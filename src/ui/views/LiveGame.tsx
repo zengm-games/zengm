@@ -1,6 +1,12 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { ChangeEvent } from "react";
+import React, {
+	ChangeEvent,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { BoxScoreRow, BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, processLiveGameEvents } from "../util";
@@ -57,112 +63,44 @@ const getSeconds = (time: string) => {
 	return min * 60 + sec;
 };
 
-type LiveGameProps = View<"liveGame">;
-type State = {
-	playIndex: number;
-	paused: boolean;
-	speed: number;
-	started: boolean;
-};
+const LiveGame = (props: View<"liveGame">) => {
+	const [paused, setPaused] = useState(false);
+	const pausedRef = useRef(paused);
+	const [speed, setSpeed] = useState(7);
+	const speedRef = useRef(speed);
+	const [playIndex, setPlayIndex] = useState(-1);
+	const [started, setStarted] = useState(!!props.events);
 
-class LiveGame extends React.Component<LiveGameProps, State> {
-	boxScore: any;
-	componentIsMounted: boolean | undefined;
-	events: any[] | undefined;
-	overtimes: number;
-	playByPlayDiv: HTMLDivElement | null;
-	quarters: string[];
+	const boxScore = useRef<any>(
+		props.initialBoxScore ? props.initialBoxScore : {},
+	);
 
-	constructor(props: LiveGameProps) {
-		super(props);
-		this.state = {
-			playIndex: -1,
-			paused: false,
-			speed: 7,
-			started: !!props.events,
-		};
-		this.boxScore = props.initialBoxScore ? props.initialBoxScore : {};
-		if (props.events) {
-			this.startLiveGame(props.events.slice());
-		}
+	const overtimes = useRef(0);
+	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
+	const quarters = useRef(["Q1"]);
+	const componentIsMounted = useRef(false);
+	const events = useRef<any[] | undefined>();
 
-		this.overtimes = 0;
-		this.playByPlayDiv = null;
-		this.quarters = ["Q1"];
-
-		this.handleSpeedChange = this.handleSpeedChange.bind(this);
-		this.setPlayByPlayDivHeight = this.setPlayByPlayDivHeight.bind(this);
-		this.handlePause = this.handlePause.bind(this);
-		this.handlePlay = this.handlePlay.bind(this);
-		this.processToNextPause = this.processToNextPause.bind(this);
-	}
-
-	componentDidMount() {
-		this.componentIsMounted = true;
-
-		// Keep height of plays list equal to window
-		this.setPlayByPlayDivHeight();
-		window.addEventListener("optimizedResize", this.setPlayByPlayDivHeight);
-	}
-
-	componentDidUpdate() {
-		if (this.props.events && !this.state.started) {
-			this.boxScore = this.props.initialBoxScore;
-			this.setState(
-				{
-					started: true,
-				},
-				() => {
-					this.startLiveGame(this.props.events.slice());
-				},
-			);
-		}
-	}
-
-	componentWillUnmount() {
-		this.componentIsMounted = false;
-
-		window.removeEventListener("optimizedResize", this.setPlayByPlayDivHeight);
-
-		updatePhaseAndLeagueTopBar();
-	}
-
-	setPlayByPlayDivHeight() {
-		if (this.playByPlayDiv) {
-			// Keep in sync with .live-game-affix
-			if (window.matchMedia("(min-width:768px)").matches) {
-				this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
-			} else if (this.playByPlayDiv.style.height !== "") {
-				this.playByPlayDiv.style.removeProperty("height");
-			}
-		}
-	}
-
-	startLiveGame(events: any[]) {
-		this.events = events;
-		this.processToNextPause();
-	}
-
-	processToNextPause(force?: boolean): number {
-		if (!this.componentIsMounted || (this.state.paused && !force)) {
+	const processToNextPause = useCallback((force?: boolean): number => {
+		if (!componentIsMounted.current || (pausedRef.current && !force)) {
 			return 0;
 		}
 
-		const startSeconds = getSeconds(this.boxScore.time);
+		const startSeconds = getSeconds(boxScore.current.time);
 
-		if (!this.events) {
-			throw new Error("this.events is undefined");
+		if (!events.current) {
+			throw new Error("events.current is undefined");
 		}
 
 		const output = processLiveGameEvents({
-			boxScore: this.boxScore,
-			events: this.events,
-			overtimes: this.overtimes,
-			quarters: this.quarters,
+			boxScore: boxScore.current,
+			events: events.current,
+			overtimes: overtimes.current,
+			quarters: quarters.current,
 		});
 		const text = output.text;
-		this.overtimes = output.overtimes;
-		this.quarters = output.quarters;
+		overtimes.current = output.overtimes;
+		quarters.current = output.quarters;
 
 		if (text !== undefined) {
 			const p = document.createElement("p");
@@ -179,44 +117,44 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 				p.appendChild(node);
 			}
 
-			if (this.playByPlayDiv) {
-				this.playByPlayDiv.insertBefore(p, this.playByPlayDiv.firstChild);
+			if (playByPlayDiv.current) {
+				playByPlayDiv.current.insertBefore(p, playByPlayDiv.current.firstChild);
 			}
 		}
 
-		if (this.events && this.events.length > 0) {
-			if (!this.state.paused) {
-				setTimeout(this.processToNextPause, 4000 / 1.2 ** this.state.speed);
+		if (events.current && events.current.length > 0) {
+			if (!pausedRef.current) {
+				setTimeout(processToNextPause, 4000 / 1.2 ** speedRef.current);
 			}
 		} else {
-			this.boxScore.time = "0:00";
-			this.boxScore.gameOver = true;
-			if (this.boxScore.scoringSummary) {
-				for (const event of this.boxScore.scoringSummary) {
+			boxScore.current.time = "0:00";
+			boxScore.current.gameOver = true;
+			if (boxScore.current.scoringSummary) {
+				for (const event of boxScore.current.scoringSummary) {
 					event.hide = false;
 				}
 			}
 
 			// Update team records with result of game
 			// Keep in sync with liveGame.ts
-			for (const t of this.boxScore.teams) {
-				if (this.boxScore.playoffs) {
+			for (const t of boxScore.current.teams) {
+				if (boxScore.current.playoffs) {
 					if (t.playoffs) {
-						if (this.boxScore.won.tid === t.tid) {
+						if (boxScore.current.won.tid === t.tid) {
 							t.playoffs.won += 1;
-						} else if (this.boxScore.lost.tid === t.tid) {
+						} else if (boxScore.current.lost.tid === t.tid) {
 							t.playoffs.lost += 1;
 						}
 					}
 				} else {
-					if (this.boxScore.won.pts === this.boxScore.lost.pts) {
+					if (boxScore.current.won.pts === boxScore.current.lost.pts) {
 						// Tied!
 						if (t.tied !== undefined) {
 							t.tied += 1;
 						}
-					} else if (this.boxScore.won.tid === t.tid) {
+					} else if (boxScore.current.won.tid === t.tid) {
 						t.won += 1;
-					} else if (this.boxScore.lost.tid === t.tid) {
+					} else if (boxScore.current.lost.tid === t.tid) {
 						t.lost += 1;
 					}
 				}
@@ -225,22 +163,61 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 			updatePhaseAndLeagueTopBar();
 		}
 
-		this.setState(state => ({
-			playIndex: state.playIndex + 1,
-		}));
+		setPlayIndex(prev => prev + 1);
 
-		const endSeconds = getSeconds(this.boxScore.time);
+		const endSeconds = getSeconds(boxScore.current.time);
 
 		// This is negative when rolling over to a new quarter
 		const elapsedSeconds = startSeconds - endSeconds;
 		return elapsedSeconds;
-	}
+	}, []);
+
+	useEffect(() => {
+		componentIsMounted.current = true;
+
+		const setPlayByPlayDivHeight = () => {
+			if (playByPlayDiv.current) {
+				// Keep in sync with .live-game-affix
+				if (window.matchMedia("(min-width:768px)").matches) {
+					playByPlayDiv.current.style.height = `${window.innerHeight - 113}px`;
+				} else if (playByPlayDiv.current.style.height !== "") {
+					playByPlayDiv.current.style.removeProperty("height");
+				}
+			}
+		};
+
+		// Keep height of plays list equal to window
+		setPlayByPlayDivHeight();
+		window.addEventListener("optimizedResize", setPlayByPlayDivHeight);
+
+		return () => {
+			componentIsMounted.current = false;
+			window.removeEventListener("optimizedResize", setPlayByPlayDivHeight);
+			updatePhaseAndLeagueTopBar();
+		};
+	}, []);
+
+	const startLiveGame = useCallback(
+		(events2: any[]) => {
+			events.current = events2;
+			processToNextPause();
+		},
+		[processToNextPause],
+	);
+
+	useEffect(() => {
+		if (props.events && !started) {
+			boxScore.current = props.initialBoxScore;
+			setStarted(true);
+			startLiveGame(props.events.slice());
+		}
+	}, [props.events, props.initialBoxScore, started, startLiveGame]);
 
 	// Plays up to `cutoffs` seconds, or until end of quarter
-	playSeconds(cutoff: number) {
+	const playSeconds = (cutoff: number) => {
 		let seconds = 0;
-		while (seconds < cutoff && !this.boxScore.gameOver) {
-			const elapsedSeconds = this.processToNextPause(true);
+		while (seconds < cutoff && !boxScore.current.gameOver) {
+			const elapsedSeconds = processToNextPause(true);
 			if (elapsedSeconds > 0) {
 				seconds += elapsedSeconds;
 			} else if (elapsedSeconds < 0) {
@@ -248,203 +225,199 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 				break;
 			}
 		}
-	}
+	};
 
-	playUntilLastTwoMinutes() {
+	const playUntilLastTwoMinutes = () => {
 		const quartersToPlay =
-			this.quarters.length >= 4 ? 0 : 4 - this.quarters.length;
+			quarters.current.length >= 4 ? 0 : 4 - quarters.current.length;
 		for (let i = 0; i < quartersToPlay; i++) {
-			this.playSeconds(Infinity);
+			playSeconds(Infinity);
 		}
 
-		const currentSeconds = getSeconds(this.boxScore.time);
+		const currentSeconds = getSeconds(boxScore.current.time);
 		const targetSeconds = 125; // 2 minutes plus 5 seconds, cause can't always be exact
 		const secoundsToPlay = currentSeconds - targetSeconds;
 		if (secoundsToPlay > 0) {
-			this.playSeconds(secoundsToPlay);
+			playSeconds(secoundsToPlay);
 		}
-	}
+	};
 
-	playUntilElamEnding() {
-		while (this.boxScore.elamTarget === undefined && !this.boxScore.gameOver) {
-			this.processToNextPause(true);
+	const playUntilElamEnding = () => {
+		while (
+			boxScore.current.elamTarget === undefined &&
+			!boxScore.current.gameOver
+		) {
+			processToNextPause(true);
 		}
-	}
+	};
 
-	handleSpeedChange(event: ChangeEvent<HTMLInputElement>) {
+	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = parseInt(event.target.value, 10);
 		if (!Number.isNaN(speed)) {
-			this.setState({ speed });
+			setSpeed(speed);
+			speedRef.current = speed;
 		}
-	}
+	};
 
-	handlePause() {
-		this.setState({
-			paused: true,
-		});
-	}
+	const handlePause = () => {
+		setPaused(true);
+		pausedRef.current = true;
+	};
 
-	handlePlay() {
-		this.setState(
-			{
-				paused: false,
-			},
-			() => {
-				this.processToNextPause();
-			},
-		);
-	}
+	const handlePlay = () => {
+		setPaused(false);
+		pausedRef.current = false;
+		processToNextPause();
+	};
 
-	render() {
-		// Needs to return actual div, not fragment, for AutoAffix!!!
-		return (
-			<div>
-				<p className="text-danger">
-					If you navigate away from this page, you won't be able to see these
-					play-by-play results again because they are not stored anywhere. The
-					results of this game are already final, though.
-				</p>
+	// Needs to return actual div, not fragment, for AutoAffix!!!
+	return (
+		<div>
+			<p className="text-danger">
+				If you navigate away from this page, you won't be able to see these
+				play-by-play results again because they are not stored anywhere. The
+				results of this game are already final, though.
+			</p>
 
-				<div className="row">
-					<div className="col-md-9">
-						{this.boxScore.gid >= 0 ? (
-							<BoxScoreWrapper
-								boxScore={this.boxScore}
-								injuredToBottom
-								Row={PlayerRow}
-								playIndex={this.state.playIndex}
-							/>
-						) : (
-							<h2>Loading...</h2>
-						)}
-					</div>
-					<div className="col-md-3">
-						<div className="live-game-affix">
-							{this.boxScore.gid >= 0 ? (
-								<div className="d-flex align-items-center mb-3">
-									<div className="btn-group mr-2">
-										{this.state.paused ? (
-											<button
-												className="btn btn-light-bordered"
-												disabled={this.boxScore.gameOver}
-												onClick={this.handlePlay}
-												title="Resume Simulation"
-											>
-												<span className="glyphicon glyphicon-play" />
-											</button>
-										) : (
-											<button
-												className="btn btn-light-bordered"
-												disabled={this.boxScore.gameOver}
-												onClick={this.handlePause}
-												title="Pause Simulation"
-											>
-												<span className="glyphicon glyphicon-pause" />
-											</button>
-										)}
+			<div className="row">
+				<div className="col-md-9">
+					{boxScore.current.gid >= 0 ? (
+						<BoxScoreWrapper
+							boxScore={boxScore.current}
+							injuredToBottom
+							Row={PlayerRow}
+							playIndex={playIndex}
+						/>
+					) : (
+						<h2>Loading...</h2>
+					)}
+				</div>
+				<div className="col-md-3">
+					<div className="live-game-affix">
+						{boxScore.current.gid >= 0 ? (
+							<div className="d-flex align-items-center mb-3">
+								<div className="btn-group mr-2">
+									{paused ? (
 										<button
 											className="btn btn-light-bordered"
-											disabled={!this.state.paused || this.boxScore.gameOver}
-											onClick={() => {
-												this.processToNextPause(true);
-											}}
-											title="Show Next Play"
+											disabled={boxScore.current.gameOver}
+											onClick={handlePlay}
+											title="Resume Simulation"
 										>
-											<span className="glyphicon glyphicon-step-forward" />
+											<span className="glyphicon glyphicon-play" />
 										</button>
-										<Dropdown alignRight>
-											<Dropdown.Toggle
-												id="live-game-sim-more"
-												className="btn-light-bordered live-game-sim-more"
-												disabled={!this.state.paused || this.boxScore.gameOver}
-												variant={"no-class" as any}
-												title="Fast Forward"
+									) : (
+										<button
+											className="btn btn-light-bordered"
+											disabled={boxScore.current.gameOver}
+											onClick={handlePause}
+											title="Pause Simulation"
+										>
+											<span className="glyphicon glyphicon-pause" />
+										</button>
+									)}
+									<button
+										className="btn btn-light-bordered"
+										disabled={!paused || boxScore.current.gameOver}
+										onClick={() => {
+											processToNextPause(true);
+										}}
+										title="Show Next Play"
+									>
+										<span className="glyphicon glyphicon-step-forward" />
+									</button>
+									<Dropdown alignRight>
+										<Dropdown.Toggle
+											id="live-game-sim-more"
+											className="btn-light-bordered live-game-sim-more"
+											disabled={!paused || boxScore.current.gameOver}
+											variant={"no-class" as any}
+											title="Fast Forward"
+										>
+											<span className="glyphicon glyphicon-fast-forward" />
+										</Dropdown.Toggle>
+										<Dropdown.Menu>
+											<Dropdown.Item
+												onClick={() => {
+													playSeconds(60);
+												}}
 											>
-												<span className="glyphicon glyphicon-fast-forward" />
-											</Dropdown.Toggle>
-											<Dropdown.Menu>
+												1 minute
+											</Dropdown.Item>
+											<Dropdown.Item
+												onClick={() => {
+													playSeconds(60 * 3);
+												}}
+											>
+												3 minutes
+											</Dropdown.Item>
+											<Dropdown.Item
+												onClick={() => {
+													playSeconds(60 * 6);
+												}}
+											>
+												6 minutes
+											</Dropdown.Item>
+											<Dropdown.Item
+												onClick={() => {
+													playSeconds(Infinity);
+												}}
+											>
+												End of{" "}
+												{boxScore.current.elamTarget === undefined
+													? "quarter"
+													: "game"}
+											</Dropdown.Item>
+											{!boxScore.current.elam ? (
 												<Dropdown.Item
 													onClick={() => {
-														this.playSeconds(60);
+														playUntilLastTwoMinutes();
 													}}
 												>
-													1 minute
+													Until last 2 minutes
 												</Dropdown.Item>
+											) : null}
+											{boxScore.current.elam &&
+											boxScore.current.elamTarget === undefined ? (
 												<Dropdown.Item
 													onClick={() => {
-														this.playSeconds(60 * 3);
+														playUntilElamEnding();
 													}}
 												>
-													3 minutes
+													Until Elam Ending
 												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														this.playSeconds(60 * 6);
-													}}
-												>
-													6 minutes
-												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														this.playSeconds(Infinity);
-													}}
-												>
-													End of{" "}
-													{this.boxScore.elamTarget === undefined
-														? "quarter"
-														: "game"}
-												</Dropdown.Item>
-												{!this.boxScore.elam ? (
-													<Dropdown.Item
-														onClick={() => {
-															this.playUntilLastTwoMinutes();
-														}}
-													>
-														Until last 2 minutes
-													</Dropdown.Item>
-												) : null}
-												{this.boxScore.elam &&
-												this.boxScore.elamTarget === undefined ? (
-													<Dropdown.Item
-														onClick={() => {
-															this.playUntilElamEnding();
-														}}
-													>
-														Until Elam Ending
-													</Dropdown.Item>
-												) : null}
-											</Dropdown.Menu>
-										</Dropdown>
-									</div>
-									<div className="form-group flex-grow-1 mb-0">
-										<input
-											type="range"
-											className="form-control-range"
-											disabled={this.boxScore.gameOver}
-											min="1"
-											max="33"
-											step="1"
-											value={this.state.speed}
-											onChange={this.handleSpeedChange}
-											title="Speed"
-										/>
-									</div>
+											) : null}
+										</Dropdown.Menu>
+									</Dropdown>
 								</div>
-							) : null}
+								<div className="form-group flex-grow-1 mb-0">
+									<input
+										type="range"
+										className="form-control-range"
+										disabled={boxScore.current.gameOver}
+										min="1"
+										max="33"
+										step="1"
+										value={speed}
+										onChange={handleSpeedChange}
+										title="Speed"
+									/>
+								</div>
+							</div>
+						) : null}
 
-							<div
-								className="live-game-playbyplay"
-								ref={c => {
-									this.playByPlayDiv = c;
-								}}
-							/>
-						</div>
+						<div
+							className="live-game-playbyplay"
+							ref={c => {
+								playByPlayDiv.current = c;
+							}}
+						/>
 					</div>
 				</div>
 			</div>
-		);
-	}
-}
+		</div>
+	);
+};
 
 // @ts-ignore
 LiveGame.propTypes = {
@@ -456,7 +429,7 @@ LiveGame.propTypes = {
 	initialBoxScore: PropTypes.object,
 };
 
-const LiveGameWrapper = (props: LiveGameProps) => {
+const LiveGameWrapper = (props: View<"liveGame">) => {
 	useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
 
 	return <LiveGame {...props} />;

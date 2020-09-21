@@ -88,14 +88,16 @@ const HeadlineScore = ({ boxScore }: any) => {
 					<span className="text-muted">{t0.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t0}>
-					{t0.region} {t0.name}
+					<span className="d-none d-sm-inline">{t0.region} </span>
+					{t0.name}
 				</TeamNameLink>{" "}
 				{t0.pts},{" "}
 				{t1.playoffs ? (
 					<span className="text-muted">{t1.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t1}>
-					{t1.region} {t1.name}
+					<span className="d-none d-sm-inline">{t1.region} </span>
+					{t1.name}
 				</TeamNameLink>{" "}
 				{t1.pts}
 				{boxScore.overtime}

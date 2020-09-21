@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-09-21: Added keyboard shortcuts to the live game sim controls.
+
 * 2020-09-20: Below team logos in playoff box scores, playoff series results are shown rather than regular season records. And yeah, when you're watching a live game, the win total updates when the game finishes :) [[1]](https://old.reddit.com/r/BasketballGM/comments/iw8dv0/below_team_logos_in_playoff_box_scores_playoff/)
 
 * 2020-09-19: In BBGM, new God Mode option to set the number of players on the court. By default it's 5-on-5, but now it can be anything. Extreme values may do weird things. [[1]](https://old.reddit.com/r/BasketballGM/comments/ivlhui/new_god_mode_option_to_set_the_number_of_players/)

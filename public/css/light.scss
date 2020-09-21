@@ -151,14 +151,20 @@ a.god-mode.active {
 	cursor: pointer;
 }
 
-.kbd-parent {
-	position: relative;
-	padding-right: 70px;
-}
 .kbd {
-	position: absolute;
-	right: 20px;
-	top: 4px;
+	display: none;
+}
+@include media-breakpoint-up(sm) {
+	.kbd-parent {
+		position: relative;
+		padding-right: 70px;
+	}
+	.kbd {
+		display: block;
+		position: absolute;
+		right: 20px;
+		top: 4px;
+	}
 }
 
 .dashboard-top-link {

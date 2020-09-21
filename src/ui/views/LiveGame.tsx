@@ -225,17 +225,22 @@ const LiveGame = (props: View<"liveGame">) => {
 		}
 	};
 
-	const handlePause = () => {
+	const handlePause = useCallback(() => {
 		setPaused(true);
 		pausedRef.current = true;
-	};
+	}, []);
 
-	const handlePlay = () => {
+	const handlePlay = useCallback(() => {
 		setPaused(false);
 		pausedRef.current = false;
 		processToNextPause();
 		setPlayIndex(prev => prev + 1);
-	};
+	}, [processToNextPause]);
+
+	const handleNextPlay = useCallback(() => {
+		processToNextPause(true);
+		setPlayIndex(prev => prev + 1);
+	}, [processToNextPause]);
 
 	const fastForwardMenuItems = useMemo(() => {
 		// Plays up to `cutoffs` seconds, or until end of quarter
@@ -343,19 +348,28 @@ const LiveGame = (props: View<"liveGame">) => {
 		const handleKeydown = (event: KeyboardEvent) => {
 			// alt + letter
 			if (
-				pausedRef.current &&
 				event.altKey &&
 				!event.ctrlKey &&
 				!event.shiftKey &&
 				!event.isComposing &&
 				!event.metaKey
 			) {
-				const option = fastForwardMenuItems.find(
-					option2 => `Key${option2.key}` === event.code,
-				);
+				if (pausedRef.current) {
+					const option = fastForwardMenuItems.find(
+						option2 => `Key${option2.key}` === event.code,
+					);
 
-				if (option) {
-					option.onClick();
+					if (option) {
+						option.onClick();
+					} else if (event.code === "KeyB") {
+						handlePlay();
+					} else if (event.code === "KeyN") {
+						handleNextPlay();
+					}
+				} else {
+					if (event.code === "KeyB") {
+						handlePause();
+					}
 				}
 			}
 		};
@@ -364,7 +378,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [fastForwardMenuItems]);
+	}, [fastForwardMenuItems, handlePause, handleNextPlay, handlePlay]);
 
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
@@ -398,7 +412,7 @@ const LiveGame = (props: View<"liveGame">) => {
 											className="btn btn-light-bordered"
 											disabled={boxScore.current.gameOver}
 											onClick={handlePlay}
-											title="Resume Simulation"
+											title="Resume Simulation (alt+b)"
 										>
 											<span className="glyphicon glyphicon-play" />
 										</button>
@@ -407,7 +421,7 @@ const LiveGame = (props: View<"liveGame">) => {
 											className="btn btn-light-bordered"
 											disabled={boxScore.current.gameOver}
 											onClick={handlePause}
-											title="Pause Simulation"
+											title="Pause Simulation (alt+b)"
 										>
 											<span className="glyphicon glyphicon-pause" />
 										</button>
@@ -415,11 +429,8 @@ const LiveGame = (props: View<"liveGame">) => {
 									<button
 										className="btn btn-light-bordered"
 										disabled={!paused || boxScore.current.gameOver}
-										onClick={() => {
-											processToNextPause(true);
-											setPlayIndex(prev => prev + 1);
-										}}
-										title="Show Next Play"
+										onClick={handleNextPlay}
+										title="Show Next Play (alt+n)"
 									>
 										<span className="glyphicon glyphicon-step-forward" />
 									</button>

@@ -116,16 +116,21 @@ const FreeAgents = ({
 				},
 				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
 				p.contract.exp,
-				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-				// @ts-ignore
-				<NegotiateButtons
-					capSpace={capSpace}
-					disabled={gameSimInProgress}
-					minContract={minContract}
-					spectator={spectator}
-					p={p}
-					willingToNegotiate={p.mood.willing}
-				/>,
+				{
+					value: (
+						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+						// @ts-ignore
+						<NegotiateButtons
+							capSpace={capSpace}
+							disabled={gameSimInProgress}
+							minContract={minContract}
+							spectator={spectator}
+							p={p}
+							willingToNegotiate={p.mood.willing}
+						/>
+					),
+					searchValue: p.mood.willing ? "Negotiate Sign" : "Refuses!",
+				},
 			],
 		};
 	});

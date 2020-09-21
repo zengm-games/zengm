@@ -78,16 +78,20 @@ const NegotiationList = ({
 				},
 				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
 				p.contract.exp,
-				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-				// @ts-ignore
-				<NegotiateButtons
-					canGoOverCap={!hardCap}
-					capSpace={capSpace}
-					minContract={minContract}
-					spectator={spectator}
-					p={p}
-					willingToNegotiate={p.mood.willing}
-				/>,
+				{
+					value: (
+						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+						// @ts-ignore
+						<NegotiateButtons
+							capSpace={capSpace}
+							minContract={minContract}
+							spectator={spectator}
+							p={p}
+							willingToNegotiate={p.mood.willing}
+						/>
+					),
+					searchValue: p.mood.willing ? "Negotiate Sign" : "Refuses!",
+				},
 			],
 		};
 	});

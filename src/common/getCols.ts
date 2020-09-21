@@ -1436,7 +1436,7 @@ const cols: {
 		sortType: "name",
 	},
 	Negotiate: {
-		noSearch: true,
+		sortSequence: [],
 	},
 	Opp: {
 		desc: "Opponent",

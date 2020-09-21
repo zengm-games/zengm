@@ -412,7 +412,7 @@ const LiveGame = (props: View<"liveGame">) => {
 											className="btn btn-light-bordered"
 											disabled={boxScore.current.gameOver}
 											onClick={handlePlay}
-											title="Resume Simulation (Alt+b)"
+											title="Resume Simulation (Alt+B)"
 										>
 											<span className="glyphicon glyphicon-play" />
 										</button>
@@ -421,7 +421,7 @@ const LiveGame = (props: View<"liveGame">) => {
 											className="btn btn-light-bordered"
 											disabled={boxScore.current.gameOver}
 											onClick={handlePause}
-											title="Pause Simulation (Alt+b)"
+											title="Pause Simulation (Alt+B)"
 										>
 											<span className="glyphicon glyphicon-pause" />
 										</button>
@@ -430,7 +430,7 @@ const LiveGame = (props: View<"liveGame">) => {
 										className="btn btn-light-bordered"
 										disabled={!paused || boxScore.current.gameOver}
 										onClick={handleNextPlay}
-										title="Show Next Play (Alt+n)"
+										title="Show Next Play (Alt+N)"
 									>
 										<span className="glyphicon glyphicon-step-forward" />
 									</button>

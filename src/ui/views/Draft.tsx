@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
-import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
+import {
+	DataTable,
+	DraftAbbrev,
+	PlayerNameLabels,
+	RosterComposition,
+} from "../components";
 import type { View } from "../../common/types";
 
 const DraftButtons = ({
@@ -111,6 +116,7 @@ const Draft = ({
 	spectator,
 	stats,
 	undrafted,
+	userPlayers,
 	userTids,
 }: View<"draft">) => {
 	const [drafting, setDrafting] = useState(false);
@@ -329,62 +335,72 @@ const Draft = ({
 	const draftedColClasses = classNames(colClass);
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
-				| <a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
-				{draftType !== "noLottery" &&
-				draftType !== "random" &&
-				draftType !== "freeAgents" ? (
-					<>
-						<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a> |{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-			</p>
-
-			{remainingPicks.length > 0 ? (
-				<>
-					{challengeNoDraftPicks && !fantasyDraft && !expansionDraft ? (
-						<div>
-							<p className="alert alert-danger d-inline-block">
-								<b>Challenge Mode:</b> Your team does not get any draft picks
-								unless you acquire them in a trade.
-							</p>
-						</div>
-					) : null}
-					{spectator ? (
-						<div>
-							<p className="alert alert-danger d-inline-block">
-								In spectator mode you can't make draft picks, you can only watch
-								the draft.
-							</p>
-						</div>
-					) : null}
-					<DraftButtons
-						spectator={spectator}
-						userRemaining={userRemaining}
-						usersTurn={usersTurn}
-					/>
-				</>
-			) : (
-				<>
-					<p id="draft-buttons">
-						<span className="alert alert-success d-inline-block mb-0">
-							The draft is over!
-						</span>
+			<div className="d-sm-flex">
+				<div>
+					<p>
+						More:{" "}
+						<a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a> |{" "}
+						<a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
+						{draftType !== "noLottery" &&
+						draftType !== "random" &&
+						draftType !== "freeAgents" ? (
+							<>
+								<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a>{" "}
+								|{" "}
+							</>
+						) : null}
+						<a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
 					</p>
-					{fantasyDraft || expansionDraft ? (
-						<p>
-							<span className="alert alert-warning d-inline-block mb-0">
-								Draft results from {fantasyDraft ? "fantasy" : "expansion"}{" "}
-								drafts are only temporarily viewable. When you navigate away
-								from this page or proceed to the next phase of the game, you
-								cannot come back to this page.
-							</span>
-						</p>
-					) : null}
-				</>
-			)}
+
+					{remainingPicks.length > 0 ? (
+						<>
+							{challengeNoDraftPicks && !fantasyDraft && !expansionDraft ? (
+								<div>
+									<p className="alert alert-danger d-inline-block">
+										<b>Challenge Mode:</b> Your team does not get any draft
+										picks unless you acquire them in a trade.
+									</p>
+								</div>
+							) : null}
+							{spectator ? (
+								<div>
+									<p className="alert alert-danger d-inline-block">
+										In spectator mode you can't make draft picks, you can only
+										watch the draft.
+									</p>
+								</div>
+							) : null}
+							<DraftButtons
+								spectator={spectator}
+								userRemaining={userRemaining}
+								usersTurn={usersTurn}
+							/>
+						</>
+					) : (
+						<>
+							<p id="draft-buttons">
+								<span className="alert alert-success d-inline-block mb-0">
+									The draft is over!
+								</span>
+							</p>
+							{fantasyDraft || expansionDraft ? (
+								<p>
+									<span className="alert alert-warning d-inline-block mb-0">
+										Draft results from {fantasyDraft ? "fantasy" : "expansion"}{" "}
+										drafts are only temporarily viewable. When you navigate away
+										from this page or proceed to the next phase of the game, you
+										cannot come back to this page.
+									</span>
+								</p>
+							) : null}
+						</>
+					)}
+				</div>
+
+				{process.env.SPORT === "football" ? (
+					<RosterComposition className="mb-3 ml-sm-3" players={userPlayers} />
+				) : null}
+			</div>
 
 			<div className={wrapperClasses}>
 				<div className={undraftedColClasses}>

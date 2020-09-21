@@ -164,6 +164,19 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			});
 		}
 
+		const userPlayersAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
+		const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
+			attrs: [],
+			ratings: ["pos"],
+			stats: [],
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+		});
+
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -174,6 +187,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			spectator: g.get("spectator"),
 			stats,
 			undrafted,
+			userPlayers,
 			userTids: g.get("userTids"),
 		};
 	}

@@ -4,6 +4,7 @@ import React, {
 	ChangeEvent,
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
@@ -81,6 +82,7 @@ const LiveGame = (props: View<"liveGame">) => {
 	const componentIsMounted = useRef(false);
 	const events = useRef<any[] | undefined>();
 
+	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback((force?: boolean): number => {
 		if (!componentIsMounted.current || (pausedRef.current && !force)) {
 			return 0;
@@ -124,7 +126,10 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		if (events.current && events.current.length > 0) {
 			if (!pausedRef.current) {
-				setTimeout(processToNextPause, 4000 / 1.2 ** speedRef.current);
+				setTimeout(() => {
+					processToNextPause();
+					setPlayIndex(prev => prev + 1);
+				}, 4000 / 1.2 ** speedRef.current);
 			}
 		} else {
 			boxScore.current.time = "0:00";
@@ -163,8 +168,6 @@ const LiveGame = (props: View<"liveGame">) => {
 			updatePhaseAndLeagueTopBar();
 		}
 
-		setPlayIndex(prev => prev + 1);
-
 		const endSeconds = getSeconds(boxScore.current.time);
 
 		// This is negative when rolling over to a new quarter
@@ -201,6 +204,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		(events2: any[]) => {
 			events.current = events2;
 			processToNextPause();
+			setPlayIndex(prev => prev + 1);
 		},
 		[processToNextPause],
 	);
@@ -212,44 +216,6 @@ const LiveGame = (props: View<"liveGame">) => {
 			startLiveGame(props.events.slice());
 		}
 	}, [props.events, props.initialBoxScore, started, startLiveGame]);
-
-	// Plays up to `cutoffs` seconds, or until end of quarter
-	const playSeconds = (cutoff: number) => {
-		let seconds = 0;
-		while (seconds < cutoff && !boxScore.current.gameOver) {
-			const elapsedSeconds = processToNextPause(true);
-			if (elapsedSeconds > 0) {
-				seconds += elapsedSeconds;
-			} else if (elapsedSeconds < 0) {
-				// End of quarter, always stop
-				break;
-			}
-		}
-	};
-
-	const playUntilLastTwoMinutes = () => {
-		const quartersToPlay =
-			quarters.current.length >= 4 ? 0 : 4 - quarters.current.length;
-		for (let i = 0; i < quartersToPlay; i++) {
-			playSeconds(Infinity);
-		}
-
-		const currentSeconds = getSeconds(boxScore.current.time);
-		const targetSeconds = 125; // 2 minutes plus 5 seconds, cause can't always be exact
-		const secoundsToPlay = currentSeconds - targetSeconds;
-		if (secoundsToPlay > 0) {
-			playSeconds(secoundsToPlay);
-		}
-	};
-
-	const playUntilElamEnding = () => {
-		while (
-			boxScore.current.elamTarget === undefined &&
-			!boxScore.current.gameOver
-		) {
-			processToNextPause(true);
-		}
-	};
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = parseInt(event.target.value, 10);
@@ -268,7 +234,137 @@ const LiveGame = (props: View<"liveGame">) => {
 		setPaused(false);
 		pausedRef.current = false;
 		processToNextPause();
+		setPlayIndex(prev => prev + 1);
 	};
+
+	const fastForwardMenuItems = useMemo(() => {
+		// Plays up to `cutoffs` seconds, or until end of quarter
+		const playSeconds = (cutoff: number) => {
+			let seconds = 0;
+			let numPlays = 0;
+			while (seconds < cutoff && !boxScore.current.gameOver) {
+				const elapsedSeconds = processToNextPause(true);
+				numPlays += 1;
+				if (elapsedSeconds > 0) {
+					seconds += elapsedSeconds;
+				} else if (elapsedSeconds < 0) {
+					// End of quarter, always stop
+					break;
+				}
+			}
+			setPlayIndex(prev => prev + numPlays);
+		};
+
+		const playUntilLastTwoMinutes = () => {
+			const quartersToPlay =
+				quarters.current.length >= 4 ? 0 : 4 - quarters.current.length;
+			for (let i = 0; i < quartersToPlay; i++) {
+				playSeconds(Infinity);
+			}
+
+			const currentSeconds = getSeconds(boxScore.current.time);
+			const targetSeconds = 125; // 2 minutes plus 5 seconds, cause can't always be exact
+			const secoundsToPlay = currentSeconds - targetSeconds;
+			if (secoundsToPlay > 0) {
+				playSeconds(secoundsToPlay);
+			}
+		};
+
+		const playUntilElamEnding = () => {
+			let numPlays = 0;
+			while (
+				boxScore.current.elamTarget === undefined &&
+				!boxScore.current.gameOver
+			) {
+				processToNextPause(true);
+				numPlays += 1;
+			}
+			setPlayIndex(prev => prev + numPlays);
+		};
+
+		const menuItems = [
+			{
+				label: "1 minute",
+				key: "O",
+				onClick: () => {
+					playSeconds(60);
+				},
+			},
+			{
+				label: "3 minutes",
+				key: "T",
+				onClick: () => {
+					playSeconds(60 * 3);
+				},
+			},
+			{
+				label: "6 minutes",
+				key: "S",
+				onClick: () => {
+					playSeconds(60 * 6);
+				},
+			},
+			{
+				label: `End of ${
+					boxScore.current.elamTarget === undefined ? "quarter" : "game"
+				}`,
+				key: "Q",
+				onClick: () => {
+					playSeconds(Infinity);
+				},
+			},
+		];
+
+		if (!boxScore.current.elam) {
+			menuItems.push({
+				label: "Until last 2 minutes",
+				key: "U",
+				onClick: () => {
+					playUntilLastTwoMinutes();
+				},
+			});
+		}
+
+		if (boxScore.current.elam && boxScore.current.elamTarget === undefined) {
+			menuItems.push({
+				label: "Until Elam Ending",
+				key: "U",
+				onClick: () => {
+					playUntilElamEnding();
+				},
+			});
+		}
+
+		return menuItems;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [boxScore.current.elam, boxScore.current.elamTarget, processToNextPause]);
+
+	useEffect(() => {
+		const handleKeydown = (event: KeyboardEvent) => {
+			// alt + letter
+			if (
+				pausedRef.current &&
+				event.altKey &&
+				!event.ctrlKey &&
+				!event.shiftKey &&
+				!event.isComposing &&
+				!event.metaKey
+			) {
+				const option = fastForwardMenuItems.find(
+					option2 => `Key${option2.key}` === event.code,
+				);
+
+				if (option) {
+					option.onClick();
+				}
+			}
+		};
+
+		document.addEventListener("keydown", handleKeydown);
+		return () => {
+			document.removeEventListener("keydown", handleKeydown);
+		};
+	}, [fastForwardMenuItems]);
 
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
@@ -321,6 +417,7 @@ const LiveGame = (props: View<"liveGame">) => {
 										disabled={!paused || boxScore.current.gameOver}
 										onClick={() => {
 											processToNextPause(true);
+											setPlayIndex(prev => prev + 1);
 										}}
 										title="Show Next Play"
 									>
@@ -337,56 +434,16 @@ const LiveGame = (props: View<"liveGame">) => {
 											<span className="glyphicon glyphicon-fast-forward" />
 										</Dropdown.Toggle>
 										<Dropdown.Menu>
-											<Dropdown.Item
-												onClick={() => {
-													playSeconds(60);
-												}}
-											>
-												1 minute
-											</Dropdown.Item>
-											<Dropdown.Item
-												onClick={() => {
-													playSeconds(60 * 3);
-												}}
-											>
-												3 minutes
-											</Dropdown.Item>
-											<Dropdown.Item
-												onClick={() => {
-													playSeconds(60 * 6);
-												}}
-											>
-												6 minutes
-											</Dropdown.Item>
-											<Dropdown.Item
-												onClick={() => {
-													playSeconds(Infinity);
-												}}
-											>
-												End of{" "}
-												{boxScore.current.elamTarget === undefined
-													? "quarter"
-													: "game"}
-											</Dropdown.Item>
-											{!boxScore.current.elam ? (
+											{fastForwardMenuItems.map(item => (
 												<Dropdown.Item
-													onClick={() => {
-														playUntilLastTwoMinutes();
-													}}
+													key={item.label}
+													onClick={item.onClick}
+													className="kbd-parent"
 												>
-													Until last 2 minutes
+													{item.label}
+													<span className="text-muted kbd">Alt+{item.key}</span>
 												</Dropdown.Item>
-											) : null}
-											{boxScore.current.elam &&
-											boxScore.current.elamTarget === undefined ? (
-												<Dropdown.Item
-													onClick={() => {
-														playUntilElamEnding();
-													}}
-												>
-													Until Elam Ending
-												</Dropdown.Item>
-											) : null}
+											))}
 										</Dropdown.Menu>
 									</Dropdown>
 								</div>

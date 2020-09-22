@@ -83,6 +83,7 @@ const NegotiationList = ({
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 						// @ts-ignore
 						<NegotiateButtons
+							canGoOverCap
 							capSpace={capSpace}
 							minContract={minContract}
 							spectator={spectator}

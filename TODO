@@ -1,3 +1,5 @@
+https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
+
 GM face in team history page
 - saved faces in account?
 - allow overriding for specific league, or linking to one from your account (requries sync)
@@ -347,6 +349,8 @@ FBGM
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - Some automatic first down penalties result in 1st and 1
+- some penalties push team into endzone
+  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHMGGpznWHgLkCNTbcXJbzZLzp
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - kneeling at end of games

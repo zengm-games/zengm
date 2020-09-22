@@ -648,6 +648,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "array",
 							minItems: 1,
 						}),
+						gameAttribute("numPlayersOnCourt", {
+							type: "integer",
+							minimum: 1,
+						}),
 						gameAttribute("numPlayoffByes", {
 							type: ["integer", "array"],
 						}),

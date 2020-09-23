@@ -1636,9 +1636,6 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 					"tpp",
 					"ftp",
 					"ewa",
-					"tsp",
-					"tpar",
-					"ftr",
 			  ]
 			: ["keyStats"];
 	return idb.getCopy.playersPlus(p, {

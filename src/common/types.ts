@@ -375,6 +375,7 @@ export type GameAttributesLeague = {
 				>;
 		  };
 	rookieContractLengths: number[];
+	rookiesCanRefuse: boolean;
 	salaryCap: number;
 	season: number;
 	sonRate: number;

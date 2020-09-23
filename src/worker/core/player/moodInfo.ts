@@ -75,6 +75,9 @@ const moodInfo = async (
 	) {
 		probWilling = 1;
 		willing = true;
+	} else if (components.rookieContract > 0 && !g.get("rookiesCanRefuse")) {
+		probWilling = 1;
+		willing = true;
 	} else {
 		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
 
@@ -87,7 +90,7 @@ const moodInfo = async (
 		willing = rand < probWilling;
 	}
 
-	// Outside the above if/else so it plays nice with either branch
+	// Outside the above if/else so it plays nice with any branch
 	if (
 		g.get("challengeNoFreeAgents") &&
 		!resigning &&

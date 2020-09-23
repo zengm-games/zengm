@@ -34,6 +34,7 @@ type Key =
 	| "sonRate"
 	| "homeCourtAdvantage"
 	| "rookieContractLengths"
+	| "rookiesCanRefuse"
 	| "allStarGame"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
@@ -533,6 +534,27 @@ export const options: {
 				}
 			}
 		},
+	},
+	{
+		category: "Contracts",
+		key: "rookiesCanRefuse",
+		name: "Rookes Can Refuse To Negotiate",
+		helpText: (
+			<>
+				<p>
+					{helpers.upperCaseFirstLetter(process.env.SPORT)} GM has no concept of
+					"restricted free agency" like the NBA does, so draft picks can refuse
+					to negotiate with you after their rookie contracts expire. This option
+					can force every player to be willing to negotiate when his rookie
+					contract expires, which can somewhat make up for restricted free
+					agency not existing.
+				</p>
+				<p>
+					This only applies if the <b>hard cap option is disabled</b>.
+				</p>
+			</>
+		),
+		type: "bool",
 	},
 	{
 		category: "Challenge Modes",

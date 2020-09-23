@@ -698,6 +698,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							minItems: 1,
 						}),
+						gameAttribute("rookiesCanRefuse", {
+							type: "boolean",
+						}),
 						gameAttribute("salaryCap", {
 							type: "integer",
 							minimum: 0,

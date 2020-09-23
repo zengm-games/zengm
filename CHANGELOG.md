@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-09-22: A few new contract options in God Mode. Set the minimum and maximum length of allowable contracts, and set whether players should be allowed to refuse to negotiate after their rookie contract expires. [[1]](https://old.reddit.com/r/BasketballGM/comments/iy2qo5/a_few_new_contract_options_in_god_mode_set_the/)
+
 * 2020-09-21: Added keyboard shortcuts to the live game sim controls.
 
 * 2020-09-20: Below team logos in playoff box scores, playoff series results are shown rather than regular season records. And yeah, when you're watching a live game, the win total updates when the game finishes :) [[1]](https://old.reddit.com/r/BasketballGM/comments/iw8dv0/below_team_logos_in_playoff_box_scores_playoff/)

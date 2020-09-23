@@ -117,6 +117,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	foulRateFactor: 1,
 	foulsNeededToFoulOut: 6,
 	rookieContractLengths: [3, 2],
+	rookiesCanRefuse: true,
 
 	pace: 100,
 	threePointers: true,

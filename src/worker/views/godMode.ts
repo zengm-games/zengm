@@ -25,6 +25,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			injuryRate: g.get("injuryRate"),
 			homeCourtAdvantage: g.get("homeCourtAdvantage"),
 			rookieContractLengths: g.get("rookieContractLengths"),
+			rookiesCanRefuse: g.get("rookiesCanRefuse"),
 			tragicDeathRate: g.get("tragicDeathRate"),
 			brotherRate: g.get("brotherRate"),
 			sonRate: g.get("sonRate"),

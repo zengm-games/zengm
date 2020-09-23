@@ -125,6 +125,8 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<br />
 					AST: {helpers.roundStat(stats.ast, "ast")}
 					<br />
+					FG%: {helpers.roundStat(stats.fgp, "fgp")}%
+					<br />
 					TS%: {helpers.roundStat(stats.tsp, "tsp")}%
 				</div>
 				<div className="col-4">
@@ -134,6 +136,8 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					STL: {helpers.roundStat(stats.stl, "stl")}
 					<br />
 					TO: {helpers.roundStat(stats.tov, "tov")}
+					<br />
+					3P%: {helpers.roundStat(stats.tpp, "tpp")}
 					<br />
 					3PAr: {helpers.roundStat(stats.tpar, "tpar")}
 				</div>
@@ -145,6 +149,8 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<br />
 					EWA: {helpers.roundStat(stats.ewa, "ewa")}
 					<br />
+					FT%: {helpers.roundStat(stats.ftp, "ftp")}
+					<br />
 					FTr: {helpers.roundStat(stats.ftr, "ftr")}
 				</div>
 			</div>
@@ -154,6 +160,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 			<div className="row mt-2">
 				<div className="col-12">
 					<b>Stats</b>
+					<br />
 					<br />
 					<br />
 					<br />

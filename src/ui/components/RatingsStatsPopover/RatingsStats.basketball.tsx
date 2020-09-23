@@ -135,7 +135,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<br />
 					TO: {helpers.roundStat(stats.tov, "tov")}
 					<br />
-					3P%: {helpers.roundStat(stats.tpp, "tpp")}
+					3P%: {helpers.roundStat(stats.tpp, "tpp")}%
 				</div>
 				<div className="col-4">
 					<br />
@@ -145,7 +145,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<br />
 					EWA: {helpers.roundStat(stats.ewa, "ewa")}
 					<br />
-					FT%: {helpers.roundStat(stats.ftp, "ftp")}
+					FT%: {helpers.roundStat(stats.ftp, "ftp")}%
 				</div>
 			</div>
 		);

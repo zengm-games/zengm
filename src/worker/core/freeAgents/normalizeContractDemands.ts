@@ -16,7 +16,7 @@ const getExpiration = (p: Player, randomizeExp: boolean) => {
 
 	// Players with high potentials want short contracts
 	const potentialDifference = Math.round((pot - ovr) / 4.0);
-	let years = 5 - potentialDifference;
+	let years = g.get("maxContractLength") - potentialDifference;
 
 	if (years < 2) {
 		years = 2;
@@ -34,6 +34,13 @@ const getExpiration = (p: Player, randomizeExp: boolean) => {
 	// Randomize expiration for contracts generated at beginning of new game
 	if (randomizeExp) {
 		years = random.randInt(1, years);
+		years = helpers.bound(years, 1, g.get("maxContractLength"));
+	} else {
+		years = helpers.bound(
+			years,
+			g.get("minContractLength"),
+			g.get("maxContractLength"),
+		);
 	}
 
 	return g.get("season") + years - 1;

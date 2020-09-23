@@ -337,8 +337,10 @@ export type GameAttributesLeague = {
 	luxuryPayroll: number;
 	luxuryTax: number;
 	maxContract: number;
+	maxContractLength: number;
 	maxRosterSize: number;
 	minContract: number;
+	minContractLength: number;
 	minPayroll: number;
 	minRosterSize: number;
 	names?: NamesLegacy;

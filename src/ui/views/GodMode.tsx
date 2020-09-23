@@ -22,6 +22,8 @@ type Key =
 	| "luxuryTax"
 	| "minContract"
 	| "maxContract"
+	| "minContractLength"
+	| "maxContractLength"
 	| "hardCap"
 	| "budget"
 	| "aiTradesFactor"
@@ -59,6 +61,7 @@ type Key =
 type Category =
 	| "League Structure"
 	| "Finance"
+	| "Contracts"
 	| "Events"
 	| "Game Simulation"
 	| "Elam Ending"
@@ -281,18 +284,60 @@ export const options: {
 			"Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
 	},
 	{
-		category: "Finance",
+		category: "Contracts",
 		key: "minContract",
 		name: "Minimum Contract",
 		type: "float1000",
 		decoration: "currency",
+		validator: value => {
+			if (value < 0) {
+				throw new Error("Value cannot be negative");
+			}
+		},
 	},
 	{
-		category: "Finance",
+		category: "Contracts",
 		key: "maxContract",
 		name: "Max Contract",
 		type: "float1000",
 		decoration: "currency",
+		validator: (value, output) => {
+			if (value < 0) {
+				throw new Error("Value cannot be negative");
+			}
+			if (value < output.minContract) {
+				throw new Error(
+					"Value cannot be less than the minimum contract amount",
+				);
+			}
+		},
+	},
+	{
+		category: "Contracts",
+		key: "minContractLength",
+		name: "Minimum Contract Length",
+		type: "int",
+		validator: value => {
+			if (value < 1) {
+				throw new Error("Value must be at least 1");
+			}
+		},
+	},
+	{
+		category: "Contracts",
+		key: "maxContractLength",
+		name: "Maximum Contract Length",
+		type: "int",
+		validator: (value, output) => {
+			if (value < 1) {
+				throw new Error("Value must be at least 1");
+			}
+			if (value < output.minContractLength) {
+				throw new Error(
+					"Value cannot be less than the minimum contract amount",
+				);
+			}
+		},
 	},
 	{
 		category: "Finance",
@@ -458,7 +503,7 @@ export const options: {
 			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 	},
 	{
-		category: "Finance",
+		category: "Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
 		helpText: (
@@ -1289,6 +1334,7 @@ const groupedOptions = groupBy(options, "category");
 const categories = [
 	"League Structure",
 	"Finance",
+	"Contracts",
 	"Events",
 	"Game Simulation",
 	"Elam Ending",

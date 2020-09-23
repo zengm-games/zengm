@@ -7,6 +7,7 @@ import type {
 	PlayerContract,
 	UpdateEvents,
 } from "../../common/types";
+import range from "lodash/range";
 
 const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	let growthFactor = 0.15;
@@ -15,32 +16,37 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	growthFactor += (ovr % 10) * 0.01 - 0.05;
 	let exp = g.get("season");
 
-	if (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE) {
-		exp += 1;
+	if (g.get("phase") <= PHASE.AFTER_TRADE_DEADLINE) {
+		exp -= 1;
 	}
+	let found: number | undefined;
+
+	const allowedLengths = range(
+		g.get("minContractLength"),
+		g.get("maxContractLength") + 1,
+	);
 
 	const contractOptions: {
 		exp: number;
 		years: number;
 		amount: number;
 		smallestAmount: boolean;
-	}[] = [];
-	let found: number | undefined;
-
-	for (let i = 0; i < 5; i++) {
-		contractOptions[i] = {
-			exp: exp + i,
-			years: 1 + i,
+	}[] = allowedLengths.map((contractLength, i) => {
+		const contractOption = {
+			exp: exp + contractLength,
+			years: contractLength,
 			amount: 0,
 			smallestAmount: false,
 		};
 
-		if (contractOptions[i].exp === contract.exp) {
-			contractOptions[i].amount = contract.amount;
-			contractOptions[i].smallestAmount = true;
+		if (contractOption.exp === contract.exp) {
+			contractOption.amount = contract.amount;
+			contractOption.smallestAmount = true;
 			found = i;
 		}
-	}
+
+		return contractOption;
+	});
 
 	if (found === undefined) {
 		contractOptions[0].amount = contract.amount;
@@ -49,7 +55,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	}
 
 	// From the desired contract, ask for more money for less or more years
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < contractOptions.length; i++) {
 		const factor = 1 + Math.abs(found - i) * growthFactor;
 		contractOptions[i].amount = contractOptions[found].amount * factor;
 		contractOptions[i].amount =

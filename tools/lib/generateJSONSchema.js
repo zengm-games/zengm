@@ -568,6 +568,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 							minimum: 0,
 						}),
+						gameAttribute("maxContractLength", {
+							type: "integer",
+							minimum: 1,
+						}),
 						gameAttribute("maxRosterSize", {
 							type: "integer",
 							minimum: 0,
@@ -575,6 +579,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("minContract", {
 							type: "integer",
 							minimum: 0,
+						}),
+						gameAttribute("minContractLength", {
+							type: "integer",
+							minimum: 1,
 						}),
 						gameAttribute("minPayroll", {
 							type: "integer",

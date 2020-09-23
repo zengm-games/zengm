@@ -19,6 +19,8 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			luxuryTax: g.get("luxuryTax"),
 			minContract: g.get("minContract"),
 			maxContract: g.get("maxContract"),
+			minContractLength: g.get("minContractLength"),
+			maxContractLength: g.get("maxContractLength"),
 			aiTradesFactor: g.get("aiTradesFactor"),
 			injuryRate: g.get("injuryRate"),
 			homeCourtAdvantage: g.get("homeCourtAdvantage"),

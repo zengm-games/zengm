@@ -14,6 +14,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	luxuryTax: 1.5,
 	minContract: 750, // [thousands of dollars]
 	maxContract: 30000, // [thousands of dollars]
+	minContractLength: 1,
+	maxContractLength: 5,
 	minRosterSize: 10,
 	maxRosterSize: 15,
 	numGames: 82, // per season

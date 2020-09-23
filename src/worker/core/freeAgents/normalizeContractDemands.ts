@@ -14,21 +14,22 @@ const ROUNDS = process.env.SPORT === "football" ? 0 : 60;
 const getExpiration = (p: Player, randomizeExp: boolean) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
 
+	let years;
+
 	// Players with high potentials want short contracts
-	const potentialDifference = Math.round((pot - ovr) / 4.0);
-	let years = g.get("maxContractLength") - potentialDifference;
-
-	if (years < 2) {
+	const potentialDifference = pot - ovr;
+	if (potentialDifference >= 10) {
 		years = 2;
-	}
+	} else {
+		// Bad players can only ask for short deals, good players ask for longer deals
+		years = (p.value - 25) / 5;
 
-	// Bad players can only ask for short deals
-	if (p.value < 36) {
-		years = 1;
-	} else if (p.value < 45) {
-		years = 2;
-	} else if (p.value < 55) {
-		years = 3;
+		// Sometimes players want shorter contracts, for flexibility
+		if (Math.random() < 0.5) {
+			years /= 2;
+		}
+
+		years = helpers.bound(Math.round(years), 1, Infinity);
 	}
 
 	// Randomize expiration for contracts generated at beginning of new game

@@ -11,7 +11,11 @@ const LEARNING_RATE = 0.5;
 // 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
 const ROUNDS = process.env.SPORT === "football" ? 0 : 60;
 
-const getExpiration = (p: Player, randomizeExp: boolean) => {
+const getExpiration = (
+	p: Player,
+	randomizeExp: boolean,
+	nextSeason?: boolean,
+) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
 
 	let years;
@@ -44,7 +48,11 @@ const getExpiration = (p: Player, randomizeExp: boolean) => {
 		);
 	}
 
-	const offset = g.get("phase") <= PHASE.AFTER_TRADE_DEADLINE ? -2 : -1;
+	let offset = g.get("phase") <= PHASE.AFTER_TRADE_DEADLINE ? -1 : 0;
+	if (nextSeason) {
+		// Otherwise the season+phase combo appears off when setting contract expiration in newPhasePreseason
+		offset -= 1;
+	}
 
 	return g.get("season") + years + offset;
 };
@@ -77,6 +85,7 @@ const stableSoftmax = (x: number[], param: number) => {
 const normalizeContractDemands = async ({
 	type,
 	pids,
+	nextSeason,
 }: {
 	type:
 		| "newLeague"
@@ -84,6 +93,7 @@ const normalizeContractDemands = async ({
 		| "includeExpiringContracts"
 		| "dummyExpiringContracts";
 	pids?: number[];
+	nextSeason?: boolean;
 }) => {
 	// Higher means more unequal salaries
 	let PARAM;
@@ -257,7 +267,7 @@ const normalizeContractDemands = async ({
 		) {
 			const p = info.p;
 
-			let exp = getExpiration(p, type === "newLeague");
+			let exp = getExpiration(p, type === "newLeague", nextSeason);
 			if (afterSeasonOver) {
 				exp += 1;
 			}

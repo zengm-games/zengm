@@ -292,6 +292,9 @@ const newPhasePreseason = async (
 	if (!repeatSeason) {
 		await freeAgents.normalizeContractDemands({
 			type: "dummyExpiringContracts",
+
+			// Set this because otherwise the season+phase combo appears off when setting contract expiration
+			nextSeason: true,
 		});
 	}
 

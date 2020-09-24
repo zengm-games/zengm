@@ -44,7 +44,9 @@ const getExpiration = (p: Player, randomizeExp: boolean) => {
 		);
 	}
 
-	return g.get("season") + years - 1;
+	const offset = g.get("phase") <= PHASE.AFTER_TRADE_DEADLINE ? -2 : -1;
+
+	return g.get("season") + years + offset;
 };
 
 const stableSoftmax = (x: number[], param: number) => {

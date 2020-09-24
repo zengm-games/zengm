@@ -475,7 +475,10 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
-			{type === "readyToRun" && state.revealState === "init" ? (
+			{type === "readyToRun" &&
+			state.revealState === "init" &&
+			result &&
+			result.length > 0 ? (
 				<button
 					className="btn btn-large btn-success"
 					onClick={() => startLottery()}

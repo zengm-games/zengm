@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Basketball GM Upgrade Fallback</title>
+  </head>
+  <body>
+    <p>Use this if you're having trouble upgrading from version 38 to 39 (the player mood update) like <a href="https://github.com/dumbmatter/gm-games/issues/318">described here</a>.</p>
+
+    <p>It's okay if this gets interrupted in the middle, just start it again. And running it on an already-upgraded league will not break anything.</p>
+
+    <form id="form">
+      <select id="league"></select>
+      <button type="submit">Upgrade</button>
+    </form>
+    <br>
+
+    <div id="status"></div>
+  </body>
+  <script src="https://unpkg.com/idb@5/build/iife/index-min.js"></script>
+  <script src="upgrade-39.js"></script>
+</html>

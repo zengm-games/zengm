@@ -149,7 +149,7 @@ const updateRoster = async (
 					(g.get("phase") !== PHASE.PLAYOFFS ||
 						players.length > g.get("maxRosterSize")) &&
 					!g.get("gameOver") &&
-					players.length > g.get("minRosterSize") &&
+					players.length > g.get("numPlayersOnCourt") &&
 					g.get("phase") !== PHASE.FANTASY_DRAFT &&
 					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {

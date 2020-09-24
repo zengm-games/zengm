@@ -1327,8 +1327,8 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
-	"Desired Contract": {
-		desc: "Desired Contract",
+	"Projected Contract": {
+		desc: "Projected Contract",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
@@ -2000,7 +2000,7 @@ const titleOverrides = {
 	"award:oroy": "OROY",
 	"award:droy": "DROY",
 	"Current Contract": "Current",
-	"Desired Contract": "Desired",
+	"Projected Contract": "Projected",
 	...sportSpecificTitleOverrides,
 };
 const actualCols: {

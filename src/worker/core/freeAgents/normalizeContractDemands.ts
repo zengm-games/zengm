@@ -48,7 +48,7 @@ const getExpiration = (
 		);
 	}
 
-	let offset = g.get("phase") <= PHASE.AFTER_TRADE_DEADLINE ? -1 : 0;
+	let offset = g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0;
 	if (nextSeason) {
 		// Otherwise the season+phase combo appears off when setting contract expiration in newPhasePreseason
 		offset -= 1;
@@ -256,7 +256,6 @@ const normalizeContractDemands = async ({
 	}
 	//console.timeEnd("foo");
 
-	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {
 		if (
 			(type === "freeAgentsOnly" ||
@@ -267,10 +266,7 @@ const normalizeContractDemands = async ({
 		) {
 			const p = info.p;
 
-			let exp = getExpiration(p, type === "newLeague", nextSeason);
-			if (afterSeasonOver) {
-				exp += 1;
-			}
+			const exp = getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
 

@@ -26,26 +26,34 @@ const updateTeamFinances = async (
 			showInt = parseInt(inputs.show, 10);
 		}
 
-		// Convert contract objects into table rows
-		const contractTotals = [0, 0, 0, 0, 0];
 		let season = g.get("season");
-
 		if (g.get("phase") >= PHASE.DRAFT) {
 			// After the draft, don't show old contract year
 			season += 1;
 		}
 
+		// How many seasons into the future are contracts?
+		let maxContractExp = -Infinity;
+		for (const contract of contractsRaw) {
+			if (contract.exp > maxContractExp) {
+				maxContractExp = contract.exp;
+			}
+		}
+		const numSeasons = Math.max(
+			g.get("maxContractLength"),
+			maxContractExp - season + 1,
+		);
+
+		// Convert contract objects into table rows
+		const contractTotals = Array(numSeasons).fill(0);
 		const contracts = contractsRaw.map(contract => {
 			const amounts: number[] = [];
 
 			for (let i = season; i <= contract.exp; i++) {
-				// Only look at first 5 years (edited rosters might have longer contracts)
-				if (i - season >= 5) {
-					break;
-				}
-
 				amounts.push(contract.amount / 1000);
-				contractTotals[i - season] += contract.amount / 1000;
+				if (contractTotals[i - season] !== undefined) {
+					contractTotals[i - season] += contract.amount / 1000;
+				}
 			}
 
 			return {
@@ -61,14 +69,13 @@ const updateTeamFinances = async (
 				amounts,
 			};
 		});
+		console.log(contracts);
 
-		const salariesSeasons = [
-			season,
-			season + 1,
-			season + 2,
-			season + 3,
-			season + 4,
-		];
+		const salariesSeasons = [];
+		for (let i = 0; i < numSeasons; i++) {
+			salariesSeasons.push(season + i);
+		}
+
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			tid: inputs.tid,
 		});

@@ -57,7 +57,7 @@ const UpcomingFreeAgents = ({
 				{
 					value: <Mood maxWidth p={p} />,
 					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
-					searchValue: p.mood.traits.join(""),
+					searchValue: p.mood ? p.mood.traits.join("") : null,
 				},
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []

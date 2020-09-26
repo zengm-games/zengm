@@ -237,7 +237,7 @@ const updatePlayer = async (
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 
-		const willingToSign = p.mood && p.mood.willing;
+		const willingToSign = !!(p.mood && p.mood.willing);
 
 		const retired = p.tid === PLAYER.RETIRED;
 

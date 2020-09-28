@@ -348,13 +348,18 @@ const Player2 = ({
 
 	let statusInfo: ReactNode = null;
 	if (!retired) {
+		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 		statusInfo = (
 			<div className="d-flex">
 				{injured ? (
 					<span
 						className="badge badge-danger badge-injury"
 						style={{ marginLeft: 0 }}
-						title={`${player.injury.type} (out ${player.injury.gamesRemaining} more games)`}
+						title={`${player.injury.type} (out ${
+							player.injury.gamesRemaining
+						} more ${
+							player.injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`
+						})`}
 					>
 						{player.injury.gamesRemaining}
 					</span>

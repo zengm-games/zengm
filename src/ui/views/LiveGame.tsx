@@ -348,6 +348,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		const handleKeydown = (event: KeyboardEvent) => {
 			// alt + letter
 			if (
+				!boxScore.current.gameOver &&
 				event.altKey &&
 				!event.ctrlKey &&
 				!event.shiftKey &&

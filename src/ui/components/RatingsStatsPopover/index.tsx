@@ -5,6 +5,7 @@ import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
+import { PLAYER } from "../../../common";
 
 const Icon = ({
 	onClick,
@@ -35,6 +36,9 @@ type Props = {
 const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
+		abbrev?: string;
+		tid?: number;
+		age?: number;
 		jerseyNumber?: string;
 		name?: string;
 		ratings?: {
@@ -54,6 +58,8 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 		pid,
 	});
 
+	console.log(player);
+
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
 		setLoadingData(false);
@@ -65,6 +71,9 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	const loadData = useCallback(async () => {
 		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid);
 		setPlayer({
+			abbrev: p.abbrev,
+			tid: p.tid,
+			age: p.age,
 			jerseyNumber: p.jerseyNumber,
 			name: p.name,
 			ratings: p.ratings,
@@ -81,18 +90,31 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 		}
 	}, [loadData, loadingData]);
 
-	const { jerseyNumber, name, ratings, stats } = player;
+	const { abbrev, tid, age, jerseyNumber, name, ratings, stats } = player;
 
 	let nameBlock = null;
 	if (name) {
 		// Explicit boolean check is for Firefox 57 and older
 		nameBlock = (
 			<>
+				{jerseyNumber ? (
+					<span className="text-muted jersey-number-popover mr-1">
+						{jerseyNumber}
+					</span>
+				) : null}
 				<a href={helpers.leagueUrl(["player", pid])}>
 					<b>{name}</b>
 				</a>
 				{ratings !== undefined ? `, ${ratings.pos}` : null}
-				{jerseyNumber ? `, #${jerseyNumber}` : null}
+				{abbrev !== undefined && tid !== undefined && tid !== PLAYER.RETIRED ? (
+					<>
+						,{" "}
+						<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
+							{abbrev}
+						</a>
+					</>
+				) : null}
+				{age !== undefined && tid !== PLAYER.RETIRED ? `, ${age} yo` : null}
 				{!disableWatchToggle && typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}

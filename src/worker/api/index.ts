@@ -1636,10 +1636,14 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 					"tsp",
 					"tpar",
 					"ftr",
+					"fgp",
+					"tpp",
+					"ftp",
 			  ]
 			: ["keyStats"];
+
 	return idb.getCopy.playersPlus(p, {
-		attrs: ["name", "jerseyNumber"],
+		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],
 		ratings: ["pos", "ovr", "pot", ...RATINGS],
 		stats,
 		season,

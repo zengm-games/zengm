@@ -1,4 +1,13 @@
+"Deaths" frivolity page shows HoF team in the "At Death" column instead of the team they were actually on when they were "At Death" (Shaq was on the Blazers; here it shows as Minnesota.) @MarcerMercer#8952 
+
+team and age on player info popover
+
 you know when you have your cursor over the red injury flag and itll say something like: Fractured foot (out 7 more games). Can you put the original injury length as well? Like 'Fractured foot 23 days (out 7 more days)? SHould also be days instead of games https://discord.com/channels/@me/744589296329162802
+
+centralize player action buttons
+- include Draft
+- existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
+- show in player stats/ratings/bios tables? and roster, player profile?
 
 No trades or other finance/roster moves while job offers
 - https://old.reddit.com/r/BasketballGM/comments/iz8bvk/exploit_1_get_job_offer_2_trade_all_of_your_stars/
@@ -24,6 +33,9 @@ redo mood system
   - moodComponents.playingTime for football - based on depth chart
   - table showing all of the mood components as columns
   - should affect trades
+
+player development - less correlation betwen ratings
+- https://github.com/nicidob/gm-games/commit/fec2175636191ca96b60912601b3212be03bb7ad
 
 gm score
 - @nicidob

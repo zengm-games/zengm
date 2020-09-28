@@ -10,158 +10,76 @@ type RatingFormula = {
 	changeLimits: (age: number) => [number, number];
 };
 
-const shootingFormula: RatingFormula = {
-	ageModifier: (age: number) => {
-		// Reverse most of the age-related decline in calcBaseChange
-		if (age <= 27) {
-			return 0;
-		}
-
-		if (age <= 29) {
-			return 0.5;
-		}
-
-		if (age <= 31) {
-			return 1.5;
-		}
-
-		return 2;
-	},
-	changeLimits: () => [-3, 13],
-};
-const iqFormula: RatingFormula = {
-	ageModifier: (age: number) => {
-		if (age <= 21) {
-			return 4;
-		}
-
-		if (age <= 23) {
-			return 3;
-		}
-
-		// Reverse most of the age-related decline in calcBaseChange
-		if (age <= 27) {
-			return 0;
-		}
-
-		if (age <= 29) {
-			return 0.5;
-		}
-
-		if (age <= 31) {
-			return 1.5;
-		}
-
-		return 2;
-	},
-	changeLimits: age => {
-		if (age > 24) {
-			return [-3, 9];
-		}
-
-		// For 19: [-3, 32]
-		// For 23: [-3, 12]
-		return [-3, 7 + 5 * (24 - age)];
-	},
-};
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	stre: {
-		ageModifier: () => 0,
+		ageModifier: () => -0.5,
 		changeLimits: () => [-Infinity, Infinity],
 	},
 	spd: {
 		ageModifier: (age: number) => {
-			if (age <= 27) {
+			if (age <= 24) {
 				return 0;
 			}
-
-			if (age <= 30) {
-				return -2;
-			}
-
-			if (age <= 35) {
-				return -3;
-			}
-
-			if (age <= 40) {
-				return -4;
-			}
-
-			return -8;
+			return -0.2 * (age - 24);
 		},
 		changeLimits: () => [-12, 2],
 	},
 	jmp: {
 		ageModifier: (age: number) => {
-			if (age <= 26) {
+			if (age <= 24) {
 				return 0;
 			}
-
-			if (age <= 30) {
-				return -3;
-			}
-
-			if (age <= 35) {
-				return -4;
-			}
-
-			if (age <= 40) {
-				return -5;
-			}
-
-			return -10;
+			return -0.2 * (age - 24);
 		},
 		changeLimits: () => [-12, 2],
 	},
 	endu: {
 		ageModifier: (age: number) => {
-			if (age <= 23) {
-				return random.uniform(0, 9);
+			if (age <= 20) {
+				return 4;
 			}
-
-			if (age <= 30) {
-				return 0;
-			}
-
-			if (age <= 35) {
-				return -2;
-			}
-
-			if (age <= 40) {
-				return -4;
-			}
-
-			return -8;
+			return -0.5 * (age - 20) + 4;
 		},
 		changeLimits: () => [-11, 19],
 	},
 	dnk: {
-		ageModifier: (age: number) => {
-			// Like shootingForumla, except for old players
-			if (age <= 27) {
-				return 0;
-			}
-
-			return 0.5;
-		},
-		changeLimits: () => [-3, 13],
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
 	},
-	ins: shootingFormula,
-	ft: shootingFormula,
-	fg: shootingFormula,
-	tp: shootingFormula,
-	oiq: iqFormula,
-	diq: iqFormula,
+	ins: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
+	ft: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
+	fg: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
+	tp: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
+	oiq: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
+	diq: {
+		ageModifier: () => 0,
+		changeLimits: () => [-2, 5],
+	},
 	drb: {
-		ageModifier: shootingFormula.ageModifier,
+		ageModifier: () => 0,
 		changeLimits: () => [-2, 5],
 	},
 	pss: {
-		ageModifier: shootingFormula.ageModifier,
+		ageModifier: () => 0,
 		changeLimits: () => [-2, 5],
 	},
 	reb: {
-		ageModifier: shootingFormula.ageModifier,
+		ageModifier: () => 0,
 		changeLimits: () => [-2, 5],
 	},
 };
@@ -169,33 +87,19 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 const calcBaseChange = (age: number, coachingRank: number): number => {
 	let val: number;
 
-	if (age <= 21) {
+	if (age <= 20) {
 		val = 2;
-	} else if (age <= 25) {
-		val = 1;
-	} else if (age <= 27) {
-		val = 0;
-	} else if (age <= 29) {
-		val = -1;
-	} else if (age <= 31) {
-		val = -2;
-	} else if (age <= 34) {
-		val = -3;
-	} else if (age <= 40) {
-		val = -4;
-	} else if (age <= 43) {
-		val = -5;
 	} else {
-		val = -6;
+		val = -0.33 * (age - 20) + 2;
 	}
 
 	// Noise
 	if (age <= 23) {
-		val += helpers.bound(random.realGauss(0, 5), -4, 20);
-	} else if (age <= 25) {
-		val += helpers.bound(random.realGauss(0, 5), -4, 10);
+		val += helpers.bound(random.realGauss(0, 7), -10, 20);
+	} else if (age <= 28) {
+		val += helpers.bound(random.realGauss(0, 6), -15, 15);
 	} else {
-		val += helpers.bound(random.realGauss(0, 3), -2, 4);
+		val += helpers.bound(random.realGauss(0, 5), -15, 10);
 	}
 
 	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
@@ -227,8 +131,26 @@ const developSeason = (
 			ratings.hgt += 1;
 		}
 	}
+	const baseChange1 = calcBaseChange(age, coachingRank);
+	const baseChange2 = calcBaseChange(age, coachingRank);
 
-	const baseChange = calcBaseChange(age, coachingRank);
+	const ratingsNumbers: Record<Exclude<RatingKey, "hgt">, number> = {
+		stre: baseChange1,
+		spd: baseChange2,
+		jmp: baseChange2,
+		endu: baseChange1,
+		dnk: baseChange1,
+		ins: baseChange1,
+		ft: baseChange2,
+		fg: baseChange2,
+		tp: baseChange2,
+		oiq: baseChange1,
+		diq: baseChange1,
+		drb: baseChange2,
+		pss: baseChange2,
+		reb: baseChange1,
+	};
+	const mult = 1.4;
 
 	for (const key of helpers.keys(ratingsFormulas)) {
 		const ageModifier = ratingsFormulas[key].ageModifier(age);
@@ -237,9 +159,9 @@ const developSeason = (
 		ratings[key] = limitRating(
 			ratings[key] +
 				helpers.bound(
-					(baseChange + ageModifier) * random.uniform(0.4, 1.4),
+					(ratingsNumbers[key] + ageModifier) * random.uniform(0.4, 1.4),
 					changeLimits[0],
-					changeLimits[1],
+					mult * changeLimits[1],
 				),
 		);
 	}

@@ -14,34 +14,31 @@ const typeFactors: Record<
 	Partial<Record<RatingKey, number>>
 > = {
 	point: {
-		jmp: 1.65,
-		spd: 1.65,
-		drb: 1.5,
-		pss: 1.5,
-		ft: 1.4,
-		fg: 1.4,
-		tp: 1.4,
-		oiq: 1.2,
-		endu: 1.4,
-	},
-	wing: {
-		drb: 1.2,
-		dnk: 1.5,
-		jmp: 1.4,
-		spd: 1.4,
+		jmp: 1.2,
+		spd: 1.1,
+		drb: 1.1,
+		pss: 1.2,
+		reb: 0.9,
+		ins: 0.9,
 		ft: 1.2,
 		fg: 1.2,
 		tp: 1.2,
+		endu: 1.1,
+		dnk: 0.9,
 	},
+	wing: {},
 	big: {
-		stre: 1.2,
-		ins: 1.6,
-		dnk: 1.5,
-		reb: 1.4,
+		stre: 1.1,
+		ins: 1.1,
+		dnk: 1.1,
+		endu: 0.9,
+		reb: 1.1,
+		spd: 0.9,
+		jmp: 0.9,
+		pss: 0.8,
 		ft: 0.8,
 		fg: 0.8,
 		tp: 0.8,
-		diq: 1.2,
 	},
 };
 
@@ -100,37 +97,38 @@ const genRatings = (
 
 	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 37,
-		spd: 40,
-		jmp: 40,
-		endu: 17,
-		ins: 27,
-		dnk: 27,
-		ft: 32,
-		fg: 32,
-		tp: 32,
-		oiq: 22,
-		diq: 22,
-		drb: 37,
+		stre: 44,
+		spd: 47,
+		jmp: 47,
+		endu: 33,
+		ins: 39,
+		dnk: 43,
+		ft: 39,
+		fg: 39,
+		tp: 41,
+		oiq: 37,
+		diq: 39,
+		drb: 46,
 		pss: 37,
 		reb: 37,
 	};
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
 	// ensure there are some who are elite in one but not the other
+	const factorBig = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
+	const bigRatings = ["stre", "ins", "reb", "endu", "dnk"];
+	const athleticismRatings = ["spd", "jmp"];
 	const shootingRatings = ["ft", "fg", "tp"];
-	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
+	const skillRatings = ["oiq", "diq", "drb", "pss"];
 
 	for (const key of helpers.keys(rawRatings)) {
 		const typeFactor = typeFactors[type].hasOwnProperty(key)
 			? typeFactors[type][key]
 			: 1;
-		let factor = factorIns;
+		let factor = 1;
 
 		if (athleticismRatings.includes(key)) {
 			factor = factorAthleticism;
@@ -138,8 +136,9 @@ const genRatings = (
 			factor = factorShooting;
 		} else if (skillRatings.includes(key)) {
 			factor = factorSkill;
+		} else if (bigRatings.includes(key)) {
+			factor = factorBig;
 		}
-
 		// For TypeScript
 		// https://github.com/microsoft/TypeScript/issues/21732
 		if (typeFactor === undefined) {

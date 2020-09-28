@@ -26,6 +26,10 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 			title: "Career Stats",
 			colspan: stats.length,
 		},
+		{
+			title: "",
+			colspan: 1,
+		},
 	];
 
 	const cols = getCols(
@@ -59,11 +63,11 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 				<a
 					href={helpers.leagueUrl([
 						"roster",
-						`${p.bestStats.abbrev}_${p.bestStats.tid}`,
-						p.bestStats.season,
+						`${lastStats.abbrev}_${lastStats.tid}`,
+						p.diedYear,
 					])}
 				>
-					{p.bestStats.abbrev}
+					{lastStats.abbrev}
 				</a>,
 				p.diedYear,
 				p.ageAtDeath,

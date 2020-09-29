@@ -15,6 +15,7 @@ const AwardRaces = ({
 	awardCandidates,
 	challengeNoRatings,
 	season,
+	teams,
 	userTid,
 }: View<"awardRaces">) => {
 	useTitleBar({
@@ -27,7 +28,15 @@ const AwardRaces = ({
 		},
 	});
 
-	const globalCols = getCols("#", "Name", "Pos", "Age", "Team", "Ovr");
+	const globalCols = getCols(
+		"#",
+		"Name",
+		"Pos",
+		"Age",
+		"Team",
+		"Record",
+		"Ovr",
+	);
 
 	return (
 		<>
@@ -60,6 +69,16 @@ const AwardRaces = ({
 						const abbrev = ps ? ps.abbrev : undefined;
 						const tid = ps ? ps.tid : undefined;
 
+						const t = teams.find(t => t.tid === tid);
+
+						let record = null;
+						if (t) {
+							record = `${t.seasonAttrs.won}-${t.seasonAttrs.lost}`;
+							if (t.seasonAttrs.tied) {
+								record += `-${t.seasonAttrs.tied}`;
+							}
+						}
+
 						const data = [
 							j + 1,
 							<PlayerNameLabels
@@ -73,11 +92,18 @@ const AwardRaces = ({
 							</PlayerNameLabels>,
 							pos,
 							p.age,
-							<a
-								href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}
-							>
-								{abbrev}
-							</a>,
+							<>
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${abbrev}_${tid}`,
+										season,
+									])}
+								>
+									{abbrev}
+								</a>
+							</>,
+							record,
 						];
 
 						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

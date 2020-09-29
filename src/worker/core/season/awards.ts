@@ -90,6 +90,22 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		p => p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
 	);
 
+	// Add winp, for later
+	const teamSeasons = await idb.getCopies.teamSeasons({
+		season,
+	});
+	const teamInfos: Record<
+		number,
+		{
+			winp: number;
+		}
+	> = {};
+	for (const teamSeason of teamSeasons) {
+		teamInfos[teamSeason.tid] = {
+			winp: helpers.calcWinp(teamSeason),
+		};
+	}
+
 	// For convenience later
 	for (const p of players) {
 		p.pos = p.ratings[p.ratings.length - 1].pos;
@@ -104,6 +120,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
+
+		p.teamInfo = teamInfos[p.currentStats.tid];
 	}
 
 	return players;

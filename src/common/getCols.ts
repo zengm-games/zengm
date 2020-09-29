@@ -1500,6 +1500,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	Record: {
+		desc: "Record",
+		sortType: "record",
+	},
 	Relation: {},
 	Result: {},
 	Retired: {

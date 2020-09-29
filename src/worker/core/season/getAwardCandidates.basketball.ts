@@ -5,7 +5,9 @@ import {
 	mipScore,
 	mvpScore,
 	royFilter,
+	royScore,
 	smoyFilter,
+	smoyScore,
 } from "./doAwards.basketball";
 
 const getAwardCandidates = async (season: number) => {
@@ -43,7 +45,7 @@ const getAwardCandidates = async (season: number) => {
 					allowNone: true,
 					amount: 10,
 					filter: smoyFilter,
-					score: mvpScore,
+					score: smoyScore,
 				},
 				players,
 			),
@@ -56,7 +58,7 @@ const getAwardCandidates = async (season: number) => {
 					allowNone: true,
 					amount: 10,
 					filter: royFilter,
-					score: mvpScore,
+					score: royScore,
 				},
 				players,
 			),

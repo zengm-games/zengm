@@ -186,8 +186,21 @@ const getRealFinalsMvp = async (
 	}
 };
 
-export const mvpScore = (p: PlayerFiltered) =>
+export const mvpScore = (p: PlayerFiltered) => {
+	let teamFactor = 0;
+	if (p.currentStats.gp >= 20) {
+		teamFactor =
+			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
+	}
+
+	return p.currentStats.ewa + p.currentStats.ws + teamFactor;
+};
+
+export const smoyScore = (p: PlayerFiltered) =>
 	p.currentStats.ewa + p.currentStats.ws;
+
+export const royScore = (p: PlayerFiltered) =>
+	p.currentStats.ewa + p.currentStats.ws + p.currentStats.pts;
 
 export const dpoyScore = (p: PlayerFiltered) =>
 	p.currentStats.dws + p.currentStats.blk + p.currentStats.stl;
@@ -348,7 +361,7 @@ const doAwards = async (conditions: Conditions) => {
 	const [smoy] = getTopPlayersOffense(
 		{
 			filter: smoyFilter,
-			score: mvpScore,
+			score: smoyScore,
 		},
 		players,
 	);
@@ -357,7 +370,7 @@ const doAwards = async (conditions: Conditions) => {
 			allowNone: true,
 			amount: 5,
 			filter: royFilter,
-			score: mvpScore,
+			score: royScore,
 		},
 		players,
 	);

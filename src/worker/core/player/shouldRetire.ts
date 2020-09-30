@@ -43,7 +43,7 @@ const shouldRetire = (
 			}
 		}
 	} else {
-		const maxAge = pos === "QB" || pos === "P" || pos === "K" ? 32 : 28;
+		const maxAge = pos === "QB" || pos === "P" || pos === "K" ? 33 : 29;
 		const minPot = 50;
 
 		// Only players older than maxAge or without a contract will retire

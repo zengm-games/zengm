@@ -230,7 +230,7 @@ export const footballOverrides =
 					},
 				],
 				draftType: "noLottery",
-				numDraftRounds: 8,
+				numDraftRounds: 7,
 				defaultStadiumCapacity: 70000,
 				salaryCap: 200000,
 				minPayroll: 150000,

@@ -1,3 +1,6 @@
+option for number of draft rounds
+- after generating players like normal, see if more are needed for more draft rounds. if so, generate players scaled down to be worse than the worst player in the class
+
 centralize player action buttons
 - include Draft
 - existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
@@ -262,7 +265,6 @@ from survey
 - team comparison should be better
 - better international name options
 - player mood revamp (bigger contract, ring-chasing, etc)
-- add option to edit # draft rounds
 
 @Sniksir#7396 A button to completely clear either side of the trade window would save a ton of time.
 
@@ -358,7 +360,6 @@ add option to disable salary cap @hrmantovani#2284
 
 FBGM
 - retirement age
-  - get rid of draft round
   - increase roster size limit to 55
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off

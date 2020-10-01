@@ -17,7 +17,9 @@ type Props = {
 const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 	let ratingsBlock;
 
-	if (ratings && !challengeNoRatings) {
+	if (challengeNoRatings) {
+		ratingsBlock = null;
+	} else if (ratings) {
 		const extraRatings = posRatings(ratings.pos);
 		const cols = getCols(...extraRatings.map(rating => `rating:${rating}`));
 		ratingsBlock = (

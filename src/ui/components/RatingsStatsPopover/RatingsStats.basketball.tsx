@@ -16,9 +16,11 @@ type Props = {
 const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 	let ratingsBlock;
 
-	if (ratings && !challengeNoRatings) {
+	if (challengeNoRatings) {
+		ratingsBlock = null;
+	} else if (ratings) {
 		ratingsBlock = (
-			<div className="row">
+			<div className="row mb-2">
 				<div className="col-4">
 					<b>Ratings</b>
 					<br />
@@ -96,7 +98,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 		);
 	} else {
 		ratingsBlock = (
-			<div className="row">
+			<div className="row mb-2">
 				<div className="col-12">
 					<b>Ratings</b>
 					<br />
@@ -115,7 +117,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 
 	if (stats) {
 		statsBlock = (
-			<div className="row mt-2">
+			<div className="row">
 				<div className="col-4">
 					<b>Stats</b>
 					<br />

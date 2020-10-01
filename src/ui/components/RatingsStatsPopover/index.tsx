@@ -132,7 +132,6 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 			className="text-nowrap"
 			style={{
 				minWidth: 250,
-				minHeight: 225,
 			}}
 		>
 			<p className="mb-2">{nameBlock}</p>

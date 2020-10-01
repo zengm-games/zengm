@@ -6,6 +6,8 @@ centralize player action buttons
 - existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
 - show in player stats/ratings/bios tables? and roster, player profile?
 
+contract extensions, available if player mood is high enough and contract is expiring
+
 No trades or other finance/roster moves while job offers
 - https://old.reddit.com/r/BasketballGM/comments/iz8bvk/exploit_1_get_job_offer_2_trade_all_of_your_stars/
 
@@ -383,6 +385,7 @@ FBGM
 - weird offensive holding application https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/g1073zl/?context=3
 - DL in FBGM get way too many interceptions, CB should get more
 - in FBGM, during the FA period with 30 days: injured players on rosters will not recover a single week if you sim to 1 day left in FA; injured players in fa will recover a week in every day of FA (30 weeks total)
+- in OT, if the other team has already scored a FG, never punt!!!
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

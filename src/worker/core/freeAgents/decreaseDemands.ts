@@ -17,8 +17,9 @@ const decreaseDemands = async () => {
 	);
 
 	for (const p of players) {
-		const baseAmount = 50 * Math.sqrt(g.get("maxContract") / 20000); // 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
+		const baseAmount = 50 * Math.sqrt(g.get("maxContract") / 20000);
 
+		// 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
 		const factor =
 			g.get("phase") !== PHASE.FREE_AGENCY ? 82 / g.get("numGames") : 1;
 		p.contract.amount -= helpers.bound(

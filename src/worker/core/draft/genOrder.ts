@@ -21,6 +21,7 @@ const genOrder = async (
 		);
 	} else if (
 		g.get("draftType") === "noLottery" ||
+		g.get("draftType") === "noLotteryReverse" ||
 		g.get("draftType") === "random"
 	) {
 		await genOrderNone(mock);

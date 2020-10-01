@@ -20,6 +20,7 @@ const MAX_SUPPORTED_LEAGUE_VERSION = 39;
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
 	"noLottery",
+	"noLotteryReverse",
 	"random",
 ];
 

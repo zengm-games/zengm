@@ -22,8 +22,13 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 		active: true,
 	});
 
-	if (g.get("draftType") !== "random") {
+	const draftType = g.get("draftType");
+
+	if (draftType !== "random") {
 		lotterySort(teams);
+		if (draftType === "noLotteryReverse") {
+			teams.reverse();
+		}
 	}
 
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
@@ -45,7 +50,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	}
 
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
-		if (g.get("draftType") === "random") {
+		if (draftType === "random") {
 			random.shuffle(teams);
 		}
 

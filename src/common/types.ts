@@ -127,7 +127,10 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: Exclude<DraftType, "random" | "noLottery" | "freeAgents">;
+	draftType?: Exclude<
+		DraftType,
+		"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
+	>;
 	result: DraftLotteryResultArray;
 };
 
@@ -149,6 +152,7 @@ export type DraftType =
 	| "nba1994"
 	| "nba2019"
 	| "noLottery"
+	| "noLotteryReverse"
 	| "random"
 	| "coinFlip"
 	| "randomLottery"

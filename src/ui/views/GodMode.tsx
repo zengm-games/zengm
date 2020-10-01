@@ -220,8 +220,12 @@ export const options: {
 					round.
 				</p>
 				<p>
-					<b>No Lottery, draft in order:</b> No lottery, teams draft in order of
-					their record, with non-playoff teams coming first
+					<b>No Lottery, worst to best:</b> No lottery, teams draft in order of
+					their record, from worst to best with non-playoff teams coming first.
+				</p>
+				<p>
+					<b>No Lottery, best to worst:</b> No lottery, teams draft in order of
+					their record, from best to worst with playoff teams coming first.
 				</p>
 				<p>
 					<b>No draft, rookies are free agents</b> There is no draft and all
@@ -238,7 +242,8 @@ export const options: {
 			randomLottery: "Random, lottery only",
 			coinFlip: "Coin flip",
 			random: "Random",
-			noLottery: "No lottery, draft in order",
+			noLottery: "No lottery, worst to best",
+			noLotteryReverse: "No lottery, best to worst",
 			freeAgents: "No draft, rookies are free agents",
 		},
 	},

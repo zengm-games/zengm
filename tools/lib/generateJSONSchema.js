@@ -492,6 +492,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								"nba1994",
 								"nba2019",
 								"noLottery",
+								"noLotteryReverse",
 								"random",
 								"nba1990",
 								"randomLotteryFirst3",

@@ -197,7 +197,11 @@ const newPhaseBeforeDraft = async (
 			await genMessage(response.deltas, response.cappedDeltas);
 		}
 
-		if (g.get("draftType") === "noLottery" || g.get("draftType") === "random") {
+		if (
+			g.get("draftType") === "noLottery" ||
+			g.get("draftType") === "noLotteryReverse" ||
+			g.get("draftType") === "random"
+		) {
 			await draft.genOrder(false, conditions);
 		}
 	}

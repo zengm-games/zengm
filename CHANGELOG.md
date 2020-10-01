@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-10-01: In honor of our glorious upcoming election, I am introducing the most American option ever added to Basketball GM: a new draft type "No lottery, best to worst" in which the best teams get the best picks in the draft. [[1]](https://old.reddit.com/r/BasketballGM/comments/j3k1g9/in_honor_of_our_glorious_upcoming_election_i_am/)
+
 * 2020-09-22: A few new contract options in God Mode. Set the minimum and maximum length of allowable contracts, and set whether players should be allowed to refuse to negotiate after their rookie contract expires. [[1]](https://old.reddit.com/r/BasketballGM/comments/iy2qo5/a_few_new_contract_options_in_god_mode_set_the/)
 
 * 2020-09-21: Added keyboard shortcuts to the live game sim controls.

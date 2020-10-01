@@ -22,7 +22,9 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 	coinFlip:
 		"Coin flip to determine the top 2 picks, like the NBA from 1966-1984",
 	noLottery:
-		"No lottery, teams draft in order of their record, with non-playoff teams coming first",
+		"No lottery, teams draft in order of their record, from worst to best with non-playoff teams coming first",
+	noLotteryReverse:
+		"No lottery, teams draft in order of their record, from best to worst with playoff teams coming first",
 	random: "Teams draft in random order, including playoff teams",
 	freeAgents:
 		"There is no draft and all, rookies simply become free agents who can be signed by any team",
@@ -30,7 +32,10 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 
 const getProbs = (
 	result: DraftLotteryResultArray,
-	draftType: Exclude<DraftType, "random" | "noLottery" | "freeAgents">,
+	draftType: Exclude<
+		DraftType,
+		"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
+	>,
 ): (number | undefined)[][] => {
 	const probs: number[][] = [];
 	const topNCombos = new Map();
@@ -349,6 +354,7 @@ const DraftLotteryTable = (props: Props) => {
 		draftType !== undefined &&
 		draftType !== "random" &&
 		draftType !== "noLottery" &&
+		draftType !== "noLotteryReverse" &&
 		draftType !== "freeAgents"
 			? getProbs(result, draftType)
 			: undefined;

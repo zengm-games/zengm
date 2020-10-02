@@ -14,13 +14,19 @@ const defaultFormula: RatingFormula = {
 	ageModifier: (age: number) => {
 		return 0;
 	},
-	changeLimits: () => [-10, 10],
+	changeLimits: (age: number) => {
+		if (age <= 25) {
+			return [-8, 10];
+		}
+		const age_adj = -0.5 * (age - 25);
+		return [-10 + age_adj, 10 + age_adj];
+	},
 };
 
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	stre: {
 		ageModifier: () => -0.5,
-		changeLimits: () => [-10, 10],
+		changeLimits: (age: number) => defaultFormula.changeLimits(age),
 	},
 	spd: {
 		ageModifier: (age: number) => {
@@ -29,7 +35,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			}
 			return -0.25 * (age - 24);
 		},
-		changeLimits: () => [-10, 10],
+		changeLimits: (age: number) => defaultFormula.changeLimits(age),
 	},
 	jmp: {
 		ageModifier: (age: number) => {
@@ -38,7 +44,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			}
 			return -0.25 * (age - 24);
 		},
-		changeLimits: () => [-10, 10],
+		changeLimits: (age: number) => defaultFormula.changeLimits(age),
 	},
 	endu: {
 		ageModifier: (age: number) => {
@@ -47,7 +53,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			}
 			return -0.5 * (age - 20) + 4;
 		},
-		changeLimits: () => [-20, 20],
+		changeLimits: (age: number) => defaultFormula.changeLimits(age),
 	},
 	dnk: defaultFormula,
 	ins: defaultFormula,
@@ -74,7 +80,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 	if (age <= 23) {
 		val += helpers.bound(random.realGauss(0, 7), -5, 20);
 	} else if (age <= 28) {
-		val += helpers.bound(random.realGauss(0, 6), -7, 20);
+		val += helpers.bound(random.realGauss(0, 6), -7, 15);
 	} else {
 		val += helpers.bound(random.realGauss(0, 5), -10, 10);
 	}

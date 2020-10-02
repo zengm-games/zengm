@@ -218,19 +218,20 @@ const updatePlayMenu = async () => {
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {
 			keys = ["untilPreseason"];
-		}
-		if (g.get("draftType") === "freeAgents") {
-			// Special case in actions.ts will call the draft phases before this automatically
-			keys = ["untilResignPlayers"];
 		} else {
-			// Offseason - pre draft
-			keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
-				? ["viewDraftLottery", "untilDraft"]
-				: ["untilDraft"];
-		}
+			if (g.get("draftType") === "freeAgents") {
+				// Special case in actions.ts will call the draft phases before this automatically
+				keys = ["untilResignPlayers"];
+			} else {
+				// Offseason - pre draft
+				keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
+					? ["viewDraftLottery", "untilDraft"]
+					: ["untilDraft"];
+			}
 
-		if (g.get("otherTeamsWantToHire")) {
-			keys.push("newTeamGood");
+			if (g.get("otherTeamsWantToHire")) {
+				keys.push("newTeamGood");
+			}
 		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft

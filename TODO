@@ -404,6 +404,7 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
 - some factor based on # of recent trades (similar to player mood revamp?)
+- value of picks should depend of draftType setting
 
 team needs/synergy display on roster
 - and power rankings

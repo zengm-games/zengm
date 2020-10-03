@@ -63,7 +63,6 @@ const genPicks = async (afterDraft?: true) => {
 		// We kind of need one season at least, for the actual draft
 		numSeasons = 1;
 	}
-	console.log("genPicks", numSeasons);
 
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
 	for (let i = 0; i < numSeasons; i++) {

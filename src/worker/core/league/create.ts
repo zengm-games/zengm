@@ -949,7 +949,7 @@ const create = async ({
 	const players = await idb.cache.players.getAll();
 
 	// Adjustment for hard cap - lower contracts for teams above cap
-	if (g.get("hardCap")) {
+	if (leagueFile.players === undefined && g.get("hardCap")) {
 		const teams = await idb.cache.teams.getAll();
 		for (const t of teams) {
 			if (t.disabled) {

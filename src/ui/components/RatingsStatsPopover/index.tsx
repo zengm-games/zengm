@@ -58,8 +58,6 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 		pid,
 	});
 
-	console.log(player);
-
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
 		setLoadingData(false);

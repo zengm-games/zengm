@@ -14,26 +14,21 @@ const typeFactors: Record<
 	Partial<Record<RatingKey, number>>
 > = {
 	point: {
-		jmp: 1.3,
+		jmp: 1.2,
 		spd: 1.1,
-		drb: 1.1,
-		pss: 1.3,
+		drb: 1.2,
+		pss: 1.2,
 		reb: 0.8,
 		ins: 0.9,
-		ft: 1.3,
-		fg: 1.3,
-		tp: 1.3,
+		ft: 1.2,
+		fg: 1.2,
+		tp: 1.2,
 		endu: 1.1,
-		dnk: 0.8,
+		dnk: 0.9,
 	},
 	wing: {
-		dnk: 0.9,
-		drb: 0.9,
-		fg: 0.9,
 		jmp: 0.9,
 		pss: 0.9,
-		spd: 0.9,
-		stre: 0.9,
 		tp: 0.9,
 	},
 	big: {
@@ -44,10 +39,11 @@ const typeFactors: Record<
 		reb: 1.1,
 		spd: 0.9,
 		jmp: 0.9,
-		pss: 0.7,
-		ft: 0.7,
-		fg: 0.7,
-		tp: 0.7,
+		pss: 0.8,
+		drb: 0.9,
+		ft: 0.8,
+		fg: 0.8,
+		tp: 0.8,
 	},
 };
 
@@ -106,28 +102,28 @@ const genRatings = (
 
 	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 43,
-		spd: 46,
-		jmp: 46,
-		endu: 30,
-		ins: 37,
-		dnk: 42,
-		ft: 37,
-		fg: 38,
-		tp: 40,
-		oiq: 36,
-		diq: 37,
-		drb: 45,
-		pss: 42,
-		reb: 37,
+		stre: 45,
+		spd: 49,
+		jmp: 49,
+		endu: 32,
+		ins: 39,
+		dnk: 45,
+		ft: 41,
+		fg: 41,
+		tp: 42,
+		oiq: 38,
+		diq: 39,
+		drb: 47,
+		pss: 44,
+		reb: 46,
 	};
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
 	// ensure there are some who are elite in one but not the other
-	const factorBig = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+	const factorBig = helpers.bound(random.realGauss(1, 0.4), 0.2, 1.2);
+	const factorAthleticism = helpers.bound(random.realGauss(1, 0.4), 0.2, 1.2);
+	const factorShooting = helpers.bound(random.realGauss(1, 0.4), 0.2, 1.2);
+	const factorSkill = helpers.bound(random.realGauss(1, 0.4), 0.2, 1.2);
 	const bigRatings = ["stre", "ins", "reb", "endu", "dnk"];
 	const athleticismRatings = ["spd", "jmp"];
 	const shootingRatings = ["ft", "fg", "tp"];

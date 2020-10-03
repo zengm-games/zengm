@@ -486,6 +486,7 @@ export const createWithoutSaving = async (
 			let draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season"),
 				scoutingRank,
+				[],
 			);
 
 			// Very rough simulation of a draft
@@ -718,24 +719,16 @@ export const createWithoutSaving = async (
 	}
 
 	// See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * activeTids.length * 7) / 6,
-	);
-
-	// 70 for basketball 2 round draft
-	let createUndrafted1 = baseNumPlayers;
-	let createUndrafted2 = baseNumPlayers;
-	let createUndrafted3 = baseNumPlayers;
 	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
-
+	const existingDraftClasses: [any[], any[], any[]] = [[], [], []];
 	for (const p of players) {
 		if (p.tid === PLAYER.UNDRAFTED) {
 			if (p.draft.year === g.get("season") + seasonOffset) {
-				createUndrafted1 -= 1;
+				existingDraftClasses[0].push(p);
 			} else if (p.draft.year === g.get("season") + seasonOffset + 1) {
-				createUndrafted2 -= 1;
+				existingDraftClasses[1].push(p);
 			} else if (p.draft.year === g.get("season") + seasonOffset + 2) {
-				createUndrafted3 -= 1;
+				existingDraftClasses[2].push(p);
 			}
 		}
 	}
@@ -743,32 +736,31 @@ export const createWithoutSaving = async (
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
 	if (g.get("phase") >= 0) {
 		if (
-			createUndrafted1 > 0 &&
-			(g.get("phase") <= PHASE.DRAFT_LOTTERY ||
-				g.get("phase") >= PHASE.RESIGN_PLAYERS)
+			g.get("phase") <= PHASE.DRAFT_LOTTERY ||
+			g.get("phase") >= PHASE.RESIGN_PLAYERS
 		) {
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + seasonOffset,
 				scoutingRank,
-				createUndrafted1,
+				existingDraftClasses[0],
 			);
 			players = players.concat(draftClass);
 		}
 
-		if (createUndrafted2 > 0) {
+		{
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 1 + seasonOffset,
 				scoutingRank,
-				createUndrafted2,
+				existingDraftClasses[1],
 			);
 			players = players.concat(draftClass);
 		}
 
-		if (createUndrafted3 > 0) {
+		{
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 2 + seasonOffset,
 				scoutingRank,
-				createUndrafted3,
+				existingDraftClasses[2],
 			);
 			players = players.concat(draftClass);
 		}

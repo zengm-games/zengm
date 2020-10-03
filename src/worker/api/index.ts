@@ -1403,18 +1403,8 @@ const handleUploadedDraftClass = async (
 		await idb.cache.players.add(p2);
 	}
 
-	// "Top off" the draft class if <70 players imported
-	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
-	); // 70 for basketball 2 round draft
-
-	if (players.length < baseNumPlayers) {
-		await draft.genPlayers(
-			draftYear,
-			scoutingRank,
-			baseNumPlayers - players.length,
-		);
-	}
+	// "Top off" the draft class if not enough players imported
+	await draft.genPlayers(draftYear, scoutingRank);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };

@@ -1,6 +1,6 @@
 import { PLAYER } from "../../../common";
 import { player } from "..";
-import { g, random } from "../../util";
+import { defaultGameAttributes, g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
@@ -9,16 +9,28 @@ import type {
 const genPlayersWithoutSaving = async (
 	draftYear: number,
 	scoutingRank: number,
-	numPlayers?: number,
+	existingPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
+	forceScrubs?: boolean,
 ): Promise<PlayerWithoutKey<MinimalPlayerRatings>[]> => {
-	if (numPlayers === null || numPlayers === undefined) {
-		numPlayers = Math.round(
-			(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
-		); // 70 for basketball 2 round draft
+	// If user has increased the number of rounds - code below ensures excess players are scrubs.
+	// If user has descreased the number of rounds - keep number of prospects the same, more will go undrafted.
+	const normalNumPlayers = Math.round(
+		(defaultGameAttributes.numDraftRounds * g.get("numActiveTeams") * 7) / 6,
+	);
+	const baseNumPlayers = Math.max(
+		Math.round((g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6),
+		normalNumPlayers,
+	);
+
+	const numPlayers = baseNumPlayers - existingPlayers.length;
+	if (numPlayers <= 0) {
+		return [];
 	}
 
-	if (numPlayers < 0) {
-		numPlayers = 0;
+	if (!forceScrubs) {
+		// If it's mostly real players, generate scrubs
+		const numRealPlayers = existingPlayers.filter(p => p.real).length;
+		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
 	const baseAge = 19 - (draftYear - g.get("season"));
@@ -66,13 +78,47 @@ const genPlayersWithoutSaving = async (
 	}
 
 	// Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
-	const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
+	if (existingPlayers.length === 0) {
+		const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
 
-	for (let i = 0; i < numSpecialPlayerChances; i++) {
-		if (Math.random() < 1 / numSpecialPlayerChances) {
+		for (let i = 0; i < numSpecialPlayerChances; i++) {
+			if (Math.random() < 1 / numSpecialPlayerChances) {
+				const p = enteringDraft[i];
+				player.bonus(p);
+				await player.develop(p, 0); // Recalculate ovr/pot
+			}
+		}
+	}
+
+	// If user has increased the number of rounds, ensure excess players are scrubs
+	if (normalNumPlayers < baseNumPlayers || forceScrubs) {
+		const worstPlayer = [...existingPlayers, ...enteringDraft].sort(
+			(a, b) => a.ratings[0].ovr - b.ratings[0].ovr,
+		)[0];
+
+		let numPlayersToNerf;
+		if (forceScrubs) {
+			numPlayersToNerf = enteringDraft.length;
+		} else {
+			// Any new players created beyond normalNumPlayers, make sure to nerf them
+			const playersRemainingToHitNormalNumPlayers =
+				normalNumPlayers - existingPlayers.length;
+			if (playersRemainingToHitNormalNumPlayers <= 0) {
+				numPlayersToNerf = enteringDraft.length;
+			} else {
+				numPlayersToNerf =
+					enteringDraft.length - playersRemainingToHitNormalNumPlayers;
+			}
+		}
+
+		random.shuffle(enteringDraft);
+		for (let i = 0; i < numPlayersToNerf; i++) {
 			const p = enteringDraft[i];
-			player.bonus(p);
-			await player.develop(p, 0); // Recalculate ovr/pot
+			const ovrDiff = p.ratings[0].ovr - worstPlayer.ratings[0].ovr;
+			if (ovrDiff > 0) {
+				player.bonus(p, -ovrDiff / 2);
+				await player.develop(p, 0);
+			}
 		}
 	}
 

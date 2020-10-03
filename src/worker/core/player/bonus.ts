@@ -4,7 +4,7 @@ import type { PlayerWithoutKey } from "../../../common/types";
 
 const bonus = (p: PlayerWithoutKey, amount?: number) => {
 	const ratings = p.ratings[p.ratings.length - 1];
-	const skip = ["fuzz", "ovr", "pos", "pot", "season", "skills"];
+	const skip = ["fuzz", "injuryIndex", "ovr", "pos", "pot", "season", "skills"];
 
 	for (const key of Object.keys(ratings)) {
 		if (skip.includes(key) || typeof ratings[key] !== "number") {

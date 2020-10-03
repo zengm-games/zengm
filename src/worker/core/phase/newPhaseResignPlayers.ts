@@ -244,25 +244,7 @@ const newPhaseResignPlayers = async (
 	}
 
 	// Generate a new draft class, while leaving existing players in that draft class in place
-	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
-	);
-	const playersAlreadyInDraftClass = draftProspects.filter(
-		p => p.draft.year === g.get("season") + 3,
-	);
-	if (baseNumPlayers > playersAlreadyInDraftClass.length) {
-		// If it's mostly real players, generate scrubs
-		const numRealPlayers = playersAlreadyInDraftClass.filter(p => p.real)
-			.length;
-		const scrubs = numRealPlayers > 0.5 * baseNumPlayers;
-
-		await draft.genPlayers(
-			g.get("season") + 3,
-			undefined,
-			baseNumPlayers - playersAlreadyInDraftClass.length,
-			scrubs,
-		);
-	}
+	await draft.genPlayers(g.get("season") + 3, undefined);
 
 	// Delete any old undrafted players that still somehow exist
 	const toRemove = [];

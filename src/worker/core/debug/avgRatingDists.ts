@@ -26,7 +26,7 @@ const avgRatingDists = async (numPlayers: number = 100) => {
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {
-			const players = await draft.genPlayersWithoutSaving(2019, 15.5, 70);
+			const players = await draft.genPlayersWithoutSaving(2019, 15.5, []);
 			playersToProcess = players;
 		}
 

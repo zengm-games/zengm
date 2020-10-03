@@ -57,7 +57,8 @@ type Key =
 	| "elamMinutes"
 	| "elamPoints"
 	| "playerMoodTraits"
-	| "numPlayersOnCourt";
+	| "numPlayersOnCourt"
+	| "numDraftRounds";
 
 type Category =
 	| "League Structure"
@@ -254,6 +255,17 @@ export const options: {
 		type: "int",
 		helpText:
 			"Number of seasons in the future to generate tradable draft picks for. The default value is 4. If you set this to 0, it disables all trading of draft picks.",
+		validator: value => {
+			if (value < 0) {
+				throw new Error("Value cannot be less than 0");
+			}
+		},
+	},
+	{
+		category: "League Structure",
+		key: "numDraftRounds",
+		name: "# Draft Rounds",
+		type: "int",
 		validator: value => {
 			if (value < 0) {
 				throw new Error("Value cannot be less than 0");

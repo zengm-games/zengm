@@ -59,6 +59,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			elamPoints: g.get("elamPoints"),
 			playerMoodTraits: g.get("playerMoodTraits"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
+			numDraftRounds: g.get("numDraftRounds"),
 		};
 	}
 };

@@ -18,8 +18,7 @@ import { g, helpers, logEvent } from "../../util";
 const genPlayers = async (
 	draftYear: number,
 	scoutingRank: number | undefined | null = null,
-	numPlayers?: number,
-	scrubs?: boolean,
+	forceScrubs?: boolean,
 ) => {
 	// If scoutingRank is not supplied, have to hit the DB to get it
 	if (scoutingRank === undefined || scoutingRank === null) {
@@ -37,19 +36,20 @@ const genPlayers = async (
 		);
 	}
 
+	const existingPlayers = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
+	).filter(p => p.draft.year === draftYear);
+
 	const players = await genPlayersWithoutSaving(
 		draftYear,
 		scoutingRank,
-		numPlayers,
+		existingPlayers,
+		forceScrubs,
 	);
 
 	for (const p of players) {
-		if (scrubs) {
-			player.bonus(p, -15);
-			await player.develop(p, 0); // Recalculate ovr/pot
-		}
-
 		await idb.cache.players.add(p);
+
 		// idb.cache.players.add will create the "pid" property, transforming PlayerWithoutKey to Player
 		// @ts-ignore
 		await player.addRelatives(p);
@@ -58,7 +58,7 @@ const genPlayers = async (
 	}
 
 	// Easter eggs!
-	if (process.env.SPORT === "basketball" && !scrubs) {
+	if (process.env.SPORT === "basketball" && !forceScrubs) {
 		if (Math.random() < 1 / 100000) {
 			const p = player.generate(
 				PLAYER.UNDRAFTED,

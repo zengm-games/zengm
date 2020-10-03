@@ -5,7 +5,7 @@ import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
 import { draft, league, finances } from "..";
 import { idb } from "../../db";
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE } from "../../../common";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {
@@ -95,31 +95,12 @@ const addNewTeamToExistingLeague = async (
 	await draft.genPicks();
 
 	// Add new draft prospects to draft classes
-	const draftClassTargetSize = Math.round(
-		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
-	);
-	const draftProspects = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		PLAYER.UNDRAFTED,
-	);
-
 	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
 	for (let i = 0; i < 3; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 
-		const numPlayersAlreadyInDraftClass = draftProspects.filter(
-			p => p.draft.year === draftYear,
-		).length;
-
-		const numNeeded = helpers.bound(
-			draftClassTargetSize - numPlayersAlreadyInDraftClass,
-			0,
-			g.get("numDraftRounds"),
-		);
-		if (numNeeded > 0) {
-			// Generate scrubs only!
-			await draft.genPlayers(draftYear, undefined, numNeeded, true);
-		}
+		// Generate scrubs only!
+		await draft.genPlayers(draftYear, undefined, true);
 	}
 
 	await finances.updateRanks(["budget"]);

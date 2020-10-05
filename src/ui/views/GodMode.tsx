@@ -58,7 +58,8 @@ type Key =
 	| "elamPoints"
 	| "playerMoodTraits"
 	| "numPlayersOnCourt"
-	| "numDraftRounds";
+	| "numDraftRounds"
+	| "tradeDeadline";
 
 type Category =
 	| "League Structure"
@@ -637,6 +638,36 @@ export const options: {
 				for more info about player mood.
 			</>
 		),
+	},
+	{
+		category: "League Structure",
+		key: "tradeDeadline",
+		name: "Trade Deadline",
+		type: "int",
+		helpText: (
+			<>
+				<p>
+					Set this to the fraction of the season you want to happen before the
+					trade deadline. So if you set this to 0.75, 75% of the season will be
+					played before the trade deadline.
+				</p>
+				<p>
+					Set it to 1 (i.e. 100% of the season) to disable the trade deadline.
+				</p>
+				<p>
+					If you're already in the regular season phase, changing this setting
+					will only affect future seasons, not the current season.
+				</p>
+			</>
+		),
+		validator: (value, output) => {
+			if (value > 1) {
+				throw new Error("Value cannot be greater than 1");
+			}
+			if (value < 0) {
+				throw new Error("Value cannot be less than 0");
+			}
+		},
 	},
 ];
 

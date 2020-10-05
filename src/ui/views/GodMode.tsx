@@ -643,7 +643,7 @@ export const options: {
 		category: "League Structure",
 		key: "tradeDeadline",
 		name: "Trade Deadline",
-		type: "int",
+		type: "float",
 		helpText: (
 			<>
 				<p>

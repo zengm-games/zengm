@@ -326,10 +326,10 @@ const play = async (
 			schedule[0].homeTid === -3 &&
 			schedule[0].awayTid === -3
 		) {
-			console.log("Trade deadline!");
 			await idb.cache.schedule.delete(schedule[0].gid);
-			await play(numDays - 1, conditions, false);
 			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
+			await toUI("deleteGames", [[schedule[0].gid]]);
+			await play(numDays - 1, conditions, false);
 		} else {
 			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
 			if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
@@ -375,7 +375,10 @@ const play = async (
 						await lock.set("stopGameSim", false);
 					}
 
-					if (g.get("phase") !== PHASE.PLAYOFFS) {
+					if (
+						g.get("phase") !== PHASE.PLAYOFFS &&
+						g.get("phase") !== PHASE.AFTER_TRADE_DEADLINE
+					) {
 						await freeAgents.decreaseDemands();
 						await freeAgents.autoSign();
 						await trade.betweenAiTeams();

@@ -105,6 +105,10 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 };
 
+const deleteGames = (gids: number[]) => {
+	localActions.deleteGames(gids);
+};
+
 const mergeGames = (games: LocalStateUI["games"]) => {
 	localActions.mergeGames(games);
 };
@@ -206,6 +210,7 @@ export default {
 	bbgmPing,
 	confirm,
 	confirmDeleteAllLeagues,
+	deleteGames,
 	initAds,
 	mergeGames,
 	newLid,

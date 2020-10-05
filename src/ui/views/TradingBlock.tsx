@@ -285,7 +285,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		return (
 			<div>
 				<h2>Error</h2>
-				<p>You're not allowed to make trades now.</p>
+				<p>
+					You're not allowed to make trades{" "}
+					{phase === PHASE.AFTER_TRADE_DEADLINE
+						? "after the trade deadline"
+						: "now"}
+					.
+				</p>
 			</div>
 		);
 	}

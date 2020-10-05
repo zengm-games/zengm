@@ -321,29 +321,40 @@ const play = async (
 			}
 		}
 
-		// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-		if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
-			return cbNoGames();
+		if (
+			schedule.length > 0 &&
+			schedule[0].homeTid === -3 &&
+			schedule[0].awayTid === -3
+		) {
+			console.log("Trade deadline!");
+			await idb.cache.schedule.delete(schedule[0].gid);
+			await play(numDays - 1, conditions, false);
+			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
+		} else {
+			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+			if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
+				return cbNoGames();
+			}
+
+			const tids = new Set<number>();
+
+			for (const matchup of schedule) {
+				tids.add(matchup.homeTid);
+				tids.add(matchup.awayTid);
+			}
+
+			const teams = await loadTeams(Array.from(tids)); // Play games
+
+			// Will loop through schedule and simulate all games
+			if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
+				// Sometimes the playoff schedule isn't made the day before, so make it now
+				// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+				await season.newSchedulePlayoffsDay();
+				schedule = await season.getSchedule(true);
+			}
+
+			await cbSimGames(schedule, teams, dayOver);
 		}
-
-		const tids = new Set<number>();
-
-		for (const matchup of schedule) {
-			tids.add(matchup.homeTid);
-			tids.add(matchup.awayTid);
-		}
-
-		const teams = await loadTeams(Array.from(tids)); // Play games
-
-		// Will loop through schedule and simulate all games
-		if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
-			// Sometimes the playoff schedule isn't made the day before, so make it now
-			// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-			await season.newSchedulePlayoffsDay();
-			schedule = await season.getSchedule(true);
-		}
-
-		await cbSimGames(schedule, teams, dayOver);
 	};
 
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done

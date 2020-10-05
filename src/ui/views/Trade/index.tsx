@@ -353,7 +353,11 @@ const Trade = (props: View<"trade">) => {
 									</p>
 								) : (
 									<p className="alert alert-danger">
-										You're not allowed to make trades now.
+										You're not allowed to make trades{" "}
+										{phase === PHASE.AFTER_TRADE_DEADLINE
+											? "after the trade deadline"
+											: "now"}
+										.
 									</p>
 								)}
 							</div>

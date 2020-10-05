@@ -154,7 +154,8 @@ const ScoreBox = ({
 
 	const gameSeason = game.season === undefined ? season : game.season;
 
-	const allStarGame = game.teams[0].tid < 0 || game.teams[1].tid < 0;
+	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
+	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
 
 	const scoreBox = (
 		<div
@@ -196,113 +197,116 @@ const ScoreBox = ({
 					limitWidthToParent ? "position-absolute w-100" : undefined,
 				)}
 			>
-				{allStarGame && !final
-					? [1, 2].map(i => (
-							<div className="d-flex align-items-center" key={i}>
-								<div className="score-box-logo" />
-								<div className={classNames("p-1", { "pr-5": small })}>
-									<a href={helpers.leagueUrl(["all_star_draft"])}>
-										{small ? `AS${i}` : `All-Star Team ${i}`}
-									</a>
-								</div>
+				{tradeDeadline ? (
+					<div className="score-box-deadline p-1 d-flex align-items-center">
+						Trade deadline
+					</div>
+				) : allStarGame && !final ? (
+					[1, 2].map(i => (
+						<div className="d-flex align-items-center" key={i}>
+							<div className="score-box-logo" />
+							<div className={classNames("p-1", { "pr-5": small })}>
+								<a href={helpers.leagueUrl(["all_star_draft"])}>
+									{small ? `AS${i}` : `All-Star Team ${i}`}
+								</a>
 							</div>
-					  ))
-					: [1, 0].map(i => {
-							const t = game.teams[i];
-							let scoreClasses;
-							if (winner !== undefined) {
-								scoreClasses = {
-									"alert-success":
-										winner === i && userInGame && t.tid === userTid,
-									"alert-danger":
-										winner === i && userInGame && t.tid !== userTid,
-									"alert-warning":
-										winner === -1 && userInGame && t.tid === userTid,
-									"alert-secondary": winner === i && !userInGame,
-								};
-							}
+						</div>
+					))
+				) : (
+					[1, 0].map(i => {
+						const t = game.teams[i];
+						let scoreClasses;
+						if (winner !== undefined) {
+							scoreClasses = {
+								"alert-success":
+									winner === i && userInGame && t.tid === userTid,
+								"alert-danger": winner === i && userInGame && t.tid !== userTid,
+								"alert-warning":
+									winner === -1 && userInGame && t.tid === userTid,
+								"alert-secondary": winner === i && !userInGame,
+							};
+						}
 
-							let imgURL;
-							let teamName;
-							let rosterURL;
-							if (allStarGame) {
-								imgURL = undefined;
-								teamName = small
-									? `AS${i === 0 ? 2 : 1}`
-									: `All-Star Team ${i === 0 ? 2 : 1}`;
-								rosterURL = helpers.leagueUrl(["all_star_history"]);
-							} else {
-								imgURL = teamInfoCache[t.tid]?.imgURL;
-								teamName = small
-									? teamInfoCache[t.tid]?.abbrev
-									: `${teamInfoCache[t.tid]?.region} ${
-											teamInfoCache[t.tid]?.name
-									  }`;
-								rosterURL = helpers.leagueUrl([
-									"roster",
-									`${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
-								]);
-							}
+						let imgURL;
+						let teamName;
+						let rosterURL;
+						if (allStarGame) {
+							imgURL = undefined;
+							teamName = small
+								? `AS${i === 0 ? 2 : 1}`
+								: `All-Star Team ${i === 0 ? 2 : 1}`;
+							rosterURL = helpers.leagueUrl(["all_star_history"]);
+						} else {
+							imgURL = teamInfoCache[t.tid]?.imgURL;
+							teamName = small
+								? teamInfoCache[t.tid]?.abbrev
+								: `${teamInfoCache[t.tid]?.region} ${
+										teamInfoCache[t.tid]?.name
+								  }`;
+							rosterURL = helpers.leagueUrl([
+								"roster",
+								`${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
+							]);
+						}
 
-							return (
-								<div
-									key={i}
-									className={classNames(
-										"d-flex align-items-center",
-										scoreClasses,
-									)}
-								>
-									{imgURL || allStarGame ? (
-										<div className="score-box-logo d-flex align-items-center justify-content-center">
-											{imgURL ? (
-												<img className="mw-100 mh-100" src={imgURL} alt="" />
-											) : null}
-										</div>
-									) : null}
-									<div className="flex-grow-1 p-1 text-truncate">
-										{t.playoffs ? (
-											<span className="text-dark">{t.playoffs.seed}. </span>
+						return (
+							<div
+								key={i}
+								className={classNames(
+									"d-flex align-items-center",
+									scoreClasses,
+								)}
+							>
+								{imgURL || allStarGame ? (
+									<div className="score-box-logo d-flex align-items-center justify-content-center">
+										{imgURL ? (
+											<img className="mw-100 mh-100" src={imgURL} alt="" />
 										) : null}
-										<a href={rosterURL}>{teamName}</a>
-										{!small ? getRecord(t) : null}
 									</div>
-									{hasOvrs ? (
-										<div className="p-1 text-right">{t.ovr}</div>
+								) : null}
+								<div className="flex-grow-1 p-1 text-truncate">
+									{t.playoffs ? (
+										<span className="text-dark">{t.playoffs.seed}. </span>
 									) : null}
-									{spreads ? (
-										<div
-											className={classNames(
-												"text-right p-1 pr-2",
-												small ? "score-box-score" : "score-box-spread",
-											)}
-										>
-											{spreads[i]}
-										</div>
-									) : null}
-									{final ? (
-										<div
-											className={classNames(
-												"score-box-score p-1 text-right font-weight-bold",
-												scoreClasses,
-											)}
-										>
-											<a
-												href={helpers.leagueUrl([
-													"game_log",
-													allStarGame
-														? "special"
-														: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
-													gameSeason,
-													game.gid,
-												])}
-											>
-												{t.pts}
-											</a>
-										</div>
-									) : null}
+									<a href={rosterURL}>{teamName}</a>
+									{!small ? getRecord(t) : null}
 								</div>
-							);
-					  })}
+								{hasOvrs ? <div className="p-1 text-right">{t.ovr}</div> : null}
+								{spreads ? (
+									<div
+										className={classNames(
+											"text-right p-1 pr-2",
+											small ? "score-box-score" : "score-box-spread",
+										)}
+									>
+										{spreads[i]}
+									</div>
+								) : null}
+								{final ? (
+									<div
+										className={classNames(
+											"score-box-score p-1 text-right font-weight-bold",
+											scoreClasses,
+										)}
+									>
+										<a
+											href={helpers.leagueUrl([
+												"game_log",
+												allStarGame
+													? "special"
+													: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
+												gameSeason,
+												game.gid,
+											])}
+										>
+											{t.pts}
+										</a>
+									</div>
+								) : null}
+							</div>
+						);
+					})
+				)}
 			</div>
 			{!small && overtimes ? (
 				<div className="d-flex justify-content-end text-muted">

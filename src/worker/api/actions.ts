@@ -305,6 +305,13 @@ const playMenu = {
 			game.play(numDays, conditions);
 		}
 	},
+	untilTradeDeadline: async (conditions: Conditions) => {
+		if (g.get("phase") < PHASE.PLAYOFFS) {
+			await updateStatus("Playing...");
+			const numDays = await season.getDaysLeftSchedule("tradeDeadline");
+			game.play(numDays, conditions);
+		}
+	},
 	untilPlayoffs: async (conditions: Conditions) => {
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");

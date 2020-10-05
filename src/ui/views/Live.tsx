@@ -12,7 +12,17 @@ const Live = ({ games, userTid }: View<"live">) => {
 		gameSimInProgress: state.gameSimInProgress,
 	}));
 
-	return (
+	const tradeDeadline =
+		games.length === 1 &&
+		games[0].teams[0].tid === -3 &&
+		games[0].teams[1].tid === -3;
+
+	return tradeDeadline ? (
+		<p>
+			Play one day to move past the trade deadline, and then the next day's
+			games will be available here.
+		</p>
+	) : (
 		<>
 			<p>
 				To view a live play-by-play summary of a game, select one of today's

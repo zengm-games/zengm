@@ -72,6 +72,8 @@ const LeagueTopBar = React.memo(() => {
 		return null;
 	}
 
+	console.log("games", games);
+
 	// Don't show any new games if liveGameInProgress
 	if (!liveGameInProgress) {
 		prevGames.current = games;

@@ -104,7 +104,8 @@ export const getUpcoming = async ({
 				tid === undefined ||
 				tid === game.homeTid ||
 				tid === game.awayTid ||
-				(game.homeTid === -1 && game.awayTid === -2),
+				(game.homeTid === -1 && game.awayTid === -2) ||
+				(game.homeTid === -3 && game.awayTid === -3),
 		)
 		.slice(0, limit);
 

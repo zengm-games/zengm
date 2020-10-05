@@ -2,6 +2,7 @@ import { PHASE } from "../../../common";
 import finalize from "./finalize";
 import newPhasePreseason from "./newPhasePreseason";
 import newPhaseRegularSeason from "./newPhaseRegularSeason";
+import newPhaseAfterTradeDeadline from "./newPhaseAfterTradeDeadline";
 import newPhasePlayoffs from "./newPhasePlayoffs";
 import newPhaseBeforeDraft from "./newPhaseBeforeDraft";
 import newPhaseDraft from "./newPhaseDraft";

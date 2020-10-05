@@ -22,7 +22,14 @@ const propose = async (
 		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.PLAYOFFS
 	) {
-		return [false, "Error! You're not allowed to make trades now."];
+		return [
+			false,
+			`Error! You're not allowed to make trades ${
+				g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
+					? "after the trade deadline"
+					: "now"
+			}.`,
+		];
 	}
 
 	const { teams } = await get();

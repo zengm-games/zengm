@@ -29,9 +29,20 @@ const getSchedule = async (
 				// Only keep games from unique teams, no 2 games in 1 day
 				break;
 			}
+
+			// For ASG and trade deadline, make absolutely sure they are alone. This shouldn't be necessary because addDaysToSchedule should handle it, but just in case...
+			if ((game.homeTid < 0 || game.awayTid < 0) && tids.size > 0) {
+				break;
+			}
+
 			partialSchedule.push(game);
 			tids.add(game.homeTid);
 			tids.add(game.awayTid);
+
+			// For ASG and trade deadline, make absolutely sure they are alone. This shouldn't be necessary because addDaysToSchedule should handle it, but just in case...
+			if (game.homeTid < 0 || game.awayTid < 0) {
+				break;
+			}
 		}
 		return partialSchedule;
 	}

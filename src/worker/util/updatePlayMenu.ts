@@ -1,5 +1,5 @@
 import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
-import { allStar, draft, season } from "../core";
+import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
@@ -175,24 +175,27 @@ const updatePlayMenu = async () => {
 		g.get("phase") === PHASE.REGULAR_SEASON ||
 		g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 	) {
-		const allStarScheduled = await allStar.futureGameIsAllStar();
-		const allStarNext = await allStar.nextGameIsAllStar();
 		const untilMore: string[] = [];
 
-		if (allStarScheduled && !allStarNext) {
-			untilMore.push("untilAllStarGame");
-		}
-
 		const schedule = await season.getSchedule();
-		const tradeDeadlineScheduled = schedule.some(
+		const tradeDeadlineIndex = schedule.findIndex(
 			game => game.awayTid === -3 && game.homeTid === -3,
 		);
-		const tradeDeadlineNext =
-			schedule.length > 0 &&
-			schedule[0].awayTid === -3 &&
-			schedule[0].homeTid === -3;
-		if (tradeDeadlineScheduled && !tradeDeadlineNext) {
+		const allStarIndex = schedule.findIndex(
+			game => game.awayTid === -2 && game.homeTid === -1,
+		);
+
+		// > rather than >= because if it's the next game already, no need to "play until"
+		if (tradeDeadlineIndex > 0 && allStarIndex > 0) {
+			if (tradeDeadlineIndex < allStarIndex) {
+				untilMore.push("untilTradeDeadline", "untilAllStarGame");
+			} else {
+				untilMore.push("untilAllStarGame", "untilTradeDeadline");
+			}
+		} else if (tradeDeadlineIndex > 0) {
 			untilMore.push("untilTradeDeadline");
+		} else if (allStarIndex > 0) {
+			untilMore.push("untilAllStarGame");
 		}
 
 		// Regular season - pre trading deadline
@@ -202,7 +205,7 @@ const updatePlayMenu = async () => {
 			keys = ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"];
 		}
 
-		if (allStarNext) {
+		if (allStarIndex === 0) {
 			keys.unshift("viewAllStarSelections");
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {

@@ -647,9 +647,9 @@ export const options: {
 		helpText: (
 			<>
 				<p>
-					Set this to the fraction of the season you want to happen before the
-					trade deadline. So if you set this to 0.75, 75% of the season will be
-					played before the trade deadline.
+					Set this to the fraction of the regular season you want to happen
+					before no more trades are allowed. So if you set this to 0.75, 75% of
+					the season will be played before the trade deadline.
 				</p>
 				<p>
 					Set it to 1 (i.e. 100% of the season) to disable the trade deadline.
@@ -660,7 +660,7 @@ export const options: {
 				</p>
 			</>
 		),
-		validator: (value, output) => {
+		validator: value => {
 			if (value > 1) {
 				throw new Error("Value cannot be greater than 1");
 			}

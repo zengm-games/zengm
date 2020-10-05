@@ -952,7 +952,11 @@ const genFilename = (data: any) => {
 		"season",
 	)}_${PHASE_TEXT[g.get("phase")].replace(/[^a-z0-9]/gi, "_")}`;
 
-	if (g.get("phase") === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+	if (
+		(g.get("phase") === PHASE.REGULAR_SEASON ||
+			g.get("phase") === PHASE.AFTER_TRADE_DEADLINE) &&
+		data.hasOwnProperty("teams")
+	) {
 		const season =
 			data.teams[g.get("userTid")].seasons[
 				data.teams[g.get("userTid")].seasons.length - 1

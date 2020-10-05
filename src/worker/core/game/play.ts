@@ -111,14 +111,12 @@ const play = async (
 			}),
 		);
 
-		// Update clinchedPlayoffs
-		if (g.get("phase") === PHASE.REGULAR_SEASON) {
-			await team.updateClinchedPlayoffs(false, conditions);
-		}
-
-		// Update playoff series W/L
 		if (g.get("phase") === PHASE.PLAYOFFS) {
+			// Update playoff series W/L
 			await updatePlayoffSeries(results, conditions);
+		} else {
+			// Update clinchedPlayoffs
+			await team.updateClinchedPlayoffs(false, conditions);
 		}
 
 		// Delete finished games from schedule

@@ -1,3 +1,6 @@
+trade deadline
+- how store? how set? use season days? a dummy game?
+
 name/colleges revamp
 - races
   - @ClevelandFan#6181 can help
@@ -13,9 +16,17 @@ name/colleges revamp
   - https://github.com/lipis/flag-icon-css
 
 centralize player action buttons
-- include Draft
-- existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
+- buttons
+  - Draft
+  - Trade For
+  - Trade Away
+  - Negotiate
+  - Sign
+  - Release
+- option to pick which to show, so it can replace NegotiateButtons
 - show in player stats/ratings/bios tables? and roster, player profile?
+- button group, or single button with dropdown
+- help popover in column explains stuff, and text on confirm windows
 
 contract extensions, available if player mood is high enough and contract is expiring
 

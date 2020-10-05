@@ -26,7 +26,7 @@ const moodInfo = async (
 	let firstSeasonAfterExpansionOverride = false;
 	if (
 		p.contract.exp === season &&
-		phase > PHASE.REGULAR_SEASON &&
+		phase >= PHASE.PLAYOFFS &&
 		phase <= PHASE.RESIGN_PLAYERS
 	) {
 		const t = await idb.cache.teams.get(tid);

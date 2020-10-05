@@ -47,6 +47,9 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		[PHASE.REGULAR_SEASON]: {
 			func: newPhaseRegularSeason,
 		},
+		[PHASE.AFTER_TRADE_DEADLINE]: {
+			func: newPhaseAfterTradeDeadline,
+		},
 		[PHASE.PLAYOFFS]: {
 			func: newPhasePlayoffs,
 		},

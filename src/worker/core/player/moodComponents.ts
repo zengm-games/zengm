@@ -138,7 +138,7 @@ const moodComponents = async (
 			let wonTitle = false;
 
 			// If season ongoing, project record and playoff success based on last year
-			if (phase <= PHASE.REGULAR_SEASON) {
+			if (phase < PHASE.PLAYOFFS) {
 				const previousSeason = teamSeasons.find(ts => ts.season === season - 1);
 				const previousRecord = {
 					won: previousSeason ? previousSeason.won : 0,

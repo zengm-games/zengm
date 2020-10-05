@@ -239,7 +239,8 @@ const NextButton = ({
 			{boxScore.season === season &&
 			currentGidInList &&
 			(nextGid === undefined || clickedGoToNext || autoGoToNext) &&
-			(phase === PHASE.REGULAR_SEASON || phase === PHASE.PLAYOFFS) ? (
+			phase >= PHASE.REGULAR_SEASON &&
+			phase <= PHASE.PLAYOFFS ? (
 				<button
 					className="btn btn-light-bordered"
 					disabled={!canPlay}

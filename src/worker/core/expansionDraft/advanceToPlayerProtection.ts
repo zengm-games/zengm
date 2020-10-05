@@ -25,7 +25,7 @@ const advanceToPlayerProtection = async (
 
 	// Used for some special behavior for teams created in expansion drafts after the regular season has ended - can check if g.get("season") is less than firstSeasonAfterExpansion
 	let firstSeasonAfterExpansion = g.get("season");
-	if (g.get("phase") > PHASE.REGULAR_SEASON) {
+	if (g.get("phase") >= PHASE.PLAYOFFS) {
 		firstSeasonAfterExpansion += 1;
 	}
 

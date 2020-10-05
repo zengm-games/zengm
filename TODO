@@ -1,3 +1,17 @@
+name/colleges revamp
+- races
+  - @ClevelandFan#6181 can help
+  - playerBioInfo.countries[].races?: Record<Race, number>,
+  - defaultRaces: Record<Country, Record<Race, number>>
+  - CSV in tools, generate JSON like names, print countries missing
+    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
+  - default values for individual countries
+  - new release of faces.js, and upgrade
+- global default... should it override individual countries?
+  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
+- flag icon on roster page
+  - https://github.com/lipis/flag-icon-css
+
 centralize player action buttons
 - include Draft
 - existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
@@ -122,15 +136,6 @@ jersey styles by team
 jeresy style in teamseason
 
 cap evolving over time
-
-name/colleges revamp
-- races
-  - playerBioInfo.countries[].races?: Record<Race, number>,
-  - default values for individual countries
-  - global default... should it override individual countries?
-    - distinction between "default if unset in built-in defaults" and "override built-in defaults too"
-- flag icon on roster page
-  - https://github.com/lipis/flag-icon-css
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?

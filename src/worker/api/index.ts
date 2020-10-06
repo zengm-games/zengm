@@ -295,6 +295,11 @@ const createLeague = async ({
 	}
 
 	const leagueFile: any = {};
+	console.log(
+		leagueFile.startingSeason,
+		actualStartingSeason,
+		leagueFile.gameAttributes,
+	);
 	for (const key of [...keptKeys, "version"]) {
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];
@@ -332,9 +337,17 @@ const createLeague = async ({
 		| RealTeamInfo
 		| undefined;
 	if (realTeamInfo) {
+		let currentSeason = leagueFile.startingSeason;
+		if (leagueFile.gameAttributes) {
+			for (const { key, value } of leagueFile.gameAttributes) {
+				if (key === "season") {
+					currentSeason = value;
+				}
+			}
+		}
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
-				applyRealTeamInfo(t, realTeamInfo, leagueFile.startingSeason);
+				applyRealTeamInfo(t, realTeamInfo, currentSeason);
 			}
 		}
 

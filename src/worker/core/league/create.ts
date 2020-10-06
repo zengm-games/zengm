@@ -562,7 +562,10 @@ export const createWithoutSaving = async (
 			throw new Error("Not enough players!");
 		}
 
-		const numPlayerPerTeam = g.get("maxRosterSize") - 2;
+		const numPlayerPerTeam = Math.max(
+			g.get("maxRosterSize") - 2,
+			g.get("minRosterSize"),
+		);
 
 		// 13 for basketball
 		const maxNumFreeAgents = Math.round(

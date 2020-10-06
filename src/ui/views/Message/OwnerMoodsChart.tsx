@@ -51,7 +51,9 @@ const OwnerMoodsChart = ({
 			const width = node.clientWidth - margin.left - margin.right;
 			const height = 400;
 			const xScale = scalePoint().domain(years).range([0, width]);
-			const yScale = scaleLinear().domain(yDomain).range([height, 0]);
+			const yScale = scaleLinear().domain(yDomain).range([height, 0]) as (
+				y: number,
+			) => number;
 			const svg = select(node)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)

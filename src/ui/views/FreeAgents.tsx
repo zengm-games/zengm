@@ -57,7 +57,7 @@ const FreeAgents = ({
 	}));
 
 	if (
-		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
+		(phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT
 	) {

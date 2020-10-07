@@ -1742,7 +1742,9 @@ class GameSim {
 					this.doSafety();
 				}
 			} else {
-				this.advanceYds(0);
+				if (!penInfo2) {
+					this.advanceYds(0);
+				}
 				this.playByPlay.logEvent("passIncomplete", {
 					clock: this.clock,
 					t: this.o,
@@ -2081,11 +2083,6 @@ class GameSim {
 			automaticFirstDown: penInfo.automaticFirstDown,
 			repeatDown: true,
 		});
-
-		if (penInfo.automaticFirstDown) {
-			this.down = 1;
-			this.toGo = 10;
-		}
 
 		return {
 			type: "penalty",

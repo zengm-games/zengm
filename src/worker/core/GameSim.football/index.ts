@@ -1885,6 +1885,11 @@ class GameSim {
 			playYds: 0,
 		},
 	) {
+		// No penalties during two point conversion, because it is not handled well currently
+		if (this.twoPointConversionTeam !== undefined) {
+			return;
+		}
+
 		// Handle plays in endzone
 		let wouldHaveBeenTD = false;
 

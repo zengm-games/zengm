@@ -556,7 +556,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "rookiesCanRefuse",
-		name: "Rookes Can Refuse To Negotiate",
+		name: "Rookies Can Refuse To Negotiate",
 		helpText: (
 			<>
 				<p>

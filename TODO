@@ -381,6 +381,7 @@ FBGM
 - Some automatic first down penalties result in 1st and 1
 - some penalties push team into endzone
   - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHMGGpznWHgLkCNTbcXJbzZLzp
+  - https://discord.com/channels/290013534023057409/290015591216054273/763398810549354517
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - kneeling at end of games
@@ -398,6 +399,10 @@ FBGM
 - DL in FBGM get way too many interceptions, CB should get more
 - in FBGM, during the FA period with 30 days: injured players on rosters will not recover a single week if you sim to 1 day left in FA; injured players in fa will recover a week in every day of FA (30 weeks total)
 - in OT, if the other team has already scored a FG, never punt!!!
+- better support for running QBs to put up big numbers
+- penalties accepted when normal gain would have been better
+  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJZJZkXTNBnKVDvKLkMfMMTZdG
+  - https://i.imgur.com/qb1Fuhf.png
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

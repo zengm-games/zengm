@@ -151,7 +151,7 @@ const ageShift: Record<number, number> = {
 };
 
 const max_shift = Math.max(...Object.values(ageShift));
-const min_shift = Math.max(...Object.values(ageShift));
+const min_shift = Math.min(...Object.values(ageShift));
 
 const getAgeShift = (age: number) => {
 	if (ageShift.hasOwnProperty(age)) {
@@ -216,19 +216,19 @@ const sum = (x: number[]) => {
 	return total;
 };
 
-const age_shift_int: Record<number, number> = {};
-const totalAgeProg = sum(Object.values(ageShift).filter(shift => shift > 0));
-for (let age = MIN_AGE; age <= MAX_AGE; age++) {
-	let leftOver = 0;
-	for (let age2 = age; age2 <= MAX_AGE; age2++) {
-		if (ageShift[age2] > 0) {
-			leftOver += ageShift[age2];
+const percentOfProgsLeft = (age: number, draft_age: number) => {
+	let total = 0;
+	let seen = 0;
+	for (let i = draft_age; i < 27; i++) {
+		if (ageShift[i] > 0) {
+			total += ageShift[i];
+			if (i < age) {
+				seen += ageShift[i];
+			}
 		}
 	}
-	if (leftOver > 0) {
-		age_shift_int[age] = leftOver / totalAgeProg;
-	}
-}
+	return 1 - seen / total;
+};
 
 const YEARS_TO_MODEL = 3;
 
@@ -501,11 +501,11 @@ const getTeamValue = async (
 	// add young player value into long-term estimate - this is basically giving a boost of long term value to very young players (age_shift_int declines very fast with age) so young prospects won't be seen as negative value
 	for (const p of players) {
 		const age = season - p.born.year;
+		const ageAtDraft = p.draft.year - p.born.year;
 		const { ovr, pot } = p.ratings[p.ratings.length - 1];
-		if (age_shift_int[age] !== undefined) {
-			dpars.push(age_shift_int[age] * winp_draft(ovr, pot, age));
-		}
+		dpars.push(percentOfProgsLeft(age, ageAtDraft) * winp_draft(ovr, pot, age));
 	}
+	console.log(dpars);
 
 	const value = evalState(pars, tss, salaryCap, minContract);
 

@@ -22,7 +22,6 @@ trade3
 2. replace draft pick value stuff with actual draft prospect info, both for draft pick value and adding draft picks to the roster for future seasons
 - why add dpars and pars, what units are they?
 - how exactly to replace?
-3. maybe add a penalty for the user's draft picks
 4. make sure it handles edge cases reasonably (like if user changes settings to have 10 draft rounds, or make picks 10 years in the future tradeable)
 5. make it calculate replacement value dynamically, to handle weird leagues... not sure if other parameters would need to change too
 6. make sure i know how to reliably regenerate parameters :slight_smile:

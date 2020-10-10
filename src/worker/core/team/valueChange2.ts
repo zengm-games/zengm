@@ -359,12 +359,24 @@ const getTeamValue = async (
 		const numYearsFromNow =
 			typeof dp.season !== "number" ? 0 : dp.season - season;
 
-		let position = numActiveTeams * (dp.round - 1);
+		let position;
 		if (dp.pick > 0) {
-			position += dp.pick;
+			position = dp.pick;
 		} else {
-			position += m2pos(m2next(numYearsFromNow, teamMOVs[dp.originalTid]));
+			position = m2pos(m2next(numYearsFromNow, teamMOVs[dp.originalTid]));
 		}
+
+		// Penalty for user draft picks
+		if (dp.originalTid === g.get("userTid")) {
+			position = helpers.bound(
+				Math.round(position + g.get("numActiveTeams") / 4),
+				1,
+				g.get("numActiveTeams"),
+			);
+		}
+
+		// Account for round
+		position += numActiveTeams * (dp.round - 1);
 
 		return {
 			numYearsFromNow,
@@ -450,7 +462,6 @@ const getTeamValue = async (
 	}
 
 	const draftProspectValues = await getDraftProspectValues();
-	console.log(draftProspectValues);
 	const getDraftProspect = (season: number, position: number) => {
 		if (draftProspectValues[season]) {
 			if (draftProspectValues[season][position]) {
@@ -505,7 +516,6 @@ const getTeamValue = async (
 		const { ovr, pot } = p.ratings[p.ratings.length - 1];
 		dpars.push(percentOfProgsLeft(age, ageAtDraft) * winp_draft(ovr, pot, age));
 	}
-	console.log(dpars);
 
 	const value = evalState(pars, tss, salaryCap, minContract);
 

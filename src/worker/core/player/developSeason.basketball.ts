@@ -18,10 +18,10 @@ const defaultFormula: RatingFormula = {
 		if (age <= 23) {
 			return [-2, 10];
 		} else if (age <= 25) {
-			return [-10, 5];
+			return [-5, 5];
 		}
 		const age_adj = -0.5 * (age - 25);
-		return [-15 + age_adj, 3 + age_adj];
+		return [-5 + age_adj, 5 + age_adj];
 	},
 };
 
@@ -179,24 +179,25 @@ const developSeason = (
 			ratings.hgt += 1;
 		}
 	}
-	const baseChange1 = calcBaseChange(age, coachingRank);
-	const baseChange2 = calcBaseChange(age, coachingRank);
+	const baseChangeStre = calcBaseChange(age, coachingRank);
+	const baseChangeFin = calcBaseChange(age, coachingRank);
+	const baseChangeSho = calcBaseChange(age, coachingRank);
 
 	const ratingsNumbers: Record<Exclude<RatingKey, "hgt">, number> = {
-		stre: baseChange1,
-		spd: baseChange2,
-		jmp: baseChange2,
-		endu: baseChange1,
-		dnk: baseChange1,
-		ins: baseChange1,
-		ft: baseChange2,
-		fg: baseChange2,
-		tp: baseChange2,
-		oiq: baseChange2,
-		diq: baseChange1,
-		drb: baseChange2,
-		pss: baseChange2,
-		reb: baseChange1,
+		stre: baseChangeStre,
+		spd: baseChangeFin,
+		jmp: baseChangeFin,
+		endu: baseChangeStre,
+		dnk: baseChangeStre,
+		ins: baseChangeStre,
+		ft: baseChangeSho,
+		fg: baseChangeSho,
+		tp: baseChangeSho,
+		oiq: baseChangeFin,
+		diq: baseChangeStre,
+		drb: baseChangeFin,
+		pss: baseChangeFin,
+		reb: baseChangeStre,
 	};
 
 	for (const key of helpers.keys(ratingsFormulas)) {

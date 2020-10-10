@@ -27,6 +27,10 @@ trade3
 6. make sure i know how to reliably regenerate parameters :slight_smile:
 - https://github.com/nicidob/bbgm/blob/536435c1a0821590ac6bad1bbaa775f21bb3385d/trade_models-3.ipynb
 it's bothering me that we have two completely different ways of valuing players, whether they are a draft prospect or on a team. basically makes it impossible that we'd ever be in a situation where a team with the #1 pick values that pick/player the same before and after they make their pick, because there are these two formulas that have basically nothing to do with each other and they'd have to balance perfectly every single time.
+- expose parameters to tune
+  - `return a*sum(value) + (1-a)*sum(dpars)`
+  - "Give boost to top players"
+
 
 AI teams should release players if better FAs are available
 - draft picks after first season, especially

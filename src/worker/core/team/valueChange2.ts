@@ -250,6 +250,9 @@ const evalState = (
 		play.sort((a, b) => b - a);
 		play = play.slice(0, 10);
 
+		// Give boost to top players
+		play = play.map((p, i) => (1 + 0.2 * Math.exp(-i / 2)) * p);
+
 		const play_s =
 			sum(play.map((p, i) => Math.exp(i * team_mov[0]) * p)) * team_mov[1] -
 			team_mov[2];
@@ -509,7 +512,6 @@ const getTeamValue = async (
 		const ageAtDraft = p.draft.year - p.born.year;
 		const { ovr, pot } = p.ratings[p.ratings.length - 1];
 		dpars.push(percentOfProgsLeft(age, ageAtDraft) * winp_draft(ovr, pot, age));
-		console.log(percentOfProgsLeft(age, ageAtDraft), winp_draft(ovr, pot, age));
 	}
 
 	const value = evalState(pars, tss, salaryCap, minContract);

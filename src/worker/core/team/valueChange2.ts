@@ -132,22 +132,22 @@ const MIN_AGE = 19;
 const MAX_AGE = 35;
 const ageShift: Record<number, number> = {
 	19: 6.6,
-	20: 7.2,
+	20: 7.0,
 	21: 5.1,
-	22: 4.6,
-	23: 2.2,
-	24: 2.2,
+	22: 4.5,
+	23: 2.4,
+	24: 2.4,
 	25: 0.2,
 	26: 0.1,
-	27: -1.0,
-	28: -1.1,
-	29: -1.7,
-	30: -2.4,
+	27: -0.9,
+	28: -1.0,
+	29: -1.6,
+	30: -2.3,
 	31: -3.4,
-	32: -3.5,
-	33: -3.6,
+	32: -3.6,
+	33: -3.7,
 	34: -4.7,
-	35: -5.0,
+	35: -5.1,
 };
 
 const max_shift = Math.max(...Object.values(ageShift));
@@ -165,30 +165,13 @@ const getAgeShift = (age: number) => {
 	return min_shift;
 };
 
-// all this +/- stuff is only really used for the 'current year MOV' prediction & contract value
-const iv = [72.7, 7.28, 18.1];
-const getMOV = (x: number) => {
-	const offset = Math.floor(iv.length / 3);
-	let tot = -2.021381747657189;
-	for (let i = 0; i < offset; i++) {
-		tot += iv[offset + i] * (Math.tanh((x - iv[i]) / iv[2 * offset + i]) + 1.0);
-	}
-	return tot;
-};
-
-// estimated mov per ovr
-const o2m: Record<number, number> = {};
-for (let i = 0; i <= 100; i++) {
-	o2m[i] = getMOV(i);
-}
+// all this +/- stuff is used for
+// * the 'current year MOV' prediction & contract value
+// * projecting salary.
 const getO2M = (ovr: number) => {
-	if (ovr < 0) {
-		return o2m[0];
-	}
-	if (ovr > 100) {
-		return o2m[100];
-	}
-	return o2m[Math.round(ovr)];
+	const iv = [72.7, 7.28 * 2, 18.1 / 2];
+	const minVal = -2.021381747657189;
+	return minVal + iv[1] / (1 + Math.exp(-(ovr - iv[0]) / iv[2]));
 };
 
 // These are the same thing, in different units (supposedly)
@@ -197,16 +180,16 @@ const REPLACEMENT_LEVEL_OVR = 44.37; // [ovr]
 
 // expected mov, weight for players, weight for salary cap space
 const WEIGHTS = [
-	[-1.591, -0.708, 0.497],
-	[-0.898, 3.266, 0.304],
-	[-0.543, 2.346, 0.184],
+	[-2.849, -2.235, 0.544],
+	[-1.723, 3.316, 0.368],
+	[-1.225, 2.212, 0.217],
 ];
 
 // team value
-const team_mov = [-0.20384938, 0.3719406, 101.37586688];
+const team_mov = [-0.21133543900273594, 0.35989254239441687, 96.76582740557117];
 
 // salaries to mov
-const sA = 4.020403849764475;
+const sA = 3.8;
 
 const sum = (x: number[]) => {
 	let total = 0;
@@ -216,7 +199,15 @@ const sum = (x: number[]) => {
 	return total;
 };
 
+const percentOfProgsLeftCache: Record<number, Record<number, number>> = {};
 const percentOfProgsLeft = (age: number, draft_age: number) => {
+	if (!percentOfProgsLeftCache[age]) {
+		percentOfProgsLeftCache[age] = {};
+	}
+	if (percentOfProgsLeftCache[age][draft_age]) {
+		return percentOfProgsLeftCache[age][draft_age];
+	}
+
 	let total = 0;
 	let seen = 0;
 	for (let i = draft_age; i < 27; i++) {
@@ -227,7 +218,10 @@ const percentOfProgsLeft = (age: number, draft_age: number) => {
 			}
 		}
 	}
-	return 1 - seen / total;
+
+	const percent = total === 0 ? 0 : 1 - seen / total;
+	percentOfProgsLeftCache[age][draft_age] = 1 - seen / total;
+	return percent;
 };
 
 const YEARS_TO_MODEL = 3;
@@ -515,6 +509,7 @@ const getTeamValue = async (
 		const ageAtDraft = p.draft.year - p.born.year;
 		const { ovr, pot } = p.ratings[p.ratings.length - 1];
 		dpars.push(percentOfProgsLeft(age, ageAtDraft) * winp_draft(ovr, pot, age));
+		console.log(percentOfProgsLeft(age, ageAtDraft), winp_draft(ovr, pot, age));
 	}
 
 	const value = evalState(pars, tss, salaryCap, minContract);

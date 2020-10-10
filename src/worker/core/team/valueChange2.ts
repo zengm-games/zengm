@@ -8,6 +8,18 @@ import { defaultGameAttributes, g, helpers } from "../../util";
 import { draft } from "..";
 import range from "lodash/range";
 
+/**
+ * nicidob says:
+ * 
+ * the accounting currency here is something like "make second round" (or whatever round). 
+ * 1. There's a straightforward formula for that based on roster and cap space. 
+ * 2. Draft picks are estimated as "chance of becoming the best player on such a 2nd round team"
+ * 
+ * but there's 2 major hacks I implemented to make it more practical 
+1a. more than 3 years out, predicting is worthless, so just estimate leftover contract value and add it back in credit towards salary cap (HACK)
+ * 3. there's a disconnect between (1) and (2), so try and have young players count as partial credit towards the draft pick they once were. (HACK)
+ */
+
 const MIN_AGE = 19;
 const MAX_AGE = 35;
 const ageShift: Record<number, number> = {
@@ -84,6 +96,8 @@ const WEIGHTS = [
 
 // draft value. (1) is pos -> %, (2) ovr,pot,age -> %, (3) pos -> ovr
 const draftP = [0.27988742, 0.30226007, 0.62866095];
+
+// probability of player being the best player on a team that makes it to the 2nd round
 const winp_draft = (ovr: number, pot: number, age: number) => {
 	const xv = 4.3341 + ovr * 0.1294 + pot * 0.0343 + age * -0.7099;
 	return 1 / (1 + Math.exp(-xv));
@@ -105,7 +119,7 @@ const sum = (x: number[]) => {
 };
 
 const age_shift_int: Record<number, number> = {};
-const totalAgeProg = sum(Object.values(ageShift));
+const totalAgeProg = sum(Object.values(ageShift).filter(shift => shift > 0));
 for (let age = MIN_AGE; age <= MAX_AGE; age++) {
 	let leftOver = 0;
 	for (let age2 = age; age2 <= MAX_AGE; age2++) {
@@ -246,9 +260,14 @@ const getTeamValue = async (
 	const draftPickInfos = picks.map(dp => {
 		const numYearsFromNow =
 			typeof dp.season !== "number" ? 0 : dp.season - season;
-		const position =
-			m2pos(m2next(numYearsFromNow, teamMOVs[dp.originalTid])) +
-			numActiveTeams * (dp.round - 1);
+
+		let position = numActiveTeams * (dp.round - 1);
+		if (dp.pick > 0) {
+			position += dp.pick;
+		} else {
+			position += m2pos(m2next(numYearsFromNow, teamMOVs[dp.originalTid]));
+		}
+
 		return {
 			numYearsFromNow,
 			position,
@@ -357,16 +376,18 @@ const getTeamValue = async (
 		}
 	}
 
-	// add young player value into long-term estimate
+	// add young player value into long-term estimate - this is basically giving a boost of long term value to very young players (age_shift_int declines very fast with age) so young prospects won't be seen as negative value
 	for (const p of players) {
 		const age = season - p.born.year;
-		const ovr = p.ratings[p.ratings.length - 1].ovr;
+		const { ovr, pot } = p.ratings[p.ratings.length - 1];
 		if (age_shift_int[age] !== undefined) {
-			dpars.push(age_shift_int[age] * winp_draft(ovr, ovr, age));
+			dpars.push(age_shift_int[age] * winp_draft(ovr, pot, age));
 		}
 	}
 
 	const value = evalState(pars, tss, salaryCap, minContract);
+	console.log(pars, value, dpars);
+
 	return sum(value) + sum(dpars);
 };
 
@@ -425,7 +446,6 @@ const valueChange2 = async (
 		dpidsAdd,
 		dpidsRemove,
 	});
-	console.log("value", value);
 
 	return value - value0;
 };

@@ -3,7 +3,30 @@ trade3
 - replacement value should be dynamic?
 - far future draft picks getting value?
 - draft pick value based on class talent
+- draft pick position based on record and lottery for current season (like current version)
+  - estimate current draft position, regress to "baseline" based on how close season is to over or how far in future season is
+  - if pick is already set (after lottery), use that directly
+  - replace draftP with winp_draft and draftOVR with player ovr
 - football
+- if adding fudge factor to draft picks, make sure to account for round... like the best 2nd round pick is still worse than the worst 1st round pick
+  - function to compute value by pick #. must be monotonic decreasing, and probably should have gaps between rounders
+  - even if all prospects are the same (or don't exist) still subtract epsilon from the value of each pick
+- age_shift and ovr, or value?
+- how to re-generate parameters?
+- add tuning parameters - willingness to trade, value of picks, value of stars
+- test
+  - draft player, test his value in trade - should be same to trade for pick or prospect
+    - is "add young player value into long-term estimate" really necessary? pick value should be based on prospect value, so why?
+  - contending/rebuilding
+1. incorporate current season record into draft position estimate, similar to what i already do in the current trade function
+2. replace draft pick value stuff with actual draft prospect info, both for draft pick value and adding draft picks to the roster for future seasons
+- why add dpars and pars, what units are they?
+- how exactly to replace?
+3. maybe add a penalty for the user's draft picks
+4. make sure it handles edge cases reasonably (like if user changes settings to have 10 draft rounds, or make picks 10 years in the future tradeable)
+5. make it calculate replacement value dynamically, to handle weird leagues... not sure if other parameters would need to change too
+6. make sure i know how to reliably regenerate parameters :slight_smile:
+- https://github.com/nicidob/bbgm/blob/536435c1a0821590ac6bad1bbaa775f21bb3385d/trade_models-3.ipynb
 
 AI teams should release players if better FAs are available
 - draft picks after first season, especially

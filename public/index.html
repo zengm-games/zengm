@@ -333,11 +333,13 @@
         }
       };
 
-      var supportsAsync = function () {
+      var supportsSpread = function () {
         try {
-          eval("async function foo() {}");
+          eval("const x={a:1}; const y={...x};");
+console.log("MODERN");
           return true;
         } catch (err) {
+console.log("LEGACY");
           return false;
         }
       };
@@ -362,12 +364,10 @@
         } else {
           withGoodBrowser();
 
-          var safari10NeedsLegacy = navigator.userAgent.indexOf("Safari/602") >= 0 || navigator.userAgent.indexOf("Safari/603") >= 0;
-
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          if (supportsAsync() && !safari10NeedsLegacy) {
+          if (supportsSpread()) {
             script.src = "/gen/ui-" + bbgmVersion + ".js";
           } else  {
             script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";

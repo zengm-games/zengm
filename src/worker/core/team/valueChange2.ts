@@ -250,8 +250,10 @@ const evalState = (
 		play.sort((a, b) => b - a);
 		play = play.slice(0, 10);
 
-		// Give boost to top players
-		play = play.map((p, i) => (1 + 0.2 * Math.exp(-i / 2)) * p);
+		// Give boost to top players. Without this, teams will be too eager to add depth at the expense of stars. Which... is actually the correct thing to do in BBGM today, because depth is overvalued.
+		play = play.map(
+			(p, i) => (1 + (g.get("tradeAIValueStars") / 100) * Math.exp(-i / 2)) * p,
+		);
 
 		const play_s =
 			sum(play.map((p, i) => Math.exp(i * team_mov[0]) * p)) * team_mov[1] -
@@ -516,7 +518,10 @@ const getTeamValue = async (
 
 	const value = evalState(pars, tss, salaryCap, minContract);
 
-	return sum(value) + sum(dpars);
+	return (
+		(1 - g.get("tradeAIValueFuture")) * sum(value) +
+		g.get("tradeAIValueFuture") * sum(dpars)
+	);
 };
 
 const getTeamValueWrapper = async ({

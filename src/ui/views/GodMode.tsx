@@ -59,7 +59,9 @@ type Key =
 	| "playerMoodTraits"
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
-	| "tradeDeadline";
+	| "tradeDeadline"
+	| "tradeAIValueFuture"
+	| "tradeAIValueStars";
 
 type Category =
 	| "League Structure"
@@ -67,6 +69,7 @@ type Category =
 	| "Contracts"
 	| "Events"
 	| "Game Simulation"
+	| "Trades"
 	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"
@@ -419,7 +422,36 @@ export const options: {
 		),
 	},
 	{
-		category: "Events",
+		category: "Trades",
+		key: "tradeAIValueStars",
+		name: "AI Player Value Bonus For Stars",
+		type: "float",
+		decoration: "percent",
+		helpText:
+			"When assessing the value of a trade, the AI has to balance how much it values acquiring star players with how much it values depth. Increase this value to make the AI value stars more, and decrease it to make the AI vlaue depth more.",
+	},
+	{
+		category: "Trades",
+		key: "tradeAIValueFuture",
+		name: "AI Values Now Or Future",
+		type: "float",
+		helpText: (
+			<>
+				<p>
+					0 to 1, where 0 means AI trade value is 100% based on current talent
+					and 1 means it's 100% based on draft picks and prospects.
+				</p>
+				<p>
+					Setting it all the way to 0 or 1 will make the AI really stupid
+					(either not valuing draft picks and prospects at all, or not valuing
+					established players at all), but intermediate values could be
+					worthwhile. Default is 0.5.
+				</p>
+			</>
+		),
+	},
+	{
+		category: "Trades",
 		key: "aiTradesFactor",
 		name: "Trades Between AI Teams Factor",
 		type: "float",
@@ -1406,6 +1438,7 @@ const categories = [
 	"Finance",
 	"Contracts",
 	"Events",
+	"Trades",
 	"Game Simulation",
 	"Elam Ending",
 	"Challenge Modes",

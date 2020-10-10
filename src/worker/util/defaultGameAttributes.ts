@@ -142,6 +142,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 
+	// % bonus (or penalty) to give each team's top player's value, decaying for other players on roster
+	tradeAIValueStars: 20,
+
+	// 0 to 1, where 0 means trade value is 100% current performance and 1 means it's 100% future development
+	tradeAIValueFuture: 0.5,
+
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
 	userTid: [

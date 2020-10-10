@@ -394,6 +394,8 @@ export type GameAttributesLeague = {
 		disabled?: boolean;
 	}[];
 	ties: boolean;
+	tradeAIValueFuture: number;
+	tradeAIValueStars: number;
 	tradeDeadline: number;
 	tragicDeathRate: number;
 	userTid: number;

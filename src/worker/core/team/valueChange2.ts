@@ -6,7 +6,115 @@ import type {
 } from "../../../common/types";
 import { defaultGameAttributes, g, helpers } from "../../util";
 import { draft } from "..";
+import groupBy from "lodash/groupBy";
 import range from "lodash/range";
+import { PHASE, PLAYER } from "../../../common";
+import { playoffSeries } from "../../db/getCopies";
+
+const PLACEHOLDER_VALUE_ALREADY_PICKED = -1;
+
+// probability of player being the best player on a team that makes it to the 2nd round
+const winp_draft = (ovr: number, pot: number, age: number) => {
+	const xv = 4.3341 + ovr * 0.1294 + pot * 0.0343 + age * -0.7099;
+	return 1 / (1 + Math.exp(-xv));
+};
+
+/**
+ * Estimate draft pick values, based on the generated draft prospects in the database.
+ *
+ * This was made for team.valueChange, so it could be called once and the results cached.
+ *
+ * @memberOf core.trade
+ * @return {Promise.Object} Resolves to estimated draft pick values.
+ */
+const getDraftProspectValues = async () => {
+	const players = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
+	).map(p => ({
+		ageAtDraft: p.draft.year - p.born.year,
+		ovr: p.ratings[p.ratings.length - 1].ovr,
+		value: winp_draft(
+			p.ratings[p.ratings.length - 1].ovr,
+			p.ratings[p.ratings.length - 1].pot,
+			p.draft.year - p.born.year,
+		),
+		draftYear: p.draft.year,
+	}));
+	players.sort((a, b) => b.value - a.value);
+	const playersByDraftYear = groupBy(players, p => p.draftYear);
+
+	let maxLength = 0;
+	for (const players of Object.values(playersByDraftYear)) {
+		if (players.length > maxLength) {
+			maxLength = players.length;
+		}
+	}
+
+	// Handle case where draft is in progress
+	if (g.get("phase") === PHASE.DRAFT) {
+		// See what the lowest remaining pick is
+		const numPicks = g.get("numDraftRounds") * g.get("numActiveTeams");
+		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+			dp => dp.season === g.get("season"),
+		);
+		const diff = numPicks - draftPicks.length;
+
+		if (diff > 0) {
+			// Value of PLACEHOLDER_VALUE_ALREADY_PICKED is arbitrary since these entries should never appear in a trade since the picks don't exist anymore
+			const fakeValues = Array(diff).fill({
+				ageAtDraft: PLACEHOLDER_VALUE_ALREADY_PICKED,
+				ovr: 0,
+				pot: 0,
+			});
+			playersByDraftYear[g.get("season")] = fakeValues.concat(
+				playersByDraftYear[g.get("season")],
+			);
+		}
+	}
+
+	// Defaults are the average of future drafts
+	const seasons = Object.keys(playersByDraftYear);
+	const currentSeasonString = String(g.get("season"));
+	playersByDraftYear.default = range(maxLength).map(i => {
+		const vals = seasons
+			.filter(season => {
+				if (
+					!playersByDraftYear[season][i] ||
+					(g.get("phase") === PHASE.DRAFT &&
+						season === currentSeasonString &&
+						playersByDraftYear[season][i].ageAtDraft ===
+							PLACEHOLDER_VALUE_ALREADY_PICKED)
+				) {
+					return false;
+				}
+
+				return true;
+			})
+			.map(season => playersByDraftYear[season][i]);
+		const p = vals.reduce(
+			(total, val) => ({
+				ageAtDraft: total.ageAtDraft + val.ageAtDraft,
+				ovr: total.ovr + val.ovr,
+				value: total.value + val.value,
+				draftYear: 0,
+			}),
+			{
+				ageAtDraft: 0,
+				ovr: 0,
+				value: 0,
+				draftYear: 0,
+			},
+		);
+
+		p.ageAtDraft /= vals.length;
+		p.ovr /= vals.length;
+		p.value /= vals.length;
+
+		return p;
+	});
+
+	return playersByDraftYear;
+};
 
 /**
  * nicidob says:
@@ -93,16 +201,6 @@ const WEIGHTS = [
 	[-0.898, 3.266, 0.304],
 	[-0.543, 2.346, 0.184],
 ];
-
-// draft value. (1) is pos -> %, (2) ovr,pot,age -> %, (3) pos -> ovr
-const draftP = [0.27988742, 0.30226007, 0.62866095];
-
-// probability of player being the best player on a team that makes it to the 2nd round
-const winp_draft = (ovr: number, pot: number, age: number) => {
-	const xv = 4.3341 + ovr * 0.1294 + pot * 0.0343 + age * -0.7099;
-	return 1 / (1 + Math.exp(-xv));
-};
-const draftOVR = [-0.07936123, 21.17839312, -28.19483771];
 
 // team value
 const team_mov = [-0.20384938, 0.3719406, 101.37586688];
@@ -290,7 +388,7 @@ const getTeamValue = async (
 
 		// compute aging value
 		for (const i of range(Math.max(YEARS_TO_MODEL, yearsLeftOnContract))) {
-			ovr2 += ageShift[age + i] ?? min_shift;
+			ovr2 += getAgeShift(age + i);
 			povrs.push(ovr2);
 		}
 
@@ -351,13 +449,33 @@ const getTeamValue = async (
 		}
 	}
 
+	const draftProspectValues = await getDraftProspectValues();
+	console.log(draftProspectValues);
+	const getDraftProspect = (season: number, position: number) => {
+		if (draftProspectValues[season]) {
+			if (draftProspectValues[season][position]) {
+				return draftProspectValues[season][position];
+			}
+
+			return draftProspectValues[season][
+				draftProspectValues[season].length - 1
+			];
+		}
+
+		if (draftProspectValues.default[position]) {
+			return draftProspectValues.default[position];
+		}
+
+		return draftProspectValues.default[draftProspectValues.default.length - 1];
+	};
+
 	// compute draft pick value
 	for (const { numYearsFromNow, position } of draftPickInfos) {
-		dpars.push(
-			0.95 ** numYearsFromNow *
-				draftP[1] *
-				Math.exp(-draftP[0] * position ** draftP[2]),
+		const draftProspectInfo = getDraftProspect(
+			g.get("season") + numYearsFromNow,
+			position - 1,
 		);
+		dpars.push(draftProspectInfo.value);
 	}
 
 	// add draft picks to roster
@@ -365,9 +483,13 @@ const getTeamValue = async (
 	for (const { numYearsFromNow, position } of draftPickInfos) {
 		const rookieYear = numYearsFromNow + 1;
 		if (rookieYear < YEARS_TO_MODEL) {
-			let ovr = Math.exp(draftOVR[0] * position) * draftOVR[1] - draftOVR[2];
-			for (let i = rookieYear; i < YEARS_TO_MODEL; i++) {
-				ovr = ovr + getAgeShift(20 - rookieYear + i);
+			const draftProspectInfo = getDraftProspect(
+				g.get("season") + numYearsFromNow,
+				position - 1,
+			);
+			let ovr = draftProspectInfo.ovr;
+			for (let i = 0; i < YEARS_TO_MODEL; i++) {
+				ovr += getAgeShift(draftProspectInfo.ageAtDraft + 1 + i);
 				if (!pars[i]) {
 					pars[i] = [];
 				}
@@ -386,7 +508,6 @@ const getTeamValue = async (
 	}
 
 	const value = evalState(pars, tss, salaryCap, minContract);
-	console.log(pars, value, dpars);
 
 	return sum(value) + sum(dpars);
 };
@@ -438,7 +559,6 @@ const valueChange2 = async (
 	dpidsRemove: number[],
 ) => {
 	const value0 = await getTeamValueWrapper({ tid });
-	console.log("value0", value0);
 	const value = await getTeamValueWrapper({
 		tid,
 		pidsAdd,

@@ -20,6 +20,8 @@ trade3
   - draft player, test his value in trade - should be same to trade for pick or prospect
     - is "add young player value into long-term estimate" really necessary? pick value should be based on prospect value, so why?
   - contending/rebuilding
+  - big contracts have negative value
+  - betweenAiTeams performance and cutoff
 1. incorporate current season record into draft position estimate, similar to what i already do in the current trade function
 2. replace draft pick value stuff with actual draft prospect info, both for draft pick value and adding draft picks to the roster for future seasons
 - why add dpars and pars, what units are they?
@@ -29,9 +31,10 @@ trade3
 6. make sure i know how to reliably regenerate parameters :slight_smile:
 - https://github.com/nicidob/bbgm/blob/536435c1a0821590ac6bad1bbaa775f21bb3385d/trade_models-3.ipynb
 it's bothering me that we have two completely different ways of valuing players, whether they are a draft prospect or on a team. basically makes it impossible that we'd ever be in a situation where a team with the #1 pick values that pick/player the same before and after they make their pick, because there are these two formulas that have basically nothing to do with each other and they'd have to balance perfectly every single time.
-- difficulty affects trades, somehow
+- add option to affect difficultyFudgeFactor
 - doesn't really make sense that percentOfProgsLeft cares about ageAtDraft, but whatever
 - is p.value used for anything else? get rid of it?
+- add flag to valueChange to disable fudgeFactor when trading between AI teams
 
 AI teams should release players if better FAs are available
 - draft picks after first season, especially

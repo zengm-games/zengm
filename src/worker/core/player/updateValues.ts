@@ -5,12 +5,12 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 import { local } from "../../util";
-import updateOvrMeatStd from "./updateOvrMeanStd";
+import updateOvrMeanStd from "./updateOvrMeanStd";
 
 const updateValues = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ) => {
-	await updateOvrMeatStd();
+	await updateOvrMeanStd();
 
 	p.value = value(p, {
 		ovrMean: local.playerOvrMean,

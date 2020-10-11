@@ -1,7 +1,7 @@
 import { local } from "../../util";
 import { idb } from "../../db";
 
-const updateOvrMeatStd = async () => {
+const updateOvrMeanStd = async () => {
 	if (local.playerOvrMeanStdStale) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			-1,
@@ -27,4 +27,4 @@ const updateOvrMeatStd = async () => {
 	}
 };
 
-export default updateOvrMeatStd;
+export default updateOvrMeanStd;

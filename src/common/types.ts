@@ -988,8 +988,9 @@ export type Local = {
 		| undefined;
 	phaseText: string;
 	playerBioInfo?: PlayerBioInfoProcessed;
-	playerOvrMean?: number;
-	playerOvrStd?: number;
+	playerOvrMean: number;
+	playerOvrStd: number;
+	playerOvrMeanStdStale: boolean;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

@@ -306,6 +306,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "editAwards",
+				godMode: true,
+				league: true,
+				path: ["edit_awards"],
+				text: "Edit awards",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "deleteOldData",
 				league: true,
 				path: ["delete_old_data"],

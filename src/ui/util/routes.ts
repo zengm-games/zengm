@@ -69,6 +69,8 @@ const routes = () => {
 		"/l/:lid/free_agents": genPage("freeAgents"),
 		"/l/:lid/trade": genPage("trade"),
 		"/l/:lid/trading_block": genPage("tradingBlock"),
+		"/l/:lid/edit_awards": genPage("editAwards"),
+		"/l/:lid/edit_awards/:season": genPage("editAwards"),
 		"/l/:lid/draft": genPage("draft"),
 		"/l/:lid/draft_history": genPage("draftSummary"),
 		"/l/:lid/draft_history/:season": genPage("draftSummary"),

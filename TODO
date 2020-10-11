@@ -1,19 +1,13 @@
 trade3
 - "excess player contract value (past 3 years)... maybe should be added into "long term value" not jammed into "short term value""
 - replacement value should be dynamic?
-- far future draft picks getting value?
-- draft pick value based on class talent
 - draft pick position based on record and lottery for current season (like current version)
   - estimate current draft position, regress to "baseline" based on how close season is to over or how far in future season is
-  - if pick is already set (after lottery), use that directly
-  - replace draftP with winp_draft and draftOVR with player ovr
 - football
   - get rid of hardcoded 10
   - replacement level
   - position adjustment (similar to value formula)
-- if adding fudge factor to draft picks, make sure to account for round... like the best 2nd round pick is still worse than the worst 1st round pick
-  - function to compute value by pick #. must be monotonic decreasing, and probably should have gaps between rounders
-  - even if all prospects are the same (or don't exist) still subtract epsilon from the value of each pick
+- even if all prospects are the same (or don't exist) still subtract epsilon from the value of each pick, so picks will always be tradeable in order (like 150th pick for the 151th pick)
 - age_shift and ovr, or value?
 - how to re-generate parameters?
 - test
@@ -23,18 +17,18 @@ trade3
   - big contracts have negative value
   - betweenAiTeams performance and cutoff
 1. incorporate current season record into draft position estimate, similar to what i already do in the current trade function
-2. replace draft pick value stuff with actual draft prospect info, both for draft pick value and adding draft picks to the roster for future seasons
-- why add dpars and pars, what units are they?
-- how exactly to replace?
-4. make sure it handles edge cases reasonably (like if user changes settings to have 10 draft rounds, or make picks 10 years in the future tradeable)
-5. make it calculate replacement value dynamically, to handle weird leagues... not sure if other parameters would need to change too
 6. make sure i know how to reliably regenerate parameters :slight_smile:
 - https://github.com/nicidob/bbgm/blob/536435c1a0821590ac6bad1bbaa775f21bb3385d/trade_models-3.ipynb
-it's bothering me that we have two completely different ways of valuing players, whether they are a draft prospect or on a team. basically makes it impossible that we'd ever be in a situation where a team with the #1 pick values that pick/player the same before and after they make their pick, because there are these two formulas that have basically nothing to do with each other and they'd have to balance perfectly every single time.
+- difficulty - apply in ratio of trade values at end?
+  - can't be ratio, or might not accept draft pick for free
+  - for draft picks, can have it alter the projected position
 - add option to affect difficultyFudgeFactor
 - doesn't really make sense that percentOfProgsLeft cares about ageAtDraft, but whatever
 - is p.value used for anything else? get rid of it?
 - add flag to valueChange to disable fudgeFactor when trading between AI teams
+- set cutoffs for betweenAiTeams accepting to keep number of trades the same as it is now
+  - trade.propose cutoffs for texts too
+- should be wary of trading away picks to user, not just recieving them
 
 AI teams should release players if better FAs are available
 - draft picks after first season, especially

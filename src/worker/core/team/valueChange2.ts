@@ -326,19 +326,9 @@ const getTeamMOVs = async () => {
 };
 
 const getTeamValue = async (
-	tid: number,
 	players: Player<MinimalPlayerRatings>[],
 	picks: DraftPick[],
 ) => {
-	const difficultyFudgeFactor = helpers.bound(
-		1 + 0.1 * g.get("difficulty"),
-		0,
-		Infinity,
-	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
-
-	// Fudge factor for AI overvaluing its own players
-	const fudgeFactor = tid !== g.get("userTid") ? difficultyFudgeFactor : 1;
-
 	const teamMOVs = await getTeamMOVs();
 
 	const minContract = g.get("minContract");
@@ -404,7 +394,7 @@ const getTeamValue = async (
 		const yearsLeftOnContract = p.contract.exp - season;
 		const con = p.contract.amount;
 
-		let ovr2 = ovr * fudgeFactor;
+		let ovr2 = ovr;
 		const povrs = [ovr2];
 
 		// compute aging value
@@ -507,7 +497,7 @@ const getTeamValue = async (
 				g.get("season") + numYearsFromNow,
 				position - 1,
 			);
-			let ovr = fudgeFactor * draftProspectInfo.ovr;
+			let ovr = draftProspectInfo.ovr;
 			for (let i = 0; i < YEARS_TO_MODEL; i++) {
 				ovr += getAgeShift(draftProspectInfo.ageAtDraft + 1 + i);
 				if (!pars[i]) {
@@ -523,11 +513,7 @@ const getTeamValue = async (
 		const age = season - p.born.year;
 		const ageAtDraft = p.draft.year - p.born.year;
 		const { ovr, pot } = p.ratings[p.ratings.length - 1];
-		dpars.push(
-			fudgeFactor *
-				percentOfProgsLeft(age, ageAtDraft) *
-				winp_draft(ovr, pot, age),
-		);
+		dpars.push(percentOfProgsLeft(age, ageAtDraft) * winp_draft(ovr, pot, age));
 	}
 
 	const value = evalState(pars, tss, salaryCap, minContract);
@@ -574,7 +560,7 @@ const getTeamValueWrapper = async ({
 		picks.push(dp);
 	}
 
-	return getTeamValue(tid, players, picks);
+	return getTeamValue(players, picks);
 };
 
 const valueChange2 = async (

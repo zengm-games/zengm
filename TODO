@@ -1,3 +1,15 @@
+trade stuff
+- ensure pick values are never negative
+- ensure pick values go in order
+- flag to make fudge factor not apply for ai-ai trades
+- test
+  - difficulty affects user draft pick value
+  - contending/rebuilding
+- add back contract stuff
+  - contractSeasonsRemaining
+- parameters
+  - base
+
 AI teams should release players if better FAs are available
 - draft picks after first season, especially
 

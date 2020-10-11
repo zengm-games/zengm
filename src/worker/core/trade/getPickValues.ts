@@ -25,19 +25,15 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 	const pickValues: TradePickValues = {} as TradePickValues;
 
-	let maxLength = 0;
 	for (const [season, players] of Object.entries(playersByDraftYear)) {
-		if (players.length > maxLength) {
-			maxLength = players.length;
-		}
-
 		pickValues[season] = players.map(p => p.value);
 	}
+
+	const numPicks = g.get("numDraftRounds") * g.get("numActiveTeams");
 
 	// Handle case where draft is in progress
 	if (g.get("phase") === PHASE.DRAFT) {
 		// See what the lowest remaining pick is
-		const numPicks = g.get("numDraftRounds") * g.get("numActiveTeams");
 		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
 			dp => dp.season === g.get("season"),
 		);
@@ -55,7 +51,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	// Defaults are the average of future drafts
 	const seasons = Object.keys(playersByDraftYear);
 	const currentSeasonString = String(g.get("season"));
-	pickValues.default = range(maxLength).map(i => {
+	pickValues.default = range(numPicks).map(i => {
 		const vals = seasons
 			.filter(season => {
 				const seasonPickValues = pickValues[season];

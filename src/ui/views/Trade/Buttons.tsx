@@ -9,6 +9,7 @@ const Buttons = ({
 	handleClickClear,
 	handleClickForceTrade,
 	handleClickPropose,
+	numAssets,
 }: {
 	asking: boolean;
 	enablePropose: boolean;
@@ -18,6 +19,7 @@ const Buttons = ({
 	handleClickClear: () => void;
 	handleClickForceTrade: () => void;
 	handleClickPropose: () => void;
+	numAssets: number;
 }) => {
 	return (
 		<>
@@ -37,7 +39,7 @@ const Buttons = ({
 				<button
 					type="submit"
 					className="btn btn-secondary mt-2"
-					disabled={asking}
+					disabled={asking || numAssets === 0}
 					onClick={handleClickAsk}
 				>
 					{asking ? "Waiting for answer..." : "What would make this deal work?"}

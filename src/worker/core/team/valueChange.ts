@@ -147,7 +147,7 @@ const getPickNumber = (dp: DraftPick, season: number) => {
 			// Penalty for user draft picks
 			const difficultyFactor = 1 + 1.5 * g.get("difficulty");
 			estPick = helpers.bound(
-				Math.round(estPick + g.get("numActiveTeams") / 3) * difficultyFactor,
+				Math.round((estPick + g.get("numActiveTeams") / 3) * difficultyFactor),
 				1,
 				g.get("numActiveTeams"),
 			);

@@ -13,7 +13,7 @@ import getPayroll from "./getPayroll";
 
 type Asset = {
 	value: number;
-	contract: PlayerContract;
+	contractValue: number;
 	injury: PlayerInjury;
 	age: number;
 	draftPick?: number;
@@ -28,6 +28,34 @@ let cache: {
 
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
+
+const MIN_VALUE = process.env.SPORT === "basketball" ? -0.5 : -1;
+const MAX_VALUE = process.env.SPORT === "basketball" ? 2 : 3;
+const getContractValue = (
+	contract: PlayerContract,
+	normalizedValue: number,
+) => {
+	const season = g.get("season");
+	const phase = g.get("phase");
+	if (
+		contract.exp === season ||
+		(phase > PHASE.PLAYOFFS && contract.exp === season + 1)
+	) {
+		// Don't care about expiring contracts
+		return 0;
+	}
+
+	const salaryCap = g.get("salaryCap");
+	const normalizedContractAmount = contract.amount / salaryCap;
+
+	const slope =
+		(g.get("maxContract") / salaryCap - g.get("minContract") / salaryCap) /
+		(MAX_VALUE - MIN_VALUE);
+
+	const expectedAmount = slope * (normalizedValue - MIN_VALUE);
+
+	return expectedAmount - normalizedContractAmount;
+};
 
 const getPlayers = async ({
 	add,
@@ -54,24 +82,25 @@ const getPlayers = async ({
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 	for (const p of players) {
-		let value = zscore(p.value);
+		const value = zscore(p.value);
 
 		if (!pidsRemove.includes(p.pid)) {
 			roster.push({
 				value,
-				contract: p.contract,
+				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 			});
 		} else {
 			// Only apply fudge factor to positive assets
-			if (value > 0) {
-				value *= fudgeFactor;
+			let fudgedValue = value;
+			if (fudgedValue > 0) {
+				fudgedValue *= fudgeFactor;
 			}
 
 			remove.push({
-				value,
-				contract: p.contract,
+				value: fudgedValue,
+				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 			});
@@ -82,9 +111,11 @@ const getPlayers = async ({
 	for (const pid of pidsAdd) {
 		const p = await idb.cache.players.get(pid);
 		if (p) {
+			const value = zscore(p.value);
+
 			add.push({
-				value: zscore(p.value),
-				contract: p.contract,
+				value,
+				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 			});
@@ -151,21 +182,32 @@ const getPickInfo = (
 		value = estValues.default[estPick - 1];
 	}
 	if (value === undefined) {
-		throw new Error("Undefined value");
+		value = estValues.default[estValues.default.length - 1];
 	}
+	if (value === undefined) {
+		value = 20;
+	}
+
+	// Ensure there are no tied pick values
+	value -= estPick * 1e-10;
 
 	value = zscore(value);
 
 	return {
 		value,
-		contract: {
-			amount: rookieSalaries[estPick - 1],
-			exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
-		},
+		contractValue: getContractValue(
+			{
+				amount: rookieSalaries[estPick - 1],
+				exp: season + 2,
+			},
+			value,
+		),
 		injury: {
 			type: "Healthy",
 			gamesRemaining: 0,
 		},
+
+		// Would be better to store age in estValues, but oh well
 		age: 20,
 		draftPick: estPick,
 	};
@@ -210,8 +252,7 @@ const getPicks = async ({
 	}
 };
 
-// This actually doesn't do anything because I'm an idiot
-const base = 3;
+const EXPONENT = 3;
 
 const sumValues = (
 	players: Asset[],
@@ -278,37 +319,12 @@ const sumValues = (
 		if (playerValue < 0) {
 			playerValue = 0;
 		}
+
+		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
+		playerValue += contractsFactor * p.contractValue;
 		console.log(playerValue, p);
 
-		return memo + playerValue ** base;
-	}, 0);
-};
-
-// Sum of contracts
-// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
-const sumContracts = (
-	players: Asset[],
-	gpAvg: number,
-	onlyThisSeason = false,
-) => {
-	if (players.length === 0) {
-		return 0;
-	}
-
-	return players.reduce((memo, p) => {
-		if (p.draftPick !== undefined) {
-			return memo;
-		}
-
-		return (
-			memo +
-			(p.contract.amount / 1000) *
-				player.contractSeasonsRemaining(
-					p.contract.exp,
-					g.get("numGames") - gpAvg,
-				) **
-					(0.25 - (onlyThisSeason ? 0.25 : 0))
-		);
+		return memo + playerValue ** EXPONENT;
 	}, 0);
 };
 
@@ -471,9 +487,6 @@ const valueChange = async (
 		estValues: cache.estValues,
 	});
 
-	const contractsFactor = strategy === "rebuilding" ? 0.3 : 0.1;
-	const salaryRemoved = sumContracts(remove, gpAvg) - sumContracts(add, gpAvg);
-
 	console.log("ADD");
 	const valuesAdd = sumValues(add, gpAvg, strategy, tid, true);
 	console.log("Total", valuesAdd);
@@ -482,43 +495,7 @@ const valueChange = async (
 	const valuesRemove = sumValues(remove, gpAvg, strategy, tid);
 	console.log("Total", valuesRemove);
 
-	let dv = valuesAdd - valuesRemove;
-	/*console.log("Added players/picks: " + sumValues(add, true));
-  console.log("Removed players/picks: " + (-sumValues(remove)));
-  console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
-  console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
-  console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
-
-	return dv;
-
-	// Aversion towards losing cap space in a trade during free agency
-	if (
-		g.get("phase") >= PHASE.RESIGN_PLAYERS ||
-		g.get("phase") <= PHASE.FREE_AGENCY
-	) {
-		// Only care if cap space is over 2 million
-		if (payroll + 2000 < g.get("salaryCap")) {
-			const salaryAddedThisSeason =
-				sumContracts(add, gpAvg, true) - sumContracts(remove, gpAvg, true); // Only care if cap space is being used
-
-			if (salaryAddedThisSeason > 0) {
-				//console.log("Free agency penalty: -" + (0.2 + 0.8 * g.get("daysLeft") / 30) * salaryAddedThisSeason);
-				dv -= (0.2 + (0.8 * g.get("daysLeft")) / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
-			}
-		}
-	}
-
-	// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-	// This is a fudge factor, since it's one-sided to punish the player
-	if (add.length > remove.length) {
-		dv -= add.length - remove.length;
-	}
-
-	return dv;
-	/*console.log('---');
-  console.log([sumValues(add), sumContracts(add)]);
-  console.log([sumValues(remove), sumContracts(remove)]);
-  console.log(dv);*/
+	return valuesAdd - valuesRemove;
 };
 
 export default valueChange;

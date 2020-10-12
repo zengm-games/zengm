@@ -1,12 +1,18 @@
 trade stuff
 - ensure pick values are never negative
-- ensure pick values go in order
 - flag to make fudge factor not apply for ai-ai trades
+- cutoffs in various files (trade GM messages, AI trade acceptance)
 - test
   - difficulty affects user draft pick value
   - contending/rebuilding
+  - football
+  - adding draft rounds
 - add back contract stuff
+  - basketball: -0.5 to 2, football: -1 to 3
+  - account for expiring
   - contractSeasonsRemaining
+  - fit % of cap to player value
+    - do for football and basketball separately
 - parameters
   - base
 

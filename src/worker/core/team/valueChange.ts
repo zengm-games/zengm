@@ -281,17 +281,17 @@ const sumValues = (
 		if (strategy === "rebuilding") {
 			// Value young/cheap players and draft picks more. Penalize expensive/old players
 			if (p.draftPick !== undefined) {
-				playerValue *= 1.15;
-			} else if (p.age <= 19) {
-				playerValue *= 1.15;
-			} else if (p.age === 20) {
 				playerValue *= 1.1;
-			} else if (p.age === 21) {
+			} else if (p.age <= 19) {
 				playerValue *= 1.075;
-			} else if (p.age === 22) {
+			} else if (p.age === 20) {
 				playerValue *= 1.05;
-			} else if (p.age === 23) {
+			} else if (p.age === 21) {
+				playerValue *= 1.0375;
+			} else if (p.age === 22) {
 				playerValue *= 1.025;
+			} else if (p.age === 23) {
+				playerValue *= 1.0125;
 			} else if (p.age === 27) {
 				playerValue *= 0.975;
 			} else if (p.age === 28) {
@@ -302,17 +302,19 @@ const sumValues = (
 		} else if (strategy === "contending") {
 			// Much of the value for these players comes from potential, which we don't really care about
 			if (p.draftPick !== undefined) {
-				playerValue *= 0.75;
+				playerValue *= 0.7;
 			} else if (p.age <= 19) {
-				playerValue *= 0.85;
+				playerValue *= 0.725;
 			} else if (p.age === 20) {
-				playerValue *= 0.9;
+				playerValue *= 0.75;
 			} else if (p.age === 21) {
-				playerValue *= 0.925;
+				playerValue *= 0.8;
 			} else if (p.age === 22) {
-				playerValue *= 0.95;
+				playerValue *= 0.85;
 			} else if (p.age === 23) {
-				playerValue *= 0.975;
+				playerValue *= 0.9;
+			} else if (p.age === 24) {
+				playerValue *= 0.95;
 			}
 		}
 

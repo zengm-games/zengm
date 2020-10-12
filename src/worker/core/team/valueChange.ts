@@ -1,4 +1,3 @@
-import countBy from "lodash/countBy";
 import { PHASE } from "../../../common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";

@@ -1,4 +1,5 @@
 trade stuff
+- better value of draft picks in new league
 - ensure pick values are never negative
 - flag to make fudge factor not apply for ai-ai trades
 - cutoffs in various files (trade GM messages, AI trade acceptance)

@@ -295,11 +295,6 @@ const createLeague = async ({
 	}
 
 	const leagueFile: any = {};
-	console.log(
-		leagueFile.startingSeason,
-		actualStartingSeason,
-		leagueFile.gameAttributes,
-	);
 	for (const key of [...keptKeys, "version"]) {
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];

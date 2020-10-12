@@ -9,7 +9,6 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types";
-import getPayroll from "./getPayroll";
 
 type Asset = {
 	value: number;
@@ -54,7 +53,10 @@ const getContractValue = (
 
 	const expectedAmount = slope * (normalizedValue - MIN_VALUE);
 
-	return expectedAmount - normalizedContractAmount;
+	const contractValue = expectedAmount - normalizedContractAmount;
+
+	// Don't let contract value exceed 0.1, it's just a small boost or a big penalty
+	return Math.min(contractValue, 0.1);
 };
 
 const getPlayers = async ({
@@ -63,7 +65,6 @@ const getPlayers = async ({
 	roster,
 	pidsAdd,
 	pidsRemove,
-	difficultyFudgeFactor,
 	tid,
 }: {
 	add: Asset[];
@@ -71,9 +72,14 @@ const getPlayers = async ({
 	roster: Asset[];
 	pidsAdd: number[];
 	pidsRemove: number[];
-	difficultyFudgeFactor: number;
 	tid: number;
 }) => {
+	const difficultyFudgeFactor = helpers.bound(
+		1 + 0.1 * g.get("difficulty"),
+		0,
+		Infinity,
+	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
+
 	// Fudge factor for AI overvaluing its own players
 	const fudgeFactor =
 		(tid !== g.get("userTid") ? 1.05 : 1) * difficultyFudgeFactor;
@@ -149,7 +155,7 @@ const getPickNumber = (dp: DraftPick, season: number) => {
 		} else {
 			// Bonus for AI draft picks
 			estPick = helpers.bound(
-				Math.round(estPick - g.get("numActiveTeams") / 4),
+				Math.round(estPick - g.get("numActiveTeams") / 6),
 				1,
 				g.get("numActiveTeams"),
 			);
@@ -188,20 +194,26 @@ const getPickInfo = (
 		value = 20;
 	}
 
+	value = zscore(value);
+
+	let contractValue = getContractValue(
+		{
+			amount: rookieSalaries[estPick - 1],
+			exp: season + 2,
+		},
+		value,
+	);
+
+	// Since rookies can be cut after the draft, value of a draft pick can't be negative
+	value = Math.max(0.1, value);
+	contractValue = Math.max(0, contractValue);
+
 	// Ensure there are no tied pick values
 	value -= estPick * 1e-10;
 
-	value = zscore(value);
-
 	return {
 		value,
-		contractValue: getContractValue(
-			{
-				amount: rookieSalaries[estPick - 1],
-				exp: season + 2,
-			},
-			value,
-		),
+		contractValue,
 		injury: {
 			type: "Healthy",
 			gamesRemaining: 0,
@@ -252,11 +264,10 @@ const getPicks = async ({
 	}
 };
 
-const EXPONENT = 3;
+const EXPONENT = 7;
 
 const sumValues = (
 	players: Asset[],
-	gpAvg: number,
 	strategy: string,
 	tid: number,
 	includeInjuries = false,
@@ -324,7 +335,7 @@ const sumValues = (
 		playerValue += contractsFactor * p.contractValue;
 		console.log(playerValue, p);
 
-		return memo + playerValue ** EXPONENT;
+		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);
 };
 
@@ -442,28 +453,12 @@ const valueChange = async (
 	const add: Asset[] = [];
 	const remove: Asset[] = [];
 	const t = await idb.cache.teams.get(tid);
-	const teamStats = await idb.cache.teamStats.indexGet(
-		"teamSeasonsByTidSeason",
-		[tid, g.get("season")],
-	);
 
 	if (!t) {
 		throw new Error("Invalid team");
 	}
 
 	const strategy = t.strategy;
-	const gpAvg = helpers.bound(
-		teamStats ? teamStats.gp : 0,
-		0,
-		g.get("numGames"),
-	); // Ideally would be done separately for each team, but close enough
-
-	const payroll = await getPayroll(tid);
-	const difficultyFudgeFactor = helpers.bound(
-		1 + 0.1 * g.get("difficulty"),
-		0,
-		Infinity,
-	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
 
 	if (prevValueChangeKey !== valueChangeKey || cache === undefined) {
 		cache = await refreshCache();
@@ -476,7 +471,6 @@ const valueChange = async (
 		roster,
 		pidsAdd,
 		pidsRemove,
-		difficultyFudgeFactor,
 		tid,
 	});
 	await getPicks({
@@ -488,11 +482,11 @@ const valueChange = async (
 	});
 
 	console.log("ADD");
-	const valuesAdd = sumValues(add, gpAvg, strategy, tid, true);
+	const valuesAdd = sumValues(add, strategy, tid, true);
 	console.log("Total", valuesAdd);
 
 	console.log("REMOVE");
-	const valuesRemove = sumValues(remove, gpAvg, strategy, tid);
+	const valuesRemove = sumValues(remove, strategy, tid);
 	console.log("Total", valuesRemove);
 
 	return valuesAdd - valuesRemove;

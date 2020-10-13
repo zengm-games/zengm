@@ -13,7 +13,7 @@ import type { Conditions } from "../../../common/types"; // Depending on phase, 
 import { idb } from "../../db";
 
 const autoPlay = async (conditions: Conditions = {}) => {
-	const currentPhase = g.get("phase");
+	let currentPhase = g.get("phase");
 
 	// No newPhase call is triggered after expansion draft, so this check comes first
 	if (currentPhase === PHASE.EXPANSION_DRAFT) {
@@ -23,6 +23,8 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		if (g.get("expansionDraft").phase === "draft") {
 			await draft.runPicks("untilEnd", conditions);
 		}
+
+		currentPhase = g.get("phase");
 	}
 
 	// If game over and user's team is disabled, need to pick a new team or there will be errors

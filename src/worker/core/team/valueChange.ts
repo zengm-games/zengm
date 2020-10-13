@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common";
-import { draft, player, trade } from "..";
+import { draft, player, team, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
 import type {
@@ -8,6 +8,7 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types";
+import groupBy from "lodash/groupBy";
 
 type Asset = {
 	value: number;
@@ -341,79 +342,75 @@ const sumValues = (
 };
 
 const refreshCache = async () => {
+	const playersByTid = groupBy(
+		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+		"tid",
+	);
+	const teamOvrs: {
+		tid: number;
+		ovr: number;
+	}[] = [];
+	for (const [tidString, players] of Object.entries(playersByTid)) {
+		const tid = parseInt(tidString);
+		const ovr = team.ovr(
+			players.map(p => ({
+				pid: p.pid,
+				ratings: {
+					ovr: p.ratings[p.ratings.length - 1].ovr,
+					pos: p.ratings[p.ratings.length - 1].pos,
+				},
+			})),
+		);
+
+		teamOvrs.push({ tid, ovr });
+	}
+	teamOvrs.sort((a, b) => b.ovr - a.ovr);
+
 	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
 
 	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
-		[[g.get("season") - 1], [g.get("season"), "Z"]],
+		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
 	let gp = 0;
 
 	// Estimate the order of the picks by team
 	const wps = teams.map(t => {
+		const teamOvrRank = teamOvrs.findIndex(t2 => t2.tid === t.tid);
+		if (teamOvrRank < 0) {
+			throw new Error("Team ovr rank not found");
+		}
+
+		// 25% to 75% based on rank
+		const teamOvrWinp =
+			0.25 +
+			(0.5 * (teamOvrs.length - 1 - teamOvrRank)) / (teamOvrs.length - 1);
+
 		const teamSeasons = allTeamSeasons.filter(
 			teamSeason => teamSeason.tid === t.tid,
 		);
-		const s = teamSeasons.length;
-		let rCurrent;
-		let rLast;
+		let record: [number, number];
 
 		if (teamSeasons.length === 0) {
 			// Expansion team?
-			rCurrent = [
-				Math.round(0.2 * g.get("numGames")),
-				Math.round(0.8 * g.get("numGames")),
-			];
-			rLast = [
-				Math.round(0.2 * g.get("numGames")),
-				Math.round(0.8 * g.get("numGames")),
-			];
-		} else if (teamSeasons.length === 1) {
-			// First season
-			if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
-				rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
-			} else {
-				// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-				rCurrent =
-					t.tid === g.get("userTid")
-						? [g.get("numGames"), 0]
-						: [0, g.get("numGames")];
-			}
-
-			if (t.tid === g.get("userTid")) {
-				rLast = [
-					Math.round(0.6 * g.get("numGames")),
-					Math.round(0.4 * g.get("numGames")),
-				];
-			} else {
-				// Assume a losing season to minimize bad trades
-				rLast = [
-					Math.round(0.4 * g.get("numGames")),
-					Math.round(0.6 * g.get("numGames")),
-				];
-			}
+			record = [0, 0];
 		} else {
-			// Second (or higher) season
-			rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
-			rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
+			const teamSeason = teamSeasons[0];
+			record = [teamSeason.won, teamSeason.lost];
 		}
 
-		gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
+		gp = record[0] + record[1];
 
-		// If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-		const halfSeason = Math.round(0.5 * g.get("numGames"));
+		const seasonFraction = gp / g.get("numGames");
 
-		if (gp >= halfSeason) {
-			return rCurrent[0] / gp;
+		// Weighted average of current season record and team rating, based on how much of the current season is complete
+		if (gp === 0) {
+			return teamOvrWinp;
 		}
-		if (gp > 0) {
-			return (
-				((gp / halfSeason) * rCurrent[0]) / gp +
-				(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames")
-			);
-		}
-		return rLast[0] / g.get("numGames");
+		return (
+			seasonFraction * (record[0] / gp) + (1 - seasonFraction) * teamOvrWinp
+		);
 	});
 
 	// Get rank order of wps http://stackoverflow.com/a/14834599/786644

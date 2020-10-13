@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* BETA: Some improvements to the trade AI, particularly related to how it values draft picks. [[1]](https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/) [[2]](https://old.reddit.com/r/Football_GM/comments/ja60au/want_to_test_some_improvements_to_the_trade_ai/)
+
 * 2020-10-05: Added a trade deadline, which is customizable in the God Mode options. [[1]](https://basketball-gm.com/blog/2020/10/trade-deadline/) [[2]](https://old.reddit.com/r/BasketballGM/comments/j5tgfk/added_a_trade_deadline_which_is_customizable_in/)
 
 * 2020-10-03: New option in God Mode to change the number of draft rounds. This does not change the talent pool - if you add more draft rounds, the additional draft prospects will not be very good. If you remove draft rounds, there will be more good undrafted free agents. [[1]](https://old.reddit.com/r/BasketballGM/comments/j4peh5/new_option_in_god_mode_to_change_the_number_of/)

@@ -77,7 +77,7 @@ const propose = async (
 	// Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
 	let message;
 
-	if (dv > -2.5) {
+	if (dv > -2) {
 		message = "Close, but not quite good enough.";
 	} else if (dv > -5) {
 		message = "That's not a good deal for me.";

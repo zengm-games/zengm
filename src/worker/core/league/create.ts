@@ -815,7 +815,7 @@ const create = async ({
 	shuffleRosters?: boolean;
 	difficulty?: number;
 	importLid?: number | undefined | null;
-	forceAutoSort: boolean;
+	forceAutoSort?: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
 		name,

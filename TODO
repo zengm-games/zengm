@@ -16,8 +16,11 @@ start in any phase
 - draft
   - set
     - draft lottery results
+- scheduledEvents
+  - generate with current season, process if past phase... expansion draft too?
 - blog
-   -playoff rosters
+   - playoff rosters
+   - no stats yet
 
 trade stuff
 - better value of draft picks in new league

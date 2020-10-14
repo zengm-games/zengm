@@ -7,7 +7,6 @@ import React, {
 	useRef,
 	useReducer,
 	useEffect,
-	ChangeEvent,
 } from "react";
 import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
@@ -284,9 +283,9 @@ const LeagueMenu = <T extends string>({
 	quickValues?: T[];
 	value: T;
 	values: { key: T; value: string }[];
-	value2: number;
-	values2: { key: number; value: string }[];
-	onNewValue2: (key: number) => void;
+	value2?: number;
+	values2?: { key: number; value: string }[];
+	onNewValue2?: (key: number) => void;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
@@ -360,7 +359,7 @@ const LeagueMenu = <T extends string>({
 						);
 					})}
 				</select>
-				{value2 !== undefined ? (
+				{value2 !== undefined && values2 && onNewValue2 ? (
 					<select
 						className="form-control"
 						onChange={event => {
@@ -384,7 +383,7 @@ const LeagueMenu = <T extends string>({
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
 
-							if (value2 !== undefined) {
+							if (value2 !== undefined && values2 && onNewValue2) {
 								const keys2 = values2.map(v => v.key);
 								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
 								onNewValue2(random2);

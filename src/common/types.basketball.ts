@@ -70,80 +70,43 @@ export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
 	bestRecordConfs: (AwardTeam | undefined)[];
+
 	// Only in old leagues
 	bre?: AwardTeam;
 	brw?: AwardTeam;
+
 	roy: AwardPlayer | undefined;
 	allRookie: AwardPlayer[];
-	// If there are <5 rookies in a league file
 	mip: AwardPlayer | undefined;
-	// First season has no MIP
-	mvp: AwardPlayer;
+	mvp: AwardPlayer | undefined;
 	smoy: AwardPlayer | undefined;
-	// Some weird leagues could have only starters
 	allLeague: [
 		{
 			title: "First Team";
-			players: [
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-			];
+			players: AwardPlayer[];
 		},
 		{
 			title: "Second Team";
-			players: [
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-			];
+			players: AwardPlayer[];
 		},
 		{
 			title: "Third Team";
-			players: [
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-				AwardPlayer,
-			];
+			players: AwardPlayer[];
 		},
 	];
 	dpoy: AwardPlayerDefense;
 	allDefensive: [
 		{
 			title: "First Team";
-			players: [
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-			];
+			players: AwardPlayerDefense[];
 		},
 		{
 			title: "Second Team";
-			players: [
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-			];
+			players: AwardPlayerDefense[];
 		},
 		{
 			title: "Third Team";
-			players: [
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-				AwardPlayerDefense,
-			];
+			players: AwardPlayerDefense[];
 		},
 	];
 	finalsMvp: AwardPlayer | undefined;

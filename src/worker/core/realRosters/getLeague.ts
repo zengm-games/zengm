@@ -127,6 +127,9 @@ const genPlayoffSeries = (
 		firstRoundMatchups.push({ home, away });
 	}
 
+	let numPlayoffTeams = 2 * firstRoundMatchups.length;
+	let numPlayoffByes = 0;
+
 	for (const series of secondRound) {
 		for (let i = 0; i < series.abbrevs.length; i++) {
 			const abbrev = series.abbrevs[i];
@@ -136,9 +139,12 @@ const genPlayoffSeries = (
 				firstRoundMatchups.push({
 					home,
 				});
+				numPlayoffTeams += 1;
+				numPlayoffByes += 1;
 			}
 		}
 	}
+	console.log("firstRoundMatchups", firstRoundMatchups);
 	const numRounds = Math.log2(firstRoundMatchups.length);
 	const series: typeof firstRoundMatchups[] = [];
 	for (let i = 0; i <= numRounds; i++) {
@@ -146,10 +152,50 @@ const genPlayoffSeries = (
 	}
 
 	// Reorder to match expected BBGM format
-	if (season >= 1984) {
-		// Normal modern NBA - 2 conferences, 8 teams per conference
-		console.log(firstRoundMatchups);
-		const confSeeds = genPlayoffSeeds(8, 0);
+	if (season === 1947 || season === 1948 || season === 1950) {
+		let matchupsAbbrevs;
+		// One team from each matchup
+		if (season === 1947) {
+			matchupsAbbrevs = ["CHI", "WSC", "NYC", "PHV"];
+		} else if (season === 1948) {
+			matchupsAbbrevs = ["STB", "PHV", "BLB", "CHI"];
+		} else {
+			matchupsAbbrevs = [
+				"MNL",
+				"FTW",
+				"IND",
+				"AND",
+				"SYR",
+				"PHV",
+				"WSC",
+				"NYC",
+			];
+		}
+
+		const matchups = matchupsAbbrevs.map(abbrev => {
+			const t = initialTeams.find(t => t.abbrev === abbrev);
+			if (t) {
+				const matchup = firstRoundMatchups.find(
+					matchup =>
+						t.tid === matchup.home.tid ||
+						(matchup.away && t.tid === matchup.away.tid),
+				);
+				if (matchup) {
+					return matchup;
+				}
+				throw new Error("Matchup not found");
+			}
+			console.log(
+				abbrev,
+				initialTeams.map(t => t.abbrev),
+				initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.abbrev)),
+			);
+			throw new Error("Team not found");
+		});
+		console.log(matchups);
+		series[0] = matchups;
+	} else {
+		const confSeeds = genPlayoffSeeds(numPlayoffTeams / 2, numPlayoffByes / 2);
 		const cids = [0, 1];
 		for (const cid of cids) {
 			const confMatchups = firstRoundMatchups.filter(
@@ -167,10 +213,6 @@ const genPlayoffSeries = (
 				}
 			}
 		}
-		console.log(series[0]);
-	} else {
-		// Seeds were weird if you go back far enough, so do something like genPlayoffSeeds (start with champ and work back) but with actual playoff data
-		throw new Error("Not implemented yet");
 	}
 
 	return [
@@ -655,7 +697,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 			for (const t of initialTeams) {
 				const teamSeasonData =
 					basketball.teamSeasons[options.season][
-						oldAbbrevTo2020BBGMAbbrev(t.abbrev)
+						// MAYBE OTHER PLACES SHOULD BE srID TOO!
+						oldAbbrevTo2020BBGMAbbrev(t.srID)
 					];
 				if (!teamSeasonData) {
 					throw new Error("Missing teamSeason");

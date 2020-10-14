@@ -1,3 +1,5 @@
+auto play broken in 1955?
+
 start in any phase
 - expansion draft changes available teams
 - playoffs
@@ -5,8 +7,8 @@ start in any phase
   - init playoffSeries object
   - make sure team and player stats rows set correctly (init playoffs ones)
   - set teamSeason.playoffRoundsWon
-  - test ordering of playoffSeries
-    - byes!
+  - test simming of playoffs
+    - weird seasons like 1947, 1948, 1950
 
 trade stuff
 - better value of draft picks in new league

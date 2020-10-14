@@ -1,4 +1,4 @@
-import loadDataBasketball from "./loadData.basketball";
+import loadDataBasketball, { Basketball } from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
 import type {
@@ -8,7 +8,7 @@ import type {
 } from "../../../common/types";
 import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
-import { helpers, random } from "../../util";
+import { defaultGameAttributes, helpers, random } from "../../util";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
@@ -51,6 +51,97 @@ const nerfDraftProspect = (ratings: {
 	decreaseRating("endu", 5);
 	decreaseRating("diq", 4);
 	decreaseRating("oiq", 4);
+};
+
+const genPlayoffSeries = (
+	basketball: Basketball,
+	season: number,
+	initialTeams: ReturnType<typeof formatScheduledEvents>["initialTeams"],
+) => {
+	// Look at first 2 rounds, to find any byes
+	const firstRound = basketball.playoffSeries[season].filter(
+		row => row.round === 0,
+	);
+	const secondRound = basketball.playoffSeries[season].filter(
+		row => row.round === 1,
+	);
+
+	const firstRoundMatchups = [];
+	const firstRoundAbbrevs = new Set();
+
+	const genTeam = (
+		abbrev: string,
+		series: {
+			seeds: [number, number];
+		},
+		i: number,
+	) => {
+		firstRoundAbbrevs.add(abbrev);
+		const t = initialTeams.find(
+			t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
+		);
+		if (!t) {
+			throw new Error("Missing team");
+		}
+		const teamSeason = basketball.teamSeasons[season][abbrev];
+		if (!teamSeason) {
+			throw new Error("Missing teamSeason");
+		}
+		const winp = helpers.calcWinp(teamSeason);
+
+		return {
+			tid: t.tid,
+			cid: t.cid,
+			winp,
+			seed: series.seeds[i],
+			won: 0,
+		};
+	};
+
+	for (const series of firstRound) {
+		const teams = series.abbrevs.map((abbrev, i) => genTeam(abbrev, series, i));
+
+		let home;
+		let away;
+		if (
+			(teams[0].seed === teams[1].seed && teams[0].winp > teams[1].winp) ||
+			teams[0].seed < teams[1].seed
+		) {
+			home = teams[0];
+			away = teams[1];
+		} else {
+			home = teams[1];
+			away = teams[0];
+		}
+		firstRoundMatchups.push({ home, away });
+	}
+
+	for (const series of secondRound) {
+		for (let i = 0; i < series.abbrevs.length; i++) {
+			const abbrev = series.abbrevs[i];
+			if (!firstRoundAbbrevs.has(abbrev)) {
+				// Appears in second round but not first... must have been a bye
+				const home = genTeam(abbrev, series, i);
+				firstRoundMatchups.push({
+					home,
+				});
+			}
+		}
+	}
+	const numRounds = Math.log2(firstRoundMatchups.length);
+	const series = [];
+	for (let i = 0; i <= numRounds; i++) {
+		series.push([]);
+	}
+	series[0] = firstRoundMatchups;
+
+	return [
+		{
+			season,
+			currentRound: 0,
+			series,
+		},
+	];
 };
 
 const getLeague = async (options: GetLeagueOptions) => {
@@ -515,92 +606,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		let playoffSeries;
 		if (options.phase === PHASE.PLAYOFFS) {
-			// Look at first 2 rounds, to find any byes
-			const firstRound = basketball.playoffSeries[options.season].filter(
-				row => row.round === 0,
+			playoffSeries = genPlayoffSeries(
+				basketball,
+				options.season,
+				initialTeams,
 			);
-			const secondRound = basketball.playoffSeries[options.season].filter(
-				row => row.round === 1,
-			);
-
-			const firstRoundMatchups = [];
-			const firstRoundAbbrevs = new Set();
-
-			const genTeam = (
-				abbrev: string,
-				series: {
-					seeds: [number, number];
-				},
-				i: number,
-			) => {
-				firstRoundAbbrevs.add(abbrev);
-				const t = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
-				);
-				if (!t) {
-					throw new Error("Missing team");
-				}
-				const teamSeason = basketball.teamSeasons[options.season][abbrev];
-				if (!teamSeason) {
-					throw new Error("Missing teamSeason");
-				}
-				const winp = helpers.calcWinp(teamSeason);
-
-				return {
-					tid: t.tid,
-					cid: t.cid,
-					winp,
-					seed: series.seeds[i],
-					won: 0,
-				};
-			};
-
-			for (const series of firstRound) {
-				const teams = series.abbrevs.map((abbrev, i) =>
-					genTeam(abbrev, series, i),
-				);
-
-				let home;
-				let away;
-				if (
-					(teams[0].seed === teams[1].seed && teams[0].winp > teams[1].winp) ||
-					teams[0].seed < teams[1].seed
-				) {
-					home = teams[0];
-					away = teams[1];
-				} else {
-					home = teams[1];
-					away = teams[0];
-				}
-				firstRoundMatchups.push({ home, away });
-			}
-
-			for (const series of secondRound) {
-				for (let i = 0; i < series.abbrevs.length; i++) {
-					const abbrev = series.abbrevs[i];
-					if (!firstRoundAbbrevs.has(abbrev)) {
-						// Appears in second round but not first... must have been a bye
-						const home = genTeam(abbrev, series, i);
-						firstRoundMatchups.push({
-							home,
-						});
-					}
-				}
-			}
-			const numRounds = Math.log2(firstRoundMatchups.length);
-			const series = [];
-			for (let i = 0; i <= numRounds; i++) {
-				series.push([]);
-			}
-			series[0] = firstRoundMatchups;
-
-			playoffSeries = [
-				{
-					season: options.season,
-					currentRound: 0,
-					series,
-				},
-			];
 		}
 
 		if (options.phase >= PHASE.PLAYOFFS) {
@@ -613,7 +623,13 @@ const getLeague = async (options: GetLeagueOptions) => {
 					throw new Error("Missing teamSeason");
 				}
 
-				const teamSeason = team.genSeasonRow(t);
+				const teamSeason = team.genSeasonRow(
+					t,
+					undefined,
+					initialTeams.length,
+					options.season,
+					defaultGameAttributes.defaultStadiumCapacity,
+				);
 				const keys = [
 					"won",
 					"lost",

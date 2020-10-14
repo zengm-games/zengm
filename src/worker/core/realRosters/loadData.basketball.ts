@@ -21,7 +21,7 @@ export type Ratings = {
 	abbrev_if_new_row?: string;
 };
 
-type Basketball = {
+export type Basketball = {
 	awards: Record<
 		string,
 		| {

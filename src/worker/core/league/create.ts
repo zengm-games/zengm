@@ -788,7 +788,6 @@ export const createWithoutSaving = async (
 		? leagueFile.scheduledEvents
 		: [];
 
-	console.log(leagueData);
 	return Object.assign(leagueData, {
 		draftLotteryResults,
 		draftPicks,
@@ -904,10 +903,8 @@ const create = async ({
 
 	// orderBy is to ensure games is before schedule, so that games are added before schedule to the database, so Cache._maxIds.schedule can be set to Cache.maxIds.game, so gids never conflict
 	const orderedLeagueData = orderBy(Object.entries(leagueData), 0);
-	console.log(orderedLeagueData);
 
 	for (const [store, records] of orderedLeagueData) {
-		console.log(store, records);
 		if (store === "gameAttributes" || !Array.isArray(records)) {
 			continue;
 		}

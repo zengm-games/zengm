@@ -281,17 +281,7 @@ export const createWithoutSaving = async (
 			teamSeasons.push(teamSeason);
 		}
 
-		let teamStatsLocal: TeamStatsWithoutKey[];
-
-		if (teamInfo.stats) {
-			teamStatsLocal = teamInfo.stats;
-		} else if (!t.disabled && g.get("phase") <= PHASE.PLAYOFFS) {
-			teamStatsLocal = [
-				team.genStatsRow(t.tid, g.get("phase") === PHASE.PLAYOFFS),
-			];
-		} else {
-			teamStatsLocal = [];
-		}
+		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
 
 		for (const ts of teamStatsLocal) {
 			ts.tid = t.tid;

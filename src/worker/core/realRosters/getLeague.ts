@@ -152,6 +152,8 @@ const genPlayoffSeries = (
 
 	// Reorder to match expected BBGM format
 	if (season === 1947 || season === 1948 || season === 1950) {
+		// These ones are hardcoded because their byes are weird, not like normal BBGM byes, so their seeds don't match up.
+
 		let matchupsAbbrevs;
 		// One team from each matchup
 		if (season === 1947) {

@@ -1341,6 +1341,7 @@ export type GetLeagueOptions =
 	| {
 			type: "real";
 			season: number;
+			phase: number;
 			randomDebuts: boolean;
 	  }
 	| {

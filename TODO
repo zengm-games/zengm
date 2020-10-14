@@ -1,4 +1,11 @@
 start in any phase
+- expansion draft changes available teams
+- playoffs
+  - init playoffSeries object
+  - make sure team and player stats rows set correctly (init playoffs ones)
+  - set teamSeason.playoffRoundsWon
+  - test ordering of playoffSeries
+    - byes!
 
 trade stuff
 - better value of draft picks in new league

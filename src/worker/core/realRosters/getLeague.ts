@@ -9,7 +9,7 @@ import type {
 import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { helpers, random } from "../../util";
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { player } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 
@@ -480,6 +480,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
+		if (options.phase !== undefined && options.phase !== PHASE.PRESEASON) {
+			gameAttributes.push({ key: "phase", value: options.phase });
+		}
+
 		let draftPicks: DraftPickWithoutKey[] | undefined;
 		if (options.season === 2020 && !options.randomDebuts) {
 			draftPicks = helpers.deepCopy(basketball.draftPicks2020).map(dp => {
@@ -508,6 +512,96 @@ const getLeague = async (options: GetLeagueOptions) => {
 			});
 		}
 
+		let playoffSeries;
+		if (options.phase === PHASE.PLAYOFFS) {
+			// Look at first 2 rounds, to find any byes
+			const firstRound = basketball.playoffSeries[options.season].filter(
+				row => row.round === 0,
+			);
+			const secondRound = basketball.playoffSeries[options.season].filter(
+				row => row.round === 1,
+			);
+
+			const firstRoundMatchups = [];
+			const firstRoundAbbrevs = new Set();
+
+			const genTeam = (
+				abbrev: string,
+				series: {
+					seeds: [number, number];
+				},
+				i: number,
+			) => {
+				firstRoundAbbrevs.add(abbrev);
+				const t = initialTeams.find(
+					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
+				);
+				if (!t) {
+					throw new Error("Missing team");
+				}
+				const teamSeason = basketball.teamSeasons[options.season][abbrev];
+				if (!teamSeason) {
+					throw new Error("Missing teamSeason");
+				}
+				const winp = helpers.calcWinp(teamSeason);
+
+				return {
+					tid: t.tid,
+					cid: t.cid,
+					winp,
+					seed: series.seeds[i],
+					won: 0,
+				};
+			};
+
+			for (const series of firstRound) {
+				const teams = series.abbrevs.map((abbrev, i) =>
+					genTeam(abbrev, series, i),
+				);
+
+				let home;
+				let away;
+				if (
+					(teams[0].seed === teams[1].seed && teams[0].winp > teams[1].winp) ||
+					teams[0].seed < teams[1].seed
+				) {
+					home = teams[0];
+					away = teams[1];
+				} else {
+					home = teams[1];
+					away = teams[0];
+				}
+				firstRoundMatchups.push({ home, away });
+			}
+
+			for (const series of secondRound) {
+				for (let i = 0; i < series.abbrevs.length; i++) {
+					const abbrev = series.abbrevs[i];
+					if (!firstRoundAbbrevs.has(abbrev)) {
+						// Appears in second round but not first... must have been a bye
+						const home = genTeam(abbrev, series, i);
+						firstRoundMatchups.push({
+							home,
+						});
+					}
+				}
+			}
+			const numRounds = Math.log2(firstRoundMatchups.length);
+			const series = [];
+			for (let i = 0; i <= numRounds; i++) {
+				series.push([]);
+			}
+			series[0] = firstRoundMatchups;
+
+			playoffSeries = [
+				{
+					season: options.season,
+					currentRound: 0,
+					series,
+				},
+			];
+		}
+
 		return {
 			version: 37,
 			startingSeason: options.season,
@@ -516,6 +610,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			scheduledEvents,
 			gameAttributes,
 			draftPicks,
+			playoffSeries,
 		};
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;

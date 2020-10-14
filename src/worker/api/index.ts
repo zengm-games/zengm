@@ -70,6 +70,7 @@ import type {
 	TeamSeasonWithoutKey,
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
+	Phase,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
@@ -290,12 +291,21 @@ const createLeague = async ({
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
 }): Promise<number> => {
+	const keys = [...keptKeys, "version"];
+
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+
+		if (
+			getLeagueOptions.type === "real" &&
+			getLeagueOptions.phase >= PHASE.PLAYOFFS
+		) {
+			keys.push("playoffSeries");
+		}
 	}
 
 	const leagueFile: any = {};
-	for (const key of [...keptKeys, "version"]) {
+	for (const key of keys) {
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];
 		}
@@ -418,6 +428,7 @@ const createLeague = async ({
 		// Figure out what lid should be rather than using auto increment primary key, because when deleting leagues the primary key does not reset which can look weird
 		importLid = await getNewLeagueLid();
 	}
+	console.log(leagueFile);
 
 	const lid = await league.create({
 		name,

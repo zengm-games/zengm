@@ -81,6 +81,34 @@ type Basketball = {
 		season: number;
 	}[];
 	freeAgents: any[];
+	teamSeasons: Record<
+		number,
+		Record<
+			string,
+			{
+				abbrev: string;
+				won: number;
+				lost: number;
+				wonHome: number;
+				lostHome: number;
+				wonAway: number;
+				lostAway: number;
+				wonDiv: number;
+				lostDiv: number;
+				wonConf: number;
+				lostConf: number;
+			}
+		>
+	>;
+	playoffSeries: Record<
+		number,
+		{
+			round: number;
+			abbrevs: [string, string];
+			seeds: [number, number];
+			wons: [number, number];
+		}[]
+	>;
 };
 
 let cachedJSON: Basketball;

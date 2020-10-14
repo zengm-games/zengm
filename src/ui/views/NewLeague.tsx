@@ -8,7 +8,7 @@ import React, {
 	useReducer,
 	useEffect,
 } from "react";
-import { DIFFICULTY, applyRealTeamInfo } from "../../common";
+import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
@@ -255,6 +255,17 @@ const legends = [
 	},
 ];
 
+const phases = [
+	{
+		key: PHASE.PRESEASON,
+		value: "Preseason",
+	},
+	{
+		key: PHASE.PLAYOFFS,
+		value: "Playoffs",
+	},
+];
+
 const LeagueMenu = <T extends string>({
 	getLeagueInfo,
 	onDone,
@@ -364,6 +375,7 @@ type State = {
 	creating: boolean;
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
+	phase: number;
 	difficulty: number;
 	leagueFile: any;
 	legend: string;
@@ -403,6 +415,10 @@ type Action =
 	| {
 			type: "setDifficulty";
 			difficulty: string;
+	  }
+	| {
+			type: "setPhase";
+			phase: string;
 	  }
 	| {
 			type: "setKeptKeys";
@@ -520,6 +536,12 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				difficulty: parseFloat(action.difficulty),
+			};
+
+		case "setPhase":
+			return {
+				...state,
+				phase: parseInt(action.phase),
 			};
 
 		case "setKeptKeys":
@@ -754,6 +776,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
+				phase: PHASE.PLAYOFFS,
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",
@@ -835,6 +858,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					getLeagueOptions = {
 						type: "real",
 						season: state.season,
+						phase: state.phase,
 						randomDebuts: state.randomization === "debuts",
 					};
 				} else if (state.customize === "legends") {
@@ -917,6 +941,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.lid,
 			props.name,
 			state.noStartingInjuries,
+			state.phase,
 			state.randomization,
 			state.realPlayerDeterminism,
 			state.repeatSeason,
@@ -1298,28 +1323,50 @@ const NewLeague = (props: View<"newLeague">) => {
 					) : null}
 
 					{state.customize === "real" ? (
-						<div className="form-group">
-							<LeagueMenu
-								value={String(state.season)}
-								values={seasons}
-								getLeagueInfo={value =>
-									toWorker("main", "getLeagueInfo", {
-										type: "real",
-										season: parseInt(value),
-									})
-								}
-								onLoading={value => {
-									const season = parseInt(value);
-									dispatch({ type: "setSeason", season });
-								}}
-								onDone={handleNewLeagueInfo}
-								quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
-							/>
-							<div className="text-muted mt-1">
-								{state.season} in BBGM is the {state.season - 1}-
-								{String(state.season).slice(2)} season.
+						<>
+							<div className="form-group">
+								<LeagueMenu
+									value={String(state.season)}
+									values={seasons}
+									getLeagueInfo={value =>
+										toWorker("main", "getLeagueInfo", {
+											type: "real",
+											season: parseInt(value),
+										})
+									}
+									onLoading={value => {
+										const season = parseInt(value);
+										dispatch({ type: "setSeason", season });
+									}}
+									onDone={handleNewLeagueInfo}
+									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+								/>
+								<div className="text-muted mt-1">
+									{state.season} in BBGM is the {state.season - 1}-
+									{String(state.season).slice(2)} season.
+								</div>
 							</div>
-						</div>
+							<div className="form-group">
+								<label htmlFor="new-league-phase">Phase</label>
+								<select
+									id="new-league-phase"
+									className="form-control mb-1"
+									onChange={event => {
+										dispatch({
+											type: "setPhase",
+											phase: event.target.value,
+										});
+									}}
+									value={state.phase}
+								>
+									{phases.map(({ key, value }) => (
+										<option key={key} value={key}>
+											{value}
+										</option>
+									))}
+								</select>
+							</div>
+						</>
 					) : null}
 
 					{state.customize === "legends" ? (

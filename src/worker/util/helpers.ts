@@ -60,7 +60,7 @@ const calcWinp = ({
 	won,
 }: {
 	lost: number;
-	tied: any;
+	tied?: any;
 	won: number;
 }) => {
 	// Some old leagues had NaN for tied...

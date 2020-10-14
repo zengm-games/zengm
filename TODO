@@ -1,6 +1,7 @@
 start in any phase
 - expansion draft changes available teams
 - playoffs
+  - to assign team, use last team a player was with that season, not first
   - init playoffSeries object
   - make sure team and player stats rows set correctly (init playoffs ones)
   - set teamSeason.playoffRoundsWon

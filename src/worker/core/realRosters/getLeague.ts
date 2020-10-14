@@ -12,7 +12,7 @@ import { defaultGameAttributes, helpers, random } from "../../util";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
-import { idb } from "../../db";
+import genPlayoffSeeds from "../season/genPlayoffSeeds";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -66,7 +66,18 @@ const genPlayoffSeries = (
 		row => row.round === 1,
 	);
 
-	const firstRoundMatchups = [];
+	type MatchupTeam = {
+		tid: number;
+		cid: number;
+		winp: number;
+		seed: number;
+		won: number;
+	};
+
+	const firstRoundMatchups: {
+		home: MatchupTeam;
+		away?: MatchupTeam;
+	}[] = [];
 	const firstRoundAbbrevs = new Set();
 
 	const genTeam = (
@@ -129,11 +140,38 @@ const genPlayoffSeries = (
 		}
 	}
 	const numRounds = Math.log2(firstRoundMatchups.length);
-	const series = [];
+	const series: typeof firstRoundMatchups[] = [];
 	for (let i = 0; i <= numRounds; i++) {
 		series.push([]);
 	}
-	series[0] = firstRoundMatchups;
+
+	// Reorder to match expected BBGM format
+	if (season >= 1984) {
+		// Normal modern NBA - 2 conferences, 8 teams per conference
+		console.log(firstRoundMatchups);
+		const confSeeds = genPlayoffSeeds(8, 0);
+		const cids = [0, 1];
+		for (const cid of cids) {
+			const confMatchups = firstRoundMatchups.filter(
+				matchup => matchup.home.cid === cid,
+			);
+			for (const seeds of confSeeds) {
+				const matchup = confMatchups.find(
+					matchup =>
+						matchup.home.seed - 1 === seeds[0] ||
+						matchup.home.seed - 1 === seeds[1],
+				);
+				console.log(seeds, matchup);
+				if (matchup) {
+					series[0].push(matchup);
+				}
+			}
+		}
+		console.log(series[0]);
+	} else {
+		// Seeds were weird if you go back far enough, so do something like genPlayoffSeeds (start with champ and work back) but with actual playoff data
+		throw new Error("Not implemented yet");
+	}
 
 	return [
 		{

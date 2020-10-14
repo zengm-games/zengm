@@ -89,7 +89,7 @@ const genPlayoffSeries = (
 	) => {
 		firstRoundAbbrevs.add(abbrev);
 		const t = initialTeams.find(
-			t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
+			t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
 		);
 		if (!t) {
 			throw new Error("Missing team");
@@ -185,14 +185,8 @@ const genPlayoffSeries = (
 				}
 				throw new Error("Matchup not found");
 			}
-			console.log(
-				abbrev,
-				initialTeams.map(t => t.abbrev),
-				initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.abbrev)),
-			);
 			throw new Error("Team not found");
 		});
-		console.log(matchups);
 		series[0] = matchups;
 	} else {
 		const confSeeds = genPlayoffSeeds(numPlayoffTeams / 2, numPlayoffByes / 2);
@@ -284,7 +278,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		} else {
 			let draftTid;
 			const draftTeam = teams.find(
-				t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === bio.draftAbbrev,
+				t => oldAbbrevTo2020BBGMAbbrev(t.srID) === bio.draftAbbrev,
 			);
 			if (draftTeam) {
 				draftTid = draftTeam.tid;
@@ -318,16 +312,16 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (legends) {
 				const team = teams.find(t => {
 					if (hasQueens && abbrev === "NOL" && ratings.season < 2003) {
-						return oldAbbrevTo2020BBGMAbbrev(t.abbrev) === "CHA";
+						return oldAbbrevTo2020BBGMAbbrev(t.srID) === "CHA";
 					}
 
-					return oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev;
+					return oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev;
 				});
 				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
 				if (abbrev !== undefined) {
 					const t = teams.find(
-						t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
+						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
 					);
 					if (t) {
 						tid = t.tid;
@@ -660,13 +654,13 @@ const getLeague = async (options: GetLeagueOptions) => {
 		if (options.season === 2020 && !options.randomDebuts) {
 			draftPicks = helpers.deepCopy(basketball.draftPicks2020).map(dp => {
 				const t = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === dp.abbrev,
+					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
 				);
 				if (!t) {
 					throw new Error(`Team not found for draft pick abbrev ${dp.abbrev}`);
 				}
 				const t2 = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === dp.originalAbbrev,
+					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
 				);
 				if (!t2) {
 					throw new Error(
@@ -697,7 +691,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			for (const t of initialTeams) {
 				const teamSeasonData =
 					basketball.teamSeasons[options.season][
-						// MAYBE OTHER PLACES SHOULD BE srID TOO!
 						oldAbbrevTo2020BBGMAbbrev(t.srID)
 					];
 				if (!teamSeasonData) {

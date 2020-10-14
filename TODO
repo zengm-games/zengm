@@ -9,6 +9,7 @@ start in any phase
   - set teamSeason.playoffRoundsWon
   - test simming of playoffs
     - weird seasons like 1947, 1948, 1950
+  - get rid of genStatsRow in league.create, just make it dynamically
 
 trade stuff
 - better value of draft picks in new league

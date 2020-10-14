@@ -144,7 +144,6 @@ const genPlayoffSeries = (
 			}
 		}
 	}
-	console.log("firstRoundMatchups", firstRoundMatchups);
 	const numRounds = Math.log2(firstRoundMatchups.length);
 	const series: typeof firstRoundMatchups[] = [];
 	for (let i = 0; i <= numRounds; i++) {
@@ -201,7 +200,6 @@ const genPlayoffSeries = (
 						matchup.home.seed - 1 === seeds[0] ||
 						matchup.home.seed - 1 === seeds[1],
 				);
-				console.log(seeds, matchup);
 				if (matchup) {
 					series[0].push(matchup);
 				}

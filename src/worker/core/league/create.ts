@@ -285,8 +285,10 @@ export const createWithoutSaving = async (
 
 		if (teamInfo.stats) {
 			teamStatsLocal = teamInfo.stats;
-		} else if (!t.disabled) {
-			teamStatsLocal = [team.genStatsRow(t.tid)];
+		} else if (!t.disabled && g.get("phase") <= PHASE.PLAYOFFS) {
+			teamStatsLocal = [
+				team.genStatsRow(t.tid, g.get("phase") === PHASE.PLAYOFFS),
+			];
 		} else {
 			teamStatsLocal = [];
 		}

@@ -338,13 +338,6 @@ const play = async (
 
 			const tids = new Set<number>();
 
-			for (const matchup of schedule) {
-				tids.add(matchup.homeTid);
-				tids.add(matchup.awayTid);
-			}
-
-			const teams = await loadTeams(Array.from(tids)); // Play games
-
 			// Will loop through schedule and simulate all games
 			if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
 				// Sometimes the playoff schedule isn't made the day before, so make it now
@@ -352,6 +345,13 @@ const play = async (
 				await season.newSchedulePlayoffsDay();
 				schedule = await season.getSchedule(true);
 			}
+
+			for (const matchup of schedule) {
+				tids.add(matchup.homeTid);
+				tids.add(matchup.awayTid);
+			}
+
+			const teams = await loadTeams(Array.from(tids)); // Play games
 
 			await cbSimGames(schedule, teams, dayOver);
 		}

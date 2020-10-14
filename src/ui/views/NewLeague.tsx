@@ -7,6 +7,7 @@ import React, {
 	useRef,
 	useReducer,
 	useEffect,
+	ChangeEvent,
 } from "react";
 import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
@@ -273,6 +274,9 @@ const LeagueMenu = <T extends string>({
 	quickValues,
 	value,
 	values,
+	value2,
+	values2,
+	onNewValue2,
 }: {
 	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
 	onDone: (leagueInfo: any) => void;
@@ -280,6 +284,9 @@ const LeagueMenu = <T extends string>({
 	quickValues?: T[];
 	value: T;
 	values: { key: T; value: string }[];
+	value2: number;
+	values2: { key: number; value: string }[];
+	onNewValue2: (key: number) => void;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
@@ -353,6 +360,21 @@ const LeagueMenu = <T extends string>({
 						);
 					})}
 				</select>
+				{value2 !== undefined ? (
+					<select
+						className="form-control"
+						onChange={event => {
+							onNewValue2(parseInt(event.target.value));
+						}}
+						value={value2}
+					>
+						{values2.map(({ key, value }) => (
+							<option key={key} value={key}>
+								{value}
+							</option>
+						))}
+					</select>
+				) : null}
 				<div className="input-group-append">
 					<button
 						className="btn btn-secondary"
@@ -361,6 +383,12 @@ const LeagueMenu = <T extends string>({
 							const keys = values.map(v => v.key);
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
+
+							if (value2 !== undefined) {
+								const keys2 = values2.map(v => v.key);
+								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
+								onNewValue2(random2);
+							}
 						}}
 					>
 						Random
@@ -418,7 +446,7 @@ type Action =
 	  }
 	| {
 			type: "setPhase";
-			phase: string;
+			phase: number;
 	  }
 	| {
 			type: "setKeptKeys";
@@ -541,7 +569,7 @@ const reducer = (state: State, action: Action): State => {
 		case "setPhase":
 			return {
 				...state,
-				phase: parseInt(action.phase),
+				phase: action.phase,
 			};
 
 		case "setKeptKeys":
@@ -1340,31 +1368,19 @@ const NewLeague = (props: View<"newLeague">) => {
 									}}
 									onDone={handleNewLeagueInfo}
 									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+									value2={state.phase}
+									values2={phases}
+									onNewValue2={phase => {
+										dispatch({
+											type: "setPhase",
+											phase,
+										});
+									}}
 								/>
 								<div className="text-muted mt-1">
 									{state.season} in BBGM is the {state.season - 1}-
 									{String(state.season).slice(2)} season.
 								</div>
-							</div>
-							<div className="form-group">
-								<label htmlFor="new-league-phase">Phase</label>
-								<select
-									id="new-league-phase"
-									className="form-control mb-1"
-									onChange={event => {
-										dispatch({
-											type: "setPhase",
-											phase: event.target.value,
-										});
-									}}
-									value={state.phase}
-								>
-									{phases.map(({ key, value }) => (
-										<option key={key} value={key}>
-											{value}
-										</option>
-									))}
-								</select>
 							</div>
 						</>
 					) : null}

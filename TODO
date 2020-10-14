@@ -5,6 +5,7 @@ start in any phase
 - playoffs
   - add player stats, so awards work
     - advanced stats will require team stats too... sum up from players?
+    - maybe better for mvp (ha!) to not include stats and add them later
 - draft lottery
   - set
     - playoffRoundsWon
@@ -15,6 +16,8 @@ start in any phase
 - draft
   - set
     - draft lottery results
+- blog
+   -playoff rosters
 
 trade stuff
 - better value of draft picks in new league

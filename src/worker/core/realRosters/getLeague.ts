@@ -10,8 +10,9 @@ import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { helpers, random } from "../../util";
 import { PHASE, PLAYER } from "../../../common";
-import { player } from "..";
+import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
+import { idb } from "../../db";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -600,6 +601,54 @@ const getLeague = async (options: GetLeagueOptions) => {
 					series,
 				},
 			];
+		}
+
+		if (options.phase >= PHASE.PLAYOFFS) {
+			for (const t of initialTeams) {
+				const teamSeasonData =
+					basketball.teamSeasons[options.season][
+						oldAbbrevTo2020BBGMAbbrev(t.abbrev)
+					];
+				if (!teamSeasonData) {
+					throw new Error("Missing teamSeason");
+				}
+
+				const teamSeason = team.genSeasonRow(t);
+				const keys = [
+					"won",
+					"lost",
+					"wonHome",
+					"lostHome",
+					"wonAway",
+					"lostAway",
+					"wonDiv",
+					"lostDiv",
+					"wonConf",
+					"lostConf",
+				] as const;
+				for (const key of keys) {
+					teamSeason[key] = teamSeasonData[key];
+				}
+
+				if (playoffSeries) {
+					if (options.phase === PHASE.PLAYOFFS) {
+						const firstRoundMatchups = playoffSeries[0].series[0];
+						for (const matchup of firstRoundMatchups) {
+							if (
+								(matchup.away && matchup.away.tid === t.tid) ||
+								matchup.home.tid === t.tid
+							) {
+								teamSeason.playoffRoundsWon = 0;
+								teamSeason.clinchedPlayoffs = "x";
+							}
+						}
+					} else {
+						throw new Error("Add number of playoff rounds won");
+					}
+				}
+
+				(t as any).seasons = [teamSeason];
+			}
 		}
 
 		return {

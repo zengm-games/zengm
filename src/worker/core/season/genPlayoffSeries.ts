@@ -130,7 +130,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 			throw new Error("Not enough teams for playoffs");
 		}
 
-		const seeds = genSeeds(numPlayoffTeams, numPlayoffByes);
+		const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
 		series[0] = seeds.map(matchup => {
 			const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
 			const away =

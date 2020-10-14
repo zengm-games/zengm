@@ -5,7 +5,16 @@ start in any phase
 - playoffs
   - add player stats, so awards work
     - advanced stats will require team stats too... sum up from players?
-  - to assign team, use last team a player was with that season, not first
+- draft lottery
+  - set
+    - playoffRoundsWon
+    - awards
+    - playoffSeries full results
+    - playoff stats
+    - traded draft picks
+- draft
+  - set
+    - draft lottery results
 
 trade stuff
 - better value of draft picks in new league

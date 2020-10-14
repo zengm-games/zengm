@@ -70,7 +70,6 @@ import type {
 	TeamSeasonWithoutKey,
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
-	Phase,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
@@ -428,7 +427,6 @@ const createLeague = async ({
 		// Figure out what lid should be rather than using auto increment primary key, because when deleting leagues the primary key does not reset which can look weird
 		importLid = await getNewLeagueLid();
 	}
-	console.log(leagueFile);
 
 	const lid = await league.create({
 		name,
@@ -437,6 +435,7 @@ const createLeague = async ({
 		shuffleRosters,
 		difficulty,
 		importLid,
+		forceAutoSort: !!getLeagueOptions,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created

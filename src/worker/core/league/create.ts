@@ -807,6 +807,7 @@ const create = async ({
 	shuffleRosters = false,
 	difficulty = 0,
 	importLid,
+	forceAutoSort,
 }: {
 	name: string;
 	tid: number;
@@ -814,6 +815,7 @@ const create = async ({
 	shuffleRosters?: boolean;
 	difficulty?: number;
 	importLid?: number | undefined | null;
+	forceAutoSort: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
 		name,
@@ -981,7 +983,7 @@ const create = async ({
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
 		: false;
 
-	if (!skipNewPhase) {
+	if (!skipNewPhase || forceAutoSort) {
 		await updatePhase();
 		await updateStatus("Idle");
 

@@ -6,16 +6,20 @@ start in any phase
   - add player stats, so awards work
     - advanced stats will require team stats too... sum up from players?
     - maybe better for mvp (ha!) to not include stats and add them later
-- draft lottery
+- draft
   - set
     - playoffRoundsWon
     - awards
     - playoffSeries full results
     - playoff stats
     - traded draft picks
-- draft
+    - draft picks with order
+      - only keep first 2 rounds
+      - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
+- after draft
   - set
-    - draft lottery results
+    - disable for 2020
+    - use all rounds, not just first 2. any entry in draftPicks with a slug
 - scheduledEvents
   - generate with current season, process if past phase... expansion draft too?
 - blog

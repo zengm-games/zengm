@@ -73,13 +73,16 @@ export type Basketball = {
 	}[];
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
-	draftPicks2020: {
-		abbrev: string;
-		originalAbbrev: string;
-		round: number;
-		pick: number;
-		season: number;
-	}[];
+	draftPicks: Record<
+		number,
+		{
+			abbrev: string;
+			originalAbbrev?: string;
+			round: number;
+			pick: number;
+			slug?: string;
+		}[]
+	>;
 	freeAgents: any[];
 	teamSeasons: Record<
 		number,

@@ -1307,6 +1307,25 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
+	const expansionSeasons = [
+		1947,
+		1948,
+		1949,
+		1961,
+		1966,
+		1967,
+		1968,
+		1970,
+		1974,
+		1976,
+		1980,
+		1988,
+		1989,
+		1995,
+		2004,
+	];
+	const invalidSeasonPhaseExpansion = expansionSeasons.includes(state.season);
+
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 			{props.lid !== undefined ? (
@@ -1380,10 +1399,17 @@ const NewLeague = (props: View<"newLeague">) => {
 										});
 									}}
 								/>
-								<div className="text-muted mt-1">
-									{state.season} in BBGM is the {state.season - 1}-
-									{String(state.season).slice(2)} season.
-								</div>
+								{invalidSeasonPhaseExpansion ? (
+									<div className="text-danger mt-1">
+										Starting after the playoffs is not yet supported for seasons
+										with expansion drafts.
+									</div>
+								) : (
+									<div className="text-muted mt-1">
+										{state.season} in BBGM is the {state.season - 1}-
+										{String(state.season).slice(2)} season.
+									</div>
+								)}
 							</div>
 						</>
 					) : null}
@@ -1545,7 +1571,11 @@ const NewLeague = (props: View<"newLeague">) => {
 						<button
 							type="submit"
 							className="btn btn-lg btn-primary mt-3"
-							disabled={state.creating || disableWhileLoadingLeagueFile}
+							disabled={
+								state.creating ||
+								disableWhileLoadingLeagueFile ||
+								invalidSeasonPhaseExpansion
+							}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}
 						</button>

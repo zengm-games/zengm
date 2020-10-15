@@ -1,30 +1,30 @@
 auto play broken in 1955?
 
 start in any phase
-- expansion draft changes available teams
-- regular season, not preseason - can i make this the default for new leagues?
-- playoffs
-  - add player stats, so awards work
-    - what about if you start after playoffs and some players have already retired?
-    - advanced stats will require team stats too... sum up from players?
-    - maybe better for mvp (ha!) to not include stats and add them later
 - draft
-  - start in 1948 draft: "Team not found for draft pick abbrev IND" - because of expansion draft
-  - set
-    - draft picks with order
-      - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
-    - anything else from newPhase functions?
-      - newPhaseBeforeDraft has some stuff, would be nice to include, but careful about that draft.genOrder call
+  - newPhaseBeforeDraft
+    - give awards to championship team
+      - needs to be done before my code in getLeague that retires players!
 - after draft
   - set
     - disable for 2020
     - use all rounds, not just first 2. any entry in draftPicks with a slug
 - scheduledEvents
   - generate with current season, process if past phase... expansion draft too?
+    - ignoring expansion draft for now... are there other non-preseason ones to handle?
+- later
+  - start before expansion draft
+  - start before draft lottery
+  - support starting after playoffs even if there is an expansion draft
+    - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
+    - expansion team should be selectable
+  - add player stats if phase after regular season
+    - advanced stats will require team stats too... sum up from players?
 - blog
    - playoff rosters
    - no stats yet
    - describe each of the phase options
+     - no starting after playoffs for expansion draft
    - makes sense to hire GM before draft
 
 trade stuff

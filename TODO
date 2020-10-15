@@ -13,9 +13,7 @@ start in any phase
     - retired players
     - awards
     - draft picks with order
-      - dupe team/round picks getting deleted (like 1984 pick 1-10)
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
-      - are they going to get messed up by genPicks?
     - anything else from newPhase functions?
       - newPhaseBeforeDraft has some stuff, would be nice to include, but careful about that draft.genOrder call
 - after draft
@@ -27,6 +25,7 @@ start in any phase
 - blog
    - playoff rosters
    - no stats yet
+   - describe each of the phase options
 
 trade stuff
 - better value of draft picks in new league

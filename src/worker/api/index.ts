@@ -435,7 +435,7 @@ const createLeague = async ({
 		shuffleRosters,
 		difficulty,
 		importLid,
-		forceAutoSort: !!getLeagueOptions,
+		realPlayers: !!getLeagueOptions,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created

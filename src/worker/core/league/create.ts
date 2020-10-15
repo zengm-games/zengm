@@ -184,7 +184,6 @@ export const createWithoutSaving = async (
 			}
 		}
 	}
-	console.log("league.create draftPicks", draftPicks);
 
 	// Import of legacy draftOrder data
 	if (
@@ -808,7 +807,7 @@ const create = async ({
 	shuffleRosters = false,
 	difficulty = 0,
 	importLid,
-	forceAutoSort,
+	realPlayers,
 }: {
 	name: string;
 	tid: number;
@@ -816,7 +815,7 @@ const create = async ({
 	shuffleRosters?: boolean;
 	difficulty?: number;
 	importLid?: number | undefined | null;
-	forceAutoSort?: boolean;
+	realPlayers?: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
 		name,
@@ -984,7 +983,7 @@ const create = async ({
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
 		: false;
 
-	if (!skipNewPhase || forceAutoSort) {
+	if (!skipNewPhase || realPlayers) {
 		await updatePhase();
 		await updateStatus("Idle");
 
@@ -1007,7 +1006,9 @@ const create = async ({
 		}
 	}
 
-	await draft.genPicks();
+	await draft.genPicks({
+		realPlayers,
+	});
 
 	if (!leagueFile.events || leagueFile.events.length === 0) {
 		await logEvent({

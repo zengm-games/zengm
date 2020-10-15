@@ -14,7 +14,6 @@ import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
-import phase from "../phase";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {

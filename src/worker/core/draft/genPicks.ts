@@ -47,7 +47,14 @@ const doSeason = async (
 	}
 };
 
-const genPicks = async (afterDraft?: true) => {
+// realPlayes means the picks came from a real players roster, in which case we don't want to apply this normalization because some historical drafts were weird (or were normal and we don't know originalTid). Only current year, currently.
+const genPicks = async ({
+	afterDraft,
+	realPlayers,
+}: {
+	afterDraft?: boolean;
+	realPlayers?: boolean;
+} = {}) => {
 	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
 	const existingPicks: (DraftPick & {
 		keep?: boolean;
@@ -67,7 +74,9 @@ const genPicks = async (afterDraft?: true) => {
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
-		await doSeason(draftYear, existingPicks);
+		if (realPlayers && draftYear === g.get("season")) {
+			await doSeason(draftYear, existingPicks);
+		}
 	}
 
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
@@ -79,6 +88,12 @@ const genPicks = async (afterDraft?: true) => {
 	} else if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
 		for (const existingPick of existingPicks) {
 			if (existingPick.season === "expansion") {
+				existingPick.keep = true;
+			}
+		}
+	} else if (realPlayers) {
+		for (const existingPick of existingPicks) {
+			if (existingPick.season === g.get("season")) {
 				existingPick.keep = true;
 			}
 		}

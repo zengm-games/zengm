@@ -4,7 +4,9 @@ import { g } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
-	await draft.genPicks(true);
+	await draft.genPicks({
+		afterDraft: true,
+	});
 
 	// Delete any old draft picks
 	const draftPicks = await idb.cache.draftPicks.getAll();

@@ -11,7 +11,6 @@ start in any phase
   - start in 1948 draft: "Team not found for draft pick abbrev IND" - because of expansion draft
   - set
     - retired players
-    - awards
     - draft picks with order
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
     - anything else from newPhase functions?

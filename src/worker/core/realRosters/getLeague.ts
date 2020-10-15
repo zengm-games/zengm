@@ -444,9 +444,17 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			const allAwards = basketball.awards[slug];
 
+			const awardsCustoffSeason =
+				options.type === "real" &&
+				options.phase !== undefined &&
+				options.phase > PHASE.PLAYOFFS
+					? season + 1
+					: season;
 			awards =
 				allAwards && !draftProspect
-					? helpers.deepCopy(allAwards.filter(award => award.season < season))
+					? helpers.deepCopy(
+							allAwards.filter(award => award.season < awardsCustoffSeason),
+					  )
 					: undefined;
 		}
 

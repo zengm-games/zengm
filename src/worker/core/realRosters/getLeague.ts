@@ -56,9 +56,12 @@ const nerfDraftProspect = (ratings: {
 
 const genPlayoffSeries = (
 	basketball: Basketball,
-	season: number,
 	initialTeams: ReturnType<typeof formatScheduledEvents>["initialTeams"],
+	season: number,
+	phase: number,
 ) => {
+	const saveAllResults = phase > PHASE.PLAYOFFS;
+
 	// Look at first 2 rounds, to find any byes
 	const firstRound = basketball.playoffSeries[season].filter(
 		row => row.round === 0,
@@ -83,9 +86,7 @@ const genPlayoffSeries = (
 
 	const genTeam = (
 		abbrev: string,
-		series: {
-			seeds: [number, number];
-		},
+		series: typeof basketball.playoffSeries[number][number],
 		i: number,
 	) => {
 		firstRoundAbbrevs.add(abbrev);
@@ -106,7 +107,7 @@ const genPlayoffSeries = (
 			cid: t.cid,
 			winp,
 			seed: series.seeds[i],
-			won: 0,
+			won: saveAllResults ? series.wons[i] : 0,
 		};
 	};
 
@@ -706,15 +707,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		let playoffSeries;
-		if (options.phase === PHASE.PLAYOFFS) {
+		if (options.phase >= PHASE.PLAYOFFS) {
 			playoffSeries = genPlayoffSeries(
 				basketball,
-				options.season,
 				initialTeams,
+				options.season,
+				options.phase,
 			);
-		}
 
-		if (options.phase >= PHASE.PLAYOFFS) {
 			for (const t of initialTeams) {
 				const teamSeasonData =
 					basketball.teamSeasons[options.season][
@@ -747,20 +747,21 @@ const getLeague = async (options: GetLeagueOptions) => {
 					teamSeason[key] = teamSeasonData[key];
 				}
 
-				if (playoffSeries) {
-					if (options.phase === PHASE.PLAYOFFS) {
-						const firstRoundMatchups = playoffSeries[0].series[0];
-						for (const matchup of firstRoundMatchups) {
-							if (
-								(matchup.away && matchup.away.tid === t.tid) ||
-								matchup.home.tid === t.tid
-							) {
-								teamSeason.playoffRoundsWon = 0;
+				for (let i = 0; i < playoffSeries[0].series.length; i++) {
+					const round = playoffSeries[0].series[i];
+					for (const matchup of round) {
+						if (
+							(matchup.away && matchup.away.tid === t.tid) ||
+							matchup.home.tid === t.tid
+						) {
+							if (i === 0) {
 								teamSeason.clinchedPlayoffs = "x";
 							}
+							if (i === 0 || options.phase > PHASE.PLAYOFFS) {
+								// Only record the first round, if this is the playoffs phase
+								teamSeason.playoffRoundsWon = i;
+							}
 						}
-					} else {
-						throw new Error("Add number of playoff rounds won");
 					}
 				}
 

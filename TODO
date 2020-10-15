@@ -9,6 +9,7 @@ start in any phase
 - draft
   - set
     - playoffRoundsWon
+      - should be good, but confirm after adding full playoffSeries data
     - awards
     - playoffSeries full results
     - playoff stats

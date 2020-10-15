@@ -8,16 +8,15 @@ start in any phase
     - maybe better for mvp (ha!) to not include stats and add them later
 - draft
   - set
-    - playoffRoundsWon
-      - should be good, but confirm after adding full playoffSeries data
+    - standings not coming through?
+      - because of `stats && ((output as never) as any).stats === undefined`
+      - need something like showNoStats from playersPlus
+    - power rankings broken, same reason?
     - awards
-    - playoffSeries full results
-    - playoff stats
-    - traded draft picks
     - draft picks with order
       - only keep first 2 rounds
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
-      - are they doing to get messed up by genPicks?
+      - are they going to get messed up by genPicks?
       - add order to alexnoob picks for 2020
       - set all picks to 0 if phase < DRAFT or if season > current
     - draftlottery marked as done

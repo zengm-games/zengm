@@ -111,7 +111,7 @@ const genPlayoffSeries = (
 		};
 	};
 
-	for (const series of firstRound) {
+	const genHomeAway = (series: typeof firstRound[number]) => {
 		const teams = series.abbrevs.map((abbrev, i) => genTeam(abbrev, series, i));
 
 		let home;
@@ -126,7 +126,12 @@ const genPlayoffSeries = (
 			home = teams[1];
 			away = teams[0];
 		}
-		firstRoundMatchups.push({ home, away });
+
+		return { home, away };
+	};
+
+	for (const series of firstRound) {
+		firstRoundMatchups.push(genHomeAway(series));
 	}
 
 	let numPlayoffTeams = 2 * firstRoundMatchups.length;
@@ -211,10 +216,39 @@ const genPlayoffSeries = (
 		}
 	}
 
+	// If necessary, add matchups for rounds after the first round
+	if (saveAllResults) {
+		for (let i = 1; i <= numRounds; i++) {
+			const currentRound = series[i];
+			const matchups = basketball.playoffSeries[season]
+				.filter(row => row.round === i)
+				.map(genHomeAway);
+
+			// Iterate over every other game, and find the matchup in the next round that contains one of the teams in that game. This ensures order of the bracket is maintained.
+			const previousRound = series[i - 1];
+			for (let i = 0; i < previousRound.length; i += 2) {
+				const { away, home } = previousRound[i];
+				const previousTids = [home.tid];
+				if (away) {
+					previousTids.push(away.tid);
+				}
+				const currentMatchup = matchups.find(
+					matchup =>
+						previousTids.includes(matchup.home.tid) ||
+						previousTids.includes(matchup.away.tid),
+				);
+				if (!currentMatchup) {
+					throw new Error("Matchup not found");
+				}
+				currentRound.push(currentMatchup);
+			}
+		}
+	}
+
 	return [
 		{
 			season,
-			currentRound: 0,
+			currentRound: saveAllResults ? numRounds - 1 : 0,
 			series,
 		},
 	];
@@ -761,6 +795,19 @@ const getLeague = async (options: GetLeagueOptions) => {
 								// Only record the first round, if this is the playoffs phase
 								teamSeason.playoffRoundsWon = i;
 							}
+						}
+					}
+				}
+
+				// Find who actually won title
+				if (options.phase > PHASE.PLAYOFFS) {
+					const { home, away } = playoffSeries[0].series[
+						playoffSeries[0].series.length - 1
+					][0];
+					if (away) {
+						const champ = (home.won > away.won ? home : away).tid;
+						if (teamSeason.tid === champ) {
+							teamSeason.playoffRoundsWon += 1;
 						}
 					}
 				}

@@ -299,7 +299,7 @@ const createLeague = async ({
 			getLeagueOptions.type === "real" &&
 			getLeagueOptions.phase >= PHASE.PLAYOFFS
 		) {
-			keys.push("playoffSeries", "draftLotteryResults");
+			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
 		}
 	}
 

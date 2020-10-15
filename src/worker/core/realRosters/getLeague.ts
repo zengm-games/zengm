@@ -739,7 +739,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 						tid: t.tid,
 						originalTid: t2.tid,
 						round: dp.round,
-						pick: includeRealizedDraftPicksThisSeason ? dp.pick : 0,
+						pick:
+							includeRealizedDraftPicksThisSeason && dp.pick !== undefined
+								? dp.pick
+								: 0,
 						season: dp.season ?? options.season,
 					};
 				});

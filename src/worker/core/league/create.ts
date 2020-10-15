@@ -184,6 +184,7 @@ export const createWithoutSaving = async (
 			}
 		}
 	}
+	console.log("league.create draftPicks", draftPicks);
 
 	// Import of legacy draftOrder data
 	if (

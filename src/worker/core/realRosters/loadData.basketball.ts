@@ -78,7 +78,7 @@ export type Basketball = {
 		{
 			abbrev: string;
 			round: number;
-			pick: number;
+			pick?: number;
 
 			// Would be nice to have all these, but we don't, so just assume it's same as abbrev then
 			originalAbbrev?: string;

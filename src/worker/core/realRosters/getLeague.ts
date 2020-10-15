@@ -703,44 +703,48 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
-		if (options.phase !== undefined && options.phase !== PHASE.PRESEASON) {
+		if (options.phase !== PHASE.PRESEASON) {
 			gameAttributes.push({ key: "phase", value: options.phase });
 		}
+
+		const getDraftPickTeams = (
+			dp: Basketball["draftPicks"][number][number],
+		) => {
+			const t = initialTeams.find(
+				t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
+			);
+			if (!t) {
+				throw new Error(`Team not found for draft pick abbrev ${dp.abbrev}`);
+			}
+
+			let t2;
+			if (dp.originalAbbrev) {
+				t2 = initialTeams.find(
+					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
+				);
+				if (!t2) {
+					throw new Error(
+						`Team not found for draft pick abbrev ${dp.originalAbbrev}`,
+					);
+				}
+			} else {
+				t2 = t;
+			}
+
+			return [t, t2];
+		};
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
 		let draftLotteryResults: DraftLotteryResult[] | undefined;
 		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
 		const includeDraftPicks2020AndFuture =
 			options.season === 2020 && !options.randomDebuts;
-		const includeRealizedDraftPicksThisSeason =
-			options.phase !== undefined && options.phase === PHASE.DRAFT;
+		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
-			draftPicks = helpers
-				.deepCopy(basketball.draftPicks[options.season])
+			draftPicks = basketball.draftPicks[options.season]
 				.filter(dp => dp.round <= 2)
 				.map(dp => {
-					const t = initialTeams.find(
-						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
-					);
-					if (!t) {
-						throw new Error(
-							`Team not found for draft pick abbrev ${dp.abbrev}`,
-						);
-					}
-
-					let t2;
-					if (dp.originalAbbrev) {
-						t2 = initialTeams.find(
-							t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
-						);
-						if (!t2) {
-							throw new Error(
-								`Team not found for draft pick abbrev ${dp.originalAbbrev}`,
-							);
-						}
-					} else {
-						t2 = t;
-					}
+					const [t, t2] = getDraftPickTeams(dp);
 
 					return {
 						tid: t.tid,
@@ -868,6 +872,34 @@ const getLeague = async (options: GetLeagueOptions) => {
 					p.tid = PLAYER.RETIRED;
 					(p as any).retiredYear = options.season;
 				}
+			}
+		}
+
+		// Assign drafted players to their teams
+		if (options.phase > PHASE.DRAFT) {
+			for (const dp of basketball.draftPicks[options.season]) {
+				if (!dp.slug) {
+					continue;
+				}
+
+				const p = players.find(p => p.srID === dp.slug);
+				if (!p) {
+					throw new Error("Player not found");
+				}
+				if (dp.pick === undefined) {
+					throw new Error("No pick number");
+				}
+
+				const [t, t2] = getDraftPickTeams(dp);
+
+				p.tid = t.tid;
+				p.draft = {
+					round: dp.round,
+					pick: dp.pick,
+					tid: t.tid,
+					year: options.season,
+					originalTid: t2.tid,
+				};
 			}
 		}
 

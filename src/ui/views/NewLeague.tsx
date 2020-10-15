@@ -799,6 +799,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (Number.isNaN(season)) {
 				season = 2020;
 			}
+			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
+			if (Number.isNaN(phase)) {
+				phase = season === 2020 ? PHASE.DRAFT : PHASE.PRESEASON;
+			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
 				leagueFile,
@@ -811,7 +815,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
-				phase: PHASE.AFTER_DRAFT,
+				phase,
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",
@@ -946,6 +950,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 				if (state.customize === "real") {
 					safeLocalStorage.setItem("prevSeason", String(state.season));
+					safeLocalStorage.setItem("prevPhase", String(state.phase));
 				}
 			} catch (err) {
 				dispatch({

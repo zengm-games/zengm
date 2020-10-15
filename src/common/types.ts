@@ -127,10 +127,12 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: Exclude<
-		DraftType,
-		"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
-	>;
+	draftType?:
+		| Exclude<
+				DraftType,
+				"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
+		  >
+		| "dummy";
 	result: DraftLotteryResultArray;
 };
 

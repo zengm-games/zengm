@@ -7,6 +7,7 @@ import type {
 	DraftLotteryResultArray,
 	ViewInput,
 	DraftType,
+	DraftLotteryResult,
 } from "../../common/types";
 
 const updateDraftLottery = async (
@@ -16,7 +17,7 @@ const updateDraftLottery = async (
 ): Promise<{
 	challengeWarning?: boolean;
 	notEnoughTeams?: boolean;
-	draftType?: DraftType;
+	draftType?: DraftType | "dummy";
 	result: DraftLotteryResultArray | undefined;
 	season: number;
 	showExpansionTeamMessage: boolean;
@@ -58,7 +59,7 @@ const updateDraftLottery = async (
 					? draftLotteryResult.result
 					: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
 
-				let draftType: DraftType | undefined;
+				let draftType: DraftLotteryResult["draftType"] | undefined;
 
 				if (draftLotteryResult) {
 					draftType = draftLotteryResult.draftType || "nba1994";

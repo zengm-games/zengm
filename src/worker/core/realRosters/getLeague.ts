@@ -5,6 +5,7 @@ import type {
 	GetLeagueOptions,
 	Relative,
 	DraftPickWithoutKey,
+	DraftLotteryResult,
 } from "../../../common/types";
 import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
@@ -700,6 +701,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
+		let draftLotteryResults: DraftLotteryResult[] | undefined;
 		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
 		const includeDraftPicks2020AndFuture =
 			options.season === 2020 && !options.randomDebuts;
@@ -740,6 +742,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 						season: dp.season ?? options.season,
 					};
 				});
+		}
+		if (includeRealizedDraftPicksThisSeason) {
+			draftLotteryResults = [
+				{
+					season: options.season,
+					draftType: "dummy",
+					result: [],
+				},
+			];
 		}
 
 		let playoffSeries;
@@ -826,6 +837,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			scheduledEvents,
 			gameAttributes,
 			draftPicks,
+			draftLotteryResults,
 			playoffSeries,
 		};
 	} else if (options.type === "legends") {

@@ -5,12 +5,12 @@ start in any phase
 - regular season, not preseason - can i make this the default for new leagues?
 - playoffs
   - add player stats, so awards work
+    - what about if you start after playoffs and some players have already retired?
     - advanced stats will require team stats too... sum up from players?
     - maybe better for mvp (ha!) to not include stats and add them later
 - draft
   - start in 1948 draft: "Team not found for draft pick abbrev IND" - because of expansion draft
   - set
-    - retired players
     - draft picks with order
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
     - anything else from newPhase functions?
@@ -25,6 +25,7 @@ start in any phase
    - playoff rosters
    - no stats yet
    - describe each of the phase options
+   - makes sense to hire GM before draft
 
 trade stuff
 - better value of draft picks in new league

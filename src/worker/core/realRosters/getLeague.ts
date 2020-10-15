@@ -549,6 +549,24 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}),
 			);
 
+		// Skip 2020 because we don't have 2021 data yet!
+		if (options.phase > PHASE.PLAYOFFS && options.season < 2020) {
+			// Make players as retired - don't delete, so we have full season stats and awards
+			const nextSeasonSlugs = new Set();
+			for (const row of basketball.ratings) {
+				if (row.season === options.season + 1) {
+					nextSeasonSlugs.add(row.slug);
+				}
+			}
+
+			for (const p of players) {
+				if (!nextSeasonSlugs.has(p.srID)) {
+					p.tid = PLAYER.RETIRED;
+					(p as any).retiredYear = options.season;
+				}
+			}
+		}
+
 		// Free agents were generated in 2020, so offset
 		const numExistingFreeAgents = players.filter(
 			p => p.tid === PLAYER.FREE_AGENT,

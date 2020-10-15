@@ -710,6 +710,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = helpers
 				.deepCopy(basketball.draftPicks[options.season])
+				.filter(dp => dp.round <= 2)
 				.map(dp => {
 					const t = initialTeams.find(
 						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,

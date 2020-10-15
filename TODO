@@ -12,7 +12,6 @@ start in any phase
   - set
     - awards
     - draft picks with order
-      - only keep first 2 rounds
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
       - are they going to get messed up by genPicks?
     - anything else from newPhase functions?

@@ -549,24 +549,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}),
 			);
 
-		// Skip 2020 because we don't have 2021 data yet!
-		if (options.phase > PHASE.PLAYOFFS && options.season < 2020) {
-			// Make players as retired - don't delete, so we have full season stats and awards
-			const nextSeasonSlugs = new Set();
-			for (const row of basketball.ratings) {
-				if (row.season === options.season + 1) {
-					nextSeasonSlugs.add(row.slug);
-				}
-			}
-
-			for (const p of players) {
-				if (!nextSeasonSlugs.has(p.srID)) {
-					p.tid = PLAYER.RETIRED;
-					(p as any).retiredYear = options.season;
-				}
-			}
-		}
-
 		// Free agents were generated in 2020, so offset
 		const numExistingFreeAgents = players.filter(
 			p => p.tid === PLAYER.FREE_AGENT,
@@ -850,11 +832,42 @@ const getLeague = async (options: GetLeagueOptions) => {
 						const champ = (home.won > away.won ? home : away).tid;
 						if (teamSeason.tid === champ) {
 							teamSeason.playoffRoundsWon += 1;
+
+							// Give players awards
+							const champPlayers = players.filter(p => p.tid === champ);
+							for (const p of champPlayers) {
+								if (!p.awards) {
+									p.awards = [];
+								}
+								p.awards.push({
+									season: options.season,
+									type: "Won Championship",
+								});
+							}
 						}
 					}
 				}
 
 				(t as any).seasons = [teamSeason];
+			}
+		}
+
+		// Make players as retired - don't delete, so we have full season stats and awards.
+		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
+		// Skip 2020 because we don't have 2021 data yet!
+		if (options.phase > PHASE.PLAYOFFS && options.season < 2020) {
+			const nextSeasonSlugs = new Set();
+			for (const row of basketball.ratings) {
+				if (row.season === options.season + 1) {
+					nextSeasonSlugs.add(row.slug);
+				}
+			}
+
+			for (const p of players) {
+				if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
+					p.tid = PLAYER.RETIRED;
+					(p as any).retiredYear = options.season;
+				}
 			}
 		}
 

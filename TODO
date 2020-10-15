@@ -1,10 +1,6 @@
 auto play broken in 1955?
 
 start in any phase
-- draft
-  - newPhaseBeforeDraft
-    - give awards to championship team
-      - needs to be done before my code in getLeague that retires players!
 - after draft
   - set
     - disable for 2020

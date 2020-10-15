@@ -16,6 +16,10 @@ start in any phase
     - draft picks with order
       - only keep first 2 rounds
       - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
+      - are they doing to get messed up by genPicks?
+      - add order to alexnoob picks for 2020
+      - set all picks to 0 if phase < DRAFT or if season > current
+    - draftlottery marked as done
 - after draft
   - set
     - disable for 2020

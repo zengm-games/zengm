@@ -264,6 +264,10 @@ const phases = [
 		key: PHASE.PLAYOFFS,
 		value: "Playoffs",
 	},
+	{
+		key: PHASE.DRAFT,
+		value: "Draft",
+	},
 ];
 
 const LeagueMenu = <T extends string>({
@@ -803,7 +807,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
-				phase: PHASE.PLAYOFFS,
+				phase: PHASE.DRAFT,
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",

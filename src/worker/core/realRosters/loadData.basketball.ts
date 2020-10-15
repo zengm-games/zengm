@@ -77,10 +77,17 @@ export type Basketball = {
 		number,
 		{
 			abbrev: string;
-			originalAbbrev?: string;
 			round: number;
 			pick: number;
+
+			// Would be nice to have all these, but we don't, so just assume it's same as abbrev then
+			originalAbbrev?: string;
+
+			// If a player was drafted with this pick
 			slug?: string;
+
+			// Only for the hardcoded current season picks
+			season?: number;
 		}[]
 	>;
 	freeAgents: any[];

@@ -13,6 +13,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
+import phase from "../phase";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -664,31 +665,44 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
-		if (options.season === 2020 && !options.randomDebuts) {
-			draftPicks = helpers.deepCopy(basketball.draftPicks2020).map(dp => {
-				const t = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
-				);
-				if (!t) {
-					throw new Error(`Team not found for draft pick abbrev ${dp.abbrev}`);
-				}
-				const t2 = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
-				);
-				if (!t2) {
-					throw new Error(
-						`Team not found for draft pick abbrev ${dp.originalAbbrev}`,
+		if (
+			(options.season === 2020 && !options.randomDebuts) ||
+			(options.phase !== undefined && options.phase === PHASE.DRAFT)
+		) {
+			draftPicks = helpers
+				.deepCopy(basketball.draftPicks[options.season])
+				.map(dp => {
+					const t = initialTeams.find(
+						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
 					);
-				}
+					if (!t) {
+						throw new Error(
+							`Team not found for draft pick abbrev ${dp.abbrev}`,
+						);
+					}
 
-				return {
-					tid: t.tid,
-					originalTid: t2.tid,
-					round: dp.round,
-					pick: dp.pick,
-					season: dp.season,
-				};
-			});
+					let t2;
+					if (dp.originalAbbrev) {
+						t2 = initialTeams.find(
+							t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
+						);
+						if (!t2) {
+							throw new Error(
+								`Team not found for draft pick abbrev ${dp.originalAbbrev}`,
+							);
+						}
+					} else {
+						t2 = t;
+					}
+
+					return {
+						tid: t.tid,
+						originalTid: t2.tid,
+						round: dp.round,
+						pick: dp.pick,
+						season: dp.season ?? options.season,
+					};
+				});
 		}
 
 		let playoffSeries;

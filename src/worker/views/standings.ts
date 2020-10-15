@@ -56,6 +56,7 @@ const updateStandings = async (
 					],
 					stats: ["pts", "oppPts", "mov"],
 					season: inputs.season,
+					showNoStats: true,
 				}),
 				inputs.season,
 			)

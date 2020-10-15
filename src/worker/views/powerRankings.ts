@@ -44,6 +44,7 @@ const updatePowerRankings = async (
 			],
 			stats: ["gp", "mov"],
 			season,
+			showNoStats: true,
 		});
 
 		// Calculate team ovr ratings

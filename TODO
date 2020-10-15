@@ -2,16 +2,14 @@ auto play broken in 1955?
 
 start in any phase
 - expansion draft changes available teams
+- regular season, not preseason - can i make this the default for new leagues?
 - playoffs
   - add player stats, so awards work
     - advanced stats will require team stats too... sum up from players?
     - maybe better for mvp (ha!) to not include stats and add them later
 - draft
+  - start in 1948 draft: "Team not found for draft pick abbrev IND"
   - set
-    - standings not coming through?
-      - because of `stats && ((output as never) as any).stats === undefined`
-      - need something like showNoStats from playersPlus
-    - power rankings broken, same reason?
     - awards
     - draft picks with order
       - only keep first 2 rounds
@@ -20,6 +18,7 @@ start in any phase
       - add order to alexnoob picks for 2020
       - set all picks to 0 if phase < DRAFT or if season > current
     - draftlottery marked as done
+    - anything else from newPhase functions?
 - after draft
   - set
     - disable for 2020

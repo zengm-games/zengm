@@ -222,6 +222,7 @@ const processStats = async <
 	regularSeason: boolean,
 	statType: TeamStatType,
 	addDummySeason: boolean,
+	showNoStats: boolean,
 	season?: Season,
 ) => {
 	let teamStats;
@@ -274,7 +275,7 @@ const processStats = async <
 	// Handle playoffs/regularSeason
 	teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
 
-	if (teamStats.length === 0 && addDummySeason) {
+	if (teamStats.length === 0 && (addDummySeason || showNoStats)) {
 		teamStats.push({});
 	}
 
@@ -308,6 +309,7 @@ const processTeam = async <
 		regularSeason,
 		statType,
 		addDummySeason,
+		showNoStats,
 	}: {
 		season?: number;
 		attrs?: Attrs;
@@ -317,6 +319,7 @@ const processTeam = async <
 		regularSeason: boolean;
 		statType: TeamStatType;
 		addDummySeason: boolean;
+		showNoStats: boolean;
 	},
 ) => {
 	// @ts-ignore
@@ -347,6 +350,7 @@ const processTeam = async <
 				regularSeason,
 				statType,
 				addDummySeason,
+				showNoStats,
 				season,
 			),
 		);
@@ -382,6 +386,7 @@ const processTeam = async <
  * @param {boolean=} options.regularSeason Boolean representing whether to return playoff stats or not; default is false.
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @param {boolean=} options.addDummySeason If season is specified, should we return data for this team if it is missing a TeamStats or TeamSeasons entry?
+ * @param {boolean=} options.showNoStats If season is specified, should we return data for this team if it is missing a TeamStats entry, but has a TeamSeason entry? Since TeamStats is now lazily created, this is needed to return anything in preseason or regular season before games are played.
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 async function getCopies<
@@ -400,6 +405,7 @@ async function getCopies<
 	statType = "perGame",
 	addDummySeason = false,
 	active,
+	showNoStats = false,
 }: {
 	tid?: number;
 	season?: Season;
@@ -411,6 +417,7 @@ async function getCopies<
 	statType?: TeamStatType;
 	addDummySeason?: boolean;
 	active?: true;
+	showNoStats?: boolean;
 } = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>[]> {
 	const options = {
 		season,
@@ -421,6 +428,7 @@ async function getCopies<
 		regularSeason,
 		statType,
 		addDummySeason,
+		showNoStats,
 	};
 
 	if (tid === undefined) {

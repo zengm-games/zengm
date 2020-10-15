@@ -1,8 +1,13 @@
 import orderBy from "lodash/orderBy";
 import { helpers } from "../../util";
 import type { ScheduledEventWithoutKey } from "../../../common/types";
+import { PHASE } from "../../../common";
 
-const processGameAttributes = (events: any[], season: number) => {
+const processGameAttributes = (
+	events: any[],
+	season: number,
+	phase: number,
+) => {
 	let gameAttributeEvents = [];
 
 	for (const event of events) {
@@ -18,7 +23,7 @@ const processGameAttributes = (events: any[], season: number) => {
 	for (const event of gameAttributeEvents) {
 		if (
 			(event.season === season + 1 ||
-				(event.season === season && event.phase > 0)) &&
+				(event.season === season && event.phase > phase)) &&
 			initialGameAttributes === undefined
 		) {
 			initialGameAttributes = helpers.deepCopy(prevState);
@@ -41,7 +46,7 @@ const processGameAttributes = (events: any[], season: number) => {
 		gameAttributeEvents.filter(
 			event =>
 				(event.season > season ||
-					(event.season === season && event.phase > 0)) &&
+					(event.season === season && event.phase > phase)) &&
 				Object.keys(event.info).length > 0,
 		),
 	);
@@ -49,7 +54,11 @@ const processGameAttributes = (events: any[], season: number) => {
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
-const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
+const processTeams = (
+	events: ScheduledEventWithoutKey[],
+	season: number,
+	phase: number,
+) => {
 	let teamEvents = [];
 
 	for (const event of events) {
@@ -79,7 +88,8 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 	let prevState: any[] = [];
 	for (const event of teamEvents) {
 		if (
-			(event.season > season || (event.season === season && event.phase > 0)) &&
+			(event.season > season ||
+				(event.season === season && event.phase > phase)) &&
 			// @ts-ignore
 			initialTeams === undefined
 		) {
@@ -198,7 +208,11 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 	return { teamEvents, initialTeams };
 };
 
-const formatScheduledEvents = (events: any[], season: number) => {
+const formatScheduledEvents = (
+	events: any[],
+	season: number,
+	phase: number = PHASE.PRESEASON,
+) => {
 	for (const event of events) {
 		if (
 			event.type !== "gameAttributes" &&
@@ -215,9 +229,14 @@ const formatScheduledEvents = (events: any[], season: number) => {
 	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
 		eventsSorted,
 		season,
+		phase,
 	);
 
-	const { teamEvents, initialTeams } = processTeams(eventsSorted, season);
+	const { teamEvents, initialTeams } = processTeams(
+		eventsSorted,
+		season,
+		phase,
+	);
 
 	return {
 		scheduledEvents: [...gameAttributeEvents, ...teamEvents],

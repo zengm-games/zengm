@@ -1,9 +1,6 @@
 auto play broken in 1955?
 
 start in any phase
-- scheduledEvents
-  - generate with current season, process if past phase... expansion draft too?
-    - ignoring expansion draft for now... are there other non-preseason ones to handle?
 - later
   - start before expansion draft
   - start before draft lottery

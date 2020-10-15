@@ -539,7 +539,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 			scheduledEvents,
 			initialGameAttributes,
 			initialTeams,
-		} = formatScheduledEvents(scheduledEventsAll, options.season);
+		} = formatScheduledEvents(
+			scheduledEventsAll,
+			options.season,
+			options.phase,
+		);
 
 		const players = basketball.ratings
 			.filter(row => row.season === options.season)

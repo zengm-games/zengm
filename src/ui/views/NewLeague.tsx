@@ -268,6 +268,10 @@ const phases = [
 		key: PHASE.DRAFT,
 		value: "Draft",
 	},
+	{
+		key: PHASE.AFTER_DRAFT,
+		value: "After Draft",
+	},
 ];
 
 const LeagueMenu = <T extends string>({
@@ -807,7 +811,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
-				phase: PHASE.DRAFT,
+				phase: PHASE.AFTER_DRAFT,
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",
@@ -1324,7 +1328,15 @@ const NewLeague = (props: View<"newLeague">) => {
 		1995,
 		2004,
 	];
-	const invalidSeasonPhaseExpansion = expansionSeasons.includes(state.season);
+	let invalidSeasonPhaseMessage: string | undefined;
+	if (state.phase >= PHASE.DRAFT && expansionSeasons.includes(state.season)) {
+		invalidSeasonPhaseMessage =
+			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
+	}
+	if (state.season === 2020 && state.phase > PHASE.DRAFT) {
+		invalidSeasonPhaseMessage =
+			"Sorry, I'm not allowed to share the 2020 draft results until after they broadcast the draft on TV.";
+	}
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -1399,10 +1411,9 @@ const NewLeague = (props: View<"newLeague">) => {
 										});
 									}}
 								/>
-								{invalidSeasonPhaseExpansion ? (
+								{invalidSeasonPhaseMessage ? (
 									<div className="text-danger mt-1">
-										Starting after the playoffs is not yet supported for seasons
-										with expansion drafts.
+										{invalidSeasonPhaseMessage}
 									</div>
 								) : (
 									<div className="text-muted mt-1">
@@ -1574,7 +1585,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							disabled={
 								state.creating ||
 								disableWhileLoadingLeagueFile ||
-								invalidSeasonPhaseExpansion
+								!!invalidSeasonPhaseMessage
 							}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}

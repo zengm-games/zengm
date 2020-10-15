@@ -1,6 +1,8 @@
 auto play broken in 1955?
 
 start in any phase
+- remember selected phase, not just season, from new league page
+  - default to 2020 draft
 - after draft
   - set
     - disable for 2020

@@ -700,10 +700,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
-		if (
-			(options.season === 2020 && !options.randomDebuts) ||
-			(options.phase !== undefined && options.phase === PHASE.DRAFT)
-		) {
+		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
+		const includeDraftPicks2020AndFuture =
+			options.season === 2020 && !options.randomDebuts;
+		const includeRealizedDraftPicksThisSeason =
+			options.phase !== undefined && options.phase === PHASE.DRAFT;
+		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = helpers
 				.deepCopy(basketball.draftPicks[options.season])
 				.map(dp => {
@@ -734,7 +736,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						tid: t.tid,
 						originalTid: t2.tid,
 						round: dp.round,
-						pick: dp.pick,
+						pick: includeRealizedDraftPicksThisSeason ? dp.pick : 0,
 						season: dp.season ?? options.season,
 					};
 				});

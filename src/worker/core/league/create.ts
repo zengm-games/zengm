@@ -245,7 +245,10 @@ export const createWithoutSaving = async (
 					"colors",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
-					if (teamSeason[key] === undefined) {
+					if (
+						teamSeason[key] === undefined ||
+						teamSeason.season === g.get("season")
+					) {
 						// @ts-ignore
 						teamSeason[key] = t[key];
 					}

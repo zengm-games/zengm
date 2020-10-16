@@ -3,8 +3,6 @@ auto play broken in 1955?
 start in any phase
 - bugs
   - Team info from options is forgotten when I load in, but it does change to what it should be when I sim to the next year
-  - Try to start in 1950 or 1953 before/after draft you get this error.: "Missing team"
-    - Happens when generating playoff series, because initialTeams does not include contracted teams. Need to change that so initialTeams always is calculated from phase 0, and then also handle the contraction.
 - later
   - start before expansion draft
   - start before draft lottery

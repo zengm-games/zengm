@@ -82,6 +82,7 @@ const processTeams = (
 		tid: number;
 		cid: number;
 		did: number;
+		disabled?: boolean;
 	}[];
 
 	// Keep track of initial teams
@@ -111,19 +112,25 @@ const processTeams = (
 				...t,
 			};
 		} else if (event.type === "contraction") {
-			let found = false;
-			prevState = prevState.filter(t => {
-				if (t.tid === event.info.tid) {
-					found = true;
-					return false;
+			if (event.season === season && event.phase <= phase) {
+				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs.
+				const t = prevState.find(t => t.tid === event.info.tid);
+				t.disabled = true;
+			} else {
+				let found = false;
+				prevState = prevState.filter(t => {
+					if (t.tid === event.info.tid) {
+						found = true;
+						return false;
+					}
+					return true;
+				});
+				if (!found) {
+					console.log(event);
+					throw new Error(
+						`Contraction of team that doesn't exist, tid ${event.info.tid}`,
+					);
 				}
-				return true;
-			});
-			if (!found) {
-				console.log(event);
-				throw new Error(
-					`Contraction of team that doesn't exist, tid ${event.info.tid}`,
-				);
 			}
 		}
 	}

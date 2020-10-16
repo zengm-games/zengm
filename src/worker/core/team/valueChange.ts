@@ -137,14 +137,20 @@ const getPickNumber = (dp: DraftPick, season: number) => {
 		const temp = cache.estPicks[dp.originalTid];
 		estPick = temp !== undefined ? temp : g.get("numActiveTeams") / 2;
 
-		// For future draft picks, add some uncertainty. Weighted average of estPicks and numTeams/2
+		const usersPick = dp.originalTid === g.get("userTid");
+
+		// For future draft picks, add some uncertainty.
+		const regressionTarget =
+			(usersPick ? 0.75 : 0.25) * g.get("numActiveTeams");
+
+		// Never let this improve the future projection of user's picks
 		const seasons = helpers.bound(season - g.get("season"), 0, 5);
+		// Weighted average of estPicks and regressionTarget
 		estPick = Math.round(
-			(estPick * (5 - seasons)) / 5 +
-				((g.get("numActiveTeams") / 2) * seasons) / 5,
+			(estPick * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5,
 		);
 
-		if (dp.originalTid === g.get("userTid")) {
+		if (usersPick) {
 			// Penalty for user draft picks
 			const difficultyFactor = 1 + 1.5 * g.get("difficulty");
 			estPick = helpers.bound(
@@ -303,17 +309,17 @@ const sumValues = (
 		} else if (strategy === "contending") {
 			// Much of the value for these players comes from potential, which we don't really care about
 			if (p.draftPick !== undefined) {
-				playerValue *= 0.7;
+				playerValue *= 0.775;
 			} else if (p.age <= 19) {
-				playerValue *= 0.725;
-			} else if (p.age === 20) {
-				playerValue *= 0.75;
-			} else if (p.age === 21) {
 				playerValue *= 0.8;
-			} else if (p.age === 22) {
+			} else if (p.age === 20) {
+				playerValue *= 0.825;
+			} else if (p.age === 21) {
 				playerValue *= 0.85;
+			} else if (p.age === 22) {
+				playerValue *= 0.875;
 			} else if (p.age === 23) {
-				playerValue *= 0.9;
+				playerValue *= 0.925;
 			} else if (p.age === 24) {
 				playerValue *= 0.95;
 			}

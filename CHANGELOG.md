@@ -4,6 +4,8 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * BETA: Start current or historical "real players" leagues at different times during the season: preseason, playoffs, draft, or after draft.
 
+* BETA: Updates to the 2020 BBGM rosters.
+
 * BETA: Some improvements to the trade AI, particularly related to how it values draft picks. [[1]](https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/) [[2]](https://old.reddit.com/r/Football_GM/comments/ja60au/want_to_test_some_improvements_to_the_trade_ai/)
 
 * 2020-10-05: Added a trade deadline, which is customizable in the God Mode options. [[1]](https://basketball-gm.com/blog/2020/10/trade-deadline/) [[2]](https://old.reddit.com/r/BasketballGM/comments/j5tgfk/added_a_trade_deadline_which_is_customizable_in/)

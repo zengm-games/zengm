@@ -336,10 +336,8 @@
       var supportsSpread = function () {
         try {
           eval("const x={a:1}; const y={...x};");
-console.log("MODERN");
           return true;
         } catch (err) {
-console.log("LEGACY");
           return false;
         }
       };

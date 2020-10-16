@@ -3,6 +3,7 @@ auto play broken in 1955?
 start in any phase
 - start any real players league
   - teams only have their current season draft picks, no future ones
+- get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
 - later
   - start before expansion draft
   - start before draft lottery

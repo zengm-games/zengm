@@ -74,9 +74,7 @@ const genPicks = async ({
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
-		if (!realPlayers || draftYear === g.get("season")) {
-			await doSeason(draftYear, existingPicks);
-		}
+		await doSeason(draftYear, existingPicks);
 	}
 
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {

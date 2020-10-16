@@ -309,7 +309,7 @@ const sumValues = (
 		} else if (strategy === "contending") {
 			// Much of the value for these players comes from potential, which we don't really care about
 			if (p.draftPick !== undefined) {
-				playerValue *= 0.775;
+				playerValue *= 0.825;
 			} else if (p.age <= 19) {
 				playerValue *= 0.8;
 			} else if (p.age === 20) {

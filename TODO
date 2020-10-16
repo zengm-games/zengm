@@ -1,9 +1,12 @@
 auto play broken in 1955?
 
 start in any phase
+- check if genPicks is now adding extra picks where there should be gaps
 - use playoff data to assign championship awards
-- get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+  - do this in make-json, so replace getLeague code for current season
 - later
+  - get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+    - need to improve LeagueMenu so fetching leagueInfo depends on both season and phase forms
   - start before expansion draft
   - start before draft lottery
   - support starting after playoffs even if there is an expansion draft
@@ -19,7 +22,6 @@ start in any phase
    - makes sense to hire GM before draft
 
 trade stuff
-- better value of draft picks in new league
 - flag to make fudge factor not apply for ai-ai trades
 - more penalty for bad contracts
 

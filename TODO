@@ -1,7 +1,10 @@
 auto play broken in 1955?
 
 start in any phase
-- injuries should heal some amount
+- bugs
+  - Team info from options is forgotten when I load in, but it does change to what it should be when I sim to the next year
+  - Try to start in 1950 or 1953 before/after draft you get this error.: "Missing team"
+    - contracted teams drafted players. they should be filtered out when generating the JSON
 - later
   - start before expansion draft
   - start before draft lottery

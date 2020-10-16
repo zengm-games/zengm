@@ -907,6 +907,13 @@ const NewLeague = (props: View<"newLeague">) => {
 					};
 				}
 
+				const teamRegionName = getTeamRegionName(state.teams, state.tid);
+				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
+				if (state.customize === "real") {
+					safeLocalStorage.setItem("prevSeason", String(state.season));
+					safeLocalStorage.setItem("prevPhase", String(state.phase));
+				}
+
 				const lid = await toWorker("main", "createLeague", {
 					name,
 					tid: state.tid,
@@ -935,7 +942,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (type === "legends") {
 					type = String(state.legend);
 				}
-				const teamRegionName = getTeamRegionName(state.teams, state.tid);
 				if (window.enableLogging && window.gtag) {
 					window.gtag("event", "new_league", {
 						event_category: type,
@@ -945,13 +951,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 
 				realtimeUpdate([], `/l/${lid}`);
-
-				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
-
-				if (state.customize === "real") {
-					safeLocalStorage.setItem("prevSeason", String(state.season));
-					safeLocalStorage.setItem("prevPhase", String(state.phase));
-				}
 			} catch (err) {
 				dispatch({
 					type: "error",

@@ -47,7 +47,7 @@ const doSeason = async (
 	}
 };
 
-// realPlayes means the picks came from a real players roster, in which case we don't want to apply this normalization because some historical drafts were weird (or were normal and we don't know originalTid). Only current year, currently.
+// realPlayers means the picks came from a real players roster, in which case we don't want to apply this normalization because some historical drafts were weird (or were normal and we don't know originalTid). Only current year, currently. The bulk of this work is done by ongoingDraft above, not by this realPlayers option, which may not actually do anything now! Could be useful if more seasons are included in the future.
 const genPicks = async ({
 	afterDraft,
 	realPlayers,

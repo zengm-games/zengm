@@ -867,18 +867,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 						const champ = (home.won > away.won ? home : away).tid;
 						if (teamSeason.tid === champ) {
 							teamSeason.playoffRoundsWon += 1;
-
-							// Give players awards
-							const champPlayers = players.filter(p => p.tid === champ);
-							for (const p of champPlayers) {
-								if (!p.awards) {
-									p.awards = [];
-								}
-								p.awards.push({
-									season: options.season,
-									type: "Won Championship",
-								});
-							}
 						}
 					}
 				}

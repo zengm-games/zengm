@@ -2,9 +2,11 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* BETA: Start current or historical "real players" leagues at different times during the season: preseason, playoffs, draft, or after draft.
+* BETA: Start current or historical real players leagues at different times during the season: preseason, playoffs, draft, or after draft.
 
 * BETA: Updates to the 2020 BBGM rosters.
+
+* DEV: Added "Won Championship" entries to player awards for past seasons in real players leagues.
 
 * BETA: Some improvements to the trade AI, particularly related to how it values draft picks. [[1]](https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/) [[2]](https://old.reddit.com/r/Football_GM/comments/ja60au/want_to_test_some_improvements_to_the_trade_ai/)
 

@@ -553,6 +553,33 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}),
 			);
 
+		// Heal injuries, if necessary
+		let gamesToHeal = 0;
+		if (options.phase >= PHASE.PLAYOFFS) {
+			// Regular season
+			gamesToHeal +=
+				initialGameAttributes.numGames ?? defaultGameAttributes.numGames;
+		}
+		if (options.phase >= PHASE.DRAFT) {
+			// Offseason
+			gamesToHeal += defaultGameAttributes.numGames;
+		}
+		if (gamesToHeal > 0) {
+			for (const p of players) {
+				if (!p.injury) {
+					continue;
+				}
+				if (p.injury.gamesRemaining <= gamesToHeal) {
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
+				} else {
+					p.injury.gamesRemaining -= gamesToHeal;
+				}
+			}
+		}
+
 		// Free agents were generated in 2020, so offset
 		const numExistingFreeAgents = players.filter(
 			p => p.tid === PLAYER.FREE_AGENT,

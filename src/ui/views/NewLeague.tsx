@@ -8,7 +8,7 @@ import React, {
 	useReducer,
 	useEffect,
 } from "react";
-import { DIFFICULTY, applyRealTeamInfo } from "../../common";
+import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
@@ -255,6 +255,25 @@ const legends = [
 	},
 ];
 
+const phases = [
+	{
+		key: PHASE.PRESEASON,
+		value: "Preseason",
+	},
+	{
+		key: PHASE.PLAYOFFS,
+		value: "Playoffs",
+	},
+	{
+		key: PHASE.DRAFT,
+		value: "Draft",
+	},
+	{
+		key: PHASE.AFTER_DRAFT,
+		value: "After draft",
+	},
+];
+
 const LeagueMenu = <T extends string>({
 	getLeagueInfo,
 	onDone,
@@ -262,6 +281,9 @@ const LeagueMenu = <T extends string>({
 	quickValues,
 	value,
 	values,
+	value2,
+	values2,
+	onNewValue2,
 }: {
 	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
 	onDone: (leagueInfo: any) => void;
@@ -269,6 +291,9 @@ const LeagueMenu = <T extends string>({
 	quickValues?: T[];
 	value: T;
 	values: { key: T; value: string }[];
+	value2?: number;
+	values2?: { key: number; value: string }[];
+	onNewValue2?: (key: number) => void;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
@@ -342,6 +367,21 @@ const LeagueMenu = <T extends string>({
 						);
 					})}
 				</select>
+				{value2 !== undefined && values2 && onNewValue2 ? (
+					<select
+						className="form-control"
+						onChange={event => {
+							onNewValue2(parseInt(event.target.value));
+						}}
+						value={value2}
+					>
+						{values2.map(({ key, value }) => (
+							<option key={key} value={key}>
+								{value}
+							</option>
+						))}
+					</select>
+				) : null}
 				<div className="input-group-append">
 					<button
 						className="btn btn-secondary"
@@ -350,6 +390,12 @@ const LeagueMenu = <T extends string>({
 							const keys = values.map(v => v.key);
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
+
+							if (value2 !== undefined && values2 && onNewValue2) {
+								const keys2 = values2.map(v => v.key);
+								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
+								onNewValue2(random2);
+							}
 						}}
 					>
 						Random
@@ -364,6 +410,7 @@ type State = {
 	creating: boolean;
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
+	phase: number;
 	difficulty: number;
 	leagueFile: any;
 	legend: string;
@@ -403,6 +450,10 @@ type Action =
 	| {
 			type: "setDifficulty";
 			difficulty: string;
+	  }
+	| {
+			type: "setPhase";
+			phase: number;
 	  }
 	| {
 			type: "setKeptKeys";
@@ -520,6 +571,12 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				difficulty: parseFloat(action.difficulty),
+			};
+
+		case "setPhase":
+			return {
+				...state,
+				phase: action.phase,
 			};
 
 		case "setKeptKeys":
@@ -742,6 +799,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (Number.isNaN(season)) {
 				season = 2020;
 			}
+			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
+			if (Number.isNaN(phase)) {
+				phase = season === 2020 ? PHASE.DRAFT : PHASE.PRESEASON;
+			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
 				leagueFile,
@@ -754,6 +815,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
+				phase,
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",
@@ -835,6 +897,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					getLeagueOptions = {
 						type: "real",
 						season: state.season,
+						phase: state.phase,
 						randomDebuts: state.randomization === "debuts",
 					};
 				} else if (state.customize === "legends") {
@@ -842,6 +905,13 @@ const NewLeague = (props: View<"newLeague">) => {
 						type: "legends",
 						decade: state.legend as any,
 					};
+				}
+
+				const teamRegionName = getTeamRegionName(state.teams, state.tid);
+				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
+				if (state.customize === "real") {
+					safeLocalStorage.setItem("prevSeason", String(state.season));
+					safeLocalStorage.setItem("prevPhase", String(state.phase));
 				}
 
 				const lid = await toWorker("main", "createLeague", {
@@ -872,7 +942,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (type === "legends") {
 					type = String(state.legend);
 				}
-				const teamRegionName = getTeamRegionName(state.teams, state.tid);
 				if (window.enableLogging && window.gtag) {
 					window.gtag("event", "new_league", {
 						event_category: type,
@@ -882,12 +951,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 
 				realtimeUpdate([], `/l/${lid}`);
-
-				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
-
-				if (state.customize === "real") {
-					safeLocalStorage.setItem("prevSeason", String(state.season));
-				}
 			} catch (err) {
 				dispatch({
 					type: "error",
@@ -917,6 +980,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.lid,
 			props.name,
 			state.noStartingInjuries,
+			state.phase,
 			state.randomization,
 			state.realPlayerDeterminism,
 			state.repeatSeason,
@@ -1251,6 +1315,33 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
+	const expansionSeasons = [
+		1947,
+		1948,
+		1949,
+		1961,
+		1966,
+		1967,
+		1968,
+		1970,
+		1974,
+		1976,
+		1980,
+		1988,
+		1989,
+		1995,
+		2004,
+	];
+	let invalidSeasonPhaseMessage: string | undefined;
+	if (state.phase >= PHASE.DRAFT && expansionSeasons.includes(state.season)) {
+		invalidSeasonPhaseMessage =
+			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
+	}
+	if (state.season === 2020 && state.phase > PHASE.DRAFT) {
+		invalidSeasonPhaseMessage =
+			"Sorry, I'm not allowed to share the 2020 draft results until after they broadcast the draft on TV.";
+	}
+
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 			{props.lid !== undefined ? (
@@ -1298,28 +1389,44 @@ const NewLeague = (props: View<"newLeague">) => {
 					) : null}
 
 					{state.customize === "real" ? (
-						<div className="form-group">
-							<LeagueMenu
-								value={String(state.season)}
-								values={seasons}
-								getLeagueInfo={value =>
-									toWorker("main", "getLeagueInfo", {
-										type: "real",
-										season: parseInt(value),
-									})
-								}
-								onLoading={value => {
-									const season = parseInt(value);
-									dispatch({ type: "setSeason", season });
-								}}
-								onDone={handleNewLeagueInfo}
-								quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
-							/>
-							<div className="text-muted mt-1">
-								{state.season} in BBGM is the {state.season - 1}-
-								{String(state.season).slice(2)} season.
+						<>
+							<div className="form-group">
+								<LeagueMenu
+									value={String(state.season)}
+									values={seasons}
+									getLeagueInfo={value =>
+										toWorker("main", "getLeagueInfo", {
+											type: "real",
+											season: parseInt(value),
+										})
+									}
+									onLoading={value => {
+										const season = parseInt(value);
+										dispatch({ type: "setSeason", season });
+									}}
+									onDone={handleNewLeagueInfo}
+									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+									value2={state.phase}
+									values2={phases}
+									onNewValue2={phase => {
+										dispatch({
+											type: "setPhase",
+											phase,
+										});
+									}}
+								/>
+								{invalidSeasonPhaseMessage ? (
+									<div className="text-danger mt-1">
+										{invalidSeasonPhaseMessage}
+									</div>
+								) : (
+									<div className="text-muted mt-1">
+										{state.season} in BBGM is the {state.season - 1}-
+										{String(state.season).slice(2)} season.
+									</div>
+								)}
 							</div>
-						</div>
+						</>
 					) : null}
 
 					{state.customize === "legends" ? (
@@ -1479,7 +1586,11 @@ const NewLeague = (props: View<"newLeague">) => {
 						<button
 							type="submit"
 							className="btn btn-lg btn-primary mt-3"
-							disabled={state.creating || disableWhileLoadingLeagueFile}
+							disabled={
+								state.creating ||
+								disableWhileLoadingLeagueFile ||
+								!!invalidSeasonPhaseMessage
+							}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}
 						</button>

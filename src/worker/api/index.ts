@@ -290,17 +290,21 @@ const createLeague = async ({
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
 }): Promise<number> => {
+	const keys = [...keptKeys, "version"];
+
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+
+		if (
+			getLeagueOptions.type === "real" &&
+			getLeagueOptions.phase >= PHASE.PLAYOFFS
+		) {
+			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+		}
 	}
 
 	const leagueFile: any = {};
-	console.log(
-		leagueFile.startingSeason,
-		actualStartingSeason,
-		leagueFile.gameAttributes,
-	);
-	for (const key of [...keptKeys, "version"]) {
+	for (const key of keys) {
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];
 		}
@@ -431,6 +435,7 @@ const createLeague = async ({
 		shuffleRosters,
 		difficulty,
 		importLid,
+		realPlayers: !!getLeagueOptions,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created

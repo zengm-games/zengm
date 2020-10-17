@@ -34,6 +34,7 @@ import sign from "./sign";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import stats from "./stats";
+import updateOvrMeanStd from "./updateOvrMeanStd";
 import updateValues from "./updateValues";
 import value from "./value";
 
@@ -74,6 +75,7 @@ export default {
 	shouldRetire,
 	skills,
 	stats,
+	updateOvrMeanStd,
 	updateValues,
 	value,
 };

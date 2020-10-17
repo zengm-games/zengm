@@ -83,8 +83,8 @@ describe("worker/core/league/create", () => {
 		assert.strictEqual(leagueData.teamSeasons.length, g.get("numActiveTeams"));
 	});
 
-	test("initialize teamStats object store", async () => {
-		assert.strictEqual(leagueData.teamStats.length, g.get("numActiveTeams"));
+	test("lazily initialize teamStats object store", async () => {
+		assert.strictEqual(leagueData.teamStats.length, 0);
 	});
 
 	test("initialize trade object store", async () => {

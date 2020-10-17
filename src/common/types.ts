@@ -127,10 +127,12 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: Exclude<
-		DraftType,
-		"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
-	>;
+	draftType?:
+		| Exclude<
+				DraftType,
+				"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
+		  >
+		| "dummy";
 	result: DraftLotteryResultArray;
 };
 
@@ -988,8 +990,9 @@ export type Local = {
 		| undefined;
 	phaseText: string;
 	playerBioInfo?: PlayerBioInfoProcessed;
-	playerOvrMean?: number;
-	playerOvrStd?: number;
+	playerOvrMean: number;
+	playerOvrStd: number;
+	playerOvrMeanStdStale: boolean;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
@@ -1340,6 +1343,7 @@ export type GetLeagueOptions =
 	| {
 			type: "real";
 			season: number;
+			phase: number;
 			randomDebuts: boolean;
 	  }
 	| {

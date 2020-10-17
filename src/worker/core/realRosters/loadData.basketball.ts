@@ -21,7 +21,7 @@ export type Ratings = {
 	abbrev_if_new_row?: string;
 };
 
-type Basketball = {
+export type Basketball = {
 	awards: Record<
 		string,
 		| {
@@ -73,14 +73,52 @@ type Basketball = {
 	}[];
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
-	draftPicks2020: {
-		abbrev: string;
-		originalAbbrev: string;
-		round: number;
-		pick: number;
-		season: number;
-	}[];
+	draftPicks: Record<
+		number,
+		{
+			abbrev: string;
+			round: number;
+			pick?: number;
+
+			// Would be nice to have all these, but we don't, so just assume it's same as abbrev then
+			originalAbbrev?: string;
+
+			// If a player was drafted with this pick
+			slug?: string;
+
+			// Only for the hardcoded current season picks
+			season?: number;
+		}[]
+	>;
 	freeAgents: any[];
+	teamSeasons: Record<
+		number,
+		Record<
+			string,
+			{
+				abbrev: string;
+				won: number;
+				lost: number;
+				wonHome: number;
+				lostHome: number;
+				wonAway: number;
+				lostAway: number;
+				wonDiv: number;
+				lostDiv: number;
+				wonConf: number;
+				lostConf: number;
+			}
+		>
+	>;
+	playoffSeries: Record<
+		number,
+		{
+			round: number;
+			abbrevs: [string, string];
+			seeds: [number, number];
+			wons: [number, number];
+		}[]
+	>;
 };
 
 let cachedJSON: Basketball;

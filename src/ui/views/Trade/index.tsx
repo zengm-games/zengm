@@ -237,6 +237,12 @@ const Trade = (props: View<"trade">) => {
 		spectator ||
 		challengeNoTrades;
 
+	const numAssets =
+		summary.teams[0].picks.length +
+		summary.teams[0].trade.length +
+		summary.teams[1].picks.length +
+		summary.teams[1].trade.length;
+
 	return (
 		<>
 			<div className="row">
@@ -341,6 +347,7 @@ const Trade = (props: View<"trade">) => {
 											handleClickClear={handleClickClear}
 											handleClickForceTrade={handleClickForceTrade}
 											handleClickPropose={handleClickPropose}
+											numAssets={numAssets}
 										/>
 									</div>
 								) : challengeNoTrades ? (

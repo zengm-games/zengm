@@ -45,7 +45,7 @@ const updatePlayMenu = async () => {
 			key: "a",
 		},
 		untilTradeDeadline: {
-			label: "Until Trade Deadline",
+			label: "Until trade deadline",
 			key: "b",
 		},
 		viewAllStarSelections: {

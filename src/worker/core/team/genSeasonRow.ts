@@ -8,8 +8,11 @@ import type {
 const genSeasonRow = (
 	t: Team | TeamBasic,
 	prevSeason?: TeamSeasonWithoutKey,
+	numActiveTeams: number = g.get("numActiveTeams"),
+	season: number = g.get("season"),
+	defaultStadiumCapacity: number = g.get("defaultStadiumCapacity"),
 ): TeamSeasonWithoutKey => {
-	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
+	const defaultRank = (numActiveTeams + 1) / 2;
 	const newSeason = {
 		tid: t.tid,
 		cid: t.cid,
@@ -19,7 +22,7 @@ const genSeasonRow = (
 		abbrev: t.abbrev,
 		imgURL: t.imgURL,
 		colors: t.colors,
-		season: g.get("season"),
+		season,
 		gp: 0,
 		gpHome: 0,
 		att: 0,
@@ -44,7 +47,7 @@ const genSeasonRow = (
 		playoffRoundsWon: -1, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
 		hype: Math.random(),
 		pop: 1,
-		stadiumCapacity: g.get("defaultStadiumCapacity"),
+		stadiumCapacity: defaultStadiumCapacity,
 		revenues: {
 			luxuryTaxShare: {
 				amount: 0,

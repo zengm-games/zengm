@@ -11,13 +11,11 @@ start in any phase
     - expansion team should be selectable
   - add player stats if phase after regular season
     - advanced stats will require team stats too... sum up from players?
-- blog
-   - playoff rosters
-   - no stats yet
-   - describe each of the phase options
-     - no starting after playoffs for expansion draft
-   - makes sense to hire GM before draft
-   - other changelog stuff
+    - advanced stats and other missing values, calculate on load?
+  - what about changes to settings (like playoff settings, etc), does it need to store previous season's value too?
+  - what about seasons with expansion teams?
+    - tricky for draft, since it should have expansion draft as already happened... maybe disable those years
+      - could get results of expansion draft and assing those players to team!
 
 trade stuff
 - flag to make fudge factor not apply for ai-ai trades

@@ -270,7 +270,7 @@ const phases = [
 	},
 	{
 		key: PHASE.AFTER_DRAFT,
-		value: "After Draft",
+		value: "After draft",
 	},
 ];
 

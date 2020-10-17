@@ -66,6 +66,7 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 
 							return (
 								<ScoreBox
+									className="mb-3"
 									key={game.gid}
 									game={game}
 									header={i === 0}
@@ -78,7 +79,12 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 				<div className="col-sm-6">
 					<h2>Completed Games</h2>
 					{completed.map((game, i) => (
-						<ScoreBox key={game.gid} game={game} header={i === 0} />
+						<ScoreBox
+							className="mb-3"
+							key={game.gid}
+							game={game}
+							header={i === 0}
+						/>
 					))}
 				</div>
 			</div>

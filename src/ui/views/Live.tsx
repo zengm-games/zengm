@@ -29,16 +29,6 @@ const Live = ({ games, userTid }: View<"live">) => {
 				games below.
 			</p>
 
-			<div
-				className="alert alert-info d-inline-block"
-				style={{ maxWidth: 770 }}
-			>
-				<b>August 13, 2020 - new feature!</b> Now when you watch a live game,
-				only that one game is simulated. When it's over, today's other games
-				will still be waiting here. That means you can view the play-by-play of
-				multiple games in the same day.
-			</div>
-
 			{gameSimInProgress ? (
 				<p className="text-danger">
 					Stop the current game simulation to select a play-by-play game.
@@ -82,6 +72,7 @@ const Live = ({ games, userTid }: View<"live">) => {
 								</>
 							}
 							actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
+							className="mb-3"
 							limitWidthToParent
 						/>
 					</div>

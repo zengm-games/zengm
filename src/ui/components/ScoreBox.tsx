@@ -44,6 +44,7 @@ const ScoreBox = ({
 	actionHighlight,
 	actionOnClick,
 	actionText,
+	className,
 	game,
 	header,
 	limitWidthToParent,
@@ -53,6 +54,7 @@ const ScoreBox = ({
 	actionHighlight?: boolean;
 	actionOnClick?: () => void;
 	actionText?: React.ReactNode;
+	className?: string;
 	game: {
 		gid: number;
 		overtimes?: number;
@@ -318,7 +320,7 @@ const ScoreBox = ({
 
 	if (actionText) {
 		return (
-			<div className={classNames("d-flex", { "mb-3": !small, "mr-2": small })}>
+			<div className={classNames("d-flex", className)}>
 				{scoreBox}
 				<button
 					className={classNames(
@@ -334,11 +336,7 @@ const ScoreBox = ({
 		);
 	}
 
-	return (
-		<div className={classNames({ "mb-3": !small, "mr-2": small })}>
-			{scoreBox}
-		</div>
-	);
+	return <div className={className}>{scoreBox}</div>;
 };
 
 export default ScoreBox;

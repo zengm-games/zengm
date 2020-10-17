@@ -113,7 +113,7 @@ const LeagueTopBar = React.memo(() => {
 							exit={{}}
 							transition={transition}
 						>
-							<ScoreBox game={game} small />
+							<ScoreBox className="mr-2" game={game} small />
 						</motion.div>
 					))}
 				</AnimatePresence>

@@ -2,6 +2,8 @@
 - sim multiple times until the desired result
 - if it never happens, start increasing home court advantage
 - if it still never happens, error
+- ui
+  - should be on schedule page and live game sim page
 
 auto play broken in 1955?
 

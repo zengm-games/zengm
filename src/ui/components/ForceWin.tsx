@@ -9,6 +9,32 @@ const style = {
 	width: 140,
 };
 
+type State = undefined | "saving" | "saved" | "error";
+const useSavingState = () => {
+	const [state, setState] = useState<State>();
+	const timeoutID = useRef<number | undefined>();
+
+	const wrappedSetState = (state2: State) => {
+		window.clearTimeout(timeoutID.current);
+
+		setState(state2);
+
+		if (state2 === "saved") {
+			timeoutID.current = window.setTimeout(() => {
+				setState(undefined);
+			}, 5000);
+		}
+	};
+
+	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeoutID.current);
+		};
+	}, []);
+
+	return [state, wrappedSetState] as const;
+};
+
 const ForceWin = ({
 	className,
 	game,
@@ -20,21 +46,12 @@ const ForceWin = ({
 		teams: [Team, Team];
 	};
 }) => {
-	const [state, setState] = useState<
-		undefined | "saving" | "saved" | "error"
-	>();
-	const timeoutID = useRef<number | undefined>();
+	const [state, setState] = useSavingState();
 
 	const { godMode, teamInfoCache } = useLocalShallow(state => ({
 		godMode: state.godMode,
 		teamInfoCache: state.teamInfoCache,
 	}));
-
-	useEffect(() => {
-		return () => {
-			window.clearTimeout(timeoutID.current);
-		};
-	}, []);
 
 	let forceWin = null;
 	if (godMode) {
@@ -50,8 +67,6 @@ const ForceWin = ({
 					disabled={state === "saving"}
 					id={id}
 					onChange={async event => {
-						window.clearTimeout(timeoutID.current);
-
 						setState("saving");
 						let tid: number | undefined;
 						if (event.target.value !== "none") {
@@ -67,10 +82,6 @@ const ForceWin = ({
 							throw error;
 						}
 						setState("saved");
-
-						timeoutID.current = window.setTimeout(() => {
-							setState(undefined);
-						}, 5000);
 					}}
 					style={style}
 					defaultValue={game.forceWin ?? "none"}

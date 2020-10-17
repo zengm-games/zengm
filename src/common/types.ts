@@ -1055,6 +1055,7 @@ export type ScheduleGameWithoutKey = {
 	gid?: number;
 	awayTid: number;
 	homeTid: number;
+	forceWin?: number; // either awayTid or homeTid, if defined
 
 	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
 	day: number;

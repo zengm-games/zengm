@@ -2038,6 +2038,16 @@ const runBefore = async (
 	return {};
 };
 
+const setForceWin = async (gid: number, tid?: number) => {
+	const game = await idb.cache.schedule.get(gid);
+	if (!game) {
+		throw new Error("Game not found");
+	}
+
+	game.forceWin = tid;
+	await idb.cache.schedule.put(game);
+};
+
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	if (key === "autoSave" && value === false) {
 		await league.setGameAttributes({ godModeInPast: true });
@@ -2898,6 +2908,7 @@ export default {
 	retiredJerseyNumberDelete,
 	retiredJerseyNumberUpsert,
 	runBefore,
+	setForceWin,
 	setLocal,
 	sign,
 	updateExpansionDraftSetup,

@@ -4,6 +4,10 @@
 - if it still never happens, error
 - ui
   - should be on schedule page and live game sim page
+  - test all values of `state`
+  - animate status icons
+- backend
+  - if forceWin set in schedule, tid matches, and god mode, then do it
 
 auto play broken in 1955?
 

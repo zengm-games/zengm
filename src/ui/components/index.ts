@@ -9,6 +9,7 @@ export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";
 export { default as ErrorBoundary } from "./ErrorBoundary";
 export { default as Footer } from "./Footer";
+export { default as ForceWin } from "./ForceWin";
 export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";

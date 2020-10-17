@@ -3,7 +3,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { ScoreBox } from "../components";
+import { ForceWin, ScoreBox } from "../components";
 
 const Live = ({ games, userTid }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });
@@ -72,9 +72,9 @@ const Live = ({ games, userTid }: View<"live">) => {
 								</>
 							}
 							actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
-							className="mb-3"
 							limitWidthToParent
 						/>
+						<ForceWin className="mb-3" game={game} />
 					</div>
 				))}
 			</div>

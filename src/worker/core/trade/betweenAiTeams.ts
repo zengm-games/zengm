@@ -56,10 +56,10 @@ const attempt = async (valueChangeKey: number) => {
 	const pids: number[] = [];
 	const dpids: number[] = [];
 
-	if ((r < 0.33 || draftPicks.length === 0) && players.length > 0) {
+	if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 		// Weight by player value - good player more likely to be in trade
 		pids.push(random.choice(players, p => p.value).pid);
-	} else if ((r < 0.67 || players.length === 0) && draftPicks.length > 0) {
+	} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {
 		pids.push(random.choice(players, p => p.value).pid);

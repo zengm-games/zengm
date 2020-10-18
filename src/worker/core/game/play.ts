@@ -326,7 +326,7 @@ const play = async (
 
 					if (wonTid === game.forceWin) {
 						found = true;
-						result.forceWin = i + 1;
+						(result as any).forceWin = i + 1;
 						results.push(result);
 						break;
 					}

@@ -541,7 +541,7 @@ const BoxScoreWrapper = ({
 		forcedWinText = (
 			<>
 				<br />
-				Forced win on the{" "}
+				Forced win in{" "}
 				<span
 					className={pure ? "text-success" : "text-danger"}
 					title={
@@ -550,9 +550,9 @@ const BoxScoreWrapper = ({
 							: "Forcing the win required giving the winning team a bonus"
 					}
 				>
-					{helpers.ordinal(boxScore.forceWin)}
+					{helpers.numberWithCommas(boxScore.forceWin)}
 				</span>{" "}
-				try.
+				{boxScore.forceWin === 1 ? "try" : "tries"}.
 			</>
 		);
 	}

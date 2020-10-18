@@ -3,7 +3,6 @@ import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
 import type {
 	LocalStateUI,
-	ScheduleGame,
 	ScheduleGameWithoutKey,
 } from "../../../common/types";
 import addDaysToSchedule from "./addDaysToSchedule";

@@ -1,13 +1,10 @@
+import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { toWorker, useLocalShallow } from "../util";
 
 type Team = {
 	tid: number;
-};
-
-const style = {
-	width: 140,
 };
 
 type State = undefined | "saving" | "saved" | "error";
@@ -48,52 +45,47 @@ const ForceWin = ({
 	};
 }) => {
 	const [state, setState] = useSavingState();
+	const [forceWin, setForceWin] = useState(game.forceWin);
 
 	const { godMode, teamInfoCache } = useLocalShallow(state => ({
 		godMode: state.godMode,
 		teamInfoCache: state.teamInfoCache,
 	}));
 
-	let forceWin = null;
+	let form = null;
 	if (godMode) {
 		const id = `force-win-${game.gid}`;
 
-		forceWin = (
-			<form className="form-inline my-1">
+		form = (
+			<div className="form-inline my-1">
 				<label className="mr-1" htmlFor={id}>
 					Force win?
 				</label>
-				<select
-					className="form-control form-control-sm"
-					disabled={state === "saving"}
-					id={id}
-					onChange={async event => {
-						setState("saving");
-						let tid: number | undefined;
-						if (event.target.value !== "none") {
-							const tidParsed = parseInt(event.target.value);
-							if (!Number.isNaN(tidParsed)) {
-								tid = tidParsed;
-							}
-						}
-						try {
-							await toWorker("main", "setForceWin", game.gid, tid);
-						} catch (error) {
-							setState("error");
-							throw error;
-						}
-						setState("saved");
-					}}
-					style={style}
-					defaultValue={game.forceWin ?? "none"}
-				>
-					<option value="none">None</option>
+				<div className="btn-group">
 					{[game.teams[1], game.teams[0]].map(({ tid }, index) => (
-						<option key={index} value={tid}>
-							{teamInfoCache[tid]?.region} {teamInfoCache[tid]?.name}
-						</option>
+						<button
+							key={index}
+							className={classNames(
+								"btn btn-sm",
+								tid === forceWin ? "btn-god-mode" : "btn-light-bordered",
+							)}
+							onClick={async () => {
+								try {
+									setState("saving");
+									const newForceWin = forceWin === tid ? undefined : tid;
+									setForceWin(newForceWin);
+									await toWorker("main", "setForceWin", game.gid, newForceWin);
+								} catch (error) {
+									setState("error");
+									throw error;
+								}
+								setState("saved");
+							}}
+						>
+							{teamInfoCache[tid]?.abbrev}
+						</button>
 					))}
-				</select>
+				</div>
 				<AnimatePresence>
 					{state === "saved" ? (
 						<motion.div
@@ -102,18 +94,18 @@ const ForceWin = ({
 							exit={{ opacity: 0, transition: { duration: 1 } }}
 							transition={{ duration: 0.1 }}
 						>
-							<span className="ml-1 glyphicon glyphicon-ok text-success" />
+							<span className="ml-2 glyphicon glyphicon-ok text-success" />
 						</motion.div>
 					) : null}
 				</AnimatePresence>
 				{state === "error" ? (
-					<span className="ml-1 text-danger">Error</span>
+					<span className="ml-2 text-danger">Error</span>
 				) : null}
-			</form>
+			</div>
 		);
 	}
 
-	return <div className={className}>{forceWin}</div>;
+	return <div className={className}>{form}</div>;
 };
 
 export default ForceWin;

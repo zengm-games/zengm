@@ -289,10 +289,12 @@ const play = async (
 
 			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
 
-			let result;
 			if (g.get("godMode") && game.forceWin !== undefined) {
+				const NUM_TRIES = 1000;
+
+				let found = false;
 				for (let i = 0; i < 10000; i++) {
-					result = new GameSim(
+					const result = new GameSim(
 						game.gid,
 						helpers.deepCopy(teamsInput),
 						doPlayByPlay,
@@ -307,13 +309,39 @@ const play = async (
 
 					if (wonTid === game.forceWin) {
 						console.log("number of tries", i);
+						found = true;
+						results.push(result);
 						break;
 					}
 				}
+
+				if (!found) {
+					const teamInfoCache = g.get("teamInfoCache");
+					const otherTid =
+						game.homeTid === game.forceWin ? game.awayTid : game.homeTid;
+
+					logEvent(
+						{
+							type: "error",
+							text: `Could not find a simulation in ${helpers.numberWithCommas(
+								NUM_TRIES,
+							)} tries where the ${teamInfoCache[game.forceWin].region} ${
+								teamInfoCache[game.forceWin].name
+							} beat the ${teamInfoCache[otherTid].region} ${
+								teamInfoCache[otherTid].name
+							}.`,
+							showNotification: true,
+							persistent: true,
+							saveToDb: false,
+						},
+						conditions,
+					);
+					await lock.set("stopGameSim", true);
+				}
 			} else {
-				result = new GameSim(game.gid, teamsInput, doPlayByPlay).run();
+				const result = new GameSim(game.gid, teamsInput, doPlayByPlay).run();
+				results.push(result);
 			}
-			results.push(result);
 		}
 
 		await cbSaveResults(results, dayOver);

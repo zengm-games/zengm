@@ -5,13 +5,13 @@
 - ui
   - test all values of `state`
   - animate status icons
+  - bulk set on schedule page
 - backend
-  - how many tries?
-  - UI if it can't find one?
+  - gradually increase home court advantage
 - blog
   - on schedule and live game sim pages
   - runs N times
-  - no cheating!
+  - home court advantage
   - only works in god mode
 
 auto play broken in 1955?

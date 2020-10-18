@@ -1,9 +1,3 @@
-"force win" button
-- blog
-  - on schedule (including bulk) and live game sim pages
-  - runs 500 times, then 500 more with gradually increasing bonus
-  - only works in god mode
-
 start in any phase
 - later
   - get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");

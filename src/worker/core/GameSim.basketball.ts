@@ -207,6 +207,7 @@ class GameSim {
 		gid: number,
 		teams: [TeamGameSim, TeamGameSim],
 		doPlayByPlay: boolean,
+		homeCourtFactor: number = 1,
 	) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
@@ -260,7 +261,7 @@ class GameSim {
 		}
 
 		if (!this.allStarGame) {
-			this.homeCourtAdvantage();
+			this.homeCourtAdvantage(homeCourtFactor);
 		}
 
 		this.o = 0;
@@ -273,12 +274,10 @@ class GameSim {
 	 * Scales composite ratings, giving home players bonuses and away players penalties.
 	 *
 	 */
-	homeCourtAdvantage() {
-		const homeCourtModifier = helpers.bound(
-			1 + g.get("homeCourtAdvantage") / 100,
-			0.01,
-			Infinity,
-		);
+	homeCourtAdvantage(homeCourtFactor: number) {
+		const homeCourtModifier =
+			homeCourtFactor *
+			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
 		for (const t of teamNums) {
 			let factor;

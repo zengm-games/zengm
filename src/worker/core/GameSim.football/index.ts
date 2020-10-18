@@ -94,10 +94,11 @@ class GameSim {
 		gid: number,
 		teams: [TeamGameSim, TeamGameSim],
 		doPlayByPlay: boolean,
+		homeCourtFactor: number = 1,
 	) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
-		this.team = team; // If a team plays twice in a day, this needs to be a deep copy
+		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];
 
@@ -123,15 +124,13 @@ class GameSim {
 		this.scrimmage = 20;
 		this.timeouts = [3, 3];
 		this.twoMinuteWarningHappened = false;
-		this.homeCourtAdvantage();
+		this.homeCourtAdvantage(homeCourtFactor);
 	}
 
-	homeCourtAdvantage() {
-		const homeCourtModifier = helpers.bound(
-			1 + g.get("homeCourtAdvantage") / 100,
-			0.01,
-			Infinity,
-		);
+	homeCourtAdvantage(homeCourtFactor: number) {
+		const homeCourtModifier =
+			homeCourtFactor *
+			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
 		for (let t = 0; t < 2; t++) {
 			let factor;

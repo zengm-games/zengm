@@ -1,10 +1,8 @@
 "force win" button
-- backend
-  - gradually increase home court advantage
+- football
 - blog
   - on schedule (including bulk) and live game sim pages
-  - runs N times
-  - home court advantage
+  - runs 500 times, then 500 more with gradually increasing bonus
   - only works in god mode
 
 start in any phase

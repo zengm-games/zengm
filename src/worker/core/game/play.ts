@@ -290,14 +290,19 @@ const play = async (
 			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
 
 			if (g.get("godMode") && game.forceWin !== undefined) {
-				const NUM_TRIES = 1000;
+				const NUM_TRIES = 2000;
+				const START_CHANGING_HOME_COURT_ADVANTAGE = NUM_TRIES / 4;
+
+				const forceWinHome = game.forceWin === game.homeTid;
+				let homeCourtFactor = 1;
 
 				let found = false;
-				for (let i = 0; i < 10000; i++) {
+				for (let i = 0; i < NUM_TRIES; i++) {
 					const result = new GameSim(
 						game.gid,
 						helpers.deepCopy(teamsInput),
 						doPlayByPlay,
+						homeCourtFactor,
 					).run();
 
 					let wonTid: number | undefined;
@@ -308,17 +313,27 @@ const play = async (
 					}
 
 					if (wonTid === game.forceWin) {
-						console.log("number of tries", i);
 						found = true;
 						results.push(result);
 						break;
+					}
+
+					if (i > START_CHANGING_HOME_COURT_ADVANTAGE) {
+						// Scale from 1x to 3x linearly, after staying at 1x for some time
+						homeCourtFactor =
+							1 +
+							(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
+								(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
+
+						if (!forceWinHome) {
+							homeCourtFactor = 1 / homeCourtFactor;
+						}
 					}
 				}
 
 				if (!found) {
 					const teamInfoCache = g.get("teamInfoCache");
-					const otherTid =
-						game.homeTid === game.forceWin ? game.awayTid : game.homeTid;
+					const otherTid = forceWinHome ? game.awayTid : game.homeTid;
 
 					logEvent(
 						{

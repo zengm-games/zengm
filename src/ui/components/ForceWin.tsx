@@ -68,7 +68,7 @@ const ForceWin = ({
 						<button
 							key={index}
 							className={classNames(
-								"btn btn-sm",
+								"btn btn-xs",
 								tid === forceWin ? "btn-god-mode" : "btn-light-bordered",
 							)}
 							onClick={async () => {

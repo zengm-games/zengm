@@ -202,6 +202,7 @@ export type Game = {
 	att: number;
 	clutchPlays?: string[];
 	gid: number;
+	forceWin?: number; // If defined, it's the number of iterations that were used to force the win
 	lost: {
 		tid: number;
 		pts: number;

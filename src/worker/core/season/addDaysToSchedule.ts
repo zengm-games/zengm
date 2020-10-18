@@ -1,9 +1,11 @@
+import type { ScheduleGameWithoutKey } from "../../../common/types";
+
 const addDaysToSchedule = (
 	games: {
 		homeTid: number;
 		awayTid: number;
 	}[],
-) => {
+): ScheduleGameWithoutKey[] => {
 	const dayTids = new Set();
 	let day = 1;
 	let prevDayAllStarGame = false;

@@ -1009,6 +1009,10 @@ const create = async ({
 		}
 	}
 
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		await season.newSchedulePlayoffsDay();
+	}
+
 	await draft.genPicks({
 		realPlayers,
 	});

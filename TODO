@@ -5,8 +5,7 @@ force win
   - show # iterations in box score
   - highlight in game log, schedule, and top score bar
   - in playoffs, When you watch a game, all other games that had a force win set are reset back to none  @dooby moogey#2784
-
-if you start a league from the playoffs you can't watch any of the game 1's live @dooby moogey#2784
+  - if you start a league from the playoffs you can't watch any of the game 1's live @dooby moogey#2784
 
 Hall Of Shame --- maybe a bug... "Best season" is often a 0 games, 0 minutes played season @nicidob
 

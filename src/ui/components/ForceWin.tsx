@@ -53,9 +53,10 @@ const ForceWin = ({
 	}));
 
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
+	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
 
 	let form = null;
-	if (godMode) {
+	if (godMode && !tradeDeadline) {
 		const id = `force-win-${game.gid}`;
 
 		form = (

@@ -298,6 +298,18 @@ const play = async (
 
 				let found = false;
 				for (let i = 0; i < NUM_TRIES; i++) {
+					if (i >= START_CHANGING_HOME_COURT_ADVANTAGE) {
+						// Scale from 1x to 3x linearly, after staying at 1x for some time
+						homeCourtFactor =
+							1 +
+							(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
+								(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
+
+						if (!forceWinHome) {
+							homeCourtFactor = 1 / homeCourtFactor;
+						}
+					}
+
 					const result = new GameSim(
 						game.gid,
 						helpers.deepCopy(teamsInput),
@@ -314,20 +326,9 @@ const play = async (
 
 					if (wonTid === game.forceWin) {
 						found = true;
+						result.forceWin = i + 1;
 						results.push(result);
 						break;
-					}
-
-					if (i > START_CHANGING_HOME_COURT_ADVANTAGE) {
-						// Scale from 1x to 3x linearly, after staying at 1x for some time
-						homeCourtFactor =
-							1 +
-							(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
-								(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
-
-						if (!forceWinHome) {
-							homeCourtFactor = 1 / homeCourtFactor;
-						}
 					}
 				}
 

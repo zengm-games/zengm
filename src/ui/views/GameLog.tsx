@@ -137,7 +137,7 @@ const GamesList = ({
 										{oppAbbrev}
 									</a>
 								</td>
-								<td className="game-log-cell">
+								<td className={classNames("game-log-cell")}>
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
@@ -145,6 +145,9 @@ const GamesList = ({
 											season,
 											gm.gid,
 										])}
+										className={
+											gm.forceWin !== undefined ? "god-mode" : undefined
+										}
 									>
 										{result}
 									</a>

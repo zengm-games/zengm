@@ -535,6 +535,28 @@ const BoxScoreWrapper = ({
 	const t1 =
 		boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
 
+	let forcedWinText = null;
+	if (boxScore.forceWin !== undefined) {
+		const pure = boxScore.forceWin <= 500;
+		forcedWinText = (
+			<>
+				<br />
+				Forced win on the{" "}
+				<span
+					className={pure ? "text-success" : "text-danger"}
+					title={
+						pure
+							? "Win was forced without giving a bonus to the winning team"
+							: "Forcing the win required giving the winning team a bonus"
+					}
+				>
+					{helpers.ordinal(boxScore.forceWin)}
+				</span>{" "}
+				try.
+			</>
+		);
+	}
+
 	return (
 		<>
 			<div className="d-flex text-center">
@@ -569,6 +591,7 @@ const BoxScoreWrapper = ({
 				injuredToBottom={injuredToBottom}
 			/>
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
+			{forcedWinText}
 		</>
 	);
 };

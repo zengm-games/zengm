@@ -341,7 +341,7 @@ const sumValues = (
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
-		console.log(playerValue, p);
+		// console.log(playerValue, p);
 
 		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);
@@ -485,13 +485,13 @@ const valueChange = async (
 		estValues: cache.estValues,
 	});
 
-	console.log("ADD");
+	// console.log("ADD");
 	const valuesAdd = sumValues(add, strategy, tid, true);
-	console.log("Total", valuesAdd);
+	// console.log("Total", valuesAdd);
 
-	console.log("REMOVE");
+	// console.log("REMOVE");
 	const valuesRemove = sumValues(remove, strategy, tid);
-	console.log("Total", valuesRemove);
+	// console.log("Total", valuesRemove);
 
 	return valuesAdd - valuesRemove;
 };

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { ScoreBox } from "../components";
+import { ForceWin, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow, helpers } from "../util";
@@ -65,13 +65,10 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 								  };
 
 							return (
-								<ScoreBox
-									className="mb-3"
-									key={game.gid}
-									game={game}
-									header={i === 0}
-									{...action}
-								/>
+								<React.Fragment key={game.gid}>
+									<ScoreBox game={game} header={i === 0} {...action} />
+									<ForceWin className="mb-3" game={game} />
+								</React.Fragment>
 							);
 						})}
 					</ul>

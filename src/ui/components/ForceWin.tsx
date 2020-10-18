@@ -87,8 +87,8 @@ const ForceWin = ({
 					defaultValue={game.forceWin ?? "none"}
 				>
 					<option value="none">None</option>
-					{[game.teams[1], game.teams[0]].map(({ tid }) => (
-						<option key={tid} value={tid}>
+					{[game.teams[1], game.teams[0]].map(({ tid }, index) => (
+						<option key={index} value={tid}>
 							{teamInfoCache[tid]?.region} {teamInfoCache[tid]?.name}
 						</option>
 					))}

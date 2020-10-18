@@ -3,13 +3,13 @@
 - if it never happens, start increasing home court advantage
 - if it still never happens, error
 - ui
-  - should be on schedule page and live game sim page
   - test all values of `state`
   - animate status icons
 - backend
   - how many tries?
   - UI if it can't find one?
 - blog
+  - on schedule and live game sim pages
   - runs N times
   - no cheating!
   - only works in god mode

@@ -1,10 +1,4 @@
 "force win" button
-- sim multiple times until the desired result
-- if it never happens, start increasing home court advantage
-- if it still never happens, error
-- ui
-  - test all values of `state`
-  - animate status icons
 - backend
   - gradually increase home court advantage
 - blog

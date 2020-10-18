@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { toWorker, useLocalShallow } from "../util";
 
@@ -22,7 +23,7 @@ const useSavingState = () => {
 		if (state2 === "saved") {
 			timeoutID.current = window.setTimeout(() => {
 				setState(undefined);
-			}, 5000);
+			}, 1000);
 		}
 	};
 
@@ -93,8 +94,20 @@ const ForceWin = ({
 						</option>
 					))}
 				</select>
-				{state === "saved" ? (
-					<span className="ml-1 glyphicon glyphicon-ok text-success" />
+				<AnimatePresence>
+					{state === "saved" ? (
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0, transition: { duration: 1 } }}
+							transition={{ duration: 0.1 }}
+						>
+							<span className="ml-1 glyphicon glyphicon-ok text-success" />
+						</motion.div>
+					) : null}
+				</AnimatePresence>
+				{state === "error" ? (
+					<span className="ml-1 text-danger">Error</span>
 				) : null}
 			</form>
 		);

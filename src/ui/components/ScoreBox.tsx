@@ -217,16 +217,22 @@ const ScoreBox = ({
 				) : (
 					[1, 0].map(i => {
 						const t = game.teams[i];
-						let scoreClasses;
+						let scoreClass;
 						if (winner !== undefined) {
-							scoreClasses = {
-								"alert-success":
-									winner === i && userInGame && t.tid === userTid,
-								"alert-danger": winner === i && userInGame && t.tid !== userTid,
-								"alert-warning":
-									winner === -1 && userInGame && t.tid === userTid,
-								"alert-secondary": winner === i && !userInGame,
-							};
+							if (winner === i) {
+								if (userInGame) {
+									if (t.tid === userTid) {
+										scoreClass = "alert-success";
+									} else {
+										scoreClass = "alert-danger";
+									}
+								} else {
+									scoreClass = "alert-secondary";
+								}
+							} else if (winner === -1 && userInGame && t.tid === userTid) {
+								// Tie
+								scoreClass = "alert-warning";
+							}
 						}
 
 						let imgURL;
@@ -254,10 +260,7 @@ const ScoreBox = ({
 						return (
 							<div
 								key={i}
-								className={classNames(
-									"d-flex align-items-center",
-									scoreClasses,
-								)}
+								className={classNames("d-flex align-items-center", scoreClass)}
 							>
 								{imgURL || allStarGame ? (
 									<div className="score-box-logo d-flex align-items-center justify-content-center">
@@ -288,7 +291,7 @@ const ScoreBox = ({
 									<div
 										className={classNames(
 											"score-box-score p-1 text-right font-weight-bold",
-											scoreClasses,
+											scoreClass,
 										)}
 									>
 										<a

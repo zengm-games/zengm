@@ -146,7 +146,7 @@ const GamesList = ({
 											gm.gid,
 										])}
 										className={
-											gm.forceWin !== undefined ? "god-mode" : undefined
+											gm.forceWin !== undefined ? "alert-god-mode" : undefined
 										}
 									>
 										{result}

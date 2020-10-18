@@ -427,6 +427,7 @@ const writeGameStats = async (
 		await toUI("mergeGames", [
 			[
 				{
+					forceWin: results.forceWin,
 					gid: results.gid,
 					teams: [
 						{

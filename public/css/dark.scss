@@ -159,6 +159,7 @@ a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
 }
+
 .btn-god-mode {
 	&,
 	&:active,
@@ -166,6 +167,10 @@ a.god-mode.active {
 	&:not(:disabled):hover {
 		color: $white;
 	}
+}
+
+.alert-god-mode {
+	background-color: darken($purple, 45) !important;
 }
 
 .watch-active,

@@ -110,13 +110,14 @@ export const getUpcoming = async ({
 		.slice(0, limit);
 
 	const upcoming: {
+		forceWin?: number;
 		gid: number;
 		season: number;
 		teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
 	}[] = filteredSchedule.map(({ awayTid, forceWin, gid, homeTid }) => {
 		return {
-			gid,
 			forceWin,
+			gid,
 			season: g.get("season"),
 			teams: [getTeam(homeTid), getTeam(awayTid)],
 		};

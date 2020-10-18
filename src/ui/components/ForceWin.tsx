@@ -39,8 +39,8 @@ const ForceWin = ({
 }: {
 	className?: string;
 	game: {
-		gid: number;
 		forceWin?: number;
+		gid: number;
 		teams: [Team, Team];
 	};
 }) => {

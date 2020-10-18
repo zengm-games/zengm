@@ -647,6 +647,7 @@ export type LocalStateUI = {
 	customMenu?: MenuItemHeader;
 	gameSimInProgress: boolean;
 	games: {
+		forceWin?: number;
 		gid: number;
 		teams: [
 			{

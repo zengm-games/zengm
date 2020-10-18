@@ -141,6 +141,10 @@ a.god-mode.active {
 	@include button-variant($purple, $gray-400);
 }
 
+.alert-god-mode {
+	background-color: lighten($purple, 40) !important;
+}
+
 .play-button {
 	font-size: 1.01562rem;
 	padding: 14px !important;

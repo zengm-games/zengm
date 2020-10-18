@@ -1,12 +1,10 @@
 force win
-- add info to game object for force simmed game
-  - show in purple highlight for ScoreBox
 - in playoffs, When you watch a game, all other games that had a force win set are reset back to none  @dooby moogey#2784
 - done
   - switch from dropdown to abbrev buttons https://cdn.discordapp.com/attachments/331882115119448065/767413820233613332/unknown.png @dooby moogey#2784
   - ASG teams @dooby moogey#2784
   - show # iterations in box score
-  - GameLog?
+  - highlight in game log, schedule, and top score bar
 
 if you start a league from the playoffs you can't watch any of the game 1's live @dooby moogey#2784
 

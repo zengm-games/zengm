@@ -56,6 +56,7 @@ const ScoreBox = ({
 	actionText?: React.ReactNode;
 	className?: string;
 	game: {
+		forceWin?: number;
 		gid: number;
 		overtimes?: number;
 		season?: number;
@@ -218,6 +219,7 @@ const ScoreBox = ({
 					[1, 0].map(i => {
 						const t = game.teams[i];
 						let scoreClass;
+						let scoreClassForceWin;
 						if (winner !== undefined) {
 							if (winner === i) {
 								if (userInGame) {
@@ -229,10 +231,17 @@ const ScoreBox = ({
 								} else {
 									scoreClass = "alert-secondary";
 								}
+
+								if (game.forceWin !== undefined) {
+									scoreClassForceWin = "alert-god-mode";
+								}
 							} else if (winner === -1 && userInGame && t.tid === userTid) {
 								// Tie
 								scoreClass = "alert-warning";
 							}
+						}
+						if (!scoreClassForceWin) {
+							scoreClassForceWin = scoreClass;
 						}
 
 						let imgURL;
@@ -260,7 +269,10 @@ const ScoreBox = ({
 						return (
 							<div
 								key={i}
-								className={classNames("d-flex align-items-center", scoreClass)}
+								className={classNames(
+									"d-flex align-items-center",
+									scoreClassForceWin,
+								)}
 							>
 								{imgURL || allStarGame ? (
 									<div className="score-box-logo d-flex align-items-center justify-content-center">

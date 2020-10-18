@@ -16,6 +16,7 @@ const initUILocalGames = async () => {
 			true,
 		)
 	).map(game => ({
+		forceWin: game.forceWin,
 		gid: game.gid,
 		teams: [
 			{

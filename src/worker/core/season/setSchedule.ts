@@ -30,6 +30,7 @@ const setSchedule = async (tids: [number, number][]) => {
 	const upcoming = await getUpcoming({ tid: userTid });
 	for (const game of upcoming) {
 		games.push({
+			forceWin: game.forceWin,
 			gid: game.gid,
 			teams: [
 				{

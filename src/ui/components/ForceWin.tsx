@@ -52,6 +52,8 @@ const ForceWin = ({
 		teamInfoCache: state.teamInfoCache,
 	}));
 
+	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
+
 	let form = null;
 	if (godMode) {
 		const id = `force-win-${game.gid}`;
@@ -82,7 +84,9 @@ const ForceWin = ({
 								setState("saved");
 							}}
 						>
-							{teamInfoCache[tid]?.abbrev}
+							{allStarGame
+								? `AS${tid === -1 ? 2 : 1}`
+								: teamInfoCache[tid]?.abbrev}
 						</button>
 					))}
 				</div>

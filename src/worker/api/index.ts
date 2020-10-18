@@ -2048,6 +2048,27 @@ const setForceWin = async (gid: number, tid?: number) => {
 	await idb.cache.schedule.put(game);
 };
 
+const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
+	const games = await idb.cache.schedule.getAll();
+	for (const game of games) {
+		if (game.homeTid !== tid && game.awayTid !== tid) {
+			continue;
+		}
+
+		if (type === "win") {
+			game.forceWin = tid;
+		} else if (type === "lose") {
+			game.forceWin = game.homeTid === tid ? game.awayTid : game.homeTid;
+		} else {
+			delete game.forceWin;
+		}
+
+		await idb.cache.schedule.put(game);
+	}
+
+	await toUI("realtimeUpdate", [["gameSim"]]);
+};
+
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	if (key === "autoSave" && value === false) {
 		await league.setGameAttributes({ godModeInPast: true });
@@ -2909,6 +2930,7 @@ export default {
 	retiredJerseyNumberUpsert,
 	runBefore,
 	setForceWin,
+	setForceWinAll,
 	setLocal,
 	sign,
 	updateExpansionDraftSetup,

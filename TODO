@@ -5,16 +5,13 @@
 - ui
   - test all values of `state`
   - animate status icons
-  - bulk set on schedule page
 - backend
   - gradually increase home court advantage
 - blog
-  - on schedule and live game sim pages
+  - on schedule (including bulk) and live game sim pages
   - runs N times
   - home court advantage
   - only works in god mode
-
-auto play broken in 1955?
 
 start in any phase
 - later

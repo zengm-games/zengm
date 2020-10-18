@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { ForceWin, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
@@ -12,9 +12,20 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress } = useLocalShallow(state => ({
+	const { gameSimInProgress, godMode } = useLocalShallow(state => ({
 		gameSimInProgress: state.gameSimInProgress,
+		godMode: state.godMode,
 	}));
+
+	const [forcingAll, setForcingAll] = useState(false);
+	const [forceWinKey, setForceWinKey] = useState(0);
+
+	const handleForceAll = (type: "win" | "lose" | "none") => async () => {
+		setForcingAll(true);
+		await toWorker("main", "setForceWinAll", tid, type);
+		setForceWinKey(key => key + 1);
+		setForcingAll(false);
+	};
 
 	return (
 		<>
@@ -43,6 +54,31 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 				|{" "}
 				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
 			</p>
+			{godMode ? (
+				<div className="btn-group mb-3">
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("win")}
+						disabled={forcingAll}
+					>
+						Force win all
+					</button>
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("lose")}
+						disabled={forcingAll}
+					>
+						Force lose all
+					</button>
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("none")}
+						disabled={forcingAll}
+					>
+						Reset all
+					</button>
+				</div>
+			) : null}
 			<div className="row">
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>
@@ -67,7 +103,7 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 							return (
 								<React.Fragment key={game.gid}>
 									<ScoreBox game={game} header={i === 0} {...action} />
-									<ForceWin className="mb-3" game={game} />
+									<ForceWin key={forceWinKey} className="mb-3" game={game} />
 								</React.Fragment>
 							);
 						})}

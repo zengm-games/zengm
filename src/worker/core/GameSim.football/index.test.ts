@@ -28,8 +28,9 @@ describe("worker/core/GameSim.football", () => {
 
 	test("kick a field goal when down 2 at the end of the game and there is little time left", async () => {
 		const teams = await loadTeams([0, 1]);
-		const game = new GameSim(0, teams[0], teams[1], false); // Down by 2, 4th quarter, ball on the opp 20 yard line, 6 seconds left
+		const game = new GameSim(0, [teams[0], teams[1]], false);
 
+		// Down by 2, 4th quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;
@@ -42,8 +43,9 @@ describe("worker/core/GameSim.football", () => {
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
 		const teams = await loadTeams([0, 1]);
-		const game = new GameSim(0, teams[0], teams[1], false); // Arbitrary score, 2nd quarter, ball on the opp 20 yard line, 6 seconds left
+		const game = new GameSim(0, [teams[0], teams[1]], false);
 
+		// Arbitrary score, 2nd quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;

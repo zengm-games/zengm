@@ -7,7 +7,12 @@
   - test all values of `state`
   - animate status icons
 - backend
-  - if forceWin set in schedule, tid matches, and god mode, then do it
+  - how many tries?
+  - UI if it can't find one?
+- blog
+  - runs N times
+  - no cheating!
+  - only works in god mode
 
 auto play broken in 1955?
 

@@ -205,8 +205,7 @@ class GameSim {
 	 */
 	constructor(
 		gid: number,
-		team1: TeamGameSim,
-		team2: TeamGameSim,
+		teams: [TeamGameSim, TeamGameSim],
 		doPlayByPlay: boolean,
 	) {
 		if (doPlayByPlay) {
@@ -214,7 +213,7 @@ class GameSim {
 		}
 
 		this.id = gid;
-		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
+		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.numPlayersOnCourt = g.get("numPlayersOnCourt");

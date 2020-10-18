@@ -92,13 +92,12 @@ class GameSim {
 
 	constructor(
 		gid: number,
-		team1: TeamGameSim,
-		team2: TeamGameSim,
+		teams: [TeamGameSim, TeamGameSim],
 		doPlayByPlay: boolean,
 	) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
-		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
+		this.team = team; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];
 

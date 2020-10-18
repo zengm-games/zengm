@@ -278,21 +278,42 @@ const play = async (
 
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
-		schedule: (ScheduleGame & { gid: number })[],
+		schedule: ScheduleGame[],
 		teams: Record<number, any>,
 		dayOver: boolean,
 	) => {
 		const results: any[] = [];
 
-		for (let i = 0; i < schedule.length; i++) {
-			const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-			const gs = new GameSim(
-				schedule[i].gid,
-				teams[schedule[i].homeTid],
-				teams[schedule[i].awayTid],
-				doPlayByPlay,
-			);
-			results.push(gs.run());
+		for (const game of schedule) {
+			const doPlayByPlay = gidPlayByPlay === game.gid;
+
+			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
+
+			let result;
+			if (g.get("godMode") && game.forceWin !== undefined) {
+				for (let i = 0; i < 10000; i++) {
+					result = new GameSim(
+						game.gid,
+						helpers.deepCopy(teamsInput),
+						doPlayByPlay,
+					).run();
+
+					let wonTid: number | undefined;
+					if (result.team[0].stat.pts > result.team[1].stat.pts) {
+						wonTid = result.team[0].id;
+					} else if (result.team[0].stat.pts < result.team[1].stat.pts) {
+						wonTid = result.team[1].id;
+					}
+
+					if (wonTid === game.forceWin) {
+						console.log("number of tries", i);
+						break;
+					}
+				}
+			} else {
+				result = new GameSim(game.gid, teamsInput, doPlayByPlay).run();
+			}
+			results.push(result);
 		}
 
 		await cbSaveResults(results, dayOver);

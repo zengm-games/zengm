@@ -1,6 +1,4 @@
-This is a user-focused changelog. The entries here are things that affect gameplay.
-
-Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
+This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
 * 2020-10-18: New feature in God Mode to select the winner of a game before it's played. [[1]](https://basketball-gm.com/blog/2020/10/force-win/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/)
 
@@ -520,11 +518,11 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2018-05-19: Dead players cannot have children.
 
-* 2018-05-11: **Draft day trades. [[1]](https://basketball-gm.com/blog/2018/05/draft-day-trades/) [[2]](https://old.reddit.com/r/BasketballGM/comments/8ir6fc/new_feature_released_draft_day_trades/)**
+* **2018-05-11: Draft day trades. [[1]](https://basketball-gm.com/blog/2018/05/draft-day-trades/) [[2]](https://old.reddit.com/r/BasketballGM/comments/8ir6fc/new_feature_released_draft_day_trades/)**
 
 * 2018-05-08: After the draft lottery, show draft pick positions when trading picks.
 
-* 2018-05-03: **Relatives! Players can be the father, son, or brother of other players. [[1]](https://basketball-gm.com/blog/2018/05/relatives-fathers-sons-and-brothers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/8guvko/relatives_fathers_sons_and_brothers/)**
+* **2018-05-03: Relatives! Players can be the father, son, or brother of other players. [[1]](https://basketball-gm.com/blog/2018/05/relatives-fathers-sons-and-brothers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/8guvko/relatives_fathers_sons_and_brothers/)**
 
 * 2018-04-11: Performance improvements in large leagues. [[1]](https://basketball-gm.com/blog/2018/04/performance-improvements-in-large-leagues/) [[2]](https://old.reddit.com/r/BasketballGM/comments/8blmn3/performance_improvements_in_large_leagues/)
 
@@ -694,7 +692,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2015-04-17: All-Rookie Teams.
 
-*** 2015-04-12: Each player has a small chance of dying a tragic death.**
+* **2015-04-12: Each player has a small chance of dying a tragic death.**
 
 * 2015-03-29: Customize generated player names in a league file. [[1]](https://basketball-gm.com/blog/2015/03/customize-random-names/) [[2]](https://old.reddit.com/r/BasketballGM/comments/30p852/customize_random_names/)
 
@@ -748,6 +746,254 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2014-07-30: Performance and stability improvements. [[1]](https://old.reddit.com/r/BasketballGM/comments/2c7hme/performance_and_stability/)
 
-* 2014-07-25: Highlight user's team and players in League History page.
+* 2014-07-19: Contracts are editable in create/edit player.
 
-Commits older than https://github.com/dumbmatter/gm-games/commits/master?after=dc95cf87ae4c8909d29179b13ff7f680d73d8828+0 are not listed here. Maybe some day I will go through them and update this!
+* 2014-07-12: New feature: Power Rankings. [[1]](https://old.reddit.com/r/BasketballGM/comments/2aijfj/new_feature_power_rankings_and_some_other_minor/)
+
+* **2014-07-05: New feature: God Mode, which allows you to have more control over your league. [[1]](https://basketball-gm.com/blog/2014/07/new-feature-god-mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/29xjb5/new_feature_god_mode/)**
+
+* 2014-06-15: Custom draft class import. [[1]](https://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/) [[2]](https://old.reddit.com/r/BasketballGM/comments/2893s0/new_feature_custom_draft_classes/)
+
+* **2014-06-02: Full league import/export. [[1]](https://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/) [[2]](https://old.reddit.com/r/BasketballGM/comments/275zwp/fairly_major_new_feature_needs_testing_export/)**
+
+* 2014-05-24: Redesigned dashboard. [[1]](https://old.reddit.com/r/BasketballGM/comments/26dlwo/dashboard_redesign/)
+
+* 2014-05-04: Slight change to game simulation - your best players will score more. [[1]](https://old.reddit.com/r/BasketballGM/comments/24qtog/slight_change_to_game_simulation_your_best/)
+
+* 2014-05-01: Fun new Donald Sterling-inspired owner message. [[1]](https://old.reddit.com/r/BasketballGM/comments/24ikkt/fun_new_donald_sterlinginspired_owner_message/)
+
+* 2014-04-27: Filter by team in Player Stats and Player Ratings pages.
+
+* 2014-04-26: Redesigned Schedule page.
+
+* 2014-04-25: Make healthRank a little less impactful in determining injury duration.
+
+* 2014-03-18: Show conference ranks in division standings, which is particularly important for mobile where conference standings are not shown.
+
+* 2014-03-09: Decrease the recently-added trade fudge factor by 50%.
+
+* 2014-03-09: In trades, AI teams value their assets more, and they value combinations of players less.
+
+* 2014-03-08: Add support for leagues with more than 30 teams.
+
+* 2014-03-08: Players should very rarely refuse to re-sign after winning the title.
+
+* 2014-03-05: New "Upcoming Free Agents" page. [[1]](https://old.reddit.com/r/BasketballGM/comments/1zp11c/minor_new_feature_upcoming_free_agents_page/)
+
+* 2014-03-04: Warning when proceeding to free agency while some players remaing un-re-signed.
+
+* 2014-03-03: Achievements! Also, an account system to store achievements. [[1]](https://basketball-gm.com/blog/2014/03/new-feature-achievements/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1zggeq/new_feature_achievements/)
+
+* 2014-02-24: Add point differential to team stats.
+
+* 2014-02-24: Remove double counting of rebounding synergy bonus.
+
+* 2014-02-22: New league history summary page, showing all seasons at once. [[1]](https://old.reddit.com/r/BasketballGM/comments/1ynj2c/minor_new_feature_league_history_overview/)
+
+* 2014-02-19: Synergy depends on player rating values, not on skill labels. So a player who barely gets a skill label and a player who barely misses it will be almost identical. [[1]](https://basketball-gm.com/blog/2014/02/what-do-skills-mean/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1ye471/what_do_skills_mean/)
+
+* 2014-02-17: Rookie of the Year should not depend on wins, otherwise weird stuff can happen like a player who got 0 minutes on a great team winning.
+
+* 2014-02-17: Improve trading block performance.
+
+* 2014-02-15: New improved trade AI. [[1]](https://basketball-gm.com/blog/2014/02/new-improved-trade-ai/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1xztme/new_improved_trade_ai_tons_of_loopholes_fixed_but/)
+
+* 2014-01-31: Injuries heal even if the player's team doesn't play that day.
+
+* 2014-01-26: New Feature: Create A Player. [[1]](https://old.reddit.com/r/BasketballGM/comments/1w7u8o/new_feature_create_a_player_please_help_test_it/)
+
+* 2014-01-21: New team regions and names. [[1]](https://basketball-gm.com/blog/2014/01/new-team-regions-and-names/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1vsg92/new_team_regions_and_names_final/)
+
+* 2014-01-21: New feature: Watch List. [[1]](https://old.reddit.com/r/BasketballGM/comments/1vscy1/new_feature_watch_list/)
+
+* 2014-01-15:  Tweak steal and turnover distributions.
+
+* 2014-01-14: Team abbreviations are customizable at Tools > Edit Team Info. [[1]](https://old.reddit.com/r/BasketballGM/comments/1v8x1p/very_minor_new_feature_you_can_customize_team/)
+
+* **2014-01-13: Three years of future draft prospects are generated ahead-of-time, and are viewable on the new Draft Scouting page. [[1]](http://basketball-gm.com/blog/2014/01/anyone-want-to-beta-test-new-draft-scouting-features/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1uzyzy/anyone_want_to_beta_test_new_draft_scouting/) [[3]](https://old.reddit.com/r/BasketballGM/comments/1v56z4/new_draft_scouting_features_are_live_in_all/)**
+
+* 2014-01-06: Add option to delete old data and improve performance. [[1]](https://basketball-gm.com/blog/2014/01/performance-issues-in-old-leagues/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1ul7dd/performance_issues_in_old_leagues/)
+
+* 2014-01-05: Progress bar while waiting for trading block offers.
+
+* 2014-01-03: New options on the player stats page: view career totals, career averages, season totals, per 36 minute stats. [[1]](https://old.reddit.com/r/BasketballGM/comments/1ud5qp/new_options_on_the_player_stats_page_view_career/)
+
+* 2013-12-22: Quick access menu on the left on large screens. [[1]](https://old.reddit.com/r/BasketballGM/comments/1thxau/quick_access_menu_on_large_screens/)
+
+* 2013-12-21: Added Finals MVP award.
+
+* 2013-12-21: Base roster sorting on player value (no potential, just ovr and stats) rather than just ovr.
+
+* 2013-12-14: Show attendance in box score.
+
+* 2013-12-11: Show player moods in the Free Agents table.
+
+* 2013-12-10: Display change in ovr and pot in the Roster table.
+
+* 2013-12-08: Spread out the foul distribution a little bit more. Fewer players foul out, fewer players get 0 fouls.
+
+* 2013-12-08:  GMs get fired after playoffs, not before regular season. And you get a new intro message after you start with a new team.
+
+* 2013-12-07: Tweak contracts formula to fix issue wtih too many free agents going unsigned.
+
+* 2013-12-03: Keyboard shortcut: alt+p -> click first item of play menu.
+
+* 2013-11-27: Add support for custom rosters to define the URL to a logo for each team.
+
+* 2013-11-26: Highlight players on court in live play-by-play.
+
+* 2013-11-26: Beter awards formulas, based on EWA and wins. [[1]](https://old.reddit.com/r/BasketballGM/comments/1rh71z/minor_new_feature_better_awards_formula/)
+
+* 2013-11-24: Notification bubbles. [[1]](https://old.reddit.com/r/BasketballGM/comments/1re3ea/new_feature_notification_bubbles/)
+
+* 2013-11-20: Smarter substitution patterns, based on stats too, not just ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/1r3oyl/very_minor_update_smarter_substitutions/)
+
+* 2013-11-18: Show EWA in Team History and Hall of Fame pages.
+
+* 2013-11-10: Allow trades that go over the roster size limit, and check roster size  limit before starting game simulation.
+
+* 2013-11-03: Live play-by-play simulation. [[1]](https://old.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/)
+
+* 2013-11-01: Fixed a bug that allowed AI teams to go over the cap to sign free agents.
+
+* 2013-11-25: Fixed various bugs introduced with the recent free agency changes. [[1]](https://old.reddit.com/r/BasketballGM/comments/1p8ovm/free_agency_fixes/)
+
+* **2013-11-22: Revamped free agency, which now gradually happens over 30 days rather than all at once. [[1]](https://old.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/)**
+
+* 2013-10-15: New "Fantasy Draft" feature. [[1]](https://old.reddit.com/r/BasketballGM/comments/1ojn4u/new_experimental_feature_fantasy_draft/)
+
+* 2013-10-11: Once you've loaded the game in your browser, it should be cached so that it loads in the future even if you're offline. [[1]](https://old.reddit.com/r/BasketballGM/comments/1o9boe/offline_play/)
+
+* 2013-10-06: Changes in player development (7 footers with perimeter skills are much less common). [[1]](https://old.reddit.com/r/BasketballGM/comments/1nvwcp/changes_in_player_development_7_footers_with/)
+
+* **2013-10-01: New UI - prettier, less glitchy, and mobile-friendly. [[1]](https://old.reddit.com/r/BasketballGM/comments/1nk34h/new_ui_prettier_less_glitchy_and_mobilefriendly/)**
+
+* **2013-09-21: New features: "Trading Block" and a better "What would make this deal work?" button. [[1]](https://old.reddit.com/r/BasketballGM/comments/1mves9/new_features_trading_block_and_a_better_what/)**
+
+* 2013-09-02:  Releasing a just-drafted player before the regular season starts incurs no penalty - basically the contract is not guaranteed until the regular season.
+
+* 2013-09-02: Increase luxury tax from 50% to 150%.
+
+* 2013-09-01: Allow user to randomize teams when importing custom rosters.
+
+* 2013-09-01: Get rid of the ability to "Buy Out" contracts because it made tanking too easy.
+
+* 2013-08-31: New formula for overall ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/1lhojx/new_formula_for_overall_ratings/)
+
+* 2013-08-29: New "Edit Team Info" page.
+
+* 2013-08-29: Steeper declines in player value for aging players.
+
+* 2013-08-28: A little lower contracts across the board.
+
+* 2013-08-27: After being fired, the user has the option of being hired by a bad team, rather than just having the league be over.
+
+* 2013-08-25: Added EWA calculation, based on PER. Displayed in leaders, player stats, and player pages. This will eventually be used for awards.
+
+* 2013-08-24: Player valuation changes. [[1]](https://old.reddit.com/r/BasketballGM/comments/1l0v45/player_valuation_changes/)
+
+* 2013-08-24: Grouped awards by type in player page, which makes long awards lists more readable.
+
+* 2013-08-11: Fixed a couple things about exported rosters for past seasons: rosters reflect past not current players, and startingSeason is correct.
+
+* 2013-08-11: Increase min height by 1 inch.
+
+* 2013-08-11: Fix floor on 3 point percentage.
+
+* 2013-08-10: Tweak game simulation to encourage more balanced rosters.
+
+* 2013-08-10: Teams draft based on "value" which incorporates age, not just ratings.
+
+* 2013-08-08: Allow teams to be defined in custom roster files.
+
+* 2013-08-07: Make counter-offer button faster by only testing up to 5 assets.
+
+* 2013-08-05: AI teams will not trade away more than two draft picks in a single trade. [[1]](https://old.reddit.com/r/BasketballGM/comments/1jr5zr/closing_some_loopholes/)
+
+* 2013-08-05: Default ratings for bigs lowered by 5 across the board. [[1]](https://old.reddit.com/r/BasketballGM/comments/1jr5zr/closing_some_loopholes/)
+
+* 2013-08-02: Optionally allow real images to be used for players in custom roster files, rather than always using randomly-generated faces.
+
+* 2013-08-01: Reduce importance of interior defense and rebounding skills.
+
+* 2013-08-01: Reset playing time modifier when a player leaves the user's team.
+
+* 2013-08-01: Taller bigs.
+
+* 2013-08-01: Fewer players demanding contracts slightly above the minimum.
+
+* 2013-08-01: No fuzz for height rating.
+
+* 2013-08-01: League championships show up in Awards section on player pages.
+
+* 2013-08-01: Add a three season grace period in new leagues where you cannot be fired.
+
+* 2013-07-30: Fixed bug where coaching spending had the opposite of its intended effect for improving players.
+
+* 2013-07-28: Fixed bug where playing time would be set to 0 if you view an old roster before viewing the current one.
+
+* 2013-07-27: Fixed contract lengths for exported rosters.
+
+* 2013-07-26:  Automatically add minimum contract players to the AI teams before the season starts if they are below the minimum roster limit.
+
+* 2013-07-19: Make free agents a bit more adversarial.
+
+* 2013-07-17: Player contract demands are based on ratings and stats, not just ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/1igs9u/new_version_310/)
+
+* **2013-07-17: Future draft picks can be traded. [[1]](https://old.reddit.com/r/BasketballGM/comments/1igs9u/new_version_310/)**
+
+* **2013-07-17: "What would make you agree to this deal?" button to get counter-offers in trade negotiations. [[1]](https://old.reddit.com/r/BasketballGM/comments/1igs9u/new_version_310/)**
+
+* **2013-07-17: GMs of other teams pursue different strategies depending on if they are contending or rebuilding. [[1]](https://old.reddit.com/r/BasketballGM/comments/1igs9u/new_version_310/)**
+
+* 2013-07-14: Strongly discourage AI teams from trading draft picks early in the game, since there is too much uncertainty then.
+
+* 2013-07-05: New method of calculating salaries based on player value.
+
+* **2013-06-16: Hall of Fame.**
+
+* 2013-06-14: Fewer extreme tall/short players.
+
+* 2013-06-07: Support for starting a league with custom rosters and exporting the rosters from a current league. [[1]](https://old.reddit.com/r/BasketballGM/comments/1fw4il/custom_rosters_exporting_rosters/)
+
+* 2013-05-26: Immediately sub off a player with 6 fouls. Otherwise, more than 6 fouls could happen.
+
+* 2013-05-20: Faster UI, particularly in the game log.
+
+* 2013-05-15: Change playing time for your players from the Roster page.
+
+* 2013-05-14: Show record and playoffs results in the Roster page.
+
+* 2013-05-13: Added all players in team history to the Team History page and you can switch to other teams besides your own.
+
+* 2013-05-05: Player value is logarithmic when making trades, so it is harder to steal top players from AI teams.
+
+* **2013-04-08: Added NBA-like draft lottery.**
+
+* 2013-04-06: Players foul out with 6 fouls.
+
+* **2013-03-23: More refined financial data, such as different classes of revenue and expenses, and a new Team Finances page to view it.**
+
+* **2013-03-23: Injuries.**
+
+* 2013-03-23: Home court advantage in game simulation
+
+* 2013-03-23: "Hype" for a team governs things like attendance and revenue.
+
+* 2013-03-23: Different population sizes for different regions, which influences revenue and thus game difficulty.
+
+* 2013-03-23: Awards and salaries from previous seasons displayed in player view.
+
+* 2013-03-23: More sane and less adversarial contract negotiations, with more direct feedback about what the player is thinking.
+
+* 2013-03-23: Settings to control various budget items, such as ticket price, scouting budget, etc.
+
+* 2013-03-23: "Fuzz" in displayed player ratings: the more spent on scouting, the more accurate the displayed ratings.
+
+* 2013-03-23: More historical information in player view: previous contracts and awards won.
+
+* 2013-03-23: Annual interactions with the owner: if you do poorly, you might get fired.
+
+* 2013-03-23: Free agents refuse to sign with your team if they don't like you.
+
+* 2013-03-02: First beta of the web-based version Basketball GM, replacing [the old downloadable version](https://basketball-gm.com/old/).

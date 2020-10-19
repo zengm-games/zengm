@@ -276,6 +276,22 @@ const play = async (
 		}
 	};
 
+	const getResult = (
+		gid: number,
+		teams: [any, any],
+		doPlayByPlay: boolean,
+		homeCourtFactor?: number,
+	) => {
+		// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
+		for (const t of teams) {
+			if (t.depth !== undefined) {
+				t.depth = team.getDepthPlayers(t.depth, t.player);
+			}
+		}
+
+		return new GameSim(gid, teams, doPlayByPlay, homeCourtFactor).run();
+	};
+
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
 		schedule: ScheduleGame[],
@@ -310,12 +326,12 @@ const play = async (
 						}
 					}
 
-					const result = new GameSim(
+					const result = getResult(
 						game.gid,
-						helpers.deepCopy(teamsInput),
+						helpers.deepCopy(teamsInput), // So stats start at 0 each time
 						doPlayByPlay,
 						homeCourtFactor,
-					).run();
+					);
 
 					let wonTid: number | undefined;
 					if (result.team[0].stat.pts > result.team[1].stat.pts) {
@@ -355,7 +371,7 @@ const play = async (
 					await lock.set("stopGameSim", true);
 				}
 			} else {
-				const result = new GameSim(game.gid, teamsInput, doPlayByPlay).run();
+				const result = getResult(game.gid, teamsInput, doPlayByPlay);
 				results.push(result);
 			}
 		}

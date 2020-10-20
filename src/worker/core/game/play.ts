@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, TIME_BETWEEN_GAMES } from "../../../common";
+import { PHASE, TIME_BETWEEN_GAMES } from "../../../common";
 import {
 	GameSim,
 	allStar,
@@ -142,15 +142,19 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
+			await freeAgents.decreaseDemands();
+			await freeAgents.autoSign();
+			await trade.betweenAiTeams();
+
 			await finances.updateRanks(["expenses", "revenues"]);
 
 			local.minFractionDiffs = undefined;
 
 			const healedTexts: string[] = [];
 
-			// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+			// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats. Free agents are handled in decreaseDemands.
 			const players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
+				0,
 				Infinity,
 			]);
 
@@ -460,9 +464,6 @@ const play = async (
 						g.get("phase") !== PHASE.PLAYOFFS &&
 						g.get("phase") !== PHASE.AFTER_TRADE_DEADLINE
 					) {
-						await freeAgents.decreaseDemands();
-						await freeAgents.autoSign();
-						await trade.betweenAiTeams();
 						await team.checkRosterSizes("other");
 					}
 

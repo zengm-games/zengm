@@ -706,7 +706,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2015-02-06: Fixed a trade AI bug that applied a penalty in the wrong direction for "4 quarters for a dollar" trades.
 
-* **2015-02-04: New feature: Statistical Feats. Triple doubles, 5x5s, 50 point games, etc.  [[1]]](https://basketball-gm.com/blog/2015/02/new-feature-statistical-feats/) [[2]](https://old.reddit.com/r/BasketballGM/comments/2upz55/new_feature_statistical_feats/)**
+* **2015-02-04: New feature: Statistical Feats. Triple doubles, 5x5s, 50 point games, etc.  [[1]](https://basketball-gm.com/blog/2015/02/new-feature-statistical-feats/) [[2]](https://old.reddit.com/r/BasketballGM/comments/2upz55/new_feature_statistical_feats/)**
 
 * 2015-01-31: Easy spreadsheet stats export from Tools > Export Stats. [[1]](https://basketball-gm.com/blog/2015/01/easy-stats-export/) [[2]](https://old.reddit.com/r/BasketballGM/comments/2ub9zh/new_feature_easy_stats_export_from_tools_export/)
 

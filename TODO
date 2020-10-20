@@ -1,8 +1,22 @@
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/g9ac541/
 - https://discord.com/channels/290013534023057409/290015591216054273/767875431310688296
+- when I pot 1st round pick on trading block, teams offer just their 2nd round pick?!!
 
 AI re-signing is just player mood + trade function
+- so many fewer FAs!
+- add fudge factor?
+  - difficulty dependent
+- show mood towards current team in UI?
+  - column toggle, like injuries in team ranks?
+
+genSchedulePlayoffsDay -> genSchedulePlayoffsRound
+- make whole round at once, accounting for how many games have been played
+- when series ends, delete remaining games from schedule
+- remove forceWin hack in setSchedule
+- https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
+
+make force win buttons same width
 
 schedule editor
 
@@ -80,7 +94,7 @@ finances revamp
 - https://old.reddit.com/r/BasketballGM/comments/ir5rbf/suggestions_for_finances_overhaul/
 
 redo mood system
-- some way to see how it changes during FA - show probability? show # days until willing?
+- some way to see how it changes during FA - show probability? show # days until willing? https://old.reddit.com/r/BasketballGM/comments/iuluuj/the_new_player_mood_system_is_now_live_in_version/g5mgi31/
 - customizable columns on roster page
 - later
   - moodComponents.playingTime for football - based on depth chart

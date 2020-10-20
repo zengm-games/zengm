@@ -919,6 +919,35 @@ const getLeague = async (options: GetLeagueOptions) => {
 					year: options.season,
 					originalTid: t2.tid,
 				};
+
+				// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
+				const salaryRow = basketball.salaries.find(
+					row => row.start <= options.season + 1 && row.slug === p.srID,
+				);
+				if (salaryRow) {
+					p.contract = {
+						amount: salaryRow.amount / 1000,
+						exp: salaryRow.exp,
+					};
+
+					let minYears =
+						defaultGameAttributes.rookieContractLengths[dp.round - 1] ??
+						defaultGameAttributes.rookieContractLengths[
+							defaultGameAttributes.rookieContractLengths.length - 1
+						];
+
+					// Offset because it starts next season
+					minYears += 1;
+
+					if (p.contract.exp < options.season + minYears) {
+						p.contract.exp = options.season + minYears;
+					}
+
+					if (p.contract.exp > options.season + 5) {
+						// Bound at 5 year contract
+						p.contract.exp = options.season + 5;
+					}
+				}
 			}
 		}
 

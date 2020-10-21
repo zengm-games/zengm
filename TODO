@@ -7,8 +7,23 @@ AI re-signing is just player mood + trade function
 - so many fewer FAs!
 - add fudge factor?
   - difficulty dependent
-- show mood towards current team in UI?
-  - column toggle, like injuries in team ranks?
+- ui plan
+  - X free agents: mood towards you only
+  - X negotiation: mood towards you only
+  - X bios: towards current team
+  - X upcoming free agents: both, in separate columns
+  - X player page: towards current team
+  - X roster: current team
+  - popover: allow switching between both
+      - whatever text is shown in there, make sure it's sensible for free agents and re-signing players too. current isn't.
+  - columns: different title text for your team or current team
+  - in the displayed icons, some distinction between your team and current team visually? maybe color?
+- moodInfos
+  - overrides same for both teams?
+  - replace all moodInfo calls with this, so it can be used inside Mood.tsx to show both
+  - fall back from current to user if no current (like for FAs)
+    - but in some cases we don't want fallback, like UpcomingFreeAgents. and yes it does happen there, in the re-signing phase...
+- abstract searchValue stuff into common function, seems same everywhere?
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played

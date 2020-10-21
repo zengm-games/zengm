@@ -193,12 +193,12 @@ const updatePlayer = async (
 		const userTid = g.get("userTid");
 
 		if (p.tid !== PLAYER.RETIRED) {
-			p.mood = await player.moodInfo(pRaw, userTid);
+			p.mood = await player.moodInfos(pRaw);
 		}
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = p.mood.contractAmount / 1000;
+			p.contract.amount = p.mood.user.contractAmount / 1000;
 		}
 
 		const teamColors = await getTeamColors(p.tid);
@@ -237,7 +237,7 @@ const updatePlayer = async (
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 
-		const willingToSign = !!(p.mood && p.mood.willing);
+		const willingToSign = !!(p.mood.user && p.mood.user.willing);
 
 		const retired = p.tid === PLAYER.RETIRED;
 

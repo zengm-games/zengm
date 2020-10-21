@@ -105,7 +105,7 @@ const Negotiation = ({
 				</a>{" "}
 			</h2>
 			<div className="d-flex align-items-center">
-				<Mood p={player} />
+				<Mood defaultType="user" p={player} />
 				<RatingsStatsPopover pid={player.pid} />
 			</div>
 			<p className="mt-2">

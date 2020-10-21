@@ -20,6 +20,21 @@ const UpcomingFreeAgents = ({
 		dropdownFields: { seasonsUpcoming: season },
 	});
 
+	const superCols = [
+		{
+			title: "",
+			colspan: 6 + stats.length,
+		},
+		{
+			title: "Projected Mood",
+			colspan: 2,
+		},
+		{
+			title: "",
+			colspan: phase === PHASE.RESIGN_PLAYERS ? 1 : 2,
+		},
+	];
+
 	const cols = getCols(
 		"Name",
 		"Pos",
@@ -29,9 +44,12 @@ const UpcomingFreeAgents = ({
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
 		"Mood",
+		"Mood",
 		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
 		"Projected Contract",
 	);
+	cols[6 + stats.length].title = "Your Team";
+	cols[7 + stats.length].title = "Current Team";
 
 	const rows = players.map(p => {
 		return {
@@ -55,9 +73,18 @@ const UpcomingFreeAgents = ({
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
-					value: <Mood maxWidth p={p} />,
-					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
-					searchValue: p.mood ? p.mood.traits.join("") : null,
+					value: <Mood defaultType="user" maxWidth p={p} />,
+					sortValue: p.mood.user
+						? processComponents(p.mood.user.components).sum
+						: null,
+					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
+				},
+				{
+					value: <Mood defaultType="current" maxWidth p={p} />,
+					sortValue: p.mood.current
+						? processComponents(p.mood.current.components).sum
+						: null,
+					searchValue: p.mood.current ? p.mood.current.traits.join("") : null,
 				},
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []
@@ -87,6 +114,7 @@ const UpcomingFreeAgents = ({
 				name="UpcomingFreeAgents"
 				rows={rows}
 				pagination
+				superCols={superCols}
 			/>
 		</>
 	);

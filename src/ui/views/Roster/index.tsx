@@ -354,7 +354,7 @@ const Roster = ({
 							) : null}
 							{showMood ? (
 								<td>
-									<Mood maxWidth p={p} />
+									<Mood defaultType="current" maxWidth p={p} />
 								</td>
 							) : null}
 							{showRelease ? (

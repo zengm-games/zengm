@@ -110,11 +110,13 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
-					value: <Mood maxWidth p={p} />,
-					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
-					searchValue: p.mood ? p.mood.traits.join("") : null,
+					value: <Mood defaultType="user" maxWidth p={p} />,
+					sortValue: p.mood.user
+						? processComponents(p.mood.user.components).sum
+						: null,
+					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
 				},
-				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
+				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{
 					value: (
@@ -126,10 +128,10 @@ const FreeAgents = ({
 							minContract={minContract}
 							spectator={spectator}
 							p={p}
-							willingToNegotiate={p.mood.willing}
+							willingToNegotiate={p.mood.user.willing}
 						/>
 					),
-					searchValue: p.mood.willing ? "Negotiate Sign" : "Refuses!",
+					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 				},
 			],
 		};

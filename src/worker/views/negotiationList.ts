@@ -26,7 +26,7 @@ const updateNegotiationList = async () => {
 	).filter(p => negotiationPids.includes(p.pid));
 
 	for (const p of playersAll) {
-		(p as any).mood = await player.moodInfo(p, userTid);
+		(p as any).mood = await player.moodInfos(p);
 	}
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
@@ -53,7 +53,7 @@ const updateNegotiationList = async () => {
 
 	let sumContracts = 0;
 	for (const p of players) {
-		sumContracts += p.mood.contractAmount;
+		sumContracts += p.mood.user.contractAmount;
 	}
 	sumContracts /= 1000;
 

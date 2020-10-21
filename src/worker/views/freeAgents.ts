@@ -23,7 +23,7 @@ const updateFreeAgents = async () => {
 			: ["gp", "keyStats", "av"];
 
 	for (const p of playersAll) {
-		(p as any).mood = await player.moodInfo(p, userTid);
+		(p as any).mood = await player.moodInfos(p);
 	}
 
 	const players = await idb.getCopies.playersPlus(playersAll, {

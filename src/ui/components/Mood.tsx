@@ -91,8 +91,15 @@ export const processComponents = (components: MoodComponents) => {
 	};
 };
 
+type PlayerMood = {
+	components: MoodComponents;
+	probWilling: number;
+	traits: MoodTrait[];
+};
+
 const Mood = ({
 	className,
+	defaultType,
 	maxWidth,
 	p,
 }: {
@@ -102,23 +109,25 @@ const Mood = ({
 		pid: number;
 		name: string;
 		mood: {
-			components: MoodComponents;
-			probWilling: number;
-			traits: MoodTrait[];
+			user: PlayerMood;
+			current?: PlayerMood;
 		};
 		tid: number;
 	};
+	defaultType: "user" | "current";
 }) => {
 	const userTid = useLocal(state => state.userTid);
 
-	if (!p.mood) {
+	const mood = p.mood[defaultType];
+
+	if (!mood) {
 		return null;
 	}
 
-	const { componentsRounded, sum } = processComponents(p.mood.components);
+	const { componentsRounded, sum } = processComponents(mood.components);
 
 	const showProbWilling = p.tid >= 0;
-	const roundedProbWilling = roundProbWilling(p.mood.probWilling);
+	const roundedProbWilling = roundProbWilling(mood.probWilling);
 
 	const id = `mood-popover-${p.pid}`;
 
@@ -127,10 +136,10 @@ const Mood = ({
 	);
 	const modalBody = (
 		<>
-			{p.mood.traits.length > 0 ? (
+			{mood.traits.length > 0 ? (
 				<p className="mb-2">
 					Priorities:{" "}
-					{p.mood.traits
+					{mood.traits
 						.map(trait => MOOD_TRAITS[trait].toLowerCase())
 						.join(", ")}
 				</p>
@@ -195,7 +204,7 @@ const Mood = ({
 				{plusMinus(sum)}
 			</span>
 			<div className="ml-1 mr-auto" data-no-row-highlight="true">
-				{p.mood.traits.join(" ")}
+				{mood.traits.join(" ")}
 			</div>
 			{showProbWilling ? (
 				<span className="text-muted ml-1" data-no-row-highlight="true">

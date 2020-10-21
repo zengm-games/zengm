@@ -372,7 +372,7 @@ const Player2 = ({
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
 				player.tid >= 0 ? (
-					<Mood className="ml-2" p={player} />
+					<Mood className="ml-2" defaultType="user" p={player} />
 				) : null}
 			</div>
 		);

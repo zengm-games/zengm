@@ -24,6 +24,7 @@ import killOne from "./killOne";
 import limitRating from "./limitRating";
 import madeHof from "./madeHof";
 import moodInfo from "./moodInfo";
+import moodInfos from "./moodInfos";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
@@ -65,6 +66,7 @@ export default {
 	limitRating,
 	madeHof,
 	moodInfo,
+	moodInfos,
 	ovr,
 	pos,
 	release,

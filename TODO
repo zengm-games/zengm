@@ -24,9 +24,7 @@ AI re-signing is just player mood + trade function
   - X upcoming free agents: both, in separate columns
   - X player page: towards current team
   - X roster: current team
-- moodInfos
-  - fall back from current to user if no current (like for FAs)
-    - but in some cases we don't want fallback, like UpcomingFreeAgents. and yes it does happen there, in the re-signing phase...
+- during re-signing phase, should still show % everywhere except re-signing table. same with free agency, i think?
 - abstract searchValue stuff into common function, seems same everywhere?
 - blog
   - UI shows whichever is appropriate, except both on upcoming free agents

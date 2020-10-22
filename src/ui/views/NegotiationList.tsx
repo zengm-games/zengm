@@ -78,7 +78,7 @@ const NegotiationList = ({
 						: null,
 					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
 				},
-				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
+				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{
 					value: (

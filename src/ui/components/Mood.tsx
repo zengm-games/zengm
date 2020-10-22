@@ -135,6 +135,11 @@ const Mood = ({
 		return null;
 	}
 
+	if (defaultType === "current" && !p.mood.current) {
+		// This handles when it's requested to show the current team, but there is no current team
+		return null;
+	}
+
 	const showProbWilling = p.tid >= 0;
 
 	const id = `mood-popover-${p.pid}`;

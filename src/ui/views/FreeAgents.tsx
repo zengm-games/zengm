@@ -11,7 +11,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { dataTableWrappedMood, processComponents } from "../components/Mood";
+import { dataTableWrappedMood } from "../components/Mood";
 
 const FreeAgents = ({
 	capSpace,

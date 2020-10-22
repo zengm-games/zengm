@@ -104,9 +104,16 @@ const UpcomingFreeAgents = ({
 			{phase !== PHASE.RESIGN_PLAYERS ? (
 				<p>
 					Keep in mind that many of these players will choose to re-sign with
-					their current team rather than become free agents.
+					their current team rather than become free agents. Also even if a
+					player is &gt;99% willing to re-sign with his team, he still may
+					become a free agent if his team does not want him.
 				</p>
 			) : null}
+
+			<p>
+				"Projected mood" is based on projected salary demands, not on projected
+				future team performance or any other factors.
+			</p>
 
 			<DataTable
 				cols={cols}

@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useState } from "react";
 import { MOOD_TRAITS } from "../../common";
 import type { MoodComponents, MoodTrait } from "../../common/types";
-import { helpers, useLocal } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+import { helpers, useLocalShallow } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 import ResponsivePopover from "./ResponsivePopover";
 
 const componentText = (component: keyof MoodComponents, value: number) => {
@@ -116,25 +116,31 @@ const Mood = ({
 	};
 	defaultType: "user" | "current";
 }) => {
-	const userTid = useLocal(state => state.userTid);
+	const { teamInfoCache, userTid } = useLocalShallow(state => ({
+		teamInfoCache: state.teamInfoCache,
+		userTid: state.userTid,
+	}));
 
-	const mood = p.mood[defaultType];
+	const playerIsOnUsersTeam = userTid === p.tid;
+	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;
+	const initialType =
+		defaultType === "current" && canShowCurrent ? "current" : "user";
 
-	if (!mood) {
+	const [type, setType] = useState<"user" | "current">(initialType);
+
+	const mood = p.mood[type];
+	const initialMood = p.mood[initialType];
+
+	if (!initialMood) {
 		return null;
 	}
 
-	const { componentsRounded, sum } = processComponents(mood.components);
-
 	const showProbWilling = p.tid >= 0;
-	const roundedProbWilling = roundProbWilling(mood.probWilling);
 
 	const id = `mood-popover-${p.pid}`;
 
-	const moodIsForUsersTeam = defaultType === "user" || userTid === p.tid;
-
 	let signText;
-	if (moodIsForUsersTeam) {
+	if (type === "user") {
 		if (p.tid === userTid) {
 			signText = "re-sign with you";
 		} else {
@@ -145,47 +151,83 @@ const Mood = ({
 	}
 
 	const modalHeader = (
-		<>
-			<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>'s mood towards{" "}
-			{moodIsForUsersTeam ? "your" : "his current"} team
-		</>
+		<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 	);
-	const modalBody = (
-		<>
-			{mood.traits.length > 0 ? (
-				<p className="mb-2">
-					Priorities:{" "}
-					{mood.traits
-						.map(trait => MOOD_TRAITS[trait].toLowerCase())
-						.join(", ")}
-				</p>
-			) : null}
-			<table>
-				<tbody>
-					{helpers.keys(componentsRounded).map(key => {
-						const text = componentText(key, componentsRounded[key]);
-						if (!text) {
-							return null;
-						}
+	let modalBody = null;
+	if (mood) {
+		const { componentsRounded } = processComponents(mood.components);
+		const roundedProbWilling = roundProbWilling(mood.probWilling);
 
-						return (
-							<tr key={key} className={highlightColor(componentsRounded[key])}>
-								<td className="text-right p-0">
-									{plusMinus(componentsRounded[key])}
-								</td>
-								<td className="p-0 pl-1">{text}</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-			{showProbWilling ? (
-				<p className="mt-2 mb-0">
-					Odds player would {signText}: {roundedProbWilling}%
-				</p>
-			) : null}
-		</>
-	);
+		modalBody = (
+			<>
+				{mood && mood.traits.length > 0 ? (
+					<p className="mb-2">
+						Priorities:{" "}
+						{mood.traits
+							.map(trait => MOOD_TRAITS[trait].toLowerCase())
+							.join(", ")}
+					</p>
+				) : null}
+				<ul className="nav nav-tabs mb-2">
+					<li className="nav-item">
+						<a
+							className={classNames("nav-link", {
+								active: type === "user",
+							})}
+							href="#"
+							onClick={() => {
+								setType("user");
+							}}
+						>
+							{teamInfoCache[userTid]?.abbrev}
+						</a>
+					</li>
+					{canShowCurrent ? (
+						<li className="nav-item">
+							<a
+								className={classNames("nav-link", {
+									active: type === "current",
+								})}
+								href="#"
+								onClick={() => {
+									setType("current");
+								}}
+							>
+								{teamInfoCache[p.tid]?.abbrev}
+							</a>
+						</li>
+					) : null}
+				</ul>
+				<table>
+					<tbody>
+						{helpers.keys(componentsRounded).map(key => {
+							const text = componentText(key, componentsRounded[key]);
+							if (!text) {
+								return null;
+							}
+
+							return (
+								<tr
+									key={key}
+									className={highlightColor(componentsRounded[key])}
+								>
+									<td className="text-right p-0">
+										{plusMinus(componentsRounded[key])}
+									</td>
+									<td className="p-0 pl-1">{text}</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+				{showProbWilling ? (
+					<p className="mt-1 mb-0">
+						Odds player would {signText}: {roundedProbWilling}%
+					</p>
+				) : null}
+			</>
+		);
+	}
 
 	const popoverContent = (
 		<div
@@ -198,37 +240,41 @@ const Mood = ({
 		</div>
 	);
 
-	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
-		<button
-			className={classNames(
-				"btn btn-xs d-flex",
-				className,
-				moodIsForUsersTeam
-					? "btn-light-bordered-primary"
-					: "btn-light-bordered",
-				{
-					"w-100": maxWidth,
-				},
-			)}
-			onClick={onClick}
-		>
-			<span
-				className={`text-right ${highlightColor(sum)}`}
-				data-no-row-highlight="true"
-				style={plusMinusStyle}
+	const { sum } = processComponents(initialMood.components);
+	const roundedProbWilling = roundProbWilling(initialMood.probWilling);
+	const renderTarget = ({ onClick }: { onClick?: () => void }) => {
+		return (
+			<button
+				className={classNames(
+					"btn btn-xs d-flex",
+					className,
+					initialType === "user"
+						? "btn-light-bordered-primary"
+						: "btn-light-bordered",
+					{
+						"w-100": maxWidth,
+					},
+				)}
+				onClick={onClick}
 			>
-				{plusMinus(sum)}
-			</span>
-			<div className="ml-1 mr-auto" data-no-row-highlight="true">
-				{mood.traits.join(" ")}
-			</div>
-			{showProbWilling ? (
-				<span className="text-muted ml-1" data-no-row-highlight="true">
-					{roundedProbWilling}%
+				<span
+					className={`text-right ${highlightColor(sum)}`}
+					data-no-row-highlight="true"
+					style={plusMinusStyle}
+				>
+					{plusMinus(sum)}
 				</span>
-			) : null}
-		</button>
-	);
+				<div className="ml-1 mr-auto" data-no-row-highlight="true">
+					{initialMood.traits.join(" ")}
+				</div>
+				{showProbWilling ? (
+					<span className="text-muted ml-1" data-no-row-highlight="true">
+						{roundedProbWilling}%
+					</span>
+				) : null}
+			</button>
+		);
+	};
 
 	return (
 		<ResponsivePopover

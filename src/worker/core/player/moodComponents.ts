@@ -107,6 +107,7 @@ const moodComponents = async (
 		trades: 0,
 		playingTime: 0,
 		rookieContract: 0,
+		difficulty: 0,
 	};
 
 	{
@@ -279,20 +280,40 @@ const moodComponents = async (
 
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
-	if (difficulty !== 0) {
-		for (const key of helpers.keys(components)) {
-			// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)
-			if (difficulty > 0) {
-				if (components[key] > 0) {
-					components[key] /= 1 + difficulty;
+	if (tid === g.get("userTid")) {
+		if (difficulty !== 0) {
+			for (const key of helpers.keys(components)) {
+				// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)
+				if (difficulty > 0) {
+					if (components[key] > 0) {
+						components[key] /= 1 + difficulty;
+					} else {
+						components[key] *= 1 + difficulty;
+					}
 				} else {
-					components[key] *= 1 + difficulty;
+					if (components[key] > 0) {
+						components[key] *= 1 - difficulty;
+					} else {
+						components[key] /= 1 - difficulty;
+					}
+				}
+			}
+		}
+	} else {
+		// At default difficulty, make players more likely to refuse. Decrease this, and players will be more likely to enter free agency
+		const amount = 0.5 - helpers.bound(difficulty / 2, -0.25, 0.25);
+		for (const key of helpers.keys(components)) {
+			if (amount > 0) {
+				if (components[key] > 0) {
+					components[key] /= 1 + amount;
+				} else {
+					components[key] *= 1 + amount;
 				}
 			} else {
 				if (components[key] > 0) {
-					components[key] *= 1 - difficulty;
+					components[key] *= 1 - amount;
 				} else {
-					components[key] /= 1 - difficulty;
+					components[key] /= 1 - amount;
 				}
 			}
 		}

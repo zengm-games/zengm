@@ -15,7 +15,7 @@ profit for extreme caps needs to be fixed first, its not possible to make money 
 AI re-signing is just player mood + trade function
 - so many fewer FAs!
 - add fudge factor?
-  - difficulty dependent
+  
 - football - currently goes down a different code path for re-signing...
 - ui plan
   - X free agents: mood towards you only
@@ -29,6 +29,7 @@ AI re-signing is just player mood + trade function
   - UI shows whichever is appropriate, except both on upcoming free agents
     - border color indicates which
   - popover shows current team and your team
+  - mood towards AI teams depends on difficulty
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played

@@ -371,8 +371,12 @@ const Player2 = ({
 				<WatchBlock className="ml-2" pid={player.pid} watch={player.watch} />
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
-				player.tid >= 0 ? (
-					<Mood className="ml-2" defaultType="current" p={player} />
+				player.tid >= PLAYER.FREE_AGENT ? (
+					<Mood
+						className="ml-2"
+						defaultType={player.tid === PLAYER.FREE_AGENT ? "user" : "current"}
+						p={player}
+					/>
 				) : null}
 			</div>
 		);

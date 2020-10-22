@@ -132,6 +132,52 @@ const newPhaseResignPlayers = async (
 					conditions,
 				);
 			}
+		} else if (process.env.SPORT === "basketball") {
+			let reSignPlayer = true;
+
+			const contract = {
+				...p.contract,
+			};
+			const payroll = payrollsByTid.get(p.tid);
+
+			if (g.get("hardCap") && contract.amount + payroll > g.get("salaryCap")) {
+				if (payroll === undefined) {
+					throw new Error(
+						"Payroll should always be defined if there is a hard cap",
+					);
+				}
+
+				reSignPlayer = false;
+			} else {
+				const mood = await player.moodInfo(p, p.tid, {
+					contractAmount: p.contract.amount,
+				});
+
+				if (!mood.willing) {
+					console.log(p.firstName, p.lastName, "refuses", mood);
+					reSignPlayer = false;
+				} else {
+					// Is team better off without him?
+					const dv = await team.valueChange(p.tid, [], [p.pid], [], []);
+
+					if (mood.willing && dv < 0) {
+						await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
+
+						if (payroll !== undefined) {
+							payrollsByTid.set(p.tid, contract.amount + payroll);
+						}
+					} else {
+						console.log(p.firstName, p.lastName, "not wanted");
+						reSignPlayer = false;
+					}
+				}
+			}
+
+			if (!reSignPlayer) {
+				player.addToFreeAgents(p);
+			}
+
+			await idb.cache.players.put(p);
 		} else {
 			// AI teams
 			const counts = neededPositionsByTid.get(p.tid);

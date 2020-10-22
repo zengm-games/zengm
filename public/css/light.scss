@@ -652,6 +652,12 @@ tr.table-warning:hover > td {
 	border: 1px solid $gray-400 !important;
 	color: $gray-700 !important;
 }
+.btn-light-bordered-primary {
+	@extend .btn-light;
+	background-color: $white;
+	border: 1px solid $primary !important;
+	color: $gray-700 !important;
+}
 
 .navbar-border {
 	border-bottom: 1px solid $gray-200;

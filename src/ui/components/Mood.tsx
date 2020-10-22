@@ -189,11 +189,20 @@ const Mood = ({
 		</div>
 	);
 
+	const moodIsForUsersTeam = defaultType === "user" || userTid === p.tid;
+
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
 		<button
-			className={classNames("btn btn-light-bordered btn-xs d-flex", className, {
-				"w-100": maxWidth,
-			})}
+			className={classNames(
+				"btn btn-xs d-flex",
+				className,
+				moodIsForUsersTeam
+					? "btn-light-bordered-primary"
+					: "btn-light-bordered",
+				{
+					"w-100": maxWidth,
+				},
+			)}
 			onClick={onClick}
 		>
 			<span

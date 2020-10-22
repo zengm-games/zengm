@@ -131,8 +131,24 @@ const Mood = ({
 
 	const id = `mood-popover-${p.pid}`;
 
+	const moodIsForUsersTeam = defaultType === "user" || userTid === p.tid;
+
+	let signText;
+	if (moodIsForUsersTeam) {
+		if (p.tid === userTid) {
+			signText = "re-sign with you";
+		} else {
+			signText = "sign with you";
+		}
+	} else {
+		signText = "re-sign with his current team";
+	}
+
 	const modalHeader = (
-		<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+		<>
+			<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>'s mood towards{" "}
+			{moodIsForUsersTeam ? "your" : "his current"} team
+		</>
 	);
 	const modalBody = (
 		<>
@@ -165,14 +181,7 @@ const Mood = ({
 			</table>
 			{showProbWilling ? (
 				<p className="mt-2 mb-0">
-					Odds player will {p.tid === userTid ? "re-sign" : "sign"} with you:{" "}
-					{roundedProbWilling}%
-				</p>
-			) : null}
-			{p.tid !== userTid ? (
-				<p className="mt-2 mb-0 text-muted">
-					This is his mood towards your team if you acquired him, not towards
-					his current team
+					Odds player would {signText}: {roundedProbWilling}%
 				</p>
 			) : null}
 		</>
@@ -188,8 +197,6 @@ const Mood = ({
 			{modalBody}
 		</div>
 	);
-
-	const moodIsForUsersTeam = defaultType === "user" || userTid === p.tid;
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
 		<button

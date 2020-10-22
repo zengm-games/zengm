@@ -1,7 +1,6 @@
 import React from "react";
 import {
 	DataTable,
-	Mood,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -11,7 +10,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
-import { processComponents } from "../components/Mood";
+import { dataTableWrappedMood } from "../components/Mood";
 
 const NegotiationList = ({
 	capSpace,
@@ -71,13 +70,11 @@ const NegotiationList = ({
 					searchValue: p.latestTransaction,
 					sortValue: p.latestTransactionSeason,
 				},
-				{
-					value: <Mood defaultType="user" maxWidth p={p} />,
-					sortValue: p.mood.user
-						? processComponents(p.mood.user.components).sum
-						: null,
-					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
-				},
+				dataTableWrappedMood({
+					defaultType: "user",
+					maxWidth: true,
+					p,
+				}),
 				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{

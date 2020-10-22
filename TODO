@@ -25,7 +25,6 @@ AI re-signing is just player mood + trade function
   - X player page: towards current team
   - X roster: current team
 - during re-signing phase, should still show % everywhere except re-signing table. same with free agency, i think?
-- abstract searchValue stuff into common function, seems same everywhere?
 - blog
   - UI shows whichever is appropriate, except both on upcoming free agents
     - border color indicates which

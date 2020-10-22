@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { DataTable, Mood, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
-import { processComponents } from "../components/Mood";
+import { dataTableWrappedMood } from "../components/Mood";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
@@ -72,20 +72,16 @@ const UpcomingFreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				{
-					value: <Mood defaultType="user" maxWidth p={p} />,
-					sortValue: p.mood.user
-						? processComponents(p.mood.user.components).sum
-						: null,
-					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
-				},
-				{
-					value: <Mood defaultType="current" maxWidth p={p} />,
-					sortValue: p.mood.current
-						? processComponents(p.mood.current.components).sum
-						: null,
-					searchValue: p.mood.current ? p.mood.current.traits.join("") : null,
-				},
+				dataTableWrappedMood({
+					defaultType: "user",
+					maxWidth: true,
+					p,
+				}),
+				dataTableWrappedMood({
+					defaultType: "current",
+					maxWidth: true,
+					p,
+				}),
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []
 					: [helpers.formatCurrency(p.contract.amount, "M")]),

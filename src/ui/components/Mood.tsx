@@ -97,12 +97,7 @@ type PlayerMood = {
 	traits: MoodTrait[];
 };
 
-const Mood = ({
-	className,
-	defaultType,
-	maxWidth,
-	p,
-}: {
+type Props = {
 	className?: string;
 	maxWidth?: boolean;
 	p: {
@@ -115,7 +110,9 @@ const Mood = ({
 		tid: number;
 	};
 	defaultType: "user" | "current";
-}) => {
+};
+
+const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	const { teamInfoCache, userTid } = useLocalShallow(state => ({
 		teamInfoCache: state.teamInfoCache,
 		userTid: state.userTid,
@@ -293,3 +290,15 @@ const Mood = ({
 };
 
 export default Mood;
+
+export const dataTableWrappedMood = (props: Props) => {
+	const { defaultType, p } = props;
+
+	const mood = p.mood[defaultType];
+
+	return {
+		value: <Mood {...props} />,
+		sortValue: mood ? processComponents(mood.components).sum : null,
+		searchValue: mood ? mood.traits.join("") : null,
+	};
+};

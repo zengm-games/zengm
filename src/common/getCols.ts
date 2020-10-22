@@ -1427,6 +1427,8 @@ const cols: {
 	},
 	Mood: {
 		width: "1px",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	MVP: {
 		desc: "Most Valuable Player",

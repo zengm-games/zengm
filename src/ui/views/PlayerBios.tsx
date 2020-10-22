@@ -1,17 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DataTable,
-	Height,
-	Mood,
-	PlayerNameLabels,
-	Weight,
-} from "../components";
+import { DataTable, Height, PlayerNameLabels, Weight } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
-import { processComponents } from "../components/Mood";
+import { dataTableWrappedMood } from "../components/Mood";
 
 const PlayerBios = ({
 	abbrev,
@@ -98,13 +92,11 @@ const PlayerBios = ({
 					value: <Weight pounds={p.weight} />,
 					sortValue: p.weight,
 				},
-				{
-					value: <Mood defaultType="current" maxWidth p={p} />,
-					sortValue: p.mood.current
-						? processComponents(p.mood.current.components).sum
-						: null,
-					searchValue: p.mood.current ? p.mood.current.traits.join("") : null,
-				},
+				dataTableWrappedMood({
+					defaultType: "current",
+					maxWidth: true,
+					p,
+				}),
 				p.contract.amount > 0
 					? helpers.formatCurrency(p.contract.amount, "M")
 					: null,

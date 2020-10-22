@@ -3,7 +3,6 @@ import React, { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
 	DataTable,
-	Mood,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -12,7 +11,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { processComponents } from "../components/Mood";
+import { dataTableWrappedMood, processComponents } from "../components/Mood";
 
 const FreeAgents = ({
 	capSpace,
@@ -109,13 +108,11 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				{
-					value: <Mood defaultType="user" maxWidth p={p} />,
-					sortValue: p.mood.user
-						? processComponents(p.mood.user.components).sum
-						: null,
-					searchValue: p.mood.user ? p.mood.user.traits.join("") : null,
-				},
+				dataTableWrappedMood({
+					defaultType: "user",
+					maxWidth: true,
+					p,
+				}),
 				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{

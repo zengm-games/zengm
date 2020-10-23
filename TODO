@@ -13,9 +13,7 @@ soccer-style team names
 profit for extreme caps needs to be fixed first, its not possible to make money above $400m cap space
 
 AI re-signing is just player mood + trade function
-- so many fewer FAs!
-- add fudge factor?
-  
+- tweak fudge factor?
 - football - currently goes down a different code path for re-signing...
 - ui plan
   - X free agents: mood towards you only
@@ -30,6 +28,8 @@ AI re-signing is just player mood + trade function
     - border color indicates which
   - popover shows current team and your team
   - mood towards AI teams depends on difficulty
+- later
+  - have it affect free agent signings too
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played
@@ -364,6 +364,7 @@ custom league generator
 fuzz/scouting revamp
 - prospects and young players only
 - fuzz is deterministic noise
+- scouting budget affects accuracy of mood percentages?
 
 wrong team abbrev on player history https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
 

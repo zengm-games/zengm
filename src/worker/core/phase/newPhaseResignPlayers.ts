@@ -154,7 +154,6 @@ const newPhaseResignPlayers = async (
 				});
 
 				if (!mood.willing) {
-					console.log(p.firstName, p.lastName, "refuses", mood);
 					reSignPlayer = false;
 				} else {
 					// Is team better off without him?
@@ -167,7 +166,6 @@ const newPhaseResignPlayers = async (
 							payrollsByTid.set(p.tid, contract.amount + payroll);
 						}
 					} else {
-						console.log(p.firstName, p.lastName, "not wanted");
 						reSignPlayer = false;
 					}
 				}

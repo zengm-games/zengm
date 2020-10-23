@@ -144,7 +144,9 @@ const play = async (
 		if (dayOver) {
 			await freeAgents.decreaseDemands();
 			await freeAgents.autoSign();
-			await trade.betweenAiTeams();
+			if (g.get("phase") === PHASE.REGULAR_SEASON) {
+				await trade.betweenAiTeams();
+			}
 
 			await finances.updateRanks(["expenses", "revenues"]);
 

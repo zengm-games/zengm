@@ -142,9 +142,15 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
-			await freeAgents.decreaseDemands();
-			await freeAgents.autoSign();
-			if (g.get("phase") === PHASE.REGULAR_SEASON) {
+			const phase = g.get("phase");
+			if (
+				phase === PHASE.REGULAR_SEASON ||
+				phase === PHASE.AFTER_TRADE_DEADLINE
+			) {
+				await freeAgents.decreaseDemands();
+				await freeAgents.autoSign();
+			}
+			if (phase === PHASE.REGULAR_SEASON) {
 				await trade.betweenAiTeams();
 			}
 

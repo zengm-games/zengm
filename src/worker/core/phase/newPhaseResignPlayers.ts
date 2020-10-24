@@ -35,9 +35,6 @@ const newPhaseResignPlayers = async (
 		await idb.cache.players.put(p);
 	}
 
-	const teams = await idb.cache.teams.getAll();
-	const strategies = teams.map(t => t.strategy);
-
 	// Re-sign players on user's team, and some AI players
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		0,
@@ -132,7 +129,7 @@ const newPhaseResignPlayers = async (
 					conditions,
 				);
 			}
-		} else if (process.env.SPORT === "basketball") {
+		} else {
 			let reSignPlayer = true;
 
 			const contract = {
@@ -140,19 +137,48 @@ const newPhaseResignPlayers = async (
 			};
 			const payroll = payrollsByTid.get(p.tid);
 
-			if (g.get("hardCap") && contract.amount + payroll > g.get("salaryCap")) {
-				if (payroll === undefined) {
-					throw new Error(
-						"Payroll should always be defined if there is a hard cap",
-					);
+			const counts = neededPositionsByTid.get(p.tid);
+			const pos = p.ratings[p.ratings.length - 1].pos;
+
+			if (g.get("hardCap")) {
+				if (contract.amount + payroll > g.get("salaryCap")) {
+					if (payroll === undefined) {
+						throw new Error(
+							"Payroll should always be defined if there is a hard cap",
+						);
+					}
+
+					reSignPlayer = false;
 				}
 
-				reSignPlayer = false;
-			} else {
+				// Don't go beyond roster needs by position
+				if (
+					process.env.SPORT === "football" &&
+					counts !== undefined &&
+					counts[pos] !== undefined &&
+					counts[pos] <= 0
+				) {
+					reSignPlayer = false;
+				}
+
+				// Always sign rookies, and give them smaller contracts
+				if (draftPick) {
+					contract.amount /= 2;
+
+					if (contract.amount < g.get("minContract")) {
+						contract.amount = g.get("minContract");
+					} else {
+						contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
+					}
+				}
+			}
+
+			if (reSignPlayer) {
 				const mood = await player.moodInfo(p, p.tid, {
 					contractAmount: p.contract.amount,
 				});
 
+				// Player must be willing to sign (includes draft picks and first year after expansion, from moodInfo)
 				if (!mood.willing) {
 					reSignPlayer = false;
 				} else {
@@ -161,6 +187,10 @@ const newPhaseResignPlayers = async (
 
 					if (mood.willing && dv < 0) {
 						await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
+
+						if (counts !== undefined && counts[pos] !== undefined) {
+							counts[pos] -= 1;
+						}
 
 						if (payroll !== undefined) {
 							payrollsByTid.set(p.tid, contract.amount + payroll);
@@ -172,84 +202,6 @@ const newPhaseResignPlayers = async (
 			}
 
 			if (!reSignPlayer) {
-				player.addToFreeAgents(p);
-			}
-
-			await idb.cache.players.put(p);
-		} else {
-			// AI teams
-			const counts = neededPositionsByTid.get(p.tid);
-			const pos = p.ratings[p.ratings.length - 1].pos;
-			const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
-			let probReSign = p.value / 100 - factor; // Make it less likely to re-sign players based on roster needs
-
-			if (
-				counts !== undefined &&
-				counts[pos] !== undefined &&
-				counts[pos] <= 0
-			) {
-				probReSign -= 0.25;
-			}
-
-			const payroll = payrollsByTid.get(p.tid);
-			const contract = {
-				...p.contract,
-			};
-
-			// Always sign rookies, and give them smaller contracts
-			if (draftPick) {
-				contract.amount /= 2;
-
-				if (contract.amount < g.get("minContract")) {
-					contract.amount = g.get("minContract");
-				} else {
-					contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
-				}
-
-				if (p.draft.round <= 3) {
-					probReSign = 1;
-				} else if (p.draft.round <= 5) {
-					probReSign += 0.35;
-				} else if (p.draft.round <= 7) {
-					probReSign += 0.25;
-				} else if (p.draft.round <= 8) {
-					probReSign += 0.15;
-				}
-			}
-
-			const t = teams.find(t => t.tid == p.tid);
-			if (
-				t &&
-				t.firstSeasonAfterExpansion !== undefined &&
-				t.firstSeasonAfterExpansion - 1 === g.get("season")
-			) {
-				probReSign = 1;
-			}
-
-			if (g.get("hardCap")) {
-				if (payroll === undefined) {
-					throw new Error(
-						"Payroll should always be defined if there is a hard cap",
-					);
-				}
-
-				if (contract.amount + payroll > g.get("salaryCap")) {
-					probReSign = 0;
-				}
-			}
-
-			// Should eventually be smarter than a coin flip
-			if (Math.random() < probReSign) {
-				await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
-
-				if (counts !== undefined && counts[pos] !== undefined) {
-					counts[pos] -= 1;
-				}
-
-				if (payroll !== undefined) {
-					payrollsByTid.set(p.tid, contract.amount + payroll);
-				}
-			} else {
 				player.addToFreeAgents(p);
 			}
 

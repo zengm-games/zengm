@@ -79,7 +79,8 @@ const moodInfo = async (
 		probWilling = 1;
 		willing = true;
 	} else {
-		probWilling = 1 / (1 + Math.exp(-0.75 * sumAndStuff));
+		// Decrease that 0.7 to make players less likely to be at extremes (1% or 99%) in mood
+		probWilling = 1 / (1 + Math.exp(-0.7 * sumAndStuff));
 
 		const rand = random.uniformSeed(
 			p.pid +

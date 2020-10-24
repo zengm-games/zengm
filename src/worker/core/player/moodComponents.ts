@@ -268,6 +268,7 @@ const moodComponents = async (
 			];
 			const onRookieContract =
 				rookieContractLength !== undefined &&
+				p.tid === tid &&
 				p.draft.round > 0 &&
 				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
 					(p.draft.year + rookieContractLength === season &&

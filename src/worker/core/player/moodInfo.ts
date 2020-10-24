@@ -79,7 +79,7 @@ const moodInfo = async (
 		probWilling = 1;
 		willing = true;
 	} else {
-		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
+		probWilling = 1 / (1 + Math.exp(-0.75 * sumAndStuff));
 
 		const rand = random.uniformSeed(
 			p.pid +

@@ -458,7 +458,7 @@ FBGM
 - kneeling at end of games
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
-  - user report of K/P being released by AI teams during season
+  - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
 - smarter cutting when over roster limit (like don't cut only K/P)
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not

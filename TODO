@@ -16,8 +16,6 @@ profit for extreme caps needs to be fixed first, its not possible to make money 
 
 AI re-signing is just player mood + trade function
 - tweak fudge factor?
-- football - currently goes down a different code path for re-signing...
-  - for position-dependent stuff, if considering the best player at a position and already over the limit for that position, should still keep that player
 - ui plan
   - X free agents: mood towards you only
   - X negotiation: mood towards you only

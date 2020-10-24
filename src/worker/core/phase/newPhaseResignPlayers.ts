@@ -42,24 +42,41 @@ const newPhaseResignPlayers = async (
 	]);
 
 	// Figure out how many players are needed at each position, beyond who is already signed
-	const neededPositionsByTid = new Map();
+	type PositionInfo = Record<
+		string,
+		{
+			count: number;
+			maxValue: number;
+		}
+	>;
+	const positionInfoByTid = new Map<number, PositionInfo>();
 
 	if (Object.keys(POSITION_COUNTS).length > 0) {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
-			const counts = { ...POSITION_COUNTS };
-			neededPositionsByTid.set(tid, counts);
+			const positionInfo: PositionInfo = {};
+			for (const [pos, count] of Object.entries(POSITION_COUNTS)) {
+				positionInfo[pos] = {
+					count,
+					maxValue: 0,
+				};
+			}
+			positionInfoByTid.set(tid, positionInfo);
 		}
 
 		for (const p of players) {
+			// Only expiring contracts and hard cap rookies!
 			if (p.contract.exp <= g.get("season")) {
 				continue;
 			}
 
-			const counts = neededPositionsByTid.get(p.tid);
+			const positionInfo = positionInfoByTid.get(p.tid);
 			const pos = p.ratings[p.ratings.length - 1].pos;
 
-			if (counts !== undefined && counts[pos] !== undefined) {
-				counts[pos] -= 1;
+			if (positionInfo !== undefined && positionInfo[pos] !== undefined) {
+				positionInfo[pos].count -= 1;
+				if (p.value > positionInfo[pos].maxValue) {
+					positionInfo[pos].maxValue = p.value;
+				}
 			}
 		}
 	}
@@ -137,7 +154,7 @@ const newPhaseResignPlayers = async (
 			};
 			const payroll = payrollsByTid.get(p.tid);
 
-			const counts = neededPositionsByTid.get(p.tid);
+			const positionInfo = positionInfoByTid.get(p.tid);
 			const pos = p.ratings[p.ratings.length - 1].pos;
 
 			if (g.get("hardCap")) {
@@ -154,9 +171,10 @@ const newPhaseResignPlayers = async (
 				// Don't go beyond roster needs by position
 				if (
 					process.env.SPORT === "football" &&
-					counts !== undefined &&
-					counts[pos] !== undefined &&
-					counts[pos] <= 0
+					positionInfo !== undefined &&
+					positionInfo[pos] !== undefined &&
+					positionInfo[pos].count <= 0 &&
+					positionInfo[pos].maxValue > p.value
 				) {
 					reSignPlayer = false;
 				}
@@ -188,8 +206,11 @@ const newPhaseResignPlayers = async (
 					if (mood.willing && dv < 0) {
 						await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 
-						if (counts !== undefined && counts[pos] !== undefined) {
-							counts[pos] -= 1;
+						if (positionInfo !== undefined && positionInfo[pos] !== undefined) {
+							positionInfo[pos].count -= 1;
+							if (p.value > positionInfo[pos].maxValue) {
+								positionInfo[pos].maxValue = p.value;
+							}
 						}
 
 						if (payroll !== undefined) {

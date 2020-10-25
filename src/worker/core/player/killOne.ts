@@ -4,6 +4,22 @@ import { g, helpers, logEvent, random } from "../../util";
 import type { Conditions, Player } from "../../../common/types";
 
 const killOne = async (conditions: Conditions, player?: Player) => {
+	const gifts = [
+		"basketball shorts",
+		"jerseys",
+		"athletic socks",
+		"knee sleeves",
+		"elbow sleeves",
+		"compression pants",
+		"ankle braces",
+		"knee braces",
+		...(process.env.SPORT === "football"
+			? ["cleats", "helmets", "shoulder pads"]
+			: ["sneakers", "headbands"]),
+	];
+	const gift1 = random.choice(gifts);
+	const gift2 = random.choice(gifts.filter(gift => gift !== gift1));
+
 	const reason = random.choice([
 		"died from a drug overdose",
 		"was killed by a gunshot during an altercation at a night club",
@@ -73,6 +89,9 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"was intensely focused on playing Basketball GM on his cell phone. As he walked across the street, he was so distracted by his ultimately fatal obsession that he didn't notice the bus barreling towards him",
 		"drowned while crossing the Saleph River",
 		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
+
+		// Draco, an Athenian lawmaker, was reportedly smothered to death by gifts of cloaks and hats showered upon him by appreciative citizens
+		`was smothered to death by gifts of ${gift1} and ${gift2} showered upon him by appreciative fans`,
 	]);
 
 	let p: Player;

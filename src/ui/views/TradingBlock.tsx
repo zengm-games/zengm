@@ -340,7 +340,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		};
 	});
 
-	const pickRows = userPicks.map(pick => {
+	const pickRows = userPicks.map((pick, i) => {
 		return {
 			key: pick.dpid,
 			data: [
@@ -349,7 +349,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					checked={state.dpids.includes(pick.dpid)}
 					onChange={() => handleChangeAsset("dpids", pick.dpid)}
 				/>,
-				pick.desc,
+				{
+					value: pick.desc,
+					sortValue: i,
+				},
 			],
 		};
 	});

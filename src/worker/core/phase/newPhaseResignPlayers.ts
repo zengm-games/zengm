@@ -93,7 +93,7 @@ const newPhaseResignPlayers = async (
 		}
 	}
 
-	const expiringPlayers = orderBy(
+	const expiringPids = orderBy(
 		players.filter(p => p.contract.exp <= g.get("season")),
 		[
 			"tid",
@@ -103,13 +103,19 @@ const newPhaseResignPlayers = async (
 			"value",
 		],
 		["asc", "desc", "desc"],
-	);
+	).map(p => p.pid);
 
 	await freeAgents.normalizeContractDemands({
 		type: "includeExpiringContracts",
 	});
 
-	for (const p of expiringPlayers) {
+	for (const pid of expiringPids) {
+		// Re-fetch players, because normalizeContractDemands might have changed some objects
+		const p = await idb.cache.players.get(pid);
+		if (!p) {
+			continue;
+		}
+
 		const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
 
 		if (
@@ -119,7 +125,6 @@ const newPhaseResignPlayers = async (
 		) {
 			const tid = p.tid;
 
-			// Add to free agents first, to generate a contract demand, then open negotiations with player
 			player.addToFreeAgents(p);
 
 			if (draftPick) {

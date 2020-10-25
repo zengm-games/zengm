@@ -461,8 +461,6 @@ const doAwards = async (conditions: Conditions) => {
 		});
 	}
 
-	console.log(awards);
-
 	// Special cases for teams
 	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
 		const type = awardNames[key];

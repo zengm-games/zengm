@@ -176,8 +176,8 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 							className={classNames("nav-link", {
 								active: type === "user",
 							})}
-							href="#"
-							onClick={() => {
+							onClick={event => {
+								event.preventDefault();
 								setType("user");
 							}}
 						>
@@ -190,8 +190,8 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 								className={classNames("nav-link", {
 									active: type === "current",
 								})}
-								href="#"
-								onClick={() => {
+								onClick={event => {
+									event.preventDefault();
 									setType("current");
 								}}
 							>

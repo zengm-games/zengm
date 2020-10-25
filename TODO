@@ -20,26 +20,13 @@ profit for extreme caps needs to be fixed first, its not possible to make money 
 during re-signing phase, should still show % everywhere except re-signing table. same with free agency, i think?
 
 AI re-signing is just player mood + trade function
-- tweak fudge factor?
-- ui plan
-  - X free agents: mood towards you only
-  - X negotiation: mood towards you only
-  - X bios: towards current team
-  - X upcoming free agents: both, in separate columns
-  - X player page: towards current team
-  - X roster: current team
-- 
-- blog
-  - UI shows whichever is appropriate, except both on upcoming free agents
-    - border color indicates which
-  - popover shows current team and your team
-  - mood towards AI teams depends on difficulty
 - later
   - have it affect free agent signings too
 
 next/prev buttons
 - players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
 - seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
+  - for just seasons, or all dropdowns?
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played

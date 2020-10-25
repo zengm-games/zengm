@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-10-25: AI teams are affected by player mood when re-signing players, and you can see a player's mood toward his current team. [[1]](https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jhn2vu/new_in_version_202010250240_ai_teams_are_affected/)
+
 * 2020-10-18: New feature in God Mode to select the winner of a game before it's played. [[1]](https://basketball-gm.com/blog/2020/10/force-win/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/)
 
 * **2020-10-17: Start current or historical real players leagues at different times during the season: preseason, playoffs, draft, or after draft. [[1]](https://basketball-gm.com/blog/2020/10/start-any-time/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jcwq87/new_feature_start_real_players_leagues_at/)**

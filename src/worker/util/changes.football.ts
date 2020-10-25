@@ -83,6 +83,11 @@ const changes = [
 		msg:
 			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-mood/">More details</a>',
 	},
+	{
+		date: "2020-10-25",
+		msg:
+			'AI teams are affected by player mood when re-signing players, and you can see a player\'s mood toward his current team. <a href="https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/">More details</a>',
+	},
 ];
 
 export default changes;

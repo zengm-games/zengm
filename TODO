@@ -2,8 +2,8 @@ FBGM not enough good FAs?
 - also, test "going over the roster limit FA" stuff
 
 play menu empty during auto play
-- because of react-bootstrap upgrade?
 - other menus flaky too!
+- seems to be because of React 17
 
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/g9ac541/

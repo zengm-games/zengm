@@ -1,3 +1,5 @@
+add ticket price to league finances @IKT#1817
+
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/g9ac541/
 - https://discord.com/channels/290013534023057409/290015591216054273/767875431310688296
@@ -12,6 +14,8 @@ It feels like there are too many good players still in free agency in the presea
 
 force resign button under lock ratings, keep a man on one team
 - hard cap
+- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
+- @dooby moogey#2784
 
 soccer-style team names
 - instead of region and name, it's short name and long name
@@ -31,6 +35,7 @@ next/prev buttons
 - players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
 - seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
   - for just seasons, or all dropdowns?
+- teams on trade page @AGLR_23#4969
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played
@@ -459,6 +464,7 @@ FBGM
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
   - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
+  - @geonerd#6946
 - smarter cutting when over roster limit (like don't cut only K/P)
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not
@@ -474,6 +480,7 @@ FBGM
 - penalties accepted when normal gain would have been better
   - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJZJZkXTNBnKVDvKLkMfMMTZdG
   - https://i.imgur.com/qb1Fuhf.png
+- when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -62,7 +62,7 @@ const writeTeamStats = async (results: GameResults) => {
 				t.budget.ticketPrice.amount * (90000 / g.get("salaryCap")) ** 0.75;
 
 			if (process.env.SPORT === "football") {
-				att *= 28;
+				att *= 6.5;
 			}
 		}
 

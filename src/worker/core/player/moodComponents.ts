@@ -268,11 +268,13 @@ const moodComponents = async (
 			];
 			const onRookieContract =
 				rookieContractLength !== undefined &&
-				p.tid === tid &&
+				(p.tid === tid ||
+					(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)) &&
 				p.draft.round > 0 &&
 				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
 					(p.draft.year + rookieContractLength === season &&
 						phase <= PHASE.RESIGN_PLAYERS));
+
 			if (onRookieContract || p.tid === PLAYER.UNDRAFTED) {
 				components.rookieContract = 8;
 			}

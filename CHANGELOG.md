@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-10-26: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out.
+* DEV: Previously, AI teams who were under the salary cap and had no roster spots open would never sign free agents, as if they'd rather miss out on a good free agent than cut a guy at the end of the bench. Now they are willing do that.
+
+* DEV: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out.
 
 * 2020-10-25: AI teams are affected by player mood when re-signing players, and you can see a player's mood toward his current team. [[1]](https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jhn2vu/new_in_version_202010250240_ai_teams_are_affected/)
 

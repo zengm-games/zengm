@@ -208,7 +208,11 @@ const newPhaseResignPlayers = async (
 					// Is team better off without him?
 					const dv = await team.valueChange(p.tid, [], [p.pid], [], []);
 
-					if (mood.willing && dv < 0) {
+					// Skip re-signing some low value players, otherwise teams fill up their rosters too readily
+					const skipBadPlayer =
+						contract.amount < g.get("minContract") * 2 && Math.random() < 0.5;
+
+					if (mood.willing && dv < 0 && !skipBadPlayer) {
 						await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 
 						if (positionInfo !== undefined && positionInfo[pos] !== undefined) {

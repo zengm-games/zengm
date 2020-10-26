@@ -1,4 +1,9 @@
-add ticket price to league finances @IKT#1817
+FBGM not enough good FAs?
+- also, test "going over the roster limit FA" stuff
+
+play menu empty during auto play
+- because of react-bootstrap upgrade?
+- other menus flaky too!
 
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/ja6095/want_to_test_some_improvements_to_the_trade_ai/g9ac541/
@@ -9,6 +14,7 @@ trade balancing
   - AI will trade 9th pick for 10th pick
 - https://old.reddit.com/r/BasketballGM/comments/jhtm1k/im_playing_charlotte_queens_on_hard_mode_and_i/
 - https://old.reddit.com/r/BasketballGM/comments/jhud86/has_there_been_a_change_in_the_trading_system_ive/
+- could value DPs and players before first progs more
 
 It feels like there are too many good players still in free agency in the preseason with the new update
 

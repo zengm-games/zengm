@@ -1,9 +1,10 @@
 import { team } from "..";
 import { g } from "../../util";
-import type { PlayerWithoutKey } from "../../../common/types"; // Find the best available free agent for a team.
+import type { PlayerWithoutKey } from "../../../common/types";
+
+// Find the best available free agent for a team.
 // playersAvailable should be sorted - best players first, worst players last. It will be mutated if a player is found, to remove the found player.
 // If payroll is not supplied, don't do salary cap check (like when creating new league).
-
 const getBest = <T extends PlayerWithoutKey>(
 	playersOnRoster: T[],
 	playersAvailable: T[],
@@ -33,10 +34,11 @@ const getBest = <T extends PlayerWithoutKey>(
 
 		const salaryCapCheck =
 			payroll === undefined ||
-			p.contract.amount + payroll <= g.get("salaryCap"); // Don't sign minimum contract players to fill out the roster
+			p.contract.amount + payroll <= g.get("salaryCap");
 
+		// Don't sign minimum contract players to fill out the roster
 		if (
-			salaryCapCheck ||
+			(salaryCapCheck && p.contract.amount > g.get("minContract")) ||
 			(p.contract.amount <= g.get("minContract") &&
 				playersOnRoster.length < g.get("maxRosterSize") - 2)
 		) {

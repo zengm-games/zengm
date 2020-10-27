@@ -54,6 +54,8 @@ const propose = async (
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
+		undefined,
+		g.get("userTid"),
 	);
 
 	if (dv > 0 || forceTrade) {

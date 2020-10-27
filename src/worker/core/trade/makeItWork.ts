@@ -144,6 +144,7 @@ const tryAddAsset = async (
 			userDpids,
 			otherDpids,
 			valueChangeKey,
+			teams[0].tid,
 		);
 	}
 	assets.sort((a, b) => b.dv - a.dv); // Find the asset that will push the trade value the smallest amount above 0
@@ -195,6 +196,7 @@ async function testTrade(
 		teams[0].dpids,
 		teams[1].dpids,
 		valueChangeKey,
+		teams[0].tid,
 	);
 
 	if (dv > 0 && initialSign === -1) {
@@ -244,6 +246,7 @@ const makeItWork = async (
 		teams[0].dpids,
 		teams[1].dpids,
 		valueChangeKey,
+		teams[0].tid,
 	);
 
 	if (dv > 0) {

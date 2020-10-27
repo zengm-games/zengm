@@ -66,6 +66,7 @@ const getPlayers = async ({
 	pidsAdd,
 	pidsRemove,
 	tid,
+	tradingPartnerTid,
 }: {
 	add: Asset[];
 	remove: Asset[];
@@ -73,6 +74,7 @@ const getPlayers = async ({
 	pidsAdd: number[];
 	pidsRemove: number[];
 	tid: number;
+	tradingPartnerTid?: number;
 }) => {
 	const difficultyFudgeFactor = helpers.bound(
 		1 + 0.1 * g.get("difficulty"),
@@ -82,7 +84,9 @@ const getPlayers = async ({
 
 	// Fudge factor for AI overvaluing its own players
 	const fudgeFactor =
-		(tid !== g.get("userTid") ? 1.05 : 1) * difficultyFudgeFactor;
+		(tid !== g.get("userTid") && tradingPartnerTid !== g.get("userTid")
+			? 1.05
+			: 1) * difficultyFudgeFactor;
 
 	// Get roster and players to remove
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -129,7 +133,11 @@ const getPlayers = async ({
 	}
 };
 
-const getPickNumber = (dp: DraftPick, season: number) => {
+const getPickNumber = (
+	dp: DraftPick,
+	season: number,
+	tradingPartnerTid?: number,
+) => {
 	let estPick: number;
 	if (dp.pick > 0) {
 		estPick = dp.pick;
@@ -137,34 +145,47 @@ const getPickNumber = (dp: DraftPick, season: number) => {
 		const temp = cache.estPicks[dp.originalTid];
 		estPick = temp !== undefined ? temp : g.get("numActiveTeams") / 2;
 
-		const usersPick = dp.originalTid === g.get("userTid");
+		// tid rather than originalTid, because it's about what the user can control
+		const usersPick = dp.tid === g.get("userTid");
+
+		// Used to know when to overvalue own pick
+		const tradeWithUser = tradingPartnerTid === g.get("userTid");
 
 		// For future draft picks, add some uncertainty.
 		const regressionTarget =
 			(usersPick ? 0.75 : 0.25) * g.get("numActiveTeams");
 
 		// Never let this improve the future projection of user's picks
-		const seasons = helpers.bound(season - g.get("season"), 0, 5);
+		let seasons = helpers.bound(season - g.get("season"), 0, 5);
+		if (tradeWithUser && seasons > 0) {
+			// When trading with the user, expect things to change rapidly
+			seasons = helpers.bound(seasons + 1, 0, 5);
+		}
+
 		// Weighted average of estPicks and regressionTarget
 		estPick = Math.round(
 			(estPick * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5,
 		);
 
-		if (usersPick) {
-			// Penalty for user draft picks
-			const difficultyFactor = 1 + 1.5 * g.get("difficulty");
-			estPick = helpers.bound(
-				Math.round((estPick + g.get("numActiveTeams") / 3) * difficultyFactor),
-				1,
-				g.get("numActiveTeams"),
-			);
-		} else {
-			// Bonus for AI draft picks
-			estPick = helpers.bound(
-				Math.round(estPick - g.get("numActiveTeams") / 6),
-				1,
-				g.get("numActiveTeams"),
-			);
+		if (tradeWithUser) {
+			if (usersPick) {
+				// Penalty for user draft picks
+				const difficultyFactor = 1 + 1.5 * g.get("difficulty");
+				estPick = helpers.bound(
+					Math.round(
+						(estPick + g.get("numActiveTeams") / 2.5) * difficultyFactor,
+					),
+					1,
+					g.get("numActiveTeams"),
+				);
+			} else {
+				// Bonus for AI draft picks
+				estPick = helpers.bound(
+					Math.round(estPick - g.get("numActiveTeams") / 2.5),
+					1,
+					g.get("numActiveTeams"),
+				);
+			}
 		}
 	}
 
@@ -177,13 +198,14 @@ const getPickInfo = (
 	dp: DraftPick,
 	estValues: TradePickValues,
 	rookieSalaries: any,
+	tradingPartnerTid?: number,
 ): Asset => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
 			? g.get("season")
 			: dp.season;
 
-	const estPick = getPickNumber(dp, season);
+	const estPick = getPickNumber(dp, season, tradingPartnerTid);
 
 	let value;
 	const valuesTemp = estValues[season];
@@ -237,12 +259,14 @@ const getPicks = async ({
 	dpidsAdd,
 	dpidsRemove,
 	estValues,
+	tradingPartnerTid,
 }: {
 	add: Asset[];
 	remove: Asset[];
 	dpidsAdd: number[];
 	dpidsRemove: number[];
 	estValues: TradePickValues;
+	tradingPartnerTid?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
 	if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
@@ -254,7 +278,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(dp, estValues, rookieSalaries);
+			const pickInfo = getPickInfo(
+				dp,
+				estValues,
+				rookieSalaries,
+				tradingPartnerTid,
+			);
 			add.push(pickInfo);
 		}
 
@@ -264,7 +293,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(dp, estValues, rookieSalaries);
+			const pickInfo = getPickInfo(
+				dp,
+				estValues,
+				rookieSalaries,
+				tradingPartnerTid,
+			);
 			remove.push(pickInfo);
 		}
 	}
@@ -437,6 +471,7 @@ const refreshCache = async () => {
 	};
 };
 
+// tradingPartnerTid is currently just used to determine if this is a trade with the user, so additional fuzz can be applied
 const valueChange = async (
 	tid: number,
 	pidsAdd: number[],
@@ -444,6 +479,7 @@ const valueChange = async (
 	dpidsAdd: number[],
 	dpidsRemove: number[],
 	valueChangeKey: number = Math.random(),
+	tradingPartnerTid?: number,
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
 	if (dpidsRemove.length > 2) {
@@ -476,6 +512,7 @@ const valueChange = async (
 		pidsAdd,
 		pidsRemove,
 		tid,
+		tradingPartnerTid,
 	});
 	await getPicks({
 		add,
@@ -483,6 +520,7 @@ const valueChange = async (
 		dpidsAdd,
 		dpidsRemove,
 		estValues: cache.estValues,
+		tradingPartnerTid,
 	});
 
 	// console.log("ADD");

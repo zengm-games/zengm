@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Contracts are rounded to the nearest $10k rather than the nearest $50k.
+
 * DEV: Previously, AI teams who were under the salary cap and had no roster spots open would never sign free agents, as if they'd rather miss out on a good free agent than cut a guy at the end of the bench. Now they are willing do that, which can help the AI a lot with roster building.
 
 * DEV: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out.

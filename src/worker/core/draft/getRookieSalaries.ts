@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 /**
  * Get a list of rookie salaries for all players in the draft.
@@ -116,7 +116,7 @@ const getRookieSalaries = (): number[] => {
 				(0.25 * g.get("maxContract") - g.get("minContract")) / 4500; // Add min back
 
 			rookieSalaries[i] += g.get("minContract");
-			rookieSalaries[i] = Math.round(rookieSalaries[i] / 50) * 50;
+			rookieSalaries[i] = helpers.roundContract(rookieSalaries[i]);
 		}
 	}
 

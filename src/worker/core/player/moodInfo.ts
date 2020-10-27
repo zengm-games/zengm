@@ -62,7 +62,7 @@ const moodInfo = async (
 	}
 
 	contractAmount = helpers.bound(
-		50 * Math.round(contractAmount / 50), // Make it a multiple of 50k
+		helpers.roundContract(contractAmount),
 		g.get("minContract"),
 		g.get("maxContract"),
 	);

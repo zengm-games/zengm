@@ -284,7 +284,7 @@ const normalizeContractDemands = async ({
 				}
 
 				amount = helpers.bound(
-					50 * Math.round(info.contractAmount / 50), // Make it a multiple of 50k
+					helpers.roundContract(info.contractAmount),
 					minContract,
 					maxContract,
 				);

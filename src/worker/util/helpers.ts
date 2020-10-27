@@ -316,6 +316,9 @@ const resetG = () => {
 	}
 };
 
+// Make it a multiple of 10k
+const roundContract = (amount: number) => 10 * Math.round(amount / 10);
+
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
@@ -348,6 +351,7 @@ const helpers = {
 	pickDesc,
 	quarterLengthFactor,
 	resetG,
+	roundContract,
 	sigmoid,
 };
 

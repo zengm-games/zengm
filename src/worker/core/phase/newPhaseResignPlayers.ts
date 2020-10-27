@@ -133,7 +133,7 @@ const newPhaseResignPlayers = async (
 				if (p.contract.amount < g.get("minContract")) {
 					p.contract.amount = g.get("minContract");
 				} else {
-					p.contract.amount = helpers.roundContract(p.contract.amount); // Make it a multiple of 50k
+					p.contract.amount = helpers.roundContract(p.contract.amount);
 				}
 			}
 

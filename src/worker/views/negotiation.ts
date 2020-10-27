@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { contractNegotiation, player, team } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type {
 	ViewInput,
 	PlayerContract,
@@ -59,7 +59,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 		const factor = 1 + Math.abs(found - i) * growthFactor;
 		contractOptions[i].amount = contractOptions[found].amount * factor;
 		contractOptions[i].amount =
-			0.05 * Math.round(contractOptions[i].amount / 0.05); // Make it a multiple of 50k
+			helpers.roundContract(contractOptions[i].amount * 1000) / 1000;
 	}
 
 	return contractOptions.filter(contractOption => {

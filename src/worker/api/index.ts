@@ -73,6 +73,11 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
+import {
+	AwardsByPlayer,
+	saveAwardsByPlayer,
+	deleteAwardsByPlayer,
+} from "../core/season/awards";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -2290,7 +2295,6 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
-
 const updateGameAttributesGodMode = async (
 	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
 		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
@@ -2626,6 +2630,125 @@ const updateTeamInfo = async (
 	});
 };
 
+const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
+	awards = awards["aws"];
+	const awardsByPlayer: AwardsByPlayer = [];
+	const simpleAwards = [
+		"mvp",
+		"roy",
+		"smoy",
+		"dpoy",
+		"mip",
+		"finalsMvp",
+	] as const;
+	const awardNames = {
+		mvp: "Most Valuable Player",
+		roy: "Rookie of the Year",
+		smoy: "Sixth Man of the Year",
+		dpoy: "Defensive Player of the Year",
+		mip: "Most Improved Player",
+		finalsMvp: "Finals MVP",
+		allLeague: "All-League",
+		allDefensive: "All-Defensive",
+		allRookie: "All-Rookie Team",
+	};
+	for (const key of simpleAwards) {
+		const type = awardNames[key];
+		const award = awards[key];
+
+		if (award === undefined) {
+			// e.g. MIP in first season
+			continue;
+		}
+
+		const { pid, tid, name } = award;
+		awardsByPlayer.push({
+			pid,
+			tid,
+			name,
+			type,
+		});
+	}
+
+	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
+		const type = awardNames[key];
+
+		if (key === "allRookie") {
+			for (const { pid, tid, name } of awards.allRookie) {
+				awardsByPlayer.push({
+					pid,
+					tid,
+					name,
+					type,
+				});
+			}
+		} else {
+			for (const level of awards[key]) {
+				for (const { pid, tid, name } of level.players) {
+					awardsByPlayer.push({
+						pid,
+						tid,
+						name,
+						type: `${level.title} ${type}`,
+					});
+				}
+			}
+		}
+	}
+	const awardsByPlayerToDelete: AwardsByPlayer = [];
+	for (const key of simpleAwards) {
+		const type = awardNames[key];
+		const award = awardsInitial[key];
+
+		if (award === undefined) {
+			// e.g. MIP in first season
+			continue;
+		}
+
+		const { pid, tid, name } = award;
+		awardsByPlayerToDelete.push({
+			pid,
+			tid,
+			name,
+			type,
+		});
+	}
+
+	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
+		const type = awardNames[key];
+
+		if (key === "allRookie") {
+			for (const { pid, tid, name } of awardsInitial.allRookie) {
+				awardsByPlayerToDelete.push({
+					pid,
+					tid,
+					name,
+					type,
+				});
+			}
+		} else {
+			for (const level of awardsInitial[key]) {
+				for (const { pid, tid, name } of level.players) {
+					awardsByPlayerToDelete.push({
+						pid,
+						tid,
+						name,
+						type: `${level.title} ${type}`,
+					});
+				}
+			}
+		}
+	}
+	await deleteAwardsByPlayer(
+		awardsByPlayerToDelete,
+		{},
+		awards.season,
+		Object.values(awardNames),
+	);
+	await idb.cache.awards.put(awards);
+	await saveAwardsByPlayer(awardsByPlayer, {}, awards.season);
+};
+
 const upsertCustomizedPlayer = async (
 	p: Player | PlayerWithoutKey,
 	originalTid: number,
@@ -2899,4 +3022,5 @@ export default {
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,
+	upsertAwards,
 };

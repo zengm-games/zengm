@@ -78,22 +78,6 @@ export const validateSeason = (season?: number | string): number => {
 	return season;
 };
 
-export const validateSeasonMinus1 = (season?: number | string): number => {
-	if (season === undefined) {
-		return g.get("season") - 1;
-	}
-
-	if (typeof season === "string") {
-		season = parseInt(season, 10);
-	}
-
-	if (Number.isNaN(season)) {
-		return g.get("season") - 1;
-	}
-
-	return season;
-};
-
 const account = (params: Params, ctxBBGM: any) => {
 	return {
 		goldMessage: ctxBBGM.goldResult ? ctxBBGM.goldResult.message : undefined,
@@ -648,12 +632,6 @@ const validateSeasonOnly = (params: Params) => {
 	};
 };
 
-const validateSeasonMinus1Only = (params: Params) => {
-	return {
-		season: validateSeasonMinus1(params.season),
-	};
-};
-
 export default {
 	account,
 	awardRaces: validateSeasonOnly,
@@ -664,7 +642,7 @@ export default {
 	draftLottery,
 	draftSummary,
 	draftTeamHistory,
-	editAwards: validateSeasonMinus1Only,
+	editAwards: validateSeasonOnly,
 	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,

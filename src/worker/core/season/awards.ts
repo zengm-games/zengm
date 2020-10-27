@@ -262,6 +262,7 @@ const getTopPlayers = (
 const saveAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	conditions: Conditions,
+	season?: number,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -303,7 +304,6 @@ const saveAwardsByPlayer = async (
 			conditions,
 		);
 	}
-
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 	for (const pid of pids) {
 		const p = await idb.cache.players.get(pid);
@@ -311,7 +311,7 @@ const saveAwardsByPlayer = async (
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
 					p.awards.push({
-						season: g.get("season"),
+						season: season ? season : g.get("season"),
 						type: awardByPlayer.type,
 					});
 				}
@@ -321,11 +321,29 @@ const saveAwardsByPlayer = async (
 		}
 	}
 };
+const deleteAwardsByPlayer = async (
+	awardsByPlayer: AwardsByPlayer,
+	conditions: Conditions,
+	season: number,
+	awardsToDelete: string[],
+) => {
+	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
+	for (const pid of pids) {
+		const p = await idb.cache.players.get(pid);
+		if (p) {
+			p.awards = p.awards.filter(
+				x => x.season != season || x.type! in awardsToDelete,
+			);
+			await idb.cache.players.put(p);
+		}
+	}
+};
 
 export {
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
+	deleteAwardsByPlayer,
 	saveAwardsByPlayer,
 	teamAwards,
 };

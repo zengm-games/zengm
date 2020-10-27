@@ -66,7 +66,6 @@ const autoSign = async () => {
 		const p = getBest(playersOnRoster, playersSorted, payroll);
 
 		if (p) {
-			console.log("sign", p.pid, p.contract.exp);
 			await player.sign(p, t.tid, p.contract, g.get("phase"));
 			await idb.cache.players.put(p);
 			await team.rosterAutoSort(t.tid);

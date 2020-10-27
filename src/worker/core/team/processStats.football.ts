@@ -106,7 +106,7 @@ const processStats = (
 	}
 
 	// Since they come in same stream, always need to be able to distinguish
-	row.playoffs = ts.playoffs !== undefined ? ts.playoffs : playoffs;
+	row.playoffs = ts.playoffs ?? playoffs;
 	return row;
 };
 

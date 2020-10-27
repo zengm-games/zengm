@@ -125,7 +125,7 @@ const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {
-	const pos2 = pos !== undefined ? pos : ratings.pos;
+	const pos2 = pos ?? ratings.pos;
 	let r = 0;
 
 	if (info.hasOwnProperty(pos2)) {

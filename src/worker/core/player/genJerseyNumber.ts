@@ -122,7 +122,7 @@ const weightFunction =
 				const frequency = frequencies[jerseyNumber];
 
 				// +1 is to make the 0s possible
-				return frequency === undefined ? 0.25 : frequency;
+				return frequency ?? 0.25;
 		  }
 		: () => 1;
 

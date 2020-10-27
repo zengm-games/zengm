@@ -64,7 +64,7 @@ const processAttrs = (
 ) => {
 	const getSalary = () => {
 		let total = 0;
-		const s = season === undefined ? g.get("season") : season;
+		const s = season ?? g.get("season");
 
 		for (const salary of p.salaries) {
 			if (salary.season === s) {
@@ -77,7 +77,7 @@ const processAttrs = (
 
 	for (const attr of attrs) {
 		if (attr === "age") {
-			const s = season === undefined ? g.get("season") : season;
+			const s = season ?? g.get("season");
 			output.age = s - p.born.year;
 		} else if (attr === "ageAtDeath") {
 			output.ageAtDeath =

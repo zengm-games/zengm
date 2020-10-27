@@ -8,7 +8,7 @@ const createFilterFunction = (
 	sortType?: SortType,
 	searchType?: SortType,
 ) => {
-	searchType = searchType === undefined ? sortType : searchType;
+	searchType = searchType ?? sortType;
 
 	const filters = originalFilterText
 		.split("|")

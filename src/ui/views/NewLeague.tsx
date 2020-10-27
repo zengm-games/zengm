@@ -813,8 +813,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize,
 				season,
 				legend: "all",
-				difficulty:
-					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
+				difficulty: props.difficulty ?? DIFFICULTY.Normal,
 				phase,
 				leagueFile,
 				loadingLeagueFile: false,

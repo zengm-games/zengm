@@ -155,7 +155,7 @@ const ScoreBox = ({
 		}
 	}
 
-	const gameSeason = game.season === undefined ? season : game.season;
+	const gameSeason = game.season ?? season;
 
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
 	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;

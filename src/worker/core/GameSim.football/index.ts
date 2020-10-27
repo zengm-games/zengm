@@ -2004,7 +2004,7 @@ class GameSim {
 				automaticFirstDown: !!pen.automaticFirstDown,
 				name: pen.name,
 				penYds: pen.yds,
-				posOdds: pen.posOdds !== undefined ? pen.posOdds : undefined,
+				posOdds: pen.posOdds ?? undefined,
 				spotYds,
 				totYds,
 			};

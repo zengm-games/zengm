@@ -5,8 +5,8 @@ import { Modal } from "react-bootstrap";
 
 const Confirm = confirmable(
 	({ show, proceed, confirmation, defaultValue, okText, cancelText }: any) => {
-		okText = okText !== undefined ? okText : "OK";
-		cancelText = cancelText !== undefined ? cancelText : "Cancel";
+		okText = okText ?? "OK";
+		cancelText = cancelText ?? "Cancel";
 		const [controlledValue, setControlledValue] = useState(defaultValue);
 		const ok = useCallback(
 			() => proceed(defaultValue === undefined ? true : controlledValue),

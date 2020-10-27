@@ -17,8 +17,7 @@ async function realtimeUpdate(
 	raw: Record<string, unknown> = {},
 	replace: boolean = false,
 ) {
-	url =
-		url !== undefined ? url : window.location.pathname + window.location.search;
+	url = url ?? window.location.pathname + window.location.search;
 	const inLeague = url.substr(0, 3) === "/l/";
 	const refresh = url === window.location.pathname && inLeague;
 	const state = {

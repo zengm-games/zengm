@@ -80,8 +80,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 			? gameAttributes.season
 			: g.get("season");
 
-	let actualPhase =
-		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
+	let actualPhase = gameAttributes.phase ?? g.get("phase");
 	if (actualPhase < 0) {
 		const nextPhase = g.get("nextPhase");
 		if (nextPhase !== undefined) {

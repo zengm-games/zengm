@@ -18,8 +18,7 @@ const name = (): {
 	lastName: string;
 } => {
 	// This makes it wait until g is loaded before calling loadNames, so user-defined playerBioInfo will be used if provided
-	const playerBioInfo =
-		local.playerBioInfo === undefined ? loadNames() : local.playerBioInfo;
+	const playerBioInfo = local.playerBioInfo ?? loadNames();
 
 	if (local.playerBioInfo === undefined) {
 		local.playerBioInfo = playerBioInfo;

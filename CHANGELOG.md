@@ -1,12 +1,12 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-10-26: AI teams are a bit more skeptical when trading draft picks with the user.
+* 2020-10-26: AI teams are a bit more skeptical when trading draft picks with the user. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 
-* 2020-10-26: Contracts are rounded to the nearest $10k rather than the nearest $50k.
+* 2020-10-26: Contracts are rounded to the nearest $10k rather than the nearest $50k. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 
-* 2020-10-26: Previously, AI teams who were under the salary cap and had no roster spots open would never sign free agents, as if they'd rather miss out on a good free agent than cut a guy at the end of the bench. Now they are willing do that, which can help the AI a lot with roster building.
+* 2020-10-26: Previously, AI teams who were under the salary cap and had no roster spots open would never sign free agents, as if they'd rather miss out on a good free agent than cut a guy at the end of the bench. Now they are willing do that, which can help the AI a lot with roster building. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 
-* 2020-10-26: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out.
+* 2020-10-26: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 
 * 2020-10-25: AI teams are affected by player mood when re-signing players, and you can see a player's mood toward his current team. [[1]](https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jhn2vu/new_in_version_202010250240_ai_teams_are_affected/)
 

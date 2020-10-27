@@ -142,7 +142,7 @@ const autoSortRoster = async (
 	pos: string | undefined,
 	tids: number[] | undefined,
 ) => {
-	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+	const tids2 = tids ?? [g.get("userTid")];
 
 	for (const tid of tids2) {
 		await team.rosterAutoSort(
@@ -1871,7 +1871,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 };
 
 const resetPlayingTime = async (tids: number[] | undefined) => {
-	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+	const tids2 = tids ?? [g.get("userTid")];
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		0,
@@ -2032,7 +2032,7 @@ const runBefore = async (
 
 	if (view) {
 		const data = await view(inputs, updateEvents, prevData, conditions);
-		return data === undefined ? {} : data;
+		return data ?? {};
 	}
 
 	return {};

@@ -434,7 +434,7 @@ const playerStats = (params: Params) => {
 		abbrev,
 		season:
 			params.season === "career" ? undefined : validateSeason(params.season),
-		statType: params.statType !== undefined ? params.statType : defaultStatType,
+		statType: params.statType ?? defaultStatType,
 		playoffs,
 	};
 };
@@ -483,13 +483,13 @@ const schedule = (params: Params) => {
 };
 
 const teamFinances = (params: Params) => {
-	const show = params.show !== undefined ? params.show : "10";
+	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, show, tid };
 };
 
 const teamHistory = (params: Params) => {
-	const show = params.show !== undefined ? params.show : "10";
+	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, show, tid };
 };
@@ -509,8 +509,7 @@ const teamStats = (params: Params) => {
 
 	return {
 		season: validateSeason(params.season),
-		teamOpponent:
-			params.teamOpponent !== undefined ? params.teamOpponent : "team",
+		teamOpponent: params.teamOpponent ?? "team",
 		playoffs,
 	};
 };
@@ -533,8 +532,7 @@ const leagueStats = (params: Params) => {
 	return {
 		tid,
 		abbrev,
-		teamOpponent:
-			params.teamOpponent !== undefined ? params.teamOpponent : "team",
+		teamOpponent: params.teamOpponent ?? "team",
 		playoffs,
 	};
 };

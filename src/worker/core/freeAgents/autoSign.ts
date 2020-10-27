@@ -44,11 +44,15 @@ const autoSign = async () => {
 			continue;
 		}
 
+		let probSkip;
+		if (process.env.SPORT === "basketball") {
+			probSkip = t.strategy === "rebuilding" ? 0.9 : 0.75;
+		} else {
+			probSkip = 0.5;
+		}
+
 		// Skip teams sometimes
-		if (
-			process.env.SPORT === "basketball" &&
-			Math.random() < (t.strategy === "rebuilding" ? 0.9 : 0.75)
-		) {
+		if (Math.random() < probSkip) {
 			continue;
 		}
 

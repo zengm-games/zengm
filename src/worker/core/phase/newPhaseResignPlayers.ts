@@ -212,7 +212,10 @@ const newPhaseResignPlayers = async (
 					const skipBadPlayer =
 						contract.amount < g.get("minContract") * 2 && Math.random() < 0.5;
 
-					if (mood.willing && dv < 0 && !skipBadPlayer) {
+					// More randomness if hard cap
+					const whatever = g.get("hardCap") ? Math.random() > 0.1 : true;
+
+					if (mood.willing && dv < 0 && !skipBadPlayer && whatever) {
 						await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 
 						if (positionInfo !== undefined && positionInfo[pos] !== undefined) {

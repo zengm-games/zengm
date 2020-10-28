@@ -27,7 +27,7 @@ const PlayerPicture = ({
 	}, [face, imgURL, teamColors, wrapper]);
 
 	if (imgURL) {
-		return <img alt="Player" src={imgURL} style={imgStyle} />;
+		return <img alt="Player" src={imgURL} style={imgStyle} onError="this.onerror=null;this.src='https://play.basketball-gm.com/img/blank-face.png'"/>;
 	}
 
 	if (face) {

@@ -15,6 +15,7 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
+import { GRACE_PERIOD } from "../../common";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -49,7 +50,7 @@ const bbgmPing = (
 const initAds = (goldUntil: number | undefined) => {
 	let hideAds = false; // No ads for Gold members
 
-	const currentTimestamp = Math.floor(Date.now() / 1000);
+	const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 
 	if (goldUntil === undefined || currentTimestamp < goldUntil) {
 		hideAds = true;

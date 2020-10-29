@@ -89,7 +89,7 @@ const moodInfo = async (
 				p.pid +
 				p.stats.length +
 				p.ratings[p.ratings.length - 1].ovr +
-				(p.stats.length > 0 ? p.stats[0].min : 0),
+				(p.stats.length > 0 ? p.stats[p.stats.length - 1].min : 0),
 		);
 		willing = rand < probWilling;
 	}

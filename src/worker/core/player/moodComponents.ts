@@ -283,7 +283,7 @@ const moodComponents = async (
 
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
-	if (tid === g.get("userTid")) {
+	if (g.get("userTids").includes(tid)) {
 		if (difficulty !== 0) {
 			for (const key of helpers.keys(components)) {
 				// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)

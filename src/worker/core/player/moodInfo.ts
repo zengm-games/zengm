@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
@@ -46,7 +46,9 @@ const moodInfo = async (
 
 	// Add some based on how long free agency has lasted and how good/bad the player is
 	let sumAndStuff = sumComponents;
-	sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
+	if (p.tid === PLAYER.FREE_AGENT) {
+		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
+	}
 	const valueDiff =
 		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;

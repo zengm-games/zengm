@@ -193,6 +193,8 @@ const newPhaseResignPlayers = async (
 					} else {
 						contract.amount = helpers.roundContract(contract.amount);
 					}
+
+					reSignPlayer = true;
 				}
 			}
 

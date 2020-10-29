@@ -294,6 +294,10 @@ export default Mood;
 export const dataTableWrappedMood = (props: Props) => {
 	const { defaultType, p } = props;
 
+	if (!p.mood) {
+		return null;
+	}
+
 	const mood = p.mood[defaultType];
 
 	return {

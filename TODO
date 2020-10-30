@@ -489,6 +489,7 @@ FBGM
 - when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
 - scoring summary updates before play by play
 - had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
+- fantasy points
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

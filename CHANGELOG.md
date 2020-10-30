@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-10-29: Two new challenge modes: "You're fired if you pay the luxury tax" and "You're fired if you miss the playoffs". For an even bigger challenge, try them both at the same time!
+* 2020-10-29: Two new challenge modes: "You're fired if you pay the luxury tax" and "You're fired if you miss the playoffs". For an even bigger challenge, try them both at the same time! [[1]](https://old.reddit.com/r/BasketballGM/comments/jknpft/two_new_challenge_modes_in_version_202010300096/)
 
 * 2020-10-26: AI teams are a bit more skeptical when trading draft picks with the user. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 

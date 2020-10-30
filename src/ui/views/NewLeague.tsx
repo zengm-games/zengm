@@ -1213,23 +1213,25 @@ const NewLeague = (props: View<"newLeague">) => {
 					</span>
 				</label>
 			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeFiredLuxuryTax"
-					checked={state.challengeFiredLuxuryTax}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeFiredLuxuryTax" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeFiredLuxuryTax"
-				>
-					You're fired if you pay the luxury tax
-				</label>
-			</div>
+			{process.env.SPORT !== "football" || state.challengeFiredLuxuryTax ? (
+				<div className="form-check mb-2">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						id="new-league-challengeFiredLuxuryTax"
+						checked={state.challengeFiredLuxuryTax}
+						onChange={() => {
+							dispatch({ type: "toggleChallengeFiredLuxuryTax" });
+						}}
+					/>
+					<label
+						className="form-check-label"
+						htmlFor="new-league-challengeFiredLuxuryTax"
+					>
+						You're fired if you pay the luxury tax
+					</label>
+				</div>
+			) : null}
 			<div className="form-check mb-2">
 				<input
 					className="form-check-input"

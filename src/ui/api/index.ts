@@ -90,7 +90,6 @@ const initAds = (goldUntil: number | undefined) => {
 							"basketball-gm_leaderboard_atf",
 							"basketball-gm_mrec_btf_1",
 							"basketball-gm_mrec_btf_2",
-							"basketball-gm_right_rail",
 					  ];
 
 			for (const adDiv of adDivs) {

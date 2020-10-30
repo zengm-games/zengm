@@ -12,7 +12,7 @@ const otherSport =
 	process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 const NagModal = ({ close, show }: Props) => {
-	const adBlock = !window.bbgmAds.init;
+	const adBlock = !window.freestar.freestarReloadAdSlot;
 	return (
 		<Modal show={show} onHide={close}>
 			<Modal.Header closeButton>

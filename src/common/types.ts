@@ -15,12 +15,12 @@ declare global {
 	interface Window {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
-		bbgmAds: any;
 		bbgmVersion: string;
 		bbgmVersionUI: string;
 		bbgmVersionWorker: string;
 		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
+		freestar: any;
 		getTheme: () => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;

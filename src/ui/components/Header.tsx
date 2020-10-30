@@ -2,17 +2,32 @@ import React, { useEffect } from "react"; // Ensure there is enough room to disp
 
 const widthCutoff = 1200 + 190;
 
+let displayed = false;
 const updateSkyscraperDisplay = () => {
-	const div = document.getElementById("bbgm-ads-skyscraper");
+	const div = document.getElementById("basketball-gm_right_rail");
 
 	if (div) {
 		const documentElement = document.documentElement;
 
-		if (documentElement) {
-			const width = documentElement.clientWidth;
-			div.style.display = width < widthCutoff ? "none" : "block";
+		if (documentElement && documentElement.clientWidth >= widthCutoff) {
+			if (!displayed) {
+				div.style.display = "block";
+				window.freestar.newAdSlots([
+					{
+						placementName: "basketball-gm_right_rail",
+						slotId: "basketball-gm_right_rail",
+					},
+				]);
+				console.log("newAdSlots");
+				displayed = true;
+			}
 		} else {
-			div.style.display = "none";
+			if (displayed) {
+				div.style.display = "none";
+				window.freestar.deleteAdSlots("basketball-gm_right_rail");
+				console.log("deleteAdSlots");
+				displayed = false;
+			}
 		}
 	}
 };
@@ -47,7 +62,7 @@ const Header = React.memo(() => {
 		<>
 			<div
 				className="banner-ad"
-				id="bbgm-ads-top"
+				id="basketball-gm_leaderboard_atf"
 				style={{
 					display: "none",
 					textAlign: "center",
@@ -56,7 +71,7 @@ const Header = React.memo(() => {
 			/>
 			<div
 				className="banner-ad"
-				id="bbgm-ads-mobile"
+				id="basketball-gm_mobile_leaderboard"
 				style={{
 					display: "none",
 					textAlign: "center",
@@ -71,7 +86,7 @@ const Header = React.memo(() => {
 				}}
 			>
 				<div
-					id="bbgm-ads-skyscraper"
+					id="basketball-gm_right_rail"
 					style={{
 						display: "none",
 					}}

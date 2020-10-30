@@ -14,13 +14,15 @@
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
 
-    <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
-    <script async="async" src="https://basketball-gm.com/prebid/BBGM_ADS_FILENAME.js"></script>
     <script type="text/javascript">
-      var googletag = googletag || {};
-      googletag.cmd = googletag.cmd || [];
-      var bbgmAds = bbgmAds || {};
-      bbgmAds.cmd = bbgmAds.cmd || [];
+      var freestar = freestar || {};
+      freestar.hitTime = Date.now();
+      freestar.queue = freestar.queue || [];
+      freestar.config = freestar.config || {};
+      freestar.debug = window.location.search.indexOf('fsdebug') === -1 ? false : true;
+      freestar.config.enabled_slots = [];
+      !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/basketball-gm-com";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
+      freestar.initCallback = function () { freestar.newAdSlots(freestar.config.enabled_slots); }
     </script>
 
     <script type="text/javascript">

@@ -56,8 +56,8 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
-	if (!hideAds) {
-		window.bbgmAds.cmd.push(() => {
+	if (!hideAds || true) {
+		window.freestar.queue.push(() => {
 			// Add margin for skyscraper on right
 			const container = document.getElementsByClassName("bbgm-container")[0];
 			if (container instanceof HTMLElement) {
@@ -67,11 +67,11 @@ const initAds = (goldUntil: number | undefined) => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const showDivs =
 				window.screen && window.screen.width < 768
-					? ["bbgm-ads-mobile"]
+					? ["basketball-gm_mobile_leaderboard"]
 					: [
-							"bbgm-ads-top",
-							"bbgm-ads-bottom1",
-							"bbgm-ads-bottom2",
+							"basketball-gm_leaderboard_atf",
+							"basketball-gm_mrec_btf_1",
+							"basketball-gm_mrec_btf_2",
 							"skyscraper-wrapper",
 					  ];
 
@@ -85,23 +85,28 @@ const initAds = (goldUntil: number | undefined) => {
 
 			const adDivs =
 				window.screen && window.screen.width < 768
-					? ["bbgm-ads-mobile"]
+					? ["basketball-gm_mobile_leaderboard"]
 					: [
-							"bbgm-ads-top",
-							"bbgm-ads-bottom1",
-							"bbgm-ads-bottom2",
-							"bbgm-ads-skyscraper",
+							"basketball-gm_leaderboard_atf",
+							"basketball-gm_mrec_btf_1",
+							"basketball-gm_mrec_btf_2",
 					  ];
-			window.bbgmAds.init(adDivs).then(() => {
-				if (window.screen && window.screen.width >= 768) {
-					// Show the logo too
-					const logo = document.getElementById("bbgm-ads-logo");
 
-					if (logo) {
-						logo.style.display = "flex";
-					}
+			for (const adDiv of adDivs) {
+				window.freestar.config.enabled_slots.push({
+					placementName: adDiv,
+					slotId: adDiv,
+				});
+			}
+
+			if (window.screen && window.screen.width >= 768) {
+				// Show the logo too
+				const logo = document.getElementById("bbgm-ads-logo");
+
+				if (logo) {
+					logo.style.display = "flex";
 				}
-			});
+			}
 		});
 	}
 };
@@ -168,7 +173,7 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.bbgmAds.init;
+	const adBlock = !window.freestar.freestarReloadAdSlot;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

@@ -251,9 +251,22 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					window.bbgmAds.cmd.push(() => {
-						window.bbgmAds.refresh();
-					});
+					if (window.freestar.freestarReloadAdSlot) {
+						const adDivs =
+							window.screen && window.screen.width < 768
+								? ["basketball-gm_mobile_leaderboard"]
+								: [
+										"basketball-gm_leaderboard_atf",
+										"basketball-gm_mrec_btf_1",
+										"basketball-gm_mrec_btf_2",
+										"basketball-gm_right_rail",
+								  ];
+
+						for (const adDiv of adDivs) {
+							console.log("reload", adDiv);
+							window.freestar.freestarReloadAdSlot(adDiv);
+						}
+					}
 				} else {
 					initialLoad = false;
 				}

@@ -318,6 +318,8 @@ export type GameAttributesLeague = {
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	challengeLoseBestPlayer: boolean;
+	challengeFiredLuxuryTax: boolean;
+	challengeFiredMissPlayoffs: boolean;
 	confs: { cid: number; name: string }[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;

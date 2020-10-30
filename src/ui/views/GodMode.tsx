@@ -48,6 +48,8 @@ type Key =
 	| "challengeNoRatings"
 	| "challengeNoTrades"
 	| "challengeLoseBestPlayer"
+	| "challengeFiredLuxuryTax"
+	| "challengeFiredMissPlayoffs"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
@@ -604,6 +606,18 @@ export const options: {
 		category: "Challenge Modes",
 		key: "challengeLoseBestPlayer",
 		name: "Lose Best Player",
+		type: "bool",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeFiredLuxuryTax",
+		name: "You're Fired If You Pay The Luxury Tax",
+		type: "bool",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeFiredMissPlayoffs",
+		name: "You're Fired If You Miss The Playoffs",
 		type: "bool",
 	},
 	{

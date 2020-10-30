@@ -49,6 +49,8 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoTrades: g.get("challengeNoTrades"),
 			challengeLoseBestPlayer: g.get("challengeLoseBestPlayer"),
 			challengeNoRatings: g.get("challengeNoRatings"),
+			challengeFiredLuxuryTax: g.get("challengeFiredLuxuryTax"),
+			challengeFiredMissPlayoffs: g.get("challengeFiredMissPlayoffs"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),

@@ -427,6 +427,8 @@ type State = {
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	challengeLoseBestPlayer: boolean;
+	challengeFiredLuxuryTax: boolean;
+	challengeFiredMissPlayoffs: boolean;
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -505,6 +507,12 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeLoseBestPlayer";
+	  }
+	| {
+			type: "toggleChallengeFiredLuxuryTax";
+	  }
+	| {
+			type: "toggleChallengeFiredMissPlayoffs";
 	  }
 	| {
 			type: "toggleEqualizeRegions";
@@ -634,6 +642,8 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoRatings: boolean;
 				challengeNoTrades: boolean;
 				challengeLoseBestPlayer: boolean;
+				challengeFiredLuxuryTax: boolean;
+				challengeFiredMissPlayoffs: boolean;
 				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
@@ -643,6 +653,8 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoRatings: state.challengeNoRatings,
 				challengeNoTrades: state.challengeNoTrades,
 				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
+				challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
+				challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -736,6 +748,17 @@ const reducer = (state: State, action: Action): State => {
 				challengeLoseBestPlayer: !state.challengeLoseBestPlayer,
 			};
 
+		case "toggleChallengeFiredLuxuryTax":
+			return {
+				...state,
+				challengeFiredLuxuryTax: !state.challengeFiredLuxuryTax,
+			};
+
+		case "toggleChallengeFiredMissPlayoffs":
+			return {
+				...state,
+				challengeFiredMissPlayoffs: !state.challengeFiredMissPlayoffs,
+			};
 		case "toggleEqualizeRegions":
 			return {
 				...state,
@@ -829,6 +852,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeNoRatings: false,
 				challengeNoTrades: false,
 				challengeLoseBestPlayer: false,
+				challengeFiredLuxuryTax: false,
+				challengeFiredMissPlayoffs: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
@@ -928,6 +953,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeNoRatings: state.challengeNoRatings,
 					challengeNoTrades: state.challengeNoTrades,
 					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
+					challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
+					challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
@@ -969,6 +996,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeNoRatings,
 			state.challengeNoTrades,
 			state.challengeLoseBestPlayer,
+			state.challengeFiredLuxuryTax,
+			state.challengeFiredMissPlayoffs,
 			state.customize,
 			state.difficulty,
 			state.equalizeRegions,
@@ -1182,6 +1211,40 @@ const NewLeague = (props: View<"newLeague">) => {
 					<span className="text-muted">
 						{helpTexts.challengeLoseBestPlayer}
 					</span>
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeFiredLuxuryTax"
+					checked={state.challengeFiredLuxuryTax}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeFiredLuxuryTax" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeFiredLuxuryTax"
+				>
+					You're fired if you pay the luxury tax
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeFiredMissPlayoffs"
+					checked={state.challengeFiredMissPlayoffs}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeFiredMissPlayoffs" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeFiredMissPlayoffs"
+				>
+					You're fired if you miss the playoffs
 				</label>
 			</div>
 		</div>,

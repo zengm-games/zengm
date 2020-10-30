@@ -56,7 +56,7 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
-	if (!hideAds || true) {
+	if (!hideAds) {
 		window.freestar.queue.push(() => {
 			// Add margin for skyscraper on right
 			const container = document.getElementsByClassName("bbgm-container")[0];
@@ -97,6 +97,7 @@ const initAds = (goldUntil: number | undefined) => {
 					placementName: adDiv,
 					slotId: adDiv,
 				});
+				console.log("enabled_slots", adDiv);
 			}
 
 			if (window.screen && window.screen.width >= 768) {

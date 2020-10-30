@@ -18,14 +18,14 @@ const updateSkyscraperDisplay = () => {
 						slotId: "basketball-gm_right_rail",
 					},
 				]);
-				console.log("newAdSlots");
+				console.log("newAdSlots", "basketball-gm_right_rail");
 				displayed = true;
 			}
 		} else {
 			if (displayed) {
 				div.style.display = "none";
 				window.freestar.deleteAdSlots("basketball-gm_right_rail");
-				console.log("deleteAdSlots");
+				console.log("deleteAdSlots", "basketball-gm_right_rail");
 				displayed = false;
 			}
 		}

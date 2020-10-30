@@ -2,7 +2,6 @@ import React, { useEffect } from "react"; // Ensure there is enough room to disp
 
 const widthCutoff = 1200 + 190;
 
-let displayed = false;
 const updateSkyscraperDisplay = () => {
 	const div = document.getElementById("basketball-gm_right_rail");
 
@@ -10,24 +9,9 @@ const updateSkyscraperDisplay = () => {
 		const documentElement = document.documentElement;
 
 		if (documentElement && documentElement.clientWidth >= widthCutoff) {
-			if (!displayed) {
-				div.style.display = "block";
-				window.freestar.newAdSlots([
-					{
-						placementName: "basketball-gm_right_rail",
-						slotId: "basketball-gm_right_rail",
-					},
-				]);
-				console.log("newAdSlots", "basketball-gm_right_rail");
-				displayed = true;
-			}
+			div.style.display = "block";
 		} else {
-			if (displayed) {
-				div.style.display = "none";
-				window.freestar.deleteAdSlots("basketball-gm_right_rail");
-				console.log("deleteAdSlots", "basketball-gm_right_rail");
-				displayed = false;
-			}
+			div.style.display = "none";
 		}
 	}
 };

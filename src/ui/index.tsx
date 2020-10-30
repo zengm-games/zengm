@@ -263,6 +263,12 @@ const setupRoutes = () => {
 								  ];
 
 						for (const adDiv of adDivs) {
+							if (adDiv === "basketball-gm_right_rail") {
+								const div = document.getElementById(adDiv);
+								if (div && div.style.display === "none") {
+									continue;
+								}
+							}
 							console.log("reload", adDiv);
 							window.freestar.freestarReloadAdSlot(adDiv);
 						}

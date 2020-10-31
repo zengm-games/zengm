@@ -62,7 +62,7 @@ const writeTeamStats = async (results: GameResults) => {
 				t.budget.ticketPrice.amount * (90000 / g.get("salaryCap")) ** 0.75;
 
 			if (process.env.SPORT === "football") {
-				att *= 6.5;
+				att *= 28;
 			}
 		}
 
@@ -124,6 +124,10 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// Attendance: base on home team
 		if (t1 === 0) {
+			if (process.env.SPORT === "football") {
+				att *= 0.23;
+			}
+
 			att = random.gauss(att, 1000);
 			att *= (45 * 50) / relativeTicketPrice ** 2; // Attendance depends on ticket price. Not sure if this formula is reasonable.
 

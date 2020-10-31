@@ -12,7 +12,7 @@ const updateSkyscraperDisplay =
 					const documentElement = document.documentElement;
 
 					if (documentElement && documentElement.clientWidth >= widthCutoff) {
-						if (!displayed) {
+						if (!displayed && window.freestar.newAdSlots) {
 							div.style.display = "block";
 							window.freestar.newAdSlots([
 								{
@@ -24,7 +24,7 @@ const updateSkyscraperDisplay =
 							displayed = true;
 						}
 					} else {
-						if (displayed) {
+						if (displayed && window.freestar.deleteAdSlots) {
 							div.style.display = "none";
 							window.freestar.deleteAdSlots("basketball-gm_right_rail");
 							console.log("deleteAdSlots", "basketball-gm_right_rail");

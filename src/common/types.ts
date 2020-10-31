@@ -21,6 +21,7 @@ declare global {
 		bbgmVersionWorker: string;
 		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
+		freestar: any;
 		getTheme: () => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;

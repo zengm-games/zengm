@@ -57,7 +57,10 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 
 	if (!hideAds) {
-		window.bbgmAds.cmd.push(() => {
+		(process.env.SPORT === "basketball"
+			? window.freestar.queue
+			: window.bbgmAds.cmd
+		).push(() => {
 			// Add margin for skyscraper on right
 			const container = document.getElementsByClassName("bbgm-container")[0];
 			if (container instanceof HTMLElement) {
@@ -65,15 +68,28 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
-			const showDivs =
-				window.screen && window.screen.width < 768
-					? ["bbgm-ads-mobile"]
+			const divsMobile =
+				process.env.SPORT === "basketball"
+					? ["basketball-gm_mobile_leaderboard"]
+					: ["bbgm-ads-mobile"];
+			const showDivsDesktop =
+				process.env.SPORT === "basketball"
+					? [
+							"basketball-gm_leaderboard_atf",
+							"basketball-gm_mrec_btf_1",
+							"basketball-gm_mrec_btf_2",
+							"skyscraper-wrapper",
+					  ]
 					: [
 							"bbgm-ads-top",
 							"bbgm-ads-bottom1",
 							"bbgm-ads-bottom2",
 							"skyscraper-wrapper",
 					  ];
+			const showDivs =
+				window.screen && window.screen.width < 768
+					? divsMobile
+					: showDivsDesktop;
 
 			for (const id of showDivs) {
 				const div = document.getElementById(id);
@@ -83,16 +99,31 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivs =
-				window.screen && window.screen.width < 768
-					? ["bbgm-ads-mobile"]
+			const adDivsDesktop =
+				process.env.SPORT === "basketball"
+					? [
+							"basketball-gm_leaderboard_atf",
+							"basketball-gm_mrec_btf_1",
+							"basketball-gm_mrec_btf_2",
+					  ]
 					: [
 							"bbgm-ads-top",
 							"bbgm-ads-bottom1",
 							"bbgm-ads-bottom2",
 							"bbgm-ads-skyscraper",
 					  ];
-			window.bbgmAds.init(adDivs).then(() => {
+			const adDivs =
+				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
+
+			if (process.env.SPORT === "basketball") {
+				for (const adDiv of adDivs) {
+					window.freestar.config.enabled_slots.push({
+						placementName: adDiv,
+						slotId: adDiv,
+					});
+					console.log("enabled_slots", adDiv);
+				}
+
 				if (window.screen && window.screen.width >= 768) {
 					// Show the logo too
 					const logo = document.getElementById("bbgm-ads-logo");
@@ -101,7 +132,18 @@ const initAds = (goldUntil: number | undefined) => {
 						logo.style.display = "flex";
 					}
 				}
-			});
+			} else {
+				window.bbgmAds.init(adDivs).then(() => {
+					if (window.screen && window.screen.width >= 768) {
+						// Show the logo too
+						const logo = document.getElementById("bbgm-ads-logo");
+
+						if (logo) {
+							logo.style.display = "flex";
+						}
+					}
+				});
+			}
 		});
 	}
 };
@@ -168,7 +210,10 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.bbgmAds.init;
+	const adBlock =
+		process.env.SPORT === "basketball"
+			? !window.freestar.freestarReloadAdSlot
+			: !window.bbgmAds.init;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

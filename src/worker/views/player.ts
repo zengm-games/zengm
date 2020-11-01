@@ -101,6 +101,7 @@ const updatePlayer = async (
 					| "college"
 					| "watch"
 					| "relatives"
+					| "awards"
 			  > & {
 					age: number;
 					draft: {
@@ -153,6 +154,7 @@ const updatePlayer = async (
 				"injuries",
 				"salaries",
 				"salariesTotal",
+				"awards",
 				"awardsGrouped",
 				"imgURL",
 				"watch",

@@ -25,6 +25,7 @@ import type { View, Player, Phase } from "../../../common/types";
 import { PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
+import SeasonIcons from "./SeasonIcons";
 
 const Relatives = ({
 	pid,
@@ -135,8 +136,18 @@ const StatsTable = ({
 						key: i,
 						data: [
 							{
-								value: ps.season,
+								searchValue: ps.season,
 								sortValue: i,
+								value: (
+									<>
+										{ps.season}{" "}
+										<SeasonIcons
+											season={ps.season}
+											awards={p.awards}
+											playoffs={playoffs}
+										/>
+									</>
+								),
 							},
 							<a
 								href={helpers.leagueUrl([
@@ -649,22 +660,23 @@ const Player2 = ({
 							key: i,
 							data: [
 								{
+									searchValue: r.season,
 									sortValue: i,
-									value:
-										r.injuryIndex !== undefined &&
-										player.injuries[r.injuryIndex] ? (
-											<>
-												{r.season}
+									value: (
+										<>
+											{r.season}
+											{r.injuryIndex !== undefined &&
+											player.injuries[r.injuryIndex] ? (
 												<span
 													className="badge badge-danger badge-injury"
 													title={player.injuries[r.injuryIndex].type}
 												>
 													+
 												</span>
-											</>
-										) : (
-											r.season
-										),
+											) : null}{" "}
+											<SeasonIcons season={r.season} awards={player.awards} />
+										</>
+									),
 								},
 								r.abbrev ? (
 									<a
@@ -727,7 +739,19 @@ const Player2 = ({
 						rows={player.salaries.map((s, i) => {
 							return {
 								key: i,
-								data: [s.season, helpers.formatCurrency(s.amount, "M")],
+								data: [
+									{
+										searchValue: s.season,
+										sortValue: i,
+										value: (
+											<>
+												{s.season}{" "}
+												<SeasonIcons season={s.season} awards={player.awards} />
+											</>
+										),
+									},
+									helpers.formatCurrency(s.amount, "M"),
+								],
 							};
 						})}
 					/>

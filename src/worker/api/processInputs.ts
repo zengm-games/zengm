@@ -100,8 +100,14 @@ const customizePlayer = (params: Params) => {
 		}
 	}
 
+	let type: "clone" | undefined;
+	if (params.type === "clone" && pid !== null) {
+		type = "clone";
+	}
+
 	return {
 		pid,
+		type,
 	};
 };
 

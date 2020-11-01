@@ -132,6 +132,7 @@ const routes = () => {
 		"/l/:lid/watch_list/:statType/:playoffs": genPage("watchList"),
 		"/l/:lid/customize_player": genPage("customizePlayer"),
 		"/l/:lid/customize_player/:pid": genPage("customizePlayer"),
+		"/l/:lid/customize_player/:pid/:type": genPage("customizePlayer"),
 		"/l/:lid/history_all": genPage("historyAll"),
 		"/l/:lid/upcoming_free_agents": genPage("upcomingFreeAgents"),
 		"/l/:lid/upcoming_free_agents/:season": genPage("upcomingFreeAgents"),

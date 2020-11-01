@@ -506,7 +506,7 @@ const Player2 = ({
 								godMode ? "btn-god-mode" : "btn-light-bordered",
 							)}
 						>
-							Edit Player
+							Edit
 						</a>
 						{godMode ? (
 							<button
@@ -525,8 +525,20 @@ const Player2 = ({
 									}
 								}}
 							>
-								Delete Player
+								Delete
 							</button>
+						) : null}
+						{godMode ? (
+							<a
+								href={helpers.leagueUrl([
+									"customize_player",
+									player.pid,
+									"clone",
+								])}
+								className="btn btn-god-mode"
+							>
+								Clone
+							</a>
 						) : null}
 						{showTradeFor || showTradingBlock ? (
 							<button

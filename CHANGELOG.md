@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-11-01 In God Mode, you can now clone a player by clicking the "Clone" button on their player profile page. [[1]](https://old.reddit.com/r/BasketballGM/comments/jm5jj7/in_god_mode_you_can_now_clone_a_player_by/)
+
 * 2020-11-01: Added icons in tables on player profile pages showing which seasons a player was an All-Star (or All-League in FBGM) or MVP. For playoff stats, it shows if the player won a championship. [[1]](https://old.reddit.com/r/BasketballGM/comments/jlwaro/new_in_version_202011010239_icons_in_tables_on/)
 
 * 2020-10-29: Two new challenge modes: "You're fired if you pay the luxury tax" and "You're fired if you miss the playoffs". For an even bigger challenge, try them both at the same time! [[1]](https://old.reddit.com/r/BasketballGM/comments/jknpft/two_new_challenge_modes_in_version_202010300096/)

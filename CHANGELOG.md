@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-11-01: Added icons to rows in tables on player profile pages showing which seasons a player was an All-Star (or All-League in FBGM), MVP, and champion.
+* 2020-11-01: Added icons in tables on player profile pages showing which seasons a player was an All-Star (or All-League in FBGM) or MVP. For playoff stats, it shows if the player won a championship. [[1]](https://old.reddit.com/r/BasketballGM/comments/jlwaro/new_in_version_202011010239_icons_in_tables_on/)
 
 * 2020-10-29: Two new challenge modes: "You're fired if you pay the luxury tax" and "You're fired if you miss the playoffs". For an even bigger challenge, try them both at the same time! [[1]](https://old.reddit.com/r/BasketballGM/comments/jknpft/two_new_challenge_modes_in_version_202010300096/)
 
@@ -12,7 +12,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2020-10-26: Fixed bug in FBGM where it was almost impossible to have any attendance less than a sell out. [[1]](https://old.reddit.com/r/BasketballGM/comments/jit3yx/a_few_small_updates_in_version_202010270158/)
 
-* 2020-10-25: AI teams are affected by player mood when re-signing players, and you can see a player's mood toward his current team. [[1]](https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jhn2vu/new_in_version_202010250240_ai_teams_are_affected/)
+* **2020-10-25: AI teams are affected by player mood when re-signing players, and you can see a player's mood toward his current team. [[1]](https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jhn2vu/new_in_version_202010250240_ai_teams_are_affected/)**
 
 * 2020-10-18: New feature in God Mode to select the winner of a game before it's played. [[1]](https://basketball-gm.com/blog/2020/10/force-win/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/)
 

@@ -998,3 +998,13 @@ button.live-game-sim-more {
 		padding-left: 1em !important;
 	}
 }
+
+.text-yellow {
+	color: $yellow;
+}
+
+.ring::after {
+	color: $yellow;
+	content: "\274d";
+	font-weight: bold;
+}

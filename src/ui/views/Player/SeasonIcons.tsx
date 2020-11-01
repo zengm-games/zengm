@@ -11,7 +11,7 @@ const SeasonIcons = ({
 	playoffs?: boolean;
 }) => {
 	let type;
-	let icon;
+	let className;
 	for (const award of awards) {
 		if (award.season !== season) {
 			continue;
@@ -20,41 +20,34 @@ const SeasonIcons = ({
 		if (playoffs) {
 			if (award.type === "Won Championship") {
 				type = award.type;
-				icon = "🏆";
+				className = "ring";
 				break;
 			}
 		} else {
 			if (award.type === "Most Valuable Player") {
 				type = award.type;
-				icon = "🏅";
+				className = "glyphicon glyphicon-star text-yellow";
 				break;
 			}
 
 			// Only show these if not MVP, so no "break" statement inside
 			if (process.env.SPORT === "basketball" && award.type === "All-Star") {
 				type = award.type;
-				icon = "⭐";
+				className = "glyphicon glyphicon-star text-muted";
 			}
 			if (
 				process.env.SPORT === "football" &&
 				award.type.includes("All-League")
 			) {
 				type = award.type;
-				icon = "⭐";
+				className = "glyphicon glyphicon-star text-muted";
 			}
 		}
 	}
 
-	if (type && icon) {
+	if (type && className) {
 		return (
-			<span
-				className="cursor-default"
-				role="img"
-				aria-label={type}
-				title={type}
-			>
-				{icon}
-			</span>
+			<span className={className} role="img" aria-label={type} title={type} />
 		);
 	}
 

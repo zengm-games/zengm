@@ -418,8 +418,8 @@ const Player2 = ({
 
 	return (
 		<>
-			<div className="row mb-3">
-				<div className="col-sm-6">
+			<div className="d-sm-flex mb-3">
+				<div className="player-bio">
 					<div className="d-flex">
 						<div
 							className="player-picture"
@@ -596,7 +596,7 @@ const Player2 = ({
 					) : null}
 				</div>
 
-				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">
+				<div className="mt-3 mt-sm-0 text-nowrap">
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
 					) : null}

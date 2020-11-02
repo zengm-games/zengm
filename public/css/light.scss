@@ -1008,3 +1008,16 @@ button.live-game-sim-more {
 	content: "\274d";
 	font-weight: bold;
 }
+
+@include media-breakpoint-up(sm) {
+	.player-bio {
+		min-width: 370px;
+		margin-right: 1em;
+	}
+}
+
+@include media-breakpoint-up(lg) {
+	.player-bio {
+		min-width: 420px;
+	}
+}

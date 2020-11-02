@@ -361,11 +361,10 @@ const Player2 = ({
 	if (!retired) {
 		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 		statusInfo = (
-			<div className="d-flex">
+			<div className="d-flex align-items-center">
 				{injured ? (
 					<span
-						className="badge badge-danger badge-injury"
-						style={{ marginLeft: 0 }}
+						className="badge badge-danger badge-injury ml-0"
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${

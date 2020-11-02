@@ -20,8 +20,8 @@ const awardsOrder = [
 	"Second Team All-Defensive",
 	"Third Team All-Defensive",
 	"All-Rookie Team",
-	"All-Star",
 	"All-Star MVP",
+	"All-Star",
 	"League Scoring Leader",
 	"League Rebounding Leader",
 	"League Assists Leader",
@@ -37,17 +37,39 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 		let type = originalType;
 
-		if (type.endsWith("Leader")) {
-			type = type.replace("League ", "");
-		}
+		if (type === "Inducted into the Hall of Fame") {
+			type = "Hall of Fame";
+		} else if (type === "Most Valuable Player") {
+			type = "MVP";
+		} else if (type === "Won Championship") {
+			type = "Champion";
+		} else if (type === "Finals MVP") {
+			type = "FMVP";
+		} else if (type === "Defensive Player of the Year") {
+			type = "DPOY";
+		} else if (type === "Sixth Man of the Year") {
+			type = "SMOY";
+		} else if (type === "Most Improved Player") {
+			type = "MIP";
+		} else if (type === "Rookie of the Year") {
+			type = "ROY";
+		} else if (type === "Offensive Rookie of the Year") {
+			type = "OROY";
+		} else if (type === "Defensive Rookie of the Year") {
+			type = "DROY";
+		} else {
+			if (type.endsWith("Leader")) {
+				type = type.replace("League ", "");
+			}
 
-		type = type
-			.replace("First Team ", "")
-			.replace("Second Team ", "")
-			.replace("Third Team ", "");
+			type = type
+				.replace("First Team ", "")
+				.replace("Second Team ", "")
+				.replace("Third Team ", "");
 
-		if (type.endsWith(" Team")) {
-			type = type.replace(" Team ", "");
+			if (type.endsWith(" Team")) {
+				type = type.replace(" Team", "");
+			}
 		}
 
 		return type;

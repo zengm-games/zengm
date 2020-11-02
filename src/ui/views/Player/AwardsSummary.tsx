@@ -14,7 +14,7 @@ const AwardsSummary = ({ awards }: { awards: Player["awards"] }) => {
 	// "First Team All-League", "Second Team All-League", "Third Team All-League", "First Team All-Defensive", "Second Team All-Defensive", "Third Team All-Defensive",
 
 	return (
-		<div className="flex-grow-1 clearfix" style={{ maxWidth: 500 }}>
+		<div className="flex-grow-1 clearfix" style={{ maxWidth: 400 }}>
 			{awardsGrouped.map((a, i) => {
 				return (
 					<div

@@ -597,7 +597,7 @@ const Player2 = ({
 				</div>
 
 				<div className="mt-3 mt-sm-0 text-nowrap">
-					<div className="d-md-flex">
+					<div className="d-xl-flex">
 						{!retired && showRatings ? (
 							<div className="mr-sm-5">
 								<RatingsOverview ratings={player.ratings} />

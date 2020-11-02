@@ -1,5 +1,6 @@
 player profile top redesign
 - merge all league team entries?
+  - move awardsGrouped logic client side, and add an option for this
 - complicated width thin in RatingsOverview still needed?
 - test with very long awards list - overflow when it's all a single column to the right?
 - test with very long jersey numbers list

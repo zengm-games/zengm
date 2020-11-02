@@ -1,15 +1,25 @@
 import React from "react";
 
-const style = { fontSize: "90%", width: 200 };
+const style = { fontSize: "90%", width: 160 };
 
 const AwardsSummary = ({ awardsGrouped }: { awardsGrouped: any[] }) => {
 	if (awardsGrouped.length === 0) {
 		return null;
 	}
 
+	// "First Team All-League", "Second Team All-League", "Third Team All-League", "First Team All-Defensive", "Second Team All-Defensive", "Third Team All-Defensive",
+
 	return (
 		<div className="flex-grow-1 clearfix" style={{ maxWidth: 500 }}>
 			{awardsGrouped.map((a, i) => {
+				let type = a.type.endsWith("Leader")
+					? a.type.replace("League ", "")
+					: a.type;
+
+				type = type.replace("First", "1st");
+				type = type.replace("Second", "2nd");
+				type = type.replace("Third", "3rd");
+
 				return (
 					<div
 						key={i}
@@ -18,7 +28,7 @@ const AwardsSummary = ({ awardsGrouped }: { awardsGrouped: any[] }) => {
 						style={style}
 					>
 						{a.count > 1 ? `${a.count}x ` : null}
-						{a.type}
+						{type}
 					</div>
 				);
 			})}

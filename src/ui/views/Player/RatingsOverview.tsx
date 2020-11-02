@@ -2,31 +2,6 @@ import React, { useLayoutEffect, useRef } from "react";
 import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
-	const ratingsColumnsWrapper = useRef<HTMLDivElement | null>(null);
-	const ratingsTopWrapper = useRef<HTMLDivElement | null>(null);
-
-	useLayoutEffect(() => {
-		const resizeListener = () => {
-			if (ratingsColumnsWrapper.current && ratingsTopWrapper.current) {
-				let width = 0;
-				for (const column of ratingsColumnsWrapper.current.childNodes) {
-					const columnDiv = column as HTMLDivElement;
-					const style = getComputedStyle(columnDiv);
-					width += columnDiv.offsetWidth;
-					width += parseFloat(style.marginLeft);
-				}
-
-				ratingsTopWrapper.current.style.maxWidth = `${width}px`;
-			}
-		};
-
-		resizeListener();
-		window.addEventListener("optimizedResize", resizeListener);
-		return () => {
-			window.removeEventListener("optimizedResize", resizeListener);
-		};
-	}, []);
-
 	const r = ratings.length - 1;
 
 	let lastSeason: any = ratings[r];
@@ -316,8 +291,8 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 			  ];
 
 	return (
-		<>
-			<div className="d-flex justify-content-between" ref={ratingsTopWrapper}>
+		<div className="ratings-overview">
+			<div className="d-flex justify-content-between">
 				<h2 className="mr-3">
 					Overall:{" "}
 					<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
@@ -331,10 +306,7 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 					</RatingWithChange>
 				</h2>
 			</div>
-			<div
-				className="d-flex justify-content-between"
-				ref={ratingsColumnsWrapper}
-			>
+			<div className="d-flex justify-content-between">
 				{columns.map((column, i) => (
 					<div key={i} className={i === 0 ? undefined : "ml-2 ml-sm-5"}>
 						{Object.entries(column).map(([name, categories], j) => (
@@ -370,7 +342,7 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 					</div>
 				))}
 			</div>
-		</>
+		</div>
 	);
 };
 

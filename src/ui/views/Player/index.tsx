@@ -600,18 +600,16 @@ const Player2 = ({
 				</div>
 
 				<div className="mt-3 mt-sm-0 text-nowrap">
-					<div className="d-xl-flex">
+					<div className="ratings-and-awards">
 						{!retired && showRatings ? (
-							<div className="mr-sm-5">
-								<RatingsOverview ratings={player.ratings} />
-							</div>
+							<RatingsOverview ratings={player.ratings} />
 						) : null}
 						<AwardsSummary awards={player.awards} />
 					</div>
 					{jerseyNumberInfos.length > 0 ? (
 						<div
 							className={classNames("d-flex flex-wrap", {
-								"mt-2": !retired && showRatings,
+								"mt-2": (!retired && showRatings) || player.awards.length > 0,
 							})}
 							style={{
 								gap: "0.5em",

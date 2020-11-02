@@ -422,7 +422,7 @@ const Player2 = ({
 				<div className="col-sm-6">
 					<div className="d-flex">
 						<div
-							className="player-picture mb-2"
+							className="player-picture"
 							style={{
 								marginTop: player.imgURL ? 0 : -20,
 							}}
@@ -498,7 +498,7 @@ const Player2 = ({
 						</div>
 					</div>
 
-					<div className="btn-group">
+					<div className="btn-group mt-2">
 						<a
 							href={helpers.leagueUrl(["customize_player", player.pid])}
 							className={classNames(

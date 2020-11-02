@@ -2641,17 +2641,28 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 		"mip",
 		"finalsMvp",
 	] as const;
-	const awardNames = {
-		mvp: "Most Valuable Player",
-		roy: "Rookie of the Year",
-		smoy: "Sixth Man of the Year",
-		dpoy: "Defensive Player of the Year",
-		mip: "Most Improved Player",
-		finalsMvp: "Finals MVP",
-		allLeague: "All-League",
-		allDefensive: "All-Defensive",
-		allRookie: "All-Rookie Team",
-	};
+	const awardNames =
+		process.env.SPORT === "basketball"
+			? {
+					mvp: "Most Valuable Player",
+					roy: "Rookie of the Year",
+					smoy: "Sixth Man of the Year",
+					dpoy: "Defensive Player of the Year",
+					mip: "Most Improved Player",
+					finalsMvp: "Finals MVP",
+					allLeague: "All-League",
+					allDefensive: "All-Defensive",
+					allRookie: "All-Rookie Team",
+			  }
+			: {
+					mvp: "Most Valuable Player",
+					dpoy: "Defensive Player of the Year",
+					oroy: "Offensive Rookie of the Year",
+					droy: "Defensive Rookie of the Year",
+					finalsMvp: "Finals MVP",
+					allLeague: "All-League",
+					allRookie: "All-Rookie Team",
+			  };
 	for (const key of simpleAwards) {
 		const type = awardNames[key];
 		const award = awards[key];

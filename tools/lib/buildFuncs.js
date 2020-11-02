@@ -264,8 +264,10 @@ function cmpFactory(cmpConfig) {
       "success": success,
       "callId": i.callId
       }};
-      event.source.postMessage(msgIsString ?
-      JSON.stringify(returnMsg) : returnMsg, '*');
+      if (event && event.source && event.source.postMessage) {
+        event.source.postMessage(msgIsString ?
+        JSON.stringify(returnMsg) : returnMsg, '*');
+      }
     });
     }
   }

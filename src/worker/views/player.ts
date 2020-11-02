@@ -122,7 +122,6 @@ const updatePlayer = async (
 					mood: any;
 					salaries: any[];
 					salariesTotal: any;
-					awardsGrouped: any[];
 					untradable: any;
 					untradableMsg: string;
 					ratings: (MinimalPlayerRatings & {
@@ -155,7 +154,6 @@ const updatePlayer = async (
 				"salaries",
 				"salariesTotal",
 				"awards",
-				"awardsGrouped",
 				"imgURL",
 				"watch",
 				"college",

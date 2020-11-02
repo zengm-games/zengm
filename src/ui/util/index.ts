@@ -27,6 +27,7 @@ export { default as downloadFile } from "./downloadFile";
 export { default as genStaticPage } from "./genStaticPage";
 export { default as getCols } from "../../common/getCols";
 export { default as getScript } from "./getScript";
+export { default as groupAwards } from "./groupAwards";
 export { default as helpers } from "./helpers";
 export { default as initView } from "./initView";
 export {

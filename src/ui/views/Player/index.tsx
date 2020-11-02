@@ -20,6 +20,7 @@ import {
 	helpers,
 	toWorker,
 	realtimeUpdate,
+	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
 import { PHASE, PLAYER } from "../../../common";
@@ -416,6 +417,8 @@ const Player2 = ({
 	const college =
 		player.college && player.college !== "" ? player.college : "None";
 
+	const awardsGrouped = groupAwards(player.awards);
+
 	return (
 		<>
 			<div className="d-sm-flex mb-3">
@@ -603,7 +606,7 @@ const Player2 = ({
 								<RatingsOverview ratings={player.ratings} />
 							</div>
 						) : null}
-						<AwardsSummary awardsGrouped={player.awardsGrouped} />
+						<AwardsSummary awards={player.awards} />
 					</div>
 					{jerseyNumberInfos.length > 0 ? (
 						<div
@@ -723,10 +726,10 @@ const Player2 = ({
 			<div className="row">
 				<div className="col-6 col-md-3">
 					<h2>Awards</h2>
-					{player.awardsGrouped.length > 0 ? (
+					{awardsGrouped.length > 0 ? (
 						<table className="table table-nonfluid table-striped table-bordered table-sm player-awards">
 							<tbody>
-								{player.awardsGrouped.map((a, i) => {
+								{awardsGrouped.map((a, i) => {
 									return (
 										<tr key={i}>
 											<td>
@@ -739,7 +742,7 @@ const Player2 = ({
 							</tbody>
 						</table>
 					) : null}
-					{player.awardsGrouped.length === 0 ? <p>None</p> : null}
+					{awardsGrouped.length === 0 ? <p>None</p> : null}
 				</div>
 				<div className="col-6 col-md-3">
 					<h2>Salaries</h2>

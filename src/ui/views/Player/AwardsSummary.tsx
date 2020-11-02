@@ -1,11 +1,15 @@
 import React from "react";
+import type { Player } from "../../../common/types";
+import { groupAwards } from "../../util";
 
 const style = { fontSize: "90%", width: 160 };
 
-const AwardsSummary = ({ awardsGrouped }: { awardsGrouped: any[] }) => {
-	if (awardsGrouped.length === 0) {
+const AwardsSummary = ({ awards }: { awards: Player["awards"] }) => {
+	if (awards.length === 0) {
 		return null;
 	}
+
+	const awardsGrouped = groupAwards(awards);
 
 	// "First Team All-League", "Second Team All-League", "Third Team All-League", "First Team All-Defensive", "Second Team All-Defensive", "Third Team All-Defensive",
 

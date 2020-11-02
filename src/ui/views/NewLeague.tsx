@@ -1469,7 +1469,15 @@ const NewLeague = (props: View<"newLeague">) => {
 										dispatch({ type: "setSeason", season });
 									}}
 									onDone={handleNewLeagueInfo}
-									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+									quickValues={[
+										"1947",
+										"1956",
+										"1968",
+										"1984",
+										"1996",
+										"2003",
+										"2020",
+									]}
 									value2={state.phase}
 									values2={phases}
 									onNewValue2={phase => {

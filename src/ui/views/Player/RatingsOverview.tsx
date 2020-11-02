@@ -331,7 +331,10 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 					</RatingWithChange>
 				</h2>
 			</div>
-			<div className="d-flex justify-content-start" ref={ratingsColumnsWrapper}>
+			<div
+				className="d-flex justify-content-between"
+				ref={ratingsColumnsWrapper}
+			>
 				{columns.map((column, i) => (
 					<div key={i} className={i === 0 ? undefined : "ml-2 ml-sm-5"}>
 						{Object.entries(column).map(([name, categories], j) => (

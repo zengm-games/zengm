@@ -25,6 +25,7 @@ import type { View, Player, Phase } from "../../../common/types";
 import { PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
+import AwardsSummary from "./AwardsSummary";
 import SeasonIcons from "./SeasonIcons";
 
 const Relatives = ({
@@ -596,9 +597,14 @@ const Player2 = ({
 				</div>
 
 				<div className="mt-3 mt-sm-0 text-nowrap">
-					{!retired && showRatings ? (
-						<RatingsOverview ratings={player.ratings} />
-					) : null}
+					<div className="d-md-flex">
+						{!retired && showRatings ? (
+							<div className="mr-sm-5">
+								<RatingsOverview ratings={player.ratings} />
+							</div>
+						) : null}
+						<AwardsSummary awardsGrouped={player.awardsGrouped} />
+					</div>
 					{jerseyNumberInfos.length > 0 ? (
 						<div
 							className={classNames("d-flex flex-wrap", {
@@ -724,7 +730,7 @@ const Player2 = ({
 									return (
 										<tr key={i}>
 											<td>
-												{a.count > 1 ? <span>{a.count}x </span> : null}
+												{a.count > 1 ? `${a.count}x ` : null}
 												{a.type} ({a.seasons.join(", ")})
 											</td>
 										</tr>

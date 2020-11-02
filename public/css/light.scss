@@ -1015,9 +1015,3 @@ button.live-game-sim-more {
 		margin-right: 1em;
 	}
 }
-
-@include media-breakpoint-up(lg) {
-	.player-bio {
-		min-width: 420px;
-	}
-}

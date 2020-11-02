@@ -30,6 +30,7 @@ type PlayersPlusOptionsRequired = {
 	statType: PlayerStatType;
 	mergeStats: boolean;
 };
+
 const awardsOrder = [
 	"Inducted into the Hall of Fame",
 	"Most Valuable Player",
@@ -41,11 +42,6 @@ const awardsOrder = [
 	"Rookie of the Year",
 	"Offensive Rookie of the Year",
 	"Defensive Rookie of the Year",
-	"League Scoring Leader",
-	"League Rebounding Leader",
-	"League Assists Leader",
-	"League Steals Leader",
-	"League Blocks Leader",
 	"First Team All-League",
 	"Second Team All-League",
 	"Third Team All-League",
@@ -55,6 +51,11 @@ const awardsOrder = [
 	"All-Rookie Team",
 	"All-Star",
 	"All-Star MVP",
+	"League Scoring Leader",
+	"League Rebounding Leader",
+	"League Assists Leader",
+	"League Steals Leader",
+	"League Blocks Leader",
 ];
 
 const processAttrs = (

@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
+	const ratingsColumnsWrapper = useRef<HTMLDivElement | null>(null);
+	const ratingsTopWrapper = useRef<HTMLDivElement | null>(null);
+
+	useLayoutEffect(() => {
+		const resizeListener = () => {
+			if (ratingsColumnsWrapper.current && ratingsTopWrapper.current) {
+				let width = 0;
+				for (const column of ratingsColumnsWrapper.current.childNodes) {
+					const columnDiv = column as HTMLDivElement;
+					const style = getComputedStyle(columnDiv);
+					width += columnDiv.offsetWidth;
+					width += parseFloat(style.marginLeft);
+				}
+
+				ratingsTopWrapper.current.style.maxWidth = `${width}px`;
+			}
+		};
+
+		resizeListener();
+		window.addEventListener("optimizedResize", resizeListener);
+		return () => {
+			window.removeEventListener("optimizedResize", resizeListener);
+		};
+	}, []);
+
 	const r = ratings.length - 1;
 
 	let lastSeason: any = ratings[r];
@@ -13,7 +38,7 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 		}
 	}
 
-	const values: Record<
+	const columns: Record<
 		string,
 		{
 			label: React.ReactNode;
@@ -45,6 +70,8 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 								rating: "endu",
 							},
 						],
+					},
+					{
 						Shooting: [
 							{
 								label: "Inside",
@@ -82,6 +109,8 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 								rating: "tp",
 							},
 						],
+					},
+					{
 						Skill: [
 							{
 								label: (
@@ -141,55 +170,6 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 								rating: "endu",
 							},
 						],
-						Passing: [
-							{
-								label: "Vision",
-								rating: "thv",
-							},
-							{
-								label: "Power",
-								rating: "thp",
-							},
-							{
-								label: "Accuracy",
-								rating: "tha",
-							},
-						],
-						"Rushing/Receiving": [
-							{
-								label: (
-									<>
-										<span className="d-md-none">Elusive</span>
-										<span className="d-none d-md-inline">Elusiveness</span>
-									</>
-								),
-								rating: "elu",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">Routes</span>
-										<span className="d-none d-md-inline">Route Running</span>
-									</>
-								),
-								rating: "rtr",
-							},
-							{
-								label: "Hands",
-								rating: "hnd",
-							},
-							{
-								label: (
-									<>
-										Ball <span className="d-md-none">Sec</span>
-										<span className="d-none d-md-inline">Security</span>
-									</>
-								),
-								rating: "bsc",
-							},
-						],
-					},
-					{
 						Blocking: [
 							{
 								label: (
@@ -208,6 +188,22 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 									</>
 								),
 								rating: "pbk",
+							},
+						],
+					},
+					{
+						Passing: [
+							{
+								label: "Vision",
+								rating: "thv",
+							},
+							{
+								label: "Power",
+								rating: "thp",
+							},
+							{
+								label: "Accuracy",
+								rating: "tha",
 							},
 						],
 						Defense: [
@@ -241,6 +237,41 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 									</>
 								),
 								rating: "rns",
+							},
+						],
+					},
+					{
+						"Rushing/Receiving": [
+							{
+								label: (
+									<>
+										<span className="d-md-none">Elusive</span>
+										<span className="d-none d-md-inline">Elusiveness</span>
+									</>
+								),
+								rating: "elu",
+							},
+							{
+								label: (
+									<>
+										<span className="d-md-none">Routes</span>
+										<span className="d-none d-md-inline">Route Running</span>
+									</>
+								),
+								rating: "rtr",
+							},
+							{
+								label: "Hands",
+								rating: "hnd",
+							},
+							{
+								label: (
+									<>
+										Ball <span className="d-md-none">Sec</span>
+										<span className="d-none d-md-inline">Security</span>
+									</>
+								),
+								rating: "bsc",
 							},
 						],
 						Kicking: [
@@ -286,76 +317,56 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 
 	return (
 		<>
-			<div className="d-none d-lg-flex row">
-				<div className="col-lg-8">
-					<h2>
-						Overall:{" "}
-						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
-							{ratings[r].ovr}
-						</RatingWithChange>
-					</h2>
-				</div>
-				<div className="col-lg-4">
-					<h2>
-						Potential:{" "}
-						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
-							{ratings[r].pot}
-						</RatingWithChange>
-					</h2>
-				</div>
+			<div className="d-flex justify-content-between" ref={ratingsTopWrapper}>
+				<h2 className="mr-3">
+					Overall:{" "}
+					<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
+						{ratings[r].ovr}
+					</RatingWithChange>
+				</h2>
+				<h2>
+					Potential:{" "}
+					<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
+						{ratings[r].pot}
+					</RatingWithChange>
+				</h2>
 			</div>
-			<div className="d-lg-none row">
-				<div className="col-6">
-					<h2>
-						Overall:{" "}
-						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
-							{ratings[r].ovr}
-						</RatingWithChange>
-					</h2>
-				</div>
-				<div className="col-6">
-					<h2>
-						Potential:{" "}
-						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
-							{ratings[r].pot}
-						</RatingWithChange>
-					</h2>
-				</div>
-			</div>
-			{values.map((value, i) => (
-				<div key={i} className={i === 0 ? "row" : "row mt-2"}>
-					{Object.entries(value).map(([name, categories]) => (
-						<div key={name} className="col-4">
-							<table>
-								<thead>
-									<tr className="border-bottom">
-										<th className="p-0" colSpan={2}>
-											{name}
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{categories.map(({ label, rating }, j) => (
-										<tr key={j}>
-											<td className="p-0">{label}:</td>
-											<td className="p-0 pl-1">
-												<RatingWithChange
-													change={
-														(ratings[r] as any)[rating] -
-														(lastSeason as any)[rating]
-													}
-												>
-													{(ratings[r] as any)[rating]}
-												</RatingWithChange>
-											</td>
+			<div className="d-flex justify-content-start" ref={ratingsColumnsWrapper}>
+				{columns.map((column, i) => (
+					<div key={i} className={i === 0 ? undefined : "ml-2 ml-sm-5"}>
+						{Object.entries(column).map(([name, categories], j) => (
+							<div key={name} className={j === 0 ? undefined : "mt-2"}>
+								<table>
+									<thead>
+										<tr className="border-bottom">
+											<th className="p-0" colSpan={2}>
+												{name}
+											</th>
 										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					))}
-				</div>
-			))}
+									</thead>
+									<tbody>
+										{categories.map(({ label, rating }, j) => (
+											<tr key={j}>
+												<td className="p-0">{label}:</td>
+												<td className="p-0 pl-1">
+													<RatingWithChange
+														change={
+															(ratings[r] as any)[rating] -
+															(lastSeason as any)[rating]
+														}
+													>
+														{(ratings[r] as any)[rating]}
+													</RatingWithChange>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						))}
+					</div>
+				))}
+			</div>
 		</>
 	);
 };

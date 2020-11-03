@@ -93,7 +93,10 @@ const PlayerBios = ({
 					sortValue: p.weight,
 				},
 				dataTableWrappedMood({
-					defaultType: "current",
+					defaultType:
+						p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.UNDRAFTED
+							? "user"
+							: "current",
 					maxWidth: true,
 					p,
 				}),

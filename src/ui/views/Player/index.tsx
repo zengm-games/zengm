@@ -386,7 +386,12 @@ const Player2 = ({
 				player.tid >= PLAYER.FREE_AGENT ? (
 					<Mood
 						className="ml-2"
-						defaultType={player.tid === PLAYER.FREE_AGENT ? "user" : "current"}
+						defaultType={
+							player.tid === PLAYER.FREE_AGENT ||
+							player.tid === PLAYER.UNDRAFTED
+								? "user"
+								: "current"
+						}
 						p={player}
 					/>
 				) : null}

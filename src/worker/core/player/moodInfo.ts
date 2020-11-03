@@ -53,8 +53,10 @@ const moodInfo = async (
 		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
+	const thisIsAUserTeam = g.get("userTids").includes(tid);
+
 	// More AI players testing free agency
-	if (!g.get("userTids").includes(tid)) {
+	if (!thisIsAUserTeam) {
 		sumAndStuff -= 2;
 	}
 
@@ -76,7 +78,7 @@ const moodInfo = async (
 
 	let willing = false;
 	if (
-		!g.get("playersRefuseToNegotiate") ||
+		(!g.get("playersRefuseToNegotiate") && thisIsAUserTeam) ||
 		rookie ||
 		firstSeasonAfterExpansionOverride
 	) {

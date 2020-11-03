@@ -86,7 +86,8 @@ const Header = React.memo(() => {
 				style={{
 					display: "none",
 					textAlign: "center",
-					minHeight: "95px",
+					minHeight: 90,
+					marginBottom: 5,
 				}}
 			/>
 			<div
@@ -99,7 +100,8 @@ const Header = React.memo(() => {
 				style={{
 					display: "none",
 					textAlign: "center",
-					minHeight: "55px",
+					minHeight: 50,
+					marginBottom: 5,
 				}}
 			/>
 			<div

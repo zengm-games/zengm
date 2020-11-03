@@ -212,4 +212,16 @@ for (const country of possiblyMissingCountries) {
 	}
 }
 
+/*// https://stackoverflow.com/a/53593328
+const JSONstringifyOrder = (obj, space) => {
+	var allKeys = [];
+	JSON.stringify(obj, (key, value) => {
+		allKeys.push(key);
+		return value;
+	});
+	allKeys.sort();
+	return JSON.stringify(obj, allKeys, space);
+};
+console.log(JSONstringifyOrder(defaultCountries, 4));*/
+
 export { defaultCountries, groups };

@@ -12,6 +12,7 @@ const Playoffs = ({
 	confNames,
 	finalMatchups,
 	matchups,
+	numGamesPlayoffSeries,
 	numGamesToWinSeries,
 	season,
 	series,
@@ -28,6 +29,20 @@ const Playoffs = ({
 	});
 
 	const numRounds = series.length;
+
+	const numGamesPlayoffSeriesReflected: (number | undefined)[] = [
+		...numGamesPlayoffSeries,
+		...[...numGamesPlayoffSeries].reverse().slice(1),
+	];
+	for (let i = 0; i < series.length; i++) {
+		if (series[i].length === 0) {
+			numGamesPlayoffSeriesReflected[i] = undefined;
+			numGamesPlayoffSeriesReflected[
+				numGamesPlayoffSeriesReflected.length - 1 - i
+			] = undefined;
+		}
+	}
+	console.log(numGamesPlayoffSeries, numGamesPlayoffSeriesReflected);
 
 	return (
 		<div style={{ maxWidth: 210 * (2 * numRounds - 1) }}>
@@ -68,6 +83,18 @@ const Playoffs = ({
 							</tr>
 						))}
 					</tbody>
+					<tfoot>
+						<tr className="text-center text-muted">
+							{numGamesPlayoffSeriesReflected.map((numGames, i) => {
+								let text = null;
+								if (numGames !== undefined) {
+									text = `Best of ${numGames}`;
+								}
+
+								return <td key={i}>{text}</td>;
+							})}
+						</tr>
+					</tfoot>
 				</table>
 			</ResponsiveTableWrapper>
 		</div>

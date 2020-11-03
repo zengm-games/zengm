@@ -22,10 +22,12 @@ similar, it'd be nice to fix the "trade all my goodies to my new team" thing, if
 play menu empty during auto play
 - other menus flaky too!
 - seems to be because of React 17
+  - probably https://github.com/react-bootstrap/react-bootstrap/issues/5409
 
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/jhtm1k/im_playing_charlotte_queens_on_hard_mode_and_i/
 - could value DPs and players before first progs more
+- I don’t think it’s something intended to happen, pretty frequently if I trading block a late first round pick I get offers for guys drafted ahead of my pick
 
 force resign button under lock ratings, keep a man on one team
 - hard cap

@@ -128,11 +128,8 @@ for (const freq of [countriesBasketball, countriesFootball]) {
 }
 
 console.log(
-	`\nconst countriesBasketball = ${JSONstringifyOrder(
+	`\defaultCountries = process.env.SPORT === "basketball" ? ${JSONstringifyOrder(
 		countriesBasketball,
 		"\t",
-	)};\n\n`,
-);
-console.log(
-	`const countriesFootball = ${JSONstringifyOrder(countriesFootball, "\t")};\n`,
+	)} : ${JSONstringifyOrder(countriesFootball, "\t")};\n`,
 );

@@ -60,10 +60,12 @@ if (process.env.NODE_ENV === "test") {
 	defaultCountries =
 		process.env.SPORT === "basketball"
 			? {
+					Algeria: 1,
 					Angola: 8,
 					Argentina: 71,
 					Australia: 174,
 					Austria: 15,
+					Azerbaijan: 1,
 					Bahamas: 48,
 					Belarus: 12,
 					Belgium: 44,
@@ -99,6 +101,7 @@ if (process.env.NODE_ENV === "test") {
 					Haiti: 12,
 					Hungary: 22,
 					Iceland: 10,
+					India: 1,
 					Iran: 6,
 					Ireland: 7,
 					Israel: 50,
@@ -112,6 +115,7 @@ if (process.env.NODE_ENV === "test") {
 					Latvia: 69,
 					Liberia: 4,
 					Lithuania: 195,
+					Luxembourg: 3,
 					Mali: 20,
 					Mexico: 17,
 					Moldova: 4,
@@ -123,6 +127,7 @@ if (process.env.NODE_ENV === "test") {
 					"North Macedonia": 28,
 					Norway: 6,
 					Panama: 17,
+					Philippines: 3,
 					Poland: 69,
 					Portugal: 12,
 					"Puerto Rico": 58,
@@ -145,6 +150,7 @@ if (process.env.NODE_ENV === "test") {
 					USA: 23461,
 					Ukraine: 48,
 					Uruguay: 7,
+					Uzbekistan: 3,
 					Venezuela: 13,
 					"Virgin Islands": 10,
 			  }
@@ -183,6 +189,7 @@ if (process.env.NODE_ENV === "test") {
 					Norway: 2,
 					"Puerto Rico": 3,
 					Russia: 2,
+					Samoa: 1,
 					Scotland: 2,
 					Serbia: 1,
 					Slovakia: 1,

@@ -53,6 +53,11 @@ const moodInfo = async (
 		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
+	// More AI players testing free agency
+	if (!g.get("userTids").includes(tid)) {
+		sumAndStuff -= 2;
+	}
+
 	let contractAmount =
 		overrides.contractAmount !== undefined
 			? overrides.contractAmount

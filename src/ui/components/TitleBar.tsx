@@ -144,6 +144,16 @@ const TitleBar = () => {
 					type: "link",
 					league: true,
 					path: [
+						"player_bios",
+						`${moreInfoAbbrev}_${moreInfoTid}`,
+						moreInfoSeason,
+					],
+					text: "Player Bios",
+				},
+				{
+					type: "link",
+					league: true,
+					path: [
 						"player_stats",
 						`${moreInfoAbbrev}_${moreInfoTid}`,
 						moreInfoSeason,

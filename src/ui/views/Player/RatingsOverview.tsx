@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React from "react";
 import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: any[] }) => {

@@ -1,15 +1,3 @@
-player profile top redesign
-- TRY USING CSS COLUMNS
-- for retired player at max width, should not just be two columns
-- jersey numbers and stats summary overlap on mid size screens
-- top margin for awards summary
-- complicated width thing in RatingsOverview still needed?
-- test with very long awards list - overflow when it's all a single column to the right?
-- test with very long jersey numbers list
-- test on HoF retired players
-- on xs, should it be 50% and 2 columns?
-- replace `max-width: 510px;` with JS manually applying the width of the ratings block?
-
 mood should show for draft prospects on player bios and player profiles @ClevelandFan#6181
 
 option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob

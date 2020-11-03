@@ -1003,6 +1003,10 @@ button.live-game-sim-more {
 	color: $yellow;
 }
 
+.badge-yellow {
+	@include badge-variant($yellow);
+}
+
 .ring::after {
 	color: $yellow;
 	content: "\274d";
@@ -1023,43 +1027,5 @@ button.live-game-sim-more {
 	.ratings-overview {
 		display: inline-block;
 		width: inherit;
-	}
-}
-
-.awards-summary {
-	margin-top: 0.5em;
-	max-width: 510px;
-
-	div {
-		margin-top: 0.25em;
-		margin-right: 0.25em;
-		width: calc(50% - 0.25em);
-		font-size: 90%;
-
-		float: left;
-	}
-}
-
-@media (min-width: 430px) {
-	.awards-summary {
-		div {
-			width: calc(33.333% - 0.25em);
-		}
-	}
-}
-
-@media (min-width: 1400px) {
-	.awards-summary {
-		div {
-			width: calc(50% - 0.25em);
-		}
-	}
-
-	.ratings-and-awards {
-		display: flex;
-	}
-
-	.ratings-overview {
-		margin-right: 3em;
 	}
 }

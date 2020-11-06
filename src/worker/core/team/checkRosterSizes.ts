@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { PLAYER, POSITION_COUNTS } from "../../../common";
 import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
@@ -47,11 +47,59 @@ const checkRosterSizes = async (
 				)}">trades</a>) before continuing.`;
 			} else {
 				// Automatically drop lowest value players until we reach g.get("maxRosterSize")
+
+				// Only drop player from a position there is an excess of (no dropping your only kicker)
+				let counts;
+				if (process.env.SPORT === "football") {
+					counts = { ...POSITION_COUNTS };
+					for (const pos of Object.keys(counts)) {
+						counts[pos] = 0;
+					}
+
+					for (const p of players) {
+						const pos = p.ratings[p.ratings.length - 1].pos;
+
+						if (counts.hasOwnProperty(pos)) {
+							counts[pos] += 1;
+						}
+					}
+
+					let validPositions = [];
+					for (const [pos, count] of Object.entries(counts)) {
+						if (count > POSITION_COUNTS[count]) {
+							validPositions.push(pos);
+						}
+					}
+
+					// Should be impossible, but just in case, include all players except K/P
+					if (validPositions.length === 0) {
+						validPositions = Object.keys(POSITION_COUNTS).filter(
+							pos => pos !== "K" && pos !== "P",
+						);
+					}
+				}
+
 				players.sort((a, b) => a.value - b.value); // Lowest first
 
-				for (let i = 0; i < numPlayersOnRoster - g.get("maxRosterSize"); i++) {
-					await player.release(players[i], false);
-					releasedPIDs.push(players[i].pid);
+				let i = -1;
+				while (numPlayersOnRoster > g.get("maxRosterSize")) {
+					i += 1;
+					const p = players[i];
+
+					if (counts && process.env.SPORT === "football") {
+						const pos = p.ratings[p.ratings.length - 1].pos;
+
+						// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
+						if (counts[pos] <= 1) {
+							continue;
+						}
+
+						counts[pos] -= 1;
+					}
+
+					await player.release(p, false);
+					releasedPIDs.push(p.pid);
+					numPlayersOnRoster -= 1;
 				}
 			}
 		} else if (numPlayersOnRoster < g.get("minRosterSize")) {

@@ -1516,52 +1516,6 @@ const categories: {
 	},
 ];
 
-const Label = ({
-	id,
-	disabled,
-	name,
-	description,
-	helpText,
-}: {
-	id: string;
-	disabled: boolean;
-	name: string;
-	description?: ReactNode;
-	helpText?: ReactNode;
-}) => {
-	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
-
-	return (
-		<>
-			<label className="mb-0" htmlFor={id}>
-				{disabled ? (
-					<span
-						className="legend-square god-mode mr-1"
-						title={godModeRequiredMessage}
-					/>
-				) : null}
-				{name}
-			</label>
-			{helpText ? (
-				<span
-					className="ml-1 glyphicon glyphicon-question-sign help-icon"
-					onClick={() => {
-						setShowDescriptionLong(show => !show);
-					}}
-				/>
-			) : null}
-			{description ? (
-				<div className="text-muted settings-description mt-1">
-					{description}
-				</div>
-			) : null}
-			{showDescriptionLong ? (
-				<div className="text-muted settings-description mt-1">{helpText}</div>
-			) : null}
-		</>
-	);
-};
-
 const inputStyle = {
 	width: 150,
 };
@@ -1658,6 +1612,75 @@ Input.propTypes = {
 	type: PropTypes.string.isRequired,
 	value: PropTypes.string.isRequired,
 	values: PropTypes.object,
+};
+
+const Option = ({
+	id,
+	disabled,
+	name,
+	description,
+	helpText,
+	decoration,
+	onChange,
+	type,
+	value,
+	values,
+}: {
+	id: string;
+	disabled: boolean;
+	name: string;
+	description?: ReactNode;
+	helpText?: ReactNode;
+	decoration?: Decoration;
+	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	type: FieldType;
+	value: string;
+	values?: Values;
+}) => {
+	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
+
+	return (
+		<div className="d-flex">
+			<div className="mr-auto">
+				<label className="mb-0" htmlFor={id}>
+					{disabled ? (
+						<span
+							className="legend-square god-mode mr-1"
+							title={godModeRequiredMessage}
+						/>
+					) : null}
+					{name}
+				</label>
+				{helpText ? (
+					<span
+						className="ml-1 glyphicon glyphicon-question-sign help-icon"
+						onClick={() => {
+							setShowDescriptionLong(show => !show);
+						}}
+					/>
+				) : null}
+				{description ? (
+					<div className="text-muted settings-description mt-1">
+						{description}
+					</div>
+				) : null}
+				{showDescriptionLong ? (
+					<div className="text-muted settings-description mt-1">{helpText}</div>
+				) : null}
+			</div>
+			<div className="ml-5">
+				<Input
+					type={type}
+					disabled={disabled}
+					id={id}
+					onChange={onChange}
+					value={value}
+					values={values}
+					decoration={decoration}
+				/>
+			</div>
+		</div>
+	);
 };
 
 const Settings = (props: View<"settings">) => {
@@ -1864,31 +1887,21 @@ const Settings = (props: View<"settings">) => {
 									values,
 								}) => {
 									const enabled = props.godMode || !godModeRequired;
-									const id = `settings-${name}`;
+									const id = `settings-${category.name}-${name}`;
 									return (
 										<div key={key} className="list-group-item">
-											<div className="d-flex">
-												<div className="mr-auto">
-													<Label
-														id={id}
-														disabled={!enabled}
-														name={name}
-														description={description}
-														helpText={helpText}
-													/>
-												</div>
-												<div className="ml-5">
-													<Input
-														type={type}
-														disabled={!enabled}
-														id={id}
-														onChange={handleChange(key, type === "bool")}
-														value={state[key]}
-														values={values}
-														decoration={decoration}
-													/>
-												</div>
-											</div>
+											<Option
+												type={type}
+												disabled={!enabled}
+												id={id}
+												onChange={handleChange(key, type === "bool")}
+												value={state[key]}
+												values={values}
+												decoration={decoration}
+												name={name}
+												description={description}
+												helpText={helpText}
+											/>
 										</div>
 									);
 								},

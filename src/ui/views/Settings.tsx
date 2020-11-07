@@ -1897,7 +1897,10 @@ const Settings = (props: View<"settings">) => {
 									const enabled = props.godMode || !godModeRequired;
 									const id = `settings-${category.name}-${name}`;
 									return (
-										<div key={key} className="list-group-item">
+										<div
+											key={key}
+											className="list-group-item list-group-item-settings"
+										>
 											<Option
 												type={type}
 												disabled={!enabled}

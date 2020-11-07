@@ -1035,6 +1035,16 @@ button.live-game-sim-more {
 	margin-bottom: 0 !important;
 }
 
+@include media-breakpoint-down(xs) {
+	.list-group-item-settings {
+		padding-right: 0;
+		padding-left: 0;
+		border-right: 0;
+		border-left: 0;
+		border-radius: 0 !important;
+	}
+}
+
 .settings-buttons {
 	bottom: 0;
 	position: -webkit-sticky; // Safari

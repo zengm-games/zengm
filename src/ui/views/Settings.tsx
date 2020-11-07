@@ -1513,6 +1513,47 @@ const categories: {
 	},
 ];
 
+const Label = ({
+	id,
+	disabled,
+	name,
+	description,
+	helpText,
+}: {
+	id: string;
+	disabled: boolean;
+	name: string;
+	description?: ReactNode;
+	helpText?: ReactNode;
+}) => {
+	return (
+		<>
+			<label className="mb-0" htmlFor={id}>
+				{disabled ? (
+					<span
+						className="legend-square god-mode mr-1"
+						title={godModeRequiredMessage}
+					/>
+				) : null}
+				{name}
+				{description ? (
+					<>
+						<br />
+						<span className="text-muted settings-description">
+							{description}
+						</span>
+					</>
+				) : null}
+			</label>
+			{helpText ? (
+				<HelpPopover title={name} className="ml-1">
+					{helpText}
+				</HelpPopover>
+			) : null}
+		</>
+	);
+};
+
 const inputStyle = {
 	width: 150,
 };
@@ -1790,28 +1831,13 @@ const Settings = (props: View<"settings">) => {
 										<div key={key} className="list-group-item">
 											<div className="d-flex">
 												<div className="mr-auto align-self-center">
-													<label className="mb-0" htmlFor={id}>
-														{!enabled ? (
-															<span
-																className="legend-square god-mode mr-1"
-																title={godModeRequiredMessage}
-															/>
-														) : null}
-														{name}
-														{description ? (
-															<>
-																<br />
-																<span className="text-muted settings-description">
-																	{description}
-																</span>
-															</>
-														) : null}
-													</label>
-													{helpText ? (
-														<HelpPopover title={name} className="ml-1">
-															{helpText}
-														</HelpPopover>
-													) : null}
+													<Label
+														id={id}
+														disabled={!enabled}
+														name={name}
+														description={description}
+														helpText={helpText}
+													/>
 												</div>
 												<div className="ml-5">
 													<Input

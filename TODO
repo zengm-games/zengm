@@ -1,4 +1,5 @@
 settings re-design
+- for boolean fields, expand clickable area to the whole thing and change color on hover
 - put God Mode under Game Modes?
 - click to show long description, not popover
 - RPD slider

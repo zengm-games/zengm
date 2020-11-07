@@ -1,7 +1,6 @@
 settings re-design
 - click to show long description, not popover
-- align top form control
-- call it settings
+- RPD slider
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too
 - global options should just be a separate page always, "global settings"

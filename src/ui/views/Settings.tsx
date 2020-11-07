@@ -1710,7 +1710,7 @@ const Settings = (props: View<"settings">) => {
 	};
 
 	return (
-		<form onSubmit={handleFormSubmit}>
+		<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
 			{categories.map((category, i) => {
 				const catOptions = groupedOptions[category.name];
 				if (!catOptions) {
@@ -1719,7 +1719,7 @@ const Settings = (props: View<"settings">) => {
 
 				return (
 					<React.Fragment key={category.name}>
-						<h2 className={i === 0 ? "mt-3" : "mt-2"}>
+						<h2 className={i === 0 ? "mt-3" : "mt-5"}>
 							{category.name}
 							{category.helpText ? (
 								<HelpPopover title={category.name} className="ml-1">

@@ -203,7 +203,6 @@ export const options: {
 		godModeRequired: "existingLeagueOnly",
 		helpText: (
 			<>
-				<p>Currently this just changes the type of draft lottery.</p>
 				<p>
 					<b>NBA 2019:</b> Weighted lottery for the top 4 picks, like the NBA
 					from 2019+
@@ -674,7 +673,11 @@ export const options: {
 		type: "bool",
 		description: (
 			<>
-				See{" "}
+				This controls the existence of player mood traits (fame, loyalty, money,
+				winning). Even if you disable it, the player mood system will still
+				exist. For example, players will still want to play for a winning team,
+				but there won't be any players who get an extra bonus/penalty for having
+				the "winning" mood trait. See{" "}
 				<a
 					href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
 					rel="noopener noreferrer"
@@ -1526,6 +1529,8 @@ const Label = ({
 	description?: ReactNode;
 	helpText?: ReactNode;
 }) => {
+	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
+
 	return (
 		<>
 			<label className="mb-0" htmlFor={id}>
@@ -1536,19 +1541,22 @@ const Label = ({
 					/>
 				) : null}
 				{name}
-				{description ? (
-					<>
-						<br />
-						<span className="text-muted settings-description">
-							{description}
-						</span>
-					</>
-				) : null}
 			</label>
 			{helpText ? (
-				<HelpPopover title={name} className="ml-1">
-					{helpText}
-				</HelpPopover>
+				<span
+					className="ml-1 glyphicon glyphicon-question-sign help-icon"
+					onClick={() => {
+						setShowDescriptionLong(show => !show);
+					}}
+				/>
+			) : null}
+			{description ? (
+				<div className="text-muted settings-description mt-1">
+					{description}
+				</div>
+			) : null}
+			{showDescriptionLong ? (
+				<div className="text-muted settings-description mt-1">{helpText}</div>
 			) : null}
 		</>
 	);
@@ -1830,7 +1838,7 @@ const Settings = (props: View<"settings">) => {
 									return (
 										<div key={key} className="list-group-item">
 											<div className="d-flex">
-												<div className="mr-auto align-self-center">
+												<div className="mr-auto">
 													<Label
 														id={id}
 														disabled={!enabled}

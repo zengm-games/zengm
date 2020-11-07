@@ -6,6 +6,7 @@ import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, localActions, logEvent, toWorker, helpers } from "../util";
 import type { View } from "../../common/types";
+import { AnimatePresence, motion } from "framer-motion";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
@@ -210,7 +211,7 @@ export const options: {
 			<>
 				<p>
 					<b>NBA 2019:</b> Weighted lottery for the top 4 picks, like the NBA
-					from 2019+
+					since 2019
 				</p>
 				<p>
 					<b>NBA 1994:</b> Weighted lottery for the top 3 picks, like the NBA
@@ -1709,11 +1710,26 @@ const Option = ({
 					{description}
 				</div>
 			) : null}
-			{showDescriptionLong ? (
-				<div className="text-muted settings-description mt-1">
-					{descriptionLong}
-				</div>
-			) : null}
+			<AnimatePresence initial={false}>
+				{showDescriptionLong ? (
+					<motion.div
+						initial="collapsed"
+						animate="open"
+						exit="collapsed"
+						variants={{
+							open: { opacity: 1, height: "auto" },
+							collapsed: { opacity: 0, height: 0 },
+						}}
+						transition={{
+							duration: 0.3,
+							type: "tween",
+						}}
+						className="text-muted settings-description mt-1"
+					>
+						{descriptionLong}
+					</motion.div>
+				) : null}
+			</AnimatePresence>
 		</>
 	);
 };

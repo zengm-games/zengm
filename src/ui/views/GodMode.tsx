@@ -28,8 +28,8 @@ const GodMode = (props: View<"godMode">) => {
 			<p>
 				God Mode is a collection of customization features that allow you to
 				kind of do whatever you want. If you enable God Mode, you get access to
-				the following features (which show up in the game as{" "}
-				<span className="god-mode god-mode-text">purple text</span>
+				the following features (which show up in the UI as{" "}
+				<span className="god-mode god-mode-text">purple</span>
 				):
 			</p>
 

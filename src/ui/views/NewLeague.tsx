@@ -1335,7 +1335,6 @@ const NewLeague = (props: View<"newLeague">) => {
 								realPlayerDeterminism: parseFloat(event.target.value as any),
 							});
 						}}
-						title="Speed"
 					/>
 					<div className="text-right" style={{ minWidth: 40 }}>
 						{Math.round(state.realPlayerDeterminism * 100)}%

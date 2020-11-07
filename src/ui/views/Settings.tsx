@@ -82,7 +82,8 @@ type FieldType =
 	| "float1000"
 	| "int"
 	| "jsonString"
-	| "string";
+	| "string"
+	| "rangePercent";
 
 type Decoration = "currency" | "percent";
 
@@ -822,7 +823,7 @@ if (process.env.SPORT === "basketball") {
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
 			godModeRequired: "always",
-			type: "float",
+			type: "rangePercent",
 			descriptionLong: (
 				<>
 					<p>{descriptions.realPlayerDeterminism}</p>
@@ -1456,6 +1457,16 @@ const encodeDecodeFunctions = {
 		stringify: (value: any) => JSON.stringify(value),
 		parse: (value: string) => JSON.parse(value),
 	},
+	rangePercent: {
+		stringify: (value: number) => String(value),
+		parse: (value: string) => {
+			const parsed = parseFloat(value);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid number`);
+			}
+			return parsed;
+		},
+	},
 };
 
 const groupedOptions = groupBy(options, "category");
@@ -1548,7 +1559,7 @@ const Input = ({
 		title,
 		id,
 		onChange,
-		style: !decoration ? inputStyle : undefined,
+		style: !decoration && type !== "rangePercent" ? inputStyle : undefined,
 		value,
 	};
 
@@ -1565,6 +1576,22 @@ const Input = ({
 					id={id}
 				/>
 				<label className="custom-control-label" htmlFor={id}></label>
+			</div>
+		);
+	} else if (type === "rangePercent") {
+		inputElement = (
+			<div className="d-flex" style={inputStyle}>
+				<input
+					type="range"
+					{...commonProps}
+					className="form-control-range"
+					min="0"
+					max="1"
+					step="0.05"
+				/>
+				<div className="text-right" style={{ minWidth: 40 }}>
+					{Math.round(parseFloat(value) * 100)}%
+				</div>
 			</div>
 		);
 	} else if (values) {

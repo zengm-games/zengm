@@ -1034,3 +1034,12 @@ button.live-game-sim-more {
 .settings-description > p:last-child {
 	margin-bottom: 0 !important;
 }
+
+.settings-buttons {
+	bottom: 0;
+	position: -webkit-sticky; // Safari
+	position: sticky;
+
+	// To make it go over the Bootstrap custom form controls, like switch
+	z-index: 2;
+}

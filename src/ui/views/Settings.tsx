@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, { useState, ReactNode, ChangeEvent, FormEvent } from "react";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, logEvent, toWorker, helpers } from "../util";
+import { confirm, localActions, logEvent, toWorker, helpers } from "../util";
 import type { View } from "../../common/types";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
@@ -1661,6 +1661,36 @@ Input.propTypes = {
 };
 
 const Settings = (props: View<"settings">) => {
+	const { godMode, godModeInPast } = props;
+
+	useTitleBar({ title: "Settings" });
+
+	const handleGodModeToggle = async () => {
+		let proceed: any = true;
+		if (!godMode && !godModeInPast) {
+			proceed = await confirm(
+				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
+				{
+					okText: "Enable God Mode",
+				},
+			);
+		}
+
+		if (proceed) {
+			const attrs: {
+				godMode: boolean;
+				godModeInPast?: true;
+			} = { godMode: !godMode };
+
+			if (attrs.godMode) {
+				attrs.godModeInPast = true;
+			}
+
+			await toWorker("main", "updateGameAttributes", attrs);
+			localActions.update({ godMode: attrs.godMode });
+		}
+	};
+
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
 	const [state, setState] = useState<Record<Key, string>>(() => {
@@ -1868,12 +1898,21 @@ const Settings = (props: View<"settings">) => {
 				);
 			})}
 
-			<button
-				className="btn btn-primary mt-3"
-				disabled={!props.godMode || submitting}
-			>
-				Save Settings
-			</button>
+			<div className="alert-secondary rounded-top mt-5 p-2 d-flex settings-buttons">
+				<button
+					className={classNames(
+						"btn",
+						godMode ? "btn-success" : "btn-god-mode",
+					)}
+					onClick={handleGodModeToggle}
+					type="button"
+				>
+					{godMode ? "Disable God Mode" : "Enable God Mode"}
+				</button>
+				<button className="btn btn-primary ml-auto" disabled={submitting}>
+					Save Settings
+				</button>
+			</div>
 		</form>
 	);
 };
@@ -1910,72 +1949,4 @@ Settings.propTypes = {
 	foulsNeededToFoulOut: PropTypes.number.isRequired,
 };
 
-const SettingsWrapper = (props: View<"settings">) => {
-	const { godMode } = props;
-
-	useTitleBar({ title: "Settings" });
-
-	const handleGodModeToggle = async () => {
-		const attrs: {
-			godMode: boolean;
-			godModeInPast?: true;
-		} = { godMode: !godMode };
-
-		if (attrs.godMode) {
-			attrs.godModeInPast = true;
-		}
-
-		await toWorker("main", "updateGameAttributes", attrs);
-		localActions.update({ godMode: attrs.godMode });
-	};
-
-	return (
-		<>
-			<p>
-				God Mode is a collection of customization features that allow you to
-				kind of do whatever you want. If you enable God Mode, you get access to
-				the following features (which show up in the game as{" "}
-				<span className="god-mode god-mode-text">purple text</span>
-				):
-			</p>
-
-			<ul>
-				<li>Create custom players by going to Tools &gt; Create A Player</li>
-				<li>
-					Edit any player by going to their player page and clicking Edit Player
-				</li>
-				<li>
-					Force any trade to be accepted by checking the Force Trade checkbox
-					before proposing a trade
-				</li>
-				<li>
-					You can become the GM of another team at any time with Tools &gt;
-					Switch Team
-				</li>
-				<li>Add, remove and edit teams with Tools &gt; Manage Teams</li>
-				<li>You will never be fired!</li>
-				<li>You will be able to change the options below</li>
-			</ul>
-
-			<p>
-				However, if you enable God Mode within a league, you will not get credit
-				for any <a href="/account">Achievements</a>. This persists even if you
-				disable God Mode. You can only get Achievements in a league where God
-				Mode has never been enabled.
-			</p>
-
-			<button
-				className={classNames("btn", godMode ? "btn-success" : "btn-god-mode")}
-				onClick={handleGodModeToggle}
-			>
-				{godMode ? "Disable God Mode" : "Enable God Mode"}
-			</button>
-
-			<Settings {...props} />
-		</>
-	);
-};
-
-SettingsWrapper.propTypes = Settings.propTypes;
-
-export default SettingsWrapper;
+export default Settings;

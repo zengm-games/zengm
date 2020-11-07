@@ -1,6 +1,7 @@
 settings re-design
 - for boolean fields, expand clickable area to the whole thing and change color on hover
-- put God Mode under Game Modes?
+- label description under form control too, for mobile
+- animate show/hide of long description
 - click to show long description, not popover
 - RPD slider
 - unify options and god mode options

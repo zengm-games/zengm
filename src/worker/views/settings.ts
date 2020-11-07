@@ -8,6 +8,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		return {
 			godMode: g.get("godMode"),
+			godModeInPast: g.get("godModeInPast"),
 			numGames: g.get("numGames"),
 			numActiveTeams: g.get("numActiveTeams"),
 			quarterLength: g.get("quarterLength"),

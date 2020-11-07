@@ -1516,9 +1516,14 @@ const categories: {
 	},
 ];
 
+const inputStyle = {
+	width: 150,
+};
+
 const Input = ({
 	decoration,
 	disabled,
+	id,
 	onChange,
 	type,
 	value,
@@ -1526,6 +1531,7 @@ const Input = ({
 }: {
 	decoration?: Decoration;
 	disabled?: boolean;
+	id: string;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
 	value: string;
@@ -1534,17 +1540,26 @@ const Input = ({
 	const commonProps = {
 		className: "form-control",
 		disabled,
+		id,
 		onChange,
+		style: !decoration ? inputStyle : undefined,
 		value,
 	};
 
 	let inputElement;
 	if (type === "bool") {
 		inputElement = (
-			<select {...commonProps}>
-				<option value="true">Enabled</option>
-				<option value="false">Disabled</option>
-			</select>
+			<div className="custom-control custom-switch">
+				<input
+					type="checkbox"
+					className="custom-control-input"
+					disabled={disabled}
+					checked={value === "true"}
+					onChange={onChange}
+					id={id}
+				/>
+				<label className="custom-control-label" htmlFor={id}></label>
+			</div>
 		);
 	} else if (values) {
 		inputElement = (
@@ -1562,7 +1577,7 @@ const Input = ({
 
 	if (decoration === "currency") {
 		return (
-			<div className="input-group">
+			<div className="input-group" style={inputStyle}>
 				<div className="input-group-prepend">
 					<div className="input-group-text">$</div>
 				</div>
@@ -1576,7 +1591,7 @@ const Input = ({
 
 	if (decoration === "percent") {
 		return (
-			<div className="input-group">
+			<div className="input-group" style={inputStyle}>
 				{inputElement}
 				<div className="input-group-append">
 					<div className="input-group-text">%</div>
@@ -1615,10 +1630,12 @@ const Settings = (props: View<"settings">) => {
 		return initialState;
 	});
 
-	const handleChange = (name: string) => (
+	const handleChange = (name: string, boolean: boolean = false) => (
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
-		const value = event.target.value;
+		const value = !boolean
+			? event.target.value
+			: String((event.target as any).checked);
 		setState(prevState => ({
 			...prevState,
 			[name]: value,
@@ -1768,11 +1785,12 @@ const Settings = (props: View<"settings">) => {
 									values,
 								}) => {
 									const enabled = props.godMode || !godModeRequired;
+									const id = `settings-${name}`;
 									return (
 										<div key={key} className="list-group-item">
 											<div className="d-flex">
 												<div className="mr-auto">
-													<label>{name}</label>
+													<label htmlFor={id}>{name}</label>
 													{helpText ? (
 														<HelpPopover title={name} className="ml-1">
 															{helpText}
@@ -1783,7 +1801,8 @@ const Settings = (props: View<"settings">) => {
 													<Input
 														type={type}
 														disabled={!enabled}
-														onChange={handleChange(key)}
+														id={id}
+														onChange={handleChange(key, type === "bool")}
 														value={state[key]}
 														values={values}
 														decoration={decoration}

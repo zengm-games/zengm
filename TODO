@@ -1,3 +1,36 @@
+settings re-design
+- call it settings
+- unify options and god mode options
+  - need to support the fancy controls for some of them, and maybe use elsewhere too
+- global options should just be a separate page always, "global settings"
+- multiple pages or tabs, like Chrome/Firefox
+- more settings out of god mode
+  - challenge modes
+  - enable/disable elam ending
+  - groundhog day
+  - rpdd
+  - son/brother rate
+  - ASG
+- god mode stuff
+  - for god mode only settings, have some purple indicator
+  - support for a god mode toggle at the top, which would be needed for new league definitely
+  - keep the Tools > God Mode dedicated page too, with just the toggle
+- more settings you can change outside of god mode only when starting a league (or before simming anything in a league)
+  - trade deadline
+  - playoff structure
+  - draft type
+- for god mode only settings, allow changing some by some amount without enabling god mode
+- all settings should be editable when creating a new league
+  - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
+  - also new league has some extra settings that don't persist, like randomization and no starting injuries
+  - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
+- for each setting:
+  - godMode: boolean
+  - godModeNewLeague: boolean
+  - newLeagueOnly: boolean (worth it? would only be set for equalizeRegions i think)
+
+auto play should not work if you're fired
+
 do something about hotkeys on live sim page and accidentally simming - should show a warning, similar to navigating away
 
 option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob

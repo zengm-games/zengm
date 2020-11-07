@@ -42,7 +42,6 @@ const Playoffs = ({
 			] = undefined;
 		}
 	}
-	console.log(numGamesPlayoffSeries, numGamesPlayoffSeriesReflected);
 
 	return (
 		<div style={{ maxWidth: 210 * (2 * numRounds - 1) }}>

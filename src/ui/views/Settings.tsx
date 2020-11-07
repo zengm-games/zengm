@@ -1457,17 +1457,64 @@ const encodeDecodeFunctions = {
 const groupedOptions = groupBy(options, "category");
 
 // Specified order
-const categories = [
-	"League Structure",
-	"Finance",
-	"Contracts",
-	"Events",
-	"Game Simulation",
-	"Elam Ending",
-	"Challenge Modes",
-	"Game Modes",
-	"Player Development",
-] as const;
+const categories: {
+	name: Category;
+	helpText?: ReactNode;
+}[] = [
+	{
+		name: "League Structure",
+	},
+	{
+		name: "Finance",
+	},
+	{
+		name: "Contracts",
+	},
+	{
+		name: "Events",
+	},
+	{
+		name: "Game Simulation",
+	},
+	{
+		name: "Elam Ending",
+		helpText: (
+			<>
+				<p>
+					The{" "}
+					<a
+						href="https://thetournament.com/elam-ending"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						Elam Ending
+					</a>{" "}
+					is a new way to play the end of basketball games. In the final period
+					of the game, when the clock goes below a certain point ("Minutes Left
+					Trigger"), the clock is turned off. The winner of the game will be the
+					team that first hits a target score. That target is determined by
+					adding some number of points ("Target Points to Add") to the leader's
+					current score.
+				</p>
+				<p>
+					The Elam Ending generally makes the end of the game more exciting.
+					Nobody is trying to run out the clock. Nobody is trying to foul or
+					call strategic timeouts or rush shots. It's just high quality
+					basketball, every play until the end of the game.
+				</p>
+			</>
+		),
+	},
+	{
+		name: "Challenge Modes",
+	},
+	{
+		name: "Game Modes",
+	},
+	{
+		name: "Player Development",
+	},
+];
 
 const Input = ({
 	decoration,
@@ -1653,42 +1700,22 @@ const Settings = (props: View<"settings">) => {
 	return (
 		<form onSubmit={handleFormSubmit}>
 			{categories.map((category, i) => {
-				const catOptions = groupedOptions[category];
+				const catOptions = groupedOptions[category.name];
 				if (!catOptions) {
 					return null;
 				}
 
 				return (
-					<React.Fragment key={category}>
-						<h2 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h2>
-						{category === "Elam Ending" ? (
-							<>
-								<p>
-									The{" "}
-									<a
-										href="https://thetournament.com/elam-ending"
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										Elam Ending
-									</a>{" "}
-									is a new way to play the end of basketball games. In the final
-									period of the game, when the clock goes below a certain point
-									("Minutes Left Trigger"), the clock is turned off. The winner
-									of the game will be the team that first hits a target score.
-									That target is determined by adding some number of points
-									("Target Points to Add") to the leader's current score.
-								</p>
-								<p>
-									The Elam Ending generally makes the end of the game more
-									exciting. Nobody is trying to run out the clock. Nobody is
-									trying to foul or call strategic timeouts or rush shots. It's
-									just high quality basketball, every play until the end of the
-									game.
-								</p>
-							</>
-						) : null}
-						{category === "Game Simulation" &&
+					<React.Fragment key={category.name}>
+						<h2 className={i === 0 ? "mt-3" : "mt-2"}>
+							{category.name}
+							{category.helpText ? (
+								<HelpPopover title={category.name} className="ml-1">
+									{category.helpText}
+								</HelpPopover>
+							) : null}
+						</h2>
+						{category.name === "Game Simulation" &&
 						process.env.SPORT === "basketball" &&
 						gameSimPresets ? (
 							<div className="form-inline mb-3">

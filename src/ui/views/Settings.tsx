@@ -464,7 +464,7 @@ export const options: {
 		name: "Injury Rate",
 		godModeRequired: "always",
 		type: "float",
-		description: (
+		helpText: (
 			<>
 				<p>
 					The injury rate is the probability that a player is injured per
@@ -499,7 +499,7 @@ export const options: {
 		name: "Tragic Death Rate",
 		godModeRequired: "always",
 		type: "float",
-		description: (
+		helpText: (
 			<>
 				<p>
 					The tragic death rate is the probability that a player will die a
@@ -1640,46 +1640,48 @@ const Option = ({
 	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
 
 	return (
-		<div className="d-flex">
-			<div className="mr-auto">
-				<label className="mb-0" htmlFor={id}>
-					{disabled ? (
+		<>
+			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
+				<div className="mr-auto">
+					<label className="mb-0" htmlFor={id}>
+						{disabled ? (
+							<span
+								className="legend-square god-mode mr-1"
+								title={godModeRequiredMessage}
+							/>
+						) : null}
+						{name}
+					</label>
+					{helpText ? (
 						<span
-							className="legend-square god-mode mr-1"
-							title={godModeRequiredMessage}
+							className="ml-1 glyphicon glyphicon-question-sign help-icon"
+							onClick={() => {
+								setShowDescriptionLong(show => !show);
+							}}
 						/>
 					) : null}
-					{name}
-				</label>
-				{helpText ? (
-					<span
-						className="ml-1 glyphicon glyphicon-question-sign help-icon"
-						onClick={() => {
-							setShowDescriptionLong(show => !show);
-						}}
+				</div>
+				<div className="ml-5">
+					<Input
+						type={type}
+						disabled={disabled}
+						id={id}
+						onChange={onChange}
+						value={value}
+						values={values}
+						decoration={decoration}
 					/>
-				) : null}
-				{description ? (
-					<div className="text-muted settings-description mt-1">
-						{description}
-					</div>
-				) : null}
-				{showDescriptionLong ? (
-					<div className="text-muted settings-description mt-1">{helpText}</div>
-				) : null}
+				</div>
 			</div>
-			<div className="ml-5">
-				<Input
-					type={type}
-					disabled={disabled}
-					id={id}
-					onChange={onChange}
-					value={value}
-					values={values}
-					decoration={decoration}
-				/>
-			</div>
-		</div>
+			{description ? (
+				<div className="text-muted settings-description mt-1">
+					{description}
+				</div>
+			) : null}
+			{showDescriptionLong ? (
+				<div className="text-muted settings-description mt-1">{helpText}</div>
+			) : null}
+		</>
 	);
 };
 

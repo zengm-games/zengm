@@ -88,7 +88,7 @@ type Decoration = "currency" | "percent";
 
 type Values = { [key: string]: string | undefined };
 
-export const helpTexts = {
+export const descriptions = {
 	challengeLoseBestPlayer:
 		"At the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player).",
 	challengeNoDraftPicks:
@@ -108,10 +108,14 @@ export const options: {
 	godModeRequired?: "always" | "existingLeagueOnly";
 	type: FieldType;
 	decoration?: Decoration;
-	description?: ReactNode;
-	helpText?: ReactNode;
 	values?: Values;
 	validator?: (value: any, output: any, props: View<"settings">) => void;
+
+	// Short, one line, shown by default
+	description?: ReactNode;
+
+	// Longer than one line, hidden by default
+	descriptionLong?: ReactNode;
 }[] = [
 	{
 		category: "League Structure",
@@ -201,7 +205,7 @@ export const options: {
 		key: "draftType",
 		name: "Draft Type",
 		godModeRequired: "existingLeagueOnly",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					<b>NBA 2019:</b> Weighted lottery for the top 4 picks, like the NBA
@@ -386,7 +390,7 @@ export const options: {
 		name: "Hard Cap",
 		godModeRequired: "always",
 		type: "bool",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					If this is enabled, then you can not exceed the salary cap to sign
@@ -416,7 +420,7 @@ export const options: {
 		name: "Budget",
 		godModeRequired: "always",
 		type: "bool",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					By default, an important part of this game is managing your team's
@@ -464,7 +468,7 @@ export const options: {
 		name: "Injury Rate",
 		godModeRequired: "always",
 		type: "float",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					The injury rate is the probability that a player is injured per
@@ -499,7 +503,7 @@ export const options: {
 		name: "Tragic Death Rate",
 		godModeRequired: "always",
 		type: "float",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					The tragic death rate is the probability that a player will die a
@@ -555,7 +559,7 @@ export const options: {
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
 		godModeRequired: "always",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					Specify the length of rookie contracts. Different rounds can have
@@ -588,7 +592,7 @@ export const options: {
 		key: "rookiesCanRefuse",
 		name: "Rookies Can Refuse To Negotiate",
 		godModeRequired: "always",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					{helpers.upperCaseFirstLetter(process.env.SPORT)} GM has no concept of
@@ -610,14 +614,14 @@ export const options: {
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
-		description: helpTexts.challengeNoDraftPicks,
+		description: descriptions.challengeNoDraftPicks,
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
-		description: helpTexts.challengeNoFreeAgents,
+		description: descriptions.challengeNoFreeAgents,
 	},
 	{
 		category: "Challenge Modes",
@@ -636,7 +640,7 @@ export const options: {
 		key: "challengeLoseBestPlayer",
 		name: "Lose Best Player",
 		type: "bool",
-		description: helpTexts.challengeLoseBestPlayer,
+		description: descriptions.challengeLoseBestPlayer,
 	},
 	{
 		category: "Challenge Modes",
@@ -695,7 +699,7 @@ export const options: {
 		name: "Trade Deadline",
 		godModeRequired: "existingLeagueOnly",
 		type: "float",
-		helpText: (
+		descriptionLong: (
 			<>
 				<p>
 					Set this to the fraction of the regular season you want to happen
@@ -754,7 +758,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Foul Rate Factor",
 			godModeRequired: "always",
 			type: "float",
-			helpText:
+			descriptionLong:
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
@@ -775,7 +779,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Pace",
 			godModeRequired: "always",
 			type: "float",
-			helpText: "Average number of possessions per 48 minutes.",
+			descriptionLong: "Average number of possessions per 48 minutes.",
 		},
 		{
 			category: "Game Simulation",
@@ -783,7 +787,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Pointers",
 			godModeRequired: "always",
 			type: "bool",
-			helpText:
+			descriptionLong:
 				"If you disable three pointers, shots from that range will still be displayed as three pointers in stats tables, but they will only count for two points.",
 		},
 		{
@@ -792,7 +796,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Point Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
-			helpText:
+			descriptionLong:
 				"The baseline rate for number of three pointers is multiplied by this number.",
 		},
 		{
@@ -801,7 +805,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Point Accuracy Factor",
 			godModeRequired: "always",
 			type: "float",
-			helpText:
+			descriptionLong:
 				"The baseline rate for three point percentage is multiplied by this number.",
 		},
 		{
@@ -810,7 +814,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Two Point Accuracy Factor",
 			godModeRequired: "always",
 			type: "float",
-			helpText:
+			descriptionLong:
 				"The baseline rate for two point percentage is multiplied by this number.",
 		},
 		{
@@ -819,9 +823,9 @@ if (process.env.SPORT === "basketball") {
 			name: "Real Player Determinism",
 			godModeRequired: "always",
 			type: "float",
-			helpText: (
+			descriptionLong: (
 				<>
-					<p>{helpTexts.realPlayerDeterminism}</p>
+					<p>{descriptions.realPlayerDeterminism}</p>
 					<p>
 						This has no impact on "random players"" leagues or randomly
 						generated players in "real players" leagues.
@@ -883,7 +887,7 @@ options.push({
 	name: "Groundhog Day",
 	godModeRequired: "always",
 	type: "bool",
-	description: `${helpTexts.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
+	description: `${descriptions.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
 				draft.`,
 });
 
@@ -1619,7 +1623,7 @@ const Option = ({
 	disabled,
 	name,
 	description,
-	helpText,
+	descriptionLong,
 	decoration,
 	onChange,
 	type,
@@ -1630,7 +1634,7 @@ const Option = ({
 	disabled: boolean;
 	name: string;
 	description?: ReactNode;
-	helpText?: ReactNode;
+	descriptionLong?: ReactNode;
 	decoration?: Decoration;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -1652,7 +1656,7 @@ const Option = ({
 						) : null}
 						{name}
 					</label>
-					{helpText ? (
+					{descriptionLong ? (
 						<span
 							className="ml-1 glyphicon glyphicon-question-sign help-icon"
 							onClick={() => {
@@ -1679,7 +1683,9 @@ const Option = ({
 				</div>
 			) : null}
 			{showDescriptionLong ? (
-				<div className="text-muted settings-description mt-1">{helpText}</div>
+				<div className="text-muted settings-description mt-1">
+					{descriptionLong}
+				</div>
 			) : null}
 		</>
 	);
@@ -1881,7 +1887,7 @@ const Settings = (props: View<"settings">) => {
 								({
 									decoration,
 									description,
-									helpText,
+									descriptionLong,
 									godModeRequired,
 									key,
 									name,
@@ -1902,7 +1908,7 @@ const Settings = (props: View<"settings">) => {
 												decoration={decoration}
 												name={name}
 												description={description}
-												helpText={helpText}
+												descriptionLong={descriptionLong}
 											/>
 										</div>
 									);

@@ -21,7 +21,7 @@ import {
 } from "../util";
 import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
-import { helpTexts } from "./Settings";
+import { descriptions } from "./Settings";
 
 type NewLeagueTeam = {
 	tid: number;
@@ -1136,7 +1136,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				>
 					No draft picks
 					<br />
-					<span className="text-muted">{helpTexts.challengeNoDraftPicks}</span>
+					<span className="text-muted">
+						{descriptions.challengeNoDraftPicks}
+					</span>
 				</label>
 			</div>
 			<div className="form-check mb-2">
@@ -1155,7 +1157,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				>
 					No free agents
 					<br />
-					<span className="text-muted">{helpTexts.challengeNoFreeAgents}</span>
+					<span className="text-muted">
+						{descriptions.challengeNoFreeAgents}
+					</span>
 				</label>
 			</div>
 			<div className="form-check mb-2">
@@ -1209,7 +1213,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					Lose best player every season
 					<br />
 					<span className="text-muted">
-						{helpTexts.challengeLoseBestPlayer}
+						{descriptions.challengeLoseBestPlayer}
 					</span>
 				</label>
 			</div>
@@ -1301,7 +1305,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				<label className="form-check-label" htmlFor="new-league-repeatSeason">
 					Groundhog Day
 					<br />
-					<span className="text-muted">{helpTexts.repeatSeason}</span>
+					<span className="text-muted">{descriptions.repeatSeason}</span>
 				</label>
 			</div>
 		</div>,
@@ -1337,7 +1341,9 @@ const NewLeague = (props: View<"newLeague">) => {
 						{Math.round(state.realPlayerDeterminism * 100)}%
 					</div>
 				</div>
-				<div className="text-muted mt-1">{helpTexts.realPlayerDeterminism}</div>
+				<div className="text-muted mt-1">
+					{descriptions.realPlayerDeterminism}
+				</div>
 			</div>,
 		);
 	}

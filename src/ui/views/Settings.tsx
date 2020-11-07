@@ -1756,24 +1756,30 @@ const Settings = (props: View<"settings">) => {
 								</select>
 							</div>
 						) : null}
-						<div className="row">
+						<div className="list-group">
 							{catOptions.map(
 								({ decoration, helpText, key, name, type, values }) => (
-									<div key={key} className="col-sm-3 col-6 form-group">
-										<label>{name}</label>
-										{helpText ? (
-											<HelpPopover title={name} className="ml-1">
-												{helpText}
-											</HelpPopover>
-										) : null}
-										<Input
-											type={type}
-											disabled={!props.godMode}
-											onChange={handleChange(key)}
-											value={state[key]}
-											values={values}
-											decoration={decoration}
-										/>
+									<div key={key} className="list-group-item">
+										<div className="d-flex">
+											<div className="mr-auto">
+												<label>{name}</label>
+												{helpText ? (
+													<HelpPopover title={name} className="ml-1">
+														{helpText}
+													</HelpPopover>
+												) : null}
+											</div>
+											<div>
+												<Input
+													type={type}
+													disabled={!props.godMode}
+													onChange={handleChange(key)}
+													value={state[key]}
+													values={values}
+													decoration={decoration}
+												/>
+											</div>
+										</div>
 									</div>
 								),
 							)}

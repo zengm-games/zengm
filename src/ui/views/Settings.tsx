@@ -7,6 +7,8 @@ import useTitleBar from "../hooks/useTitleBar";
 import { localActions, logEvent, toWorker, helpers } from "../util";
 import type { View } from "../../common/types";
 
+const godModeRequiredMessage = "Enable God Mode to change this setting";
+
 type Key =
 	| "numGames"
 	| "quarterLength"
@@ -1532,9 +1534,11 @@ const Input = ({
 	value: string;
 	values?: Values;
 }) => {
+	const title = disabled ? godModeRequiredMessage : undefined;
 	const commonProps = {
 		className: "form-control",
 		disabled,
+		title,
 		id,
 		onChange,
 		style: !decoration ? inputStyle : undefined,
@@ -1544,7 +1548,7 @@ const Input = ({
 	let inputElement;
 	if (type === "bool") {
 		inputElement = (
-			<div className="custom-control custom-switch">
+			<div className="custom-control custom-switch" title={title}>
 				<input
 					type="checkbox"
 					className="custom-control-input"
@@ -1787,6 +1791,12 @@ const Settings = (props: View<"settings">) => {
 											<div className="d-flex">
 												<div className="mr-auto align-self-center">
 													<label className="mb-0" htmlFor={id}>
+														{!enabled ? (
+															<span
+																className="legend-square god-mode mr-1"
+																title={godModeRequiredMessage}
+															/>
+														) : null}
 														{name}
 														{description ? (
 															<>

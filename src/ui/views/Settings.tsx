@@ -1566,13 +1566,15 @@ const Input = ({
 
 	let inputElement;
 	if (type === "bool") {
+		const checked = value === "true";
+		const switchTitle = title ?? (checked ? "Enabled" : "Disabled");
 		inputElement = (
-			<div className="custom-control custom-switch" title={title}>
+			<div className="custom-control custom-switch" title={switchTitle}>
 				<input
 					type="checkbox"
 					className="custom-control-input"
 					disabled={disabled}
-					checked={value === "true"}
+					checked={checked}
 					onChange={onChange}
 					id={id}
 				/>

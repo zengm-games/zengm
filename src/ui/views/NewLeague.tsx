@@ -21,7 +21,7 @@ import {
 } from "../util";
 import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
-import { helpTexts } from "./GodMode";
+import { helpTexts } from "./Settings";
 
 type NewLeagueTeam = {
 	tid: number;

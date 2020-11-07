@@ -70,6 +70,7 @@ import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
 import Schedule from "./Schedule";
 import ScheduledEvents from "./ScheduledEvents";
+import Settings from "./Settings";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
@@ -156,6 +157,7 @@ export default {
 	RosterContinuity,
 	Schedule,
 	ScheduledEvents,
+	Settings,
 	Standings,
 	TeamFinances,
 	TeamHistory,

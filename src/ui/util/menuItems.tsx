@@ -438,6 +438,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "settings",
+				league: true,
+				path: ["settings"],
+				text: "Settings",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "dangerZone",
 				league: true,
 				path: ["danger_zone"],

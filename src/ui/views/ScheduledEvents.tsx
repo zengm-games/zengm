@@ -4,7 +4,7 @@ import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal, toWorker } from "../util";
 import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
-import { options } from "./GodMode";
+import { options } from "./Settings";
 import { Dropdown } from "react-bootstrap";
 
 const godModeOptions: Partial<Record<

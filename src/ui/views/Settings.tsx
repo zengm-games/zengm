@@ -103,6 +103,7 @@ export const options: {
 	category: Category;
 	key: Key;
 	name: string;
+	godModeRequired?: "always" | "existingLeagueOnly";
 	type: FieldType;
 	decoration?: Decoration;
 	helpText?: ReactNode;
@@ -113,6 +114,7 @@ export const options: {
 		category: "League Structure",
 		key: "numGames",
 		name: "# Games Per Season",
+		godModeRequired: "always",
 		type: "int",
 		helpText: "This will only apply to seasons that have not started yet.",
 	},
@@ -120,12 +122,14 @@ export const options: {
 		category: "League Structure",
 		key: "quarterLength",
 		name: "Quarter Length (minutes)",
+		godModeRequired: "always",
 		type: "float",
 	},
 	{
 		category: "League Structure",
 		key: "minRosterSize",
 		name: "Min Roster Size",
+		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
 			if (
@@ -140,12 +144,14 @@ export const options: {
 		category: "League Structure",
 		key: "maxRosterSize",
 		name: "Max Roster Size",
+		godModeRequired: "always",
 		type: "int",
 	},
 	{
 		category: "League Structure",
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
+		godModeRequired: "existingLeagueOnly",
 		helpText: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
@@ -177,6 +183,7 @@ export const options: {
 		category: "League Structure",
 		key: "numPlayoffByes",
 		name: "# First Round Byes",
+		godModeRequired: "existingLeagueOnly",
 		type: "int",
 		helpText:
 			"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
@@ -190,6 +197,7 @@ export const options: {
 		category: "League Structure",
 		key: "draftType",
 		name: "Draft Type",
+		godModeRequired: "existingLeagueOnly",
 		helpText: (
 			<>
 				<p>Currently this just changes the type of draft lottery.</p>
@@ -255,6 +263,7 @@ export const options: {
 		category: "League Structure",
 		key: "numSeasonsFutureDraftPicks",
 		name: "# Tradable Draft Pick Seasons",
+		godModeRequired: "existingLeagueOnly",
 		type: "int",
 		helpText:
 			"Number of seasons in the future to generate tradable draft picks for. The default value is 4. If you set this to 0, it disables all trading of draft picks.",
@@ -268,6 +277,7 @@ export const options: {
 		category: "League Structure",
 		key: "numDraftRounds",
 		name: "# Draft Rounds",
+		godModeRequired: "existingLeagueOnly",
 		type: "int",
 		validator: value => {
 			if (value < 0) {
@@ -279,6 +289,7 @@ export const options: {
 		category: "Finance",
 		key: "salaryCap",
 		name: "Salary Cap",
+		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
 	},
@@ -286,6 +297,7 @@ export const options: {
 		category: "Finance",
 		key: "minPayroll",
 		name: "Minimum Payroll",
+		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
 	},
@@ -293,6 +305,7 @@ export const options: {
 		category: "Finance",
 		key: "luxuryPayroll",
 		name: "Luxury Tax Threshold",
+		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
 	},
@@ -300,6 +313,7 @@ export const options: {
 		category: "Finance",
 		key: "luxuryTax",
 		name: "Luxury Tax",
+		godModeRequired: "always",
 		type: "float",
 		helpText:
 			"Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
@@ -308,6 +322,7 @@ export const options: {
 		category: "Contracts",
 		key: "minContract",
 		name: "Minimum Contract",
+		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
 		validator: value => {
@@ -320,6 +335,7 @@ export const options: {
 		category: "Contracts",
 		key: "maxContract",
 		name: "Max Contract",
+		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
 		validator: (value, output) => {
@@ -337,6 +353,7 @@ export const options: {
 		category: "Contracts",
 		key: "minContractLength",
 		name: "Minimum Contract Length",
+		godModeRequired: "always",
 		type: "int",
 		validator: value => {
 			if (value < 1) {
@@ -348,6 +365,7 @@ export const options: {
 		category: "Contracts",
 		key: "maxContractLength",
 		name: "Maximum Contract Length",
+		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
 			if (value < 1) {
@@ -364,6 +382,7 @@ export const options: {
 		category: "Finance",
 		key: "hardCap",
 		name: "Hard Cap",
+		godModeRequired: "always",
 		type: "bool",
 		helpText: (
 			<>
@@ -393,6 +412,7 @@ export const options: {
 		category: "Finance",
 		key: "budget",
 		name: "Budget",
+		godModeRequired: "always",
 		type: "bool",
 		helpText: (
 			<>
@@ -424,6 +444,7 @@ export const options: {
 		category: "Events",
 		key: "aiTradesFactor",
 		name: "Trades Between AI Teams Factor",
+		godModeRequired: "always",
 		type: "float",
 		helpText:
 			"The baseline rate of trades between AI teams is multiplied by this number. Anything beyond 100 will be both absurd and ridiculously slow.",
@@ -432,12 +453,14 @@ export const options: {
 		category: "Events",
 		key: "playersRefuseToNegotiate",
 		name: "Players Can Refuse To Sign With You",
+		godModeRequired: "always",
 		type: "bool",
 	},
 	{
 		category: "Events",
 		key: "injuryRate",
 		name: "Injury Rate",
+		godModeRequired: "always",
 		type: "float",
 		helpText: (
 			<>
@@ -472,6 +495,7 @@ export const options: {
 		category: "Events",
 		key: "tragicDeathRate",
 		name: "Tragic Death Rate",
+		godModeRequired: "always",
 		type: "float",
 		helpText: (
 			<>
@@ -518,6 +542,7 @@ export const options: {
 			process.env.SPORT === "football"
 				? "Home Field Advantage"
 				: "Home Court Advantage",
+		godModeRequired: "always",
 		type: "float",
 		decoration: "percent",
 		helpText:
@@ -527,6 +552,7 @@ export const options: {
 		category: "Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
+		godModeRequired: "always",
 		helpText: (
 			<>
 				<p>
@@ -559,6 +585,7 @@ export const options: {
 		category: "Contracts",
 		key: "rookiesCanRefuse",
 		name: "Rookies Can Refuse To Negotiate",
+		godModeRequired: "always",
 		helpText: (
 			<>
 				<p>
@@ -624,6 +651,7 @@ export const options: {
 		category: "Game Modes",
 		key: "spectator",
 		name: "Spectator Mode",
+		godModeRequired: "always",
 		type: "bool",
 		helpText:
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
@@ -638,6 +666,7 @@ export const options: {
 		category: "League Structure",
 		key: "playerMoodTraits",
 		name: "Player Mood Traits",
+		godModeRequired: "existingLeagueOnly",
 		type: "bool",
 		helpText: (
 			<>
@@ -657,6 +686,7 @@ export const options: {
 		category: "League Structure",
 		key: "tradeDeadline",
 		name: "Trade Deadline",
+		godModeRequired: "existingLeagueOnly",
 		type: "float",
 		helpText: (
 			<>
@@ -699,6 +729,7 @@ if (process.env.SPORT === "basketball") {
 			category: "League Structure",
 			key: "numPlayersOnCourt",
 			name: "# Players On Court",
+			godModeRequired: "always",
 			type: "int",
 			helpText: "By default BBGM is 5-on-5, but you can change that here",
 			validator: (value, output) => {
@@ -714,6 +745,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "foulRateFactor",
 			name: "Foul Rate Factor",
+			godModeRequired: "always",
 			type: "float",
 			helpText:
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
@@ -722,6 +754,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "foulsNeededToFoulOut",
 			name: "# Fouls Needed to Foul Out",
+			godModeRequired: "always",
 			type: "int",
 			validator: value => {
 				if (value < 0) {
@@ -733,6 +766,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "pace",
 			name: "Pace",
+			godModeRequired: "always",
 			type: "float",
 			helpText: "Average number of possessions per 48 minutes.",
 		},
@@ -740,6 +774,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "threePointers",
 			name: "Three Pointers",
+			godModeRequired: "always",
 			type: "bool",
 			helpText:
 				"If you disable three pointers, shots from that range will still be displayed as three pointers in stats tables, but they will only count for two points.",
@@ -748,6 +783,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "threePointTendencyFactor",
 			name: "Three Point Tendency Factor",
+			godModeRequired: "always",
 			type: "float",
 			helpText:
 				"The baseline rate for number of three pointers is multiplied by this number.",
@@ -756,6 +792,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "threePointAccuracyFactor",
 			name: "Three Point Accuracy Factor",
+			godModeRequired: "always",
 			type: "float",
 			helpText:
 				"The baseline rate for three point percentage is multiplied by this number.",
@@ -764,6 +801,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Game Simulation",
 			key: "twoPointAccuracyFactor",
 			name: "Two Point Accuracy Factor",
+			godModeRequired: "always",
 			type: "float",
 			helpText:
 				"The baseline rate for two point percentage is multiplied by this number.",
@@ -772,6 +810,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Player Development",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
+			godModeRequired: "always",
 			type: "float",
 			helpText: (
 				<>
@@ -808,6 +847,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Elam Ending",
 			key: "elamMinutes",
 			name: "Minutes Left Trigger",
+			godModeRequired: "always",
 			type: "float",
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value > output.quarterLength) {
@@ -819,6 +859,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Elam Ending",
 			key: "elamPoints",
 			name: "Target Points to Add",
+			godModeRequired: "always",
 			type: "int",
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value < 0) {
@@ -833,6 +874,7 @@ options.push({
 	category: "Player Development",
 	key: "repeatSeason",
 	name: "Groundhog Day",
+	godModeRequired: "always",
 	type: "bool",
 	helpText: (
 		<>

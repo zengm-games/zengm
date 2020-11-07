@@ -1,8 +1,5 @@
 settings re-design
 - if wide enough, add menu on the right to jump between sections
-- in dark mode, switch looks weird
-  - disabled is weird around the border
-  - disabled yes also seems to have a check mark in it?
 - for boolean fields, expand clickable area to the whole thing and change color on hover
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too

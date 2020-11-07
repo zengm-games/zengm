@@ -760,7 +760,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Foul Rate Factor",
 			godModeRequired: "always",
 			type: "float",
-			descriptionLong:
+			description:
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
@@ -781,7 +781,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Pace",
 			godModeRequired: "always",
 			type: "float",
-			descriptionLong: "Average number of possessions per 48 minutes.",
+			description: "Average number of possessions per 48 minutes.",
 		},
 		{
 			category: "Game Simulation",
@@ -789,7 +789,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Pointers",
 			godModeRequired: "always",
 			type: "bool",
-			descriptionLong:
+			description:
 				"If you disable three pointers, shots from that range will still be displayed as three pointers in stats tables, but they will only count for two points.",
 		},
 		{
@@ -798,7 +798,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Point Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
-			descriptionLong:
+			description:
 				"The baseline rate for number of three pointers is multiplied by this number.",
 		},
 		{
@@ -807,7 +807,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Three Point Accuracy Factor",
 			godModeRequired: "always",
 			type: "float",
-			descriptionLong:
+			description:
 				"The baseline rate for three point percentage is multiplied by this number.",
 		},
 		{
@@ -816,7 +816,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Two Point Accuracy Factor",
 			godModeRequired: "always",
 			type: "float",
-			descriptionLong:
+			description:
 				"The baseline rate for two point percentage is multiplied by this number.",
 		},
 		{

@@ -226,7 +226,7 @@ table.table thead .sorting::after {
 }
 
 // For Firefox: https://mail.google.com/mail/u/0/#sent/FMfcgxwGDDlBLslqTJrgVGGsTVMGLjNx?compose=lqrsljbfHSlTfwlWfkfgJZGFBMJhCZGwxnNHFrchrZwsNsKzFxrVPNQnHBRBvMchPkvLxQTLsjknLTNJK
-input[type="checkbox"][disabled] {
+input[type="checkbox"][disabled]:not(.custom-control-input) {
 	cursor: not-allowed;
 	opacity: 0.65;
 }

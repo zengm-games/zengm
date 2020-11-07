@@ -1,4 +1,6 @@
 settings re-design
+- click to show long description, not popover
+- align top form control
 - call it settings
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too

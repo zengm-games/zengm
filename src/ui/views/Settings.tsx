@@ -106,6 +106,7 @@ export const options: {
 	godModeRequired?: "always" | "existingLeagueOnly";
 	type: FieldType;
 	decoration?: Decoration;
+	description?: ReactNode;
 	helpText?: ReactNode;
 	values?: Values;
 	validator?: (value: any, output: any, props: View<"settings">) => void;
@@ -116,7 +117,7 @@ export const options: {
 		name: "# Games Per Season",
 		godModeRequired: "always",
 		type: "int",
-		helpText: "This will only apply to seasons that have not started yet.",
+		description: "This will only apply to seasons that have not started yet.",
 	},
 	{
 		category: "League Structure",
@@ -152,7 +153,7 @@ export const options: {
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
-		helpText: (
+		description: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
 				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
@@ -185,7 +186,7 @@ export const options: {
 		name: "# First Round Byes",
 		godModeRequired: "existingLeagueOnly",
 		type: "int",
-		helpText:
+		description:
 			"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
 		validator: value => {
 			if (value < 0) {
@@ -265,7 +266,7 @@ export const options: {
 		name: "# Tradable Draft Pick Seasons",
 		godModeRequired: "existingLeagueOnly",
 		type: "int",
-		helpText:
+		description:
 			"Number of seasons in the future to generate tradable draft picks for. The default value is 4. If you set this to 0, it disables all trading of draft picks.",
 		validator: value => {
 			if (value < 0) {
@@ -315,7 +316,7 @@ export const options: {
 		name: "Luxury Tax",
 		godModeRequired: "always",
 		type: "float",
-		helpText:
+		description:
 			"Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
 	},
 	{
@@ -446,7 +447,7 @@ export const options: {
 		name: "Trades Between AI Teams Factor",
 		godModeRequired: "always",
 		type: "float",
-		helpText:
+		description:
 			"The baseline rate of trades between AI teams is multiplied by this number. Anything beyond 100 will be both absurd and ridiculously slow.",
 	},
 	{
@@ -462,7 +463,7 @@ export const options: {
 		name: "Injury Rate",
 		godModeRequired: "always",
 		type: "float",
-		helpText: (
+		description: (
 			<>
 				<p>
 					The injury rate is the probability that a player is injured per
@@ -497,7 +498,7 @@ export const options: {
 		name: "Tragic Death Rate",
 		godModeRequired: "always",
 		type: "float",
-		helpText: (
+		description: (
 			<>
 				<p>
 					The tragic death rate is the probability that a player will die a
@@ -524,7 +525,7 @@ export const options: {
 		key: "brotherRate",
 		name: "Brother Rate",
 		type: "float",
-		helpText:
+		description:
 			"The probability that a new player will be the brother of an existing player.",
 	},
 	{
@@ -532,7 +533,7 @@ export const options: {
 		key: "sonRate",
 		name: "Son Rate",
 		type: "float",
-		helpText:
+		description:
 			"The probability that a new player will be the son of an existing player.",
 	},
 	{
@@ -545,7 +546,7 @@ export const options: {
 		godModeRequired: "always",
 		type: "float",
 		decoration: "percent",
-		helpText:
+		description:
 			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 	},
 	{
@@ -608,14 +609,14 @@ export const options: {
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
-		helpText: helpTexts.challengeNoDraftPicks,
+		description: helpTexts.challengeNoDraftPicks,
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
-		helpText: helpTexts.challengeNoFreeAgents,
+		description: helpTexts.challengeNoFreeAgents,
 	},
 	{
 		category: "Challenge Modes",
@@ -634,6 +635,7 @@ export const options: {
 		key: "challengeLoseBestPlayer",
 		name: "Lose Best Player",
 		type: "bool",
+		description: helpTexts.challengeLoseBestPlayer,
 	},
 	{
 		category: "Challenge Modes",
@@ -653,7 +655,7 @@ export const options: {
 		name: "Spectator Mode",
 		godModeRequired: "always",
 		type: "bool",
-		helpText:
+		description:
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
 	},
 	{
@@ -668,7 +670,7 @@ export const options: {
 		name: "Player Mood Traits",
 		godModeRequired: "existingLeagueOnly",
 		type: "bool",
-		helpText: (
+		description: (
 			<>
 				See{" "}
 				<a
@@ -722,7 +724,7 @@ if (process.env.SPORT === "basketball") {
 			key: "allStarGame",
 			name: "All-Star Game",
 			type: "bool",
-			helpText:
+			description:
 				"Changing this will not affect an in-progress season, only future seasons.",
 		},
 		{
@@ -731,7 +733,7 @@ if (process.env.SPORT === "basketball") {
 			name: "# Players On Court",
 			godModeRequired: "always",
 			type: "int",
-			helpText: "By default BBGM is 5-on-5, but you can change that here",
+			description: "By default BBGM is 5-on-5, but you can change that here",
 			validator: (value, output) => {
 				if (value > output.minRosterSize) {
 					throw new Error("Value cannot be greater than the min roster size");
@@ -876,15 +878,8 @@ options.push({
 	name: "Groundhog Day",
 	godModeRequired: "always",
 	type: "bool",
-	helpText: (
-		<>
-			<p>{helpTexts.repeatSeason}</p>
-			<p>
-				Groundhog Day can be enabled at any point in the season prior to the
-				draft.
-			</p>
-		</>
-	),
+	description: `${helpTexts.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
+				draft.`,
 });
 
 // See play-style-adjustments in bbgm-rosters
@@ -1777,6 +1772,7 @@ const Settings = (props: View<"settings">) => {
 							{catOptions.map(
 								({
 									decoration,
+									description,
 									helpText,
 									godModeRequired,
 									key,
@@ -1789,15 +1785,25 @@ const Settings = (props: View<"settings">) => {
 									return (
 										<div key={key} className="list-group-item">
 											<div className="d-flex">
-												<div className="mr-auto">
-													<label htmlFor={id}>{name}</label>
+												<div className="mr-auto align-self-center">
+													<label className="mb-0" htmlFor={id}>
+														{name}
+														{description ? (
+															<>
+																<br />
+																<span className="text-muted settings-description">
+																	{description}
+																</span>
+															</>
+														) : null}
+													</label>
 													{helpText ? (
 														<HelpPopover title={name} className="ml-1">
 															{helpText}
 														</HelpPopover>
 													) : null}
 												</div>
-												<div>
+												<div className="ml-5">
 													<Input
 														type={type}
 														disabled={!enabled}

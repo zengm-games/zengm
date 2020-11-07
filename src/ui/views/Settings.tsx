@@ -1971,7 +1971,7 @@ const Settings = (props: View<"settings">) => {
 				<button
 					className={classNames(
 						"btn",
-						godMode ? "btn-success" : "btn-god-mode",
+						godMode ? "btn-success" : "btn-god-mode border-0",
 					)}
 					onClick={handleGodModeToggle}
 					type="button"

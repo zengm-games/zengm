@@ -154,11 +154,12 @@ a.god-mode.active {
 }
 
 .btn-god-mode {
+	@include button-variant(darken($purple, 20), $gray-400);
 	&,
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		color: $white;
+		color: $black;
 	}
 }
 

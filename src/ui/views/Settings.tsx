@@ -1737,7 +1737,7 @@ const Option = ({
 const Settings = (props: View<"settings">) => {
 	const { godMode, godModeInPast } = props;
 
-	useTitleBar({ title: "Settings" });
+	useTitleBar({ title: "League Settings" });
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
@@ -1876,7 +1876,7 @@ const Settings = (props: View<"settings">) => {
 
 				return (
 					<React.Fragment key={category.name}>
-						<h2 className={i === 0 ? "mt-3" : "mt-5"}>
+						<h2 className={i === 0 ? undefined : "mt-5"}>
 							{category.name}
 							{category.helpText ? (
 								<HelpPopover title={category.name} className="ml-1">

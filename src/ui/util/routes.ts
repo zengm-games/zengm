@@ -37,7 +37,8 @@ const routes = () => {
 		"/account/lost_password": genPage("lostPassword", false),
 		"/account/reset_password/:token": genPage("resetPassword", false),
 		"/account/update_card": genPage("accountUpdateCard", false),
-		"/options": genPage("options", false),
+		"/settings": genPage("globalSettings", false),
+
 		// League views
 		"/l/:lid": genPage("leagueDashboard"),
 		"/l/:lid/new_team": genPage("newTeam"),

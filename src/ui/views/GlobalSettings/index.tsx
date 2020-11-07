@@ -80,14 +80,10 @@ const Options = (props: View<"options"> & { title?: string }) => {
 		}
 	};
 
-	const title = props.title ? props.title : "Options";
-
-	useTitleBar({ title: "Options" });
+	useTitleBar({ title: "Global Settings" });
 
 	return (
 		<>
-			{props.title ? <h2>{title}</h2> : null}
-
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
@@ -137,7 +133,7 @@ const Options = (props: View<"options"> & { title?: string }) => {
 					</>
 				) : null}
 
-				<button className="btn btn-primary mt-3">Save {title}</button>
+				<button className="btn btn-primary mt-3">Save Global Settings</button>
 			</form>
 		</>
 	);

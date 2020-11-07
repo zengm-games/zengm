@@ -24,6 +24,7 @@ import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
 import frivolitiesJerseyNumbers from "./frivolitiesJerseyNumbers";
 import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
 import gameLog from "./gameLog";
+import globalSettings from "./globalSettings";
 import gmHistory from "./gmHistory";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
@@ -48,7 +49,6 @@ import negotiationList from "./negotiationList";
 import newLeague from "./newLeague";
 import newTeam from "./newTeam";
 import news from "./news";
-import options from "./options";
 import player from "./player";
 import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
@@ -106,6 +106,7 @@ export default {
 	frivolitiesJerseyNumbers,
 	frivolitiesTeamSeasons,
 	gameLog,
+	globalSettings,
 	gmHistory,
 	godMode,
 	hallOfFame,
@@ -130,7 +131,6 @@ export default {
 	newLeague,
 	newTeam,
 	news,
-	options,
 	player,
 	playerBios,
 	playerFeats,

@@ -3,7 +3,6 @@ settings re-design
 - for boolean fields, expand clickable area to the whole thing and change color on hover
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too
-- global options should just be a separate page always, "global settings"
 - more settings out of god mode
 - god mode stuff
   - for god mode only settings, have some purple indicator

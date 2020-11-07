@@ -4,7 +4,6 @@ import { DIFFICULTY } from "../../common";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
-import Options from "./Options";
 import type { View } from "../../common/types";
 
 const difficultyValues = Object.values(DIFFICULTY);
@@ -163,8 +162,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 
 				<button className="btn btn-primary">Save League Options</button>
 			</form>
-
-			<Options title="Global Options" {...props.globalOptions} />
 		</>
 	);
 };

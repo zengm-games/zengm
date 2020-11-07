@@ -392,13 +392,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "options",
-				nonLeague: true,
-				path: "/options",
-				text: "Options",
-			},
-			{
-				type: "link",
 				active: pageID => pageID === "leagueOptions",
 				league: true,
 				path: ["options"],
@@ -438,10 +431,18 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "options",
+				league: true,
+				nonLeague: true,
+				path: "/settings",
+				text: "Global Settings",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "settings",
 				league: true,
 				path: ["settings"],
-				text: "Settings",
+				text: "League Settings",
 			},
 			{
 				type: "link",

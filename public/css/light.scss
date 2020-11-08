@@ -1061,6 +1061,11 @@ a.anchor {
 	visibility: hidden;
 }
 
+.settings-shortcuts {
+	align-self: flex-start;
+	position: sticky;
+	top: 60px;
+}
 @media (min-width: 900px) {
 	.settings-shortcuts {
 		display: block !important;

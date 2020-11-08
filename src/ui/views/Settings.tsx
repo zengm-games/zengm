@@ -2223,14 +2223,7 @@ const Settings = (props: View<"settings">) => {
 				</div>
 			</form>
 
-			<div
-				className="d-none settings-shortcuts ml-3"
-				style={{
-					alignSelf: "flex-start",
-					position: "sticky",
-					top: 60,
-				}}
-			>
+			<div className="d-none settings-shortcuts ml-3">
 				<ul className="list-unstyled">
 					<li className="mb-1">Shortcuts:</li>
 					{currentCategoryNames.map(name => (

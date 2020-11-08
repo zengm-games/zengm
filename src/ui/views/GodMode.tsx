@@ -74,7 +74,10 @@ const GodMode = (props: View<"godMode">) => {
 			</p>
 
 			<button
-				className={classNames("btn", godMode ? "btn-success" : "btn-god-mode")}
+				className={classNames(
+					"btn",
+					godMode ? "btn-success" : "btn-god-mode border-0",
+				)}
 				onClick={handleGodModeToggle}
 			>
 				{godMode ? "Disable God Mode" : "Enable God Mode"}

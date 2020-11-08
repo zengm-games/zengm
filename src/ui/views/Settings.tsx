@@ -2037,6 +2037,10 @@ const Settings = (props: View<"settings">) => {
 				) : null}
 
 				{categories.map(category => {
+					if (!groupedOptions[category.name]) {
+						return null;
+					}
+
 					const catOptions = groupedOptions[category.name].filter(option => {
 						return (
 							(godMode || showGodModeSettings || !option.godModeRequired) &&
@@ -2044,7 +2048,7 @@ const Settings = (props: View<"settings">) => {
 						);
 					});
 
-					if (!catOptions || catOptions.length === 0) {
+					if (catOptions.length === 0) {
 						return null;
 					}
 					currentCategoryNames.push(category.name);

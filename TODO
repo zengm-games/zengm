@@ -1,8 +1,5 @@
 settings re-design
-- error messages z index must be over floating bottom bar
 - for boolean fields, expand clickable area to the whole thing and change color on hover
-- unify options and god mode options
-  - need stopOnInjury in state
 - all settings should be editable when creating a new league
   - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
   - also new league has some extra settings that don't persist, like randomization and no starting injuries

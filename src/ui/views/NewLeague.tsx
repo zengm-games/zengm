@@ -1599,11 +1599,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								</option>
 							) : null}
 						</select>
-						<span className="text-muted">
-							Increasing difficulty makes AI teams more reluctant to trade with
-							you, makes players less likely to sign with you, and makes it
-							harder to turn a profit.
-						</span>
+						<span className="text-muted">{descriptions.difficulty}</span>
 					</div>
 
 					{moreOptions.length > 0 ? (

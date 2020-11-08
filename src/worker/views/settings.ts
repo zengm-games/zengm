@@ -65,6 +65,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numDraftRounds: g.get("numDraftRounds"),
 			tradeDeadline: g.get("tradeDeadline"),
 			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
+			difficulty: g.get("difficulty"),
 		};
 	}
 };

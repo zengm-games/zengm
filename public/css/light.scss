@@ -1066,3 +1066,13 @@ a.anchor {
 		display: block !important;
 	}
 }
+
+.rounded-top-0 {
+	border-top-right-radius: 0rem !important;
+	border-top-left-radius: 0rem !important;
+}
+
+.rounded-bottom-0 {
+	border-bottom-right-radius: 0rem !important;
+	border-bottom-left-radius: 0rem !important;
+}

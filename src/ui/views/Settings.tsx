@@ -7,6 +7,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, localActions, logEvent, toWorker, helpers } from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
+import { DIFFICULTY } from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
@@ -65,9 +66,11 @@ type Key =
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
 	| "tradeDeadline"
-	| "autoDeleteOldBoxScores";
+	| "autoDeleteOldBoxScores"
+	| "difficulty";
 
 type Category =
+	| "General"
 	| "Season"
 	| "Team"
 	| "Draft"
@@ -87,7 +90,8 @@ type FieldType =
 	| "int"
 	| "jsonString"
 	| "string"
-	| "rangePercent";
+	| "rangePercent"
+	| "floatValuesOrCustom";
 
 type Decoration = "currency" | "percent";
 
@@ -100,6 +104,8 @@ export const descriptions = {
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
+	difficulty:
+		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:
 		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
 	repeatSeason:
@@ -844,6 +850,17 @@ if (process.env.SPORT === "basketball") {
 	);
 }
 
+const difficultyValues: Values = {
+	[DIFFICULTY.Easy]: "Easy",
+	[DIFFICULTY.Normal]: "Normal",
+	[DIFFICULTY.Hard]: "Hard",
+	[DIFFICULTY.Insane]: "Insane",
+};
+
+for (const [description, difficulty] of Object.entries(DIFFICULTY)) {
+	difficultyValues[difficulty] = description;
+}
+
 options.push(
 	{
 		category: "Game Simulation",
@@ -881,7 +898,24 @@ options.push(
 				draft.`,
 	},
 	{
-		category: "Season",
+		category: "General",
+		key: "difficulty",
+		name: "Difficulty",
+		type: "floatValuesOrCustom",
+		descriptionLong: (
+			<>
+				<p>{descriptions.difficulty}</p>
+				<p>
+					If you set the difficulty to Easy, you will not get credit for any{" "}
+					<a href="/account">Achievements</a>. This persists even if you switch
+					to a harder difficulty.
+				</p>
+			</>
+		),
+		values: difficultyValues,
+	},
+	{
+		category: "General",
 		key: "autoDeleteOldBoxScores",
 		name: "Auto Delete Old Box Scores",
 		type: "bool",
@@ -1484,6 +1518,19 @@ const encodeDecodeFunctions = {
 			return parsed;
 		},
 	},
+	floatValuesOrCustom: {
+		stringify: (value: number, values: Values) =>
+			JSON.stringify([values[value] === undefined, value]),
+		parse: (value: string) => {
+			console.log("parse floatValuesOrCustom value", value);
+			const parts = JSON.parse(value);
+			const numberPart = parseFloat(parts[1]);
+			if (Number.isNaN(numberPart)) {
+				throw new Error(`"${numberPart}" is not a valid number`);
+			}
+			return numberPart;
+		},
+	},
 };
 
 const groupedOptions = groupBy(options, "category");
@@ -1493,6 +1540,9 @@ const categories: {
 	name: Category;
 	helpText?: ReactNode;
 }[] = [
+	{
+		name: "General",
+	},
 	{
 		name: "Season",
 	},
@@ -1570,6 +1620,7 @@ const Input = ({
 	decoration?: Decoration;
 	disabled?: boolean;
 	id: string;
+	name: string;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
 	value: string;
@@ -1620,15 +1671,45 @@ const Input = ({
 			</div>
 		);
 	} else if (values) {
-		inputElement = (
-			<select {...commonProps}>
-				{Object.keys(values).map(key => (
-					<option key={key} value={key}>
-						{values[key]}
-					</option>
-				))}
-			</select>
-		);
+		if (type === "floatValuesOrCustom") {
+			const parsed = JSON.parse(value);
+			const selectValue =
+				parsed[0] || values[parsed[1]] === undefined ? "custom" : parsed[1];
+			inputElement = (
+				<>
+					<select
+						{...commonProps}
+						className="form-control rounded-bottom-0"
+						value={selectValue}
+					>
+						{Object.keys(values).map(key => (
+							<option key={key} value={key}>
+								{values[key]}
+							</option>
+						))}
+						<option value="custom">Custom</option>
+					</select>
+					<input
+						type="text"
+						className="form-control rounded-top-0 border-top-0"
+						style={inputStyle}
+						disabled={selectValue !== "custom"}
+						onChange={onChange}
+						value={parsed[1]}
+					/>
+				</>
+			);
+		} else {
+			inputElement = (
+				<select {...commonProps}>
+					{Object.keys(values).map(key => (
+						<option key={key} value={key}>
+							{values[key]}
+						</option>
+					))}
+				</select>
+			);
+		}
 	} else {
 		inputElement = <input type="text" {...commonProps} />;
 	}
@@ -1722,6 +1803,7 @@ const Option = ({
 						type={type}
 						disabled={disabled}
 						id={id}
+						name={name}
 						onChange={onChange}
 						value={value}
 						values={values}
@@ -1796,24 +1878,34 @@ const Settings = (props: View<"settings">) => {
 	const [state, setState] = useState<Record<Key, string>>(() => {
 		// @ts-ignore
 		const initialState: Record<Key, string> = {};
-		for (const { key, type } of options) {
+		for (const { key, type, values } of options) {
 			const value = props[key];
 
 			// https://github.com/microsoft/TypeScript/issues/21732
 			// @ts-ignore
 			const stringify = encodeDecodeFunctions[type].stringify;
 
-			initialState[key] = stringify ? stringify(value) : value;
+			initialState[key] = stringify ? stringify(value, values) : value;
 		}
 		return initialState;
 	});
 
-	const handleChange = (name: string, boolean: boolean = false) => (
+	const handleChange = (name: Key, type: FieldType) => (
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
-		const value = !boolean
-			? event.target.value
-			: String((event.target as any).checked);
+		let value: string;
+		if (type === "bool") {
+			value = String((event.target as any).checked);
+		} else if (type === "floatValuesOrCustom") {
+			if (event.target.value === "custom") {
+				value = JSON.stringify([true, JSON.parse(state[name])[1]]);
+			} else {
+				value = JSON.stringify([false, event.target.value]);
+			}
+		} else {
+			value = event.target.value;
+		}
+		console.log("handleChange", name, value);
 		setState(prevState => ({
 			...prevState,
 			[name]: value,
@@ -1995,7 +2087,7 @@ const Settings = (props: View<"settings">) => {
 													type={type}
 													disabled={!enabled}
 													id={id}
-													onChange={handleChange(key, type === "bool")}
+													onChange={handleChange(key, type)}
 													value={state[key]}
 													values={values}
 													decoration={decoration}

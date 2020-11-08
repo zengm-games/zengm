@@ -1,4 +1,8 @@
 settings re-design
+- difficulty
+  - init value in stringify for true/false should be dynamic
+- for the double inputs (like difficulty) make it responsive so it all fits on one row on large screens
+- error messages z index must be over floating bottom bar
 - for boolean fields, expand clickable area to the whole thing and change color on hover
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too

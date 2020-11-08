@@ -3,17 +3,11 @@ import React, { useState, FormEvent, ChangeEvent } from "react";
 import { DIFFICULTY } from "../../common";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../util";
+import { logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
-
-const difficultyValues = Object.values(DIFFICULTY);
 
 const LeagueOptions = (props: View<"leagueOptions">) => {
 	const [state, setState] = useState({
-		difficulty: String(props.difficulty),
-		difficultySelect: difficultyValues.includes(props.difficulty)
-			? String(props.difficulty)
-			: "custom",
 		stopOnInjury: String(props.stopOnInjury),
 		stopOnInjuryGames: String(props.stopOnInjuryGames),
 	});
@@ -50,10 +44,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 	};
 
 	useTitleBar({ title: "Options" });
-
-	const disableDifficultyInput =
-		state.difficultySelect !== "custom" &&
-		difficultyValues.includes(parseFloat(state.difficulty));
 
 	return (
 		<>
@@ -92,48 +82,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 							</div>
 						</div>
 					</div>
-					<div className="col-sm-3 col-6 form-group">
-						<label htmlFor="options-difficulty">Difficulty</label>
-						<HelpPopover title="Difficulty" className="ml-1">
-							<p>
-								Increasing difficulty makes AI teams more reluctant to trade
-								with you, makes players less likely to sign with you, and makes
-								it harder to turn a profit.
-							</p>
-							<p>
-								If you set the difficulty to Easy, you will not get credit for
-								any <a href="/account">Achievements</a>. This persists even if
-								you switch to a harder difficulty.
-							</p>
-						</HelpPopover>
-						<select
-							id="options-difficulty"
-							className="form-control"
-							onChange={event => {
-								handleChange("difficultySelect")(event);
-								if (event.target.value !== "custom") {
-									handleChange("difficulty")(event);
-								}
-							}}
-							value={state.difficultySelect}
-						>
-							{Object.entries(DIFFICULTY).map(([text, numeric]) => (
-								<option key={numeric} value={numeric}>
-									{text}
-								</option>
-							))}
-							<option value="custom">Custom</option>
-						</select>
-						<div className="input-group mt-2">
-							<input
-								type="text"
-								className="form-control"
-								disabled={disableDifficultyInput}
-								onChange={handleChange("difficulty")}
-								value={state.difficulty}
-							/>
-						</div>
-					</div>
 				</div>
 
 				<button className="btn btn-primary">Save League Options</button>
@@ -143,7 +91,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 };
 
 LeagueOptions.propTypes = {
-	difficulty: PropTypes.number.isRequired,
 	stopOnInjury: PropTypes.bool.isRequired,
 	stopOnInjuryGames: PropTypes.number.isRequired,
 };

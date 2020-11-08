@@ -119,11 +119,7 @@ const Options = (props: View<"globalSettings">) => {
 
 				{process.env.SPORT === "basketball" ? (
 					<>
-						{props.title ? (
-							<h3>Team and Player Data for "Real Players" Leagues</h3>
-						) : (
-							<h2>Team and Player Data for "Real Players" Leagues</h2>
-						)}
+						<h2>Team and Player Data for "Real Players" Leagues</h2>
 						<RealData
 							handleChange={handleChange}
 							realPlayerPhotos={state.realPlayerPhotos}

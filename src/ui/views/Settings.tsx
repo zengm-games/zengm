@@ -920,6 +920,8 @@ options.push(
 		key: "stopOnInjuryGames",
 		name: "Stop On Injury Longer Than",
 		type: "int",
+		description:
+			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
 		customForm: true,
 	},
 	{
@@ -1653,7 +1655,10 @@ const Input = ({
 		title,
 		id,
 		onChange,
-		style: !decoration && type !== "rangePercent" ? inputStyle : undefined,
+		style:
+			!decoration && type !== "rangePercent" && type !== "floatValuesOrCustom"
+				? inputStyle
+				: undefined,
 		value,
 	};
 
@@ -1698,11 +1703,12 @@ const Input = ({
 					? "custom"
 					: parsed[1];
 			inputElement = (
-				<>
+				<div className="input-group" style={inputStyle}>
 					<select
 						{...commonProps}
-						className="form-control rounded-bottom-0"
+						className="form-control"
 						value={selectValue}
+						style={{ width: 70 }}
 					>
 						{values.map(({ key, value }) => (
 							<option key={key} value={key}>
@@ -1713,13 +1719,12 @@ const Input = ({
 					</select>
 					<input
 						type="text"
-						className="form-control rounded-top-0 border-top-0"
-						style={inputStyle}
+						className="form-control"
 						disabled={selectValue !== "custom"}
 						onChange={onChange}
 						value={parsed[1]}
 					/>
-				</>
+				</div>
 			);
 		} else {
 			inputElement = (

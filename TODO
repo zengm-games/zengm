@@ -1,5 +1,4 @@
 settings re-design
-- button to hide god mode options
 - for boolean fields, expand clickable area to the whole thing and change color on hover
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too

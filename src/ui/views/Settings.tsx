@@ -1754,6 +1754,8 @@ const Settings = (props: View<"settings">) => {
 
 	useTitleBar({ title: "League Settings" });
 
+	const [showGodModeSettings, setShowGodModeSettings] = useState(false);
+
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
 		if (!godMode && !godModeInPast) {
@@ -1881,14 +1883,32 @@ const Settings = (props: View<"settings">) => {
 		});
 	};
 
+	const currentCategoryNames: Category[] = [];
+
 	return (
 		<div className="d-flex">
 			<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
-				{categories.map((category, i) => {
-					const catOptions = groupedOptions[category.name];
-					if (!catOptions) {
+				{!godMode ? (
+					<button
+						type="button"
+						className="btn btn-secondary mb-3"
+						onClick={() => {
+							setShowGodModeSettings(show => !show);
+						}}
+					>
+						{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+					</button>
+				) : null}
+
+				{categories.map(category => {
+					const catOptions = groupedOptions[category.name].filter(option => {
+						return godMode || showGodModeSettings || !option.godModeRequired;
+					});
+
+					if (!catOptions || catOptions.length === 0) {
 						return null;
 					}
+					currentCategoryNames.push(category.name);
 
 					return (
 						<React.Fragment key={category.name}>
@@ -1903,12 +1923,13 @@ const Settings = (props: View<"settings">) => {
 							</h2>
 							{category.name === "Game Simulation" &&
 							process.env.SPORT === "basketball" &&
-							gameSimPresets ? (
+							gameSimPresets &&
+							(godMode || showGodModeSettings) ? (
 								<div className="form-inline mb-3">
 									<select
 										className="form-control"
 										value={gameSimPreset}
-										disabled={!props.godMode}
+										disabled={!godMode}
 										onChange={event => {
 											// @ts-ignore
 											const presets = gameSimPresets[event.target.value];
@@ -1954,7 +1975,7 @@ const Settings = (props: View<"settings">) => {
 										type,
 										values,
 									}) => {
-										const enabled = props.godMode || !godModeRequired;
+										const enabled = godMode || !godModeRequired;
 										const id = `settings-${category.name}-${name}`;
 										return (
 											<div
@@ -2009,9 +2030,9 @@ const Settings = (props: View<"settings">) => {
 			>
 				<ul className="list-unstyled">
 					<li className="mb-1">Shortcuts:</li>
-					{categories.map(category => (
-						<li key={category.name} className="mb-1">
-							<a href={`#${category.name}`}>{category.name}</a>
+					{currentCategoryNames.map(name => (
+						<li key={name} className="mb-1">
+							<a href={`#${name}`}>{name}</a>
 						</li>
 					))}
 				</ul>

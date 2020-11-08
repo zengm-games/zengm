@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
@@ -1809,7 +1810,16 @@ const Option = ({
 		<>
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
 				<div className="mr-auto">
-					<label className="mb-0" htmlFor={id}>
+					<label
+						className="mb-0"
+						htmlFor={id}
+						onClick={event => {
+							// Don't toggle on label click, too confusing
+							if (type === "bool") {
+								event.preventDefault();
+							}
+						}}
+					>
 						{disabled ? (
 							<span
 								className="legend-square god-mode mr-1"
@@ -1938,7 +1948,6 @@ const Settings = (props: View<"settings">) => {
 		} else {
 			value = event.target.value;
 		}
-		console.log(name, type, value);
 
 		setState(prevState => ({
 			...prevState,
@@ -1976,7 +1985,6 @@ const Settings = (props: View<"settings">) => {
 				return;
 			}
 		}
-		console.log("output", output);
 
 		// Run validation functions at the end, so all values are available
 		for (const option of options) {

@@ -67,7 +67,9 @@ type Key =
 	| "numDraftRounds"
 	| "tradeDeadline"
 	| "autoDeleteOldBoxScores"
-	| "difficulty";
+	| "difficulty"
+	| "stopOnInjuryGames"
+	| "stopOnInjury";
 
 type Category =
 	| "General"
@@ -124,6 +126,8 @@ export const options: {
 	decoration?: Decoration;
 	values?: Values;
 	validator?: (value: any, output: any, props: View<"settings">) => void;
+	customForm?: true;
+	hidden?: true;
 
 	// Short, one line, shown by default
 	description?: ReactNode;
@@ -893,7 +897,7 @@ options.push(
 		category: "General",
 		key: "difficulty",
 		name: "Difficulty",
-		type: "floatValuesOrCustom",
+		type: "floatValuesOrCustom", // Maybe this would have been better as customForm, like stopOnInjuryGames
 		descriptionLong: (
 			<>
 				<p>{descriptions.difficulty}</p>
@@ -910,6 +914,20 @@ options.push(
 			{ key: String(DIFFICULTY.Hard), value: "Hard" },
 			{ key: String(DIFFICULTY.Insane), value: "Insane" },
 		],
+	},
+	{
+		category: "General",
+		key: "stopOnInjuryGames",
+		name: "Stop On Injury Longer Than",
+		type: "int",
+		customForm: true,
+	},
+	{
+		category: "General",
+		key: "stopOnInjury",
+		name: "Stop On Injury Longer Than",
+		type: "bool",
+		hidden: true,
 	},
 	{
 		category: "General",
@@ -1470,6 +1488,7 @@ const encodeDecodeFunctions = {
 		stringify: (value: boolean) => String(value),
 		parse: (value: string) => value === "true",
 	},
+	custom: {},
 	float: {
 		stringify: (value: number) => String(value),
 		parse: (value: string) => {
@@ -1765,6 +1784,7 @@ const Option = ({
 	type,
 	value,
 	values,
+	customForm,
 }: {
 	id: string;
 	disabled: boolean;
@@ -1776,6 +1796,7 @@ const Option = ({
 	type: FieldType;
 	value: string;
 	values?: Values;
+	customForm?: ReactNode;
 }) => {
 	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
 
@@ -1802,16 +1823,20 @@ const Option = ({
 					) : null}
 				</div>
 				<div className="ml-5">
-					<Input
-						type={type}
-						disabled={disabled}
-						id={id}
-						name={name}
-						onChange={onChange}
-						value={value}
-						values={values}
-						decoration={decoration}
-					/>
+					{customForm ? (
+						customForm
+					) : (
+						<Input
+							type={type}
+							disabled={disabled}
+							id={id}
+							name={name}
+							onChange={onChange}
+							value={value}
+							values={values}
+							decoration={decoration}
+						/>
+					)}
 				</div>
 			</div>
 			{description ? (
@@ -1908,6 +1933,8 @@ const Settings = (props: View<"settings">) => {
 		} else {
 			value = event.target.value;
 		}
+		console.log(name, type, value);
+
 		setState(prevState => ({
 			...prevState,
 			[name]: value,
@@ -1944,6 +1971,7 @@ const Settings = (props: View<"settings">) => {
 				return;
 			}
 		}
+		console.log("output", output);
 
 		// Run validation functions at the end, so all values are available
 		for (const option of options) {
@@ -2005,7 +2033,10 @@ const Settings = (props: View<"settings">) => {
 
 				{categories.map(category => {
 					const catOptions = groupedOptions[category.name].filter(option => {
-						return godMode || showGodModeSettings || !option.godModeRequired;
+						return (
+							(godMode || showGodModeSettings || !option.godModeRequired) &&
+							!option.hidden
+						);
 					});
 
 					if (!catOptions || catOptions.length === 0) {
@@ -2069,6 +2100,7 @@ const Settings = (props: View<"settings">) => {
 							<div className="list-group mb-5">
 								{catOptions.map(
 									({
+										customForm,
 										decoration,
 										description,
 										descriptionLong,
@@ -2080,6 +2112,52 @@ const Settings = (props: View<"settings">) => {
 									}) => {
 										const enabled = godMode || !godModeRequired;
 										const id = `settings-${category.name}-${name}`;
+
+										let customFormNode;
+										if (customForm) {
+											if (key === "stopOnInjuryGames") {
+												const key2 = "stopOnInjury";
+												const checked = state[key2] === "true";
+												customFormNode = (
+													<div
+														style={inputStyle}
+														className="d-flex align-items-center"
+													>
+														<div
+															className="custom-control custom-switch"
+															title={checked ? "Enabled" : "Disabled"}
+														>
+															<input
+																type="checkbox"
+																className="custom-control-input"
+																checked={checked}
+																onChange={handleChange(key2, "bool")}
+																id={id + "2"}
+																value={state[key2]}
+															/>
+															<label
+																className="custom-control-label"
+																htmlFor={id + "2"}
+															></label>
+														</div>
+														<div className="input-group">
+															<input
+																id={id}
+																disabled={!checked}
+																className="form-control"
+																type="text"
+																onChange={handleChange(key, type)}
+																value={state[key]}
+															/>
+															<div className="input-group-append">
+																<div className="input-group-text">Games</div>
+															</div>
+														</div>
+													</div>
+												);
+											}
+										}
+
 										return (
 											<div
 												key={key}
@@ -2096,6 +2174,7 @@ const Settings = (props: View<"settings">) => {
 													name={name}
 													description={description}
 													descriptionLong={descriptionLong}
+													customForm={customFormNode}
 												/>
 											</div>
 										);

@@ -66,6 +66,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tradeDeadline: g.get("tradeDeadline"),
 			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
 			difficulty: g.get("difficulty"),
+			stopOnInjury: g.get("stopOnInjury"),
+			stopOnInjuryGames: g.get("stopOnInjuryGames"),
 		};
 	}
 };

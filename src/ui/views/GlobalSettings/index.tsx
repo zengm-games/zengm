@@ -6,8 +6,7 @@ import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
 
-// Props are not from View<> because they are only ever passed from LeagueOptions
-const Options = (props: View<"options"> & { title?: string }) => {
+const Options = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = safeLocalStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";

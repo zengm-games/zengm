@@ -35,7 +35,6 @@ import inbox from "./inbox";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
-import leagueOptions from "./leagueOptions";
 import leagueStats from "./leagueStats";
 import live from "./live";
 import liveGame from "./liveGame";
@@ -117,7 +116,6 @@ export default {
 	leaders,
 	leagueDashboard,
 	leagueFinances,
-	leagueOptions,
 	leagueStats,
 	live,
 	liveGame,

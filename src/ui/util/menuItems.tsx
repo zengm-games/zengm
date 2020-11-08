@@ -390,13 +390,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["new_team"],
 				text: "Switch Team",
 			},
-			{
-				type: "link",
-				active: pageID => pageID === "leagueOptions",
-				league: true,
-				path: ["options"],
-				text: "Options",
-			},
 			...(process.env.SPORT === "basketball" ? [scheduledEvents] : []),
 			{
 				type: "link",

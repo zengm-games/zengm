@@ -154,7 +154,6 @@ const routes = () => {
 		"/l/:lid/transactions/:abbrev": genPage("transactions"),
 		"/l/:lid/transactions/:abbrev/:season": genPage("transactions"),
 		"/l/:lid/transactions/:abbrev/:season/:eventType": genPage("transactions"),
-		"/l/:lid/options": genPage("leagueOptions"),
 		"/l/:lid/danger_zone": genPage("dangerZone"),
 		"/l/:lid/depth": genPage("depthFootball"),
 		"/l/:lid/depth/:abbrev": genPage("depthFootball"),

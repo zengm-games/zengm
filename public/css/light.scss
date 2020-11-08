@@ -1053,3 +1053,16 @@ button.live-game-sim-more {
 	// To make it go over the Bootstrap custom form controls, like switch
 	z-index: 2;
 }
+
+a.anchor {
+	display: block;
+	position: relative;
+	top: -60px;
+	visibility: hidden;
+}
+
+@media (min-width: 900px) {
+	.settings-shortcuts {
+		display: block !important;
+	}
+}

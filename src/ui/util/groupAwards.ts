@@ -78,7 +78,6 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 	const seen = new Set();
 	const awardsGrouped = [];
 	const awardsGroupedTemp = groupBy(awards, award => getType(award.type));
-	console.log(awardsGroupedTemp);
 
 	for (const originalType of awardsOrder) {
 		const type = getType(originalType);

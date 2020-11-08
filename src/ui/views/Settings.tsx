@@ -1869,120 +1869,141 @@ const Settings = (props: View<"settings">) => {
 	};
 
 	return (
-		<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
-			{categories.map((category, i) => {
-				const catOptions = groupedOptions[category.name];
-				if (!catOptions) {
-					return null;
-				}
+		<div className="d-flex">
+			<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
+				{categories.map((category, i) => {
+					const catOptions = groupedOptions[category.name];
+					if (!catOptions) {
+						return null;
+					}
 
-				return (
-					<React.Fragment key={category.name}>
-						<h2 className={i === 0 ? undefined : "mt-5"}>
-							{category.name}
-							{category.helpText ? (
-								<HelpPopover title={category.name} className="ml-1">
-									{category.helpText}
-								</HelpPopover>
+					return (
+						<React.Fragment key={category.name}>
+							<a className="anchor" id={category.name} />
+							<h2>
+								{category.name}
+								{category.helpText ? (
+									<HelpPopover title={category.name} className="ml-1">
+										{category.helpText}
+									</HelpPopover>
+								) : null}
+							</h2>
+							{category.name === "Game Simulation" &&
+							process.env.SPORT === "basketball" &&
+							gameSimPresets ? (
+								<div className="form-inline mb-3">
+									<select
+										className="form-control"
+										value={gameSimPreset}
+										disabled={!props.godMode}
+										onChange={event => {
+											// @ts-ignore
+											const presets = gameSimPresets[event.target.value];
+											if (!presets) {
+												return;
+											}
+
+											const presetsString: any = {};
+											for (const [key, value] of Object.entries(presets)) {
+												presetsString[key] = String(value);
+											}
+
+											setState(prevState => ({
+												...prevState,
+												...presetsString,
+											}));
+											setGameSimPreset(event.target.value);
+										}}
+									>
+										<option value="default">
+											Select preset based on historical NBA stats
+										</option>
+										{Object.keys(gameSimPresets)
+											.sort()
+											.reverse()
+											.map(season => (
+												<option key={season} value={season}>
+													{season}
+												</option>
+											))}
+									</select>
+								</div>
 							) : null}
-						</h2>
-						{category.name === "Game Simulation" &&
-						process.env.SPORT === "basketball" &&
-						gameSimPresets ? (
-							<div className="form-inline mb-3">
-								<select
-									className="form-control"
-									value={gameSimPreset}
-									disabled={!props.godMode}
-									onChange={event => {
-										// @ts-ignore
-										const presets = gameSimPresets[event.target.value];
-										if (!presets) {
-											return;
-										}
-
-										const presetsString: any = {};
-										for (const [key, value] of Object.entries(presets)) {
-											presetsString[key] = String(value);
-										}
-
-										setState(prevState => ({
-											...prevState,
-											...presetsString,
-										}));
-										setGameSimPreset(event.target.value);
-									}}
-								>
-									<option value="default">
-										Select preset based on historical NBA stats
-									</option>
-									{Object.keys(gameSimPresets)
-										.sort()
-										.reverse()
-										.map(season => (
-											<option key={season} value={season}>
-												{season}
-											</option>
-										))}
-								</select>
+							<div className="list-group mb-5">
+								{catOptions.map(
+									({
+										decoration,
+										description,
+										descriptionLong,
+										godModeRequired,
+										key,
+										name,
+										type,
+										values,
+									}) => {
+										const enabled = props.godMode || !godModeRequired;
+										const id = `settings-${category.name}-${name}`;
+										return (
+											<div
+												key={key}
+												className="list-group-item list-group-item-settings"
+											>
+												<Option
+													type={type}
+													disabled={!enabled}
+													id={id}
+													onChange={handleChange(key, type === "bool")}
+													value={state[key]}
+													values={values}
+													decoration={decoration}
+													name={name}
+													description={description}
+													descriptionLong={descriptionLong}
+												/>
+											</div>
+										);
+									},
+								)}
 							</div>
-						) : null}
-						<div className="list-group">
-							{catOptions.map(
-								({
-									decoration,
-									description,
-									descriptionLong,
-									godModeRequired,
-									key,
-									name,
-									type,
-									values,
-								}) => {
-									const enabled = props.godMode || !godModeRequired;
-									const id = `settings-${category.name}-${name}`;
-									return (
-										<div
-											key={key}
-											className="list-group-item list-group-item-settings"
-										>
-											<Option
-												type={type}
-												disabled={!enabled}
-												id={id}
-												onChange={handleChange(key, type === "bool")}
-												value={state[key]}
-												values={values}
-												decoration={decoration}
-												name={name}
-												description={description}
-												descriptionLong={descriptionLong}
-											/>
-										</div>
-									);
-								},
-							)}
-						</div>
-					</React.Fragment>
-				);
-			})}
+						</React.Fragment>
+					);
+				})}
 
-			<div className="alert-secondary rounded-top mt-5 p-2 d-flex settings-buttons">
-				<button
-					className={classNames(
-						"btn",
-						godMode ? "btn-success" : "btn-god-mode border-0",
-					)}
-					onClick={handleGodModeToggle}
-					type="button"
-				>
-					{godMode ? "Disable God Mode" : "Enable God Mode"}
-				</button>
-				<button className="btn btn-primary ml-auto" disabled={submitting}>
-					Save Settings
-				</button>
+				<div className="alert-secondary rounded-top p-2 d-flex settings-buttons">
+					<button
+						className={classNames(
+							"btn",
+							godMode ? "btn-success" : "btn-god-mode border-0",
+						)}
+						onClick={handleGodModeToggle}
+						type="button"
+					>
+						{godMode ? "Disable God Mode" : "Enable God Mode"}
+					</button>
+					<button className="btn btn-primary ml-auto" disabled={submitting}>
+						Save Settings
+					</button>
+				</div>
+			</form>
+
+			<div
+				className="d-none settings-shortcuts ml-3"
+				style={{
+					alignSelf: "flex-start",
+					position: "sticky",
+					top: 60,
+				}}
+			>
+				<ul className="list-unstyled">
+					<li className="mb-1">Shortcuts:</li>
+					{categories.map(category => (
+						<li key={category.name} className="mb-1">
+							<a href={`#${category.name}`}>{category.name}</a>
+						</li>
+					))}
+				</ul>
 			</div>
-		</form>
+		</div>
 	);
 };
 

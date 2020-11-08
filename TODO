@@ -1,22 +1,16 @@
 settings re-design
-- if wide enough, add menu on the right to jump between sections
 - for boolean fields, expand clickable area to the whole thing and change color on hover
 - unify options and god mode options
   - need to support the fancy controls for some of them, and maybe use elsewhere too
-- more settings out of god mode
-- god mode stuff
-  - for god mode only settings, have some purple indicator
-  - support for a god mode toggle at the top, which would be needed for new league definitely
-  - keep the Tools > God Mode dedicated page too, with just the toggle
 - all settings should be editable when creating a new league
   - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
   - also new league has some extra settings that don't persist, like randomization and no starting injuries
   - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
   - make sure it handles setting the season for pace etc in real players leagues
-- for each setting:
-  - godMode: boolean
-  - godModeNewLeague: boolean
-  - newLeagueOnly: boolean (worth it? would only be set for equalizeRegions i think)
+  - godModeRequired value of "existingLeagueOnly" should be used here
+-  make sure ad doesn't refresh when clicking on the right menu (hash links)
+
+on player page, the injury symbol should go after All-Star and MVP symbols
 
 auto play should not work if you're fired
 

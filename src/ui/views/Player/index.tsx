@@ -688,7 +688,8 @@ const Player2 = ({
 									sortValue: i,
 									value: (
 										<>
-											{r.season}
+											{r.season}{" "}
+											<SeasonIcons season={r.season} awards={player.awards} />
 											{r.injuryIndex !== undefined &&
 											player.injuries[r.injuryIndex] ? (
 												<span
@@ -697,8 +698,7 @@ const Player2 = ({
 												>
 													+
 												</span>
-											) : null}{" "}
-											<SeasonIcons season={r.season} awards={player.awards} />
+											) : null}
 										</>
 									),
 								},

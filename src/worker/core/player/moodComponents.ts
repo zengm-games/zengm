@@ -129,7 +129,6 @@ const moodComponents = async (
 
 	{
 		// TEAM PERFORMANCE: -2 means no playoffs and 25% winning percentage. +2 means championship and 60% winning percentage, or 75% winning percentage
-		console.log("currentTeamSeason", currentTeamSeason);
 		if (currentTeamSeason) {
 			const projectedRecord = {
 				won: currentTeamSeason.won,

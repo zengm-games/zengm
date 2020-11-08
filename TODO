@@ -7,10 +7,6 @@ settings re-design
   - godModeRequired value of "existingLeagueOnly" should be used here
 -  make sure ad doesn't refresh when clicking on the right menu (hash links)
 
-player page
-- the injury symbol should go after All-Star and MVP symbols
-- star alignment https://cdn.discordapp.com/attachments/290015591216054273/774793208500191232/unknown.png
-
 auto play should not work if you're fired
 
 do something about hotkeys on live sim page and accidentally simming - should show a warning, similar to navigating away

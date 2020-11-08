@@ -2205,8 +2205,8 @@ const Settings = (props: View<"settings">) => {
 				<div className="alert-secondary rounded-top p-2 d-flex settings-buttons">
 					<button
 						className={classNames(
-							"btn",
-							godMode ? "btn-success" : "btn-god-mode border-0",
+							"btn border-0",
+							godMode ? "btn-success" : "btn-god-mode",
 						)}
 						onClick={handleGodModeToggle}
 						type="button"

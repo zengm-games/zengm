@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, toWorker } from "../util";
+import { helpers, localActions, toWorker } from "../util";
 import type { View } from "../../common/types";
 
 const GodMode = (props: View<"godMode">) => {
@@ -34,8 +34,18 @@ const GodMode = (props: View<"godMode">) => {
 			</p>
 
 			<ul>
-				<li>Customize tons of options at Tools &gt; Settings</li>
-				<li>Create custom players by going to Tools &gt; Create A Player</li>
+				<li>
+					Customize tons of options at{" "}
+					<a href={helpers.leagueUrl(["settings"])}>
+						Tools &gt; League Settings
+					</a>
+				</li>
+				<li>
+					Create custom players by going to{" "}
+					<a href={helpers.leagueUrl(["customize_player"])}>
+						Tools &gt; Create A Player
+					</a>
+				</li>
 				<li>
 					Edit any player by going to their player page and clicking Edit Player
 				</li>
@@ -44,10 +54,15 @@ const GodMode = (props: View<"godMode">) => {
 					before proposing a trade
 				</li>
 				<li>
-					You can become the GM of another team at any time with Tools &gt;
-					Switch Team
+					You can become the GM of another team at any time with{" "}
+					<a href={helpers.leagueUrl(["new_team"])}>Tools &gt; Switch Team</a>
 				</li>
-				<li>Add, remove and edit teams with Tools &gt; Manage Teams</li>
+				<li>
+					Add, remove and edit teams with{" "}
+					<a href={helpers.leagueUrl(["manage_teams"])}>
+						Tools &gt; Manage Teams
+					</a>
+				</li>
 				<li>You will never be fired!</li>
 			</ul>
 

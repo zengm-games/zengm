@@ -7,11 +7,15 @@ settings re-design
   - godModeRequired value of "existingLeagueOnly" should be used here
 -  make sure ad doesn't refresh when clicking on the right menu (hash links)
 
-on player page, the injury symbol should go after All-Star and MVP symbols
+player page
+- the injury symbol should go after All-Star and MVP symbols
+- star alignment https://cdn.discordapp.com/attachments/290015591216054273/774793208500191232/unknown.png
 
 auto play should not work if you're fired
 
 do something about hotkeys on live sim page and accidentally simming - should show a warning, similar to navigating away
+
+real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
 
 option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob
 

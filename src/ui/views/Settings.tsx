@@ -2026,7 +2026,7 @@ const Settings = (props: View<"settings">) => {
 		setSubmitting(false);
 		logEvent({
 			type: "success",
-			text: "God Mode options successfully updated.",
+			text: "League settings successfully updated.",
 			saveToDb: false,
 		});
 	};

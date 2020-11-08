@@ -5,6 +5,8 @@ settings re-design
   - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
   - make sure it handles setting the season for pace etc in real players leagues
   - godModeRequired value of "existingLeagueOnly" should be used here
+- some settings should only be editable in offseason
+  - playoff structure
 
 auto play should not work if you're fired
 

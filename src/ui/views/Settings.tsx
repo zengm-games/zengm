@@ -67,8 +67,10 @@ type Key =
 	| "tradeDeadline";
 
 type Category =
-	| "League Structure"
-	| "Finance"
+	| "Season"
+	| "Team"
+	| "Draft"
+	| "Finances"
 	| "Contracts"
 	| "Events"
 	| "Game Simulation"
@@ -120,7 +122,7 @@ export const options: {
 	descriptionLong?: ReactNode;
 }[] = [
 	{
-		category: "League Structure",
+		category: "Season",
 		key: "numGames",
 		name: "# Games Per Season",
 		godModeRequired: "always",
@@ -128,14 +130,7 @@ export const options: {
 		description: "This will only apply to seasons that have not started yet.",
 	},
 	{
-		category: "League Structure",
-		key: "quarterLength",
-		name: "Quarter Length (minutes)",
-		godModeRequired: "always",
-		type: "float",
-	},
-	{
-		category: "League Structure",
+		category: "Team",
 		key: "minRosterSize",
 		name: "Min Roster Size",
 		godModeRequired: "always",
@@ -150,14 +145,14 @@ export const options: {
 		},
 	},
 	{
-		category: "League Structure",
+		category: "Team",
 		key: "maxRosterSize",
 		name: "Max Roster Size",
 		godModeRequired: "always",
 		type: "int",
 	},
 	{
-		category: "League Structure",
+		category: "Season",
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
@@ -189,7 +184,7 @@ export const options: {
 		},
 	},
 	{
-		category: "League Structure",
+		category: "Season",
 		key: "numPlayoffByes",
 		name: "# First Round Byes",
 		godModeRequired: "existingLeagueOnly",
@@ -203,7 +198,7 @@ export const options: {
 		},
 	},
 	{
-		category: "League Structure",
+		category: "Draft",
 		key: "draftType",
 		name: "Draft Type",
 		godModeRequired: "existingLeagueOnly",
@@ -268,7 +263,7 @@ export const options: {
 		},
 	},
 	{
-		category: "League Structure",
+		category: "Draft",
 		key: "numSeasonsFutureDraftPicks",
 		name: "# Tradable Draft Pick Seasons",
 		godModeRequired: "existingLeagueOnly",
@@ -282,7 +277,7 @@ export const options: {
 		},
 	},
 	{
-		category: "League Structure",
+		category: "Draft",
 		key: "numDraftRounds",
 		name: "# Draft Rounds",
 		godModeRequired: "existingLeagueOnly",
@@ -294,7 +289,7 @@ export const options: {
 		},
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "salaryCap",
 		name: "Salary Cap",
 		godModeRequired: "always",
@@ -302,7 +297,7 @@ export const options: {
 		decoration: "currency",
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "minPayroll",
 		name: "Minimum Payroll",
 		godModeRequired: "always",
@@ -310,7 +305,7 @@ export const options: {
 		decoration: "currency",
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "luxuryPayroll",
 		name: "Luxury Tax Threshold",
 		godModeRequired: "always",
@@ -318,7 +313,7 @@ export const options: {
 		decoration: "currency",
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "luxuryTax",
 		name: "Luxury Tax",
 		godModeRequired: "always",
@@ -387,7 +382,7 @@ export const options: {
 		},
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "hardCap",
 		name: "Hard Cap",
 		godModeRequired: "always",
@@ -417,7 +412,7 @@ export const options: {
 		),
 	},
 	{
-		category: "Finance",
+		category: "Finances",
 		key: "budget",
 		name: "Budget",
 		godModeRequired: "always",
@@ -544,19 +539,6 @@ export const options: {
 			"The probability that a new player will be the son of an existing player.",
 	},
 	{
-		category: "Game Simulation",
-		key: "homeCourtAdvantage",
-		name:
-			process.env.SPORT === "football"
-				? "Home Field Advantage"
-				: "Home Court Advantage",
-		godModeRequired: "always",
-		type: "float",
-		decoration: "percent",
-		description:
-			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
-	},
-	{
 		category: "Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
@@ -610,6 +592,30 @@ export const options: {
 			</>
 		),
 		type: "bool",
+	},
+	{
+		category: "Contracts",
+		key: "playerMoodTraits",
+		name: "Player Mood Traits",
+		godModeRequired: "existingLeagueOnly",
+		type: "bool",
+		description: (
+			<>
+				This controls the existence of player mood traits (fame, loyalty, money,
+				winning). Even if you disable it, the player mood system will still
+				exist. For example, players will still want to play for a winning team,
+				but there won't be any players who get an extra bonus/penalty for having
+				the "winning" mood trait. See{" "}
+				<a
+					href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					the manual
+				</a>{" "}
+				for more info about player mood.
+			</>
+		),
 	},
 	{
 		category: "Challenge Modes",
@@ -666,37 +672,7 @@ export const options: {
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
 	},
 	{
-		category: "Game Simulation",
-		key: "ties",
-		name: "Ties (Regular Season Only)",
-		type: "bool",
-	},
-	{
-		category: "League Structure",
-		key: "playerMoodTraits",
-		name: "Player Mood Traits",
-		godModeRequired: "existingLeagueOnly",
-		type: "bool",
-		description: (
-			<>
-				This controls the existence of player mood traits (fame, loyalty, money,
-				winning). Even if you disable it, the player mood system will still
-				exist. For example, players will still want to play for a winning team,
-				but there won't be any players who get an extra bonus/penalty for having
-				the "winning" mood trait. See{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					the manual
-				</a>{" "}
-				for more info about player mood.
-			</>
-		),
-	},
-	{
-		category: "League Structure",
+		category: "Season",
 		key: "tradeDeadline",
 		name: "Trade Deadline",
 		godModeRequired: "existingLeagueOnly",
@@ -731,28 +707,12 @@ export const options: {
 if (process.env.SPORT === "basketball") {
 	options.push(
 		{
-			category: "League Structure",
+			category: "Season",
 			key: "allStarGame",
 			name: "All-Star Game",
 			type: "bool",
 			description:
 				"Changing this will not affect an in-progress season, only future seasons.",
-		},
-		{
-			category: "League Structure",
-			key: "numPlayersOnCourt",
-			name: "# Players On Court",
-			godModeRequired: "always",
-			type: "int",
-			description: "By default BBGM is 5-on-5, but you can change that here",
-			validator: (value, output) => {
-				if (value > output.minRosterSize) {
-					throw new Error("Value cannot be greater than the min roster size");
-				}
-				if (value <= 0) {
-					throw new Error("Value must be greater than 0");
-				}
-			},
 		},
 		{
 			category: "Game Simulation",
@@ -883,15 +843,62 @@ if (process.env.SPORT === "basketball") {
 	);
 }
 
-options.push({
-	category: "Player Development",
-	key: "repeatSeason",
-	name: "Groundhog Day",
-	godModeRequired: "always",
-	type: "bool",
-	description: `${descriptions.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
+options.push(
+	{
+		category: "Game Simulation",
+		key: "quarterLength",
+		name: "Quarter Length (minutes)",
+		godModeRequired: "always",
+		type: "float",
+	},
+	{
+		category: "Game Simulation",
+		key: "homeCourtAdvantage",
+		name:
+			process.env.SPORT === "football"
+				? "Home Field Advantage"
+				: "Home Court Advantage",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+		description:
+			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
+	},
+	{
+		category: "Game Simulation",
+		key: "ties",
+		name: "Ties (Regular Season Only)",
+		type: "bool",
+	},
+	{
+		category: "Player Development",
+		key: "repeatSeason",
+		name: "Groundhog Day",
+		godModeRequired: "always",
+		type: "bool",
+		description: `${descriptions.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
 				draft.`,
-});
+	},
+);
+
+if (process.env.SPORT === "basketball") {
+	options.push({
+		category: "Game Simulation",
+		key: "numPlayersOnCourt",
+		name: "# Players On Court",
+		godModeRequired: "always",
+		type: "int",
+		description: "By default BBGM is 5-on-5, but you can change that here",
+		validator: (value, output) => {
+			if (value > output.minRosterSize) {
+				throw new Error("Value cannot be greater than the min roster size");
+			}
+			if (value <= 0) {
+				throw new Error("Value must be greater than 0");
+			}
+		},
+	});
+}
 
 // See play-style-adjustments in bbgm-rosters
 const gameSimPresets =
@@ -1478,10 +1485,16 @@ const categories: {
 	helpText?: ReactNode;
 }[] = [
 	{
-		name: "League Structure",
+		name: "Season",
 	},
 	{
-		name: "Finance",
+		name: "Team",
+	},
+	{
+		name: "Draft",
+	},
+	{
+		name: "Finances",
 	},
 	{
 		name: "Contracts",

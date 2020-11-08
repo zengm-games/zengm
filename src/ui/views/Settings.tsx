@@ -1516,8 +1516,13 @@ const encodeDecodeFunctions = {
 		},
 	},
 	floatValuesOrCustom: {
-		stringify: (value: number, values: Values) =>
-			JSON.stringify([values[value] === undefined, String(value)]),
+		stringify: (value: number, values: Values) => {
+			const stringValue = String(value);
+			return JSON.stringify([
+				values.every(({ key }) => key !== stringValue),
+				stringValue,
+			]);
+		},
 		parse: (value: string) => {
 			const parts = JSON.parse(value);
 			const numberPart = parseFloat(parts[1]);
@@ -1670,7 +1675,7 @@ const Input = ({
 		if (type === "floatValuesOrCustom") {
 			const parsed = JSON.parse(value);
 			const selectValue =
-				parsed[0] || !values.some(({ key }) => key === parsed[1])
+				parsed[0] || values.every(({ key }) => key !== parsed[1])
 					? "custom"
 					: parsed[1];
 			inputElement = (

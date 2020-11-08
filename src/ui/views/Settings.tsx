@@ -899,8 +899,8 @@ options.push(
 				<p>{descriptions.difficulty}</p>
 				<p>
 					If you set the difficulty to Easy, you will not get credit for any{" "}
-					<a href="/account">Achievements</a>. This persists even if you switch
-					to a harder difficulty.
+					<a href="/account">Achievements</a>. This persists even if you later
+					switch to a harder difficulty.
 				</p>
 			</>
 		),
@@ -1989,7 +1989,7 @@ const Settings = (props: View<"settings">) => {
 				{!godMode ? (
 					<button
 						type="button"
-						className="btn btn-secondary mb-3"
+						className="btn btn-secondary mb-5"
 						onClick={() => {
 							setShowGodModeSettings(show => !show);
 						}}

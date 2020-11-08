@@ -4,6 +4,7 @@ import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
+import { DIFFICULTY } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -20,6 +21,13 @@ const setGameAttributes = async (
 	gameAttributes: Partial<GameAttributesLeague>,
 ) => {
 	const toUpdate: (keyof GameAttributesLeague)[] = [];
+
+	if (
+		gameAttributes.difficulty !== undefined &&
+		gameAttributes.difficulty <= DIFFICULTY.Easy
+	) {
+		gameAttributes.easyDifficultyInPast = true;
+	}
 
 	for (const key of helpers.keys(gameAttributes)) {
 		const currentValue = unwrap(g, key);

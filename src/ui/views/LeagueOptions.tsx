@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { DIFFICULTY } from "../../common";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { logEvent, toWorker } from "../util";
@@ -26,13 +25,9 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 		event.preventDefault();
 
 		const attrs: any = {
-			difficulty: parseFloat(state.difficulty),
 			stopOnInjury: state.stopOnInjury === "true",
 			stopOnInjuryGames: parseInt(state.stopOnInjuryGames, 10),
 		};
-		if (attrs.difficulty <= DIFFICULTY.Easy) {
-			attrs.easyDifficultyInPast = true;
-		}
 
 		await toWorker("main", "updateGameAttributes", attrs);
 

@@ -11,7 +11,6 @@ const updateLeagueOptions = async (
 		updateEvents.includes("options")
 	) {
 		return {
-			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
 			difficulty: g.get("difficulty"),
 			stopOnInjury: g.get("stopOnInjury"),
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),

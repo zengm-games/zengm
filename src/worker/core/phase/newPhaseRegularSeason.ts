@@ -148,7 +148,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Options.'; })">Enable Persistent Storage</button></center></div>`,
+				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></center></div>`,
 				type: "info",
 			});
 		}

@@ -64,7 +64,8 @@ type Key =
 	| "playerMoodTraits"
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
-	| "tradeDeadline";
+	| "tradeDeadline"
+	| "autoDeleteOldBoxScores";
 
 type Category =
 	| "Season"
@@ -878,6 +879,14 @@ options.push(
 		type: "bool",
 		description: `${descriptions.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
 				draft.`,
+	},
+	{
+		category: "Season",
+		key: "autoDeleteOldBoxScores",
+		name: "Auto Delete Old Box Scores",
+		type: "bool",
+		description:
+			"This will automatically delete box scores older than the past three seasons because box scores use a lot of disk space. See Tools > Delete Old Data for more.",
 	},
 );
 

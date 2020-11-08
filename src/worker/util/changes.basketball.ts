@@ -190,7 +190,7 @@ const changes = [
 	{
 		date: "2017-06-07",
 		msg:
-			"By default, box scores from past seasons will be deleted to save hard drive space. To diasble this new behavior, go to Tools > Options.",
+			"By default, box scores from past seasons will be deleted to save hard drive space. To diasble this new behavior, go to Tools > Settings.",
 	},
 	{
 		date: "2017-10-04",

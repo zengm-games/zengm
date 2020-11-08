@@ -10,7 +10,6 @@ const difficultyValues = Object.values(DIFFICULTY);
 
 const LeagueOptions = (props: View<"leagueOptions">) => {
 	const [state, setState] = useState({
-		autoDeleteOldBoxScores: String(props.autoDeleteOldBoxScores),
 		difficulty: String(props.difficulty),
 		difficultySelect: difficultyValues.includes(props.difficulty)
 			? String(props.difficulty)
@@ -33,7 +32,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 		event.preventDefault();
 
 		const attrs: any = {
-			autoDeleteOldBoxScores: state.autoDeleteOldBoxScores === "true",
 			difficulty: parseFloat(state.difficulty),
 			stopOnInjury: state.stopOnInjury === "true",
 			stopOnInjuryGames: parseInt(state.stopOnInjuryGames, 10),
@@ -63,28 +61,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 
 			<form onSubmit={handleFormSubmit} className="mb-5">
 				<div className="row">
-					<div className="col-sm-3 col-6 form-group">
-						<label htmlFor="options-auto-delete-box-scores">
-							Auto Delete Old Box Scores
-						</label>
-						<HelpPopover title="Auto Delete Old Box Scores" className="ml-1">
-							This will automatically delete box scores older than the past
-							three seasons because box scores use a lot of disk space. See{" "}
-							<a href={helpers.leagueUrl(["delete_old_data"])}>
-								Delete Old Data
-							</a>{" "}
-							for more.
-						</HelpPopover>
-						<select
-							id="options-auto-delete-box-scores"
-							className="form-control"
-							onChange={handleChange("autoDeleteOldBoxScores")}
-							value={state.autoDeleteOldBoxScores}
-						>
-							<option value="true">Enabled</option>
-							<option value="false">Disabled</option>
-						</select>
-					</div>
 					<div className="col-sm-3 col-6 form-group">
 						<label htmlFor="options-stop-on-injury">
 							Stop On Injury Longer Than
@@ -167,7 +143,6 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 };
 
 LeagueOptions.propTypes = {
-	autoDeleteOldBoxScores: PropTypes.bool.isRequired,
 	difficulty: PropTypes.number.isRequired,
 	stopOnInjury: PropTypes.bool.isRequired,
 	stopOnInjuryGames: PropTypes.number.isRequired,

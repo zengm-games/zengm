@@ -95,7 +95,10 @@ type FieldType =
 
 type Decoration = "currency" | "percent";
 
-type Values = { [key: string]: string | undefined };
+type Values = {
+	key: string;
+	value: string;
+}[];
 
 export const descriptions = {
 	challengeLoseBestPlayer:
@@ -256,18 +259,18 @@ export const options: {
 			</>
 		),
 		type: "string",
-		values: {
-			nba2019: "NBA 2019",
-			nba1994: "NBA 1994",
-			nba1990: "NBA 1990",
-			randomLotteryFirst3: "Random, first 3",
-			randomLottery: "Random, lottery only",
-			coinFlip: "Coin flip",
-			random: "Random",
-			noLottery: "No lottery, worst to best",
-			noLotteryReverse: "No lottery, best to worst",
-			freeAgents: "No draft, rookies are free agents",
-		},
+		values: [
+			{ key: "nba2019", value: "NBA 2019" },
+			{ key: "nba1994", value: "NBA 1994" },
+			{ key: "nba1990", value: "NBA 1990" },
+			{ key: "randomLotteryFirst3", value: "Random, first 3" },
+			{ key: "randomLottery", value: "Random, lottery only" },
+			{ key: "coinFlip", value: "Coin flip" },
+			{ key: "random", value: "Random" },
+			{ key: "noLottery", value: "No lottery, worst to best" },
+			{ key: "noLotteryReverse", value: "No lottery, best to worst" },
+			{ key: "freeAgents", value: "No draft, rookies are free agents" },
+		],
 	},
 	{
 		category: "Draft",
@@ -850,17 +853,6 @@ if (process.env.SPORT === "basketball") {
 	);
 }
 
-const difficultyValues: Values = {
-	[DIFFICULTY.Easy]: "Easy",
-	[DIFFICULTY.Normal]: "Normal",
-	[DIFFICULTY.Hard]: "Hard",
-	[DIFFICULTY.Insane]: "Insane",
-};
-
-for (const [description, difficulty] of Object.entries(DIFFICULTY)) {
-	difficultyValues[difficulty] = description;
-}
-
 options.push(
 	{
 		category: "Game Simulation",
@@ -912,7 +904,12 @@ options.push(
 				</p>
 			</>
 		),
-		values: difficultyValues,
+		values: [
+			{ key: String(DIFFICULTY.Easy), value: "Easy" },
+			{ key: String(DIFFICULTY.Normal), value: "Normal" },
+			{ key: String(DIFFICULTY.Hard), value: "Hard" },
+			{ key: String(DIFFICULTY.Insane), value: "Insane" },
+		],
 	},
 	{
 		category: "General",
@@ -1520,9 +1517,8 @@ const encodeDecodeFunctions = {
 	},
 	floatValuesOrCustom: {
 		stringify: (value: number, values: Values) =>
-			JSON.stringify([values[value] === undefined, value]),
+			JSON.stringify([values[value] === undefined, String(value)]),
 		parse: (value: string) => {
-			console.log("parse floatValuesOrCustom value", value);
 			const parts = JSON.parse(value);
 			const numberPart = parseFloat(parts[1]);
 			if (Number.isNaN(numberPart)) {
@@ -1674,7 +1670,9 @@ const Input = ({
 		if (type === "floatValuesOrCustom") {
 			const parsed = JSON.parse(value);
 			const selectValue =
-				parsed[0] || values[parsed[1]] === undefined ? "custom" : parsed[1];
+				parsed[0] || !values.some(({ key }) => key === parsed[1])
+					? "custom"
+					: parsed[1];
 			inputElement = (
 				<>
 					<select
@@ -1682,9 +1680,9 @@ const Input = ({
 						className="form-control rounded-bottom-0"
 						value={selectValue}
 					>
-						{Object.keys(values).map(key => (
+						{values.map(({ key, value }) => (
 							<option key={key} value={key}>
-								{values[key]}
+								{value}
 							</option>
 						))}
 						<option value="custom">Custom</option>
@@ -1702,9 +1700,9 @@ const Input = ({
 		} else {
 			inputElement = (
 				<select {...commonProps}>
-					{Object.keys(values).map(key => (
+					{values.map(({ key, value }) => (
 						<option key={key} value={key}>
-							{values[key]}
+							{value}
 						</option>
 					))}
 				</select>
@@ -1748,7 +1746,7 @@ Input.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	type: PropTypes.string.isRequired,
 	value: PropTypes.string.isRequired,
-	values: PropTypes.object,
+	values: PropTypes.array,
 };
 
 const Option = ({
@@ -1905,7 +1903,6 @@ const Settings = (props: View<"settings">) => {
 		} else {
 			value = event.target.value;
 		}
-		console.log("handleChange", name, value);
 		setState(prevState => ({
 			...prevState,
 			[name]: value,

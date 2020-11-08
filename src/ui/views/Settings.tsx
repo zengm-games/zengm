@@ -1608,6 +1608,10 @@ const categories: {
 					current score.
 				</p>
 				<p>
+					By default, the trigger is 4 minutes remaining and the target points
+					to add is 8.
+				</p>
+				<p>
 					The Elam Ending generally makes the end of the game more exciting.
 					Nobody is trying to run out the clock. Nobody is trying to foul or
 					call strategic timeouts or rush shots. It's just high quality
@@ -1709,7 +1713,7 @@ const Input = ({
 						{...commonProps}
 						className="form-control"
 						value={selectValue}
-						style={{ width: 70 }}
+						style={{ width: 60 }}
 					>
 						{values.map(({ key, value }) => (
 							<option key={key} value={key}>

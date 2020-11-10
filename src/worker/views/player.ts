@@ -275,16 +275,31 @@ const updatePlayer = async (
 
 			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
 
+			const teamSeasonsIndex = idb.league
+				.transaction("teamSeasons")
+				.store.index("tid, season");
+
+			console.log("ps.season", ps.season);
 			let ts:
 				| {
 						colors: [string, string, string];
 						name: string;
 						region: string;
 				  }
-				| undefined = await idb.league
-				.transaction("teamSeasons")
-				.store.index("season, tid")
-				.get([ps.season, ps.tid]);
+				| undefined = await teamSeasonsIndex.get([ps.tid, ps.season]);
+			if (!ts) {
+				// No team season entry for the requested season... is there an older one, somehow? If so, use the latest one before the requested season. If not, use the first we find (it is the oldest existing one, so assume that applies).
+				let cursor = await teamSeasonsIndex.openCursor(
+					IDBKeyRange.lowerBound([ps.tid, -Infinity]),
+				);
+				while (cursor) {
+					if (cursor.value.season > ps.season && ts) {
+						break;
+					}
+					ts = cursor.value;
+					cursor = await cursor.continue();
+				}
+			}
 			if (!ts) {
 				ts = await idb.cache.teams.get(ps.tid);
 			}

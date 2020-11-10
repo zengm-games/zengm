@@ -46,7 +46,7 @@ const updatePlayMenu = async () => {
 		},
 		untilTradeDeadline: {
 			label: "Until trade deadline",
-			key: "b",
+			key: "r",
 		},
 		viewAllStarSelections: {
 			url: helpers.leagueUrl(["all_star_draft"]),

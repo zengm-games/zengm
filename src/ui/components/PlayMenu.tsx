@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { realtimeUpdate, toWorker } from "../util";
+import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
 import classNames from "classnames";
 
@@ -20,7 +20,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 
 const PlayMenu = ({ lid, spectator, options }: Props) => {
 	useEffect(() => {
-		const handleKeydown = (event: KeyboardEvent) => {
+		const handleKeydown = async (event: KeyboardEvent) => {
 			// alt + letter
 			if (
 				event.altKey &&
@@ -33,6 +33,22 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 
 				if (!option) {
 					return;
+				}
+
+				if (window.location.pathname.includes("/live_game")) {
+					const liveGameInProgress = local.getState().liveGameInProgress;
+					if (liveGameInProgress) {
+						const proceed = await confirm(
+							"Are you sure you meant to press a Play Menu keyboard shortcut while watching a live sim?",
+							{
+								okText: "Yes",
+								cancelText: "Cancel",
+							},
+						);
+						if (!proceed) {
+							return;
+						}
+					}
 				}
 
 				if (option.url) {

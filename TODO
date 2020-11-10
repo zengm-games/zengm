@@ -1,6 +1,7 @@
 redesign draft screen
 - compute skills somehow.. lower cutoff? project future like pot?
 - https://cdn.discordapp.com/attachments/331882115119448065/775567088584491018/unknown.png
+- should not require scrolling on mobile
 
 Click on the phase by play button to quickly take you to relevant page. So clicking on playoffs takes you to playoffs, draft to draft, FA to FA. So on. Reg and preseason to dashboard @dooby moogey#2784
 
@@ -13,8 +14,6 @@ settings re-design
   - godModeRequired value of "existingLeagueOnly" should be used here
 - some settings should only be editable in offseason
   - playoff structure
-
-do something about hotkeys on live sim page and accidentally simming - should show a warning, similar to navigating away
 
 real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
 
@@ -31,10 +30,6 @@ when I just deleted old data, processing after draft and pre season sped up atle
 
 how to stop 2p from beign a negative rating
 - @nicidob says: basic summary: it's used only in "usage", but it's a small part of that, and "shoot midrange". Well... shoot midrange is like 0.8 to 0.9 PPS, while Dunks and 3s are 1.2 and 1.1 PPS. Sure, actual ratings shift the %s, but i'm not sure how extreme it'd have to get before your MR PPS isn't the "worst possible shot". So the 2p setting basically is "how likely are you to take the worst possible shot". My idea is to make the mid-range more of a "leftover"... if your 3p or dunk or LP isn't high enough, it gets picked. then higher 2p is just higher MR accuracy and its negative effect is gone. Then you can era-adjust the default
-
-if you're fired, you can auto-sim to be not fired
-
-similar, it'd be nice to fix the "trade all my goodies to my new team" thing, if u haven't already
 
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/jhtm1k/im_playing_charlotte_queens_on_hard_mode_and_i/

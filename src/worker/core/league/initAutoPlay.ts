@@ -1,8 +1,22 @@
 import autoPlay from "./autoPlay";
-import { local, toUI, g } from "../../util";
+import { local, toUI, g, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const initAutoPlay = async (conditions: Conditions) => {
+	if (g.get("gameOver")) {
+		logEvent(
+			{
+				type: "error",
+				text: "You can't auto play while you're fired!",
+				showNotification: true,
+				persistent: true,
+				saveToDb: false,
+			},
+			conditions,
+		);
+		return false;
+	}
+
 	const result = await toUI(
 		"autoPlayDialog",
 		[g.get("season"), !!g.get("repeatSeason")],

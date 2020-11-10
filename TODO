@@ -1,3 +1,9 @@
+redesign draft screen
+- compute skills somehow.. lower cutoff? project future like pot?
+- https://cdn.discordapp.com/attachments/331882115119448065/775567088584491018/unknown.png
+
+Click on the phase by play button to quickly take you to relevant page. So clicking on playoffs takes you to playoffs, draft to draft, FA to FA. So on. Reg and preseason to dashboard @dooby moogey#2784
+
 settings re-design
 - all settings should be editable when creating a new league
   - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
@@ -7,8 +13,6 @@ settings re-design
   - godModeRequired value of "existingLeagueOnly" should be used here
 - some settings should only be editable in offseason
   - playoff structure
-
-auto play should not work if you're fired
 
 do something about hotkeys on live sim page and accidentally simming - should show a warning, similar to navigating away
 

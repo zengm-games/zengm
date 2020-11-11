@@ -73,6 +73,7 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
+import { getScore } from "../core/player/checkJerseyNumberRetirement";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1941,6 +1942,19 @@ const retiredJerseyNumberUpsert = async (
 		throw new Error("Invalid value for player ID number");
 	}
 
+	let playerText = "";
+	let score: number | undefined;
+	if (info.pid !== undefined) {
+		const p = await idb.getCopy.players({ pid: info.pid });
+		if (p) {
+			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>'s `;
+
+			score = getScore(p, tid);
+		}
+	}
+
 	// Insert or update?
 	if (i === undefined) {
 		if (!t.retiredJerseyNumbers) {
@@ -1949,6 +1963,7 @@ const retiredJerseyNumberUpsert = async (
 
 		t.retiredJerseyNumbers.push({
 			...info,
+			score,
 		});
 	} else {
 		if (!t.retiredJerseyNumbers) {
@@ -1961,17 +1976,8 @@ const retiredJerseyNumberUpsert = async (
 
 		t.retiredJerseyNumbers[i] = {
 			...info,
+			score,
 		};
-	}
-
-	let playerText = "";
-	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid });
-		if (p) {
-			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-				p.firstName
-			} ${p.lastName}</a>'s `;
-		}
 	}
 
 	logEvent({

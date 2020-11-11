@@ -1134,6 +1134,7 @@ export type Team = {
 		seasonRetired: number;
 		seasonTeamInfo: number;
 		pid?: number;
+		score?: number;
 		text: string;
 	}[];
 };

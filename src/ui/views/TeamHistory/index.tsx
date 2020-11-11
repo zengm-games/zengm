@@ -99,7 +99,14 @@ const TeamHistory = ({
 						tid={tid}
 						userTid={userTid}
 					/>
-					<Players players={players} stats={stats} tid={tid} />
+					<Players
+						godMode={godMode}
+						season={season}
+						players={players}
+						stats={stats}
+						tid={tid}
+						userTid={userTid}
+					/>
 				</div>
 			</div>
 		</>

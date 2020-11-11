@@ -279,7 +279,6 @@ const updatePlayer = async (
 				.transaction("teamSeasons")
 				.store.index("tid, season");
 
-			console.log("ps.season", ps.season);
 			let ts:
 				| {
 						colors: [string, string, string];

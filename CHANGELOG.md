@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-11-10: Added a button to easily retire a player's jersey number, next to each player on the Team History page. [[1]]()
+
 * 2020-11-08: Redesigned league settings page, including more settings available outside of God Mode. [[1]](https://basketball-gm.com/blog/2020/11/settings-redesign/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jqeogt/redesigned_league_settings_page_including_more/)
 
 * 2020-11-02: Added a summary of a player's awards at the top of the player profile page. [[1]](https://old.reddit.com/r/BasketballGM/comments/jn1zc6/added_a_summary_of_a_players_awards_at_the_top_of/)

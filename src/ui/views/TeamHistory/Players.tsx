@@ -1,25 +1,69 @@
 import React from "react";
 import { PLAYER } from "../../../common";
 import { DataTable, PlayerNameLabels } from "../../components";
-import { helpers, getCols } from "../../util";
+import { helpers, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
+import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
 
+// The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({
 	gmHistory,
+	godMode,
 	players,
+	season,
 	stats,
 	tid,
-}: Pick<View<"teamHistory">, "players" | "stats" | "tid"> & {
-	gmHistory?: boolean;
-}) => {
+	userTid,
+}: Pick<View<"teamHistory">, "players" | "stats" | "tid"> &
+	Partial<Pick<View<"teamHistory">, "godMode" | "season" | "userTid">> & {
+		gmHistory?: boolean;
+	}) => {
+	const includeRetireJerseyButton = (tid === userTid || godMode) && !gmHistory;
+
+	const retireJerseyNumber = async (p: any) => {
+		let number: string | undefined;
+		const numbers = Object.keys(p.retirableJerseyNumbers);
+		if (numbers.length === 1) {
+			number = numbers[0];
+		} else if (numbers.length > 1) {
+			number = await playerRetireJerseyNumberDialog(p);
+		}
+		if (!number) {
+			return;
+		}
+
+		const seasonTeamInfo =
+			p.retirableJerseyNumbers[number] &&
+			p.retirableJerseyNumbers[number].length > 0
+				? p.retirableJerseyNumbers[number][
+						p.retirableJerseyNumbers[number].length - 1
+				  ]
+				: season;
+
+		await toWorker("main", "retiredJerseyNumberUpsert", tid, undefined, {
+			number,
+			seasonRetired: season,
+			seasonTeamInfo,
+			pid: p.pid,
+			text: "",
+		});
+	};
+
 	const cols = getCols(
 		"Name",
 		"Pos",
 		...stats.map(stat => `stat:${stat}`),
 		"Last Season",
+		"Actions",
 	);
+	if (!includeRetireJerseyButton) {
+		cols.pop();
+	}
 
 	const rows = players.map(p => {
+		const canRetireJerseyNumber =
+			Object.keys(p.retirableJerseyNumbers).length > 0 && p.tid !== tid;
+
 		return {
 			key: p.pid,
 			data: [
@@ -34,6 +78,17 @@ const Players = ({
 				p.pos,
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 				p.lastYr,
+				...(includeRetireJerseyButton
+					? [
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={!canRetireJerseyNumber}
+								onClick={() => retireJerseyNumber(p)}
+							>
+								Retire Jersey
+							</button>,
+					  ]
+					: []),
 			],
 			classNames: {
 				// Highlight active and HOF players

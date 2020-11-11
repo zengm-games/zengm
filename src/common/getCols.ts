@@ -1267,6 +1267,7 @@ const cols: {
 	Acquired: {
 		desc: "How Player Was Acquired",
 	},
+	Actions: {},
 	Age: {
 		sortType: "number",
 	},

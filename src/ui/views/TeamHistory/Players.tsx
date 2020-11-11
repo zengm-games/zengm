@@ -62,7 +62,9 @@ const Players = ({
 
 	const rows = players.map(p => {
 		const canRetireJerseyNumber =
-			Object.keys(p.retirableJerseyNumbers).length > 0 && p.tid !== tid;
+			!!p.retirableJerseyNumbers &&
+			Object.keys(p.retirableJerseyNumbers).length > 0 &&
+			p.tid !== tid;
 
 		return {
 			key: p.pid,

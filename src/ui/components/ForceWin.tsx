@@ -33,6 +33,10 @@ const useSavingState = () => {
 	return [state, wrappedSetState] as const;
 };
 
+const style = {
+	minWidth: 41,
+};
+
 const ForceWin = ({
 	className,
 	game,
@@ -84,6 +88,7 @@ const ForceWin = ({
 								}
 								setState("saved");
 							}}
+							style={style}
 						>
 							{allStarGame
 								? `AS${tid === -1 ? 2 : 1}`

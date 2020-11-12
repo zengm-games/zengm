@@ -70,8 +70,6 @@ genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - remove forceWin hack in setSchedule
 - https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
 
-make force win buttons same width
-
 schedule editor
 
 star icon next to year player was all star

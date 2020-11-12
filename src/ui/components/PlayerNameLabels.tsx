@@ -37,7 +37,8 @@ const PlayerNameLabels = (props: {
 	let injuryIcon: React.ReactNode = null;
 
 	if (injury !== undefined) {
-		if (injury.gamesRemaining > 0) {
+		// type check is for 1 game injuries, they're stored as 0 in the box score because number of games is determined after the game is played
+		if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
 			const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 			const title = `${injury.type} (out ${injury.gamesRemaining} more ${
 				injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`

@@ -159,7 +159,7 @@ a.god-mode.active {
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		color: $black;
+		color: $black !important;
 	}
 }
 

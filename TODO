@@ -1,11 +1,4 @@
-better AI jersey retirement
-- keep score along with retired
-  - maxValue - threshold
-  - keep for ones user retires too
-    - write function to compute score for player+tid, and use in both places
-- increase limit to 9
-- https://old.reddit.com/r/BasketballGM/comments/jryt79/added_a_button_to_easily_retire_a_players_jersey/gbwzdj5/?context=3
-- test position distribution in FBGM
+more variation in pace plz @nicidob
 
 redesign draft screen
 - on draft screen, add a new "Scouting" column that contains skills applied with lower cutoffs

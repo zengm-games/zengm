@@ -417,15 +417,15 @@ const refreshCache = async () => {
 
 	// Estimate the order of the picks by team
 	const wps = teams.map(t => {
-		const teamOvrRank = teamOvrs.findIndex(t2 => t2.tid === t.tid);
+		let teamOvrRank = teamOvrs.findIndex(t2 => t2.tid === t.tid);
 		if (teamOvrRank < 0) {
-			throw new Error("Team ovr rank not found");
+			// This happens if a team has no players on it - just assume they are the worst
+			teamOvrRank = teamOvrs.length;
 		}
 
 		// 25% to 75% based on rank
 		const teamOvrWinp =
-			0.25 +
-			(0.5 * (teamOvrs.length - 1 - teamOvrRank)) / (teamOvrs.length - 1);
+			0.25 + (0.5 * (teams.length - 1 - teamOvrRank)) / (teams.length - 1);
 
 		const teamSeasons = allTeamSeasons.filter(
 			teamSeason => teamSeason.tid === t.tid,

@@ -82,6 +82,16 @@ const GodMode = (props: View<"godMode">) => {
 			>
 				{godMode ? "Disable God Mode" : "Enable God Mode"}
 			</button>
+
+			<div>
+				<p className="alert alert-info mt-3 d-inline-block">
+					The additional settings that used to be here are now available at{" "}
+					<a href={helpers.leagueUrl(["settings"])}>
+						Tools &gt; League Settings
+					</a>
+					.
+				</p>
+			</div>
 		</>
 	);
 };

@@ -248,11 +248,14 @@ type ScoringSummaryState = {
 	count: number;
 };
 
-const reducer = (sum: number, event: ScoringSummaryEvent) => {
-	if (event.hide) {
-		return sum;
+const getCount = (events: ScoringSummaryEvent[]) => {
+	let count = 0;
+	for (const event of events) {
+		if (!event.hide) {
+			count += 1;
+		}
 	}
-	return sum + 1;
+	return count;
 };
 
 class ScoringSummary extends React.Component<
@@ -269,12 +272,12 @@ class ScoringSummary extends React.Component<
 
 	static getDerivedStateFromProps(props: ScoringSummaryProps) {
 		return {
-			count: props.events.reduce(reducer, 0),
+			count: getCount(props.events),
 		};
 	}
 
 	shouldComponentUpdate(nextProps: ScoringSummaryProps) {
-		const newCount = nextProps.events.reduce(reducer, 0);
+		const newCount = getCount(nextProps.events);
 		return this.state.count !== newCount;
 	}
 

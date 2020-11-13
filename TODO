@@ -508,7 +508,10 @@ FBGM
 - when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
 - had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
 - fantasy points
-- late game strategy, like punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
+- late game strategy
+  - punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
+  - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
+- penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

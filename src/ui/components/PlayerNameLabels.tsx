@@ -37,8 +37,15 @@ const PlayerNameLabels = (props: {
 	let injuryIcon: React.ReactNode = null;
 
 	if (injury !== undefined) {
-		// type check is for 1 game injuries, they're stored as 0 in the box score because number of games is determined after the game is played
-		if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
+		if (injury.gamesRemaining === -1) {
+			// This is used in box scores, where it would be confusing to display "out X more games" in old box scores
+			injuryIcon = (
+				<span className="badge badge-danger badge-injury" title={injury.type}>
+					+
+				</span>
+			);
+		} else if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
+			// type check is for 1 game injuries, they're stored as 0 in the box score because number of games is determined after the game is played
 			const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 			const title = `${injury.type} (out ${injury.gamesRemaining} more ${
 				injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`
@@ -46,13 +53,6 @@ const PlayerNameLabels = (props: {
 			injuryIcon = (
 				<span className="badge badge-danger badge-injury" title={title}>
 					{injury.gamesRemaining}
-				</span>
-			);
-		} else if (injury.gamesRemaining === -1) {
-			// This is used in box scores, where it would be confusing to display "out X more games" in old box scores
-			injuryIcon = (
-				<span className="badge badge-danger badge-injury" title={injury.type}>
-					+
 				</span>
 			);
 		}

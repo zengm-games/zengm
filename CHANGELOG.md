@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-11-12: In FBGM live sims, no more spoilers where scoring plays appeared in the scoring summary before being shown in the play-by-play. [[1]]()
+* DEV: In FBGM live sims, no more spoilers where scoring plays appeared in the scoring summary before being shown in the play-by-play. [[1]]()
 
 * 2020-11-10: Added a button to easily retire a player's jersey number, next to each player on the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/jryt79/added_a_button_to_easily_retire_a_players_jersey/)
 

@@ -479,7 +479,6 @@ add option to disable salary cap @hrmantovani#2284
 FBGM
 - retirement age
   - increase roster size limit to 55
-- when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - Some automatic first down penalties result in 1st and 1
 - some penalties push team into endzone
@@ -508,7 +507,6 @@ FBGM
   - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJZJZkXTNBnKVDvKLkMfMMTZdG
   - https://i.imgur.com/qb1Fuhf.png
 - when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
-- scoring summary updates before play by play
 - had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
 - fantasy points
 - late game strategy, like punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310

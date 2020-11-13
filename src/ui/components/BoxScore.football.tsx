@@ -239,15 +239,6 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 	return processedEvents;
 };
 
-type ScoringSummaryProps = {
-	events: ScoringSummaryEvent[];
-	teams: [Team, Team];
-};
-
-type ScoringSummaryState = {
-	count: number;
-};
-
 const getCount = (events: ScoringSummaryEvent[]) => {
 	let count = 0;
 	for (const event of events) {
@@ -258,32 +249,15 @@ const getCount = (events: ScoringSummaryEvent[]) => {
 	return count;
 };
 
-class ScoringSummary extends React.Component<
-	ScoringSummaryProps,
-	ScoringSummaryState
-> {
-	constructor(props: ScoringSummaryProps) {
-		super(props);
-
-		this.state = {
-			count: 0,
-		};
-	}
-
-	static getDerivedStateFromProps(props: ScoringSummaryProps) {
-		return {
-			count: getCount(props.events),
-		};
-	}
-
-	shouldComponentUpdate(nextProps: ScoringSummaryProps) {
-		const newCount = getCount(nextProps.events);
-		return this.state.count !== newCount;
-	}
-
-	render() {
-		const { events, teams } = this.props;
-
+const ScoringSummary = React.memo(
+	({
+		events,
+		teams,
+	}: {
+		count: number;
+		events: ScoringSummaryEvent[];
+		teams: [Team, Team];
+	}) => {
 		let prevQuarter: keyof typeof quarters;
 
 		const processedEvents = processEvents(events);
@@ -336,8 +310,11 @@ class ScoringSummary extends React.Component<
 				</tbody>
 			</table>
 		);
-	}
-}
+	},
+	(prevProps, nextProps) => {
+		return prevProps.count === nextProps.count;
+	},
+);
 
 // @ts-ignore
 ScoringSummary.propTypes = {
@@ -351,6 +328,7 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
+				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
 				teams={boxScore.teams}
 			/>

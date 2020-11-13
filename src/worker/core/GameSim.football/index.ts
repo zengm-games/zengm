@@ -2037,7 +2037,11 @@ class GameSim {
 			}
 		}
 
-		penInfo.totYds -= adjustment;
+		if (side === "defense") {
+			penInfo.totYds -= adjustment;
+		} else {
+			penInfo.totYds += adjustment;
+		}
 		penInfo.penYds -= adjustment;
 
 		// recordedPenYds also includes spotYds for defensive pass interference

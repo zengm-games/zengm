@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: In FBGM live sims, no more spoilers where scoring plays appeared in the scoring summary before being shown in the play-by-play. [[1]]()
+* 2020-11-12: Fixed bug in FBGM where "half the distance to the goal" penalties were being assessed wrong, leading to the line of scrimmage being in the endzone. [[1]](https://old.reddit.com/r/Football_GM/comments/jtar0p/will_they_score_a_touchdown_you_have_to_wait_and/)
+
+* 2020-11-12: In FBGM live sims, no more spoilers where scoring plays appeared in the scoring summary before being shown in the play-by-play. [[1]](https://old.reddit.com/r/Football_GM/comments/jtar0p/will_they_score_a_touchdown_you_have_to_wait_and/)
 
 * 2020-11-10: Added a button to easily retire a player's jersey number, next to each player on the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/jryt79/added_a_button_to_easily_retire_a_players_jersey/)
 

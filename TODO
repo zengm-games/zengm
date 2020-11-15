@@ -5,7 +5,8 @@ store event metadata better, generate html dynamically
   - career stats with this team after the trade
     - include titles won
   - show warning about stat accuracy if player was re-traded to same team multiple times in season
-  - store phase of trade too
+  - contracts
+  - https://discord.com/channels/290013534023057409/290015468939640832/777430391895883776
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded

@@ -114,6 +114,7 @@ const processTrade = async (
 		tids: Array.from(tids), // Array.from is for Flow
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
 		assets,
+		phase: g.get("phase"),
 	});
 };
 

@@ -3,19 +3,22 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
 import { SafeHtml } from "../components";
+import { PHASE_TEXT } from "../../common";
 
-const TradeSummary = ({ season, teams }: View<"tradeSummary">) => {
+const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 	useTitleBar({
 		title: "Trade Summary",
 	});
 
-	if (!teams || season === undefined) {
+	if (!teams || season === undefined || phase === undefined) {
 		return <p>Trade not found.</p>;
 	}
 
 	return (
 		<>
-			<h2>Trade during the {season} PHASE GOES HERE</h2>
+			<h2>
+				Trade during the {season} {PHASE_TEXT[phase]}
+			</h2>
 			<div className="d-flex">
 				{teams.map((t, i) => (
 					<div key={t.tid} className={i === 0 ? "mr-5" : undefined}>

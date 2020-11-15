@@ -198,6 +198,7 @@ export type EventBBGMWithoutKey =
 			dpids: number[];
 			tids: number[];
 			season: number;
+			phase?: Phase; // Only legacy will be undefined
 			score?: number; // Only legacy will be undefined
 			assets?: TradeEventAssets; // Only legacy will be undefined
 	  };

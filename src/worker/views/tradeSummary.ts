@@ -54,6 +54,7 @@ const updateTradeSummary = async (
 			eid,
 			teams,
 			season: event.season,
+			phase: event.phase,
 		};
 	}
 };

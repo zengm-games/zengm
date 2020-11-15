@@ -78,6 +78,11 @@ const updateTradeSummary = async (
 				contract: PlayerContract;
 			};
 
+			type CommonPick = {
+				abbrev?: string; // from originalTid
+				tid: number; // from originalTid
+			};
+
 			const assets: (
 				| ({
 						type: "player";
@@ -90,12 +95,12 @@ const updateTradeSummary = async (
 				| ({
 						type: "deletedPlayer";
 				  } & CommonPlayer)
-				| {
+				| ({
 						type: "realizedPick";
-				  }
-				| {
+				  } & CommonPick)
+				| ({
 						type: "unrealizedPick";
-				  }
+				  } & CommonPick)
 			)[] = [];
 
 			for (const asset of event.teams[i].assets) {
@@ -131,6 +136,27 @@ const updateTradeSummary = async (
 						});
 					}
 				} else {
+					// Show abbrev only if it's another team's pick
+					let abbrev;
+					if (otherTid !== asset.originalTid) {
+						const season =
+							typeof asset.season === "number" ? asset.season : event.season;
+						const teamInfo = await getTeamInfoBySeason(
+							asset.originalTid,
+							season,
+						);
+						if (teamInfo) {
+							abbrev = teamInfo.abbrev;
+						} else {
+							abbrev = "???";
+						}
+					}
+
+					const common = {
+						abbrev,
+						tid: asset.originalTid,
+					};
+
 					// Has the pick been made yet or not?
 				}
 			}

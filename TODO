@@ -1,19 +1,18 @@
 store event metadata better, generate html dynamically
-- use to flesh out trade summaries
-- to do that for draft, would need to store old draft pick info for dpid, otherwise it's either slow lookup (scan for year+round+team) or impossible (old drafts or custom drafts with multiple picks for one team in a round)
 - trade summary page
   - link from event, and roster page transaction column
   - career stats after trade
   - career stats with this team after the trade
   - show warning about stat accuracy if player was re-traded to same team multiple times in season
-- for team region/name/abbrev, abstract code used in views/player.ts to find teamSeason info
-  - if that is too slow, load it all and cache in memory
 - typescript
   - might need to split event and options into two separate args in logEvent
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded
   - also show up on player page of player picked with that pick
+
+allow positions to be edited for retired players outside of god mode
+- https://old.reddit.com/r/Football_GM/comments/jtoogd/wrte_ypc_option_to_turn_off_auto_positions/gcb5gfb/?context=3
 
 more variation in pace plz @nicidob
 
@@ -420,6 +419,7 @@ fuzz/scouting revamp
 - scouting budget affects accuracy of mood percentages?
 
 wrong team abbrev on player history https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
+- getTeamInfoBySeason
 
 add records to top scroll on desktop https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/ftg0cvm/?context=3
 

@@ -17,6 +17,7 @@ export { default as genMessage } from "./genMessage";
 export { default as getNewLeagueLid } from "./getNewLeagueLid";
 export { default as getProcessedGames } from "./getProcessedGames";
 export { default as getTeamColors } from "./getTeamColors";
+export { default as getTeamInfoBySeason } from "./getTeamInfoBySeason";
 export { default as helpers } from "./helpers";
 export { default as initUILocalGames } from "./initUILocalGames";
 export { default as injuries } from "./injuries";

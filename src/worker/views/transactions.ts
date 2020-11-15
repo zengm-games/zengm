@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { formatEventText, g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateEventLog = async (
@@ -44,11 +44,26 @@ const updateEventLog = async (
 			events = events.filter(event => event.type === inputs.eventType);
 		}
 
-		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+		const events2 = [];
+		for (const event of events) {
+			if (event.text !== undefined) {
+				events2.push(event);
+			} else {
+				events2.push({
+					type: event.type,
+					text: await formatEventText(event),
+					pids: event.pids,
+					tids: event.tids,
+					season: event.season,
+					score: event.score,
+				});
+			}
+			helpers.correctLinkLid(g.get("lid"), events2[events2.length - 1]);
+		}
 
 		return {
 			abbrev: inputs.abbrev,
-			events,
+			events: events2,
 			season: inputs.season,
 			eventType: inputs.eventType,
 			tid: inputs.tid,

@@ -1,5 +1,6 @@
 import type {
 	Conditions,
+	EventBBGMWithoutKey,
 	LogEventSaveOptions,
 	LogEventShowOptions,
 	LogEventType,
@@ -9,14 +10,9 @@ import type {
 type LogEventOptions = {
 	extraClass?: string;
 	persistent?: boolean;
-	pids?: number[];
 	saveToDb?: boolean;
-	score?: number;
 	showNotification?: boolean;
-	text: string;
-	tids?: number[];
-	type: LogEventType;
-};
+} & Omit<EventBBGMWithoutKey, "season">;
 
 function createLogger(
 	saveEvent: (a: LogEventSaveOptions) => void,
@@ -26,37 +22,27 @@ function createLogger(
 		{
 			extraClass,
 			persistent = false,
-			pids,
 			saveToDb = true,
-			score,
 			showNotification = true,
-			text,
-			tids,
-			type,
+			...event
 		}: LogEventOptions,
 		conditions?: Conditions,
 	) => {
 		if (saveToDb) {
-			if (pids === undefined && tids === undefined) {
+			if (event.pids === undefined && event.tids === undefined) {
 				throw new Error("Saved event must include pids or tids");
 			}
 
-			saveEvent({
-				type,
-				text,
-				pids,
-				tids,
-				score,
-			});
+			saveEvent(event);
 		}
 
-		if (showNotification) {
+		if (showNotification && event.text) {
 			showEvent(
 				{
 					extraClass,
 					persistent,
-					text,
-					type,
+					text: event.text,
+					type: event.type,
 				},
 				conditions,
 			);

@@ -1,3 +1,30 @@
+store event metadata better, generate html dynamically
+- use to flesh out trade summaries
+- to do that for draft, would need to store old draft pick info for dpid, otherwise it's either slow lookup (scan for year+round+team) or impossible (old drafts or custom drafts with multiple picks for one team in a round)
+- store p.draft.dpid
+  - index on that, or is draft year index enough, if i get with a cursor? maybe try that, least disruptive
+- trade summary page
+  - link from event, and roster page transaction column
+- for team region/name/abbrev, abstract code used in views/player.ts to find teamSeason info
+  - if that is too slow, load it all and cache in memory
+		text: `The <a href="${helpers.leagueUrl([
+			"roster",
+			g.get("teamInfoCache")[tids[0]]?.abbrev,
+			g.get("season"),
+		])}">${
+			g.get("teamInfoCache")[tids[0]]?.name
+		}</a> traded ${formatAssetsEventLog(
+			tradeSummary.teams[0],
+		)} to the <a href="${helpers.leagueUrl([
+			"roster",
+			g.get("teamInfoCache")[tids[1]]?.abbrev,
+			g.get("season"),
+		])}">${
+			g.get("teamInfoCache")[tids[1]]?.name
+		}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
+- typescript
+  - might need to split event and options into two separate args in logEvent
+
 more variation in pace plz @nicidob
 
 redesign draft screen
@@ -512,6 +539,7 @@ FBGM
   - punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
   - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
+- holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

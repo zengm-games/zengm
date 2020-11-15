@@ -11,6 +11,7 @@ export { default as checkNaNs } from "./checkNaNs";
 export { default as defaultGameAttributes } from "./defaultGameAttributes";
 export { default as env } from "./env";
 export { default as face } from "./face";
+export { default as formatEventText } from "./formatEventText";
 export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";
 export { default as getNewLeagueLid } from "./getNewLeagueLid";

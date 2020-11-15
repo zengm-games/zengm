@@ -163,18 +163,42 @@ export type DraftType =
 	| "nba1990"
 	| "freeAgents";
 
-export type EventBBGMWithoutKey = {
-	type: LogEventType;
-	text: string;
-	pids?: number[];
-	tids?: number[];
-	season: number;
+// Key is team ID recieving this asset. from is team ID that traded this asset away
+// Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
+export type TradeEventAssets = Record<
+	number,
+	(
+		| {
+				pid: number;
+				tid: number; // tid the player was originally on
+				name: string;
+		  }
+		| DraftPick
+	)[]
+>;
 
-	// < 10: not very important
-	// < 20: somewhat important
-	// >= 20: very important
-	score?: number;
-};
+export type EventBBGMWithoutKey =
+	| {
+			type: Exclude<LogEventType, "trade">;
+			text: string;
+			pids?: number[];
+			tids?: number[];
+			season: number;
+
+			// < 10: not very important
+			// < 20: somewhat important
+			// >= 20: very important
+			score?: number;
+	  }
+	| {
+			type: "trade";
+			text?: string; // Only legacy will have text
+			pids: number[];
+			tids: number[];
+			season: number;
+			score?: number; // Only legacy will be undefined
+			assets?: TradeEventAssets; // Only legacy will be undefined
+	  };
 
 export type EventBBGM = EventBBGMWithoutKey & {
 	eid: number;
@@ -829,6 +853,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		pot: number;
 		ovr: number;
 		skills: string[];
+		dpid?: number;
 	};
 	face: Face;
 	firstName: string;

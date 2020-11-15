@@ -9,38 +9,7 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import type { TradeSummary } from "../../../common/types";
-
-const formatAssetsEventLog = (t: TradeSummary["teams"][0]) => {
-	const strings: string[] = [];
-	t.trade.forEach(p =>
-		strings.push(
-			`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`,
-		),
-	);
-	t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
-	let text;
-
-	if (strings.length === 0) {
-		text = "nothing";
-	} else if (strings.length === 1) {
-		text = strings[0];
-	} else if (strings.length === 2) {
-		text = `${strings[0]} and ${strings[1]}`;
-	} else {
-		text = strings[0];
-
-		for (let i = 1; i < strings.length; i++) {
-			if (i === strings.length - 1) {
-				text += `, and ${strings[i]}`;
-			} else {
-				text += `, ${strings[i]}`;
-			}
-		}
-	}
-
-	return text;
-};
+import type { TradeEventAssets, TradeSummary } from "../../../common/types";
 
 const processTrade = async (
 	tradeSummary: TradeSummary,
@@ -49,6 +18,8 @@ const processTrade = async (
 	dpids: [number[], number[]],
 ) => {
 	let pidsEvent = [...pids[0], ...pids[1]];
+
+	const assets: TradeEventAssets = {};
 
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
@@ -65,6 +36,8 @@ const processTrade = async (
 				await idb.cache.teamSeasons.put(teamSeason);
 			}
 		}
+
+		assets[tids[k]] = [];
 
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
@@ -97,6 +70,12 @@ const processTrade = async (
 			}
 
 			await idb.cache.players.put(p);
+
+			assets[tids[k]].push({
+				pid,
+				tid: tids[j],
+				name: `${p.firstName} ${p.lastName}`,
+			});
 		}
 
 		for (const dpid of dpids[j]) {
@@ -106,6 +85,10 @@ const processTrade = async (
 			}
 			dp.tid = tids[k];
 			await idb.cache.draftPicks.put(dp);
+
+			assets[tids[k]].push({
+				...dp,
+			});
 		}
 	}
 
@@ -124,25 +107,11 @@ const processTrade = async (
 
 	logEvent({
 		type: "trade",
-		text: `The <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[0]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[0]]?.name
-		}</a> traded ${formatAssetsEventLog(
-			tradeSummary.teams[0],
-		)} to the <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[1]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[1]]?.name
-		}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
 		showNotification: false,
 		pids: pidsEvent,
 		tids: Array.from(tids), // Array.from is for Flow
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
+		assets,
 	});
 };
 

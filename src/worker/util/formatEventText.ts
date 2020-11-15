@@ -10,7 +10,7 @@ type PlayerAsset = {
 	tid: number;
 	name: string;
 };
-const assetIsPlayer = (
+export const assetIsPlayer = (
 	asset: PlayerAsset | DraftPick,
 ): asset is PlayerAsset => {
 	// https://github.com/microsoft/TypeScript/issues/21732

@@ -16,13 +16,16 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 
 	return (
 		<>
-			<h2>
-				Trade during the {season} {PHASE_TEXT[phase]}
-			</h2>
+			<p>
+				Trade during the{" "}
+				<b>
+					{season} {PHASE_TEXT[phase]}
+				</b>
+			</p>
 			<div className="d-flex">
 				{teams.map((t, i) => (
 					<div key={t.tid} className={i === 0 ? "mr-5" : undefined}>
-						<h3>
+						<h2>
 							<a
 								href={helpers.leagueUrl([
 									"roster",
@@ -33,7 +36,7 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 								{t.region} {t.name}
 							</a>{" "}
 							recieved:
-						</h3>
+						</h2>
 						<ul className="list-unstyled">
 							{t.assets.map((asset, i) => (
 								<li key={i}>

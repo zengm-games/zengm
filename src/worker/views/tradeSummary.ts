@@ -1,7 +1,11 @@
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	PlayerContract,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
 import { idb } from "../db";
 import { getTeamInfoBySeason } from "../util";
-import { formatAssets } from "../util/formatEventText";
+import { assetIsPlayer } from "../util/formatEventText";
 
 const updateTradeSummary = async (
 	{ eid }: ViewInput<"tradeSummary">,
@@ -32,11 +36,50 @@ const updateTradeSummary = async (
 			if (!teamInfo) {
 				throw new Error("teamInfo not found");
 			}
-			const assets = await formatAssets(
-				event.teams[i].assets,
-				otherTid,
-				event.season,
-			);
+			const assets: (
+				| {
+						type: "player";
+						pid: number;
+						name: string;
+						contract: PlayerContract;
+				  }
+				| {
+						type: "deletedPlayer";
+						pid: number;
+						name: string;
+						contract: PlayerContract;
+				  }
+				| {
+						type: "realizedPick";
+				  }
+				| {
+						type: "unrealizedPick";
+				  }
+			)[] = [];
+
+			for (const asset of event.teams[i].assets) {
+				if (assetIsPlayer(asset)) {
+					const p = await idb.getCopy.players({ pid: asset.pid });
+					if (p) {
+						assets.push({
+							type: "player",
+							pid: asset.pid,
+							name: `${p.firstName} ${p.lastName}`,
+							contract: asset.contract,
+						});
+					} else {
+						assets.push({
+							type: "deletedPlayer",
+							pid: asset.pid,
+							name: asset.name,
+							contract: asset.contract,
+						});
+					}
+				} else {
+					// Has the pick been made yet or not?
+				}
+			}
+
 			teams.push({
 				abbrev: teamInfo.abbrev,
 				region: teamInfo.region,

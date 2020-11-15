@@ -3,10 +3,12 @@ import { mergeByPk } from "./helpers";
 import type { EventBBGM } from "../../../common/types";
 
 const getCopies = async ({
+	dpid,
 	pid,
 	season,
 	filter = () => true,
 }: {
+	dpid?: number;
 	pid?: number;
 	season?: number;
 	filter?: (event: EventBBGM) => boolean;
@@ -33,6 +35,16 @@ const getCopies = async ({
 			await idb.league.transaction("events").store.index("pids").getAll(pid),
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.pids !== undefined && event.pids.includes(pid);
+			}),
+			"events",
+		).filter(filter);
+	}
+
+	if (dpid !== undefined) {
+		return mergeByPk(
+			await idb.league.transaction("events").store.index("dpids").getAll(dpid),
+			(await idb.cache.events.getAll()).filter(event => {
+				return event.dpids !== undefined && event.dpids.includes(dpid);
 			}),
 			"events",
 		).filter(filter);

@@ -18,6 +18,7 @@ const processTrade = async (
 	dpids: [number[], number[]],
 ) => {
 	let pidsEvent = [...pids[0], ...pids[1]];
+	const dpidsEvent = [...dpids[0], ...dpids[1]];
 
 	const assets: TradeEventAssets = {};
 
@@ -109,6 +110,7 @@ const processTrade = async (
 		type: "trade",
 		showNotification: false,
 		pids: pidsEvent,
+		dpids: dpidsEvent,
 		tids: Array.from(tids), // Array.from is for Flow
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
 		assets,

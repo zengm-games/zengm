@@ -16,7 +16,7 @@ const assetIsPlayer = (
 	return (asset as any).pid !== undefined;
 };
 
-const formatPick = async (dp: DraftPick, tid: number, season: number) => {
+const formatPick = async (dp: DraftPick, season: number) => {
 	// Has the draft already happened? If so, fill in the player
 	let playerInfo = "";
 	if (
@@ -37,26 +37,27 @@ const formatPick = async (dp: DraftPick, tid: number, season: number) => {
 		}
 	}
 
+	const pickAbbrev = g.get("teamInfoCache")[dp.originalTid]?.abbrev;
+
 	return `a ${dp.season} ${helpers.ordinal(
 		dp.round,
 	)} round pick (<a href="${helpers.leagueUrl([
 		"roster",
-		g.get("teamInfoCache")[tid]?.abbrev,
+		`${pickAbbrev}_${dp.originalTid}`,
 		season,
-	])}">${g.get("teamInfoCache")[dp.originalTid]?.abbrev}</a>${playerInfo})`;
+	])}">${pickAbbrev}</a>${playerInfo})`;
 };
 
 const formatEventText = async (event: EventBBGM) => {
 	if (event.type === "trade" && event.assets) {
 		let text = "";
-		console.log(event.assets);
 
 		for (const [tidString, assets] of Object.entries(event.assets)) {
 			const tid = parseInt(tidString);
 
 			const teamName = `<a href="${helpers.leagueUrl([
 				"roster",
-				g.get("teamInfoCache")[tid]?.abbrev,
+				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
 				event.season,
 			])}">${g.get("teamInfoCache")[tid]?.name}</a>`;
 
@@ -75,7 +76,7 @@ const formatEventText = async (event: EventBBGM) => {
 						}</a>`,
 					);
 				} else {
-					strings.push(await formatPick(asset, tid, event.season));
+					strings.push(await formatPick(asset, event.season));
 				}
 			}
 

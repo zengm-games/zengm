@@ -182,6 +182,7 @@ export type EventBBGMWithoutKey =
 			type: Exclude<LogEventType, "trade">;
 			text: string;
 			pids?: number[];
+			dpids?: number[];
 			tids?: number[];
 			season: number;
 
@@ -194,6 +195,7 @@ export type EventBBGMWithoutKey =
 			type: "trade";
 			text?: string; // Only legacy will have text
 			pids: number[];
+			dpids: number[];
 			tids: number[];
 			season: number;
 			score?: number; // Only legacy will be undefined

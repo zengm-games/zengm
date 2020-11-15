@@ -11,14 +11,13 @@ store event metadata better, generate html dynamically
 - for team region/name/abbrev, abstract code used in views/player.ts to find teamSeason info
   - if that is too slow, load it all and cache in memory
 		text: ``,
-- on player page, show events linked to dpid too
-  - add dpids to events: need new index to use in getCopies
+- formatEventText gets teams order wrong
 - typescript
   - might need to split event and options into two separate args in logEvent
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded
-  - also show up on player page of player picked with that pick?
+  - also show up on player page of player picked with that pick
 
 more variation in pace plz @nicidob
 

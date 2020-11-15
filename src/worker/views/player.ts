@@ -13,6 +13,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -104,15 +105,7 @@ const updatePlayer = async (
 					| "awards"
 			  > & {
 					age: number;
-					draft: {
-						round: number;
-						pick: number;
-						tid: number;
-						originalTid: number;
-						year: number;
-						pot: number;
-						ovr: number;
-						skills: string[];
+					draft: Player["draft"] & {
 						age: number;
 						abbrev: string;
 						originalAbbrev: string;
@@ -202,9 +195,20 @@ const updatePlayer = async (
 		}
 
 		const teamColors = await getTeamColors(p.tid);
-		const eventsAll = await idb.getCopies.events({
-			pid: inputs.pid,
-		});
+		const eventsAll = orderBy(
+			[
+				...(await idb.getCopies.events({
+					pid: inputs.pid,
+				})),
+				...(p.draft.dpid !== undefined
+					? await idb.getCopies.events({
+							dpid: p.draft.dpid,
+					  })
+					: []),
+			],
+			"eid",
+			"asc",
+		);
 		const feats = eventsAll
 			.filter(event => event.type === "playerFeat")
 			.map(event => {

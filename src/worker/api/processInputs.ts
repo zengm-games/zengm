@@ -560,6 +560,12 @@ const standings = (params: Params) => {
 	};
 };
 
+const tradeSummary = (params: Params) => {
+	return {
+		eid: params.eid ? parseInt(params.eid) : NaN,
+	};
+};
+
 const tradingBlock = (params: Params, ctxBBGM: any) => {
 	const pid = ctxBBGM.pid;
 	return {
@@ -681,6 +687,7 @@ export default {
 	teamRecords,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
+	tradeSummary,
 	tradingBlock,
 	transactions,
 	upcomingFreeAgents,

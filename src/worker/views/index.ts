@@ -72,6 +72,7 @@ import teamRecords from "./teamRecords";
 import teamStatDists from "./teamStatDists";
 import teamStats from "./teamStats";
 import trade from "./trade";
+import tradeSummary from "./tradeSummary";
 import tradingBlock from "./tradingBlock";
 import tragicDeaths from "./tragicDeaths";
 import transactions from "./transactions";
@@ -153,6 +154,7 @@ export default {
 	teamStatDists,
 	teamStats,
 	trade,
+	tradeSummary,
 	tradingBlock,
 	tragicDeaths,
 	transactions,

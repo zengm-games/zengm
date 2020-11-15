@@ -3,13 +3,16 @@ store event metadata better, generate html dynamically
   - link from event, and roster page transaction column
   - career stats after trade
   - career stats with this team after the trade
+    - include titles won
   - show warning about stat accuracy if player was re-traded to same team multiple times in season
+  - store phase of trade too
 - typescript
   - might need to split event and options into two separate args in logEvent
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded
   - also show up on player page of player picked with that pick
+  - trade summary page
 
 allow positions to be edited for retired players outside of god mode
 - https://old.reddit.com/r/Football_GM/comments/jtoogd/wrte_ypc_option_to_turn_off_auto_positions/gcb5gfb/?context=3

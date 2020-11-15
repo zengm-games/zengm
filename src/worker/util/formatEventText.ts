@@ -138,7 +138,11 @@ const formatEventText = async (event: EventBBGM) => {
 			text += await formatAssets(assets, tid);
 		}
 
-		text += ".";
+		text += `. <a href="${helpers.leagueUrl([
+			"trade_summary",
+			event.eid,
+		])}">(Details)</a>`;
+
 		return text;
 	}
 

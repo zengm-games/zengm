@@ -187,6 +187,7 @@ const routes = () => {
 		"/l/:lid/import_players": genPage("importPlayers"),
 		"/l/:lid/gm_history": genPage("gmHistory"),
 		"/l/:lid/settings": genPage("settings"),
+		"/l/:lid/trade_summary/:eid": genPage("tradeSummary"),
 
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),

@@ -2,20 +2,37 @@ import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { EventBBGM } from "../../../common/types";
 
-const getCopies = async ({
-	dpid,
-	pid,
-	season,
-	filter = () => true,
-}: {
-	dpid?: number;
-	pid?: number;
-	season?: number;
-	filter?: (event: EventBBGM) => boolean;
-} = {}): Promise<EventBBGM[]> => {
-	if (season !== undefined && pid !== undefined) {
-		throw new Error("Can't currently filter by season and pid");
-	}
+type Filter = (event: EventBBGM) => boolean;
+
+const getCopies = async (
+	input:
+		| {
+				filter?: Filter;
+		  }
+		| {
+				eid: number;
+				filter?: Filter;
+		  }
+		| {
+				dpid: number;
+				filter?: Filter;
+		  }
+		| {
+				pid: number;
+				filter?: Filter;
+		  }
+		| {
+				season: number;
+				filter?: Filter;
+		  } = {},
+): Promise<EventBBGM[]> => {
+	const { eid, dpid, pid, season, filter = () => true } = input as {
+		eid?: number;
+		dpid?: number;
+		pid?: number;
+		season?: number;
+		filter?: Filter;
+	};
 
 	if (season !== undefined) {
 		return mergeByPk(
@@ -48,6 +65,20 @@ const getCopies = async ({
 			}),
 			"events",
 		).filter(filter);
+	}
+
+	if (eid !== undefined) {
+		const event = await idb.cache.events.get(eid);
+		if (event) {
+			return [event];
+		}
+
+		const event2 = await idb.league.get("events", eid);
+		if (event2) {
+			return [event2];
+		}
+
+		return [];
 	}
 
 	return mergeByPk(

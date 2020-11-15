@@ -575,13 +575,14 @@ export type LogEventType =
 	| "tragedy"
 	| "upgrade";
 
-export type LogEventSaveOptions = {
-	type: LogEventType;
-	text: string;
-	pids?: number[];
-	tids?: number[];
-	score?: number;
-};
+// https://stackoverflow.com/a/57103940/786644
+export type DistributiveOmit<T, K extends keyof T> = T extends any
+	? Omit<T, K>
+	: never;
+export type LogEventSaveOptions = DistributiveOmit<
+	EventBBGMWithoutKey,
+	"season"
+>;
 
 export type LogEventShowOptions = {
 	extraClass?: string;

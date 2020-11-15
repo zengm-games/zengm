@@ -21,19 +21,24 @@ const assetIsPlayer = (
 	return (asset as any).pid !== undefined;
 };
 
-const formatPick = async (dp: DraftPick, tidTradedAway: number) => {
+const formatPick = async (
+	dp: DraftPick,
+	tidTradedAway: number,
+	tradeSeason: number,
+) => {
 	const details = [];
 
 	// Show abbrev only if it's another team's pick
 	if (tidTradedAway !== dp.originalTid) {
-		const teamInfo = await getTeamInfoBySeason(dp.originalTid, dp.season);
+		const season = typeof dp.season === "number" ? dp.season : tradeSeason;
+		const teamInfo = await getTeamInfoBySeason(dp.originalTid, season);
 		if (teamInfo) {
 			const pickAbbrev = teamInfo.abbrev;
 			details.push(
 				`<a href="${helpers.leagueUrl([
 					"roster",
 					`${pickAbbrev}_${dp.originalTid}`,
-					dp.season,
+					season,
 				])}">${pickAbbrev}</a>`,
 			);
 		} else {
@@ -43,8 +48,9 @@ const formatPick = async (dp: DraftPick, tidTradedAway: number) => {
 
 	// Has the draft already happened? If so, fill in the player
 	if (
-		dp.season < g.get("season") ||
-		(dp.season === g.get("season") && g.get("phase") >= PHASE.DRAFT)
+		typeof dp.season === "number" &&
+		(dp.season < g.get("season") ||
+			(dp.season === g.get("season") && g.get("phase") >= PHASE.DRAFT))
 	) {
 		await iterate(
 			idb.league.transaction("players").store.index("draft.year, retiredYear"),
@@ -63,7 +69,15 @@ const formatPick = async (dp: DraftPick, tidTradedAway: number) => {
 		);
 	}
 
-	return `a ${dp.season} ${helpers.ordinal(dp.round)} round pick${
+	let seasonDescription;
+	if (dp.season === "fantasy") {
+		seasonDescription = `${tradeSeason} fantasy draft`;
+	} else if (dp.season === "expansion") {
+		seasonDescription = `${tradeSeason} expansion draft`;
+	} else {
+		seasonDescription = dp.season;
+	}
+	return `a ${seasonDescription} ${helpers.ordinal(dp.round)} round pick${
 		details.length > 0 ? ` (${details.join(", ")})` : ""
 	}`;
 };
@@ -71,6 +85,7 @@ const formatPick = async (dp: DraftPick, tidTradedAway: number) => {
 const formatAssets = async (
 	assets: TradeEventAssets[number],
 	tidTradedAway: number,
+	tradeSeason: number,
 ) => {
 	const strings: string[] = [];
 	for (const asset of assets) {
@@ -81,7 +96,7 @@ const formatAssets = async (
 				}</a>`,
 			);
 		} else {
-			strings.push(await formatPick(asset, tidTradedAway));
+			strings.push(await formatPick(asset, tidTradedAway, tradeSeason));
 		}
 	}
 
@@ -135,7 +150,7 @@ const formatEventText = async (event: EventBBGM) => {
 				text += ` to the ${teamName} for `;
 			}
 
-			text += await formatAssets(assets, tid);
+			text += await formatAssets(assets, tid, event.season);
 		}
 
 		text += `. <a href="${helpers.leagueUrl([

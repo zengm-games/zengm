@@ -3,7 +3,7 @@ import type {
 	EventBBGMWithoutKey,
 	LogEventSaveOptions,
 	LogEventShowOptions,
-	LogEventType,
+	DistributiveOmit,
 } from "./types";
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
@@ -12,7 +12,7 @@ type LogEventOptions = {
 	persistent?: boolean;
 	saveToDb?: boolean;
 	showNotification?: boolean;
-} & Omit<EventBBGMWithoutKey, "season">;
+} & DistributiveOmit<EventBBGMWithoutKey, "season">;
 
 function createLogger(
 	saveEvent: (a: LogEventSaveOptions) => void,

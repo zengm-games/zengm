@@ -1,5 +1,10 @@
 import { PHASE } from "../../common";
-import type { DraftPick, EventBBGM, TradeEventTeams } from "../../common/types";
+import type {
+	DraftPick,
+	EventBBGM,
+	Player,
+	TradeEventTeams,
+} from "../../common/types";
 import { idb, iterate } from "../db";
 import g from "./g";
 import getTeamInfoBySeason from "./getTeamInfoBySeason";
@@ -15,6 +20,30 @@ export const assetIsPlayer = (
 ): asset is PlayerAsset => {
 	// https://github.com/microsoft/TypeScript/issues/21732
 	return (asset as any).pid !== undefined;
+};
+
+export const getPlayerFromPick = async (dp: DraftPick) => {
+	let p: Player | undefined;
+
+	if (
+		typeof dp.season === "number" &&
+		(dp.season < g.get("season") ||
+			(dp.season === g.get("season") && g.get("phase") >= PHASE.DRAFT))
+	) {
+		await iterate(
+			idb.league.transaction("players").store.index("draft.year, retiredYear"),
+			IDBKeyRange.bound([dp.season], [dp.season, Infinity]),
+			"prev",
+			(p2, shortCircuit) => {
+				if (p2.draft.dpid === dp.dpid) {
+					p = p2;
+					shortCircuit();
+				}
+			},
+		);
+	}
+
+	return p;
 };
 
 const formatPick = async (
@@ -43,25 +72,12 @@ const formatPick = async (
 	}
 
 	// Has the draft already happened? If so, fill in the player
-	if (
-		typeof dp.season === "number" &&
-		(dp.season < g.get("season") ||
-			(dp.season === g.get("season") && g.get("phase") >= PHASE.DRAFT))
-	) {
-		await iterate(
-			idb.league.transaction("players").store.index("draft.year, retiredYear"),
-			IDBKeyRange.bound([dp.season], [dp.season, Infinity]),
-			"prev",
-			(p, shortCircuit) => {
-				if (p.draft.dpid === dp.dpid) {
-					details.push(
-						`became <a href="${helpers.leagueUrl(["player", p.pid])}">${
-							p.firstName
-						} ${p.lastName}</a>`,
-					);
-					shortCircuit();
-				}
-			},
+	const p = await getPlayerFromPick(dp);
+	if (p) {
+		details.push(
+			`became <a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>`,
 		);
 	}
 

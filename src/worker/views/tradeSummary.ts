@@ -9,7 +9,7 @@ import type {
 import { player } from "../core";
 import { idb } from "../db";
 import { getTeamInfoBySeason } from "../util";
-import { assetIsPlayer } from "../util/formatEventText";
+import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
 
 const findRatingsRow = (
 	allRatings: MinimalPlayerRatings[],
@@ -81,6 +81,9 @@ const updateTradeSummary = async (
 			type CommonPick = {
 				abbrev?: string; // from originalTid
 				tid: number; // from originalTid
+				round: number;
+				pick: number;
+				season: number | "fantasy" | "expansion";
 			};
 
 			const assets: (
@@ -155,9 +158,25 @@ const updateTradeSummary = async (
 					const common = {
 						abbrev,
 						tid: asset.originalTid,
+						round: asset.round,
+						pick: asset.pick,
+						season: asset.season,
 					};
 
-					// Has the pick been made yet or not?
+					// Has the draft already happened? If so, fill in the player
+					const p = await getPlayerFromPick(asset);
+					console.log(asset, p);
+					if (p) {
+						assets.push({
+							type: "realizedPick",
+							...common,
+						});
+					} else {
+						assets.push({
+							type: "unrealizedPick",
+							...common,
+						});
+					}
 				}
 			}
 
@@ -169,8 +188,6 @@ const updateTradeSummary = async (
 				assets,
 			});
 		}
-
-		console.log("event", event);
 
 		return {
 			eid,

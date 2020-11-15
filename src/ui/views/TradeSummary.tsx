@@ -4,6 +4,47 @@ import type { View } from "../../common/types";
 import { helpers } from "../util";
 import { PlayerNameLabels, SafeHtml } from "../components";
 import { PHASE_TEXT } from "../../common";
+import { draftPicks } from "../../worker/db/getCopies";
+
+const PickText = ({
+	asset,
+	season,
+}: {
+	asset: {
+		abbrev?: string;
+		round: number;
+		season: number | "fantasy" | "expansion";
+		tid: number;
+	};
+	season: number;
+}) => {
+	return (
+		<>
+			{asset.season === "fantasy"
+				? `${season} fantasy draft`
+				: asset.season === "expansion"
+				? `${season} expansion draft`
+				: asset.season}{" "}
+			{helpers.ordinal(asset.round)} round pick
+			{asset.abbrev ? (
+				<>
+					{" "}
+					(
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${asset.abbrev}_${asset.tid}`,
+							typeof asset.season === "number" ? asset.season : season,
+						])}
+					>
+						{asset.abbrev}
+					</a>
+					)
+				</>
+			) : null}
+		</>
+	);
+};
 
 const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 	useTitleBar({
@@ -38,6 +79,8 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 							recieved:
 						</h2>
 						{t.assets.map((asset, i) => {
+							console.log(asset);
+
 							if (asset.type === "player") {
 								return (
 									<div key={i} className="mb-3">
@@ -76,6 +119,23 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 											"M",
 										)}{" "}
 										thru {asset.contract.exp}
+									</div>
+								);
+							}
+
+							if (asset.type === "unrealizedPick") {
+								return (
+									<div key={i} className="mb-3">
+										<PickText asset={asset} season={season} />
+									</div>
+								);
+							}
+
+							if (asset.type === "realizedPick") {
+								return (
+									<div key={i} className="mb-3">
+										PLAYERNAME
+										<PickText asset={asset} season={season} />
 									</div>
 								);
 							}

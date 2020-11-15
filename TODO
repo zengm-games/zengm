@@ -1,8 +1,6 @@
 store event metadata better, generate html dynamically
 - use to flesh out trade summaries
 - to do that for draft, would need to store old draft pick info for dpid, otherwise it's either slow lookup (scan for year+round+team) or impossible (old drafts or custom drafts with multiple picks for one team in a round)
-- store p.draft.dpid
-  - index on that, or is draft year index enough, if i get with a cursor? maybe try that, least disruptive
 - trade summary page
   - link from event, and roster page transaction column
   - career stats after trade

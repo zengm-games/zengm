@@ -4,7 +4,7 @@ import type {
 	EventBBGM,
 	TradeEventAssets,
 } from "../../common/types";
-import { idb } from "../db";
+import { idb, iterate } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 
@@ -45,19 +45,21 @@ const formatPick = async (
 		season < g.get("season") ||
 		(season === g.get("season") && g.get("phase") >= PHASE.DRAFT)
 	) {
-		const draftClass = await idb.getCopies.players({
-			draftYear: season,
-		});
-		for (const p of draftClass) {
-			if (p.draft.dpid === dp.dpid) {
-				details.push(
-					`became <a href="${helpers.leagueUrl(["player", p.pid])}">${
-						p.firstName
-					} ${p.lastName}</a>`,
-				);
-				break;
-			}
-		}
+		await iterate(
+			idb.league.transaction("players").store.index("draft.year, retiredYear"),
+			IDBKeyRange.bound([season], [season, Infinity]),
+			"prev",
+			(p, shortCircuit) => {
+				if (p.draft.dpid === dp.dpid) {
+					details.push(
+						`became <a href="${helpers.leagueUrl(["player", p.pid])}">${
+							p.firstName
+						} ${p.lastName}</a>`,
+					);
+					shortCircuit();
+				}
+			},
+		);
 	}
 
 	return `a ${dp.season} ${helpers.ordinal(dp.round)} round pick${

@@ -2,6 +2,7 @@ import { PHASE } from "../../common";
 import type {
 	MinimalPlayerRatings,
 	Phase,
+	Player,
 	PlayerContract,
 	UpdateEvents,
 	ViewInput,
@@ -41,6 +42,24 @@ const findRatingsRow = (
 	throw new Error("Ratings not found");
 };
 
+const getActualPlayerInfo = (
+	p: Player,
+	ratingsIndex: number,
+	season: number,
+	phase: Phase = 0,
+) => {
+	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
+
+	return {
+		name: `${p.firstName} ${p.lastName}`,
+		pos: ratings.pos,
+		ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+		pot: player.fuzzRating(ratings.pot, ratings.fuzz),
+		skills: ratings.skills,
+		watch: p.watch,
+	};
+};
+
 const updateTradeSummary = async (
 	{ eid }: ViewInput<"tradeSummary">,
 	updateEvents: UpdateEvents,
@@ -78,6 +97,16 @@ const updateTradeSummary = async (
 				contract: PlayerContract;
 			};
 
+			type CommonActualPlayer = {
+				pid: number;
+				name: string;
+				pos: string;
+				ovr: number;
+				pot: number;
+				skills: string[];
+				watch: boolean;
+			};
+
 			type CommonPick = {
 				abbrev?: string; // from originalTid
 				tid: number; // from originalTid
@@ -89,18 +118,15 @@ const updateTradeSummary = async (
 			const assets: (
 				| ({
 						type: "player";
-						pos: string;
-						ovr: number;
-						pot: number;
-						skills: string[];
-						watch: boolean;
-				  } & CommonPlayer)
+				  } & CommonPlayer &
+						CommonActualPlayer)
 				| ({
 						type: "deletedPlayer";
 				  } & CommonPlayer)
 				| ({
 						type: "realizedPick";
-				  } & CommonPick)
+				  } & CommonPick &
+						CommonActualPlayer)
 				| ({
 						type: "unrealizedPick";
 				  } & CommonPick)
@@ -114,21 +140,14 @@ const updateTradeSummary = async (
 						contract: asset.contract,
 					};
 					if (p) {
-						const ratings = findRatingsRow(
-							p.ratings,
-							asset.ratingsIndex,
-							event.season,
-							event.phase ?? 0,
-						);
-
 						assets.push({
 							type: "player",
-							name: `${p.firstName} ${p.lastName}`,
-							pos: ratings.pos,
-							ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
-							pot: player.fuzzRating(ratings.pot, ratings.fuzz),
-							skills: ratings.skills,
-							watch: p.watch,
+							...getActualPlayerInfo(
+								p,
+								asset.ratingsIndex,
+								event.season,
+								event.phase,
+							),
 							...common,
 						});
 					} else {
@@ -169,6 +188,8 @@ const updateTradeSummary = async (
 					if (p) {
 						assets.push({
 							type: "realizedPick",
+							pid: p.pid,
+							...getActualPlayerInfo(p, 0, event.season, event.phase),
 							...common,
 						});
 					} else {

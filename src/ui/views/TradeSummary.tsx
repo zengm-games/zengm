@@ -95,13 +95,13 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 											</PlayerNameLabels>
 										</div>
 										<div>
-											{asset.ovr} ovr, {asset.pot} pot
-											<br />
 											{helpers.formatCurrency(
 												asset.contract.amount / 1000,
 												"M",
 											)}{" "}
 											thru {asset.contract.exp}
+											<br />
+											{asset.ovr} ovr, {asset.pot} pot
 											<br />
 											15 WS after trade
 										</div>
@@ -134,8 +134,25 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 							if (asset.type === "realizedPick") {
 								return (
 									<div key={i} className="mb-3">
-										PLAYERNAME
-										<PickText asset={asset} season={season} />
+										<div>
+											<PlayerNameLabels
+												pid={asset.pid}
+												pos={asset.pos}
+												skills={asset.skills}
+												watch={asset.watch}
+											>
+												{asset.name}
+											</PlayerNameLabels>
+										</div>
+										<div>
+											<span className="text-muted">
+												via <PickText asset={asset} season={season} />
+											</span>
+											<br />
+											{asset.ovr} ovr, {asset.pot} pot
+											<br />
+											15 WS after trade
+										</div>
 									</div>
 								);
 							}
@@ -143,13 +160,6 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 							return "???";
 						})}
 						<b>Total WS after trade: 75</b>
-						<li>
-							Bob Jones{" "}
-							<span className="text-muted">via 2010 2nd round pick (ATL)</span>
-						</li>
-						<li>2010 2nd round pick (ATL)</li>
-						<li>2015 fantasy draft 1st round pick</li>
-						<li className="mt-2">Total WS after trade: 17.6</li>
 					</div>
 				))}
 			</div>

@@ -7,6 +7,7 @@ store event metadata better, generate html dynamically
   - show warning about stat accuracy if player was re-traded to same team multiple times in season
   - contracts
   - https://discord.com/channels/290013534023057409/290015468939640832/777430391895883776
+  - include team rating before and after trade
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded

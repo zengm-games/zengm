@@ -1,9 +1,5 @@
 import { PHASE } from "../../common";
-import type {
-	DraftPick,
-	EventBBGM,
-	TradeEventAssets,
-} from "../../common/types";
+import type { DraftPick, EventBBGM, TradeEventTeams } from "../../common/types";
 import { idb, iterate } from "../db";
 import g from "./g";
 import getTeamInfoBySeason from "./getTeamInfoBySeason";
@@ -83,7 +79,7 @@ const formatPick = async (
 };
 
 export const formatAssets = async (
-	assets: TradeEventAssets[number],
+	assets: TradeEventTeams[number]["assets"],
 	tidTradedAway: number,
 	tradeSeason: number,
 ) => {
@@ -104,19 +100,16 @@ export const formatAssets = async (
 };
 
 const formatEventText = async (event: EventBBGM) => {
-	if (event.type === "trade" && event.assets) {
+	if (event.type === "trade" && event.teams) {
 		let text = "";
 
 		// assets is indexed on the recieving teams, so swap indexes when making text about the former teams
-		const tids = Object.keys(event.assets)
-			.reverse()
-			.map(tid => parseInt(tid));
-		const teamAssets = Object.values(event.assets);
+		const tids = [...event.tids];
 
 		for (let i = 0; i < 2; i++) {
 			const tid = tids[i];
 			const teamInfo = await getTeamInfoBySeason(tid, event.season);
-			const assets = teamAssets[i];
+			const assets = event.teams[i].assets;
 			const teamName = teamInfo
 				? `<a href="${helpers.leagueUrl([
 						"roster",

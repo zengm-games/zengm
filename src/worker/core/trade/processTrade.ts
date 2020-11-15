@@ -9,7 +9,7 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import type { TradeEventAssets, TradeSummary } from "../../../common/types";
+import type { TradeEventTeams, TradeSummary } from "../../../common/types";
 
 const processTrade = async (
 	tradeSummary: TradeSummary,
@@ -20,7 +20,14 @@ const processTrade = async (
 	let pidsEvent = [...pids[0], ...pids[1]];
 	const dpidsEvent = [...dpids[0], ...dpids[1]];
 
-	const assets: TradeEventAssets = {};
+	const teams: TradeEventTeams = [
+		{
+			assets: [],
+		},
+		{
+			assets: [],
+		},
+	];
 
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
@@ -37,8 +44,6 @@ const processTrade = async (
 				await idb.cache.teamSeasons.put(teamSeason);
 			}
 		}
-
-		assets[tids[k]] = [];
 
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
@@ -72,10 +77,11 @@ const processTrade = async (
 
 			await idb.cache.players.put(p);
 
-			assets[tids[k]].push({
+			teams[k].assets.push({
 				pid,
 				tid: tids[j],
 				name: `${p.firstName} ${p.lastName}`,
+				contract: p.contract,
 			});
 		}
 
@@ -87,7 +93,7 @@ const processTrade = async (
 			dp.tid = tids[k];
 			await idb.cache.draftPicks.put(dp);
 
-			assets[tids[k]].push({
+			teams[k].assets.push({
 				...dp,
 			});
 		}
@@ -113,7 +119,7 @@ const processTrade = async (
 		dpids: dpidsEvent,
 		tids: Array.from(tids), // Array.from is for Flow
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
-		assets,
+		teams,
 		phase: g.get("phase"),
 	});
 };

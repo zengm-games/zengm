@@ -15,7 +15,7 @@ const updateTradeSummary = async (
 		eid !== state.eid
 	) {
 		const event = await idb.getCopy.events({ eid });
-		if (!event || event.type !== "trade" || !event.assets) {
+		if (!event || event.type !== "trade" || !event.teams) {
 			return {
 				eid,
 			};
@@ -23,9 +23,7 @@ const updateTradeSummary = async (
 
 		const teams = [];
 
-		const tids = Object.keys(event.assets)
-			.reverse()
-			.map(tid => parseInt(tid));
+		const tids = [...event.tids];
 
 		for (let i = 0; i < tids.length; i++) {
 			const tid = tids[i];
@@ -35,7 +33,7 @@ const updateTradeSummary = async (
 				throw new Error("teamInfo not found");
 			}
 			const assets = await formatAssets(
-				event.assets[tid],
+				event.teams[i].assets,
 				otherTid,
 				event.season,
 			);

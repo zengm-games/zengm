@@ -1,6 +1,7 @@
 store event metadata better, generate html dynamically
 - trade summary page
   - link from event, and roster page transaction column
+  - career stats before trade
   - career stats after trade
   - career stats with this team after the trade
     - include titles won
@@ -9,7 +10,10 @@ store event metadata better, generate html dynamically
   - https://discord.com/channels/290013534023057409/290015468939640832/777430391895883776
   - include team rating before and after trade
   - test with deleted player
+  - test with deleted data (ratings/stats)
   - store skills, ovr, and pot at time of trade?
+    - like with stats, best way to store might be "index number for stats/ratings" and then just do the best we can for ones with deleted data
+  - skill labels are adding a little extra margin
 - test upgrade (old trade events)
 - blog
   - traded draft picks expanded

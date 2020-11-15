@@ -171,6 +171,8 @@ type TradeEventAsset =
 			tid: number; // tid the player was originally on
 			name: string;
 			contract: PlayerContract;
+			ratingsIndex: number;
+			statsIndex: number;
 	  }
 	| DraftPick;
 

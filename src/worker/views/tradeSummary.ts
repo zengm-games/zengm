@@ -1,11 +1,45 @@
+import { PHASE } from "../../common";
 import type {
+	MinimalPlayerRatings,
+	Phase,
 	PlayerContract,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
+import { player } from "../core";
 import { idb } from "../db";
 import { getTeamInfoBySeason } from "../util";
 import { assetIsPlayer } from "../util/formatEventText";
+
+const findRatingsRow = (
+	allRatings: MinimalPlayerRatings[],
+	ratingsIndex: number,
+	season: number,
+	phase: Phase,
+) => {
+	// If no data was deleted/edited, should work with just ratingsIndex
+	const firstTry = allRatings[ratingsIndex];
+	if (firstTry !== undefined && firstTry.season === season) {
+		return firstTry;
+	}
+
+	// Something's wrong! Look for first/last ratings entry that season based on phase
+	if (phase <= PHASE.PLAYOFFS) {
+		const ratings = allRatings.find(ratings => ratings.season >= season);
+		if (ratings) {
+			return ratings;
+		}
+	} else {
+		for (let i = allRatings.length - 1; i >= 0; i--) {
+			const ratings = allRatings[i];
+			if (ratings.season <= season) {
+				return ratings;
+			}
+		}
+	}
+
+	throw new Error("Ratings not found");
+};
 
 const updateTradeSummary = async (
 	{ eid }: ViewInput<"tradeSummary">,
@@ -16,6 +50,7 @@ const updateTradeSummary = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
+		updateEvents.includes("playerMovement") ||
 		eid !== state.eid
 	) {
 		const event = await idb.getCopy.events({ eid });
@@ -36,19 +71,25 @@ const updateTradeSummary = async (
 			if (!teamInfo) {
 				throw new Error("teamInfo not found");
 			}
+
+			type CommonPlayer = {
+				pid: number;
+				name: string;
+				contract: PlayerContract;
+			};
+
 			const assets: (
-				| {
+				| ({
 						type: "player";
-						pid: number;
-						name: string;
-						contract: PlayerContract;
-				  }
-				| {
+						pos: string;
+						ovr: number;
+						pot: number;
+						skills: string[];
+						watch: boolean;
+				  } & CommonPlayer)
+				| ({
 						type: "deletedPlayer";
-						pid: number;
-						name: string;
-						contract: PlayerContract;
-				  }
+				  } & CommonPlayer)
 				| {
 						type: "realizedPick";
 				  }
@@ -60,19 +101,33 @@ const updateTradeSummary = async (
 			for (const asset of event.teams[i].assets) {
 				if (assetIsPlayer(asset)) {
 					const p = await idb.getCopy.players({ pid: asset.pid });
+					const common = {
+						pid: asset.pid,
+						contract: asset.contract,
+					};
 					if (p) {
+						const ratings = findRatingsRow(
+							p.ratings,
+							asset.ratingsIndex,
+							event.season,
+							event.phase ?? 0,
+						);
+
 						assets.push({
 							type: "player",
-							pid: asset.pid,
 							name: `${p.firstName} ${p.lastName}`,
-							contract: asset.contract,
+							pos: ratings.pos,
+							ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+							pot: player.fuzzRating(ratings.pot, ratings.fuzz),
+							skills: ratings.skills,
+							watch: p.watch,
+							...common,
 						});
 					} else {
 						assets.push({
 							type: "deletedPlayer",
-							pid: asset.pid,
 							name: asset.name,
-							contract: asset.contract,
+							...common,
 						});
 					}
 				} else {

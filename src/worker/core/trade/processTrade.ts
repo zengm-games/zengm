@@ -82,6 +82,8 @@ const processTrade = async (
 				tid: tids[j],
 				name: `${p.firstName} ${p.lastName}`,
 				contract: p.contract,
+				ratingsIndex: p.ratings.length - 1,
+				statsIndex: p.stats.length - 1,
 			});
 		}
 

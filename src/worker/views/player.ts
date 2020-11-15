@@ -6,7 +6,7 @@ import {
 } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
-import { face, g, getTeamColors, helpers } from "../util";
+import { face, formatEventText, g, getTeamColors, helpers } from "../util";
 import type {
 	MinimalPlayerRatings,
 	Player,
@@ -211,31 +211,30 @@ const updatePlayer = async (
 				return {
 					eid: event.eid,
 					season: event.season,
-					text: event.text,
+					text: helpers.correctLinkLid(g.get("lid"), event.text as any),
 				};
 			});
-		const events = eventsAll
-			.filter(event => {
-				// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
-				return !(
-					event.type === "award" ||
-					event.type === "injured" ||
-					event.type === "healed" ||
-					event.type === "hallOfFame" ||
-					event.type === "playerFeat" ||
-					event.type === "tragedy" ||
-					event.type === undefined
-				);
-			})
-			.map(event => {
-				return {
-					eid: event.eid,
-					season: event.season,
-					text: event.text,
-				};
+		const eventsFiltered = eventsAll.filter(event => {
+			// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
+			return !(
+				event.type === "award" ||
+				event.type === "injured" ||
+				event.type === "healed" ||
+				event.type === "hallOfFame" ||
+				event.type === "playerFeat" ||
+				event.type === "tragedy" ||
+				event.type === undefined
+			);
+		});
+
+		const events = [];
+		for (const event of eventsFiltered) {
+			events.push({
+				eid: event.eid,
+				text: await formatEventText(event),
+				season: event.season,
 			});
-		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
-		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+		}
 
 		const willingToSign = !!(p.mood && p.mood.user && p.mood.user.willing);
 

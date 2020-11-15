@@ -5,25 +5,20 @@ store event metadata better, generate html dynamically
   - index on that, or is draft year index enough, if i get with a cursor? maybe try that, least disruptive
 - trade summary page
   - link from event, and roster page transaction column
+  - career stats after trade
+  - career stats with this team after the trade
+  - show warning about stat accuracy if player was re-traded to same team multiple times in season
 - for team region/name/abbrev, abstract code used in views/player.ts to find teamSeason info
   - if that is too slow, load it all and cache in memory
-		text: `The <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[0]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[0]]?.name
-		}</a> traded ${formatAssetsEventLog(
-			tradeSummary.teams[0],
-		)} to the <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[1]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[1]]?.name
-		}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
+		text: ``,
+- on player page, show events linked to dpid too
+  - add dpids to events: need new index to use in getCopies
 - typescript
   - might need to split event and options into two separate args in logEvent
+- test upgrade (old trade events)
+- blog
+  - traded draft picks expanded
+  - also show up on player page of player picked with that pick?
 
 more variation in pace plz @nicidob
 

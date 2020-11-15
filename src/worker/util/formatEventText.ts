@@ -102,6 +102,10 @@ const formatEventText = async (event: EventBBGM) => {
 		return text;
 	}
 
+	if (event.text) {
+		return helpers.correctLinkLid(g.get("lid"), event.text);
+	}
+
 	return "";
 };
 

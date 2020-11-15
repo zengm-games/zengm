@@ -10,8 +10,6 @@ store event metadata better, generate html dynamically
   - show warning about stat accuracy if player was re-traded to same team multiple times in season
 - for team region/name/abbrev, abstract code used in views/player.ts to find teamSeason info
   - if that is too slow, load it all and cache in memory
-		text: ``,
-- formatEventText gets teams order wrong
 - typescript
   - might need to split event and options into two separate args in logEvent
 - test upgrade (old trade events)

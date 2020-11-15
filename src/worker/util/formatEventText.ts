@@ -82,7 +82,7 @@ const formatPick = async (
 	}`;
 };
 
-const formatAssets = async (
+export const formatAssets = async (
 	assets: TradeEventAssets[number],
 	tidTradedAway: number,
 	tradeSeason: number,
@@ -100,26 +100,7 @@ const formatAssets = async (
 		}
 	}
 
-	let text = "";
-	if (strings.length === 0) {
-		text += "nothing";
-	} else if (strings.length === 1) {
-		text += strings[0];
-	} else if (strings.length === 2) {
-		text += `${strings[0]} and ${strings[1]}`;
-	} else {
-		text += strings[0];
-
-		for (let i = 1; i < strings.length; i++) {
-			if (i === strings.length - 1) {
-				text += `, and ${strings[i]}`;
-			} else {
-				text += `, ${strings[i]}`;
-			}
-		}
-	}
-
-	return text;
+	return strings;
 };
 
 const formatEventText = async (event: EventBBGM) => {
@@ -150,7 +131,24 @@ const formatEventText = async (event: EventBBGM) => {
 				text += ` to the ${teamName} for `;
 			}
 
-			text += await formatAssets(assets, tid, event.season);
+			const strings = await formatAssets(assets, tid, event.season);
+			if (strings.length === 0) {
+				text += "nothing";
+			} else if (strings.length === 1) {
+				text += strings[0];
+			} else if (strings.length === 2) {
+				text += `${strings[0]} and ${strings[1]}`;
+			} else {
+				text += strings[0];
+
+				for (let i = 1; i < strings.length; i++) {
+					if (i === strings.length - 1) {
+						text += `, and ${strings[i]}`;
+					} else {
+						text += `, ${strings[i]}`;
+					}
+				}
+			}
 		}
 
 		text += `. <a href="${helpers.leagueUrl([

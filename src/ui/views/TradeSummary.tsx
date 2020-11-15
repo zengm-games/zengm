@@ -1,21 +1,55 @@
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
+import { helpers } from "../util";
+import { SafeHtml } from "../components";
 
-const TradeSummary = (props: View<"tradeSummary">) => {
+const TradeSummary = ({ season, teams }: View<"tradeSummary">) => {
 	useTitleBar({
 		title: "Trade Summary",
 	});
 
-	if (props) {
+	if (!teams || season === undefined) {
 		return <p>Trade not found.</p>;
 	}
 
 	return (
 		<>
-			<h2>Trade during the 2020 draft</h2>
-			<h3>Team 1 recieved:</h3>
-			<h3>Team 2 recieved:</h3>
+			<h2>Trade during the {season} PHASE GOES HERE</h2>
+			<div className="d-flex">
+				{teams.map((t, i) => (
+					<div key={t.tid} className={i === 0 ? "mr-5" : undefined}>
+						<h3>
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${t.abbrev}_${t.tid}`,
+									season,
+								])}
+							>
+								{t.region} {t.name}
+							</a>{" "}
+							recieved:
+						</h3>
+						<ul className="list-unstyled">
+							{t.assets.map((asset, i) => (
+								<li key={i}>
+									<SafeHtml dirty={asset} />
+								</li>
+							))}
+							<li>
+								Bob Jones{" "}
+								<span className="text-muted">
+									via 2010 2nd round pick (ATL)
+								</span>
+							</li>
+							<li>2010 2nd round pick (ATL)</li>
+							<li>2015 fantasy draft 1st round pick</li>
+							<li className="mt-2">Total WS after trade: 17.6</li>
+						</ul>
+					</div>
+				))}
+			</div>
 		</>
 	);
 };

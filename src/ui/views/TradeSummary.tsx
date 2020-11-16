@@ -15,6 +15,7 @@ const PickText = ({
 		round: number;
 		season: number | "fantasy" | "expansion";
 		tid: number;
+		type: "realizedPick" | "unrealizedPick";
 	};
 	season: number;
 }) => {
@@ -41,11 +42,21 @@ const PickText = ({
 
 	return (
 		<>
-			{asset.season === "fantasy"
-				? `${season} fantasy draft`
-				: asset.season === "expansion"
-				? `${season} expansion draft`
-				: asset.season}{" "}
+			{asset.season === "fantasy" ? (
+				`${season} fantasy draft`
+			) : asset.season === "expansion" ? (
+				`${season} expansion draft`
+			) : (
+				<a
+					href={
+						asset.type === "realizedPick"
+							? helpers.leagueUrl(["draft_summary", asset.season])
+							: helpers.leagueUrl(["draft_scouting"])
+					}
+				>
+					{asset.season}
+				</a>
+			)}{" "}
 			{helpers.ordinal(asset.round)} round pick
 			{details.length > 0 ? (
 				<>

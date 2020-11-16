@@ -266,12 +266,17 @@ const ScoreBox = ({
 							]);
 						}
 
+						// For @MikeHoudini on Discord
+						const userTeamClass =
+							t.tid === userTid && final ? "user-team" : undefined;
+
 						return (
 							<div
 								key={i}
 								className={classNames(
 									"d-flex align-items-center",
 									scoreClassForceWin,
+									userTeamClass,
 								)}
 							>
 								{imgURL || allStarGame ? (
@@ -304,6 +309,7 @@ const ScoreBox = ({
 										className={classNames(
 											"score-box-score p-1 text-right font-weight-bold",
 											scoreClass,
+											userTeamClass,
 										)}
 									>
 										<a

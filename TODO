@@ -1,12 +1,14 @@
+team context on trade summary page
+- graph of team winning percentage over time, -2 to 5 years relative to the trade
+- on hover/click, show W-L record and playoff result
+- special icon for playoffs, finals, championship
+
 show ovr when live editing a player's ratings
 - use worker, don't include code in both
 
-allow positions to be edited for retired players outside of god mode
-- https://old.reddit.com/r/Football_GM/comments/jtoogd/wrte_ypc_option_to_turn_off_auto_positions/gcb5gfb/?context=3
-
 more variation in pace plz @nicidob
 
-allow setting filename when exporting @doobey
+finances in shorter season https://old.reddit.com/r/BasketballGM/comments/jtu1yr/someone_has_to_fix_this_the_finance_system_is/gcapqg7/
 
 redesign draft screen
 - on draft screen, add a new "Scouting" column that contains skills applied with lower cutoffs

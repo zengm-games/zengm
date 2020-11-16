@@ -634,7 +634,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "rating", "pos")}
 									value={p.ratings[r].pos}
-									disabled={!godMode}
+									disabled={!godMode && p.tid !== PLAYER.RETIRED}
 								>
 									{POSITIONS.filter(pos => {
 										if (

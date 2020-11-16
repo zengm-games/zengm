@@ -1,13 +1,13 @@
 store event metadata better, generate html dynamically
 - trade summary page
-  - link from event, and roster page transaction column
   - skill labels are adding a little extra margin
 - test upgrade (old trade events)
-- test FBGM
+- changelog, changes
 - blog
   - traded draft picks expanded
   - also show up on player page of player picked with that pick
   - trade summary page
+    - link from event, and roster page transaction column
 
 allow positions to be edited for retired players outside of god mode
 - https://old.reddit.com/r/Football_GM/comments/jtoogd/wrte_ypc_option_to_turn_off_auto_positions/gcb5gfb/?context=3

@@ -186,11 +186,11 @@ const processAttrs = (
 				} else if (transaction.type === "trade") {
 					// @ts-ignore
 					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
-					output.latestTransaction = `Trade with <a href="${helpers.leagueUrl([
-						"roster",
-						abbrev,
-						transaction.season,
-					])}">${abbrev} in ${transaction.season}</a>`;
+					const url =
+						transaction.eid !== undefined
+							? helpers.leagueUrl(["trade_summary", transaction.eid])
+							: helpers.leagueUrl(["roster", abbrev, transaction.season]);
+					output.latestTransaction = `Trade with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
 				} else if (transaction.type === "import") {

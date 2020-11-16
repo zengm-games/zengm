@@ -1,11 +1,9 @@
 store event metadata better, generate html dynamically
 - trade summary page
   - link from event, and roster page transaction column
-  - https://discord.com/channels/290013534023057409/290015468939640832/777430391895883776
   - test with deleted player
   - test with deleted data (ratings/stats)
   - skill labels are adding a little extra margin
-  - age
 - test upgrade (old trade events)
 - test FBGM
 - blog

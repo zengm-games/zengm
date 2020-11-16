@@ -57,7 +57,6 @@ const findStatSum = (
 	const firstTry = allStats[statsIndex];
 	if (firstTry !== undefined && firstTry.season === season) {
 		rows = allStats.slice(statsIndex);
-		console.log(allStats, statsIndex);
 	} else {
 		// Something's wrong! Look for first/last stats entry that season based on phase
 		rows = allStats.filter(row => {
@@ -93,6 +92,7 @@ const getActualPlayerInfo = (
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
+		age: season - p.born.year,
 		pos: ratings.pos,
 		ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
 		pot: player.fuzzRating(ratings.pot, ratings.fuzz),
@@ -142,6 +142,7 @@ const updateTradeSummary = async (
 			type CommonActualPlayer = {
 				pid: number;
 				name: string;
+				age: number;
 				pos: string;
 				ovr: number;
 				pot: number;
@@ -233,7 +234,6 @@ const updateTradeSummary = async (
 
 					// Has the draft already happened? If so, fill in the player
 					const p = await getPlayerFromPick(asset);
-					console.log(asset, p);
 					if (p) {
 						const playerInfo = getActualPlayerInfo(
 							p,

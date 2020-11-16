@@ -78,8 +78,6 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 							recieved:
 						</h2>
 						{t.assets.map((asset, i) => {
-							console.log(asset);
-
 							if (asset.type === "player") {
 								return (
 									<div key={i} className="mb-3">
@@ -100,7 +98,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 											)}{" "}
 											thru {asset.contract.exp}
 											<br />
-											{asset.ovr} ovr, {asset.pot} pot
+											{asset.ovr} ovr, {asset.pot} pot, {asset.age} years old
 											<br />
 											{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 										</div>

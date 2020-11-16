@@ -21,7 +21,6 @@ const PickText = ({
 }) => {
 	const details = [];
 
-	console.log(asset);
 	if (asset.pick !== undefined && asset.pick > 0) {
 		details.push(`#${asset.pick}`);
 	}

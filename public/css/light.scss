@@ -265,6 +265,10 @@ table {
 	white-space: nowrap;
 }
 
+.table {
+	font-variant: tabular-nums;
+}
+
 .table-bordered {
 	tbody tr.separator td {
 		border-bottom: 1px solid $gray-700;

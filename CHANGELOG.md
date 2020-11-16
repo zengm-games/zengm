@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* **2020-11-15: Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. [[1]](https://basketball-gm.com/blog/2020/11/trade-details/) [[2]](https://old.reddit.com/r/BasketballGM/comments/juzose/transaction_logs_for_trades_are_now_dynamically/)**
+
 * 2020-11-12: Fixed bug in FBGM where "half the distance to the goal" penalties were being assessed wrong, leading to the line of scrimmage being in the endzone. [[1]](https://old.reddit.com/r/Football_GM/comments/jtar0p/will_they_score_a_touchdown_you_have_to_wait_and/)
 
 * 2020-11-12: In FBGM live sims, no more spoilers where scoring plays appeared in the scoring summary before being shown in the play-by-play. [[1]](https://old.reddit.com/r/Football_GM/comments/jtar0p/will_they_score_a_touchdown_you_have_to_wait_and/)

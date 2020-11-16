@@ -78,7 +78,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 							>
 								{t.region} {t.name}
 							</a>{" "}
-							recieved:
+							received:
 						</h2>
 						{t.assets.map((asset, i) => {
 							if (asset.type === "player") {

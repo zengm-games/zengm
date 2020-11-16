@@ -80,7 +80,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 						{t.assets.map((asset, i) => {
 							if (asset.type === "player") {
 								return (
-									<div key={i} className="mb-3">
+									<div key={i} className="mb-2">
 										<div>
 											<PlayerNameLabels
 												pid={asset.pid}
@@ -108,7 +108,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 
 							if (asset.type === "deletedPlayer") {
 								return (
-									<div key={i} className="mb-3">
+									<div key={i} className="mb-2">
 										{asset.name}
 										<br />
 										{helpers.formatCurrency(
@@ -122,7 +122,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 
 							if (asset.type === "unrealizedPick") {
 								return (
-									<div key={i} className="mb-3">
+									<div key={i} className="mb-2">
 										<PickText asset={asset} season={season} />
 									</div>
 								);
@@ -130,7 +130,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 
 							if (asset.type === "realizedPick") {
 								return (
-									<div key={i} className="mb-3">
+									<div key={i} className="mb-2">
 										<div>
 											<PlayerNameLabels
 												pid={asset.pid}
@@ -146,7 +146,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 												via <PickText asset={asset} season={season} />
 											</span>
 											<br />
-											{asset.ovr} ovr, {asset.pot} pot
+											{asset.ovr} ovr, {asset.pot} pot, {asset.age} years old
 											<br />
 											{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 										</div>

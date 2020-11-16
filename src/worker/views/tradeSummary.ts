@@ -85,6 +85,7 @@ const getActualPlayerInfo = (
 	statsIndex: number,
 	season: number,
 	phase: Phase = 0,
+	draftPick: boolean = false,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
 
@@ -92,7 +93,7 @@ const getActualPlayerInfo = (
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
-		age: season - p.born.year,
+		age: (draftPick ? p.draft.year : season) - p.born.year,
 		pos: ratings.pos,
 		ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
 		pot: player.fuzzRating(ratings.pot, ratings.fuzz),
@@ -241,6 +242,7 @@ const updateTradeSummary = async (
 							0,
 							event.season,
 							event.phase,
+							true,
 						);
 						statSum += playerInfo.stat;
 

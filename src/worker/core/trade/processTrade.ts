@@ -32,6 +32,33 @@ const processTrade = async (
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
 	for (const j of [0, 1]) {
+		for (const pid of pids[j]) {
+			const p = await idb.cache.players.get(pid);
+			if (p && p.valueFuzz > maxPlayerValue) {
+				maxPlayerValue = p.valueFuzz;
+				maxPid = p.pid;
+			}
+		}
+	}
+
+	// Make sure to show best player first, so his picture is shown in news feed
+	if (maxPid !== undefined) {
+		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
+	}
+
+	const eid = await logEvent({
+		type: "trade",
+		showNotification: false,
+		pids: pidsEvent,
+		dpids: dpidsEvent,
+		tids: Array.from(tids), // Array.from is for Flow
+		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
+		teams,
+		phase: g.get("phase"),
+	});
+	console.log("eid", eid);
+
+	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
 		if (pids[j].length > 0) {
@@ -68,12 +95,8 @@ const processTrade = async (
 				tid: p.tid,
 				type: "trade",
 				fromTid: tids[j],
+				eid,
 			});
-
-			if (p.valueFuzz > maxPlayerValue) {
-				maxPlayerValue = p.valueFuzz;
-				maxPid = p.pid;
-			}
 
 			await idb.cache.players.put(p);
 
@@ -108,22 +131,6 @@ const processTrade = async (
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}
-
-	// Make sure to show best player first, so his picture is shown in news feed
-	if (maxPid !== undefined) {
-		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
-	}
-
-	logEvent({
-		type: "trade",
-		showNotification: false,
-		pids: pidsEvent,
-		dpids: dpidsEvent,
-		tids: Array.from(tids), // Array.from is for Flow
-		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
-		teams,
-		phase: g.get("phase"),
-	});
 };
 
 export default processTrade;

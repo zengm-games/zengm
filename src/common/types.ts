@@ -915,6 +915,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 				tid: number;
 				type: "trade";
 				fromTid: number;
+				eid?: number;
 		  }
 		| {
 				season: number;

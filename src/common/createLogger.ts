@@ -15,10 +15,10 @@ type LogEventOptions = {
 } & DistributiveOmit<EventBBGMWithoutKey, "season">;
 
 function createLogger(
-	saveEvent: (a: LogEventSaveOptions) => void,
+	saveEvent: (a: LogEventSaveOptions) => Promise<number | undefined>,
 	showEvent: (a: LogEventShowOptions, conditions?: Conditions) => void,
-): (a: LogEventOptions, conditions?: Conditions) => void {
-	const logEvent = (
+) {
+	const logEvent = async (
 		{
 			extraClass,
 			persistent = false,
@@ -28,12 +28,13 @@ function createLogger(
 		}: LogEventOptions,
 		conditions?: Conditions,
 	) => {
+		let result;
 		if (saveToDb) {
 			if (event.pids === undefined && event.tids === undefined) {
 				throw new Error("Saved event must include pids or tids");
 			}
 
-			saveEvent(event);
+			result = await saveEvent(event);
 		}
 
 		if (showNotification && event.text) {
@@ -47,6 +48,8 @@ function createLogger(
 				conditions,
 			);
 		}
+
+		return result;
 	};
 
 	return logEvent;

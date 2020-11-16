@@ -1,3 +1,6 @@
+show ovr when live editing a player's ratings
+- use worker, don't include code in both
+
 allow positions to be edited for retired players outside of god mode
 - https://old.reddit.com/r/Football_GM/comments/jtoogd/wrte_ypc_option_to_turn_off_auto_positions/gcb5gfb/?context=3
 

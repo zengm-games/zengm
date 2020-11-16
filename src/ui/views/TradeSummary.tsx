@@ -11,12 +11,34 @@ const PickText = ({
 }: {
 	asset: {
 		abbrev?: string;
+		pick?: number;
 		round: number;
 		season: number | "fantasy" | "expansion";
 		tid: number;
 	};
 	season: number;
 }) => {
+	const details = [];
+
+	console.log(asset);
+	if (asset.pick !== undefined && asset.pick > 0) {
+		details.push(`#${asset.pick}`);
+	}
+
+	if (asset.abbrev) {
+		details.push(
+			<a
+				href={helpers.leagueUrl([
+					"roster",
+					`${asset.abbrev}_${asset.tid}`,
+					typeof asset.season === "number" ? asset.season : season,
+				])}
+			>
+				{asset.abbrev}
+			</a>,
+		);
+	}
+
 	return (
 		<>
 			{asset.season === "fantasy"
@@ -25,20 +47,11 @@ const PickText = ({
 				? `${season} expansion draft`
 				: asset.season}{" "}
 			{helpers.ordinal(asset.round)} round pick
-			{asset.abbrev ? (
+			{details.length > 0 ? (
 				<>
 					{" "}
-					(
-					<a
-						href={helpers.leagueUrl([
-							"roster",
-							`${asset.abbrev}_${asset.tid}`,
-							typeof asset.season === "number" ? asset.season : season,
-						])}
-					>
-						{asset.abbrev}
-					</a>
-					)
+					({details[0]}
+					{details.length > 1 ? <>, {details[1]}</> : null})
 				</>
 			) : null}
 		</>

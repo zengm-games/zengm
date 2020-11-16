@@ -156,7 +156,6 @@ const updateTradeSummary = async (
 				abbrev?: string; // from originalTid
 				tid: number; // from originalTid
 				round: number;
-				pick: number;
 				season: number | "fantasy" | "expansion";
 			};
 
@@ -170,6 +169,7 @@ const updateTradeSummary = async (
 				  } & CommonPlayer)
 				| ({
 						type: "realizedPick";
+						pick: number;
 				  } & CommonPick &
 						CommonActualPlayer)
 				| ({
@@ -229,7 +229,6 @@ const updateTradeSummary = async (
 						abbrev,
 						tid: asset.originalTid,
 						round: asset.round,
-						pick: asset.pick,
 						season: asset.season,
 					};
 
@@ -249,6 +248,7 @@ const updateTradeSummary = async (
 						assets.push({
 							type: "realizedPick",
 							pid: p.pid,
+							pick: p.draft.pick,
 							...playerInfo,
 							...common,
 						});

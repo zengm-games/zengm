@@ -2,9 +2,8 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
-import { PlayerNameLabels, SafeHtml } from "../components";
+import { PlayerNameLabels } from "../components";
 import { PHASE_TEXT } from "../../common";
-import { draftPicks } from "../../worker/db/getCopies";
 
 const PickText = ({
 	asset,
@@ -46,7 +45,7 @@ const PickText = ({
 	);
 };
 
-const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
+const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 	useTitleBar({
 		title: "Trade Summary",
 	});
@@ -58,7 +57,7 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 	return (
 		<>
 			<p>
-				Trade during the{" "}
+				Trade occurred during the{" "}
 				<b>
 					{season} {PHASE_TEXT[phase]}
 				</b>
@@ -103,7 +102,7 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 											<br />
 											{asset.ovr} ovr, {asset.pot} pot
 											<br />
-											15 WS after trade
+											{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 										</div>
 									</div>
 								);
@@ -151,7 +150,7 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 											<br />
 											{asset.ovr} ovr, {asset.pot} pot
 											<br />
-											15 WS after trade
+											{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 										</div>
 									</div>
 								);
@@ -159,7 +158,9 @@ const TradeSummary = ({ phase, season, teams }: View<"tradeSummary">) => {
 
 							return "???";
 						})}
-						<b>Total WS after trade: 75</b>
+						<b>
+							Total {stat} after trade: {helpers.roundStat(t.statSum, "ws")}
+						</b>
 					</div>
 				))}
 			</div>

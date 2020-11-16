@@ -4,6 +4,7 @@ import type {
 	Phase,
 	Player,
 	PlayerContract,
+	PlayerStats,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
@@ -30,6 +31,8 @@ const findRatingsRow = (
 		if (ratings) {
 			return ratings;
 		}
+
+		return allRatings[allRatings.length - 1];
 	} else {
 		for (let i = allRatings.length - 1; i >= 0; i--) {
 			const ratings = allRatings[i];
@@ -37,18 +40,56 @@ const findRatingsRow = (
 				return ratings;
 			}
 		}
+
+		return allRatings[0];
+	}
+};
+
+const findStatSum = (
+	allStats: PlayerStats[],
+	statsIndex: number,
+	season: number,
+	phase: Phase,
+) => {
+	let rows: PlayerStats[];
+
+	// If no data was deleted/edited, should work with just ratingsIndex
+	const firstTry = allStats[statsIndex];
+	if (firstTry !== undefined && firstTry.season === season) {
+		rows = allStats.slice(statsIndex);
+		console.log(allStats, statsIndex);
+	} else {
+		// Something's wrong! Look for first/last stats entry that season based on phase
+		rows = allStats.filter(row => {
+			if (
+				row.season < season ||
+				(row.season === season && !row.playoffs && phase >= PHASE.PLAYOFFS) ||
+				(row.season === season && row.playoffs && phase > PHASE.PLAYOFFS)
+			) {
+				return false;
+			}
+
+			return true;
+		});
 	}
 
-	throw new Error("Ratings not found");
+	let statSum = 0;
+	for (const row of rows) {
+		statSum += process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
+	}
+	return statSum;
 };
 
 const getActualPlayerInfo = (
 	p: Player,
 	ratingsIndex: number,
+	statsIndex: number,
 	season: number,
 	phase: Phase = 0,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
+
+	const stat = findStatSum(p.stats, statsIndex, season, phase);
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
@@ -56,6 +97,7 @@ const getActualPlayerInfo = (
 		ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
 		pot: player.fuzzRating(ratings.pot, ratings.fuzz),
 		skills: ratings.skills,
+		stat,
 		watch: p.watch,
 	};
 };
@@ -105,6 +147,7 @@ const updateTradeSummary = async (
 				pot: number;
 				skills: string[];
 				watch: boolean;
+				stat: number;
 			};
 
 			type CommonPick = {
@@ -132,6 +175,8 @@ const updateTradeSummary = async (
 				  } & CommonPick)
 			)[] = [];
 
+			let statSum = 0;
+
 			for (const asset of event.teams[i].assets) {
 				if (assetIsPlayer(asset)) {
 					const p = await idb.getCopy.players({ pid: asset.pid });
@@ -140,14 +185,18 @@ const updateTradeSummary = async (
 						contract: asset.contract,
 					};
 					if (p) {
+						const playerInfo = getActualPlayerInfo(
+							p,
+							asset.ratingsIndex,
+							asset.statsIndex,
+							event.season,
+							event.phase,
+						);
+						statSum += playerInfo.stat;
+
 						assets.push({
 							type: "player",
-							...getActualPlayerInfo(
-								p,
-								asset.ratingsIndex,
-								event.season,
-								event.phase,
-							),
+							...playerInfo,
 							...common,
 						});
 					} else {
@@ -186,10 +235,19 @@ const updateTradeSummary = async (
 					const p = await getPlayerFromPick(asset);
 					console.log(asset, p);
 					if (p) {
+						const playerInfo = getActualPlayerInfo(
+							p,
+							0,
+							0,
+							event.season,
+							event.phase,
+						);
+						statSum += playerInfo.stat;
+
 						assets.push({
 							type: "realizedPick",
 							pid: p.pid,
-							...getActualPlayerInfo(p, 0, event.season, event.phase),
+							...playerInfo,
 							...common,
 						});
 					} else {
@@ -207,6 +265,7 @@ const updateTradeSummary = async (
 				name: teamInfo.name,
 				tid,
 				assets,
+				statSum,
 			});
 		}
 
@@ -215,6 +274,7 @@ const updateTradeSummary = async (
 			teams,
 			season: event.season,
 			phase: event.phase,
+			stat: process.env.SPORT === "basketball" ? "WS" : "AV",
 		};
 	}
 };

@@ -62,9 +62,12 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 					{season} {PHASE_TEXT[phase]}
 				</b>
 			</p>
-			<div className="d-flex">
+			<div className="d-sm-flex">
 				{teams.map((t, i) => (
-					<div key={t.tid} className={i === 0 ? "mr-5" : undefined}>
+					<div
+						key={t.tid}
+						className={i === 0 ? "mb-3 mb-sm-0 mr-sm-5" : undefined}
+					>
 						<h2>
 							<a
 								href={helpers.leagueUrl([

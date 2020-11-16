@@ -1,8 +1,6 @@
 store event metadata better, generate html dynamically
 - trade summary page
   - link from event, and roster page transaction column
-  - test with deleted player
-  - test with deleted data (ratings/stats)
   - skill labels are adding a little extra margin
 - test upgrade (old trade events)
 - test FBGM

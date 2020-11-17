@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
 	DataTable,
+	MoreLinks,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -62,12 +63,7 @@ const FreeAgents = ({
 	) {
 		return (
 			<div>
-				<p>
-					More:{" "}
-					<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
-						Upcoming Free Agents
-					</a>
-				</p>
+				<MoreLinks type="freeAgents" page="free_agents" />
 				<p>You're not allowed to sign free agents now.</p>
 				<p>
 					Free agents can only be signed before the playoffs or after players
@@ -140,12 +136,7 @@ const FreeAgents = ({
 				<RosterComposition className="float-right mb-3" players={userPlayers} />
 			) : null}
 
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
-					Upcoming Free Agents
-				</a>
-			</p>
+			<MoreLinks type="freeAgents" page="free_agents" />
 
 			<RosterSalarySummary
 				capSpace={capSpace}

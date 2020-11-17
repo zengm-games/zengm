@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -92,10 +92,7 @@ const UpcomingFreeAgents = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["free_agents"])}>Current Free Agents</a>
-			</p>
+			<MoreLinks type="freeAgents" page="upcoming_free_agents" />
 
 			{phase !== PHASE.RESIGN_PLAYERS ? (
 				<p>

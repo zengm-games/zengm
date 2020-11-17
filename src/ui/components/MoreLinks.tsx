@@ -29,6 +29,9 @@ const MoreLinks = (
 				type: "teamStats";
 				season: number;
 		  }
+		| {
+				type: "freeAgents";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -173,6 +176,17 @@ const MoreLinks = (
 			{
 				url: ["team_stat_dists", season],
 				name: "Stat Distributions",
+			},
+		];
+	} else if (props.type === "freeAgents") {
+		links = [
+			{
+				url: ["free_agents"],
+				name: "Current Free Agents",
+			},
+			{
+				url: ["upcoming_free_agents"],
+				name: "Upcoming Free Agents",
 			},
 		];
 	} else {

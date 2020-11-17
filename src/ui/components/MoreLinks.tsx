@@ -32,6 +32,9 @@ const MoreLinks = (
 		| {
 				type: "freeAgents";
 		  }
+		| {
+				type: "league";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -189,6 +192,19 @@ const MoreLinks = (
 				name: "Upcoming Free Agents",
 			},
 		];
+	} else if (props.type === "league") {
+		links = [
+			{ url: ["league_stats"], name: "League Stats" },
+			{ url: ["history_all"], name: "League History" },
+			{ url: ["team_records"], name: "Team Records" },
+			{ url: ["awards_records"], name: "Awards Records" },
+		];
+		if (process.env.SPORT === "basketball") {
+			links.push({
+				url: ["all_star_history"],
+				name: "All-Star History",
+			});
+		}
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

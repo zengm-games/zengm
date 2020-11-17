@@ -2,9 +2,7 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers } from "../../util";
 import type { View } from "../../../common/types";
-import { NO_LOTTERY_DRAFT_TYPES } from "../../../common";
 import { MoreLinks } from "../../components";
 
 const PAGE_SIZE = 3;

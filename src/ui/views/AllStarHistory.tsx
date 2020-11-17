@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -235,12 +235,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["league_stats"])}>League Stats</a> |{" "}
-				<a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
-				<a href={helpers.leagueUrl(["team_records"])}>Team Records</a> |{" "}
-				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>
-			</p>
+			<MoreLinks type="league" page="all_star_history" />
 
 			<DataTable
 				cols={cols}

@@ -5,12 +5,17 @@ import { curveMonotoneX, line } from "d3-shape";
 import { select } from "d3-selection";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
+import { PHASE } from "../../../common";
 
 const Charts = ({
+	phase,
 	season,
 	seasonsToPlot,
 	teams,
-}: Pick<View<"tradeSummary">, "season" | "seasonsToPlot" | "teams">) => {
+}: Pick<
+	View<"tradeSummary">,
+	"phase" | "season" | "seasonsToPlot" | "teams"
+>) => {
 	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
@@ -59,8 +64,6 @@ const Charts = ({
 				yScale: (y: number) => number,
 				y: number,
 				color: string,
-				text?: string,
-				position?: string,
 			) => {
 				const line2 = line<number>()
 					.x(d => d)
@@ -72,16 +75,6 @@ const Charts = ({
 					.style("stroke", color)
 					.style("stroke-dasharray", "5 5")
 					.attr("d", line2);
-
-				if (text) {
-					svg
-						.append("text")
-						.attr("y", yScale(y) + (position === "above" ? -7 : 17))
-						.attr("x", width - 4)
-						.attr("text-anchor", "end")
-						.style("fill", color)
-						.text(text);
-				}
 			};
 
 			/*drawReferenceLine(3, "var(--success)", "Perfect", "above");
@@ -89,6 +82,42 @@ const Charts = ({
 			drawReferenceLine(3, "var(--success)", "Perfect", "above");
             drawReferenceLine(0, "var(--secondary)");*/
 			drawHorizontal(yScaleWinp, 0.5, "var(--secondary)");
+
+			let xMarker: number | undefined;
+			if (phase < PHASE.REGULAR_SEASON) {
+				const left = xScale(String(season - 1));
+				const right = xScale(String(season));
+				if (left !== undefined && right !== undefined) {
+					xMarker = (left + right) / 2;
+				}
+			} else if (phase === PHASE.REGULAR_SEASON) {
+				xMarker = xScale(String(season));
+			} else {
+				const left = xScale(String(season));
+				const right = xScale(String(season + 1));
+				if (left !== undefined && right !== undefined) {
+					xMarker = (left + right) / 2;
+				}
+			}
+			if (xMarker !== undefined) {
+				const tradeMarker = line<number>()
+					.x(() => xMarker as number)
+					.y(d => yScaleWinp(d));
+				svg
+					.append("path")
+					.datum([0, 0.1])
+					.attr("class", "chart-line")
+					.style("stroke", "var(--danger)")
+					.style("stroke-width", "3")
+					.attr("d", tradeMarker);
+
+				svg
+					.append("text")
+					.attr("y", yScaleWinp(0.05))
+					.attr("x", xMarker + 5)
+					.style("fill", "var(--danger)")
+					.text("Trade");
+			}
 
 			const strokeWidth = 1;
 
@@ -133,7 +162,7 @@ const Charts = ({
 					.call(axisLeft(yScaleWinp).tickFormat(helpers.roundWinp));
 			}
 		}
-	}, [node, seasonsToPlot, teams]);
+	}, [node, phase, season, seasonsToPlot, teams]);
 
 	return (
 		<div

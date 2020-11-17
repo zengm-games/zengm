@@ -191,7 +191,12 @@ const TradeSummary = ({
 					</div>
 				))}
 			</div>
-			<Charts season={season} seasonsToPlot={seasonsToPlot} teams={teams} />
+			<Charts
+				phase={phase}
+				season={season}
+				seasonsToPlot={seasonsToPlot}
+				teams={teams}
+			/>
 		</>
 	);
 };

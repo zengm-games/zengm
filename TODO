@@ -1,6 +1,7 @@
 charts
 - how to detect if colors too close to each other or background?
   - test in dark mode too
+  - probably not worth it
 - team name and record on hover
 
 fuzz

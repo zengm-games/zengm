@@ -4,8 +4,9 @@ charts
   - probably not worth it
 - team name and record on hover
 - special icon for playoffs/champ
+- include WS from before trade
 - how to handle undefined value
-  - season with no WS
+  - season with no WS - 0
   - season before league existed
   - season with no W/L/T yet (preseason or future)
 

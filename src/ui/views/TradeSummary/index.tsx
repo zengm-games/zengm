@@ -195,6 +195,7 @@ const TradeSummary = ({
 				phase={phase}
 				season={season}
 				seasonsToPlot={seasonsToPlot}
+				stat={stat}
 				teams={teams}
 			/>
 		</>

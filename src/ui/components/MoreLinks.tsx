@@ -81,6 +81,13 @@ const MoreLinks = (
 			{
 				url:
 					season !== undefined
+						? ["transactions", `${abbrev}_${tid}`, season]
+						: ["transactions", `${abbrev}_${tid}`],
+				name: "Transactions",
+			},
+			{
+				url:
+					season !== undefined
 						? ["news", `${abbrev}_${tid}`, season]
 						: ["news", `${abbrev}_${tid}`],
 				name: "News Feed",

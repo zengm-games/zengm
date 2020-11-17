@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { SafeHtml } from "../components";
+import { MoreLinks, SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
@@ -24,37 +24,13 @@ const Transactions = ({
 
 	const moreLinks =
 		abbrev !== "all" ? (
-			<p>
-				More:{" "}
-				{process.env.SPORT === "football" ? (
-					<>
-						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
-							Depth Chart
-						</a>{" "}
-						|{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
-					Finances
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`, season])}>
-					Game Log
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
-					Schedule
-				</a>
-				|{" "}
-				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
-					News Feed
-				</a>
-			</p>
+			<MoreLinks
+				type="team"
+				page="depth"
+				abbrev={abbrev}
+				tid={tid}
+				season={season !== "all" ? season : undefined}
+			/>
 		) : (
 			<p>
 				More: <a href={helpers.leagueUrl(["news", "all", season])}>News Feed</a>

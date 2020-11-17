@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
 import { BoxPlot, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 

@@ -56,7 +56,6 @@ const processTrade = async (
 		teams,
 		phase: g.get("phase"),
 	});
-	console.log("eid", eid);
 
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;

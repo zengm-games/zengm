@@ -1,20 +1,32 @@
 import React from "react";
+import { NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import type { DraftType } from "../../common/types";
 import { helpers } from "../util";
 
-const MoreLinks = ({
-	type,
-	page,
-	...info
-}: {
-	type: "team";
-	page: string;
-	abbrev: string;
-	tid: number;
-	season?: number;
-}) => {
-	let links;
-	if (type === "team") {
-		const { abbrev, season, tid } = info;
+const MoreLinks = (
+	props:
+		| {
+				type: "team";
+				page: string;
+				abbrev: string;
+				tid: number;
+				season?: number;
+		  }
+		| {
+				type: "draft";
+				page: string;
+				draftType: DraftType;
+				season?: number;
+		  },
+) => {
+	const { page } = props;
+
+	let links: {
+		url: (string | number)[];
+		name: string;
+	}[];
+	if (props.type === "team") {
+		const { abbrev, season, tid } = props;
 		links = [
 			{
 				url:
@@ -69,6 +81,29 @@ const MoreLinks = ({
 				name: "Franchise Leaders",
 			});
 		}
+	} else if (props.type === "draft") {
+		const { draftType, season } = props;
+
+		links = [
+			// { url: ["draft"], name: "Draft", },
+			{
+				url: ["draft_scouting"],
+				name:
+					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
+			},
+		];
+		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
+			links.push({
+				url:
+					season !== undefined ? ["draft_lottery", season] : ["draft_lottery"],
+				name: "Draft Lottery",
+			});
+		}
+		links.push({
+			url: season !== undefined ? ["draft_history", season] : ["draft_history"],
+			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
+		});
+		links.push({ url: ["draft_team_history"], name: "Team History" });
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

@@ -5,6 +5,7 @@ import {
 	DraftAbbrev,
 	SkillsBlock,
 	PlayerNameLabels,
+	MoreLinks,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
@@ -129,21 +130,7 @@ const DraftTeamHistory = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					{!noDraft ? "Draft Scouting" : "Upcoming Prospects"}
-				</a>{" "}
-				|{" "}
-				{!NO_LOTTERY_DRAFT_TYPES.includes(draftType) ? (
-					<>
-						<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a> |{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["draft_history"])}>
-					{!noDraft ? "Draft" : "Prospects"} History
-				</a>
-			</p>
+			<MoreLinks type="draft" page="draft_team_history" draftType={draftType} />
 
 			<p>
 				Players currently on your team are{" "}

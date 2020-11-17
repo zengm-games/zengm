@@ -2,7 +2,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import React, { useEffect, useReducer, useRef } from "react";
-import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
+import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import type {
@@ -560,14 +560,12 @@ const DraftLottery = (props: Props) => {
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["draft_history", props.season])}>
-					Draft History
-				</a>{" "}
-				| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-			</p>
+			<MoreLinks
+				type="draft"
+				page="draft_lottery"
+				draftType="nba1994"
+				season={props.season}
+			/>
 
 			{props.type === "projected" ? (
 				<p>

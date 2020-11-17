@@ -101,7 +101,6 @@ const Charts = ({
 				}
 			}
 			if (xMarker !== undefined) {
-				console.log(yScale.range(), yScale(1));
 				const tradeMarker = line<number>()
 					.x(() => xMarker as number)
 					.y(d => yScale(d));
@@ -129,9 +128,13 @@ const Charts = ({
 					.y(d => yScale(d.teams[i].winp ?? 0))
 					.curve(curveMonotoneX);
 
+				const filtered = seasonsToPlot.filter(
+					row => row.teams[i].winp !== undefined,
+				);
+
 				svg
 					.append("path")
-					.datum(seasonsToPlot)
+					.datum(filtered)
 					.attr("class", "chart-line")
 					.style("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
@@ -139,7 +142,7 @@ const Charts = ({
 
 				svg
 					.selectAll()
-					.data(seasonsToPlot)
+					.data(filtered)
 					.enter()
 					.append("circle")
 					.attr("class", "chart-point")

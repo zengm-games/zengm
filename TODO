@@ -7,7 +7,6 @@ trade summary charts
   - would it make tooltips easier?
 - how to handle undefined value
   - season before league existed
-  - season before team existed http://localhost/l/10/trade_summary/4201
   - season with no W/L/T yet (preseason or future)
     - filter out on both plots
 

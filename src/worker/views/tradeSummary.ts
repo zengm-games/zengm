@@ -10,7 +10,7 @@ import type {
 } from "../../common/types";
 import { player } from "../core";
 import { idb } from "../db";
-import { getTeamInfoBySeason } from "../util";
+import { getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
 
 const findRatingsRow = (
@@ -50,6 +50,7 @@ const findStatSum = (
 	statsIndex: number,
 	season: number,
 	phase: Phase,
+	statSumsBySeason: Record<number, number>,
 ) => {
 	let rows: PlayerStats[];
 
@@ -74,7 +75,14 @@ const findStatSum = (
 
 	let statSum = 0;
 	for (const row of rows) {
-		statSum += process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
+		const stat =
+			process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
+		statSum += stat;
+
+		if (!statSumsBySeason[row.season]) {
+			statSumsBySeason[row.season] = 0;
+		}
+		statSumsBySeason[row.season] += stat;
 	}
 	return statSum;
 };
@@ -85,11 +93,18 @@ const getActualPlayerInfo = (
 	statsIndex: number,
 	season: number,
 	phase: Phase = 0,
+	statSumsBySeason: Record<number, number>,
 	draftPick: boolean = false,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
 
-	const stat = findStatSum(p.stats, statsIndex, season, phase);
+	const stat = findStatSum(
+		p.stats,
+		statsIndex,
+		season,
+		phase,
+		statSumsBySeason,
+	);
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
@@ -101,6 +116,65 @@ const getActualPlayerInfo = (
 		stat,
 		watch: p.watch,
 	};
+};
+
+const getSeasonsToPlot = async (
+	season: number,
+	phase: Phase = 0,
+	tids: [number, number],
+	statSumsBySeason: [Record<number, number>, Record<number, number>],
+) => {
+	// Default range of the plot, relative to the season of the trade
+	const start = season - (phase <= PHASE.PLAYOFFS ? 2 : 1);
+	let end = season + 5;
+
+	// Extend end date if we have stats
+	const statSeasons = [
+		...Object.keys(statSumsBySeason[0]),
+		...Object.keys(statSumsBySeason[1]),
+	].map(x => parseInt(x));
+	const maxStatSeason = Math.max(...statSeasons);
+	if (maxStatSeason > end) {
+		end = maxStatSeason;
+	}
+
+	const seasons = [];
+
+	const teamSeasonsIndex = idb.league
+		.transaction("teamSeasons")
+		.store.index("tid, season");
+
+	for (let i = start; i <= end; i++) {
+		type Team = {
+			winp?: number;
+			won?: number;
+			lost?: number;
+			tied?: number;
+			stat?: number;
+		};
+		const teams: [Team, Team] = [{}, {}];
+		for (let j = 0; j < tids.length; j++) {
+			const tid = tids[j];
+			const teamSeason = await teamSeasonsIndex.get([tid, i]);
+			if (teamSeason) {
+				teams[j].won = teamSeason.won;
+				teams[j].lost = teamSeason.lost;
+				teams[j].tied = teamSeason.tied;
+				teams[j].winp = helpers.calcWinp(teamSeason);
+			}
+
+			if (i > season || (i === season && phase <= PHASE.PLAYOFFS)) {
+				teams[j].stat = statSumsBySeason[j][i] ?? 0;
+			}
+		}
+
+		seasons.push({
+			season: i,
+			teams,
+		});
+	}
+
+	return seasons;
 };
 
 const updateTradeSummary = async (
@@ -125,6 +199,11 @@ const updateTradeSummary = async (
 		const teams = [];
 
 		const tids = [...event.tids];
+
+		const statSumsBySeason: [Record<number, number>, Record<number, number>] = [
+			{},
+			{},
+		];
 
 		for (let i = 0; i < tids.length; i++) {
 			const tid = tids[i];
@@ -193,6 +272,7 @@ const updateTradeSummary = async (
 							asset.statsIndex,
 							event.season,
 							event.phase,
+							statSumsBySeason[i],
 						);
 						statSum += playerInfo.stat;
 
@@ -241,6 +321,7 @@ const updateTradeSummary = async (
 							0,
 							event.season,
 							event.phase,
+							statSumsBySeason[i],
 							true,
 						);
 						statSum += playerInfo.stat;
@@ -270,6 +351,16 @@ const updateTradeSummary = async (
 				statSum,
 			});
 		}
+
+		console.log("statSumsBySeason", statSumsBySeason);
+
+		const seasons = await getSeasonsToPlot(
+			event.season,
+			event.phase,
+			event.tids as [number, number],
+			statSumsBySeason,
+		);
+		console.log(seasons);
 
 		return {
 			eid,

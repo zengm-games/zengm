@@ -1,9 +1,9 @@
 import React from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { helpers } from "../util";
-import { PlayerNameLabels } from "../components";
-import { PHASE_TEXT } from "../../common";
+import useTitleBar from "../../hooks/useTitleBar";
+import type { View } from "../../../common/types";
+import { helpers } from "../../util";
+import { PlayerNameLabels } from "../../components";
+import { PHASE_TEXT } from "../../../common";
 
 const PickText = ({
 	asset,

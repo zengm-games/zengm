@@ -17,6 +17,11 @@ const MoreLinks = (
 				page: string;
 				draftType: DraftType;
 				season?: number;
+		  }
+		| {
+				type: "playerRatings";
+				page: string;
+				season: number;
 		  },
 ) => {
 	const { page } = props;
@@ -104,6 +109,19 @@ const MoreLinks = (
 			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
 		});
 		links.push({ url: ["draft_team_history"], name: "Team History" });
+	} else if (props.type === "playerRatings") {
+		const { season } = props;
+
+		links = [
+			{
+				url: ["player_ratings", season],
+				name: "Main Ratings",
+			},
+			{
+				url: ["player_rating_dists", season],
+				name: "Rating Distributions",
+			},
+		];
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxPlot } from "../components";
+import { BoxPlot, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
@@ -21,10 +21,11 @@ const PlayerRatingDists = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["player_ratings", season])}>Main Ratings</a>
-			</p>
+			<MoreLinks
+				type="playerRatings"
+				page="player_rating_dists"
+				season={season}
+			/>
 
 			<p>
 				These <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a> show

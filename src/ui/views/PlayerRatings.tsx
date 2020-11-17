@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { POSITIONS, PLAYER } from "../../common";
@@ -100,12 +100,7 @@ const PlayerRatings = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["player_rating_dists", season])}>
-					Rating Distributions
-				</a>
-			</p>
+			<MoreLinks type="playerRatings" page="player_ratings" season={season} />
 
 			{challengeNoRatings ? (
 				<p className="alert alert-danger d-inline-block">

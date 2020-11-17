@@ -4,27 +4,33 @@ import type { DraftType } from "../../common/types";
 import { helpers } from "../util";
 
 const MoreLinks = (
-	props:
+	props: (
 		| {
 				type: "team";
-				page: string;
 				abbrev: string;
 				tid: number;
 				season?: number;
 		  }
 		| {
 				type: "draft";
-				page: string;
 				draftType: DraftType;
 				season?: number;
 		  }
 		| {
 				type: "playerRatings";
-				page: string;
 				season: number;
-		  },
+		  }
+		| {
+				type: "playerStats";
+				season?: number;
+				statType?: string;
+		  }
+	) & {
+		page: string;
+		keepSelfLink?: boolean;
+	},
 ) => {
-	const { page } = props;
+	const { keepSelfLink, page } = props;
 
 	let links: {
 		url: (string | number)[];
@@ -122,6 +128,36 @@ const MoreLinks = (
 				name: "Rating Distributions",
 			},
 		];
+	} else if (props.type === "playerStats") {
+		const { season, statType } = props;
+		links = [
+			{
+				url:
+					season !== undefined
+						? ["player_stat_dists", season]
+						: ["player_stat_dists"],
+				name: "Stat Distributions",
+			},
+		];
+
+		if (season === undefined || page !== "player_stats") {
+			links.unshift({
+				url: season !== undefined ? ["player_stats", season] : ["player_stats"],
+				name: page === "player_stats" ? "Per Game" : "Main Stats",
+			});
+		} else {
+			links.unshift({
+				url: [
+					"player_stats",
+					"all",
+					"career",
+					process.env.SPORT === "basketball" || statType === undefined
+						? "totals"
+						: statType,
+				],
+				name: "Career Totals",
+			});
+		}
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}
@@ -130,7 +166,7 @@ const MoreLinks = (
 		<p>
 			More:{" "}
 			{links
-				.filter(({ url }) => url[0] !== page)
+				.filter(({ url }) => keepSelfLink || url[0] !== page)
 				.map(({ url, name }, i) => {
 					return (
 						<React.Fragment key={url[0]}>

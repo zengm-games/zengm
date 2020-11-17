@@ -10,7 +10,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER, NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import { PLAYER } from "../../common";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);

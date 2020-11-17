@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { BoxPlot, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
 import type { View } from "../../common/types";
 
 const width100 = {

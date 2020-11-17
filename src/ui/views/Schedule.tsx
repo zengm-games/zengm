@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker, useLocalShallow, helpers } from "../util";
+import { toWorker, useLocalShallow } from "../util";
 
 const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 	useTitleBar({

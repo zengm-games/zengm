@@ -92,7 +92,7 @@ const getActualPlayerInfo = (
 	ratingsIndex: number,
 	statsIndex: number,
 	season: number,
-	phase: Phase = 0,
+	phase: Phase,
 	statSumsBySeason: Record<number, number>,
 	draftPick: boolean = false,
 ) => {
@@ -120,7 +120,7 @@ const getActualPlayerInfo = (
 
 const getSeasonsToPlot = async (
 	season: number,
-	phase: Phase = 0,
+	phase: Phase,
 	tids: [number, number],
 	statSumsBySeason: [Record<number, number>, Record<number, number>],
 ) => {
@@ -169,7 +169,7 @@ const getSeasonsToPlot = async (
 		}
 
 		seasons.push({
-			season: i,
+			season: String(i),
 			teams,
 		});
 	}
@@ -190,10 +190,17 @@ const updateTradeSummary = async (
 		eid !== state.eid
 	) {
 		const event = await idb.getCopy.events({ eid });
-		if (!event || event.type !== "trade" || !event.teams) {
-			return {
-				eid,
+		if (
+			!event ||
+			event.type !== "trade" ||
+			!event.teams ||
+			event.phase === undefined
+		) {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				errorMessage: "Trade not found.",
 			};
+			return returnValue;
 		}
 
 		const teams = [];
@@ -344,6 +351,7 @@ const updateTradeSummary = async (
 
 			teams.push({
 				abbrev: teamInfo.abbrev,
+				colors: teamInfo.colors,
 				region: teamInfo.region,
 				name: teamInfo.name,
 				tid,
@@ -354,13 +362,13 @@ const updateTradeSummary = async (
 
 		console.log("statSumsBySeason", statSumsBySeason);
 
-		const seasons = await getSeasonsToPlot(
+		const seasonsToPlot = await getSeasonsToPlot(
 			event.season,
 			event.phase,
 			event.tids as [number, number],
 			statSumsBySeason,
 		);
-		console.log(seasons);
+		console.log(seasonsToPlot);
 
 		return {
 			eid,
@@ -368,6 +376,7 @@ const updateTradeSummary = async (
 			season: event.season,
 			phase: event.phase,
 			stat: process.env.SPORT === "basketball" ? "WS" : "AV",
+			seasonsToPlot,
 		};
 	}
 };

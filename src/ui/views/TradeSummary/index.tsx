@@ -4,6 +4,7 @@ import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PlayerNameLabels } from "../../components";
 import { PHASE_TEXT } from "../../../common";
+import Charts from "./Charts";
 
 const PickText = ({
 	asset,
@@ -68,14 +69,16 @@ const PickText = ({
 	);
 };
 
-const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
+const TradeSummary = ({
+	phase,
+	season,
+	seasonsToPlot,
+	stat,
+	teams,
+}: View<"tradeSummary">) => {
 	useTitleBar({
 		title: "Trade Summary",
 	});
-
-	if (!teams || season === undefined || phase === undefined) {
-		return <p>Trade not found.</p>;
-	}
 
 	return (
 		<>
@@ -188,6 +191,7 @@ const TradeSummary = ({ phase, season, stat, teams }: View<"tradeSummary">) => {
 					</div>
 				))}
 			</div>
+			<Charts season={season} seasonsToPlot={seasonsToPlot} teams={teams} />
 		</>
 	);
 };

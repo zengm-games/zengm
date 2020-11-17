@@ -1,3 +1,8 @@
+charts
+- how to detect if colors too close to each other or background?
+  - test in dark mode too
+- team name and record on hover
+
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5
 

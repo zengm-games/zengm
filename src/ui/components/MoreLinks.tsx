@@ -35,6 +35,9 @@ const MoreLinks = (
 		| {
 				type: "league";
 		  }
+		| {
+				type: "importExport";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -205,6 +208,12 @@ const MoreLinks = (
 				name: "All-Star History",
 			});
 		}
+	} else if (props.type === "importExport") {
+		links = [
+			{ url: ["import_players"], name: "Import Players" },
+			{ url: ["export_players"], name: "Export Players" },
+			{ url: ["export_league"], name: "Export League" },
+		];
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

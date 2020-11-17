@@ -1,4 +1,5 @@
 import React, { useCallback, useState, ReactNode, FormEvent } from "react";
+import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";
 
@@ -99,6 +100,7 @@ const ExportLeague = () => {
 
 	return (
 		<>
+			<MoreLinks type="importExport" page="export_league" />
 			<p>
 				Here you can export your entire league data to a single League File. A
 				League File can serve many purposes. You can use it as a <b>backup</b>,

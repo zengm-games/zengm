@@ -2,7 +2,12 @@ import React, { useState, ChangeEvent } from "react";
 import { PLAYER, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
-import { DataTable, PlayerNameLabels, LeagueFileUpload } from "../components";
+import {
+	DataTable,
+	PlayerNameLabels,
+	LeagueFileUpload,
+	MoreLinks,
+} from "../components";
 import type { View } from "../../common/types";
 import orderBy from "lodash/orderBy";
 
@@ -63,12 +68,7 @@ const ImportPlayers = ({
 		dropdownView: "import_players",
 	});
 
-	const links = (
-		<p>
-			More: <a href={helpers.leagueUrl(["export_players"])}>Export Players</a> |{" "}
-			<a href={helpers.leagueUrl(["export_league"])}>Export League</a>
-		</p>
-	);
+	const links = <MoreLinks type="importExport" page="import_players" />;
 
 	if (!godMode) {
 		return (

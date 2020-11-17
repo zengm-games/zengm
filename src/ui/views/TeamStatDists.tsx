@@ -725,9 +725,6 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 	return (
 		<>
 			<MoreLinks type="teamStats" page="team_stat_dists" season={season} />
-			<p>
-				More: <a href={helpers.leagueUrl(["team_stats", season])}>Main Stats</a>
-			</p>
 
 			<p>
 				These <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a> show

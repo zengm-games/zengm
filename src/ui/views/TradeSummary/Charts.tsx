@@ -162,7 +162,11 @@ const Charts = ({
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,0)`)
-					.call(axisLeft(yScale).tickFormat(helpers.roundWinp as any));
+					.call(
+						axisLeft(yScale)
+							.ticks(5)
+							.tickFormat(helpers.roundWinp as any),
+					);
 			}
 
 			const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
@@ -202,9 +206,13 @@ const Charts = ({
 					.y(d => yScale2(d.teams[i].stat ?? 0))
 					.curve(curveMonotoneX);
 
+				const filtered = seasonsToPlot.filter(
+					row => row.teams[i].stat !== undefined,
+				);
+
 				svg2
 					.append("path")
-					.datum(seasonsToPlot)
+					.datum(filtered)
 					.attr("class", "chart-line")
 					.style("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
@@ -212,7 +220,7 @@ const Charts = ({
 
 				svg2
 					.selectAll()
-					.data(seasonsToPlot)
+					.data(filtered)
 					.enter()
 					.append("circle")
 					.attr("class", "chart-point")
@@ -232,9 +240,22 @@ const Charts = ({
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,0)`)
-					.call(axisLeft(yScale2));
+					.call(axisLeft(yScale2).ticks(5));
 			}
 		}
+
+		return () => {
+			if (node) {
+				while (node.firstChild) {
+					node.removeChild(node.firstChild);
+				}
+			}
+			if (node2) {
+				while (node2.firstChild) {
+					node2.removeChild(node2.firstChild);
+				}
+			}
+		};
 	}, [node, node2, phase, season, seasonsToPlot, teams]);
 
 	return (
@@ -273,7 +294,7 @@ const Charts = ({
 					maxWidth: 400,
 				}}
 			>
-				<div className="text-center">{stat} by traded assets</div>
+				<div className="text-center">{stat} by assets received in trade</div>
 				<div ref={getNode2} />
 				<div
 					className="chart-legend"

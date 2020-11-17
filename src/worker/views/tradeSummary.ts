@@ -10,7 +10,7 @@ import type {
 } from "../../common/types";
 import { player } from "../core";
 import { idb } from "../db";
-import { getTeamInfoBySeason, helpers } from "../util";
+import { g, getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
 
 const findRatingsRow = (
@@ -80,10 +80,15 @@ const findStatSum = (
 		}
 
 		// Including before trade
-		if (!statSumsBySeason[row.season]) {
-			statSumsBySeason[row.season] = 0;
+		if (
+			row.season < g.get("season") ||
+			(row.season === g.get("season") && g.get("phase") >= PHASE.REGULAR_SEASON)
+		) {
+			if (!statSumsBySeason[row.season]) {
+				statSumsBySeason[row.season] = 0;
+			}
+			statSumsBySeason[row.season] += stat;
 		}
-		statSumsBySeason[row.season] += stat;
 	}
 	return statSum;
 };
@@ -151,12 +156,22 @@ const getSeasonsToPlot = async (
 			won?: number;
 			lost?: number;
 			tied?: number;
-			stat: number;
+			stat?: number;
 		};
-		const teams: [Team, Team] = [{ stat: 0 }, { stat: 0 }];
+		const teams: [Team, Team] = [{}, {}];
 		for (let j = 0; j < tids.length; j++) {
 			const tid = tids[j];
-			const teamSeason = await teamSeasonsIndex.get([tid, i]);
+			let teamSeason;
+			if (i === g.get("season")) {
+				teamSeason = await idb.cache.teamSeasons.indexGet(
+					"teamSeasonsByTidSeason",
+					[tid, i],
+				);
+			}
+			if (!teamSeason) {
+				teamSeason = await teamSeasonsIndex.get([tid, i]);
+			}
+
 			if (
 				teamSeason &&
 				(teamSeason.won > 0 || teamSeason.lost > 0 || teamSeason.tied > 0)
@@ -167,7 +182,7 @@ const getSeasonsToPlot = async (
 				teams[j].winp = helpers.calcWinp(teamSeason);
 			}
 
-			teams[j].stat = statSumsBySeason[j][i] ?? 0;
+			teams[j].stat = statSumsBySeason[j][i];
 		}
 
 		seasons.push({
@@ -361,15 +376,12 @@ const updateTradeSummary = async (
 			});
 		}
 
-		console.log("statSumsBySeason", statSumsBySeason);
-
 		const seasonsToPlot = await getSeasonsToPlot(
 			event.season,
 			event.phase,
 			event.tids as [number, number],
 			statSumsBySeason,
 		);
-		console.log(seasonsToPlot);
 
 		return {
 			eid,

@@ -1,14 +1,14 @@
-trade summary charts
+trade frivolities
+- biggest trades (some formula based on ovr+pot of the players in the trade. maybe also including picks, not sure)
+- most lopsided trade outcomes (biggest difference in WS after trade, minimum 3 years out)
+
+trade summary charts future
 - some indication for winning a championship, special marker?
   - tooltip required, for clarity
 - tooltip
   - team region, name, record, playoff result
 - https://github.com/airbnb/visx
   - would it make tooltips easier?
-- how to handle undefined value
-  - season before league existed
-  - season with no W/L/T yet (preseason or future)
-    - filter out on both plots
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5

@@ -34,7 +34,7 @@ const Charts = ({
 	}, []);
 
 	useEffect(() => {
-		if (node) {
+		if (node && node2) {
 			const allStats: number[] = [];
 			const seasons: string[] = [];
 
@@ -48,7 +48,6 @@ const Charts = ({
 			}
 
 			// totals span -1 to 3, others -3 to 1
-			const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
 			const margin = {
 				top: 15,
 				right: 15,
@@ -67,6 +66,7 @@ const Charts = ({
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
 			const drawHorizontal = (
+				svg: any,
 				yScale: (y: number) => number,
 				y: number,
 				color: string,
@@ -82,7 +82,7 @@ const Charts = ({
 					.style("stroke-dasharray", "5 5")
 					.attr("d", line2);
 			};
-			drawHorizontal(yScale, 0.5, "var(--secondary)");
+			drawHorizontal(svg, yScale, 0.5, "var(--secondary)");
 
 			let xMarker: number | undefined;
 			if (phase < PHASE.REGULAR_SEASON) {
@@ -161,90 +161,31 @@ const Charts = ({
 					.attr("transform", `translate(0,0)`)
 					.call(axisLeft(yScale).tickFormat(helpers.roundWinp as any));
 			}
-		}
-	}, [node, phase, season, seasonsToPlot, teams]);
 
-	useEffect(() => {
-		if (node2) {
-			const allStats: number[] = [];
-			const seasons: string[] = [];
-
-			for (const row of seasonsToPlot) {
-				for (const team of row.teams) {
-					if (team.stat !== undefined) {
-						allStats.push(team.stat);
-					}
-				}
-				seasons.push(row.season);
-			}
-
-			// totals span -1 to 3, others -3 to 1
 			const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
-			const margin = {
-				top: 15,
-				right: 15,
-				bottom: 30,
-				left: 30,
-			};
-			const width = node2.clientWidth - margin.left - margin.right;
-			const height = 200;
-			const xScale = scalePoint().domain(seasons).range([0, width]);
-			const yScale = scaleLinear().domain(yDomainStat).range([height, 0]);
-			const svg = select(node2)
+			const yScale2 = scaleLinear().domain(yDomainStat).range([height, 0]);
+			const svg2 = select(node2)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
-			const drawHorizontal = (
-				yScale: (y: number) => number,
-				y: number,
-				color: string,
-			) => {
-				const line2 = line<number>()
-					.x(d => d)
-					.y(() => yScale(y));
-				svg
-					.append("path")
-					.datum(xScale.range())
-					.attr("class", "chart-line")
-					.style("stroke", color)
-					.style("stroke-dasharray", "5 5")
-					.attr("d", line2);
-			};
-			drawHorizontal(yScale, 0, "var(--secondary)");
+			drawHorizontal(svg2, yScale2, 0, "var(--secondary)");
 
-			let xMarker: number | undefined;
-			if (phase < PHASE.REGULAR_SEASON) {
-				const left = xScale(String(season - 1));
-				const right = xScale(String(season));
-				if (left !== undefined && right !== undefined) {
-					xMarker = (left + right) / 2;
-				}
-			} else if (phase === PHASE.REGULAR_SEASON) {
-				xMarker = xScale(String(season));
-			} else {
-				const left = xScale(String(season));
-				const right = xScale(String(season + 1));
-				if (left !== undefined && right !== undefined) {
-					xMarker = (left + right) / 2;
-				}
-			}
 			if (xMarker !== undefined) {
-				console.log(yScale.range(), yScale(1));
 				const tradeMarker = line<number>()
 					.x(() => xMarker as number)
-					.y(d => yScale(d));
-				svg
+					.y(d => yScale2(d));
+				svg2
 					.append("path")
-					.datum(yScale.domain())
+					.datum(yScale2.domain())
 					.attr("class", "chart-line")
 					.style("stroke", "var(--danger)")
 					.style("stroke-dasharray", "5 5")
 					.attr("d", tradeMarker);
 
-				svg
+				svg2
 					.append("text")
 					.attr("y", margin.top)
 					.attr("x", xMarker + 5)
@@ -252,15 +193,13 @@ const Charts = ({
 					.text("Trade");
 			}
 
-			const strokeWidth = 1;
-
 			for (let i = 0; i < 2; i++) {
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
-					.y(d => yScale(d.teams[i].stat ?? 0))
+					.y(d => yScale2(d.teams[i].stat ?? 0))
 					.curve(curveMonotoneX);
 
-				svg
+				svg2
 					.append("path")
 					.datum(seasonsToPlot)
 					.attr("class", "chart-line")
@@ -268,7 +207,7 @@ const Charts = ({
 					.style("stroke-width", strokeWidth)
 					.attr("d", line2);
 
-				svg
+				svg2
 					.selectAll()
 					.data(seasonsToPlot)
 					.enter()
@@ -277,28 +216,28 @@ const Charts = ({
 					.attr("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
 					.attr("cx", d => xScale(d.season) as number)
-					.attr("cy", d => yScale(d.teams[i].stat ?? 0))
+					.attr("cy", d => yScale2(d.teams[i].stat ?? 0))
 					.attr("r", 5 * Math.sqrt(strokeWidth));
 
-				svg
+				svg2
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,${height})`)
 					.call(axisBottom(xScale));
 
-				svg
+				svg2
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,0)`)
-					.call(axisLeft(yScale));
+					.call(axisLeft(yScale2));
 			}
 		}
-	}, [node2, phase, season, seasonsToPlot, teams]);
+	}, [node, node2, phase, season, seasonsToPlot, teams]);
 
 	return (
 		<>
 			<div
-				className="position-relative mt-3"
+				className="position-relative"
 				style={{
 					maxWidth: 400,
 				}}

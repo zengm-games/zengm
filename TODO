@@ -1,15 +1,15 @@
-charts
-- how to detect if colors too close to each other or background?
-  - test in dark mode too
-  - probably not worth it
-- team name and record on hover
-- special icon for playoffs/champ
-- include WS from before trade
+trade summary charts
+- some indication for winning a championship, special marker?
+  - tooltip required, for clarity
+- tooltip
+  - team region, name, record, playoff result
+- https://github.com/airbnb/visx
+  - would it make tooltips easier?
 - how to handle undefined value
   - season before league existed
+  - season before team existed http://localhost/l/10/trade_summary/4201
   - season with no W/L/T yet (preseason or future)
     - filter out on both plots
-- DRY
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5

@@ -156,7 +156,10 @@ const getSeasonsToPlot = async (
 		for (let j = 0; j < tids.length; j++) {
 			const tid = tids[j];
 			const teamSeason = await teamSeasonsIndex.get([tid, i]);
-			if (teamSeason) {
+			if (
+				teamSeason &&
+				(teamSeason.won > 0 || teamSeason.lost > 0 || teamSeason.tied > 0)
+			) {
 				teams[j].won = teamSeason.won;
 				teams[j].lost = teamSeason.lost;
 				teams[j].tied = teamSeason.tied;
@@ -351,7 +354,6 @@ const updateTradeSummary = async (
 
 			teams.push({
 				abbrev: teamInfo.abbrev,
-				colors: teamInfo.colors,
 				region: teamInfo.region,
 				name: teamInfo.name,
 				tid,

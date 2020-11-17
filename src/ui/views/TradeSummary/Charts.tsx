@@ -7,6 +7,8 @@ import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PHASE } from "../../../common";
 
+const colors = ["var(--blue)", "var(--green)"];
+
 const Charts = ({
 	phase,
 	season,
@@ -47,9 +49,7 @@ const Charts = ({
 			const width = node.clientWidth - margin.left - margin.right;
 			const height = 200;
 			const xScale = scalePoint().domain(seasons).range([0, width]);
-			const yScaleWinp = scaleLinear().domain([0, 1]).range([height, 0]) as (
-				y: number,
-			) => number;
+			const yScaleWinp = scaleLinear().domain([0, 1]).range([height, 0]);
 			const yScaleStat = scaleLinear()
 				.domain(yDomainStat)
 				.range([height, 0]) as (y: number) => number;
@@ -100,20 +100,21 @@ const Charts = ({
 				}
 			}
 			if (xMarker !== undefined) {
+				console.log(yScaleWinp.range(), yScaleWinp(1));
 				const tradeMarker = line<number>()
 					.x(() => xMarker as number)
 					.y(d => yScaleWinp(d));
 				svg
 					.append("path")
-					.datum([0, 0.1])
+					.datum(yScaleWinp.domain())
 					.attr("class", "chart-line")
 					.style("stroke", "var(--danger)")
-					.style("stroke-width", "3")
+					.style("stroke-dasharray", "5 5")
 					.attr("d", tradeMarker);
 
 				svg
 					.append("text")
-					.attr("y", yScaleWinp(0.05))
+					.attr("y", margin.top)
 					.attr("x", xMarker + 5)
 					.style("fill", "var(--danger)")
 					.text("Trade");
@@ -122,8 +123,6 @@ const Charts = ({
 			const strokeWidth = 1;
 
 			for (let i = 0; i < 2; i++) {
-				const color = teams[i].colors[0];
-
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
 					.y(d => yScaleWinp(d.teams[i].winp ?? 0))
@@ -133,7 +132,7 @@ const Charts = ({
 					.append("path")
 					.datum(seasonsToPlot)
 					.attr("class", "chart-line")
-					.style("stroke", color)
+					.style("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
 					.attr("d", line2);
 
@@ -143,7 +142,7 @@ const Charts = ({
 					.enter()
 					.append("circle")
 					.attr("class", "chart-point")
-					.attr("stroke", color)
+					.attr("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
 					.attr("cx", d => xScale(d.season) as number)
 					.attr("cy", d => yScaleWinp(d.teams[i].winp ?? 0))
@@ -159,7 +158,7 @@ const Charts = ({
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,0)`)
-					.call(axisLeft(yScaleWinp).tickFormat(helpers.roundWinp));
+					.call(axisLeft(yScaleWinp).tickFormat(helpers.roundWinp as any));
 			}
 		}
 	}, [node, phase, season, seasonsToPlot, teams]);
@@ -185,7 +184,7 @@ const Charts = ({
 			>
 				<ul className="list-unstyled mb-0">
 					{teams.map((t, i) => (
-						<li key={i} style={{ color: t.colors[0] }}>
+						<li key={i} style={{ color: colors[i] }}>
 							— {t.abbrev}
 						</li>
 					))}

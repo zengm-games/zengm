@@ -3,6 +3,11 @@ charts
   - test in dark mode too
   - probably not worth it
 - team name and record on hover
+- special icon for playoffs/champ
+- how to handle undefined value
+  - season with no WS
+  - season before league existed
+  - season with no W/L/T yet (preseason or future)
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5

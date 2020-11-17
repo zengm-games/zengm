@@ -4,6 +4,7 @@ import {
 	BarGraph,
 	DataTable,
 	HelpPopover,
+	MoreLinks,
 	PlayerNameLabels,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -567,31 +568,7 @@ const TeamFinances = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				{process.env.SPORT === "football" ? (
-					<>
-						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
-							Depth Chart
-						</a>{" "}
-						|{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
-					Game Log
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
-					Schedule
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
-			</p>
+			<MoreLinks type="team" page="team_finances" abbrev={abbrev} tid={tid} />
 
 			<PayrollInfo
 				hardCap={hardCap}

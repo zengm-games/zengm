@@ -17,6 +17,7 @@ export { default as JerseyNumber } from "./JerseyNumber";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as MarginOfVictory } from "./MarginOfVictory";
 export { default as Mood } from "./Mood";
+export { default as MoreLinks } from "./MoreLinks";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";
 export { default as NagModal } from "./NagModal";
 export { default as NavBar } from "./NavBar";

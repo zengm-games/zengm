@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import arrayMove from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { PlayerNameLabels, SortableTable } from "../components";
+import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import { POSITIONS } from "../../common/constants.football";
 import type { View } from "../../common/types";
 
@@ -93,29 +93,7 @@ const Depth = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
-					Finances
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
-					Game Log
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
-					Schedule
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["news_feed", `${abbrev}_${tid}`])}>
-					News Feed
-				</a>
-			</p>
+			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
 			<p style={{ clear: "both" }}>
 				Click or drag row handles to move players between the starting lineup{" "}
 				<span className="table-info legend-square" /> and the bench{" "}

@@ -186,7 +186,7 @@ const getSeasonsToPlot = async (
 		}
 
 		seasons.push({
-			season: String(i),
+			season: i,
 			teams,
 		});
 	}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { axisBottom, axisLeft } from "d3-axis";
-import { scaleLinear, scalePoint } from "d3-scale";
+import { scaleLinear } from "d3-scale";
 import { curveMonotoneX, line } from "d3-shape";
 import { select } from "d3-selection";
 import type { View } from "../../../common/types";
@@ -36,7 +36,7 @@ const Charts = ({
 	useEffect(() => {
 		if (node && node2) {
 			const allStats: number[] = [];
-			const seasons: string[] = [];
+			const seasons: number[] = [];
 
 			for (const row of seasonsToPlot) {
 				for (const team of row.teams) {
@@ -56,7 +56,9 @@ const Charts = ({
 			};
 			const width = node.clientWidth - margin.left - margin.right;
 			const height = 200;
-			const xScale = scalePoint().domain(seasons).range([0, width]);
+			const xScale = scaleLinear()
+				.domain([seasons[0], seasons[seasons.length - 1]])
+				.range([0, width]);
 			const yScale = scaleLinear().domain([0, 1]).range([height, 0]);
 			const svg = select(node)
 				.append("svg")
@@ -84,25 +86,17 @@ const Charts = ({
 			};
 			drawHorizontal(svg, yScale, 0.5, "var(--secondary)");
 
-			let xMarker: number | undefined;
+			let xMarker: number;
 			if (phase < PHASE.REGULAR_SEASON) {
-				const left = xScale(String(season - 1));
-				const right = xScale(String(season));
-				if (left !== undefined && right !== undefined) {
-					xMarker = (left + right) / 2;
-				}
+				xMarker = xScale(season - 0.5);
 			} else if (phase === PHASE.REGULAR_SEASON) {
-				xMarker = xScale(String(season));
+				xMarker = xScale(season);
 			} else {
-				const left = xScale(String(season));
-				const right = xScale(String(season + 1));
-				if (left !== undefined && right !== undefined) {
-					xMarker = (left + right) / 2;
-				}
+				xMarker = xScale(season + 0.5);
 			}
 			if (xMarker !== undefined) {
 				const tradeMarker = line<number>()
-					.x(() => xMarker as number)
+					.x(() => xMarker)
 					.y(d => yScale(d));
 				svg
 					.append("path")
@@ -156,7 +150,7 @@ const Charts = ({
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,${height})`)
-					.call(axisBottom(xScale));
+					.call(axisBottom(xScale).ticks(8).tickFormat(String));
 
 				svg
 					.append("g")
@@ -234,7 +228,7 @@ const Charts = ({
 					.append("g")
 					.attr("class", "chart-axis")
 					.attr("transform", `translate(0,${height})`)
-					.call(axisBottom(xScale));
+					.call(axisBottom(xScale).ticks(8).tickFormat(String));
 
 				svg2
 					.append("g")

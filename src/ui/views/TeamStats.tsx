@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
-import { DataTable, MarginOfVictory } from "../components";
+import { DataTable, MarginOfVictory, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 
 const legendSquare = (className: string) => {
@@ -147,22 +147,15 @@ const TeamStats = ({
 
 	return (
 		<>
-			<div className="row">
-				<div className="col-sm-4">
-					More:{" "}
-					<a href={helpers.leagueUrl(["team_stat_dists", season])}>
-						Stat Distributions
-					</a>
-				</div>
-				<div className="col-sm-8 text-right">
-					<p>
-						For a statistical category, among all teams, your team is in the...
-						<br />
-						{legendSquare("success")} <strong>Top third</strong>
-						{legendSquare("warning")} <strong>Middle third</strong>
-						{legendSquare("danger")} <strong>Bottom third</strong>
-					</p>
-				</div>
+			<div className="d-sm-flex">
+				<MoreLinks type="teamStats" page="team_stats" season={season} />
+				<p className="flex-grow-1 text-right">
+					For a statistical category, among all teams, your team is in the...
+					<br />
+					{legendSquare("success")} <strong>Top third</strong>
+					{legendSquare("warning")} <strong>Middle third</strong>
+					{legendSquare("danger")} <strong>Bottom third</strong>
+				</p>
 			</div>
 
 			<DataTable

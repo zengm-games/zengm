@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import { BoxPlot } from "../components";
+import { BoxPlot, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 
 const proStatsAll =
@@ -724,6 +724,7 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 
 	return (
 		<>
+			<MoreLinks type="teamStats" page="team_stat_dists" season={season} />
 			<p>
 				More: <a href={helpers.leagueUrl(["team_stats", season])}>Main Stats</a>
 			</p>

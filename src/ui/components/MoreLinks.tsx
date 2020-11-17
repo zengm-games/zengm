@@ -25,6 +25,10 @@ const MoreLinks = (
 				season?: number;
 				statType?: string;
 		  }
+		| {
+				type: "teamStats";
+				season: number;
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -158,6 +162,19 @@ const MoreLinks = (
 				name: "Career Totals",
 			});
 		}
+	} else if (props.type === "teamStats") {
+		const { season } = props;
+
+		links = [
+			{
+				url: ["team_stats", season],
+				name: "Main Stats",
+			},
+			{
+				url: ["team_stat_dists", season],
+				name: "Stat Distributions",
+			},
+		];
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

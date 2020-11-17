@@ -6,9 +6,10 @@ charts
 - special icon for playoffs/champ
 - include WS from before trade
 - how to handle undefined value
-  - season with no WS - 0
   - season before league existed
   - season with no W/L/T yet (preseason or future)
+    - filter out on both plots
+- DRY
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5

@@ -213,7 +213,7 @@ const Charts = ({
 					.style("stroke-dasharray", "5 5")
 					.attr("d", line2);
 			};
-			drawHorizontal(yScale, 0.5, "var(--secondary)");
+			drawHorizontal(yScale, 0, "var(--secondary)");
 
 			let xMarker: number | undefined;
 			if (phase < PHASE.REGULAR_SEASON) {

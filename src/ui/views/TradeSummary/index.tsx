@@ -191,6 +191,7 @@ const TradeSummary = ({
 					</div>
 				))}
 			</div>
+
 			<Charts
 				phase={phase}
 				season={season}

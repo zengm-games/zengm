@@ -52,33 +52,34 @@ const findStatSum = (
 	phase: Phase,
 	statSumsBySeason: Record<number, number>,
 ) => {
-	let rows: PlayerStats[];
+	let index = statsIndex;
 
-	// If no data was deleted/edited, should work with just ratingsIndex
-	const firstTry = allStats[statsIndex];
-	if (firstTry !== undefined && firstTry.season === season) {
-		rows = allStats.slice(statsIndex);
-	} else {
-		// Something's wrong! Look for first/last stats entry that season based on phase
-		rows = allStats.filter(row => {
-			if (
-				row.season < season ||
-				(row.season === season && !row.playoffs && phase >= PHASE.PLAYOFFS) ||
-				(row.season === season && row.playoffs && phase > PHASE.PLAYOFFS)
-			) {
-				return false;
-			}
-
-			return true;
+	// If no data was deleted/edited, should work with just statsIndex
+	const firstTry = allStats[index];
+	if (firstTry === undefined || firstTry.season !== season) {
+		// Something's wrong! Look for first stats entry that is after the trade
+		index = allStats.findIndex(row => {
+			return (
+				row.season > season ||
+				(row.season === season && !row.playoffs && phase < PHASE.PLAYOFFS) ||
+				(row.season === season && row.playoffs && phase <= PHASE.PLAYOFFS)
+			);
 		});
 	}
 
 	let statSum = 0;
-	for (const row of rows) {
+	for (let i = 0; i < allStats.length; i++) {
+		const row = allStats[i];
+
 		const stat =
 			process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
-		statSum += stat;
 
+		// Only after trade
+		if (i >= index) {
+			statSum += stat;
+		}
+
+		// Including before trade
 		if (!statSumsBySeason[row.season]) {
 			statSumsBySeason[row.season] = 0;
 		}
@@ -150,9 +151,9 @@ const getSeasonsToPlot = async (
 			won?: number;
 			lost?: number;
 			tied?: number;
-			stat?: number;
+			stat: number;
 		};
-		const teams: [Team, Team] = [{}, {}];
+		const teams: [Team, Team] = [{ stat: 0 }, { stat: 0 }];
 		for (let j = 0; j < tids.length; j++) {
 			const tid = tids[j];
 			const teamSeason = await teamSeasonsIndex.get([tid, i]);
@@ -166,9 +167,7 @@ const getSeasonsToPlot = async (
 				teams[j].winp = helpers.calcWinp(teamSeason);
 			}
 
-			if (i > season || (i === season && phase <= PHASE.PLAYOFFS)) {
-				teams[j].stat = statSumsBySeason[j][i] ?? 0;
-			}
+			teams[j].stat = statSumsBySeason[j][i] ?? 0;
 		}
 
 		seasons.push({

@@ -90,20 +90,18 @@ const Header = React.memo(() => {
 					marginBottom: 5,
 				}}
 			/>
-			<div
-				className="banner-ad"
-				id={
-					process.env.SPORT === "basketball"
-						? "basketball-gm_mobile_leaderboard"
-						: "bbgm-ads-mobile"
-				}
-				style={{
-					display: "none",
-					textAlign: "center",
-					minHeight: 50,
-					marginBottom: 5,
-				}}
-			/>
+			{process.env.SPORT === "football" ? (
+				<div
+					className="banner-ad"
+					id="bbgm-ads-mobile"
+					style={{
+						display: "none",
+						textAlign: "center",
+						minHeight: 50,
+						marginBottom: 5,
+					}}
+				/>
+			) : null}
 			<div
 				className="banner-ad skyscraper-wrapper"
 				id="skyscraper-wrapper"

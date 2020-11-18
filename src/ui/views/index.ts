@@ -26,6 +26,7 @@ import Frivolities from "./Frivolities";
 import FrivolitiesDraftClasses from "./FrivolitiesDraftClasses";
 import FrivolitiesJerseyNumbers from "./FrivolitiesJerseyNumbers";
 import FrivolitiesTeamSeasons from "./FrivolitiesTeamSeasons";
+import FrivolitiesTrades from "./FrivolitiesTrades";
 import GlobalSettings from "./GlobalSettings";
 import GmHistory from "./GmHistory";
 import GameLog from "./GameLog";
@@ -113,6 +114,7 @@ export default {
 	FrivolitiesDraftClasses,
 	FrivolitiesJerseyNumbers,
 	FrivolitiesTeamSeasons,
+	FrivolitiesTrades,
 	GlobalSettings,
 	GmHistory,
 	GameLog,

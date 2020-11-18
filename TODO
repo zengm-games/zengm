@@ -1,6 +1,7 @@
 trade frivolities
 - biggest trades (some formula based on ovr+pot of the players in the trade. maybe also including picks, not sure)
 - most lopsided trade outcomes (biggest difference in WS after trade, minimum 3 years out)
+- filter on season
 
 trade summary charts future
 - some indication for winning a championship, special marker?

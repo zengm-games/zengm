@@ -215,6 +215,25 @@ const freeAgents = () => {
 	}
 };
 
+const frivolitiesTrades = (params: Params) => {
+	let abbrev: string = "all";
+	let tid: number = -1;
+	if (params.abbrev && params.abbrev !== "all") {
+		[tid, abbrev] = validateAbbrev(params.abbrev);
+	}
+
+	if (tid < 0) {
+		tid = -1;
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		tid,
+		type: params.type,
+	};
+};
+
 const gameLog = (params: Params) => {
 	const abbrev =
 		params.abbrev === "special" ? "special" : validateAbbrev(params.abbrev)[1];
@@ -656,6 +675,7 @@ export default {
 	fantasyDraft,
 	freeAgents,
 	frivolitiesTeamSeasons: most,
+	frivolitiesTrades,
 	gameLog,
 	history,
 	leaders,

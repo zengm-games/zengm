@@ -164,6 +164,8 @@ const routes = () => {
 		"/l/:lid/frivolities/draft_classes": genPage("frivolitiesDraftClasses"),
 		"/l/:lid/frivolities/jersey_numbers": genPage("frivolitiesJerseyNumbers"),
 		"/l/:lid/frivolities/teams/:type": genPage("frivolitiesTeamSeasons"),
+		"/l/:lid/frivolities/trades/:type": genPage("frivolitiesTrades"),
+		"/l/:lid/frivolities/trades/:type/:abbrev": genPage("frivolitiesTrades"),
 		"/l/:lid/frivolities/most/:type": genPage("most"),
 		"/l/:lid/frivolities/most/:type/:arg": genPage("most"),
 		"/l/:lid/frivolities/relatives": genPage("relatives"),

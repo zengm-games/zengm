@@ -1,6 +1,12 @@
 import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	TeamSeason,
+	DiscriminateUnion,
+	EventBBGM,
+} from "../../common/types";
 import { PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
 import { team } from "../core";
@@ -10,15 +16,15 @@ type Most = {
 	extra?: Record<string, unknown>;
 };
 
-export const getMostXTeamSeasons = async ({
+type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
+
+export const getMostXRows = async ({
 	filter,
 	getValue,
-	after,
 	sortParams,
 }: {
-	filter?: (ts: TeamSeason) => boolean;
+	filter?: (event: TradeEvent) => boolean;
 	getValue: (ts: TeamSeason) => Most | undefined;
-	after?: (most: Most) => Promise<Most> | Most;
 	sortParams?: any;
 }) => {
 	const LIMIT = 100;
@@ -70,7 +76,7 @@ export const getMostXTeamSeasons = async ({
 				seed: null as null | number,
 				rank: 0,
 				mov: 0,
-				most: after ? await after(ts.most) : ts.most,
+				most: ts.most,
 			};
 		}),
 	);
@@ -114,208 +120,61 @@ export const getMostXTeamSeasons = async ({
 	return ordered;
 };
 
-const getRoundsWonText = (ts: TeamSeason) => {
-	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
-	const numConfs = g.get("confs", ts.season).length;
-
-	return helpers.roundsWonText(ts.playoffRoundsWon, numPlayoffRounds, numConfs);
-};
-
-const updateFrivolitiesTeamSeasons = async (
-	{ type }: ViewInput<"frivolitiesTeamSeasons">,
+const frivolitiesTrades = async (
+	{ abbrev, tid, type }: ViewInput<"frivolitiesTrades">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun") || type !== state.type) {
-		let filter: Parameters<typeof getMostXTeamSeasons>[0]["filter"];
-		let getValue: Parameters<typeof getMostXTeamSeasons>[0]["getValue"];
-		let after: Parameters<typeof getMostXTeamSeasons>[0]["after"];
+		let filter: Parameters<typeof getMostXRows>[0]["filter"];
+		let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
 		let sortParams: any;
 		let title: string;
 		let description: string | undefined;
-		const extraCols: {
-			key: string | [string, string] | [string, string, string];
-			keySort?: string | [string, string] | [string, string, string];
-			colName: string;
-		}[] = [];
 
-		const phase = g.get("phase");
-		const season = g.get("season");
+		if (type === "biggest") {
+			title = "Biggest Trades";
+			description = "Trades involving the best players and prospects.";
 
-		if (type === "best_non_playoff") {
-			title = "Best Non-Playoff Teams";
-			description =
-				"These are the best seasons from teams that did not make the playoffs.";
-
-			filter = ts =>
-				ts.playoffRoundsWon < 0 &&
-				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => {
 				return { value: helpers.calcWinp(ts) };
 			};
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "desc"],
-			];
-		} else if (type === "worst_playoff") {
-			title = "Worst Playoff Teams";
+			sortParams = [["most.value"], ["desc"]];
+		} else if (type === "lopsided") {
+			title = "Most Lopsided Trades";
 			description =
-				"These are the worst seasons from teams that somehow made the playoffs.";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
+				"Trades where one team's assets got a lot more production than the other.";
 
-			filter = ts =>
-				ts.playoffRoundsWon >= 0 &&
-				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => ({
 				value: -helpers.calcWinp(ts),
 				roundsWonText: getRoundsWonText(ts),
 			});
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "asc"],
-			];
-		} else if (type === "worst_finals") {
-			title = "Worst Finals Teams";
-			description =
-				"These are the worst seasons from teams that somehow made the finals.";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
-
-			filter = ts =>
-				ts.playoffRoundsWon >= 0 &&
-				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = ts => {
-				const roundsWonText = getRoundsWonText(ts);
-
-				// Keep in sync with helpers.roundsWonText
-				const validTexts = [
-					"League champs",
-					"Conference champs",
-					"Made finals",
-				];
-				if (!validTexts.includes(roundsWonText)) {
-					return;
-				}
-				return {
-					value: -helpers.calcWinp(ts),
-					roundsWonText,
-				};
-			};
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "asc"],
-			];
-		} else if (type === "worst_champ") {
-			title = "Worst Champion Teams";
-			description =
-				"These are the worst seasons from teams that somehow won the title.";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
-
-			filter = ts =>
-				ts.playoffRoundsWon >= 0 &&
-				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = ts => {
-				const roundsWonText = getRoundsWonText(ts);
-
-				// Keep in sync with helpers.roundsWonText
-				const validTexts = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
-					return;
-				}
-				return {
-					value: -helpers.calcWinp(ts),
-					roundsWonText,
-				};
-			};
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "asc"],
-			];
-		} else if (type === "best") {
-			title = "Best Teams";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
-
-			filter = ts => season > ts.season || phase > PHASE.PLAYOFFS;
-			getValue = ts => ({
-				value: helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts),
-			});
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "desc"],
-			];
-		} else if (type === "worst") {
-			title = "Worst Teams";
-
-			filter = ts => season > ts.season || phase > PHASE.PLAYOFFS;
-			getValue = ts => ({
-				value: -helpers.calcWinp(ts),
-			});
-			sortParams = [
-				["most.value", "mov"],
-				["desc", "asc"],
-			];
+			sortParams = [["most.value"], ["desc"]];
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}
 
-		const teamSeasons = await getMostXTeamSeasons({
+		if (tid >= 0) {
+			filter = event => event.tids.includes(tid);
+		}
+
+		const rows = await getMostXRows({
 			filter,
 			getValue,
-			after,
 			sortParams,
 		});
 
 		return {
+			abbrev,
 			description,
-			extraCols,
-			teamSeasons,
-			ties: g.get("ties"),
+			rows,
 			title,
+			tid,
 			type,
 			userTid: g.get("userTid"),
 		};
 	}
 };
 
-export default updateFrivolitiesTeamSeasons;
+export default frivolitiesTrades;

@@ -69,7 +69,9 @@ const initAds = (goldUntil: number | undefined) => {
 
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile =
-				process.env.SPORT === "basketball" ? [""] : ["bbgm-ads-mobile"];
+				process.env.SPORT === "basketball"
+					? ["basketball-gm_mobile_leaderboard"]
+					: ["bbgm-ads-mobile"];
 			const showDivsDesktop =
 				process.env.SPORT === "basketball"
 					? [
@@ -119,6 +121,7 @@ const initAds = (goldUntil: number | undefined) => {
 						placementName: adDiv,
 						slotId: adDiv,
 					});
+					console.log("enabled_slots", adDiv);
 				}
 
 				if (window.screen && window.screen.width >= 768) {

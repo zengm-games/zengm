@@ -255,7 +255,7 @@ const setupRoutes = () => {
 						if (window.freestar.freestarReloadAdSlot) {
 							const adDivs =
 								window.screen && window.screen.width < 768
-									? []
+									? ["basketball-gm_mobile_leaderboard"]
 									: [
 											"basketball-gm_leaderboard_atf",
 											"basketball-gm_mrec_btf_1",
@@ -264,6 +264,7 @@ const setupRoutes = () => {
 									  ];
 
 							for (const adDiv of adDivs) {
+								console.log("reload", adDiv);
 								window.freestar.freestarReloadAdSlot(adDiv);
 							}
 						}

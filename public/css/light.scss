@@ -799,19 +799,19 @@ tr.table-warning:hover > td {
 		display: inline !important;
 	}
 	/*.d-xxl-inline-block {
-    display: inline-block !important; }
+	display: inline-block !important; }
   .d-xxl-block {
-    display: block !important; }
+	display: block !important; }
   .d-xxl-table {
-    display: table !important; }
+	display: table !important; }
   .d-xxl-table-row {
-    display: table-row !important; }
+	display: table-row !important; }
   .d-xxl-table-cell {
-    display: table-cell !important; }
+	display: table-cell !important; }
   .d-xxl-flex {
-    display: flex !important; }
+	display: flex !important; }
   .d-xxl-inline-flex {
-    display: inline-flex !important; } }*/
+	display: inline-flex !important; } }*/
 }
 
 .chart-legend {
@@ -1084,4 +1084,21 @@ a.anchor {
 .rounded-bottom-0 {
 	border-bottom-right-radius: 0rem !important;
 	border-bottom-left-radius: 0rem !important;
+}
+
+#basketball-gm_mobile_leaderboard {
+	z-index: 2147483647;
+	bottom: 0;
+	padding-top: 2px;
+	position: fixed;
+	left: 0;
+	right: 0;
+	text-align: center;
+	background-color: rgba(247, 247, 247, 0.9);
+	vertical-align: bottom !important;
+	width: 100vw;
+
+	// override inline styles in JS file
+	margin-bottom: 0 !important;
+	height: 52px;
 }

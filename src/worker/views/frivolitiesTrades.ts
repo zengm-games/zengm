@@ -148,7 +148,6 @@ const frivolitiesTrades = async (
 
 			getValue = ts => ({
 				value: -helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts),
 			});
 			sortParams = [["most.value"], ["desc"]];
 		} else {
@@ -159,7 +158,7 @@ const frivolitiesTrades = async (
 			filter = event => event.tids.includes(tid);
 		}
 
-		const rows = await getMostXRows({
+		const trades = await getMostXRows({
 			filter,
 			getValue,
 			sortParams,
@@ -168,9 +167,9 @@ const frivolitiesTrades = async (
 		return {
 			abbrev,
 			description,
-			rows,
 			title,
 			tid,
+			trades,
 			type,
 			userTid: g.get("userTid"),
 		};

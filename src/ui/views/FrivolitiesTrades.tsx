@@ -6,7 +6,7 @@ import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { getValue } from "./Most";
 
-const FrivolitiesTeamSeasons = ({
+const FrivolitiesTrades = ({
 	description,
 	extraCols,
 	teamSeasons,
@@ -14,7 +14,7 @@ const FrivolitiesTeamSeasons = ({
 	title,
 	type,
 	userTid,
-}: View<"frivolitiesTeamSeasons">) => {
+}: View<"frivolitiesTrades">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 
 	const cols = getCols(
@@ -80,7 +80,7 @@ const FrivolitiesTeamSeasons = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				name={`FrivolitiesTeamSeasons_${type}`}
+				name={`FrivolitiesTrades_${type}`}
 				nonfluid
 				rows={rows}
 			/>
@@ -88,4 +88,4 @@ const FrivolitiesTeamSeasons = ({
 	);
 };
 
-export default FrivolitiesTeamSeasons;
+export default FrivolitiesTrades;

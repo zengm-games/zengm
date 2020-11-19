@@ -1,17 +1,7 @@
 trade frivolities
 - biggest trades (some formula based on ovr+pot of the players in the trade. maybe also including picks, not sure)
 - most lopsided trade outcomes (biggest difference in WS after trade, minimum 3 years out)
-- filter on team
-- columns
-  - rank
-  - season + phase
-  - team1
-  - team2
-  - assets1
-  - assets2
-  - stat after trade 1
-  - stat after trade 2
-  - links (to details)
+- team dropdown not working
 - test in FBGM too, column name?
 - test in old firefox and safari 10 and others because async iterator
   - if not good, change to while loop

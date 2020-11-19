@@ -4,6 +4,7 @@ import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import { PHASE_TEXT } from "../../common";
 
 const FrivolitiesTrades = ({
 	abbrev,
@@ -27,12 +28,17 @@ const FrivolitiesTrades = ({
 		"Season",
 		"Team",
 		"Received",
-		"stat:ws",
+		`stat:${process.env.SPORT === "basketball" ? "ws" : "av"}`,
 		"Team",
 		"Received",
-		"stat:ws",
+		`stat:${process.env.SPORT === "basketball" ? "ws" : "av"}`,
 		"Links",
 	);
+	for (const i of [4, 7]) {
+		if (cols[i].desc) {
+			cols[i].desc += " (Total After Trade)";
+		}
+	}
 
 	const superCols = [
 		{
@@ -74,7 +80,10 @@ const FrivolitiesTrades = ({
 			key: trade.rank,
 			data: [
 				trade.rank,
-				"SEASON+PHASE",
+				{
+					value: `${trade.season} ${PHASE_TEXT[trade.phase]}`,
+					sortValue: trade.season + (trade.phase + 10) / 1000,
+				},
 				...teamCols[0],
 				...teamCols[1],
 				<a href={helpers.leagueUrl(["trade_summary", trade.eid])}>Details</a>,

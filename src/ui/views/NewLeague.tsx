@@ -1407,8 +1407,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
 	}
 	if (state.season === 2020 && state.phase > PHASE.DRAFT) {
-		invalidSeasonPhaseMessage =
-			"Sorry, I'm not allowed to share the 2020 draft results until after they broadcast the draft on TV.";
+		invalidSeasonPhaseMessage = "Sorry, this is not ready yet.";
 	}
 
 	return (

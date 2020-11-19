@@ -68,6 +68,9 @@ const useLocal = create<
 	moreInfoAbbrev: undefined,
 	moreInfoSeason: undefined,
 	moreInfoTid: undefined,
+	stickyMultiTeamMenu: false,
+	stickyFooterAd: false,
+	stickyFormButtons: false,
 
 	actions: {
 		deleteGames(gids: number[]) {

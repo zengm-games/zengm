@@ -76,9 +76,13 @@ const Notification = ({
 const transition = { duration: 0.2, type: "tween" };
 
 const Notifications = () => {
-	const { userTids } = useLocalShallow(state => ({
-		userTids: state.userTids,
-	}));
+	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalShallow(
+		state => ({
+			stickyFooterAd: state.stickyFooterAd,
+			stickyFormButtons: state.stickyFormButtons,
+			userTids: state.userTids,
+		}),
+	);
 
 	const [notifications, setNotifications] = useState<Message[]>([]);
 
@@ -126,15 +130,24 @@ const Notifications = () => {
 		[],
 	);
 
+	let ulBottom = 0;
+	let buttonBottom = 6;
+	if (userTids.length > 1 && !stickyFormButtons) {
+		// Move up ul over multi team menu, but button doesn't need to move
+		ulBottom += 40;
+	}
+	if (stickyFormButtons) {
+		// Ideally all stickyFormButtons logic would only happen on narrow windows, but whatever it's fine
+		ulBottom += 49;
+		buttonBottom += 49;
+	}
+	if (stickyFooterAd) {
+		ulBottom += 52;
+		buttonBottom += 52;
+	}
+
 	return (
-		<div
-			className={classNames(
-				"notification-container",
-				userTids.length > 1
-					? "notification-container-extra-margin-bottom"
-					: undefined,
-			)}
-		>
+		<div className="notification-container">
 			{notifications.length > 0 ? (
 				<button
 					className="notification-close-all"
@@ -142,11 +155,18 @@ const Notifications = () => {
 					onClick={() => {
 						setNotifications([]);
 					}}
+					style={{
+						bottom: buttonBottom,
+					}}
 				>
 					&times;
 				</button>
 			) : null}
-			<ul>
+			<ul
+				style={{
+					bottom: ulBottom,
+				}}
+			>
 				<AnimatePresence initial={false}>
 					{notifications.map(notification => (
 						<motion.li

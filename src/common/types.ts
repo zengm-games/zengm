@@ -755,6 +755,8 @@ export type LocalStateUI = {
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
+	stickyFooterAd: boolean;
+	stickyFormButtons: boolean;
 };
 
 export type PartialTopMenu = {

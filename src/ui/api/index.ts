@@ -124,7 +124,11 @@ const initAds = (goldUntil: number | undefined) => {
 					console.log("enabled_slots", adDiv);
 
 					if (adDiv === "basketball-gm_mobile_leaderboard") {
-						// Add margin to footer
+						localActions.update({
+							stickyFooterAd: true,
+						});
+
+						// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 						const footer = document.getElementById("main-footer");
 						if (footer) {
 							footer.style.marginBottom = "52px";

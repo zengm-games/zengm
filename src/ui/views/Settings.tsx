@@ -2,10 +2,23 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, { useState, ReactNode, ChangeEvent, FormEvent } from "react";
+import React, {
+	useState,
+	ReactNode,
+	ChangeEvent,
+	FormEvent,
+	useEffect,
+} from "react";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, localActions, logEvent, toWorker, helpers } from "../util";
+import {
+	confirm,
+	localActions,
+	logEvent,
+	toWorker,
+	helpers,
+	useLocalShallow,
+} from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { DIFFICULTY } from "../../common";
@@ -1894,6 +1907,22 @@ const Settings = (props: View<"settings">) => {
 
 	const [showGodModeSettings, setShowGodModeSettings] = useState(false);
 
+	useEffect(() => {
+		localActions.update({
+			stickyFormButtons: true,
+		});
+
+		return () => {
+			localActions.update({
+				stickyFormButtons: false,
+			});
+		};
+	});
+
+	const { stickyFooterAd } = useLocalShallow(state => ({
+		stickyFooterAd: state.stickyFooterAd,
+	}));
+
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
 		if (!godMode && !godModeInPast) {
@@ -2032,6 +2061,11 @@ const Settings = (props: View<"settings">) => {
 	};
 
 	const currentCategoryNames: Category[] = [];
+
+	let bottom = 0;
+	if (stickyFooterAd) {
+		bottom += 52;
+	}
 
 	return (
 		<div className="d-flex">
@@ -2206,7 +2240,10 @@ const Settings = (props: View<"settings">) => {
 					);
 				})}
 
-				<div className="alert-secondary rounded-top p-2 d-flex settings-buttons">
+				<div
+					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
+					style={{ bottom }}
+				>
 					<button
 						className={classNames(
 							"btn border-0",

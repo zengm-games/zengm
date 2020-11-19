@@ -627,7 +627,6 @@ tr.table-warning:hover > td {
 	opacity: 0.9;
 	position: fixed;
 	right: 6px;
-	bottom: 0;
 	padding-bottom: 6px;
 	border-radius: 0.25em 0.25em 0 0;
 }
@@ -1050,7 +1049,6 @@ button.live-game-sim-more {
 }
 
 .settings-buttons {
-	bottom: 0;
 	position: -webkit-sticky; // Safari
 	position: sticky;
 

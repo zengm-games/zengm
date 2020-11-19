@@ -163,7 +163,7 @@ export type DraftType =
 	| "nba1990"
 	| "freeAgents";
 
-// Key is team ID recieving this asset. from is team ID that traded this asset away
+// Key is team ID receiving this asset. from is team ID that traded this asset away
 // Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
 type TradeEventAsset =
 	| {

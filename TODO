@@ -12,6 +12,11 @@ trade frivolities
   - stat after trade 1
   - stat after trade 2
   - links (to details)
+- test in FBGM too, column name?
+- test in old firefox and safari 10 and others because async iterator
+  - if not good, change to while loop
+
+option to disable AI jersey retirements @guap#4475
 
 trade summary charts future
 - some indication for winning a championship, special marker?

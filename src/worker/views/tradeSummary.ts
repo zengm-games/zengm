@@ -1,5 +1,7 @@
 import { PHASE } from "../../common";
 import type {
+	DiscriminateUnion,
+	EventBBGM,
 	MinimalPlayerRatings,
 	Phase,
 	Player,
@@ -50,7 +52,7 @@ const findStatSum = (
 	statsIndex: number,
 	season: number,
 	phase: Phase,
-	statSumsBySeason: Record<number, number>,
+	statSumsBySeason?: Record<number, number>,
 ) => {
 	let index = statsIndex;
 
@@ -80,14 +82,17 @@ const findStatSum = (
 		}
 
 		// Including before trade
-		if (
-			row.season < g.get("season") ||
-			(row.season === g.get("season") && g.get("phase") >= PHASE.REGULAR_SEASON)
-		) {
-			if (!statSumsBySeason[row.season]) {
-				statSumsBySeason[row.season] = 0;
+		if (statSumsBySeason) {
+			if (
+				row.season < g.get("season") ||
+				(row.season === g.get("season") &&
+					g.get("phase") >= PHASE.REGULAR_SEASON)
+			) {
+				if (!statSumsBySeason[row.season]) {
+					statSumsBySeason[row.season] = 0;
+				}
+				statSumsBySeason[row.season] += stat;
 			}
-			statSumsBySeason[row.season] += stat;
 		}
 	}
 	return statSum;
@@ -99,7 +104,7 @@ const getActualPlayerInfo = (
 	statsIndex: number,
 	season: number,
 	phase: Phase,
-	statSumsBySeason: Record<number, number>,
+	statSumsBySeason?: Record<number, number>,
 	draftPick: boolean = false,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
@@ -194,6 +199,146 @@ const getSeasonsToPlot = async (
 	return seasons;
 };
 
+type CommonPlayer = {
+	pid: number;
+	name: string;
+	contract: PlayerContract;
+};
+
+type CommonActualPlayer = {
+	pid: number;
+	name: string;
+	age: number;
+	pos: string;
+	ovr: number;
+	pot: number;
+	skills: string[];
+	watch: boolean;
+	stat: number;
+};
+
+type CommonPick = {
+	abbrev?: string; // from originalTid
+	tid: number; // from originalTid
+	round: number;
+	season: number | "fantasy" | "expansion";
+};
+
+type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
+
+type StatSumsBySeason = [Record<number, number>, Record<number, number>];
+
+export const processAssets = async (
+	event: TradeEvent,
+	i: number,
+	statSumsBySeason?: StatSumsBySeason,
+) => {
+	if (!event.teams || event.phase === undefined) {
+		throw new Error("Invalid event");
+	}
+
+	const otherTid = event.tids[i === 0 ? 1 : 0];
+
+	const assets: (
+		| ({
+				type: "player";
+		  } & CommonPlayer &
+				CommonActualPlayer)
+		| ({
+				type: "deletedPlayer";
+		  } & CommonPlayer)
+		| ({
+				type: "realizedPick";
+				pick: number;
+		  } & CommonPick &
+				CommonActualPlayer)
+		| ({
+				type: "unrealizedPick";
+		  } & CommonPick)
+	)[] = [];
+
+	for (const asset of event.teams[i].assets) {
+		if (assetIsPlayer(asset)) {
+			const p = await idb.getCopy.players({ pid: asset.pid });
+			const common = {
+				pid: asset.pid,
+				contract: asset.contract,
+			};
+			if (p) {
+				const playerInfo = getActualPlayerInfo(
+					p,
+					asset.ratingsIndex,
+					asset.statsIndex,
+					event.season,
+					event.phase,
+					statSumsBySeason ? statSumsBySeason[i] : undefined,
+				);
+
+				assets.push({
+					type: "player",
+					...playerInfo,
+					...common,
+				});
+			} else {
+				assets.push({
+					type: "deletedPlayer",
+					name: asset.name,
+					...common,
+				});
+			}
+		} else {
+			// Show abbrev only if it's another team's pick
+			let abbrev;
+			if (otherTid !== asset.originalTid) {
+				const season =
+					typeof asset.season === "number" ? asset.season : event.season;
+				const teamInfo = await getTeamInfoBySeason(asset.originalTid, season);
+				if (teamInfo) {
+					abbrev = teamInfo.abbrev;
+				} else {
+					abbrev = "???";
+				}
+			}
+
+			const common = {
+				abbrev,
+				tid: asset.originalTid,
+				round: asset.round,
+				season: asset.season,
+			};
+
+			// Has the draft already happened? If so, fill in the player
+			const p = await getPlayerFromPick(asset);
+			if (p) {
+				const playerInfo = getActualPlayerInfo(
+					p,
+					0,
+					0,
+					event.season,
+					event.phase,
+					statSumsBySeason ? statSumsBySeason[i] : undefined,
+					true,
+				);
+
+				assets.push({
+					type: "realizedPick",
+					pid: p.pid,
+					pick: p.draft.pick,
+					...playerInfo,
+					...common,
+				});
+			} else {
+				assets.push({
+					type: "unrealizedPick",
+					...common,
+				});
+			}
+		}
+	}
+
+	return assets;
+};
+
 const updateTradeSummary = async (
 	{ eid }: ViewInput<"tradeSummary">,
 	updateEvents: UpdateEvents,
@@ -222,147 +367,22 @@ const updateTradeSummary = async (
 
 		const teams = [];
 
-		const tids = [...event.tids];
+		const statSumsBySeason: StatSumsBySeason = [{}, {}];
 
-		const statSumsBySeason: [Record<number, number>, Record<number, number>] = [
-			{},
-			{},
-		];
-
-		for (let i = 0; i < tids.length; i++) {
-			const tid = tids[i];
-			const otherTid = tids[i === 0 ? 1 : 0];
+		for (let i = 0; i < event.tids.length; i++) {
+			const tid = event.tids[i];
 			const teamInfo = await getTeamInfoBySeason(tid, event.season);
 			if (!teamInfo) {
 				throw new Error("teamInfo not found");
 			}
 
-			type CommonPlayer = {
-				pid: number;
-				name: string;
-				contract: PlayerContract;
-			};
-
-			type CommonActualPlayer = {
-				pid: number;
-				name: string;
-				age: number;
-				pos: string;
-				ovr: number;
-				pot: number;
-				skills: string[];
-				watch: boolean;
-				stat: number;
-			};
-
-			type CommonPick = {
-				abbrev?: string; // from originalTid
-				tid: number; // from originalTid
-				round: number;
-				season: number | "fantasy" | "expansion";
-			};
-
-			const assets: (
-				| ({
-						type: "player";
-				  } & CommonPlayer &
-						CommonActualPlayer)
-				| ({
-						type: "deletedPlayer";
-				  } & CommonPlayer)
-				| ({
-						type: "realizedPick";
-						pick: number;
-				  } & CommonPick &
-						CommonActualPlayer)
-				| ({
-						type: "unrealizedPick";
-				  } & CommonPick)
-			)[] = [];
+			const assets = await processAssets(event, i, statSumsBySeason);
 
 			let statSum = 0;
-
-			for (const asset of event.teams[i].assets) {
-				if (assetIsPlayer(asset)) {
-					const p = await idb.getCopy.players({ pid: asset.pid });
-					const common = {
-						pid: asset.pid,
-						contract: asset.contract,
-					};
-					if (p) {
-						const playerInfo = getActualPlayerInfo(
-							p,
-							asset.ratingsIndex,
-							asset.statsIndex,
-							event.season,
-							event.phase,
-							statSumsBySeason[i],
-						);
-						statSum += playerInfo.stat;
-
-						assets.push({
-							type: "player",
-							...playerInfo,
-							...common,
-						});
-					} else {
-						assets.push({
-							type: "deletedPlayer",
-							name: asset.name,
-							...common,
-						});
-					}
-				} else {
-					// Show abbrev only if it's another team's pick
-					let abbrev;
-					if (otherTid !== asset.originalTid) {
-						const season =
-							typeof asset.season === "number" ? asset.season : event.season;
-						const teamInfo = await getTeamInfoBySeason(
-							asset.originalTid,
-							season,
-						);
-						if (teamInfo) {
-							abbrev = teamInfo.abbrev;
-						} else {
-							abbrev = "???";
-						}
-					}
-
-					const common = {
-						abbrev,
-						tid: asset.originalTid,
-						round: asset.round,
-						season: asset.season,
-					};
-
-					// Has the draft already happened? If so, fill in the player
-					const p = await getPlayerFromPick(asset);
-					if (p) {
-						const playerInfo = getActualPlayerInfo(
-							p,
-							0,
-							0,
-							event.season,
-							event.phase,
-							statSumsBySeason[i],
-							true,
-						);
-						statSum += playerInfo.stat;
-
-						assets.push({
-							type: "realizedPick",
-							pid: p.pid,
-							pick: p.draft.pick,
-							...playerInfo,
-							...common,
-						});
-					} else {
-						assets.push({
-							type: "unrealizedPick",
-							...common,
-						});
-					}
+			for (const asset of assets) {
+				const stat = (asset as any).stat;
+				if (typeof stat === "number") {
+					statSum += stat;
 				}
 			}
 

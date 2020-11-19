@@ -57,7 +57,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Mailing List</b><br>If you'd like to recieve a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
+				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
 					process.env.SPORT,
 				)} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
 				type: "info",

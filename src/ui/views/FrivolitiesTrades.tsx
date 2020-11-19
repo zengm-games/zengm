@@ -1,74 +1,87 @@
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MarginOfVictory } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
-import { getValue } from "./Most";
 
 const FrivolitiesTrades = ({
+	abbrev,
 	description,
-	extraCols,
-	teamSeasons,
-	ties,
 	title,
+	trades,
 	type,
 	userTid,
 }: View<"frivolitiesTrades">) => {
-	useTitleBar({ title, customMenu: frivolitiesMenu });
+	useTitleBar({
+		title,
+		customMenu: frivolitiesMenu,
+		dropdownView: "frivolitiesTrades",
+		dropdownFields: {
+			teamsAndAll: abbrev,
+		},
+	});
 
 	const cols = getCols(
 		"#",
-		"Team",
 		"Season",
-		"W",
-		"L",
-		...(ties ? ["T"] : []),
-		"%",
-		"stat:mov",
-		...extraCols.map(x => x.colName),
+		"Team",
+		"Received",
+		"stat:ws",
+		"Team",
+		"Received",
+		"stat:ws",
 		"Links",
 	);
 
-	const rows = teamSeasons.map(ts => {
-		return {
-			key: ts.rank,
-			data: [
-				ts.rank,
+	const superCols = [
+		{
+			title: "",
+			colspan: 2,
+		},
+		{
+			title: "Team 1",
+			colspan: 3,
+		},
+		{
+			title: "Team 2",
+			colspan: 3,
+		},
+		{
+			title: "",
+			colspan: 1,
+		},
+	];
+
+	const rows = trades.map(trade => {
+		const teamCols = trade.teams.map(t => {
+			return [
 				<a
 					href={helpers.leagueUrl([
 						"roster",
-						`${ts.abbrev}_${ts.tid}`,
-						ts.season,
+						`${t.abbrev}_${t.tid}`,
+						trade.season,
 					])}
 				>
-					{ts.region} {ts.name}
+					{t.region} {t.name}
 				</a>,
-				ts.season,
-				ts.won,
-				ts.lost,
-				...(ties ? [ts.tied] : []),
-				helpers.roundWinp(ts.winp),
-				<MarginOfVictory>{ts.mov}</MarginOfVictory>,
-				...extraCols.map(x => {
-					const value = getValue(ts, x.key);
-					if (x.keySort) {
-						const sortValue = getValue(ts, x.keySort);
+				"ASSETS",
+				t.stat,
+			];
+		});
 
-						return {
-							value,
-							sortValue,
-						};
-					}
-					return value;
-				}),
-				<>
-					<a href={helpers.leagueUrl(["standings", ts.season])}>Standings</a> |{" "}
-					<a href={helpers.leagueUrl(["playoffs", ts.season])}>Playoffs</a>
-				</>,
+		return {
+			key: trade.rank,
+			data: [
+				trade.rank,
+				"SEASON+PHASE",
+				...teamCols[0],
+				...teamCols[1],
+				<a href={helpers.leagueUrl(["trade_summary", trade.eid])}>Details</a>,
 			],
 			classNames: {
-				"table-info": ts.tid === userTid,
+				"table-info":
+					trade.teams[0].tid === userTid || trade.teams[1].tid === userTid,
 			},
 		};
 	});
@@ -83,6 +96,7 @@ const FrivolitiesTrades = ({
 				name={`FrivolitiesTrades_${type}`}
 				nonfluid
 				rows={rows}
+				superCols={superCols}
 			/>
 		</>
 	);

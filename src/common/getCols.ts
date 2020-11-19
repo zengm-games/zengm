@@ -1503,6 +1503,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	Received: {
+		desc: "Assets Received in Trade",
+	},
 	Record: {
 		desc: "Record",
 		sortType: "record",

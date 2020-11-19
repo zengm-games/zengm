@@ -94,7 +94,7 @@ const formatPick = async (
 	}`;
 };
 
-export const formatAssets = async (
+const formatAssets = async (
 	assets: TradeEventTeams[number]["assets"],
 	tidTradedAway: number,
 	tradeSeason: number,
@@ -119,7 +119,7 @@ const formatEventText = async (event: EventBBGM) => {
 	if (event.type === "trade" && event.teams) {
 		let text = "";
 
-		// assets is indexed on the recieving teams, so swap indexes when making text about the former teams
+		// assets is indexed on the receiving teams, so swap indexes when making text about the former teams
 		const tids = [...event.tids].reverse();
 
 		for (let i = 0; i < 2; i++) {

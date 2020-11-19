@@ -59,35 +59,6 @@ const showEvent = ({
 			});
 		}
 	}
-
-	// Hacky way to make sure there is room for the multi team mode menu
-	const notificationContainer = document.getElementById(
-		"notification-container",
-	);
-
-	if (
-		local.getState().userTids !== undefined &&
-		local.getState().userTids.length > 1 &&
-		notificationContainer &&
-		!notificationContainer.classList.contains(
-			"notification-container-extra-margin-bottom",
-		)
-	) {
-		notificationContainer.classList.add(
-			"notification-container-extra-margin-bottom",
-		);
-	} else if (
-		local.getState().userTids !== undefined &&
-		local.getState().userTids.length === 1 &&
-		notificationContainer &&
-		notificationContainer.classList.contains(
-			"notification-container-extra-margin-bottom",
-		)
-	) {
-		notificationContainer.classList.remove(
-			"notification-container-extra-margin-bottom",
-		);
-	}
 };
 
 const logEvent = createLogger(saveEvent, showEvent);

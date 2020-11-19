@@ -122,6 +122,18 @@ const initAds = (goldUntil: number | undefined) => {
 						slotId: adDiv,
 					});
 					console.log("enabled_slots", adDiv);
+
+					if (adDiv === "basketball-gm_mobile_leaderboard") {
+						localActions.update({
+							stickyFooterAd: true,
+						});
+
+						// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+						const footer = document.getElementById("main-footer");
+						if (footer) {
+							footer.style.marginBottom = "52px";
+						}
+					}
 				}
 
 				if (window.screen && window.screen.width >= 768) {
@@ -137,7 +149,6 @@ const initAds = (goldUntil: number | undefined) => {
 					if (window.screen && window.screen.width >= 768) {
 						// Show the logo too
 						const logo = document.getElementById("bbgm-ads-logo");
-
 						if (logo) {
 							logo.style.display = "flex";
 						}

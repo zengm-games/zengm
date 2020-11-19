@@ -16,6 +16,7 @@ const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 
 const MultiTeamMenu = () => {
 	const state = useLocalShallow(state2 => ({
+		stickyFooterAd: state2.stickyFooterAd,
 		teamInfoCache: state2.teamInfoCache,
 		userTid: state2.userTid,
 		userTids: state2.userTids,
@@ -55,8 +56,13 @@ const MultiTeamMenu = () => {
 	const prevDisabled = ind < 0 || ind === 0;
 	const nextDisabled = ind < 0 || ind === state.userTids.length - 1;
 
+	let bottom = 0;
+	if (state.stickyFooterAd) {
+		bottom += 52;
+	}
+
 	return (
-		<div className="multi-team-menu d-flex align-items-end">
+		<div className="multi-team-menu d-flex align-items-end" style={{ bottom }}>
 			<button
 				className="btn btn-link p-0 mb-1"
 				disabled={prevDisabled}

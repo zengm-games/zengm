@@ -5,6 +5,30 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { PHASE_TEXT } from "../../common";
+import PickText from "./TradeSummary/PickText";
+
+const PlayerInfo = ({
+	asset,
+}: {
+	asset: {
+		age: number;
+		name: string;
+		ovr: number;
+		pid: number;
+		pos: string;
+		pot: number;
+	};
+}) => {
+	return (
+		<>
+			<span className="d-inline-block text-right mr-1" style={{ minWidth: 19 }}>
+				{asset.pos}
+			</span>
+			<a href={helpers.leagueUrl(["player", asset.pid])}>{asset.name}</a> (
+			{asset.ovr}/{asset.pot}, {asset.age} yo)
+		</>
+	);
+};
 
 const FrivolitiesTrades = ({
 	abbrev,
@@ -71,7 +95,51 @@ const FrivolitiesTrades = ({
 				>
 					{t.region} {t.name}
 				</a>,
-				"ASSETS",
+				{
+					value: (
+						<ul className="list-unstyled mb-0">
+							{t.assets.map(asset => {
+								if (asset.type === "player") {
+									return (
+										<li>
+											<PlayerInfo asset={asset} />
+										</li>
+									);
+								}
+
+								if (asset.type === "deletedPlayer") {
+									return (
+										<li>
+											<a href={helpers.leagueUrl(["player", asset.pid])}>
+												{asset.name}
+											</a>
+										</li>
+									);
+								}
+
+								if (asset.type === "realizedPick") {
+									return (
+										<li>
+											<PlayerInfo asset={asset} />
+											<br />
+											<span className="text-muted" style={{ paddingLeft: 24 }}>
+												via <PickText asset={asset} season={trade.season} />
+											</span>
+										</li>
+									);
+								}
+
+								if (asset.type === "unrealizedPick") {
+									return (
+										<li>
+											<PickText asset={asset} season={trade.season} />
+										</li>
+									);
+								}
+							})}
+						</ul>
+					),
+				},
 				t.stat,
 			];
 		});

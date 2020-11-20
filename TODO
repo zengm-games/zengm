@@ -1,5 +1,4 @@
 trade frivolities
-- team dropdown not working
 - test in old firefox and safari 10 and others because async iterator
   - if not good, change to while loop
 

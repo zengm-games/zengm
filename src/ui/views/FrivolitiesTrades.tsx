@@ -41,7 +41,7 @@ const FrivolitiesTrades = ({
 	useTitleBar({
 		title,
 		customMenu: frivolitiesMenu,
-		dropdownView: "frivolitiesTrades",
+		dropdownView: `frivolities/trades/${type}`,
 		dropdownFields: {
 			teamsAndAll: abbrev,
 		},

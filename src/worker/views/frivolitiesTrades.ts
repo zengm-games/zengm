@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
+import { g, getTeamInfoBySeason } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,

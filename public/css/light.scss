@@ -1085,7 +1085,7 @@ a.anchor {
 }
 
 #basketball-gm_mobile_leaderboard {
-	z-index: 2147483647;
+	z-index: 1000; // Behind sidebar
 	bottom: 0;
 	padding-top: 2px;
 	position: fixed;

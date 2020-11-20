@@ -173,7 +173,7 @@ const frivolitiesTrades = async (
 		} else if (type === "lopsided") {
 			title = "Most Lopsided Trades";
 			description =
-				"Trades where one team's assets got a lot more production than the other.";
+				"Trades where one team's assets produced a lot more value than the other.";
 
 			getValue = teams => {
 				const value = Math.abs(teams[0].statSum - teams[1].statSum);

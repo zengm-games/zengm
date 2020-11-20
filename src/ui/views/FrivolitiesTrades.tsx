@@ -98,10 +98,10 @@ const FrivolitiesTrades = ({
 				{
 					value: (
 						<ul className="list-unstyled mb-0">
-							{t.assets.map(asset => {
+							{t.assets.map((asset, i) => {
 								if (asset.type === "player") {
 									return (
-										<li>
+										<li key={i}>
 											<PlayerInfo asset={asset} />
 										</li>
 									);
@@ -109,7 +109,7 @@ const FrivolitiesTrades = ({
 
 								if (asset.type === "deletedPlayer") {
 									return (
-										<li>
+										<li key={i}>
 											<a href={helpers.leagueUrl(["player", asset.pid])}>
 												{asset.name}
 											</a>
@@ -119,7 +119,7 @@ const FrivolitiesTrades = ({
 
 								if (asset.type === "realizedPick") {
 									return (
-										<li>
+										<li key={i}>
 											<PlayerInfo asset={asset} />
 											<br />
 											<span className="text-muted" style={{ paddingLeft: 24 }}>
@@ -131,7 +131,7 @@ const FrivolitiesTrades = ({
 
 								if (asset.type === "unrealizedPick") {
 									return (
-										<li>
+										<li key={i}>
 											<PickText asset={asset} season={trade.season} />
 										</li>
 									);
@@ -140,7 +140,7 @@ const FrivolitiesTrades = ({
 						</ul>
 					),
 				},
-				t.stat,
+				helpers.roundStat(t.statSum, "ws"),
 			];
 		});
 

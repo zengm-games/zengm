@@ -380,6 +380,7 @@ const updateTradeSummary = async (
 
 			let statSum = 0;
 			for (const asset of assets) {
+				// https://github.com/microsoft/TypeScript/issues/21732
 				const stat = (asset as any).stat;
 				if (typeof stat === "number") {
 					statSum += stat;

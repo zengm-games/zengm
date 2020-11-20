@@ -22,22 +22,13 @@ const isTradeEvent = (event: EventBBGM): event is TradeEvent => {
 	return event.type === "trade";
 };
 
-type AssetPlayer = {
-	type: "player";
-	pid: number;
-	name: string;
-	ovr: number;
-	pot: number;
-	watch: boolean;
-};
-
 type Team = {
 	tid: number;
 	abbrev: string;
 	region: string;
 	name: string;
 	assets: ThenArg<ReturnType<typeof processAssets>>;
-	stat: number;
+	statSum: number;
 };
 
 type Trade = {
@@ -58,7 +49,14 @@ const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
 
 	const assets = await processAssets(event, i);
 
-	let stat = 0;
+	let statSum = 0;
+	for (const asset of assets) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		const stat = (asset as any).stat;
+		if (typeof stat === "number") {
+			statSum += stat;
+		}
+	}
 
 	return {
 		tid,
@@ -66,7 +64,7 @@ const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
 		region: teamInfo.region,
 		name: teamInfo.name,
 		assets,
-		stat,
+		statSum,
 	};
 };
 
@@ -156,15 +154,20 @@ const frivolitiesTrades = async (
 			description = "Trades involving the best players and prospects.";
 
 			getValue = teams => {
-				let score = 0;
+				let scoreMax = 0;
 				for (const t of teams) {
 					for (const asset of t.assets) {
-						if (typeof asset.ovr === "number") {
-							score += asset.ovr;
+						// https://github.com/microsoft/TypeScript/issues/21732
+						const { ovr, pot } = asset as any;
+						if (typeof ovr === "number" && typeof pot === "number") {
+							const score = ovr + 0.25 * pot;
+							if (score > scoreMax) {
+								scoreMax = score;
+							}
 						}
 					}
 				}
-				return { value: score };
+				return { value: scoreMax };
 			};
 			sortParams = [["most.value"], ["desc"]];
 		} else if (type === "lopsided") {
@@ -172,9 +175,11 @@ const frivolitiesTrades = async (
 			description =
 				"Trades where one team's assets got a lot more production than the other.";
 
-			getValue = teams => ({
-				value: 0,
-			});
+			getValue = teams => {
+				const value = Math.abs(teams[0].statSum - teams[1].statSum);
+
+				return { value };
+			};
 			sortParams = [["most.value"], ["desc"]];
 		} else {
 			throw new Error(`Unknown type "${type}"`);

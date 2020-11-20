@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-11-19: New setting "AI Teams Retire Jersey Numbers" to control whether AI teams should automatically retire/unretire jersey numbers.
+
 * 2020-11-19: Two new trade frivolities: Biggest Trades (trades involving the best players and prospects) and Most Lopsided Trades (trades where one team's assets produced a lot more value than the other). [[1]](https://basketball-gm.com/blog/2020/11/trade-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jxfy8b/two_new_trade_frivolities_biggest_trades_trades/)
 
 * 2020-11-17: Added some charts to the Trade Summary page. [[1]](https://www.reddit.com/r/BasketballGM/comments/jvn292/since_its_now_trading_season_i_added_some_charts/)

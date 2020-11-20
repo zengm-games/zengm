@@ -83,7 +83,8 @@ type Key =
 	| "autoDeleteOldBoxScores"
 	| "difficulty"
 	| "stopOnInjuryGames"
-	| "stopOnInjury";
+	| "stopOnInjury"
+	| "aiJerseyRetirement";
 
 type Category =
 	| "General"
@@ -479,6 +480,15 @@ export const options: {
 		type: "float",
 		description:
 			"The baseline rate of trades between AI teams is multiplied by this number. Anything beyond 100 will be both absurd and ridiculously slow.",
+	},
+	{
+		category: "Events",
+		key: "aiJerseyRetirement",
+		name: "AI Teams Retire Jersey Numbers",
+		godModeRequired: "always",
+		type: "bool",
+		descriptionLong:
+			"Normally, teams controlled by the AI (including your team, if you're using Auto Play or Spectator Mode) will retire jersey numbers of their former players as they deem appropriate. You can disable that behavior here, and then the AI will not retire or unretire any jersey numbers.",
 	},
 	{
 		category: "Events",

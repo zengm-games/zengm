@@ -347,6 +347,7 @@ export type NamesLegacy = {
 };
 
 export type GameAttributesLeague = {
+	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
 	allStarGame: boolean;
 	autoDeleteOldBoxScores: boolean;

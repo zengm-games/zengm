@@ -88,6 +88,10 @@ export const getScore = (p: Player, tid: number) => {
 };
 
 const checkJerseyNumberRetirement = async (p: Player) => {
+	if (!g.get("aiJerseyRetirement")) {
+		return;
+	}
+
 	let tid: number | undefined;
 	let number: string | undefined;
 

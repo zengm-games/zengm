@@ -1,16 +1,13 @@
 import React, { createRef } from "react";
-import { render } from "react-dom";
 import Select from "react-select";
-import type { Player } from "src/common/types";
 
 class SelectReact extends React.Component<
 	{
 		player: any;
 		options: any[];
 		changing: Function;
-		teamPlayers: any;
-		teamNumber: number;
-		playerNumber: number;
+		teamNumber?: number;
+		playerNumber?: number;
 		award: string;
 	},
 	{ select: { value: any; options: any[] }; ref: any }

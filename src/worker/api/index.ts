@@ -2633,17 +2633,13 @@ const updateTeamInfo = async (
 const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 	awards = awards["aws"];
 	const awardsByPlayer: AwardsByPlayer = [];
-	const simpleAwards = [
-		"mvp",
-		"roy",
-		"smoy",
-		"dpoy",
-		"mip",
-		"finalsMvp",
-	] as const;
+	const simpleAwards =
+		process.env.SPORT === "basketball"
+			? (["mvp", "roy", "smoy", "dpoy", "mip", "finalsMvp"] as const)
+			: (["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const);
 	const awardNames =
 		process.env.SPORT === "basketball"
-			? {
+			? ({
 					mvp: "Most Valuable Player",
 					roy: "Rookie of the Year",
 					smoy: "Sixth Man of the Year",
@@ -2653,8 +2649,8 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 					allLeague: "All-League",
 					allDefensive: "All-Defensive",
 					allRookie: "All-Rookie Team",
-			  }
-			: {
+			  } as const)
+			: ({
 					mvp: "Most Valuable Player",
 					dpoy: "Defensive Player of the Year",
 					oroy: "Offensive Rookie of the Year",
@@ -2662,9 +2658,9 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 					finalsMvp: "Finals MVP",
 					allLeague: "All-League",
 					allRookie: "All-Rookie Team",
-			  };
+			  } as const);
 	for (const key of simpleAwards) {
-		const type = awardNames[key];
+		const type = awardNames[key] as string;
 		const award = awards[key];
 
 		if (award === undefined) {
@@ -2680,9 +2676,12 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 			type,
 		});
 	}
-
-	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
-		const type = awardNames[key];
+	const awardsTeams =
+		process.env.SPORT === "basketball"
+			? (["allRookie", "allLeague", "allDefensive"] as const)
+			: (["allRookie", "allLeague"] as const);
+	for (const key of awardsTeams) {
+		const type = awardNames[key] as string;
 
 		if (key === "allRookie") {
 			for (const { pid, tid, name } of awards.allRookie) {
@@ -2708,7 +2707,7 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 	}
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
 	for (const key of simpleAwards) {
-		const type = awardNames[key];
+		const type = awardNames[key] as string;
 		const award = awardsInitial[key];
 
 		if (award === undefined) {
@@ -2725,9 +2724,8 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 		});
 	}
 
-	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
-		const type = awardNames[key];
-
+	for (const key of awardsTeams) {
+		const type = awardNames[key] as string;
 		if (key === "allRookie") {
 			for (const { pid, tid, name } of awardsInitial.allRookie) {
 				awardsByPlayerToDelete.push({

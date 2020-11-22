@@ -27,14 +27,19 @@ const EditAwardsFootball = ({
 	});
 	const handleChange = (obj: any, pl: any) => {
 		let error: boolean = false;
-		console.log("handleChange");
-		console.log(obj);
-		let returnedPlayer: any;
 		const p: any = pl;
-		console.log(p);
 		const type = obj.props.award;
 		const numberTeam = obj.props.teamNumber;
-		const numberPlayer = obj.props.numberPlayer;
+		const numberPlayer = obj.props.playerNumber;
+		if (state.aws == undefined) {
+			setState(prevState => {
+				const aws = helpers.deepCopy(awards);
+				return {
+					...prevState,
+					aws,
+				};
+			});
+		}
 		setState(prevState => {
 			const aws: any = prevState.aws;
 			if (
@@ -58,10 +63,7 @@ const EditAwardsFootball = ({
 						arrayPids.push(element.pid);
 					});
 				});
-				console.log(p.pid);
-				console.log(arrayPids);
 				if (arrayPids.includes(p.pid)) {
-					console.log("iyo");
 					logEvent({
 						type: "error",
 						text: "Player already in teams of this category",
@@ -84,6 +86,24 @@ const EditAwardsFootball = ({
 					keyStats: p.currentStats.keyStats,
 				};
 			} else if (type == "allRookie") {
+				let arrayPids: number[] = [];
+				aws[type].map((element: any) => {
+					arrayPids.push(element.pid);
+				});
+				if (arrayPids.includes(p.pid)) {
+					logEvent({
+						type: "error",
+						text: "Player already in teams of this category",
+						saveToDb: false,
+						persistent: true,
+					});
+					error = true;
+					obj.setValue(obj.state.select.value);
+					return {
+						...prevState,
+						aws,
+					};
+				}
 				aws[type][numberPlayer] = {
 					pid: p.pid,
 					name: p.firstName + " ",
@@ -129,68 +149,49 @@ const EditAwardsFootball = ({
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
 						<label>Finals MVP</label>
-						<Select
-							defaultValue={awards["finalsMvp"]}
-							label="Single select"
+						<SelectReact
 							options={players}
-							onChange={(event: any) => {
-								handleChange("finalsMvp", 0, 0, event);
-							}}
-							getOptionValue={option => option["pid"]}
-							getOptionLabel={option => option["name"]}
+							player={awards["finalsMvp"]}
+							award="finalsMvp"
+							changing={handleChange.bind(this)}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
 						<label>MVP</label>
-						<Select
-							defaultValue={awards["mvp"]}
-							label="Single select"
+						<SelectReact
 							options={players}
-							onChange={(event: any) => {
-								handleChange("mvp", 0, 0, event);
-							}}
-							getOptionValue={option => option["pid"]}
-							getOptionLabel={option => option["name"]}
+							player={awards["mvp"]}
+							award="mvp"
+							changing={handleChange.bind(this)}
 						/>
 					</div>
 
 					<div className="col-sm-3 col-6 form-group">
 						<label>Defensive Player of the year</label>
-						<Select
-							defaultValue={awards["dpoy"]}
-							label="Single select"
+						<SelectReact
 							options={players}
-							onChange={(event: any) => {
-								handleChange("dpoy", 0, 0, event);
-							}}
-							getOptionValue={option => option["pid"]}
-							getOptionLabel={option => option["name"]}
+							player={awards["dpoy"]}
+							award="dpoy"
+							changing={handleChange.bind(this)}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
 						<label>Defensive Rookie of the year</label>
-						<Select
-							defaultValue={awards["droy"]}
-							label="Single select"
+
+						<SelectReact
 							options={players}
-							onChange={(event: any) => {
-								handleChange("droy", 0, 0, event);
-							}}
-							getOptionValue={option => option["pid"]}
-							getOptionLabel={option => option["name"]}
+							player={awards["droy"]}
+							award="droy"
+							changing={handleChange.bind(this)}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
 						<label>Offensive Rookie of the year</label>
-						<Select
-							defaultValue={awards["oroy"]}
-							label="Single select"
+						<SelectReact
 							options={players}
-							onChange={(event: any) => {
-								handleChange("oroy", 0, 0, event);
-							}}
-							getOptionValue={option => option["pid"]}
-							getOptionLabel={option => option["name"]}
+							player={awards["oroy"]}
+							award="oroy"
+							changing={handleChange.bind(this)}
 						/>
 					</div>
 				</div>
@@ -205,7 +206,6 @@ const EditAwardsFootball = ({
 										<SelectReact
 											options={players}
 											player={player}
-											teamPlayers={element}
 											award="allLeague"
 											teamNumber={i}
 											playerNumber={j}
@@ -229,15 +229,12 @@ const EditAwardsFootball = ({
 				{awards["allRookie"].map((element: any, i: number) => {
 					return (
 						<div className="col-sm-3 col-6 form-group">
-							<Select
-								defaultValue={element}
-								label="Single select"
+							<SelectReact
 								options={players}
-								onChange={(event: any) => {
-									handleChange("allRookie", i, 0, event);
-								}}
-								getOptionValue={option => option["pid"]}
-								getOptionLabel={option => option["name"]}
+								player={element}
+								award="allRookie"
+								playerNumber={i}
+								changing={handleChange.bind(this)}
 							/>
 						</div>
 					);

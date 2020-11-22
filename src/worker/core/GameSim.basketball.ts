@@ -141,6 +141,56 @@ const pickPlayer = (
 	return 0;
 };
 
+// point • matrix
+const linearTransform4D = (
+	matrix: number[],
+	bias: number[],
+	point: number[],
+): number[] => {
+	// Give a simple variable name to each part of the matrix, a column and row number
+	let c0r0 = matrix[0],
+		c1r0 = matrix[1],
+		c2r0 = matrix[2],
+		c3r0 = matrix[3];
+	let c0r1 = matrix[4],
+		c1r1 = matrix[5],
+		c2r1 = matrix[6],
+		c3r1 = matrix[7];
+	let c0r2 = matrix[8],
+		c1r2 = matrix[9],
+		c2r2 = matrix[10],
+		c3r2 = matrix[11];
+	let c0r3 = matrix[12],
+		c1r3 = matrix[13],
+		c2r3 = matrix[14],
+		c3r3 = matrix[15];
+
+	// Now set some simple names for the point
+	let x = point[0];
+	let y = point[1];
+	let z = point[2];
+	let w = point[3];
+
+	// Multiply the point against each part of the 1st column, then add together
+	let resultX = x * c0r0 + y * c0r1 + z * c0r2 + w * c0r3;
+
+	// Multiply the point against each part of the 2nd column, then add together
+	let resultY = x * c1r0 + y * c1r1 + z * c1r2 + w * c1r3;
+
+	// Multiply the point against each part of the 3rd column, then add together
+	let resultZ = x * c2r0 + y * c2r1 + z * c2r2 + w * c2r3;
+
+	// Multiply the point against each part of the 4th column, then add together
+	let resultW = x * c3r0 + y * c3r1 + z * c3r2 + w * c3r3;
+
+	return [
+		resultX + bias[0],
+		resultY + bias[1],
+		resultZ + bias[2],
+		resultW + bias[3],
+	];
+};
+
 class GameSim {
 	id: number;
 
@@ -1312,19 +1362,65 @@ class GameSim {
 		let probMissAndFoul;
 		let type: ShotType;
 
-		const rShot =
-			0.69 +
-			1.57 * this.team[this.o].player[p].compositeRating.shootingAtRim -
-			0.86 * this.team[this.o].player[p].compositeRating.shootingMidRange -
-			1.06 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
-		const lShot =
-			0.11 * this.team[this.o].player[p].compositeRating.shootingLowPost -
-			0.27 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
-		const mShot = 0;
-		const tShot =
-			-0.8 * this.team[this.o].player[p].compositeRating.shootingLowPost -
-			0.82 * this.team[this.o].player[p].compositeRating.shootingMidRange +
-			3.3 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+		const m1 = [
+			2.746696,
+			-0.4067031,
+			-0.16296275,
+			1.2038584,
+			1.0869961,
+			0.29596367,
+			-0.12329404,
+			-0.6934256,
+			-1.9520527,
+			0.8385392,
+			0.51677364,
+			-0.4509902,
+			-2.4895766,
+			-1.7389809,
+			0.26240268,
+			0.02959079,
+		];
+		const b1 = [-1.2218589, 0.6188029, 0.18970709, -0.08382772];
+		const m2 = [
+			0.7306026,
+			0.58740854,
+			-0.041206032,
+			-1.7370037,
+			0.63410217,
+			0.7026119,
+			0.37222016,
+			-1.5711316,
+			-0.38651368,
+			-0.14610946,
+			-0.31575158,
+			0.23786432,
+			1.1137322,
+			0.1308731,
+			-1.5386553,
+			0.9266571,
+		];
+		const b2 = [0.83704126, -0.027587852, -0.4608978, -0.88724256];
+
+		const inputVec = [
+			this.team[this.o].player[p].compositeRating.shootingAtRim,
+			this.team[this.o].player[p].compositeRating.shootingLowPost,
+			this.team[this.o].player[p].compositeRating.shootingMidRange,
+			this.team[this.o].player[p].compositeRating.shootingThreePointer,
+		];
+
+		const h1 = linearTransform4D(m1, b1, inputVec);
+		const res = linearTransform4D(m2, b2, [
+			Math.tanh(h1[0]),
+			Math.tanh(h1[1]),
+			Math.tanh(h1[2]),
+			Math.tanh(h1[3]),
+		]);
+
+		const rShot = res[0];
+		const lShot = res[1];
+		const mShot = res[2];
+		const tShot = res[3];
+
 		const minV = Math.min(rShot, lShot, mShot, tShot);
 
 		const sFactor =

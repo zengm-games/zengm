@@ -1423,11 +1423,14 @@ class GameSim {
 
 		const minV = Math.min(rShot, lShot, mShot, tShot);
 
-		const sFactor =
-			this.synergyFactor *
-			Math.exp(this.team[this.o].synergy.off - this.team[this.d].synergy.def); // Synergy makes easy shots either more likely or less likely
-		//console.log(sFactor);
-		const erShot = Math.exp(rShot - minV);
+		// Synergy makes shots at the rim either more likely or less likely
+		const sFactor = Math.exp(
+			this.team[this.o].synergy.off - this.team[this.d].synergy.def,
+		); // ranges from 0.6 to 1.4. Mean of 0.87
+		const sFactor2 = 17.6 * this.synergyFactor * (sFactor - 0.87); // mean of 0, std of synergyFactor * 2, roughly
+		const sScale = 0.5 + 1 / (1 + Math.exp(-sFactor2)); // mean of 1, ranges [0.75 to 1.35 in playoffs], 2.5x less in regular season
+
+		const erShot = Math.exp(rShot - minV) * sScale;
 		const elShot = Math.exp(lShot - minV);
 		const emShot = Math.exp(mShot - minV);
 		const etShot = Math.exp(tShot - minV) * g.get("threePointTendencyFactor");

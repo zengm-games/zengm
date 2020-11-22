@@ -1312,13 +1312,38 @@ class GameSim {
 		let probMissAndFoul;
 		let type: ShotType;
 
-		if (
-			forceThreePointer ||
-			(this.team[this.o].player[p].compositeRating.shootingThreePointer >
-				0.35 &&
-				Math.random() <
-					0.67 * shootingThreePointerScaled * g.get("threePointTendencyFactor"))
-		) {
+		const rShot =
+			0.69 +
+			1.57 * this.team[this.o].player[p].compositeRating.shootingAtRim -
+			0.86 * this.team[this.o].player[p].compositeRating.shootingMidRange -
+			1.06 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+		const lShot =
+			0.11 * this.team[this.o].player[p].compositeRating.shootingLowPost -
+			0.27 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+		const mShot = 0;
+		const tShot =
+			-0.8 * this.team[this.o].player[p].compositeRating.shootingLowPost -
+			0.82 * this.team[this.o].player[p].compositeRating.shootingMidRange +
+			3.3 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+		const minV = Math.min(rShot, lShot, mShot, tShot);
+
+		const sFactor =
+			this.synergyFactor *
+			Math.exp(this.team[this.o].synergy.off - this.team[this.d].synergy.def); // Synergy makes easy shots either more likely or less likely
+		//console.log(sFactor);
+		const erShot = Math.exp(rShot - minV);
+		const elShot = Math.exp(lShot - minV);
+		const emShot = Math.exp(mShot - minV);
+		const etShot = Math.exp(tShot - minV) * g.get("threePointTendencyFactor");
+		const shotTotal = erShot + elShot + emShot + etShot;
+		const sNum = Math.random();
+
+		const prShot = erShot / shotTotal;
+		//const plShot = (elShot/shotTotal);
+		const pmShot = emShot / shotTotal;
+		const ptShot = etShot / shotTotal;
+
+		if (forceThreePointer || sNum < ptShot) {
 			// Three pointer
 			type = "threePointer";
 			probMissAndFoul = 0.02;
@@ -1333,23 +1358,7 @@ class GameSim {
 
 			this.recordPlay("fgaTp", this.o, [this.team[this.o].player[p].name]);
 		} else {
-			const r1 =
-				0.8 *
-				Math.random() *
-				this.team[this.o].player[p].compositeRating.shootingMidRange;
-			const r2 =
-				Math.random() *
-				(this.team[this.o].player[p].compositeRating.shootingAtRim +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			const r3 =
-				Math.random() *
-				(this.team[this.o].player[p].compositeRating.shootingLowPost +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			if (r1 > r2 && r1 > r3) {
+			if (sNum < pmShot + ptShot) {
 				// Two point jumper
 				type = "midRange";
 				probMissAndFoul = 0.07;
@@ -1360,7 +1369,7 @@ class GameSim {
 				this.recordPlay("fgaMidRange", this.o, [
 					this.team[this.o].player[p].name,
 				]);
-			} else if (r2 > r3) {
+			} else if (sNum < prShot + pmShot + ptShot) {
 				// Dunk, fast break or half court
 				type = "atRim";
 				probMissAndFoul = 0.37;

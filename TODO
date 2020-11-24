@@ -1,3 +1,5 @@
+FBGM too many very short players
+
 on trade summary page, also show how hte player left the team (or if still active/retired). use p.transactions
 
 can "players refuse to re-sign with you" be moved from events to contracts on the settings page @KingLexgoat223#4720
@@ -545,6 +547,8 @@ FBGM
   - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
+- OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
+- 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

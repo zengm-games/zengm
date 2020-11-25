@@ -3,7 +3,13 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
 import Select from "react-select";
-import { localActions, logEvent, toWorker, helpers } from "../util";
+import {
+	localActions,
+	logEvent,
+	toWorker,
+	helpers,
+	realtimeUpdate,
+} from "../util";
 import SelectReact from "../components/SelectMultiple";
 const EditAwardsBasketball = ({
 	godMode,
@@ -46,7 +52,8 @@ const EditAwardsBasketball = ({
 				type == "finalsMvp" ||
 				type == "mvp" ||
 				type == "smoy" ||
-				type == "roy"
+				type == "roy" ||
+				type == "mip"
 			) {
 				aws[type] = {
 					pid: p.pid,
@@ -174,6 +181,7 @@ const EditAwardsBasketball = ({
 
 		try {
 			const aws = await toWorker("main", "upsertAwards", state, awardsInitial);
+			realtimeUpdate([], helpers.leagueUrl(["history"]));
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -234,6 +242,16 @@ const EditAwardsBasketball = ({
 							options={players}
 							player={awards["smoy"]}
 							award="dpoy"
+							changing={handleChange.bind(this)}
+						/>
+					</div>
+
+					<div className="col-sm-3 col-6 form-group">
+						<label>Most Improved player</label>
+						<SelectReact
+							options={players}
+							player={awards["mip"]}
+							award="mip"
 							changing={handleChange.bind(this)}
 						/>
 					</div>

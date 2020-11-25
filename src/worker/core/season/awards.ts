@@ -306,7 +306,13 @@ const saveAwardsByPlayer = async (
 	}
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 	for (const pid of pids) {
-		const p = await idb.cache.players.get(pid);
+		let p = await idb.cache.players.get(pid);
+		if (!p) {
+			const p2 = await idb.getCopy.players({
+				pid: pid,
+			});
+			p = p2 as PlayerFiltered;
+		}
 		if (p) {
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {

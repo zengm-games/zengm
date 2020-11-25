@@ -492,13 +492,6 @@ export const options: {
 	},
 	{
 		category: "Events",
-		key: "playersRefuseToNegotiate",
-		name: "Players Can Refuse To Sign With You",
-		godModeRequired: "always",
-		type: "bool",
-	},
-	{
-		category: "Events",
 		key: "injuryRate",
 		name: "Injury Rate",
 		godModeRequired: "always",
@@ -629,6 +622,13 @@ export const options: {
 				</p>
 			</>
 		),
+		type: "bool",
+	},
+	{
+		category: "Contracts",
+		key: "playersRefuseToNegotiate",
+		name: "Players Can Refuse To Negotiate",
+		godModeRequired: "always",
 		type: "bool",
 	},
 	{

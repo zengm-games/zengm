@@ -14,7 +14,7 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 	if (g.get("season") === inputs.season) {
 		// This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
 		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			0,
+			PLAYER.FREE_AGENT,
 			Infinity,
 		]);
 	} else {

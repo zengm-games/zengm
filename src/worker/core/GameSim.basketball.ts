@@ -1488,7 +1488,7 @@ class GameSim {
 
 		const erShot = Math.exp(rShot - minV) * sScale;
 		const elShot = Math.exp(lShot - minV);
-		const emShot = Math.exp(mShot - minV);
+		const emShot = Math.exp(mShot - minV) / sScale;
 		const etShot = Math.exp(tShot - minV) * g.get("threePointTendencyFactor");
 		const shotTotal = erShot + elShot + emShot + etShot;
 		const sNum = Math.random();

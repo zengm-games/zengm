@@ -83,6 +83,23 @@ const updateCustomizePlayer = async (
 			}
 
 			originalTid = p.tid;
+
+			if (inputs.type === "clone") {
+				delete p.pid;
+				p.awards = [];
+				p.stats = [];
+				p.draft = {
+					...p.draft,
+					round: 0,
+					pick: 0,
+					tid: -1,
+					originalTid: -1,
+					pot: 0,
+					ovr: 0,
+					skills: [],
+				};
+				p.salaries = p.salaries.filter(row => row.season >= g.get("season"));
+			}
 		}
 
 		return {

@@ -83,6 +83,16 @@ const changes = [
 		msg:
 			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-mood/">More details</a>',
 	},
+	{
+		date: "2020-10-25",
+		msg:
+			'AI teams are affected by player mood when re-signing players, and you can see a player\'s mood toward his current team. <a href="https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/">More details</a>',
+	},
+	{
+		date: "2020-11-15",
+		msg:
+			'Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. <a href="https://basketball-gm.com/blog/2020/11/trade-details/">More details</a>',
+	},
 ];
 
 export default changes;

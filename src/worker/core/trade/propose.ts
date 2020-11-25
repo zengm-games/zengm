@@ -22,7 +22,14 @@ const propose = async (
 		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.PLAYOFFS
 	) {
-		return [false, "Error! You're not allowed to make trades now."];
+		return [
+			false,
+			`Error! You're not allowed to make trades ${
+				g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
+					? "after the trade deadline"
+					: "now"
+			}.`,
+		];
 	}
 
 	const { teams } = await get();
@@ -47,6 +54,8 @@ const propose = async (
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
+		undefined,
+		g.get("userTid"),
 	);
 
 	if (dv > 0 || forceTrade) {
@@ -70,9 +79,9 @@ const propose = async (
 	// Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
 	let message;
 
-	if (dv > -5) {
+	if (dv > -2) {
 		message = "Close, but not quite good enough.";
-	} else if (dv > -10) {
+	} else if (dv > -5) {
 		message = "That's not a good deal for me.";
 	} else {
 		message = "What, are you crazy?!";

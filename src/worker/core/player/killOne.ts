@@ -4,6 +4,22 @@ import { g, helpers, logEvent, random } from "../../util";
 import type { Conditions, Player } from "../../../common/types";
 
 const killOne = async (conditions: Conditions, player?: Player) => {
+	const gifts = [
+		"basketball shorts",
+		"jerseys",
+		"athletic socks",
+		"knee sleeves",
+		"elbow sleeves",
+		"compression pants",
+		"ankle braces",
+		"knee braces",
+		...(process.env.SPORT === "football"
+			? ["cleats", "helmets", "shoulder pads"]
+			: ["sneakers", "headbands"]),
+	];
+	const gift1 = random.choice(gifts);
+	const gift2 = random.choice(gifts.filter(gift => gift !== gift1));
+
 	const reason = random.choice([
 		"died from a drug overdose",
 		"was killed by a gunshot during an altercation at a night club",
@@ -23,7 +39,6 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"died of exertion while trying to set the record for largest number of sex partners in one day",
 		"rode his Segway off a cliff",
 		"fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",
-		"was found dead in a hotel room with a belt around his neck and his hand around his dick",
 		"was pursued by a bear, and mauled", // poor Antigonus
 		"was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
 		`was killed by ${random.choice([
@@ -74,6 +89,9 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"was intensely focused on playing Basketball GM on his cell phone. As he walked across the street, he was so distracted by his ultimately fatal obsession that he didn't notice the bus barreling towards him",
 		"drowned while crossing the Saleph River",
 		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
+
+		// Draco, an Athenian lawmaker, was reportedly smothered to death by gifts of cloaks and hats showered upon him by appreciative citizens
+		`was smothered to death by gifts of ${gift1} and ${gift2} showered upon him by appreciative fans`,
 	]);
 
 	let p: Player;

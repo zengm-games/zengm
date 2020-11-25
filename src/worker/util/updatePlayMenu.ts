@@ -1,5 +1,5 @@
 import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
-import { allStar, draft } from "../core";
+import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
@@ -43,6 +43,10 @@ const updatePlayMenu = async () => {
 		untilAllStarGame: {
 			label: "Until All-Star Game",
 			key: "a",
+		},
+		untilTradeDeadline: {
+			label: "Until trade deadline",
+			key: "r",
 		},
 		viewAllStarSelections: {
 			url: helpers.leagueUrl(["all_star_draft"]),
@@ -171,35 +175,37 @@ const updatePlayMenu = async () => {
 		g.get("phase") === PHASE.REGULAR_SEASON ||
 		g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 	) {
-		const allStarScheduled = await allStar.futureGameIsAllStar();
-		const allStarNext = await allStar.nextGameIsAllStar();
-		const untilAllStarGame: string[] = [];
+		const untilMore: string[] = [];
 
-		if (allStarScheduled && !allStarNext) {
-			untilAllStarGame.push("untilAllStarGame");
+		const schedule = await season.getSchedule();
+		const tradeDeadlineIndex = schedule.findIndex(
+			game => game.awayTid === -3 && game.homeTid === -3,
+		);
+		const allStarIndex = schedule.findIndex(
+			game => game.awayTid === -2 && game.homeTid === -1,
+		);
+
+		// > rather than >= because if it's the next game already, no need to "play until"
+		if (tradeDeadlineIndex > 0 && allStarIndex > 0) {
+			if (tradeDeadlineIndex < allStarIndex) {
+				untilMore.push("untilTradeDeadline", "untilAllStarGame");
+			} else {
+				untilMore.push("untilAllStarGame", "untilTradeDeadline");
+			}
+		} else if (tradeDeadlineIndex > 0) {
+			untilMore.push("untilTradeDeadline");
+		} else if (allStarIndex > 0) {
+			untilMore.push("untilAllStarGame");
 		}
 
 		// Regular season - pre trading deadline
 		if (process.env.SPORT === "basketball") {
-			keys = [
-				"day",
-				"dayLive",
-				"week",
-				"month",
-				...untilAllStarGame,
-				"untilPlayoffs",
-			];
+			keys = ["day", "dayLive", "week", "month", ...untilMore, "untilPlayoffs"];
 		} else {
-			keys = [
-				"week",
-				"weekLive",
-				"month",
-				...untilAllStarGame,
-				"untilPlayoffs",
-			];
+			keys = ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"];
 		}
 
-		if (allStarNext) {
+		if (allStarIndex === 0) {
 			keys.unshift("viewAllStarSelections");
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {

@@ -50,6 +50,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			pot: p.ratings[p.ratings.length - 1].pot,
 			ovr: p.ratings[p.ratings.length - 1].ovr,
 			skills: p.ratings[p.ratings.length - 1].skills,
+			dpid: dp.dpid,
 		};
 		local.fantasyDraftResults.push(fakeP);
 	} else {
@@ -62,6 +63,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			pot: p.ratings[0].pot,
 			ovr: p.ratings[0].ovr,
 			skills: p.ratings[0].skills,
+			dpid: dp.dpid,
 		};
 	}
 

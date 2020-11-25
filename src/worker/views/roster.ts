@@ -109,7 +109,7 @@ const updateRoster = async (
 			payroll = (await team.getPayroll(inputs.tid)) / 1000;
 
 			for (const p of playersAll) {
-				(p as any).mood = await player.moodInfo(p, g.get("userTid"));
+				(p as any).mood = await player.moodInfos(p);
 			}
 
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.

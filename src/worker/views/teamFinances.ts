@@ -69,7 +69,6 @@ const updateTeamFinances = async (
 				amounts,
 			};
 		});
-		console.log(contracts);
 
 		const salariesSeasons = [];
 		for (let i = 0; i < numSeasons; i++) {

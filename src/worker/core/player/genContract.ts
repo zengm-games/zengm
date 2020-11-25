@@ -51,7 +51,7 @@ const genContract = (
 		amount = 0;
 	}
 
-	amount = 50 * Math.round(amount / 50); // Make it a multiple of 50k
+	amount = helpers.roundContract(amount);
 
 	return {
 		amount,

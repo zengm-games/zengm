@@ -4,8 +4,8 @@ const checkObject = (
 	foundNaN?: boolean,
 	replace?: boolean,
 ): boolean => {
-	foundNaN = foundNaN !== undefined ? foundNaN : false;
-	replace = replace !== undefined ? replace : false;
+	foundNaN = foundNaN ?? false;
+	replace = replace ?? false;
 
 	if (obj === null || obj === undefined) {
 		return foundNaN;

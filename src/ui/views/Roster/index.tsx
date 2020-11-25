@@ -10,6 +10,7 @@ import {
 	RatingWithChange,
 	SortableTable,
 	SafeHtml,
+	MoreLinks,
 } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
@@ -128,36 +129,13 @@ const Roster = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				{process.env.SPORT === "football" ? (
-					<>
-						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
-							Depth Chart
-						</a>{" "}
-						|{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
-					Finances
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`, season])}>
-					Game Log
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
-					Schedule
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
-					News Feed
-				</a>
-			</p>
+			<MoreLinks
+				type="team"
+				page="roster"
+				abbrev={abbrev}
+				tid={tid}
+				season={season}
+			/>
 
 			<TopStuff
 				abbrev={abbrev}
@@ -354,7 +332,7 @@ const Roster = ({
 							) : null}
 							{showMood ? (
 								<td>
-									<Mood maxWidth p={p} />
+									<Mood defaultType="current" maxWidth p={p} />
 								</td>
 							) : null}
 							{showRelease ? (

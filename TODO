@@ -1,3 +1,141 @@
+draft prospects in watch list should show ratings (not 0/0) @alphy#5106
+
+FBGM ovrs
+
+FBGM too many very short players
+
+on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
+
+Maybe another frivolty to say which players were the best with a certain pick, e.g. 1-3 would be Michael Jordan IRL, 1-1 would be LeBron James, etc @lewie100
+
+for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
+- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
+- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
+
+trade summary charts future
+- some indication for winning a championship, special marker?
+  - tooltip required, for clarity
+- tooltip
+  - team region, name, record, playoff result
+- https://github.com/airbnb/visx
+  - would it make tooltips easier?
+
+fuzz
+- nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5
+
+team context on trade summary page
+- graph of team winning percentage over time, -2 to 5 years relative to the trade
+- on hover/click, show W-L record and playoff result
+- special icon for playoffs, finals, championship
+
+show ovr when live editing a player's ratings
+- use worker, don't include code in both
+
+more variation in pace plz @nicidob
+- https://discord.com/channels/290013534023057409/290015468939640832/780515737139150890
+
+how to stop 2p from beign a negative rating
+- @nicidob says: basic summary: it's used only in "usage", but it's a small part of that, and "shoot midrange". Well... shoot midrange is like 0.8 to 0.9 PPS, while Dunks and 3s are 1.2 and 1.1 PPS. Sure, actual ratings shift the %s, but i'm not sure how extreme it'd have to get before your MR PPS isn't the "worst possible shot". So the 2p setting basically is "how likely are you to take the worst possible shot". My idea is to make the mid-range more of a "leftover"... if your 3p or dunk or LP isn't high enough, it gets picked. then higher 2p is just higher MR accuracy and its negative effect is gone. Then you can era-adjust the default
+
+finances in shorter season https://old.reddit.com/r/BasketballGM/comments/jtu1yr/someone_has_to_fix_this_the_finance_system_is/gcapqg7/
+
+redesign draft screen
+- on draft screen, add a new "Scouting" column that contains skills applied with lower cutoffs
+- compute skills somehow.. lower cutoff? project future like pot?
+- https://cdn.discordapp.com/attachments/331882115119448065/775567088584491018/unknown.png
+- should not require scrolling on mobile
+
+Click on the phase by play button to quickly take you to relevant page. So clicking on playoffs takes you to playoffs, draft to draft, FA to FA. So on. Reg and preseason to dashboard @dooby moogey#2784
+
+settings re-design
+- all settings should be editable when creating a new league
+  - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
+  - also new league has some extra settings that don't persist, like randomization and no starting injuries
+  - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
+  - make sure it handles setting the season for pace etc in real players leagues
+  - godModeRequired value of "existingLeagueOnly" should be used here
+- some settings should only be editable in offseason
+  - playoff structure
+
+real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
+
+option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob
+
+player page redesign
+- collapse https://cdn.discordapp.com/attachments/331882115119448065/772161255922204732/image0.png
+
+possible to enter into negotiations with a player, trade away other players so that now he refuses to negotiate, but still sign him because negotiations have already started
+- check mood on negotiation page, even if negotiation already started
+
+when I just deleted old data, processing after draft and pre season sped up atleast 200%
+- if not fixable, then maybe add option to auto delete more stuff, not just box scores
+
+trade balancing
+- https://old.reddit.com/r/BasketballGM/comments/jhtm1k/im_playing_charlotte_queens_on_hard_mode_and_i/
+- could value DPs and players before first progs more
+- I don’t think it’s something intended to happen, pretty frequently if I trading block a late first round pick I get offers for guys drafted ahead of my pick
+- care more about bad contracts
+- FBGM should not demand as much in 2 for 1 trades? https://discord.com/channels/@me/696164463312764949/776342790586105877
+
+force resign button under lock ratings, keep a man on one team
+- hard cap
+- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
+- @dooby moogey#2784
+
+soccer-style team names
+- instead of region and name, it's short name and long name
+- abstract any display of team name/region to handle this
+  - maybe in teamsPlus, have longName and shortName which check some option to see how to generate them
+- @Ra98
+
+profit for extreme caps needs to be fixed first, its not possible to make money above $400m cap space
+
+during re-signing phase, should still show % everywhere except re-signing table. same with free agency, i think?
+
+AI re-signing is just player mood + trade function
+- later
+  - have it affect free agent signings too
+
+next/prev buttons
+- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
+- seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
+  - for just seasons, or all dropdowns?
+- teams on trade page @AGLR_23#4969
+
+genSchedulePlayoffsDay -> genSchedulePlayoffsRound
+- make whole round at once, accounting for how many games have been played
+- when series ends, delete remaining games from schedule
+- remove forceWin hack in setSchedule
+- https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
+
+schedule editor
+
+star icon next to year player was all star
+- maybe championship and mvp too?
+
+start in any phase
+- later
+  - get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+    - need to improve LeagueMenu so fetching leagueInfo depends on both season and phase forms
+  - start before expansion draft
+  - start before draft lottery
+  - support starting after playoffs even if there is an expansion draft
+    - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
+    - expansion team should be selectable
+  - add player stats if phase after regular season
+    - advanced stats will require team stats too... sum up from players?
+    - advanced stats and other missing values, calculate on load?
+  - what about changes to settings (like playoff settings, etc), does it need to store previous season's value too?
+  - what about seasons with expansion teams?
+    - tricky for draft, since it should have expansion draft as already happened... maybe disable those years
+      - could get results of expansion draft and assing those players to team!
+
+trade stuff
+- more penalty for bad contracts
+
+AI teams should release players if better FAs are available
+- draft picks after first season, especially
+
 name/colleges revamp
 - races
   - @ClevelandFan#6181 can help
@@ -13,9 +151,17 @@ name/colleges revamp
   - https://github.com/lipis/flag-icon-css
 
 centralize player action buttons
-- include Draft
-- existing ones: Trade For, Add to Trading Block, Negotiate, Sign?
+- buttons
+  - Draft
+  - Trade For
+  - Trade Away
+  - Negotiate
+  - Sign
+  - Release
+- option to pick which to show, so it can replace NegotiateButtons
 - show in player stats/ratings/bios tables? and roster, player profile?
+- button group, or single button with dropdown
+- help popover in column explains stuff, and text on confirm windows
 
 contract extensions, available if player mood is high enough and contract is expiring
 
@@ -37,7 +183,7 @@ finances revamp
 - https://old.reddit.com/r/BasketballGM/comments/ir5rbf/suggestions_for_finances_overhaul/
 
 redo mood system
-- some way to see how it changes during FA - show probability? show # days until willing?
+- some way to see how it changes during FA - show probability? show # days until willing? https://old.reddit.com/r/BasketballGM/comments/iuluuj/the_new_player_mood_system_is_now_live_in_version/g5mgi31/
 - customizable columns on roster page
 - later
   - moodComponents.playingTime for football - based on depth chart
@@ -53,6 +199,9 @@ gm score
 - show on GM History
 - fully dynamic, or store in TeamSeason?
 - same as the owner mood score?
+- https://discord.com/channels/290013534023057409/290015468939640832/770460701235478568
+  - df['profit']- expected_profit(df['pop'],df['cap']) + (expected_cost(df['win'])-90000) + (expected_costP(df['playw'])-90000)
+  - https://github.com/nicidob/bbgm/blob/master/gmRating.ipynb
 
 taller players should get injured more
 
@@ -89,6 +238,7 @@ frivolities
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career
+  - made playoffs every season @shep#9376 
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs)
@@ -286,8 +436,10 @@ custom league generator
 fuzz/scouting revamp
 - prospects and young players only
 - fuzz is deterministic noise
+- scouting budget affects accuracy of mood percentages?
 
 wrong team abbrev on player history https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
+- getTeamInfoBySeason
 
 add records to top scroll on desktop https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/ftg0cvm/?context=3
 
@@ -356,6 +508,7 @@ god mode stuff
 - more stuff on player editor
 - awards editor
 - pick all stars, and captains
+- edit list of injuries, deaths
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues
@@ -365,17 +518,15 @@ add option to disable salary cap @hrmantovani#2284
 FBGM
 - retirement age
   - increase roster size limit to 55
-- when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - Some automatic first down penalties result in 1st and 1
-- some penalties push team into endzone
-  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHMGGpznWHgLkCNTbcXJbzZLzp
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - kneeling at end of games
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
-  - user report of K/P being released by AI teams during season
+  - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
+  - @geonerd#6946
 - smarter cutting when over roster limit (like don't cut only K/P)
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not
@@ -383,11 +534,24 @@ FBGM
 - Add the release and trade away buttons to the depth chart screen. I find myself flipping back and forth from the depth chart and roster.
 - Add the roster composition to any roster type screen like draft, depth chart, and trade screens.
 - trade possible after playoffs phase begins, but only before first playoff game is played?
-- automatic 1st not given https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/
 - weird offensive holding application https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/g1073zl/?context=3
 - DL in FBGM get way too many interceptions, CB should get more
 - in FBGM, during the FA period with 30 days: injured players on rosters will not recover a single week if you sim to 1 day left in FA; injured players in fa will recover a week in every day of FA (30 weeks total)
 - in OT, if the other team has already scored a FG, never punt!!!
+- better support for running QBs to put up big numbers
+- penalties accepted when normal gain would have been better
+  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJZJZkXTNBnKVDvKLkMfMMTZdG
+  - https://i.imgur.com/qb1Fuhf.png
+- when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
+- had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
+- fantasy points
+- late game strategy
+  - punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
+  - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
+- penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
+- holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
+- OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
+- 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

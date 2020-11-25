@@ -1,4 +1,3 @@
-import groupBy from "lodash/groupBy";
 import {
 	PLAYER,
 	PHASE,
@@ -30,32 +29,6 @@ type PlayersPlusOptionsRequired = {
 	statType: PlayerStatType;
 	mergeStats: boolean;
 };
-const awardsOrder = [
-	"Inducted into the Hall of Fame",
-	"Most Valuable Player",
-	"Won Championship",
-	"Finals MVP",
-	"Defensive Player of the Year",
-	"Sixth Man of the Year",
-	"Most Improved Player",
-	"Rookie of the Year",
-	"Offensive Rookie of the Year",
-	"Defensive Rookie of the Year",
-	"League Scoring Leader",
-	"League Rebounding Leader",
-	"League Assists Leader",
-	"League Steals Leader",
-	"League Blocks Leader",
-	"First Team All-League",
-	"Second Team All-League",
-	"Third Team All-League",
-	"First Team All-Defensive",
-	"Second Team All-Defensive",
-	"Third Team All-Defensive",
-	"All-Rookie Team",
-	"All-Star",
-	"All-Star MVP",
-];
 
 const processAttrs = (
 	output: PlayerFiltered,
@@ -64,7 +37,7 @@ const processAttrs = (
 ) => {
 	const getSalary = () => {
 		let total = 0;
-		const s = season === undefined ? g.get("season") : season;
+		const s = season ?? g.get("season");
 
 		for (const salary of p.salaries) {
 			if (salary.season === s) {
@@ -77,7 +50,7 @@ const processAttrs = (
 
 	for (const attr of attrs) {
 		if (attr === "age") {
-			const s = season === undefined ? g.get("season") : season;
+			const s = season ?? g.get("season");
 			output.age = s - p.born.year;
 		} else if (attr === "ageAtDeath") {
 			output.ageAtDeath =
@@ -142,34 +115,6 @@ const processAttrs = (
 				(memo: number, salary: { amount: number }) => memo + salary.amount,
 				0,
 			);
-		} else if (attr === "awardsGrouped") {
-			output.awardsGrouped = [];
-			const awardsGroupedTemp = groupBy(p.awards, award => award.type);
-
-			for (const award of awardsOrder) {
-				if (awardsGroupedTemp.hasOwnProperty(award)) {
-					output.awardsGrouped.push({
-						type: award,
-						count: awardsGroupedTemp[award].length,
-						seasons: helpers.yearRanges(
-							awardsGroupedTemp[award].map(a => a.season),
-						),
-					});
-				}
-			}
-
-			// Handle non-default awards, just for fun if someone wants to add more
-			for (const award of Object.keys(awardsGroupedTemp).sort()) {
-				if (!awardsOrder.includes(award)) {
-					output.awardsGrouped.push({
-						type: award,
-						count: awardsGroupedTemp[award].length,
-						seasons: helpers.yearRanges(
-							awardsGroupedTemp[award].map(a => a.season),
-						),
-					});
-				}
-			}
 		} else if (attr === "name") {
 			output.name = `${p.firstName} ${p.lastName}`;
 		} else if (attr === "nameAbbrev") {
@@ -241,11 +186,11 @@ const processAttrs = (
 				} else if (transaction.type === "trade") {
 					// @ts-ignore
 					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
-					output.latestTransaction = `Trade with <a href="${helpers.leagueUrl([
-						"roster",
-						abbrev,
-						transaction.season,
-					])}">${abbrev} in ${transaction.season}</a>`;
+					const url =
+						transaction.eid !== undefined
+							? helpers.leagueUrl(["trade_summary", transaction.eid])
+							: helpers.leagueUrl(["roster", abbrev, transaction.season]);
+					output.latestTransaction = `Trade with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
 				} else if (transaction.type === "import") {

@@ -14,15 +14,6 @@
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
 
-    <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
-    <script async="async" src="https://basketball-gm.com/prebid/BBGM_ADS_FILENAME.js"></script>
-    <script type="text/javascript">
-      var googletag = googletag || {};
-      googletag.cmd = googletag.cmd || [];
-      var bbgmAds = bbgmAds || {};
-      bbgmAds.cmd = bbgmAds.cmd || [];
-    </script>
-
     <script type="text/javascript">
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
       function isBuggyFirefox() {
@@ -141,8 +132,8 @@
         });
       }
     </script>
-
-    QUANTCAST_CODE
+BANNER_ADS_CODE
+QUANTCAST_CODE
   </head>
 
   <body class="h-100">
@@ -333,9 +324,9 @@
         }
       };
 
-      var supportsAsync = function () {
+      var supportsSpread = function () {
         try {
-          eval("async function foo() {}");
+          eval("const x={a:1}; const y={...x};");
           return true;
         } catch (err) {
           return false;
@@ -362,12 +353,10 @@
         } else {
           withGoodBrowser();
 
-          var safari10NeedsLegacy = navigator.userAgent.indexOf("Safari/602") >= 0 || navigator.userAgent.indexOf("Safari/603") >= 0;
-
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          if (supportsAsync() && !safari10NeedsLegacy) {
+          if (supportsSpread()) {
             script.src = "/gen/ui-" + bbgmVersion + ".js";
           } else  {
             script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";

@@ -60,7 +60,7 @@ const calcWinp = ({
 	won,
 }: {
 	lost: number;
-	tied: any;
+	tied?: any;
 	won: number;
 }) => {
 	// Some old leagues had NaN for tied...
@@ -80,13 +80,8 @@ const calcWinp = ({
 };
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
-const correctLinkLid = (
-	lid: number,
-	event: {
-		text: string;
-	},
-) => {
-	event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
+const correctLinkLid = (lid: number, text: string) => {
+	return text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
 };
 
 const defaultBudgetAmount = (
@@ -316,6 +311,9 @@ const resetG = () => {
 	}
 };
 
+// Make it a multiple of 10k
+const roundContract = (amount: number) => 10 * Math.round(amount / 10);
+
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
@@ -348,6 +346,7 @@ const helpers = {
 	pickDesc,
 	quarterLengthFactor,
 	resetG,
+	roundContract,
 	sigmoid,
 };
 

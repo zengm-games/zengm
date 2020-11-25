@@ -60,42 +60,29 @@ const makeTeams = <T>(
 ): [
 	{
 		title: "First Team";
-		players: [T, T, T, T, T];
+		players: T[];
 	},
 	{
 		title: "Second Team";
-		players: [T, T, T, T, T];
+		players: T[];
 	},
 	{
 		title: "Third Team";
-		players: [T, T, T, T, T];
+		players: T[];
 	},
 ] => {
 	return [
 		{
 			title: "First Team",
-			players: [
-				// Can't use Array.slice because of Flow https://flow.org/en/docs/types/tuples/#toc-tuples-don-t-match-array-types
-				players[0],
-				players[1],
-				players[2],
-				players[3],
-				players[4],
-			],
+			players: players.slice(0, 5),
 		},
 		{
 			title: "Second Team",
-			players: [players[5], players[6], players[7], players[8], players[9]],
+			players: players.slice(5, 10),
 		},
 		{
 			title: "Third Team",
-			players: [
-				players[10],
-				players[11],
-				players[12],
-				players[13],
-				players[14],
-			],
+			players: players.slice(10, 15),
 		},
 	];
 };
@@ -351,6 +338,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	const mvpPlayers = getTopPlayersOffense(
 		{
+			allowNone: true,
 			amount: 15,
 			score: mvpScore,
 		},
@@ -360,6 +348,7 @@ const doAwards = async (conditions: Conditions) => {
 	const allLeague = makeTeams(mvpPlayers);
 	const [smoy] = getTopPlayersOffense(
 		{
+			allowNone: true,
 			filter: smoyFilter,
 			score: smoyScore,
 		},
@@ -380,6 +369,7 @@ const doAwards = async (conditions: Conditions) => {
 	const allRookie = royPlayers.slice(0, 5);
 	const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
 		{
+			allowNone: true,
 			amount: 15,
 			score: dpoyScore,
 		},
@@ -389,6 +379,7 @@ const doAwards = async (conditions: Conditions) => {
 	const allDefensive = makeTeams(dpoyPlayers);
 	const [mip] = getTopPlayersOffense(
 		{
+			allowNone: true,
 			filter: mipFilter,
 			score: mipScore,
 		},

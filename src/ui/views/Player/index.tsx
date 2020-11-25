@@ -20,11 +20,14 @@ import {
 	helpers,
 	toWorker,
 	realtimeUpdate,
+	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
 import { PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
+import AwardsSummary from "./AwardsSummary";
+import SeasonIcons from "./SeasonIcons";
 
 const Relatives = ({
 	pid,
@@ -135,8 +138,18 @@ const StatsTable = ({
 						key: i,
 						data: [
 							{
-								value: ps.season,
+								searchValue: ps.season,
 								sortValue: i,
+								value: (
+									<>
+										{ps.season}{" "}
+										<SeasonIcons
+											season={ps.season}
+											awards={p.awards}
+											playoffs={playoffs}
+										/>
+									</>
+								),
 							},
 							<a
 								href={helpers.leagueUrl([
@@ -350,11 +363,10 @@ const Player2 = ({
 	if (!retired) {
 		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 		statusInfo = (
-			<div className="d-flex">
+			<div className="d-flex align-items-center">
 				{injured ? (
 					<span
-						className="badge badge-danger badge-injury"
-						style={{ marginLeft: 0 }}
+						className="badge badge-danger badge-injury ml-0"
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${
@@ -371,8 +383,17 @@ const Player2 = ({
 				<WatchBlock className="ml-2" pid={player.pid} watch={player.watch} />
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
-				player.tid >= 0 ? (
-					<Mood className="ml-2" p={player} />
+				player.tid >= PLAYER.FREE_AGENT ? (
+					<Mood
+						className="ml-2"
+						defaultType={
+							player.tid === PLAYER.FREE_AGENT ||
+							player.tid === PLAYER.UNDRAFTED
+								? "user"
+								: "current"
+						}
+						p={player}
+					/>
 				) : null}
 			</div>
 		);
@@ -401,193 +422,211 @@ const Player2 = ({
 	const college =
 		player.college && player.college !== "" ? player.college : "None";
 
+	const awardsGrouped = groupAwards(player.awards);
+
 	return (
 		<>
-			<div className="row mb-3">
-				<div className="col-sm-6">
-					<div className="d-flex">
-						<div
-							className="player-picture mb-2"
-							style={{
-								marginTop: player.imgURL ? 0 : -20,
-							}}
-						>
-							<PlayerPicture
-								face={player.face}
-								imgURL={player.imgURL}
-								teamColors={teamColors}
-							/>
-						</div>
-						<div>
-							<strong>
-								{player.ratings[player.ratings.length - 1].pos},{" "}
-								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
-								{player.jerseyNumber ? (
+			<div className="mb-3">
+				<div className="d-sm-flex">
+					<div className="player-bio">
+						<div className="d-flex">
+							<div
+								className="player-picture"
+								style={{
+									marginTop: player.imgURL ? 0 : -20,
+								}}
+							>
+								<PlayerPicture
+									face={player.face}
+									imgURL={player.imgURL}
+									teamColors={teamColors}
+								/>
+							</div>
+							<div>
+								<strong>
+									{player.ratings[player.ratings.length - 1].pos},{" "}
+									{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
+									{player.jerseyNumber ? (
+										<>
+											,{" "}
+											<a
+												href={helpers.leagueUrl([
+													"frivolities",
+													"most",
+													"jersey_number",
+													player.jerseyNumber,
+												])}
+											>
+												#{player.jerseyNumber}
+											</a>
+										</>
+									) : null}
+								</strong>
+								<br />
+								{height}, {weight}
+								<br />
+								Born: {player.born.year} -{" "}
+								<a
+									href={helpers.leagueUrl([
+										"frivolities",
+										"most",
+										"country",
+										window.encodeURIComponent(helpers.getCountry(player)),
+									])}
+								>
+									{player.born.loc}
+								</a>
+								<br />
+								{typeof player.diedYear !== "number" ? (
 									<>
-										,{" "}
-										<a
-											href={helpers.leagueUrl([
-												"frivolities",
-												"most",
-												"jersey_number",
-												player.jerseyNumber,
-											])}
-										>
-											#{player.jerseyNumber}
-										</a>
+										Age: {player.age}
+										<br />
 									</>
-								) : null}
-							</strong>
-							<br />
-							{height}, {weight}
-							<br />
-							Born: {player.born.year} -{" "}
-							<a
-								href={helpers.leagueUrl([
-									"frivolities",
-									"most",
-									"country",
-									window.encodeURIComponent(helpers.getCountry(player)),
-								])}
-							>
-								{player.born.loc}
-							</a>
-							<br />
-							{typeof player.diedYear !== "number" ? (
-								<>
-									Age: {player.age}
-									<br />
-								</>
-							) : (
-								<>
-									Died: {player.diedYear}
-									<br />
-								</>
-							)}
-							<Relatives pid={player.pid} relatives={player.relatives} />
-							{draftInfo}
-							College:{" "}
-							<a
-								href={helpers.leagueUrl([
-									"frivolities",
-									"most",
-									"college",
-									window.encodeURIComponent(college),
-								])}
-							>
-								{college}
-							</a>
-							<br />
-							{contractInfo}
-							{statusInfo}
-						</div>
-					</div>
-
-					<div className="btn-group">
-						<a
-							href={helpers.leagueUrl(["customize_player", player.pid])}
-							className={classNames(
-								"btn",
-								godMode ? "btn-god-mode" : "btn-light-bordered",
-							)}
-						>
-							Edit Player
-						</a>
-						{godMode ? (
-							<button
-								className="btn btn-god-mode"
-								onClick={async () => {
-									const proceed = await confirm(
-										`Are you sure you want to delete ${player.name}?`,
-										{
-											okText: "Delete Player",
-										},
-									);
-									if (proceed) {
-										await toWorker("main", "removePlayer", player.pid);
-
-										realtimeUpdate([], helpers.leagueUrl([]));
-									}
-								}}
-							>
-								Delete Player
-							</button>
-						) : null}
-						{showTradeFor || showTradingBlock ? (
-							<button
-								className="btn btn-light-bordered"
-								disabled={player.untradable}
-								onClick={() => {
-									if (showTradeFor) {
-										toWorker("actions", "tradeFor", { pid: player.pid });
-									} else {
-										toWorker("actions", "addToTradingBlock", player.pid);
-									}
-								}}
-								title={player.untradableMsg}
-							>
-								{showTradeFor ? (
-									"Trade For"
 								) : (
 									<>
-										<span className="d-none d-md-inline">Add To </span>Trading
-										Block
+										Died: {player.diedYear}
+										<br />
 									</>
 								)}
-							</button>
-						) : null}
-						{!spectator && freeAgent ? (
-							<button
-								className="btn btn-light-bordered"
-								disabled={!willingToSign}
-								onClick={() => toWorker("actions", "negotiate", player.pid)}
-								title={
-									willingToSign
-										? undefined
-										: `${player.name} refuses to negotiate with you`
-								}
+								<Relatives pid={player.pid} relatives={player.relatives} />
+								{draftInfo}
+								College:{" "}
+								<a
+									href={helpers.leagueUrl([
+										"frivolities",
+										"most",
+										"college",
+										window.encodeURIComponent(college),
+									])}
+								>
+									{college}
+								</a>
+								<br />
+								{contractInfo}
+								{statusInfo}
+							</div>
+						</div>
+
+						<div className="btn-group mt-2">
+							<a
+								href={helpers.leagueUrl(["customize_player", player.pid])}
+								className={classNames(
+									"btn",
+									godMode ? "btn-god-mode" : "btn-light-bordered",
+								)}
 							>
-								Negotiate Contract
-							</button>
+								Edit
+							</a>
+							{godMode ? (
+								<button
+									className="btn btn-god-mode"
+									onClick={async () => {
+										const proceed = await confirm(
+											`Are you sure you want to delete ${player.name}?`,
+											{
+												okText: "Delete Player",
+											},
+										);
+										if (proceed) {
+											await toWorker("main", "removePlayer", player.pid);
+
+											realtimeUpdate([], helpers.leagueUrl([]));
+										}
+									}}
+								>
+									Delete
+								</button>
+							) : null}
+							{godMode ? (
+								<a
+									href={helpers.leagueUrl([
+										"customize_player",
+										player.pid,
+										"clone",
+									])}
+									className="btn btn-god-mode"
+								>
+									Clone
+								</a>
+							) : null}
+							{showTradeFor || showTradingBlock ? (
+								<button
+									className="btn btn-light-bordered"
+									disabled={player.untradable}
+									onClick={() => {
+										if (showTradeFor) {
+											toWorker("actions", "tradeFor", { pid: player.pid });
+										} else {
+											toWorker("actions", "addToTradingBlock", player.pid);
+										}
+									}}
+									title={player.untradableMsg}
+								>
+									{showTradeFor ? (
+										"Trade For"
+									) : (
+										<>
+											<span className="d-none d-md-inline">Add To </span>Trading
+											Block
+										</>
+									)}
+								</button>
+							) : null}
+							{!spectator && freeAgent ? (
+								<button
+									className="btn btn-light-bordered"
+									disabled={!willingToSign}
+									onClick={() => toWorker("actions", "negotiate", player.pid)}
+									title={
+										willingToSign
+											? undefined
+											: `${player.name} refuses to negotiate with you`
+									}
+								>
+									Negotiate Contract
+								</button>
+							) : null}
+						</div>
+						{player.careerStats.gp > 0 ? (
+							<>
+								{statSummary.map(({ name, onlyShowIf, stats }) => (
+									<StatsSummary
+										key={name}
+										name={name}
+										onlyShowIf={onlyShowIf}
+										position={player.ratings[player.ratings.length - 1].pos}
+										phase={phase}
+										season={season}
+										stats={stats}
+										p={player}
+									/>
+								))}
+							</>
 						) : null}
 					</div>
-					{player.careerStats.gp > 0 ? (
-						<>
-							{statSummary.map(({ name, onlyShowIf, stats }) => (
-								<StatsSummary
-									key={name}
-									name={name}
-									onlyShowIf={onlyShowIf}
-									position={player.ratings[player.ratings.length - 1].pos}
-									phase={phase}
-									season={season}
-									stats={stats}
-									p={player}
-								/>
-							))}
-						</>
-					) : null}
+
+					<div className="mt-3 mt-sm-0 text-nowrap">
+						{!retired && showRatings ? (
+							<RatingsOverview ratings={player.ratings} />
+						) : null}
+						{jerseyNumberInfos.length > 0 ? (
+							<div
+								className={classNames("d-flex flex-wrap", {
+									"mt-2": (!retired && showRatings) || player.awards.length > 0,
+								})}
+								style={{
+									gap: "0.5em",
+								}}
+							>
+								{jerseyNumberInfos.map((info, i) => (
+									<JerseyNumber key={i} {...info} />
+								))}
+							</div>
+						) : null}
+					</div>
 				</div>
 
-				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">
-					{!retired && showRatings ? (
-						<RatingsOverview ratings={player.ratings} />
-					) : null}
-					{jerseyNumberInfos.length > 0 ? (
-						<div
-							className={classNames("d-flex flex-wrap", {
-								"mt-2": !retired && showRatings,
-							})}
-							style={{
-								gap: "0.5em",
-							}}
-						>
-							{jerseyNumberInfos.map((info, i) => (
-								<JerseyNumber key={i} {...info} />
-							))}
-						</div>
-					) : null}
-				</div>
+				<AwardsSummary awards={player.awards} />
 			</div>
 
 			{player.careerStats.gp > 0 ? (
@@ -645,22 +684,23 @@ const Player2 = ({
 							key: i,
 							data: [
 								{
+									searchValue: r.season,
 									sortValue: i,
-									value:
-										r.injuryIndex !== undefined &&
-										player.injuries[r.injuryIndex] ? (
-											<>
-												{r.season}
+									value: (
+										<>
+											{r.season}{" "}
+											<SeasonIcons season={r.season} awards={player.awards} />
+											{r.injuryIndex !== undefined &&
+											player.injuries[r.injuryIndex] ? (
 												<span
 													className="badge badge-danger badge-injury"
 													title={player.injuries[r.injuryIndex].type}
 												>
 													+
 												</span>
-											</>
-										) : (
-											r.season
-										),
+											) : null}
+										</>
+									),
 								},
 								r.abbrev ? (
 									<a
@@ -690,14 +730,14 @@ const Player2 = ({
 			<div className="row">
 				<div className="col-6 col-md-3">
 					<h2>Awards</h2>
-					{player.awardsGrouped.length > 0 ? (
+					{awardsGrouped.length > 0 ? (
 						<table className="table table-nonfluid table-striped table-bordered table-sm player-awards">
 							<tbody>
-								{player.awardsGrouped.map((a, i) => {
+								{awardsGrouped.map((a, i) => {
 									return (
 										<tr key={i}>
 											<td>
-												{a.count > 1 ? <span>{a.count}x </span> : null}
+												{a.count > 1 ? `${a.count}x ` : null}
 												{a.type} ({a.seasons.join(", ")})
 											</td>
 										</tr>
@@ -706,7 +746,7 @@ const Player2 = ({
 							</tbody>
 						</table>
 					) : null}
-					{player.awardsGrouped.length === 0 ? <p>None</p> : null}
+					{awardsGrouped.length === 0 ? <p>None</p> : null}
 				</div>
 				<div className="col-6 col-md-3">
 					<h2>Salaries</h2>
@@ -723,7 +763,19 @@ const Player2 = ({
 						rows={player.salaries.map((s, i) => {
 							return {
 								key: i,
-								data: [s.season, helpers.formatCurrency(s.amount, "M")],
+								data: [
+									{
+										searchValue: s.season,
+										sortValue: i,
+										value: (
+											<>
+												{s.season}{" "}
+												<SeasonIcons season={s.season} awards={player.awards} />
+											</>
+										),
+									},
+									helpers.formatCurrency(s.amount, "M"),
+								],
 							};
 						})}
 					/>

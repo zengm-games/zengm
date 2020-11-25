@@ -71,7 +71,7 @@ const processTeam = (
 		},
 		healthRank: finances.getRankLastThree([teamSeason], "expenses", "health"),
 		compositeRating,
-		depth: undefined,
+		depth: teamInput.depth,
 	};
 
 	for (const p of players) {
@@ -127,10 +127,6 @@ const processTeam = (
 			energy: 1,
 		};
 		t.player.push(p2);
-	}
-
-	if (teamInput.depth !== undefined) {
-		t.depth = team.getDepthPlayers(teamInput.depth, t.player);
 	}
 
 	for (const p of t.player) {

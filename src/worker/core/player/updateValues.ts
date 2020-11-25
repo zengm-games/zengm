@@ -4,36 +4,13 @@ import type {
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types";
-import { idb } from "../../db";
 import { local } from "../../util";
+import updateOvrMeanStd from "./updateOvrMeanStd";
 
 const updateValues = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ) => {
-	if (
-		(process.env.SPORT === "basketball" && local.playerOvrMean === undefined) ||
-		local.playerOvrStd === undefined
-	) {
-		const players = await idb.cache.players.indexGetAll("playersByTid", [
-			-1,
-			Infinity,
-		]);
-
-		if (players.length > 0) {
-			let sum = 0;
-			for (const p of players) {
-				sum += p.ratings[p.ratings.length - 1].ovr;
-			}
-			local.playerOvrMean = sum / players.length;
-
-			let sumSquareDeviations = 0;
-			for (const p of players) {
-				sumSquareDeviations +=
-					(p.ratings[p.ratings.length - 1].ovr - local.playerOvrMean) ** 2;
-			}
-			local.playerOvrStd = Math.sqrt(sumSquareDeviations / players.length);
-		}
-	}
+	await updateOvrMeanStd();
 
 	p.value = value(p, {
 		ovrMean: local.playerOvrMean,

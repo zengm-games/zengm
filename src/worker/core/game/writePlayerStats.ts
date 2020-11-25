@@ -22,6 +22,10 @@ const doInjury = async (
 		pidsInjuredOneGameOrLess.add(p2.pid);
 	}
 
+	if (!p2.injuries) {
+		// Not sure why this is needed, but some users had problems
+		p2.injuries = [];
+	}
 	p2.injuries.push({
 		season: g.get("season"),
 		games: p2.injury.gamesRemaining,

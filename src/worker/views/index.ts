@@ -24,7 +24,9 @@ import freeAgents from "./freeAgents";
 import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
 import frivolitiesJerseyNumbers from "./frivolitiesJerseyNumbers";
 import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
+import frivolitiesTrades from "./frivolitiesTrades";
 import gameLog from "./gameLog";
+import globalSettings from "./globalSettings";
 import gmHistory from "./gmHistory";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
@@ -35,7 +37,6 @@ import inbox from "./inbox";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
-import leagueOptions from "./leagueOptions";
 import leagueStats from "./leagueStats";
 import live from "./live";
 import liveGame from "./liveGame";
@@ -49,7 +50,6 @@ import negotiationList from "./negotiationList";
 import newLeague from "./newLeague";
 import newTeam from "./newTeam";
 import news from "./news";
-import options from "./options";
 import player from "./player";
 import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
@@ -66,6 +66,7 @@ import roster from "./roster";
 import rosterContinuity from "./rosterContinuity";
 import schedule from "./schedule";
 import scheduledEvents from "./scheduledEvents";
+import settings from "./settings";
 import standings from "./standings";
 import teamFinances from "./teamFinances";
 import teamHistory from "./teamHistory";
@@ -73,6 +74,7 @@ import teamRecords from "./teamRecords";
 import teamStatDists from "./teamStatDists";
 import teamStats from "./teamStats";
 import trade from "./trade";
+import tradeSummary from "./tradeSummary";
 import tradingBlock from "./tradingBlock";
 import tragicDeaths from "./tragicDeaths";
 import transactions from "./transactions";
@@ -106,7 +108,9 @@ export default {
 	frivolitiesDraftClasses,
 	frivolitiesJerseyNumbers,
 	frivolitiesTeamSeasons,
+	frivolitiesTrades,
 	gameLog,
+	globalSettings,
 	gmHistory,
 	godMode,
 	hallOfFame,
@@ -117,7 +121,6 @@ export default {
 	leaders,
 	leagueDashboard,
 	leagueFinances,
-	leagueOptions,
 	leagueStats,
 	live,
 	liveGame,
@@ -131,7 +134,6 @@ export default {
 	newLeague,
 	newTeam,
 	news,
-	options,
 	player,
 	playerBios,
 	playerFeats,
@@ -148,6 +150,7 @@ export default {
 	rosterContinuity,
 	schedule,
 	scheduledEvents,
+	settings,
 	standings,
 	teamFinances,
 	teamHistory,
@@ -155,6 +158,7 @@ export default {
 	teamStatDists,
 	teamStats,
 	trade,
+	tradeSummary,
 	tradingBlock,
 	tragicDeaths,
 	transactions,

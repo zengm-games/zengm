@@ -253,7 +253,7 @@ const newSchedule = (
 
 	// Add an All-Star Game
 	if (g.get("allStarGame")) {
-		const ind = Math.round(0.6 * tids.length);
+		const ind = Math.round(0.7 * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}
 

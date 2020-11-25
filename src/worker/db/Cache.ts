@@ -157,12 +157,12 @@ class StoreAPI<Input, Output, ID> {
 		return this.cache._indexGetAll(index, key);
 	}
 
-	add(obj: Input): Promise<number | string> {
-		return this.cache._add(this.store, obj);
+	add(obj: Input): Promise<ID> {
+		return this.cache._add(this.store, obj) as any;
 	}
 
-	put(obj: Input): Promise<number | string> {
-		return this.cache._put(this.store, obj);
+	put(obj: Input): Promise<ID> {
+		return this.cache._put(this.store, obj) as any;
 	}
 
 	delete(id: number): Promise<void> {

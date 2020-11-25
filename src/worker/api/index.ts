@@ -78,6 +78,7 @@ import {
 	saveAwardsByPlayer,
 	deleteAwardsByPlayer,
 } from "../core/season/awards";
+import { getScore } from "../core/player/checkJerseyNumberRetirement";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -147,7 +148,7 @@ const autoSortRoster = async (
 	pos: string | undefined,
 	tids: number[] | undefined,
 ) => {
-	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+	const tids2 = tids ?? [g.get("userTid")];
 
 	for (const tid of tids2) {
 		await team.rosterAutoSort(
@@ -271,6 +272,8 @@ const createLeague = async ({
 	challengeNoRatings,
 	challengeNoTrades,
 	challengeLoseBestPlayer,
+	challengeFiredLuxuryTax,
+	challengeFiredMissPlayoffs,
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
@@ -290,17 +293,28 @@ const createLeague = async ({
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	challengeLoseBestPlayer: boolean;
+	challengeFiredLuxuryTax: boolean;
+	challengeFiredMissPlayoffs: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
 }): Promise<number> => {
+	const keys = [...keptKeys, "version"];
+
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+
+		if (
+			getLeagueOptions.type === "real" &&
+			getLeagueOptions.phase >= PHASE.PLAYOFFS
+		) {
+			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+		}
 	}
 
 	const leagueFile: any = {};
-	for (const key of [...keptKeys, "version"]) {
+	for (const key of keys) {
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];
 		}
@@ -337,9 +351,17 @@ const createLeague = async ({
 		| RealTeamInfo
 		| undefined;
 	if (realTeamInfo) {
+		let currentSeason = leagueFile.startingSeason;
+		if (leagueFile.gameAttributes) {
+			for (const { key, value } of leagueFile.gameAttributes) {
+				if (key === "season") {
+					currentSeason = value;
+				}
+			}
+		}
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
-				applyRealTeamInfo(t, realTeamInfo, leagueFile.startingSeason);
+				applyRealTeamInfo(t, realTeamInfo, currentSeason);
 			}
 		}
 
@@ -388,6 +410,16 @@ const createLeague = async ({
 	);
 	upsertGameAttribute(
 		leagueFile.gameAttributes,
+		"challengeFiredLuxuryTax",
+		challengeFiredLuxuryTax,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"challengeFiredMissPlayoffs",
+		challengeFiredMissPlayoffs,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
 		"equalizeRegions",
 		equalizeRegions,
 	);
@@ -423,6 +455,7 @@ const createLeague = async ({
 		shuffleRosters,
 		difficulty,
 		importLid,
+		realPlayers: !!getLeagueOptions,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
@@ -957,7 +990,11 @@ const genFilename = (data: any) => {
 		"season",
 	)}_${PHASE_TEXT[g.get("phase")].replace(/[^a-z0-9]/gi, "_")}`;
 
-	if (g.get("phase") === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+	if (
+		(g.get("phase") === PHASE.REGULAR_SEASON ||
+			g.get("phase") === PHASE.AFTER_TRADE_DEADLINE) &&
+		data.hasOwnProperty("teams")
+	) {
 		const season =
 			data.teams[g.get("userTid")].seasons[
 				data.teams[g.get("userTid")].seasons.length - 1
@@ -1854,7 +1891,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 };
 
 const resetPlayingTime = async (tids: number[] | undefined) => {
-	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+	const tids2 = tids ?? [g.get("userTid")];
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		0,
@@ -1910,6 +1947,19 @@ const retiredJerseyNumberUpsert = async (
 		throw new Error("Invalid value for player ID number");
 	}
 
+	let playerText = "";
+	let score: number | undefined;
+	if (info.pid !== undefined) {
+		const p = await idb.getCopy.players({ pid: info.pid });
+		if (p) {
+			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>'s `;
+
+			score = getScore(p, tid);
+		}
+	}
+
 	// Insert or update?
 	if (i === undefined) {
 		if (!t.retiredJerseyNumbers) {
@@ -1918,6 +1968,7 @@ const retiredJerseyNumberUpsert = async (
 
 		t.retiredJerseyNumbers.push({
 			...info,
+			score,
 		});
 	} else {
 		if (!t.retiredJerseyNumbers) {
@@ -1930,17 +1981,8 @@ const retiredJerseyNumberUpsert = async (
 
 		t.retiredJerseyNumbers[i] = {
 			...info,
+			score,
 		};
-	}
-
-	let playerText = "";
-	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid });
-		if (p) {
-			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-				p.firstName
-			} ${p.lastName}</a>'s `;
-		}
 	}
 
 	logEvent({
@@ -2015,10 +2057,41 @@ const runBefore = async (
 
 	if (view) {
 		const data = await view(inputs, updateEvents, prevData, conditions);
-		return data === undefined ? {} : data;
+		return data ?? {};
 	}
 
 	return {};
+};
+
+const setForceWin = async (gid: number, tid?: number) => {
+	const game = await idb.cache.schedule.get(gid);
+	if (!game) {
+		throw new Error("Game not found");
+	}
+
+	game.forceWin = tid;
+	await idb.cache.schedule.put(game);
+};
+
+const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
+	const games = await idb.cache.schedule.getAll();
+	for (const game of games) {
+		if (game.homeTid !== tid && game.awayTid !== tid) {
+			continue;
+		}
+
+		if (type === "win") {
+			game.forceWin = tid;
+		} else if (type === "lose") {
+			game.forceWin = game.homeTid === tid ? game.awayTid : game.homeTid;
+		} else {
+			delete game.forceWin;
+		}
+
+		await idb.cache.schedule.put(game);
+	}
+
+	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
@@ -3008,6 +3081,8 @@ export default {
 	retiredJerseyNumberDelete,
 	retiredJerseyNumberUpsert,
 	runBefore,
+	setForceWin,
+	setForceWinAll,
 	setLocal,
 	sign,
 	updateExpansionDraftSetup,

@@ -100,8 +100,14 @@ const customizePlayer = (params: Params) => {
 		}
 	}
 
+	let type: "clone" | undefined;
+	if (params.type === "clone" && pid !== null) {
+		type = "clone";
+	}
+
 	return {
 		pid,
+		type,
 	};
 };
 
@@ -207,6 +213,25 @@ const freeAgents = () => {
 			redirectUrl: helpers.leagueUrl(["negotiation"]),
 		};
 	}
+};
+
+const frivolitiesTrades = (params: Params) => {
+	let abbrev: string = "all";
+	let tid: number = -1;
+	if (params.abbrev && params.abbrev !== "all") {
+		[tid, abbrev] = validateAbbrev(params.abbrev);
+	}
+
+	if (tid < 0) {
+		tid = -1;
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		tid,
+		type: params.type,
+	};
 };
 
 const gameLog = (params: Params) => {
@@ -434,7 +459,7 @@ const playerStats = (params: Params) => {
 		abbrev,
 		season:
 			params.season === "career" ? undefined : validateSeason(params.season),
-		statType: params.statType !== undefined ? params.statType : defaultStatType,
+		statType: params.statType ?? defaultStatType,
 		playoffs,
 	};
 };
@@ -483,13 +508,13 @@ const schedule = (params: Params) => {
 };
 
 const teamFinances = (params: Params) => {
-	const show = params.show !== undefined ? params.show : "10";
+	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, show, tid };
 };
 
 const teamHistory = (params: Params) => {
-	const show = params.show !== undefined ? params.show : "10";
+	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, show, tid };
 };
@@ -509,8 +534,7 @@ const teamStats = (params: Params) => {
 
 	return {
 		season: validateSeason(params.season),
-		teamOpponent:
-			params.teamOpponent !== undefined ? params.teamOpponent : "team",
+		teamOpponent: params.teamOpponent ?? "team",
 		playoffs,
 	};
 };
@@ -533,8 +557,7 @@ const leagueStats = (params: Params) => {
 	return {
 		tid,
 		abbrev,
-		teamOpponent:
-			params.teamOpponent !== undefined ? params.teamOpponent : "team",
+		teamOpponent: params.teamOpponent ?? "team",
 		playoffs,
 	};
 };
@@ -553,6 +576,12 @@ const standings = (params: Params) => {
 	return {
 		season: validateSeason(params.season),
 		type,
+	};
+};
+
+const tradeSummary = (params: Params) => {
+	return {
+		eid: params.eid ? parseInt(params.eid) : NaN,
 	};
 };
 
@@ -647,6 +676,7 @@ export default {
 	fantasyDraft,
 	freeAgents,
 	frivolitiesTeamSeasons: most,
+	frivolitiesTrades,
 	gameLog,
 	history,
 	leaders,
@@ -678,6 +708,7 @@ export default {
 	teamRecords,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
+	tradeSummary,
 	tradingBlock,
 	transactions,
 	upcomingFreeAgents,

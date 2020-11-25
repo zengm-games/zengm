@@ -30,7 +30,7 @@ const updateUpcomingFreeAgents = async (
 		p.contractDesired = player.genContract(p, false); // No randomization
 		p.contractDesired.exp += inputs.season - g.get("season");
 
-		p.mood = await player.moodInfo(p, g.get("userTid"), {
+		p.mood = await player.moodInfos(p, {
 			contractAmount: p.contractDesired.amount,
 		});
 	}
@@ -59,7 +59,7 @@ const updateUpcomingFreeAgents = async (
 
 	// Apply mood
 	for (const p of players) {
-		p.contractDesired.amount = p.mood.contractAmount / 1000;
+		p.contractDesired.amount = p.mood.user.contractAmount / 1000;
 	}
 
 	return {

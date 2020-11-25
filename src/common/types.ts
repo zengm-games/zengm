@@ -21,6 +21,7 @@ declare global {
 		bbgmVersionWorker: string;
 		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
+		freestar: any;
 		getTheme: () => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;
@@ -127,10 +128,12 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: Exclude<
-		DraftType,
-		"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
-	>;
+	draftType?:
+		| Exclude<
+				DraftType,
+				"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
+		  >
+		| "dummy";
 	result: DraftLotteryResultArray;
 };
 
@@ -160,18 +163,56 @@ export type DraftType =
 	| "nba1990"
 	| "freeAgents";
 
-export type EventBBGMWithoutKey = {
-	type: LogEventType;
-	text: string;
-	pids?: number[];
-	tids?: number[];
-	season: number;
+// Key is team ID receiving this asset. from is team ID that traded this asset away
+// Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
+type TradeEventAsset =
+	| {
+			pid: number;
+			tid: number; // tid the player was originally on
+			name: string;
+			contract: PlayerContract;
+			ratingsIndex: number;
+			statsIndex: number;
+	  }
+	| DraftPick;
 
-	// < 10: not very important
-	// < 20: somewhat important
-	// >= 20: very important
-	score?: number;
-};
+export type TradeEventTeams = {
+	assets: TradeEventAsset[];
+}[];
+
+export type DiscriminateUnion<
+	T,
+	K extends keyof T,
+	V extends T[K]
+> = T extends Record<K, V> ? T : never;
+
+export type EventBBGMWithoutKey =
+	| {
+			type: Exclude<LogEventType, "trade">;
+			text: string;
+			pids?: number[];
+			dpids?: number[];
+			tids?: number[];
+			season: number;
+
+			// < 10: not very important
+			// < 20: somewhat important
+			// >= 20: very important
+			score?: number;
+	  }
+	| {
+			type: "trade";
+			text?: string; // Only legacy will have text
+			pids: number[];
+			dpids: number[];
+			tids: number[];
+			season: number;
+
+			// These three will only be undefind in legacy events
+			phase?: Phase;
+			score?: number;
+			teams?: TradeEventTeams;
+	  };
 
 export type EventBBGM = EventBBGMWithoutKey & {
 	eid: number;
@@ -200,6 +241,7 @@ export type Game = {
 	att: number;
 	clutchPlays?: string[];
 	gid: number;
+	forceWin?: number; // If defined, it's the number of iterations that were used to force the win
 	lost: {
 		tid: number;
 		pts: number;
@@ -305,6 +347,7 @@ export type NamesLegacy = {
 };
 
 export type GameAttributesLeague = {
+	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
 	allStarGame: boolean;
 	autoDeleteOldBoxScores: boolean;
@@ -315,6 +358,8 @@ export type GameAttributesLeague = {
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	challengeLoseBestPlayer: boolean;
+	challengeFiredLuxuryTax: boolean;
+	challengeFiredMissPlayoffs: boolean;
 	confs: { cid: number; name: string }[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;
@@ -394,6 +439,7 @@ export type GameAttributesLeague = {
 		disabled?: boolean;
 	}[];
 	ties: boolean;
+	tradeDeadline: number;
 	tragicDeathRate: number;
 	userTid: number;
 	userTids: number[];
@@ -542,13 +588,14 @@ export type LogEventType =
 	| "tragedy"
 	| "upgrade";
 
-export type LogEventSaveOptions = {
-	type: LogEventType;
-	text: string;
-	pids?: number[];
-	tids?: number[];
-	score?: number;
-};
+// https://stackoverflow.com/a/57103940/786644
+export type DistributiveOmit<T, K extends keyof T> = T extends any
+	? Omit<T, K>
+	: never;
+export type LogEventSaveOptions = DistributiveOmit<
+	EventBBGMWithoutKey,
+	"season"
+>;
 
 export type LogEventShowOptions = {
 	extraClass?: string;
@@ -643,6 +690,7 @@ export type LocalStateUI = {
 	customMenu?: MenuItemHeader;
 	gameSimInProgress: boolean;
 	games: {
+		forceWin?: number;
 		gid: number;
 		teams: [
 			{
@@ -714,6 +762,8 @@ export type LocalStateUI = {
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
+	stickyFooterAd: boolean;
+	stickyFormButtons: boolean;
 };
 
 export type PartialTopMenu = {
@@ -821,6 +871,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		pot: number;
 		ovr: number;
 		skills: string[];
+		dpid?: number;
 	};
 	face: Face;
 	firstName: string;
@@ -873,6 +924,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 				tid: number;
 				type: "trade";
 				fromTid: number;
+				eid?: number;
 		  }
 		| {
 				season: number;
@@ -987,8 +1039,9 @@ export type Local = {
 		| undefined;
 	phaseText: string;
 	playerBioInfo?: PlayerBioInfoProcessed;
-	playerOvrMean?: number;
-	playerOvrStd?: number;
+	playerOvrMean: number;
+	playerOvrStd: number;
+	playerOvrMeanStdStale: boolean;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
@@ -1051,6 +1104,7 @@ export type ScheduleGameWithoutKey = {
 	gid?: number;
 	awayTid: number;
 	homeTid: number;
+	forceWin?: number; // either awayTid or homeTid, if defined
 
 	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
 	day: number;
@@ -1124,6 +1178,7 @@ export type Team = {
 		seasonRetired: number;
 		seasonTeamInfo: number;
 		pid?: number;
+		score?: number;
 		text: string;
 	}[];
 };
@@ -1339,6 +1394,7 @@ export type GetLeagueOptions =
 	| {
 			type: "real";
 			season: number;
+			phase: number;
 			randomDebuts: boolean;
 	  }
 	| {

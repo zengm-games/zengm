@@ -9,7 +9,8 @@ const updateUserRoster = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim")
+		updateEvents.includes("gameSim") ||
+		updateEvents.includes("newPhase")
 	) {
 		const stats =
 			process.env.SPORT === "basketball"

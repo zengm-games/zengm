@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DataTable } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -133,20 +133,7 @@ const TeamRecords = ({
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["league_stats"])}>League Stats</a> |{" "}
-				<a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
-				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>
-				{process.env.SPORT === "basketball" ? (
-					<>
-						{" "}
-						|{" "}
-						<a href={helpers.leagueUrl(["all_star_history"])}>
-							All-Star History
-						</a>
-					</>
-				) : null}
-			</p>
+			<MoreLinks type="league" page="team_records" />
 
 			{hasHistoricalTeams ? (
 				<button

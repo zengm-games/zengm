@@ -22,7 +22,7 @@ const FilterHeader = ({
 			{colOrder.map(({ colIndex }) => {
 				const col = cols[colIndex];
 
-				const filter = filters[colIndex] === undefined ? "" : filters[colIndex];
+				const filter = filters[colIndex] ?? "";
 				return (
 					<th key={colIndex}>
 						{col.noSearch ? null : (

@@ -443,6 +443,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 				type: "array",
 				items: {
 					oneOf: [
+						gameAttribute("aiJerseyRetirement", { type: "boolean" }),
 						gameAttribute("aiTradesFactor", { type: "number" }),
 						gameAttribute("allStarGame", { type: "boolean" }),
 						gameAttribute("autoDeleteOldBoxScores", { type: "boolean" }),
@@ -464,6 +465,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "boolean",
 						}),
 						gameAttribute("challengeLoseBestPlayer", {
+							type: "boolean",
+						}),
+						gameAttribute("challengeFiredLuxuryTax", {
+							type: "boolean",
+						}),
+						gameAttribute("challengeFiredMissPlayoffs", {
 							type: "boolean",
 						}),
 						gameAttribute("confs", {
@@ -727,6 +734,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						}),
 						gameAttribute("ties", {
 							type: ["boolean", "array"],
+						}),
+						gameAttribute("tradeDeadline", {
+							type: "number",
 						}),
 						gameAttribute("tragicDeathRate", {
 							type: "number",

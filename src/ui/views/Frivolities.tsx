@@ -10,6 +10,13 @@ import type {
 const style = { maxWidth: 1000 };
 
 const frivolities = {
+	Draft: [
+		{
+			urlParts: ["draft_classes"],
+			name: "Draft Class Rankings",
+			description: "All draft classes, ranked from best to worst.",
+		},
+	],
 	"Player Bios": [
 		{
 			urlParts: ["colleges"],
@@ -79,11 +86,17 @@ const frivolities = {
 			description: "The worst seasons from teams that won the title.",
 		},
 	],
-	Draft: [
+	Trades: [
 		{
-			urlParts: ["draft_classes"],
-			name: "Draft Class Rankings",
-			description: "All draft classes, ranked from best to worst.",
+			urlParts: ["trades", "biggest"],
+			name: "Biggest Trades",
+			description: "Trades involving the best players and prospects.",
+		},
+		{
+			urlParts: ["trades", "lopsided"],
+			name: "Most Lopsided Trades",
+			description:
+				"Trades where one team's assets produced a lot more value than the other.",
 		},
 	],
 	"Player Rankings": [
@@ -207,7 +220,7 @@ const Frivolities = () => {
 	});
 
 	const columns: (keyof typeof frivolities)[][] = [
-		["Player Bios", "Teams", "Draft"],
+		["Draft", "Player Bios", "Teams", "Trades"],
 		["Player Rankings"],
 	];
 

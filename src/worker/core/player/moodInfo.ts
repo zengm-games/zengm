@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
@@ -26,7 +26,7 @@ const moodInfo = async (
 	let firstSeasonAfterExpansionOverride = false;
 	if (
 		p.contract.exp === season &&
-		phase > PHASE.REGULAR_SEASON &&
+		phase >= PHASE.PLAYOFFS &&
 		phase <= PHASE.RESIGN_PLAYERS
 	) {
 		const t = await idb.cache.teams.get(tid);
@@ -46,10 +46,19 @@ const moodInfo = async (
 
 	// Add some based on how long free agency has lasted and how good/bad the player is
 	let sumAndStuff = sumComponents;
-	sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
+	if (p.tid === PLAYER.FREE_AGENT) {
+		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
+	}
 	const valueDiff =
 		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
+
+	const thisIsAUserTeam = g.get("userTids").includes(tid);
+
+	// More AI players testing free agency
+	if (!thisIsAUserTeam) {
+		sumAndStuff -= 2;
+	}
 
 	let contractAmount =
 		overrides.contractAmount !== undefined
@@ -62,14 +71,14 @@ const moodInfo = async (
 	}
 
 	contractAmount = helpers.bound(
-		50 * Math.round(contractAmount / 50), // Make it a multiple of 50k
+		helpers.roundContract(contractAmount),
 		g.get("minContract"),
 		g.get("maxContract"),
 	);
 
 	let willing = false;
 	if (
-		!g.get("playersRefuseToNegotiate") ||
+		(!g.get("playersRefuseToNegotiate") && thisIsAUserTeam) ||
 		rookie ||
 		firstSeasonAfterExpansionOverride
 	) {
@@ -79,13 +88,15 @@ const moodInfo = async (
 		probWilling = 1;
 		willing = true;
 	} else {
-		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
+		// Decrease that 0.7 to make players less likely to be at extremes (1% or 99%) in mood
+		probWilling = 1 / (1 + Math.exp(-0.7 * sumAndStuff));
 
 		const rand = random.uniformSeed(
-			p.pid +
+			tid +
+				p.pid +
 				p.stats.length +
 				p.ratings[p.ratings.length - 1].ovr +
-				(p.stats.length > 0 ? p.stats[0].min : 0),
+				(p.stats.length > 0 ? p.stats[p.stats.length - 1].min : 0),
 		);
 		willing = rand < probWilling;
 	}

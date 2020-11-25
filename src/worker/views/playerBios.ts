@@ -36,7 +36,7 @@ const updatePlayers = async (
 			if (p.tid !== PLAYER.RETIRED) {
 				const p2 = await idb.cache.players.get(p.pid);
 				if (p2) {
-					p.mood = await player.moodInfo(p2, userTid);
+					p.mood = await player.moodInfos(p2);
 				}
 			}
 		}

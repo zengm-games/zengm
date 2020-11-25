@@ -6,7 +6,9 @@ import getSchedule from "./getSchedule";
  * @memberOf core.season
  * @return {Promise} The number of days left in the schedule.
  */
-const getDaysLeftSchedule = async (target?: number | "allStarGame") => {
+const getDaysLeftSchedule = async (
+	target?: number | "allStarGame" | "tradeDeadline",
+) => {
 	const schedule = await getSchedule();
 
 	if (target !== undefined) {
@@ -19,6 +21,10 @@ const getDaysLeftSchedule = async (target?: number | "allStarGame") => {
 			} else if (target === "allStarGame") {
 				game = schedule.find(
 					game => game.awayTid === -2 && game.homeTid === -1,
+				);
+			} else if (target === "tradeDeadline") {
+				game = schedule.find(
+					game => game.awayTid === -3 && game.homeTid === -3,
 				);
 			}
 

@@ -1,8 +1,15 @@
 import { idb } from "../../db";
 import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
-import type { LocalStateUI } from "../../../common/types";
+import type {
+	LocalStateUI,
+	ScheduleGameWithoutKey,
+} from "../../../common/types";
 import addDaysToSchedule from "./addDaysToSchedule";
+import { PHASE } from "../../../common";
+
+const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
+	JSON.stringify([game.homeTid, game.awayTid]);
 
 /**
  * Save the schedule to the database, overwriting what's currently there.
@@ -12,6 +19,20 @@ import addDaysToSchedule from "./addDaysToSchedule";
  * @return {Promise}
  */
 const setSchedule = async (tids: [number, number][]) => {
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+	const oldForceWin: Record<string, number> = {};
+	if (playoffs) {
+		// If live simming an individual playoff game, setSchedule gets called afterwards with the remaining games that day. But that means it forgets forceWin! So we need to keep track of old forceWin values
+		const oldSchedule = await idb.cache.schedule.getAll();
+
+		for (const game of oldSchedule) {
+			if (game.forceWin !== undefined) {
+				const key = makePlayoffsKey(game);
+				oldForceWin[key] = game.forceWin;
+			}
+		}
+	}
+
 	await idb.cache.schedule.clear();
 
 	const schedule = addDaysToSchedule(
@@ -21,6 +42,13 @@ const setSchedule = async (tids: [number, number][]) => {
 		})),
 	);
 	for (const game of schedule) {
+		if (playoffs) {
+			const key = makePlayoffsKey(game);
+			if (oldForceWin[key] !== undefined) {
+				game.forceWin = oldForceWin[key];
+			}
+		}
+
 		idb.cache.schedule.add(game);
 	}
 
@@ -30,6 +58,7 @@ const setSchedule = async (tids: [number, number][]) => {
 	const upcoming = await getUpcoming({ tid: userTid });
 	for (const game of upcoming) {
 		games.push({
+			forceWin: game.forceWin,
 			gid: game.gid,
 			teams: [
 				{

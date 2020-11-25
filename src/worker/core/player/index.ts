@@ -24,6 +24,7 @@ import killOne from "./killOne";
 import limitRating from "./limitRating";
 import madeHof from "./madeHof";
 import moodInfo from "./moodInfo";
+import moodInfos from "./moodInfos";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
@@ -34,6 +35,7 @@ import sign from "./sign";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import stats from "./stats";
+import updateOvrMeanStd from "./updateOvrMeanStd";
 import updateValues from "./updateValues";
 import value from "./value";
 
@@ -64,6 +66,7 @@ export default {
 	limitRating,
 	madeHof,
 	moodInfo,
+	moodInfos,
 	ovr,
 	pos,
 	release,
@@ -74,6 +77,7 @@ export default {
 	shouldRetire,
 	skills,
 	stats,
+	updateOvrMeanStd,
 	updateValues,
 	value,
 };

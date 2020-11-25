@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../../common";
+import { PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";
 import { idb } from "../../db";
@@ -44,21 +44,15 @@ const autoSign = async () => {
 			continue;
 		}
 
-		// Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-		if (
-			process.env.SPORT === "basketball" &&
-			g.get("phase") === PHASE.FREE_AGENCY &&
-			Math.random() < (0.99 * g.get("daysLeft")) / 30
-		) {
-			continue;
+		let probSkip;
+		if (process.env.SPORT === "basketball") {
+			probSkip = t.strategy === "rebuilding" ? 0.9 : 0.75;
+		} else {
+			probSkip = 0.5;
 		}
 
-		// Skip rebuilding teams sometimes
-		if (
-			process.env.SPORT === "basketball" &&
-			t.strategy === "rebuilding" &&
-			Math.random() < 0.7
-		) {
+		// Skip teams sometimes
+		if (Math.random() < probSkip) {
 			continue;
 		}
 
@@ -67,15 +61,14 @@ const autoSign = async () => {
 			t.tid,
 		);
 
-		if (playersOnRoster.length < g.get("maxRosterSize")) {
-			const payroll = await team.getPayroll(t.tid);
-			const p = getBest(playersOnRoster, playersSorted, payroll);
+		// Ignore roster size, will drop bad player if necessary in checkRosterSizes, and getBest won't sign min contract player unless under the roster limit
+		const payroll = await team.getPayroll(t.tid);
+		const p = getBest(playersOnRoster, playersSorted, payroll);
 
-			if (p) {
-				await player.sign(p, t.tid, p.contract, g.get("phase"));
-				await idb.cache.players.put(p);
-				await team.rosterAutoSort(t.tid);
-			}
+		if (p) {
+			await player.sign(p, t.tid, p.contract, g.get("phase"));
+			await idb.cache.players.put(p);
+			await team.rosterAutoSort(t.tid);
 		}
 	}
 };

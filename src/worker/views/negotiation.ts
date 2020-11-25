@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { contractNegotiation, player, team } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type {
 	ViewInput,
 	PlayerContract,
@@ -59,7 +59,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 		const factor = 1 + Math.abs(found - i) * growthFactor;
 		contractOptions[i].amount = contractOptions[found].amount * factor;
 		contractOptions[i].amount =
-			0.05 * Math.round(contractOptions[i].amount / 0.05); // Make it a multiple of 50k
+			helpers.roundContract(contractOptions[i].amount * 1000) / 1000;
 	}
 
 	return contractOptions.filter(contractOption => {
@@ -132,11 +132,11 @@ const updateNegotiation = async (
 			return returnValue;
 		}
 
-		p.mood = await player.moodInfo(p2, userTid);
+		p.mood = await player.moodInfos(p2);
 
 		const contractOptions = generateContractOptions(
 			{
-				amount: p.mood.contractAmount / 1000,
+				amount: p.mood.user.contractAmount / 1000,
 				exp: p.contract.exp,
 			},
 			p.ratings.ovr,
@@ -154,7 +154,7 @@ const updateNegotiation = async (
 				contractOptions.push({
 					exp: g.get("season") + 1,
 					years: 1,
-					amount: p.mood.contractAmount / 1000,
+					amount: p.mood.user.contractAmount / 1000,
 					smallestAmount: true,
 				});
 			}

@@ -19,6 +19,7 @@ $black: #000 !default;
 @import "node_modules/bootstrap/scss/dropdown";
 @import "node_modules/bootstrap/scss/button-group";
 @import "node_modules/bootstrap/scss/input-group";
+@import "node_modules/bootstrap/scss/custom-forms";
 @import "node_modules/bootstrap/scss/nav";
 @import "node_modules/bootstrap/scss/navbar";
 @import "node_modules/bootstrap/scss/card";
@@ -77,7 +78,8 @@ h5 {
 		height: 600px;
 		width: 190px;
 	}
-	#bbgm-ads-skyscraper {
+	#bbgm-ads-skyscraper,
+	#basketball-gm_right_rail {
 		width: 160px;
 		height: 600px;
 		margin: 0 auto;
@@ -139,6 +141,10 @@ a.god-mode.active {
 
 .btn-god-mode {
 	@include button-variant($purple, $gray-400);
+}
+
+.alert-god-mode {
+	background-color: lighten($purple, 40) !important;
 }
 
 .play-button {
@@ -257,6 +263,10 @@ a.god-mode.active {
 
 table {
 	white-space: nowrap;
+}
+
+.table {
+	font-variant: tabular-nums;
 }
 
 .table-bordered {
@@ -617,9 +627,9 @@ tr.table-warning:hover > td {
 	opacity: 0.9;
 	position: fixed;
 	right: 6px;
-	bottom: 0;
 	padding-bottom: 6px;
 	border-radius: 0.25em 0.25em 0 0;
+	z-index: 1000;
 }
 
 .dropdown-toggle {
@@ -646,6 +656,12 @@ tr.table-warning:hover > td {
 	@extend .btn-light;
 	background-color: $white;
 	border: 1px solid $gray-400 !important;
+	color: $gray-700 !important;
+}
+.btn-light-bordered-primary {
+	@extend .btn-light;
+	background-color: $white;
+	border: 1px solid $blue !important;
 	color: $gray-700 !important;
 }
 
@@ -783,19 +799,19 @@ tr.table-warning:hover > td {
 		display: inline !important;
 	}
 	/*.d-xxl-inline-block {
-    display: inline-block !important; }
+	display: inline-block !important; }
   .d-xxl-block {
-    display: block !important; }
+	display: block !important; }
   .d-xxl-table {
-    display: table !important; }
+	display: table !important; }
   .d-xxl-table-row {
-    display: table-row !important; }
+	display: table-row !important; }
   .d-xxl-table-cell {
-    display: table-cell !important; }
+	display: table-cell !important; }
   .d-xxl-flex {
-    display: flex !important; }
+	display: flex !important; }
   .d-xxl-inline-flex {
-    display: inline-flex !important; } }*/
+	display: inline-flex !important; } }*/
 }
 
 .chart-legend {
@@ -821,6 +837,9 @@ tr.table-warning:hover > td {
 	}
 }
 
+.cursor-default {
+	cursor: default;
+}
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -879,6 +898,10 @@ tr.table-warning:hover > td {
 
 .score-box {
 	max-width: 400px;
+}
+
+.score-box-deadline {
+	height: 54px;
 }
 
 .score-box-header {
@@ -979,4 +1002,102 @@ button.live-game-sim-more {
 	.table-separator-left {
 		padding-left: 1em !important;
 	}
+}
+
+.text-yellow {
+	color: $yellow;
+}
+
+.badge-yellow {
+	@include badge-variant($yellow);
+}
+
+.ring::after {
+	color: $yellow;
+	content: "\274d";
+	font-weight: bold;
+}
+
+@include media-breakpoint-up(sm) {
+	.player-bio {
+		min-width: 370px;
+		margin-right: 1em;
+	}
+}
+
+.ratings-overview {
+	width: 100%;
+}
+@include media-breakpoint-up(sm) {
+	.ratings-overview {
+		display: inline-block;
+		width: inherit;
+	}
+}
+
+.settings-description > p:last-child {
+	margin-bottom: 0 !important;
+}
+
+@include media-breakpoint-down(xs) {
+	.list-group-item-settings {
+		padding-right: 0;
+		padding-left: 0;
+		border-right: 0;
+		border-left: 0;
+		border-radius: 0 !important;
+	}
+}
+
+.settings-buttons {
+	position: -webkit-sticky; // Safari
+	position: sticky;
+
+	// To make it go over the Bootstrap custom form controls, like switch
+	z-index: 2;
+}
+
+a.anchor {
+	display: block;
+	position: relative;
+	top: -60px;
+	visibility: hidden;
+}
+
+.settings-shortcuts {
+	align-self: flex-start;
+	position: sticky;
+	top: 60px;
+}
+@media (min-width: 900px) {
+	.settings-shortcuts {
+		display: block !important;
+	}
+}
+
+.rounded-top-0 {
+	border-top-right-radius: 0rem !important;
+	border-top-left-radius: 0rem !important;
+}
+
+.rounded-bottom-0 {
+	border-bottom-right-radius: 0rem !important;
+	border-bottom-left-radius: 0rem !important;
+}
+
+#basketball-gm_mobile_leaderboard {
+	z-index: 1000; // Behind sidebar
+	bottom: 0;
+	padding-top: 2px;
+	position: fixed;
+	left: 0;
+	right: 0;
+	text-align: center;
+	background-color: rgba(247, 247, 247, 0.9);
+	vertical-align: bottom !important;
+	width: 100vw;
+
+	// override inline styles in JS file
+	margin-bottom: 0 !important;
+	height: 52px;
 }

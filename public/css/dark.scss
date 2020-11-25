@@ -117,13 +117,6 @@ $text-muted: $gray-400;
 	background-color: $gray-100 !important;
 }
 
-.btn-light-bordered {
-	@extend .btn-light;
-	background-color: $white;
-	border: 1px solid $gray-400 !important;
-	color: $gray-700 !important;
-}
-
 .badge-danger {
 	background-color: darken($red, 20);
 	color: $black;
@@ -159,13 +152,19 @@ a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
 }
+
 .btn-god-mode {
+	@include button-variant(darken($purple, 20), $gray-400);
 	&,
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		color: $white;
+		color: $black !important;
 	}
+}
+
+.alert-god-mode {
+	background-color: darken($purple, 45) !important;
 }
 
 .watch-active,
@@ -228,7 +227,7 @@ table.table thead .sorting::after {
 }
 
 // For Firefox: https://mail.google.com/mail/u/0/#sent/FMfcgxwGDDlBLslqTJrgVGGsTVMGLjNx?compose=lqrsljbfHSlTfwlWfkfgJZGFBMJhCZGwxnNHFrchrZwsNsKzFxrVPNQnHBRBvMchPkvLxQTLsjknLTNJK
-input[type="checkbox"][disabled] {
+input[type="checkbox"][disabled]:not(.custom-control-input) {
 	cursor: not-allowed;
 	opacity: 0.65;
 }
@@ -238,7 +237,8 @@ input[type="checkbox"][disabled] {
 .badge-success,
 .badge-info,
 .badge-warning,
-.badge-dark {
+.badge-dark,
+.badge-yellow {
 	color: $white;
 }
 

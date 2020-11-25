@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, TIME_BETWEEN_GAMES } from "../../../common";
+import { PHASE, TIME_BETWEEN_GAMES } from "../../../common";
 import {
 	GameSim,
 	allStar,
@@ -111,14 +111,12 @@ const play = async (
 			}),
 		);
 
-		// Update clinchedPlayoffs
-		if (g.get("phase") === PHASE.REGULAR_SEASON) {
-			await team.updateClinchedPlayoffs(false, conditions);
-		}
-
-		// Update playoff series W/L
 		if (g.get("phase") === PHASE.PLAYOFFS) {
+			// Update playoff series W/L
 			await updatePlayoffSeries(results, conditions);
+		} else {
+			// Update clinchedPlayoffs
+			await team.updateClinchedPlayoffs(false, conditions);
 		}
 
 		// Delete finished games from schedule
@@ -144,15 +142,27 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
+			const phase = g.get("phase");
+			if (
+				phase === PHASE.REGULAR_SEASON ||
+				phase === PHASE.AFTER_TRADE_DEADLINE
+			) {
+				await freeAgents.decreaseDemands();
+				await freeAgents.autoSign();
+			}
+			if (phase === PHASE.REGULAR_SEASON) {
+				await trade.betweenAiTeams();
+			}
+
 			await finances.updateRanks(["expenses", "revenues"]);
 
 			local.minFractionDiffs = undefined;
 
 			const healedTexts: string[] = [];
 
-			// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+			// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats. Free agents are handled in decreaseDemands.
 			const players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
+				0,
 				Infinity,
 			]);
 
@@ -278,23 +288,104 @@ const play = async (
 		}
 	};
 
+	const getResult = (
+		gid: number,
+		teams: [any, any],
+		doPlayByPlay: boolean,
+		homeCourtFactor?: number,
+	) => {
+		// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
+		for (const t of teams) {
+			if (t.depth !== undefined) {
+				t.depth = team.getDepthPlayers(t.depth, t.player);
+			}
+		}
+
+		return new GameSim(gid, teams, doPlayByPlay, homeCourtFactor).run();
+	};
+
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
-		schedule: (ScheduleGame & { gid: number })[],
+		schedule: ScheduleGame[],
 		teams: Record<number, any>,
 		dayOver: boolean,
 	) => {
 		const results: any[] = [];
 
-		for (let i = 0; i < schedule.length; i++) {
-			const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-			const gs = new GameSim(
-				schedule[i].gid,
-				teams[schedule[i].homeTid],
-				teams[schedule[i].awayTid],
-				doPlayByPlay,
-			);
-			results.push(gs.run());
+		for (const game of schedule) {
+			const doPlayByPlay = gidPlayByPlay === game.gid;
+
+			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
+
+			if (g.get("godMode") && game.forceWin !== undefined) {
+				const NUM_TRIES = 2000;
+				const START_CHANGING_HOME_COURT_ADVANTAGE = NUM_TRIES / 4;
+
+				const forceWinHome = game.forceWin === game.homeTid;
+				let homeCourtFactor = 1;
+
+				let found = false;
+				for (let i = 0; i < NUM_TRIES; i++) {
+					if (i >= START_CHANGING_HOME_COURT_ADVANTAGE) {
+						// Scale from 1x to 3x linearly, after staying at 1x for some time
+						homeCourtFactor =
+							1 +
+							(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
+								(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
+
+						if (!forceWinHome) {
+							homeCourtFactor = 1 / homeCourtFactor;
+						}
+					}
+
+					const result = getResult(
+						game.gid,
+						helpers.deepCopy(teamsInput), // So stats start at 0 each time
+						doPlayByPlay,
+						homeCourtFactor,
+					);
+
+					let wonTid: number | undefined;
+					if (result.team[0].stat.pts > result.team[1].stat.pts) {
+						wonTid = result.team[0].id;
+					} else if (result.team[0].stat.pts < result.team[1].stat.pts) {
+						wonTid = result.team[1].id;
+					}
+
+					if (wonTid === game.forceWin) {
+						found = true;
+						(result as any).forceWin = i + 1;
+						results.push(result);
+						break;
+					}
+				}
+
+				if (!found) {
+					const teamInfoCache = g.get("teamInfoCache");
+					const otherTid = forceWinHome ? game.awayTid : game.homeTid;
+
+					logEvent(
+						{
+							type: "error",
+							text: `Could not find a simulation in ${helpers.numberWithCommas(
+								NUM_TRIES,
+							)} tries where the ${teamInfoCache[game.forceWin].region} ${
+								teamInfoCache[game.forceWin].name
+							} beat the ${teamInfoCache[otherTid].region} ${
+								teamInfoCache[otherTid].name
+							}.`,
+							showNotification: true,
+							persistent: true,
+							saveToDb: false,
+						},
+						conditions,
+					);
+					await lock.set("stopGameSim", true);
+				}
+			} else {
+				const result = getResult(game.gid, teamsInput, doPlayByPlay);
+				results.push(result);
+			}
 		}
 
 		await cbSaveResults(results, dayOver);
@@ -323,29 +414,40 @@ const play = async (
 			}
 		}
 
-		// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-		if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
-			return cbNoGames();
+		if (
+			schedule.length > 0 &&
+			schedule[0].homeTid === -3 &&
+			schedule[0].awayTid === -3
+		) {
+			await idb.cache.schedule.delete(schedule[0].gid);
+			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
+			await toUI("deleteGames", [[schedule[0].gid]]);
+			await play(numDays - 1, conditions, false);
+		} else {
+			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+			if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
+				return cbNoGames();
+			}
+
+			const tids = new Set<number>();
+
+			// Will loop through schedule and simulate all games
+			if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
+				// Sometimes the playoff schedule isn't made the day before, so make it now
+				// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+				await season.newSchedulePlayoffsDay();
+				schedule = await season.getSchedule(true);
+			}
+
+			for (const matchup of schedule) {
+				tids.add(matchup.homeTid);
+				tids.add(matchup.awayTid);
+			}
+
+			const teams = await loadTeams(Array.from(tids)); // Play games
+
+			await cbSimGames(schedule, teams, dayOver);
 		}
-
-		const tids = new Set<number>();
-
-		for (const matchup of schedule) {
-			tids.add(matchup.homeTid);
-			tids.add(matchup.awayTid);
-		}
-
-		const teams = await loadTeams(Array.from(tids)); // Play games
-
-		// Will loop through schedule and simulate all games
-		if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
-			// Sometimes the playoff schedule isn't made the day before, so make it now
-			// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-			await season.newSchedulePlayoffsDay();
-			schedule = await season.getSchedule(true);
-		}
-
-		await cbSimGames(schedule, teams, dayOver);
 	};
 
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
@@ -366,10 +468,10 @@ const play = async (
 						await lock.set("stopGameSim", false);
 					}
 
-					if (g.get("phase") !== PHASE.PLAYOFFS) {
-						await freeAgents.decreaseDemands();
-						await freeAgents.autoSign();
-						await trade.betweenAiTeams();
+					if (
+						g.get("phase") !== PHASE.PLAYOFFS &&
+						g.get("phase") !== PHASE.AFTER_TRADE_DEADLINE
+					) {
 						await team.checkRosterSizes("other");
 					}
 

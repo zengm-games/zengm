@@ -6,13 +6,21 @@ import {
 } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
-import { face, g, getTeamColors, helpers } from "../util";
+import {
+	face,
+	formatEventText,
+	g,
+	getTeamColors,
+	getTeamInfoBySeason,
+	helpers,
+} from "../util";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -101,17 +109,10 @@ const updatePlayer = async (
 					| "college"
 					| "watch"
 					| "relatives"
+					| "awards"
 			  > & {
 					age: number;
-					draft: {
-						round: number;
-						pick: number;
-						tid: number;
-						originalTid: number;
-						year: number;
-						pot: number;
-						ovr: number;
-						skills: string[];
+					draft: Player["draft"] & {
 						age: number;
 						abbrev: string;
 						originalAbbrev: string;
@@ -121,7 +122,6 @@ const updatePlayer = async (
 					mood: any;
 					salaries: any[];
 					salariesTotal: any;
-					awardsGrouped: any[];
 					untradable: any;
 					untradableMsg: string;
 					ratings: (MinimalPlayerRatings & {
@@ -153,7 +153,7 @@ const updatePlayer = async (
 				"injuries",
 				"salaries",
 				"salariesTotal",
-				"awardsGrouped",
+				"awards",
 				"imgURL",
 				"watch",
 				"college",
@@ -193,51 +193,61 @@ const updatePlayer = async (
 		const userTid = g.get("userTid");
 
 		if (p.tid !== PLAYER.RETIRED) {
-			p.mood = await player.moodInfo(pRaw, userTid);
-		}
+			p.mood = await player.moodInfos(pRaw);
 
-		// Account for extra free agent demands
-		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = p.mood.contractAmount / 1000;
+			// Account for extra free agent demands
+			if (p.tid === PLAYER.FREE_AGENT) {
+				p.contract.amount = p.mood.user.contractAmount / 1000;
+			}
 		}
 
 		const teamColors = await getTeamColors(p.tid);
-		const eventsAll = await idb.getCopies.events({
-			pid: inputs.pid,
-		});
+		const eventsAll = orderBy(
+			[
+				...(await idb.getCopies.events({
+					pid: inputs.pid,
+				})),
+				...(p.draft.dpid !== undefined
+					? await idb.getCopies.events({
+							dpid: p.draft.dpid,
+					  })
+					: []),
+			],
+			"eid",
+			"asc",
+		);
 		const feats = eventsAll
 			.filter(event => event.type === "playerFeat")
 			.map(event => {
 				return {
 					eid: event.eid,
 					season: event.season,
-					text: event.text,
+					text: helpers.correctLinkLid(g.get("lid"), event.text as any),
 				};
 			});
-		const events = eventsAll
-			.filter(event => {
-				// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
-				return !(
-					event.type === "award" ||
-					event.type === "injured" ||
-					event.type === "healed" ||
-					event.type === "hallOfFame" ||
-					event.type === "playerFeat" ||
-					event.type === "tragedy" ||
-					event.type === undefined
-				);
-			})
-			.map(event => {
-				return {
-					eid: event.eid,
-					season: event.season,
-					text: event.text,
-				};
-			});
-		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
-		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+		const eventsFiltered = eventsAll.filter(event => {
+			// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
+			return !(
+				event.type === "award" ||
+				event.type === "injured" ||
+				event.type === "healed" ||
+				event.type === "hallOfFame" ||
+				event.type === "playerFeat" ||
+				event.type === "tragedy" ||
+				event.type === undefined
+			);
+		});
 
-		const willingToSign = !!(p.mood && p.mood.willing);
+		const events = [];
+		for (const event of eventsFiltered) {
+			events.push({
+				eid: event.eid,
+				text: await formatEventText(event),
+				season: event.season,
+			});
+		}
+
+		const willingToSign = !!(p.mood && p.mood.user && p.mood.user.willing);
 
 		const retired = p.tid === PLAYER.RETIRED;
 
@@ -275,19 +285,7 @@ const updatePlayer = async (
 
 			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
 
-			let ts:
-				| {
-						colors: [string, string, string];
-						name: string;
-						region: string;
-				  }
-				| undefined = await idb.league
-				.transaction("teamSeasons")
-				.store.index("season, tid")
-				.get([ps.season, ps.tid]);
-			if (!ts) {
-				ts = await idb.cache.teams.get(ps.tid);
-			}
+			const ts = await getTeamInfoBySeason(ps.tid, ps.season);
 
 			let newRow = false;
 			if (prev === undefined || jerseyNumber !== prev.number) {

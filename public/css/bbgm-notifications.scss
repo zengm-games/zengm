@@ -1,4 +1,6 @@
 .notification-container {
+	z-index: 1000;
+
 	ul,
 	li {
 		padding: 0;
@@ -7,7 +9,6 @@
 
 	ul {
 		position: fixed;
-		bottom: 0;
 		right: 6px;
 		top: 0;
 		display: flex;

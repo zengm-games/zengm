@@ -173,7 +173,7 @@ const processStats = (
 
 			if (scale) {
 				// Either the raw stat from database, or something added up above (trb, 2p, 2pa)
-				const val = row[stat] !== undefined ? row[stat] : ts[stat];
+				const val = row[stat] ?? ts[stat];
 				if (statType === "totals") {
 					row[stat] = val;
 				} else {
@@ -192,7 +192,7 @@ const processStats = (
 	}
 
 	// Since they come in same stream, always need to be able to distinguish
-	row.playoffs = ts.playoffs !== undefined ? ts.playoffs : playoffs;
+	row.playoffs = ts.playoffs ?? playoffs;
 	return row;
 };
 

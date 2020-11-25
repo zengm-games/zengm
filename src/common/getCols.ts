@@ -1267,6 +1267,7 @@ const cols: {
 	Acquired: {
 		desc: "How Player Was Acquired",
 	},
+	Actions: {},
 	Age: {
 		sortType: "number",
 	},
@@ -1427,6 +1428,8 @@ const cols: {
 	},
 	Mood: {
 		width: "1px",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	MVP: {
 		desc: "Most Valuable Player",
@@ -1499,6 +1502,9 @@ const cols: {
 	"Profit (YTD)": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
+	},
+	Received: {
+		desc: "Assets Received in Trade",
 	},
 	Record: {
 		desc: "Record",

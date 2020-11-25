@@ -51,7 +51,7 @@ const processStats = (
 			row[stat] = percentage(ps.fg, ps.fga);
 			scale = false;
 		} else if (stat === "efg") {
-			row[stat] = percentage((ps.fg + 0.5 * ps.tp), ps.fga);
+			row[stat] = percentage(ps.fg + 0.5 * ps.tp, ps.fga);
 			scale = false;
 		} else if (stat === "fgpAtRim") {
 			row[stat] = percentage(ps.fgAtRim, ps.fgaAtRim);
@@ -110,7 +110,7 @@ const processStats = (
 
 		if (scale) {
 			// Either the raw stat from database, or something added up above (trb, 2p, 2pa)
-			const val = row[stat] !== undefined ? row[stat] : ps[stat];
+			const val = row[stat] ?? ps[stat];
 			if (statType === "totals") {
 				row[stat] = val;
 			} else if (statType === "per36" && stat !== "min") {

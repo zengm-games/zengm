@@ -398,20 +398,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["new_team"],
 				text: "Switch Team",
 			},
-			{
-				type: "link",
-				active: pageID => pageID === "options",
-				nonLeague: true,
-				path: "/options",
-				text: "Options",
-			},
-			{
-				type: "link",
-				active: pageID => pageID === "leagueOptions",
-				league: true,
-				path: ["options"],
-				text: "Options",
-			},
 			...(process.env.SPORT === "basketball" ? [scheduledEvents] : []),
 			{
 				type: "link",
@@ -443,6 +429,21 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				},
 
 				text: "Delete All Leagues",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "options",
+				league: true,
+				nonLeague: true,
+				path: "/settings",
+				text: "Global Settings",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "settings",
+				league: true,
+				path: ["settings"],
+				text: "League Settings",
 			},
 			{
 				type: "link",

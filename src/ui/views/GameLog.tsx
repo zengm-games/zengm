@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxScoreRow, BoxScoreWrapper } from "../components";
+import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
@@ -137,7 +137,7 @@ const GamesList = ({
 										{oppAbbrev}
 									</a>
 								</td>
-								<td className="game-log-cell">
+								<td className={classNames("game-log-cell")}>
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
@@ -145,6 +145,9 @@ const GamesList = ({
 											season,
 											gm.gid,
 										])}
+										className={
+											gm.forceWin !== undefined ? "alert-god-mode" : undefined
+										}
 									>
 										{result}
 									</a>
@@ -209,36 +212,13 @@ const GameLog = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				{process.env.SPORT === "football" ? (
-					<>
-						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
-							Depth Chart
-						</a>{" "}
-						|{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
-					Roster
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
-					Finances
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
-					Schedule
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
-					News Feed
-				</a>
-			</p>
+			<MoreLinks
+				type="team"
+				page="game_log"
+				abbrev={abbrev}
+				tid={tid}
+				season={season}
+			/>
 
 			{noGamesAndNoBoxScore ? (
 				noGamesMessage

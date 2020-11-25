@@ -278,8 +278,7 @@ const newPhasePreseason = async (
 	}
 
 	// Again, so updateValues can happen after new mean/std is calculated
-	local.playerOvrMean = undefined;
-	local.playerOvrStd = undefined;
+	local.playerOvrMeanStdStale = true;
 	for (const p of players) {
 		if (!repeatSeason) {
 			// Update player values after ratings changes

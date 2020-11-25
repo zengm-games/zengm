@@ -37,7 +37,8 @@ const routes = () => {
 		"/account/lost_password": genPage("lostPassword", false),
 		"/account/reset_password/:token": genPage("resetPassword", false),
 		"/account/update_card": genPage("accountUpdateCard", false),
-		"/options": genPage("options", false),
+		"/settings": genPage("globalSettings", false),
+
 		// League views
 		"/l/:lid": genPage("leagueDashboard"),
 		"/l/:lid/new_team": genPage("newTeam"),
@@ -134,6 +135,7 @@ const routes = () => {
 		"/l/:lid/watch_list/:statType/:playoffs": genPage("watchList"),
 		"/l/:lid/customize_player": genPage("customizePlayer"),
 		"/l/:lid/customize_player/:pid": genPage("customizePlayer"),
+		"/l/:lid/customize_player/:pid/:type": genPage("customizePlayer"),
 		"/l/:lid/history_all": genPage("historyAll"),
 		"/l/:lid/upcoming_free_agents": genPage("upcomingFreeAgents"),
 		"/l/:lid/upcoming_free_agents/:season": genPage("upcomingFreeAgents"),
@@ -154,7 +156,6 @@ const routes = () => {
 		"/l/:lid/transactions/:abbrev": genPage("transactions"),
 		"/l/:lid/transactions/:abbrev/:season": genPage("transactions"),
 		"/l/:lid/transactions/:abbrev/:season/:eventType": genPage("transactions"),
-		"/l/:lid/options": genPage("leagueOptions"),
 		"/l/:lid/danger_zone": genPage("dangerZone"),
 		"/l/:lid/depth": genPage("depthFootball"),
 		"/l/:lid/depth/:abbrev": genPage("depthFootball"),
@@ -165,6 +166,8 @@ const routes = () => {
 		"/l/:lid/frivolities/draft_classes": genPage("frivolitiesDraftClasses"),
 		"/l/:lid/frivolities/jersey_numbers": genPage("frivolitiesJerseyNumbers"),
 		"/l/:lid/frivolities/teams/:type": genPage("frivolitiesTeamSeasons"),
+		"/l/:lid/frivolities/trades/:type": genPage("frivolitiesTrades"),
+		"/l/:lid/frivolities/trades/:type/:abbrev": genPage("frivolitiesTrades"),
 		"/l/:lid/frivolities/most/:type": genPage("most"),
 		"/l/:lid/frivolities/most/:type/:arg": genPage("most"),
 		"/l/:lid/frivolities/relatives": genPage("relatives"),
@@ -187,6 +190,8 @@ const routes = () => {
 		"/l/:lid/export_players/:season": genPage("exportPlayers"),
 		"/l/:lid/import_players": genPage("importPlayers"),
 		"/l/:lid/gm_history": genPage("gmHistory"),
+		"/l/:lid/settings": genPage("settings"),
+		"/l/:lid/trade_summary/:eid": genPage("tradeSummary"),
 
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),

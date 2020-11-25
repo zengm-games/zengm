@@ -105,7 +105,16 @@ export const getHistory = async (
 			: ["gp", "keyStats", "av"];
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["pid", "name", "injury", "tid", "hof", "watch", "jerseyNumber"],
+		attrs: [
+			"pid",
+			"name",
+			"injury",
+			"tid",
+			"hof",
+			"watch",
+			"jerseyNumber",
+			"retirableJerseyNumbers",
+		],
 		ratings: ["pos"],
 		stats: ["season", "abbrev", ...stats],
 	});
@@ -172,15 +181,6 @@ const updateTeamHistory = async (
 			tid: inputs.tid,
 		});
 
-		const players = await idb.getCopies.players({
-			statsTid: inputs.tid,
-		});
-		for (const p of players) {
-			p.stats = p.stats.filter(row => row.tid === inputs.tid);
-		}
-
-		const history = await getHistory(teamSeasons, players);
-
 		const retiredJerseyNumbers = await Promise.all(
 			(t.retiredJerseyNumbers || []).map(async row => {
 				const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
@@ -208,6 +208,41 @@ const updateTeamHistory = async (
 				};
 			}),
 		);
+
+		const retiredByPid: Record<number, string[]> = {};
+		if (retiredJerseyNumbers) {
+			for (const { pid, number } of retiredJerseyNumbers) {
+				if (pid !== undefined) {
+					if (!retiredByPid[pid]) {
+						retiredByPid[pid] = [];
+					}
+					retiredByPid[pid].push(number);
+				}
+			}
+		}
+
+		const players = await idb.getCopies.players({
+			statsTid: inputs.tid,
+		});
+		for (const p of players) {
+			p.stats = p.stats.filter(row => row.tid === inputs.tid);
+			const retirableJerseyNumbers: Record<string, string[]> = {};
+			(p as any).retirableJerseyNumbers = retirableJerseyNumbers;
+			for (const { jerseyNumber, playoffs, season } of p.stats) {
+				if (
+					!playoffs &&
+					jerseyNumber !== undefined &&
+					(!retiredByPid[p.pid] || !retiredByPid[p.pid].includes(jerseyNumber))
+				) {
+					if (!retirableJerseyNumbers[jerseyNumber]) {
+						retirableJerseyNumbers[jerseyNumber] = [];
+					}
+					retirableJerseyNumbers[jerseyNumber].push(season);
+				}
+			}
+		}
+
+		const history = await getHistory(teamSeasons, players);
 
 		return {
 			...history,

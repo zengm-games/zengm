@@ -92,13 +92,13 @@ class GameSim {
 
 	constructor(
 		gid: number,
-		team1: TeamGameSim,
-		team2: TeamGameSim,
+		teams: [TeamGameSim, TeamGameSim],
 		doPlayByPlay: boolean,
+		homeCourtFactor: number = 1,
 	) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
-		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
+		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];
 
@@ -124,15 +124,13 @@ class GameSim {
 		this.scrimmage = 20;
 		this.timeouts = [3, 3];
 		this.twoMinuteWarningHappened = false;
-		this.homeCourtAdvantage();
+		this.homeCourtAdvantage(homeCourtFactor);
 	}
 
-	homeCourtAdvantage() {
-		const homeCourtModifier = helpers.bound(
-			1 + g.get("homeCourtAdvantage") / 100,
-			0.01,
-			Infinity,
-		);
+	homeCourtAdvantage(homeCourtFactor: number) {
+		const homeCourtModifier =
+			homeCourtFactor *
+			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
 		for (let t = 0; t < 2; t++) {
 			let factor;
@@ -1742,7 +1740,9 @@ class GameSim {
 					this.doSafety();
 				}
 			} else {
-				this.advanceYds(0);
+				if (!penInfo2) {
+					this.advanceYds(0);
+				}
 				this.playByPlay.logEvent("passIncomplete", {
 					clock: this.clock,
 					t: this.o,
@@ -1885,6 +1885,11 @@ class GameSim {
 			playYds: 0,
 		},
 	) {
+		// No penalties during two point conversion, because it is not handled well currently
+		if (this.twoPointConversionTeam !== undefined) {
+			return;
+		}
+
 		// Handle plays in endzone
 		let wouldHaveBeenTD = false;
 
@@ -1999,7 +2004,7 @@ class GameSim {
 				automaticFirstDown: !!pen.automaticFirstDown,
 				name: pen.name,
 				penYds: pen.yds,
-				posOdds: pen.posOdds !== undefined ? pen.posOdds : undefined,
+				posOdds: pen.posOdds ?? undefined,
 				spotYds,
 				totYds,
 			};
@@ -2032,7 +2037,11 @@ class GameSim {
 			}
 		}
 
-		penInfo.totYds -= adjustment;
+		if (side === "defense") {
+			penInfo.totYds -= adjustment;
+		} else {
+			penInfo.totYds += adjustment;
+		}
 		penInfo.penYds -= adjustment;
 
 		// recordedPenYds also includes spotYds for defensive pass interference
@@ -2076,11 +2085,6 @@ class GameSim {
 			automaticFirstDown: penInfo.automaticFirstDown,
 			repeatDown: true,
 		});
-
-		if (penInfo.automaticFirstDown) {
-			this.down = 1;
-			this.toGo = 10;
-		}
 
 		return {
 			type: "penalty",

@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
 	DataTable,
-	Mood,
+	MoreLinks,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -12,7 +12,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { processComponents } from "../components/Mood";
+import { dataTableWrappedMood } from "../components/Mood";
 
 const FreeAgents = ({
 	capSpace,
@@ -57,18 +57,13 @@ const FreeAgents = ({
 	}));
 
 	if (
-		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
+		(phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT
 	) {
 		return (
 			<div>
-				<p>
-					More:{" "}
-					<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
-						Upcoming Free Agents
-					</a>
-				</p>
+				<MoreLinks type="freeAgents" page="free_agents" />
 				<p>You're not allowed to sign free agents now.</p>
 				<p>
 					Free agents can only be signed before the playoffs or after players
@@ -109,12 +104,12 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				{
-					value: <Mood maxWidth p={p} />,
-					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
-					searchValue: p.mood ? p.mood.traits.join("") : null,
-				},
-				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
+				dataTableWrappedMood({
+					defaultType: "user",
+					maxWidth: true,
+					p,
+				}),
+				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{
 					value: (
@@ -126,10 +121,10 @@ const FreeAgents = ({
 							minContract={minContract}
 							spectator={spectator}
 							p={p}
-							willingToNegotiate={p.mood.willing}
+							willingToNegotiate={p.mood.user.willing}
 						/>
 					),
-					searchValue: p.mood.willing ? "Negotiate Sign" : "Refuses!",
+					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 				},
 			],
 		};
@@ -141,12 +136,7 @@ const FreeAgents = ({
 				<RosterComposition className="float-right mb-3" players={userPlayers} />
 			) : null}
 
-			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
-					Upcoming Free Agents
-				</a>
-			</p>
+			<MoreLinks type="freeAgents" page="free_agents" />
 
 			<RosterSalarySummary
 				capSpace={capSpace}

@@ -6,6 +6,7 @@ import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
 import {
 	DataTable,
 	DraftAbbrev,
+	MoreLinks,
 	PlayerNameLabels,
 	RosterComposition,
 } from "../components";
@@ -337,21 +338,7 @@ const Draft = ({
 		<>
 			<div className="d-sm-flex">
 				<div>
-					<p>
-						More:{" "}
-						<a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a> |{" "}
-						<a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
-						{draftType !== "noLottery" &&
-						draftType !== "noLotteryReverse" &&
-						draftType !== "random" &&
-						draftType !== "freeAgents" ? (
-							<>
-								<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a>{" "}
-								|{" "}
-							</>
-						) : null}
-						<a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-					</p>
+					<MoreLinks type="draft" page="draft" draftType={draftType} />
 
 					{remainingPicks.length > 0 ? (
 						<>

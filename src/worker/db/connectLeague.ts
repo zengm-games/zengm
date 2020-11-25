@@ -52,6 +52,7 @@ export interface LeagueDB extends DBSchema {
 		value: EventBBGMWithoutKey;
 		autoIncrementKeyPath: "eid";
 		indexes: {
+			dpids: number;
 			pids: number;
 			season: number;
 		};
@@ -393,6 +394,10 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		unique: false,
 	});
 	eventStore.createIndex("pids", "pids", {
+		unique: false,
+		multiEntry: true,
+	});
+	eventStore.createIndex("dpids", "dpids", {
 		unique: false,
 		multiEntry: true,
 	});
@@ -861,7 +866,12 @@ const migrate = ({
 		);
 	}
 
-	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
+	if (oldVersion <= 39) {
+		transaction.objectStore("events").createIndex("dpids", "dpids", {
+			unique: false,
+			multiEntry: true,
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

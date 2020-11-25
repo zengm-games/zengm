@@ -41,7 +41,7 @@ const match = (route: Route, path: string) => {
 	const params: Params = {};
 	let matches = false;
 
-	const [pathname] = path.split("?");
+	const pathname = path.split("?")[0].split("#")[0];
 	const m = route.regex.exec(decodeURIComponent(pathname));
 
 	if (m) {
@@ -140,6 +140,7 @@ class Router {
 	private routeMatched: RouteMatched | undefined;
 	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
+	private lastNavigatedPath: string | undefined;
 
 	constructor() {
 		this.routes = [];
@@ -198,6 +199,8 @@ class Router {
 							path,
 						);
 					}
+
+					this.lastNavigatedPath = path;
 
 					await route.cb(context);
 				} catch (errorLocal) {
@@ -320,6 +323,14 @@ class Router {
 				: window.location.pathname +
 				  window.location.search +
 				  window.location.hash;
+
+		if (
+			this.lastNavigatedPath &&
+			this.lastNavigatedPath.split("#")[0] === path.split("#")[0]
+		) {
+			// Just switching the hash in the URL on the same page, not actually navigation
+			return;
+		}
 
 		this.navigate(path, { replace: true });
 	}

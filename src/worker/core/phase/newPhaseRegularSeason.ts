@@ -57,7 +57,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Mailing List</b><br>If you'd like to recieve a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
+				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
 					process.env.SPORT,
 				)} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
 				type: "info",
@@ -148,7 +148,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Options.'; })">Enable Persistent Storage</button></center></div>`,
+				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></center></div>`,
 				type: "info",
 			});
 		}

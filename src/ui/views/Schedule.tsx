@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
-import { ScoreBox } from "../components";
+import React, { useState } from "react";
+import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker, useLocalShallow, helpers } from "../util";
+import { toWorker, useLocalShallow } from "../util";
 
 const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 	useTitleBar({
@@ -12,37 +12,49 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress } = useLocalShallow(state => ({
+	const { gameSimInProgress, godMode } = useLocalShallow(state => ({
 		gameSimInProgress: state.gameSimInProgress,
+		godMode: state.godMode,
 	}));
+
+	const [forcingAll, setForcingAll] = useState(false);
+	const [forceWinKey, setForceWinKey] = useState(0);
+
+	const handleForceAll = (type: "win" | "lose" | "none") => async () => {
+		setForcingAll(true);
+		await toWorker("main", "setForceWinAll", tid, type);
+		setForceWinKey(key => key + 1);
+		setForcingAll(false);
+	};
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				{process.env.SPORT === "football" ? (
-					<>
-						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
-							Depth Chart
-						</a>{" "}
-						|{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
-					Finances
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
-					Game Log
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
-					History
-				</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
-			</p>
+			<MoreLinks type="team" page="schedule" abbrev={abbrev} tid={tid} />
+			{godMode ? (
+				<div className="btn-group mb-3">
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("win")}
+						disabled={forcingAll}
+					>
+						Force win all
+					</button>
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("lose")}
+						disabled={forcingAll}
+					>
+						Force lose all
+					</button>
+					<button
+						className="btn btn-god-mode"
+						onClick={handleForceAll("none")}
+						disabled={forcingAll}
+					>
+						Reset all
+					</button>
+				</div>
+			) : null}
 			<div className="row">
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>
@@ -65,12 +77,10 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 								  };
 
 							return (
-								<ScoreBox
-									key={game.gid}
-									game={game}
-									header={i === 0}
-									{...action}
-								/>
+								<React.Fragment key={game.gid}>
+									<ScoreBox game={game} header={i === 0} {...action} />
+									<ForceWin key={forceWinKey} className="mb-3" game={game} />
+								</React.Fragment>
 							);
 						})}
 					</ul>
@@ -78,7 +88,12 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 				<div className="col-sm-6">
 					<h2>Completed Games</h2>
 					{completed.map((game, i) => (
-						<ScoreBox key={game.gid} game={game} header={i === 0} />
+						<ScoreBox
+							className="mb-3"
+							key={game.gid}
+							game={game}
+							header={i === 0}
+						/>
 					))}
 				</div>
 			</div>

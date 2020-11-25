@@ -158,7 +158,7 @@ const createGameAttributes = ({
 		);
 	}
 
-	if (gameAttributes.numDraftRounds < 1) {
+	if (gameAttributes.numDraftRounds < 0) {
 		throw new Error("numDraftRounds must be a positive number");
 	}
 

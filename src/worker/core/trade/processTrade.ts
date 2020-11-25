@@ -9,38 +9,7 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import type { TradeSummary } from "../../../common/types";
-
-const formatAssetsEventLog = (t: TradeSummary["teams"][0]) => {
-	const strings: string[] = [];
-	t.trade.forEach(p =>
-		strings.push(
-			`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`,
-		),
-	);
-	t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
-	let text;
-
-	if (strings.length === 0) {
-		text = "nothing";
-	} else if (strings.length === 1) {
-		text = strings[0];
-	} else if (strings.length === 2) {
-		text = `${strings[0]} and ${strings[1]}`;
-	} else {
-		text = strings[0];
-
-		for (let i = 1; i < strings.length; i++) {
-			if (i === strings.length - 1) {
-				text += `, and ${strings[i]}`;
-			} else {
-				text += `, ${strings[i]}`;
-			}
-		}
-	}
-
-	return text;
-};
+import type { TradeEventTeams, TradeSummary } from "../../../common/types";
 
 const processTrade = async (
 	tradeSummary: TradeSummary,
@@ -49,9 +18,45 @@ const processTrade = async (
 	dpids: [number[], number[]],
 ) => {
 	let pidsEvent = [...pids[0], ...pids[1]];
+	const dpidsEvent = [...dpids[0], ...dpids[1]];
+
+	const teams: TradeEventTeams = [
+		{
+			assets: [],
+		},
+		{
+			assets: [],
+		},
+	];
 
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
+	for (const j of [0, 1]) {
+		for (const pid of pids[j]) {
+			const p = await idb.cache.players.get(pid);
+			if (p && p.valueFuzz > maxPlayerValue) {
+				maxPlayerValue = p.valueFuzz;
+				maxPid = p.pid;
+			}
+		}
+	}
+
+	// Make sure to show best player first, so his picture is shown in news feed
+	if (maxPid !== undefined) {
+		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
+	}
+
+	const eid = await logEvent({
+		type: "trade",
+		showNotification: false,
+		pids: pidsEvent,
+		dpids: dpidsEvent,
+		tids: Array.from(tids), // Array.from is for Flow
+		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
+		teams,
+		phase: g.get("phase"),
+	});
+
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
@@ -89,14 +94,19 @@ const processTrade = async (
 				tid: p.tid,
 				type: "trade",
 				fromTid: tids[j],
+				eid,
 			});
 
-			if (p.valueFuzz > maxPlayerValue) {
-				maxPlayerValue = p.valueFuzz;
-				maxPid = p.pid;
-			}
-
 			await idb.cache.players.put(p);
+
+			teams[k].assets.push({
+				pid,
+				tid: tids[j],
+				name: `${p.firstName} ${p.lastName}`,
+				contract: p.contract,
+				ratingsIndex: p.ratings.length - 1,
+				statsIndex: p.stats.length - 1,
+			});
 		}
 
 		for (const dpid of dpids[j]) {
@@ -106,6 +116,10 @@ const processTrade = async (
 			}
 			dp.tid = tids[k];
 			await idb.cache.draftPicks.put(dp);
+
+			teams[k].assets.push({
+				...dp,
+			});
 		}
 	}
 
@@ -116,34 +130,6 @@ const processTrade = async (
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}
-
-	// Make sure to show best player first, so his picture is shown in news feed
-	if (maxPid !== undefined) {
-		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
-	}
-
-	logEvent({
-		type: "trade",
-		text: `The <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[0]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[0]]?.name
-		}</a> traded ${formatAssetsEventLog(
-			tradeSummary.teams[0],
-		)} to the <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[tids[1]]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[tids[1]]?.name
-		}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
-		showNotification: false,
-		pids: pidsEvent,
-		tids: Array.from(tids), // Array.from is for Flow
-		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
-	});
 };
 
 export default processTrade;

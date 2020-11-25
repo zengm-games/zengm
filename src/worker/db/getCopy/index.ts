@@ -1,6 +1,7 @@
 export { default as allStars } from "./allStars";
 export { default as awards } from "./awards";
 export { default as draftLotteryResults } from "./draftLotteryResults";
+export { default as events } from "./events";
 export { default as messages } from "./messages";
 export { default as players } from "./players";
 export { default as playersPlus } from "./playersPlus";

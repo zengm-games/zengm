@@ -107,6 +107,7 @@ const moodComponents = async (
 		trades: 0,
 		playingTime: 0,
 		rookieContract: 0,
+		difficulty: 0,
 	};
 
 	{
@@ -135,78 +136,90 @@ const moodComponents = async (
 				tied: currentTeamSeason.tied || 0,
 			};
 
-			let wonTitle = false;
+			// If a custom league file starts after the regular season, don't assume all teams have 0 winning percentage
+			const leagueFileFromAfterSeason =
+				g.get("phase") >= PHASE.PLAYOFFS &&
+				projectedRecord.won === 0 &&
+				projectedRecord.lost === 0 &&
+				projectedRecord.tied === 0;
+			if (!leagueFileFromAfterSeason) {
+				let wonTitle = false;
 
-			// If season ongoing, project record and playoff success based on last year
-			if (phase <= PHASE.REGULAR_SEASON) {
-				const previousSeason = teamSeasons.find(ts => ts.season === season - 1);
-				const previousRecord = {
-					won: previousSeason ? previousSeason.won : 0,
-					lost: previousSeason ? previousSeason.lost : 0,
-					tied: previousSeason ? previousSeason.tied || 0 : 1,
-				};
+				// If season ongoing, project record and playoff success based on last year
+				if (phase < PHASE.PLAYOFFS) {
+					const previousSeason = teamSeasons.find(
+						ts => ts.season === season - 1,
+					);
+					const previousRecord = {
+						won: previousSeason ? previousSeason.won : 0,
+						lost: previousSeason ? previousSeason.lost : 0,
+						tied: previousSeason ? previousSeason.tied || 0 : 1,
+					};
 
-				const fractionComplete =
-					(projectedRecord.won + projectedRecord.lost + projectedRecord.tied) /
-					g.get("numGames");
+					const fractionComplete =
+						(projectedRecord.won +
+							projectedRecord.lost +
+							projectedRecord.tied) /
+						g.get("numGames");
 
-				const currentGames =
-					projectedRecord.won + projectedRecord.lost + projectedRecord.tied;
-				const previousGames =
-					previousRecord.won + previousRecord.lost + previousRecord.tied;
+					const currentGames =
+						projectedRecord.won + projectedRecord.lost + projectedRecord.tied;
+					const previousGames =
+						previousRecord.won + previousRecord.lost + previousRecord.tied;
 
-				const remainingGames = helpers.bound(
-					g.get("numGames") - currentGames,
-					0,
-					Infinity,
-				);
+					const remainingGames = helpers.bound(
+						g.get("numGames") - currentGames,
+						0,
+						Infinity,
+					);
 
-				for (const key of ["won", "lost", "tied"] as const) {
-					const currentFraction =
-						currentGames > 0 ? projectedRecord[key] / currentGames : 0;
-					const previousFraction =
-						previousGames > 0 ? previousRecord[key] / previousGames : 0;
+					for (const key of ["won", "lost", "tied"] as const) {
+						const currentFraction =
+							currentGames > 0 ? projectedRecord[key] / currentGames : 0;
+						const previousFraction =
+							previousGames > 0 ? previousRecord[key] / previousGames : 0;
 
-					projectedRecord[key] +=
-						(currentFraction * fractionComplete +
-							previousFraction * (1 - fractionComplete)) *
-						remainingGames;
-				}
+						projectedRecord[key] +=
+							(currentFraction * fractionComplete +
+								previousFraction * (1 - fractionComplete)) *
+							remainingGames;
+					}
 
-				if (previousSeason) {
+					if (previousSeason) {
+						wonTitle =
+							previousSeason.playoffRoundsWon >=
+							g.get("numGamesPlayoffSeries", season - 1).length;
+					}
+				} else {
 					wonTitle =
-						previousSeason.playoffRoundsWon >=
-						g.get("numGamesPlayoffSeries", season - 1).length;
+						currentTeamSeason.playoffRoundsWon >=
+						g.get("numGamesPlayoffSeries", "current").length;
 				}
-			} else {
-				wonTitle =
-					currentTeamSeason.playoffRoundsWon >=
-					g.get("numGamesPlayoffSeries", "current").length;
+
+				let winp = helpers.calcWinp(projectedRecord);
+				if (wonTitle) {
+					// If won title, equivalent to extra 15%, so 60% winp and title maxes it out
+					winp += 0.15;
+				}
+
+				// 25% to 75% -> -2 to 2
+				components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
+
+				// Negative matters more
+				if (
+					process.env.SPORT === "basketball" &&
+					components.teamPerformance < 0
+				) {
+					components.teamPerformance *= 2;
+				}
+
+				// Set upper bound, in case went over due to playoff bonus
+				components.teamPerformance = helpers.bound(
+					components.teamPerformance,
+					-Infinity,
+					2,
+				);
 			}
-
-			let winp = helpers.calcWinp(projectedRecord);
-			if (wonTitle) {
-				// If won title, equivalent to extra 15%, so 60% winp and title maxes it out
-				winp += 0.15;
-			}
-
-			// 25% to 75% -> -2 to 2
-			components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
-
-			// Negative matters more
-			if (
-				process.env.SPORT === "basketball" &&
-				components.teamPerformance < 0
-			) {
-				components.teamPerformance *= 2;
-			}
-
-			// Set upper bound, in case went over due to playoff bonus
-			components.teamPerformance = helpers.bound(
-				components.teamPerformance,
-				-Infinity,
-				2,
-			);
 		}
 	}
 
@@ -267,10 +280,13 @@ const moodComponents = async (
 			];
 			const onRookieContract =
 				rookieContractLength !== undefined &&
+				(p.tid === tid ||
+					(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)) &&
 				p.draft.round > 0 &&
 				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
 					(p.draft.year + rookieContractLength === season &&
 						phase <= PHASE.RESIGN_PLAYERS));
+
 			if (onRookieContract || p.tid === PLAYER.UNDRAFTED) {
 				components.rookieContract = 8;
 			}
@@ -279,20 +295,40 @@ const moodComponents = async (
 
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
-	if (difficulty !== 0) {
-		for (const key of helpers.keys(components)) {
-			// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)
-			if (difficulty > 0) {
-				if (components[key] > 0) {
-					components[key] /= 1 + difficulty;
+	if (g.get("userTids").includes(tid)) {
+		if (difficulty !== 0) {
+			for (const key of helpers.keys(components)) {
+				// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)
+				if (difficulty > 0) {
+					if (components[key] > 0) {
+						components[key] /= 1 + difficulty;
+					} else {
+						components[key] *= 1 + difficulty;
+					}
 				} else {
-					components[key] *= 1 + difficulty;
+					if (components[key] > 0) {
+						components[key] *= 1 - difficulty;
+					} else {
+						components[key] /= 1 - difficulty;
+					}
+				}
+			}
+		}
+	} else {
+		// At default difficulty, make players more likely to refuse. Decrease this, and players will be more likely to enter free agency
+		const amount = 0.5 - helpers.bound(difficulty / 2, -0.25, 0.25);
+		for (const key of helpers.keys(components)) {
+			if (amount > 0) {
+				if (components[key] > 0) {
+					components[key] /= 1 + amount;
+				} else {
+					components[key] *= 1 + amount;
 				}
 			} else {
 				if (components[key] > 0) {
-					components[key] *= 1 - difficulty;
+					components[key] *= 1 - amount;
 				} else {
-					components[key] /= 1 - difficulty;
+					components[key] /= 1 - amount;
 				}
 			}
 		}

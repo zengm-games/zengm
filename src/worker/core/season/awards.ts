@@ -224,8 +224,8 @@ const getTopPlayers = (
 		throw new Error("No players");
 	}
 
-	const actualFilter = filter !== undefined ? filter : () => true;
-	const actualAmount = amount !== undefined ? amount : 1;
+	const actualFilter = filter ?? (() => true);
+	const actualAmount = amount ?? 1;
 	const cache: Map<number, number> = new Map();
 	const players = playersUnsorted.filter(actualFilter).sort((a, b) => {
 		let aScore = cache.get(a.pid);

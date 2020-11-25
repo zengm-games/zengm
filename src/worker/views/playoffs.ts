@@ -49,6 +49,7 @@ const updatePlayoffs = async (
 		matchup: [number, number];
 		rowspan: number;
 	}[][];
+	numGamesPlayoffSeries: number[];
 	numGamesToWinSeries: number[];
 	season: number;
 	series: {
@@ -121,12 +122,15 @@ const updatePlayoffs = async (
 
 		const confNames = g.get("confs", inputs.season).map(conf => conf.name); // Display the current or archived playoffs
 
+		const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", inputs.season);
+
 		return {
 			finalMatchups,
 			matchups,
-			numGamesToWinSeries: g
-				.get("numGamesPlayoffSeries", inputs.season)
-				.map(helpers.numGamesToWinSeries),
+			numGamesPlayoffSeries,
+			numGamesToWinSeries: numGamesPlayoffSeries.map(
+				helpers.numGamesToWinSeries,
+			),
 			confNames,
 			season: inputs.season,
 			series: series2,

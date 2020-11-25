@@ -1,6 +1,9 @@
 import { achievement, checkAccount } from "../util";
 import type { Conditions, UpdateEvents, ViewInput } from "../../common/types";
 
+// For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
+const GRACE_PERIOD = 60 * 60 * 24 * 3;
+
 const updateAccount = async (
 	inputs: ViewInput<"account">,
 	updateEvents: UpdateEvents,
@@ -15,15 +18,15 @@ const updateAccount = async (
 			partialTopMenu.username !== "";
 		const goldUntilDate = new Date(partialTopMenu.goldUntil * 1000);
 		const goldUntilDateString = goldUntilDate.toDateString();
-		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		const showGoldActive =
 			loggedIn &&
 			!partialTopMenu.goldCancelled &&
-			currentTimestamp <= partialTopMenu.goldUntil;
+			currentTimestamp < partialTopMenu.goldUntil;
 		const showGoldCancelled =
 			loggedIn &&
 			partialTopMenu.goldCancelled &&
-			currentTimestamp <= partialTopMenu.goldUntil;
+			currentTimestamp < partialTopMenu.goldUntil;
 		const showGoldPitch = !loggedIn || !showGoldActive;
 		return {
 			email: partialTopMenu.email,

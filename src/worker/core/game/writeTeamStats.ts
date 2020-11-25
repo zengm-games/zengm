@@ -20,20 +20,25 @@ const writeTeamStats = async (results: GameResults) => {
 	for (const t1 of [0, 1]) {
 		const t2 = t1 === 1 ? 0 : 1;
 		const payroll = await team.getPayroll(results.team[t1].id);
-		const [t, teamSeasons, teamStats] = await Promise.all([
+		const [t, teamSeasons] = await Promise.all([
 			idb.cache.teams.get(results.team[t1].id),
 			idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[results.team[t1].id, g.get("season") - 2],
 				[results.team[t1].id, g.get("season")],
 			]),
-			idb.cache.teamStats.indexGet("teamStatsByPlayoffsTid", [
-				g.get("phase") === PHASE.PLAYOFFS,
-				results.team[t1].id,
-			]),
 		]);
 		const teamSeason = teamSeasons[teamSeasons.length - 1];
 		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
+
+		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+		let teamStats = await idb.cache.teamStats.indexGet(
+			"teamStatsByPlayoffsTid",
+			[playoffs, results.team[t1].id],
+		);
+		if (!teamStats) {
+			teamStats = team.genStatsRow(results.team[t1].id, playoffs);
+		}
 
 		if (!t) {
 			throw new Error("Invalid tid");
@@ -119,6 +124,10 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// Attendance: base on home team
 		if (t1 === 0) {
+			if (process.env.SPORT === "football") {
+				att *= 0.23;
+			}
+
 			att = random.gauss(att, 1000);
 			att *= (45 * 50) / relativeTicketPrice ** 2; // Attendance depends on ticket price. Not sure if this formula is reasonable.
 

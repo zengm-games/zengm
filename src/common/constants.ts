@@ -15,7 +15,7 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 39;
+const MAX_SUPPORTED_LEAGUE_VERSION = 40;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -147,9 +147,13 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 	W: "Winning",
 };
 
+// For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
+const GRACE_PERIOD = 60 * 60 * 24 * 3;
+
 export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
+	GRACE_PERIOD,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	MOOD_TRAITS,
 	NO_LOTTERY_DRAFT_TYPES,

@@ -34,9 +34,10 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
+	let e: any;
 
 	while (!stop && events.length > 0) {
-		const e = events.shift();
+		e = events.shift();
 
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = e.t === 0 ? 1 : 0;
@@ -77,6 +78,7 @@ const processLiveGameEvents = ({
 			}
 
 			text = e.text;
+			boxScore.time = e.time;
 			stop = true;
 		} else if (e.type === "clock") {
 			if (typeof e.awaitingKickoff === "number") {
@@ -149,8 +151,13 @@ const processLiveGameEvents = ({
 				// Past quarters
 				event.hide = false;
 			} else {
-				// Current quarter
-				event.hide = cmpTime(event.time, boxScore.time) === -1;
+				// Current quarter - this is the normal way all events will be shown. Used to just check time, but then scoring summary would update at the beginning of a play, since the scoring event has the same timestamp. So now also check for the internal properties of the event object, since it should always come through as "e" from above. Don't check event.t because that gets flipped in box score display
+				const show =
+					cmpTime(event.time, boxScore.time) !== -1 &&
+					e.text === event.text &&
+					e.time === event.time &&
+					e.quarter === event.quarter;
+				event.hide = !show;
 			}
 		}
 	}

@@ -2,9 +2,8 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers } from "../../util";
 import type { View } from "../../../common/types";
-import { NO_LOTTERY_DRAFT_TYPES } from "../../../common";
+import { MoreLinks } from "../../components";
 
 const PAGE_SIZE = 3;
 
@@ -40,18 +39,7 @@ const DraftScouting = ({
 
 	return (
 		<>
-			<p>
-				More:{" "}
-				{!NO_LOTTERY_DRAFT_TYPES.includes(draftType) ? (
-					<>
-						<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a> |{" "}
-					</>
-				) : null}
-				<a href={helpers.leagueUrl(["draft_history"])}>
-					{!noDraft ? "Draft" : "Prospects"} History
-				</a>{" "}
-				| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-			</p>
+			<MoreLinks type="draft" page="draft_scouting" draftType={draftType} />
 
 			<p>
 				The ratings shown are your scouts' projections for what the players'

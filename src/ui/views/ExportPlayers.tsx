@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, downloadFile } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const ExportPlayers = ({
@@ -104,10 +104,7 @@ const ExportPlayers = ({
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["import_players"])}>Import Players</a>{" "}
-				| <a href={helpers.leagueUrl(["export_league"])}>Export League</a>
-			</p>
+			<MoreLinks type="importExport" page="export_players" />
 
 			<p>
 				Here you can export any number of players to a JSON file which can be

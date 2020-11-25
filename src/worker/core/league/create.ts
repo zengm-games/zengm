@@ -245,7 +245,10 @@ export const createWithoutSaving = async (
 					"colors",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
-					if (teamSeason[key] === undefined) {
+					if (
+						teamSeason[key] === undefined ||
+						teamSeason.season === g.get("season")
+					) {
 						// @ts-ignore
 						teamSeason[key] = t[key];
 					}
@@ -281,15 +284,7 @@ export const createWithoutSaving = async (
 			teamSeasons.push(teamSeason);
 		}
 
-		let teamStatsLocal: TeamStatsWithoutKey[];
-
-		if (teamInfo.stats) {
-			teamStatsLocal = teamInfo.stats;
-		} else if (!t.disabled) {
-			teamStatsLocal = [team.genStatsRow(t.tid)];
-		} else {
-			teamStatsLocal = [];
-		}
+		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
 
 		for (const ts of teamStatsLocal) {
 			ts.tid = t.tid;
@@ -492,7 +487,10 @@ export const createWithoutSaving = async (
 			// Very rough simulation of a draft
 			for (const p of draftClass) {
 				// Temp, just for draft ordering
-				p.value = player.value(p, {});
+				p.value = player.value(p, {
+					ovrMean: 47,
+					ovrStd: 10,
+				});
 			}
 			draftClass = orderBy(draftClass, "value", "desc");
 			for (const p of draftClass) {
@@ -562,7 +560,10 @@ export const createWithoutSaving = async (
 			throw new Error("Not enough players!");
 		}
 
-		const numPlayerPerTeam = g.get("maxRosterSize") - 2;
+		const numPlayerPerTeam = Math.max(
+			g.get("maxRosterSize") - 2,
+			g.get("minRosterSize"),
+		);
 
 		// 13 for basketball
 		const maxNumFreeAgents = Math.round(
@@ -809,6 +810,7 @@ const create = async ({
 	shuffleRosters = false,
 	difficulty = 0,
 	importLid,
+	realPlayers,
 }: {
 	name: string;
 	tid: number;
@@ -816,6 +818,7 @@ const create = async ({
 	shuffleRosters?: boolean;
 	difficulty?: number;
 	importLid?: number | undefined | null;
+	realPlayers?: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
 		name,
@@ -983,7 +986,7 @@ const create = async ({
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
 		: false;
 
-	if (!skipNewPhase) {
+	if (!skipNewPhase || realPlayers) {
 		await updatePhase();
 		await updateStatus("Idle");
 
@@ -1006,7 +1009,13 @@ const create = async ({
 		}
 	}
 
-	await draft.genPicks();
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		await season.newSchedulePlayoffsDay();
+	}
+
+	await draft.genPicks({
+		realPlayers,
+	});
 
 	if (!leagueFile.events || leagueFile.events.length === 0) {
 		await logEvent({

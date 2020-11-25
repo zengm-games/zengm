@@ -13,14 +13,18 @@ import type { Conditions } from "../../../common/types"; // Depending on phase, 
 import { idb } from "../../db";
 
 const autoPlay = async (conditions: Conditions = {}) => {
+	let currentPhase = g.get("phase");
+
 	// No newPhase call is triggered after expansion draft, so this check comes first
-	if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
+	if (currentPhase === PHASE.EXPANSION_DRAFT) {
 		if (g.get("expansionDraft").phase === "protection") {
 			await expansionDraft.start();
 		}
 		if (g.get("expansionDraft").phase === "draft") {
 			await draft.runPicks("untilEnd", conditions);
 		}
+
+		currentPhase = g.get("phase");
 	}
 
 	// If game over and user's team is disabled, need to pick a new team or there will be errors
@@ -36,34 +40,37 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		}
 	}
 
-	if (g.get("phase") === PHASE.PRESEASON) {
+	if (currentPhase === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
-	} else if (g.get("phase") === PHASE.REGULAR_SEASON) {
+	} else if (
+		currentPhase === PHASE.REGULAR_SEASON ||
+		currentPhase === PHASE.AFTER_TRADE_DEADLINE
+	) {
 		const numDays = await season.getDaysLeftSchedule();
 		await game.play(numDays, conditions);
-	} else if (g.get("phase") === PHASE.PLAYOFFS) {
+	} else if (currentPhase === PHASE.PLAYOFFS) {
 		await game.play(100, conditions);
-	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
+	} else if (currentPhase === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		} else {
 			await phase.newPhase(PHASE.DRAFT, conditions);
 		}
-	} else if (g.get("phase") === PHASE.DRAFT) {
+	} else if (currentPhase === PHASE.DRAFT) {
 		if (g.get("draftType") === "freeAgents") {
 			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
 		} else {
 			await draft.runPicks("untilEnd", conditions);
 		}
-	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
+	} else if (currentPhase === PHASE.AFTER_DRAFT) {
 		await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
-	} else if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
+	} else if (currentPhase === PHASE.RESIGN_PLAYERS) {
 		await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-	} else if (g.get("phase") === PHASE.FREE_AGENCY) {
+	} else if (currentPhase === PHASE.FREE_AGENCY) {
 		// Purposely call without await, to break up the promise chain. Otherwise (at least in Chrome 85) causes a memory leak after playing like 50 seasons.
 		freeAgents.play(g.get("daysLeft"), conditions);
 	} else {
-		throw new Error(`Unknown phase: ${g.get("phase")}`);
+		throw new Error(`Unknown phase: ${currentPhase}`);
 	}
 };
 

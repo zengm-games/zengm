@@ -188,6 +188,10 @@ const writeGameStats = async (
 			},
 		],
 	};
+	if (results.forceWin !== undefined) {
+		gameStats.forceWin = results.forceWin;
+	}
+
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 	let allStars;
 
@@ -423,6 +427,7 @@ const writeGameStats = async (
 		await toUI("mergeGames", [
 			[
 				{
+					forceWin: results.forceWin,
 					gid: results.gid,
 					teams: [
 						{
@@ -481,8 +486,10 @@ const writeGameStats = async (
 					const numGamesToWinSeries = helpers.numGamesToWinSeries(
 						numGamesThisRound,
 					);
-					if (playoffInfos[tw].won === numGamesToWinSeries) {
-						endPart += `, winning the ${round} ${playoffInfos[tw].won}-${playoffInfos[tw].lost}`;
+					if (playoffInfos[indTeam].won === numGamesToWinSeries) {
+						endPart += `, winning the ${round} ${playoffInfos[indTeam].won}-${playoffInfos[indTeam].lost}`;
+					} else if (playoffInfos[indTeam].lost === numGamesToWinSeries) {
+						endPart += `, losing the ${round} ${playoffInfos[indTeam].lost}-${playoffInfos[indTeam].won}`;
 					} else {
 						endPart += ` during game ${gameNum} of the ${round}`;
 					}

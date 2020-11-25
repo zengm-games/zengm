@@ -6,8 +6,7 @@ import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
 
-// Props are not from View<> because they are only ever passed from LeagueOptions
-const Options = (props: View<"options"> & { title?: string }) => {
+const Options = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = safeLocalStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";
@@ -80,14 +79,10 @@ const Options = (props: View<"options"> & { title?: string }) => {
 		}
 	};
 
-	const title = props.title ? props.title : "Options";
-
-	useTitleBar({ title: "Options" });
+	useTitleBar({ title: "Global Settings" });
 
 	return (
 		<>
-			{props.title ? <h2>{title}</h2> : null}
-
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
@@ -124,11 +119,7 @@ const Options = (props: View<"options"> & { title?: string }) => {
 
 				{process.env.SPORT === "basketball" ? (
 					<>
-						{props.title ? (
-							<h3>Team and Player Data for "Real Players" Leagues</h3>
-						) : (
-							<h2>Team and Player Data for "Real Players" Leagues</h2>
-						)}
+						<h2>Team and Player Data for "Real Players" Leagues</h2>
 						<RealData
 							handleChange={handleChange}
 							realPlayerPhotos={state.realPlayerPhotos}
@@ -137,7 +128,7 @@ const Options = (props: View<"options"> & { title?: string }) => {
 					</>
 				) : null}
 
-				<button className="btn btn-primary mt-3">Save {title}</button>
+				<button className="btn btn-primary mt-3">Save Global Settings</button>
 			</form>
 		</>
 	);

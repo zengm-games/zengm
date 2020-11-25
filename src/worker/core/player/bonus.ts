@@ -11,7 +11,7 @@ const bonus = (p: PlayerWithoutKey, amount?: number) => {
 			continue;
 		}
 
-		const boost = amount !== undefined ? amount : random.randInt(0, 10);
+		const boost = amount ?? random.randInt(0, 10);
 		ratings[key] = limitRating(ratings[key] + boost);
 	}
 };

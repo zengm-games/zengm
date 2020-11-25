@@ -1,11 +1,16 @@
-import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
+import { formatEventText, g } from "../util";
+import type {
+	UpdateEvents,
+	ViewInput,
+	EventBBGM,
+	LogEventType,
+} from "../../common/types";
 import { idb } from "../db";
 import type { Face } from "facesjs";
 
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
-const getTid = (event: EventBBGM) => {
+const getTid = (event: { tids?: number[]; type: LogEventType }) => {
 	if (!event.tids || event.tids.length === 0 || event.tids[0] < 0) {
 		return;
 	}
@@ -83,23 +88,37 @@ export const processEvents = async (
 			}
 
 			return keep;
-		})
-		.map(event => {
-			let p:
-				| undefined
-				| {
-						imgURL?: string;
-						face?: Face;
-				  };
-			return {
-				...event,
-				tid: getTid(event),
-				p,
-			};
 		});
 
-	let numImagesRemaining = 12;
+	const events2 = [];
 	for (const event of events) {
+		events2.push({
+			eid: event.eid,
+			type: event.type,
+			text: await formatEventText(event),
+			pids: event.pids,
+			tids: event.tids,
+			season: event.season,
+			score: event.score,
+		});
+	}
+
+	const eventsWithPlayers = events2.map(event => {
+		let p:
+			| undefined
+			| {
+					imgURL?: string;
+					face?: Face;
+			  };
+		return {
+			...event,
+			tid: getTid(event),
+			p,
+		};
+	});
+
+	let numImagesRemaining = 12;
+	for (const event of eventsWithPlayers) {
 		if (numImagesRemaining <= 0) {
 			break;
 		}
@@ -115,9 +134,7 @@ export const processEvents = async (
 		}
 	}
 
-	events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
-
-	return events;
+	return eventsWithPlayers;
 };
 
 const updateNews = async (

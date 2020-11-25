@@ -175,7 +175,7 @@ const BarGraph = (props: Props) => {
 
 	const widthPct = 100 / numBars; // ylim specified or not?
 
-	const ylim = ylimArg === undefined ? defaultYlim(data) : ylimArg; // Convert heights to percentages
+	const ylim = ylimArg ?? defaultYlim(data); // Convert heights to percentages
 
 	const scaled: any = [];
 

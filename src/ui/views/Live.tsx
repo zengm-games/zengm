@@ -3,7 +3,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { ScoreBox } from "../components";
+import { ForceWin, ScoreBox } from "../components";
 
 const Live = ({ games, userTid }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });
@@ -12,22 +12,22 @@ const Live = ({ games, userTid }: View<"live">) => {
 		gameSimInProgress: state.gameSimInProgress,
 	}));
 
-	return (
+	const tradeDeadline =
+		games.length === 1 &&
+		games[0].teams[0].tid === -3 &&
+		games[0].teams[1].tid === -3;
+
+	return tradeDeadline ? (
+		<p>
+			Play one day to move past the trade deadline, and then the next day's
+			games will be available here.
+		</p>
+	) : (
 		<>
 			<p>
 				To view a live play-by-play summary of a game, select one of today's
 				games below.
 			</p>
-
-			<div
-				className="alert alert-info d-inline-block"
-				style={{ maxWidth: 770 }}
-			>
-				<b>August 13, 2020 - new feature!</b> Now when you watch a live game,
-				only that one game is simulated. When it's over, today's other games
-				will still be waiting here. That means you can view the play-by-play of
-				multiple games in the same day.
-			</div>
 
 			{gameSimInProgress ? (
 				<p className="text-danger">
@@ -74,6 +74,7 @@ const Live = ({ games, userTid }: View<"live">) => {
 							actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
 							limitWidthToParent
 						/>
+						<ForceWin className="mb-3" game={game} />
 					</div>
 				))}
 			</div>

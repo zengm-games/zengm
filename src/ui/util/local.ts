@@ -7,6 +7,7 @@ import safeLocalStorage from "./safeLocalStorage";
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
 
 type LocalActions = {
+	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
 	toggleSidebar: () => void;
@@ -67,8 +68,21 @@ const useLocal = create<
 	moreInfoAbbrev: undefined,
 	moreInfoSeason: undefined,
 	moreInfoTid: undefined,
+	stickyMultiTeamMenu: false,
+	stickyFooterAd: false,
+	stickyFormButtons: false,
 
 	actions: {
+		deleteGames(gids: number[]) {
+			set(state => {
+				const newGames = state.games.filter(game => !gids.includes(game.gid));
+
+				return {
+					games: newGames,
+				};
+			});
+		},
+
 		mergeGames(games: LocalStateUI["games"]) {
 			set(state => {
 				const newGames = state.games.slice();

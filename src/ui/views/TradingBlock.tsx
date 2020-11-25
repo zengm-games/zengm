@@ -285,7 +285,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		return (
 			<div>
 				<h2>Error</h2>
-				<p>You're not allowed to make trades now.</p>
+				<p>
+					You're not allowed to make trades{" "}
+					{phase === PHASE.AFTER_TRADE_DEADLINE
+						? "after the trade deadline"
+						: "now"}
+					.
+				</p>
 			</div>
 		);
 	}
@@ -334,7 +340,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		};
 	});
 
-	const pickRows = userPicks.map(pick => {
+	const pickRows = userPicks.map((pick, i) => {
 		return {
 			key: pick.dpid,
 			data: [
@@ -343,7 +349,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					checked={state.dpids.includes(pick.dpid)}
 					onChange={() => handleChangeAsset("dpids", pick.dpid)}
 				/>,
-				pick.desc,
+				{
+					value: pick.desc,
+					sortValue: i,
+				},
 			],
 		};
 	});

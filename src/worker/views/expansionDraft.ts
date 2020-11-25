@@ -97,7 +97,7 @@ const updateExpansionDraft = async () => {
 			name: t.name,
 			imgURL: t.imgURL,
 			colors: t.colors,
-			pop: String(t.pop !== undefined ? t.pop : 1),
+			pop: String(t.pop ?? 1),
 			stadiumCapacity: String(
 				t.stadiumCapacity !== undefined
 					? t.stadiumCapacity

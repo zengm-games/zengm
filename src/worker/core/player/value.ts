@@ -31,15 +31,15 @@ const value = (
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;
-		ovrMean?: number;
-		ovrStd?: number;
+		ovrMean: number;
+		ovrStd: number;
 	},
 ): number => {
 	options.noPot = !!options.noPot;
 	options.fuzz = !!options.fuzz;
 
 	// Current ratings
-	const pr: any = {}; // Start blank, add what we need (efficiency, wow!)
+	const pr: any = {}; // Start blank, add what we need
 
 	const s = p.ratings.length - 1;
 
@@ -55,12 +55,8 @@ const value = (
 		pr.pot = p.ratings[s].pot;
 	}
 
-	// Normalize ovr/pot
-	if (
-		process.env.SPORT === "basketball" &&
-		options.ovrMean !== undefined &&
-		options.ovrStd !== undefined
-	) {
+	// Normalize ovr/pot, other sports need testing
+	if (process.env.SPORT === "basketball") {
 		const defaultOvrMean = 47;
 		const defaultOvrStd = 10;
 		if (options.ovrStd > 0) {

@@ -20,7 +20,7 @@ const generate = (tm: any): Team => {
 		region: tm.region,
 		name: tm.name,
 		abbrev: tm.abbrev,
-		imgURL: tm.imgURL !== undefined ? tm.imgURL : "",
+		imgURL: tm.imgURL ?? "",
 		budget: {
 			ticketPrice: {
 				amount: tm.hasOwnProperty("budget")
@@ -64,7 +64,7 @@ const generate = (tm: any): Team => {
 		strategy,
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
-		pop: tm.pop !== undefined ? tm.pop : 0,
+		pop: tm.pop ?? 0,
 		stadiumCapacity:
 			tm.stadiumCapacity !== undefined
 				? tm.stadiumCapacity

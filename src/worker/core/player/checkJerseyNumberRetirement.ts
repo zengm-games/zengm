@@ -1,9 +1,10 @@
+import orderBy from "lodash/orderBy";
 import type { Player } from "../../../common/types";
 import { idb } from "../../db";
-import { random, g, local, logEvent, helpers } from "../../util";
+import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
 
-const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 6;
+const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 12;
 
 const getValueStatsRow = (ps: any) => {
 	let value = 0;
@@ -53,41 +54,20 @@ export const getMostCommonPosition = (p: Player, tid: number) => {
 
 // const posCounts = {};
 
-const checkJerseyNumberRetirement = async (p: Player) => {
-	let tid: number | undefined;
-	let number: string | undefined;
-
-	// Find team he played the most with
-	const valuesByTid = new Map<number, number>();
-
+// score over 1 means eligible to be retired by AI
+export const getScore = (p: Player, tid: number) => {
+	let value = 0;
 	for (const ps of p.stats) {
-		const value = getValueStatsRow(ps);
-		const prevValue = valuesByTid.get(ps.tid) || 0;
-		valuesByTid.set(ps.tid, prevValue + value);
-	}
-
-	if (valuesByTid.size === 0) {
-		return;
-	}
-
-	let maxValue = -Infinity;
-	let maxTid: number | undefined;
-	for (const [tid, value] of valuesByTid) {
-		if (value > maxValue) {
-			maxValue = value;
-			maxTid = tid;
+		if (ps.tid === tid) {
+			value += getValueStatsRow(ps);
 		}
-	}
-
-	if (maxTid === undefined) {
-		return;
 	}
 
 	let threshold;
 	if (process.env.SPORT === "basketball") {
 		threshold = 80;
 	} else {
-		const mostCommonPosition = getMostCommonPosition(p, maxTid);
+		const mostCommonPosition = getMostCommonPosition(p, tid);
 
 		threshold = getThreshold(mostCommonPosition);
 		if (threshold > 80) {
@@ -102,7 +82,46 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		}
 	}
 
-	if (maxValue > threshold) {
+	const score = value / threshold;
+
+	return score;
+};
+
+const checkJerseyNumberRetirement = async (p: Player) => {
+	if (!g.get("aiJerseyRetirement")) {
+		return;
+	}
+
+	let tid: number | undefined;
+	let number: string | undefined;
+
+	// Find team he played the most with
+	const scoresByTid = new Map<number, number>();
+
+	for (const ps of p.stats) {
+		if (!scoresByTid.has(ps.tid)) {
+			scoresByTid.set(ps.tid, getScore(p, ps.tid));
+		}
+	}
+
+	if (scoresByTid.size === 0) {
+		return;
+	}
+
+	let maxScore = -Infinity;
+	let maxTid: number | undefined;
+	for (const [tid, score] of scoresByTid) {
+		if (score > maxScore) {
+			maxScore = score;
+			maxTid = tid;
+		}
+	}
+
+	if (maxTid === undefined) {
+		return;
+	}
+
+	if (maxScore > 1) {
 		tid = maxTid;
 
 		// Figure out most common jersey number
@@ -158,11 +177,22 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		t.retiredJerseyNumbers.length >
 		MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM - 1
 	) {
-		const toRemove: NonNullable<
-			typeof t.retiredJerseyNumbers
-		>[number] = random.choice(t.retiredJerseyNumbers);
+		const sorted: NonNullable<typeof t.retiredJerseyNumbers> = orderBy(
+			t.retiredJerseyNumbers,
+			"score",
+			"asc",
+		);
+		const worstRetiredJersey = sorted[0];
+
+		if (
+			worstRetiredJersey.score !== undefined &&
+			worstRetiredJersey.score > maxScore
+		) {
+			return;
+		}
+
 		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter(
-			row => row !== toRemove,
+			row => row !== worstRetiredJersey,
 		);
 	}
 
@@ -172,6 +202,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		seasonTeamInfo: g.get("season"),
 		pid: p.pid,
 		text: "",
+		score: maxScore,
 	});
 
 	/*if (!posCounts[mostCommonPosition]) {

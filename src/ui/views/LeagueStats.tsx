@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { getCols, helpers } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
-import { DataTable } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 
 const formatMaybeInteger = (x: number) =>
@@ -28,7 +28,7 @@ const LeagueStats = ({
 	});
 
 	const basicColNames =
-		abbrev === "all"
+		tid < 0
 			? ["Season", "# Teams", "stat:gp", "W", "L"]
 			: ["Season", "stat:gp", "W", "L"];
 	if (ties) {
@@ -39,6 +39,9 @@ const LeagueStats = ({
 		superCols[0].colspan += 1;
 		if (ties) {
 			superCols[0].colspan += 1;
+		}
+		if (tid >= 0) {
+			superCols[0].colspan -= 1;
 		}
 	}
 
@@ -111,20 +114,7 @@ const LeagueStats = ({
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
-				<a href={helpers.leagueUrl(["team_records"])}>Team Records</a> |{" "}
-				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>
-				{process.env.SPORT === "basketball" ? (
-					<>
-						{" "}
-						|{" "}
-						<a href={helpers.leagueUrl(["all_star_history"])}>
-							All-Star History
-						</a>
-					</>
-				) : null}
-			</p>
+			<MoreLinks type="league" page="league_stats" />
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}

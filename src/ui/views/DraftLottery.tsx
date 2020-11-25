@@ -2,7 +2,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import React, { useEffect, useReducer, useRef } from "react";
-import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
+import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import type {
@@ -11,7 +11,7 @@ import type {
 	DraftType,
 } from "../../common/types";
 
-const draftTypeDescriptions: Record<DraftType, string> = {
+const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
 	nba2019: "Weighted lottery for the top 4 picks, like the NBA from 2019+",
 	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
 	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
@@ -28,6 +28,7 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 	random: "Teams draft in random order, including playoff teams",
 	freeAgents:
 		"There is no draft and all, rookies simply become free agents who can be signed by any team",
+	dummy: "From historical data",
 };
 
 const getProbs = (
@@ -355,7 +356,8 @@ const DraftLotteryTable = (props: Props) => {
 		draftType !== "random" &&
 		draftType !== "noLottery" &&
 		draftType !== "noLotteryReverse" &&
-		draftType !== "freeAgents"
+		draftType !== "freeAgents" &&
+		draftType !== "dummy"
 			? getProbs(result, draftType)
 			: undefined;
 	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
@@ -558,14 +560,12 @@ const DraftLottery = (props: Props) => {
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
-				|{" "}
-				<a href={helpers.leagueUrl(["draft_history", props.season])}>
-					Draft History
-				</a>{" "}
-				| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-			</p>
+			<MoreLinks
+				type="draft"
+				page="draft_lottery"
+				draftType="nba1994"
+				season={props.season}
+			/>
 
 			{props.type === "projected" ? (
 				<p>

@@ -229,12 +229,46 @@ const roundStat = (
 	}
 };
 
+const yearRanges = (arr: number[]): string[] => {
+	if (arr.length <= 1) {
+		return arr.map(String);
+	}
+
+	const runArr: string[] = [];
+	const tempArr = [[arr[0]]];
+
+	for (let i = 1; i < arr.length; i++) {
+		if (arr[i] - arr[i - 1] > 1) {
+			tempArr.push([]);
+		}
+
+		tempArr[tempArr.length - 1].push(arr[i]);
+	}
+
+	for (let i = 0; i < tempArr.length; i++) {
+		// runs of up to 2 consecutive years are displayed individually
+		if (tempArr[i].length <= 2) {
+			runArr.push(String(tempArr[i][0]));
+
+			if (tempArr[i].length === 2) {
+				runArr.push(String(tempArr[i][1]));
+			}
+		} else {
+			// runs of 3 or more are displayed as a range
+			runArr.push(`${tempArr[i][0]}-${tempArr[i][tempArr[i].length - 1]}`);
+		}
+	}
+
+	return runArr;
+};
+
 const helpers = {
 	...commonHelpers,
 	colorRating,
 	leagueUrl,
 	plusMinus,
 	roundStat,
+	yearRanges,
 };
 
 export default helpers;

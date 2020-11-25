@@ -77,7 +77,7 @@ const findStatSum = (
 			process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
 
 		// Only after trade
-		if (i >= index) {
+		if (i > index || (i === index && phase <= PHASE.PLAYOFFS)) {
 			statSum += stat;
 		}
 

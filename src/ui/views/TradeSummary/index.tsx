@@ -8,6 +8,7 @@ import Charts from "./Charts";
 import PickText from "./PickText";
 
 const TradeSummary = ({
+	challengeNoRatings,
 	phase,
 	season,
 	seasonsToPlot,
@@ -66,7 +67,10 @@ const TradeSummary = ({
 												)}{" "}
 												thru {asset.contract.exp}
 												<br />
-												{asset.ovr} ovr, {asset.pot} pot, {asset.age} years old
+												{!challengeNoRatings || asset.retiredYear !== Infinity
+													? `${asset.ovr} ovr, ${asset.pot} pot, `
+													: null}
+												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 											</div>
@@ -114,7 +118,10 @@ const TradeSummary = ({
 													via <PickText asset={asset} season={season} />
 												</span>
 												<br />
-												{asset.ovr} ovr, {asset.pot} pot, {asset.age} years old
+												{!challengeNoRatings || asset.retiredYear !== Infinity
+													? `${asset.ovr} ovr, ${asset.pot} pot, `
+													: null}
+												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
 											</div>

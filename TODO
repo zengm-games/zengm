@@ -1,10 +1,12 @@
-FBGM ovrs
+draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 trade summary page - WS register for the whole season if traded during draft https://discord.com/channels/290013534023057409/290015591216054273/780627225262555136
 
 shot location table does not understand that the # Teams column doesnt exist anymore when you switch to a specific team on league stats https://discord.com/channels/290013534023057409/290015591216054273/780522928697114665
 
 Drafting a player, then releasing them, makes them disappear from the Draft History list https://discord.com/channels/290013534023057409/290015591216054273/780573199297019936
+
+FBGM ovrs
 
 FBGM too many very short players
 
@@ -38,6 +40,7 @@ show ovr when live editing a player's ratings
 - use worker, don't include code in both
 
 more variation in pace plz @nicidob
+- https://discord.com/channels/290013534023057409/290015468939640832/780515737139150890
 
 how to stop 2p from beign a negative rating
 - @nicidob says: basic summary: it's used only in "usage", but it's a small part of that, and "shoot midrange". Well... shoot midrange is like 0.8 to 0.9 PPS, while Dunks and 3s are 1.2 and 1.1 PPS. Sure, actual ratings shift the %s, but i'm not sure how extreme it'd have to get before your MR PPS isn't the "worst possible shot". So the 2p setting basically is "how likely are you to take the worst possible shot". My idea is to make the mid-range more of a "leftover"... if your 3p or dunk or LP isn't high enough, it gets picked. then higher 2p is just higher MR accuracy and its negative effect is gone. Then you can era-adjust the default

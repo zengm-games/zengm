@@ -197,6 +197,7 @@ const frivolitiesTrades = async (
 
 		return {
 			abbrev,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			title,
 			trades,

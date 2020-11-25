@@ -9,6 +9,7 @@ import PickText from "./TradeSummary/PickText";
 
 const PlayerInfo = ({
 	asset,
+	challengeNoRatings,
 }: {
 	asset: {
 		age: number;
@@ -17,7 +18,9 @@ const PlayerInfo = ({
 		pid: number;
 		pos: string;
 		pot: number;
+		retiredYear: number;
 	};
+	challengeNoRatings: boolean;
 }) => {
 	return (
 		<>
@@ -25,13 +28,17 @@ const PlayerInfo = ({
 				{asset.pos}
 			</span>
 			<a href={helpers.leagueUrl(["player", asset.pid])}>{asset.name}</a> (
-			{asset.ovr}/{asset.pot}, {asset.age} yo)
+			{!challengeNoRatings || asset.retiredYear !== Infinity
+				? `${asset.ovr}/${asset.pot}, `
+				: null}
+			{asset.age} yo)
 		</>
 	);
 };
 
 const FrivolitiesTrades = ({
 	abbrev,
+	challengeNoRatings,
 	description,
 	title,
 	trades,
@@ -102,7 +109,10 @@ const FrivolitiesTrades = ({
 								if (asset.type === "player") {
 									return (
 										<li key={i}>
-											<PlayerInfo asset={asset} />
+											<PlayerInfo
+												asset={asset}
+												challengeNoRatings={challengeNoRatings}
+											/>
 										</li>
 									);
 								}
@@ -120,7 +130,10 @@ const FrivolitiesTrades = ({
 								if (asset.type === "realizedPick") {
 									return (
 										<li key={i}>
-											<PlayerInfo asset={asset} />
+											<PlayerInfo
+												asset={asset}
+												challengeNoRatings={challengeNoRatings}
+											/>
 											<br />
 											<span className="text-muted" style={{ paddingLeft: 24 }}>
 												via <PickText asset={asset} season={trade.season} />

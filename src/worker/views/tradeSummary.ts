@@ -123,6 +123,7 @@ const getActualPlayerInfo = (
 		pos: ratings.pos,
 		ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
 		pot: player.fuzzRating(ratings.pot, ratings.fuzz),
+		retiredYear: p.retiredYear,
 		skills: ratings.skills,
 		stat,
 		watch: p.watch,
@@ -212,6 +213,7 @@ type CommonActualPlayer = {
 	pos: string;
 	ovr: number;
 	pot: number;
+	retiredYear: number;
 	skills: string[];
 	watch: boolean;
 	stat: number;
@@ -405,6 +407,7 @@ const updateTradeSummary = async (
 		);
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			eid,
 			teams,
 			season: event.season,

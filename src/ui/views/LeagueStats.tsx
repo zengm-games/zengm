@@ -28,7 +28,7 @@ const LeagueStats = ({
 	});
 
 	const basicColNames =
-		abbrev === "all"
+		tid < 0
 			? ["Season", "# Teams", "stat:gp", "W", "L"]
 			: ["Season", "stat:gp", "W", "L"];
 	if (ties) {
@@ -39,6 +39,9 @@ const LeagueStats = ({
 		superCols[0].colspan += 1;
 		if (ties) {
 			superCols[0].colspan += 1;
+		}
+		if (tid >= 0) {
+			superCols[0].colspan -= 1;
 		}
 	}
 

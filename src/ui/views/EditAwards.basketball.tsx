@@ -1,15 +1,8 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
-import Select from "react-select";
-import {
-	localActions,
-	logEvent,
-	toWorker,
-	helpers,
-	realtimeUpdate,
-} from "../util";
+import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectReact from "../components/SelectMultiple";
 const EditAwardsBasketball = ({
 	godMode,
@@ -32,7 +25,6 @@ const EditAwardsBasketball = ({
 
 	const handleChange = (obj: any, pl: any) => {
 		let error: boolean = false;
-		let returnedPlayer: any;
 		const p: any = pl;
 		const type = obj.props.award;
 		const numberTeam = obj.props.teamNumber;
@@ -180,7 +172,7 @@ const EditAwardsBasketball = ({
 		}));
 
 		try {
-			const aws = await toWorker("main", "upsertAwards", state, awardsInitial);
+			await toWorker("main", "upsertAwards", state, awardsInitial);
 			realtimeUpdate([], helpers.leagueUrl(["history"]));
 		} catch (error) {
 			logEvent({
@@ -331,7 +323,7 @@ const EditAwardsBasketball = ({
 			</form>
 		);
 	} else {
-		return <div>Awards from thsis season do not exist</div>;
+		return <div>Awards from this season do not exist</div>;
 	}
 };
 export default EditAwardsBasketball;

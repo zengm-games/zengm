@@ -2,8 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
-import Select from "react-select";
-import { localActions, logEvent, toWorker, helpers } from "../util";
+import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectReact from "../components/SelectMultiple";
 const EditAwardsFootball = ({
 	godMode,
@@ -42,6 +41,9 @@ const EditAwardsFootball = ({
 		}
 		setState(prevState => {
 			const aws: any = prevState.aws;
+			if (p.currentStats == undefined) {
+				p.currentStats = { keyStats: "No stats available" };
+			}
 			if (
 				type == "finalsMvp" ||
 				type == "mvp" ||
@@ -129,7 +131,8 @@ const EditAwardsFootball = ({
 		}));
 
 		try {
-			const aws = await toWorker("main", "upsertAwards", state, awardsInitial);
+			await toWorker("main", "upsertAwards", state, awardsInitial);
+			realtimeUpdate([], helpers.leagueUrl(["history"]));
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -243,7 +246,7 @@ const EditAwardsFootball = ({
 			</form>
 		);
 	} else {
-		return <div>Awards from thsis season do not exist</div>;
+		return <div>Awards from this season do not exist</div>;
 	}
 };
 export default EditAwardsFootball;

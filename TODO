@@ -1,3 +1,8 @@
+mobile UI overflow https://old.reddit.com/r/BasketballGM/comments/k1clfg/user_interface/
+- Player Stats page, but only on short screens like Moto G4
+
+dashboard starting lineup should depend on roster size https://discord.com/channels/290013534023057409/331882115119448065/781556946267668480
+
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 FBGM ovrs
@@ -235,6 +240,7 @@ option to disable unimportant notifications
 frivolities
 - add WS/player for colleges/countries
 - players
+  - oldest peak age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career

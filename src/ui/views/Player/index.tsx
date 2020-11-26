@@ -484,7 +484,8 @@ const Player2 = ({
 									</>
 								) : (
 									<>
-										Died: {player.diedYear}
+										Died: {player.diedYear} (
+										{player.diedYear - player.born.year} years old)
 										<br />
 									</>
 								)}

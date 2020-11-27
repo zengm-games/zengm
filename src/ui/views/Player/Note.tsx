@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import type { Player } from "../../../common/types";
 import { toWorker } from "../../util";
 
+const MAX_WIDTH = 600;
+
 const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 	const [editing, setEditing] = useState(false);
 	const [editedNote, setEditedNote] = useState(note ?? "");
@@ -22,7 +24,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 					onChange={event => {
 						setEditedNote(event.target.value);
 					}}
-					style={{ maxWidth: 600 }}
+					style={{ maxWidth: MAX_WIDTH }}
 					value={editedNote}
 				/>
 
@@ -60,7 +62,10 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 
 	return (
 		<>
-			<div className="mt-3" style={{ whiteSpace: "pre-line" }}>
+			<div
+				className="mt-3 overflow-auto"
+				style={{ whiteSpace: "pre-line", maxHeight: 300, maxWidth: MAX_WIDTH }}
+			>
 				{note}
 			</div>
 			<button

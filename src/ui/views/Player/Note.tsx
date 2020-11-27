@@ -18,7 +18,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 			>
 				<textarea
 					className="form-control"
-					rows={7}
+					rows={5}
 					onChange={event => {
 						setEditedNote(event.target.value);
 					}}

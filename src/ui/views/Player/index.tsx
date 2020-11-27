@@ -503,6 +503,13 @@ const Player2 = ({
 									{college}
 								</a>
 								<br />
+								Experience:{" "}
+								{player.experience === 0
+									? "none"
+									: `${player.experience} year${
+											player.experience > 1 ? "s" : ""
+									  }`}
+								<br />
 								{contractInfo}
 								{statusInfo}
 							</div>

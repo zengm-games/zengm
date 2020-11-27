@@ -133,6 +133,7 @@ const updatePlayer = async (
 					careerStats: Stats;
 					careerStatsPlayoffs: Stats;
 					jerseyNumber?: string;
+					experience: number;
 			  })
 			| undefined = await idb.getCopy.playersPlus(pRaw, {
 			attrs: [
@@ -160,6 +161,7 @@ const updatePlayer = async (
 				"relatives",
 				"untradable",
 				"jerseyNumber",
+				"experience",
 			],
 			ratings: [
 				"season",

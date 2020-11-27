@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-11-27: Added a "player note" that you can write on player profile pages, if you want to remind yourself of anything about a player in the future. [[1]](https://old.reddit.com/r/BasketballGM/comments/k293hf/added_a_player_note_that_you_can_write_on_player/)
+
 * 2020-11-19: New setting "AI Teams Retire Jersey Numbers" to control whether AI teams should automatically retire/unretire jersey numbers.
 
 * 2020-11-19: Two new trade frivolities: Biggest Trades (trades involving the best players and prospects) and Most Lopsided Trades (trades where one team's assets produced a lot more value than the other). [[1]](https://basketball-gm.com/blog/2020/11/trade-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jxfy8b/two_new_trade_frivolities_biggest_trades_trades/)

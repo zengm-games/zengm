@@ -23,9 +23,8 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 						setEditedNote(event.target.value);
 					}}
 					style={{ maxWidth: 600 }}
-				>
-					{editedNote}
-				</textarea>
+					value={editedNote}
+				/>
 
 				<div className="btn-group mt-2">
 					<button type="submit" className="btn btn-primary btn-sm">

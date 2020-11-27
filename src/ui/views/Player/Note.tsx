@@ -9,7 +9,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 	if (editing) {
 		return (
 			<form
-				className="mt-2"
+				className="mt-3"
 				onSubmit={async event => {
 					event.preventDefault();
 					await toWorker("main", "setPlayerNote", pid, editedNote);
@@ -60,7 +60,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 
 	return (
 		<>
-			<div className="mt-2" style={{ whiteSpace: "pre-line" }}>
+			<div className="mt-3" style={{ whiteSpace: "pre-line" }}>
 				{note}
 			</div>
 			<button

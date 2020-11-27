@@ -270,10 +270,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
 		}
 
-		const starters = userPlayers.slice(0, 5);
+		const numPlayersOnCourt = g.get("numPlayersOnCourt");
+
+		const starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders,
+			numPlayersOnCourt,
 			teamLeaders,
 			starters,
 			startersStats,

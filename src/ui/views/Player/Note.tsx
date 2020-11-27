@@ -27,7 +27,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 					{editedNote}
 				</textarea>
 
-				<div className="btn-group mt-1">
+				<div className="btn-group mt-2">
 					<button type="submit" className="btn btn-primary btn-sm">
 						Save
 					</button>

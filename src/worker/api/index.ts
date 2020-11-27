@@ -2122,7 +2122,9 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 };
 
 const setPlayerNote = async (pid: number, note: string) => {
-	const p = await idb.cache.players.get(pid);
+	const p = await idb.getCopy.players({
+		pid,
+	});
 
 	if (p) {
 		p.note = note;

@@ -890,6 +890,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	jerseyNumber?: string;
 	lastName: string;
 	moodTraits: MoodTrait[];
+	note?: string;
 	numDaysFreeAgent: number;
 	pid?: number;
 	pos?: string; // Only in players from custom league files

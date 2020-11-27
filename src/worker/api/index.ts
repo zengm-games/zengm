@@ -2121,6 +2121,19 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	}
 };
 
+const setPlayerNote = async (pid: number, note: string) => {
+	const p = await idb.cache.players.get(pid);
+
+	if (p) {
+		p.note = note;
+		await idb.cache.players.put(p);
+	} else {
+		throw new Error("Invalid pid");
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const sign = async (
 	pid: number,
 	amount: number,
@@ -2952,6 +2965,7 @@ export default {
 	setForceWin,
 	setForceWinAll,
 	setLocal,
+	setPlayerNote,
 	sign,
 	updateExpansionDraftSetup,
 	advanceToPlayerProtection,

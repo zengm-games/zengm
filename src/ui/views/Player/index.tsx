@@ -28,6 +28,7 @@ import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
 import SeasonIcons from "./SeasonIcons";
+import Note from "./Note";
 
 const Relatives = ({
 	pid,
@@ -635,6 +636,8 @@ const Player2 = ({
 				</div>
 
 				<AwardsSummary awards={player.awards} />
+
+				<Note note={player.note} pid={player.pid} />
 			</div>
 
 			{player.careerStats.gp > 0 ? (

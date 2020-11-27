@@ -47,8 +47,8 @@ const noGamesMessage = (
 	<p className="alert alert-info" style={{ maxWidth: 550 }}>
 		No games found for this season. By default, box scores from old seasons are
 		automatically deleted after 3 years.{" "}
-		<a href={helpers.leagueUrl(["options"])}>
-			You can change this behavior on the Options page.
+		<a href={helpers.leagueUrl(["settings"])}>
+			You can change this behavior on the League Settings page.
 		</a>
 	</p>
 );

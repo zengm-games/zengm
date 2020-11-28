@@ -361,7 +361,13 @@ const Player2 = ({
 	}
 
 	let statusInfo: ReactNode = null;
-	if (!retired) {
+	if (retired) {
+		statusInfo = (
+			<div className="d-flex align-items-center">
+				<WatchBlock className="ml-0" pid={player.pid} watch={player.watch} />
+			</div>
+		);
+	} else {
 		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 		statusInfo = (
 			<div className="d-flex align-items-center">

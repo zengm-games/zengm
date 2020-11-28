@@ -51,6 +51,7 @@ const updatePlayers = async (
 				"contract",
 				"draft",
 				"jerseyNumber",
+				"note",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,

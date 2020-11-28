@@ -39,6 +39,7 @@ const WatchList = ({
 		"Contract",
 		"Exp",
 		...stats.map(stat => `stat:${stat}`),
+		"Note",
 	);
 
 	const rows = players.map(p => {
@@ -80,6 +81,22 @@ const WatchList = ({
 				...stats.map(stat =>
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),
 				),
+				{
+					value: (
+						<div
+							className="overflow-auto"
+							style={{
+								maxHeight: 300,
+								maxWidth: 300,
+								whiteSpace: "pre-line",
+							}}
+						>
+							{p.note}
+						</div>
+					),
+					searchValue: p.note,
+					sortValue: p.note,
+				},
 			],
 		};
 	});

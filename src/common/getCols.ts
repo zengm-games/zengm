@@ -1441,6 +1441,7 @@ const cols: {
 	Negotiate: {
 		sortSequence: [],
 	},
+	Note: {},
 	Opp: {
 		desc: "Opponent",
 	},

@@ -14,8 +14,10 @@ const updatePlayers = async (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
 		inputs.statType !== state.statType ||
-		inputs.playoffs !== state.playoffs
+		inputs.playoffs !== state.playoffs ||
+		inputs.flagNote !== state.flagNote
 	) {
+		console.log("inputs.flagNote", inputs.flagNote);
 		const stats =
 			process.env.SPORT === "basketball"
 				? [
@@ -36,7 +38,22 @@ const updatePlayers = async (
 				: ["gp", "keyStats", "av"];
 		const playersAll = await idb.getCopies.players({
 			// In Firefox, objects have a "watch" function
-			filter: p => p.watch && typeof p.watch !== "function",
+			filter: p => {
+				if (inputs.flagNote === "flag" || inputs.flagNote === "either") {
+					const watch = p.watch && typeof p.watch !== "function";
+					if (watch) {
+						return true;
+					}
+				}
+
+				if (inputs.flagNote === "note" || inputs.flagNote === "either") {
+					if (p.note !== undefined && p.note !== "") {
+						return true;
+					}
+				}
+
+				return false;
+			},
 		});
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
@@ -79,6 +96,7 @@ const updatePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			flagNote: inputs.flagNote,
 			players,
 			playoffs: inputs.playoffs,
 			statType: inputs.statType,

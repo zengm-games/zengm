@@ -131,6 +131,7 @@ const routes = () => {
 		"/l/:lid/watch_list": genPage("watchList"),
 		"/l/:lid/watch_list/:statType": genPage("watchList"),
 		"/l/:lid/watch_list/:statType/:playoffs": genPage("watchList"),
+		"/l/:lid/watch_list/:statType/:playoffs/:flagNote": genPage("watchList"),
 		"/l/:lid/customize_player": genPage("customizePlayer"),
 		"/l/:lid/customize_player/:pid": genPage("customizePlayer"),
 		"/l/:lid/customize_player/:pid/:type": genPage("customizePlayer"),

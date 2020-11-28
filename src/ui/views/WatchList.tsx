@@ -9,6 +9,7 @@ import type { View } from "../../common/types";
 
 const WatchList = ({
 	challengeNoRatings,
+	flagNote,
 	players,
 	playoffs,
 	statType,
@@ -25,7 +26,7 @@ const WatchList = ({
 	useTitleBar({
 		title: "Watch List",
 		dropdownView: "watch_list",
-		dropdownFields: { statTypes: statType, playoffs },
+		dropdownFields: { statTypes: statType, playoffs, flagNote },
 	});
 
 	const cols = getCols(
@@ -41,6 +42,7 @@ const WatchList = ({
 		...stats.map(stat => `stat:${stat}`),
 		"Note",
 	);
+	cols[cols.length - 1].width = "1%";
 
 	const rows = players.map(p => {
 		let contract;
@@ -128,6 +130,7 @@ const WatchList = ({
 				On other pages, you can find the watch icon by clicking the info button{" "}
 				<span className="glyphicon glyphicon-stats" /> next to a player's name.
 			</p>
+			<p>You can edit a player's note near the top of his profile page.</p>
 
 			<button
 				className="btn btn-danger mb-3"

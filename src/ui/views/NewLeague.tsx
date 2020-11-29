@@ -1472,6 +1472,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									onLoading={value => {
 										const season = parseInt(value);
 										dispatch({ type: "setSeason", season });
+										dispatch({ type: "setPhase", phase: PHASE.PRESEASON });
 									}}
 									onDone={handleNewLeagueInfo}
 									quickValues={["1956", "1968", "1984", "1996", "2003", "2021"]}

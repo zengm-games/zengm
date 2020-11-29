@@ -1,3 +1,7 @@
+fix width of note column on watch list https://discord.com/channels/290013534023057409/331882115119448065/782413150971494420
+
+add experience column to player bios https://discord.com/channels/290013534023057409/331882115119448065/782347257097486336
+
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 FBGM ovrs
@@ -22,11 +26,6 @@ trade summary charts future
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5
-
-team context on trade summary page
-- graph of team winning percentage over time, -2 to 5 years relative to the trade
-- on hover/click, show W-L record and playoff result
-- special icon for playoffs, finals, championship
 
 show ovr when live editing a player's ratings
 - use worker, don't include code in both

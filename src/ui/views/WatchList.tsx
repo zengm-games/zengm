@@ -42,7 +42,7 @@ const WatchList = ({
 		...stats.map(stat => `stat:${stat}`),
 		"Note",
 	);
-	cols[cols.length - 1].width = "1%";
+	cols[cols.length - 1].width = "100%";
 
 	const rows = players.map(p => {
 		let contract;
@@ -89,7 +89,6 @@ const WatchList = ({
 							className="overflow-auto"
 							style={{
 								maxHeight: 300,
-								maxWidth: 300,
 								whiteSpace: "pre-line",
 							}}
 						>

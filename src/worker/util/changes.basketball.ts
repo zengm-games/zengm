@@ -358,7 +358,7 @@ const changes = [
 	{
 		date: "2020-11-28",
 		msg:
-			"An early version of the 2021 real players rosters are available for new leagues.",
+			"An early version of the 2021 rosters is available when creating a new real players league.",
 	},
 ];
 

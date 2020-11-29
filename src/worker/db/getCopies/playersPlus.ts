@@ -217,9 +217,9 @@ const processAttrs = (
 			}
 		} else if (attr === "experience") {
 			const seasons = new Set();
-			for (const { min, season } of p.stats) {
-				if (min > 0) {
-					seasons.add(season);
+			for (const row of p.stats) {
+				if (row.min > 0 && (season === undefined || row.season <= season)) {
+					seasons.add(row.season);
 				}
 			}
 			output.experience = seasons.size;

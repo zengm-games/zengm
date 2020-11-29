@@ -1364,6 +1364,11 @@ const cols: {
 		sortSequence: ["asc", "desc"],
 		sortType: "number",
 	},
+	Experience: {
+		desc: "Number of Years in the League",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Finals: {
 		desc: "Finals Appearances",
 		sortSequence: ["desc", "asc"],

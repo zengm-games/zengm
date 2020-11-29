@@ -24,7 +24,7 @@ const updatePlayers = async (
 		const players = await getPlayers(
 			inputs.season,
 			inputs.abbrev,
-			["born", "college", "hgt", "weight", "draft"],
+			["born", "college", "hgt", "weight", "draft", "experience"],
 			["ovr", "pot"],
 			[...stats, "jerseyNumber"],
 			inputs.tid,

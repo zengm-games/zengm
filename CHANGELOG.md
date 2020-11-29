@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-11-27: Added a "player note" that you can write on player profile pages, if you want to remind yourself of anything about a player in the future. They area also viewable on the Watch List page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k293hf/added_a_player_note_that_you_can_write_on_player/) [[2]]()
+* **2020-11-28: An early version of the 2021 real players rosters are available for new leagues. Also, you can start a 2020 league after the draft if you want to re-play free agency. [[1]]()**
+
+* 2020-11-27: Added a "player note" that you can write on player profile pages, if you want to remind yourself of anything about a player in the future. They area also viewable on the Watch List page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k293hf/added_a_player_note_that_you_can_write_on_player/) [[2]](https://old.reddit.com/r/BasketballGM/comments/k2t8rh/minor_addition_to_yesterdays_player_notes_update/)
 
 * 2020-11-19: New setting "AI Teams Retire Jersey Numbers" to control whether AI teams should automatically retire/unretire jersey numbers.
 

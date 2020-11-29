@@ -210,7 +210,7 @@ const LeaguePartPicker = ({
 const quickValuesStyle = { height: 19 };
 
 const MIN_SEASON = 1947;
-const MAX_SEASON = 2020;
+const MAX_SEASON = 2021;
 
 const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
@@ -820,11 +820,11 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			let season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
 			if (Number.isNaN(season)) {
-				season = 2020;
+				season = 2021;
 			}
 			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
 			if (Number.isNaN(phase)) {
-				phase = season === 2020 ? PHASE.DRAFT : PHASE.PRESEASON;
+				phase = PHASE.PRESEASON;
 			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
@@ -1406,8 +1406,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
 	}
-	if (state.season === 2020 && state.phase > PHASE.DRAFT) {
-		invalidSeasonPhaseMessage = "Sorry, this is not ready yet.";
+	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
+		invalidSeasonPhaseMessage =
+			"Sorry, I'm not allowed to share the results of the 2021 season yet.";
 	}
 
 	return (
@@ -1473,7 +1474,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										dispatch({ type: "setSeason", season });
 									}}
 									onDone={handleNewLeagueInfo}
-									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+									quickValues={["1956", "1968", "1984", "1996", "2003", "2021"]}
 									value2={state.phase}
 									values2={phases}
 									onNewValue2={phase => {

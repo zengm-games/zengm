@@ -36,6 +36,7 @@ const updateDraftTeamHistory = async (
 			"hof",
 			"watch",
 			"jerseyNumber",
+			"awards",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
@@ -56,6 +57,7 @@ const updateDraftTeamHistory = async (
 			hof: p.hof,
 			watch: p.watch,
 			jerseyNumber: p.jerseyNumber,
+			awards: p.awards,
 
 			// Ratings
 			currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,

@@ -11,6 +11,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+import SeasonIcons from "./Player/SeasonIcons";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -77,14 +78,26 @@ const DraftTeamHistory = ({
 					{p.draft.year}
 				</a>,
 				`${p.draft.round}-${p.draft.pick}`,
-				<PlayerNameLabels
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.currentSkills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<>
+							<PlayerNameLabels
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								skills={p.currentSkills}
+								watch={p.watch}
+							>
+								{p.name}
+							</PlayerNameLabels>
+							<div className="float-right">
+								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ml-1" awards={p.awards} />
+							</div>
+						</>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				p.pos,
 				{
 					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${

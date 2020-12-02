@@ -11,6 +11,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+import SeasonIcons from "./Player/SeasonIcons";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -100,9 +101,25 @@ const DraftSummary = ({
 			key: p.pid,
 			data: [
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
-				<PlayerNameLabels pid={p.pid} skills={p.currentSkills} watch={p.watch}>
-					{p.name}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<>
+							<PlayerNameLabels
+								pid={p.pid}
+								skills={p.currentSkills}
+								watch={p.watch}
+							>
+								{p.name}
+							</PlayerNameLabels>
+							<div className="float-right">
+								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ml-1" awards={p.awards} />
+							</div>
+						</>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				p.pos,
 				{
 					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${

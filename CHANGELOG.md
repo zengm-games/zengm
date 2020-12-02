@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Icons for All-Stars, MVPs, and championships are shown on the Draft History and Draft Team History pages. [[1]]()
+
 * **2020-11-28: An early version of the 2021 rosters is available when creating a new real players league. Also, you can start a 2020 league after the draft if you want to re-play free agency. [[1]](https://old.reddit.com/r/BasketballGM/comments/k30nhc/an_early_version_of_the_2021_rosters_is_available/)**
 
 * 2020-11-27: Added a "player note" that you can write on player profile pages, if you want to remind yourself of anything about a player in the future. They are also viewable on the Watch List page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k293hf/added_a_player_note_that_you_can_write_on_player/) [[2]](https://old.reddit.com/r/BasketballGM/comments/k2t8rh/minor_addition_to_yesterdays_player_notes_update/)

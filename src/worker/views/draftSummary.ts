@@ -27,7 +27,17 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 		return p.draft.year === inputs.season;
 	});
 	playersAll = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof", "watch"],
+		attrs: [
+			"tid",
+			"abbrev",
+			"draft",
+			"pid",
+			"name",
+			"age",
+			"hof",
+			"watch",
+			"awards",
+		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
 		showNoStats: true,
@@ -50,6 +60,7 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 				currentTid: p.tid,
 				hof: p.hof,
 				watch: p.watch,
+				awards: p.awards,
 
 				// Ratings
 				currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,

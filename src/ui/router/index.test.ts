@@ -72,7 +72,7 @@ it("navigates without creating a history entry", async () => {
 });
 
 it("fires routematched event", () => {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<void>(async (resolve, reject) => {
 		const countBefore = counts["/2"];
 		const callback = (arg: any) => {
 			try {
@@ -98,7 +98,7 @@ it("fires routematched event", () => {
 });
 
 it("fires navigationend event", () => {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<void>(async (resolve, reject) => {
 		const countBefore = counts["/3/:foo"];
 		const callback = (arg: any) => {
 			try {
@@ -126,7 +126,7 @@ it("fires navigationend event", () => {
 });
 
 it("fires navigationend event with 404 error", () => {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<void>(async (resolve, reject) => {
 		const callback = (arg: any) => {
 			try {
 				assert.strictEqual(arg.error.message, "Matching route not found");
@@ -143,7 +143,7 @@ it("fires navigationend event with 404 error", () => {
 });
 
 it("fires navigationend event with runtime error", () => {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<void>(async (resolve, reject) => {
 		const countBefore = counts["/error"];
 		const callback = (arg: any) => {
 			try {

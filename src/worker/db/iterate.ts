@@ -30,7 +30,7 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 	// @ts-ignore
 	const unwrapped: IDBObjectStore | IDBIndex = unwrap(store);
 
-	return new Promise((resolve, reject) => {
+	return new Promise<void>((resolve, reject) => {
 		const request = unwrapped.openCursor(key, direction);
 
 		request.onsuccess = (event: any) => {

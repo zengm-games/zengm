@@ -17,7 +17,6 @@ const updatePlayers = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.flagNote !== state.flagNote
 	) {
-		console.log("inputs.flagNote", inputs.flagNote);
 		const stats =
 			process.env.SPORT === "basketball"
 				? [

@@ -1,5 +1,6 @@
 @babel/runtime error
 - https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
+- caused by rollup upgrade?
 
 typescript 4.1 stuff
 

@@ -43,8 +43,12 @@ const DraftTeamHistory = ({
 			colspan: 5,
 		},
 		{
+			title: "Peak",
+			colspan: 4,
+		},
+		{
 			title: "Career Stats",
-			colspan: 7,
+			colspan: stats.length,
 		},
 	];
 
@@ -59,6 +63,10 @@ const DraftTeamHistory = ({
 		"Pot",
 		"Skills",
 		"Team",
+		"Age",
+		"Ovr",
+		"Pot",
+		"Skills",
 		"Age",
 		"Ovr",
 		"Pot",
@@ -131,6 +139,12 @@ const DraftTeamHistory = ({
 				showRatings ? p.currentPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.currentSkills} />
+				</span>,
+				p.peakAge,
+				showRatings ? p.peakOvr : null,
+				showRatings ? p.peakPot : null,
+				<span className="skills-alone">
+					<SkillsBlock skills={p.peakSkills} />
 				</span>,
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 			],

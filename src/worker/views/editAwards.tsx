@@ -1,9 +1,12 @@
-import { PLAYER } from "../../common";
-import type { ViewInput } from "../../common/types";
+import { PHASE, PLAYER } from "../../common";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
 
-const updateAwards = async (inputs: ViewInput<"editAwards">) => {
+const updateAwards = async (
+	inputs: ViewInput<"editAwards">,
+	updateEvents: UpdateEvents,
+) => {
 	if (!g.get("godMode")) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
@@ -11,11 +14,19 @@ const updateAwards = async (inputs: ViewInput<"editAwards">) => {
 		};
 		return returnValue;
 	}
-	const season = inputs.season;
-	const awards = await idb.getCopy.awards({
+	let season = inputs.season;
+	let awards = await idb.getCopy.awards({
 		season,
 	});
-
+	if (!awards) {
+		if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+			season -= 1;
+			awards = await idb.getCopy.awards({
+				season,
+			});
+		}
+		inputs.season = season;
+	}
 	let playersAll;
 	if (g.get("season") === season) {
 		playersAll = await idb.cache.players.getAll();

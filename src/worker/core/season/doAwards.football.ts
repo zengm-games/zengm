@@ -3,8 +3,8 @@ import {
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
-	saveAwardsByPlayer,
 	teamAwards,
+	makeAwardsByPlayer,
 	AwardsByPlayer,
 } from "./awards";
 import { idb } from "../../db";
@@ -349,74 +349,7 @@ const doAwards = async (conditions: Conditions) => {
 		allRookie,
 		season: g.get("season"),
 	};
-	const awardNames = {
-		mvp: "Most Valuable Player",
-		dpoy: "Defensive Player of the Year",
-		oroy: "Offensive Rookie of the Year",
-		droy: "Defensive Rookie of the Year",
-		finalsMvp: "Finals MVP",
-		allLeague: "All-League",
-		allRookie: "All-Rookie Team",
-	};
-	const simpleAwards = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
-
-	for (const key of simpleAwards) {
-		const type = awardNames[key];
-		const award = awards[key];
-
-		if (award === undefined) {
-			// e.g. MIP in first season
-			continue;
-		}
-
-		const { pid, tid, name } = award;
-		awardsByPlayer.push({
-			pid,
-			tid,
-			name,
-			type,
-		});
-	}
-
-	// Special cases for teams
-	for (const key of ["allRookie", "allLeague"] as const) {
-		const type = awardNames[key];
-
-		if (key === "allRookie") {
-			for (const award of awards.allRookie) {
-				if (award === undefined) {
-					continue;
-				}
-
-				const { pid, tid, name } = award;
-				awardsByPlayer.push({
-					pid,
-					tid,
-					name,
-					type,
-				});
-			}
-		} else {
-			for (const level of awards[key]) {
-				for (const award of level.players) {
-					if (award === undefined) {
-						continue;
-					}
-
-					const { pid, tid, name } = award;
-					awardsByPlayer.push({
-						pid,
-						tid,
-						name,
-						type: `${level.title} ${type}`,
-					});
-				}
-			}
-		}
-	}
-
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions);
+	makeAwardsByPlayer(awards, conditions);
 };
 
 export default doAwards;

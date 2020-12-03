@@ -5,9 +5,10 @@ import {
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
-	saveAwardsByPlayer,
+	makeAwardsByPlayer,
 	teamAwards,
 } from "./awards";
+
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
@@ -257,27 +258,6 @@ export const mipFilter = (p: PlayerFiltered) => {
 	return true;
 };
 
-const awardNames = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	smoy: "Sixth Man of the Year",
-	dpoy: "Defensive Player of the Year",
-	mip: "Most Improved Player",
-	finalsMvp: "Finals MVP",
-	allLeague: "All-League",
-	allDefensive: "All-Defensive",
-	allRookie: "All-Rookie Team",
-};
-
-const simpleAwards = [
-	"mvp",
-	"roy",
-	"smoy",
-	"dpoy",
-	"mip",
-	"finalsMvp",
-] as const;
-
 /**
  * Compute the awards (MVP, etc) after a season finishes.
  *
@@ -443,53 +423,7 @@ const doAwards = async (conditions: Conditions) => {
 		season: g.get("season"),
 	};
 
-	for (const key of simpleAwards) {
-		const type = awardNames[key];
-		const award = awards[key];
-
-		if (award === undefined) {
-			// e.g. MIP in first season
-			continue;
-		}
-
-		const { pid, tid, name } = award;
-		awardsByPlayer.push({
-			pid,
-			tid,
-			name,
-			type,
-		});
-	}
-
-	// Special cases for teams
-	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
-		const type = awardNames[key];
-
-		if (key === "allRookie") {
-			for (const { pid, tid, name } of awards.allRookie) {
-				awardsByPlayer.push({
-					pid,
-					tid,
-					name,
-					type,
-				});
-			}
-		} else {
-			for (const level of awards[key]) {
-				for (const { pid, tid, name } of level.players) {
-					awardsByPlayer.push({
-						pid,
-						tid,
-						name,
-						type: `${level.title} ${type}`,
-					});
-				}
-			}
-		}
-	}
-
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions);
+	makeAwardsByPlayer(awards, conditions);
 };
 
 export default doAwards;

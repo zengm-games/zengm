@@ -418,14 +418,34 @@ const RATINGS: RatingKey[] = [
 	"reb",
 ];
 const TIME_BETWEEN_GAMES = "day";
-
+const SIMPLE_AWARDS = [
+	"mvp",
+	"roy",
+	"smoy",
+	"dpoy",
+	"mip",
+	"finalsMvp",
+] as const;
+const AWARD_NAMES = {
+	mvp: "Most Valuable Player",
+	roy: "Rookie of the Year",
+	smoy: "Sixth Man of the Year",
+	dpoy: "Defensive Player of the Year",
+	mip: "Most Improved Player",
+	finalsMvp: "Finals MVP",
+	allLeague: "All-League",
+	allDefensive: "All-Defensive",
+	allRookie: "All-Rookie Team",
+} as const;
 export {
+	AWARD_NAMES,
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,
 	POSITIONS,
 	RATINGS,
+	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
 	TIME_BETWEEN_GAMES,
 };

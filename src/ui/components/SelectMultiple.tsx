@@ -14,7 +14,7 @@ class SelectReact extends React.Component<
 > {
 	constructor(props: any) {
 		super(props);
-
+		console.log("iyo2");
 		const options = props["options"];
 		const player = props["player"];
 		this.state = {

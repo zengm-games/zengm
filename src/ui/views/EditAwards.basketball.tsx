@@ -38,6 +38,7 @@ const EditAwardsBasketball = ({
 				};
 			});
 		}
+
 		setState(prevState => {
 			const aws: any = prevState.aws;
 			if (
@@ -49,16 +50,17 @@ const EditAwardsBasketball = ({
 			) {
 				if (p.pid == undefined) {
 					aws[type] = undefined;
+				} else {
+					aws[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
+						trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
+						ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
+					};
 				}
-				aws[type] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-					trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-					ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
-				};
 			} else if (type == "dpoy") {
 				if (p.pid == undefined) {
 					aws[type] = undefined;
@@ -214,6 +216,7 @@ const EditAwardsBasketball = ({
 						<label>Finals MVP</label>
 						<SelectReact
 							options={players}
+							key={season}
 							player={awards["finalsMvp"]}
 							award="finalsMvp"
 							changing={handleChange.bind(this)}
@@ -223,6 +226,7 @@ const EditAwardsBasketball = ({
 						<label>MVP</label>
 						<SelectReact
 							options={players}
+							key={season}
 							player={awards["mvp"]}
 							award="mvp"
 							changing={handleChange.bind(this)}
@@ -232,6 +236,7 @@ const EditAwardsBasketball = ({
 					<div className="col-sm-3 col-6 form-group">
 						<label>Rookie of the year</label>
 						<SelectReact
+							key={season}
 							options={players}
 							player={awards["roy"]}
 							award="roy"
@@ -242,6 +247,7 @@ const EditAwardsBasketball = ({
 						<label>Defensive Player of the year</label>
 						<SelectReact
 							options={players}
+							key={season}
 							player={awards["dpoy"]}
 							award="dpoy"
 							changing={handleChange.bind(this)}
@@ -251,6 +257,7 @@ const EditAwardsBasketball = ({
 						<label>Six Man of the year</label>
 						<SelectReact
 							options={players}
+							key={season}
 							player={awards["smoy"]}
 							award="dpoy"
 							changing={handleChange.bind(this)}
@@ -261,6 +268,7 @@ const EditAwardsBasketball = ({
 						<label>Most Improved player</label>
 						<SelectReact
 							options={players}
+							key={season}
 							player={awards["mip"]}
 							award="mip"
 							changing={handleChange.bind(this)}
@@ -276,6 +284,7 @@ const EditAwardsBasketball = ({
 								return (
 									<div className="col form-group" key={j}>
 										<SelectReact
+											key={season}
 											options={players}
 											player={player}
 											award="allLeague"
@@ -289,7 +298,7 @@ const EditAwardsBasketball = ({
 						);
 
 						return [
-							<div className="col">
+							<div className="col" key={i}>
 								{" "}
 								{title} {teamSelect}{" "}
 							</div>,
@@ -304,6 +313,7 @@ const EditAwardsBasketball = ({
 								return (
 									<div className="col form-group" key={j}>
 										<SelectReact
+											key={season}
 											options={players}
 											player={player}
 											award="allDefensive"
@@ -317,7 +327,7 @@ const EditAwardsBasketball = ({
 						);
 
 						return [
-							<div className="col">
+							<div className="col" key={i}>
 								{" "}
 								{title} {teamSelect}{" "}
 							</div>,
@@ -330,6 +340,7 @@ const EditAwardsBasketball = ({
 						<div className="col-sm-3 col-6 form-group" key={i}>
 							<SelectReact
 								options={players}
+								key={season}
 								player={element}
 								award="allRookie"
 								playerNumber={i}

@@ -147,10 +147,21 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 	W: "Winning",
 };
 
+const SIMPLE_AWARDS =
+	process.env.SPORT == "basketball"
+		? constantsBasketball.SIMPLE_AWARDS
+		: constantsFootball.SIMPLE_AWARDS;
+
+const AWARD_NAMES: any =
+	process.env.SPORT == "basketball"
+		? constantsBasketball.AWARD_NAMES
+		: constantsFootball.AWARDS_NAMES;
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
 export {
+	AWARD_NAMES,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	GRACE_PERIOD,
@@ -165,6 +176,7 @@ export {
 	PLAYER_SUMMARY,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	SIMPLE_AWARDS,
 	POSITION_COUNTS,
 	POSITIONS,
 	TEAM_STATS_TABLES,

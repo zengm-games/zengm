@@ -2801,26 +2801,31 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 		const type = awardNames[key] as string;
 		if (key === "allRookie") {
 			for (const { pid, tid, name } of awardsInitial.allRookie) {
-				awardsByPlayerToDelete.push({
-					pid,
-					tid,
-					name,
-					type,
-				});
-			}
-		} else {
-			for (const level of awardsInitial[key]) {
-				for (const { pid, tid, name } of level.players) {
+				if (pid != undefined) {
 					awardsByPlayerToDelete.push({
 						pid,
 						tid,
 						name,
-						type: `${level.title} ${type}`,
+						type,
 					});
+				}
+			}
+		} else {
+			for (const level of awardsInitial[key]) {
+				for (const { pid, tid, name } of level.players) {
+					if (pid != undefined) {
+						awardsByPlayerToDelete.push({
+							pid,
+							tid,
+							name,
+							type: `${level.title} ${type}`,
+						});
+					}
 				}
 			}
 		}
 	}
+	console.log("deleteBefore");
 	await deleteAwardsByPlayer(
 		awardsByPlayerToDelete,
 		{},

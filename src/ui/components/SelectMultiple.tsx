@@ -5,7 +5,7 @@ class SelectReact extends React.Component<
 	{
 		player: any;
 		options: any[];
-		changing: Function;
+		changing: any;
 		teamNumber?: number;
 		playerNumber?: number;
 		award: string;
@@ -47,9 +47,9 @@ class SelectReact extends React.Component<
 
 	render() {
 		const { select, ref } = this.state;
-
 		return (
 			<Select
+				classNamePrefix="dark-select"
 				defaultValue={select.value}
 				label="Single select"
 				onChange={this.handleChange}

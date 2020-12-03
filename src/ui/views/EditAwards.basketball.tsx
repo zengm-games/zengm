@@ -47,6 +47,9 @@ const EditAwardsBasketball = ({
 				type == "roy" ||
 				type == "mip"
 			) {
+				if (p.pid == undefined) {
+					aws[type] = undefined;
+				}
 				aws[type] = {
 					pid: p.pid,
 					name: p.name,
@@ -57,103 +60,119 @@ const EditAwardsBasketball = ({
 					ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
 				};
 			} else if (type == "dpoy") {
-				aws[type] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-					blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
-					stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
-				};
+				if (p.pid == undefined) {
+					aws[type] = undefined;
+				} else {
+					aws[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
+						blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
+						stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
+					};
+				}
 			} else if (type == "allDefensive") {
-				let arrayPids: number[] = [];
-				aws[type].map((team: any, index: number) => {
-					team["players"].map((element: Player, index: number) => {
-						arrayPids.push(element.pid);
+				if (p.pid == undefined) {
+					aws[type][numberTeam]["players"][numberPlayer] = undefined;
+				} else {
+					const arrayPids: number[] = [];
+					aws[type].map((team: any) => {
+						team["players"].map((element: Player) => {
+							arrayPids.push(element.pid);
+						});
 					});
-				});
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Player already in teams of this category",
-						saveToDb: false,
-						persistent: true,
-					});
-					error = true;
-					obj.setValue(obj.state.select.value);
-					return {
-						...prevState,
-						aws,
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Player already in teams of this category",
+							saveToDb: false,
+							persistent: true,
+						});
+						error = true;
+						obj.setValue(obj.state.select.value);
+						return {
+							...prevState,
+							aws,
+						};
+					}
+					aws[type][numberTeam]["players"][numberPlayer] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
+						blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
+						stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
 					};
 				}
-				aws[type][numberTeam]["players"][numberPlayer] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-					blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
-					stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
-				};
 			} else if (type == "allLeague") {
-				let arrayPids: number[] = [];
-				aws[type].map((team: any, index: number) => {
-					team["players"].map((element: Player, index: number) => {
+				if (p.pid == undefined) {
+					aws[type][numberTeam]["players"][numberPlayer] = {};
+				} else {
+					const arrayPids: number[] = [];
+					aws[type].map((team: any) => {
+						team["players"].map((element: Player) => {
+							arrayPids.push(element.pid);
+						});
+					});
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Player already in teams of this category",
+							saveToDb: false,
+							persistent: true,
+						});
+						error = true;
+						obj.setValue(obj.state.select.value);
+						return {
+							...prevState,
+							aws,
+						};
+					}
+					aws[type][numberTeam]["players"][numberPlayer] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
+						trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
+						ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
+					};
+				}
+			} else if (type == "allRookie") {
+				if (p.pid == undefined) {
+					aws[type][numberPlayer] = undefined;
+				} else {
+					const arrayPids: number[] = [];
+					aws[type].map((element: any) => {
 						arrayPids.push(element.pid);
 					});
-				});
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Player already in teams of this category",
-						saveToDb: false,
-						persistent: true,
-					});
-					error = true;
-					obj.setValue(obj.state.select.value);
-					return {
-						...prevState,
-						aws,
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Player already in teams of this category",
+							saveToDb: false,
+							persistent: true,
+						});
+						error = true;
+						obj.setValue(obj.state.select.value);
+						return {
+							...prevState,
+							aws,
+						};
+					}
+					aws[type][numberPlayer] = {
+						pid: p.pid,
+						name: p.firstName + " ",
+						tid: p.tid,
+						abbrev: p.abbrev,
+						pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
+						trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
+						ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
 					};
 				}
-				aws[type][numberTeam]["players"][numberPlayer] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-					trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-					ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
-				};
-			} else if (type == "allRookie") {
-				let arrayPids: number[] = [];
-				aws[type].map((element: any) => {
-					arrayPids.push(element.pid);
-				});
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Player already in teams of this category",
-						saveToDb: false,
-						persistent: true,
-					});
-					error = true;
-					obj.setValue(obj.state.select.value);
-					return {
-						...prevState,
-						aws,
-					};
-				}
-				aws[type][numberPlayer] = {
-					pid: p.pid,
-					name: p.firstName + " ",
-					tid: p.tid,
-					abbrev: p.abbrev,
-					pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-					trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-					ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
-				};
 			}
 
 			return {
@@ -255,7 +274,7 @@ const EditAwardsBasketball = ({
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
 								return (
-									<div className="col form-group">
+									<div className="col form-group" key={j}>
 										<SelectReact
 											options={players}
 											player={player}
@@ -283,11 +302,11 @@ const EditAwardsBasketball = ({
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
 								return (
-									<div className="col form-group">
+									<div className="col form-group" key={j}>
 										<SelectReact
 											options={players}
 											player={player}
-											award="allDefense"
+											award="allDefensive"
 											teamNumber={i}
 											playerNumber={j}
 											changing={handleChange.bind(this)}
@@ -308,7 +327,7 @@ const EditAwardsBasketball = ({
 				<h1>All-Rookie Team</h1>
 				{awards["allRookie"].map((element: any, i: number) => {
 					return (
-						<div className="col-sm-3 col-6 form-group">
+						<div className="col-sm-3 col-6 form-group" key={i}>
 							<SelectReact
 								options={players}
 								player={element}
@@ -319,7 +338,9 @@ const EditAwardsBasketball = ({
 						</div>
 					);
 				})}
-				<button className="btn btn-primary mt-3">Save changes</button>
+				<button className="btn btn-primary mt-3" disabled={!godMode}>
+					Save changes
+				</button>
 			</form>
 		);
 	} else {

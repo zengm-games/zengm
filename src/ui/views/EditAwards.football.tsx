@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
@@ -51,68 +51,81 @@ const EditAwardsFootball = ({
 				type == "oroy" ||
 				type == "dpoy"
 			) {
-				aws[type] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					keyStats: p.currentStats.keyStats,
-				};
+				if (p.pid == undefined) {
+					aws[type] = undefined;
+				} else {
+					aws[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						keyStats: p.currentStats.keyStats,
+					};
+				}
 			} else if (type == "allDefensive" || type == "allLeague") {
-				let arrayPids: number[] = [];
-				aws[type].map((team: any, index: number) => {
-					team["players"].map((element: Player, index: number) => {
+				if (p.pid == undefined) {
+					aws[type][numberTeam]["players"][numberPlayer] = undefined;
+				}
+				{
+					const arrayPids: number[] = [];
+					aws[type].map((team: any) => {
+						team["players"].map((element: Player) => {
+							arrayPids.push(element.pid);
+						});
+					});
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Player already in teams of this category",
+							saveToDb: false,
+							persistent: true,
+						});
+						error = true;
+						obj.setValue(obj.state.select.value);
+						return {
+							...prevState,
+							aws,
+						};
+					}
+
+					aws[type][numberTeam]["players"][numberPlayer] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.tid,
+						abbrev: p.abbrev,
+						keyStats: p.currentStats.keyStats,
+					};
+				}
+			} else if (type == "allRookie") {
+				if (p.pid == undefined) {
+					aws[type][numberTeam]["players"][numberPlayer] = {};
+				} else {
+					const arrayPids: number[] = [];
+					aws[type].map((element: any) => {
 						arrayPids.push(element.pid);
 					});
-				});
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Player already in teams of this category",
-						saveToDb: false,
-						persistent: true,
-					});
-					error = true;
-					obj.setValue(obj.state.select.value);
-					return {
-						...prevState,
-						aws,
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Player already in teams of this category",
+							saveToDb: false,
+							persistent: true,
+						});
+						error = true;
+						obj.setValue(obj.state.select.value);
+						return {
+							...prevState,
+							aws,
+						};
+					}
+					aws[type][numberPlayer] = {
+						pid: p.pid,
+						name: p.firstName + " ",
+						tid: p.tid,
+						abbrev: p.abbrev,
+						keyStats: p.currentStats.keyStats,
 					};
 				}
-
-				aws[type][numberTeam]["players"][numberPlayer] = {
-					pid: p.pid,
-					name: p.name,
-					tid: p.tid,
-					abbrev: p.abbrev,
-					keyStats: p.currentStats.keyStats,
-				};
-			} else if (type == "allRookie") {
-				let arrayPids: number[] = [];
-				aws[type].map((element: any) => {
-					arrayPids.push(element.pid);
-				});
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Player already in teams of this category",
-						saveToDb: false,
-						persistent: true,
-					});
-					error = true;
-					obj.setValue(obj.state.select.value);
-					return {
-						...prevState,
-						aws,
-					};
-				}
-				aws[type][numberPlayer] = {
-					pid: p.pid,
-					name: p.firstName + " ",
-					tid: p.tid,
-					abbrev: p.abbrev,
-					keyStats: p.currentStats.keyStats,
-				};
 			}
 
 			return {
@@ -205,7 +218,7 @@ const EditAwardsFootball = ({
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
 								return (
-									<div className="col form-group">
+									<div className="col form-group" key={j}>
 										<SelectReact
 											options={players}
 											player={player}
@@ -231,7 +244,7 @@ const EditAwardsFootball = ({
 				<h1>All-Rookie Team</h1>
 				{awards["allRookie"].map((element: any, i: number) => {
 					return (
-						<div className="col-sm-3 col-6 form-group">
+						<div className="col-sm-3 col-6 form-group" key={i}>
 							<SelectReact
 								options={players}
 								player={element}
@@ -242,7 +255,9 @@ const EditAwardsFootball = ({
 						</div>
 					);
 				})}
-				<button className="btn btn-primary mt-3">Save changes</button>
+				<button className="btn btn-primary mt-3" disabled={!godMode}>
+					Save changes
+				</button>
 			</form>
 		);
 	} else {

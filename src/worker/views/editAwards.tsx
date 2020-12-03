@@ -1,12 +1,9 @@
 import { PLAYER } from "../../common";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
 
-const updateAwards = async (
-	inputs: ViewInput<"editAwards">,
-	updateEvents: UpdateEvents,
-) => {
+const updateAwards = async (inputs: ViewInput<"editAwards">) => {
 	if (!g.get("godMode")) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
@@ -15,7 +12,7 @@ const updateAwards = async (
 		return returnValue;
 	}
 	const season = inputs.season;
-	let awards = await idb.getCopy.awards({
+	const awards = await idb.getCopy.awards({
 		season,
 	});
 
@@ -28,7 +25,7 @@ const updateAwards = async (
 			activeSeason: season,
 		});
 	}
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -94,6 +91,14 @@ const updateAwards = async (
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 	}
+	const nobody: any = {
+		pid: undefined,
+		name: "Nobody",
+		currentStats: undefined,
+		tid: undefined,
+		abbrev: undefined,
+	};
+	players.splice(0, 0, nobody);
 	return {
 		godMode: g.get("godMode"),
 		players,

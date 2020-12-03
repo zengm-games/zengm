@@ -1,4 +1,10 @@
-show peak team too?
+on draft history/summary icons, show all star # in tooltip for MVP guys
+
+next/prev buttons
+- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
+- seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
+  - for just seasons, or all dropdowns?
+- teams on trade page @AGLR_23#4969
 
 @babel/runtime error
 - https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
@@ -104,12 +110,6 @@ during re-signing phase, should still show % everywhere except re-signing table.
 AI re-signing is just player mood + trade function
 - later
   - have it affect free agent signings too
-
-next/prev buttons
-- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
-- seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
-  - for just seasons, or all dropdowns?
-- teams on trade page @AGLR_23#4969
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played

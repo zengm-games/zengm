@@ -251,27 +251,21 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (process.env.SPORT === "basketball") {
-						if (window.freestar.freestarReloadAdSlot) {
-							const adDivs =
-								window.screen && window.screen.width < 768
-									? ["basketball-gm_mobile_leaderboard"]
-									: [
-											"basketball-gm_leaderboard_atf",
-											"basketball-gm_mrec_btf_1",
-											"basketball-gm_mrec_btf_2",
-											"basketball-gm_right_rail",
-									  ];
+					if (window.freestar.freestarReloadAdSlot) {
+						const adDivs =
+							window.screen && window.screen.width < 768
+								? [`${process.env.SPORT}-gm_mobile_leaderboard`]
+								: [
+										`${process.env.SPORT}-gm_leaderboard_atf`,
+										`${process.env.SPORT}-gm_mrec_btf_1`,
+										`${process.env.SPORT}-gm_mrec_btf_2`,
+										`${process.env.SPORT}-gm_right_rail`,
+								  ];
 
-							for (const adDiv of adDivs) {
-								console.log("reload", adDiv);
-								window.freestar.freestarReloadAdSlot(adDiv);
-							}
+						for (const adDiv of adDivs) {
+							console.log("reload", adDiv);
+							window.freestar.freestarReloadAdSlot(adDiv);
 						}
-					} else {
-						window.bbgmAds.cmd.push(() => {
-							window.bbgmAds.refresh();
-						});
 					}
 				} else {
 					initialLoad = false;

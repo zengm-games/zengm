@@ -13,11 +13,7 @@ const Footer = React.memo(() => {
 				}}
 			>
 				<div
-					id={
-						process.env.SPORT === "basketball"
-							? "basketball-gm_mrec_btf_1"
-							: "bbgm-ads-bottom1"
-					}
+					id={`${process.env.SPORT}-gm_mrec_btf_1`}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -48,11 +44,7 @@ const Footer = React.memo(() => {
 					/>
 				</div>
 				<div
-					id={
-						process.env.SPORT === "basketball"
-							? "basketball-gm_mrec_btf_2"
-							: "bbgm-ads-bottom2"
-					}
+					id={`${process.env.SPORT}-gm_mrec_btf_2`}
 					style={{
 						display: "none",
 						textAlign: "center",

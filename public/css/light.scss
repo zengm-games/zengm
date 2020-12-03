@@ -78,8 +78,8 @@ h5 {
 		height: 600px;
 		width: 190px;
 	}
-	#bbgm-ads-skyscraper,
-	#basketball-gm_right_rail {
+	#basketball-gm_right_rail,
+	#football-gm_right_rail {
 		width: 160px;
 		height: 600px;
 		margin: 0 auto;
@@ -1085,7 +1085,8 @@ a.anchor {
 	border-bottom-left-radius: 0rem !important;
 }
 
-#basketball-gm_mobile_leaderboard {
+#basketball-gm_mobile_leaderboard,
+#football-gm_mobile_leaderboard {
 	z-index: 1000; // Behind sidebar
 	bottom: 0;
 	padding-top: 2px;

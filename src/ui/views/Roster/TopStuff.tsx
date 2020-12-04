@@ -66,6 +66,7 @@ const TopStuff = ({
 }: Pick<
 	View<"roster">,
 	| "abbrev"
+	| "keepRosterSorted"
 	| "budget"
 	| "challengeNoRatings"
 	| "currentSeason"

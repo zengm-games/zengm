@@ -1,10 +1,22 @@
-on draft history/summary icons, show all star # in tooltip for MVP guys
+select all button for multi team mode https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gar4ehp/
+
+when importing a league over another league, custom difficulty level doesn't carry over. only have a choice for easy, normal, hard, insane https://discord.com/channels/290013534023057409/290015591216054273/784166314494132275
+
+option to auto sort like AI teams https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gar7419/
 
 next/prev buttons
 - players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
 - seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
   - for just seasons, or all dropdowns?
 - teams on trade page @AGLR_23#4969
+
+expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
+
+view playoff stats on roster page https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbk7upv/
+
+start in draft lottery https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gc11694/
+
+1980 mychal thompson https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gc9w66k/
 
 @babel/runtime error
 - https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
@@ -68,6 +80,7 @@ settings re-design
   - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
   - make sure it handles setting the season for pace etc in real players leagues
   - godModeRequired value of "existingLeagueOnly" should be used here
+  - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
 - some settings should only be editable in offseason
   - playoff structure
 

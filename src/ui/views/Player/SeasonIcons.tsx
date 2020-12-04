@@ -28,10 +28,10 @@ const SeasonIcons = ({
 		if (playoffs) {
 			if (award.type === "Won Championship") {
 				type = award.type;
+				countChamp += 1;
 				if (season !== undefined) {
 					break;
 				}
-				countChamp += 1;
 			}
 		} else {
 			if (award.type === "Most Valuable Player") {

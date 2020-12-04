@@ -56,7 +56,7 @@ const InstructionsAndSortButtons = ({
 					}}
 				/>
 				<label className="form-check-label" htmlFor="ai-sort-user-roster">
-					Keep sorted
+					Keep auto sorted
 				</label>
 			</div>
 		</>

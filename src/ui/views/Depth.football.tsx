@@ -148,7 +148,7 @@ const Depth = ({
 							}}
 						/>
 						<label className="form-check-label" htmlFor="ai-sort-user-roster">
-							Keep all sorted
+							Keep all auto sorted
 						</label>
 					</div>
 				</>

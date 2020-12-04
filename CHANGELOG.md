@@ -1,5 +1,11 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-12-03: Added ability to view playoff stats on the roster page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
+* 2020-12-03: New "Keep sorted" option on the roster page, to let the AI manage sorting your roster (no more clicking "auto sort" periodically). [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
+* 2020-12-03: You can start historical real players leagues at the draft lottery phase. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
 * 2020-12-02: Icons for All-Stars, MVPs, and championships are displayed on the Draft History and Draft Team History pages. Peak ovr and pot values are also shown there. [[1]](https://old.reddit.com/r/BasketballGM/comments/k5od0c/icons_for_allstars_mvps_and_championships_are_now/)
 
 * **2020-11-28: An early version of the 2021 rosters is available when creating a new real players league. Also, you can start a 2020 league after the draft if you want to re-play free agency. [[1]](https://old.reddit.com/r/BasketballGM/comments/k30nhc/an_early_version_of_the_2021_rosters_is_available/)**

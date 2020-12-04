@@ -10,8 +10,6 @@ next/prev buttons
 
 expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
 
-start in draft lottery https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gc11694/
-
 @babel/runtime error
 - https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
 - caused by @rollup/plugin-node-resolve upgrade

@@ -8,7 +8,7 @@ import React, {
 	useReducer,
 	useEffect,
 } from "react";
-import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
+import { DIFFICULTY, applyRealTeamInfo, PHASE, PHASE_TEXT } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
@@ -258,19 +258,23 @@ const legends = [
 const phases = [
 	{
 		key: PHASE.PRESEASON,
-		value: "Preseason",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.PRESEASON]),
 	},
 	{
 		key: PHASE.PLAYOFFS,
-		value: "Playoffs",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.PLAYOFFS]),
+	},
+	{
+		key: PHASE.DRAFT_LOTTERY,
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.DRAFT_LOTTERY]),
 	},
 	{
 		key: PHASE.DRAFT,
-		value: "Draft",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.DRAFT]),
 	},
 	{
 		key: PHASE.AFTER_DRAFT,
-		value: "After draft",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.AFTER_DRAFT]),
 	},
 ];
 
@@ -1402,7 +1406,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		2004,
 	];
 	let invalidSeasonPhaseMessage: string | undefined;
-	if (state.phase >= PHASE.DRAFT && expansionSeasons.includes(state.season)) {
+	if (state.phase > PHASE.PLAYOFFS && expansionSeasons.includes(state.season)) {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
 	}

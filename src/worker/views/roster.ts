@@ -25,6 +25,7 @@ const updateRoster = async (
 ) => {
 	if (
 		updateEvents.includes("watchList") ||
+		updateEvents.includes("gameAttributes") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement") ||
@@ -203,6 +204,7 @@ const updateRoster = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			keepRosterSorted: g.get("keepRosterSorted"),
 			budget: g.get("budget"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),

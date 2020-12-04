@@ -10,7 +10,13 @@ const handleResetPT = async () => {
 	await toWorker("main", "resetPlayingTime", undefined);
 };
 
-const InstructionsAndSortButtons = ({ editable }: { editable: boolean }) => {
+const InstructionsAndSortButtons = ({
+	keepRosterSorted,
+	editable,
+}: {
+	keepRosterSorted: boolean;
+	editable: boolean;
+}) => {
 	if (!editable) {
 		return null;
 	}
@@ -26,13 +32,32 @@ const InstructionsAndSortButtons = ({ editable }: { editable: boolean }) => {
 				<span className="table-info legend-square" /> and the bench{" "}
 				<span className="table-secondary legend-square" />.
 			</p>
-			<div className="btn-group mb-3">
+			<div className="btn-group mb-2">
 				<button className="btn btn-light-bordered" onClick={handleAutoSort}>
 					Auto sort roster
 				</button>
 				<button className="btn btn-light-bordered" onClick={handleResetPT}>
 					Reset playing time
 				</button>
+			</div>
+			<div className="form-check mb-3">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					checked={keepRosterSorted}
+					id="ai-sort-user-roster"
+					onChange={async () => {
+						if (!keepRosterSorted) {
+							await handleAutoSort();
+						}
+						await toWorker("main", "updateGameAttributes", {
+							keepRosterSorted: !keepRosterSorted,
+						});
+					}}
+				/>
+				<label className="form-check-label" htmlFor="ai-sort-user-roster">
+					Keep sorted
+				</label>
 			</div>
 		</>
 	);

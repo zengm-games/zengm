@@ -142,7 +142,7 @@ const checkRosterSizes = async (
 
 		// Auto sort rosters (except player's team)
 		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-		if (!userTeamAndActive) {
+		if (!userTeamAndActive || g.get("keepRosterSorted")) {
 			await rosterAutoSort(tid);
 		}
 	};

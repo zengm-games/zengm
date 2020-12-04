@@ -47,6 +47,7 @@ TeamRating.propTypes = {
 
 const TopStuff = ({
 	abbrev,
+	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -174,7 +175,10 @@ const TopStuff = ({
 					) : null}
 				</div>
 			</div>
-			<InstructionsAndSortButtons editable={editable} />
+			<InstructionsAndSortButtons
+				keepRosterSorted={keepRosterSorted}
+				editable={editable}
+			/>
 			{season !== currentSeason ? (
 				<p>
 					Players in the Hall of Fame are{" "}

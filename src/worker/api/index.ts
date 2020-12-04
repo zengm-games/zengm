@@ -1882,7 +1882,10 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 			}
 		}),
 	);
-	await toUI("realtimeUpdate", [["playerMovement"]]);
+
+	await league.setGameAttributes({ keepRosterSorted: false });
+
+	await toUI("realtimeUpdate", [["gameAttributes", "playerMovement"]]);
 };
 
 const resetPlayingTime = async (tids: number[] | undefined) => {

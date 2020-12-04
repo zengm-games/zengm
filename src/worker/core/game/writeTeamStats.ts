@@ -328,7 +328,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// 10% chance of reordering roster, why not
 		if (Math.random() < 0.1) {
-			if (!g.get("userTids").includes(t.tid)) {
+			if (!g.get("userTids").includes(t.tid) || g.get("keepRosterSorted")) {
 				await team.rosterAutoSort(t.tid);
 			}
 		}

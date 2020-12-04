@@ -69,6 +69,7 @@ const handleRelease = async (
 
 const Roster = ({
 	abbrev,
+	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -141,6 +142,7 @@ const Roster = ({
 
 			<TopStuff
 				abbrev={abbrev}
+				keepRosterSorted={keepRosterSorted}
 				budget={budget}
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
@@ -180,6 +182,9 @@ const Roster = ({
 					})
 				}
 				onChange={async ({ oldIndex, newIndex }) => {
+					if (oldIndex === newIndex) {
+						return;
+					}
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);

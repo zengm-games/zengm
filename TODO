@@ -1,4 +1,10 @@
 option to auto sort like AI teams https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gar7419/
+- depth in football
+  - disable when depth is manually sorted
+  - when you click it, run an auto sort
+  - test for trades, etc
+
+is rosterAutoSort being called multiple times per day, both from checkRosterSizes and writeTeamStats?
 
 next/prev buttons
 - players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png

@@ -68,7 +68,7 @@ const accept = async (
 
 	// If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
 	// better than, without otherwise disturbing the depth chart order
-	await team.rosterAutoSort(g.get("userTid"), true);
+	await team.rosterAutoSort(g.get("userTid"), !g.get("keepRosterSorted"));
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();

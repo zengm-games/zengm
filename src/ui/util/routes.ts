@@ -60,6 +60,7 @@ const routes = () => {
 		"/l/:lid/roster": genPage("roster"),
 		"/l/:lid/roster/:abbrev": genPage("roster"),
 		"/l/:lid/roster/:abbrev/:season": genPage("roster"),
+		"/l/:lid/roster/:abbrev/:season/:playoffs": genPage("roster"),
 		"/l/:lid/schedule": genPage("schedule"),
 		"/l/:lid/schedule/:abbrev": genPage("schedule"),
 		"/l/:lid/team_finances": genPage("teamFinances"),

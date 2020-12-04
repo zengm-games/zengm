@@ -30,6 +30,7 @@ const updateRoster = async (
 				updateEvents.includes("playerMovement") ||
 				updateEvents.includes("newPhase"))) ||
 		inputs.abbrev !== state.abbrev ||
+		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
 	) {
 		const stats =
@@ -127,6 +128,8 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
+				playoffs: inputs.playoffs === "playoffs",
+				regularSeason: inputs.playoffs !== "playoffs",
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,
@@ -210,6 +213,7 @@ const updateRoster = async (
 			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			payroll,
 			phase: g.get("phase"),
+			playoffs: inputs.playoffs,
 			players,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,

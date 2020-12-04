@@ -22,6 +22,21 @@ const MultiTeamMode = ({
 }: View<"multiTeamMode">) => {
 	const notificationProbablyShowing = useRef(false);
 
+	const showNotification = () => {
+		// Hacky attempt to not show this notification if it's already showing
+		if (!notificationProbablyShowing.current) {
+			notificationProbablyShowing.current = true;
+			logEvent({
+				saveToDb: false,
+				text: "Switch between teams you control using the menu below:",
+				type: "info",
+			});
+			window.setTimeout(() => {
+				notificationProbablyShowing.current = false;
+			}, 8000);
+		}
+	};
+
 	const handleChange = useCallback(
 		async (event: ChangeEvent<HTMLSelectElement>) => {
 			const newUserTids = Array.from(event.target.options)
@@ -45,29 +60,12 @@ const MultiTeamMode = ({
 				await toWorker("main", "updateMultiTeamMode", gameAttributes);
 
 				if (newUserTids.length > 1) {
-					// Hacky attempt to not show this notification if it's already showing
-					if (!notificationProbablyShowing.current) {
-						notificationProbablyShowing.current = true;
-						logEvent({
-							saveToDb: false,
-							text: "Switch between teams you control using the menu below:",
-							type: "info",
-						});
-						window.setTimeout(() => {
-							notificationProbablyShowing.current = false;
-						}, 8000);
-					}
+					showNotification();
 				}
 			}
 		},
 		[userTid, userTids],
 	);
-
-	const handleDisable = useCallback(async () => {
-		await toWorker("main", "updateMultiTeamMode", {
-			userTids: [userTid],
-		});
-	}, [userTid]);
 
 	useTitleBar({ title: "Multi Team Mode" });
 
@@ -146,15 +144,33 @@ const MultiTeamMode = ({
 				(command+click on Mac) to select individual teams.
 			</p>
 
-			{userTids.length > 1 ? (
+			<div className="btn-group mb-3">
 				<button
 					type="button"
-					className="btn btn-danger mb-3"
-					onClick={handleDisable}
+					className="btn btn-light-bordered"
+					onClick={async () => {
+						await toWorker("main", "updateMultiTeamMode", {
+							userTids: teams.map(t => t.tid),
+						});
+						showNotification();
+					}}
 				>
-					Disable multi-team mode
+					Select all
 				</button>
-			) : null}
+				{userTids.length > 1 ? (
+					<button
+						type="button"
+						className="btn btn-danger"
+						onClick={async () => {
+							await toWorker("main", "updateMultiTeamMode", {
+								userTids: [userTid],
+							});
+						}}
+					>
+						Disable multi-team mode
+					</button>
+				) : null}
+			</div>
 
 			<div className="row">
 				<div className="col-sm-6">

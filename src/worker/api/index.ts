@@ -1860,6 +1860,8 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	}
 
 	if (depth.hasOwnProperty(pos)) {
+		await league.setGameAttributes({ keepRosterSorted: false });
+
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-ignore
 		depth[pos] = sortedPids;

@@ -144,7 +144,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
-	keepRosterSorted: true,
+	keepRosterSorted: false,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

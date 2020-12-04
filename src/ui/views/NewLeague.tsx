@@ -904,11 +904,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				? state.randomization === "shuffle"
 				: false;
 
-			const actualDifficulty = Object.values(DIFFICULTY).includes(
-				state.difficulty,
-			)
-				? state.difficulty
-				: DIFFICULTY.Normal;
+			const actualDifficulty = state.difficulty;
 
 			const actualStartingSeason =
 				state.customize === "default" ? startingSeason : undefined;

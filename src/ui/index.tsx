@@ -241,12 +241,12 @@ const setupRoutes = () => {
 							});
 						}
 
-						if (window._qevents) {
+						/*if (window._qevents) {
 							window._qevents.push({
 								qacct: "p-Ye5RY6xC03ZWz",
 								event: "click",
 							});
-						}
+						}*/
 					}
 				}
 

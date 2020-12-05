@@ -1102,3 +1102,10 @@ a.anchor {
 	margin-bottom: 0 !important;
 	height: 52px;
 }
+
+.SortableHelper {
+	display: flex;
+}
+.SortableHelper button {
+	white-space: nowrap;
+}

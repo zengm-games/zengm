@@ -174,6 +174,8 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
+				playoffs: inputs.playoffs === "playoffs",
+				regularSeason: inputs.playoffs !== "playoffs",
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,

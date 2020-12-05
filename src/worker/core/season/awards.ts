@@ -262,7 +262,7 @@ const getTopPlayers = (
 const saveAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	conditions: Conditions,
-	season?: number,
+	season: number = g.get("season"),
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -310,17 +310,16 @@ const saveAwardsByPlayer = async (
 	for (const pid of pids) {
 		let p = await idb.cache.players.get(pid);
 		if (!p) {
-			const p2 = await idb.getCopy.players({
+			p = (await idb.getCopy.players({
 				pid: pid,
-			});
-			p = p2 as PlayerFiltered;
+			})) as any;
 		}
 
 		if (p && pid != undefined) {
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
 					p.awards.push({
-						season: season ? season : g.get("season"),
+						season,
 						type: awardByPlayer.type,
 					});
 				}

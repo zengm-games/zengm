@@ -61,9 +61,11 @@ const Teams = ({
 	return (
 		<div className={className}>
 			<h2>{name}</h2>
-			{team.map((p, i) => (
-				<Player key={i} i={i} p={p} season={season} userTid={userTid} />
-			))}
+			{team
+				.filter(p => Object.keys(p).length > 0)
+				.map((p, i) => (
+					<Player key={i} i={i} p={p} season={season} userTid={userTid} />
+				))}
 		</div>
 	);
 };

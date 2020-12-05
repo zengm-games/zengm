@@ -64,9 +64,8 @@ const EditAwardsFootball = ({
 				}
 			} else if (type == "allDefensive" || type == "allLeague") {
 				if (p.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = undefined;
-				}
-				{
+					aws[type][numberTeam]["players"][numberPlayer] = {};
+				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((team: any) => {
 						team["players"].map((element: Player) => {
@@ -170,7 +169,7 @@ const EditAwardsFootball = ({
 							key={season}
 							player={awards["finalsMvp"]}
 							award="finalsMvp"
-							changing={handleChange.bind(this)}
+							changing={handleChange}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
@@ -180,7 +179,7 @@ const EditAwardsFootball = ({
 							key={season}
 							player={awards["mvp"]}
 							award="mvp"
-							changing={handleChange.bind(this)}
+							changing={handleChange}
 						/>
 					</div>
 
@@ -191,7 +190,7 @@ const EditAwardsFootball = ({
 							key={season}
 							player={awards["dpoy"]}
 							award="dpoy"
-							changing={handleChange.bind(this)}
+							changing={handleChange}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
@@ -202,7 +201,7 @@ const EditAwardsFootball = ({
 							key={season}
 							player={awards["droy"]}
 							award="droy"
-							changing={handleChange.bind(this)}
+							changing={handleChange}
 						/>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
@@ -212,7 +211,7 @@ const EditAwardsFootball = ({
 							key={season}
 							player={awards["oroy"]}
 							award="oroy"
-							changing={handleChange.bind(this)}
+							changing={handleChange}
 						/>
 					</div>
 				</div>
@@ -231,7 +230,7 @@ const EditAwardsFootball = ({
 											award="allLeague"
 											teamNumber={i}
 											playerNumber={j}
-											changing={handleChange.bind(this)}
+											changing={handleChange}
 										/>
 									</div>
 								);
@@ -257,7 +256,7 @@ const EditAwardsFootball = ({
 								key={season}
 								award="allRookie"
 								playerNumber={i}
-								changing={handleChange.bind(this)}
+								changing={handleChange}
 							/>
 						</div>
 					);

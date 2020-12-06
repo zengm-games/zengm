@@ -1,3 +1,8 @@
+on league dashboard, league leaders should be combined stats
+- http://localhost/l/31/player/114
+
+When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
+
 next/prev buttons
 - players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
 - seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
@@ -148,7 +153,7 @@ AI teams should release players if better FAs are available
 
 name/colleges revamp
 - races
-  - @ClevelandFan#6181 can help
+  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
   - playerBioInfo.countries[].races?: Record<Race, number>,
   - defaultRaces: Record<Country, Record<Race, number>>
   - CSV in tools, generate JSON like names, print countries missing

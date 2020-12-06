@@ -181,27 +181,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			Infinity,
 		]);
 
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"name",
-				"abbrev",
-				"tid",
-				"age",
-				"contract",
-				"rosterOrder",
-				"injury",
-				"watch",
-				"jerseyNumber",
-			],
-			ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-			stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
-			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
-
 		// League leaders
 
 		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {

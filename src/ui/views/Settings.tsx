@@ -1710,16 +1710,18 @@ const Input = ({
 	} else if (type === "rangePercent") {
 		inputElement = (
 			<div className="d-flex" style={inputStyle}>
-				<input
-					type="range"
-					{...commonProps}
-					className="form-control-range"
-					min="0"
-					max="1"
-					step="0.05"
-				/>
-				<div className="text-right" style={{ minWidth: 40 }}>
+				<div className="text-right mr-1" style={{ minWidth: 38 }}>
 					{Math.round(parseFloat(value) * 100)}%
+				</div>
+				<div>
+					<input
+						type="range"
+						{...commonProps}
+						className="form-control-range"
+						min="0"
+						max="1"
+						step="0.05"
+					/>
 				</div>
 			</div>
 		);

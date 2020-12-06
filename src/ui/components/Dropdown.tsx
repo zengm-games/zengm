@@ -80,25 +80,24 @@ const Select = ({
 		}
 
 		buttons = (
-			<>
+			<div className="btn-group" style={{ marginLeft: 2 }}>
 				<button
-					className="btn btn-link p-0 border-0"
+					className="btn btn-light-bordered btn-xs"
 					disabled={buttonInfo[0].disabled}
 					onClick={buttonInfo[0].onClick}
 					title="Previous"
-					style={{ marginLeft: 2 }}
 				>
 					<span className="glyphicon glyphicon-menu-left" />
 				</button>
 				<button
-					className="btn btn-link p-0 border-0"
+					className="btn btn-light-bordered btn-xs"
 					disabled={buttonInfo[1].disabled}
 					onClick={buttonInfo[1].onClick}
 					title="Next"
 				>
 					<span className="glyphicon glyphicon-menu-right" />
 				</button>
-			</>
+			</div>
 		);
 	}
 

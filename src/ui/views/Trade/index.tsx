@@ -122,9 +122,9 @@ const Trade = (props: View<"trade">) => {
 		await toWorker("main", "updateTrade", teams);
 	};
 
-	const handleChangeTeam = async (event: ChangeEvent<HTMLSelectElement>) => {
+	const handleChangeTeam = async (tid: number) => {
 		setState(prevState => ({ ...prevState, message: null }));
-		const otherTid = parseInt(event.currentTarget.value, 10);
+
 		const teams = [
 			{
 				tid: props.userTid,
@@ -134,13 +134,14 @@ const Trade = (props: View<"trade">) => {
 				dpidsExcluded: props.userDpidsExcluded,
 			},
 			{
-				tid: otherTid,
+				tid,
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
 				dpidsExcluded: [],
 			},
 		];
+
 		await toWorker("main", "createTrade", teams);
 	};
 
@@ -243,6 +244,8 @@ const Trade = (props: View<"trade">) => {
 		summary.teams[1].picks.length +
 		summary.teams[1].trade.length;
 
+	const otherTeamIndex = teams.findIndex(t => t.tid === otherTid);
+
 	return (
 		<>
 			<div className="row">
@@ -260,26 +263,51 @@ const Trade = (props: View<"trade">) => {
 						allowed to be traded.
 					</p>
 
-					<select
-						className="float-left form-control select-team mb-2 mr-2"
-						value={otherTid}
-						onChange={handleChangeTeam}
-					>
-						{teams.map(t => (
-							<option key={t.tid} value={t.tid}>
-								{t.region} {t.name}
-							</option>
-						))}
-					</select>
-					<div
-						style={{
-							paddingTop: 7,
-						}}
-					>
-						{won}-{lost}
-						{tied > 0 ? <>-{tied}</> : null}, {strategy}
+					<div className="d-flex mb-2">
+						<div className="btn-group">
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={otherTeamIndex <= 0}
+								onClick={() => {
+									handleChangeTeam(teams[otherTeamIndex - 1].tid);
+								}}
+								title="Previous"
+							>
+								<span className="glyphicon glyphicon-menu-left" />
+							</button>
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={otherTeamIndex >= teams.length - 1}
+								onClick={() => {
+									handleChangeTeam(teams[otherTeamIndex + 1].tid);
+								}}
+								title="Next"
+							>
+								<span className="glyphicon glyphicon-menu-right" />
+							</button>
+						</div>
+						<select
+							className="float-left form-control select-team mx-2"
+							value={otherTid}
+							onChange={event => {
+								handleChangeTeam(parseInt(event.currentTarget.value));
+							}}
+						>
+							{teams.map(t => (
+								<option key={t.tid} value={t.tid}>
+									{t.region} {t.name}
+								</option>
+							))}
+						</select>
+						<div
+							style={{
+								paddingTop: 7,
+							}}
+						>
+							{won}-{lost}
+							{tied > 0 ? <>-{tied}</> : null}, {strategy}
+						</div>
 					</div>
-					<div className="clearfix" />
 					<AssetList
 						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}

@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-12-06: Added next/prev buttons to the season and team top menus. [[1]](https://old.reddit.com/r/BasketballGM/comments/k7pi11/not_totally_sure_if_this_is_a_good_idea_but_i/)
+* 2020-12-06: Added next/prev buttons to the season and team top menus, and to the team menu on the trade page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k7pi11/not_totally_sure_if_this_is_a_good_idea_but_i/)
 
 * 2020-12-03: Added ability to view playoff stats on the roster page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
 

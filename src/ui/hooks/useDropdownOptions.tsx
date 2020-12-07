@@ -198,7 +198,7 @@ const useDropdownOptions = (field: string) => {
 
 		const offset = state.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
 
-		for (let j = 0 + offset; j < 5 + offset; j++) {
+		for (let j = 4 + offset; j >= offset; j--) {
 			keys.push(state.season + j);
 		}
 	} else if (field === "playoffs") {

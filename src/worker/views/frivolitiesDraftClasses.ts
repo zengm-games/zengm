@@ -81,7 +81,7 @@ const updateFrivolitiesDraftClasses = async (
 				if (p.hof) {
 					draftClass.numHOF += 1;
 				}
-				if (p.awards.some(award => award.type === "Most Valueable Player")) {
+				if (p.awards.some(award => award.type === "Most Valuable Player")) {
 					draftClass.numMVP += 1;
 				}
 				if (

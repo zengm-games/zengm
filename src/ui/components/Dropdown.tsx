@@ -159,8 +159,6 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 		realtimeUpdate([], helpers.leagueUrl(parts));
 	};
 
-	console.log(keys);
-
 	return (
 		<form className="form-inline">
 			{keys.map((key, i) => {

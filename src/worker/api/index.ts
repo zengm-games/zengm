@@ -357,6 +357,15 @@ const createLeague = async ({
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
 				applyRealTeamInfo(t, realTeamInfo, currentSeason);
+
+				// This is especially needed for new real players leagues started after the regular season. Arguably makes sense to always do, for consistency, since applyRealTeamInfo will override the current logos anyway, might as well do the historical ones too. But let's be careful.
+				if (getLeagueOptions && t.seasons) {
+					for (const teamSeason of t.seasons) {
+						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
+							srIDOverride: t.srID,
+						});
+					}
+				}
 			}
 		}
 

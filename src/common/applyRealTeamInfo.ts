@@ -15,14 +15,19 @@ const applyRealTeamInfo = (
 	season: number,
 	options: {
 		exactSeason?: boolean;
+
+		// Would be nice to use seasonOverride like this, instead of season, for updating objects with a specified season already in them
+		srIDOverride?: string;
 	} = {},
 ) => {
+	const srID = options.srIDOverride ?? t.srID;
+
 	let updated = false;
-	if (!realTeamInfo || !t.srID || !realTeamInfo[t.srID]) {
+	if (!realTeamInfo || !srID || !realTeamInfo[srID]) {
 		return updated;
 	}
 
-	const realInfoRoot = realTeamInfo[t.srID];
+	const realInfoRoot = realTeamInfo[srID];
 
 	// Apply the base attributes first
 	if (!options.exactSeason) {

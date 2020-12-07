@@ -2026,6 +2026,10 @@ class GameSim {
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
 		let texts;
+
+		const p = pickPlayer(this.playersOnCourt[this.d]);
+		const d = this.team[this.d].player[p].name;
+
 		if (this.playByPlay !== undefined) {
 			const threePointerText = g.get("threePointers")
 				? "three pointer"
@@ -2047,20 +2051,30 @@ class GameSim {
 			} else if (type === "fgaTp") {
 				texts = [`{0} attempts a ${threePointerText}`];
 			} else if (type === "fgAtRim") {
-				texts = ["He slams it home", "The layup is good"];
+				texts = [
+					"He slams it home",
+					`He throws it down on ${d}!`,
+					"The layup is good",
+				];
 				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
 				texts = [
 					"He slams it home, and a foul!",
+					`He dunks on ${d}, and draws the foul!`,
 					"The layup is good, and a foul!",
 				];
 				showScore = true;
-			} else if (
-				type === "fgLowPost" ||
-				type === "fgMidRange" ||
-				type === "tp"
-			) {
+			} else if (type === "fgLowPost" || type === "fgMidRange") {
 				texts = ["It's good!"];
+				showScore = true;
+			} else if (type === "tp") {
+				texts = [
+					"It's good!",
+					"It's good!",
+					"It's good!",
+					"It's good!",
+					"Bang!",
+				];
 				showScore = true;
 			} else if (
 				type === "fgLowPostAndOne" ||

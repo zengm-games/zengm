@@ -2064,17 +2064,12 @@ class GameSim {
 					"The layup is good, and a foul!",
 				];
 				showScore = true;
-			} else if (type === "fgLowPost" || type === "fgMidRange") {
+			} else if (
+				type === "fgLowPost" ||
+				type === "fgMidRange" ||
+				type === "tp"
+			) {
 				texts = ["It's good!"];
-				showScore = true;
-			} else if (type === "tp") {
-				texts = [
-					"It's good!",
-					"It's good!",
-					"It's good!",
-					"It's good!",
-					"Bang!",
-				];
 				showScore = true;
 			} else if (
 				type === "fgLowPostAndOne" ||

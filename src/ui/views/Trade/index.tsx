@@ -1,11 +1,5 @@
 import PropTypes from "prop-types";
-import React, {
-	useState,
-	useRef,
-	ChangeEvent,
-	useEffect,
-	useCallback,
-} from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";

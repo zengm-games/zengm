@@ -1220,7 +1220,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"# Active": {
+	Active: {
 		desc: "Number of Players Still Active",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -1229,7 +1229,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"# HoF": {
+	HoF: {
 		desc: "Number of Players in the Hall of Fame",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",

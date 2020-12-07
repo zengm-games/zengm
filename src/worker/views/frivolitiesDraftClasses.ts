@@ -33,6 +33,8 @@ const updateFrivolitiesDraftClasses = async (
 			season: number;
 			value: number;
 			numHOF: number;
+			numMVP: number;
+			numAS: number;
 			numActive: number;
 			bestPlayer: {
 				p: Player<MinimalPlayerRatings>;
@@ -57,6 +59,8 @@ const updateFrivolitiesDraftClasses = async (
 						season: p.draft.year,
 						value: 0,
 						numHOF: 0,
+						numMVP: 0,
+						numAS: 0,
 						numActive: 0,
 						bestPlayer: {
 							p,
@@ -76,6 +80,20 @@ const updateFrivolitiesDraftClasses = async (
 				draftClass.value += value;
 				if (p.hof) {
 					draftClass.numHOF += 1;
+				}
+				if (p.awards.some(award => award.type === "Most Valueable Player")) {
+					draftClass.numMVP += 1;
+				}
+				if (
+					p.awards.some(award => {
+						if (process.env.SPORT === "football") {
+							return award.type.includes("All-League");
+						}
+
+						return award.type === "All-Star";
+					})
+				) {
+					draftClass.numAS += 1;
 				}
 				if (p.retiredYear === Infinity) {
 					draftClass.numActive += 1;

@@ -2026,7 +2026,7 @@ class GameSim {
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
 		let texts;
-		const ratios = this.ratingArray("rebounding", this.d, 5);
+		const ratios = this.ratingArray(this.d, 5);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		const d = this.team[this.d].player[p].name;
 
@@ -2057,7 +2057,6 @@ class GameSim {
 					`He throws it down on ${d}!`,
 					"The layup is good",
 					"The layup is good",
-					"The layup is good",
 				];
 				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
@@ -2065,7 +2064,6 @@ class GameSim {
 					`He dunks on ${d}, and draws the foul!`,
 					"He slams it home, and a foul!",
 					"He slams it home, and a foul!",
-					"The layup is good, and a foul!",
 					"The layup is good, and a foul!",
 					"The layup is good, and a foul!",
 				];

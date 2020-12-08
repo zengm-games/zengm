@@ -89,6 +89,7 @@ const updateHistory = async (
 			retiredPlayers,
 			season,
 			userTid: g.get("userTid"),
+			godMode: g.get("godMode"),
 		};
 	}
 };

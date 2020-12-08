@@ -38,6 +38,10 @@ const MoreLinks = (
 		| {
 				type: "importExport";
 		  }
+		| {
+				type: "awards";
+				season?: number;
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -135,6 +139,14 @@ const MoreLinks = (
 			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
 		});
 		links.push({ url: ["draft_team_history"], name: "Team History" });
+	} else if (props.type == "awards") {
+		const { season } = props;
+		links = [
+			{
+				url: season == undefined ? ["edit_awards"] : ["edit_awards", season],
+				name: "Edit awards",
+			},
+		];
 	} else if (props.type === "playerRatings") {
 		const { season } = props;
 

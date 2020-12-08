@@ -51,6 +51,7 @@ const EditAwardsFootball = ({
 						tid: p.tid,
 						abbrev: p.abbrev,
 						keyStats: p.currentStats.keyStats,
+						pos: p.pos,
 					};
 				}
 			} else if (type == "allDefensive" || type == "allLeague") {
@@ -84,11 +85,12 @@ const EditAwardsFootball = ({
 						tid: p.tid,
 						abbrev: p.abbrev,
 						keyStats: p.currentStats.keyStats,
+						pos: p.pos,
 					};
 				}
 			} else if (type == "allRookie") {
 				if (p.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = {};
+					aws[type][numberPlayer] = {};
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((element: any) => {
@@ -110,9 +112,10 @@ const EditAwardsFootball = ({
 					}
 					aws[type][numberPlayer] = {
 						pid: p.pid,
-						name: p.firstName + " ",
+						name: p.name,
 						tid: p.tid,
 						abbrev: p.abbrev,
+						pos: p.pos,
 						keyStats: p.currentStats.keyStats,
 					};
 				}
@@ -128,7 +131,7 @@ const EditAwardsFootball = ({
 
 		try {
 			await toWorker("main", "upsertAwards", aws, awardsInitial);
-			realtimeUpdate([], helpers.leagueUrl(["history"]));
+			realtimeUpdate([], helpers.leagueUrl(["history", season]));
 		} catch (error) {
 			logEvent({
 				type: "error",

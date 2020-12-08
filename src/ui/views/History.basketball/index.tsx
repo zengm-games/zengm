@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { RetiredPlayers } from "../../../ui/components";
+import { MoreLinks, RetiredPlayers } from "../../../ui/components";
 import useTitleBar from "../../../ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
 import type { View } from "../../../common/types";
-
 export type ActualProps = Exclude<
 	View<"history">,
 	{ invalidSeason: true; season: number }
@@ -39,10 +38,15 @@ const History = (props: View<"history">) => {
 		confs,
 		retiredPlayers,
 		userTid,
+		godMode,
 	} = props as ActualProps;
-
 	return (
 		<>
+			{godMode ? (
+				<MoreLinks type="awards" page="history" season={season} />
+			) : (
+				""
+			)}
 			<div className="row">
 				<div className="col-md-3 col-sm-4 col-12">
 					<AwardsAndChamp

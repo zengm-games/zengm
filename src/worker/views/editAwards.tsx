@@ -1,12 +1,9 @@
 import { PHASE, PLAYER } from "../../common";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
 
-const updateAwards = async (
-	inputs: ViewInput<"editAwards">,
-	updateEvents: UpdateEvents,
-) => {
+const updateAwards = async (inputs: ViewInput<"editAwards">) => {
 	if (!g.get("godMode")) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {

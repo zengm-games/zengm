@@ -156,7 +156,7 @@ const EditAwardsBasketball = ({
 					}
 					aws[type][numberPlayer] = {
 						pid: p.pid,
-						name: p.firstName + " ",
+						name: p.name,
 						tid: p.tid,
 						abbrev: p.abbrev,
 						pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
@@ -176,7 +176,7 @@ const EditAwardsBasketball = ({
 
 		try {
 			await toWorker("main", "upsertAwards", aws, awardsInitial);
-			realtimeUpdate([], helpers.leagueUrl(["history"]));
+			realtimeUpdate([], helpers.leagueUrl(["history", season]));
 		} catch (error) {
 			logEvent({
 				type: "error",

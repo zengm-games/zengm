@@ -22,6 +22,7 @@ const LeagueDashboard = ({
 	name,
 	numConfs,
 	numGamesToWinSeries,
+	numPlayersOnCourt,
 	numPlayoffRounds,
 	numPlayoffTeams,
 	payroll,
@@ -173,6 +174,7 @@ const LeagueDashboard = ({
 					</div>
 					<StartingLineup
 						challengeNoRatings={challengeNoRatings}
+						numPlayersOnCourt={numPlayersOnCourt}
 						starters={starters}
 						startersStats={startersStats}
 					/>

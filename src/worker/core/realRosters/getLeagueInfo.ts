@@ -68,7 +68,7 @@ const getLeagueInfo = async (
 		);
 
 		const stores =
-			options.season === 2020
+			options.season >= 2020
 				? ["teams", "players", "gameAttributes", "startingSeason", "draftPicks"]
 				: [
 						"teams",

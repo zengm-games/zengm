@@ -180,28 +180,18 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			PLAYER.FREE_AGENT,
 			Infinity,
 		]);
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"name",
-				"abbrev",
-				"tid",
-				"age",
-				"contract",
-				"rosterOrder",
-				"injury",
-				"watch",
-				"jerseyNumber",
-			],
-			ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-			stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
+
+		// League leaders
+
+		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
+			attrs: ["pid", "name", "abbrev", "tid"],
+			stats: leaderStats,
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
-			fuzz: true,
+			mergeStats: true,
 		});
 
-		// League leaders
 		const leagueLeaders: {
 			abbrev: string;
 			name: string;
@@ -212,15 +202,15 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (players.length > 0) {
-				players.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			if (leaderPlayers.length > 0) {
+				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
 				leagueLeaders.push({
-					abbrev: players[0].abbrev,
-					name: players[0].name,
-					pid: players[0].pid,
+					abbrev: leaderPlayers[0].abbrev,
+					name: leaderPlayers[0].name,
+					pid: leaderPlayers[0].pid,
 					stat,
-					tid: players[0].tid,
-					value: players[0].stats[stat],
+					tid: leaderPlayers[0].tid,
+					value: leaderPlayers[0].stats[stat],
 				});
 			} else {
 				leagueLeaders.push({
@@ -234,8 +224,31 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
+		const userPlayers = await idb.getCopies.playersPlus(
+			playersAll.filter(p => p.tid === g.get("userTid")),
+			{
+				attrs: [
+					"pid",
+					"name",
+					"abbrev",
+					"tid",
+					"age",
+					"contract",
+					"rosterOrder",
+					"injury",
+					"watch",
+					"jerseyNumber",
+				],
+				ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
+				stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
+				season: g.get("season"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			},
+		);
+
 		// Team leaders
-		const userPlayers = players.filter(p => p.tid === g.get("userTid"));
 		const teamLeaders: {
 			name: string;
 			pid: number;
@@ -270,10 +283,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
 		}
 
-		const starters = userPlayers.slice(0, 5);
+		const numPlayersOnCourt = g.get("numPlayersOnCourt");
+
+		const starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders,
+			numPlayersOnCourt,
 			teamLeaders,
 			starters,
 			startersStats,

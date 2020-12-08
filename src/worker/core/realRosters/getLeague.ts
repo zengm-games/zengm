@@ -422,10 +422,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 			let salaryRow = basketball.salaries.find(
 				row => row.start <= season && row.exp >= season && row.slug === slug,
 			);
-			if (season === 2020) {
-				// For 2020, auto-apply extensions, otherwise will feel weird
+			if (season >= 2020) {
+				// For 2020+, auto-apply extensions, otherwise will feel weird
 				const salaryRowExtension = basketball.salaries.find(
-					row => row.start > 2020 && row.slug === slug,
+					row => row.start > season && row.slug === slug,
 				);
 				if (salaryRowExtension) {
 					salaryRow = salaryRowExtension;
@@ -730,7 +730,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes.push({ key, value });
 		}
 
-		if (options.season === 2020 && !options.randomDebuts) {
+		if (options.season >= 2020 && !options.randomDebuts) {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
@@ -769,7 +769,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 		let draftLotteryResults: DraftLotteryResult[] | undefined;
 		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
 		const includeDraftPicks2020AndFuture =
-			options.season === 2020 && !options.randomDebuts;
+			options.season >= 2020 &&
+			!options.randomDebuts &&
+			!!basketball.draftPicks[options.season];
 		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]
@@ -877,8 +879,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		// Make players as retired - don't delete, so we have full season stats and awards.
 		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
-		// Skip 2020 because we don't have 2021 data yet!
-		if (options.phase > PHASE.PLAYOFFS && options.season < 2020) {
+		// Skip 2021 because we don't have 2021 data yet!
+		if (options.phase > PHASE.PLAYOFFS && options.season < 2021) {
 			const nextSeasonSlugs = new Set();
 			for (const row of basketball.ratings) {
 				if (row.season === options.season + 1) {

@@ -68,7 +68,8 @@ const propose = async (
 		await clear(); // Auto-sort team rosters
 
 		for (const tid of tids) {
-			const onlyNewPlayers = g.get("userTids").includes(tid);
+			const onlyNewPlayers =
+				g.get("userTids").includes(tid) && !g.get("keepRosterSorted");
 
 			await team.rosterAutoSort(tid, onlyNewPlayers);
 		}

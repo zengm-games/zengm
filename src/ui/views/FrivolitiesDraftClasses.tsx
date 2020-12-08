@@ -16,7 +16,7 @@ const FrivolitiesDraftClasses = ({
 	const superCols = [
 		{
 			title: "",
-			colspan: 5,
+			colspan: 7,
 		},
 		{
 			title: "Best Player",
@@ -28,8 +28,10 @@ const FrivolitiesDraftClasses = ({
 		"#",
 		"Season",
 		process.env.SPORT === "basketball" ? "stat:ws" : "stat:av",
-		"# HoF",
-		"# Active",
+		"Active",
+		process.env.SPORT === "basketball" ? "count:allStar" : "count:allLeague",
+		"count:mvp",
+		"HoF",
 		"Name",
 		"Pos",
 		"Pick",
@@ -53,8 +55,10 @@ const FrivolitiesDraftClasses = ({
 					process.env.SPORT === "basketball" ? "ws" : "av",
 					true,
 				),
-				draftClass.numHOF,
 				draftClass.numActive,
+				draftClass.numAS,
+				draftClass.numMVP,
+				draftClass.numHOF,
 				{
 					value: (
 						<PlayerNameLabels

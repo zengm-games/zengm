@@ -59,7 +59,7 @@ const DeleteOldData = () => {
 							checked={state.boxScores}
 						/>
 						Delete Old Box Scores{" "}
-						<a href={helpers.leagueUrl(["options"])}>
+						<a href={helpers.leagueUrl(["settings"])}>
 							(done automatically by default)
 						</a>
 					</label>

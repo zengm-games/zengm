@@ -499,7 +499,11 @@ const roster = (params: Params) => {
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	const season = validateSeason(params.season);
-	return { abbrev, season, tid };
+
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	return { abbrev, playoffs, season, tid };
 };
 
 const schedule = (params: Params) => {
@@ -649,10 +653,19 @@ const watchList = (params: Params) => {
 		statType = "perGame";
 	}
 
+	let flagNote: "flag" | "note" | "either";
+	if (params.flagNote === "either") {
+		flagNote = "either";
+	} else if (params.flagNote === "note") {
+		flagNote = "note";
+	} else {
+		flagNote = "flag";
+	}
+
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
-	return { playoffs, statType };
+	return { playoffs, statType, flagNote };
 };
 
 const validateSeasonOnly = (params: Params) => {

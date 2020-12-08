@@ -1,3 +1,18 @@
+draft history star overflow small screens https://discord.com/channels/290013534023057409/290015591216054273/785192984928321586
+
+When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
+
+next/prev buttons
+- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
+
+expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
+
+@babel/runtime error
+- https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
+- caused by @rollup/plugin-node-resolve upgrade
+
+typescript 4.1 stuff
+
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 FBGM ovrs
@@ -23,11 +38,6 @@ trade summary charts future
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5
 
-team context on trade summary page
-- graph of team winning percentage over time, -2 to 5 years relative to the trade
-- on hover/click, show W-L record and playoff result
-- special icon for playoffs, finals, championship
-
 show ovr when live editing a player's ratings
 - use worker, don't include code in both
 
@@ -36,6 +46,8 @@ more variation in pace plz @nicidob
 
 how to stop 2p from beign a negative rating
 - @nicidob says: basic summary: it's used only in "usage", but it's a small part of that, and "shoot midrange". Well... shoot midrange is like 0.8 to 0.9 PPS, while Dunks and 3s are 1.2 and 1.1 PPS. Sure, actual ratings shift the %s, but i'm not sure how extreme it'd have to get before your MR PPS isn't the "worst possible shot". So the 2p setting basically is "how likely are you to take the worst possible shot". My idea is to make the mid-range more of a "leftover"... if your 3p or dunk or LP isn't high enough, it gets picked. then higher 2p is just higher MR accuracy and its negative effect is gone. Then you can era-adjust the default
+
+break difficulty setting into multiple components that can be controlled independently
 
 finances in shorter season https://old.reddit.com/r/BasketballGM/comments/jtu1yr/someone_has_to_fix_this_the_finance_system_is/gcapqg7/
 
@@ -54,6 +66,7 @@ settings re-design
   - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
   - make sure it handles setting the season for pace etc in real players leagues
   - godModeRequired value of "existingLeagueOnly" should be used here
+  - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
 - some settings should only be editable in offseason
   - playoff structure
 
@@ -76,6 +89,7 @@ trade balancing
 - I don’t think it’s something intended to happen, pretty frequently if I trading block a late first round pick I get offers for guys drafted ahead of my pick
 - care more about bad contracts
 - FBGM should not demand as much in 2 for 1 trades? https://discord.com/channels/@me/696164463312764949/776342790586105877
+- https://old.reddit.com/r/BasketballGM/comments/k3339l/the_cpus_lack_of_value_for_draft_picks_is/
 
 force resign button under lock ratings, keep a man on one team
 - hard cap
@@ -95,12 +109,6 @@ during re-signing phase, should still show % everywhere except re-signing table.
 AI re-signing is just player mood + trade function
 - later
   - have it affect free agent signings too
-
-next/prev buttons
-- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
-- seasons https://cdn.discordapp.com/attachments/331882115119448065/769710180920328192/unknown.png
-  - for just seasons, or all dropdowns?
-- teams on trade page @AGLR_23#4969
 
 genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - make whole round at once, accounting for how many games have been played
@@ -138,7 +146,7 @@ AI teams should release players if better FAs are available
 
 name/colleges revamp
 - races
-  - @ClevelandFan#6181 can help
+  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
   - playerBioInfo.countries[].races?: Record<Race, number>,
   - defaultRaces: Record<Country, Record<Race, number>>
   - CSV in tools, generate JSON like names, print countries missing
@@ -235,6 +243,7 @@ option to disable unimportant notifications
 frivolities
 - add WS/player for colleges/countries
 - players
+  - oldest peak age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career

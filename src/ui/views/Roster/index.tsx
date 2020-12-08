@@ -69,6 +69,7 @@ const handleRelease = async (
 
 const Roster = ({
 	abbrev,
+	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -80,6 +81,7 @@ const Roster = ({
 	payroll,
 	phase,
 	players,
+	playoffs,
 	salaryCap,
 	season,
 	showSpectatorWarning,
@@ -100,6 +102,7 @@ const Roster = ({
 		dropdownFields: {
 			teams: abbrev,
 			seasons: season,
+			playoffs,
 		},
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
@@ -139,6 +142,7 @@ const Roster = ({
 
 			<TopStuff
 				abbrev={abbrev}
+				keepRosterSorted={keepRosterSorted}
 				budget={budget}
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
@@ -178,6 +182,9 @@ const Roster = ({
 					})
 				}
 				onChange={async ({ oldIndex, newIndex }) => {
+					if (oldIndex === newIndex) {
+						return;
+					}
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
@@ -321,7 +328,7 @@ const Roster = ({
 									{p.contract.exp}
 								</td>
 							) : null}
-							<td>{p.stats.yearsWithTeam}</td>
+							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
 							{stats.map(stat => (
 								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 							))}

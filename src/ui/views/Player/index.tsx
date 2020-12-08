@@ -28,6 +28,7 @@ import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
 import SeasonIcons from "./SeasonIcons";
+import Note from "./Note";
 
 const Relatives = ({
 	pid,
@@ -360,7 +361,13 @@ const Player2 = ({
 	}
 
 	let statusInfo: ReactNode = null;
-	if (!retired) {
+	if (retired) {
+		statusInfo = (
+			<div className="d-flex align-items-center">
+				<WatchBlock className="ml-0" pid={player.pid} watch={player.watch} />
+			</div>
+		);
+	} else {
 		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
 		statusInfo = (
 			<div className="d-flex align-items-center">
@@ -484,7 +491,8 @@ const Player2 = ({
 									</>
 								) : (
 									<>
-										Died: {player.diedYear}
+										Died: {player.diedYear} (
+										{player.diedYear - player.born.year} years old)
 										<br />
 									</>
 								)}
@@ -501,6 +509,13 @@ const Player2 = ({
 								>
 									{college}
 								</a>
+								<br />
+								Experience:{" "}
+								{player.experience === 0
+									? "none"
+									: `${player.experience} year${
+											player.experience > 1 ? "s" : ""
+									  }`}
 								<br />
 								{contractInfo}
 								{statusInfo}
@@ -627,6 +642,8 @@ const Player2 = ({
 				</div>
 
 				<AwardsSummary awards={player.awards} />
+
+				<Note note={player.note} pid={player.pid} />
 			</div>
 
 			{player.careerStats.gp > 0 ? (

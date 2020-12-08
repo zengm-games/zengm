@@ -1220,7 +1220,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"# Active": {
+	Active: {
 		desc: "Number of Players Still Active",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -1229,7 +1229,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"# HoF": {
+	HoF: {
 		desc: "Number of Players in the Hall of Fame",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -1364,6 +1364,11 @@ const cols: {
 		sortSequence: ["asc", "desc"],
 		sortType: "number",
 	},
+	Experience: {
+		desc: "Number of Years in the League",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Finals: {
 		desc: "Finals Appearances",
 		sortSequence: ["desc", "asc"],
@@ -1441,6 +1446,7 @@ const cols: {
 	Negotiate: {
 		sortSequence: [],
 	},
+	Note: {},
 	Opp: {
 		desc: "Opponent",
 	},

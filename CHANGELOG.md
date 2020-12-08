@@ -1,5 +1,19 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-12-06: Added next/prev buttons to the season and team top menus, and to the team menu on the trade page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k7pi11/not_totally_sure_if_this_is_a_good_idea_but_i/)
+
+* 2020-12-03: Added ability to view playoff stats on the roster page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
+* 2020-12-03: New "Keep sorted" option on the roster page, to let the AI manage sorting your roster (no more clicking "auto sort" periodically). [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
+* 2020-12-03: You can start historical real players leagues at the draft lottery phase. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+
+* 2020-12-02: Icons for All-Stars, MVPs, and championships are displayed on the Draft History and Draft Team History pages. Peak ovr and pot values are also shown there. [[1]](https://old.reddit.com/r/BasketballGM/comments/k5od0c/icons_for_allstars_mvps_and_championships_are_now/)
+
+* **2020-11-28: An early version of the 2021 rosters is available when creating a new real players league. Also, you can start a 2020 league after the draft if you want to re-play free agency. [[1]](https://old.reddit.com/r/BasketballGM/comments/k30nhc/an_early_version_of_the_2021_rosters_is_available/)**
+
+* 2020-11-27: Added a "player note" that you can write on player profile pages, if you want to remind yourself of anything about a player in the future. They are also viewable on the Watch List page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k293hf/added_a_player_note_that_you_can_write_on_player/) [[2]](https://old.reddit.com/r/BasketballGM/comments/k2t8rh/minor_addition_to_yesterdays_player_notes_update/)
+
 * 2020-11-19: New setting "AI Teams Retire Jersey Numbers" to control whether AI teams should automatically retire/unretire jersey numbers.
 
 * 2020-11-19: Two new trade frivolities: Biggest Trades (trades involving the best players and prospects) and Most Lopsided Trades (trades where one team's assets produced a lot more value than the other). [[1]](https://basketball-gm.com/blog/2020/11/trade-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/jxfy8b/two_new_trade_frivolities_biggest_trades_trades/)
@@ -248,7 +262,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * **2020-05-05: Expansion draft, including configurable player protections from existing teams and the ability to control an expansion team. Tools > Expansion Draft.**
 
-* 2020-05-03: Added a new page Tools > Manage Confs that allows you to create, edit, and delete divisions and conferenes.
+* 2020-05-03: Added a new page Tools > Manage Confs that allows you to create, edit, and delete divisions and conferences.
 
 * 2020-05-03: Added tracking of changes to some league settings (conferences, divisions, and number of playoff rounds) so that historical screens don't show incorrect values.
 
@@ -336,7 +350,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2019-12-11: Added a "Budget" option to God Mode, which lets you equalize all the team spending effects (scouting, coaching, facilities, health) and ignore whether your team is making a profit or loss. [[1]](https://old.reddit.com/r/BasketballGM/comments/e5qq7l/thoughts_on_a_potential_no_finances_mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/e9d9xs/new_in_version_201912111267_a_budget_option_in/) [[3]](https://old.reddit.com/r/Football_GM/comments/e9dakv/new_in_version_201912111268_a_budget_option_in/)
 
-* 2019-12-07: Change team ovr ratings to be unbounded rather than 0-100, because some multiplayer leagues and custom roster files people use have very unflated ratings and half the league ends up at 100.
+* 2019-12-07: Change team ovr ratings to be unbounded rather than 0-100, because some multiplayer leagues and custom roster files people use have very inflated ratings and half the league ends up at 100.
 
 * 2019-12-01: Show region population on league finances page.
 
@@ -816,7 +830,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2014-03-05: New "Upcoming Free Agents" page. [[1]](https://old.reddit.com/r/BasketballGM/comments/1zp11c/minor_new_feature_upcoming_free_agents_page/)
 
-* 2014-03-04: Warning when proceeding to free agency while some players remaing un-re-signed.
+* 2014-03-04: Warning when proceeding to free agency while some players remaining un-re-signed.
 
 * 2014-03-03: Achievements! Also, an account system to store achievements. [[1]](https://basketball-gm.com/blog/2014/03/new-feature-achievements/) [[2]](https://old.reddit.com/r/BasketballGM/comments/1zggeq/new_feature_achievements/)
 
@@ -878,7 +892,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2013-11-26: Highlight players on court in live play-by-play.
 
-* 2013-11-26: Beter awards formulas, based on EWA and wins. [[1]](https://old.reddit.com/r/BasketballGM/comments/1rh71z/minor_new_feature_better_awards_formula/)
+* 2013-11-26: Better awards formulas, based on EWA and wins. [[1]](https://old.reddit.com/r/BasketballGM/comments/1rh71z/minor_new_feature_better_awards_formula/)
 
 * 2013-11-24: Notification bubbles. [[1]](https://old.reddit.com/r/BasketballGM/comments/1re3ea/new_feature_notification_bubbles/)
 

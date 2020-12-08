@@ -444,6 +444,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 				items: {
 					oneOf: [
 						gameAttribute("aiJerseyRetirement", { type: "boolean" }),
+						gameAttribute("keepRosterSorted", { type: "boolean" }),
 						gameAttribute("aiTradesFactor", { type: "number" }),
 						gameAttribute("allStarGame", { type: "boolean" }),
 						gameAttribute("autoDeleteOldBoxScores", { type: "boolean" }),

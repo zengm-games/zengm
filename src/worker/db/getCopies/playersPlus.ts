@@ -215,6 +215,14 @@ const processAttrs = (
 				// Latest
 				output.jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
 			}
+		} else if (attr === "experience") {
+			const seasons = new Set();
+			for (const row of p.stats) {
+				if (row.min > 0 && (season === undefined || row.season <= season)) {
+					seasons.add(row.season);
+				}
+			}
+			output.experience = seasons.size;
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
 			// @ts-ignore

@@ -2,11 +2,12 @@ import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
+import maxBy from "lodash/maxBy";
 
 const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 	const stats =
 		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
+			? ["gp", "min", "pts", "trb", "ast", "per", "ws"]
 			: ["gp", "keyStats", "av"]; // Update every time because anything could change this (unless all players from class are retired)
 
 	let playersAll;
@@ -27,8 +28,19 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 		return p.draft.year === inputs.season;
 	});
 	playersAll = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof", "watch"],
-		ratings: ["ovr", "pot", "skills", "pos"],
+		attrs: [
+			"tid",
+			"abbrev",
+			"draft",
+			"pid",
+			"name",
+			"age",
+			"hof",
+			"watch",
+			"awards",
+			"born",
+		],
+		ratings: ["ovr", "pot", "skills", "pos", "season"],
 		stats,
 		showNoStats: true,
 		showRookies: true,
@@ -40,6 +52,7 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 		})
 		.map(p => {
 			const currentPr = p.ratings[p.ratings.length - 1];
+			const peakPr: any = maxBy(p.ratings, "ovr");
 			return {
 				// Attributes
 				pid: p.pid,
@@ -50,12 +63,18 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 				currentTid: p.tid,
 				hof: p.hof,
 				watch: p.watch,
+				awards: p.awards,
 
 				// Ratings
 				currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
 				currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
 				currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
 				pos: currentPr.pos,
+
+				peakAge: peakPr.season - p.born.year,
+				peakOvr: peakPr.ovr,
+				peakPot: peakPr.pot,
+				peakSkills: peakPr.skills,
 
 				// Stats
 				careerStats: p.careerStats,

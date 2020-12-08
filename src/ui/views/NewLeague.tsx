@@ -8,7 +8,7 @@ import React, {
 	useReducer,
 	useEffect,
 } from "react";
-import { DIFFICULTY, applyRealTeamInfo, PHASE } from "../../common";
+import { DIFFICULTY, applyRealTeamInfo, PHASE, PHASE_TEXT } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
@@ -210,7 +210,7 @@ const LeaguePartPicker = ({
 const quickValuesStyle = { height: 19 };
 
 const MIN_SEASON = 1947;
-const MAX_SEASON = 2020;
+const MAX_SEASON = 2021;
 
 const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
@@ -258,19 +258,23 @@ const legends = [
 const phases = [
 	{
 		key: PHASE.PRESEASON,
-		value: "Preseason",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.PRESEASON]),
 	},
 	{
 		key: PHASE.PLAYOFFS,
-		value: "Playoffs",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.PLAYOFFS]),
+	},
+	{
+		key: PHASE.DRAFT_LOTTERY,
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.DRAFT_LOTTERY]),
 	},
 	{
 		key: PHASE.DRAFT,
-		value: "Draft",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.DRAFT]),
 	},
 	{
 		key: PHASE.AFTER_DRAFT,
-		value: "After draft",
+		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.AFTER_DRAFT]),
 	},
 ];
 
@@ -820,11 +824,11 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			let season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
 			if (Number.isNaN(season)) {
-				season = 2020;
+				season = 2021;
 			}
 			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
 			if (Number.isNaN(phase)) {
-				phase = season === 2020 ? PHASE.DRAFT : PHASE.PRESEASON;
+				phase = PHASE.PRESEASON;
 			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
@@ -900,11 +904,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				? state.randomization === "shuffle"
 				: false;
 
-			const actualDifficulty = Object.values(DIFFICULTY).includes(
-				state.difficulty,
-			)
-				? state.difficulty
-				: DIFFICULTY.Normal;
+			const actualDifficulty = state.difficulty;
 
 			const actualStartingSeason =
 				state.customize === "default" ? startingSeason : undefined;
@@ -1402,12 +1402,13 @@ const NewLeague = (props: View<"newLeague">) => {
 		2004,
 	];
 	let invalidSeasonPhaseMessage: string | undefined;
-	if (state.phase >= PHASE.DRAFT && expansionSeasons.includes(state.season)) {
+	if (state.phase > PHASE.PLAYOFFS && expansionSeasons.includes(state.season)) {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
 	}
-	if (state.season === 2020 && state.phase > PHASE.DRAFT) {
-		invalidSeasonPhaseMessage = "Sorry, this is not ready yet.";
+	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
+		invalidSeasonPhaseMessage =
+			"Sorry, I'm not allowed to share the results of the 2021 season yet.";
 	}
 
 	return (
@@ -1471,9 +1472,13 @@ const NewLeague = (props: View<"newLeague">) => {
 									onLoading={value => {
 										const season = parseInt(value);
 										dispatch({ type: "setSeason", season });
+
+										if (season === 2021) {
+											dispatch({ type: "setPhase", phase: PHASE.PRESEASON });
+										}
 									}}
 									onDone={handleNewLeagueInfo}
-									quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+									quickValues={["1956", "1968", "1984", "1996", "2003", "2021"]}
 									value2={state.phase}
 									values2={phases}
 									onNewValue2={phase => {

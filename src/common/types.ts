@@ -15,7 +15,6 @@ declare global {
 	interface Window {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
-		bbgmAds: any;
 		bbgmVersion: string;
 		bbgmVersionUI: string;
 		bbgmVersionWorker: string;
@@ -348,6 +347,7 @@ export type NamesLegacy = {
 
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
+	keepRosterSorted: boolean;
 	aiTradesFactor: number;
 	allStarGame: boolean;
 	autoDeleteOldBoxScores: boolean;
@@ -890,6 +890,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	jerseyNumber?: string;
 	lastName: string;
 	moodTraits: MoodTrait[];
+	note?: string;
 	numDaysFreeAgent: number;
 	pid?: number;
 	pos?: string; // Only in players from custom league files

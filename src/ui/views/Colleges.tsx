@@ -45,8 +45,8 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 				? "Country"
 				: "stat:jerseyNumber",
 			"# Players",
-			"# Active",
-			"# HoF",
+			"Active",
+			"HoF",
 			"stat:gp",
 			`stat:${valueStat}`,
 			"Name",

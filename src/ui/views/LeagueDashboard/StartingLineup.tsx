@@ -10,18 +10,22 @@ import type { View } from "../../../common/types";
 
 const StartingLineup = ({
 	challengeNoRatings,
+	numPlayersOnCourt,
 	starters,
 	startersStats,
 }: Pick<
 	View<"leagueDashboard">,
-	"challengeNoRatings" | "starters" | "startersStats"
+	"challengeNoRatings" | "numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
 	const statCols = getCols(...startersStats.map(stat => `stat:${stat}`));
 
 	return (
 		<>
 			<h2>
-				{process.env.SPORT === "basketball" ? "Starting Lineup" : "Top Players"}
+				{process.env.SPORT === "basketball" &&
+				numPlayersOnCourt >= starters.length
+					? "Starting Lineup"
+					: "Top Players"}
 			</h2>
 			<ResponsiveTableWrapper nonfluid className="mb-0">
 				<table className="table table-striped table-bordered table-sm">

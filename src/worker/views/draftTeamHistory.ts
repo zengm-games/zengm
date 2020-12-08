@@ -6,6 +6,7 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../common/types";
+import maxBy from "lodash/maxBy";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -20,7 +21,7 @@ const updateDraftTeamHistory = async (
 
 	const stats =
 		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
+			? ["gp", "min", "pts", "trb", "ast", "per", "ws"]
 			: ["gp", "keyStats", "av"];
 	const playersAll2 = await idb.getCopies.players({
 		filter,
@@ -36,8 +37,10 @@ const updateDraftTeamHistory = async (
 			"hof",
 			"watch",
 			"jerseyNumber",
+			"awards",
+			"born",
 		],
-		ratings: ["ovr", "pot", "skills", "pos"],
+		ratings: ["ovr", "pot", "skills", "pos", "season"],
 		stats,
 		showNoStats: true,
 		showRookies: true,
@@ -45,6 +48,7 @@ const updateDraftTeamHistory = async (
 	});
 	const players = playersAll.map(p => {
 		const currentPr = p.ratings[p.ratings.length - 1];
+		const peakPr: any = maxBy(p.ratings, "ovr");
 		return {
 			// Attributes
 			pid: p.pid,
@@ -56,12 +60,18 @@ const updateDraftTeamHistory = async (
 			hof: p.hof,
 			watch: p.watch,
 			jerseyNumber: p.jerseyNumber,
+			awards: p.awards,
 
 			// Ratings
 			currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
 			currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
 			currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
 			pos: currentPr.pos,
+
+			peakAge: peakPr.season - p.born.year,
+			peakOvr: peakPr.ovr,
+			peakPot: peakPr.pot,
+			peakSkills: peakPr.skills,
 
 			// Stats
 			careerStats: p.careerStats,

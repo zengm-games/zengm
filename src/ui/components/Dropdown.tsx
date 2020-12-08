@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, useEffect, useState, ChangeEvent } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 
@@ -9,7 +9,7 @@ const Select = ({
 	value,
 }: {
 	field: string;
-	handleChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+	handleChange: (value: number | string) => void;
 	value: number | string;
 }) => {
 	const options = useDropdownOptions(field);
@@ -46,25 +46,86 @@ const Select = ({
 		width,
 	};
 
-	if (options.length === 1) {
-		style.display = "none";
+	if (options.length <= 1) {
+		return null;
+	}
+
+	const optionIndex = options.findIndex(option => option.key === value);
+
+	const showButtons = field.startsWith("teams") || field.startsWith("seasons");
+
+	let buttons = null;
+	if (showButtons) {
+		const buttonInfo = [
+			{
+				disabled: optionIndex <= 0,
+				onClick: (event: SyntheticEvent) => {
+					event.preventDefault();
+					handleChange(options[optionIndex - 1].key);
+				},
+			},
+			{
+				disabled: optionIndex >= options.length - 1,
+				onClick: (event: SyntheticEvent) => {
+					event.preventDefault();
+					handleChange(options[optionIndex + 1].key);
+				},
+			},
+		];
+
+		// Seasons are displayed in reverse order in the dropdown, and "prev" should be "back in time"
+		const reverseOrder = field.startsWith("seasons");
+		if (reverseOrder) {
+			buttonInfo.reverse();
+		}
+
+		buttons = (
+			<div className="btn-group" style={{ marginLeft: 2 }}>
+				<button
+					className="btn btn-light-bordered btn-xs"
+					disabled={buttonInfo[0].disabled}
+					onClick={buttonInfo[0].onClick}
+					title="Previous"
+				>
+					<span className="glyphicon glyphicon-menu-left" />
+				</button>
+				<button
+					className="btn btn-light-bordered btn-xs"
+					disabled={buttonInfo[1].disabled}
+					onClick={buttonInfo[1].onClick}
+					title="Next"
+				>
+					<span className="glyphicon glyphicon-menu-right" />
+				</button>
+			</div>
+		);
 	}
 
 	return (
-		<>
-			<select
-				value={value}
-				className="dropdown-select"
-				onChange={handleChange}
-				style={style}
-			>
-				{options.map(opt => (
-					<option key={opt.key} value={opt.key}>
-						{opt.val}
-					</option>
-				))}
-			</select>
-		</>
+		<div
+			className="d-flex"
+			style={{
+				marginLeft: 10,
+			}}
+		>
+			{buttons}
+			<div className="form-group mb-0">
+				<select
+					value={value}
+					className="dropdown-select"
+					onChange={event => {
+						handleChange(event.currentTarget.value);
+					}}
+					style={style}
+				>
+					{options.map(opt => (
+						<option key={opt.key} value={opt.key}>
+							{opt.val}
+						</option>
+					))}
+				</select>
+			</div>
+		</div>
 	);
 };
 
@@ -86,12 +147,9 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
-	const handleChange = (
-		i: number,
-		event: SyntheticEvent<HTMLSelectElement>,
-	) => {
+	const handleChange = (i: number, value: string | number) => {
 		const newValues = values.slice();
-		newValues[i] = event.currentTarget.value;
+		newValues[i] = value;
 		const parts = [view, ...newValues];
 
 		if (extraParam !== undefined) {
@@ -105,13 +163,12 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 		<form className="form-inline">
 			{keys.map((key, i) => {
 				return (
-					<div key={key} className="form-group ml-1 mb-0">
-						<Select
-							field={key}
-							value={values[i]}
-							handleChange={event => handleChange(i, event)}
-						/>
-					</div>
+					<Select
+						key={key}
+						field={key}
+						value={values[i]}
+						handleChange={value => handleChange(i, value)}
+					/>
 				);
 			})}
 		</form>

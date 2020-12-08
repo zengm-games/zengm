@@ -355,6 +355,11 @@ const changes = [
 		msg:
 			'Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. <a href="https://basketball-gm.com/blog/2020/11/trade-details/">More details</a>',
 	},
+	{
+		date: "2020-11-28",
+		msg:
+			"An early version of the 2021 rosters is available when creating a new real players league.",
+	},
 ];
 
 export default changes;

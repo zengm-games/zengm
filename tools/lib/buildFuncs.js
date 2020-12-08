@@ -163,6 +163,10 @@ const reset = () => {
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 
+const upperCaseFirstLetter = string => {
+	return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+};
+
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	const sport = getSport();
 
@@ -181,13 +185,11 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 		silent: true,
 	});
 
-	const bannerAdsCode =
-		sport === "basketball"
-			? `<script type="text/javascript">
+	const bannerAdsCode = `<script type="text/javascript">
 var cmpConfig = {
   global: false,
-  publisherName: "Basketball GM",
-  publisherLogo: "https://basketball-gm.com/files/logo.png",
+  publisherName: "${upperCaseFirstLetter(sport)} GM",
+  publisherLogo: "https://${sport}-gm.com/files/logo.png",
 };
 function cmpFactory(cmpConfig) {
   var cssToAdd = cmpConfig.customCSS ? cmpConfig.customCSS : ".qc-cmp-button.qc-cmp-secondary-button { border-color: #eee !important; background-color: #eee !important; }";
@@ -310,17 +312,9 @@ freestar.config = freestar.config || {};
 freestar.debug = window.location.search.indexOf('fsdebug') === -1 ? false : true;
 freestar.config.enabled_slots = [];
 if (window.enableLogging) {
-  !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/basketball-gm-com";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
+  !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/${sport}-gm-com";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
   freestar.initCallback = function () { freestar.newAdSlots(freestar.config.enabled_slots); }
 }
-</script>`
-			: `<script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
-<script async="async" src="https://basketball-gm.com/prebid/BBGM_ADS_FILENAME.js"></script>
-<script type="text/javascript">
-var googletag = googletag || {};
-googletag.cmd = googletag.cmd || [];
-var bbgmAds = bbgmAds || {};
-bbgmAds.cmd = bbgmAds.cmd || [];
 </script>`;
 
 	replace({
@@ -388,6 +382,42 @@ qacct:"p-Ye5RY6xC03ZWz"
 	replace({
 		regex: "QUANTCAST_CODE",
 		replacement: quantcastCode,
+		paths: ["build/index.html"],
+		silent: true,
+	});
+
+	let facebookPixelCode = "";
+	if (!watch) {
+		facebookPixelCode = `<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${
+			process.env.SPORT === "basketball"
+				? "1285618145138713"
+				: "216939956468092"
+		}');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=${
+			process.env.SPORT === "basketball"
+				? "1285618145138713"
+				: "216939956468092"
+		}&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->`;
+	}
+
+	replace({
+		regex: "FACEBOOK_PIXEL_CODE",
+		replacement: facebookPixelCode,
 		paths: ["build/index.html"],
 		silent: true,
 	});

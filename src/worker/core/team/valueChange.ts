@@ -162,18 +162,23 @@ const getPickNumber = (
 			seasons = helpers.bound(seasons + 1, 0, 5);
 		}
 
+		if (seasons === 0 && g.get("phase") < PHASE.PLAYOFFS) {
+			// Would be better to base on fraction of season completed, but oh well
+			seasons += 0.5;
+		}
+
 		// Weighted average of estPicks and regressionTarget
 		estPick = Math.round(
 			(estPick * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5,
 		);
 
-		if (tradeWithUser) {
+		if (tradeWithUser && seasons > 0) {
 			if (usersPick) {
 				// Penalty for user draft picks
 				const difficultyFactor = 1 + 1.5 * g.get("difficulty");
 				estPick = helpers.bound(
 					Math.round(
-						(estPick + g.get("numActiveTeams") / 2.5) * difficultyFactor,
+						(estPick + g.get("numActiveTeams") / 3.5) * difficultyFactor,
 					),
 					1,
 					g.get("numActiveTeams"),
@@ -181,7 +186,7 @@ const getPickNumber = (
 			} else {
 				// Bonus for AI draft picks
 				estPick = helpers.bound(
-					Math.round(estPick - g.get("numActiveTeams") / 2.5),
+					Math.round(estPick - g.get("numActiveTeams") / 3.5),
 					1,
 					g.get("numActiveTeams"),
 				);

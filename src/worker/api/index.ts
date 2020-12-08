@@ -364,6 +364,15 @@ const createLeague = async ({
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
 				applyRealTeamInfo(t, realTeamInfo, currentSeason);
+
+				// This is especially needed for new real players leagues started after the regular season. Arguably makes sense to always do, for consistency, since applyRealTeamInfo will override the current logos anyway, might as well do the historical ones too. But let's be careful.
+				if (getLeagueOptions && t.seasons) {
+					for (const teamSeason of t.seasons) {
+						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
+							srIDOverride: t.srID,
+						});
+					}
+				}
 			}
 		}
 
@@ -1867,6 +1876,8 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	}
 
 	if (depth.hasOwnProperty(pos)) {
+		await league.setGameAttributes({ keepRosterSorted: false });
+
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-ignore
 		depth[pos] = sortedPids;
@@ -1889,7 +1900,10 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 			}
 		}),
 	);
-	await toUI("realtimeUpdate", [["playerMovement"]]);
+
+	await league.setGameAttributes({ keepRosterSorted: false });
+
+	await toUI("realtimeUpdate", [["gameAttributes", "playerMovement"]]);
 };
 
 const resetPlayingTime = async (tids: number[] | undefined) => {
@@ -2126,6 +2140,21 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 		l.difficulty = g.get("difficulty");
 		await idb.meta.put("leagues", l);
 	}
+};
+
+const setPlayerNote = async (pid: number, note: string) => {
+	const p = await idb.getCopy.players({
+		pid,
+	});
+
+	if (p) {
+		p.note = note;
+		await idb.cache.players.put(p);
+	} else {
+		throw new Error("Invalid pid");
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const sign = async (
@@ -3019,6 +3048,7 @@ export default {
 	setForceWin,
 	setForceWinAll,
 	setLocal,
+	setPlayerNote,
 	sign,
 	updateExpansionDraftSetup,
 	advanceToPlayerProtection,

@@ -36,6 +36,7 @@ const Depth = ({
 	abbrev,
 	challengeNoRatings,
 	editable,
+	keepRosterSorted,
 	players,
 	pos,
 	ratings,
@@ -116,20 +117,41 @@ const Depth = ({
 			</ul>
 
 			{editable ? (
-				<div className="btn-group mb-3">
-					<button
-						className="btn btn-light-bordered"
-						onClick={() => handleAutoSort(pos)}
-					>
-						Auto sort {pos}
-					</button>
-					<button
-						className="btn btn-light-bordered"
-						onClick={handleAutoSortAll}
-					>
-						Auto sort all
-					</button>
-				</div>
+				<>
+					<div className="btn-group mb-2">
+						<button
+							className="btn btn-light-bordered"
+							onClick={() => handleAutoSort(pos)}
+						>
+							Auto sort {pos}
+						</button>
+						<button
+							className="btn btn-light-bordered"
+							onClick={handleAutoSortAll}
+						>
+							Auto sort all
+						</button>
+					</div>
+					<div className="form-check mb-3">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={keepRosterSorted}
+							id="ai-sort-user-roster"
+							onChange={async () => {
+								if (!keepRosterSorted) {
+									await handleAutoSortAll();
+								}
+								await toWorker("main", "updateGameAttributes", {
+									keepRosterSorted: !keepRosterSorted,
+								});
+							}}
+						/>
+						<label className="form-check-label" htmlFor="ai-sort-user-roster">
+							Keep all auto sorted
+						</label>
+					</div>
+				</>
 			) : null}
 
 			<div className="clearfix" />

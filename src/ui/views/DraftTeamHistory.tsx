@@ -88,7 +88,7 @@ const DraftTeamHistory = ({
 				`${p.draft.round}-${p.draft.pick}`,
 				{
 					value: (
-						<>
+						<div className="d-flex">
 							<PlayerNameLabels
 								jerseyNumber={p.jerseyNumber}
 								pid={p.pid}
@@ -97,11 +97,11 @@ const DraftTeamHistory = ({
 							>
 								{p.name}
 							</PlayerNameLabels>
-							<div className="float-right">
+							<div className="ml-auto">
 								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
 								<SeasonIcons className="ml-1" awards={p.awards} />
 							</div>
-						</>
+						</div>
 					),
 					sortValue: p.name,
 					searchValue: p.name,

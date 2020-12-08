@@ -2706,7 +2706,6 @@ const updateTeamInfo = async (
 };
 
 const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
-	awards = awards["aws"];
 	const awardNames = AWARD_NAMES;
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
 	const simpleAwards = SIMPLE_AWARDS;

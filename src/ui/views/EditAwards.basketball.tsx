@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
@@ -16,31 +16,20 @@ const EditAwardsBasketball = ({
 		dropdownFields: { seasons: season },
 	});
 	const awardsInitial = awards;
-	const [state, setState] = useState(() => {
-		const aws = helpers.deepCopy(awards);
-		return {
-			aws,
-		};
-	});
-
+	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
+	useEffect(() => {
+		setAws(() => helpers.deepCopy(awards));
+	}, [awards, season]);
 	const handleChange = (obj: any, pl: any) => {
 		let error: boolean = false;
 		const p: any = pl;
 		const type = obj.props.award;
 		const numberTeam = obj.props.teamNumber;
 		const numberPlayer = obj.props.playerNumber;
-		if (state.aws == undefined) {
-			setState(prevState => {
-				const aws = helpers.deepCopy(awards);
-				return {
-					...prevState,
-					aws,
-				};
-			});
-		}
 
-		setState(prevState => {
-			const aws: any = prevState.aws;
+		setAws((prevState: any) => {
+			const aws: any = prevState;
+
 			if (
 				type == "finalsMvp" ||
 				type == "mvp" ||
@@ -177,23 +166,16 @@ const EditAwardsBasketball = ({
 				}
 			}
 
-			return {
-				...prevState,
-				aws,
-			};
+			return aws;
 		});
 		return error;
 	};
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
-		setState(prevState => ({
-			...prevState,
-			saving: true,
-		}));
 
 		try {
-			await toWorker("main", "upsertAwards", state, awardsInitial);
+			await toWorker("main", "upsertAwards", aws, awardsInitial);
 			realtimeUpdate([], helpers.leagueUrl(["history"]));
 		} catch (error) {
 			logEvent({
@@ -202,10 +184,6 @@ const EditAwardsBasketball = ({
 				saveToDb: false,
 				persistent: true,
 			});
-			setState(prevState => ({
-				...prevState,
-				saving: false,
-			}));
 		}
 	};
 	if (awards) {
@@ -259,7 +237,7 @@ const EditAwardsBasketball = ({
 							options={players}
 							key={season}
 							player={awards["smoy"]}
-							award="dpoy"
+							award="smoy"
 							changing={handleChange}
 						/>
 					</div>

@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
@@ -17,30 +17,21 @@ const EditAwardsFootball = ({
 	});
 
 	const awardsInitial = awards;
-	const [state, setState] = useState(() => {
-		const aws = helpers.deepCopy(awards);
-
-		return {
-			aws,
-		};
-	});
+	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
+	useEffect(() => {
+		setAws(() => helpers.deepCopy(awards));
+	}, [awards, season]);
 	const handleChange = (obj: any, pl: any) => {
 		let error: boolean = false;
 		const p: any = pl;
 		const type = obj.props.award;
 		const numberTeam = obj.props.teamNumber;
 		const numberPlayer = obj.props.playerNumber;
-		if (state.aws == undefined) {
-			setState(prevState => {
-				const aws = helpers.deepCopy(awards);
-				return {
-					...prevState,
-					aws,
-				};
-			});
+		if (aws == undefined) {
+			setAws(() => helpers.deepCopy(awards));
 		}
-		setState(prevState => {
-			const aws: any = prevState.aws;
+		setAws((prevState: any) => {
+			const aws: any = prevState;
 			if (p.currentStats == undefined) {
 				p.currentStats = { keyStats: "No stats available" };
 			}
@@ -127,23 +118,16 @@ const EditAwardsFootball = ({
 				}
 			}
 
-			return {
-				...prevState,
-				aws,
-			};
+			return aws;
 		});
 		return error;
 	};
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
-		setState(prevState => ({
-			...prevState,
-			saving: true,
-		}));
 
 		try {
-			await toWorker("main", "upsertAwards", state, awardsInitial);
+			await toWorker("main", "upsertAwards", aws, awardsInitial);
 			realtimeUpdate([], helpers.leagueUrl(["history"]));
 		} catch (error) {
 			logEvent({
@@ -152,10 +136,6 @@ const EditAwardsFootball = ({
 				saveToDb: false,
 				persistent: true,
 			});
-			setState(prevState => ({
-				...prevState,
-				saving: false,
-			}));
 		}
 	};
 	if (awards) {

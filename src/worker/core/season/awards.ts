@@ -405,7 +405,6 @@ const makeAwardsByPlayer = async (awards: any, conditions: Conditions) => {
 		} else {
 			for (const level of awards[key]) {
 				for (const { pid, tid, name } of level.players) {
-					console.log(pid);
 					awardsByPlayer.push({
 						pid,
 						tid,

@@ -1165,6 +1165,11 @@ const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
 
+const getRandomName = async (country: string) => {
+	const { firstName, lastName } = player.name(country);
+	return { firstName, lastName };
+};
+
 const getRandomRatings = async (age: number, pos: string | undefined) => {
 	// 100 tries to find a matching position
 	let p: any;
@@ -2958,6 +2963,7 @@ export default {
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,
+	getRandomName,
 	getRandomRatings,
 	getTradingBlockOffers,
 	getVersionWorker,

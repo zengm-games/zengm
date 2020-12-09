@@ -11,7 +11,9 @@ const getFromCumSumArray = (array: [string, number][]) => {
 	return foundRow[0];
 };
 
-const name = (): {
+const name = (
+	countryOverride?: string,
+): {
 	college: string;
 	country: string;
 	firstName: string;
@@ -28,7 +30,13 @@ const name = (): {
 	if (!frequencies || frequencies.length === 0) {
 		throw new Error("No countries in playerBioInfo");
 	}
-	const country = getFromCumSumArray(frequencies);
+
+	let country;
+	if (countryOverride && playerBioInfo.countries[countryOverride]) {
+		country = countryOverride;
+	} else {
+		country = getFromCumSumArray(frequencies);
+	}
 
 	if (!playerBioInfo.countries[country]) {
 		throw new Error(`Country "${country}" missing in playerBioInfo countries`);

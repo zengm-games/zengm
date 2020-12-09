@@ -1,8 +1,33 @@
+File System Access API https://web.dev/file-system-access/
+- use (when available) for saving any files
+- is it possible to stream from IDB to file?
+  - write to stream returns a promise
+  - transaction auto commit still unavoidable? if so:
+    - could we just keep writing to file without awaiting?
+    - use multiple transactions, one for each "chunk"
+  - Send a Tweet to @ChromiumDev with #filesystemaccess and let us know where and how you're using it.
+- is it possible to select a directory, and auto save there every year?
+  - Since permissions currently are not persisted between sessions, you should verify whether the user has granted permission to the file using queryPermission(). If they haven't, use requestPermission() to (re-)request it.
+
 ability to switch back to prior year
 - In danger zone, button to reset to preseason of any season
+  - preseason, or regular season? or pick phase?
 - On export league, ability to export at any past preseason
 - would need to store rosters each preseason, similar to groundhog day
+  - new object store, primary key season, array of all roster infos?
+    - do i ever want to suppport different phases? then primary key needs to be (season, phase)
+    - delete old data
+    - league export
+    - league creation
+  - write at the end of newPhase that switches to this season+phase?
+- available seasons/phases populate the menu by looking at the keys of the object store
+- also roll back teams, somehow
+- roll back g changes, when possible
+  - maybe store g in the object store too... { g, teams }
 - g.repeatSeason could become a boolean that uses this (eventually, gotta worry about upgrades)
+- maybe not...
+  - in other games, this would be achieved by saving at different times. when that is easier (stream) that will be better
+  - storing g is messy, since g already has a history mechanism
 
 name/colleges revamp
 - races
@@ -102,6 +127,8 @@ settings re-design
   - playoff structure
 
 real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
+- add marker for rookie contracts
+- also use this to determine who can be released, rather than the hacky way now
 
 option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob
 

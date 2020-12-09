@@ -2026,11 +2026,11 @@ class GameSim {
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
 		let texts;
-		const ratios = this.ratingArray("rebounding", this.d, 5);
-		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-		const d = this.team[this.d].player[p].name;
 
 		if (this.playByPlay !== undefined) {
+			const ratios = this.ratingArray("rebounding", this.d, 5);
+			const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+			const d = this.team[this.d].player[p].name;
 			const threePointerText = g.get("threePointers")
 				? "three pointer"
 				: "deep shot";

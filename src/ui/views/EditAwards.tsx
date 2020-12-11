@@ -49,9 +49,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
+							pts: p.stats.pts,
+							trb: p.stats.trb,
+							ast: p.stats.ast,
 						};
 					} else {
 						aws[type] = {
@@ -59,8 +59,8 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							keyStats: p.currentStats.keyStats,
-							pos: p.pos,
+							keyStats: p.stats.keyStats,
+							pos: p.ratings.pos,
 						};
 					}
 				}
@@ -74,9 +74,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
-							blk: p.currentStats == undefined ? 0 : p.currentStats.blk,
-							stl: p.currentStats == undefined ? 0 : p.currentStats.stl,
+							trb: p.stats.trb,
+							blk: p.stats.blk,
+							stl: p.stats.stl,
 						};
 					} else {
 						aws[type] = {
@@ -84,8 +84,8 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							keyStats: p.currentStats.keyStats,
-							pos: p.pos,
+							keyStats: p.stats.keyStats,
+							pos: p.ratings.pos,
 						};
 					}
 				}
@@ -118,9 +118,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
-							blk: p.currentStats == undefined ? 0 : p.currentStats.blk,
-							stl: p.currentStats == undefined ? 0 : p.currentStats.stl,
+							trb: p.stats.trb,
+							blk: p.stats.blk,
+							stl: p.stats.stl,
 						};
 					} else {
 						aws[type][numberTeam]["players"][numberPlayer] = {
@@ -128,8 +128,8 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							keyStats: p.currentStats.keyStats,
-							pos: p.pos,
+							keyStats: p.stats.keyStats,
+							pos: p.ratings.pos,
 						};
 					}
 				}
@@ -162,9 +162,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
+							pts: p.stats.pts,
+							trb: p.stats.trb,
+							ast: p.stats.ast,
 						};
 					} else {
 						aws[type][numberTeam]["players"][numberPlayer] = {
@@ -172,8 +172,8 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							keyStats: p.currentStats.keyStats,
-							pos: p.pos,
+							keyStats: p.stats.keyStats,
+							pos: p.ratings.pos,
 						};
 					}
 				}
@@ -204,9 +204,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
+							pts: p.stats.pts,
+							trb: p.stats.trb,
+							ast: p.stats.ast,
 						};
 					} else {
 						aws[type][numberPlayer] = {
@@ -214,8 +214,8 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pos: p.pos,
-							keyStats: p.currentStats.keyStats,
+							pos: p.ratings.pos,
+							keyStats: p.stats.keyStats,
 						};
 					}
 				}

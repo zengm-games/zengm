@@ -79,38 +79,11 @@ const updateAwards = async (
 							"tid",
 							"jerseyNumber",
 					  ]
-					: [
-							"keyStats",
-							"av",
-							"pntYds",
-							"fg",
-							"krTD",
-							"krYds",
-							"prTD",
-							"prYds",
-							"season",
-							"abbrev",
-							"tid",
-							"jerseyNumber",
-					  ],
+					: ["keyStats", "season", "abbrev", "tid", "jerseyNumber"],
 			fuzz: true,
 			mergeStats: true,
+			season,
 		});
-
-		for (const p of players) {
-			p.pos = p.ratings[p.ratings.length - 1].pos;
-
-			p.currentStats = p.stats[p.stats.length - 1];
-			for (let i = p.stats.length - 1; i >= 0; i--) {
-				if (p.stats[i].season === season) {
-					p.currentStats = p.stats[i];
-					break;
-				}
-			}
-
-			// Otherwise it's always the current season
-			p.age = season - p.born.year;
-		}
 
 		const nobody = {
 			pid: undefined,

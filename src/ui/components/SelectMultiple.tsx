@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React from "react";
 import Select from "react-select";
 
 class SelectReact extends React.Component<

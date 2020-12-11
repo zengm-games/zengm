@@ -8,8 +8,6 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	applyRealTeamInfo,
-	AWARD_NAMES,
-	SIMPLE_AWARDS,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -79,7 +77,6 @@ import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	AwardsByPlayer,
 	deleteAwardsByPlayer,
-	makeAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";

@@ -263,7 +263,7 @@ const saveAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	conditions: Conditions,
 	season: number = g.get("season"),
-	logEvents?: boolean = true,
+	logEvents: boolean = true,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {

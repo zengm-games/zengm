@@ -278,7 +278,7 @@ const setupRoutes = () => {
 
 				if (errMsg === "Matching route not found") {
 					listOfOptions = ["that the lollipop is named after a famous horse named \"Lolly Pop\"", "that these fun facts are from the internet but I don't bother citing them", "Elvis only won 3 Grammys", "that it takes 700 grapes to make a bottle of wine", "that the very first alarm clock could only ring at 4 AM", "that snails can sleep for 3 years", "a B-25 plane crashed into the Empire State Building", "BBC once reported that they had no news", "that in Japan, it's a tradition to eat KFC on Christmas", "the first commercial was for Mr. Potato Head", "the White House got its name in 1901", "basketball was made so football players can stay active during the winter", "chocolate syrup was used as blood in black and white movies", "that in the Middle Ages, tomatoes were thought poisonous", "that the largest Ferris Wheel is in Dallas", "I'm blue da ba dee da ba daa", "Space Jam is the best movie", "released in 1903, Vie et Passion du Christ is the first movie in color", "2020 ÷ 5 = 404", "I'm running out of ideas", "Hawaiian pizza was made in Canada", "that these facts aren't made by Dumbmatter"];
-					errMsg = "Page not found.<p>But did you know " + listOfOptions[Math.floor(Math.random() * listOfOptions.length)] + "</p>";
+					errMsg = "Page not found.<p>But did you know " + listOfOptions[Math.floor(Math.random() * listOfOptions.length)] + "?</p>";
 				} else if (errMsg === "League not found.") {
 					errMsg = leagueNotFoundMessage;
 				} else if (

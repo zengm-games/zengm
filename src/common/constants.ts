@@ -147,12 +147,12 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 	W: "Winning",
 };
 
-const SIMPLE_AWARDS =
+const SIMPLE_AWARDS: Readonly<string[]> =
 	process.env.SPORT == "basketball"
 		? constantsBasketball.SIMPLE_AWARDS
 		: constantsFootball.SIMPLE_AWARDS;
 
-const AWARD_NAMES: any =
+const AWARD_NAMES: Record<string, string> =
 	process.env.SPORT == "basketball"
 		? constantsBasketball.AWARD_NAMES
 		: constantsFootball.AWARDS_NAMES;

@@ -211,30 +211,37 @@ table.table thead .sorting::after {
 }
 
 .dark-select__control {
-	background-color: $gray-100 !important;
+	background-color: $white !important;
+}
+.dark-select__control--is-focused {
+	border-color: $primary !important;
+	box-shadow: $primary 0 0 1px !important;
 }
 .dark-select__single-value {
-	color: white !important;
+	color: $black !important;
 }
 .dark-select__input {
-	background-color: $gray-100 !important;
-	color: white !important;
+	background-color: $white !important;
+	color: $black !important;
 }
 
 .dark-select__menu-list {
-	background-color: $gray-200 !important;
-	color: white !important;
+	background-color: $white !important;
+	color: $black !important;
 }
-.react-select__indicators {
-	background-color: purple !important;
+.dark-select__indicator svg {
+	color: $gray-300 !important;
+	&:not(:disabled):hover {
+		color: $gray-400 !important;
+	}
 }
 .dark-select__option {
-	background-color: $gray-200 !important;
-	color: white !important;
+	background-color: $white !important;
+	color: $black !important;
 }
 .dark-select__option:hover {
-	background-color: $gray-500 !important;
-	color: white !important;
+	background-color: $gray-100 !important;
+	color: $black !important;
 }
 .table-accent {
 	background-color: rgba(255, 255, 255, 0.1);

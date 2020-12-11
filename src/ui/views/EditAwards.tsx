@@ -11,11 +11,10 @@ const EditAwards = ({
 	season,
 }: View<"editAwards">) => {
 	useTitleBar({
-		title: "Edit awards",
+		title: "Edit Awards",
 		dropdownView: "edit_awards",
-		dropdownFields: { seasons: season },
+		dropdownFields: { seasonsHistory: season },
 	});
-	const awardsInitial = awards;
 	const football = process.env.SPORT === "football";
 	const basketball = process.env.SPORT === "basketball";
 	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
@@ -50,9 +49,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
+							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
+							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
+							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
 						};
 					} else {
 						aws[type] = {
@@ -75,9 +74,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-							blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
-							stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
+							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
+							blk: p.currentStats == undefined ? 0 : p.currentStats.blk,
+							stl: p.currentStats == undefined ? 0 : p.currentStats.stl,
 						};
 					} else {
 						aws[type] = {
@@ -103,9 +102,8 @@ const EditAwards = ({
 					if (arrayPids.includes(p.pid)) {
 						logEvent({
 							type: "error",
-							text: "Player already in teams of this category",
+							text: "Cannot add player to team twice",
 							saveToDb: false,
-							persistent: true,
 						});
 						error = true;
 						obj.setValue(obj.state.select.value);
@@ -120,9 +118,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-							blk: p.currentStats == undefined ? 0.0 : p.currentStats.blk,
-							stl: p.currentStats == undefined ? 0.0 : p.currentStats.stl,
+							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
+							blk: p.currentStats == undefined ? 0 : p.currentStats.blk,
+							stl: p.currentStats == undefined ? 0 : p.currentStats.stl,
 						};
 					} else {
 						aws[type][numberTeam]["players"][numberPlayer] = {
@@ -148,9 +146,8 @@ const EditAwards = ({
 					if (arrayPids.includes(p.pid)) {
 						logEvent({
 							type: "error",
-							text: "Player already in teams of this category",
+							text: "Cannot add player to team twice",
 							saveToDb: false,
-							persistent: true,
 						});
 						error = true;
 						obj.setValue(obj.state.select.value);
@@ -165,9 +162,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
+							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
+							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
+							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
 						};
 					} else {
 						aws[type][numberTeam]["players"][numberPlayer] = {
@@ -191,9 +188,8 @@ const EditAwards = ({
 					if (arrayPids.includes(p.pid)) {
 						logEvent({
 							type: "error",
-							text: "Player already in teams of this category",
+							text: "Cannot add player to team twice",
 							saveToDb: false,
-							persistent: true,
 						});
 						error = true;
 						obj.setValue(obj.state.select.value);
@@ -208,9 +204,9 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pts: p.currentStats == undefined ? 0.0 : p.currentStats.pts,
-							trb: p.currentStats == undefined ? 0.0 : p.currentStats.trb,
-							ast: p.currentStats == undefined ? 0.0 : p.currentStats.ast,
+							pts: p.currentStats == undefined ? 0 : p.currentStats.pts,
+							trb: p.currentStats == undefined ? 0 : p.currentStats.trb,
+							ast: p.currentStats == undefined ? 0 : p.currentStats.ast,
 						};
 					} else {
 						aws[type][numberPlayer] = {
@@ -233,7 +229,7 @@ const EditAwards = ({
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
-			await toWorker("main", "upsertAwards", aws, awardsInitial);
+			await toWorker("main", "upsertAwards", aws);
 			realtimeUpdate([], helpers.leagueUrl(["history", season]));
 		} catch (error) {
 			logEvent({
@@ -248,7 +244,7 @@ const EditAwards = ({
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					<div className="col-sm-3 col-6 form-group">
+					<div className="col-sm-4 col-6 form-group">
 						<label>Finals MVP</label>
 						<SelectReact
 							options={players}
@@ -258,7 +254,7 @@ const EditAwards = ({
 							changing={handleChange}
 						/>
 					</div>
-					<div className="col-sm-3 col-6 form-group">
+					<div className="col-sm-4 col-6 form-group">
 						<label>MVP</label>
 						<SelectReact
 							options={players}
@@ -269,8 +265,8 @@ const EditAwards = ({
 						/>
 					</div>
 
-					<div className="col-sm-3 col-6 form-group" hidden={football}>
-						<label>Rookie of the year</label>
+					<div className="col-sm-4 col-6 form-group" hidden={football}>
+						<label>Rookie of the Year</label>
 						<SelectReact
 							key={season}
 							options={players}
@@ -279,8 +275,8 @@ const EditAwards = ({
 							changing={handleChange}
 						/>
 					</div>
-					<div className="col-sm-3 col-6 form-group">
-						<label>Defensive Player of the year</label>
+					<div className="col-sm-4 col-6 form-group">
+						<label>Defensive Player of the Year</label>
 						<SelectReact
 							options={players}
 							key={season}
@@ -290,8 +286,8 @@ const EditAwards = ({
 						/>
 					</div>
 					{basketball ? (
-						<div className="col-sm-3 col-6 form-group" hidden={football}>
-							<label>Six Man of the year</label>
+						<div className="col-sm-4 col-6 form-group" hidden={football}>
+							<label>Six Man of the Year</label>
 							<SelectReact
 								options={players}
 								key={season}
@@ -302,8 +298,8 @@ const EditAwards = ({
 						</div>
 					) : null}
 					{basketball ? (
-						<div className="col-sm-3 col-6 form-group" hidden={football}>
-							<label>Most Improved player</label>
+						<div className="col-sm-4 col-6 form-group" hidden={football}>
+							<label>Most Improved Player</label>
 							<SelectReact
 								options={players}
 								key={season}
@@ -315,8 +311,8 @@ const EditAwards = ({
 					) : null}
 
 					{football ? (
-						<div className="col-sm-3 col-6 form-group">
-							<label>Defensive Rookie of the year</label>
+						<div className="col-sm-4 col-6 form-group">
+							<label>Defensive Rookie of the Year</label>
 
 							<SelectReact
 								options={players}
@@ -328,8 +324,8 @@ const EditAwards = ({
 						</div>
 					) : null}
 					{football ? (
-						<div className="col-sm-3 col-6 form-group" hidden={basketball}>
-							<label>Offensive Rookie of the year</label>
+						<div className="col-sm-4 col-6 form-group" hidden={basketball}>
+							<label>Offensive Rookie of the Year</label>
 							<SelectReact
 								options={players}
 								key={season}
@@ -340,14 +336,12 @@ const EditAwards = ({
 						</div>
 					) : null}
 				</div>
-				<h1>Teams</h1>
-				<div className="row">
+				<div className="row mt-4">
 					{awards["allLeague"].map((element: any, i: number) => {
-						const title = <h1 key={i}>{element.title} All NBA</h1>;
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
 								return (
-									<div className="col form-group" key={j}>
+									<div className="form-group" key={j}>
 										<SelectReact
 											key={season}
 											options={players}
@@ -363,21 +357,20 @@ const EditAwards = ({
 						);
 
 						return [
-							<div className="col" key={i}>
-								{" "}
-								{title} {teamSelect}{" "}
+							<div className="col-sm-4" key={i}>
+								<h3>{element.title} All-League</h3>
+								{teamSelect}
 							</div>,
 						];
 					})}
 				</div>
 				{basketball ? (
-					<div className="row">
+					<div className="row mt-4">
 						{awards["allDefensive"].map((element: any, i: number) => {
-							const title = <h1 key={i}>{element.title} All Defensive</h1>;
 							const teamSelect = element["players"].map(
 								(player: any, j: number) => {
 									return (
-										<div className="col form-group" key={j}>
+										<div className="form-group" key={j}>
 											<SelectReact
 												key={season}
 												options={players}
@@ -393,31 +386,36 @@ const EditAwards = ({
 							);
 
 							return [
-								<div className="col" key={i}>
-									{" "}
-									{title} {teamSelect}{" "}
+								<div className="col-sm-4" key={i}>
+									<h3>{element.title} All-Defensive</h3>
+									{teamSelect}
 								</div>,
 							];
 						})}
 					</div>
 				) : null}
-				<h1>All-Rookie Team</h1>
-				{awards["allRookie"].map((element: any, i: number) => {
-					return (
-						<div className="col-sm-3 col-6 form-group" key={i}>
-							<SelectReact
-								options={players}
-								key={season}
-								player={element}
-								award="allRookie"
-								playerNumber={i}
-								changing={handleChange}
-							/>
-						</div>
-					);
-				})}
+				<div className="row mt-4">
+					<div className="col-sm-4">
+						<h3>All-Rookie Team</h3>
+						{awards["allRookie"].map((element: any, i: number) => {
+							return (
+								<div className="form-group" key={i}>
+									<SelectReact
+										options={players}
+										key={season}
+										player={element}
+										award="allRookie"
+										playerNumber={i}
+										changing={handleChange}
+									/>
+								</div>
+							);
+						})}
+					</div>
+				</div>
+
 				<button className="btn btn-primary mt-3" disabled={!godMode}>
-					Save changes
+					Save Changes
 				</button>
 			</form>
 		);

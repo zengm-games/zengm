@@ -65,7 +65,7 @@ const Teams = ({
 		content = <p>None</p>;
 	} else {
 		content = team
-			.filter(p => Object.keys(p).length > 0)
+			.filter(p => p !== undefined)
 			.map(p => <Player key={p.pid} p={p} season={season} userTid={userTid} />);
 	}
 

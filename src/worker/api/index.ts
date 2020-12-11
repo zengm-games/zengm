@@ -2734,12 +2734,18 @@ const updateTeamInfo = async (
 	});
 };
 
-const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
-	const awardNames = AWARD_NAMES;
+const upsertAwards = async (awards: any): Promise<any> => {
+	const awardsInitial = await idb.getCopy.awards({
+		season: awards.season,
+	});
+
+	if (!awardsInitial) {
+		throw new Error("awardsInitial not found");
+	}
+
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
-	const simpleAwards = SIMPLE_AWARDS;
-	for (const key of simpleAwards) {
-		const type = awardNames[key] as string;
+	for (const key of SIMPLE_AWARDS) {
+		const type = AWARD_NAMES[key];
 		const award = awardsInitial[key];
 
 		if (award === undefined) {
@@ -2760,7 +2766,7 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 			? (["allRookie", "allLeague", "allDefensive"] as const)
 			: (["allRookie", "allLeague"] as const);
 	for (const key of awardsTeams) {
-		const type = awardNames[key] as string;
+		const type = AWARD_NAMES[key];
 		if (key === "allRookie") {
 			for (const { pid, tid, name } of awardsInitial.allRookie) {
 				if (pid != undefined) {
@@ -2787,11 +2793,7 @@ const upsertAwards = async (awards: any, awardsInitial: any): Promise<any> => {
 			}
 		}
 	}
-	await deleteAwardsByPlayer(
-		awardsByPlayerToDelete,
-		awards.season,
-		Object.values(awardNames),
-	);
+	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
 	makeAwardsByPlayer(awards, {});
 };
 

@@ -52,6 +52,7 @@ const MoreLinks = (
 	let links: {
 		url: (string | number)[];
 		name: string;
+		className?: string;
 	}[];
 	if (props.type === "team") {
 		const { abbrev, season, tid } = props;
@@ -141,10 +142,12 @@ const MoreLinks = (
 		links.push({ url: ["draft_team_history"], name: "Team History" });
 	} else if (props.type == "awards") {
 		const { season } = props;
+
 		links = [
 			{
 				url: season == undefined ? ["edit_awards"] : ["edit_awards", season],
-				name: "Edit awards",
+				name: "Edit Awards",
+				className: "god-mode",
 			},
 		];
 	} else if (props.type === "playerRatings") {
@@ -242,11 +245,13 @@ const MoreLinks = (
 			More:{" "}
 			{links
 				.filter(({ url }) => keepSelfLink || url[0] !== page)
-				.map(({ url, name }, i) => {
+				.map(({ className, url, name }, i) => {
 					return (
 						<React.Fragment key={url[0]}>
 							{i > 0 ? " | " : null}
-							<a href={helpers.leagueUrl(url)}>{name}</a>
+							<a className={className} href={helpers.leagueUrl(url)}>
+								{name}
+							</a>
 						</React.Fragment>
 					);
 				})}

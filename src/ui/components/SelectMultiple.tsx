@@ -48,11 +48,10 @@ class SelectReact extends React.Component<
 			<Select
 				classNamePrefix="dark-select"
 				defaultValue={select.value}
-				label="Single select"
 				onChange={this.handleChange}
 				options={select.options}
-				getOptionValue={option => option["pid"]}
-				getOptionLabel={option => option["name"]}
+				getOptionValue={option => option.pid}
+				getOptionLabel={option => option.name}
 			/>
 		);
 	}

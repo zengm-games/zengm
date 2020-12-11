@@ -46,51 +46,19 @@ const updateAwards = async (
 		playersAll = orderBy(playersAll, ["lastName", "firstName"]);
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"name",
-				"firstName",
-				"tid",
-				"abbrev",
-				"draft",
-				"injury",
-				"born",
-				"watch",
-			],
-			ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
+			attrs: ["pid", "name", "tid", "abbrev"],
+			ratings: ["pos"],
 			stats:
 				process.env.SPORT === "basketball"
-					? [
-							"gp",
-							"gs",
-							"min",
-							"pts",
-							"trb",
-							"ast",
-							"blk",
-							"stl",
-							"per",
-							"ewa",
-							"ws",
-							"dws",
-							"ws48",
-							"season",
-							"abbrev",
-							"tid",
-							"jerseyNumber",
-					  ]
-					: ["keyStats", "season", "abbrev", "tid", "jerseyNumber"],
+					? ["pts", "trb", "ast", "blk", "stl"]
+					: ["keyStats"],
 			fuzz: true,
 			mergeStats: true,
 			season,
 		});
 
 		const nobody = {
-			pid: undefined,
 			name: "Nobody",
-			currentStats: undefined,
-			tid: undefined,
-			abbrev: undefined,
 		};
 		players.unshift(nobody);
 

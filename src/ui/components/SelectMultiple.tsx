@@ -10,7 +10,7 @@ class SelectReact extends React.Component<
 		playerNumber?: number;
 		award: string;
 	},
-	{ select: { value: any; options: any[] }; ref: any }
+	{ select: { value: any; options: any[] } }
 > {
 	constructor(props: any) {
 		super(props);
@@ -21,7 +21,6 @@ class SelectReact extends React.Component<
 				value: player, // "One" as initial value for react-select
 				options, // all available options
 			},
-			ref: createRef(),
 		};
 	}
 
@@ -40,12 +39,11 @@ class SelectReact extends React.Component<
 			this.setValue(value);
 		} else {
 			this.setValue(this.state.select.value);
-			this.state.ref.forceUpdate();
 		}
 	};
 
 	render() {
-		const { select, ref } = this.state;
+		const { select } = this.state;
 		return (
 			<Select
 				classNamePrefix="dark-select"
@@ -55,7 +53,6 @@ class SelectReact extends React.Component<
 				options={select.options}
 				getOptionValue={option => option["pid"]}
 				getOptionLabel={option => option["name"]}
-				ref={ref}
 			/>
 		);
 	}

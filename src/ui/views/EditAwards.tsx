@@ -2,7 +2,8 @@ import React, { FormEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
-import SelectReact from "../components/SelectMultiple";
+import SelectMultiple from "../components/SelectMultiple";
+import { AWARD_NAMES } from "../../common";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (process.env.SPORT !== "football") {
@@ -262,103 +263,28 @@ const EditAwards = ({
 			});
 		}
 	};
+
+	const simpleAwardKeys =
+		process.env.SPORT === "basketball"
+			? ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"]
+			: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
+
 	if (awards) {
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					<div className="col-md-4 col-6 form-group">
-						<label>Finals MVP</label>
-						<SelectReact
-							options={players}
-							key={season}
-							player={awards["finalsMvp"]}
-							award="finalsMvp"
-							changing={handleChange}
-						/>
-					</div>
-					<div className="col-md-4 col-6 form-group">
-						<label>MVP</label>
-						<SelectReact
-							options={players}
-							key={season}
-							player={awards["mvp"]}
-							award="mvp"
-							changing={handleChange}
-						/>
-					</div>
-
-					{process.env.SPORT === "basketball" ? (
-						<div className="col-md-4 col-6 form-group">
-							<label>Rookie of the Year</label>
-							<SelectReact
-								key={season}
+					{simpleAwardKeys.map(key => (
+						<div key={key} className="col-md-4 col-6 form-group">
+							<label>{AWARD_NAMES[key]}</label>
+							<SelectMultiple
 								options={players}
-								player={awards["roy"]}
-								award="roy"
+								key={season}
+								player={awards[key]}
+								award={key}
 								changing={handleChange}
 							/>
 						</div>
-					) : null}
-					<div className="col-md-4 col-6 form-group">
-						<label>Defensive Player of the Year</label>
-						<SelectReact
-							options={players}
-							key={season}
-							player={awards["dpoy"]}
-							award="dpoy"
-							changing={handleChange}
-						/>
-					</div>
-					{process.env.SPORT === "basketball" ? (
-						<div className="col-md-4 col-6 form-group">
-							<label>Sixth Man of the Year</label>
-							<SelectReact
-								options={players}
-								key={season}
-								player={awards["smoy"]}
-								award="smoy"
-								changing={handleChange}
-							/>
-						</div>
-					) : null}
-					{process.env.SPORT === "basketball" ? (
-						<div className="col-md-4 col-6 form-group">
-							<label>Most Improved Player</label>
-							<SelectReact
-								options={players}
-								key={season}
-								player={awards["mip"]}
-								award="mip"
-								changing={handleChange}
-							/>
-						</div>
-					) : null}
-
-					{process.env.SPORT === "football" ? (
-						<div className="col-md-4 col-6 form-group">
-							<label>Defensive Rookie of the Year</label>
-
-							<SelectReact
-								options={players}
-								key={season}
-								player={awards["droy"]}
-								award="droy"
-								changing={handleChange}
-							/>
-						</div>
-					) : null}
-					{process.env.SPORT === "football" ? (
-						<div className="col-md-4 col-6 form-group">
-							<label>Offensive Rookie of the Year</label>
-							<SelectReact
-								options={players}
-								key={season}
-								player={awards["oroy"]}
-								award="oroy"
-								changing={handleChange}
-							/>
-						</div>
-					) : null}
+					))}
 				</div>
 				<div className="row">
 					{awards["allLeague"].map((element: any, i: number) => {
@@ -368,7 +294,7 @@ const EditAwards = ({
 									<div className="d-flex" key={j}>
 										<Position index={j} p={player} />
 										<div className="form-group flex-grow-1">
-											<SelectReact
+											<SelectMultiple
 												key={season}
 												options={players}
 												player={player}
@@ -398,7 +324,7 @@ const EditAwards = ({
 									(player: any, j: number) => {
 										return (
 											<div className="form-group" key={j}>
-												<SelectReact
+												<SelectMultiple
 													key={season}
 													options={players}
 													player={player}
@@ -429,7 +355,7 @@ const EditAwards = ({
 								<div className="d-flex" key={i}>
 									<Position index={i} p={player} />
 									<div className="form-group flex-grow-1">
-										<SelectReact
+										<SelectMultiple
 											options={players}
 											key={season}
 											player={player}

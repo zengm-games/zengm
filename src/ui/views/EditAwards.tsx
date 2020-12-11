@@ -363,38 +363,38 @@ const EditAwards = ({
 							</div>,
 						];
 					})}
-				</div>
-				{basketball ? (
-					<div className="row mt-4">
-						{awards["allDefensive"].map((element: any, i: number) => {
-							const teamSelect = element["players"].map(
-								(player: any, j: number) => {
-									return (
-										<div className="form-group" key={j}>
-											<SelectReact
-												key={season}
-												options={players}
-												player={player}
-												award="allDefensive"
-												teamNumber={i}
-												playerNumber={j}
-												changing={handleChange}
-											/>
-										</div>
-									);
-								},
-							);
 
-							return [
-								<div className="col-sm-4" key={i}>
-									<h3>{element.title} All-Defensive</h3>
-									{teamSelect}
-								</div>,
-							];
-						})}
-					</div>
-				) : null}
-				<div className="row mt-4">
+					{basketball ? (
+						<>
+							{awards["allDefensive"].map((element: any, i: number) => {
+								const teamSelect = element["players"].map(
+									(player: any, j: number) => {
+										return (
+											<div className="form-group" key={j}>
+												<SelectReact
+													key={season}
+													options={players}
+													player={player}
+													award="allDefensive"
+													teamNumber={i}
+													playerNumber={j}
+													changing={handleChange}
+												/>
+											</div>
+										);
+									},
+								);
+
+								return [
+									<div className="col-sm-4" key={i}>
+										<h3>{element.title} All-Defensive</h3>
+										{teamSelect}
+									</div>,
+								];
+							})}
+						</>
+					) : null}
+
 					<div className="col-sm-4">
 						<h3>All-Rookie Team</h3>
 						{awards["allRookie"].map((element: any, i: number) => {

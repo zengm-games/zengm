@@ -260,7 +260,7 @@ const EditAwards = ({
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					<div className="col-sm-4 col-6 form-group">
+					<div className="col-md-4 col-6 form-group">
 						<label>Finals MVP</label>
 						<SelectReact
 							options={players}
@@ -270,7 +270,7 @@ const EditAwards = ({
 							changing={handleChange}
 						/>
 					</div>
-					<div className="col-sm-4 col-6 form-group">
+					<div className="col-md-4 col-6 form-group">
 						<label>MVP</label>
 						<SelectReact
 							options={players}
@@ -282,7 +282,7 @@ const EditAwards = ({
 					</div>
 
 					{process.env.SPORT === "basketball" ? (
-						<div className="col-sm-4 col-6 form-group">
+						<div className="col-md-4 col-6 form-group">
 							<label>Rookie of the Year</label>
 							<SelectReact
 								key={season}
@@ -293,7 +293,7 @@ const EditAwards = ({
 							/>
 						</div>
 					) : null}
-					<div className="col-sm-4 col-6 form-group">
+					<div className="col-md-4 col-6 form-group">
 						<label>Defensive Player of the Year</label>
 						<SelectReact
 							options={players}
@@ -304,7 +304,7 @@ const EditAwards = ({
 						/>
 					</div>
 					{process.env.SPORT === "basketball" ? (
-						<div className="col-sm-4 col-6 form-group">
+						<div className="col-md-4 col-6 form-group">
 							<label>Six Man of the Year</label>
 							<SelectReact
 								options={players}
@@ -316,7 +316,7 @@ const EditAwards = ({
 						</div>
 					) : null}
 					{process.env.SPORT === "basketball" ? (
-						<div className="col-sm-4 col-6 form-group">
+						<div className="col-md-4 col-6 form-group">
 							<label>Most Improved Player</label>
 							<SelectReact
 								options={players}
@@ -329,7 +329,7 @@ const EditAwards = ({
 					) : null}
 
 					{process.env.SPORT === "football" ? (
-						<div className="col-sm-4 col-6 form-group">
+						<div className="col-md-4 col-6 form-group">
 							<label>Defensive Rookie of the Year</label>
 
 							<SelectReact
@@ -342,7 +342,7 @@ const EditAwards = ({
 						</div>
 					) : null}
 					{process.env.SPORT === "football" ? (
-						<div className="col-sm-4 col-6 form-group">
+						<div className="col-md-4 col-6 form-group">
 							<label>Offensive Rookie of the Year</label>
 							<SelectReact
 								options={players}
@@ -354,11 +354,10 @@ const EditAwards = ({
 						</div>
 					) : null}
 				</div>
-				<div className="row mt-4">
+				<div className="row">
 					{awards["allLeague"].map((element: any, i: number) => {
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
-								console.log(player);
 								return (
 									<div className="d-flex" key={j}>
 										<Position index={j} p={player} />
@@ -379,8 +378,8 @@ const EditAwards = ({
 						);
 
 						return [
-							<div className="col-sm-4" key={i}>
-								<h3>{element.title} All-League</h3>
+							<div className="col-md-4 col-6" key={i}>
+								<h3 className="mt-4">{element.title} All-League</h3>
 								{teamSelect}
 							</div>,
 						];
@@ -408,8 +407,8 @@ const EditAwards = ({
 								);
 
 								return [
-									<div className="col-sm-4" key={i}>
-										<h3>{element.title} All-Defensive</h3>
+									<div className="col-md-4 col-6" key={i}>
+										<h3 className="mt-4">{element.title} All-Defensive</h3>
 										{teamSelect}
 									</div>,
 								];
@@ -417,8 +416,8 @@ const EditAwards = ({
 						</>
 					) : null}
 
-					<div className="col-sm-4">
-						<h3>All-Rookie Team</h3>
+					<div className="col-md-4 col-6">
+						<h3 className="mt-4">All-Rookie Team</h3>
 						{awards["allRookie"].map((player: any, i: number) => {
 							return (
 								<div className="d-flex" key={i}>

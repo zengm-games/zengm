@@ -57,19 +57,14 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "OROY";
 		} else if (type === "Defensive Rookie of the Year") {
 			type = "DROY";
-		} else {
-			if (type.endsWith("Leader")) {
-				type = type.replace("League ", "");
-			}
-
-			type = type
-				.replace("First Team ", "")
-				.replace("Second Team ", "")
-				.replace("Third Team ", "");
-
-			if (type.endsWith(" Team")) {
-				type = type.replace(" Team", "");
-			}
+		} else if (type.includes("All-League")) {
+			type = "All-League";
+		} else if (type.includes("All-Defensive")) {
+			type = "All-Defensive";
+		} else if (type.includes("All-Rookie")) {
+			type = "All-Rookie";
+		} else if (type.endsWith("Leader")) {
+			type = type.replace("League ", "");
 		}
 
 		return type;

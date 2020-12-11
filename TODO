@@ -1,3 +1,8 @@
+EditAwards
+- DRY individual award fields in EditAwards
+- add position and stats after name https://discord.com/channels/290013534023057409/331882115119448065/786938907387887686
+- all league not being deleted correctly https://discord.com/channels/290013534023057409/290015591216054273/786977276973416478
+
 draft history star overflow small screens https://discord.com/channels/290013534023057409/290015591216054273/785192984928321586
 
 When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
@@ -561,6 +566,7 @@ FBGM
 - holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
+- skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

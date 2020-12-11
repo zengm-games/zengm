@@ -2757,7 +2757,7 @@ const updateAwards = async (
 	const awardsByPlayer: AwardsByPlayer = [];
 	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
 	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season);
+	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
 };
 
 const upsertCustomizedPlayer = async (

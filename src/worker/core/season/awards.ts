@@ -263,6 +263,7 @@ const saveAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	conditions: Conditions,
 	season: number = g.get("season"),
+	logEvents?: boolean = true,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -292,17 +293,19 @@ const saveAwardsByPlayer = async (
 			score = 20;
 		}
 
-		logEvent(
-			{
-				type: "award",
-				text,
-				showNotification: false,
-				pids: [p.pid],
-				tids: [p.tid],
-				score,
-			},
-			conditions,
-		);
+		if (logEvents) {
+			logEvent(
+				{
+					type: "award",
+					text,
+					showNotification: false,
+					pids: [p.pid],
+					tids: [p.tid],
+					score,
+				},
+				conditions,
+			);
+		}
 	}
 	const pids = Array.from(
 		new Set(awardsByPlayer.map(award => award.pid)),

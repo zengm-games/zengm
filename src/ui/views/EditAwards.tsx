@@ -229,7 +229,7 @@ const EditAwards = ({
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
-			await toWorker("main", "upsertAwards", aws);
+			await toWorker("main", "updateAwards", aws);
 			realtimeUpdate([], helpers.leagueUrl(["history", season]));
 		} catch (error) {
 			logEvent({

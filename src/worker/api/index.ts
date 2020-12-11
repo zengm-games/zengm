@@ -76,9 +76,11 @@ import type {
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
 import {
+	addSimpleAndTeamAwardsToAwardsByPlayer,
 	AwardsByPlayer,
 	deleteAwardsByPlayer,
 	makeAwardsByPlayer,
+	saveAwardsByPlayer,
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 
@@ -2734,7 +2736,10 @@ const updateTeamInfo = async (
 	});
 };
 
-const upsertAwards = async (awards: any): Promise<any> => {
+const updateAwards = async (
+	awards: any,
+	conditions: Conditions,
+): Promise<any> => {
 	const awardsInitial = await idb.getCopy.awards({
 		season: awards.season,
 	});
@@ -2743,58 +2748,16 @@ const upsertAwards = async (awards: any): Promise<any> => {
 		throw new Error("awardsInitial not found");
 	}
 
+	// Delete old awards
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
-	for (const key of SIMPLE_AWARDS) {
-		const type = AWARD_NAMES[key];
-		const award = awardsInitial[key];
-
-		if (award === undefined) {
-			// e.g. MIP in first season
-			continue;
-		}
-
-		const { pid, tid, name } = award;
-		awardsByPlayerToDelete.push({
-			pid,
-			tid,
-			name,
-			type,
-		});
-	}
-	const awardsTeams =
-		process.env.SPORT === "basketball"
-			? (["allRookie", "allLeague", "allDefensive"] as const)
-			: (["allRookie", "allLeague"] as const);
-	for (const key of awardsTeams) {
-		const type = AWARD_NAMES[key];
-		if (key === "allRookie") {
-			for (const { pid, tid, name } of awardsInitial.allRookie) {
-				if (pid != undefined) {
-					awardsByPlayerToDelete.push({
-						pid,
-						tid,
-						name,
-						type,
-					});
-				}
-			}
-		} else {
-			for (const level of awardsInitial[key]) {
-				for (const { pid, tid, name } of level.players) {
-					if (pid != undefined) {
-						awardsByPlayerToDelete.push({
-							pid,
-							tid,
-							name,
-							type: `${level.title} ${type}`,
-						});
-					}
-				}
-			}
-		}
-	}
+	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
 	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
-	makeAwardsByPlayer(awards, {});
+
+	// Add new awards
+	const awardsByPlayer: AwardsByPlayer = [];
+	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
+	await idb.cache.awards.put(awards);
+	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season);
 };
 
 const upsertCustomizedPlayer = async (
@@ -3061,6 +3024,7 @@ export default {
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,
+	updateAwards,
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,
@@ -3073,6 +3037,4 @@ export default {
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,
-	makeAwardsByPlayer,
-	upsertAwards,
 };

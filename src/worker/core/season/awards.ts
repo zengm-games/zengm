@@ -6,6 +6,7 @@ import type {
 	PlayerFiltered,
 	TeamFiltered,
 } from "../../../common/types";
+import type { Awards } from "../../../common/types.basketball";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -332,7 +333,7 @@ const deleteAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	season: number,
 ) => {
-	const builtInAwardTypes = Object.keys(AWARD_NAMES);
+	const builtInAwardTypes = Object.values(AWARD_NAMES);
 
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 	for (const pid of pids) {
@@ -346,8 +347,10 @@ const deleteAwardsByPlayer = async (
 		}
 	}
 };
-const makeAwardsByPlayer = async (awards: any, conditions: Conditions) => {
-	const awardsByPlayer: AwardsByPlayer = [];
+const addSimpleAndTeamAwardsToAwardsByPlayer = (
+	awards: any,
+	awardsByPlayer: AwardsByPlayer,
+) => {
 	for (const key of SIMPLE_AWARDS) {
 		const type = AWARD_NAMES[key] as string;
 		const award = awards[key];
@@ -374,28 +377,30 @@ const makeAwardsByPlayer = async (awards: any, conditions: Conditions) => {
 
 		if (key === "allRookie") {
 			for (const { pid, tid, name } of awards.allRookie) {
-				awardsByPlayer.push({
-					pid,
-					tid,
-					name,
-					type,
-				});
-			}
-		} else {
-			for (const level of awards[key]) {
-				for (const { pid, tid, name } of level.players) {
+				if (pid != undefined) {
 					awardsByPlayer.push({
 						pid,
 						tid,
 						name,
-						type: `${level.title} ${type}`,
+						type,
 					});
+				}
+			}
+		} else {
+			for (const level of awards[key]) {
+				for (const { pid, tid, name } of level.players) {
+					if (pid != undefined) {
+						awardsByPlayer.push({
+							pid,
+							tid,
+							name,
+							type: `${level.title} ${type}`,
+						});
+					}
 				}
 			}
 		}
 	}
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season);
 };
 
 export {
@@ -404,6 +409,6 @@ export {
 	leagueLeaders,
 	deleteAwardsByPlayer,
 	saveAwardsByPlayer,
-	makeAwardsByPlayer,
+	addSimpleAndTeamAwardsToAwardsByPlayer,
 	teamAwards,
 };

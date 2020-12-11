@@ -5,8 +5,9 @@ import {
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
-	makeAwardsByPlayer,
 	teamAwards,
+	addSimpleAndTeamAwardsToAwardsByPlayer,
+	saveAwardsByPlayer,
 } from "./awards";
 
 import { idb } from "../../db";
@@ -422,8 +423,9 @@ const doAwards = async (conditions: Conditions) => {
 		allRookie,
 		season: g.get("season"),
 	};
-
-	makeAwardsByPlayer(awards, conditions);
+	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
+	await idb.cache.awards.put(awards);
+	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season);
 };
 
 export default doAwards;

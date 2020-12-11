@@ -1,9 +1,23 @@
 import React, { FormEvent, useState, useEffect } from "react";
-
 import useTitleBar from "../hooks/useTitleBar";
 import type { Player, View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectReact from "../components/SelectMultiple";
+
+const Position = ({ index, p }: { index: number; p: any }) => {
+	if (process.env.SPORT !== "football") {
+		return null;
+	}
+
+	let pos = p.pos;
+	if (index === 24) {
+		pos = "KR";
+	} else if (index === 25) {
+		pos = "PR";
+	}
+	return <div style={{ width: 26, marginTop: 10 }}>{pos}</div>;
+};
+
 const EditAwards = ({
 	godMode,
 	players,
@@ -15,8 +29,6 @@ const EditAwards = ({
 		dropdownView: "edit_awards",
 		dropdownFields: { seasonsHistory: season },
 	});
-	const football = process.env.SPORT === "football";
-	const basketball = process.env.SPORT === "basketball";
 	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
 	useEffect(() => {
 		setAws(() => helpers.deepCopy(awards));
@@ -43,7 +55,7 @@ const EditAwards = ({
 				if (p.pid == undefined) {
 					aws[type] = undefined;
 				} else {
-					if (basketball) {
+					if (process.env.SPORT === "basketball") {
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
@@ -68,7 +80,7 @@ const EditAwards = ({
 				if (p.pid == undefined) {
 					aws[type] = undefined;
 				} else {
-					if (basketball) {
+					if (process.env.SPORT === "basketball") {
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
@@ -112,7 +124,7 @@ const EditAwards = ({
 							aws,
 						};
 					}
-					if (basketball) {
+					if (process.env.SPORT === "basketball") {
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
@@ -129,7 +141,9 @@ const EditAwards = ({
 							tid: p.tid,
 							abbrev: p.abbrev,
 							keyStats: p.stats.keyStats,
-							pos: p.ratings.pos,
+							pos:
+								aws[type][numberTeam]["players"][numberPlayer].pos ??
+								p.ratings.pos,
 						};
 					}
 				}
@@ -156,7 +170,7 @@ const EditAwards = ({
 							aws,
 						};
 					}
-					if (basketball) {
+					if (process.env.SPORT === "basketball") {
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
@@ -173,7 +187,9 @@ const EditAwards = ({
 							tid: p.tid,
 							abbrev: p.abbrev,
 							keyStats: p.stats.keyStats,
-							pos: p.ratings.pos,
+							pos:
+								aws[type][numberTeam]["players"][numberPlayer].pos ??
+								p.ratings.pos,
 						};
 					}
 				}
@@ -198,7 +214,7 @@ const EditAwards = ({
 							aws,
 						};
 					}
-					if (basketball) {
+					if (process.env.SPORT === "basketball") {
 						aws[type][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
@@ -214,7 +230,7 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pos: p.ratings.pos,
+							pos: aws[type][numberPlayer].pos ?? p.ratings.pos,
 							keyStats: p.stats.keyStats,
 						};
 					}
@@ -265,16 +281,18 @@ const EditAwards = ({
 						/>
 					</div>
 
-					<div className="col-sm-4 col-6 form-group" hidden={football}>
-						<label>Rookie of the Year</label>
-						<SelectReact
-							key={season}
-							options={players}
-							player={awards["roy"]}
-							award="roy"
-							changing={handleChange}
-						/>
-					</div>
+					{process.env.SPORT === "basketball" ? (
+						<div className="col-sm-4 col-6 form-group">
+							<label>Rookie of the Year</label>
+							<SelectReact
+								key={season}
+								options={players}
+								player={awards["roy"]}
+								award="roy"
+								changing={handleChange}
+							/>
+						</div>
+					) : null}
 					<div className="col-sm-4 col-6 form-group">
 						<label>Defensive Player of the Year</label>
 						<SelectReact
@@ -285,8 +303,8 @@ const EditAwards = ({
 							changing={handleChange}
 						/>
 					</div>
-					{basketball ? (
-						<div className="col-sm-4 col-6 form-group" hidden={football}>
+					{process.env.SPORT === "basketball" ? (
+						<div className="col-sm-4 col-6 form-group">
 							<label>Six Man of the Year</label>
 							<SelectReact
 								options={players}
@@ -297,8 +315,8 @@ const EditAwards = ({
 							/>
 						</div>
 					) : null}
-					{basketball ? (
-						<div className="col-sm-4 col-6 form-group" hidden={football}>
+					{process.env.SPORT === "basketball" ? (
+						<div className="col-sm-4 col-6 form-group">
 							<label>Most Improved Player</label>
 							<SelectReact
 								options={players}
@@ -310,7 +328,7 @@ const EditAwards = ({
 						</div>
 					) : null}
 
-					{football ? (
+					{process.env.SPORT === "football" ? (
 						<div className="col-sm-4 col-6 form-group">
 							<label>Defensive Rookie of the Year</label>
 
@@ -323,8 +341,8 @@ const EditAwards = ({
 							/>
 						</div>
 					) : null}
-					{football ? (
-						<div className="col-sm-4 col-6 form-group" hidden={basketball}>
+					{process.env.SPORT === "football" ? (
+						<div className="col-sm-4 col-6 form-group">
 							<label>Offensive Rookie of the Year</label>
 							<SelectReact
 								options={players}
@@ -340,17 +358,21 @@ const EditAwards = ({
 					{awards["allLeague"].map((element: any, i: number) => {
 						const teamSelect = element["players"].map(
 							(player: any, j: number) => {
+								console.log(player);
 								return (
-									<div className="form-group" key={j}>
-										<SelectReact
-											key={season}
-											options={players}
-											player={player}
-											award="allLeague"
-											teamNumber={i}
-											playerNumber={j}
-											changing={handleChange}
-										/>
+									<div className="d-flex" key={j}>
+										<Position index={j} p={player} />
+										<div className="form-group flex-grow-1">
+											<SelectReact
+												key={season}
+												options={players}
+												player={player}
+												award="allLeague"
+												teamNumber={i}
+												playerNumber={j}
+												changing={handleChange}
+											/>
+										</div>
 									</div>
 								);
 							},
@@ -364,7 +386,7 @@ const EditAwards = ({
 						];
 					})}
 
-					{basketball ? (
+					{process.env.SPORT === "basketball" ? (
 						<>
 							{awards["allDefensive"].map((element: any, i: number) => {
 								const teamSelect = element["players"].map(
@@ -397,17 +419,20 @@ const EditAwards = ({
 
 					<div className="col-sm-4">
 						<h3>All-Rookie Team</h3>
-						{awards["allRookie"].map((element: any, i: number) => {
+						{awards["allRookie"].map((player: any, i: number) => {
 							return (
-								<div className="form-group" key={i}>
-									<SelectReact
-										options={players}
-										key={season}
-										player={element}
-										award="allRookie"
-										playerNumber={i}
-										changing={handleChange}
-									/>
+								<div className="d-flex" key={i}>
+									<Position index={i} p={player} />
+									<div className="form-group flex-grow-1">
+										<SelectReact
+											options={players}
+											key={season}
+											player={player}
+											award="allRookie"
+											playerNumber={i}
+											changing={handleChange}
+										/>
+									</div>
 								</div>
 							);
 						})}

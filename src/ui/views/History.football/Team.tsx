@@ -62,7 +62,7 @@ const Teams = ({
 		<div className={className}>
 			<h2>{name}</h2>
 			{team
-				.filter(p => p !== undefined)
+				.filter(p => p)
 				.map((p, i) => (
 					<Player key={i} i={i} p={p} season={season} userTid={userTid} />
 				))}

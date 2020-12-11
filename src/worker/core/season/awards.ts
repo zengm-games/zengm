@@ -354,7 +354,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 		const type = AWARD_NAMES[key] as string;
 		const award = awards[key];
 
-		if (award === undefined) {
+		if (!award) {
 			// e.g. MIP in first season
 			continue;
 		}
@@ -375,8 +375,9 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 		const type = AWARD_NAMES[key] as string;
 
 		if (key === "allRookie") {
-			for (const { pid, tid, name } of awards.allRookie) {
-				if (pid != undefined) {
+			for (const p of awards.allRookie) {
+				if (p) {
+					const { pid, tid, name } = p;
 					awardsByPlayer.push({
 						pid,
 						tid,
@@ -387,8 +388,9 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 			}
 		} else {
 			for (const level of awards[key]) {
-				for (const { pid, tid, name } of level.players) {
-					if (pid != undefined) {
+				for (const p of level.players) {
+					if (p) {
+						const { pid, tid, name } = p;
 						awardsByPlayer.push({
 							pid,
 							tid,

@@ -53,7 +53,7 @@ const Teams = ({
 			<div className="mb-3" key={t.title}>
 				<h3>{t.title}</h3>
 				{t.players.map((p: any) =>
-					Object.keys(p).length > 0 ? (
+					p ? (
 						<Player key={p.pid} p={p} season={season} userTid={userTid} />
 					) : (
 						""
@@ -65,7 +65,7 @@ const Teams = ({
 		content = <p>None</p>;
 	} else {
 		content = team
-			.filter(p => p !== undefined)
+			.filter(p => p)
 			.map(p => <Player key={p.pid} p={p} season={season} userTid={userTid} />);
 	}
 

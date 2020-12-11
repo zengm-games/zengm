@@ -1,6 +1,6 @@
 import React, { FormEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import type { Player, View } from "../../common/types";
+import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectReact from "../components/SelectMultiple";
 
@@ -103,12 +103,14 @@ const EditAwards = ({
 				}
 			} else if (type == "allDefensive") {
 				if (p.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = {};
+					aws[type][numberTeam]["players"][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((team: any) => {
-						team["players"].map((element: Player) => {
-							arrayPids.push(element.pid);
+						team["players"].map((element: any) => {
+							if (element !== undefined) {
+								arrayPids.push(element.pid);
+							}
 						});
 					});
 					if (arrayPids.includes(p.pid)) {
@@ -142,19 +144,21 @@ const EditAwards = ({
 							abbrev: p.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
-								aws[type][numberTeam]["players"][numberPlayer].pos ??
+								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
 								p.ratings.pos,
 						};
 					}
 				}
 			} else if (type == "allLeague") {
 				if (p.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = {};
+					aws[type][numberTeam]["players"][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((team: any) => {
-						team["players"].map((element: Player) => {
-							arrayPids.push(element.pid);
+						team["players"].map((element: any) => {
+							if (element !== undefined) {
+								arrayPids.push(element.pid);
+							}
 						});
 					});
 					if (arrayPids.includes(p.pid)) {
@@ -188,18 +192,20 @@ const EditAwards = ({
 							abbrev: p.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
-								aws[type][numberTeam]["players"][numberPlayer].pos ??
+								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
 								p.ratings.pos,
 						};
 					}
 				}
 			} else if (type == "allRookie") {
 				if (p.pid == undefined) {
-					aws[type][numberPlayer] = {};
+					aws[type][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((element: any) => {
-						arrayPids.push(element.pid);
+						if (element !== undefined) {
+							arrayPids.push(element.pid);
+						}
 					});
 					if (arrayPids.includes(p.pid)) {
 						logEvent({
@@ -230,7 +236,7 @@ const EditAwards = ({
 							name: p.name,
 							tid: p.tid,
 							abbrev: p.abbrev,
-							pos: aws[type][numberPlayer].pos ?? p.ratings.pos,
+							pos: aws[type][numberPlayer]?.pos ?? p.ratings.pos,
 							keyStats: p.stats.keyStats,
 						};
 					}

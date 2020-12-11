@@ -311,7 +311,7 @@ const EditAwards = ({
 					</div>
 					{process.env.SPORT === "basketball" ? (
 						<div className="col-md-4 col-6 form-group">
-							<label>Six Man of the Year</label>
+							<label>Sixth Man of the Year</label>
 							<SelectReact
 								options={players}
 								key={season}

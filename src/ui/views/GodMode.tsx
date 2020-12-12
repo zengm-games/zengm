@@ -108,7 +108,7 @@ const GodMode = (props: View<"godMode">) => {
 							<a href={helpers.leagueUrl(["new_team"])}>
 								Tools &gt; Switch Team
 							</a>
-							. You can control multiple teams at the same time at{" "}
+							, or you can control multiple teams simultaneously at{" "}
 							<a href={helpers.leagueUrl(["multi_team_mode"])}>
 								Tools &gt; Multi Team Mode
 							</a>

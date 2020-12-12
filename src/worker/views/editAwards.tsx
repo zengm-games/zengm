@@ -57,11 +57,6 @@ const updateAwards = async (
 			season,
 		});
 
-		const nobody = {
-			name: "Nobody",
-		};
-		players.unshift(nobody);
-
 		return {
 			godMode: g.get("godMode"),
 			players,

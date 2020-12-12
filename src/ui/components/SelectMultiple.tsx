@@ -46,6 +46,7 @@ class SelectReact extends React.Component<
 			<Select
 				classNamePrefix="dark-select"
 				defaultValue={select.value}
+				isClearable
 				onChange={this.handleChange}
 				options={select.options}
 				getOptionValue={p => p.pid}

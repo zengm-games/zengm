@@ -10,7 +10,7 @@ const Position = ({ index, p }: { index: number; p: any }) => {
 		return null;
 	}
 
-	let pos = p.pos;
+	let pos = p ? p.pos : "";
 	if (index === 24) {
 		pos = "KR";
 	} else if (index === 25) {
@@ -53,7 +53,7 @@ const EditAwards = ({
 				type == "oroy" ||
 				type == "droy"
 			) {
-				if (p.pid == undefined) {
+				if (p?.pid == undefined) {
 					aws[type] = undefined;
 				} else {
 					if (process.env.SPORT === "basketball") {
@@ -78,7 +78,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (type == "dpoy") {
-				if (p.pid == undefined) {
+				if (p?.pid == undefined) {
 					aws[type] = undefined;
 				} else {
 					if (process.env.SPORT === "basketball") {
@@ -103,7 +103,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (type == "allDefensive") {
-				if (p.pid == undefined) {
+				if (p?.pid == undefined) {
 					aws[type][numberTeam]["players"][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];
@@ -151,7 +151,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (type == "allLeague") {
-				if (p.pid == undefined) {
+				if (p?.pid == undefined) {
 					aws[type][numberTeam]["players"][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];
@@ -199,7 +199,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (type == "allRookie") {
-				if (p.pid == undefined) {
+				if (p?.pid == undefined) {
 					aws[type][numberPlayer] = undefined;
 				} else {
 					const arrayPids: number[] = [];

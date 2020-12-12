@@ -2749,6 +2749,7 @@ const updateAwards = async (
 	// Delete old awards
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
 	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
+	console.log("awardsByPlayerToDelete", awardsByPlayerToDelete);
 	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
 
 	// Add new awards

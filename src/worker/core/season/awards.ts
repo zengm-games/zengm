@@ -335,15 +335,15 @@ const deleteAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	season: number,
 ) => {
-	const builtInAwardTypes = Object.values(AWARD_NAMES);
-
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 	for (const pid of pids) {
 		const p = await idb.cache.players.get(pid);
 		if (p) {
-			// Delete all built-in awards this season, since they will later be re-created
+			const typesToDelete = awardsByPlayer
+				.filter(award => award.pid === p.pid)
+				.map(award => award.type);
 			p.awards = p.awards.filter(
-				x => x.season != season || !builtInAwardTypes.includes(x.type),
+				award => award.season != season || !typesToDelete.includes(award.type),
 			);
 			await idb.cache.players.put(p);
 		}

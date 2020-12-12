@@ -35,11 +35,16 @@ const EditAwards = ({
 		setAws(() => helpers.deepCopy(awards));
 	}, [awards, season]);
 
-	const handleChange = (type: string) => (obj: any, pl: any) => {
-		let error: boolean = false;
-		const p: any = pl;
-		const numberTeam = obj.props.teamNumber;
-		const numberPlayer = obj.props.playerNumber;
+	const handleChange = (type: string) => ({
+		p,
+		teamNumber = 0,
+		playerNumber = 0,
+	}: {
+		p: any;
+		teamNumber: number;
+		playerNumber: number;
+	}) => {
+		let error = false;
 
 		setAws((prevState: any) => {
 			const aws: any = prevState;
@@ -104,7 +109,7 @@ const EditAwards = ({
 				}
 			} else if (type == "allDefensive") {
 				if (p?.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = undefined;
+					aws[type][teamNumber]["players"][playerNumber] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((team: any) => {
@@ -121,14 +126,13 @@ const EditAwards = ({
 							saveToDb: false,
 						});
 						error = true;
-						obj.setValue(obj.state.select.value);
 						return {
 							...prevState,
 							aws,
 						};
 					}
 					if (process.env.SPORT === "basketball") {
-						aws[type][numberTeam]["players"][numberPlayer] = {
+						aws[type][teamNumber]["players"][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
@@ -138,21 +142,21 @@ const EditAwards = ({
 							stl: p.stats.stl,
 						};
 					} else {
-						aws[type][numberTeam]["players"][numberPlayer] = {
+						aws[type][teamNumber]["players"][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
 							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
-								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
+								aws[type][teamNumber]["players"][playerNumber]?.pos ??
 								p.ratings.pos,
 						};
 					}
 				}
 			} else if (type == "allLeague") {
 				if (p?.pid == undefined) {
-					aws[type][numberTeam]["players"][numberPlayer] = undefined;
+					aws[type][teamNumber]["players"][playerNumber] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((team: any) => {
@@ -169,14 +173,13 @@ const EditAwards = ({
 							saveToDb: false,
 						});
 						error = true;
-						obj.setValue(obj.state.select.value);
 						return {
 							...prevState,
 							aws,
 						};
 					}
 					if (process.env.SPORT === "basketball") {
-						aws[type][numberTeam]["players"][numberPlayer] = {
+						aws[type][teamNumber]["players"][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
@@ -186,21 +189,21 @@ const EditAwards = ({
 							ast: p.stats.ast,
 						};
 					} else {
-						aws[type][numberTeam]["players"][numberPlayer] = {
+						aws[type][teamNumber]["players"][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
 							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
-								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
+								aws[type][teamNumber]["players"][playerNumber]?.pos ??
 								p.ratings.pos,
 						};
 					}
 				}
 			} else if (type == "allRookie") {
 				if (p?.pid == undefined) {
-					aws[type][numberPlayer] = undefined;
+					aws[type][playerNumber] = undefined;
 				} else {
 					const arrayPids: number[] = [];
 					aws[type].map((element: any) => {
@@ -215,14 +218,13 @@ const EditAwards = ({
 							saveToDb: false,
 						});
 						error = true;
-						obj.setValue(obj.state.select.value);
 						return {
 							...prevState,
 							aws,
 						};
 					}
 					if (process.env.SPORT === "basketball") {
-						aws[type][numberPlayer] = {
+						aws[type][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
@@ -232,12 +234,12 @@ const EditAwards = ({
 							ast: p.stats.ast,
 						};
 					} else {
-						aws[type][numberPlayer] = {
+						aws[type][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
 							abbrev: p.stats.abbrev,
-							pos: aws[type][numberPlayer]?.pos ?? p.ratings.pos,
+							pos: aws[type][playerNumber]?.pos ?? p.ratings.pos,
 							keyStats: p.stats.keyStats,
 						};
 					}
@@ -246,6 +248,7 @@ const EditAwards = ({
 
 			return aws;
 		});
+
 		return error;
 	};
 
@@ -309,7 +312,7 @@ const EditAwards = ({
 							<SelectMultiple
 								options={players}
 								key={season}
-								player={getPlayer(awards[key])}
+								defaultValue={getPlayer(awards[key])}
 								getOptionLabel={getOptionLabel(key)}
 								changing={handleChange(key)}
 							/>
@@ -327,7 +330,7 @@ const EditAwards = ({
 											<SelectMultiple
 												key={season}
 												options={players}
-												player={getPlayer(player)}
+												defaultValue={getPlayer(player)}
 												getOptionLabel={getOptionLabel("allLeague")}
 												teamNumber={i}
 												playerNumber={j}
@@ -357,7 +360,7 @@ const EditAwards = ({
 												<SelectMultiple
 													key={season}
 													options={players}
-													player={getPlayer(player)}
+													defaultValue={getPlayer(player)}
 													getOptionLabel={getOptionLabel("allDefensive")}
 													teamNumber={i}
 													playerNumber={j}
@@ -388,7 +391,7 @@ const EditAwards = ({
 										<SelectMultiple
 											options={players}
 											key={season}
-											player={getPlayer(player)}
+											defaultValue={getPlayer(player)}
 											getOptionLabel={getOptionLabel("allRookie")}
 											playerNumber={i}
 											changing={handleChange("allRookie")}

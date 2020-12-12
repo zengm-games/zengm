@@ -1,59 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import Select from "react-select";
 
-class SelectReact extends React.Component<
-	{
-		player: any;
-		options: any[];
-		changing: any;
-		teamNumber?: number;
-		playerNumber?: number;
-		getOptionLabel: any;
-	},
-	{ select: { value: any; options: any[] } }
-> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			select: {
-				value: props.player,
-				options: props.options,
-			},
-		};
-	}
+const SelectReact = ({
+	defaultValue,
+	options,
+	changing,
+	teamNumber,
+	playerNumber,
+	getOptionLabel,
+}: {
+	defaultValue: any;
+	options: any[];
+	changing: (arg: any) => boolean;
+	teamNumber?: number;
+	playerNumber?: number;
+	getOptionLabel: any;
+}) => {
+	const [value, setValue] = useState(defaultValue);
 
-	setValue = (value: any) => {
-		this.setState(prevState => ({
-			select: {
-				...prevState.select,
-				value,
-			},
-		}));
-	};
-
-	handleChange = (value: any) => {
-		const val = this.props.changing(this, value);
-		if (!val) {
-			this.setValue(value);
-		} else {
-			this.setValue(this.state.select.value);
+	const handleChange = (p: any) => {
+		const error = changing({
+			p,
+			teamNumber,
+			playerNumber,
+		});
+		if (!error) {
+			setValue(p);
 		}
 	};
 
-	render() {
-		const { select } = this.state;
-		return (
-			<Select
-				classNamePrefix="dark-select"
-				defaultValue={select.value}
-				isClearable
-				onChange={this.handleChange}
-				options={select.options}
-				getOptionValue={p => p.pid}
-				getOptionLabel={this.props.getOptionLabel}
-			/>
-		);
-	}
-}
+	return (
+		<Select
+			classNamePrefix="dark-select"
+			defaultValue={value}
+			isClearable
+			onChange={handleChange}
+			options={options}
+			getOptionValue={p => p.pid}
+			getOptionLabel={getOptionLabel}
+		/>
+	);
+};
 
 export default SelectReact;

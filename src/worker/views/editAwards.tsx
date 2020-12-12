@@ -50,8 +50,8 @@ const updateAwards = async (
 			ratings: ["pos"],
 			stats:
 				process.env.SPORT === "basketball"
-					? ["abbrev", "pts", "trb", "ast", "blk", "stl"]
-					: ["abbrev", "keyStats"],
+					? ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"]
+					: ["abbrev", "tid", "keyStats"],
 			fuzz: true,
 			mergeStats: true,
 			season,

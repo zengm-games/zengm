@@ -34,10 +34,10 @@ const EditAwards = ({
 	useEffect(() => {
 		setAws(() => helpers.deepCopy(awards));
 	}, [awards, season]);
-	const handleChange = (obj: any, pl: any) => {
+
+	const handleChange = (type: string) => (obj: any, pl: any) => {
 		let error: boolean = false;
 		const p: any = pl;
-		const type = obj.props.award;
 		const numberTeam = obj.props.teamNumber;
 		const numberPlayer = obj.props.playerNumber;
 
@@ -60,8 +60,8 @@ const EditAwards = ({
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							pts: p.stats.pts,
 							trb: p.stats.trb,
 							ast: p.stats.ast,
@@ -70,8 +70,8 @@ const EditAwards = ({
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos: p.ratings.pos,
 						};
@@ -85,8 +85,8 @@ const EditAwards = ({
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							trb: p.stats.trb,
 							blk: p.stats.blk,
 							stl: p.stats.stl,
@@ -95,8 +95,8 @@ const EditAwards = ({
 						aws[type] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos: p.ratings.pos,
 						};
@@ -131,8 +131,8 @@ const EditAwards = ({
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							trb: p.stats.trb,
 							blk: p.stats.blk,
 							stl: p.stats.stl,
@@ -141,8 +141,8 @@ const EditAwards = ({
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
 								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
@@ -179,8 +179,8 @@ const EditAwards = ({
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							pts: p.stats.pts,
 							trb: p.stats.trb,
 							ast: p.stats.ast,
@@ -189,8 +189,8 @@ const EditAwards = ({
 						aws[type][numberTeam]["players"][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							keyStats: p.stats.keyStats,
 							pos:
 								aws[type][numberTeam]["players"][numberPlayer]?.pos ??
@@ -225,8 +225,8 @@ const EditAwards = ({
 						aws[type][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							pts: p.stats.pts,
 							trb: p.stats.trb,
 							ast: p.stats.ast,
@@ -235,8 +235,8 @@ const EditAwards = ({
 						aws[type][numberPlayer] = {
 							pid: p.pid,
 							name: p.name,
-							tid: p.tid,
-							abbrev: p.abbrev,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
 							pos: aws[type][numberPlayer]?.pos ?? p.ratings.pos,
 							keyStats: p.stats.keyStats,
 						};
@@ -311,7 +311,7 @@ const EditAwards = ({
 								key={season}
 								player={getPlayer(awards[key])}
 								getOptionLabel={getOptionLabel(key)}
-								changing={handleChange}
+								changing={handleChange(key)}
 							/>
 						</div>
 					))}
@@ -331,7 +331,7 @@ const EditAwards = ({
 												getOptionLabel={getOptionLabel("allLeague")}
 												teamNumber={i}
 												playerNumber={j}
-												changing={handleChange}
+												changing={handleChange("allLeague")}
 											/>
 										</div>
 									</div>
@@ -361,7 +361,7 @@ const EditAwards = ({
 													getOptionLabel={getOptionLabel("allDefensive")}
 													teamNumber={i}
 													playerNumber={j}
-													changing={handleChange}
+													changing={handleChange("allDefensive")}
 												/>
 											</div>
 										);
@@ -391,7 +391,7 @@ const EditAwards = ({
 											player={getPlayer(player)}
 											getOptionLabel={getOptionLabel("allRookie")}
 											playerNumber={i}
-											changing={handleChange}
+											changing={handleChange("allRookie")}
 										/>
 									</div>
 								</div>

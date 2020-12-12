@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* 2020-12-12: New "Edit Awards" page available in God Mode, which allows you to edit all the end-of-season award winners. [[1]]()
+* 2020-12-12: New "Edit Awards" page available in God Mode, which allows you to edit all the end-of-season award winners. Thanks @luso97! [[1]](https://old.reddit.com/r/BasketballGM/comments/kbl3m7/new_edit_awards_page_available_in_god_mode_which/)
 
 * 2020-12-09: Added "Randomize Name" button to the Create/Edit Player page, which picks a random name from the currently selected country. [[1]](https://old.reddit.com/r/BasketballGM/comments/k9mugr/just_a_tiny_fun_new_feature_i_added_a_randomize/)
 

@@ -550,23 +550,52 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Attributes</h2>
 
 						<div className="row">
-							<div className="col-sm-3 form-group">
-								<label>First Name</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "root", "firstName")}
-									value={p.firstName}
-								/>
-							</div>
-							<div className="col-sm-3 form-group">
-								<label>Last Name</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "root", "lastName")}
-									value={p.lastName}
-								/>
+							<div className="col-sm-6 form-group">
+								<label>Name</label>
+								<div className="input-group">
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "root", "firstName")}
+										value={p.firstName}
+									/>
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "root", "lastName")}
+										value={p.lastName}
+									/>
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											type="button"
+											onClick={async event => {
+												event.preventDefault();
+
+												const { firstName, lastName } = await toWorker(
+													"main",
+													"getRandomName",
+													p.born.loc,
+												);
+
+												setState(prevState => {
+													const p: any = {
+														...prevState.p,
+														firstName,
+														lastName,
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+										>
+											Randomize
+										</button>
+									</div>
+								</div>
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Age</label>
@@ -663,7 +692,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
-								<label>Hometown</label>
+								<label>Country</label>
 								<input
 									type="text"
 									className="form-control"

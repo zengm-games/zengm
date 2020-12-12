@@ -5,10 +5,6 @@ import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
 
-const baseStyle = {
-	height: 30,
-};
-
 const PlayerNameLabels = (props: {
 	children: ReactNode;
 	disableWatchToggle?: boolean;
@@ -59,7 +55,7 @@ const PlayerNameLabels = (props: {
 	}
 
 	return (
-		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
+		<span style={style}>
 			{props.hasOwnProperty("jerseyNumber") ? (
 				<span className="text-muted jersey-number-name">{jerseyNumber}</span>
 			) : null}

@@ -111,7 +111,7 @@ const DraftSummary = ({
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
 				{
 					value: (
-						<>
+						<div className="d-flex">
 							<PlayerNameLabels
 								pid={p.pid}
 								skills={p.currentSkills}
@@ -119,11 +119,11 @@ const DraftSummary = ({
 							>
 								{p.name}
 							</PlayerNameLabels>
-							<div className="float-right">
+							<div className="ml-auto">
 								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
 								<SeasonIcons className="ml-1" awards={p.awards} />
 							</div>
-						</>
+						</div>
 					),
 					sortValue: p.name,
 					searchValue: p.name,

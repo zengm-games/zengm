@@ -25,6 +25,7 @@ import limitRating from "./limitRating";
 import madeHof from "./madeHof";
 import moodInfo from "./moodInfo";
 import moodInfos from "./moodInfos";
+import name from "./name";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
@@ -67,6 +68,7 @@ export default {
 	madeHof,
 	moodInfo,
 	moodInfos,
+	name,
 	ovr,
 	pos,
 	release,

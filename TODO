@@ -1,4 +1,69 @@
-draft history star overflow small screens https://discord.com/channels/290013534023057409/290015591216054273/785192984928321586
+UI for selecting a custom set of teams in a new league
+- "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
+  - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
+    - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
+- clicking "Customize" takes you to a new page
+  - list of teams by confs/divs
+    - allow CRUD of confs/divs/teams
+    - allow drag and drop to reorder confs/divs
+      - https://github.com/atlassian/react-beautiful-dnd
+    - allow drag and drop to move teams to other divs
+  - add/edit team
+    - region name, pop, stadium capacity, logo URL, srID (dropdown, not free text, and help popover explaining that real team overrides will apply), colors, include real players?, append real players season to last name?
+  - while viewing confs/divs/teams, buttons on the side
+    - Presets
+      - Default BBGM teams with random players
+      - Real teams and players
+        - shows a popup to let you pick a season and select if you want to include players or not
+      - Legends
+        - shows a popup to let you pick a decade
+  - Save/Cancel buttons at the bottom
+- for real players leagues, make sure scheduled events are correct (delete any referring to teams that aren't there, and make sure tids are correct especially for expansion teams)
+
+File System Access API https://web.dev/file-system-access/
+- use (when available) for saving any files
+- is it possible to stream from IDB to file?
+  - write to stream returns a promise
+  - transaction auto commit still unavoidable? if so:
+    - could we just keep writing to file without awaiting?
+    - use multiple transactions, one for each "chunk"
+  - Send a Tweet to @ChromiumDev with #filesystemaccess and let us know where and how you're using it.
+- is it possible to select a directory, and auto save there every year?
+  - Since permissions currently are not persisted between sessions, you should verify whether the user has granted permission to the file using queryPermission(). If they haven't, use requestPermission() to (re-)request it.
+
+ability to switch back to prior year
+- In danger zone, button to reset to preseason of any season
+  - preseason, or regular season? or pick phase?
+- On export league, ability to export at any past preseason
+- would need to store rosters each preseason, similar to groundhog day
+  - new object store, primary key season, array of all roster infos?
+    - do i ever want to suppport different phases? then primary key needs to be (season, phase)
+    - delete old data
+    - league export
+    - league creation
+  - write at the end of newPhase that switches to this season+phase?
+- available seasons/phases populate the menu by looking at the keys of the object store
+- also roll back teams, somehow
+- roll back g changes, when possible
+  - maybe store g in the object store too... { g, teams }
+- g.repeatSeason could become a boolean that uses this (eventually, gotta worry about upgrades)
+- maybe not...
+  - in other games, this would be achieved by saving at different times. when that is easier (stream) that will be better
+  - storing g is messy, since g already has a history mechanism
+
+name/colleges revamp
+- races
+  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
+  - playerBioInfo.countries[].races?: Record<Race, number>,
+  - defaultRaces: Record<Country, Record<Race, number>>
+  - CSV in tools, generate JSON like names, print countries missing
+    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
+  - default values for individual countries
+  - new release of faces.js, and upgrade
+- global default... should it override individual countries?
+  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
+- flag icon on roster page
+  - https://github.com/lipis/flag-icon-css
 
 When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
 
@@ -15,7 +80,20 @@ typescript 4.1 stuff
 
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
-FBGM ovrs
+nicidob new ovr formula
+- basketball: https://github.com/dumbmatter/gm-games/pull/275/files
+- football: https://paste.ubuntu.com/p/H5pPmb3r6J/
+  - nicodob says:
+    - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
+    - that does the ratings and vomits out the over_under roster
+    - as-is it basically eats FBGM or BBGM leagues up. It does the position-specific code. So to replicate the PR I just replace the pos = r['pos'] with pos='ALL' and the code is happy to do it
+    - yeah I mean there's a handful of differences here. this uses JSON leagues (not a split 'avg.csv'/'game.csv'), and does position-specific breakdowns. But yes it's the same thing, it takes leagues with box scores and does minute-weighted rating differences to MOV for individual games
+    - it also doesn't do the scaling to ensure the mean and variance are unchanged (i just check R^2 and move on)
+    - And here I'm using L1 Regularization + Cross-Validation to drop a bunch of coefficients to zero for ratings that don't matter
+    - the problem is i got really wonky distributions when I tried to output the FBGM stuff
+    - like I don't understand how mean/variance are set by the code right now
+    - the notebook spits out a copy+paste table for ovr.football.ts and I have a local copy with it but the numbers are big and positions are set - wrong because I deleted bonuses and.....
+    - it was non-obvious to me how to get these in-game in a good way so I don't have a good PR
 
 FBGM too many very short players
 
@@ -71,6 +149,8 @@ settings re-design
   - playoff structure
 
 real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
+- add marker for rookie contracts
+- also use this to determine who can be released, rather than the hacky way now
 
 option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob
 
@@ -144,20 +224,6 @@ trade stuff
 AI teams should release players if better FAs are available
 - draft picks after first season, especially
 
-name/colleges revamp
-- races
-  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
-  - playerBioInfo.countries[].races?: Record<Race, number>,
-  - defaultRaces: Record<Country, Record<Race, number>>
-  - CSV in tools, generate JSON like names, print countries missing
-    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
-  - default values for individual countries
-  - new release of faces.js, and upgrade
-- global default... should it override individual countries?
-  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
-- flag icon on roster page
-  - https://github.com/lipis/flag-icon-css
-
 centralize player action buttons
 - buttons
   - Draft
@@ -175,10 +241,6 @@ contract extensions, available if player mood is high enough and contract is exp
 
 No trades or other finance/roster moves while job offers
 - https://old.reddit.com/r/BasketballGM/comments/iz8bvk/exploit_1_get_job_offer_2_trade_all_of_your_stars/
-
-AI control buttons
-- handle lineup sorting automatically https://discord.com/channels/@me/713482931447791648
-- retire jerseys automatically
 
 https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
 
@@ -213,9 +275,7 @@ gm score
 
 taller players should get injured more
 
-option in team history to have AI auto retire jerseys
-
-AI re-signing logic
+option in team history to have AI auto retire jerseys, similar to "keep auto sorted"
 
 ratings stats popover should be based on year and allow switching https://media.discordapp.net/attachments/713482931447791648/755051634890899516/unknown.png?width=1439&height=71 @ninjasean56
 
@@ -260,8 +320,6 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
-nicidob trade
-
 jersey numbers
 - higher limit for AI teams, and make panel collapsable
   - https://old.reddit.com/r/BasketballGM/comments/i55hvu/ai_jersey_retirement/g0onh40/?context=3
@@ -304,21 +362,6 @@ rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comm
 option to lock ratings for all players, including future players
 
 FBGM make ratings improvements less correlated
-
-nicidob new ovr formula
-- basketball: https://github.com/dumbmatter/gm-games/pull/275/files
-- football: https://paste.ubuntu.com/p/H5pPmb3r6J/
-  - nicodob says:
-    - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
-    - that does the ratings and vomits out the over_under roster
-    - as-is it basically eats FBGM or BBGM leagues up. It does the position-specific code. So to replicate the PR I just replace the pos = r['pos'] with pos='ALL' and the code is happy to do it
-    - yeah I mean there's a handful of differences here. this uses JSON leagues (not a split 'avg.csv'/'game.csv'), and does position-specific breakdowns. But yes it's the same thing, it takes leagues with box scores and does minute-weighted rating differences to MOV for individual games
-    - it also doesn't do the scaling to ensure the mean and variance are unchanged (i just check R^2 and move on)
-    - And here I'm using L1 Regularization + Cross-Validation to drop a bunch of coefficients to zero for ratings that don't matter
-    - the problem is i got really wonky distributions when I tried to output the FBGM stuff
-    - like I don't understand how mean/variance are set by the code right now
-    - the notebook spits out a copy+paste table for ovr.football.ts and I have a local copy with it but the numbers are big and positions are set - wrong because I deleted bonuses and.....
-    - it was non-obvious to me how to get these in-game in a good way so I don't have a good PR
 
 built-in UI to load custom user files
 - UI in BBGM to create league
@@ -436,11 +479,6 @@ legendary seasons
 - by decade?
 
 roy formula, value counting stats more
-
-custom league generator
-- any historical team, with or without real players
-- any fake team
-- user defined teams
 
 fuzz/scouting revamp
 - prospects and young players only
@@ -873,9 +911,6 @@ bundle size by removing dependency (tested by adding to "external" in rollup con
 
 keep box scores with feats, and ASG
 
-SW stuff
-- dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe
-
 hype revamp
 - make more transparent
 - YWT
@@ -909,12 +944,7 @@ Could you add a page which shows all the game results on any given day? Just the
 
 option to control retirement rate
 
-Too few players refuse after recent change
-- https://www.reddit.com/r/BasketballGM/comments/ays1wh/change_in_free_agents_refusing_to_sign
-
 Force players to play through injury
-
-In danger zone, button to reset to preseason. Do stats and draft and finances as best possible
 
 load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automatic_nba_rosters_by_understanding/es28wcf/?context=3
 - explanation text?

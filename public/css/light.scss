@@ -1110,3 +1110,19 @@ a.anchor {
 .SortableHelper button {
 	white-space: nowrap;
 }
+
+@include media-breakpoint-up(sm) {
+	.border-radius-top-sm-0 {
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
+
+	.border-radius-bottom-sm-0 {
+		border-bottom-left-radius: 0 !important;
+		border-bottom-right-radius: 0 !important;
+	}
+
+	.border-top-sm-0 {
+		border-top: 0 !important;
+	}
+}

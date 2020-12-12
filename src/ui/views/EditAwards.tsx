@@ -269,14 +269,34 @@ const EditAwards = ({
 			? ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"]
 			: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
 
-	console.log("hi", players, awards.mvp);
-
 	const getPlayer = (p?: { pid: number }) => {
 		if (!p) {
 			return;
 		}
 
 		return players.find(p2 => p2.pid === p.pid);
+	};
+
+	const getOptionLabel = (award: string) => p => {
+		if (p.pid === undefined) {
+			return p.name;
+		}
+
+		let stats;
+		if (process.env.SPORT === "basketball") {
+			if (award === "dpoy" || award === "allDefensive") {
+				stats = `${p.stats.trb.toFixed(1)} reb, ${p.stats.blk.toFixed(
+					1,
+				)} blk, ${p.stats.stl.toFixed(1)} stl`;
+			} else {
+				stats = `${p.stats.pts.toFixed(1)} pts, ${p.stats.trb.toFixed(
+					1,
+				)} reb, ${p.stats.ast.toFixed(1)} ast`;
+			}
+		} else {
+			stats = p.stats.keyStats;
+		}
+		return `${p.name} (${p.ratings.pos}, ${p.stats.abbrev}) ${stats}`;
 	};
 
 	if (awards) {
@@ -290,7 +310,7 @@ const EditAwards = ({
 								options={players}
 								key={season}
 								player={getPlayer(awards[key])}
-								award={key}
+								getOptionLabel={getOptionLabel(key)}
 								changing={handleChange}
 							/>
 						</div>
@@ -308,7 +328,7 @@ const EditAwards = ({
 												key={season}
 												options={players}
 												player={getPlayer(player)}
-												award="allLeague"
+												getOptionLabel={getOptionLabel("allLeague")}
 												teamNumber={i}
 												playerNumber={j}
 												changing={handleChange}
@@ -338,7 +358,7 @@ const EditAwards = ({
 													key={season}
 													options={players}
 													player={getPlayer(player)}
-													award="allDefensive"
+													getOptionLabel={getOptionLabel("allDefensive")}
 													teamNumber={i}
 													playerNumber={j}
 													changing={handleChange}
@@ -369,7 +389,7 @@ const EditAwards = ({
 											options={players}
 											key={season}
 											player={getPlayer(player)}
-											award="allRookie"
+											getOptionLabel={getOptionLabel("allRookie")}
 											playerNumber={i}
 											changing={handleChange}
 										/>

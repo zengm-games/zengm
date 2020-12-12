@@ -277,7 +277,7 @@ const EditAwards = ({
 		return players.find(p2 => p2.pid === p.pid);
 	};
 
-	const getOptionLabel = (award: string) => p => {
+	const getOptionLabel = (award: string) => (p: any) => {
 		if (p.pid === undefined) {
 			return p.name;
 		}

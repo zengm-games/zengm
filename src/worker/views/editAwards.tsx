@@ -46,12 +46,12 @@ const updateAwards = async (
 		playersAll = orderBy(playersAll, ["lastName", "firstName"]);
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "tid", "abbrev"],
+			attrs: ["pid", "name"],
 			ratings: ["pos"],
 			stats:
 				process.env.SPORT === "basketball"
-					? ["pts", "trb", "ast", "blk", "stl"]
-					: ["keyStats"],
+					? ["abbrev", "pts", "trb", "ast", "blk", "stl"]
+					: ["abbrev", "keyStats"],
 			fuzz: true,
 			mergeStats: true,
 			season,

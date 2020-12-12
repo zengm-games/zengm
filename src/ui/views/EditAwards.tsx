@@ -269,17 +269,27 @@ const EditAwards = ({
 			? ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"]
 			: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
 
+	console.log("hi", players, awards.mvp);
+
+	const getPlayer = (p?: { pid: number }) => {
+		if (!p) {
+			return;
+		}
+
+		return players.find(p2 => p2.pid === p.pid);
+	};
+
 	if (awards) {
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					{simpleAwardKeys.map(key => (
-						<div key={key} className="col-md-4 col-6 form-group">
+						<div key={key} className="col-lg-4 col-md-6 form-group">
 							<label>{AWARD_NAMES[key]}</label>
 							<SelectMultiple
 								options={players}
 								key={season}
-								player={awards[key]}
+								player={getPlayer(awards[key])}
 								award={key}
 								changing={handleChange}
 							/>
@@ -297,7 +307,7 @@ const EditAwards = ({
 											<SelectMultiple
 												key={season}
 												options={players}
-												player={player}
+												player={getPlayer(player)}
 												award="allLeague"
 												teamNumber={i}
 												playerNumber={j}
@@ -310,7 +320,7 @@ const EditAwards = ({
 						);
 
 						return [
-							<div className="col-md-4 col-6" key={i}>
+							<div className="col-lg-4 col-md-6" key={i}>
 								<h3 className="mt-4">{element.title} All-League</h3>
 								{teamSelect}
 							</div>,
@@ -327,7 +337,7 @@ const EditAwards = ({
 												<SelectMultiple
 													key={season}
 													options={players}
-													player={player}
+													player={getPlayer(player)}
 													award="allDefensive"
 													teamNumber={i}
 													playerNumber={j}
@@ -339,7 +349,7 @@ const EditAwards = ({
 								);
 
 								return [
-									<div className="col-md-4 col-6" key={i}>
+									<div className="col-lg-4 col-md-6" key={i}>
 										<h3 className="mt-4">{element.title} All-Defensive</h3>
 										{teamSelect}
 									</div>,
@@ -358,7 +368,7 @@ const EditAwards = ({
 										<SelectMultiple
 											options={players}
 											key={season}
-											player={player}
+											player={getPlayer(player)}
 											award="allRookie"
 											playerNumber={i}
 											changing={handleChange}

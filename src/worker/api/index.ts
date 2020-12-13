@@ -2742,7 +2742,6 @@ const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
 ): Promise<any> => {
-	console.log("updateAwards", awards);
 	const awardsInitial = await idb.getCopy.awards({
 		season: awards.season,
 	});
@@ -2754,7 +2753,6 @@ const updateAwards = async (
 	// Delete old awards
 	const awardsByPlayerToDelete: AwardsByPlayer = [];
 	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
-	console.log("awardsByPlayerToDelete", awardsByPlayerToDelete);
 	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
 
 	// Add new awards

@@ -49,12 +49,12 @@ const findRatingsRow = (
 
 const findStatSum = (
 	allStats: PlayerStats[],
-	statsIndex: number,
+	statsIndex: number | undefined, // undefined means it was a traded draft pick, so include all stats
 	season: number,
 	phase: Phase,
 	statSumsBySeason?: Record<number, number>,
 ) => {
-	let index = statsIndex;
+	let index = statsIndex ?? 0;
 
 	// If no data was deleted/edited, should work with just statsIndex
 	const firstTry = allStats[index];
@@ -77,7 +77,11 @@ const findStatSum = (
 			process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
 
 		// Only after trade
-		if (i > index || (i === index && phase <= PHASE.PLAYOFFS)) {
+		if (
+			i > index ||
+			(i === index && phase <= PHASE.PLAYOFFS) ||
+			statsIndex === undefined
+		) {
 			statSum += stat;
 		}
 
@@ -101,7 +105,7 @@ const findStatSum = (
 const getActualPlayerInfo = (
 	p: Player,
 	ratingsIndex: number,
-	statsIndex: number,
+	statsIndex: number | undefined,
 	season: number,
 	phase: Phase,
 	statSumsBySeason?: Record<number, number>,
@@ -315,7 +319,7 @@ export const processAssets = async (
 				const playerInfo = getActualPlayerInfo(
 					p,
 					0,
-					0,
+					undefined,
 					event.season,
 					event.phase,
 					statSumsBySeason ? statSumsBySeason[i] : undefined,

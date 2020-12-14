@@ -65,8 +65,8 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
-			// const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
-			const divsMobile: string[] = [];
+			const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
+			// const divsMobile: string[] = [];
 			const showDivsDesktop = [
 				`${process.env.SPORT}-gm_leaderboard_atf`,
 				`${process.env.SPORT}-gm_mrec_btf_1`,

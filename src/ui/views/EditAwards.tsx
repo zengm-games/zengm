@@ -46,185 +46,131 @@ const EditAwards = ({
 	}) => {
 		let error = false;
 
-		setAws((prevState: any) => {
-			const aws: any = prevState;
-
-			if (
-				type == "finalsMvp" ||
-				type == "mvp" ||
-				type == "smoy" ||
-				type == "roy" ||
-				type == "mip" ||
-				type == "oroy" ||
-				type == "droy"
-			) {
-				if (p?.pid == undefined) {
-					aws[type] = undefined;
+		const newAwards = { ...aws };
+		if (
+			type == "finalsMvp" ||
+			type == "mvp" ||
+			type == "smoy" ||
+			type == "roy" ||
+			type == "mip" ||
+			type == "oroy" ||
+			type == "droy"
+		) {
+			if (p?.pid == undefined) {
+				newAwards[type] = undefined;
+			} else {
+				if (process.env.SPORT === "basketball") {
+					newAwards[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.stats.tid,
+						abbrev: p.stats.abbrev,
+						pts: p.stats.pts,
+						trb: p.stats.trb,
+						ast: p.stats.ast,
+					};
 				} else {
-					if (process.env.SPORT === "basketball") {
-						aws[type] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							pts: p.stats.pts,
-							trb: p.stats.trb,
-							ast: p.stats.ast,
-						};
-					} else {
-						aws[type] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos: p.ratings.pos,
-						};
-					}
+					newAwards[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.stats.tid,
+						abbrev: p.stats.abbrev,
+						keyStats: p.stats.keyStats,
+						pos: p.ratings.pos,
+					};
 				}
-			} else if (type == "dpoy") {
-				if (p?.pid == undefined) {
-					aws[type] = undefined;
+			}
+		} else if (type == "dpoy") {
+			if (p?.pid == undefined) {
+				newAwards[type] = undefined;
+			} else {
+				if (process.env.SPORT === "basketball") {
+					newAwards[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.stats.tid,
+						abbrev: p.stats.abbrev,
+						trb: p.stats.trb,
+						blk: p.stats.blk,
+						stl: p.stats.stl,
+					};
 				} else {
-					if (process.env.SPORT === "basketball") {
-						aws[type] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							trb: p.stats.trb,
-							blk: p.stats.blk,
-							stl: p.stats.stl,
-						};
-					} else {
-						aws[type] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos: p.ratings.pos,
-						};
-					}
+					newAwards[type] = {
+						pid: p.pid,
+						name: p.name,
+						tid: p.stats.tid,
+						abbrev: p.stats.abbrev,
+						keyStats: p.stats.keyStats,
+						pos: p.ratings.pos,
+					};
 				}
-			} else if (type == "allDefensive") {
-				if (p?.pid == undefined) {
-					aws[type][teamNumber]["players"][playerNumber] = undefined;
-				} else {
-					const arrayPids: number[] = [];
-					aws[type].map((team: any) => {
-						team["players"].map((element: any) => {
-							if (element !== undefined) {
-								arrayPids.push(element.pid);
-							}
-						});
-					});
-					if (arrayPids.includes(p.pid)) {
-						logEvent({
-							type: "error",
-							text: "Cannot add player to team twice",
-							saveToDb: false,
-						});
-						error = true;
-						return {
-							...prevState,
-							aws,
-						};
-					}
-					if (process.env.SPORT === "basketball") {
-						aws[type][teamNumber]["players"][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							trb: p.stats.trb,
-							blk: p.stats.blk,
-							stl: p.stats.stl,
-						};
-					} else {
-						aws[type][teamNumber]["players"][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos:
-								aws[type][teamNumber]["players"][playerNumber]?.pos ??
-								p.ratings.pos,
-						};
-					}
-				}
-			} else if (type == "allLeague") {
-				if (p?.pid == undefined) {
-					aws[type][teamNumber]["players"][playerNumber] = undefined;
-				} else {
-					const arrayPids: number[] = [];
-					aws[type].map((team: any) => {
-						team["players"].map((element: any) => {
-							if (element !== undefined) {
-								arrayPids.push(element.pid);
-							}
-						});
-					});
-					if (arrayPids.includes(p.pid)) {
-						logEvent({
-							type: "error",
-							text: "Cannot add player to team twice",
-							saveToDb: false,
-						});
-						error = true;
-						return {
-							...prevState,
-							aws,
-						};
-					}
-					if (process.env.SPORT === "basketball") {
-						aws[type][teamNumber]["players"][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							pts: p.stats.pts,
-							trb: p.stats.trb,
-							ast: p.stats.ast,
-						};
-					} else {
-						aws[type][teamNumber]["players"][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos:
-								aws[type][teamNumber]["players"][playerNumber]?.pos ??
-								p.ratings.pos,
-						};
-					}
-				}
-			} else if (type == "allRookie") {
-				if (p?.pid == undefined) {
-					aws[type][playerNumber] = undefined;
-				} else {
-					const arrayPids: number[] = [];
-					aws[type].map((element: any) => {
+			}
+		} else if (type == "allDefensive") {
+			if (p?.pid == undefined) {
+				newAwards[type][teamNumber].players[playerNumber] = undefined;
+			} else {
+				const arrayPids: number[] = [];
+				for (const team of newAwards[type]) {
+					for (const element of team.players) {
 						if (element !== undefined) {
 							arrayPids.push(element.pid);
 						}
+					}
+				}
+				if (arrayPids.includes(p.pid)) {
+					logEvent({
+						type: "error",
+						text: "Cannot add player to team twice",
+						saveToDb: false,
 					});
-					if (arrayPids.includes(p.pid)) {
-						logEvent({
-							type: "error",
-							text: "Cannot add player to team twice",
-							saveToDb: false,
-						});
-						error = true;
-						return {
-							...prevState,
-							aws,
+					error = true;
+				} else {
+					if (process.env.SPORT === "basketball") {
+						newAwards[type][teamNumber].players[playerNumber] = {
+							pid: p.pid,
+							name: p.name,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
+							trb: p.stats.trb,
+							blk: p.stats.blk,
+							stl: p.stats.stl,
+						};
+					} else {
+						newAwards[type][teamNumber].players[playerNumber] = {
+							pid: p.pid,
+							name: p.name,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
+							keyStats: p.stats.keyStats,
+							pos:
+								newAwards[type][teamNumber].players[playerNumber]?.pos ??
+								p.ratings.pos,
 						};
 					}
+				}
+			}
+		} else if (type == "allLeague") {
+			if (p?.pid == undefined) {
+				newAwards[type][teamNumber].players[playerNumber] = undefined;
+			} else {
+				const arrayPids: number[] = [];
+				for (const team of newAwards[type]) {
+					for (const element of team.players) {
+						if (element !== undefined) {
+							arrayPids.push(element.pid);
+						}
+					}
+				}
+				if (arrayPids.includes(p.pid)) {
+					logEvent({
+						type: "error",
+						text: "Cannot add player to team twice",
+						saveToDb: false,
+					});
+					error = true;
+				} else {
 					if (process.env.SPORT === "basketball") {
-						aws[type][playerNumber] = {
+						newAwards[type][teamNumber].players[playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
@@ -234,20 +180,64 @@ const EditAwards = ({
 							ast: p.stats.ast,
 						};
 					} else {
-						aws[type][playerNumber] = {
+						newAwards[type][teamNumber].players[playerNumber] = {
 							pid: p.pid,
 							name: p.name,
 							tid: p.stats.tid,
 							abbrev: p.stats.abbrev,
-							pos: aws[type][playerNumber]?.pos ?? p.ratings.pos,
+							keyStats: p.stats.keyStats,
+							pos:
+								newAwards[type][teamNumber].players[playerNumber]?.pos ??
+								p.ratings.pos,
+						};
+					}
+				}
+			}
+		} else if (type == "allRookie") {
+			if (p?.pid == undefined) {
+				newAwards[type][playerNumber] = undefined;
+			} else {
+				const arrayPids: number[] = [];
+				for (const element of newAwards[type]) {
+					if (element !== undefined) {
+						arrayPids.push(element.pid);
+					}
+				}
+				if (arrayPids.includes(p.pid)) {
+					logEvent({
+						type: "error",
+						text: "Cannot add player to team twice",
+						saveToDb: false,
+					});
+					error = true;
+				} else {
+					if (process.env.SPORT === "basketball") {
+						newAwards[type][playerNumber] = {
+							pid: p.pid,
+							name: p.name,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
+							pts: p.stats.pts,
+							trb: p.stats.trb,
+							ast: p.stats.ast,
+						};
+					} else {
+						newAwards[type][playerNumber] = {
+							pid: p.pid,
+							name: p.name,
+							tid: p.stats.tid,
+							abbrev: p.stats.abbrev,
+							pos: newAwards[type][playerNumber]?.pos ?? p.ratings.pos,
 							keyStats: p.stats.keyStats,
 						};
 					}
 				}
 			}
+		}
 
-			return aws;
-		});
+		if (!error) {
+			setAws({ ...newAwards });
+		}
 
 		return error;
 	};
@@ -320,27 +310,25 @@ const EditAwards = ({
 					))}
 				</div>
 				<div className="row">
-					{awards["allLeague"].map((element: any, i: number) => {
-						const teamSelect = element["players"].map(
-							(player: any, j: number) => {
-								return (
-									<div className="d-flex" key={j}>
-										<Position index={j} p={player} />
-										<div className="form-group flex-grow-1">
-											<SelectMultiple
-												key={season}
-												options={players}
-												defaultValue={getPlayer(player)}
-												getOptionLabel={getOptionLabel("allLeague")}
-												teamNumber={i}
-												playerNumber={j}
-												changing={handleChange("allLeague")}
-											/>
-										</div>
+					{awards.allLeague.map((element: any, i: number) => {
+						const teamSelect = element.players.map((player: any, j: number) => {
+							return (
+								<div className="d-flex" key={j}>
+									<Position index={j} p={player} />
+									<div className="form-group flex-grow-1">
+										<SelectMultiple
+											key={season}
+											options={players}
+											defaultValue={getPlayer(player)}
+											getOptionLabel={getOptionLabel("allLeague")}
+											teamNumber={i}
+											playerNumber={j}
+											changing={handleChange("allLeague")}
+										/>
 									</div>
-								);
-							},
-						);
+								</div>
+							);
+						});
 
 						return [
 							<div className="col-lg-4 col-md-6" key={i}>
@@ -352,8 +340,8 @@ const EditAwards = ({
 
 					{process.env.SPORT === "basketball" ? (
 						<>
-							{awards["allDefensive"].map((element: any, i: number) => {
-								const teamSelect = element["players"].map(
+							{awards.allDefensive.map((element: any, i: number) => {
+								const teamSelect = element.players.map(
 									(player: any, j: number) => {
 										return (
 											<div className="form-group" key={j}>
@@ -383,7 +371,7 @@ const EditAwards = ({
 
 					<div className="col-md-4 col-6">
 						<h3 className="mt-4">All-Rookie Team</h3>
-						{awards["allRookie"].map((player: any, i: number) => {
+						{awards.allRookie.map((player: any, i: number) => {
 							return (
 								<div className="d-flex" key={i}>
 									<Position index={i} p={player} />

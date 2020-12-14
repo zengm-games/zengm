@@ -32,7 +32,7 @@ const SelectReact = ({
 	return (
 		<Select
 			classNamePrefix="dark-select"
-			defaultValue={value}
+			value={value}
 			isClearable
 			onChange={handleChange}
 			options={options}

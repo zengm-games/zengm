@@ -1,4 +1,7 @@
+Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
+
 award editor
+- add link to award races page
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
 
 UI for selecting a custom set of teams in a new league
@@ -1496,7 +1499,7 @@ player.updateValues.getStats doesn't really make sense. Should get all from past
 new achievements
 - gold
 - 100 year championship drought before winning another (cubs)
-- win title without any 1st round picks
+- win title without any 1st round picks @AtomicDelirium#1413
 - "On the edge" – Play 28 games in playoffs and win finals (4-3 in each series)
 - Have more than 100 players who played most of their career on your team be HOF @Happy_McSmileyface#1538
 

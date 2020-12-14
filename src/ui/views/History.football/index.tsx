@@ -38,16 +38,12 @@ const History = (props: View<"history">) => {
 		confs,
 		retiredPlayers,
 		userTid,
-		godMode,
 	} = props as ActualProps;
 
 	return (
 		<>
-			{godMode ? (
-				<MoreLinks type="awards" page="history" season={season} />
-			) : (
-				""
-			)}
+			<MoreLinks type="awards" page="history" season={season} />
+
 			<div className="row">
 				<div className="col-md-3 col-sm-4 col-12">
 					<AwardsAndChamp

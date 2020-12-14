@@ -7,6 +7,7 @@ import {
 	DataTable,
 	RatingWithChange,
 	StatWithChange,
+	MoreLinks,
 } from "../components";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
@@ -40,6 +41,8 @@ const AwardRaces = ({
 
 	return (
 		<>
+			<MoreLinks type="awards" page="award_races" season={season} />
+
 			<div className="row" style={{ marginTop: -14 }}>
 				{awardCandidates.map(({ name, players, stats }) => {
 					const mip = name === "Most Improved Player";

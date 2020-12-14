@@ -1,7 +1,7 @@
 import React from "react";
 import { NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType } from "../../common/types";
-import { helpers } from "../util";
+import { helpers, useLocalShallow } from "../util";
 
 const MoreLinks = (
 	props: (
@@ -48,6 +48,10 @@ const MoreLinks = (
 	},
 ) => {
 	const { keepSelfLink, page } = props;
+
+	const { godMode } = useLocalShallow(state2 => ({
+		godMode: state2.godMode,
+	}));
 
 	let links: {
 		url: (string | number)[];
@@ -143,13 +147,16 @@ const MoreLinks = (
 	} else if (props.type == "awards") {
 		const { season } = props;
 
-		links = [
-			{
-				url: season == undefined ? ["edit_awards"] : ["edit_awards", season],
-				name: "Edit Awards",
-				className: "god-mode",
-			},
-		];
+		links = godMode
+			? [
+					{
+						url:
+							season == undefined ? ["edit_awards"] : ["edit_awards", season],
+						name: "Edit Awards",
+						className: "god-mode",
+					},
+			  ]
+			: [];
 	} else if (props.type === "playerRatings") {
 		const { season } = props;
 
@@ -238,6 +245,10 @@ const MoreLinks = (
 		];
 	} else {
 		throw new Error("Invalid MoreLinks type");
+	}
+
+	if (links.length === 0) {
+		return null;
 	}
 
 	return (

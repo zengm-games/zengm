@@ -446,7 +446,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("aiJerseyRetirement", { type: "boolean" }),
 						gameAttribute("keepRosterSorted", { type: "boolean" }),
 						gameAttribute("aiTradesFactor", { type: "number" }),
-						gameAttribute("allStarGame", { type: "boolean" }),
+						gameAttribute("allStarGame", {
+							// boolean is legacy
+							type: ["boolean", "number", "null"],
+						}),
 						gameAttribute("autoDeleteOldBoxScores", { type: "boolean" }),
 						gameAttribute("brotherRate", {
 							type: "number",

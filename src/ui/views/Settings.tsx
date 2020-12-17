@@ -104,6 +104,7 @@ type FieldType =
 	| "bool"
 	| "float"
 	| "float1000"
+	| "floatOrNull"
 	| "int"
 	| "jsonString"
 	| "string"
@@ -748,9 +749,31 @@ if (process.env.SPORT === "basketball") {
 			category: "Season",
 			key: "allStarGame",
 			name: "All-Star Game",
-			type: "bool",
-			description:
-				"Changing this will not affect an in-progress season, only future seasons.",
+			type: "floatOrNull",
+			descriptionLong: (
+				<>
+					<p>
+						Set this to the fraction of the regular season you want to happen
+						before the All-Star Game. So if you set this to 0.75, 75% of the
+						season will be played before the All-Star Game.
+					</p>
+					<p>Make it blank to disable the All-Star Game.</p>
+					<p>
+						If you're already in the regular season phase, changing this setting
+						will only affect future seasons, not the current season.
+					</p>
+				</>
+			),
+			validator: value => {
+				if (value !== null) {
+					if (value > 1) {
+						throw new Error("Value cannot be greater than 1");
+					}
+					if (value < 0) {
+						throw new Error("Value cannot be less than 0");
+					}
+				}
+			},
 		},
 		{
 			category: "Game Simulation",
@@ -1535,6 +1558,20 @@ const encodeDecodeFunctions = {
 			return parsed;
 		},
 	},
+	floatOrNull: {
+		stringify: (value: number | null) => (value === null ? "" : String(value)),
+		parse: (value: string) => {
+			if (value === "") {
+				return null;
+			}
+
+			const parsed = parseFloat(value);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid number`);
+			}
+			return parsed;
+		},
+	},
 	int: {
 		stringify: (value: number) => String(value),
 		parse: (value: string) => {
@@ -2311,7 +2348,6 @@ Settings.propTypes = {
 	numPlayoffByes: PropTypes.number.isRequired,
 	draftType: PropTypes.string.isRequired,
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
-	allStarGame: PropTypes.bool.isRequired,
 	budget: PropTypes.bool.isRequired,
 	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
 	foulRateFactor: PropTypes.number.isRequired,

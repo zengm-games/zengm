@@ -26,7 +26,7 @@ describe("worker/core/season/newSchedule.basketball", () => {
 	describe("newScheduleDefault", () => {
 		beforeAll(() => {
 			testHelpers.resetG();
-			g.setWithoutSavingToDB("allStarGame", false);
+			g.setWithoutSavingToDB("allStarGame", null);
 		});
 
 		test("schedule 1230 games (82 each for 30 teams)", () => {

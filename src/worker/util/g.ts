@@ -45,6 +45,15 @@ const g: GameAttributes & {
 				return gameAttribute[0].value;
 			}
 
+			if (key === "allStarGame" && typeof gameAttribute === "boolean") {
+				if (gameAttribute) {
+					// Old default, back when it was a boolean and not customizable
+					return 0.7;
+				}
+
+				return null;
+			}
+
 			// @ts-ignore
 			return gameAttribute;
 		}

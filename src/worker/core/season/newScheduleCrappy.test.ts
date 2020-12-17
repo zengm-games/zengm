@@ -14,7 +14,7 @@ const makeTeams = (numTeams: number) => {
 describe("worker/core/season/newScheduleCrappy", () => {
 	beforeEach(() => {
 		testHelpers.resetG();
-		g.setWithoutSavingToDB("allStarGame", false);
+		g.setWithoutSavingToDB("allStarGame", null);
 	});
 
 	test("when numTeams*numGames is even, everyone gets a full schedule", () => {

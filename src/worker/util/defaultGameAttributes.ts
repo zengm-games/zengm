@@ -111,7 +111,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numDraftRounds: 2,
 	defaultStadiumCapacity: 25000,
 	playersRefuseToNegotiate: true,
-	allStarGame: true,
+	allStarGame: 0.7,
 	budget: true,
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
@@ -249,7 +249,7 @@ export const footballOverrides =
 				tragicDeathRate: 1 / (20 * 50),
 				sonRate: 0.005,
 				brotherRate: 0.005,
-				allStarGame: false,
+				allStarGame: null,
 		  }
 		: {};
 

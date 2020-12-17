@@ -1,5 +1,6 @@
 import flatten from "lodash/flatten";
 import { g, random } from "../../../worker/util";
+import allStar from "../allStar";
 import newScheduleCrappy from "./newScheduleCrappy";
 
 /**
@@ -252,8 +253,9 @@ const newSchedule = (
 	tids = flatten(days);
 
 	// Add an All-Star Game
-	if (g.get("allStarGame")) {
-		const ind = Math.round(0.7 * tids.length);
+	const allStarGame = g.get("allStarGame");
+	if (allStarGame !== null) {
+		const ind = Math.round(allStarGame * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}
 

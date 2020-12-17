@@ -349,7 +349,7 @@ export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	keepRosterSorted: boolean;
 	aiTradesFactor: number;
-	allStarGame: boolean;
+	allStarGame: number | null;
 	autoDeleteOldBoxScores: boolean;
 	brotherRate: number;
 	budget: boolean;

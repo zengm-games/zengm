@@ -195,7 +195,7 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 
 				<button
 					type="button"
-					className="btn btn-light-bordered mb-5"
+					className="btn btn-god-mode border-0 mb-5"
 					disabled={
 						(phase !== PHASE.REGULAR_SEASON &&
 							phase !== PHASE.AFTER_TRADE_DEADLINE) ||

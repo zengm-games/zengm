@@ -181,8 +181,13 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 					guess you get an extra All-Star Game?
 				</p>
 
-				{phase !== PHASE.REGULAR_SEASON &&
-				phase !== PHASE.AFTER_TRADE_DEADLINE ? (
+				{!godMode ? (
+					<p className="text-warning">
+						This feature is only available in{" "}
+						<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+					</p>
+				) : phase !== PHASE.REGULAR_SEASON &&
+				  phase !== PHASE.AFTER_TRADE_DEADLINE ? (
 					<p className="text-warning">
 						This only works during the regular season.
 					</p>
@@ -192,8 +197,9 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 					type="button"
 					className="btn btn-light-bordered mb-5"
 					disabled={
-						phase !== PHASE.REGULAR_SEASON &&
-						phase !== PHASE.AFTER_TRADE_DEADLINE
+						(phase !== PHASE.REGULAR_SEASON &&
+							phase !== PHASE.AFTER_TRADE_DEADLINE) ||
+						!godMode
 					}
 					onClick={async () => {
 						await toWorker("main", "allStarGameNow");

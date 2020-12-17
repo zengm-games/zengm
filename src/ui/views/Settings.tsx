@@ -727,8 +727,9 @@ export const options: {
 					Set it to 1 (i.e. 100% of the season) to disable the trade deadline.
 				</p>
 				<p>
-					If you're already in the regular season phase, changing this setting
-					will only affect future seasons, not the current season.
+					If you're already in the regular season, changing this setting will
+					only affect future seasons, not the current season. See Tools &gt;
+					Danger Zone to edit the current season's trade deadline.
 				</p>
 			</>
 		),
@@ -759,8 +760,9 @@ if (process.env.SPORT === "basketball") {
 					</p>
 					<p>Make it blank to disable the All-Star Game.</p>
 					<p>
-						If you're already in the regular season phase, changing this setting
-						will only affect future seasons, not the current season.
+						If you're already in the regular season, changing this setting will
+						only affect future seasons, not the current season. See Tools &gt;
+						Danger Zone to edit the current season's All-Star game.
 					</p>
 				</>
 			),

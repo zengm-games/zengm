@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: Added button to toggle the current state of the trade deadline on Tools > Danger Zone. [[1]]()
+* DEV: Added button to change the schedule of the All-Star Game to Tools > Danger Zone. [[1]]()
+
+* DEV: Added button to toggle the current state of the trade deadline to Tools > Danger Zone. [[1]]()
 
 * DEV: The time at which the All-Star Game occurs can now be edited at Tools > League Settings. By default it is 70% of the way through the season. [[1]]()
 

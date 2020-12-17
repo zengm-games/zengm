@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PHASE } from "../../common";
 import type { View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
+import { helpers, logEvent, toWorker } from "../util";
 
 const AutoSave = ({ autoSave }: { autoSave: boolean }) => {
 	const [processing, setProcessing] = useState(false);
@@ -195,8 +195,14 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 						phase !== PHASE.REGULAR_SEASON &&
 						phase !== PHASE.AFTER_TRADE_DEADLINE
 					}
-					onClick={() => {
-						toWorker("main", "allStarGameNow");
+					onClick={async () => {
+						await toWorker("main", "allStarGameNow");
+
+						logEvent({
+							saveToDb: false,
+							text: "The All-Star Game has been scheduled.",
+							type: "info",
+						});
 					}}
 				>
 					Schedule All-Star Game now

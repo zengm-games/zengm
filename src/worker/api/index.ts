@@ -47,6 +47,7 @@ import {
 	updatePhase,
 	logEvent,
 	getNewLeagueLid,
+	initUILocalGames,
 } from "../util";
 import views from "../views";
 import type {
@@ -71,6 +72,8 @@ import type {
 	TeamSeasonWithoutKey,
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
+	ScheduleGame,
+	ScheduleGameWithoutKey,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";
 import {
@@ -145,7 +148,49 @@ const allStarDraftUser = async (pid: number) => {
 	return finalized;
 };
 
-const allStarGameNow = async () => {};
+const allStarGameNow = async () => {
+	const currentPhase = g.get("phase");
+	if (
+		currentPhase != PHASE.REGULAR_SEASON &&
+		currentPhase !== PHASE.AFTER_TRADE_DEADLINE
+	) {
+		return;
+	}
+
+	let schedule = (await season.getSchedule()).map(game => {
+		const newGame: ScheduleGameWithoutKey = {
+			...game,
+		};
+		// Delete gid, so ASG added to beginning will be in order
+		delete newGame.gid;
+		return newGame;
+	});
+
+	// Does ASG exist in schedule? If so, delete it.
+	schedule = schedule.filter(
+		game => game.awayTid !== -2 || game.homeTid !== -1,
+	);
+
+	// Add 1 to each day, so we can fit in ASG
+	for (const game of schedule) {
+		game.day += 1;
+	}
+
+	// Add new ASG to front of schedule, and adjust days
+	schedule.unshift({
+		awayTid: -2,
+		homeTid: -1,
+		day: schedule.length > 0 ? schedule[0].day - 1 : 0,
+	});
+
+	await idb.cache.schedule.clear();
+	for (const game of schedule) {
+		await idb.cache.schedule.add(game);
+	}
+
+	await initUILocalGames();
+	await toUI("realtimeUpdate", [["gameSim"]]);
+};
 
 const autoSortRoster = async (
 	pos: string | undefined,

@@ -1,6 +1,5 @@
 import flatten from "lodash/flatten";
 import { g, random } from "../../../worker/util";
-import allStar from "../allStar";
 import newScheduleCrappy from "./newScheduleCrappy";
 
 /**

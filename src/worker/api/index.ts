@@ -72,7 +72,6 @@ import type {
 	TeamSeasonWithoutKey,
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
-	ScheduleGame,
 	ScheduleGameWithoutKey,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";

@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Added button to toggle the current state of the trade deadline on Tools > Danger Zone. [[1]]()
+
 * DEV: The time at which the All-Star Game occurs can now be edited at Tools > League Settings. By default it is 70% of the way through the season. [[1]]()
 
 * 2020-12-12: New "Edit Awards" page available in God Mode, which allows you to edit all the end-of-season award winners. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/331) [[2]](https://old.reddit.com/r/BasketballGM/comments/kbl3m7/new_edit_awards_page_available_in_god_mode_which/)

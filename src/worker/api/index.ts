@@ -24,6 +24,7 @@ import {
 	expansionDraft,
 	realRosters,
 	freeAgents,
+	season,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -71,7 +72,6 @@ import type {
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
 } from "../../common/types";
-import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -144,6 +144,8 @@ const allStarDraftUser = async (pid: number) => {
 	const finalized = await allStar.draftUser(pid);
 	return finalized;
 };
+
+const allStarGameNow = async () => {};
 
 const autoSortRoster = async (
 	pos: string | undefined,
@@ -2193,7 +2195,7 @@ const updateExpansionDraftSetup = async (changes: {
 		throw new Error("Invalid expansion draft phase");
 	}
 
-	await setGameAttributes({
+	await league.setGameAttributes({
 		expansionDraft: {
 			...expansionDraft,
 			...changes,
@@ -2228,7 +2230,7 @@ const cancelExpansionDraft = async () => {
 	for (let i = 0; i < expansionDraft.expansionTids.length; i++) {
 		await removeLastTeam();
 	}
-	await setGameAttributes({
+	await league.setGameAttributes({
 		expansionDraft: { phase: "setup" },
 		phase: g.get("nextPhase"),
 		nextPhase: undefined,
@@ -2950,6 +2952,33 @@ const proposeTrade = async (
 	return output;
 };
 
+const toggleTradeDeadline = async () => {
+	const currentPhase = g.get("phase");
+	if (currentPhase === PHASE.AFTER_TRADE_DEADLINE) {
+		await league.setGameAttributes({
+			phase: PHASE.REGULAR_SEASON,
+		});
+
+		await toUI("realtimeUpdate", [["newPhase"]]);
+	} else if (currentPhase === PHASE.REGULAR_SEASON) {
+		await league.setGameAttributes({
+			phase: PHASE.AFTER_TRADE_DEADLINE,
+		});
+
+		// Delete scheduled trade deadline
+		const schedule = await season.getSchedule();
+		const tradeDeadline = schedule.find(
+			game => game.homeTid === -3 && game.awayTid === -3,
+		);
+		if (tradeDeadline) {
+			await idb.cache.schedule.delete(tradeDeadline.gid);
+			await toUI("deleteGames", [[tradeDeadline.gid]]);
+		}
+
+		await toUI("realtimeUpdate", [["newPhase"]]);
+	}
+};
+
 const tradeCounterOffer = async (): Promise<string> => {
 	const message = await trade.makeItWorkTrade();
 	await toUI("realtimeUpdate", []);
@@ -2968,6 +2997,7 @@ export default {
 	allStarDraftAll,
 	allStarDraftOne,
 	allStarDraftUser,
+	allStarGameNow,
 	autoSortRoster,
 	beforeViewLeague,
 	beforeViewNonLeague,
@@ -3026,6 +3056,7 @@ export default {
 	startExpansionDraft,
 	startFantasyDraft,
 	switchTeam,
+	toggleTradeDeadline,
 	tradeCounterOffer,
 	updateAwards,
 	updateBudget,

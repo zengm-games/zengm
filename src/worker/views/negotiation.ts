@@ -110,20 +110,20 @@ const updateNegotiation = async (
 		}
 
 		const p2 = await idb.cache.players.get(negotiation.pid);
-		if (!p2) {
-			throw new Error("Player not found");
+		let p;
+		if (p2) {
+			p = await idb.getCopy.playersPlus(p2, {
+				attrs: ["pid", "name", "age", "contract"],
+				ratings: ["ovr", "pot"],
+				season: g.get("season"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			});
 		}
-		const p = await idb.getCopy.playersPlus(p2, {
-			attrs: ["pid", "name", "age", "contract"],
-			ratings: ["ovr", "pot"],
-			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
 
-		// This can happen if a negotiation is somehow started with a retired player
-		if (!p) {
+		// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
+		if (!p || !p2) {
 			contractNegotiation.cancel(negotiation.pid);
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {

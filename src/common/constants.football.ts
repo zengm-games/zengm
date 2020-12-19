@@ -1,4 +1,4 @@
-import type { CompositeWeights } from "./types";
+import type { CompositeWeights, Conf, Div } from "./types";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -420,7 +420,7 @@ const RATINGS: RatingKey[] = [
 ];
 const TIME_BETWEEN_GAMES = "week";
 const SIMPLE_AWARDS = ["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const;
-const AWARDS_NAMES = {
+const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	dpoy: "Defensive Player of the Year",
 	oroy: "Offensive Rookie of the Year",
@@ -429,8 +429,65 @@ const AWARDS_NAMES = {
 	allLeague: "All-League",
 	allRookie: "All-Rookie Team",
 } as const;
+
+const DEFAULT_CONFS: Conf[] = [
+	{
+		cid: 0,
+		name: "American Conference",
+	},
+	{
+		cid: 1,
+		name: "National Conference",
+	},
+];
+
+const DEFAULT_DIVS: Div[] = [
+	{
+		did: 0,
+		cid: 0,
+		name: "East",
+	},
+	{
+		did: 1,
+		cid: 0,
+		name: "North",
+	},
+	{
+		did: 2,
+		cid: 0,
+		name: "South",
+	},
+	{
+		did: 3,
+		cid: 0,
+		name: "West",
+	},
+	{
+		did: 4,
+		cid: 1,
+		name: "East",
+	},
+	{
+		did: 5,
+		cid: 1,
+		name: "North",
+	},
+	{
+		did: 6,
+		cid: 1,
+		name: "South",
+	},
+	{
+		did: 7,
+		cid: 1,
+		name: "West",
+	},
+];
+
 export {
-	AWARDS_NAMES,
+	AWARD_NAMES,
+	DEFAULT_CONFS,
+	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,

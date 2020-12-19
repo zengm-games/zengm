@@ -7,6 +7,8 @@ import {
 	applyRealTeamInfo,
 	PHASE,
 	PHASE_TEXT,
+	DEFAULT_CONFS,
+	DEFAULT_DIVS,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -22,6 +24,8 @@ import type {
 	View,
 	RealTeamInfo,
 	GetLeagueOptions,
+	Div,
+	Conf,
 } from "../../../common/types";
 import classNames from "classnames";
 import { descriptions } from "../Settings";
@@ -181,6 +185,8 @@ type State = {
 	loadingLeagueFile: boolean;
 	randomization: "none" | "debuts" | "shuffle";
 	teams: NewLeagueTeam[];
+	confs: Conf[];
+	divs: Div[];
 	tid: number;
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
@@ -606,7 +612,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				leagueFile,
 				loadingLeagueFile: false,
 				randomization: "none",
-				teams,
+				teams: teamsDefault,
+				confs: DEFAULT_CONFS,
+				divs: DEFAULT_DIVS,
 				tid: getNewTid(prevTeamRegionName, teams),
 				pendingInitialLeagueInfo: true,
 				allKeys,

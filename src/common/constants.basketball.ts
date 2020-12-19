@@ -1,4 +1,4 @@
-import type { CompositeWeights } from "./types";
+import type { CompositeWeights, Conf, Div } from "./types";
 import type { RatingKey } from "./types.basketball";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -437,8 +437,55 @@ const AWARD_NAMES = {
 	allDefensive: "All-Defensive",
 	allRookie: "All-Rookie Team",
 } as const;
+
+const DEFAULT_CONFS: Conf[] = [
+	{
+		cid: 0,
+		name: "Eastern Conference",
+	},
+	{
+		cid: 1,
+		name: "Western Conference",
+	},
+];
+
+const DEFAULT_DIVS: Div[] = [
+	{
+		did: 0,
+		cid: 0,
+		name: "Atlantic",
+	},
+	{
+		did: 1,
+		cid: 0,
+		name: "Central",
+	},
+	{
+		did: 2,
+		cid: 0,
+		name: "Southeast",
+	},
+	{
+		did: 3,
+		cid: 1,
+		name: "Southwest",
+	},
+	{
+		did: 4,
+		cid: 1,
+		name: "Northwest",
+	},
+	{
+		did: 5,
+		cid: 1,
+		name: "Pacific",
+	},
+];
+
 export {
 	AWARD_NAMES,
+	DEFAULT_CONFS,
+	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,

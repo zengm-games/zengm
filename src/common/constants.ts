@@ -155,13 +155,25 @@ const SIMPLE_AWARDS: Readonly<string[]> =
 const AWARD_NAMES: Record<string, string> =
 	process.env.SPORT == "basketball"
 		? constantsBasketball.AWARD_NAMES
-		: constantsFootball.AWARDS_NAMES;
+		: constantsFootball.AWARD_NAMES;
+
+const DEFAULT_CONFS =
+	process.env.SPORT == "basketball"
+		? constantsBasketball.DEFAULT_CONFS
+		: constantsFootball.DEFAULT_CONFS;
+
+const DEFAULT_DIVS =
+	process.env.SPORT == "basketball"
+		? constantsBasketball.DEFAULT_DIVS
+		: constantsFootball.DEFAULT_DIVS;
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
 export {
 	AWARD_NAMES,
+	DEFAULT_CONFS,
+	DEFAULT_DIVS,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	GRACE_PERIOD,

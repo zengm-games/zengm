@@ -345,6 +345,9 @@ export type NamesLegacy = {
 	};
 };
 
+export type Conf = { cid: number; name: string };
+export type Div = { cid: number; did: number; name: string };
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	keepRosterSorted: boolean;
@@ -360,11 +363,11 @@ export type GameAttributesLeague = {
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
-	confs: { cid: number; name: string }[];
+	confs: Conf[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;
 	difficulty: number;
-	divs: { cid: number; did: number; name: string }[];
+	divs: Div[];
 	draftType: DraftType;
 	easyDifficultyInPast: boolean;
 	elam: boolean;

@@ -1,3 +1,4 @@
+import { DEFAULT_CONFS, DEFAULT_DIVS } from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
@@ -24,53 +25,13 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	confs: [
 		{
 			start: -Infinity,
-			value: [
-				{
-					cid: 0,
-					name: "Eastern Conference",
-				},
-				{
-					cid: 1,
-					name: "Western Conference",
-				},
-			],
+			value: DEFAULT_CONFS,
 		},
 	],
 	divs: [
 		{
 			start: -Infinity,
-			value: [
-				{
-					did: 0,
-					cid: 0,
-					name: "Atlantic",
-				},
-				{
-					did: 1,
-					cid: 0,
-					name: "Central",
-				},
-				{
-					did: 2,
-					cid: 0,
-					name: "Southeast",
-				},
-				{
-					did: 3,
-					cid: 1,
-					name: "Southwest",
-				},
-				{
-					did: 4,
-					cid: 1,
-					name: "Northwest",
-				},
-				{
-					did: 5,
-					cid: 1,
-					name: "Pacific",
-				},
-			],
+			value: DEFAULT_DIVS,
 		},
 	],
 	numGamesPlayoffSeries: [
@@ -172,58 +133,6 @@ export const footballOverrides =
 		? {
 				numGames: 16,
 				quarterLength: 15,
-				confs: [
-					{
-						cid: 0,
-						name: "American Conference",
-					},
-					{
-						cid: 1,
-						name: "National Conference",
-					},
-				],
-				divs: [
-					{
-						did: 0,
-						cid: 0,
-						name: "East",
-					},
-					{
-						did: 1,
-						cid: 0,
-						name: "North",
-					},
-					{
-						did: 2,
-						cid: 0,
-						name: "South",
-					},
-					{
-						did: 3,
-						cid: 0,
-						name: "West",
-					},
-					{
-						did: 4,
-						cid: 1,
-						name: "East",
-					},
-					{
-						did: 5,
-						cid: 1,
-						name: "North",
-					},
-					{
-						did: 6,
-						cid: 1,
-						name: "South",
-					},
-					{
-						did: 7,
-						cid: 1,
-						name: "West",
-					},
-				],
 				numGamesPlayoffSeries: [1, 1, 1, 1],
 				numPlayoffByes: 4,
 				stopOnInjuryGames: 1,

@@ -1,16 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, {
-	useCallback,
-	useState,
-	useRef,
-	useReducer,
-	useEffect,
-} from "react";
-import { DIFFICULTY, applyRealTeamInfo, PHASE, PHASE_TEXT } from "../../common";
-import { LeagueFileUpload, PopText } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
+import React, { useCallback, useState, useReducer } from "react";
+import {
+	DIFFICULTY,
+	applyRealTeamInfo,
+	PHASE,
+	PHASE_TEXT,
+} from "../../../common";
+import { LeagueFileUpload, PopText } from "../../components";
+import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
 	helpers,
@@ -18,26 +17,17 @@ import {
 	realtimeUpdate,
 	toWorker,
 	safeLocalStorage,
-} from "../util";
-import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
+} from "../../util";
+import type {
+	View,
+	RealTeamInfo,
+	GetLeagueOptions,
+} from "../../../common/types";
 import classNames from "classnames";
-import { descriptions } from "./Settings";
-
-type NewLeagueTeam = {
-	tid: number;
-	region: string;
-	name: string;
-	pop?: number;
-	popRank: number;
-	srID?: string;
-	disabled?: boolean;
-};
-
-type LeagueInfo = {
-	startingSeason: number;
-	stores: string[];
-	teams: NewLeagueTeam[];
-};
+import { descriptions } from "../Settings";
+import LeagueMenu from "./LeagueMenu";
+import LeaguePartPicker from "./LeaguePartPicker";
+import type { LeagueInfo, NewLeagueTeam } from "./types";
 
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
@@ -62,31 +52,6 @@ const applyRealTeamInfos = (
 const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 	helpers.getTeamsDefault(),
 );
-
-const leaguePartDescriptions: { [key: string]: string } = {
-	gameAttributes: "League settings",
-	startingSeason: "Starting season",
-	players: "Players, including ratings and stats",
-	teams: "Teams",
-	teamSeason: "Team seasons history",
-	teamStats: "Team stats history",
-	allStars: "All-Star Game history",
-	awards: "Awards history",
-	games: "Box scores",
-	releasedPlayers: "Contracts owed to released players",
-	draftLotteryResults: "Draft lottery history",
-	events: "Event log",
-	negotiations: "In-progress contract negotiations",
-	trade: "In-progress trade negotiations",
-	meta: "League metadata, like league name",
-	messages: "Messages from the owner",
-	playerFeats: "Statistical feats",
-	playoffSeries: "Upcoming and historical playoff series",
-	schedule: "Upcoming schedule",
-	draftPicks: "Traded future draft picks",
-	scheduledEvents:
-		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
-};
 
 const initKeptKeys = ({
 	leagueFile,
@@ -134,80 +99,6 @@ const initKeptKeys = ({
 		keptKeys,
 	};
 };
-
-const LeaguePartPicker = ({
-	allKeys,
-	keptKeys,
-	setKeptKeys,
-}: {
-	allKeys: string[];
-	keptKeys: string[];
-	setKeptKeys: (keys: string[]) => void;
-}) => {
-	if (allKeys.length === 0) {
-		return null;
-	}
-
-	const keysSorted = Object.keys(leaguePartDescriptions).filter(key =>
-		allKeys.includes(key),
-	);
-	keysSorted.push(...allKeys.filter(key => !keysSorted.includes(key)));
-
-	return (
-		<div className="form-group">
-			<label>Use from selected league:</label>
-
-			{keysSorted.map(key => (
-				<div key={key} className="form-check">
-					<label className="form-check-label">
-						<input
-							className="form-check-input"
-							onChange={() => {
-								if (keptKeys.includes(key)) {
-									setKeptKeys(keptKeys.filter(key2 => key2 !== key));
-								} else {
-									setKeptKeys([...keptKeys, key]);
-								}
-							}}
-							type="checkbox"
-							checked={keptKeys.includes(key)}
-						/>
-						{leaguePartDescriptions[key] ? leaguePartDescriptions[key] : key}
-					</label>
-				</div>
-			))}
-
-			<div className="mt-1">
-				<button
-					className="btn btn-link p-0"
-					onClick={event => {
-						event.preventDefault();
-						setKeptKeys([...allKeys]);
-					}}
-				>
-					All
-				</button>{" "}
-				|{" "}
-				<button
-					className="btn btn-link p-0"
-					onClick={event => {
-						event.preventDefault();
-						setKeptKeys([]);
-					}}
-				>
-					None
-				</button>
-			</div>
-
-			<p className="alert alert-warning my-3">
-				Warning: selecting a weird combination of things may result in a
-				partially or completely broken league.
-			</p>
-		</div>
-	);
-};
-
-const quickValuesStyle = { height: 19 };
 
 const MIN_SEASON = 1947;
 const MAX_SEASON = 2021;
@@ -277,138 +168,6 @@ const phases = [
 		value: helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.AFTER_DRAFT]),
 	},
 ];
-
-const LeagueMenu = <T extends string>({
-	getLeagueInfo,
-	onDone,
-	onLoading,
-	quickValues,
-	value,
-	values,
-	value2,
-	values2,
-	onNewValue2,
-}: {
-	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
-	onDone: (leagueInfo: any) => void;
-	onLoading: (value: T) => void;
-	quickValues?: T[];
-	value: T;
-	values: { key: T; value: string }[];
-	value2?: number;
-	values2?: { key: number; value: string }[];
-	onNewValue2?: (key: number) => void;
-}) => {
-	const waitingForInfo = useRef<string | undefined>(value);
-
-	const handleNewValue = async (newValue: T) => {
-		waitingForInfo.current = newValue;
-		onLoading(newValue);
-
-		try {
-			const leagueInfo = await getLeagueInfo(newValue);
-			if (waitingForInfo.current === newValue) {
-				onDone(leagueInfo);
-			}
-		} catch (error) {
-			console.error(error);
-			if (window.bugsnagClient) {
-				window.bugsnagClient.notify(error);
-			}
-			logEvent({
-				type: "error",
-				text: `Error loading real team data: ${error.message}`,
-				saveToDb: false,
-				persistent: true,
-			});
-		}
-		if (waitingForInfo.current === newValue) {
-			waitingForInfo.current = undefined;
-		}
-	};
-
-	// Handle initial value
-	useEffect(() => {
-		handleNewValue(value);
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-	return (
-		<>
-			<div className="d-flex">
-				<label htmlFor="new-league-season" className="flex-grow-1">
-					Season
-				</label>
-				{quickValues
-					? quickValues.map(key => (
-							<button
-								key={key}
-								type="button"
-								className="btn btn-link border-0 p-0 mb-1 ml-2"
-								style={quickValuesStyle}
-								onClick={() => {
-									handleNewValue(key);
-								}}
-							>
-								{values.find(v => v.key === key)!.value}
-							</button>
-					  ))
-					: null}
-			</div>
-			<div className="input-group mb-1">
-				<select
-					id="new-league-season"
-					className="form-control"
-					value={value}
-					onChange={async event => {
-						await handleNewValue((event.target.value as unknown) as T);
-					}}
-				>
-					{values.map(({ key, value }) => {
-						return (
-							<option key={key} value={key}>
-								{value}
-							</option>
-						);
-					})}
-				</select>
-				{value2 !== undefined && values2 && onNewValue2 ? (
-					<select
-						className="form-control"
-						onChange={event => {
-							onNewValue2(parseInt(event.target.value));
-						}}
-						value={value2}
-					>
-						{values2.map(({ key, value }) => (
-							<option key={key} value={key}>
-								{value}
-							</option>
-						))}
-					</select>
-				) : null}
-				<div className="input-group-append">
-					<button
-						className="btn btn-secondary"
-						type="button"
-						onClick={() => {
-							const keys = values.map(v => v.key);
-							const random = keys[Math.floor(Math.random() * keys.length)];
-							handleNewValue(random);
-
-							if (value2 !== undefined && values2 && onNewValue2) {
-								const keys2 = values2.map(v => v.key);
-								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
-								onNewValue2(random2);
-							}
-						}}
-					>
-						Random
-					</button>
-				</div>
-			</div>
-		</>
-	);
-};
 
 type State = {
 	creating: boolean;

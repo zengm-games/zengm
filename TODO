@@ -1,3 +1,5 @@
+move groundhog day to game modes in settings
+
 With multiple all-star games in one season, clicking "prev" or "next" gives you an error. https://discord.com/channels/290013534023057409/290015591216054273/789050505942532146
 
 make it not possible to trade/release while a team wants to have you join their team. super unfair to be able to trade all draft picks to team i'm switching too https://discord.com/channels/290013534023057409/331882115119448065/789181173343322143
@@ -27,6 +29,8 @@ Noticed that if I auto play through resignings and FA teams always end up above 
 
 award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
+- support adding custom awards
+- support editing seasons older than the start of the league
 
 UI for selecting a custom set of teams in a new league
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
@@ -39,7 +43,7 @@ UI for selecting a custom set of teams in a new league
       - https://github.com/atlassian/react-beautiful-dnd
     - allow drag and drop to move teams to other divs
   - add/edit team
-    - region name, pop, stadium capacity, logo URL, srID (dropdown, not free text, and help popover explaining that real team overrides will apply), colors, include real players?, append real players season to last name?
+    - region name, pop, stadium capacity, logo URL, srID (dropdown, not free text, and help popover explaining that real team overrides will apply), colors, include real players?
   - while viewing confs/divs/teams, buttons on the side
     - Presets
       - Default BBGM teams with random players
@@ -48,7 +52,11 @@ UI for selecting a custom set of teams in a new league
       - Legends
         - shows a popup to let you pick a decade
   - Save/Cancel buttons at the bottom
+- for storing new NewLeague, keep separate from "normal" list of teams. show customize button in red (or something) when customized. when switching settings (like random to real, or season within real) keep customized teams.
 - for real players leagues, make sure scheduled events are correct (delete any referring to teams that aren't there, and make sure tids are correct especially for expansion teams)
+- appending season/index to player's name
+  - track how many of each slug/season are in the league file. if a slug appears more than once, add just the season (or DP or the draft year, for draft prospects) to his last name if that season appears only once. otherwise, add an index number(like #1, #2, and #3 for 3 versions of the same player from the same season), including the season too if there's also more than one season (like 2018 #2)
+  - how should this deal with mixing a legends team into a real league? legends already have season appended. could save that appending until post-processing, and just always make sure to add it for legends teams (whether in legends or normal leagues)
 
 File System Access API https://web.dev/file-system-access/
 - use (when available) for saving any files

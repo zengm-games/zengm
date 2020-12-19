@@ -28,6 +28,7 @@ import { descriptions } from "../Settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";
+import CustomizeTeams from "./CustomizeTeams";
 
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
@@ -556,6 +557,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
+	const [customizeTeamsUI, setCustomizeTeamsUI] = useState(false);
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -859,6 +861,21 @@ const NewLeague = (props: View<"newLeague">) => {
 	};
 
 	useTitleBar({ title, hideNewWindow: true });
+
+	if (customizeTeamsUI) {
+		return (
+			<CustomizeTeams
+				onCancel={() => {
+					console.log("CANCEL");
+					setCustomizeTeamsUI(false);
+				}}
+				onSave={teams => {
+					console.log("SAVE", teams);
+					setCustomizeTeamsUI(false);
+				}}
+			/>
+		);
+	}
 
 	const displayedTeams = state.keptKeys.includes("teams")
 		? state.teams
@@ -1305,6 +1322,18 @@ const NewLeague = (props: View<"newLeague">) => {
 									);
 								})}
 							</select>
+							<div className="input-group-append new-league-customize-teams-wrapper">
+								<button
+									className="btn btn-secondary"
+									disabled={disableWhileLoadingLeagueFile}
+									type="button"
+									onClick={() => {
+										setCustomizeTeamsUI(true);
+									}}
+								>
+									Customize
+								</button>
+							</div>
 							<div className="input-group-append">
 								<button
 									className="btn btn-secondary"

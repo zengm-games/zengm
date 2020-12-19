@@ -57,6 +57,8 @@ UI for selecting a custom set of teams in a new league
 - appending season/index to player's name
   - track how many of each slug/season are in the league file. if a slug appears more than once, add just the season (or DP or the draft year, for draft prospects) to his last name if that season appears only once. otherwise, add an index number(like #1, #2, and #3 for 3 versions of the same player from the same season), including the season too if there's also more than one season (like 2018 #2)
   - how should this deal with mixing a legends team into a real league? legends already have season appended. could save that appending until post-processing, and just always make sure to add it for legends teams (whether in legends or normal leagues)
+- would be nice if the Customize Teams page was a new URL so the back button worked the same as "cancel"
+  - will have same issue when adding a settings page
 
 File System Access API https://web.dev/file-system-access/
 - use (when available) for saving any files

@@ -40,6 +40,8 @@ UI for selecting a custom set of teams in a new league
   - list of teams by confs/divs
     - allow CRUD of confs/divs/teams
       - how use confs/divs from getLeagueInfo?
+        - need to either save it or re-init, even if it's edited by user, in case user clicks "reset" in CustomizeTeams
+        - need to send to createLeague, and then within createLeague apply it to gameAttributes (overwrite anything in league file or default from real players league)
     - allow drag and drop to reorder confs/divs
       - https://github.com/atlassian/react-beautiful-dnd
     - allow drag and drop to move teams to other divs
@@ -60,6 +62,8 @@ UI for selecting a custom set of teams in a new league
   - how should this deal with mixing a legends team into a real league? legends already have season appended. could save that appending until post-processing, and just always make sure to add it for legends teams (whether in legends or normal leagues)
 - would be nice if the Customize Teams page was a new URL so the back button worked the same as "cancel"
   - will have same issue when adding a settings page
+- blog
+  - Want to create a league where the Eastern Conference is made up of all the real Atlanta teams from the 80s, and the Western Conference is made up of all the real Sacramento teams from the 90s, and have it start in 1962 and proceed with real players in the draft from there? I don't know why you'd want to do that, but you can do that.
 
 File System Access API https://web.dev/file-system-access/
 - use (when available) for saving any files

@@ -881,6 +881,16 @@ const NewLeague = (props: View<"newLeague">) => {
 					console.log("SAVE", teams);
 					setCustomizeTeamsUI(false);
 				}}
+				initialConfs={state.confs}
+				initialDivs={state.divs}
+				initialTeams={state.teams}
+				getDefaultConfsDivsTeams={async () => {
+					return {
+						confs: DEFAULT_CONFS,
+						divs: DEFAULT_DIVS,
+						teams: teamsDefault,
+					};
+				}}
 			/>
 		);
 	}

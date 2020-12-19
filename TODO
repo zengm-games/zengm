@@ -39,6 +39,7 @@ UI for selecting a custom set of teams in a new league
 - clicking "Customize" takes you to a new page
   - list of teams by confs/divs
     - allow CRUD of confs/divs/teams
+      - how use confs/divs from getLeagueInfo?
     - allow drag and drop to reorder confs/divs
       - https://github.com/atlassian/react-beautiful-dnd
     - allow drag and drop to move teams to other divs

@@ -1,5 +1,6 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
+import type { Conf, Div } from "../../../common/types";
 
 export const legendsInfo = {
 	"1950s": {
@@ -61,11 +62,18 @@ const getLeagueInfo = async (
 
 	const basketball = await loadDataBasketball();
 
+	const scheduledEventsAll = [
+		...basketball.scheduledEventsGameAttributes,
+		...basketball.scheduledEventsTeams,
+	];
+
 	if (options.type === "real") {
-		const { initialTeams } = formatScheduledEvents(
-			basketball.scheduledEventsTeams,
+		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
+			scheduledEventsAll,
 			options.season,
 		);
+
+		console.log("initialGameAttributes", initialGameAttributes);
 
 		const stores =
 			options.season >= 2020
@@ -79,6 +87,8 @@ const getLeagueInfo = async (
 				  ];
 
 		return {
+			confs: initialGameAttributes.confs as Conf[],
+			divs: initialGameAttributes.divs as Div[],
 			startingSeason: options.season,
 			stores,
 			teams: initialTeams,
@@ -89,14 +99,16 @@ const getLeagueInfo = async (
 		const lastSeason =
 			options.decade === "all" ? 2020 : parseInt(options.decade) + 9;
 
-		const { initialTeams } = formatScheduledEvents(
-			basketball.scheduledEventsTeams,
+		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
+			scheduledEventsAll,
 			lastSeason,
 		);
 
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
 
 		return {
+			confs: initialGameAttributes.confs as Conf[],
+			divs: initialGameAttributes.divs as Div[],
 			startingSeason: legendsInfo[options.decade].end,
 			stores,
 			teams: initialTeams,

@@ -2,18 +2,33 @@ import React, { useState } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
 
+const EditButton = ({ onClick }: { onClick: () => void }) => {
+	return (
+		<button
+			className="ml-3 btn btn-link p-0 border-0"
+			onClick={onClick}
+			title="Edit"
+			type="button"
+		>
+			<span className="glyphicon glyphicon-edit" />
+		</button>
+	);
+};
+
 const Division = ({
 	div,
+	teams,
 	renameDiv,
 }: {
 	div: Div;
+	teams: NewLeagueTeam[];
 	renameDiv: (did: number, name: string) => void;
 }) => {
 	const [renaming, setRenaming] = useState(false);
 	const [name, setName] = useState(div.name);
 
 	return (
-		<div className="card">
+		<div className="card mt-3">
 			<div className="card-header">
 				{renaming ? (
 					<form
@@ -39,19 +54,21 @@ const Division = ({
 				) : (
 					<div className="d-flex">
 						{div.name}
-						<button
-							className="ml-3 btn btn-link p-0 border-0"
+						<EditButton
 							onClick={() => {
 								setRenaming(true);
 							}}
-							title="Edit"
-							type="button"
-						>
-							<span className="glyphicon glyphicon-edit" />
-						</button>
+						/>
 					</div>
 				)}
 			</div>
+			<ul className="list-group list-group-flush">
+				{teams.map(t => (
+					<li key={t.tid} className="list-group-item">
+						{t.region} {t.name}
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 };
@@ -59,11 +76,13 @@ const Division = ({
 const Conference = ({
 	conf,
 	divs,
+	teams,
 	renameConf,
 	renameDiv,
 }: {
 	conf: Conf;
 	divs: Div[];
+	teams: NewLeagueTeam[];
 	renameConf: (cid: number, name: string) => void;
 	renameDiv: (did: number, name: string) => void;
 }) => {
@@ -97,23 +116,24 @@ const Conference = ({
 				) : (
 					<div className="d-flex">
 						{conf.name}
-						<button
-							className="ml-3 btn btn-link p-0 border-0"
+						<EditButton
 							onClick={() => {
 								setRenaming(true);
 							}}
-							title="Edit"
-							type="button"
-						>
-							<span className="glyphicon glyphicon-edit" />
-						</button>
+						/>
 					</div>
 				)}
 			</div>
 
-			<div className="m-2">
+			<div className="row mx-0 mb-3">
 				{divs.map(div => (
-					<Division key={div.did} div={div} renameDiv={renameDiv} />
+					<div className="col-sm-6 col-md-4" key={div.did}>
+						<Division
+							div={div}
+							renameDiv={renameDiv}
+							teams={teams.filter(t => t.did === div.did)}
+						/>
+					</div>
 				))}
 			</div>
 		</div>
@@ -135,6 +155,7 @@ const CustomizeTeams = ({
 }) => {
 	const [confs, setConfs] = useState([...initialConfs]);
 	const [divs, setDivs] = useState([...initialDivs]);
+	const [teams, setTeams] = useState([...initialTeams]);
 
 	const renameThing = (type: "conf" | "div") => (id: number, name: string) => {
 		const func = type === "conf" ? setConfs : setDivs;
@@ -153,7 +174,6 @@ const CustomizeTeams = ({
 			}),
 		);
 	};
-
 	const renameConf = renameThing("conf");
 	const renameDiv = renameThing("div");
 
@@ -165,6 +185,7 @@ const CustomizeTeams = ({
 					key={conf.cid}
 					conf={conf}
 					divs={divs.filter(div => div.cid === conf.cid)}
+					teams={teams}
 					renameConf={renameConf}
 					renameDiv={renameDiv}
 				/>

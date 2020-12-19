@@ -6,6 +6,8 @@ export type NewLeagueTeam = {
 	popRank: number;
 	srID?: string;
 	disabled?: boolean;
+	cid: number;
+	did: number;
 };
 
 export type LeagueInfo = {

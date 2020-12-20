@@ -940,9 +940,11 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
-	const displayedTeams = state.keptKeys.includes("teams")
-		? state.teams
-		: teamsDefault;
+	const keptKeysIsAvailable = state.customize.startsWith("custom");
+	const displayedTeams =
+		!keptKeysIsAvailable || state.keptKeys.includes("teams")
+			? state.teams
+			: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
 		((state.customize === "custom-rosters" ||

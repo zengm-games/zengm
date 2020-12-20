@@ -38,9 +38,8 @@ UI for selecting a custom set of teams in a new league
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
 - MVP
   - random players only
-  - add support for editing teams
-  - add support for deleting things
-  - list of teams on main page doesn't update after deleting conf/div
+  - add support for creating/editing teams
+    - somehow allow a preset for a city to be selected
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
   - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
@@ -63,6 +62,7 @@ UI for selecting a custom set of teams in a new league
       - for tids need to be careful - tid is referenced in other parts of a league file, most importantly players, but also other parts. so maybe don't allow this from uploaded files?
         - if allow, store a map of (old file tid -> new league tid) and use it to update/delete all team-related objects
           - i guess same would be needed for cid/did
+        - see makeTIDsSequential
       - need to be careful for cids too, see PlayoffSeriesTeam
         - even if we don't keep any history, need to consider in-progress playoffs
 - for storing new NewLeague, keep separate from "normal" list of teams. show customize button in red (or something) when customized. when switching settings (like random to real, or season within real) keep customized teams.

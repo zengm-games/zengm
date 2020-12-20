@@ -199,6 +199,13 @@ type ConfsDivsTeams = {
 	teams: NewLeagueTeam[];
 };
 
+const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
+	return teams.map((t, i) => ({
+		...t,
+		tid: i,
+	}));
+};
+
 const CustomizeTeams = ({
 	onCancel,
 	onSave,
@@ -241,14 +248,14 @@ const CustomizeTeams = ({
 	const deleteConf = (cid: number) => {
 		setConfs(confs.filter(conf => conf.cid !== cid));
 		setDivs(divs.filter(div => div.cid !== cid));
-		setTeams(teams.filter(t => t.cid !== cid));
+		setTeams(makeTIDsSequential(teams.filter(t => t.cid !== cid)));
 	};
 	const deleteDiv = (did: number) => {
 		setDivs(divs.filter(div => div.did !== did));
-		setTeams(teams.filter(t => t.did !== did));
+		setTeams(makeTIDsSequential(teams.filter(t => t.did !== did)));
 	};
 	const deleteTeam = (tid: number) => {
-		setTeams(teams.filter(t => t.tid !== tid));
+		setTeams(makeTIDsSequential(teams.filter(t => t.tid !== tid)));
 	};
 
 	return (

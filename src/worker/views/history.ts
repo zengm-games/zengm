@@ -12,7 +12,7 @@ const updateHistory = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (season === g.get("season") && local.unviewedSeasonSummary) {
+	if (local.unviewedSeasonSummary) {
 		viewedSeasonSummary();
 	}
 

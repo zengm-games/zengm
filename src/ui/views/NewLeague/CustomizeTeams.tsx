@@ -16,13 +16,28 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 	);
 };
 
+const DeleteButton = ({ onClick }: { onClick: () => void }) => {
+	return (
+		<button
+			className="ml-2 btn btn-link text-danger p-0 border-0"
+			onClick={onClick}
+			title="Delete"
+			type="button"
+		>
+			<span className="glyphicon glyphicon-remove" />
+		</button>
+	);
+};
+
 const CardHeader = ({
 	alignButtonsRight,
 	name,
+	onDelete,
 	onRename,
 }: {
 	alignButtonsRight?: boolean;
 	name: string;
+	onDelete: () => void;
 	onRename: (name: string) => void;
 }) => {
 	const [renaming, setRenaming] = useState(false);
@@ -41,6 +56,7 @@ const CardHeader = ({
 						onRename(controlledName);
 						setRenaming(false);
 					}}
+					style={{ maxWidth: 300 }}
 				>
 					<input
 						type="text"
@@ -64,6 +80,7 @@ const CardHeader = ({
 							setRenaming(true);
 						}}
 					/>
+					<DeleteButton onClick={onDelete} />
 				</div>
 			)}
 		</div>
@@ -74,16 +91,23 @@ const Division = ({
 	div,
 	teams,
 	renameDiv,
+	deleteDiv,
+	deleteTeam,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
 	renameDiv: (did: number, name: string) => void;
+	deleteDiv: (did: number) => void;
+	deleteTeam: (tid: number) => void;
 }) => {
 	return (
 		<div className="card mt-3">
 			<CardHeader
 				alignButtonsRight
 				name={div.name}
+				onDelete={() => {
+					deleteDiv(div.did);
+				}}
 				onRename={(name: string) => {
 					renameDiv(div.did, name);
 				}}
@@ -96,6 +120,11 @@ const Division = ({
 							{t.region} {t.name}
 						</div>
 						<EditButton onClick={() => {}} />
+						<DeleteButton
+							onClick={() => {
+								deleteTeam(t.tid);
+							}}
+						/>
 					</li>
 				))}
 			</ul>
@@ -109,6 +138,9 @@ const Conference = ({
 	teams,
 	renameConf,
 	renameDiv,
+	deleteConf,
+	deleteDiv,
+	deleteTeam,
 	addDiv,
 }: {
 	conf: Conf;
@@ -116,12 +148,18 @@ const Conference = ({
 	teams: NewLeagueTeam[];
 	renameConf: (cid: number, name: string) => void;
 	renameDiv: (did: number, name: string) => void;
+	deleteConf: (cid: number) => void;
+	deleteDiv: (did: number) => void;
+	deleteTeam: (tid: number) => void;
 	addDiv: (cid: number) => void;
 }) => {
 	return (
 		<div className="card mb-3">
 			<CardHeader
 				name={conf.name}
+				onDelete={() => {
+					deleteConf(conf.cid);
+				}}
 				onRename={(name: string) => {
 					renameConf(conf.cid, name);
 				}}
@@ -133,6 +171,8 @@ const Conference = ({
 						<Division
 							div={div}
 							renameDiv={renameDiv}
+							deleteDiv={deleteDiv}
+							deleteTeam={deleteTeam}
 							teams={teams.filter(t => t.did === div.did)}
 						/>
 					</div>
@@ -198,6 +238,19 @@ const CustomizeTeams = ({
 	const renameConf = renameThing("conf");
 	const renameDiv = renameThing("div");
 
+	const deleteConf = (cid: number) => {
+		setConfs(confs.filter(conf => conf.cid !== cid));
+		setDivs(divs.filter(div => div.cid !== cid));
+		setTeams(teams.filter(t => t.cid !== cid));
+	};
+	const deleteDiv = (did: number) => {
+		setDivs(divs.filter(div => div.did !== did));
+		setTeams(teams.filter(t => t.did !== did));
+	};
+	const deleteTeam = (tid: number) => {
+		setTeams(teams.filter(t => t.tid !== tid));
+	};
+
 	return (
 		<>
 			<div className="mb-3">
@@ -237,6 +290,9 @@ const CustomizeTeams = ({
 					teams={teams}
 					renameConf={renameConf}
 					renameDiv={renameDiv}
+					deleteConf={deleteConf}
+					deleteDiv={deleteDiv}
+					deleteTeam={deleteTeam}
 					addDiv={(cid: number) => {
 						const maxDID = Math.max(...divs.map(div => div.did));
 						setDivs([

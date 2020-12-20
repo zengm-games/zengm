@@ -56,7 +56,9 @@ const updateExpansionDraft = async () => {
 			continue;
 		}
 
-		const currentTeam = currentTeams.find(t2 => t2.region === t.region);
+		const currentTeam = currentTeams.find(
+			t2 => t2.region === t.region && t2.name === t.name,
+		);
 		if (currentTeam) {
 			continue;
 		}

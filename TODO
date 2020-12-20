@@ -33,6 +33,9 @@ award editor
 - support editing seasons older than the start of the league
 
 UI for selecting a custom set of teams in a new league
+- DOES THIS MAKE SENSE?
+  - random players - sure, it's fine
+  - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
   - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
@@ -58,6 +61,9 @@ UI for selecting a custom set of teams in a new league
     - rewrite cids/dids/tids to be continuous on save
       - for tids need to be careful - tid is referenced in other parts of a league file, most importantly players, but also other parts. so maybe don't allow this from uploaded files?
         - if allow, store a map of (old file tid -> new league tid) and use it to update/delete all team-related objects
+          - i guess same would be needed for cid/did
+      - need to be careful for cids too, see PlayoffSeriesTeam
+        - even if we don't keep any history, need to consider in-progress playoffs
 - for storing new NewLeague, keep separate from "normal" list of teams. show customize button in red (or something) when customized. when switching settings (like random to real, or season within real) keep customized teams.
 - for real players leagues, make sure scheduled events are correct (delete any referring to teams that aren't there, and make sure tids are correct especially for expansion teams)
 - appending season/index to player's name

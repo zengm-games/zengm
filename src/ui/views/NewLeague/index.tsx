@@ -245,6 +245,12 @@ type Action =
 			season: number;
 	  }
 	| {
+			type: "setTeams";
+			teams: NewLeagueTeam[];
+			confs: Conf[];
+			divs: Div[];
+	  }
+	| {
 			type: "setTid";
 			tid: number;
 	  }
@@ -382,6 +388,14 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				season: action.season,
+			};
+
+		case "setTeams":
+			return {
+				...state,
+				confs: action.confs,
+				divs: action.divs,
+				teams: action.teams,
 			};
 
 		case "setTid": {
@@ -902,14 +916,15 @@ const NewLeague = (props: View<"newLeague">) => {
 					console.log("CANCEL");
 					setCustomizeTeamsUI(false);
 				}}
-				onSave={teams => {
+				onSave={({ confs, divs, teams }) => {
 					console.log("SAVE", teams);
+					dispatch({ type: "setTeams", confs, divs, teams });
 					setCustomizeTeamsUI(false);
 				}}
 				initialConfs={state.confs}
 				initialDivs={state.divs}
 				initialTeams={state.teams}
-				getDefaultConfsDivsTeams={async () => {
+				getDefaultConfsDivsTeams={() => {
 					return {
 						confs: DEFAULT_CONFS,
 						divs: DEFAULT_DIVS,

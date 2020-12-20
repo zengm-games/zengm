@@ -147,18 +147,26 @@ const Conference = ({
 	);
 };
 
+type ConfsDivsTeams = {
+	confs: Conf[];
+	divs: Div[];
+	teams: NewLeagueTeam[];
+};
+
 const CustomizeTeams = ({
 	onCancel,
 	onSave,
 	initialConfs,
 	initialDivs,
 	initialTeams,
+	getDefaultConfsDivsTeams,
 }: {
 	onCancel: () => void;
-	onSave: (teams: any[]) => void;
+	onSave: (obj: ConfsDivsTeams) => void;
 	initialConfs: Conf[];
 	initialDivs: Div[];
 	initialTeams: NewLeagueTeam[];
+	getDefaultConfsDivsTeams: () => ConfsDivsTeams;
 }) => {
 	const [confs, setConfs] = useState([...initialConfs]);
 	const [divs, setDivs] = useState([...initialDivs]);
@@ -186,6 +194,26 @@ const CustomizeTeams = ({
 
 	return (
 		<>
+			<div className="mb-3">
+				<button className="btn btn-secondary mr-2" title="Add Conference">
+					Add Conf
+				</button>
+				<button className="btn btn-secondary mr-2" title="Add Division">
+					Add Div
+				</button>
+				<button className="btn btn-secondary mr-2">Add Team</button>
+				<button
+					className="btn btn-danger"
+					onClick={() => {
+						const info = getDefaultConfsDivsTeams();
+						setConfs(info.confs);
+						setDivs(info.divs);
+						setTeams(info.teams);
+					}}
+				>
+					Reset All
+				</button>
+			</div>
 			{confs.map(conf => (
 				<Conference
 					key={conf.cid}
@@ -199,7 +227,7 @@ const CustomizeTeams = ({
 
 			<form
 				onSubmit={() => {
-					onSave([]);
+					onSave({ confs, divs, teams });
 				}}
 			>
 				<button className="btn btn-primary mr-2" type="submit">

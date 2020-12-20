@@ -17,9 +17,11 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const CardHeader = ({
+	alignButtonsRight,
 	name,
 	onRename,
 }: {
+	alignButtonsRight?: boolean;
 	name: string;
 	onRename: (name: string) => void;
 }) => {
@@ -39,7 +41,6 @@ const CardHeader = ({
 						onRename(controlledName);
 						setRenaming(false);
 					}}
-					style={{ maxWidth: 300 }}
 				>
 					<input
 						type="text"
@@ -55,7 +56,9 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					{name}
+					<div className={alignButtonsRight ? "mr-auto" : undefined}>
+						{name}
+					</div>
 					<EditButton
 						onClick={() => {
 							setRenaming(true);
@@ -79,6 +82,7 @@ const Division = ({
 	return (
 		<div className="card mt-3">
 			<CardHeader
+				alignButtonsRight
 				name={div.name}
 				onRename={(name: string) => {
 					renameDiv(div.did, name);
@@ -87,8 +91,11 @@ const Division = ({
 
 			<ul className="list-group list-group-flush">
 				{teams.map(t => (
-					<li key={t.tid} className="list-group-item">
-						{t.region} {t.name}
+					<li key={t.tid} className="list-group-item d-flex">
+						<div className="mr-auto">
+							{t.region} {t.name}
+						</div>
+						<EditButton onClick={() => {}} />
 					</li>
 				))}
 			</ul>

@@ -65,8 +65,8 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
-			// const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
-			const divsMobile: string[] = [];
+			const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
+			// const divsMobile: string[] = [];
 			const showDivsDesktop = [
 				`${process.env.SPORT}-gm_leaderboard_atf`,
 				`${process.env.SPORT}-gm_mrec_btf_1`,
@@ -100,18 +100,28 @@ const initAds = (goldUntil: number | undefined) => {
 					slotId: adDiv,
 				});
 				console.log("enabled_slots", adDiv);
+			}
 
-				if (adDiv.endsWith("-gm_mobile_leaderboard")) {
-					localActions.update({
-						stickyFooterAd: true,
-					});
+			if (adDivs.includes(`${process.env.SPORT}-gm_mobile_leaderboard`)) {
+				localActions.update({
+					stickyFooterAd: true,
+				});
 
-					// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
-					const footer = document.getElementById("main-footer");
-					if (footer) {
-						footer.style.marginBottom = "52px";
-					}
+				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+				const footer = document.getElementById("main-footer");
+				if (footer) {
+					footer.style.marginBottom = "52px";
 				}
+
+				// Hack to hopefully stop the Microsoft ad from breaking everything
+				window.googletag.cmd.push(() => {
+					window.googletag.pubads().setForceSafeFrame(true);
+					window.googletag.pubads().setSafeFrameConfig({
+						allowOverlayExpansion: false,
+						allowPushExpansion: false,
+						sandbox: true,
+					});
+				});
 			}
 
 			if (window.screen && window.screen.width >= 768) {

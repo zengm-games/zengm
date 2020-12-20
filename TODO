@@ -56,11 +56,13 @@ UI for selecting a custom set of teams in a new league
         - shows a popup to let you pick a decade
   - Save/Cancel buttons at the bottom
     - rewrite cids/dids/tids to be continuous on save
+      - for tids need to be careful - tid is referenced in other parts of a league file, most importantly players, but also other parts. so maybe don't allow this from uploaded files?
 - for storing new NewLeague, keep separate from "normal" list of teams. show customize button in red (or something) when customized. when switching settings (like random to real, or season within real) keep customized teams.
 - for real players leagues, make sure scheduled events are correct (delete any referring to teams that aren't there, and make sure tids are correct especially for expansion teams)
 - appending season/index to player's name
   - track how many of each slug/season are in the league file. if a slug appears more than once, add just the season (or DP or the draft year, for draft prospects) to his last name if that season appears only once. otherwise, add an index number(like #1, #2, and #3 for 3 versions of the same player from the same season), including the season too if there's also more than one season (like 2018 #2)
   - how should this deal with mixing a legends team into a real league? legends already have season appended. could save that appending until post-processing, and just always make sure to add it for legends teams (whether in legends or normal leagues)
+- what about players from a league file (uploaded or real players) that are not on any defind team? delete? make free agents?
 - would be nice if the Customize Teams page was a new URL so the back button worked the same as "cancel"
   - will have same issue when adding a settings page
 - blog

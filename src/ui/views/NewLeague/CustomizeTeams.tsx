@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
+import classNames from "classnames";
 
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
@@ -29,7 +30,10 @@ const Division = ({
 
 	return (
 		<div className="card mt-3">
-			<div className="card-header">
+			<div
+				className={classNames("card-header", renaming ? "p-1" : undefined)}
+				style={{ height: 44 }}
+			>
 				{renaming ? (
 					<form
 						className="form-inline"
@@ -91,7 +95,10 @@ const Conference = ({
 
 	return (
 		<div className="card mb-3">
-			<div className="card-header">
+			<div
+				className={classNames("card-header", renaming ? "p-1" : undefined)}
+				style={{ height: 44 }}
+			>
 				{renaming ? (
 					<form
 						className="form-inline"

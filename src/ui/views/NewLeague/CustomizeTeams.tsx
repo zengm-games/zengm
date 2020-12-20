@@ -264,7 +264,8 @@ const CustomizeTeams = ({
 				<button
 					className="btn btn-secondary mr-2"
 					onClick={() => {
-						const maxCID = Math.max(...confs.map(conf => conf.cid));
+						const maxCID =
+							confs.length > 0 ? Math.max(...confs.map(conf => conf.cid)) : -1;
 						setConfs([
 							...confs,
 							{
@@ -301,7 +302,8 @@ const CustomizeTeams = ({
 					deleteDiv={deleteDiv}
 					deleteTeam={deleteTeam}
 					addDiv={(cid: number) => {
-						const maxDID = Math.max(...divs.map(div => div.did));
+						const maxDID =
+							divs.length > 0 ? Math.max(...divs.map(div => div.did)) : -1;
 						setDivs([
 							...divs,
 							{

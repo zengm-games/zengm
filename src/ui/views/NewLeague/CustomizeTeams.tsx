@@ -16,6 +16,57 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 	);
 };
 
+const CardHeader = ({
+	name,
+	onRename,
+}: {
+	name: string;
+	onRename: (name: string) => void;
+}) => {
+	const [renaming, setRenaming] = useState(false);
+	const [controlledName, setControlledName] = useState(name);
+
+	return (
+		<div
+			className={classNames("card-header", renaming ? "p-1" : undefined)}
+			style={{ height: 44 }}
+		>
+			{renaming ? (
+				<form
+					className="d-flex"
+					onSubmit={event => {
+						event.preventDefault();
+						onRename(controlledName);
+						setRenaming(false);
+					}}
+					style={{ maxWidth: 300 }}
+				>
+					<input
+						type="text"
+						className="form-control mr-2"
+						value={controlledName}
+						onChange={event => {
+							setControlledName(event.target.value);
+						}}
+					/>
+					<button type="submit" className="btn btn-primary">
+						Save
+					</button>
+				</form>
+			) : (
+				<div className="d-flex">
+					{name}
+					<EditButton
+						onClick={() => {
+							setRenaming(true);
+						}}
+					/>
+				</div>
+			)}
+		</div>
+	);
+};
+
 const Division = ({
 	div,
 	teams,
@@ -25,47 +76,15 @@ const Division = ({
 	teams: NewLeagueTeam[];
 	renameDiv: (did: number, name: string) => void;
 }) => {
-	const [renaming, setRenaming] = useState(false);
-	const [name, setName] = useState(div.name);
-
 	return (
 		<div className="card mt-3">
-			<div
-				className={classNames("card-header", renaming ? "p-1" : undefined)}
-				style={{ height: 44 }}
-			>
-				{renaming ? (
-					<form
-						className="form-inline"
-						onSubmit={event => {
-							event.preventDefault();
-							renameDiv(div.did, name);
-							setRenaming(false);
-						}}
-					>
-						<input
-							type="text"
-							className="form-control mr-2"
-							value={name}
-							onChange={event => {
-								setName(event.target.value);
-							}}
-						/>
-						<button type="submit" className="btn btn-primary">
-							Save
-						</button>
-					</form>
-				) : (
-					<div className="d-flex">
-						{div.name}
-						<EditButton
-							onClick={() => {
-								setRenaming(true);
-							}}
-						/>
-					</div>
-				)}
-			</div>
+			<CardHeader
+				name={div.name}
+				onRename={(name: string) => {
+					renameDiv(div.did, name);
+				}}
+			/>
+
 			<ul className="list-group list-group-flush">
 				{teams.map(t => (
 					<li key={t.tid} className="list-group-item">
@@ -90,47 +109,14 @@ const Conference = ({
 	renameConf: (cid: number, name: string) => void;
 	renameDiv: (did: number, name: string) => void;
 }) => {
-	const [renaming, setRenaming] = useState(false);
-	const [name, setName] = useState(conf.name);
-
 	return (
 		<div className="card mb-3">
-			<div
-				className={classNames("card-header", renaming ? "p-1" : undefined)}
-				style={{ height: 44 }}
-			>
-				{renaming ? (
-					<form
-						className="form-inline"
-						onSubmit={event => {
-							event.preventDefault();
-							renameConf(conf.cid, name);
-							setRenaming(false);
-						}}
-					>
-						<input
-							type="text"
-							className="form-control mr-2"
-							value={name}
-							onChange={event => {
-								setName(event.target.value);
-							}}
-						/>
-						<button type="submit" className="btn btn-primary">
-							Save
-						</button>
-					</form>
-				) : (
-					<div className="d-flex">
-						{conf.name}
-						<EditButton
-							onClick={() => {
-								setRenaming(true);
-							}}
-						/>
-					</div>
-				)}
-			</div>
+			<CardHeader
+				name={conf.name}
+				onRename={(name: string) => {
+					renameConf(conf.cid, name);
+				}}
+			/>
 
 			<div className="row mx-0 mb-3">
 				{divs.map(div => (

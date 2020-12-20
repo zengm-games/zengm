@@ -9,6 +9,7 @@ import {
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	gameAttributeHasHistory,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -259,6 +260,8 @@ type Action =
 			type: "newLeagueInfo";
 			allKeys: string[];
 			teams: NewLeagueTeam[];
+			confs: Conf[];
+			divs: Div[];
 	  }
 	| {
 			type: "toggleExpandOptions";
@@ -406,6 +409,9 @@ const reducer = (state: State, action: Action): State => {
 				oldAllKeys: state.allKeys,
 			});
 
+			let confs = DEFAULT_CONFS;
+			let divs = DEFAULT_DIVS;
+
 			const gameAttributeOverrides: {
 				challengeNoDraftPicks: boolean;
 				challengeNoFreeAgents: boolean;
@@ -440,6 +446,16 @@ const reducer = (state: State, action: Action): State => {
 						(gameAttributeOverrides as any)[key] = booleanValue;
 						gameAttributeOverrides.expandOptions = true;
 					}
+
+					if (key === "confs") {
+						confs = gameAttributeHasHistory(value)
+							? value[value.length - 1].value
+							: value;
+					} else if (key === "divs") {
+						divs = gameAttributeHasHistory(value)
+							? value[value.length - 1].value
+							: value;
+					}
 				}
 			}
 
@@ -449,6 +465,8 @@ const reducer = (state: State, action: Action): State => {
 				leagueFile: action.leagueFile,
 				allKeys,
 				keptKeys,
+				confs,
+				divs,
 				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				...gameAttributeOverrides,
@@ -476,6 +494,8 @@ const reducer = (state: State, action: Action): State => {
 				leagueFile: null,
 				allKeys,
 				keptKeys,
+				confs: action.confs,
+				divs: action.divs,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				pendingInitialLeagueInfo: false,
@@ -865,10 +885,15 @@ const NewLeague = (props: View<"newLeague">) => {
 				props.realTeamInfo,
 				leagueInfo.startingSeason,
 			),
+			confs: leagueInfo.confs,
+			divs: leagueInfo.divs,
 		});
 	};
 
-	useTitleBar({ title, hideNewWindow: true });
+	useTitleBar({
+		title: customizeTeamsUI ? `${title} » Customize Teams` : title,
+		hideNewWindow: true,
+	});
 
 	if (customizeTeamsUI) {
 		return (

@@ -57,6 +57,7 @@ UI for selecting a custom set of teams in a new league
   - Save/Cancel buttons at the bottom
     - rewrite cids/dids/tids to be continuous on save
       - for tids need to be careful - tid is referenced in other parts of a league file, most importantly players, but also other parts. so maybe don't allow this from uploaded files?
+        - if allow, store a map of (old file tid -> new league tid) and use it to update/delete all team-related objects
 - for storing new NewLeague, keep separate from "normal" list of teams. show customize button in red (or something) when customized. when switching settings (like random to real, or season within real) keep customized teams.
 - for real players leagues, make sure scheduled events are correct (delete any referring to teams that aren't there, and make sure tids are correct especially for expansion teams)
 - appending season/index to player's name

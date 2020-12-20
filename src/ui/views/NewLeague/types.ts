@@ -1,3 +1,5 @@
+import type { Conf, Div } from "../../../common/types";
+
 export type NewLeagueTeam = {
 	tid: number;
 	region: string;
@@ -13,5 +15,7 @@ export type NewLeagueTeam = {
 export type LeagueInfo = {
 	startingSeason: number;
 	stores: string[];
+	confs: Conf[];
+	divs: Div[];
 	teams: NewLeagueTeam[];
 };

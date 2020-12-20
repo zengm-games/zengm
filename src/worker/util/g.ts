@@ -3,16 +3,7 @@ import type {
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../common/types";
-import { PHASE, helpers } from "../../common";
-
-export const gameAttributeHasHistory = (gameAttribute: any) => {
-	return (
-		Array.isArray(gameAttribute) &&
-		gameAttribute.length > 0 &&
-		gameAttribute[0] &&
-		typeof gameAttribute[0].start === "number"
-	);
-};
+import { PHASE, helpers, gameAttributeHasHistory } from "../../common";
 
 // This will get filled by values from IndexedDB
 const g: GameAttributes & {

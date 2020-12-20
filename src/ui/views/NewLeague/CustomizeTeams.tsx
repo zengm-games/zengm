@@ -186,7 +186,6 @@ const CustomizeTeams = ({
 
 	return (
 		<>
-			<h2>Customize Teams</h2>
 			{confs.map(conf => (
 				<Conference
 					key={conf.cid}

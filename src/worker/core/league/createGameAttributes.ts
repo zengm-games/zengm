@@ -1,7 +1,7 @@
-import { DIFFICULTY, PHASE } from "../../../common";
+import { DIFFICULTY, gameAttributeHasHistory, PHASE } from "../../../common";
 import type { GameAttributesLeagueWithHistory } from "../../../common/types";
 import { defaultGameAttributes, helpers } from "../../util";
-import { gameAttributeHasHistory, unwrap, wrap } from "../../util/g";
+import { unwrap, wrap } from "../../util/g";
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 

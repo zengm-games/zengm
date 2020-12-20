@@ -1,8 +1,8 @@
 import { league } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g } from "../../util";
-import { helpers } from "../../../common";
-import { unwrap, gameAttributeHasHistory } from "../../util/g";
+import { gameAttributeHasHistory, helpers } from "../../../common";
+import { unwrap } from "../../util/g";
 import gameAttributesToUI from "./gameAttributesToUI";
 
 /**

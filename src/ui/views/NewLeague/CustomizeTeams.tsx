@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
 import classNames from "classnames";
+import { Modal } from "react-bootstrap";
 
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
@@ -91,12 +92,14 @@ const Division = ({
 	div,
 	teams,
 	renameDiv,
+	editTeam,
 	deleteDiv,
 	deleteTeam,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
 	renameDiv: (did: number, name: string) => void;
+	editTeam: (tid: number) => void;
 	deleteDiv: (did: number) => void;
 	deleteTeam: (tid: number) => void;
 }) => {
@@ -119,7 +122,11 @@ const Division = ({
 						<div className="mr-auto">
 							{t.region} {t.name}
 						</div>
-						<EditButton onClick={() => {}} />
+						<EditButton
+							onClick={() => {
+								editTeam(t.tid);
+							}}
+						/>
 						<DeleteButton
 							onClick={() => {
 								deleteTeam(t.tid);
@@ -138,6 +145,7 @@ const Conference = ({
 	teams,
 	renameConf,
 	renameDiv,
+	editTeam,
 	deleteConf,
 	deleteDiv,
 	deleteTeam,
@@ -148,6 +156,7 @@ const Conference = ({
 	teams: NewLeagueTeam[];
 	renameConf: (cid: number, name: string) => void;
 	renameDiv: (did: number, name: string) => void;
+	editTeam: (tid: number) => void;
 	deleteConf: (cid: number) => void;
 	deleteDiv: (did: number) => void;
 	deleteTeam: (tid: number) => void;
@@ -171,6 +180,7 @@ const Conference = ({
 						<Division
 							div={div}
 							renameDiv={renameDiv}
+							editTeam={editTeam}
 							deleteDiv={deleteDiv}
 							deleteTeam={deleteTeam}
 							teams={teams.filter(t => t.did === div.did)}
@@ -224,6 +234,7 @@ const CustomizeTeams = ({
 	const [confs, setConfs] = useState([...initialConfs]);
 	const [divs, setDivs] = useState([...initialDivs]);
 	const [teams, setTeams] = useState([...initialTeams]);
+	const [editingTID, setEditingTID] = useState<number | undefined>();
 
 	const renameThing = (type: "conf" | "div") => (id: number, name: string) => {
 		const func = type === "conf" ? setConfs : setDivs;
@@ -245,6 +256,10 @@ const CustomizeTeams = ({
 	const renameConf = renameThing("conf");
 	const renameDiv = renameThing("div");
 
+	const editTeam = (tid: number) => {
+		setEditingTID(tid);
+	};
+
 	const deleteConf = (cid: number) => {
 		setConfs(confs.filter(conf => conf.cid !== cid));
 		setDivs(divs.filter(div => div.cid !== cid));
@@ -264,20 +279,11 @@ const CustomizeTeams = ({
 				<button
 					className="btn btn-secondary mr-2"
 					onClick={() => {
-						const maxCID =
-							confs.length > 0 ? Math.max(...confs.map(conf => conf.cid)) : -1;
-						setConfs([
-							...confs,
-							{
-								cid: maxCID + 1,
-								name: "New Conference",
-							},
-						]);
+						setEditingTID(-1);
 					}}
 				>
-					Add Conference
+					Add Team
 				</button>
-				<button className="btn btn-secondary mr-2">Add Team</button>
 				<button
 					className="btn btn-danger"
 					onClick={() => {
@@ -298,6 +304,7 @@ const CustomizeTeams = ({
 					teams={teams}
 					renameConf={renameConf}
 					renameDiv={renameDiv}
+					editTeam={editTeam}
 					deleteConf={deleteConf}
 					deleteDiv={deleteDiv}
 					deleteTeam={deleteTeam}
@@ -315,8 +322,25 @@ const CustomizeTeams = ({
 					}}
 				/>
 			))}
+			<button
+				className="btn btn-secondary"
+				onClick={() => {
+					const maxCID =
+						confs.length > 0 ? Math.max(...confs.map(conf => conf.cid)) : -1;
+					setConfs([
+						...confs,
+						{
+							cid: maxCID + 1,
+							name: "New Conference",
+						},
+					]);
+				}}
+			>
+				Add Conference
+			</button>
 
 			<form
+				className="mt-3"
 				onSubmit={() => {
 					onSave({ confs, divs, teams });
 				}}
@@ -328,6 +352,34 @@ const CustomizeTeams = ({
 					Cancel
 				</button>
 			</form>
+
+			<Modal
+				show={editingTID !== undefined}
+				onHide={() => {
+					setEditingTID(undefined);
+				}}
+			>
+				<Modal.Header closeButton>
+					{editingTID !== undefined && editingTID >= 0 ? "Edit" : "Add"} Team
+				</Modal.Header>
+				<Modal.Body>
+					<p>
+						Click and drag to reorder columns, or use the checkboxes to
+						show/hide columns.
+					</p>
+				</Modal.Body>
+				<Modal.Footer>
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							setEditingTID(undefined);
+						}}
+					>
+						Cancel
+					</button>
+					<button className="btn btn-primary">Save</button>
+				</Modal.Footer>
+			</Modal>
 		</>
 	);
 };

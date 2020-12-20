@@ -40,6 +40,9 @@ UI for selecting a custom set of teams in a new league
   - random players only
   - add support for creating/editing teams
     - somehow allow a preset for a city to be selected
+      - use similar UI to expansion draft
+      - fix LA/LA issue
+    - reuse the expansion draft team editor UI?
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
   - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply

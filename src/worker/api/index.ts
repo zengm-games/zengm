@@ -73,6 +73,8 @@ import type {
 	ScheduledEventGameAttributes,
 	ScheduledEventTeamInfo,
 	ScheduleGameWithoutKey,
+	Conf,
+	Div,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";
 import {
@@ -82,6 +84,7 @@ import {
 	saveAwardsByPlayer,
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
+import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -325,6 +328,9 @@ const createLeague = async ({
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
+	confs,
+	divs,
+	teams,
 }: {
 	name: string;
 	tid: number;
@@ -346,6 +352,9 @@ const createLeague = async ({
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
+	confs: Conf[];
+	divs: Div[];
+	teams: NewLeagueTeam[];
 }): Promise<number> => {
 	const keys = [...keptKeys, "version"];
 
@@ -365,6 +374,10 @@ const createLeague = async ({
 		if (leagueFileInput && leagueFileInput[key]) {
 			leagueFile[key] = leagueFileInput[key];
 		}
+	}
+
+	if (leagueFile.teamas === undefined) {
+		leagueFile.teams = teams;
 	}
 
 	if (leagueFile.startingSeason === undefined) {
@@ -479,6 +492,8 @@ const createLeague = async ({
 		"equalizeRegions",
 		equalizeRegions,
 	);
+	upsertGameAttribute(leagueFile.gameAttributes, "confs", confs);
+	upsertGameAttribute(leagueFile.gameAttributes, "divs", divs);
 
 	if (realPlayerDeterminism !== undefined) {
 		upsertGameAttribute(

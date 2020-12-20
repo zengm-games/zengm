@@ -762,6 +762,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
+					confs: state.confs,
+					divs: state.divs,
+					teams: state.teams,
 				});
 
 				let type: string = state.customize;
@@ -801,8 +804,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeLoseBestPlayer,
 			state.challengeFiredLuxuryTax,
 			state.challengeFiredMissPlayoffs,
+			state.confs,
 			state.customize,
 			state.difficulty,
+			state.divs,
 			state.equalizeRegions,
 			state.keptKeys,
 			state.leagueFile,

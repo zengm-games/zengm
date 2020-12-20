@@ -109,12 +109,14 @@ const Conference = ({
 	teams,
 	renameConf,
 	renameDiv,
+	addDiv,
 }: {
 	conf: Conf;
 	divs: Div[];
 	teams: NewLeagueTeam[];
 	renameConf: (cid: number, name: string) => void;
 	renameDiv: (did: number, name: string) => void;
+	addDiv: (cid: number) => void;
 }) => {
 	return (
 		<div className="card mb-3">
@@ -125,7 +127,7 @@ const Conference = ({
 				}}
 			/>
 
-			<div className="row mx-0 mb-3">
+			<div className="row mx-0">
 				{divs.map(div => (
 					<div className="col-sm-6 col-md-4" key={div.did}>
 						<Division
@@ -135,6 +137,17 @@ const Conference = ({
 						/>
 					</div>
 				))}
+			</div>
+
+			<div className="card-body p-0 m-3">
+				<button
+					className="btn btn-secondary"
+					onClick={() => {
+						addDiv(conf.cid);
+					}}
+				>
+					Add Division
+				</button>
 			</div>
 		</div>
 	);
@@ -188,11 +201,20 @@ const CustomizeTeams = ({
 	return (
 		<>
 			<div className="mb-3">
-				<button className="btn btn-secondary mr-2" title="Add Conference">
-					Add Conf
-				</button>
-				<button className="btn btn-secondary mr-2" title="Add Division">
-					Add Div
+				<button
+					className="btn btn-secondary mr-2"
+					onClick={() => {
+						const maxCID = Math.max(...confs.map(conf => conf.cid));
+						setConfs([
+							...confs,
+							{
+								cid: maxCID + 1,
+								name: "New Conference",
+							},
+						]);
+					}}
+				>
+					Add Conference
 				</button>
 				<button className="btn btn-secondary mr-2">Add Team</button>
 				<button
@@ -215,6 +237,17 @@ const CustomizeTeams = ({
 					teams={teams}
 					renameConf={renameConf}
 					renameDiv={renameDiv}
+					addDiv={(cid: number) => {
+						const maxDID = Math.max(...divs.map(div => div.did));
+						setDivs([
+							...divs,
+							{
+								did: maxDID + 1,
+								cid,
+								name: "New Division",
+							},
+						]);
+					}}
 				/>
 			))}
 

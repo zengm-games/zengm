@@ -36,15 +36,15 @@ UI for selecting a custom set of teams in a new league
 - DOES THIS MAKE SENSE?
   - random players - sure, it's fine
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
+- MVP
+  - random players only
+  - add support for editing teams
+  - add support for deleting things
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
   - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
 - clicking "Customize" takes you to a new page
   - list of teams by confs/divs
-    - allow CRUD of confs/divs/teams
-      - how use confs/divs from getLeagueInfo?
-        - need to either save it or re-init, even if it's edited by user, in case user clicks "reset" in CustomizeTeams
-        - need to send to createLeague, and then within createLeague apply it to gameAttributes (overwrite anything in league file or default from real players league)
     - allow drag and drop to reorder confs/divs
       - https://github.com/atlassian/react-beautiful-dnd
     - allow drag and drop to move teams to other divs

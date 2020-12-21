@@ -167,6 +167,11 @@ const DEFAULT_DIVS =
 		? constantsBasketball.DEFAULT_DIVS
 		: constantsFootball.DEFAULT_DIVS;
 
+const DEFAULT_STADIUM_CAPACITY =
+	process.env.SPORT == "basketball"
+		? constantsBasketball.DEFAULT_STADIUM_CAPACITY
+		: constantsFootball.DEFAULT_STADIUM_CAPACITY;
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
@@ -174,6 +179,7 @@ export {
 	AWARD_NAMES,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	GRACE_PERIOD,

@@ -33,6 +33,10 @@ type Action =
 			cid: number;
 	  }
 	| {
+			type: "addTeam";
+			t: NewLeagueTeam;
+	  }
+	| {
 			type: "renameConf";
 			cid: number;
 			name: string;
@@ -41,6 +45,10 @@ type Action =
 			type: "renameDiv";
 			did: number;
 			name: string;
+	  }
+	| {
+			type: "editTeam";
+			t: NewLeagueTeam;
 	  }
 	| {
 			type: "moveConf";
@@ -110,6 +118,13 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
+		case "addTeam": {
+			return {
+				...state,
+				teams: makeTIDsSequential([...state.teams, action.t]),
+			};
+		}
+
 		case "renameConf":
 			return {
 				...state,
@@ -139,6 +154,20 @@ const reducer = (state: State, action: Action): State => {
 					};
 				}),
 			};
+
+		case "editTeam": {
+			const newTeams = state.teams.map(t => {
+				if (t.tid !== action.t.tid) {
+					return t;
+				}
+
+				return action.t;
+			});
+			return {
+				...state,
+				teams: makeTIDsSequential(newTeams),
+			};
+		}
 
 		case "moveConf": {
 			const oldIndex = state.confs.findIndex(conf => conf.cid === action.cid);
@@ -507,6 +536,12 @@ const CustomizeTeams = ({
 		setEditingTID(tid);
 	};
 
+	let editingTeam: NewLeagueTeam | undefined;
+	if (editingTID === -1) {
+	} else if (editingTID !== undefined) {
+		editingTeam = teams.find(t => t.tid === editingTID);
+	}
+
 	return (
 		<>
 			<div className="mb-3">
@@ -568,8 +603,15 @@ const CustomizeTeams = ({
 
 			<UpsertTeamModal
 				key={editingTID}
-				tid={editingTID}
-				onSave={() => {
+				t={editingTeam}
+				confs={confs}
+				divs={divs}
+				onSave={(t: NewLeagueTeam) => {
+					if (t.tid === -1) {
+						dispatch({ type: "addTeam", t });
+					} else {
+						dispatch({ type: "editTeam", t });
+					}
 					setEditingTID(undefined);
 				}}
 				onCancel={() => {

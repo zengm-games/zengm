@@ -1,4 +1,8 @@
-import { DEFAULT_CONFS, DEFAULT_DIVS } from "../../common";
+import {
+	DEFAULT_CONFS,
+	DEFAULT_DIVS,
+	DEFAULT_STADIUM_CAPACITY,
+} from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
@@ -70,7 +74,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	],
 	draftType: "nba2019",
 	numDraftRounds: 2,
-	defaultStadiumCapacity: 25000,
+	defaultStadiumCapacity: DEFAULT_STADIUM_CAPACITY,
 	playersRefuseToNegotiate: true,
 	allStarGame: 0.7,
 	budget: true,
@@ -145,7 +149,6 @@ export const footballOverrides =
 				],
 				draftType: "noLottery",
 				numDraftRounds: 7,
-				defaultStadiumCapacity: 70000,
 				salaryCap: 200000,
 				minPayroll: 150000,
 				minContract: 500,

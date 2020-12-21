@@ -38,7 +38,7 @@ const TeamForm = ({
 	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
 	t:
 		| Omit<View<"manageTeams">["teams"][number], "tid">
-		| (ExpansionDraftSetupTeam & {
+		| (Omit<ExpansionDraftSetupTeam, "takeControl"> & {
 				disabled?: boolean;
 		  });
 }) => {

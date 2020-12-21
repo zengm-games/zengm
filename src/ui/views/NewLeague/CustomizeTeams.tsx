@@ -4,6 +4,7 @@ import type { Conf, Div } from "../../../common/types";
 import classNames from "classnames";
 import { Modal } from "react-bootstrap";
 import arrayMove from "array-move";
+import orderBy from "lodash/orderBy";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -156,7 +157,63 @@ const reducer = (state: State, action: Action): State => {
 		}
 
 		case "moveDiv": {
-			throw new Error("Not implemented");
+			// Make sure we're sorted by cid, to make moving between conferences easy
+			const newDivs = orderBy(state.divs, "cid", "asc");
+
+			const div = newDivs.find(div => div.did === action.did);
+			if (!div) {
+				return state;
+			}
+
+			// See if we're moving at the boundary of the conference, in which case we need to switch to a new conference
+			const divsLocal = newDivs.filter(div2 => div2.cid === div.cid);
+			const indexLocal = divsLocal.findIndex(div => div.did === action.did);
+			let newCID = -1;
+			if (
+				(indexLocal === 0 && action.direction === -1) ||
+				(indexLocal === divsLocal.length - 1 && action.direction === 1)
+			) {
+				const confIndex = state.confs.findIndex(conf => conf.cid === div.cid);
+				if (confIndex > 0 && action.direction === -1) {
+					newCID = state.confs[confIndex - 1].cid;
+				} else if (
+					confIndex < state.confs.length - 1 &&
+					action.direction === 1
+				) {
+					newCID = state.confs[confIndex + 1].cid;
+				}
+			}
+
+			if (newCID >= 0) {
+				return {
+					...state,
+					divs: newDivs.map(div => {
+						if (action.did !== div.did) {
+							return div;
+						}
+
+						return {
+							...div,
+							cid: newCID,
+						};
+					}),
+				};
+			}
+
+			// Normal move
+			const oldIndex = newDivs.findIndex(div => div.did === action.did);
+			const newIndex = oldIndex + action.direction;
+
+			if (newIndex < 0 || newIndex > newDivs.length - 1) {
+				return state;
+			}
+
+			const newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
+
+			return {
+				...state,
+				divs: newDivs2,
+			};
 		}
 
 		case "deleteConf":
@@ -402,8 +459,8 @@ const Conference = ({
 							dispatch={dispatch}
 							editTeam={editTeam}
 							teams={teams.filter(t => t.did === div.did)}
-							disableMoveUp={i === 0}
-							disableMoveDown={i === divs.length - 1}
+							disableMoveUp={i === 0 && disableMoveUp}
+							disableMoveDown={i === divs.length - 1 && disableMoveDown}
 						/>
 					</div>
 				))}

@@ -1,10 +1,51 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { DEFAULT_STADIUM_CAPACITY } from "../../../common";
-import type { Conf, Div } from "../../../common/types";
-import { logEvent } from "../../util";
+import type { Conf, Div, View } from "../../../common/types";
+import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { NewLeagueTeam } from "./types";
+
+const GodModeWarning = ({
+	controlledTeam,
+	godModeLimits,
+}: {
+	controlledTeam?: {
+		pop: string;
+		stadiumCapacity: string;
+	};
+	godModeLimits: View<"newLeague">["godModeLimits"];
+}) => {
+	const pop = controlledTeam ? parseFloat(controlledTeam.pop) : NaN;
+	const stadiumCapacity = controlledTeam
+		? parseInt(controlledTeam.stadiumCapacity)
+		: NaN;
+
+	const errors = [];
+	if (!Number.isNaN(pop) && pop > godModeLimits.pop) {
+		errors.push(`a region's population is over ${godModeLimits.pop} million`);
+	}
+	if (
+		!Number.isNaN(stadiumCapacity) &&
+		stadiumCapacity > godModeLimits.stadiumCapacity
+	) {
+		errors.push(
+			`a team's stadium capacity is over ${helpers.numberWithCommas(
+				godModeLimits.stadiumCapacity,
+			)}`,
+		);
+	}
+	if (errors.length >= 1) {
+		return (
+			<div className="alert alert-danger">
+				If {errors.join(" or ")}, then God Mode will be enabled by default in
+				this league.
+			</div>
+		);
+	}
+
+	return null;
+};
 
 const UpsertTeamModal = ({
 	t,
@@ -12,12 +53,14 @@ const UpsertTeamModal = ({
 	divs,
 	onCancel,
 	onSave,
+	godModeLimits,
 }: {
 	t?: NewLeagueTeam;
 	confs: Conf[];
 	divs: Div[];
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeam) => void;
+	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
 	const [controlledTeam, setControlledTeam] = useState(() => {
 		if (t === undefined) {
@@ -136,6 +179,10 @@ const UpsertTeamModal = ({
 						<button className="d-none" type="submit"></button>
 					</form>
 				) : null}
+				<GodModeWarning
+					controlledTeam={controlledTeam}
+					godModeLimits={godModeLimits}
+				/>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-secondary" onClick={onCancel}>

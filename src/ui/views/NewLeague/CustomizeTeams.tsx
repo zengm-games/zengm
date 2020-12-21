@@ -1,6 +1,6 @@
 import React, { useReducer, useState } from "react";
 import type { NewLeagueTeam } from "./types";
-import type { Conf, Div } from "../../../common/types";
+import type { Conf, Div, View } from "../../../common/types";
 import classNames from "classnames";
 import arrayMove from "array-move";
 import orderBy from "lodash/orderBy";
@@ -9,7 +9,6 @@ import countBy from "lodash/countBy";
 import { confirm, logEvent } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
-import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.basketball";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -613,6 +612,7 @@ const CustomizeTeams = ({
 	initialDivs,
 	initialTeams,
 	getDefaultConfsDivsTeams,
+	godModeLimits,
 }: {
 	onCancel: () => void;
 	onSave: (obj: ConfsDivsTeams) => void;
@@ -620,6 +620,7 @@ const CustomizeTeams = ({
 	initialDivs: Div[];
 	initialTeams: NewLeagueTeam[];
 	getDefaultConfsDivsTeams: () => ConfsDivsTeams;
+	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
 	const [{ confs, divs, teams }, dispatch] = useReducer(reducer, {
 		confs: [...initialConfs],
@@ -802,6 +803,7 @@ const CustomizeTeams = ({
 				onCancel={() => {
 					setEditingInfo({ type: "none" });
 				}}
+				godModeLimits={godModeLimits}
 			/>
 		</>
 	);

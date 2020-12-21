@@ -1,8 +1,10 @@
 import { idb } from "../db";
 import type { ViewInput, RealTeamInfo } from "../../common/types";
-import { getNewLeagueLid } from "../util";
+import { getNewLeagueLid, newLeagueGodModeLimits } from "../util";
 
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
+	const godModeLimits = newLeagueGodModeLimits();
+
 	if (lid !== undefined) {
 		// Importing!
 		const l = await idb.meta.get("leagues", lid);
@@ -13,6 +15,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 				difficulty: l.difficulty,
 				name: l.name,
 				type,
+				godModeLimits,
 			};
 		}
 	}
@@ -30,6 +33,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		name: `League ${newLid}`,
 		realTeamInfo,
 		type,
+		godModeLimits,
 	};
 };
 

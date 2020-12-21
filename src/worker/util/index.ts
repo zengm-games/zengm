@@ -25,6 +25,7 @@ export { default as loadNames } from "./loadNames";
 export { default as local } from "./local";
 export { default as lock } from "./lock";
 export { default as logEvent } from "./logEvent";
+export { default as newLeagueGodModeLimits } from "./newLeagueGodModeLimits";
 export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame";
 export { default as processScheduledEvents } from "./processScheduledEvents";
 export { default as random } from "./random";

@@ -918,12 +918,15 @@ const NewLeague = (props: View<"newLeague">) => {
 		return (
 			<CustomizeTeams
 				onCancel={() => {
-					console.log("CANCEL");
 					setCustomizeTeamsUI(false);
 				}}
 				onSave={({ confs, divs, teams }) => {
-					console.log("SAVE", teams);
-					dispatch({ type: "setTeams", confs, divs, teams });
+					dispatch({
+						type: "setTeams",
+						confs,
+						divs,
+						teams: helpers.addPopRank(teams),
+					});
 					setCustomizeTeamsUI(false);
 				}}
 				initialConfs={state.confs}

@@ -1,9 +1,9 @@
 import { g, helpers } from "../util";
-import teamInfos from "../../common/teamInfos";
 import getTeamInfos from "../../common/getTeamInfos";
 import type { ExpansionDraftSetupTeam } from "../../common/types";
 import { idb } from "../db";
 import orderBy from "lodash/orderBy";
+import getUnusedAbbrevs from "../../common/getUnusedAbbrevs";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -22,49 +22,7 @@ const updateExpansionDraft = async () => {
 	}
 
 	const currentTeams = g.get("teamInfoCache");
-	const allAbbrevs: string[] = [];
-	for (const [abbrev, t] of Object.entries(teamInfos)) {
-		const blacklist = [...allAbbrevs, ...currentTeams.map(t => t.abbrev)];
-
-		// Handle a couple teams with multiple abbrevs
-		if (blacklist.includes("LA") && abbrev === "LAC") {
-			continue;
-		}
-		if (blacklist.includes("LA") && abbrev === "LAE") {
-			continue;
-		}
-		if (blacklist.includes("LAC") && abbrev === "LA") {
-			continue;
-		}
-		if (blacklist.includes("LAC") && abbrev === "LAE") {
-			continue;
-		}
-		if (blacklist.includes("LAE") && abbrev === "LA") {
-			continue;
-		}
-		if (blacklist.includes("LAE") && abbrev === "LAC") {
-			continue;
-		}
-		if (blacklist.includes("GS") && abbrev === "SF") {
-			continue;
-		}
-		if (blacklist.includes("SF") && abbrev === "GS") {
-			continue;
-		}
-
-		if (blacklist.includes(abbrev)) {
-			continue;
-		}
-
-		const currentTeam = currentTeams.find(
-			t2 => t2.region === t.region && t2.name === t.name,
-		);
-		if (currentTeam) {
-			continue;
-		}
-
-		allAbbrevs.push(abbrev);
-	}
+	const allAbbrevs = getUnusedAbbrevs(currentTeams);
 
 	const divs = g.get("divs", "current");
 	const div = divs[divs.length - 1];

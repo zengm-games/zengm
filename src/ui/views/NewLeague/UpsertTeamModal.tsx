@@ -36,6 +36,47 @@ const UpsertTeamModal = ({
 		};
 	});
 
+	const save = () => {
+		if (t === undefined || controlledTeam === undefined) {
+			return;
+		}
+		const edited = {
+			...t,
+			region: controlledTeam.region,
+			name: controlledTeam.name,
+			abbrev: controlledTeam.abbrev,
+			pop: parseFloat(controlledTeam.pop),
+			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
+			colors: controlledTeam.colors,
+			did: parseInt(controlledTeam.did),
+			imgURL: t.imgURL,
+		};
+
+		const errors = [];
+		let errorMessage: string | undefined;
+		if (Number.isNaN(edited.pop)) {
+			errors.push("Population");
+		}
+		if (Number.isNaN(edited.stadiumCapacity)) {
+			errors.push("Stadium Capacity");
+		}
+		if (errors.length === 1) {
+			errorMessage = `${errors[0]} must be a number.`;
+		} else if (errors.length > 1) {
+			errorMessage = `${errors[0]} and ${errors[1]} must be numbers.`;
+		}
+		if (errorMessage) {
+			logEvent({
+				type: "error",
+				text: errorMessage,
+				saveToDb: false,
+			});
+			return;
+		}
+
+		onSave(edited);
+	};
+
 	return (
 		<Modal size="lg" show={t !== undefined} onHide={onCancel}>
 			<Modal.Header closeButton>
@@ -43,96 +84,64 @@ const UpsertTeamModal = ({
 			</Modal.Header>
 			<Modal.Body>
 				{controlledTeam ? (
-					<div className="row">
-						<TeamForm
-							classNamesCol={[
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-								"col-6",
-							]}
-							confs={confs}
-							divs={divs}
-							handleInputChange={(field, event) => {
-								if (field.startsWith("colors")) {
-									const ind = parseInt(field.replace("colors", ""));
-									if (ind >= 0 && ind <= 2) {
-										const colors = [...controlledTeam.colors] as [
-											string,
-											string,
-											string,
-										];
-										(colors[ind] = event.target.value),
-											setControlledTeam({
-												...controlledTeam,
-												colors,
-											});
+					<form
+						id="foo"
+						onSubmit={event => {
+							console.log("onSubmit");
+							event.preventDefault();
+							save();
+						}}
+					>
+						<div className="row">
+							<TeamForm
+								classNamesCol={[
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+									"col-6",
+								]}
+								confs={confs}
+								divs={divs}
+								handleInputChange={(field, event) => {
+									if (field.startsWith("colors")) {
+										const ind = parseInt(field.replace("colors", ""));
+										if (ind >= 0 && ind <= 2) {
+											const colors = [...controlledTeam.colors] as [
+												string,
+												string,
+												string,
+											];
+											(colors[ind] = event.target.value),
+												setControlledTeam({
+													...controlledTeam,
+													colors,
+												});
+										}
+									} else {
+										setControlledTeam({
+											...controlledTeam,
+											[field]: event.target.value,
+										});
 									}
-								} else {
-									setControlledTeam({
-										...controlledTeam,
-										[field]: event.target.value,
-									});
-								}
-							}}
-							hideStatus
-							t={controlledTeam}
-						/>
-					</div>
+								}}
+								hideStatus
+								t={controlledTeam}
+							/>
+						</div>
+						<button className="d-none" type="submit"></button>
+					</form>
 				) : null}
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-secondary" onClick={onCancel}>
 					Cancel
 				</button>
-				<button
-					className="btn btn-primary"
-					onClick={() => {
-						if (t === undefined || controlledTeam === undefined) {
-							return;
-						}
-						const edited = {
-							...t,
-							region: controlledTeam.region,
-							name: controlledTeam.name,
-							abbrev: controlledTeam.abbrev,
-							pop: parseFloat(controlledTeam.pop),
-							stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
-							colors: controlledTeam.colors,
-							did: parseInt(controlledTeam.did),
-							imgURL: t.imgURL,
-						};
-
-						const errors = [];
-						let errorMessage: string | undefined;
-						if (Number.isNaN(edited.pop)) {
-							errors.push("Population");
-						}
-						if (Number.isNaN(edited.stadiumCapacity)) {
-							errors.push("Stadium Capacity");
-						}
-						if (errors.length === 1) {
-							errorMessage = `${errors[0]} must be a number.`;
-						} else if (errors.length > 1) {
-							errorMessage = `${errors[0]} and ${errors[1]} must be numbers.`;
-						}
-						if (errorMessage) {
-							logEvent({
-								type: "error",
-								text: errorMessage,
-								saveToDb: false,
-							});
-							return;
-						}
-
-						onSave(edited);
-					}}
-				>
+				<button className="btn btn-primary" onClick={save}>
 					Save
 				</button>
 			</Modal.Footer>

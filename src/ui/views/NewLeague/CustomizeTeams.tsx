@@ -6,7 +6,7 @@ import arrayMove from "array-move";
 import orderBy from "lodash/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash/countBy";
-import { logEvent } from "../../util";
+import { confirm, logEvent } from "../../util";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -410,8 +410,17 @@ const Division = ({
 			<CardHeader
 				alignButtonsRight
 				name={div.name}
-				onDelete={() => {
-					dispatch({ type: "deleteDiv", did: div.did });
+				onDelete={async () => {
+					const proceed = await confirm(
+						`Are you want to delete the "${div.name}" division, including all teams inside it?`,
+						{
+							okText: "Delete",
+							cancelText: "Cancel",
+						},
+					);
+					if (proceed) {
+						dispatch({ type: "deleteDiv", did: div.did });
+					}
 				}}
 				onMoveDown={() => {
 					dispatch({ type: "moveDiv", did: div.did, direction: 1 });
@@ -494,8 +503,17 @@ const Conference = ({
 		<div className="card mb-3">
 			<CardHeader
 				name={conf.name}
-				onDelete={() => {
-					dispatch({ type: "deleteConf", cid: conf.cid });
+				onDelete={async () => {
+					const proceed = await confirm(
+						`Are you want to delete the "${conf.name}" conference, including all divisions and teams inside it?`,
+						{
+							okText: "Delete",
+							cancelText: "Cancel",
+						},
+					);
+					if (proceed) {
+						dispatch({ type: "deleteConf", cid: conf.cid });
+					}
 				}}
 				onMoveDown={() => {
 					dispatch({ type: "moveConf", cid: conf.cid, direction: 1 });
@@ -662,6 +680,7 @@ const CustomizeTeams = ({
 				className="mt-3"
 				onSubmit={event => {
 					event.preventDefault();
+
 					if (abbrevsUsedMultipleTimes.length > 0) {
 						logEvent({
 							type: "error",
@@ -672,6 +691,16 @@ const CustomizeTeams = ({
 						});
 						return;
 					}
+
+					if (teams.length < 2) {
+						logEvent({
+							type: "error",
+							text: "Your league must have at least 2 teams in it.",
+							saveToDb: false,
+						});
+						return;
+					}
+
 					onSave({ confs, divs, teams });
 				}}
 			>

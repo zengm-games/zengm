@@ -2,9 +2,9 @@ import React, { useReducer, useState } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
 import classNames from "classnames";
-import { Modal } from "react-bootstrap";
 import arrayMove from "array-move";
 import orderBy from "lodash/orderBy";
+import UpsertTeamModal from "./UpsertTeamModal";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -566,33 +566,16 @@ const CustomizeTeams = ({
 				</button>
 			</form>
 
-			<Modal
-				show={editingTID !== undefined}
-				onHide={() => {
+			<UpsertTeamModal
+				key={editingTID}
+				tid={editingTID}
+				onSave={() => {
 					setEditingTID(undefined);
 				}}
-			>
-				<Modal.Header closeButton>
-					{editingTID !== undefined && editingTID >= 0 ? "Edit" : "Add"} Team
-				</Modal.Header>
-				<Modal.Body>
-					<p>
-						Click and drag to reorder columns, or use the checkboxes to
-						show/hide columns.
-					</p>
-				</Modal.Body>
-				<Modal.Footer>
-					<button
-						className="btn btn-secondary"
-						onClick={() => {
-							setEditingTID(undefined);
-						}}
-					>
-						Cancel
-					</button>
-					<button className="btn btn-primary">Save</button>
-				</Modal.Footer>
-			</Modal>
+				onCancel={() => {
+					setEditingTID(undefined);
+				}}
+			/>
 		</>
 	);
 };

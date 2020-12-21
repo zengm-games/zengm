@@ -55,11 +55,14 @@ UI for selecting a custom set of teams in a new league
 - MVP
   - random players only
   - confirm for delete conf/div
+  - show error if two abbrevs are the same? does it actually matter still?
   - add support for creating/editing teams
     - somehow allow a preset for a city to be selected
       - use similar UI to expansion draft
       - fix LA/LA issue
     - reuse the expansion draft team editor UI?
+    - what about God Mode?
+      - in upsert form, add warning that any stadium capacity over X or pop over Y will result in god mode being enabled in your league
 - after MVP
   - do we think of it as "editing the teams list of in some league file" or "specifying teams list, which may include additional info like adding real teams"? the latter is simpler, because then we start a league with no history or anything. but in UI terms it's unclear how to present it... like the "Customize" button is great for a random players league, because it already has no history or anything. but should that include access to real players? and how should the "main" flow be for accessing real players, should it be only from the "custom league" screen? if it's hidden in another dropdown, probably not many people would see it. so i guess it'd just be nice from a UI perspective if it could be made generic enough to work everywhere, but i don't know if that will be possible.
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
@@ -664,6 +667,7 @@ FBGM
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
 - skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
+- too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

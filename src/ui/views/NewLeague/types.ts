@@ -4,8 +4,12 @@ export type NewLeagueTeam = {
 	tid: number;
 	region: string;
 	name: string;
-	pop?: number;
+	abbrev: string;
+	pop: number;
 	popRank: number;
+	stadiumCapacity?: number;
+	imgURL?: string;
+	colors?: [string, string, string];
 	srID?: string;
 	disabled?: boolean;
 	cid: number;

@@ -601,7 +601,7 @@ const CustomizeTeams = ({
 				region: "",
 				name: "",
 				abbrev: "NEW",
-				pop: 0,
+				pop: 1,
 				popRank: 0,
 				cid: div.cid,
 				did: div.did,
@@ -684,7 +684,7 @@ const CustomizeTeams = ({
 			</form>
 
 			<UpsertTeamModal
-				key={editingInfo.tid}
+				key={editingInfo.type === "edit" ? editingInfo.tid : editingInfo.type}
 				t={editingTeam}
 				confs={confs}
 				divs={divs}

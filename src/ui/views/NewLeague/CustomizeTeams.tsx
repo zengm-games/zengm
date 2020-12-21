@@ -1,8 +1,163 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
 import classNames from "classnames";
 import { Modal } from "react-bootstrap";
+
+const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
+	return teams.map((t, i) => ({
+		...t,
+		tid: i,
+	}));
+};
+
+type ConfsDivsTeams = {
+	confs: Conf[];
+	divs: Div[];
+	teams: NewLeagueTeam[];
+};
+
+type State = ConfsDivsTeams;
+
+type Action =
+	| ({
+			type: "setState";
+	  } & ConfsDivsTeams)
+	| {
+			type: "addConf";
+	  }
+	| {
+			type: "addDiv";
+			cid: number;
+	  }
+	| {
+			type: "renameConf";
+			cid: number;
+			name: string;
+	  }
+	| {
+			type: "renameDiv";
+			did: number;
+			name: string;
+	  }
+	| {
+			type: "deleteConf";
+			cid: number;
+	  }
+	| {
+			type: "deleteDiv";
+			did: number;
+	  }
+	| {
+			type: "deleteTeam";
+			tid: number;
+	  };
+
+const reducer = (state: State, action: Action): State => {
+	switch (action.type) {
+		case "setState":
+			return {
+				...state,
+				confs: action.confs,
+				divs: action.divs,
+				teams: action.teams,
+			};
+
+		case "addConf": {
+			const maxCID =
+				state.confs.length > 0
+					? Math.max(...state.confs.map(conf => conf.cid))
+					: -1;
+			return {
+				...state,
+				confs: [
+					...state.confs,
+					{
+						cid: maxCID + 1,
+						name: "New Conference",
+					},
+				],
+			};
+		}
+
+		case "addDiv": {
+			const maxDID =
+				state.divs.length > 0
+					? Math.max(...state.divs.map(div => div.did))
+					: -1;
+			return {
+				...state,
+				divs: [
+					...state.divs,
+					{
+						did: maxDID + 1,
+						cid: action.cid,
+						name: "New Division",
+					},
+				],
+			};
+		}
+
+		case "renameConf":
+			return {
+				...state,
+				confs: state.confs.map(conf => {
+					if (action.cid !== conf.cid) {
+						return conf;
+					}
+
+					return {
+						...conf,
+						name: action.name,
+					};
+				}),
+			};
+
+		case "renameDiv":
+			return {
+				...state,
+				divs: state.divs.map(div => {
+					if (action.did !== div.did) {
+						return div;
+					}
+
+					return {
+						...div,
+						name: action.name,
+					};
+				}),
+			};
+
+		case "deleteConf":
+			return {
+				confs: state.confs.filter(conf => conf.cid !== action.cid),
+				divs: state.divs.filter(div => div.cid !== action.cid),
+				teams: makeTIDsSequential(
+					state.teams.filter(t => t.cid !== action.cid),
+				),
+			};
+
+		case "deleteDiv":
+			return {
+				...state,
+				divs: state.divs.filter(div => div.did !== action.did),
+				teams: makeTIDsSequential(
+					state.teams.filter(t => t.did !== action.did),
+				),
+			};
+
+		case "deleteTeam":
+			return {
+				...state,
+				teams: makeTIDsSequential(
+					state.teams.filter(t => t.tid !== action.tid),
+				),
+			};
+
+		default:
+			throw new Error();
+	}
+};
 
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
@@ -91,17 +246,13 @@ const CardHeader = ({
 const Division = ({
 	div,
 	teams,
-	renameDiv,
+	dispatch,
 	editTeam,
-	deleteDiv,
-	deleteTeam,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
-	renameDiv: (did: number, name: string) => void;
+	dispatch: React.Dispatch<Action>;
 	editTeam: (tid: number) => void;
-	deleteDiv: (did: number) => void;
-	deleteTeam: (tid: number) => void;
 }) => {
 	return (
 		<div className="card mt-3">
@@ -109,10 +260,10 @@ const Division = ({
 				alignButtonsRight
 				name={div.name}
 				onDelete={() => {
-					deleteDiv(div.did);
+					dispatch({ type: "deleteDiv", did: div.did });
 				}}
 				onRename={(name: string) => {
-					renameDiv(div.did, name);
+					dispatch({ type: "renameDiv", did: div.did, name });
 				}}
 			/>
 
@@ -129,7 +280,7 @@ const Division = ({
 						/>
 						<DeleteButton
 							onClick={() => {
-								deleteTeam(t.tid);
+								dispatch({ type: "deleteTeam", tid: t.tid });
 							}}
 						/>
 					</li>
@@ -143,34 +294,24 @@ const Conference = ({
 	conf,
 	divs,
 	teams,
-	renameConf,
-	renameDiv,
+	dispatch,
 	editTeam,
-	deleteConf,
-	deleteDiv,
-	deleteTeam,
-	addDiv,
 }: {
 	conf: Conf;
 	divs: Div[];
 	teams: NewLeagueTeam[];
-	renameConf: (cid: number, name: string) => void;
-	renameDiv: (did: number, name: string) => void;
+	dispatch: React.Dispatch<Action>;
 	editTeam: (tid: number) => void;
-	deleteConf: (cid: number) => void;
-	deleteDiv: (did: number) => void;
-	deleteTeam: (tid: number) => void;
-	addDiv: (cid: number) => void;
 }) => {
 	return (
 		<div className="card mb-3">
 			<CardHeader
 				name={conf.name}
 				onDelete={() => {
-					deleteConf(conf.cid);
+					dispatch({ type: "deleteConf", cid: conf.cid });
 				}}
 				onRename={(name: string) => {
-					renameConf(conf.cid, name);
+					dispatch({ type: "renameConf", cid: conf.cid, name });
 				}}
 			/>
 
@@ -179,10 +320,8 @@ const Conference = ({
 					<div className="col-sm-6 col-md-4" key={div.did}>
 						<Division
 							div={div}
-							renameDiv={renameDiv}
+							dispatch={dispatch}
 							editTeam={editTeam}
-							deleteDiv={deleteDiv}
-							deleteTeam={deleteTeam}
 							teams={teams.filter(t => t.did === div.did)}
 						/>
 					</div>
@@ -193,7 +332,7 @@ const Conference = ({
 				<button
 					className="btn btn-secondary"
 					onClick={() => {
-						addDiv(conf.cid);
+						dispatch({ type: "addDiv", cid: conf.cid });
 					}}
 				>
 					Add Division
@@ -201,19 +340,6 @@ const Conference = ({
 			</div>
 		</div>
 	);
-};
-
-type ConfsDivsTeams = {
-	confs: Conf[];
-	divs: Div[];
-	teams: NewLeagueTeam[];
-};
-
-const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
-	return teams.map((t, i) => ({
-		...t,
-		tid: i,
-	}));
 };
 
 const CustomizeTeams = ({
@@ -231,46 +357,16 @@ const CustomizeTeams = ({
 	initialTeams: NewLeagueTeam[];
 	getDefaultConfsDivsTeams: () => ConfsDivsTeams;
 }) => {
-	const [confs, setConfs] = useState([...initialConfs]);
-	const [divs, setDivs] = useState([...initialDivs]);
-	const [teams, setTeams] = useState([...initialTeams]);
+	const [{ confs, divs, teams }, dispatch] = useReducer(reducer, {
+		confs: [...initialConfs],
+		divs: [...initialDivs],
+		teams: [...initialTeams],
+	});
+
 	const [editingTID, setEditingTID] = useState<number | undefined>();
-
-	const renameThing = (type: "conf" | "div") => (id: number, name: string) => {
-		const func = type === "conf" ? setConfs : setDivs;
-
-		func((rows: any[]) =>
-			rows.map(row => {
-				const rowID = type === "conf" ? row.cid : row.did;
-				if (rowID !== id) {
-					return row;
-				}
-
-				return {
-					...row,
-					name,
-				};
-			}),
-		);
-	};
-	const renameConf = renameThing("conf");
-	const renameDiv = renameThing("div");
 
 	const editTeam = (tid: number) => {
 		setEditingTID(tid);
-	};
-
-	const deleteConf = (cid: number) => {
-		setConfs(confs.filter(conf => conf.cid !== cid));
-		setDivs(divs.filter(div => div.cid !== cid));
-		setTeams(makeTIDsSequential(teams.filter(t => t.cid !== cid)));
-	};
-	const deleteDiv = (did: number) => {
-		setDivs(divs.filter(div => div.did !== did));
-		setTeams(makeTIDsSequential(teams.filter(t => t.did !== did)));
-	};
-	const deleteTeam = (tid: number) => {
-		setTeams(makeTIDsSequential(teams.filter(t => t.tid !== tid)));
 	};
 
 	return (
@@ -288,9 +384,10 @@ const CustomizeTeams = ({
 					className="btn btn-danger"
 					onClick={() => {
 						const info = getDefaultConfsDivsTeams();
-						setConfs(info.confs);
-						setDivs(info.divs);
-						setTeams(info.teams);
+						dispatch({
+							type: "setState",
+							...info,
+						});
 					}}
 				>
 					Reset All
@@ -302,38 +399,14 @@ const CustomizeTeams = ({
 					conf={conf}
 					divs={divs.filter(div => div.cid === conf.cid)}
 					teams={teams}
-					renameConf={renameConf}
-					renameDiv={renameDiv}
+					dispatch={dispatch}
 					editTeam={editTeam}
-					deleteConf={deleteConf}
-					deleteDiv={deleteDiv}
-					deleteTeam={deleteTeam}
-					addDiv={(cid: number) => {
-						const maxDID =
-							divs.length > 0 ? Math.max(...divs.map(div => div.did)) : -1;
-						setDivs([
-							...divs,
-							{
-								did: maxDID + 1,
-								cid,
-								name: "New Division",
-							},
-						]);
-					}}
 				/>
 			))}
 			<button
 				className="btn btn-secondary"
 				onClick={() => {
-					const maxCID =
-						confs.length > 0 ? Math.max(...confs.map(conf => conf.cid)) : -1;
-					setConfs([
-						...confs,
-						{
-							cid: maxCID + 1,
-							name: "New Conference",
-						},
-					]);
+					dispatch({ type: "addConf" });
 				}}
 			>
 				Add Conference

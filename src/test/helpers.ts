@@ -1,7 +1,7 @@
 import { Cache, idb } from "../worker/db";
 import { STORES, Store } from "../worker/db/Cache";
 import { defaultGameAttributes, g, helpers } from "../worker/util";
-import { footballOverrides } from "../common/defaultGameAttributes";
+import { footballOverrides } from "../worker/util/defaultGameAttributes";
 
 const mockIDBLeague = (): any => {
 	const store = {

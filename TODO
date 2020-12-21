@@ -1,3 +1,17 @@
+name/colleges revamp
+- races
+  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
+  - playerBioInfo.countries[].races?: Record<Race, number>,
+  - defaultRaces: Record<Country, Record<Race, number>>
+  - CSV in tools, generate JSON like names, print countries missing
+    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
+  - default values for individual countries
+  - new release of faces.js with many new facial features, and upgrade
+- global default... should it override individual countries?
+  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
+- flag icon on roster page
+  - https://github.com/lipis/flag-icon-css
+
 move groundhog day to game modes in settings
 
 With multiple all-star games in one season, clicking "prev" or "next" gives you an error. https://discord.com/channels/290013534023057409/290015591216054273/789050505942532146
@@ -39,12 +53,18 @@ UI for selecting a custom set of teams in a new league
   - random players - sure, it's fine
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
 - MVP
+  - try drag adn drop
+  - reorder confs/divs, no drag and drop though
+    - make sure to handle moving divs from one conference to another
   - random players only
+  - confirm for delete conf/div
   - add support for creating/editing teams
     - somehow allow a preset for a city to be selected
       - use similar UI to expansion draft
       - fix LA/LA issue
     - reuse the expansion draft team editor UI?
+- after MVP
+  - do we think of it as "editing the teams list of in some league file" or "specifying teams list, which may include additional info like adding real teams"? the latter is simpler, because then we start a league with no history or anything. but in UI terms it's unclear how to present it... like the "Customize" button is great for a random players league, because it already has no history or anything. but should that include access to real players? and how should the "main" flow be for accessing real players, should it be only from the "custom league" screen? if it's hidden in another dropdown, probably not many people would see it. so i guess it'd just be nice from a UI perspective if it could be made generic enough to work everywhere, but i don't know if that will be possible.
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right
   - does this make sense? what if we do a real players league and pick 2 custom teams with random players, what would that imply?
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
@@ -111,20 +131,6 @@ ability to switch back to prior year
 - maybe not...
   - in other games, this would be achieved by saving at different times. when that is easier (stream) that will be better
   - storing g is messy, since g already has a history mechanism
-
-name/colleges revamp
-- races
-  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
-  - playerBioInfo.countries[].races?: Record<Race, number>,
-  - defaultRaces: Record<Country, Record<Race, number>>
-  - CSV in tools, generate JSON like names, print countries missing
-    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
-  - default values for individual countries
-  - new release of faces.js, and upgrade
-- global default... should it override individual countries?
-  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
-- flag icon on roster page
-  - https://github.com/lipis/flag-icon-css
 
 When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
 

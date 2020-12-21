@@ -390,6 +390,7 @@ const Division = ({
 	div,
 	teams,
 	dispatch,
+	addTeam,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
@@ -398,6 +399,7 @@ const Division = ({
 	div: Div;
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
+	addTeam: (did: number) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -452,6 +454,17 @@ const Division = ({
 					</li>
 				))}
 			</ul>
+
+			<div className="card-body p-0 m-3">
+				<button
+					className="btn btn-secondary"
+					onClick={() => {
+						addTeam(div.did);
+					}}
+				>
+					Add Team
+				</button>
+			</div>
 		</div>
 	);
 };
@@ -461,6 +474,7 @@ const Conference = ({
 	divs,
 	teams,
 	dispatch,
+	addTeam,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
@@ -470,6 +484,7 @@ const Conference = ({
 	divs: Div[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
+	addTeam: (did: number) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -501,6 +516,7 @@ const Conference = ({
 						<Division
 							div={div}
 							dispatch={dispatch}
+							addTeam={addTeam}
 							editTeam={editTeam}
 							teams={teams.filter(t => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
@@ -546,16 +562,53 @@ const CustomizeTeams = ({
 		teams: [...initialTeams],
 	});
 
-	const [editingTID, setEditingTID] = useState<number | undefined>();
+	const [editingInfo, setEditingInfo] = useState<
+		| {
+				type: "none";
+		  }
+		| {
+				type: "add";
+				did: number;
+		  }
+		| {
+				type: "edit";
+				tid: number;
+		  }
+	>({
+		type: "none",
+	});
 
 	const editTeam = (tid: number) => {
-		setEditingTID(tid);
+		setEditingInfo({
+			type: "edit",
+			tid,
+		});
+	};
+
+	const addTeam = (did: number) => {
+		setEditingInfo({
+			type: "add",
+			did,
+		});
 	};
 
 	let editingTeam: NewLeagueTeam | undefined;
-	if (editingTID === -1) {
-	} else if (editingTID !== undefined) {
-		editingTeam = teams.find(t => t.tid === editingTID);
+	if (editingInfo.type === "add") {
+		const div = divs.find(div => div.did === editingInfo.did);
+		if (div) {
+			editingTeam = {
+				tid: -1,
+				region: "",
+				name: "",
+				abbrev: "NEW",
+				pop: 0,
+				popRank: 0,
+				cid: div.cid,
+				did: div.did,
+			};
+		}
+	} else if (editingInfo.type === "edit") {
+		editingTeam = teams.find(t => t.tid === editingInfo.tid);
 	}
 
 	const abbrevCounts = countBy(teams, "abbrev");
@@ -569,14 +622,6 @@ const CustomizeTeams = ({
 	return (
 		<>
 			<div className="mb-3">
-				<button
-					className="btn btn-secondary mr-2"
-					onClick={() => {
-						setEditingTID(-1);
-					}}
-				>
-					Add Team
-				</button>
 				<button
 					className="btn btn-danger"
 					onClick={() => {
@@ -597,6 +642,7 @@ const CustomizeTeams = ({
 					divs={divs.filter(div => div.cid === conf.cid)}
 					teams={teams}
 					dispatch={dispatch}
+					addTeam={addTeam}
 					editTeam={editTeam}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
@@ -638,7 +684,7 @@ const CustomizeTeams = ({
 			</form>
 
 			<UpsertTeamModal
-				key={editingTID}
+				key={editingInfo.tid}
 				t={editingTeam}
 				confs={confs}
 				divs={divs}
@@ -648,10 +694,10 @@ const CustomizeTeams = ({
 					} else {
 						dispatch({ type: "editTeam", t });
 					}
-					setEditingTID(undefined);
+					setEditingInfo({ type: "none" });
 				}}
 				onCancel={() => {
-					setEditingTID(undefined);
+					setEditingInfo({ type: "none" });
 				}}
 			/>
 		</>

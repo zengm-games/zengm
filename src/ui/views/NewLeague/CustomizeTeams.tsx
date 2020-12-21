@@ -386,6 +386,27 @@ const CardHeader = ({
 	);
 };
 
+const AddTeam = ({
+	addTeam,
+	did,
+}: {
+	addTeam: (did: number) => void;
+	did: number;
+}) => {
+	return (
+		<div className="card-body p-0 m-3">
+			<button
+				className="btn btn-secondary"
+				onClick={() => {
+					addTeam(did);
+				}}
+			>
+				Add Team
+			</button>
+		</div>
+	);
+};
+
 const Division = ({
 	div,
 	teams,
@@ -464,16 +485,7 @@ const Division = ({
 				))}
 			</ul>
 
-			<div className="card-body p-0 m-3">
-				<button
-					className="btn btn-secondary"
-					onClick={() => {
-						addTeam(div.did);
-					}}
-				>
-					Add Team
-				</button>
-			</div>
+			<AddTeam addTeam={addTeam} did={div.did} />
 		</div>
 	);
 };

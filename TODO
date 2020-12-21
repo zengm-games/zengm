@@ -12,6 +12,9 @@ name/colleges revamp
 - flag icon on roster page
   - https://github.com/lipis/flag-icon-css
 
+add some more built-in teams
+- https://old.reddit.com/r/BasketballGM/comments/g66uz4/team_name_suggestions_for_other_cities/
+
 move groundhog day to game modes in settings
 
 With multiple all-star games in one season, clicking "prev" or "next" gives you an error. https://discord.com/channels/290013534023057409/290015591216054273/789050505942532146
@@ -52,9 +55,6 @@ UI for selecting a custom set of teams in a new league
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
 - MVP
   - random players only
-  - somehow allow a preset for a city to be selected
-    - share code with expansion draft
-    - Add Team should be dropdown
   - what about God Mode?
     - in upsert form, add warning that any stadium capacity over X or pop over Y will result in god mode being enabled in your league
 - after MVP

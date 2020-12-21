@@ -7,6 +7,9 @@ import orderBy from "lodash/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash/countBy";
 import { confirm, logEvent } from "../../util";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
+import getTeamInfos from "../../../common/getTeamInfos";
+import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.basketball";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -389,20 +392,43 @@ const CardHeader = ({
 const AddTeam = ({
 	addTeam,
 	did,
+	availableBuiltInTeams,
 }: {
-	addTeam: (did: number) => void;
+	addTeam: (did: number, t?: NewLeagueTeam) => void;
 	did: number;
+	availableBuiltInTeams: NewLeagueTeam[];
 }) => {
+	const [abbrev, setAbbrev] = useState("custom");
+
 	return (
 		<div className="card-body p-0 m-3">
-			<button
-				className="btn btn-secondary"
-				onClick={() => {
-					addTeam(did);
-				}}
-			>
-				Add Team
-			</button>
+			<div className="input-group">
+				<select
+					className="form-control"
+					value={abbrev}
+					onChange={event => {
+						setAbbrev(event.target.value);
+					}}
+				>
+					<option value="custom">Custom Team</option>
+					{availableBuiltInTeams.map(t => (
+						<option key={t.abbrev} value={t.abbrev}>
+							{t.region} {t.name} ({t.abbrev})
+						</option>
+					))}
+				</select>
+				<div className="input-group-append">
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							const t = availableBuiltInTeams.find(t => t.abbrev === abbrev);
+							addTeam(did, t);
+						}}
+					>
+						Add Team
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 };
@@ -416,15 +442,17 @@ const Division = ({
 	disableMoveUp,
 	disableMoveDown,
 	abbrevsUsedMultipleTimes,
+	availableBuiltInTeams,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
-	addTeam: (did: number) => void;
+	addTeam: (did: number, t?: NewLeagueTeam) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
+	availableBuiltInTeams: NewLeagueTeam[];
 }) => {
 	return (
 		<div className="card mt-3">
@@ -485,7 +513,11 @@ const Division = ({
 				))}
 			</ul>
 
-			<AddTeam addTeam={addTeam} did={div.did} />
+			<AddTeam
+				addTeam={addTeam}
+				did={div.did}
+				availableBuiltInTeams={availableBuiltInTeams}
+			/>
 		</div>
 	);
 };
@@ -500,16 +532,18 @@ const Conference = ({
 	disableMoveUp,
 	disableMoveDown,
 	abbrevsUsedMultipleTimes,
+	availableBuiltInTeams,
 }: {
 	conf: Conf;
 	divs: Div[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
-	addTeam: (did: number) => void;
+	addTeam: (did: number, t?: NewLeagueTeam) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
+	availableBuiltInTeams: NewLeagueTeam[];
 }) => {
 	return (
 		<div className="card mb-3">
@@ -552,6 +586,7 @@ const Conference = ({
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
 							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+							availableBuiltInTeams={availableBuiltInTeams}
 						/>
 					</div>
 				))}
@@ -615,11 +650,25 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const addTeam = (did: number) => {
-		setEditingInfo({
-			type: "add",
-			did,
-		});
+	const addTeam = (did: number, t?: NewLeagueTeam) => {
+		if (t) {
+			const div = divs.find(div => div.did === did);
+			if (div) {
+				dispatch({
+					type: "addTeam",
+					t: {
+						...t,
+						cid: div.cid,
+						did: div.did,
+					},
+				});
+			}
+		} else {
+			setEditingInfo({
+				type: "add",
+				did,
+			});
+		}
 	};
 
 	let editingTeam: NewLeagueTeam | undefined;
@@ -632,7 +681,7 @@ const CustomizeTeams = ({
 				name: "",
 				abbrev: "NEW",
 				pop: 1,
-				popRank: 0,
+				popRank: -1,
 				cid: div.cid,
 				did: div.did,
 			};
@@ -648,6 +697,18 @@ const CustomizeTeams = ({
 			abbrevsUsedMultipleTimes.push(abbrev);
 		}
 	}
+
+	const availableAbbrevs = getUnusedAbbrevs(teams);
+	const param = availableAbbrevs.map(abbrev => ({
+		tid: -1,
+		cid: -1,
+		did: -1,
+		abbrev,
+	}));
+	const availableBuiltInTeams: NewLeagueTeam[] = getTeamInfos(param).map(t => ({
+		...t,
+		popRank: -1,
+	}));
 
 	return (
 		<>
@@ -677,6 +738,7 @@ const CustomizeTeams = ({
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
 					abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+					availableBuiltInTeams={availableBuiltInTeams}
 				/>
 			))}
 			<button

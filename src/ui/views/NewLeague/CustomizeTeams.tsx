@@ -5,6 +5,8 @@ import classNames from "classnames";
 import arrayMove from "array-move";
 import orderBy from "lodash/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
+import countBy from "lodash/countBy";
+import { logEvent } from "../../util";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -391,6 +393,7 @@ const Division = ({
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
+	abbrevsUsedMultipleTimes,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
@@ -398,6 +401,7 @@ const Division = ({
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
+	abbrevsUsedMultipleTimes: string[];
 }) => {
 	return (
 		<div className="card mt-3">
@@ -424,7 +428,16 @@ const Division = ({
 				{teams.map(t => (
 					<li key={t.tid} className="list-group-item d-flex">
 						<div className="mr-auto">
-							{t.region} {t.name}
+							{t.region} {t.name}{" "}
+							<span
+								className={
+									abbrevsUsedMultipleTimes.includes(t.abbrev)
+										? "text-danger"
+										: undefined
+								}
+							>
+								({t.abbrev})
+							</span>
 						</div>
 						<EditButton
 							onClick={() => {
@@ -451,6 +464,7 @@ const Conference = ({
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
+	abbrevsUsedMultipleTimes,
 }: {
 	conf: Conf;
 	divs: Div[];
@@ -459,6 +473,7 @@ const Conference = ({
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
+	abbrevsUsedMultipleTimes: string[];
 }) => {
 	return (
 		<div className="card mb-3">
@@ -490,6 +505,7 @@ const Conference = ({
 							teams={teams.filter(t => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
+							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 						/>
 					</div>
 				))}
@@ -542,6 +558,14 @@ const CustomizeTeams = ({
 		editingTeam = teams.find(t => t.tid === editingTID);
 	}
 
+	const abbrevCounts = countBy(teams, "abbrev");
+	const abbrevsUsedMultipleTimes: string[] = [];
+	for (const [abbrev, count] of Object.entries(abbrevCounts)) {
+		if (count > 1) {
+			abbrevsUsedMultipleTimes.push(abbrev);
+		}
+	}
+
 	return (
 		<>
 			<div className="mb-3">
@@ -576,6 +600,7 @@ const CustomizeTeams = ({
 					editTeam={editTeam}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
+					abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 				/>
 			))}
 			<button
@@ -589,7 +614,18 @@ const CustomizeTeams = ({
 
 			<form
 				className="mt-3"
-				onSubmit={() => {
+				onSubmit={event => {
+					event.preventDefault();
+					if (abbrevsUsedMultipleTimes.length > 0) {
+						logEvent({
+							type: "error",
+							text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
+								", ",
+							)}`,
+							saveToDb: false,
+						});
+						return;
+					}
 					onSave({ confs, divs, teams });
 				}}
 			>

@@ -59,7 +59,6 @@ const UpsertTeamModal = ({
 							confs={confs}
 							divs={divs}
 							handleInputChange={(field, event) => {
-								console.log(field, event.target.value);
 								if (field.startsWith("colors")) {
 									const ind = parseInt(field.replace("colors", ""));
 									if (ind >= 0 && ind <= 2) {

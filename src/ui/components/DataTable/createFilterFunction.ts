@@ -19,7 +19,7 @@ const createFilterFunction = (
 			let number;
 
 			if (searchType === "number" || searchType === "currency") {
-				number = text.replace(/[^-?0-9.<>]/g, "");
+				number = text.replace(/[^-?0-9.<>=]/g, "");
 
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
 					direction = number[0];

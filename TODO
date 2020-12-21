@@ -33,8 +33,6 @@ tiebreakers based on head-to-head
   - this implies that the draft ranking would be different than playoff seeding, at times
 - persist playoff seed to teamSeason
 
-swap from earthquakes to lowriders for random leagues
-
 "find players" form
 - customizable search boxes for stats/ratings
 - table then displays only the columns you searched for, like stathead

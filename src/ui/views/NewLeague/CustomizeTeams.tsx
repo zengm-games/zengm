@@ -3,6 +3,7 @@ import type { NewLeagueTeam } from "./types";
 import type { Conf, Div } from "../../../common/types";
 import classNames from "classnames";
 import { Modal } from "react-bootstrap";
+import arrayMove from "array-move";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -39,6 +40,16 @@ type Action =
 			type: "renameDiv";
 			did: number;
 			name: string;
+	  }
+	| {
+			type: "moveConf";
+			cid: number;
+			direction: 1 | -1;
+	  }
+	| {
+			type: "moveDiv";
+			did: number;
+			direction: 1 | -1;
 	  }
 	| {
 			type: "deleteConf";
@@ -128,6 +139,26 @@ const reducer = (state: State, action: Action): State => {
 				}),
 			};
 
+		case "moveConf": {
+			const oldIndex = state.confs.findIndex(conf => conf.cid === action.cid);
+			const newIndex = oldIndex + action.direction;
+
+			if (newIndex < 0 || newIndex > state.confs.length - 1) {
+				return state;
+			}
+
+			const newConfs = arrayMove(state.confs, oldIndex, newIndex);
+
+			return {
+				...state,
+				confs: newConfs,
+			};
+		}
+
+		case "moveDiv": {
+			throw new Error("Not implemented");
+		}
+
 		case "deleteConf":
 			return {
 				confs: state.confs.filter(conf => conf.cid !== action.cid),
@@ -162,7 +193,7 @@ const reducer = (state: State, action: Action): State => {
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
 		<button
-			className="ml-3 btn btn-link p-0 border-0"
+			className="ml-2 btn btn-link p-0 border-0 text-reset"
 			onClick={onClick}
 			title="Edit"
 			type="button"
@@ -189,12 +220,20 @@ const CardHeader = ({
 	alignButtonsRight,
 	name,
 	onDelete,
+	onMoveDown,
+	onMoveUp,
 	onRename,
+	disableMoveUp,
+	disableMoveDown,
 }: {
 	alignButtonsRight?: boolean;
 	name: string;
 	onDelete: () => void;
+	onMoveDown: () => void;
+	onMoveUp: () => void;
 	onRename: (name: string) => void;
+	disableMoveUp: boolean;
+	disableMoveDown: boolean;
 }) => {
 	const [renaming, setRenaming] = useState(false);
 	const [controlledName, setControlledName] = useState(name);
@@ -228,9 +267,25 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					<div className={alignButtonsRight ? "mr-auto" : undefined}>
-						{name}
-					</div>
+					<div className={alignButtonsRight ? "mr-auto" : "mr-2"}>{name}</div>
+					<button
+						className="ml-2 btn btn-link p-0 border-0 text-reset"
+						title="Move Up"
+						type="button"
+						onClick={onMoveUp}
+						disabled={disableMoveUp}
+					>
+						<span className="glyphicon glyphicon-menu-left" />
+					</button>
+					<button
+						className="ml-2 btn btn-link p-0 border-0 text-reset"
+						title="Move Down"
+						type="button"
+						onClick={onMoveDown}
+						disabled={disableMoveDown}
+					>
+						<span className="glyphicon glyphicon-menu-right" />
+					</button>
 					<EditButton
 						onClick={() => {
 							setRenaming(true);
@@ -248,11 +303,15 @@ const Division = ({
 	teams,
 	dispatch,
 	editTeam,
+	disableMoveUp,
+	disableMoveDown,
 }: {
 	div: Div;
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
 	editTeam: (tid: number) => void;
+	disableMoveUp: boolean;
+	disableMoveDown: boolean;
 }) => {
 	return (
 		<div className="card mt-3">
@@ -262,9 +321,17 @@ const Division = ({
 				onDelete={() => {
 					dispatch({ type: "deleteDiv", did: div.did });
 				}}
+				onMoveDown={() => {
+					dispatch({ type: "moveDiv", did: div.did, direction: 1 });
+				}}
+				onMoveUp={() => {
+					dispatch({ type: "moveDiv", did: div.did, direction: -1 });
+				}}
 				onRename={(name: string) => {
 					dispatch({ type: "renameDiv", did: div.did, name });
 				}}
+				disableMoveUp={disableMoveUp}
+				disableMoveDown={disableMoveDown}
 			/>
 
 			<ul className="list-group list-group-flush">
@@ -296,12 +363,16 @@ const Conference = ({
 	teams,
 	dispatch,
 	editTeam,
+	disableMoveUp,
+	disableMoveDown,
 }: {
 	conf: Conf;
 	divs: Div[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
 	editTeam: (tid: number) => void;
+	disableMoveUp: boolean;
+	disableMoveDown: boolean;
 }) => {
 	return (
 		<div className="card mb-3">
@@ -310,19 +381,29 @@ const Conference = ({
 				onDelete={() => {
 					dispatch({ type: "deleteConf", cid: conf.cid });
 				}}
+				onMoveDown={() => {
+					dispatch({ type: "moveConf", cid: conf.cid, direction: 1 });
+				}}
+				onMoveUp={() => {
+					dispatch({ type: "moveConf", cid: conf.cid, direction: -1 });
+				}}
+				disableMoveUp={disableMoveUp}
+				disableMoveDown={disableMoveDown}
 				onRename={(name: string) => {
 					dispatch({ type: "renameConf", cid: conf.cid, name });
 				}}
 			/>
 
 			<div className="row mx-0">
-				{divs.map(div => (
+				{divs.map((div, i) => (
 					<div className="col-sm-6 col-md-4" key={div.did}>
 						<Division
 							div={div}
 							dispatch={dispatch}
 							editTeam={editTeam}
 							teams={teams.filter(t => t.did === div.did)}
+							disableMoveUp={i === 0}
+							disableMoveDown={i === divs.length - 1}
 						/>
 					</div>
 				))}
@@ -393,7 +474,7 @@ const CustomizeTeams = ({
 					Reset All
 				</button>
 			</div>
-			{confs.map(conf => (
+			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
 					conf={conf}
@@ -401,6 +482,8 @@ const CustomizeTeams = ({
 					teams={teams}
 					dispatch={dispatch}
 					editTeam={editTeam}
+					disableMoveUp={i === 0}
+					disableMoveDown={i === confs.length - 1}
 				/>
 			))}
 			<button

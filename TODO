@@ -13,7 +13,11 @@ name/colleges revamp
   - https://github.com/lipis/flag-icon-css
 
 add some more built-in teams
-- https://old.reddit.com/r/BasketballGM/comments/g66uz4/team_name_suggestions_for_other_cities/
+- Virginia Beach, Austin, Buffalo, Jacksonville
+  - https://old.reddit.com/r/BasketballGM/comments/g66uz4/team_name_suggestions_for_other_cities/ has some suggestions
+- maybe: Providence, Columbus, Ottawa, Calgary, Louisville
+- foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw
+- also redo a couple old logos
 
 move groundhog day to game modes in settings
 
@@ -54,7 +58,6 @@ UI for selecting a custom set of teams in a new league
   - random players - sure, it's fine
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
 - MVP
-  - random players only
   - what about God Mode?
     - in upsert form, add warning that any stadium capacity over X or pop over Y will result in god mode being enabled in your league
 - after MVP

@@ -1390,18 +1390,20 @@ const NewLeague = (props: View<"newLeague">) => {
 									);
 								})}
 							</select>
-							<div className="input-group-append new-league-customize-teams-wrapper">
-								<button
-									className="btn btn-secondary"
-									disabled={disableWhileLoadingLeagueFile}
-									type="button"
-									onClick={() => {
-										setCustomizeTeamsUI(true);
-									}}
-								>
-									Customize
-								</button>
-							</div>
+							{state.customize === "default" ? (
+								<div className="input-group-append new-league-customize-teams-wrapper">
+									<button
+										className="btn btn-secondary"
+										disabled={disableWhileLoadingLeagueFile}
+										type="button"
+										onClick={() => {
+											setCustomizeTeamsUI(true);
+										}}
+									>
+										Customize
+									</button>
+								</div>
+							) : null}
 							<div className="input-group-append">
 								<button
 									className="btn btn-secondary"

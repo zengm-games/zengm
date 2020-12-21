@@ -37,8 +37,8 @@ const GodModeWarning = ({
 	}
 	if (errors.length >= 1) {
 		return (
-			<div className="alert alert-danger">
-				If {errors.join(" or ")}, then God Mode will be enabled by default in
+			<div className="alert alert-danger mb-0">
+				If {errors.join(" or ")}, then you will not earn any achievements in
 				this league.
 			</div>
 		);

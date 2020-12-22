@@ -267,7 +267,7 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 
       var payload = json.__tcfapiCall;
 
-      if (payload) {
+      if (payload && window.__tcfapi) {
         window.__tcfapi(
           payload.command,
           payload.version,
@@ -281,8 +281,10 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
             };
             if (msgIsString) {
               returnMsg = JSON.stringify(returnMsg);
-            }
-            event.source.postMessage(returnMsg, '*');
+			}
+			if (event.source) {
+			  event.source.postMessage(returnMsg, '*');
+			}
           },
           payload.parameter
         );

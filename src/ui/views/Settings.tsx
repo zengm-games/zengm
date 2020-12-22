@@ -934,12 +934,12 @@ options.push(
 		type: "bool",
 	},
 	{
-		category: "Player Development",
+		category: "Game Modes",
 		key: "repeatSeason",
 		name: "Groundhog Day",
 		godModeRequired: "always",
 		type: "bool",
-		description: `${descriptions.repeatSeason}. Groundhog Day can be enabled at any point in the season prior to the
+		description: `${descriptions.repeatSeason} Groundhog Day can be enabled at any point in the season prior to the
 				draft.`,
 	},
 	{

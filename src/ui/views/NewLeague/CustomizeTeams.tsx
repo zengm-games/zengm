@@ -9,6 +9,7 @@ import countBy from "lodash/countBy";
 import { confirm, logEvent } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
+import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -71,6 +72,7 @@ type Action =
 	| {
 			type: "deleteDiv";
 			did: number;
+			moveToDID?: number;
 	  }
 	| {
 			type: "deleteTeam";
@@ -258,14 +260,36 @@ const reducer = (state: State, action: Action): State => {
 				),
 			};
 
-		case "deleteDiv":
+		case "deleteDiv": {
+			let newTeams;
+			if (action.moveToDID === undefined) {
+				// Delete children
+				newTeams = state.teams.filter(t => t.did !== action.did);
+			} else {
+				// Move children
+				const div = state.divs.find(div => div.did === action.moveToDID);
+				if (!div) {
+					throw new Error("div not found");
+				}
+				newTeams = state.teams.map(t => {
+					if (t.did !== action.did) {
+						return t;
+					}
+
+					return {
+						...t,
+						did: div.did,
+						cid: div.cid,
+					};
+				});
+			}
+
 			return {
 				...state,
 				divs: state.divs.filter(div => div.did !== action.did),
-				teams: makeTIDsSequential(
-					state.teams.filter(t => t.did !== action.did),
-				),
+				teams: makeTIDsSequential(newTeams),
 			};
+		}
 
 		case "deleteTeam":
 			return {
@@ -434,6 +458,7 @@ const AddTeam = ({
 
 const Division = ({
 	div,
+	divs,
 	teams,
 	dispatch,
 	addTeam,
@@ -444,6 +469,7 @@ const Division = ({
 	availableBuiltInTeams,
 }: {
 	div: Div;
+	divs: Div[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
 	addTeam: (did: number, t?: NewLeagueTeam) => void;
@@ -459,15 +485,25 @@ const Division = ({
 				alignButtonsRight
 				name={div.name}
 				onDelete={async () => {
-					const proceed = await confirm(
-						`Are you want to delete the "${div.name}" division, including all teams inside it?`,
-						{
-							okText: "Delete",
-							cancelText: "Cancel",
-						},
-					);
-					if (proceed) {
+					if (teams.length === 0) {
 						dispatch({ type: "deleteDiv", did: div.did });
+					} else {
+						const siblings = divs
+							.filter(div2 => div2.did !== div.did)
+							.map(div2 => ({
+								key: div2.did,
+								text: `Move teams to "${div2.name}" division`,
+							}));
+						const { proceed, key } = await confirmDeleteWithChlidren({
+							text: `When the "${div.name}" division is deleted, what should happen to its teams?`,
+							deleteButtonText: "Delete Division",
+							deleteChildrenText: `Delete all teams in the "${div.name}" division`,
+							siblings,
+						});
+
+						if (proceed) {
+							dispatch({ type: "deleteDiv", did: div.did, moveToDID: key });
+						}
 					}
 				}}
 				onMoveDown={() => {
@@ -574,21 +610,24 @@ const Conference = ({
 			/>
 
 			<div className="row mx-0">
-				{divs.map((div, i) => (
-					<div className="col-sm-6 col-md-4" key={div.did}>
-						<Division
-							div={div}
-							dispatch={dispatch}
-							addTeam={addTeam}
-							editTeam={editTeam}
-							teams={teams.filter(t => t.did === div.did)}
-							disableMoveUp={i === 0 && disableMoveUp}
-							disableMoveDown={i === divs.length - 1 && disableMoveDown}
-							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
-							availableBuiltInTeams={availableBuiltInTeams}
-						/>
-					</div>
-				))}
+				{divs
+					.filter(div => div.cid === conf.cid)
+					.map((div, i) => (
+						<div className="col-sm-6 col-md-4" key={div.did}>
+							<Division
+								div={div}
+								divs={divs}
+								dispatch={dispatch}
+								addTeam={addTeam}
+								editTeam={editTeam}
+								teams={teams.filter(t => t.did === div.did)}
+								disableMoveUp={i === 0 && disableMoveUp}
+								disableMoveDown={i === divs.length - 1 && disableMoveDown}
+								abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+								availableBuiltInTeams={availableBuiltInTeams}
+							/>
+						</div>
+					))}
 			</div>
 
 			<div className="card-body p-0 m-3">
@@ -731,7 +770,7 @@ const CustomizeTeams = ({
 				<Conference
 					key={conf.cid}
 					conf={conf}
-					divs={divs.filter(div => div.cid === conf.cid)}
+					divs={divs}
 					teams={teams}
 					dispatch={dispatch}
 					addTeam={addTeam}

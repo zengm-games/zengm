@@ -17,8 +17,24 @@ name/colleges revamp
   - https://github.com/lipis/flag-icon-css
 
 add some more built-in teams
-- Virginia Beach, Austin, Buffalo, Jacksonville
-  
+- Virginia Beach
+  - Colonists
+  - Settlers
+  - Sandpipers
+- Austin
+  - Lone Stars
+  - River Bats
+  - Steer
+  - Armadillos
+- Buffalo
+  - Wings
+  - Buffalo
+- Jacksonville
+  - Gators
+- Honolulu
+  - Pearls
+- Ottawa
+  - Spiders https://en.wikipedia.org/wiki/Maman_(sculpture)
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
 - also redo a couple old logos
@@ -63,6 +79,11 @@ UI for selecting a custom set of teams in a new league
 - DOES THIS MAKE SENSE?
   - random players - sure, it's fine
   - real players, league file - gets a bit tricky for leagues starting after preseason, due to needing to match up tid/cid/did with various other objects, such as playoffSeries, scheduledEvents, teamSeason, etc
+- MVP
+  - when deleting conf/div, give option for what to do with the divs/teams in it, in a dropdown
+    - Delete, or Move to other conf/div (list all options)
+    - Don't show confirmation window if there are no children
+    - include conference name in divs list, to disambiguate
 - after MVP
   - do we think of it as "editing the teams list of in some league file" or "specifying teams list, which may include additional info like adding real teams"? the latter is simpler, because then we start a league with no history or anything. but in UI terms it's unclear how to present it... like the "Customize" button is great for a random players league, because it already has no history or anything. but should that include access to real players? and how should the "main" flow be for accessing real players, should it be only from the "custom league" screen? if it's hidden in another dropdown, probably not many people would see it. so i guess it'd just be nice from a UI perspective if it could be made generic enough to work everywhere, but i don't know if that will be possible.
 - "Customize" link in "Pick your team", maybe next to "Random". that results in a list of custom teams+options in state, which is reset whenever you switch the season/phase for real players, or switch the customize setting on the right

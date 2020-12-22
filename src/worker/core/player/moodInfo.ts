@@ -78,7 +78,7 @@ const moodInfo = async (
 
 	let willing = false;
 	if (
-		(!g.get("playersRefuseToNegotiate") && thisIsAUserTeam) ||
+		!g.get("playersRefuseToNegotiate") ||
 		rookie ||
 		firstSeasonAfterExpansionOverride
 	) {

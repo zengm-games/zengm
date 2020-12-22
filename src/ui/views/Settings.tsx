@@ -607,7 +607,7 @@ export const options: {
 		category: "Contracts",
 		key: "rookiesCanRefuse",
 		name: "Rookies Can Refuse To Negotiate",
-		godModeRequired: "always",
+		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (
 			<>
 				<p>

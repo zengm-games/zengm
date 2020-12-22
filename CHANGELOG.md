@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* BETA: You can now add/edit/delete teams in a new Random Players league before creating it, by clicking the "Customize" button under "Pick your team". [[1]]()
+* **2020-12-22: You can now add/edit/delete teams in a new Random Players league before creating it, by clicking the "Customize" button under "Pick your team". [[1]](https://old.reddit.com/r/BasketballGM/comments/kiclrx/you_can_now_addeditdelete_teams_in_a_new_random/)**
 
 * 2020-12-16: Added button to change the schedule of the All-Star Game to Tools > Danger Zone. [[1]](https://old.reddit.com/r/BasketballGM/comments/kepbrj/a_few_little_customization_options_for_the/)
 

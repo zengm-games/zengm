@@ -257,7 +257,7 @@ const NextButton = ({
 					})}
 					href={helpers.leagueUrl([
 						"game_log",
-						`${abbrev}_${tid}`,
+						abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
 						boxScore.season,
 						nextGid,
 					])}
@@ -308,7 +308,7 @@ const DetailedScore = ({
 						})}
 						href={helpers.leagueUrl([
 							"game_log",
-							`${abbrev}_${tid}`,
+							abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
 							boxScore.season,
 							prevGid,
 						])}

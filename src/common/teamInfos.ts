@@ -92,15 +92,15 @@ const teamInfos: {
 	},
 	LA: {
 		region: "Los Angeles",
-		name: "Earthquakes",
-		pop: 15.6,
-		colors: ["#aeaeae", "#ea4b0f", "#dedddd"],
-	},
-	LAL: {
-		region: "Los Angeles",
 		name: "Lowriders",
 		pop: 15.6,
 		colors: ["#00008b", "#ffaf28", "#ff24ee"],
+	},
+	LAE: {
+		region: "Los Angeles",
+		name: "Earthquakes",
+		pop: 15.6,
+		colors: ["#aeaeae", "#ea4b0f", "#dedddd"],
 	},
 	LV: {
 		region: "Las Vegas",
@@ -260,7 +260,8 @@ const teamInfos: {
 	},
 };
 
-teamInfos.LAC = teamInfos.LA;
+teamInfos.LAL = teamInfos.LA;
+teamInfos.LAC = teamInfos.LAE;
 teamInfos.GS = {
 	...teamInfos.SF,
 	region: "Golden State",

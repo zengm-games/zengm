@@ -146,7 +146,7 @@ function getTeamsDefault(): TeamBasic[] {
 				cid: 1,
 				did: 5,
 
-				abbrev: "LAL",
+				abbrev: "LA",
 			},
 			{
 				tid: 12,
@@ -366,7 +366,7 @@ function getTeamsDefault(): TeamBasic[] {
 				cid: 1,
 				did: 7,
 
-				abbrev: "LAL",
+				abbrev: "LA",
 			},
 			{
 				tid: 13,

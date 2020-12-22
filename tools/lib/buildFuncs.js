@@ -163,10 +163,6 @@ const reset = () => {
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 
-const upperCaseFirstLetter = string => {
-	return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
-};
-
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	const sport = getSport();
 
@@ -185,123 +181,161 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 		silent: true,
 	});
 
-	const bannerAdsCode = `<script type="text/javascript">
-var cmpConfig = {
-  global: false,
-  publisherName: "${upperCaseFirstLetter(sport)} GM",
-  publisherLogo: "https://${sport}-gm.com/files/logo.png",
-};
-function cmpFactory(cmpConfig) {
-  var cssToAdd = cmpConfig.customCSS ? cmpConfig.customCSS : ".qc-cmp-button.qc-cmp-secondary-button { border-color: #eee !important; background-color: #eee !important; }";
-  var styleSheet = document.createElement("style");
-  styleSheet.type = "text/css";
-  styleSheet.innerText = cssToAdd;
-  document.head.appendChild(styleSheet);
+	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
+	const bannerAdsCode = `<script type="text/javascript" async=true>
+(function() {
+  var host = '${sport}-gm.com';
+  var element = document.createElement('script');
+  var firstScript = document.getElementsByTagName('script')[0];
+  var url = 'https://quantcast.mgr.consensu.org'
+    .concat('/choice/', 'M1Q1fpfqa7Vk4', '/', host, '/choice.js')
+  var uspTries = 0;
+  var uspTriesLimit = 3;
+  element.async = true;
+  element.type = 'text/javascript';
+  element.src = url;
 
-  var initArgs = {
-    'Language': 'en',
-    'Initial Screen Reject Button Text': 'I DO NOT ACCEPT',
-    'Initial Screen Accept Button Text': 'I ACCEPT',
-    'Purpose Screen Body Text': 'You can set your consent preferences and determine how you want your data to be used based on the purposes below. You may set your preferences for us independently from those of third-party partners. Each purpose has a description so that you know how we and partners use your data.',
-    'Purpose Screen Vendor Link Text': 'See Vendors',
-    'Purpose Screen Save and Exit Button Text': 'SAVE &amp; EXIT',
-    'Vendor Screen Body Text': 'You can set consent preferences for individual third-party partners we work with below. Expand each company list item to see what purposes they use data for to help make your choices. In some cases, companies may use your data without asking for your consent, based on their legitimate interests. You can click on their privacy policy links for more information and to object to such processing. ',
-    'Vendor Screen Accept All Button Text': 'ACCEPT ALL',
-    'Vendor Screen Reject All Button Text': 'REJECT ALL',
-    'Vendor Screen Purposes Link Text': 'Back to Purposes',
-    'Vendor Screen Save and Exit Button Text': 'SAVE &amp; EXIT',
-    'Initial Screen Body Text': 'We and our partners use technologies, such as cookies, and process personal data, such as IP addresses and cookie identifiers, to personalise ads and content based on your interests, measure the performance of ads and content, and derive insights about the audiences who saw ads and content. Click below to consent to the use of this technology and the processing of your personal data for these purposes. You can change your mind and change your consent choices at any time by returning to this site. ',
-    'Initial Screen Body Text Option': 1,
-    'Publisher Purpose IDs': [1,2,3,4,5],
-    'Consent Scope': 'service',
-  };
-  if (cmpConfig.global) {
-    initArgs['Display UI'] = 'always';
-  }
-  if (cmpConfig.publisherName) {
-    initArgs['Publisher Name'] = cmpConfig.publisherName;
-  }
-  if (cmpConfig.publisherLogo) {
-    initArgs['Publisher Logo'] = cmpConfig.publisherLogo;
-  }
+  firstScript.parentNode.insertBefore(element, firstScript);
 
-  var elem = document.createElement('script');
-  elem.src = 'https://quantcast.mgr.consensu.org/cmp.js';
-  elem.async = true;
-  elem.type = "text/javascript";
-  var scpt = document.getElementsByTagName('script')[0];
-  scpt.parentNode.insertBefore(elem, scpt);
-  (function() {
-  var gdprAppliesGlobally = cmpConfig.global;
-  function addFrame() {
-    if (!window.frames['__cmpLocator']) {
-    if (document.body) {
-      var body = document.body,
-        iframe = document.createElement('iframe');
-      iframe.style = 'display:none';
-      iframe.name = '__cmpLocator';
-      body.appendChild(iframe);
-    } else {
-      // In the case where this stub is located in the head,
-      // this allows us to inject the iframe more quickly than
-      // relying on DOMContentLoaded or other events.
-      setTimeout(addFrame, 5);
-    }
-    }
-  }
-  addFrame();
-  function cmpMsgHandler(event) {
-    var msgIsString = typeof event.data === "string";
-    var json;
-    if(msgIsString) {
-    json = event.data.indexOf("__cmpCall") != -1 ? JSON.parse(event.data) : {};
-    } else {
-    json = event.data;
-    }
-    if (json.__cmpCall) {
-    var i = json.__cmpCall;
-    window.__cmp(i.command, i.parameter, function(retValue, success) {
-      var returnMsg = {"__cmpReturn": {
-      "returnValue": retValue,
-      "success": success,
-      "callId": i.callId
-      }};
-      if (event && event.source && event.source.postMessage) {
-        event.source.postMessage(msgIsString ?
-        JSON.stringify(returnMsg) : returnMsg, '*');
+  function makeStub() {
+    var TCF_LOCATOR_NAME = '__tcfapiLocator';
+    var queue = [];
+    var win = window;
+    var cmpFrame;
+
+    function addFrame() {
+      var doc = win.document;
+      var otherCMP = !!(win.frames[TCF_LOCATOR_NAME]);
+
+      if (!otherCMP) {
+        if (doc.body) {
+          var iframe = doc.createElement('iframe');
+
+          iframe.style.cssText = 'display:none';
+          iframe.name = TCF_LOCATOR_NAME;
+          doc.body.appendChild(iframe);
+        } else {
+          setTimeout(addFrame, 5);
+        }
       }
-    });
+      return !otherCMP;
     }
-  }
-  window.__cmp = function (c) {
-    var b = arguments;
-    if (!b.length) {
-    return __cmp.a;
+
+    function tcfAPIHandler() {
+      var gdprApplies;
+      var args = arguments;
+
+      if (!args.length) {
+        return queue;
+      } else if (args[0] === 'setGdprApplies') {
+        if (
+          args.length > 3 &&
+          args[2] === 2 &&
+          typeof args[3] === 'boolean'
+        ) {
+          gdprApplies = args[3];
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
+        }
+      } else if (args[0] === 'ping') {
+        var retr = {
+          gdprApplies: gdprApplies,
+          cmpLoaded: false,
+          cmpStatus: 'stub'
+        };
+
+        if (typeof args[2] === 'function') {
+          args[2](retr);
+        }
+      } else {
+        queue.push(args);
+      }
     }
-    else if (b[0] === 'ping') {
-    b[2]({"gdprAppliesGlobally": gdprAppliesGlobally,
-      "cmpLoaded": false}, true);
-    } else if (c == '__cmp')
-    return false;
-    else {
-    if (typeof __cmp.a === 'undefined') {
-      __cmp.a = [];
+
+    function postMessageEventHandler(event) {
+      var msgIsString = typeof event.data === 'string';
+      var json = {};
+
+      try {
+        if (msgIsString) {
+          json = JSON.parse(event.data);
+        } else {
+          json = event.data;
+        }
+      } catch (ignore) {}
+
+      var payload = json.__tcfapiCall;
+
+      if (payload) {
+        window.__tcfapi(
+          payload.command,
+          payload.version,
+          function(retValue, success) {
+            var returnMsg = {
+              __tcfapiReturn: {
+                returnValue: retValue,
+                success: success,
+                callId: payload.callId
+              }
+            };
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
+            event.source.postMessage(returnMsg, '*');
+          },
+          payload.parameter
+        );
+      }
     }
-    __cmp.a.push([].slice.apply(b));
+
+    while (win) {
+      try {
+        if (win.frames[TCF_LOCATOR_NAME]) {
+          cmpFrame = win;
+          break;
+        }
+      } catch (ignore) {}
+
+      if (win === window.top) {
+        break;
+      }
+      win = win.parent;
     }
+    if (!cmpFrame) {
+      addFrame();
+      win.__tcfapi = tcfAPIHandler;
+      win.addEventListener('message', postMessageEventHandler, false);
+    }
+  };
+
+  makeStub();
+
+  var uspStubFunction = function() {
+    var arg = arguments;
+    if (typeof window.__uspapi !== uspStubFunction) {
+      setTimeout(function() {
+        if (typeof window.__uspapi !== 'undefined') {
+          window.__uspapi.apply(window.__uspapi, arg);
+        }
+      }, 500);
+    }
+  };
+
+  var checkIfUspIsReady = function() {
+    uspTries++;
+    if (window.__uspapi === uspStubFunction && uspTries < uspTriesLimit) {
+      console.warn('USP is not accessible');
+    } else {
+      clearInterval(uspInterval);
+    }
+  };
+
+  if (typeof window.__uspapi === 'undefined') {
+    window.__uspapi = uspStubFunction;
+    var uspInterval = setInterval(checkIfUspIsReady, 6000);
   }
-  window.__cmp.gdprAppliesGlobally = gdprAppliesGlobally;
-  window.__cmp.msgHandler = cmpMsgHandler;
-  if (window.addEventListener) {
-    window.addEventListener('message', cmpMsgHandler, false);
-  }
-  else {
-    window.attachEvent('onmessage', cmpMsgHandler);
-  }
-  })();
-  window.__cmp('init', initArgs);
-}
-cmpFactory(cmpConfig);
+})();
 </script>
 
 <script type="text/javascript">

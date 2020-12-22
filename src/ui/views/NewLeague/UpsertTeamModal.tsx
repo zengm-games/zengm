@@ -83,6 +83,12 @@ const UpsertTeamModal = ({
 		if (t === undefined || controlledTeam === undefined) {
 			return;
 		}
+		const did = parseInt(controlledTeam.did);
+		const div = divs.find(div => div.did === did);
+		if (!div) {
+			return;
+		}
+
 		const edited = {
 			...t,
 			region: controlledTeam.region,
@@ -91,7 +97,8 @@ const UpsertTeamModal = ({
 			pop: parseFloat(controlledTeam.pop),
 			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
 			colors: controlledTeam.colors,
-			did: parseInt(controlledTeam.did),
+			did,
+			cid: div.cid,
 			imgURL: t.imgURL,
 		};
 

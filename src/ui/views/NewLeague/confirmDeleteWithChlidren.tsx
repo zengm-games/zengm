@@ -46,7 +46,6 @@ const Confirm = confirmable(
 				}
 			}, 0);
 		}, []);
-		console.log(siblings);
 
 		return (
 			<Modal show={show} onHide={cancel}>

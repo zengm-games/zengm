@@ -6,7 +6,7 @@ import arrayMove from "array-move";
 import orderBy from "lodash/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash/countBy";
-import { confirm, logEvent } from "../../util";
+import { logEvent } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
@@ -68,6 +68,7 @@ type Action =
 	| {
 			type: "deleteConf";
 			cid: number;
+			moveToCID?: number;
 	  }
 	| {
 			type: "deleteDiv";
@@ -251,14 +252,45 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
-		case "deleteConf":
+		case "deleteConf": {
+			const { moveToCID } = action;
+
+			let newDivs;
+			let newTeams;
+			if (moveToCID === undefined) {
+				// Delete children
+				newDivs = state.divs.filter(div => div.cid !== action.cid);
+				newTeams = state.teams.filter(t => t.cid !== action.cid);
+			} else {
+				// Move children
+				newDivs = state.divs.map(div => {
+					if (div.cid !== action.cid) {
+						return div;
+					}
+
+					return {
+						...div,
+						cid: moveToCID,
+					};
+				});
+				newTeams = state.teams.map(t => {
+					if (t.cid !== action.cid) {
+						return t;
+					}
+
+					return {
+						...t,
+						cid: moveToCID,
+					};
+				});
+			}
+
 			return {
 				confs: state.confs.filter(conf => conf.cid !== action.cid),
-				divs: state.divs.filter(div => div.cid !== action.cid),
-				teams: makeTIDsSequential(
-					state.teams.filter(t => t.cid !== action.cid),
-				),
+				divs: newDivs,
+				teams: makeTIDsSequential(newTeams),
 			};
+		}
 
 		case "deleteDiv": {
 			let newTeams;
@@ -459,6 +491,7 @@ const AddTeam = ({
 const Division = ({
 	div,
 	divs,
+	confs,
 	teams,
 	dispatch,
 	addTeam,
@@ -470,6 +503,7 @@ const Division = ({
 }: {
 	div: Div;
 	divs: Div[];
+	confs: Conf[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
 	addTeam: (did: number, t?: NewLeagueTeam) => void;
@@ -490,10 +524,15 @@ const Division = ({
 					} else {
 						const siblings = divs
 							.filter(div2 => div2.did !== div.did)
-							.map(div2 => ({
-								key: div2.did,
-								text: `Move teams to "${div2.name}" division`,
-							}));
+							.map(div2 => {
+								const conf = confs.find(conf => conf.cid === div2.cid);
+								return {
+									key: div2.did,
+									text: `Move teams to "${div2.name}" division (${
+										conf ? conf.name : "unknown conference"
+									})`,
+								};
+							});
 						const { proceed, key } = await confirmDeleteWithChlidren({
 							text: `When the "${div.name}" division is deleted, what should happen to its teams?`,
 							deleteButtonText: "Delete Division",
@@ -559,6 +598,7 @@ const Division = ({
 
 const Conference = ({
 	conf,
+	confs,
 	divs,
 	teams,
 	dispatch,
@@ -570,6 +610,7 @@ const Conference = ({
 	availableBuiltInTeams,
 }: {
 	conf: Conf;
+	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
 	dispatch: React.Dispatch<Action>;
@@ -580,20 +621,32 @@ const Conference = ({
 	abbrevsUsedMultipleTimes: string[];
 	availableBuiltInTeams: NewLeagueTeam[];
 }) => {
+	const children = divs.filter(div => div.cid === conf.cid);
+
 	return (
 		<div className="card mb-3">
 			<CardHeader
 				name={conf.name}
 				onDelete={async () => {
-					const proceed = await confirm(
-						`Are you want to delete the "${conf.name}" conference, including all divisions and teams inside it?`,
-						{
-							okText: "Delete",
-							cancelText: "Cancel",
-						},
-					);
-					if (proceed) {
+					if (children.length === 0) {
 						dispatch({ type: "deleteConf", cid: conf.cid });
+					} else {
+						const siblings = confs
+							.filter(conf2 => conf2.cid !== conf.cid)
+							.map(conf2 => ({
+								key: conf2.cid,
+								text: `Move divisions to "${conf2.name}" conference`,
+							}));
+						const { proceed, key } = await confirmDeleteWithChlidren({
+							text: `When the "${conf.name}" conference is deleted, what should happen to its divisions?`,
+							deleteButtonText: "Delete Conference",
+							deleteChildrenText: `Delete all divisions in the "${conf.name}" conference`,
+							siblings,
+						});
+
+						if (proceed) {
+							dispatch({ type: "deleteConf", cid: conf.cid, moveToCID: key });
+						}
 					}
 				}}
 				onMoveDown={() => {
@@ -610,24 +663,23 @@ const Conference = ({
 			/>
 
 			<div className="row mx-0">
-				{divs
-					.filter(div => div.cid === conf.cid)
-					.map((div, i) => (
-						<div className="col-sm-6 col-md-4" key={div.did}>
-							<Division
-								div={div}
-								divs={divs}
-								dispatch={dispatch}
-								addTeam={addTeam}
-								editTeam={editTeam}
-								teams={teams.filter(t => t.did === div.did)}
-								disableMoveUp={i === 0 && disableMoveUp}
-								disableMoveDown={i === divs.length - 1 && disableMoveDown}
-								abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
-								availableBuiltInTeams={availableBuiltInTeams}
-							/>
-						</div>
-					))}
+				{children.map((div, i) => (
+					<div className="col-sm-6 col-md-4" key={div.did}>
+						<Division
+							div={div}
+							divs={divs}
+							confs={confs}
+							dispatch={dispatch}
+							addTeam={addTeam}
+							editTeam={editTeam}
+							teams={teams.filter(t => t.did === div.did)}
+							disableMoveUp={i === 0 && disableMoveUp}
+							disableMoveDown={i === divs.length - 1 && disableMoveDown}
+							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+							availableBuiltInTeams={availableBuiltInTeams}
+						/>
+					</div>
+				))}
 			</div>
 
 			<div className="card-body p-0 m-3">
@@ -770,6 +822,7 @@ const CustomizeTeams = ({
 				<Conference
 					key={conf.cid}
 					conf={conf}
+					confs={confs}
 					divs={divs}
 					teams={teams}
 					dispatch={dispatch}

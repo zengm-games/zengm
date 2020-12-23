@@ -1,5 +1,6 @@
 name/colleges revamp
 - races
+  - latino -> brown?
   - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
   - playerBioInfo.countries[].races?: Record<Race, number>,
   - defaultRaces: Record<Country, Record<Race, number>>
@@ -41,6 +42,7 @@ add some more built-in teams
   - Gators
   - Jam
   - DJs
+  - Manatees
 - Honolulu
   - Pearls
 - Ottawa

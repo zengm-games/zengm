@@ -99,7 +99,7 @@ const UpsertTeamModal = ({
 			colors: controlledTeam.colors,
 			did,
 			cid: div.cid,
-			imgURL: t.imgURL,
+			imgURL: controlledTeam.imgURL,
 		};
 
 		const errors = [];

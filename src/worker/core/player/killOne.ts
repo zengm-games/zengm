@@ -89,6 +89,7 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"was intensely focused on playing Basketball GM on his cell phone. As he walked across the street, he was so distracted by his ultimately fatal obsession that he didn't notice the bus barreling towards him",
 		"drowned while crossing the Saleph River",
 		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
+		"committed suicide by two shots to the back of his head after handcuffing and throwing himself into ocean inside duffle bag, CIA reports",
 
 		// Draco, an Athenian lawmaker, was reportedly smothered to death by gifts of cloaks and hats showered upon him by appreciative citizens
 		`was smothered to death by gifts of ${gift1} and ${gift2} showered upon him by appreciative fans`,

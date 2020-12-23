@@ -44,13 +44,15 @@ export const categories = {
 	},
 };
 
-export const types: Partial<Record<
-	LogEventType,
-	{
-		text: string;
-		category: keyof typeof categories;
-	}
->> = {
+export const types: Partial<
+	Record<
+		LogEventType,
+		{
+			text: string;
+			category: keyof typeof categories;
+		}
+	>
+> = {
 	injured: {
 		text: "Injury",
 		category: "injury",
@@ -224,7 +226,7 @@ const NewsBlock = ({
 			}
 			const rosterURL = helpers.leagueUrl([
 				"roster",
-				`${teamInfo.abbrev}_${event.tid}`,
+				`${teamInfo.abbrev}_${tid}`,
 				season,
 			]);
 

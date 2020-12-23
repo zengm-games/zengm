@@ -377,7 +377,7 @@ const createLeague = async ({
 		}
 	}
 
-	if (leagueFile.teamas === undefined) {
+	if (leagueFile.teams === undefined) {
 		leagueFile.teams = teams;
 	}
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { logEvent, toWorker } from "../util";
-import type { Player } from "../../common/types";
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.
@@ -18,7 +17,7 @@ const NegotiateButtons = ({
 	disabled?: boolean;
 	minContract: number;
 	spectator: boolean;
-	p: Player;
+	p: any;
 	willingToNegotiate: boolean;
 }) => {
 	if (spectator) {
@@ -29,11 +28,13 @@ const NegotiateButtons = ({
 		return "Refuses!";
 	}
 
+	const contractAmount = p.mood.user.contractAmount;
+
 	const signDisabled =
 		!canGoOverCap &&
 		(!!disabled ||
-			(p.contract.amount > capSpace + 1 / 1000 &&
-				p.contract.amount > (minContract + 1) / 1000));
+			(contractAmount / 1000 > capSpace + 1 / 1000 &&
+				contractAmount / 1000 > (minContract + 1) / 1000));
 	return (
 		<div className="btn-group">
 			<button
@@ -51,7 +52,7 @@ const NegotiateButtons = ({
 						"main",
 						"sign",
 						p.pid,
-						p.contract.amount * 1000,
+						contractAmount,
 						p.contract.exp,
 					);
 

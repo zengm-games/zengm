@@ -1,4 +1,6 @@
-sign button gives players their desired contract as it is literally listed if you check the edit player page, disreagrding any boost that a poor mood might give it @ClevelandFan
+When I click the edit player button outside of god mode, the height rating on that screen is different than what’s listed on the regular player page
+Other ratings are unchanged and correctly fuzzed
+But it’s almost like height fuzz doesn’t happen when you’re on the non god mode edit page
 
 name/colleges revamp
 - races
@@ -45,6 +47,7 @@ add some more built-in teams
   - Jam
   - DJs
   - Manatees
+  - Stingrays
 - Honolulu
   - Pearls
 - Ottawa
@@ -52,6 +55,9 @@ add some more built-in teams
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
 - also redo a couple old logos
+  - San Francisco Unicorns
+  - St Louis Gateway
+  - queens switch to other logo
 
 button to delete all players on a team, or all players https://discord.com/channels/290013534023057409/331882115119448065/791027026860965889
 

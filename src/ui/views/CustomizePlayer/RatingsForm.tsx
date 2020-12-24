@@ -64,7 +64,7 @@ const RatingsForm = ({
 																	handleChange("rating", rating, event);
 																}}
 																value={
-																	godMode
+																	godMode || rating === "hgt"
 																		? ratingsRow[rating]
 																		: Math.round(
 																				helpers.bound(

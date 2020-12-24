@@ -12,19 +12,13 @@ const getUnusedAbbrevs = (
 		const blacklist = [...abbrevs, ...currentTeams.map(t => t.abbrev)];
 
 		// Handle a couple teams with multiple abbrevs
-		if (blacklist.includes("LA") && abbrev === "LAC") {
+		if (blacklist.includes("LA") && abbrev === "LAL") {
 			continue;
 		}
-		if (blacklist.includes("LA") && abbrev === "LAE") {
-			continue;
-		}
-		if (blacklist.includes("LAC") && abbrev === "LA") {
+		if (blacklist.includes("LAL") && abbrev === "LA") {
 			continue;
 		}
 		if (blacklist.includes("LAC") && abbrev === "LAE") {
-			continue;
-		}
-		if (blacklist.includes("LAE") && abbrev === "LA") {
 			continue;
 		}
 		if (blacklist.includes("LAE") && abbrev === "LAC") {

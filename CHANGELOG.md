@@ -1,5 +1,9 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+2020-12-25: A ton of new facial features were added by @TravisJB89 and @domini7. Like 100+ new facial features. [[1]]()
+
+2020-12-25: The concept of "race" was added to the face generator by @icedjuro. Each country in the game is now annotated with a distribution of races so generated faces feel more realistic. Like it's still possible to get a black player from China, but it is much less common. [[1]]()
+
 * **2020-12-22: You can now add/edit/delete teams in a new Random Players league before creating it, by clicking the "Customize" button under "Pick your team". [[1]](https://old.reddit.com/r/BasketballGM/comments/kiclrx/you_can_now_addeditdelete_teams_in_a_new_random/)**
 
 * 2020-12-16: Added button to change the schedule of the All-Star Game to Tools > Danger Zone. [[1]](https://old.reddit.com/r/BasketballGM/comments/kepbrj/a_few_little_customization_options_for_the/)
@@ -158,7 +162,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2020-07-23: Improvements to game simulation realism: more realistic shooting percentages based on player positions and shot locations; teams change how they play if they are winning or losing; and the distribution of playing time is now more realistic. [[1]](https://basketball-gm.com/blog/2020/07/game-sim-realism/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hwr0eu/three_improvements_to_game_simulation_realism/)
 
-* 2020-07-20: The ratings summary at the top of individual player pages now shows the difference between last year's ratings and this year's ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/hv8arf/some_recent_minor_ui_updates/)
+* 2020-07-20: The ratings summary at the top of individual player pages now shows the difference between last year's ratings and this year's ratings. Thanks @icedjuro! [[1]](https://old.reddit.com/r/BasketballGM/comments/hv8arf/some_recent_minor_ui_updates/)
 
 * 2020-07-20: On the roster page and individual player pages, players on your team have a button to quickly add them to the trading block, in the same place as the "Trade For" button for players who are on other teams.
 

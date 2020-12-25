@@ -19,7 +19,7 @@ const generate = (
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
-	const { college, country, firstName, lastName } = name();
+	const { college, country, firstName, lastName, race } = name();
 
 	const weight = genWeight(ratings.hgt, ratings.stre);
 
@@ -44,7 +44,7 @@ const generate = (
 			ovr: 0,
 			skills: [],
 		},
-		face: face.generate(),
+		face: face.generate(race),
 		firstName,
 		gamesUntilTradable: 0,
 		hgt: heightInInches,

@@ -72,7 +72,6 @@ const name = (
 	const races =
 		playerBioInfo.countries[country].races ?? playerBioInfo.default.races;
 	const race = getFromCumSumArray(races);
-	console.log(country, race);
 
 	return {
 		college,

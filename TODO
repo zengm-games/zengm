@@ -1,15 +1,9 @@
 name/colleges revamp
 - races
-  - latino -> brown?
-  - @ClevelandFan#6181 can help ~/Downloads/BBGM_Countries.csv
-  - playerBioInfo.countries[].races?: Record<Race, number>,
-  - defaultRaces: Record<Country, Record<Race, number>>
-  - CSV in tools, generate JSON like names, print countries missing
-    - incorporate group info from defaultCountries.groups, or just import defaultCountries after generating names json
-  - default values for individual countries
-  - new release of faces.js with many new facial features, and upgrade
+  - some way to validate that all countries have races, and vice versa
+  - update docs
 - global default... should it override individual countries?
-  - distinction between "default if unset in built-in defaults" and "override built-in defaults too". add some other property like defaultAll that overrides everything, with same format as default
+  - see comments in PlayerBioInfo in types.ts
 - flag icon on roster page
   - https://github.com/lipis/flag-icon-css
 

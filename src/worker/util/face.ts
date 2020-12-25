@@ -3,9 +3,10 @@ import { idb } from "../db";
 import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
+	Race,
 } from "../../common/types";
 
-const generate = () => {
+const generate = (race?: Race) => {
 	const overrides: any = {
 		jersey: {
 			id: process.env.SPORT === "basketball" ? "jersey3" : "football",
@@ -18,7 +19,9 @@ const generate = () => {
 		};
 	}
 
-	return generateFace(overrides);
+	return generateFace(overrides, {
+		race,
+	});
 };
 
 const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {

@@ -977,22 +977,31 @@ export type PlayersPlusOptions = {
 	mergeStats?: boolean;
 };
 
+export type Race = "asian" | "black" | "brown" | "white";
+
 export type PlayerBioInfo = {
 	// This either overwrites a built-in country, or adds a new country
 	countries?: Record<
 		string,
 		{
-			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
+			// If any of these properties is undefined, fall back to default, then whatever the built-in value is (if it exists)
 			first?: Record<string, number>;
 			last?: Record<string, number>;
 			colleges?: Record<string, number>;
 			fractionSkipCollege?: number;
+			races?: Record<Race, number>;
 		}
 	>;
 
 	default?: {
+		// Applies to all built-in countries, since there is just one global country list to override
 		colleges?: Record<string, number>;
+
+		// Applies to all built-in countries except US and Canada, where it's overridden to 0.02 by default
 		fractionSkipCollege?: number;
+
+		// Applies to no built-in countries, since they all have built-in defaults
+		races?: Record<Race, number>;
 	};
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
@@ -1007,12 +1016,14 @@ export type PlayerBioInfoProcessed = {
 			last: [string, number][];
 			colleges?: [string, number][];
 			fractionSkipCollege?: number;
+			races?: [Race, number][];
 		}
 	>;
 
 	default: {
 		colleges: [string, number][];
 		fractionSkipCollege: number;
+		races: [Race, number][];
 	};
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)

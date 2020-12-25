@@ -1,6 +1,7 @@
+import type { Race } from "../../../common/types";
 import { loadNames, local, random } from "../../util";
 
-const getFromCumSumArray = (array: [string, number][]) => {
+const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
 	const rand = random.uniform(0, array[array.length - 1][1]);
 	const foundRow = array.find(row => row[1] >= rand);
 
@@ -18,6 +19,7 @@ const name = (
 	country: string;
 	firstName: string;
 	lastName: string;
+	race: Race;
 } => {
 	// This makes it wait until g is loaded before calling loadNames, so user-defined playerBioInfo will be used if provided
 	const playerBioInfo = local.playerBioInfo ?? loadNames();
@@ -55,29 +57,29 @@ const name = (
 	const lastName = getFromCumSumArray(lastCountry);
 
 	let college = "";
-	const countryColleges = playerBioInfo.countries[country].colleges;
 	const colleges =
-		countryColleges !== undefined
-			? countryColleges
-			: playerBioInfo.default.colleges;
+		playerBioInfo.countries[country].colleges ?? playerBioInfo.default.colleges;
 	if (colleges && colleges.length > 0) {
-		const countryfractionSkipCollege =
-			playerBioInfo.countries[country].fractionSkipCollege;
 		const fractionSkipCollege =
-			countryfractionSkipCollege !== undefined
-				? countryfractionSkipCollege
-				: playerBioInfo.default.fractionSkipCollege;
+			playerBioInfo.countries[country].fractionSkipCollege ??
+			playerBioInfo.default.fractionSkipCollege;
 
 		if (Math.random() > fractionSkipCollege) {
 			college = getFromCumSumArray(colleges);
 		}
 	}
 
+	const races =
+		playerBioInfo.countries[country].races ?? playerBioInfo.default.races;
+	const race = getFromCumSumArray(races);
+	console.log(country, race);
+
 	return {
 		college,
 		country,
 		firstName,
 		lastName,
+		race,
 	};
 };
 

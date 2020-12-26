@@ -545,7 +545,7 @@ const Player2 = ({
 											},
 										);
 										if (proceed) {
-											await toWorker("main", "removePlayer", player.pid);
+											await toWorker("main", "removePlayers", [player.pid]);
 
 											realtimeUpdate([], helpers.leagueUrl([]));
 										}

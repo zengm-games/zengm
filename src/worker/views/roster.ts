@@ -26,9 +26,9 @@ const updateRoster = async (
 	if (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
+		updateEvents.includes("playerMovement") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement") ||
 				updateEvents.includes("newPhase"))) ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.playoffs !== state.playoffs ||
@@ -211,6 +211,7 @@ const updateRoster = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			editable,
+			godMode: g.get("godMode"),
 			maxRosterSize: g.get("maxRosterSize"),
 			numConfs: g.get("confs", "current").length,
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),

@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2020-12-26: Added a button to delete all players on a team to the roster page.
+
 * 2020-12-26: Added buttons to randomize college and country to the player editor.
 
 * 2020-12-25: A ton of new facial features were added by @TravisJB89 and @domini7. Like 100+ new facial features. [[1]](https://github.com/dumbmatter/facesjs/pull/12) [[2]](https://github.com/dumbmatter/facesjs/pull/11) [[3]](https://old.reddit.com/r/BasketballGM/comments/kk0vfz/bbgm_christmas_update_version_202012250934/?)

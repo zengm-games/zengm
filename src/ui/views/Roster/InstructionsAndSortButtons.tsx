@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { toWorker } from "../../util";
+import type { View } from "../../../common/types";
+import { confirm, toWorker } from "../../util";
 
 const handleAutoSort = async () => {
 	await toWorker("main", "autoSortRoster", undefined, undefined);
@@ -13,52 +14,91 @@ const handleResetPT = async () => {
 const InstructionsAndSortButtons = ({
 	keepRosterSorted,
 	editable,
-}: {
-	keepRosterSorted: boolean;
-	editable: boolean;
-}) => {
-	if (!editable) {
-		return null;
-	}
-
+	godMode,
+	players,
+}: Pick<
+	View<"roster">,
+	"keepRosterSorted" | "editable" | "godMode" | "players"
+>) => {
 	return (
 		<>
-			<p
-				style={{
-					clear: "both",
-				}}
-			>
-				Click or drag row handles to move players between the starting lineup{" "}
-				<span className="table-info legend-square" /> and the bench{" "}
-				<span className="table-secondary legend-square" />.
-			</p>
-			<div className="btn-group mb-2">
-				<button className="btn btn-light-bordered" onClick={handleAutoSort}>
-					Auto sort roster
-				</button>
-				<button className="btn btn-light-bordered" onClick={handleResetPT}>
-					Reset playing time
-				</button>
-			</div>
-			<div className="form-check mb-3">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					checked={keepRosterSorted}
-					id="ai-sort-user-roster"
-					onChange={async () => {
-						if (!keepRosterSorted) {
-							await handleAutoSort();
-						}
-						await toWorker("main", "updateGameAttributes", {
-							keepRosterSorted: !keepRosterSorted,
-						});
+			{editable ? (
+				<p
+					style={{
+						clear: "both",
 					}}
-				/>
-				<label className="form-check-label" htmlFor="ai-sort-user-roster">
-					Keep auto sorted
-				</label>
-			</div>
+				>
+					Click or drag row handles to move players between the starting lineup{" "}
+					<span className="table-info legend-square" /> and the bench{" "}
+					<span className="table-secondary legend-square" />.
+				</p>
+			) : null}
+
+			{editable || godMode ? (
+				<div className="mb-3">
+					<div className="btn-group">
+						{editable ? (
+							<button
+								className="btn btn-light-bordered"
+								onClick={handleAutoSort}
+							>
+								Auto sort roster
+							</button>
+						) : null}
+						{editable ? (
+							<button
+								className="btn btn-light-bordered"
+								onClick={handleResetPT}
+							>
+								Reset playing time
+							</button>
+						) : null}
+						{godMode ? (
+							<button
+								className="btn btn-god-mode"
+								onClick={async () => {
+									const proceed = await confirm(
+										`Are you sure you want to delete all ${players.length} players on this team?`,
+										{
+											okText: "Delete Players",
+										},
+									);
+									if (proceed) {
+										await toWorker(
+											"main",
+											"removePlayers",
+											players.map(p => p.pid),
+										);
+									}
+								}}
+							>
+								Delete players
+							</button>
+						) : null}
+					</div>
+					{editable ? (
+						<div className="form-check mt-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={keepRosterSorted}
+								id="ai-sort-user-roster"
+								onChange={async () => {
+									if (!keepRosterSorted) {
+										await handleAutoSort();
+									}
+									await toWorker("main", "updateGameAttributes", {
+										keepRosterSorted: !keepRosterSorted,
+									});
+								}}
+							/>
+							<label className="form-check-label" htmlFor="ai-sort-user-roster">
+								Keep auto sorted
+							</label>
+						</div>
+					) : null}
+				</div>
+			) : null}
 		</>
 	);
 };

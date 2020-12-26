@@ -52,6 +52,7 @@ const TopStuff = ({
 	challengeNoRatings,
 	currentSeason,
 	editable,
+	godMode,
 	numConfs,
 	numPlayoffRounds,
 	openRosterSpots,
@@ -71,6 +72,7 @@ const TopStuff = ({
 	| "challengeNoRatings"
 	| "currentSeason"
 	| "editable"
+	| "godMode"
 	| "numConfs"
 	| "numPlayoffRounds"
 	| "payroll"
@@ -179,6 +181,8 @@ const TopStuff = ({
 			<InstructionsAndSortButtons
 				keepRosterSorted={keepRosterSorted}
 				editable={editable}
+				godMode={godMode}
+				players={players}
 			/>
 			{season !== currentSeason ? (
 				<p>

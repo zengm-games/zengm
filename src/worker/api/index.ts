@@ -1961,8 +1961,8 @@ const removeLeague = async (lid: number) => {
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
-const removePlayer = async (pid: number) => {
-	await player.remove([pid]);
+const removePlayers = async (pids: number[]) => {
+	await player.remove(pids);
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
@@ -3134,7 +3134,7 @@ export default {
 	regenerateDraftClass,
 	releasePlayer,
 	removeLeague,
-	removePlayer,
+	removePlayers,
 	reorderDepthDrag,
 	reorderRosterDrag,
 	resetPlayingTime,

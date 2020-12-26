@@ -74,6 +74,7 @@ const Roster = ({
 	challengeNoRatings,
 	currentSeason,
 	editable,
+	godMode,
 	maxRosterSize,
 	numConfs,
 	numPlayersOnCourt,
@@ -147,6 +148,7 @@ const Roster = ({
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
 				editable={editable}
+				godMode={godMode}
 				numConfs={numConfs}
 				numPlayoffRounds={numPlayoffRounds}
 				openRosterSpots={maxRosterSize - players.length}

@@ -592,7 +592,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 												});
 											}}
 										>
-											Randomize
+											Random
 										</button>
 									</div>
 								</div>
@@ -691,24 +691,88 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={jerseyNumber}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
+							<div className="col-sm-6 form-group">
 								<label>Country</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "born", "loc")}
-									value={p.born.loc}
-									disabled={!godMode}
-								/>
+								<div className="input-group">
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "born", "loc")}
+										value={p.born.loc}
+										disabled={!godMode}
+									/>
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											type="button"
+											disabled={!godMode}
+											onClick={async event => {
+												event.preventDefault();
+
+												const country = await toWorker(
+													"main",
+													"getRandomCountry",
+												);
+
+												setState(prevState => {
+													const p: any = {
+														...prevState.p,
+														born: {
+															...prevState.p.born,
+															loc: country,
+														},
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+										>
+											Random
+										</button>
+									</div>
+								</div>
 							</div>
-							<div className="col-sm-3 form-group">
+							<div className="col-sm-6 form-group">
 								<label>College</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "root", "college")}
-									value={p.college}
-								/>
+								<div className="input-group">
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "root", "college")}
+										value={p.college}
+									/>
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											type="button"
+											onClick={async event => {
+												event.preventDefault();
+
+												const college = await toWorker(
+													"main",
+													"getRandomCollege",
+												);
+
+												setState(prevState => {
+													const p: any = {
+														...prevState.p,
+														college,
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+										>
+											Random
+										</button>
+									</div>
+								</div>
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Draft Class</label>

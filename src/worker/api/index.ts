@@ -2362,6 +2362,14 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 		await updatePlayMenu();
 	}
 
+	if (g.get("otherTeamsWantToHire")) {
+		await league.setGameAttributes({
+			otherTeamsWantToHire: false,
+		});
+		await updateStatus("Idle");
+		await updatePlayMenu();
+	}
+
 	const expansionDraft = g.get("expansionDraft");
 	if (
 		g.get("phase") === PHASE.EXPANSION_DRAFT &&

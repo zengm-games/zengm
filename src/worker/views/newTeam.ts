@@ -34,9 +34,9 @@ const updateTeamSelect = async () => {
 		addDummySeason: true,
 	});
 
-	let teams = helpers.addPopRank(rawTeams);
+	const teamsAll = helpers.addPopRank(rawTeams);
 
-	const numActiveTeams = teams.length;
+	const numActiveTeams = teamsAll.length;
 
 	const expansionDraft = g.get("expansionDraft");
 	const expansion =
@@ -50,16 +50,12 @@ const updateTeamSelect = async () => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	const disabled = t ? t.disabled : false;
 
-	if (!expansion) {
-		// Remove user's team (no re-hiring immediately after firing)
-		teams = teams.filter(t => t.tid !== g.get("userTid"));
-	}
+	// Remove user's team (no re-hiring immediately after firing)
+	let teams = teamsAll.filter(t => t.tid !== g.get("userTid"));
 
 	if (expansion) {
 		// User team will always be first, cause expansion teams are at the end of the teams list
-		teams = teams.filter(
-			t => t.tid === g.get("userTid") || expansionTids.includes(t.tid),
-		);
+		teams = teams.filter(t => expansionTids.includes(t.tid));
 	} else if (otherTeamsWantToHire) {
 		// Deterministic random selection of teams
 		teams = orderBy(teams, t => t.seasonAttrs.revenue % 10, "asc").slice(0, 5);
@@ -71,9 +67,9 @@ const updateTeamSelect = async () => {
 	}
 
 	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
-	if (expansion) {
+	if (expansion || otherTeamsWantToHire) {
 		// User team first!
-		const userTeam = teams.find(t => t.tid === g.get("userTid"));
+		const userTeam = teamsAll.find(t => t.tid === g.get("userTid"));
 		if (userTeam) {
 			orderedTeams = [userTeam, ...orderedTeams.filter(t => t !== userTeam)];
 		}

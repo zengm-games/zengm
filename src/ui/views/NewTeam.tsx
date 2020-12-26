@@ -136,7 +136,7 @@ const NewTeam = ({
 	} else if (godMode) {
 		submitText = "Switch Team";
 	} else {
-		submitText = "Accept New Job";
+		submitText = tid === userTid ? "Turn Down Job Offers" : "Accept New Job";
 	}
 
 	const t = teams.find(t => t.tid === tid);
@@ -157,7 +157,7 @@ const NewTeam = ({
 					{teams.map(t => {
 						return (
 							<option key={t.tid} value={t.tid}>
-								{expansion && t.tid === userTid
+								{(expansion || otherTeamsWantToHire) && t.tid === userTid
 									? `Stay with my current team in ${t.region}`
 									: `${t.region} ${t.name}`}
 							</option>

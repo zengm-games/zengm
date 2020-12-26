@@ -112,7 +112,7 @@ const PlayerBios = ({
 						"frivolities",
 						"most",
 						"country",
-						window.encodeURIComponent(helpers.getCountry(p)),
+						window.encodeURIComponent(helpers.getCountry(p.born.loc)),
 					])}
 				>
 					{p.born.loc}

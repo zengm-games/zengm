@@ -478,7 +478,9 @@ const Player2 = ({
 										"frivolities",
 										"most",
 										"country",
-										window.encodeURIComponent(helpers.getCountry(player)),
+										window.encodeURIComponent(
+											helpers.getCountry(player.born.loc),
+										),
 									])}
 								>
 									{player.born.loc}

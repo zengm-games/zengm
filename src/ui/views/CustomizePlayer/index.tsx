@@ -387,7 +387,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	const randomizeFace = async (event: MouseEvent) => {
 		event.preventDefault(); // Don't submit whole form
 
-		const face = await toWorker("main", "generateFace");
+		const face = await toWorker("main", "generateFace", p.born.loc);
 
 		setState(prevState => {
 			// @ts-ignore

@@ -574,7 +574,7 @@ const updatePlayers = async (
 				["frivolities", "countries"],
 			)}">Other countries.</a>`;
 
-			filter = p => helpers.getCountry(p) === arg;
+			filter = p => helpers.getCountry(p.born.loc) === arg;
 			getValue = playerValue;
 		} else if (type === "college") {
 			if (arg === undefined) {

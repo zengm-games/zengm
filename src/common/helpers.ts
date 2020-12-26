@@ -830,8 +830,8 @@ const isAmerican = (loc: string) => {
 	return states.includes(state);
 };
 
-const getCountry = (p: { born: { loc: string } }) => {
-	let name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
+const getCountry = (bornLoc?: string) => {
+	let name = bornLoc && bornLoc !== "" ? bornLoc : "None";
 
 	if (isAmerican(name)) {
 		name = "USA";

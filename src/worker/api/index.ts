@@ -1231,8 +1231,9 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 	};
 };
 
-const generateFace = () => {
-	return face.generate();
+const generateFace = (country: string) => {
+	const { race } = player.name(helpers.getCountry(country));
+	return face.generate(race);
 };
 
 const getLeagueInfo = async (
@@ -1255,7 +1256,7 @@ const getLocal = async (name: keyof Local) => {
 };
 
 const getRandomName = async (country: string) => {
-	const { firstName, lastName } = player.name(country);
+	const { firstName, lastName } = player.name(helpers.getCountry(country));
 	return { firstName, lastName };
 };
 

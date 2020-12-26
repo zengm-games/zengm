@@ -31,7 +31,7 @@ const reducer = (
 			return;
 		}
 	} else {
-		name = helpers.getCountry(p);
+		name = helpers.getCountry(p.born.loc);
 	}
 
 	if (!infos[name]) {

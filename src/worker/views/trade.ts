@@ -226,6 +226,7 @@ const updateTrade = async () => {
 		tied: t.seasonAttrs.tied,
 		userTeamName,
 		gameOver: g.get("gameOver"),
+		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
 		godMode: g.get("godMode"),
 		forceTrade: false,
 		numDraftRounds: g.get("numDraftRounds"),

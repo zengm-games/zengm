@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
-import { toWorker } from "../../util";
+import { helpers, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
@@ -170,6 +170,7 @@ const Trade = (props: View<"trade">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		otherTeamsWantToHire,
 		godMode,
 		lost,
 		multiTeamMode,
@@ -229,6 +230,7 @@ const Trade = (props: View<"trade">) => {
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT ||
 		gameOver ||
+		otherTeamsWantToHire ||
 		spectator ||
 		challengeNoTrades;
 
@@ -379,6 +381,14 @@ const Trade = (props: View<"trade">) => {
 								) : spectator ? (
 									<p className="alert alert-danger">
 										You're not allowed to make trades in spectator mode.
+									</p>
+								) : otherTeamsWantToHire ? (
+									<p className="alert alert-danger">
+										You're not allowed to make trades while you have{" "}
+										<a href={helpers.leagueUrl(["new_team"])}>
+											open job offers from other teams
+										</a>
+										.
 									</p>
 								) : (
 									<p className="alert alert-danger">

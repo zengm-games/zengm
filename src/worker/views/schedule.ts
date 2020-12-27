@@ -64,7 +64,7 @@ export const getUpcoming = async ({
 					lost: number;
 			  }
 			| undefined;
-		if (g.get("phase") === PHASE.PLAYOFFS && roundSeries) {
+		if (roundSeries) {
 			for (const series of roundSeries) {
 				if (series.home.tid === tid) {
 					playoffs = {

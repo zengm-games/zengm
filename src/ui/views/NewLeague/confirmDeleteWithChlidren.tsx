@@ -104,5 +104,4 @@ const confirmDeleteWithChlidren = (
 	return confirmFunction(args) as any;
 };
 
-console.log("hi", confirmDeleteWithChlidren);
 export default confirmDeleteWithChlidren;

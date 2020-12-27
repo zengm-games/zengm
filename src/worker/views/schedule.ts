@@ -2,7 +2,6 @@ import { season, player, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
-import { PHASE } from "../../common";
 
 export const getUpcoming = async ({
 	tid,

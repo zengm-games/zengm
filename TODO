@@ -1,3 +1,7 @@
+better asian names
+- split up parsing of basketball/football built in names to generate an intermediate CSV, to see what should be done with those asian names more easily
+- https://old.reddit.com/message/messages/xjbi7a
+
 https://discord.com/channels/290013534023057409/331882115119448065/792603966063902741
 
 option to exclude notable games box scores from deletion
@@ -85,6 +89,9 @@ tiebreakers based on head-to-head
 "find players" form
 - customizable search boxes for stats/ratings
 - table then displays only the columns you searched for, like stathead
+
+trade filters
+- https://old.reddit.com/r/BasketballGM/comments/kksxpp/proposal_trade_filters/
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
 

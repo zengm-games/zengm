@@ -1,122 +1,122 @@
 country,copy_from,asian,black,brown,white,total
-Algeria,Turkey,,,,,=SUM(C2:F2)
-American Samoa,Turkey,,,,,=SUM(C3:F3)
-Angola,Nigeria,,,,,=SUM(C4:F4)
-Argentina,,1,10,14,75,=SUM(C5:F5)
-Armenia,Lithuania,,,,,=SUM(C6:F6)
-Australia,Spain,,,,,=SUM(C7:F7)
-Austria,Spain,,,,,=SUM(C8:F8)
-Azerbaijan,Lithuania,,,,,=SUM(C9:F9)
-Bahamas,Nigeria,,,,,=SUM(C10:F10)
-Belarus,Lithuania,,,,,=SUM(C11:F11)
-Belgium,Germany,,,,,=SUM(C12:F12)
-Benin,Nigeria,,,,,=SUM(C13:F13)
-Bolivia,Mexico,,,,,=SUM(C14:F14)
-Bosnia and Herzegovina,Lithuania,,,,,=SUM(C15:F15)
-Brazil,,1,33,33,33,=SUM(C16:F16)
-Bulgaria,Lithuania,,,,,=SUM(C17:F17)
-Cameroon,Nigeria,,,,,=SUM(C18:F18)
-Canada,USA,,,,,=SUM(C19:F19)
-Cape Verde,,1,28,70,1,=SUM(C20:F20)
-Central African Republic,Nigeria,,,,,=SUM(C21:F21)
-Chad,Nigeria,,,,,=SUM(C22:F22)
-Chile,Argentina,,,,,=SUM(C23:F23)
-China,,997,1,1,1,=SUM(C24:F24)
-Colombia,Mexico,,,,,=SUM(C25:F25)
-Congo,Nigeria,,,,,=SUM(C26:F26)
-Costa Rica,Mexico,,,,,=SUM(C76:F76)
-Croatia,Lithuania,,,,,=SUM(C28:F28)
-Cuba,Mexico,,,,,=SUM(C29:F29)
-Czech Republic,Germany,,,,,=SUM(C30:F30)
-Denmark,Germany,,,,,=SUM(C31:F31)
-Dominican Republic,Nigeria,,,,,=SUM(C32:F32)
-East Timor,Turkey,,,,,=SUM(C33:F33)
-Egypt,Turkey,,,,,=SUM(C34:F34)
-El Salvador,Mexico,,,,,=SUM(C35:F35)
-England,Germany,,,,,=SUM(C36:F36)
-Equador,Mexico,,,,,=SUM(C37:F37)
-Estonia,Lithuania,,,,,=SUM(C38:F38)
-Ethiopia,Nigeria,,,,,=SUM(C39:F39)
-Finland,Spain,,,,,=SUM(C40:F40)
-France,USA,,,,,=SUM(C41:F41)
-French Guiana,Mexico,,,,,=SUM(C42:F42)
-Gabon,Nigeria,,,,,=SUM(C43:F43)
-Georgia,Lithuania,,,,,=SUM(C44:F44)
-Germany,,1,25,25,49,=SUM(C45:F45)
-Ghana,Nigeria,,,,,=SUM(C46:F46)
-Greece,Spain,,,,,=SUM(C47:F47)
-Guadeloupe,South Africa,,,,,=SUM(C48:F48)
-Guatemala,Mexico,,,,,=SUM(C49:F49)
-Guinea,Nigeria,,,,,=SUM(C50:F50)
-Guinea-Bissau,Nigeria,,,,,=SUM(C51:F51)
-Haiti,Nigeria,,,,,=SUM(C52:F52)
-Honduras,Mexico,,,,,=SUM(C53:F53)
-Hungary,Lithuania,,,,,=SUM(C54:F54)
-Iceland,Lithuania,,,,,=SUM(C55:F55)
-India,Turkey,,,,,=SUM(C56:F56)
-Indonesia,China,,,,,=SUM(C57:F57)
-Iran,Lithuania,,,,,=SUM(C58:F58)
-Ireland,Germany,,,,,=SUM(C59:F59)
-Israel,Lithuania,,,,,=SUM(C60:F60)
-Italy,Spain,,,,,=SUM(C61:F61)
-Ivory Coast,Nigeria,,,,,=SUM(C62:F62)
-Jamaica,Nigeria,,,,,=SUM(C63:F63)
-Japan,China,,,,,=SUM(C64:F64)
-Kazakhstan,China,,,,,=SUM(C65:F65)
-Kenya,Nigeria,,,,,=SUM(C66:F66)
-Kosovo,Lithuania,,,,,=SUM(C67:F67)
-Kyrgyzstan,China,,,,,=SUM(C68:F68)
-Laos,China,,,,,=SUM(C69:F69)
-Latvia,Lithuania,,,,,=SUM(C70:F70)
-Liberia,Nigeria,,,,,=SUM(C71:F71)
-Lithuania,,1,1,1,997,=SUM(C72:F72)
-Luxembourg,Spain,,,,,=SUM(C73:F73)
-Macau,China,,,,,=SUM(C74:F74)
-Mali,Nigeria,,,,,=SUM(C75:F75)
-Mexico,,1,10,79,10,=SUM(C76:F76)
-Moldova,Lithuania,,,,,=SUM(C77:F77)
-Montenegro,Lithuania,,,,,=SUM(C78:F78)
-Morocco,Turkey,,,,,=SUM(C79:F79)
-Mozambique,Nigeria,,,,,=SUM(C80:F80)
-Nepal,Turkey,,,,,=SUM(C81:F81)
-Netherlands,Spain,,,,,=SUM(C82:F82)
-New Zealand,Lithuania,,,,,=SUM(C83:F83)
-Nicaragua,Mexico,,,,,=SUM(C84:F84)
-Nigeria,,1,997,1,1,=SUM(C85:F85)
-North Korea,China,,,,,=SUM(C86:F86)
-North Macedonia,Lithuania,,,,,=SUM(C87:F87)
-Norway,Spain,,,,,=SUM(C88:F88)
-Pakistan,Turkey,,,,,=SUM(C89:F89)
-Panama,Mexico,,,,,=SUM(C90:F90)
-Papua New Guinea,China,,,,,=SUM(C91:F91)
-Paraguay,Mexico,,,,,=SUM(C92:F92)
-Peru,Mexico,,,,,=SUM(C93:F93)
-Philippines,Turkey,,,,,=SUM(C94:F94)
-Poland,Lithuania,,,,,=SUM(C95:F95)
-Portugal,Spain,,,,,=SUM(C96:F96)
-Puerto Rico,USA,,,,,=SUM(C97:F97)
-Romania,Lithuania,,,,,=SUM(C98:F98)
-Russia,Lithuania,,,,,=SUM(C99:F99)
-Samoa,Turkey,,,,,=SUM(C100:F100)
-Scotland,Spain,,,,,=SUM(C101:F101)
-Senegal,Nigeria,,,,,=SUM(C102:F102)
-Serbia,Lithuania,,,,,=SUM(C103:F103)
-Slovakia,Spain,,,,,=SUM(C104:F104)
-Slovenia,Lithuania,,,,,=SUM(C105:F105)
-South Africa,,1,80,10,9,=SUM(C106:F106)
-South Korea,China,,,,,=SUM(C107:F107)
-South Sudan,Nigeria,,,,,=SUM(C108:F108)
-Spain,,1,10,10,79,=SUM(C109:F109)
-Sudan,Nigeria,,,,,=SUM(C110:F110)
-Sweden,Spain,,,,,=SUM(C111:F111)
-Switzerland,Germany,,,,,=SUM(C112:F112)
-Thailand,China,,,,,=SUM(C113:F113)
-Trinidad and Tobago,Cape Verde,,,,,=SUM(C114:F114)
-Turkey,,1,1,997,1,=SUM(C115:F115)
-USA,,1,50,35,14,=SUM(C116:F116)
-Ukraine,Lithuania,,,,,=SUM(C117:F117)
-Uruguay,Argentina,,,,,=SUM(C118:F118)
-Uzbekistan,Lithuania,,,,,=SUM(C119:F119)
-Venezuela,Argentina,,,,,=SUM(C120:F120)
-Vietnam,China,,,,,=SUM(C121:F121)
-Virgin Islands,South Africa,1,80,10,9,=SUM(C122:F122)
+Algeria,Turkey,,,,,0
+American Samoa,Turkey,,,,,0
+Angola,Nigeria,,,,,0
+Argentina,,1,10,14,75,100
+Armenia,Lithuania,,,,,0
+Australia,Spain,,,,,0
+Austria,Spain,,,,,0
+Azerbaijan,Lithuania,,,,,0
+Bahamas,Nigeria,,,,,0
+Belarus,Lithuania,,,,,0
+Belgium,Germany,,,,,0
+Benin,Nigeria,,,,,0
+Bolivia,Mexico,,,,,0
+Bosnia and Herzegovina,Lithuania,,,,,0
+Brazil,,1,33,33,33,100
+Bulgaria,Lithuania,,,,,0
+Cameroon,Nigeria,,,,,0
+Canada,USA,,,,,0
+Cape Verde,,1,28,70,1,100
+Central African Republic,Nigeria,,,,,0
+Chad,Nigeria,,,,,0
+Chile,Argentina,,,,,0
+China,,997,1,1,1,1000
+Colombia,Mexico,,,,,0
+Congo,Nigeria,,,,,0
+Costa Rica,Mexico,,,,,100
+Croatia,Lithuania,,,,,0
+Cuba,Mexico,,,,,0
+Czech Republic,Germany,,,,,0
+Denmark,Germany,,,,,0
+Dominican Republic,Nigeria,,,,,0
+East Timor,Turkey,,,,,0
+Egypt,Turkey,,,,,0
+El Salvador,Mexico,,,,,0
+England,Germany,,,,,0
+Equador,Mexico,,,,,0
+Estonia,Lithuania,,,,,0
+Ethiopia,Nigeria,,,,,0
+Finland,Spain,,,,,0
+France,USA,,,,,0
+French Guiana,Mexico,,,,,0
+Gabon,Nigeria,,,,,0
+Georgia,Lithuania,,,,,0
+Germany,,1,15,15,69,100
+Ghana,Nigeria,,,,,0
+Greece,Spain,,,,,0
+Guadeloupe,South Africa,,,,,0
+Guatemala,Mexico,,,,,0
+Guinea,Nigeria,,,,,0
+Guinea-Bissau,Nigeria,,,,,0
+Haiti,Nigeria,,,,,0
+Honduras,Mexico,,,,,0
+Hungary,Lithuania,,,,,0
+Iceland,Lithuania,,,,,0
+India,Turkey,,,,,0
+Indonesia,China,,,,,0
+Iran,Lithuania,,,,,0
+Ireland,Germany,,,,,0
+Israel,Lithuania,,,,,0
+Italy,Spain,,,,,0
+Ivory Coast,Nigeria,,,,,0
+Jamaica,Nigeria,,,,,0
+Japan,China,,,,,0
+Kazakhstan,China,,,,,0
+Kenya,Nigeria,,,,,0
+Kosovo,Lithuania,,,,,0
+Kyrgyzstan,China,,,,,0
+Laos,China,,,,,0
+Latvia,Lithuania,,,,,0
+Liberia,Nigeria,,,,,0
+Lithuania,,1,1,1,997,1000
+Luxembourg,Spain,,,,,0
+Macau,China,,,,,0
+Mali,Nigeria,,,,,0
+Mexico,,1,10,79,10,100
+Moldova,Lithuania,,,,,0
+Montenegro,Lithuania,,,,,0
+Morocco,Turkey,,,,,0
+Mozambique,Nigeria,,,,,0
+Nepal,Turkey,,,,,0
+Netherlands,Spain,,,,,0
+New Zealand,Lithuania,,,,,0
+Nicaragua,Mexico,,,,,0
+Nigeria,,1,997,1,1,1000
+North Korea,China,,,,,0
+North Macedonia,Lithuania,,,,,0
+Norway,Spain,,,,,0
+Pakistan,Turkey,,,,,0
+Panama,Mexico,,,,,0
+Papua New Guinea,China,,,,,0
+Paraguay,Mexico,,,,,0
+Peru,Mexico,,,,,0
+Philippines,Turkey,,,,,0
+Poland,Lithuania,,,,,0
+Portugal,Spain,,,,,0
+Puerto Rico,USA,,,,,0
+Romania,Lithuania,,,,,0
+Russia,Lithuania,,,,,0
+Samoa,Turkey,,,,,0
+Scotland,Spain,,,,,0
+Senegal,Nigeria,,,,,0
+Serbia,Lithuania,,,,,0
+Slovakia,Spain,,,,,0
+Slovenia,Lithuania,,,,,0
+South Africa,,1,80,10,9,100
+South Korea,China,,,,,0
+South Sudan,Nigeria,,,,,0
+Spain,,1,10,10,79,100
+Sudan,Nigeria,,,,,0
+Sweden,Spain,,,,,0
+Switzerland,Germany,,,,,0
+Thailand,China,,,,,0
+Trinidad and Tobago,Cape Verde,,,,,0
+Turkey,,1,1,997,1,1000
+USA,,1,50,35,14,100
+Ukraine,Lithuania,,,,,0
+Uruguay,Argentina,,,,,0
+Uzbekistan,Lithuania,,,,,0
+Venezuela,Argentina,,,,,0
+Vietnam,China,,,,,0
+Virgin Islands,South Africa,1,80,10,9,100

@@ -18,15 +18,22 @@ const createFilterFunction = (
 			let direction;
 			let number;
 
-			if (searchType === "number" || searchType === "currency") {
+			if (
+				searchType === "number" ||
+				searchType === "currency" ||
+				searchType === "draftPick"
+			) {
 				number = text.replace(/[^-?0-9.<>=]/g, "");
-
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
 					direction = number[0];
 					number = number.slice(1); // Remove first char
 				}
 
-				number = parseFloat(number);
+				if (searchType === "draftPick") {
+					number = getSortVal(number, "draftPick");
+				} else {
+					number = parseFloat(number);
+				}
 			}
 
 			return {

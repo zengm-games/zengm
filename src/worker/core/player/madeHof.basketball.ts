@@ -17,6 +17,8 @@ import type {
 const madeHof = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
+	let earliestSeason = Infinity;
+
 	// Average together WS and EWA
 	const winShares = p.stats.map(ps => {
 		let sum = 0;
@@ -31,6 +33,10 @@ const madeHof = (
 
 		if (typeof ps.ewa === "number") {
 			sum += ps.ewa;
+		}
+
+		if (ps.season < earliestSeason) {
+			earliestSeason = ps.season;
 		}
 
 		return sum / 2;
@@ -51,7 +57,8 @@ const madeHof = (
 	}
 
 	// Fudge factor for players generated when the league started
-	const fudgeSeasons = g.get("startingSeason") - p.draft.year - 5;
+	const fudgeSeasons =
+		Math.min(earliestSeason, g.get("startingSeason")) - p.draft.year - 5;
 
 	if (fudgeSeasons > 0) {
 		total += winShares[0] * fudgeSeasons;

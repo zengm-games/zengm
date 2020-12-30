@@ -1505,6 +1505,7 @@ const getTradingBlockOffers = async (
 		);
 	};
 
+	//since filters reduce the number of viable offers, try up to 10 times to get some good offers
 	let filteredOffers: OfferType[] = [];
 	let iterations = 0;
 	while (filteredOffers.length === 0 && iterations < 10) {

@@ -6,6 +6,7 @@ import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View, ThenArg } from "../../common/types";
 import type api from "../../worker/api";
+import TradeFilter, { filterType } from "./TradeFilter";
 
 type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -177,12 +178,27 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		offers: OfferType[];
 		pids: number[];
 		dpids: number[];
+		filters: filterType;
 	}>({
 		asking: false,
 		offers: [],
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: [],
+		filters: {
+			balancedOnly: false,
+			salaryCap: "",
+			multi: { pos: [], posExt: [], skill: [] },
+		},
 	});
+
+	const setFilters = (filters: filterType) => {
+		setState(prevState => {
+			return {
+				...prevState,
+				filters: filters,
+			};
+		});
+	};
 
 	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
@@ -218,6 +234,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			"getTradingBlockOffers",
 			state.pids,
 			state.dpids,
+			state.filters,
 		);
 
 		setState(prevState => ({
@@ -394,6 +411,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				>
 					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
 				</button>
+				<TradeFilter setFilters={setFilters} />
 			</div>
 
 			{state.offers.map((offer, i) => {

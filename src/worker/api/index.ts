@@ -77,6 +77,9 @@ import type {
 	ScheduleGameWithoutKey,
 	Conf,
 	Div,
+	ThenArg,
+	ContractInfo,
+	DraftPick,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";
 import {
@@ -87,6 +90,24 @@ import {
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
+import type { filterType } from "src/ui/views/TradeFilter";
+
+type OfferType = {
+	tid: number;
+	abbrev: string;
+	region: string;
+	name: string;
+	strategy: string;
+	won: number;
+	lost: number;
+	tied: number;
+	pids: number[];
+	dpids: number[];
+	warning: string | null | undefined;
+	payroll: number | ContractInfo[];
+	picks: DraftPick[];
+	players: Player[];
+};
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1305,13 +1326,69 @@ const getRandomRatings = async (age: number, pos: string | undefined) => {
 	};
 };
 
-const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
+const filterSkills = (offerList: OfferType[], filters: filterType) => {
+	if (filters.multi.skill && filters.multi.skill.length > 0)
+		return offerList.filter(
+			o =>
+				o.players.filter((pl: any) => playerMeetsSkillReq(pl, filters)).length >
+				0,
+		);
+	else return offerList;
+};
+
+const playerMeetsSkillReq = (player: any, filters: filterType) => {
+	if (filters.multi.skill && filters.multi.skill.length > 0) {
+		//essentially perform an intersection of the two arrays and see if it there's any overlap which would qualify the offer
+		return (
+			filters.multi.skill.filter(value => {
+				return player.ratings.skills.includes(value);
+			}).length > 0
+		);
+	} else return true;
+};
+
+const filterOffers = (
+	offers: OfferType[],
+	filters: filterType,
+): OfferType[] => {
+	//filter for position, and whle we're at it check the skill requirements (if applicable)
+	if (filters.multi.pos && filters.multi.pos.length > 0) {
+		offers = offers.filter(o => {
+			let qualifyingPlayers = o.players.filter((player: any) => {
+				return (
+					filters.multi.posExt.includes(player.ratings.pos) &&
+					playerMeetsSkillReq(player, filters)
+				);
+			});
+			return qualifyingPlayers.length > 0;
+		});
+	} else offers = filterSkills(offers, filters);
+
+	//of the offers that currently qualify, only return the ones that are balanced $-wise, if applicable
+	if (filters.balancedOnly)
+		offers = offers.filter(offer => offer.warning === null);
+	else if (Number(filters.salaryCap) > 0) {
+		offers = offers.filter(offer => {
+			let combinedSalary = 0;
+			offer.players.forEach(player => {
+				combinedSalary += player.contract.amount;
+			});
+			return combinedSalary <= Number(filters.salaryCap);
+		});
+	}
+
+	return offers;
+};
+
+const getTradingBlockOffers = async (
+	pids: number[],
+	dpids: number[],
+	filters: filterType,
+): Promise<OfferType[]> => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
-		// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 		const teams = await idb.cache.teams.getAll();
 		const tids = teams.filter(t => !t.disabled).map(t => t.tid);
 		random.shuffle(tids);
-		tids.splice(10);
 		const offers: TradeTeam[] = [];
 
 		for (const tid of tids) {
@@ -1343,7 +1420,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			}
 		}
 
-		return offers;
+		return offers.slice(0, 5);
 	};
 
 	const augmentOffers = async (offers: TradeTeam[]) => {
@@ -1428,8 +1505,17 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		);
 	};
 
-	const offers = await getOffers(pids, dpids);
-	return augmentOffers(offers);
+	let filteredOffers: OfferType[] = [];
+	let iterations = 0;
+	while (filteredOffers.length === 0 && iterations < 10) {
+		const offers = await getOffers(pids, dpids);
+		const augmentedOffers = await augmentOffers(offers);
+		filteredOffers = filterOffers(augmentedOffers, filters);
+		iterations++;
+	}
+
+	//probably best not to overwhelm the player with offers, let's show 5
+	return filteredOffers;
 };
 
 const getVersionWorker = async () => {

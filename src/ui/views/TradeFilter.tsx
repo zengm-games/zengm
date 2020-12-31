@@ -118,7 +118,7 @@ const TradeFilter = (props: tradeFilterProps) => {
 	const CheckBox = (props: { value: string; type: string }) => {
 		return (
 			<div key={props.value}>
-				<label className="form-check-label">
+				<label className="form-check-label" style={{ fontSize: "12px" }}>
 					<input
 						className="form-check-input"
 						onChange={() => toggleFilter(props.value, props.type)}
@@ -137,26 +137,31 @@ const TradeFilter = (props: tradeFilterProps) => {
 				multiple categories to narrow it.
 			</div>
 			<div className="row">
-				<div className="col-xs-auto">
+				<div
+					className="col-xs-auto pr-2 mr-3"
+					style={{ borderRight: "1px solid #444" }}
+				>
 					<strong>Pos</strong>
-					<div className="form-check"></div>
-					<div className="form-check">
+					<div className="form-check mt-1">
 						{BB_POS.map(pos => (
 							<CheckBox key={pos} value={pos} type="pos" />
 						))}
 					</div>
 				</div>
-				<div className="col-xs-auto pl-3">
+				<div
+					className="col-xs-auto pr-2 mr-3"
+					style={{ borderRight: "1px solid #444" }}
+				>
 					<strong>Skill</strong>
-					<div className="form-check">
+					<div className="form-check mt-1">
 						{BB_SKILLS.map(skill => (
 							<CheckBox key={skill} value={skill} type="skill" />
 						))}
 					</div>
 				</div>
-				<div className="col-xs-auto pl-3">
+				<div className="col-xs-auto">
 					<strong>Salary (Combined)</strong>
-					<div className="mt-2 mb-1">Less than:</div>
+					<div className="mt-1 mb-1">Less than:</div>
 					<div className="input-group input-group-sm float-left finances-settings-field">
 						<div className="input-group-prepend">
 							<div className="input-group-text">$</div>
@@ -191,7 +196,7 @@ const TradeFilter = (props: tradeFilterProps) => {
 		</div>
 	);
 	const popover = (
-		<Popover id={"Filters"} style={{ maxWidth: 280 }}>
+		<Popover id={"Filters"} style={{ maxWidth: 320 }}>
 			<Popover.Title>
 				{
 					<>

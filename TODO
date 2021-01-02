@@ -1,3 +1,5 @@
+add triple doubles as a stat
+
 scheduled events documentation
 - https://old.reddit.com/r/BasketballGM/comments/k7g2yu/tutorial_how_to_schedule_an_expansion_draft_in_a/
 
@@ -36,6 +38,8 @@ settings re-design
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
 - some settings should only be editable in offseason
   - playoff structure
+
+allow import/export of league settings from New League page
 
 add some more built-in teams
 - Virginia Beach
@@ -705,6 +709,7 @@ FBGM
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
 - skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
 - too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
+- sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

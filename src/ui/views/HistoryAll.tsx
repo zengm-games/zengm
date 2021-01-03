@@ -72,6 +72,35 @@ const teamName = (
 	return "N/A";
 };
 
+const formatTeam = (
+	t: View<"historyAll">["seasons"][number]["champ"],
+	season: number,
+	countText: string | null,
+	userTid: number,
+) => {
+	if (!t) {
+		return null;
+	}
+
+	return {
+		classNames: t.tid === userTid ? "table-info p-0 pr-1" : "p-0 pr-1",
+		value: (
+			<div className="d-flex align-items-center">
+				{t.imgURL ? (
+					<div className="playoff-matchup-logo mr-2 d-flex align-items-center justify-content-center">
+						<img className="mw-100 mh-100" src={t.imgURL} alt="" />
+					</div>
+				) : null}
+				<div>
+					{t.seed}. {teamName(t, season)}
+					{countText}
+				</div>
+			</div>
+		),
+		sortValue: `${t.region} ${t.name} ${season}`,
+	};
+};
+
 const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
@@ -96,30 +125,9 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			countText = null;
 		}
 
-		const champEl = s.champ
-			? {
-					classNames: s.champ.tid === userTid ? "table-info" : undefined,
-					value: (
-						<>
-							{s.champ.seed}. {teamName(s.champ, s.season)}
-							{countText}
-						</>
-					),
-					sortValue: `${s.champ.region} ${s.champ.name} ${s.season}`,
-			  }
-			: null;
+		const champEl = formatTeam(s.champ, s.season, countText, userTid);
 
-		const runnerUpEl = s.runnerUp
-			? {
-					classNames: s.runnerUp.tid === userTid ? "table-info" : undefined,
-					value: (
-						<>
-							{s.runnerUp.seed}. {teamName(s.runnerUp, s.season)}
-						</>
-					),
-					sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
-			  }
-			: null;
+		const runnerUpEl = formatTeam(s.runnerUp, s.season, null, userTid);
 
 		return {
 			key: s.season,
@@ -137,6 +145,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			<MoreLinks type="league" page="history_all" />
 
 			<DataTable
+				className="align-middle-all"
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="HistoryAll"

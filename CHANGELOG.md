@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Team logos are shown on the League History table for the league champion and runner up.
+
 * 2020-12-26: Added a button to delete all players on a team to the roster page.
 
 * 2020-12-26: Added buttons to randomize college and country to the player editor.

@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: Team logos are shown on the League History table for the league champion and runner up.
+* 2021-01-03: The number of times a player has won an award is shown in the League History table. [[1]](https://old.reddit.com/r/BasketballGM/comments/kpfnul/a_couple_minor_ui_improvements_on_the_league/)
+
+* 2021-01-03: Team logos are shown in the League History table for the league champion and runner up. [[1]](https://old.reddit.com/r/BasketballGM/comments/kpfnul/a_couple_minor_ui_improvements_on_the_league/)
 
 * 2020-12-26: Added a button to delete all players on a team to the roster page.
 

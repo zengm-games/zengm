@@ -13,6 +13,7 @@ const awardName = (
 				name: string;
 				tid: number;
 				abbrev: string;
+				count: number;
 		  }
 		| undefined,
 	season: number,
@@ -24,22 +25,25 @@ const awardName = (
 	}
 
 	const ret = (
-		<>
-			<PlayerNameLabels pid={award.pid} pos={award.pos}>
-				{award.name}
-			</PlayerNameLabels>{" "}
-			(
-			<a
-				href={helpers.leagueUrl([
-					"roster",
-					`${award.abbrev}_${award.tid}`,
-					season,
-				])}
-			>
-				{award.abbrev}
-			</a>
-			)
-		</>
+		<div className="d-flex">
+			<div className="mr-auto">
+				<PlayerNameLabels pid={award.pid} pos={award.pos}>
+					{award.name}
+				</PlayerNameLabels>{" "}
+				(
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${award.abbrev}_${award.tid}`,
+						season,
+					])}
+				>
+					{award.abbrev}
+				</a>
+				)
+			</div>
+			<CountBadge count={award.count} />
+		</div>
 	);
 
 	// This is our team.
@@ -72,10 +76,21 @@ const teamName = (
 	return "N/A";
 };
 
+const CountBadge = ({ count }: { count: number }) => {
+	if (count > 1) {
+		return (
+			<div className="ml-1">
+				<span className="badge badge-secondary align-text-bottom">{count}</span>
+			</div>
+		);
+	}
+
+	return null;
+};
+
 const formatTeam = (
 	t: View<"historyAll">["seasons"][number]["champ"],
 	season: number,
-	countText: string | null,
 	userTid: number,
 ) => {
 	if (!t) {
@@ -91,10 +106,10 @@ const formatTeam = (
 						<img className="mw-100 mh-100" src={t.imgURL} alt="" />
 					</div>
 				) : null}
-				<div>
+				<div className="mr-auto">
 					{t.seed}. {teamName(t, season)}
-					{countText}
 				</div>
+				<CountBadge count={t.count} />
 			</div>
 		),
 		sortValue: `${t.region} ${t.name} ${season}`,
@@ -112,22 +127,19 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	);
 
 	const rows = seasons.map(s => {
-		let countText;
 		let seasonLink;
 		if (s.champ) {
 			seasonLink = (
 				<a href={helpers.leagueUrl(["history", s.season])}>{s.season}</a>
 			);
-			countText = ` - ${helpers.ordinal(s.champ.count)} title`;
 		} else {
 			// This happens if there is missing data, such as from Delete Old Data
 			seasonLink = String(s.season);
-			countText = null;
 		}
 
-		const champEl = formatTeam(s.champ, s.season, countText, userTid);
+		const champEl = formatTeam(s.champ, s.season, userTid);
 
-		const runnerUpEl = formatTeam(s.runnerUp, s.season, null, userTid);
+		const runnerUpEl = formatTeam(s.runnerUp, s.season, userTid);
 
 		return {
 			key: s.season,

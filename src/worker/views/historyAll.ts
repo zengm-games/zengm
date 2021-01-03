@@ -143,17 +143,56 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		// Count up number of championships per team
-		const championshipsByTid: Record<number, number> = {};
+		// Count up number of championships/awards per tid/pid
+		const counts: Record<string, Record<number, number>> = {
+			finalsMvp: {},
+			mvp: {},
+			dpoy: {},
+			smoy: {},
+			mip: {},
+			roy: {},
+			oroy: {},
+			droy: {},
+			runnerUp: {},
+			champ: {},
+		};
 
+		const teamCategories = ["champ", "runnerUp"];
+		const playerCategories = [
+			"finalsMvp",
+			"mvp",
+			"dpoy",
+			"smoy",
+			"mip",
+			"roy",
+			"oroy",
+			"droy",
+		];
 		for (const row of seasons) {
-			if (row.champ) {
-				const tid = row.champ.tid;
-				if (championshipsByTid[tid] === undefined) {
-					championshipsByTid[tid] = 0;
+			for (const category of teamCategories) {
+				if (!row[category]) {
+					continue;
 				}
-				championshipsByTid[tid] += 1;
-				row.champ.count = championshipsByTid[tid];
+
+				const tid = row[category].tid;
+				if (counts[category][tid] === undefined) {
+					counts[category][tid] = 0;
+				}
+				counts[category][tid] += 1;
+				row[category].count = counts[category][tid];
+			}
+
+			for (const category of playerCategories) {
+				if (!row[category]) {
+					continue;
+				}
+
+				const pid = row[category].pid;
+				if (counts[category][pid] === undefined) {
+					counts[category][pid] = 0;
+				}
+				counts[category][pid] += 1;
+				row[category].count = counts[category][pid];
 			}
 		}
 

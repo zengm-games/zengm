@@ -26,8 +26,6 @@ async function updateSeasons(
 			season <= g.get("season");
 			season++
 		) {
-			const tidsSortedNew = new Set();
-
 			const players = await idb.getCopies.players({
 				activeSeason: season,
 			});

@@ -113,6 +113,7 @@ const Draft = ({
 	draftType,
 	drafted,
 	expansionDraft,
+	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
 	spectator,
 	stats,
@@ -355,6 +356,13 @@ const Draft = ({
 									<p className="alert alert-danger d-inline-block">
 										In spectator mode you can't make draft picks, you can only
 										watch the draft.
+									</p>
+								</div>
+							) : null}
+							{expansionDraftFilteredTeamsMessage ? (
+								<div>
+									<p className="alert alert-warning d-inline-block">
+										{expansionDraftFilteredTeamsMessage}
 									</p>
 								</div>
 							) : null}

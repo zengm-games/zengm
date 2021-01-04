@@ -69,16 +69,29 @@ const updateExpansionDraft = async () => {
 		});
 	}
 
+	const initialTeams = expansionDraft.teams ?? [];
+	const initialNumPerTeam =
+		expansionDraft.numPerTeam ??
+		String(
+			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
+				initialTeams.length,
+				g.get("minRosterSize"),
+				g.get("numActiveTeams"),
+			),
+		);
+
 	return {
 		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
 		confs: g.get("confs"),
 		divs: g.get("divs"),
 		godMode: g.get("godMode"),
-		initialTeams: expansionDraft.teams || [],
+		initialTeams,
+		initialNumPerTeam,
 		initialNumProtectedPlayers:
-			expansionDraft.numProtectedPlayers || String(g.get("minRosterSize")),
+			expansionDraft.numProtectedPlayers ?? String(g.get("minRosterSize")),
 		minRosterSize: g.get("minRosterSize"),
 		multiTeamMode: g.get("userTids").length > 1,
+		numActiveTeams: g.get("numActiveTeams"),
 		phase: g.get("phase"),
 	};
 };

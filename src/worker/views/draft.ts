@@ -12,6 +12,50 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
 		const expansionDraft = g.get("expansionDraft");
+		let expansionDraftFilteredTeamsMessage: string | undefined;
+
+		let drafted: any[];
+
+		if (
+			fantasyDraft ||
+			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
+				expansionDraft.phase === "draft")
+		) {
+			drafted = local.fantasyDraftResults;
+		} else {
+			drafted = await idb.cache.players.indexGetAll("playersByTid", [
+				0,
+				Infinity,
+			]);
+			drafted = drafted.filter(p => p.draft.year === g.get("season"));
+			drafted.sort(
+				(a, b) =>
+					100 * a.draft.round +
+					a.draft.pick -
+					(100 * b.draft.round + b.draft.pick),
+			);
+		}
+
+		drafted = await idb.getCopies.playersPlus(drafted, {
+			attrs: [
+				"pid",
+				"tid",
+				"name",
+				"age",
+				"draft",
+				"injury",
+				"contract",
+				"watch",
+				"prevTid",
+				"prevAbbrev",
+			],
+			ratings: ["ovr", "pot", "skills", "pos"],
+			stats: ["per", "ewa"],
+			season: g.get("season"),
+			showRookies: true,
+			fuzz: true,
+		});
+
 		let stats: string[];
 		let undrafted: any[];
 
@@ -35,6 +79,36 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			undrafted = (
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
 			).filter(p => expansionDraft.availablePids.includes(p.pid));
+
+			if (expansionDraft.numPerTeam !== undefined) {
+				// Keep logic in sync with runPicks.ts
+				const tidsOverLimit: number[] = [];
+				for (const [tidString, numPerTeam] of Object.entries(
+					expansionDraft.numPerTeamDrafted,
+				)) {
+					if (numPerTeam >= expansionDraft.numPerTeam) {
+						const tid = parseInt(tidString);
+						tidsOverLimit.push(tid);
+					}
+				}
+
+				if (tidsOverLimit.length > 0) {
+					const numPlayersBefore = undrafted.length;
+					undrafted = undrafted.filter(p => !tidsOverLimit.includes(p.tid));
+					console.log(undrafted.map(p => p.tid));
+					if (undrafted.length !== numPlayersBefore) {
+						const teamInfoCache = g.get("teamInfoCache");
+						const abbrevs = tidsOverLimit
+							.map(tid => teamInfoCache[tid].abbrev)
+							.sort();
+						expansionDraftFilteredTeamsMessage = `Players from some teams (${abbrevs.join(
+							", ",
+						)}) are no longer available to be selected because they have already reached the limit of ${
+							expansionDraft.numPerTeam
+						} drafted player${expansionDraft.numPerTeam === 1 ? "" : "s"}.`;
+					}
+				}
+			}
 		} else {
 			stats = [];
 			undrafted = (
@@ -83,48 +157,6 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			...p,
 			rank: i + 1,
 		}));
-
-		let drafted: any[];
-
-		if (
-			fantasyDraft ||
-			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
-				expansionDraft.phase === "draft")
-		) {
-			drafted = local.fantasyDraftResults;
-		} else {
-			drafted = await idb.cache.players.indexGetAll("playersByTid", [
-				0,
-				Infinity,
-			]);
-			drafted = drafted.filter(p => p.draft.year === g.get("season"));
-			drafted.sort(
-				(a, b) =>
-					100 * a.draft.round +
-					a.draft.pick -
-					(100 * b.draft.round + b.draft.pick),
-			);
-		}
-
-		drafted = await idb.getCopies.playersPlus(drafted, {
-			attrs: [
-				"pid",
-				"tid",
-				"name",
-				"age",
-				"draft",
-				"injury",
-				"contract",
-				"watch",
-				"prevTid",
-				"prevAbbrev",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats: ["per", "ewa"],
-			season: g.get("season"),
-			showRookies: true,
-			fuzz: true,
-		});
 
 		let draftPicks = await draft.getOrder();
 
@@ -183,6 +215,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			draftType: g.get("draftType"),
 			drafted,
 			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,
+			expansionDraftFilteredTeamsMessage,
 			fantasyDraft,
 			spectator: g.get("spectator"),
 			stats,

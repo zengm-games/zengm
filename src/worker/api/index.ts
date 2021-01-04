@@ -2284,6 +2284,7 @@ const sign = async (
 
 const updateExpansionDraftSetup = async (changes: {
 	numProtectedPlayers?: string;
+	numPerTeam?: string;
 	teams?: ExpansionDraftSetupTeam[];
 }) => {
 	const expansionDraft = g.get("expansionDraft");

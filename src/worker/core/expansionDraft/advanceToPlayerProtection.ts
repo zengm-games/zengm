@@ -16,6 +16,7 @@ const advanceToPlayerProtection = async (
 	const {
 		errors,
 		expansionTeams,
+		numPerTeam,
 		numProtectedPlayers,
 	} = await validateExpansionDraftSetup();
 
@@ -98,6 +99,7 @@ const advanceToPlayerProtection = async (
 	gameAttributes.expansionDraft = {
 		phase: "protection",
 		numProtectedPlayers,
+		numPerTeam,
 		expansionTids,
 		protectedPids,
 		allowSwitchTeam: fromScheduledEvent,

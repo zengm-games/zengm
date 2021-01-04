@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-01-04: In expansion drafts, now there is a limit to the number of players that can be selected from each existing team. This number is customizable in expansion draft setup, and defaults to the minimum number required to allow the expansion draft to complete (like if there are 20 existing teams and 4 expansion teams, you need at least 2 players per team for a 10 round expansion draft). [[1]]()
+
 * 2021-01-03: The number of times a player has won an award is shown in the League History table. [[1]](https://old.reddit.com/r/BasketballGM/comments/kpfnul/a_couple_minor_ui_improvements_on_the_league/)
 
 * 2021-01-03: Team logos are shown in the League History table for the league champion and runner up. [[1]](https://old.reddit.com/r/BasketballGM/comments/kpfnul/a_couple_minor_ui_improvements_on_the_league/)

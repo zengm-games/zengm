@@ -456,11 +456,13 @@ export type GameAttributesLeague = {
 	expansionDraft:
 		| {
 				phase: "setup";
+				numPerTeam?: string;
 				numProtectedPlayers?: string;
 				teams?: ExpansionDraftSetupTeam[];
 		  }
 		| {
 				phase: "protection";
+				numPerTeam: number;
 				numProtectedPlayers: number;
 				expansionTids: number[];
 				protectedPids: { [key: number]: number[] };
@@ -468,6 +470,8 @@ export type GameAttributesLeague = {
 		  }
 		| {
 				phase: "draft";
+				numPerTeam: number;
+				numPerTeamDrafted: Record<number, number>;
 				expansionTids: number[];
 				availablePids: number[];
 		  };

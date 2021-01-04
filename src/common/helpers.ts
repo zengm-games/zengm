@@ -921,11 +921,23 @@ const roundsWonText = (
 	return "";
 };
 
+// Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?
+const getExpansionDraftMinimumPlayersPerActiveTeam = (
+	numExpansionTeams: number,
+	numDraftRounds: number,
+	numActiveTeams: number,
+) => {
+	return Math.ceil(
+		(Math.max(1, numExpansionTeams) * numDraftRounds) / numActiveTeams,
+	);
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
 	gameScore,
 	getCountry,
+	getExpansionDraftMinimumPlayersPerActiveTeam,
 	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,

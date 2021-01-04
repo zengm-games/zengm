@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 const validateExpansionDraftSetup = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -7,10 +7,19 @@ const validateExpansionDraftSetup = async () => {
 		throw new Error("Invalid expansion draft phase");
 	}
 
-	const expansionTeamsRaw = expansionDraft.teams || [];
+	const expansionTeamsRaw = expansionDraft.teams ?? [];
 	const numProtectedPlayersRaw =
-		expansionDraft.numProtectedPlayers ||
+		expansionDraft.numProtectedPlayers ??
 		String(g.get("minRosterSize") - expansionTeamsRaw.length);
+	const numPerTeamMinimum = helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
+		expansionTeamsRaw.length,
+		g.get("minRosterSize"),
+		g.get("numActiveTeams"),
+	);
+	const numPerTeamRaw =
+		expansionDraft.numPerTeam ??
+		expansionDraft.numPerTeam ??
+		String(numPerTeamMinimum);
 
 	const errors = [];
 	const teams = await idb.cache.teams.getAll();
@@ -100,12 +109,22 @@ const validateExpansionDraftSetup = async () => {
 		errors.push("Invalid number of protected players");
 	}
 
+	const numPerTeam = parseInt(numPerTeamRaw);
+	if (Number.isNaN(numPerTeam)) {
+		errors.push("Invalid number of draftable players per existing team");
+	} else if (numPerTeam < numPerTeamMinimum) {
+		errors.push(
+			`Number of draftable players per existing team must be at least ${numPerTeamMinimum} or there won't be enough available players`,
+		);
+	}
+
 	const errorsOutput =
 		errors.length > 0 ? Array.from(new Set(errors)) : undefined;
 
 	return {
 		errors: errorsOutput,
 		expansionTeams,
+		numPerTeam,
 		numProtectedPlayers,
 	};
 };

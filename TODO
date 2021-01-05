@@ -92,6 +92,7 @@ tiebreakers based on head-to-head
   - in FBGM, do it per division for division winners, then per conference to find
   - this implies that the draft ranking would be different than playoff seeding, at times
 - persist playoff seed to teamSeason
+- "Reason" column like https://www.pro-football-reference.com/years/2020/
 
 "find players" form
 - customizable search boxes for stats/ratings

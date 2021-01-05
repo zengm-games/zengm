@@ -1725,10 +1725,6 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			await checkChanges(conditions);
 			await checkAccount(conditions);
 			await toUI("initAds", [local.goldUntil], conditions);
-
-			const options = (((await idb.meta.get("attributes", "options")) ||
-				{}) as unknown) as Options;
-			await toUI("updateLocal", [{ units: options.units }]);
 		})();
 	} else {
 		// Even if it's not the first host tab, show ads (still async). Why
@@ -1738,6 +1734,11 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			toUI("initAds", [local.goldUntil], conditions);
 		}, 0);
 	}
+
+	// Send options to all new tabs
+	const options = (((await idb.meta.get("attributes", "options")) ||
+		{}) as unknown) as Options;
+	await toUI("updateLocal", [{ units: options.units }], conditions);
 };
 
 const lockSet = async (name: LockName, value: boolean) => {

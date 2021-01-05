@@ -109,8 +109,8 @@ const newSchedule = (
 	}[],
 ) => {
 	let tids: [number, number][];
-	let fourDivsPerConf = true;
 
+	let fourDivsPerConf = true;
 	for (const conf of g.get("confs", "current")) {
 		if (
 			g.get("divs", "current").filter(div => div.cid === conf.cid).length !== 4
@@ -120,8 +120,15 @@ const newSchedule = (
 		}
 	}
 
-	let twoConfsEvenTeams = g.get("confs", "current").length === 2;
+	let fourTeamsPerDiv = true;
+	for (const div of g.get("divs", "current")) {
+		if (teams.filter(t => t.seasonAttrs.did === div.did).length !== 4) {
+			fourTeamsPerDiv = false;
+			break;
+		}
+	}
 
+	let twoConfsEvenTeams = g.get("confs", "current").length === 2;
 	for (const conf of g.get("confs", "current")) {
 		if (
 			teams.filter(t => t.seasonAttrs.cid === conf.cid).length !==
@@ -137,6 +144,7 @@ const newSchedule = (
 		g.get("numGames") === 16 &&
 		g.get("confs", "current").length === 2 &&
 		fourDivsPerConf &&
+		fourTeamsPerDiv &&
 		twoConfsEvenTeams
 	) {
 		tids = newScheduleDefault(teams);

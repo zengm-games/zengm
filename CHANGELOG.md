@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-01-04: Added "Clear" button to the Draft Scouting page in God Mode to allow you to easily delete all players in a draft class.
+
 * 2021-01-04: Projected cap space is shown on the Upcoming Free Agents page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/ggyrl00/)
 
 * 2021-01-04: In expansion drafts, now there is a limit to the number of players that can be selected from each existing team. This number is customizable in expansion draft setup, and defaults to the minimum number required to allow the expansion draft to complete (like if there are 20 existing teams and 4 expansion teams, you need at least 2 players per team for a 10 round expansion draft). [[1]](https://old.reddit.com/r/BasketballGM/comments/kqernl/in_expansion_drafts_now_version_202101041112/)

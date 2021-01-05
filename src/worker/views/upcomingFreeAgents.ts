@@ -67,7 +67,6 @@ const updateUpcomingFreeAgents = async (
 		inputs.season,
 	);
 	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
-	console.log(projectedPayroll, projectedCapSpace);
 
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),

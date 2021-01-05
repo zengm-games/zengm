@@ -11,6 +11,7 @@ const UpcomingFreeAgents = ({
 	challengeNoRatings,
 	phase,
 	players,
+	projectedCapSpace,
 	season,
 	stats,
 }: View<"upcomingFreeAgents">) => {
@@ -93,6 +94,11 @@ const UpcomingFreeAgents = ({
 	return (
 		<>
 			<MoreLinks type="freeAgents" page="upcoming_free_agents" />
+
+			<p>
+				Projected {season} cap space:{" "}
+				{helpers.formatCurrency(projectedCapSpace / 1000, "M")}
+			</p>
 
 			{phase !== PHASE.RESIGN_PLAYERS ? (
 				<p>

@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { player } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
@@ -62,10 +62,18 @@ const updateUpcomingFreeAgents = async (
 		p.contractDesired.amount = p.mood.user.contractAmount / 1000;
 	}
 
+	const projectedPayroll = await team.getPayroll(
+		g.get("userTid"),
+		inputs.season,
+	);
+	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
+	console.log(projectedPayroll, projectedCapSpace);
+
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		phase: g.get("phase"),
 		players,
+		projectedCapSpace,
 		season: inputs.season,
 		stats,
 	};

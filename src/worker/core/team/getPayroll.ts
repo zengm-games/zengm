@@ -10,24 +10,30 @@ import type { ContractInfo } from "../../../common/types";
  * @param {number | ContractInfo[]} tid Team ID, or a list of contracts from getContracts.
  * @return {Promise.<number>} Resolves to payroll in thousands of dollars.
  */
-const getPayroll = async (input: number | ContractInfo[]): Promise<number> => {
+const getPayroll = async (
+	input: number | ContractInfo[],
+	season?: number,
+): Promise<number> => {
 	let payroll = 0;
 
 	if (typeof input === "number") {
 		const tid = input;
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-		for (const p of players) {
-			payroll += p.contract.amount;
-		}
-
 		const releasedPlayers = await idb.cache.releasedPlayers.indexGetAll(
 			"releasedPlayersByTid",
 			tid,
 		);
-		for (const p of releasedPlayers) {
-			payroll += p.contract.amount;
+
+		for (const p of [...players, ...releasedPlayers]) {
+			if (season === undefined || p.contract.exp > season) {
+				payroll += p.contract.amount;
+			}
 		}
 	} else {
+		if (season !== undefined) {
+			throw new Error("season parameter is not supported");
+		}
+
 		const contracts = input;
 		for (let i = 0; i < contracts.length; i++) {
 			payroll += contracts[i].amount;

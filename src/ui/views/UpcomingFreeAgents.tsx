@@ -14,6 +14,7 @@ const UpcomingFreeAgents = ({
 	projectedCapSpace,
 	season,
 	stats,
+	userTid,
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
@@ -88,6 +89,9 @@ const UpcomingFreeAgents = ({
 					: [helpers.formatCurrency(p.contract.amount, "M")]),
 				helpers.formatCurrency(p.contractDesired.amount, "M"),
 			],
+			classNames: {
+				"table-info": p.tid === userTid,
+			},
 		};
 	});
 

@@ -75,6 +75,7 @@ const updateUpcomingFreeAgents = async (
 		projectedCapSpace,
 		season: inputs.season,
 		stats,
+		userTid: g.get("userTid"),
 	};
 };
 

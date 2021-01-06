@@ -1416,6 +1416,7 @@ export type GetLeagueOptions =
 			season: number;
 			phase: number;
 			randomDebuts: boolean;
+			realDraftRatings: "draft" | "rookie";
 	  }
 	| {
 			type: "legends";

@@ -14,6 +14,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
+import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -263,7 +264,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 	let pid = -1;
 
-	const formatPlayer = (
+	const formatPlayer = async (
 		ratings: Ratings,
 		season: number,
 		teams: any[],
@@ -458,18 +459,29 @@ const getLeague = async (options: GetLeagueOptions) => {
 					: undefined;
 		}
 
-		// Whitelist, to get rid of any other columns
-		const currentRatings = getOnlyRatings(ratings);
-		if (draftProspect) {
-			nerfDraftProspect(currentRatings);
-		}
-
 		let bornYear;
 		if (legends) {
 			const age = ratings.season - bio.bornYear;
 			bornYear = season - age;
 		} else {
 			bornYear = bio.bornYear;
+		}
+
+		const age = ratings.season - bornYear;
+
+		// Whitelist, to get rid of any other columns
+		const currentRatings = getOnlyRatings(ratings);
+
+		if (draftProspect) {
+			nerfDraftProspect(currentRatings);
+
+			if (options.type === "real" && options.realDraftRatings === "draft") {
+				await setDraftProspectRatingsBasedOnDraftPosition(
+					currentRatings,
+					age,
+					bio,
+				);
+			}
 		}
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
@@ -545,13 +557,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 			options.phase,
 		);
 
-		const players = basketball.ratings
-			.filter(row => row.season === options.season)
-			.map(ratings =>
-				formatPlayer(ratings, options.season, initialTeams, {
-					randomDebuts: options.randomDebuts,
-				}),
-			);
+		const players = await Promise.all(
+			basketball.ratings
+				.filter(row => row.season === options.season)
+				.map(ratings =>
+					formatPlayer(ratings, options.season, initialTeams, {
+						randomDebuts: options.randomDebuts,
+					}),
+				),
+		);
 
 		// Heal injuries, if necessary
 		let gamesToHeal = 0;
@@ -604,22 +618,24 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		// Find draft prospects, which can't include any active players
 		const seenSlugs = new Set(players.map(p => p.srID));
-		const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
-			.filter(ratings => {
-				// Only keep rookie seasons
-				const seen = seenSlugs.has(ratings.slug);
-				seenSlugs.add(ratings.slug);
-				return !seen;
-			})
-			.filter(
-				ratings => ratings.season > options.season || options.randomDebuts,
-			)
-			.map(ratings =>
-				formatPlayer(ratings, options.season, initialTeams, {
-					draftProspect: true,
-					randomDebuts: options.randomDebuts,
-				}),
-			);
+		const draftProspects = await Promise.all(
+			orderBy(basketball.ratings, ["slug", "season"])
+				.filter(ratings => {
+					// Only keep rookie seasons
+					const seen = seenSlugs.has(ratings.slug);
+					seenSlugs.add(ratings.slug);
+					return !seen;
+				})
+				.filter(
+					ratings => ratings.season > options.season || options.randomDebuts,
+				)
+				.map(ratings =>
+					formatPlayer(ratings, options.season, initialTeams, {
+						draftProspect: true,
+						randomDebuts: options.randomDebuts,
+					}),
+				),
+		);
 
 		if (options.randomDebuts) {
 			// For players in past draft classes, automatically move to future draft classes, so they will be correctly randomized below
@@ -977,23 +993,21 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		pid = -1;
 
-		let players = orderBy(
-			basketball.ratings,
-			ratings => player.ovr(ratings as any),
-			"desc",
-		)
-			.filter(
-				ratings =>
-					ratings.season >= legendsInfo[options.decade].start &&
-					ratings.season <= legendsInfo[options.decade].end,
-			)
-			.map(ratings =>
-				formatPlayer(ratings, season, initialTeams, {
-					legends: true,
-					hasQueens,
-				}),
-			)
-			.filter(p => p.tid >= 0);
+		let players = await Promise.all(
+			orderBy(basketball.ratings, ratings => player.ovr(ratings as any), "desc")
+				.filter(
+					ratings =>
+						ratings.season >= legendsInfo[options.decade].start &&
+						ratings.season <= legendsInfo[options.decade].end,
+				)
+				.map(ratings =>
+					formatPlayer(ratings, season, initialTeams, {
+						legends: true,
+						hasQueens,
+					}),
+				),
+		);
+		players = players.filter(p => p.tid >= 0);
 
 		const keptPlayers = [];
 		const numPlayersPerTeam = Array(initialTeams.length).fill(0);

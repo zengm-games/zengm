@@ -330,7 +330,6 @@ const createLeague = async ({
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
-	realDraftRatings,
 	confs,
 	divs,
 	teams,
@@ -355,7 +354,6 @@ const createLeague = async ({
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
-	realDraftRatings: "rookie" | "draft";
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];

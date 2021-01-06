@@ -6,10 +6,11 @@ real players prospect rating options
 - base on draft position (find averages for a given age selected at a certain position, and scale player up/down until he hits it)
   - for age... factor in expected development? find separate curves from random data for each age? use player value formula?
   - add noise to each draft class, and draft pick?
-  - plan
-    - generate N draft classes. sort by normal formula. find typical player value (using valueCombineOvrPot) for each pick.
-    - write function to get value for a pick, given number of teams. so if there are more/fewer teams, draft prospect quality is interpolated
-    - write function to adjust a player to a given value, by adding/deleting from all non-height ratings
+  - fix numTeams in setDraftProspectRatingsBasedOnDraftPosition
+    - is this really necessary?
+  - get rid of pot estimation except for the final value?
+    - formatPlayer no longer needs to be async
+  - benchmark - very slow in old leagues currently
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
 
 force tie, in addition to force win (only when ties are possible)

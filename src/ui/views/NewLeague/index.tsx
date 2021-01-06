@@ -676,7 +676,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
-				realDraftRatings: "rookie",
+				realDraftRatings: "draft",
 			};
 		},
 	);
@@ -730,12 +730,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					? state.realPlayerDeterminism
 					: undefined;
 
-			const actualRealDraftRatings =
-				(state.customize === "real" || state.customize === "legends") &&
-				state.keptKeys.includes("players")
-					? state.realDraftRatings
-					: undefined;
-
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -744,6 +738,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						season: state.season,
 						phase: state.phase,
 						randomDebuts: state.randomization === "debuts",
+						realDraftRatings: state.realDraftRatings,
 					};
 				} else if (state.customize === "legends") {
 					getLeagueOptions = {
@@ -780,7 +775,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
-					realDraftRatings: actualRealDraftRatings,
 					confs: state.confs,
 					divs: state.divs,
 					teams: state.teams,

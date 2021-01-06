@@ -39,6 +39,7 @@ import stats from "./stats";
 import updateOvrMeanStd from "./updateOvrMeanStd";
 import updateValues from "./updateValues";
 import value from "./value";
+import valueCombineOvrPot from "./valueCombineOvrPot";
 
 export default {
 	addRatingsRow,
@@ -82,4 +83,5 @@ export default {
 	updateOvrMeanStd,
 	updateValues,
 	value,
+	valueCombineOvrPot,
 };

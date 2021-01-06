@@ -1,3 +1,18 @@
+league name being stored in file name
+- https://discord.com/channels/@me/682666234604552221/796152730036731974
+
+real players prospect rating options
+- base on rookie stats (current behavior)
+- base on draft position (find averages for a given age selected at a certain position, and scale player up/down until he hits it)
+  - for age... factor in expected development? find separate curves from random data for each age? use player value formula?
+  - add noise to each draft class, and draft pick?
+  - how to handle different draft class size? truncate or interpolate?
+  - plan
+    - generate N draft classes. sort by normal formula. find typical player value for each pick.
+- base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
+
+force tie, in addition to force win (only when ties are possible)
+
 add triple doubles as a stat
 
 scheduled events documentation
@@ -709,10 +724,11 @@ FBGM
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
 - skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
+  - lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
+  - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
 - too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
 - if there's a fumble on the 2-point attempt recovered by the defense, the team that just scored the touchdown gets the ball back https://discord.com/channels/290013534023057409/290015591216054273/794950003621101589
-- lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

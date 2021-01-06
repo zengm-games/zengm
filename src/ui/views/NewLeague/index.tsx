@@ -204,6 +204,7 @@ type State = {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
+	realDraftRatings: "rookie" | "draft";
 };
 
 type Action =
@@ -303,6 +304,10 @@ type Action =
 	| {
 			type: "setRealPlayerDeterminism";
 			realPlayerDeterminism: number;
+	  }
+	| {
+			type: "setRealDraftRatings";
+			realDraftRatings: "rookie" | "draft";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -587,6 +592,12 @@ const reducer = (state: State, action: Action): State => {
 				realPlayerDeterminism: action.realPlayerDeterminism,
 			};
 
+		case "setRealDraftRatings":
+			return {
+				...state,
+				realDraftRatings: action.realDraftRatings,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -665,6 +676,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
+				realDraftRatings: "rookie",
 			};
 		},
 	);
@@ -718,6 +730,12 @@ const NewLeague = (props: View<"newLeague">) => {
 					? state.realPlayerDeterminism
 					: undefined;
 
+			const actualRealDraftRatings =
+				(state.customize === "real" || state.customize === "legends") &&
+				state.keptKeys.includes("players")
+					? state.realDraftRatings
+					: undefined;
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -762,6 +780,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
+					realDraftRatings: actualRealDraftRatings,
 					confs: state.confs,
 					divs: state.divs,
 					teams: state.teams,
@@ -818,6 +837,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.noStartingInjuries,
 			state.phase,
 			state.randomization,
+			state.realDraftRatings,
 			state.realPlayerDeterminism,
 			state.repeatSeason,
 			state.season,
@@ -1160,6 +1180,44 @@ const NewLeague = (props: View<"newLeague">) => {
 		(state.customize === "real" || state.customize === "legends") &&
 		state.keptKeys.includes("players")
 	) {
+		moreOptions.unshift(
+			<div key="realDraftRatings" className="form-group">
+				<label htmlFor="new-league-realDraftRatings">
+					Real draft prospect ratings
+				</label>
+				<select
+					id="new-league-realDraftRatings"
+					className="form-control"
+					onChange={event => {
+						dispatch({
+							type: "setRealDraftRatings",
+							realDraftRatings: event.target.value as any,
+						});
+					}}
+					value={state.realDraftRatings}
+				>
+					<option value="rookie">Based on rookie season stats</option>
+					<option value="draft">Based on draft position</option>
+				</select>
+				{state.realDraftRatings === "rookie" ? (
+					<div className="text-muted mt-1">
+						Player ratings for draft prospects are based on their rookie season
+						stats. Players who overperformed or underperformed their real draft
+						positions as rookies will be ranked differently than they were in
+						reality.
+					</div>
+				) : null}
+				{state.realDraftRatings === "draft" ? (
+					<div className="text-muted mt-1">
+						Player ratings for draft prospects are based on the position they
+						were drafted. Every #1 picks will have a high rating, even if in
+						reality he was a bust. Every late pick will have a low rating, even
+						if in reality he became a star.
+					</div>
+				) : null}
+			</div>,
+		);
+
 		moreOptions.unshift(
 			<div key="realPlayerDeterminism" className="form-group">
 				<label htmlFor="new-league-realPlayerDeterminism">

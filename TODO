@@ -1,6 +1,3 @@
-league name being stored in file name
-- https://discord.com/channels/@me/682666234604552221/796152730036731974
-
 real players prospect rating options
 - base on rookie stats (current behavior)
 - base on draft position (find averages for a given age selected at a certain position, and scale player up/down until he hits it)
@@ -9,9 +6,25 @@ real players prospect rating options
   - fix numTeams in setDraftProspectRatingsBasedOnDraftPosition
     - is this really necessary?
   - get rid of pot estimation except for the final value?
+    - build model to estimate pot from (ovr, age)
+    - implement in own function, move potEstimator football stuff there
+    - only use for this new feature, not normal pot
     - formatPlayer no longer needs to be async
   - benchmark - very slow in old leagues currently
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
+
+phase out use of Team.cid and TeamSeason.cid - can get it from did
+
+nicidob FBGM ovr
+- https://discord.com/channels/290013534023057409/290015468939640832/796279896073568256
+
+relatives sometimes not defined in both players in new league
+- create a new league, go to relatives frivolities, sort by name, look at the ones with just one last name... often there is a missing relative from that list
+
+league name being stored in file name
+- https://discord.com/channels/@me/682666234604552221/796152730036731974
+
+danger zone schedule ASG now should update play menu, so you can do the draft
 
 force tie, in addition to force win (only when ties are possible)
 
@@ -730,6 +743,7 @@ FBGM
   - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
 - too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
+  - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - if there's a fumble on the 2-point attempt recovered by the defense, the team that just scored the touchdown gets the ball back https://discord.com/channels/290013534023057409/290015591216054273/794950003621101589
 
 eventually

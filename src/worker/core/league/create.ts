@@ -918,7 +918,13 @@ const create = async ({
 		if (leagueFile.players === undefined) {
 			// If no players were uploaded in custom league file, add some relatives!
 			await player.addRelatives(p);
-		} else {
+		}
+	}
+
+	// A new loop, because addRelatives updates the database
+	const players1 = await idb.cache.players.getAll();
+	for (const p of players1) {
+		if (leagueFile.players) {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
 			if (
 				p.tid >= 0 &&

@@ -3,6 +3,7 @@ import type { RatingKey } from "../../../common/types.basketball";
 import { g } from "../../util";
 import player from "../player";
 import { bootstrapPot } from "../player/develop";
+import potEstimator from "../player/potEstimator";
 
 /*
 Run this script in the worker console in a random players league (30 teams) to get the data:
@@ -86,21 +87,14 @@ const VALUE_BY_PICK = [
 ];
 const VALUE_UNDRAFTED = 36.6;
 
-const getValue = async (ratings: Record<RatingKey, number>, age: number) => {
+const getValue = (ratings: Record<RatingKey, number>, age: number) => {
 	const ovr = player.ovr(ratings as any);
-	const pot = await bootstrapPot(
-		{
-			...ratings,
-			ovr,
-		} as any,
-		age,
-		undefined,
-	);
+	const pot = potEstimator(ovr, age);
 
 	return player.valueCombineOvrPot(ovr, pot, age);
 };
 
-const setDraftProspectRatingsBasedOnDraftPosition = async (
+const setDraftProspectRatingsBasedOnDraftPosition = (
 	ratings: Record<RatingKey, number>,
 	age: number,
 	bio: { draftRound: number; draftPick: number },
@@ -133,7 +127,7 @@ const setDraftProspectRatingsBasedOnDraftPosition = async (
 			remainder * VALUE_BY_PICK[lower + 1];
 	}
 
-	let value = await getValue(ratings, age);
+	let value = getValue(ratings, age);
 	let diff = targetValue - value;
 	if (Math.abs(diff) < 1) {
 		console.log(
@@ -164,7 +158,7 @@ const setDraftProspectRatingsBasedOnDraftPosition = async (
 			}
 		}
 
-		value = await getValue(ratings, age);
+		value = getValue(ratings, age);
 		diff = targetValue - value;
 
 		if ((diff <= 0 && direction === 1) || (diff >= 0 && direction === -1)) {

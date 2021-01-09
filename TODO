@@ -5,12 +5,6 @@ real players prospect rating options
   - add noise to each draft class, and draft pick?
   - fix numTeams in setDraftProspectRatingsBasedOnDraftPosition
     - is this really necessary?
-  - get rid of pot estimation except for the final value?
-    - build model to estimate pot from (ovr, age)
-    - implement in own function, move potEstimator football stuff there
-    - only use for this new feature, not normal pot
-    - formatPlayer no longer needs to be async
-  - benchmark - very slow in old leagues currently
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
 
 phase out use of Team.cid and TeamSeason.cid - can get it from did

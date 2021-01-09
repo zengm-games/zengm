@@ -263,7 +263,11 @@ const augmentPartialPlayer = async (
 
 			r.ovr = ovr(r);
 			r.skills = skills(r);
-			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
+			r.pot = await bootstrapPot({
+				ratings: r,
+				age: r.season - p.born.year,
+				srID: p.srID,
+			});
 
 			if (p.draft.year === r.season) {
 				p.draft.ovr = r.ovr;
@@ -300,7 +304,11 @@ const augmentPartialPlayer = async (
 			(r.pot === undefined || r.pot < r.ovr)
 		) {
 			// Only basketball, in case position is not known at this point
-			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
+			r.pot = await bootstrapPot({
+				ratings: r,
+				age: r.season - p.born.year,
+				srID: p.srID,
+			});
 		}
 
 		if (r.pos === undefined && process.env.SPORT !== "football") {

@@ -1727,6 +1727,15 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			await toUI("initAds", [local.goldUntil], conditions);
 		})();
 	} else {
+		// No need to run checkAccount and make another HTTP request
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+		await toUI("updateLocal", [
+			{
+				gold: currentTimestamp <= local.goldUntil,
+				username: local.username,
+			},
+		]);
+
 		// Even if it's not the first host tab, show ads (still async). Why
 		// setTimeout? Cause horrible race condition with actually rendering the
 		// ad divs. Need to move them more fully into React to solve this.

@@ -1065,6 +1065,7 @@ export type Local = {
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
+	username: string | undefined;
 };
 
 export type PlayoffSeriesTeam = {

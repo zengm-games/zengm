@@ -18,9 +18,10 @@ const checkAccount = async (
 			credentials: "include",
 		});
 
-		// Keep track of latest here, for ads
+		// Keep track of latest here, for ads and multi tab sync
 		local.goldUntil = data.gold_until;
 		local.mailingList = !!data.mailing_list;
+		local.username = data.username === "" ? undefined : data.username;
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		await toUI("updateLocal", [
 			{

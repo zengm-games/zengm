@@ -485,7 +485,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 				options.realDraftRatings === "draft" &&
 				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
 			) {
-				console.log(draft.year, bio);
 				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
 			}
 		}

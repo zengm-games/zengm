@@ -1204,7 +1204,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				{state.realDraftRatings === "draft" ? (
 					<div className="text-muted mt-1">
 						Player ratings for draft prospects are based on the position they
-						were drafted. Every #1 picks will have a high rating, even if in
+						were drafted. Every #1 pick will have a high rating, even if in
 						reality he was a bust. Every late pick will have a low rating, even
 						if in reality he became a star.
 					</div>

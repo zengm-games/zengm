@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-01-09: When creating a new Real Players league, there is now a "Real draft prospect ratings" option which allows you to change how draft prospect ratings are defined. The default remains unchanged (ratings are based on rookie season stats), but there is now another option to base ratings purely on draft position. That will result in simulated drafts being much more similar to real drafts. [[1]]() [[2]]()
+
 * 2021-01-04: Added "Clear" button to the Draft Scouting page in God Mode to allow you to easily delete all players in a draft class.
 
 * 2021-01-04: Projected cap space is shown on the Upcoming Free Agents page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/ggyrl00/)

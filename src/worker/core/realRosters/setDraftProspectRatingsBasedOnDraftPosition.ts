@@ -1,8 +1,6 @@
 import { RATINGS } from "../../../common/constants.basketball";
 import type { RatingKey } from "../../../common/types.basketball";
-import { g } from "../../util";
 import player from "../player";
-import { bootstrapPot } from "../player/develop";
 import potEstimator from "../player/potEstimator";
 
 /*
@@ -99,9 +97,8 @@ const setDraftProspectRatingsBasedOnDraftPosition = (
 	age: number,
 	bio: { draftRound: number; draftPick: number },
 ) => {
+	// In theory this should change with draft class, but doesn't seem to matter too much
 	const numTeams = 30;
-	g.numActiveTeams = numTeams;
-	g.realPlayerDeterminism = false;
 
 	let index;
 
@@ -130,15 +127,6 @@ const setDraftProspectRatingsBasedOnDraftPosition = (
 	let value = getValue(ratings, age);
 	let diff = targetValue - value;
 	if (Math.abs(diff) < 1) {
-		console.log(
-			bio.name,
-			"return 1",
-			index,
-			"target",
-			targetValue,
-			"value",
-			value,
-		);
 		return;
 	}
 
@@ -147,11 +135,7 @@ const setDraftProspectRatingsBasedOnDraftPosition = (
 		throw new Error("Invalid direction");
 	}
 
-	console.log(bio.name, "search", index, "target", targetValue, "value", value);
-
-	let i = 0;
 	while (true) {
-		i += 1;
 		for (const rating of RATINGS) {
 			if (rating !== "hgt") {
 				ratings[rating] = player.limitRating(ratings[rating] + direction);
@@ -162,16 +146,6 @@ const setDraftProspectRatingsBasedOnDraftPosition = (
 		diff = targetValue - value;
 
 		if ((diff <= 0 && direction === 1) || (diff >= 0 && direction === -1)) {
-			console.log(
-				bio.name,
-				"return 2",
-				index,
-				"target",
-				targetValue,
-				"value",
-				value,
-				i,
-			);
 			return;
 		}
 	}

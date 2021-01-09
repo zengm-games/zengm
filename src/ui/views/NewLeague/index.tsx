@@ -676,7 +676,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
-				realDraftRatings: "draft",
+				realDraftRatings: "rookie",
 			};
 		},
 	);

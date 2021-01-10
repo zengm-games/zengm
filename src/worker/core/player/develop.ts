@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PLAYER, POSITIONS } from "../../../common";
+import { isSport, PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
 import pos from "./pos";
@@ -27,7 +27,7 @@ export const bootstrapPot = async ({
 		return pos ? ratings.ovrs[pos] : ratings.ovr;
 	}
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (pos === undefined) {
 			throw new Error("pos is required for potEstimator");
 		}
@@ -116,7 +116,7 @@ const develop = async (
 	// years===0 condition is so editing locked player in God Mode will update ovr and pot
 	if (!ratings.locked || years === 0) {
 		// Run these even for players developing 0 seasons
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
@@ -173,7 +173,7 @@ const develop = async (
 
 	if (!ratings.locked && years > 0) {
 		// In the NBA displayed weights seem to never change and seem inaccurate
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			const newWeight = genWeight(ratings.hgt, ratings.stre, ratings.pos);
 			if (p.ratings.length <= 1) {
 				p.weight = newWeight;

@@ -42,7 +42,7 @@ const getBest = <T extends PlayerWithoutKey>(
 			playersOnRoster.length < g.get("maxRosterSize") - 2;
 		let shouldAddPlayerPosition = false;
 
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			if (
 				(neededPositions.has("K") && pos === "K") ||
 				(neededPositions.has("P") && pos === "P")

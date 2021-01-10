@@ -4,6 +4,7 @@ import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import type { View } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -116,7 +117,7 @@ const TopStuff = ({
 		);
 
 	let marginOfVictory: string;
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (t.stats.gp !== 0) {
 			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
 				1,

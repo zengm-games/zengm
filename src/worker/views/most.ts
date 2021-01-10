@@ -13,7 +13,7 @@ import type {
 } from "../../common/types";
 import groupBy from "lodash/groupBy";
 import { player } from "../core";
-import { PLAYER } from "../../common";
+import { isSport, PLAYER } from "../../common";
 
 type Most = {
 	value: number;
@@ -103,7 +103,7 @@ export const getMostXPlayers = async ({
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			sum += ps.ows + ps.dws + ps.ewa;
 		} else {
 			sum += ps.av;

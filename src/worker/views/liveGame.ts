@@ -3,6 +3,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { setTeamInfo } from "./gameLog";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { isSport } from "../../common";
 
 const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,
@@ -98,7 +99,7 @@ const updatePlayByPlay = async (
 					}
 				}
 
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					p.inGame = j < (boxScore.numPlayersOnCourt || 5);
 				}
 			}

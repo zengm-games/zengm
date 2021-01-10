@@ -21,7 +21,7 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { DIFFICULTY } from "../../common";
+import { DIFFICULTY, isSport } from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
@@ -744,7 +744,7 @@ export const options: {
 	},
 ];
 
-if (process.env.SPORT === "basketball") {
+if (isSport("basketball")) {
 	options.push(
 		{
 			category: "Season",
@@ -990,7 +990,7 @@ options.push(
 	},
 );
 
-if (process.env.SPORT === "basketball") {
+if (isSport("basketball")) {
 	options.push({
 		category: "Game Simulation",
 		key: "numPlayersOnCourt",

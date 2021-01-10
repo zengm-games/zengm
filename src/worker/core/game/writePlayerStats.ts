@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { isSport, PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
@@ -66,7 +66,7 @@ const doInjury = async (
 	let score;
 	// 0 to 25, where 0 is role player and 25 is star
 	let playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		playerQuality -= 7;
 	}
 
@@ -213,7 +213,7 @@ const writePlayerStats = async (
 
 		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
 
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			for (let i = 0; i < result.team.length; i++) {
 				let maxPss = 0;
 				let id;
@@ -286,7 +286,7 @@ const writePlayerStats = async (
 
 						ps.gp += 1;
 
-						if (process.env.SPORT === "football") {
+						if (isSport("football")) {
 							const stat = qbResults.get(p.id);
 							if (stat) {
 								ps[stat] += 1;

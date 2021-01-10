@@ -1,4 +1,4 @@
-import { PLAYER, POSITION_COUNTS } from "../../../common";
+import { isSport, PLAYER, POSITION_COUNTS } from "../../../common";
 import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
@@ -50,7 +50,7 @@ const checkRosterSizes = async (
 
 				// Only drop player from a position there is an excess of (no dropping your only kicker)
 				let counts;
-				if (process.env.SPORT === "football") {
+				if (isSport("football")) {
 					counts = { ...POSITION_COUNTS };
 					for (const pos of Object.keys(counts)) {
 						counts[pos] = 0;

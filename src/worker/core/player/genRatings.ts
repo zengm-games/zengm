@@ -1,8 +1,9 @@
+import { isSport } from "../../../common";
 import genRatingsBasketball from "./genRatings.basketball";
 import genRatingsFootball from "./genRatings.football";
 
 const genRatings = (season: number, scoutingRank: number) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return genRatingsFootball(season, scoutingRank);
 	}
 

@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
-import { POSITIONS, RATINGS } from "../../common";
+import { isSport, POSITIONS, RATINGS } from "../../common";
 
 const Other = ({
 	actualShowHealthy,
@@ -104,7 +104,7 @@ const PowerRankings = ({
 
 	const cols = getCols(...colNames);
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		for (let i = 0; i < colNames.length; i++) {
 			if (colNames[i].startsWith("rating:")) {
 				cols[i].sortSequence = ["asc", "desc"];

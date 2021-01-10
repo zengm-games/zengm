@@ -8,6 +8,7 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	applyRealTeamInfo,
+	isSport,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -2953,7 +2954,7 @@ const upsertCustomizedPlayer = async (
 	// In case that develop call reset position, re-apply it here
 	p.ratings[r].pos = selectedPos;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (
 			p.ratings[r].ovrs &&
 			p.ratings[r].ovrs.hasOwnProperty(selectedPos) &&

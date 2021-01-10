@@ -1,8 +1,9 @@
+import { isSport } from "../../common";
 import advStatsBasketball from "./advStats.basketball";
 import advStatsFootball from "./advStats.football";
 
 const advStats = () => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return advStatsFootball();
 	}
 

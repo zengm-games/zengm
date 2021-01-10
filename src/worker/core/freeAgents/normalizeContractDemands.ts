@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE } from "../../../common";
+import { PLAYER, PHASE, isSport } from "../../../common";
 import { team, player } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -97,7 +97,7 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	let PARAM;
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
 	} else {
 		PARAM = 1;
@@ -270,7 +270,7 @@ const normalizeContractDemands = async ({
 
 			let amount;
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				// During regular season, should only look for short contracts that teams will actually sign
 				if (type === "dummyExpiringContracts") {
 					if (info.contractAmount >= maxContract / 4) {

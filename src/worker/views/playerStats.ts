@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -23,7 +23,7 @@ const updatePlayers = async (
 	) {
 		let statsTable;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			if (inputs.statType === "advanced") {
 				statsTable = PLAYER_STATS_TABLES.advanced;
 			} else if (inputs.statType === "shotLocations") {
@@ -67,7 +67,7 @@ const updatePlayers = async (
 		// Show all teams
 		let statType: PlayerStatType;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			if (inputs.statType === "totals") {
 				statType = "totals";
 			} else if (inputs.statType === "per36") {

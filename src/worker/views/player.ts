@@ -3,6 +3,7 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	PLAYER_SUMMARY,
+	isSport,
 } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
@@ -52,7 +53,7 @@ const updatePlayer = async (
 		);
 
 		// Needed because shot locations tables are "special" for now, unfortunately
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			stats = stats.concat([
 				"fgAtRim",
 				"fgaAtRim",

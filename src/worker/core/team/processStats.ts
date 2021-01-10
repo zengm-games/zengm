@@ -5,6 +5,7 @@ import type {
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const processStats = (
 	ts: TeamStats,
@@ -12,7 +13,7 @@ const processStats = (
 	playoffs: boolean,
 	statType: TeamStatType,
 ) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return processStatsFootball(ts, stats, playoffs);
 	}
 

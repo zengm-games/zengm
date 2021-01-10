@@ -4,6 +4,7 @@ import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, MarginOfVictory, MoreLinks } from "../components";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const legendSquare = (className: string) => {
 	return <span className={`table-${className} legend-square ml-3`} />;
@@ -89,7 +90,7 @@ const TeamStats = ({
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
 			for (const plusMinusCol of plusMinusCols) {
 				if (data.hasOwnProperty(plusMinusCol)) {

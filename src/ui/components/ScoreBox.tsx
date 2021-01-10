@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React from "react";
+import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
 
 const roundHalf = (x: number) => {
@@ -113,7 +114,7 @@ const ScoreBox = ({
 	) {
 		let spread;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
 			spread = roundHalf(

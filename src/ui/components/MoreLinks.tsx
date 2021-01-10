@@ -1,5 +1,5 @@
 import React from "react";
-import { NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import { isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType } from "../../common/types";
 import { helpers, useLocalShallow } from "../util";
 
@@ -103,7 +103,7 @@ const MoreLinks = (
 			},
 		];
 
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			links.unshift({
 				url: ["depth", `${abbrev}_${tid}`],
 				name: "Depth Chart",
@@ -231,7 +231,7 @@ const MoreLinks = (
 			{ url: ["team_records"], name: "Team Records" },
 			{ url: ["awards_records"], name: "Awards Records" },
 		];
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			links.push({
 				url: ["all_star_history"],
 				name: "All-Star History",

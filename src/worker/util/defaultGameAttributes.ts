@@ -2,6 +2,7 @@ import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_STADIUM_CAPACITY,
+	isSport,
 } from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
@@ -165,7 +166,7 @@ export const footballOverrides =
 		  }
 		: {};
 
-if (process.env.SPORT === "football") {
+if (isSport("football")) {
 	Object.assign(defaultGameAttributes, footballOverrides);
 }
 

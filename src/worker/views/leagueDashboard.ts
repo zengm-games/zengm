@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { isSport, PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
@@ -277,7 +277,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		// Roster
 		// Find starting 5 or top 5
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
 		} else {
 			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);

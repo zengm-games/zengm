@@ -1,3 +1,4 @@
+import { isSport } from "../common";
 import { Cache, idb } from "../worker/db";
 import { STORES, Store } from "../worker/db/Cache";
 import { defaultGameAttributes, g, helpers } from "../worker/util";
@@ -110,7 +111,7 @@ const resetG = () => {
 	const teams = helpers.getTeamsDefault();
 	Object.assign(g, defaultGameAttributes);
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		Object.assign(g, footballOverrides);
 	}
 

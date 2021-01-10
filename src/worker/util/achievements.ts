@@ -3,6 +3,7 @@ import g from "./g";
 import achievementsBasketball from "./achievements.basketball";
 import achievementsFootball from "./achievements.football";
 import type { Achievement } from "../../common/types";
+import { isSport } from "../../common";
 
 // These are achievements that are common across all sports. Sport-specific achievements go in achievements.basketball.ts and achievements.football.ts
 
@@ -551,7 +552,7 @@ const achievements: Achievement[] = [
 	},
 ];
 
-if (process.env.SPORT === "football") {
+if (isSport("football")) {
 	achievements.push(...achievementsFootball);
 } else {
 	achievements.push(...achievementsBasketball);

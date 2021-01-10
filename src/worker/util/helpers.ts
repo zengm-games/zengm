@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PLAYER, helpers as commonHelpers } from "../../common";
+import { PLAYER, helpers as commonHelpers, isSport } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import random from "./random";
@@ -215,7 +215,7 @@ const orderByWinp = <
 	const defaultOrders: Array<"asc" | "desc"> = ["desc", "desc", "asc"];
 	const sortedTeams = orderBy(teams, defaultFuncs, defaultOrders);
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		return sortedTeams;
 	}
 

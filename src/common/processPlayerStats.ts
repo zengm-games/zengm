@@ -1,3 +1,4 @@
+import isSport from "./isSport";
 import processPlayerStatsBasketball from "./processPlayerStats.basketball";
 import processPlayerStatsFootball from "./processPlayerStats.football";
 import type { PlayerStats, PlayerStatType } from "./types";
@@ -8,7 +9,7 @@ const processPlayerStats = (
 	statType?: PlayerStatType,
 	bornYear?: number,
 ) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return processPlayerStatsFootball(ps, stats, statType, bornYear);
 	}
 

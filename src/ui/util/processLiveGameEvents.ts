@@ -1,3 +1,4 @@
+import { isSport } from "../../common";
 import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball";
 import processLiveGameEventsFootball from "./processLiveGameEvents.football";
 
@@ -13,7 +14,7 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: string[];
 }) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return processLiveGameEventsFootball({
 			events,
 			boxScore,

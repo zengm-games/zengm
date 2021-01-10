@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PLAYER } from "../../../common";
+import { isSport, PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";
 import { idb } from "../../db";
@@ -45,7 +45,7 @@ const autoSign = async () => {
 		}
 
 		let probSkip;
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			probSkip = t.strategy === "rebuilding" ? 0.9 : 0.75;
 		} else {
 			probSkip = 0.5;

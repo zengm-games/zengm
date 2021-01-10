@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import { isSport } from "../../common";
 import BoxScoreRowBasketball from "./BoxScoreRow.basketball";
 import BoxScoreRowFootball from "./BoxScoreRow.football";
 
@@ -10,7 +11,7 @@ const BoxScoreRow = (props: {
 	p: any;
 	stats?: string[];
 }) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return BoxScoreRowFootball(props as any);
 	}
 

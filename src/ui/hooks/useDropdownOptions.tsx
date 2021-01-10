@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, TEAM_STATS_TABLES, POSITIONS } from "../../common";
+import { PHASE, TEAM_STATS_TABLES, POSITIONS, isSport } from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
@@ -206,7 +206,7 @@ const useDropdownOptions = (field: string) => {
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			keys = ["perGame", "per36", "totals"];
 
 			if (field === "statTypesAdv") {

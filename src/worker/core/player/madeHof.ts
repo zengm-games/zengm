@@ -5,11 +5,12 @@ import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const madeHof = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return madeHofFootball(p as any);
 	}
 

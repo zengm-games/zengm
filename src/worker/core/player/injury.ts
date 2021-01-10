@@ -1,6 +1,6 @@
 import { g, helpers, injuries, random } from "../../util";
 import type { PlayerInjury } from "../../../common/types";
-import { PHASE } from "../../../common";
+import { isSport, PHASE } from "../../../common";
 
 /**
  * Pick injury type and duration.
@@ -25,7 +25,7 @@ const injury = (healthRank: number): PlayerInjury => {
 	}
 
 	// Hack for football
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		gamesRemaining = Math.ceil(gamesRemaining / 3);
 	}
 

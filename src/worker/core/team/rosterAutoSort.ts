@@ -1,3 +1,4 @@
+import { isSport } from "../../../common";
 import rosterAutoSortBasketball from "./rosterAutoSort.basketball";
 import rosterAutoSortFootball from "./rosterAutoSort.football";
 
@@ -6,7 +7,7 @@ const rosterAutoSort = (
 	onlyNewPlayers?: boolean,
 	pos?: string,
 ) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return rosterAutoSortFootball(tid, onlyNewPlayers, pos as any);
 	}
 

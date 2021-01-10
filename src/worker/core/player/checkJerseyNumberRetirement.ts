@@ -1,4 +1,5 @@
 import orderBy from "lodash/orderBy";
+import { isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
@@ -9,7 +10,7 @@ const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 12;
 const getValueStatsRow = (ps: any) => {
 	let value = 0;
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		if (typeof ps.dws === "number") {
 			value += ps.dws;
 		}
@@ -23,7 +24,7 @@ const getValueStatsRow = (ps: any) => {
 		}
 
 		value /= 2;
-	} else if (process.env.SPORT === "football") {
+	} else if (isSport("football")) {
 		value += ps.av;
 	}
 
@@ -64,7 +65,7 @@ export const getScore = (p: Player, tid: number) => {
 	}
 
 	let threshold;
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		threshold = 80;
 	} else {
 		const mostCommonPosition = getMostCommonPosition(p, tid);

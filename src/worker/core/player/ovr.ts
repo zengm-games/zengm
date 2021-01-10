@@ -1,9 +1,10 @@
 import ovrBasketball from "./ovr.basketball";
 import ovrFootball from "./ovr.football";
 import type { MinimalPlayerRatings } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const ovr = (ratings: MinimalPlayerRatings, pos?: string) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return ovrFootball(ratings as any, pos as any);
 	}
 

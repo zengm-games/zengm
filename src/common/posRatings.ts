@@ -1,8 +1,9 @@
 import posRatingsFootball from "./posRatings.football";
 import { RATINGS } from ".";
+import isSport from "./isSport";
 
 const posRatings = (pos: string) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return posRatingsFootball(pos);
 	}
 

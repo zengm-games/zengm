@@ -2,12 +2,13 @@ import type { Player, PlayerWithoutKey } from "../../../common/types";
 import { idb } from "../../db";
 import range from "lodash/range";
 import { random, helpers } from "../../util";
+import { isSport } from "../../../common";
 
 // Football gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(i => String(i));
 
 // Basketball also gets 0 and 00
-if (process.env.SPORT === "basketball") {
+if (isSport("basketball")) {
 	VALID_JERSEY_NUMBERS.push("0", "00");
 }
 
@@ -208,7 +209,7 @@ const genJerseyNumber = async (
 		return prevJerseyNumber;
 	}
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		return random.choice(candidates, weightFunction);
 	}
 

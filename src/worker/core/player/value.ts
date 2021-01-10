@@ -6,6 +6,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 import valueCombineOvrPot from "./valueCombineOvrPot";
+import { isSport } from "../../../common";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -57,7 +58,7 @@ const value = (
 	}
 
 	// Normalize ovr/pot, other sports need testing
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		const defaultOvrMean = 47;
 		const defaultOvrStd = 10;
 		if (options.ovrStd > 0) {
@@ -116,7 +117,7 @@ const value = (
 	// 2. Potential
 	let potential = pr.pot;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (pr.pos === "QB") {
 			current *= 1.25;
 			potential *= 1.25;

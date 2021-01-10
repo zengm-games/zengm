@@ -13,6 +13,7 @@ import {
 	RATINGS,
 	POSITIONS,
 	MOOD_TRAITS,
+	isSport,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -486,7 +487,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const pos = p.ratings[r].pos;
 
 			const keys = posRatings(pos);
-			if (process.env.SPORT === "football") {
+			if (isSport("football")) {
 				keys.push("stre", "spd", "endu");
 			}
 

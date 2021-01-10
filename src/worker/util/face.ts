@@ -5,6 +5,7 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types";
+import { isSport } from "../../common";
 
 const generate = (race?: Race) => {
 	const overrides: any = {
@@ -13,7 +14,7 @@ const generate = (race?: Race) => {
 		},
 	};
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		overrides.glasses = {
 			id: "none",
 		};

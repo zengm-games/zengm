@@ -21,7 +21,7 @@ const sign = async (
 	}
 
 	let score = p.valueFuzz - 45;
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		score -= 7;
 	}
 	score = Math.round(helpers.bound(score, 0, Infinity));

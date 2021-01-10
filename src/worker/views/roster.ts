@@ -1,4 +1,4 @@
-import { PHASE, POSITIONS } from "../../common";
+import { isSport, PHASE, POSITIONS } from "../../common";
 import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -140,7 +140,7 @@ const updateRoster = async (
 				numGamesRemaining,
 			});
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 			} else {
 				players.sort((a, b) => footballScore(b) - footballScore(a));
@@ -183,7 +183,7 @@ const updateRoster = async (
 				fuzz: true,
 			});
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				players.sort(
 					(a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
 				);

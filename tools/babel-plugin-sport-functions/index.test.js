@@ -68,6 +68,18 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : proce
 			);
 		});
 
+		it("should replace bySport, with quoted properties", () => {
+			compare(
+				`const whatever = bySport({
+  "basketball": "basketball thing",
+  football: "football thing",
+});`,
+				`"use strict";
+
+const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "football thing";`,
+			);
+		});
+
 		it("should replace bySport, with default if no matching sport", () => {
 			compare(
 				`const whatever = bySport({

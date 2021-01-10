@@ -14,6 +14,18 @@ module.exports = function (babel) {
 		t.identifier("SPORT"),
 	);
 
+	const getObjectKey = property => {
+		if (property.key.type === "Identifier") {
+			return t.stringLiteral(property.key.name);
+		}
+
+		if (property.key.type === "StringLiteral") {
+			return t.stringLiteral(property.key.value);
+		}
+
+		throw new Error(`Unknown node type "${property.key.type}"`);
+	};
+
 	return {
 		visitor: {
 			CallExpression: {
@@ -81,7 +93,7 @@ module.exports = function (babel) {
 									t.binaryExpression(
 										"===",
 										PROCESS_ENV_SPORT,
-										t.stringLiteral(sportProperties[0].key.name),
+										getObjectKey(sportProperties[0]),
 									),
 									sportProperties[0].value,
 									defaultProperty.value,
@@ -94,7 +106,7 @@ module.exports = function (babel) {
 								t.binaryExpression(
 									"===",
 									PROCESS_ENV_SPORT,
-									t.stringLiteral(sportProperties[i].key.name),
+									getObjectKey(sportProperties[i]),
 								),
 								sportProperties[i].value,
 								bigTernary,

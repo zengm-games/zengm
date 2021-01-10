@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { bySport } from "../../common";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerFeats">,
@@ -72,52 +73,52 @@ const updatePlayers = async (
 			};
 		});
 
-		const stats =
-			process.env.SPORT === "basketball"
-				? [
-						"gs",
-						"min",
-						"fg",
-						"fga",
-						"fgp",
-						"tp",
-						"tpa",
-						"tpp",
-						"ft",
-						"fta",
-						"ftp",
-						"orb",
-						"drb",
-						"trb",
-						"ast",
-						"tov",
-						"stl",
-						"blk",
-						"pf",
-						"pts",
-						"gmsc",
-				  ]
-				: [
-						"pssCmp",
-						"pss",
-						"pssYds",
-						"pssTD",
-						"rus",
-						"rusYds",
-						"rusTD",
-						"rec",
-						"recYds",
-						"recTD",
-						"defInt",
-						"defIntTD",
-						"defFmbFrc",
-						"defFmbRec",
-						"defFmbTD",
-						"defSk",
-						"defSft",
-						"prTD",
-						"krTD",
-				  ];
+		const stats = bySport({
+			basketball: [
+				"gs",
+				"min",
+				"fg",
+				"fga",
+				"fgp",
+				"tp",
+				"tpa",
+				"tpp",
+				"ft",
+				"fta",
+				"ftp",
+				"orb",
+				"drb",
+				"trb",
+				"ast",
+				"tov",
+				"stl",
+				"blk",
+				"pf",
+				"pts",
+				"gmsc",
+			],
+			football: [
+				"pssCmp",
+				"pss",
+				"pssYds",
+				"pssTD",
+				"rus",
+				"rusYds",
+				"rusTD",
+				"rec",
+				"recYds",
+				"recTD",
+				"defInt",
+				"defIntTD",
+				"defFmbFrc",
+				"defFmbRec",
+				"defFmbTD",
+				"defSk",
+				"defSft",
+				"prTD",
+				"krTD",
+			],
+		});
 		return {
 			abbrev: inputs.abbrev,
 			feats: featsProcessed,

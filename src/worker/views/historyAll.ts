@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
@@ -64,10 +64,10 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 
 		const awards = await idb.getCopies.awards();
-		const awardNames =
-			process.env.SPORT === "basketball"
-				? ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"]
-				: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"];
+		const awardNames = bySport({
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+		});
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,

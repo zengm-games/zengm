@@ -1,3 +1,5 @@
+import { bySport } from "../../common";
+
 // Would be better as part of idb.getCopies.playersPlus
 const processPlayersHallOfFame = <
 	T extends {
@@ -25,8 +27,10 @@ const processPlayersHallOfFame = <
 		const teamSums: Record<number, number> = {};
 		for (let j = 0; j < p.stats.length; j++) {
 			const tid = p.stats[j].tid;
-			const EWA =
-				process.env.SPORT === "basketball" ? p.stats[j].ewa : p.stats[j].av;
+			const EWA = bySport({
+				basketball: p.stats[j].ewa,
+				football: p.stats[j].av,
+			});
 			if (EWA > bestEWA) {
 				bestStats = p.stats[j];
 				bestEWA = EWA;

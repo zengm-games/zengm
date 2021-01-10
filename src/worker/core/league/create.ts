@@ -1,6 +1,6 @@
 import orderBy from "lodash/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
@@ -1000,7 +1000,7 @@ const create = async ({
 		// Auto sort rosters
 		for (const t of leagueData.teams) {
 			let noRosterOrderSet = true;
-			if (process.env.SPORT === "basketball" && leagueFile.players) {
+			if (isSport("basketball") && leagueFile.players) {
 				for (const p of leagueFile.players) {
 					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
 						noRosterOrderSet = false;

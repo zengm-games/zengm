@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents } from "../../common/types";
@@ -9,10 +9,20 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		(updateEvents.includes("newPhase") &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-				: ["keyStats", "av"];
+		const stats = bySport({
+			basketball: [
+				"gp",
+				"min",
+				"pts",
+				"trb",
+				"ast",
+				"per",
+				"ewa",
+				"ws",
+				"ws48",
+			],
+			football: ["keyStats", "av"],
+		});
 		const playersAll = await idb.getCopies.players({
 			filter: p => p.hof,
 		});

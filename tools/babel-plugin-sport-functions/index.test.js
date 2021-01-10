@@ -25,7 +25,7 @@ describe("babel-plugin-sport-functions", function () {
 }`,
 				`"use strict";
 
-if (isSport("basketball")) {
+if (process.env.SPORT === "basketball") {
   console.log("foo");
 }`,
 			);

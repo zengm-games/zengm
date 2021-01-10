@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import { fetchWrapper } from "../../common";
+import { bySport, fetchWrapper } from "../../common";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
 import safeLocalStorage from "./safeLocalStorage";
@@ -97,12 +97,14 @@ const takeScreenshot = async () => {
 		logEvent({
 			type: "screenshot",
 			text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
-<a href="https://www.reddit.com/r/${
-				process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM"
-			}/submit?url=${encodedURL}">Share on Reddit</a><br>
-<a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=${
-				process.env.SPORT === "basketball" ? "basketball_gm" : "FootballGM_Game"
-			}">Share on Twitter</a>`,
+<a href="https://www.reddit.com/r/${bySport({
+				basketball: "BasketballGM",
+				football: "Football_GM",
+			})}/submit?url=${encodedURL}">Share on Reddit</a><br>
+<a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=${bySport({
+				basketball: "basketball_gm",
+				football: "FootballGM_Game",
+			})}">Share on Twitter</a>`,
 			saveToDb: false,
 			showNotification: true,
 			persistent: true,

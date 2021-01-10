@@ -1,6 +1,7 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import type { Conf, Div } from "../../../common/types";
+import { isSport } from "../../../common";
 
 export const legendsInfo = {
 	"1950s": {
@@ -56,7 +57,7 @@ const getLeagueInfo = async (
 					| "all";
 		  },
 ) => {
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 

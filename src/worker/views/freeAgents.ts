@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -17,10 +17,10 @@ const updateFreeAgents = async () => {
 	);
 	const capSpace =
 		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["min", "pts", "trb", "ast", "per"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["min", "pts", "trb", "ast", "per"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	for (const p of playersAll) {
 		(p as any).mood = await player.moodInfos(p);

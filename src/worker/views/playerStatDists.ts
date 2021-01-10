@@ -34,7 +34,7 @@ const updatePlayers = async (
 
 		let stats = undefined;
 		let statType: PlayerStatType = "perGame";
-		if (process.env.SPORT == "football") {
+		if (isSport("football")) {
 			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
 		} else {
 			if (inputs.statType === "advanced") {

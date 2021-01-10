@@ -5,12 +5,12 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types";
-import { isSport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 const generate = (race?: Race) => {
 	const overrides: any = {
 		jersey: {
-			id: process.env.SPORT === "basketball" ? "jersey3" : "football",
+			id: bySport({ basketball: "jersey3", football: "football" }),
 		},
 	};
 

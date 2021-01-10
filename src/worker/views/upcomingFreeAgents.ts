@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -7,10 +7,10 @@ import type { ViewInput } from "../../common/types";
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
 ) => {
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["min", "pts", "trb", "ast", "per"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["min", "pts", "trb", "ast", "per"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	const showActualFreeAgents =
 		g.get("phase") === PHASE.RESIGN_PLAYERS &&

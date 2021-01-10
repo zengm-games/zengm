@@ -4,6 +4,7 @@ import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
 import type { OwnerMood } from "../../common/types";
+import { bySport } from "../../common";
 
 const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
 
@@ -121,9 +122,10 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 			if (currentTotal >= 0) {
 				if (deltas.playoffs >= 0 && deltas.wins >= 0) {
 					if (deltas.money < 0) {
-						text = `Keep it up on the ${
-							process.env.SPORT === "basketball" ? "court" : "field"
-						}, but I need more money.`;
+						text = `Keep it up on the ${bySport({
+							basketball: "court",
+							football: "field",
+						})}, but I need more money.`;
 					} else {
 						text = "Keep it up.";
 					}
@@ -191,9 +193,9 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 				currentMood.wins < 0 &&
 				currentMood.playoffs < 0
 			) {
-				m += `<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the ${
-					process.env.SPORT === "basketball" ? "court" : "field"
-				}. We need a new direction. You're fired.</p>`;
+				m += `<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the ${bySport(
+					{ basketball: "court", football: "field" },
+				)}. We need a new direction. You're fired.</p>`;
 			} else {
 				m += "<p>You're fired.</p>";
 			}

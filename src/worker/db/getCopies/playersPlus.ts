@@ -2,6 +2,7 @@ import {
 	PLAYER,
 	PHASE,
 	processPlayerStats as processPlayerStats2,
+	bySport,
 } from "../../../common";
 import { player, trade } from "../../core";
 import { g, helpers } from "../../util";
@@ -383,24 +384,24 @@ const processRatings = (
 	}
 };
 
-const weightByMinutes =
-	process.env.SPORT === "basketball"
-		? [
-				"per",
-				"astp",
-				"blkp",
-				"drbp",
-				"orbp",
-				"stlp",
-				"trbp",
-				"usgp",
-				"drtg",
-				"ortg",
-				"obpm",
-				"dbpm",
-				"bpm",
-		  ]
-		: [];
+const weightByMinutes = bySport({
+	basketball: [
+		"per",
+		"astp",
+		"blkp",
+		"drbp",
+		"orbp",
+		"stlp",
+		"trbp",
+		"usgp",
+		"drtg",
+		"ortg",
+		"obpm",
+		"dbpm",
+		"bpm",
+	],
+	football: [],
+});
 
 const reduceCareerStats = (
 	careerStats: any[],

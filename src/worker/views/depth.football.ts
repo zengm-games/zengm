@@ -4,6 +4,7 @@ import { g } from "../util";
 import posRatings from "../../common/posRatings.football";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import type { Position } from "../../common/types.football";
+import { isSport } from "../../common";
 
 const defenseStats = [
 	"defTckSolo",
@@ -67,7 +68,7 @@ async function updateDepth(
 	updateEvents: UpdateEvents,
 	state: any,
 ) {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		throw new Error("Not implemented");
 	}
 

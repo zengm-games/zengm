@@ -1,14 +1,16 @@
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
 import maxBy from "lodash/maxBy";
 
 const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ws"]
-			: ["gp", "keyStats", "av"]; // Update every time because anything could change this (unless all players from class are retired)
+	// Update every time because anything could change this (unless all players from class are retired)
+
+	const stats = bySport({
+		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	let playersAll;
 

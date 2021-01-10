@@ -1,3 +1,4 @@
+import { bySport } from "../../../common";
 import { g, helpers } from "../../util";
 import newScheduleBasketball from "./newSchedule.basketball";
 import newScheduleFootball from "./newSchedule.football";
@@ -11,10 +12,10 @@ const newSchedule = (
 		tid: number;
 	}[],
 ) => {
-	const tids =
-		process.env.SPORT === "football"
-			? newScheduleFootball(teams)
-			: newScheduleBasketball(teams);
+	const tids = bySport({
+		basketball: newScheduleBasketball(teams),
+		football: newScheduleFootball(teams),
+	});
 
 	const tradeDeadline = g.get("tradeDeadline");
 	if (tradeDeadline < 1) {

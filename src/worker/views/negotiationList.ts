@@ -1,13 +1,13 @@
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
 const updateNegotiationList = async () => {
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]
-			: ["yearsWithTeam", "gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
+		football: ["yearsWithTeam", "gp", "keyStats", "av"],
+	});
 
 	const userTid = g.get("userTid");
 

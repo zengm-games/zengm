@@ -171,7 +171,7 @@ const updatePlayers = async (
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
-			process.env.SPORT === "football"
+			isSport("football")
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;

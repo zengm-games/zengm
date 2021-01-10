@@ -1,11 +1,11 @@
 import { finances } from "..";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		return 0;
 	}
 

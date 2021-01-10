@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PHASE } from "../../common";
+import { isSport, PHASE } from "../../common";
 import type { View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
@@ -165,7 +165,7 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 					</button>
 				)}
 
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<div className="mt-5">
 						<h2>All-Star Game</h2>
 

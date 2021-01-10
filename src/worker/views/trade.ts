@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
@@ -97,10 +97,10 @@ const updateTrade = async () => {
 		"jerseyNumber",
 	];
 	const ratings = ["ovr", "pot", "skills", "pos"];
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+		football: ["gp", "keyStats", "av"],
+	});
 	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,
 		ratings,

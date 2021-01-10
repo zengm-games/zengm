@@ -83,7 +83,7 @@ const value = (
 	let current = pr.ovr;
 
 	// No stats at all? Just look at ratings more, then.
-	if (process.env.SPORT === "basketball" && ps.length > 0) {
+	if (isSport("basketball") && ps.length > 0) {
 		const ps1 = ps[ps.length - 1]; // Most recent stats
 
 		if (ps.length === 1 || ps[0].min >= 2000) {

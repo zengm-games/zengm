@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { isSport, PHASE } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";

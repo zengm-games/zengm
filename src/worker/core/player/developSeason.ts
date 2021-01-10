@@ -31,7 +31,7 @@ const developSeason = async (
 		return;
 	}
 
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 

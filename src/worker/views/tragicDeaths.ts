@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents } from "../../common/types";
+import { bySport } from "../../common";
 
 const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
@@ -17,10 +18,20 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-				: ["keyStats", "av"];
+		const stats = bySport({
+			basketball: [
+				"gp",
+				"min",
+				"pts",
+				"trb",
+				"ast",
+				"per",
+				"ewa",
+				"ws",
+				"ws48",
+			],
+			football: ["keyStats", "av"],
+		});
 		const playersAll = (
 			await Promise.all(
 				pids.map(pid =>

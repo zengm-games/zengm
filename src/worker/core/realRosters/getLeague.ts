@@ -10,7 +10,7 @@ import type {
 import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { defaultGameAttributes, helpers, random } from "../../util";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
@@ -261,7 +261,7 @@ const genPlayoffSeries = (
 };
 
 const getLeague = async (options: GetLeagueOptions) => {
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 

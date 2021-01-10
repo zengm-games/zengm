@@ -1,8 +1,9 @@
 import React from "react";
+import { bySport } from "../../common";
 import helpers from "./helpers"; // Most of this text came from basketball-gm.com and the FAQ
 
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
-const pro = process.env.SPORT === "football" ? "NFL" : "NBA";
+const pro = bySport({ basketball: "NBA", football: "NFL" });
 const leagueNotFoundMessage = (
 	<>
 		<h2>League not found</h2>

@@ -6,6 +6,7 @@ import { getCols } from "../util";
 import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import { bySport } from "../../common";
 
 const RosterContinuity = ({
 	abbrevs,
@@ -41,18 +42,18 @@ const RosterContinuity = ({
 					}
 
 					return {
-						classNames:
-							process.env.SPORT === "basketball"
-								? {
-										"table-danger": pct < 0.7,
-										"table-warning": pct >= 0.7 && pct < 0.85,
-										"table-success": pct >= 0.85,
-								  }
-								: {
-										"table-danger": pct < 0.725,
-										"table-warning": pct >= 0.725 && pct < 0.825,
-										"table-success": pct >= 0.825,
-								  },
+						classNames: bySport({
+							basketball: {
+								"table-danger": pct < 0.7,
+								"table-warning": pct >= 0.7 && pct < 0.85,
+								"table-success": pct >= 0.85,
+							},
+							football: {
+								"table-danger": pct < 0.725,
+								"table-warning": pct >= 0.725 && pct < 0.825,
+								"table-success": pct >= 0.825,
+							},
+						}),
 						value: pct.toFixed(2),
 					};
 				}),

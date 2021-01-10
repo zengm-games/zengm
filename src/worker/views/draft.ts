@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import type { UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
@@ -60,10 +60,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		let undrafted: any[];
 
 		if (fantasyDraft) {
-			stats =
-				process.env.SPORT === "basketball"
-					? ["per", "ewa"]
-					: ["gp", "keyStats", "av"];
+			stats = bySport({
+				basketball: ["per", "ewa"],
+				football: ["gp", "keyStats", "av"],
+			});
 			undrafted = await idb.cache.players.indexGetAll(
 				"playersByTid",
 				PLAYER.UNDRAFTED,
@@ -72,10 +72,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.EXPANSION_DRAFT &&
 			expansionDraft.phase === "draft"
 		) {
-			stats =
-				process.env.SPORT === "basketball"
-					? ["per", "ewa"]
-					: ["gp", "keyStats", "av"];
+			stats = bySport({
+				basketball: ["per", "ewa"],
+				football: ["gp", "keyStats", "av"],
+			});
 			undrafted = (
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
 			).filter(p => expansionDraft.availablePids.includes(p.pid));

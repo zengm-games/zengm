@@ -7,6 +7,7 @@ import { getCols, helpers, toWorker } from "../util";
 import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import { POSITIONS } from "../../common/constants.football";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", pos, undefined);
@@ -44,7 +45,7 @@ const Depth = ({
 	stats,
 	tid,
 }: View<"depthFootball">) => {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		throw new Error("Not implemented");
 	}
 

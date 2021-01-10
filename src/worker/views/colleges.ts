@@ -1,6 +1,7 @@
 import { idb, iterate } from "../db";
 import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
+import { bySport } from "../../common";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -14,8 +15,10 @@ type InfoTemp = {
 	};
 };
 
-const valueStatNames =
-	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
+const valueStatNames = bySport({
+	basketball: ["ows", "dws"],
+	football: ["av"],
+});
 
 const reducer = (
 	type: "college" | "country" | "jerseyNumbers",

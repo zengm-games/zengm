@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -81,50 +81,52 @@ const updatePlayers = async (
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
-		const ratings =
-			process.env.SPORT === "basketball"
-				? [
-						"hgt",
-						"stre",
-						"spd",
-						"jmp",
-						"endu",
-						"ins",
-						"dnk",
-						"ft",
-						"fg",
-						"tp",
-						"oiq",
-						"diq",
-						"drb",
-						"pss",
-						"reb",
-				  ]
-				: [
-						"hgt",
-						"stre",
-						"spd",
-						"endu",
-						"thv",
-						"thp",
-						"tha",
-						"bsc",
-						"elu",
-						"rtr",
-						"hnd",
-						"rbk",
-						"pbk",
-						"pcv",
-						"tck",
-						"prs",
-						"rns",
-						"kpw",
-						"kac",
-						"ppw",
-						"pac",
-				  ];
-		const extraRatings =
-			process.env.SPORT === "basketball" ? [] : ["ovrs", "pots"];
+		const ratings = bySport({
+			basketball: [
+				"hgt",
+				"stre",
+				"spd",
+				"jmp",
+				"endu",
+				"ins",
+				"dnk",
+				"ft",
+				"fg",
+				"tp",
+				"oiq",
+				"diq",
+				"drb",
+				"pss",
+				"reb",
+			],
+			football: [
+				"hgt",
+				"stre",
+				"spd",
+				"endu",
+				"thv",
+				"thp",
+				"tha",
+				"bsc",
+				"elu",
+				"rtr",
+				"hnd",
+				"rbk",
+				"pbk",
+				"pcv",
+				"tck",
+				"prs",
+				"rns",
+				"kpw",
+				"kac",
+				"ppw",
+				"pac",
+			],
+		});
+		const extraRatings = bySport({
+			basketball: [],
+			football: ["ovrs", "pots"],
+		});
 
 		const players = await getPlayers(
 			inputs.season,

@@ -3,16 +3,17 @@ import g from "./g";
 import achievementsBasketball from "./achievements.basketball";
 import achievementsFootball from "./achievements.football";
 import type { Achievement } from "../../common/types";
-import { isSport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 // These are achievements that are common across all sports. Sport-specific achievements go in achievements.basketball.ts and achievements.football.ts
 
-const goldenOldiesCutoffs =
-	process.env.SPORT === "basketball" ? [30, 33, 36] : [28, 30, 32];
-const youngGunsCutoffs =
-	process.env.SPORT === "basketball" ? [25, 22] : [26, 24];
-const superTeamCutoff = process.env.SPORT === "basketball" ? 3 : 15;
-const trustTheProcessCutoff = process.env.SPORT === "basketball" ? 3 : 7;
+const goldenOldiesCutoffs = bySport({
+	basketball: [30, 33, 36],
+	football: [28, 30, 32],
+});
+const youngGunsCutoffs = bySport({ basketball: [25, 22], football: [26, 24] });
+const superTeamCutoff = bySport({ basketball: 3, football: 15 });
+const trustTheProcessCutoff = bySport({ basketball: 3, football: 7 });
 
 const checkDynasty = async (titles: number, years: number) => {
 	const teamSeasons = await idb.getCopies.teamSeasons({

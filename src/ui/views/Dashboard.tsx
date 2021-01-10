@@ -4,7 +4,7 @@ import React, { useCallback, useState, CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";
-import { DIFFICULTY } from "../../common";
+import { DIFFICULTY, isSport } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
@@ -338,12 +338,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			) : null}
 			<div
 				className={
-					process.env.SPORT === "basketball"
-						? "mt-2 dashboard-top-wrapper"
-						: "mt-2"
+					isSport("basketball") ? "mt-2 dashboard-top-wrapper" : "mt-2"
 				}
 			>
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<>
 						<a
 							href="/new_league/real"
@@ -393,11 +391,11 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 				<a
 					href={`https://play.${
-						process.env.SPORT === "football" ? "basketball" : "football"
+						isSport("football") ? "basketball" : "football"
 					}-gm.com/`}
 					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${process.env.SPORT}`}
 				>
-					{process.env.SPORT === "football"
+					{isSport("football")
 						? "Try our other game, Basketball GM!"
 						: "Try our other game, Football GM!"}
 				</a>

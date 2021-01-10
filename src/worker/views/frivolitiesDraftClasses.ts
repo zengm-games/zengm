@@ -5,7 +5,7 @@ import type {
 	Player,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import { isSport, PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
@@ -101,10 +101,20 @@ const updateFrivolitiesDraftClasses = async (
 			},
 		);
 
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: [
+				"gp",
+				"min",
+				"pts",
+				"trb",
+				"ast",
+				"per",
+				"ewa",
+				"ws",
+				"ws48",
+			],
+			football: ["gp", "keyStats", "av"],
+		});
 
 		const bestPlayersAll = draftClasses.map(
 			draftClass => draftClass.bestPlayer.p,

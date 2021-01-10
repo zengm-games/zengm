@@ -71,7 +71,6 @@ module.exports = function (babel) {
 						const defaultProperty = properties.find(
 							property => property.key.name === "default",
 						);
-						// console.log(node.arguments[0].properties)
 
 						if (sportProperties.length === 0) {
 							throw new Error("Must have at least one sport in bySport");

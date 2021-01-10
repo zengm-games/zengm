@@ -1,6 +1,6 @@
 import { helpers, g } from "../../util";
 import type { Team } from "../../../common/types";
-import { POSITIONS } from "../../../common";
+import { isSport, POSITIONS } from "../../../common";
 
 /**
  * Create a new team object.
@@ -83,7 +83,7 @@ const generate = (tm: any): Team => {
 		t.srID = tm.srID;
 	}
 
-	if (process.env.SPORT === "football" && tm.depth === undefined) {
+	if (isSport("football") && tm.depth === undefined) {
 		t.depth = POSITIONS.reduce((depth, pos) => {
 			depth[pos] = [];
 			return depth;

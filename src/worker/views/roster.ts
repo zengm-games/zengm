@@ -1,4 +1,4 @@
-import { isSport, PHASE, POSITIONS } from "../../common";
+import { bySport, isSport, PHASE, POSITIONS } from "../../common";
 import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -34,16 +34,16 @@ const updateRoster = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+		});
 
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
 			!g.get("spectator") &&
-			process.env.SPORT === "basketball";
+			isSport("basketball");
 
 		const showRelease =
 			inputs.season === g.get("season") &&

@@ -1,11 +1,11 @@
-import { isSport, PHASE } from "../../../common";
+import { bySport, isSport, PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 
-const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
+const gameOrWeek = bySport({ basketball: "game", football: "week" });
 
 const doInjury = async (
 	p: any,
@@ -53,12 +53,10 @@ const doInjury = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	let injuryLength = "short";
-	if (
-		p2.injury.gamesRemaining >= (process.env.SPORT === "basketball" ? 10 : 4)
-	) {
+	if (p2.injury.gamesRemaining >= bySport({ basketball: 10, football: 4 })) {
 		injuryLength = "medium";
 	} else if (
-		p2.injury.gamesRemaining >= (process.env.SPORT === "basketball" ? 20 : 8)
+		p2.injury.gamesRemaining >= bySport({ basketball: 20, football: 8 })
 	) {
 		injuryLength = "long";
 	}
@@ -129,10 +127,10 @@ const doInjury = async (
 	// 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
 
 	let ratingsLoss = false;
-	const gamesRemainingNormalized =
-		process.env.SPORT === "basketball"
-			? p2.injury.gamesRemaining
-			: p2.injury.gamesRemaining * 3;
+	const gamesRemainingNormalized = bySport({
+		basketball: p2.injury.gamesRemaining,
+		football: p2.injury.gamesRemaining * 3,
+	});
 
 	if (
 		gamesRemainingNormalized > 25 &&
@@ -161,7 +159,7 @@ const doInjury = async (
 			1,
 			100,
 		);
-		const rating = process.env.SPORT === "basketball" ? "jmp" : "thp";
+		const rating = bySport({ basketball: "jmp", football: "thp" });
 		p2.ratings[r][rating] = helpers.bound(
 			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
 			1,
@@ -244,7 +242,7 @@ const writePlayerStats = async (
 		for (const t of result.team) {
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
-				if (process.env.SPORT !== "basketball" && p.stat.min === 0) {
+				if (!isSport("basketball") && p.stat.min === 0) {
 					continue;
 				}
 
@@ -275,7 +273,7 @@ const writePlayerStats = async (
 								throw new Error(`Missing key "${key}" on ps`);
 							}
 
-							if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+							if (isSport("football") && key.endsWith("Lng")) {
 								if (p.stat[key] > ps[key]) {
 									ps[key] = p.stat[key];
 								}

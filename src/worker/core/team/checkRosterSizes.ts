@@ -86,7 +86,7 @@ const checkRosterSizes = async (
 					i += 1;
 					const p = players[i];
 
-					if (counts && process.env.SPORT === "football") {
+					if (counts && isSport("football")) {
 						const pos = p.ratings[p.ratings.length - 1].pos;
 
 						// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply

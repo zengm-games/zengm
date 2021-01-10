@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import generate from "./generate";
@@ -299,10 +299,7 @@ const augmentPartialPlayer = async (
 			r.ovr = ovr(p.ratings[0]);
 		}
 
-		if (
-			process.env.SPORT === "basketball" &&
-			(r.pot === undefined || r.pot < r.ovr)
-		) {
+		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {
 			// Only basketball, in case position is not known at this point
 			r.pot = await bootstrapPot({
 				ratings: r,
@@ -311,7 +308,7 @@ const augmentPartialPlayer = async (
 			});
 		}
 
-		if (r.pos === undefined && process.env.SPORT !== "football") {
+		if (r.pos === undefined && !isSport("football")) {
 			// Football is handled below with call to player.develop
 			if (p.pos !== undefined && typeof p.pos === "string") {
 				r.pos = p.pos;

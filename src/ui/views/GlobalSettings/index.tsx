@@ -5,6 +5,7 @@ import { logEvent, safeLocalStorage, toWorker } from "../../util";
 import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const Options = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
@@ -117,7 +118,7 @@ const Options = (props: View<"globalSettings">) => {
 					</div>
 				</div>
 
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<>
 						<h2>Team and Player Data for "Real Players" Leagues</h2>
 						<RealData

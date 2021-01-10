@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import React, { FormEvent } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
+import { ACCOUNT_API_URL, fetchWrapper, isSport } from "../../../common";
 import { helpers, localActions, realtimeUpdate, toWorker } from "../../util";
+
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
-const otherSport =
-	process.env.SPORT === "basketball" ? "Football" : "Basketball";
+const otherSport = isSport("basketball") ? "Football" : "Basketball";
 type Props = {
 	ajaxErrorMsg: string;
 };

@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { bySport, PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import checkStatisticalFeatBasketball from "./checkStatisticalFeat.basketball";
@@ -9,10 +9,10 @@ import type {
 	GameResults,
 } from "../../../common/types";
 
-const checkPlayer =
-	process.env.SPORT === "football"
-		? checkStatisticalFeatFootball
-		: checkStatisticalFeatBasketball;
+const checkPlayer = bySport({
+	basketball: checkStatisticalFeatBasketball,
+	football: checkStatisticalFeatFootball,
+});
 
 const checkStatisticalFeat = (
 	pid: number,

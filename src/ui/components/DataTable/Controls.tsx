@@ -2,6 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
+import { bySport } from "../../../common";
 import HelpPopover from "../HelpPopover";
 
 const hideAllControlsStyle = {
@@ -29,10 +30,12 @@ const Controls = ({
 	onToggleFilters: () => void;
 	searchText: string;
 }) => {
-	const positionFilterText =
-		process.env.SPORT === "football"
-			? '"WR|TE" under a Position column to display wide receivers and tight ends'
-			: '"C|PF" under a Position column to display centers and power forwards';
+	const positionFilterText = bySport({
+		basketball:
+			'"WR|TE" under a Position column to display wide receivers and tight ends',
+		football:
+			'"C|PF" under a Position column to display centers and power forwards',
+	});
 	return (
 		<div
 			className="datatable-controls d-flex"

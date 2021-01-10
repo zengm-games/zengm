@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
@@ -18,8 +18,10 @@ const updatePlayers = async (
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
-		const stats =
-			process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
+		const stats = bySport({
+			basketball: ["pts", "trb", "ast"],
+			football: ["keyStats"],
+		});
 
 		const players = await getPlayers(
 			inputs.season,

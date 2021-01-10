@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
+import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import {
 	contractNegotiation,
 	draft,
@@ -175,7 +175,7 @@ const newPhaseResignPlayers = async (
 
 				// Don't go beyond roster needs by position
 				if (
-					process.env.SPORT === "football" &&
+					isSport("football") &&
 					positionInfo !== undefined &&
 					positionInfo[pos] !== undefined &&
 					positionInfo[pos].count <= 0 &&

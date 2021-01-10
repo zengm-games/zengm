@@ -1,7 +1,10 @@
+import { bySport } from "../../common";
 import GameSimBasketball from "./GameSim.basketball";
 import GameSimFootball from "./GameSim.football";
 
-const GameSim =
-	process.env.SPORT === "football" ? GameSimFootball : GameSimBasketball;
+const GameSim = bySport<typeof GameSimFootball | typeof GameSimBasketball>({
+	basketball: GameSimBasketball,
+	football: GameSimFootball,
+});
 
 export default GameSim;

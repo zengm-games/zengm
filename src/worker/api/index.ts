@@ -9,6 +9,7 @@ import {
 	RATINGS,
 	applyRealTeamInfo,
 	isSport,
+	bySport,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -1359,10 +1360,10 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			addDummySeason: true,
 			active: true,
 		});
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+		});
 
 		// Take the pids and dpids in each offer and get the info needed to display the offer
 		return Promise.all(
@@ -1777,26 +1778,26 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
 	const season =
 		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
-	const stats =
-		process.env.SPORT === "basketball"
-			? [
-					"pts",
-					"trb",
-					"ast",
-					"blk",
-					"stl",
-					"tov",
-					"min",
-					"per",
-					"ewa",
-					"tsp",
-					"tpar",
-					"ftr",
-					"fgp",
-					"tpp",
-					"ftp",
-			  ]
-			: ["keyStats"];
+	const stats = bySport({
+		basketball: [
+			"pts",
+			"trb",
+			"ast",
+			"blk",
+			"stl",
+			"tov",
+			"min",
+			"per",
+			"ewa",
+			"tsp",
+			"tpar",
+			"ftr",
+			"fgp",
+			"tpp",
+			"ftp",
+		],
+		football: ["keyStats"],
+	});
 
 	return idb.getCopy.playersPlus(p, {
 		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],

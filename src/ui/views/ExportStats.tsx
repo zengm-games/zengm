@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const genFilename = (
 	leagueName: string,
@@ -74,7 +75,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 				<div className="form-group mr-2">
 					<select className="form-control" onChange={resetState}>
 						<option value="averages">Season Averages</option>
-						{process.env.SPORT === "basketball" ? (
+						{isSport("basketball") ? (
 							<option value="games">Individual Games</option>
 						) : null}
 					</select>

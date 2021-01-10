@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { defaultGameAttributes, g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -462,7 +462,7 @@ const updateLeaders = async (
 					// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 					let playerValue;
 
-					if (process.env.SPORT === "football" || cat.minStats[k] === "gp") {
+					if (isSport("football") || cat.minStats[k] === "gp") {
 						playerValue = p.stats[cat.minStats[k]];
 					} else {
 						playerValue = p.stats[cat.minStats[k]] * p.stats.gp;

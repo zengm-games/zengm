@@ -6,6 +6,7 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../common/types";
+import { isSport } from "../../common";
 
 const style = { maxWidth: 1000 };
 
@@ -135,7 +136,7 @@ const frivolities = {
 			name: "Hall of Good",
 			description: "The best retired players who didn't make the Hall of Fame.",
 		},
-		...(process.env.SPORT === "basketball"
+		...(isSport("basketball")
 			? [
 					{
 						urlParts: ["most", "hall_of_shame"],

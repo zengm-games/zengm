@@ -86,11 +86,21 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 	return async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {
-			const valueStat = process.env.SPORT === "basketball" ? "ws" : "av";
-			const stats =
-				process.env.SPORT === "basketball"
-					? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-					: ["keyStats", "av"];
+			const valueStat = bySport({ basketball: "ws", football: "av" });
+			const stats = bySport({
+				basketball: [
+					"gp",
+					"min",
+					"pts",
+					"trb",
+					"ast",
+					"per",
+					"ewa",
+					"ws",
+					"ws48",
+				],
+				football: ["keyStats", "av"],
+			});
 
 			const infosTemp: { [key: string]: InfoTemp } = {};
 			await iterate(

@@ -1,5 +1,5 @@
 import React from "react";
-import { isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import { bySport, isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType } from "../../common/types";
 import { helpers, useLocalShallow } from "../util";
 
@@ -116,7 +116,10 @@ const MoreLinks = (
 					"player_stats",
 					`${abbrev}_${tid}`,
 					"career",
-					process.env.SPORT === "football" ? "passing" : "totals",
+					bySport({
+						football: "passing",
+						basketball: "totals",
+					}),
 				],
 				name: "Franchise Leaders",
 			});
@@ -193,9 +196,7 @@ const MoreLinks = (
 					"player_stats",
 					"all",
 					"career",
-					process.env.SPORT === "basketball" || statType === undefined
-						? "totals"
-						: statType,
+					isSport("basketball") || statType === undefined ? "totals" : statType,
 				],
 				name: "Career Totals",
 			});

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, isSport } from "../../../common";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common";
 import { team, player } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -9,7 +9,10 @@ const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
 
 // 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
-const ROUNDS = process.env.SPORT === "football" ? 0 : 60;
+const ROUNDS = bySport({
+	football: 0,
+	basketball: 60,
+});
 
 const getExpiration = (
 	p: Player,

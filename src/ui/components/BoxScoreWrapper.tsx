@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { PHASE } from "../../common";
+import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import BoxScore from "./BoxScore";
 
@@ -355,7 +355,7 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<div className="mx-xs-auto table-nonfluid text-center">
 						<FourFactors teams={boxScore.teams} />
 					</div>

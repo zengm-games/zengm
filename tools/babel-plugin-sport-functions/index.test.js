@@ -55,7 +55,7 @@ process.env.SPORT === "basketball" ? 1 : 0;`,
 	});
 
 	describe("bySport", () => {
-		it("should replace bySport, with error if no matching sport", () => {
+		it("should replace bySport", () => {
 			compare(
 				`const whatever = bySport({
   basketball: "basketball thing",
@@ -83,8 +83,8 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "foot
 		it("should replace bySport, with default if no matching sport", () => {
 			compare(
 				`const whatever = bySport({
-  basketball: "basketball thing",
   default: "default thing",
+  basketball: "basketball thing",
 });`,
 				`"use strict";
 

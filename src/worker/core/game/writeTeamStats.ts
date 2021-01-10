@@ -1,4 +1,4 @@
-import { isSport, PHASE } from "../../../common";
+import { bySport, isSport, PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
@@ -222,15 +222,17 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.health.amount += healthPaid;
 		teamSeason.expenses.facilities.amount += facilitiesPaid; // For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 
-		const skip =
-			process.env.SPORT === "basketball" ? ["ptsQtrs", "ba"] : ["ptsQtrs"];
+		const skip = bySport({
+			basketball: ["ptsQtrs", "ba"],
+			football: ["ptsQtrs"],
+		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
 			if (skip.includes(key)) {
 				continue;
 			}
 
-			if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+			if (isSport("football") && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
 					teamStats[key] = results.team[t1].stat[key];
 				}

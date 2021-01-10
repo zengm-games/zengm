@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { isSport } from "../../common";
 import { helpers } from "../util";
 
 const RetiredPlayers = ({
@@ -39,7 +40,7 @@ const RetiredPlayers = ({
 						key={p.pid}
 						className={p.stats.tid === userTid ? "table-info" : undefined}
 					>
-						{process.env.SPORT === "football" ? `${p.ratings.pos} ` : null}
+						{isSport("football") ? `${p.ratings.pos} ` : null}
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 						{p.stats.tid >= 0 ? (
 							<>

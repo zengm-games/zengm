@@ -23,7 +23,7 @@ import {
 	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
-import { PHASE, PLAYER } from "../../../common";
+import { bySport, PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
@@ -368,7 +368,7 @@ const Player2 = ({
 			</div>
 		);
 	} else {
-		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
+		const dayOrWeek = bySport({ basketball: "day", football: "week" });
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (

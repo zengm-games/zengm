@@ -10,6 +10,7 @@ import type {
 	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types";
+import { bySport } from "../../../common";
 
 const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 
@@ -24,9 +25,10 @@ const create = async (conditions: Conditions) => {
 	const players = await getPlayers(g.get("season"));
 
 	const score = (p: PlayerFiltered) =>
-		process.env.SPORT === "football"
-			? p.currentStats.av
-			: p.currentStats.ewa + p.currentStats.ws;
+		bySport({
+			football: p.currentStats.av,
+			basketball: p.currentStats.ewa + p.currentStats.ws,
+		});
 
 	const sortedPlayers = getTopPlayers(
 		{

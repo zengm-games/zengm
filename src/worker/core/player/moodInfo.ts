@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common";
+import { bySport, PHASE, PLAYER } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
@@ -49,8 +49,7 @@ const moodInfo = async (
 	if (p.tid === PLAYER.FREE_AGENT) {
 		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	}
-	const valueDiff =
-		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
+	const valueDiff = (p.value - bySport({ football: 85, basketball: 65 })) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	const thisIsAUserTeam = g.get("userTids").includes(tid);

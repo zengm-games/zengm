@@ -133,15 +133,15 @@ const TEAM_STATS_TABLES: {
 		stats: string[];
 		superCols?: any[];
 	};
-} =
-	process.env.SPORT === "football"
-		? constantsFootball.TEAM_STATS_TABLES
-		: constantsBasketball.TEAM_STATS_TABLES;
+} = bySport({
+	basketball: constantsBasketball.TEAM_STATS_TABLES,
+	football: constantsFootball.TEAM_STATS_TABLES,
+});
 
-const TIME_BETWEEN_GAMES: string =
-	process.env.SPORT === "football"
-		? constantsFootball.TIME_BETWEEN_GAMES
-		: constantsBasketball.TIME_BETWEEN_GAMES;
+const TIME_BETWEEN_GAMES: string = bySport({
+	basketball: constantsBasketball.TIME_BETWEEN_GAMES,
+	football: constantsFootball.TIME_BETWEEN_GAMES,
+});
 
 const MOOD_TRAITS: Record<MoodTrait, string> = {
 	F: "Fame",

@@ -172,7 +172,7 @@ const TopStuff = ({
 									{showTradeFor ? `Strategy: ${t.strategy}` : null}
 								</div>
 							) : null}
-							{process.env.SPORT === "football" ? (
+							{isSport("football") ? (
 								<RosterComposition className="ml-3" players={players} />
 							) : null}
 						</div>

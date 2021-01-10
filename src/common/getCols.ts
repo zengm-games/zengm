@@ -1,6 +1,7 @@
 import { helpers } from ".";
 import type { SortOrder, SortType } from "./types";
 import type { Col } from "../ui/components/DataTable";
+import bySport from "./bySport";
 
 type ColTemp = {
 	desc?: string;
@@ -10,1199 +11,1199 @@ type ColTemp = {
 	sortType?: SortType;
 	width?: string;
 };
-const sportSpecificCols: {
+const sportSpecificCols = bySport<{
 	[key: string]: ColTemp;
-} =
-	process.env.SPORT === "basketball"
-		? {
-				"rating:fg": {
-					desc: "Mid Range",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:tp": {
-					desc: "Three Pointers",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:oiq": {
-					desc: "Offensive IQ",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:dnk": {
-					desc: "Dunks/Layups",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:drb": {
-					desc: "Dribbling",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ins": {
-					desc: "Inside Scoring",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:jmp": {
-					desc: "Jumping",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ft": {
-					desc: "Free Throws",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:pss": {
-					desc: "Passing",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:reb": {
-					desc: "Rebounding",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:diq": {
-					desc: "Defensive IQ",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:2pp": {
-					desc: "Two Point Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:2p": {
-					desc: "Two Pointers Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:2pa": {
-					desc: "Two Pointers Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pm": {
-					desc: "Plus/Minus",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tpp": {
-					desc: "Three Point Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tp": {
-					desc: "Three Pointers Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tpa": {
-					desc: "Three Pointers Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tpar": {
-					desc: "Three Point Attempt Rate (3PA / FGA)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:astp": {
-					desc:
-						"Percentage of teammate field goals a player assisted while on the floor",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ast": {
-					desc: "Assists Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ba": {
-					desc: "Blocks Against",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:blk": {
-					desc: "Blocks",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:blkp": {
-					desc: "Percentage of opponent two-pointers blocked",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drb": {
-					desc: "Defensive Rebounds",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drbp": {
-					desc: "Percentage of available defensive rebounds grabbed",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drtg": {
-					desc: "Defensive Rating (points allowed per 100 possessions)",
-					sortSequence: ["asc", "desc"],
-					sortType: "number",
-				},
-				"stat:dws": {
-					desc: "Defensive Win Shares",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ewa": {
-					desc: "Estimated Wins Added",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:efg": {
-					desc: "Effective Field Goal Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgp": {
-					desc: "Field Goal Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg": {
-					desc: "Field Goals Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga": {
-					desc: "Field Goals Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ftp": {
-					desc: "Free Throw Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ft": {
-					desc: "Free Throws Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fta": {
-					desc: "Free Throws Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ftr": {
-					desc: "Free Throw Attempt Rate (FTA / FGA)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:gmsc": {
-					desc: "Game Score",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:nrtg": {
-					desc: "Net Rating (point differential per 100 possessions)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:orb": {
-					desc: "Offensive Rebounds",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:orbp": {
-					desc: "Percentage of available offensive rebounds grabbed",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ortg": {
-					desc: "Offensive Rating (points produced/scored per 100 possessions)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ows": {
-					desc: "Offensive Win Shares",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pace": {
-					desc: "Possessions Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:per": {
-					desc: "Player Efficiency Rating",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pf": {
-					desc: "Personal Fouls",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pl": {
-					desc:
-						"Pythagorean Losses (expected losses based on points scored and allowed)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pts": {
-					desc: "Points",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pw": {
-					desc:
-						"Pythagorean Wins (expected wins based on points scored and allowed)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:stl": {
-					desc: "Steals",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:stlp": {
-					desc: "Percentage of opponent possessions ending in steals",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tovp": {
-					desc: "Turnovers per 100 plays",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:trb": {
-					desc: "Total Rebounds",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:trbp": {
-					desc: "Percentage of available rebounds grabbed",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tsp": {
-					desc: "True Shooting Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tov": {
-					desc: "Turnovers",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:usgp": {
-					desc: "Percentage of team plays used",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ws": {
-					desc: "Win Shares",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ws48": {
-					desc: "Win Shares Per 48 Minutes",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:obpm": {
-					desc: "Offensive Box Plus-Minus",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:dbpm": {
-					desc: "Defensive Box Plus-Minus",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:bpm": {
-					desc: "Box Plus-Minus",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:vorp": {
-					desc: "Value Over Replacement Player",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgAtRim": {
-					desc: "At Rim Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgaAtRim": {
-					desc: "At Rim Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgpAtRim": {
-					desc: "At Rim Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgLowPost": {
-					desc: "Low Post Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgaLowPost": {
-					desc: "Low Post Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgpLowPost": {
-					desc: "Low Post Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgMidRange": {
-					desc: "Mid Range Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgaMidRange": {
-					desc: "Mid Range Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgpMidRange": {
-					desc: "Mid Range Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-		  }
-		: {
-				"pos:QB": {
-					desc: "Quarterback",
-					sortType: "number",
-				},
-				"pos:RB": {
-					desc: "Running Back",
-					sortType: "number",
-				},
-				"pos:WR": {
-					desc: "Wide Receiver",
-					sortType: "number",
-				},
-				"pos:TE": {
-					desc: "Tight End",
-					sortType: "number",
-				},
-				"pos:OL": {
-					desc: "Offensive Lineman",
-					sortType: "number",
-				},
-				"pos:DL": {
-					desc: "Defensive Lineman",
-					sortType: "number",
-				},
-				"pos:LB": {
-					desc: "Linebacker",
-					sortType: "number",
-				},
-				"pos:CB": {
-					desc: "Cornerback",
-					sortType: "number",
-				},
-				"pos:S": {
-					desc: "Safety",
-					sortType: "number",
-				},
-				"pos:K": {
-					desc: "Kicker",
-					sortType: "number",
-				},
-				"pos:P": {
-					desc: "Punter",
-					sortType: "number",
-				},
-				"rating:thv": {
-					desc: "Throwing Vision",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:thp": {
-					desc: "Throwing Power",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:tha": {
-					desc: "Throwing Accuracy",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:bsc": {
-					desc: "Ball Security",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:elu": {
-					desc: "Elusiveness",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:rtr": {
-					desc: "Route Running",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:hnd": {
-					desc: "Hands",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:rbk": {
-					desc: "Run Blocking",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:pbk": {
-					desc: "Pass Blocking",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:pcv": {
-					desc: "Pass Coverage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:tck": {
-					desc: "Tackling",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:prs": {
-					desc: "Pass Rushing",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:rns": {
-					desc: "Run Stopping",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:kpw": {
-					desc: "Kicking Power",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:kac": {
-					desc: "Kicking Accuracy",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ppw": {
-					desc: "Punting Power",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:pac": {
-					desc: "Punting Accuracy",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrQB": {
-					desc: "Overall Rating (QB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrRB": {
-					desc: "Overall Rating (RB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrWR": {
-					desc: "Overall Rating (WR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrTE": {
-					desc: "Overall Rating (TE)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrOL": {
-					desc: "Overall Rating (OL)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrDL": {
-					desc: "Overall Rating (DL)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrLB": {
-					desc: "Overall Rating (LB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrCB": {
-					desc: "Overall Rating (CB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrS": {
-					desc: "Overall Rating (S)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrK": {
-					desc: "Overall Rating (K)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrP": {
-					desc: "Overall Rating (P)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrKR": {
-					desc: "Overall Rating (KR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:ovrPR": {
-					desc: "Overall Rating (PR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potQB": {
-					desc: "Potential Rating (QB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potRB": {
-					desc: "Potential Rating (RB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potWR": {
-					desc: "Potential Rating (WR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potTE": {
-					desc: "Potential Rating (TE)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potOL": {
-					desc: "Potential Rating (OL)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potDL": {
-					desc: "Potential Rating (DL)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potLB": {
-					desc: "Potential Rating (LB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potCB": {
-					desc: "Potential Rating (CB)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potS": {
-					desc: "Potential Rating (S)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potK": {
-					desc: "Potential Rating (K)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potP": {
-					desc: "Potential Rating (P)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potKR": {
-					desc: "Potential Rating (KR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"rating:potPR": {
-					desc: "Potential Rating (PR)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fmb": {
-					desc: "Fumbles",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fmbLost": {
-					desc: "Fumbles Lost",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssCmp": {
-					desc: "Completions",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pss": {
-					desc: "Passing Attempts",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssYds": {
-					desc: "Passing Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssTD": {
-					desc: "Passing Touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssInt": {
-					desc: "Interceptions",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssLng": {
-					desc: "Longest Pass",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssSk": {
-					desc: "Times Sacked",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssSkYds": {
-					desc: "Yards lost due to sacks",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rus": {
-					desc: "Rushing Attempts",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusYds": {
-					desc: "Rushing Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusTD": {
-					desc: "Rushing Touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusLng": {
-					desc: "Longest Run",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tgt": {
-					desc: "Targets",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rec": {
-					desc: "Receptions",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recYds": {
-					desc: "Receiving Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recTD": {
-					desc: "Receiving Touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recLng": {
-					desc: "Longest Reception",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pr": {
-					desc: "Punt Returns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:prYds": {
-					desc: "Punt Return Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:prTD": {
-					desc: "Punts returned for touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:prLng": {
-					desc: "Longest Punt Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:kr": {
-					desc: "Kickoff Returns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:krYds": {
-					desc: "Kickoff Return Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:krTD": {
-					desc: "Kickoffs returned for touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:krLng": {
-					desc: "Longest Kickoff Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defInt": {
-					desc: "Interceptions",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defIntYds": {
-					desc: "Yards interceptions were returned for",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defIntTD": {
-					desc: "Interceptions returned for touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defIntLng": {
-					desc: "Longest Interception Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defPssDef": {
-					desc: "Passes Defended",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defFmbFrc": {
-					desc: "Forced Fumbles",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defFmbRec": {
-					desc: "Fumbles Recovered",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defFmbYds": {
-					desc: "Yards fumbles were returned for",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defFmbTD": {
-					desc: "Fumbles returned for touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defFmbLng": {
-					desc: "Longest Fumble Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defSk": {
-					desc: "Sacks",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defTckSolo": {
-					desc: "Solo Tackles",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defTckAst": {
-					desc: "Assists On Tackles",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defTckLoss": {
-					desc: "Tackes For Loss",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defSft": {
-					desc: "Safeties Scored",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg0": {
-					desc: "Field Goals Made, 19 yards and under",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga0": {
-					desc: "Field Goals Attempted, 19 yards and under",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg20": {
-					desc: "Field Goals Made, 20-29 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga20": {
-					desc: "Field Goals Attempted, 20-29 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg30": {
-					desc: "Field Goals Made, 30-39 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga30": {
-					desc: "Field Goals Attempted, 30-39 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg40": {
-					desc: "Field Goals Made, 40-49 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga40": {
-					desc: "Field Goals Attempted, 40-49 yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg50": {
-					desc: "Field Goals Made, 50+ yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga50": {
-					desc: "Field Goals Attempted, 50+ yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgLng": {
-					desc: "Longest Field Goal",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:xp": {
-					desc: "Extra Points Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:xpa": {
-					desc: "Extra Points Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pnt": {
-					desc: "Times Punted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntYds": {
-					desc: "Total Punt Yardage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntLng": {
-					desc: "Longest Punt",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntBlk": {
-					desc: "Times Punts Blocked",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pen": {
-					desc: "Penalties",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:penYds": {
-					desc: "Penalty Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:cmpPct": {
-					desc: "Completion Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:qbRat": {
-					desc: "Quarterback Rating",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recYdsPerAtt": {
-					desc: "Yards Per Catch",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fg": {
-					desc: "Field Goals Made",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fga": {
-					desc: "Field Goals Attempted",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:fgPct": {
-					desc: "Field Goal Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:xpPct": {
-					desc: "Extra Point Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:kickingPts": {
-					desc: "Kicking Points",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntYdsPerAtt": {
-					desc: "Yards Per Punt",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntTB": {
-					desc: "Punt Touchbacks",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pntIn20": {
-					desc: "Punts Inside 20",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:krYdsPerAtt": {
-					desc: "Yards Per Kick Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:prYdsPerAtt": {
-					desc: "Yards Per Punt Return",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:defTck": {
-					desc: "Total Tackles",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:keyStats": {
-					desc: "Key Stats",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pts": {
-					desc: "",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:yds": {
-					desc: "Offensive Yards",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ply": {
-					desc: "Plays",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ydsPerPlay": {
-					desc: "Yards Per Play",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:tov": {
-					desc: "Turnovers",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drives": {
-					desc: "Number of Drives",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drivesScoringPct": {
-					desc: "Percentage of drives ending in a score",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:drivesTurnoverPct": {
-					desc: "Percentage of drives ending in a turnover",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:avgFieldPosition": {
-					desc: "Average Starting Field Position",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:timePerDrive": {
-					desc: "Time Per Drive (minutes)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:playsPerDrive": {
-					desc: "Number of Plays Per Drive",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ydsPerDrive": {
-					desc: "Yards Per Drive",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ptsPerDrive": {
-					desc: "Points Per Drive",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:qbRec": {
-					desc: "Team record as primary QB",
-					sortSequence: ["desc", "asc"],
-					sortType: "record",
-				},
-				"stat:pssTDPct": {
-					desc: "Percentage of passes that result in touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssIntPct": {
-					desc: "Percentage of passes that result in interceptions",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssYdsPerAtt": {
-					desc: "Pass Yards Per Attempt",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssAdjYdsPerAtt": {
-					desc:
-						"Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssYdsPerCmp": {
-					desc: "Pass Yards Per Completion",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssYdsPerGame": {
-					desc: "Pass Yards Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssNetYdsPerAtt": {
-					desc: "Net Pass Yards Per Attempt (passes and sacks)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssAdjNetYdsPerAtt": {
-					desc:
-						"Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:pssSkPct": {
-					desc: "Percentage of times sacked when attempting a pass",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusYdsPerAtt": {
-					desc: "Rushing Yards Per Attempt",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusYdsPerGame": {
-					desc: "Rushing Yards Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusPerGame": {
-					desc: "Rushing Attempts Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recYdsPerRec": {
-					desc: "Yards Per Reception",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recPerGame": {
-					desc: "Receptions Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recYdsPerGame": {
-					desc: "Receiving Yards Per Game",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:recCatchPct": {
-					desc: "Catch Percentage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:touches": {
-					desc: "Touches (Rushing Attempts And Receptions)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ydsPerTouch": {
-					desc: "Yards Per Touch",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:ydsFromScrimmage": {
-					desc: "Total Rushing and Receiving Yards From Scrimmage",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:rusRecTD": {
-					desc: "Total Rushing and Receiving Touchdowns",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:allPurposeYds": {
-					desc:
-						"All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-				"stat:av": {
-					desc: "Approximate Value",
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-				},
-		  };
+}>({
+	basketball: {
+		"rating:fg": {
+			desc: "Mid Range",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:tp": {
+			desc: "Three Pointers",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:oiq": {
+			desc: "Offensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:dnk": {
+			desc: "Dunks/Layups",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:drb": {
+			desc: "Dribbling",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ins": {
+			desc: "Inside Scoring",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:jmp": {
+			desc: "Jumping",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ft": {
+			desc: "Free Throws",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:pss": {
+			desc: "Passing",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:reb": {
+			desc: "Rebounding",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:diq": {
+			desc: "Defensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:2pp": {
+			desc: "Two Point Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:2p": {
+			desc: "Two Pointers Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:2pa": {
+			desc: "Two Pointers Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pm": {
+			desc: "Plus/Minus",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tpp": {
+			desc: "Three Point Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tp": {
+			desc: "Three Pointers Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tpa": {
+			desc: "Three Pointers Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tpar": {
+			desc: "Three Point Attempt Rate (3PA / FGA)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:astp": {
+			desc:
+				"Percentage of teammate field goals a player assisted while on the floor",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ast": {
+			desc: "Assists Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ba": {
+			desc: "Blocks Against",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:blk": {
+			desc: "Blocks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:blkp": {
+			desc: "Percentage of opponent two-pointers blocked",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drb": {
+			desc: "Defensive Rebounds",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drbp": {
+			desc: "Percentage of available defensive rebounds grabbed",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drtg": {
+			desc: "Defensive Rating (points allowed per 100 possessions)",
+			sortSequence: ["asc", "desc"],
+			sortType: "number",
+		},
+		"stat:dws": {
+			desc: "Defensive Win Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ewa": {
+			desc: "Estimated Wins Added",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:efg": {
+			desc: "Effective Field Goal Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgp": {
+			desc: "Field Goal Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg": {
+			desc: "Field Goals Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga": {
+			desc: "Field Goals Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ftp": {
+			desc: "Free Throw Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ft": {
+			desc: "Free Throws Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fta": {
+			desc: "Free Throws Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ftr": {
+			desc: "Free Throw Attempt Rate (FTA / FGA)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gmsc": {
+			desc: "Game Score",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:nrtg": {
+			desc: "Net Rating (point differential per 100 possessions)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:orb": {
+			desc: "Offensive Rebounds",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:orbp": {
+			desc: "Percentage of available offensive rebounds grabbed",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ortg": {
+			desc: "Offensive Rating (points produced/scored per 100 possessions)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ows": {
+			desc: "Offensive Win Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pace": {
+			desc: "Possessions Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:per": {
+			desc: "Player Efficiency Rating",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pf": {
+			desc: "Personal Fouls",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pl": {
+			desc:
+				"Pythagorean Losses (expected losses based on points scored and allowed)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pts": {
+			desc: "Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pw": {
+			desc:
+				"Pythagorean Wins (expected wins based on points scored and allowed)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:stl": {
+			desc: "Steals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:stlp": {
+			desc: "Percentage of opponent possessions ending in steals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tovp": {
+			desc: "Turnovers per 100 plays",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:trb": {
+			desc: "Total Rebounds",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:trbp": {
+			desc: "Percentage of available rebounds grabbed",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tsp": {
+			desc: "True Shooting Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tov": {
+			desc: "Turnovers",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:usgp": {
+			desc: "Percentage of team plays used",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ws": {
+			desc: "Win Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ws48": {
+			desc: "Win Shares Per 48 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:obpm": {
+			desc: "Offensive Box Plus-Minus",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:dbpm": {
+			desc: "Defensive Box Plus-Minus",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:bpm": {
+			desc: "Box Plus-Minus",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:vorp": {
+			desc: "Value Over Replacement Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgAtRim": {
+			desc: "At Rim Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgaAtRim": {
+			desc: "At Rim Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgpAtRim": {
+			desc: "At Rim Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgLowPost": {
+			desc: "Low Post Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgaLowPost": {
+			desc: "Low Post Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgpLowPost": {
+			desc: "Low Post Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgMidRange": {
+			desc: "Mid Range Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgaMidRange": {
+			desc: "Mid Range Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgpMidRange": {
+			desc: "Mid Range Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+	},
+	football: {
+		"pos:QB": {
+			desc: "Quarterback",
+			sortType: "number",
+		},
+		"pos:RB": {
+			desc: "Running Back",
+			sortType: "number",
+		},
+		"pos:WR": {
+			desc: "Wide Receiver",
+			sortType: "number",
+		},
+		"pos:TE": {
+			desc: "Tight End",
+			sortType: "number",
+		},
+		"pos:OL": {
+			desc: "Offensive Lineman",
+			sortType: "number",
+		},
+		"pos:DL": {
+			desc: "Defensive Lineman",
+			sortType: "number",
+		},
+		"pos:LB": {
+			desc: "Linebacker",
+			sortType: "number",
+		},
+		"pos:CB": {
+			desc: "Cornerback",
+			sortType: "number",
+		},
+		"pos:S": {
+			desc: "Safety",
+			sortType: "number",
+		},
+		"pos:K": {
+			desc: "Kicker",
+			sortType: "number",
+		},
+		"pos:P": {
+			desc: "Punter",
+			sortType: "number",
+		},
+		"rating:thv": {
+			desc: "Throwing Vision",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:thp": {
+			desc: "Throwing Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:tha": {
+			desc: "Throwing Accuracy",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:bsc": {
+			desc: "Ball Security",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:elu": {
+			desc: "Elusiveness",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:rtr": {
+			desc: "Route Running",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:hnd": {
+			desc: "Hands",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:rbk": {
+			desc: "Run Blocking",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:pbk": {
+			desc: "Pass Blocking",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:pcv": {
+			desc: "Pass Coverage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:tck": {
+			desc: "Tackling",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:prs": {
+			desc: "Pass Rushing",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:rns": {
+			desc: "Run Stopping",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:kpw": {
+			desc: "Kicking Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:kac": {
+			desc: "Kicking Accuracy",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ppw": {
+			desc: "Punting Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:pac": {
+			desc: "Punting Accuracy",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrQB": {
+			desc: "Overall Rating (QB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrRB": {
+			desc: "Overall Rating (RB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrWR": {
+			desc: "Overall Rating (WR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrTE": {
+			desc: "Overall Rating (TE)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrOL": {
+			desc: "Overall Rating (OL)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrDL": {
+			desc: "Overall Rating (DL)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrLB": {
+			desc: "Overall Rating (LB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrCB": {
+			desc: "Overall Rating (CB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrS": {
+			desc: "Overall Rating (S)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrK": {
+			desc: "Overall Rating (K)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrP": {
+			desc: "Overall Rating (P)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrKR": {
+			desc: "Overall Rating (KR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrPR": {
+			desc: "Overall Rating (PR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potQB": {
+			desc: "Potential Rating (QB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potRB": {
+			desc: "Potential Rating (RB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potWR": {
+			desc: "Potential Rating (WR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potTE": {
+			desc: "Potential Rating (TE)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potOL": {
+			desc: "Potential Rating (OL)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potDL": {
+			desc: "Potential Rating (DL)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potLB": {
+			desc: "Potential Rating (LB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potCB": {
+			desc: "Potential Rating (CB)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potS": {
+			desc: "Potential Rating (S)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potK": {
+			desc: "Potential Rating (K)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potP": {
+			desc: "Potential Rating (P)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potKR": {
+			desc: "Potential Rating (KR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potPR": {
+			desc: "Potential Rating (PR)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fmb": {
+			desc: "Fumbles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fmbLost": {
+			desc: "Fumbles Lost",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssCmp": {
+			desc: "Completions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pss": {
+			desc: "Passing Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssYds": {
+			desc: "Passing Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssTD": {
+			desc: "Passing Touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssInt": {
+			desc: "Interceptions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssLng": {
+			desc: "Longest Pass",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssSk": {
+			desc: "Times Sacked",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssSkYds": {
+			desc: "Yards lost due to sacks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rus": {
+			desc: "Rushing Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusYds": {
+			desc: "Rushing Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusTD": {
+			desc: "Rushing Touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusLng": {
+			desc: "Longest Run",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tgt": {
+			desc: "Targets",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rec": {
+			desc: "Receptions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recYds": {
+			desc: "Receiving Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recTD": {
+			desc: "Receiving Touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recLng": {
+			desc: "Longest Reception",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pr": {
+			desc: "Punt Returns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:prYds": {
+			desc: "Punt Return Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:prTD": {
+			desc: "Punts returned for touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:prLng": {
+			desc: "Longest Punt Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:kr": {
+			desc: "Kickoff Returns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:krYds": {
+			desc: "Kickoff Return Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:krTD": {
+			desc: "Kickoffs returned for touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:krLng": {
+			desc: "Longest Kickoff Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defInt": {
+			desc: "Interceptions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defIntYds": {
+			desc: "Yards interceptions were returned for",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defIntTD": {
+			desc: "Interceptions returned for touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defIntLng": {
+			desc: "Longest Interception Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defPssDef": {
+			desc: "Passes Defended",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defFmbFrc": {
+			desc: "Forced Fumbles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defFmbRec": {
+			desc: "Fumbles Recovered",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defFmbYds": {
+			desc: "Yards fumbles were returned for",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defFmbTD": {
+			desc: "Fumbles returned for touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defFmbLng": {
+			desc: "Longest Fumble Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defSk": {
+			desc: "Sacks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defTckSolo": {
+			desc: "Solo Tackles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defTckAst": {
+			desc: "Assists On Tackles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defTckLoss": {
+			desc: "Tackes For Loss",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defSft": {
+			desc: "Safeties Scored",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg0": {
+			desc: "Field Goals Made, 19 yards and under",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga0": {
+			desc: "Field Goals Attempted, 19 yards and under",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg20": {
+			desc: "Field Goals Made, 20-29 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga20": {
+			desc: "Field Goals Attempted, 20-29 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg30": {
+			desc: "Field Goals Made, 30-39 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga30": {
+			desc: "Field Goals Attempted, 30-39 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg40": {
+			desc: "Field Goals Made, 40-49 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga40": {
+			desc: "Field Goals Attempted, 40-49 yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg50": {
+			desc: "Field Goals Made, 50+ yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga50": {
+			desc: "Field Goals Attempted, 50+ yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgLng": {
+			desc: "Longest Field Goal",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:xp": {
+			desc: "Extra Points Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:xpa": {
+			desc: "Extra Points Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pnt": {
+			desc: "Times Punted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntYds": {
+			desc: "Total Punt Yardage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntLng": {
+			desc: "Longest Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntBlk": {
+			desc: "Times Punts Blocked",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pen": {
+			desc: "Penalties",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:penYds": {
+			desc: "Penalty Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:cmpPct": {
+			desc: "Completion Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:qbRat": {
+			desc: "Quarterback Rating",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recYdsPerAtt": {
+			desc: "Yards Per Catch",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fg": {
+			desc: "Field Goals Made",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fga": {
+			desc: "Field Goals Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fgPct": {
+			desc: "Field Goal Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:xpPct": {
+			desc: "Extra Point Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:kickingPts": {
+			desc: "Kicking Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntYdsPerAtt": {
+			desc: "Yards Per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntTB": {
+			desc: "Punt Touchbacks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pntIn20": {
+			desc: "Punts Inside 20",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:krYdsPerAtt": {
+			desc: "Yards Per Kick Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:prYdsPerAtt": {
+			desc: "Yards Per Punt Return",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:defTck": {
+			desc: "Total Tackles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:keyStats": {
+			desc: "Key Stats",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pts": {
+			desc: "",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:yds": {
+			desc: "Offensive Yards",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ply": {
+			desc: "Plays",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ydsPerPlay": {
+			desc: "Yards Per Play",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tov": {
+			desc: "Turnovers",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drives": {
+			desc: "Number of Drives",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drivesScoringPct": {
+			desc: "Percentage of drives ending in a score",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:drivesTurnoverPct": {
+			desc: "Percentage of drives ending in a turnover",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:avgFieldPosition": {
+			desc: "Average Starting Field Position",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:timePerDrive": {
+			desc: "Time Per Drive (minutes)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:playsPerDrive": {
+			desc: "Number of Plays Per Drive",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ydsPerDrive": {
+			desc: "Yards Per Drive",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ptsPerDrive": {
+			desc: "Points Per Drive",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:qbRec": {
+			desc: "Team record as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:pssTDPct": {
+			desc: "Percentage of passes that result in touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssIntPct": {
+			desc: "Percentage of passes that result in interceptions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssYdsPerAtt": {
+			desc: "Pass Yards Per Attempt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssAdjYdsPerAtt": {
+			desc:
+				"Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssYdsPerCmp": {
+			desc: "Pass Yards Per Completion",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssYdsPerGame": {
+			desc: "Pass Yards Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssNetYdsPerAtt": {
+			desc: "Net Pass Yards Per Attempt (passes and sacks)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssAdjNetYdsPerAtt": {
+			desc:
+				"Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pssSkPct": {
+			desc: "Percentage of times sacked when attempting a pass",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusYdsPerAtt": {
+			desc: "Rushing Yards Per Attempt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusYdsPerGame": {
+			desc: "Rushing Yards Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusPerGame": {
+			desc: "Rushing Attempts Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recYdsPerRec": {
+			desc: "Yards Per Reception",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recPerGame": {
+			desc: "Receptions Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recYdsPerGame": {
+			desc: "Receiving Yards Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:recCatchPct": {
+			desc: "Catch Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:touches": {
+			desc: "Touches (Rushing Attempts And Receptions)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ydsPerTouch": {
+			desc: "Yards Per Touch",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ydsFromScrimmage": {
+			desc: "Total Rushing and Receiving Yards From Scrimmage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:rusRecTD": {
+			desc: "Total Rushing and Receiving Touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:allPurposeYds": {
+			desc:
+				"All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:av": {
+			desc: "Approximate Value",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+	},
+});
 const cols: {
 	[key: string]: ColTemp;
 } = {

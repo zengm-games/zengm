@@ -2,6 +2,7 @@
 import type { TeamBasic, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash/orderBy";
+import isSport from "./isSport";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -62,7 +63,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 
 function getTeamsDefault(): TeamBasic[] {
 	let teams: Omit<TeamBasic, "popRank">[];
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		teams = getTeamInfos([
 			{
 				tid: 0,

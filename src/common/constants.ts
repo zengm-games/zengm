@@ -1,3 +1,4 @@
+import bySport from "./bySport";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 
@@ -80,49 +81,51 @@ const STRIPE_PUBLISHABLE_KEY =
 		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
-const COMPOSITE_WEIGHTS: CompositeWeights =
-	process.env.SPORT === "football"
-		? constantsFootball.COMPOSITE_WEIGHTS
-		: constantsBasketball.COMPOSITE_WEIGHTS;
-const PLAYER_SUMMARY: {
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: any[];
-	};
-} =
-	process.env.SPORT === "football"
-		? constantsFootball.PLAYER_SUMMARY
-		: constantsBasketball.PLAYER_SUMMARY;
-const PLAYER_STATS_TABLES: {
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: any[];
-	};
-} =
-	process.env.SPORT === "football"
-		? constantsFootball.PLAYER_STATS_TABLES
-		: constantsBasketball.PLAYER_STATS_TABLES;
+const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
+	basketball: constantsBasketball.COMPOSITE_WEIGHTS,
+	football: constantsFootball.COMPOSITE_WEIGHTS,
+});
 
-const RATINGS: any[] =
-	process.env.SPORT === "football"
-		? constantsFootball.RATINGS
-		: constantsBasketball.RATINGS;
+const PLAYER_SUMMARY = bySport<{
+	[key: string]: {
+		name: string;
+		onlyShowIf?: string[];
+		stats: string[];
+		superCols?: any[];
+	};
+}>({
+	basketball: constantsBasketball.PLAYER_SUMMARY,
+	football: constantsFootball.PLAYER_SUMMARY,
+});
+
+const PLAYER_STATS_TABLES = bySport<{
+	[key: string]: {
+		name: string;
+		onlyShowIf?: string[];
+		stats: string[];
+		superCols?: any[];
+	};
+}>({
+	basketball: constantsBasketball.PLAYER_STATS_TABLES,
+	football: constantsFootball.PLAYER_STATS_TABLES,
+});
+
+const RATINGS = bySport<any[]>({
+	basketball: constantsBasketball.RATINGS,
+	football: constantsFootball.RATINGS,
+});
 
 const POSITION_COUNTS: {
 	[key: string]: number;
-} =
-	process.env.SPORT === "football"
-		? constantsFootball.POSITION_COUNTS
-		: constantsBasketball.POSITION_COUNTS;
+} = bySport({
+	basketball: constantsBasketball.POSITION_COUNTS,
+	football: constantsFootball.POSITION_COUNTS,
+});
 
-const POSITIONS: any[] =
-	process.env.SPORT === "football"
-		? constantsFootball.POSITIONS
-		: constantsBasketball.POSITIONS;
+const POSITIONS = bySport<any[]>({
+	basketball: constantsBasketball.POSITIONS,
+	football: constantsFootball.POSITIONS,
+});
 
 const TEAM_STATS_TABLES: {
 	[key: string]: {
@@ -147,30 +150,30 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 	W: "Winning",
 };
 
-const SIMPLE_AWARDS: Readonly<string[]> =
-	process.env.SPORT == "basketball"
-		? constantsBasketball.SIMPLE_AWARDS
-		: constantsFootball.SIMPLE_AWARDS;
+const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
+	basketball: constantsBasketball.SIMPLE_AWARDS,
+	football: constantsFootball.SIMPLE_AWARDS,
+});
 
-const AWARD_NAMES: Record<string, string> =
-	process.env.SPORT == "basketball"
-		? constantsBasketball.AWARD_NAMES
-		: constantsFootball.AWARD_NAMES;
+const AWARD_NAMES = bySport<Record<string, string>>({
+	basketball: constantsBasketball.AWARD_NAMES,
+	football: constantsFootball.AWARD_NAMES,
+});
 
-const DEFAULT_CONFS =
-	process.env.SPORT == "basketball"
-		? constantsBasketball.DEFAULT_CONFS
-		: constantsFootball.DEFAULT_CONFS;
+const DEFAULT_CONFS = bySport({
+	basketball: constantsBasketball.DEFAULT_CONFS,
+	football: constantsFootball.DEFAULT_CONFS,
+});
 
-const DEFAULT_DIVS =
-	process.env.SPORT == "basketball"
-		? constantsBasketball.DEFAULT_DIVS
-		: constantsFootball.DEFAULT_DIVS;
+const DEFAULT_DIVS = bySport({
+	basketball: constantsBasketball.DEFAULT_DIVS,
+	football: constantsFootball.DEFAULT_DIVS,
+});
 
-const DEFAULT_STADIUM_CAPACITY =
-	process.env.SPORT == "basketball"
-		? constantsBasketball.DEFAULT_STADIUM_CAPACITY
-		: constantsFootball.DEFAULT_STADIUM_CAPACITY;
+const DEFAULT_STADIUM_CAPACITY = bySport({
+	basketball: constantsBasketball.DEFAULT_STADIUM_CAPACITY,
+	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
+});
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;

@@ -17,6 +17,8 @@ module.exports = api => {
 				loose: true,
 			},
 		], // Chrome 80, Firefox 72, Safari 13.1
+
+		require("./tools/babel-plugin-sport-functions"),
 	];
 
 	if (process.env.LEGACY) {

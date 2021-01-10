@@ -1,5 +1,6 @@
 import { g, helpers } from "../util";
 import { idb } from "../db";
+import { bySport } from "../../common";
 
 const updateProtectPlayers = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -26,10 +27,10 @@ const updateProtectPlayers = async () => {
 		return returnValue;
 	}
 
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]
-			: ["yearsWithTeam", "gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
+		football: ["yearsWithTeam", "gp", "keyStats", "av"],
+	});
 
 	let players: any[] = [];
 	const expansionTeam = expansionDraft.expansionTids.includes(g.get("userTid"));

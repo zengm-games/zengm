@@ -21,7 +21,13 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { DIFFICULTY, GAME_NAME, isSport } from "../../common";
+import {
+	COURT,
+	DIFFICULTY,
+	GAME_NAME,
+	isSport,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
@@ -166,10 +172,7 @@ export const options: {
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
-			if (
-				process.env.SPORT === "basketball" &&
-				value < output.numPlayersOnCourt
-			) {
+			if (!isSport("football") && value < output.numPlayersOnCourt) {
 				throw new Error("Value cannot be less than # Players On Court");
 			}
 		},
@@ -502,7 +505,7 @@ export const options: {
 				<p>
 					The injury rate is the probability that a player is injured per
 					possession.
-					{process.env.SPORT === "basketball" ? (
+					{isSport("basketball") ? (
 						<>
 							{" "}
 							Based on{" "}
@@ -538,13 +541,13 @@ export const options: {
 					The tragic death rate is the probability that a player will die a
 					tragic death on a given regular season day. Yes, this only happens in
 					the regular season.
-					{process.env.SPORT === "basketball"
+					{isSport("basketball")
 						? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
 						: null}{" "}
 					If you set it too high and run out of players, then you'll have to use
 					God Mode to either create more or bring some back from the dead.
 				</p>
-				{process.env.SPORT === "basketball" ? (
+				{SPORT_HAS_REAL_PLAYERS ? (
 					<p>
 						If you're using the built-in rosters with real players, please be
 						aware that real players can never experience tragic deaths, no
@@ -916,10 +919,7 @@ options.push(
 	{
 		category: "Game Simulation",
 		key: "homeCourtAdvantage",
-		name:
-			process.env.SPORT === "football"
-				? "Home Field Advantage"
-				: "Home Court Advantage",
+		name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
 		godModeRequired: "always",
 		type: "float",
 		decoration: "percent",

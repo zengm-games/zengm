@@ -207,6 +207,16 @@ const FACEBOOK_USERNAME = bySport({
 	football: "football.general.manager",
 });
 
+const SPORT_HAS_REAL_PLAYERS = bySport({
+	basketball: true,
+	football: false,
+});
+
+const SPORT_HAS_LEGENDS = bySport({
+	basketball: true,
+	football: false,
+});
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
@@ -229,6 +239,8 @@ export {
 	PHASE,
 	PLAYER,
 	PHASE_TEXT,
+	SPORT_HAS_LEGENDS,
+	SPORT_HAS_REAL_PLAYERS,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
 	PLAYER_SUMMARY,

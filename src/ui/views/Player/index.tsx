@@ -220,8 +220,7 @@ const StatsSummary = ({
 		cols[cols.length - 1].title = "%";
 	}
 
-	const separatorAfter =
-		process.env.SPORT === "basketball" ? [0, 4, 8] : [0, 2];
+	const separatorAfter = bySport({ basketball: [0, 4, 8], football: [0, 2] });
 
 	return (
 		<div className="player-stats-summary">

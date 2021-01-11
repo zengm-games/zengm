@@ -1,6 +1,12 @@
+confetti falling after live sim championship win TheRealGWood
+
 new constants
 - url
 - some better way of linking to other sports
+
+in team history page, add winning % next to each season team record so we can compare seasons with different amount of games https://discord.com/channels/290013534023057409/331882115119448065/797811209872474143
+
+better default playoff structure for small leagues https://discord.com/channels/290013534023057409/331882115119448065/798232086707699752
 
 real players prospect rating options
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
@@ -446,7 +452,8 @@ frivolities
   - best playoffs (record in individual playoffs)
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
-- best trades
+- draft
+  - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
 
 nicidob PRs
 - player overall ratings
@@ -739,6 +746,8 @@ FBGM
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - if there's a fumble on the 2-point attempt recovered by the defense, the team that just scored the touchdown gets the ball back https://discord.com/channels/290013534023057409/290015591216054273/794950003621101589
+- multiple QBs problem
+  - switch from top value to top change in team rating, for both draft and FA
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

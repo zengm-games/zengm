@@ -153,7 +153,7 @@ const TopStuff = ({
 						{marginOfVictory}
 					</div>
 
-					{season === currentSeason || process.env.SPORT === "football" ? (
+					{season === currentSeason || isSport("football") ? (
 						<div className="d-flex mt-3">
 							{season === currentSeason ? (
 								<div>

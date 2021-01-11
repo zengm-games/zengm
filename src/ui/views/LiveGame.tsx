@@ -13,6 +13,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { localActions, processLiveGameEvents } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
+import { bySport } from "../../common";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -26,9 +27,11 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
-		return process.env.SPORT === "basketball"
-			? this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate
-			: true;
+		return bySport({
+			basketball:
+				this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
+			football: true,
+		});
 	}
 
 	render() {
@@ -37,12 +40,12 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 		// Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
 		this.prevInGame = p.inGame;
 
-		const classes =
-			process.env.SPORT === "basketball"
-				? classNames({
-						"table-warning": p.inGame,
-				  })
-				: undefined;
+		const classes = bySport({
+			basketball: classNames({
+				"table-warning": p.inGame,
+			}),
+			football: undefined,
+		});
 
 		return <BoxScoreRow className={classes} p={p} {...props} />;
 	}

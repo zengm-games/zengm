@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import arrayMove from "array-move";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import {
 	HelpPopover,
 	Mood,
@@ -177,7 +177,7 @@ const Roster = ({
 				rowClassName={({ index, isDragged, value: p }) =>
 					classNames({
 						separator:
-							process.env.SPORT === "basketball" &&
+							isSport("basketball") &&
 							index === numPlayersOnCourt - 1 &&
 							!isDragged,
 						"table-danger": p.hof,

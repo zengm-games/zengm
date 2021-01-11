@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import {
 	contractNegotiation,
 	draft,
@@ -219,11 +219,12 @@ const playAmount = async (
 		numDays = 1;
 	} else if (amount === "week") {
 		numDays =
-			process.env.SPORT === "basketball" || g.get("phase") === PHASE.FREE_AGENCY
-				? 7
-				: 1;
+			!isSport("football") || g.get("phase") === PHASE.FREE_AGENCY ? 7 : 1;
 	} else if (amount === "month") {
-		numDays = process.env.SPORT === "basketball" ? 30 : 4;
+		numDays = bySport({
+			football: 4,
+			default: 30,
+		});
 	} else if (amount === "untilPreseason") {
 		numDays = g.get("daysLeft");
 	} else {

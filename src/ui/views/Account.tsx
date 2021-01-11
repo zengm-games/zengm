@@ -7,6 +7,7 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 	GAME_NAME,
+	isSport,
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getScript, localActions, realtimeUpdate } from "../util";
@@ -264,8 +265,7 @@ const Account = ({
 	let goldPitchDiv: React.ReactNode = null;
 
 	if (showGoldPitch) {
-		const otherSport =
-			process.env.SPORT === "basketball" ? "Football" : "Basketball";
+		const otherSport = isSport("basketball") ? "Football" : "Basketball";
 		goldPitchDiv = (
 			<>
 				<h2>GM Gold</h2>

@@ -667,10 +667,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode && p.tid !== PLAYER.RETIRED}
 								>
 									{POSITIONS.filter(pos => {
-										if (
-											process.env.SPORT === "football" &&
-											bannedPositions.includes(pos)
-										) {
+										if (isSport("football") && bannedPositions.includes(pos)) {
 											return false;
 										}
 										return true;
@@ -917,9 +914,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										"main",
 										"getRandomRatings",
 										(p as any).age,
-										process.env.SPORT === "football"
-											? p.ratings[r].pos
-											: undefined,
+										isSport("football") ? p.ratings[r].pos : undefined,
 									);
 
 									setState(prevState => {

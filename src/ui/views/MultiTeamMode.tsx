@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useCallback, ChangeEvent, useRef } from "react";
-import { PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, logEvent } from "../util";
 import type { View } from "../../common/types";
@@ -201,10 +201,9 @@ const MultiTeamMode = ({
 					className="btn btn-light-bordered"
 					onClick={() => handleAutoSort(userTids)}
 				>
-					Auto sort{" "}
-					{process.env.SPORT === "basketball" ? "roster" : "depth chart"}
+					Auto sort {bySport({ football: "depth charts", default: "rosters" })}
 				</button>
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<button
 						className="btn btn-light-bordered"
 						onClick={() => handleResetPT(userTids)}

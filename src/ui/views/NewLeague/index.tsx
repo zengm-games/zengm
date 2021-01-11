@@ -10,6 +10,9 @@ import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	gameAttributeHasHistory,
+	isSport,
+	SPORT_HAS_LEGENDS,
+	SPORT_HAS_REAL_PLAYERS,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -685,8 +688,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	if (props.lid !== undefined) {
 		title = "Import League";
 	} else if (props.type === "custom") {
-		title =
-			process.env.SPORT === "basketball" ? "New Custom League" : "New League";
+		title = SPORT_HAS_REAL_PLAYERS ? "New Custom League" : "New League";
 	} else if (props.type === "random") {
 		title = "New Random Players League";
 	} else if (props.type === "legends") {
@@ -1076,7 +1078,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					</span>
 				</label>
 			</div>
-			{process.env.SPORT !== "football" || state.challengeFiredLuxuryTax ? (
+			{!isSport("football") || state.challengeFiredLuxuryTax ? (
 				<div className="form-check mb-2">
 					<input
 						className="form-check-input"
@@ -1662,14 +1664,14 @@ const NewLeague = (props: View<"newLeague">) => {
 											value={state.customize}
 										>
 											<option value="default">
-												{process.env.SPORT === "basketball"
+												{SPORT_HAS_REAL_PLAYERS
 													? "Random players and teams"
 													: "Default"}
 											</option>
-											{process.env.SPORT === "basketball" ? (
+											{SPORT_HAS_REAL_PLAYERS ? (
 												<option value="real">Real players and teams</option>
 											) : null}
-											{process.env.SPORT === "basketball" ? (
+											{SPORT_HAS_LEGENDS ? (
 												<option value="legends">Legends</option>
 											) : null}
 											<option value="custom-rosters">Upload league file</option>

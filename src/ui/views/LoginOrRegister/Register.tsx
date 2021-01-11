@@ -1,10 +1,15 @@
 import classNames from "classnames";
 import React, { FormEvent } from "react";
-import { ACCOUNT_API_URL, fetchWrapper, isSport } from "../../../common";
-import { helpers, localActions, realtimeUpdate, toWorker } from "../../util";
+import {
+	ACCOUNT_API_URL,
+	fetchWrapper,
+	isSport,
+	SPORT_UPPER_CASE,
+} from "../../../common";
+import { localActions, realtimeUpdate, toWorker } from "../../util";
 
-const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 const otherSport = isSport("basketball") ? "Football" : "Basketball";
+
 type Props = {
 	ajaxErrorMsg: string;
 };
@@ -101,7 +106,7 @@ class Register extends React.Component<Props, State> {
 			<>
 				<h2>Register</h2>
 				<p className="alert alert-primary">
-					Accounts are shared between {sport} GM and{" "}
+					Accounts are shared between {SPORT_UPPER_CASE} GM and{" "}
 					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
 						{otherSport} GM
 					</a>

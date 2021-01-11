@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
-import { bySport } from "../../common";
+import { COURT } from "../../common";
 
 const MAX_WIDTH = 1120;
 
@@ -385,12 +385,7 @@ const Standings = ({
 		<>
 			{allStandings}
 			<div>
-				z - clinched #1 overall seed and home{" "}
-				{bySport({
-					basketball: "court",
-					football: "field",
-				})}{" "}
-				advantage
+				z - clinched #1 overall seed and home {COURT} advantage
 				<br />
 				{numPlayoffByes > 0 ? (
 					<>

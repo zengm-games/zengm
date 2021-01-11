@@ -1,7 +1,8 @@
 import { season } from "..";
 import { idb, iterate } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, local, logEvent } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
+import { SPORT_UPPER_CASE } from "../../../common";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -29,7 +30,6 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 		await transaction.done;
 	}
 
-	const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 	const subreddit =
 		process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM";
 
@@ -57,9 +57,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
-					process.env.SPORT,
-				)} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
+				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${SPORT_UPPER_CASE} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
 				type: "info",
 			});
 		} else {
@@ -91,9 +89,9 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 							process.env.SPORT === "basketball"
 								? "basketball_gm"
 								: "FootballGM_Game"
-						}">Follow ${sport} GM on Twitter</a></p><p><a href="https://www.facebook.com/${
+						}">Follow ${SPORT_UPPER_CASE} GM on Twitter</a></p><p><a href="https://www.facebook.com/${
 							process.env.SPORT
-						}.general.manager">Like ${sport} GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${sport} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${sport} GM players and devs on Discord</a></p><p>The more people that play ${sport} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
+						}.general.manager">Like ${SPORT_UPPER_CASE} GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${SPORT_UPPER_CASE} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${SPORT_UPPER_CASE} GM players and devs on Discord</a></p><p>The more people that play ${SPORT_UPPER_CASE} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
 							process.env.SPORT
 						}-gm.com">email me</a>.</p>`,
 					});

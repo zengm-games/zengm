@@ -175,11 +175,19 @@ const DEFAULT_STADIUM_CAPACITY = bySport({
 	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
 });
 
+const COURT = bySport({ basketball: "court", football: "field" });
+
+const SPORT_UPPER_CASE = bySport({
+	basketball: "Basketball",
+	football: "Football",
+});
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
 export {
 	AWARD_NAMES,
+	COURT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_STADIUM_CAPACITY,
@@ -200,6 +208,7 @@ export {
 	SIMPLE_AWARDS,
 	POSITION_COUNTS,
 	POSITIONS,
+	SPORT_UPPER_CASE,
 	TEAM_STATS_TABLES,
 	TIME_BETWEEN_GAMES,
 };

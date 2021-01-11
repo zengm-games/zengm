@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React, { useCallback, useEffect, useState } from "react";
-import { helpers } from "../../util";
+import { SPORT_UPPER_CASE } from "../../../common";
 
 const Storage = () => {
 	const [status, setStatus] = useState<
@@ -49,8 +49,7 @@ const Storage = () => {
 	return (
 		<>
 			<p>
-				Since {helpers.upperCaseFirstLetter(process.env.SPORT)} GM stores game
-				data in your browser profile,{" "}
+				Since {SPORT_UPPER_CASE} GM stores game data in your browser profile,{" "}
 				<a href="https://basketball-gm.com/manual/faq/#missing-leagues">
 					sometimes it can be inadvertently deleted
 				</a>

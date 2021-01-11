@@ -1,3 +1,10 @@
+new constants
+- email address
+- url
+- game name
+- subreddit
+- twitter
+
 real players prospect rating options
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
 
@@ -55,6 +62,8 @@ settings re-design
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
 - some settings should only be editable in offseason
   - playoff structure
+- to add
+  - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
 allow import/export of league settings from New League page
 

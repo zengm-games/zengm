@@ -3,10 +3,10 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
-import { AWARD_NAMES, isSport } from "../../common";
+import { AWARD_NAMES, bySport, isSport } from "../../common";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		return null;
 	}
 
@@ -257,10 +257,10 @@ const EditAwards = ({
 		}
 	};
 
-	const simpleAwardKeys =
-		process.env.SPORT === "basketball"
-			? ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"]
-			: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
+	const simpleAwardKeys = bySport({
+		basketball: ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"],
+		football: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"],
+	});
 
 	const getPlayer = (p?: { pid: number }) => {
 		if (!p) {
@@ -338,7 +338,7 @@ const EditAwards = ({
 						];
 					})}
 
-					{process.env.SPORT === "basketball" ? (
+					{isSport("basketball") ? (
 						<>
 							{awards.allDefensive.map((element: any, i: number) => {
 								const teamSelect = element.players.map(

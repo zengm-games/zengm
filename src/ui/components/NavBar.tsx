@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
+import { SPORT_UPPER_CASE } from "../../common";
 import {
-	helpers,
 	localActions,
 	menuItems,
 	safeLocalStorage,
@@ -11,8 +11,6 @@ import {
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
 import PlayMenu from "./PlayMenu";
-
-const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 
 type Props = {
 	updating: boolean;
@@ -124,7 +122,7 @@ const NavBar = ({ updating }: Props) => {
 						overlay={
 							<Popover id="popover-welcome">
 								<Popover.Title className="text-primary font-weight-bold">
-									Welcome to {sport} GM!
+									Welcome to {SPORT_UPPER_CASE} GM!
 								</Popover.Title>
 								<Popover.Content>
 									To advance through the game, use the Play button at the top.

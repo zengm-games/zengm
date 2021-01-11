@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import type { TeamSeason, Conditions } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import { season } from "..";
-import { bySport } from "../../../common";
+import { bySport, COURT } from "../../../common";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -141,10 +141,7 @@ const updateClinchedPlayoffs = async (
 			} else if (clinchedPlayoffs[i] === "y") {
 				action = "clinched a first round bye";
 			} else if (clinchedPlayoffs[i] === "z") {
-				action = `clinched the #1 overall seed and home ${bySport({
-					basketball: "court",
-					football: "field",
-				})} advantage`;
+				action = `clinched the #1 overall seed and home ${COURT} advantage`;
 			} else if (clinchedPlayoffs[i] === "o") {
 				action = "have been eliminated from playoff contention";
 			}

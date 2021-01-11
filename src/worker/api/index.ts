@@ -1733,7 +1733,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		await toUI("updateLocal", [
 			{
-				gold: currentTimestamp <= local.goldUntil,
+				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
 				username: local.username,
 			},
 		]);

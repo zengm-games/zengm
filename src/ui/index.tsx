@@ -7,12 +7,12 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
+import { EMAIL_ADDRESS, GAME_NAME } from "../common";
 window.bbgm = { ...util };
 const {
 	compareVersions,
 	confirm,
 	genStaticPage,
-	helpers,
 	leagueNotFoundMessage,
 	local,
 	logEvent,
@@ -34,9 +34,7 @@ const handleVersion = async () => {
 			) {
 				logEvent({
 					type: "error",
-					text: `A newer version of ${helpers.upperCaseFirstLetter(
-						process.env.SPORT,
-					)} GM was just opened in another tab. Please reload this tab to load the same version here.`,
+					text: `A newer version of ${GAME_NAME} was just opened in another tab. Please reload this tab to load the same version here.`,
 					saveToDb: false,
 					persistent: true,
 				});
@@ -91,11 +89,7 @@ const handleVersion = async () => {
 			// This version is older than another tab's
 			console.log(window.bbgmVersion, bbgmVersionStored);
 			console.log(
-				`This version of ${helpers.upperCaseFirstLetter(
-					process.env.SPORT,
-				)} GM (${
-					window.bbgmVersion
-				}) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
+				`This version of ${GAME_NAME} (${window.bbgmVersion}) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email ${EMAIL_ADDRESS} with any info about how this error occurred.`,
 			);
 
 			// Don't block

@@ -9,7 +9,7 @@ import React, {
 	MouseEvent,
 	ChangeEvent,
 } from "react";
-import { MAX_SUPPORTED_LEAGUE_VERSION, helpers } from "../../common";
+import { MAX_SUPPORTED_LEAGUE_VERSION, GAME_NAME } from "../../common";
 
 // This is dynamically resolved with rollup-plugin-alias
 import schema from "league-schema"; // eslint-disable-line
@@ -165,11 +165,7 @@ const LeagueFileUpload = ({
 				leagueFile.version > MAX_SUPPORTED_LEAGUE_VERSION
 			) {
 				const error = new Error(
-					`This league file is a newer format (version ${
-						leagueFile.version
-					}) than is supported by your version of ${helpers.upperCaseFirstLetter(
-						process.env.SPORT,
-					)} GM (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
+					`This league file is a newer format (version ${leagueFile.version}) than is supported by your version of ${GAME_NAME} (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
 				);
 				(error as any).version = true;
 				console.log(isMounted, error);

@@ -60,8 +60,7 @@ module.exports = function (babel) {
 						//     ? "basketball thing"
 						//     : process.env.SPORT === "football"
 						//     ? "football thing"
-						//     : process.env.SPORT === "hockey"
-						//     ? "hockey thing";
+						//     : "hockey thing";
 						//
 						// And this:
 						//

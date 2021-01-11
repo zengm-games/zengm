@@ -177,9 +177,19 @@ const DEFAULT_STADIUM_CAPACITY = bySport({
 
 const COURT = bySport({ basketball: "court", football: "field" });
 
-const SPORT_UPPER_CASE = bySport({
-	basketball: "Basketball",
-	football: "Football",
+const EMAIL_ADDRESS = bySport({
+	basketball: "commissioner@basketball-gm.com",
+	football: "commissioner@football-gm.com",
+});
+
+const GAME_ACRONYM = bySport({
+	basketball: "BBGM",
+	football: "FBGM",
+});
+
+const GAME_NAME = bySport({
+	basketball: "Basketball GM",
+	football: "Football GM",
 });
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
@@ -193,6 +203,9 @@ export {
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
+	EMAIL_ADDRESS,
+	GAME_ACRONYM,
+	GAME_NAME,
 	GRACE_PERIOD,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	MOOD_TRAITS,
@@ -208,7 +221,6 @@ export {
 	SIMPLE_AWARDS,
 	POSITION_COUNTS,
 	POSITIONS,
-	SPORT_UPPER_CASE,
 	TEAM_STATS_TABLES,
 	TIME_BETWEEN_GAMES,
 };

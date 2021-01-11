@@ -21,7 +21,7 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { DIFFICULTY, SPORT_UPPER_CASE, isSport } from "../../common";
+import { DIFFICULTY, GAME_NAME, isSport } from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
@@ -611,10 +611,10 @@ export const options: {
 		descriptionLong: (
 			<>
 				<p>
-					{SPORT_UPPER_CASE} GM has no concept of "restricted free agency" like
-					the NBA does, so draft picks can refuse to negotiate with you after
-					their rookie contracts expire. This option can force every player to
-					be willing to negotiate when his rookie contract expires, which can
+					{GAME_NAME} has no concept of "restricted free agency" like the NBA
+					does, so draft picks can refuse to negotiate with you after their
+					rookie contracts expire. This option can force every player to be
+					willing to negotiate when his rookie contract expires, which can
 					somewhat make up for restricted free agency not existing.
 				</p>
 				<p>

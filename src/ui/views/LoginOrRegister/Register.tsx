@@ -4,7 +4,7 @@ import {
 	ACCOUNT_API_URL,
 	fetchWrapper,
 	isSport,
-	SPORT_UPPER_CASE,
+	GAME_NAME,
 } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 
@@ -106,7 +106,7 @@ class Register extends React.Component<Props, State> {
 			<>
 				<h2>Register</h2>
 				<p className="alert alert-primary">
-					Accounts are shared between {SPORT_UPPER_CASE} GM and{" "}
+					Accounts are shared between {GAME_NAME} and{" "}
 					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
 						{otherSport} GM
 					</a>

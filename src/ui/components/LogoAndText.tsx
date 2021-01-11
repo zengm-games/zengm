@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { bySport, SPORT_UPPER_CASE } from "../../common";
+import { bySport, GAME_NAME } from "../../common";
 
 const logoImage = bySport({
 	basketball:
@@ -42,9 +42,9 @@ const LogoAndText = React.memo(({ gold, lid, updating }: Props) => {
 					WebkitAnimationPlayState: updating ? "running" : "paused",
 				}}
 			/>
-			<span className="d-none d-lg-inline">{SPORT_UPPER_CASE} GM</span>
+			<span className="d-none d-lg-inline">{GAME_NAME}</span>
 			{lid === undefined ? (
-				<span className="d-lg-none">{SPORT_UPPER_CASE} GM</span>
+				<span className="d-lg-none">{GAME_NAME}</span>
 			) : null}
 		</a>
 	);

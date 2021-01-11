@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import type { TeamSeason, Conditions } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import { season } from "..";
-import { bySport, COURT } from "../../../common";
+import { COURT } from "../../../common";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 

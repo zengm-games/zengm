@@ -2,7 +2,7 @@ import { season } from "..";
 import { idb, iterate } from "../../db";
 import { g, local, logEvent } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
-import { SPORT_UPPER_CASE } from "../../../common";
+import { EMAIL_ADDRESS, GAME_NAME } from "../../../common";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -57,7 +57,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${SPORT_UPPER_CASE} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
+				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${GAME_NAME}, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
 				type: "info",
 			});
 		} else {
@@ -73,7 +73,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 					read: false,
 					from: "The Commissioner",
 					year: g.get("season"),
-					text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:commissioner@${process.env.SPORT}-gm.com">Send an email</a> (commissioner@${process.env.SPORT}-gm.com) or join the discussion on <a href="http://www.reddit.com/r/${subreddit}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
+					text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:${EMAIL_ADDRESS}">Send an email</a> (${EMAIL_ADDRESS}) or join the discussion on <a href="http://www.reddit.com/r/${subreddit}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
 				});
 			} else if (nagged !== undefined) {
 				if (
@@ -89,11 +89,9 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 							process.env.SPORT === "basketball"
 								? "basketball_gm"
 								: "FootballGM_Game"
-						}">Follow ${SPORT_UPPER_CASE} GM on Twitter</a></p><p><a href="https://www.facebook.com/${
+						}">Follow ${GAME_NAME} on Twitter</a></p><p><a href="https://www.facebook.com/${
 							process.env.SPORT
-						}.general.manager">Like ${SPORT_UPPER_CASE} GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${SPORT_UPPER_CASE} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${SPORT_UPPER_CASE} GM players and devs on Discord</a></p><p>The more people that play ${SPORT_UPPER_CASE} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
-							process.env.SPORT
-						}-gm.com">email me</a>.</p>`,
+						}.general.manager">Like ${GAME_NAME} on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${GAME_NAME} on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${GAME_NAME} players and devs on Discord</a></p><p>The more people that play ${GAME_NAME}, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:${EMAIL_ADDRESS}">email me</a>.</p>`,
 					});
 				} else if (
 					process.env.SPORT === "basketball" &&

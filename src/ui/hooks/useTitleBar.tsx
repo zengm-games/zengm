@@ -2,11 +2,7 @@ import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
 import type { MenuItemHeader } from "../../common/types";
-
-// helpers.upperCaseFirst failed for some reason
-const sport = `${process.env.SPORT.charAt(
-	0,
-).toUpperCase()}${process.env.SPORT.slice(1)}`;
+import { GAME_NAME } from "../../common";
 
 const useTitleBar = ({
 	title,
@@ -45,7 +41,7 @@ const useTitleBar = ({
 		if (title) {
 			parts.push(title);
 		} else {
-			parts.push(`${sport} GM`);
+			parts.push(GAME_NAME);
 		}
 
 		const sortedTeams = getSortedTeams(state);

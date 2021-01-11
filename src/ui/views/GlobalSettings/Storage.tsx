@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React, { useCallback, useEffect, useState } from "react";
-import { SPORT_UPPER_CASE } from "../../../common";
+import { GAME_NAME } from "../../../common";
 
 const Storage = () => {
 	const [status, setStatus] = useState<
@@ -49,7 +49,7 @@ const Storage = () => {
 	return (
 		<>
 			<p>
-				Since {SPORT_UPPER_CASE} GM stores game data in your browser profile,{" "}
+				Since {GAME_NAME} stores game data in your browser profile,{" "}
 				<a href="https://basketball-gm.com/manual/faq/#missing-leagues">
 					sometimes it can be inadvertently deleted
 				</a>

@@ -1,4 +1,5 @@
 import React from "react";
+import { GAME_ACRONYM } from "../../common";
 
 const Footer = React.memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
@@ -113,7 +114,7 @@ const Footer = React.memo(() => {
 				<br />
 			</p>
 			<p className="float-sm-right text-muted">
-				{process.env.SPORT.charAt(0).toUpperCase()}BGM v{window.bbgmVersion}
+				{GAME_ACRONYM} v{window.bbgmVersion}
 			</p>
 		</footer>
 	);

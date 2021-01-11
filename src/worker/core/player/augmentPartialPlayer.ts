@@ -200,16 +200,13 @@ const augmentPartialPlayer = async (
 
 	const r2 = p.ratings[p.ratings.length - 1];
 
-	if (process.env.SPORT === "football" && (!r2.ovrs || !r2.pots || !r2.pos)) {
+	if (isSport("football") && (!r2.ovrs || !r2.pots || !r2.pos)) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
 		await develop(p, 0);
 	}
 
 	// Rating rescaling
-	if (
-		process.env.SPORT === "basketball" &&
-		(version === undefined || version <= 26)
-	) {
+	if (isSport("basketball") && (version === undefined || version <= 26)) {
 		for (const r of p.ratings) {
 			// Replace blk/stl with diq
 			if (typeof r.diq !== "number") {

@@ -192,6 +192,21 @@ const GAME_NAME = bySport({
 	football: "Football GM",
 });
 
+const SUBREDDIT_NAME = bySport({
+	basketball: "BasketballGM",
+	football: "Football_GM",
+});
+
+const TWITTER_HANDLE = bySport({
+	basketball: "basketball_gm",
+	football: "FootballGM_Game",
+});
+
+const FACEBOOK_USERNAME = bySport({
+	basketball: "basketball.general.manager",
+	football: "football.general.manager",
+});
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
@@ -204,6 +219,7 @@ export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	EMAIL_ADDRESS,
+	FACEBOOK_USERNAME,
 	GAME_ACRONYM,
 	GAME_NAME,
 	GRACE_PERIOD,
@@ -221,6 +237,8 @@ export {
 	SIMPLE_AWARDS,
 	POSITION_COUNTS,
 	POSITIONS,
+	SUBREDDIT_NAME,
 	TEAM_STATS_TABLES,
 	TIME_BETWEEN_GAMES,
+	TWITTER_HANDLE,
 };

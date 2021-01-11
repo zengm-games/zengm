@@ -12,7 +12,12 @@ import type {
 } from "../../../common/types";
 import { bySport } from "../../../common";
 
-const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
+const NUM_ALL_STARS =
+	2 *
+	bySport({
+		basketball: 12,
+		football: 40,
+	});
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {

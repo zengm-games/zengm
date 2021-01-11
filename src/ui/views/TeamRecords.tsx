@@ -3,6 +3,7 @@ import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { bySport } from "../../common";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	return {
@@ -19,32 +20,32 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	};
 };
 
-const categories =
-	process.env.SPORT === "basketball"
-		? [
-				"mvp",
-				"dpoy",
-				"smoy",
-				"mip",
-				"roy",
-				"bestRecord",
-				"bestRecordConf",
-				"allRookie",
-				"allLeague",
-				"allDefense",
-				"allStar",
-				"allStarMVP",
-		  ]
-		: [
-				"mvp",
-				"dpoy",
-				"oroy",
-				"droy",
-				"bestRecord",
-				"bestRecordConf",
-				"allRookie",
-				"allLeague",
-		  ];
+const categories = bySport({
+	basketball: [
+		"mvp",
+		"dpoy",
+		"smoy",
+		"mip",
+		"roy",
+		"bestRecord",
+		"bestRecordConf",
+		"allRookie",
+		"allLeague",
+		"allDefense",
+		"allStar",
+		"allStarMVP",
+	],
+	football: [
+		"mvp",
+		"dpoy",
+		"oroy",
+		"droy",
+		"bestRecord",
+		"bestRecordConf",
+		"allRookie",
+		"allLeague",
+	],
+});
 
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
 	!t.root || t.disabled;

@@ -1,6 +1,7 @@
 import { csvFormatRows } from "d3-dsv";
 import flatten from "lodash/flatten";
 import {
+	GAME_ACRONYM,
 	PHASE,
 	PHASE_TEXT,
 	PLAYER,
@@ -1080,11 +1081,13 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 const genFilename = (data: any) => {
 	const leagueName =
 		data.meta !== undefined ? data.meta.name : `League ${g.get("lid")}`;
-	let filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${g.get(
-		"season",
-	)}_${PHASE_TEXT[g.get("phase")].replace(/[^a-z0-9]/gi, "_")}`;
+	let filename = `${GAME_ACRONYM}_${leagueName.replace(
+		/[^a-z0-9]/gi,
+		"_",
+	)}_${g.get("season")}_${PHASE_TEXT[g.get("phase")].replace(
+		/[^a-z0-9]/gi,
+		"_",
+	)}`;
 
 	if (
 		(g.get("phase") === PHASE.REGULAR_SEASON ||
@@ -1184,9 +1187,9 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
-	const filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_draft_class_${g.get("leagueName")}_${season}.json`;
+	const filename = `${GAME_ACRONYM}_draft_class_${g.get(
+		"leagueName",
+	)}_${season}.json`;
 
 	return {
 		filename,
@@ -1224,9 +1227,9 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		delete p.yearsFreeAgent;
 	}
 
-	const filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_players_${g.get("leagueName")}_${g.get("season")}.json`;
+	const filename = `${GAME_ACRONYM}_players_${g.get("leagueName")}_${g.get(
+		"season",
+	)}.json`;
 
 	return {
 		filename,

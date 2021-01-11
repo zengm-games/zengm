@@ -1,11 +1,10 @@
 import html2canvas from "html2canvas";
 import {
-	bySport,
 	fetchWrapper,
+	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../common";
-import helpers from "./helpers";
 import logEvent from "./logEvent";
 import safeLocalStorage from "./safeLocalStorage";
 
@@ -25,9 +24,7 @@ const takeScreenshot = async () => {
 		logos.length > 0 && logos[0] instanceof HTMLImageElement
 			? `<img src="${logos[0].src}">`
 			: "";
-	watermark.innerHTML = `<nav class="navbar navbar-light bg-light"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${helpers.upperCaseFirstLetter(
-		process.env.SPORT,
-	)} GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
+	watermark.innerHTML = `<nav class="navbar navbar-light bg-light"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${
 		process.env.SPORT

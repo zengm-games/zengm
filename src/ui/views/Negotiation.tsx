@@ -5,13 +5,14 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Mood, RatingsStatsPopover } from "../components";
+import { isSport } from "../../common";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {
 	const count = await toWorker("main", "countNegotiations");
 	if (count > 0) {
 		realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
-	} else if (cancelled || process.env.SPORT === "football") {
+	} else if (cancelled || isSport("football")) {
 		// After signing player in football, go back to free agents screen, cause you probably need more
 		realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
 	} else {

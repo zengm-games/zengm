@@ -3,18 +3,19 @@ import React, { useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { isSport } from "../../common";
+import { GAME_ACRONYM, isSport } from "../../common";
 
 const genFilename = (
 	leagueName: string,
 	season: number | "all",
 	grouping: "averages" | "games",
 ) => {
-	const filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${season}_${
-		season === "all" ? "seasons" : "season"
-	}_${grouping === "averages" ? "Average_Stats" : "Game_Stats"}`;
+	const filename = `${GAME_ACRONYM}_${leagueName.replace(
+		/[^a-z0-9]/gi,
+		"_",
+	)}_${season}_${season === "all" ? "seasons" : "season"}_${
+		grouping === "averages" ? "Average_Stats" : "Game_Stats"
+	}`;
 
 	return `${filename}.csv`;
 };

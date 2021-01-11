@@ -43,22 +43,6 @@ const runPicks = async (
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
 		).filter(p => expansionDraft.availablePids.includes(p.pid));
-
-		if (expansionDraft.numPerTeam !== undefined) {
-			// Keep logic in sync with draft.ts
-			const tidsOverLimit: number[] = [];
-			for (const [tidString, numPerTeam] of Object.entries(
-				expansionDraft.numPerTeamDrafted,
-			)) {
-				if (numPerTeam >= expansionDraft.numPerTeam) {
-					const tid = parseInt(tidString);
-					tidsOverLimit.push(tid);
-				}
-			}
-			if (tidsOverLimit.length > 0) {
-				playersAll = playersAll.filter(p => !tidsOverLimit.includes(p.tid));
-			}
-		}
 	} else {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
@@ -102,6 +86,27 @@ const runPicks = async (
 				}
 
 				draftPicks.shift();
+
+				const expansionDraft2 = g.get("expansionDraft"); // Get again, might have changed
+				if (
+					expansionDraft2.phase === "draft" &&
+					expansionDraft2.numPerTeam !== undefined
+				) {
+					// Keep logic in sync with draft.ts
+					const tidsOverLimit: number[] = [];
+					for (const [tidString, numPerTeam] of Object.entries(
+						expansionDraft2.numPerTeamDrafted,
+					)) {
+						if (numPerTeam >= expansionDraft2.numPerTeam) {
+							const tid = parseInt(tidString);
+							tidsOverLimit.push(tid);
+						}
+					}
+					if (tidsOverLimit.length > 0) {
+						playersAll = playersAll.filter(p => !tidsOverLimit.includes(p.tid));
+					}
+				}
+
 				const selection = random.choice(playersAll, p => p.value ** 69);
 
 				// 0=best prospect, 1=next best prospect, etc.

@@ -95,7 +95,6 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				if (tidsOverLimit.length > 0) {
 					const numPlayersBefore = undrafted.length;
 					undrafted = undrafted.filter(p => !tidsOverLimit.includes(p.tid));
-					console.log(undrafted.map(p => p.tid));
 					if (undrafted.length !== numPlayersBefore) {
 						const teamInfoCache = g.get("teamInfoCache");
 						const abbrevs = tidsOverLimit

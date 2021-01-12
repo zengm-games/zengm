@@ -80,6 +80,7 @@ import type {
 	ScheduleGameWithoutKey,
 	Conf,
 	Div,
+	LocalStateUI,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";
 import {
@@ -2412,6 +2413,10 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 	}
 };
 
+const uiUpdateLocal = async (obj: Partial<LocalStateUI>) => {
+	await toUI("updateLocal", [obj]);
+};
+
 const updateBudget = async (
 	budgetAmounts: {
 		coaching: number;
@@ -3180,6 +3185,7 @@ export default {
 	switchTeam,
 	toggleTradeDeadline,
 	tradeCounterOffer,
+	uiUpdateLocal,
 	updateAwards,
 	updateBudget,
 	updateConfsDivs,

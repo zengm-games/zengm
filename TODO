@@ -121,6 +121,10 @@ tiebreakers based on head-to-head
   - this implies that the draft ranking would be different than playoff seeding, at times
 - persist playoff seed to teamSeason
 - "Reason" column like https://www.pro-football-reference.com/years/2020/
+- in teamSeason store rankLeague, rankDiv, rankConf
+  - only at end of season, or always?
+  - use in standings, etc
+  - playoff clinching
 
 "find players" form
 - customizable search boxes for stats/ratings

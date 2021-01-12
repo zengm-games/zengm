@@ -105,7 +105,6 @@ const updatePowerRankings = async (
 				const other: Record<string, number> = {};
 				const otherCurrent: Record<string, number> = {};
 				if (isSport("basketball")) {
-					console.log("FAFAFAFAFA");
 					for (const rating of RATINGS) {
 						other[rating] = team.ovr(teamPlayers, {
 							rating,

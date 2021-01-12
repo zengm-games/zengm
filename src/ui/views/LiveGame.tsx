@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { BoxScoreRow, BoxScoreWrapper, Confetti } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, processLiveGameEvents } from "../util";
+import { localActions, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../common";
@@ -57,9 +57,8 @@ PlayerRow.propTypes = {
 };
 
 const updatePhaseAndLeagueTopBar = () => {
-	localActions.update({
-		liveGameInProgress: false,
-	});
+	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
+	toWorker("main", "uiUpdateLocal", { liveGameInProgress: false });
 };
 
 const getSeconds = (time: string) => {

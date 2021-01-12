@@ -45,6 +45,7 @@ const createGameAttributes = ({
 		difficulty,
 	};
 
+	let leagueFileNumGamesPlayoffSeries;
 	if (leagueFile.gameAttributes) {
 		for (const gameAttribute of leagueFile.gameAttributes) {
 			// Set default for anything except these, since they can be overwritten by form input.
@@ -64,6 +65,10 @@ const createGameAttributes = ({
 					gameAttribute.value[0].start === null
 				) {
 					gameAttribute.value[0].start = -Infinity;
+				}
+
+				if (gameAttribute.key === "numGamesPlayoffSeries") {
+					leagueFileNumGamesPlayoffSeries = gameAttribute.value;
 				}
 			}
 		}
@@ -135,7 +140,6 @@ const createGameAttributes = ({
 			gameAttributes.numActiveTeams,
 		);
 	} catch (error) {
-		// Would be better to hard error here, but backwards compatibility
 		legacyPlayoffs = true;
 	}
 	if (legacyPlayoffs) {
@@ -146,6 +150,16 @@ const createGameAttributes = ({
 			gameAttributes.numActiveTeams,
 		);
 		delete (gameAttributes as any).numPlayoffRounds;
+	}
+
+	// Don't have too many playoff teams in custom leagues... like in a 16 team league, we don't want 16 teams in the playoffs
+	if (!leagueFileNumGamesPlayoffSeries) {
+		while (
+			2 ** newNumGames.length > 0.75 * gameAttributes.numTeams &&
+			newNumGames.length > 1
+		) {
+			newNumGames.shift();
+		}
 	}
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4

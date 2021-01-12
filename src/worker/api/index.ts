@@ -197,6 +197,7 @@ const allStarGameNow = async () => {
 	}
 
 	await initUILocalGames();
+	await updatePlayMenu();
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
@@ -3084,6 +3085,7 @@ const toggleTradeDeadline = async () => {
 			phase: PHASE.REGULAR_SEASON,
 		});
 
+		await updatePlayMenu();
 		await toUI("realtimeUpdate", [["newPhase"]]);
 	} else if (currentPhase === PHASE.REGULAR_SEASON) {
 		await league.setGameAttributes({
@@ -3100,6 +3102,7 @@ const toggleTradeDeadline = async () => {
 			await toUI("deleteGames", [[tradeDeadline.gid]]);
 		}
 
+		await updatePlayMenu();
 		await toUI("realtimeUpdate", [["newPhase"]]);
 	}
 };

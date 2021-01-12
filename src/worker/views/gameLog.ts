@@ -39,6 +39,7 @@ export const setTeamInfo = async (
 			t.name = teamSeason.name || g.get("teamInfoCache")[t.tid]?.name;
 			t.abbrev = teamSeason.abbrev || g.get("teamInfoCache")[t.tid]?.abbrev;
 			t.imgURL = teamSeason.imgURL || g.get("teamInfoCache")[t.tid]?.imgURL;
+			t.colors = teamSeason.colors;
 		} else {
 			t.region = g.get("teamInfoCache")[t.tid]?.region;
 			t.name = g.get("teamInfoCache")[t.tid]?.name;

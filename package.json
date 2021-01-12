@@ -37,6 +37,7 @@
 		"array-move": "^3.0.1",
 		"bootstrap": "^4.5.3",
 		"classnames": "^2.2.6",
+		"confetti-js": "^0.0.18",
 		"d3-axis": "^2.0.0",
 		"d3-dsv": "^2.0.0",
 		"d3-scale": "^3.2.3",

@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-01-11: If you live sim the last game of the playoffs, confetti drops after the game ends. [[1]]()
+
 * 2021-01-09: When creating a new Real Players league, there is now a "Real draft prospect ratings" option which allows you to change how draft prospect ratings are defined. The default remains unchanged (ratings are based on rookie season stats), but there is now another option to base ratings purely on draft position. That will result in simulated drafts being much more similar to real drafts. [[1]](https://basketball-gm.com/blog/2021/01/real-draft-prosect-ratings/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ktu8r9/when_creating_a_new_real_players_league_there_is/)
 
 * 2021-01-04: Added "Clear" button to the Draft Scouting page in God Mode to allow you to easily delete all players in a draft class.

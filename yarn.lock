@@ -3020,6 +3020,11 @@ conditional-type-checks@^1.0.5:
   resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-1.0.5.tgz#310ecd13c46c3963fbe9a2f8f93511d88cdcc973"
   integrity sha512-DkfkvmjXVe4ye4llJ1JADtO3dNvqqcQM08cA9BhNt9Oe8pyRW8X1CZyBg9Qst05bDV9BJM01KLmnFh78NcJgNg==
 
+confetti-js@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/confetti-js/-/confetti-js-0.0.18.tgz#1ecdc74f78cd65e6a549becb94315f2a21900022"
+  integrity sha512-0B7pYmZGBZuBkN32ydjWRpJLfRUT9KZYkQKkC4SGrAsUq0XE2DLY5foCWBXMXXVg7sFKs3qIb+qsDx1eFTeSvA==
+
 confusing-browser-globals@^1.0.10, confusing-browser-globals@^1.0.9:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/confusing-browser-globals/-/confusing-browser-globals-1.0.10.tgz#30d1e7f3d1b882b25ec4933d1d1adac353d20a59"

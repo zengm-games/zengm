@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { BoxScoreRow, BoxScoreWrapper, Confetti } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, processLiveGameEvents, toWorker } from "../util";
+import { processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../common";

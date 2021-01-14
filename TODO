@@ -3,8 +3,8 @@ numPeriods
   - "Start of " BBGM+FBGM
   - boxScore.quarter in processLiveGameEvents BBGM+FBGM
   - "quarter length" option
+  - "end of quarter" quick play option
   - anything else?
-- 5th period shows as overtime in box score
 
 new constants
 - url

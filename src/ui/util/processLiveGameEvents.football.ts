@@ -48,7 +48,7 @@ const processLiveGameEvents = ({
 			boxScore.teams[1].ptsQtrs.push(0);
 
 			const ptsQtrs = boxScore.teams[0].ptsQtrs;
-			if (ptsQtrs.length > 4) {
+			if (ptsQtrs.length > boxScore.numPeriods) {
 				overtimes += 1;
 				if (overtimes === 1) {
 					boxScore.overtime = " (OT)";

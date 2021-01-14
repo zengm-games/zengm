@@ -286,7 +286,9 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		const playUntilLastTwoMinutes = () => {
 			const quartersToPlay =
-				quarters.current.length >= 4 ? 0 : 4 - quarters.current.length;
+				quarters.current.length >= boxScore.current.numPeriods
+					? 0
+					: boxScore.current.numPeriods - quarters.current.length;
 			for (let i = 0; i < quartersToPlay; i++) {
 				playSeconds(Infinity);
 			}

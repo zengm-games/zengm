@@ -293,9 +293,11 @@ const DetailedScore = ({
 	tid?: number;
 }) => {
 	// Quarter/overtime labels
-	const qtrs: string[] = boxScore.teams[1].ptsQtrs.map(
+	const qtrs: string[] = boxScore.teams[0].ptsQtrs.map(
 		(pts: number, i: number) => {
-			return i < 4 ? `${i + 1}` : `OT${i - 3}`;
+			return i < boxScore.numPeriods
+				? `${i + 1}`
+				: `OT${i - boxScore.numPeriods + 1}`;
 		},
 	);
 	qtrs.push("F");

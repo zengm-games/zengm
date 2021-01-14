@@ -122,6 +122,10 @@ const boxScore = async (gid: number) => {
 		overtime = "";
 	}
 
+	if (game.numPeriods === undefined) {
+		game.numPeriods = 4;
+	}
+
 	const game2 = {
 		...game,
 		overtime,

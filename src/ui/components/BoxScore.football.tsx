@@ -2,19 +2,13 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
-import { helpers, processPlayerStats } from "../../common";
+import { getPeriodName, helpers, processPlayerStats } from "../../common";
 
-const quarters = {
-	Q1: "1st Quarter",
-	Q2: "2nd Quarter",
-	Q3: "3rd Quarter",
-	Q4: "4th Quarter",
-	OT: "Overtime",
-};
+type Quarter = `Q${number}` | "OT";
 
 type ScoringSummaryEvent = {
 	hide: boolean;
-	quarter: keyof typeof quarters;
+	quarter: Quarter;
 	t: 0 | 1;
 	text: string;
 	time: number;
@@ -32,6 +26,7 @@ type BoxScore = {
 	gid: number;
 	scoringSummary: ScoringSummaryEvent[];
 	teams: [Team, Team];
+	numPeriods?: number;
 };
 
 const statsByType = {
@@ -174,7 +169,7 @@ StatsTable.propTypes = {
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
 	const processedEvents: {
-		quarter: keyof typeof quarters;
+		quarter: Quarter;
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
@@ -252,13 +247,15 @@ const getCount = (events: ScoringSummaryEvent[]) => {
 const ScoringSummary = React.memo(
 	({
 		events,
+		numPeriods,
 		teams,
 	}: {
 		count: number;
 		events: ScoringSummaryEvent[];
+		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
-		let prevQuarter: keyof typeof quarters;
+		let prevQuarter: Quarter;
 
 		const processedEvents = processEvents(events);
 
@@ -270,13 +267,25 @@ const ScoringSummary = React.memo(
 			<table className="table table-sm border-bottom">
 				<tbody>
 					{processedEvents.map((event, i) => {
+						let quarterText = "???";
+						if (event.quarter === "OT") {
+							quarterText === "Overtime";
+						} else {
+							const quarter = parseInt(event.quarter.replace("Q", ""));
+							if (!Number.isNaN(quarter)) {
+								quarterText = `${helpers.ordinal(quarter)} ${getPeriodName(
+									numPeriods,
+								)}`;
+							}
+						}
+
 						let quarterHeader: ReactNode = null;
 						if (event.quarter !== prevQuarter) {
 							prevQuarter = event.quarter;
 							quarterHeader = (
 								<tr>
 									<td className="text-muted" colSpan={5}>
-										{quarters[event.quarter]}
+										{quarterText}
 									</td>
 								</tr>
 							);
@@ -330,6 +339,7 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 				key={boxScore.gid}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
+				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
 			{[

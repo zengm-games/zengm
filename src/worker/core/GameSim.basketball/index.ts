@@ -1,5 +1,5 @@
 import { g, helpers, random } from "../../util";
-import { PHASE } from "../../../common";
+import { getPeriodName, PHASE } from "../../../common";
 import range from "lodash/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 
@@ -2119,7 +2119,11 @@ class GameSim {
 				texts = ["(assist: {0})"];
 			} else if (type === "quarter") {
 				const period = this.team[0].stat.ptsQtrs.length;
-				texts = [`Start of ${helpers.ordinal(period)} quarter`];
+				texts = [
+					`Start of ${helpers.ordinal(period)} ${getPeriodName(
+						this.numPeriods,
+					)}`,
+				];
 			} else if (type === "overtime") {
 				texts = [
 					`Start of ${helpers.ordinal(

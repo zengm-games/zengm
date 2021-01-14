@@ -927,7 +927,7 @@ options.push(
 	{
 		category: "Game Simulation",
 		key: "quarterLength",
-		name: "Quarter Length (minutes)",
+		name: "Period Length (minutes)",
 		godModeRequired: "always",
 		type: "float",
 	},

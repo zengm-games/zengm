@@ -1,12 +1,3 @@
-numPeriods
-- check after half possession for 2 periods
-- getPeriodName() => quarter | half | period
-  - "Start of " BBGM+FBGM
-  - boxScore.quarter in processLiveGameEvents BBGM+FBGM
-  - "quarter length" option
-  - anything else?
-  - const quarters in BoxScore.football
-
 new constants
 - url
 - some better way of linking to other sports

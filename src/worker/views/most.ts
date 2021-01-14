@@ -375,7 +375,7 @@ const updatePlayers = async (
 							(g.get("quarterLength") > 0
 								? g.get("quarterLength")
 								: defaultGameAttributes.quarterLength) *
-							4 &&
+							g.get("numPeriods") &&
 					(p.retiredYear === Infinity || p.ratings.length > 3)
 				) {
 					return { value: -valueTimesMin / min };

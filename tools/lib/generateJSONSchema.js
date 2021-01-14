@@ -695,6 +695,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						}),
+						gameAttribute("numPeriods", {
+							type: "number",
+							minimum: 0,
+						}),
 						gameAttribute("realPlayerDeterminism", {
 							type: "number",
 							minimum: 0,

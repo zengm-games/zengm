@@ -1,3 +1,8 @@
+numPeriods
+- getPeriodName() => quarter | half | period
+  - "Start of "
+- test football
+
 new constants
 - url
 - some better way of linking to other sports

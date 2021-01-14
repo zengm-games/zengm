@@ -325,7 +325,8 @@ const quarterLengthFactor = () => {
 	}
 
 	return Math.sqrt(
-		g.get("quarterLength") / defaultGameAttributes.quarterLength,
+		(g.get("numPeriods") * g.get("quarterLength")) /
+			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength),
 	);
 };
 

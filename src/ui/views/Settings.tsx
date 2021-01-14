@@ -33,6 +33,7 @@ const godModeRequiredMessage = "Enable God Mode to change this setting";
 
 type Key =
 	| "numGames"
+	| "numPeriods"
 	| "quarterLength"
 	| "minRosterSize"
 	| "maxRosterSize"
@@ -889,7 +890,9 @@ if (isSport("basketball")) {
 			type: "float",
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value > output.quarterLength) {
-					throw new Error("Value must be less than the quarter length");
+					throw new Error(
+						"Value must be less than or equal to the quarter length",
+					);
 				}
 			},
 		},
@@ -909,6 +912,18 @@ if (isSport("basketball")) {
 }
 
 options.push(
+	{
+		category: "Game Simulation",
+		key: "numPeriods",
+		name: "Number of Periods Per Game",
+		godModeRequired: "always",
+		type: "int",
+		validator: value => {
+			if (value <= 0) {
+				throw new Error("Value must be greater than 0");
+			}
+		},
+	},
 	{
 		category: "Game Simulation",
 		key: "quarterLength",

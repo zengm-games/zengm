@@ -135,7 +135,9 @@ const processStats = (
 				scale = false;
 			} else if (stat === "pace") {
 				if (ts.min > 0) {
-					row.pace = (g.get("quarterLength") * 4 * poss(ts)) / (ts.min / 5);
+					row.pace =
+						(g.get("quarterLength") * g.get("numPeriods") * poss(ts)) /
+						(ts.min / 5);
 				} else {
 					row.pace = 0;
 				}

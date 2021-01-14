@@ -1,7 +1,20 @@
 numPeriods
 - getPeriodName() => quarter | half | period
-  - "Start of "
+  - "Start of " BBGM+FBGM
+  - boxScore.quarter in processLiveGameEvents BBGM+FBGM
+  - "quarter length" option
+  - anything else?
+- 5th period shows as overtime in box score
 - test football
+  - quarter
+  - 4
+  - abstract check for "is end of this period going to take the ball away from me"
+    - Who gets the ball after halftime?
+    - "If there are under 10 seconds left in the half/overtime, maybe try a field goal"
+    - Two minute warning
+    - Timeouts - late in game when clock is running
+    - Check two minute warning again
+    - this.hurryUp
 
 new constants
 - url

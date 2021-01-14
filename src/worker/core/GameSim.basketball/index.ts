@@ -1,6 +1,7 @@
-import { g, helpers, random } from "../util";
-import { PHASE } from "../../common";
+import { g, helpers, random } from "../../util";
+import { PHASE } from "../../../common";
 import range from "lodash/range";
+import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 
 type PlayType =
 	| "ast"
@@ -447,12 +448,15 @@ class GameSim {
 		const wonJump = this.jumpBall();
 
 		while (!this.elamDone) {
-			// Who gets the ball after halftime?
-			if (this.numPeriods === 4 && quarter === 3) {
-				// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
+			// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
+			if (
+				jumpBallWinnerStartsThisPeriodWithPossession(quarter, this.numPeriods)
+			) {
+				this.o = wonJump === 0 ? 1 : 0;
+			} else {
 				this.o = wonJump === 0 ? 0 : 1;
-				this.d = this.o === 0 ? 1 : 0;
 			}
+			this.d = this.o === 0 ? 1 : 0;
 
 			this.checkElamEnding(); // Before loop, in case it's at 0
 			while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
@@ -616,7 +620,7 @@ class GameSim {
 		} else {
 			gameOver =
 				this.t <= 0 &&
-				this.team[this.o].stat.ptsQtrs.length >= 4 &&
+				this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
 				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
 		}
 
@@ -1145,7 +1149,7 @@ class GameSim {
 		const offenseWinningByABit = diff > 0 && diff <= 6;
 		const intentionalFoul =
 			offenseWinningByABit &&
-			this.team[0].stat.ptsQtrs.length >= 4 &&
+			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
 			timeBeforePossession < 25 / 60 &&
 			!this.elamActive;
 
@@ -1161,7 +1165,7 @@ class GameSim {
 		// If winning at end of game, just run out the clock
 		if (
 			this.t <= 0 &&
-			this.team[this.o].stat.ptsQtrs.length >= 4 &&
+			this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
 			this.team[this.o].stat.pts > this.team[this.d].stat.pts &&
 			!this.elamActive
 		) {
@@ -1683,7 +1687,7 @@ class GameSim {
 		}
 
 		eventText += ` to force ${helpers.overtimeCounter(
-			this.team[0].stat.ptsQtrs.length - 3,
+			this.team[0].stat.ptsQtrs.length - this.numPeriods + 1,
 		)} overtime`;
 		this.clutchPlays.push({
 			text: eventText,
@@ -2119,7 +2123,7 @@ class GameSim {
 			} else if (type === "overtime") {
 				texts = [
 					`Start of ${helpers.ordinal(
-						this.team[0].stat.ptsQtrs.length - 4,
+						this.team[0].stat.ptsQtrs.length - this.numPeriods,
 					)} overtime period`,
 				];
 			} else if (type === "gameOver") {

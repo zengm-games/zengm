@@ -16,6 +16,9 @@ import type {
 	TeamNum,
 	Formation,
 } from "./types";
+import isFirstPeriodAfterHalftime from "./isFirstPeriodAfterHalftime";
+import possessionEndsAfterThisPeriod from "./possessionEndsAfterThisPeriod";
+import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -217,7 +220,7 @@ class GameSim {
 			quarter += 1;
 
 			// Who gets the ball after halftime?
-			if (this.numPeriods === 4 && quarter === 3) {
+			if (isFirstPeriodAfterHalftime(quarter, this.numPeriods)) {
 				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
@@ -382,8 +385,9 @@ class GameSim {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		return (
-			((quarter === 2 && this.scrimmage >= 50) ||
-				(quarter >= 4 && ptsDown >= 0)) &&
+			((isFirstPeriodAfterHalftime(quarter + 1, this.numPeriods) &&
+				this.scrimmage >= 50) ||
+				(quarter === this.numPeriods && ptsDown >= 0)) &&
 			this.clock <= 2
 		);
 	}
@@ -483,13 +487,13 @@ class GameSim {
 		}
 
 		// Don't kick a FG when we really need a touchdown!
-		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
+		const needTouchdown =
+			quarter >= this.numPeriods && ptsDown > 3 && this.clock <= 2;
 
 		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
 			this.clock <= 10 / 60 &&
-			quarter !== 1 &&
-			quarter !== 3 &&
+			possessionEndsAfterThisPeriod(quarter, this.numPeriods) &&
 			!needTouchdown &&
 			this.probMadeFieldGoal() >= 0.02
 		) {
@@ -608,7 +612,7 @@ class GameSim {
 
 		// Two minute warning
 		if (
-			(quarter === 2 || quarter >= 4) &&
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
 			this.clock - dt <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
@@ -627,11 +631,14 @@ class GameSim {
 		}
 
 		// Timeouts - late in game when clock is running
-		if ((quarter === 2 || quarter >= 4) && this.isClockRunning) {
+		if (
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
+			this.isClockRunning
+		) {
 			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
 			// No point in the 4th quarter of a blowout
-			if (diff < 24) {
+			if (diff < 24 || quarter < this.numPeriods) {
 				if (diff > 0) {
 					// If offense is winning, defense uses timeouts when near the end
 					if (this.clock < 2.5) {
@@ -662,7 +669,7 @@ class GameSim {
 
 		// Check two minute warning again
 		if (
-			(quarter === 2 || quarter >= 4) &&
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
 			this.clock - dt - dtClockRunning <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {

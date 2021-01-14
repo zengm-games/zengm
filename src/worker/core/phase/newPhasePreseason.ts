@@ -1,4 +1,4 @@
-import { PLAYER, applyRealTeamInfo } from "../../../common";
+import { PLAYER, applyRealTeamInfo, bySport } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -210,7 +210,10 @@ const newPhasePreseason = async (
 			const reason = random.choice([
 				`A newly discovered Kenyan birth certificate suggests that ${name}`,
 				`In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
-				`Internet sleuths on /r/nba uncovered evidence that ${name}`,
+				`Internet sleuths on /r/${bySport({
+					basketball: "nba",
+					football: "nfl",
+				})} uncovered evidence that ${name}`,
 				`Internet sleuths on Twitter uncovered evidence that ${name}`,
 				`In an emotional interview on 60 Minutes, ${name} admitted that he`,
 				`During a preaseason locker room interview, ${name} accidentally revealed that he`,

@@ -64,6 +64,8 @@ class GameSim {
 
 	clock: number;
 
+	numPeriods: number;
+
 	isClockRunning: boolean;
 
 	o: TeamNum;
@@ -114,6 +116,7 @@ class GameSim {
 		this.overtime = false;
 		this.overtimes = 0;
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
+		this.numPeriods = g.get("numPeriods");
 
 		this.isClockRunning = false;
 		this.awaitingAfterTouchdown = false;
@@ -213,13 +216,14 @@ class GameSim {
 
 			quarter += 1;
 
-			if (quarter === 3) {
+			// Who gets the ball after halftime?
+			if (this.numPeriods === 4 && quarter === 3) {
 				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
 				this.o = oAfterHalftime;
 				this.d = this.o === 0 ? 1 : 0;
-			} else if (quarter === 5) {
+			} else if (quarter > this.numPeriods) {
 				break;
 			}
 
@@ -337,12 +341,12 @@ class GameSim {
 		}
 
 		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
-		if (this.team[0].stat.ptsQtrs.length <= 3) {
+		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return 0.01;
 		}
 
 		// Does game situation dictate an onside kick in the 4th quarter?
-		if (this.team[0].stat.ptsQtrs.length !== 4) {
+		if (this.team[0].stat.ptsQtrs.length !== this.numPeriods) {
 			return 0;
 		}
 
@@ -397,7 +401,7 @@ class GameSim {
 				return "twoPointConversion";
 			}
 
-			if (quarter >= 4) {
+			if (quarter >= this.numPeriods) {
 				if (ptsDown === 0) {
 					return "extraPoint";
 				}

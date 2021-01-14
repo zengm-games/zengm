@@ -13,7 +13,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
-import { bySport } from "../../common";
+import { bySport, getPeriodName } from "../../common";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -337,7 +337,11 @@ const LiveGame = (props: View<"liveGame">) => {
 			},
 			{
 				label: `End of ${
-					boxScore.current.elamTarget === undefined ? "quarter" : "game"
+					boxScore.current.elamTarget !== undefined
+						? "game"
+						: boxScore.current.overtime
+						? "period"
+						: getPeriodName(boxScore.current.numPeriods)
 				}`,
 				key: "Q",
 				onClick: () => {
@@ -368,7 +372,12 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		return menuItems;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [boxScore.current.elam, boxScore.current.elamTarget, processToNextPause]);
+	}, [
+		boxScore.current.elam,
+		boxScore.current.elamTarget,
+		boxScore.current.overtime,
+		processToNextPause,
+	]);
 
 	useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {

@@ -1,3 +1,4 @@
+import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
 
 // Mutates boxScore!!!
@@ -34,7 +35,9 @@ const processLiveGameEvents = ({
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 			} else {
-				boxScore.quarter = `${helpers.ordinal(quarter)} quarter`;
+				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
+					boxScore.numPeriods,
+				)}`;
 				quarters.push(`Q${quarter}`);
 			}
 		}

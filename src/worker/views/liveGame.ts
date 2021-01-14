@@ -3,7 +3,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { setTeamInfo } from "./gameLog";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { isSport, PHASE } from "../../common";
+import { getPeriodName, isSport, PHASE } from "../../common";
 
 const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,
@@ -44,7 +44,7 @@ const updatePlayByPlay = async (
 		boxScore.elam = allStarGame ? g.get("elamASG") : g.get("elam");
 
 		boxScore.overtime = "";
-		boxScore.quarter = "1st quarter";
+		boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;
 		boxScore.time = `${g.get("quarterLength")}:00`;
 		boxScore.gameOver = false;
 

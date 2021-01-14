@@ -17,6 +17,9 @@ describe("worker/core/GameSim.basketball", () => {
 		});
 
 		test("numPeriods is even", () => {
+			assert.strictEqual(short(1, 2), true);
+			assert.strictEqual(short(2, 2), false);
+
 			assert.strictEqual(short(1, 4), true);
 			assert.strictEqual(short(2, 4), false);
 			assert.strictEqual(short(3, 4), false);

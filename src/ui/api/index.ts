@@ -114,6 +114,8 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
+				window.googletag = window.googletag || {};
+				window.googletag.cmd = window.googletag.cmd || [];
 				window.googletag.cmd.push(() => {
 					window.googletag.pubads().setForceSafeFrame(true);
 					window.googletag.pubads().setSafeFrameConfig({

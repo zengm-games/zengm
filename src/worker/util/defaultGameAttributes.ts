@@ -140,7 +140,7 @@ export const footballOverrides =
 				numGames: 16,
 				quarterLength: 15,
 				numGamesPlayoffSeries: [1, 1, 1, 1],
-				numPlayoffByes: 4,
+				numPlayoffByes: 2,
 				stopOnInjuryGames: 1,
 				hardCap: true,
 				ties: [

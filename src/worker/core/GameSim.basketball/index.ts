@@ -1767,7 +1767,9 @@ class GameSim {
 
 				if (!this.elamActive) {
 					if (play.time > 0) {
-						eventText += ` with ${play.time} seconds remaining`;
+						eventText += ` with ${play.time} second${
+							play.time !== 1 ? "s" : ""
+						} remaining`;
 					} else {
 						eventText +=
 							play.type === "ft"

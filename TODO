@@ -755,6 +755,7 @@ FBGM
 - base transactions on change in team rating
   - draft and free agency - probably 100%
   - trades - maybe 50/50? otherwise too easy to scam?
+- deffPssDef should be only on incompletions?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

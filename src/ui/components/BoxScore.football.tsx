@@ -269,7 +269,7 @@ const ScoringSummary = React.memo(
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
 						if (event.quarter === "OT") {
-							quarterText === "Overtime";
+							quarterText = "Overtime";
 						} else {
 							const quarter = parseInt(event.quarter.replace("Q", ""));
 							if (!Number.isNaN(quarter)) {

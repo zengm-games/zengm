@@ -745,6 +745,7 @@ FBGM
   - https://cdn.discordapp.com/attachments/290015591216054273/798701791982256128/image0.jpg
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
+- if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

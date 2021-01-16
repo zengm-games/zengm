@@ -162,6 +162,7 @@ const newPhasePreseason = async (
 			g.get("spectator")
 		) {
 			team.autoBudgetSettings(t, popRanks[i]);
+			t.adjustForInflation = true;
 			await idb.cache.teams.put(t);
 		}
 	}

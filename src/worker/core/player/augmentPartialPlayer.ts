@@ -36,9 +36,10 @@ const augmentPartialPlayer = async (
 		p.name !== undefined &&
 		(p.firstName === undefined || p.lastName === undefined)
 	) {
-		// parse and split names from roster file
-		p.firstName = p.name.split(" ")[0];
-		p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
+		const parts = p.name.split(" ");
+		p.firstName = parts[0];
+		p.lastName = parts.slice(1, parts.length).join(" ");
+		delete p.name;
 	}
 
 	// This is used to get at default values for various attributes

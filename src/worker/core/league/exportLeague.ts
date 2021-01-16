@@ -1,8 +1,7 @@
 import { getAll, idb } from "../../db";
 import { g, local } from "../../util";
 
-/**
- * Export existing active league.
+/* Export existing active league.
  *
  * @memberOf core.league
  * @param {string[]} stores Array of names of objectStores to include in export
@@ -45,6 +44,19 @@ const exportLeague = async (
 			);
 		}),
 	);
+
+	if (stores.includes("players")) {
+		// Don't export cartoon face if imgURL is provided
+		exportedLeague.players = exportedLeague.players.map((p: any) => {
+			if (p.imgURL && p.imgURL !== "") {
+				const p2 = { ...p };
+				delete p2.face;
+				return p2;
+			}
+
+			return p;
+		});
+	}
 
 	if (stores.includes("teams")) {
 		for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {

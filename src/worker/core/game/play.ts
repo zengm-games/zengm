@@ -468,10 +468,7 @@ const play = async (
 						await lock.set("stopGameSim", false);
 					}
 
-					if (
-						g.get("phase") !== PHASE.PLAYOFFS &&
-						g.get("phase") !== PHASE.AFTER_TRADE_DEADLINE
-					) {
+					if (g.get("phase") !== PHASE.PLAYOFFS) {
 						await team.checkRosterSizes("other");
 					}
 

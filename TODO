@@ -746,6 +746,9 @@ FBGM
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
 - if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
+- base transactions on change in team rating
+  - draft and free agency - probably 100%
+  - trades - maybe 50/50? otherwise too easy to scam?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

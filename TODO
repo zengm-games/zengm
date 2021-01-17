@@ -226,12 +226,7 @@ next/prev buttons
 
 expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
 
-@babel/runtime error
-- https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
-- caused by @rollup/plugin-node-resolve upgrade
-
 typescript 4.1 stuff
-- https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html and https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#jsx-factories after upgrading @types/react to 17
 
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 

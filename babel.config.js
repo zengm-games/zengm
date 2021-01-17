@@ -2,7 +2,9 @@
 
 module.exports = api => {
 	// Make sure config gets updated when process.env.LEGACY changes
-	api.cache.invalidate(() => !!process.env.LEGACY);
+	api.cache.invalidate(() =>
+		JSON.stringify([process.env.LEGACY, process.env.NODE_ENV]),
+	);
 
 	const plugins = [require("./tools/babel-plugin-sport-functions")];
 
@@ -35,7 +37,7 @@ module.exports = api => {
 				"@babel/preset-react",
 				{
 					runtime: "automatic",
-					development: process.env.NODE_ENV === "development",
+					development: process.env.NODE_ENV !== "production",
 				},
 			],
 			"@babel/preset-typescript",

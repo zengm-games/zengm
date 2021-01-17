@@ -707,8 +707,6 @@ add option to disable salary cap @hrmantovani#2284
 FBGM
 - retirement age
   - increase roster size limit to 55
-- when the ball is turned over, instead of a new set of downs, you start where the other team left off
-- Some automatic first down penalties result in 1st and 1
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - kneeling at end of games
@@ -734,17 +732,15 @@ FBGM
 - when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
 - had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
 - fantasy points
-- late game strategy
-  - punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
-  - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
+  - i can't reproduce this
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
-- skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
+- skip down after fumble
   - lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
   - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
-- too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
+  - could happen if advanceYds is called multiple times, like if there are 2 fumbles on the play, or multiple penalties
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - multiple QBs problem
@@ -753,7 +749,7 @@ FBGM
 - base transactions on change in team rating
   - draft and free agency - probably 100%
   - trades - maybe 50/50? otherwise too easy to scam?
-- deffPssDef should be only on incompletions?
+- defPssDef should be only on incompletions?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

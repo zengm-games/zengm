@@ -6,7 +6,7 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../common/types";
-import { isSport } from "../../common";
+import { GAME_NAME, isSport } from "../../common";
 
 const style = { maxWidth: 1000 };
 
@@ -172,8 +172,7 @@ const frivolities = {
 		{
 			urlParts: ["most", "oldest_former_players"],
 			name: "Oldest Former Players",
-			description:
-				"As in reality, players die in Basketball GM, even after their careers end. See who made it the longest.",
+			description: `As in reality, players die in ${GAME_NAME}, even after their careers end. See who made it the longest.`,
 		},
 		{
 			urlParts: ["most", "oldest"],

@@ -1390,7 +1390,10 @@ class GameSim {
 	}
 
 	doTwoPointConversion() {
-		this.twoPointConversionTeam = this.o;
+		// this.twoPointConversionTeam is overwritten elsewhere, so don't use it here for possession tracking
+		const twoPointConversionTeam = this.o;
+
+		this.twoPointConversionTeam = twoPointConversionTeam;
 		this.down = 1;
 		this.scrimmage = 98; // Put this before the play, in case there is a turnover during conversion!
 
@@ -1402,9 +1405,14 @@ class GameSim {
 			this.doRun();
 		}
 
+		// Reset off/def teams in case there was a turnover during the conversion attempt
+		this.o = twoPointConversionTeam;
+		this.d = this.o === 0 ? 1 : 0;
+
 		this.twoPointConversionTeam = undefined;
 		this.awaitingAfterTouchdown = false;
 		this.isClockRunning = false;
+
 		return 0;
 	}
 

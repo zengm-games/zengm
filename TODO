@@ -747,8 +747,6 @@ FBGM
 - too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
-- if there's a fumble on the 2-point attempt recovered by the defense, the team that just scored the touchdown gets the ball back https://discord.com/channels/290013534023057409/290015591216054273/794950003621101589
-  - https://cdn.discordapp.com/attachments/290015591216054273/798701791982256128/image0.jpg
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
 - if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
@@ -977,8 +975,6 @@ sw cache issue
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
 Jofish - when you make a move that causes an error in your roster (i.e. not enough/too many players) and try to simulate the all-star game, it freezes. I understand that the game still has to check if the rosters are proper, however, there is no warning given. Even though it doesn't make sense that the user's roster has to comply within the league even though it's the all-star game, a simple warning given would be nice
-
-turnover in 2 point conversion -> wrong team still kicking off, wtf
 
 probGoForIt should account for being down by a FG or less late in the game
 

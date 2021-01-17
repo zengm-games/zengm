@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { takeScreenshot, toWorker } from ".";
 import { isSport } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";

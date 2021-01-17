@@ -30,7 +30,16 @@ module.exports = api => {
 	}
 
 	return {
-		presets: ["@babel/preset-react", "@babel/preset-typescript"],
+		presets: [
+			[
+				"@babel/preset-react",
+				{
+					runtime: "automatic",
+					development: process.env.NODE_ENV === "development",
+				},
+			],
+			"@babel/preset-typescript",
+		],
 		plugins,
 		env: {
 			test: {

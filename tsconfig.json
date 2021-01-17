@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"resolveJsonModule": true,
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"rootDir": "./src",
 		"noEmit": true,
 		"noUnusedLocals": true,

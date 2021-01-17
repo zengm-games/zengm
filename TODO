@@ -232,6 +232,9 @@ expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jl
 
 typescript 4.1 stuff
 - https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html and https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#jsx-factories after upgrading @types/react to 17
+- "jsx": "react-jsxdev" in dev tsconfig https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#jsx-factories
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
 
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 

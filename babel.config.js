@@ -37,7 +37,9 @@ module.exports = api => {
 				"@babel/preset-react",
 				{
 					runtime: "automatic",
-					development: process.env.NODE_ENV !== "production",
+
+					// Results in a ton of warnings from Rollup during watch
+					// development: process.env.NODE_ENV !== "production",
 				},
 			],
 			"@babel/preset-typescript",

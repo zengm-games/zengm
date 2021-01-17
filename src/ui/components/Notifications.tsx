@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
 import { useLocalShallow } from "../util";

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import type { ReactNode } from "react";
 
 const Pagination = ({
 	currentPage,
@@ -28,7 +28,7 @@ const Pagination = ({
 		lastShownPage = numPages;
 	}
 
-	const numberedPages: React.ReactNode[] = [];
+	const numberedPages: ReactNode[] = [];
 
 	for (let i = firstShownPage; i <= lastShownPage; i++) {
 		numberedPages.push(

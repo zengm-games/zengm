@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
 	SortableContainer,
 	SortableElement,
@@ -15,7 +16,7 @@ type RowClassName<Value> = (a: {
 	isDragged: boolean;
 	value: Value;
 }) => string | undefined;
-type Row<Value> = (a: { index: number; value: Value }) => React.ReactNode;
+type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 
 // Should be Value passed through as generic parameter, but that is annoying with HOC
 type ShouldBeValue = any;
@@ -186,7 +187,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	rowClassName,
 	values,
 }: {
-	cols: () => React.ReactNode;
+	cols: () => ReactNode;
 	disabled?: boolean;
 	highlightHandle: HighlightHandle<Value>;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, {
+import {
+	Component,
 	ChangeEvent,
 	useCallback,
 	useEffect,
@@ -22,7 +23,7 @@ type PlayerRowProps = {
 	p: any;
 };
 
-class PlayerRow extends React.Component<PlayerRowProps> {
+class PlayerRow extends Component<PlayerRowProps> {
 	prevInGame: boolean | undefined;
 
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!

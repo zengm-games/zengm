@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ReactNode } from "react";
+import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
 import { getPeriodName, helpers, processPlayerStats } from "../../common";
@@ -244,7 +244,7 @@ const getCount = (events: ScoringSummaryEvent[]) => {
 	return count;
 };
 
-const ScoringSummary = React.memo(
+const ScoringSummary = memo(
 	({
 		events,
 		numPeriods,
@@ -292,7 +292,7 @@ const ScoringSummary = React.memo(
 						}
 
 						return (
-							<React.Fragment key={i}>
+							<Fragment key={i}>
 								{quarterHeader}
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
@@ -313,7 +313,7 @@ const ScoringSummary = React.memo(
 									<td>{event.time}</td>
 									<td style={{ whiteSpace: "normal" }}>{event.text}</td>
 								</tr>
-							</React.Fragment>
+							</Fragment>
 						);
 					})}
 				</tbody>
@@ -351,14 +351,14 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 				"Returns",
 				"Defense",
 			].map(title => (
-				<React.Fragment key={title}>
+				<Fragment key={title}>
 					<h2>{title}</h2>
 					<StatsTable
 						Row={Row}
 						boxScore={boxScore}
 						type={title.toLowerCase() as any}
 					/>
-				</React.Fragment>
+				</Fragment>
 			))}
 		</div>
 	);

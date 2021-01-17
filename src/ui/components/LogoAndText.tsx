@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import { memo } from "react";
 import { bySport, GAME_NAME } from "../../common";
 
 const logoImage = bySport({
@@ -21,7 +21,7 @@ type Props = {
 	lid?: number;
 	updating: boolean;
 };
-const LogoAndText = React.memo(({ gold, lid, updating }: Props) => {
+const LogoAndText = memo(({ gold, lid, updating }: Props) => {
 	return (
 		<a
 			className={

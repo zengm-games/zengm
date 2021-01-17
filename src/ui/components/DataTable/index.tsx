@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, MouseEvent, ReactNode } from "react";
+import { Component, SyntheticEvent, MouseEvent, ReactNode } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
 import Footer from "./Footer";
@@ -86,7 +86,7 @@ type State = {
 	sortBys: SortBy[];
 };
 
-class DataTable extends React.Component<Props, State> {
+class DataTable extends Component<Props, State> {
 	settingsCache: SettingsCache;
 
 	constructor(props: Props) {

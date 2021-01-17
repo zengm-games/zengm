@@ -1,6 +1,6 @@
-import React from "react";
 import { bySport } from "../../../common";
 import RatingWithChange from "../../components/RatingWithChange";
+import type { ReactNode } from "react";
 
 const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 	const r = ratings.length - 1;
@@ -18,7 +18,7 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 		Record<
 			string,
 			{
-				label: React.ReactNode;
+				label: ReactNode;
 				rating: string;
 			}[]
 		>[]

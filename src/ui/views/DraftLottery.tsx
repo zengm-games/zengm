@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";

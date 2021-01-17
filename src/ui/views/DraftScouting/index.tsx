@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import { useState } from "react";
 import { MOOD_TRAITS } from "../../common";
 import type { MoodComponents, MoodTrait } from "../../common/types";
 import { helpers, useLocalShallow } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.

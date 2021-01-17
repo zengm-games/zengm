@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, { MouseEvent } from "react";
+import { Component, Fragment } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
@@ -24,10 +25,7 @@ type StripeButtonState = {
 	handler: StripeCheckoutHandler | undefined | null;
 };
 
-class StripeButton extends React.Component<
-	StripeButtonProps,
-	StripeButtonState
-> {
+class StripeButton extends Component<StripeButtonProps, StripeButtonState> {
 	constructor(props: StripeButtonProps) {
 		super(props);
 		this.state = {
@@ -154,7 +152,7 @@ type UserInfoState = {
 	logoutError: string | undefined | null;
 };
 
-class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
+class UserInfo extends Component<UserInfoProps, UserInfoState> {
 	constructor(props: UserInfoProps) {
 		super(props);
 		this.state = {
@@ -262,7 +260,7 @@ const Account = ({
 		title: "Your Account",
 		hideNewWindow: true,
 	});
-	let goldPitchDiv: React.ReactNode = null;
+	let goldPitchDiv: ReactNode = null;
 
 	if (showGoldPitch) {
 		const otherSport = isSport("basketball") ? "Football" : "Basketball";
@@ -362,7 +360,7 @@ const Account = ({
 			{Object.entries(groupBy(achievements, "category")).map(
 				([category, catAchivements]: [any, any[]]) => {
 					return (
-						<React.Fragment key={category}>
+						<Fragment key={category}>
 							<h3 className="mt-4">{category}</h3>
 							<div
 								className="row"
@@ -399,7 +397,7 @@ const Account = ({
 									);
 								})}
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				},
 			)}

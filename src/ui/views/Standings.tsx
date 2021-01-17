@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import { Fragment } from "react";
 import { ResponsiveTableWrapper, MarginOfVictory } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
@@ -317,7 +317,7 @@ const Standings = ({
 	}
 
 	const groupStandings = groups.map(({ name, subgroups }, i) => (
-		<React.Fragment key={i}>
+		<Fragment key={i}>
 			{name ? <h2>{name}</h2> : null}
 			{subgroups.map((subgroup, j) => (
 				<GroupStandings
@@ -329,7 +329,7 @@ const Standings = ({
 					userTid={userTid}
 				/>
 			))}
-		</React.Fragment>
+		</Fragment>
 	));
 
 	let allStandings;
@@ -345,7 +345,7 @@ const Standings = ({
 			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
 				{groupStandings.map((confStandings, i) => {
 					return (
-						<React.Fragment key={i}>
+						<Fragment key={i}>
 							<div className="col-md-9">{confStandings}</div>
 							<div className="col-md-3 d-none d-md-block">
 								<h2>&nbsp;</h2>
@@ -357,7 +357,7 @@ const Standings = ({
 									playoffsByConference={playoffsByConference}
 								/>
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 			</div>

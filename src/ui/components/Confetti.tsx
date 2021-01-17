@@ -1,6 +1,6 @@
 // @ts-ignore
 import ConfettiGenerator from "confetti-js";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // https://stackoverflow.com/a/5624139/786644
 const hexToRgb = (hex: string) => {

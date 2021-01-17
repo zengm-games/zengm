@@ -1,15 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React from "react";
 import { NewsBlock } from "../../components";
 import { helpers, useLocal } from "../../util";
 import type { View } from "../../../common/types";
 import throttle from "lodash/throttle";
+import { Component, createElement, memo } from "react";
+import type { ComponentType } from "react";
 
 // Similar to react-throttle-render
 const throttleRender = (wait: number) => {
-	return function <Props>(component: React.ComponentType<Props>) {
+	return function <Props>(component: ComponentType<Props>) {
 		type State = { props: Props };
-		class Throttled extends React.Component<Props, State> {
+		class Throttled extends Component<Props, State> {
 			throttledSetState: ((state: State) => void) & {
 				cancel: () => void;
 			};
@@ -39,7 +40,7 @@ const throttleRender = (wait: number) => {
 			}
 
 			render() {
-				return React.createElement(component, this.state.props);
+				return createElement(component, this.state.props);
 			}
 		}
 
@@ -90,7 +91,7 @@ const Headlines = ({
 	);
 };
 
-const ThrottledComponent = React.memo(
+const ThrottledComponent = memo(
 	throttleRender(2000)(Headlines),
 	(prevProps, nextProps) => {
 		// Complicated memo function is because we don't want the throttle timer to start when doing a render where nothing changed, and we can't maintain referential equality of props.events because it is passed between the UI and worker.

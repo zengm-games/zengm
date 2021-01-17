@@ -1,5 +1,5 @@
 import type { Col } from ".";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import classNames from "classnames";

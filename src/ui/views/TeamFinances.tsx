@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ChangeEvent, FormEvent, ReactNode } from "react";
+import { Component, ChangeEvent, FormEvent, ReactNode } from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -43,10 +43,7 @@ type HandleChanges = {
 	adjustForInflation: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-class FinancesForm extends React.Component<
-	FinancesFormProps,
-	FinancesFormState
-> {
+class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	handleChanges: HandleChanges;
 
 	constructor(props: FinancesFormProps) {

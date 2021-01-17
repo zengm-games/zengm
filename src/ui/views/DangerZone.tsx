@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { isSport, PHASE } from "../../common";
 import type { View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";

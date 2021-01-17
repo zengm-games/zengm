@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, useReducer } from "react";
+import { useCallback, useState, useReducer } from "react";
+import type { ReactNode } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -978,7 +979,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: React.ReactNode[] = [
+	const moreOptions: ReactNode[] = [
 		<div key="challenge" className="mb-3">
 			<label>Challenge modes</label>
 			<div className="form-check mb-2">

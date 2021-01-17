@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 const quartile = (data: number[], quart: 1 | 2 | 3) => {
 	if (quart === 1 || quart === 2 || quart === 3) {

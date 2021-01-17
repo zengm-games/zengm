@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, CSSProperties } from "react";
+import { useCallback, useState, CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";

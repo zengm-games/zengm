@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { bySport, isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType } from "../../common/types";
 import { helpers, useLocalShallow } from "../util";
@@ -259,12 +259,12 @@ const MoreLinks = (
 				.filter(({ url }) => keepSelfLink || url[0] !== page)
 				.map(({ className, url, name }, i) => {
 					return (
-						<React.Fragment key={url[0]}>
+						<Fragment key={url[0]}>
 							{i > 0 ? " | " : null}
 							<a className={className} href={helpers.leagueUrl(url)}>
 								{name}
 							</a>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 		</p>

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import { Fragment } from "react";
 import posRatings from "../../../common/posRatings.football";
 import { getCols, helpers } from "../../util";
 import type { RatingKey } from "../../../common/types.football";
@@ -54,13 +54,13 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 				</div>
 				<div className="col-4 mt-1">
 					{extraRatings.map((rating, i) => (
-						<React.Fragment key={rating}>
+						<Fragment key={rating}>
 							<br />
 							<span className={helpers.colorRating(ratings[rating])}>
 								<span title={cols[i].desc}>{cols[i].title}</span>:{" "}
 								{ratings[rating]}
 							</span>
-						</React.Fragment>
+						</Fragment>
 					))}
 				</div>
 			</div>

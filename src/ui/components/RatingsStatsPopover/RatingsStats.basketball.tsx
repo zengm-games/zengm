@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { helpers } from "../../util";
 import type { RatingKey } from "../../../common/types.basketball";
 

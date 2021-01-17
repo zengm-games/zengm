@@ -1,4 +1,3 @@
-import React from "react";
 import { bySport, GAME_NAME } from "../../common";
 
 const pro = bySport({ basketball: "NBA", football: "NFL" });

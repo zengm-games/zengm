@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type {
@@ -246,7 +246,7 @@ const Frivolities = () => {
 						className={`col-12 col-md-6${i > 0 ? " mt-3 mt-md-0" : ""}`}
 					>
 						{categories.map((category, i) => (
-							<React.Fragment key={category}>
+							<Fragment key={category}>
 								<h3 className={`ml-1${i > 0 ? " mt-3" : ""}`}>{category}</h3>
 								<div className="list-group">
 									{frivolities[category].map(frivolity => (
@@ -263,7 +263,7 @@ const Frivolities = () => {
 										</a>
 									))}
 								</div>
-							</React.Fragment>
+							</Fragment>
 						))}
 					</div>
 				))}

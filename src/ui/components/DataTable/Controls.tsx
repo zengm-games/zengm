@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent } from "react";
+import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../../common";
 import HelpPopover from "../HelpPopover";

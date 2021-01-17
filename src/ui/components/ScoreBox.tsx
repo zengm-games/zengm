@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import React from "react";
 import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
+import type { ReactNode } from "react";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -54,7 +54,7 @@ const ScoreBox = ({
 	actionDisabled?: boolean;
 	actionHighlight?: boolean;
 	actionOnClick?: () => void;
-	actionText?: React.ReactNode;
+	actionText?: ReactNode;
 	className?: string;
 	game: {
 		forceWin?: number;

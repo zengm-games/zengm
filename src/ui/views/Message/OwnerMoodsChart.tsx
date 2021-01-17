@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { axisBottom } from "d3-axis";
 import { scaleLinear, scalePoint } from "d3-scale";
 import { curveMonotoneX, line } from "d3-shape";

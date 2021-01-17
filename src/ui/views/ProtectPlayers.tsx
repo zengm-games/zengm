@@ -1,4 +1,5 @@
-import React, { useState, FormEvent } from "react";
+import { useState, FormEvent } from "react";
+import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	confirm,
@@ -28,7 +29,7 @@ const PlayerList = ({
 	numRemaining: number;
 	protectedPids: number[];
 	tid: number;
-	upcomingFreeAgentsText: React.ReactNode;
+	upcomingFreeAgentsText: ReactNode;
 }) => {
 	const cols = getCols(
 		"",

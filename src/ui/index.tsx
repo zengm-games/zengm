@@ -1,6 +1,6 @@
 /* eslint-disable import/first */
 import "bbgm-polyfills"; // eslint-disable-line
-import React from "react";
+import type { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
@@ -268,7 +268,7 @@ const setupRoutes = () => {
 		},
 		navigationEnd: ({ context, error }) => {
 			if (error) {
-				let errMsg: React.ReactNode = error.message;
+				let errMsg: ReactNode = error.message;
 
 				if (errMsg === "Matching route not found") {
 					errMsg = "Page not found.";

@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import { Component, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 type Props = {
@@ -8,7 +8,7 @@ type State = {
 	errorMessage: string | undefined;
 };
 
-class Login extends React.Component<Props, State> {
+class Login extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

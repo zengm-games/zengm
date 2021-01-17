@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent } from "react";
+import type { Dispatch, FormEvent } from "react";
 import { PHASE } from "../../../common";
 import { logEvent, toWorker, helpers } from "../../util";
 import type { Phase } from "../../../common/types";

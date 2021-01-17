@@ -1,5 +1,5 @@
+import * as React from "react";
 import bugsnagReact from "@bugsnag/plugin-react";
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 
 const Fallback = ({ error, info }: { error: Error; info?: any }) => {

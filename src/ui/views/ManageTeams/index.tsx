@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useReducer, ChangeEvent, FormEvent } from "react";
+import { Fragment, useReducer, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
@@ -193,7 +193,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			<form onSubmit={handleSubmit}>
 				<div className="row">
 					{teams.map(t => (
-						<React.Fragment key={t.tid}>
+						<Fragment key={t.tid}>
 							<TeamForm
 								classNamesCol={[
 									"col-6 col-lg-2",
@@ -218,7 +218,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>
 								<hr />
 							</div>
-						</React.Fragment>
+						</Fragment>
 					))}
 				</div>
 				<div className="text-center">

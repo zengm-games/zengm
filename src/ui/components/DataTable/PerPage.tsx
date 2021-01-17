@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { SyntheticEvent } from "react";
+import type { SyntheticEvent } from "react";
 
 const PerPage = ({
 	onChange,

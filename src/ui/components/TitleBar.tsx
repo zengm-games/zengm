@@ -1,4 +1,3 @@
-import React from "react";
 import Dropdown from "./Dropdown";
 import DropdownLinks from "./DropdownLinks";
 import NewWindowLink from "./NewWindowLink";

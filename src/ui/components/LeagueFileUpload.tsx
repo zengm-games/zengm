@@ -1,6 +1,6 @@
 import Ajv from "ajv";
 import PropTypes from "prop-types";
-import React, {
+import {
 	useCallback,
 	useEffect,
 	useReducer,

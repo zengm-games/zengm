@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { PHASE } from "../../common";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";

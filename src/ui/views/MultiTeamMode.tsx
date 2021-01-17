@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, ChangeEvent, useRef } from "react";
+import { useCallback, ChangeEvent, useRef } from "react";
 import { bySport, isSport, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, logEvent } from "../util";

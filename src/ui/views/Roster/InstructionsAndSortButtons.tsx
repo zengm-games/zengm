@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import type { View } from "../../../common/types";
 import { confirm, toWorker } from "../../util";
 

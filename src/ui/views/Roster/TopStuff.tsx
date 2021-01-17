@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState, CSSProperties } from "react";
+import { useState, CSSProperties } from "react";
 import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";

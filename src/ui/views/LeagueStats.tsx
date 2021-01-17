@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { getCols, helpers } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, MoreLinks } from "../components";

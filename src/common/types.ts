@@ -1,5 +1,5 @@
 import type { Face } from "facesjs";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
@@ -643,10 +643,10 @@ export type MenuItemLink = {
 	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
-		| Exclude<React.ReactNode, null | undefined | number | boolean>
+		| Exclude<ReactNode, null | undefined | number | boolean>
 		| {
-				side: Exclude<React.ReactNode, null | undefined | number | boolean>;
-				top: Exclude<React.ReactNode, null | undefined | number | boolean>;
+				side: Exclude<ReactNode, null | undefined | number | boolean>;
+				top: Exclude<ReactNode, null | undefined | number | boolean>;
 		  };
 };
 

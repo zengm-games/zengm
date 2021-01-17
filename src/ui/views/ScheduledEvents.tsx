@@ -1,4 +1,3 @@
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal, toWorker } from "../util";
@@ -7,10 +6,9 @@ import { PHASE_TEXT } from "../../common";
 import { options } from "./Settings";
 import { Dropdown } from "react-bootstrap";
 
-const godModeOptions: Partial<Record<
-	typeof options[number]["key"],
-	typeof options[number]
->> = {};
+const godModeOptions: Partial<
+	Record<typeof options[number]["key"], typeof options[number]>
+> = {};
 for (const option of options) {
 	godModeOptions[option.key] = option;
 }

@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import HelpPopover from "./HelpPopover";
 import { POSITION_COUNTS } from "../../common";
 

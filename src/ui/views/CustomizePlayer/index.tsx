@@ -1,12 +1,6 @@
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, {
-	useState,
-	FormEvent,
-	ChangeEvent,
-	MouseEvent,
-	ReactNode,
-} from "react";
+import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
 import {
 	PHASE,
 	PLAYER,

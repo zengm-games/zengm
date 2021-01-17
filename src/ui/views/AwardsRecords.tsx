@@ -1,6 +1,5 @@
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React from "react";
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";

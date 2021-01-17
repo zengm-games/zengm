@@ -1,4 +1,3 @@
-import React from "react";
 import { isSport } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import Login from "./Login";

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocalShallow } from "../util";

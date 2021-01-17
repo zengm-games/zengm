@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 
 const TeamForm = ({

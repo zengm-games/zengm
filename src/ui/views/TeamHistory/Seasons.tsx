@@ -1,4 +1,3 @@
-import React from "react";
 import { RecordAndPlayoffs } from "../../components";
 import type { View } from "../../../common/types";
 

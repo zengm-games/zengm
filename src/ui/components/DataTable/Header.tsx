@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, MouseEvent } from "react";
+import type { SyntheticEvent, MouseEvent } from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
 const FilterHeader = ({

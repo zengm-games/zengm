@@ -1,4 +1,3 @@
-import React from "react";
 import type { Player } from "../../../common/types";
 import { groupAwards } from "../../util";
 

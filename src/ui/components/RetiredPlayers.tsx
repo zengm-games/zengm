@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { isSport } from "../../common";
 import { helpers } from "../util";
 

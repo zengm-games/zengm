@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import {
 	DataTable,
 	Height,
@@ -45,11 +45,11 @@ const Relatives = ({
 		<>
 			{relatives.map(rel => {
 				return (
-					<React.Fragment key={rel.pid}>
+					<Fragment key={rel.pid}>
 						{helpers.upperCaseFirstLetter(rel.type)}:{" "}
 						<a href={helpers.leagueUrl(["player", rel.pid])}>{rel.name}</a>
 						<br />
-					</React.Fragment>
+					</Fragment>
 				);
 			})}
 			<a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>

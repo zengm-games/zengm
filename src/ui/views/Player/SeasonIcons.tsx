@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import React from "react";
 import { isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 

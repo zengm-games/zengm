@@ -2,7 +2,8 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, {
+import {
+	Fragment,
 	useState,
 	ReactNode,
 	ChangeEvent,
@@ -2165,7 +2166,7 @@ const Settings = (props: View<"settings">) => {
 					currentCategoryNames.push(category.name);
 
 					return (
-						<React.Fragment key={category.name}>
+						<Fragment key={category.name}>
 							<a className="anchor" id={category.name} />
 							<h2>
 								{category.name}
@@ -2301,7 +2302,7 @@ const Settings = (props: View<"settings">) => {
 									},
 								)}
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 

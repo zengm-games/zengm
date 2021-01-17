@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
 
 const isMobile = () => window.screen && window.screen.width < 768;

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
@@ -31,7 +31,7 @@ const PlayerNameLabels = (props: {
 		watch,
 	} = props;
 
-	let injuryIcon: React.ReactNode = null;
+	let injuryIcon: ReactNode = null;
 
 	if (injury !== undefined) {
 		if (injury.gamesRemaining === -1) {

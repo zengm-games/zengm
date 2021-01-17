@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { FormEvent } from "react";
+import { Component, FormEvent } from "react";
 import {
 	ACCOUNT_API_URL,
 	fetchWrapper,
@@ -21,7 +21,7 @@ type State = {
 	errorMessageUsername: string | undefined;
 };
 
-class Register extends React.Component<Props, State> {
+class Register extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

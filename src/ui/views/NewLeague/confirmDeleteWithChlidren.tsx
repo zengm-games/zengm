@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "react-bootstrap";
 

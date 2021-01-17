@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ChangeEvent } from "react";
+import { Fragment, ChangeEvent } from "react";
 import { bySport } from "../../../common";
 import { getCols, helpers } from "../../util";
 
@@ -52,7 +52,7 @@ const RatingsForm = ({
 								<div key={j} className="col-4">
 									{Object.entries(block).map(([title, ratings]) => {
 										return (
-											<React.Fragment key={title}>
+											<Fragment key={title}>
 												<h3>{title}</h3>
 												{ratings.map(rating => {
 													return (
@@ -82,7 +82,7 @@ const RatingsForm = ({
 														</div>
 													);
 												})}
-											</React.Fragment>
+											</Fragment>
 										);
 									})}
 								</div>

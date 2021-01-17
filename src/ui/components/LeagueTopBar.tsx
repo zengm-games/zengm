@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 
@@ -25,7 +25,7 @@ const hiddenStyle = {
 	marginBottom: -64,
 };
 
-const LeagueTopBar = React.memo(() => {
+const LeagueTopBar = memo(() => {
 	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
 		games: state.games,
 		lid: state.lid,

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect, MouseEvent } from "react";
+import { useEffect, MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";

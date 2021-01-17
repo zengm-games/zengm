@@ -1,4 +1,5 @@
-import React, { useReducer, useState } from "react";
+import { useReducer, useState } from "react";
+import type { Dispatch } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div, View } from "../../../common/types";
 import classNames from "classnames";
@@ -505,7 +506,7 @@ const Division = ({
 	divs: Div[];
 	confs: Conf[];
 	teams: NewLeagueTeam[];
-	dispatch: React.Dispatch<Action>;
+	dispatch: Dispatch<Action>;
 	addTeam: (did: number, t?: NewLeagueTeam) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
@@ -613,7 +614,7 @@ const Conference = ({
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
-	dispatch: React.Dispatch<Action>;
+	dispatch: Dispatch<Action>;
 	addTeam: (did: number, t?: NewLeagueTeam) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;

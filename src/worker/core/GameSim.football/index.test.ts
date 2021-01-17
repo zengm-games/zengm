@@ -43,8 +43,10 @@ describe("worker/core/GameSim.football", () => {
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;
-		game.team[0].stat.ptsQtrs = [0, 0, 0, 0];
-		game.team[1].stat.ptsQtrs = [0, 0, 0, 2];
+		game.team[0].stat.pts = 0;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 2;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
 		game.scrimmage = 80;
 		game.clock = 0.01;
 		assert.strictEqual(game.getPlayType(), "fieldGoal");
@@ -57,10 +59,39 @@ describe("worker/core/GameSim.football", () => {
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;
-		game.team[0].stat.ptsQtrs = [0, Math.round(Math.random() * 100)];
-		game.team[1].stat.ptsQtrs = [0, Math.round(Math.random() * 100)];
+		game.team[0].stat.pts = Math.round(Math.random() * 100);
+		game.team[0].stat.ptsQtrs = [0, game.team[0].stat.pts];
+		game.team[1].stat.pts = Math.round(Math.random() * 100);
+		game.team[1].stat.ptsQtrs = [0, game.team[1].stat.pts];
 		game.scrimmage = 80;
 		game.clock = 0.01;
 		assert.strictEqual(game.getPlayType(), "fieldGoal");
+	});
+
+	test("don't punt when down late, and usually pass", async () => {
+		// Down by 7, 4th quarter, ball on own 20 yard line, 4th down, 1:30 left
+		const game = await simGame();
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = 0;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 7;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
+		game.down = 4;
+		game.scrimmage = 20;
+		game.clock = 1.5;
+
+		let numRun = 0;
+		for (let i = 0; i < 100; i++) {
+			const playType = game.getPlayType();
+			assert(playType === "run" || playType === "pass");
+			if (playType === "run") {
+				numRun += 1;
+			}
+		}
+
+		// Should really be 2% chance
+		assert(numRun <= 10);
 	});
 });

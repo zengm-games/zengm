@@ -281,6 +281,20 @@ class GameSim {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
 		this.updatePlayersOnField("starters");
 		this.updateTeamCompositeRatings();
+
+		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		const desperation =
+			quarter >= this.numPeriods &&
+			((quarter > this.numPeriods && ptsDown > 0) ||
+				(ptsDown > 0 && this.clock <= 2) ||
+				(ptsDown > 8 && this.clock <= 3) ||
+				(ptsDown > 16 && this.clock <= 4) ||
+				(ptsDown > 24 && this.clock <= 6));
+		if (desperation) {
+			return 0.98;
+		}
+
 		let offPassing = 0;
 		let offRushing = 0;
 		let defPassing = 0;
@@ -490,6 +504,10 @@ class GameSim {
 		const needTouchdown =
 			quarter >= this.numPeriods && ptsDown > 3 && this.clock <= 2;
 
+		const neverPunt =
+			(quarter === this.numPeriods && ptsDown > 0 && this.clock <= 2) ||
+			(quarter > this.numPeriods && ptsDown > 0);
+
 		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
 			this.clock <= 10 / 60 &&
@@ -560,7 +578,9 @@ class GameSim {
 					}
 
 					// Default option - punt
-					return "punt";
+					if (!neverPunt) {
+						return "punt";
+					}
 				}
 			}
 		}

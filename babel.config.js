@@ -4,25 +4,22 @@ module.exports = api => {
 	// Make sure config gets updated when process.env.LEGACY changes
 	api.cache.invalidate(() => !!process.env.LEGACY);
 
-	const plugins = [
-		[
-			"@babel/plugin-proposal-optional-chaining",
-			{
-				loose: true,
-			},
-		], // Chrome 80, Firefox 74, Safari 13.1
-		[
-			"@babel/plugin-proposal-nullish-coalescing-operator",
-			{
-				loose: true,
-			},
-		], // Chrome 80, Firefox 72, Safari 13.1
-
-		require("./tools/babel-plugin-sport-functions"),
-	];
+	const plugins = [require("./tools/babel-plugin-sport-functions")];
 
 	if (process.env.LEGACY) {
 		plugins.push(
+			[
+				"@babel/plugin-proposal-optional-chaining",
+				{
+					loose: true,
+				},
+			], // Chrome 80, Firefox 74, Safari 13.1
+			[
+				"@babel/plugin-proposal-nullish-coalescing-operator",
+				{
+					loose: true,
+				},
+			], // Chrome 80, Firefox 72, Safari 13.1
 			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Firefox 55, Safari 11.1
 			"@babel/plugin-transform-for-of", // Chrome 51, Firefox 53
 			"@babel/plugin-transform-parameters", // Firefox 53

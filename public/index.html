@@ -325,9 +325,9 @@ FACEBOOK_PIXEL_CODE
         }
       };
 
-      var supportsSpread = function () {
+      var supportsModern = function () {
         try {
-          eval("const x={a:1}; const y={...x};");
+          eval("var x = {}; x ?? x?.y;");
           return true;
         } catch (err) {
           return false;
@@ -357,7 +357,7 @@ FACEBOOK_PIXEL_CODE
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          if (supportsSpread()) {
+          if (supportsModern()) {
             script.src = "/gen/ui-" + bbgmVersion + ".js";
           } else  {
             script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";

@@ -425,7 +425,7 @@ class GameSim {
 		if (
 			this.elam &&
 			!this.elamActive &&
-			this.team[0].stat.ptsQtrs.length >= 4 &&
+			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
 			this.t <= g.get("elamMinutes")
 		) {
 			const maxPts = Math.max(

@@ -636,7 +636,8 @@ const transactions = (params: Params) => {
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
-	if (g.get("phase") >= 0 && g.get("phase") <= PHASE.RESIGN_PLAYERS) {
+	const actualPhase = g.get("nextPhase") ?? g.get("phase");
+	if (actualPhase >= 0 && actualPhase <= PHASE.RESIGN_PLAYERS) {
 		if (season < g.get("season")) {
 			season = g.get("season");
 		}

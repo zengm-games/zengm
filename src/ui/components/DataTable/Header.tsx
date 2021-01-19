@@ -85,25 +85,28 @@ const SuperCols = ({
 			}
 		}
 	}
+	console.log(colOrder, superCols, colspanAdjustments);
 
 	return (
 		<tr>
-			{superCols
-				.filter(({ colspan }, i) => colspan + colspanAdjustments[i] > 0)
-				.map(({ colspan, desc, title }, i) => {
-					return (
-						<th
-							key={i}
-							colSpan={colspan + colspanAdjustments[i]}
-							style={{
-								textAlign: "center",
-							}}
-							title={desc}
-						>
-							{title}
-						</th>
-					);
-				})}
+			{superCols.map(({ colspan, desc, title }, i) => {
+				const adjustedColspan = colspan + colspanAdjustments[i];
+				if (adjustedColspan <= 0) {
+					return null;
+				}
+				return (
+					<th
+						key={i}
+						colSpan={adjustedColspan}
+						style={{
+							textAlign: "center",
+						}}
+						title={desc}
+					>
+						{title}
+					</th>
+				);
+			})}
 		</tr>
 	);
 };

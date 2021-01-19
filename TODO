@@ -1,3 +1,7 @@
+madeHof
+- copy fudge changes from basketball to football
+- numGames scaling - use lower bound of games played each season
+
 In live sim, when there is a foul, indicate how many fouls the team has so we can see how many fouls needed before the bonus https://discord.com/channels/290013534023057409/331882115119448065/800225337929105438
 - timeouts too?
 

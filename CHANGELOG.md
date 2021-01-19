@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-keep roster sorted per team, default true
+
 
 * 2021-01-18: The "Keep auto sorted" roster option is now per-team rather than global, which may be useful in multi-team mode. This option will also be enabled by default in new leagues.
 

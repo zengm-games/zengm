@@ -1,4 +1,4 @@
-import { DEFAULT_STADIUM_CAPACITY } from "../../common/constants.basketball";
+import { DEFAULT_STADIUM_CAPACITY } from "../../common";
 import teamInfos from "../../common/teamInfos";
 
 const newLeagueGodModeLimits = () => {

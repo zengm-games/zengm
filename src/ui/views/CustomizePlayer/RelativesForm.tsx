@@ -101,7 +101,7 @@ const RelativesForm = ({
 						<div className="flex-shrink-0" style={{ fontSize: 20 }}>
 							<RatingsStatsPopover pid={parseInt(pid as any, 10)} />
 							<button
-								className="ml-3 new_window text-danger btn btn-link p-0 border-0"
+								className="ml-3 text-danger btn btn-link p-0 border-0"
 								onClick={() => {
 									handleRelativesChange(i, "delete");
 								}}

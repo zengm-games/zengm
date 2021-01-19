@@ -872,6 +872,43 @@ const migrate = ({
 			multiEntry: true,
 		});
 	}
+
+	if (oldVersion <= 40) {
+		const tx = unwrap(transaction);
+		tx.objectStore("gameAttributes").get("userTids").onsuccess = (
+			event: any,
+		) => {
+			let userTids: number[] = [];
+			console.log("userTids result", event.target.result);
+			if (event.target.result) {
+				userTids = event.target.result.value;
+			}
+
+			tx.objectStore("gameAttributes").get("keepRosterSorted").onsuccess = (
+				event: any,
+			) => {
+				let keepRosterSorted = true;
+				if (event.target.result) {
+					keepRosterSorted = !!event.target.result.value;
+				}
+
+				iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+					t.keepRosterSorted = userTids.includes(t.tid)
+						? keepRosterSorted
+						: true;
+
+					if (t.adjustForInflation === undefined) {
+						t.adjustForInflation = true;
+					}
+					if (t.disabled === undefined) {
+						t.disabled = false;
+					}
+
+					return t;
+				});
+			};
+		};
+	}
 };
 
 const connectLeague = (lid: number) =>

@@ -26,6 +26,9 @@ const loadTeamSeasons = async () => {
 
 		const t = {
 			...partialT,
+			adjustForInflation: true,
+			disabled: false,
+			keepRosterSorted: true,
 			colors: ["#000000", "#000000", "#000000"],
 		} as Team;
 

@@ -199,7 +199,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	});
 
 	if (g.get("userTids").includes(dp.tid)) {
-		await team.rosterAutoSort(dp.tid, !g.get("keepRosterSorted"));
+		const t = await idb.cache.teams.get(dp.tid);
+		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
+		await team.rosterAutoSort(dp.tid, onlyNewPlayers);
 	}
 };
 

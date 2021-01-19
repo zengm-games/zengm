@@ -77,6 +77,7 @@ async function updateDepth(
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("gameAttributes") ||
+		updateEvents.includes("team") ||
 		pos !== state.pos ||
 		abbrev !== state.abbrev
 	) {
@@ -118,7 +119,7 @@ async function updateDepth(
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			editable,
-			keepRosterSorted: g.get("keepRosterSorted"),
+			keepRosterSorted: t.keepRosterSorted,
 			pos,
 			players: players2,
 			ratings,

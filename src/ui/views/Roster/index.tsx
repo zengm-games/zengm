@@ -69,7 +69,6 @@ const handleRelease = async (
 
 const Roster = ({
 	abbrev,
-	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -143,7 +142,6 @@ const Roster = ({
 
 			<TopStuff
 				abbrev={abbrev}
-				keepRosterSorted={keepRosterSorted}
 				budget={budget}
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}

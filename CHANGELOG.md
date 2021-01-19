@@ -1,5 +1,9 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+keep roster sorted per team, default true
+
+* 2021-01-18: The "Keep auto sorted" roster option is now per-team rather than global, which may be useful in multi-team mode.
+
 * 2021-01-16: A few little improvements to FBGM game simulation. Teams will not punt when they're on the verge of losing, and teams will pass more when they're down late. Also fixed a bug where a turnover during a two point conversion resulted in the wrong team kicking off. [[1]](https://old.reddit.com/r/Football_GM/comments/kyvwwa/a_few_little_improvements_to_fbgm_game_simulation/)
 
 * 2021-01-14: Added a new league setting "Number of Periods Per Game" to let you change from the default of 4 quarters to whatever you want. In FBGM, if the number of periods is odd, there is no halftime. In BBGM, I also fixed the logic for which team gets possession at the start of a period (it was actually implemented like football previously which doesn't make any sense, I have no idea what I was thinking when I did that). [[1]](https://old.reddit.com/r/BasketballGM/comments/kxeuym/added_a_new_league_setting_number_of_periods_per/) [[2]](https://old.reddit.com/r/Football_GM/comments/kxev9g/added_a_new_league_setting_number_of_periods_per/)
@@ -42,7 +46,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2020-12-03: Added ability to view playoff stats on the roster page. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
 
-* 2020-12-03: New "Keep sorted" option on the roster page, to let the AI manage sorting your roster (no more clicking "auto sort" periodically). [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
+* 2020-12-03: New "Keep auto sorted" option on the roster page, to let the AI manage sorting your roster (no more clicking "auto sort" periodically). [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
 
 * 2020-12-03: You can start historical real players leagues at the draft lottery phase. [[1]](https://old.reddit.com/r/BasketballGM/comments/k6ctkt/some_improvements_from_last_months_suggestions/)
 

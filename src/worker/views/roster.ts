@@ -27,6 +27,7 @@ const updateRoster = async (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("team") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("newPhase"))) ||
@@ -63,7 +64,7 @@ const updateRoster = async (
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
-			attrs: ["tid", "strategy", "region", "name"],
+			attrs: ["tid", "strategy", "region", "name", "keepRosterSorted"],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
 			addDummySeason: true,
@@ -207,7 +208,6 @@ const updateRoster = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			keepRosterSorted: g.get("keepRosterSorted"),
 			budget: g.get("budget"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),

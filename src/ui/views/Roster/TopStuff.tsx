@@ -48,7 +48,6 @@ TeamRating.propTypes = {
 
 const TopStuff = ({
 	abbrev,
-	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -68,7 +67,6 @@ const TopStuff = ({
 }: Pick<
 	View<"roster">,
 	| "abbrev"
-	| "keepRosterSorted"
 	| "budget"
 	| "challengeNoRatings"
 	| "currentSeason"
@@ -180,10 +178,11 @@ const TopStuff = ({
 				</div>
 			</div>
 			<InstructionsAndSortButtons
-				keepRosterSorted={keepRosterSorted}
+				keepRosterSorted={t.keepRosterSorted}
 				editable={editable}
 				godMode={godMode}
 				players={players}
+				tid={tid}
 			/>
 			{season !== currentSeason ? (
 				<p>

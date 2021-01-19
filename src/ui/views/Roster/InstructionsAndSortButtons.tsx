@@ -15,10 +15,10 @@ const InstructionsAndSortButtons = ({
 	editable,
 	godMode,
 	players,
-}: Pick<
-	View<"roster">,
-	"keepRosterSorted" | "editable" | "godMode" | "players"
->) => {
+	tid,
+}: Pick<View<"roster">, "editable" | "godMode" | "players" | "tid"> & {
+	keepRosterSorted: boolean;
+}) => {
 	return (
 		<>
 			{editable ? (
@@ -86,9 +86,12 @@ const InstructionsAndSortButtons = ({
 									if (!keepRosterSorted) {
 										await handleAutoSort();
 									}
-									await toWorker("main", "updateGameAttributes", {
-										keepRosterSorted: !keepRosterSorted,
-									});
+									await toWorker(
+										"main",
+										"updateKeepRosterSorted",
+										tid,
+										!keepRosterSorted,
+									);
 								}}
 							/>
 							<label className="form-check-label" htmlFor="ai-sort-user-roster">

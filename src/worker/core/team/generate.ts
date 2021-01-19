@@ -65,14 +65,11 @@ const generate = (tm: any): Team => {
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
 		pop: tm.pop ?? 0,
-		stadiumCapacity:
-			tm.stadiumCapacity !== undefined
-				? tm.stadiumCapacity
-				: g.get("defaultStadiumCapacity"),
-		disabled: tm.disabled,
-		retiredJerseyNumbers: tm.retiredJerseyNumbers
-			? tm.retiredJerseyNumbers
-			: [],
+		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),
+		retiredJerseyNumbers: tm.retiredJerseyNumbers ?? [],
+		adjustForInflation: tm.adjustForInflation ?? true,
+		disabled: tm.disabled ?? false,
+		keepRosterSorted: tm.keepRosterSorted ?? true,
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

@@ -66,9 +66,11 @@ const accept = async (
 	await idb.cache.players.put(p);
 	await cancel(pid);
 
-	// If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
+	// If a depth chart exists, place this player in the depth chart so they are ahead of every player they are
 	// better than, without otherwise disturbing the depth chart order
-	await team.rosterAutoSort(g.get("userTid"), !g.get("keepRosterSorted"));
+	const t = await idb.cache.teams.get(p.tid);
+	const onlyNewPlayers = t ? !t.keepRosterSorted : false;
+	await team.rosterAutoSort(g.get("userTid"), onlyNewPlayers);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();

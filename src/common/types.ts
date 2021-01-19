@@ -352,7 +352,6 @@ export type Div = { cid: number; did: number; name: string };
 
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
-	keepRosterSorted: boolean;
 	aiTradesFactor: number;
 	allStarGame: number | null;
 	autoDeleteOldBoxScores: boolean;
@@ -1189,11 +1188,9 @@ export type Team = {
 	pop?: number;
 	stadiumCapacity?: number;
 
-	// Optional because no upgrade. Otherwise, would make this true by default
-	adjustForInflation?: boolean;
-
-	// Optional because no upgrade. Otherwise, would make this false by default
-	disabled?: boolean;
+	adjustForInflation: boolean;
+	disabled: boolean;
+	keepRosterSorted: boolean;
 
 	// Optional because no upgrade. Otherwise, would make this empty array by default
 	retiredJerseyNumbers?: {
@@ -1392,6 +1389,7 @@ export type UpdateEvents = (
 	| "playerMovement"
 	| "scheduledEvents"
 	| "retiredJerseys"
+	| "team"
 	| "teamFinances"
 	| "watchList"
 )[];

@@ -143,9 +143,12 @@ const Depth = ({
 								if (!keepRosterSorted) {
 									await handleAutoSortAll();
 								}
-								await toWorker("main", "updateGameAttributes", {
-									keepRosterSorted: !keepRosterSorted,
-								});
+								await toWorker(
+									"main",
+									"updateKeepRosterSorted",
+									tid,
+									!keepRosterSorted,
+								);
 							}}
 						/>
 						<label className="form-check-label" htmlFor="ai-sort-user-roster">

@@ -163,6 +163,7 @@ const newPhasePreseason = async (
 		) {
 			team.autoBudgetSettings(t, popRanks[i]);
 			t.adjustForInflation = true;
+			t.keepRosterSorted = true;
 			await idb.cache.teams.put(t);
 		}
 	}

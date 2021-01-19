@@ -1995,7 +1995,7 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	}
 
 	if (depth.hasOwnProperty(pos)) {
-		await league.setGameAttributes({ keepRosterSorted: false });
+		t.keepRosterSorted = false;
 
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-ignore
@@ -2020,7 +2020,11 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 		}),
 	);
 
-	await league.setGameAttributes({ keepRosterSorted: false });
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (t) {
+		t.keepRosterSorted = false;
+		await idb.cache.teams.put(t);
+	}
 
 	await toUI("realtimeUpdate", [["gameAttributes", "playerMovement"]]);
 };
@@ -2563,6 +2567,20 @@ const updateGameAttributesGodMode = async (
 		await league.initRepeatSeason();
 	}
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
+const updateKeepRosterSorted = async (
+	tid: number,
+	keepRosterSorted: boolean,
+) => {
+	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	t.keepRosterSorted = keepRosterSorted;
+	await idb.cache.teams.put(t);
+	await toUI("realtimeUpdate", [["team"]]);
 };
 
 const updateLeague = async (lid: number, obj: any) => {
@@ -3194,6 +3212,7 @@ export default {
 	updateConfsDivs,
 	updateGameAttributes,
 	updateGameAttributesGodMode,
+	updateKeepRosterSorted,
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,

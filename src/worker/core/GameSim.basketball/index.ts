@@ -1560,8 +1560,9 @@ class GameSim {
 		}
 
 		const names = [this.team[this.o].player[p].name];
-		if (fouler) {
-			names.push(this.team[this.d].player[fouler].name);
+		if (fouler !== undefined) {
+			const p2 = this.playersOnCourt[this.d][fouler];
+			names.push(this.team[this.d].player[p2].name);
 		}
 
 		if (type === "atRim") {
@@ -1893,7 +1894,7 @@ class GameSim {
 		shooter?: PlayerNumOnCourt,
 		fouler?: PlayerNumOnCourt,
 	) {
-		if (!fouler) {
+		if (fouler === undefined) {
 			fouler = pickPlayer(this.ratingArray("fouling", t));
 		}
 		const p = this.playersOnCourt[t][fouler];

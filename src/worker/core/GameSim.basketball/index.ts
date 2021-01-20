@@ -1554,24 +1554,32 @@ class GameSim {
 		this.recordStat(this.o, p, "fg");
 		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
 
+		let fouler;
+		if (andOne) {
+			fouler = pickPlayer(this.ratingArray("fouling", this.d));
+		}
+
+		const names = [this.team[this.o].player[p].name];
+		if (fouler) {
+			names.push(this.team[this.d].player[fouler].name);
+		}
+
 		if (type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");
-			this.recordPlay(andOne ? "fgAtRimAndOne" : "fgAtRim", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay(andOne ? "fgAtRimAndOne" : "fgAtRim", this.o, names);
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
 			this.recordStat(this.o, p, "fgLowPost");
-			this.recordPlay(andOne ? "fgLowPostAndOne" : "fgLowPost", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay(andOne ? "fgLowPostAndOne" : "fgLowPost", this.o, names);
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
 			this.recordStat(this.o, p, "fgMidRange");
-			this.recordPlay(andOne ? "fgMidRangeAndOne" : "fgMidRange", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay(
+				andOne ? "fgMidRangeAndOne" : "fgMidRange",
+				this.o,
+				names,
+			);
 		} else if (type === "threePointer") {
 			if (g.get("threePointers")) {
 				this.recordStat(this.o, p, "pts"); // Extra point for 3's
@@ -1579,9 +1587,7 @@ class GameSim {
 
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
-			this.recordPlay(andOne ? "tpAndOne" : "tp", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay(andOne ? "tpAndOne" : "tp", this.o, names);
 		}
 
 		this.recordLastScore(this.o, p, type, this.t);
@@ -1593,7 +1599,7 @@ class GameSim {
 		}
 
 		if (andOne && !this.elamDone) {
-			this.doPf(this.d, "pfAndOne", shooter);
+			this.doPf(this.d, "pfAndOne", shooter, fouler);
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 
@@ -1885,9 +1891,12 @@ class GameSim {
 		t: TeamNum,
 		type: "pfNonShooting" | "pfBonus" | "pfFG" | "pfTP" | "pfAndOne",
 		shooter?: PlayerNumOnCourt,
+		fouler?: PlayerNumOnCourt,
 	) {
-		const ratios = this.ratingArray("fouling", t);
-		const p = this.playersOnCourt[t][pickPlayer(ratios)];
+		if (!fouler) {
+			fouler = pickPlayer(this.ratingArray("fouling", t));
+		}
+		const p = this.playersOnCourt[t][fouler];
 		this.recordStat(this.d, p, "pf");
 
 		const names = [this.team[this.d].player[p].name];
@@ -2059,11 +2068,25 @@ class GameSim {
 			} else if (type === "fgaTp") {
 				texts = [`{0} attempts a ${threePointerText}`];
 			} else if (type === "fgAtRim") {
-				texts = ["He slams it home", "The layup is good"];
+				// Randomly pick a name to be dunked on
+				const ratios = this.ratingArray("blocking", this.d, 5);
+				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+				const dunkedOnName = this.team[this.d].player[p].name;
+
+				texts = [
+					`He throws it down on ${dunkedOnName}!`,
+					"He slams it home",
+					"He slams it home",
+					"The layup is good",
+					"The layup is good",
+				];
 				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
 				texts = [
+					"He throws it down on {1}, and a foul!",
 					"He slams it home, and a foul!",
+					"He slams it home, and a foul!",
+					"The layup is good, and a foul!",
 					"The layup is good, and a foul!",
 				];
 				showScore = true;

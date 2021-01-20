@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-
+* 2021-01-19: In the play-by-play during live sims, players can get dunked on. 
 
 * 2021-01-18: The "Keep auto sorted" roster option is now per-team rather than global, which may be useful in multi-team mode. This option will also be enabled by default in new leagues.
 

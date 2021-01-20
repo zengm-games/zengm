@@ -2216,7 +2216,8 @@ class GameSim {
 
 			for (const p of onField) {
 				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-				const injuryRate = g.get("injuryRate") * 1.03 ** (p.age - 25);
+				const injuryRate =
+					g.get("injuryRate") * 1.03 ** (Math.min(p.age, 50) - 25);
 
 				if (Math.random() < injuryRate) {
 					// 50% as many injuries for QB

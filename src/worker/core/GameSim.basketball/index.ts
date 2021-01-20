@@ -1119,7 +1119,7 @@ class GameSim {
 				if (this.playersOnCourt[t].includes(p)) {
 					// Modulate injuryRate by age - assume default is 26 yo, and increase/decrease by 3%
 					const injuryRate =
-						baseRate * 1.03 ** (this.team[t].player[p].age - 26);
+						baseRate * 1.03 ** (Math.min(50, this.team[t].player[p].age) - 26);
 
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;

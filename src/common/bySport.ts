@@ -3,17 +3,13 @@ const bySport = <T extends unknown>(
 		| {
 				basketball: T;
 				football: T;
+				hockey: T;
 				default?: T;
 		  }
 		| {
-				basketball: T;
-				default: T;
-		  }
-		| {
-				football: T;
-				default: T;
-		  }
-		| {
+				basketball?: T;
+				football?: T;
+				hockey?: T;
 				default: T;
 		  },
 ): T => {

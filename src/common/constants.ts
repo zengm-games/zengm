@@ -175,46 +175,58 @@ const DEFAULT_STADIUM_CAPACITY = bySport({
 	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
 });
 
-const COURT = bySport({ basketball: "court", football: "field" });
+const COURT = bySport({
+	basketball: "court",
+	football: "field",
+	hockey: "ice",
+});
 
 const EMAIL_ADDRESS = bySport({
 	basketball: "commissioner@basketball-gm.com",
 	football: "commissioner@football-gm.com",
+	hockey: "commissioner@zengm.com",
 });
 
 const GAME_ACRONYM = bySport({
 	basketball: "BBGM",
 	football: "FBGM",
+	hockey: "ZGMH",
 });
 
 const GAME_NAME = bySport({
 	basketball: "Basketball GM",
 	football: "Football GM",
+	hockey: "ZenGM Hockey",
 });
 
 const SUBREDDIT_NAME = bySport({
 	basketball: "BasketballGM",
 	football: "Football_GM",
+	hockey: "ZenGMHockey",
 });
 
 const TWITTER_HANDLE = bySport({
 	basketball: "basketball_gm",
 	football: "FootballGM_Game",
+	hockey: "ZenGMGames",
 });
 
 const FACEBOOK_USERNAME = bySport({
 	basketball: "basketball.general.manager",
 	football: "football.general.manager",
+	hockey: "ZenGMGames",
 });
 
 const SPORT_HAS_REAL_PLAYERS = bySport({
 	basketball: true,
 	football: false,
+	hockey: false,
 });
 
 const SPORT_HAS_LEGENDS = bySport({
 	basketball: true,
 	football: false,
+	hockey: false,
 });
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process

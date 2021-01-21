@@ -2,7 +2,7 @@
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
-    <title>Basketball GM</title>
+    <title>GAME_NAME</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FF7F2A"/>
 
@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="/ico/icon64.png">
     <link rel="apple-touch-icon" href="/ico/icon192.png">
 
-    <meta name="Description" content="A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
+    <meta name="Description" content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
 
@@ -64,7 +64,7 @@
       }
       window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 
-      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0;
+      window.enableLogging = location.host.indexOf("ROOT_DOMAIN_NAME") >= 0;
 
       if (window.enableLogging) {
         window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
@@ -78,7 +78,7 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'GOOGLE_ANALYTICS_ID', {
-          'cookie_domain': 'basketball-gm.com'
+          'cookie_domain': 'ROOT_DOMAIN_NAME'
         });
 
         // Google Consumer Surveys
@@ -101,9 +101,9 @@
       var releaseStage = "unknown";
       if (location.host.indexOf("localhost") === 0) {
         releaseStage = "development";
-      } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+      } else if (location.host.indexOf("BETA_SUBDOMAIN") === 0) {
         releaseStage = "beta";
-      } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+      } else if (location.host.indexOf("PLAY_SUBDOMAIN") === 0) {
         releaseStage = "production";
       }
 
@@ -163,7 +163,7 @@ FACEBOOK_PIXEL_CODE
 
           <p style="clear: both; margin-bottom: 3em"></p>
 
-          <p>Basketball GM vREV_GOES_HERE</p>
+          <p>GAME_NAME vREV_GOES_HERE</p>
           <div id="startup-browser">Checking browser...</div>
           <div id="startup-ui"></div>
           <p id="startup-worker"></p>
@@ -172,7 +172,7 @@ FACEBOOK_PIXEL_CODE
 
           <div class="alert alert-danger" id="startup-error-unknown" style="display: none">
             <p>This should only take a few seconds on a fast connection.</p>
-            <p>If it gets stuck for a while, read <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and <a href="https://basketball-gm.com/contact/">ask for help</a> if it still isn't working.</p>
+            <p>If it gets stuck for a while, read <a href="https://MANUAL_URL/debugging/">the debugging instructions</a> and <a href="https://ROOT_DOMAIN_NAME/contact/">ask for help</a> if it still isn't working.</p>
           </div>
         </div>
       </div>
@@ -338,14 +338,14 @@ FACEBOOK_PIXEL_CODE
         if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
           var errorMsg;
           if (idbResult === "open-failed") {
-            errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play Basketball GM.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents Basketball GM from running. Either load Basketball GM outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
+            errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents GAME_NAME from running. Either load GAME_NAME outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
           } else {
-            errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.google.com/chrome/">Google Chrome</a> and <a href="https://www.mozilla.org/en-US/firefox/">Mozilla Firefox</a> work best.</p>';
+            errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. The latest versions of <a href="https://www.google.com/chrome/">Google Chrome</a> and <a href="https://www.mozilla.org/en-US/firefox/">Mozilla Firefox</a> work best.</p>';
           }
 
           // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
           if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
-            errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 10.3 or higher to play Basketball GM. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
+            errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 10.3 or higher to play GAME_NAME. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
           }
 
           startupError.innerHTML = errorMsg;

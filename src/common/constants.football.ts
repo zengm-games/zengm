@@ -418,8 +418,9 @@ const RATINGS: RatingKey[] = [
 	"ppw",
 	"pac",
 ];
-const TIME_BETWEEN_GAMES = "week";
+
 const SIMPLE_AWARDS = ["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const;
+
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	dpoy: "Defensive Player of the Year",
@@ -498,6 +499,5 @@ export {
 	RATINGS,
 	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
-	TIME_BETWEEN_GAMES,
 	DEFAULT_STADIUM_CAPACITY,
 };

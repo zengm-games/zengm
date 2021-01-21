@@ -117,12 +117,14 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.25],
 	},
 };
+
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
 		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
 	},
 };
+
 const PLAYER_STATS_TABLES = {
 	regular: {
 		name: "Stats",
@@ -258,6 +260,7 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 };
+
 const TEAM_STATS_TABLES = {
 	team: {
 		name: "Team",
@@ -398,8 +401,11 @@ const TEAM_STATS_TABLES = {
 		stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr", "tsp"],
 	},
 };
+
 const POSITIONS = ["PG", "G", "SG", "GF", "SF", "F", "PF", "FC", "C"];
+
 const POSITION_COUNTS = {};
+
 const RATINGS: RatingKey[] = [
 	"hgt",
 	"stre",
@@ -417,7 +423,7 @@ const RATINGS: RatingKey[] = [
 	"pss",
 	"reb",
 ];
-const TIME_BETWEEN_GAMES = "day";
+
 const SIMPLE_AWARDS = [
 	"mvp",
 	"roy",
@@ -426,6 +432,7 @@ const SIMPLE_AWARDS = [
 	"mip",
 	"finalsMvp",
 ] as const;
+
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
@@ -496,6 +503,5 @@ export {
 	RATINGS,
 	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
-	TIME_BETWEEN_GAMES,
 	DEFAULT_STADIUM_CAPACITY,
 };

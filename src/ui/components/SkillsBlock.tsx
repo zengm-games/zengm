@@ -25,6 +25,13 @@ const tooltips = bySport({
 		RS: "Run Stopper",
 		L: "Lockdown Coverage",
 	},
+	hockey: {
+		Pm: "Playmaker",
+		Pw: "Power",
+		G: "Grinder",
+		E: "Enforcer",
+		S: "Sniper",
+	},
 });
 
 const SkillsBlock = ({

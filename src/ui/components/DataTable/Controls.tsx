@@ -35,7 +35,9 @@ const Controls = ({
 			'"WR|TE" under a Position column to display wide receivers and tight ends',
 		football:
 			'"C|PF" under a Position column to display centers and power forwards',
+		hockey: '"C|W" under a Position column to display centers and wingers',
 	});
+
 	return (
 		<div
 			className="datatable-controls d-flex"

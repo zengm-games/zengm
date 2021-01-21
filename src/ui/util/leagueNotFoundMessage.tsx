@@ -1,6 +1,6 @@
 import { bySport, GAME_NAME } from "../../common";
 
-const pro = bySport({ basketball: "NBA", football: "NFL" });
+const pro = bySport({ basketball: "NBA", football: "NFL", hockey: "NHL" });
 const leagueNotFoundMessage = (
 	<>
 		<h2>League not found</h2>

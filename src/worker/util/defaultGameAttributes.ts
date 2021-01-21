@@ -166,8 +166,18 @@ export const footballOverrides =
 		  }
 		: {};
 
+export const hockeyOverrides =
+	process.env.NODE_ENV === "test" || isSport("hockey")
+		? {
+				minRosterSize: 20,
+				maxRosterSize: 23,
+		  }
+		: {};
+
 if (isSport("football")) {
 	Object.assign(defaultGameAttributes, footballOverrides);
+} else if (isSport("hockey")) {
+	Object.assign(defaultGameAttributes, hockeyOverrides);
 }
 
 export default defaultGameAttributes;

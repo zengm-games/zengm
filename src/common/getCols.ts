@@ -1203,6 +1203,98 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 	},
+	hockey: {
+		"rating:pss": {
+			desc: "Passing",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:wst": {
+			desc: "Wristshot",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:sst": {
+			desc: "Slapshot",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:stk": {
+			desc: "Stickhandling",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:oiq": {
+			desc: "Offensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:chk": {
+			desc: "Checking",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:blk": {
+			desc: "Blocking Shots",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:fcf": {
+			desc: "Faceoffs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:diq": {
+			desc: "Defensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:glk": {
+			desc: "Goalkeeping",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrC": {
+			desc: "Overall Rating (Center)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrW": {
+			desc: "Overall Rating (Winger)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrD": {
+			desc: "Overall Rating (Defenseman)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrG": {
+			desc: "Overall Rating (Goalie)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potC": {
+			desc: "Potential Rating (Center)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potW": {
+			desc: "Potential Rating (Winger)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potD": {
+			desc: "Potential Rating (Defenseman)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potG": {
+			desc: "Potential Rating (Goalie)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+	},
 });
 const cols: {
 	[key: string]: ColTemp;
@@ -1980,6 +2072,26 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:rusRecTD": "RRTD",
 		"stat:allPurposeYds": "APY",
 		"stat:av": "AV",
+	},
+	hockey: {
+		"rating:pss": "Pss",
+		"rating:wst": "Wst",
+		"rating:sst": "Sst",
+		"rating:stk": "Stk",
+		"rating:oiq": "oIQ",
+		"rating:chk": "Chk",
+		"rating:blk": "Blk",
+		"rating:fcf": "Fcf",
+		"rating:diq": "dIQ",
+		"rating:glk": "Glk",
+		"rating:ovrC": "OvrC",
+		"rating:ovrW": "OvrW",
+		"rating:ovrD": "OvrD",
+		"rating:ovrG": "OvrG",
+		"rating:potC": "PotC",
+		"rating:potW": "PotW",
+		"rating:potD": "PotD",
+		"rating:potG": "PotG",
 	},
 });
 

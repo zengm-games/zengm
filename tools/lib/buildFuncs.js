@@ -81,7 +81,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 };
 
 const bySport = object => {
-	const sport = process.env.SPORT;
+	const sport = process.env.SPORT ?? "basketball";
 	if (object.hasOwnProperty(sport)) {
 		return object[sport];
 	}

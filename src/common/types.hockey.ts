@@ -136,6 +136,7 @@ export type PlayerRatings = {
 	pot: number;
 	ovrs: Record<Position, number>;
 	pots: Record<Position, number>;
+	pos: string;
 	season: number;
 	skills: string[];
 };

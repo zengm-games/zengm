@@ -89,7 +89,7 @@ const getRatingsToBoost = (pos: string) => {
 		// Offensive or defensive?
 		if (Math.random() < 0.5) {
 			return {
-				hgt: 1,
+				hgt: 1.25,
 				stre: 2,
 				wst: 1.5,
 				sst: 2,
@@ -99,7 +99,7 @@ const getRatingsToBoost = (pos: string) => {
 			};
 		}
 		return {
-			hgt: 1,
+			hgt: 1.25,
 			stre: 2,
 			wst: 1,
 			sst: 1.5,

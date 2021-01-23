@@ -31,8 +31,8 @@ const stats = {
 		"gwA",
 
 		// Shots on goal and attempted
-		"sog",
-		"sat",
+		"s",
+		"tsa",
 
 		// Faceoffs
 		"fow",

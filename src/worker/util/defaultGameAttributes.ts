@@ -169,6 +169,8 @@ export const footballOverrides =
 export const hockeyOverrides =
 	process.env.NODE_ENV === "test" || isSport("hockey")
 		? {
+				quarterLength: 20,
+				numPeriods: 3,
 				minRosterSize: 20,
 				maxRosterSize: 23,
 		  }

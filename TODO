@@ -1,3 +1,10 @@
+warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
+
+for RPDD, do `ratings = ratings + ((1-RPD) * progs + RPD * real_progs)` rather than averaging the ratings each year
+- or store the actual random ratings separately, and average them in. rather than doing a moving average and combining the real+random each iteration. because moving average means it converges for most %s.
+  - that might be better, it'd work with the different draft settings too
+- https://discord.com/channels/290013534023057409/331882115119448065/802930498342879240
+
 store results of trading block in database
 
 madeHof

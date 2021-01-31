@@ -298,14 +298,13 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 						{t.region} {t.name}
 					</h2>
 					{["Skaters", "Goalies"].map(title => (
-						<Fragment key={title}>
-							<StatsTable
-								Row={Row}
-								title={title}
-								type={title.toLowerCase() as any}
-								t={t}
-							/>
-						</Fragment>
+						<StatsTable
+							key={title}
+							Row={Row}
+							title={title}
+							type={title.toLowerCase() as any}
+							t={t}
+						/>
 					))}
 				</Fragment>
 			))}

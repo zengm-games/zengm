@@ -2,6 +2,7 @@ import { helpers } from ".";
 import type { SortOrder, SortType } from "./types";
 import type { Col } from "../ui/components/DataTable";
 import bySport from "./bySport";
+import isSport from "./isSport";
 
 type ColTemp = {
 	desc?: string;
@@ -1890,7 +1891,7 @@ const cols: {
 		sortType: "number",
 	},
 	"stat:min": {
-		desc: "Minutes Per Game",
+		desc: isSport("hockey") ? "Time On Ice" : "Minutes Per Game",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -2320,7 +2321,7 @@ const titleOverrides = {
 	"stat:gp": "G",
 	"stat:gs": "GS",
 	"stat:jerseyNumber": "#",
-	"stat:min": "MP",
+	"stat:min": isSport("hockey") ? "TOI" : "MP",
 	"stat:mov": "MOV",
 	"stat:yearsWithTeam": "YWT",
 	"count:allDefense": "ADT",

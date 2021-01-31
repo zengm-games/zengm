@@ -264,8 +264,8 @@ class GameSim {
 	doHit() {
 		const t = Math.random() < 0.5 ? 0 : 1;
 		const t2 = t === 0 ? 1 : 0;
-		const hitter = this.pickPlayer(t, "enforcer");
-		const target = this.pickPlayer(t2);
+		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
+		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
 		this.recordStat(t2, target, "energy", -0.1);
 
@@ -274,6 +274,7 @@ class GameSim {
 			t,
 			names: [hitter.name, target.name],
 		});
+		this.recordStat(t, hitter, "hit", 1);
 	}
 
 	isGiveaway() {
@@ -289,19 +290,18 @@ class GameSim {
 	}
 
 	doGiveaway() {
-		const p = this.pickPlayer(this.o);
+		const p = this.pickPlayer(this.o, undefined, ["C", "W", "D"]);
 
 		this.playByPlay.logEvent("gv", {
 			clock: this.clock,
 			t: this.o,
 			names: [p.name],
 		});
-
 		this.recordStat(this.o, p, "gv", 1);
 	}
 
 	doTakeaway() {
-		const p = this.pickPlayer(this.d, "grinder");
+		const p = this.pickPlayer(this.d, "grinder", ["C", "W", "D"]);
 
 		this.playByPlay.logEvent("tk", {
 			clock: this.clock,
@@ -336,7 +336,7 @@ class GameSim {
 	}
 
 	doShot() {
-		const shooter = this.pickPlayer(this.o, "scoring");
+		const shooter = this.pickPlayer(this.o, "scoring", ["C", "W", "D"]);
 
 		const type: "slapshot" | "wristshot" | "shot" = random.choice([
 			"slapshot",
@@ -354,12 +354,13 @@ class GameSim {
 		const r = Math.random();
 
 		if (r < 0.1) {
-			const blocker = this.pickPlayer(this.d, "blocking");
+			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
 			this.playByPlay.logEvent("block", {
 				clock: this.clock,
 				t: this.d,
 				names: [blocker.name],
 			});
+			this.recordStat(this.d, blocker, "blk", 1);
 			return "block";
 		}
 
@@ -374,28 +375,30 @@ class GameSim {
 
 		this.recordStat(this.o, shooter, "s");
 
-		const goalie = this.pickPlayer(this.d);
+		const goalie = this.playersOnIce[this.d].G[0];
 
-		if (r < 0.9) {
-			this.playByPlay.logEvent("save", {
-				clock: this.clock,
-				t: this.d,
-				names: [goalie.name],
-			});
-			this.recordStat(this.d, goalie, "sv");
+		if (goalie) {
+			if (r < 0.9) {
+				this.playByPlay.logEvent("save", {
+					clock: this.clock,
+					t: this.d,
+					names: [goalie.name],
+				});
+				this.recordStat(this.d, goalie, "sv");
 
-			return "save";
-		}
+				return "save";
+			}
 
-		if (r < 0.97) {
-			this.playByPlay.logEvent("save-freeze", {
-				clock: this.clock,
-				t: this.d,
-				names: [goalie.name],
-			});
-			this.recordStat(this.d, goalie, "sv");
+			if (r < 0.97) {
+				this.playByPlay.logEvent("save-freeze", {
+					clock: this.clock,
+					t: this.d,
+					names: [goalie.name],
+				});
+				this.recordStat(this.d, goalie, "sv");
 
-			return "save-freeze";
+				return "save-freeze";
+			}
 		}
 
 		this.playByPlay.logEvent("goal", {
@@ -404,6 +407,9 @@ class GameSim {
 			names: [shooter.name],
 		});
 		this.recordStat(this.o, shooter, "evG");
+		if (goalie) {
+			this.recordStat(this.d, goalie, "ga");
+		}
 
 		return "goal";
 	}

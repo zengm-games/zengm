@@ -1,3 +1,5 @@
+when you try to edit awards it automatically removes players that retired that year and you cant add them back unless you manually unretire them https://discord.com/channels/290013534023057409/290015591216054273/803726444907855932
+
 warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
 
 for RPDD, do `ratings = ratings + ((1-RPD) * progs + RPD * real_progs)` rather than averaging the ratings each year
@@ -756,6 +758,9 @@ FBGM
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
+  - https://github.com/nicidob/fbgm/blob/master/how_to_select.ipynb
+    - https://discord.com/channels/290013534023057409/290015468939640832/805212769841446932
+    - https://discord.com/channels/290013534023057409/290015468939640832/805215950516256779
 - if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
 - base transactions on change in team rating
   - draft and free agency - probably 100%

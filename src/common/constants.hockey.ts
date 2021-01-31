@@ -1,5 +1,5 @@
 import type { CompositeWeights, Conf, Div } from "./types";
-import type { RatingKey } from "./types.hockey";
+import type { Position, RatingKey } from "./types.hockey";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {
@@ -50,6 +50,18 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	goalkeeping: {
 		ratings: ["glk"],
+	},
+	blocking: {
+		ratings: ["blk", "diq", "stre", "spd"],
+		weights: [1, 1, 0.1, 0.1],
+	},
+	scoring: {
+		ratings: ["sst", "wst", "stk", "oiq", "spd", "hgt", "stre"],
+		weights: [1, 1, 1, 1, 0.5, 0.25, 0.1],
+	},
+	endurance: {
+		ratings: [50, "endu"],
+		weights: [1, 1],
 	},
 };
 
@@ -178,9 +190,9 @@ const TEAM_STATS_TABLES = {
 	},
 };
 
-const POSITIONS = ["C", "W", "D", "G"];
+const POSITIONS: Position[] = ["C", "W", "D", "G"];
 
-const POSITION_COUNTS = {
+const POSITION_COUNTS: Record<Position, number> = {
 	C: 4,
 	W: 8,
 	D: 6,

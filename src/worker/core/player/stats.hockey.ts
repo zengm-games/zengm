@@ -11,6 +11,9 @@ const stats = {
 		// Quality starts and really bad starts (goalie)
 		"qs",
 		"rbs",
+
+		// Shutouts
+		"so",
 	] as const,
 	raw: [
 		"gp",
@@ -53,9 +56,6 @@ const stats = {
 
 		// Saves
 		"sv",
-
-		// Shutouts
-		"so",
 	] as const,
 	max: [
 		"minMax",

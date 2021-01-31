@@ -1,6 +1,7 @@
-import { isSport } from "../../common";
+import { bySport } from "../../common";
 import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball";
 import processLiveGameEventsFootball from "./processLiveGameEvents.football";
+import processLiveGameEventsHockey from "./processLiveGameEvents.hockey";
 
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
@@ -14,20 +15,25 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: string[];
 }) => {
-	if (isSport("football")) {
-		return processLiveGameEventsFootball({
+	return bySport({
+		basketball: processLiveGameEventsBasketball({
 			events,
 			boxScore,
 			overtimes,
 			quarters,
-		});
-	}
-
-	return processLiveGameEventsBasketball({
-		events,
-		boxScore,
-		overtimes,
-		quarters,
+		}),
+		football: processLiveGameEventsFootball({
+			events,
+			boxScore,
+			overtimes,
+			quarters,
+		}),
+		hockey: processLiveGameEventsHockey({
+			events,
+			boxScore,
+			overtimes,
+			quarters,
+		}),
 	});
 };
 

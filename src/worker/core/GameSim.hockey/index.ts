@@ -195,7 +195,9 @@ class GameSim {
 		return out;
 	}
 
-	initplayersOnIceNewPeriod() {}
+	initplayersOnIceNewPeriod() {
+		console.log("initplayersOnIceNewPeriod");
+	}
 
 	simRegulation() {
 		let quarter = 1;
@@ -750,11 +752,11 @@ class GameSim {
 			if (pts !== undefined) {
 				this.team[t].stat.pts += pts;
 				this.team[t].stat.ptsQtrs[qtr] += pts;
-				this.playByPlay.logStat(qtr, t, undefined, "pts", pts);
+				this.playByPlay.logStat(t, undefined, "pts", pts);
 			}
 
 			if (p !== undefined && s !== "min") {
-				this.playByPlay.logStat(qtr, t, p.id, s, amt);
+				this.playByPlay.logStat(t, p.id, s, amt);
 			}
 		}
 	}

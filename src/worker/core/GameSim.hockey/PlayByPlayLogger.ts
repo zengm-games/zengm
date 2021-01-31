@@ -1,6 +1,6 @@
 import { getPeriodName } from "../../../common";
 import { g, helpers } from "../../util";
-import type { PlayType, TeamNum } from "./types"; // Convert clock in minutes to min:sec, like 1.5 -> 1:30
+import type { TeamNum } from "./types"; // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 
 const formatClock = (clock: number) => {
 	const secNum = Math.ceil((clock % 1) * 60);
@@ -17,22 +17,26 @@ const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-const descriptionYdsTD = (
-	yds: number,
-	td: boolean,
-	touchdownText: string,
-	showYdsOnTD: boolean,
-) => {
-	if (td && showYdsOnTD) {
-		return `${yds} yards${td ? ` and ${touchdownText}!` : ""}`;
-	}
-
-	if (td) {
-		return `${touchdownText}!`;
-	}
-
-	return `${yds} yards`;
-};
+type PlayType =
+	| "quarter"
+	| "overtime"
+	| "gameOver"
+	| "injury"
+	| "hit"
+	| "gv"
+	| "tk"
+	| "slapshot"
+	| "wristshot"
+	| "shot"
+	| "block"
+	| "miss"
+	| "save"
+	| "save-freeze"
+	| "faceoff"
+	| "goal"
+	| "offensiveLineChange"
+	| "fullLineChange"
+	| "defensiveLineChange";
 
 class PlayByPlayLogger {
 	active: boolean;
@@ -189,13 +193,7 @@ class PlayByPlayLogger {
 		}
 	}
 
-	logStat(
-		qtr: number,
-		t: number,
-		pid: number | undefined | null,
-		s: string,
-		amt: number,
-	) {
+	logStat(t: number, pid: number | undefined | null, s: string, amt: number) {
 		if (!this.active) {
 			return;
 		}
@@ -207,36 +205,6 @@ class PlayByPlayLogger {
 			pid,
 			s,
 			amt,
-		});
-	}
-
-	logClock({
-		awaitingKickoff,
-		clock,
-		down,
-		scrimmage,
-		t,
-		toGo,
-	}: {
-		awaitingKickoff: TeamNum | undefined;
-		clock: number;
-		down: number;
-		scrimmage: number;
-		t: TeamNum;
-		toGo: number;
-	}) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "clock",
-			awaitingKickoff,
-			down,
-			scrimmage,
-			t,
-			time: formatClock(clock),
-			toGo,
 		});
 	}
 

@@ -1,26 +1,5 @@
 import type { Position } from "../../../common/types.hockey";
 
-export type PlayType =
-	| "quarter"
-	| "overtime"
-	| "gameOver"
-	| "injury"
-	| "hit"
-	| "gv"
-	| "tk"
-	| "slapshot"
-	| "wristshot"
-	| "shot"
-	| "block"
-	| "miss"
-	| "save"
-	| "save-freeze"
-	| "faceoff"
-	| "goal"
-	| "offensiveLineChange"
-	| "fullLineChange"
-	| "defensiveLineChange";
-
 export type TeamNum = 0 | 1;
 
 export type CompositeRating =

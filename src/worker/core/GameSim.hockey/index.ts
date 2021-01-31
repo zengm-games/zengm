@@ -390,7 +390,7 @@ class GameSim {
 		const goalie = this.playersOnIce[this.d].G[0];
 
 		if (goalie) {
-			if (r < 0.9) {
+			if (r < 0.8) {
 				this.playByPlay.logEvent({
 					type: "save",
 					clock: this.clock,
@@ -402,7 +402,7 @@ class GameSim {
 				return "save";
 			}
 
-			if (r < 0.97) {
+			if (r < 0.9) {
 				this.playByPlay.logEvent({
 					type: "save-freeze",
 					clock: this.clock,

@@ -26,7 +26,7 @@ const cmpTime = (t1: string, t2: string) => {
 };
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
-const formatClock = (clock: number) => {
+export const formatClock = (clock: number) => {
 	const secNum = Math.ceil((clock % 1) * 60);
 
 	let sec;
@@ -41,7 +41,7 @@ const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-const getText = (event: PlayByPlayEvent, numPeriods: number) => {
+export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	if (event.type === "injury") {
 		return `${event.names[0]} was injured!`;
 	}

@@ -67,6 +67,7 @@ export type PlayByPlayEvent = (
 
 export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
+	hide?: boolean;
 };
 
 class PlayByPlayLogger {

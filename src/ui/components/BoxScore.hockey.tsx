@@ -3,6 +3,8 @@ import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
 import { getPeriodName, helpers, processPlayerStats } from "../../common";
+import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
+import { formatClock, getText } from "../util/processLiveGameEvents.hockey";
 
 type ScoringSummaryEvent = {
 	hide: boolean;
@@ -120,15 +122,10 @@ const StatsTable = ({
 	);
 };
 
-const processEvents = (events: ScoringSummaryEvent[]) => {
-	const processedEvents: {
-		quarter: number;
+const processEvents = (events: PlayByPlayEventScore[]) => {
+	const processedEvents: (PlayByPlayEventScore & {
 		score: [number, number];
-		scoreType: string | null;
-		t: 0 | 1;
-		text: string;
-		time: number;
-	}[] = [];
+	})[] = [];
 	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
@@ -136,20 +133,18 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 			continue;
 		}
 
+		score[event.t] += 1;
+
 		processedEvents.push({
-			t: event.t,
-			quarter: event.quarter,
-			time: event.time,
-			text: event.text,
+			...event,
 			score: helpers.deepCopy(score),
-			scoreType: "EV",
 		});
 	}
 
 	return processedEvents;
 };
 
-const getCount = (events: ScoringSummaryEvent[]) => {
+const getCount = (events: PlayByPlayEventScore[]) => {
 	let count = 0;
 	for (const event of events) {
 		if (!event.hide) {
@@ -166,12 +161,11 @@ const ScoringSummary = memo(
 		teams,
 	}: {
 		count: number;
-		events: ScoringSummaryEvent[];
+		events: PlayByPlayEventScore[];
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
 		let prevQuarter: number;
-
 		const processedEvents = processEvents(events);
 
 		if (processedEvents.length === 0) {
@@ -208,7 +202,7 @@ const ScoringSummary = memo(
 								{quarterHeader}
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
-									<td>{event.scoreType}</td>
+									<td>EV</td>
 									<td>
 										{event.t === 0 ? (
 											<>
@@ -222,8 +216,10 @@ const ScoringSummary = memo(
 											</>
 										)}
 									</td>
-									<td>{event.time}</td>
-									<td style={{ whiteSpace: "normal" }}>{event.text}</td>
+									<td>{formatClock(event.clock)}</td>
+									<td style={{ whiteSpace: "normal" }}>
+										{getText(event, numPeriods)}
+									</td>
 								</tr>
 							</Fragment>
 						);

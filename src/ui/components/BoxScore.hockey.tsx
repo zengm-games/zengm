@@ -54,81 +54,72 @@ const sortsByType = {
 
 const StatsTable = ({
 	Row,
-	boxScore,
+	title,
 	type,
+	t,
 }: {
 	Row: any;
-	boxScore: BoxScore;
+	title: string;
 	type: keyof typeof sortsByType;
+	t: Team;
 }) => {
 	const stats = statsByType[type];
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
 	const sorts = sortsByType[type];
 
 	return (
-		<>
-			{boxScore.teams.map(t => (
-				<div key={t.abbrev} className="mb-3">
-					<ResponsiveTableWrapper>
-						<table className="table table-striped table-bordered table-sm table-hover">
-							<thead>
-								<tr>
-									<th colSpan={2}>
-										{t.region} {t.name}
+		<div key={t.abbrev} className="mb-3">
+			<ResponsiveTableWrapper>
+				<table className="table table-striped table-bordered table-sm table-hover">
+					<thead>
+						<tr>
+							<th colSpan={2}>{title}</th>
+							{cols.map(({ desc, title, width }, i) => {
+								return (
+									<th key={i} title={desc} style={{ width }}>
+										{title}
 									</th>
-									{cols.map(({ desc, title, width }, i) => {
-										return (
-											<th key={i} title={desc} style={{ width }}>
-												{title}
-											</th>
-										);
-									})}
-								</tr>
-							</thead>
-							<tbody>
-								{t.players
-									.map(p => {
-										return {
-											...p,
-											processed: processPlayerStats(p, stats),
-										};
-									})
-									.filter(p => {
-										// Filter based on if player has any stats
-										for (const stat of stats) {
-											if (
-												p.processed[stat] !== undefined &&
-												p.processed[stat] !== 0 &&
-												stat !== "min"
-											) {
-												return true;
-											}
-										}
-										return false;
-									})
-									.sort((a, b) => {
-										for (const sort of sorts) {
-											if (b.processed[sort] !== a.processed[sort]) {
-												return b.processed[sort] - a.processed[sort];
-											}
-										}
-										return 0;
-									})
-									.map((p, i) => (
-										<Row key={p.pid} i={i} p={p} stats={stats} />
-									))}
-							</tbody>
-						</table>
-					</ResponsiveTableWrapper>
-				</div>
-			))}
-		</>
+								);
+							})}
+						</tr>
+					</thead>
+					<tbody>
+						{t.players
+							.map(p => {
+								return {
+									...p,
+									processed: processPlayerStats(p, stats),
+								};
+							})
+							.filter(p => {
+								// Filter based on if player has any stats
+								for (const stat of stats) {
+									if (
+										p.processed[stat] !== undefined &&
+										p.processed[stat] !== 0 &&
+										stat !== "min"
+									) {
+										return true;
+									}
+								}
+								return false;
+							})
+							.sort((a, b) => {
+								for (const sort of sorts) {
+									if (b.processed[sort] !== a.processed[sort]) {
+										return b.processed[sort] - a.processed[sort];
+									}
+								}
+								return 0;
+							})
+							.map((p, i) => (
+								<Row key={p.pid} i={i} p={p} stats={stats} />
+							))}
+					</tbody>
+				</table>
+			</ResponsiveTableWrapper>
+		</div>
 	);
-};
-StatsTable.propTypes = {
-	boxScore: PropTypes.object.isRequired,
-	Row: PropTypes.any,
-	type: PropTypes.string.isRequired,
 };
 
 // Condenses TD + XP/2P into one event rather than two
@@ -300,14 +291,22 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
-			{["Skaters", "Goalies"].map(title => (
-				<Fragment key={title}>
-					<h2>{title}</h2>
-					<StatsTable
-						Row={Row}
-						boxScore={boxScore}
-						type={title.toLowerCase() as any}
-					/>
+
+			{boxScore.teams.map(t => (
+				<Fragment key={t.abbrev}>
+					<h2>
+						{t.region} {t.name}
+					</h2>
+					{["Skaters", "Goalies"].map(title => (
+						<Fragment key={title}>
+							<StatsTable
+								Row={Row}
+								title={title}
+								type={title.toLowerCase() as any}
+								t={t}
+							/>
+						</Fragment>
+					))}
 				</Fragment>
 			))}
 		</div>

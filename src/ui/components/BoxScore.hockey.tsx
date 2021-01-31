@@ -4,11 +4,9 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
 import { getPeriodName, helpers, processPlayerStats } from "../../common";
 
-type Quarter = `Q${number}` | "OT";
-
 type ScoringSummaryEvent = {
 	hide: boolean;
-	quarter: Quarter;
+	quarter: number;
 	t: 0 | 1;
 	text: string;
 	time: number;
@@ -125,7 +123,7 @@ const StatsTable = ({
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
 	const processedEvents: {
-		quarter: Quarter;
+		quarter: number;
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
@@ -204,7 +202,7 @@ const ScoringSummary = memo(
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
-		let prevQuarter: Quarter;
+		let prevQuarter: number;
 
 		const processedEvents = processEvents(events);
 
@@ -217,15 +215,12 @@ const ScoringSummary = memo(
 				<tbody>
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
-						if (event.quarter === "OT") {
+						if (event.quarter > numPeriods) {
 							quarterText = "Overtime";
 						} else {
-							const quarter = parseInt(event.quarter.replace("Q", ""));
-							if (!Number.isNaN(quarter)) {
-								quarterText = `${helpers.ordinal(quarter)} ${getPeriodName(
-									numPeriods,
-								)}`;
-							}
+							quarterText = `${helpers.ordinal(event.quarter)} ${getPeriodName(
+								numPeriods,
+							)}`;
 						}
 
 						let quarterHeader: ReactNode = null;

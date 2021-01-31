@@ -17,26 +17,55 @@ const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-type PlayType =
-	| "quarter"
-	| "overtime"
-	| "gameOver"
-	| "injury"
-	| "hit"
-	| "gv"
-	| "tk"
-	| "slapshot"
-	| "wristshot"
-	| "shot"
-	| "block"
-	| "miss"
-	| "save"
-	| "save-freeze"
-	| "faceoff"
-	| "goal"
-	| "offensiveLineChange"
-	| "fullLineChange"
-	| "defensiveLineChange";
+type PlayByPlayEvent =
+	| {
+			type: "quarter" | "overtime";
+			quarter: number;
+			clock: number;
+	  }
+	| {
+			type: "gameOver";
+			clock: number;
+	  }
+	| {
+			type: "injury";
+			clock: number;
+			t: TeamNum;
+			names: [string];
+			injuredPID: number;
+	  }
+	| {
+			type: "hit" | "faceoff";
+			clock: number;
+			t: TeamNum;
+			names: [string, string];
+	  }
+	| {
+			type:
+				| "gv"
+				| "tk"
+				| "slapshot"
+				| "wristshot"
+				| "shot"
+				| "block"
+				| "miss"
+				| "save"
+				| "save-freeze";
+			clock: number;
+			t: TeamNum;
+			names: [string];
+	  }
+	| {
+			type: "goal";
+			clock: number;
+			t: TeamNum;
+			names: [string];
+	  }
+	| {
+			type: "offensiveLineChange" | "fullLineChange" | "defensiveLineChange";
+			clock: number;
+			t: TeamNum;
+	  };
 
 class PlayByPlayLogger {
 	active: boolean;
@@ -45,150 +74,82 @@ class PlayByPlayLogger {
 
 	scoringSummary: any[];
 
-	quarter: string;
+	quarter: number;
 
 	constructor(active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
 		this.scoringSummary = [];
-		this.quarter = "Q1";
+		this.quarter = 1;
 	}
 
-	logEvent(
-		type: PlayType,
-		{
-			clock,
-			injuredPID,
-			names,
-			penaltyName,
-			quarter,
-			t,
-		}: {
-			clock: number;
-			injuredPID?: number;
-			names?: string[];
-			offense?: boolean;
-			penaltyName?: string;
-			quarter?: number;
-			t?: TeamNum;
-		},
-	) {
+	logEvent(event: PlayByPlayEvent) {
 		let text;
 
 		if (this.playByPlay !== undefined) {
-			if (type === "injury") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} was injured!`;
-			} else if (type === "quarter") {
-				text = `Start of ${helpers.ordinal(quarter)} ${getPeriodName(
+			if (event.type === "injury") {
+				text = `${event.names[0]} was injured!`;
+			} else if (event.type === "quarter") {
+				text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
 					g.get("numPeriods"),
 				)}`;
 
-				if (quarter === undefined) {
-					throw new Error("Missing quarter");
-				}
-
-				this.quarter = `Q${quarter}`;
-			} else if (type === "overtime") {
+				this.quarter = event.quarter;
+			} else if (event.type === "overtime") {
 				text = "Start of overtime";
-				this.quarter = "OT";
-			} else if (type === "gameOver") {
+				this.quarter += 1;
+			} else if (event.type === "gameOver") {
 				text = "End of game";
-			} else if (type === "hit") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} hit ${names[1]}`;
-			} else if (type === "gv") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Giveaway by ${names[0]}`;
-			} else if (type === "tk") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Takeaway by ${names[0]}`;
-			} else if (type === "slapshot") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Slapshot from ${names[0]}`;
-			} else if (type === "wristshot") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Wristshot by ${names[0]}`;
-			} else if (type === "shot") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Shot by ${names[0]}`;
-			} else if (type === "block") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Blocked by ${names[0]}`;
-			} else if (type === "miss") {
+			} else if (event.type === "hit") {
+				text = `${event.names[0]} hit ${event.names[1]}`;
+			} else if (event.type === "gv") {
+				text = `Giveaway by ${event.names[0]}`;
+			} else if (event.type === "tk") {
+				text = `Takeaway by ${event.names[0]}`;
+			} else if (event.type === "slapshot") {
+				text = `Slapshot from ${event.names[0]}`;
+			} else if (event.type === "wristshot") {
+				text = `Wristshot by ${event.names[0]}`;
+			} else if (event.type === "shot") {
+				text = `Shot by ${event.names[0]}`;
+			} else if (event.type === "block") {
+				text = `Blocked by ${event.names[0]}`;
+			} else if (event.type === "miss") {
 				text = "Shot missed the goal";
-			} else if (type === "save") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Saved by ${names[0]}`;
-			} else if (type === "save-freeze") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Saved by ${names[0]}, and he freezes the puck`;
-			} else if (type === "faceoff") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} wins the faceoff against ${names[1]}`;
-			} else if (type === "goal") {
+			} else if (event.type === "save") {
+				text = `Saved by ${event.names[0]}`;
+			} else if (event.type === "save-freeze") {
+				text = `Saved by ${event.names[0]}, and he freezes the puck`;
+			} else if (event.type === "faceoff") {
+				text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
+			} else if (event.type === "goal") {
 				text = "Goal!!!";
-			} else if (type === "offensiveLineChange") {
+			} else if (event.type === "offensiveLineChange") {
 				text = "Offensive line change";
-			} else if (type === "fullLineChange") {
+			} else if (event.type === "fullLineChange") {
 				text = "Full line change";
-			} else if (type === "defensiveLineChange") {
+			} else if (event.type === "defensiveLineChange") {
 				text = "Defensive line change";
 			} else {
-				throw new Error(`No text for "${type}"`);
+				throw new Error(`No text for "${event.type}"`);
 			}
 
-			if (text) {
-				const event: any = {
-					type: "text",
-					text,
-					t,
-					time: formatClock(clock),
-					quarter: this.quarter,
-				};
+			const event2: any = {
+				type: "text",
+				text,
+				t: event.t,
+				time: formatClock(event.clock),
+				quarter: this.quarter,
+			};
 
-				if (injuredPID !== undefined) {
-					event.injuredPID = injuredPID;
-				}
+			if (event.injuredPID !== undefined) {
+				event2.injuredPID = injuredPID;
+			}
 
-				this.playByPlay.push(event);
+			this.playByPlay.push(event2);
 
-				if (type === "goal") {
-					this.scoringSummary.push(event);
-				}
+			if (event.type === "goal") {
+				this.scoringSummary.push(event2);
 			}
 		}
 	}

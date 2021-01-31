@@ -159,7 +159,8 @@ class GameSim {
 			}
 		}
 
-		this.playByPlay.logEvent("gameOver", {
+		this.playByPlay.logEvent({
+			type: "gameOver",
 			clock: this.clock,
 		});
 		// this.checkGameWinner();
@@ -223,7 +224,8 @@ class GameSim {
 			this.minutesSinceLineChange[0].defense = 0;
 			this.minutesSinceLineChange[1].offense = 0;
 			this.minutesSinceLineChange[1].defense = 0;
-			this.playByPlay.logEvent("quarter", {
+			this.playByPlay.logEvent({
+				type: "quarter",
 				clock: this.clock,
 				quarter: this.team[0].stat.ptsQtrs.length,
 			});
@@ -241,8 +243,10 @@ class GameSim {
 		this.overtimes += 1;
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
-		this.playByPlay.logEvent("overtime", {
+		this.playByPlay.logEvent({
+			type: "overtime",
 			clock: this.clock,
+			quarter: this.team[0].stat.ptsQtrs.length,
 		});
 
 		this.initplayersOnIceNewPeriod();
@@ -271,7 +275,8 @@ class GameSim {
 
 		this.recordStat(t2, target, "energy", -0.1);
 
-		this.playByPlay.logEvent("hit", {
+		this.playByPlay.logEvent({
+			type: "hit",
 			clock: this.clock,
 			t,
 			names: [hitter.name, target.name],
@@ -294,7 +299,8 @@ class GameSim {
 	doGiveaway() {
 		const p = this.pickPlayer(this.o, undefined, ["C", "W", "D"]);
 
-		this.playByPlay.logEvent("gv", {
+		this.playByPlay.logEvent({
+			type: "gv",
 			clock: this.clock,
 			t: this.o,
 			names: [p.name],
@@ -305,7 +311,8 @@ class GameSim {
 	doTakeaway() {
 		const p = this.pickPlayer(this.d, "grinder", ["C", "W", "D"]);
 
-		this.playByPlay.logEvent("tk", {
+		this.playByPlay.logEvent({
+			type: "tk",
 			clock: this.clock,
 			t: this.d,
 			names: [p.name],
@@ -346,7 +353,8 @@ class GameSim {
 			"shot",
 		]);
 
-		this.playByPlay.logEvent(type, {
+		this.playByPlay.logEvent({
+			type: type,
 			clock: this.clock,
 			t: this.o,
 			names: [shooter.name],
@@ -357,7 +365,8 @@ class GameSim {
 
 		if (r < 0.1) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
-			this.playByPlay.logEvent("block", {
+			this.playByPlay.logEvent({
+				type: "block",
 				clock: this.clock,
 				t: this.d,
 				names: [blocker.name],
@@ -367,7 +376,8 @@ class GameSim {
 		}
 
 		if (r < 0.4) {
-			this.playByPlay.logEvent("miss", {
+			this.playByPlay.logEvent({
+				type: "miss",
 				clock: this.clock,
 				t: this.o,
 				names: [shooter.name],
@@ -381,7 +391,8 @@ class GameSim {
 
 		if (goalie) {
 			if (r < 0.9) {
-				this.playByPlay.logEvent("save", {
+				this.playByPlay.logEvent({
+					type: "save",
 					clock: this.clock,
 					t: this.d,
 					names: [goalie.name],
@@ -392,7 +403,8 @@ class GameSim {
 			}
 
 			if (r < 0.97) {
-				this.playByPlay.logEvent("save-freeze", {
+				this.playByPlay.logEvent({
+					type: "save-freeze",
 					clock: this.clock,
 					t: this.d,
 					names: [goalie.name],
@@ -403,7 +415,8 @@ class GameSim {
 			}
 		}
 
-		this.playByPlay.logEvent("goal", {
+		this.playByPlay.logEvent({
+			type: "goal",
 			clock: this.clock,
 			t: this.o,
 			names: [shooter.name],
@@ -432,7 +445,8 @@ class GameSim {
 			this.recordStat(0, p0, "fol");
 		}
 
-		this.playByPlay.logEvent("faceoff", {
+		this.playByPlay.logEvent({
+			type: "faceoff",
 			clock: this.clock,
 			t: this.o,
 			names: [p0.name, p1.name],
@@ -540,7 +554,8 @@ class GameSim {
 				}
 
 				if (lineChangeEvent) {
-					this.playByPlay.logEvent(lineChangeEvent, {
+					this.playByPlay.logEvent({
+						type: lineChangeEvent,
 						clock: this.clock,
 						t,
 					});
@@ -681,7 +696,8 @@ class GameSim {
 					}
 
 					p.injured = true;
-					this.playByPlay.logEvent("injury", {
+					this.playByPlay.logEvent({
+						type: "injury",
 						clock: this.clock,
 						t,
 						names: [p.name],
@@ -755,7 +771,7 @@ class GameSim {
 				this.playByPlay.logStat(t, undefined, "pts", pts);
 			}
 
-			if (p !== undefined && s !== "min") {
+			if (p !== undefined) {
 				this.playByPlay.logStat(t, p.id, s, amt);
 			}
 		}

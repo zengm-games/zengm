@@ -120,7 +120,6 @@ const StatsTable = ({
 	);
 };
 
-// Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
 	const processedEvents: {
 		quarter: number;
@@ -137,45 +136,14 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 			continue;
 		}
 
-		let scoreType: string | null = null;
-		if (event.text.includes("extra point")) {
-			scoreType = "XP";
-			if (event.text.includes("made")) {
-				score[event.t] += 1;
-			}
-		} else if (event.text.includes("field goal")) {
-			scoreType = "FG";
-			if (event.text.includes("made")) {
-				score[event.t] += 3;
-			}
-		} else if (event.text.includes("touchdown")) {
-			scoreType = "TD";
-			score[event.t] += 6;
-		} else if (event.text.toLowerCase().includes("two point")) {
-			scoreType = "2P";
-			if (!event.text.includes("failed")) {
-				score[event.t] += 2;
-			}
-		}
-
-		const prevEvent: any = processedEvents[processedEvents.length - 1];
-
-		if (prevEvent && scoreType === "XP") {
-			prevEvent.score = score.slice();
-			prevEvent.text += ` (${event.text})`;
-		} else if (prevEvent && scoreType === "2P" && event.t === prevEvent.t) {
-			prevEvent.score = score.slice();
-			prevEvent.text += ` (${event.text})`;
-		} else {
-			processedEvents.push({
-				t: event.t,
-				quarter: event.quarter,
-				time: event.time,
-				text: event.text,
-				score: helpers.deepCopy(score),
-				scoreType,
-			});
-		}
+		processedEvents.push({
+			t: event.t,
+			quarter: event.quarter,
+			time: event.time,
+			text: event.text,
+			score: helpers.deepCopy(score),
+			scoreType: "EV",
+		});
 	}
 
 	return processedEvents;

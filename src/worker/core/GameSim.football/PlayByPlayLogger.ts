@@ -1,7 +1,8 @@
 import { getPeriodName } from "../../../common";
 import { g, helpers } from "../../util";
-import type { PlayType, TeamNum } from "./types"; // Convert clock in minutes to min:sec, like 1.5 -> 1:30
+import type { PlayType, TeamNum } from "./types";
 
+// Convert clock in minutes to min:sec, like 1.5 -> 1:30
 const formatClock = (clock: number) => {
 	const secNum = Math.ceil((clock % 1) * 60);
 

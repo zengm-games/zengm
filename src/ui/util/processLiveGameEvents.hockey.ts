@@ -1,5 +1,9 @@
 import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
+import type {
+	PlayByPlayEvent,
+	PlayByPlayEventScore,
+} from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1: string, t2: string) => {
@@ -21,6 +25,87 @@ const cmpTime = (t1: string, t2: string) => {
 	return 0;
 };
 
+// Convert clock in minutes to min:sec, like 1.5 -> 1:30
+const formatClock = (clock: number) => {
+	const secNum = Math.ceil((clock % 1) * 60);
+
+	let sec;
+	if (secNum >= 60) {
+		sec = "59";
+	} else if (secNum < 10) {
+		sec = `0${secNum}`;
+	} else {
+		sec = `${secNum}`;
+	}
+
+	return `${Math.floor(clock)}:${sec}`;
+};
+
+const getText = (event: PlayByPlayEvent, numPeriods: number) => {
+	if (event.type === "injury") {
+		return `${event.names[0]} was injured!`;
+	}
+	if (event.type === "quarter") {
+		return `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
+			numPeriods,
+		)}`;
+	}
+	if (event.type === "overtime") {
+		return "Start of overtime";
+	}
+	if (event.type === "gameOver") {
+		return "End of game";
+	}
+	if (event.type === "hit") {
+		return `${event.names[0]} hit ${event.names[1]}`;
+	}
+	if (event.type === "gv") {
+		return `Giveaway by ${event.names[0]}`;
+	}
+	if (event.type === "tk") {
+		return `Takeaway by ${event.names[0]}`;
+	}
+	if (event.type === "slapshot") {
+		return `Slapshot from ${event.names[0]}`;
+	}
+	if (event.type === "wristshot") {
+		return `Wristshot by ${event.names[0]}`;
+	}
+	if (event.type === "shot") {
+		return `Shot by ${event.names[0]}`;
+	}
+	if (event.type === "block") {
+		return `Blocked by ${event.names[0]}`;
+	}
+	if (event.type === "miss") {
+		return "Shot missed the goal";
+	}
+	if (event.type === "save") {
+		return `Saved by ${event.names[0]}`;
+	}
+	if (event.type === "save-freeze") {
+		return `Saved by ${event.names[0]}, and he freezes the puck`;
+	}
+	if (event.type === "faceoff") {
+		return `${event.names[0]} wins the faceoff against ${event.names[1]}`;
+	}
+	if (event.type === "goal") {
+		return "Goal!!!";
+	}
+	if (event.type === "offensiveLineChange") {
+		return "Offensive line change";
+	}
+	if (event.type === "fullLineChange") {
+		return "Full line change";
+	}
+	if (event.type === "defensiveLineChange") {
+		return "Defensive line change";
+	}
+
+	console.log(event);
+	return `??? ${event.type}`;
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -28,19 +113,32 @@ const processLiveGameEvents = ({
 	overtimes,
 	quarters,
 }: {
-	events: any[];
-	boxScore: any;
+	events: PlayByPlayEvent[];
+	boxScore: {
+		quarter: string;
+		numPeriods: number;
+		overtime?: string;
+		teams: any;
+		time: string;
+		scoringSummary: PlayByPlayEventScore[];
+	};
 	overtimes: number;
-	quarters: string[];
+	quarters: number[];
 }) => {
 	let stop = false;
 	let text;
-	let e: any;
+	let prevText;
+	let e2: PlayByPlayEvent;
 
 	while (!stop && events.length > 0) {
-		e = events.shift();
+		const e = events.shift();
+		if (!e) {
+			continue;
+		}
+		e2 = e;
 
 		// Swap teams order, so home team is at bottom in box score
+		// @ts-ignore
 		const actualT = e.t === 0 ? 1 : 0;
 
 		if (e.quarter !== undefined && !quarters.includes(e.quarter)) {
@@ -63,47 +161,12 @@ const processLiveGameEvents = ({
 				)}`;
 			}
 
-			boxScore.time = e.time;
+			if (e.type !== "stat") {
+				boxScore.time = formatClock(e.clock);
+			}
 		}
 
-		if (e.type === "text") {
-			if (e.injuredPID !== undefined) {
-				const p = boxScore.teams[actualT].players.find(
-					(p2: any) => p2.pid === e.injuredPID,
-				);
-				if (p === undefined) {
-					console.log("Can't find injured player", e);
-				}
-				p.injury = {
-					type: "Injured",
-					gamesRemaining: -1,
-				};
-			}
-
-			text = e.text;
-			boxScore.time = e.time;
-			stop = true;
-		} else if (e.type === "clock") {
-			if (typeof e.awaitingKickoff === "number") {
-				text = `${e.time} - ${boxScore.teams[actualT].abbrev} kicking off`;
-			} else {
-				let fieldPos = "";
-				if (e.scrimmage === 50) {
-					fieldPos = "50 yd line";
-				} else if (e.scrimmage > 50) {
-					fieldPos = `opp ${100 - e.scrimmage}`;
-				} else {
-					fieldPos = `own ${e.scrimmage}`;
-				}
-
-				text = `${e.time} - ${
-					boxScore.teams[actualT].abbrev
-				} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
-			}
-
-			boxScore.time = e.time;
-			stop = true;
-		} else if (e.type === "stat") {
+		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
 				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
@@ -126,16 +189,30 @@ const processLiveGameEvents = ({
 				}
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
+		} else if (e.type !== "init") {
+			if (e.type === "injury") {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.injuredPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find injured player", e);
+				}
+				p.injury = {
+					type: "Injured",
+					gamesRemaining: -1,
+				};
+			}
+
+			prevText = text;
+			text = getText(e, boxScore.numPeriods);
+			boxScore.time = formatClock(e.clock);
+			stop = true;
 		}
 	}
 
 	//  Handle filtering of scoringSummary
 	if (boxScore.scoringSummary && boxScore.time !== undefined) {
 		for (const event of boxScore.scoringSummary) {
-			if (event.time === undefined) {
-				continue;
-			}
-
 			if (event.hide === false) {
 				// Already past, no need to check again
 				continue;
@@ -150,10 +227,10 @@ const processLiveGameEvents = ({
 			} else {
 				// Current quarter - this is the normal way all events will be shown. Used to just check time, but then scoring summary would update at the beginning of a play, since the scoring event has the same timestamp. So now also check for the internal properties of the event object, since it should always come through as "e" from above. Don't check event.t because that gets flipped in box score display
 				const show =
-					cmpTime(event.time, boxScore.time) !== -1 &&
-					e.text === event.text &&
-					e.time === event.time &&
-					e.quarter === event.quarter;
+					cmpTime(formatClock(event.clock), boxScore.time) !== -1 &&
+					prevText === getText(event, boxScore.numPeriods) &&
+					e2.clock === event.clock &&
+					e2.quarter === event.quarter;
 				event.hide = !show;
 			}
 		}

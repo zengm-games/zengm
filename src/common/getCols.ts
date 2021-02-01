@@ -1018,7 +1018,7 @@ const sportSpecificCols = bySport<{
 		"stat:keyStats": {
 			desc: "Key Stats",
 			sortSequence: ["desc", "asc"],
-			sortType: "number",
+			sortType: "string",
 		},
 		"stat:pts": {
 			desc: "",
@@ -1479,6 +1479,11 @@ const sportSpecificCols = bySport<{
 			desc: "Goals Against Average",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
+		},
+		"stat:keyStats": {
+			desc: "Key Stats",
+			sortSequence: ["desc", "asc"],
+			sortType: "string",
 		},
 	},
 });
@@ -2315,6 +2320,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:rbsPct": "TBRBS%",
 		"stat:sa": "SA",
 		"stat:gaa": "GAA",
+		"stat:keyStats": "Stats",
 	},
 });
 

@@ -792,7 +792,7 @@ class GameSim {
 
 			let pts;
 
-			const goals = ["evG", "ppG", "shG", "gwG"];
+			const goals = ["evG", "ppG", "shG"];
 
 			if (goals.includes(s)) {
 				pts = 1;

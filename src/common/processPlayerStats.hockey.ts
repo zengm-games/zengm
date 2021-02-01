@@ -29,8 +29,8 @@ const processStats = (
 ) => {
 	const row: any = {};
 
-	const g = ps.evG + ps.ppG + ps.shG + ps.gwG;
-	const a = ps.evA + ps.ppA + ps.shA + ps.gwA;
+	const g = ps.evG + ps.ppG + ps.shG;
+	const a = ps.evA + ps.ppA + ps.shA;
 
 	for (const stat of stats) {
 		if (stat === "pts") {
@@ -42,7 +42,7 @@ const processStats = (
 		} else if (stat === "sa") {
 			row[stat] = ps.sv + ps.ga;
 		} else if (stat === "sPct") {
-			row[stat] = percentage(ps.evG + ps.ppG + ps.shG + ps.gwG, ps.s);
+			row[stat] = percentage(ps.evG + ps.ppG + ps.shG, ps.s);
 		} else if (stat === "svPct") {
 			row[stat] = percentage(ps.sv, ps.sv + ps.ga);
 		} else if (stat === "foPct") {

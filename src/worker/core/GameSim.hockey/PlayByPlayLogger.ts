@@ -5,7 +5,7 @@ type PlayByPlayEventInputScore = {
 	clock: number;
 	t: TeamNum;
 	names: [string] | [string, string] | [string, string, string];
-	goalType: "EV" | "SH" | "PP" | "GW";
+	goalType: "EV" | "SH" | "PP";
 	shotType: string;
 };
 

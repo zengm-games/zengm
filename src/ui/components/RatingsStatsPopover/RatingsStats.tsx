@@ -1,22 +1,28 @@
 import RatingsStatsBasketball from "./RatingsStats.basketball";
 import RatingsStatsFootball from "./RatingsStats.football";
+import RatingsStatsHockey from "./RatingsStats.hockey";
 import { useLocal } from "../../util";
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 const RatingsStats = (props: { ratings: any; stats: any }) => {
 	const challengeNoRatings = useLocal(state => state.challengeNoRatings);
 
-	if (isSport("football")) {
-		return RatingsStatsFootball({
+	return bySport({
+		basketball: RatingsStatsBasketball({
 			...props,
 			challengeNoRatings,
-		});
-	}
-
-	return RatingsStatsBasketball({
-		...props,
-		challengeNoRatings,
+		}),
+		football: RatingsStatsFootball({
+			...props,
+			challengeNoRatings,
+		}),
+		hockey: RatingsStatsHockey({
+			...props,
+			challengeNoRatings,
+		}),
 	});
+
+	return;
 };
 
 export default RatingsStats;

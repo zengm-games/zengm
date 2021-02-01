@@ -656,7 +656,6 @@ class GameSim {
 	}
 
 	updatePlayingTime(possessionTime: number) {
-		this.recordStat(this.o, undefined, "timePos", possessionTime);
 		const onField = new Set();
 
 		for (const t of teamNums) {

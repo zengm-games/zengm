@@ -220,11 +220,12 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.scouting.amount += scoutingPaid;
 		teamSeason.expenses.coaching.amount += coachingPaid;
 		teamSeason.expenses.health.amount += healthPaid;
-		teamSeason.expenses.facilities.amount += facilitiesPaid; // For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
+		teamSeason.expenses.facilities.amount += facilitiesPaid;
 
+		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({
 			basketball: ["ptsQtrs", "ba"],
-			football: ["ptsQtrs"],
+			default: ["ptsQtrs"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
@@ -241,8 +242,9 @@ const writeTeamStats = async (results: GameResults) => {
 			}
 
 			if (key !== "min") {
-				const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`; // Deal with upgraded leagues, and some stats that don't have opp versions
+				const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`;
 
+				// Deal with upgraded leagues, and some stats that don't have opp versions
 				if (teamStats.hasOwnProperty(oppKey)) {
 					teamStats[oppKey] += results.team[t2].stat[key];
 				}

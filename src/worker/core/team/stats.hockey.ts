@@ -1,4 +1,5 @@
 const teamAndOpp = [
+	"pts",
 	"pim",
 	"evG",
 	"ppG",
@@ -18,6 +19,7 @@ const teamAndOpp = [
 
 	// KEEP THIS IN SYCN WITH ABOVE! TypeScript needs them to be listed explicitly. Used to be:
 	// ...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
+	"oppPts",
 	"oppPim",
 	"oppEvG",
 	"oppPpG",

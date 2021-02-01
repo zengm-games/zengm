@@ -33,9 +33,12 @@ const statsByType = {
 		"blk",
 		"gv",
 		"tk",
+		"fow",
+		"fol",
+		"foPct",
 		"min",
 	],
-	goalies: ["ga", "sa", "sv", "svPct", "so", "pim", "min"],
+	goalies: ["ga", "sa", "sv", "svPct", "pim", "min"],
 };
 
 const sortsByType = {

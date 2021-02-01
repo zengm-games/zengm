@@ -1395,6 +1395,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:foPct": {
+			desc: "Faceoff Win Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:blk": {
 			desc: "Blocks",
 			sortSequence: ["desc", "asc"],
@@ -2293,6 +2298,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:tsa": "TSA",
 		"stat:fow": "FOW",
 		"stat:fol": "FOL",
+		"stat:foPct": "FO%",
 		"stat:blk": "BLK",
 		"stat:hit": "HIT",
 		"stat:tk": "TK",

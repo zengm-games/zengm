@@ -90,7 +90,11 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		return `${event.names[0]} wins the faceoff against ${event.names[1]}`;
 	}
 	if (event.type === "goal") {
-		return "Goal!!!";
+		let text = "Goal!!!";
+		if (event.names.length > 1) {
+			text += ` (assist: ${event.names.slice(1).join(", ")})`;
+		}
+		return text;
 	}
 	if (event.type === "offensiveLineChange") {
 		return "Offensive line change";

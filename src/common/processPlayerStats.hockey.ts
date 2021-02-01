@@ -33,10 +33,14 @@ const processStats = (
 			row[stat] = ps.evG + ps.ppG + ps.shG + ps.gwG;
 		} else if (stat === "a") {
 			row[stat] = ps.evA + ps.ppA + ps.shA + ps.gwA;
+		} else if (stat === "sa") {
+			row[stat] = ps.sv + ps.ga;
 		} else if (stat === "sPct") {
 			row[stat] = percentage(ps.evG + ps.ppG + ps.shG + ps.gwG, ps.s);
 		} else if (stat === "svPct") {
 			row[stat] = percentage(ps.sv, ps.sv + ps.ga);
+		} else if (stat === "foPct") {
+			row[stat] = percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "age") {
 			if (bornYear === undefined) {
 				throw new Error(

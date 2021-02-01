@@ -415,11 +415,39 @@ class GameSim {
 			}
 		}
 
+		let assister1: PlayerGameSim | undefined;
+		let assister2: PlayerGameSim | undefined;
+		const r2 = Math.random();
+		if (r2 < 0.9) {
+			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+				shooter,
+			]);
+			this.recordStat(this.o, assister1, "evA");
+		}
+		if (r2 < 0.8) {
+			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+				shooter,
+				assister1 as PlayerGameSim,
+			]);
+			this.recordStat(this.o, assister2, "evA");
+		}
+
+		let assisterNames: [] | [string] | [string, string];
+		if (assister1 && assister2) {
+			assisterNames = [assister1.name, assister2.name];
+		} else if (assister1) {
+			assisterNames = [assister1.name];
+		} else {
+			assisterNames = [];
+		}
+
 		this.playByPlay.logEvent({
 			type: "goal",
 			clock: this.clock,
 			t: this.o,
-			names: [shooter.name],
+			names: [shooter.name, ...assisterNames],
+			shotType: type,
+			goalType: "EV",
 		});
 		this.recordStat(this.o, shooter, "evG");
 		if (goalie) {
@@ -713,8 +741,13 @@ class GameSim {
 		rating?: CompositeRating,
 		positions: Position[] = POSITIONS,
 		power: number = 1,
+		ignorePlayers?: PlayerGameSim[],
 	) {
-		const players = getPlayers(this.playersOnIce[t], positions);
+		let players = getPlayers(this.playersOnIce[t], positions);
+		if (ignorePlayers) {
+			players = players.filter(p => !ignorePlayers.includes(p));
+		}
+
 		const weightFunc =
 			rating !== undefined
 				? (p: PlayerGameSim) =>

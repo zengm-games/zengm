@@ -26,7 +26,10 @@ const processStats = (
 	const row: any = {};
 
 	for (const stat of stats) {
-		if (stat === "g") {
+		if (stat === "pts") {
+			row[stat] =
+				ps.evG + ps.ppG + ps.shG + ps.gwG + ps.evA + ps.ppA + ps.shA + ps.gwA;
+		} else if (stat === "g") {
 			row[stat] = ps.evG + ps.ppG + ps.shG + ps.gwG;
 		} else if (stat === "a") {
 			row[stat] = ps.evA + ps.ppA + ps.shA + ps.gwA;

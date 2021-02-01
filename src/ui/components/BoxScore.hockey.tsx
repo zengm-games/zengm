@@ -4,16 +4,7 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
 import { getPeriodName, helpers, processPlayerStats } from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
-import { formatClock, getText } from "../util/processLiveGameEvents.hockey";
-
-type ScoringSummaryEvent = {
-	hide: boolean;
-	quarter: number;
-	t: 0 | 1;
-	text: string;
-	time: number;
-	type: string;
-};
+import { formatClock } from "../util/processLiveGameEvents.hockey";
 
 type Team = {
 	abbrev: string;
@@ -24,7 +15,7 @@ type Team = {
 
 type BoxScore = {
 	gid: number;
-	scoringSummary: ScoringSummaryEvent[];
+	scoringSummary: PlayByPlayEventScore[];
 	teams: [Team, Team];
 	numPeriods?: number;
 };
@@ -202,7 +193,6 @@ const ScoringSummary = memo(
 								{quarterHeader}
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
-									<td>EV</td>
 									<td>
 										{event.t === 0 ? (
 											<>
@@ -217,8 +207,18 @@ const ScoringSummary = memo(
 										)}
 									</td>
 									<td>{formatClock(event.clock)}</td>
+									<td>{event.goalType}</td>
 									<td style={{ whiteSpace: "normal" }}>
-										{getText(event, numPeriods)}
+										{helpers.upperCaseFirstLetter(event.shotType)} by{" "}
+										{event.names[0]}
+										{event.names.length > 1 ? (
+											<>
+												{" "}
+												<span className="text-muted">
+													(assist: {event.names.slice(1).join(", ")})
+												</span>
+											</>
+										) : null}
 									</td>
 								</tr>
 							</Fragment>

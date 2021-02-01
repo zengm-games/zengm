@@ -69,7 +69,7 @@ const PLAYER_SUMMARY = {
 	summarySkater: {
 		name: "SummarySkater",
 		onlyShowIf: ["C", "W", "D"],
-		stats: ["gp", "g", "a", "pts", "pm", "ops", "dps"],
+		stats: ["gp", "g", "a", "pts", "pm", "ops", "dps", "ps"],
 	},
 	summaryGoalie: {
 		name: "SummaryGoalie",

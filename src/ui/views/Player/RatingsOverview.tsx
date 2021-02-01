@@ -291,6 +291,101 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 				],
 			},
 		],
+		hockey: [
+			{
+				Physical: [
+					{
+						label: "Height",
+						rating: "hgt",
+					},
+					{
+						label: "Strength",
+						rating: "stre",
+					},
+					{
+						label: "Speed",
+						rating: "spd",
+					},
+					{
+						label: "Endurance",
+						rating: "endu",
+					},
+				],
+			},
+			{
+				Shooting: [
+					{
+						label: "Passing",
+						rating: "pss",
+					},
+					{
+						label: "Wristshot",
+						rating: "wst",
+					},
+					{
+						label: "Slapshot",
+						rating: "sst",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Stickhndl</span>
+								<span className="d-none d-md-inline">Stickhandling</span>
+							</>
+						),
+						rating: "stk",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Off</span>
+								<span className="d-none d-md-inline">Offensive</span> IQ
+							</>
+						),
+						rating: "oiq",
+					},
+				],
+			},
+			{
+				Skill: [
+					{
+						label: "Checking",
+						rating: "chk",
+					},
+					{
+						label: (
+							<>
+								Blocking
+								<span className="d-none d-md-inline"> Shots</span>
+							</>
+						),
+						rating: "blk",
+					},
+					{
+						label: "Faceoffs",
+						rating: "fcf",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Def</span>
+								<span className="d-none d-md-inline">Defensive</span> IQ
+							</>
+						),
+						rating: "diq",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Goalie</span>
+								<span className="d-none d-md-inline">Goalkeeping</span>
+							</>
+						),
+						rating: "glk",
+					},
+				],
+			},
+		],
 	});
 
 	return (

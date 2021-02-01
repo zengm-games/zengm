@@ -52,6 +52,7 @@ const PowerRankings = ({
 			"Position Ranks",
 			"pos",
 		],
+		hockey: [POSITIONS, "Position Ranks", "pos"],
 	});
 
 	const superCols = [

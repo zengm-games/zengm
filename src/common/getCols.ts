@@ -1205,6 +1205,22 @@ const sportSpecificCols = bySport<{
 		},
 	},
 	hockey: {
+		"pos:C": {
+			desc: "Center",
+			sortType: "number",
+		},
+		"pos:W": {
+			desc: "Wing",
+			sortType: "number",
+		},
+		"pos:D": {
+			desc: "Defenseman",
+			sortType: "number",
+		},
+		"pos:G": {
+			desc: "Goalie",
+			sortType: "number",
+		},
 		"rating:pss": {
 			desc: "Passing",
 			sortSequence: ["desc", "asc"],
@@ -1507,6 +1523,11 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:gc": {
 			desc: "Goals Created",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:amin": {
+			desc: "Average Time On Ice",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -2290,6 +2311,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:av": "AV",
 	},
 	hockey: {
+		"pos:C": "C",
+		"pos:W": "W",
+		"pos:D": "D",
+		"pos:G": "G",
 		"rating:pss": "Pss",
 		"rating:wst": "Wst",
 		"rating:sst": "Sst",
@@ -2351,6 +2376,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:dps": "DPS",
 		"stat:gps": "GPS",
 		"stat:gc": "GC",
+		"stat:amin": "ATOI",
 	},
 });
 
@@ -2360,7 +2386,7 @@ const titleOverrides = {
 	"rating:hgt": "Hgt",
 	"rating:spd": "Spd",
 	"rating:stre": "Str",
-	"stat:gp": "G",
+	"stat:gp": isSport("hockey") ? "GP" : "G",
 	"stat:gs": "GS",
 	"stat:jerseyNumber": "#",
 	"stat:min": isSport("hockey") ? "TOI" : "MP",

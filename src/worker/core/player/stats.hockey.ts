@@ -14,6 +14,12 @@ const stats = {
 
 		// Shutouts
 		"so",
+
+		// Goals created and point shares
+		"gc",
+		"ops",
+		"dps",
+		"gps",
 	] as const,
 	raw: [
 		"gp",

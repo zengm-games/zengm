@@ -6,7 +6,6 @@ const teamAndOpp = [
 	"evA",
 	"ppA",
 	"shA",
-	"gwA",
 	"s",
 	"tsa",
 	"fow",
@@ -15,7 +14,6 @@ const teamAndOpp = [
 	"hit",
 	"tk",
 	"gv",
-	"ga",
 	"sv",
 
 	// KEEP THIS IN SYCN WITH ABOVE! TypeScript needs them to be listed explicitly. Used to be:
@@ -27,7 +25,6 @@ const teamAndOpp = [
 	"oppEvA",
 	"oppPpA",
 	"oppShA",
-	"oppGwA",
 	"oppS",
 	"oppTsa",
 	"oppFow",
@@ -36,7 +33,6 @@ const teamAndOpp = [
 	"oppHit",
 	"oppTk",
 	"oppGv",
-	"oppGa",
 	"oppSv",
 ] as const;
 

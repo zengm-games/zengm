@@ -1,4 +1,3 @@
-import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
 
 const ratio = (numerator: number, denominator: number) => {
@@ -11,14 +10,6 @@ const ratio = (numerator: number, denominator: number) => {
 
 const percentage = (numerator: number, denominator: number) => {
 	return 100 * ratio(numerator, denominator);
-};
-
-const qbRat = (ps: PlayerStats) => {
-	const a = helpers.bound((ps.pssCmp / ps.pss - 0.3) * 5, 0, 2.375);
-	const b = helpers.bound((ps.pssYds / ps.pss - 3) * 0.25, 0, 2.375);
-	const c = helpers.bound((ps.pssTD / ps.pss) * 20, 0, 2.375);
-	const d = helpers.bound(2.375 - (ps.pssInt / ps.pss) * 25, 0, 2.375);
-	return ((a + b + c + d) / 6) * 100;
 };
 
 const processStats = (
@@ -35,6 +26,8 @@ const processStats = (
 	for (const stat of stats) {
 		if (stat === "pts") {
 			row[stat] = g + a;
+		} else if (stat === "ps") {
+			row[stat] = ps.ops + ps.dps + ps.gps;
 		} else if (stat === "g") {
 			row[stat] = g;
 		} else if (stat === "a") {
@@ -42,7 +35,7 @@ const processStats = (
 		} else if (stat === "sa") {
 			row[stat] = ps.sv + ps.ga;
 		} else if (stat === "sPct") {
-			row[stat] = percentage(ps.evG + ps.ppG + ps.shG, ps.s);
+			row[stat] = percentage(g, ps.s);
 		} else if (stat === "svPct") {
 			row[stat] = percentage(ps.sv, ps.sv + ps.ga);
 		} else if (stat === "foPct") {

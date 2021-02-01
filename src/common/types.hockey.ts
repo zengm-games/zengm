@@ -1,40 +1,22 @@
-import type teamStats from "../worker/core/team/stats.basketball";
+import type teamStats from "../worker/core/team/stats.hockey";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
 	| typeof teamStats["raw"][number]
-	| "fgp"
-	| "oppFgp"
-	| "fgpAtRim"
-	| "oppFgpAtRim"
-	| "fgpLowPost"
-	| "oppFgpLowPost"
-	| "fgpMidRange"
-	| "oppFgpMidRange"
-	| "tpp"
-	| "oppTpp"
-	| "ftp"
-	| "oppFtp"
-	| "mov"
-	| "oppMov"
-	| "pw"
-	| "pl"
-	| "ortg"
-	| "drtg"
-	| "nrtg"
-	| "pace"
-	| "poss"
-	| "tpar"
-	| "ftr"
-	| "tsp"
-	| "trb"
-	| "oppTrb"
-	| "2p"
-	| "2pa"
-	| "2pp"
-	| "opp2p"
-	| "opp2pa"
-	| "opp2pp";
+	| "g"
+	| "a"
+	| "sa"
+	| "sPct"
+	| "svPct"
+	| "foPct"
+	| "gaa"
+	| "oppG"
+	| "oppA"
+	| "oppAa"
+	| "oppSPct"
+	| "oppSvPct"
+	| "oppFoPct"
+	| "oppGaa";
 
 type AwardTeam = {
 	tid: number;

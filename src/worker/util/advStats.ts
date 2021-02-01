@@ -1,13 +1,14 @@
-import { isSport } from "../../common";
+import { bySport } from "../../common";
 import advStatsBasketball from "./advStats.basketball";
 import advStatsFootball from "./advStats.football";
+import advStatsHockey from "./advStats.hockey";
 
 const advStats = () => {
-	if (isSport("football")) {
-		return advStatsFootball();
-	}
-
-	return advStatsBasketball();
+	return bySport({
+		basketball: advStatsBasketball,
+		football: advStatsFootball,
+		hockey: advStatsHockey,
+	});
 };
 
 export default advStats;

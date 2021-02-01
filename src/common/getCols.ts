@@ -1485,6 +1485,31 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "string",
 		},
+		"stat:ps": {
+			desc: "Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ops": {
+			desc: "Offensive Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:dps": {
+			desc: "Defensive Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gps": {
+			desc: "Goalie Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gc": {
+			desc: "Goals Created",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 });
 const cols: {
@@ -2321,6 +2346,11 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:sa": "SA",
 		"stat:gaa": "GAA",
 		"stat:keyStats": "Stats",
+		"stat:ps": "PS",
+		"stat:ops": "OPS",
+		"stat:dps": "DPS",
+		"stat:gps": "GPS",
+		"stat:gc": "GC",
 	},
 });
 

@@ -209,6 +209,7 @@ class GameSim {
 
 			while (this.clock > 0) {
 				this.simPossession();
+				this.updatePlayersOnIce();
 			}
 
 			quarter += 1;
@@ -253,8 +254,9 @@ class GameSim {
 		this.faceoff();
 
 		// @ts-ignore
-		while (this.clock > 0 && this.overtimeState !== "over") {
+		while (this.clock > 0) {
 			this.simPossession();
+			this.updatePlayersOnIce();
 		}
 	}
 
@@ -549,6 +551,8 @@ class GameSim {
 	}
 
 	updatePlayersOnIce(playType?: "starters") {
+		let substitutions = false;
+
 		for (const t of [0, 1] as const) {
 			const positionCounts = {
 				C: 1,
@@ -568,17 +572,20 @@ class GameSim {
 					| "fullLineChange"
 					| "defensiveLineChange"
 					| undefined;
-				if (this.minutesSinceLineChange[t].offense >= 0.7) {
-					positionsToChange.push("C", "W");
-					lineChangeEvent = "offensiveLineChange";
-				}
-				if (this.minutesSinceLineChange[t].defense >= 0.9) {
-					if (lineChangeEvent) {
-						lineChangeEvent = "fullLineChange";
-					} else {
-						lineChangeEvent = "defensiveLineChange";
+
+				if (this.clock >= 1) {
+					if (this.minutesSinceLineChange[t].offense >= 0.7) {
+						positionsToChange.push("C", "W");
+						lineChangeEvent = "offensiveLineChange";
 					}
-					positionsToChange.push("D");
+					if (this.minutesSinceLineChange[t].defense >= 0.9) {
+						if (lineChangeEvent) {
+							lineChangeEvent = "fullLineChange";
+						} else {
+							lineChangeEvent = "defensiveLineChange";
+						}
+						positionsToChange.push("D");
+					}
 				}
 
 				if (lineChangeEvent) {
@@ -602,6 +609,7 @@ class GameSim {
 
 			// Find top fatigue-adjusted players at positions waiting to sub in, and do it
 			for (const pos of positionsToChange) {
+				substitutions = true;
 				availableSubs = orderBy(
 					availableSubs,
 					p => p.ovrs[pos] * fatigue(p.stat.energy),
@@ -618,6 +626,7 @@ class GameSim {
 				const pos = pos2 as Position;
 				for (const p of players) {
 					if (p.injured) {
+						substitutions = true;
 						availableSubs = orderBy(
 							availableSubs,
 							p => p.ovrs[pos] * fatigue(p.stat.energy),
@@ -641,7 +650,9 @@ class GameSim {
 			}
 		}
 
-		this.updateTeamCompositeRatings();
+		if (substitutions) {
+			this.updateTeamCompositeRatings();
+		}
 	}
 
 	updatePlayingTime(possessionTime: number) {

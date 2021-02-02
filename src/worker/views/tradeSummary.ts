@@ -73,7 +73,11 @@ const findStatSum = (
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
-		const stat = bySport({ basketball: row.ows + row.dws, football: row.av });
+		const stat = bySport({
+			basketball: row.ows + row.dws,
+			football: row.av,
+			hockey: row.ops + row.dps + row.gps,
+		});
 
 		// Only after trade
 		if (
@@ -415,7 +419,7 @@ const updateTradeSummary = async (
 			teams,
 			season: event.season,
 			phase: event.phase,
-			stat: bySport({ basketball: "WS", football: "AV" }),
+			stat: bySport({ basketball: "WS", football: "AV", hockey: "PS" }),
 			seasonsToPlot,
 		};
 	}

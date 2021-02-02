@@ -510,6 +510,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								"coinFlip",
 								"nba",
 								"freeAgents",
+								"nhl2017",
 							],
 						}),
 						gameAttribute("easyDifficultyInPast", {

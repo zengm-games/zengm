@@ -173,6 +173,7 @@ export const hockeyOverrides =
 				numPeriods: 3,
 				minRosterSize: 20,
 				maxRosterSize: 23,
+				draftType: "nhl2017",
 		  }
 		: {};
 

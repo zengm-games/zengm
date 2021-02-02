@@ -252,6 +252,10 @@ export const options: {
 					from 1990-1993
 				</p>
 				<p>
+					<b>NHL 2017:</b> Weighted lottery for the top 3 picks, like the NHL
+					since 2017
+				</p>
+				<p>
 					<b>Random, first 3:</b> Random lottery for the top 3 picks, like the
 					NBA from 1987-1989
 				</p>
@@ -288,6 +292,7 @@ export const options: {
 			{ key: "nba2019", value: "NBA 2019" },
 			{ key: "nba1994", value: "NBA 1994" },
 			{ key: "nba1990", value: "NBA 1990" },
+			{ key: "nhl2017", value: "NHL 2017" },
 			{ key: "randomLotteryFirst3", value: "Random, first 3" },
 			{ key: "randomLottery", value: "Random, lottery only" },
 			{ key: "coinFlip", value: "Coin flip" },

@@ -313,7 +313,16 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 				],
 			},
 			{
-				Shooting: [
+				Offense: [
+					{
+						label: (
+							<>
+								<span className="d-md-none">Off</span>
+								<span className="d-none d-md-inline">Offensive</span> IQ
+							</>
+						),
+						rating: "oiq",
+					},
 					{
 						label: "Passing",
 						rating: "pss",
@@ -335,19 +344,19 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 						),
 						rating: "stk",
 					},
-					{
-						label: (
-							<>
-								<span className="d-md-none">Off</span>
-								<span className="d-none d-md-inline">Offensive</span> IQ
-							</>
-						),
-						rating: "oiq",
-					},
 				],
 			},
 			{
-				Skill: [
+				Defense: [
+					{
+						label: (
+							<>
+								<span className="d-md-none">Def</span>
+								<span className="d-none d-md-inline">Defensive</span> IQ
+							</>
+						),
+						rating: "diq",
+					},
 					{
 						label: "Checking",
 						rating: "chk",
@@ -364,15 +373,6 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 					{
 						label: "Faceoffs",
 						rating: "fcf",
-					},
-					{
-						label: (
-							<>
-								<span className="d-md-none">Def</span>
-								<span className="d-none d-md-inline">Defensive</span> IQ
-							</>
-						),
-						rating: "diq",
 					},
 					{
 						label: (

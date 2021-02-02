@@ -78,6 +78,8 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
 					football:
 						"a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage",
+					hockey:
+						"a backup goalie who only played one game is not eligible for the league lead in SV%",
 				})}
 				).
 			</p>

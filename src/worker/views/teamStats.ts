@@ -180,6 +180,7 @@ const updateTeams = async (
 				"oppYdsPerDrive",
 				"oppPtsPerDrive",
 			],
+			hockey: ["lost", "fol", "gv", "gaa", "rbs"],
 		});
 
 		for (const t of teams) {

@@ -164,6 +164,14 @@ const processSeasonAttrs = async <
 					} else if (ts.streak < 0) {
 						row.streak = `Lost ${Math.abs(ts.streak)}`;
 					}
+				} else if (attr === "pts") {
+					row.pts = 2 * ts.won;
+					if (typeof row.tied === "number") {
+						row.pts += row.tied;
+					}
+					if (typeof row.otl === "number") {
+						row.pts += row.otl;
+					}
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];

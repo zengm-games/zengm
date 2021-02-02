@@ -3,6 +3,7 @@ import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import checkStatisticalFeatBasketball from "./checkStatisticalFeat.basketball";
 import checkStatisticalFeatFootball from "./checkStatisticalFeat.football";
+import checkStatisticalFeatHockey from "./checkStatisticalFeat.hockey";
 import type {
 	Conditions,
 	GamePlayer,
@@ -12,6 +13,7 @@ import type {
 const checkPlayer = bySport({
 	basketball: checkStatisticalFeatBasketball,
 	football: checkStatisticalFeatFootball,
+	hockey: checkStatisticalFeatHockey,
 });
 
 const checkStatisticalFeat = (

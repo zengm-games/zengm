@@ -1,4 +1,4 @@
-import { bySport, PHASE } from "../../common";
+import { PHASE, SIMPLE_AWARDS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
@@ -64,10 +64,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 
 		const awards = await idb.getCopies.awards();
-		const awardNames = bySport({
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
-		});
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
@@ -197,7 +193,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			awards: awardNames,
+			awards: SIMPLE_AWARDS,
 			seasons,
 			userTid: g.get("userTid"),
 		};

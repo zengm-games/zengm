@@ -17,8 +17,12 @@ const youngGunsCutoffs = bySport({
 	football: [26, 24],
 	hockey: [25, 22],
 });
-const superTeamCutoff = bySport({ basketball: 3, football: 15 });
-const trustTheProcessCutoff = bySport({ basketball: 3, football: 7 });
+const superTeamCutoff = bySport({ basketball: 3, football: 15, hockey: 4 });
+const trustTheProcessCutoff = bySport({
+	basketball: 3,
+	football: 7,
+	hockey: 3,
+});
 
 const checkDynasty = async (titles: number, years: number) => {
 	const teamSeasons = await idb.getCopies.teamSeasons({

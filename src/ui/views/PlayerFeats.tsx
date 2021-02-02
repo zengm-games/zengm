@@ -127,6 +127,15 @@ const PlayerFeats = ({
 						<span className="text-info">highlighted in blue</span>.
 					</p>
 				),
+				hockey: (
+					<p>
+						All games where a player got a hat trick, 4+ points, or a shutout
+						are listed here. If you changed quarter length to a non-default
+						value in God Mode, the cuttoffs are scaled. Statistical feats from
+						your players are{" "}
+						<span className="text-info">highlighted in blue</span>.
+					</p>
+				),
 			})}
 
 			<DataTable

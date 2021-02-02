@@ -17,7 +17,7 @@ const processStats = (
 	return bySport({
 		basketball: processStatsBasketball(ts, stats, playoffs, statType),
 		football: processStatsFootball(ts, stats, playoffs),
-		hockey: processStatsFootball(ts, stats, playoffs),
+		hockey: processStatsHockey(ts, stats, playoffs),
 	});
 };
 

@@ -13,7 +13,7 @@ const processLiveGameEvents = ({
 	events: any[];
 	boxScore: any;
 	overtimes: number;
-	quarters: string[];
+	quarters: any[]; // Basketball/football use strings, hockey uses numbers
 }) => {
 	return bySport({
 		basketball: processLiveGameEventsBasketball({

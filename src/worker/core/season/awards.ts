@@ -86,6 +86,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"tid",
 				"jerseyNumber",
 			],
+			hockey: ["keyStats"],
 		}),
 		fuzz: true,
 		mergeStats: true,
@@ -379,6 +380,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	const awardsTeams = bySport({
 		basketball: ["allRookie", "allLeague", "allDefensive"] as const,
 		football: ["allRookie", "allLeague"] as const,
+		hockey: ["allRookie", "allLeague"] as const,
 	});
 	for (const key of awardsTeams) {
 		const type = AWARD_NAMES[key] as string;

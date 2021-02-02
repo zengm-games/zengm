@@ -14,7 +14,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
-import { bySport, getPeriodName } from "../../common";
+import { bySport, getPeriodName, isSport } from "../../common";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -87,7 +87,7 @@ const LiveGame = (props: View<"liveGame">) => {
 
 	const overtimes = useRef(0);
 	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
-	const quarters = useRef(["Q1"]);
+	const quarters = useRef(isSport("hockey") ? [1] : ["Q1"]);
 	const componentIsMounted = useRef(false);
 	const events = useRef<any[] | undefined>();
 

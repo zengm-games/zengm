@@ -52,6 +52,11 @@ const RosterContinuity = ({
 								"table-warning": pct >= 0.725 && pct < 0.825,
 								"table-success": pct >= 0.825,
 							},
+							hockey: {
+								"table-danger": pct < 0.725,
+								"table-warning": pct >= 0.725 && pct < 0.825,
+								"table-success": pct >= 0.825,
+							},
 						}),
 						value: pct.toFixed(2),
 					};

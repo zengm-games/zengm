@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { bySport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerFeats">,
@@ -40,21 +40,23 @@ const updatePlayers = async (
 		}
 
 		const featsProcessed = feats.map(feat => {
-			feat.stats.trb = feat.stats.orb + feat.stats.drb;
-			feat.stats.fgp =
-				feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
-			feat.stats.tpp =
-				feat.stats.tpa > 0 ? (100 * feat.stats.tp) / feat.stats.tpa : 0;
-			feat.stats.ftp =
-				feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
+			if (isSport("basketball")) {
+				feat.stats.trb = feat.stats.orb + feat.stats.drb;
+				feat.stats.fgp =
+					feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
+				feat.stats.tpp =
+					feat.stats.tpa > 0 ? (100 * feat.stats.tp) / feat.stats.tpa : 0;
+				feat.stats.ftp =
+					feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
+
+				feat.stats.gmsc = helpers.gameScore(feat.stats);
+			}
 
 			if (feat.overtimes === 1) {
 				feat.score += " (OT)";
 			} else if (feat.overtimes > 1) {
 				feat.score += ` (${feat.overtimes}OT)`;
 			}
-
-			feat.stats.gmsc = helpers.gameScore(feat.stats);
 
 			let type: string;
 			if (feat.playoffs) {
@@ -117,6 +119,33 @@ const updatePlayers = async (
 				"defSft",
 				"prTD",
 				"krTD",
+			],
+			hockey: [
+				"g",
+				"a",
+				"pts",
+				"pm",
+				"pim",
+				"evG",
+				"ppG",
+				"shG",
+				"gwG",
+				"evA",
+				"ppA",
+				"shA",
+				"gwA",
+				"s",
+				"sPct",
+				"tsa",
+				"min",
+				"amin",
+				"fow",
+				"fol",
+				"foPct",
+				"blk",
+				"hit",
+				"tk",
+				"gv",
 			],
 		});
 		return {

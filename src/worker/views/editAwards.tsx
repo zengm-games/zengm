@@ -51,6 +51,7 @@ const updateAwards = async (
 			stats: bySport({
 				basketball: ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"],
 				football: ["abbrev", "tid", "keyStats"],
+				hockey: ["abbrev", "tid", "keyStats"],
 			}),
 			fuzz: true,
 			mergeStats: true,

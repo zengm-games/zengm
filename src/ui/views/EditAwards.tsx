@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
-import { AWARD_NAMES, bySport, isSport } from "../../common";
+import { AWARD_NAMES, isSport, SIMPLE_AWARDS } from "../../common";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -257,11 +257,6 @@ const EditAwards = ({
 		}
 	};
 
-	const simpleAwardKeys = bySport({
-		basketball: ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"],
-		football: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"],
-	});
-
 	const getPlayer = (p?: { pid: number }) => {
 		if (!p) {
 			return;
@@ -296,7 +291,7 @@ const EditAwards = ({
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					{simpleAwardKeys.map(key => (
+					{SIMPLE_AWARDS.map(key => (
 						<div key={key} className="col-lg-4 col-md-6 form-group">
 							<label>{AWARD_NAMES[key]}</label>
 							<SelectMultiple

@@ -51,8 +51,10 @@ const processStats = (
 				row[stat] = percentage(ts.sv, ts.sv + ts.ga);
 			} else if (stat === "foPct") {
 				row[stat] = percentage(ts.fow, ts.fow + ts.fol);
+			} else if (stat === "qsPct") {
+				row[stat] = percentage(ts.qs, ts.gp);
 			} else if (stat === "gaa") {
-				row[stat] = ratio(ts.ga, ts.gp);
+				row[stat] = ratio(oppG, ts.gp);
 			} else if (stat === "oppG") {
 				row[stat] = oppG;
 			} else if (stat === "oppA") {
@@ -66,7 +68,7 @@ const processStats = (
 			} else if (stat === "oppFoPct") {
 				row[stat] = percentage(ts.oppFow, ts.oppFow + ts.oppFol);
 			} else if (stat === "oppGaa") {
-				row[stat] = ratio(ts.oppGa, ts.gp);
+				row[stat] = ratio(g, ts.gp);
 			} else {
 				row[stat] = ts[stat];
 			}

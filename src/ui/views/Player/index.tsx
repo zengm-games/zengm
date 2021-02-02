@@ -23,7 +23,7 @@ import {
 	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
-import { bySport, PHASE, PLAYER } from "../../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
@@ -503,18 +503,22 @@ const Player2 = ({
 								)}
 								<Relatives pid={player.pid} relatives={player.relatives} />
 								{draftInfo}
-								College:{" "}
-								<a
-									href={helpers.leagueUrl([
-										"frivolities",
-										"most",
-										"college",
-										window.encodeURIComponent(college),
-									])}
-								>
-									{college}
-								</a>
-								<br />
+								{isSport("hockey") && college === "None" ? null : (
+									<>
+										College:{" "}
+										<a
+											href={helpers.leagueUrl([
+												"frivolities",
+												"most",
+												"college",
+												window.encodeURIComponent(college),
+											])}
+										>
+											{college}
+										</a>
+										<br />
+									</>
+								)}
 								Experience:{" "}
 								{player.experience === 0
 									? "none"

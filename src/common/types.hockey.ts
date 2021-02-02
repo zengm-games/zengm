@@ -9,6 +9,7 @@ export type TeamStatAttr =
 	| "sPct"
 	| "svPct"
 	| "foPct"
+	| "qsPct"
 	| "gaa"
 	| "oppG"
 	| "oppA"

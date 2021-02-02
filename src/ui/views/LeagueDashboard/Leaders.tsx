@@ -21,6 +21,7 @@ const Leader = ({
 	const numberToDisplay = bySport({
 		basketball: helpers.roundStat(value, stat),
 		football: helpers.numberWithCommas(value),
+		hockey: helpers.numberWithCommas(value),
 	});
 
 	return (

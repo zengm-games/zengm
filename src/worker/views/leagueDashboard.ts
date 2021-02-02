@@ -81,10 +81,12 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pssYdsPerGame",
 				"rusYdsPerGame",
 			] as const,
+			hockey: ["g", "a"] as const,
 		});
 		const statNames = bySport({
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
+			hockey: ["Goals", "Allowed"],
 		});
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({

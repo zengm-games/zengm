@@ -132,7 +132,7 @@ const processLiveGameEvents = ({
 	let stop = false;
 	let text;
 	let prevText;
-	let e2: PlayByPlayEvent;
+	let e2: PlayByPlayEvent | undefined;
 
 	while (!stop && events.length > 0) {
 		const e = events.shift();
@@ -145,7 +145,7 @@ const processLiveGameEvents = ({
 		// @ts-ignore
 		const actualT = e.t === 0 ? 1 : 0;
 
-		if (e.quarter !== undefined && !quarters.includes(e.quarter)) {
+		if (e.type !== "init" && !quarters.includes(e.quarter)) {
 			quarters.push(e.quarter);
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
@@ -233,8 +233,9 @@ const processLiveGameEvents = ({
 				const show =
 					cmpTime(formatClock(event.clock), boxScore.time) !== -1 &&
 					prevText === getText(event, boxScore.numPeriods) &&
-					e2.clock === event.clock &&
-					e2.quarter === event.quarter;
+					e2 &&
+					(e2 as any).clock === event.clock &&
+					(e2 as any).quarter === event.quarter;
 				event.hide = !show;
 			}
 		}

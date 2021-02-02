@@ -265,7 +265,7 @@ const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
 	dpoy: "Defensive Player of the Year",
-	goal: "Best Goalie",
+	goy: "Goalie of the Year",
 	finalsMvp: "Finals MVP",
 	allLeague: "All-League",
 	allRookie: "All-Rookie Team",

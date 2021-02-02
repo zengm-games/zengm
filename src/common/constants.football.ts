@@ -419,7 +419,7 @@ const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-const SIMPLE_AWARDS = ["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const;
+const SIMPLE_AWARDS = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
 
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",

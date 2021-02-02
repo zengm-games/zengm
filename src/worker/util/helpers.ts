@@ -324,6 +324,7 @@ const quarterLengthFactor = () => {
 		return 1;
 	}
 
+	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	return Math.sqrt(
 		(g.get("numPeriods") * g.get("quarterLength")) /
 			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength),

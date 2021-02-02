@@ -54,18 +54,23 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 	  };
 
-export type PlayByPlayEvent = (
-	| PlayByPlayEventInput
+export type PlayByPlayEvent =
+	| ((
+			| PlayByPlayEventInput
+			| {
+					type: "stat";
+					t: TeamNum;
+					pid: number | undefined | null;
+					s: string;
+					amt: number;
+			  }
+	  ) & {
+			quarter: number;
+	  })
 	| {
-			type: "stat";
-			t: TeamNum;
-			pid: number | undefined | null;
-			s: string;
-			amt: number;
-	  }
-) & {
-	quarter: number;
-};
+			type: "init";
+			boxScore: any;
+	  };
 
 export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
@@ -122,7 +127,7 @@ class PlayByPlayLogger {
 		});
 	}
 
-	getPlayByPlay(boxScore: any) {
+	getPlayByPlay(boxScore: any): PlayByPlayEvent[] | undefined {
 		if (!this.active) {
 			return;
 		}

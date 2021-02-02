@@ -176,7 +176,10 @@ const PlayerStats = ({
 				Players on your team are{" "}
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
-				. Only players averaging more than 5 minutes per game are shown.
+				.
+				{isSport("basketball")
+					? " Only players averaging more than 5 minutes per game are shown."
+					: null}
 			</p>
 
 			<DataTable
@@ -196,19 +199,7 @@ PlayerStats.propTypes = {
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
 	season: PropTypes.number, // Undefined for career totals
-	statType: PropTypes.oneOf([
-		"advanced",
-		"gameHighs",
-		"per36",
-		"perGame",
-		"shotLocations",
-		"totals",
-		"passing",
-		"rushing",
-		"defense",
-		"kicking",
-		"returns",
-	]).isRequired,
+	statType: PropTypes.string.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,
 	userTid: PropTypes.number,

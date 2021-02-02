@@ -456,6 +456,7 @@ const playerStats = (params: Params) => {
 	const defaultStatType = bySport({
 		basketball: "perGame",
 		football: "passing",
+		hockey: "skater",
 	});
 	return {
 		abbrev,
@@ -470,6 +471,7 @@ const playerStatDists = (params: Params) => {
 	const defaultStatType = bySport({
 		basketball: "perGame",
 		football: "passing",
+		hockey: "skater",
 	});
 	return {
 		season: validateSeason(params.season),

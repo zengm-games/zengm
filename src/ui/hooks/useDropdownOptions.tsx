@@ -103,6 +103,8 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	flag: "Flagged Players",
 	note: "Players With Notes",
 	either: "Either",
+	skater: "Skaters",
+	goalie: "Goalies",
 };
 
 export const getDropdownValue = (
@@ -212,17 +214,22 @@ const useDropdownOptions = (field: string) => {
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
-		if (isSport("basketball")) {
-			keys = ["perGame", "per36", "totals"];
-
-			if (field === "statTypesAdv") {
-				keys.push("shotLocations");
-				keys.push("advanced");
-				keys.push("gameHighs");
-			}
-		} else {
-			keys = ["passing", "rushing", "defense", "kicking", "returns"];
-		}
+		keys = bySport({
+			basketball: [
+				"perGame",
+				"per36",
+				"totals",
+				...(field === "statTypesAdv"
+					? ["shotLocations", "advanced", "gameHighs"]
+					: []),
+			],
+			football: ["passing", "rushing", "defense", "kicking", "returns"],
+			hockey: [
+				"skater",
+				"goalie",
+				...(field === "statTypesAdv" ? ["advanced"] : []),
+			],
+		});
 	} else if (field === "awardType") {
 		keys = bySport({
 			basketball: [

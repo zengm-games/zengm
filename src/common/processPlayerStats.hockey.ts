@@ -42,7 +42,7 @@ const processStats = (
 			row[stat] = percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "gaa") {
 			row[stat] = ratio(ps.ga, ps.gp);
-		} else if (stat === "atoi") {
+		} else if (stat === "amin") {
 			row[stat] = ratio(ps.min, ps.gp);
 		} else if (stat === "age") {
 			if (bornYear === undefined) {

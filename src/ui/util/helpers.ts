@@ -30,6 +30,7 @@ const roundOverrides: Record<
 	string,
 	| "none"
 	| "oneDecimalPlace"
+	| "twoDecimalPlaces"
 	| "roundWinp"
 	| "plusMinus"
 	| "plusMinusNoDecimalPlace"
@@ -178,6 +179,75 @@ const roundOverrides: Record<
 		allPurposeYds: "noDecimalPlace",
 		av: "noDecimalPlace",
 	},
+	hockey: {
+		gp: "noDecimalPlace",
+		gs: "noDecimalPlace",
+		yearsWithTeam: "noDecimalPlace",
+		w: "noDecimalPlace",
+		l: "noDecimalPlace",
+		t: "noDecimalPlace",
+		otl: "noDecimalPlace",
+		qs: "noDecimalPlace",
+		rbs: "noDecimalPlace",
+		pm: "plusMinusNoDecimalPlace",
+		pim: "oneDecimalPlace",
+		evG: "noDecimalPlace",
+		ppG: "noDecimalPlace",
+		shG: "noDecimalPlace",
+		gwG: "noDecimalPlace",
+		evA: "noDecimalPlace",
+		ppA: "noDecimalPlace",
+		shA: "noDecimalPlace",
+		gwA: "noDecimalPlace",
+		s: "noDecimalPlace",
+		tsa: "noDecimalPlace",
+		fow: "noDecimalPlace",
+		fol: "noDecimalPlace",
+		foPct: "oneDecimalPlace",
+		blk: "noDecimalPlace",
+		hit: "noDecimalPlace",
+		tk: "noDecimalPlace",
+		gv: "noDecimalPlace",
+		ga: "noDecimalPlace",
+		sv: "noDecimalPlace",
+		so: "noDecimalPlace",
+		g: "noDecimalPlace",
+		a: "noDecimalPlace",
+		pts: "noDecimalPlace",
+		sPct: "oneDecimalPlace",
+		svPct: "oneDecimalPlace",
+		qsPct: "oneDecimalPlace",
+		rbsPct: "oneDecimalPlace",
+		sa: "noDecimalPlace",
+		gaa: "twoDecimalPlaces",
+		ps: "oneDecimalPlace",
+		ops: "oneDecimalPlace",
+		dps: "oneDecimalPlace",
+		gps: "oneDecimalPlace",
+		gc: "oneDecimalPlace",
+		amin: "oneDecimalPlace",
+		minMax: "oneDecimalPlace",
+		pmMax: "plusMinusNoDecimalPlace",
+		pimMax: "oneDecimalPlace",
+		evGMax: "noDecimalPlace",
+		ppGMax: "noDecimalPlace",
+		shGMax: "noDecimalPlace",
+		evAMax: "noDecimalPlace",
+		ppAMax: "noDecimalPlace",
+		shAMax: "noDecimalPlace",
+		sMax: "noDecimalPlace",
+		tsaMax: "noDecimalPlace",
+		fowMax: "noDecimalPlace",
+		folMax: "noDecimalPlace",
+		blkMax: "noDecimalPlace",
+		hitMax: "noDecimalPlace",
+		tkMax: "noDecimalPlace",
+		gvMax: "noDecimalPlace",
+		gaMax: "noDecimalPlace",
+		svMax: "noDecimalPlace",
+		gMax: "noDecimalPlace",
+		aMax: "noDecimalPlace",
+	},
 });
 
 const roundStat = (
@@ -201,6 +271,13 @@ const roundStat = (
 			return value.toLocaleString("en-US", {
 				maximumFractionDigits: 1,
 				minimumFractionDigits: 1,
+			});
+		}
+
+		if (roundOverrides[stat] === "twoDecimalPlaces") {
+			return value.toLocaleString("en-US", {
+				maximumFractionDigits: 2,
+				minimumFractionDigits: 2,
 			});
 		}
 

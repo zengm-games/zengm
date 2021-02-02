@@ -140,7 +140,8 @@ const PLAYER_STATS_TABLES = {
 		name: "Game Highs",
 		stats: [
 			"gp",
-			"minMax",
+			"gMax",
+			"aMax",
 			"pmMax",
 			"pimMax",
 			"evGMax",
@@ -151,6 +152,7 @@ const PLAYER_STATS_TABLES = {
 			"shAMax",
 			"sMax",
 			"tsaMax",
+			"minMax",
 			"fowMax",
 			"folMax",
 			"blkMax",
@@ -159,9 +161,6 @@ const PLAYER_STATS_TABLES = {
 			"gvMax",
 			"gaMax",
 			"svMax",
-			"soMax",
-			"gMax",
-			"aMax",
 		],
 	},
 };

@@ -295,14 +295,18 @@ const writePlayerStats = async (
 							const stat = key.replace("Max", "");
 
 							let value;
-							if (stat === "2p") {
+							if (isSport("basketball") && stat === "2p") {
 								value = p.stat.fg - p.stat.tp;
-							} else if (stat === "2pa") {
+							} else if (isSport("basketball") && stat === "2pa") {
 								value = p.stat.fga - p.stat.tpa;
-							} else if (stat === "trb") {
+							} else if (isSport("basketball") && stat === "trb") {
 								value = p.stat.drb + p.stat.orb;
-							} else if (stat === "gmsc") {
+							} else if (isSport("basketball") && stat === "gmsc") {
 								value = helpers.gameScore(p.stat);
+							} else if (isSport("hockey") && stat === "g") {
+								value = p.stat.evG + p.stat.ppG + p.stat.shG;
+							} else if (isSport("hockey") && stat === "a") {
+								value = p.stat.evA + p.stat.ppA + p.stat.shA;
 							} else {
 								value = p.stat[stat];
 							}

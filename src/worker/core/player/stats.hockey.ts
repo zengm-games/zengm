@@ -83,7 +83,6 @@ const stats = {
 		"gvMax",
 		"gaMax",
 		"svMax",
-		"soMax",
 		"gMax",
 		"aMax",
 	] as const,

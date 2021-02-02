@@ -17,6 +17,7 @@ const NUM_ALL_STARS =
 	bySport({
 		basketball: 12,
 		football: 40,
+		hockey: 12,
 	});
 
 const create = async (conditions: Conditions) => {
@@ -33,6 +34,7 @@ const create = async (conditions: Conditions) => {
 		bySport({
 			football: p.currentStats.av,
 			basketball: p.currentStats.ewa + p.currentStats.ws,
+			hockey: p.currentStats.ps,
 		});
 
 	const sortedPlayers = getTopPlayers(

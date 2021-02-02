@@ -215,6 +215,7 @@ const newPhasePreseason = async (
 				`Internet sleuths on /r/${bySport({
 					basketball: "nba",
 					football: "nfl",
+					hockey: "hockey",
 				})} uncovered evidence that ${name}`,
 				`Internet sleuths on Twitter uncovered evidence that ${name}`,
 				`In an emotional interview on 60 Minutes, ${name} admitted that he`,

@@ -5,7 +5,7 @@ import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 
-const gameOrWeek = bySport({ basketball: "game", football: "week" });
+const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
 	p: any,
@@ -53,10 +53,10 @@ const doInjury = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	let injuryLength = "short";
-	if (p2.injury.gamesRemaining >= bySport({ basketball: 10, football: 4 })) {
+	if (p2.injury.gamesRemaining >= bySport({ default: 10, football: 4 })) {
 		injuryLength = "medium";
 	} else if (
-		p2.injury.gamesRemaining >= bySport({ basketball: 20, football: 8 })
+		p2.injury.gamesRemaining >= bySport({ default: 20, football: 8 })
 	) {
 		injuryLength = "long";
 	}
@@ -128,8 +128,8 @@ const doInjury = async (
 
 	let ratingsLoss = false;
 	const gamesRemainingNormalized = bySport({
-		basketball: p2.injury.gamesRemaining,
 		football: p2.injury.gamesRemaining * 3,
+		default: p2.injury.gamesRemaining,
 	});
 
 	if (
@@ -159,12 +159,18 @@ const doInjury = async (
 			1,
 			100,
 		);
-		const rating = bySport({ basketball: "jmp", football: "thp" });
-		p2.ratings[r][rating] = helpers.bound(
-			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
-			1,
-			100,
-		);
+		const rating = bySport({
+			basketball: "jmp",
+			football: "thp",
+			hockey: undefined,
+		});
+		if (rating) {
+			p2.ratings[r][rating] = helpers.bound(
+				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
+				1,
+				100,
+			);
+		}
 
 		// Update ovr and pot
 		await player.develop(p2, 0);

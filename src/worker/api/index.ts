@@ -1803,6 +1803,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 			"ftp",
 		],
 		football: ["keyStats"],
+		hockey: ["keyStats"],
 	});
 
 	return idb.getCopy.playersPlus(p, {

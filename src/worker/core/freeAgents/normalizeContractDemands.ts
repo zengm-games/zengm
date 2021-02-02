@@ -11,7 +11,7 @@ const LEARNING_RATE = 0.5;
 // 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
 const ROUNDS = bySport({
 	football: 0,
-	basketball: 60,
+	default: 60,
 });
 
 const getExpiration = (

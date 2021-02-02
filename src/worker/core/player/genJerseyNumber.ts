@@ -125,6 +125,115 @@ const weightFunction = bySport({
 		return frequency ?? 0.25;
 	},
 	football: () => 1,
+	hockey: (jerseyNumber: string) => {
+		// https://www.hockey-reference.com/leagues/NHL_2020_numbers.html
+		const frequencies: Record<string, number> = {
+			1: 7,
+			2: 12,
+			3: 15,
+			4: 16,
+			5: 16,
+			6: 20,
+			7: 14,
+			8: 19,
+			9: 17,
+			10: 16,
+			11: 16,
+			12: 14,
+			13: 19,
+			14: 21,
+			15: 19,
+			16: 14,
+			17: 21,
+			18: 19,
+			19: 22,
+			20: 23,
+			21: 22,
+			22: 19,
+			23: 20,
+			24: 19,
+			25: 17,
+			26: 22,
+			27: 19,
+			28: 32,
+			29: 21,
+			30: 16,
+			31: 14,
+			32: 13,
+			33: 18,
+			34: 17,
+			35: 15,
+			36: 15,
+			37: 19,
+			38: 18,
+			39: 13,
+			40: 15,
+			41: 13,
+			42: 14,
+			43: 11,
+			44: 24,
+			45: 12,
+			46: 17,
+			47: 14,
+			48: 14,
+			49: 10,
+			50: 13,
+			51: 9,
+			52: 10,
+			53: 14,
+			54: 5,
+			55: 14,
+			56: 7,
+			57: 8,
+			58: 11,
+			59: 6,
+			60: 9,
+			61: 10,
+			62: 7,
+			63: 8,
+			64: 10,
+			65: 7,
+			66: 0,
+			67: 11,
+			68: 6,
+			69: 0,
+			70: 9,
+			71: 12,
+			72: 12,
+			73: 9,
+			74: 13,
+			75: 9,
+			76: 4,
+			77: 15,
+			78: 4,
+			79: 7,
+			80: 5,
+			81: 10,
+			82: 5,
+			83: 8,
+			84: 2,
+			85: 2,
+			86: 8,
+			87: 2,
+			88: 11,
+			89: 8,
+			90: 11,
+			91: 8,
+			92: 8,
+			93: 5,
+			94: 2,
+			95: 6,
+			96: 2,
+			97: 2,
+			98: 1,
+			99: 0,
+		};
+
+		const frequency = frequencies[jerseyNumber];
+
+		// +1 is to make the 0s possible
+		return frequency ?? 0.25;
+	},
 });
 
 const genFootballWeightFunction = (boost: number[]) => {
@@ -148,7 +257,7 @@ const weightFunctionsByPosition = bySport({
 		K: genFootballWeightFunction(range(1, 20)),
 		P: genFootballWeightFunction(range(1, 20)),
 	},
-	basketball: {},
+	default: undefined,
 });
 
 const genJerseyNumber = async (
@@ -209,15 +318,15 @@ const genJerseyNumber = async (
 		return prevJerseyNumber;
 	}
 
-	if (isSport("basketball")) {
-		return random.choice(candidates, weightFunction);
+	if (weightFunctionsByPosition) {
+		const pos = p.ratings[p.ratings.length - 1].pos;
+		if ((weightFunctionsByPosition as any)[pos]) {
+			return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
+		}
+		return random.choice(candidates);
 	}
 
-	const pos = p.ratings[p.ratings.length - 1].pos;
-	if ((weightFunctionsByPosition as any)[pos]) {
-		return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
-	}
-	return random.choice(candidates);
+	return random.choice(candidates, weightFunction);
 };
 
 export default genJerseyNumber;

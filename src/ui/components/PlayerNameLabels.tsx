@@ -43,9 +43,9 @@ const PlayerNameLabels = (props: {
 			);
 		} else if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
 			// type check is for 1 game injuries, they're stored as 0 in the box score because number of games is determined after the game is played
-			const dayOrWeek = bySport({ basketball: "day", football: "week" });
+			const gameOrWeek = bySport({ default: "game", football: "week" });
 			const title = `${injury.type} (out ${injury.gamesRemaining} more ${
-				injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`
+				injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
 			})`;
 			injuryIcon = (
 				<span className="badge badge-danger badge-injury" title={title}>

@@ -259,24 +259,15 @@ const RATINGS: RatingKey[] = [
 	"glk",
 ];
 
-const SIMPLE_AWARDS = [
-	"mvp",
-	"roy",
-	"smoy",
-	"dpoy",
-	"mip",
-	"finalsMvp",
-] as const;
+const SIMPLE_AWARDS = ["mvp", "roy", "dpoy", "goal", "finalsMvp"] as const;
 
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
-	smoy: "Sixth Man of the Year",
 	dpoy: "Defensive Player of the Year",
-	mip: "Most Improved Player",
+	goal: "Best Goalie",
 	finalsMvp: "Finals MVP",
 	allLeague: "All-League",
-	allDefensive: "All-Defensive",
 	allRookie: "All-Rookie Team",
 } as const;
 

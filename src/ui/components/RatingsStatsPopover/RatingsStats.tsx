@@ -21,8 +21,6 @@ const RatingsStats = (props: { ratings: any; stats: any }) => {
 			challengeNoRatings,
 		}),
 	});
-
-	return;
 };
 
 export default RatingsStats;

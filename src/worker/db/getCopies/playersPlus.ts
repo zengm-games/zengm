@@ -401,6 +401,7 @@ const weightByMinutes = bySport({
 		"bpm",
 	],
 	football: [],
+	hockey: [],
 });
 
 const reduceCareerStats = (

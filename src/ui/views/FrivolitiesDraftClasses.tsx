@@ -27,9 +27,13 @@ const FrivolitiesDraftClasses = ({
 	const cols = getCols(
 		"#",
 		"Season",
-		bySport({ basketball: "stat:ws", football: "stat:av" }),
+		bySport({ basketball: "stat:ws", football: "stat:av", hockey: "stat:ps" }),
 		"Active",
-		bySport({ basketball: "count:allStar", football: "count:allLeague" }),
+		bySport({
+			basketball: "count:allStar",
+			football: "count:allLeague",
+			hockey: "count:allLeague",
+		}),
 		"count:mvp",
 		"HoF",
 		"Name",
@@ -52,7 +56,7 @@ const FrivolitiesDraftClasses = ({
 				</a>,
 				helpers.roundStat(
 					draftClass.value,
-					bySport({ basketball: "ws", football: "av" }),
+					bySport({ basketball: "ws", football: "av", hockey: "ps" }),
 					true,
 				),
 				draftClass.numActive,

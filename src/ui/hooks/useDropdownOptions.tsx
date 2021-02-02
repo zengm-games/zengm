@@ -1,11 +1,5 @@
 import orderBy from "lodash/orderBy";
-import {
-	PHASE,
-	TEAM_STATS_TABLES,
-	POSITIONS,
-	isSport,
-	bySport,
-} from "../../common";
+import { PHASE, TEAM_STATS_TABLES, POSITIONS, bySport } from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
@@ -263,6 +257,17 @@ const useDropdownOptions = (field: string) => {
 				"dpoy",
 				"oroy",
 				"droy",
+				"first_team",
+				"second_team",
+				"all_league",
+			],
+			hockey: [
+				"champion",
+				"mvp",
+				"finals_mvp",
+				"dpoy",
+				"roy",
+				"goal",
 				"first_team",
 				"second_team",
 				"all_league",

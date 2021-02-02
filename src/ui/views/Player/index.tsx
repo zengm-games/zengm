@@ -371,7 +371,7 @@ const Player2 = ({
 			</div>
 		);
 	} else {
-		const dayOrWeek = bySport({ basketball: "day", football: "week" });
+		const gameOrWeek = bySport({ default: "game", football: "week" });
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (
@@ -380,7 +380,7 @@ const Player2 = ({
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${
-							player.injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`
+							player.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
 						})`}
 					>
 						{player.injury.gamesRemaining}

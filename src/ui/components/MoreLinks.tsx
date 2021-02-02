@@ -119,6 +119,7 @@ const MoreLinks = (
 					bySport({
 						football: "passing",
 						basketball: "totals",
+						hockey: "skater",
 					}),
 				],
 				name: "Franchise Leaders",

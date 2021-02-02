@@ -15,6 +15,7 @@ const newSchedule = (
 	const tids = bySport({
 		basketball: newScheduleBasketball(teams),
 		football: newScheduleFootball(teams),
+		hockey: newScheduleBasketball(teams),
 	});
 
 	const tradeDeadline = g.get("tradeDeadline");

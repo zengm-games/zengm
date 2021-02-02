@@ -364,8 +364,8 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 					{
 						label: (
 							<>
+								<span className="d-none d-md-inline">Shot </span>
 								Blocking
-								<span className="d-none d-md-inline"> Shots</span>
 							</>
 						),
 						rating: "blk",

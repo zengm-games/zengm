@@ -10,6 +10,7 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ps"],
 	});
 
 	let playersAll;

@@ -114,6 +114,7 @@ const updateFrivolitiesDraftClasses = async (
 				"ws48",
 			],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ps"],
 		});
 
 		const bestPlayersAll = draftClasses.map(

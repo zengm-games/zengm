@@ -22,6 +22,7 @@ const updateDraftTeamHistory = async (
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ps"],
 	});
 	const playersAll2 = await idb.getCopies.players({
 		filter,

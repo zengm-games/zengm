@@ -23,6 +23,7 @@ const updatePlayers = async (
 				"ws48",
 			],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ps"],
 		});
 
 		let playersAll: Player[] = [];

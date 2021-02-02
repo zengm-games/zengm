@@ -1252,7 +1252,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"rating:blk": {
-			desc: "Blocking Shots",
+			desc: "Shot Blocking",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},

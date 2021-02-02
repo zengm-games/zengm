@@ -100,6 +100,7 @@ const updateTrade = async () => {
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ps"],
 	});
 	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,

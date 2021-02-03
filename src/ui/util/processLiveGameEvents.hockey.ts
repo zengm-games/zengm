@@ -41,73 +41,85 @@ export const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
+const getText = (
+	event: PlayByPlayEvent,
+	boxScore: {
+		numPeriods: number;
+		time: string;
+		teams: [{ abbrev: string }, { abbrev: string }];
+	},
+) => {
+	let text;
+
 	if (event.type === "injury") {
-		return `${event.names[0]} was injured!`;
+		text = `${event.names[0]} was injured!`;
 	}
 	if (event.type === "quarter") {
-		return `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
-			numPeriods,
+		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
+			boxScore.numPeriods,
 		)}`;
 	}
 	if (event.type === "overtime") {
-		return "Start of overtime";
+		text = "Start of overtime";
 	}
 	if (event.type === "gameOver") {
-		return "End of game";
+		text = "End of game";
 	}
 	if (event.type === "hit") {
-		return `${event.names[0]} hit ${event.names[1]}`;
+		text = `${event.names[0]} hit ${event.names[1]}`;
 	}
 	if (event.type === "gv") {
-		return `Giveaway by ${event.names[0]}`;
+		text = `Giveaway by ${event.names[0]}`;
 	}
 	if (event.type === "tk") {
-		return `Takeaway by ${event.names[0]}`;
+		text = `Takeaway by ${event.names[0]}`;
 	}
 	if (event.type === "slapshot") {
-		return `Slapshot from ${event.names[0]}`;
+		text = `Slapshot from ${event.names[0]}`;
 	}
 	if (event.type === "wristshot") {
-		return `Wristshot by ${event.names[0]}`;
+		text = `Wristshot by ${event.names[0]}`;
 	}
 	if (event.type === "shot") {
-		return `Shot by ${event.names[0]}`;
+		text = `Shot by ${event.names[0]}`;
 	}
 	if (event.type === "block") {
-		return `Blocked by ${event.names[0]}`;
+		text = `Blocked by ${event.names[0]}`;
 	}
 	if (event.type === "miss") {
-		return "Shot missed the goal";
+		text = "Shot missed the goal";
 	}
 	if (event.type === "save") {
-		return `Saved by ${event.names[0]}`;
+		text = `Saved by ${event.names[0]}`;
 	}
 	if (event.type === "save-freeze") {
-		return `Saved by ${event.names[0]}, and he freezes the puck`;
+		text = `Saved by ${event.names[0]}, and he freezes the puck`;
 	}
 	if (event.type === "faceoff") {
-		return `${event.names[0]} wins the faceoff against ${event.names[1]}`;
+		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
 	}
 	if (event.type === "goal") {
-		let text = "Goal!!!";
+		text = "Goal!!!";
 		if (event.names.length > 1) {
 			text += ` (assist: ${event.names.slice(1).join(", ")})`;
 		}
-		return text;
 	}
 	if (event.type === "offensiveLineChange") {
-		return "Offensive line change";
+		text = "Offensive line change";
 	}
 	if (event.type === "fullLineChange") {
-		return "Full line change";
+		text = "Full line change";
 	}
 	if (event.type === "defensiveLineChange") {
-		return "Defensive line change";
+		text = "Defensive line change";
 	}
 
-	console.log(event);
-	return `??? ${event.type}`;
+	if (text === undefined) {
+		throw new Error(`Invalid event type "${event.type}"`);
+	}
+
+	const actualT = event.t === 0 ? 1 : 0;
+	return `${boxScore.time} - ${boxScore.teams[actualT].abbrev} - ${text}`;
 };
 
 // Mutates boxScore!!!
@@ -212,7 +224,7 @@ const processLiveGameEvents = ({
 			}
 
 			prevText = text;
-			text = getText(e, boxScore.numPeriods);
+			text = getText(e, boxScore);
 			boxScore.time = formatClock(e.clock);
 			stop = true;
 		}
@@ -236,7 +248,7 @@ const processLiveGameEvents = ({
 				// Current quarter - this is the normal way all events will be shown. Used to just check time, but then scoring summary would update at the beginning of a play, since the scoring event has the same timestamp. So now also check for the internal properties of the event object, since it should always come through as "e" from above. Don't check event.t because that gets flipped in box score display
 				const show =
 					cmpTime(formatClock(event.clock), boxScore.time) !== -1 &&
-					prevText === getText(event, boxScore.numPeriods) &&
+					prevText === getText(event, boxScore) &&
 					e2 &&
 					(e2 as any).clock === event.clock &&
 					(e2 as any).quarter === event.quarter;

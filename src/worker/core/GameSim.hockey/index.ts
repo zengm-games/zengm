@@ -2,13 +2,12 @@ import { PHASE } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { POSITIONS } from "../../../common/constants.hockey";
 import PlayByPlayLogger from "./PlayByPlayLogger";
-import getCompositeFactor from "./getCompositeFactor";
+// import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";
-import penalties from "./penalties";
+// import penalties from "./penalties";
 import type { Position } from "../../../common/types.hockey";
 import type {
 	CompositeRating,
-	PenaltyPlayType,
 	PlayerGameSim,
 	PlayersOnIce,
 	TeamGameSim,

@@ -36,6 +36,12 @@ const processTeamInfo = async (
 	};
 	Object.assign(t, info);
 
+	// Make sure this didn't fuck up the cid somehow, such as if the user moved a team to a new conference, but then the scheduled event only has the div because it assumes conference didn't change. THIS WOULD BE LESS LIKELY TO HAPPEN IF NEW DIVS/CONFS WERE NOT CREATED BEFORE TEAM DID/CID VALUES WERE UPDATED! https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkRDqKPHCkJdLXcZvNCxhbGzn
+	const div = g.get("divs").find(div => div.did === t.did);
+	if (div) {
+		t.cid = div.cid;
+	}
+
 	await idb.cache.teams.put(t);
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(

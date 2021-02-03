@@ -45,6 +45,16 @@ const categories = bySport({
 		"allRookie",
 		"allLeague",
 	],
+	hockey: [
+		"mvp",
+		"dpoy",
+		"roy",
+		"goy",
+		"bestRecord",
+		"bestRecordConf",
+		"allRookie",
+		"allLeague",
+	],
 });
 
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>

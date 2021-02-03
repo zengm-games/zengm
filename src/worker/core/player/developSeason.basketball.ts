@@ -16,9 +16,9 @@ const defaultFormula: RatingFormula = {
 	},
 	changeLimits: (age: number) => {
 		if (age <= 23) {
-			return [-2, 10];
+			return [-2, 20];
 		} else if (age <= 25) {
-			return [-5, 5];
+			return [-5, 10];
 		}
 		const age_adj = -0.5 * (age - 25);
 		return [-5 + age_adj, 5 + age_adj];
@@ -143,11 +143,11 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 
 	// Noise
 	if (age <= 23) {
-		val += helpers.bound(random.realGauss(0, 7), -5, 20);
+		val += helpers.bound(random.realGauss(0, 8), -2, 8);
 	} else if (age <= 28) {
-		val += helpers.bound(random.realGauss(0, 6), -10, 15);
+		val += helpers.bound(random.realGauss(0, 6), -2, 6);
 	} else {
-		val += helpers.bound(random.realGauss(0, 5), -15, 10);
+		val += helpers.bound(random.realGauss(0, 4), -2, 4);
 	}
 
 	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
@@ -179,26 +179,7 @@ const developSeason = (
 			ratings.hgt += 1;
 		}
 	}
-	const baseChangeStre = calcBaseChange(age, coachingRank);
-	const baseChangeFin = calcBaseChange(age, coachingRank);
-	const baseChangeSho = calcBaseChange(age, coachingRank);
-
-	const ratingsNumbers: Record<Exclude<RatingKey, "hgt">, number> = {
-		stre: baseChangeStre,
-		spd: baseChangeFin,
-		jmp: baseChangeFin,
-		endu: baseChangeStre,
-		dnk: baseChangeStre,
-		ins: baseChangeStre,
-		ft: baseChangeSho,
-		fg: baseChangeSho,
-		tp: baseChangeSho,
-		oiq: baseChangeFin,
-		diq: baseChangeStre,
-		drb: baseChangeFin,
-		pss: baseChangeFin,
-		reb: baseChangeStre,
-	};
+	const baseChange = calcBaseChange(age, coachingRank);
 
 	for (const key of helpers.keys(ratingsFormulas)) {
 		const ageModifier = ratingsFormulas[key].ageModifier(age);
@@ -207,7 +188,7 @@ const developSeason = (
 		ratings[key] = limitRating(
 			ratings[key] +
 				helpers.bound(
-					(ratingsNumbers[key] + ageModifier) * random.uniform(0.7, 1.3),
+					(baseChange + ageModifier) * random.uniform(0.1, 1.7),
 					changeLimits[0],
 					changeLimits[1],
 				),

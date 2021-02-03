@@ -13,7 +13,7 @@ const generate = (race?: Race) => {
 			id: bySport({
 				basketball: "jersey3",
 				football: "football",
-				hockey: "football",
+				hockey: "hockey",
 			}),
 		},
 	};

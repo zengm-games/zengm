@@ -5,9 +5,9 @@ import advStatsHockey from "./advStats.hockey";
 
 const advStats = () => {
 	return bySport({
-		basketball: advStatsBasketball,
-		football: advStatsFootball,
-		hockey: advStatsHockey,
+		basketball: advStatsBasketball(),
+		football: advStatsFootball(),
+		hockey: advStatsHockey(),
 	});
 };
 

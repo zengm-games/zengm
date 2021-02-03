@@ -54,10 +54,10 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			(p.stats.g + 0.5 * p.stats.a) *
 			(t.stats.g / (t.stats.g + 0.5 * t.stats.a));
 
-		if (OFFENSIVE_POSITIONS.includes(p.stats.pos)) {
+		if (OFFENSIVE_POSITIONS.includes(p.ratings.pos)) {
 			sumsByType.forwards.gc += gcPlayer;
 			sumsByType.forwards.min += p.stats.min;
-		} else if (DEFENSIVE_POSITIONS.includes(p.stats.pos)) {
+		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
 			sumsByType.defensemen.gc += gcPlayer;
 			sumsByType.defensemen.min += p.stats.min;
 		}
@@ -65,9 +65,9 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 		if (!sumsByPosition[t.tid]) {
 			sumsByPosition[t.tid] = initSumByPosition();
 		}
-		if (sumsByPosition[t.tid][p.stats.pos]) {
-			sumsByPosition[t.tid][p.stats.pos].pm += p.stats.pm;
-			sumsByPosition[t.tid][p.stats.pos].min += p.stats.min;
+		if (sumsByPosition[t.tid][p.ratings.pos]) {
+			sumsByPosition[t.tid][p.ratings.pos].pm += p.stats.pm;
+			sumsByPosition[t.tid][p.ratings.pos].min += p.stats.min;
 		}
 
 		return gcPlayer;
@@ -87,11 +87,14 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 
 		const marginalGoalsPerPoint = league.g / league.pts;
 
-		if (p.stats.pos === "G") {
+		if (p.ratings.pos === "G") {
 			// Goalie point shares
 			const shotsAgainstAdjustment = p.stats.sa / p.stats.min / league.saPerMin;
 			const marginalGoalsAgainst =
-				(1 + 7 / 12) * shotsAgainstAdjustment * p.stats.min * league.gaaPerMin -
+				(1 + 7 / 12) *
+					shotsAgainstAdjustment *
+					p.stats.min *
+					league.oppGPerPmin -
 				p.stats.ga;
 			gps[i] = (2 / 7) * (marginalGoalsAgainst / marginalGoalsPerPoint);
 
@@ -99,7 +102,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			dps[i] = 0;
 		} else {
 			const type: keyof typeof sumsByType = OFFENSIVE_POSITIONS.includes(
-				p.stats.pos,
+				p.ratings.pos,
 			)
 				? "forwards"
 				: "defensemen";
@@ -122,8 +125,8 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 				positionAdjustment *
 				(p.stats.pm -
 					p.stats.min *
-						(sumsByPosition[t.tid][p.stats.pos].pm /
-							sumsByPosition[t.tid][p.stats.pos].min));
+						(sumsByPosition[t.tid][p.ratings.pos].pm /
+							sumsByPosition[t.tid][p.ratings.pos].min));
 			const marginalGoalsAgainst =
 				proportionTeamMin *
 					proportionMarginalGoalsAgainstSkaters *
@@ -140,13 +143,11 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 		gc,
 		ops,
 		dps,
+		gps,
 	};
 };
 
 const advStats = async () => {
-	// Not tested yet
-	return;
-
 	if (PHASE.PLAYOFFS === g.get("phase")) {
 		// Don't calculate in playoffs
 		return;
@@ -158,7 +159,7 @@ const advStats = async () => {
 	]);
 	const players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["pid", "tid"],
-		stats: ["gp", "pos", "min", "g", "a", "sa", "ga", "pm"],
+		stats: ["gp", "min", "g", "a", "sa", "ga", "pm"],
 		ratings: ["pos"],
 		season: g.get("season"),
 		playoffs: false,
@@ -190,8 +191,18 @@ const advStats = async () => {
 			memo.pts = t.seasonAttrs.pts;
 		}
 
+		if (memo.hasOwnProperty("gPerGame")) {
+			memo.gPerGame += t.stats.g / t.stats.gp;
+		} else {
+			memo.gPerGame = t.stats.g / t.stats.gp;
+		}
+
 		return memo;
 	}, {});
+	league.min /= g.get("numPlayersOnCourt");
+	league.saPerMin = league.sa / league.min;
+	league.oppGPerPmin = league.oppG / league.min;
+	league.gPerGame /= teams.length;
 
 	const updatedStats = { ...calculatePS(players, teams, league) };
 	await advStatsSave(players, playersRaw, updatedStats);

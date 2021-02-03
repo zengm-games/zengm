@@ -176,6 +176,7 @@ export const hockeyOverrides =
 				draftType: "nhl2017",
 				numDraftRounds: 4,
 				allStarGame: null,
+				numPlayersOnCourt: 6,
 		  }
 		: {};
 

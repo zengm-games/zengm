@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: Several new facial features in the cartoon face generator from @TravisJB89. [[1]](https://github.com/dumbmatter/facesjs/pull/14)
+* 2021-02-03: Several new facial features in the cartoon face generator from @TravisJB89. [[1]](https://github.com/dumbmatter/facesjs/pull/14)
 
 * 2021-01-19: In the play-by-play during live sims, players can get dunked on.
 

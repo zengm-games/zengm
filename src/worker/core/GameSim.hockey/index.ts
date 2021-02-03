@@ -650,6 +650,13 @@ class GameSim {
 		}
 
 		if (substitutions) {
+			for (const t of [0, 1] as const) {
+				this.playByPlay.logEvent({
+					type: "playersOnIce",
+					t,
+					pids: flatten(Object.values(this.playersOnIce[t])).map(p => p.id),
+				});
+			}
 			this.updateTeamCompositeRatings();
 		}
 	}

@@ -32,6 +32,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 			basketball:
 				this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
 			football: true,
+			hockey: this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
 		});
 	}
 
@@ -46,6 +47,9 @@ class PlayerRow extends Component<PlayerRowProps> {
 				"table-warning": p.inGame,
 			}),
 			football: undefined,
+			hockey: classNames({
+				"table-warning": p.inGame,
+			}),
 		});
 
 		return <BoxScoreRow className={classes} p={p} {...props} />;

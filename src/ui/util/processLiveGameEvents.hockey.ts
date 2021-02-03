@@ -165,7 +165,7 @@ const processLiveGameEvents = ({
 				)}`;
 			}
 
-			if (e.type !== "stat") {
+			if (e.type !== "stat" && e.type !== "playersOnIce") {
 				boxScore.time = formatClock(e.clock);
 			}
 		}
@@ -192,6 +192,10 @@ const processLiveGameEvents = ({
 					}
 				}
 				boxScore.teams[actualT][e.s] += e.amt;
+			}
+		} else if (e.type === "playersOnIce") {
+			for (const p of boxScore.teams[actualT].players) {
+				p.inGame = e.pids.includes(p.pid);
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {

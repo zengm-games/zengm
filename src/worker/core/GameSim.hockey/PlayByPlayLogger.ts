@@ -52,6 +52,11 @@ type PlayByPlayEventInput =
 			type: "offensiveLineChange" | "fullLineChange" | "defensiveLineChange";
 			clock: number;
 			t: TeamNum;
+	  }
+	| {
+			type: "playersOnIce";
+			t: TeamNum;
+			pids: number[];
 	  };
 
 export type PlayByPlayEvent =

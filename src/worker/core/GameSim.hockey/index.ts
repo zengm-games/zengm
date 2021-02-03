@@ -573,11 +573,17 @@ class GameSim {
 					| undefined;
 
 				if (this.clock >= 1) {
-					if (this.minutesSinceLineChange[t].offense >= 0.7) {
+					if (
+						this.minutesSinceLineChange[t].offense >= 0.7 &&
+						Math.random() < 0.75
+					) {
 						positionsToChange.push("C", "W");
 						lineChangeEvent = "offensiveLineChange";
 					}
-					if (this.minutesSinceLineChange[t].defense >= 0.9) {
+					if (
+						this.minutesSinceLineChange[t].defense >= 0.9 &&
+						Math.random() < 0.75
+					) {
 						if (lineChangeEvent) {
 							lineChangeEvent = "fullLineChange";
 						} else {

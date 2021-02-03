@@ -118,7 +118,7 @@ const getText = (
 		throw new Error(`Invalid event type "${event.type}"`);
 	}
 
-	const actualT = event.t === 0 ? 1 : 0;
+	const actualT = (event as any).t === 0 ? 1 : 0;
 	return `${boxScore.time} - ${boxScore.teams[actualT].abbrev} - ${text}`;
 };
 

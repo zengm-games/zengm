@@ -52,11 +52,8 @@ const info = {
 
 // Handle some nonlinear interactions
 const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
-	/*RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 300, 6, 20),
-	WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 5),
-	TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 2, 10),
-	LB: ratings => helpers.bound(ratings.tck / 30, 2, 5),
-	S: ratings => helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 2, 15),*/
+	W: ratings =>
+		helpers.bound(((ratings.oiq - 30) * (ratings.diq - 30)) / 50, 0, 5),
 	G: ratings => -0.25 * ratings.glk,
 };
 

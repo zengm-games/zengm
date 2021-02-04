@@ -115,7 +115,7 @@ const TopStuff = ({
 		);
 
 	let marginOfVictory: string;
-	if (isSport("football")) {
+	if (isSport("football") || isSport("hockey")) {
 		if (t.stats.gp !== 0) {
 			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
 				1,

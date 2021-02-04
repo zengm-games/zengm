@@ -57,6 +57,7 @@ const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
 	TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 2, 10),
 	LB: ratings => helpers.bound(ratings.tck / 30, 2, 5),
 	S: ratings => helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 2, 15),*/
+	G: ratings => -0.25 * ratings.glk,
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {
@@ -85,26 +86,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		throw new Error(`Unknown position: "${pos2}"`);
 	}
 
-	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
-	// +8 at 68
-	// +4 at 50
-	// -5 at 42
-	// -10 at 31
-	let fudgeFactor = 0;
-
-	if (r >= 68) {
-		fudgeFactor = 8;
-	} else if (r >= 50) {
-		fudgeFactor = 4 + (r - 50) * (4 / 18);
-	} else if (r >= 42) {
-		fudgeFactor = -5 + (r - 42) * (10 / 8);
-	} else if (r >= 31) {
-		fudgeFactor = -5 - (42 - r) * (5 / 11);
-	} else {
-		fudgeFactor = -10;
-	}
-
-	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
+	r = helpers.bound(Math.round(r), 0, 100);
 
 	return r;
 };

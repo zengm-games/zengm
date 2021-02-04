@@ -1,3 +1,8 @@
+free agents should be more willing to sign with teams that overpay
+- https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
+
+when doing no trades challenge, it shouldn't make trades with your team in auto play
+
 warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
 
 for RPDD, do `ratings = ratings + ((1-RPD) * progs + RPD * real_progs)` rather than averaging the ratings each year

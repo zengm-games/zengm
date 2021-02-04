@@ -65,5 +65,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, "localhost", () => {
-	console.log(`View Basketball GM at http://localhost:${port}`);
+	console.log(`View at http://localhost:${port}`);
 });

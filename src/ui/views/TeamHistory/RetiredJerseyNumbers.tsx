@@ -299,7 +299,7 @@ const RetiredJerseyNumbers = ({
 											{row.numRings > 0 ? (
 												<span
 													title={`${row.numRings} championship${
-														row.numRings > 1 ? "s" : ""
+														row.numRings === 1 ? "" : "s"
 													}`}
 												>
 													<span className="ring ml-1" />

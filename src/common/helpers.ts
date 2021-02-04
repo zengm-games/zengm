@@ -579,6 +579,16 @@ function formatCurrency(
 	if (append === "M" && abs > 1000) {
 		abs /= 1000;
 		append = "B";
+
+		if (abs > 1000) {
+			abs /= 1000;
+			append = "T";
+
+			if (abs > 1000) {
+				abs /= 1000;
+				append = "Q";
+			}
+		}
 	}
 
 	if (append === "M" && abs < 1 && abs !== 0) {

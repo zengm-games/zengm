@@ -18,7 +18,7 @@ see LICENSE.md for details.**
 ## Development Info
 
 If you just want to play the game, go to <https://basketball-gm.com/> or
-<https://football-gm.com/> or <http://hockey.zengm.com/> Instructions below are for developers who want to
+<https://football-gm.com/> or <http://hockey.zengm.com/>. Instructions below are for developers who want to
 run a copy locally so they can make changes to the code.
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy

@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: In the Retired Jersey Numbers of the Team History page, it now shows how many championships each player won with this team.
+* 2021-02-04: In the Retired Jersey Numbers of the Team History page, it now shows how many championships each player won with this team. [[1]]()
 
 * 2021-02-03: Several new facial features in the cartoon face generator from @TravisJB89. [[1]](https://github.com/dumbmatter/facesjs/pull/14)
 

@@ -23,7 +23,21 @@ const rosterAutoSort = async (
 	if (!t) {
 		throw new Error("Invalid tid");
 	}
-	const depth = t.depth;
+	const depth = t.depth as {
+		QB: number[];
+		RB: number[];
+		WR: number[];
+		TE: number[];
+		OL: number[];
+		DL: number[];
+		LB: number[];
+		CB: number[];
+		S: number[];
+		K: number[];
+		P: number[];
+		KR: number[];
+		PR: number[];
+	};
 
 	if (depth === undefined) {
 		throw new Error("Missing depth");

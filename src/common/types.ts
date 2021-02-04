@@ -1167,21 +1167,27 @@ export type Team = {
 		BudgetItem
 	>;
 	strategy: "contending" | "rebuilding";
-	depth?: {
-		QB: number[];
-		RB: number[];
-		WR: number[];
-		TE: number[];
-		OL: number[];
-		DL: number[];
-		LB: number[];
-		CB: number[];
-		S: number[];
-		K: number[];
-		P: number[];
-		KR: number[];
-		PR: number[];
-	};
+	depth?:
+		| {
+				QB: number[];
+				RB: number[];
+				WR: number[];
+				TE: number[];
+				OL: number[];
+				DL: number[];
+				LB: number[];
+				CB: number[];
+				S: number[];
+				K: number[];
+				P: number[];
+				KR: number[];
+				PR: number[];
+		  }
+		| {
+				F: number[];
+				D: number[];
+				G: number[];
+		  };
 	firstSeasonAfterExpansion?: number;
 	srID?: string;
 

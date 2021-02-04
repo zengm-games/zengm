@@ -85,6 +85,12 @@ const generate = (tm: any): Team => {
 			depth[pos] = [];
 			return depth;
 		}, {});
+	} else if (isSport("hockey") && tm.depth === undefined) {
+		t.depth = {
+			F: [],
+			D: [],
+			G: [],
+		};
 	}
 
 	return t;

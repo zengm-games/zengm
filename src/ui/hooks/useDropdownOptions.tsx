@@ -1,5 +1,11 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, TEAM_STATS_TABLES, POSITIONS, bySport } from "../../common";
+import {
+	PHASE,
+	TEAM_STATS_TABLES,
+	POSITIONS,
+	bySport,
+	isSport,
+} from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
@@ -100,6 +106,14 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	skater: "Skaters",
 	goalie: "Goalies",
 };
+
+if (isSport("hockey")) {
+	Object.assign(dropdownValues, {
+		F: "Forwards",
+		D: "Defensemen",
+		G: "Goalies",
+	});
+}
 
 export const getDropdownValue = (
 	key: number | string,
@@ -294,8 +308,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["by_team", "by_conf", "by_div"];
 	} else if (field === "teamRecordsFilter") {
 		keys = ["all|||teams", "your_teams"];
-	} else if (field === "positions") {
-		keys = POSITIONS;
+	} else if (field === "depth") {
+		keys = isSport("hockey") ? ["F", "D", "G"] : POSITIONS;
 	} else if (field === "newsLevels") {
 		keys = ["big", "normal", "all|||news"];
 	} else if (field === "newestOldestFirst") {

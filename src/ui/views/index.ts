@@ -10,7 +10,7 @@ import CustomizePlayer from "./CustomizePlayer";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
 import DeleteOldData from "./DeleteOldData";
-import DepthFootball from "./Depth.football";
+import Depth from "./Depth";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
@@ -99,7 +99,7 @@ export default {
 	DangerZone,
 	Dashboard,
 	DeleteOldData,
-	DepthFootball,
+	Depth,
 	Draft,
 	DraftLottery,
 	DraftScouting,

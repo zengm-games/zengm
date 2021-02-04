@@ -1,13 +1,14 @@
 import posRatingsFootball from "./posRatings.football";
+import posRatingsHockey from "./posRatings.hockey";
 import { RATINGS } from ".";
-import isSport from "./isSport";
+import bySport from "./bySport";
 
 const posRatings = (pos: string) => {
-	if (isSport("football")) {
-		return posRatingsFootball(pos);
-	}
-
-	return [...RATINGS];
+	return bySport({
+		basketball: [...RATINGS],
+		football: posRatingsFootball(pos),
+		hockey: posRatingsHockey(pos),
+	});
 };
 
 export default posRatings;

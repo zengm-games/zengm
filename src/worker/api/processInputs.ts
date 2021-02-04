@@ -111,7 +111,7 @@ const customizePlayer = (params: Params) => {
 	};
 };
 
-const depthFootball = (params: Params) => {
+const depth = (params: Params) => {
 	// Fix broken links
 	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
@@ -131,9 +131,15 @@ const depthFootball = (params: Params) => {
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 
+	const DEFAULT_POS = bySport({
+		basketball: "G",
+		football: "QB",
+		hockey: "F",
+	});
+
 	// https://github.com/microsoft/TypeScript/issues/21732
 	// @ts-ignore
-	const pos: string = POSITIONS.includes(params.pos) ? params.pos : "QB";
+	const pos: string = POSITIONS.includes(params.pos) ? params.pos : DEFAULT_POS;
 
 	return { abbrev, pos, tid };
 };
@@ -688,7 +694,7 @@ export default {
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,
-	depthFootball,
+	depth,
 	draft,
 	draftLottery,
 	draftSummary,

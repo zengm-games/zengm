@@ -170,9 +170,7 @@ const TopStuff = ({
 									{showTradeFor ? `Strategy: ${t.strategy}` : null}
 								</div>
 							) : null}
-							{isSport("football") ? (
-								<RosterComposition className="ml-3" players={players} />
-							) : null}
+							<RosterComposition className="ml-3" players={players} />
 						</div>
 					) : null}
 				</div>

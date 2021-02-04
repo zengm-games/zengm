@@ -132,9 +132,7 @@ const FreeAgents = ({
 
 	return (
 		<>
-			{isSport("football") ? (
-				<RosterComposition className="float-right mb-3" players={userPlayers} />
-			) : null}
+			<RosterComposition className="float-right mb-3" players={userPlayers} />
 
 			<MoreLinks type="freeAgents" page="free_agents" />
 

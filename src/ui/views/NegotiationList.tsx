@@ -98,9 +98,7 @@ const NegotiationList = ({
 
 	return (
 		<>
-			{isSport("football") ? (
-				<RosterComposition className="float-right mb-3" players={userPlayers} />
-			) : null}
+			<RosterComposition className="float-right mb-3" players={userPlayers} />
 
 			<p>
 				More:{" "}

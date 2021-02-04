@@ -269,6 +269,7 @@ const RetiredJerseyNumbers = ({
 		});
 	};
 
+	console.log("retiredJerseyNumbers", retiredJerseyNumbers);
 	return (
 		<>
 			{retiredJerseyNumbers.length === 0 ? (
@@ -295,6 +296,16 @@ const RetiredJerseyNumbers = ({
 											<a href={helpers.leagueUrl(["player", row.pid])}>
 												{row.name}
 											</a>
+											{row.numRings > 0 ? (
+												<span title={`${row.numRings} championships`}>
+													<span className="ring ml-1" />
+													{row.numRings > 1 ? (
+														<span className="text-yellow ml-1">
+															x{row.numRings}
+														</span>
+													) : null}
+												</span>
+											) : null}
 											{row.text ? " - " : null}
 										</>
 									) : null}

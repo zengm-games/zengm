@@ -194,11 +194,17 @@ const updateTeamHistory = async (
 
 				let name;
 				let pos;
+				let champSeasons: number[] = [];
 				if (row.pid !== undefined) {
 					const p = await idb.getCopy.players({ pid: row.pid });
 					if (p) {
 						name = `${p.firstName} ${p.lastName}`;
 						pos = getMostCommonPosition(p, inputs.tid);
+
+						champSeasons = p.awards
+							.filter(award => award.type === "Won Championship")
+							.map(award => award.season)
+							.sort();
 					}
 				}
 
@@ -207,6 +213,7 @@ const updateTeamHistory = async (
 					teamInfo,
 					name,
 					pos,
+					champSeasons,
 				};
 			}),
 		);
@@ -246,13 +253,38 @@ const updateTeamHistory = async (
 
 		const history = await getHistory(teamSeasons, players);
 
+		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
+			let numRings = 0;
+			for (const historyRow of history.history) {
+				if (
+					historyRow.playoffRoundsWon >= historyRow.numPlayoffRounds &&
+					row.champSeasons.includes(historyRow.season)
+				) {
+					numRings += 1;
+				}
+			}
+
+			return {
+				name: row.name,
+				number: row.number,
+				pid: row.pid,
+				pos: row.pos,
+				score: row.score,
+				seasonRetired: row.seasonRetired,
+				seasonTeamInfo: row.seasonTeamInfo,
+				teamInfo: row.teamInfo,
+				text: row.text,
+				numRings,
+			};
+		});
+
 		return {
 			...history,
 			abbrev: inputs.abbrev,
 			tid: inputs.tid,
 			godMode: g.get("godMode"),
 			season: g.get("season"),
-			retiredJerseyNumbers,
+			retiredJerseyNumbers: retiredJerseyNumbers2,
 		};
 	}
 };

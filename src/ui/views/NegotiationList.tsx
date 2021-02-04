@@ -10,7 +10,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
-import { isSport } from "../../common";
 
 const NegotiationList = ({
 	capSpace,

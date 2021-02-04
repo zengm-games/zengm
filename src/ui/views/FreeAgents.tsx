@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
-import { isSport, PHASE } from "../../common";
+import { PHASE } from "../../common";
 import {
 	DataTable,
 	MoreLinks,

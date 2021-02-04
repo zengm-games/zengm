@@ -11,7 +11,6 @@ import {
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
-import { isSport } from "../../common";
 
 const DraftButtons = ({
 	spectator,

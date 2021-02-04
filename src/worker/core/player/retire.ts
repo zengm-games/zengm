@@ -80,6 +80,10 @@ const retire = async (
 
 	p.tid = PLAYER.RETIRED;
 	p.retiredYear = g.get("season");
+	p.injury = {
+		type: "Healthy",
+		gamesRemaining: 0,
+	};
 
 	await player.checkJerseyNumberRetirement(p);
 };

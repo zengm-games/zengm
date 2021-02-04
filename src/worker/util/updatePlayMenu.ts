@@ -216,7 +216,7 @@ const updatePlayMenu = async () => {
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
-		if (isSport("basketball")) {
+		if (isSport("basketball") || isSport("hockey")) {
 			keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
 		} else {
 			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];

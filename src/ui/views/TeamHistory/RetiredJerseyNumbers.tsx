@@ -297,7 +297,11 @@ const RetiredJerseyNumbers = ({
 												{row.name}
 											</a>
 											{row.numRings > 0 ? (
-												<span title={`${row.numRings} championships`}>
+												<span
+													title={`${row.numRings} championship${
+														row.numRings > 1 ? "s" : ""
+													}`}
+												>
 													<span className="ring ml-1" />
 													{row.numRings > 1 ? (
 														<span className="text-yellow ml-1">

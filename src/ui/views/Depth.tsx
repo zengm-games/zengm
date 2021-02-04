@@ -7,6 +7,7 @@ import { getCols, helpers, toWorker } from "../util";
 import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
+import { NUM_LINES } from "../../common/constants.hockey";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", pos, undefined);
@@ -54,11 +55,7 @@ const posNames: Record<string, string> | undefined = isSport("hockey")
 	: undefined;
 
 const numLinesByPos: Record<string, number> | undefined = isSport("hockey")
-	? {
-			F: 4,
-			D: 3,
-			G: 1,
-	  }
+	? NUM_LINES
 	: undefined;
 
 const Depth = ({
@@ -272,7 +269,9 @@ const Depth = ({
 						<td
 							className={classNames({
 								"text-danger":
-									pos !== "KR" && pos !== "PR" && pos !== p.ratings.pos,
+									pos !== "KR" &&
+									pos !== "PR" &&
+									!positions.includes(p.ratings.pos),
 							})}
 						>
 							{p.ratings.pos}

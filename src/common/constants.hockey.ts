@@ -236,9 +236,9 @@ const TEAM_STATS_TABLES = {
 const POSITIONS: Position[] = ["C", "W", "D", "G"];
 
 const POSITION_COUNTS: Record<Position, number> = {
-	C: 4,
-	W: 8,
-	D: 6,
+	C: 5,
+	W: 10,
+	D: 7,
 	G: 3,
 };
 

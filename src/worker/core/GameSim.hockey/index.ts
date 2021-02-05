@@ -628,6 +628,8 @@ class GameSim {
 	}
 
 	faceoff() {
+		this.updatePlayersOnIce();
+
 		const p0 = this.getTopPlayerOnIce(0, "faceoffs", ["C", "W", "D"]);
 		const p1 = this.getTopPlayerOnIce(1, "faceoffs", ["C", "W", "D"]);
 

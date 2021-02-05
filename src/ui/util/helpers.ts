@@ -35,6 +35,7 @@ const roundOverrides: Record<
 	| "plusMinus"
 	| "plusMinusNoDecimalPlace"
 	| "noDecimalPlace"
+	| "minutes"
 	| undefined
 > = bySport({
 	basketball: {
@@ -226,8 +227,9 @@ const roundOverrides: Record<
 		dps: "oneDecimalPlace",
 		gps: "oneDecimalPlace",
 		gc: "oneDecimalPlace",
-		amin: "oneDecimalPlace",
-		minMax: "oneDecimalPlace",
+		min: "minutes",
+		amin: "minutes",
+		minMax: "minutes",
 		pmMax: "plusMinusNoDecimalPlace",
 		pimMax: "oneDecimalPlace",
 		evGMax: "noDecimalPlace",
@@ -268,10 +270,25 @@ const roundStat = (
 			value = 0;
 		}
 
+		if (roundOverrides[stat] === "minutes") {
+			if (value > 100) {
+				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			}
+
+			const remainder = value % 1;
+			let seconds = Math.round(remainder * 60);
+			let minutes = Math.floor(value);
+			while (seconds >= 60) {
+				minutes += 1;
+				seconds -= 60;
+			}
+			return `${minutes}:${seconds >= 10 ? seconds : `0${seconds}`}`;
+		}
+
 		if (roundOverrides[stat] === "oneDecimalPlace") {
 			return value.toLocaleString("en-US", {
 				maximumFractionDigits: 1,
-				minimumFractionDigits: 1,
+				minimumFractionDigits: 0,
 			});
 		}
 

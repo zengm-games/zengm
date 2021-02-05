@@ -191,7 +191,7 @@ const processLiveGameEvents = ({
 			}
 
 			// Everything else
-			if (boxScore.teams[actualT].hasOwnProperty(e.s) && e.s !== "min") {
+			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
 				if (e.pid !== undefined) {
 					const p = boxScore.teams[actualT].players.find(
 						(p2: any) => p2.pid === e.pid,

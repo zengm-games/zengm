@@ -171,8 +171,8 @@ export const hockeyOverrides =
 		? {
 				quarterLength: 20,
 				numPeriods: 3,
-				minRosterSize: 20,
-				maxRosterSize: 23,
+				minRosterSize: 23,
+				maxRosterSize: 25,
 				draftType: "nhl2017",
 				numDraftRounds: 4,
 				allStarGame: null,

@@ -3,7 +3,6 @@ import { g } from "../../util";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
-	POSITIONS,
 } from "../../../common/constants.hockey";
 import type { Position } from "../../../common/types.hockey";
 import type { PlayerFiltered } from "../../../common/types";
@@ -68,6 +67,7 @@ const rosterAutoSort = async (
 
 	for (const pos2 of positions) {
 		if (onlyNewPlayers) {
+			console.log(pos);
 			throw new Error("not implemented yet");
 			/*// Identify players not currently in the depth chart, and add them to the depth chart above any player worse
 			// than them without otherwise disturbing the order of the depth chart. This is useful for adding free agents to

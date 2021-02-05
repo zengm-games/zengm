@@ -723,6 +723,12 @@ class GameSim {
 	doLineChange(t: TeamNum, pos: "F" | "D") {
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
+
+		// Sometimes skip the 4th line of forwards
+		if (pos === "F" && this.currentLine[t][pos] >= 3 && Math.random() < 0.5) {
+			this.currentLine[t][pos] = 0;
+		}
+
 		let newLine = this.lines[t][pos][this.currentLine[t][pos]];
 		if (!newLine || newLine.length < NUM_PLAYERS_PER_LINE[pos]) {
 			this.currentLine[t][pos] = 0;

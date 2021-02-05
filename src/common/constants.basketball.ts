@@ -425,21 +425,21 @@ const RATINGS: RatingKey[] = [
 ];
 
 const SIMPLE_AWARDS = [
+	"finalsMvp",
 	"mvp",
-	"roy",
 	"smoy",
 	"dpoy",
 	"mip",
-	"finalsMvp",
+	"roy",
 ] as const;
 
 const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	smoy: "Sixth Man of the Year",
-	dpoy: "Defensive Player of the Year",
-	mip: "Most Improved Player",
 	finalsMvp: "Finals MVP",
+	mvp: "Most Valuable Player",
+	dpoy: "Defensive Player of the Year",
+	smoy: "Sixth Man of the Year",
+	mip: "Most Improved Player",
+	roy: "Rookie of the Year",
 	allLeague: "All-League",
 	allDefensive: "All-Defensive",
 	allRookie: "All-Rookie Team",

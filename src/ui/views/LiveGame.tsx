@@ -29,10 +29,17 @@ class PlayerRow extends Component<PlayerRowProps> {
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
-			basketball:
-				this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
+			basketball: !!(
+				this.prevInGame ||
+				nextProps.p.inGame ||
+				nextProps.forceUpdate
+			),
 			football: true,
-			hockey: this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
+			hockey: !!(
+				this.prevInGame ||
+				nextProps.p.inGame ||
+				nextProps.forceUpdate
+			),
 		});
 	}
 

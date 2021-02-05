@@ -78,12 +78,12 @@ class GameSim {
 
 	minutesSinceLineChange: [
 		{
-			offense: number;
-			defense: number;
+			F: number;
+			D: number;
 		},
 		{
-			offense: number;
-			defense: number;
+			F: number;
+			D: number;
 		},
 	];
 
@@ -117,6 +117,21 @@ class GameSim {
 			},
 		];
 
+		this.setLines();
+
+		this.currentLine = [
+			{
+				F: 0,
+				D: 0,
+				G: 0,
+			},
+			{
+				F: 0,
+				D: 0,
+				G: 0,
+			},
+		];
+
 		// Record "gs" stat for starters
 		this.o = 0;
 		this.d = 1;
@@ -132,32 +147,17 @@ class GameSim {
 
 		this.minutesSinceLineChange = [
 			{
-				offense: 0,
-				defense: 0,
-			},
-			{
-				offense: 0,
-				defense: 0,
-			},
-		];
-
-		this.setLines();
-		console.log(this.lines);
-
-		this.currentLine = [
-			{
 				F: 0,
 				D: 0,
-				G: 0,
 			},
 			{
 				F: 0,
 				D: 0,
-				G: 0,
 			},
 		];
 	}
 
+	// Call this at beginning of game or after injuries
 	setLines() {
 		this.lines = [
 			{
@@ -368,15 +368,11 @@ class GameSim {
 		return out;
 	}
 
-	initplayersOnIceNewPeriod() {
-		console.log("initplayersOnIceNewPeriod");
-	}
-
 	simRegulation() {
 		let quarter = 1;
 
 		while (true) {
-			this.initplayersOnIceNewPeriod();
+			this.updatePlayersOnIce("newPeriod");
 			this.faceoff();
 
 			while (this.clock > 0) {
@@ -393,10 +389,10 @@ class GameSim {
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
 			this.clock = g.get("quarterLength");
-			this.minutesSinceLineChange[0].offense = 0;
-			this.minutesSinceLineChange[0].defense = 0;
-			this.minutesSinceLineChange[1].offense = 0;
-			this.minutesSinceLineChange[1].defense = 0;
+			this.minutesSinceLineChange[0].F = 0;
+			this.minutesSinceLineChange[0].D = 0;
+			this.minutesSinceLineChange[1].F = 0;
+			this.minutesSinceLineChange[1].D = 0;
 			this.playByPlay.logEvent({
 				type: "quarter",
 				clock: this.clock,
@@ -422,7 +418,7 @@ class GameSim {
 			quarter: this.team[0].stat.ptsQtrs.length,
 		});
 
-		this.initplayersOnIceNewPeriod();
+		this.updatePlayersOnIce("newPeriod");
 		this.faceoff();
 
 		// @ts-ignore
@@ -505,10 +501,10 @@ class GameSim {
 		this.updatePlayingTime(dt);
 
 		this.clock -= dt;
-		this.minutesSinceLineChange[0].offense += dt;
-		this.minutesSinceLineChange[0].defense += dt;
-		this.minutesSinceLineChange[1].offense += dt;
-		this.minutesSinceLineChange[1].defense += dt;
+		this.minutesSinceLineChange[0].F += dt;
+		this.minutesSinceLineChange[0].D += dt;
+		this.minutesSinceLineChange[1].F += dt;
+		this.minutesSinceLineChange[1].D += dt;
 
 		if (this.clock <= 0) {
 			this.clock = 0;
@@ -722,21 +718,35 @@ class GameSim {
 		console.log("updateTeamCompositeRatings");
 	}
 
-	updatePlayersOnIce(playType?: "starters") {
+	doLineChange(t: TeamNum, pos: "F" | "D") {
+		this.minutesSinceLineChange[t][pos] = 0;
+		this.currentLine[t][pos] += 1;
+		let newLine = this.lines[t][pos][this.currentLine[t][pos]];
+		if (!newLine || newLine.length < NUM_PLAYERS_PER_LINE[pos]) {
+			this.currentLine[t][pos] = 0;
+			newLine = this.lines[t][pos][this.currentLine[t][pos]];
+		}
+		if (!newLine || newLine.length < NUM_PLAYERS_PER_LINE[pos]) {
+			throw new Error("Not enough players");
+		}
+
+		if (pos === "F") {
+			this.playersOnIce[t].C = newLine.slice(0, 1);
+			this.playersOnIce[t].W = newLine.slice(1, 3);
+		} else {
+			this.playersOnIce[t].D = newLine;
+		}
+	}
+
+	updatePlayersOnIce(playType?: "starters" | "newPeriod") {
 		let substitutions = false;
 
 		for (const t of [0, 1] as const) {
-			const positionCounts = {
-				C: 1,
-				W: 2,
-				D: 2,
-				G: 1,
-			};
-
-			const positionsToChange: Position[] = [];
-
-			if (playType === "starters") {
-				positionsToChange.push("C", "W", "D", "G");
+			if (playType === "starters" || playType === "newPeriod") {
+				this.playersOnIce[t].C = this.lines[t].F[0].slice(0, 1);
+				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
+				this.playersOnIce[t].D = this.lines[t].D[0];
+				this.playersOnIce[t].G = this.lines[t].G[0];
 			} else {
 				// Line change based on playing time
 				let lineChangeEvent:
@@ -746,23 +756,19 @@ class GameSim {
 					| undefined;
 
 				if (this.clock >= 1) {
-					if (
-						this.minutesSinceLineChange[t].offense >= 0.7 &&
-						Math.random() < 0.75
-					) {
-						positionsToChange.push("C", "W");
+					if (this.minutesSinceLineChange[t].F >= 0.7 && Math.random() < 0.75) {
 						lineChangeEvent = "offensiveLineChange";
+						this.doLineChange(t, "F");
+						substitutions = true;
 					}
-					if (
-						this.minutesSinceLineChange[t].defense >= 0.9 &&
-						Math.random() < 0.75
-					) {
+					if (this.minutesSinceLineChange[t].D >= 0.9 && Math.random() < 0.75) {
 						if (lineChangeEvent) {
 							lineChangeEvent = "fullLineChange";
 						} else {
 							lineChangeEvent = "defensiveLineChange";
 						}
-						positionsToChange.push("D");
+						this.doLineChange(t, "D");
+						substitutions = true;
 					}
 				}
 
@@ -775,54 +781,9 @@ class GameSim {
 				}
 			}
 
-			// Pull the goalie, based on positionCounts?
-			if (positionCounts.G === 0 && this.playersOnIce[t].G.length > 0) {
-				positionsToChange.push("G");
-			}
-
-			const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
-			let availableSubs = this.team[t].player.filter(
-				p => !currentlyOnIce.includes(p),
-			);
-
-			// Find top fatigue-adjusted players at positions waiting to sub in, and do it
-			for (const pos of positionsToChange) {
-				substitutions = true;
-				availableSubs = orderBy(
-					availableSubs,
-					p => p.ovrs[pos] * fatigue(p.stat.energy),
-					"desc",
-				);
-				this.playersOnIce[t][pos] = availableSubs.slice(0, positionCounts[pos]);
-				availableSubs = availableSubs.filter(
-					p => !this.playersOnIce[t][pos].includes(p),
-				);
-			}
-
-			// Swap out injured players individually, not full line change
-			for (const [pos2, players] of Object.entries(this.playersOnIce[t])) {
-				const pos = pos2 as Position;
-				for (const p of players) {
-					if (p.injured) {
-						substitutions = true;
-						availableSubs = orderBy(
-							availableSubs,
-							p => p.ovrs[pos] * fatigue(p.stat.energy),
-							"desc",
-						);
-						if (availableSubs.length > 0) {
-							this.playersOnIce[t][pos].push(availableSubs[0]);
-							this.playersOnIce[t][pos] = this.playersOnIce[t][pos].filter(
-								p2 => p2 !== p,
-							);
-						}
-					}
-				}
-			}
-
 			if (playType === "starters") {
-				const currentlyOnIce2 = flatten(Object.values(this.playersOnIce[t]));
-				for (const p of currentlyOnIce2) {
+				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
+				for (const p of currentlyOnIce) {
 					this.recordStat(t, p, "gs");
 				}
 			}

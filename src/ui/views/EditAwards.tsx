@@ -50,6 +50,7 @@ const EditAwards = ({
 		if (
 			type == "finalsMvp" ||
 			type == "mvp" ||
+			type == "goy" ||
 			type == "smoy" ||
 			type == "roy" ||
 			type == "mip" ||
@@ -333,7 +334,7 @@ const EditAwards = ({
 						];
 					})}
 
-					{isSport("basketball") ? (
+					{isSport("basketball") || isSport("hockey") ? (
 						<>
 							{awards.allDefensive.map((element: any, i: number) => {
 								const teamSelect = element.players.map(

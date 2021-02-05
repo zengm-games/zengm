@@ -425,12 +425,12 @@ const RATINGS: RatingKey[] = [
 ];
 
 const SIMPLE_AWARDS = [
-	"finalsMvp",
 	"mvp",
+	"roy",
 	"smoy",
 	"dpoy",
 	"mip",
-	"roy",
+	"finalsMvp",
 ] as const;
 
 const AWARD_NAMES = {

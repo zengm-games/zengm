@@ -8,6 +8,7 @@ const awardsOrder = [
 	"Won Championship",
 	"Finals MVP",
 	"Defensive Player of the Year",
+	"Goalie of the Year",
 	"Sixth Man of the Year",
 	"Most Improved Player",
 	"Rookie of the Year",
@@ -47,6 +48,8 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "FMVP";
 		} else if (type === "Defensive Player of the Year") {
 			type = "DPOY";
+		} else if (type === "Goalie of the Year") {
+			type = "GOY";
 		} else if (type === "Sixth Man of the Year") {
 			type = "SMOY";
 		} else if (type === "Most Improved Player") {

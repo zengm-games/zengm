@@ -380,7 +380,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	const awardsTeams = bySport({
 		basketball: ["allRookie", "allLeague", "allDefensive"] as const,
 		football: ["allRookie", "allLeague"] as const,
-		hockey: ["allRookie", "allLeague"] as const,
+		hockey: ["allRookie", "allLeague", "allDefensive"] as const,
 	});
 	for (const key of awardsTeams) {
 		const type = AWARD_NAMES[key] as string;

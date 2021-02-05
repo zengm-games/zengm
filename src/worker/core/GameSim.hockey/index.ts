@@ -1,6 +1,10 @@
 import { PHASE } from "../../../common";
 import { g, helpers, random } from "../../util";
-import { POSITIONS } from "../../../common/constants.hockey";
+import {
+	NUM_LINES,
+	NUM_PLAYERS_PER_LINE,
+	POSITIONS,
+} from "../../../common/constants.hockey";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 // import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";
@@ -32,6 +36,18 @@ const fatigue = (energy: number): number => {
 	}
 
 	return energy;
+};
+
+type TeamLines = {
+	F: PlayerGameSim[][];
+	D: PlayerGameSim[][];
+	G: PlayerGameSim[][];
+};
+
+type TeamCurrentLine = {
+	F: 0;
+	D: 0;
+	G: 0;
 };
 
 class GameSim {
@@ -69,6 +85,11 @@ class GameSim {
 			defense: number;
 		},
 	];
+
+	// @ts-ignore
+	lines: [TeamLines, TeamLines];
+
+	currentLine: [TeamCurrentLine, TeamCurrentLine];
 
 	constructor(
 		gid: number,
@@ -118,6 +139,82 @@ class GameSim {
 				defense: 0,
 			},
 		];
+
+		this.setLines();
+		console.log(this.lines);
+
+		this.currentLine = [
+			{
+				F: 0,
+				D: 0,
+				G: 0,
+			},
+			{
+				F: 0,
+				D: 0,
+				G: 0,
+			},
+		];
+	}
+
+	setLines() {
+		this.lines = [
+			{
+				F: [],
+				D: [],
+			},
+			{
+				F: [],
+				D: [],
+			},
+		] as any;
+
+		for (const t of [0, 1] as const) {
+			// First, make sure players listed in the main lines for G/D/F are reserved and not used as injury replacements
+			const inDepthChart = new Set();
+			for (const pos of ["G", "D", "F"] as const) {
+				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
+				for (let i = 0; i < numInDepthChart; i++) {
+					inDepthChart.add(this.team[t].depth[pos][i].id);
+				}
+			}
+
+			// Then, assign players to lines, moving up lower players to replace injured ones
+			for (const pos of ["G", "D", "F"] as const) {
+				const players = this.team[t].depth[pos];
+
+				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
+
+				for (let i = 0; i < NUM_LINES[pos]; i++) {
+					const lines: PlayerGameSim[][] = [[]];
+					let ind = 0;
+					for (const p of players) {
+						if (p.injured) {
+							continue;
+						}
+
+						if (i < numInDepthChart || !inDepthChart.has(p.id)) {
+							if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
+								lines.push([]);
+								ind += 1;
+							}
+							if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
+								lines[ind].push(p);
+							}
+
+							if (
+								lines.length === NUM_LINES[pos] &&
+								lines[ind].length === NUM_PLAYERS_PER_LINE[pos]
+							) {
+								break;
+							}
+						}
+					}
+
+					this.lines[t][pos] = lines;
+				}
+			}
+		}
 	}
 
 	homeCourtAdvantage(homeCourtFactor: number) {

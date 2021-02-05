@@ -37,5 +37,5 @@ export type TeamGameSim = {
 	stat: any;
 	player: PlayerGameSim[];
 	compositeRating: any;
-	depth: Record<Position, PlayerGameSim[]>;
+	depth: Record<"F" | "D" | "G", PlayerGameSim[]>;
 };

@@ -4,6 +4,7 @@ import type { ActualProps } from ".";
 
 const Winner = ({
 	award,
+	defense = false,
 	finals = false,
 	season,
 	userTid,

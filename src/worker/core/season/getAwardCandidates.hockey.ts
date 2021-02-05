@@ -21,7 +21,7 @@ const getAwardCandidates = async (season: number) => {
 				},
 				players,
 			),
-			stats: ["pts"],
+			stats: ["keyStats"],
 		},
 		{
 			name: "Defensive Player of the Year",
@@ -33,7 +33,7 @@ const getAwardCandidates = async (season: number) => {
 				},
 				players,
 			),
-			stats: ["tk"],
+			stats: ["keyStats"],
 		},
 		{
 			name: "Goalie of the Year",
@@ -45,7 +45,7 @@ const getAwardCandidates = async (season: number) => {
 				},
 				players,
 			),
-			stats: ["gaa"],
+			stats: ["keyStats"],
 		},
 		{
 			name: "Rookie of the Year",
@@ -58,7 +58,7 @@ const getAwardCandidates = async (season: number) => {
 				},
 				players,
 			),
-			stats: ["pts"],
+			stats: ["keyStats"],
 		},
 	];
 

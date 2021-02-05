@@ -199,6 +199,13 @@ const Depth = ({
 				</>
 			) : null}
 
+			{isSport("hockey") && pos === "F" ? (
+				<p className="text-warning">
+					Each line of forwards is made up of one center and two wings. The
+					center is the first of the three players in each line.
+				</p>
+			) : null}
+
 			<div className="clearfix" />
 
 			<SortableTable

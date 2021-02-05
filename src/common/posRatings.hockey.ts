@@ -3,6 +3,10 @@ const posRatings = (pos: string) => {
 		return ["glk"];
 	}
 
+	if (pos === "D") {
+		return ["pss", "wst", "sst", "stk", "oiq", "chk", "blk", "diq"];
+	}
+
 	return ["pss", "wst", "sst", "stk", "oiq", "chk", "blk", "fcf", "diq"];
 };
 

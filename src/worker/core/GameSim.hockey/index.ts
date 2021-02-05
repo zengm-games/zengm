@@ -19,6 +19,7 @@ import type {
 } from "./types";
 import orderBy from "lodash/orderBy";
 import flatten from "lodash/flatten";
+import range from "lodash/range";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -179,40 +180,115 @@ class GameSim {
 				}
 			}
 
+			const usedPlayerIDs = new Set();
+
 			// Then, assign players to lines, moving up lower players to replace injured ones
-			for (const pos of ["G", "D", "F"] as const) {
+			for (const pos of ["G", "D"] as const) {
 				const players = this.team[t].depth[pos];
 
 				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
 
-				for (let i = 0; i < NUM_LINES[pos]; i++) {
-					const lines: PlayerGameSim[][] = [[]];
-					let ind = 0;
-					for (const p of players) {
-						if (p.injured) {
-							continue;
+				const lines: PlayerGameSim[][] = [[]];
+				let ind = 0;
+				for (let i = 0; i < players.length; i++) {
+					const p = players[i];
+					if (p.injured || usedPlayerIDs.has(p.id)) {
+						continue;
+					}
+
+					if (i < numInDepthChart || !inDepthChart.has(p.id)) {
+						if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
+							lines.push([]);
+							ind += 1;
+						}
+						if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
+							lines[ind].push(p);
+							usedPlayerIDs.add(p.id);
 						}
 
-						if (i < numInDepthChart || !inDepthChart.has(p.id)) {
-							if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
-								lines.push([]);
-								ind += 1;
-							}
-							if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
-								lines[ind].push(p);
-							}
+						if (
+							lines.length === NUM_LINES[pos] &&
+							lines[ind].length === NUM_PLAYERS_PER_LINE[pos]
+						) {
+							break;
+						}
+					}
+				}
 
-							if (
-								lines.length === NUM_LINES[pos] &&
-								lines[ind].length === NUM_PLAYERS_PER_LINE[pos]
-							) {
-								break;
-							}
+				this.lines[t][pos] = lines;
+			}
+
+			// Special case for forwards (no need to check inDepthChart anymore, since other positions are already done)
+			{
+				const pos = "F";
+				const players = this.team[t].depth[pos];
+
+				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
+
+				const centers = [];
+				const wings = [];
+
+				for (let i = 0; i < players.length; i++) {
+					const p = players[i];
+					if (p.injured || usedPlayerIDs.has(p.id)) {
+						continue;
+					}
+
+					// For the 4 defined lines, first of the 3 players is the center
+					if (i >= numInDepthChart) {
+						centers.push(p);
+						wings.push(p);
+					} else if (i % NUM_PLAYERS_PER_LINE[pos] === 0) {
+						centers.push(p);
+					} else {
+						wings.push(p);
+					}
+				}
+
+				const lines: PlayerGameSim[][] = range(4).map(() => []);
+				for (const line of lines) {
+					let center = centers.shift();
+					while (center === undefined || usedPlayerIDs.has(center.id)) {
+						center = centers.shift();
+						if (center === undefined && wings.length > 0) {
+							center = wings.shift();
 						}
 					}
 
-					this.lines[t][pos] = lines;
+					let wing1 = wings.shift();
+					while (
+						wing1 === undefined ||
+						usedPlayerIDs.has(wing1.id) ||
+						wing1 === center
+					) {
+						wing1 = wings.shift();
+						if (wing1 === undefined && centers.length > 0) {
+							wing1 = centers.shift();
+						}
+					}
+
+					let wing2 = wings.shift();
+					while (
+						wing2 === undefined ||
+						usedPlayerIDs.has(wing2.id) ||
+						wing2 === center ||
+						wing2 === wing1
+					) {
+						wing2 = wings.shift();
+						if (wing2 === undefined && centers.length > 0) {
+							wing2 = centers.shift();
+						}
+					}
+
+					if (center && wing1 && wing2) {
+						line.push(center, wing1, wing2);
+						usedPlayerIDs.add(center.id);
+						usedPlayerIDs.add(wing1.id);
+						usedPlayerIDs.add(wing2.id);
+					}
 				}
+
+				this.lines[t][pos] = lines;
 			}
 		}
 	}

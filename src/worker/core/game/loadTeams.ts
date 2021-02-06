@@ -34,8 +34,10 @@ const processTeam = (
 	// Initialize team composite rating object
 	const compositeRating: any = {};
 
-	for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
-		compositeRating[rating] = 0;
+	if (isSport("basketball")) {
+		for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
+			compositeRating[rating] = 0;
+		}
 	}
 
 	// Injury-adjusted ovr

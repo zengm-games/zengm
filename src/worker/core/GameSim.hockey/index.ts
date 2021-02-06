@@ -20,6 +20,7 @@ import type {
 import orderBy from "lodash/orderBy";
 import flatten from "lodash/flatten";
 import range from "lodash/range";
+import getCompositeFactor from "./getCompositeFactor";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -434,11 +435,19 @@ class GameSim {
 	}
 
 	getNumHits() {
-		return 1;
+		return Math.round(
+			this.team[this.o].compositeRating.hitting +
+				this.team[this.d].compositeRating.hitting +
+				Math.random() -
+				0.5,
+		);
 	}
 
 	doHit() {
-		const t = Math.random() < 0.5 ? 0 : 1;
+		const t = random.choice(
+			[0, 1] as TeamNum[],
+			t => this.team[t].compositeRating.hitting,
+		);
 		const t2 = t === 0 ? 1 : 0;
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
@@ -455,15 +464,23 @@ class GameSim {
 	}
 
 	isGiveaway() {
-		return Math.random() < 0.1;
+		return (
+			Math.random() <
+			(0.1 * this.team[this.o].compositeRating.puckControl) /
+				this.team[this.d].compositeRating.takeaway
+		);
 	}
 
 	isTakeaway() {
-		return Math.random() < 0.1;
+		return (
+			Math.random() <
+			(0.1 * this.team[this.d].compositeRating.takeaway) /
+				this.team[this.o].compositeRating.puckControl
+		);
 	}
 
 	isNothing() {
-		return Math.random() < 0.3;
+		return Math.random() < 0.1;
 	}
 
 	doGiveaway() {
@@ -533,7 +550,7 @@ class GameSim {
 
 		const r = Math.random();
 
-		if (r < 0.1) {
+		if (r < 0.2 * this.team[this.d].compositeRating.blocking) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
 			this.playByPlay.logEvent({
 				type: "block",
@@ -545,7 +562,7 @@ class GameSim {
 			return "block";
 		}
 
-		if (r < 0.4) {
+		if (r < 1 - Math.sqrt(shooter.compositeRating.scoring)) {
 			this.playByPlay.logEvent({
 				type: "miss",
 				clock: this.clock,
@@ -560,28 +577,18 @@ class GameSim {
 		const goalie = this.playersOnIce[this.d].G[0];
 
 		if (goalie) {
-			if (r < 0.8) {
+			if (r < goalie.compositeRating.goalkeeping ** 0.25) {
+				const saveType = Math.random() < 0.1 ? "save-freeze" : "save";
+
 				this.playByPlay.logEvent({
-					type: "save",
+					type: saveType,
 					clock: this.clock,
 					t: this.d,
 					names: [goalie.name],
 				});
 				this.recordStat(this.d, goalie, "sv");
 
-				return "save";
-			}
-
-			if (r < 0.9) {
-				this.playByPlay.logEvent({
-					type: "save-freeze",
-					clock: this.clock,
-					t: this.d,
-					names: [goalie.name],
-				});
-				this.recordStat(this.d, goalie, "sv");
-
-				return "save-freeze";
+				return saveType;
 			}
 		}
 
@@ -717,7 +724,57 @@ class GameSim {
 	}
 
 	updateTeamCompositeRatings() {
-		console.log("updateTeamCompositeRatings");
+		for (const t of [0, 1] as const) {
+			this.team[t].compositeRating.hitting = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					D: 1,
+					W: 0.5,
+					C: 0.25,
+				},
+				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
+			});
+
+			this.team[t].compositeRating.puckControl = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					C: 1,
+					W: 0.5,
+					D: 0.25,
+				},
+				valFunc: p => p.compositeRating.playmaker,
+			});
+
+			this.team[t].compositeRating.takeaway = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					D: 1,
+					W: 0.5,
+					C: 0.25,
+				},
+				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
+			});
+
+			this.team[t].compositeRating.blocking = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					D: 1,
+					W: 0.5,
+					C: 0.25,
+				},
+				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
+			});
+
+			this.team[t].compositeRating.scoring = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					C: 1,
+					W: 0.5,
+					D: 0.25,
+				},
+				valFunc: p => p.compositeRating.scoring,
+			});
+		}
 	}
 
 	doLineChange(t: TeamNum, pos: "F" | "D") {

@@ -1,4 +1,4 @@
-import { bySport, PHASE, SIMPLE_AWARDS } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";

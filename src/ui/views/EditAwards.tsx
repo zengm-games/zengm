@@ -334,7 +334,7 @@ const EditAwards = ({
 						];
 					})}
 
-					{isSport("basketball") || isSport("hockey") ? (
+					{isSport("basketball") ? (
 						<>
 							{awards.allDefensive.map((element: any, i: number) => {
 								const teamSelect = element.players.map(

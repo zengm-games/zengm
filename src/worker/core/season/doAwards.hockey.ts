@@ -16,6 +16,7 @@ import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type {
 	AwardPlayer,
 	AwardPlayerDefense,
+	AwardPlayerGoalie,
 	Awards,
 } from "../../../common/types.hockey";
 
@@ -27,6 +28,7 @@ const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 		abbrev: p.abbrev,
 		keyStats: p.currentStats.keyStats,
 		pts: p.currentStats.pts,
+		ops: p.currentStats.ops,
 	};
 };
 
@@ -37,7 +39,19 @@ const getPlayerInfoDefense = (p: PlayerFiltered): AwardPlayerDefense => {
 		tid: p.tid,
 		abbrev: p.abbrev,
 		tk: p.currentStats.tk,
+		hit: p.currentStats.hit,
+		dps: p.currentStats.dps,
+	};
+};
+
+const getPlayerInfoGoalie = (p: PlayerFiltered): AwardPlayerGoalie => {
+	return {
+		pid: p.pid,
+		name: p.name,
+		tid: p.tid,
+		abbrev: p.abbrev,
 		gaa: p.currentStats.gaa,
+		gps: p.currentStats.gps,
 	};
 };
 
@@ -53,6 +67,13 @@ const getTopPlayersDefense = (
 	playersUnsorted: PlayerFiltered[],
 ): AwardPlayerDefense[] => {
 	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoDefense);
+};
+
+const getTopPlayersGoalie = (
+	options: GetTopPlayersOptions,
+	playersUnsorted: PlayerFiltered[],
+): AwardPlayerGoalie[] => {
+	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoGoalie);
 };
 
 const makeTeams = <T>(
@@ -157,6 +178,7 @@ const getRealFinalsMvp = async (
 			abbrev: p.abbrev,
 			pts: playerArray[0].pts / finalsGames.length,
 			keyStats: "",
+			ops: p.ops,
 		};
 	}
 };
@@ -168,14 +190,17 @@ export const mvpScore = (p: PlayerFiltered) => {
 			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
 	}
 
-	return p.currentStats.pts + teamFactor;
+	return p.currentStats.pts + p.currentStats.ops + teamFactor;
 };
 
-export const royScore = (p: PlayerFiltered) => p.currentStats.pts;
+export const royScore = (p: PlayerFiltered) =>
+	p.currentStats.pts + p.currentStats.ops;
 
-export const dpoyScore = (p: PlayerFiltered) => p.currentStats.tk;
+export const dpoyScore = (p: PlayerFiltered) =>
+	p.currentStats.tk + p.currentStats.dps + p.currentStats.hit;
 
-export const goyScore = (p: PlayerFiltered) => p.currentStats.gaa;
+export const goyScore = (p: PlayerFiltered) =>
+	p.currentStats.gaa + p.currentStats.gps;
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
@@ -234,7 +259,7 @@ const doAwards = async (conditions: Conditions) => {
 	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
 	const allRookie = royPlayers.slice(0, 5);
-	const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
+	const dpoyPlayers = getTopPlayersDefense(
 		{
 			allowNone: true,
 			amount: 15,
@@ -243,10 +268,10 @@ const doAwards = async (conditions: Conditions) => {
 		players,
 	);
 	const dpoy = dpoyPlayers[0];
-	const allDefensive = makeTeams(dpoyPlayers);
-	const goyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
+	const goyPlayers = getTopPlayersGoalie(
 		{
 			allowNone: true,
+			amount: 15,
 			score: goyScore,
 		},
 		players,
@@ -304,7 +329,6 @@ const doAwards = async (conditions: Conditions) => {
 		roy,
 		finalsMvp,
 		allLeague,
-		allDefensive,
 		allRookie,
 		season: g.get("season"),
 	};

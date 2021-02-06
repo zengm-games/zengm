@@ -95,9 +95,6 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["bsc", "stre"],
 		weights: [1, 0.2],
 	},
-	pace: {
-		ratings: ["spd", "endu"],
-	},
 	endurance: {
 		ratings: [50, "endu"],
 		weights: [1, 1],

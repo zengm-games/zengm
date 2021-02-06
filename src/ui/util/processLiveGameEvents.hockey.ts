@@ -191,18 +191,18 @@ const processLiveGameEvents = ({
 			}
 
 			// Everything else
-			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
-				if (e.pid !== undefined) {
-					const p = boxScore.teams[actualT].players.find(
-						(p2: any) => p2.pid === e.pid,
-					);
-					if (p === undefined) {
-						console.log("Can't find player", e);
-					}
-					if (p) {
-						p[e.s] += e.amt;
-					}
+			if (e.pid !== undefined) {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.pid,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
 				}
+				if (p && p[e.s] !== undefined) {
+					p[e.s] += e.amt;
+				}
+			}
+			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		} else if (e.type === "playersOnIce") {

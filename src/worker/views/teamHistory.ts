@@ -103,7 +103,7 @@ export const getHistory = async (
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
 		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ps"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	let players = await idb.getCopies.playersPlus(playersAll, {

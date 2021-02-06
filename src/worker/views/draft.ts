@@ -63,7 +63,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats = bySport({
 				basketball: ["per", "ewa"],
 				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ps"],
+				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 			});
 			undrafted = await idb.cache.players.indexGetAll(
 				"playersByTid",
@@ -76,7 +76,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats = bySport({
 				basketball: ["per", "ewa"],
 				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ps"],
+				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 			});
 			undrafted = (
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])

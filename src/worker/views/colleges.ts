@@ -105,7 +105,7 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 					"ws48",
 				],
 				football: ["keyStats", "av"],
-				hockey: ["keyStats", "ps"],
+				hockey: ["keyStats", "ops", "dps", "ps"],
 			});
 
 			const infosTemp: { [key: string]: InfoTemp } = {};

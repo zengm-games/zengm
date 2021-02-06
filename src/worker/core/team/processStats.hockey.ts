@@ -44,11 +44,11 @@ const processStats = (
 			} else if (stat === "a") {
 				row[stat] = a;
 			} else if (stat === "sa") {
-				row[stat] = ts.sv + ts.ga;
+				row[stat] = ts.sv + oppG;
 			} else if (stat === "sPct") {
 				row[stat] = percentage(g, ts.s);
 			} else if (stat === "svPct") {
-				row[stat] = percentage(ts.sv, ts.sv + ts.ga);
+				row[stat] = percentage(ts.sv, ts.sv + oppG);
 			} else if (stat === "foPct") {
 				row[stat] = percentage(ts.fow, ts.fow + ts.fol);
 			} else if (stat === "qsPct") {
@@ -60,11 +60,11 @@ const processStats = (
 			} else if (stat === "oppA") {
 				row[stat] = oppA;
 			} else if (stat === "oppAa") {
-				row[stat] = ts.oppSv + ts.oppGa;
+				row[stat] = ts.oppSv + g;
 			} else if (stat === "oppSPct") {
 				row[stat] = percentage(oppG, ts.oppS);
 			} else if (stat === "oppSvPct") {
-				row[stat] = percentage(ts.oppSv, ts.oppSv + ts.ga);
+				row[stat] = percentage(ts.oppSv, ts.oppSv + oppG);
 			} else if (stat === "oppFoPct") {
 				row[stat] = percentage(ts.oppFow, ts.oppFow + ts.oppFol);
 			} else if (stat === "oppGaa") {

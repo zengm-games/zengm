@@ -63,7 +63,7 @@ export const getMostXPlayers = async ({
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
 		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ps"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	const players = await idb.getCopies.playersPlus(playersAll, {

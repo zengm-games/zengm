@@ -133,6 +133,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 					positionAdjustment *
 					teamMarginalGoalsAgainst +
 				plusMinusAdjustment;
+
 			dps[i] = marginalGoalsAgainst / marginalGoalsPerPoint;
 
 			gps[i] = 0;

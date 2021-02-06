@@ -7,7 +7,7 @@ const updateNegotiationList = async () => {
 	const stats = bySport({
 		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
 		football: ["yearsWithTeam", "gp", "keyStats", "av"],
-		hockey: ["yearsWithTeam", "gp", "keyStats", "ps"],
+		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	const userTid = g.get("userTid");

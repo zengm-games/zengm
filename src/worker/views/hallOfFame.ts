@@ -22,7 +22,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"ws48",
 			],
 			football: ["keyStats", "av"],
-			hockey: ["keyStats", "ps"],
+			hockey: ["keyStats", "ops", "dps", "ps"],
 		});
 		const playersAll = await idb.getCopies.players({
 			filter: p => p.hof,

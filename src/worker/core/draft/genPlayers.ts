@@ -118,7 +118,59 @@ const genPlayers = async (
 				false,
 				scoutingRank,
 			);
-			p.born.year = draftYear - 71;
+			p.born.year = draftYear - 47;
+			p.born.loc = "Honolulu, HI";
+			p.college = "Columbia University";
+			p.firstName = "Barack";
+			p.hgt = 73;
+			p.imgURL = "/img/obama.jpg";
+			p.lastName = "Obama";
+			p.weight = 175;
+			Object.assign(p.ratings[0], {
+				hgt: 20,
+				stre: 80,
+				spd: 80,
+				jmp: 80,
+				endu: 80,
+				ins: 90,
+				dnk: 80,
+				ft: 80,
+				fg: 80,
+				tp: 40,
+				oiq: 80,
+				diq: 80,
+				drb: 90,
+				pss: 80,
+				reb: 100,
+			});
+			await player.develop(p, 0);
+			await player.updateValues(p);
+			p.ratings[0].skills = ["Dp"];
+			const pid = await idb.cache.players.add(p);
+
+			if (typeof pid === "number") {
+				await logEvent({
+					type: "playerFeat",
+					text: `<a href="${helpers.leagueUrl(["player", pid])}">${
+						p.firstName
+					} ${
+						p.lastName
+					}</a> decided to bring hope and change to Basketball GM.`,
+					showNotification: false,
+					pids: [pid],
+					tids: [g.get("userTid")],
+				});
+			}
+			// eslint-disable-next-line no-dupe-else-if
+		} else if (Math.random() < 1 / 100000) {
+			const p = player.generate(
+				PLAYER.UNDRAFTED,
+				19,
+				draftYear,
+				false,
+				scoutingRank,
+			);
+			p.born.year = draftYear - 70;
 			p.born.loc = "Queens, NY";
 			p.college = "Wharton";
 			p.firstName = "Donald";

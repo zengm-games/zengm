@@ -1,6 +1,5 @@
 import orderBy from "lodash/orderBy";
 import {
-	GetTopPlayersOptions,
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
@@ -14,6 +13,7 @@ import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 
 import type { AwardPlayer, Awards } from "../../../common/types.hockey";
+import { processPlayerStats } from "../../../common";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -92,6 +92,8 @@ const getRealFinalsMvp = async (
 			pid: number;
 			score: number;
 			tid: number;
+			g: number;
+			a: number;
 			pts: number;
 		}
 	> = new Map();
@@ -99,17 +101,23 @@ const getRealFinalsMvp = async (
 	for (const game of finalsGames) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
+				const row = processPlayerStats(p, ["g", "a", "pts"]);
+
 				const info = playerInfos.get(p.pid) || {
 					pid: p.pid,
 					score: 0,
 					tid: t.tid,
+					g: 0,
+					a: 0,
 					pts: 0,
 				};
 
 				// 75% bonus for the winning team
 				const factor = t.tid === champTid ? 1.75 : 1;
-				info.score += factor * p.pts;
-				info.pts += p.pts;
+				info.score += factor * row.pts;
+				info.pts += row.pts;
+				info.g += row.g;
+				info.a += row.a;
 				playerInfos.set(p.pid, info);
 			}
 		}
@@ -134,9 +142,16 @@ const getRealFinalsMvp = async (
 			name: p.name,
 			tid: p.tid,
 			abbrev: p.abbrev,
-			pts: playerArray[0].pts / finalsGames.length,
-			keyStats: "",
-			ops: p.ops,
+			g: playerArray[0].g,
+			a: playerArray[0].a,
+			pts: playerArray[0].pts,
+			ops: 0,
+			tk: 0,
+			hit: 0,
+			dps: 0,
+			gaa: 0,
+			svPct: 0,
+			gps: 0,
 		};
 	}
 };

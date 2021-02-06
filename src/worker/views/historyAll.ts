@@ -1,4 +1,4 @@
-import { PHASE, SIMPLE_AWARDS } from "../../common";
+import { bySport, PHASE, SIMPLE_AWARDS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
@@ -192,8 +192,14 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
+		const awardNames = bySport({
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+			hockey: ["finalsMvp", "mvp", "dpoy", "goy", "roy"],
+		});
+
 		return {
-			awards: SIMPLE_AWARDS,
+			awards: awardNames,
 			seasons,
 			userTid: g.get("userTid"),
 		};

@@ -1,30 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-const tooltips =
-	process.env.SPORT === "basketball"
-		? {
-				"3": "Three Point Shooter",
-				A: "Athlete",
-				B: "Ball Handler",
-				Di: "Interior Defender",
-				Dp: "Perimeter Defender",
-				Po: "Post Scorer",
-				Ps: "Passer",
-				R: "Rebounder",
-		  }
-		: {
-				Pa: "Accurate Passer",
-				Pd: "Deep Passer",
-				Ps: "Smart Passer",
-				A: "Athletic",
-				X: "Explosive Runner",
-				H: "Hands",
-				Bp: "Pass Blocker",
-				Br: "Run Blocker",
-				PR: "Pass Rusher",
-				RS: "Run Stopper",
-				L: "Lockdown Coverage",
-		  };
+import { SKILLS } from "../../common/constants";
+
+const tooltips = SKILLS;
 
 const SkillsBlock = ({
 	className,
@@ -46,7 +24,7 @@ const SkillsBlock = ({
 					title={
 						// https://github.com/microsoft/TypeScript/issues/21732
 						// @ts-ignore
-						tooltips.hasOwnProperty(skill) ? tooltips[skill] : null
+						tooltips.hasOwnProperty(skill) ? tooltips[skill].description : null
 					}
 				>
 					{skill}

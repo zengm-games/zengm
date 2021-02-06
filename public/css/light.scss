@@ -664,7 +664,18 @@ tr.table-warning:hover > td {
 	border: 1px solid $blue !important;
 	color: $gray-700 !important;
 }
-
+.color-primary {
+	color: $primary;
+}
+.check-item-default {
+	color: $gray-600;
+	background: $gray-200;
+}
+.check-item-checked {
+	background: $primary;
+	color: $white;
+	border-color: $primary;
+}
 .navbar-border {
 	border-bottom: 1px solid $gray-200;
 }

@@ -7,6 +7,7 @@ import { DataTable, PlayerNameLabels } from "../components";
 import type { View, ThenArg } from "../../common/types";
 import type api from "../../worker/api";
 import TradeFilter, { filterType } from "./TradeFilter";
+import { AnimatePresence, motion } from "framer-motion";
 
 type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -179,6 +180,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: number[];
 		dpids: number[];
 		filters: filterType;
+		showFilters: boolean;
+		filterVerbiage: string;
 	}>({
 		asking: false,
 		offers: [],
@@ -189,13 +192,32 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			salaryCap: "",
 			multi: { pos: [], posExt: [], skill: [] },
 		},
+		showFilters: false,
+		filterVerbiage: "Filter",
 	});
 
 	const setFilters = (filters: filterType) => {
 		setState(prevState => {
+			let count = 0;
+			if (filters.multi.pos && filters.multi.pos.length > 0) count++;
+			if (filters.multi.skill && filters.multi.skill.length > 0) count++;
+			if (filters.balancedOnly || filters.salaryCap) count++;
+
+			const plurality = count > 1 ? "Filters" : "Filter";
+
 			return {
 				...prevState,
 				filters: filters,
+				filterVerbiage: count > 0 ? ` (${count} ${plurality})` : plurality,
+			};
+		});
+	};
+
+	const toggleFilterDisplay = () => {
+		setState(prevState => {
+			return {
+				...prevState,
+				showFilters: !prevState.showFilters,
 			};
 		});
 	};
@@ -403,6 +425,18 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 
 			<div ref={beforeOffersRef} />
 
+			<AnimatePresence>
+				{state.showFilters === true && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+					>
+						<TradeFilter setFilters={setFilters} filters={state.filters} />
+					</motion.div>
+				)}
+			</AnimatePresence>
+
 			<div className="text-center">
 				<button
 					className="btn btn-lg btn-primary"
@@ -411,7 +445,14 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				>
 					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
 				</button>
-				<TradeFilter setFilters={setFilters} />
+				<a
+					onClick={toggleFilterDisplay}
+					className="btn btn-lg btn-link cursor-pointer"
+					title="Filter"
+				>
+					<span className="glyphicon glyphicon-filter align-middle"></span>{" "}
+					<span className="text-align-middle">{state.filterVerbiage}</span>
+				</a>
 			</div>
 
 			{state.offers.map((offer, i) => {

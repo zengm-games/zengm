@@ -116,6 +116,10 @@ export type Conditions = {
 	hostID?: number;
 };
 
+export type Skill = {
+	[key: string]: { description: string | undefined; label: string };
+};
+
 export type DraftLotteryResultArray = {
 	tid: number;
 	originalTid: number;

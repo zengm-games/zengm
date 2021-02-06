@@ -1,7 +1,13 @@
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 
-import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types";
+import type {
+	CompositeWeights,
+	Phase,
+	DraftType,
+	MoodTrait,
+	Skill,
+} from "./types";
 
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
@@ -124,6 +130,11 @@ const POSITIONS: any[] =
 		? constantsFootball.POSITIONS
 		: constantsBasketball.POSITIONS;
 
+const SKILLS: Skill =
+	process.env.SPORT === "football"
+		? constantsFootball.SKILLS
+		: constantsBasketball.SKILLS;
+
 const TEAM_STATS_TABLES: {
 	[key: string]: {
 		name: string;
@@ -199,4 +210,5 @@ export {
 	POSITIONS,
 	TEAM_STATS_TABLES,
 	TIME_BETWEEN_GAMES,
+	SKILLS,
 };

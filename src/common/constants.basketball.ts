@@ -1,6 +1,40 @@
-import type { CompositeWeights, Conf, Div } from "./types";
+import type { CompositeWeights, Conf, Div, Skill } from "./types";
 import type { RatingKey } from "./types.basketball";
 
+const SKILLS: Skill = {
+	B: {
+		label: "B",
+		description: "Ball Handler",
+	},
+	Ps: {
+		label: "Ps",
+		description: "Passer",
+	},
+	Po: {
+		label: "Po",
+		description: "Post Scorer",
+	},
+	"3": {
+		label: "3",
+		description: "Three Point Shooter",
+	},
+	R: {
+		label: "R",
+		description: "Rebounder",
+	},
+	Di: {
+		label: "Di",
+		description: "Interior Defender",
+	},
+	Dp: {
+		label: "Dp",
+		description: "Perimeter Defender",
+	},
+	A: {
+		label: "A",
+		description: "Athlete",
+	},
+};
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {
 		ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
@@ -13,7 +47,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["drb", "spd"],
 		weights: [1, 1],
 		skill: {
-			label: "B",
+			label: SKILLS.B.label,
 			cutoff: 0.68,
 		},
 	},
@@ -21,7 +55,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["drb", "pss", "oiq"],
 		weights: [0.4, 1, 0.5],
 		skill: {
-			label: "Ps",
+			label: SKILLS.Ps.label,
 			cutoff: 0.63,
 		},
 	},
@@ -37,7 +71,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["hgt", "stre", "spd", "ins", "oiq"],
 		weights: [1, 0.6, 0.2, 1, 0.4],
 		skill: {
-			label: "Po",
+			label: SKILLS.Po.label,
 			cutoff: 0.61,
 		},
 	},
@@ -49,7 +83,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["oiq", "tp"],
 		weights: [0.1, 1],
 		skill: {
-			label: "3",
+			label: SKILLS["3"].label,
 			cutoff: 0.59,
 		},
 	},
@@ -60,7 +94,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
 		weights: [2, 0.1, 0.1, 2, 0.5, 0.5],
 		skill: {
-			label: "R",
+			label: SKILLS.R.label,
 			cutoff: 0.61,
 		},
 	},
@@ -88,7 +122,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["hgt", "stre", "spd", "jmp", "diq"],
 		weights: [2.5, 1, 0.5, 0.5, 2],
 		skill: {
-			label: "Di",
+			label: SKILLS.Di.label,
 			cutoff: 0.57,
 		},
 	},
@@ -96,7 +130,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["hgt", "stre", "spd", "jmp", "diq"],
 		weights: [0.5, 0.5, 2, 0.5, 1],
 		skill: {
-			label: "Dp",
+			label: SKILLS.Dp.label,
 			cutoff: 0.61,
 		},
 	},
@@ -108,7 +142,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["stre", "spd", "jmp", "hgt"],
 		weights: [1, 1, 1, 0.75],
 		skill: {
-			label: "A",
+			label: SKILLS.A.label,
 			cutoff: 0.63,
 		},
 	},
@@ -485,6 +519,7 @@ const DEFAULT_DIVS: Div[] = [
 const DEFAULT_STADIUM_CAPACITY = 25000;
 
 export {
+	SKILLS,
 	AWARD_NAMES,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,

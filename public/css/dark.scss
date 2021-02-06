@@ -46,6 +46,19 @@ $text-muted: $gray-400;
 	color: $primary;
 }
 
+.check-item-default {
+	color: $gray-600;
+	background: $gray-200;
+}
+.check-item-checked {
+	background: $primary;
+	color: $black;
+	border-color: $primary;
+}
+.color-primary {
+	color: $primary;
+}
+
 .text-danger {
 	color: lighten($red, 10) !important;
 }

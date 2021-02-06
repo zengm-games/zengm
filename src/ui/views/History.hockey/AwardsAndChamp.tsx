@@ -6,16 +6,52 @@ const Winner = ({
 	award,
 	finals = false,
 	season,
+	type,
 	userTid,
 }: {
 	award: ActualProps["awards"][number];
 	finals?: boolean;
 	season: number;
+	type: "any" | "defense" | "goalie";
 	userTid: number;
 }) => {
 	if (!award) {
 		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 		return finals ? <>???</> : <p>???</p>;
+	}
+	console.log(award);
+
+	let stats;
+	if (type === "defense") {
+		stats = `${helpers.roundStat(award.tk, "tk")} TK, ${helpers.roundStat(
+			award.hit,
+			"hit",
+		)} HIT`;
+		if (!finals) {
+			stats += `, ${helpers.roundStat(award.dps, "dps")} DPS`;
+		}
+	} else if (
+		type === "goalie" ||
+		(type === "any" && award.gps > award.ops + award.dps)
+	) {
+		stats = `${helpers.roundStat(award.gaa, "gaa")} GAA, ${helpers.roundStat(
+			award.svPct,
+			"svPct",
+		)} SV%`;
+		if (!finals) {
+			stats += `, ${helpers.roundStat(award.gps, "gps")} GPS`;
+		}
+	} else {
+		stats = `${helpers.roundStat(award.g, "g")} G, ${helpers.roundStat(
+			award.a,
+			"a",
+		)} A, ${helpers.roundStat(award.pts, "pts")} P`;
+		if (!finals) {
+			stats += `, ${helpers.roundStat(
+				award.ops + award.dps + award.gps,
+				"ps",
+			)} PS`;
+		}
 	}
 
 	const nameAndStats = (
@@ -38,7 +74,7 @@ const Winner = ({
 				)
 			</span>
 			<br />
-			{award.keyStats}
+			{stats}
 		</>
 	);
 
@@ -94,6 +130,7 @@ const AwardsAndChamp = ({
 								finals
 								season={season}
 								userTid={userTid}
+								type="any"
 							/>
 						</p>
 					</div>
@@ -121,15 +158,35 @@ const AwardsAndChamp = ({
 					</p>
 				))}
 				<h2>Most Valuable Player</h2>
-				<Winner award={awards.mvp} season={season} userTid={userTid} />
+				<Winner
+					award={awards.mvp}
+					season={season}
+					userTid={userTid}
+					type="any"
+				/>
 			</div>
 			<div className="col-sm-12 col-6">
 				<h2>Defensive Player of the Year</h2>
-				<Winner award={awards.dpoy} season={season} userTid={userTid} />
+				<Winner
+					award={awards.dpoy}
+					season={season}
+					userTid={userTid}
+					type="defense"
+				/>
 				<h2>Goalie of the Year</h2>
-				<Winner award={awards.goy} season={season} userTid={userTid} />
+				<Winner
+					award={awards.goy}
+					season={season}
+					userTid={userTid}
+					type="goalie"
+				/>
 				<h2>Rookie of the Year</h2>
-				<Winner award={awards.roy} season={season} userTid={userTid} />
+				<Winner
+					award={awards.roy}
+					season={season}
+					userTid={userTid}
+					type="any"
+				/>
 			</div>
 		</div>
 	);

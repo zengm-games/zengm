@@ -13,67 +13,25 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 
-import type {
-	AwardPlayer,
-	AwardPlayerDefense,
-	AwardPlayerGoalie,
-	Awards,
-} from "../../../common/types.hockey";
+import type { AwardPlayer, Awards } from "../../../common/types.hockey";
 
-const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
+const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
 		pid: p.pid,
 		name: p.name,
 		tid: p.tid,
 		abbrev: p.abbrev,
-		keyStats: p.currentStats.keyStats,
+		g: p.currentStats.g,
+		a: p.currentStats.a,
 		pts: p.currentStats.pts,
 		ops: p.currentStats.ops,
-	};
-};
-
-const getPlayerInfoDefense = (p: PlayerFiltered): AwardPlayerDefense => {
-	return {
-		pid: p.pid,
-		name: p.name,
-		tid: p.tid,
-		abbrev: p.abbrev,
 		tk: p.currentStats.tk,
 		hit: p.currentStats.hit,
 		dps: p.currentStats.dps,
-	};
-};
-
-const getPlayerInfoGoalie = (p: PlayerFiltered): AwardPlayerGoalie => {
-	return {
-		pid: p.pid,
-		name: p.name,
-		tid: p.tid,
-		abbrev: p.abbrev,
 		gaa: p.currentStats.gaa,
+		svPct: p.currentStats.svPct,
 		gps: p.currentStats.gps,
 	};
-};
-
-const getTopPlayersOffense = (
-	options: GetTopPlayersOptions,
-	playersUnsorted: PlayerFiltered[],
-): AwardPlayer[] => {
-	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoOffense);
-};
-
-const getTopPlayersDefense = (
-	options: GetTopPlayersOptions,
-	playersUnsorted: PlayerFiltered[],
-): AwardPlayerDefense[] => {
-	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoDefense);
-};
-
-const getTopPlayersGoalie = (
-	options: GetTopPlayersOptions,
-	playersUnsorted: PlayerFiltered[],
-): AwardPlayerGoalie[] => {
-	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoGoalie);
 };
 
 const makeTeams = <T>(
@@ -236,17 +194,17 @@ const doAwards = async (conditions: Conditions) => {
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
 	leagueLeaders(players, [], awardsByPlayer);
 
-	const mvpPlayers = getTopPlayersOffense(
+	const mvpPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: 15,
 			score: mvpScore,
 		},
 		players,
-	);
+	).map(getPlayerInfo);
 	const mvp = mvpPlayers[0];
 	const allLeague = makeTeams(mvpPlayers);
-	const royPlayers = getTopPlayersOffense(
+	const royPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: 5,
@@ -254,28 +212,28 @@ const doAwards = async (conditions: Conditions) => {
 			score: royScore,
 		},
 		players,
-	);
+	).map(getPlayerInfo);
 
 	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
 	const allRookie = royPlayers.slice(0, 5);
-	const dpoyPlayers = getTopPlayersDefense(
+	const dpoyPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: 1,
 			score: dpoyScore,
 		},
 		players,
-	);
+	).map(getPlayerInfo);
 	const dpoy = dpoyPlayers[0];
-	const goyPlayers = getTopPlayersGoalie(
+	const goyPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: 1,
 			score: goyScore,
 		},
 		players,
-	);
+	).map(getPlayerInfo);
 	const goy = goyPlayers[0];
 
 	let finalsMvp;
@@ -312,12 +270,12 @@ const doAwards = async (conditions: Conditions) => {
 
 		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
 		if (finalsMvp === undefined) {
-			[finalsMvp] = getTopPlayersOffense(
+			[finalsMvp] = getTopPlayers(
 				{
 					score: mvpScore,
 				},
 				champPlayers,
-			);
+			).map(getPlayerInfo);
 		}
 	}
 

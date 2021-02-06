@@ -34,27 +34,15 @@ export type AwardPlayer = {
 	name: string;
 	tid: number;
 	abbrev: string;
-	keyStats: string;
+	g: number;
+	a: number;
 	pts: number;
 	ops: number;
-};
-
-export type AwardPlayerDefense = {
-	pid: number;
-	name: string;
-	tid: number;
-	abbrev: string;
 	tk: number;
 	hit: number;
 	dps: number;
-};
-
-export type AwardPlayerGoalie = {
-	pid: number;
-	name: string;
-	tid: number;
-	abbrev: string;
 	gaa: number;
+	svPct: number;
 	gps: number;
 };
 
@@ -84,8 +72,8 @@ export type Awards = {
 			players: AwardPlayer[];
 		},
 	];
-	dpoy: AwardPlayerDefense;
-	goy: AwardPlayerGoalie;
+	dpoy: AwardPlayer;
+	goy: AwardPlayer;
 	finalsMvp: AwardPlayer | undefined;
 };
 

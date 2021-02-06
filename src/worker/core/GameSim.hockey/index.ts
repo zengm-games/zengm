@@ -1023,6 +1023,15 @@ class GameSim {
 				this.team[t].stat.pts += pts;
 				this.team[t].stat.ptsQtrs[qtr] += pts;
 				this.playByPlay.logStat(t, undefined, "pts", pts);
+
+				for (const t2 of [0, 1] as const) {
+					const currentlyOnIce = flatten(Object.values(this.playersOnIce[t2]));
+					for (const p2 of currentlyOnIce) {
+						const pm = t2 === t ? 1 : -1;
+						p2.stat.pm += pm;
+						this.playByPlay.logStat(t2, p2.id, "pm", pm);
+					}
+				}
 			}
 
 			if (p !== undefined) {

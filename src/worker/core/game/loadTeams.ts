@@ -140,18 +140,20 @@ const processTeam = (
 		numPlayers = 7;
 	}
 
-	// Would be better if these were scaled by average min played and endurancence
-	t.pace = 0;
+	if (isSport("basketball")) {
+		// Would be better if these were scaled by average min played and endurancence
+		t.pace = 0;
 
-	for (let i = 0; i < numPlayers; i++) {
-		t.pace += t.player[i].compositeRating.pace;
-	}
+		for (let i = 0; i < numPlayers; i++) {
+			t.pace += t.player[i].compositeRating.pace;
+		}
 
-	t.pace /= numPlayers;
-	t.pace = t.pace * 15 + 100; // Scale between 100 and 115
+		t.pace /= numPlayers;
+		t.pace = t.pace * 15 + 100; // Scale between 100 and 115
 
-	if (allStarGame) {
-		t.pace *= 1.15;
+		if (allStarGame) {
+			t.pace *= 1.15;
+		}
 	}
 
 	t.stat = { ...teamStats, pts: 0, ptsQtrs: [0] };

@@ -2,9 +2,6 @@ import type { CompositeWeights, Conf, Div } from "./types";
 import type { Position, RatingKey } from "./types.hockey";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
-	pace: {
-		ratings: ["spd", "pss"],
-	},
 	playmaker: {
 		ratings: ["stk", "pss", "oiq", "spd", "hgt", "stre"],
 		weights: [1, 1, 1, 1, 0.25, 0.1],

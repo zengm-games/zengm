@@ -200,7 +200,7 @@ export const dpoyScore = (p: PlayerFiltered) =>
 	p.currentStats.tk + p.currentStats.dps + p.currentStats.hit;
 
 export const goyScore = (p: PlayerFiltered) =>
-	p.currentStats.gaa + p.currentStats.gps;
+	-p.currentStats.gaa + p.currentStats.gps;
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
@@ -262,7 +262,7 @@ const doAwards = async (conditions: Conditions) => {
 	const dpoyPlayers = getTopPlayersDefense(
 		{
 			allowNone: true,
-			amount: 15,
+			amount: 1,
 			score: dpoyScore,
 		},
 		players,
@@ -271,12 +271,13 @@ const doAwards = async (conditions: Conditions) => {
 	const goyPlayers = getTopPlayersGoalie(
 		{
 			allowNone: true,
-			amount: 15,
+			amount: 1,
 			score: goyScore,
 		},
 		players,
 	);
 	const goy = goyPlayers[0];
+
 	let finalsMvp;
 	const champTeam = teams.find(
 		t =>

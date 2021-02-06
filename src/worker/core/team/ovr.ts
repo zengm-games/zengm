@@ -1,3 +1,4 @@
+import { isSport } from "../../../common";
 import ovrBasketball from "./ovr.basketball";
 import ovrFootball from "./ovr.football";
 
@@ -13,7 +14,7 @@ const ovr = (
 		rating?: string;
 	} = {},
 ) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return ovrFootball(players, options.pos);
 	}
 

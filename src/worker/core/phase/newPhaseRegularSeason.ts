@@ -1,7 +1,15 @@
 import { season } from "..";
 import { idb, iterate } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, local, logEvent } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
+import {
+	EMAIL_ADDRESS,
+	FACEBOOK_USERNAME,
+	GAME_NAME,
+	isSport,
+	SUBREDDIT_NAME,
+	TWITTER_HANDLE,
+} from "../../../common";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -29,10 +37,6 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 		await transaction.done;
 	}
 
-	const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
-	const subreddit =
-		process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM";
-
 	if (!local.autoPlayUntil) {
 		let naggedMailingList = await idb.meta.get(
 			"attributes",
@@ -57,9 +61,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${helpers.upperCaseFirstLetter(
-					process.env.SPORT,
-				)} GM, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
+				text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${GAME_NAME}, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener noreferrer">subscribe to our newsletter here</a>.`,
 				type: "info",
 			});
 		} else {
@@ -75,7 +77,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 					read: false,
 					from: "The Commissioner",
 					year: g.get("season"),
-					text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:commissioner@${process.env.SPORT}-gm.com">Send an email</a> (commissioner@${process.env.SPORT}-gm.com) or join the discussion on <a href="http://www.reddit.com/r/${subreddit}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
+					text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:${EMAIL_ADDRESS}">Send an email</a> (${EMAIL_ADDRESS}) or join the discussion on <a href="http://www.reddit.com/r/${SUBREDDIT_NAME}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
 				});
 			} else if (nagged !== undefined) {
 				if (
@@ -87,18 +89,10 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 						read: false,
 						from: "The Commissioner",
 						year: g.get("season"),
-						text: `<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/${
-							process.env.SPORT === "basketball"
-								? "basketball_gm"
-								: "FootballGM_Game"
-						}">Follow ${sport} GM on Twitter</a></p><p><a href="https://www.facebook.com/${
-							process.env.SPORT
-						}.general.manager">Like ${sport} GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${sport} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${sport} GM players and devs on Discord</a></p><p>The more people that play ${sport} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
-							process.env.SPORT
-						}-gm.com">email me</a>.</p>`,
+						text: `<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/${TWITTER_HANDLE}">Follow ${GAME_NAME} on Twitter</a></p><p><a href="https://www.facebook.com/${FACEBOOK_USERNAME}">Like ${GAME_NAME} on Facebook</a></p><p><a href="http://www.reddit.com/r/${SUBREDDIT_NAME}/">Discuss ${GAME_NAME} on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${GAME_NAME} players and devs on Discord</a></p><p>The more people that play ${GAME_NAME}, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:${EMAIL_ADDRESS}">email me</a>.</p>`,
 					});
 				} else if (
-					process.env.SPORT === "basketball" &&
+					isSport("basketball") &&
 					nagged >= 2 &&
 					nagged <= 3 &&
 					Math.random() < 0.5

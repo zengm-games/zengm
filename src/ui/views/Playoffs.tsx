@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";

@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import type {
 	DiscriminateUnion,
 	EventBBGM,
@@ -73,8 +73,7 @@ const findStatSum = (
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
-		const stat =
-			process.env.SPORT === "basketball" ? row.ows + row.dws : row.av;
+		const stat = bySport({ basketball: row.ows + row.dws, football: row.av });
 
 		// Only after trade
 		if (
@@ -416,7 +415,7 @@ const updateTradeSummary = async (
 			teams,
 			season: event.season,
 			phase: event.phase,
-			stat: process.env.SPORT === "basketball" ? "WS" : "AV",
+			stat: bySport({ basketball: "WS", football: "AV" }),
 			seasonsToPlot,
 		};
 	}

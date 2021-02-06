@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { helpers } from "../util";

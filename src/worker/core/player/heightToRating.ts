@@ -1,10 +1,11 @@
+import { isSport } from "../../../common";
 import limitRating from "./limitRating";
 
 const heightToRating = (heightInInches: number) => {
 	let minHgt;
 	let maxHgt;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		minHgt = 64; // 5'4"
 		maxHgt = 82; // 6'10"
 	} else {

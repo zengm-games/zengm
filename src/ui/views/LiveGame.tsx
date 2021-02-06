@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, {
+import {
+	Component,
 	ChangeEvent,
 	useCallback,
 	useEffect,
@@ -8,11 +9,12 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { BoxScoreRow, BoxScoreWrapper } from "../components";
+import { BoxScoreRow, BoxScoreWrapper, Confetti } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, processLiveGameEvents } from "../util";
+import { processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
+import { bySport, getPeriodName } from "../../common";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -21,14 +23,16 @@ type PlayerRowProps = {
 	p: any;
 };
 
-class PlayerRow extends React.Component<PlayerRowProps> {
+class PlayerRow extends Component<PlayerRowProps> {
 	prevInGame: boolean | undefined;
 
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
-		return process.env.SPORT === "basketball"
-			? this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate
-			: true;
+		return bySport({
+			basketball:
+				this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
+			football: true,
+		});
 	}
 
 	render() {
@@ -37,12 +41,12 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 		// Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
 		this.prevInGame = p.inGame;
 
-		const classes =
-			process.env.SPORT === "basketball"
-				? classNames({
-						"table-warning": p.inGame,
-				  })
-				: undefined;
+		const classes = bySport({
+			basketball: classNames({
+				"table-warning": p.inGame,
+			}),
+			football: undefined,
+		});
 
 		return <BoxScoreRow className={classes} p={p} {...props} />;
 	}
@@ -54,9 +58,8 @@ PlayerRow.propTypes = {
 };
 
 const updatePhaseAndLeagueTopBar = () => {
-	localActions.update({
-		liveGameInProgress: false,
-	});
+	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
+	toWorker("main", "uiUpdateLocal", { liveGameInProgress: false });
 };
 
 const getSeconds = (time: string) => {
@@ -71,6 +74,12 @@ const LiveGame = (props: View<"liveGame">) => {
 	const speedRef = useRef(speed);
 	const [playIndex, setPlayIndex] = useState(-1);
 	const [started, setStarted] = useState(!!props.events);
+	const [confetti, setConfetti] = useState<{
+		colors?: [string, string, string];
+		display: boolean;
+	}>({
+		display: false,
+	});
 
 	const boxScore = useRef<any>(
 		props.initialBoxScore ? props.initialBoxScore : {},
@@ -83,97 +92,113 @@ const LiveGame = (props: View<"liveGame">) => {
 	const events = useRef<any[] | undefined>();
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
-	const processToNextPause = useCallback((force?: boolean): number => {
-		if (!componentIsMounted.current || (pausedRef.current && !force)) {
-			return 0;
-		}
-
-		const startSeconds = getSeconds(boxScore.current.time);
-
-		if (!events.current) {
-			throw new Error("events.current is undefined");
-		}
-
-		const output = processLiveGameEvents({
-			boxScore: boxScore.current,
-			events: events.current,
-			overtimes: overtimes.current,
-			quarters: quarters.current,
-		});
-		const text = output.text;
-		overtimes.current = output.overtimes;
-		quarters.current = output.quarters;
-
-		if (text !== undefined) {
-			const p = document.createElement("p");
-			const node = document.createTextNode(text);
-			if (
-				text === "End of game" ||
-				text.startsWith("Start of") ||
-				text.startsWith("Elam Ending activated! First team to")
-			) {
-				const b = document.createElement("b");
-				b.appendChild(node);
-				p.appendChild(b);
-			} else {
-				p.appendChild(node);
+	const processToNextPause = useCallback(
+		(force?: boolean): number => {
+			if (!componentIsMounted.current || (pausedRef.current && !force)) {
+				return 0;
 			}
 
-			if (playByPlayDiv.current) {
-				playByPlayDiv.current.insertBefore(p, playByPlayDiv.current.firstChild);
-			}
-		}
+			const startSeconds = getSeconds(boxScore.current.time);
 
-		if (events.current && events.current.length > 0) {
-			if (!pausedRef.current) {
-				setTimeout(() => {
-					processToNextPause();
-					setPlayIndex(prev => prev + 1);
-				}, 4000 / 1.2 ** speedRef.current);
-			}
-		} else {
-			boxScore.current.time = "0:00";
-			boxScore.current.gameOver = true;
-			if (boxScore.current.scoringSummary) {
-				for (const event of boxScore.current.scoringSummary) {
-					event.hide = false;
-				}
+			if (!events.current) {
+				throw new Error("events.current is undefined");
 			}
 
-			// Update team records with result of game
-			// Keep in sync with liveGame.ts
-			for (const t of boxScore.current.teams) {
-				if (boxScore.current.playoffs) {
-					if (t.playoffs) {
-						if (boxScore.current.won.tid === t.tid) {
-							t.playoffs.won += 1;
-						} else if (boxScore.current.lost.tid === t.tid) {
-							t.playoffs.lost += 1;
-						}
-					}
+			const output = processLiveGameEvents({
+				boxScore: boxScore.current,
+				events: events.current,
+				overtimes: overtimes.current,
+				quarters: quarters.current,
+			});
+			const text = output.text;
+			overtimes.current = output.overtimes;
+			quarters.current = output.quarters;
+
+			if (text !== undefined) {
+				const p = document.createElement("p");
+				const node = document.createTextNode(text);
+				if (
+					text === "End of game" ||
+					text.startsWith("Start of") ||
+					text.startsWith("Elam Ending activated! First team to")
+				) {
+					const b = document.createElement("b");
+					b.appendChild(node);
+					p.appendChild(b);
 				} else {
-					if (boxScore.current.won.pts === boxScore.current.lost.pts) {
-						// Tied!
-						if (t.tied !== undefined) {
-							t.tied += 1;
-						}
-					} else if (boxScore.current.won.tid === t.tid) {
-						t.won += 1;
-					} else if (boxScore.current.lost.tid === t.tid) {
-						t.lost += 1;
-					}
+					p.appendChild(node);
+				}
+
+				if (playByPlayDiv.current) {
+					playByPlayDiv.current.insertBefore(
+						p,
+						playByPlayDiv.current.firstChild,
+					);
 				}
 			}
 
-			updatePhaseAndLeagueTopBar();
-		}
+			if (events.current && events.current.length > 0) {
+				if (!pausedRef.current) {
+					setTimeout(() => {
+						processToNextPause();
+						setPlayIndex(prev => prev + 1);
+					}, 4000 / 1.2 ** speedRef.current);
+				}
+			} else {
+				boxScore.current.time = "0:00";
+				boxScore.current.gameOver = true;
+				if (boxScore.current.scoringSummary) {
+					for (const event of boxScore.current.scoringSummary) {
+						event.hide = false;
+					}
+				}
 
-		const endSeconds = getSeconds(boxScore.current.time);
+				// Update team records with result of game
+				// Keep in sync with liveGame.ts
+				for (const t of boxScore.current.teams) {
+					if (boxScore.current.playoffs) {
+						if (t.playoffs) {
+							if (boxScore.current.won.tid === t.tid) {
+								t.playoffs.won += 1;
 
-		// This is negative when rolling over to a new quarter
-		const elapsedSeconds = startSeconds - endSeconds;
-		return elapsedSeconds;
-	}, []);
+								if (
+									props.finals &&
+									t.playoffs.won >= boxScore.current.numGamesToWinSeries
+								) {
+									setConfetti({
+										display: true,
+										colors: t.colors,
+									});
+								}
+							} else if (boxScore.current.lost.tid === t.tid) {
+								t.playoffs.lost += 1;
+							}
+						}
+					} else {
+						if (boxScore.current.won.pts === boxScore.current.lost.pts) {
+							// Tied!
+							if (t.tied !== undefined) {
+								t.tied += 1;
+							}
+						} else if (boxScore.current.won.tid === t.tid) {
+							t.won += 1;
+						} else if (boxScore.current.lost.tid === t.tid) {
+							t.lost += 1;
+						}
+					}
+				}
+
+				updatePhaseAndLeagueTopBar();
+			}
+
+			const endSeconds = getSeconds(boxScore.current.time);
+
+			// This is negative when rolling over to a new quarter
+			const elapsedSeconds = startSeconds - endSeconds;
+			return elapsedSeconds;
+		},
+		[props.finals],
+	);
 
 	useEffect(() => {
 		componentIsMounted.current = true;
@@ -262,7 +287,9 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		const playUntilLastTwoMinutes = () => {
 			const quartersToPlay =
-				quarters.current.length >= 4 ? 0 : 4 - quarters.current.length;
+				quarters.current.length >= boxScore.current.numPeriods
+					? 0
+					: boxScore.current.numPeriods - quarters.current.length;
 			for (let i = 0; i < quartersToPlay; i++) {
 				playSeconds(Infinity);
 			}
@@ -311,7 +338,11 @@ const LiveGame = (props: View<"liveGame">) => {
 			},
 			{
 				label: `End of ${
-					boxScore.current.elamTarget === undefined ? "quarter" : "game"
+					boxScore.current.elamTarget !== undefined
+						? "game"
+						: boxScore.current.overtime
+						? "period"
+						: getPeriodName(boxScore.current.numPeriods)
 				}`,
 				key: "Q",
 				onClick: () => {
@@ -342,7 +373,12 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		return menuItems;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [boxScore.current.elam, boxScore.current.elamTarget, processToNextPause]);
+	}, [
+		boxScore.current.elam,
+		boxScore.current.elamTarget,
+		boxScore.current.overtime,
+		processToNextPause,
+	]);
 
 	useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
@@ -384,6 +420,8 @@ const LiveGame = (props: View<"liveGame">) => {
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
+			{confetti.display ? <Confetti colors={confetti.colors} /> : null}
+
 			<p className="text-danger">
 				If you navigate away from this page, you won't be able to see these
 				play-by-play results again because they are not stored anywhere. The

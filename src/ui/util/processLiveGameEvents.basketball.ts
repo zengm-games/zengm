@@ -1,3 +1,4 @@
+import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
 
 // Mutates boxScore!!!
@@ -25,8 +26,8 @@ const processLiveGameEvents = ({
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
 			const quarter = boxScore.teams[0].ptsQtrs.length;
-			if (quarter > 4) {
-				overtimes = quarter - 4;
+			if (quarter > boxScore.numPeriods) {
+				overtimes = quarter - boxScore.numPeriods;
 				if (overtimes === 1) {
 					boxScore.overtime = " (OT)";
 				} else if (overtimes > 1) {
@@ -34,7 +35,9 @@ const processLiveGameEvents = ({
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 			} else {
-				boxScore.quarter = `${helpers.ordinal(quarter)} quarter`;
+				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
+					boxScore.numPeriods,
+				)}`;
 				quarters.push(`Q${quarter}`);
 			}
 		}

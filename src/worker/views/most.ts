@@ -13,7 +13,7 @@ import type {
 } from "../../common/types";
 import groupBy from "lodash/groupBy";
 import { player } from "../core";
-import { PLAYER } from "../../common";
+import { bySport, isSport, PLAYER } from "../../common";
 
 type Most = {
 	value: number;
@@ -60,10 +60,10 @@ export const getMostXPlayers = async ({
 		},
 	);
 
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -103,7 +103,7 @@ export const getMostXPlayers = async ({
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			sum += ps.ows + ps.dws + ps.ewa;
 		} else {
 			sum += ps.av;
@@ -307,10 +307,12 @@ const updatePlayers = async (
 			after = tidAndSeasonToAbbrev;
 		} else if (type === "steals") {
 			title = "Biggest Steals";
-			description =
-				process.env.SPORT === "basketball"
-					? "These are the undrafted players or second round picks who had the best careers."
-					: "These are the undrafted players or 5th+ round picks who had the best careers.";
+			description = bySport({
+				basketball:
+					"These are the undrafted players or second round picks who had the best careers.",
+				football:
+					"These are the undrafted players or 5th+ round picks who had the best careers.",
+			});
 			extraCols.push({
 				key: ["most", "extra"],
 				colName: "Team",
@@ -318,9 +320,10 @@ const updatePlayers = async (
 
 			filter = p =>
 				p.draft.round === 0 ||
-				(process.env.SPORT === "basketball"
-					? p.draft.round >= 2
-					: p.draft.round >= 5);
+				bySport({
+					basketball: p.draft.round >= 2,
+					football: p.draft.round >= 5,
+				});
 			getValue = p => {
 				const value = playerValue(p).value;
 
@@ -372,7 +375,7 @@ const updatePlayers = async (
 							(g.get("quarterLength") > 0
 								? g.get("quarterLength")
 								: defaultGameAttributes.quarterLength) *
-							4 &&
+							g.get("numPeriods") &&
 					(p.retiredYear === Infinity || p.ratings.length > 3)
 				) {
 					return { value: -valueTimesMin / min };

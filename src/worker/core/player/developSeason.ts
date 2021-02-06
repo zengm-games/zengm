@@ -2,7 +2,7 @@ import developSeasonBasketball from "./developSeason.basketball";
 import developSeasonFootball from "./developSeason.football";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import { g, helpers } from "../../util";
-import { RATINGS } from "../../../common";
+import { isSport, RATINGS } from "../../../common";
 import loadDataBasketball from "../realRosters/loadData.basketball";
 import type { Ratings } from "../realRosters/loadData.basketball";
 import limitRating from "./limitRating";
@@ -16,7 +16,7 @@ const developSeason = async (
 	srID: string | undefined,
 	coachingRank?: number,
 ) => {
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		return developSeasonFootball(ratings as any, age, coachingRank);
 	}
 
@@ -31,7 +31,7 @@ const developSeason = async (
 		return;
 	}
 
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 

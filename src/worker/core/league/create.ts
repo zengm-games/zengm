@@ -1,6 +1,6 @@
 import orderBy from "lodash/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
@@ -918,7 +918,13 @@ const create = async ({
 		if (leagueFile.players === undefined) {
 			// If no players were uploaded in custom league file, add some relatives!
 			await player.addRelatives(p);
-		} else {
+		}
+	}
+
+	// A new loop, because addRelatives updates the database
+	const players1 = await idb.cache.players.getAll();
+	for (const p of players1) {
+		if (leagueFile.players) {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
 			if (
 				p.tid >= 0 &&
@@ -994,7 +1000,7 @@ const create = async ({
 		// Auto sort rosters
 		for (const t of leagueData.teams) {
 			let noRosterOrderSet = true;
-			if (process.env.SPORT === "basketball" && leagueFile.players) {
+			if (isSport("basketball") && leagueFile.players) {
 				for (const p of leagueFile.players) {
 					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
 						noRosterOrderSet = false;

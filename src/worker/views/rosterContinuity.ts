@@ -2,6 +2,7 @@ import range from "lodash/range";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 async function updateSeasons(
 	inputs: unknown,
@@ -94,12 +95,50 @@ async function updateSeasons(
 			prevMinutesAll = minutesAll;
 		}
 
-		seasons.reverse();
+		const abbrevs = g.get("teamInfoCache").map(t => t.abbrev);
+
+		// Keep track of tids, sorted alphabetically by abbrev, adding any new ones (again sorted) to the end each year
+		const tidsSorted: number[] = [];
+		for (const season of seasons) {
+			const tidsSortedSeasonSet = new Set<number>();
+			for (let tid = 0; tid < season.length; tid++) {
+				if (season[tid] !== undefined) {
+					tidsSortedSeasonSet.add(tid);
+				}
+			}
+
+			const tidsSortedSeason = orderBy(
+				Array.from(tidsSortedSeasonSet).filter(
+					tid => !tidsSorted.includes(tid),
+				),
+				tid => abbrevs[tid],
+			);
+			tidsSorted.push(...tidsSortedSeason);
+		}
+
+		const remainingTids = [];
+		for (let tid = 0; tid < abbrevs.length; tid++) {
+			if (!tidsSorted.includes(tid)) {
+				remainingTids.push(tid);
+			}
+		}
+		if (remainingTids.length > 0) {
+			const tidsSortedSeason = orderBy(remainingTids, tid => abbrevs[tid]);
+			tidsSorted.push(...tidsSortedSeason);
+		}
+
+		// Actually reorder all
+		const abbrevsSorted = tidsSorted.map(tid => abbrevs[tid]);
+		const seasonsSorted = seasons.map(season =>
+			tidsSorted.map(tid => season[tid]),
+		);
+
+		seasonsSorted.reverse();
 
 		return {
-			abbrevs: g.get("teamInfoCache").map(t => t.abbrev),
+			abbrevs: abbrevsSorted,
 			season: g.get("season"),
-			seasons,
+			seasons: seasonsSorted,
 			userTid: g.get("userTid"),
 		};
 	}

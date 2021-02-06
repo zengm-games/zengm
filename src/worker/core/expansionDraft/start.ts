@@ -43,6 +43,8 @@ const start = async () => {
 	await league.setGameAttributes({
 		expansionDraft: {
 			phase: "draft",
+			numPerTeam: expansionDraft.numPerTeam,
+			numPerTeamDrafted: {},
 			expansionTids: expansionDraft.expansionTids,
 			availablePids,
 		},

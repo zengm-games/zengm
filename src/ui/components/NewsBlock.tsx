@@ -1,4 +1,3 @@
-import React from "react";
 import PlayerPicture from "./PlayerPicture";
 import SafeHtml from "./SafeHtml";
 import classNames from "classnames";

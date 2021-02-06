@@ -5,6 +5,7 @@ import type {
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types";
+import { isSport } from "../../../common";
 
 /**
  * Generate a contract for a player.
@@ -22,7 +23,7 @@ const genContract = (
 	const ratings = p.ratings[p.ratings.length - 1];
 	let factor = g.get("hardCap") ? 1.75 : 3.4;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (ratings.pos === "QB") {
 			factor *= 1.5;
 		} else if (ratings.pos === "K" || ratings.pos === "P") {

@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -17,24 +17,25 @@ const updatePlayers = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.flagNote !== state.flagNote
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? [
-						"gp",
-						"min",
-						"fgp",
-						"tpp",
-						"ftp",
-						"trb",
-						"ast",
-						"tov",
-						"stl",
-						"blk",
-						"pts",
-						"per",
-						"ewa",
-				  ]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: [
+				"gp",
+				"min",
+				"fgp",
+				"tpp",
+				"ftp",
+				"trb",
+				"ast",
+				"tov",
+				"stl",
+				"blk",
+				"pts",
+				"per",
+				"ewa",
+			],
+			football: ["gp", "keyStats", "av"],
+		});
+
 		const playersAll = await idb.getCopies.players({
 			// In Firefox, objects have a "watch" function
 			filter: p => {

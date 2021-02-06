@@ -5,6 +5,8 @@ import type {
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types";
+import valueCombineOvrPot from "./valueCombineOvrPot";
+import { isSport } from "../../../common";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -56,7 +58,7 @@ const value = (
 	}
 
 	// Normalize ovr/pot, other sports need testing
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		const defaultOvrMean = 47;
 		const defaultOvrStd = 10;
 		if (options.ovrStd > 0) {
@@ -81,7 +83,7 @@ const value = (
 	let current = pr.ovr;
 
 	// No stats at all? Just look at ratings more, then.
-	if (process.env.SPORT === "basketball" && ps.length > 0) {
+	if (isSport("basketball") && ps.length > 0) {
 		const ps1 = ps[ps.length - 1]; // Most recent stats
 
 		if (ps.length === 1 || ps[0].min >= 2000) {
@@ -115,7 +117,7 @@ const value = (
 	// 2. Potential
 	let potential = pr.pot;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (pr.pos === "QB") {
 			current *= 1.25;
 			potential *= 1.25;
@@ -145,65 +147,7 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
-	// Coefficients influenced by analysis from nicidob:
-	// "I built my little statistical OVR measure. Then grouped by age. And got the average sOVR for the following 4 player years. Then just did a regression tree from [pot, ovr] (if both exist) to see how to get that sOVR"
-	if (age <= 19) {
-		return 0.7 * potential + 0.3 * current;
-	}
-
-	if (age <= 20) {
-		return 0.65 * potential + 0.35 * current;
-	}
-
-	if (age <= 21) {
-		return 0.6 * potential + 0.4 * current;
-	}
-
-	if (age <= 22) {
-		return 0.6 * potential + 0.4 * current;
-	}
-
-	if (age <= 23) {
-		return 0.55 * potential + 0.45 * current;
-	}
-
-	if (age <= 24) {
-		return 0.45 * potential + 0.55 * current;
-	}
-
-	if (age <= 25) {
-		return 0.3 * potential + 0.7 * current;
-	}
-
-	if (age <= 26) {
-		return 0.15 * potential + 0.85 * current;
-	}
-
-	if (age <= 27) {
-		return 0.025 * potential + 0.95 * current;
-	}
-
-	if (age <= 28) {
-		return 0.95 * current;
-	}
-
-	if (age <= 29) {
-		return 0.94 * current;
-	}
-
-	if (age <= 30) {
-		return 0.93 * current;
-	}
-
-	if (age <= 33) {
-		return 0.92 * current;
-	}
-
-	if (age <= 38) {
-		return 0.91 * current;
-	}
-
-	return 0.9 * current;
+	return valueCombineOvrPot(current, potential, age);
 };
 
 export default value;

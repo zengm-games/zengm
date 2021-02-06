@@ -1,4 +1,5 @@
-import { helpers } from "../../util";
+import { getPeriodName } from "../../../common";
+import { g, helpers } from "../../util";
 import type { PlayType, TeamNum } from "./types"; // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 
 const formatClock = (clock: number) => {
@@ -146,7 +147,9 @@ class PlayByPlayLogger {
 
 				text = `${names[0]} was injured!`;
 			} else if (type === "quarter") {
-				text = `Start of ${helpers.ordinal(quarter)} quarter`;
+				text = `Start of ${helpers.ordinal(quarter)} ${getPeriodName(
+					g.get("numPeriods"),
+				)}`;
 
 				if (quarter === undefined) {
 					throw new Error("Missing quarter");

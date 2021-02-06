@@ -1,4 +1,4 @@
-import { PHASE, POSITIONS } from "../../common";
+import { bySport, PHASE, POSITIONS } from "../../common";
 import { g, helpers } from "../util";
 import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";
@@ -453,8 +453,10 @@ const playerStats = (params: Params) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
-	const defaultStatType =
-		process.env.SPORT === "basketball" ? "perGame" : "passing";
+	const defaultStatType = bySport({
+		basketball: "perGame",
+		football: "passing",
+	});
 	return {
 		abbrev,
 		season:
@@ -465,8 +467,10 @@ const playerStats = (params: Params) => {
 };
 
 const playerStatDists = (params: Params) => {
-	const defaultStatType =
-		process.env.SPORT === "basketball" ? "perGame" : "passing";
+	const defaultStatType = bySport({
+		basketball: "perGame",
+		football: "passing",
+	});
 	return {
 		season: validateSeason(params.season),
 		statType: params.statType != undefined ? params.statType : defaultStatType,
@@ -567,8 +571,10 @@ const leagueStats = (params: Params) => {
 };
 
 const standings = (params: Params) => {
-	let type: "conf" | "div" | "league" =
-		process.env.SPORT === "football" ? "div" : "conf";
+	let type: "conf" | "div" | "league" = bySport({
+		basketball: "conf",
+		default: "div",
+	});
 	if (
 		params.type === "conf" ||
 		params.type === "div" ||
@@ -630,7 +636,8 @@ const transactions = (params: Params) => {
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
-	if (g.get("phase") >= 0 && g.get("phase") <= PHASE.RESIGN_PLAYERS) {
+	const actualPhase = g.get("nextPhase") ?? g.get("phase");
+	if (actualPhase >= 0 && actualPhase <= PHASE.RESIGN_PLAYERS) {
 		if (season < g.get("season")) {
 			season = g.get("season");
 		}

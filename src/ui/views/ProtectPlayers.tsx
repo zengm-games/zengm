@@ -1,4 +1,5 @@
-import React, { useState, FormEvent } from "react";
+import { useState, FormEvent } from "react";
+import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	confirm,
@@ -15,7 +16,8 @@ import { PHASE } from "../../common";
 const PlayerList = ({
 	challengeNoRatings,
 	updateProtectedPids,
-	numProtectedPlayers,
+	numPerTeam,
+	numRemaining,
 	players,
 	protectedPids,
 	stats,
@@ -23,10 +25,11 @@ const PlayerList = ({
 	upcomingFreeAgentsText,
 }: Pick<View<"protectPlayers">, "challengeNoRatings" | "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
-	numProtectedPlayers: number;
+	numPerTeam: number;
+	numRemaining: number;
 	protectedPids: number[];
 	tid: number;
-	upcomingFreeAgentsText: React.ReactNode;
+	upcomingFreeAgentsText: ReactNode;
 }) => {
 	const cols = getCols(
 		"",
@@ -40,8 +43,6 @@ const PlayerList = ({
 		...stats.map(stat => `stat:${stat}`),
 		"Acquired",
 	);
-
-	const numRemaining = numProtectedPlayers - protectedPids.length;
 
 	const rows = players.map(p => {
 		return {
@@ -95,7 +96,11 @@ const PlayerList = ({
 				are not protected may be selected in the expansion draft.
 			</p>
 			{upcomingFreeAgentsText}
-			<p>Protections remaining: {numRemaining}</p>
+			<p>
+				Protections remaining: {numRemaining}
+				<br />
+				Max number of selected players per existing team: {numPerTeam ?? "???"}
+			</p>
 			<div className="btn-group mb-3">
 				<button
 					type="button"
@@ -147,8 +152,12 @@ const ProtectPlayers = ({
 
 	const protectedPids = expansionDraft.protectedPids[userTid] || [];
 
-	const numRemaining =
-		expansionDraft.numProtectedPlayers - protectedPids.length;
+	const maxNumCanProtext = Math.min(
+		expansionDraft.numProtectedPlayers,
+		players.length - (expansionDraft.numPerTeam ?? 0),
+	);
+
+	const numRemaining = maxNumCanProtext - protectedPids.length;
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -242,6 +251,10 @@ const ProtectPlayers = ({
 							Your team is an expansion team, so you have no players to protect.
 						</p>
 						{upcomingFreeAgentsText}
+						<p>
+							Max number of selected players per existing team:{" "}
+							{expansionDraft.numPerTeam ?? "???"}
+						</p>
 					</>
 				) : expansionDraft.numProtectedPlayers <= 0 ? (
 					<>
@@ -254,7 +267,8 @@ const ProtectPlayers = ({
 					<PlayerList
 						challengeNoRatings={challengeNoRatings}
 						updateProtectedPids={updateProtectedPids}
-						numProtectedPlayers={expansionDraft.numProtectedPlayers}
+						numPerTeam={expansionDraft.numPerTeam}
+						numRemaining={numRemaining}
 						players={players}
 						protectedPids={protectedPids}
 						stats={stats}
@@ -266,7 +280,7 @@ const ProtectPlayers = ({
 				<button
 					type="submit"
 					className="btn btn-primary"
-					disabled={numRemaining < 0 || saving}
+					disabled={(!expansionTeam && numRemaining < 0) || saving}
 				>
 					Start Expansion Draft
 				</button>

@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -13,6 +12,7 @@ const awardName = (
 				name: string;
 				tid: number;
 				abbrev: string;
+				count: number;
 		  }
 		| undefined,
 	season: number,
@@ -24,22 +24,25 @@ const awardName = (
 	}
 
 	const ret = (
-		<>
-			<PlayerNameLabels pid={award.pid} pos={award.pos}>
-				{award.name}
-			</PlayerNameLabels>{" "}
-			(
-			<a
-				href={helpers.leagueUrl([
-					"roster",
-					`${award.abbrev}_${award.tid}`,
-					season,
-				])}
-			>
-				{award.abbrev}
-			</a>
-			)
-		</>
+		<div className="d-flex">
+			<div className="mr-auto">
+				<PlayerNameLabels pid={award.pid} pos={award.pos}>
+					{award.name}
+				</PlayerNameLabels>{" "}
+				(
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${award.abbrev}_${award.tid}`,
+						season,
+					])}
+				>
+					{award.abbrev}
+				</a>
+				)
+			</div>
+			<CountBadge count={award.count} />
+		</div>
 	);
 
 	// This is our team.
@@ -72,6 +75,46 @@ const teamName = (
 	return "N/A";
 };
 
+const CountBadge = ({ count }: { count: number }) => {
+	if (count > 1) {
+		return (
+			<div className="ml-1">
+				<span className="badge badge-secondary align-text-bottom">{count}</span>
+			</div>
+		);
+	}
+
+	return null;
+};
+
+const formatTeam = (
+	t: View<"historyAll">["seasons"][number]["champ"],
+	season: number,
+	userTid: number,
+) => {
+	if (!t) {
+		return null;
+	}
+
+	return {
+		classNames: t.tid === userTid ? "table-info p-0 pr-1" : "p-0 pr-1",
+		value: (
+			<div className="d-flex align-items-center">
+				{t.imgURL ? (
+					<div className="playoff-matchup-logo mr-2 d-flex align-items-center justify-content-center">
+						<img className="mw-100 mh-100" src={t.imgURL} alt="" />
+					</div>
+				) : null}
+				<div className="mr-auto">
+					{t.seed}. {teamName(t, season)}
+				</div>
+				<CountBadge count={t.count} />
+			</div>
+		),
+		sortValue: `${t.region} ${t.name} ${season}`,
+	};
+};
+
 const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
@@ -83,43 +126,19 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	);
 
 	const rows = seasons.map(s => {
-		let countText;
 		let seasonLink;
 		if (s.champ) {
 			seasonLink = (
 				<a href={helpers.leagueUrl(["history", s.season])}>{s.season}</a>
 			);
-			countText = ` - ${helpers.ordinal(s.champ.count)} title`;
 		} else {
 			// This happens if there is missing data, such as from Delete Old Data
 			seasonLink = String(s.season);
-			countText = null;
 		}
 
-		const champEl = s.champ
-			? {
-					classNames: s.champ.tid === userTid ? "table-info" : undefined,
-					value: (
-						<>
-							{s.champ.seed}. {teamName(s.champ, s.season)}
-							{countText}
-						</>
-					),
-					sortValue: `${s.champ.region} ${s.champ.name} ${s.season}`,
-			  }
-			: null;
+		const champEl = formatTeam(s.champ, s.season, userTid);
 
-		const runnerUpEl = s.runnerUp
-			? {
-					classNames: s.runnerUp.tid === userTid ? "table-info" : undefined,
-					value: (
-						<>
-							{s.runnerUp.seed}. {teamName(s.runnerUp, s.season)}
-						</>
-					),
-					sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
-			  }
-			: null;
+		const runnerUpEl = formatTeam(s.runnerUp, s.season, userTid);
 
 		return {
 			key: s.season,
@@ -137,6 +156,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			<MoreLinks type="league" page="history_all" />
 
 			<DataTable
+				className="align-middle-all"
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="HistoryAll"

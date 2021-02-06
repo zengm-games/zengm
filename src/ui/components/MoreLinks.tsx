@@ -1,5 +1,5 @@
-import React from "react";
-import { NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import { Fragment } from "react";
+import { bySport, isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType } from "../../common/types";
 import { helpers, useLocalShallow } from "../util";
 
@@ -103,7 +103,7 @@ const MoreLinks = (
 			},
 		];
 
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			links.unshift({
 				url: ["depth", `${abbrev}_${tid}`],
 				name: "Depth Chart",
@@ -116,7 +116,10 @@ const MoreLinks = (
 					"player_stats",
 					`${abbrev}_${tid}`,
 					"career",
-					process.env.SPORT === "football" ? "passing" : "totals",
+					bySport({
+						football: "passing",
+						basketball: "totals",
+					}),
 				],
 				name: "Franchise Leaders",
 			});
@@ -193,9 +196,7 @@ const MoreLinks = (
 					"player_stats",
 					"all",
 					"career",
-					process.env.SPORT === "basketball" || statType === undefined
-						? "totals"
-						: statType,
+					isSport("basketball") || statType === undefined ? "totals" : statType,
 				],
 				name: "Career Totals",
 			});
@@ -231,7 +232,7 @@ const MoreLinks = (
 			{ url: ["team_records"], name: "Team Records" },
 			{ url: ["awards_records"], name: "Awards Records" },
 		];
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			links.push({
 				url: ["all_star_history"],
 				name: "All-Star History",
@@ -258,12 +259,12 @@ const MoreLinks = (
 				.filter(({ url }) => keepSelfLink || url[0] !== page)
 				.map(({ className, url, name }, i) => {
 					return (
-						<React.Fragment key={url[0]}>
+						<Fragment key={url[0]}>
 							{i > 0 ? " | " : null}
 							<a className={className} href={helpers.leagueUrl(url)}>
 								{name}
 							</a>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 		</p>

@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
@@ -48,10 +48,10 @@ const updateAwards = async (
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name"],
 			ratings: ["pos"],
-			stats:
-				process.env.SPORT === "basketball"
-					? ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"]
-					: ["abbrev", "tid", "keyStats"],
+			stats: bySport({
+				basketball: ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"],
+				football: ["abbrev", "tid", "keyStats"],
+			}),
 			fuzz: true,
 			mergeStats: true,
 			season,

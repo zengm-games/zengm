@@ -1,4 +1,4 @@
-import { PLAYER, POSITION_COUNTS } from "../../../common";
+import { isSport, PLAYER, POSITION_COUNTS } from "../../../common";
 import { idb } from "../../db";
 import { player } from "..";
 
@@ -38,7 +38,7 @@ const countPositions = async () => {
 		posOvrs[position] /= posCounts[position];
 	}
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		let positionCountsTotal = 0;
 
 		for (const target of Object.values(POSITION_COUNTS)) {

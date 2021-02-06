@@ -1,11 +1,11 @@
-import React from "react";
+import { isSport } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import Login from "./Login";
 import Register from "./Register";
+
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
-const otherSport =
-	process.env.SPORT === "basketball" ? "Football" : "Basketball";
+const otherSport = isSport("basketball") ? "Football" : "Basketball";
 
 const LoginOrRegister = () => {
 	useTitleBar({

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, useCallback } from "react";
+import { memo, SyntheticEvent, useCallback } from "react";
 import { toWorker } from "../util";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 	watch: boolean;
 };
 
-const WatchBlock = React.memo(({ className, pid, watch }: Props) => {
+const WatchBlock = memo(({ className, pid, watch }: Props) => {
 	const handleClick = useCallback(
 		async (e: SyntheticEvent) => {
 			e.preventDefault();

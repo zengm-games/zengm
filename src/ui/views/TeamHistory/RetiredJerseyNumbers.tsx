@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { JerseyNumber } from "../../components";
 import { helpers, confirm, toWorker, logEvent } from "../../util";
 import type { View } from "../../../common/types";

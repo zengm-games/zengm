@@ -1,10 +1,15 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, CSSProperties } from "react";
+import { useCallback, useState, CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";
-import { DIFFICULTY } from "../../common";
+import {
+	DIFFICULTY,
+	isSport,
+	SPORT_HAS_LEGENDS,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
@@ -338,12 +343,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			) : null}
 			<div
 				className={
-					process.env.SPORT === "basketball"
-						? "mt-2 dashboard-top-wrapper"
-						: "mt-2"
+					SPORT_HAS_REAL_PLAYERS ? "mt-2 dashboard-top-wrapper" : "mt-2"
 				}
 			>
-				{process.env.SPORT === "basketball" ? (
+				{SPORT_HAS_REAL_PLAYERS ? (
 					<>
 						<a
 							href="/new_league/real"
@@ -362,14 +365,16 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<span className="dashboard-top-link-small">» Random players</span>
 						</a>
 						<div className="d-sm-none" />
-						<a
-							href="/new_league/legends"
-							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-						>
-							New league
-							<br />
-							<span className="dashboard-top-link-small">» Legends</span>
-						</a>
+						{SPORT_HAS_LEGENDS ? (
+							<a
+								href="/new_league/legends"
+								className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+							>
+								New league
+								<br />
+								<span className="dashboard-top-link-small">» Legends</span>
+							</a>
+						) : null}
 						<a
 							href="/new_league"
 							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
@@ -393,11 +398,11 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 				<a
 					href={`https://play.${
-						process.env.SPORT === "football" ? "basketball" : "football"
+						isSport("football") ? "basketball" : "football"
 					}-gm.com/`}
 					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${process.env.SPORT}`}
 				>
-					{process.env.SPORT === "football"
+					{isSport("football")
 						? "Try our other game, Basketball GM!"
 						: "Try our other game, Football GM!"}
 				</a>

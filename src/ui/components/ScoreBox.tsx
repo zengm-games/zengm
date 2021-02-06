@@ -1,6 +1,7 @@
 import classNames from "classnames";
-import React from "react";
+import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
+import type { ReactNode } from "react";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -53,7 +54,7 @@ const ScoreBox = ({
 	actionDisabled?: boolean;
 	actionHighlight?: boolean;
 	actionOnClick?: () => void;
-	actionText?: React.ReactNode;
+	actionText?: ReactNode;
 	className?: string;
 	game: {
 		forceWin?: number;
@@ -113,7 +114,7 @@ const ScoreBox = ({
 	) {
 		let spread;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
 			spread = roundHalf(

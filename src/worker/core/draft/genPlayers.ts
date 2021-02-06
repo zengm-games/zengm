@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { isSport, PLAYER } from "../../../common";
 import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
@@ -58,7 +58,7 @@ const genPlayers = async (
 	}
 
 	// Easter eggs!
-	if (process.env.SPORT === "basketball" && !forceScrubs) {
+	if (isSport("basketball") && !forceScrubs) {
 		if (Math.random() < 1 / 100000) {
 			const p = player.generate(
 				PLAYER.UNDRAFTED,

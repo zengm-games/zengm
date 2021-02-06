@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, useReducer } from "react";
+import { useCallback, useState, useReducer } from "react";
+import type { ReactNode } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -10,6 +11,9 @@ import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	gameAttributeHasHistory,
+	isSport,
+	SPORT_HAS_LEGENDS,
+	SPORT_HAS_REAL_PLAYERS,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -204,6 +208,7 @@ type State = {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
+	realDraftRatings: "rookie" | "draft";
 };
 
 type Action =
@@ -303,6 +308,10 @@ type Action =
 	| {
 			type: "setRealPlayerDeterminism";
 			realPlayerDeterminism: number;
+	  }
+	| {
+			type: "setRealDraftRatings";
+			realDraftRatings: "rookie" | "draft";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -587,6 +596,12 @@ const reducer = (state: State, action: Action): State => {
 				realPlayerDeterminism: action.realPlayerDeterminism,
 			};
 
+		case "setRealDraftRatings":
+			return {
+				...state,
+				realDraftRatings: action.realDraftRatings,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -665,6 +680,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
+				realDraftRatings: "rookie",
 			};
 		},
 	);
@@ -673,8 +689,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	if (props.lid !== undefined) {
 		title = "Import League";
 	} else if (props.type === "custom") {
-		title =
-			process.env.SPORT === "basketball" ? "New Custom League" : "New League";
+		title = SPORT_HAS_REAL_PLAYERS ? "New Custom League" : "New League";
 	} else if (props.type === "random") {
 		title = "New Random Players League";
 	} else if (props.type === "legends") {
@@ -726,6 +741,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						season: state.season,
 						phase: state.phase,
 						randomDebuts: state.randomization === "debuts",
+						realDraftRatings: state.realDraftRatings,
 					};
 				} else if (state.customize === "legends") {
 					getLeagueOptions = {
@@ -818,6 +834,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.noStartingInjuries,
 			state.phase,
 			state.randomization,
+			state.realDraftRatings,
 			state.realPlayerDeterminism,
 			state.repeatSeason,
 			state.season,
@@ -962,7 +979,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: React.ReactNode[] = [
+	const moreOptions: ReactNode[] = [
 		<div key="challenge" className="mb-3">
 			<label>Challenge modes</label>
 			<div className="form-check mb-2">
@@ -1062,7 +1079,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					</span>
 				</label>
 			</div>
-			{process.env.SPORT !== "football" || state.challengeFiredLuxuryTax ? (
+			{!isSport("football") || state.challengeFiredLuxuryTax ? (
 				<div className="form-check mb-2">
 					<input
 						className="form-check-input"
@@ -1160,6 +1177,44 @@ const NewLeague = (props: View<"newLeague">) => {
 		(state.customize === "real" || state.customize === "legends") &&
 		state.keptKeys.includes("players")
 	) {
+		moreOptions.unshift(
+			<div key="realDraftRatings" className="form-group">
+				<label htmlFor="new-league-realDraftRatings">
+					Real draft prospect ratings
+				</label>
+				<select
+					id="new-league-realDraftRatings"
+					className="form-control"
+					onChange={event => {
+						dispatch({
+							type: "setRealDraftRatings",
+							realDraftRatings: event.target.value as any,
+						});
+					}}
+					value={state.realDraftRatings}
+				>
+					<option value="rookie">Based on rookie season stats</option>
+					<option value="draft">Based on draft position</option>
+				</select>
+				{state.realDraftRatings === "rookie" ? (
+					<div className="text-muted mt-1">
+						Player ratings for draft prospects are based on their rookie season
+						stats. Players who overperformed or underperformed their real draft
+						positions as rookies will be ranked differently than they were in
+						reality.
+					</div>
+				) : null}
+				{state.realDraftRatings === "draft" ? (
+					<div className="text-muted mt-1">
+						Player ratings for draft prospects are based on the position they
+						were drafted. Every #1 pick will have a high rating, even if in
+						reality he was a bust. Every late pick will have a low rating, even
+						if in reality he became a star.
+					</div>
+				) : null}
+			</div>,
+		);
+
 		moreOptions.unshift(
 			<div key="realPlayerDeterminism" className="form-group">
 				<label htmlFor="new-league-realPlayerDeterminism">
@@ -1610,14 +1665,14 @@ const NewLeague = (props: View<"newLeague">) => {
 											value={state.customize}
 										>
 											<option value="default">
-												{process.env.SPORT === "basketball"
+												{SPORT_HAS_REAL_PLAYERS
 													? "Random players and teams"
 													: "Default"}
 											</option>
-											{process.env.SPORT === "basketball" ? (
+											{SPORT_HAS_REAL_PLAYERS ? (
 												<option value="real">Real players and teams</option>
 											) : null}
-											{process.env.SPORT === "basketball" ? (
+											{SPORT_HAS_LEGENDS ? (
 												<option value="legends">Legends</option>
 											) : null}
 											<option value="custom-rosters">Upload league file</option>

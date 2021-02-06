@@ -112,7 +112,7 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	league.aPER /=
 		league.gp *
 		5 *
-		4 *
+		g.get("numPeriods") *
 		(g.get("quarterLength") > 0
 			? g.get("quarterLength")
 			: defaultGameAttributes.quarterLength);

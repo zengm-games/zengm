@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import OwnerMoodsChart from "./OwnerMoodsChart";
 import { SafeHtml } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";

@@ -1,6 +1,6 @@
 import { display, Face } from "facesjs";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const imgStyle = {
 	maxHeight: "100%",

@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -23,7 +23,7 @@ const updatePlayers = async (
 	) {
 		let statsTable;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			if (inputs.statType === "advanced") {
 				statsTable = PLAYER_STATS_TABLES.advanced;
 			} else if (inputs.statType === "shotLocations") {
@@ -67,7 +67,7 @@ const updatePlayers = async (
 		// Show all teams
 		let statType: PlayerStatType;
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			if (inputs.statType === "totals") {
 				statType = "totals";
 			} else if (inputs.statType === "per36") {
@@ -107,7 +107,7 @@ const updatePlayers = async (
 		});
 
 		// Only keep players with more than 5 mpg in regular season, of any PT in playoffs
-		if (inputs.abbrev !== "watch" && process.env.SPORT === "basketball") {
+		if (inputs.abbrev !== "watch" && isSport("basketball")) {
 			// Find max gp to use for filtering
 			let gp = 0;
 
@@ -171,7 +171,7 @@ const updatePlayers = async (
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
-			process.env.SPORT === "football"
+			isSport("football")
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;

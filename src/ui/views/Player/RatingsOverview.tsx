@@ -1,5 +1,6 @@
-import React from "react";
+import { bySport } from "../../../common";
 import RatingWithChange from "../../components/RatingWithChange";
+import type { ReactNode } from "react";
 
 const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 	const r = ratings.length - 1;
@@ -13,282 +14,284 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 		}
 	}
 
-	const columns: Record<
-		string,
-		{
-			label: React.ReactNode;
-			rating: string;
-		}[]
-	>[] =
-		process.env.SPORT === "basketball"
-			? [
+	const columns = bySport<
+		Record<
+			string,
+			{
+				label: ReactNode;
+				rating: string;
+			}[]
+		>[]
+	>({
+		basketball: [
+			{
+				Physical: [
 					{
-						Physical: [
-							{
-								label: "Height",
-								rating: "hgt",
-							},
-							{
-								label: "Strength",
-								rating: "stre",
-							},
-							{
-								label: "Speed",
-								rating: "spd",
-							},
-							{
-								label: "Jumping",
-								rating: "jmp",
-							},
-							{
-								label: "Endurance",
-								rating: "endu",
-							},
-						],
+						label: "Height",
+						rating: "hgt",
 					},
 					{
-						Shooting: [
-							{
-								label: "Inside",
-								rating: "ins",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">Layups</span>
-										<span className="d-none d-md-inline">Dunks/Layups</span>
-									</>
-								),
-								rating: "dnk",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">FT</span>
-										<span className="d-none d-md-inline">Free Throws</span>
-									</>
-								),
-								rating: "ft",
-							},
-							{
-								label: "Mid Range",
-								rating: "fg",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">3</span>
-										<span className="d-none d-md-inline">Three</span> Pointers
-									</>
-								),
-								rating: "tp",
-							},
-						],
+						label: "Strength",
+						rating: "stre",
 					},
 					{
-						Skill: [
-							{
-								label: (
-									<>
-										<span className="d-md-none">Off</span>
-										<span className="d-none d-md-inline">Offensive</span> IQ
-									</>
-								),
-								rating: "oiq",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">Def</span>
-										<span className="d-none d-md-inline">Defensive</span> IQ
-									</>
-								),
-								rating: "diq",
-							},
-							{
-								label: "Dribbling",
-								rating: "drb",
-							},
-							{
-								label: "Passing",
-								rating: "pss",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">Reb</span>
-										<span className="d-none d-md-inline">Rebounding</span>
-									</>
-								),
-								rating: "reb",
-							},
-						],
-					},
-			  ]
-			: [
-					{
-						Physical: [
-							{
-								label: "Height",
-								rating: "hgt",
-							},
-							{
-								label: "Strength",
-								rating: "stre",
-							},
-							{
-								label: "Speed",
-								rating: "spd",
-							},
-							{
-								label: "Endurance",
-								rating: "endu",
-							},
-						],
-						Blocking: [
-							{
-								label: (
-									<>
-										Run <span className="d-md-none">Block</span>
-										<span className="d-none d-md-inline">Blocking</span>
-									</>
-								),
-								rating: "rbk",
-							},
-							{
-								label: (
-									<>
-										Pass <span className="d-md-none">Block</span>
-										<span className="d-none d-md-inline">Blocking</span>
-									</>
-								),
-								rating: "pbk",
-							},
-						],
+						label: "Speed",
+						rating: "spd",
 					},
 					{
-						Passing: [
-							{
-								label: "Vision",
-								rating: "thv",
-							},
-							{
-								label: "Power",
-								rating: "thp",
-							},
-							{
-								label: "Accuracy",
-								rating: "tha",
-							},
-						],
-						Defense: [
-							{
-								label: (
-									<>
-										Pass <span className="d-md-none">Cover</span>
-										<span className="d-none d-md-inline">Coverage</span>
-									</>
-								),
-								rating: "pcv",
-							},
-							{
-								label: "Tackling",
-								rating: "tck",
-							},
-							{
-								label: (
-									<>
-										Pass <span className="d-md-none">Rush</span>
-										<span className="d-none d-md-inline">Rushing</span>
-									</>
-								),
-								rating: "prs",
-							},
-							{
-								label: (
-									<>
-										Run <span className="d-md-none">Stop</span>
-										<span className="d-none d-md-inline">Stopping</span>
-									</>
-								),
-								rating: "rns",
-							},
-						],
+						label: "Jumping",
+						rating: "jmp",
 					},
 					{
-						"Rushing/Receiving": [
-							{
-								label: (
-									<>
-										<span className="d-md-none">Elusive</span>
-										<span className="d-none d-md-inline">Elusiveness</span>
-									</>
-								),
-								rating: "elu",
-							},
-							{
-								label: (
-									<>
-										<span className="d-md-none">Routes</span>
-										<span className="d-none d-md-inline">Route Running</span>
-									</>
-								),
-								rating: "rtr",
-							},
-							{
-								label: "Hands",
-								rating: "hnd",
-							},
-							{
-								label: (
-									<>
-										Ball <span className="d-md-none">Sec</span>
-										<span className="d-none d-md-inline">Security</span>
-									</>
-								),
-								rating: "bsc",
-							},
-						],
-						Kicking: [
-							{
-								label: (
-									<>
-										Kick <span className="d-md-none">Pow</span>
-										<span className="d-none d-md-inline">Power</span>
-									</>
-								),
-								rating: "kpw",
-							},
-							{
-								label: (
-									<>
-										Kick <span className="d-md-none">Acc</span>
-										<span className="d-none d-md-inline">Accuracy</span>
-									</>
-								),
-								rating: "kac",
-							},
-							{
-								label: (
-									<>
-										Punt <span className="d-md-none">Pow</span>
-										<span className="d-none d-md-inline">Power</span>
-									</>
-								),
-								rating: "ppw",
-							},
-							{
-								label: (
-									<>
-										Punt <span className="d-md-none">Acc</span>
-										<span className="d-none d-md-inline">Accuracy</span>
-									</>
-								),
-								rating: "pac",
-							},
-						],
+						label: "Endurance",
+						rating: "endu",
 					},
-			  ];
+				],
+			},
+			{
+				Shooting: [
+					{
+						label: "Inside",
+						rating: "ins",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Layups</span>
+								<span className="d-none d-md-inline">Dunks/Layups</span>
+							</>
+						),
+						rating: "dnk",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">FT</span>
+								<span className="d-none d-md-inline">Free Throws</span>
+							</>
+						),
+						rating: "ft",
+					},
+					{
+						label: "Mid Range",
+						rating: "fg",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">3</span>
+								<span className="d-none d-md-inline">Three</span> Pointers
+							</>
+						),
+						rating: "tp",
+					},
+				],
+			},
+			{
+				Skill: [
+					{
+						label: (
+							<>
+								<span className="d-md-none">Off</span>
+								<span className="d-none d-md-inline">Offensive</span> IQ
+							</>
+						),
+						rating: "oiq",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Def</span>
+								<span className="d-none d-md-inline">Defensive</span> IQ
+							</>
+						),
+						rating: "diq",
+					},
+					{
+						label: "Dribbling",
+						rating: "drb",
+					},
+					{
+						label: "Passing",
+						rating: "pss",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Reb</span>
+								<span className="d-none d-md-inline">Rebounding</span>
+							</>
+						),
+						rating: "reb",
+					},
+				],
+			},
+		],
+		football: [
+			{
+				Physical: [
+					{
+						label: "Height",
+						rating: "hgt",
+					},
+					{
+						label: "Strength",
+						rating: "stre",
+					},
+					{
+						label: "Speed",
+						rating: "spd",
+					},
+					{
+						label: "Endurance",
+						rating: "endu",
+					},
+				],
+				Blocking: [
+					{
+						label: (
+							<>
+								Run <span className="d-md-none">Block</span>
+								<span className="d-none d-md-inline">Blocking</span>
+							</>
+						),
+						rating: "rbk",
+					},
+					{
+						label: (
+							<>
+								Pass <span className="d-md-none">Block</span>
+								<span className="d-none d-md-inline">Blocking</span>
+							</>
+						),
+						rating: "pbk",
+					},
+				],
+			},
+			{
+				Passing: [
+					{
+						label: "Vision",
+						rating: "thv",
+					},
+					{
+						label: "Power",
+						rating: "thp",
+					},
+					{
+						label: "Accuracy",
+						rating: "tha",
+					},
+				],
+				Defense: [
+					{
+						label: (
+							<>
+								Pass <span className="d-md-none">Cover</span>
+								<span className="d-none d-md-inline">Coverage</span>
+							</>
+						),
+						rating: "pcv",
+					},
+					{
+						label: "Tackling",
+						rating: "tck",
+					},
+					{
+						label: (
+							<>
+								Pass <span className="d-md-none">Rush</span>
+								<span className="d-none d-md-inline">Rushing</span>
+							</>
+						),
+						rating: "prs",
+					},
+					{
+						label: (
+							<>
+								Run <span className="d-md-none">Stop</span>
+								<span className="d-none d-md-inline">Stopping</span>
+							</>
+						),
+						rating: "rns",
+					},
+				],
+			},
+			{
+				"Rushing/Receiving": [
+					{
+						label: (
+							<>
+								<span className="d-md-none">Elusive</span>
+								<span className="d-none d-md-inline">Elusiveness</span>
+							</>
+						),
+						rating: "elu",
+					},
+					{
+						label: (
+							<>
+								<span className="d-md-none">Routes</span>
+								<span className="d-none d-md-inline">Route Running</span>
+							</>
+						),
+						rating: "rtr",
+					},
+					{
+						label: "Hands",
+						rating: "hnd",
+					},
+					{
+						label: (
+							<>
+								Ball <span className="d-md-none">Sec</span>
+								<span className="d-none d-md-inline">Security</span>
+							</>
+						),
+						rating: "bsc",
+					},
+				],
+				Kicking: [
+					{
+						label: (
+							<>
+								Kick <span className="d-md-none">Pow</span>
+								<span className="d-none d-md-inline">Power</span>
+							</>
+						),
+						rating: "kpw",
+					},
+					{
+						label: (
+							<>
+								Kick <span className="d-md-none">Acc</span>
+								<span className="d-none d-md-inline">Accuracy</span>
+							</>
+						),
+						rating: "kac",
+					},
+					{
+						label: (
+							<>
+								Punt <span className="d-md-none">Pow</span>
+								<span className="d-none d-md-inline">Power</span>
+							</>
+						),
+						rating: "ppw",
+					},
+					{
+						label: (
+							<>
+								Punt <span className="d-md-none">Acc</span>
+								<span className="d-none d-md-inline">Accuracy</span>
+							</>
+						),
+						rating: "pac",
+					},
+				],
+			},
+		],
+	});
 
 	return (
 		<div className="ratings-overview">

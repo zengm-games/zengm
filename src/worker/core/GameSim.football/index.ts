@@ -16,6 +16,9 @@ import type {
 	TeamNum,
 	Formation,
 } from "./types";
+import isFirstPeriodAfterHalftime from "./isFirstPeriodAfterHalftime";
+import possessionEndsAfterThisPeriod from "./possessionEndsAfterThisPeriod";
+import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -63,6 +66,8 @@ class GameSim {
 		| "over";
 
 	clock: number;
+
+	numPeriods: number;
 
 	isClockRunning: boolean;
 
@@ -114,6 +119,7 @@ class GameSim {
 		this.overtime = false;
 		this.overtimes = 0;
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
+		this.numPeriods = g.get("numPeriods");
 
 		this.isClockRunning = false;
 		this.awaitingAfterTouchdown = false;
@@ -213,13 +219,14 @@ class GameSim {
 
 			quarter += 1;
 
-			if (quarter === 3) {
+			// Who gets the ball after halftime?
+			if (isFirstPeriodAfterHalftime(quarter, this.numPeriods)) {
 				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
 				this.o = oAfterHalftime;
 				this.d = this.o === 0 ? 1 : 0;
-			} else if (quarter === 5) {
+			} else if (quarter > this.numPeriods) {
 				break;
 			}
 
@@ -274,6 +281,20 @@ class GameSim {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
 		this.updatePlayersOnField("starters");
 		this.updateTeamCompositeRatings();
+
+		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		const desperation =
+			quarter >= this.numPeriods &&
+			((quarter > this.numPeriods && ptsDown > 0) ||
+				(ptsDown > 0 && this.clock <= 2) ||
+				(ptsDown > 8 && this.clock <= 3) ||
+				(ptsDown > 16 && this.clock <= 4) ||
+				(ptsDown > 24 && this.clock <= 6));
+		if (desperation) {
+			return 0.98;
+		}
+
 		let offPassing = 0;
 		let offRushing = 0;
 		let defPassing = 0;
@@ -337,12 +358,12 @@ class GameSim {
 		}
 
 		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
-		if (this.team[0].stat.ptsQtrs.length <= 3) {
+		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return 0.01;
 		}
 
 		// Does game situation dictate an onside kick in the 4th quarter?
-		if (this.team[0].stat.ptsQtrs.length !== 4) {
+		if (this.team[0].stat.ptsQtrs.length !== this.numPeriods) {
 			return 0;
 		}
 
@@ -378,8 +399,9 @@ class GameSim {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		return (
-			((quarter === 2 && this.scrimmage >= 50) ||
-				(quarter >= 4 && ptsDown >= 0)) &&
+			((isFirstPeriodAfterHalftime(quarter + 1, this.numPeriods) &&
+				this.scrimmage >= 50) ||
+				(quarter === this.numPeriods && ptsDown >= 0)) &&
 			this.clock <= 2
 		);
 	}
@@ -397,7 +419,7 @@ class GameSim {
 				return "twoPointConversion";
 			}
 
-			if (quarter >= 4) {
+			if (quarter >= this.numPeriods) {
 				if (ptsDown === 0) {
 					return "extraPoint";
 				}
@@ -479,13 +501,17 @@ class GameSim {
 		}
 
 		// Don't kick a FG when we really need a touchdown!
-		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
+		const needTouchdown =
+			quarter >= this.numPeriods && ptsDown > 3 && this.clock <= 2;
+
+		const neverPunt =
+			(quarter === this.numPeriods && ptsDown > 0 && this.clock <= 2) ||
+			(quarter > this.numPeriods && ptsDown > 0);
 
 		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
 			this.clock <= 10 / 60 &&
-			quarter !== 1 &&
-			quarter !== 3 &&
+			possessionEndsAfterThisPeriod(quarter, this.numPeriods) &&
 			!needTouchdown &&
 			this.probMadeFieldGoal() >= 0.02
 		) {
@@ -552,7 +578,9 @@ class GameSim {
 					}
 
 					// Default option - punt
-					return "punt";
+					if (!neverPunt) {
+						return "punt";
+					}
 				}
 			}
 		}
@@ -604,7 +632,7 @@ class GameSim {
 
 		// Two minute warning
 		if (
-			(quarter === 2 || quarter >= 4) &&
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
 			this.clock - dt <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
@@ -623,11 +651,14 @@ class GameSim {
 		}
 
 		// Timeouts - late in game when clock is running
-		if ((quarter === 2 || quarter >= 4) && this.isClockRunning) {
+		if (
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
+			this.isClockRunning
+		) {
 			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
 			// No point in the 4th quarter of a blowout
-			if (diff < 24) {
+			if (diff < 24 || quarter < this.numPeriods) {
 				if (diff > 0) {
 					// If offense is winning, defense uses timeouts when near the end
 					if (this.clock < 2.5) {
@@ -658,7 +689,7 @@ class GameSim {
 
 		// Check two minute warning again
 		if (
-			(quarter === 2 || quarter >= 4) &&
+			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
 			this.clock - dt - dtClockRunning <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
@@ -1379,7 +1410,10 @@ class GameSim {
 	}
 
 	doTwoPointConversion() {
-		this.twoPointConversionTeam = this.o;
+		// this.twoPointConversionTeam is overwritten elsewhere, so don't use it here for possession tracking
+		const twoPointConversionTeam = this.o;
+
+		this.twoPointConversionTeam = twoPointConversionTeam;
 		this.down = 1;
 		this.scrimmage = 98; // Put this before the play, in case there is a turnover during conversion!
 
@@ -1391,9 +1425,14 @@ class GameSim {
 			this.doRun();
 		}
 
+		// Reset off/def teams in case there was a turnover during the conversion attempt
+		this.o = twoPointConversionTeam;
+		this.d = this.o === 0 ? 1 : 0;
+
 		this.twoPointConversionTeam = undefined;
 		this.awaitingAfterTouchdown = false;
 		this.isClockRunning = false;
+
 		return 0;
 	}
 
@@ -2177,7 +2216,8 @@ class GameSim {
 
 			for (const p of onField) {
 				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-				const injuryRate = g.get("injuryRate") * 1.03 ** (p.age - 25);
+				const injuryRate =
+					g.get("injuryRate") * 1.03 ** (Math.min(p.age, 50) - 25);
 
 				if (Math.random() < injuryRate) {
 					// 50% as many injuries for QB

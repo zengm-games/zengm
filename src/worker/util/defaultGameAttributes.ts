@@ -2,6 +2,7 @@ import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_STADIUM_CAPACITY,
+	isSport,
 } from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
@@ -25,6 +26,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	maxRosterSize: 15,
 	numGames: 82, // per season
 	otherTeamsWantToHire: false,
+	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]
 	confs: [
 		{
@@ -109,7 +111,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
-	keepRosterSorted: false,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -133,12 +134,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const footballOverrides =
-	process.env.NODE_ENV === "test" || process.env.SPORT === "football"
+	process.env.NODE_ENV === "test" || isSport("football")
 		? {
 				numGames: 16,
 				quarterLength: 15,
 				numGamesPlayoffSeries: [1, 1, 1, 1],
-				numPlayoffByes: 4,
+				numPlayoffByes: 2,
 				stopOnInjuryGames: 1,
 				hardCap: true,
 				ties: [
@@ -165,7 +166,7 @@ export const footballOverrides =
 		  }
 		: {};
 
-if (process.env.SPORT === "football") {
+if (isSport("football")) {
 	Object.assign(defaultGameAttributes, footballOverrides);
 }
 

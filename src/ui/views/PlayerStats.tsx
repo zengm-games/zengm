@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -87,7 +87,7 @@ const PlayerStats = ({
 	}
 
 	let sortCol = cols.length - 1;
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (statType === "passing") {
 			sortCol = 9;
 		} else if (statType === "rushing") {

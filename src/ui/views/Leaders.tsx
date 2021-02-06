@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import classNames from "classnames";
+import { bySport } from "../../common";
 
 const Row = ({
 	cat,
@@ -73,9 +73,12 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 		<>
 			<p>
 				Only eligible players are shown (<i>e.g.</i>{" "}
-				{process.env.SPORT === "basketball"
-					? "a player shooting 2 for 2 on the season is not eligible for the league lead in FG%"
-					: "a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage"}
+				{bySport({
+					basketball:
+						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
+					football:
+						"a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage",
+				})}
 				).
 			</p>
 

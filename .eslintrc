@@ -73,7 +73,9 @@
     "react/no-unescaped-entities": "off",
     "react/prop-types": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "react-hooks/rules-of-hooks": "error"
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
   },
   "overrides": [{
     "files": "**/*.test.{js,ts}",

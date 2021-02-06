@@ -2,7 +2,8 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, {
+import {
+	Fragment,
 	useState,
 	ReactNode,
 	ChangeEvent,
@@ -21,12 +22,19 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { DIFFICULTY } from "../../common";
+import {
+	COURT,
+	DIFFICULTY,
+	GAME_NAME,
+	isSport,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
 
 type Key =
 	| "numGames"
+	| "numPeriods"
 	| "quarterLength"
 	| "minRosterSize"
 	| "maxRosterSize"
@@ -166,10 +174,7 @@ export const options: {
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
-			if (
-				process.env.SPORT === "basketball" &&
-				value < output.numPlayersOnCourt
-			) {
+			if (!isSport("football") && value < output.numPlayersOnCourt) {
 				throw new Error("Value cannot be less than # Players On Court");
 			}
 		},
@@ -502,7 +507,7 @@ export const options: {
 				<p>
 					The injury rate is the probability that a player is injured per
 					possession.
-					{process.env.SPORT === "basketball" ? (
+					{isSport("basketball") ? (
 						<>
 							{" "}
 							Based on{" "}
@@ -538,13 +543,13 @@ export const options: {
 					The tragic death rate is the probability that a player will die a
 					tragic death on a given regular season day. Yes, this only happens in
 					the regular season.
-					{process.env.SPORT === "basketball"
+					{isSport("basketball")
 						? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
 						: null}{" "}
 					If you set it too high and run out of players, then you'll have to use
 					God Mode to either create more or bring some back from the dead.
 				</p>
-				{process.env.SPORT === "basketball" ? (
+				{SPORT_HAS_REAL_PLAYERS ? (
 					<p>
 						If you're using the built-in rosters with real players, please be
 						aware that real players can never experience tragic deaths, no
@@ -611,12 +616,11 @@ export const options: {
 		descriptionLong: (
 			<>
 				<p>
-					{helpers.upperCaseFirstLetter(process.env.SPORT)} GM has no concept of
-					"restricted free agency" like the NBA does, so draft picks can refuse
-					to negotiate with you after their rookie contracts expire. This option
-					can force every player to be willing to negotiate when his rookie
-					contract expires, which can somewhat make up for restricted free
-					agency not existing.
+					{GAME_NAME} has no concept of "restricted free agency" like the NBA
+					does, so draft picks can refuse to negotiate with you after their
+					rookie contracts expire. This option can force every player to be
+					willing to negotiate when his rookie contract expires, which can
+					somewhat make up for restricted free agency not existing.
 				</p>
 				<p>
 					This only applies if the <b>hard cap option is disabled</b>.
@@ -744,7 +748,7 @@ export const options: {
 	},
 ];
 
-if (process.env.SPORT === "basketball") {
+if (isSport("basketball")) {
 	options.push(
 		{
 			category: "Season",
@@ -887,7 +891,9 @@ if (process.env.SPORT === "basketball") {
 			type: "float",
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value > output.quarterLength) {
-					throw new Error("Value must be less than the quarter length");
+					throw new Error(
+						"Value must be less than or equal to the quarter length",
+					);
 				}
 			},
 		},
@@ -909,18 +915,27 @@ if (process.env.SPORT === "basketball") {
 options.push(
 	{
 		category: "Game Simulation",
+		key: "numPeriods",
+		name: "Number of Periods Per Game",
+		godModeRequired: "always",
+		type: "int",
+		validator: value => {
+			if (value <= 0) {
+				throw new Error("Value must be greater than 0");
+			}
+		},
+	},
+	{
+		category: "Game Simulation",
 		key: "quarterLength",
-		name: "Quarter Length (minutes)",
+		name: "Period Length (minutes)",
 		godModeRequired: "always",
 		type: "float",
 	},
 	{
 		category: "Game Simulation",
 		key: "homeCourtAdvantage",
-		name:
-			process.env.SPORT === "football"
-				? "Home Field Advantage"
-				: "Home Court Advantage",
+		name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
 		godModeRequired: "always",
 		type: "float",
 		decoration: "percent",
@@ -990,7 +1005,7 @@ options.push(
 	},
 );
 
-if (process.env.SPORT === "basketball") {
+if (isSport("basketball")) {
 	options.push({
 		category: "Game Simulation",
 		key: "numPlayersOnCourt",
@@ -2151,7 +2166,7 @@ const Settings = (props: View<"settings">) => {
 					currentCategoryNames.push(category.name);
 
 					return (
-						<React.Fragment key={category.name}>
+						<Fragment key={category.name}>
 							<a className="anchor" id={category.name} />
 							<h2>
 								{category.name}
@@ -2287,7 +2302,7 @@ const Settings = (props: View<"settings">) => {
 									},
 								)}
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 

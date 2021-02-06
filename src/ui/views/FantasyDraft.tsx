@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import arrayMove from "array-move";
 import { PHASE } from "../../common";
 import { SortableTable } from "../components";

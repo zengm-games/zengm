@@ -4,6 +4,7 @@ import { g } from "../util";
 import posRatings from "../../common/posRatings.football";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import type { Position } from "../../common/types.football";
+import { isSport } from "../../common";
 
 const defenseStats = [
 	"defTckSolo",
@@ -67,7 +68,7 @@ async function updateDepth(
 	updateEvents: UpdateEvents,
 	state: any,
 ) {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		throw new Error("Not implemented");
 	}
 
@@ -76,6 +77,7 @@ async function updateDepth(
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("gameAttributes") ||
+		updateEvents.includes("team") ||
 		pos !== state.pos ||
 		abbrev !== state.abbrev
 	) {
@@ -117,7 +119,7 @@ async function updateDepth(
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			editable,
-			keepRosterSorted: g.get("keepRosterSorted"),
+			keepRosterSorted: t.keepRosterSorted,
 			pos,
 			players: players2,
 			ratings,

@@ -1,11 +1,11 @@
-import type React from "react";
+import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import initView from "./initView";
 
 const genStaticPage = (
 	name: string,
 	title: string,
-	content: React.ReactNode,
+	content: ReactNode,
 	inLeague: boolean,
 ) => {
 	return initView({

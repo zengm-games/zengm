@@ -29,9 +29,9 @@ const defaultRaces: Record<string, Record<Race, number>> = {
 	},
 	Germany: {
 		asian: 1,
-		black: 25,
-		brown: 25,
-		white: 49,
+		black: 15,
+		brown: 15,
+		white: 69,
 	},
 	Lithuania: {
 		asian: 1,

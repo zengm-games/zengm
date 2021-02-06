@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { isSport, PLAYER } from "../../../common";
 import { player } from "..";
 import { defaultGameAttributes, g, random } from "../../util";
 import type {
@@ -60,7 +60,7 @@ const genPlayersWithoutSaving = async (
 	for (let i = 0; i < 4; i++) {
 		let cutoff = 0; // For football, only juniors and seniors
 
-		if (process.env.SPORT === "basketball" || i >= 2) {
+		if (isSport("basketball") || i >= 2) {
 			// Top 50% of players remaining enter draft, except in last year when all do
 			cutoff = i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
 		}

@@ -1,41 +1,41 @@
 import PropTypes from "prop-types";
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { BoxPlot, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const width100 = {
 	width: "100%",
 };
 
-const proQuartiles =
-	process.env.SPORT === "basketball"
-		? {
-				gp: [4.0, 27.75, 53.0, 73.0, 82.0],
-				gs: [0.0, 1.75, 11.0, 45.0, 82.0],
-				min: [4.2, 14.9, 21.2, 27.8, 36.9],
-				fg: [0.2, 1.9, 3.0, 4.7, 10.8],
-				fga: [0.6, 4.3, 6.7, 10.3, 24.5],
-				fgp: [15.2, 40.8, 44.2, 48.7, 73.1],
-				tp: [0.0, 0.3, 0.8, 1.4, 5.1],
-				tpa: [0.0, 1.1, 2.5, 4.0, 13.2],
-				tpp: [0.0, 27.8, 33.6, 37.2, 100.0],
-				ft: [0.0, 0.6, 1.1, 1.9, 9.7],
-				fta: [0.0, 0.88, 1.5, 2.5, 11.0],
-				ftp: [0.0, 68.9, 76.7, 82.7, 100.0],
-				orb: [0.0, 0.4, 0.7, 1.2, 5.4],
-				drb: [0.2, 1.8, 2.6, 3.9, 11.1],
-				trb: [0.4, 2.2, 3.3, 4.93, 16.0],
-				ast: [0.0, 0.9, 1.5, 2.7, 10.7],
-				stl: [0.0, 0.4, 0.6, 0.9, 2.4],
-				blk: [0.0, 0.2, 0.3, 0.6, 2.7],
-				tov: [0.1, 0.6, 1.0, 1.5, 5.0],
-				pf: [0.2, 1.4, 1.8, 2.3, 3.8],
-				pts: [0.8, 5.1, 7.9, 12.6, 36.1],
-				per: [0.7, 10.4, 13.0, 16.4, 31.0],
-		  }
-		: {};
+const proQuartiles = isSport("basketball")
+	? {
+			gp: [4.0, 27.75, 53.0, 73.0, 82.0],
+			gs: [0.0, 1.75, 11.0, 45.0, 82.0],
+			min: [4.2, 14.9, 21.2, 27.8, 36.9],
+			fg: [0.2, 1.9, 3.0, 4.7, 10.8],
+			fga: [0.6, 4.3, 6.7, 10.3, 24.5],
+			fgp: [15.2, 40.8, 44.2, 48.7, 73.1],
+			tp: [0.0, 0.3, 0.8, 1.4, 5.1],
+			tpa: [0.0, 1.1, 2.5, 4.0, 13.2],
+			tpp: [0.0, 27.8, 33.6, 37.2, 100.0],
+			ft: [0.0, 0.6, 1.1, 1.9, 9.7],
+			fta: [0.0, 0.88, 1.5, 2.5, 11.0],
+			ftp: [0.0, 68.9, 76.7, 82.7, 100.0],
+			orb: [0.0, 0.4, 0.7, 1.2, 5.4],
+			drb: [0.2, 1.8, 2.6, 3.9, 11.1],
+			trb: [0.4, 2.2, 3.3, 4.93, 16.0],
+			ast: [0.0, 0.9, 1.5, 2.7, 10.7],
+			stl: [0.0, 0.4, 0.6, 0.9, 2.4],
+			blk: [0.0, 0.2, 0.3, 0.6, 2.7],
+			tov: [0.1, 0.6, 1.0, 1.5, 5.0],
+			pf: [0.2, 1.4, 1.8, 2.3, 3.8],
+			pts: [0.8, 5.1, 7.9, 12.6, 36.1],
+			per: [0.7, 10.4, 13.0, 16.4, 31.0],
+	  }
+	: {};
 
 const PlayerStatDists = ({
 	numGames,
@@ -51,7 +51,7 @@ const PlayerStatDists = ({
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =
-		process.env.SPORT === "basketball" && statType == "perGame"
+		isSport("basketball") && statType == "perGame"
 			? {
 					gp: [0, numGames],
 					gs: [0, numGames],
@@ -86,7 +86,7 @@ const PlayerStatDists = ({
 				These <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a> show
 				the league-wide distributions of player stats for all active players in
 				the selected season.{" "}
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<>
 						Blue plots are for this league and green plots are from the
 						2018-2020 NBA seasons, for comparison. NBA data was generously
@@ -134,7 +134,7 @@ const PlayerStatDists = ({
 													color="var(--green)"
 													labels={false}
 													scale={
-														process.env.SPORT === "basketball"
+														isSport("basketball")
 															? (scale as any)[stat]
 															: [undefined, undefined]
 													}

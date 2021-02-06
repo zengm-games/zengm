@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import type { ReactNode } from "react";
 
 const HelpPopover = ({
 	children,
@@ -8,7 +8,7 @@ const HelpPopover = ({
 	style,
 	title,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
 	style?: {
 		[key: string]: number | string;

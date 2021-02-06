@@ -1,4 +1,3 @@
-import React from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";

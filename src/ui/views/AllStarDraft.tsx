@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";

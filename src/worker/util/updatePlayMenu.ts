@@ -1,4 +1,4 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES, isSport } from "../../common";
 import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
@@ -199,7 +199,7 @@ const updatePlayMenu = async () => {
 		}
 
 		// Regular season - pre trading deadline
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			keys = ["day", "dayLive", "week", "month", ...untilMore, "untilPlayoffs"];
 		} else {
 			keys = ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"];
@@ -210,7 +210,7 @@ const updatePlayMenu = async () => {
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
 		} else {
 			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];

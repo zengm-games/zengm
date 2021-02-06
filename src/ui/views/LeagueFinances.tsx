@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
+import type { ReactNode } from "react";
 
 const LeagueFinances = ({
 	budget,
@@ -60,7 +60,7 @@ const LeagueFinances = ({
 				? t.seasonAttrs.payroll
 				: t.seasonAttrs.salaryPaid;
 
-		const data: React.ReactNode[] = [
+		const data: ReactNode[] = [
 			<a
 				href={helpers.leagueUrl([
 					"team_finances",

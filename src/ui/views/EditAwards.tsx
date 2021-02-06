@@ -1,12 +1,12 @@
-import React, { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
-import { AWARD_NAMES } from "../../common";
+import { AWARD_NAMES, bySport, isSport } from "../../common";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		return null;
 	}
 
@@ -59,7 +59,7 @@ const EditAwards = ({
 			if (p?.pid == undefined) {
 				newAwards[type] = undefined;
 			} else {
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					newAwards[type] = {
 						pid: p.pid,
 						name: p.name,
@@ -84,7 +84,7 @@ const EditAwards = ({
 			if (p?.pid == undefined) {
 				newAwards[type] = undefined;
 			} else {
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					newAwards[type] = {
 						pid: p.pid,
 						name: p.name,
@@ -125,7 +125,7 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (process.env.SPORT === "basketball") {
+					if (isSport("basketball")) {
 						newAwards[type][teamNumber].players[playerNumber] = {
 							pid: p.pid,
 							name: p.name,
@@ -169,7 +169,7 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (process.env.SPORT === "basketball") {
+					if (isSport("basketball")) {
 						newAwards[type][teamNumber].players[playerNumber] = {
 							pid: p.pid,
 							name: p.name,
@@ -211,7 +211,7 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (process.env.SPORT === "basketball") {
+					if (isSport("basketball")) {
 						newAwards[type][playerNumber] = {
 							pid: p.pid,
 							name: p.name,
@@ -257,10 +257,10 @@ const EditAwards = ({
 		}
 	};
 
-	const simpleAwardKeys =
-		process.env.SPORT === "basketball"
-			? ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"]
-			: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
+	const simpleAwardKeys = bySport({
+		basketball: ["mvp", "dpoy", "smoy", "mip", "roy", "finalsMvp"],
+		football: ["mvp", "dpoy", "oroy", "droy", "finalsMvp"],
+	});
 
 	const getPlayer = (p?: { pid: number }) => {
 		if (!p) {
@@ -276,7 +276,7 @@ const EditAwards = ({
 		}
 
 		let stats;
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			if (award === "dpoy" || award === "allDefensive") {
 				stats = `${p.stats.trb.toFixed(1)} reb, ${p.stats.blk.toFixed(
 					1,
@@ -338,7 +338,7 @@ const EditAwards = ({
 						];
 					})}
 
-					{process.env.SPORT === "basketball" ? (
+					{isSport("basketball") ? (
 						<>
 							{awards.allDefensive.map((element: any, i: number) => {
 								const teamSelect = element.players.map(

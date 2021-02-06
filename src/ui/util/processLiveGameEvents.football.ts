@@ -1,3 +1,4 @@
+import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
@@ -48,7 +49,7 @@ const processLiveGameEvents = ({
 			boxScore.teams[1].ptsQtrs.push(0);
 
 			const ptsQtrs = boxScore.teams[0].ptsQtrs;
-			if (ptsQtrs.length > 4) {
+			if (ptsQtrs.length > boxScore.numPeriods) {
 				overtimes += 1;
 				if (overtimes === 1) {
 					boxScore.overtime = " (OT)";
@@ -57,7 +58,9 @@ const processLiveGameEvents = ({
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 			} else {
-				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} quarter`;
+				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
+					boxScore.numPeriods,
+				)}`;
 			}
 
 			boxScore.time = e.time;

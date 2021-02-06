@@ -1,5 +1,3 @@
-import React from "react";
-
 const leaguePartDescriptions: { [key: string]: string } = {
 	gameAttributes: "League settings",
 	startingSeason: "Starting season",

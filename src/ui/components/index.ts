@@ -4,6 +4,7 @@ export { default as BoxScore } from "./BoxScore";
 export { default as BoxScoreRow } from "./BoxScoreRow";
 export { default as BoxScoreWrapper } from "./BoxScoreWrapper";
 export { default as ScoreBox } from "./ScoreBox";
+export { default as Confetti } from "./Confetti";
 export { default as Controller } from "./Controller";
 export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";

@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	DataTable,
 	NegotiateButtons,
@@ -11,6 +10,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import { isSport } from "../../common";
 
 const NegotiationList = ({
 	capSpace,
@@ -98,7 +98,7 @@ const NegotiationList = ({
 
 	return (
 		<>
-			{process.env.SPORT === "football" ? (
+			{isSport("football") ? (
 				<RosterComposition className="float-right mb-3" players={userPlayers} />
 			) : null}
 

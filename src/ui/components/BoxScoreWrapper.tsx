@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import { PHASE } from "../../common";
+import { useCallback, useEffect, useState, useRef } from "react";
+import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import BoxScore from "./BoxScore";
 
@@ -293,9 +293,13 @@ const DetailedScore = ({
 	tid?: number;
 }) => {
 	// Quarter/overtime labels
-	const qtrs = boxScore.teams[1].ptsQtrs.map((pts: number, i: number) => {
-		return i < 4 ? `Q${i + 1}` : `OT${i - 3}`;
-	});
+	const qtrs: string[] = boxScore.teams[0].ptsQtrs.map(
+		(pts: number, i: number) => {
+			return i < boxScore.numPeriods
+				? `${i + 1}`
+				: `OT${i - boxScore.numPeriods + 1}`;
+		},
+	);
 	qtrs.push("F");
 
 	return (
@@ -323,8 +327,13 @@ const DetailedScore = ({
 						<thead>
 							<tr>
 								<th />
-								{qtrs.map((qtr: number) => (
-									<th key={qtr}>{qtr}</th>
+								{qtrs.map((qtr, i) => (
+									<th
+										key={qtr}
+										className={i < qtrs.length - 1 ? "text-muted" : undefined}
+									>
+										{qtr}
+									</th>
 								))}
 							</tr>
 						</thead>
@@ -355,7 +364,7 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
-				{process.env.SPORT === "basketball" ? (
+				{isSport("basketball") ? (
 					<div className="mx-xs-auto table-nonfluid text-center">
 						<FourFactors teams={boxScore.teams} />
 					</div>

@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { isSport, PLAYER } from "../../../common";
 import { g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
@@ -15,7 +15,7 @@ const shouldRetire = (
 	// Originally this used pot, but pot is about 1.1*value, and value is consistent in leagues with different ratings distributions
 	const pot = 1.1 * p.value;
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		const maxAge = 33;
 		const minPot = 40;
 

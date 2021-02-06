@@ -1,6 +1,7 @@
 import { team } from "..";
 import { g } from "../../util";
 import type { PlayerWithoutKey } from "../../../common/types";
+import { isSport } from "../../../common";
 
 // Find the best available free agent for a team.
 // playersAvailable should be sorted - best players first, worst players last. It will be mutated if a player is found, to remove the found player.
@@ -22,7 +23,7 @@ const getBest = <T extends PlayerWithoutKey>(
 			if (!neededPositions.has(pos)) {
 				continue;
 			}
-		} else if (process.env.SPORT === "football" && !useNeededPositions) {
+		} else if (isSport("football") && !useNeededPositions) {
 			// Skip signing extra QBs, otherwise too many will be signed because values are higher
 			const pos = p.ratings[p.ratings.length - 1].pos;
 
@@ -42,7 +43,7 @@ const getBest = <T extends PlayerWithoutKey>(
 			playersOnRoster.length < g.get("maxRosterSize") - 2;
 		let shouldAddPlayerPosition = false;
 
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			if (
 				(neededPositions.has("K") && pos === "K") ||
 				(neededPositions.has("P") && pos === "P")

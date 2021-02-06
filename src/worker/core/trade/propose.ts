@@ -5,6 +5,7 @@ import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";
 import get from "./get";
+import { idb } from "../../db";
 
 /**
  * Proposes the current trade in the database.
@@ -68,8 +69,9 @@ const propose = async (
 		await clear(); // Auto-sort team rosters
 
 		for (const tid of tids) {
+			const t = await idb.cache.teams.get(tid);
 			const onlyNewPlayers =
-				g.get("userTids").includes(tid) && !g.get("keepRosterSorted");
+				g.get("userTids").includes(tid) && t && !t.keepRosterSorted;
 
 			await team.rosterAutoSort(tid, onlyNewPlayers);
 		}

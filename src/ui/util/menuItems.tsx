@@ -1,5 +1,5 @@
-import * as React from "react";
 import { takeScreenshot, toWorker } from ".";
+import { isSport } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
@@ -118,7 +118,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["roster"],
 				text: "Roster",
 			},
-			...(process.env.SPORT === "football" ? [depthChart] : []),
+			...(isSport("football") ? [depthChart] : []),
 			{
 				type: "link",
 				active: pageID => pageID === "schedule",
@@ -398,7 +398,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["new_team"],
 				text: "Switch Team",
 			},
-			...(process.env.SPORT === "basketball" ? [scheduledEvents] : []),
+			...(isSport("basketball") ? [scheduledEvents] : []),
 			{
 				type: "link",
 				league: true,

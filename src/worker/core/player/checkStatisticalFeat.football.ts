@@ -1,10 +1,8 @@
-import { defaultGameAttributes, g } from "../../../worker/util";
+import { helpers } from "../../../worker/util";
 import type { GamePlayer } from "../../../common/types";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
-	const minFactor = Math.sqrt(
-		g.get("quarterLength") / defaultGameAttributes.quarterLength,
-	);
+	const minFactor = helpers.quarterLengthFactor();
 
 	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	const FIVE_HUNDRED = minFactor * 500;

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
 import {
@@ -11,6 +11,7 @@ import {
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const DraftButtons = ({
 	spectator,
@@ -113,6 +114,7 @@ const Draft = ({
 	draftType,
 	drafted,
 	expansionDraft,
+	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
 	spectator,
 	stats,
@@ -358,6 +360,13 @@ const Draft = ({
 									</p>
 								</div>
 							) : null}
+							{expansionDraftFilteredTeamsMessage ? (
+								<div>
+									<p className="alert alert-warning d-inline-block">
+										{expansionDraftFilteredTeamsMessage}
+									</p>
+								</div>
+							) : null}
 							<DraftButtons
 								spectator={spectator}
 								userRemaining={userRemaining}
@@ -385,7 +394,7 @@ const Draft = ({
 					)}
 				</div>
 
-				{process.env.SPORT === "football" ? (
+				{isSport("football") ? (
 					<RosterComposition className="mb-3 ml-sm-3" players={userPlayers} />
 				) : null}
 			</div>

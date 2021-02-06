@@ -2,9 +2,12 @@ import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, AllStars } from "../../common/types";
+import { bySport } from "../../common";
 
-const stats =
-	process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
+const stats = bySport({
+	basketball: ["pts", "trb", "ast"],
+	football: ["keyStats"],
+});
 
 const getPlayerInfo = async (pid: number) => {
 	const p = await idb.cache.players.get(pid);

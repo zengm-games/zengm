@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -34,7 +34,7 @@ const updatePlayers = async (
 
 		let stats = undefined;
 		let statType: PlayerStatType = "perGame";
-		if (process.env.SPORT == "football") {
+		if (isSport("football")) {
 			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
 		} else {
 			if (inputs.statType === "advanced") {
@@ -57,7 +57,7 @@ const updatePlayers = async (
 			season: inputs.season,
 			statType: statType,
 		});
-		if (process.env.SPORT === "football") {
+		if (isSport("football")) {
 			const statTable = PLAYER_STATS_TABLES[inputs.statType];
 			const onlyShowIf = statTable.onlyShowIf as string[];
 			players = players.filter(p => {

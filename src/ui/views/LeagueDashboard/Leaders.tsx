@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
+import { bySport } from "../../../common";
 
 const Leader = ({
 	abbrev,
@@ -18,10 +18,10 @@ const Leader = ({
 	tid?: number;
 	value: number;
 }) => {
-	const numberToDisplay =
-		process.env.SPORT === "basketball"
-			? helpers.roundStat(value, stat)
-			: helpers.numberWithCommas(value);
+	const numberToDisplay = bySport({
+		basketball: helpers.roundStat(value, stat),
+		football: helpers.numberWithCommas(value),
+	});
 
 	return (
 		<>

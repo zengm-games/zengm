@@ -1,8 +1,8 @@
-import React from "react";
+import { forwardRef } from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 
-const Summary = React.forwardRef(
+const Summary = forwardRef(
 	(
 		{ salaryCap, summary }: Pick<View<"trade">, "salaryCap" | "summary">,
 		ref: any,

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { helpers } from "../util";
 
 const RecordAndPlayoffs = ({

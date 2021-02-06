@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useRef, useState, ReactNode } from "react";
+import { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";

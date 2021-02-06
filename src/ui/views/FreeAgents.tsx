@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
-import { PHASE } from "../../common";
+import { useCallback, useState } from "react";
+import { isSport, PHASE } from "../../common";
 import {
 	DataTable,
 	MoreLinks,
@@ -132,7 +132,7 @@ const FreeAgents = ({
 
 	return (
 		<>
-			{process.env.SPORT === "football" ? (
+			{isSport("football") ? (
 				<RosterComposition className="float-right mb-3" players={userPlayers} />
 			) : null}
 

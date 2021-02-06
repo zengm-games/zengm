@@ -1,20 +1,17 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, { MouseEvent } from "react";
+import { Component, Fragment } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
+	GAME_NAME,
+	isSport,
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import {
-	confirm,
-	getScript,
-	helpers,
-	localActions,
-	realtimeUpdate,
-} from "../util";
+import { confirm, getScript, localActions, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
 
 const ajaxErrorMsg =
@@ -28,10 +25,7 @@ type StripeButtonState = {
 	handler: StripeCheckoutHandler | undefined | null;
 };
 
-class StripeButton extends React.Component<
-	StripeButtonProps,
-	StripeButtonState
-> {
+class StripeButton extends Component<StripeButtonProps, StripeButtonState> {
 	constructor(props: StripeButtonProps) {
 		super(props);
 		this.state = {
@@ -158,7 +152,7 @@ type UserInfoState = {
 	logoutError: string | undefined | null;
 };
 
-class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
+class UserInfo extends Component<UserInfoProps, UserInfoState> {
 	constructor(props: UserInfoProps) {
 		super(props);
 		this.state = {
@@ -266,12 +260,10 @@ const Account = ({
 		title: "Your Account",
 		hideNewWindow: true,
 	});
-	let goldPitchDiv: React.ReactNode = null;
+	let goldPitchDiv: ReactNode = null;
 
 	if (showGoldPitch) {
-		const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
-		const otherSport =
-			process.env.SPORT === "basketball" ? "Football" : "Basketball";
+		const otherSport = isSport("basketball") ? "Football" : "Basketball";
 		goldPitchDiv = (
 			<>
 				<h2>GM Gold</h2>
@@ -279,7 +271,7 @@ const Account = ({
 				<div className="row">
 					<div className="col-lg-8 col-md-10">
 						<p>
-							{sport} GM is completely free. There will never be any{" "}
+							{GAME_NAME} is completely free. There will never be any{" "}
 							<a
 								href="http://en.wikipedia.org/wiki/Freemium"
 								rel="noopener noreferrer"
@@ -302,7 +294,7 @@ const Account = ({
 						</p>
 
 						<p>
-							If you want to support {sport} GM continuing to be a non-sucky
+							If you want to support {GAME_NAME} continuing to be a non-sucky
 							game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
 							get? More like, what don't you get? You get no new features, no
 							new improvements, no new anything. Just <b>no more ads</b>, both
@@ -311,9 +303,9 @@ const Account = ({
 								{otherSport} GM
 							</a>
 							. That's it. Why? For basically the same reason I won't make{" "}
-							{sport} GM freemium. I don't want the free version to become a
+							{GAME_NAME} freemium. I don't want the free version to become a
 							crippled advertisement for the pay version. If you agree that the
-							world is a better place when anyone anywhere can play {sport} GM
+							world is a better place when anyone anywhere can play {GAME_NAME}{" "}
 							and {otherSport} GM, sign up for GM Gold today!
 						</p>
 
@@ -368,7 +360,7 @@ const Account = ({
 			{Object.entries(groupBy(achievements, "category")).map(
 				([category, catAchivements]: [any, any[]]) => {
 					return (
-						<React.Fragment key={category}>
+						<Fragment key={category}>
 							<h3 className="mt-4">{category}</h3>
 							<div
 								className="row"
@@ -405,7 +397,7 @@ const Account = ({
 									);
 								})}
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				},
 			)}

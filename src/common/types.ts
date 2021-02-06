@@ -1,5 +1,5 @@
 import type { Face } from "facesjs";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
@@ -251,6 +251,7 @@ export type Game = {
 		pts: number;
 	};
 	numGamesToWinSeries?: number;
+	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;
 	playoffs: boolean;
 	overtimes: number;
@@ -355,7 +356,6 @@ export type Div = { cid: number; did: number; name: string };
 
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
-	keepRosterSorted: boolean;
 	aiTradesFactor: number;
 	allStarGame: number | null;
 	autoDeleteOldBoxScores: boolean;
@@ -406,6 +406,7 @@ export type GameAttributesLeague = {
 	numDraftRounds: number;
 	numGames: number;
 	numGamesPlayoffSeries: number[];
+	numPeriods: number;
 	numPlayersOnCourt: number;
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
@@ -460,11 +461,13 @@ export type GameAttributesLeague = {
 	expansionDraft:
 		| {
 				phase: "setup";
+				numPerTeam?: string;
 				numProtectedPlayers?: string;
 				teams?: ExpansionDraftSetupTeam[];
 		  }
 		| {
 				phase: "protection";
+				numPerTeam: number;
 				numProtectedPlayers: number;
 				expansionTids: number[];
 				protectedPids: { [key: number]: number[] };
@@ -472,6 +475,8 @@ export type GameAttributesLeague = {
 		  }
 		| {
 				phase: "draft";
+				numPerTeam: number;
+				numPerTeamDrafted: Record<number, number>;
 				expansionTids: number[];
 				availablePids: number[];
 		  };
@@ -641,10 +646,10 @@ export type MenuItemLink = {
 	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
-		| Exclude<React.ReactNode, null | undefined | number | boolean>
+		| Exclude<ReactNode, null | undefined | number | boolean>
 		| {
-				side: Exclude<React.ReactNode, null | undefined | number | boolean>;
-				top: Exclude<React.ReactNode, null | undefined | number | boolean>;
+				side: Exclude<ReactNode, null | undefined | number | boolean>;
+				top: Exclude<ReactNode, null | undefined | number | boolean>;
 		  };
 };
 
@@ -1065,6 +1070,7 @@ export type Local = {
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
+	username: string | undefined;
 };
 
 export type PlayoffSeriesTeam = {
@@ -1186,11 +1192,9 @@ export type Team = {
 	pop?: number;
 	stadiumCapacity?: number;
 
-	// Optional because no upgrade. Otherwise, would make this true by default
-	adjustForInflation?: boolean;
-
-	// Optional because no upgrade. Otherwise, would make this false by default
-	disabled?: boolean;
+	adjustForInflation: boolean;
+	disabled: boolean;
+	keepRosterSorted: boolean;
 
 	// Optional because no upgrade. Otherwise, would make this empty array by default
 	retiredJerseyNumbers?: {
@@ -1389,6 +1393,7 @@ export type UpdateEvents = (
 	| "playerMovement"
 	| "scheduledEvents"
 	| "retiredJerseys"
+	| "team"
 	| "teamFinances"
 	| "watchList"
 )[];
@@ -1416,6 +1421,7 @@ export type GetLeagueOptions =
 			season: number;
 			phase: number;
 			randomDebuts: boolean;
+			realDraftRatings: "draft" | "rookie";
 	  }
 	| {
 			type: "legends";

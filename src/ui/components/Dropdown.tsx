@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, SyntheticEvent } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 
@@ -42,7 +43,7 @@ const Select = ({
 		document.body.removeChild(el);
 	}, [field, options, value]);
 
-	const style: React.CSSProperties = {
+	const style: CSSProperties = {
 		width,
 	};
 

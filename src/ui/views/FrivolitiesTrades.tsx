@@ -1,10 +1,9 @@
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
-import { PHASE_TEXT } from "../../common";
+import { bySport, PHASE_TEXT } from "../../common";
 import PickText from "./TradeSummary/PickText";
 
 const PlayerInfo = ({
@@ -59,10 +58,10 @@ const FrivolitiesTrades = ({
 		"Season",
 		"Team",
 		"Received",
-		`stat:${process.env.SPORT === "basketball" ? "ws" : "av"}`,
+		`stat:${bySport({ basketball: "ws", football: "av" })}`,
 		"Team",
 		"Received",
-		`stat:${process.env.SPORT === "basketball" ? "ws" : "av"}`,
+		`stat:${bySport({ basketball: "ws", football: "av" })}`,
 		"Links",
 	);
 	for (const i of [4, 7]) {

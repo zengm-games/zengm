@@ -1,4 +1,4 @@
-import React, { useCallback, useState, ReactNode, FormEvent } from "react";
+import { useCallback, useState, ReactNode, FormEvent } from "react";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";

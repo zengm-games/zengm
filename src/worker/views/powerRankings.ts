@@ -2,7 +2,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
-import { POSITIONS, RATINGS } from "../../common";
+import { POSITIONS, RATINGS, isSport } from "../../common";
 
 const otherToRanks = (
 	teams: {
@@ -64,7 +64,7 @@ const updatePowerRankings = async (
 				}
 
 				const ratings = ["ovr", "pos"];
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					ratings.push(...RATINGS);
 				}
 
@@ -104,7 +104,7 @@ const updatePowerRankings = async (
 
 				const other: Record<string, number> = {};
 				const otherCurrent: Record<string, number> = {};
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					for (const rating of RATINGS) {
 						other[rating] = team.ovr(teamPlayers, {
 							rating,

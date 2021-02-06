@@ -2,6 +2,7 @@ import {
 	PLAYER,
 	PHASE,
 	processPlayerStats as processPlayerStats2,
+	bySport,
 } from "../../../common";
 import { player, trade } from "../../core";
 import { g, helpers } from "../../util";
@@ -383,24 +384,24 @@ const processRatings = (
 	}
 };
 
-const weightByMinutes =
-	process.env.SPORT === "basketball"
-		? [
-				"per",
-				"astp",
-				"blkp",
-				"drbp",
-				"orbp",
-				"stlp",
-				"trbp",
-				"usgp",
-				"drtg",
-				"ortg",
-				"obpm",
-				"dbpm",
-				"bpm",
-		  ]
-		: [];
+const weightByMinutes = bySport({
+	basketball: [
+		"per",
+		"astp",
+		"blkp",
+		"drbp",
+		"orbp",
+		"stlp",
+		"trbp",
+		"usgp",
+		"drtg",
+		"ortg",
+		"obpm",
+		"dbpm",
+		"bpm",
+	],
+	football: [],
+});
 
 const reduceCareerStats = (
 	careerStats: any[],
@@ -497,7 +498,11 @@ const getPlayerStats = (
 				// Special case for some variables, weight by minutes
 				for (const attr of weightByMinutes) {
 					if (statSums.hasOwnProperty(attr)) {
-						statSums[attr] /= statSums.min;
+						if (statSums.min > 0) {
+							statSums[attr] /= statSums.min;
+						} else {
+							statSums[attr] = 0;
+						}
 					}
 				}
 
@@ -628,11 +633,19 @@ const processStats = (
 		// Special case for some variables, weight by minutes
 		for (const attr of weightByMinutes) {
 			if (statSums.hasOwnProperty(attr)) {
-				statSums[attr] /= statSums.min;
+				if (statSums.min > 0) {
+					statSums[attr] /= statSums.min;
+				} else {
+					statSums[attr] = 0;
+				}
 			}
 
 			if (statSumsPlayoffs.hasOwnProperty(attr)) {
-				statSumsPlayoffs[attr] /= statSumsPlayoffs.min;
+				if (statSumsPlayoffs.min > 0) {
+					statSumsPlayoffs[attr] /= statSumsPlayoffs.min;
+				} else {
+					statSumsPlayoffs[attr] = 0;
+				}
 			}
 		}
 

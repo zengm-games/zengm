@@ -1,4 +1,4 @@
-import React from "react";
+import { isValidElement } from "react";
 // @ts-ignore
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
@@ -17,7 +17,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 			val = value;
 		}
 
-		if (React.isValidElement(val)) {
+		if (isValidElement(val)) {
 			sortVal = textContent(val);
 		} else {
 			sortVal = val;

@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import generate from "./generate";
@@ -36,9 +36,10 @@ const augmentPartialPlayer = async (
 		p.name !== undefined &&
 		(p.firstName === undefined || p.lastName === undefined)
 	) {
-		// parse and split names from roster file
-		p.firstName = p.name.split(" ")[0];
-		p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
+		const parts = p.name.split(" ");
+		p.firstName = parts[0];
+		p.lastName = parts.slice(1, parts.length).join(" ");
+		delete p.name;
 	}
 
 	// This is used to get at default values for various attributes
@@ -200,16 +201,13 @@ const augmentPartialPlayer = async (
 
 	const r2 = p.ratings[p.ratings.length - 1];
 
-	if (process.env.SPORT === "football" && (!r2.ovrs || !r2.pots || !r2.pos)) {
+	if (isSport("football") && (!r2.ovrs || !r2.pots || !r2.pos)) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
 		await develop(p, 0);
 	}
 
 	// Rating rescaling
-	if (
-		process.env.SPORT === "basketball" &&
-		(version === undefined || version <= 26)
-	) {
+	if (isSport("basketball") && (version === undefined || version <= 26)) {
 		for (const r of p.ratings) {
 			// Replace blk/stl with diq
 			if (typeof r.diq !== "number") {
@@ -263,7 +261,11 @@ const augmentPartialPlayer = async (
 
 			r.ovr = ovr(r);
 			r.skills = skills(r);
-			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
+			r.pot = await bootstrapPot({
+				ratings: r,
+				age: r.season - p.born.year,
+				srID: p.srID,
+			});
 
 			if (p.draft.year === r.season) {
 				p.draft.ovr = r.ovr;
@@ -295,15 +297,16 @@ const augmentPartialPlayer = async (
 			r.ovr = ovr(p.ratings[0]);
 		}
 
-		if (
-			process.env.SPORT === "basketball" &&
-			(r.pot === undefined || r.pot < r.ovr)
-		) {
+		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {
 			// Only basketball, in case position is not known at this point
-			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
+			r.pot = await bootstrapPot({
+				ratings: r,
+				age: r.season - p.born.year,
+				srID: p.srID,
+			});
 		}
 
-		if (r.pos === undefined && process.env.SPORT !== "football") {
+		if (r.pos === undefined && !isSport("football")) {
 			// Football is handled below with call to player.develop
 			if (p.pos !== undefined && typeof p.pos === "string") {
 				r.pos = p.pos;

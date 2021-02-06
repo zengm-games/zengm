@@ -7,6 +7,7 @@ import type {
 	Player,
 } from "../../common/types";
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
+import { bySport } from "../../common";
 
 export const getHistory = async (
 	teamSeasons: TeamSeason[],
@@ -99,10 +100,10 @@ export const getHistory = async (
 
 	history.reverse(); // Show most recent season first
 
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [

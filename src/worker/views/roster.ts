@@ -1,4 +1,4 @@
-import { PHASE, POSITIONS } from "../../common";
+import { bySport, isSport, PHASE, POSITIONS } from "../../common";
 import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -27,6 +27,7 @@ const updateRoster = async (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("team") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("newPhase"))) ||
@@ -34,16 +35,16 @@ const updateRoster = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+		});
 
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
 			!g.get("spectator") &&
-			process.env.SPORT === "basketball";
+			isSport("basketball");
 
 		const showRelease =
 			inputs.season === g.get("season") &&
@@ -63,7 +64,7 @@ const updateRoster = async (
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
-			attrs: ["tid", "strategy", "region", "name"],
+			attrs: ["tid", "strategy", "region", "name", "keepRosterSorted"],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
 			addDummySeason: true,
@@ -140,7 +141,7 @@ const updateRoster = async (
 				numGamesRemaining,
 			});
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 			} else {
 				players.sort((a, b) => footballScore(b) - footballScore(a));
@@ -183,7 +184,7 @@ const updateRoster = async (
 				fuzz: true,
 			});
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				players.sort(
 					(a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
 				);
@@ -207,7 +208,6 @@ const updateRoster = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			keepRosterSorted: g.get("keepRosterSorted"),
 			budget: g.get("budget"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),

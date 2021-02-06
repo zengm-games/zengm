@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { helpers, useLocal } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 
 const DraftAbbrev = ({

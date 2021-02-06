@@ -1,18 +1,13 @@
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, {
-	useState,
-	FormEvent,
-	ChangeEvent,
-	MouseEvent,
-	ReactNode,
-} from "react";
+import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
 import {
 	PHASE,
 	PLAYER,
 	RATINGS,
 	POSITIONS,
 	MOOD_TRAITS,
+	isSport,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -486,7 +481,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const pos = p.ratings[r].pos;
 
 			const keys = posRatings(pos);
-			if (process.env.SPORT === "football") {
+			if (isSport("football")) {
 				keys.push("stre", "spd", "endu");
 			}
 
@@ -666,10 +661,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode && p.tid !== PLAYER.RETIRED}
 								>
 									{POSITIONS.filter(pos => {
-										if (
-											process.env.SPORT === "football" &&
-											bannedPositions.includes(pos)
-										) {
+										if (isSport("football") && bannedPositions.includes(pos)) {
 											return false;
 										}
 										return true;
@@ -916,9 +908,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										"main",
 										"getRandomRatings",
 										(p as any).age,
-										process.env.SPORT === "football"
-											? p.ratings[r].pos
-											: undefined,
+										isSport("football") ? p.ratings[r].pos : undefined,
 									);
 
 									setState(prevState => {

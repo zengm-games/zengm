@@ -3,6 +3,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { setTeamInfo } from "./gameLog";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getPeriodName, isSport, PHASE } from "../../common";
 
 const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,
@@ -43,7 +44,7 @@ const updatePlayByPlay = async (
 		boxScore.elam = allStarGame ? g.get("elamASG") : g.get("elam");
 
 		boxScore.overtime = "";
-		boxScore.quarter = "1st quarter";
+		boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;
 		boxScore.time = `${g.get("quarterLength")}:00`;
 		boxScore.gameOver = false;
 
@@ -98,7 +99,7 @@ const updatePlayByPlay = async (
 					}
 				}
 
-				if (process.env.SPORT === "basketball") {
+				if (isSport("basketball")) {
 					p.inGame = j < (boxScore.numPlayersOnCourt || 5);
 				}
 			}
@@ -113,9 +114,31 @@ const updatePlayByPlay = async (
 			}
 		}
 
+		// For confetti
+		let finals = false;
+		if (boxScore.playoffs && g.get("phase") >= PHASE.PLAYOFFS) {
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+			if (playoffSeries) {
+				const finalRound =
+					playoffSeries.series[playoffSeries.series.length - 1];
+				if (finalRound.length === 1) {
+					const finalMatchup = finalRound[0];
+					if (
+						(finalMatchup.home.tid === boxScore.teams[0].tid &&
+							finalMatchup.away?.tid === boxScore.teams[1].tid) ||
+						(finalMatchup.home.tid === boxScore.teams[1].tid &&
+							finalMatchup.away?.tid === boxScore.teams[0].tid)
+					) {
+						finals = true;
+					}
+				}
+			}
+		}
+
 		return {
-			initialBoxScore: boxScore,
 			events: inputs.playByPlay,
+			finals,
+			initialBoxScore: boxScore,
 		};
 	}
 };

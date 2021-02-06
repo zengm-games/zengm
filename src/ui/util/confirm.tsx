@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "react-bootstrap";
 

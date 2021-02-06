@@ -1,30 +1,33 @@
 import PropTypes from "prop-types";
-import React, { ChangeEvent } from "react";
+import { Fragment, ChangeEvent } from "react";
+import { bySport } from "../../../common";
 import { getCols, helpers } from "../../util";
 
-const rows: {
-	[key: string]: string[];
-}[][] =
-	process.env.SPORT === "basketball"
-		? [
-				[
-					{ Physical: ["hgt", "stre", "spd", "jmp", "endu"] },
-					{ Shooting: ["ins", "dnk", "ft", "fg", "tp"] },
-					{ Skill: ["oiq", "diq", "drb", "pss", "reb"] },
-				],
-		  ]
-		: [
-				[
-					{ Physical: ["hgt", "stre", "spd", "endu"] },
-					{ Passing: ["thv", "thp", "tha"] },
-					{ "Rush/Rec": ["elu", "rtr", "hnd", "bsc"] },
-				],
-				[
-					{ Blocking: ["rbk", "pbk"] },
-					{ Defense: ["pcv", "tck", "prs", "rns"] },
-					{ Kicking: ["kpw", "kac", "ppw", "pac"] },
-				],
-		  ];
+const rows = bySport<
+	{
+		[key: string]: string[];
+	}[][]
+>({
+	basketball: [
+		[
+			{ Physical: ["hgt", "stre", "spd", "jmp", "endu"] },
+			{ Shooting: ["ins", "dnk", "ft", "fg", "tp"] },
+			{ Skill: ["oiq", "diq", "drb", "pss", "reb"] },
+		],
+	],
+	football: [
+		[
+			{ Physical: ["hgt", "stre", "spd", "endu"] },
+			{ Passing: ["thv", "thp", "tha"] },
+			{ "Rush/Rec": ["elu", "rtr", "hnd", "bsc"] },
+		],
+		[
+			{ Blocking: ["rbk", "pbk"] },
+			{ Defense: ["pcv", "tck", "prs", "rns"] },
+			{ Kicking: ["kpw", "kac", "ppw", "pac"] },
+		],
+	],
+});
 
 const RatingsForm = ({
 	godMode,
@@ -49,7 +52,7 @@ const RatingsForm = ({
 								<div key={j} className="col-4">
 									{Object.entries(block).map(([title, ratings]) => {
 										return (
-											<React.Fragment key={title}>
+											<Fragment key={title}>
 												<h3>{title}</h3>
 												{ratings.map(rating => {
 													return (
@@ -79,7 +82,7 @@ const RatingsForm = ({
 														</div>
 													);
 												})}
-											</React.Fragment>
+											</Fragment>
 										);
 									})}
 								</div>

@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
@@ -48,7 +48,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev"],
+			attrs: ["tid", "abbrev", "imgURL"],
 			seasonAttrs: [
 				"season",
 				"playoffRoundsWon",
@@ -58,15 +58,16 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"abbrev",
 				"region",
 				"name",
+				"imgURL",
 			],
 			addDummySeason: true,
 		});
 
 		const awards = await idb.getCopies.awards();
-		const awardNames =
-			process.env.SPORT === "basketball"
-				? ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"]
-				: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"];
+		const awardNames = bySport({
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+		});
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
@@ -131,6 +132,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						won: teamSeason ? teamSeason.won : 0,
 						lost: teamSeason ? teamSeason.lost : 0,
 						tied: teamSeason ? teamSeason.tied : 0,
+						imgURL:
+							teamSeason && teamSeason.imgURL ? teamSeason.imgURL : t.imgURL,
 						count: 0,
 					};
 				};
@@ -140,17 +143,56 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		// Count up number of championships per team
-		const championshipsByTid: Record<number, number> = {};
+		// Count up number of championships/awards per tid/pid
+		const counts: Record<string, Record<number, number>> = {
+			finalsMvp: {},
+			mvp: {},
+			dpoy: {},
+			smoy: {},
+			mip: {},
+			roy: {},
+			oroy: {},
+			droy: {},
+			runnerUp: {},
+			champ: {},
+		};
 
+		const teamCategories = ["champ", "runnerUp"];
+		const playerCategories = [
+			"finalsMvp",
+			"mvp",
+			"dpoy",
+			"smoy",
+			"mip",
+			"roy",
+			"oroy",
+			"droy",
+		];
 		for (const row of seasons) {
-			if (row.champ) {
-				const tid = row.champ.tid;
-				if (championshipsByTid[tid] === undefined) {
-					championshipsByTid[tid] = 0;
+			for (const category of teamCategories) {
+				if (!row[category]) {
+					continue;
 				}
-				championshipsByTid[tid] += 1;
-				row.champ.count = championshipsByTid[tid];
+
+				const tid = row[category].tid;
+				if (counts[category][tid] === undefined) {
+					counts[category][tid] = 0;
+				}
+				counts[category][tid] += 1;
+				row[category].count = counts[category][tid];
+			}
+
+			for (const category of playerCategories) {
+				if (!row[category]) {
+					continue;
+				}
+
+				const pid = row[category].pid;
+				if (counts[category][pid] === undefined) {
+					counts[category][pid] = 0;
+				}
+				counts[category][pid] += 1;
+				row[category].count = counts[category][pid];
 			}
 		}
 

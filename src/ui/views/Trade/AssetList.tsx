@@ -1,6 +1,5 @@
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";

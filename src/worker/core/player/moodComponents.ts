@@ -1,11 +1,11 @@
 import { finances } from "..";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		return 0;
 	}
 
@@ -206,10 +206,7 @@ const moodComponents = async (
 				components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
 
 				// Negative matters more
-				if (
-					process.env.SPORT === "basketball" &&
-					components.teamPerformance < 0
-				) {
+				if (isSport("basketball") && components.teamPerformance < 0) {
 					components.teamPerformance *= 2;
 				}
 
@@ -240,7 +237,7 @@ const moodComponents = async (
 			(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)
 		) {
 			// Wants to re-sign
-			components.loyalty += process.env.SPORT === "football" ? 5 : 2;
+			components.loyalty += isSport("football") ? 5 : 2;
 		}
 	}
 

@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
@@ -73,19 +73,19 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("newPhase")
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? (["pts", "oppPts", "trb", "ast"] as const)
-				: ([
-						"ptsPerGame",
-						"oppPtsPerGame",
-						"pssYdsPerGame",
-						"rusYdsPerGame",
-				  ] as const);
-		const statNames =
-			process.env.SPORT === "basketball"
-				? ["Points", "Allowed", "Rebounds", "Assists"]
-				: ["Points", "Allowed", "PssYds", "RusYds"];
+		const stats = bySport({
+			basketball: ["pts", "oppPts", "trb", "ast"] as const,
+			football: [
+				"ptsPerGame",
+				"oppPtsPerGame",
+				"pssYdsPerGame",
+				"rusYdsPerGame",
+			] as const,
+		});
+		const statNames = bySport({
+			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
+			football: ["Points", "Allowed", "PssYds", "RusYds"],
+		});
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
@@ -168,14 +168,14 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("newPhase")
 	) {
-		const startersStats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats"];
-		const leaderStats =
-			process.env.SPORT === "basketball"
-				? ["pts", "trb", "ast"]
-				: ["pssYds", "rusYds", "recYds"];
+		const startersStats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats"],
+		});
+		const leaderStats = bySport({
+			basketball: ["pts", "trb", "ast"],
+			football: ["pssYds", "rusYds", "recYds"],
+		});
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
@@ -277,7 +277,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		// Roster
 		// Find starting 5 or top 5
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
 		} else {
 			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);

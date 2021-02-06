@@ -1,10 +1,15 @@
 import classNames from "classnames";
-import React, { FormEvent } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { helpers, localActions, realtimeUpdate, toWorker } from "../../util";
-const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
-const otherSport =
-	process.env.SPORT === "basketball" ? "Football" : "Basketball";
+import { Component, FormEvent } from "react";
+import {
+	ACCOUNT_API_URL,
+	fetchWrapper,
+	isSport,
+	GAME_NAME,
+} from "../../../common";
+import { localActions, realtimeUpdate, toWorker } from "../../util";
+
+const otherSport = isSport("basketball") ? "Football" : "Basketball";
+
 type Props = {
 	ajaxErrorMsg: string;
 };
@@ -16,7 +21,7 @@ type State = {
 	errorMessageUsername: string | undefined;
 };
 
-class Register extends React.Component<Props, State> {
+class Register extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
@@ -101,7 +106,7 @@ class Register extends React.Component<Props, State> {
 			<>
 				<h2>Register</h2>
 				<p className="alert alert-primary">
-					Accounts are shared between {sport} GM and{" "}
+					Accounts are shared between {GAME_NAME} and{" "}
 					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
 						{otherSport} GM
 					</a>

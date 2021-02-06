@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import {
 	DataTable,
 	Height,
@@ -23,7 +23,7 @@ import {
 	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
-import { PHASE, PLAYER } from "../../../common";
+import { bySport, PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
@@ -45,11 +45,11 @@ const Relatives = ({
 		<>
 			{relatives.map(rel => {
 				return (
-					<React.Fragment key={rel.pid}>
+					<Fragment key={rel.pid}>
 						{helpers.upperCaseFirstLetter(rel.type)}:{" "}
 						<a href={helpers.leagueUrl(["player", rel.pid])}>{rel.name}</a>
 						<br />
-					</React.Fragment>
+					</Fragment>
 				);
 			})}
 			<a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>
@@ -220,8 +220,7 @@ const StatsSummary = ({
 		cols[cols.length - 1].title = "%";
 	}
 
-	const separatorAfter =
-		process.env.SPORT === "basketball" ? [0, 4, 8] : [0, 2];
+	const separatorAfter = bySport({ basketball: [0, 4, 8], football: [0, 2] });
 
 	return (
 		<div className="player-stats-summary">
@@ -368,7 +367,7 @@ const Player2 = ({
 			</div>
 		);
 	} else {
-		const dayOrWeek = process.env.SPORT === "basketball" ? "day" : "week";
+		const dayOrWeek = bySport({ basketball: "day", football: "week" });
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (

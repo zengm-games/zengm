@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
+import { bySport } from "../../common";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -194,9 +194,7 @@ const GameLog = ({
 		title: "Game Log",
 		dropdownView: "game_log",
 		dropdownFields: {
-			[process.env.SPORT === "basketball"
-				? "teamsAndSpecial"
-				: "teams"]: abbrev,
+			[bySport({ basketball: "teamsAndSpecial", football: "teams" })]: abbrev,
 			seasons: season,
 		},
 		dropdownExtraParam: boxScore.gid,

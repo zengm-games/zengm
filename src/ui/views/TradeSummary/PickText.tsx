@@ -1,4 +1,3 @@
-import React from "react";
 import { helpers } from "../../util";
 
 const PickText = ({

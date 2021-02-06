@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import { isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 
 // If no season, then check whole career
@@ -43,14 +43,11 @@ const SeasonIcons = ({
 			}
 
 			// Only show these if not MVP, so no "break" statement inside
-			if (process.env.SPORT === "basketball" && award.type === "All-Star") {
+			if (isSport("basketball") && award.type === "All-Star") {
 				type = award.type;
 				countAllStar += 1;
 			}
-			if (
-				process.env.SPORT === "football" &&
-				award.type.includes("All-League")
-			) {
+			if (isSport("football") && award.type.includes("All-League")) {
 				type = award.type;
 				countAllLeague += 1;
 			}

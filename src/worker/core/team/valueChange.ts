@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { bySport, PHASE } from "../../../common";
 import { draft, player, team, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
@@ -28,8 +28,8 @@ let cache: {
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
 
-const MIN_VALUE = process.env.SPORT === "basketball" ? -0.5 : -1;
-const MAX_VALUE = process.env.SPORT === "basketball" ? 2 : 3;
+const MIN_VALUE = bySport({ basketball: -0.5, football: -1 });
+const MAX_VALUE = bySport({ basketball: 2, football: 3 });
 const getContractValue = (
 	contract: PlayerContract,
 	normalizedValue: number,

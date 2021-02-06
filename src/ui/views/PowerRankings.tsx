@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
-import { POSITIONS, RATINGS } from "../../common";
+import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
 
 const Other = ({
 	actualShowHealthy,
@@ -45,10 +45,14 @@ const PowerRankings = ({
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;
 
-	const otherKeys =
-		process.env.SPORT === "basketball"
-			? RATINGS
-			: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR");
+	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
+		basketball: [RATINGS, "Rating Ranks", "rating"],
+		football: [
+			POSITIONS.filter(pos => pos !== "KR" && pos !== "PR"),
+			"Position Ranks",
+			"pos",
+		],
+	});
 
 	const superCols = [
 		{
@@ -66,9 +70,7 @@ const PowerRankings = ({
 		{
 			title: (
 				<>
-					{process.env.SPORT === "basketball"
-						? "Rating Ranks"
-						: "Position Ranks"}
+					{otherKeysTitle}
 					{currentSeason === season ? (
 						<a
 							className="ml-2"
@@ -97,14 +99,12 @@ const PowerRankings = ({
 		...(ties ? ["T"] : []),
 		"L10",
 		"stat:mov",
-		...(process.env.SPORT === "basketball"
-			? otherKeys.map(rating => `rating:${rating}`)
-			: otherKeys.map(pos => `pos:${pos}`)),
+		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
 	];
 
 	const cols = getCols(...colNames);
 
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		for (let i = 0; i < colNames.length; i++) {
 			if (colNames[i].startsWith("rating:")) {
 				cols[i].sortSequence = ["asc", "desc"];

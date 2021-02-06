@@ -1,9 +1,9 @@
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import { bySport } from "../../common";
 
 const FrivolitiesDraftClasses = ({
 	challengeNoRatings,
@@ -27,9 +27,9 @@ const FrivolitiesDraftClasses = ({
 	const cols = getCols(
 		"#",
 		"Season",
-		process.env.SPORT === "basketball" ? "stat:ws" : "stat:av",
+		bySport({ basketball: "stat:ws", football: "stat:av" }),
 		"Active",
-		process.env.SPORT === "basketball" ? "count:allStar" : "count:allLeague",
+		bySport({ basketball: "count:allStar", football: "count:allLeague" }),
 		"count:mvp",
 		"HoF",
 		"Name",
@@ -52,7 +52,7 @@ const FrivolitiesDraftClasses = ({
 				</a>,
 				helpers.roundStat(
 					draftClass.value,
-					process.env.SPORT === "basketball" ? "ws" : "av",
+					bySport({ basketball: "ws", football: "av" }),
 					true,
 				),
 				draftClass.numActive,

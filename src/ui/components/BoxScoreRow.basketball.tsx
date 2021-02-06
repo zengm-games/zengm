@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
 

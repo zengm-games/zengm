@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useEffect, useState, ReactNode, FormEvent } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
+import { useEffect, useState, ReactNode, FormEvent } from "react";
+import { ACCOUNT_API_URL, EMAIL_ADDRESS, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
@@ -195,10 +195,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 			{state.globalMessage ? <p>{state.globalMessage}</p> : null}
 			<p>
 				If you are having trouble with this, please{" "}
-				<a href="mailto:commissioner@basketball-gm.com">
-					email commissioner@basketball-gm.com
-				</a>
-				.
+				<a href={`mailto:${EMAIL_ADDRESS}`}>email {EMAIL_ADDRESS}</a>.
 			</p>
 		</>
 	);

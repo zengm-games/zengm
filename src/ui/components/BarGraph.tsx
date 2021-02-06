@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import type { CSSProperties } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 /**
@@ -130,7 +130,7 @@ const Block = ({
 	tooltip,
 }: {
 	className: string;
-	style: React.CSSProperties;
+	style: CSSProperties;
 	tooltip: string | undefined;
 }) => {
 	if (tooltip === undefined) {

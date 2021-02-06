@@ -444,7 +444,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 				items: {
 					oneOf: [
 						gameAttribute("aiJerseyRetirement", { type: "boolean" }),
-						gameAttribute("keepRosterSorted", { type: "boolean" }),
 						gameAttribute("aiTradesFactor", { type: "number" }),
 						gameAttribute("allStarGame", {
 							// boolean is legacy
@@ -695,6 +694,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						}),
+						gameAttribute("numPeriods", {
+							type: "number",
+							minimum: 0,
+						}),
 						gameAttribute("realPlayerDeterminism", {
 							type: "number",
 							minimum: 0,
@@ -777,6 +780,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 
 						// These are obsolete, just here for backwards compatbility
 						...[
+							"keepRosterSorted",
 							"numPlayoffRounds",
 							"ownerMood",
 							"aiTrades",
@@ -1654,6 +1658,18 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "object",
 								properties: {},
 							},
+						},
+						firstSeasonAfterExpansion: {
+							type: "integer",
+						},
+						adjustForInflation: {
+							type: "boolean",
+						},
+						disabled: {
+							type: "boolean",
+						},
+						keepRosterSorted: {
+							type: "boolean",
 						},
 						...depth,
 					},

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE } from "../../../common";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common";
 import { team, player } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -9,7 +9,10 @@ const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
 
 // 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
-const ROUNDS = process.env.SPORT === "football" ? 0 : 60;
+const ROUNDS = bySport({
+	football: 0,
+	basketball: 60,
+});
 
 const getExpiration = (
 	p: Player,
@@ -97,7 +100,7 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	let PARAM;
-	if (process.env.SPORT === "basketball") {
+	if (isSport("basketball")) {
 		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
 	} else {
 		PARAM = 1;
@@ -148,7 +151,7 @@ const normalizeContractDemands = async ({
 	});
 
 	let playerInfosCurrent: typeof playerInfos;
-	if (process.env.SPORT === "football" && type === "newLeague") {
+	if (isSport("football") && type === "newLeague") {
 		// For performance, especially for FBGM, just assume the bottom 60% of the league will be min contracts
 		const cutoff = Math.round(0.4 * playerInfos.length);
 		const ordered = orderBy(playerInfos, "value", "desc");
@@ -260,7 +263,7 @@ const normalizeContractDemands = async ({
 		if (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
-				process.env.SPORT === "football" ||
+				isSport("football") ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {
@@ -270,7 +273,7 @@ const normalizeContractDemands = async ({
 
 			let amount;
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				// During regular season, should only look for short contracts that teams will actually sign
 				if (type === "dummyExpiringContracts") {
 					if (info.contractAmount >= maxContract / 4) {

@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { bySport } from "../../common";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,
@@ -12,10 +13,10 @@ const updateUserRoster = async (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+		});
 		const [userRosterAll, userPicks] = await Promise.all([
 			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
 			await idb.getCopies.draftPicks({

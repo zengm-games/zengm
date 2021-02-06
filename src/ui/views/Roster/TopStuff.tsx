@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
-import React, { useState, CSSProperties } from "react";
+import { useState, CSSProperties } from "react";
 import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import type { View } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -47,7 +48,6 @@ TeamRating.propTypes = {
 
 const TopStuff = ({
 	abbrev,
-	keepRosterSorted,
 	budget,
 	challengeNoRatings,
 	currentSeason,
@@ -67,7 +67,6 @@ const TopStuff = ({
 }: Pick<
 	View<"roster">,
 	| "abbrev"
-	| "keepRosterSorted"
 	| "budget"
 	| "challengeNoRatings"
 	| "currentSeason"
@@ -116,7 +115,7 @@ const TopStuff = ({
 		);
 
 	let marginOfVictory: string;
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (t.stats.gp !== 0) {
 			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
 				1,
@@ -152,7 +151,7 @@ const TopStuff = ({
 						{marginOfVictory}
 					</div>
 
-					{season === currentSeason || process.env.SPORT === "football" ? (
+					{season === currentSeason || isSport("football") ? (
 						<div className="d-flex mt-3">
 							{season === currentSeason ? (
 								<div>
@@ -171,7 +170,7 @@ const TopStuff = ({
 									{showTradeFor ? `Strategy: ${t.strategy}` : null}
 								</div>
 							) : null}
-							{process.env.SPORT === "football" ? (
+							{isSport("football") ? (
 								<RosterComposition className="ml-3" players={players} />
 							) : null}
 						</div>
@@ -179,10 +178,11 @@ const TopStuff = ({
 				</div>
 			</div>
 			<InstructionsAndSortButtons
-				keepRosterSorted={keepRosterSorted}
+				keepRosterSorted={t.keepRosterSorted}
 				editable={editable}
 				godMode={godMode}
 				players={players}
+				tid={tid}
 			/>
 			{season !== currentSeason ? (
 				<p>

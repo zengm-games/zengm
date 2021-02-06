@@ -10,10 +10,16 @@ import type {
 import type { Ratings } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { defaultGameAttributes, helpers, random } from "../../util";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
+import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
+
+const LATEST_SEASON = 2021;
+const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
+const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
+const FREE_AGENTS_SEASON = 2020;
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -255,7 +261,7 @@ const genPlayoffSeries = (
 };
 
 const getLeague = async (options: GetLeagueOptions) => {
-	if (process.env.SPORT !== "basketball") {
+	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 
@@ -422,8 +428,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 			let salaryRow = basketball.salaries.find(
 				row => row.start <= season && row.exp >= season && row.slug === slug,
 			);
-			if (season >= 2020) {
-				// For 2020+, auto-apply extensions, otherwise will feel weird
+			if (season >= LATEST_SEASON) {
+				// Auto-apply extensions, otherwise will feel weird
 				const salaryRowExtension = basketball.salaries.find(
 					row => row.start > season && row.slug === slug,
 				);
@@ -458,18 +464,29 @@ const getLeague = async (options: GetLeagueOptions) => {
 					: undefined;
 		}
 
-		// Whitelist, to get rid of any other columns
-		const currentRatings = getOnlyRatings(ratings);
-		if (draftProspect) {
-			nerfDraftProspect(currentRatings);
-		}
-
 		let bornYear;
 		if (legends) {
 			const age = ratings.season - bio.bornYear;
 			bornYear = season - age;
 		} else {
 			bornYear = bio.bornYear;
+		}
+
+		const age = ratings.season - bornYear;
+
+		// Whitelist, to get rid of any other columns
+		const currentRatings = getOnlyRatings(ratings);
+
+		if (draftProspect) {
+			nerfDraftProspect(currentRatings);
+
+			if (
+				options.type === "real" &&
+				options.realDraftRatings === "draft" &&
+				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
+			) {
+				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
+			}
 		}
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
@@ -589,7 +606,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
 			);
 			for (const p of freeAgents2) {
-				let offset = 2020 - options.season;
+				let offset = FREE_AGENTS_SEASON - options.season;
 
 				// Make them a bit older so they suck
 				offset += 5;
@@ -730,7 +747,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes.push({ key, value });
 		}
 
-		if (options.season >= 2020 && !options.randomDebuts) {
+		if (
+			options.season >= FIRST_SEASON_WITH_ALEXNOOB_ROSTERS &&
+			!options.randomDebuts
+		) {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
@@ -1015,7 +1035,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		const freeAgents2 = helpers.deepCopy(basketball.freeAgents);
 		for (const p of freeAgents2) {
-			let offset = 2020 - season;
+			let offset = FREE_AGENTS_SEASON - season;
 
 			// Make them a bit older so they suck
 			offset += 5;

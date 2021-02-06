@@ -1,4 +1,3 @@
-import React from "react";
 import { PLAYER } from "../../../common";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { helpers, getCols, toWorker } from "../../util";

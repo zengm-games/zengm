@@ -1,4 +1,10 @@
-import { PLAYER, PHASE, SIMPLE_AWARDS, AWARD_NAMES } from "../../../common";
+import {
+	PLAYER,
+	PHASE,
+	SIMPLE_AWARDS,
+	AWARD_NAMES,
+	bySport,
+} from "../../../common";
 import { idb } from "../../db";
 import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
 import type {
@@ -46,41 +52,41 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			"watch",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
-		stats:
-			process.env.SPORT === "basketball"
-				? [
-						"gp",
-						"gs",
-						"min",
-						"pts",
-						"trb",
-						"ast",
-						"blk",
-						"stl",
-						"per",
-						"ewa",
-						"ws",
-						"dws",
-						"ws48",
-						"season",
-						"abbrev",
-						"tid",
-						"jerseyNumber",
-				  ]
-				: [
-						"keyStats",
-						"av",
-						"pntYds",
-						"fg",
-						"krTD",
-						"krYds",
-						"prTD",
-						"prYds",
-						"season",
-						"abbrev",
-						"tid",
-						"jerseyNumber",
-				  ],
+		stats: bySport({
+			basketball: [
+				"gp",
+				"gs",
+				"min",
+				"pts",
+				"trb",
+				"ast",
+				"blk",
+				"stl",
+				"per",
+				"ewa",
+				"ws",
+				"dws",
+				"ws48",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+			],
+			football: [
+				"keyStats",
+				"av",
+				"pntYds",
+				"fg",
+				"krTD",
+				"krYds",
+				"prTD",
+				"prYds",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+			],
+		}),
 		fuzz: true,
 		mergeStats: true,
 	});
@@ -370,10 +376,10 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 			type,
 		});
 	}
-	const awardsTeams =
-		process.env.SPORT === "basketball"
-			? (["allRookie", "allLeague", "allDefensive"] as const)
-			: (["allRookie", "allLeague"] as const);
+	const awardsTeams = bySport({
+		basketball: ["allRookie", "allLeague", "allDefensive"] as const,
+		football: ["allRookie", "allLeague"] as const,
+	});
 	for (const key of awardsTeams) {
 		const type = AWARD_NAMES[key] as string;
 

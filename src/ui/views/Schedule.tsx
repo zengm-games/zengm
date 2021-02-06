@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
@@ -77,10 +77,10 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 								  };
 
 							return (
-								<React.Fragment key={game.gid}>
+								<Fragment key={game.gid}>
 									<ScoreBox game={game} header={i === 0} {...action} />
 									<ForceWin key={forceWinKey} className="mb-3" game={game} />
-								</React.Fragment>
+								</Fragment>
 							);
 						})}
 					</ul>

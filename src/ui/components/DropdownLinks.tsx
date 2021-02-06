@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { MouseEvent, useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { helpers } from "../util";
 import type {
@@ -54,7 +55,7 @@ const TopMenuDropdown = ({
 	openID,
 	onToggle,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	hideTitle?: boolean;
 	long: string;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
@@ -244,7 +245,7 @@ type DropdownLinksProps = {
 	menuItems: (MenuItemLink | MenuItemHeader)[];
 };
 
-const DropdownLinks = React.memo(
+const DropdownLinks = memo(
 	({ className, godMode, hideTitle, lid, menuItems }: DropdownLinksProps) => {
 		const [openID, setOpenID] = useState<string | undefined>();
 		const handleTopMenuToggle = useCallback(

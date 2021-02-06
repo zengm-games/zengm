@@ -2,6 +2,7 @@ import retire from "./retire";
 import { idb } from "../../db";
 import { g, helpers, logEvent, random } from "../../util";
 import type { Conditions, Player } from "../../../common/types";
+import { bySport } from "../../../common";
 
 const killOne = async (conditions: Conditions, player?: Player) => {
 	const gifts = [
@@ -13,9 +14,10 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"compression pants",
 		"ankle braces",
 		"knee braces",
-		...(process.env.SPORT === "football"
-			? ["cleats", "helmets", "shoulder pads"]
-			: ["sneakers", "headbands"]),
+		...bySport({
+			football: ["cleats", "helmets", "shoulder pads"],
+			basketball: ["sneakers", "headbands"],
+		}),
 	];
 	const gift1 = random.choice(gifts);
 	const gift2 = random.choice(gifts.filter(gift => gift !== gift1));

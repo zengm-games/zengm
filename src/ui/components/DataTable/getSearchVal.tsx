@@ -1,4 +1,4 @@
-import React from "react";
+import { isValidElement } from "react";
 // @ts-ignore
 import textContent from "react-addons-text-content";
 
@@ -16,7 +16,7 @@ const getSearchVal = (value: any, toLowerCase: boolean = true) => {
 			val = value;
 		}
 
-		if (React.isValidElement(val)) {
+		if (isValidElement(val)) {
 			searchVal = textContent(val);
 		} else {
 			searchVal = val;

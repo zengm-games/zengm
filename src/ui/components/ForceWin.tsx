@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toWorker, useLocalShallow } from "../util";
 
 type Team = {

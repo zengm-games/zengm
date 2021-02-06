@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import {
 	PlayerNameLabels,
 	RatingWithChange,
@@ -7,6 +6,7 @@ import {
 } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const StartingLineup = ({
 	challengeNoRatings,
@@ -22,8 +22,7 @@ const StartingLineup = ({
 	return (
 		<>
 			<h2>
-				{process.env.SPORT === "basketball" &&
-				numPlayersOnCourt >= starters.length
+				{isSport("basketball") && numPlayersOnCourt >= starters.length
 					? "Starting Lineup"
 					: "Top Players"}
 			</h2>

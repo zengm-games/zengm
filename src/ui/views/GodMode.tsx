@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, localActions, toWorker } from "../util";
 import type { View } from "../../common/types";

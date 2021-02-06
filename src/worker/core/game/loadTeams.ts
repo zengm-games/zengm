@@ -2,7 +2,7 @@ import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS } from "../../../common";
+import { COMPOSITE_WEIGHTS, isSport } from "../../../common";
 
 const processTeam = (
 	teamInput: {
@@ -112,7 +112,7 @@ const processTeam = (
 			);
 		}
 
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
 

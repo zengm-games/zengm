@@ -158,9 +158,18 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		g.get("phase") === PHASE.EXPANSION_DRAFT &&
 		expansionDraft.phase === "draft"
 	) {
+		const numDraftedByThisTeam =
+			expansionDraft.numPerTeamDrafted?.[prevTid] !== undefined
+				? expansionDraft.numPerTeamDrafted[prevTid] + 1
+				: 1;
+
 		await league.setGameAttributes({
 			expansionDraft: {
 				...expansionDraft,
+				numPerTeamDrafted: {
+					...expansionDraft.numPerTeamDrafted,
+					[prevTid]: numDraftedByThisTeam,
+				},
 				availablePids: expansionDraft.availablePids.filter(
 					pid2 => pid !== pid2,
 				),
@@ -190,7 +199,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	});
 
 	if (g.get("userTids").includes(dp.tid)) {
-		await team.rosterAutoSort(dp.tid, !g.get("keepRosterSorted"));
+		const t = await idb.cache.teams.get(dp.tid);
+		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
+		await team.rosterAutoSort(dp.tid, onlyNewPlayers);
 	}
 };
 

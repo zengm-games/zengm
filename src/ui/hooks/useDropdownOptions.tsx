@@ -1,5 +1,11 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, TEAM_STATS_TABLES, POSITIONS } from "../../common";
+import {
+	PHASE,
+	TEAM_STATS_TABLES,
+	POSITIONS,
+	isSport,
+	bySport,
+} from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
@@ -206,7 +212,7 @@ const useDropdownOptions = (field: string) => {
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
-		if (process.env.SPORT === "basketball") {
+		if (isSport("basketball")) {
 			keys = ["perGame", "per36", "totals"];
 
 			if (field === "statTypesAdv") {
@@ -218,43 +224,43 @@ const useDropdownOptions = (field: string) => {
 			keys = ["passing", "rushing", "defense", "kicking", "returns"];
 		}
 	} else if (field === "awardType") {
-		keys =
-			process.env.SPORT === "basketball"
-				? [
-						"champion",
-						"mvp",
-						"finals_mvp",
-						"dpoy",
-						"smoy",
-						"mip",
-						"roy",
-						"first_team",
-						"second_team",
-						"third_team",
-						"all_league",
-						"first_def",
-						"second_def",
-						"third_def",
-						"all_def",
-						"all_star",
-						"all_star_mvp",
-						"ppg_leader",
-						"rpg_leader",
-						"apg_leader",
-						"spg_leader",
-						"bpg_leader",
-				  ]
-				: [
-						"champion",
-						"mvp",
-						"finals_mvp",
-						"dpoy",
-						"oroy",
-						"droy",
-						"first_team",
-						"second_team",
-						"all_league",
-				  ];
+		keys = bySport({
+			basketball: [
+				"champion",
+				"mvp",
+				"finals_mvp",
+				"dpoy",
+				"smoy",
+				"mip",
+				"roy",
+				"first_team",
+				"second_team",
+				"third_team",
+				"all_league",
+				"first_def",
+				"second_def",
+				"third_def",
+				"all_def",
+				"all_star",
+				"all_star_mvp",
+				"ppg_leader",
+				"rpg_leader",
+				"apg_leader",
+				"spg_leader",
+				"bpg_leader",
+			],
+			football: [
+				"champion",
+				"mvp",
+				"finals_mvp",
+				"dpoy",
+				"oroy",
+				"droy",
+				"first_team",
+				"second_team",
+				"all_league",
+			],
+		});
 	} else if (field === "eventType") {
 		keys = [
 			"all|||types",

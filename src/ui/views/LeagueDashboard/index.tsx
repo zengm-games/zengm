@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
 import { PlayoffMatchup } from "../../components";

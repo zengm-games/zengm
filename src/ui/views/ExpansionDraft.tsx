@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
@@ -10,10 +10,12 @@ const ExpansionDraft = ({
 	confs,
 	divs,
 	godMode,
+	initialNumPerTeam,
 	initialNumProtectedPlayers,
 	initialTeams,
 	minRosterSize,
 	multiTeamMode,
+	numActiveTeams,
 	phase,
 }: View<"expansionDraft">) => {
 	const defaultTeam: ExpansionDraftSetupTeam = {
@@ -33,6 +35,7 @@ const ExpansionDraft = ({
 	const [numProtectedPlayers, setNumProtectedPlayers2] = useState(
 		initialNumProtectedPlayers,
 	);
+	const [numPerTeam, setNumPerTeam2] = useState(initialNumPerTeam);
 	const [addTeamAbbrev, setAddTeamAbbrev] = useState("");
 
 	const setNumProtectedPlayers = async (newNum: string) => {
@@ -44,15 +47,33 @@ const ExpansionDraft = ({
 		setSaving(false);
 	};
 
-	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
-		const newNum = String(
-			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
-		);
-		setTeams2(newTeams);
-		setNumProtectedPlayers2(newNum);
+	const setNumPerTeam = async (newNum: string) => {
+		setNumPerTeam2(newNum);
 		setSaving(true);
 		await toWorker("main", "updateExpansionDraftSetup", {
-			numProtectedPlayers: newNum,
+			numPerTeam: newNum,
+		});
+		setSaving(false);
+	};
+
+	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
+		const newNumProtectedPlayers = String(
+			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
+		);
+		const newNumPerTeam = String(
+			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
+				newTeams.length,
+				minRosterSize,
+				numActiveTeams,
+			),
+		);
+		setTeams2(newTeams);
+		setNumProtectedPlayers2(newNumProtectedPlayers);
+		setNumPerTeam2(newNumPerTeam);
+		setSaving(true);
+		await toWorker("main", "updateExpansionDraftSetup", {
+			numProtectedPlayers: newNumProtectedPlayers,
+			numPerTeam: newNumPerTeam,
 			teams: newTeams,
 		});
 		setSaving(false);
@@ -277,33 +298,51 @@ const ExpansionDraft = ({
 				</div>
 
 				<h2>Settings</h2>
-				<div className="form-group">
-					<label htmlFor="expansion-num-protected">
-						Number of players each existing team can protect
-					</label>
-					<input
-						id="expansion-num-protected"
-						type="text"
-						className="form-control"
-						disabled={disableNumProtectedPlayersChange}
-						onChange={async event => {
-							await setNumProtectedPlayers(event.target.value);
-						}}
-						value={numProtectedPlayers}
-						style={{ maxWidth: 100 }}
-					/>
-					{disableNumProtectedPlayersChange ? (
-						<p className="form-text text-muted">
-							If you're taking control of a team, you can't change the number of
-							protected players unless you enable{" "}
-							<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-						</p>
-					) : null}
+				<div className="d-sm-flex">
+					<div className="form-group mb-0 mr-sm-3">
+						<label htmlFor="expansion-num-protected">
+							Number of players each existing team can protect
+						</label>
+						<input
+							id="expansion-num-protected"
+							type="text"
+							className="form-control"
+							disabled={disableNumProtectedPlayersChange}
+							onChange={async event => {
+								await setNumProtectedPlayers(event.target.value);
+							}}
+							value={numProtectedPlayers}
+							style={{ maxWidth: 100 }}
+						/>
+					</div>
+					<div className="form-groupmb-0 ">
+						<label htmlFor="expansion-num-per-team">
+							Max number of players that can be drafted from each existing team
+						</label>
+						<input
+							id="expansion-num-per-team"
+							type="text"
+							className="form-control"
+							disabled={disableNumProtectedPlayersChange}
+							onChange={async event => {
+								await setNumPerTeam(event.target.value);
+							}}
+							value={numPerTeam}
+							style={{ maxWidth: 100 }}
+						/>
+					</div>
 				</div>
+				{disableNumProtectedPlayersChange ? (
+					<div className="form-text text-muted mt-2 mb-0">
+						If you're taking control of a team, you can't change these settings
+						unless you enable{" "}
+						<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+					</div>
+				) : null}
 
 				<button
 					type="submit"
-					className="btn btn-primary"
+					className="btn btn-primary mt-3"
 					disabled={saving || teams.length === 0}
 				>
 					Advance To Player Protection

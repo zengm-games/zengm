@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -19,10 +19,10 @@ const updateDraftTeamHistory = async (
 			p.draft.tid === g.get("userTid", p.draft.year + 1);
 	}
 
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["gp", "min", "pts", "trb", "ast", "per", "ws"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
+		football: ["gp", "keyStats", "av"],
+	});
 	const playersAll2 = await idb.getCopies.players({
 		filter,
 	});

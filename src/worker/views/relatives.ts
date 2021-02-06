@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types";
+import { bySport } from "../../common";
 
 const updatePlayers = async (
 	{ pid }: ViewInput<"relatives">,
@@ -9,10 +10,21 @@ const updatePlayers = async (
 ) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun") || pid !== state.pid) {
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: [
+				"gp",
+				"min",
+				"pts",
+				"trb",
+				"ast",
+				"per",
+				"ewa",
+				"ws",
+				"ws48",
+			],
+			football: ["gp", "keyStats", "av"],
+		});
+
 		let playersAll: Player[] = [];
 
 		if (typeof pid === "number") {

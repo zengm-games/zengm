@@ -1,6 +1,7 @@
 import { csvFormatRows } from "d3-dsv";
 import flatten from "lodash/flatten";
 import {
+	GAME_ACRONYM,
 	PHASE,
 	PHASE_TEXT,
 	PLAYER,
@@ -8,6 +9,8 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	applyRealTeamInfo,
+	isSport,
+	bySport,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -80,6 +83,7 @@ import type {
 	ThenArg,
 	ContractInfo,
 	DraftPick,
+	LocalStateUI,
 } from "../../common/types";
 import orderBy from "lodash/orderBy";
 import {
@@ -214,6 +218,7 @@ const allStarGameNow = async () => {
 	}
 
 	await initUILocalGames();
+	await updatePlayMenu();
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
@@ -1099,11 +1104,13 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 const genFilename = (data: any) => {
 	const leagueName =
 		data.meta !== undefined ? data.meta.name : `League ${g.get("lid")}`;
-	let filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${g.get(
-		"season",
-	)}_${PHASE_TEXT[g.get("phase")].replace(/[^a-z0-9]/gi, "_")}`;
+	let filename = `${GAME_ACRONYM}_${leagueName.replace(
+		/[^a-z0-9]/gi,
+		"_",
+	)}_${g.get("season")}_${PHASE_TEXT[g.get("phase")].replace(
+		/[^a-z0-9]/gi,
+		"_",
+	)}`;
 
 	if (
 		(g.get("phase") === PHASE.REGULAR_SEASON ||
@@ -1203,9 +1210,9 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
-	const filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_draft_class_${g.get("leagueName")}_${season}.json`;
+	const filename = `${GAME_ACRONYM}_draft_class_${g.get(
+		"leagueName",
+	)}_${season}.json`;
 
 	return {
 		filename,
@@ -1243,9 +1250,9 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		delete p.yearsFreeAgent;
 	}
 
-	const filename = `${
-		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_players_${g.get("leagueName")}_${g.get("season")}.json`;
+	const filename = `${GAME_ACRONYM}_players_${g.get("leagueName")}_${g.get(
+		"season",
+	)}.json`;
 
 	return {
 		filename,
@@ -1435,10 +1442,10 @@ const getTradingBlockOffers = async (
 			addDummySeason: true,
 			active: true,
 		});
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"];
+		const stats = bySport({
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+		});
 
 		// Take the pids and dpids in each offer and get the info needed to display the offer
 		return Promise.all(
@@ -1812,12 +1819,17 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			await checkChanges(conditions);
 			await checkAccount(conditions);
 			await toUI("initAds", [local.goldUntil], conditions);
-
-			const options = (((await idb.meta.get("attributes", "options")) ||
-				{}) as unknown) as Options;
-			await toUI("updateLocal", [{ units: options.units }]);
 		})();
 	} else {
+		// No need to run checkAccount and make another HTTP request
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+		await toUI("updateLocal", [
+			{
+				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
+				username: local.username,
+			},
+		]);
+
 		// Even if it's not the first host tab, show ads (still async). Why
 		// setTimeout? Cause horrible race condition with actually rendering the
 		// ad divs. Need to move them more fully into React to solve this.
@@ -1825,6 +1837,11 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			toUI("initAds", [local.goldUntil], conditions);
 		}, 0);
 	}
+
+	// Send options to all new tabs
+	const options = (((await idb.meta.get("attributes", "options")) ||
+		{}) as unknown) as Options;
+	await toUI("updateLocal", [{ units: options.units }], conditions);
 };
 
 const lockSet = async (name: LockName, value: boolean) => {
@@ -1853,26 +1870,26 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
 	const season =
 		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
-	const stats =
-		process.env.SPORT === "basketball"
-			? [
-					"pts",
-					"trb",
-					"ast",
-					"blk",
-					"stl",
-					"tov",
-					"min",
-					"per",
-					"ewa",
-					"tsp",
-					"tpar",
-					"ftr",
-					"fgp",
-					"tpp",
-					"ftp",
-			  ]
-			: ["keyStats"];
+	const stats = bySport({
+		basketball: [
+			"pts",
+			"trb",
+			"ast",
+			"blk",
+			"stl",
+			"tov",
+			"min",
+			"per",
+			"ewa",
+			"tsp",
+			"tpar",
+			"ftr",
+			"fgp",
+			"tpp",
+			"ftp",
+		],
+		football: ["keyStats"],
+	});
 
 	return idb.getCopy.playersPlus(p, {
 		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],
@@ -2065,7 +2082,7 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	}
 
 	if (depth.hasOwnProperty(pos)) {
-		await league.setGameAttributes({ keepRosterSorted: false });
+		t.keepRosterSorted = false;
 
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-ignore
@@ -2090,7 +2107,11 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 		}),
 	);
 
-	await league.setGameAttributes({ keepRosterSorted: false });
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (t) {
+		t.keepRosterSorted = false;
+		await idb.cache.teams.put(t);
+	}
 
 	await toUI("realtimeUpdate", [["gameAttributes", "playerMovement"]]);
 };
@@ -2371,6 +2392,7 @@ const sign = async (
 
 const updateExpansionDraftSetup = async (changes: {
 	numProtectedPlayers?: string;
+	numPerTeam?: string;
 	teams?: ExpansionDraftSetupTeam[];
 }) => {
 	const expansionDraft = g.get("expansionDraft");
@@ -2481,6 +2503,10 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 			);
 		}
 	}
+};
+
+const uiUpdateLocal = async (obj: Partial<LocalStateUI>) => {
+	await toUI("updateLocal", [obj]);
 };
 
 const updateBudget = async (
@@ -2628,6 +2654,20 @@ const updateGameAttributesGodMode = async (
 		await league.initRepeatSeason();
 	}
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
+const updateKeepRosterSorted = async (
+	tid: number,
+	keepRosterSorted: boolean,
+) => {
+	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	t.keepRosterSorted = keepRosterSorted;
+	await idb.cache.teams.put(t);
+	await toUI("realtimeUpdate", [["team"]]);
 };
 
 const updateLeague = async (lid: number, obj: any) => {
@@ -3029,7 +3069,7 @@ const upsertCustomizedPlayer = async (
 	// In case that develop call reset position, re-apply it here
 	p.ratings[r].pos = selectedPos;
 
-	if (process.env.SPORT === "football") {
+	if (isSport("football")) {
 		if (
 			p.ratings[r].ovrs &&
 			p.ratings[r].ovrs.hasOwnProperty(selectedPos) &&
@@ -3150,6 +3190,7 @@ const toggleTradeDeadline = async () => {
 			phase: PHASE.REGULAR_SEASON,
 		});
 
+		await updatePlayMenu();
 		await toUI("realtimeUpdate", [["newPhase"]]);
 	} else if (currentPhase === PHASE.REGULAR_SEASON) {
 		await league.setGameAttributes({
@@ -3166,6 +3207,7 @@ const toggleTradeDeadline = async () => {
 			await toUI("deleteGames", [[tradeDeadline.gid]]);
 		}
 
+		await updatePlayMenu();
 		await toUI("realtimeUpdate", [["newPhase"]]);
 	}
 };
@@ -3251,11 +3293,13 @@ export default {
 	switchTeam,
 	toggleTradeDeadline,
 	tradeCounterOffer,
+	uiUpdateLocal,
 	updateAwards,
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,
 	updateGameAttributesGodMode,
+	updateKeepRosterSorted,
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,

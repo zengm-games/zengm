@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useReducer, useRef } from "react";
+import { memo, useCallback, useEffect, useReducer, useRef } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	local,
@@ -25,7 +25,7 @@ type LeagueContentProps = {
 	children: any;
 	updating: boolean;
 };
-const LeagueContent = React.memo(
+const LeagueContent = memo(
 	(props: LeagueContentProps) => {
 		return props.children;
 	},

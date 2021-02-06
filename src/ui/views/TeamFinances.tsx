@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { ChangeEvent, FormEvent, ReactNode } from "react";
+import { Component, ChangeEvent, FormEvent, ReactNode } from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -43,10 +43,7 @@ type HandleChanges = {
 	adjustForInflation: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-class FinancesForm extends React.Component<
-	FinancesFormProps,
-	FinancesFormState
-> {
+class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	handleChanges: HandleChanges;
 
 	constructor(props: FinancesFormProps) {
@@ -59,7 +56,7 @@ class FinancesForm extends React.Component<
 			saving: false,
 			scouting: String(props.t.budget.scouting.amount),
 			ticketPrice: String(props.t.budget.ticketPrice.amount),
-			adjustForInflation: props.t.adjustForInflation !== false,
+			adjustForInflation: props.t.adjustForInflation,
 		};
 		this.handleChanges = {
 			coaching: this.handleChange.bind(this, "coaching"),
@@ -83,7 +80,7 @@ class FinancesForm extends React.Component<
 				health: nextProps.t.budget.health.amount,
 				scouting: nextProps.t.budget.scouting.amount,
 				ticketPrice: nextProps.t.budget.ticketPrice.amount,
-				adjustForInflation: nextProps.t.adjustForInflation !== false,
+				adjustForInflation: nextProps.t.adjustForInflation,
 			};
 		}
 

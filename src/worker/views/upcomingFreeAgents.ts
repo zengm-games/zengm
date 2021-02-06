@@ -1,5 +1,5 @@
-import { PHASE, PLAYER } from "../../common";
-import { player } from "../core";
+import { bySport, PHASE, PLAYER } from "../../common";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
@@ -7,10 +7,10 @@ import type { ViewInput } from "../../common/types";
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
 ) => {
-	const stats =
-		process.env.SPORT === "basketball"
-			? ["min", "pts", "trb", "ast", "per"]
-			: ["gp", "keyStats", "av"];
+	const stats = bySport({
+		basketball: ["min", "pts", "trb", "ast", "per"],
+		football: ["gp", "keyStats", "av"],
+	});
 
 	const showActualFreeAgents =
 		g.get("phase") === PHASE.RESIGN_PLAYERS &&
@@ -62,12 +62,20 @@ const updateUpcomingFreeAgents = async (
 		p.contractDesired.amount = p.mood.user.contractAmount / 1000;
 	}
 
+	const projectedPayroll = await team.getPayroll(
+		g.get("userTid"),
+		inputs.season,
+	);
+	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
+
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		phase: g.get("phase"),
 		players,
+		projectedCapSpace,
 		season: inputs.season,
 		stats,
+		userTid: g.get("userTid"),
 	};
 };
 

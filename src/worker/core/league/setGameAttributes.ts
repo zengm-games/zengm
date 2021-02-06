@@ -95,7 +95,7 @@ const setGameAttributes = async (
 						!local.autoPlayUntil &&
 						!g.get("spectator")
 					) {
-						if (t.adjustForInflation !== false) {
+						if (t.adjustForInflation) {
 							for (const key of keys) {
 								const factor =
 									helpers.defaultBudgetAmount(t.budget[key].rank, value) /

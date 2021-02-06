@@ -1,10 +1,11 @@
 import classNames from "classnames";
-import React from "react";
+import { Fragment } from "react";
 import { ResponsiveTableWrapper, MarginOfVictory } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
+import { COURT } from "../../common";
 
 const MAX_WIDTH = 1120;
 
@@ -316,7 +317,7 @@ const Standings = ({
 	}
 
 	const groupStandings = groups.map(({ name, subgroups }, i) => (
-		<React.Fragment key={i}>
+		<Fragment key={i}>
 			{name ? <h2>{name}</h2> : null}
 			{subgroups.map((subgroup, j) => (
 				<GroupStandings
@@ -328,7 +329,7 @@ const Standings = ({
 					userTid={userTid}
 				/>
 			))}
-		</React.Fragment>
+		</Fragment>
 	));
 
 	let allStandings;
@@ -344,7 +345,7 @@ const Standings = ({
 			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
 				{groupStandings.map((confStandings, i) => {
 					return (
-						<React.Fragment key={i}>
+						<Fragment key={i}>
 							<div className="col-md-9">{confStandings}</div>
 							<div className="col-md-3 d-none d-md-block">
 								<h2>&nbsp;</h2>
@@ -356,7 +357,7 @@ const Standings = ({
 									playoffsByConference={playoffsByConference}
 								/>
 							</div>
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 			</div>
@@ -384,8 +385,7 @@ const Standings = ({
 		<>
 			{allStandings}
 			<div>
-				z - clinched #1 overall seed and home{" "}
-				{process.env.SPORT === "basketball" ? "court" : "field"} advantage
+				z - clinched #1 overall seed and home {COURT} advantage
 				<br />
 				{numPlayoffByes > 0 ? (
 					<>

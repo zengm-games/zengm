@@ -1,3 +1,4 @@
+import { isSport } from "../../../common";
 import type { Position } from "../../../common/types.football";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
@@ -9,7 +10,7 @@ const getDepthPlayers = <
 	depth: Record<Position, number[]>,
 	players: T[],
 ): Record<Position, T[]> => {
-	if (process.env.SPORT !== "football") {
+	if (!isSport("football")) {
 		throw new Error("Not implemented");
 	}
 

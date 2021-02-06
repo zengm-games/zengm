@@ -1,4 +1,4 @@
-import { PLAYER, POSITION_COUNTS } from "../../../common";
+import { isSport, PLAYER, POSITION_COUNTS } from "../../../common";
 import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
@@ -50,7 +50,7 @@ const checkRosterSizes = async (
 
 				// Only drop player from a position there is an excess of (no dropping your only kicker)
 				let counts;
-				if (process.env.SPORT === "football") {
+				if (isSport("football")) {
 					counts = { ...POSITION_COUNTS };
 					for (const pos of Object.keys(counts)) {
 						counts[pos] = 0;
@@ -86,7 +86,7 @@ const checkRosterSizes = async (
 					i += 1;
 					const p = players[i];
 
-					if (counts && process.env.SPORT === "football") {
+					if (counts && isSport("football")) {
 						const pos = p.ratings[p.ratings.length - 1].pos;
 
 						// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
@@ -142,7 +142,8 @@ const checkRosterSizes = async (
 
 		// Auto sort rosters (except player's team)
 		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-		if (!userTeamAndActive || g.get("keepRosterSorted")) {
+		const t = await idb.cache.teams.get(tid);
+		if (!userTeamAndActive || (t && t.keepRosterSorted)) {
 			await rosterAutoSort(tid);
 		}
 	};

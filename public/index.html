@@ -223,7 +223,7 @@ FACEBOOK_PIXEL_CODE
         return array;
       }
 
-      var abbrevs = shuffle(["ATL", "BAL", "BKN", "BOS", "CHA", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "IND", "KC", "LA", "LAL", "LV", "MEM", "MIA", "MIL", "MIN", "MON", "MXC", "NOL", "NYC", "OKC", "ORL", "PHI", "PHO", "PIT", "POR", "SA", "SAC", "SD", "SEA", "SF", "STL", "TOR", "TPA", "UTA", "VAN", "WAS"]);
+      var abbrevs = shuffle(["ATL", "BAL", "BKN", "BOS", "CHA", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "IND", "KC", "LA", "LAE", "LV", "MEM", "MIA", "MIL", "MIN", "MON", "MXC", "NOL", "NYC", "OKC", "ORL", "PHI", "PHO", "PIT", "POR", "SA", "SAC", "SD", "SEA", "SF", "STL", "TOR", "TPA", "UTA", "VAN", "WAS"]);
       for (var i = 0; i < 12; i++) {
         document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
       }
@@ -325,9 +325,9 @@ FACEBOOK_PIXEL_CODE
         }
       };
 
-      var supportsSpread = function () {
+      var supportsModern = function () {
         try {
-          eval("const x={a:1}; const y={...x};");
+          eval("var x = {}; x ?? x?.y;");
           return true;
         } catch (err) {
           return false;
@@ -357,7 +357,7 @@ FACEBOOK_PIXEL_CODE
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          if (supportsSpread()) {
+          if (supportsModern()) {
             script.src = "/gen/ui-" + bbgmVersion + ".js";
           } else  {
             script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";

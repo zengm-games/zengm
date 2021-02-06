@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { PHASE } from "../../common";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -11,8 +10,10 @@ const UpcomingFreeAgents = ({
 	challengeNoRatings,
 	phase,
 	players,
+	projectedCapSpace,
 	season,
 	stats,
+	userTid,
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
@@ -87,12 +88,20 @@ const UpcomingFreeAgents = ({
 					: [helpers.formatCurrency(p.contract.amount, "M")]),
 				helpers.formatCurrency(p.contractDesired.amount, "M"),
 			],
+			classNames: {
+				"table-info": p.tid === userTid,
+			},
 		};
 	});
 
 	return (
 		<>
 			<MoreLinks type="freeAgents" page="upcoming_free_agents" />
+
+			<p>
+				Projected {season} cap space:{" "}
+				{helpers.formatCurrency(projectedCapSpace / 1000, "M")}
+			</p>
 
 			{phase !== PHASE.RESIGN_PLAYERS ? (
 				<p>

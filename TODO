@@ -1,3 +1,44 @@
+madeHof
+- copy fudge changes from basketball to football
+- numGames scaling - use lower bound of games played each season
+
+In live sim, when there is a foul, indicate how many fouls the team has so we can see how many fouls needed before the bonus https://discord.com/channels/290013534023057409/331882115119448065/800225337929105438
+- timeouts too?
+
+sim substitutions faster in live sim
+- https://discord.com/channels/290013534023057409/331882115119448065/799434082802860073
+
+bold scoring plays in live sim
+- https://discord.com/channels/290013534023057409/331882115119448065/799434734101856312
+
+new constants
+- url
+- some better way of linking to other sports
+
+real players prospect rating options
+- base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
+
+phase out use of Team.cid and TeamSeason.cid - can get it from did
+
+nicidob FBGM ovr
+- https://discord.com/channels/290013534023057409/290015468939640832/796279896073568256
+- https://discord.com/channels/290013534023057409/290015468939640832/796812223254364222
+- distribution of players in new league, and distribution of ovr at each position?
+
+league name being stored in file name
+- https://discord.com/channels/@me/682666234604552221/796152730036731974
+
+force tie, in addition to force win (only when ties are possible)
+
+add triple doubles as a stat
+
+scheduled events documentation
+- https://old.reddit.com/r/BasketballGM/comments/k7g2yu/tutorial_how_to_schedule_an_expansion_draft_in_a/
+
+better asian names
+- split up parsing of basketball/football built in names to generate an intermediate CSV, to see what should be done with those asian names more easily
+- https://old.reddit.com/message/messages/xjbi7a
+
 https://discord.com/channels/290013534023057409/331882115119448065/792603966063902741
 
 option to exclude notable games box scores from deletion
@@ -9,6 +50,7 @@ option to exclude notable games box scores from deletion
 - games involving your team
 
 Thanos custom mode: Half the league dies at the start of every season @myst#9056
+- setting should be a % chance for each year
 
 name/colleges revamp
 - races
@@ -29,6 +71,10 @@ settings re-design
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
 - some settings should only be editable in offseason
   - playoff structure
+- to add
+  - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
+
+allow import/export of league settings from New League page
 
 add some more built-in teams
 - Virginia Beach
@@ -63,6 +109,7 @@ add some more built-in teams
   - queens switch to other logo
   - Calgary Mounties. Montreal Beavers and Toronto Raccoons, or Montreal Separatists/Resistance and Toronto Beavers
   - redo: Seattle, St. Louis, Chicago
+  - logos should work for both basketball and football
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
 
@@ -80,10 +127,18 @@ tiebreakers based on head-to-head
   - in FBGM, do it per division for division winners, then per conference to find
   - this implies that the draft ranking would be different than playoff seeding, at times
 - persist playoff seed to teamSeason
+- "Reason" column like https://www.pro-football-reference.com/years/2020/
+- in teamSeason store rankLeague, rankDiv, rankConf
+  - only at end of season, or always?
+  - use in standings, etc
+  - playoff clinching
 
 "find players" form
 - customizable search boxes for stats/ratings
 - table then displays only the columns you searched for, like stathead
+
+trade filters
+- https://old.reddit.com/r/BasketballGM/comments/kksxpp/proposal_trade_filters/
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
 
@@ -175,12 +230,7 @@ next/prev buttons
 
 expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
 
-@babel/runtime error
-- https://github.com/babel/babel/issues/12158 - but i still see it in v7.12.5
-- caused by @rollup/plugin-node-resolve upgrade
-
 typescript 4.1 stuff
-- https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html and https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#jsx-factories after upgrading @types/react to 17
 
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
@@ -406,7 +456,8 @@ frivolities
   - best playoffs (record in individual playoffs)
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
-- best trades
+- draft
+  - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
 
 nicidob PRs
 - player overall ratings
@@ -658,8 +709,6 @@ add option to disable salary cap @hrmantovani#2284
 FBGM
 - retirement age
   - increase roster size limit to 55
-- when the ball is turned over, instead of a new set of downs, you start where the other team left off
-- Some automatic first down penalties result in 1st and 1
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - kneeling at end of games
@@ -685,15 +734,25 @@ FBGM
 - when a touchback occurs on an INT it doesnt say https://cdn.discordapp.com/attachments/682666234604552221/770164768425115678/unknown.png
 - had a playoff game go to double overtime. with two minutes left in the first OT, I saw a score pop up on the scoring summary saying someone had kicked a field goal. that did not actually happen in-game. instead, the game went to the second overtime, where that field goal did in fact happen with two minutes to play. so basically, in double overtime games, the scoring summary updates scores for the second overtime at the times they happened, but in the first OT instead. first OT (field goal was not kicked, but the scoring summary updated anyways)
 - fantasy points
-- late game strategy
-  - punting when down and hardly any time left https://discord.com/channels/@me/631992291514515488/773305319324385310
-  - down by 1 on opp 49, last play of game - run the ball? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - penalty gives fewer yards than play, why accept penalty? https://discord.com/channels/290013534023057409/290015591216054273/776846929836507157
 - holding penalty on offense advances the ball https://mail.google.com/mail/u/0/#inbox/FMfcgxwKjKsHRgGqXdslRhWNXMPvWsfh
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
+  - i can't reproduce this
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
-- skip down after fumble https://discord.com/channels/290013534023057409/290015591216054273/786978817847066714
-- too many runs when down late https://discord.com/channels/290013534023057409/569726303926878219/789226451308118027
+- skip down after fumble
+  - lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
+  - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
+  - could happen if advanceYds is called multiple times, like if there are 2 fumbles on the play, or multiple penalties
+- sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
+  - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
+- multiple QBs problem
+  - switch from top value to top change in team rating, for both draft and FA
+- if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
+- base transactions on change in team rating
+  - draft and free agency - probably 100%
+  - trades - maybe 50/50? otherwise too easy to scam?
+- defPssDef should be only on incompletions?
+- small thing its difficult to trade in fbgm because teams are permanently in the contending strategy no matter how bad they are https://discord.com/channels/290013534023057409/331882115119448065/800250593049837590
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -915,8 +974,6 @@ sw cache issue
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
 Jofish - when you make a move that causes an error in your roster (i.e. not enough/too many players) and try to simulate the all-star game, it freezes. I understand that the game still has to check if the rosters are proper, however, there is no warning given. Even though it doesn't make sense that the user's roster has to comply within the league even though it's the all-star game, a simple warning given would be nice
-
-turnover in 2 point conversion -> wrong team still kicking off, wtf
 
 probGoForIt should account for being down by a FG or less late in the game
 

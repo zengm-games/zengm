@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { bySport, isSport, PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
@@ -61,7 +61,7 @@ const writeTeamStats = async (results: GameResults) => {
 			relativeTicketPrice =
 				t.budget.ticketPrice.amount * (90000 / g.get("salaryCap")) ** 0.75;
 
-			if (process.env.SPORT === "football") {
+			if (isSport("football")) {
 				att *= 28;
 			}
 		}
@@ -85,7 +85,7 @@ const writeTeamStats = async (results: GameResults) => {
 			healthPaid = t.budget.health.amount / g.get("numGames");
 			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
 
-			if (process.env.SPORT === "basketball") {
+			if (isSport("basketball")) {
 				merchRevenue = ((g.get("salaryCap") / 90000) * 4.5 * att) / 1000;
 
 				if (merchRevenue > 250) {
@@ -124,7 +124,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// Attendance: base on home team
 		if (t1 === 0) {
-			if (process.env.SPORT === "football") {
+			if (isSport("football")) {
 				att *= 0.23;
 			}
 
@@ -222,15 +222,17 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.health.amount += healthPaid;
 		teamSeason.expenses.facilities.amount += facilitiesPaid; // For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 
-		const skip =
-			process.env.SPORT === "basketball" ? ["ptsQtrs", "ba"] : ["ptsQtrs"];
+		const skip = bySport({
+			basketball: ["ptsQtrs", "ba"],
+			football: ["ptsQtrs"],
+		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
 			if (skip.includes(key)) {
 				continue;
 			}
 
-			if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+			if (isSport("football") && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
 					teamStats[key] = results.team[t1].stat[key];
 				}

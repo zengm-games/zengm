@@ -1,6 +1,6 @@
 import { helpers, g } from "../../util";
 import type { Team } from "../../../common/types";
-import { POSITIONS } from "../../../common";
+import { isSport, POSITIONS } from "../../../common";
 
 /**
  * Create a new team object.
@@ -65,14 +65,11 @@ const generate = (tm: any): Team => {
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
 		pop: tm.pop ?? 0,
-		stadiumCapacity:
-			tm.stadiumCapacity !== undefined
-				? tm.stadiumCapacity
-				: g.get("defaultStadiumCapacity"),
-		disabled: tm.disabled,
-		retiredJerseyNumbers: tm.retiredJerseyNumbers
-			? tm.retiredJerseyNumbers
-			: [],
+		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),
+		retiredJerseyNumbers: tm.retiredJerseyNumbers ?? [],
+		adjustForInflation: tm.adjustForInflation ?? true,
+		disabled: tm.disabled ?? false,
+		keepRosterSorted: tm.keepRosterSorted ?? true,
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {
@@ -83,7 +80,7 @@ const generate = (tm: any): Team => {
 		t.srID = tm.srID;
 	}
 
-	if (process.env.SPORT === "football" && tm.depth === undefined) {
+	if (isSport("football") && tm.depth === undefined) {
 		t.depth = POSITIONS.reduce((depth, pos) => {
 			depth[pos] = [];
 			return depth;

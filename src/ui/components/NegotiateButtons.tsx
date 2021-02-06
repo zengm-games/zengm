@@ -1,4 +1,3 @@
-import React from "react";
 import { logEvent, toWorker } from "../util";
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always

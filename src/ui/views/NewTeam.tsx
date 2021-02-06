@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";

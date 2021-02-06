@@ -2001,6 +2001,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"count:goy": {
+		desc: "Goalie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"count:mip": {
 		desc: "Most Improved Player",
 		sortSequence: ["desc", "asc"],
@@ -2033,6 +2038,10 @@ const cols: {
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",
+		sortType: "name",
+	},
+	"award:goy": {
+		desc: "Goalie of the Year",
 		sortType: "name",
 	},
 	"award:finalsMvp": {
@@ -2400,6 +2409,7 @@ const titleOverrides = {
 	"count:bestRecord": "BR",
 	"count:bestRecordConf": "BRC",
 	"count:dpoy": "DPOY",
+	"count:goy": "GOY",
 	"count:mip": "MIP",
 	"count:mvp": "MVP",
 	"count:roy": "ROY",
@@ -2407,6 +2417,7 @@ const titleOverrides = {
 	"count:oroy": "OROY",
 	"count:droy": "DROY",
 	"award:dpoy": "DPOY",
+	"award:goy": "GOY",
 	"award:finalsMvp": "Finals MVP",
 	"award:mip": "MIP",
 	"award:mvp": "MVP",

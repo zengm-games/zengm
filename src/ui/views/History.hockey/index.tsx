@@ -69,16 +69,6 @@ const History = (props: View<"history">) => {
 						userTid={userTid}
 					/>
 				</div>
-				<div className="col-md-3 col-sm-4 col-6">
-					<Team
-						className="mb-3"
-						name="All-Defensive Teams"
-						nested
-						season={season}
-						team={awards.allDefensive}
-						userTid={userTid}
-					/>
-				</div>
 				<div className="col-md-3 col-sm-12">
 					<RetiredPlayers
 						retiredPlayers={retiredPlayers}

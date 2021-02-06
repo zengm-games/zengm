@@ -34,9 +34,9 @@ export type AwardPlayer = {
 	name: string;
 	tid: number;
 	abbrev: string;
+	keyStats: string;
 	pts: number;
-	trb: number;
-	ast: number;
+	ops: number;
 };
 
 export type AwardPlayerDefense = {
@@ -44,9 +44,18 @@ export type AwardPlayerDefense = {
 	name: string;
 	tid: number;
 	abbrev: string;
-	trb: number;
-	blk: number;
-	stl: number;
+	tk: number;
+	hit: number;
+	dps: number;
+};
+
+export type AwardPlayerGoalie = {
+	pid: number;
+	name: string;
+	tid: number;
+	abbrev: string;
+	gaa: number;
+	gps: number;
 };
 
 export type Awards = {
@@ -60,9 +69,7 @@ export type Awards = {
 
 	roy: AwardPlayer | undefined;
 	allRookie: AwardPlayer[];
-	mip: AwardPlayer | undefined;
 	mvp: AwardPlayer | undefined;
-	smoy: AwardPlayer | undefined;
 	allLeague: [
 		{
 			title: "First Team";
@@ -78,20 +85,7 @@ export type Awards = {
 		},
 	];
 	dpoy: AwardPlayerDefense;
-	allDefensive: [
-		{
-			title: "First Team";
-			players: AwardPlayerDefense[];
-		},
-		{
-			title: "Second Team";
-			players: AwardPlayerDefense[];
-		},
-		{
-			title: "Third Team";
-			players: AwardPlayerDefense[];
-		},
-	];
+	goy: AwardPlayerGoalie;
 	finalsMvp: AwardPlayer | undefined;
 };
 

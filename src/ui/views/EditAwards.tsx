@@ -50,6 +50,7 @@ const EditAwards = ({
 		if (
 			type == "finalsMvp" ||
 			type == "mvp" ||
+			type == "goy" ||
 			type == "smoy" ||
 			type == "roy" ||
 			type == "mip" ||

@@ -336,7 +336,7 @@ export const options: {
 		key: "draftAge",
 		name: "Age of draft prospects",
 		godModeRequired: "existingLeagueOnly",
-		description: "Configure the age of draftees",
+		description: "Set the minimum/maximum age of draft prospects.",
 		type: "jsonString",
 		validator: (value, output, props) => {
 			if (!Array.isArray(value)) {
@@ -607,12 +607,7 @@ export const options: {
 		name: "Force Retire at Age",
 		type: "int",
 		description:
-			"Players at or above this age will retire at the end of the season. 0 disables the setting.",
-		validator: value => {
-			if (value < 0) {
-				throw new Error("Value cannot be negative");
-			}
-		},
+			"Players at or above this age will retire at the end of the season. A number that is less than the maximum draft age will disable this setting. If this number is close to the max draft age, it is recommended to increase draft rounds in order to have enough players in your league.",
 	},
 	{
 		category: "Contracts",

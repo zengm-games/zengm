@@ -59,7 +59,7 @@ const genPlayersWithoutSaving = async (
 	let enteringDraft: typeof remaining = [];
 
 	for (let i = 0; i < 4; i++) {
-		let cutoff = 0; // For football, only juniors and seniors
+		let cutoff = draftAge[1] - draftAge[0]; // For football, only juniors and seniors by default.
 
 		if (isSport("basketball") || i >= 2) {
 			// Top 50% of players remaining enter draft, except in last year when all do

@@ -495,6 +495,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "array",
 							minItems: 1,
 						}),
+						gameAttribute("draftAge", {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 2,
+							maxItems: 2,
+						}),
 						gameAttribute("draftType", {
 							type: "string",
 							// nba is legacy
@@ -532,6 +540,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						}),
 						gameAttribute("equalizeRegions", {
 							type: "boolean",
+						}),
+						gameAttribute("forceRetireAge", {
+							type: "integer",
 						}),
 						gameAttribute("foulsNeededToFoulOut", {
 							type: "integer",

@@ -829,6 +829,9 @@ if (isSport("basketball")) {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
+				if (value.length < 3 || value.length > 3) {
+					throw new Error("Must have 3 numbers");
+				}
 				for (const num of value) {
 					if (!Number.isInteger(num)) {
 						throw new Error("Array must contain only integers");

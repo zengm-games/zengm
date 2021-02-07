@@ -38,6 +38,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 			hockey: !!(
 				this.prevInGame ||
 				nextProps.p.inGame ||
+				nextProps.p.inPenaltyBox ||
 				nextProps.forceUpdate
 			),
 		});
@@ -56,6 +57,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 			football: undefined,
 			hockey: classNames({
 				"table-warning": p.inGame,
+				"table-danger": p.inPenaltyBox,
 			}),
 		});
 

@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * DEV: Updated the "desired contract length" formula based to feel more realistic. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/356)
 
-* 2021-02-07: In BBGM, added a new league setting available in God Mode to control the number of fouls in a period before the bonus. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/351) [[2]](https://old.reddit.com/r/BasketballGM/comments/legy0a/udominila_added_a_new_league_setting_available_in/)
+* 2021-02-07: In BBGM, added a new league setting available in God Mode to control the number of fouls in a period before the bonus. Thanks @domini7! This setting automatically changes in historical leagues in 1955 and 1967. [[1]](https://github.com/dumbmatter/gm-games/pull/351) [[2]](https://old.reddit.com/r/BasketballGM/comments/legy0a/udominila_added_a_new_league_setting_available_in/)
 
 * 2021-02-04: In the Retired Jersey Numbers of the Team History page, it now shows how many championships each player won with this team. [[1]](https://old.reddit.com/r/BasketballGM/comments/lc88pn/number_of_championships_are_shown_for_players/)
 

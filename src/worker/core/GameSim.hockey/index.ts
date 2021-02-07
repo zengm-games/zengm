@@ -704,6 +704,11 @@ class GameSim {
 			t => this.team[t].compositeRating.penalties,
 		);
 
+		// Hack - don't want to deal with >2 penalties at the same time
+		if (this.penaltyBox[t].length >= 2) {
+			return false;
+		}
+
 		const p = this.pickPlayer(t, "penalties", ["C", "W", "D"]);
 
 		const penaltyType = penaltyTypes[penalty.type];

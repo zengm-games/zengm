@@ -685,9 +685,6 @@ class GameSim {
 		);
 
 		const p = this.pickPlayer(t, "penalties", ["C", "W", "D"]);
-		if (p === undefined) {
-			debugger;
-		}
 
 		const penaltyType = penaltyTypes[penalty.type];
 

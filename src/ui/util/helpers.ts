@@ -229,7 +229,11 @@ const roundOverrides: Record<
 		gc: "oneDecimalPlace",
 		min: "minutes",
 		amin: "minutes",
+		ppMin: "minutes",
+		shMin: "minutes",
 		minMax: "minutes",
+		ppMinMax: "minutes",
+		shMinMax: "minutes",
 		pmMax: "plusMinusNoDecimalPlace",
 		pimMax: "oneDecimalPlace",
 		evGMax: "noDecimalPlace",
@@ -273,6 +277,10 @@ const roundStat = (
 		if (roundOverrides[stat] === "minutes") {
 			if (value > 100) {
 				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			}
+
+			if (value === 0) {
+				return "--:--";
 			}
 
 			const remainder = value % 1;

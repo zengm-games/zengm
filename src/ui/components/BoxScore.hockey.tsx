@@ -37,8 +37,10 @@ const statsByType = {
 		"fol",
 		"foPct",
 		"min",
+		"ppMin",
+		"shMin",
 	],
-	goalies: ["ga", "sa", "sv", "svPct", "pim", "min"],
+	goalies: ["ga", "sa", "sv", "svPct", "pim", "min", "ppMin", "shMin"],
 };
 
 const sortsByType = {
@@ -92,6 +94,8 @@ const StatsTable = ({
 										p.processed[stat] !== undefined &&
 										p.processed[stat] !== 0 &&
 										stat !== "min" &&
+										stat !== "ppMin" &&
+										stat !== "shMin" &&
 										stat !== "pm" &&
 										stat !== "pim"
 									) {

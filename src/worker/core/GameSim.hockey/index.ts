@@ -1065,6 +1065,16 @@ class GameSim {
 				continue;
 			}
 
+			const t2 = t === 0 ? 1 : 0;
+			const penaltyBoxDiff =
+				this.penaltyBox.count(t) - this.penaltyBox.count(t2);
+			let strengthType: "ev" | "sh" | "pp" = "ev";
+			if (penaltyBoxDiff > 0) {
+				strengthType = "sh";
+			} else if (penaltyBoxDiff < 0) {
+				strengthType = "pp";
+			}
+
 			for (const pos of helpers.keys(this.playersOnIce[t])) {
 				// Update minutes (overall, court, and bench)
 				// https://github.com/microsoft/TypeScript/issues/21732
@@ -1072,6 +1082,11 @@ class GameSim {
 				for (const p of this.playersOnIce[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
+					if (strengthType === "pp") {
+						this.recordStat(t, p, "ppMin", possessionTime);
+					} else if (strengthType === "sh") {
+						this.recordStat(t, p, "shMin", possessionTime);
+					}
 					this.recordStat(t, p, "courtTime", possessionTime);
 
 					// This used to be 0.04. Increase more to lower PT

@@ -227,7 +227,7 @@ const writeTeamStats = async (results: GameResults) => {
 		const skip = bySport({
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
-			hockey: ["ptsQtrs", "ga"],
+			hockey: ["ptsQtrs", "ga", "ppMin", "shMin"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {

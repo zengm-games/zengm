@@ -1531,6 +1531,16 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:ppMin": {
+			desc: "Power Play Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:shMin": {
+			desc: "Short Handed Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 });
 const cols: {
@@ -2386,6 +2396,8 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:gps": "GPS",
 		"stat:gc": "GC",
 		"stat:amin": "ATOI",
+		"stat:ppMin": "ppTOI",
+		"stat:shMin": "shTOI",
 	},
 });
 

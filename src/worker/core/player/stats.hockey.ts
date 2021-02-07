@@ -25,6 +25,8 @@ const stats = {
 		"gp",
 		"gs",
 		"min",
+		"ppMin",
+		"shMin",
 		"minAvailable",
 		"pm",
 		"pim",
@@ -65,6 +67,8 @@ const stats = {
 	] as const,
 	max: [
 		"minMax",
+		"ppMinMax",
+		"shMinMax",
 		"pmMax",
 		"pimMax",
 		"evGMax",

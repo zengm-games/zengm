@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { bySport, isSport } from "../../common";
+import { bySport, isSport, processPlayerStats } from "../../common";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerFeats">,
@@ -50,6 +50,12 @@ const updatePlayers = async (
 					feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
 
 				feat.stats.gmsc = helpers.gameScore(feat.stats);
+			} else if (isSport("hockey")) {
+				const toAdd = ["g", "a", "pts", "sPct", "foPct"];
+				const processed = processPlayerStats(feat.stats, toAdd);
+				for (const stat of toAdd) {
+					feat.stats[stat] = processed[stat];
+				}
 			}
 
 			if (feat.overtimes === 1) {
@@ -138,7 +144,6 @@ const updatePlayers = async (
 				"sPct",
 				"tsa",
 				"min",
-				"amin",
 				"fow",
 				"fol",
 				"foPct",

@@ -378,6 +378,7 @@ class GameSim {
 
 			while (this.clock > 0) {
 				this.simPossession();
+				this.advanceClock();
 				this.updatePlayersOnIce();
 			}
 
@@ -425,6 +426,7 @@ class GameSim {
 		// @ts-ignore
 		while (this.clock > 0) {
 			this.simPossession();
+			this.advanceClock();
 			this.updatePlayersOnIce();
 		}
 	}
@@ -658,6 +660,8 @@ class GameSim {
 			t: this.o,
 			names: [p0.name, p1.name],
 		});
+
+		this.advanceClock();
 	}
 
 	simPossession() {

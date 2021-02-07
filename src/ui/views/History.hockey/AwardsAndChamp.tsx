@@ -19,7 +19,6 @@ const Winner = ({
 		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 		return finals ? <>???</> : <p>???</p>;
 	}
-	console.log(award);
 
 	let stats;
 	if (type === "defense") {

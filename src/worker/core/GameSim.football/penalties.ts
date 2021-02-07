@@ -559,14 +559,14 @@ const penalties: Penalty[] = [
 			TE: 0.05,
 		},
 	},
-]; // Total each season, to compare with penalty.numPerSeason for frequency calculation
+];
 
+// Total each season, to compare with penalty.numPerSeason for frequency calculation
 const numPlays = {
 	kickoffReturn: 2500,
 	punt: 2000,
 	puntReturn: 2000,
-	fieldGoal: 2000,
-	// Includes extra points
+	fieldGoal: 2000, // Includes extra points
 	pass: 17500,
 	run: 13000,
 	beforeSnap: 0,

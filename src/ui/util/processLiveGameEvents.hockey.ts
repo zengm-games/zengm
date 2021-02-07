@@ -125,6 +125,9 @@ const getText = (
 				: "Double minor";
 		text = `${type} penalty on ${event.names[0]} for ${event.penaltyName}`;
 	}
+	if (event.type === "penaltyOver") {
+		text = `${event.names[0]} is released from the penalty box`;
+	}
 
 	if (text === undefined) {
 		throw new Error(`Invalid event type "${event.type}"`);

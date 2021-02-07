@@ -22,6 +22,7 @@ import flatten from "lodash/flatten";
 import range from "lodash/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
+import PenaltyBox from "./PenaltyBox";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -52,14 +53,6 @@ type TeamCurrentLine = {
 	D: 0;
 	G: 0;
 };
-
-type PenaltyBoxEntry = {
-	p: PlayerGameSim;
-	type: keyof typeof penaltyTypes;
-	minutesLeft: number;
-	minutesReducedAfterGoal: number;
-};
-
 class GameSim {
 	id: number;
 
@@ -101,7 +94,7 @@ class GameSim {
 
 	currentLine: [TeamCurrentLine, TeamCurrentLine];
 
-	penaltyBox: [PenaltyBoxEntry[], PenaltyBoxEntry[]];
+	penaltyBox: PenaltyBox;
 
 	constructor(
 		gid: number,
@@ -167,7 +160,15 @@ class GameSim {
 			},
 		];
 
-		this.penaltyBox = [[], []];
+		this.penaltyBox = new PenaltyBox(({ t, p, minutesAgo }) => {
+			this.playByPlay.logEvent({
+				type: "penaltyOver",
+				clock: this.clock + minutesAgo,
+				t,
+				names: [p.name],
+				penaltyPID: p.id,
+			});
+		});
 	}
 
 	// Call this at beginning of game or after injuries
@@ -534,6 +535,7 @@ class GameSim {
 		this.updatePlayingTime(dt);
 
 		this.clock -= dt;
+		this.penaltyBox.advanceClock(dt);
 		this.minutesSinceLineChange[0].F += dt;
 		this.minutesSinceLineChange[0].D += dt;
 		this.minutesSinceLineChange[1].F += dt;
@@ -608,7 +610,7 @@ class GameSim {
 		}
 
 		const penaltyBoxDiff =
-			this.penaltyBox[this.o].length - this.penaltyBox[this.d].length;
+			this.penaltyBox.count(this.o) - this.penaltyBox.count(this.d);
 		let strengthType: "ev" | "sh" | "pp" = "ev";
 		if (penaltyBoxDiff > 0) {
 			strengthType = "sh";
@@ -705,13 +707,15 @@ class GameSim {
 		);
 
 		// Hack - don't want to deal with >2 penalties at the same time
-		if (this.penaltyBox[t].length >= 2) {
+		if (this.penaltyBox.count(t) >= 2) {
 			return false;
 		}
 
 		const p = this.pickPlayer(t, "penalties", ["C", "W", "D"]);
 
 		const penaltyType = penaltyTypes[penalty.type];
+
+		this.penaltyBox.add(t, p, penalty);
 
 		this.playByPlay.logEvent({
 			type: "penalty",
@@ -720,6 +724,7 @@ class GameSim {
 			names: [p.name],
 			penaltyType: penalty.type,
 			penaltyName: penalty.name,
+			penaltyPID: p.id,
 		});
 		this.recordStat(t, p, "pim", penaltyType.minutes);
 

@@ -1189,13 +1189,14 @@ class GameSim {
 
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
-			// In the bonus? Checking >=1 for foulsLastTwoMinutes because incrementing this counter is done in this.doPf below
+			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
+			const foulsUntilBonus = g.get("foulsUntilBonus");
 			const inBonus =
 				(this.t <= 2 &&
-					this.foulsLastTwoMinutes[this.d] >= g.get("foulsUntilBonus")[2]) ||
+					this.foulsLastTwoMinutes[this.d] >= foulsUntilBonus[2] - 1) ||
 				(this.overtimes >= 1 &&
-					this.foulsThisQuarter[this.d] >= g.get("foulsUntilBonus")[1]) ||
-				this.foulsThisQuarter[this.d] >= g.get("foulsUntilBonus")[0];
+					this.foulsThisQuarter[this.d] >= foulsUntilBonus[1] - 1) ||
+				this.foulsThisQuarter[this.d] >= foulsUntilBonus[0] - 1;
 
 			if (inBonus) {
 				this.doPf(this.d, "pfBonus", shooter);

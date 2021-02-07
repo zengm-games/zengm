@@ -815,11 +815,12 @@ if (isSport("basketball")) {
 			godModeRequired: "always",
 			description: (
 				<>
-					Specify the # of fouls a team needs before they enter the penalty. You
-					must enter a valid JSON array of integers. Each number determines # of
-					fouls needed to enter bonus at different parts of a game. 1st
-					determines # for periods, 2nd determines # for overtime, 3rd
-					determines # in last 2 minutes. The default is <code>[5,4,1]</code>.
+					This is the number of team fouls required for the opponent to get
+					bonus FTs for a non-shooting foul. You must enter a valid JSON array
+					of three integers. Each number determines the cutoff for different
+					parts of a game. 1st is for each regulation period, 2nd is for each
+					overtime period, 3rd is for the last 2 minutes of each period. The
+					default is <code>[5,4,2]</code>.
 				</>
 			),
 			type: "jsonString",

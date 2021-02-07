@@ -336,7 +336,7 @@ export const options: {
 		key: "draftAge",
 		name: "Age of draft prospects",
 		godModeRequired: "existingLeagueOnly",
-		description: "Set the minimum/maximum age of draft prospects.",
+		description: "Set the minimum/maximum age of generated draft prospects.",
 		type: "jsonString",
 		validator: value => {
 			if (!Array.isArray(value)) {

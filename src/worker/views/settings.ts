@@ -30,6 +30,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tragicDeathRate: g.get("tragicDeathRate"),
 			brotherRate: g.get("brotherRate"),
 			sonRate: g.get("sonRate"),
+			forceRetireAge: g.get("forceRetireAge"),
 			hardCap: g.get("hardCap"),
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"), // Always get latest value
 			numPlayoffByes: g.get("numPlayoffByes"), // Always get latest value

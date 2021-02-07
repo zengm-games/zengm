@@ -58,6 +58,7 @@ type Key =
 	| "tragicDeathRate"
 	| "brotherRate"
 	| "sonRate"
+	| "forceRetireAge"
 	| "homeCourtAdvantage"
 	| "rookieContractLengths"
 	| "rookiesCanRefuse"
@@ -580,6 +581,19 @@ export const options: {
 		type: "float",
 		description:
 			"The probability that a new player will be the son of an existing player.",
+	},
+	{
+		category: "Events",
+		key: "forceRetireAge",
+		name: "Force Retire at Age",
+		type: "int",
+		description:
+			"Players at or above this age will retire at the end of the season. 0 disables the setting.",
+		validator: value => {
+			if (value < 0) {
+				throw new Error("Value cannot be negative");
+			}
+		},
 	},
 	{
 		category: "Contracts",

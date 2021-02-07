@@ -64,6 +64,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	// The probability that a new player will be the son or brother of an existing player. In practice, the observed number may be smaller than this because sometimes a valid match will not be found.
 	sonRate: 0.02,
 	brotherRate: 0.02,
+	forceRetireAge: 0,
 
 	easyDifficultyInPast: false,
 	hardCap: false,

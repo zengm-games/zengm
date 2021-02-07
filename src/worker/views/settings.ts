@@ -40,6 +40,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numSeasonsFutureDraftPicks: g.get("numSeasonsFutureDraftPicks"),
 			foulRateFactor: g.get("foulRateFactor"),
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
+			foulsUntilBonus: g.get("foulsUntilBonus"),
 			threePointers: g.get("threePointers"),
 			pace: g.get("pace"),
 			threePointTendencyFactor: g.get("threePointTendencyFactor"),

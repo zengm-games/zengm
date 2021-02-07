@@ -64,6 +64,7 @@ type Key =
 	| "allStarGame"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
+	| "foulsUntilBonus"
 	| "threePointers"
 	| "pace"
 	| "threePointTendencyFactor"
@@ -804,6 +805,34 @@ if (isSport("basketball")) {
 			validator: value => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
+			key: "foulsUntilBonus",
+			name: "# of Fouls Until Teams Enter Bonus",
+			godModeRequired: "always",
+			descriptionLong: (
+				<>
+					<p>
+						Specify the # of fouls a team needs before they enter the penalty.
+						You must enter a valid JSON array of integers. The first #
+						determines the # of fouls needed to enter the bonus in a period. The
+						second determines the # of fouls until bonus for overtime. The third
+						determines last two minutes.
+					</p>
+				</>
+			),
+			type: "jsonString",
+			validator: value => {
+				if (!Array.isArray(value)) {
+					throw new Error("Must be an array");
+				}
+				for (const num of value) {
+					if (!Number.isInteger(num)) {
+						throw new Error("Array must contain only integers");
+					}
 				}
 			},
 		},
@@ -2374,6 +2403,7 @@ Settings.propTypes = {
 	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
 	foulRateFactor: PropTypes.number.isRequired,
 	foulsNeededToFoulOut: PropTypes.number.isRequired,
+	foulsUntilBonus: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Settings;

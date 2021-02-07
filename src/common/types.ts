@@ -378,6 +378,7 @@ export type GameAttributesLeague = {
 	elamPoints: number;
 	equalizeRegions: boolean;
 	foulsNeededToFoulOut: number;
+	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
 	godMode: boolean;

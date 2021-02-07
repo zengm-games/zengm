@@ -21,23 +21,15 @@ const getExpiration = (
 ) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
 
-	let years;
-
-	// Players with high potentials want short contracts
-	const potentialDifference = pot - ovr;
-	if (potentialDifference >= 10) {
-		years = 2;
-	} else {
-		// Bad players can only ask for short deals, good players ask for longer deals
-		years = (p.value - 25) / 5;
-
-		// Sometimes players want shorter contracts, for flexibility
-		if (Math.random() < 0.5) {
-			years /= 2;
-		}
-
-		years = helpers.bound(Math.round(years), 1, Infinity);
-	}
+	// pot is predictable via age+ovr with R^2=0.94, so skip it b/c wasn't in data
+	const age = g.get("season") - p.born.year;
+	let years =
+		1 +
+		0.001629 * (age * age) -
+		0.003661 * (age * ovr) +
+		0.002178 * (ovr * ovr) +
+		0 * pot;
+	years = Math.round(years);
 
 	// Randomize expiration for contracts generated at beginning of new game
 	if (randomizeExp) {

@@ -1,3 +1,4 @@
+import type { penaltyTypes } from "./penalties";
 import type { TeamNum } from "./types";
 
 type PlayByPlayEventInputScore = {
@@ -58,6 +59,14 @@ type PlayByPlayEventInput =
 			type: "playersOnIce";
 			t: TeamNum;
 			pids: number[];
+	  }
+	| {
+			type: "penalty";
+			clock: number;
+			t: TeamNum;
+			names: [string];
+			penaltyType: keyof typeof penaltyTypes;
+			penaltyName: string;
 	  };
 
 export type PlayByPlayEvent =

@@ -21,6 +21,7 @@ import orderBy from "lodash/orderBy";
 import flatten from "lodash/flatten";
 import range from "lodash/range";
 import getCompositeFactor from "./getCompositeFactor";
+import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -597,19 +598,21 @@ class GameSim {
 
 		let assister1: PlayerGameSim | undefined;
 		let assister2: PlayerGameSim | undefined;
-		const r2 = Math.random();
-		if (r2 < 0.9) {
-			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
-				shooter,
-			]);
-			this.recordStat(this.o, assister1, "evA");
-		}
-		if (r2 < 0.8) {
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
-				shooter,
-				assister1 as PlayerGameSim,
-			]);
-			this.recordStat(this.o, assister2, "evA");
+		if (type !== "reboundShot") {
+			const r2 = Math.random();
+			if (r2 < 0.9) {
+				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+					shooter,
+				]);
+				this.recordStat(this.o, assister1, "evA");
+			}
+			if (r2 < 0.8) {
+				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+					shooter,
+					assister1 as PlayerGameSim,
+				]);
+				this.recordStat(this.o, assister2, "evA");
+			}
 		}
 
 		let assisterNames: [] | [string] | [string, string];
@@ -665,6 +668,42 @@ class GameSim {
 		this.advanceClock();
 	}
 
+	checkPenalty() {
+		const r = Math.random();
+
+		const penalty = penalties.find(
+			penalty => r < penalty.cumsumProbPerPossession,
+		);
+
+		if (!penalty) {
+			return false;
+		}
+
+		const t = random.choice(
+			[0, 1] as TeamNum[],
+			t => this.team[t].compositeRating.penalties,
+		);
+
+		const p = this.pickPlayer(t, "penalties", ["C", "W", "D"]);
+		if (p === undefined) {
+			debugger;
+		}
+
+		const penaltyType = penaltyTypes[penalty.type];
+
+		this.playByPlay.logEvent({
+			type: "penalty",
+			clock: this.clock,
+			t,
+			names: [p.name],
+			penaltyType: penalty.type,
+			penaltyName: penalty.name,
+		});
+		this.recordStat(t, p, "pim", penaltyType.minutes);
+
+		return true;
+	}
+
 	simPossession(special?: "rebound") {
 		if (!special) {
 			const numHits = this.getNumHits();
@@ -674,6 +713,10 @@ class GameSim {
 				if (this.advanceClock()) {
 					return;
 				}
+			}
+
+			if (this.checkPenalty()) {
+				return;
 			}
 
 			if (this.advanceClock()) {
@@ -744,6 +787,26 @@ class GameSim {
 					C: 0.25,
 				},
 				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
+			});
+
+			this.team[t].compositeRating.penalties = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					D: 1,
+					W: 0.5,
+					C: 0.25,
+				},
+				valFunc: p => p.compositeRating.penalties / 2,
+			});
+
+			this.team[t].compositeRating.penalties = getCompositeFactor({
+				playersOnIce: this.playersOnIce[t],
+				positions: {
+					D: 1,
+					W: 0.5,
+					C: 0.25,
+				},
+				valFunc: p => p.compositeRating.enforcer / 2,
 			});
 
 			this.team[t].compositeRating.puckControl = getCompositeFactor({

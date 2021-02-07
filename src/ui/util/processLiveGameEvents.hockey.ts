@@ -116,6 +116,15 @@ const getText = (
 	if (event.type === "defensiveLineChange") {
 		text = "Defensive line change";
 	}
+	if (event.type === "penalty") {
+		const type =
+			event.penaltyType === "major"
+				? "Major"
+				: event.penaltyType === "minor"
+				? "Minor"
+				: "Double minor";
+		text = `${type} penalty on ${event.names[0]} for ${event.penaltyName}`;
+	}
 
 	if (text === undefined) {
 		throw new Error(`Invalid event type "${event.type}"`);

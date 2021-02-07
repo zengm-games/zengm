@@ -212,8 +212,10 @@ const ScoringSummary = memo(
 									<td>{formatClock(event.clock)}</td>
 									<td>{event.goalType}</td>
 									<td style={{ whiteSpace: "normal" }}>
-										{helpers.upperCaseFirstLetter(event.shotType)} by{" "}
-										{event.names[0]}
+										{event.shotType === "reboundShot"
+											? "Rebound shot"
+											: helpers.upperCaseFirstLetter(event.shotType)}{" "}
+										by {event.names[0]}
 										{event.names.length > 1 ? (
 											<>
 												{" "}

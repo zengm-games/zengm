@@ -56,6 +56,10 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["sst", "wst", "stk", "oiq", "spd", "hgt", "stre"],
 		weights: [1, 1, 1, 1, 0.5, 0.25, 0.1],
 	},
+	penalties: {
+		ratings: [50, "chk", "diq"],
+		weights: [1, 1, -0.5],
+	},
 	endurance: {
 		ratings: [50, "endu"],
 		weights: [1, 1],

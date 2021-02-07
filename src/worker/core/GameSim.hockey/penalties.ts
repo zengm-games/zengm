@@ -35,13 +35,6 @@ export const penalties: {
 		cumsumProbPerPossession: 0,
 	},
 	{
-		name: "bench",
-		type: "minor",
-		numPerSeason: 1,
-		probPerPossession: 0,
-		cumsumProbPerPossession: 0,
-	},
-	{
 		name: "boarding",
 		type: "minor",
 		numPerSeason: 104,
@@ -91,14 +84,14 @@ export const penalties: {
 		cumsumProbPerPossession: 0,
 	},
 	{
-		name: "closing hand on puck",
+		name: "closing his hand on the puck",
 		type: "minor",
 		numPerSeason: 18,
 		probPerPossession: 0,
 		cumsumProbPerPossession: 0,
 	},
 	{
-		name: "concealing puck",
+		name: "concealing the puck",
 		type: "minor",
 		numPerSeason: 2,
 		probPerPossession: 0,
@@ -196,7 +189,7 @@ export const penalties: {
 		cumsumProbPerPossession: 0,
 	},
 	{
-		name: "illegal check to head",
+		name: "illegal check to the head",
 		type: "minor",
 		numPerSeason: 25,
 		probPerPossession: 0,
@@ -288,10 +281,10 @@ export const penalties: {
 	},
 ];
 
-// Assume 30 seconds per possession, 60 minutes per game, 82 game season
+// Assume 60 seconds per possession, 60 minutes per game, 82 game season, 30 teams
 let cumsumProbPerPossession = 0;
 for (const penalty of penalties) {
-	penalty.probPerPossession = penalty.numPerSeason / (82 * 120);
+	penalty.probPerPossession = penalty.numPerSeason / (60 * 82 * 30);
 	cumsumProbPerPossession += penalty.probPerPossession;
 	penalty.cumsumProbPerPossession = cumsumProbPerPossession;
 }

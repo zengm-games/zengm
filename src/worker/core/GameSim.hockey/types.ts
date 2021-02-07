@@ -12,7 +12,9 @@ export type CompositeRating =
 	| "faceoffs"
 	| "goalkeeping"
 	| "blocking"
-	| "scoring";
+	| "scoring"
+	| "penalties"
+	| "endurance";
 
 export type PlayerGameSim = {
 	id: number;

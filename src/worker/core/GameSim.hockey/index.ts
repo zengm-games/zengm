@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common";
-import { g, helpers, random } from "../../util";
+import { defaultGameAttributes, g, helpers, random } from "../../util";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -405,10 +405,10 @@ class GameSim {
 	}
 
 	simOvertime() {
-		this.clock = Math.ceil((g.get("quarterLength") * 2) / 3); // 10 minutes by default, but scales
+		this.clock = g.get("quarterLength");
 
-		if (this.clock === 0) {
-			this.clock = 10;
+		if (this.clock <= 0) {
+			this.clock = defaultGameAttributes.quarterLength;
 		}
 
 		this.overtime = true;

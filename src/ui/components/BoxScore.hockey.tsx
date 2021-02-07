@@ -91,7 +91,9 @@ const StatsTable = ({
 									if (
 										p.processed[stat] !== undefined &&
 										p.processed[stat] !== 0 &&
-										stat !== "min"
+										stat !== "min" &&
+										stat !== "pm" &&
+										stat !== "pim"
 									) {
 										return true;
 									}

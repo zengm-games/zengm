@@ -537,6 +537,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 							minimum: 0,
 						}),
+						gameAttribute("foulsUntilBonus", {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 3,
+							maxItems: 3,
+						}),
 						gameAttribute("foulRateFactor", {
 							type: "number",
 						}),

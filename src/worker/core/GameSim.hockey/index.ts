@@ -1046,6 +1046,19 @@ class GameSim {
 					this.recordStat(t, p, "gs");
 				}
 			}
+
+			if (substitutions || options.type === "starters") {
+				for (const t of [0, 1] as const) {
+					for (const pos of helpers.keys(this.playersOnIce[t])) {
+						for (const p of this.playersOnIce[t][pos]) {
+							const stat = pos === "G" ? "gpGoalie" : "gpSkater";
+							if (p.stat[stat] === 0) {
+								this.recordStat(t, p, stat);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		if (substitutions) {
@@ -1056,6 +1069,9 @@ class GameSim {
 					pids: flatten(Object.values(this.playersOnIce[t])).map(p => p.id),
 				});
 			}
+		}
+
+		if (substitutions || options.type === "starters") {
 			this.updateTeamCompositeRatings();
 		}
 	}
@@ -1212,33 +1228,45 @@ class GameSim {
 			p.stat[s] += amt;
 		}
 
+		// Filter out stats that don't get saved to box score
 		if (
 			s !== "gs" &&
 			s !== "courtTime" &&
 			s !== "benchTime" &&
 			s !== "energy"
 		) {
-			this.team[t].stat[s] += amt;
+			// Filter out stats that are only for player, not team
+			if (
+				s !== "ppMin" &&
+				s !== "shMin" &&
+				s !== "gpSkater" &&
+				s !== "gpGoalie" &&
+				s !== "ga"
+			) {
+				this.team[t].stat[s] += amt;
 
-			let pts;
+				let pts;
 
-			const goals = ["evG", "ppG", "shG"];
+				const goals = ["evG", "ppG", "shG"];
 
-			if (goals.includes(s)) {
-				pts = 1;
-			}
+				if (goals.includes(s)) {
+					pts = 1;
+				}
 
-			if (pts !== undefined) {
-				this.team[t].stat.pts += pts;
-				this.team[t].stat.ptsQtrs[qtr] += pts;
-				this.playByPlay.logStat(t, undefined, "pts", pts);
+				if (pts !== undefined) {
+					this.team[t].stat.pts += pts;
+					this.team[t].stat.ptsQtrs[qtr] += pts;
+					this.playByPlay.logStat(t, undefined, "pts", pts);
 
-				for (const t2 of [0, 1] as const) {
-					const currentlyOnIce = flatten(Object.values(this.playersOnIce[t2]));
-					for (const p2 of currentlyOnIce) {
-						const pm = t2 === t ? 1 : -1;
-						p2.stat.pm += pm;
-						this.playByPlay.logStat(t2, p2.id, "pm", pm);
+					for (const t2 of [0, 1] as const) {
+						const currentlyOnIce = flatten(
+							Object.values(this.playersOnIce[t2]),
+						);
+						for (const p2 of currentlyOnIce) {
+							const pm = t2 === t ? 1 : -1;
+							p2.stat.pm += pm;
+							this.playByPlay.logStat(t2, p2.id, "pm", pm);
+						}
 					}
 				}
 			}

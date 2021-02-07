@@ -228,29 +228,32 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				for (const p of boxScore.teams[actualT].players) {
-					if (p.pid === e.injuredPID) {
-						p.injury = {
-							type: "Injured",
-							gamesRemaining: -1,
-						};
-						break;
-					}
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.injuredPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
 				}
+				p.injury = {
+					type: "Injured",
+					gamesRemaining: -1,
+				};
 			} else if (e.type === "penalty") {
-				for (const p of boxScore.teams[actualT].players) {
-					if (p.pid === e.penaltyPID) {
-						p.inPenaltyBox = true;
-						break;
-					}
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.penaltyPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
 				}
+				p.inPenaltyBox = true;
 			} else if (e.type === "penaltyOver") {
-				for (const p of boxScore.teams[actualT].players) {
-					if (p.pid === e.penaltyPID) {
-						p.inPenaltyBox = false;
-						break;
-					}
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.penaltyPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
 				}
+				p.inPenaltyBox = false;
 			}
 
 			prevText = text;

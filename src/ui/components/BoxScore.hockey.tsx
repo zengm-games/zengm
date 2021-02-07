@@ -87,23 +87,11 @@ const StatsTable = ({
 									processed: processPlayerStats(p, stats),
 								};
 							})
-							.filter(p => {
-								// Filter based on if player has any stats
-								for (const stat of stats) {
-									if (
-										p.processed[stat] !== undefined &&
-										p.processed[stat] !== 0 &&
-										stat !== "min" &&
-										stat !== "ppMin" &&
-										stat !== "shMin" &&
-										stat !== "pm" &&
-										stat !== "pim"
-									) {
-										return true;
-									}
-								}
-								return false;
-							})
+							.filter(
+								p =>
+									(type === "skaters" && p.gpSkater > 0) ||
+									(type === "goalies" && p.gpGoalie > 0),
+							)
 							.sort((a, b) => {
 								for (const sort of sorts) {
 									if (b.processed[sort] !== a.processed[sort]) {

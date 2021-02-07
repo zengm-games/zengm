@@ -223,11 +223,10 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.facilities.amount += facilitiesPaid;
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
-		// "ga" is similar - only matters for individual goalies, but team is better with opp stats
 		const skip = bySport({
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
-			hockey: ["ptsQtrs", "ga", "ppMin", "shMin"],
+			hockey: ["ptsQtrs"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {

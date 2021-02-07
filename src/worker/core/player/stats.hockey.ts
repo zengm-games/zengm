@@ -23,6 +23,8 @@ const stats = {
 	] as const,
 	raw: [
 		"gp",
+		"gpSkater",
+		"gpGoalie",
 		"gs",
 		"min",
 		"ppMin",

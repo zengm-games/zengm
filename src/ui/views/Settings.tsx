@@ -813,15 +813,13 @@ if (isSport("basketball")) {
 			key: "foulsUntilBonus",
 			name: "# of Fouls Until Teams Enter Bonus",
 			godModeRequired: "always",
-			descriptionLong: (
+			description: (
 				<>
-					<p>
-						Specify the # of fouls a team needs before they enter the penalty.
-						You must enter a valid JSON array of integers. The first #
-						determines the # of fouls needed to enter the bonus in a period. The
-						second determines the # of fouls until bonus for overtime. The third
-						determines last two minutes.
-					</p>
+					Specify the # of fouls a team needs before they enter the penalty. You
+					must enter a valid JSON array of integers. Each number determines # of
+					fouls needed to enter bonus at different parts of a game. 1st
+					determines # for periods, 2nd determines # for overtime, 3rd
+					determines # in last 2 minutes.
 				</>
 			),
 			type: "jsonString",
@@ -835,6 +833,9 @@ if (isSport("basketball")) {
 				for (const num of value) {
 					if (!Number.isInteger(num)) {
 						throw new Error("Array must contain only integers");
+					}
+					if (num < 0) {
+						throw new Error("Values cannot be less than 0");
 					}
 				}
 			},

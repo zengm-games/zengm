@@ -534,10 +534,14 @@ class GameSim {
 			dt = this.clock;
 		}
 
-		this.updatePlayingTime(dt);
+		// If advancing dt will pass by someone being released from the penalty box, break it into multiple steps so updatePlayingTime can be correct about ppMin and shMin
+		const dts = this.penaltyBox.splitUpAdvanceClock(dt);
+		for (const partial of dts) {
+			this.updatePlayingTime(partial);
+			this.clock -= partial;
+			this.penaltyBox.advanceClock(partial);
+		}
 
-		this.clock -= dt;
-		this.penaltyBox.advanceClock(dt);
 		this.minutesSinceLineChange[0].F += dt;
 		this.minutesSinceLineChange[0].D += dt;
 		this.minutesSinceLineChange[1].F += dt;

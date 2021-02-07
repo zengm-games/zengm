@@ -78,6 +78,28 @@ class PenaltyBox {
 			});
 		}
 	}
+
+	splitUpAdvanceClock(minutes: number) {
+		const needToStopAt = new Set<number>([minutes]);
+
+		for (const t of [0, 1] as const) {
+			for (const entry of this.players[t]) {
+				if (entry.minutesLeft < minutes) {
+					needToStopAt.add(entry.minutesLeft);
+				}
+			}
+		}
+
+		const minutesArray = Array.from(needToStopAt).sort((a, b) => a - b);
+
+		return minutesArray.map((x, i) => {
+			if (i === 0) {
+				return x;
+			}
+
+			return x - minutesArray[i - 1];
+		});
+	}
 }
 
 export default PenaltyBox;

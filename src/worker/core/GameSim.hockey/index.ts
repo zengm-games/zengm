@@ -53,6 +53,13 @@ type TeamCurrentLine = {
 	G: 0;
 };
 
+type PenaltyBoxEntry = {
+	p: PlayerGameSim;
+	type: keyof typeof penaltyTypes;
+	minutesLeft: number;
+	minutesReducedAfterGoal: number;
+};
+
 class GameSim {
 	id: number;
 
@@ -93,6 +100,8 @@ class GameSim {
 	lines: [TeamLines, TeamLines];
 
 	currentLine: [TeamCurrentLine, TeamCurrentLine];
+
+	penaltyBox: [PenaltyBoxEntry[], PenaltyBoxEntry[]];
 
 	constructor(
 		gid: number,
@@ -157,6 +166,8 @@ class GameSim {
 				D: 0,
 			},
 		];
+
+		this.penaltyBox = [[], []];
 	}
 
 	// Call this at beginning of game or after injuries
@@ -596,6 +607,15 @@ class GameSim {
 			}
 		}
 
+		const penaltyBoxDiff =
+			this.penaltyBox[this.o].length - this.penaltyBox[this.d].length;
+		let strengthType: "ev" | "sh" | "pp" = "ev";
+		if (penaltyBoxDiff > 0) {
+			strengthType = "sh";
+		} else if (penaltyBoxDiff < 0) {
+			strengthType = "pp";
+		}
+
 		let assister1: PlayerGameSim | undefined;
 		let assister2: PlayerGameSim | undefined;
 		if (type !== "reboundShot") {
@@ -604,14 +624,14 @@ class GameSim {
 				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
 					shooter,
 				]);
-				this.recordStat(this.o, assister1, "evA");
+				this.recordStat(this.o, assister1, `${strengthType}A`);
 			}
 			if (r2 < 0.8) {
 				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
 					shooter,
 					assister1 as PlayerGameSim,
 				]);
-				this.recordStat(this.o, assister2, "evA");
+				this.recordStat(this.o, assister2, `${strengthType}A`);
 			}
 		}
 
@@ -630,9 +650,9 @@ class GameSim {
 			t: this.o,
 			names: [shooter.name, ...assisterNames],
 			shotType: type,
-			goalType: "EV",
+			goalType: strengthType,
 		});
-		this.recordStat(this.o, shooter, "evG");
+		this.recordStat(this.o, shooter, `${strengthType}G`);
 		if (goalie) {
 			this.recordStat(this.d, goalie, "ga");
 		}

@@ -146,13 +146,14 @@ export const penalties: {
 		probPerPossession: 0,
 		cumsumProbPerPossession: 0,
 	},
-	{
+	// Disabled for now, cause this would generally apply to 2 people
+	/*{
 		name: "fighting",
 		type: "major",
 		numPerSeason: 449,
 		probPerPossession: 0,
 		cumsumProbPerPossession: 0,
-	},
+	},*/
 	{
 		name: "high-sticking",
 		type: "doubleMinor",

@@ -49,9 +49,9 @@ type TeamLines = {
 };
 
 type TeamCurrentLine = {
-	F: 0;
-	D: 0;
-	G: 0;
+	F: number;
+	D: number;
+	G: number;
 };
 class GameSim {
 	id: number;
@@ -139,7 +139,7 @@ class GameSim {
 		// Record "gs" stat for starters
 		this.o = 0;
 		this.d = 1;
-		this.updatePlayersOnIce("starters");
+		this.updatePlayersOnIce({ type: "starters" });
 		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
 		this.overtime = false;
@@ -168,6 +168,8 @@ class GameSim {
 				names: [p.name],
 				penaltyPID: p.id,
 			});
+
+			this.updatePlayersOnIce({ type: "penaltyOver", p });
 		});
 	}
 
@@ -386,13 +388,13 @@ class GameSim {
 		let quarter = 1;
 
 		while (true) {
-			this.updatePlayersOnIce("newPeriod");
+			this.updatePlayersOnIce({ type: "newPeriod" });
 			this.faceoff();
 
 			while (this.clock > 0) {
 				this.simPossession();
 				this.advanceClock();
-				this.updatePlayersOnIce();
+				this.updatePlayersOnIce({ type: "normal" });
 			}
 
 			quarter += 1;
@@ -433,14 +435,14 @@ class GameSim {
 			quarter: this.team[0].stat.ptsQtrs.length,
 		});
 
-		this.updatePlayersOnIce("newPeriod");
+		this.updatePlayersOnIce({ type: "newPeriod" });
 		this.faceoff();
 
 		// @ts-ignore
 		while (this.clock > 0) {
 			this.simPossession();
 			this.advanceClock();
-			this.updatePlayersOnIce();
+			this.updatePlayersOnIce({ type: "normal" });
 		}
 	}
 
@@ -663,7 +665,7 @@ class GameSim {
 	}
 
 	faceoff() {
-		this.updatePlayersOnIce();
+		this.updatePlayersOnIce({ type: "normal" });
 
 		const p0 = this.getTopPlayerOnIce(0, "faceoffs", ["C", "W", "D"]);
 		const p1 = this.getTopPlayerOnIce(1, "faceoffs", ["C", "W", "D"]);
@@ -727,6 +729,9 @@ class GameSim {
 			penaltyPID: p.id,
 		});
 		this.recordStat(t, p, "pim", penaltyType.minutes);
+
+		// Actually remove player from ice
+		this.updatePlayersOnIce({ type: "penalty" });
 
 		return true;
 	}
@@ -883,6 +888,11 @@ class GameSim {
 		this.currentLine[t][pos] += 1;
 
 		// Sometimes skip the 4th line of forwards
+		if (pos === "F" && this.currentLine[t][pos] === 2 && Math.random() < 0.1) {
+			this.currentLine[t][pos] = 0;
+		}
+
+		// Sometimes skip the 4th line of forwards
 		if (pos === "F" && this.currentLine[t][pos] >= 3 && Math.random() < 0.5) {
 			this.currentLine[t][pos] = 0;
 		}
@@ -896,23 +906,96 @@ class GameSim {
 			throw new Error("Not enough players");
 		}
 
+		newLine = [...newLine];
+		for (let i = 0; i < newLine.length; i++) {
+			const p = newLine[i];
+			if (this.penaltyBox.has(t, p)) {
+				let nextLine = this.lines[t][pos][this.currentLine[t][pos] + 1];
+				if (!nextLine) {
+					nextLine = this.lines[t][pos][0];
+				}
+				if (nextLine.length < NUM_PLAYERS_PER_LINE[pos]) {
+					throw new Error("Not enough players");
+				}
+
+				newLine[i] = random.choice(nextLine);
+			}
+		}
+
+		/*replace player from default line when...
+		- already in game (could get into this situation with penalties or whatever!)
+		  - how do i know if he's already in the game????? depends if other line is changing now or not
+		    - pass array of players already in game to this function*/
+		console.log("TODO");
+
 		if (pos === "F") {
-			this.playersOnIce[t].C = newLine.slice(0, 1);
-			this.playersOnIce[t].W = newLine.slice(1, 3);
+			const penaltyBoxCount = this.penaltyBox.count(t);
+			if (penaltyBoxCount === 0) {
+				// Normal
+				this.playersOnIce[t].C = newLine.slice(0, 1);
+				this.playersOnIce[t].W = newLine.slice(1, 3);
+			} else if (penaltyBoxCount === 1) {
+				// Leave out a forward
+				const r = Math.random();
+				if (r < 0.33) {
+					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].W = newLine.slice(1, 2);
+				} else if (r < 0.67) {
+					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].W = newLine.slice(2, 3);
+				} else {
+					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].W = newLine.slice(1, 3);
+				}
+			} else if (penaltyBoxCount === 2) {
+				// Leave out two forwards
+				const r = Math.random();
+				if (r < 0.33) {
+					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].W = [];
+				} else if (r < 0.67) {
+					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].W = newLine.slice(1, 2);
+				} else {
+					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].W = newLine.slice(2, 3);
+				}
+			} else {
+				throw new Error("Not implemented");
+			}
 		} else {
 			this.playersOnIce[t].D = newLine;
 		}
 	}
 
-	updatePlayersOnIce(playType?: "starters" | "newPeriod") {
+	updatePlayersOnIce(
+		options:
+			| {
+					type: "starters" | "newPeriod" | "normal" | "penalty";
+					p?: undefined;
+			  }
+			| {
+					type: "penaltyOver";
+					p: PlayerGameSim;
+			  },
+	) {
 		let substitutions = false;
 
 		for (const t of [0, 1] as const) {
-			if (playType === "starters" || playType === "newPeriod") {
+			if (options.type === "starters" || options.type === "newPeriod") {
 				this.playersOnIce[t].C = this.lines[t].F[0].slice(0, 1);
 				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
 				this.playersOnIce[t].D = this.lines[t].D[0];
 				this.playersOnIce[t].G = this.lines[t].G[0];
+			} else if (options.type === "penaltyOver") {
+				if (this.playersOnIce[t].C.length < 1) {
+					this.playersOnIce[t].C.push(options.p);
+				} else if (this.playersOnIce[t].W.length < 2) {
+					this.playersOnIce[t].W.push(options.p);
+				} else {
+					this.playersOnIce[t].D.push(options.p);
+				}
+				substitutions = true;
 			} else {
 				// Line change based on playing time
 				let lineChangeEvent:
@@ -921,13 +1004,19 @@ class GameSim {
 					| "defensiveLineChange"
 					| undefined;
 
-				if (this.clock >= 1) {
-					if (this.minutesSinceLineChange[t].F >= 0.7 && Math.random() < 0.75) {
+				if (this.clock >= 1 || options.type === "penalty") {
+					if (
+						(this.minutesSinceLineChange[t].F >= 0.7 && Math.random() < 0.75) ||
+						options.type === "penalty"
+					) {
 						lineChangeEvent = "offensiveLineChange";
 						this.doLineChange(t, "F");
 						substitutions = true;
 					}
-					if (this.minutesSinceLineChange[t].D >= 0.9 && Math.random() < 0.75) {
+					if (
+						(this.minutesSinceLineChange[t].D >= 0.9 && Math.random() < 0.75) ||
+						options.type === "penalty"
+					) {
 						if (lineChangeEvent) {
 							lineChangeEvent = "fullLineChange";
 						} else {
@@ -947,7 +1036,7 @@ class GameSim {
 				}
 			}
 
-			if (playType === "starters") {
+			if (options.type === "starters") {
 				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
 				for (const p of currentlyOnIce) {
 					this.recordStat(t, p, "gs");

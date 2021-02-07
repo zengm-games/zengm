@@ -37,6 +37,10 @@ class PenaltyBox {
 		return this.players[t].length;
 	}
 
+	has(t: TeamNum, p: PlayerGameSim) {
+		return this.players[t].some(entry => entry.p === p);
+	}
+
 	goal(scoringTeam: TeamNum) {
 		const t = scoringTeam === 0 ? 1 : 0;
 		for (const entry of this.players[t]) {

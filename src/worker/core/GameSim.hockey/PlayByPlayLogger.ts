@@ -39,6 +39,7 @@ type PlayByPlayEventInput =
 				| "slapshot"
 				| "wristshot"
 				| "shot"
+				| "reboundShot"
 				| "block"
 				| "miss"
 				| "save"

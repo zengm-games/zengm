@@ -510,9 +510,11 @@ class GameSim {
 		this.recordStat(this.d, p, "tk", 1);
 	}
 
-	advanceClock() {
-		// 0 to 30 seconds
-		let dt = Math.random() * 0.5;
+	advanceClock(special?: "rebound") {
+		// 1 to 30 seconds, or less if it's a rebound
+		const maxLength = special === "rebound" ? 0.05 : 0.5;
+
+		let dt = Math.random() * (maxLength - 0.017) + 0.017;
 		if (this.clock - dt < 0) {
 			dt = this.clock;
 		}
@@ -533,14 +535,13 @@ class GameSim {
 		return false;
 	}
 
-	doShot() {
+	doShot(special?: "rebound") {
 		const shooter = this.pickPlayer(this.o, "scoring", ["C", "W", "D"]);
 
-		const type: "slapshot" | "wristshot" | "shot" = random.choice([
-			"slapshot",
-			"wristshot",
-			"shot",
-		]);
+		const type: "slapshot" | "wristshot" | "shot" | "reboundShot" =
+			special === "rebound"
+				? "reboundShot"
+				: random.choice(["slapshot", "wristshot", "shot"]);
 
 		this.playByPlay.logEvent({
 			type: type,
@@ -664,53 +665,59 @@ class GameSim {
 		this.advanceClock();
 	}
 
-	simPossession() {
-		const numHits = this.getNumHits();
-		for (let i = 0; i < numHits; i++) {
-			this.doHit();
+	simPossession(special?: "rebound") {
+		if (!special) {
+			const numHits = this.getNumHits();
+			for (let i = 0; i < numHits; i++) {
+				this.doHit();
+
+				if (this.advanceClock()) {
+					return;
+				}
+			}
 
 			if (this.advanceClock()) {
 				return;
 			}
+
+			if (this.isGiveaway()) {
+				this.doGiveaway();
+				return;
+			}
+
+			if (this.isTakeaway()) {
+				this.doTakeaway();
+				return;
+			}
+
+			if (this.isNothing()) {
+				return;
+			}
 		}
 
-		if (this.advanceClock()) {
+		if (this.advanceClock(special)) {
 			return;
 		}
 
-		if (this.isGiveaway()) {
-			this.doGiveaway();
-			return;
-		}
-
-		if (this.isTakeaway()) {
-			this.doTakeaway();
-			return;
-		}
-
-		if (this.isNothing()) {
-			return;
-		}
-
-		if (this.advanceClock()) {
-			return;
-		}
-
-		const outcome = this.doShot();
+		const outcome = this.doShot(special);
 
 		if (outcome === "block" || outcome === "miss") {
-			if (Math.random() < 0.5) {
+			const r = Math.random();
+			if (r < 0.5) {
 				this.possessionChange();
+			} else if (r < 0.6) {
+				this.simPossession("rebound");
 			}
 
 			return;
 		}
 
 		if (outcome === "save") {
-			if (Math.random() < 0.5) {
+			const r = Math.random();
+			if (r < 0.5) {
 				this.possessionChange();
-			} else {
-				console.log("opportunity for another shot?");
+			} else if (r < 0.7) {
+				this.simPossession("rebound");
 			}
 
 			return;

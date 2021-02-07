@@ -83,6 +83,9 @@ const getText = (
 	if (event.type === "shot") {
 		text = `Shot by ${event.names[0]}`;
 	}
+	if (event.type === "reboundShot") {
+		text = `Shot by ${event.names[0]} off the rebound`;
+	}
 	if (event.type === "block") {
 		text = `Blocked by ${event.names[0]}`;
 	}

@@ -338,7 +338,7 @@ export const options: {
 		godModeRequired: "existingLeagueOnly",
 		description: "Set the minimum/maximum age of draft prospects.",
 		type: "jsonString",
-		validator: (value, output, props) => {
+		validator: value => {
 			if (!Array.isArray(value)) {
 				throw new Error("Must be an array");
 			}

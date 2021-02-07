@@ -33,7 +33,8 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	const baseAge = 19 - (draftYear - g.get("season"));
+	const draftAge = g.get("draftAge");
+	const baseAge = draftAge[0] - (draftYear - g.get("season"));
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const p: any = player.generate(
@@ -62,7 +63,10 @@ const genPlayersWithoutSaving = async (
 
 		if (isSport("basketball") || i >= 2) {
 			// Top 50% of players remaining enter draft, except in last year when all do
-			cutoff = i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
+			cutoff =
+				i === draftAge[1] - draftAge[0]
+					? remaining.length
+					: Math.round(0.5 * remaining.length);
 		}
 
 		remaining.sort(

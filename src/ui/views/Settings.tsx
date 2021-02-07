@@ -42,6 +42,7 @@ type Key =
 	| "numPlayoffByes"
 	| "draftType"
 	| "numSeasonsFutureDraftPicks"
+	| "draftAge"
 	| "salaryCap"
 	| "minPayroll"
 	| "luxuryPayroll"
@@ -327,6 +328,24 @@ export const options: {
 		validator: value => {
 			if (value < 0) {
 				throw new Error("Value cannot be less than 0");
+			}
+		},
+	},
+	{
+		category: "Draft",
+		key: "draftAge",
+		name: "Age of draft prospects",
+		godModeRequired: "existingLeagueOnly",
+		description: "Configure the age of draftees",
+		type: "jsonString",
+		validator: (value, output, props) => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			for (const num of value) {
+				if (!Number.isInteger(num)) {
+					throw new Error("Array must contain only integers");
+				}
 			}
 		},
 	},

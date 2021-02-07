@@ -819,7 +819,7 @@ if (isSport("basketball")) {
 					must enter a valid JSON array of integers. Each number determines # of
 					fouls needed to enter bonus at different parts of a game. 1st
 					determines # for periods, 2nd determines # for overtime, 3rd
-					determines # in last 2 minutes.
+					determines # in last 2 minutes. The default is <code>[5,4,1]</code>.
 				</>
 			),
 			type: "jsonString",

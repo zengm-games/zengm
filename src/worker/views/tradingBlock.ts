@@ -16,7 +16,7 @@ const updateUserRoster = async (
 		const stats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+			hockey: ["gp", "keyStats", "ops", "dps", "gps", "ps"],
 		});
 		const [userRosterAll, userPicks] = await Promise.all([
 			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),

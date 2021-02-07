@@ -10,7 +10,7 @@ const updateUpcomingFreeAgents = async (
 	const stats = bySport({
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		hockey: ["gp", "keyStats", "ops", "dps", "gps", "ps"],
 	});
 
 	const showActualFreeAgents =

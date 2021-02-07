@@ -1368,7 +1368,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		const stats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+			hockey: ["gp", "keyStats", "ops", "dps", "gps", "ps"],
 		});
 
 		// Take the pids and dpids in each offer and get the info needed to display the offer

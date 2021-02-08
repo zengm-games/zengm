@@ -188,8 +188,6 @@ const roundOverrides: Record<
 		l: "noDecimalPlace",
 		t: "noDecimalPlace",
 		otl: "noDecimalPlace",
-		qs: "noDecimalPlace",
-		rbs: "noDecimalPlace",
 		pm: "plusMinusNoDecimalPlace",
 		pim: "oneDecimalPlace",
 		evG: "noDecimalPlace",
@@ -218,8 +216,8 @@ const roundOverrides: Record<
 		oppPts: "noDecimalPlace",
 		sPct: "oneDecimalPlace",
 		svPct: "oneDecimalPlace",
-		qsPct: "oneDecimalPlace",
-		rbsPct: "oneDecimalPlace",
+		ppo: "noDecimalPlace",
+		ppPct: "oneDecimalPlace",
 		sa: "noDecimalPlace",
 		gaa: "twoDecimalPlaces",
 		ps: "oneDecimalPlace",
@@ -229,7 +227,11 @@ const roundOverrides: Record<
 		gc: "oneDecimalPlace",
 		min: "minutes",
 		amin: "minutes",
+		ppMin: "minutes",
+		shMin: "minutes",
 		minMax: "minutes",
+		ppMinMax: "minutes",
+		shMinMax: "minutes",
 		pmMax: "plusMinusNoDecimalPlace",
 		pimMax: "oneDecimalPlace",
 		evGMax: "noDecimalPlace",
@@ -250,6 +252,31 @@ const roundOverrides: Record<
 		svMax: "noDecimalPlace",
 		gMax: "noDecimalPlace",
 		aMax: "noDecimalPlace",
+		oppG: "noDecimalPlace",
+		oppA: "noDecimalPlace",
+		oppPim: "noDecimalPlace",
+		oppEvG: "noDecimalPlace",
+		oppPpG: "noDecimalPlace",
+		oppShG: "noDecimalPlace",
+		oppEvA: "noDecimalPlace",
+		oppPpA: "noDecimalPlace",
+		oppShA: "noDecimalPlace",
+		oppS: "noDecimalPlace",
+		oppSPct: "oneDecimalPlace",
+		oppTsa: "noDecimalPlace",
+		oppPpo: "noDecimalPlace",
+		oppPpPct: "oneDecimalPlace",
+		oppFow: "noDecimalPlace",
+		oppFol: "noDecimalPlace",
+		oppFoPct: "oneDecimalPlace",
+		oppBlk: "noDecimalPlace",
+		oppHit: "noDecimalPlace",
+		oppTk: "noDecimalPlace",
+		oppGv: "noDecimalPlace",
+		oppSv: "noDecimalPlace",
+		oppSvPct: "oneDecimalPlace",
+		oppGaa: "twoDecimalPlaces",
+		oppSo: "noDecimalPlace",
 	},
 });
 
@@ -273,6 +300,10 @@ const roundStat = (
 		if (roundOverrides[stat] === "minutes") {
 			if (value > 100) {
 				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			}
+
+			if (value === 0) {
+				return "--:--";
 			}
 
 			const remainder = value % 1;

@@ -37,8 +37,10 @@ const statsByType = {
 		"fol",
 		"foPct",
 		"min",
+		"ppMin",
+		"shMin",
 	],
-	goalies: ["ga", "sa", "sv", "svPct", "pim", "min"],
+	goalies: ["ga", "sa", "sv", "svPct", "pim", "min", "ppMin", "shMin"],
 };
 
 const sortsByType = {
@@ -48,11 +50,13 @@ const sortsByType = {
 
 const StatsTable = ({
 	Row,
+	forceRowUpdate,
 	title,
 	type,
 	t,
 }: {
 	Row: any;
+	forceRowUpdate: boolean;
 	title: string;
 	type: keyof typeof sortsByType;
 	t: Team;
@@ -85,21 +89,11 @@ const StatsTable = ({
 									processed: processPlayerStats(p, stats),
 								};
 							})
-							.filter(p => {
-								// Filter based on if player has any stats
-								for (const stat of stats) {
-									if (
-										p.processed[stat] !== undefined &&
-										p.processed[stat] !== 0 &&
-										stat !== "min" &&
-										stat !== "pm" &&
-										stat !== "pim"
-									) {
-										return true;
-									}
-								}
-								return false;
-							})
+							.filter(
+								p =>
+									(type === "skaters" && p.gpSkater > 0) ||
+									(type === "goalies" && p.gpGoalie > 0),
+							)
 							.sort((a, b) => {
 								for (const sort of sorts) {
 									if (b.processed[sort] !== a.processed[sort]) {
@@ -109,7 +103,13 @@ const StatsTable = ({
 								return 0;
 							})
 							.map((p, i) => (
-								<Row key={p.pid} i={i} p={p} stats={stats} />
+								<Row
+									key={p.pid}
+									i={i}
+									p={p}
+									stats={stats}
+									forceUpdate={forceRowUpdate}
+								/>
 							))}
 					</tbody>
 				</table>
@@ -246,7 +246,15 @@ ScoringSummary.propTypes = {
 	teams: PropTypes.array.isRequired,
 };
 
-const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
+const BoxScore = ({
+	boxScore,
+	forceRowUpdate,
+	Row,
+}: {
+	boxScore: BoxScore;
+	forceRowUpdate: boolean;
+	Row: any;
+}) => {
 	return (
 		<div className="mb-3">
 			<h2>Scoring Summary</h2>
@@ -267,6 +275,7 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 						<StatsTable
 							key={title}
 							Row={Row}
+							forceRowUpdate={forceRowUpdate}
 							title={title}
 							type={title.toLowerCase() as any}
 							t={t}

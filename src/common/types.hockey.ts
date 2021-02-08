@@ -9,7 +9,7 @@ export type TeamStatAttr =
 	| "sPct"
 	| "svPct"
 	| "foPct"
-	| "qsPct"
+	| "ppPct"
 	| "gaa"
 	| "oppG"
 	| "oppA"
@@ -17,6 +17,7 @@ export type TeamStatAttr =
 	| "oppSPct"
 	| "oppSvPct"
 	| "oppFoPct"
+	| "oppPpPct"
 	| "oppGaa";
 
 type AwardTeam = {

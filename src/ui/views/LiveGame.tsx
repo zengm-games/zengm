@@ -38,6 +38,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 			hockey: !!(
 				this.prevInGame ||
 				nextProps.p.inGame ||
+				nextProps.p.inPenaltyBox ||
 				nextProps.forceUpdate
 			),
 		});
@@ -56,6 +57,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 			football: undefined,
 			hockey: classNames({
 				"table-warning": p.inGame,
+				"table-danger": p.inPenaltyBox,
 			}),
 		});
 
@@ -131,7 +133,8 @@ const LiveGame = (props: View<"liveGame">) => {
 				if (
 					text === "End of game" ||
 					text.startsWith("Start of") ||
-					text.startsWith("Elam Ending activated! First team to")
+					text.startsWith("Elam Ending activated! First team to") ||
+					text.includes("Goal!")
 				) {
 					const b = document.createElement("b");
 					b.appendChild(node);

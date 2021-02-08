@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import { helpers } from "../../ui/util";
+import { helpers } from ".";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
@@ -51,6 +51,8 @@ const getText = (
 ) => {
 	let text;
 
+	let showTeamAndClock = true;
+
 	if (event.type === "injury") {
 		text = `${event.names[0]} was injured!`;
 	}
@@ -58,12 +60,15 @@ const getText = (
 		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
 			boxScore.numPeriods,
 		)}`;
+		showTeamAndClock = false;
 	}
 	if (event.type === "overtime") {
 		text = "Start of overtime";
+		showTeamAndClock = false;
 	}
 	if (event.type === "gameOver") {
 		text = "End of game";
+		showTeamAndClock = false;
 	}
 	if (event.type === "hit") {
 		text = `${event.names[0]} hit ${event.names[1]}`;
@@ -125,15 +130,22 @@ const getText = (
 				: "Double minor";
 		text = `${type} penalty on ${event.names[0]} for ${event.penaltyName}`;
 	}
+	if (event.type === "penaltyOver") {
+		text = `${event.names[0]} is released from the penalty box`;
+	}
 
 	if (text === undefined) {
 		throw new Error(`Invalid event type "${event.type}"`);
 	}
 
-	const actualT = (event as any).t === 0 ? 1 : 0;
-	return `${formatClock((event as any).clock)} - ${
-		boxScore.teams[actualT].abbrev
-	} - ${text}`;
+	if (showTeamAndClock) {
+		const actualT = (event as any).t === 0 ? 1 : 0;
+		text = `${formatClock((event as any).clock)} - ${
+			boxScore.teams[actualT].abbrev
+		} - ${text}`;
+	}
+
+	return text;
 };
 
 // Mutates boxScore!!!
@@ -157,15 +169,13 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
-	let prevText;
-	let e2: PlayByPlayEvent | undefined;
+	let prevGoal: PlayByPlayEvent | undefined;
 
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 		if (!e) {
 			continue;
 		}
-		e2 = e;
 
 		// Swap teams order, so home team is at bottom in box score
 		// @ts-ignore
@@ -229,15 +239,34 @@ const processLiveGameEvents = ({
 					(p2: any) => p2.pid === e.injuredPID,
 				);
 				if (p === undefined) {
-					console.log("Can't find injured player", e);
+					console.log("Can't find player", e);
 				}
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,
 				};
+			} else if (e.type === "penalty") {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.penaltyPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
+				}
+				p.inPenaltyBox = true;
+			} else if (e.type === "penaltyOver") {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.penaltyPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find player", e);
+				}
+				p.inPenaltyBox = false;
 			}
 
-			prevText = text;
+			if (e.type === "goal") {
+				prevGoal = e;
+			}
+
 			text = getText(e, boxScore);
 			boxScore.time = formatClock(e.clock);
 			stop = true;
@@ -259,13 +288,10 @@ const processLiveGameEvents = ({
 				// Past quarters
 				event.hide = false;
 			} else {
-				// Current quarter - this is the normal way all events will be shown. Used to just check time, but then scoring summary would update at the beginning of a play, since the scoring event has the same timestamp. So now also check for the internal properties of the event object, since it should always come through as "e" from above. Don't check event.t because that gets flipped in box score display
+				const cmp = cmpTime(formatClock(event.clock), boxScore.time);
 				const show =
-					cmpTime(formatClock(event.clock), boxScore.time) !== -1 &&
-					prevText === getText(event, boxScore) &&
-					e2 &&
-					(e2 as any).clock === event.clock &&
-					(e2 as any).quarter === event.quarter;
+					cmp === 1 ||
+					(cmp === 0 && prevGoal && (prevGoal as any).clock === event.clock);
 				event.hide = !show;
 			}
 		}

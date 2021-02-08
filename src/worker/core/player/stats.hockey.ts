@@ -8,10 +8,6 @@ const stats = {
 		"t",
 		"otl",
 
-		// Quality starts and really bad starts (goalie)
-		"qs",
-		"rbs",
-
 		// Shutouts
 		"so",
 
@@ -23,8 +19,12 @@ const stats = {
 	] as const,
 	raw: [
 		"gp",
+		"gpSkater",
+		"gpGoalie",
 		"gs",
 		"min",
+		"ppMin",
+		"shMin",
 		"minAvailable",
 		"pm",
 		"pim",
@@ -65,6 +65,8 @@ const stats = {
 	] as const,
 	max: [
 		"minMax",
+		"ppMinMax",
+		"shMinMax",
 		"pmMax",
 		"pimMax",
 		"evGMax",

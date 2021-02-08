@@ -67,6 +67,14 @@ type PlayByPlayEventInput =
 			names: [string];
 			penaltyType: keyof typeof penaltyTypes;
 			penaltyName: string;
+			penaltyPID: number;
+	  }
+	| {
+			type: "penaltyOver";
+			clock: number;
+			t: TeamNum;
+			names: [string];
+			penaltyPID: number;
 	  };
 
 export type PlayByPlayEvent =

@@ -85,7 +85,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
 	foulsNeededToFoulOut: 6,
-	foulsUntilBonus: [5, 4, 1],
+	foulsUntilBonus: [5, 4, 2],
 	rookieContractLengths: [3, 2],
 	rookiesCanRefuse: true,
 

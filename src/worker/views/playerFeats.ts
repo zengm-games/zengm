@@ -151,6 +151,7 @@ const updatePlayers = async (
 				"hit",
 				"tk",
 				"gv",
+				"sv",
 			],
 		});
 		return {

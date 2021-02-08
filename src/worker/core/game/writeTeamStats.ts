@@ -223,11 +223,10 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.facilities.amount += facilitiesPaid;
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
-		// "ga" is similar - only matters for individual goalies, but team is better with opp stats
 		const skip = bySport({
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
-			hockey: ["ptsQtrs", "ga"],
+			hockey: ["ptsQtrs"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
@@ -250,6 +249,16 @@ const writeTeamStats = async (results: GameResults) => {
 				if (teamStats.hasOwnProperty(oppKey)) {
 					teamStats[oppKey] += results.team[t2].stat[key];
 				}
+			}
+		}
+
+		// Track this separately, because a team can get a shutout with multiple goalies, and then there is no player shutout
+		if (isSport("hockey")) {
+			if (results.team[t2].stat.pts === 0) {
+				teamStats.so += 1;
+			}
+			if (results.team[t1].stat.pts === 0) {
+				teamStats.oppSo += 1;
 			}
 		}
 

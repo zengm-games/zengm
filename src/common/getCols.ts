@@ -1331,16 +1331,6 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
-		"stat:qs": {
-			desc: "Quality Starts",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:rbs": {
-			desc: "Really Bad Starts",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
 		"stat:pm": {
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],
@@ -1476,16 +1466,6 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
-		"stat:qsPct": {
-			desc: "Quality Starts Percentage",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:rbsPct": {
-			desc: "Really Bad Starts Percentage",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
 		"stat:sa": {
 			desc: "Shots Against",
 			sortSequence: ["desc", "asc"],
@@ -1528,6 +1508,26 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:amin": {
 			desc: "Average Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppMin": {
+			desc: "Power Play Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:shMin": {
+			desc: "Short Handed Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppo": {
+			desc: "Power Play Opportunities",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppPct": {
+			desc: "Power Play Percentage",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -2346,8 +2346,6 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:l": "L",
 		"stat:t": "T",
 		"stat:otl": "OT",
-		"stat:qs": "QS",
-		"stat:rbs": "RBS",
 		"stat:pm": "+/-",
 		"stat:pim": "PIM",
 		"stat:evG": "evG",
@@ -2375,8 +2373,6 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:pts": "PTS",
 		"stat:sPct": "S%",
 		"stat:svPct": "SV%",
-		"stat:qsPct": "QS%",
-		"stat:rbsPct": "TBRBS%",
 		"stat:sa": "SA",
 		"stat:gaa": "GAA",
 		"stat:keyStats": "Stats",
@@ -2386,6 +2382,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:gps": "GPS",
 		"stat:gc": "GC",
 		"stat:amin": "ATOI",
+		"stat:ppMin": "ppTOI",
+		"stat:shMin": "shTOI",
+		"stat:ppo": "PPO",
+		"stat:ppPct": "PP%",
 	},
 });
 

@@ -205,6 +205,30 @@ const processGameAttributes = async (
 		);
 	}
 
+	const prevFoulsUntilBonus = g.get("foulsUntilBonus");
+	if (
+		info.foulsUntilBonus !== undefined &&
+		JSON.stringify(info.foulsUntilBonus) !== JSON.stringify(prevFoulsUntilBonus)
+	) {
+		let text = "New number of team fouls until the bonus: ";
+
+		if (info.foulsUntilBonus[0] === info.foulsUntilBonus[1]) {
+			text += `${info.foulsUntilBonus[0]} in any regulation or overtime period`;
+		} else {
+			text += `${info.foulsUntilBonus[0]} in regulation periods, ${info.foulsUntilBonus[1]} in overtime periods`;
+		}
+
+		if (
+			info.foulsUntilBonus[2] < info.foulsUntilBonus[0] ||
+			info.foulsUntilBonus[2] < info.foulsUntilBonus[1]
+		) {
+			// If this condition is not true, then last 2 minutes rule basically does not exist
+			text += `, ${info.foulsUntilBonus[2]} in the last 2 minutes of any period`;
+		}
+
+		texts.push(text);
+	}
+
 	for (const text of texts) {
 		logEvent({
 			text,

@@ -142,7 +142,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.events}
 						/>
-						Delete All Event Log Entries
+						Delete All News Feed Entries
 					</label>
 				</div>
 

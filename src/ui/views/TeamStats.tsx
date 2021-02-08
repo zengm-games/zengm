@@ -90,7 +90,7 @@ const TeamStats = ({
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
-		if (isSport("basketball")) {
+		if (isSport("basketball") || isSport("hockey")) {
 			const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
 			for (const plusMinusCol of plusMinusCols) {
 				if (data.hasOwnProperty(plusMinusCol)) {

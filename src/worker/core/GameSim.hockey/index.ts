@@ -160,7 +160,7 @@ class GameSim {
 			},
 		];
 
-		this.penaltyBox = new PenaltyBox(({ t, p, minutesAgo }) => {
+		this.penaltyBox = new PenaltyBox(({ t, p, minutesAgo, ppo }) => {
 			this.playByPlay.logEvent({
 				type: "penaltyOver",
 				clock: this.clock + minutesAgo,
@@ -168,6 +168,11 @@ class GameSim {
 				names: [p.name],
 				penaltyPID: p.id,
 			});
+
+			if (ppo > 0) {
+				const t2 = t === 0 ? 1 : 0;
+				this.recordStat(t2, undefined, "ppo", 1);
+			}
 
 			this.updatePlayersOnIce({ type: "penaltyOver", p, t });
 		});
@@ -621,12 +626,11 @@ class GameSim {
 			}
 		}
 
-		const penaltyBoxDiff =
-			this.penaltyBox.count(this.o) - this.penaltyBox.count(this.d);
+		const powerPlayTeam = this.penaltyBox.getPowerPlayTeam();
 		let strengthType: "ev" | "sh" | "pp" = "ev";
-		if (penaltyBoxDiff > 0) {
+		if (powerPlayTeam === this.d) {
 			strengthType = "sh";
-		} else if (penaltyBoxDiff < 0) {
+		} else if (powerPlayTeam === this.o) {
 			strengthType = "pp";
 		}
 

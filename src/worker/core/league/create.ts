@@ -467,8 +467,12 @@ export const createWithoutSaving = async (
 
 		// Generate past 20 years of draft classes
 
+		let seasonsSimmed = 20;
+		if (g.get("forceRetireAge") > g.get("draftAge")[1]) {
+			seasonsSimmed = g.get("forceRetireAge") - g.get("draftAge")[1];
+		}
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
-		const NUM_PAST_SEASONS = 20 + seasonOffset;
+		const NUM_PAST_SEASONS = seasonsSimmed + seasonOffset;
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();

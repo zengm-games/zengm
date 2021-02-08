@@ -472,7 +472,7 @@ export const createWithoutSaving = async (
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();
-		const keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
+		let keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 		for (
 			let numYearsAgo = NUM_PAST_SEASONS;
@@ -652,7 +652,9 @@ export const createWithoutSaving = async (
 		};
 
 		// Drafted players kept with own team, with some probability
+		const playersStayedOnOwnTeam = new Set();
 		for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
+			console.log(i);
 			const p = keptPlayers[i];
 
 			if (
@@ -661,9 +663,10 @@ export const createWithoutSaving = async (
 				numPlayersByTid[p.draft.tid] < numPlayerPerTeam
 			) {
 				await addPlayerToTeam(p, p.draft.tid);
-				keptPlayers.splice(i, 1);
+				playersStayedOnOwnTeam.add(p);
 			}
 		}
+		keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
 
 		// Then add other players, up to the limit
 		while (true) {

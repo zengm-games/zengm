@@ -4,7 +4,6 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
-import { players } from "../../db/getCopies";
 
 const gameOrWeek = bySport({ default: "game", football: "week" });
 

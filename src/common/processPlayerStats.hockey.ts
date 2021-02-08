@@ -40,8 +40,6 @@ const processStats = (
 			row[stat] = percentage(ps.sv, ps.sv + ps.ga);
 		} else if (stat === "foPct") {
 			row[stat] = percentage(ps.fow, ps.fow + ps.fol);
-		} else if (stat === "qsPct") {
-			row[stat] = percentage(ps.qs, ps.gp);
 		} else if (stat === "gaa") {
 			row[stat] = ratio(ps.ga, ps.gp);
 		} else if (stat === "amin") {

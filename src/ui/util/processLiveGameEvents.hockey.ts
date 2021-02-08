@@ -169,7 +169,6 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
-	let prevText;
 	let prevGoal: PlayByPlayEvent | undefined;
 
 	while (!stop && events.length > 0) {

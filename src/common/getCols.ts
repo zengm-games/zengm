@@ -1521,6 +1521,16 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:ppo": {
+			desc: "Power Play Opportunities",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppPct": {
+			desc: "Power Play Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 });
 const cols: {
@@ -2374,6 +2384,8 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:amin": "ATOI",
 		"stat:ppMin": "ppTOI",
 		"stat:shMin": "shTOI",
+		"stat:ppo": "PPO",
+		"stat:ppPct": "PP%",
 	},
 });
 

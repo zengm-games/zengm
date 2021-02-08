@@ -19,6 +19,7 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 9,
 					lost: 1,
 					tied: 0,
+					otl: 0,
 				},
 			},
 			{
@@ -31,6 +32,7 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 8,
 					lost: 2,
 					tied: 0,
+					otl: 0,
 				},
 			},
 			{
@@ -43,6 +45,7 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 1,
 					lost: 9,
 					tied: 0,
+					otl: 0,
 				},
 			},
 			{
@@ -55,6 +58,7 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 2,
 					lost: 8,
 					tied: 0,
+					otl: 0,
 				},
 			},
 		];

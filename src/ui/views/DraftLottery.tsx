@@ -408,7 +408,10 @@ const DraftLotteryTable = (props: Props) => {
 						</thead>
 						<tbody>
 							{result.map(
-								({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
+								(
+									{ tid, originalTid, chances, pick, won, lost, otl, tied },
+									i,
+								) => {
 									const pickCols = range(NUM_PICKS).map(j => {
 										const prob = probs[i][j];
 										const pct =
@@ -456,6 +459,7 @@ const DraftLotteryTable = (props: Props) => {
 											<td>
 												<a href={helpers.leagueUrl(["standings", season])}>
 													{won}-{lost}
+													{otl > 0 ? <>-{otl}</> : null}
 													{tied > 0 ? <>-{tied}</> : null}
 												</a>
 											</td>

@@ -149,10 +149,14 @@ const processSeasonAttrs = async <
 				} else if (attr === "lastTen") {
 					const lastTenWon = ts.lastTen.filter(x => x === 1).length;
 					const lastTenLost = ts.lastTen.filter(x => x === 0).length;
+					const lastTenOTL = ts.lastTen.filter(x => x === "OTL").length;
+					const lastTenTied = ts.lastTen.filter(x => x === -1).length;
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
-					if (g.get("ties", season)) {
-						const lastTenTied = ts.lastTen.filter(x => x === -1).length;
+					if (lastTenOTL > 0) {
+						row.lastTen += `-${lastTenOTL}`;
+					}
+					if (lastTenTied > 0) {
 						row.lastTen += `-${lastTenTied}`;
 					}
 				} else if (attr === "streak") {

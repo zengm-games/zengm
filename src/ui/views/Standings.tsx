@@ -13,23 +13,19 @@ const record = (
 	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
 	type: "Home" | "Away" | "Div" | "Conf",
 ) => {
-	const won = `won${type}` as "wonHome" | "wonAway" | "wonDiv" | "wonConf";
-	const lost = `lost${type}` as
-		| "lostHome"
-		| "lostAway"
-		| "lostDiv"
-		| "lostConf";
-	const tied = `tied${type}` as
-		| "tiedHome"
-		| "tiedAway"
-		| "tiedDiv"
-		| "tiedConf";
+	const won = `won${type}` as const;
+	const lost = `lost${type}` as const;
+	const otl = `otl${type}` as const;
+	const tied = `tied${type}` as const;
 
-	const val = `${seasonAttrs[won]}-${seasonAttrs[lost]}`;
-	if (seasonAttrs[tied] > 0) {
-		return `${val}-${seasonAttrs[tied]}`;
+	let text = `${seasonAttrs[won]}-${seasonAttrs[lost]}`;
+	if (seasonAttrs[otl] > 0) {
+		text += `-${seasonAttrs[otl]}`;
 	}
-	return val;
+	if (seasonAttrs[tied] > 0) {
+		text += `-${seasonAttrs[tied]}`;
+	}
+	return text;
 };
 
 const GroupStandingsRow = ({
@@ -37,9 +33,10 @@ const GroupStandingsRow = ({
 	separator,
 	t,
 	ties,
+	otl,
 	type,
 	userTid,
-}: Pick<View<"standings">, "season" | "ties" | "type" | "userTid"> & {
+}: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
 	separator: boolean;
 	t: View<"standings">["teams"][number];
 }) => {
@@ -72,6 +69,7 @@ const GroupStandingsRow = ({
 			</td>
 			<td>{t.seasonAttrs.won}</td>
 			<td>{t.seasonAttrs.lost}</td>
+			{otl ? <td>{t.seasonAttrs.otl}</td> : null}
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
 			<td>{t.gb[type]}</td>
@@ -100,9 +98,13 @@ const GroupStandings = ({
 	separatorIndex,
 	teams,
 	ties,
+	otl,
 	type,
 	userTid,
-}: Pick<View<"standings">, "season" | "teams" | "ties" | "type" | "userTid"> & {
+}: Pick<
+	View<"standings">,
+	"season" | "teams" | "ties" | "otl" | "type" | "userTid"
+> & {
 	name?: string;
 	separatorIndex?: number;
 }) => {
@@ -114,6 +116,7 @@ const GroupStandings = ({
 						<th style={width100}>{name}</th>
 						<th>W</th>
 						<th>L</th>
+						{otl ? <th>OTL</th> : null}
 						{ties ? <th>T</th> : null}
 						<th>%</th>
 						<th>GB</th>
@@ -135,6 +138,7 @@ const GroupStandings = ({
 							t={t}
 							season={season}
 							separator={separatorIndex === i}
+							otl={otl}
 							ties={ties}
 							type={type}
 							userTid={userTid}
@@ -239,6 +243,7 @@ const Standings = ({
 	season,
 	teams,
 	ties,
+	otl,
 	type,
 	userTid,
 }: View<"standings">) => {
@@ -324,6 +329,7 @@ const Standings = ({
 					key={j}
 					{...subgroup}
 					season={season}
+					otl={otl}
 					ties={ties}
 					type={type}
 					userTid={userTid}

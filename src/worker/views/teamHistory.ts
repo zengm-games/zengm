@@ -26,6 +26,7 @@ export const getHistory = async (
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
 		numConfs: number;
@@ -37,6 +38,7 @@ export const getHistory = async (
 	let totalWon = 0;
 	let totalLost = 0;
 	let totalTied = 0;
+	let totalOtl = 0;
 	let playoffAppearances = 0;
 	let finalsAppearances = 0;
 	let championships = 0;
@@ -50,6 +52,7 @@ export const getHistory = async (
 			won: teamSeason.won,
 			lost: teamSeason.lost,
 			tied: teamSeason.tied,
+			otl: teamSeason.otl,
 			playoffRoundsWon: teamSeason.playoffRoundsWon,
 			numPlayoffRounds,
 			numConfs: g.get("confs", teamSeason.season).length,
@@ -64,6 +67,7 @@ export const getHistory = async (
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;
 		totalTied += teamSeason.tied;
+		totalOtl += teamSeason.otl;
 
 		if (teamSeason.playoffRoundsWon >= 0) {
 			playoffAppearances += 1;
@@ -143,6 +147,7 @@ export const getHistory = async (
 		won: totalWon,
 		lost: totalLost,
 		tied: totalTied,
+		otl: totalOtl,
 	});
 
 	return {
@@ -152,6 +157,7 @@ export const getHistory = async (
 		totalWon,
 		totalLost,
 		totalTied,
+		totalOtl,
 		totalWinp,
 		playoffAppearances,
 		finalsAppearances,

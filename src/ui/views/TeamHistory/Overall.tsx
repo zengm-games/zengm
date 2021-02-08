@@ -8,6 +8,7 @@ const Overall = ({
 	finalsAppearances,
 	playoffAppearances,
 	totalLost,
+	totalOtl,
 	totalTied,
 	totalWinp,
 	totalWon,
@@ -19,12 +20,16 @@ const Overall = ({
 	| "finalsAppearances"
 	| "playoffAppearances"
 	| "totalLost"
+	| "totalOtl"
 	| "totalTied"
 	| "totalWinp"
 	| "totalWon"
 	| "worstRecord"
 >) => {
 	let record = `${totalWon}-${totalLost}`;
+	if (totalOtl > 0) {
+		record += `-${totalOtl}`;
+	}
 	if (totalTied > 0) {
 		record += `-${totalTied}`;
 	}
@@ -49,6 +54,7 @@ const Overall = ({
 						lost={bestRecord.lost}
 						season={bestRecord.season}
 						tied={bestRecord.tied}
+						otl={bestRecord.otl}
 						won={bestRecord.won}
 					/>
 				) : (
@@ -63,6 +69,7 @@ const Overall = ({
 						lost={worstRecord.lost}
 						season={worstRecord.season}
 						tied={worstRecord.tied}
+						otl={worstRecord.otl}
 						won={worstRecord.won}
 					/>
 				) : (

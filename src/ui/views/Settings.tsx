@@ -80,6 +80,7 @@ type Key =
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
+	| "otl"
 	| "spectator"
 	| "elam"
 	| "elamASG"
@@ -986,6 +987,14 @@ options.push(
 		key: "ties",
 		name: "Ties (Regular Season Only)",
 		type: "bool",
+	},
+	{
+		category: "Game Simulation",
+		key: "otl",
+		name: "Overtime Losses (Regular Season Only)",
+		type: "bool",
+		description:
+			"Track overtime losses (OTL) separately from regulation losses, as is common in hockey.",
 	},
 	{
 		category: "Game Modes",

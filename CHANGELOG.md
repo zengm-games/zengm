@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Added a new option in League Settings to track overtime losses (OTL) separately from regulation losses, as is common in hockey. Currently it's just cosmetic, they count the same as losses.
+
 * DEV: Added new skill label "V" for "Volume Scorer" to BBGM. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/357)
 
 * DEV: Updated the "desired contract length" formula based to feel more realistic. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/356)

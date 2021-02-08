@@ -57,6 +57,7 @@ const updateRoster = async (
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"playoffRoundsWon",
 			"imgURL",
 			"region",

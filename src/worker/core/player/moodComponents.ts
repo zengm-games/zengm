@@ -133,7 +133,8 @@ const moodComponents = async (
 			const projectedRecord = {
 				won: currentTeamSeason.won,
 				lost: currentTeamSeason.lost,
-				tied: currentTeamSeason.tied || 0,
+				tied: currentTeamSeason.tied ?? 0,
+				otl: currentTeamSeason.otl ?? 0,
 			};
 
 			// If a custom league file starts after the regular season, don't assume all teams have 0 winning percentage
@@ -141,7 +142,8 @@ const moodComponents = async (
 				g.get("phase") >= PHASE.PLAYOFFS &&
 				projectedRecord.won === 0 &&
 				projectedRecord.lost === 0 &&
-				projectedRecord.tied === 0;
+				projectedRecord.tied === 0 &&
+				projectedRecord.otl === 0;
 			if (!leagueFileFromAfterSeason) {
 				let wonTitle = false;
 
@@ -153,19 +155,27 @@ const moodComponents = async (
 					const previousRecord = {
 						won: previousSeason ? previousSeason.won : 0,
 						lost: previousSeason ? previousSeason.lost : 0,
-						tied: previousSeason ? previousSeason.tied || 0 : 1,
+						tied: previousSeason ? previousSeason.tied ?? 0 : 1,
+						otl: previousSeason ? previousSeason.otl ?? 0 : 1,
 					};
 
 					const fractionComplete =
 						(projectedRecord.won +
 							projectedRecord.lost +
-							projectedRecord.tied) /
+							projectedRecord.tied +
+							projectedRecord.otl) /
 						g.get("numGames");
 
 					const currentGames =
-						projectedRecord.won + projectedRecord.lost + projectedRecord.tied;
+						projectedRecord.won +
+						projectedRecord.lost +
+						projectedRecord.tied +
+						projectedRecord.otl;
 					const previousGames =
-						previousRecord.won + previousRecord.lost + previousRecord.tied;
+						previousRecord.won +
+						previousRecord.lost +
+						previousRecord.tied +
+						previousRecord.otl;
 
 					const remainingGames = helpers.bound(
 						g.get("numGames") - currentGames,
@@ -173,7 +183,7 @@ const moodComponents = async (
 						Infinity,
 					);
 
-					for (const key of ["won", "lost", "tied"] as const) {
+					for (const key of ["won", "lost", "tied", "otl"] as const) {
 						const currentFraction =
 							currentGames > 0 ? projectedRecord[key] / currentGames : 0;
 						const previousFraction =

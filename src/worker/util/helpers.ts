@@ -25,6 +25,7 @@ const augmentSeries = async (
 			won: 0,
 			lost: 0,
 			tied: g.get("ties", season) ? 0 : undefined,
+			otl: g.get("otl", season) ? 0 : undefined,
 		};
 
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
@@ -39,6 +40,9 @@ const augmentSeries = async (
 
 			if (g.get("ties", season)) {
 				obj.regularSeason.tied = teamSeason.tied;
+			}
+			if (g.get("otl", season)) {
+				obj.regularSeason.otl = teamSeason.otl;
 			}
 		}
 	};
@@ -56,24 +60,29 @@ const augmentSeries = async (
 
 const calcWinp = ({
 	lost,
+	otl,
 	tied,
 	won,
 }: {
 	lost: number;
+	otl?: any;
 	tied?: any;
 	won: number;
 }) => {
+	const actualOtl = otl ?? 0;
+	const actualLost = lost + actualOtl;
+
 	// Some old leagues had NaN for tied...
 	if (typeof tied !== "number" || Number.isNaN(tied)) {
-		if (won + lost > 0) {
-			return won / (won + lost);
+		if (won + actualLost > 0) {
+			return won / (won + actualLost);
 		}
 
 		return 0;
 	}
 
-	if (won + lost + tied > 0) {
-		return (won + 0.5 * tied) / (won + lost + tied);
+	if (won + actualLost + tied > 0) {
+		return (won + 0.5 * tied) / (won + actualLost + tied);
 	}
 
 	return 0;

@@ -55,6 +55,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"won",
 				"lost",
 				"tied",
+				"otl",
 				"abbrev",
 				"region",
 				"name",
@@ -129,6 +130,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						won: teamSeason ? teamSeason.won : 0,
 						lost: teamSeason ? teamSeason.lost : 0,
 						tied: teamSeason ? teamSeason.tied : 0,
+						otl: teamSeason ? teamSeason.otl : 0,
 						imgURL:
 							teamSeason && teamSeason.imgURL ? teamSeason.imgURL : t.imgURL,
 						count: 0,

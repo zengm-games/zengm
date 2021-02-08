@@ -25,6 +25,7 @@ const updateTeamSelect = async () => {
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"season",
 			"playoffRoundsWon",
 			"revenue",

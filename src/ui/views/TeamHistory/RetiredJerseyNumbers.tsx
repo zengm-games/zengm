@@ -269,7 +269,6 @@ const RetiredJerseyNumbers = ({
 		});
 	};
 
-	console.log("retiredJerseyNumbers", retiredJerseyNumbers);
 	return (
 		<>
 			{retiredJerseyNumbers.length === 0 ? (

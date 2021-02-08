@@ -751,6 +751,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("ties", {
 							type: ["boolean", "array"],
 						}),
+						gameAttribute("otl", {
+							type: ["boolean", "array"],
+						}),
 						gameAttribute("tradeDeadline", {
 							type: "number",
 						}),

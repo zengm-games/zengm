@@ -46,9 +46,13 @@ const TeamLogo = ({
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 }) => {
 	let record = `${t.won}-${t.lost}`;
+	if (typeof t.otl === "number" && !Number.isNaN(t.otl) && t.otl > 0) {
+		record += `-${t.otl}`;
+	}
 	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
 		record += `-${t.tied}`;
 	}

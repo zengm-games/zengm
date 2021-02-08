@@ -15,6 +15,7 @@ describe("worker/core/draft/updateChances", () => {
 				"won",
 				"lost",
 				"tied",
+				"otl",
 				"winp",
 				"playoffRoundsWon",
 				"cid",

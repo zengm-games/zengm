@@ -186,7 +186,7 @@ class GameSim {
 			},
 		] as any;
 
-		for (const t of [0, 1] as const) {
+		for (const t of teamNums) {
 			// First, make sure players listed in the main lines for G/D/F are reserved and not used as injury replacements
 			const inDepthChart = new Set();
 			for (const pos of ["G", "D", "F"] as const) {
@@ -468,7 +468,7 @@ class GameSim {
 
 	doHit() {
 		const t = random.choice(
-			[0, 1] as TeamNum[],
+			teamNums,
 			t => this.team[t].compositeRating.hitting,
 		);
 		const t2 = t === 0 ? 1 : 0;
@@ -714,7 +714,7 @@ class GameSim {
 		}
 
 		const t = random.choice(
-			[0, 1] as TeamNum[],
+			teamNums,
 			t => this.team[t].compositeRating.penalties,
 		);
 
@@ -825,7 +825,7 @@ class GameSim {
 	}
 
 	updateTeamCompositeRatings() {
-		for (const t of [0, 1] as const) {
+		for (const t of teamNums) {
 			this.team[t].compositeRating.hitting = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
 				positions: {
@@ -996,7 +996,7 @@ class GameSim {
 	) {
 		let substitutions = false;
 
-		for (const t of [0, 1] as const) {
+		for (const t of teamNums) {
 			if (options.type === "starters" || options.type === "newPeriod") {
 				this.playersOnIce[t].C = this.lines[t].F[0].slice(0, 1);
 				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
@@ -1085,11 +1085,6 @@ class GameSim {
 		const onField = new Set();
 
 		for (const t of teamNums) {
-			// Get rid of this after making sure playersOnIce is always set, even for special teams
-			if (this.playersOnIce[t] === undefined) {
-				continue;
-			}
-
 			const t2 = t === 0 ? 1 : 0;
 			const penaltyBoxDiff =
 				this.penaltyBox.count(t) - this.penaltyBox.count(t2);
@@ -1101,9 +1096,6 @@ class GameSim {
 			}
 
 			for (const pos of helpers.keys(this.playersOnIce[t])) {
-				// Update minutes (overall, court, and bench)
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
 				for (const p of this.playersOnIce[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
@@ -1263,7 +1255,7 @@ class GameSim {
 					this.team[t].stat.ptsQtrs[qtr] += pts;
 					this.playByPlay.logStat(t, undefined, "pts", pts);
 
-					for (const t2 of [0, 1] as const) {
+					for (const t2 of teamNums) {
 						const currentlyOnIce = flatten(
 							Object.values(this.playersOnIce[t2]),
 						);

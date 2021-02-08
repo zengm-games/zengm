@@ -257,6 +257,9 @@ const writeTeamStats = async (results: GameResults) => {
 			if (results.team[t2].stat.pts === 0) {
 				teamStats.so += 1;
 			}
+			if (results.team[t1].stat.pts === 0) {
+				teamStats.oppSo += 1;
+			}
 		}
 
 		teamStats.gp += 1;

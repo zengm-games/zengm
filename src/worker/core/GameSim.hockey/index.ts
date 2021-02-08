@@ -671,6 +671,8 @@ class GameSim {
 			this.recordStat(this.d, goalie, "ga");
 		}
 
+		this.penaltyBox.goal(this.o);
+
 		return "goal";
 	}
 

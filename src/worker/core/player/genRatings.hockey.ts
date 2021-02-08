@@ -199,6 +199,26 @@ const genRatings = (
 		pots: { ...defaultOvrsOrPots },
 	};
 
+	const age = g.get("draftAge")[0];
+	if (age != 19) {
+		// players younger than 19 will be downscaled, older upscaled
+		const subAmount = 3 * (19 - age);
+
+		ratings.stre -= subAmount;
+		ratings.spd -= Math.round(subAmount / 2);
+		ratings.endu -= subAmount;
+		ratings.pss -= subAmount;
+		ratings.wst -= subAmount;
+		ratings.sst -= subAmount;
+		ratings.stk -= subAmount;
+		ratings.oiq -= subAmount;
+		ratings.chk -= subAmount;
+		ratings.blk -= subAmount;
+		ratings.fcf -= subAmount;
+		ratings.diq -= subAmount;
+		ratings.glk -= subAmount;
+	}
+
 	// Higher fuzz for draft prospects
 	if (g.get("phase") >= PHASE.RESIGN_PLAYERS) {
 		if (season === g.get("season") + 2) {

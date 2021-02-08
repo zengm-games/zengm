@@ -183,6 +183,28 @@ const genRatings = (
 		skills: [],
 	};
 
+	// If the youngest players generated aren't 19, scale player ratings to match
+	const age = g.get("draftAge")[0];
+	if (age != 19) {
+		// players younger than 19 will be downscaled, older upscaled
+		const subAmount = 3 * (19 - age);
+
+		ratings.stre -= subAmount;
+		ratings.spd -= Math.round(subAmount / 2);
+		ratings.jmp -= Math.round(subAmount / 2);
+		ratings.endu -= subAmount;
+		ratings.ins -= subAmount;
+		ratings.dnk -= subAmount;
+		ratings.ft -= subAmount;
+		ratings.fg -= subAmount;
+		ratings.tp -= subAmount;
+		ratings.oiq -= subAmount;
+		ratings.diq -= subAmount;
+		ratings.drb -= Math.round(subAmount / 2);
+		ratings.pss -= Math.round(subAmount / 2);
+		ratings.reb -= Math.round(subAmount / 2);
+	}
+
 	// Ugly hack: Tall people can't dribble/pass very well
 	/*if (ratings.hgt > 40) {
          ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));

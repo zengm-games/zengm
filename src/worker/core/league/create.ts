@@ -654,7 +654,6 @@ export const createWithoutSaving = async (
 		// Drafted players kept with own team, with some probability
 		const playersStayedOnOwnTeam = new Set();
 		for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
-			console.log(i);
 			const p = keptPlayers[i];
 
 			if (

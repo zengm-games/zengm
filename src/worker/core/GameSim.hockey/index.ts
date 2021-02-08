@@ -169,7 +169,7 @@ class GameSim {
 				penaltyPID: p.id,
 			});
 
-			this.updatePlayersOnIce({ type: "penaltyOver", p });
+			this.updatePlayersOnIce({ type: "penaltyOver", p, t });
 		});
 	}
 
@@ -992,6 +992,7 @@ class GameSim {
 			| {
 					type: "penaltyOver";
 					p: PlayerGameSim;
+					t: TeamNum;
 			  },
 	) {
 		let substitutions = false;
@@ -1003,14 +1004,16 @@ class GameSim {
 				this.playersOnIce[t].D = this.lines[t].D[0];
 				this.playersOnIce[t].G = this.lines[t].G[0];
 			} else if (options.type === "penaltyOver") {
-				if (this.playersOnIce[t].C.length < 1) {
-					this.playersOnIce[t].C.push(options.p);
-				} else if (this.playersOnIce[t].W.length < 2) {
-					this.playersOnIce[t].W.push(options.p);
-				} else {
-					this.playersOnIce[t].D.push(options.p);
+				if (options.t === t) {
+					if (this.playersOnIce[t].C.length < 1) {
+						this.playersOnIce[t].C.push(options.p);
+					} else if (this.playersOnIce[t].W.length < 2) {
+						this.playersOnIce[t].W.push(options.p);
+					} else {
+						this.playersOnIce[t].D.push(options.p);
+					}
+					substitutions = true;
 				}
-				substitutions = true;
 			} else {
 				// Line change based on playing time
 				let lineChangeEvent:

@@ -441,6 +441,12 @@ class GameSim {
 		// @ts-ignore
 		while (this.clock > 0) {
 			this.simPossession();
+
+			if (this.team[0].stat.pts !== this.team[1].stat.pts) {
+				// Sudden death overtime
+				break;
+			}
+
 			this.advanceClock();
 			this.updatePlayersOnIce({ type: "normal" });
 		}
@@ -808,6 +814,11 @@ class GameSim {
 		}
 
 		if (outcome === "goal") {
+			if (this.overtime) {
+				// Sudden death overtime
+				return;
+			}
+
 			this.faceoff();
 			return;
 		}

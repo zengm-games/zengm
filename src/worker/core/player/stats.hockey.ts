@@ -8,10 +8,6 @@ const stats = {
 		"t",
 		"otl",
 
-		// Quality starts and really bad starts (goalie)
-		"qs",
-		"rbs",
-
 		// Shutouts
 		"so",
 

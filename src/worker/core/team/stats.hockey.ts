@@ -42,7 +42,7 @@ const teamAndOpp = [
 // derived: still stored in database, but not directly recorded in game sim
 // not present in this file: transiently derived things, like FG%
 const stats = {
-	derived: ["qs", "rbs", "so", "oppQs", "oppRbs", "oppSo"],
+	derived: ["so", "oppQs", "oppRbs", "oppSo"],
 	raw: ["gp", "min", ...teamAndOpp] as const,
 };
 

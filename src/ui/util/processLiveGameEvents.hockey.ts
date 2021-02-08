@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import { helpers } from "../../ui/util";
+import { helpers } from ".";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
@@ -51,6 +51,8 @@ const getText = (
 ) => {
 	let text;
 
+	let showTeamAndClock = true;
+
 	if (event.type === "injury") {
 		text = `${event.names[0]} was injured!`;
 	}
@@ -58,12 +60,15 @@ const getText = (
 		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
 			boxScore.numPeriods,
 		)}`;
+		showTeamAndClock = false;
 	}
 	if (event.type === "overtime") {
 		text = "Start of overtime";
+		showTeamAndClock = false;
 	}
 	if (event.type === "gameOver") {
 		text = "End of game";
+		showTeamAndClock = false;
 	}
 	if (event.type === "hit") {
 		text = `${event.names[0]} hit ${event.names[1]}`;
@@ -133,10 +138,14 @@ const getText = (
 		throw new Error(`Invalid event type "${event.type}"`);
 	}
 
-	const actualT = (event as any).t === 0 ? 1 : 0;
-	return `${formatClock((event as any).clock)} - ${
-		boxScore.teams[actualT].abbrev
-	} - ${text}`;
+	if (showTeamAndClock) {
+		const actualT = (event as any).t === 0 ? 1 : 0;
+		text = `${formatClock((event as any).clock)} - ${
+			boxScore.teams[actualT].abbrev
+		} - ${text}`;
+	}
+
+	return text;
 };
 
 // Mutates boxScore!!!

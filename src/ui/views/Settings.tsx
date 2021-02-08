@@ -342,6 +342,12 @@ export const options: {
 			if (!Array.isArray(value)) {
 				throw new Error("Must be an array");
 			}
+			if (value.length != 2) {
+				throw new Error("Must have 2 numbers");
+			}
+			if (value[0] > value[1]) {
+				throw new Error("Max age can't be less than min age!");
+			}
 			for (const num of value) {
 				if (!Number.isInteger(num)) {
 					throw new Error("Array must contain only integers");
@@ -857,7 +863,7 @@ if (isSport("basketball")) {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length < 3 || value.length > 3) {
+				if (value.length != 3) {
 					throw new Error("Must have 3 numbers");
 				}
 				for (const num of value) {

@@ -246,7 +246,15 @@ ScoringSummary.propTypes = {
 	teams: PropTypes.array.isRequired,
 };
 
-const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
+const BoxScore = ({
+	boxScore,
+	forceRowUpdate,
+	Row,
+}: {
+	boxScore: BoxScore;
+	forceRowUpdate: boolean;
+	Row: any;
+}) => {
 	return (
 		<div className="mb-3">
 			<h2>Scoring Summary</h2>
@@ -267,6 +275,7 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 						<StatsTable
 							key={title}
 							Row={Row}
+							forceRowUpdate={forceRowUpdate}
 							title={title}
 							type={title.toLowerCase() as any}
 							t={t}

@@ -4,6 +4,7 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
+import { players } from "../../db/getCopies";
 
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
@@ -246,6 +247,16 @@ const writePlayerStats = async (
 		}
 
 		for (const t of result.team) {
+			// This needs to be before checkStatistical Feat
+			if (isSport("hockey")) {
+				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
+
+				// As in NHL, shutout only is credited if a single goalie plays the whole game
+				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
+					goalies[0].stat.so = 1;
+				}
+			}
+
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
 				if (!isSport("basketball") && p.stat.min === 0) {
@@ -260,8 +271,9 @@ const writePlayerStats = async (
 				}
 
 				if (!allStarGame) {
-					let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+					let ps = p2.stats[p2.stats.length - 1];
 
+					// This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
 					if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
 						await player.addStatsRow(p2, playoffs);
 						ps = p2.stats[p2.stats.length - 1];

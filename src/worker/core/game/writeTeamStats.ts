@@ -252,6 +252,13 @@ const writeTeamStats = async (results: GameResults) => {
 			}
 		}
 
+		// Track this separately, because a team can get a shutout with multiple goalies, and then there is no player shutout
+		if (isSport("hockey")) {
+			if (results.team[t2].stat.pts === 0) {
+				teamStats.so += 1;
+			}
+		}
+
 		teamStats.gp += 1;
 
 		if (teamSeason.lastTen.length === 10 && g.get("phase") !== PHASE.PLAYOFFS) {

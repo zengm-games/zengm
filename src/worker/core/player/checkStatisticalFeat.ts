@@ -62,9 +62,13 @@ const checkStatisticalFeat = (
 		const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
 		const won = results.team[i].stat.pts > results.team[j].stat.pts;
 		const tied = results.team[i].stat.pts === results.team[j].stat.pts;
-		const featTextArr = Object.keys(feats).map(
-			stat => `${feats[stat]} ${stat}`,
-		);
+		const featTextArr = Object.keys(feats).map(stat => {
+			const text = `${feats[stat]} ${stat}`;
+			if (text === "1 shutout") {
+				return "a shutout";
+			}
+			return text;
+		});
 		let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${
 			p.name
 		}</a> had <a href="${helpers.leagueUrl([

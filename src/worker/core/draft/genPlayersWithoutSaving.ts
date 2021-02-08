@@ -58,7 +58,7 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < draftAge[1] + 1; i++) {
 		let cutoff = draftAge[1] - draftAge[0]; // For football, only juniors and seniors by default.
 
 		if (isSport("basketball") || i >= 2) {

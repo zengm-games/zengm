@@ -9,8 +9,8 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["ins", "dnk", "fg", "tp", "spd", "hgt", "drb", "oiq"],
 		weights: [1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0.5],
 		skill: {
-			label: "S",
-			cutoff: 0.68,
+			label: "V",
+			cutoff: 0.61,
 		},
 	},
 	dribbling: {

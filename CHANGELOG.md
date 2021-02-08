@@ -1,5 +1,9 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: Added a new option in League Settings to track overtime losses (OTL) separately from regulation losses, as is common in hockey. Currently it's just cosmetic, they count the same as losses.
+
+* DEV: Added new skill label "V" for "Volume Scorer" to BBGM. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/357)
+
 * DEV: Updated the "desired contract length" formula based to feel more realistic. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/356)
 
 * 2021-02-07: In BBGM, added a new league setting available in God Mode to control the number of fouls in a period before the bonus. Thanks @domini7! This setting automatically changes in historical leagues in 1955 and 1967. [[1]](https://github.com/dumbmatter/gm-games/pull/351) [[2]](https://old.reddit.com/r/BasketballGM/comments/legy0a/udominila_added_a_new_league_setting_available_in/)

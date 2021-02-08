@@ -58,6 +58,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),
+			otl: g.get("otl"),
 			spectator: g.get("spectator"),
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),

@@ -4,6 +4,7 @@ import { bySport } from "../../common";
 const tooltips = bySport({
 	basketball: {
 		"3": "Three Point Shooter",
+		S: "Scorer",
 		A: "Athlete",
 		B: "Ball Handler",
 		Di: "Interior Defender",
@@ -11,6 +12,7 @@ const tooltips = bySport({
 		Po: "Post Scorer",
 		Ps: "Passer",
 		R: "Rebounder",
+		V: "Volume Scorer",
 	},
 	football: {
 		Pa: "Accurate Passer",

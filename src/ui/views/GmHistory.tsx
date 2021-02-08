@@ -15,6 +15,7 @@ const GmHistory = ({
 	stats,
 	totalLost,
 	totalTied,
+	totalOtl,
 	totalWinp,
 	totalWon,
 	userTid,
@@ -46,6 +47,7 @@ const GmHistory = ({
 						playoffAppearances={playoffAppearances}
 						totalLost={totalLost}
 						totalTied={totalTied}
+						totalOtl={totalOtl}
 						totalWinp={totalWinp}
 						totalWon={totalWon}
 						worstRecord={worstRecord}

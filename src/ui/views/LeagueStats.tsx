@@ -16,6 +16,7 @@ const LeagueStats = ({
 	teamOpponent,
 	tid,
 	ties,
+	otl,
 }: View<"leagueStats">) => {
 	useTitleBar({
 		title: "League Stats",
@@ -34,10 +35,16 @@ const LeagueStats = ({
 	if (ties) {
 		basicColNames.push("T");
 	}
+	if (otl) {
+		basicColNames.push("OTL");
+	}
 
 	if (superCols) {
 		superCols[0].colspan += 1;
 		if (ties) {
+			superCols[0].colspan += 1;
+		}
+		if (otl) {
 			superCols[0].colspan += 1;
 		}
 		if (tid >= 0) {
@@ -65,6 +72,9 @@ const LeagueStats = ({
 		const otherStatColumns = ["won", "lost"];
 		if (ties) {
 			otherStatColumns.push("tied");
+		}
+		if (otl) {
+			otherStatColumns.push("otl");
 		}
 
 		// Create the cells for this row.
@@ -98,6 +108,9 @@ const LeagueStats = ({
 
 		if (ties) {
 			data.tied = formatMaybeInteger(s.stats.tied);
+		}
+		if (otl) {
+			data.otl = formatMaybeInteger(s.stats.otl);
 		}
 
 		for (const stat of stats) {

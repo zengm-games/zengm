@@ -133,8 +133,10 @@ const LiveGame = (props: View<"liveGame">) => {
 				if (
 					text === "End of game" ||
 					text.startsWith("Start of") ||
-					text.startsWith("Elam Ending activated! First team to") ||
-					text.includes("Goal!")
+					(isSport("basketball") &&
+						text.startsWith("Elam Ending activated! First team to")) ||
+					(isSport("hockey") &&
+						(text.includes("Goal!") || text.includes("penalty")))
 				) {
 					const b = document.createElement("b");
 					b.appendChild(node);
@@ -197,7 +199,11 @@ const LiveGame = (props: View<"liveGame">) => {
 						} else if (boxScore.current.won.tid === t.tid) {
 							t.won += 1;
 						} else if (boxScore.current.lost.tid === t.tid) {
-							t.lost += 1;
+							if (boxScore.current.overtimes > 0 && props.otl) {
+								t.otl += 1;
+							} else {
+								t.lost += 1;
+							}
 						}
 					}
 				}
@@ -211,7 +217,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.finals],
+		[props.finals, props.otl],
 	);
 
 	useEffect(() => {

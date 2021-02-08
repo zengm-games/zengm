@@ -13,6 +13,7 @@ const processTeam = (
 		won: number;
 		lost: number;
 		tied: number;
+		otl: number;
 		cid: number;
 		did: number;
 		expenses: {
@@ -61,6 +62,7 @@ const processTeam = (
 		won: teamSeason.won,
 		lost: teamSeason.lost,
 		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
+		otl: g.get("otl", "current") ? teamSeason.otl : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,
 		ovr,
@@ -224,6 +226,7 @@ const loadTeams = async (tids: number[]) => {
 					won: 0,
 					lost: 0,
 					tied: 0,
+					otl: 0,
 					expenses: {
 						health: {
 							rank: 1,

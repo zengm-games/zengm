@@ -1360,7 +1360,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["abbrev", "region", "name", "strategy", "tid"],
-			seasonAttrs: ["won", "lost", "tied"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
 			season: g.get("season"),
 			addDummySeason: true,
 			active: true,
@@ -1425,6 +1425,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					won: t.seasonAttrs.won,
 					lost: t.seasonAttrs.lost,
 					tied: t.seasonAttrs.tied,
+					otl: t.seasonAttrs.otl,
 					pids: offer.pids,
 					dpids: offer.dpids,
 					warning: offer.warning,

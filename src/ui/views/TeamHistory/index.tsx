@@ -21,6 +21,7 @@ const TeamHistory = ({
 	stats,
 	tid,
 	totalLost,
+	totalOtl,
 	totalTied,
 	totalWinp,
 	totalWon,
@@ -45,6 +46,7 @@ const TeamHistory = ({
 						finalsAppearances={finalsAppearances}
 						playoffAppearances={playoffAppearances}
 						totalLost={totalLost}
+						totalOtl={totalOtl}
 						totalTied={totalTied}
 						totalWinp={totalWinp}
 						totalWon={totalWon}

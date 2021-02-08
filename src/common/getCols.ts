@@ -1884,6 +1884,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	OTL: {
+		desc: "Overtime Losses",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Team: {},
 	Titles: {
 		desc: "Championships Won",
@@ -2345,7 +2350,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:w": "W",
 		"stat:l": "L",
 		"stat:t": "T",
-		"stat:otl": "OT",
+		"stat:otl": "OTL",
 		"stat:pm": "+/-",
 		"stat:pim": "PIM",
 		"stat:evG": "evG",

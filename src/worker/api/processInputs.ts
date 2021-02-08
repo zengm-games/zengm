@@ -581,7 +581,8 @@ const leagueStats = (params: Params) => {
 const standings = (params: Params) => {
 	let type: "conf" | "div" | "league" = bySport({
 		basketball: "conf",
-		default: "div",
+		football: "div",
+		hockey: "div",
 	});
 	if (
 		params.type === "conf" ||

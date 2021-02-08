@@ -15,7 +15,7 @@ export const getUpcoming = async ({
 	const schedule = await season.getSchedule(oneDay);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
-		seasonAttrs: ["won", "lost", "tied"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
 		active: true,
 	});
@@ -93,6 +93,7 @@ export const getUpcoming = async ({
 			won: t.seasonAttrs.won,
 			lost: t.seasonAttrs.lost,
 			tied: t.seasonAttrs.tied,
+			otl: t.seasonAttrs.otl,
 			playoffs,
 		};
 	};

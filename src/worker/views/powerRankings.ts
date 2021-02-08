@@ -37,6 +37,7 @@ const updatePowerRankings = async (
 				"won",
 				"lost",
 				"tied",
+				"otl",
 				"lastTen",
 				"abbrev",
 				"region",
@@ -150,9 +151,15 @@ const updatePowerRankings = async (
 		}
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {
 				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -163,6 +170,7 @@ const updatePowerRankings = async (
 			season,
 			teams: teamsWithRankings,
 			ties: g.get("ties", season) || ties,
+			otl: g.get("otl", season) || otl,
 			userTid: g.get("userTid"),
 		};
 	}

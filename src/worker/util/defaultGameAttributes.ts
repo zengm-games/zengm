@@ -68,6 +68,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	easyDifficultyInPast: false,
 	hardCap: false,
+
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
 	ties: [
 		{
@@ -75,6 +76,13 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			value: false,
 		},
 	],
+	otl: [
+		{
+			start: -Infinity,
+			value: false,
+		},
+	],
+
 	draftType: "nba2019",
 	numDraftRounds: 2,
 	draftAge: [19, 22],
@@ -181,6 +189,12 @@ export const hockeyOverrides =
 				numDraftRounds: 4,
 				allStarGame: null,
 				numPlayersOnCourt: 6,
+				otl: [
+					{
+						start: -Infinity,
+						value: true,
+					},
+				],
 		  }
 		: {};
 

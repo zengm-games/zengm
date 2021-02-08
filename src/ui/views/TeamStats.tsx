@@ -19,6 +19,7 @@ const TeamStats = ({
 	teamOpponent,
 	teams,
 	ties,
+	otl,
 	userTid,
 }: View<"teamStats">) => {
 	useTitleBar({
@@ -34,6 +35,9 @@ const TeamStats = ({
 	});
 
 	const basicColNames = ["Team", "stat:gp", "W", "L"];
+	if (otl) {
+		basicColNames.push("OTL");
+	}
 	if (ties) {
 		basicColNames.push("T");
 	}
@@ -57,6 +61,9 @@ const TeamStats = ({
 	const teamCount = teams.length;
 	const rows = teams.map(t => {
 		const otherStatColumns = ["won", "lost"];
+		if (otl) {
+			otherStatColumns.push("otl");
+		}
 		if (ties) {
 			otherStatColumns.push("tied");
 		}
@@ -79,6 +86,9 @@ const TeamStats = ({
 			lost: t.seasonAttrs.lost,
 		};
 
+		if (otl) {
+			data.otl = t.seasonAttrs.otl;
+		}
 		if (ties) {
 			data.tied = t.seasonAttrs.tied;
 		}
@@ -184,6 +194,7 @@ TeamStats.propTypes = {
 		"opponentShotLocations",
 	]).isRequired,
 	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+	otl: PropTypes.bool.isRequired,
 	ties: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,
 };

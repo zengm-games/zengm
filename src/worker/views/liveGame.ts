@@ -26,6 +26,8 @@ const updatePlayByPlay = async (
 			await idb.cache.games.get(inputs.gidPlayByPlay),
 		);
 
+		const otl = g.get("otl", "current");
+
 		// Stats to set to 0
 		const resetStatsPlayer = player.stats.raw;
 		const resetStatsTeam = team.stats.raw;
@@ -70,7 +72,11 @@ const updatePlayByPlay = async (
 				} else if (boxScore.won.tid === t.tid) {
 					t.won -= 1;
 				} else if (boxScore.lost.tid === t.tid) {
-					t.lost -= 1;
+					if (boxScore.overtimes > 0 && otl) {
+						t.otl -= 1;
+					} else {
+						t.lost -= 1;
+					}
 				}
 			}
 
@@ -139,6 +145,7 @@ const updatePlayByPlay = async (
 			events: inputs.playByPlay,
 			finals,
 			initialBoxScore: boxScore,
+			otl,
 		};
 	}
 };

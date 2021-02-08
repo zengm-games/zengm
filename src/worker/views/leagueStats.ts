@@ -25,6 +25,7 @@ const updateLeagueStats = async (
 		const ignoreStats = ["mov", "pw", "pl"];
 
 		let ties = false;
+		let otl = false;
 
 		let stats: string[] = [];
 
@@ -58,10 +59,15 @@ const updateLeagueStats = async (
 			const seasonAttrs = output.seasonAttrs;
 			const teams = output.teams;
 
-			if (!ties) {
+			if (!ties || !otl) {
 				for (const t of teams) {
 					if (t.seasonAttrs.tied > 0) {
 						ties = true;
+					}
+					if (t.seasonAttrs.otl > 0) {
+						otl = true;
+					}
+					if (ties && otl) {
 						break;
 					}
 				}
@@ -130,6 +136,7 @@ const updateLeagueStats = async (
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
 			ties: g.get("ties") || ties,
+			otl: g.get("otl") || otl,
 		};
 	}
 };

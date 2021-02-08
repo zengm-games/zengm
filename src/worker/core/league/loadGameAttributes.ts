@@ -18,6 +18,7 @@ const loadGameAttributes = async () => {
 		"divs",
 		"numGamesPlayoffSeries",
 		"numPlayoffByes",
+		"otl",
 		"ties",
 		"userTid",
 	];

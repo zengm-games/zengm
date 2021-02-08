@@ -14,6 +14,7 @@ const getClinchedPlayoffs = (
 		const worstCases = teamSeasons.map(t2 => {
 			// Handle tied undefined
 			const tied = t2.tied ?? 0;
+			const otl = t2.otl ?? 0;
 
 			const gp = t2.won + t2.lost + tied;
 
@@ -26,6 +27,7 @@ const getClinchedPlayoffs = (
 					won: t2.won,
 					lost: t2.lost,
 					tied,
+					otl,
 					winp: 0,
 					cid: t2.cid,
 					did: t2.did,
@@ -76,6 +78,7 @@ const getClinchedPlayoffs = (
 			const bestCases = teamSeasons.map(t2 => {
 				// Handle tied undefined
 				const tied = t2.tied ?? 0;
+				const otl = t2.otl ?? 0;
 
 				const gp = t2.won + t2.lost + tied;
 
@@ -88,6 +91,7 @@ const getClinchedPlayoffs = (
 						won: t2.won,
 						lost: t2.lost,
 						tied,
+						otl,
 						winp: 0,
 						cid: t2.cid,
 						did: t2.did,

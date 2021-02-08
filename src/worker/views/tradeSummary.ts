@@ -169,6 +169,7 @@ const getSeasonsToPlot = async (
 			won?: number;
 			lost?: number;
 			tied?: number;
+			otl?: number;
 			stat?: number;
 		};
 		const teams: [Team, Team] = [{}, {}];
@@ -187,11 +188,15 @@ const getSeasonsToPlot = async (
 
 			if (
 				teamSeason &&
-				(teamSeason.won > 0 || teamSeason.lost > 0 || teamSeason.tied > 0)
+				(teamSeason.won > 0 ||
+					teamSeason.lost > 0 ||
+					teamSeason.tied > 0 ||
+					teamSeason.otl > 0)
 			) {
 				teams[j].won = teamSeason.won;
 				teams[j].lost = teamSeason.lost;
 				teams[j].tied = teamSeason.tied;
+				teams[j].otl = teamSeason.otl;
 				teams[j].winp = helpers.calcWinp(teamSeason);
 			}
 

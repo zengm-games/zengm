@@ -139,7 +139,7 @@ const updateTrade = async () => {
 		tid: otherTid,
 		season: g.get("season"),
 		attrs: ["strategy"],
-		seasonAttrs: ["won", "lost", "tied"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
 		addDummySeason: true,
 	});
 
@@ -225,6 +225,7 @@ const updateTrade = async () => {
 		showResigningMsg,
 		teams: teams2,
 		tied: t.seasonAttrs.tied,
+		otl: t.seasonAttrs.otl,
 		userTeamName,
 		gameOver: g.get("gameOver"),
 		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),

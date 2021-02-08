@@ -28,6 +28,7 @@ type AwardTeam = {
 	won: number;
 	lost: number;
 	tied: number | undefined;
+	otl: number | undefined;
 };
 
 export type AwardPlayer = {

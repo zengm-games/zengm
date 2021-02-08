@@ -154,7 +154,18 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 const teamAwards = (
 	teamsUnsorted: TeamFiltered<
 		["tid"],
-		["winp", "won", "lost", "tied", "cid", "did", "abbrev", "region", "name"],
+		[
+			"winp",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"cid",
+			"did",
+			"abbrev",
+			"region",
+			"name",
+		],
 		any,
 		number
 	>[],
@@ -173,6 +184,7 @@ const teamAwards = (
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
 		tied: g.get("ties", "current") ? teams[0].seasonAttrs.tied : undefined,
+		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
 	};
 	const bestRecordConfs = g.get("confs", "current").map(c => {
 		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
@@ -189,6 +201,7 @@ const teamAwards = (
 			won: t.seasonAttrs.won,
 			lost: t.seasonAttrs.lost,
 			tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
+			otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
 		};
 	});
 	return {

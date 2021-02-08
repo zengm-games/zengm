@@ -14,6 +14,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"cid",
 			"did",
 		],

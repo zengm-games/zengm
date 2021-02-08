@@ -65,6 +65,7 @@ const TeamRecords = ({
 	filter,
 	teams,
 	ties,
+	otl,
 	userTid,
 }: View<"teamRecords">) => {
 	const [showHistorical, setShowHistorical] = useState(true);
@@ -84,7 +85,7 @@ const TeamRecords = ({
 		displayName = "Team";
 	}
 
-	let cols = getCols(
+	const cols = getCols(
 		...(displayName === "Division" ? ["Conference"] : []),
 		displayName,
 		"Start",
@@ -92,7 +93,8 @@ const TeamRecords = ({
 		"# Seasons",
 		"W",
 		"L",
-		"T",
+		...(otl ? ["OTL"] : []),
+		...(ties ? ["T"] : []),
 		"%",
 		"Playoffs",
 		"Last",
@@ -102,9 +104,7 @@ const TeamRecords = ({
 		"Last",
 		...categories.map(category => `count:${category}`),
 	);
-	if (!ties) {
-		cols = cols.filter(col => col.title !== "T");
-	}
+
 	const lasts = cols.filter(col => col.title === "Last");
 	lasts[0].desc = "Last Playoffs Appearance";
 	lasts[1].desc = "Last Finals Appearance";
@@ -123,6 +123,7 @@ const TeamRecords = ({
 					t.numSeasons,
 					t.won,
 					t.lost,
+					...(otl ? [t.otl] : []),
 					...(ties ? [t.tied] : []),
 					helpers.roundWinp(t.winp),
 					t.playoffs,

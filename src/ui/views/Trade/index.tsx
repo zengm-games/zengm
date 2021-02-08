@@ -179,6 +179,7 @@ const Trade = (props: View<"trade">) => {
 		otherPicks,
 		otherRoster,
 		otherTid,
+		otl,
 		phase,
 		salaryCap,
 		summary,
@@ -301,6 +302,7 @@ const Trade = (props: View<"trade">) => {
 							}}
 						>
 							{won}-{lost}
+							{otl > 0 ? <>-{otl}</> : null}
 							{tied > 0 ? <>-{tied}</> : null}, {strategy}
 						</div>
 					</div>

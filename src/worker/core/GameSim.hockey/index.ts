@@ -904,7 +904,11 @@ class GameSim {
 		}
 	}
 
-	doLineChange(t: TeamNum, pos: "F" | "D") {
+	doLineChange(
+		t: TeamNum,
+		pos: "F" | "D",
+		playersRemainingOn: PlayerGameSim[],
+	) {
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
 
@@ -930,7 +934,7 @@ class GameSim {
 		newLine = [...newLine];
 		for (let i = 0; i < newLine.length; i++) {
 			const p = newLine[i];
-			if (this.penaltyBox.has(t, p)) {
+			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
 				let nextLine = this.lines[t][pos][this.currentLine[t][pos] + 1];
 				if (!nextLine) {
 					nextLine = this.lines[t][pos][0];
@@ -942,12 +946,6 @@ class GameSim {
 				newLine[i] = random.choice(nextLine);
 			}
 		}
-
-		/*replace player from default line when...
-		- already in game (could get into this situation with penalties or whatever!)
-		  - how do i know if he's already in the game????? depends if other line is changing now or not
-		    - pass array of players already in game to this function*/
-		console.log("TODO");
 
 		if (pos === "F") {
 			const penaltyBoxCount = this.penaltyBox.count(t);
@@ -1034,8 +1032,6 @@ class GameSim {
 						options.type === "penalty"
 					) {
 						lineChangeEvent = "offensiveLineChange";
-						this.doLineChange(t, "F");
-						substitutions = true;
 					}
 					if (
 						(this.minutesSinceLineChange[t].D >= 0.9 && Math.random() < 0.75) ||
@@ -1046,12 +1042,31 @@ class GameSim {
 						} else {
 							lineChangeEvent = "defensiveLineChange";
 						}
-						this.doLineChange(t, "D");
-						substitutions = true;
 					}
 				}
 
 				if (lineChangeEvent) {
+					if (lineChangeEvent === "offensiveLineChange") {
+						this.doLineChange(t, "F", [
+							...this.playersOnIce[t].D,
+							...this.playersOnIce[t].G,
+						]);
+					} else if (lineChangeEvent === "defensiveLineChange") {
+						this.doLineChange(t, "D", [
+							...this.playersOnIce[t].C,
+							...this.playersOnIce[t].W,
+							...this.playersOnIce[t].G,
+						]);
+					} else {
+						this.doLineChange(t, "F", [...this.playersOnIce[t].G]);
+						this.doLineChange(t, "D", [
+							...this.playersOnIce[t].C,
+							...this.playersOnIce[t].W,
+							...this.playersOnIce[t].G,
+						]);
+					}
+					substitutions = true;
+
 					this.playByPlay.logEvent({
 						type: lineChangeEvent,
 						clock: this.clock,

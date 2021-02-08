@@ -12,6 +12,7 @@ const RecordAndPlayoffs = ({
 	season,
 	style,
 	tied,
+	otl,
 	tid,
 	won,
 }: {
@@ -24,6 +25,7 @@ const RecordAndPlayoffs = ({
 	season: number;
 	style?: CSSProperties;
 	tied?: number;
+	otl?: number;
 	tid: number;
 	won: number;
 }) => {
@@ -38,6 +40,9 @@ const RecordAndPlayoffs = ({
 		) : null;
 
 	let record = `${won}-${lost}`;
+	if (typeof otl === "number" && !Number.isNaN(otl) && otl > 0) {
+		record += `-${otl}`;
+	}
 	if (typeof tied === "number" && !Number.isNaN(tied) && tied > 0) {
 		record += `-${tied}`;
 	}

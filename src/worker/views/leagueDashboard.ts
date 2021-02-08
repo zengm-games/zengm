@@ -42,6 +42,7 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
+			otl: latestSeason !== undefined ? latestSeason.otl : 0,
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
 			salaryCap: g.get("salaryCap") / 1000,
@@ -383,6 +384,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"won",
 					"lost",
 					"tied",
+					"otl",
 					"winp",
 					"cid",
 					"did",

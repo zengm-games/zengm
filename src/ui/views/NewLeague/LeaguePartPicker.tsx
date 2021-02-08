@@ -10,7 +10,7 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	games: "Box scores",
 	releasedPlayers: "Contracts owed to released players",
 	draftLotteryResults: "Draft lottery history",
-	events: "Event log",
+	events: "News feed",
 	negotiations: "In-progress contract negotiations",
 	trade: "In-progress trade negotiations",
 	meta: "League metadata, like league name",

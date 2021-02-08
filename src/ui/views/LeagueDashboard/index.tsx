@@ -24,6 +24,7 @@ const LeagueDashboard = ({
 	numPlayersOnCourt,
 	numPlayoffRounds,
 	numPlayoffTeams,
+	otl,
 	payroll,
 	playoffRoundsWon,
 	playoffsByConference,
@@ -83,6 +84,7 @@ const LeagueDashboard = ({
 							<div className="text-center mb-3">
 								<span style={{ fontSize: "3rem" }}>
 									{won}-{lost}
+									{otl > 0 ? <>-{otl}</> : null}
 									{tied > 0 ? <>-{tied}</> : null}
 								</span>
 								<br />

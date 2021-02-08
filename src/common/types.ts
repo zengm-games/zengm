@@ -124,6 +124,7 @@ export type DraftLotteryResultArray = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
 }[];
 
 export type DraftLotteryResult = {
@@ -227,6 +228,7 @@ type GameTeam = {
 	won?: number; // Undefined for legacy objects
 	lost?: number; // Undefined for legacy objects
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
+	otl?: number; // Undefined for legacy objects or if there are no otls in this sport
 
 	playoffs?: {
 		seed: number;
@@ -413,6 +415,7 @@ export type GameAttributesLeague = {
 	numTeams: number;
 	playerMoodTraits: boolean;
 	spectator: boolean;
+	otl: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
@@ -488,6 +491,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "divs"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
+	| "otl"
 	| "ties"
 	| "userTid"
 > & {
@@ -499,6 +503,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	numPlayoffByes: GameAttributeWithHistory<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
+	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
@@ -1084,6 +1089,7 @@ export type PlayoffSeriesTeam = {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	seed: number;
 	tid: number;
@@ -1305,7 +1311,7 @@ export type TeamSeasonWithoutKey = {
 	lostConf: number;
 	tiedConf: number;
 	otlConf: number;
-	lastTen: (-1 | 0 | 1)[];
+	lastTen: (-1 | 0 | 1 | "OTL")[];
 	streak: number;
 	playoffRoundsWon: number;
 	// -1: didn't make playoffs. 0: lost in first round. ... N: won championship

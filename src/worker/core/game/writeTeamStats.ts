@@ -293,23 +293,30 @@ const writeTeamStats = async (results: GameResults) => {
 				teamSeason.streak = 1;
 			}
 		} else if (lost && g.get("phase") !== PHASE.PLAYOFFS) {
-			teamSeason.lost += 1;
+			const lostOrOtl =
+				results.overtimes > 0 && g.get("otl", "current") ? "otl" : "lost";
+
+			teamSeason[lostOrOtl] += 1;
 
 			if (results.team[0].did === results.team[1].did) {
-				teamSeason.lostDiv += 1;
+				teamSeason[`${lostOrOtl}Div` as const] += 1;
 			}
 
 			if (results.team[0].cid === results.team[1].cid) {
-				teamSeason.lostConf += 1;
+				teamSeason[`${lostOrOtl}Conf` as const] += 1;
 			}
 
 			if (t1 === 0) {
-				teamSeason.lostHome += 1;
+				teamSeason[`${lostOrOtl}Home` as const] += 1;
 			} else {
-				teamSeason.lostAway += 1;
+				teamSeason[`${lostOrOtl}Away` as const] += 1;
 			}
 
-			teamSeason.lastTen.unshift(0);
+			if (lostOrOtl === "lost") {
+				teamSeason.lastTen.unshift(0);
+			} else {
+				teamSeason.lastTen.unshift("OTL");
+			}
 
 			if (teamSeason.streak <= 0) {
 				teamSeason.streak -= 1;

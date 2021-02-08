@@ -133,8 +133,10 @@ const LiveGame = (props: View<"liveGame">) => {
 				if (
 					text === "End of game" ||
 					text.startsWith("Start of") ||
-					text.startsWith("Elam Ending activated! First team to") ||
-					text.includes("Goal!")
+					(isSport("basketball") &&
+						text.startsWith("Elam Ending activated! First team to")) ||
+					(isSport("hockey") &&
+						(text.includes("Goal!") || text.includes("penalty")))
 				) {
 					const b = document.createElement("b");
 					b.appendChild(node);

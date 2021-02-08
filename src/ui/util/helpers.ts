@@ -317,9 +317,13 @@ const roundStat = (
 		}
 
 		if (roundOverrides[stat] === "oneDecimalPlace") {
+			if (value === 100) {
+				return "100";
+			}
+
 			return value.toLocaleString("en-US", {
 				maximumFractionDigits: 1,
-				minimumFractionDigits: 0,
+				minimumFractionDigits: 1,
 			});
 		}
 

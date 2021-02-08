@@ -50,11 +50,13 @@ const sortsByType = {
 
 const StatsTable = ({
 	Row,
+	forceRowUpdate,
 	title,
 	type,
 	t,
 }: {
 	Row: any;
+	forceRowUpdate: boolean;
 	title: string;
 	type: keyof typeof sortsByType;
 	t: Team;
@@ -101,7 +103,13 @@ const StatsTable = ({
 								return 0;
 							})
 							.map((p, i) => (
-								<Row key={p.pid} i={i} p={p} stats={stats} />
+								<Row
+									key={p.pid}
+									i={i}
+									p={p}
+									stats={stats}
+									forceUpdate={forceRowUpdate}
+								/>
 							))}
 					</tbody>
 				</table>

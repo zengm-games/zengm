@@ -1048,21 +1048,15 @@ class GameSim {
 			}
 
 			if (substitutions || options.type === "starters") {
-				for (const t of [0, 1] as const) {
-					for (const pos of helpers.keys(this.playersOnIce[t])) {
-						for (const p of this.playersOnIce[t][pos]) {
-							const stat = pos === "G" ? "gpGoalie" : "gpSkater";
-							if (p.stat[stat] === 0) {
-								this.recordStat(t, p, stat);
-							}
+				for (const pos of helpers.keys(this.playersOnIce[t])) {
+					for (const p of this.playersOnIce[t][pos]) {
+						const stat = pos === "G" ? "gpGoalie" : "gpSkater";
+						if (p.stat[stat] === 0) {
+							this.recordStat(t, p, stat);
 						}
 					}
 				}
-			}
-		}
 
-		if (substitutions) {
-			for (const t of [0, 1] as const) {
 				this.playByPlay.logEvent({
 					type: "playersOnIce",
 					t,

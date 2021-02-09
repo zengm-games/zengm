@@ -9,7 +9,12 @@ export interface FilterFunction {
 export const POS: FilterFunction = {
 	name: "POS",
 	execute(filteredPlayers: any, offer: any, filterData: any) {
-		if (filterData && filterData.length > 0) {
+		if (offer.players.length === 0)
+			return {
+				players: offer.players,
+				qualifies: true,
+			};
+		else if (filterData && filterData.length > 0) {
 			const qualifyingPlayers = filteredPlayers.filter((pl: any) => {
 				return filterData.includes(pl.ratings.pos);
 			});
@@ -49,7 +54,12 @@ export const SALARY_CAP: FilterFunction = {
 export const SKILL: FilterFunction = {
 	name: "SKILL",
 	execute(filteredPlayers: any, offer: any, filterData: any) {
-		if (filterData && filterData.length > 0) {
+		if (offer.players.length === 0)
+			return {
+				players: offer.players,
+				qualifies: true,
+			};
+		else if (filterData && filterData.length > 0) {
 			const qualifyingPlayers = filteredPlayers.filter(
 				(player: any) =>
 					_.intersection(filterData, player.ratings.skills).length > 0,

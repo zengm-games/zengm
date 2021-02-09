@@ -100,15 +100,26 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return -Infinity;
 			}
 
-			let [won, lost, tied] = sortVal.split("-").map(num => parseInt(num, 10));
+			let [won, lost, otl, tied] = sortVal
+				.split("-")
+				.map(num => parseInt(num, 10));
 
+			// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
+			if (typeof otl === "number" && typeof tied !== "number") {
+				tied = otl;
+				otl = 0;
+			}
+
+			if (typeof otl !== "number") {
+				otl = 0;
+			}
 			if (typeof tied !== "number") {
 				tied = 0;
 			}
 
-			if (won + lost + tied > 0) {
+			if (won + lost + otl + tied > 0) {
 				// Sort by wins, winp
-				return won + (won + 0.5 * tied) / (won + lost + tied);
+				return won + (won + 0.5 * tied) / (won + lost + otl + tied);
 			}
 
 			return 0;

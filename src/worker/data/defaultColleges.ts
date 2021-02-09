@@ -490,6 +490,7 @@ const defaultColleges = bySport<Record<string, number>>({
 		"South Alabama": 2,
 		"South Central Louisiana State University": 1,
 	},
+	hockey: {},
 });
 
 export default defaultColleges;

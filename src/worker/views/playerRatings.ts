@@ -122,10 +122,27 @@ const updatePlayers = async (
 				"ppw",
 				"pac",
 			],
+			hockey: [
+				"hgt",
+				"stre",
+				"spd",
+				"endu",
+				"pss",
+				"wst",
+				"sst",
+				"stk",
+				"oiq",
+				"chk",
+				"blk",
+				"fcf",
+				"diq",
+				"glk",
+			],
 		});
 		const extraRatings = bySport({
 			basketball: [],
 			football: ["ovrs", "pots"],
+			hockey: ["ovrs", "pots"],
 		});
 
 		const players = await getPlayers(

@@ -55,6 +55,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"won",
 				"lost",
 				"tied",
+				"otl",
 				"abbrev",
 				"region",
 				"name",
@@ -64,16 +65,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 
 		const awards = await idb.getCopies.awards();
-		const awardNames = bySport({
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
-		});
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
 				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
 				mvp: addAbbrev(a.mvp, teams, a.season),
 				dpoy: addAbbrev(a.dpoy, teams, a.season),
+				goy: addAbbrev(a.goy, teams, a.season),
 				smoy: addAbbrev(a.smoy, teams, a.season),
 				mip: addAbbrev(a.mip, teams, a.season),
 				roy: addAbbrev(a.roy, teams, a.season),
@@ -132,6 +130,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						won: teamSeason ? teamSeason.won : 0,
 						lost: teamSeason ? teamSeason.lost : 0,
 						tied: teamSeason ? teamSeason.tied : 0,
+						otl: teamSeason ? teamSeason.otl : 0,
 						imgURL:
 							teamSeason && teamSeason.imgURL ? teamSeason.imgURL : t.imgURL,
 						count: 0,
@@ -148,6 +147,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			finalsMvp: {},
 			mvp: {},
 			dpoy: {},
+			goy: {},
 			smoy: {},
 			mip: {},
 			roy: {},
@@ -162,6 +162,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			"finalsMvp",
 			"mvp",
 			"dpoy",
+			"goy",
 			"smoy",
 			"mip",
 			"roy",
@@ -195,6 +196,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				row[category].count = counts[category][pid];
 			}
 		}
+
+		const awardNames = bySport({
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+			hockey: ["finalsMvp", "mvp", "dpoy", "goy", "roy"],
+		});
 
 		return {
 			awards: awardNames,

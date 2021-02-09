@@ -42,21 +42,12 @@ const groups = {
 let defaultCountries: Record<string, number>;
 
 if (process.env.NODE_ENV === "test") {
-	defaultCountries = bySport<Record<string, number>>({
-		basketball: {
-			Angola: 8,
-			Argentina: 71,
-			Australia: 174,
-			Austria: 15,
-		},
-		football: {
-			"American Samoa": 70,
-			Angola: 1,
-			Argentina: 1,
-			Australia: 108,
-			Austria: 5,
-		},
-	});
+	defaultCountries = {
+		Angola: 8,
+		Argentina: 71,
+		Australia: 174,
+		Austria: 15,
+	};
 } else {
 	defaultCountries = bySport<Record<string, number>>({
 		basketball: {
@@ -199,6 +190,46 @@ if (process.env.NODE_ENV === "test") {
 			Switzerland: 2,
 			USA: 73489,
 			"Virgin Islands": 1,
+		},
+
+		// Frequencies manually taken from https://www.hockey-reference.com/friv/birthplaces.cgi
+		hockey: {
+			Austria: 9,
+			Bahamas: 1,
+			Belarus: 2,
+			Belgium: 1,
+			Brazil: 2,
+			Bulgaria: 1,
+			Canada: 5256,
+			"Czech Republic": 225,
+			Denmark: 16,
+			England: 48,
+			Finland: 232,
+			France: 12,
+			Germany: 36,
+			Haiti: 1,
+			Ireland: 5,
+			Italy: 3,
+			Jamaica: 1,
+			Japan: 2,
+			Kazakhstan: 1,
+			Latvia: 7,
+			Lithuania: 1,
+			Netherlands: 2,
+			Nigeria: 2,
+			Norway: 8,
+			Paraguay: 1,
+			Poland: 8,
+			Russia: 304,
+			Slovakia: 98,
+			Slovenia: 2,
+			"South Africa": 1,
+			"South Korea": 2,
+			Sweden: 355,
+			Switzerland: 37,
+			USA: 1283,
+			Ukraine: 1,
+			Venezuela: 2,
 		},
 	});
 }

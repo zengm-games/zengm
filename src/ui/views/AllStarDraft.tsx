@@ -81,7 +81,9 @@ const PlayersTable = ({
 				>
 					{p.name}
 				</PlayerNameLabels>,
-				p.abbrev,
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+					{p.abbrev}
+				</a>,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),

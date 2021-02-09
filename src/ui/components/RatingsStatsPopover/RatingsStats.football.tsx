@@ -81,7 +81,6 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 	}
 
 	let statsBlock;
-
 	if (stats && stats.keyStats !== "") {
 		statsBlock = (
 			<div

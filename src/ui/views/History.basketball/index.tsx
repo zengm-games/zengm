@@ -38,6 +38,7 @@ const History = (props: View<"history">) => {
 		retiredPlayers,
 		userTid,
 	} = props as ActualProps;
+
 	return (
 		<>
 			<MoreLinks type="awards" page="history" season={season} />

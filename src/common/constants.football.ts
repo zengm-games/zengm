@@ -141,9 +141,6 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["bsc", "stre"],
 		weights: [1, 0.2],
 	},
-	pace: {
-		ratings: ["spd", "endu"],
-	},
 	endurance: {
 		ratings: [50, "endu"],
 		weights: [1, 1],
@@ -464,8 +461,9 @@ const RATINGS: RatingKey[] = [
 	"ppw",
 	"pac",
 ];
-const TIME_BETWEEN_GAMES = "week";
-const SIMPLE_AWARDS = ["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const;
+
+const SIMPLE_AWARDS = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
+
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	dpoy: "Defensive Player of the Year",
@@ -545,6 +543,5 @@ export {
 	RATINGS,
 	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
-	TIME_BETWEEN_GAMES,
 	DEFAULT_STADIUM_CAPACITY,
 };

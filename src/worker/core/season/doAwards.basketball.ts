@@ -276,6 +276,7 @@ const doAwards = async (conditions: Conditions) => {
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"winp",
 			"playoffRoundsWon",
 			"abbrev",

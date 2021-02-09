@@ -18,6 +18,7 @@ type InfoTemp = {
 const valueStatNames = bySport({
 	basketball: ["ows", "dws"],
 	football: ["av"],
+	hockey: ["ops", "dps", "gps"],
 });
 
 const reducer = (
@@ -86,7 +87,11 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 	return async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {
-			const valueStat = bySport({ basketball: "ws", football: "av" });
+			const valueStat = bySport({
+				basketball: "ws",
+				football: "av",
+				hockey: "ps",
+			});
 			const stats = bySport({
 				basketball: [
 					"gp",
@@ -100,6 +105,7 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 					"ws48",
 				],
 				football: ["keyStats", "av"],
+				hockey: ["keyStats", "ops", "dps", "ps"],
 			});
 
 			const infosTemp: { [key: string]: InfoTemp } = {};

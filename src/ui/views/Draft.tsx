@@ -11,7 +11,6 @@ import {
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
-import { isSport } from "../../common";
 
 const DraftButtons = ({
 	spectator,
@@ -394,9 +393,7 @@ const Draft = ({
 					)}
 				</div>
 
-				{isSport("football") ? (
-					<RosterComposition className="mb-3 ml-sm-3" players={userPlayers} />
-				) : null}
+				<RosterComposition className="mb-3 ml-sm-3" players={userPlayers} />
 			</div>
 
 			<div className={wrapperClasses}>

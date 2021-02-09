@@ -20,6 +20,7 @@ const updateFreeAgents = async () => {
 	const stats = bySport({
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	for (const p of playersAll) {

@@ -5,7 +5,7 @@ import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 
-const gameOrWeek = bySport({ basketball: "game", football: "week" });
+const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
 	p: any,
@@ -53,10 +53,10 @@ const doInjury = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	let injuryLength = "short";
-	if (p2.injury.gamesRemaining >= bySport({ basketball: 10, football: 4 })) {
+	if (p2.injury.gamesRemaining >= bySport({ default: 10, football: 4 })) {
 		injuryLength = "medium";
 	} else if (
-		p2.injury.gamesRemaining >= bySport({ basketball: 20, football: 8 })
+		p2.injury.gamesRemaining >= bySport({ default: 20, football: 8 })
 	) {
 		injuryLength = "long";
 	}
@@ -128,8 +128,8 @@ const doInjury = async (
 
 	let ratingsLoss = false;
 	const gamesRemainingNormalized = bySport({
-		basketball: p2.injury.gamesRemaining,
 		football: p2.injury.gamesRemaining * 3,
+		default: p2.injury.gamesRemaining,
 	});
 
 	if (
@@ -159,12 +159,18 @@ const doInjury = async (
 			1,
 			100,
 		);
-		const rating = bySport({ basketball: "jmp", football: "thp" });
-		p2.ratings[r][rating] = helpers.bound(
-			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
-			1,
-			100,
-		);
+		const rating = bySport({
+			basketball: "jmp",
+			football: "thp",
+			hockey: undefined,
+		});
+		if (rating) {
+			p2.ratings[r][rating] = helpers.bound(
+				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
+				1,
+				100,
+			);
+		}
 
 		// Update ovr and pot
 		await player.develop(p2, 0);
@@ -240,6 +246,16 @@ const writePlayerStats = async (
 		}
 
 		for (const t of result.team) {
+			// This needs to be before checkStatistical Feat
+			if (isSport("hockey")) {
+				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
+
+				// As in NHL, shutout only is credited if a single goalie plays the whole game
+				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
+					goalies[0].stat.so = 1;
+				}
+			}
+
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
 				if (!isSport("basketball") && p.stat.min === 0) {
@@ -254,8 +270,9 @@ const writePlayerStats = async (
 				}
 
 				if (!allStarGame) {
-					let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+					let ps = p2.stats[p2.stats.length - 1];
 
+					// This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
 					if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
 						await player.addStatsRow(p2, playoffs);
 						ps = p2.stats[p2.stats.length - 1];
@@ -295,14 +312,18 @@ const writePlayerStats = async (
 							const stat = key.replace("Max", "");
 
 							let value;
-							if (stat === "2p") {
+							if (isSport("basketball") && stat === "2p") {
 								value = p.stat.fg - p.stat.tp;
-							} else if (stat === "2pa") {
+							} else if (isSport("basketball") && stat === "2pa") {
 								value = p.stat.fga - p.stat.tpa;
-							} else if (stat === "trb") {
+							} else if (isSport("basketball") && stat === "trb") {
 								value = p.stat.drb + p.stat.orb;
-							} else if (stat === "gmsc") {
+							} else if (isSport("basketball") && stat === "gmsc") {
 								value = helpers.gameScore(p.stat);
+							} else if (isSport("hockey") && stat === "g") {
+								value = p.stat.evG + p.stat.ppG + p.stat.shG;
+							} else if (isSport("hockey") && stat === "a") {
+								value = p.stat.evA + p.stat.ppA + p.stat.shA;
 							} else {
 								value = p.stat[stat];
 							}

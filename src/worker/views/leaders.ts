@@ -13,6 +13,7 @@ const getCategoriesAndStats = () => {
 			data: any[];
 			minStats: string[];
 			minValue: number[];
+			sortAscending?: true;
 		}[]
 	>({
 		basketball: [
@@ -370,6 +371,171 @@ const getCategoriesAndStats = () => {
 				minValue: [],
 			},
 		],
+		hockey: [
+			{
+				name: "Goals",
+				stat: "G",
+				statProp: "g",
+				title: "Goals",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Assists",
+				stat: "A",
+				statProp: "a",
+				title: "Assists",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Points",
+				stat: "PTS",
+				statProp: "pts",
+				title: "Points",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Plus/Minus",
+				stat: "+/-",
+				statProp: "pm",
+				title: "Plus/Minus",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Penalty Minutes",
+				stat: "PIM",
+				statProp: "pim",
+				title: "Penalty Minutes",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Time On Ice",
+				stat: "TOI",
+				statProp: "min",
+				title: "Time On Ice",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Blocks",
+				stat: "BLK",
+				statProp: "blk",
+				title: "Blocks",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Hits",
+				stat: "HIT",
+				statProp: "hit",
+				title: "Hits",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Takeaways",
+				stat: "TK",
+				statProp: "tk",
+				title: "Takeaways",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Giveaways",
+				stat: "GV",
+				statProp: "gv",
+				title: "Giveaways",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Save Percentage",
+				stat: "SV%",
+				statProp: "svPct",
+				title: "Save Percentage",
+				data: [],
+				minStats: ["sv"],
+				minValue: [800],
+			},
+			{
+				name: "Goals Against Average",
+				stat: "GAA",
+				statProp: "gaa",
+				title: "Goals Against Average",
+				data: [],
+				minStats: ["sv"],
+				minValue: [800],
+				sortAscending: true,
+			},
+			{
+				name: "Shutouts",
+				stat: "SO",
+				statProp: "so",
+				title: "Shutouts",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Goals Created",
+				stat: "GC",
+				statProp: "gc",
+				title: "Goals Created",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Offensive Point Shares",
+				stat: "OPS",
+				statProp: "ops",
+				title: "Offensive Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Defensive Point Shares",
+				stat: "DPS",
+				statProp: "dps",
+				title: "Defensive Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Goalie Point Shares",
+				stat: "GPS",
+				statProp: "gps",
+				title: "Goalie Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Point Shares",
+				stat: "PS",
+				statProp: "ps",
+				title: "Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+		],
 	});
 
 	const statsSet = new Set<string>();
@@ -452,7 +618,11 @@ const updateLeaders = async (
 			helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 		for (const cat of categories) {
-			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+			if (cat.sortAscending) {
+				players.sort((a, b) => a.stats[cat.statProp] - b.stats[cat.statProp]);
+			} else {
+				players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+			}
 
 			for (const p of players) {
 				// Test if the player meets the minimum statistical requirements for this category
@@ -461,8 +631,7 @@ const updateLeaders = async (
 				for (let k = 0; k < cat.minStats.length; k++) {
 					// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 					let playerValue;
-
-					if (isSport("football") || cat.minStats[k] === "gp") {
+					if (!isSport("basketball") || cat.minStats[k] === "gp") {
 						playerValue = p.stats[cat.minStats[k]];
 					} else {
 						playerValue = p.stats[cat.minStats[k]] * p.stats.gp;

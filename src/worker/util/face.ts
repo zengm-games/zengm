@@ -10,11 +10,15 @@ import { bySport, isSport } from "../../common";
 const generate = (race?: Race) => {
 	const overrides: any = {
 		jersey: {
-			id: bySport({ basketball: "jersey3", football: "football" }),
+			id: bySport({
+				basketball: "jersey3",
+				football: "football",
+				hockey: "hockey",
+			}),
 		},
 	};
 
-	if (isSport("football")) {
+	if (!isSport("basketball")) {
 		overrides.glasses = {
 			id: "none",
 		};

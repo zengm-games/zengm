@@ -131,6 +131,44 @@ const optionsTmp = bySport({
 			key: "all_league",
 		},
 	],
+	hockey: [
+		{
+			val: "Won Championship",
+			key: "champion",
+		},
+		{
+			val: "Most Valuable Player",
+			key: "mvp",
+		},
+		{
+			val: "Finals MVP",
+			key: "finals_mvp",
+		},
+		{
+			val: "Defensive Player of the Year",
+			key: "dpoy",
+		},
+		{
+			val: "Goalie of the Year",
+			key: "goy",
+		},
+		{
+			val: "Rookie of the Year",
+			key: "roy",
+		},
+		{
+			val: "First Team All-League",
+			key: "first_team",
+		},
+		{
+			val: "Second Team All-League",
+			key: "second_team",
+		},
+		{
+			val: "All-League",
+			key: "all_league",
+		},
+	],
 });
 
 const awardOptions: any = {};

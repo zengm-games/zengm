@@ -1,10 +1,9 @@
 import { team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import posRatings from "../../common/posRatings.football";
+import posRatings from "../../common/posRatings";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import type { Position } from "../../common/types.football";
-import { isSport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 const defenseStats = [
 	"defTckSolo",
@@ -23,52 +22,62 @@ const defenseStats = [
 	"defFmbYds",
 	"defFmbTD",
 ];
-const stats: Record<Position, string[]> = {
-	QB: [
-		"pssCmp",
-		"pss",
-		"cmpPct",
-		"pssYds",
-		"pssTD",
-		"pssInt",
-		"pssSk",
-		"pssSkYds",
-		"qbRat",
-		"fmbLost",
-	],
-	RB: [
-		"rus",
-		"rusYds",
-		"rusYdsPerAtt",
-		"rusLng",
-		"rusTD",
-		"tgt",
-		"rec",
-		"recYds",
-		"recYdsPerAtt",
-		"recTD",
-		"recLng",
-		"fmbLost",
-	],
-	WR: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng", "fmbLost"],
-	TE: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng", "fmbLost"],
-	OL: [],
-	DL: defenseStats,
-	LB: defenseStats,
-	CB: defenseStats,
-	S: defenseStats,
-	K: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
-	P: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
-	KR: ["kr", "krYds", "krYdsPerAtt", "krLng", "krTD"],
-	PR: ["pr", "prYds", "prYdsPerAtt", "prLng", "prTD"],
-};
 
-async function updateDepth(
-	{ abbrev, pos, tid }: ViewInput<"depthFootball">,
+const stats = bySport<Record<string, string[]>>({
+	basketball: {},
+	football: {
+		QB: [
+			"pssCmp",
+			"pss",
+			"cmpPct",
+			"pssYds",
+			"pssTD",
+			"pssInt",
+			"pssSk",
+			"pssSkYds",
+			"qbRat",
+			"fmbLost",
+		],
+		RB: [
+			"rus",
+			"rusYds",
+			"rusYdsPerAtt",
+			"rusLng",
+			"rusTD",
+			"tgt",
+			"rec",
+			"recYds",
+			"recYdsPerAtt",
+			"recTD",
+			"recLng",
+			"fmbLost",
+		],
+		WR: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng", "fmbLost"],
+		TE: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng", "fmbLost"],
+		OL: [],
+		DL: defenseStats,
+		LB: defenseStats,
+		CB: defenseStats,
+		S: defenseStats,
+		K: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
+		P: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		KR: ["kr", "krYds", "krYdsPerAtt", "krLng", "krTD"],
+		PR: ["pr", "prYds", "prYdsPerAtt", "prLng", "prTD"],
+	},
+	hockey: {
+		F: ["g", "a", "ops", "dps", "ps"],
+		D: ["g", "a", "ops", "dps", "ps"],
+		G: ["gaa", "svPct", "gps"],
+	},
+});
+
+const updateDepth = async (
+	{ abbrev, pos, tid }: ViewInput<"depth">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
-	if (!isSport("football")) {
+) => {
+	console.log();
+	if (!isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
 
@@ -128,6 +137,6 @@ async function updateDepth(
 			tid,
 		};
 	}
-}
+};
 
 export default updateDepth;

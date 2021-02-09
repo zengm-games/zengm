@@ -1,6 +1,11 @@
 import { unwrap } from "idb";
 import orderBy from "lodash/orderBy";
-import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE, PLAYER } from "../../common";
+import {
+	isSport,
+	MAX_SUPPORTED_LEAGUE_VERSION,
+	PHASE,
+	PLAYER,
+} from "../../common";
 import { player, season } from "../core";
 import { idb } from ".";
 import iterate from "./iterate";
@@ -472,443 +477,457 @@ const migrate = ({
 		});
 	};
 
-	if (oldVersion <= 15) {
-		throw new Error(`League is too old to upgrade (version ${oldVersion})`);
-	}
+	if (isSport("basketball") || isSport("football")) {
+		if (oldVersion <= 15) {
+			throw new Error(`League is too old to upgrade (version ${oldVersion})`);
+		}
 
-	if (oldVersion <= 16) {
-		const teamSeasonsStore = db.createObjectStore("teamSeasons", {
-			keyPath: "rid",
-			autoIncrement: true,
-		});
-		const teamStatsStore = db.createObjectStore("teamStats", {
-			keyPath: "rid",
-			autoIncrement: true,
-		});
-		teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
-			unique: false,
-		});
-		teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
-			unique: true,
-		});
-		teamStatsStore.createIndex("tid", "tid", {
-			unique: false,
-		});
-		teamStatsStore.createIndex("season, tid", ["season", "tid"], {
-			unique: false,
-		});
-
-		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
-			for (const teamStats of (t as any).stats) {
-				teamStats.tid = t.tid;
-
-				if (!teamStats.hasOwnProperty("ba")) {
-					teamStats.ba = 0;
-				}
-
-				teamStatsStore.add(teamStats);
-			}
-
-			for (const teamSeason of (t as any).seasons) {
-				teamSeason.tid = t.tid;
-				teamSeasonsStore.add(teamSeason);
-			}
-
-			delete (t as any).stats;
-			delete (t as any).seasons;
-			return t;
-		});
-	}
-
-	if (oldVersion <= 17) {
-		// This used to upgrade team logos to the new ones, but Firefox
-	}
-
-	if (oldVersion <= 18) {
-		// Split old single string p.name into two names
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			if ((p as any).name) {
-				const bothNames = (p as any).name.split(" ");
-				p.firstName = bothNames[0];
-				p.lastName = bothNames[1];
-				delete (p as any).name;
-			}
-
-			return p;
-		});
-	}
-
-	if (oldVersion <= 19) {
-		// New best records format in awards
-		iterate(transaction.objectStore("awards"), undefined, undefined, a => {
-			if (a.bre && a.brw) {
-				a.bestRecordConfs = [a.bre, a.brw];
-				a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
-				delete a.bre;
-				delete a.brw;
-				return a;
-			}
-		});
-	}
-
-	if (oldVersion <= 20) {
-		// Removing indexes when upgrading to cache version
-		transaction.objectStore("draftPicks").deleteIndex("season");
-		transaction.objectStore("draftPicks").deleteIndex("tid");
-		transaction.objectStore("playerFeats").deleteIndex("pid");
-		transaction.objectStore("playerFeats").deleteIndex("tid");
-		transaction.objectStore("players").deleteIndex("draft.year");
-		transaction.objectStore("players").deleteIndex("retiredYear");
-		transaction.objectStore("releasedPlayers").deleteIndex("tid");
-		transaction.objectStore("releasedPlayers").deleteIndex("contract.exp");
-	}
-
-	if (oldVersion <= 21) {
-		transaction
-			.objectStore("players")
-			.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"], {
+		if (oldVersion <= 16) {
+			const teamSeasonsStore = db.createObjectStore("teamSeasons", {
+				keyPath: "rid",
+				autoIncrement: true,
+			});
+			const teamStatsStore = db.createObjectStore("teamStats", {
+				keyPath: "rid",
+				autoIncrement: true,
+			});
+			teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
 				unique: false,
 			});
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			if (p.retiredYear === null || p.retiredYear === undefined) {
-				p.retiredYear = Infinity;
-				return p;
-			}
-		});
-	}
-
-	if (oldVersion <= 22) {
-		db.createObjectStore("draftLotteryResults", {
-			keyPath: "season",
-		});
-	}
-
-	if (oldVersion <= 23) {
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			for (const r of p.ratings) {
-				r.hgt = player.heightToRating(p.hgt);
-			}
-
-			return p;
-		});
-	}
-
-	if (oldVersion <= 24) {
-		iterate(transaction.objectStore("teamStats"), undefined, undefined, ts => {
-			ts.oppBlk = ts.ba;
-			delete ts.ba;
-			return ts;
-		});
-	}
-
-	if (oldVersion <= 25) {
-		iterate(transaction.objectStore("games"), undefined, undefined, gm => {
-			for (const t of gm.teams) {
-				delete t.trb;
-
-				for (const p of t.players) {
-					delete p.trb;
-				}
-			}
-
-			return gm;
-		});
-		iterate(
-			transaction.objectStore("playerStats" as any),
-			undefined,
-			undefined,
-			ps => {
-				delete ps.trb;
-				return ps;
-			},
-		);
-		iterate(transaction.objectStore("teamStats"), undefined, undefined, ts => {
-			delete ts.trb;
-			delete ts.oppTrb;
-			return ts;
-		});
-	}
-
-	if (oldVersion <= 26) {
-		slowUpgrade();
-
-		// Only non-retired players, for efficiency
-		iterate(
-			transaction.objectStore("players"),
-			undefined,
-			undefined,
-			(p: any) => {
-				for (const r of p.ratings) {
-					// Replace blk/stl with diq
-					if (typeof r.diq !== "number") {
-						if (typeof r.blk === "number" && typeof r.stl === "number") {
-							r.diq = Math.round((r.blk + r.stl) / 2);
-							delete r.blk;
-							delete r.stl;
-						} else {
-							r.diq = 50;
-						}
-					}
-
-					// Add oiq
-					if (typeof r.oiq !== "number") {
-						r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
-
-						if (typeof r.oiq !== "number") {
-							r.oiq = 50;
-						}
-					}
-
-					// Scale ratings
-					const ratingKeys = [
-						"stre",
-						"spd",
-						"jmp",
-						"endu",
-						"ins",
-						"dnk",
-						"ft",
-						"fg",
-						"tp",
-						"oiq",
-						"diq",
-						"drb",
-						"pss",
-						"reb",
-					];
-
-					for (const key of ratingKeys) {
-						if (typeof r[key] === "number") {
-							// 100 -> 80
-							// 0 -> 20
-							// Linear in between
-							r[key] -= (20 * (r[key] - 50)) / 50;
-						} else {
-							console.log(p);
-							throw new Error(`Missing rating: ${key}`);
-						}
-					}
-
-					r.ovr = player.ovr(r);
-					r.skills = player.skills(r);
-
-					// Don't want to deal with bootstrapPot now being async
-					r.pot = r.ovr;
-
-					if (p.draft.year === r.season) {
-						p.draft.ovr = r.ovr;
-						p.draft.skills = r.skills;
-						p.draft.pot = r.pot;
-					}
-				}
-
-				if (!Array.isArray(p.relatives)) {
-					p.relatives = [];
-				}
-
-				return p;
-			},
-		);
-	}
-
-	if (oldVersion <= 27) {
-		iterate(
-			transaction.objectStore("teamSeasons"),
-			undefined,
-			undefined,
-			teamSeason => {
-				if (typeof teamSeason.stadiumCapacity !== "number") {
-					teamSeason.stadiumCapacity = 25000;
-					return teamSeason;
-				}
-			},
-		);
-	}
-
-	if (oldVersion <= 28) {
-		slowUpgrade();
-		upgrade29(unwrap(transaction));
-	}
-
-	if (oldVersion === 29) {
-		// === rather than <= is to prevent the 30 and 27/29 upgrades from having a race condition on updating players
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			if (!Array.isArray(p.relatives)) {
-				p.relatives = [];
-				return p;
-			}
-		});
-	}
-
-	if (oldVersion <= 30) {
-		upgrade31(unwrap(transaction));
-	}
-
-	if (oldVersion <= 31) {
-		// Gets need to use raw IDB API because Firefox < 60
-		const tx = unwrap(transaction);
-
-		tx.objectStore("gameAttributes").get("difficulty").onsuccess = (
-			event: any,
-		) => {
-			let difficulty =
-				event.target.result !== undefined
-					? event.target.result.value
-					: undefined;
-
-			if (typeof difficulty === "number") {
-				// Migrating from initial test implementation
-				difficulty -= 0.5;
-			} else {
-				difficulty = 0;
-			}
-
-			tx.objectStore("gameAttributes").put({
-				key: "difficulty",
-				value: difficulty,
+			teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
+				unique: true,
+			});
+			teamStatsStore.createIndex("tid", "tid", {
+				unique: false,
+			});
+			teamStatsStore.createIndex("season, tid", ["season", "tid"], {
+				unique: false,
 			});
 
-			unwrap(idb.meta.transaction("leagues").objectStore("leagues")).get(
-				lid,
-			).onsuccess = (event2: any) => {
-				const l = event2.target.result;
-				l.difficulty = difficulty;
-				idb.meta.put("leagues", l);
-			};
-		};
-	}
+			iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+				for (const teamStats of (t as any).stats) {
+					teamStats.tid = t.tid;
 
-	if (oldVersion <= 32) {
-		upgrade33(transaction);
-	}
+					if (!teamStats.hasOwnProperty("ba")) {
+						teamStats.ba = 0;
+					}
 
-	if (oldVersion <= 33) {
-		db.createObjectStore("allStars", {
-			keyPath: "season",
-		});
-	}
-
-	if (oldVersion <= 34) {
-		const teamsDefault = helpers.getTeamsDefault();
-		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
-			if (!(t as any).colors) {
-				if (
-					(teamsDefault as any)[t.tid] &&
-					teamsDefault[t.tid].region === t.region &&
-					teamsDefault[t.tid].name === t.name
-				) {
-					t.colors = teamsDefault[t.tid].colors;
-				} else {
-					t.colors = ["#000000", "#cccccc", "#ffffff"];
+					teamStatsStore.add(teamStats);
 				}
 
+				for (const teamSeason of (t as any).seasons) {
+					teamSeason.tid = t.tid;
+					teamSeasonsStore.add(teamSeason);
+				}
+
+				delete (t as any).stats;
+				delete (t as any).seasons;
 				return t;
-			}
-		});
-	}
+			});
+		}
 
-	if (oldVersion <= 35) {
-		slowUpgrade();
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			if (!(p as any).injuries) {
-				p.injuries = [];
+		if (oldVersion <= 17) {
+			// This used to upgrade team logos to the new ones, but Firefox
+		}
+
+		if (oldVersion <= 18) {
+			// Split old single string p.name into two names
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				if ((p as any).name) {
+					const bothNames = (p as any).name.split(" ");
+					p.firstName = bothNames[0];
+					p.lastName = bothNames[1];
+					delete (p as any).name;
+				}
+
 				return p;
-			}
-		});
-	}
+			});
+		}
 
-	if (oldVersion <= 36) {
-		const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
-			keyPath: "id",
-			autoIncrement: true,
-		});
-		scheduledEventsStore.createIndex("season", "season", {
-			unique: false,
-		});
-	}
+		if (oldVersion <= 19) {
+			// New best records format in awards
+			iterate(transaction.objectStore("awards"), undefined, undefined, a => {
+				if (a.bre && a.brw) {
+					a.bestRecordConfs = [a.bre, a.brw];
+					a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
+					delete a.bre;
+					delete a.brw;
+					return a;
+				}
+			});
+		}
 
-	if (oldVersion <= 37) {
-		upgrade38(transaction);
-	}
+		if (oldVersion <= 20) {
+			// Removing indexes when upgrading to cache version
+			transaction.objectStore("draftPicks").deleteIndex("season");
+			transaction.objectStore("draftPicks").deleteIndex("tid");
+			transaction.objectStore("playerFeats").deleteIndex("pid");
+			transaction.objectStore("playerFeats").deleteIndex("tid");
+			transaction.objectStore("players").deleteIndex("draft.year");
+			transaction.objectStore("players").deleteIndex("retiredYear");
+			transaction.objectStore("releasedPlayers").deleteIndex("tid");
+			transaction.objectStore("releasedPlayers").deleteIndex("contract.exp");
+		}
 
-	if (oldVersion <= 38) {
-		slowUpgrade();
-
-		let lastCentury = 0; // Iterate over players
-
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			// This can be really slow, so need some UI for progress
-			const century = Math.floor(p.draft.year / 100);
-			if (century > lastCentury) {
-				const text = `Upgrading players drafted in the ${century}00s...`;
-				logEvent({
-					type: "upgrade",
-					text,
-					saveToDb: false,
+		if (oldVersion <= 21) {
+			transaction
+				.objectStore("players")
+				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"], {
+					unique: false,
 				});
-				console.log(text);
-				lastCentury = century;
-			}
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				if (p.retiredYear === null || p.retiredYear === undefined) {
+					p.retiredYear = Infinity;
+					return p;
+				}
+			});
+		}
 
-			delete (p as any).freeAgentMood;
-			p.moodTraits = player.genMoodTraits();
-			p.numDaysFreeAgent = 0;
-			return p;
-		});
-		iterate(
-			transaction.objectStore("teamSeasons"),
-			undefined,
-			undefined,
-			teamSeason => {
-				teamSeason.numPlayersTradedAway = 0;
-				return teamSeason;
-			},
-		);
-	}
+		if (oldVersion <= 22) {
+			db.createObjectStore("draftLotteryResults", {
+				keyPath: "season",
+			});
+		}
 
-	if (oldVersion <= 39) {
-		transaction.objectStore("events").createIndex("dpids", "dpids", {
-			unique: false,
-			multiEntry: true,
-		});
-	}
+		if (oldVersion <= 23) {
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				for (const r of p.ratings) {
+					r.hgt = player.heightToRating(p.hgt);
+				}
 
-	if (oldVersion <= 40) {
-		const tx = unwrap(transaction);
-		tx.objectStore("gameAttributes").get("userTids").onsuccess = (
-			event: any,
-		) => {
-			let userTids: number[] = [];
-			console.log("userTids result", event.target.result);
-			if (event.target.result) {
-				userTids = event.target.result.value;
-			}
+				return p;
+			});
+		}
 
-			tx.objectStore("gameAttributes").get("keepRosterSorted").onsuccess = (
+		if (oldVersion <= 24) {
+			iterate(
+				transaction.objectStore("teamStats"),
+				undefined,
+				undefined,
+				ts => {
+					ts.oppBlk = ts.ba;
+					delete ts.ba;
+					return ts;
+				},
+			);
+		}
+
+		if (oldVersion <= 25) {
+			iterate(transaction.objectStore("games"), undefined, undefined, gm => {
+				for (const t of gm.teams) {
+					delete t.trb;
+
+					for (const p of t.players) {
+						delete p.trb;
+					}
+				}
+
+				return gm;
+			});
+			iterate(
+				transaction.objectStore("playerStats" as any),
+				undefined,
+				undefined,
+				ps => {
+					delete ps.trb;
+					return ps;
+				},
+			);
+			iterate(
+				transaction.objectStore("teamStats"),
+				undefined,
+				undefined,
+				ts => {
+					delete ts.trb;
+					delete ts.oppTrb;
+					return ts;
+				},
+			);
+		}
+
+		if (oldVersion <= 26) {
+			slowUpgrade();
+
+			// Only non-retired players, for efficiency
+			iterate(
+				transaction.objectStore("players"),
+				undefined,
+				undefined,
+				(p: any) => {
+					for (const r of p.ratings) {
+						// Replace blk/stl with diq
+						if (typeof r.diq !== "number") {
+							if (typeof r.blk === "number" && typeof r.stl === "number") {
+								r.diq = Math.round((r.blk + r.stl) / 2);
+								delete r.blk;
+								delete r.stl;
+							} else {
+								r.diq = 50;
+							}
+						}
+
+						// Add oiq
+						if (typeof r.oiq !== "number") {
+							r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
+
+							if (typeof r.oiq !== "number") {
+								r.oiq = 50;
+							}
+						}
+
+						// Scale ratings
+						const ratingKeys = [
+							"stre",
+							"spd",
+							"jmp",
+							"endu",
+							"ins",
+							"dnk",
+							"ft",
+							"fg",
+							"tp",
+							"oiq",
+							"diq",
+							"drb",
+							"pss",
+							"reb",
+						];
+
+						for (const key of ratingKeys) {
+							if (typeof r[key] === "number") {
+								// 100 -> 80
+								// 0 -> 20
+								// Linear in between
+								r[key] -= (20 * (r[key] - 50)) / 50;
+							} else {
+								console.log(p);
+								throw new Error(`Missing rating: ${key}`);
+							}
+						}
+
+						r.ovr = player.ovr(r);
+						r.skills = player.skills(r);
+
+						// Don't want to deal with bootstrapPot now being async
+						r.pot = r.ovr;
+
+						if (p.draft.year === r.season) {
+							p.draft.ovr = r.ovr;
+							p.draft.skills = r.skills;
+							p.draft.pot = r.pot;
+						}
+					}
+
+					if (!Array.isArray(p.relatives)) {
+						p.relatives = [];
+					}
+
+					return p;
+				},
+			);
+		}
+
+		if (oldVersion <= 27) {
+			iterate(
+				transaction.objectStore("teamSeasons"),
+				undefined,
+				undefined,
+				teamSeason => {
+					if (typeof teamSeason.stadiumCapacity !== "number") {
+						teamSeason.stadiumCapacity = 25000;
+						return teamSeason;
+					}
+				},
+			);
+		}
+
+		if (oldVersion <= 28) {
+			slowUpgrade();
+			upgrade29(unwrap(transaction));
+		}
+
+		if (oldVersion === 29) {
+			// === rather than <= is to prevent the 30 and 27/29 upgrades from having a race condition on updating players
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				if (!Array.isArray(p.relatives)) {
+					p.relatives = [];
+					return p;
+				}
+			});
+		}
+
+		if (oldVersion <= 30) {
+			upgrade31(unwrap(transaction));
+		}
+
+		if (oldVersion <= 31) {
+			// Gets need to use raw IDB API because Firefox < 60
+			const tx = unwrap(transaction);
+
+			tx.objectStore("gameAttributes").get("difficulty").onsuccess = (
 				event: any,
 			) => {
-				let keepRosterSorted = true;
-				if (event.target.result) {
-					keepRosterSorted = !!event.target.result.value;
+				let difficulty =
+					event.target.result !== undefined
+						? event.target.result.value
+						: undefined;
+
+				if (typeof difficulty === "number") {
+					// Migrating from initial test implementation
+					difficulty -= 0.5;
+				} else {
+					difficulty = 0;
 				}
 
-				iterate(transaction.objectStore("teams"), undefined, undefined, t => {
-					t.keepRosterSorted = userTids.includes(t.tid)
-						? keepRosterSorted
-						: true;
+				tx.objectStore("gameAttributes").put({
+					key: "difficulty",
+					value: difficulty,
+				});
 
-					if (t.adjustForInflation === undefined) {
-						t.adjustForInflation = true;
-					}
-					if (t.disabled === undefined) {
-						t.disabled = false;
+				unwrap(idb.meta.transaction("leagues").objectStore("leagues")).get(
+					lid,
+				).onsuccess = (event2: any) => {
+					const l = event2.target.result;
+					l.difficulty = difficulty;
+					idb.meta.put("leagues", l);
+				};
+			};
+		}
+
+		if (oldVersion <= 32) {
+			upgrade33(transaction);
+		}
+
+		if (oldVersion <= 33) {
+			db.createObjectStore("allStars", {
+				keyPath: "season",
+			});
+		}
+
+		if (oldVersion <= 34) {
+			const teamsDefault = helpers.getTeamsDefault();
+			iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+				if (!(t as any).colors) {
+					if (
+						(teamsDefault as any)[t.tid] &&
+						teamsDefault[t.tid].region === t.region &&
+						teamsDefault[t.tid].name === t.name
+					) {
+						t.colors = teamsDefault[t.tid].colors;
+					} else {
+						t.colors = ["#000000", "#cccccc", "#ffffff"];
 					}
 
 					return t;
-				});
+				}
+			});
+		}
+
+		if (oldVersion <= 35) {
+			slowUpgrade();
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				if (!(p as any).injuries) {
+					p.injuries = [];
+					return p;
+				}
+			});
+		}
+
+		if (oldVersion <= 36) {
+			const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
+				keyPath: "id",
+				autoIncrement: true,
+			});
+			scheduledEventsStore.createIndex("season", "season", {
+				unique: false,
+			});
+		}
+
+		if (oldVersion <= 37) {
+			upgrade38(transaction);
+		}
+
+		if (oldVersion <= 38) {
+			slowUpgrade();
+
+			let lastCentury = 0; // Iterate over players
+
+			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+				// This can be really slow, so need some UI for progress
+				const century = Math.floor(p.draft.year / 100);
+				if (century > lastCentury) {
+					const text = `Upgrading players drafted in the ${century}00s...`;
+					logEvent({
+						type: "upgrade",
+						text,
+						saveToDb: false,
+					});
+					console.log(text);
+					lastCentury = century;
+				}
+
+				delete (p as any).freeAgentMood;
+				p.moodTraits = player.genMoodTraits();
+				p.numDaysFreeAgent = 0;
+				return p;
+			});
+			iterate(
+				transaction.objectStore("teamSeasons"),
+				undefined,
+				undefined,
+				teamSeason => {
+					teamSeason.numPlayersTradedAway = 0;
+					return teamSeason;
+				},
+			);
+		}
+
+		if (oldVersion <= 39) {
+			transaction.objectStore("events").createIndex("dpids", "dpids", {
+				unique: false,
+				multiEntry: true,
+			});
+		}
+
+		if (oldVersion <= 40) {
+			const tx = unwrap(transaction);
+			tx.objectStore("gameAttributes").get("userTids").onsuccess = (
+				event: any,
+			) => {
+				let userTids: number[] = [];
+				console.log("userTids result", event.target.result);
+				if (event.target.result) {
+					userTids = event.target.result.value;
+				}
+
+				tx.objectStore("gameAttributes").get("keepRosterSorted").onsuccess = (
+					event: any,
+				) => {
+					let keepRosterSorted = true;
+					if (event.target.result) {
+						keepRosterSorted = !!event.target.result.value;
+					}
+
+					iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+						t.keepRosterSorted = userTids.includes(t.tid)
+							? keepRosterSorted
+							: true;
+
+						if (t.adjustForInflation === undefined) {
+							t.adjustForInflation = true;
+						}
+						if (t.disabled === undefined) {
+							t.disabled = false;
+						}
+
+						return t;
+					});
+				};
 			};
-		};
+		}
 	}
+
+	// New ones here!
 };
 
 const connectLeague = (lid: number) =>

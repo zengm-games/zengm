@@ -64,6 +64,7 @@ type Key =
 	| "allStarGame"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
+	| "foulsUntilBonus"
 	| "threePointers"
 	| "pace"
 	| "threePointTendencyFactor"
@@ -79,6 +80,7 @@ type Key =
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
+	| "otl"
 	| "spectator"
 	| "elam"
 	| "elamASG"
@@ -252,6 +254,10 @@ export const options: {
 					from 1990-1993
 				</p>
 				<p>
+					<b>NHL 2017:</b> Weighted lottery for the top 3 picks, like the NHL
+					since 2017
+				</p>
+				<p>
 					<b>Random, first 3:</b> Random lottery for the top 3 picks, like the
 					NBA from 1987-1989
 				</p>
@@ -288,6 +294,7 @@ export const options: {
 			{ key: "nba2019", value: "NBA 2019" },
 			{ key: "nba1994", value: "NBA 1994" },
 			{ key: "nba1990", value: "NBA 1990" },
+			{ key: "nhl2017", value: "NHL 2017" },
 			{ key: "randomLotteryFirst3", value: "Random, first 3" },
 			{ key: "randomLottery", value: "Random, lottery only" },
 			{ key: "coinFlip", value: "Coin flip" },
@@ -804,6 +811,39 @@ if (isSport("basketball")) {
 		},
 		{
 			category: "Game Simulation",
+			key: "foulsUntilBonus",
+			name: "# of Fouls Until Teams Enter Bonus",
+			godModeRequired: "always",
+			description: (
+				<>
+					This is the number of team fouls required for the opponent to get
+					bonus FTs for a non-shooting foul. You must enter a valid JSON array
+					of three integers. Each number determines the cutoff for different
+					parts of a game. 1st is for each regulation period, 2nd is for each
+					overtime period, 3rd is for the last 2 minutes of each period. The
+					default is <code>[5,4,2]</code>.
+				</>
+			),
+			type: "jsonString",
+			validator: value => {
+				if (!Array.isArray(value)) {
+					throw new Error("Must be an array");
+				}
+				if (value.length < 3 || value.length > 3) {
+					throw new Error("Must have 3 numbers");
+				}
+				for (const num of value) {
+					if (!Number.isInteger(num)) {
+						throw new Error("Array must contain only integers");
+					}
+					if (num < 0) {
+						throw new Error("Values cannot be less than 0");
+					}
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
 			key: "pace",
 			name: "Pace",
 			godModeRequired: "always",
@@ -947,6 +987,14 @@ options.push(
 		key: "ties",
 		name: "Ties (Regular Season Only)",
 		type: "bool",
+	},
+	{
+		category: "Game Simulation",
+		key: "otl",
+		name: "Overtime Losses (Regular Season Only)",
+		type: "bool",
+		description:
+			"Track overtime losses (OTL) separately from regulation losses, as is common in hockey.",
 	},
 	{
 		category: "Game Modes",
@@ -2369,6 +2417,7 @@ Settings.propTypes = {
 	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
 	foulRateFactor: PropTypes.number.isRequired,
 	foulsNeededToFoulOut: PropTypes.number.isRequired,
+	foulsUntilBonus: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Settings;

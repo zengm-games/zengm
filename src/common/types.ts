@@ -128,6 +128,7 @@ export type DraftLotteryResultArray = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
 }[];
 
 export type DraftLotteryResult = {
@@ -165,7 +166,8 @@ export type DraftType =
 	| "randomLottery"
 	| "randomLotteryFirst3"
 	| "nba1990"
-	| "freeAgents";
+	| "freeAgents"
+	| "nhl2017";
 
 // Key is team ID receiving this asset. from is team ID that traded this asset away
 // Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
@@ -230,6 +232,7 @@ type GameTeam = {
 	won?: number; // Undefined for legacy objects
 	lost?: number; // Undefined for legacy objects
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
+	otl?: number; // Undefined for legacy objects or if there are no otls in this sport
 
 	playoffs?: {
 		seed: number;
@@ -381,6 +384,7 @@ export type GameAttributesLeague = {
 	elamPoints: number;
 	equalizeRegions: boolean;
 	foulsNeededToFoulOut: number;
+	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
 	godMode: boolean;
@@ -413,6 +417,7 @@ export type GameAttributesLeague = {
 	numTeams: number;
 	playerMoodTraits: boolean;
 	spectator: boolean;
+	otl: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
@@ -488,6 +493,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "divs"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
+	| "otl"
 	| "ties"
 	| "userTid"
 > & {
@@ -499,6 +505,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	numPlayoffByes: GameAttributeWithHistory<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
+	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
@@ -1084,6 +1091,7 @@ export type PlayoffSeriesTeam = {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	seed: number;
 	tid: number;
@@ -1170,21 +1178,27 @@ export type Team = {
 		BudgetItem
 	>;
 	strategy: "contending" | "rebuilding";
-	depth?: {
-		QB: number[];
-		RB: number[];
-		WR: number[];
-		TE: number[];
-		OL: number[];
-		DL: number[];
-		LB: number[];
-		CB: number[];
-		S: number[];
-		K: number[];
-		P: number[];
-		KR: number[];
-		PR: number[];
-	};
+	depth?:
+		| {
+				QB: number[];
+				RB: number[];
+				WR: number[];
+				TE: number[];
+				OL: number[];
+				DL: number[];
+				LB: number[];
+				CB: number[];
+				S: number[];
+				K: number[];
+				P: number[];
+				KR: number[];
+				PR: number[];
+		  }
+		| {
+				F: number[];
+				D: number[];
+				G: number[];
+		  };
 	firstSeasonAfterExpansion?: number;
 	srID?: string;
 
@@ -1217,13 +1231,18 @@ type TeamSeasonPlus = TeamSeason & {
 	payroll: number;
 	lastTen: string;
 	streak: string;
+
+	// Only hockey!
+	pts: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
+import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
-	Record<TeamStatAttrFootball, number> & {
+	Record<TeamStatAttrFootball, number> &
+	Record<TeamStatAttrHockey, number> & {
 		season: number;
 		playoffs: boolean;
 	};
@@ -1277,19 +1296,24 @@ export type TeamSeasonWithoutKey = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
 	wonHome: number;
 	lostHome: number;
 	tiedHome: number;
+	otlHome: number;
 	wonAway: number;
 	lostAway: number;
 	tiedAway: number;
+	otlAway: number;
 	wonDiv: number;
 	lostDiv: number;
 	tiedDiv: number;
+	otlDiv: number;
 	wonConf: number;
 	lostConf: number;
 	tiedConf: number;
-	lastTen: (-1 | 0 | 1)[];
+	otlConf: number;
+	lastTen: (-1 | 0 | 1 | "OTL")[];
 	streak: number;
 	playoffRoundsWon: number;
 	// -1: didn't make playoffs. 0: lost in first round. ... N: won championship

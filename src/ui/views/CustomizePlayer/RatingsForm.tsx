@@ -27,6 +27,13 @@ const rows = bySport<
 			{ Kicking: ["kpw", "kac", "ppw", "pac"] },
 		],
 	],
+	hockey: [
+		[
+			{ Physical: ["hgt", "stre", "spd", "endu"] },
+			{ Offense: ["oiq", "pss", "wst", "sst", "stk"] },
+			{ Defense: ["diq", "chk", "blk", "fcf", "glk"] },
+		],
+	],
 });
 
 const RatingsForm = ({

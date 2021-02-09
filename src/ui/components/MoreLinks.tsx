@@ -103,7 +103,7 @@ const MoreLinks = (
 			},
 		];
 
-		if (isSport("football")) {
+		if (isSport("football") || isSport("hockey")) {
 			links.unshift({
 				url: ["depth", `${abbrev}_${tid}`],
 				name: "Depth Chart",
@@ -119,6 +119,7 @@ const MoreLinks = (
 					bySport({
 						football: "passing",
 						basketball: "totals",
+						hockey: "skater",
 					}),
 				],
 				name: "Franchise Leaders",

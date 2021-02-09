@@ -13,6 +13,7 @@ const processTeam = (
 		won: number;
 		lost: number;
 		tied: number;
+		otl: number;
 		cid: number;
 		did: number;
 		expenses: {
@@ -34,8 +35,10 @@ const processTeam = (
 	// Initialize team composite rating object
 	const compositeRating: any = {};
 
-	for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
-		compositeRating[rating] = 0;
+	if (isSport("basketball")) {
+		for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
+			compositeRating[rating] = 0;
+		}
 	}
 
 	// Injury-adjusted ovr
@@ -59,6 +62,7 @@ const processTeam = (
 		won: teamSeason.won,
 		lost: teamSeason.lost,
 		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
+		otl: g.get("otl", "current") ? teamSeason.otl : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,
 		ovr,
@@ -140,18 +144,20 @@ const processTeam = (
 		numPlayers = 7;
 	}
 
-	// Would be better if these were scaled by average min played and endurancence
-	t.pace = 0;
+	if (isSport("basketball")) {
+		// Would be better if these were scaled by average min played and endurancence
+		t.pace = 0;
 
-	for (let i = 0; i < numPlayers; i++) {
-		t.pace += t.player[i].compositeRating.pace;
-	}
+		for (let i = 0; i < numPlayers; i++) {
+			t.pace += t.player[i].compositeRating.pace;
+		}
 
-	t.pace /= numPlayers;
-	t.pace = t.pace * 15 + 100; // Scale between 100 and 115
+		t.pace /= numPlayers;
+		t.pace = t.pace * 15 + 100; // Scale between 100 and 115
 
-	if (allStarGame) {
-		t.pace *= 1.15;
+		if (allStarGame) {
+			t.pace *= 1.15;
+		}
 	}
 
 	t.stat = { ...teamStats, pts: 0, ptsQtrs: [0] };
@@ -220,6 +226,7 @@ const loadTeams = async (tids: number[]) => {
 					won: 0,
 					lost: 0,
 					tied: 0,
+					otl: 0,
 					expenses: {
 						health: {
 							rank: 1,

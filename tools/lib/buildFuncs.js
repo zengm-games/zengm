@@ -80,29 +80,80 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 	}
 };
 
-const setSport = () => {
-	if (process.env.SPORT === "football") {
-		replace({
-			regex: "basketball",
-			replacement: "football",
-			paths: ["build/index.html"],
-			silent: true,
-		});
-		replace({
-			regex: "Basketball",
-			replacement: "Football",
-			paths: ["build/index.html"],
-			silent: true,
-		});
-
-		// lol
-		replace({
-			regex: "football-gm.com/prebid",
-			replacement: "basketball-gm.com/prebid",
-			paths: ["build/index.html"],
-			silent: true,
-		});
+const bySport = object => {
+	const sport = process.env.SPORT ?? "basketball";
+	if (object.hasOwnProperty(sport)) {
+		return object[sport];
 	}
+
+	if (object.hasOwnProperty("default")) {
+		return object.default;
+	}
+
+	throw new Error("No value for sport and no default");
+};
+
+const setSport = () => {
+	replace({
+		regex: "GAME_NAME",
+		replacement: bySport({
+			basketball: "Basketball GM",
+			football: "Football GM",
+			hockey: "ZenGM Hockey",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "SPORT",
+		replacement: bySport({
+			basketball: "basketball",
+			football: "football",
+			hockey: "hockey",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "ROOT_DOMAIN_NAME",
+		replacement: bySport({
+			basketball: "basketball-gm.com",
+			football: "football-gm.com",
+			hockey: "hockey.zengm.com",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "PLAY_SUBDOMAIN",
+		replacement: bySport({
+			basketball: "play.basketball-gm.com",
+			football: "play.football-gm.com",
+			hockey: "hockey.zengm.com",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "BETA_SUBDOMAIN",
+		replacement: bySport({
+			basketball: "beta.basketball-gm.com",
+			football: "beta.football-gm.com",
+			hockey: "beta.hockey.zengm.com",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "MANUAL_URL",
+		replacement: bySport({
+			basketball: "basketball-gm.com/manual",
+			football: "football-gm.com/manual",
+			hockey: "zengm.com/hockey/manual",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
 };
 
 const copyFiles = () => {
@@ -184,7 +235,11 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>
 (function() {
-  var host = '${sport}-gm.com';
+  var host = '${bySport({
+		basketball: "basketball-gm.com",
+		football: "football-gm.com",
+		hockey: "zengm.com",
+	})}';
   var element = document.createElement('script');
   var firstScript = document.getElementsByTagName('script')[0];
   var url = 'https://quantcast.mgr.consensu.org'

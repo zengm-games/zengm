@@ -3,8 +3,8 @@ import {
 	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	isSport,
 	bySport,
+	isSport,
 } from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
@@ -60,6 +60,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	mvp: "Most Valuable Player",
 	finals_mvp: "Finals MVP",
 	dpoy: "Defensive Player of the Year",
+	goy: "Goalie of the Year",
 	smoy: "Sixth Man of the Year",
 	mip: "Most Improved Player",
 	roy: "Rookie of the Year",
@@ -103,7 +104,17 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	flag: "Flagged Players",
 	note: "Players With Notes",
 	either: "Either",
+	skater: "Skaters",
+	goalie: "Goalies",
 };
+
+if (isSport("hockey")) {
+	Object.assign(dropdownValues, {
+		F: "Forwards",
+		D: "Defensemen",
+		G: "Goalies",
+	});
+}
 
 export const getDropdownValue = (
 	key: number | string,
@@ -212,17 +223,22 @@ const useDropdownOptions = (field: string) => {
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
-		if (isSport("basketball")) {
-			keys = ["perGame", "per36", "totals"];
-
-			if (field === "statTypesAdv") {
-				keys.push("shotLocations");
-				keys.push("advanced");
-				keys.push("gameHighs");
-			}
-		} else {
-			keys = ["passing", "rushing", "defense", "kicking", "returns"];
-		}
+		keys = bySport({
+			basketball: [
+				"perGame",
+				"per36",
+				"totals",
+				...(field === "statTypesAdv"
+					? ["shotLocations", "advanced", "gameHighs"]
+					: []),
+			],
+			football: ["passing", "rushing", "defense", "kicking", "returns"],
+			hockey: [
+				"skater",
+				"goalie",
+				...(field === "statTypesAdv" ? ["advanced"] : []),
+			],
+		});
 	} else if (field === "awardType") {
 		keys = bySport({
 			basketball: [
@@ -260,6 +276,17 @@ const useDropdownOptions = (field: string) => {
 				"second_team",
 				"all_league",
 			],
+			hockey: [
+				"champion",
+				"mvp",
+				"finals_mvp",
+				"dpoy",
+				"roy",
+				"goy",
+				"first_team",
+				"second_team",
+				"all_league",
+			],
 		});
 	} else if (field === "eventType") {
 		keys = [
@@ -282,8 +309,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["by_team", "by_conf", "by_div"];
 	} else if (field === "teamRecordsFilter") {
 		keys = ["all|||teams", "your_teams"];
-	} else if (field === "positions") {
-		keys = POSITIONS;
+	} else if (field === "depth") {
+		keys = isSport("hockey") ? ["F", "D", "G"] : POSITIONS;
 	} else if (field === "newsLevels") {
 		keys = ["big", "normal", "all|||news"];
 	} else if (field === "newestOldestFirst") {

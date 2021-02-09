@@ -30,6 +30,7 @@ const processPlayersHallOfFame = <
 			const EWA = bySport({
 				basketball: p.stats[j].ewa,
 				football: p.stats[j].av,
+				hockey: p.stats[j].ops + p.stats[j].dps + p.stats[j].gps,
 			});
 			if (EWA > bestEWA) {
 				bestStats = p.stats[j];

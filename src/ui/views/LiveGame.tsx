@@ -14,7 +14,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
-import { bySport, getPeriodName } from "../../common";
+import { bySport, getPeriodName, isSport } from "../../common";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -29,9 +29,18 @@ class PlayerRow extends Component<PlayerRowProps> {
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
-			basketball:
-				this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate,
+			basketball: !!(
+				this.prevInGame ||
+				nextProps.p.inGame ||
+				nextProps.forceUpdate
+			),
 			football: true,
+			hockey: !!(
+				this.prevInGame ||
+				nextProps.p.inGame ||
+				nextProps.p.inPenaltyBox ||
+				nextProps.forceUpdate
+			),
 		});
 	}
 
@@ -46,6 +55,10 @@ class PlayerRow extends Component<PlayerRowProps> {
 				"table-warning": p.inGame,
 			}),
 			football: undefined,
+			hockey: classNames({
+				"table-warning": p.inGame,
+				"table-danger": p.inPenaltyBox,
+			}),
 		});
 
 		return <BoxScoreRow className={classes} p={p} {...props} />;
@@ -87,7 +100,7 @@ const LiveGame = (props: View<"liveGame">) => {
 
 	const overtimes = useRef(0);
 	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
-	const quarters = useRef(["Q1"]);
+	const quarters = useRef(isSport("hockey") ? [1] : ["Q1"]);
 	const componentIsMounted = useRef(false);
 	const events = useRef<any[] | undefined>();
 
@@ -120,7 +133,10 @@ const LiveGame = (props: View<"liveGame">) => {
 				if (
 					text === "End of game" ||
 					text.startsWith("Start of") ||
-					text.startsWith("Elam Ending activated! First team to")
+					(isSport("basketball") &&
+						text.startsWith("Elam Ending activated! First team to")) ||
+					(isSport("hockey") &&
+						(text.includes("Goal!") || text.includes("penalty")))
 				) {
 					const b = document.createElement("b");
 					b.appendChild(node);
@@ -183,7 +199,11 @@ const LiveGame = (props: View<"liveGame">) => {
 						} else if (boxScore.current.won.tid === t.tid) {
 							t.won += 1;
 						} else if (boxScore.current.lost.tid === t.tid) {
-							t.lost += 1;
+							if (boxScore.current.overtimes > 0 && props.otl) {
+								t.otl += 1;
+							} else {
+								t.lost += 1;
+							}
 						}
 					}
 				}
@@ -197,7 +217,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.finals],
+		[props.finals, props.otl],
 	);
 
 	useEffect(() => {

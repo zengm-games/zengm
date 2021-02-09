@@ -100,6 +100,7 @@ const updateTrade = async () => {
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,
@@ -138,7 +139,7 @@ const updateTrade = async () => {
 		tid: otherTid,
 		season: g.get("season"),
 		attrs: ["strategy"],
-		seasonAttrs: ["won", "lost", "tied"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
 		addDummySeason: true,
 	});
 
@@ -224,6 +225,7 @@ const updateTrade = async () => {
 		showResigningMsg,
 		teams: teams2,
 		tied: t.seasonAttrs.tied,
+		otl: t.seasonAttrs.otl,
 		userTeamName,
 		gameOver: g.get("gameOver"),
 		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),

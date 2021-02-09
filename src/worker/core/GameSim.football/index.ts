@@ -211,7 +211,6 @@ class GameSim {
 		const oAfterHalftime = this.d;
 		let quarter = 1;
 
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			while (this.clock > 0 || this.awaitingAfterTouchdown) {
 				this.simPlay();

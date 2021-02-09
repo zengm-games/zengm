@@ -34,6 +34,7 @@ const updatePlayers = async (
 				"ewa",
 			],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 
 		const playersAll = await idb.getCopies.players({

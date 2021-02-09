@@ -1,6 +1,7 @@
 import bySport from "./bySport";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
+import * as constantsHockey from "./constants.hockey";
 
 import type {
 	CompositeWeights,
@@ -13,7 +14,11 @@ import type {
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
-		: `https://account.${process.env.SPORT}-gm.com`;
+		: bySport({
+				basketball: "https://account.basketball-gm.com",
+				football: "https://account.football-gm.com",
+				default: "https://account.zengm.com",
+		  });
 
 const DIFFICULTY = {
 	Easy: -0.25,
@@ -75,7 +80,11 @@ const PHASE_TEXT = {
 	"1": "regular season",
 	"2": "regular season",
 	"3": "playoffs",
-	"4": process.env.SPORT === "basketball" ? "draft lottery" : "before draft", // Would be better to read from g.get("draftType")
+	"4": bySport({
+		// Would be better to read from g.get("draftType")
+		football: "before draft",
+		default: "draft lottery",
+	}),
 	"5": "draft",
 	"6": "after draft",
 	"7": "re-sign players",
@@ -90,6 +99,7 @@ const STRIPE_PUBLISHABLE_KEY =
 const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
 	basketball: constantsBasketball.COMPOSITE_WEIGHTS,
 	football: constantsFootball.COMPOSITE_WEIGHTS,
+	hockey: constantsHockey.COMPOSITE_WEIGHTS,
 });
 
 const PLAYER_SUMMARY = bySport<{
@@ -102,6 +112,7 @@ const PLAYER_SUMMARY = bySport<{
 }>({
 	basketball: constantsBasketball.PLAYER_SUMMARY,
 	football: constantsFootball.PLAYER_SUMMARY,
+	hockey: constantsHockey.PLAYER_SUMMARY,
 });
 
 const PLAYER_STATS_TABLES = bySport<{
@@ -114,11 +125,13 @@ const PLAYER_STATS_TABLES = bySport<{
 }>({
 	basketball: constantsBasketball.PLAYER_STATS_TABLES,
 	football: constantsFootball.PLAYER_STATS_TABLES,
+	hockey: constantsHockey.PLAYER_STATS_TABLES,
 });
 
 const RATINGS = bySport<any[]>({
 	basketball: constantsBasketball.RATINGS,
 	football: constantsFootball.RATINGS,
+	hockey: constantsHockey.RATINGS,
 });
 
 const POSITION_COUNTS: {
@@ -126,11 +139,13 @@ const POSITION_COUNTS: {
 } = bySport({
 	basketball: constantsBasketball.POSITION_COUNTS,
 	football: constantsFootball.POSITION_COUNTS,
+	hockey: constantsHockey.POSITION_COUNTS,
 });
 
 const POSITIONS = bySport<any[]>({
 	basketball: constantsBasketball.POSITIONS,
 	football: constantsFootball.POSITIONS,
+	hockey: constantsHockey.POSITIONS,
 });
 
 const SKILLS: Skill =
@@ -147,11 +162,12 @@ const TEAM_STATS_TABLES: {
 } = bySport({
 	basketball: constantsBasketball.TEAM_STATS_TABLES,
 	football: constantsFootball.TEAM_STATS_TABLES,
+	hockey: constantsHockey.TEAM_STATS_TABLES,
 });
 
 const TIME_BETWEEN_GAMES: string = bySport({
-	basketball: constantsBasketball.TIME_BETWEEN_GAMES,
-	football: constantsFootball.TIME_BETWEEN_GAMES,
+	football: "week",
+	default: "day",
 });
 
 const MOOD_TRAITS: Record<MoodTrait, string> = {
@@ -164,68 +180,85 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
 	basketball: constantsBasketball.SIMPLE_AWARDS,
 	football: constantsFootball.SIMPLE_AWARDS,
+	hockey: constantsHockey.SIMPLE_AWARDS,
 });
 
 const AWARD_NAMES = bySport<Record<string, string>>({
 	basketball: constantsBasketball.AWARD_NAMES,
 	football: constantsFootball.AWARD_NAMES,
+	hockey: constantsHockey.AWARD_NAMES,
 });
 
 const DEFAULT_CONFS = bySport({
 	basketball: constantsBasketball.DEFAULT_CONFS,
 	football: constantsFootball.DEFAULT_CONFS,
+	hockey: constantsHockey.DEFAULT_CONFS,
 });
 
 const DEFAULT_DIVS = bySport({
 	basketball: constantsBasketball.DEFAULT_DIVS,
 	football: constantsFootball.DEFAULT_DIVS,
+	hockey: constantsHockey.DEFAULT_DIVS,
 });
 
 const DEFAULT_STADIUM_CAPACITY = bySport({
 	basketball: constantsBasketball.DEFAULT_STADIUM_CAPACITY,
 	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
+	hockey: constantsHockey.DEFAULT_STADIUM_CAPACITY,
 });
 
-const COURT = bySport({ basketball: "court", football: "field" });
+const COURT = bySport({
+	basketball: "court",
+	football: "field",
+	hockey: "ice",
+});
 
 const EMAIL_ADDRESS = bySport({
 	basketball: "commissioner@basketball-gm.com",
 	football: "commissioner@football-gm.com",
+	hockey: "commissioner@zengm.com",
 });
 
 const GAME_ACRONYM = bySport({
 	basketball: "BBGM",
 	football: "FBGM",
+	hockey: "ZGMH",
 });
 
 const GAME_NAME = bySport({
 	basketball: "Basketball GM",
 	football: "Football GM",
+	hockey: "ZenGM Hockey",
 });
 
 const SUBREDDIT_NAME = bySport({
 	basketball: "BasketballGM",
 	football: "Football_GM",
+	hockey: "ZenGMHockey",
 });
 
 const TWITTER_HANDLE = bySport({
 	basketball: "basketball_gm",
 	football: "FootballGM_Game",
+	hockey: "ZenGMGames",
 });
 
 const FACEBOOK_USERNAME = bySport({
 	basketball: "basketball.general.manager",
 	football: "football.general.manager",
+	hockey: "ZenGMGames",
 });
 
 const SPORT_HAS_REAL_PLAYERS = bySport({
 	basketball: true,
 	football: false,
+	hockey: false,
 });
 
 const SPORT_HAS_LEGENDS = bySport({
 	basketball: true,
 	football: false,
+	hockey: false,
 });
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process

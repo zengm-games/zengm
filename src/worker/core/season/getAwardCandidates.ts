@@ -1,13 +1,14 @@
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 import getAwardCandidatesBasketball from "./getAwardCandidates.basketball";
 import getAwardCandidatesFootball from "./getAwardCandidates.football";
+import getAwardCandidatesHockey from "./getAwardCandidates.hockey";
 
 const getAwardCandidates = (season: number) => {
-	if (isSport("football")) {
-		return getAwardCandidatesFootball(season);
-	}
-
-	return getAwardCandidatesBasketball(season);
+	return bySport({
+		basketball: getAwardCandidatesBasketball(season),
+		football: getAwardCandidatesFootball(season),
+		hockey: getAwardCandidatesHockey(season),
+	});
 };
 
 export default getAwardCandidates;

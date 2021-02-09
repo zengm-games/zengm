@@ -220,11 +220,13 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.expenses.scouting.amount += scoutingPaid;
 		teamSeason.expenses.coaching.amount += coachingPaid;
 		teamSeason.expenses.health.amount += healthPaid;
-		teamSeason.expenses.facilities.amount += facilitiesPaid; // For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
+		teamSeason.expenses.facilities.amount += facilitiesPaid;
 
+		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
+			hockey: ["ptsQtrs"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
@@ -241,11 +243,22 @@ const writeTeamStats = async (results: GameResults) => {
 			}
 
 			if (key !== "min") {
-				const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`; // Deal with upgraded leagues, and some stats that don't have opp versions
+				const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`;
 
+				// Deal with upgraded leagues, and some stats that don't have opp versions
 				if (teamStats.hasOwnProperty(oppKey)) {
 					teamStats[oppKey] += results.team[t2].stat[key];
 				}
+			}
+		}
+
+		// Track this separately, because a team can get a shutout with multiple goalies, and then there is no player shutout
+		if (isSport("hockey")) {
+			if (results.team[t2].stat.pts === 0) {
+				teamStats.so += 1;
+			}
+			if (results.team[t1].stat.pts === 0) {
+				teamStats.oppSo += 1;
 			}
 		}
 
@@ -280,23 +293,30 @@ const writeTeamStats = async (results: GameResults) => {
 				teamSeason.streak = 1;
 			}
 		} else if (lost && g.get("phase") !== PHASE.PLAYOFFS) {
-			teamSeason.lost += 1;
+			const lostOrOtl =
+				results.overtimes > 0 && g.get("otl", "current") ? "otl" : "lost";
+
+			teamSeason[lostOrOtl] += 1;
 
 			if (results.team[0].did === results.team[1].did) {
-				teamSeason.lostDiv += 1;
+				teamSeason[`${lostOrOtl}Div` as const] += 1;
 			}
 
 			if (results.team[0].cid === results.team[1].cid) {
-				teamSeason.lostConf += 1;
+				teamSeason[`${lostOrOtl}Conf` as const] += 1;
 			}
 
 			if (t1 === 0) {
-				teamSeason.lostHome += 1;
+				teamSeason[`${lostOrOtl}Home` as const] += 1;
 			} else {
-				teamSeason.lostAway += 1;
+				teamSeason[`${lostOrOtl}Away` as const] += 1;
 			}
 
-			teamSeason.lastTen.unshift(0);
+			if (lostOrOtl === "lost") {
+				teamSeason.lastTen.unshift(0);
+			} else {
+				teamSeason.lastTen.unshift("OTL");
+			}
 
 			if (teamSeason.streak <= 0) {
 				teamSeason.streak -= 1;

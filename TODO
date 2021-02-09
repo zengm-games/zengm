@@ -1,3 +1,19 @@
+if you edit awards from a past season to take an award away from a retired player, it doesn't remove it from their player page. just changes the season summary and assigns it to the new player https://discord.com/channels/290013534023057409/290015591216054273/808088623874179115
+
+free agents should be more willing to sign with teams that overpay
+- https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
+
+when doing no trades challenge, it shouldn't make trades with your team in auto play
+
+warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
+
+for RPDD, do `ratings = ratings + ((1-RPD) * progs + RPD * real_progs)` rather than averaging the ratings each year
+- or store the actual random ratings separately, and average them in. rather than doing a moving average and combining the real+random each iteration. because moving average means it converges for most %s.
+  - that might be better, it'd work with the different draft settings too
+- https://discord.com/channels/290013534023057409/331882115119448065/802930498342879240
+
+store results of trading block in database
+
 madeHof
 - copy fudge changes from basketball to football
 - numGames scaling - use lower bound of games played each season
@@ -747,12 +763,17 @@ FBGM
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
+  - https://github.com/nicidob/fbgm/blob/master/how_to_select.ipynb
+    - https://discord.com/channels/290013534023057409/290015468939640832/805212769841446932
+    - https://discord.com/channels/290013534023057409/290015468939640832/805215950516256779
 - if there's a rush for a two yard gain, but a 10-yard holding penalty, it should be 1st-and-20, but the computer still credits the two yards and makes it a 1st-and-18.
 - base transactions on change in team rating
   - draft and free agency - probably 100%
   - trades - maybe 50/50? otherwise too easy to scam?
 - defPssDef should be only on incompletions?
 - small thing its difficult to trade in fbgm because teams are permanently in the contending strategy no matter how bad they are https://discord.com/channels/290013534023057409/331882115119448065/800250593049837590
+- penalty on punt goes in wrong direction https://old.reddit.com/r/Football_GM/comments/l9xzhi/bug_report_penalty_goes_the_wrong_way/
+- holding on incomplete pass https://discord.com/channels/290013534023057409/290015591216054273/806339641924911154
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

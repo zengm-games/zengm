@@ -34,6 +34,7 @@ const PowerRankings = ({
 	season,
 	teams,
 	ties,
+	otl,
 	userTid,
 }: View<"powerRankings">) => {
 	useTitleBar({
@@ -52,6 +53,7 @@ const PowerRankings = ({
 			"Position Ranks",
 			"pos",
 		],
+		hockey: [POSITIONS, "Position Ranks", "pos"],
 	});
 
 	const superCols = [
@@ -65,7 +67,7 @@ const PowerRankings = ({
 		},
 		{
 			title: "",
-			colspan: ties ? 5 : 4,
+			colspan: 4 + (ties ? 1 : 0) + (otl ? 1 : 0),
 		},
 		{
 			title: (
@@ -96,6 +98,7 @@ const PowerRankings = ({
 		"Healthy",
 		"W",
 		"L",
+		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"L10",
 		"stat:mov",
@@ -136,6 +139,7 @@ const PowerRankings = ({
 				!challengeNoRatings ? t.ovr : null,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
+				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
 				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,

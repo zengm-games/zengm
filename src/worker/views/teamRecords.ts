@@ -49,6 +49,7 @@ const tallyAwards = (
 	const teamAwards = {
 		mvp: 0,
 		dpoy: 0,
+		goy: 0,
 		smoy: 0,
 		mip: 0,
 		roy: 0,
@@ -78,6 +79,10 @@ const tallyAwards = (
 
 		if (a.dpoy && a.dpoy.tid === tid) {
 			teamAwards.dpoy++;
+		}
+
+		if (a.goy && a.goy.tid === tid) {
+			teamAwards.goy++;
 		}
 
 		if (a.smoy && a.smoy.tid === tid) {
@@ -187,6 +192,7 @@ const getRowInfo = (
 		won: number;
 		lost: number;
 		tied: number;
+		otl: number;
 		playoffRoundsWon: number;
 	}[],
 	awards: any[],
@@ -229,6 +235,7 @@ const getRowInfo = (
 		won: sumBy(seasonAttrs, "won"),
 		lost: sumBy(seasonAttrs, "lost"),
 		tied: sumBy(seasonAttrs, "tied"),
+		otl: sumBy(seasonAttrs, "otl"),
 		winp: 0,
 		playoffs,
 		finals,
@@ -261,6 +268,7 @@ type Team = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
 	winp: number;
 	playoffs: number;
 	finals: number;
@@ -276,11 +284,13 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"won",
 		"lost",
 		"tied",
+		"otl",
 		"playoffs",
 		"finals",
 		"titles",
 		"mvp",
 		"dpoy",
+		"goy",
 		"smoy",
 		"mip",
 		"roy",
@@ -343,6 +353,7 @@ const updateTeamRecords = async (
 					"won",
 					"lost",
 					"tied",
+					"otl",
 					"playoffRoundsWon",
 				],
 			}),
@@ -460,9 +471,15 @@ const updateTeamRecords = async (
 		}
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.tied > 0) {
 				ties = true;
+			}
+			if (t.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -472,6 +489,7 @@ const updateTeamRecords = async (
 			filter,
 			teams,
 			ties: g.get("ties") || ties,
+			otl: g.get("otl") || otl,
 			userTid: g.get("userTid"),
 		};
 	}

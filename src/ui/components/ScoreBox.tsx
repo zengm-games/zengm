@@ -15,6 +15,7 @@ type Team = {
 	won?: number;
 	lost?: number;
 	tied?: number;
+	otl?: number;
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -30,10 +31,15 @@ const getRecord = (t: Team) => {
 	if (t.won === undefined || t.lost === undefined) {
 		return "";
 	}
-	if (t.tied === undefined || t.tied === 0) {
-		return ` ${t.won}-${t.lost}`;
+
+	let record = `${t.won}-${t.lost}`;
+	if (t.tied !== undefined && t.tied > 0) {
+		record += `-${t.tied}`;
 	}
-	return ` ${t.won}-${t.lost}-${t.tied}`;
+	if (t.otl !== undefined && t.otl > 0) {
+		record += `-${t.otl}`;
+	}
+	return ` ${record}`;
 };
 
 const smallStyle = {

@@ -4,7 +4,7 @@ import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
 	type: "link",
-	active: pageID => pageID === "depthFootball",
+	active: pageID => pageID === "depth",
 	league: true,
 	path: ["depth"],
 	text: "Depth Chart",
@@ -118,7 +118,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["roster"],
 				text: "Roster",
 			},
-			...(isSport("football") ? [depthChart] : []),
+			...(isSport("football") || isSport("hockey") ? [depthChart] : []),
 			{
 				type: "link",
 				active: pageID => pageID === "schedule",

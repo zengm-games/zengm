@@ -63,6 +63,7 @@ export const getMostXPlayers = async ({
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
@@ -312,6 +313,8 @@ const updatePlayers = async (
 					"These are the undrafted players or second round picks who had the best careers.",
 				football:
 					"These are the undrafted players or 5th+ round picks who had the best careers.",
+				hockey:
+					"These are the undrafted players or 3rd+ round picks who had the best careers.",
 			});
 			extraCols.push({
 				key: ["most", "extra"],
@@ -323,6 +326,7 @@ const updatePlayers = async (
 				bySport({
 					basketball: p.draft.round >= 2,
 					football: p.draft.round >= 5,
+					hockey: p.draft.round >= 3,
 				});
 			getValue = p => {
 				const value = playerValue(p).value;

@@ -3,8 +3,6 @@ import type { GamePlayer } from "../../../common/types";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = helpers.quarterLengthFactor();
-
-	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	const FIVE_HUNDRED = minFactor * 500;
 	const FOUR_HUNDRED = minFactor * 400;
 	const THREE_HUNDRED = minFactor * 300;
@@ -15,8 +13,9 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	const FIVE = minFactor * 5;
 	const FOUR = minFactor * 4;
 	const THREE = minFactor * 3;
-	const TWO = minFactor * 2; // If no touchdown feat is found for individual passing/rushing/etc TDs, it'll check at the end for grouped TDs.
+	const TWO = minFactor * 2;
 
+	// If no touchdown feat is found for individual passing/rushing/etc TDs, it'll check at the end for grouped TDs.
 	let touchdownFeatFound = false;
 	let rusRecYdsFeatFound = false;
 	const statArr: any = {};

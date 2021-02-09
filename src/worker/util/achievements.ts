@@ -10,10 +10,19 @@ import { bySport, isSport } from "../../common";
 const goldenOldiesCutoffs = bySport({
 	basketball: [30, 33, 36],
 	football: [28, 30, 32],
+	hockey: [30, 33, 36],
 });
-const youngGunsCutoffs = bySport({ basketball: [25, 22], football: [26, 24] });
-const superTeamCutoff = bySport({ basketball: 3, football: 15 });
-const trustTheProcessCutoff = bySport({ basketball: 3, football: 7 });
+const youngGunsCutoffs = bySport({
+	basketball: [25, 22],
+	football: [26, 24],
+	hockey: [25, 22],
+});
+const superTeamCutoff = bySport({ basketball: 3, football: 15, hockey: 4 });
+const trustTheProcessCutoff = bySport({
+	basketball: 3,
+	football: 7,
+	hockey: 3,
+});
 
 const checkDynasty = async (titles: number, years: number) => {
 	const teamSeasons = await idb.getCopies.teamSeasons({

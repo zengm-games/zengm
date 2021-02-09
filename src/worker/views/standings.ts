@@ -32,19 +32,24 @@ const updateStandings = async (
 						"won",
 						"lost",
 						"tied",
+						"otl",
 						"winp",
 						"wonHome",
 						"lostHome",
 						"tiedHome",
+						"otlHome",
 						"wonAway",
 						"lostAway",
 						"tiedAway",
+						"otlAway",
 						"wonDiv",
 						"lostDiv",
 						"tiedDiv",
+						"otlDiv",
 						"wonConf",
 						"lostConf",
 						"tiedConf",
+						"otlConf",
 						"lastTen",
 						"streak",
 						"cid",
@@ -116,9 +121,15 @@ const updateStandings = async (
 		}
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {
 				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -132,6 +143,7 @@ const updateStandings = async (
 			season: inputs.season,
 			teams,
 			ties: g.get("ties", inputs.season) || ties,
+			otl: g.get("otl", inputs.season) || otl,
 			type: inputs.type,
 			userTid: g.get("userTid"),
 		};

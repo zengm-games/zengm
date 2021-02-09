@@ -30,10 +30,12 @@ const roundOverrides: Record<
 	string,
 	| "none"
 	| "oneDecimalPlace"
+	| "twoDecimalPlaces"
 	| "roundWinp"
 	| "plusMinus"
 	| "plusMinusNoDecimalPlace"
 	| "noDecimalPlace"
+	| "minutes"
 	| undefined
 > = bySport({
 	basketball: {
@@ -178,6 +180,104 @@ const roundOverrides: Record<
 		allPurposeYds: "noDecimalPlace",
 		av: "noDecimalPlace",
 	},
+	hockey: {
+		gp: "noDecimalPlace",
+		gs: "noDecimalPlace",
+		yearsWithTeam: "noDecimalPlace",
+		w: "noDecimalPlace",
+		l: "noDecimalPlace",
+		t: "noDecimalPlace",
+		otl: "noDecimalPlace",
+		pm: "plusMinusNoDecimalPlace",
+		pim: "oneDecimalPlace",
+		evG: "noDecimalPlace",
+		ppG: "noDecimalPlace",
+		shG: "noDecimalPlace",
+		gwG: "noDecimalPlace",
+		evA: "noDecimalPlace",
+		ppA: "noDecimalPlace",
+		shA: "noDecimalPlace",
+		gwA: "noDecimalPlace",
+		s: "noDecimalPlace",
+		tsa: "noDecimalPlace",
+		fow: "noDecimalPlace",
+		fol: "noDecimalPlace",
+		foPct: "oneDecimalPlace",
+		blk: "noDecimalPlace",
+		hit: "noDecimalPlace",
+		tk: "noDecimalPlace",
+		gv: "noDecimalPlace",
+		ga: "noDecimalPlace",
+		sv: "noDecimalPlace",
+		so: "noDecimalPlace",
+		g: "noDecimalPlace",
+		a: "noDecimalPlace",
+		pts: "noDecimalPlace",
+		oppPts: "noDecimalPlace",
+		sPct: "oneDecimalPlace",
+		svPct: "oneDecimalPlace",
+		ppo: "noDecimalPlace",
+		ppPct: "oneDecimalPlace",
+		sa: "noDecimalPlace",
+		gaa: "twoDecimalPlaces",
+		ps: "oneDecimalPlace",
+		ops: "oneDecimalPlace",
+		dps: "oneDecimalPlace",
+		gps: "oneDecimalPlace",
+		gc: "oneDecimalPlace",
+		min: "minutes",
+		amin: "minutes",
+		ppMin: "minutes",
+		shMin: "minutes",
+		minMax: "minutes",
+		ppMinMax: "minutes",
+		shMinMax: "minutes",
+		pmMax: "plusMinusNoDecimalPlace",
+		pimMax: "oneDecimalPlace",
+		evGMax: "noDecimalPlace",
+		ppGMax: "noDecimalPlace",
+		shGMax: "noDecimalPlace",
+		evAMax: "noDecimalPlace",
+		ppAMax: "noDecimalPlace",
+		shAMax: "noDecimalPlace",
+		sMax: "noDecimalPlace",
+		tsaMax: "noDecimalPlace",
+		fowMax: "noDecimalPlace",
+		folMax: "noDecimalPlace",
+		blkMax: "noDecimalPlace",
+		hitMax: "noDecimalPlace",
+		tkMax: "noDecimalPlace",
+		gvMax: "noDecimalPlace",
+		gaMax: "noDecimalPlace",
+		svMax: "noDecimalPlace",
+		gMax: "noDecimalPlace",
+		aMax: "noDecimalPlace",
+		oppG: "noDecimalPlace",
+		oppA: "noDecimalPlace",
+		oppPim: "noDecimalPlace",
+		oppEvG: "noDecimalPlace",
+		oppPpG: "noDecimalPlace",
+		oppShG: "noDecimalPlace",
+		oppEvA: "noDecimalPlace",
+		oppPpA: "noDecimalPlace",
+		oppShA: "noDecimalPlace",
+		oppS: "noDecimalPlace",
+		oppSPct: "oneDecimalPlace",
+		oppTsa: "noDecimalPlace",
+		oppPpo: "noDecimalPlace",
+		oppPpPct: "oneDecimalPlace",
+		oppFow: "noDecimalPlace",
+		oppFol: "noDecimalPlace",
+		oppFoPct: "oneDecimalPlace",
+		oppBlk: "noDecimalPlace",
+		oppHit: "noDecimalPlace",
+		oppTk: "noDecimalPlace",
+		oppGv: "noDecimalPlace",
+		oppSv: "noDecimalPlace",
+		oppSvPct: "oneDecimalPlace",
+		oppGaa: "twoDecimalPlaces",
+		oppSo: "noDecimalPlace",
+	},
 });
 
 const roundStat = (
@@ -197,10 +297,40 @@ const roundStat = (
 			value = 0;
 		}
 
+		if (roundOverrides[stat] === "minutes") {
+			if (value > 100) {
+				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			}
+
+			if (value === 0) {
+				return "--:--";
+			}
+
+			const remainder = value % 1;
+			let seconds = Math.round(remainder * 60);
+			let minutes = Math.floor(value);
+			while (seconds >= 60) {
+				minutes += 1;
+				seconds -= 60;
+			}
+			return `${minutes}:${seconds >= 10 ? seconds : `0${seconds}`}`;
+		}
+
 		if (roundOverrides[stat] === "oneDecimalPlace") {
+			if (value === 100) {
+				return "100";
+			}
+
 			return value.toLocaleString("en-US", {
 				maximumFractionDigits: 1,
 				minimumFractionDigits: 1,
+			});
+		}
+
+		if (roundOverrides[stat] === "twoDecimalPlaces") {
+			return value.toLocaleString("en-US", {
+				maximumFractionDigits: 2,
+				minimumFractionDigits: 2,
 			});
 		}
 

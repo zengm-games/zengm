@@ -115,7 +115,7 @@ const TopStuff = ({
 		);
 
 	let marginOfVictory: string;
-	if (isSport("football")) {
+	if (isSport("football") || isSport("hockey")) {
 		if (t.stats.gp !== 0) {
 			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
 				1,
@@ -170,9 +170,7 @@ const TopStuff = ({
 									{showTradeFor ? `Strategy: ${t.strategy}` : null}
 								</div>
 							) : null}
-							{isSport("football") ? (
-								<RosterComposition className="ml-3" players={players} />
-							) : null}
+							<RosterComposition className="ml-3" players={players} />
 						</div>
 					) : null}
 				</div>

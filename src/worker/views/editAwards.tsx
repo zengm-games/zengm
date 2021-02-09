@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, PHASE } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
@@ -33,15 +33,10 @@ const updateAwards = async (
 		(season === g.get("season") && updateEvents.includes("newPhase")) ||
 		season !== state.season
 	) {
-		let playersAll;
-		if (g.get("season") === season) {
-			playersAll = await idb.cache.players.getAll();
-			playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-		} else {
-			playersAll = await idb.getCopies.players({
-				activeSeason: season,
-			});
-		}
+		// Don't use cache, in case this is the current season and we want to include players who just retired
+		let playersAll = await idb.getCopies.players({
+			activeSeason: season,
+		});
 
 		playersAll = orderBy(playersAll, ["lastName", "firstName"]);
 
@@ -51,6 +46,7 @@ const updateAwards = async (
 			stats: bySport({
 				basketball: ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"],
 				football: ["abbrev", "tid", "keyStats"],
+				hockey: ["abbrev", "tid", "keyStats"],
 			}),
 			fuzz: true,
 			mergeStats: true,

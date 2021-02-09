@@ -75,6 +75,14 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 		};
 	}
 
+	if (draftType === "nhl2017") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [185, 135, 115, 95, 85, 75, 65, 60, 50, 35, 30, 25, 20, 15, 10],
+		};
+	}
+
 	throw new Error(`Unsupported draft type "${draftType}"`);
 };
 
@@ -85,6 +93,7 @@ const VALID_DRAFT_TYPES = [
 	"randomLottery",
 	"randomLotteryFirst3",
 	"nba1990",
+	"nhl2017",
 ] as const;
 
 /**
@@ -109,6 +118,7 @@ const genOrder = async (
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"cid",
 			"did",
 		],
@@ -279,11 +289,13 @@ const genOrder = async (
 				const t = teams.find(t2 => t2.tid === dp.tid);
 				let won = 0;
 				let lost = 0;
+				let otl = 0;
 				let tied = 0;
 
 				if (t) {
 					won = t.seasonAttrs.won;
 					lost = t.seasonAttrs.lost;
+					otl = t.seasonAttrs.otl;
 					tied = t.seasonAttrs.tied;
 				}
 
@@ -296,6 +308,7 @@ const genOrder = async (
 					pick: dp.pick,
 					won,
 					lost,
+					otl,
 					tied,
 				};
 			}),

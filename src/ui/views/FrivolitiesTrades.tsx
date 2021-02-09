@@ -58,10 +58,10 @@ const FrivolitiesTrades = ({
 		"Season",
 		"Team",
 		"Received",
-		`stat:${bySport({ basketball: "ws", football: "av" })}`,
+		`stat:${bySport({ basketball: "ws", football: "av", hockey: "ps" })}`,
 		"Team",
 		"Received",
-		`stat:${bySport({ basketball: "ws", football: "av" })}`,
+		`stat:${bySport({ basketball: "ws", football: "av", hockey: "ps" })}`,
 		"Links",
 	);
 	for (const i of [4, 7]) {

@@ -33,6 +33,7 @@ const Offer = (props: OfferProps) => {
 		i,
 		lost,
 		name,
+		otl,
 		payroll,
 		picks,
 		pids,
@@ -128,6 +129,7 @@ const Offer = (props: OfferProps) => {
 			</h2>
 			<p>
 				{won}-{lost}
+				{otl > 0 ? <>-{otl}</> : null}
 				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
 				{helpers.formatCurrency(payroll / 1000, "M")} payroll
 			</p>

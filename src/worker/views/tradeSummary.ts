@@ -73,7 +73,11 @@ const findStatSum = (
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
-		const stat = bySport({ basketball: row.ows + row.dws, football: row.av });
+		const stat = bySport({
+			basketball: row.ows + row.dws,
+			football: row.av,
+			hockey: row.ops + row.dps + row.gps,
+		});
 
 		// Only after trade
 		if (
@@ -165,6 +169,7 @@ const getSeasonsToPlot = async (
 			won?: number;
 			lost?: number;
 			tied?: number;
+			otl?: number;
 			stat?: number;
 		};
 		const teams: [Team, Team] = [{}, {}];
@@ -183,11 +188,15 @@ const getSeasonsToPlot = async (
 
 			if (
 				teamSeason &&
-				(teamSeason.won > 0 || teamSeason.lost > 0 || teamSeason.tied > 0)
+				(teamSeason.won > 0 ||
+					teamSeason.lost > 0 ||
+					teamSeason.tied > 0 ||
+					teamSeason.otl > 0)
 			) {
 				teams[j].won = teamSeason.won;
 				teams[j].lost = teamSeason.lost;
 				teams[j].tied = teamSeason.tied;
+				teams[j].otl = teamSeason.otl;
 				teams[j].winp = helpers.calcWinp(teamSeason);
 			}
 
@@ -415,7 +424,7 @@ const updateTradeSummary = async (
 			teams,
 			season: event.season,
 			phase: event.phase,
-			stat: bySport({ basketball: "WS", football: "AV" }),
+			stat: bySport({ basketball: "WS", football: "AV", hockey: "PS" }),
 			seasonsToPlot,
 		};
 	}

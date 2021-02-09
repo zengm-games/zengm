@@ -38,6 +38,7 @@ const updateRoster = async (
 		const stats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
 		});
 
 		const editable =
@@ -56,6 +57,7 @@ const updateRoster = async (
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"playoffRoundsWon",
 			"imgURL",
 			"region",

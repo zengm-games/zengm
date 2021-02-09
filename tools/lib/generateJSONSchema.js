@@ -510,6 +510,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								"coinFlip",
 								"nba",
 								"freeAgents",
+								"nhl2017",
 							],
 						}),
 						gameAttribute("easyDifficultyInPast", {
@@ -535,6 +536,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("foulsNeededToFoulOut", {
 							type: "integer",
 							minimum: 0,
+						}),
+						gameAttribute("foulsUntilBonus", {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 3,
+							maxItems: 3,
 						}),
 						gameAttribute("foulRateFactor", {
 							type: "number",
@@ -740,6 +749,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 						}),
 						gameAttribute("ties", {
+							type: ["boolean", "array"],
+						}),
+						gameAttribute("otl", {
 							type: ["boolean", "array"],
 						}),
 						gameAttribute("tradeDeadline", {

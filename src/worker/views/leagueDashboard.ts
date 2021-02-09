@@ -42,6 +42,7 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
+			otl: latestSeason !== undefined ? latestSeason.otl : 0,
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
 			salaryCap: g.get("salaryCap") / 1000,
@@ -81,10 +82,12 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pssYdsPerGame",
 				"rusYdsPerGame",
 			] as const,
+			hockey: ["g", "a"] as const,
 		});
 		const statNames = bySport({
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
+			hockey: ["Goals", "Allowed"],
 		});
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
@@ -170,11 +173,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const startersStats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats"],
+			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 		const leaderStats = bySport({
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
+			hockey: ["g", "a", "pts"],
 		});
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
@@ -379,6 +384,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"won",
 					"lost",
 					"tied",
+					"otl",
 					"winp",
 					"cid",
 					"did",

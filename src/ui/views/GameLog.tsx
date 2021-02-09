@@ -194,7 +194,11 @@ const GameLog = ({
 		title: "Game Log",
 		dropdownView: "game_log",
 		dropdownFields: {
-			[bySport({ basketball: "teamsAndSpecial", football: "teams" })]: abbrev,
+			[bySport({
+				basketball: "teamsAndSpecial",
+				football: "teams",
+				hockey: "teams",
+			})]: abbrev,
 			seasons: season,
 		},
 		dropdownExtraParam: boxScore.gid,

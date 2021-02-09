@@ -23,7 +23,7 @@ import {
 	groupAwards,
 } from "../../util";
 import type { View, Player, Phase } from "../../../common/types";
-import { bySport, PHASE, PLAYER } from "../../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import AwardsSummary from "./AwardsSummary";
@@ -220,7 +220,11 @@ const StatsSummary = ({
 		cols[cols.length - 1].title = "%";
 	}
 
-	const separatorAfter = bySport({ basketball: [0, 4, 8], football: [0, 2] });
+	const separatorAfter = bySport({
+		basketball: [0, 4, 8],
+		football: [0, 2],
+		hockey: [0, 5],
+	});
 
 	return (
 		<div className="player-stats-summary">
@@ -367,7 +371,7 @@ const Player2 = ({
 			</div>
 		);
 	} else {
-		const dayOrWeek = bySport({ basketball: "day", football: "week" });
+		const gameOrWeek = bySport({ default: "game", football: "week" });
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (
@@ -376,7 +380,7 @@ const Player2 = ({
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${
-							player.injury.gamesRemaining === 1 ? dayOrWeek : `${dayOrWeek}s`
+							player.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
 						})`}
 					>
 						{player.injury.gamesRemaining}
@@ -499,18 +503,22 @@ const Player2 = ({
 								)}
 								<Relatives pid={player.pid} relatives={player.relatives} />
 								{draftInfo}
-								College:{" "}
-								<a
-									href={helpers.leagueUrl([
-										"frivolities",
-										"most",
-										"college",
-										window.encodeURIComponent(college),
-									])}
-								>
-									{college}
-								</a>
-								<br />
+								{isSport("hockey") && college === "None" ? null : (
+									<>
+										College:{" "}
+										<a
+											href={helpers.leagueUrl([
+												"frivolities",
+												"most",
+												"college",
+												window.encodeURIComponent(college),
+											])}
+										>
+											{college}
+										</a>
+										<br />
+									</>
+								)}
 								Experience:{" "}
 								{player.experience === 0
 									? "none"

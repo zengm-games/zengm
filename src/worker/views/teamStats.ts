@@ -12,7 +12,7 @@ export const getStats = async (
 	tid?: number,
 ) => {
 	const stats = statsTable.stats;
-	const seasonAttrs = ["abbrev", "won", "lost", "tied"] as const;
+	const seasonAttrs = ["abbrev", "won", "lost", "tied", "otl"] as const;
 	const teams = (
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
@@ -98,9 +98,15 @@ const updateTeams = async (
 		);
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {
 				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -180,6 +186,35 @@ const updateTeams = async (
 				"oppYdsPerDrive",
 				"oppPtsPerDrive",
 			],
+			hockey: [
+				"lost",
+				"fol",
+				"gv",
+				"gaa",
+				"oppG",
+				"oppA",
+				"oppPim",
+				"oppEvG",
+				"oppPpG",
+				"oppShG",
+				"oppEvA",
+				"oppPpA",
+				"oppShA",
+				"oppS",
+				"oppSPct",
+				"oppTsa",
+				"oppPpo",
+				"oppPpPct",
+				"oppFow",
+				"oppFoPct",
+				"oppBlk",
+				"oppHit",
+				"oppTk",
+				"oppSv",
+				"oppSvPct",
+				"oppSo",
+				"oppMov",
+			],
 		});
 
 		for (const t of teams) {
@@ -239,6 +274,7 @@ const updateTeams = async (
 			teamOpponent: inputs.teamOpponent,
 			teams,
 			ties: g.get("ties", inputs.season) || ties,
+			otl: g.get("otl", inputs.season) || otl,
 			userTid: g.get("userTid"),
 		};
 	}

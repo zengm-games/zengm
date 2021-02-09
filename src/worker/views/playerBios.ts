@@ -21,6 +21,7 @@ const updatePlayers = async (
 		const stats = bySport({
 			basketball: ["pts", "trb", "ast"],
 			football: ["keyStats"],
+			hockey: ["keyStats"],
 		});
 
 		const players = await getPlayers(

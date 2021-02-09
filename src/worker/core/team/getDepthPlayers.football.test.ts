@@ -48,7 +48,7 @@ describe("worker/core/player/getDepthPlayers.football", () => {
 		for (const pos of helpers.keys(output)) {
 			assert.deepStrictEqual(
 				output[pos].map(p => p.pid),
-				target[pos],
+				(target as any)[pos],
 			);
 		}
 	});

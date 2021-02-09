@@ -17,6 +17,7 @@ type SeriesTeam = {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	seed: number;
 	tid: number;

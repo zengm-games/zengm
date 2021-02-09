@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { isSport } from "../../common";
+import { bySport } from "../../common";
 import BoxScoreRowBasketball from "./BoxScoreRow.basketball";
 import BoxScoreRowFootball from "./BoxScoreRow.football";
 
@@ -11,11 +11,11 @@ const BoxScoreRow = (props: {
 	p: any;
 	stats?: string[];
 }) => {
-	if (isSport("football")) {
-		return BoxScoreRowFootball(props as any);
-	}
-
-	return BoxScoreRowBasketball(props);
+	return bySport({
+		basketball: BoxScoreRowBasketball(props),
+		football: BoxScoreRowFootball(props as any),
+		hockey: BoxScoreRowFootball(props as any),
+	});
 };
 
 export default BoxScoreRow;

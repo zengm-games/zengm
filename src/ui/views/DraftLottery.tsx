@@ -12,9 +12,10 @@ import type {
 } from "../../common/types";
 
 const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
-	nba2019: "Weighted lottery for the top 4 picks, like the NBA from 2019+",
+	nba2019: "Weighted lottery for the top 4 picks, like the NBA since 2019",
 	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
 	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
+	nhl2017: "Weighted lottery for the top 3 picks, like the NHL since 2017",
 	randomLotteryFirst3:
 		"Random lottery for the top 3 picks, like the NBA from 1987-1989",
 	randomLottery:
@@ -407,7 +408,10 @@ const DraftLotteryTable = (props: Props) => {
 						</thead>
 						<tbody>
 							{result.map(
-								({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
+								(
+									{ tid, originalTid, chances, pick, won, lost, otl, tied },
+									i,
+								) => {
 									const pickCols = range(NUM_PICKS).map(j => {
 										const prob = probs[i][j];
 										const pct =
@@ -455,6 +459,7 @@ const DraftLotteryTable = (props: Props) => {
 											<td>
 												<a href={helpers.leagueUrl(["standings", season])}>
 													{won}-{lost}
+													{otl > 0 ? <>-{otl}</> : null}
 													{tied > 0 ? <>-{tied}</> : null}
 												</a>
 											</td>

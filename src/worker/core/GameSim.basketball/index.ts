@@ -1189,11 +1189,14 @@ class GameSim {
 
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
-			// In the bonus? Checking >=1 for foulsLastTwoMinutes because incrementing this counter is done in this.doPf below
+			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
+			const foulsUntilBonus = g.get("foulsUntilBonus");
 			const inBonus =
-				(this.t <= 2 && this.foulsLastTwoMinutes[this.d] >= 1) ||
-				(this.overtimes >= 1 && this.foulsThisQuarter[this.d] >= 4) ||
-				this.foulsThisQuarter[this.d] >= 5;
+				(this.t <= 2 &&
+					this.foulsLastTwoMinutes[this.d] >= foulsUntilBonus[2] - 1) ||
+				(this.overtimes >= 1 &&
+					this.foulsThisQuarter[this.d] >= foulsUntilBonus[1] - 1) ||
+				this.foulsThisQuarter[this.d] >= foulsUntilBonus[0] - 1;
 
 			if (inBonus) {
 				this.doPf(this.d, "pfBonus", shooter);
@@ -1560,8 +1563,9 @@ class GameSim {
 		}
 
 		const names = [this.team[this.o].player[p].name];
-		if (fouler) {
-			names.push(this.team[this.d].player[fouler].name);
+		if (fouler !== undefined) {
+			const p2 = this.playersOnCourt[this.d][fouler];
+			names.push(this.team[this.d].player[p2].name);
 		}
 
 		if (type === "atRim") {
@@ -1893,7 +1897,7 @@ class GameSim {
 		shooter?: PlayerNumOnCourt,
 		fouler?: PlayerNumOnCourt,
 	) {
-		if (!fouler) {
+		if (fouler === undefined) {
 			fouler = pickPlayer(this.ratingArray("fouling", t));
 		}
 		const p = this.playersOnCourt[t][fouler];

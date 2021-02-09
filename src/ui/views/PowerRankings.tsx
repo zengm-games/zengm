@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MarginOfVictory } from "../components";
+import { DataTable, MovOrDiff } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
 
@@ -101,7 +101,7 @@ const PowerRankings = ({
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"L10",
-		"stat:mov",
+		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
 	];
 
@@ -142,7 +142,10 @@ const PowerRankings = ({
 				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
-				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,
+				<MovOrDiff
+					stats={t.stats}
+					type={isSport("basketball") ? "mov" : "diff"}
+				/>,
 				...otherKeys.map(key => ({
 					value: (
 						<Other

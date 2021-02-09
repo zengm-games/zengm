@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import { Fragment } from "react";
-import { ResponsiveTableWrapper, MarginOfVictory } from "../components";
+import { ResponsiveTableWrapper, PlusMinus, MovOrDiff } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
-import { COURT } from "../../common";
+import { COURT, isSport } from "../../common";
 
 const MAX_WIDTH = 1120;
 
@@ -80,7 +80,10 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
-				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>
+				<MovOrDiff
+					stats={t.stats}
+					type={isSport("basketball") ? "mov" : "diff"}
+				/>
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
@@ -126,7 +129,11 @@ const GroupStandings = ({
 						<th>Conf</th>
 						<th title="Points Per Game">Pts</th>
 						<th title="Opponent Points Per Game">Opp</th>
-						<th title="Average Margin of Victory">MOV</th>
+						{isSport("basketball") ? (
+							<th title="Average Margin of Victory">MOV</th>
+						) : (
+							<th title="Point Differential">Diff</th>
+						)}
 						<th>Streak</th>
 						<th>L10</th>
 					</tr>

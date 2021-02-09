@@ -43,7 +43,7 @@ const updatePowerRankings = async (
 				"region",
 				"name",
 			],
-			stats: ["gp", "mov"],
+			stats: ["gp", "mov", "pts", "oppPts"],
 			season,
 			showNoStats: true,
 		});

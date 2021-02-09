@@ -1,22 +1,28 @@
 import PropTypes from "prop-types";
 
-const MarginOfVictory = ({ children }: { children: number }) => {
+const PlusMinus = ({
+	children,
+	decimalPlaces = 1,
+}: {
+	children: number;
+	decimalPlaces?: number;
+}) => {
 	return (
 		<>
 			{children !== 0 ? (
 				<span className={children < 0 ? "text-danger" : "text-success"}>
 					{children > 0 ? "+" : null}
-					{children.toFixed(1)}
+					{children.toFixed(decimalPlaces)}
 				</span>
 			) : (
-				"0.0"
+				(0).toFixed(decimalPlaces)
 			)}
 		</>
 	);
 };
 
-MarginOfVictory.propTypes = {
+PlusMinus.propTypes = {
 	children: PropTypes.number.isRequired,
 };
 
-export default MarginOfVictory;
+export default PlusMinus;

@@ -1961,6 +1961,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"stat:diff": {
+		desc: "Point Differential",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"stat:yearsWithTeam": {
 		desc: "Years With Team",
 		sortSequence: ["desc", "asc"],
@@ -2405,6 +2410,7 @@ const titleOverrides = {
 	"stat:jerseyNumber": "#",
 	"stat:min": isSport("hockey") ? "TOI" : "MP",
 	"stat:mov": "MOV",
+	"stat:diff": "Diff",
 	"stat:yearsWithTeam": "YWT",
 	"count:allDefense": "ADT",
 	"count:allLeague": "ALT",

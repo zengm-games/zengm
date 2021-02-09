@@ -71,6 +71,9 @@ export const getMostXTeamSeasons = async ({
 				seed: null as null | number,
 				rank: 0,
 				mov: 0,
+				gp: 0,
+				pts: 0,
+				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
 			};
 		}),
@@ -86,6 +89,9 @@ export const getMostXTeamSeasons = async ({
 		const row = teamStats.find(row => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
+			ts.gp = row.gp;
+			ts.pts = row.pts;
+			ts.oppPts = row.oppPts;
 		}
 
 		if (ts.playoffRoundsWon >= 0) {

@@ -7,9 +7,9 @@ const updateHeadToHead = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	console.log(abbrev, season, state);
 	if (
-		(season === g.get("season") && updateEvents.includes("gameSim")) ||
+		((season === g.get("season") || season === "all") &&
+			updateEvents.includes("gameSim")) ||
 		season !== state.season ||
 		abbrev !== state.abbrev
 	) {

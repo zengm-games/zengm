@@ -1668,6 +1668,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Diff: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Difficulty: {
 		sortSequence: ["desc", "asc"],
 	},
@@ -1801,12 +1805,22 @@ const cols: {
 		sortType: "number",
 	},
 	PA: {
-		desc: isSport("hockey") ? "Goals Against" : "Points Against",
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	PS: {
-		desc: isSport("hockey") ? "Goals For" : "Points Scored",
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PA/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PS/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1880,6 +1894,11 @@ const cols: {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],
 	},
+	"Rounds Lost": {
+		desc: "Playoff Rounds Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Rounds Won": {
 		desc: "Playoff Rounds Won",
 		sortSequence: ["desc", "asc"],
@@ -1892,16 +1911,6 @@ const cols: {
 	},
 	Seed: {
 		desc: "Playoff Seed",
-		sortType: "number",
-	},
-	"Series Won": {
-		desc: "Playoff Series Won",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	"Series Lost": {
-		desc: "Playoff Series Lost",
-		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	Skills: {},
@@ -2428,6 +2437,8 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ppPct": "PP%",
 		PS: "GF",
 		PA: "GA",
+		"PS/g": "GF",
+		"PA/g": "GA",
 	},
 });
 

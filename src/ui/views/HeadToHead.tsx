@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, MovOrDiff } from "../components";
 import type { View } from "../../common/types";
 
 const HeadToHead = ({
@@ -29,8 +29,12 @@ const HeadToHead = ({
 		"%",
 		"PS",
 		"PA",
-		"Series Won",
-		"Series Lost",
+		"Diff",
+		"PS/g",
+		"PA/g",
+		"Diff",
+		"Rounds Won",
+		"Rounds Lost",
 		"Finals Won",
 		"Finals Lost",
 	);
@@ -40,6 +44,14 @@ const HeadToHead = ({
 		if (season !== "all") {
 			urlParts.push(season);
 		}
+
+		const gp = t.won + t.lost + t.otl + t.tied;
+
+		const movOrDiffStats = {
+			pts: t.pts,
+			oppPts: t.oppPts,
+			gp,
+		};
 
 		return {
 			key: t.tid,
@@ -52,8 +64,12 @@ const HeadToHead = ({
 				...(otl ? [t.otl] : []),
 				...(ties ? [t.tied] : []),
 				helpers.roundWinp(t.winp),
-				t.pts,
-				t.oppPts,
+				helpers.roundStat(t.pts, "pts", true),
+				helpers.roundStat(t.oppPts, "pts", true),
+				<MovOrDiff stats={movOrDiffStats} type="diff" />,
+				helpers.roundStat(t.pts / gp, "pts"),
+				helpers.roundStat(t.oppPts / gp, "pts"),
+				<MovOrDiff stats={movOrDiffStats} type="mov" />,
 				t.seriesWon,
 				t.seriesLost,
 				t.finalsWon,

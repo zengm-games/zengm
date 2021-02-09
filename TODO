@@ -9,8 +9,7 @@ head to head records
 - pages
   - head2head_all: matrix of winp, for all teams
     - filter by season, reg/playoffs/both, (eventually) playoff round
-  - head2head: one team's table, like https://www.basketball-reference.com/teams/BOS/head2head.html
-    - filter by season, reg/playoffs/both, (eventually) playoff round
+    - link from leauge History
   - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams

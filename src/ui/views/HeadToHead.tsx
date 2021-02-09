@@ -8,6 +8,7 @@ const HeadToHead = ({
 	season,
 	teams,
 	ties,
+	type,
 	otl,
 	userTid,
 }: View<"headToHead">) => {
@@ -17,6 +18,7 @@ const HeadToHead = ({
 		dropdownFields: {
 			teams: abbrev,
 			seasonsAndAll: season,
+			playoffsAll: type,
 		},
 	});
 
@@ -33,10 +35,9 @@ const HeadToHead = ({
 		"PS/g",
 		"PA/g",
 		"Diff",
-		"Rounds Won",
-		"Rounds Lost",
-		"Finals Won",
-		"Finals Lost",
+		...(type === "regularSeason"
+			? []
+			: ["Rounds Won", "Rounds Lost", "Finals Won", "Finals Lost"]),
 	);
 
 	const rows = teams.map(t => {
@@ -70,10 +71,9 @@ const HeadToHead = ({
 				helpers.roundStat(t.pts / gp, "pts"),
 				helpers.roundStat(t.oppPts / gp, "pts"),
 				<MovOrDiff stats={movOrDiffStats} type="mov" />,
-				t.seriesWon,
-				t.seriesLost,
-				t.finalsWon,
-				t.finalsLost,
+				...(type === "regularSeason"
+					? []
+					: [t.seriesWon, t.seriesLost, t.finalsWon, t.finalsLost]),
 			],
 			classNames: {
 				"table-info": t.tid === userTid,

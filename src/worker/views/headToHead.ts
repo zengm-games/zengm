@@ -3,7 +3,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
 
 const updateHeadToHead = async (
-	{ abbrev, season, tid }: ViewInput<"headToHead">,
+	{ abbrev, season, tid, type }: ViewInput<"headToHead">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -11,7 +11,8 @@ const updateHeadToHead = async (
 		((season === g.get("season") || season === "all") &&
 			updateEvents.includes("gameSim")) ||
 		season !== state.season ||
-		abbrev !== state.abbrev
+		abbrev !== state.abbrev ||
+		type !== state.type
 	) {
 		const simpleSums = [
 			"won",
@@ -35,7 +36,7 @@ const updateHeadToHead = async (
 		await headToHead.iterate(
 			{
 				tid,
-				type: "all",
+				type,
 				season,
 			},
 			info => {
@@ -95,6 +96,7 @@ const updateHeadToHead = async (
 			teams,
 			ties: g.get("ties", season === "all" ? "current" : season) || ties,
 			otl: g.get("otl", season === "all" ? "current" : season) || otl,
+			type,
 			userTid: g.get("userTid"),
 		};
 	}

@@ -261,10 +261,20 @@ const headToHead = (params: Params) => {
 		season = "all";
 	}
 
+	let type: "playoffs" | "regularSeason" | "all";
+	if (params.type === "playoffs") {
+		type = "playoffs";
+	} else if (params.type === "regularSeason") {
+		type = "regularSeason";
+	} else {
+		type = "all";
+	}
+
 	return {
 		abbrev,
 		season,
 		tid,
+		type,
 	};
 };
 

@@ -1,7 +1,7 @@
 import addGame from "./addGame";
-import iterateSeasons from "./iterateSeasons";
+import iterate from "./iterate";
 
 export default {
 	addGame,
-	iterateSeasons,
+	iterate,
 };

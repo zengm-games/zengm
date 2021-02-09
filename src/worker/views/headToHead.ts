@@ -32,10 +32,11 @@ const updateHeadToHead = async (
 
 		const infoByTid = new Map<number, TeamInfo>();
 
-		await headToHead.iterateSeasons(
+		await headToHead.iterate(
 			{
 				tid,
 				type: "all",
+				season,
 			},
 			info => {
 				const current = infoByTid.get(info.tid);

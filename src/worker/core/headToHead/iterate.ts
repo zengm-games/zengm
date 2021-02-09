@@ -17,10 +17,11 @@ const blankInfo = (tid: number, season: number) => ({
 	finalsLost: 0,
 });
 
-const iterateSeasons = async (
+const iterate2 = async (
 	options: {
 		tid: number;
 		type: "regularSeason" | "playoffs" | "all";
+		season: number | "all";
 	},
 	cb: (info: ReturnType<typeof blankInfo>) => void,
 ) => {
@@ -107,10 +108,15 @@ const iterateSeasons = async (
 		}
 	};
 
+	let key;
+	if (options.season !== "all") {
+		key = IDBKeyRange.only(options.season);
+	}
+
 	let doCurrentSeasonFromCache = false;
 	await iterate(
 		idb.league.transaction("headToHeads").store,
-		undefined,
+		key,
 		undefined,
 		headToHead => {
 			if (headToHead.season === g.get("season")) {
@@ -130,4 +136,4 @@ const iterateSeasons = async (
 	}
 };
 
-export default iterateSeasons;
+export default iterate2;

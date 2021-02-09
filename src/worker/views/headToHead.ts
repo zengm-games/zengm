@@ -11,7 +11,7 @@ const updateHeadToHead = async (
 		((season === g.get("season") || season === "all") &&
 			updateEvents.includes("gameSim")) ||
 		season !== state.season ||
-		abbrev !== state.abbrev ||
+		tid !== state.tid ||
 		type !== state.type
 	) {
 		const simpleSums = [
@@ -28,7 +28,6 @@ const updateHeadToHead = async (
 		] as const;
 		type TeamInfo = Record<typeof simpleSums[number], number> & {
 			tid: number;
-			winp: number;
 		};
 
 		const infoByTid = new Map<number, TeamInfo>();
@@ -46,10 +45,7 @@ const updateHeadToHead = async (
 						current[key] += info[key];
 					}
 				} else {
-					infoByTid.set(info.tid, {
-						...info,
-						winp: 0,
-					});
+					infoByTid.set(info.tid, info);
 				}
 			},
 		);
@@ -59,6 +55,7 @@ const updateHeadToHead = async (
 			name: string;
 			abbrev: string;
 			tid: number;
+			winp: number;
 		} & TeamInfo)[] = [];
 
 		const teamInfoCache = g.get("teamInfoCache");
@@ -69,11 +66,8 @@ const updateHeadToHead = async (
 				region: teamInfoCache[info.tid].region,
 				name: teamInfoCache[info.tid].name,
 				abbrev: teamInfoCache[info.tid].abbrev,
+				winp: helpers.calcWinp(info),
 			});
-		}
-
-		for (const t of teams) {
-			t.winp = helpers.calcWinp(t);
 		}
 
 		let ties = false;

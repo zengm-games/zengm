@@ -2,8 +2,9 @@ import type { HeadToHead } from "../../../common/types";
 import { idb, iterate } from "../../db";
 import { g } from "../../util";
 
-const blankInfo = (tid: number, season: number) => ({
+const blankInfo = (tid: number, tid2: number, season: number) => ({
 	tid,
+	tid2,
 	season,
 	won: 0,
 	lost: 0,
@@ -19,30 +20,31 @@ const blankInfo = (tid: number, season: number) => ({
 
 const iterate2 = async (
 	options: {
-		tid: number;
+		tid: number | "all";
 		type: "regularSeason" | "playoffs" | "all";
 		season: number | "all";
 	},
 	cb: (info: ReturnType<typeof blankInfo>) => void,
 ) => {
-	const processHeadToHead = (headToHead: HeadToHead) => {
+	const processHeadToHeadTeam = (headToHead: HeadToHead, tid2: number) => {
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", headToHead.season)
 			.length;
 
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
-			if (tid === options.tid) {
+			if (tid === tid2) {
 				continue;
 			}
 
-			const info = blankInfo(tid, headToHead.season);
+			const info = blankInfo(tid, tid2, headToHead.season);
 
 			let found = false;
 			if (options.type === "regularSeason" || options.type === "all") {
 				let record;
-				if (tid < options.tid) {
-					record = headToHead.regularSeason[tid]?.[options.tid];
-				} else {
-					record = headToHead.regularSeason[options.tid]?.[tid];
+				if (tid < tid2) {
+					record = headToHead.regularSeason[tid]?.[tid2];
+				} else if (options.tid !== "all") {
+					// Only want to check these if we're not already returning "all" tids, because otherwise it'd be redundant
+					record = headToHead.regularSeason[tid2]?.[tid];
 				}
 
 				if (record) {
@@ -59,11 +61,12 @@ const iterate2 = async (
 			if (options.type === "playoffs" || options.type === "all") {
 				let record;
 				let rowIsFirstTid = false;
-				if (tid < options.tid) {
+				if (tid < tid2) {
 					rowIsFirstTid = true;
-					record = headToHead.playoffs[tid]?.[options.tid];
-				} else {
-					record = headToHead.playoffs[options.tid]?.[tid];
+					record = headToHead.playoffs[tid]?.[tid2];
+				} else if (options.tid !== "all") {
+					// Only want to check these if we're not already returning "all" tids, because otherwise it'd be redundant
+					record = headToHead.playoffs[tid2]?.[tid];
 				}
 
 				if (record) {
@@ -105,6 +108,16 @@ const iterate2 = async (
 			if (found) {
 				cb(info);
 			}
+		}
+	};
+
+	const processHeadToHead = (headToHead: HeadToHead) => {
+		if (options.tid === "all") {
+			for (let tid2 = 0; tid2 < g.get("numTeams"); tid2++) {
+				processHeadToHeadTeam(headToHead, tid2);
+			}
+		} else {
+			processHeadToHeadTeam(headToHead, options.tid);
 		}
 	};
 

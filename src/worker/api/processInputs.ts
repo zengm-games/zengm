@@ -250,9 +250,7 @@ const gameLog = (params: Params) => {
 	};
 };
 
-const headToHead = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-
+const headToHeadAll = (params: Params) => {
 	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
@@ -271,10 +269,18 @@ const headToHead = (params: Params) => {
 	}
 
 	return {
-		abbrev,
 		season,
-		tid,
 		type,
+	};
+};
+
+const headToHead = (params: Params) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		abbrev,
+		tid,
+		...headToHeadAll(params),
 	};
 };
 
@@ -736,6 +742,7 @@ export default {
 	frivolitiesTrades,
 	gameLog,
 	headToHead,
+	headToHeadAll,
 	history,
 	leaders,
 	leagueFinances: validateSeasonOnly,

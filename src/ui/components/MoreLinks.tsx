@@ -233,6 +233,7 @@ const MoreLinks = (
 	} else if (props.type === "league") {
 		links = [
 			{ url: ["league_stats"], name: "League Stats" },
+			{ url: ["head2head_all"], name: "Head-to-Head" },
 			{ url: ["history_all"], name: "League History" },
 			{ url: ["team_records"], name: "Team Records" },
 			{ url: ["awards_records"], name: "Awards Records" },

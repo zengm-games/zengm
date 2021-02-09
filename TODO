@@ -8,11 +8,13 @@ head to head records
 - MoreLinks to head2head should include season if season is no the current season
 - pages
   - head2head_all: matrix of winp, for all teams
-    - filter by season, reg/playoffs/both, (eventually) playoff round
-    - link from leauge History
+    - headers link to head2head
+    - OTL STUFF
+      - if we have (w/l/t/otl) for a given matchup (t1, t2), that's not enough to get otl for (t2, t1). need to store otw, or store full record for both teams, or ignore otl
   - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams
+    - link here from head2head and head2head_all
 
 if you edit awards from a past season to take an award away from a retired player, it doesn't remove it from their player page. just changes the season summary and assigns it to the new player https://discord.com/channels/290013534023057409/290015591216054273/808088623874179115
 

@@ -194,9 +194,13 @@ const routes = () => {
 		"/l/:lid/gm_history": genPage("gmHistory"),
 		"/l/:lid/settings": genPage("settings"),
 		"/l/:lid/trade_summary/:eid": genPage("tradeSummary"),
+		"/l/:lid/head2head": genPage("headToHead"),
 		"/l/:lid/head2head/:abbrev": genPage("headToHead"),
 		"/l/:lid/head2head/:abbrev/:season": genPage("headToHead"),
 		"/l/:lid/head2head/:abbrev/:season/:type": genPage("headToHead"),
+		"/l/:lid/head2head_all": genPage("headToHeadAll"),
+		"/l/:lid/head2head_all/:season": genPage("headToHeadAll"),
+		"/l/:lid/head2head_all/:season/:type": genPage("headToHeadAll"),
 
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),

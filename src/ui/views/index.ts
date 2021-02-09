@@ -34,6 +34,7 @@ import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
 import HeadToHead from "./HeadToHead";
+import HeadToHeadAll from "./HeadToHeadAll";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
 import ImportPlayers from "./ImportPlayers";
@@ -124,6 +125,7 @@ export default {
 	GodMode,
 	HallOfFame,
 	HeadToHead,
+	HeadToHeadAll,
 	History,
 	HistoryAll,
 	ImportPlayers,

@@ -44,8 +44,7 @@ const iterate2 = async (
 				if (tid < tid2) {
 					rowIsFirstTid = true;
 					record = headToHead.regularSeason[tid]?.[tid2];
-				} else if (options.tid !== "all") {
-					// Only want to check these if we're not already returning "all" tids, because otherwise it'd be redundant
+				} else {
 					record = headToHead.regularSeason[tid2]?.[tid];
 				}
 
@@ -74,8 +73,7 @@ const iterate2 = async (
 				if (tid < tid2) {
 					rowIsFirstTid = true;
 					record = headToHead.playoffs[tid]?.[tid2];
-				} else if (options.tid !== "all") {
-					// Only want to check these if we're not already returning "all" tids, because otherwise it'd be redundant
+				} else {
 					record = headToHead.playoffs[tid2]?.[tid];
 				}
 

@@ -8,10 +8,10 @@ head to head records
 - MoreLinks to head2head should include season if season is no the current season
 - pages
   - head2head_all: matrix of winp, for all teams
-    - headers link to head2head
-    - OTL STUFF
-      - if we have (w/l/t/otl) for a given matchup (t1, t2), that's not enough to get otl for (t2, t1). need to store otw, or store full record for both teams, or ignore otl
     - tooltip to explain which team is the W team and which is the L team, in each cell
+    - given the links to head2head in the rows, might make sense to transpose
+    - color in gradient
+      - if feasible, use it elswhere too, like team composition and player info popover
   - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams

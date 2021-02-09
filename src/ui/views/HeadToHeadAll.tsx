@@ -65,8 +65,7 @@ const HeadToHeadAll = ({
 					),
 				},
 				...teams.map(t2 => {
-					const info =
-						infoByTid?.get(t2.tid) ?? infoByTidByTid.get(t2.tid)?.get(t.tid);
+					const info = infoByTid?.get(t2.tid);
 					if (!info) {
 						return null;
 					}

@@ -6,8 +6,10 @@ import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View, ThenArg } from "../../common/types";
 import type api from "../../worker/api";
-import TradeFilter, { filterType } from "./TradeFilter";
+import TradeFilter, { filterType } from "../views/TradeFilter/TradeFilter";
 import { AnimatePresence, motion } from "framer-motion";
+import FilterItem from "../../worker/core/trade/filterItem";
+import _ from "lodash";
 
 type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -173,6 +175,17 @@ const pickCols = getCols("", "Draft Picks");
 pickCols[0].sortSequence = [];
 pickCols[1].width = "100%";
 
+const populateExtendedPositions = (items: string[]): string[] => {
+	let extPos = [...items].filter(pos => !["GF", "FC", "F", "G"].includes(pos));
+	if (extPos.includes("PG") || extPos.includes("SG")) extPos.push("G");
+	if (extPos.includes("PF") || extPos.includes("SF")) extPos.push("F");
+	if (extPos.includes("PF") || extPos.includes("C")) extPos.push("FC");
+	if (extPos.includes("SF") || extPos.includes("SG")) extPos.push("GF");
+	return extPos;
+};
+
+export let something: boolean;
+
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
@@ -188,9 +201,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: [],
 		filters: {
-			balancedOnly: false,
-			salaryCap: "",
-			multi: { pos: [], posExt: [], skill: [] },
+			pos: new FilterItem([], "POS", populateExtendedPositions),
+			salaryCap: new FilterItem("", "SALARY_CAP"),
+			skill: new FilterItem([], "SKILL"),
 		},
 		showFilters: false,
 		filterVerbiage: "Filter",
@@ -199,9 +212,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	const setFilters = (filters: filterType) => {
 		setState(prevState => {
 			let count = 0;
-			if (filters.multi.pos && filters.multi.pos.length > 0) count++;
-			if (filters.multi.skill && filters.multi.skill.length > 0) count++;
-			if (filters.balancedOnly || filters.salaryCap) count++;
+			if (filters.pos.filterData && filters.pos.filterData.length > 0) count++;
+			if (filters.skill.filterData && filters.skill.filterData.length > 0)
+				count++;
+			if (filters.salaryCap.filterData !== "") count++;
 
 			const plurality = count > 1 ? "Filters" : "Filter";
 
@@ -245,6 +259,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	};
 
 	const handleClickAsk = async () => {
+		something = state.showFilters;
 		setState(prevState => ({
 			...prevState,
 			asking: true,
@@ -256,7 +271,12 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			"getTradingBlockOffers",
 			state.pids,
 			state.dpids,
-			state.filters,
+			Object.values(state.filters).map((filter: FilterItem) => {
+				return {
+					filterFunction: filter.filterFunction,
+					filterData: filter.filterData,
+				};
+			}),
 		);
 
 		setState(prevState => ({

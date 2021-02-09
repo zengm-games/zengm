@@ -94,9 +94,9 @@ import {
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
-import type { filterType } from "src/ui/views/TradeFilter";
+import * as filter_functions from "../core/trade/filterFunctions";
 
-type OfferType = {
+export type OfferType = {
 	tid: number;
 	abbrev: string;
 	region: string;
@@ -1333,64 +1333,37 @@ const getRandomRatings = async (age: number, pos: string | undefined) => {
 	};
 };
 
-const filterSkills = (offerList: OfferType[], filters: filterType) => {
-	if (filters.multi.skill && filters.multi.skill.length > 0)
-		return offerList.filter(
-			o =>
-				o.players.filter((pl: any) => playerMeetsSkillReq(pl, filters)).length >
-				0,
-		);
-	else return offerList;
-};
-
-const playerMeetsSkillReq = (player: any, filters: filterType) => {
-	if (filters.multi.skill && filters.multi.skill.length > 0) {
-		//essentially perform an intersection of the two arrays and see if it there's any overlap which would qualify the offer
-		return (
-			filters.multi.skill.filter(value => {
-				return player.ratings.skills.includes(value);
-			}).length > 0
-		);
-	} else return true;
-};
-
 const filterOffers = (
 	offers: OfferType[],
-	filters: filterType,
-): OfferType[] => {
-	//filter for position, and whle we're at it check the skill requirements (if applicable)
-	if (filters.multi.pos && filters.multi.pos.length > 0) {
-		offers = offers.filter(o => {
-			let qualifyingPlayers = o.players.filter((player: any) => {
-				return (
-					filters.multi.posExt.includes(player.ratings.pos) &&
-					playerMeetsSkillReq(player, filters)
+	filters: [{ filterFunction: string; filterData: any }],
+) => {
+	//filtering logic
+	return offers.filter(offer => {
+		let filteredPlayers = offer.players;
+		const qualifies = filters.reduce((qualifies: boolean, filter) => {
+			const command = Object.values(filter_functions).find(
+				c => c.name === filter.filterFunction,
+			);
+			if (!qualifies) return false;
+			else if (command && filter.filterData) {
+				const newRes = command.execute(
+					filteredPlayers,
+					offer,
+					filter.filterData,
 				);
-			});
-			return qualifyingPlayers.length > 0;
-		});
-	} else offers = filterSkills(offers, filters);
+				filteredPlayers = newRes.players;
 
-	//of the offers that currently qualify, only return the ones that are balanced $-wise, if applicable
-	if (filters.balancedOnly)
-		offers = offers.filter(offer => offer.warning === null);
-	else if (Number(filters.salaryCap) > 0) {
-		offers = offers.filter(offer => {
-			let combinedSalary = 0;
-			offer.players.forEach(player => {
-				combinedSalary += player.contract.amount;
-			});
-			return combinedSalary <= Number(filters.salaryCap);
-		});
-	}
-
-	return offers;
+				return qualifies && newRes.qualifies;
+			} else return true;
+		}, true);
+		return qualifies;
+	});
 };
 
 const getTradingBlockOffers = async (
 	pids: number[],
 	dpids: number[],
-	filters: filterType,
+	filters: [{ filterFunction: string; filterData: any }],
 ): Promise<OfferType[]> => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		const teams = await idb.cache.teams.getAll();
@@ -1427,10 +1400,10 @@ const getTradingBlockOffers = async (
 			}
 		}
 
-		return offers.slice(0, 5);
+		return offers.slice(0, 10);
 	};
 
-	const augmentOffers = async (offers: TradeTeam[]) => {
+	const augmentOffers = async (offers: TradeTeam[]): Promise<OfferType[]> => {
 		if (offers.length === 0) {
 			return [];
 		}
@@ -1483,7 +1456,6 @@ const getTradingBlockOffers = async (
 					tid,
 				});
 				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
-
 				const picks2 = picks.map(dp => {
 					return {
 						...dp,
@@ -1522,7 +1494,6 @@ const getTradingBlockOffers = async (
 		iterations++;
 	}
 
-	//probably best not to overwhelm the player with offers, let's show 5
 	return filteredOffers;
 };
 

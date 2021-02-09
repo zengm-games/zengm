@@ -40,7 +40,9 @@ const iterate2 = async (
 			let found = false;
 			if (options.type === "regularSeason" || options.type === "all") {
 				let record;
+				let rowIsFirstTid = false;
 				if (tid < tid2) {
+					rowIsFirstTid = true;
 					record = headToHead.regularSeason[tid]?.[tid2];
 				} else if (options.tid !== "all") {
 					// Only want to check these if we're not already returning "all" tids, because otherwise it'd be redundant
@@ -49,12 +51,20 @@ const iterate2 = async (
 
 				if (record) {
 					found = true;
-					info.won += record.won;
-					info.lost += record.lost;
 					info.tied += record.tied;
-					info.otl += record.otl;
-					info.pts += record.pts;
-					info.oppPts += record.oppPts;
+					if (rowIsFirstTid) {
+						info.won += record.lost + record.otl;
+						info.lost += record.won;
+						info.otl += record.otw;
+						info.pts += record.oppPts;
+						info.oppPts += record.pts;
+					} else {
+						info.won += record.won + record.otw;
+						info.lost += record.lost;
+						info.otl += record.otl;
+						info.pts += record.pts;
+						info.oppPts += record.oppPts;
+					}
 				}
 			}
 
@@ -69,26 +79,28 @@ const iterate2 = async (
 					record = headToHead.playoffs[tid2]?.[tid];
 				}
 
+				console.log("rowIsFirstTid", rowIsFirstTid);
+
 				if (record) {
 					found = true;
-					info.won += record.won;
-					info.lost += record.lost;
-					info.pts += record.pts;
-					info.oppPts += record.oppPts;
 
 					let outcome: typeof record["result"];
-					if (record.result === "lost") {
-						if (rowIsFirstTid) {
+					if (rowIsFirstTid) {
+						info.won += record.lost;
+						info.lost += record.won;
+						info.pts += record.oppPts;
+						info.oppPts += record.pts;
+						if (record.result === "lost") {
 							outcome = "won";
-						} else {
+						} else if (record.result === "won") {
 							outcome = "lost";
 						}
-					} else if (record.result === "won") {
-						if (rowIsFirstTid) {
-							outcome = "lost";
-						} else {
-							outcome = "won";
-						}
+					} else {
+						info.won += record.won;
+						info.lost += record.lost;
+						info.pts += record.pts;
+						info.oppPts += record.oppPts;
+						outcome = record.result;
 					}
 
 					if (outcome === "won") {

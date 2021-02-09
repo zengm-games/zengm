@@ -45,19 +45,26 @@ const addGame = async ({
 				lost: 0,
 				tied: 0,
 				otl: 0,
+				otw: 0,
 				pts: 0,
 				oppPts: 0,
 			};
 		}
 
 		if (pts[i] > pts[j]) {
-			headToHead.regularSeason[t0][t1].won += 1;
+			if (overtime && otl) {
+				headToHead.regularSeason[t0][t1].otw += 1;
+			} else {
+				headToHead.regularSeason[t0][t1].won += 1;
+			}
 		} else if (pts[i] === pts[j]) {
 			headToHead.regularSeason[t0][t1].tied += 1;
-		} else if (overtime && otl) {
-			headToHead.regularSeason[t0][t1].otl += 1;
 		} else {
-			headToHead.regularSeason[t0][t1].lost += 1;
+			if (overtime && otl) {
+				headToHead.regularSeason[t0][t1].otl += 1;
+			} else {
+				headToHead.regularSeason[t0][t1].lost += 1;
+			}
 		}
 
 		headToHead.regularSeason[t0][t1].pts += pts[i];

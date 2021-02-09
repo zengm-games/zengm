@@ -2,7 +2,6 @@ import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
 import orderBy from "lodash/orderBy";
-import { number } from "prop-types";
 
 const updateHeadToHeadAll = async (
 	{ season, type }: ViewInput<"headToHeadAll">,

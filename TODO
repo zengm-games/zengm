@@ -11,6 +11,7 @@ head to head records
     - headers link to head2head
     - OTL STUFF
       - if we have (w/l/t/otl) for a given matchup (t1, t2), that's not enough to get otl for (t2, t1). need to store otw, or store full record for both teams, or ignore otl
+    - tooltip to explain which team is the W team and which is the L team, in each cell
   - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams

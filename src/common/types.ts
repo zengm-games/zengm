@@ -1472,6 +1472,9 @@ export type HeadToHead = {
 				otl: number;
 				pts: number;
 				oppPts: number;
+
+				// Needed because we're only storing one record per (tid, tid) pair, and we swap the results when returning the other
+				otw: number;
 			}
 		>
 	>;

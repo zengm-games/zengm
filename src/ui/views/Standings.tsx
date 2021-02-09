@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { Fragment } from "react";
-import { ResponsiveTableWrapper, PlusMinus, MovOrDiff } from "../components";
+import { ResponsiveTableWrapper, MovOrDiff } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";

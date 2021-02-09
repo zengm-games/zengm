@@ -1704,6 +1704,16 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"Finals Won": {
+		desc: "Finals Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Lost": {
+		desc: "Finals Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	From: {},
 	Games: {
 		desc: "Number of Games",

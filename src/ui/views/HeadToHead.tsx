@@ -1,32 +1,7 @@
-import PropTypes from "prop-types";
-import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MovOrDiff } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
-import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
-
-const Other = ({
-	actualShowHealthy,
-	current,
-	healthy,
-}: {
-	actualShowHealthy: boolean;
-	current: number;
-	healthy: number;
-}) => {
-	if (actualShowHealthy || current === healthy) {
-		return <>{healthy}</>;
-	}
-
-	return (
-		<>
-			<span className={healthy > current ? "text-success" : "text-danger"}>
-				{current}
-			</span>
-		</>
-	);
-};
 
 const HeadToHead = ({
 	abbrev,
@@ -56,6 +31,8 @@ const HeadToHead = ({
 		"PA",
 		"Series Won",
 		"Series Lost",
+		"Finals Won",
+		"Finals Lost",
 	);
 
 	const rows = teams.map(t => {
@@ -74,11 +51,13 @@ const HeadToHead = ({
 				t.lost,
 				...(otl ? [t.otl] : []),
 				...(ties ? [t.tied] : []),
-				t.winp,
+				helpers.roundWinp(t.winp),
 				t.pts,
 				t.oppPts,
 				t.seriesWon,
 				t.seriesLost,
+				t.finalsWon,
+				t.finalsLost,
 			],
 			classNames: {
 				"table-info": t.tid === userTid,

@@ -32,6 +32,7 @@ import type {
 	Team,
 	Trade,
 	ScheduledEventWithoutKey,
+	HeadToHead,
 } from "../../common/types";
 
 export interface LeagueDB extends DBSchema {

@@ -1,7 +1,6 @@
-import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { headToHead, team } from "../core";
+import { headToHead } from "../core";
 
 const updateHeadToHead = async (
 	{ abbrev, season, tid }: ViewInput<"headToHead">,
@@ -14,16 +13,21 @@ const updateHeadToHead = async (
 		season !== state.season ||
 		abbrev !== state.abbrev
 	) {
-		type TeamInfo = {
-			won: number;
-			lost: number;
-			tied: number;
-			otl: number;
+		const simpleSums = [
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"pts",
+			"oppPts",
+			"seriesWon",
+			"seriesLost",
+			"finalsWon",
+			"finalsLost",
+		] as const;
+		type TeamInfo = Record<typeof simpleSums[number], number> & {
+			tid: number;
 			winp: number;
-			pts: number;
-			oppPts: number;
-			seriesWon: number;
-			seriesLost: number;
 		};
 
 		const infoByTid = new Map<number, TeamInfo>();
@@ -31,9 +35,21 @@ const updateHeadToHead = async (
 		await headToHead.iterateSeasons(
 			{
 				tid,
-				type: "combined",
+				type: "all",
 			},
-			info => {},
+			info => {
+				const current = infoByTid.get(info.tid);
+				if (current) {
+					for (const key of simpleSums) {
+						current[key] += info[key];
+					}
+				} else {
+					infoByTid.set(info.tid, {
+						...info,
+						winp: 0,
+					});
+				}
+			},
 		);
 
 		const teams: ({
@@ -42,6 +58,17 @@ const updateHeadToHead = async (
 			abbrev: string;
 			tid: number;
 		} & TeamInfo)[] = [];
+
+		const teamInfoCache = g.get("teamInfoCache");
+
+		for (const info of infoByTid.values()) {
+			teams.push({
+				...info,
+				region: teamInfoCache[info.tid].region,
+				name: teamInfoCache[info.tid].name,
+				abbrev: teamInfoCache[info.tid].abbrev,
+			});
+		}
 
 		for (const t of teams) {
 			t.winp = helpers.calcWinp(t);
@@ -65,8 +92,8 @@ const updateHeadToHead = async (
 			abbrev,
 			season,
 			teams,
-			ties: g.get("ties", season) || ties,
-			otl: g.get("otl", season) || otl,
+			ties: g.get("ties", season === "all" ? "current" : season) || ties,
+			otl: g.get("otl", season === "all" ? "current" : season) || otl,
 			userTid: g.get("userTid"),
 		};
 	}

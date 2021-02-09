@@ -350,6 +350,9 @@ class Cache {
 				pk: "season",
 				pkType: "number",
 				autoIncrement: false,
+				// Current season
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("headToHeads").getAll(this._season),
 			},
 			messages: {
 				pk: "mid",

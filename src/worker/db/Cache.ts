@@ -10,6 +10,7 @@ import type {
 	EventBBGM,
 	Game,
 	GameAttribute,
+	HeadToHead,
 	Message,
 	MessageWithoutKey,
 	MinimalPlayerRatings,
@@ -48,6 +49,7 @@ export type Store =
 	| "events"
 	| "gameAttributes"
 	| "games"
+	| "headToHeads"
 	| "messages"
 	| "negotiations"
 	| "playerFeats"
@@ -80,6 +82,7 @@ export const STORES: Store[] = [
 	"events",
 	"gameAttributes",
 	"games",
+	"headToHeads",
 	"messages",
 	"negotiations",
 	"playerFeats",
@@ -239,6 +242,8 @@ class Cache {
 
 	games: StoreAPI<Game, Game, number>;
 
+	headToHeads: StoreAPI<HeadToHead, HeadToHead, number>;
+
 	messages: StoreAPI<MessageWithoutKey, Message, number>;
 
 	negotiations: StoreAPI<Negotiation, Negotiation, number>;
@@ -340,6 +345,11 @@ class Cache {
 				// Current season
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
 					getAll(tx.objectStore("games").index("season"), this._season),
+			},
+			headToHeads: {
+				pk: "season",
+				pkType: "number",
+				autoIncrement: false,
 			},
 			messages: {
 				pk: "mid",
@@ -510,6 +520,7 @@ class Cache {
 		this.events = new StoreAPI(this, "events");
 		this.gameAttributes = new StoreAPI(this, "gameAttributes");
 		this.games = new StoreAPI(this, "games");
+		this.headToHeads = new StoreAPI(this, "headToHeads");
 		this.messages = new StoreAPI(this, "messages");
 		this.negotiations = new StoreAPI(this, "negotiations");
 		this.playerFeats = new StoreAPI(this, "playerFeats");

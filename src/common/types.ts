@@ -1456,6 +1456,7 @@ export type GetLeagueOptions =
 				| "all";
 	  };
 
+// Would probably be better to have this all at the root, and store one object per (season, t0, t1) but it's awkward to separate t0 and t1 and IndexedDB does not let you make a compound index that includes a multiEntry index, so maybe this is better?
 export type HeadToHead = {
 	season: number;
 

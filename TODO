@@ -2,12 +2,13 @@ head to head records
 - add to league export
 - add to delete old data
 - add to schema
-- test upgrade
 - https://old.reddit.com/r/BasketballGM/comments/lfs129/what_do_you_want_to_see_in_a_head_to_head_records/?
 - headToHead.get/set functions
 - pages
   - matrix of winp, for all teams
+    - filter by season, reg/playoffs/both
   - one team's table, like https://www.basketball-reference.com/teams/BOS/head2head.html
+    - filter by season, reg/playoffs/both
   - summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams

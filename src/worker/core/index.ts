@@ -7,6 +7,7 @@ export { default as expansionDraft } from "./expansionDraft";
 export { default as finances } from "./finances";
 export { default as freeAgents } from "./freeAgents";
 export { default as game } from "./game";
+export { default as headToHead } from "./headToHead";
 export { default as league } from "./league";
 export { default as phase } from "./phase";
 export { default as player } from "./player";

@@ -1,39 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, gradientStyleFactory, helpers } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import type { Col } from "../components/DataTable";
 import classNames from "classnames";
 
-const gradientStyleFactory = (
-	low: number,
-	mid1: number,
-	mid2: number,
-	high: number,
-) => (x: number) => {
-	let backgroundColor;
-	if (x < low) {
-		backgroundColor = "var(--gradient-base-danger)";
-	} else if (x < mid1) {
-		const fraction = (mid1 - x) / (mid1 - low);
-		backgroundColor = `rgba(var(--gradient-base-danger), ${fraction})`;
-	} else if (x > mid2) {
-		const fraction = (x - mid2) / (high - mid2);
-		backgroundColor = `rgba(var(--gradient-base-success), ${fraction})`;
-	} else if (x > high) {
-		backgroundColor = "var(--gradient-base-success)";
-	}
-
-	if (!backgroundColor) {
-		return;
-	}
-
-	return {
-		backgroundColor,
-	};
-};
-
-const gradientStyle = gradientStyleFactory(0.35, 0.49, 0.51, 0.65);
+const gradientStyle = gradientStyleFactory(0.38, 0.49, 0.51, 0.62);
 
 const HeadToHeadAll = ({
 	infoByTidByTid,

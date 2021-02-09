@@ -20,13 +20,11 @@ const addGame = async ({
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 	const otl = g.get("otl", "current");
 
-	const headToHead =
-		(await idb.cache.headToHeads.get(season)) ??
-		({
-			season,
-			regularSeason: {},
-			playoffs: {},
-		} as HeadToHead);
+	const headToHead: HeadToHead = (await idb.cache.headToHeads.get(season)) ?? {
+		season,
+		regularSeason: {},
+		playoffs: {},
+	};
 
 	const minTid = Math.min(...tids);
 	const i = tids.indexOf(minTid);
@@ -95,8 +93,8 @@ const addGame = async ({
 			headToHead.playoffs[t0][t1].lost += 1;
 		}
 
-		headToHead.regularSeason[t0][t1].pts += pts[i];
-		headToHead.regularSeason[t0][t1].oppPts += pts[j];
+		headToHead.playoffs[t0][t1].pts += pts[i];
+		headToHead.playoffs[t0][t1].oppPts += pts[j];
 
 		if (seriesWinner === tids[i]) {
 			headToHead.playoffs[t0][t1].result = "won";

@@ -81,7 +81,7 @@ const Row = ({
 
 Row.propTypes = {
 	row: PropTypes.shape({
-		classNames: PropTypes.object,
+		classNames: PropTypes.oneOf([PropTypes.object, PropTypes.string]),
 		data: PropTypes.array.isRequired,
 	}).isRequired,
 };

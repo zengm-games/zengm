@@ -94,6 +94,7 @@ const updateHeadToHead = async (
 			abbrev,
 			season,
 			teams,
+			tid,
 			ties: g.get("ties", season === "all" ? "current" : season) || ties,
 			otl: g.get("otl", season === "all" ? "current" : season) || otl,
 			type,

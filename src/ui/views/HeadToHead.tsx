@@ -1,12 +1,13 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MovOrDiff } from "../components";
+import { DataTable, MoreLinks, MovOrDiff } from "../components";
 import type { View } from "../../common/types";
 
 const HeadToHead = ({
 	abbrev,
 	season,
 	teams,
+	tid,
 	ties,
 	type,
 	otl,
@@ -83,6 +84,13 @@ const HeadToHead = ({
 
 	return (
 		<>
+			<MoreLinks
+				type="team"
+				page="head2head"
+				abbrev={abbrev}
+				tid={tid}
+				season={season === "all" ? undefined : season}
+			/>
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}

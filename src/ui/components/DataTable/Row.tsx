@@ -36,6 +36,10 @@ const Row = ({
 					props.title = value.title;
 				}
 
+				if (value && value.style) {
+					props.style = value.style;
+				}
+
 				const singleCheckbox =
 					actualValue &&
 					actualValue.type === "input" &&

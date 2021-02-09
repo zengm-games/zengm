@@ -3,17 +3,15 @@ head to head records
 - add to delete old data
 - add to schema
 - https://old.reddit.com/r/BasketballGM/comments/lfs129/what_do_you_want_to_see_in_a_head_to_head_records/?
-- headToHead.get/set functions
 - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
 - MoreLinks to head2head should include season if season is no the current season
 - pages
-  - head2head_all: matrix of winp, for all teams
-    - color in gradient
-      - if feasible, use it elswhere too, like team composition and player info popover
   - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams
     - link here from head2head and head2head_all
+
+use gradientStyleFactory for team composition and player info popover
 
 if you edit awards from a past season to take an award away from a retired player, it doesn't remove it from their player page. just changes the season summary and assigns it to the new player https://discord.com/channels/290013534023057409/290015591216054273/808088623874179115
 

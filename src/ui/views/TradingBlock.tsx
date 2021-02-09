@@ -186,8 +186,6 @@ const populateExtendedPositions = (items: string[]): string[] => {
 	return extPos;
 };
 
-export let something: boolean;
-
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
@@ -261,7 +259,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	};
 
 	const handleClickAsk = async () => {
-		something = state.showFilters;
 		setState(prevState => ({
 			...prevState,
 			asking: true,

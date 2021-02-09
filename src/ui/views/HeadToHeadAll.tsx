@@ -12,7 +12,6 @@ const HeadToHeadAll = ({
 	type,
 	userTid,
 }: View<"headToHeadAll">) => {
-	console.log("hi", infoByTidByTid);
 	useTitleBar({
 		title: "Head-to-Head",
 		dropdownView: "head2head_all",
@@ -83,6 +82,7 @@ const HeadToHeadAll = ({
 							"table-danger": info.winp <= 0.45,
 							"table-success": info.winp >= 0.55,
 						}),
+						title: `${t.abbrev}'s record vs ${t2.abbrev}`,
 						value: (
 							<>
 								{helpers.roundWinp(info.winp)}
@@ -99,9 +99,13 @@ const HeadToHeadAll = ({
 	return (
 		<>
 			<MoreLinks type="league" page="head2head_all" />
+
+			<p>Each table cell shows the row team's record vs the column team.</p>
+
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				hideAllControls
 				name="HeadToHeadAll"
 				nonfluid
 				rows={rows}

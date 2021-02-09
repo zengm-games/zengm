@@ -77,8 +77,6 @@ const iterate2 = async (
 					record = headToHead.playoffs[tid2]?.[tid];
 				}
 
-				console.log("rowIsFirstTid", rowIsFirstTid);
-
 				if (record) {
 					found = true;
 

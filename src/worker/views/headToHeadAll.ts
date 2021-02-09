@@ -28,18 +28,18 @@ const updateHeadToHeadAll = async (
 				season,
 			},
 			info => {
-				let infoByTid = infoByTidByTid.get(info.tid);
+				let infoByTid = infoByTidByTid.get(info.tid2);
 				if (!infoByTid) {
 					infoByTid = new Map();
-					infoByTidByTid.set(info.tid, infoByTid);
+					infoByTidByTid.set(info.tid2, infoByTid);
 				}
-				const current = infoByTid.get(info.tid2);
+				const current = infoByTid.get(info.tid);
 				if (current) {
 					for (const key of simpleSums) {
 						current[key] += info[key];
 					}
 				} else {
-					infoByTid.set(info.tid2, {
+					infoByTid.set(info.tid, {
 						...info,
 						winp: 0,
 					});

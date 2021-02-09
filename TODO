@@ -8,8 +8,6 @@ head to head records
 - MoreLinks to head2head should include season if season is no the current season
 - pages
   - head2head_all: matrix of winp, for all teams
-    - tooltip to explain which team is the W team and which is the L team, in each cell
-    - given the links to head2head in the rows, might make sense to transpose
     - color in gradient
       - if feasible, use it elswhere too, like team composition and player info popover
   - head2head_matchup: summary of matchup between two specific teams

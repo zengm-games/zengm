@@ -33,6 +33,7 @@ import GmHistory from "./GmHistory";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
+import HeadToHead from "./HeadToHead";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
 import ImportPlayers from "./ImportPlayers";
@@ -122,6 +123,7 @@ export default {
 	GameLog,
 	GodMode,
 	HallOfFame,
+	HeadToHead,
 	History,
 	HistoryAll,
 	ImportPlayers,

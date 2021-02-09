@@ -130,12 +130,12 @@ const GroupStandings = ({
 						{isSport("hockey") ? (
 							<th title="Goals For">GF</th>
 						) : (
-							<th title="Points Per Game">Pts</th>
+							<th title="Points Scored">PS</th>
 						)}
 						{isSport("hockey") ? (
 							<th title="Goals Against">GA</th>
 						) : (
-							<th title="Opponent Points Per Game">Opp</th>
+							<th title="Points Against">PA</th>
 						)}
 						{isSport("basketball") ? (
 							<th title="Average Margin of Victory">MOV</th>

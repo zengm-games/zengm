@@ -84,6 +84,10 @@ const MoreLinks = (
 				name: "History",
 			},
 			{
+				url: ["head2head", `${abbrev}_${tid}`],
+				name: "Head-to-Head",
+			},
+			{
 				url: ["schedule", `${abbrev}_${tid}`],
 				name: "Schedule",
 			},

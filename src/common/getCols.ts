@@ -1790,6 +1790,16 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	PA: {
+		desc: isSport("hockey") ? "Goals Against" : "Points Against",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	PS: {
+		desc: isSport("hockey") ? "Goals For" : "Points Scored",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -1872,6 +1882,16 @@ const cols: {
 	},
 	Seed: {
 		desc: "Playoff Seed",
+		sortType: "number",
+	},
+	"Series Won": {
+		desc: "Playoff Series Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Series Lost": {
+		desc: "Playoff Series Lost",
+		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	Skills: {},
@@ -2396,6 +2416,8 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:shMin": "shTOI",
 		"stat:ppo": "PPO",
 		"stat:ppPct": "PP%",
+		PS: "GF",
+		PA: "GA",
 	},
 });
 

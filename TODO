@@ -4,12 +4,14 @@ head to head records
 - add to schema
 - https://old.reddit.com/r/BasketballGM/comments/lfs129/what_do_you_want_to_see_in_a_head_to_head_records/?
 - headToHead.get/set functions
+- somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
+- MoreLinks to head2head should include season if season is no the current season
 - pages
-  - matrix of winp, for all teams
-    - filter by season, reg/playoffs/both
-  - one team's table, like https://www.basketball-reference.com/teams/BOS/head2head.html
-    - filter by season, reg/playoffs/both
-  - summary of matchup between two specific teams
+  - head2head_all: matrix of winp, for all teams
+    - filter by season, reg/playoffs/both, (eventually) playoff round
+  - head2head: one team's table, like https://www.basketball-reference.com/teams/BOS/head2head.html
+    - filter by season, reg/playoffs/both, (eventually) playoff round
+  - head2head_matchup: summary of matchup between two specific teams
     - list available box scores between teams
     - list statisitical feats between teams
 

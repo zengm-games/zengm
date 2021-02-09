@@ -73,6 +73,10 @@ export interface LeagueDB extends DBSchema {
 			season: number;
 		};
 	};
+	headToHeads: {
+		key: number;
+		value: HeadToHead;
+	};
 	messages: {
 		key: number;
 		value: MessageWithoutKey;
@@ -348,6 +352,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	});
 	const gameStore = db.createObjectStore("games", {
 		keyPath: "gid",
+	});
+	db.createObjectStore("headToHeads", {
+		keyPath: "season",
 	});
 	db.createObjectStore("messages", {
 		keyPath: "mid",
@@ -925,6 +932,12 @@ const migrate = ({
 				};
 			};
 		}
+	}
+
+	if (oldVersion <= 41) {
+		db.createObjectStore("headToHeads", {
+			keyPath: "season",
+		});
 	}
 
 	// New ones here!

@@ -1455,3 +1455,39 @@ export type GetLeagueOptions =
 				| "2010s"
 				| "all";
 	  };
+
+export type HeadToHead = {
+	season: number;
+
+	// The keys are team IDs. First should be the lowest of the pair
+	regularSeason: Record<
+		number,
+		Record<
+			number,
+			{
+				won: number;
+				lost: number;
+				tied: number;
+				otl: number;
+				pts: number;
+				oppPts: number;
+			}
+		>
+	>;
+
+	playoffs: Record<
+		number,
+		Record<
+			number,
+			// This assumes you can only play one playoff series against a given team in a season
+			{
+				round: number;
+				result: "won" | "lost" | undefined;
+				won: number;
+				lost: number;
+				pts: number;
+				oppPts: number;
+			}
+		>
+	>;
+};

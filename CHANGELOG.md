@@ -1,10 +1,12 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: Added a new option in League Settings to track overtime losses (OTL) separately from regulation losses, as is common in hockey. Currently it's just cosmetic, they count the same as losses.
+* 2021-02-09: Head-to-head team results are now viewable at League > History > Head-to-Head and Team > History > Head-to-Head. [[1]](https://basketball-gm.com/blog/2021/02/head-to-head/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lgj82n/headtohead_team_results_new_in_version/)
 
-* DEV: Added new skill label "V" for "Volume Scorer" to BBGM. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/357)
+* 2021-02-09: Added a new option in League Settings to track overtime losses (OTL) separately from regulation losses, as is common in hockey. Currently it's just cosmetic, they count the same as losses.
 
-* DEV: Updated the "desired contract length" formula based to feel more realistic. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/356)
+* 2021-02-09: Added new skill label "V" for "Volume Scorer" to BBGM. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/357)
+
+* 2021-02-09: Updated the "desired contract length" formula based to feel more realistic. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/356)
 
 * 2021-02-07: In BBGM, added a new league setting available in God Mode to control the number of fouls in a period before the bonus. Thanks @domini7! This setting automatically changes in historical leagues in 1955 and 1967. [[1]](https://github.com/dumbmatter/gm-games/pull/351) [[2]](https://old.reddit.com/r/BasketballGM/comments/legy0a/udominila_added_a_new_league_setting_available_in/)
 

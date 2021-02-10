@@ -1154,6 +1154,6 @@ a.anchor {
 }
 
 :root {
-	--gradient-base-danger: #{derive-rgb-values-from-hex($danger)};
-	--gradient-base-success: #{derive-rgb-values-from-hex($success)};
+	--gradient-base-danger: #{derive-rgb-values-from-hex(lighten($danger, 20%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
 }

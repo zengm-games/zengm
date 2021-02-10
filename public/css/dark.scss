@@ -281,5 +281,6 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 }
 
 :root {
-	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 20%))};
+	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
 }

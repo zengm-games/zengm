@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { gradientStyleFactory, helpers } from "../../util";
 import type { RatingKey } from "../../../common/types.basketball";
 
-const gradientStyle = gradientStyleFactory(20, 40, 60, 80);
+const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 
 type Props = {
 	ratings?: {

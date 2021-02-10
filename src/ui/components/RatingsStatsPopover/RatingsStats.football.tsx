@@ -4,7 +4,7 @@ import posRatings from "../../../common/posRatings.football";
 import { getCols, gradientStyleFactory } from "../../util";
 import type { RatingKey } from "../../../common/types.football";
 
-const gradientStyle = gradientStyleFactory(20, 40, 60, 80);
+const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 
 type Props = {
 	ratings?: {

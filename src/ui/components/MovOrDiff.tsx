@@ -1,3 +1,4 @@
+import { isSport } from "../../common";
 import PlusMinus from "./PlusMinus";
 
 const MovOrDiff = ({
@@ -11,7 +12,11 @@ const MovOrDiff = ({
 	};
 	type: "mov" | "diff";
 }) => {
-	let value = stats.pts - stats.oppPts;
+	// pts and oppPts already come scaled in basketball
+	const pts = isSport("basketball") ? stats.pts * stats.gp : stats.pts;
+	const oppPts = isSport("basketball") ? stats.oppPts * stats.gp : stats.oppPts;
+
+	let value = pts - oppPts;
 	if (type === "mov") {
 		if (stats.gp > 0) {
 			value /= stats.gp;

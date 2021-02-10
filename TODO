@@ -1,4 +1,16 @@
+head to head records
+- later
+  - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
+  - on head2head, a chart like https://i.gyazo.com/9e3f36a8e53b1f1ec681170843ea0679.png (bar graph of win% against each other team) linking to head2head_matchup
+  - head2head_matchup: summary of matchup between two specific teams
+    - http://www.winsipedia.com/air-force/vs/army
+    - list available box scores between teams
+    - list statisitical feats between teams
+    - link here from head2head and head2head_all
+
 if you edit awards from a past season to take an award away from a retired player, it doesn't remove it from their player page. just changes the season summary and assigns it to the new player https://discord.com/channels/290013534023057409/290015591216054273/808088623874179115
+
+auto adjust ticket price for playoffs https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghykfvs/
 
 free agents should be more willing to sign with teams that overpay
 - https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
@@ -85,6 +97,7 @@ settings re-design
   - make sure it handles setting the season for pace etc in real players leagues
   - godModeRequired value of "existingLeagueOnly" should be used here
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
+  - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
 - some settings should only be editable in offseason
   - playoff structure
 - to add
@@ -1356,8 +1369,10 @@ re-evaluate contracts
 
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
+  - https://www.google.com/search?q=OOTP+player+generator+modifiers&client=ubuntu&hs=nzO&channel=fs&sxsrf=ALeKk03DAwxNZl2Io6A0PwDmnR3InA95_w:1612847896152&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjc07TPhtzuAhXlUd8KHdfaB9kQ_AUoAnoECA8QBA&biw=1920&bih=869#imgrc=qKcVVE7ByPY6xM
 
 somewhere, show average age of team
+- https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/gi5929n/
 
 increase PG cutoff
 - https://www.reddit.com/r/BasketballGM/comments/8lfyuh/7_center_turns_into_pg_when_the_season_starts/

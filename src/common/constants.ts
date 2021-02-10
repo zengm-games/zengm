@@ -21,7 +21,7 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 41;
+const MAX_SUPPORTED_LEAGUE_VERSION = 42;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",

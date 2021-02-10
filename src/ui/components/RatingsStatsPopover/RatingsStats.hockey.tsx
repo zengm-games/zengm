@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
-import { helpers } from "../../util";
+import { gradientStyleFactory } from "../../util";
 import type { RatingKey } from "../../../common/types.hockey";
+
+const gradientStyle = gradientStyleFactory(20, 40, 60, 80);
 
 type Props = {
 	ratings?: {
@@ -23,71 +25,41 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 				<div className="col-4">
 					<b>Ratings</b>
 					<br />
-					<span className={helpers.colorRating(ratings.hgt)}>
-						Hgt: {ratings.hgt}
-					</span>
+					<span style={gradientStyle(ratings.hgt)}>Hgt: {ratings.hgt}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.stre)}>
-						Str: {ratings.stre}
-					</span>
+					<span style={gradientStyle(ratings.stre)}>Str: {ratings.stre}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.spd)}>
-						Spd: {ratings.spd}
-					</span>
+					<span style={gradientStyle(ratings.spd)}>Spd: {ratings.spd}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.endu)}>
-						End: {ratings.endu}
-					</span>
+					<span style={gradientStyle(ratings.endu)}>End: {ratings.endu}</span>
 				</div>
 				<div className="col-4">
-					<span className={helpers.colorRating(ratings.ovr)}>
-						Ovr: {ratings.ovr}
-					</span>
+					<span style={gradientStyle(ratings.ovr)}>Ovr: {ratings.ovr}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.pss)}>
-						Pss: {ratings.pss}
-					</span>
+					<span style={gradientStyle(ratings.pss)}>Pss: {ratings.pss}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.wst)}>
-						Wst: {ratings.wst}
-					</span>
+					<span style={gradientStyle(ratings.wst)}>Wst: {ratings.wst}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.sst)}>
-						Sst: {ratings.sst}
-					</span>
+					<span style={gradientStyle(ratings.sst)}>Sst: {ratings.sst}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.stk)}>
-						Stk: {ratings.stk}
-					</span>
+					<span style={gradientStyle(ratings.stk)}>Stk: {ratings.stk}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.oiq)}>
-						oIQ: {ratings.oiq}
-					</span>
+					<span style={gradientStyle(ratings.oiq)}>oIQ: {ratings.oiq}</span>
 				</div>
 				<div className="col-4">
-					<span className={helpers.colorRating(ratings.pot)}>
+					<span style={gradientStyle(ratings.pot)}>
 						Pot: {Math.round(ratings.pot)}
 					</span>
 					<br />
-					<span className={helpers.colorRating(ratings.chk)}>
-						Chk: {ratings.chk}
-					</span>
+					<span style={gradientStyle(ratings.chk)}>Chk: {ratings.chk}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.blk)}>
-						Blk: {ratings.blk}
-					</span>
+					<span style={gradientStyle(ratings.blk)}>Blk: {ratings.blk}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.fcf)}>
-						Fcf: {ratings.fcf}
-					</span>
+					<span style={gradientStyle(ratings.fcf)}>Fcf: {ratings.fcf}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.diq)}>
-						dIQ: {ratings.diq}
-					</span>
+					<span style={gradientStyle(ratings.diq)}>dIQ: {ratings.diq}</span>
 					<br />
-					<span className={helpers.colorRating(ratings.glk)}>
-						Glk: {ratings.glk}
-					</span>
+					<span style={gradientStyle(ratings.glk)}>Glk: {ratings.glk}</span>
 				</div>
 			</div>
 		);

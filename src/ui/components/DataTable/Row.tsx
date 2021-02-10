@@ -32,6 +32,14 @@ const Row = ({
 					props.className = classNames(value.classNames);
 				}
 
+				if (value && value.title) {
+					props.title = value.title;
+				}
+
+				if (value && value.style) {
+					props.style = value.style;
+				}
+
 				const singleCheckbox =
 					actualValue &&
 					actualValue.type === "input" &&
@@ -73,7 +81,6 @@ const Row = ({
 
 Row.propTypes = {
 	row: PropTypes.shape({
-		classNames: PropTypes.object,
 		data: PropTypes.array.isRequired,
 	}).isRequired,
 };

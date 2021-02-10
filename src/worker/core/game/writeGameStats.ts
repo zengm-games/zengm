@@ -8,6 +8,7 @@ import type {
 	GameResults,
 	LogEventType,
 } from "../../../common/types";
+import { headToHead } from "..";
 
 const allStarMVP = async (
 	game: Game,
@@ -554,6 +555,18 @@ const writeGameStats = async (
 			await idb.cache.allStars.put(allStars);
 		}
 	}
+
+	let seriesWinner: number | undefined;
+	if (playoffInfos && playoffInfos[tw].won === numGamesToWinSeries) {
+		seriesWinner = gameStats.won.tid;
+	}
+	await headToHead.addGame({
+		tids: [gameStats.won.tid, gameStats.lost.tid],
+		pts: [gameStats.won.pts, gameStats.lost.pts],
+		overtime: gameStats.overtimes > 0,
+		playoffRound: currentRound,
+		seriesWinner,
+	});
 
 	await idb.cache.games.add(gameStats);
 };

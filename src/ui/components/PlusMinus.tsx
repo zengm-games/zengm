@@ -7,12 +7,16 @@ const PlusMinus = ({
 	children: number;
 	decimalPlaces?: number;
 }) => {
+	const formattedNumber = children.toLocaleString("en-US", {
+		maximumFractionDigits: decimalPlaces,
+		minimumFractionDigits: decimalPlaces,
+	});
+
 	return (
 		<>
 			{children !== 0 ? (
 				<span className={children < 0 ? "text-danger" : "text-success"}>
-					{children > 0 ? "+" : null}
-					{children.toFixed(decimalPlaces)}
+					{formattedNumber}
 				</span>
 			) : (
 				(0).toFixed(decimalPlaces)

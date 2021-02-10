@@ -72,6 +72,7 @@ export type LeagueFile = {
 	events?: any[];
 	playerFeats?: any[];
 	scheduledEvents?: any[];
+	headToHeads?: any[];
 };
 
 export type TeamInfo = TeamBasic & {
@@ -402,6 +403,8 @@ export const createWithoutSaving = async (
 		"games",
 		"events",
 		"playerFeats",
+		"scheduledEvents",
+		"headToHeads",
 	] as const;
 	const leagueData: any = {};
 
@@ -782,16 +785,11 @@ export const createWithoutSaving = async (
 		}
 	}
 
-	const scheduledEvents = leagueFile.scheduledEvents
-		? leagueFile.scheduledEvents
-		: [];
-
 	return Object.assign(leagueData, {
 		draftLotteryResults,
 		draftPicks,
 		gameAttributes,
 		players,
-		scheduledEvents,
 		teamSeasons,
 		teamStats,
 		teams,

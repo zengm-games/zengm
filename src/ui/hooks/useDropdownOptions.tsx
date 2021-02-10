@@ -106,6 +106,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	either: "Either",
 	skater: "Skaters",
 	goalie: "Goalies",
+	"all|||playoffsAll": "All Games",
 };
 
 if (isSport("hockey")) {
@@ -220,6 +221,8 @@ const useDropdownOptions = (field: string) => {
 		}
 	} else if (field === "playoffs") {
 		keys = ["regularSeason", "playoffs"];
+	} else if (field === "playoffsAll") {
+		keys = ["all|||playoffsAll", "regularSeason", "playoffs"];
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {

@@ -165,7 +165,6 @@ export const options: {
 		category: "Season",
 		key: "numGames",
 		name: "# Games Per Season",
-		godModeRequired: "always",
 		type: "int",
 		description: "This will only apply to seasons that have not started yet.",
 	},
@@ -192,7 +191,6 @@ export const options: {
 		category: "Season",
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
-		godModeRequired: "existingLeagueOnly",
 		description: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
@@ -224,7 +222,6 @@ export const options: {
 		category: "Season",
 		key: "numPlayoffByes",
 		name: "# First Round Byes",
-		godModeRequired: "existingLeagueOnly",
 		type: "int",
 		description:
 			"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
@@ -716,7 +713,6 @@ export const options: {
 		category: "Game Modes",
 		key: "spectator",
 		name: "Spectator Mode",
-		godModeRequired: "always",
 		type: "bool",
 		description:
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",

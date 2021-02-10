@@ -49,8 +49,9 @@ const MoreLinks = (
 ) => {
 	const { keepSelfLink, page } = props;
 
-	const { godMode } = useLocalShallow(state2 => ({
+	const { godMode, season: currentSeason } = useLocalShallow(state2 => ({
 		godMode: state2.godMode,
+		season: state2.season,
 	}));
 
 	let links: {
@@ -60,6 +61,7 @@ const MoreLinks = (
 	}[];
 	if (props.type === "team") {
 		const { abbrev, season, tid } = props;
+
 		links = [
 			{
 				url:
@@ -84,7 +86,10 @@ const MoreLinks = (
 				name: "History",
 			},
 			{
-				url: ["head2head", `${abbrev}_${tid}`],
+				url:
+					season !== undefined && season !== currentSeason
+						? ["head2head", `${abbrev}_${tid}`, season]
+						: ["head2head", `${abbrev}_${tid}`],
 				name: "Head-to-Head",
 			},
 			{

@@ -91,6 +91,15 @@ const HeadToHead = ({
 				tid={tid}
 				season={season === "all" ? undefined : season}
 			/>
+
+			<p>
+				View{" "}
+				<a href={helpers.leagueUrl(["head2head_all", season, type])}>
+					head-to-head results for all teams
+				</a>{" "}
+				in one giant table.
+			</p>
+
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}

@@ -1,13 +1,6 @@
 import { bySport, helpers as commonHelpers } from "../../common";
 import { local } from "./local";
 
-const colorRating = (rating: number) => {
-	const classes = ["table-danger", "table-warning", undefined, "table-success"];
-	const cutoffs = [30, 45, 60, Infinity];
-	const ind = cutoffs.findIndex(cutoff => rating < cutoff);
-	return classes[ind];
-};
-
 const leagueUrl = (components: (number | string)[]): string => {
 	const lid = local.getState().lid;
 
@@ -394,7 +387,6 @@ const yearRanges = (arr: number[]): string[] => {
 
 const helpers = {
 	...commonHelpers,
-	colorRating,
 	leagueUrl,
 	plusMinus,
 	roundStat,

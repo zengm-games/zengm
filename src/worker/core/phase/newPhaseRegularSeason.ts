@@ -37,6 +37,13 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 		await transaction.done;
 	}
 
+	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost
+	await idb.cache.headToHeads.put({
+		season: g.get("season"),
+		regularSeason: {},
+		playoffs: {},
+	});
+
 	if (!local.autoPlayUntil) {
 		let naggedMailingList = await idb.meta.get(
 			"attributes",

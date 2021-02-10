@@ -2,6 +2,7 @@ import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
 import orderBy from "lodash/orderBy";
+import { PHASE } from "../../common";
 
 const updateHeadToHeadAll = async (
 	{ season, type }: ViewInput<"headToHeadAll">,
@@ -47,13 +48,11 @@ const updateHeadToHeadAll = async (
 				}
 
 				const gp = info.won + info.lost + info.otl + info.tied;
-				for (const tid2 of [info.tid, info.tid2]) {
-					gpByTid.set(tid2, (gpByTid.get(tid2) ?? 0) + gp);
-				}
+				gpByTid.set(info.tid, (gpByTid.get(info.tid) ?? 0) + gp);
 			},
 		);
 
-		const teams = orderBy(
+		let teams = orderBy(
 			g.get("teamInfoCache").map((t, tid) => ({
 				tid,
 				abbrev: t.abbrev,
@@ -62,11 +61,24 @@ const updateHeadToHeadAll = async (
 				disabled: t.disabled,
 			})),
 			"abbrev",
-		).filter(t => {
-			// For old seasons, don't include teams that didn't exist yet
-			const gp = gpByTid.get(t.tid) ?? 0;
-			return gp > 0;
-		});
+		);
+
+		if (season !== "all") {
+			const currentSeason = g.get("season");
+			if (
+				season < currentSeason ||
+				(season === currentSeason && g.get("phase") > PHASE.REGULAR_SEASON)
+			) {
+				// For old seasons, don't include teams that played no games (inactive or didn't exist yet)
+				teams = teams.filter(t => {
+					const gp = gpByTid.get(t.tid) ?? 0;
+					return gp > 0;
+				});
+			} else if (season === currentSeason) {
+				// For current season, don't include inactive teams
+				teams = teams.filter(t => !t.disabled);
+			}
+		}
 
 		for (const infoByTid of infoByTidByTid.values()) {
 			for (const info of infoByTid.values()) {

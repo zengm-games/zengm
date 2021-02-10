@@ -107,7 +107,6 @@ const HeadToHeadAll = ({
 				defaultSort={[0, "asc"]}
 				hideAllControls
 				name="HeadToHeadAll"
-				nonfluid
 				rows={rows}
 				striped={false}
 			/>

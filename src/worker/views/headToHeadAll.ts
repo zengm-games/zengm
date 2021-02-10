@@ -53,6 +53,7 @@ const updateHeadToHeadAll = async (
 				abbrev: t.abbrev,
 				name: t.name,
 				region: t.region,
+				disabled: t.disabled,
 			})),
 			"abbrev",
 		);

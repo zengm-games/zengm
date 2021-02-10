@@ -4,6 +4,7 @@ import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import type { Col } from "../components/DataTable";
 import classNames from "classnames";
+import { useState } from "react";
 
 const gradientStyle = gradientStyleFactory(0.38, 0.49, 0.51, 0.62);
 
@@ -23,9 +24,16 @@ const HeadToHeadAll = ({
 		},
 	});
 
+	const [showInactive, setShowInactive] = useState(true);
+
+	const hasInactiveTeams = teams.some(t => t.disabled);
+
+	const teamsFiltered =
+		!hasInactiveTeams || showInactive ? teams : teams.filter(t => !t.disabled);
+
 	const cols = [
 		...getCols("Team"),
-		...teams.map(
+		...teamsFiltered.map(
 			(t): Col => {
 				return {
 					classNames: classNames(
@@ -41,7 +49,7 @@ const HeadToHeadAll = ({
 		),
 	];
 
-	const rows = teams.map(t => {
+	const rows = teamsFiltered.map(t => {
 		const infoByTid = infoByTidByTid.get(t.tid);
 
 		return {
@@ -66,7 +74,7 @@ const HeadToHeadAll = ({
 						</a>
 					),
 				},
-				...teams.map(t2 => {
+				...teamsFiltered.map(t2 => {
 					const info = infoByTid?.get(t2.tid);
 					if (!info) {
 						return null;
@@ -101,6 +109,17 @@ const HeadToHeadAll = ({
 			<MoreLinks type="league" page="head2head_all" />
 
 			<p>Each table cell shows the row team's record vs the column team.</p>
+
+			{hasInactiveTeams ? (
+				<button
+					className="btn btn-secondary mb-3"
+					onClick={() => {
+						setShowInactive(show => !show);
+					}}
+				>
+					{showInactive ? "Hide inactive teams" : "Show inactive teams"}
+				</button>
+			) : null}
 
 			<DataTable
 				cols={cols}

@@ -25,6 +25,7 @@ describe("worker/core/league/create", () => {
 			"events",
 			"gameAttributes",
 			"games",
+			"headToHeads",
 			"messages",
 			"negotiations",
 			"playerFeats",

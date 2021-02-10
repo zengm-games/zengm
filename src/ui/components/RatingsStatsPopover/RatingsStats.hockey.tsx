@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { gradientStyleFactory, helpers } from "../../util";
+import { gradientStyleFactory } from "../../util";
 import type { RatingKey } from "../../../common/types.hockey";
 
 const gradientStyle = gradientStyleFactory(20, 40, 60, 80);

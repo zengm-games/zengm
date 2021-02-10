@@ -581,6 +581,7 @@ const deleteOldData = async (options: {
 			"draftLotteryResults",
 			"events",
 			"games",
+			"headToHeads",
 			"teams",
 			"teamSeasons",
 			"teamStats",
@@ -606,6 +607,8 @@ const deleteOldData = async (options: {
 		);
 
 		transaction.objectStore("draftLotteryResults").clear();
+
+		transaction.objectStore("headToHeads").clear();
 
 		await iterate(
 			transaction.objectStore("allStars"),

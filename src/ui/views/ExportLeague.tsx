@@ -11,7 +11,7 @@ const categories = [
 		checked: true,
 	},
 	{
-		objectStores: "teams,teamSeasons,teamStats",
+		objectStores: "teams,teamSeasons,teamStats,headToHeads",
 		name: "Teams",
 		desc: "All team info and stats.",
 		checked: true,

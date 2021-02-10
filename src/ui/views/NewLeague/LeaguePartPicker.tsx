@@ -21,6 +21,7 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	draftPicks: "Traded future draft picks",
 	scheduledEvents:
 		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
+	headToHeads: "Team head-to-head results",
 };
 
 const LeaguePartPicker = ({

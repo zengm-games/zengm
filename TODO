@@ -1,11 +1,8 @@
 head to head records
-- add to league export
-- add to delete old data
-- add to schema
-- https://old.reddit.com/r/BasketballGM/comments/lfs129/what_do_you_want_to_see_in_a_head_to_head_records/?
-- somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
 - MoreLinks to head2head should include season if season is no the current season
+- link from head2head to head2head_all
 - later
+  - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
   - on head2head, a chart like https://i.gyazo.com/9e3f36a8e53b1f1ec681170843ea0679.png (bar graph of win% against each other team) linking to head2head_matchup
   - head2head_matchup: summary of matchup between two specific teams
     - http://www.winsipedia.com/air-force/vs/army

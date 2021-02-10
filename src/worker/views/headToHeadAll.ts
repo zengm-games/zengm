@@ -63,8 +63,6 @@ const updateHeadToHeadAll = async (
 			}
 		}
 
-		console.log(teams, infoByTidByTid);
-
 		return {
 			infoByTidByTid,
 			season,

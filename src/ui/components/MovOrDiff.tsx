@@ -13,7 +13,11 @@ const MovOrDiff = ({
 }) => {
 	let value = stats.pts - stats.oppPts;
 	if (type === "mov") {
-		value /= stats.gp;
+		if (stats.gp > 0) {
+			value /= stats.gp;
+		} else {
+			value = 0;
+		}
 	}
 
 	const decimalPlaces = type === "mov" ? 1 : 0;

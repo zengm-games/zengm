@@ -134,14 +134,15 @@ const iterate2 = async (
 		key = IDBKeyRange.only(options.season);
 	}
 
-	let doCurrentSeasonFromCache = false;
+	const currentSeason = g.get("season");
+
 	await iterate(
 		idb.league.transaction("headToHeads").store,
 		key,
 		undefined,
 		headToHead => {
-			if (headToHead.season === g.get("season")) {
-				doCurrentSeasonFromCache = true;
+			if (headToHead.season === currentSeason) {
+				// We'll do this later, from cache
 				return;
 			}
 
@@ -149,8 +150,8 @@ const iterate2 = async (
 		},
 	);
 
-	if (doCurrentSeasonFromCache) {
-		const headToHead = await idb.cache.headToHeads.get(g.get("season"));
+	if (options.season === "all" || options.season === currentSeason) {
+		const headToHead = await idb.cache.headToHeads.get(currentSeason);
 		if (headToHead) {
 			processHeadToHead(headToHead);
 		}

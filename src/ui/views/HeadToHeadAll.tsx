@@ -26,7 +26,7 @@ const HeadToHeadAll = ({
 
 	const [showInactive, setShowInactive] = useState(true);
 
-	const hasInactiveTeams = teams.some(t => t.disabled);
+	const hasInactiveTeams = season === "all" && teams.some(t => t.disabled);
 
 	const teamsFiltered =
 		!hasInactiveTeams || showInactive ? teams : teams.filter(t => !t.disabled);
@@ -108,27 +108,33 @@ const HeadToHeadAll = ({
 		<>
 			<MoreLinks type="league" page="head2head_all" />
 
-			<p>Each table cell shows the row team's record vs the column team.</p>
+			{rows.length === 0 ? (
+				<p>No data {season !== "all" ? "for this season yet" : "yet"}.</p>
+			) : (
+				<>
+					<p>Each table cell shows the row team's record vs the column team.</p>
 
-			{hasInactiveTeams ? (
-				<button
-					className="btn btn-secondary mb-3"
-					onClick={() => {
-						setShowInactive(show => !show);
-					}}
-				>
-					{showInactive ? "Hide inactive teams" : "Show inactive teams"}
-				</button>
-			) : null}
+					{hasInactiveTeams ? (
+						<button
+							className="btn btn-secondary mb-3"
+							onClick={() => {
+								setShowInactive(show => !show);
+							}}
+						>
+							{showInactive ? "Hide inactive teams" : "Show inactive teams"}
+						</button>
+					) : null}
 
-			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
-				hideAllControls
-				name="HeadToHeadAll"
-				rows={rows}
-				striped={false}
-			/>
+					<DataTable
+						cols={cols}
+						defaultSort={[0, "asc"]}
+						hideAllControls
+						name="HeadToHeadAll"
+						rows={rows}
+						striped={false}
+					/>
+				</>
+			)}
 		</>
 	);
 };

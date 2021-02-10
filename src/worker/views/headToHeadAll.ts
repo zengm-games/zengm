@@ -20,6 +20,7 @@ const updateHeadToHeadAll = async (
 		};
 
 		const infoByTidByTid = new Map<number, Map<number, TeamInfo>>();
+		const gpByTid = new Map<number, number>();
 
 		await headToHead.iterate(
 			{
@@ -44,6 +45,11 @@ const updateHeadToHeadAll = async (
 						winp: 0,
 					});
 				}
+
+				const gp = info.won + info.lost + info.otl + info.tied;
+				for (const tid2 of [info.tid, info.tid2]) {
+					gpByTid.set(tid2, (gpByTid.get(tid2) ?? 0) + gp);
+				}
 			},
 		);
 
@@ -56,7 +62,11 @@ const updateHeadToHeadAll = async (
 				disabled: t.disabled,
 			})),
 			"abbrev",
-		);
+		).filter(t => {
+			// For old seasons, don't include teams that didn't exist yet
+			const gp = gpByTid.get(t.tid) ?? 0;
+			return gp > 0;
+		});
 
 		for (const infoByTid of infoByTidByTid.values()) {
 			for (const info of infoByTid.values()) {

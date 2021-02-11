@@ -1,8 +1,8 @@
 import { idb } from "../../db";
 import type { TeamSeason, Conditions } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
-import { season } from "..";
 import { COURT } from "../../../common";
+import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -48,6 +48,7 @@ const getClinchedPlayoffs = async (
 			return worstCase;
 		});
 
+		// This is needed just to determin the overall #1 seed
 		const sorted = helpers.orderByWinp(worstCases);
 
 		// x - clinched playoffs
@@ -59,7 +60,7 @@ const getClinchedPlayoffs = async (
 		if (sorted[0].tid === t.tid) {
 			clinchedPlayoffs = "z";
 		} else {
-			const result = await season.genPlayoffSeries(sorted);
+			const result = await genPlayoffSeriesFromTeams(worstCases);
 			const matchups = result.series[0];
 			for (const matchup of matchups) {
 				if (!matchup.away && matchup.home.tid === t.tid) {
@@ -112,9 +113,7 @@ const getClinchedPlayoffs = async (
 				return bestCase;
 			});
 
-			const sorted = helpers.orderByWinp(bestCases);
-
-			const result = await season.genPlayoffSeries(sorted);
+			const result = await genPlayoffSeriesFromTeams(bestCases);
 			if (!result.tidPlayoffs.includes(t.tid)) {
 				clinchedPlayoffs = "o";
 			}

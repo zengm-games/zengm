@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { PHASE } from "../../../common";
 import { season } from "..";
-import { g, helpers, random } from "../../util";
+import { g, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 /**
@@ -27,9 +27,7 @@ const lotterySort = async (
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {
-		const { tidPlayoffs } = await season.genPlayoffSeries(
-			helpers.orderByWinp(teams),
-		);
+		const { tidPlayoffs } = await season.genPlayoffSeries();
 
 		for (const t of teams) {
 			if (tidPlayoffs.includes(t.tid)) {

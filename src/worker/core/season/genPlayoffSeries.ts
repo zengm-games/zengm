@@ -1,13 +1,14 @@
 import range from "lodash/range";
-import { g, helpers } from "../../util";
+import { g, helpers, orderTeams } from "../../util";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
 } from "../../../common/types";
 import genPlayoffSeeds from "./genPlayoffSeeds";
+import { idb } from "../../db";
 
-type MyTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
+type MyTeam = TeamFiltered<["tid"], ["cid", "did", "winp", "won"], any, number>;
 
 const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	return {
@@ -20,7 +21,7 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 };
 
 // In a 2 conference playoff, this should be called once with each side of the bracket
-const makeMatchups = (
+export const makeMatchups = (
 	teams: MyTeam[],
 	numPlayoffTeams: number,
 	numPlayoffByes: number,
@@ -41,7 +42,19 @@ const makeMatchups = (
 	});
 };
 
-const genPlayoffSeries = async (teams: MyTeam[]) => {
+const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
+	const tidPlayoffs = [];
+	for (const matchup of series[0]) {
+		tidPlayoffs.push(matchup.home.tid);
+		if (matchup.away !== undefined) {
+			tidPlayoffs.push(matchup.away.tid);
+		}
+	}
+
+	return tidPlayoffs;
+};
+
+export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
 
@@ -61,7 +74,10 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 	);
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
-	let tidPlayoffs: number[] = [];
+	if (teams.length < numPlayoffTeams) {
+		throw new Error("Not enough teams for playoffs");
+	}
+
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
 	if (playoffsByConference) {
@@ -69,22 +85,13 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 			// Default: top 50% of teams in each of the two conferences
 			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
-				const teamsConf: MyTeam[] = [];
-
-				for (const t of teams) {
-					if (t.seasonAttrs.cid === cid) {
-						teamsConf.push(t);
-						tidPlayoffs.push(t.tid);
-
-						if (teamsConf.length >= numPlayoffTeams / 2) {
-							break;
-						}
-					}
-				}
+				const teamsConf: MyTeam[] = teams.filter(
+					t => t.seasonAttrs.cid === cid,
+				);
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
-					const round = makeMatchups(
-						teamsConf,
+					const round = await makeMatchups(
+						await orderTeams(teamsConf),
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
 					);
@@ -100,18 +107,19 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 
 			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
-				for (const t of teams) {
-					if (t.seasonAttrs.cid === cid) {
-						teamsFinals.push(t);
-						tidPlayoffs.push(t.tid);
-						break;
-					}
+				const teamsConf: MyTeam[] = teams.filter(
+					t => t.seasonAttrs.cid === cid,
+				);
+				if (teamsConf.length > 0) {
+					// This sort determines conference champ. Sort inside makeMatchups will determine overall #1 seed
+					const sorted = await orderTeams(teamsConf);
+					teamsFinals.push(sorted[0]);
 				}
 			}
 
 			if (teamsFinals.length === 2) {
-				const round = makeMatchups(
-					teamsFinals,
+				const round = await makeMatchups(
+					await orderTeams(teamsFinals),
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
 				);
@@ -125,34 +133,31 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 
 	// Not an "else" because if the (playoffsByConference) branch fails it sets it to false and runs this as backup
 	if (!playoffsByConference) {
-		// Reset, in case they were set in prior branch
-		tidPlayoffs = [];
+		// Reset, in case it was partially set in prior branch
 		series = range(numRounds).map(() => []);
 
-		// Alternative: top 50% of teams overall
-		const teamsPlayoffs: MyTeam[] = [];
-
-		for (let i = 0; i < teams.length; i++) {
-			teamsPlayoffs.push(teams[i]);
-			tidPlayoffs.push(teams[i].tid);
-
-			if (teamsPlayoffs.length >= numPlayoffTeams) {
-				break;
-			}
-		}
-
-		if (teamsPlayoffs.length < numPlayoffTeams) {
-			throw new Error("Not enough teams for playoffs");
-		}
-
-		const round = makeMatchups(teamsPlayoffs, numPlayoffTeams, numPlayoffByes);
+		const round = await makeMatchups(
+			await orderTeams(teams),
+			numPlayoffTeams,
+			numPlayoffByes,
+		);
 		series[0].push(...round);
 	}
 
 	return {
 		series,
-		tidPlayoffs,
+		tidPlayoffs: getTidPlayoffs(series),
 	};
+};
+
+const genPlayoffSeries = async () => {
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did", "winp", "won"],
+		season: g.get("season"),
+	});
+
+	return genPlayoffSeriesFromTeams(teams);
 };
 
 export default genPlayoffSeries;

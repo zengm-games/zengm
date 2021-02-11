@@ -1,13 +1,7 @@
 better tiebreakers
-- go over code, switch to orderTeams, make sure to do it by div/conf/league appropriately
-  - what about arg to season.genPlayoffSeries? maybe that should internally have the logit to handle conf/league
-    - split into 3 functions
-      - 1 to order a list of pre-sorted teams into a 1-N playoff bracket
-      - 1 wrapping that to handle splitting into 2 conferences and sorting
-        - calls this from updateClinchedPlayoffs
-      - 1 wrapping that to actually fetch the teams
-    - should it also handle fetching teams? what about the unit tests? have them test a more internal function
+- fix lotterySort test
 - delete helpers.orderByWinp
+  - make any place that was passing a season to helpers.orderByWinp also passes a season to orderTeams!
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random
@@ -29,6 +23,7 @@ better tiebreakers
   - only at end of season, or always?
   - use in standings, etc
   - playoff clinching
+- handle tiebreaker when 2 #1 seeds meet in playoffs
 
 head to head records
 - later

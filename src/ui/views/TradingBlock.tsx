@@ -8,7 +8,7 @@ import type { View, ThenArg } from "../../common/types";
 import type api from "../../worker/api";
 import TradeFilter, { filterType } from "../views/TradeFilter/TradeFilter";
 import { AnimatePresence, motion } from "framer-motion";
-import FilterItem from "../../worker/core/trade/filterItem";
+import FilterItem from "../../worker/core/trade/FilterItem";
 import _ from "lodash";
 
 type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];

@@ -100,24 +100,24 @@ export type AllStars = {
 	};
 };
 
+export type CompositeWeight<RatingKey = string> = {
+	ratings: (RatingKey | number)[];
+	weights?: number[] | undefined;
+	skill?:
+		| {
+				label: string;
+				cutoff?: number | undefined;
+				description: string;
+		  }
+		| undefined;
+};
 export type CompositeWeights<RatingKey = string> = {
-	[key: string]: {
-		ratings: (RatingKey | number)[];
-		weights?: number[];
-		skill?: {
-			label: string;
-			cutoff?: number;
-		};
-	};
+	[key: string]: CompositeWeight<RatingKey>;
 };
 
 // Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere
 export type Conditions = {
 	hostID?: number;
-};
-
-export type Skill = {
-	[key: string]: { description: string | undefined; label: string };
 };
 
 export type DraftLotteryResultArray = {

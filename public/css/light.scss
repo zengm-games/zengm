@@ -665,14 +665,21 @@ tr.table-warning:hover > td {
 	border: 1px solid $blue !important;
 	color: $gray-700 !important;
 }
-.color-primary {
-	color: $primary;
-}
-.check-item-default {
+
+.toggle-item-default {
 	color: $gray-600;
 	background: $gray-200;
+	padding: 3px 7px;
+	border-radius: 50px;
+	font-size: 12px;
+	border-width: 1px;
+	cursor: pointer;
+	width: 40px;
+	display: inline-block;
+	margin: 0 5px 0 0;
 }
-.check-item-checked {
+.toggle-item-checked {
+	@extend .toggle-item-default;
 	background: $primary;
 	color: $white;
 	border-color: $primary;

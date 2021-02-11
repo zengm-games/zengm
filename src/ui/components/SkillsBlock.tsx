@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
-import React from "react";
 import { SKILLS } from "../../common/constants";
 
 const tooltips = SKILLS;
+console.log(tooltips);
 
 const SkillsBlock = ({
 	className,
@@ -24,7 +24,7 @@ const SkillsBlock = ({
 					title={
 						// https://github.com/microsoft/TypeScript/issues/21732
 						// @ts-ignore
-						tooltips.hasOwnProperty(skill) ? tooltips[skill].description : null
+						tooltips.hasOwnProperty(skill) ? tooltips[skill] : undefined
 					}
 				>
 					{skill}

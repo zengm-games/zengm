@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { POSITIONS, SKILLS } from "../../../common/constants";
-import type FilterItem from "../../../worker/core/trade/filterItem";
+import type FilterItem from "../../../worker/core/trade/FilterItem";
 import FilterGroup from "./FilterGroup";
 
 interface tradeFilterProps {
@@ -15,7 +15,7 @@ const POS = POSITIONS.filter(
 	pos => !["GF", "FC", "F", "G", "KR", "PR"].includes(pos),
 );
 
-const SKILL = Object.values(SKILLS).map(skill => skill.label);
+const SKILL = Object.keys(SKILLS);
 
 const TradeFilter = (props: tradeFilterProps) => {
 	const [filters, setFilters] = useState<filterType>(props.filters);

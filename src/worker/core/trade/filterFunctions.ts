@@ -1,5 +1,5 @@
 import _ from "lodash";
-import type { OfferType } from "src/worker/api";
+import type { AugmentedOffer } from "src/worker/api";
 
 export interface FilterFunction {
 	name: string;
@@ -32,7 +32,7 @@ export const POS: FilterFunction = {
 
 export const SALARY_CAP: FilterFunction = {
 	name: "SALARY_CAP",
-	execute(filteredPlayers: any, offer: OfferType, filterData: any) {
+	execute(filteredPlayers: any, offer: AugmentedOffer, filterData: any) {
 		if (filterData === "-1") {
 			return {
 				players: filteredPlayers,

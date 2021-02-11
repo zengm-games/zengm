@@ -51,7 +51,7 @@ export default function FilterGroup(props: {
 				key={props.value}
 				text={props.value}
 				onCheck={() => toggleFilter(props.value, props.type)}
-				isChecked={activeFilters.includes(props.value)}
+				checked={activeFilters.includes(props.value)}
 				className="mt-2"
 				tooltip={props.tooltip}
 			/>

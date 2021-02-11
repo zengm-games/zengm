@@ -7,6 +7,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 1, 1, 0.25, 0.1],
 		skill: {
 			label: "Pm",
+			description: "Playmaker",
 			cutoff: 0.65,
 		},
 	},
@@ -15,6 +16,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 1, 0.25, 0.1],
 		skill: {
 			label: "Pw",
+			description: "Power",
 			cutoff: 0.65,
 		},
 	},
@@ -23,6 +25,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 1, 0.25, 0.25, 0.1],
 		skill: {
 			label: "G",
+			description: "Grinder",
 			cutoff: 0.65,
 		},
 	},
@@ -31,6 +34,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 0.25, 0.1],
 		skill: {
 			label: "E",
+			description: "Enforcer",
 			cutoff: 0.65,
 		},
 	},
@@ -39,6 +43,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 0.25],
 		skill: {
 			label: "S",
+			description: "Sniper",
 			cutoff: 0.65,
 		},
 	},

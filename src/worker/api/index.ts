@@ -96,7 +96,7 @@ import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import * as filter_functions from "../core/trade/filterFunctions";
 
-export type OfferType = {
+export type AugmentedOffer = {
 	tid: number;
 	abbrev: string;
 	region: string;
@@ -104,6 +104,7 @@ export type OfferType = {
 	strategy: string;
 	won: number;
 	lost: number;
+	otl: number;
 	tied: number;
 	pids: number[];
 	dpids: number[];
@@ -1334,7 +1335,7 @@ const getRandomRatings = async (age: number, pos: string | undefined) => {
 };
 
 const filterOffers = (
-	offers: OfferType[],
+	offers: AugmentedOffer[],
 	filters: [{ filterFunction: string; filterData: any }],
 ) => {
 	//filtering logic
@@ -1364,7 +1365,7 @@ const getTradingBlockOffers = async (
 	pids: number[],
 	dpids: number[],
 	filters: [{ filterFunction: string; filterData: any }],
-): Promise<OfferType[]> => {
+): Promise<AugmentedOffer[]> => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		const teams = await idb.cache.teams.getAll();
 		const tids = teams.filter(t => !t.disabled).map(t => t.tid);
@@ -1403,7 +1404,9 @@ const getTradingBlockOffers = async (
 		return offers.slice(0, 10);
 	};
 
-	const augmentOffers = async (offers: TradeTeam[]): Promise<OfferType[]> => {
+	const augmentOffers = async (
+		offers: TradeTeam[],
+	): Promise<AugmentedOffer[]> => {
 		if (offers.length === 0) {
 			return [];
 		}
@@ -1487,7 +1490,7 @@ const getTradingBlockOffers = async (
 	};
 
 	//since filters reduce the number of viable offers, try up to 10 times to get some good offers
-	let filteredOffers: OfferType[] = [];
+	let filteredOffers: AugmentedOffer[] = [];
 	let iterations = 0;
 	while (filteredOffers.length === 0 && iterations < 10) {
 		const offers = await getOffers(pids, dpids);

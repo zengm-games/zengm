@@ -8,7 +8,7 @@ import type {
 	Phase,
 	DraftType,
 	MoodTrait,
-	Skill,
+	CompositeWeight,
 } from "./types";
 
 const ACCOUNT_API_URL =
@@ -148,10 +148,16 @@ const POSITIONS = bySport<any[]>({
 	hockey: constantsHockey.POSITIONS,
 });
 
-const SKILLS: Skill =
-	process.env.SPORT === "football"
-		? constantsFootball.SKILLS
-		: constantsBasketball.SKILLS;
+const SKILLS: { [key: string]: string } = Object.values(
+	bySport<CompositeWeights>({
+		basketball: constantsBasketball.COMPOSITE_WEIGHTS,
+		football: constantsFootball.COMPOSITE_WEIGHTS,
+		hockey: constantsHockey.COMPOSITE_WEIGHTS,
+	}),
+).reduce((skills: { [key: string]: string }, item: CompositeWeight) => {
+	if (item.skill) skills[item.skill.label] = item.skill.description;
+	return skills;
+}, {});
 
 const TEAM_STATS_TABLES: {
 	[key: string]: {

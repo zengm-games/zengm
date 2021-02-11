@@ -1,93 +1,53 @@
-import type { CompositeWeights, Conf, Div, Skill } from "./types";
+import type { CompositeWeights, Conf, Div } from "./types";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football";
 
-const SKILLS: Skill = {
-	Pa: {
-		label: "Pa",
-		description: "Accurate Passer",
-	},
-	Pd: {
-		label: "Pd",
-		description: "Deep Passer",
-	},
-	Ps: {
-		label: "Ps",
-		description: "Smart Passer",
-	},
-	A: {
-		label: "A",
-		description: "Athletic",
-	},
-	X: {
-		label: "X",
-		description: "Explosive Runner",
-	},
-	H: {
-		label: "H",
-		description: "Hands",
-	},
-	Bp: {
-		label: "Bp",
-		description: "Pass Blocker",
-	},
-	Br: {
-		label: "Br",
-		description: "Run Blocker",
-	},
-	PR: {
-		label: "PR",
-		description: "Pass Rusher",
-	},
-	RS: {
-		label: "RS",
-		description: "Run Stopper",
-	},
-	L: {
-		label: "L",
-		description: "Lockdown Coverage",
-	},
-};
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	passingAccuracy: {
 		ratings: ["tha", "hgt"],
 		weights: [1, 0.2],
 		skill: {
-			label: SKILLS.Pa.label,
+			label: "Pa",
+			description: "Accurate Passer",
 		},
 	},
 	passingDeep: {
 		ratings: ["thp", "tha", "hgt"],
 		weights: [1, 0.1, 0.2],
 		skill: {
-			label: SKILLS.Pd.label,
+			label: "Pd",
+			description: "Deep Passer",
 		},
 	},
 	passingVision: {
 		ratings: ["thv", "hgt"],
 		weights: [1, 0.5],
 		skill: {
-			label: SKILLS.Ps.label,
+			label: "Ps",
+			description: "Smart Passer",
 		},
 	},
 	athleticism: {
 		ratings: ["stre", "spd", "hgt"],
 		weights: [1, 1, 0.2],
 		skill: {
-			label: SKILLS.A.label,
+			label: "A",
+			description: "Athletic",
 		},
 	},
 	rushing: {
 		ratings: ["stre", "spd", "elu"],
 		weights: [0.5, 1, 1],
 		skill: {
-			label: SKILLS.X.label,
+			label: "X",
+			description: "Explosive Runner",
 		},
 	},
 	catching: {
 		ratings: ["hgt", "hnd"],
 		weights: [0.2, 1],
 		skill: {
-			label: SKILLS.H.label,
+			label: "H",
+			description: "Hands",
 		},
 	},
 	gettingOpen: {
@@ -98,35 +58,40 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["hgt", "stre", "spd", "pbk"],
 		weights: [0.5, 1, 0.2, 1],
 		skill: {
-			label: SKILLS.Bp.label,
+			label: "Bp",
+			description: "Pass Blocker",
 		},
 	},
 	runBlocking: {
 		ratings: ["hgt", "stre", "spd", "rbk"],
 		weights: [0.5, 1, 0.4, 1],
 		skill: {
-			label: SKILLS.Br.label,
+			label: "Br",
+			description: "Run Blocker",
 		},
 	},
 	passRushing: {
 		ratings: ["hgt", "stre", "spd", "prs", "tck"],
 		weights: [1, 1, 0.5, 1, 0.25],
 		skill: {
-			label: SKILLS.PR.label,
+			label: "PR",
+			description: "Pass Rusher",
 		},
 	},
 	runStopping: {
 		ratings: ["hgt", "stre", "spd", "rns", "tck"],
 		weights: [0.5, 1, 0.5, 1, 1],
 		skill: {
-			label: SKILLS.RS.label,
+			label: "RS",
+			description: "Run Stopper",
 		},
 	},
 	passCoverage: {
 		ratings: ["hgt", "spd", "pcv", "tck"],
 		weights: [0.1, 1, 1, 0.25],
 		skill: {
-			label: SKILLS.L.label,
+			label: "L",
+			description: "Lockdown Coverage",
 		},
 	},
 	tackling: {
@@ -531,7 +496,6 @@ const DEFAULT_DIVS: Div[] = [
 const DEFAULT_STADIUM_CAPACITY = 70000;
 
 export {
-	SKILLS,
 	AWARD_NAMES,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,

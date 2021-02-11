@@ -1,5 +1,7 @@
+sorting of diff/mov columns https://discord.com/channels/290013534023057409/290015591216054273/809078682550403112
+
 head to head records
-- hide inactive teams button, like team records https://discord.com/channels/290013534023057409/290015591216054273/808930808105795615
+- add footer to head2head table summing it up
 - later
   - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
   - on head2head, a chart like https://i.gyazo.com/9e3f36a8e53b1f1ec681170843ea0679.png (bar graph of win% against each other team) linking to head2head_matchup

@@ -69,7 +69,7 @@ const calcWinp = ({
 	tied?: any;
 	won: number;
 }) => {
-	const actualOtl = otl ?? 0;
+	const actualOtl = typeof otl !== "number" || Number.isNaN(otl) ? 0 : otl;
 	const actualLost = lost + actualOtl;
 
 	// Some old leagues had NaN for tied...

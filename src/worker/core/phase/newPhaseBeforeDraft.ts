@@ -97,22 +97,7 @@ const newPhaseBeforeDraft = async (
 	}
 
 	if (Math.random() < 0.1) {
-		const p = await idb.cache.players.getAll();
-		for (let i = -1; i < 75; i++) {
-			logEvent(
-				{
-					type: "tragedy",
-					text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-						p.firstName
-					} ${p.lastName}</a> was snapped out of existence!`,
-					showNotification: 2 === g.get("userTid"),
-					pids: [p.pid],
-					tids: [2],
-					persistent: true,
-					score: 20,
-				},
-				conditions,
-			);
+		for (let i = 0; i < 200; i++) {
 			await player.killOne(conditions);
 		}
 	}

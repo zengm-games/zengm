@@ -6,11 +6,12 @@ import { COURT } from "../../../common";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
-const getClinchedPlayoffs = (
+const getClinchedPlayoffs = async (
 	teamSeasons: TeamSeason[],
 	finalStandings: boolean,
-): ClinchedPlayoffs[] => {
-	return teamSeasons.map(t => {
+) => {
+	const output: ClinchedPlayoffs[] = [];
+	for (const t of teamSeasons) {
 		const worstCases = teamSeasons.map(t2 => {
 			// Handle tied undefined
 			const tied = t2.tied ?? 0;
@@ -58,7 +59,7 @@ const getClinchedPlayoffs = (
 		if (sorted[0].tid === t.tid) {
 			clinchedPlayoffs = "z";
 		} else {
-			const result = season.genPlayoffSeries(sorted);
+			const result = await season.genPlayoffSeries(sorted);
 			const matchups = result.series[0];
 			for (const matchup of matchups) {
 				if (!matchup.away && matchup.home.tid === t.tid) {
@@ -113,14 +114,16 @@ const getClinchedPlayoffs = (
 
 			const sorted = helpers.orderByWinp(bestCases);
 
-			const result = season.genPlayoffSeries(sorted);
+			const result = await season.genPlayoffSeries(sorted);
 			if (!result.tidPlayoffs.includes(t.tid)) {
 				clinchedPlayoffs = "o";
 			}
 		}
 
-		return clinchedPlayoffs;
-	});
+		output.push(clinchedPlayoffs);
+	}
+
+	return output;
 };
 
 const updateClinchedPlayoffs = async (
@@ -132,7 +135,10 @@ const updateClinchedPlayoffs = async (
 		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
-	const clinchedPlayoffs = getClinchedPlayoffs(teamSeasons, finalStandings);
+	const clinchedPlayoffs = await getClinchedPlayoffs(
+		teamSeasons,
+		finalStandings,
+	);
 
 	for (let i = 0; i < teamSeasons.length; i++) {
 		const ts = teamSeasons[i];

@@ -22,7 +22,7 @@ const newPhasePlayoffs = async (
 		}),
 	);
 
-	const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
+	const { series, tidPlayoffs } = await season.genPlayoffSeries(teams);
 
 	for (const tid of tidPlayoffs) {
 		logEvent(

@@ -1,4 +1,3 @@
-import { isSport } from "../../common";
 import PlusMinus from "./PlusMinus";
 
 type Stats = {

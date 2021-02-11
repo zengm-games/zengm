@@ -3,7 +3,7 @@ import testHelpers from "../../../test/helpers";
 import lotterySort from "./lotterySort";
 import { g } from "../../util";
 
-describe("worker/core/draft/lotterySort", () => {
+describe("worker/core/draft/lotterySort", async () => {
 	test("projects playoff appearances when sorting for a projected lottery", async () => {
 		testHelpers.resetG();
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7]); // Two top teams are in the same conference. Only one will make the playoffs.
@@ -62,7 +62,9 @@ describe("worker/core/draft/lotterySort", () => {
 				},
 			},
 		];
-		lotterySort(teams);
+
+		await lotterySort(teams);
+
 		assert.deepStrictEqual(
 			teams.map(t => t.tid),
 			[2, 1, 3, 0],

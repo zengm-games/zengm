@@ -31,7 +31,7 @@ describe("worker/core/draft/updateChances", () => {
 			[6, 7, 8],
 			[10, 11, 12],
 		];
-		lotterySort(teams);
+		await lotterySort(teams);
 		updateChances(chances, teams, false);
 
 		for (let i = 0; i < sameRec.length; i++) {

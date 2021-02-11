@@ -28,7 +28,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		testHelpers.resetG();
 	});
 
-	test("split teams by conference if there are two conferences", () => {
+	test("split teams by conference if there are two conferences", async () => {
 		const teams = [
 			{
 				tid: 0,
@@ -71,12 +71,12 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		]);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
-		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
+		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
 		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
 		assert.strictEqual(series[0].length, 2);
 	});
 
-	test("pick teams regardless of conference if there are not two conferences", () => {
+	test("pick teams regardless of conference if there are not two conferences", async () => {
 		const teams = [
 			{
 				tid: 0,
@@ -123,12 +123,12 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		]);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
-		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
+		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
 		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
 		assert.strictEqual(series[0].length, 2);
 	});
 
-	test("split teams by conference if there are two conferences, including byes", () => {
+	test("split teams by conference if there are two conferences, including byes", async () => {
 		const teams = [
 			{
 				tid: 0,
@@ -175,7 +175,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		]);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
-		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
+		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
 		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 4, 5]);
 		const tids = [
 			[0, undefined],
@@ -197,7 +197,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		}
 	});
 
-	test("pick teams regardless of conference if there are not two conferences, including byes", () => {
+	test("pick teams regardless of conference if there are not two conferences, including byes", async () => {
 		const teams = [
 			{
 				tid: 0,
@@ -248,7 +248,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		]);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
-		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
+		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
 		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 5, 6]);
 		const tids = [
 			[0, undefined],
@@ -270,7 +270,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		}
 	});
 
-	test("handle 16 teams", () => {
+	test("handle 16 teams", async () => {
 		const teams = [
 			{
 				tid: 0,
@@ -345,7 +345,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		]);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
-		const { series } = genPlayoffSeriesWrapper(teams);
+		const { series } = await genPlayoffSeriesWrapper(teams);
 
 		// A normal NCAA bracket would swap [2, 13] and [5, 10] but I'm not sure why
 		const tids = [

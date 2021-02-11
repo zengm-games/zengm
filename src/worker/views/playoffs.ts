@@ -35,7 +35,7 @@ const getProjectedSeries = async (inputSeason: number) => {
 		inputSeason,
 	);
 
-	const result = season.genPlayoffSeries(teams);
+	const result = await season.genPlayoffSeries(teams);
 	return result.series;
 };
 

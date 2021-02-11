@@ -9,7 +9,7 @@ import type { TeamFiltered } from "../../../common/types";
  *
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
-const lotterySort = (
+const lotterySort = async (
 	teams: TeamFiltered<
 		["tid"],
 		["playoffRoundsWon", "won", "lost", "tied", "otl", "winp", "cid", "did"],
@@ -27,7 +27,9 @@ const lotterySort = (
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {
-		const { tidPlayoffs } = season.genPlayoffSeries(helpers.orderByWinp(teams));
+		const { tidPlayoffs } = await season.genPlayoffSeries(
+			helpers.orderByWinp(teams),
+		);
 
 		for (const t of teams) {
 			if (tidPlayoffs.includes(t.tid)) {

@@ -19,7 +19,7 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	};
 };
 
-const genPlayoffSeries = (teams: MyTeam[]) => {
+const genPlayoffSeries = async (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
 

@@ -1,6 +1,7 @@
 better tiebreakers
 - go over code, switch to orderTeams, make sure to do it by div/conf/league appropriately
   - what about arg to season.genPlayoffSeries? maybe that should internally have the logit to handle conf/league
+    - should it also handle fetching teams? what about the unit tests? have them test a more internal function
 - delete helpers.orderByWinp
 - add options
 	- winp vs pts (vs custom points?)

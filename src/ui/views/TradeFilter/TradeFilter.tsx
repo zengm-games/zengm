@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { POSITIONS, SKILLS } from "../../../common/constants";
 import type FilterItem from "../../../worker/core/trade/FilterItem";
 import FilterGroup from "./FilterGroup";
 
 interface tradeFilterProps {
-	setFilters: (filters: filterType) => void;
-	filters: filterType;
+	setFilters: (filters: Filter<any>) => void;
+	filters: Filter<any>;
 }
-export type filterType = {
-	[key: string]: FilterItem;
+export type Filter<FilterData> = {
+	[key: string]: FilterItem<FilterData>;
 };
 
+//may be a more elegant way to approach this?
 const POS = POSITIONS.filter(
 	pos => !["GF", "FC", "F", "G", "KR", "PR"].includes(pos),
 );
@@ -18,7 +19,7 @@ const POS = POSITIONS.filter(
 const SKILL = Object.keys(SKILLS);
 
 const TradeFilter = (props: tradeFilterProps) => {
-	const [filters, setFilters] = useState<filterType>(props.filters);
+	const [filters, setFilters] = useState<Filter<any>>(props.filters);
 	const [balancedOnly, setBalancedOnly] = useState(false);
 	const [salaryCap, setSalaryCap] = useState("");
 

@@ -6,12 +6,12 @@ import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View, ThenArg } from "../../common/types";
 import type api from "../../worker/api";
-import TradeFilter, { filterType } from "../views/TradeFilter/TradeFilter";
+import TradeFilter, { Filter } from "../views/TradeFilter/TradeFilter";
 import { AnimatePresence, motion } from "framer-motion";
 import FilterItem from "../../worker/core/trade/FilterItem";
 import _ from "lodash";
 
-type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+type Offer = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
 type OfferProps = {
 	challengeNoRatings: boolean;
@@ -22,7 +22,7 @@ type OfferProps = {
 	) => Promise<void>;
 	i: number;
 	stats: string[];
-} & OfferType;
+} & Offer;
 
 const Offer = (props: OfferProps) => {
 	const {
@@ -189,10 +189,10 @@ const populateExtendedPositions = (items: string[]): string[] => {
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
-		offers: OfferType[];
+		offers: Offer[];
 		pids: number[];
 		dpids: number[];
-		filters: filterType;
+		filters: Filter;
 		showFilters: boolean;
 		filterVerbiage: string;
 	}>({
@@ -201,15 +201,15 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: [],
 		filters: {
-			pos: new FilterItem([], "POS", populateExtendedPositions),
-			salaryCap: new FilterItem("", "SALARY_CAP"),
-			skill: new FilterItem([], "SKILL"),
+			pos: new FilterItem<string[]>([], "POS", populateExtendedPositions),
+			salaryCap: new FilterItem<string>("", "SALARY_CAP"),
+			skill: new FilterItem<string[]>([], "SKILL"),
 		},
 		showFilters: false,
 		filterVerbiage: "Filter",
 	});
 
-	const setFilters = (filters: filterType) => {
+	const setFilters = (filters: Filter) => {
 		setState(prevState => {
 			let count = 0;
 			if (filters.pos.filterData && filters.pos.filterData.length > 0) count++;
@@ -265,12 +265,12 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			offers: [],
 		}));
 
-		const offers: OfferType[] = await toWorker(
+		const offers: Offer[] = await toWorker(
 			"main",
 			"getTradingBlockOffers",
 			state.pids,
 			state.dpids,
-			Object.values(state.filters).map((filter: FilterItem) => {
+			Object.values(state.filters).map((filter: FilterItem<any>) => {
 				return {
 					filterFunction: filter.filterFunction,
 					filterData: filter.filterData,

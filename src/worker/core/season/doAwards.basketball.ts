@@ -288,7 +288,7 @@ const doAwards = async (conditions: Conditions) => {
 		season: g.get("season"),
 	});
 	const players = await getPlayers(g.get("season"));
-	const { bestRecord, bestRecordConfs } = teamAwards(teams);
+	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	const categories = [
 		{
 			name: "League Scoring Leader",

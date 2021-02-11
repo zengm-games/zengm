@@ -6,7 +6,13 @@ import {
 	bySport,
 } from "../../../common";
 import { idb } from "../../db";
-import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
+import {
+	g,
+	defaultGameAttributes,
+	helpers,
+	logEvent,
+	orderTeams,
+} from "../../util";
 import type {
 	Conditions,
 	PlayerFiltered,
@@ -151,7 +157,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
-const teamAwards = (
+const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
 		["tid"],
 		[
@@ -170,7 +176,7 @@ const teamAwards = (
 		number
 	>[],
 ) => {
-	const teams = helpers.orderByWinp(teamsUnsorted);
+	const teams = await orderTeams(teamsUnsorted);
 
 	if (teams.length === 0) {
 		throw new Error("No teams found");
@@ -186,24 +192,30 @@ const teamAwards = (
 		tied: g.get("ties", "current") ? teams[0].seasonAttrs.tied : undefined,
 		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
 	};
-	const bestRecordConfs = g.get("confs", "current").map(c => {
-		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
+	const bestRecordConfs = await Promise.all(
+		g.get("confs", "current").map(async c => {
+			const teamsConf = await orderTeams(
+				teams.filter(t2 => t2.seasonAttrs.cid === c.cid),
+			);
+			const t = teamsConf[0];
 
-		if (!t) {
-			return;
-		}
+			if (!t) {
+				return;
+			}
 
-		return {
-			tid: t.tid,
-			abbrev: t.seasonAttrs.abbrev,
-			region: t.seasonAttrs.region,
-			name: t.seasonAttrs.name,
-			won: t.seasonAttrs.won,
-			lost: t.seasonAttrs.lost,
-			tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
-			otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
-		};
-	});
+			return {
+				tid: t.tid,
+				abbrev: t.seasonAttrs.abbrev,
+				region: t.seasonAttrs.region,
+				name: t.seasonAttrs.name,
+				won: t.seasonAttrs.won,
+				lost: t.seasonAttrs.lost,
+				tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
+				otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
+			};
+		}),
+	);
+
 	return {
 		bestRecord,
 		bestRecordConfs,

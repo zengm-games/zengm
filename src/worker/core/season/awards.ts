@@ -368,24 +368,26 @@ const saveAwardsByPlayer = async (
 		}
 	}
 };
+
 const deleteAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	season: number,
 ) => {
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
-	for (const pid of pids) {
-		const p = await idb.cache.players.get(pid);
-		if (p) {
-			const typesToDelete = awardsByPlayer
-				.filter(award => award.pid === p.pid)
-				.map(award => award.type);
-			p.awards = p.awards.filter(
-				award => award.season != season || !typesToDelete.includes(award.type),
-			);
-			await idb.cache.players.put(p);
-		}
+	const players = await idb.getCopies.players({
+		pids,
+	});
+	for (const p of players) {
+		const typesToDelete = awardsByPlayer
+			.filter(award => award.pid === p.pid)
+			.map(award => award.type);
+		p.awards = p.awards.filter(
+			award => award.season != season || !typesToDelete.includes(award.type),
+		);
+		await idb.cache.players.put(p);
 	}
 };
+
 const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	awards: any,
 	awardsByPlayer: AwardsByPlayer,

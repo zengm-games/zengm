@@ -19,6 +19,27 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	};
 };
 
+const makeFirstRoundMatchups = (
+	teams: MyTeam[],
+	numPlayoffTeams: number,
+	numPlayoffByes: number,
+) => {
+	const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
+
+	return seeds.map(matchup => {
+		const home = genTeam(teams[matchup[0]], matchup[0] + 1);
+		const away =
+			matchup[1] !== undefined
+				? genTeam(teams[matchup[1]], matchup[1] + 1)
+				: undefined;
+
+		return {
+			home,
+			away,
+		};
+	});
+};
+
 const genPlayoffSeries = async (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
@@ -37,15 +58,14 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 		numPlayoffByes,
 		g.get("numActiveTeams"),
 	);
-	let tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
+	let tidPlayoffs: number[] = [];
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
 	if (playoffsByConference) {
 		if (numRounds > 1) {
-			const seeds = genPlayoffSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
-
+			// Default: top 50% of teams in each of the two conferences
 			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
 				const teamsConf: MyTeam[] = [];
@@ -62,47 +82,41 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 				}
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
-					series[0].push(
-						...seeds.map(matchup => {
-							const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
-							const away =
-								matchup[1] !== undefined
-									? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
-									: undefined;
-
-							return {
-								home,
-								away,
-							};
-						}),
+					const round = makeFirstRoundMatchups(
+						teamsConf,
+						numPlayoffTeams / 2,
+						numPlayoffByes / 2,
 					);
+					series[0].push(...round);
 				} else {
+					// Not enough teams in conference for playoff bracket
 					playoffsByConference = false;
 				}
 			}
 		} else {
 			// Special case - if there is only one round, pick the best team in each conference to play
-			const teamsConf: MyTeam[] = [];
+			const teamsFinals: MyTeam[] = [];
 
 			for (const conf of g.get("confs", "current")) {
-				for (let i = 0; i < teams.length; i++) {
-					if (teams[i].seasonAttrs.cid === conf.cid) {
-						teamsConf.push(teams[i]);
-						tidPlayoffs.push(teams[i].tid);
+				const cid = conf.cid;
+				for (const t of teams) {
+					if (t.seasonAttrs.cid === cid) {
+						teamsFinals.push(t);
+						tidPlayoffs.push(t.tid);
 						break;
 					}
 				}
 			}
 
-			if (teamsConf.length === 2) {
-				const t1 = genTeam(teamsConf[0], 1);
-				const t2 = genTeam(teamsConf[1], 1);
-
-				series[0][0] = {
-					home: t1.winp > t2.winp ? t1 : t2,
-					away: t1.winp > t2.winp ? t2 : t1,
-				};
+			if (teamsFinals.length === 2) {
+				const round = makeFirstRoundMatchups(
+					teamsFinals,
+					numPlayoffTeams / 2,
+					numPlayoffByes / 2,
+				);
+				series[0].push(...round);
 			} else {
+				// Not enough teams in conference for playoff bracket
 				playoffsByConference = false;
 			}
 		}
@@ -115,34 +129,27 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 		series = range(numRounds).map(() => []);
 
 		// Alternative: top 50% of teams overall
-		const teamsConf: MyTeam[] = [];
+		const teamsPlayoffs: MyTeam[] = [];
 
 		for (let i = 0; i < teams.length; i++) {
-			teamsConf.push(teams[i]);
+			teamsPlayoffs.push(teams[i]);
 			tidPlayoffs.push(teams[i].tid);
 
-			if (teamsConf.length >= numPlayoffTeams) {
+			if (teamsPlayoffs.length >= numPlayoffTeams) {
 				break;
 			}
 		}
 
-		if (teamsConf.length < numPlayoffTeams) {
+		if (teamsPlayoffs.length < numPlayoffTeams) {
 			throw new Error("Not enough teams for playoffs");
 		}
 
-		const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
-		series[0] = seeds.map(matchup => {
-			const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
-			const away =
-				matchup[1] !== undefined
-					? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
-					: undefined;
-
-			return {
-				home,
-				away,
-			};
-		});
+		const round = makeFirstRoundMatchups(
+			teamsPlayoffs,
+			numPlayoffTeams,
+			numPlayoffByes,
+		);
+		series[0].push(...round);
 	}
 
 	return {

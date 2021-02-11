@@ -30,6 +30,20 @@ const updateHeadToHead = async (
 			tid: number;
 		};
 
+		const totals = {
+			won: 0,
+			lost: 0,
+			tied: 0,
+			otl: 0,
+			pts: 0,
+			oppPts: 0,
+			seriesWon: 0,
+			seriesLost: 0,
+			finalsWon: 0,
+			finalsLost: 0,
+			winp: 0,
+		};
+
 		const infoByTid = new Map<number, TeamInfo>();
 
 		await headToHead.iterate(
@@ -46,6 +60,10 @@ const updateHeadToHead = async (
 					}
 				} else {
 					infoByTid.set(info.tid, info);
+				}
+
+				for (const key of simpleSums) {
+					totals[key] += info[key];
 				}
 			},
 		);
@@ -70,6 +88,8 @@ const updateHeadToHead = async (
 			});
 		}
 
+		totals.winp = helpers.calcWinp(totals);
+
 		let ties = false;
 		let otl = false;
 		for (const t of teams) {
@@ -91,6 +111,7 @@ const updateHeadToHead = async (
 			tid,
 			ties: g.get("ties", season === "all" ? "current" : season) || ties,
 			otl: g.get("otl", season === "all" ? "current" : season) || otl,
+			totals,
 			type,
 			userTid: g.get("userTid"),
 		};

@@ -12,6 +12,7 @@ const HeadToHead = ({
 	ties,
 	type,
 	otl,
+	totals,
 	userTid,
 }: View<"headToHead">) => {
 	useTitleBar({
@@ -42,12 +43,7 @@ const HeadToHead = ({
 			: ["Rounds Won", "Rounds Lost", "Finals Won", "Finals Lost"]),
 	);
 
-	const rows = teams.map(t => {
-		const urlParts: (string | number)[] = ["roster", `${t.abbrev}_${t.tid}`];
-		if (season !== "all") {
-			urlParts.push(season);
-		}
-
+	const makeRow = (t: typeof totals) => {
 		const gp = t.won + t.lost + t.otl + t.tied;
 
 		const movOrDiffStats = {
@@ -56,32 +52,45 @@ const HeadToHead = ({
 			gp,
 		};
 
+		return [
+			t.won,
+			t.lost,
+			...(otl ? [t.otl] : []),
+			...(ties ? [t.tied] : []),
+			helpers.roundWinp(t.winp),
+			helpers.roundStat(t.pts, "pts", true),
+			helpers.roundStat(t.oppPts, "pts", true),
+			wrappedMovOrDiff(movOrDiffStats, "diff"),
+			helpers.roundStat(t.pts / gp, "pts"),
+			helpers.roundStat(t.oppPts / gp, "pts"),
+			wrappedMovOrDiff(movOrDiffStats, "mov"),
+			...(type === "regularSeason"
+				? []
+				: [t.seriesWon, t.seriesLost, t.finalsWon, t.finalsLost]),
+		];
+	};
+
+	const rows = teams.map(t => {
+		const urlParts: (string | number)[] = ["roster", `${t.abbrev}_${t.tid}`];
+		if (season !== "all") {
+			urlParts.push(season);
+		}
+
 		return {
 			key: t.tid,
 			data: [
 				<a href={helpers.leagueUrl(urlParts)}>
 					{t.region} {t.name}
 				</a>,
-				t.won,
-				t.lost,
-				...(otl ? [t.otl] : []),
-				...(ties ? [t.tied] : []),
-				helpers.roundWinp(t.winp),
-				helpers.roundStat(t.pts, "pts", true),
-				helpers.roundStat(t.oppPts, "pts", true),
-				wrappedMovOrDiff(movOrDiffStats, "diff"),
-				helpers.roundStat(t.pts / gp, "pts"),
-				helpers.roundStat(t.oppPts / gp, "pts"),
-				wrappedMovOrDiff(movOrDiffStats, "mov"),
-				...(type === "regularSeason"
-					? []
-					: [t.seriesWon, t.seriesLost, t.finalsWon, t.finalsLost]),
+				...makeRow(t),
 			],
 			classNames: {
 				"table-info": t.tid === userTid,
 			},
 		};
 	});
+
+	const footer = ["Total", ...makeRow(totals)];
 
 	return (
 		<>
@@ -107,6 +116,7 @@ const HeadToHead = ({
 				name="HeadToHead"
 				nonfluid
 				rows={rows}
+				footer={footer}
 			/>
 		</>
 	);

@@ -3,8 +3,10 @@ import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import season from "./index";
 
-const genPlayoffSeriesWrapper = (teams: { tid: number; cid: number }[]) => {
-	return season.genPlayoffSeries(
+const genPlayoffSeriesWrapper = async (
+	teams: { tid: number; cid: number }[],
+) => {
+	const { series } = await season.genPlayoffSeries(
 		teams.map(t => {
 			return {
 				tid: t.tid,
@@ -18,6 +20,20 @@ const genPlayoffSeriesWrapper = (teams: { tid: number; cid: number }[]) => {
 			};
 		}),
 	);
+
+	const tidPlayoffs = [];
+	for (const matchup of series[0]) {
+		tidPlayoffs.push(matchup.home.tid);
+		if (matchup.away !== undefined) {
+			tidPlayoffs.push(matchup.away.tid);
+		}
+	}
+	tidPlayoffs.sort();
+
+	return {
+		series,
+		tidPlayoffs,
+	};
 };
 
 describe("worker/core/season/genPlayoffSeries", () => {
@@ -72,7 +88,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
-		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
+		assert.deepStrictEqual(tidPlayoffs, [0, 1, 2, 5]);
 		assert.strictEqual(series[0].length, 2);
 	});
 
@@ -124,7 +140,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
-		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
+		assert.deepStrictEqual(tidPlayoffs, [0, 2, 3, 6]);
 		assert.strictEqual(series[0].length, 2);
 	});
 
@@ -176,7 +192,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
-		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 4, 5]);
+		assert.deepStrictEqual(tidPlayoffs, [0, 1, 2, 3, 4, 5]);
 		const tids = [
 			[0, undefined],
 			[2, 3],
@@ -249,7 +265,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = await genPlayoffSeriesWrapper(teams);
-		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 5, 6]);
+		assert.deepStrictEqual(tidPlayoffs, [0, 1, 2, 3, 5, 6]);
 		const tids = [
 			[0, undefined],
 			[6, 5],

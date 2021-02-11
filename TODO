@@ -3,8 +3,9 @@ better tiebreakers
   - what about arg to season.genPlayoffSeries? maybe that should internally have the logit to handle conf/league
     - split into 3 functions
       - 1 to order a list of pre-sorted teams into a 1-N playoff bracket
-      - 1 wrapping that to actually fetch and sort the teams
-      - 1 wrapping that to handle splitting into 2 conferences
+      - 1 wrapping that to handle splitting into 2 conferences and sorting
+        - calls this from updateClinchedPlayoffs
+      - 1 wrapping that to actually fetch the teams
     - should it also handle fetching teams? what about the unit tests? have them test a more internal function
 - delete helpers.orderByWinp
 - add options

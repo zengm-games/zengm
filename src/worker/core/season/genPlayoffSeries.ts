@@ -19,7 +19,8 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	};
 };
 
-const makeFirstRoundMatchups = (
+// In a 2 conference playoff, this should be called once with each side of the bracket
+const makeMatchups = (
 	teams: MyTeam[],
 	numPlayoffTeams: number,
 	numPlayoffByes: number,
@@ -82,7 +83,7 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 				}
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
-					const round = makeFirstRoundMatchups(
+					const round = makeMatchups(
 						teamsConf,
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
@@ -109,7 +110,7 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 			}
 
 			if (teamsFinals.length === 2) {
-				const round = makeFirstRoundMatchups(
+				const round = makeMatchups(
 					teamsFinals,
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
@@ -144,11 +145,7 @@ const genPlayoffSeries = async (teams: MyTeam[]) => {
 			throw new Error("Not enough teams for playoffs");
 		}
 
-		const round = makeFirstRoundMatchups(
-			teamsPlayoffs,
-			numPlayoffTeams,
-			numPlayoffByes,
-		);
+		const round = makeMatchups(teamsPlayoffs, numPlayoffTeams, numPlayoffByes);
 		series[0].push(...round);
 	}
 

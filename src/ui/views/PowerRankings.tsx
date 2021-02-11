@@ -143,7 +143,16 @@ const PowerRankings = ({
 				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
-				wrappedMovOrDiff(t.stats, isSport("basketball") ? "mov" : "diff"),
+				wrappedMovOrDiff(
+					isSport("basketball")
+						? {
+								pts: t.stats.pts * t.stats.gp,
+								oppPts: t.stats.oppPts * t.stats.gp,
+								gp: t.stats.gp,
+						  }
+						: t.stats,
+					isSport("basketball") ? "mov" : "diff",
+				),
 				...otherKeys.map(key => ({
 					value: (
 						<Other

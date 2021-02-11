@@ -81,7 +81,15 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
 				<MovOrDiff
-					stats={t.stats}
+					stats={
+						isSport("basketball")
+							? {
+									pts: t.stats.pts * t.stats.gp,
+									oppPts: t.stats.oppPts * t.stats.gp,
+									gp: t.stats.gp,
+							  }
+							: t.stats
+					}
 					type={isSport("basketball") ? "mov" : "diff"}
 				/>
 			</td>

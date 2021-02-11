@@ -10,11 +10,7 @@ type Stats = {
 type Type = "mov" | "diff";
 
 const getValue = (stats: Stats, type: Type) => {
-	// pts and oppPts already come scaled in basketball
-	const pts = isSport("basketball") ? stats.pts * stats.gp : stats.pts;
-	const oppPts = isSport("basketball") ? stats.oppPts * stats.gp : stats.oppPts;
-
-	let value = pts - oppPts;
+	let value = stats.pts - stats.oppPts;
 	if (type === "mov") {
 		if (stats.gp > 0) {
 			value /= stats.gp;

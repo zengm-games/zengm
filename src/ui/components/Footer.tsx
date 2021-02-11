@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { Fragment, memo } from "react";
 import { GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [
@@ -95,12 +95,12 @@ const Footer = memo(() => {
 			<p className="float-sm-left">
 				{footerLinks.map(({ url, title }, i) => {
 					return (
-						<>
+						<Fragment key={url}>
 							{i > 0 ? " · " : null}
 							<a href={url} rel="noopener noreferrer" target="_blank">
 								{title}
 							</a>
-						</>
+						</Fragment>
 					);
 				})}
 				<br />

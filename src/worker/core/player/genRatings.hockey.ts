@@ -201,8 +201,8 @@ const genRatings = (
 
 	const age = g.get("draftAge")[0];
 	if (age != 19) {
-		// players younger than 19 will be downscaled, older upscaled
-		const subAmount = 3 * (19 - age);
+		// Youngest prospects != 19 will be scaled, scaling stops at age 14 and 28
+		const subAmount = helpers.bound(3 * (19 - age), -27, 21);
 
 		ratings.stre -= subAmount;
 		ratings.spd -= Math.round(subAmount / 2);

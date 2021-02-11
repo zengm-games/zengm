@@ -1,5 +1,4 @@
 head to head records
-- add footer to head2head table summing it up
 - later
   - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
   - on head2head, a chart like https://i.gyazo.com/9e3f36a8e53b1f1ec681170843ea0679.png (bar graph of win% against each other team) linking to head2head_matchup

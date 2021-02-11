@@ -2,9 +2,10 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MovOrDiff } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
+import { wrappedMovOrDiff } from "../components/MovOrDiff";
 
 const Other = ({
 	actualShowHealthy,
@@ -142,10 +143,7 @@ const PowerRankings = ({
 				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
-				<MovOrDiff
-					stats={t.stats}
-					type={isSport("basketball") ? "mov" : "diff"}
-				/>,
+				wrappedMovOrDiff(t.stats, isSport("basketball") ? "mov" : "diff"),
 				...otherKeys.map(key => ({
 					value: (
 						<Other

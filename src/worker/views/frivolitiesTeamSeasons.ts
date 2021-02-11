@@ -1,7 +1,7 @@
 import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
-import { PHASE } from "../../common";
+import { isSport, PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
 import { team } from "../core";
 
@@ -92,6 +92,12 @@ export const getMostXTeamSeasons = async ({
 			ts.gp = row.gp;
 			ts.pts = row.pts;
 			ts.oppPts = row.oppPts;
+
+			// MovOrDiff is expecting this to be per game
+			if (isSport("basketball")) {
+				ts.pts /= row.gp;
+				ts.oppPts /= row.gp;
+			}
 		}
 
 		if (ts.playoffRoundsWon >= 0) {

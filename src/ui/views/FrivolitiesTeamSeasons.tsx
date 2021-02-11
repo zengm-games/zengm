@@ -1,10 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MovOrDiff } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { getValue } from "./Most";
 import { isSport } from "../../common";
+import { wrappedMovOrDiff } from "../components/MovOrDiff";
 
 const FrivolitiesTeamSeasons = ({
 	description,
@@ -52,7 +53,7 @@ const FrivolitiesTeamSeasons = ({
 				...(otl ? [ts.otl] : []),
 				...(ties ? [ts.tied] : []),
 				helpers.roundWinp(ts.winp),
-				<MovOrDiff stats={ts} type={isSport("basketball") ? "mov" : "diff"} />,
+				wrappedMovOrDiff(ts, isSport("basketball") ? "mov" : "diff"),
 				...extraCols.map(x => {
 					const value = getValue(ts, x.key);
 					if (x.keySort) {

@@ -1,17 +1,15 @@
 import { isSport } from "../../common";
 import PlusMinus from "./PlusMinus";
 
-const MovOrDiff = ({
-	stats,
-	type,
-}: {
-	stats: {
-		pts: number;
-		oppPts: number;
-		gp: number;
-	};
-	type: "mov" | "diff";
-}) => {
+type Stats = {
+	pts: number;
+	oppPts: number;
+	gp: number;
+};
+
+type Type = "mov" | "diff";
+
+const getValue = (stats: Stats, type: Type) => {
 	// pts and oppPts already come scaled in basketball
 	const pts = isSport("basketball") ? stats.pts * stats.gp : stats.pts;
 	const oppPts = isSport("basketball") ? stats.oppPts * stats.gp : stats.oppPts;
@@ -25,9 +23,24 @@ const MovOrDiff = ({
 		}
 	}
 
-	const decimalPlaces = type === "mov" ? 1 : 0;
+	return value;
+};
 
+const MovOrDiff = ({ stats, type }: { stats: Stats; type: Type }) => {
+	const value = getValue(stats, type);
+	const decimalPlaces = type === "mov" ? 1 : 0;
 	return <PlusMinus decimalPlaces={decimalPlaces}>{value}</PlusMinus>;
 };
 
 export default MovOrDiff;
+
+export const wrappedMovOrDiff = (stats: Stats, type: Type) => {
+	const value = getValue(stats, type);
+	const decimalPlaces = type === "mov" ? 1 : 0;
+
+	return {
+		value: <PlusMinus decimalPlaces={decimalPlaces}>{value}</PlusMinus>,
+		searchValue: value,
+		sortValue: value,
+	};
+};

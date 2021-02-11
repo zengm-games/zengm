@@ -1,7 +1,8 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks, MovOrDiff } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
+import { wrappedMovOrDiff } from "../components/MovOrDiff";
 
 const HeadToHead = ({
 	abbrev,
@@ -68,10 +69,10 @@ const HeadToHead = ({
 				helpers.roundWinp(t.winp),
 				helpers.roundStat(t.pts, "pts", true),
 				helpers.roundStat(t.oppPts, "pts", true),
-				<MovOrDiff stats={movOrDiffStats} type="diff" />,
+				wrappedMovOrDiff(movOrDiffStats, "diff"),
 				helpers.roundStat(t.pts / gp, "pts"),
 				helpers.roundStat(t.oppPts / gp, "pts"),
-				<MovOrDiff stats={movOrDiffStats} type="mov" />,
+				wrappedMovOrDiff(movOrDiffStats, "mov"),
 				...(type === "regularSeason"
 					? []
 					: [t.seriesWon, t.seriesLost, t.finalsWon, t.finalsLost]),

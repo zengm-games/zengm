@@ -1,8 +1,6 @@
-import orderBy from "lodash/orderBy";
-import { PLAYER, helpers as commonHelpers, isSport } from "../../common";
+import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
-import random from "./random";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 import defaultGameAttributes from "./defaultGameAttributes";
 

@@ -435,6 +435,7 @@ const createLeague = async ({
 		challengeLoseBestPlayer,
 		challengeFiredLuxuryTax,
 		challengeFiredMissPlayoffs,
+		challengeThanosMode,
 		equalizeRegions,
 		confs,
 		divs,

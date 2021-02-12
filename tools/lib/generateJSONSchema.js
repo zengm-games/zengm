@@ -475,6 +475,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							challengeFiredMissPlayoffs: {
 								type: "boolean",
 							},
+							challengeThanosMode: {
+								type: "boolean",
+							},
 							confs: {
 								type: "array",
 								minItems: 1,

@@ -171,7 +171,7 @@ const genOrder = async (
 		throw error;
 	}
 
-	lotterySort(teams);
+	await lotterySort(teams);
 
 	const numLotteryTeams = helpers.bound(
 		teams.length - numPlayoffTeams,

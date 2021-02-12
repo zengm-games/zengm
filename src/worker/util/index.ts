@@ -30,6 +30,7 @@ export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame"
 export { default as processScheduledEvents } from "./processScheduledEvents";
 export { default as random } from "./random";
 export { default as recomputeLocalUITeamOvrs } from "./recomputeLocalUITeamOvrs";
+export { default as orderTeams } from "./orderTeams";
 export { default as toUI } from "./toUI";
 export { default as updatePhase } from "./updatePhase";
 export { default as updatePlayMenu } from "./updatePlayMenu";

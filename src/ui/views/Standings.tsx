@@ -7,10 +7,12 @@ import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
 import { COURT, isSport } from "../../common";
 
+type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
+
 const MAX_WIDTH = 1120;
 
 const record = (
-	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
+	seasonAttrs: StandingsTeam["seasonAttrs"],
 	type: "Home" | "Away" | "Div" | "Conf",
 ) => {
 	const won = `won${type}` as const;
@@ -38,7 +40,7 @@ const GroupStandingsRow = ({
 	userTid,
 }: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
 	separator: boolean;
-	t: View<"standings">["teams"][number];
+	t: StandingsTeam;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -81,7 +83,15 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
 				<MovOrDiff
-					stats={t.stats}
+					stats={
+						isSport("basketball")
+							? {
+									pts: t.stats.pts * t.stats.gp,
+									oppPts: t.stats.oppPts * t.stats.gp,
+									gp: t.stats.gp,
+							  }
+							: t.stats
+					}
 					type={isSport("basketball") ? "mov" : "diff"}
 				/>
 			</td>
@@ -104,12 +114,10 @@ const GroupStandings = ({
 	otl,
 	type,
 	userTid,
-}: Pick<
-	View<"standings">,
-	"season" | "teams" | "ties" | "otl" | "type" | "userTid"
-> & {
+}: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
 	name?: string;
 	separatorIndex?: number;
+	teams: StandingsTeam[];
 }) => {
 	return (
 		<ResponsiveTableWrapper>
@@ -177,7 +185,7 @@ const SmallStandingsRow = ({
 	maxPlayoffSeed: number;
 	playoffsByConference: boolean;
 	season: number;
-	t: View<"standings">["teams"][number];
+	t: StandingsTeam;
 	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -222,8 +230,10 @@ const SmallStandings = ({
 	userTid,
 }: Pick<
 	View<"standings">,
-	"maxPlayoffSeed" | "playoffsByConference" | "season" | "teams" | "userTid"
->) => {
+	"maxPlayoffSeed" | "playoffsByConference" | "season" | "userTid"
+> & {
+	teams: StandingsTeam[];
+}) => {
 	return (
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
@@ -255,8 +265,8 @@ const Standings = ({
 	maxPlayoffSeed,
 	numPlayoffByes,
 	playoffsByConference,
+	rankingGroups,
 	season,
-	teams,
 	ties,
 	otl,
 	type,
@@ -287,7 +297,7 @@ const Standings = ({
 		subgroups: {
 			name?: string;
 			separatorIndex?: number;
-			teams: typeof teams;
+			teams: StandingsTeam[];
 		}[];
 	}[];
 	if (type === "league") {
@@ -300,7 +310,7 @@ const Standings = ({
 				subgroups: [
 					{
 						separatorIndex,
-						teams,
+						teams: rankingGroups.league[0],
 					},
 				],
 			},
@@ -310,12 +320,12 @@ const Standings = ({
 		if (playoffsByConference || confs.length === 1) {
 			separatorIndex = maxPlayoffSeed - 1;
 		}
-		groups = confs.map(conf => ({
+		groups = confs.map((conf, i) => ({
 			name: conf.name,
 			subgroups: [
 				{
 					separatorIndex,
-					teams: teams.filter(t => t.seasonAttrs.cid === conf.cid),
+					teams: rankingGroups.conf[i],
 				},
 			],
 		}));
@@ -328,10 +338,10 @@ const Standings = ({
 			name: conf.name,
 			subgroups: divs
 				.filter(div => div.cid === conf.cid)
-				.map(div => ({
+				.map((div, i) => ({
 					name: div.name,
 					separatorIndex,
-					teams: teams.filter(t => t.seasonAttrs.did === div.did),
+					teams: rankingGroups.div[i],
 				})),
 		}));
 	}
@@ -373,7 +383,7 @@ const Standings = ({
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
 									season={season}
-									teams={teams.filter(t => t.seasonAttrs.cid === confs[i].cid)}
+									teams={rankingGroups.conf[i]}
 									userTid={userTid}
 									playoffsByConference={playoffsByConference}
 								/>
@@ -393,7 +403,7 @@ const Standings = ({
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}
 						season={season}
-						teams={teams}
+						teams={rankingGroups.league[0]}
 						userTid={userTid}
 						playoffsByConference={playoffsByConference}
 					/>

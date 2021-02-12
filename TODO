@@ -1,3 +1,31 @@
+better tiebreakers
+- convert gameAttributes import/export to object
+  - update docs
+- add options
+	- winp vs pts (vs custom points?)
+	- tiebreaker: default (make sure it makes sense with pts) vs random
+- track history of options, for historical display
+	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
+  - need to set tiebreaker to non-default value if undefined, to handle upgrades
+    - what about other custom files where it's not specified? ugh
+- tiebreakers:
+  - 1. h2h record (pool all together, if more than 2)
+  - 2. division record (if all teams are in the same division)
+  - 3. conference record (if all teams are in the same conference)
+  - 4. MOV
+  - 5. random
+- scope of ranking
+  - in BBGM, do it per conference
+  - in FBGM, do it per division for division winners, then per conference to find
+  - this implies that the draft ranking would be different than playoff seeding, at times
+- persist playoff seed to teamSeason
+- "Reason" column like https://www.pro-football-reference.com/years/2020/
+- in teamSeason store rankLeague, rankDiv, rankConf
+  - only at end of season, or always?
+  - use in standings, etc
+  - playoff clinching
+- handle tiebreaker when 2 #1 seeds meet in playoffs
+
 head to head records
 - later
   - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
@@ -139,26 +167,6 @@ add some more built-in teams
   - logos should work for both basketball and football
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
-
-tiebreakers based on head-to-head
-- use games store, or save head-to-head records separately?
-  - would be nice to have some kind of rivalry feature
-- tiebreakers:
-  - 1. h2h record (pool all together, if more than 2)
-  - 2. division record (if all teams are in the same division)
-  - 3. conference record (if all teams are in the same conference)
-  - 4. MOV
-  - 5. random
-- scope of ranking
-  - in BBGM, do it per conference
-  - in FBGM, do it per division for division winners, then per conference to find
-  - this implies that the draft ranking would be different than playoff seeding, at times
-- persist playoff seed to teamSeason
-- "Reason" column like https://www.pro-football-reference.com/years/2020/
-- in teamSeason store rankLeague, rankDiv, rankConf
-  - only at end of season, or always?
-  - use in standings, etc
-  - playoff clinching
 
 "find players" form
 - customizable search boxes for stats/ratings

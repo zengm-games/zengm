@@ -53,7 +53,16 @@ const FrivolitiesTeamSeasons = ({
 				...(otl ? [ts.otl] : []),
 				...(ties ? [ts.tied] : []),
 				helpers.roundWinp(ts.winp),
-				wrappedMovOrDiff(ts, isSport("basketball") ? "mov" : "diff"),
+				wrappedMovOrDiff(
+					isSport("basketball")
+						? {
+								pts: ts.pts * ts.gp,
+								oppPts: ts.oppPts * ts.gp,
+								gp: ts.gp,
+						  }
+						: ts,
+					isSport("basketball") ? "mov" : "diff",
+				),
 				...extraCols.map(x => {
 					const value = getValue(ts, x.key);
 					if (x.keySort) {

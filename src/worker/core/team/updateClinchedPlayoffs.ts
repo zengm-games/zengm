@@ -1,16 +1,17 @@
 import { idb } from "../../db";
 import type { TeamSeason, Conditions } from "../../../common/types";
-import { g, helpers, logEvent } from "../../util";
-import { season } from "..";
+import { g, helpers, logEvent, orderTeams } from "../../util";
 import { COURT } from "../../../common";
+import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
-const getClinchedPlayoffs = (
+const getClinchedPlayoffs = async (
 	teamSeasons: TeamSeason[],
 	finalStandings: boolean,
-): ClinchedPlayoffs[] => {
-	return teamSeasons.map(t => {
+) => {
+	const output: ClinchedPlayoffs[] = [];
+	for (const t of teamSeasons) {
 		const worstCases = teamSeasons.map(t2 => {
 			// Handle tied undefined
 			const tied = t2.tied ?? 0;
@@ -47,7 +48,8 @@ const getClinchedPlayoffs = (
 			return worstCase;
 		});
 
-		const sorted = helpers.orderByWinp(worstCases);
+		// This is needed just to determin the overall #1 seed
+		const sorted = await orderTeams(worstCases);
 
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
@@ -58,7 +60,7 @@ const getClinchedPlayoffs = (
 		if (sorted[0].tid === t.tid) {
 			clinchedPlayoffs = "z";
 		} else {
-			const result = season.genPlayoffSeries(sorted);
+			const result = await genPlayoffSeriesFromTeams(worstCases);
 			const matchups = result.series[0];
 			for (const matchup of matchups) {
 				if (!matchup.away && matchup.home.tid === t.tid) {
@@ -111,16 +113,16 @@ const getClinchedPlayoffs = (
 				return bestCase;
 			});
 
-			const sorted = helpers.orderByWinp(bestCases);
-
-			const result = season.genPlayoffSeries(sorted);
+			const result = await genPlayoffSeriesFromTeams(bestCases);
 			if (!result.tidPlayoffs.includes(t.tid)) {
 				clinchedPlayoffs = "o";
 			}
 		}
 
-		return clinchedPlayoffs;
-	});
+		output.push(clinchedPlayoffs);
+	}
+
+	return output;
 };
 
 const updateClinchedPlayoffs = async (
@@ -132,7 +134,10 @@ const updateClinchedPlayoffs = async (
 		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
-	const clinchedPlayoffs = getClinchedPlayoffs(teamSeasons, finalStandings);
+	const clinchedPlayoffs = await getClinchedPlayoffs(
+		teamSeasons,
+		finalStandings,
+	);
 
 	for (let i = 0; i < teamSeasons.length; i++) {
 		const ts = teamSeasons[i];

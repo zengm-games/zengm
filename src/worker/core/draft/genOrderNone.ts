@@ -26,7 +26,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const draftType = g.get("draftType");
 
 	if (draftType !== "random") {
-		lotterySort(teams);
+		await lotterySort(teams);
 		if (draftType === "noLotteryReverse") {
 			teams.reverse();
 		}

@@ -46,6 +46,8 @@ const HeadToHead = ({
 	const makeRow = (t: typeof totals) => {
 		const gp = t.won + t.lost + t.otl + t.tied;
 
+		console.log(t, t.pts, t.oppPts);
+
 		const movOrDiffStats = {
 			pts: t.pts,
 			oppPts: t.oppPts,

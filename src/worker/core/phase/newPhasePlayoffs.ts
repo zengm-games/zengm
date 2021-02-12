@@ -13,16 +13,7 @@ const newPhasePlayoffs = async (
 	local.playingUntilEndOfRound = false;
 
 	// Set playoff matchups
-	const teams = helpers.orderByWinp(
-		await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["winp", "won", "cid", "did"],
-			season: g.get("season"),
-			active: true,
-		}),
-	);
-
-	const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
+	const { series, tidPlayoffs } = await season.genPlayoffSeries();
 
 	for (const tid of tidPlayoffs) {
 		logEvent(

@@ -21,7 +21,7 @@ const orderTeams = async <
 		(t: T) => t.seasonAttrs.winp,
 		(t: T) => t.seasonAttrs.won,
 
-		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
+		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
 		(t: T) =>
 			random.uniformSeed(
 				t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),

@@ -1,6 +1,4 @@
 better tiebreakers
-- delete helpers.orderByWinp
-  - make any place that was passing a season to helpers.orderByWinp also passes a season to orderTeams!
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random

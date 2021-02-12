@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import type { TeamSeason, Conditions } from "../../../common/types";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent, orderTeams } from "../../util";
 import { COURT } from "../../../common";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 
@@ -49,7 +49,7 @@ const getClinchedPlayoffs = async (
 		});
 
 		// This is needed just to determin the overall #1 seed
-		const sorted = helpers.orderByWinp(worstCases);
+		const sorted = await orderTeams(worstCases);
 
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye

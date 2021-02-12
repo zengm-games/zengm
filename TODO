@@ -1,28 +1,29 @@
+leagueName gameAttribute used for anything?
+- in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
+- https://discord.com/channels/@me/673750689649917958/809629720768675880
+
 better tiebreakers
+- division leaders going first - rethink how that's implemented for FBGM
+  - we call orderTeams for a conference/league and expect it to bump up division leaders automatically
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random
+  - divisionLeadersFirstPlayoffs
 - track history of options, for historical display
 	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
   - need to set tiebreaker to non-default value if undefined, to handle upgrades
     - what about other custom files where it's not specified? ugh
 - tiebreakers:
   - 1. h2h record (pool all together, if more than 2)
-  - 2. division record (if all teams are in the same division)
-  - 3. conference record (if all teams are in the same conference)
-  - 4. MOV
-  - 5. random
-- scope of ranking
-  - in BBGM, do it per conference
-  - in FBGM, do it per division for division winners, then per conference to find
-  - this implies that the draft ranking would be different than playoff seeding, at times
-- persist playoff seed to teamSeason
+  - 2. division winner
+  - 3. division record (if all teams are in the same division)
+  - 4. conference record (if all teams are in the same conference)
+  - 5. MOV
+  - 6. random
 - "Reason" column like https://www.pro-football-reference.com/years/2020/
-- in teamSeason store rankLeague, rankDiv, rankConf
-  - only at end of season, or always?
-  - use in standings, etc
-  - playoff clinching
 - handle tiebreaker when 2 #1 seeds meet in playoffs
+- how should it work for draft order? nba uses random
+  - reassess everywhere that calls orderTeams
 
 head to head records
 - later

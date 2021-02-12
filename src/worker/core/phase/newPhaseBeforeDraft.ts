@@ -97,9 +97,10 @@ const newPhaseBeforeDraft = async (
 		}
 	}
 
+	const thanosCooldownEnd = g.get("thanosCooldownEnd");
 	if (
 		g.get("challengeThanosMode") &&
-		g.get("season") >= g.get("thanosCooldownEnd") &&
+		(thanosCooldownEnd === undefined || g.get("season") >= thanosCooldownEnd) &&
 		Math.random() < 0.2
 	) {
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [

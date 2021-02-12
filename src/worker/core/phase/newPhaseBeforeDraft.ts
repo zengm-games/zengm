@@ -97,8 +97,13 @@ const newPhaseBeforeDraft = async (
 	}
 
 	if (Math.random() < 0.1) {
-		for (let i = 0; i < 200; i++) {
-			await player.killOne(conditions);
+		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+		console.log(activePlayers.length);
+		for (let i = 0; i < activePlayers.length / 2; i++) {
+			await player.killOne();
 		}
 	}
 

@@ -17,6 +17,7 @@ import type {
 	PhaseReturn,
 	MinimalPlayerRatings,
 	Player,
+	LogEventType,
 } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
@@ -119,15 +120,18 @@ const newPhaseBeforeDraft = async (
 			}
 
 			let action;
+			let type: LogEventType;
 			if (p.real) {
 				action = "retired due to";
+				type = "retired";
 			} else {
 				p.diedYear = g.get("season");
 				action = "was killed in";
+				type = "tragedy";
 			}
 			logEvent(
 				{
-					type: "tragedy",
+					type,
 					text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 						p.firstName
 					} ${p.lastName}</a> ${action} a Thanos snap.`,

@@ -11,6 +11,7 @@ import {
 	applyRealTeamInfo,
 	isSport,
 	bySport,
+	gameAttributesArrayToObject,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -288,32 +289,6 @@ const countNegotiations = async () => {
 	return negotiations.length;
 };
 
-const upsertGameAttribute = <Key extends keyof GameAttributesLeague>(
-	gameAttributes: {
-		key: keyof GameAttributesLeague;
-		value: unknown;
-	}[],
-	key: Key,
-	value: GameAttributesLeague[Key],
-) => {
-	let found = false;
-	for (const gameAttribute of gameAttributes) {
-		if (gameAttribute.key === key) {
-			gameAttribute.value = value;
-			found = true;
-
-			// No break, in case there are dupe keys for some reason
-		}
-	}
-
-	if (!found) {
-		gameAttributes.push({
-			key,
-			value,
-		});
-	}
-};
-
 const createLeague = async ({
 	name,
 	tid,
@@ -418,14 +393,9 @@ const createLeague = async ({
 		| RealTeamInfo
 		| undefined;
 	if (realTeamInfo) {
-		let currentSeason = leagueFile.startingSeason;
-		if (leagueFile.gameAttributes) {
-			for (const { key, value } of leagueFile.gameAttributes) {
-				if (key === "season") {
-					currentSeason = value;
-				}
-			}
-		}
+		const currentSeason =
+			leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason;
+
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
 				applyRealTeamInfo(t, realTeamInfo, currentSeason);
@@ -455,59 +425,21 @@ const createLeague = async ({
 		}
 	}
 
-	if (!leagueFile.gameAttributes) {
-		leagueFile.gameAttributes = [];
-	}
-
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeNoDraftPicks",
+	const gameAttributeOverrides: Record<string, any> = {
 		challengeNoDraftPicks,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeNoFreeAgents",
 		challengeNoFreeAgents,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeNoRatings",
 		challengeNoRatings,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeNoTrades",
 		challengeNoTrades,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeLoseBestPlayer",
 		challengeLoseBestPlayer,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeFiredLuxuryTax",
 		challengeFiredLuxuryTax,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"challengeFiredMissPlayoffs",
 		challengeFiredMissPlayoffs,
-	);
-	upsertGameAttribute(
-		leagueFile.gameAttributes,
-		"equalizeRegions",
 		equalizeRegions,
-	);
-	upsertGameAttribute(leagueFile.gameAttributes, "confs", confs);
-	upsertGameAttribute(leagueFile.gameAttributes, "divs", divs);
+		confs,
+		divs,
+	};
 
 	if (realPlayerDeterminism !== undefined) {
-		upsertGameAttribute(
-			leagueFile.gameAttributes,
-			"realPlayerDeterminism",
-			realPlayerDeterminism,
-		);
+		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
 	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful
@@ -527,9 +459,14 @@ const createLeague = async ({
 			}
 		}
 		if (godModeInPastOverride) {
-			upsertGameAttribute(leagueFile.gameAttributes, "godModeInPast", true);
+			gameAttributeOverrides.godModeInPast = true;
 		}
 	}
+
+	leagueFile.gameAttributes = {
+		...leagueFile.gameAttributes,
+		...gameAttributeOverrides,
+	};
 
 	if (noStartingInjuries && leagueFile.players) {
 		for (const p of leagueFile.players) {
@@ -1455,12 +1392,15 @@ const handleUploadedDraftClass = async (
 	// Find season from uploaded file, for age adjusting
 	let uploadedSeason: number | undefined;
 
-	if (uploadedFile.hasOwnProperty("gameAttributes")) {
-		for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
-			if (uploadedFile.gameAttributes[i].key === "season") {
-				uploadedSeason = uploadedFile.gameAttributes[i].value;
-				break;
-			}
+	if (uploadedFile.gameAttributes) {
+		if (Array.isArray(uploadedFile.gameAttributes)) {
+			uploadedFile.gameAttributes = gameAttributesArrayToObject(
+				uploadedFile.gameAttributes,
+			);
+		}
+
+		if (uploadedFile.gameAttributes.season !== undefined) {
+			uploadedSeason = uploadedFile.gameAttributes.season;
 		}
 	}
 

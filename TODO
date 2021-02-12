@@ -1,5 +1,8 @@
 better tiebreakers
 - convert gameAttributes import/export to object
+  - real players
+  - schema
+  - update docs
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random

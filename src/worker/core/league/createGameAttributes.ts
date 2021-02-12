@@ -47,70 +47,67 @@ const createGameAttributes = ({
 
 	let leagueFileNumGamesPlayoffSeries;
 	if (leagueFile.gameAttributes) {
-		for (const gameAttribute of leagueFile.gameAttributes) {
+		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
 			// Set default for anything except these, since they can be overwritten by form input.
-			if (
-				gameAttribute.key !== "leagueName" &&
-				gameAttribute.key !== "difficulty"
-			) {
+			if (key !== "leagueName" && key !== "difficulty") {
 				// userTid is handled special below
-				if (gameAttribute.key !== "userTid") {
-					(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+				if (key !== "userTid") {
+					(gameAttributes as any)[key] = value;
 				}
 
 				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
 				if (
-					Array.isArray(gameAttribute.value) &&
-					gameAttribute.value.length > 0 &&
-					gameAttribute.value[0].start === null
+					Array.isArray(value) &&
+					value.length > 0 &&
+					value[0].start === null
 				) {
-					gameAttribute.value[0].start = -Infinity;
+					value[0].start = -Infinity;
 				}
 
-				if (gameAttribute.key === "numGamesPlayoffSeries") {
-					leagueFileNumGamesPlayoffSeries = gameAttribute.value;
+				if (key === "numGamesPlayoffSeries") {
+					leagueFileNumGamesPlayoffSeries = value;
 				}
 			}
 		}
 
 		// 2nd pass, so we know phase/season from league file were applied already
-		for (const gameAttribute of leagueFile.gameAttributes) {
-			if (gameAttribute.key === "userTid") {
-				// Handle league file with userTid history, but user selected a new team maybe
-				if (gameAttributeHasHistory(gameAttribute.value)) {
-					const last = gameAttribute.value[gameAttribute.value.length - 1];
-					if (last.value === userTid) {
-						// Bring over history
-						gameAttributes.userTid = gameAttribute.value;
+		if (leagueFile.gameAttributes.userTid !== undefined) {
+			const value = leagueFile.gameAttributes.userTid;
+
+			// Handle league file with userTid history, but user selected a new team maybe
+			if (gameAttributeHasHistory(value)) {
+				const last = value[value.length - 1];
+				if (last.value === userTid) {
+					// Bring over history
+					gameAttributes.userTid = value;
+				} else {
+					if (gameAttributes.season === gameAttributes.startingSeason) {
+						// If this is first year in the file, put at -Infinity
+						gameAttributes.userTid = [
+							{
+								start: -Infinity,
+								value: userTid,
+							},
+						];
 					} else {
-						if (gameAttributes.season === gameAttributes.startingSeason) {
-							// If this is first year in the file, put at -Infinity
-							gameAttributes.userTid = [
-								{
-									start: -Infinity,
-									value: userTid,
-								},
-							];
+						// Bring over history
+						gameAttributes.userTid = value;
+
+						// Keep in sync with g.wrap
+						let currentSeason = gameAttributes.season;
+						if (gameAttributes.phase > PHASE.PLAYOFFS) {
+							currentSeason += 1;
+						}
+
+						if (last.start === currentSeason) {
+							// Overwrite entry for this season
+							last.value = userTid;
 						} else {
-							// Bring over history
-							gameAttributes.userTid = gameAttribute.value;
-
-							// Keep in sync with g.wrap
-							let currentSeason = gameAttributes.season;
-							if (gameAttributes.phase > PHASE.PLAYOFFS) {
-								currentSeason += 1;
-							}
-
-							if (last.start === currentSeason) {
-								// Overwrite entry for this season
-								last.value = userTid;
-							} else {
-								// Add new entry
-								gameAttributes.userTid.push({
-									start: currentSeason,
-									value: userTid,
-								});
-							}
+							// Add new entry
+							gameAttributes.userTid.push({
+								start: currentSeason,
+								value: userTid,
+							});
 						}
 					}
 				}

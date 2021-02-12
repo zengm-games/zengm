@@ -58,7 +58,7 @@ export type LeagueFile = {
 	draftPicks?: any[];
 	draftOrder?: any[];
 	games?: any[];
-	gameAttributes?: any[];
+	gameAttributes?: Record<string, any>;
 	players?: any[];
 	schedule?: any[];
 	teams?: any[];
@@ -989,9 +989,7 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	const skipNewPhase = leagueFile.gameAttributes
-		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
-		: false;
+	const skipNewPhase = leagueFile.gameAttributes?.phase !== undefined;
 
 	if (!skipNewPhase || realPlayers) {
 		await updatePhase();

@@ -96,14 +96,14 @@ const newPhaseBeforeDraft = async (
 		}
 	}
 
-	if (Math.random() < 0.1) {
+	if (g.get("challengeThanosMode") && Math.random() < 0.2) {
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
 			0,
 			Infinity,
 		]);
 		console.log(activePlayers.length);
 		for (let i = 0; i < activePlayers.length / 2; i++) {
-			await player.killOne();
+			await player.killOne(conditions);
 		}
 	}
 

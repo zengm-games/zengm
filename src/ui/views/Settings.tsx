@@ -77,6 +77,7 @@ type Key =
 	| "challengeLoseBestPlayer"
 	| "challengeFiredLuxuryTax"
 	| "challengeFiredMissPlayoffs"
+	| "challengeThanosMode"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
@@ -135,6 +136,8 @@ export const descriptions = {
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
+	challengeThanosMode:
+		"At the end of playoffs, there's a 20% chance of half the league dying.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:
@@ -711,6 +714,13 @@ export const options: {
 		key: "challengeFiredMissPlayoffs",
 		name: "You're Fired If You Miss The Playoffs",
 		type: "bool",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeThanosMode",
+		name: "Thanos Mode",
+		type: "bool",
+		description: descriptions.challengeThanosMode,
 	},
 	{
 		category: "Game Modes",

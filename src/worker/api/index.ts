@@ -331,6 +331,7 @@ const createLeague = async ({
 	challengeLoseBestPlayer,
 	challengeFiredLuxuryTax,
 	challengeFiredMissPlayoffs,
+	challengeThanosMode,
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
@@ -355,6 +356,7 @@ const createLeague = async ({
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
@@ -493,6 +495,11 @@ const createLeague = async ({
 		leagueFile.gameAttributes,
 		"challengeFiredMissPlayoffs",
 		challengeFiredMissPlayoffs,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"challengeThanosMode",
+		challengeThanosMode,
 	);
 	upsertGameAttribute(
 		leagueFile.gameAttributes,

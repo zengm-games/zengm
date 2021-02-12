@@ -109,6 +109,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	challengeLoseBestPlayer: false,
 	challengeFiredLuxuryTax: false,
 	challengeFiredMissPlayoffs: false,
+	challengeThanosMode: false,
 	repeatSeason: undefined,
 	equalizeRegions: false,
 	realPlayerDeterminism: 0,

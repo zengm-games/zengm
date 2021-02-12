@@ -1,6 +1,5 @@
 better tiebreakers
 - convert gameAttributes import/export to object
-  - schema
   - update docs
 - add options
 	- winp vs pts (vs custom points?)

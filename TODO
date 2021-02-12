@@ -1,6 +1,5 @@
 better tiebreakers
 - convert gameAttributes import/export to object
-  - real players
   - schema
   - update docs
 - add options

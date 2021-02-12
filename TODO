@@ -1,5 +1,4 @@
 better tiebreakers
-- fix lotterySort test
 - delete helpers.orderByWinp
   - make any place that was passing a season to helpers.orderByWinp also passes a season to orderTeams!
 - add options

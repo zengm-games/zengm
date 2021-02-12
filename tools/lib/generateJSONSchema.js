@@ -744,6 +744,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							otl: {
 								type: ["boolean", "array"],
 							},
+							thanosCooldownEnd: {
+								type: "number",
+							},
 							tradeDeadline: {
 								type: "number",
 							},

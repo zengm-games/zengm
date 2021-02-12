@@ -1,6 +1,8 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: New challenge mode "Thanos Mode": at the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/360) [[2]]()
+* 2021-02-12: New challenge mode "Thanos Mode": at the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/360) [[2]](https://old.reddit.com/r/BasketballGM/comments/lifm6h/new_challenge_mode_thanos_mode_at_the_end_of_the/)
+
+* 2021-02-11: In custom league files, there is a new simpler format for writing "gameAttributes". Don't worry, the old format will continue to work, you don't need to change anything! But now you can write it as an object rather than an array, which is generally a lot simpler. See [the manual](https://basketball-gm.com/manual/customization/game-attributes/) for more info.
 
 * 2021-02-09: Head-to-head team results are now viewable at League > History > Head-to-Head and Team > History > Head-to-Head. [[1]](https://basketball-gm.com/blog/2021/02/head-to-head/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lgj82n/headtohead_team_results_new_in_version/)
 

@@ -1,3 +1,5 @@
+head2head import after box score
+
 leagueName gameAttribute used for anything?
 - in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
 - https://discord.com/channels/@me/673750689649917958/809629720768675880
@@ -8,6 +10,7 @@ better tiebreakers
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random
+    - always add random when applying it, if random is not in it
   - divisionLeadersFirstPlayoffs
 - track history of options, for historical display
 	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season

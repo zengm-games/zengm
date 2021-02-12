@@ -1,9 +1,12 @@
 better tiebreakers
+- convert gameAttributes import/export to object
 - add options
 	- winp vs pts (vs custom points?)
 	- tiebreaker: default (make sure it makes sense with pts) vs random
 - track history of options, for historical display
 	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
+  - need to set tiebreaker to non-default value if undefined, to handle upgrades
+    - what about other custom files where it's not specified? ugh
 - tiebreakers:
   - 1. h2h record (pool all together, if more than 2)
   - 2. division record (if all teams are in the same division)

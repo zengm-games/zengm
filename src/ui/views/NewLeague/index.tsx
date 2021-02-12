@@ -205,6 +205,7 @@ type State = {
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -298,6 +299,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeFiredMissPlayoffs";
+	  }
+	| {
+			type: "toggleChallengeThanosMode";
 	  }
 	| {
 			type: "toggleEqualizeRegions";
@@ -444,6 +448,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeLoseBestPlayer: boolean;
 				challengeFiredLuxuryTax: boolean;
 				challengeFiredMissPlayoffs: boolean;
+				challengeThanosMode: boolean;
 				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
@@ -455,6 +460,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 				challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
 				challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
+				challengeThanosMode: state.challengeThanosMode,
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -580,6 +586,13 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				challengeFiredMissPlayoffs: !state.challengeFiredMissPlayoffs,
 			};
+
+		case "toggleChallengeThanosMode":
+			return {
+				...state,
+				challengeThanosMode: !state.challengeThanosMode,
+			};
+
 		case "toggleEqualizeRegions":
 			return {
 				...state,
@@ -684,6 +697,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeLoseBestPlayer: false,
 				challengeFiredLuxuryTax: false,
 				challengeFiredMissPlayoffs: false,
+				challengeThanosMode: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
@@ -782,6 +796,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 					challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
 					challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
+					challengeThanosMode: state.challengeThanosMode,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
@@ -828,6 +843,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeLoseBestPlayer,
 			state.challengeFiredLuxuryTax,
 			state.challengeFiredMissPlayoffs,
+			state.challengeThanosMode,
 			state.confs,
 			state.customize,
 			state.difficulty,
@@ -1126,6 +1142,25 @@ const NewLeague = (props: View<"newLeague">) => {
 					htmlFor="new-league-challengeFiredMissPlayoffs"
 				>
 					You're fired if you miss the playoffs
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeThanosMode"
+					checked={state.challengeThanosMode}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeThanosMode" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeThanosMode"
+				>
+					Thanos Mode
+					<br />
+					<span className="text-muted">{descriptions.challengeThanosMode}</span>
 				</label>
 			</div>
 		</div>,

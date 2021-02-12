@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft, player, season, team } from "..";
+import { draft, player, season, team, league } from "..";
 import { idb } from "../../db";
 import {
 	achievement,
@@ -10,6 +10,7 @@ import {
 	local,
 	toUI,
 	logEvent,
+	random,
 } from "../../util";
 import type {
 	Conditions,
@@ -94,6 +95,46 @@ const newPhaseBeforeDraft = async (
 				}
 			}
 		}
+	}
+
+	if (
+		g.get("challengeThanosMode") &&
+		g.get("season") >= g.get("thanosCooldownEnd") &&
+		Math.random() < 0.2
+	) {
+		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+		random.shuffle(activePlayers);
+		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
+
+		for (const p of snappedPlayers) {
+			// Real players are retired, random killed.
+			if (p.real) {
+				await player.retire(p, conditions);
+				await idb.cache.players.put(p);
+			} else {
+				await player.killOne(conditions, p);
+			}
+		}
+
+		logEvent(
+			{
+				type: "tragedy",
+				text: "A Thanos event has occured!",
+				showNotification: true,
+				pids: [],
+				tids: [],
+				persistent: true,
+			},
+			conditions,
+		);
+
+		// Make sure another event won't happen within the next 2 seasons to prevent running out of players
+		await league.setGameAttributes({
+			thanosCooldownEnd: g.get("season") + 3,
+		});
 	}
 
 	if (!g.get("repeatSeason")) {

@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft, player, season, team } from "..";
+import { draft, player, season, team, league } from "..";
 import { idb } from "../../db";
 import {
 	achievement,
@@ -96,15 +96,23 @@ const newPhaseBeforeDraft = async (
 		}
 	}
 
-	if (g.get("challengeThanosMode") && Math.random() < 0.2) {
+	if (
+		g.get("challengeThanosMode") &&
+		g.get("season") >= g.get("thanosCooldownEnd") &&
+		Math.random() < 0.999
+	) {
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
 			0,
 			Infinity,
 		]);
-		console.log(activePlayers.length);
 		for (let i = 0; i < activePlayers.length / 2; i++) {
 			await player.killOne(conditions);
 		}
+
+		// Make sure another event won't happen within the next 2 seasons to prevent running out of players
+		await league.setGameAttributes({
+			thanosCooldownEnd: g.get("season") + 3,
+		});
 	}
 
 	if (!g.get("repeatSeason")) {

@@ -368,6 +368,7 @@ export type GameAttributesLeague = {
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
 	challengeThanosMode: boolean;
+	thanosCooldownEnd: number;
 	confs: Conf[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;

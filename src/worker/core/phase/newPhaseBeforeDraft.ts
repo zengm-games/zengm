@@ -99,7 +99,7 @@ const newPhaseBeforeDraft = async (
 	if (
 		g.get("challengeThanosMode") &&
 		g.get("season") >= g.get("thanosCooldownEnd") &&
-		Math.random() < 0.999
+		Math.random() < 0.2
 	) {
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
 			0,

@@ -1457,3 +1457,43 @@ export type GetLeagueOptions =
 				| "2010s"
 				| "all";
 	  };
+
+// Would probably be better to have this all at the root, and store one object per (season, t0, t1) but it's awkward to separate t0 and t1 and IndexedDB does not let you make a compound index that includes a multiEntry index, so maybe this is better?
+export type HeadToHead = {
+	season: number;
+
+	// The keys are team IDs. First should be the lowest of the pair
+	regularSeason: Record<
+		number,
+		Record<
+			number,
+			{
+				won: number;
+				lost: number;
+				tied: number;
+				otl: number;
+				pts: number;
+				oppPts: number;
+
+				// Needed because we're only storing one record per (tid, tid) pair, and we swap the results when returning the other
+				otw: number;
+			}
+		>
+	>;
+
+	playoffs: Record<
+		number,
+		Record<
+			number,
+			// This assumes you can only play one playoff series against a given team in a season
+			{
+				round: number;
+				result: "won" | "lost" | undefined;
+				won: number;
+				lost: number;
+				pts: number;
+				oppPts: number;
+			}
+		>
+	>;
+};

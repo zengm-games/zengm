@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateStandings = async (
@@ -24,91 +24,86 @@ const updateStandings = async (
 			? numPlayoffTeams / 2
 			: numPlayoffTeams;
 
-		const teams = helpers
-			.orderByWinp(
-				await idb.getCopies.teamsPlus({
-					attrs: ["tid"],
-					seasonAttrs: [
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"winp",
-						"wonHome",
-						"lostHome",
-						"tiedHome",
-						"otlHome",
-						"wonAway",
-						"lostAway",
-						"tiedAway",
-						"otlAway",
-						"wonDiv",
-						"lostDiv",
-						"tiedDiv",
-						"otlDiv",
-						"wonConf",
-						"lostConf",
-						"tiedConf",
-						"otlConf",
-						"lastTen",
-						"streak",
-						"cid",
-						"did",
-						"abbrev",
-						"region",
-						"name",
-						"clinchedPlayoffs",
-					],
-					stats: ["pts", "oppPts", "mov"],
-					season: inputs.season,
-					showNoStats: true,
-				}),
-				inputs.season,
-			)
-			.map(t => ({
-				...t,
-				gb: {
-					league: 0,
-					conf: 0,
-					div: 0,
-				},
-				rank: {
-					playoffs: 0,
-					league: 0,
-					conf: 0,
-					div: 0,
-				},
-			}));
+		const teams = (
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: [
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"winp",
+					"wonHome",
+					"lostHome",
+					"tiedHome",
+					"otlHome",
+					"wonAway",
+					"lostAway",
+					"tiedAway",
+					"otlAway",
+					"wonDiv",
+					"lostDiv",
+					"tiedDiv",
+					"otlDiv",
+					"wonConf",
+					"lostConf",
+					"tiedConf",
+					"otlConf",
+					"lastTen",
+					"streak",
+					"cid",
+					"did",
+					"abbrev",
+					"region",
+					"name",
+					"clinchedPlayoffs",
+				],
+				stats: ["pts", "oppPts", "gp"],
+				season: inputs.season,
+				showNoStats: true,
+			})
+		).map(t => ({
+			...t,
+			gb: {
+				league: 0,
+				conf: 0,
+				div: 0,
+			},
+			rank: {
+				playoffs: 0,
+				league: 0,
+				conf: 0,
+				div: 0,
+			},
+		}));
 
-		const rankingGroups: {
-			type: "league" | "conf" | "div";
-			teams: typeof teams[];
-		}[] = [
-			{
-				type: "league",
-				teams: [teams],
-			},
-			{
-				type: "conf",
-				teams: confs.map(conf =>
-					teams.filter(t => t.seasonAttrs.cid === conf.cid),
+		const rankingGroups: Record<"league" | "conf" | "div", typeof teams[]> = {
+			league: [await orderTeams(teams, inputs.season)],
+			conf: await Promise.all(
+				confs.map(conf =>
+					orderTeams(
+						teams.filter(t => t.seasonAttrs.cid === conf.cid),
+						inputs.season,
+					),
 				),
-			},
-			{
-				type: "div",
-				teams: divs.map(div =>
-					teams.filter(t => t.seasonAttrs.did === div.did),
+			),
+			div: await Promise.all(
+				divs.map(div =>
+					orderTeams(
+						teams.filter(t => t.seasonAttrs.did === div.did),
+						inputs.season,
+					),
 				),
-			},
-		];
+			),
+		};
 
-		for (const rankingGroup of rankingGroups) {
-			for (const group of rankingGroup.teams) {
+		for (const type of helpers.keys(rankingGroups)) {
+			for (const group of rankingGroups[type]) {
 				for (let i = 0; i < group.length; i++) {
 					const t = group[i];
-					t.gb[rankingGroup.type] =
+					t.gb[type] =
 						i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
-					t.rank[rankingGroup.type] = i + 1;
+					t.rank[type] = i + 1;
 				}
 			}
 		}
@@ -140,8 +135,8 @@ const updateStandings = async (
 			maxPlayoffSeed,
 			numPlayoffByes,
 			playoffsByConference,
+			rankingGroups,
 			season: inputs.season,
-			teams,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
 			type: inputs.type,

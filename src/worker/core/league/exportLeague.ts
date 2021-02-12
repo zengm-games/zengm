@@ -1,3 +1,4 @@
+import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
 import { g, local } from "../../util";
 
@@ -96,12 +97,14 @@ const exportLeague = async (
 	if (stores.includes("gameAttributes")) {
 		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
 		const keysToDelete = ["numActiveTeams", "teamInfoCache"];
-		exportedLeague.gameAttributes = exportedLeague.gameAttributes
+		const gaArray = exportedLeague.gameAttributes
 			.filter((gameAttribute: any) => !keysToDelete.includes(gameAttribute.key))
 			.filter(
 				// No point in exporting undefined
 				(gameAttribute: any) => gameAttribute.value !== undefined,
 			);
+
+		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
 	} else {
 		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
 		exportedLeague.startingSeason = g.get("startingSeason");

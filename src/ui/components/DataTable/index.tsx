@@ -67,6 +67,7 @@ export type Props = {
 		classNames?: ClassValue;
 	}[];
 	small?: boolean;
+	striped?: boolean;
 	superCols?: SuperCol[];
 	addFilters?: (string | undefined)[];
 };
@@ -399,6 +400,7 @@ class DataTable extends Component<Props, State> {
 			pagination,
 			rows,
 			small,
+			striped,
 			superCols,
 		} = this.props;
 		let processedRows = this.processRows();
@@ -494,9 +496,10 @@ class DataTable extends Component<Props, State> {
 						nonfluid={nonfluid}
 					>
 						<table
-							className={classNames("table table-striped table-hover", {
+							className={classNames("table table-hover", {
 								"table-bordered": bordered !== false,
 								"table-sm": small !== false,
+								"table-striped": striped !== false,
 							})}
 						>
 							<Header

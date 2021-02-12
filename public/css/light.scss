@@ -1144,3 +1144,16 @@ a.anchor {
 	right: 0;
 	z-index: 1050;
 }
+
+// https://blog.jim-nielsen.com/2019/generating-shades-of-color-using-css-variables/
+// Convert a hex value to comma-delimited rgb values
+// In: #000
+// Out: 0,0,0
+@function derive-rgb-values-from-hex($hex) {
+	@return red($hex), green($hex), blue($hex);
+}
+
+:root {
+	--gradient-base-danger: #{derive-rgb-values-from-hex(lighten($danger, 20%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
+}

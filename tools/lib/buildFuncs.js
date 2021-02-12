@@ -157,7 +157,7 @@ const setSport = () => {
 };
 
 const copyFiles = () => {
-	const foldersToIgnore = ["basketball", "css", "football"];
+	const foldersToIgnore = ["basketball", "css", "football", "hockey"];
 
 	fse.copySync("public", "build", {
 		filter: filename => {

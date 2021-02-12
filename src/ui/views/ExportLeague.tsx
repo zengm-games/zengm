@@ -17,6 +17,12 @@ const categories = [
 		checked: true,
 	},
 	{
+		objectStores: "headToHeads",
+		name: "Head-to-Head Data",
+		desc: "History of head-to-head results between teams.",
+		checked: true,
+	},
+	{
 		objectStores: "schedule,playoffSeries",
 		name: "Schedule",
 		desc: "Current regular season schedule and playoff series.",

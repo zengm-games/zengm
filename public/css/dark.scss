@@ -279,3 +279,8 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 .badge-light {
 	color: $black;
 }
+
+:root {
+	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
+}

@@ -58,7 +58,7 @@ export type LeagueFile = {
 	draftPicks?: any[];
 	draftOrder?: any[];
 	games?: any[];
-	gameAttributes?: any[];
+	gameAttributes?: Record<string, any>;
 	players?: any[];
 	schedule?: any[];
 	teams?: any[];
@@ -72,6 +72,7 @@ export type LeagueFile = {
 	events?: any[];
 	playerFeats?: any[];
 	scheduledEvents?: any[];
+	headToHeads?: any[];
 };
 
 export type TeamInfo = TeamBasic & {
@@ -402,6 +403,8 @@ export const createWithoutSaving = async (
 		"games",
 		"events",
 		"playerFeats",
+		"scheduledEvents",
+		"headToHeads",
 	] as const;
 	const leagueData: any = {};
 
@@ -786,16 +789,11 @@ export const createWithoutSaving = async (
 		}
 	}
 
-	const scheduledEvents = leagueFile.scheduledEvents
-		? leagueFile.scheduledEvents
-		: [];
-
 	return Object.assign(leagueData, {
 		draftLotteryResults,
 		draftPicks,
 		gameAttributes,
 		players,
-		scheduledEvents,
 		teamSeasons,
 		teamStats,
 		teams,
@@ -995,9 +993,7 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	const skipNewPhase = leagueFile.gameAttributes
-		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
-		: false;
+	const skipNewPhase = leagueFile.gameAttributes?.phase !== undefined;
 
 	if (!skipNewPhase || realPlayers) {
 		await updatePhase();

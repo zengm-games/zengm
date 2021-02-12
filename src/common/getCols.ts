@@ -1668,6 +1668,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Diff: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Difficulty: {
 		sortSequence: ["desc", "asc"],
 	},
@@ -1701,6 +1705,16 @@ const cols: {
 	},
 	Finals: {
 		desc: "Finals Appearances",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Won": {
+		desc: "Finals Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Lost": {
+		desc: "Finals Lost",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1790,6 +1804,26 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	PA: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	PS: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PA/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PS/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -1859,6 +1893,11 @@ const cols: {
 	"Roster Spots": {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],
+	},
+	"Rounds Lost": {
+		desc: "Playoff Rounds Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"Rounds Won": {
 		desc: "Playoff Rounds Won",
@@ -1958,6 +1997,11 @@ const cols: {
 	},
 	"stat:mov": {
 		desc: "Average Margin of Victory",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"stat:diff": {
+		desc: "Point Differential",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -2391,6 +2435,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:shMin": "shTOI",
 		"stat:ppo": "PPO",
 		"stat:ppPct": "PP%",
+		PS: "GF",
+		PA: "GA",
+		"PS/g": "GF",
+		"PA/g": "GA",
 	},
 });
 
@@ -2405,6 +2453,7 @@ const titleOverrides = {
 	"stat:jerseyNumber": "#",
 	"stat:min": isSport("hockey") ? "TOI" : "MP",
 	"stat:mov": "MOV",
+	"stat:diff": "Diff",
 	"stat:yearsWithTeam": "YWT",
 	"count:allDefense": "ADT",
 	"count:allLeague": "ALT",

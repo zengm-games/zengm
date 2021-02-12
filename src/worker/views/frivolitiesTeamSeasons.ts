@@ -1,7 +1,7 @@
 import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
-import { PHASE } from "../../common";
+import { isSport, PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
 import { team } from "../core";
 
@@ -71,6 +71,9 @@ export const getMostXTeamSeasons = async ({
 				seed: null as null | number,
 				rank: 0,
 				mov: 0,
+				gp: 0,
+				pts: 0,
+				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
 			};
 		}),
@@ -86,6 +89,15 @@ export const getMostXTeamSeasons = async ({
 		const row = teamStats.find(row => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
+			ts.gp = row.gp;
+			ts.pts = row.pts;
+			ts.oppPts = row.oppPts;
+
+			// MovOrDiff is expecting this to be per game
+			if (isSport("basketball")) {
+				ts.pts /= row.gp;
+				ts.oppPts /= row.gp;
+			}
 		}
 
 		if (ts.playoffRoundsWon >= 0) {

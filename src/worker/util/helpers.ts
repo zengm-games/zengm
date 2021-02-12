@@ -1,8 +1,6 @@
-import orderBy from "lodash/orderBy";
-import { PLAYER, helpers as commonHelpers, isSport } from "../../common";
+import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
-import random from "./random";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 import defaultGameAttributes from "./defaultGameAttributes";
 
@@ -69,7 +67,7 @@ const calcWinp = ({
 	tied?: any;
 	won: number;
 }) => {
-	const actualOtl = otl ?? 0;
+	const actualOtl = typeof otl !== "number" || Number.isNaN(otl) ? 0 : otl;
 	const actualLost = lost + actualOtl;
 
 	// Some old leagues had NaN for tied...
@@ -198,55 +196,6 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	return Math.ceil(numGamesPlayoffSeries / 2);
 };
 
-const orderByWinp = <
-	T extends {
-		seasonAttrs: {
-			winp: number;
-			won: number;
-			did: number;
-		};
-		tid: number;
-	}
->(
-	teams: T[],
-	season: number = g.get("season"),
-): T[] => {
-	const defaultFuncs = [
-		(t: T) => t.seasonAttrs.winp,
-		(t: T) => t.seasonAttrs.won,
-
-		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
-		(t: T) =>
-			random.uniformSeed(
-				t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
-			),
-	];
-	const defaultOrders: Array<"asc" | "desc"> = ["desc", "desc", "asc"];
-	const sortedTeams = orderBy(teams, defaultFuncs, defaultOrders);
-
-	if (isSport("basketball")) {
-		return sortedTeams;
-	}
-
-	// For football, sort by division leaders first
-	const divisionLeaders = new Map<number, number>();
-
-	for (const t of sortedTeams) {
-		if (!divisionLeaders.has(t.seasonAttrs.did)) {
-			divisionLeaders.set(t.seasonAttrs.did, t.tid);
-		}
-	}
-
-	return orderBy(
-		sortedTeams,
-		[
-			t => (divisionLeaders.get(t.seasonAttrs.did) === t.tid ? 1 : 0),
-			...defaultFuncs,
-		],
-		["desc", ...defaultOrders],
-	);
-};
-
 const overtimeCounter = (n: number): string => {
 	switch (n) {
 		case 1:
@@ -352,7 +301,6 @@ const helpers = {
 	leagueUrl,
 	zeroPad,
 	numGamesToWinSeries,
-	orderByWinp,
 	overtimeCounter,
 	pickDesc,
 	quarterLengthFactor,

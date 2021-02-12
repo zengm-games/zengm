@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { PHASE } from "../../../common";
 import { season } from "..";
-import { g, helpers, random } from "../../util";
+import { g, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 /**
@@ -9,7 +9,7 @@ import type { TeamFiltered } from "../../../common/types";
  *
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
-const lotterySort = (
+const lotterySort = async (
 	teams: TeamFiltered<
 		["tid"],
 		["playoffRoundsWon", "won", "lost", "tied", "otl", "winp", "cid", "did"],
@@ -27,7 +27,7 @@ const lotterySort = (
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {
-		const { tidPlayoffs } = season.genPlayoffSeries(helpers.orderByWinp(teams));
+		const { tidPlayoffs } = await season.genPlayoffSeries();
 
 		for (const t of teams) {
 			if (tidPlayoffs.includes(t.tid)) {

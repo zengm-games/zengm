@@ -23,16 +23,13 @@ describe("worker/core/league/createGameAttributes", () => {
 			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
-				gameAttributes: [
-					{ key: "startingSeason", value: 2010 },
-					{
-						key: "userTid",
-						value: [
-							{ start: -Infinity, value: 3 },
-							{ start: 2013, value: 5 },
-						],
-					},
-				],
+				gameAttributes: {
+					startingSeason: 2010,
+					userTid: [
+						{ start: -Infinity, value: 3 },
+						{ start: 2013, value: 5 },
+					],
+				},
 			},
 			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
@@ -50,16 +47,13 @@ describe("worker/core/league/createGameAttributes", () => {
 			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
-				gameAttributes: [
-					{ key: "startingSeason", value: 2010 },
-					{
-						key: "userTid",
-						value: [
-							{ start: -Infinity, value: 3 },
-							{ start: 2013, value: 4 },
-						],
-					},
-				],
+				gameAttributes: {
+					startingSeason: 2010,
+					userTid: [
+						{ start: -Infinity, value: 3 },
+						{ start: 2013, value: 4 },
+					],
+				},
 			},
 			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
@@ -78,16 +72,13 @@ describe("worker/core/league/createGameAttributes", () => {
 			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
-				gameAttributes: [
-					{ key: "startingSeason", value: 2010 },
-					{
-						key: "userTid",
-						value: [
-							{ start: -Infinity, value: 3 },
-							{ start: 2015, value: 4 },
-						],
-					},
-				],
+				gameAttributes: {
+					startingSeason: 2010,
+					userTid: [
+						{ start: -Infinity, value: 3 },
+						{ start: 2015, value: 5 },
+					],
+				},
 			},
 			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
@@ -105,17 +96,14 @@ describe("worker/core/league/createGameAttributes", () => {
 			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
-				gameAttributes: [
-					{ key: "startingSeason", value: 2010 },
-					{ key: "phase", value: PHASE.DRAFT },
-					{
-						key: "userTid",
-						value: [
-							{ start: -Infinity, value: 3 },
-							{ start: 2015, value: 4 },
-						],
-					},
-				],
+				gameAttributes: {
+					startingSeason: 2010,
+					phase: PHASE.DRAFT,
+					userTid: [
+						{ start: -Infinity, value: 3 },
+						{ start: 2015, value: 4 },
+					],
+				},
 			},
 			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),

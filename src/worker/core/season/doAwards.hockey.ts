@@ -207,7 +207,7 @@ const doAwards = async (conditions: Conditions) => {
 		active: true,
 	});
 	const players = await getPlayers(g.get("season"));
-	const { bestRecord, bestRecordConfs } = teamAwards(teams);
+	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	leagueLeaders(players, [], awardsByPlayer);
 
 	const mvpPlayers = getTopPlayers(

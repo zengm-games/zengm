@@ -1,16 +1,18 @@
 import classNames from "classnames";
 import { Fragment } from "react";
-import { ResponsiveTableWrapper, MarginOfVictory } from "../components";
+import { ResponsiveTableWrapper, MovOrDiff } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
-import { COURT } from "../../common";
+import { COURT, isSport } from "../../common";
+
+type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
 
 const MAX_WIDTH = 1120;
 
 const record = (
-	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
+	seasonAttrs: StandingsTeam["seasonAttrs"],
 	type: "Home" | "Away" | "Div" | "Conf",
 ) => {
 	const won = `won${type}` as const;
@@ -38,7 +40,7 @@ const GroupStandingsRow = ({
 	userTid,
 }: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
 	separator: boolean;
-	t: View<"standings">["teams"][number];
+	t: StandingsTeam;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -80,7 +82,18 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
-				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>
+				<MovOrDiff
+					stats={
+						isSport("basketball")
+							? {
+									pts: t.stats.pts * t.stats.gp,
+									oppPts: t.stats.oppPts * t.stats.gp,
+									gp: t.stats.gp,
+							  }
+							: t.stats
+					}
+					type={isSport("basketball") ? "mov" : "diff"}
+				/>
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
@@ -101,12 +114,10 @@ const GroupStandings = ({
 	otl,
 	type,
 	userTid,
-}: Pick<
-	View<"standings">,
-	"season" | "teams" | "ties" | "otl" | "type" | "userTid"
-> & {
+}: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
 	name?: string;
 	separatorIndex?: number;
+	teams: StandingsTeam[];
 }) => {
 	return (
 		<ResponsiveTableWrapper>
@@ -124,9 +135,21 @@ const GroupStandings = ({
 						<th>Road</th>
 						<th>Div</th>
 						<th>Conf</th>
-						<th title="Points Per Game">Pts</th>
-						<th title="Opponent Points Per Game">Opp</th>
-						<th title="Average Margin of Victory">MOV</th>
+						{isSport("hockey") ? (
+							<th title="Goals For">GF</th>
+						) : (
+							<th title="Points Scored">PS</th>
+						)}
+						{isSport("hockey") ? (
+							<th title="Goals Against">GA</th>
+						) : (
+							<th title="Points Against">PA</th>
+						)}
+						{isSport("basketball") ? (
+							<th title="Average Margin of Victory">MOV</th>
+						) : (
+							<th title="Point Differential">Diff</th>
+						)}
 						<th>Streak</th>
 						<th>L10</th>
 					</tr>
@@ -162,7 +185,7 @@ const SmallStandingsRow = ({
 	maxPlayoffSeed: number;
 	playoffsByConference: boolean;
 	season: number;
-	t: View<"standings">["teams"][number];
+	t: StandingsTeam;
 	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -207,8 +230,10 @@ const SmallStandings = ({
 	userTid,
 }: Pick<
 	View<"standings">,
-	"maxPlayoffSeed" | "playoffsByConference" | "season" | "teams" | "userTid"
->) => {
+	"maxPlayoffSeed" | "playoffsByConference" | "season" | "userTid"
+> & {
+	teams: StandingsTeam[];
+}) => {
 	return (
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
@@ -240,8 +265,8 @@ const Standings = ({
 	maxPlayoffSeed,
 	numPlayoffByes,
 	playoffsByConference,
+	rankingGroups,
 	season,
-	teams,
 	ties,
 	otl,
 	type,
@@ -272,7 +297,7 @@ const Standings = ({
 		subgroups: {
 			name?: string;
 			separatorIndex?: number;
-			teams: typeof teams;
+			teams: StandingsTeam[];
 		}[];
 	}[];
 	if (type === "league") {
@@ -285,7 +310,7 @@ const Standings = ({
 				subgroups: [
 					{
 						separatorIndex,
-						teams,
+						teams: rankingGroups.league[0],
 					},
 				],
 			},
@@ -295,12 +320,12 @@ const Standings = ({
 		if (playoffsByConference || confs.length === 1) {
 			separatorIndex = maxPlayoffSeed - 1;
 		}
-		groups = confs.map(conf => ({
+		groups = confs.map((conf, i) => ({
 			name: conf.name,
 			subgroups: [
 				{
 					separatorIndex,
-					teams: teams.filter(t => t.seasonAttrs.cid === conf.cid),
+					teams: rankingGroups.conf[i],
 				},
 			],
 		}));
@@ -313,11 +338,14 @@ const Standings = ({
 			name: conf.name,
 			subgroups: divs
 				.filter(div => div.cid === conf.cid)
-				.map(div => ({
-					name: div.name,
-					separatorIndex,
-					teams: teams.filter(t => t.seasonAttrs.did === div.did),
-				})),
+				.map(div => {
+					const j = divs.findIndex(div2 => div2 === div);
+					return {
+						name: div.name,
+						separatorIndex,
+						teams: rankingGroups.div[j],
+					};
+				}),
 		}));
 	}
 
@@ -358,7 +386,7 @@ const Standings = ({
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
 									season={season}
-									teams={teams.filter(t => t.seasonAttrs.cid === confs[i].cid)}
+									teams={rankingGroups.conf[i]}
 									userTid={userTid}
 									playoffsByConference={playoffsByConference}
 								/>
@@ -378,7 +406,7 @@ const Standings = ({
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}
 						season={season}
-						teams={teams}
+						teams={rankingGroups.league[0]}
 						userTid={userTid}
 						playoffsByConference={playoffsByConference}
 					/>

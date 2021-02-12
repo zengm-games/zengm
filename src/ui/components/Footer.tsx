@@ -1,5 +1,36 @@
-import { memo } from "react";
-import { GAME_ACRONYM } from "../../common";
+import { Fragment, memo } from "react";
+import { GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+
+const footerLinks = [
+	{
+		url: `https://${process.env.SPORT}-gm.com/about/`,
+		title: "About",
+	},
+	{
+		url: `https://${process.env.SPORT}-gm.com/blog/`,
+		title: "Blog",
+	},
+	{
+		url: `https://${process.env.SPORT}-gm.com/contact/`,
+		title: "Contact",
+	},
+	{
+		url: "https://github.com/dumbmatter/gm-games",
+		title: "GitHub",
+	},
+	{
+		url: `https://${process.env.SPORT}-gm.com/privacy-policy/`,
+		title: "Privacy",
+	},
+	{
+		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,
+		title: "Reddit",
+	},
+	{
+		url: "https://discord.gg/caPFuM9",
+		title: "Discord",
+	},
+];
 
 const Footer = memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
@@ -62,55 +93,16 @@ const Footer = memo(() => {
 			<hr />
 
 			<p className="float-sm-left">
-				<a
-					href={`https://${process.env.SPORT}-gm.com/about/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					About
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/blog/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Blog
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/contact/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Contact
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/privacy-policy/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Privacy
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://www.reddit.com/r/${
-						process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM"
-					}/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Reddit
-				</a>{" "}
-				·{" "}
-				<a
-					href="https://discord.gg/caPFuM9"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Discord
-				</a>
+				{footerLinks.map(({ url, title }, i) => {
+					return (
+						<Fragment key={url}>
+							{i > 0 ? " · " : null}
+							<a href={url} rel="noopener noreferrer" target="_blank">
+								{title}
+							</a>
+						</Fragment>
+					);
+				})}
 				<br />
 			</p>
 			<p className="float-sm-right text-muted">

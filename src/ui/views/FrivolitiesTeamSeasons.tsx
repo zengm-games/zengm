@@ -1,9 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MarginOfVictory } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { getValue } from "./Most";
+import { isSport } from "../../common";
+import { wrappedMovOrDiff } from "../components/MovOrDiff";
 
 const FrivolitiesTeamSeasons = ({
 	description,
@@ -26,7 +28,7 @@ const FrivolitiesTeamSeasons = ({
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"%",
-		"stat:mov",
+		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		...extraCols.map(x => x.colName),
 		"Links",
 	);
@@ -51,7 +53,16 @@ const FrivolitiesTeamSeasons = ({
 				...(otl ? [ts.otl] : []),
 				...(ties ? [ts.tied] : []),
 				helpers.roundWinp(ts.winp),
-				<MarginOfVictory>{ts.mov}</MarginOfVictory>,
+				wrappedMovOrDiff(
+					isSport("basketball")
+						? {
+								pts: ts.pts * ts.gp,
+								oppPts: ts.oppPts * ts.gp,
+								gp: ts.gp,
+						  }
+						: ts,
+					isSport("basketball") ? "mov" : "diff",
+				),
 				...extraCols.map(x => {
 					const value = getValue(ts, x.key);
 					if (x.keySort) {

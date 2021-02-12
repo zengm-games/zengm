@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { processEvents } from "./news";
 
@@ -89,14 +89,12 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
 			hockey: ["Goals", "Allowed"],
 		});
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
-				stats,
-				season: g.get("season"),
-			}),
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
+			stats,
+			season: g.get("season"),
+		});
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
@@ -110,7 +108,11 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			value: number;
 		}[] = [];
 
-		for (const t2 of teams) {
+		const teamsConf = await orderTeams(
+			teams.filter(t => t.seasonAttrs.cid === cid),
+		);
+
+		for (const t2 of teamsConf) {
 			if (t2.seasonAttrs.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
 					// @ts-ignore
@@ -377,28 +379,25 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"winp",
-					"cid",
-					"did",
-					"abbrev",
-					"region",
-					"clinchedPlayoffs",
-				],
-				season: g.get("season"),
-			}),
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"winp",
+				"cid",
+				"did",
+				"abbrev",
+				"region",
+				"clinchedPlayoffs",
+			],
+			season: g.get("season"),
+		});
 
 		// Find user's conference
-		let cid;
-
+		let cid: number | undefined;
 		for (const t of teams) {
 			if (t.tid === g.get("userTid")) {
 				cid = t.seasonAttrs.cid;
@@ -409,19 +408,22 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const confTeams: (typeof teams[number] & {
 			rank: number;
 			gb: number;
-		})[] = [];
+		})[] = await orderTeams(
+			teams
+				.filter(t => t.seasonAttrs.cid === cid)
+				.map(t => ({
+					...t,
+					rank: 0,
+					gb: 0,
+				})),
+		);
 
 		let rank = 1;
-		for (let k = 0; k < teams.length; k++) {
-			if (cid === teams[k].seasonAttrs.cid) {
-				confTeams.push({
-					...helpers.deepCopy(teams[k]),
-					rank,
-					gb:
-						rank === 1
-							? 0
-							: helpers.gb(confTeams[0].seasonAttrs, teams[k].seasonAttrs),
-				});
+		for (const t of confTeams) {
+			if (cid === t.seasonAttrs.cid) {
+				t.rank = rank;
+				t.gb =
+					rank === 1 ? 0 : helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
 
 				rank += 1;
 			}
@@ -432,8 +434,9 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				g.get("numPlayoffByes", "current")) /
 			2;
 		const playoffsByConference = g.get("confs", "current").length === 2;
+
 		return {
-			confTeams,
+			confTeams: await orderTeams(confTeams),
 			numPlayoffTeams,
 			playoffsByConference,
 		};

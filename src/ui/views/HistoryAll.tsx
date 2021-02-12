@@ -66,7 +66,8 @@ const teamName = (
 					{t.region}
 				</a>{" "}
 				({t.won}-{t.lost}
-				{t.otl > 0 ? <>-{t.otl}</> : null}){t.tied > 0 ? <>-{t.tied}</> : null})
+				{t.otl > 0 ? <>-{t.otl}</> : null}
+				{t.tied > 0 ? <>-{t.tied}</> : null})
 			</>
 		);
 	}

@@ -1,4 +1,40 @@
-if you edit awards from a past season to take an award away from a retired player, it doesn't remove it from their player page. just changes the season summary and assigns it to the new player https://discord.com/channels/290013534023057409/290015591216054273/808088623874179115
+better tiebreakers
+- add options
+	- winp vs pts (vs custom points?)
+	- tiebreaker: default (make sure it makes sense with pts) vs random
+- track history of options, for historical display
+	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
+  - need to set tiebreaker to non-default value if undefined, to handle upgrades
+    - what about other custom files where it's not specified? ugh
+- tiebreakers:
+  - 1. h2h record (pool all together, if more than 2)
+  - 2. division record (if all teams are in the same division)
+  - 3. conference record (if all teams are in the same conference)
+  - 4. MOV
+  - 5. random
+- scope of ranking
+  - in BBGM, do it per conference
+  - in FBGM, do it per division for division winners, then per conference to find
+  - this implies that the draft ranking would be different than playoff seeding, at times
+- persist playoff seed to teamSeason
+- "Reason" column like https://www.pro-football-reference.com/years/2020/
+- in teamSeason store rankLeague, rankDiv, rankConf
+  - only at end of season, or always?
+  - use in standings, etc
+  - playoff clinching
+- handle tiebreaker when 2 #1 seeds meet in playoffs
+
+head to head records
+- later
+  - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)
+  - on head2head, a chart like https://i.gyazo.com/9e3f36a8e53b1f1ec681170843ea0679.png (bar graph of win% against each other team) linking to head2head_matchup
+  - head2head_matchup: summary of matchup between two specific teams
+    - http://www.winsipedia.com/air-force/vs/army
+    - list available box scores between teams
+    - list statisitical feats between teams
+    - link here from head2head and head2head_all
+
+auto adjust ticket price for playoffs https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghykfvs/
 
 free agents should be more willing to sign with teams that overpay
 - https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
@@ -85,6 +121,7 @@ settings re-design
   - make sure it handles setting the season for pace etc in real players leagues
   - godModeRequired value of "existingLeagueOnly" should be used here
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
+  - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
 - some settings should only be editable in offseason
   - playoff structure
 - to add
@@ -128,26 +165,6 @@ add some more built-in teams
   - logos should work for both basketball and football
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
-
-tiebreakers based on head-to-head
-- use games store, or save head-to-head records separately?
-  - would be nice to have some kind of rivalry feature
-- tiebreakers:
-  - 1. h2h record (pool all together, if more than 2)
-  - 2. division record (if all teams are in the same division)
-  - 3. conference record (if all teams are in the same conference)
-  - 4. MOV
-  - 5. random
-- scope of ranking
-  - in BBGM, do it per conference
-  - in FBGM, do it per division for division winners, then per conference to find
-  - this implies that the draft ranking would be different than playoff seeding, at times
-- persist playoff seed to teamSeason
-- "Reason" column like https://www.pro-football-reference.com/years/2020/
-- in teamSeason store rankLeague, rankDiv, rankConf
-  - only at end of season, or always?
-  - use in standings, etc
-  - playoff clinching
 
 "find players" form
 - customizable search boxes for stats/ratings
@@ -1356,8 +1373,10 @@ re-evaluate contracts
 
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
+  - https://www.google.com/search?q=OOTP+player+generator+modifiers&client=ubuntu&hs=nzO&channel=fs&sxsrf=ALeKk03DAwxNZl2Io6A0PwDmnR3InA95_w:1612847896152&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjc07TPhtzuAhXlUd8KHdfaB9kQ_AUoAnoECA8QBA&biw=1920&bih=869#imgrc=qKcVVE7ByPY6xM
 
 somewhere, show average age of team
+- https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/gi5929n/
 
 increase PG cutoff
 - https://www.reddit.com/r/BasketballGM/comments/8lfyuh/7_center_turns_into_pg_when_the_season_starts/

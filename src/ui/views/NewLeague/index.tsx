@@ -14,6 +14,7 @@ import {
 	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
+	gameAttributesArrayToObject,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -458,8 +459,12 @@ const reducer = (state: State, action: Action): State => {
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
 			};
+
+			// gameAttributes was already converted to an object before dispatching this action
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
-				for (const { key, value } of action.leagueFile.gameAttributes) {
+				for (const key of helpers.keys(gameAttributeOverrides)) {
+					const value = action.leagueFile.gameAttributes[key];
+
 					// For most settings this passes through the boolean value. For repeatSeason it converts that to a boolean, and it'll be filled later with the actual correct value.
 					const booleanValue = !!value;
 					if (
@@ -469,16 +474,19 @@ const reducer = (state: State, action: Action): State => {
 						(gameAttributeOverrides as any)[key] = booleanValue;
 						gameAttributeOverrides.expandOptions = true;
 					}
+				}
 
-					if (key === "confs") {
-						confs = gameAttributeHasHistory(value)
-							? value[value.length - 1].value
-							: value;
-					} else if (key === "divs") {
-						divs = gameAttributeHasHistory(value)
-							? value[value.length - 1].value
-							: value;
-					}
+				if (action.leagueFile.gameAttributes.confs) {
+					const value = action.leagueFile.gameAttributes.confs;
+					confs = gameAttributeHasHistory(value)
+						? value[value.length - 1].value
+						: value;
+				}
+				if (action.leagueFile.gameAttributes.divs) {
+					const value = action.leagueFile.gameAttributes.divs;
+					divs = gameAttributeHasHistory(value)
+						? value[value.length - 1].value
+						: value;
 				}
 			}
 
@@ -876,6 +884,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				newTeams = teamsDefault;
 			}
 
+			if (newLeagueFile.gameAttributes) {
+				if (Array.isArray(newLeagueFile.gameAttributes)) {
+					newLeagueFile.gameAttributes = gameAttributesArrayToObject(
+						newLeagueFile.gameAttributes,
+					);
+				}
+			}
+
 			dispatch({
 				type: "newLeagueFile",
 				leagueFile: newLeagueFile,
@@ -887,23 +903,20 @@ const NewLeague = (props: View<"newLeague">) => {
 			});
 
 			// Need to update team and difficulty dropdowns?
-			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
-				for (const ga of newLeagueFile.gameAttributes) {
-					if (ga.key === "userTid") {
-						let tid = ga.value;
-						if (Array.isArray(tid) && tid.length > 0) {
-							tid = tid[tid.length - 1].value;
-						}
-						if (typeof tid === "number" && !Number.isNaN(tid)) {
-							dispatch({ type: "setTid", tid });
-						}
-					} else if (
-						ga.key === "difficulty" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						dispatch({ type: "setDifficulty", difficulty: ga.value });
+			if (newLeagueFile.gameAttributes) {
+				if (newLeagueFile.gameAttributes.userTid !== undefined) {
+					let tid = newLeagueFile.gameAttributes.userTid;
+					if (Array.isArray(tid) && tid.length > 0) {
+						tid = tid[tid.length - 1].value;
 					}
+					if (typeof tid === "number" && !Number.isNaN(tid)) {
+						dispatch({ type: "setTid", tid });
+					}
+				}
+
+				const difficulty = newLeagueFile.gameAttributes.difficulty;
+				if (typeof difficulty === "number" && !Number.isNaN(difficulty)) {
+					dispatch({ type: "setDifficulty", difficulty: String(difficulty) });
 				}
 			}
 		},

@@ -734,28 +734,20 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const gameAttributes: {
-			key: string;
-			value: unknown;
-		}[] = [
-			{
-				key: "maxRosterSize",
-				value: 17,
-			},
-		];
-		for (const [key, value] of Object.entries(initialGameAttributes)) {
-			gameAttributes.push({ key, value });
-		}
+		const gameAttributes: Record<string, unknown> = {
+			maxRosterSize: 17,
+			...initialGameAttributes,
+		};
 
 		if (
 			options.season >= FIRST_SEASON_WITH_ALEXNOOB_ROSTERS &&
 			!options.randomDebuts
 		) {
-			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
+			gameAttributes.numSeasonsFutureDraftPicks = 7;
 		}
 
 		if (options.phase !== PHASE.PRESEASON) {
-			gameAttributes.push({ key: "phase", value: options.phase });
+			gameAttributes.phase = options.phase;
 		}
 
 		const getDraftPickTeams = (
@@ -1047,19 +1039,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 		keptPlayers.push(...freeAgents2);
 
-		const gameAttributes: {
-			key: string;
-			value: unknown;
-		}[] = [
-			{
-				key: "maxRosterSize",
-				value: 17,
-			},
-			{
-				key: "aiTradesFactor",
-				value: 0,
-			},
-		];
+		const gameAttributes: Record<string, unknown> = {
+			maxRosterSize: 17,
+			aiTradesFactor: 0,
+		};
 
 		const ignoreGameAttributes = [
 			"salaryCap",
@@ -1070,7 +1053,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		];
 		for (const [key, value] of Object.entries(initialGameAttributes)) {
 			if (!ignoreGameAttributes.includes(key)) {
-				gameAttributes.push({ key, value });
+				gameAttributes[key] = value;
 			}
 		}
 

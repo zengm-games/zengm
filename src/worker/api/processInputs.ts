@@ -250,6 +250,40 @@ const gameLog = (params: Params) => {
 	};
 };
 
+const headToHeadAll = (params: Params) => {
+	let season: number | "all";
+
+	if (params.season && params.season !== "all") {
+		season = validateSeason(params.season);
+	} else {
+		season = "all";
+	}
+
+	let type: "playoffs" | "regularSeason" | "all";
+	if (params.type === "playoffs") {
+		type = "playoffs";
+	} else if (params.type === "regularSeason") {
+		type = "regularSeason";
+	} else {
+		type = "all";
+	}
+
+	return {
+		season,
+		type,
+	};
+};
+
+const headToHead = (params: Params) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		abbrev,
+		tid,
+		...headToHeadAll(params),
+	};
+};
+
 const history = (params: Params) => {
 	let season = validateSeason(params.season);
 
@@ -707,6 +741,8 @@ export default {
 	frivolitiesTeamSeasons: most,
 	frivolitiesTrades,
 	gameLog,
+	headToHead,
+	headToHeadAll,
 	history,
 	leaders,
 	leagueFinances: validateSeasonOnly,

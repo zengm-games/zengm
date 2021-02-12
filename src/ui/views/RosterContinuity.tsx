@@ -1,11 +1,17 @@
 import PropTypes from "prop-types";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols } from "../util";
+import { getCols, gradientStyleFactory } from "../util";
 import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
+
+const gradientStyle = bySport({
+	basketball: gradientStyleFactory(0.5, 0.775, 0.85, 1),
+	football: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),
+	hockey: gradientStyleFactory(0.55, 0.775, 0.85, 0.95),
+});
 
 const RosterContinuity = ({
 	abbrevs,
@@ -41,23 +47,7 @@ const RosterContinuity = ({
 					}
 
 					return {
-						classNames: bySport({
-							basketball: {
-								"table-danger": pct < 0.7,
-								"table-warning": pct >= 0.7 && pct < 0.85,
-								"table-success": pct >= 0.85,
-							},
-							football: {
-								"table-danger": pct < 0.725,
-								"table-warning": pct >= 0.725 && pct < 0.825,
-								"table-success": pct >= 0.825,
-							},
-							hockey: {
-								"table-danger": pct < 0.725,
-								"table-warning": pct >= 0.725 && pct < 0.825,
-								"table-success": pct >= 0.825,
-							},
-						}),
+						style: gradientStyle(pct),
 						value: pct.toFixed(2),
 					};
 				}),

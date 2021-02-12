@@ -10,6 +10,7 @@ import {
 	local,
 	toUI,
 	logEvent,
+	random,
 } from "../../util";
 import type {
 	Conditions,
@@ -105,9 +106,30 @@ const newPhaseBeforeDraft = async (
 			0,
 			Infinity,
 		]);
-		for (let i = 0; i < activePlayers.length / 2; i++) {
-			await player.killOne(conditions);
+		random.shuffle(activePlayers);
+		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
+
+		for (const p of snappedPlayers) {
+			// Real players are retired, random killed.
+			if (p.real) {
+				await player.retire(p, conditions);
+				await idb.cache.players.put(p);
+			} else {
+				await player.killOne(conditions, p);
+			}
 		}
+
+		logEvent(
+			{
+				type: "tragedy",
+				text: "A Thanos event has occured!",
+				showNotification: true,
+				pids: [],
+				tids: [],
+				persistent: true,
+			},
+			conditions,
+		);
 
 		// Make sure another event won't happen within the next 2 seasons to prevent running out of players
 		await league.setGameAttributes({

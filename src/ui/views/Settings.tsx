@@ -137,7 +137,7 @@ export const descriptions = {
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
 	challengeThanosMode:
-		"At the end of playoffs, there's a 20% chance of half the league dying. After each event, there is a two season wait time before another event can occur.",
+		"At the end of playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, there is a two season wait time before another event can occur.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:

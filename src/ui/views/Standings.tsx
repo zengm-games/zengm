@@ -338,11 +338,14 @@ const Standings = ({
 			name: conf.name,
 			subgroups: divs
 				.filter(div => div.cid === conf.cid)
-				.map((div, i) => ({
-					name: div.name,
-					separatorIndex,
-					teams: rankingGroups.div[i],
-				})),
+				.map(div => {
+					const j = divs.findIndex(div2 => div2 === div);
+					return {
+						name: div.name,
+						separatorIndex,
+						teams: rankingGroups.div[j],
+					};
+				}),
 		}));
 	}
 

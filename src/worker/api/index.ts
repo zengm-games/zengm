@@ -306,6 +306,7 @@ const createLeague = async ({
 	challengeLoseBestPlayer,
 	challengeFiredLuxuryTax,
 	challengeFiredMissPlayoffs,
+	challengeThanosMode,
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
@@ -330,6 +331,7 @@ const createLeague = async ({
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;

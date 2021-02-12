@@ -110,23 +110,72 @@ const newPhaseBeforeDraft = async (
 		random.shuffle(activePlayers);
 		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
 
+		const userSnappedPlayers = [];
+
 		for (const p of snappedPlayers) {
-			// Real players are retired, random killed.
-			if (p.real) {
-				await player.retire(p, conditions);
-				await idb.cache.players.put(p);
-			} else {
-				await player.killOne(conditions, p);
+			// Real players are retired, random players are  killed
+			if (p.tid === g.get("userTid")) {
+				userSnappedPlayers.push(p);
 			}
+
+			let action;
+			if (p.real) {
+				action = "retired due to";
+			} else {
+				p.diedYear = g.get("season");
+				action = "was killed in";
+			}
+			logEvent(
+				{
+					type: "tragedy",
+					text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+						p.firstName
+					} ${p.lastName}</a> ${action} a Thanos snap.`,
+					showNotification: false,
+					pids: [p.pid],
+					tids: [p.tid],
+					score: 20,
+				},
+				conditions,
+			);
+
+			await player.retire(p, conditions, {
+				logRetiredEvent: false,
+			});
+			await idb.cache.players.put(p);
 		}
 
+		let text = "A Thanos event has occured! ";
+		const numPlayers = userSnappedPlayers.length;
+		if (numPlayers === 0) {
+			text += "Somehow your team did not lose any players.";
+		} else {
+			text += `Your team lost ${numPlayers} player${
+				numPlayers === 1 ? "" : "s"
+			}: `;
+			for (let i = 0; i < numPlayers; i++) {
+				const p = userSnappedPlayers[i];
+				if (i > 0 && numPlayers === 2) {
+					text += " and ";
+				} else if (i > 0 && i === numPlayers - 1) {
+					text += ", and ";
+				} else if (i > 0) {
+					text += ", ";
+				}
+
+				text += `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+					p.firstName
+				} ${p.lastName}</a>`;
+			}
+			text += ".";
+		}
 		logEvent(
 			{
 				type: "tragedy",
-				text: "A Thanos event has occured!",
+				text,
 				showNotification: true,
 				pids: [],
-				tids: [],
+				tids: [g.get("userTid")],
 				persistent: true,
 			},
 			conditions,

@@ -131,13 +131,13 @@ type Values = {
 
 export const descriptions = {
 	challengeLoseBestPlayer:
-		"At the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player).",
+		"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
 	challengeNoDraftPicks:
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
 	challengeThanosMode:
-		"At the end of playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, there is a two season wait time before another event can occur.",
+		"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:

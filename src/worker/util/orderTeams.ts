@@ -44,30 +44,24 @@ type BaseTeam = {
 	tiebreakers?: Tiebreaker[];
 };
 
-/*const TIEBREAKERS: Tiebreaker[] = isSport("basketball") ? [
-	"headToHead",
-	"divWinner",
-	"divRecordIfSame",
-	"confRecordIfSame",
-	"marginOfVictory",
-	"random",
-] : [
-	"headToHead",
-	"divRecordIfSame",
-	"commonGames",
-	"confRecordIfSame",
-	"strengthOfVictory",
-	"strengthOfSchedule",
-	"random",
-];*/
-const TIEBREAKERS: Tiebreaker[] = [
-	"divWinner",
-	"divRecordIfSame",
-	"confRecordIfSame",
-	"marginOfVictory",
-	"headToHead",
-	"random",
-];
+const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
+	? [
+			"headToHead",
+			"divWinner",
+			"divRecordIfSame",
+			"confRecordIfSame",
+			"marginOfVictory",
+			"random",
+	  ]
+	: [
+			"headToHead",
+			"divRecordIfSame",
+			"commonGames",
+			"confRecordIfSame",
+			"strengthOfVictory",
+			"strengthOfSchedule",
+			"random",
+	  ];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -86,12 +80,15 @@ type BreakTiesOptions = {
 	divisionWinners: Set<number>;
 	headToHead?: HeadToHead;
 	season: number;
+	tiebreakers: Tiebreaker[];
 };
 
-const breakTies = <T extends BaseTeam>(
+export const breakTies = <T extends BaseTeam>(
 	teams: T[],
 	options: BreakTiesOptions,
-): T[] => {
+): (T & {
+	tiebreakers?: Tiebreaker[];
+})[] => {
 	if (teams.length <= 1) {
 		return teams;
 	}
@@ -156,7 +153,7 @@ const breakTies = <T extends BaseTeam>(
 	}
 
 	let allSameDiv = false;
-	if (TIEBREAKERS.includes("divRecordIfSame")) {
+	if (options.tiebreakers.includes("divRecordIfSame")) {
 		allSameDiv = true;
 		const did = teams[0].seasonAttrs.did;
 		for (const t of teams) {
@@ -168,7 +165,7 @@ const breakTies = <T extends BaseTeam>(
 	}
 
 	let allSameConf = false;
-	if (TIEBREAKERS.includes("divRecordIfSame")) {
+	if (options.tiebreakers.includes("confRecordIfSame")) {
 		allSameConf = true;
 		if (!allSameDiv) {
 			const cid = teams[0].seasonAttrs.cid;
@@ -276,7 +273,7 @@ const breakTies = <T extends BaseTeam>(
 	const alreadyLost = new Set();
 
 	// Find top team among teams and pass through. The rest, evaluate in an individaul tiebreaker
-	for (const tiebreaker of TIEBREAKERS) {
+	for (const tiebreaker of options.tiebreakers) {
 		for (const [iteree, order] of TIEBREAKER_FUNCTIONS[tiebreaker]) {
 			const values = teams.map((t, i) => {
 				if (alreadyLost.has(i)) {
@@ -326,7 +323,7 @@ const breakTies = <T extends BaseTeam>(
 		}
 	}
 
-	throw new Error("Should never happen");
+	throw new Error("random tiebreaker should have been used");
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
@@ -421,8 +418,17 @@ const orderTeams = async <T extends BaseTeam>(
 			Array.from(divisionLeaders.values()).map(t => t.tid),
 		),
 		season,
+		tiebreakers: [
+			...TIEBREAKERS,
+
+			// Always do random, so there is some tiebreaker at least
+			"random",
+		],
 	};
-	if (tiedGroups.length > 0 && TIEBREAKERS.includes("headToHead")) {
+	if (
+		tiedGroups.length > 0 &&
+		(TIEBREAKERS.includes("commonGames") || TIEBREAKERS.includes("headToHead"))
+	) {
 		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
 			season,
 		});

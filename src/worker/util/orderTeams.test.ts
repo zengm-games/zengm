@@ -70,4 +70,32 @@ describe("worker/util/orderTeams/breakTies", () => {
 			]);
 		});
 	}
+
+	test("divWinner", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+		teams[2].seasonAttrs.wonConf = 9;
+		teams[2].seasonAttrs.lostConf = 3;
+		teams[3].seasonAttrs.wonConf = 8;
+		teams[3].seasonAttrs.lostConf = 4;
+		teams[0].seasonAttrs.wonConf = 7;
+		teams[0].seasonAttrs.lostConf = 5;
+
+		const teamsSorted = breakTies(teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set([1]),
+			season: 2020,
+			tiebreakers: ["divWinner", "confRecordIfSame", "random"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreakers?.[0]);
+
+		assert.deepStrictEqual(tids, [1, 2, 3, 0]);
+		assert.deepStrictEqual(reasons, [
+			"divWinner",
+			"confRecordIfSame",
+			"confRecordIfSame",
+			undefined,
+		]);
+	});
 });

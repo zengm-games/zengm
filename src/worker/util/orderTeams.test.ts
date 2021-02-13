@@ -5,6 +5,7 @@ import g from "./g";
 import helpers from "./helpers";
 import range from "lodash/range";
 import { breakTies } from "./orderTeams";
+import type { HeadToHead } from "../../common/types";
 
 const baseTeams = range(4).map(tid => ({
 	tid,
@@ -54,7 +55,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			const teamsSorted = breakTies(teams, {
 				addTiebreakersField: true,
 				divisionWinners: new Set(),
-				season: 2020,
+				season: 2021,
 				tiebreakers: [tiebreaker, "random"],
 			});
 
@@ -83,7 +84,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 		const teamsSorted = breakTies(teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set([1]),
-			season: 2020,
+			season: 2021,
 			tiebreakers: ["divWinner", "confRecordIfSame", "random"],
 		});
 
@@ -95,6 +96,58 @@ describe("worker/util/orderTeams/breakTies", () => {
 			"divWinner",
 			"confRecordIfSame",
 			"confRecordIfSame",
+			undefined,
+		]);
+	});
+
+	test("headToHead", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+
+		const headToHeadEntry = (won: number, lost: number) => ({
+			won,
+			lost,
+			tied: 0,
+			otw: 0,
+			otl: 0,
+			pts: 0,
+			oppPts: 0,
+		});
+
+		const headToHead: HeadToHead = {
+			season: 2021,
+			regularSeason: {
+				0: {
+					1: headToHeadEntry(0, 1),
+					2: headToHeadEntry(0, 1),
+					3: headToHeadEntry(0, 1),
+				},
+				1: {
+					2: headToHeadEntry(0, 1),
+					3: headToHeadEntry(0, 1),
+				},
+				2: {
+					3: headToHeadEntry(0, 1),
+				},
+			},
+			playoffs: {},
+		};
+
+		const teamsSorted = breakTies(teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set(),
+			headToHead,
+			season: 2021,
+			tiebreakers: ["headToHead", "random"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreakers?.[0]);
+
+		assert.deepStrictEqual(tids, [3, 2, 1, 0]);
+		assert.deepStrictEqual(reasons, [
+			"headToHead",
+			"headToHead",
+			"headToHead",
 			undefined,
 		]);
 	});

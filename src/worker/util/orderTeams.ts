@@ -129,13 +129,13 @@ export const breakTies = <T extends BaseTeam>(
 
 				if (matchup) {
 					if (reverse) {
-						won += matchup.won + matchup.otw;
-						lost += matchup.lost;
-						otl += matchup.otl;
-					} else {
 						won += matchup.lost + matchup.otl;
 						lost += matchup.won;
 						otl += matchup.otw;
+					} else {
+						won += matchup.won + matchup.otw;
+						lost += matchup.lost;
+						otl += matchup.otl;
 					}
 					tied += matchup.tied;
 				}

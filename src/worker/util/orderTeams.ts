@@ -1,10 +1,11 @@
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-import { g } from ".";
 import { isSport } from "../../common";
+import g from "./g";
+import helpers from "./helpers";
 import random from "./random";
 
-type Tiebreaker = "random";
+type Tiebreaker = "headToHead" | "random";
 
 type BaseTeam = {
 	seasonAttrs: {
@@ -32,7 +33,7 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS: Tiebreaker[] = ["random"];
+const TIEBREAKERS: Tiebreaker[] = ["headToHead", "random"];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -58,20 +59,29 @@ const breakTies = <T extends BaseTeam>(
 ): T[] => {
 	const TIEBREAKER_FUNCTIONS: Record<
 		Tiebreaker,
-		[(t: T) => number, "asc" | "desc"]
+		[((t: T) => number)[], ("asc" | "desc")[]]
 	> = {
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
 		random: [
-			(t: T) =>
-				random.uniformSeed(
-					t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
-				),
-			"asc",
+			[
+				(t: T) =>
+					random.uniformSeed(
+						t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
+					),
+			],
+			["asc"],
 		],
 	};
 
-	const iterees = TIEBREAKERS.map(key => TIEBREAKER_FUNCTIONS[key][0]);
-	const orders = TIEBREAKERS.map(key => TIEBREAKER_FUNCTIONS[key][1]);
+	const iterees: typeof TIEBREAKER_FUNCTIONS[Tiebreaker][0] = [];
+	const orders: typeof TIEBREAKER_FUNCTIONS[Tiebreaker][1] = [];
+	const tiebreakers: Tiebreaker[] = [];
+	for (const key of helpers.keys(TIEBREAKER_FUNCTIONS)) {
+		const [itereesLocal, ordersLocal] = TIEBREAKER_FUNCTIONS[key];
+		iterees.push(...itereesLocal);
+		orders.push(...ordersLocal);
+		tiebreakers.push(...Array(itereesLocal.length).fill(key));
+	}
 
 	const teamsSorted = orderBy(teams, iterees, orders);
 
@@ -81,8 +91,8 @@ const breakTies = <T extends BaseTeam>(
 		// This is kind of redundant with orderBy above. Would be more efficient to use sortInfo to generate teamsSorted
 		const sortInfo = teamsSorted.map(t =>
 			iterees.map((iteree, i) => {
-				const order = orders[i];
-				return (order === "asc" ? -1 : 1) * iteree(t);
+				// Can ignore order, since teamsSorted is already sorted, we just need to check for any difference. Direction doesn't matter.
+				return iteree(t);
 			}),
 		);
 
@@ -96,7 +106,7 @@ const breakTies = <T extends BaseTeam>(
 
 				for (let j = 0; j < currentInfo.length; j++) {
 					if (currentInfo[j] !== nextInfo[j]) {
-						tiebreakerToAdd = TIEBREAKERS[j];
+						tiebreakerToAdd = tiebreakers[j];
 						break;
 					}
 				}

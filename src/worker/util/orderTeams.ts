@@ -7,7 +7,7 @@ import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 
-type Tiebreaker = "headToHead" | "random";
+type Tiebreaker = "divWinner" | "headToHead" | "random";
 
 type BaseTeam = {
 	seasonAttrs: {
@@ -35,7 +35,7 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS: Tiebreaker[] = ["headToHead", "random"];
+const TIEBREAKERS: Tiebreaker[] = ["divWinner", "headToHead", "random"];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -49,17 +49,16 @@ const arraysEqual = (x: number[], y: number[]) => {
 	return true;
 };
 
-type Options = {
+type BreakTiesOptions = {
 	addTiebreakersField?: boolean;
+	divisionWinners: Set<number>;
 	headToHead?: HeadToHead;
-	season?: number;
+	season: number;
 };
 
 const breakTies = <T extends BaseTeam>(
 	teams: T[],
-	options: Options & {
-		season: number;
-	},
+	options: BreakTiesOptions,
 ): T[] => {
 	if (teams.length <= 1) {
 		return teams;
@@ -128,6 +127,10 @@ const breakTies = <T extends BaseTeam>(
 		Tiebreaker,
 		[(t: T) => number, "asc" | "desc"][]
 	> = {
+		divWinner: [
+			[(t: T) => (options.divisionWinners.has(t.tid) ? 1 : 0), "desc"],
+		],
+
 		headToHead: [
 			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
 			[(t: T) => headToHeadInfo?.[t.tid]?.won ?? 0, "desc"],
@@ -173,13 +176,16 @@ const breakTies = <T extends BaseTeam>(
 			if (maxIndexes.length === 1) {
 				// If there's only one team at max, that's our team! On to the next iteration
 				const t = teams[maxIndexes[0]];
+
 				return [
-					{
-						...t,
-						tiebreakers: t.tiebreakers
-							? [...t.tiebreakers, tiebreaker]
-							: [tiebreaker],
-					},
+					!options.addTiebreakersField
+						? t
+						: {
+								...t,
+								tiebreakers: t.tiebreakers
+									? [...t.tiebreakers, tiebreaker]
+									: [tiebreaker],
+						  },
 					...breakTies(
 						teams.filter(t2 => t2 !== t),
 						options,
@@ -202,7 +208,13 @@ const breakTies = <T extends BaseTeam>(
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
-	options: Options = {},
+	{
+		addTiebreakersField,
+		season = g.get("season"),
+	}: {
+		addTiebreakersField?: boolean;
+		season?: number;
+	} = {},
 ): Promise<
 	(T & {
 		tiebreakers?: Tiebreaker[];
@@ -210,10 +222,6 @@ const orderTeams = async <T extends BaseTeam>(
 > => {
 	if (teams.length <= 1) {
 		return teams;
-	}
-
-	if (options.season === undefined) {
-		options.season = g.get("season");
 	}
 
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
@@ -224,9 +232,9 @@ const orderTeams = async <T extends BaseTeam>(
 		// If there are only teams from one division here, then this is useless
 		for (const teamsDiv of teamsDivs) {
 			const teamsDivSorted = await orderTeams(teamsDiv, {
-				...options,
-				addTiebreakersField: false,
+				season,
 			});
+
 			const t = teamsDivSorted[0];
 			if (t) {
 				divisionLeaders.set(t.seasonAttrs.did, t);
@@ -283,9 +291,16 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
+	const breakTiesOptions: BreakTiesOptions = {
+		addTiebreakersField,
+		divisionWinners: new Set(
+			Array.from(divisionLeaders.values()).map(t => t.tid),
+		),
+		season,
+	};
 	if (tiedGroups.length > 0 && TIEBREAKERS.includes("headToHead")) {
-		options.headToHead = await idb.getCopy.headToHeads({
-			season: options.season,
+		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
+			season,
 		});
 	}
 
@@ -293,7 +308,9 @@ const orderTeams = async <T extends BaseTeam>(
 	for (const tiedGroup of tiedGroups) {
 		const teamsTied = breakTies(
 			teamsSorted.slice(tiedGroup.index, tiedGroup.index + tiedGroup.length),
-			options as any,
+			{
+				...breakTiesOptions,
+			},
 		);
 
 		teamsSorted.splice(tiedGroup.index, tiedGroup.length, ...teamsTied);

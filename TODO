@@ -3,6 +3,8 @@ leagueName gameAttribute used for anything?
 - https://discord.com/channels/@me/673750689649917958/809629720768675880
 
 better tiebreakers
+- divWinner
+  - keep around the tiebreak reason from finding the div winner!
 - division leaders going first - rethink how that's implemented for FBGM
   - we call orderTeams for a conference/league and expect it to bump up division leaders automatically
 - add options
@@ -31,6 +33,10 @@ better tiebreakers
   - conference tiebreaker based on division winner tiebreaker
   - 3 teams tied. first use headToHead of all three, last 2 remain tied. Those last 2 should be compared individually for other tiebreakers (like commonGames), not with the first team still included
   - one for each order type
+- t.tiebreakers -> t.tiebreaker, since you can only view one at each level currently?
+- help icon for tiebreakers column
+ - what's shown is the tiebreaker for the current team vs the lower teams tied with it
+ - when on conferences page and it says "divWinner", can switch to divisions to see how that tiebreaker worked
 
 show best season in player page summary top
 - https://discord.com/channels/290013534023057409/331882115119448065/810075786081861652

@@ -151,4 +151,29 @@ describe("worker/util/orderTeams/breakTies", () => {
 			undefined,
 		]);
 	});
+
+	test("marginOfVictory", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+		teams[2].stats.pts = 500;
+		teams[3].stats.pts = 400;
+		teams[1].stats.pts = 300;
+
+		const teamsSorted = breakTies(teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set([1]),
+			season: 2021,
+			tiebreakers: ["marginOfVictory", "random"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreakers?.[0]);
+
+		assert.deepStrictEqual(tids, [2, 3, 1, 0]);
+		assert.deepStrictEqual(reasons, [
+			"marginOfVictory",
+			"marginOfVictory",
+			"marginOfVictory",
+			undefined,
+		]);
+	});
 });

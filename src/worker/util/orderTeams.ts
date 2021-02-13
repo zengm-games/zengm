@@ -19,6 +19,7 @@ type BaseTeam = {
 	"divRecordIfSame",
 	"confRecordIfSame",
 	"mov",
+	"strengthOfSchedule",
 	"random",
 ] : [
 	"headToHead",
@@ -26,6 +27,7 @@ type BaseTeam = {
 	"commonGames",
 	"confRecordIfSame",
 	"mov",
+	"strengthOfSchedule",
 	"random",
 ];*/
 const TIEBREAKERS = ["random"] as const;
@@ -63,7 +65,11 @@ const breakTies = <T extends BaseTeam>(teams: T[], season: number): T[] => {
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
-	season: number = g.get("season"),
+	{
+		season = g.get("season"),
+	}: {
+		season?: number;
+	} = {},
 ): Promise<T[]> => {
 	if (teams.length <= 1) {
 		return teams;
@@ -76,7 +82,7 @@ const orderTeams = async <T extends BaseTeam>(
 	if (teamsDivs.length > 1) {
 		// If there are only teams from one division here, then this is useless
 		for (const teamsDiv of teamsDivs) {
-			const teamsDivSorted = await orderTeams(teamsDiv, season);
+			const teamsDivSorted = await orderTeams(teamsDiv, { season });
 			const t = teamsDivSorted[0];
 			if (t) {
 				divisionLeaders.set(t.seasonAttrs.did, t);

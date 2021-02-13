@@ -83,7 +83,6 @@ describe("worker/core/draft/lotterySort", () => {
 		});
 
 		await lotterySort(teams);
-		console.log(teams);
 
 		assert.deepStrictEqual(
 			teams.map(t => t.tid),

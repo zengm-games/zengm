@@ -1,5 +1,3 @@
-head2head import after box score
-
 leagueName gameAttribute used for anything?
 - in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
 - https://discord.com/channels/@me/673750689649917958/809629720768675880
@@ -24,6 +22,8 @@ better tiebreakers
   - 5. MOV
   - 6. random
 - "Reason" column like https://www.pro-football-reference.com/years/2020/
+  - show the factor that caused this team to be placed ahead of the team directly after it
+  - add an option to orderTeams to include an optional "tiebreakerReason" string, and display in standings
 - handle tiebreaker when 2 #1 seeds meet in playoffs
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams

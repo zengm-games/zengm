@@ -4,7 +4,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2021-02-11: In custom league files, there is a new simpler format for writing "gameAttributes". Don't worry, the old format will continue to work, you don't need to change anything! But now you can write it as an object rather than an array, which is generally a lot simpler. See [the manual](https://basketball-gm.com/manual/customization/game-attributes/) for more info.
 
-* 2021-02-09: Head-to-head team results are now viewable at League > History > Head-to-Head and Team > History > Head-to-Head. [[1]](https://basketball-gm.com/blog/2021/02/head-to-head/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lgj82n/headtohead_team_results_new_in_version/)
+* **2021-02-09: Head-to-head team results are now viewable at League > History > Head-to-Head and Team > History > Head-to-Head. [[1]](https://basketball-gm.com/blog/2021/02/head-to-head/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lgj82n/headtohead_team_results_new_in_version/) [[3]](https://old.reddit.com/r/BasketballGM/comments/lis1x8/how_to_add_headtohead_results_for_leagues_from/)**
 
 * 2021-02-09: Added a new option in League Settings to track overtime losses (OTL) separately from regulation losses, as is common in hockey. Currently it's just cosmetic, they count the same as losses.
 

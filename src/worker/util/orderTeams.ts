@@ -41,7 +41,7 @@ type BaseTeam = {
 	};
 
 	tid: number;
-	tiebreakers?: Tiebreaker[];
+	tiebreaker?: Tiebreaker;
 };
 
 const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
@@ -86,9 +86,7 @@ type BreakTiesOptions = {
 export const breakTies = <T extends BaseTeam>(
 	teams: T[],
 	options: BreakTiesOptions,
-): (T & {
-	tiebreakers?: Tiebreaker[];
-})[] => {
+): T[] => {
 	if (teams.length <= 1) {
 		return teams;
 	}
@@ -303,9 +301,9 @@ export const breakTies = <T extends BaseTeam>(
 						? t
 						: {
 								...t,
-								tiebreakers: t.tiebreakers
-									? [...t.tiebreakers, tiebreaker]
-									: [tiebreaker],
+
+								// Overwrite any existing tiebreaker. The last one is the relevant one.
+								tiebreaker,
 						  },
 					...breakTies(
 						teams.filter(t2 => t2 !== t),
@@ -338,7 +336,7 @@ const orderTeams = async <T extends BaseTeam>(
 	} = {},
 ): Promise<
 	(T & {
-		tiebreakers?: Tiebreaker[];
+		tiebreaker?: Tiebreaker;
 	})[]
 > => {
 	if (teams.length <= 1) {

@@ -18,15 +18,14 @@ type BaseTeam = {
 	"divWinner",
 	"divRecordIfSame",
 	"confRecordIfSame",
-	"mov",
-	"strengthOfSchedule",
+	"marginOfVictory",
 	"random",
 ] : [
 	"headToHead",
-	"divRecord",
+	"divRecordIfSame",
 	"commonGames",
 	"confRecordIfSame",
-	"mov",
+	"strengthOfVictory",
 	"strengthOfSchedule",
 	"random",
 ];*/

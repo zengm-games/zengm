@@ -24,6 +24,10 @@ better tiebreakers
 - "Reason" column like https://www.pro-football-reference.com/years/2020/
   - show the factor that caused this team to be placed ahead of the team directly after it
   - add an option to orderTeams to include an optional "tiebreakerReason" string, and display in standings
+    - careful to not recursively apply it when calculating div winners... except for div winners themselves it's needed!
+      - i guess would need to keep both (tiebreaker for div winner, tiebreaker for overall sort)
+    - really only makes sense when viewing "playoff standings", which is either league or conference standings depending on if playoffsByConference
+      - standings default view should depend on playoffsByConference?
 - handle tiebreaker when 2 #1 seeds meet in playoffs
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams

@@ -30,6 +30,7 @@ better tiebreakers
 - tiebreaker tests
   - conference tiebreaker based on division winner tiebreaker
   - 3 teams tied. first use headToHead of all three, last 2 remain tied. Those last 2 should be compared individually for other tiebreakers (like commonGames), not with the first team still included
+  - one for each order type
 
 show best season in player page summary top
 - https://discord.com/channels/290013534023057409/331882115119448065/810075786081861652

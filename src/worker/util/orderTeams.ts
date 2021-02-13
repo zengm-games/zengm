@@ -1,10 +1,13 @@
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
+import { helpers } from ".";
 import { isSport } from "../../common";
+import type { HeadToHead } from "../../common/types";
+import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 
-type Tiebreaker = "random";
+type Tiebreaker = "headToHead" | "random";
 
 type BaseTeam = {
 	seasonAttrs: {
@@ -32,7 +35,7 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS: Tiebreaker[] = ["random"];
+const TIEBREAKERS: Tiebreaker[] = ["headToHead", "random"];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -46,10 +49,15 @@ const arraysEqual = (x: number[], y: number[]) => {
 	return true;
 };
 
+type Options = {
+	addTiebreakersField?: boolean;
+	headToHead?: HeadToHead;
+	season?: number;
+};
+
 const breakTies = <T extends BaseTeam>(
 	teams: T[],
-	options: {
-		addTiebreakersField?: boolean;
+	options: Options & {
 		season: number;
 	},
 ): T[] => {
@@ -57,10 +65,74 @@ const breakTies = <T extends BaseTeam>(
 		return teams;
 	}
 
+	let headToHeadInfo:
+		| Record<
+				number,
+				{
+					won: number;
+					lost: number;
+					tied: number;
+					otl: number;
+					winp: number;
+				}
+		  >
+		| undefined;
+	const headToHead = options.headToHead;
+	if (headToHead) {
+		headToHeadInfo = {};
+
+		for (const t of teams) {
+			let won = 0;
+			let lost = 0;
+			let tied = 0;
+			let otl = 0;
+
+			for (const t2 of teams) {
+				if (t === t2) {
+					continue;
+				}
+
+				let matchup = headToHead.regularSeason[t.tid]?.[t2.tid];
+				let reverse = false;
+				if (!matchup) {
+					matchup = headToHead.regularSeason[t2.tid]?.[t.tid];
+					reverse = true;
+				}
+
+				if (matchup) {
+					if (reverse) {
+						won += matchup.won + matchup.otw;
+						lost += matchup.lost;
+						otl += matchup.otl;
+					} else {
+						won += matchup.lost + matchup.otl;
+						lost += matchup.won;
+						otl += matchup.otw;
+					}
+					tied += matchup.tied;
+				}
+			}
+
+			headToHeadInfo[t.tid] = {
+				won,
+				lost,
+				tied,
+				otl,
+				winp: 0,
+			};
+			headToHeadInfo[t.tid].winp = helpers.calcWinp(headToHeadInfo[t.tid]);
+		}
+	}
+
 	const TIEBREAKER_FUNCTIONS: Record<
 		Tiebreaker,
 		[(t: T) => number, "asc" | "desc"][]
 	> = {
+		headToHead: [
+			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => headToHeadInfo?.[t.tid]?.won ?? 0, "desc"],
+		],
+
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
 		random: [
 			[
@@ -130,13 +202,7 @@ const breakTies = <T extends BaseTeam>(
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
-	{
-		addTiebreakersField,
-		season = g.get("season"),
-	}: {
-		addTiebreakersField?: boolean;
-		season?: number;
-	} = {},
+	options: Options = {},
 ): Promise<
 	(T & {
 		tiebreakers?: Tiebreaker[];
@@ -146,6 +212,10 @@ const orderTeams = async <T extends BaseTeam>(
 		return teams;
 	}
 
+	if (options.season === undefined) {
+		options.season = g.get("season");
+	}
+
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
 	const divisionLeaders = new Map<number, T>();
 	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
@@ -153,7 +223,10 @@ const orderTeams = async <T extends BaseTeam>(
 	if (teamsDivs.length > 1) {
 		// If there are only teams from one division here, then this is useless
 		for (const teamsDiv of teamsDivs) {
-			const teamsDivSorted = await orderTeams(teamsDiv, { season });
+			const teamsDivSorted = await orderTeams(teamsDiv, {
+				...options,
+				addTiebreakersField: false,
+			});
 			const t = teamsDivSorted[0];
 			if (t) {
 				divisionLeaders.set(t.seasonAttrs.did, t);
@@ -210,14 +283,17 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
+	if (tiedGroups.length > 0 && TIEBREAKERS.includes("headToHead")) {
+		options.headToHead = await idb.getCopy.headToHeads({
+			season: options.season,
+		});
+	}
+
 	// Break ties
 	for (const tiedGroup of tiedGroups) {
 		const teamsTied = breakTies(
 			teamsSorted.slice(tiedGroup.index, tiedGroup.index + tiedGroup.length),
-			{
-				addTiebreakersField,
-				season,
-			},
+			options as any,
 		);
 
 		teamsSorted.splice(tiedGroup.index, tiedGroup.length, ...teamsTied);

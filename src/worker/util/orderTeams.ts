@@ -12,6 +12,7 @@ type Tiebreaker =
 	| "divRecordIfSame"
 	| "divWinner"
 	| "headToHead"
+	| "marginOfVictory"
 	| "random";
 
 type BaseTeam = {
@@ -31,6 +32,14 @@ type BaseTeam = {
 		otlConf: number;
 		tiedConf: number;
 	};
+
+	// Needed for some tiebreakers
+	stats: {
+		gp: number;
+		pts: number;
+		oppPts: number;
+	};
+
 	tid: number;
 	tiebreakers?: Tiebreaker[];
 };
@@ -55,6 +64,7 @@ const TIEBREAKERS: Tiebreaker[] = [
 	"divWinner",
 	"divRecordIfSame",
 	"confRecordIfSame",
+	"marginOfVictory",
 	"headToHead",
 	"random",
 ];
@@ -191,6 +201,16 @@ const breakTies = <T extends BaseTeam>(
 				},
 				"desc",
 			],
+			[
+				(t: T) => {
+					if (!allSameConf) {
+						return -Infinity;
+					}
+
+					return t.seasonAttrs.wonConf;
+				},
+				"desc",
+			],
 		],
 
 		divRecordIfSame: [
@@ -209,6 +229,16 @@ const breakTies = <T extends BaseTeam>(
 				},
 				"desc",
 			],
+			[
+				(t: T) => {
+					if (!allSameDiv) {
+						return -Infinity;
+					}
+
+					return t.seasonAttrs.wonDiv;
+				},
+				"desc",
+			],
 		],
 
 		divWinner: [
@@ -218,6 +248,16 @@ const breakTies = <T extends BaseTeam>(
 		headToHead: [
 			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
 			[(t: T) => headToHeadInfo?.[t.tid]?.won ?? 0, "desc"],
+		],
+
+		marginOfVictory: [
+			[
+				(t: T) =>
+					t.stats.gp > 0
+						? (t.stats.pts - t.stats.oppPts) / t.stats.gp
+						: -Infinity,
+				"desc",
+			],
 		],
 
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result

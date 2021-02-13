@@ -3,8 +3,6 @@ leagueName gameAttribute used for anything?
 - https://discord.com/channels/@me/673750689649917958/809629720768675880
 
 better tiebreakers
-- breakties needs to be recursive?
-  - 3 teams tied. first use headToHead of all three, last 2 remain tied. Those last 2 should be compared individually for other tiebreakers (like commonGames), not with the first team still included
 - division leaders going first - rethink how that's implemented for FBGM
   - we call orderTeams for a conference/league and expect it to bump up division leaders automatically
 - add options
@@ -29,6 +27,9 @@ better tiebreakers
   - reassess everywhere that calls orderTeams
 - standings data structure is kind of weird, no need for that separate "rank" object
 - is width of standings UI okay now that there is a tiebreaker column?
+- tiebreaker tests
+  - conference tiebreaker based on division winner tiebreaker
+  - 3 teams tied. first use headToHead of all three, last 2 remain tied. Those last 2 should be compared individually for other tiebreakers (like commonGames), not with the first team still included
 
 show best season in player page summary top
 - https://discord.com/channels/290013534023057409/331882115119448065/810075786081861652

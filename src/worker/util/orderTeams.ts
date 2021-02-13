@@ -2,10 +2,9 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { isSport } from "../../common";
 import g from "./g";
-import helpers from "./helpers";
 import random from "./random";
 
-type Tiebreaker = "headToHead" | "random";
+type Tiebreaker = "random";
 
 type BaseTeam = {
 	seasonAttrs: {
@@ -33,7 +32,7 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS: Tiebreaker[] = ["headToHead", "random"];
+const TIEBREAKERS: Tiebreaker[] = ["random"];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -49,85 +48,83 @@ const arraysEqual = (x: number[], y: number[]) => {
 
 const breakTies = <T extends BaseTeam>(
 	teams: T[],
-	{
-		addTiebreakersField,
-		season,
-	}: {
+	options: {
 		addTiebreakersField?: boolean;
 		season: number;
 	},
 ): T[] => {
+	if (teams.length <= 1) {
+		return teams;
+	}
+
 	const TIEBREAKER_FUNCTIONS: Record<
 		Tiebreaker,
-		[((t: T) => number)[], ("asc" | "desc")[]]
+		[(t: T) => number, "asc" | "desc"][]
 	> = {
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
 		random: [
 			[
 				(t: T) =>
 					random.uniformSeed(
-						t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
+						t.tid + options.season + (t.seasonAttrs.won + t.seasonAttrs.winp),
 					),
+				"asc",
 			],
-			["asc"],
 		],
 	};
 
-	const iterees: typeof TIEBREAKER_FUNCTIONS[Tiebreaker][0] = [];
-	const orders: typeof TIEBREAKER_FUNCTIONS[Tiebreaker][1] = [];
-	const tiebreakers: Tiebreaker[] = [];
-	for (const key of helpers.keys(TIEBREAKER_FUNCTIONS)) {
-		const [itereesLocal, ordersLocal] = TIEBREAKER_FUNCTIONS[key];
-		iterees.push(...itereesLocal);
-		orders.push(...ordersLocal);
-		tiebreakers.push(...Array(itereesLocal.length).fill(key));
-	}
+	// Values are index on "teams" array for teams that already lost a tiebreaker round
+	const alreadyLost = new Set();
 
-	const teamsSorted = orderBy(teams, iterees, orders);
+	// Find top team among teams and pass through. The rest, evaluate in an individaul tiebreaker
+	for (const tiebreaker of TIEBREAKERS) {
+		for (const [iteree, order] of TIEBREAKER_FUNCTIONS[tiebreaker]) {
+			const values = teams.map((t, i) => {
+				if (alreadyLost.has(i)) {
+					return -Infinity;
+				}
 
-	if (addTiebreakersField) {
-		// Need to figure out the *first* tiebreaker that set each team apart from the ones after it. Last team will get no new tiebreakers entry.
+				return (order === "asc" ? -1 : 1) * iteree(t);
+			});
 
-		// This is kind of redundant with orderBy above. Would be more efficient to use sortInfo to generate teamsSorted
-		const sortInfo = teamsSorted.map(t =>
-			iterees.map((iteree, i) => {
-				// Can ignore order, since teamsSorted is already sorted, we just need to check for any difference. Direction doesn't matter.
-				return iteree(t);
-			}),
-		);
+			let maxValue;
+			let maxIndexes: number[] = [];
+			for (let i = 0; i < values.length; i++) {
+				if (maxValue === undefined || values[i] > maxValue) {
+					maxValue = values[i];
+					maxIndexes = [i];
+				} else if (values[i] === maxValue) {
+					maxIndexes.push(i);
+				}
+			}
 
-		return teamsSorted.map((t, i) => {
-			let tiebreakerToAdd: Tiebreaker | undefined;
-
-			// Last team will get no new tiebreakers entry.
-			if (i < teamsSorted.length - 1) {
-				const currentInfo = sortInfo[i];
-				const nextInfo = sortInfo[i + 1];
-
-				for (let j = 0; j < currentInfo.length; j++) {
-					if (currentInfo[j] !== nextInfo[j]) {
-						tiebreakerToAdd = tiebreakers[j];
-						break;
+			if (maxIndexes.length === 1) {
+				// If there's only one team at max, that's our team! On to the next iteration
+				const t = teams[maxIndexes[0]];
+				return [
+					{
+						...t,
+						tiebreakers: t.tiebreakers
+							? [...t.tiebreakers, tiebreaker]
+							: [tiebreaker],
+					},
+					...breakTies(
+						teams.filter(t2 => t2 !== t),
+						options,
+					),
+				];
+			} else {
+				// If there's a tie at this level, mark the teams which are not part of the tie, and continue to the next tiebreaker
+				for (let i = 0; i < values.length; i++) {
+					if (values[i] !== maxValue) {
+						alreadyLost.add(i);
 					}
 				}
 			}
-
-			if (tiebreakerToAdd) {
-				if (!t.tiebreakers) {
-					return {
-						...t,
-						tiebreakers: [tiebreakerToAdd],
-					};
-				} else {
-					t.tiebreakers.push(tiebreakerToAdd);
-				}
-			}
-
-			return t;
-		});
+		}
 	}
 
-	return teamsSorted;
+	throw new Error("Should never happen");
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.

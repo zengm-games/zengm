@@ -5,11 +5,11 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
-import { COURT, isSport } from "../../common";
+import { COURT, isSport, TIEBREAKERS } from "../../common";
 
 type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
 
-const MAX_WIDTH = 1120;
+const MAX_WIDTH = 1320;
 
 const record = (
 	seasonAttrs: StandingsTeam["seasonAttrs"],
@@ -97,7 +97,7 @@ const GroupStandingsRow = ({
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
-			<td>{t.tiebreaker}</td>
+			<td>{t.tiebreaker ? TIEBREAKERS[t.tiebreaker] : null}</td>
 		</tr>
 	);
 };

@@ -1,20 +1,13 @@
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { helpers } from ".";
-import { isSport } from "../../common";
+import { isSport, TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";
 import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 
-type Tiebreaker =
-	| "commonOpponentsRecord"
-	| "confRecordIfSame"
-	| "divRecordIfSame"
-	| "divWinner"
-	| "headToHeadRecord"
-	| "marginOfVictory"
-	| "random";
+type Tiebreaker = keyof typeof TIEBREAKERS;
 
 type BaseTeam = {
 	seasonAttrs: {
@@ -45,14 +38,14 @@ type BaseTeam = {
 	tiebreaker?: Tiebreaker;
 };
 
-const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
+const CURRENT_TIEBREAKERS: Tiebreaker[] = isSport("basketball")
 	? [
 			"headToHeadRecord",
 			"divWinner",
 			"divRecordIfSame",
 			"confRecordIfSame",
 			"marginOfVictory",
-			"random",
+			"coinFlip",
 	  ]
 	: [
 			"headToHeadRecord",
@@ -61,7 +54,7 @@ const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
 			"confRecordIfSame",
 			"strengthOfVictory",
 			"strengthOfSchedule",
-			"random",
+			"coinFlip",
 	  ];
 
 // In football and hockey, top conference playoff seeds go to the division winners
@@ -366,7 +359,7 @@ export const breakTies = <T extends BaseTeam>(
 		],
 
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
-		random: [
+		coinFlip: [
 			[
 				(t: T) =>
 					random.uniformSeed(
@@ -527,16 +520,16 @@ const orderTeams = async <T extends BaseTeam>(
 		),
 		season,
 		tiebreakers: [
-			...TIEBREAKERS,
+			...CURRENT_TIEBREAKERS,
 
 			// Always do random, so there is some tiebreaker at least
-			"random",
+			"coinFlip",
 		],
 	};
 	if (
 		tiedGroups.length > 0 &&
-		(TIEBREAKERS.includes("commonOpponentsRecord") ||
-			TIEBREAKERS.includes("headToHeadRecord"))
+		(CURRENT_TIEBREAKERS.includes("commonOpponentsRecord") ||
+			CURRENT_TIEBREAKERS.includes("headToHeadRecord"))
 	) {
 		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
 			season,

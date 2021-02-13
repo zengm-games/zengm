@@ -253,6 +253,16 @@ const SPORT_HAS_LEGENDS = bySport({
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
+const TIEBREAKERS = {
+	commonOpponentsRecord: "Common opponents record",
+	confRecordIfSame: "Conference record (if same conf)",
+	divRecordIfSame: "Division record (if same div)",
+	divWinner: "Division winner",
+	headToHeadRecord: "Head-to-head record",
+	marginOfVictory: "Margin of victory",
+	coinFlip: "Coin flip",
+};
+
 export {
 	AWARD_NAMES,
 	COURT,
@@ -284,6 +294,7 @@ export {
 	POSITIONS,
 	SUBREDDIT_NAME,
 	TEAM_STATS_TABLES,
+	TIEBREAKERS,
 	TIME_BETWEEN_GAMES,
 	TWITTER_HANDLE,
 };

@@ -33,6 +33,7 @@ better tiebreakers
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams
 - standings data structure is kind of weird, no need for that separate "rank" object
+- is width of standings UI okay now that there is a tiebreaker column?
 
 head to head records
 - later

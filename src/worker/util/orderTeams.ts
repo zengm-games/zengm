@@ -4,6 +4,8 @@ import { g } from ".";
 import { isSport } from "../../common";
 import random from "./random";
 
+type Tiebreaker = "random";
+
 type BaseTeam = {
 	seasonAttrs: {
 		winp: number;
@@ -11,9 +13,8 @@ type BaseTeam = {
 		did: number;
 	};
 	tid: number;
+	tiebreakers?: Tiebreaker[];
 };
-
-type Tiebreaker = "random";
 
 /*const TIEBREAKERS: Tiebreaker[] = isSport("basketball") ? [
 	"headToHead",
@@ -75,10 +76,45 @@ const breakTies = <T extends BaseTeam>(
 	const teamsSorted = orderBy(teams, iterees, orders);
 
 	if (addTiebreakersField) {
-		return teamsSorted.map(t => ({
-			...t,
-			tiebreakers: ["random"],
-		}));
+		// Need to figure out the *first* tiebreaker that set each team apart from the ones after it. Last team will get no new tiebreakers entry.
+
+		// This is kind of redundant with orderBy above. Would be more efficient to use sortInfo to generate teamsSorted
+		const sortInfo = teamsSorted.map(t =>
+			iterees.map((iteree, i) => {
+				const order = orders[i];
+				return (order === "asc" ? -1 : 1) * iteree(t);
+			}),
+		);
+
+		return teamsSorted.map((t, i) => {
+			let tiebreakerToAdd: Tiebreaker | undefined;
+
+			// Last team will get no new tiebreakers entry.
+			if (i < teamsSorted.length - 1) {
+				const currentInfo = sortInfo[i];
+				const nextInfo = sortInfo[i + 1];
+
+				for (let j = 0; j < currentInfo.length; j++) {
+					if (currentInfo[j] !== nextInfo[j]) {
+						tiebreakerToAdd = TIEBREAKERS[j];
+						break;
+					}
+				}
+			}
+
+			if (tiebreakerToAdd) {
+				if (!t.tiebreakers) {
+					return {
+						...t,
+						tiebreakers: [tiebreakerToAdd],
+					};
+				} else {
+					t.tiebreakers.push(tiebreakerToAdd);
+				}
+			}
+
+			return t;
+		});
 	}
 
 	return teamsSorted;

@@ -77,17 +77,18 @@ const updateStandings = async (
 			},
 		}));
 
-		const rankingGroups: Record<"league" | "conf" | "div", typeof teams[]> = {
-			league: [
-				await orderTeams(teams, {
-					season: inputs.season,
-				}),
-			],
+		const orderTeamsOptions = {
+			addTiebreakersField: true,
+			season: inputs.season,
+		};
+
+		const rankingGroups = {
+			league: [await orderTeams(teams, orderTeamsOptions)],
 			conf: await Promise.all(
 				confs.map(conf =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.cid === conf.cid),
-						{ season: inputs.season },
+						orderTeamsOptions,
 					),
 				),
 			),
@@ -95,7 +96,7 @@ const updateStandings = async (
 				divs.map(div =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.did === div.did),
-						{ season: inputs.season },
+						orderTeamsOptions,
 					),
 				),
 			),

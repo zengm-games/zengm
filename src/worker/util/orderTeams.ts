@@ -13,7 +13,9 @@ type BaseTeam = {
 	tid: number;
 };
 
-/*const TIEBREAKERS = isSport("basketball") ? [
+type Tiebreaker = "random";
+
+/*const TIEBREAKERS: Tiebreaker[] = isSport("basketball") ? [
 	"headToHead",
 	"divWinner",
 	"divRecordIfSame",
@@ -29,7 +31,7 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS = ["random"] as const;
+const TIEBREAKERS: Tiebreaker[] = ["random"];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -43,8 +45,20 @@ const arraysEqual = (x: number[], y: number[]) => {
 	return true;
 };
 
-const breakTies = <T extends BaseTeam>(teams: T[], season: number): T[] => {
-	const TIEBREAKER_FUNCTIONS = {
+const breakTies = <T extends BaseTeam>(
+	teams: T[],
+	{
+		addTiebreakersField,
+		season,
+	}: {
+		addTiebreakersField?: boolean;
+		season: number;
+	},
+): T[] => {
+	const TIEBREAKER_FUNCTIONS: Record<
+		Tiebreaker,
+		[(t: T) => number, "asc" | "desc"]
+	> = {
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
 		random: [
 			(t: T) =>
@@ -52,24 +66,39 @@ const breakTies = <T extends BaseTeam>(teams: T[], season: number): T[] => {
 					t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
 				),
 			"asc",
-		] as const,
+		],
 	};
 
 	const iterees = TIEBREAKERS.map(key => TIEBREAKER_FUNCTIONS[key][0]);
 	const orders = TIEBREAKERS.map(key => TIEBREAKER_FUNCTIONS[key][1]);
 
-	return orderBy(teams, iterees, orders);
+	const teamsSorted = orderBy(teams, iterees, orders);
+
+	if (addTiebreakersField) {
+		return teamsSorted.map(t => ({
+			...t,
+			tiebreakers: ["random"],
+		}));
+	}
+
+	return teamsSorted;
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
 	{
+		addTiebreakersField,
 		season = g.get("season"),
 	}: {
+		addTiebreakersField?: boolean;
 		season?: number;
 	} = {},
-): Promise<T[]> => {
+): Promise<
+	(T & {
+		tiebreakers?: Tiebreaker[];
+	})[]
+> => {
 	if (teams.length <= 1) {
 		return teams;
 	}
@@ -142,7 +171,10 @@ const orderTeams = async <T extends BaseTeam>(
 	for (const tiedGroup of tiedGroups) {
 		const teamsTied = breakTies(
 			teamsSorted.slice(tiedGroup.index, tiedGroup.index + tiedGroup.length),
-			season,
+			{
+				addTiebreakersField,
+				season,
+			},
 		);
 
 		teamsSorted.splice(tiedGroup.index, tiedGroup.length, ...teamsTied);

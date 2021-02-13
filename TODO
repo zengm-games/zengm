@@ -28,9 +28,11 @@ better tiebreakers
       - i guess would need to keep both (tiebreaker for div winner, tiebreaker for overall sort)
     - really only makes sense when viewing "playoff standings", which is either league or conference standings depending on if playoffsByConference
       - standings default view should depend on playoffsByConference?
+  - only show if season >50% done (or something)
 - handle tiebreaker when 2 #1 seeds meet in playoffs
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams
+- standings data structure is kind of weird, no need for that separate "rank" object
 
 head to head records
 - later

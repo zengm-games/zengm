@@ -9,16 +9,18 @@ const addGame = async ({
 	overtime,
 	playoffRound,
 	seriesWinner,
+	season = g.get("season"),
+	playoffs = g.get("phase") === PHASE.PLAYOFFS,
 }: {
 	tids: [number, number];
 	pts: [number, number];
 	overtime: boolean;
 	playoffRound?: number;
 	seriesWinner?: number;
+	season?: number;
+	playoffs?: boolean;
 }) => {
-	const season = g.get("season");
-	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-	const otl = g.get("otl", "current");
+	const otl = g.get("otl", season);
 
 	const headToHead: HeadToHead = (await idb.cache.headToHeads.get(season)) ?? {
 		season,

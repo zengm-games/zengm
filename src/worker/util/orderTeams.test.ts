@@ -73,6 +73,65 @@ describe("worker/util/orderTeams/breakTies", () => {
 		});
 	}
 
+	test("commonOpponentsRecord", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+
+		const headToHeadEntry = (won: number, lost: number) => ({
+			won,
+			lost,
+			tied: 0,
+			otw: 0,
+			otl: 0,
+			pts: 0,
+			oppPts: 0,
+		});
+
+		const headToHead: HeadToHead = {
+			season: 2021,
+			regularSeason: {
+				// The records against team 7 never matter, because the best and worst teams against the other common opponents never play team 7, so it never gets used in the tiebreaker
+				0: {
+					5: headToHeadEntry(0, 2),
+					6: headToHeadEntry(2, 0),
+					7: headToHeadEntry(100, 0),
+				},
+				1: {
+					5: headToHeadEntry(0, 1),
+					6: headToHeadEntry(2, 0),
+					7: headToHeadEntry(0, 100),
+				},
+				2: {
+					5: headToHeadEntry(0, 1),
+					6: headToHeadEntry(0, 1),
+				},
+				3: {
+					5: headToHeadEntry(2, 0),
+					6: headToHeadEntry(2, 0),
+				},
+			},
+			playoffs: {},
+		};
+
+		const teamsSorted = breakTies(teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set(),
+			headToHead,
+			season: 2021,
+			tiebreakers: ["commonOpponentsRecord", "random"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreaker);
+
+		assert.deepStrictEqual(tids, [3, 1, 0, 2]);
+		assert.deepStrictEqual(reasons, [
+			"commonOpponentsRecord",
+			"commonOpponentsRecord",
+			"commonOpponentsRecord",
+			undefined,
+		]);
+	});
+
 	test("divWinner", async () => {
 		const teams = helpers.deepCopy(baseTeams);
 		teams[2].seasonAttrs.wonConf = 9;
@@ -101,7 +160,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 		]);
 	});
 
-	test("headToHead", async () => {
+	test("headToHeadRecord", async () => {
 		const teams = helpers.deepCopy(baseTeams);
 
 		const headToHeadEntry = (won: number, lost: number) => ({
@@ -138,7 +197,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			divisionWinners: new Set(),
 			headToHead,
 			season: 2021,
-			tiebreakers: ["headToHead", "random"],
+			tiebreakers: ["headToHeadRecord", "random"],
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -146,9 +205,9 @@ describe("worker/util/orderTeams/breakTies", () => {
 
 		assert.deepStrictEqual(tids, [3, 2, 1, 0]);
 		assert.deepStrictEqual(reasons, [
-			"headToHead",
-			"headToHead",
-			"headToHead",
+			"headToHeadRecord",
+			"headToHeadRecord",
+			"headToHeadRecord",
 			undefined,
 		]);
 	});

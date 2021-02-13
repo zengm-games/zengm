@@ -8,10 +8,11 @@ import g from "./g";
 import random from "./random";
 
 type Tiebreaker =
+	| "commonOpponentsRecord"
 	| "confRecordIfSame"
 	| "divRecordIfSame"
 	| "divWinner"
-	| "headToHead"
+	| "headToHeadRecord"
 	| "marginOfVictory"
 	| "random";
 
@@ -46,7 +47,7 @@ type BaseTeam = {
 
 const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
 	? [
-			"headToHead",
+			"headToHeadRecord",
 			"divWinner",
 			"divRecordIfSame",
 			"confRecordIfSame",
@@ -54,9 +55,9 @@ const TIEBREAKERS: Tiebreaker[] = isSport("basketball")
 			"random",
 	  ]
 	: [
-			"headToHead",
+			"headToHeadRecord",
 			"divRecordIfSame",
-			"commonGames",
+			"commonOpponentsRecord",
 			"confRecordIfSame",
 			"strengthOfVictory",
 			"strengthOfSchedule",
@@ -91,6 +92,8 @@ export const breakTies = <T extends BaseTeam>(
 		return teams;
 	}
 
+	const headToHead = options.headToHead;
+
 	let headToHeadInfo:
 		| Record<
 				number,
@@ -103,8 +106,7 @@ export const breakTies = <T extends BaseTeam>(
 				}
 		  >
 		| undefined;
-	const headToHead = options.headToHead;
-	if (headToHead) {
+	if (options.tiebreakers.includes("headToHeadRecord") && headToHead) {
 		headToHeadInfo = {};
 
 		for (const t of teams) {
@@ -150,6 +152,109 @@ export const breakTies = <T extends BaseTeam>(
 		}
 	}
 
+	let commonOpponentsInfo:
+		| Record<
+				number,
+				{
+					won: number;
+					lost: number;
+					tied: number;
+					otl: number;
+					winp: number;
+				}
+		  >
+		| undefined;
+	if (options.tiebreakers.includes("commonOpponentsRecord") && headToHead) {
+		commonOpponentsInfo = {};
+
+		const addOpponentTids = (tid: number, set: Set<number>) => {
+			const tids: number[] = [];
+
+			for (const t2 of teams) {
+				const firstLevel = headToHead.regularSeason[t2.tid];
+				if (firstLevel) {
+					const tids = Object.keys(firstLevel).map(string => parseInt(string));
+					for (const tid2 of tids) {
+						if (tid2 === tid) {
+							set.add(t2.tid);
+						} else if (t2.tid === tid) {
+							set.add(tid2);
+						}
+					}
+				}
+			}
+
+			return tids;
+		};
+
+		// First, identify the common opponents shared by all of the teams
+		const commonOpponents = new Set<number>();
+		let firstTeam = true;
+		for (const t of teams) {
+			if (firstTeam) {
+				firstTeam = false;
+
+				// Initialize with first team
+				addOpponentTids(t.tid, commonOpponents);
+			} else {
+				// Check all other teams against the first team
+				const opponents = new Set<number>();
+				addOpponentTids(t.tid, opponents);
+				for (const opponent of commonOpponents) {
+					if (!opponents.has(opponent)) {
+						commonOpponents.delete(opponent);
+					}
+				}
+			}
+
+			// Remove self from list
+			commonOpponents.delete(t.tid);
+		}
+
+		if (commonOpponents.size > 0) {
+			for (const t of teams) {
+				let won = 0;
+				let lost = 0;
+				let tied = 0;
+				let otl = 0;
+				for (const tid of commonOpponents) {
+					let matchup = headToHead.regularSeason[t.tid]?.[tid];
+					let reverse = false;
+					if (!matchup) {
+						matchup = headToHead.regularSeason[tid]?.[t.tid];
+						reverse = true;
+					}
+
+					if (matchup) {
+						if (reverse) {
+							won += matchup.lost + matchup.otl;
+							lost += matchup.won;
+							otl += matchup.otw;
+						} else {
+							won += matchup.won + matchup.otw;
+							lost += matchup.lost;
+							otl += matchup.otl;
+						}
+						tied += matchup.tied;
+					} else {
+						throw new Error("Should never happen");
+					}
+				}
+
+				commonOpponentsInfo[t.tid] = {
+					won,
+					lost,
+					tied,
+					otl,
+					winp: 0,
+				};
+				commonOpponentsInfo[t.tid].winp = helpers.calcWinp(
+					commonOpponentsInfo[t.tid],
+				);
+			}
+		}
+	}
+
 	let allSameDiv = false;
 	if (options.tiebreakers.includes("divRecordIfSame")) {
 		allSameDiv = true;
@@ -180,6 +285,11 @@ export const breakTies = <T extends BaseTeam>(
 		Tiebreaker,
 		[(t: T) => number, "asc" | "desc"][]
 	> = {
+		commonOpponentsRecord: [
+			[(t: T) => commonOpponentsInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => commonOpponentsInfo?.[t.tid]?.won ?? 0, "desc"],
+		],
+
 		confRecordIfSame: [
 			[
 				(t: T) => {
@@ -240,7 +350,7 @@ export const breakTies = <T extends BaseTeam>(
 			[(t: T) => (options.divisionWinners.has(t.tid) ? 1 : 0), "desc"],
 		],
 
-		headToHead: [
+		headToHeadRecord: [
 			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
 			[(t: T) => headToHeadInfo?.[t.tid]?.won ?? 0, "desc"],
 		],
@@ -425,7 +535,8 @@ const orderTeams = async <T extends BaseTeam>(
 	};
 	if (
 		tiedGroups.length > 0 &&
-		(TIEBREAKERS.includes("commonGames") || TIEBREAKERS.includes("headToHead"))
+		(TIEBREAKERS.includes("commonOpponentsRecord") ||
+			TIEBREAKERS.includes("headToHeadRecord"))
 	) {
 		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
 			season,

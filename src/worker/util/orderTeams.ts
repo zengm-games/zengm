@@ -7,13 +7,29 @@ import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 
-type Tiebreaker = "divWinner" | "headToHead" | "random";
+type Tiebreaker =
+	| "confRecordIfSame"
+	| "divRecordIfSame"
+	| "divWinner"
+	| "headToHead"
+	| "random";
 
 type BaseTeam = {
 	seasonAttrs: {
 		winp: number;
 		won: number;
 		did: number;
+
+		// Needed for some tiebreakers
+		cid: number;
+		wonDiv: number;
+		lostDiv: number;
+		otlDiv: number;
+		tiedDiv: number;
+		wonConf: number;
+		lostConf: number;
+		otlConf: number;
+		tiedConf: number;
 	};
 	tid: number;
 	tiebreakers?: Tiebreaker[];
@@ -35,7 +51,13 @@ type BaseTeam = {
 	"strengthOfSchedule",
 	"random",
 ];*/
-const TIEBREAKERS: Tiebreaker[] = ["divWinner", "headToHead", "random"];
+const TIEBREAKERS: Tiebreaker[] = [
+	"divWinner",
+	"divRecordIfSame",
+	"confRecordIfSame",
+	"headToHead",
+	"random",
+];
 
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
@@ -123,10 +145,72 @@ const breakTies = <T extends BaseTeam>(
 		}
 	}
 
+	let allSameDiv = false;
+	if (TIEBREAKERS.includes("divRecordIfSame")) {
+		allSameDiv = true;
+		const did = teams[0].seasonAttrs.did;
+		for (const t of teams) {
+			if (t.seasonAttrs.did !== did) {
+				allSameDiv = false;
+				break;
+			}
+		}
+	}
+
+	let allSameConf = false;
+	if (TIEBREAKERS.includes("divRecordIfSame")) {
+		allSameConf = true;
+		if (!allSameDiv) {
+			const cid = teams[0].seasonAttrs.cid;
+			for (const t of teams) {
+				if (t.seasonAttrs.cid !== cid) {
+					allSameConf = false;
+					break;
+				}
+			}
+		}
+	}
+
 	const TIEBREAKER_FUNCTIONS: Record<
 		Tiebreaker,
 		[(t: T) => number, "asc" | "desc"][]
 	> = {
+		confRecordIfSame: [
+			[
+				(t: T) => {
+					if (!allSameConf) {
+						return -Infinity;
+					}
+
+					return helpers.calcWinp({
+						won: t.seasonAttrs.wonConf,
+						lost: t.seasonAttrs.lostConf,
+						otl: t.seasonAttrs.otlConf,
+						tied: t.seasonAttrs.tiedConf,
+					});
+				},
+				"desc",
+			],
+		],
+
+		divRecordIfSame: [
+			[
+				(t: T) => {
+					if (!allSameDiv) {
+						return -Infinity;
+					}
+
+					return helpers.calcWinp({
+						won: t.seasonAttrs.wonDiv,
+						lost: t.seasonAttrs.lostDiv,
+						otl: t.seasonAttrs.otlDiv,
+						tied: t.seasonAttrs.tiedDiv,
+					});
+				},
+				"desc",
+			],
+		],
+
 		divWinner: [
 			[(t: T) => (options.divisionWinners.has(t.tid) ? 1 : 0), "desc"],
 		],

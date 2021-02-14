@@ -20,7 +20,8 @@ better tiebreakers
   - reassess everywhere that calls orderTeams
 - standings data structure is kind of weird, no need for that separate "rank" object
 - test for 1 conference only
-- in god mode setting, note that coin flip is always last
+- god mode setting for tiebreakers
+  - note that coin flip is always last
 - blog
   - available tiebreakers
   - defaults

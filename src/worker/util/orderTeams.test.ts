@@ -1,7 +1,4 @@
 import assert from "assert";
-import testHelpers from "../../test/helpers";
-import { idb } from "../db";
-import g from "./g";
 import helpers from "./helpers";
 import range from "lodash/range";
 import { breakTies } from "./orderTeams";
@@ -57,7 +54,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 				addTiebreakersField: true,
 				divisionWinners: new Set(),
 				season: 2021,
-				tiebreakers: [tiebreaker, "random"],
+				tiebreakers: [tiebreaker, "coinFlip"],
 			});
 
 			const tids = teamsSorted.map(t => t.tid);
@@ -117,7 +114,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			divisionWinners: new Set(),
 			headToHead,
 			season: 2021,
-			tiebreakers: ["commonOpponentsRecord", "random"],
+			tiebreakers: ["commonOpponentsRecord", "coinFlip"],
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -145,7 +142,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			addTiebreakersField: true,
 			divisionWinners: new Set([1]),
 			season: 2021,
-			tiebreakers: ["divWinner", "confRecordIfSame", "random"],
+			tiebreakers: ["divWinner", "confRecordIfSame", "coinFlip"],
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -197,7 +194,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			divisionWinners: new Set(),
 			headToHead,
 			season: 2021,
-			tiebreakers: ["headToHeadRecord", "random"],
+			tiebreakers: ["headToHeadRecord", "coinFlip"],
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -222,7 +219,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			addTiebreakersField: true,
 			divisionWinners: new Set([1]),
 			season: 2021,
-			tiebreakers: ["marginOfVictory", "random"],
+			tiebreakers: ["marginOfVictory", "coinFlip"],
 		});
 
 		const tids = teamsSorted.map(t => t.tid);

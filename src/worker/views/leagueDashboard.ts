@@ -91,8 +91,24 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
-			seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
-			stats,
+			seasonAttrs: [
+				"won",
+				"winp",
+				"att",
+				"revenue",
+				"profit",
+				"cid",
+				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp", ...stats],
 			season: g.get("season"),
 		});
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
@@ -386,6 +402,14 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"lost",
 				"tied",
 				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
 				"winp",
 				"cid",
 				"did",
@@ -393,6 +417,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"region",
 				"clinchedPlayoffs",
 			],
+			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
 		});
 

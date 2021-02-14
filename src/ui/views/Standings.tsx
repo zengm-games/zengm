@@ -163,7 +163,7 @@ const GroupStandings = ({
 						)}
 						<th>Streak</th>
 						<th>L10</th>
-						<th>Tiebreaker</th>
+						<th style={{ minWidth: 191 }}>Tiebreaker</th>
 					</tr>
 				</thead>
 				<tbody>

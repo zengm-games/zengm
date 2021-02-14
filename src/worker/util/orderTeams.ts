@@ -516,9 +516,11 @@ const orderTeams = async <T extends BaseTeam>(
 	allTeams: BaseAllTeams[],
 	{
 		addTiebreakersField,
+		skipTiebreakers,
 		season = g.get("season"),
 	}: {
 		addTiebreakersField?: boolean;
+		skipTiebreakers?: boolean;
 		season?: number;
 	} = {},
 ): Promise<
@@ -539,6 +541,7 @@ const orderTeams = async <T extends BaseTeam>(
 		for (const teamsDiv of teamsDivs) {
 			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
 				season,
+				skipTiebreakers,
 			});
 
 			const t = teamsDivSorted[0];
@@ -560,6 +563,10 @@ const orderTeams = async <T extends BaseTeam>(
 	}
 
 	const teamsSorted = orderBy(teams, iterees, orders);
+
+	if (skipTiebreakers) {
+		return teamsSorted;
+	}
 
 	// Identify any ties
 	type TiedGroup = {

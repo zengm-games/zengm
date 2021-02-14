@@ -11,6 +11,9 @@ const getClinchedPlayoffs = async (
 	teamStats: Map<number, TeamStats>,
 	finalStandings: boolean,
 ) => {
+	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow.
+	const skipTiebreakers = !finalStandings;
+
 	const output: ClinchedPlayoffs[] = [];
 	for (const t of teamSeasons) {
 		const worstCases = teamSeasons.map(t2 => {
@@ -71,7 +74,9 @@ const getClinchedPlayoffs = async (
 		});
 
 		// This is needed just to determine the overall #1 seed
-		const sorted = await orderTeams(worstCases, worstCases);
+		const sorted = await orderTeams(worstCases, worstCases, {
+			skipTiebreakers,
+		});
 
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
@@ -82,7 +87,9 @@ const getClinchedPlayoffs = async (
 		if (sorted[0].tid === t.tid) {
 			clinchedPlayoffs = "z";
 		} else {
-			const result = await genPlayoffSeriesFromTeams(worstCases);
+			const result = await genPlayoffSeriesFromTeams(worstCases, {
+				skipTiebreakers,
+			});
 			const matchups = result.series[0];
 			for (const matchup of matchups) {
 				if (!matchup.away && matchup.home.tid === t.tid) {
@@ -156,7 +163,9 @@ const getClinchedPlayoffs = async (
 				return bestCase;
 			});
 
-			const result = await genPlayoffSeriesFromTeams(bestCases);
+			const result = await genPlayoffSeriesFromTeams(bestCases, {
+				skipTiebreakers,
+			});
 			if (!result.tidPlayoffs.includes(t.tid)) {
 				clinchedPlayoffs = "o";
 			}

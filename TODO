@@ -1,11 +1,5 @@
-leagueName gameAttribute used for anything?
-- in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
-- https://discord.com/channels/@me/673750689649917958/809629720768675880
-
 better tiebreakers
 - there is some performance issue, game sim is really slow now
-  - updateClinchedPlayoffs
-    - too many calls to orderTeams, both directly and via genPlayoffSeriesFromTeams
 - add options
 	- winp vs pts (vs custom points?)
   - playoffsByConference
@@ -23,8 +17,14 @@ better tiebreakers
     - explanation at the bottom
     - meaning of values on league/conf/div page
 
+Whenever you edit a player's retired number, it says the number was retired twice in player transactions even though I didn't delete and re-add it https://discord.com/channels/290013534023057409/290015591216054273/810214980053368872
+
 show best season in player page summary top
 - https://discord.com/channels/290013534023057409/331882115119448065/810075786081861652
+
+leagueName gameAttribute used for anything?
+- in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
+- https://discord.com/channels/@me/673750689649917958/809629720768675880
 
 head to head records
 - later
@@ -793,6 +793,7 @@ FBGM
 - small thing its difficult to trade in fbgm because teams are permanently in the contending strategy no matter how bad they are https://discord.com/channels/290013534023057409/331882115119448065/800250593049837590
 - penalty on punt goes in wrong direction https://old.reddit.com/r/Football_GM/comments/l9xzhi/bug_report_penalty_goes_the_wrong_way/
 - holding on incomplete pass https://discord.com/channels/290013534023057409/290015591216054273/806339641924911154
+- inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

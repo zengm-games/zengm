@@ -77,7 +77,12 @@ const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 	return tidPlayoffs;
 };
 
-export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
+export const genPlayoffSeriesFromTeams = async (
+	teams: MyTeam[],
+	orderTeamsOptions?: {
+		skipTiebreakers?: boolean;
+	},
+) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
 
@@ -114,7 +119,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
 					const round = await makeMatchups(
-						await orderTeams(teamsConf, teams),
+						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
 					);
@@ -135,14 +140,14 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 				);
 				if (teamsConf.length > 0) {
 					// This sort determines conference champ. Sort inside makeMatchups will determine overall #1 seed
-					const sorted = await orderTeams(teamsConf, teams);
+					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
 					teamsFinals.push(sorted[0]);
 				}
 			}
 
 			if (teamsFinals.length === 2) {
 				const round = await makeMatchups(
-					await orderTeams(teamsFinals, teams),
+					await orderTeams(teamsFinals, teams, orderTeamsOptions),
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
 				);
@@ -160,7 +165,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 		series = range(numRounds).map(() => []);
 
 		const round = await makeMatchups(
-			await orderTeams(teams, teams),
+			await orderTeams(teams, teams, orderTeamsOptions),
 			numPlayoffTeams,
 			numPlayoffByes,
 		);

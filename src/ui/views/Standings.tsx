@@ -436,7 +436,7 @@ const Standings = ({
 			<div className="d-inline-block">
 				{allStandings}
 				<div className="float-md-left">
-					z - clinched #1 overall seed and home {COURT} advantage
+					z - clinched {playoffsByConference ? "a" : "the"} #1 seed
 					<br />
 					{numPlayoffByes > 0 ? (
 						<>

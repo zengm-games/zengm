@@ -1,7 +1,6 @@
 import { idb } from "../../db";
 import type { TeamSeason, Conditions, TeamStats } from "../../../common/types";
-import { g, helpers, logEvent, orderTeams } from "../../util";
-import { COURT } from "../../../common";
+import { g, helpers, logEvent } from "../../util";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
@@ -53,7 +52,8 @@ const getClinchedPlayoffs = async (
 				},
 			};
 
-			if (gamesLeft > 0) {
+			// Even with gamesLeft 0, we still need this with skipTiebreakers because otherwise it will be overconfident despite knowing nothing about tiebreakers
+			if (gamesLeft > 0 || skipTiebreakers) {
 				if (t2.tid === t.tid) {
 					// 0.1 extra is to simulate team losing all tie breakers
 					worstCase.seasonAttrs.lost += gamesLeft + 0.1;
@@ -70,35 +70,27 @@ const getClinchedPlayoffs = async (
 			return worstCase;
 		});
 
-		// This is needed just to determine the overall #1 seed
-		const sorted = await orderTeams(worstCases, worstCases, {
-			skipTiebreakers,
-		});
-
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
 		// z - clinched home court advantage
 		// o - eliminated
 		let clinchedPlayoffs: ClinchedPlayoffs;
 
-		if (sorted[0].tid === t.tid) {
-			clinchedPlayoffs = "z";
-		} else {
-			const result = await genPlayoffSeriesFromTeams(worstCases, {
-				skipTiebreakers,
-			});
-			const matchups = result.series[0];
-			for (const matchup of matchups) {
-				if (!matchup.away && matchup.home.tid === t.tid) {
-					clinchedPlayoffs = "y";
-					break;
-				}
+		const result = await genPlayoffSeriesFromTeams(worstCases, {
+			skipTiebreakers,
+		});
+		const matchups = result.series[0];
+		for (const matchup of matchups) {
+			if (matchup.home.tid === t.tid && matchup.home.seed === 1) {
+				clinchedPlayoffs = "z";
+			} else if (!matchup.away && matchup.home.tid === t.tid) {
+				clinchedPlayoffs = "y";
 			}
+		}
 
-			if (!clinchedPlayoffs) {
-				if (result.tidPlayoffs.includes(t.tid)) {
-					clinchedPlayoffs = "x";
-				}
+		if (!clinchedPlayoffs) {
+			if (result.tidPlayoffs.includes(t.tid)) {
+				clinchedPlayoffs = "x";
 			}
 		}
 
@@ -140,7 +132,7 @@ const getClinchedPlayoffs = async (
 					},
 				};
 
-				if (gamesLeft > 0) {
+				if (gamesLeft > 0 || skipTiebreakers) {
 					if (t2.tid === t.tid) {
 						// 0.1 extra is to simulate team winning all tie breakers
 						bestCase.seasonAttrs.won += gamesLeft + 0.1;
@@ -205,7 +197,8 @@ const updateClinchedPlayoffs = async (
 			} else if (clinchedPlayoffs[i] === "y") {
 				action = "clinched a first round bye";
 			} else if (clinchedPlayoffs[i] === "z") {
-				action = `clinched the #1 overall seed and home ${COURT} advantage`;
+				const playoffsByConference = g.get("confs", "current").length === 2;
+				action = `clinched ${playoffsByConference ? "a" : "the"} #1 seed`;
 			} else if (clinchedPlayoffs[i] === "o") {
 				action = "have been eliminated from playoff contention";
 			}

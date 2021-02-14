@@ -1,13 +1,8 @@
 better tiebreakers
-- it's possible for a regular season to end without any "clinched #1 overall seed and home court advantage" team, if >2 teams are tied at the top
-  - change z to "#1 seed"
 - add options
 	- winp vs pts (vs custom points?)
   - playoffsByConference
   - divisionLeadersFirstPlayoffs
-- test
-  - playoff clinching
-  - 1 conference only
 - blog
   - available tiebreakers
   - defaults
@@ -16,6 +11,8 @@ better tiebreakers
     - new column
     - explanation at the bottom
     - meaning of values on league/conf/div page
+  - "clinched" notifications are a little worse, cause it'd be too slow/complicated to simulate all the tiebreakers, unlike before with just the random one
+    - also, switched from "clinched #1 overall seed and home court advantage" to "clinched a #1 seed" because if >2 teams are tied
 
 divs and confs in power rankings https://discord.com/channels/290013534023057409/331882115119448065/810362108017377300
 

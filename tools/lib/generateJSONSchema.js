@@ -738,6 +738,23 @@ const generateJSONSchema = (sport /*: string*/) => {
 							stopOnInjuryGames: {
 								type: "integer",
 							},
+							tiebreakers: {
+								type: "array",
+								items: {
+									type: "string",
+									enum: [
+										"commonOpponentsRecord",
+										"confRecordIfSame",
+										"divRecordIfSame",
+										"divWinner",
+										"headToHeadRecord",
+										"marginOfVictory",
+										"strengthOfVictory",
+										"strengthOfSchedule",
+										"coinFlip",
+									],
+								},
+							},
 							ties: {
 								type: ["boolean", "array"],
 							},

@@ -4,9 +4,19 @@ import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g } from "../../util";
+import testHelpers from "../../../test/helpers";
 
 describe("worker/core/draft/updateChances", () => {
-	beforeAll(loadTeamSeasons);
+	beforeAll(async () => {
+		testHelpers.resetG();
+		idb.league = testHelpers.mockIDBLeague();
+
+		await loadTeamSeasons();
+	});
+	afterAll(() => {
+		// @ts-ignore
+		idb.league = undefined;
+	});
 
 	test("distribute combinations to teams with the same record", async () => {
 		const teams = await idb.getCopies.teamsPlus({

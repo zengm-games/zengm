@@ -1,8 +1,19 @@
 import assert from "assert";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
+import testHelpers from "../../../test/helpers";
+import { idb } from "../../db";
 
 describe("worker/core/draft/genOrder", () => {
-	beforeAll(loadTeamSeasons);
+	beforeAll(async () => {
+		testHelpers.resetG();
+		idb.league = testHelpers.mockIDBLeague();
+
+		await loadTeamSeasons();
+	});
+	afterAll(() => {
+		// @ts-ignore
+		idb.league = undefined;
+	});
 
 	test("schedule 60 draft picks", async () => {
 		const draftTids = await getDraftTids();

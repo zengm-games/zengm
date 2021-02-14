@@ -89,6 +89,7 @@ describe("worker/core/draft/lotterySort", () => {
 			],
 			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
+			addDummySeason: true,
 		});
 
 		await lotterySort(teams);

@@ -390,8 +390,8 @@ export const breakTies = <T extends BaseTeam>(
 
 					return wonMinusLost({
 						won: t.seasonAttrs.wonConf,
-						lost: t.seasonAttrs.wlostonf,
-						otl: t.seasonAttrs.wotlonf,
+						lost: t.seasonAttrs.lostConf,
+						otl: t.seasonAttrs.otlConf,
 					});
 				},
 				"desc",

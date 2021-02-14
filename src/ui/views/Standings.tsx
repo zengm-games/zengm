@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
-import { COURT, isSport, TIEBREAKERS } from "../../common";
+import { isSport, TIEBREAKERS } from "../../common";
 
 type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
 

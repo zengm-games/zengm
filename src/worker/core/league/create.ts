@@ -161,6 +161,7 @@ export const createWithoutSaving = async (
 		leagueName,
 		teamInfos,
 		userTid,
+		version: leagueFile.version,
 	});
 
 	// Validation of some identifiers

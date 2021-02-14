@@ -15,10 +15,7 @@ const makeMatchupsWrapper = (
 
 				seasonAttrs: {
 					cid: t.cid,
-					did: t.cid,
-
 					// This doesn't affect order - sorting is done before calling genPlayoffSeries
-					won: 0,
 					winp: 0,
 				},
 			};

@@ -14,12 +14,14 @@ const createGameAttributes = ({
 	leagueName,
 	teamInfos,
 	userTid,
+	version,
 }: {
 	difficulty: number;
 	leagueFile: LeagueFile;
 	leagueName: string;
 	teamInfos: TeamInfo[];
 	userTid: number;
+	version?: number;
 }) => {
 	const startingSeason = leagueFile.startingSeason;
 
@@ -164,7 +166,7 @@ const createGameAttributes = ({
 	if (
 		leagueFile.gameAttributes &&
 		!leagueFile.gameAttributes.tiebreakers &&
-		version <= 42
+		(version === undefined || version <= 42)
 	) {
 		if (
 			leagueFile.gameAttributes.season !== undefined &&

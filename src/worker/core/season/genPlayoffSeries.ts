@@ -8,9 +8,32 @@ import type {
 import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
 
-type MyTeam = TeamFiltered<["tid"], ["cid", "did", "winp", "won"], any, number>;
+type MyTeam = TeamFiltered<
+	["tid"],
+	[
+		"cid",
+		"did",
+		"won",
+		"lost",
+		"tied",
+		"otl",
+		"winp",
+		"wonDiv",
+		"lostDiv",
+		"tiedDiv",
+		"otlDiv",
+		"wonConf",
+		"lostConf",
+		"tiedConf",
+		"otlConf",
+	],
+	["pts", "oppPts", "gp"],
+	number
+>;
 
-const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
+type MinimalTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
+
+const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
 	return {
 		tid: t.tid,
 		cid: t.seasonAttrs.cid,
@@ -22,7 +45,7 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 
 // In a 2 conference playoff, this should be called once with each side of the bracket
 export const makeMatchups = (
-	teams: MyTeam[],
+	teams: MinimalTeam[],
 	numPlayoffTeams: number,
 	numPlayoffByes: number,
 ) => {
@@ -153,7 +176,24 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 const genPlayoffSeries = async () => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
-		seasonAttrs: ["cid", "did", "winp", "won"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
 	});
 

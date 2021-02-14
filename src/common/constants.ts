@@ -255,8 +255,8 @@ const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
 const TIEBREAKERS = {
 	commonOpponentsRecord: "Common opponents record",
-	confRecordIfSame: "Conference record (if same conf)",
-	divRecordIfSame: "Division record (if same div)",
+	confRecordIfSame: "Conference record (same conf)",
+	divRecordIfSame: "Division record (same div)",
 	divWinner: "Division winner",
 	headToHeadRecord: "Head-to-head record",
 	marginOfVictory: "Margin of victory",

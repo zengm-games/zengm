@@ -260,6 +260,8 @@ const TIEBREAKERS = {
 	divWinner: "Division winner",
 	headToHeadRecord: "Head-to-head record",
 	marginOfVictory: "Margin of victory",
+	strengthOfVictory: "Strength of victory",
+	strengthOfSchedule: "Strength of schedule",
 	coinFlip: "Coin flip",
 };
 

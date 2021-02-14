@@ -9,6 +9,9 @@ const baseTeams = range(4).map(tid => ({
 	seasonAttrs: {
 		winp: 0.5,
 		won: 10,
+		lost: 10,
+		otl: 0,
+		tied: 0,
 		did: 0,
 		cid: 0,
 		wonDiv: 4,
@@ -50,7 +53,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 				teams[0].seasonAttrs.lostDiv = 3;
 			}
 
-			const teamsSorted = breakTies(teams, {
+			const teamsSorted = breakTies(teams, teams, {
 				addTiebreakersField: true,
 				divisionWinners: new Set(),
 				season: 2021,
@@ -109,7 +112,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			playoffs: {},
 		};
 
-		const teamsSorted = breakTies(teams, {
+		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set(),
 			headToHead,
@@ -138,7 +141,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 		teams[0].seasonAttrs.wonConf = 7;
 		teams[0].seasonAttrs.lostConf = 5;
 
-		const teamsSorted = breakTies(teams, {
+		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set([1]),
 			season: 2021,
@@ -189,7 +192,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			playoffs: {},
 		};
 
-		const teamsSorted = breakTies(teams, {
+		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set(),
 			headToHead,
@@ -215,7 +218,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 		teams[3].stats.pts = 400;
 		teams[1].stats.pts = 300;
 
-		const teamsSorted = breakTies(teams, {
+		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set([1]),
 			season: 2021,
@@ -232,5 +235,101 @@ describe("worker/util/orderTeams/breakTies", () => {
 			"marginOfVictory",
 			undefined,
 		]);
+	});
+
+	test("strengthOfSchedule", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+		teams[0].seasonAttrs.won = 5;
+		teams[0].seasonAttrs.lost = 15;
+		teams[1].seasonAttrs.won = 15;
+		teams[1].seasonAttrs.lost = 5;
+
+		const headToHeadEntry = (won: number, lost: number) => ({
+			won,
+			lost,
+			tied: 0,
+			otw: 0,
+			otl: 0,
+			pts: 0,
+			oppPts: 0,
+		});
+
+		const headToHead: HeadToHead = {
+			season: 2021,
+			regularSeason: {
+				// 2 and 3 are tied, but 3 played the better team more
+				0: {
+					2: headToHeadEntry(1, 1),
+					3: headToHeadEntry(1, 0),
+				},
+				1: {
+					2: headToHeadEntry(1, 0),
+					3: headToHeadEntry(1, 1),
+				},
+			},
+			playoffs: {},
+		};
+
+		const teamsSorted = breakTies([teams[2], teams[3]], teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set(),
+			headToHead,
+			season: 2021,
+			tiebreakers: ["strengthOfSchedule", "coinFlip"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreaker);
+
+		assert.deepStrictEqual(tids, [3, 2]);
+		assert.deepStrictEqual(reasons, ["strengthOfSchedule", undefined]);
+	});
+
+	test("strengthOfVictory", async () => {
+		const teams = helpers.deepCopy(baseTeams);
+		teams[0].seasonAttrs.won = 5;
+		teams[0].seasonAttrs.lost = 15;
+		teams[1].seasonAttrs.won = 15;
+		teams[1].seasonAttrs.lost = 5;
+
+		const headToHeadEntry = (won: number, lost: number) => ({
+			won,
+			lost,
+			tied: 0,
+			otw: 0,
+			otl: 0,
+			pts: 0,
+			oppPts: 0,
+		});
+
+		const headToHead: HeadToHead = {
+			season: 2021,
+			regularSeason: {
+				// 2 and 3 are tied, 3 played the better team less, but beat it more
+				0: {
+					2: headToHeadEntry(1, 1),
+					3: headToHeadEntry(100, 0),
+				},
+				1: {
+					2: headToHeadEntry(1, 0),
+					3: headToHeadEntry(1, 1),
+				},
+			},
+			playoffs: {},
+		};
+
+		const teamsSorted = breakTies([teams[2], teams[3]], teams, {
+			addTiebreakersField: true,
+			divisionWinners: new Set(),
+			headToHead,
+			season: 2021,
+			tiebreakers: ["strengthOfVictory", "coinFlip"],
+		});
+
+		const tids = teamsSorted.map(t => t.tid);
+		const reasons = teamsSorted.map(t => t.tiebreaker);
+
+		assert.deepStrictEqual(tids, [3, 2]);
+		assert.deepStrictEqual(reasons, ["strengthOfVictory", undefined]);
 	});
 });

@@ -84,11 +84,12 @@ const updateStandings = async (
 		};
 
 		const rankingGroups = {
-			league: [await orderTeams(teams, orderTeamsOptions)],
+			league: [await orderTeams(teams, teams, orderTeamsOptions)],
 			conf: await Promise.all(
 				confs.map(conf =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.cid === conf.cid),
+						teams,
 						orderTeamsOptions,
 					),
 				),
@@ -97,6 +98,7 @@ const updateStandings = async (
 				divs.map(div =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.did === div.did),
+						teams,
 						orderTeamsOptions,
 					),
 				),

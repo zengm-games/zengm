@@ -16,6 +16,14 @@ export const getTiebreakers = (season: number) => {
 	return tiebreakers;
 };
 
+const wonMinusLost = (obj?: { won?: number; lost?: number; otl?: number }) => {
+	if (!obj) {
+		return 0;
+	}
+
+	return (obj.won ?? 0) - (obj.lost ?? 0) - (obj.otl ?? 0);
+};
+
 type Tiebreaker = keyof typeof TIEBREAKERS;
 
 type BaseTeam = {
@@ -355,7 +363,7 @@ export const breakTies = <T extends BaseTeam>(
 	> = {
 		commonOpponentsRecord: [
 			[(t: T) => commonOpponentsInfo?.[t.tid]?.winp ?? 0, "desc"],
-			[(t: T) => commonOpponentsInfo?.[t.tid]?.won ?? 0, "desc"],
+			[(t: T) => wonMinusLost(commonOpponentsInfo?.[t.tid]), "desc"],
 		],
 
 		confRecordIfSame: [
@@ -380,7 +388,11 @@ export const breakTies = <T extends BaseTeam>(
 						return -Infinity;
 					}
 
-					return t.seasonAttrs.wonConf;
+					return wonMinusLost({
+						won: t.seasonAttrs.wonConf,
+						lost: t.seasonAttrs.wlostonf,
+						otl: t.seasonAttrs.wotlonf,
+					});
 				},
 				"desc",
 			],
@@ -408,7 +420,11 @@ export const breakTies = <T extends BaseTeam>(
 						return -Infinity;
 					}
 
-					return t.seasonAttrs.wonDiv;
+					return wonMinusLost({
+						won: t.seasonAttrs.wonDiv,
+						lost: t.seasonAttrs.lostDiv,
+						otl: t.seasonAttrs.otlDiv,
+					});
 				},
 				"desc",
 			],
@@ -420,7 +436,7 @@ export const breakTies = <T extends BaseTeam>(
 
 		headToHeadRecord: [
 			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
-			[(t: T) => headToHeadInfo?.[t.tid]?.won ?? 0, "desc"],
+			[(t: T) => wonMinusLost(headToHeadInfo?.[t.tid]), "desc"],
 		],
 
 		marginOfVictory: [
@@ -435,12 +451,12 @@ export const breakTies = <T extends BaseTeam>(
 
 		strengthOfSchedule: [
 			[(t: T) => strengthOfScheduleInfo?.[t.tid]?.winp ?? 0, "desc"],
-			[(t: T) => strengthOfScheduleInfo?.[t.tid]?.won ?? 0, "desc"],
+			[(t: T) => wonMinusLost(strengthOfScheduleInfo?.[t.tid]), "desc"],
 		],
 
 		strengthOfVictory: [
 			[(t: T) => strengthOfVictoryInfo?.[t.tid]?.winp ?? 0, "desc"],
-			[(t: T) => strengthOfVictoryInfo?.[t.tid]?.won ?? 0, "desc"],
+			[(t: T) => wonMinusLost(strengthOfVictoryInfo?.[t.tid]), "desc"],
 		],
 
 		// We want ties to be randomly decided, but consistently so orderTeams can be called multiple times with a deterministic result
@@ -555,7 +571,10 @@ const orderTeams = async <T extends BaseTeam>(
 	}
 
 	// First pass - order by winp and won
-	const iterees = [(t: T) => t.seasonAttrs.winp, (t: T) => t.seasonAttrs.won];
+	const iterees = [
+		(t: T) => t.seasonAttrs.winp,
+		(t: T) => wonMinusLost(t.seasonAttrs),
+	];
 	const orders: ("asc" | "desc")[] = ["desc", "desc"];
 	if (DIVISION_LEADERS_ALWAYS_GO_FIRST && divisionLeaders.size > 0) {
 		// ...and apply division leader boost, if necessary

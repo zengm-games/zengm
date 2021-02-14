@@ -7,6 +7,15 @@ import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 
+export const getTiebreakers = (season: number) => {
+	const tiebreakers = [...g.get("tiebreakers", season)];
+	if (!tiebreakers.includes("coinFlip")) {
+		tiebreakers.push("coinFlip");
+	}
+
+	return tiebreakers;
+};
+
 type Tiebreaker = keyof typeof TIEBREAKERS;
 
 type BaseTeam = {
@@ -494,10 +503,7 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
-	let tiebreakers = g.get("tiebreakers");
-	if (!tiebreakers.includes("coinFlip")) {
-		tiebreakers = [...tiebreakers, "coinFlip"];
-	}
+	const tiebreakers = getTiebreakers(season);
 
 	const breakTiesOptions: BreakTiesOptions = {
 		addTiebreakersField,

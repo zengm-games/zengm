@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getTiebreakers } from "../util/orderTeams";
 
 const updateStandings = async (
 	inputs: ViewInput<"standings">,
@@ -144,7 +145,7 @@ const updateStandings = async (
 			season: inputs.season,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
-			tiebreakers: g.get("tiebreakers", inputs.season),
+			tiebreakers: getTiebreakers(inputs.season),
 			type: inputs.type,
 			userTid: g.get("userTid"),
 		};

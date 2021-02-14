@@ -9,7 +9,7 @@ import {
 import { player, season } from "../core";
 import { idb } from ".";
 import iterate from "./iterate";
-import { helpers, logEvent } from "../util";
+import { defaultGameAttributes, helpers, logEvent } from "../util";
 import connectIndexedDB from "./connectIndexedDB";
 import type { DBSchema, IDBPDatabase, IDBPTransaction } from "idb";
 import type {
@@ -933,12 +933,78 @@ const migrate = ({
 				};
 			};
 		}
-	}
 
-	if (oldVersion <= 41) {
-		db.createObjectStore("headToHeads", {
-			keyPath: "season",
-		});
+		if (oldVersion <= 41) {
+			db.createObjectStore("headToHeads", {
+				keyPath: "season",
+			});
+		}
+
+		if (oldVersion <= 42) {
+			const tx = unwrap(transaction);
+			tx.objectStore("gameAttributes").get("season").onsuccess = (
+				event: any,
+			) => {
+				if (event.target.result === undefined) {
+					throw new Error("Missing season in gameAttributes during upgrade");
+				}
+
+				const season = event.target.result.value;
+
+				if (typeof season !== "number") {
+					throw new Error("Invalid season in gameAttributes during upgrade");
+				}
+
+				tx.objectStore("gameAttributes").get("phase").onsuccess = (
+					event2: any,
+				) => {
+					if (event2.target.result === undefined) {
+						throw new Error("Missing phase in gameAttributes during upgrade");
+					}
+
+					const phase = event2.target.result.value;
+
+					if (typeof phase !== "number") {
+						throw new Error("Invalid phase in gameAttributes during upgrade");
+					}
+
+					tx.objectStore("gameAttributes").get("nextPhase").onsuccess = (
+						event3: any,
+					) => {
+						if (event3.target.result === undefined) {
+							throw new Error(
+								"Missing nextPhase in gameAttributes during upgrade",
+							);
+						}
+
+						const nextPhase = event3.target.result.value;
+						const actualPhase = nextPhase ?? phase;
+
+						let currentSeason = season;
+						if (actualPhase >= PHASE.PLAYOFFS) {
+							currentSeason += 1;
+						}
+
+						// Apply default tiebreakers, while keeping track of when that happened
+						const tiebreakers = [
+							{
+								start: -Infinity,
+								value: ["coinFlip"],
+							},
+							{
+								start: currentSeason,
+								value: defaultGameAttributes.tiebreakers[0].value,
+							},
+						];
+
+						transaction.objectStore("gameAttributes").put({
+							key: "tiebreakers",
+							value: tiebreakers,
+						});
+					};
+				};
+			};
+		}
 	}
 
 	// New ones here!

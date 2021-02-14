@@ -123,12 +123,17 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
 	tiebreakers: [
-		"headToHeadRecord",
-		"divWinner",
-		"divRecordIfSame",
-		"confRecordIfSame",
-		"marginOfVictory",
-		"coinFlip",
+		{
+			start: -Infinity,
+			value: [
+				"headToHeadRecord",
+				"divWinner",
+				"divRecordIfSame",
+				"confRecordIfSame",
+				"marginOfVictory",
+				"coinFlip",
+			],
+		},
 	],
 
 	// These will always be overwritten when creating a league, just here for TypeScript
@@ -183,13 +188,18 @@ export const footballOverrides =
 				brotherRate: 0.005,
 				allStarGame: null,
 				tiebreakers: [
-					"headToHeadRecord",
-					"divRecordIfSame",
-					"commonOpponentsRecord",
-					"confRecordIfSame",
-					"strengthOfVictory",
-					"strengthOfSchedule",
-					"coinFlip",
+					{
+						start: -Infinity,
+						value: [
+							"headToHeadRecord",
+							"divRecordIfSame",
+							"commonOpponentsRecord",
+							"confRecordIfSame",
+							"strengthOfVictory",
+							"strengthOfSchedule",
+							"coinFlip",
+						],
+					},
 				],
 		  }
 		: {};

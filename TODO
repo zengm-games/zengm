@@ -7,10 +7,11 @@ better tiebreakers
 	- winp vs pts (vs custom points?)
   - playoffsByConference
   - divisionLeadersFirstPlayoffs
-- track history of options, for historical display
-	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
-  - need to set tiebreaker to non-default value if undefined, to handle upgrades
-    - what about other custom files where it's not specified? ugh
+- upgrade test - current season changes and past seasons remain the same
+  - league before/after playoffs
+  - league before/after playoffs in expansion Draft
+  - uploaded league file before/after playoffs
+  - uploaded league file before/after playoffs in expansion Draft
 - standings default view should depend on playoffsByConference?
   - only show if season >50% done (or something)
 - handle tiebreaker when teams meet in the finals of 2 conference playoffs

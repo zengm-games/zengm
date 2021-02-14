@@ -269,6 +269,7 @@ const Standings = ({
 	playoffsByConference,
 	rankingGroups,
 	season,
+	tiebreakers,
 	ties,
 	otl,
 	type,
@@ -419,18 +420,34 @@ const Standings = ({
 
 	return (
 		<>
-			{allStandings}
-			<div>
-				z - clinched #1 overall seed and home {COURT} advantage
-				<br />
-				{numPlayoffByes > 0 ? (
-					<>
-						y - clinched first round bye
-						<br />
-					</>
-				) : null}
-				x - clinched playoffs
-				<br />o - eliminated from playoff contention
+			<div className="d-inline-block">
+				{allStandings}
+				<div className="float-md-left">
+					z - clinched #1 overall seed and home {COURT} advantage
+					<br />
+					{numPlayoffByes > 0 ? (
+						<>
+							y - clinched first round bye
+							<br />
+						</>
+					) : null}
+					x - clinched playoffs
+					<br />o - eliminated from playoff contention
+				</div>
+				<div className="float-md-right mt-3 mt-md-0" style={{ maxWidth: 400 }}>
+					<p>Tiebreakers for the {season} season:</p>
+					<ol>
+						{tiebreakers.map(key => (
+							<li key={key}>{TIEBREAKERS[key]}</li>
+						))}
+					</ol>
+					<p>
+						The value shown in the "Tiebreaker" column above means "reason this
+						team is ahead of all the tied teams below it, for this level of
+						standings". You can switch between division/conference/league
+						standings to view the tiebreaker results at different levels.
+					</p>
+				</div>
 			</div>
 		</>
 	);

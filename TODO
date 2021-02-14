@@ -5,29 +5,28 @@ leagueName gameAttribute used for anything?
 better tiebreakers
 - add options
 	- winp vs pts (vs custom points?)
-	- tiebreaker: default (make sure it makes sense with pts) vs random
-    - always add random when applying it, if random is not in it
+  - playoffsByConference
   - divisionLeadersFirstPlayoffs
 - track history of options, for historical display
 	- careful about when to log changes! i think standings is the only screen where it really matters, so make sure it's saved for current/next regular season
   - need to set tiebreaker to non-default value if undefined, to handle upgrades
     - what about other custom files where it's not specified? ugh
-- "Reason" column like https://www.pro-football-reference.com/years/2020/
-  - show the factor that caused this team to be placed ahead of the team directly after it
-  - add an option to orderTeams to include an optional "tiebreakerReason" string, and display in standings
-    - careful to not recursively apply it when calculating div winners... except for div winners themselves it's needed!
-      - i guess would need to keep both (tiebreaker for div winner, tiebreaker for overall sort)
-    - really only makes sense when viewing "playoff standings", which is either league or conference standings depending on if playoffsByConference
-      - standings default view should depend on playoffsByConference?
+- standings default view should depend on playoffsByConference?
   - only show if season >50% done (or something)
-- handle tiebreaker when 2 #1 seeds meet in playoffs
+- handle tiebreaker when teams meet in the finals of 2 conference playoffs
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams
 - standings data structure is kind of weird, no need for that separate "rank" object
-- is width of standings UI okay now that there is a tiebreaker column?
-- help icon for tiebreakers column
- - what's shown is the tiebreaker for the current team vs the lower teams tied with it
- - when on conferences page and it says "divWinner", can switch to divisions to see how that tiebreaker worked
+- test for 1 conference only
+- in god mode setting, note that coin flip is always last
+- blog
+  - available tiebreakers
+  - defaults
+  - recursive algorithm
+  - standings page
+    - new column
+    - explanation at the bottom
+    - meaning of values on league/conf/div page
 
 show best season in player page summary top
 - https://discord.com/channels/290013534023057409/331882115119448065/810075786081861652

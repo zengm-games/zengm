@@ -443,6 +443,7 @@ export type GameAttributesLeague = {
 	startingSeason: number;
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
+	tiebreakers: (keyof typeof TIEBREAKERS)[];
 	teamInfoCache: {
 		abbrev: string;
 		region: string;
@@ -492,6 +493,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
+	| "tiebreakers"
 	| "ties"
 	| "userTid"
 > & {
@@ -504,6 +506,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
+	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
@@ -1238,6 +1241,7 @@ export type TeamSeasonAttr = keyof TeamSeasonPlus;
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
+import type { TIEBREAKERS } from "./constants";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> &
 	Record<TeamStatAttrHockey, number> & {

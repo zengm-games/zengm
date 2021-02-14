@@ -38,25 +38,6 @@ type BaseTeam = {
 	tiebreaker?: Tiebreaker;
 };
 
-const CURRENT_TIEBREAKERS: Tiebreaker[] = isSport("basketball")
-	? [
-			"headToHeadRecord",
-			"divWinner",
-			"divRecordIfSame",
-			"confRecordIfSame",
-			"marginOfVictory",
-			"coinFlip",
-	  ]
-	: [
-			"headToHeadRecord",
-			"divRecordIfSame",
-			"commonOpponentsRecord",
-			"confRecordIfSame",
-			"strengthOfVictory",
-			"strengthOfSchedule",
-			"coinFlip",
-	  ];
-
 // In football and hockey, top conference playoff seeds go to the division winners
 const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
 
@@ -513,23 +494,23 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
+	let tiebreakers = g.get("tiebreakers");
+	if (!tiebreakers.includes("coinFlip")) {
+		tiebreakers = [...tiebreakers, "coinFlip"];
+	}
+
 	const breakTiesOptions: BreakTiesOptions = {
 		addTiebreakersField,
 		divisionWinners: new Set(
 			Array.from(divisionLeaders.values()).map(t => t.tid),
 		),
 		season,
-		tiebreakers: [
-			...CURRENT_TIEBREAKERS,
-
-			// Always do random, so there is some tiebreaker at least
-			"coinFlip",
-		],
+		tiebreakers,
 	};
 	if (
 		tiedGroups.length > 0 &&
-		(CURRENT_TIEBREAKERS.includes("commonOpponentsRecord") ||
-			CURRENT_TIEBREAKERS.includes("headToHeadRecord"))
+		(tiebreakers.includes("commonOpponentsRecord") ||
+			tiebreakers.includes("headToHeadRecord"))
 	) {
 		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
 			season,

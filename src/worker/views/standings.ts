@@ -144,6 +144,7 @@ const updateStandings = async (
 			season: inputs.season,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
+			tiebreakers: g.get("tiebreakers", inputs.season),
 			type: inputs.type,
 			userTid: g.get("userTid"),
 		};

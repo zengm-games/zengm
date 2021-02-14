@@ -12,21 +12,31 @@ describe("worker/core/draft/updateChances", () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
 			seasonAttrs: [
+				"playoffRoundsWon",
+				"cid",
+				"did",
 				"won",
 				"lost",
 				"tied",
 				"otl",
 				"winp",
-				"playoffRoundsWon",
-				"cid",
-				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
 			],
+			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
 			addDummySeason: true,
 			active: true,
 		});
-		const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]; // index instead of tid
+		const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
 
+		// index instead of tid
 		const sameRec = [
 			[6, 7, 8],
 			[10, 11, 12],

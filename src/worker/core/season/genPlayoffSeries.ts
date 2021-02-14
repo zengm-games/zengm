@@ -97,6 +97,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 	);
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
+	console.log(teams.length, numPlayoffTeams);
 	if (teams.length < numPlayoffTeams) {
 		throw new Error("Not enough teams for playoffs");
 	}
@@ -196,6 +197,7 @@ const genPlayoffSeries = async () => {
 		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
 	});
+	console.log("teams", teams.length);
 
 	return genPlayoffSeriesFromTeams(teams);
 };

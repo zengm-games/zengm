@@ -70,15 +70,24 @@ describe("worker/core/draft/lotterySort", () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
 			seasonAttrs: [
-				"winp",
 				"playoffRoundsWon",
+				"cid",
+				"did",
 				"won",
 				"lost",
 				"tied",
 				"otl",
-				"cid",
-				"did",
+				"winp",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
 			],
+			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
 		});
 

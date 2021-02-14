@@ -22,6 +22,9 @@ type BaseTeam = {
 	seasonAttrs: {
 		winp: number;
 		won: number;
+		lost: number;
+		otl: number;
+		tied: number;
 		did: number;
 
 		// Needed for some tiebreakers

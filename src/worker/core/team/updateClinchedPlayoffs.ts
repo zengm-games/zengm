@@ -25,9 +25,6 @@ const getClinchedPlayoffs = async (
 			const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
 
 			const stats = teamStats.get(t2.tid);
-			if (!stats) {
-				throw new Error("Missing stats");
-			}
 
 			const worstCase = {
 				tid: t2.tid,
@@ -50,9 +47,9 @@ const getClinchedPlayoffs = async (
 				},
 				stats: {
 					playoffs: false,
-					pts: stats.pts,
-					oppPts: stats.oppPts,
-					gp: stats.gp,
+					pts: stats ? stats.pts : 0,
+					oppPts: stats ? stats.oppPts : 0,
+					gp: stats ? stats.gp : 0,
 				},
 			};
 
@@ -115,9 +112,6 @@ const getClinchedPlayoffs = async (
 				const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
 
 				const stats = teamStats.get(t2.tid);
-				if (!stats) {
-					throw new Error("Missing stats");
-				}
 
 				const bestCase = {
 					tid: t2.tid,
@@ -140,9 +134,9 @@ const getClinchedPlayoffs = async (
 					},
 					stats: {
 						playoffs: false,
-						pts: stats.pts,
-						oppPts: stats.oppPts,
-						gp: stats.gp,
+						pts: stats ? stats.pts : 0,
+						oppPts: stats ? stats.oppPts : 0,
+						gp: stats ? stats.gp : 0,
 					},
 				};
 

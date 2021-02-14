@@ -201,7 +201,6 @@ const genPlayoffSeries = async () => {
 		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
 	});
-	console.log("teams", teams.length);
 
 	return genPlayoffSeriesFromTeams(teams);
 };

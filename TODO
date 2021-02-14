@@ -1,10 +1,10 @@
 better tiebreakers
-- there is some performance issue, game sim is really slow now
+- it's possible for a regular season to end without any "clinched #1 overall seed and home court advantage" team, if >2 teams are tied at the top
+  - change z to "#1 seed"
 - add options
 	- winp vs pts (vs custom points?)
   - playoffsByConference
   - divisionLeadersFirstPlayoffs
-- handle tiebreaker when teams meet in the finals of 2 conference playoffs
 - test
   - playoff clinching
   - 1 conference only
@@ -16,6 +16,8 @@ better tiebreakers
     - new column
     - explanation at the bottom
     - meaning of values on league/conf/div page
+
+divs and confs in power rankings https://discord.com/channels/290013534023057409/331882115119448065/810362108017377300
 
 Whenever you edit a player's retired number, it says the number was retired twice in player transactions even though I didn't delete and re-add it https://discord.com/channels/290013534023057409/290015591216054273/810214980053368872
 

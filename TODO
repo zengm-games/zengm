@@ -11,9 +11,11 @@ better tiebreakers
 - how should it work for draft order? nba uses random
   - reassess everywhere that calls orderTeams
 - standings data structure is kind of weird, no need for that separate "rank" object
-- test for 1 conference only
 - god mode setting for tiebreakers
   - note that coin flip is always last
+- test
+  - playoff clinching
+  - 1 conference only
 - blog
   - available tiebreakers
   - defaults

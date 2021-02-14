@@ -160,7 +160,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 		series = range(numRounds).map(() => []);
 
 		const round = await makeMatchups(
-			await orderTeams(teams),
+			await orderTeams(teams, teams),
 			numPlayoffTeams,
 			numPlayoffByes,
 		);

@@ -1,6 +1,5 @@
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import { helpers } from ".";
 import { isSport, TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";

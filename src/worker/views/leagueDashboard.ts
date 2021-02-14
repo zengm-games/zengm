@@ -93,6 +93,9 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			attrs: ["tid"],
 			seasonAttrs: [
 				"won",
+				"lost",
+				"otl",
+				"tied",
 				"winp",
 				"att",
 				"revenue",
@@ -127,6 +130,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const teamsConf = await orderTeams(
 			teams.filter(t => t.seasonAttrs.cid === cid),
+			teams,
 		);
 
 		for (const t2 of teamsConf) {
@@ -443,6 +447,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					rank: 0,
 					gb: 0,
 				})),
+			teams,
 		);
 
 		let rank = 1;
@@ -463,7 +468,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const playoffsByConference = g.get("confs", "current").length === 2;
 
 		return {
-			confTeams: await orderTeams(confTeams),
+			confTeams,
 			numPlayoffTeams,
 			playoffsByConference,
 		};

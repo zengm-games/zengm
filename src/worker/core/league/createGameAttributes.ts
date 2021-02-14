@@ -1,5 +1,8 @@
 import { DIFFICULTY, gameAttributeHasHistory, PHASE } from "../../../common";
-import type { GameAttributesLeagueWithHistory } from "../../../common/types";
+import type {
+	GameAttributesLeague,
+	GameAttributesLeagueWithHistory,
+} from "../../../common/types";
 import { defaultGameAttributes, helpers } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { LeagueFile, TeamInfo } from "./create";
@@ -45,7 +48,6 @@ const createGameAttributes = ({
 		difficulty,
 	};
 
-	let leagueFileNumGamesPlayoffSeries;
 	if (leagueFile.gameAttributes) {
 		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
 			// Set default for anything except these, since they can be overwritten by form input.
@@ -62,10 +64,6 @@ const createGameAttributes = ({
 					value[0].start === null
 				) {
 					value[0].start = -Infinity;
-				}
-
-				if (key === "numGamesPlayoffSeries") {
-					leagueFileNumGamesPlayoffSeries = value;
 				}
 			}
 		}
@@ -150,12 +148,49 @@ const createGameAttributes = ({
 	}
 
 	// Don't have too many playoff teams in custom leagues... like in a 16 team league, we don't want 16 teams in the playoffs
-	if (!leagueFileNumGamesPlayoffSeries) {
+	if (
+		!leagueFile.gameAttributes ||
+		!leagueFile.gameAttributes.numGamesPlayoffSeries
+	) {
 		while (
 			2 ** newNumGames.length > 0.75 * gameAttributes.numTeams &&
 			newNumGames.length > 1
 		) {
 			newNumGames.shift();
+		}
+	}
+
+	// If tiebreakers aren't specified in league file and this is an old league file, tiebreakers should have been random up to now
+	if (
+		leagueFile.gameAttributes &&
+		!leagueFile.gameAttributes.tiebreakers &&
+		version <= 42
+	) {
+		if (
+			leagueFile.gameAttributes.season !== undefined &&
+			leagueFile.gameAttributes.phase !== undefined
+		) {
+			const actualPhase =
+				leagueFile.gameAttributes.nextPhase ?? leagueFile.gameAttributes.phase;
+
+			let currentSeason = leagueFile.gameAttributes.season;
+			if (actualPhase >= PHASE.PLAYOFFS) {
+				currentSeason += 1;
+			}
+
+			// Apply default tiebreakers, while keeping track of when that happened
+			const tiebreakers = [
+				{
+					start: -Infinity,
+					value: ["coinFlip"] as GameAttributesLeague["tiebreakers"],
+				},
+				{
+					start: currentSeason,
+					value: defaultGameAttributes.tiebreakers[0].value,
+				},
+			];
+
+			gameAttributes.tiebreakers = tiebreakers;
 		}
 	}
 

@@ -157,13 +157,23 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
-export const footballOverrides =
+export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
 				numGames: 16,
 				quarterLength: 15,
-				numGamesPlayoffSeries: [1, 1, 1, 1],
-				numPlayoffByes: 2,
+				numGamesPlayoffSeries: [
+					{
+						start: -Infinity,
+						value: [1, 1, 1, 1],
+					},
+				],
+				numPlayoffByes: [
+					{
+						start: -Infinity,
+						value: 2,
+					},
+				],
 				stopOnInjuryGames: 1,
 				hardCap: true,
 				ties: [
@@ -204,7 +214,7 @@ export const footballOverrides =
 		  }
 		: {};
 
-export const hockeyOverrides =
+export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("hockey")
 		? {
 				quarterLength: 20,

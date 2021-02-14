@@ -3,12 +3,14 @@ leagueName gameAttribute used for anything?
 - https://discord.com/channels/@me/673750689649917958/809629720768675880
 
 better tiebreakers
+- there is some performance issue, game sim is really slow now
+  - updateClinchedPlayoffs
+    - too many calls to orderTeams, both directly and via genPlayoffSeriesFromTeams
 - add options
 	- winp vs pts (vs custom points?)
   - playoffsByConference
   - divisionLeadersFirstPlayoffs
 - handle tiebreaker when teams meet in the finals of 2 conference playoffs
-- standings data structure is kind of weird, no need for that separate "rank" object
 - test
   - playoff clinching
   - 1 conference only

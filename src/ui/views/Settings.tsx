@@ -159,6 +159,7 @@ export const options: {
 	validator?: (value: any, output: any, props: View<"settings">) => void;
 	customForm?: true;
 	hidden?: true;
+	maxWidth?: true;
 
 	// Short, one line, shown by default
 	description?: ReactNode;
@@ -264,6 +265,7 @@ export const options: {
 				}
 			}
 		},
+		maxWidth: true,
 	},
 	{
 		category: "Season",
@@ -1816,6 +1818,7 @@ const Input = ({
 	decoration,
 	disabled,
 	id,
+	maxWidth,
 	onChange,
 	type,
 	value,
@@ -1824,6 +1827,7 @@ const Input = ({
 	decoration?: Decoration;
 	disabled?: boolean;
 	id: string;
+	maxWidth?: true;
 	name: string;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -1838,7 +1842,10 @@ const Input = ({
 		id,
 		onChange,
 		style:
-			!decoration && type !== "rangePercent" && type !== "floatValuesOrCustom"
+			!decoration &&
+			type !== "rangePercent" &&
+			type !== "floatValuesOrCustom" &&
+			!maxWidth
 				? inputStyle
 				: undefined,
 		value,
@@ -1969,6 +1976,7 @@ const Option = ({
 	description,
 	descriptionLong,
 	decoration,
+	maxWidth,
 	onChange,
 	type,
 	value,
@@ -1981,6 +1989,7 @@ const Option = ({
 	description?: ReactNode;
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
+	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
 	value: string;
@@ -1992,7 +2001,7 @@ const Option = ({
 	return (
 		<>
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
-				<div className="mr-auto">
+				<div className="mr-auto text-nowrap">
 					<label
 						className="mb-0"
 						htmlFor={id}
@@ -2020,7 +2029,7 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className="ml-5">
+				<div className={classNames("ml-5", maxWidth ? "w-100" : undefined)}>
 					{customForm ? (
 						customForm
 					) : (
@@ -2028,6 +2037,7 @@ const Option = ({
 							type={type}
 							disabled={disabled}
 							id={id}
+							maxWidth={maxWidth}
 							name={name}
 							onChange={onChange}
 							value={value}
@@ -2327,6 +2337,7 @@ const Settings = (props: View<"settings">) => {
 										descriptionLong,
 										godModeRequired,
 										key,
+										maxWidth,
 										name,
 										type,
 										values,
@@ -2396,6 +2407,7 @@ const Settings = (props: View<"settings">) => {
 													description={description}
 													descriptionLong={descriptionLong}
 													customForm={customFormNode}
+													maxWidth={maxWidth}
 												/>
 											</div>
 										);

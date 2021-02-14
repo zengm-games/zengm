@@ -277,6 +277,14 @@ const doAwards = async (conditions: Conditions) => {
 			"lost",
 			"tied",
 			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
 			"winp",
 			"playoffRoundsWon",
 			"abbrev",
@@ -285,6 +293,7 @@ const doAwards = async (conditions: Conditions) => {
 			"cid",
 			"did",
 		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
 	});
 	const players = await getPlayers(g.get("season"));

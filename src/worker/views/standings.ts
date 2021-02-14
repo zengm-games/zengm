@@ -121,6 +121,20 @@ const updateStandings = async (
 			}
 		}
 
+		// Don't show tiebreakers when everyone is tied 0-0
+		let showTiebreakers = false;
+		for (const t of teams) {
+			if (
+				t.seasonAttrs.won > 0 ||
+				t.seasonAttrs.lost > 0 ||
+				t.seasonAttrs.tied > 0 ||
+				t.seasonAttrs.otl > 0
+			) {
+				showTiebreakers = true;
+				break;
+			}
+		}
+
 		let ties = false;
 		let otl = false;
 		for (const t of teams) {
@@ -143,6 +157,7 @@ const updateStandings = async (
 			playoffsByConference,
 			rankingGroups,
 			season: inputs.season,
+			showTiebreakers,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
 			tiebreakers: getTiebreakers(inputs.season),

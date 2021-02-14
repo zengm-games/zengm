@@ -33,12 +33,16 @@ const record = (
 const GroupStandingsRow = ({
 	season,
 	separator,
+	showTiebreakers,
 	t,
 	ties,
 	otl,
 	type,
 	userTid,
-}: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
+}: Pick<
+	View<"standings">,
+	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "userTid"
+> & {
 	separator: boolean;
 	t: StandingsTeam;
 }) => {
@@ -97,7 +101,9 @@ const GroupStandingsRow = ({
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
-			<td>{t.tiebreaker ? TIEBREAKERS[t.tiebreaker] : null}</td>
+			<td>
+				{showTiebreakers && t.tiebreaker ? TIEBREAKERS[t.tiebreaker] : null}
+			</td>
 		</tr>
 	);
 };
@@ -110,12 +116,16 @@ const GroupStandings = ({
 	name,
 	season,
 	separatorIndex,
+	showTiebreakers,
 	teams,
 	ties,
 	otl,
 	type,
 	userTid,
-}: Pick<View<"standings">, "season" | "ties" | "otl" | "type" | "userTid"> & {
+}: Pick<
+	View<"standings">,
+	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "userTid"
+> & {
 	name?: string;
 	separatorIndex?: number;
 	teams: StandingsTeam[];
@@ -163,6 +173,7 @@ const GroupStandings = ({
 							t={t}
 							season={season}
 							separator={separatorIndex === i}
+							showTiebreakers={showTiebreakers}
 							otl={otl}
 							ties={ties}
 							type={type}
@@ -269,6 +280,7 @@ const Standings = ({
 	playoffsByConference,
 	rankingGroups,
 	season,
+	showTiebreakers,
 	tiebreakers,
 	ties,
 	otl,
@@ -360,6 +372,7 @@ const Standings = ({
 					key={j}
 					{...subgroup}
 					season={season}
+					showTiebreakers={showTiebreakers}
 					otl={otl}
 					ties={ties}
 					type={type}

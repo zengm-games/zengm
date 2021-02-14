@@ -110,6 +110,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			stats: ["pts", "oppPts", "gp", ...stats],
 			season: g.get("season"),
+			showNoStats: true,
 		});
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
@@ -419,6 +420,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
+			showNoStats: true,
 		});
 
 		// Find user's conference

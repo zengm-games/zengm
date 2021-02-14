@@ -207,6 +207,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 							"confRecordIfSame",
 							"strengthOfVictory",
 							"strengthOfSchedule",
+							"marginOfVictory",
 							"coinFlip",
 						],
 					},

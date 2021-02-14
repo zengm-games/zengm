@@ -28,6 +28,7 @@ import {
 	GAME_NAME,
 	isSport,
 	SPORT_HAS_REAL_PLAYERS,
+	TIEBREAKERS,
 } from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
@@ -95,7 +96,8 @@ type Key =
 	| "difficulty"
 	| "stopOnInjuryGames"
 	| "stopOnInjury"
-	| "aiJerseyRetirement";
+	| "aiJerseyRetirement"
+	| "tiebreakers";
 
 type Category =
 	| "General"
@@ -221,6 +223,46 @@ export const options: {
 				output.numPlayoffByes,
 				props.numActiveTeams,
 			);
+		},
+	},
+	{
+		category: "Season",
+		key: "tiebreakers",
+		name: "Tiebreakers",
+		godModeRequired: "existingLeagueOnly",
+		descriptionLong: (
+			<>
+				<p>
+					Specify the tiebreakers used to determine how tied teams should be
+					ranked in the standings and playoffs. Available tiebreakers are:
+				</p>
+				<ul>
+					{helpers.keys(TIEBREAKERS).map(key => (
+						<li key={key}>
+							<b>{key}</b> - {TIEBREAKERS[key]}
+						</li>
+					))}
+				</ul>
+				<p>
+					If your list of tiebreakers does not include "coinFlip", it will
+					automatically be added to the end to handle the case where every
+					single other tiebreaker is tied.
+				</p>
+			</>
+		),
+		type: "jsonString",
+		validator: value => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			for (const key of value) {
+				if (typeof key !== "string") {
+					throw new Error("Array must contain only strings");
+				}
+				if (!TIEBREAKERS.hasOwnProperty(key)) {
+					throw new Error(`Invalid tiebreaker "${key}"`);
+				}
+			}
 		},
 	},
 	{

@@ -73,6 +73,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),
 			aiJerseyRetirement: g.get("aiJerseyRetirement"),
 			numPeriods: g.get("numPeriods"),
+			tiebreakers: g.get("tiebreakers"),
 		};
 	}
 };

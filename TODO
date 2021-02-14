@@ -9,8 +9,6 @@ better tiebreakers
   - divisionLeadersFirstPlayoffs
 - handle tiebreaker when teams meet in the finals of 2 conference playoffs
 - standings data structure is kind of weird, no need for that separate "rank" object
-- god mode setting for tiebreakers
-  - note that coin flip is always last
 - test
   - playoff clinching
   - 1 conference only

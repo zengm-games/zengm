@@ -1448,9 +1448,11 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
-			this.doPf(this.d, type === "threePointer" ? "pfTP" : "pfFG", shooter);
+			const threePointer = type === "threePointer" && g.get("threePointers");
 
-			if (type === "threePointer" && g.get("threePointers")) {
+			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
+
+			if (threePointer) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
 

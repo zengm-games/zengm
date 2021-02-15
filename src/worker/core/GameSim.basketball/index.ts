@@ -2055,6 +2055,11 @@ class GameSim {
 			const threePointerText = g.get("threePointers")
 				? "three pointer"
 				: "deep shot";
+			const threePointDistance = helpers.bound(
+				Math.round(random.gauss(26.1, 1.5)),
+				24,
+				94,
+			);
 
 			let showScore = false;
 			if (type === "injury") {
@@ -2070,7 +2075,9 @@ class GameSim {
 			} else if (type === "fgaMidRange") {
 				texts = ["{0} attempts a mid-range shot"];
 			} else if (type === "fgaTp") {
-				texts = [`{0} attempts a ${threePointerText}`];
+				texts = [
+					`{0} attempts a ${threePointerText} from ${threePointDistance} feet`,
+				];
 			} else if (type === "fgAtRim") {
 				// Randomly pick a name to be dunked on
 				const ratios = this.ratingArray("blocking", this.d, 5);

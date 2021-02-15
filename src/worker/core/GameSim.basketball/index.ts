@@ -1345,7 +1345,7 @@ class GameSim {
 			// Great shooters shoot from deeper ranges
 			const threePointAbility =
 				this.team[this.o].player[p].compositeRating.shootingThreePointer * 100;
-			if (threePointAbility > 0.65) {
+			if (threePointAbility > 65) {
 				// 90 tp rating will have a meanDistance of 28.25, SD of 2.625
 				meanDistance += threePointAbility / 40;
 				distanceDeviation += threePointAbility / 80;

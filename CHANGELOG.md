@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* **2021-02-15: Non-random tiebreakers, based on things like head-to-head results, strength of schedule, etc. Also it's customizable in God Mode. [[1]](https://basketball-gm.com/blog/2021/02/customizable-tiebreakers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lkigp1/version_202102151049_nonrandom_tiebreakers_based/) [[3]](https://old.reddit.com/r/Football_GM/comments/lkij5s/version_202102151052_nonrandom_tiebreakers_based/)**
+
 * 2021-02-12: New challenge mode "Thanos Mode": at the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/360) [[2]](https://old.reddit.com/r/BasketballGM/comments/lifm6h/new_challenge_mode_thanos_mode_at_the_end_of_the/)
 
 * 2021-02-11: In custom league files, there is a new simpler format for writing "gameAttributes". Don't worry, the old format will continue to work, you don't need to change anything! But now you can write it as an object rather than an array, which is generally a lot simpler. See [the manual](https://basketball-gm.com/manual/customization/game-attributes/) for more info.
@@ -56,7 +58,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 * 2020-12-16: The time at which the All-Star Game occurs can now be edited at Tools > League Settings. By default it is 70% of the way through the season. [[1]](https://old.reddit.com/r/BasketballGM/comments/kepbrj/a_few_little_customization_options_for_the/)
 
-* 2020-12-12: New "Edit Awards" page available in God Mode, which allows you to edit all the end-of-season award winners. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/331) [[2]](https://old.reddit.com/r/BasketballGM/comments/kbl3m7/new_edit_awards_page_available_in_god_mode_which/)
+* **2020-12-12: New "Edit Awards" page available in God Mode, which allows you to edit all the end-of-season award winners. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/331) [[2]](https://old.reddit.com/r/BasketballGM/comments/kbl3m7/new_edit_awards_page_available_in_god_mode_which/)**
 
 * 2020-12-09: Added "Randomize Name" button to the Create/Edit Player page, which picks a random name from the currently selected country. [[1]](https://old.reddit.com/r/BasketballGM/comments/k9mugr/just_a_tiny_fun_new_feature_i_added_a_randomize/)
 

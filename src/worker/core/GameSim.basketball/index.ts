@@ -1338,12 +1338,15 @@ class GameSim {
 			probMake = shootingThreePointerScaled * 0.3 + 0.36;
 			probAndOne = 0.01;
 
+			// Show shot distance when a player attempts a deep shot
 			let meanDistance = 26;
 			let distanceDeviation = 1.5;
+
 			// Great shooters shoot from deeper ranges
 			const threePointAbility =
 				this.team[this.o].player[p].compositeRating.shootingThreePointer * 100;
-			if (threePointAbility > 0.69) {
+			if (threePointAbility > 0.65) {
+				// 90 tp rating will have a meanDistance of 28.25, SD of 2.625
 				meanDistance += threePointAbility / 40;
 				distanceDeviation += threePointAbility / 80;
 			}
@@ -1356,6 +1359,7 @@ class GameSim {
 			}
 			probMake *= g.get("threePointAccuracyFactor");
 
+			// 24 FT is where the tp line is, 94 FT is length of court
 			const shotDistance = helpers.bound(
 				Math.round(random.gauss(meanDistance, distanceDeviation)),
 				24,

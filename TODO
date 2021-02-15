@@ -3,16 +3,18 @@ better tiebreakers
 	- winp vs pts (vs custom points?)
   - playoffsByConference
   - divisionLeadersFirstPlayoffs
-- blog
-  - available tiebreakers
-  - defaults
-  - recursive algorithm
-  - standings page
-    - new column
-    - explanation at the bottom
-    - meaning of values on league/conf/div page
-  - "clinched" notifications are a little worse, cause it'd be too slow/complicated to simulate all the tiebreakers, unlike before with just the random one
-    - also, switched from "clinched #1 overall seed and home court advantage" to "clinched a #1 seed" because if >2 teams are tied
+
+I have a few issues with this file: https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
+- A few teams are not sorted alphabetically (such as Alaska Sea Sonics or Arizona Beasts)
+- I'd like everyone to be on the same shitty salary, so min and max salaries set at 100K$ but rookies still earn less (90K)
+- https://discord.com/channels/290013534023057409/290015591216054273/810511748699521044
+- performance https://discord.com/channels/290013534023057409/290015468939640832/810478838474866698
+
+average team age on roster page
+
+Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558
+
+DPOY should not use blk and stl directly, it should normalize for the number of games in the season (not gp) https://discord.com/channels/290013534023057409/290015591216054273/810469774005370880
 
 divs and confs in power rankings https://discord.com/channels/290013534023057409/331882115119448065/810362108017377300
 
@@ -793,6 +795,9 @@ FBGM
 - penalty on punt goes in wrong direction https://old.reddit.com/r/Football_GM/comments/l9xzhi/bug_report_penalty_goes_the_wrong_way/
 - holding on incomplete pass https://discord.com/channels/290013534023057409/290015591216054273/806339641924911154
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
+- sacks on 4th down
+  - don't end overtime
+  - don't get recorded as team/player stats
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

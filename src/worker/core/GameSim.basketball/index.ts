@@ -1364,7 +1364,7 @@ class GameSim {
 
 			this.recordPlay("fgaTp", this.o, [
 				this.team[this.o].player[p].name,
-				shotDistance,
+				shotDistance.toFixed(),
 			]);
 		} else {
 			const r1 =

@@ -1338,13 +1338,34 @@ class GameSim {
 			probMake = shootingThreePointerScaled * 0.3 + 0.36;
 			probAndOne = 0.01;
 
-			// Better shooting in the ASG, why not?
+			let meanDistance = 26;
+			let distanceDeviation = 1.5;
+			// Great shooters shoot from deeper ranges
+			const threePointAbility =
+				this.team[this.o].player[p].compositeRating.shootingThreePointer * 100;
+			if (threePointAbility > 0.69) {
+				meanDistance += threePointAbility / 40;
+				distanceDeviation += threePointAbility / 80;
+			}
+
+			// Better and deeper shooting in the ASG, why not?
 			if (this.allStarGame) {
 				probMake += 0.02;
+				meanDistance += 1;
+				distanceDeviation += 0.5;
 			}
 			probMake *= g.get("threePointAccuracyFactor");
 
-			this.recordPlay("fgaTp", this.o, [this.team[this.o].player[p].name]);
+			const shotDistance = helpers.bound(
+				Math.round(random.gauss(meanDistance, distanceDeviation)),
+				24,
+				94,
+			);
+
+			this.recordPlay("fgaTp", this.o, [
+				this.team[this.o].player[p].name,
+				shotDistance,
+			]);
 		} else {
 			const r1 =
 				0.8 *
@@ -2055,11 +2076,6 @@ class GameSim {
 			const threePointerText = g.get("threePointers")
 				? "three pointer"
 				: "deep shot";
-			const threePointDistance = helpers.bound(
-				Math.round(random.gauss(26.1, 1.5)),
-				24,
-				94,
-			);
 
 			let showScore = false;
 			if (type === "injury") {
@@ -2075,9 +2091,7 @@ class GameSim {
 			} else if (type === "fgaMidRange") {
 				texts = ["{0} attempts a mid-range shot"];
 			} else if (type === "fgaTp") {
-				texts = [
-					`{0} attempts a ${threePointerText} from ${threePointDistance} feet`,
-				];
+				texts = [`{0} attempts a ${threePointerText} from {1} feet`];
 			} else if (type === "fgAtRim") {
 				// Randomly pick a name to be dunked on
 				const ratios = this.ratingArray("blocking", this.d, 5);

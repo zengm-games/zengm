@@ -494,6 +494,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
+	| "pointsFormula"
 	| "tiebreakers"
 	| "ties"
 	| "userTid"
@@ -507,6 +508,9 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
+	pointsFormula: GameAttributeWithHistory<
+		GameAttributesLeague["pointsFormula"]
+	>;
 	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;

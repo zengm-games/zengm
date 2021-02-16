@@ -7,6 +7,13 @@ import {
 } from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
+const wrap = <T>(value: T) => [
+	{
+		start: -Infinity,
+		value,
+	},
+];
+
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
@@ -29,30 +36,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	otherTeamsWantToHire: false,
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]
-	confs: [
-		{
-			start: -Infinity,
-			value: DEFAULT_CONFS,
-		},
-	],
-	divs: [
-		{
-			start: -Infinity,
-			value: DEFAULT_DIVS,
-		},
-	],
-	numGamesPlayoffSeries: [
-		{
-			start: -Infinity,
-			value: [7, 7, 7, 7],
-		},
-	],
-	numPlayoffByes: [
-		{
-			start: -Infinity,
-			value: 0,
-		},
-	],
+	confs: wrap(DEFAULT_CONFS),
+	divs: wrap(DEFAULT_DIVS),
+	numGamesPlayoffSeries: wrap([7, 7, 7, 7]),
+	numPlayoffByes: wrap(0),
 	aiTradesFactor: 1,
 	autoDeleteOldBoxScores: true,
 	stopOnInjury: false,
@@ -70,18 +57,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	hardCap: false,
 
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
-	ties: [
-		{
-			start: -Infinity,
-			value: false,
-		},
-	],
-	otl: [
-		{
-			start: -Infinity,
-			value: false,
-		},
-	],
+	ties: wrap(false),
+	otl: wrap(false),
 
 	draftType: "nba2019",
 	numDraftRounds: 2,
@@ -155,7 +132,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 	tradeDeadline: 0.6,
-	pointsFormula: "",
+	pointsFormula: wrap(""),
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -164,26 +141,11 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 		? {
 				numGames: 16,
 				quarterLength: 15,
-				numGamesPlayoffSeries: [
-					{
-						start: -Infinity,
-						value: [1, 1, 1, 1],
-					},
-				],
-				numPlayoffByes: [
-					{
-						start: -Infinity,
-						value: 2,
-					},
-				],
+				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
+				numPlayoffByes: wrap(2),
 				stopOnInjuryGames: 1,
 				hardCap: true,
-				ties: [
-					{
-						start: -Infinity,
-						value: true,
-					},
-				],
+				ties: wrap(true),
 				draftType: "noLottery",
 				numDraftRounds: 7,
 				salaryCap: 200000,
@@ -199,21 +161,16 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				sonRate: 0.005,
 				brotherRate: 0.005,
 				allStarGame: null,
-				tiebreakers: [
-					{
-						start: -Infinity,
-						value: [
-							"headToHeadRecord",
-							"divRecordIfSame",
-							"commonOpponentsRecord",
-							"confRecordIfSame",
-							"strengthOfVictory",
-							"strengthOfSchedule",
-							"marginOfVictory",
-							"coinFlip",
-						],
-					},
-				],
+				tiebreakers: wrap([
+					"headToHeadRecord",
+					"divRecordIfSame",
+					"commonOpponentsRecord",
+					"confRecordIfSame",
+					"strengthOfVictory",
+					"strengthOfSchedule",
+					"marginOfVictory",
+					"coinFlip",
+				]),
 		  }
 		: {};
 
@@ -228,12 +185,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numDraftRounds: 4,
 				allStarGame: null,
 				numPlayersOnCourt: 6,
-				otl: [
-					{
-						start: -Infinity,
-						value: true,
-					},
-				],
+				otl: wrap(true),
 				pointsFormula: DEFAULT_POINTS_FORMULA,
 		  }
 		: {};

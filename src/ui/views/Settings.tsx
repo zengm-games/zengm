@@ -97,11 +97,13 @@ type Key =
 	| "stopOnInjuryGames"
 	| "stopOnInjury"
 	| "aiJerseyRetirement"
-	| "tiebreakers";
+	| "tiebreakers"
+	| "pointsFormula";
 
 type Category =
 	| "General"
 	| "Season"
+	| "Standings"
 	| "Team"
 	| "Draft"
 	| "Finances"
@@ -227,7 +229,7 @@ export const options: {
 		},
 	},
 	{
-		category: "Season",
+		category: "Standings",
 		key: "tiebreakers",
 		name: "Tiebreakers",
 		godModeRequired: "existingLeagueOnly",
@@ -266,6 +268,23 @@ export const options: {
 			}
 		},
 		maxWidth: true,
+	},
+	{
+		category: "Standings",
+		key: "pointsFormula",
+		name: "Points Formula",
+		godModeRequired: "existingLeagueOnly",
+		descriptionLong: (
+			<>
+				<p>
+					You can either rank teams by winning percentage (like NBA/NFL/MLB) or
+					points (like NHL). To rank by winning percentage, leave this blank. To
+					rank by points, enter a formula here, such as <code>2*W+OTL+T</code>.
+					Available variables are W, L, OTL, and T.
+				</p>
+			</>
+		),
+		type: "string",
 	},
 	{
 		category: "Season",
@@ -1747,6 +1766,9 @@ const categories: {
 	},
 	{
 		name: "Season",
+	},
+	{
+		name: "Standings",
 	},
 	{
 		name: "Team",

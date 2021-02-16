@@ -74,6 +74,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			aiJerseyRetirement: g.get("aiJerseyRetirement"),
 			numPeriods: g.get("numPeriods"),
 			tiebreakers: g.get("tiebreakers"),
+			pointsFormula: g.get("pointsFormula"),
 		};
 	}
 };

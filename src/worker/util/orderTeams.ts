@@ -487,7 +487,26 @@ export const breakTies = <T extends BaseTeam>(
 	// Values are index on "teams" array for teams that already lost a tiebreaker round
 	const alreadyLost = new Set();
 
+	const formatOutput = (t: T, tiebreaker: Tiebreaker) => {
+		return [
+			!options.addTiebreakersField
+				? t
+				: {
+						...t,
+
+						// Overwrite any existing tiebreaker. The last one is the relevant one.
+						tiebreaker,
+				  },
+			...breakTies(
+				teams.filter(t2 => t2 !== t),
+				allTeams,
+				options,
+			),
+		];
+	};
+
 	// Find top team among teams and pass through. The rest, evaluate in an individaul tiebreaker
+	let maxIndexes: number[];
 	for (const tiebreaker of options.tiebreakers) {
 		for (const [iteree, order] of TIEBREAKER_FUNCTIONS[tiebreaker]) {
 			const values = teams.map((t, i) => {
@@ -499,7 +518,7 @@ export const breakTies = <T extends BaseTeam>(
 			});
 
 			let maxValue;
-			let maxIndexes: number[] = [];
+			maxIndexes = [];
 			for (let i = 0; i < values.length; i++) {
 				if (maxValue === undefined || values[i] > maxValue) {
 					maxValue = values[i];
@@ -512,22 +531,7 @@ export const breakTies = <T extends BaseTeam>(
 			if (maxIndexes.length === 1) {
 				// If there's only one team at max, that's our team! On to the next iteration
 				const t = teams[maxIndexes[0]];
-
-				return [
-					!options.addTiebreakersField
-						? t
-						: {
-								...t,
-
-								// Overwrite any existing tiebreaker. The last one is the relevant one.
-								tiebreaker,
-						  },
-					...breakTies(
-						teams.filter(t2 => t2 !== t),
-						allTeams,
-						options,
-					),
-				];
+				return formatOutput(t, tiebreaker);
 			} else {
 				// If there's a tie at this level, mark the teams which are not part of the tie, and continue to the next tiebreaker
 				for (let i = 0; i < values.length; i++) {
@@ -539,7 +543,8 @@ export const breakTies = <T extends BaseTeam>(
 		}
 	}
 
-	throw new Error("random tiebreaker should have been used");
+	// We could reach here if the seed for the deterministic RNG in coinFlip is the same for two teams, which does happen unfortunately. In that case, just return the teams and pretend it was a coin flip result. Would be better to make the seed more unique, but that would break backwards compatibility.
+	return formatOutput(teams[0], "coinFlip");
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.

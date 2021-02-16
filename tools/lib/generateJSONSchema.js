@@ -651,7 +651,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "boolean",
 							},
 							pointsFormula: {
-								type: "string",
+								type: "array",
+								minItems: 1,
 							},
 							nextPhase: {
 								// Shouldn't actually be null, but legacy

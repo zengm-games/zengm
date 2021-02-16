@@ -3087,7 +3087,9 @@ const updateTrade = async (teams: TradeTeams) => {
 };
 
 const validatePointsFormula = async (pointsFormula: string) => {
-	new PointsFormulaEvaluator(pointsFormula);
+	if (pointsFormula !== "") {
+		new PointsFormulaEvaluator(pointsFormula);
+	}
 };
 
 export default {

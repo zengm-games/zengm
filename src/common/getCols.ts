@@ -1878,8 +1878,13 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
-	Pts: {
+	PTS: {
 		desc: "Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PTS%": {
+		desc: "Points Divided By Maximum Points",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

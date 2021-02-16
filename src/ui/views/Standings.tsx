@@ -80,6 +80,7 @@ const GroupStandingsRow = ({
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			{usePts ? null : <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>}
 			<td>{usePts ? Math.round(t.seasonAttrs.pts) : t.gb[type]}</td>
+			{usePts ? <td>{helpers.roundWinp(t.seasonAttrs.ptsPct)}</td> : null}
 			<td>{record(t.seasonAttrs, "Home")}</td>
 			<td>{record(t.seasonAttrs, "Away")}</td>
 			<td>{record(t.seasonAttrs, "Div")}</td>
@@ -118,7 +119,7 @@ export const ColPtsOrGB = ({
 	pointsFormula: string;
 	usePts: boolean;
 }) => {
-	const col = getCols(usePts ? "Pts" : "GB")[0];
+	const col = getCols(usePts ? "PTS" : "GB")[0];
 	if (usePts) {
 		col.desc = `Points (${pointsFormula})`;
 	}
@@ -177,6 +178,7 @@ const GroupStandings = ({
 						{ties ? <th>T</th> : null}
 						{usePts ? null : <th>%</th>}
 						<ColPtsOrGB pointsFormula={pointsFormula} usePts={usePts} />
+						{usePts ? <th>PTS%</th> : null}
 						<th>Home</th>
 						<th>Road</th>
 						<th>Div</th>

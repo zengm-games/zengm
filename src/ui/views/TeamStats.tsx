@@ -20,6 +20,7 @@ const TeamStats = ({
 	teams,
 	ties,
 	otl,
+	usePts,
 	userTid,
 }: View<"teamStats">) => {
 	useTitleBar({
@@ -40,6 +41,12 @@ const TeamStats = ({
 	}
 	if (ties) {
 		basicColNames.push("T");
+	}
+	if (usePts) {
+		basicColNames.push("PTS");
+		basicColNames.push("PTS%");
+	} else {
+		basicColNames.push("%");
 	}
 
 	const cols = getCols(
@@ -91,6 +98,12 @@ const TeamStats = ({
 		}
 		if (ties) {
 			data.tied = t.seasonAttrs.tied;
+		}
+		if (usePts) {
+			data.pts = Math.round(t.seasonAttrs.pts);
+			data.ptsPct = helpers.roundWinp(t.seasonAttrs.ptsPct);
+		} else {
+			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
 		}
 
 		for (const stat of stats) {

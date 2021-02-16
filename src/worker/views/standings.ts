@@ -38,6 +38,7 @@ const updateStandings = async (
 					"otl",
 					"winp",
 					"pts",
+					"ptsPct",
 					"wonHome",
 					"lostHome",
 					"tiedHome",

@@ -1239,6 +1239,7 @@ type TeamSeasonPlus = TeamSeason & {
 	streak: string;
 	pts: number;
 	ptsDefault: number;
+	ptsPct: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 

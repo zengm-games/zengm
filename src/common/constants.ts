@@ -265,11 +265,15 @@ const TIEBREAKERS = {
 	coinFlip: "Coin flip",
 };
 
+// This is only applied by default in hockey, but it's still used in all sports if "pts" are explicitly requested and there is no formula set
+const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
+
 export {
 	AWARD_NAMES,
 	COURT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
 	DIFFICULTY,

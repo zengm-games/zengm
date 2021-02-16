@@ -10,6 +10,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { DEFAULT_POINTS_FORMULA } from "../../../common";
+import { g } from "../../util";
+
 const SYMBOLS = ["W", "L", "T", "OTL"] as const;
 type PointsFormulaSymbol = typeof SYMBOLS[number];
 
@@ -180,7 +183,7 @@ const partiallyEvaluate = (tokens: string[]) => {
 	return processed;
 };
 
-class PointsFormulaEvaluator {
+export class PointsFormulaEvaluator {
 	tokens: (string | number)[];
 
 	constructor(equation: string) {
@@ -220,4 +223,38 @@ class PointsFormulaEvaluator {
 	}
 }
 
-export default PointsFormulaEvaluator;
+const formulaCache: Record<string, PointsFormulaEvaluator> = {};
+
+const evaluatePointsFormula = (
+	data: {
+		won: number;
+		lost: number;
+		otl: number;
+		tied: number;
+	},
+	{
+		formula,
+		season = g.get("season"),
+	}: {
+		formula?: string;
+		season?: number;
+	},
+) => {
+	let pointsFormula = formula ?? g.get("pointsFormula", season);
+	if (pointsFormula === "") {
+		// Even if no formula defined (sort by win%), use the default, so points can still be displayed
+		pointsFormula = DEFAULT_POINTS_FORMULA;
+	}
+
+	if (!formulaCache[pointsFormula]) {
+		formulaCache[pointsFormula] = new PointsFormulaEvaluator(pointsFormula);
+	}
+	return formulaCache[pointsFormula].evaluate({
+		W: data.won,
+		L: data.lost,
+		OTL: data.otl,
+		T: data.tied,
+	});
+};
+
+export default evaluatePointsFormula;

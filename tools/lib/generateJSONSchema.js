@@ -650,6 +650,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							playerMoodTraits: {
 								type: "boolean",
 							},
+							pointsFormula: {
+								type: "string",
+							},
 							nextPhase: {
 								// Shouldn't actually be null, but legacy
 								type: ["integer", "null"],

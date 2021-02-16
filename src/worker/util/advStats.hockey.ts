@@ -6,7 +6,7 @@ import advStatsSave from "./advStatsSave";
 
 type Team = TeamFiltered<
 	["tid"],
-	["pts"],
+	["ptsDefault"],
 	["gp", "min", "g", "a", "oppG", "sa"],
 	number
 >;
@@ -85,7 +85,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
-		const marginalGoalsPerPoint = league.g / league.pts;
+		const marginalGoalsPerPoint = league.g / league.ptsDefault;
 
 		if (p.ratings.pos === "G") {
 			// Goalie point shares
@@ -170,7 +170,7 @@ const advStats = async () => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		stats: teamStats,
-		seasonAttrs: ["pts"],
+		seasonAttrs: ["ptsDefault"],
 		season: g.get("season"),
 		playoffs: PHASE.PLAYOFFS === g.get("phase"),
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
@@ -186,10 +186,10 @@ const advStats = async () => {
 			}
 		}
 
-		if (memo.hasOwnProperty("pts")) {
-			memo.pts += t.seasonAttrs.pts;
+		if (memo.hasOwnProperty("ptsDefault")) {
+			memo.ptsDefault += t.seasonAttrs.ptsDefault;
 		} else {
-			memo.pts = t.seasonAttrs.pts;
+			memo.ptsDefault = t.seasonAttrs.ptsDefault;
 		}
 
 		if (memo.hasOwnProperty("gPerGame")) {

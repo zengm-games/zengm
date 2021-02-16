@@ -12,6 +12,7 @@ import type {
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types";
+import { DEFAULT_POINTS_FORMULA } from "../../../common";
 
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,
@@ -168,14 +169,11 @@ const processSeasonAttrs = async <
 					} else if (ts.streak < 0) {
 						row.streak = `Lost ${Math.abs(ts.streak)}`;
 					}
-				} else if (attr === "pts") {
-					row.pts = 2 * ts.won;
-					if (typeof row.tied === "number") {
-						row.pts += row.tied;
-					}
-					if (typeof row.otl === "number") {
-						row.pts += row.otl;
-					}
+				} else if (attr === "ptsDefault") {
+					row.ptsDefault = team.evaluatePointsFormula(ts, {
+						formula: DEFAULT_POINTS_FORMULA,
+						season: ts.season,
+					});
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];

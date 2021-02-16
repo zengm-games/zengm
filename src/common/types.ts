@@ -414,6 +414,7 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	playerMoodTraits: boolean;
+	pointsFormula: string;
 	spectator: boolean;
 	otl: boolean;
 	otherTeamsWantToHire: boolean;
@@ -1234,7 +1235,7 @@ type TeamSeasonPlus = TeamSeason & {
 	streak: string;
 
 	// Only hockey!
-	pts: number;
+	ptsDefault: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 

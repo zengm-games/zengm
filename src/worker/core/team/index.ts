@@ -3,6 +3,7 @@ import autoBudgetSettings from "./autoBudgetSettings";
 import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
+import evaluatePointsFormula from "./evaluatePointsFormula";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
 import generate from "./generate";
@@ -26,6 +27,7 @@ export default {
 	checkRosterSizes,
 	deleteUnreadMessages,
 	disable,
+	evaluatePointsFormula,
 	genSeasonRow,
 	genStatsRow,
 	generate,

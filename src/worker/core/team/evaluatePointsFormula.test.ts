@@ -1,7 +1,7 @@
 import assert from "assert";
-import PointsFormulaEvaluator from "./PointsFormulaEvaluator";
+import { PointsFormulaEvaluator } from "./evaluatePointsFormula";
 
-describe("worker/util/PointsFormulaEvaluator", () => {
+describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
 	test("works for a normal formula", () => {
 		const evaluator = new PointsFormulaEvaluator("2*W + OTL + T");
 		assert.strictEqual(

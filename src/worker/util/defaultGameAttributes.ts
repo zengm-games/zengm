@@ -1,6 +1,7 @@
 import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
 } from "../../common";
@@ -154,6 +155,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 	tradeDeadline: 0.6,
+	pointsFormula: "",
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -232,6 +234,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 						value: true,
 					},
 				],
+				pointsFormula: DEFAULT_POINTS_FORMULA,
 		  }
 		: {};
 

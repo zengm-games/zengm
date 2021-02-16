@@ -16,9 +16,6 @@ import { g } from "../../util";
 const SYMBOLS = ["W", "L", "T", "OTL"] as const;
 type PointsFormulaSymbol = typeof SYMBOLS[number];
 
-const ZERO_CHAR_CODE = "0".charCodeAt(0);
-const NINE_CHAR_CODE = "9".charCodeAt(0);
-
 const BINARY_MINUS = "-";
 const UNARY_MINUS = "#";
 
@@ -66,13 +63,13 @@ const operators: Record<
 	},
 	"^": {
 		operands: 2,
-		precedence: 3,
+		precedence: 4,
 		associativity: "r",
 		func: (a, b) => Math.pow(a, b),
 	},
 	"#": {
 		operands: 1,
-		precedence: 10,
+		precedence: 3,
 		associativity: "r",
 		func: a => -a,
 	},
@@ -92,9 +89,8 @@ const parseUnaryMinus = (string: string) => {
 				if (offset === 0) {
 					return UNARY_MINUS;
 				}
-				const charCode = string[offset - 1].charCodeAt(0);
-				return (charCode < ZERO_CHAR_CODE || charCode > NINE_CHAR_CODE) &&
-					string[offset - 1] !== ")"
+				const prevChar = string[offset - 1];
+				return !!operators[prevChar] || prevChar === "("
 					? UNARY_MINUS
 					: BINARY_MINUS;
 			},

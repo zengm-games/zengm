@@ -25,6 +25,45 @@ describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
 		);
 	});
 
+	test("works for aweird formula", () => {
+		const evaluator = new PointsFormulaEvaluator("(((W*OTL-L^3)))");
+		assert.strictEqual(
+			evaluator.evaluate({
+				W: 2,
+				L: 4,
+				OTL: 3,
+				T: 5,
+			}),
+			-58,
+		);
+	});
+
+	test("works for a weird formula 2", () => {
+		const evaluator = new PointsFormulaEvaluator("W^OTL+(-L^3)");
+		assert.strictEqual(
+			evaluator.evaluate({
+				W: 2,
+				L: 4,
+				OTL: 3,
+				T: 5,
+			}),
+			-56,
+		);
+	});
+
+	test("works for a weird formula 3", () => {
+		const evaluator = new PointsFormulaEvaluator("W^OTL-L^3--2");
+		assert.strictEqual(
+			evaluator.evaluate({
+				W: 2,
+				L: 4,
+				OTL: 3,
+				T: 5,
+			}),
+			-54,
+		);
+	});
+
 	test("error for invalid variable", () => {
 		assert.throws(
 			() => {

@@ -45,7 +45,7 @@ const updateLeagueStats = async (
 			maxSeason -= 1;
 		}
 
-		const pointsFormula = g.get("pointsFormula", inputs.season);
+		const pointsFormula = g.get("pointsFormula");
 		const usePts = pointsFormula !== "";
 
 		const seasons = [];

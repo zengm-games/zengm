@@ -186,7 +186,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				allStarGame: null,
 				numPlayersOnCourt: 6,
 				otl: wrap(true),
-				pointsFormula: DEFAULT_POINTS_FORMULA,
+				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
 		  }
 		: {};
 

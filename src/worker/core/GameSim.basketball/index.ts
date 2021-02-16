@@ -1359,16 +1359,20 @@ class GameSim {
 			}
 			probMake *= g.get("threePointAccuracyFactor");
 
-			// 24 FT is where the tp line is, 94 FT is length of court
-			const shotDistance = helpers.bound(
-				Math.round(random.gauss(meanDistance, distanceDeviation)),
-				24,
+			// 22 FT is where the corner three line is, 94 FT is length of court
+			let shotDistance = helpers.bound(
+				random.gauss(meanDistance, distanceDeviation),
+				22,
 				94,
 			);
+			const distance =
+				shotDistance > 23.8
+					? shotDistance.toFixed(1) + " feet"
+					: "from the corner";
 
 			this.recordPlay("fgaTp", this.o, [
 				this.team[this.o].player[p].name,
-				shotDistance.toFixed(),
+				distance,
 			]);
 		} else {
 			const r1 =
@@ -2095,7 +2099,7 @@ class GameSim {
 			} else if (type === "fgaMidRange") {
 				texts = ["{0} attempts a mid-range shot"];
 			} else if (type === "fgaTp") {
-				texts = [`{0} attempts a ${threePointerText} from {1} feet`];
+				texts = [`{0} attempts a ${threePointerText} from {1}`];
 			} else if (type === "fgAtRim") {
 				// Randomly pick a name to be dunked on
 				const ratios = this.ratingArray("blocking", this.d, 5);

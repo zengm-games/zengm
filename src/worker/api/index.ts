@@ -92,6 +92,7 @@ import {
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
+import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -3085,6 +3086,10 @@ const updateTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
+const validatePointsFormula = async (pointsFormula: string) => {
+	new PointsFormulaEvaluator(pointsFormula);
+};
+
 export default {
 	actions,
 	acceptContractNegotiation,
@@ -3170,4 +3175,5 @@ export default {
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,
+	validatePointsFormula,
 };

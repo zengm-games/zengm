@@ -158,7 +158,11 @@ export const options: {
 	type: FieldType;
 	decoration?: Decoration;
 	values?: Values;
-	validator?: (value: any, output: any, props: View<"settings">) => void;
+	validator?: (
+		value: any,
+		output: any,
+		props: View<"settings">,
+	) => void | Promise<void>;
 	customForm?: true;
 	hidden?: true;
 	maxWidth?: true;
@@ -284,6 +288,9 @@ export const options: {
 				</p>
 			</>
 		),
+		validator: async value => {
+			await toWorker("main", "validatePointsFormula", value);
+		},
 		type: "string",
 	},
 	{
@@ -2222,7 +2229,7 @@ const Settings = (props: View<"settings">) => {
 			const { key, name, validator } = option;
 			try {
 				if (validator) {
-					validator(output[key], output, props);
+					await validator(output[key], output, props);
 				}
 			} catch (error) {
 				setSubmitting(false);

@@ -79,7 +79,7 @@ const GroupStandingsRow = ({
 			{otl ? <td>{t.seasonAttrs.otl}</td> : null}
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			{usePts ? null : <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>}
-			<td>{usePts ? t.seasonAttrs.pts : t.gb[type]}</td>
+			<td>{usePts ? Math.round(t.seasonAttrs.pts) : t.gb[type]}</td>
 			<td>{record(t.seasonAttrs, "Home")}</td>
 			<td>{record(t.seasonAttrs, "Away")}</td>
 			<td>{record(t.seasonAttrs, "Div")}</td>
@@ -268,7 +268,7 @@ const SmallStandingsRow = ({
 			</td>
 			<td className="text-right">
 				{usePts
-					? t.seasonAttrs.pts
+					? Math.round(t.seasonAttrs.pts)
 					: playoffsByConference
 					? t.gb.conf
 					: t.gb.league}

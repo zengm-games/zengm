@@ -61,7 +61,7 @@ const Standings = ({
 									: null}
 							</td>
 							<td className="text-right">
-								{usePts ? t.seasonAttrs.pts : t.gb}
+								{usePts ? Math.round(t.seasonAttrs.pts) : t.gb}
 							</td>
 						</tr>
 					);

@@ -261,6 +261,7 @@ const doAwards = async (conditions: Conditions) => {
 			"tiedConf",
 			"otlConf",
 			"winp",
+			"pts",
 			"playoffRoundsWon",
 			"abbrev",
 			"region",

@@ -219,7 +219,7 @@ export class PointsFormulaEvaluator {
 			throw new Error("Too many values in the expression");
 		}
 
-		return stack.pop();
+		return stack.pop() as number;
 	}
 }
 
@@ -238,7 +238,7 @@ const evaluatePointsFormula = (
 	}: {
 		formula?: string;
 		season?: number;
-	},
+	} = {},
 ) => {
 	let pointsFormula = formula ?? g.get("pointsFormula", season);
 	if (pointsFormula === "") {

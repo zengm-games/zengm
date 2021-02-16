@@ -30,6 +30,7 @@ describe("worker/core/draft/updateChances", () => {
 				"tied",
 				"otl",
 				"winp",
+				"pts",
 				"wonDiv",
 				"lostDiv",
 				"tiedDiv",

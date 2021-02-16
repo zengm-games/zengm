@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { helpers } from "../../util";
+import { ColPtsOrGB } from "../Standings";
 import type { View } from "../../../common/types";
 
 const width100 = {
@@ -11,17 +12,28 @@ const Standings = ({
 	confTeams,
 	numPlayoffTeams,
 	playoffsByConference,
+	pointsFormula,
+	usePts,
 	userTid,
 }: Pick<
 	View<"leagueDashboard">,
-	"confTeams" | "numPlayoffTeams" | "playoffsByConference" | "userTid"
+	| "confTeams"
+	| "numPlayoffTeams"
+	| "playoffsByConference"
+	| "pointsFormula"
+	| "usePts"
+	| "userTid"
 >) => (
 	<>
 		<table className="table table-striped table-bordered table-sm mb-1">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>
-					<th>GB</th>
+					<ColPtsOrGB
+						alignRight
+						pointsFormula={pointsFormula}
+						usePts={usePts}
+					/>
 				</tr>
 			</thead>
 			<tbody>
@@ -48,7 +60,9 @@ const Standings = ({
 									? ` ${t.seasonAttrs.clinchedPlayoffs}`
 									: null}
 							</td>
-							<td className="text-right">{t.gb}</td>
+							<td className="text-right">
+								{usePts ? t.seasonAttrs.pts : t.gb}
+							</td>
 						</tr>
 					);
 				})}

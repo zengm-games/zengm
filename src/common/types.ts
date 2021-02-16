@@ -1233,8 +1233,7 @@ type TeamSeasonPlus = TeamSeason & {
 	payroll: number;
 	lastTen: string;
 	streak: string;
-
-	// Only hockey!
+	pts: number;
 	ptsDefault: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;

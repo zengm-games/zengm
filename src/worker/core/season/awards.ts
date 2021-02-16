@@ -162,6 +162,7 @@ const teamAwards = async (
 		["tid"],
 		[
 			"winp",
+			"pts",
 			"won",
 			"lost",
 			"tied",

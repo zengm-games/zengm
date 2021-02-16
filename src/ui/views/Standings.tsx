@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import { Fragment } from "react";
+import { CSSProperties, Fragment } from "react";
 import { ResponsiveTableWrapper, MovOrDiff } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
+import { getCols, helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
 import { isSport, TIEBREAKERS } from "../../common";
@@ -38,10 +38,11 @@ const GroupStandingsRow = ({
 	ties,
 	otl,
 	type,
+	usePts,
 	userTid,
 }: Pick<
 	View<"standings">,
-	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "userTid"
+	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "usePts" | "userTid"
 > & {
 	separator: boolean;
 	t: StandingsTeam;
@@ -77,8 +78,8 @@ const GroupStandingsRow = ({
 			<td>{t.seasonAttrs.lost}</td>
 			{otl ? <td>{t.seasonAttrs.otl}</td> : null}
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
-			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
-			<td>{t.gb[type]}</td>
+			{usePts ? null : <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>}
+			<td>{usePts ? t.seasonAttrs.pts : t.gb[type]}</td>
 			<td>{record(t.seasonAttrs, "Home")}</td>
 			<td>{record(t.seasonAttrs, "Away")}</td>
 			<td>{record(t.seasonAttrs, "Div")}</td>
@@ -108,12 +109,38 @@ const GroupStandingsRow = ({
 	);
 };
 
+export const ColPtsOrGB = ({
+	alignRight,
+	pointsFormula,
+	usePts,
+}: {
+	alignRight?: true;
+	pointsFormula: string;
+	usePts: boolean;
+}) => {
+	const col = getCols(usePts ? "Pts" : "GB")[0];
+	if (usePts) {
+		col.desc = `Points (${pointsFormula})`;
+	}
+
+	const style: CSSProperties | undefined = alignRight
+		? { textAlign: "right" }
+		: undefined;
+
+	return (
+		<th style={style} title={col.desc}>
+			{col.title}
+		</th>
+	);
+};
+
 const width100 = {
 	width: "100%",
 };
 
 const GroupStandings = ({
 	name,
+	pointsFormula,
 	season,
 	separatorIndex,
 	showTiebreakers,
@@ -121,10 +148,18 @@ const GroupStandings = ({
 	ties,
 	otl,
 	type,
+	usePts,
 	userTid,
 }: Pick<
 	View<"standings">,
-	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "userTid"
+	| "pointsFormula"
+	| "season"
+	| "showTiebreakers"
+	| "ties"
+	| "otl"
+	| "usePts"
+	| "type"
+	| "userTid"
 > & {
 	name?: string;
 	separatorIndex?: number;
@@ -140,8 +175,8 @@ const GroupStandings = ({
 						<th>L</th>
 						{otl ? <th>OTL</th> : null}
 						{ties ? <th>T</th> : null}
-						<th>%</th>
-						<th>GB</th>
+						{usePts ? null : <th>%</th>}
+						<ColPtsOrGB pointsFormula={pointsFormula} usePts={usePts} />
 						<th>Home</th>
 						<th>Road</th>
 						<th>Div</th>
@@ -177,6 +212,7 @@ const GroupStandings = ({
 							otl={otl}
 							ties={ties}
 							type={type}
+							usePts={usePts}
 							userTid={userTid}
 						/>
 					))}
@@ -192,6 +228,7 @@ const SmallStandingsRow = ({
 	playoffsByConference,
 	season,
 	t,
+	usePts,
 	userTid,
 }: {
 	i: number;
@@ -199,6 +236,7 @@ const SmallStandingsRow = ({
 	playoffsByConference: boolean;
 	season: number;
 	t: StandingsTeam;
+	usePts: boolean;
 	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -229,7 +267,11 @@ const SmallStandingsRow = ({
 					: null}
 			</td>
 			<td className="text-right">
-				{playoffsByConference ? t.gb.conf : t.gb.league}
+				{usePts
+					? t.seasonAttrs.pts
+					: playoffsByConference
+					? t.gb.conf
+					: t.gb.league}
 			</td>
 		</tr>
 	);
@@ -238,12 +280,19 @@ const SmallStandingsRow = ({
 const SmallStandings = ({
 	maxPlayoffSeed,
 	playoffsByConference,
+	pointsFormula,
 	season,
 	teams,
 	userTid,
+	usePts,
 }: Pick<
 	View<"standings">,
-	"maxPlayoffSeed" | "playoffsByConference" | "season" | "userTid"
+	| "maxPlayoffSeed"
+	| "playoffsByConference"
+	| "pointsFormula"
+	| "season"
+	| "usePts"
+	| "userTid"
 > & {
 	teams: StandingsTeam[];
 }) => {
@@ -252,7 +301,11 @@ const SmallStandings = ({
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>
-					<th style={{ textAlign: "right" }}>GB</th>
+					<ColPtsOrGB
+						alignRight
+						pointsFormula={pointsFormula}
+						usePts={usePts}
+					/>
 				</tr>
 			</thead>
 			<tbody>
@@ -264,6 +317,7 @@ const SmallStandings = ({
 						playoffsByConference={playoffsByConference}
 						season={season}
 						t={t}
+						usePts={usePts}
 						userTid={userTid}
 					/>
 				))}
@@ -278,6 +332,7 @@ const Standings = ({
 	maxPlayoffSeed,
 	numPlayoffByes,
 	playoffsByConference,
+	pointsFormula,
 	rankingGroups,
 	season,
 	showTiebreakers,
@@ -285,6 +340,7 @@ const Standings = ({
 	ties,
 	otl,
 	type,
+	usePts,
 	userTid,
 }: View<"standings">) => {
 	useTitleBar({
@@ -402,11 +458,13 @@ const Standings = ({
 				<GroupStandings
 					key={j}
 					{...subgroup}
+					pointsFormula={pointsFormula}
 					season={season}
 					showTiebreakers={showTiebreakers}
 					otl={otl}
 					ties={ties}
 					type={type}
+					usePts={usePts}
 					userTid={userTid}
 				/>
 			))}
@@ -433,10 +491,12 @@ const Standings = ({
 								<h2>&nbsp;</h2>
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
+									playoffsByConference={playoffsByConference}
+									pointsFormula={pointsFormula}
 									season={season}
 									teams={rankingGroups.conf[i]}
 									userTid={userTid}
-									playoffsByConference={playoffsByConference}
+									usePts={usePts}
 								/>
 							</div>
 						</Fragment>
@@ -453,10 +513,12 @@ const Standings = ({
 					<h2>&nbsp;</h2>
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}
+						playoffsByConference={playoffsByConference}
+						pointsFormula={pointsFormula}
 						season={season}
 						teams={rankingGroups.league[0]}
 						userTid={userTid}
-						playoffsByConference={playoffsByConference}
+						usePts={usePts}
 					/>
 				</div>
 			</div>

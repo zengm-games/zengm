@@ -3,6 +3,7 @@ import orderBy from "lodash/orderBy";
 import { helpers } from ".";
 import { isSport, TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";
+import { team } from "../core";
 import { idb } from "../db";
 import g from "./g";
 import random from "./random";
@@ -29,6 +30,7 @@ type Tiebreaker = keyof typeof TIEBREAKERS;
 type BaseTeam = {
 	seasonAttrs: {
 		winp: number;
+		pts: number;
 		won: number;
 		lost: number;
 		otl: number;
@@ -86,6 +88,7 @@ type BreakTiesOptions = {
 	headToHead?: HeadToHead;
 	season: number;
 	tiebreakers: Tiebreaker[];
+	usePts: boolean;
 };
 
 export const breakTies = <T extends BaseTeam>(
@@ -107,7 +110,7 @@ export const breakTies = <T extends BaseTeam>(
 					lost: number;
 					tied: number;
 					otl: number;
-					winp: number;
+					score: number;
 				}
 		  >
 		| undefined;
@@ -151,9 +154,11 @@ export const breakTies = <T extends BaseTeam>(
 				lost,
 				tied,
 				otl,
-				winp: 0,
+				score: 0,
 			};
-			headToHeadInfo[t.tid].winp = helpers.calcWinp(headToHeadInfo[t.tid]);
+			headToHeadInfo[t.tid].score = options.usePts
+				? team.evaluatePointsFormula(headToHeadInfo[t.tid])
+				: helpers.calcWinp(headToHeadInfo[t.tid]);
 		}
 	}
 
@@ -168,7 +173,7 @@ export const breakTies = <T extends BaseTeam>(
 					lost: number;
 					tied: number;
 					otl: number;
-					winp: number;
+					score: number;
 				}
 			> = {};
 
@@ -212,9 +217,11 @@ export const breakTies = <T extends BaseTeam>(
 					lost,
 					tied,
 					otl,
-					winp: 0,
+					score: 0,
 				};
-				info[t.tid].winp = helpers.calcWinp(info[t.tid]);
+				info[t.tid].score = options.usePts
+					? team.evaluatePointsFormula(info[t.tid])
+					: helpers.calcWinp(info[t.tid]);
 			}
 
 			return info;
@@ -236,7 +243,7 @@ export const breakTies = <T extends BaseTeam>(
 					lost: number;
 					tied: number;
 					otl: number;
-					winp: number;
+					score: number;
 				}
 		  >
 		| undefined;
@@ -322,11 +329,11 @@ export const breakTies = <T extends BaseTeam>(
 					lost,
 					tied,
 					otl,
-					winp: 0,
+					score: 0,
 				};
-				commonOpponentsInfo[t.tid].winp = helpers.calcWinp(
-					commonOpponentsInfo[t.tid],
-				);
+				commonOpponentsInfo[t.tid].score = options.usePts
+					? team.evaluatePointsFormula(commonOpponentsInfo[t.tid])
+					: helpers.calcWinp(commonOpponentsInfo[t.tid]);
 			}
 		}
 	}
@@ -362,7 +369,7 @@ export const breakTies = <T extends BaseTeam>(
 		[(t: T) => number, "asc" | "desc"][]
 	> = {
 		commonOpponentsRecord: [
-			[(t: T) => commonOpponentsInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => commonOpponentsInfo?.[t.tid]?.score ?? 0, "desc"],
 			[(t: T) => wonMinusLost(commonOpponentsInfo?.[t.tid]), "desc"],
 		],
 
@@ -373,12 +380,15 @@ export const breakTies = <T extends BaseTeam>(
 						return -Infinity;
 					}
 
-					return helpers.calcWinp({
+					const data = {
 						won: t.seasonAttrs.wonConf,
 						lost: t.seasonAttrs.lostConf,
 						otl: t.seasonAttrs.otlConf,
 						tied: t.seasonAttrs.tiedConf,
-					});
+					};
+					return options.usePts
+						? team.evaluatePointsFormula(data)
+						: helpers.calcWinp(data);
 				},
 				"desc",
 			],
@@ -405,12 +415,15 @@ export const breakTies = <T extends BaseTeam>(
 						return -Infinity;
 					}
 
-					return helpers.calcWinp({
+					const data = {
 						won: t.seasonAttrs.wonDiv,
 						lost: t.seasonAttrs.lostDiv,
 						otl: t.seasonAttrs.otlDiv,
 						tied: t.seasonAttrs.tiedDiv,
-					});
+					};
+					return options.usePts
+						? team.evaluatePointsFormula(data)
+						: helpers.calcWinp(data);
 				},
 				"desc",
 			],
@@ -435,7 +448,7 @@ export const breakTies = <T extends BaseTeam>(
 		],
 
 		headToHeadRecord: [
-			[(t: T) => headToHeadInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => headToHeadInfo?.[t.tid]?.score ?? 0, "desc"],
 			[(t: T) => wonMinusLost(headToHeadInfo?.[t.tid]), "desc"],
 		],
 
@@ -450,12 +463,12 @@ export const breakTies = <T extends BaseTeam>(
 		],
 
 		strengthOfSchedule: [
-			[(t: T) => strengthOfScheduleInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => strengthOfScheduleInfo?.[t.tid]?.score ?? 0, "desc"],
 			[(t: T) => wonMinusLost(strengthOfScheduleInfo?.[t.tid]), "desc"],
 		],
 
 		strengthOfVictory: [
-			[(t: T) => strengthOfVictoryInfo?.[t.tid]?.winp ?? 0, "desc"],
+			[(t: T) => strengthOfVictoryInfo?.[t.tid]?.score ?? 0, "desc"],
 			[(t: T) => wonMinusLost(strengthOfVictoryInfo?.[t.tid]), "desc"],
 		],
 
@@ -551,6 +564,8 @@ const orderTeams = async <T extends BaseTeam>(
 		return teams;
 	}
 
+	const usePts = g.get("pointsFormula", season) !== "";
+
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
 	const divisionLeaders = new Map<number, T>();
 	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
@@ -572,7 +587,7 @@ const orderTeams = async <T extends BaseTeam>(
 
 	// First pass - order by winp and won
 	const iterees = [
-		(t: T) => t.seasonAttrs.winp,
+		(t: T) => (usePts ? t.seasonAttrs.pts : t.seasonAttrs.winp),
 		(t: T) => wonMinusLost(t.seasonAttrs),
 	];
 	const orders: ("asc" | "desc")[] = ["desc", "desc"];
@@ -635,6 +650,7 @@ const orderTeams = async <T extends BaseTeam>(
 		),
 		season,
 		tiebreakers,
+		usePts,
 	};
 	if (
 		tiedGroups.length > 0 &&

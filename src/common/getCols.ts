@@ -1719,6 +1719,11 @@ const cols: {
 		sortType: "number",
 	},
 	From: {},
+	GB: {
+		desc: "Games Back",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Games: {
 		desc: "Number of Games",
 		sortSequence: ["desc", "asc"],
@@ -1872,6 +1877,11 @@ const cols: {
 	"Profit (YTD)": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
+	},
+	Pts: {
+		desc: "Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	Received: {
 		desc: "Assets Received in Trade",

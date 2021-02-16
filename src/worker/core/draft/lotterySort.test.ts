@@ -78,6 +78,7 @@ describe("worker/core/draft/lotterySort", () => {
 				"tied",
 				"otl",
 				"winp",
+				"pts",
 				"wonDiv",
 				"lostDiv",
 				"tiedDiv",

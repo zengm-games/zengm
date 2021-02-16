@@ -97,6 +97,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"otl",
 				"tied",
 				"winp",
+				"pts",
 				"att",
 				"revenue",
 				"profit",
@@ -416,6 +417,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"tiedConf",
 				"otlConf",
 				"winp",
+				"pts",
 				"cid",
 				"did",
 				"abbrev",
@@ -450,12 +452,19 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			teams,
 		);
 
+		const pointsFormula = g.get("pointsFormula", "current");
+		const usePts = pointsFormula !== "";
+
 		let rank = 1;
 		for (const t of confTeams) {
 			if (cid === t.seasonAttrs.cid) {
 				t.rank = rank;
-				t.gb =
-					rank === 1 ? 0 : helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+				if (!usePts) {
+					t.gb =
+						rank === 1
+							? 0
+							: helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+				}
 
 				rank += 1;
 			}
@@ -471,6 +480,8 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			confTeams,
 			numPlayoffTeams,
 			playoffsByConference,
+			pointsFormula,
+			usePts,
 		};
 	}
 };

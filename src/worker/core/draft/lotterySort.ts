@@ -21,6 +21,7 @@ const lotterySort = async (
 			"tied",
 			"otl",
 			"winp",
+			"pts",
 			"wonDiv",
 			"lostDiv",
 			"tiedDiv",

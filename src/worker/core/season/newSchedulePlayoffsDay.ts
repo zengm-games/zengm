@@ -167,6 +167,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 					attrs: ["tid"],
 					seasonAttrs: [
 						"winp",
+						"pts",
 						"won",
 						"lost",
 						"otl",

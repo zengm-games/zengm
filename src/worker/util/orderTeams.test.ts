@@ -8,6 +8,7 @@ const baseTeams = range(4).map(tid => ({
 	tid,
 	seasonAttrs: {
 		winp: 0.5,
+		pts: 20,
 		won: 10,
 		lost: 10,
 		otl: 0,
@@ -58,6 +59,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 				divisionWinners: new Set(),
 				season: 2021,
 				tiebreakers: [tiebreaker, "coinFlip"],
+				usePts: false,
 			});
 
 			const tids = teamsSorted.map(t => t.tid);
@@ -118,6 +120,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			headToHead,
 			season: 2021,
 			tiebreakers: ["commonOpponentsRecord", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -146,6 +149,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			divisionWinners: new Set([1]),
 			season: 2021,
 			tiebreakers: ["divWinner", "confRecordIfSame", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -198,6 +202,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			headToHead,
 			season: 2021,
 			tiebreakers: ["headToHeadRecord", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -223,6 +228,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			divisionWinners: new Set([1]),
 			season: 2021,
 			tiebreakers: ["marginOfVictory", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -276,6 +282,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			headToHead,
 			season: 2021,
 			tiebreakers: ["strengthOfSchedule", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);
@@ -324,6 +331,7 @@ describe("worker/util/orderTeams/breakTies", () => {
 			headToHead,
 			season: 2021,
 			tiebreakers: ["strengthOfVictory", "coinFlip"],
+			usePts: false,
 		});
 
 		const tids = teamsSorted.map(t => t.tid);

@@ -25,6 +25,9 @@ const updateStandings = async (
 			? numPlayoffTeams / 2
 			: numPlayoffTeams;
 
+		const pointsFormula = g.get("pointsFormula", inputs.season);
+		const usePts = pointsFormula !== "";
+
 		const teams = (
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
@@ -34,6 +37,7 @@ const updateStandings = async (
 					"tied",
 					"otl",
 					"winp",
+					"pts",
 					"wonHome",
 					"lostHome",
 					"tiedHome",
@@ -109,8 +113,10 @@ const updateStandings = async (
 			for (const group of rankingGroups[type]) {
 				for (let i = 0; i < group.length; i++) {
 					const t = group[i];
-					t.gb[type] =
-						i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+					if (!usePts) {
+						t.gb[type] =
+							i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+					}
 					t.rank[type] = i + 1;
 				}
 			}
@@ -157,6 +163,7 @@ const updateStandings = async (
 			maxPlayoffSeed,
 			numPlayoffByes,
 			playoffsByConference,
+			pointsFormula,
 			rankingGroups,
 			season: inputs.season,
 			showTiebreakers,
@@ -164,6 +171,7 @@ const updateStandings = async (
 			otl: g.get("otl", inputs.season) || otl,
 			tiebreakers: getTiebreakers(inputs.season),
 			type: inputs.type,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

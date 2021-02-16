@@ -169,6 +169,10 @@ const processSeasonAttrs = async <
 					} else if (ts.streak < 0) {
 						row.streak = `Lost ${Math.abs(ts.streak)}`;
 					}
+				} else if (attr === "pts") {
+					row.pts = team.evaluatePointsFormula(ts, {
+						season: ts.season,
+					});
 				} else if (attr === "ptsDefault") {
 					row.ptsDefault = team.evaluatePointsFormula(ts, {
 						formula: DEFAULT_POINTS_FORMULA,

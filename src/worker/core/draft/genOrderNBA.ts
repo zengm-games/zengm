@@ -121,6 +121,7 @@ const genOrder = async (
 			"tied",
 			"otl",
 			"winp",
+			"pts",
 			"wonDiv",
 			"lostDiv",
 			"tiedDiv",

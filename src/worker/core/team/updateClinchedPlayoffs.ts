@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import type { TeamSeason, Conditions, TeamStats } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
+import evaluatePointsFormula from "./evaluatePointsFormula";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -10,6 +11,8 @@ const getClinchedPlayoffs = async (
 	teamStats: Map<number, TeamStats>,
 	finalStandings: boolean,
 ) => {
+	const usePts = g.get("pointsFormula", "current") !== "";
+
 	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow.
 	const skipTiebreakers = !finalStandings;
 
@@ -33,6 +36,7 @@ const getClinchedPlayoffs = async (
 					otl,
 					tied,
 					winp: 0,
+					pts: 0,
 					cid: t2.cid,
 					did: t2.did,
 					wonDiv: t2.wonDiv,
@@ -65,7 +69,14 @@ const getClinchedPlayoffs = async (
 					worstCase.seasonAttrs.wonConf += gamesLeft;
 				}
 			}
-			worstCase.seasonAttrs.winp = helpers.calcWinp(worstCase.seasonAttrs);
+
+			if (usePts) {
+				worstCase.seasonAttrs.pts = evaluatePointsFormula(
+					worstCase.seasonAttrs,
+				);
+			} else {
+				worstCase.seasonAttrs.winp = helpers.calcWinp(worstCase.seasonAttrs);
+			}
 
 			return worstCase;
 		});
@@ -113,6 +124,7 @@ const getClinchedPlayoffs = async (
 						otl,
 						tied,
 						winp: 0,
+						pts: 0,
 						cid: t2.cid,
 						did: t2.did,
 						wonDiv: t2.wonDiv,
@@ -144,7 +156,14 @@ const getClinchedPlayoffs = async (
 						bestCase.seasonAttrs.lostConf += gamesLeft;
 					}
 				}
-				bestCase.seasonAttrs.winp = helpers.calcWinp(bestCase.seasonAttrs);
+
+				if (usePts) {
+					bestCase.seasonAttrs.pts = evaluatePointsFormula(
+						bestCase.seasonAttrs,
+					);
+				} else {
+					bestCase.seasonAttrs.winp = helpers.calcWinp(bestCase.seasonAttrs);
+				}
 
 				return bestCase;
 			});

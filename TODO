@@ -1,8 +1,6 @@
-better tiebreakers
-- add options
-	- winp vs pts (vs custom points?)
-  - playoffsByConference
-  - divisionLeadersFirstPlayoffs
+add standings options
+- playoffsByConference
+- divisionLeadersFirstPlayoffs
 
 I have a few issues with this file: https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - A few teams are not sorted alphabetically (such as Alaska Sea Sonics or Arizona Beasts)

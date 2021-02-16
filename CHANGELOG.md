@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-02-16: New option to switch between ordering teams by winning percentage (default) or a points formula like the NHL uses. [[1]](https://old.reddit.com/r/BasketballGM/comments/lkwj7o/new_option_to_switch_between_ordering_teams_by/)
+
 * **2021-02-15: Non-random tiebreakers, based on things like head-to-head results, strength of schedule, etc. Also it's customizable in God Mode. [[1]](https://basketball-gm.com/blog/2021/02/customizable-tiebreakers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lkigp1/version_202102151049_nonrandom_tiebreakers_based/) [[3]](https://old.reddit.com/r/Football_GM/comments/lkij5s/version_202102151052_nonrandom_tiebreakers_based/)**
 
 * 2021-02-12: New challenge mode "Thanos Mode": at the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/360) [[2]](https://old.reddit.com/r/BasketballGM/comments/lifm6h/new_challenge_mode_thanos_mode_at_the_end_of_the/)

@@ -1360,7 +1360,7 @@ class GameSim {
 			probMake *= g.get("threePointAccuracyFactor");
 
 			// 22 FT is where the corner three line is, 94 FT is length of court
-			let shotDistance = helpers.bound(
+			const shotDistance = helpers.bound(
 				random.gauss(meanDistance, distanceDeviation),
 				22,
 				94,

@@ -1366,9 +1366,7 @@ class GameSim {
 				94,
 			);
 			const distance =
-				shotDistance > 23.8
-					? shotDistance.toFixed(1) + " feet"
-					: "from the corner";
+				shotDistance > 23.8 ? shotDistance.toFixed(1) + " feet" : "the corner";
 
 			this.recordPlay("fgaTp", this.o, [
 				this.team[this.o].player[p].name,

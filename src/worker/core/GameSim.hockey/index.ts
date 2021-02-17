@@ -572,7 +572,7 @@ class GameSim {
 		const type: "slapshot" | "wristshot" | "shot" | "reboundShot" =
 			special === "rebound"
 				? "reboundShot"
-				: random.choice(["slapshot", "wristshot", "shot"]);
+				: random.choice(["slapshot", "wristshot", "shot"], [0.25, 0.5, 0.25]);
 
 		this.playByPlay.logEvent({
 			type: type,
@@ -596,6 +596,19 @@ class GameSim {
 			return "block";
 		}
 
+		let deflector;
+		if ((type === "slapshot" || type === "wristshot") && Math.random() < 0.05) {
+			deflector = this.pickPlayer(this.o, "playmaker", ["C", "W"]);
+			if (deflector) {
+				this.playByPlay.logEvent({
+					type: "deflection",
+					clock: this.clock,
+					t: this.o,
+					names: [deflector.name],
+				});
+			}
+		}
+
 		if (r < 1 - Math.sqrt(shooter.compositeRating.scoring)) {
 			this.playByPlay.logEvent({
 				type: "miss",
@@ -606,11 +619,14 @@ class GameSim {
 			return "miss";
 		}
 
-		this.recordStat(this.o, shooter, "s");
+		const actualShooter = deflector ?? shooter;
+
+		this.recordStat(this.o, actualShooter, "s");
 
 		const goalie = this.playersOnIce[this.d].G[0];
 
 		if (goalie) {
+			// Save percentage is just based on goalie https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
 			if (r < goalie.compositeRating.goalkeeping ** 0.25) {
 				const saveType = Math.random() < 0.1 ? "save-freeze" : "save";
 
@@ -638,15 +654,17 @@ class GameSim {
 		let assister2: PlayerGameSim | undefined;
 		if (type !== "reboundShot") {
 			const r2 = Math.random();
-			if (r2 < 0.9) {
+			if (deflector) {
+				assister1 = shooter;
+			} else if (r2 < 0.9) {
 				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
-					shooter,
+					actualShooter,
 				]);
 				this.recordStat(this.o, assister1, `${strengthType}A`);
 			}
 			if (r2 < 0.8) {
 				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
-					shooter,
+					actualShooter,
 					assister1 as PlayerGameSim,
 				]);
 				this.recordStat(this.o, assister2, `${strengthType}A`);
@@ -666,11 +684,11 @@ class GameSim {
 			type: "goal",
 			clock: this.clock,
 			t: this.o,
-			names: [shooter.name, ...assisterNames],
-			shotType: type,
+			names: [actualShooter.name, ...assisterNames],
+			shotType: deflector ? "deflection" : type,
 			goalType: strengthType,
 		});
-		this.recordStat(this.o, shooter, `${strengthType}G`);
+		this.recordStat(this.o, actualShooter, `${strengthType}G`);
 		if (goalie) {
 			this.recordStat(this.d, goalie, "ga");
 		}

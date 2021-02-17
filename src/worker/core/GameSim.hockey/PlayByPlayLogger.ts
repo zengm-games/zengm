@@ -44,7 +44,8 @@ type PlayByPlayEventInput =
 				| "block"
 				| "miss"
 				| "save"
-				| "save-freeze";
+				| "save-freeze"
+				| "deflection";
 			clock: number;
 			t: TeamNum;
 			names: [string];

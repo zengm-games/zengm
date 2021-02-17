@@ -102,6 +102,7 @@ const TopStuff = ({
 					season={season}
 					won={t.seasonAttrs.won}
 					lost={t.seasonAttrs.lost}
+					otl={t.seasonAttrs.otl}
 					tied={t.seasonAttrs.tied}
 					playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
 					option="noSeason"

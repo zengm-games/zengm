@@ -41,15 +41,15 @@ const getBest = <T extends PlayerWithoutKey>(
 		const shouldAddPlayerMinContract =
 			p.contract.amount <= g.get("minContract") &&
 			playersOnRoster.length < g.get("maxRosterSize") - 2;
-		let shouldAddPlayerPosition = false;
 
-		if (isSport("football")) {
-			if (
-				(neededPositions.has("K") && pos === "K") ||
-				(neededPositions.has("P") && pos === "P")
-			) {
-				shouldAddPlayerPosition = true;
-			}
+		let shouldAddPlayerPosition = false;
+		if (
+			(isSport("football") &&
+				((neededPositions.has("K") && pos === "K") ||
+					(neededPositions.has("P") && pos === "P"))) ||
+			(isSport("hockey") && neededPositions.has("G") && pos === "G")
+		) {
+			shouldAddPlayerPosition = true;
 		}
 
 		// Don't sign minimum contract players to fill out the roster

@@ -83,6 +83,9 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		throw new Error(`Unknown position: "${pos2}"`);
 	}
 
+	// Scale 10-85 to 0-100
+	r = -10 + (r * 100) / 75;
+
 	r = helpers.bound(Math.round(r), 0, 100);
 
 	return r;

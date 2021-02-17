@@ -260,46 +260,64 @@ const Depth = ({
 						))}
 					</>
 				)}
-				row={({ value: p }) => (
-					<>
-						<td>
-							<PlayerNameLabels
-								pid={p.pid}
-								injury={p.injury}
-								jerseyNumber={p.stats.jerseyNumber}
-								skills={p.ratings.skills}
-								watch={p.watch}
-							>
-								{p.name}
-							</PlayerNameLabels>
-						</td>
-						<td
-							className={classNames({
-								"text-danger":
-									pos !== "KR" &&
-									pos !== "PR" &&
-									!positions.includes(p.ratings.pos),
-							})}
-						>
-							{p.ratings.pos}
-						</td>
-						<td>{p.age}</td>
-						{positions.map(position => (
-							<Fragment key={position}>
-								<td>{!challengeNoRatings ? p.ratings.ovrs[position] : null}</td>
-								<td>{!challengeNoRatings ? p.ratings.pots[position] : null}</td>
-							</Fragment>
-						))}
-						{ratings.map(rating => (
-							<td key={rating} className="table-accent">
-								{!challengeNoRatings ? p.ratings[rating] : null}
+				row={({ index, value: p }) => {
+					let highlightPosOvr: string | undefined;
+					if (
+						isSport("hockey") &&
+						pos === "F" &&
+						index < numLines * numStarters
+					) {
+						highlightPosOvr = index % numStarters === 0 ? "C" : "W";
+					}
+					return (
+						<>
+							<td>
+								<PlayerNameLabels
+									pid={p.pid}
+									injury={p.injury}
+									jerseyNumber={p.stats.jerseyNumber}
+									skills={p.ratings.skills}
+									watch={p.watch}
+								>
+									{p.name}
+								</PlayerNameLabels>
 							</td>
-						))}
-						{stats.map(stat => (
-							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
-						))}
-					</>
-				)}
+							<td
+								className={classNames({
+									"text-danger":
+										pos !== "KR" &&
+										pos !== "PR" &&
+										!positions.includes(p.ratings.pos),
+								})}
+							>
+								{p.ratings.pos}
+							</td>
+							<td>{p.age}</td>
+							{positions.map(position => (
+								<Fragment key={position}>
+									<td
+										className={
+											highlightPosOvr === position ? "table-primary" : undefined
+										}
+									>
+										{!challengeNoRatings ? p.ratings.ovrs[position] : null}
+									</td>
+									<td>
+										{!challengeNoRatings ? p.ratings.pots[position] : null}
+									</td>
+								</Fragment>
+							))}
+							{ratings.map(rating => (
+								<td key={rating} className="table-accent">
+									{!challengeNoRatings ? p.ratings[rating] : null}
+								</td>
+							))}
+							{stats.map(stat => (
+								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
+							))}
+						</>
+					);
+				}}
 			/>
 		</>
 	);

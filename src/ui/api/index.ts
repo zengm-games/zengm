@@ -15,7 +15,7 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { GRACE_PERIOD } from "../../common";
+import { AD_DIVS, GRACE_PERIOD } from "../../common";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -65,12 +65,12 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
-			const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
+			const divsMobile = [AD_DIVS.mobile];
 			// const divsMobile: string[] = [];
 			const showDivsDesktop = [
-				`${process.env.SPORT}-gm_leaderboard_atf`,
-				`${process.env.SPORT}-gm_mrec_btf_1`,
-				`${process.env.SPORT}-gm_mrec_btf_2`,
+				AD_DIVS.leaderboard,
+				AD_DIVS.rectangle1,
+				AD_DIVS.rectangle2,
 				"skyscraper-wrapper",
 			];
 			const showDivs =
@@ -87,9 +87,9 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 
 			const adDivsDesktop = [
-				`${process.env.SPORT}-gm_leaderboard_atf`,
-				`${process.env.SPORT}-gm_mrec_btf_1`,
-				`${process.env.SPORT}-gm_mrec_btf_2`,
+				AD_DIVS.leaderboard,
+				AD_DIVS.rectangle1,
+				AD_DIVS.rectangle2,
 			];
 			const adDivs =
 				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
@@ -102,7 +102,7 @@ const initAds = (goldUntil: number | undefined) => {
 				console.log("enabled_slots", adDiv);
 			}
 
-			if (adDivs.includes(`${process.env.SPORT}-gm_mobile_leaderboard`)) {
+			if (adDivs.includes(AD_DIVS.mobile)) {
 				localActions.update({
 					stickyFooterAd: true,
 				});

@@ -280,7 +280,32 @@ const TIEBREAKERS = {
 // This is only applied by default in hockey, but it's still used in all sports if "pts" are explicitly requested and there is no formula set
 const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
 
+const AD_DIVS = bySport({
+	basketball: {
+		mobile: "basketball-gm_mobile_leaderboard",
+		leaderboard: "basketball-gm_leaderboard_atf",
+		rectangle1: "basketball-gm_mrec_btf_1",
+		rectangle2: "basketball-gm_mrec_btf_2",
+		rail: "basketball-gm_right_rail",
+	},
+	football: {
+		mobile: "basketball-gm_mobile_leaderboard",
+		leaderboard: "basketball-gm_leaderboard_atf",
+		rectangle1: "basketball-gm_mrec_btf_1",
+		rectangle2: "basketball-gm_mrec_btf_2",
+		rail: "basketball-gm_right_rail",
+	},
+	hockey: {
+		mobile: "zen-gm_mobile_leaderboard",
+		leaderboard: "zen-gm_leaderboard_atf",
+		rectangle1: "zen-gm_mrec_btf_1",
+		rectangle2: "zen-gm_mrec_btf_2",
+		rail: "zen-gm_right_rail",
+	},
+});
+
 export {
+	AD_DIVS,
 	AWARD_NAMES,
 	COURT,
 	DEFAULT_CONFS,

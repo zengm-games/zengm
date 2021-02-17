@@ -7,7 +7,7 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
+import { AD_DIVS, EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 window.bbgm = { ...util };
 const {
 	compareVersions,
@@ -248,16 +248,15 @@ const setupRoutes = () => {
 					if (window.freestar.freestarReloadAdSlot) {
 						const adDivs =
 							window.screen && window.screen.width < 768
-								? [`${process.env.SPORT}-gm_mobile_leaderboard`]
+								? [AD_DIVS.mobile]
 								: [
-										`${process.env.SPORT}-gm_leaderboard_atf`,
-										`${process.env.SPORT}-gm_mrec_btf_1`,
-										`${process.env.SPORT}-gm_mrec_btf_2`,
-										`${process.env.SPORT}-gm_right_rail`,
+										AD_DIVS.leaderboard,
+										AD_DIVS.rectangle1,
+										AD_DIVS.rectangle2,
+										AD_DIVS.rail,
 								  ];
 
 						for (const adDiv of adDivs) {
-							console.log("reload", adDiv);
 							window.freestar.freestarReloadAdSlot(adDiv);
 						}
 					}

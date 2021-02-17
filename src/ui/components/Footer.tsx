@@ -1,5 +1,10 @@
 import { Fragment, memo } from "react";
-import { GAME_ACRONYM, SUBREDDIT_NAME, WEBSITE_ROOT } from "../../common";
+import {
+	AD_DIVS,
+	GAME_ACRONYM,
+	SUBREDDIT_NAME,
+	WEBSITE_ROOT,
+} from "../../common";
 
 const footerLinks = [
 	{
@@ -45,7 +50,7 @@ const Footer = memo(() => {
 				}}
 			>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_1`}
+					id={AD_DIVS.rectangle1}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -76,7 +81,7 @@ const Footer = memo(() => {
 					/>
 				</div>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_2`}
+					id={AD_DIVS.rectangle2}
 					style={{
 						display: "none",
 						textAlign: "center",

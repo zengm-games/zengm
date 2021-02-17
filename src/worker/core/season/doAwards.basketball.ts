@@ -296,6 +296,7 @@ const doAwards = async (conditions: Conditions) => {
 		],
 		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
+		showNoStats: true,
 	});
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);

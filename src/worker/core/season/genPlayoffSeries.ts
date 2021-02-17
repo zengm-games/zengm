@@ -84,6 +84,7 @@ export const genPlayoffSeriesFromTeams = async (
 		skipTiebreakers?: boolean;
 	},
 ) => {
+	console.log("teams", teams);
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
 
@@ -202,6 +203,7 @@ const genPlayoffSeries = async () => {
 		],
 		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
+		showNoStats: true,
 	});
 
 	return genPlayoffSeriesFromTeams(teams);

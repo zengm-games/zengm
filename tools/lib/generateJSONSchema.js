@@ -744,20 +744,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							tiebreakers: {
 								type: "array",
-								items: {
-									type: "string",
-									enum: [
-										"commonOpponentsRecord",
-										"confRecordIfSame",
-										"divRecordIfSame",
-										"divWinner",
-										"headToHeadRecord",
-										"marginOfVictory",
-										"strengthOfVictory",
-										"strengthOfSchedule",
-										"coinFlip",
-									],
-								},
+								minItems: 1,
 							},
 							ties: {
 								type: ["boolean", "array"],
@@ -776,7 +763,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minimum: 0,
 							},
 							userTid: {
-								type: ["integer", "array"],
+								type: "array",
+								minItems: 1,
 							},
 							userTids: {
 								type: "array",

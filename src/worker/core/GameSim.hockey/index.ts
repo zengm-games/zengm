@@ -462,12 +462,12 @@ class GameSim {
 		this.d = this.o === 1 ? 0 : 1;
 	}
 
-	getNumHits() {
-		return Math.round(
-			this.team[this.o].compositeRating.hitting +
-				this.team[this.d].compositeRating.hitting +
-				Math.random() -
-				0.5,
+	isHit() {
+		return (
+			Math.random() <
+			0.3 *
+				(this.team[this.o].compositeRating.hitting +
+					this.team[this.d].compositeRating.hitting)
 		);
 	}
 
@@ -492,17 +492,33 @@ class GameSim {
 	}
 
 	isGiveaway() {
+		const { powerPlayTeam } = this.penaltyBox.getPowerPlayTeam();
+
+		let baseOdds = 0.1;
+		if (powerPlayTeam === this.o) {
+			baseOdds /= 2;
+		} else if (powerPlayTeam === this.d) {
+			baseOdds *= 2;
+		}
 		return (
 			Math.random() <
-			(0.1 * this.team[this.o].compositeRating.puckControl) /
+			(baseOdds * this.team[this.o].compositeRating.puckControl) /
 				this.team[this.d].compositeRating.takeaway
 		);
 	}
 
 	isTakeaway() {
+		const { powerPlayTeam } = this.penaltyBox.getPowerPlayTeam();
+
+		let baseOdds = 0.1;
+		if (powerPlayTeam === this.o) {
+			baseOdds /= 2;
+		} else if (powerPlayTeam === this.d) {
+			baseOdds *= 2;
+		}
 		return (
 			Math.random() <
-			(0.1 * this.team[this.d].compositeRating.takeaway) /
+			(baseOdds * this.team[this.d].compositeRating.takeaway) /
 				this.team[this.o].compositeRating.puckControl
 		);
 	}
@@ -537,8 +553,8 @@ class GameSim {
 	}
 
 	advanceClock(special?: "rebound") {
-		// 1 to 30 seconds, or less if it's a rebound
-		const maxLength = special === "rebound" ? 0.05 : 0.5;
+		// 1 to 15 seconds, or less if it's a rebound
+		const maxLength = special === "rebound" ? 0.05 : 0.32;
 
 		let dt = Math.random() * (maxLength - 0.017) + 0.017;
 		if (this.clock - dt < 0) {
@@ -582,9 +598,26 @@ class GameSim {
 		});
 		this.recordStat(this.o, shooter, "tsa");
 
-		const r = Math.random();
+		const {
+			powerPlayTeam,
+			strengthDifference,
+		} = this.penaltyBox.getPowerPlayTeam();
+		let strengthType: "ev" | "sh" | "pp" = "ev";
+		if (powerPlayTeam === this.d) {
+			strengthType = "sh";
+		} else if (powerPlayTeam === this.o) {
+			strengthType = "pp";
+		}
 
-		if (r < 0.2 * this.team[this.d].compositeRating.blocking) {
+		// Power play adjusts odds of a miss
+		let r = Math.random();
+		if (strengthType === "pp") {
+			r += strengthDifference === 1 ? 0.1 : 0.2;
+		} else if (strengthType === "sh") {
+			r -= strengthDifference === 1 ? 0.025 : 0.5;
+		}
+
+		if (r < 0.15 + 0.25 * this.team[this.d].compositeRating.blocking) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
 			this.playByPlay.logEvent({
 				type: "block",
@@ -626,8 +659,8 @@ class GameSim {
 		const goalie = this.playersOnIce[this.d].G[0];
 
 		if (goalie) {
-			// Save percentage is just based on goalie https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
-			if (r < goalie.compositeRating.goalkeeping ** 0.25) {
+			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
+			if (r < 0.89 + goalie.compositeRating.goalkeeping * 0.07) {
 				const saveType = Math.random() < 0.1 ? "save-freeze" : "save";
 
 				this.playByPlay.logEvent({
@@ -640,14 +673,6 @@ class GameSim {
 
 				return saveType;
 			}
-		}
-
-		const powerPlayTeam = this.penaltyBox.getPowerPlayTeam();
-		let strengthType: "ev" | "sh" | "pp" = "ev";
-		if (powerPlayTeam === this.d) {
-			strengthType = "sh";
-		} else if (powerPlayTeam === this.o) {
-			strengthType = "pp";
 		}
 
 		let assister1: PlayerGameSim | undefined;
@@ -772,10 +797,8 @@ class GameSim {
 
 	simPossession(special?: "rebound") {
 		if (!special) {
-			const numHits = this.getNumHits();
-			for (let i = 0; i < numHits; i++) {
+			if (this.isHit()) {
 				this.doHit();
-
 				if (this.advanceClock()) {
 					return;
 				}

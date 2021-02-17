@@ -57,11 +57,14 @@ class PenaltyBox {
 			powerPlayTeam = 0;
 		}
 
-		return powerPlayTeam;
+		return {
+			powerPlayTeam,
+			strengthDifference: Math.abs(counts[0] - counts[1]),
+		};
 	}
 
 	getShortHandedTeam() {
-		const powerPlayTeam = this.getPowerPlayTeam();
+		const { powerPlayTeam } = this.getPowerPlayTeam();
 
 		if (powerPlayTeam === 0) {
 			return 1;

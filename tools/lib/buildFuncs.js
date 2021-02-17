@@ -115,7 +115,7 @@ const setSport = () => {
 		silent: true,
 	});
 	replace({
-		regex: "ROOT_DOMAIN_NAME",
+		regex: "WEBSITE_ROOT",
 		replacement: bySport({
 			basketball: "basketball-gm.com",
 			football: "football-gm.com",
@@ -140,16 +140,6 @@ const setSport = () => {
 			basketball: "beta.basketball-gm.com",
 			football: "beta.football-gm.com",
 			hockey: "beta.hockey.zengm.com",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "MANUAL_URL",
-		replacement: bySport({
-			basketball: "basketball-gm.com/manual",
-			football: "football-gm.com/manual",
-			hockey: "zengm.com/hockey/manual",
 		}),
 		paths: ["build/index.html"],
 		silent: true,

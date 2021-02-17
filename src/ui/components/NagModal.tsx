@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
-import { GAME_NAME } from "../../common";
+import { GAME_NAME, WEBSITE_ROOT } from "../../common";
 
 type Props = {
 	close: () => void;
@@ -27,8 +27,7 @@ const NagModal = ({ close, show }: Props) => {
 					</p>
 					<p>
 						But please remember that {GAME_NAME} is a free game. It's made by
-						one person (
-						<a href={`https://${process.env.SPORT}-gm.com/about/`}>me</a>) in my
+						one person (<a href={`https://${WEBSITE_ROOT}/about/`}>me</a>) in my
 						spare time. The more money I make, the more time I can afford to
 						spend improving the game.
 					</p>

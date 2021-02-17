@@ -7,7 +7,7 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { EMAIL_ADDRESS, GAME_NAME } from "../common";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 window.bbgm = { ...util };
 const {
 	compareVersions,
@@ -300,7 +300,7 @@ const setupRoutes = () => {
 								<p>
 									Please{" "}
 									<a
-										href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+										href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>

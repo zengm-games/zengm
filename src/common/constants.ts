@@ -250,6 +250,18 @@ const SPORT_HAS_LEGENDS = bySport({
 	hockey: false,
 });
 
+const WEBSITE_PLAY = bySport({
+	basketball: "play.basketball-gm.com",
+	football: "play.football-gm.com",
+	hockey: "hockey.zengm.com",
+});
+
+const WEBSITE_ROOT = bySport({
+	basketball: "basketball-gm.com",
+	football: "football-gm.com",
+	hockey: "basketball-gm.com",
+});
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
@@ -303,4 +315,6 @@ export {
 	TIEBREAKERS,
 	TIME_BETWEEN_GAMES,
 	TWITTER_HANDLE,
+	WEBSITE_PLAY,
+	WEBSITE_ROOT,
 };

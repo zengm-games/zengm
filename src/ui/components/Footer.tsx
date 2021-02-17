@@ -1,17 +1,17 @@
 import { Fragment, memo } from "react";
-import { GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+import { GAME_ACRONYM, SUBREDDIT_NAME, WEBSITE_ROOT } from "../../common";
 
 const footerLinks = [
 	{
-		url: `https://${process.env.SPORT}-gm.com/about/`,
+		url: `https://${WEBSITE_ROOT}/about/`,
 		title: "About",
 	},
 	{
-		url: `https://${process.env.SPORT}-gm.com/blog/`,
+		url: `https://${WEBSITE_ROOT}/blog/`,
 		title: "Blog",
 	},
 	{
-		url: `https://${process.env.SPORT}-gm.com/contact/`,
+		url: `https://${WEBSITE_ROOT}/contact/`,
 		title: "Contact",
 	},
 	{
@@ -19,7 +19,7 @@ const footerLinks = [
 		title: "GitHub",
 	},
 	{
-		url: `https://${process.env.SPORT}-gm.com/privacy-policy/`,
+		url: `https://${WEBSITE_ROOT}/privacy-policy/`,
 		title: "Privacy",
 	},
 	{
@@ -68,7 +68,7 @@ const Footer = memo(() => {
 				>
 					<img
 						alt=""
-						src={`https://${process.env.SPORT}-gm.com/files/logo.png`}
+						src={`https://${WEBSITE_ROOT}/files/logo.png`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",

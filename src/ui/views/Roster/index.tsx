@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import arrayMove from "array-move";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	HelpPopover,
 	Mood,
@@ -244,7 +244,7 @@ const Roster = ({
 								<HelpPopover title="Player Mood">
 									See{" "}
 									<a
-										href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
+										href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>

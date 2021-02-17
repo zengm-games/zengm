@@ -1,4 +1,5 @@
 import { useCallback, useState, ReactNode, FormEvent } from "react";
+import { WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";
@@ -114,7 +115,7 @@ const ExportLeague = () => {
 				base for a <b>custom roster file</b> to share with others. Select as
 				much or as little information as you want to export, since any missing
 				information will be filled in with default values when it is used.{" "}
-				<a href={`http://${process.env.SPORT}-gm.com/manual/customization/`}>
+				<a href={`http://${WEBSITE_ROOT}/manual/customization/`}>
 					Read the manual for more info.
 				</a>
 			</p>

@@ -15,6 +15,7 @@ import {
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	gameAttributesArrayToObject,
+	WEBSITE_ROOT,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -1733,7 +1734,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												other data. You can create a league file by going to
 												Tools &gt; Export within a league, or by{" "}
 												<a
-													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+													href={`https://${WEBSITE_ROOT}/manual/customization/`}
 												>
 													creating a custom league file
 												</a>

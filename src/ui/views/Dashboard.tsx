@@ -9,6 +9,7 @@ import {
 	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
+	WEBSITE_PLAY,
 } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -330,15 +331,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				>
 					You are on the beta site. Sometimes new features are tested on the
 					beta site, but most of the time it gets updated less frequently than{" "}
-					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
-						the main site
-					</a>
-					. So unless you're testing some specific thing, you probably should be
-					playing on{" "}
-					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
-						the main site
-					</a>
-					.
+					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>. So unless
+					you're testing some specific thing, you probably should be playing on{" "}
+					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>.
 				</p>
 			) : null}
 			<div

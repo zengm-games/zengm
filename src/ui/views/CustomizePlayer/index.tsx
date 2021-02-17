@@ -8,6 +8,7 @@ import {
 	POSITIONS,
 	MOOD_TRAITS,
 	isSport,
+	WEBSITE_ROOT,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -533,7 +534,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					: "edit a player to have"}{" "}
 				whatever attributes and ratings you want. If you want to make a whole
 				league of custom players, you should probably create a{" "}
-				<a href={`https://${process.env.SPORT}-gm.com/manual/customization/`}>
+				<a href={`https://${WEBSITE_ROOT}/manual/customization/`}>
 					custom League File
 				</a>
 				.
@@ -900,7 +901,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								type="button"
 								className="btn btn-secondary btn-sm mb-1"
 								title={`Ratings will be taken from a randomly generated player with the same age${
-									process.env.SPORT === "football" ? " and position" : ""
+									isSport("football") ? " and position" : ""
 								} as this player`}
 								onClick={async event => {
 									event.preventDefault();

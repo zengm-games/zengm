@@ -11,7 +11,7 @@ import {
 } from "./awards";
 
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { defaultGameAttributes, g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type {
 	AwardPlayer,
@@ -189,10 +189,14 @@ export const smoyScore = (p: PlayerFiltered) =>
 	p.currentStats.ewa + p.currentStats.ws;
 
 export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.ewa + p.currentStats.ws + p.currentStats.pts;
+	p.currentStats.ewa +
+	p.currentStats.ws +
+	(p.currentStats.pts * p.currentStats.gp) / defaultGameAttributes.numGames;
 
 export const dpoyScore = (p: PlayerFiltered) =>
-	p.currentStats.dws + p.currentStats.blk + p.currentStats.stl;
+	p.currentStats.dws +
+	((p.currentStats.blk + p.currentStats.stl) * p.currentStats.gp) /
+		defaultGameAttributes.numGames;
 
 export const smoyFilter = (p: PlayerFiltered) =>
 	p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;

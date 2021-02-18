@@ -583,7 +583,7 @@ class GameSim {
 	}
 
 	doShot(special?: "rebound") {
-		const shooter = this.pickPlayer(this.o, "scoring", ["C", "W", "D"]);
+		const shooter = this.pickPlayer(this.o, "scoring", ["C", "W", "D"], 3);
 
 		const type: "slapshot" | "wristshot" | "shot" | "reboundShot" =
 			special === "rebound"
@@ -681,14 +681,15 @@ class GameSim {
 			const r2 = Math.random();
 			if (deflector) {
 				assister1 = shooter;
-			} else if (r2 < 0.9) {
-				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+			} else if (r2 < 0.99) {
+				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
 					actualShooter,
 				]);
 				this.recordStat(this.o, assister1, `${strengthType}A`);
 			}
-			if (r2 < 0.8) {
-				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 1, [
+
+			if (r2 < 0.9) {
+				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
 					actualShooter,
 					assister1 as PlayerGameSim,
 				]);

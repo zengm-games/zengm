@@ -2050,7 +2050,10 @@ const retiredJerseyNumberUpsert = async (
 	}
 
 	// Insert or update?
+	let saveEvent = false;
 	if (i === undefined) {
+		saveEvent = true;
+
 		if (!t.retiredJerseyNumbers) {
 			t.retiredJerseyNumbers = [];
 		}
@@ -2068,20 +2071,27 @@ const retiredJerseyNumberUpsert = async (
 			throw new Error("Invalid index");
 		}
 
+		const prevNumber = t.retiredJerseyNumbers[i].number;
+		if (prevNumber !== info.number) {
+			saveEvent = true;
+		}
+
 		t.retiredJerseyNumbers[i] = {
 			...info,
 			score,
 		};
 	}
 
-	logEvent({
-		type: "retiredJersey",
-		text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
-		showNotification: false,
-		pids: info.pid ? [info.pid] : [],
-		tids: [t.tid],
-		score: 20,
-	});
+	if (saveEvent) {
+		logEvent({
+			type: "retiredJersey",
+			text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
+			showNotification: false,
+			pids: info.pid ? [info.pid] : [],
+			tids: [t.tid],
+			score: 20,
+		});
+	}
 
 	await idb.cache.teams.put(t);
 

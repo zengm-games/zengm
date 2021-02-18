@@ -204,13 +204,35 @@ const StatsSummary = ({
 		}
 	}
 
-	const playerStats = p.stats.filter(
-		ps =>
-			!ps.playoffs &&
-			(ps.season === season ||
-				(ps.season === season - 1 && phase === PHASE.PRESEASON)),
-	);
-	const ps = playerStats[playerStats.length - 1];
+	let ps: typeof p["stats"][number] | undefined;
+	if (p.tid === PLAYER.RETIRED) {
+		// Find best season for retired player
+		let maxValue = -Infinity;
+		for (const row of p.stats) {
+			if (row.playoffs) {
+				continue;
+			}
+
+			const value = bySport({
+				basketball: row.ws,
+				football: row.av,
+				hockey: row.ps,
+			});
+			if (value > maxValue) {
+				ps = row;
+				maxValue = value;
+			}
+		}
+	} else {
+		// Find current season for active player
+		const playerStats = p.stats.filter(
+			ps =>
+				!ps.playoffs &&
+				(ps.season === season ||
+					(ps.season === season - 1 && phase === PHASE.PRESEASON)),
+		);
+		ps = playerStats[playerStats.length - 1];
+	}
 
 	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
 
@@ -251,7 +273,12 @@ const StatsSummary = ({
 				{ps ? (
 					<tbody>
 						<tr>
-							<th className="table-separator-right text-left">{ps.season}</th>
+							<th
+								className="table-separator-right text-left"
+								title={p.tid === PLAYER.RETIRED ? String(ps.season) : undefined}
+							>
+								{p.tid === PLAYER.RETIRED ? "Peak" : ps.season}
+							</th>
 							{stats.map((stat, i) => {
 								return (
 									<td

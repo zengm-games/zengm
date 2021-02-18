@@ -163,17 +163,16 @@ export const mvpScore = (p: PlayerFiltered) => {
 			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
 	}
 
-	return p.currentStats.pts + p.currentStats.ops + teamFactor;
+	return p.currentStats.pts / 25 + p.currentStats.ps + teamFactor;
 };
 
 export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.pts + p.currentStats.ops;
+	p.currentStats.pts / 25 + p.currentStats.ps;
 
 export const dpoyScore = (p: PlayerFiltered) =>
-	p.currentStats.tk + p.currentStats.dps + p.currentStats.hit;
+	p.currentStats.tk / 25 + p.currentStats.hit / 25 + p.currentStats.dps;
 
-export const goyScore = (p: PlayerFiltered) =>
-	-p.currentStats.gaa + p.currentStats.gps;
+export const goyScore = (p: PlayerFiltered) => p.currentStats.gps;
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {

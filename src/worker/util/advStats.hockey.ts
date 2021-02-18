@@ -78,6 +78,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	const dps: number[] = [];
 	const gps: number[] = [];
 
+	//const debug = [];
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
 		const t = teams.find(t => t.tid === p.tid);
@@ -89,56 +90,80 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 
 		if (p.ratings.pos === "G") {
 			// Goalie point shares
-			const shotsAgainstAdjustment = p.stats.sa / p.stats.min / league.saPerMin;
-			const marginalGoalsAgainst =
-				(1 + 7 / 12) *
-					shotsAgainstAdjustment *
-					p.stats.min *
-					league.oppGPerPmin -
-				p.stats.ga;
-			gps[i] = (2 / 7) * (marginalGoalsAgainst / marginalGoalsPerPoint);
+			if (p.stats.min > 0 && league.saPerMin > 0 && marginalGoalsPerPoint > 0) {
+				const shotsAgainstAdjustment =
+					p.stats.sa / p.stats.min / league.saPerMin;
+				const marginalGoalsAgainst =
+					(1 + 7 / 12) *
+						shotsAgainstAdjustment *
+						p.stats.min *
+						league.oppGPerPmin -
+					p.stats.ga;
+				gps[i] = (2 / 7) * (marginalGoalsAgainst / marginalGoalsPerPoint);
+
+				// Adjustment to account for goalies not getting rest days by default, leading to significantly higher GPS
+				gps[i] *= 0.75;
+
+				/*debug.push({
+					shotsAgainstAdjustment,
+					min: p.stats.min,
+					leagueGoalsAgainstPerMinute: league.oppGPerPmin,
+					goalsAgainst: p.stats.ga,
+					marginalGoalsAgainst,
+					marginalGoalsPerPoint,
+					gps: gps[i],
+				})*/
+			} else {
+				gps[i] = 0;
+			}
 
 			ops[i] = 0;
 			dps[i] = 0;
 		} else {
-			const type: keyof typeof sumsByType = OFFENSIVE_POSITIONS.includes(
-				p.ratings.pos,
-			)
-				? "forwards"
-				: "defensemen";
+			if (marginalGoalsPerPoint > 0) {
+				const type: keyof typeof sumsByType = OFFENSIVE_POSITIONS.includes(
+					p.ratings.pos,
+				)
+					? "forwards"
+					: "defensemen";
 
-			// Offensive point shares
-			const marginalGoals =
-				gc[i] -
-				(7 / 12) * p.stats.min * (sumsByType[type].gc / sumsByType[type].min);
-			ops[i] = marginalGoals / marginalGoalsPerPoint;
+				// Offensive point shares
+				const marginalGoals =
+					gc[i] -
+					(7 / 12) * p.stats.min * (sumsByType[type].gc / sumsByType[type].min);
+				ops[i] = marginalGoals / marginalGoalsPerPoint;
 
-			// Defensive point shares
-			const proportionTeamMin = p.stats.min / t.stats.min;
-			const proportionMarginalGoalsAgainstSkaters =
-				(7 - 2 * (t.stats.sa / t.stats.min / league.saPerMin)) / 7;
-			const positionAdjustment = type === "forwards" ? 5 / 7 : 10 / 7;
-			const teamMarginalGoalsAgainst =
-				(1 + 7 / 12) * t.stats.gp * league.gPerGame - t.stats.oppG;
-			const plusMinusAdjustment =
-				(1 / 7) *
-				positionAdjustment *
-				(p.stats.pm -
-					p.stats.min *
-						(sumsByPosition[t.tid][p.ratings.pos].pm /
-							sumsByPosition[t.tid][p.ratings.pos].min));
-			const marginalGoalsAgainst =
-				proportionTeamMin *
-					proportionMarginalGoalsAgainstSkaters *
+				// Defensive point shares
+				const proportionTeamMin = p.stats.min / t.stats.min;
+				const proportionMarginalGoalsAgainstSkaters =
+					(7 - 2 * (t.stats.sa / t.stats.min / league.saPerMin)) / 7;
+				const positionAdjustment = type === "forwards" ? 5 / 7 : 10 / 7;
+				const teamMarginalGoalsAgainst =
+					(1 + 7 / 12) * t.stats.gp * league.gPerGame - t.stats.oppG;
+				const plusMinusAdjustment =
+					(1 / 7) *
 					positionAdjustment *
-					teamMarginalGoalsAgainst +
-				plusMinusAdjustment;
+					(p.stats.pm -
+						p.stats.min *
+							(sumsByPosition[t.tid][p.ratings.pos].pm /
+								sumsByPosition[t.tid][p.ratings.pos].min));
+				const marginalGoalsAgainst =
+					proportionTeamMin *
+						proportionMarginalGoalsAgainstSkaters *
+						positionAdjustment *
+						teamMarginalGoalsAgainst +
+					plusMinusAdjustment;
 
-			dps[i] = marginalGoalsAgainst / marginalGoalsPerPoint;
+				dps[i] = marginalGoalsAgainst / marginalGoalsPerPoint;
+			} else {
+				ops[i] = 0;
+				dps[i] = 0;
+			}
 
 			gps[i] = 0;
 		}
 	}
+	// console.table(debug);
 
 	return {
 		gc,

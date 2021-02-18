@@ -163,7 +163,12 @@ export const mvpScore = (p: PlayerFiltered) => {
 			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
 	}
 
-	return p.currentStats.pts / 25 + p.currentStats.ps + teamFactor;
+	return (
+		p.currentStats.pts / 25 +
+		p.currentStats.ps -
+		0.1 * p.currentStats.gps +
+		teamFactor
+	);
 };
 
 export const royScore = (p: PlayerFiltered) =>

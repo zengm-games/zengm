@@ -92,7 +92,7 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	let PARAM;
-	if (isSport("basketball")) {
+	if (isSport("basketball") || isSport("hockey")) {
 		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
 	} else {
 		PARAM = 1;
@@ -265,7 +265,7 @@ const normalizeContractDemands = async ({
 
 			let amount;
 
-			if (isSport("basketball")) {
+			if (isSport("basketball") || isSport("hockey")) {
 				// During regular season, should only look for short contracts that teams will actually sign
 				if (type === "dummyExpiringContracts") {
 					if (info.contractAmount >= maxContract / 4) {

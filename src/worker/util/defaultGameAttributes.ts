@@ -179,6 +179,11 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 		? {
 				quarterLength: 20,
 				numPeriods: 3,
+				hardCap: true,
+				salaryCap: 80000,
+				minPayroll: 60000,
+				minContract: 500,
+				maxContract: 13000,
 				minRosterSize: 23,
 				maxRosterSize: 25,
 				draftType: "nhl2017",

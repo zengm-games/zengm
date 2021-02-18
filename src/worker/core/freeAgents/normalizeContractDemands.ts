@@ -7,12 +7,7 @@ import orderBy from "lodash/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
-
-// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
-const ROUNDS = bySport({
-	football: 0,
-	default: 60,
-});
+const DEFAULT_ROUNDS = 60;
 
 const getExpiration = (
 	p: Player,
@@ -103,6 +98,13 @@ const normalizeContractDemands = async ({
 	const salaryCap = g.get("salaryCap");
 	const season = g.get("season");
 
+	let numRounds = DEFAULT_ROUNDS;
+
+	// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula. Same if minContract and maxContract are the same, no point in doing auction.
+	if (isSport("football") || minContract === maxContract) {
+		numRounds = 0;
+	}
+
 	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly) because we don't know that all these players are actually going to be available
 	const NUM_BIDS_BEFORE_REMOVED = 2;
 
@@ -176,8 +178,8 @@ const normalizeContractDemands = async ({
 	//console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
-	for (let i = 0; i < ROUNDS; i++) {
-		const OFFSET = LEARNING_RATE * (1 / (1 + i / ROUNDS) ** 4);
+	for (let i = 0; i < numRounds; i++) {
+		const OFFSET = LEARNING_RATE * (1 / (1 + i / numRounds) ** 4);
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;
 
@@ -265,15 +267,9 @@ const normalizeContractDemands = async ({
 
 			let amount;
 
-			if (isSport("basketball") || isSport("hockey")) {
-				// During regular season, should only look for short contracts that teams will actually sign
-				if (type === "dummyExpiringContracts") {
-					if (info.contractAmount >= maxContract / 4) {
-						p.contract.exp = season;
-						info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
-					}
-				}
-
+			if (numRounds === 0) {
+				amount = player.genContract(p, type === "newLeague").amount;
+			} else {
 				if (type === "newLeague") {
 					info.contractAmount *= random.uniform(0.4, 1.1);
 				}
@@ -283,8 +279,14 @@ const normalizeContractDemands = async ({
 					minContract,
 					maxContract,
 				);
-			} else {
-				amount = player.genContract(p, type === "newLeague").amount;
+			}
+
+			// During regular season, should only look for short contracts that teams will actually sign
+			if (type === "dummyExpiringContracts") {
+				if (info.contractAmount >= maxContract / 4) {
+					p.contract.exp = season;
+					info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
+				}
 			}
 
 			// Make sure to remove "temp" flag!

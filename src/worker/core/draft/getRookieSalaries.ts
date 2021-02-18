@@ -107,16 +107,25 @@ const getRookieSalaries = (): number[] => {
 		otherRoundRookieSalaries,
 	);
 
-	if (g.get("minContract") !== 500 || g.get("maxContract") !== 20000) {
+	const minContract = g.get("minContract");
+	const maxContract = g.get("maxContract");
+	if (minContract !== 500 || maxContract !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {
 			// Subtract min
-			rookieSalaries[i] -= 500; // Scale so max will be 1/4 the max contract
+			rookieSalaries[i] -= 500;
 
-			rookieSalaries[i] *=
-				(0.25 * g.get("maxContract") - g.get("minContract")) / 4500; // Add min back
+			// Scale so max will be 1/4 the max contract
+			rookieSalaries[i] *= (0.25 * maxContract - minContract) / 4500;
 
-			rookieSalaries[i] += g.get("minContract");
+			// Add min back
+			rookieSalaries[i] += minContract;
 			rookieSalaries[i] = helpers.roundContract(rookieSalaries[i]);
+
+			rookieSalaries[i] = helpers.bound(
+				rookieSalaries[i],
+				minContract,
+				maxContract,
+			);
 		}
 	}
 

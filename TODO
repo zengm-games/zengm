@@ -3,9 +3,6 @@ add standings options
 - divisionLeadersFirstPlayoffs
 
 I have a few issues with this file: https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
-- A few teams are not sorted alphabetically (such as Alaska Sea Sonics or Arizona Beasts)
-- I'd like everyone to be on the same shitty salary, so min and max salaries set at 100K$ but rookies still earn less (90K)
-- https://discord.com/channels/290013534023057409/290015591216054273/810511748699521044
 - performance https://discord.com/channels/290013534023057409/290015468939640832/810478838474866698
 
 average team age on roster page

@@ -166,7 +166,7 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return (
 		p.currentStats.pts / 25 +
 		p.currentStats.ps -
-		0.1 * p.currentStats.gps +
+		0.4 * p.currentStats.gps +
 		teamFactor
 	);
 };

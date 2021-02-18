@@ -78,7 +78,6 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	const dps: number[] = [];
 	const gps: number[] = [];
 
-	//const debug = [];
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
 		const t = teams.find(t => t.tid === p.tid);
@@ -100,19 +99,6 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 						league.oppGPerPmin -
 					p.stats.ga;
 				gps[i] = (2 / 7) * (marginalGoalsAgainst / marginalGoalsPerPoint);
-
-				// Adjustment to account for goalies not getting rest days by default, leading to significantly higher GPS
-				gps[i] *= 0.75;
-
-				/*debug.push({
-					shotsAgainstAdjustment,
-					min: p.stats.min,
-					leagueGoalsAgainstPerMinute: league.oppGPerPmin,
-					goalsAgainst: p.stats.ga,
-					marginalGoalsAgainst,
-					marginalGoalsPerPoint,
-					gps: gps[i],
-				})*/
 			} else {
 				gps[i] = 0;
 			}
@@ -163,7 +149,6 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			gps[i] = 0;
 		}
 	}
-	// console.table(debug);
 
 	return {
 		gc,

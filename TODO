@@ -2,9 +2,6 @@ add standings options
 - playoffsByConference
 - divisionLeadersFirstPlayoffs
 
-I have a few issues with this file: https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
-- performance https://discord.com/channels/290013534023057409/290015468939640832/810478838474866698
-
 average team age on roster page
 
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558

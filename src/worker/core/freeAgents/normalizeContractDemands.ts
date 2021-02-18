@@ -145,9 +145,9 @@ const normalizeContractDemands = async ({
 	});
 
 	let playerInfosCurrent: typeof playerInfos;
-	if (isSport("football") && type === "newLeague") {
-		// For performance, especially for FBGM, just assume the bottom 60% of the league will be min contracts
-		const cutoff = Math.round(0.4 * playerInfos.length);
+	if (type === "newLeague") {
+		// For performance, especially for FBGM, just assume the bottom X% of the league will be min contracts
+		const cutoff = Math.round(0.75 * playerInfos.length);
 		const ordered = orderBy(playerInfos, "value", "desc");
 		playerInfosCurrent = ordered.slice(0, cutoff);
 	} else {

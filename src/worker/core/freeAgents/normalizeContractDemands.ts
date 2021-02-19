@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, bySport, isSport } from "../../../common";
+import { PLAYER, PHASE, isSport } from "../../../common";
 import { team, player } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";

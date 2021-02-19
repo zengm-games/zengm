@@ -60,15 +60,12 @@ const processTrade = async (
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
+		let teamSeason;
 		if (pids[j].length > 0) {
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsBySeasonTid",
 				[g.get("season"), tids[j]],
 			);
-			if (teamSeason) {
-				teamSeason.numPlayersTradedAway += pids.length;
-				await idb.cache.teamSeasons.put(teamSeason);
-			}
 		}
 
 		for (const pid of pids[j]) {
@@ -107,6 +104,19 @@ const processTrade = async (
 				ratingsIndex: p.ratings.length - 1,
 				statsIndex: p.stats.length - 1,
 			});
+
+			if (teamSeason) {
+				// Bad players do not actually count as a "player traded away"
+				teamSeason.numPlayersTradedAway += helpers.sigmoid(
+					p.valueNoPot / 100,
+					30,
+					0.47,
+				);
+			}
+		}
+
+		if (teamSeason) {
+			await idb.cache.teamSeasons.put(teamSeason);
 		}
 
 		for (const dpid of dpids[j]) {

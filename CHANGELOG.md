@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: The "worried he'll be traded away" mood component is based on how many players you've traded away recently. Now that factors in how good the player is too. Basically, below average players will not count much there, but above average players still will. This is based on their current ovr, not their pot, so a contending team can trade away prospects without much penalty.
+
 * 2021-02-16: New option to switch between ordering teams by winning percentage (default) or a points formula like the NHL uses. [[1]](https://old.reddit.com/r/BasketballGM/comments/lkwj7o/new_option_to_switch_between_ordering_teams_by/)
 
 * **2021-02-15: Non-random tiebreakers, based on things like head-to-head results, strength of schedule, etc. Also it's customizable in God Mode. [[1]](https://basketball-gm.com/blog/2021/02/customizable-tiebreakers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/lkigp1/version_202102151049_nonrandom_tiebreakers_based/) [[3]](https://old.reddit.com/r/Football_GM/comments/lkij5s/version_202102151052_nonrandom_tiebreakers_based/)**

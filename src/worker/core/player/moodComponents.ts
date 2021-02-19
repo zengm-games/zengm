@@ -267,7 +267,7 @@ const moodComponents = async (
 		}
 
 		components.trades = helpers.bound(
-			-(numPlayersTradedAwayNormalized - 6) / 4,
+			-(numPlayersTradedAwayNormalized - 3) / 4,
 			-Infinity,
 			0,
 		);

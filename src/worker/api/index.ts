@@ -2909,6 +2909,8 @@ const upsertCustomizedPlayer = async (
 
 		p.ratings[r].season = p.draft.year;
 	} else if (p.tid !== PLAYER.RETIRED) {
+		p.retiredYear = Infinity;
+
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
 		p.ratings[r].season = g.get("season");
 	}

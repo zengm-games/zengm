@@ -179,6 +179,7 @@ const Roster = ({
 							index === numPlayersOnCourt - 1 &&
 							!isDragged,
 						"table-danger": p.hof,
+						"table-info": p.tid === tid,
 					})
 				}
 				onChange={async ({ oldIndex, newIndex }) => {

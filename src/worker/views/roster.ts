@@ -31,6 +31,7 @@ const updateRoster = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("newPhase"))) ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season

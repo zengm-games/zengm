@@ -2,6 +2,14 @@ add standings options
 - playoffsByConference
 - divisionLeadersFirstPlayoffs
 
+load balancing
+- in hockey - goalie rest days
+- some probability that a player needs a day off after a game, based on their endurance rating
+  - if not given, decrease performance
+- only in regular season
+- some way for user to set amount - could want to do more than is strictly needed, like for injuries or tanking
+  - would need to influence mood if done too much or too little
+
 average team age on roster page
 
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558

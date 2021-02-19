@@ -45,8 +45,14 @@ const TeamStats = ({
 	if (usePts) {
 		basicColNames.push("PTS");
 		basicColNames.push("PTS%");
+		if (superCols) {
+			superCols[0].colspan += 2;
+		}
 	} else {
 		basicColNames.push("%");
+		if (superCols) {
+			superCols[0].colspan += 1;
+		}
 	}
 
 	const cols = getCols(

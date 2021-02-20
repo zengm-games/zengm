@@ -379,6 +379,26 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:dd": {
+			desc: "Double Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:td": {
+			desc: "Triple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:qd": {
+			desc: "Quadruple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fxf": {
+			desc: "Five by Fives",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 	football: {
 		"pos:QB": {
@@ -2214,6 +2234,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:fgMidRange": "M",
 		"stat:fgaMidRange": "A",
 		"stat:fgpMidRange": "%",
+		"stat:dd": "DD",
+		"stat:td": "TD",
+		"stat:qd": "QD",
+		"stat:fxf": "5x5",
 	},
 	football: {
 		"pos:QB": "QB",

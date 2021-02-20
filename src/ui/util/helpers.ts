@@ -69,6 +69,10 @@ const roundOverrides: Record<
 		pfMax: "noDecimalPlace",
 		ptsMax: "noDecimalPlace",
 		pmMax: "plusMinusNoDecimalPlace",
+		dd: "noDecimalPlace",
+		td: "noDecimalPlace",
+		qd: "noDecimalPlace",
+		fxf: "noDecimalPlace",
 	},
 	football: {
 		gp: "noDecimalPlace",

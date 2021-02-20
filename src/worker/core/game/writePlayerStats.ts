@@ -246,7 +246,7 @@ const writePlayerStats = async (
 		}
 
 		for (const t of result.team) {
-			// This needs to be before checkStatistical Feat
+			// This needs to be before checkStatisticalFeat
 			if (isSport("hockey")) {
 				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
 
@@ -260,6 +260,40 @@ const writePlayerStats = async (
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
 				if (!isSport("basketball") && p.stat.min === 0) {
 					continue;
+				}
+
+				// In theory this could be used by checkStatisticalFeat, but wouldn't really make sense because that scales the cutoff by game length
+				if (isSport("basketball")) {
+					let numDoubles = 0;
+					let numFives = 0;
+					const doubleStats = ["pts", "ast", "stl", "blk", "trb"];
+					for (const stat of doubleStats) {
+						const value =
+							stat === "trb" ? p.stat.orb + p.stat.drb : p.stat[stat];
+						if (value >= 5) {
+							numFives += 1;
+							if (value >= 10) {
+								numDoubles += 1;
+							}
+						}
+					}
+
+					if (numDoubles >= 2) {
+						p.stat.dd = 1;
+						t.stat.dd += 1;
+						if (numDoubles >= 3) {
+							p.stat.td = 1;
+							t.stat.td += 1;
+							if (numDoubles >= 4) {
+								p.stat.qd = 1;
+								t.stat.qd += 1;
+							}
+						}
+					}
+					if (numFives >= 5) {
+						p.stat.fxf = 1;
+						t.stat.fxf += 1;
+					}
 				}
 
 				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
@@ -286,8 +320,8 @@ const writePlayerStats = async (
 					// Update stats
 					if (p.stat.min > 0) {
 						for (const key of Object.keys(p.stat)) {
-							if (!ps.hasOwnProperty(key)) {
-								throw new Error(`Missing key "${key}" on ps`);
+							if (ps[key] === undefined) {
+								ps[key] = 0;
 							}
 
 							if (isSport("football") && key.endsWith("Lng")) {

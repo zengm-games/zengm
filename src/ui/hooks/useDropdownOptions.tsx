@@ -48,7 +48,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	perGame: "Per Game",
 	per36: "Per 36 Minutes",
 	totals: "Totals",
-	shotLocations: "Shot Locations",
+	shotLocations: "Shot Locations and Feats",
 	advanced: "Advanced",
 	gameHighs: "Game Highs",
 	passing: "Passing",

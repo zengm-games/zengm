@@ -289,11 +289,11 @@ const AD_DIVS = bySport({
 		rail: "basketball-gm_right_rail",
 	},
 	football: {
-		mobile: "basketball-gm_mobile_leaderboard",
-		leaderboard: "basketball-gm_leaderboard_atf",
-		rectangle1: "basketball-gm_mrec_btf_1",
-		rectangle2: "basketball-gm_mrec_btf_2",
-		rail: "basketball-gm_right_rail",
+		mobile: "football-gm_mobile_leaderboard",
+		leaderboard: "football-gm_leaderboard_atf",
+		rectangle1: "football-gm_mrec_btf_1",
+		rectangle2: "football-gm_mrec_btf_2",
+		rail: "football-gm_right_rail",
 	},
 	hockey: {
 		mobile: "zen-gm_mobile_leaderboard",

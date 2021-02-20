@@ -332,6 +332,7 @@ export type ExpansionDraftSetupTeam = {
 	name: string;
 	imgURL: string | undefined;
 	colors: [string, string, string];
+	jersey?: string;
 	pop: string;
 	stadiumCapacity: string;
 	did: string;
@@ -1179,6 +1180,7 @@ export type Team = {
 	abbrev: string;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
 		BudgetItem
@@ -1288,6 +1290,7 @@ export type TeamBasic = {
 	pop: number;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 };
 
 export type TeamStatType = "perGame" | "totals";
@@ -1362,6 +1365,7 @@ export type TeamSeasonWithoutKey = {
 	abbrev: string;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {
@@ -1438,6 +1442,7 @@ type IndividualRealTeamInfo = {
 	pop?: number;
 	colors?: [string, string, string];
 	imgURL?: string;
+	jersey?: string;
 };
 export type RealTeamInfo = Record<
 	string,

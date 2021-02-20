@@ -6,6 +6,7 @@ const POTENTIAL_OVERRIDES = [
 	"name",
 	"pop",
 	"colors",
+	"jersey",
 	"imgURL",
 ] as const;
 

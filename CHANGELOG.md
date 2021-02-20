@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: At Tools > Manage Teams, it is now possible to change the team jersey styles used for cartoon players. [[1]]()
+
 * DEV: In BBGM, "Shot Locations" tables are now "Shot Locations and Feats" and they also show double doubles, triple doubles, quadruple doubles, and five by fives. [[1]]()
 
 * 2021-02-20: In BBGM, decreased the steal rate to be a bit more realistic.

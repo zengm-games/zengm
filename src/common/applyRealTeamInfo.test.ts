@@ -28,6 +28,7 @@ describe("common/applyRealTeamInfo", () => {
 				name: "Foofoo",
 				pop: 2.5,
 				colors: ["#000000", "#0000ff", "#ff0000"],
+				jersey: "foo",
 				imgURL: "/foo.png",
 			},
 		};
@@ -39,6 +40,7 @@ describe("common/applyRealTeamInfo", () => {
 		assert.strictEqual(t.name, "Foofoo");
 		assert.strictEqual(t.pop, 2.5);
 		assert.deepStrictEqual(t.colors, ["#000000", "#0000ff", "#ff0000"]);
+		assert.strictEqual(t.jersey, "foo");
 		assert.strictEqual(t.imgURL, "/foo.png");
 	});
 
@@ -54,6 +56,7 @@ describe("common/applyRealTeamInfo", () => {
 				name: "Foofoo",
 				pop: 2.5,
 				colors: ["#000000", "#0000ff", "#ff0000"],
+				jersey: "foo",
 				imgURL: "/foo.png",
 				seasons: {
 					2014: {
@@ -73,6 +76,7 @@ describe("common/applyRealTeamInfo", () => {
 		assert.strictEqual(t.name, "Bar");
 		assert.strictEqual(t.pop, 2.5);
 		assert.deepStrictEqual(t.colors, ["#000000", "#0000ff", "#ff0000"]);
+		assert.strictEqual(t.jersey, "foo");
 		assert.strictEqual(t.imgURL, "/foo.png");
 	});
 
@@ -88,6 +92,7 @@ describe("common/applyRealTeamInfo", () => {
 				name: "Foofoo",
 				pop: 2.5,
 				colors: ["#000000", "#0000ff", "#ff0000"],
+				jersey: "foo",
 				imgURL: "/foo.png",
 				seasons: {
 					2014: {
@@ -107,6 +112,7 @@ describe("common/applyRealTeamInfo", () => {
 		assert.strictEqual(t.name, "Foofoo");
 		assert.strictEqual(t.pop, 2.5);
 		assert.deepStrictEqual(t.colors, ["#000000", "#0000ff", "#ff0000"]);
+		assert.strictEqual(t.jersey, "foo");
 		assert.strictEqual(t.imgURL, "/foo.png");
 	});
 });

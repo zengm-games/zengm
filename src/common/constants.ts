@@ -304,12 +304,35 @@ const AD_DIVS = bySport({
 	},
 });
 
+const DEFAULT_JERSEY = bySport({
+	basketball: "jersey3",
+	football: "football",
+	hockey: "hockey",
+});
+
+const JERSEYS = bySport({
+	basketball: {
+		jersey: "Plain",
+		jersey2: "Bordered",
+		jersey4: "Bordered 2",
+		jersey3: "Solid horizontal",
+		jersey5: "Pinstripes",
+	},
+	football: {
+		football: "Default",
+		football2: "Shoulder flair",
+		football3: "Shoulder stripes",
+	},
+	hockey: { hockey: "Default" },
+});
+
 export {
 	AD_DIVS,
 	AWARD_NAMES,
 	COURT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_JERSEY,
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
@@ -319,6 +342,7 @@ export {
 	GAME_ACRONYM,
 	GAME_NAME,
 	GRACE_PERIOD,
+	JERSEYS,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	MOOD_TRAITS,
 	NO_LOTTERY_DRAFT_TYPES,

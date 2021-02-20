@@ -4,6 +4,7 @@ import type { ExpansionDraftSetupTeam } from "../../common/types";
 import { idb } from "../db";
 import orderBy from "lodash/orderBy";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs";
+import { DEFAULT_JERSEY } from "../../common";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -40,6 +41,7 @@ const updateExpansionDraft = async () => {
 			name: t.name,
 			imgURL: t.imgURL,
 			colors: t.colors,
+			jersey: DEFAULT_JERSEY,
 			pop: String(t.pop),
 			stadiumCapacity: String(g.get("defaultStadiumCapacity")),
 			did: String(t.did),
@@ -57,6 +59,7 @@ const updateExpansionDraft = async () => {
 			name: t.name,
 			imgURL: t.imgURL,
 			colors: t.colors,
+			jersey: t.jersey ?? DEFAULT_JERSEY,
 			pop: String(t.pop ?? 1),
 			stadiumCapacity: String(
 				t.stadiumCapacity !== undefined

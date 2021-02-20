@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g } from "../util";
 import orderBy from "lodash/orderBy";
+import { DEFAULT_JERSEY } from "../../common";
 
 const updateTeamInfo = async () => {
 	const teams = (
@@ -12,6 +13,7 @@ const updateTeamInfo = async () => {
 				"name",
 				"imgURL",
 				"colors",
+				"jersey",
 				"did",
 				"pop",
 				"stadiumCapacity",
@@ -22,12 +24,7 @@ const updateTeamInfo = async () => {
 			addDummySeason: true,
 		})
 	).map(t => {
-		if (t.pop === undefined) {
-			t.pop = t.seasonAttrs.pop;
-		}
-		if (t.stadiumCapacity === undefined) {
-			t.stadiumCapacity = t.seasonAttrs.stadiumCapacity;
-		}
+		const pop = t.pop ?? t.seasonAttrs.pop;
 
 		return {
 			tid: t.tid,
@@ -36,8 +33,9 @@ const updateTeamInfo = async () => {
 			name: t.name,
 			imgURL: t.imgURL,
 			colors: t.colors,
-			pop: parseFloat(t.pop.toFixed(6)),
-			stadiumCapacity: t.stadiumCapacity,
+			pop: parseFloat(pop.toFixed(6)),
+			stadiumCapacity: t.stadiumCapacity ?? t.seasonAttrs.stadiumCapacity,
+			jersey: t.jersey ?? DEFAULT_JERSEY,
 			did: t.did,
 			disabled: t.disabled,
 		};

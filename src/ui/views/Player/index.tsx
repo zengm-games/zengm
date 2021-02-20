@@ -348,6 +348,7 @@ const Player2 = ({
 	statTables,
 	statSummary,
 	teamColors,
+	teamJersey,
 	teamName,
 	willingToSign,
 }: View<"player">) => {
@@ -476,7 +477,8 @@ const Player2 = ({
 								<PlayerPicture
 									face={player.face}
 									imgURL={player.imgURL}
-									teamColors={teamColors}
+									colors={teamColors}
+									jersey={teamJersey}
 								/>
 							</div>
 							<div>

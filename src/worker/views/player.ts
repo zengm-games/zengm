@@ -4,6 +4,7 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	isSport,
+	DEFAULT_JERSEY,
 } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
@@ -329,6 +330,9 @@ const updatePlayer = async (
 			}
 		}
 
+		const teamJersey =
+			(await idb.cache.teams.get(p.tid))?.jersey ?? DEFAULT_JERSEY;
+
 		return {
 			player: p,
 			showTradeFor: p.tid !== userTid && p.tid >= 0,
@@ -352,6 +356,7 @@ const updatePlayer = async (
 			statTables,
 			statSummary,
 			teamColors,
+			teamJersey,
 			teamName,
 			willingToSign,
 		};

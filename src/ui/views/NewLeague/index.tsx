@@ -968,6 +968,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					setCustomizeTeamsUI(false);
 				}}
 				onSave={({ confs, divs, teams }) => {
+					console.log("onSave", teams);
 					dispatch({
 						type: "setTeams",
 						confs,

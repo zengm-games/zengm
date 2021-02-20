@@ -2578,7 +2578,7 @@ const updateOptions = async (
 	},
 ) => {
 	const validateRealTeamInfo = (abbrev: string, teamInfo: any) => {
-		const strings = ["abbrev", "region", "name", "imgURL"];
+		const strings = ["abbrev", "region", "name", "imgURL", "jersey"];
 		const numbers = ["pop"];
 		for (const [key, value] of Object.entries(teamInfo as any)) {
 			if (strings.includes(key)) {
@@ -2726,6 +2726,7 @@ const updateTeamInfo = async (
 		pop: number | string;
 		stadiumCapacity: number | string;
 		colors: [string, string, string];
+		jersey: string;
 		disabled?: boolean;
 	}[],
 ) => {
@@ -2756,6 +2757,7 @@ const updateTeamInfo = async (
 		}
 
 		t.colors = newTeam.colors;
+		t.jersey = newTeam.jersey;
 
 		t.pop = parseFloat(newTeam.pop as string);
 		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string, 10);
@@ -2822,6 +2824,7 @@ const updateTeamInfo = async (
 				teamSeason.abbrev = t.abbrev;
 				teamSeason.imgURL = t.imgURL;
 				teamSeason.colors = t.colors;
+				teamSeason.jersey = t.jersey;
 				teamSeason.pop = t.pop;
 				teamSeason.stadiumCapacity = t.stadiumCapacity;
 

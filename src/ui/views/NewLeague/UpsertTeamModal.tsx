@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { DEFAULT_STADIUM_CAPACITY } from "../../../common";
+import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import type { Conf, Div, View } from "../../../common/types";
 import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
@@ -74,6 +74,7 @@ const UpsertTeamModal = ({
 			pop: String(t.pop),
 			stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
 			colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+			jersey: t.jersey ?? DEFAULT_JERSEY,
 			did: String(t.did),
 			imgURL: t.imgURL,
 		};
@@ -97,6 +98,7 @@ const UpsertTeamModal = ({
 			pop: parseFloat(controlledTeam.pop),
 			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
 			colors: controlledTeam.colors,
+			jersey: controlledTeam.jersey,
 			did,
 			cid: div.cid,
 			imgURL: controlledTeam.imgURL,

@@ -90,7 +90,6 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	difficulty: number,
 ) => {
-	console.log("leagueFile.teams", leagueFile.teams);
 	const teamsDefault = helpers.getTeamsDefault();
 
 	// Any custom teams?

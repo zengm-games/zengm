@@ -75,9 +75,9 @@ const LeagueStats = ({
 	);
 
 	if (teamOpponent.endsWith("ShotLocations")) {
-		cols[cols.length - 3].title = "M";
-		cols[cols.length - 2].title = "A";
-		cols[cols.length - 1].title = "%";
+		cols[cols.length - 7].title = "M";
+		cols[cols.length - 6].title = "A";
+		cols[cols.length - 5].title = "%";
 	}
 
 	const rows = seasons.map(s => {

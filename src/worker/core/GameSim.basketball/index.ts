@@ -1254,7 +1254,7 @@ class GameSim {
 	 */
 	probStl() {
 		return (
-			(0.55 * this.team[this.d].compositeRating.defensePerimeter) /
+			(0.45 * this.team[this.d].compositeRating.defensePerimeter) /
 			(0.5 *
 				(this.team[this.o].compositeRating.dribbling +
 					this.team[this.o].compositeRating.passing))
@@ -1267,7 +1267,7 @@ class GameSim {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
-		const ratios = this.ratingArray("stealing", this.d, 5);
+		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
 		this.recordPlay("stl", this.d, [

@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* DEV: In BBGM, decreased the steal rate to be a bit more realistic.
+
 * DEV: On the roster page in past seasons, players still on the current team are highlighted.
 
 * DEV: The "worried he'll be traded away" mood component is based on how many players you've traded away recently. Now that factors in how good the player is too. Basically, below average players will not count much there, but above average players still will. This is based on their current ovr, not their pot, so a contending team can trade away prospects without much penalty.

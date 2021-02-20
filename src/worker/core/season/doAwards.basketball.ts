@@ -123,6 +123,7 @@ const getRealFinalsMvp = async (
 			pts: number;
 			trb: number;
 			ast: number;
+			gp: number;
 		}
 	> = new Map();
 
@@ -136,6 +137,7 @@ const getRealFinalsMvp = async (
 					pts: 0,
 					trb: 0,
 					ast: 0,
+					gp: 0,
 				};
 
 				// 75% bonus for the winning team
@@ -144,6 +146,9 @@ const getRealFinalsMvp = async (
 				info.pts += p.pts;
 				info.trb += p.drb + p.orb;
 				info.ast += p.ast;
+				if (p.min > 0) {
+					info.gp += 1;
+				}
 				playerInfos.set(p.pid, info);
 			}
 		}
@@ -168,9 +173,9 @@ const getRealFinalsMvp = async (
 			name: p.name,
 			tid: p.tid,
 			abbrev: p.abbrev,
-			pts: playerArray[0].pts / finalsGames.length,
-			trb: playerArray[0].trb / finalsGames.length,
-			ast: playerArray[0].ast / finalsGames.length,
+			pts: playerArray[0].pts / playerArray[0].gp,
+			trb: playerArray[0].trb / playerArray[0].gp,
+			ast: playerArray[0].ast / playerArray[0].gp,
 		};
 	}
 };

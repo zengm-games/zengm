@@ -31,9 +31,15 @@ const DraftClass = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				<PlayerNameLabels pid={p.pid} skills={p.skills} watch={p.watch}>
-					{p.nameAbbrev}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<PlayerNameLabels pid={p.pid} skills={p.skills} watch={p.watch}>
+							{p.nameAbbrev}
+						</PlayerNameLabels>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				p.pos,
 				p.age,
 				!challengeNoRatings ? p.ovr : null,

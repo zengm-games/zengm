@@ -133,15 +133,21 @@ const PlayerStats = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.stats.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.nameAbbrev}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<PlayerNameLabels
+							injury={p.injury}
+							jerseyNumber={p.stats.jerseyNumber}
+							pid={p.pid}
+							skills={p.ratings.skills}
+							watch={p.watch}
+						>
+							{p.nameAbbrev}
+						</PlayerNameLabels>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				pos,
 				p.age,
 				<a

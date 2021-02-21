@@ -16,10 +16,6 @@ average team age on roster page
 
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558
 
-leagueName gameAttribute used for anything?
-- in file names of league exports, but actually should be getting that from meta, because that's what is updated when renaming in the UI
-- https://discord.com/channels/@me/673750689649917958/809629720768675880
-
 head to head records
 - later
   - somehow store streak and last 10? would be nice in the head2head page. but would be annoying to account for all the filters (season, playoffs, etc)

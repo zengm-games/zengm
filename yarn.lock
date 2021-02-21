@@ -3826,10 +3826,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-facesjs@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.3.0.tgz#80148b3d59185d3335b679a1d206f3ab0a5deab8"
-  integrity sha512-dJpqWPDsQDzyUFXY6d7TEts1Z1zVKx4QHvmyAZ2hV+EoVFoaQA/DlKSbRcJcwes0oxp7sOrTPTXjX+TWvD3TOA==
+facesjs@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.3.1.tgz#59ba3f7b522d9c8550174b5184f3df3929d586ec"
+  integrity sha512-zCcHrKjrwtNiU9ENxX4weqgat0pQpfnRWTtb4gglUOfEVujPEqIoFDPY/5cd/Yc9hRYycnm+e8iIXgtcWBO1Iw==
 
 fake-indexeddb@^3.1.2:
   version "3.1.2"

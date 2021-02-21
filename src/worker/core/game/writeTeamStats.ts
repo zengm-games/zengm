@@ -228,7 +228,6 @@ const writeTeamStats = async (results: GameResults) => {
 			football: ["ptsQtrs"],
 			hockey: ["ptsQtrs"],
 		});
-		console.log(results.team[t1].stat);
 
 		for (const key of Object.keys(results.team[t1].stat)) {
 			if (skip.includes(key)) {

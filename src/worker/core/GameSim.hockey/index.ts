@@ -661,7 +661,7 @@ class GameSim {
 		if (goalie) {
 			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
 			if (r < 0.89 + goalie.compositeRating.goalkeeping * 0.07) {
-				const saveType = Math.random() < 0.1 ? "save-freeze" : "save";
+				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
 				this.playByPlay.logEvent({
 					type: saveType,
@@ -1273,6 +1273,7 @@ class GameSim {
 		const players = orderBy(
 			getPlayers(this.playersOnIce[t], positions),
 			p => p.compositeRating[rating] * fatigue(p.stat.energy),
+			"desc",
 		);
 
 		return players[0];

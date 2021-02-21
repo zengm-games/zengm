@@ -1133,9 +1133,8 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
-	const filename = `${GAME_ACRONYM}_draft_class_${g.get(
-		"leagueName",
-	)}_${season}.json`;
+	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
 
 	return {
 		filename,
@@ -1173,7 +1172,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		delete p.yearsFreeAgent;
 	}
 
-	const filename = `${GAME_ACRONYM}_players_${g.get("leagueName")}_${g.get(
+	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const filename = `${GAME_ACRONYM}_players_${leagueName}_${g.get(
 		"season",
 	)}.json`;
 
@@ -1194,13 +1194,8 @@ const getLeagueInfo = async (
 	return realRosters.getLeagueInfo(options);
 };
 
-const getLeagueName = async () => {
-	const l = await idb.meta.get("leagues", g.get("lid"));
-	if (l) {
-		return l.name;
-	}
-
-	return "Unknown league";
+const getLeagueName = () => {
+	return league.getName();
 };
 
 const getLocal = async (name: keyof Local) => {

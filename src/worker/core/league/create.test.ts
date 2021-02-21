@@ -8,7 +8,6 @@ describe("worker/core/league/create", () => {
 	let leagueData: ThenArg<ReturnType<typeof createWithoutSaving>>;
 	beforeAll(async () => {
 		leagueData = await createWithoutSaving(
-			"Test",
 			0,
 			{ startingSeason: 2015 },
 			false,
@@ -42,7 +41,6 @@ describe("worker/core/league/create", () => {
 	});
 
 	test("initialize gameAttributes object store", async () => {
-		assert.strictEqual(leagueData.gameAttributes.leagueName, "Test");
 		assert.strictEqual(leagueData.gameAttributes.phase, 0);
 		assert.strictEqual(
 			leagueData.gameAttributes.season,

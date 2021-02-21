@@ -84,7 +84,6 @@ export type TeamInfo = TeamBasic & {
 
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = async (
-	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
 	shuffleRosters: boolean,
@@ -158,7 +157,6 @@ export const createWithoutSaving = async (
 	const gameAttributes = createGameAttributes({
 		difficulty,
 		leagueFile,
-		leagueName,
 		teamInfos,
 		userTid,
 		version: leagueFile.version,
@@ -824,7 +822,6 @@ const create = async ({
 	realPlayers?: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
-		name,
 		tid,
 		leagueFile,
 		shuffleRosters,

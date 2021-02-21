@@ -11,14 +11,12 @@ import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 const createGameAttributes = ({
 	difficulty,
 	leagueFile,
-	leagueName,
 	teamInfos,
 	userTid,
 	version,
 }: {
 	difficulty: number;
 	leagueFile: LeagueFile;
-	leagueName: string;
 	teamInfos: TeamInfo[];
 	userTid: number;
 	version?: number;
@@ -36,7 +34,6 @@ const createGameAttributes = ({
 		userTids: [userTid],
 		season: startingSeason,
 		startingSeason,
-		leagueName,
 		teamInfoCache: teamInfos.map(t => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
@@ -53,7 +50,7 @@ const createGameAttributes = ({
 	if (leagueFile.gameAttributes) {
 		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
 			// Set default for anything except these, since they can be overwritten by form input.
-			if (key !== "leagueName" && key !== "difficulty") {
+			if (key !== "difficulty") {
 				// userTid is handled special below
 				if (key !== "userTid") {
 					(gameAttributes as any)[key] = value;

@@ -125,7 +125,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	userTids: [0],
 	season: 0,
 	startingSeason: 0,
-	leagueName: "",
 	teamInfoCache: [],
 	gracePeriodEnd: 0,
 	numTeams: 0,

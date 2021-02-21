@@ -8,7 +8,6 @@ describe("worker/core/league/createGameAttributes", () => {
 		const gameAttributes = createGameAttributes({
 			difficulty: 0,
 			leagueFile: { startingSeason: 2015 },
-			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -31,7 +30,6 @@ describe("worker/core/league/createGameAttributes", () => {
 					],
 				},
 			},
-			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -55,7 +53,6 @@ describe("worker/core/league/createGameAttributes", () => {
 					],
 				},
 			},
-			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -80,7 +77,6 @@ describe("worker/core/league/createGameAttributes", () => {
 					],
 				},
 			},
-			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -105,7 +101,6 @@ describe("worker/core/league/createGameAttributes", () => {
 					],
 				},
 			},
-			leagueName: "Test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -120,7 +115,6 @@ describe("worker/core/league/createGameAttributes", () => {
 	describe("tiebreakers", () => {
 		const defaultArgs = {
 			difficulty: 0,
-			leagueName: "test",
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		};

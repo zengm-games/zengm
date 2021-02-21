@@ -572,9 +572,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
-							leagueName: {
-								type: "string",
-							},
 							lid: {
 								type: "integer",
 							},

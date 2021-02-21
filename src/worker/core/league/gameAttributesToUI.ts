@@ -14,7 +14,6 @@ const gameAttributesToUI = async (
 		"godMode",
 		"homeCourtAdvantage",
 		"lid",
-		"leagueName",
 		"spectator",
 		"phase",
 		"season",

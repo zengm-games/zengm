@@ -392,7 +392,6 @@ export type GameAttributesLeague = {
 	hardCap: boolean;
 	homeCourtAdvantage: number;
 	injuryRate: number;
-	leagueName: string;
 	lid: number;
 	luxuryPayroll: number;
 	luxuryTax: number;
@@ -746,7 +745,6 @@ export type LocalStateUI = {
 	godMode: boolean;
 	hasViewedALeague: boolean;
 	homeCourtAdvantage: number;
-	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
 	spectator: boolean;

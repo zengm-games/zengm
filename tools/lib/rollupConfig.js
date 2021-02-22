@@ -38,8 +38,11 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			},
 		}),
 		replace({
-			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
-			"process.env.SPORT": JSON.stringify(sport),
+			preventAssignment: true,
+			values: {
+				"process.env.NODE_ENV": JSON.stringify(nodeEnv),
+				"process.env.SPORT": JSON.stringify(sport),
+			},
 		}),
 		babel({
 			babelHelpers: "bundled",

@@ -48,7 +48,10 @@ const bundle = async () => {
 		input: "build/sw.js",
 		plugins: [
 			replace({
-				"process.env.NODE_ENV": JSON.stringify("production"),
+				preventAssignment: true,
+				values: {
+					"process.env.NODE_ENV": JSON.stringify("production"),
+				},
 			}),
 			babel({
 				babelHelpers: "bundled",

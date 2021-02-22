@@ -19,8 +19,7 @@
     "plugin:import/warnings",
     "plugin:jsx-a11y/recommended",
     "plugin:react/recommended",
-    "prettier",
-    "prettier/@typescript-eslint"
+    "prettier"
   ],
   "settings": {
     "import/resolver": {

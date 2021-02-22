@@ -18,7 +18,7 @@ const Injuries = ({
 	}[];
 	showRatings: boolean;
 }) => {
-	if (injuries.length === 0) {
+	if (injuries === undefined || injuries.length === 0) {
 		return <p>None</p>;
 	}
 

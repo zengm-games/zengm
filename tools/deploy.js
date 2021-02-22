@@ -1,5 +1,6 @@
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
+const build = require("./lib/buildFuncs");
 const getSport = require("./lib/getSport");
 const cloudflareConfig = require("../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
 
@@ -33,7 +34,11 @@ const mySpawn = (command, args) => {
 (async () => {
 	const subdomain = getSubdomain();
 	const sport = getSport();
-	const domain = `${subdomain}.${sport}-gm.com`;
+	const domain = build.bySport({
+		basketball: `${subdomain}.basketball-gm.com`,
+		football: `${subdomain}.football-gm.com`,
+		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,
+	});
 
 	console.log(`Deploying to ${domain}...`);
 
@@ -76,6 +81,9 @@ const mySpawn = (command, args) => {
 		console.log("Invalidating Cloudflare cache...");
 
 		const zone = cloudflareConfig.zones[sport];
+		if (!zone) {
+			throw new Error("Missing zone in Cloudflare config file");
+		}
 
 		const cf = cloudflare({
 			email: "jdscheff@gmail.com",

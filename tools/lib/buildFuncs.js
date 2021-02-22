@@ -81,7 +81,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 };
 
 const bySport = object => {
-	const sport = process.env.SPORT ?? "basketball";
+	const sport = getSport();
 	if (object.hasOwnProperty(sport)) {
 		return object[sport];
 	}
@@ -522,6 +522,7 @@ src="https://www.facebook.com/tr?id=${
 };
 
 module.exports = {
+	bySport,
 	buildCSS,
 	copyFiles,
 	fileHash,

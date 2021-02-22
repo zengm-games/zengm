@@ -50,9 +50,11 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
+		const gcDenominator = t.stats.g + 0.5 * t.stats.a;
 		const gcPlayer =
-			(p.stats.g + 0.5 * p.stats.a) *
-			(t.stats.g / (t.stats.g + 0.5 * t.stats.a));
+			gcDenominator > 0
+				? (p.stats.g + 0.5 * p.stats.a) * (t.stats.g / gcDenominator)
+				: 0;
 
 		if (OFFENSIVE_POSITIONS.includes(p.ratings.pos)) {
 			sumsByType.forwards.gc += gcPlayer;
@@ -159,10 +161,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 };
 
 const advStats = async () => {
-	if (PHASE.PLAYOFFS === g.get("phase")) {
-		// Don't calculate in playoffs
-		return;
-	}
+	const playoffs = PHASE.PLAYOFFS === g.get("phase");
 
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0
@@ -173,8 +172,8 @@ const advStats = async () => {
 		stats: ["gp", "min", "g", "a", "sa", "ga", "pm"],
 		ratings: ["pos"],
 		season: g.get("season"),
-		playoffs: false,
-		regularSeason: true,
+		playoffs,
+		regularSeason: !playoffs,
 	});
 	const teamStats = ["gp", "min", "g", "a", "oppG", "sa"] as const;
 	const teams = await idb.getCopies.teamsPlus({
@@ -182,8 +181,8 @@ const advStats = async () => {
 		stats: teamStats,
 		seasonAttrs: ["ptsDefault"],
 		season: g.get("season"),
-		playoffs: PHASE.PLAYOFFS === g.get("phase"),
-		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+		playoffs,
+		regularSeason: !playoffs,
 		addDummySeason: true,
 		active: true,
 	});
@@ -196,16 +195,22 @@ const advStats = async () => {
 			}
 		}
 
-		if (memo.hasOwnProperty("ptsDefault")) {
-			memo.ptsDefault += t.seasonAttrs.ptsDefault;
+		if (!memo.hasOwnProperty("ptsDefault")) {
+			memo.ptsDefault = 0;
+		}
+		if (playoffs) {
+			// Base off gp during the playoffs - 1 point per GP, because it'll add up to 2 after going through all teams
+			memo.ptsDefault += t.stats.gp;
 		} else {
-			memo.ptsDefault = t.seasonAttrs.ptsDefault;
+			memo.ptsDefault += t.seasonAttrs.ptsDefault;
 		}
 
-		if (memo.hasOwnProperty("gPerGame")) {
-			memo.gPerGame += t.stats.g / t.stats.gp;
-		} else {
-			memo.gPerGame = t.stats.g / t.stats.gp;
+		if (t.stats.gp > 0) {
+			if (memo.hasOwnProperty("gPerGame")) {
+				memo.gPerGame += t.stats.g / t.stats.gp;
+			} else {
+				memo.gPerGame = t.stats.g / t.stats.gp;
+			}
 		}
 
 		return memo;
@@ -213,7 +218,7 @@ const advStats = async () => {
 	league.min /= g.get("numPlayersOnCourt");
 	league.saPerMin = league.sa / league.min;
 	league.oppGPerPmin = league.oppG / league.min;
-	league.gPerGame /= teams.length;
+	league.gPerGame /= teams.filter(t => t.stats.gp > 0).length;
 
 	const updatedStats = { ...calculatePS(players, teams, league) };
 	await advStatsSave(players, playersRaw, updatedStats);

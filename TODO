@@ -1,3 +1,5 @@
+support re-seeding playoffs, and make it default for FBGM
+
 in BBGM AI teams keep dynasties together a bit too much
 
 add standings options
@@ -762,6 +764,7 @@ FBGM
   - lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
   - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
   - could happen if advanceYds is called multiple times, like if there are 2 fumbles on the play, or multiple penalties
+  - https://old.reddit.com/r/Football_GM/comments/llx3zu/possible_sim_bug_skipped_a_down_after_a_fumble/
 - sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
   - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - multiple QBs problem

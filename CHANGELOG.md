@@ -1,5 +1,7 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
+* 2021-02-21: Following up on yesterday's jersey styles option, @ClevelandFan went through all the default teams in BBGM and gave them jersey styles that look good. This will only affect new leagues and expansion teams.
+
 * 2021-02-20: At Tools > Manage Teams, it is now possible to change the team jersey styles used for cartoon players. [[1]](https://old.reddit.com/r/BasketballGM/comments/loggnj/shot_locations_tables_are_now_shot_locations_and/)
 
 * 2021-02-20: In BBGM, "Shot Locations" tables are now "Shot Locations and Feats" and they also show double doubles, triple doubles, quadruple doubles, and five by fives. [[1]](https://old.reddit.com/r/BasketballGM/comments/loggnj/shot_locations_tables_are_now_shot_locations_and/)

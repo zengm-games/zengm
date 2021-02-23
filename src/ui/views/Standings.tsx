@@ -527,11 +527,7 @@ const Standings = ({
 		);
 	}
 
-	return (
-		<>
-			<div className="d-inline-block">{allStandings}</div>
-		</>
-	);
+	return allStandings;
 };
 
 export default Standings;

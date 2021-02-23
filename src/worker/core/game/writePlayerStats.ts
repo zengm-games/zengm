@@ -213,10 +213,18 @@ const writePlayerStats = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	for (const result of results) {
+		console.log(result);
+
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
 
-		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
+		const winningTeam =
+			result.team[0].stat.pts > result.team[1].stat.pts
+				? 0
+				: result.team[0].stat.pts < result.team[1].stat.pts
+				? 1
+				: undefined;
 
+		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
 		if (isSport("football")) {
 			for (let i = 0; i < result.team.length; i++) {
 				let maxPss = 0;
@@ -231,13 +239,13 @@ const writePlayerStats = async (
 
 				if (id !== undefined) {
 					let qbResult: "qbW" | "qbL" | "qbT";
-					const j = i === 0 ? 1 : 0;
-					if (result.team[i].stat.pts > result.team[j].stat.pts) {
-						qbResult = "qbW";
-					} else if (result.team[i].stat.pts < result.team[j].stat.pts) {
-						qbResult = "qbL";
-					} else {
+					if (winningTeam === undefined) {
 						qbResult = "qbT";
+					}
+					if (winningTeam === i) {
+						qbResult = "qbW";
+					} else {
+						qbResult = "qbL";
 					}
 
 					qbResults.set(id, qbResult);
@@ -245,7 +253,9 @@ const writePlayerStats = async (
 			}
 		}
 
-		for (const t of result.team) {
+		for (let i = 0; i < result.team.length; i++) {
+			const t = result.team[i];
+
 			// This needs to be before checkStatisticalFeat
 			if (isSport("hockey")) {
 				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
@@ -253,6 +263,32 @@ const writePlayerStats = async (
 				// As in NHL, shutout only is credited if a single goalie plays the whole game
 				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
 					goalies[0].stat.so = 1;
+				}
+
+				// Check for gwG/gwA - can only be done by looking at complete scoring log for the game, since we're looking for the goal that is one more than what the losing team had in the game
+				if (winningTeam === i) {
+					const j = i === 0 ? 1 : 0;
+					const winningGoalScore = result.team[j].stat.pts + 1;
+					let currentScore = 0;
+					for (const event of result.scoringSummary) {
+						if (event.type === "goal" && event.t === i) {
+							currentScore += 1;
+							if (currentScore === winningGoalScore) {
+								const scorer = t.player.find(
+									(p: any) => p.id === event.pids[0],
+								);
+								scorer.stat.gwG += 1;
+
+								const assisterPIDs = event.pids.slice(1);
+								const assisters = t.player.filter((p: any) =>
+									assisterPIDs.includes(p.id),
+								);
+								for (const assister of assisters) {
+									assister.stat.gwA += 1;
+								}
+							}
+						}
+					}
 				}
 			}
 

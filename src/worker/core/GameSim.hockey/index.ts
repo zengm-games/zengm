@@ -677,33 +677,35 @@ class GameSim {
 
 		let assister1: PlayerGameSim | undefined;
 		let assister2: PlayerGameSim | undefined;
-		if (type !== "reboundShot") {
-			const r2 = Math.random();
-			if (deflector) {
-				assister1 = shooter;
-			} else if (r2 < 0.99) {
-				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-					actualShooter,
-				]);
-				this.recordStat(this.o, assister1, `${strengthType}A`);
-			}
+		const r2 = Math.random();
+		if (deflector) {
+			assister1 = shooter;
+		} else if (r2 < 0.99) {
+			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+				actualShooter,
+			]);
+			this.recordStat(this.o, assister1, `${strengthType}A`);
+		}
 
-			if (r2 < 0.9) {
-				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-					actualShooter,
-					assister1 as PlayerGameSim,
-				]);
-				this.recordStat(this.o, assister2, `${strengthType}A`);
-			}
+		if (r2 < 0.8) {
+			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+				actualShooter,
+				assister1 as PlayerGameSim,
+			]);
+			this.recordStat(this.o, assister2, `${strengthType}A`);
 		}
 
 		let assisterNames: [] | [string] | [string, string];
+		let assisterPIDs: [] | [number] | [number, number];
 		if (assister1 && assister2) {
 			assisterNames = [assister1.name, assister2.name];
+			assisterPIDs = [assister1.id, assister2.id];
 		} else if (assister1) {
 			assisterNames = [assister1.name];
+			assisterPIDs = [assister1.id];
 		} else {
 			assisterNames = [];
+			assisterPIDs = [];
 		}
 
 		this.playByPlay.logEvent({
@@ -711,6 +713,7 @@ class GameSim {
 			clock: this.clock,
 			t: this.o,
 			names: [actualShooter.name, ...assisterNames],
+			pids: [actualShooter.id, ...assisterPIDs],
 			shotType: deflector ? "deflection" : type,
 			goalType: strengthType,
 		});

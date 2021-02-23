@@ -1331,26 +1331,6 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
-		"stat:w": {
-			desc: "Wins",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:l": {
-			desc: "Losses",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:t": {
-			desc: "Ties",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:otl": {
-			desc: "Overtime Losses",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
 		"stat:pm": {
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],

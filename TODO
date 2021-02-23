@@ -2,6 +2,10 @@ support re-seeding playoffs, and make it default for FBGM
 
 in BBGM AI teams keep dynasties together a bit too much
 
+store w/l/t/otl for all players, similar to qbRecord
+- some kind of playing time cutoff for when a game counts for a player?
+- what is done for goalies in hockey?
+
 add standings options
 - playoffsByConference
 - divisionLeadersFirstPlayoffs

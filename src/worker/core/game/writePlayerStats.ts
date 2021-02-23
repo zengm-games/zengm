@@ -213,8 +213,6 @@ const writePlayerStats = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	for (const result of results) {
-		console.log(result);
-
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
 
 		const winningTeam =

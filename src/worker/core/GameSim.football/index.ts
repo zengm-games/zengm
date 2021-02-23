@@ -2205,7 +2205,6 @@ class GameSim {
 			const onField = new Set<any>();
 
 			for (const pos of helpers.keys(this.playersOnField[t])) {
-				// Update minutes (overall, court, and bench)
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-ignore
 				for (const p of this.playersOnField[t][pos]) {

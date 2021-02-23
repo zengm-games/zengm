@@ -209,7 +209,7 @@ class GameSim {
 
 				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
 
-				const lines: PlayerGameSim[][] = [[]];
+				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
 				let ind = 0;
 				for (let i = 0; i < players.length; i++) {
 					const p = players[i];
@@ -219,7 +219,6 @@ class GameSim {
 
 					if (i < numInDepthChart || !inDepthChart.has(p.id)) {
 						if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
-							lines.push([]);
 							ind += 1;
 						}
 						if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
@@ -231,6 +230,22 @@ class GameSim {
 							lines.length === NUM_LINES[pos] &&
 							lines[ind].length === NUM_PLAYERS_PER_LINE[pos]
 						) {
+							break;
+						}
+					}
+				}
+
+				// If too injured to fill one line, poach players from inDepthChart
+				const line = lines[0];
+				if (line.length < NUM_PLAYERS_PER_LINE[pos]) {
+					for (const p of players) {
+						if (p.injured || usedPlayerIDs.has(p.id)) {
+							continue;
+						}
+
+						line.push(p);
+						usedPlayerIDs.add(p.id);
+						if (line.length === NUM_PLAYERS_PER_LINE[pos]) {
 							break;
 						}
 					}
@@ -266,13 +281,17 @@ class GameSim {
 					}
 				}
 
-				const lines: PlayerGameSim[][] = range(4).map(() => []);
+				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
 				for (const line of lines) {
 					let center = centers.shift();
 					while (center === undefined || usedPlayerIDs.has(center.id)) {
 						center = centers.shift();
 						if (center === undefined && wings.length > 0) {
 							center = wings.shift();
+						}
+
+						if (centers.length === 0 && wings.length === 0) {
+							break;
 						}
 					}
 
@@ -285,6 +304,10 @@ class GameSim {
 						wing1 = wings.shift();
 						if (wing1 === undefined && centers.length > 0) {
 							wing1 = centers.shift();
+						}
+
+						if (centers.length === 0 && wings.length === 0) {
+							break;
 						}
 					}
 
@@ -299,6 +322,10 @@ class GameSim {
 						if (wing2 === undefined && centers.length > 0) {
 							wing2 = centers.shift();
 						}
+
+						if (centers.length === 0 && wings.length === 0) {
+							break;
+						}
 					}
 
 					if (center && wing1 && wing2) {
@@ -310,6 +337,27 @@ class GameSim {
 				}
 
 				this.lines[t][pos] = lines;
+			}
+
+			// Emergency check... do we need to use injured players to fill out the first line?
+			for (const pos of ["G", "D", "F"] as const) {
+				const players = this.team[t].depth[pos];
+
+				const line = this.lines[t][pos][0];
+				const numNeeded = NUM_PLAYERS_PER_LINE[pos];
+				if (line.length < numNeeded) {
+					for (const p of players) {
+						if (usedPlayerIDs.has(p.id)) {
+							continue;
+						}
+
+						line.push(p);
+						usedPlayerIDs.add(p.id);
+						if (line.length === numNeeded) {
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -356,7 +404,6 @@ class GameSim {
 			type: "gameOver",
 			clock: this.clock,
 		});
-		// this.checkGameWinner();
 
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
@@ -399,7 +446,10 @@ class GameSim {
 			while (this.clock > 0) {
 				this.simPossession();
 				this.advanceClock();
-				this.updatePlayersOnIce({ type: "normal" });
+				if (this.clock > 0) {
+					this.injuries();
+					this.updatePlayersOnIce({ type: "normal" });
+				}
 			}
 
 			quarter += 1;
@@ -453,7 +503,11 @@ class GameSim {
 			}
 
 			this.advanceClock();
-			this.updatePlayersOnIce({ type: "normal" });
+
+			if (this.clock > 0) {
+				this.injuries();
+				this.updatePlayersOnIce({ type: "normal" });
+			}
 		}
 	}
 
@@ -489,6 +543,12 @@ class GameSim {
 			names: [hitter.name, target.name],
 		});
 		this.recordStat(t, hitter, "hit", 1);
+
+		this.injuries({
+			hitter,
+			target,
+			t: t2,
+		});
 	}
 
 	isGiveaway() {
@@ -972,23 +1032,32 @@ class GameSim {
 			this.currentLine[t][pos] = 0;
 			newLine = this.lines[t][pos][this.currentLine[t][pos]];
 		}
-		if (!newLine || newLine.length < NUM_PLAYERS_PER_LINE[pos]) {
-			throw new Error("Not enough players");
-		}
 
 		newLine = [...newLine];
 		for (let i = 0; i < newLine.length; i++) {
 			const p = newLine[i];
 			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
-				let nextLine = this.lines[t][pos][this.currentLine[t][pos] + 1];
-				if (!nextLine) {
-					nextLine = this.lines[t][pos][0];
+				const nextLine = this.lines[t][pos][
+					this.currentLine[t][pos] + (1 % NUM_LINES[pos])
+				];
+				if (nextLine.length === 0) {
+					// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
+					let emergencyPlayers = [];
+					for (const existingLines of Object.values(this.lines[t])) {
+						for (const existingLine of existingLines) {
+							emergencyPlayers.push(...existingLine);
+						}
+					}
+					emergencyPlayers = emergencyPlayers.filter(
+						p => !playersRemainingOn.includes(p),
+					);
+					if (emergencyPlayers.length === 0) {
+						throw new Error("Not enough players");
+					}
+					newLine[i] = random.choice(emergencyPlayers);
+				} else {
+					newLine[i] = random.choice(nextLine);
 				}
-				if (nextLine.length < NUM_PLAYERS_PER_LINE[pos]) {
-					throw new Error("Not enough players");
-				}
-
-				newLine[i] = random.choice(nextLine);
 			}
 		}
 
@@ -1202,49 +1271,71 @@ class GameSim {
 		}
 	}
 
-	injuries() {
-		if ((g as any).disableInjuries) {
+	injuries(hitInfo?: {
+		hitter: PlayerGameSim;
+		target: PlayerGameSim;
+		t: TeamNum;
+	}) {
+		const baseInjuryRate = g.get("injuryRate");
+
+		if ((g as any).disableInjuries || baseInjuryRate === 0) {
 			return;
 		}
 
-		for (const t of teamNums) {
-			// Get rid of this after making sure playersOnIce is always set, even for special teams
-			if (this.playersOnIce[t] === undefined) {
-				continue;
+		let injuryOccurred = false;
+
+		// Some chance of a hit resulting in injury
+		if (hitInfo) {
+			if (
+				Math.random() <
+				500 * hitInfo.hitter.compositeRating.enforcer * baseInjuryRate
+			) {
+				hitInfo.target.injured = true;
+				this.playByPlay.logEvent({
+					type: "injury",
+					clock: this.clock,
+					t: hitInfo.t,
+					names: [hitInfo.target.name],
+					injuredPID: hitInfo.target.id,
+				});
+				injuryOccurred = true;
 			}
+		} else {
+			for (const t of teamNums) {
+				for (const pos of helpers.keys(this.playersOnIce[t])) {
+					for (const p of this.playersOnIce[t][pos]) {
+						// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
+						let injuryRate =
+							baseInjuryRate * 1.03 ** (Math.min(p.age, 50) - 25);
 
-			const onField = new Set<any>();
+						// 10% as many injuries for G
+						if (pos === "G") {
+							injuryRate *= 0.1;
+						}
 
-			for (const pos of helpers.keys(this.playersOnIce[t])) {
-				// Update minutes (overall, court, and bench)
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				for (const p of this.playersOnIce[t][pos]) {
-					onField.add(p);
-				}
-			}
+						if (Math.random() < injuryRate) {
+							// 10% as many injuries for G
+							if (pos === "G" && Math.random() < 0.1) {
+								continue;
+							}
 
-			for (const p of onField) {
-				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-				const injuryRate =
-					g.get("injuryRate") * 1.03 ** (Math.min(p.age, 50) - 25);
-
-				if (Math.random() < injuryRate) {
-					// 50% as many injuries for QB
-					if (p.pos === "QB" && Math.random() < 0.5) {
-						continue;
+							p.injured = true;
+							this.playByPlay.logEvent({
+								type: "injury",
+								clock: this.clock,
+								t,
+								names: [p.name],
+								injuredPID: p.id,
+							});
+							injuryOccurred = true;
+						}
 					}
-
-					p.injured = true;
-					this.playByPlay.logEvent({
-						type: "injury",
-						clock: this.clock,
-						t,
-						names: [p.name],
-						injuredPID: p.id,
-					});
 				}
 			}
+		}
+
+		if (injuryOccurred) {
+			this.setLines();
 		}
 	}
 

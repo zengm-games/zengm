@@ -1037,9 +1037,13 @@ class GameSim {
 		for (let i = 0; i < newLine.length; i++) {
 			const p = newLine[i];
 			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
-				const nextLine = this.lines[t][pos][
-					this.currentLine[t][pos] + (1 % NUM_LINES[pos])
+				let nextLine = this.lines[t][pos][
+					(this.currentLine[t][pos] + 1) % NUM_LINES[pos]
 				];
+				if (nextLine.length === 0 && this.currentLine[t][pos] !== 0) {
+					// This could happen if a line is empty due to a ton of injuries
+					nextLine = this.lines[t][pos][0];
+				}
 				if (nextLine.length === 0) {
 					// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
 					let emergencyPlayers = [];

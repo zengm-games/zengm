@@ -25,7 +25,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 			}
 
 			if (stats) {
-				if (stats.minAvailable && stats.minAvailable > 500) {
+				if (stats.minAvailable !== undefined && stats.minAvailable > 500) {
 					players.push({
 						pid: p.pid,
 						tid: stats.tid,

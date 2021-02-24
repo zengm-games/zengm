@@ -545,6 +545,7 @@ class GameSim {
 		this.recordStat(t, hitter, "hit", 1);
 
 		this.injuries({
+			type: "hit",
 			hitter,
 			target,
 			t: t2,
@@ -686,6 +687,16 @@ class GameSim {
 				names: [blocker.name],
 			});
 			this.recordStat(this.d, blocker, "blk", 1);
+
+			if (type === "slapshot" || type === "wristshot") {
+				this.injuries({
+					type: "block",
+					shooter,
+					target: blocker,
+					t: this.d,
+				});
+			}
+
 			return "block";
 		}
 
@@ -1275,11 +1286,21 @@ class GameSim {
 		}
 	}
 
-	injuries(hitInfo?: {
-		hitter: PlayerGameSim;
-		target: PlayerGameSim;
-		t: TeamNum;
-	}) {
+	injuries(
+		info?:
+			| {
+					type: "hit";
+					hitter: PlayerGameSim;
+					target: PlayerGameSim;
+					t: TeamNum;
+			  }
+			| {
+					type: "block";
+					shooter: PlayerGameSim;
+					target: PlayerGameSim;
+					t: TeamNum;
+			  },
+	) {
 		const baseInjuryRate = g.get("injuryRate");
 
 		if ((g as any).disableInjuries || baseInjuryRate === 0) {
@@ -1288,21 +1309,38 @@ class GameSim {
 
 		let injuryOccurred = false;
 
-		// Some chance of a hit resulting in injury
-		if (hitInfo) {
-			if (
-				Math.random() <
-				500 * hitInfo.hitter.compositeRating.enforcer * baseInjuryRate
-			) {
-				hitInfo.target.injured = true;
-				this.playByPlay.logEvent({
-					type: "injury",
-					clock: this.clock,
-					t: hitInfo.t,
-					names: [hitInfo.target.name],
-					injuredPID: hitInfo.target.id,
-				});
-				injuryOccurred = true;
+		if (info) {
+			// Some chance of a hit/block resulting in injury
+			if (info.type === "hit") {
+				if (
+					Math.random() <
+					250 * info.hitter.compositeRating.enforcer * baseInjuryRate
+				) {
+					info.target.injured = true;
+					this.playByPlay.logEvent({
+						type: "injury",
+						clock: this.clock,
+						t: info.t,
+						names: [info.target.name],
+						injuredPID: info.target.id,
+					});
+					injuryOccurred = true;
+				}
+			} else {
+				if (
+					Math.random() <
+					250 * info.shooter.compositeRating.sniper * baseInjuryRate
+				) {
+					info.target.injured = true;
+					this.playByPlay.logEvent({
+						type: "injury",
+						clock: this.clock,
+						t: info.t,
+						names: [info.target.name],
+						injuredPID: info.target.id,
+					});
+					injuryOccurred = true;
+				}
 			}
 		} else {
 			for (const t of teamNums) {

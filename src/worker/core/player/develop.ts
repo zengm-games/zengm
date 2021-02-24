@@ -9,7 +9,7 @@ import type { MinimalPlayerRatings } from "../../../common/types";
 import genWeight from "./genWeight";
 import potEstimator from "./potEstimator";
 
-const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
+const NUM_SIMULATIONS = isSport("hockey") ? 1 : 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
 export const bootstrapPot = async ({

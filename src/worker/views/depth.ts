@@ -65,8 +65,8 @@ const stats = bySport<Record<string, string[]>>({
 		PR: ["pr", "prYds", "prYdsPerAtt", "prLng", "prTD"],
 	},
 	hockey: {
-		F: ["g", "a", "ops", "dps", "ps"],
-		D: ["g", "a", "ops", "dps", "ps"],
+		F: ["amin", "g", "a", "ops", "dps", "ps"],
+		D: ["amin", "g", "a", "ops", "dps", "ps"],
 		G: ["gaa", "svPct", "gps"],
 	},
 });

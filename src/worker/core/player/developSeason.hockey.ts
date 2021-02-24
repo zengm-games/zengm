@@ -54,7 +54,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			return -8;
 		},
 		changeLimits: () => [-12, 2],
-		posCoeff: () => 0,
+		posCoeff: () => 1,
 	},
 	endu: {
 		ageModifier: (age: number) => {
@@ -77,7 +77,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			return -8;
 		},
 		changeLimits: () => [-11, 19],
-		posCoeff: () => 0,
+		posCoeff: () => 1,
 	},
 	pss: {
 		ageModifier: () => 0,

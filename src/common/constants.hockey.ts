@@ -84,10 +84,6 @@ const PLAYER_STATS_TABLES = {
 		name: "Goalie",
 		stats: [
 			"gp",
-			"w",
-			"l",
-			"t",
-			"otl",
 			"ga",
 			"sa",
 			"sv",

@@ -220,17 +220,13 @@ class GameSim {
 					if (i < numInDepthChart || !inDepthChart.has(p.id)) {
 						if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
 							ind += 1;
+							if (ind === NUM_LINES[pos]) {
+								break;
+							}
 						}
 						if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
 							lines[ind].push(p);
 							usedPlayerIDs.add(p.id);
-						}
-
-						if (
-							lines.length === NUM_LINES[pos] &&
-							lines[ind].length === NUM_PLAYERS_PER_LINE[pos]
-						) {
-							break;
 						}
 					}
 				}
@@ -1034,7 +1030,7 @@ class GameSim {
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
 
-		// Sometimes skip the 4th line of forwards
+		// Sometimes skip the 3rd line of forwards
 		if (pos === "F" && this.currentLine[t][pos] === 2 && Math.random() < 0.1) {
 			this.currentLine[t][pos] = 0;
 		}

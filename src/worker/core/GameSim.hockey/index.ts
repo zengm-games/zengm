@@ -534,7 +534,7 @@ class GameSim {
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
-		this.recordStat(t2, target, "energy", -0.1);
+		this.recordStat(t2, target, "energy", -0.25);
 
 		this.playByPlay.logEvent({
 			type: "hit",
@@ -713,7 +713,13 @@ class GameSim {
 			}
 		}
 
-		if (r < 1 - Math.sqrt(shooter.compositeRating.scoring)) {
+		if (
+			r <
+			1 -
+				Math.sqrt(
+					shooter.compositeRating.scoring * fatigue(shooter.stat.energy),
+				)
+		) {
 			this.playByPlay.logEvent({
 				type: "miss",
 				clock: this.clock,
@@ -1260,12 +1266,7 @@ class GameSim {
 					this.recordStat(t, p, "courtTime", possessionTime);
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(
-						t,
-						p,
-						"energy",
-						-0.08 * (1 - p.compositeRating.endurance),
-					);
+					this.recordStat(t, p, "energy", -0.25 * possessionTime);
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
@@ -1276,11 +1277,9 @@ class GameSim {
 			for (const p of this.team[t].player) {
 				if (!onField.has(p.id)) {
 					this.recordStat(t, p, "benchTime", possessionTime);
-					this.recordStat(t, p, "energy", 0.5);
 
-					if (p.stat.energy > 1) {
-						p.stat.energy = 1;
-					}
+					// Any player on the bench is full strength the next time he comes on
+					p.stat.energy = 1;
 				}
 			}
 		}

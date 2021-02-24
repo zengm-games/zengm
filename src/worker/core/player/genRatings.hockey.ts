@@ -169,7 +169,7 @@ const genRatings = (
 		const factor = ratingsToBoost[rating];
 		if (factor !== undefined) {
 			rawRatings[rating] = limitRating(
-				(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
+				(rawRatings[rating] += factor * random.truncGauss(10, 15, 8, 30)),
 			);
 		}
 	}

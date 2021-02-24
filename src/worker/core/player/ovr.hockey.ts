@@ -52,6 +52,7 @@ const info = {
 
 // Handle some nonlinear interactions
 const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
+	C: () => 2,
 	W: ratings =>
 		helpers.bound(((ratings.oiq - 30) * (ratings.diq - 30)) / 50, 0, 5),
 	G: ratings => -0.25 * ratings.glk,
@@ -83,8 +84,8 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		throw new Error(`Unknown position: "${pos2}"`);
 	}
 
-	// Scale 10-85 to 0-100
-	r = -10 + (r * 100) / 75;
+	// Scale 10-90 to 0-100
+	r = -10 + (r * 100) / 80;
 
 	r = helpers.bound(Math.round(r), 0, 100);
 

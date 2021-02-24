@@ -610,8 +610,8 @@ class GameSim {
 	}
 
 	advanceClock(special?: "rebound") {
-		// 1 to 15 seconds, or less if it's a rebound
-		const maxLength = special === "rebound" ? 0.05 : 0.32;
+		// 1 to N seconds, or less if it's a rebound
+		const maxLength = special === "rebound" ? 0.05 : 0.28;
 
 		let dt = Math.random() * (maxLength - 0.017) + 0.017;
 		if (this.clock - dt < 0) {
@@ -674,7 +674,7 @@ class GameSim {
 			r -= strengthDifference === 1 ? 0.025 : 0.5;
 		}
 
-		if (r < 0.15 + 0.25 * this.team[this.d].compositeRating.blocking) {
+		if (r < 0.1 + 0.35 * this.team[this.d].compositeRating.blocking) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
 			this.playByPlay.logEvent({
 				type: "block",
@@ -709,12 +709,10 @@ class GameSim {
 			}
 		}
 
+		// Can tune the exponent to adjust the cross-team variance of shooting percentage, and the constant to set the baseline shooting percentage
 		if (
 			r <
-			1 -
-				Math.sqrt(
-					shooter.compositeRating.scoring * fatigue(shooter.stat.energy),
-				)
+			0.75 - shooter.compositeRating.scoring * fatigue(shooter.stat.energy)
 		) {
 			this.playByPlay.logEvent({
 				type: "miss",

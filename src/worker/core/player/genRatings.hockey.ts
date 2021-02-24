@@ -6,6 +6,7 @@ import { g, helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.hockey";
 import type { PlayerRatings } from "../../../common/types.hockey";
 
+console.log("hi");
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
 		return sum + val;
@@ -17,6 +18,14 @@ const getPos = () => {
 		cumsum += count;
 
 		if (rand < cumsum) {
+			// Hacky - make more wings
+			if (pos === "C" && Math.random() < 0.5) {
+				return "W";
+			}
+			if (pos === "D" && Math.random() < 0.25) {
+				return "W";
+			}
+
 			return pos;
 		}
 	}

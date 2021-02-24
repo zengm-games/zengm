@@ -84,6 +84,9 @@ class PenaltyBox {
 		for (const entry of this.players[t]) {
 			const penaltyType = penaltyTypes[entry.penalty.type];
 			entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
+			if (entry.minutesLeft < 0) {
+				entry.minutesLeft = 0;
+			}
 		}
 
 		this.checkIfPenaltiesOver();

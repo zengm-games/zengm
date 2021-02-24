@@ -186,7 +186,7 @@ const roundOverrides: Record<
 		t: "noDecimalPlace",
 		otl: "noDecimalPlace",
 		pm: "plusMinusNoDecimalPlace",
-		pim: "oneDecimalPlace",
+		pim: "noDecimalPlace",
 		evG: "noDecimalPlace",
 		ppG: "noDecimalPlace",
 		shG: "noDecimalPlace",

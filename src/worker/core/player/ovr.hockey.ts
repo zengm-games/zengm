@@ -55,7 +55,7 @@ const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
 	C: () => 2,
 	W: ratings =>
 		helpers.bound(((ratings.oiq - 30) * (ratings.diq - 30)) / 50, 0, 5),
-	G: ratings => -0.25 * ratings.glk,
+	G: ratings => -0.2 * ratings.glk,
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {

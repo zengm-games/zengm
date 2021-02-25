@@ -125,7 +125,7 @@ const getRatingsToBoost = (pos: string) => {
 
 	if (pos === "G") {
 		return {
-			glk: 2,
+			glk: 2.05,
 		};
 	}
 
@@ -142,7 +142,7 @@ const infoIn = {};
 const infoOut = {};
 let timeoutID;*/
 
-const initialRating = () => limitRating(random.truncGauss(10, 5, 0, 20));
+const initialRating = () => limitRating(random.truncGauss(7, 5, 0, 15));
 
 const defaultOvrsOrPots = {
 	C: 0,

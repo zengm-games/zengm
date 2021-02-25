@@ -6,7 +6,6 @@ import { g, helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.hockey";
 import type { PlayerRatings } from "../../../common/types.hockey";
 
-console.log("hi");
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
 		return sum + val;

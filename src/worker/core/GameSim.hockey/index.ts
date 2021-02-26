@@ -608,6 +608,7 @@ class GameSim {
 			names: [p.name],
 		});
 		this.recordStat(this.d, p, "tk", 1);
+		this.possessionChange();
 	}
 
 	advanceClock(special?: "rebound") {

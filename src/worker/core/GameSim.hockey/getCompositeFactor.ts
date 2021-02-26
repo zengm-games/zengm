@@ -3,10 +3,14 @@ import type { PlayerGameSim, PlayersOnIce } from "./types";
 const getCompositeFactor = ({
 	playersOnIce,
 	positions,
+	synergyFactor,
+	synergyRatio,
 	valFunc,
 }: {
 	playersOnIce: PlayersOnIce;
 	positions: Record<"C" | "W" | "D", number>;
+	synergyFactor: number;
+	synergyRatio: number;
 	valFunc: (a: PlayerGameSim) => number;
 }) => {
 	let numerator = 0;
@@ -23,7 +27,7 @@ const getCompositeFactor = ({
 		return 0;
 	}
 
-	return numerator / denominator;
+	return (numerator / denominator) * synergyRatio ** synergyFactor;
 };
 
 export default getCompositeFactor;

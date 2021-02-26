@@ -6,9 +6,7 @@ import {
 	POSITIONS,
 } from "../../../common/constants.hockey";
 import PlayByPlayLogger from "./PlayByPlayLogger";
-// import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";
-// import penalties from "./penalties";
 import type { Position } from "../../../common/types.hockey";
 import type {
 	CompositeRating,
@@ -96,6 +94,8 @@ class GameSim {
 
 	penaltyBox: PenaltyBox;
 
+	synergyFactor: number;
+
 	constructor(
 		gid: number,
 		teams: [TeamGameSim, TeamGameSim],
@@ -105,6 +105,8 @@ class GameSim {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+
+		this.synergyFactor = 1;
 
 		this.playersOnIce = [
 			{
@@ -948,6 +950,20 @@ class GameSim {
 
 	updateTeamCompositeRatings() {
 		for (const t of teamNums) {
+			let synergy = 0;
+			for (const pos of ["C", "W", "D"] as const) {
+				for (const p of this.playersOnIce[t][pos]) {
+					synergy += p.ovrs[pos];
+				}
+			}
+			synergy /= 500; // 0 to 1 scale
+			this.team[t].synergy.reb = synergy;
+		}
+
+		for (const t of teamNums) {
+			const t2 = t === 0 ? 1 : 0;
+			const synergyRatio = this.team[t].synergy.reb / this.team[t2].synergy.reb;
+
 			this.team[t].compositeRating.hitting = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
 				positions: {
@@ -955,6 +971,8 @@ class GameSim {
 					W: 0.5,
 					C: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
 			});
 
@@ -965,6 +983,8 @@ class GameSim {
 					W: 0.5,
 					C: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => p.compositeRating.penalties / 2,
 			});
 
@@ -975,6 +995,8 @@ class GameSim {
 					W: 0.5,
 					C: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => p.compositeRating.enforcer / 2,
 			});
 
@@ -985,6 +1007,8 @@ class GameSim {
 					W: 0.5,
 					D: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => p.compositeRating.playmaker,
 			});
 
@@ -995,6 +1019,8 @@ class GameSim {
 					W: 0.5,
 					C: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
 			});
 
@@ -1005,6 +1031,8 @@ class GameSim {
 					W: 0.5,
 					C: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
 			});
 
@@ -1015,6 +1043,8 @@ class GameSim {
 					W: 0.5,
 					D: 0.25,
 				},
+				synergyFactor: this.synergyFactor,
+				synergyRatio,
 				valFunc: p => p.compositeRating.scoring,
 			});
 		}

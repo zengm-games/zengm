@@ -26,10 +26,11 @@ def get_cols():
         'D5': [],
         'D6': [],
         'G': [],
-        "diff": [],
+        "mov": [],
     }
 
     files = glob.glob('data*.json')
+    files = ['data2.json']
     files.sort()
     print(files)
 
@@ -71,8 +72,8 @@ def get_cols():
             for ts in t['stats']:
                 if not ts['playoffs'] and ts['gp'] > 0:
                     season = ts['season']
-                    diff = ts['pts'] - ts['oppPts'];
-                    cols['diff'].append(diff)
+                    mov = (ts['pts'] - ts['oppPts']) / ts['gp'];
+                    cols['mov'].append(mov)
 
                     ovrs = get_ovrs(tid, season)
 
@@ -106,20 +107,20 @@ dataset = pd.DataFrame(cols)
 
 reg = LinearRegression(normalize=True)
 fit_cols = ['C1', 'C2', 'C3', 'C4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'G']
-reg.fit(dataset[fit_cols], dataset['diff'])
-dataset['diff_predicted'] = reg.predict(dataset[fit_cols])
+reg.fit(dataset[fit_cols], dataset['mov'])
+dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
 
 print('Intercept: \n', reg.intercept_)
 print('Coefficients: \n', reg.coef_)
-print('r2: ', r2_score(dataset['diff'], dataset['diff_predicted']))
+print('r2: ', r2_score(dataset['mov'], dataset['mov_predicted']))
 
 print(dataset)
 
 
-dataset.plot.hexbin(x='diff', y='diff_predicted', gridsize=20)
-# dataset.plot.scatter(x='diff', y='diff_predicted', alpha=0.2)
-plt.xlabel('Actual GF-GA')  
-plt.ylabel('Predicted GF-GA')  
+dataset.plot.hexbin(x='mov', y='mov_predicted', gridsize=20)
+# dataset.plot.scatter(x='mov', y='mov_predicted', alpha=0.2)
+plt.xlabel('Actual MOV')  
+plt.ylabel('Predicted MOV')  
 
 # plt.plot([-2, 2], [-2, 2])
 

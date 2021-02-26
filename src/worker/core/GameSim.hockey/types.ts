@@ -40,4 +40,7 @@ export type TeamGameSim = {
 	player: PlayerGameSim[];
 	compositeRating: any;
 	depth: Record<"F" | "D" | "G", PlayerGameSim[]>;
+	synergy: {
+		reb: number;
+	};
 };

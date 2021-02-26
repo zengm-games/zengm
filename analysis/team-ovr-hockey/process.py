@@ -26,11 +26,14 @@ def get_cols():
         'D5': [],
         'D6': [],
         'G': [],
+        'C': [],
+        'W': [],
+        'D': [],
         "mov": [],
     }
 
     files = glob.glob('data*.json')
-    files = ['data2.json']
+    files = ['data4.json']
     files.sort()
     print(files)
 
@@ -99,6 +102,11 @@ def get_cols():
                     cols['D6'].append(ovrs['D'][5] if len(ovrs['D']) >= 6 else default_ovr)
                     cols['G'].append(ovrs['G'][0] if len(ovrs['G']) >= 1 else default_ovr)
 
+        for i in range(len(cols['C1'])):
+            cols['C'].append((cols['C1'][i] + cols['C2'][i] + cols['C3'][i] + 0.5 * cols['C4'][i]) / 3.5)
+            cols['W'].append((cols['W1'][i] + cols['W2'][i] + cols['W3'][i] + cols['W4'][i] + cols['W5'][i] + cols['W6'][i] + cols['W7'][i] + 0.5 * cols['W8'][i]) / 7.5)
+            cols['D'].append((cols['D1'][i] + cols['D2'][i] + cols['D3'][i] + cols['D4'][i] + cols['D5'][i] + cols['D6'][i]) / 6)
+
     return cols
 
 cols = get_cols()
@@ -106,7 +114,8 @@ cols = get_cols()
 dataset = pd.DataFrame(cols)
 
 reg = LinearRegression(normalize=True)
-fit_cols = ['C1', 'C2', 'C3', 'C4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'G']
+# fit_cols = ['C1', 'C2', 'C3', 'C4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'G']
+fit_cols = ['C', 'W', 'D', 'G']
 reg.fit(dataset[fit_cols], dataset['mov'])
 dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
 

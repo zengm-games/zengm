@@ -532,7 +532,7 @@ class GameSim {
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
-		this.recordStat(t2, target, "energy", -0.25);
+		this.recordStat(t2, target, "energy", -0.5);
 
 		this.playByPlay.logEvent({
 			type: "hit",
@@ -607,7 +607,6 @@ class GameSim {
 			t: this.d,
 			names: [p.name],
 		});
-
 		this.recordStat(this.d, p, "tk", 1);
 	}
 
@@ -729,11 +728,50 @@ class GameSim {
 
 		this.recordStat(this.o, actualShooter, "s");
 
-		const goalie = this.playersOnIce[this.d].G[0];
+		let assister1: PlayerGameSim | undefined;
+		let assister2: PlayerGameSim | undefined;
+		const r2 = Math.random();
+		if (deflector) {
+			assister1 = shooter;
+		} else if (r2 < 0.99) {
+			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+				actualShooter,
+			]);
+		}
+		if (r2 < 0.8) {
+			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+				actualShooter,
+				assister1 as PlayerGameSim,
+			]);
+		}
 
+		const goalie = this.playersOnIce[this.d].G[0];
 		if (goalie) {
+			const shotQualityFactors = [
+				actualShooter.compositeRating.scoring,
+				this.team[this.o].synergy.reb / this.team[this.d].synergy.reb,
+			];
+			if (assister1) {
+				shotQualityFactors.push(assister1.compositeRating.playmaker);
+			}
+			if (assister2) {
+				shotQualityFactors.push(assister2.compositeRating.playmaker);
+			}
+			let shotQualityFactor = 0;
+			for (const factor of shotQualityFactors) {
+				shotQualityFactor += factor;
+			}
+			shotQualityFactor /= shotQualityFactors.length;
+
+			// shotQualityFactor is generally between 0.3 and 0.9, so shotQualityProbComponent is -1 to 1
+			const shotQualityProbComponent =
+				(helpers.bound(shotQualityFactor, 0.3, 0.9) - 0.3) * (2 / 0.6) - 1;
+			const shotQualityProbComponent2 = -0.025 * shotQualityProbComponent; // -0.025 to 0.025
+
+			const TO_FIX = goalie.compositeRating.goalkeeping;
+
 			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
-			if (r < 0.89 + goalie.compositeRating.goalkeeping * 0.07) {
+			if (r < 0.89 + shotQualityProbComponent2 + TO_FIX * 0.07) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
 				this.playByPlay.logEvent({
@@ -748,34 +786,17 @@ class GameSim {
 			}
 		}
 
-		let assister1: PlayerGameSim | undefined;
-		let assister2: PlayerGameSim | undefined;
-		const r2 = Math.random();
-		if (deflector) {
-			assister1 = shooter;
-		} else if (r2 < 0.99) {
-			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-				actualShooter,
-			]);
-			this.recordStat(this.o, assister1, `${strengthType}A`);
-		}
-
-		if (r2 < 0.8) {
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-				actualShooter,
-				assister1 as PlayerGameSim,
-			]);
-			this.recordStat(this.o, assister2, `${strengthType}A`);
-		}
-
 		let assisterNames: [] | [string] | [string, string];
 		let assisterPIDs: [] | [number] | [number, number];
 		if (assister1 && assister2) {
 			assisterNames = [assister1.name, assister2.name];
 			assisterPIDs = [assister1.id, assister2.id];
+			this.recordStat(this.o, assister1, `${strengthType}A`);
+			this.recordStat(this.o, assister2, `${strengthType}A`);
 		} else if (assister1) {
 			assisterNames = [assister1.name];
 			assisterPIDs = [assister1.id];
+			this.recordStat(this.o, assister1, `${strengthType}A`);
 		} else {
 			assisterNames = [];
 			assisterPIDs = [];

@@ -6,7 +6,15 @@ let potEstimator: (ovr: number, age: number, pos?: string) => number;
 // coefficients for predicting pot. This is needed for football/hockey because pot is calculated for many
 // different positions, making it unreasonably slow. For basketball, it is only used in one place.
 if (isSport("football") || isSport("hockey")) {
-	let coeffsByPos;
+	let coeffsByPos: Record<
+		string,
+		{
+			intercept: number;
+			age: number;
+			ovr: number;
+			interaction: number;
+		}
+	>;
 	if (isSport("football")) {
 		// See analysis/pot-estimator-football
 		coeffsByPos = {

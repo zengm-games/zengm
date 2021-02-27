@@ -7,7 +7,7 @@ const ovr = (
 	players: {
 		ratings: {
 			ovr: number;
-			ovrs: Record<string, number>;
+			ovrs: Record<string, number> | undefined;
 			pos: string;
 		};
 	}[],
@@ -19,7 +19,7 @@ const ovr = (
 	return bySport({
 		basketball: ovrBasketball(players, options.rating),
 		football: ovrFootball(players, options.pos),
-		hockey: ovrHockey(players, options.pos),
+		hockey: ovrHockey(players as any, options.pos),
 	});
 };
 

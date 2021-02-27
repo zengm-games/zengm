@@ -51,6 +51,10 @@ const processTeam = (
 					p.ratings[p.ratings.length - 1].ovr,
 					p.ratings[p.ratings.length - 1].fuzz,
 				),
+				ovrs: player.fuzzOvrs(
+					p.ratings[p.ratings.length - 1].ovrs,
+					p.ratings[p.ratings.length - 1].fuzz,
+				),
 				pos: p.ratings[p.ratings.length - 1].pos,
 			},
 		}));

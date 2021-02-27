@@ -127,8 +127,12 @@ const ScoreBox = ({
 				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3.3504 * homeCourtAdvantage,
 			);
+		} else if (isSport("hockey")) {
+			spread = roundHalf(
+				(1.8 / 100) * (game.teams[0].ovr - game.teams[1].ovr) +
+					0.25 * homeCourtAdvantage,
+			);
 		} else {
-			// Just assume similar would work for football
 			spread = roundHalf(
 				(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3 * homeCourtAdvantage,

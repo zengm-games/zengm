@@ -335,13 +335,7 @@ const processRatings = (
 					row.tid = tidTemp;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
-				row[attr] = { ...pr[attr] };
-
-				if (fuzz) {
-					for (const key of Object.keys(row[attr])) {
-						row[attr][key] = player.fuzzRating(row[attr][key], pr.fuzz);
-					}
-				}
+				row[attr] = player.fuzzOvrs(pr[attr], pr.fuzz);
 			} else if (
 				fuzz &&
 				attr !== "fuzz" &&

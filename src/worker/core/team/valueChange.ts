@@ -402,6 +402,7 @@ const refreshCache = async () => {
 				pid: p.pid,
 				ratings: {
 					ovr: p.ratings[p.ratings.length - 1].ovr,
+					ovrs: p.ratings[p.ratings.length - 1].ovrs,
 					pos: p.ratings[p.ratings.length - 1].pos,
 				},
 			})),

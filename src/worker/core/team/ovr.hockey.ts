@@ -89,8 +89,6 @@ const ovr = (
 			6,
 		G: ovrs.G[0],
 	};
-	console.log(ovrs);
-	console.log(aggregated);
 
 	// See analysis/team-ovr-hockey
 	const predictedMOV =

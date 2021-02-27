@@ -10,6 +10,7 @@ import compositeRating from "./compositeRating";
 import contractSeasonsRemaining from "./contractSeasonsRemaining";
 import develop from "./develop";
 import fuzzRating from "./fuzzRating";
+import fuzzOvrs from "./fuzzOvrs";
 import genContract from "./genContract";
 import genFuzz from "./genFuzz";
 import genJerseyNumber from "./genJerseyNumber";
@@ -54,6 +55,7 @@ export default {
 	contractSeasonsRemaining,
 	develop,
 	fuzzRating,
+	fuzzOvrs,
 	genContract,
 	genFuzz,
 	genJerseyNumber,

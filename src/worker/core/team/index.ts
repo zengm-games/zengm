@@ -14,6 +14,7 @@ import getPayroll from "./getPayroll";
 import getPayrolls from "./getPayrolls";
 import ovr from "./ovr";
 import processStats from "./processStats";
+import ptsPct from "./ptsPct";
 import rosterAutoSort from "./rosterAutoSort";
 import switchTo from "./switchTo";
 import stats from "./stats";
@@ -38,6 +39,7 @@ export default {
 	getPayrolls,
 	ovr,
 	processStats,
+	ptsPct,
 	rosterAutoSort,
 	switchTo,
 	stats,

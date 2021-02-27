@@ -67,6 +67,10 @@ export const getMostXTeamSeasons = async ({
 				tied: ts.tied,
 				otl: ts.otl,
 				winp: ts.winp,
+				standingsPts: team.evaluatePointsFormula(ts, {
+					season: ts.season,
+				}),
+				ptsPct: team.ptsPct(ts),
 				playoffRoundsWon: ts.playoffRoundsWon,
 				seed: null as null | number,
 				rank: 0,
@@ -155,6 +159,9 @@ const updateFrivolitiesTeamSeasons = async (
 
 		const phase = g.get("phase");
 		const season = g.get("season");
+
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
 
 		if (type === "best_non_playoff") {
 			title = "Best Non-Playoff Teams";
@@ -327,6 +334,7 @@ const updateFrivolitiesTeamSeasons = async (
 			otl: g.get("otl"),
 			title,
 			type,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

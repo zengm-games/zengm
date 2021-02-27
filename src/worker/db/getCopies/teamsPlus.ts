@@ -174,23 +174,7 @@ const processSeasonAttrs = async <
 						season: ts.season,
 					});
 				} else if (attr === "ptsPct") {
-					const dummyRow = {
-						won: ts.won + ts.lost + ts.tied + ts.otl,
-						lost: 0,
-						tied: 0,
-						otl: 0,
-					};
-					if (dummyRow.won > 0) {
-						row.ptsPct =
-							team.evaluatePointsFormula(ts, {
-								season: ts.season,
-							}) /
-							team.evaluatePointsFormula(dummyRow, {
-								season: ts.season,
-							});
-					} else {
-						row.ptsPct = 0;
-					}
+					row.ptsPct = team.ptsPct(ts);
 				} else if (attr === "ptsDefault") {
 					row.ptsDefault = team.evaluatePointsFormula(ts, {
 						formula: DEFAULT_POINTS_FORMULA,

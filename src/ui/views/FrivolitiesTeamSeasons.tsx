@@ -15,6 +15,7 @@ const FrivolitiesTeamSeasons = ({
 	otl,
 	title,
 	type,
+	usePts,
 	userTid,
 }: View<"frivolitiesTeamSeasons">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
@@ -27,7 +28,7 @@ const FrivolitiesTeamSeasons = ({
 		"L",
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
-		"%",
+		...(usePts ? ["PTS", "PTS%"] : ["%"]),
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		...extraCols.map(x => x.colName),
 		"Links",
@@ -52,7 +53,9 @@ const FrivolitiesTeamSeasons = ({
 				ts.lost,
 				...(otl ? [ts.otl] : []),
 				...(ties ? [ts.tied] : []),
-				helpers.roundWinp(ts.winp),
+				...(usePts
+					? [Math.round(ts.standingsPts), helpers.roundWinp(ts.ptsPct)]
+					: [helpers.roundWinp(ts.winp)]),
 				wrappedMovOrDiff(
 					isSport("basketball")
 						? {

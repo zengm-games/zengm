@@ -33,7 +33,6 @@ def get_cols():
     }
 
     files = glob.glob('data*.json')
-    files = ['data5.json']
     files.sort()
     print(files)
 
@@ -104,7 +103,7 @@ def get_cols():
 
         for i in range(len(cols['C1'])):
             cols['C'].append((cols['C1'][i] + cols['C2'][i] + cols['C3'][i] + 0.5 * cols['C4'][i]) / 3.5)
-            cols['W'].append((cols['W1'][i] + cols['W2'][i] + cols['W3'][i] + cols['W4'][i] + cols['W5'][i] + cols['W6'][i] + cols['W7'][i] + 0.5 * cols['W8'][i]) / 7.5)
+            cols['W'].append((cols['W1'][i] + cols['W2'][i] + cols['W3'][i] + cols['W4'][i] + cols['W5'][i] + cols['W6'][i] + 0.5 * cols['W7'][i] + 0.5 * cols['W8'][i]) / 7)
             cols['D'].append((cols['D1'][i] + cols['D2'][i] + cols['D3'][i] + cols['D4'][i] + cols['D5'][i] + cols['D6'][i]) / 6)
 
     return cols
@@ -131,6 +130,6 @@ dataset.plot.hexbin(x='mov', y='mov_predicted', gridsize=20)
 plt.xlabel('Actual MOV')  
 plt.ylabel('Predicted MOV')  
 
-# plt.plot([-2, 2], [-2, 2])
+plt.plot([-1.5, 1.5], [-1.5, 1.5])
 
 plt.show()

@@ -17,7 +17,7 @@ const score = (p: PlayerFiltered, pos: Position) => {
 	return tempScore;
 };
 
-const sortFunction = (pos: Position) => (
+export const sortFunction = (pos: Position) => (
 	a: PlayerFiltered,
 	b: PlayerFiltered,
 ) => {

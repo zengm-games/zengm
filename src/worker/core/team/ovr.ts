@@ -1,11 +1,13 @@
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 import ovrBasketball from "./ovr.basketball";
 import ovrFootball from "./ovr.football";
+import ovrHockey from "./ovr.hockey";
 
 const ovr = (
 	players: {
 		ratings: {
 			ovr: number;
+			ovrs: Record<string, number>;
 			pos: string;
 		};
 	}[],
@@ -14,11 +16,11 @@ const ovr = (
 		rating?: string;
 	} = {},
 ) => {
-	if (isSport("football")) {
-		return ovrFootball(players, options.pos);
-	}
-
-	return ovrBasketball(players, options.rating);
+	return bySport({
+		basketball: ovrBasketball(players, options.rating),
+		football: ovrFootball(players, options.pos),
+		hockey: ovrHockey(players, options.pos),
+	});
 };
 
 export default ovr;

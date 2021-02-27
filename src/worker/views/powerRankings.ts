@@ -66,7 +66,7 @@ const updatePowerRankings = async (
 					});
 				}
 
-				const ratings = ["ovr", "pos"];
+				const ratings = ["ovr", "pos", "ovrs"];
 				if (isSport("basketball")) {
 					ratings.push(...RATINGS);
 				}

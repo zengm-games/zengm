@@ -212,8 +212,13 @@ const moodComponents = async (
 					winp += 0.15;
 				}
 
-				// 25% to 75% -> -2 to 2
-				components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
+				if (isSport("hockey")) {
+					// 40% to 60% -> -2 to 2
+					components.teamPerformance = -2 + ((winp - 0.4) * 4) / 0.2;
+				} else {
+					// 25% to 75% -> -2 to 2
+					components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
+				}
 
 				// Negative matters more
 				if (isSport("basketball") && components.teamPerformance < 0) {

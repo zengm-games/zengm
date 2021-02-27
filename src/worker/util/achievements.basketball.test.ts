@@ -4,7 +4,7 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
-import achievements from "./achievements.basketball";
+import achievements from "./achievements";
 import type { TeamSeason } from "../../common/types";
 
 const get = (slug: string): any => {

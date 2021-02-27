@@ -175,7 +175,7 @@ const newPhaseResignPlayers = async (
 
 				// Don't go beyond roster needs by position
 				if (
-					isSport("football") &&
+					(isSport("football") || isSport("hockey")) &&
 					positionInfo !== undefined &&
 					positionInfo[pos] !== undefined &&
 					positionInfo[pos].count <= 0 &&
@@ -186,7 +186,10 @@ const newPhaseResignPlayers = async (
 
 				// Always sign rookies, and give them smaller contracts
 				if (draftPick) {
-					contract.amount /= 2;
+					// Hockey already has rookie salaries set correctly in normalizeContractDemands
+					if (!isSport("hockey")) {
+						contract.amount /= 2;
+					}
 
 					if (contract.amount < g.get("minContract")) {
 						contract.amount = g.get("minContract");

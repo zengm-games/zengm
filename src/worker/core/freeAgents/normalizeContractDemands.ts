@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { PLAYER, PHASE, isSport } from "../../../common";
-import { team, player } from "..";
+import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
 import orderBy from "lodash/orderBy";
@@ -253,6 +253,13 @@ const normalizeContractDemands = async ({
 	}
 	//console.timeEnd("foo");
 
+	const hockeyRookieOverrides =
+		isSport("hockey") && type === "includeExpiringContracts";
+	let rookieSalaries;
+	if (isSport("hockey") && hockeyRookieOverrides) {
+		rookieSalaries = draft.getRookieSalaries();
+	}
+
 	for (const info of playerInfos) {
 		if (
 			(type === "freeAgentsOnly" ||
@@ -263,22 +270,38 @@ const normalizeContractDemands = async ({
 		) {
 			const p = info.p;
 
-			const exp = getExpiration(p, type === "newLeague", nextSeason);
+			const exp =
+				isSport("hockey") && hockeyRookieOverrides
+					? season + 3
+					: getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
 
 			if (numRounds === 0) {
 				amount = player.genContract(p, type === "newLeague").amount;
 			} else {
-				if (type === "newLeague") {
-					info.contractAmount *= random.uniform(0.4, 1.1);
-				}
+				if (
+					isSport("hockey") &&
+					rookieSalaries &&
+					hockeyRookieOverrides &&
+					p.draft.year === season
+				) {
+					const pickIndex =
+						(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
+					amount =
+						rookieSalaries[pickIndex] ??
+						rookieSalaries[rookieSalaries.length - 1];
+				} else {
+					if (type === "newLeague") {
+						info.contractAmount *= random.uniform(0.4, 1.1);
+					}
 
-				amount = helpers.bound(
-					helpers.roundContract(info.contractAmount),
-					minContract,
-					maxContract,
-				);
+					amount = helpers.bound(
+						helpers.roundContract(info.contractAmount),
+						minContract,
+						maxContract,
+					);
+				}
 			}
 
 			// During regular season, should only look for short contracts that teams will actually sign

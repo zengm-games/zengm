@@ -4,7 +4,7 @@ import type { ExpansionDraftSetupTeam } from "../../common/types";
 import { idb } from "../db";
 import orderBy from "lodash/orderBy";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs";
-import { DEFAULT_JERSEY } from "../../common";
+import { bySport, DEFAULT_JERSEY } from "../../common";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -91,7 +91,13 @@ const updateExpansionDraft = async () => {
 		initialTeams,
 		initialNumPerTeam,
 		initialNumProtectedPlayers:
-			expansionDraft.numProtectedPlayers ?? String(g.get("minRosterSize")),
+			expansionDraft.numProtectedPlayers ??
+			String(
+				bySport({
+					hockey: Math.max(g.get("minRosterSize") - 4, 0),
+					default: g.get("minRosterSize"),
+				}),
+			),
 		minRosterSize: g.get("minRosterSize"),
 		multiTeamMode: g.get("userTids").length > 1,
 		numActiveTeams: g.get("numActiveTeams"),

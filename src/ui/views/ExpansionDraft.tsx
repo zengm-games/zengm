@@ -59,7 +59,11 @@ const ExpansionDraft = ({
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
 		const newNumProtectedPlayers = String(
-			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
+			helpers.bound(
+				parseInt(initialNumProtectedPlayers) - newTeams.length,
+				0,
+				Infinity,
+			),
 		);
 		const newNumPerTeam = String(
 			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(

@@ -1,3 +1,4 @@
+import { isSport } from "../../../common";
 import { g, helpers } from "../../util";
 
 /**
@@ -9,6 +10,28 @@ import { g, helpers } from "../../util";
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 const getRookieSalaries = (): number[] => {
+	if (isSport("hockey")) {
+		const minContract = g.get("minContract");
+		const maxContract = g.get("maxContract");
+		const numActiveTeams = g.get("numActiveTeams");
+		const numDraftRounds = g.get("numDraftRounds");
+
+		const earlySalary = Math.min(2 * minContract, maxContract);
+		const lateSalary = minContract;
+
+		const salaries = [];
+
+		for (let i = 0; i < numActiveTeams * numDraftRounds; i++) {
+			if (i < (numActiveTeams * numDraftRounds) / 2) {
+				salaries.push(earlySalary);
+			} else {
+				salaries.push(lateSalary);
+			}
+		}
+
+		return salaries;
+	}
+
 	// Default for first round
 	const firstRoundRookieSalaries = [
 		5000,

@@ -1,35 +1,39 @@
 import { helpers } from "../../../worker/util";
 import { sortFunction } from "./rosterAutoSort.hockey";
+import {
+	NUM_LINES,
+	NUM_PLAYERS_PER_LINE,
+} from "../../../common/constants.hockey";
 
-const ovr = (
-	players: {
+export const getPlayersInLines = <
+	T extends {
 		ratings: {
-			ovr: number;
 			ovrs: Record<string, number>;
 			pos: string;
 		};
-	}[],
-	onlyPos?: string,
+	}
+>(
+	players: T[],
 ) => {
 	const info = {
 		C: {
-			selected: [] as any[],
-			minLength: 4,
+			selected: [] as T[],
+			minLength: NUM_LINES.F * 1,
 			sorted: [...players.sort(sortFunction("C"))],
 		},
 		W: {
-			selected: [] as any[],
-			minLength: 8,
+			selected: [] as T[],
+			minLength: NUM_LINES.F * 2,
 			sorted: [...players.sort(sortFunction("W"))],
 		},
 		D: {
-			selected: [] as any[],
-			minLength: 6,
+			selected: [] as T[],
+			minLength: NUM_LINES.D * NUM_PLAYERS_PER_LINE.D,
 			sorted: [...players.sort(sortFunction("D"))],
 		},
 		G: {
-			selected: [] as any[],
-			minLength: 1,
+			selected: [] as T[],
+			minLength: NUM_LINES.G * NUM_PLAYERS_PER_LINE.G,
 			sorted: [...players.sort(sortFunction("G"))],
 		},
 	};
@@ -37,7 +41,7 @@ const ovr = (
 	const maxLength = Math.max(...Object.values(info).map(x => x.minLength));
 
 	// Set starters (in lines)
-	const playersUsed = new Set();
+	const playersUsed = new Set<typeof players[number]>();
 	for (let i = 0; i < maxLength; i++) {
 		for (const pos of ["G", "C", "D", "W"] as const) {
 			const { selected, minLength, sorted } = info[pos];
@@ -54,6 +58,20 @@ const ovr = (
 			}
 		}
 	}
+
+	return info;
+};
+
+const ovr = (
+	players: {
+		ratings: {
+			ovrs: Record<string, number>;
+			pos: string;
+		};
+	}[],
+	onlyPos?: string,
+) => {
+	const info = getPlayersInLines(players);
 
 	const ovrs = {
 		C: [] as number[],

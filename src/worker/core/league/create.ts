@@ -541,9 +541,14 @@ export const createWithoutSaving = async (
 					// Guarantee contracts for undrafted players are overwritten below
 					p.contract.exp = -Infinity;
 				} else {
-					const years = 4 - round;
+					let years;
+					if (isSport("hockey")) {
+						years = 3;
+					} else {
+						// 2 years for 2nd round, 3 years for 1st round;
+						years = Math.min(4 - round, 2);
+					}
 
-					// 2 years for 2nd round, 3 years for 1st round;
 					player.setContract(
 						p,
 						{

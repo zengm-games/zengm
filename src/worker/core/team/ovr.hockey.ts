@@ -108,6 +108,12 @@ const ovr = (
 		G: ovrs.G[0],
 	};
 
+	for (const pos of helpers.keys(aggregated)) {
+		if (onlyPos !== pos && onlyPos !== undefined) {
+			aggregated[pos] = 0;
+		}
+	}
+
 	// See analysis/team-ovr-hockey
 	const predictedMOV =
 		-6.391024667200881 +

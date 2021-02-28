@@ -4,6 +4,7 @@ import { g } from "../util";
 import posRatings from "../../common/posRatings";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { bySport, isSport } from "../../common";
+import { NUM_LINES, NUM_PLAYERS_PER_LINE } from "../../common/constants.hockey";
 
 const defenseStats = [
 	"defTckSolo",
@@ -124,11 +125,59 @@ const updateDepth = async (
 			  depthPlayers[pos]
 			: [];
 
+		let multiplePositionsWarning: string | undefined;
+		if (isSport("hockey") && players.length >= g.get("minRosterSize")) {
+			const playerInfoByPid = new Map<
+				any,
+				{
+					name: string;
+					positions: string[];
+				}
+			>();
+
+			for (const [pos, posPlayers] of Object.entries(depthPlayers)) {
+				const numStarters =
+					(NUM_LINES as any)[pos] * (NUM_PLAYERS_PER_LINE as any)[pos];
+
+				for (let i = 0; i < numStarters; i++) {
+					const p = posPlayers[i];
+					if (!p) {
+						break;
+					}
+
+					const { name, pid } = p;
+					let info = playerInfoByPid.get(pid);
+					if (!info) {
+						info = {
+							name,
+							positions: [] as string[],
+						};
+						playerInfoByPid.set(pid, info);
+					}
+					info.positions.push(pos);
+				}
+			}
+
+			const playersAtMultiplePositions = [];
+			for (const { name, positions } of playerInfoByPid.values()) {
+				if (positions.length > 1) {
+					playersAtMultiplePositions.push(`${name} (${positions.join("/")})`);
+				}
+			}
+
+			if (playersAtMultiplePositions.length > 0) {
+				multiplePositionsWarning = `Some players are in the rotation at multiple positions, which may lead to erratic substitution patterns: ${playersAtMultiplePositions.join(
+					", ",
+				)}.`;
+			}
+		}
+
 		return {
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			editable,
 			keepRosterSorted: t.keepRosterSorted,
+			multiplePositionsWarning,
 			pos,
 			players: players2,
 			ratings,

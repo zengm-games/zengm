@@ -481,8 +481,8 @@ qacct:"p-Ye5RY6xC03ZWz"
 		silent: true,
 	});
 
-	/*let facebookPixelCode = "";
-	if (!watch) {
+	const facebookPixelCode = "";
+	/*if (!watch) {
 		facebookPixelCode = `<!-- Facebook Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -508,14 +508,13 @@ src="https://www.facebook.com/tr?id=${
 		}&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Facebook Pixel Code -->`;
-	}
-
+	}*/
 	replace({
 		regex: "FACEBOOK_PIXEL_CODE",
 		replacement: facebookPixelCode,
 		paths: ["build/index.html"],
 		silent: true,
-	});*/
+	});
 
 	if (watch) {
 		replace({

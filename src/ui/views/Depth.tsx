@@ -63,6 +63,7 @@ const Depth = ({
 	challengeNoRatings,
 	editable,
 	keepRosterSorted,
+	multiplePositionsWarning,
 	players,
 	pos,
 	ratings,
@@ -142,6 +143,12 @@ const Depth = ({
 					? "There are four lines of forwards (centers and wings) and three lines of defensemen. The top lines play the most. All the players in a line will generally play together, but when injuries or other disruptions occur, a player will be moved up from below."
 					: null}
 			</p>
+
+			{multiplePositionsWarning ? (
+				<div className="alert alert-danger d-inline-block mb-3">
+					{multiplePositionsWarning}
+				</div>
+			) : null}
 
 			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
 				{Object.keys(numStartersByPos).map(pos2 => (

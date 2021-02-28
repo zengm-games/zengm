@@ -115,11 +115,21 @@ const setSport = () => {
 		silent: true,
 	});
 	replace({
+		regex: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
+		replacement: bySport({
+			basketball: "basketball-gm.com",
+			football: "football-gm.com",
+			hockey: "zengm.com",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
 		regex: "WEBSITE_ROOT",
 		replacement: bySport({
 			basketball: "basketball-gm.com",
 			football: "football-gm.com",
-			hockey: "hockey.zengm.com",
+			hockey: "basketball-gm.com",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -422,24 +432,22 @@ if (window.enableLogging) {
 
 	replace({
 		regex: "GOOGLE_ANALYTICS_ID",
-		replacement: sport === "basketball" ? "UA-38759330-1" : "UA-38759330-2",
-		paths: ["build/index.html"],
-		silent: true,
-	});
-
-	replace({
-		regex: "BBGM_ADS_FILENAME",
-		replacement: sport === "basketball" ? "bbgm" : "fbgm",
+		replacement: bySport({
+			basketball: "UA-38759330-1",
+			football: "UA-38759330-2",
+			hockey: "UA-38759330-3",
+		}),
 		paths: ["build/index.html"],
 		silent: true,
 	});
 
 	replace({
 		regex: "BUGSNAG_API_KEY",
-		replacement:
-			sport === "basketball"
-				? "c10b95290070cb8888a7a79cc5408555"
-				: "fed8957cbfca2d1c80997897b840e6cf",
+		replacement: bySport({
+			basketball: "c10b95290070cb8888a7a79cc5408555",
+			football: "fed8957cbfca2d1c80997897b840e6cf",
+			hockey: "449e8ed576f7cbccf5c7649e936ab9ff",
+		}),
 		paths: ["build/index.html"],
 		silent: true,
 	});
@@ -473,7 +481,7 @@ qacct:"p-Ye5RY6xC03ZWz"
 		silent: true,
 	});
 
-	let facebookPixelCode = "";
+	/*let facebookPixelCode = "";
 	if (!watch) {
 		facebookPixelCode = `<!-- Facebook Pixel Code -->
 <script>
@@ -507,7 +515,7 @@ src="https://www.facebook.com/tr?id=${
 		replacement: facebookPixelCode,
 		paths: ["build/index.html"],
 		silent: true,
-	});
+	});*/
 
 	if (watch) {
 		replace({

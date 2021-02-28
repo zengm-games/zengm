@@ -64,7 +64,7 @@
       }
       window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 
-      window.enableLogging = location.host.indexOf("WEBSITE_ROOT") >= 0;
+      window.enableLogging = location.host.indexOf("GOOGLE_ANALYTICS_COOKIE_DOMAIN") >= 0;
 
       if (window.enableLogging) {
         window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
@@ -78,7 +78,7 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'GOOGLE_ANALYTICS_ID', {
-          'cookie_domain': 'WEBSITE_ROOT'
+          'cookie_domain': 'GOOGLE_ANALYTICS_COOKIE_DOMAIN'
         });
 
         // Google Consumer Surveys

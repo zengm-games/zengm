@@ -289,25 +289,15 @@ const DEFAULT_DIVS: Div[] = [
 	{
 		did: 1,
 		cid: 0,
-		name: "Central",
+		name: "Metropolitan",
 	},
 	{
 		did: 2,
-		cid: 0,
-		name: "Southeast",
+		cid: 1,
+		name: "Central",
 	},
 	{
 		did: 3,
-		cid: 1,
-		name: "Southwest",
-	},
-	{
-		did: 4,
-		cid: 1,
-		name: "Northwest",
-	},
-	{
-		did: 5,
 		cid: 1,
 		name: "Pacific",
 	},

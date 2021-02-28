@@ -62,11 +62,10 @@ const rosterAutoSort = async (
 	const info = getPlayersInLines(players);
 
 	// Order here matters, since players can only appear once!
-	const positions = ["G", "D", "F"] as const;
+	const positions: (keyof typeof depth)[] = pos ? [pos] : ["G", "D", "F"];
 
 	for (const pos2 of positions) {
 		if (onlyNewPlayers) {
-			console.log(pos);
 			// Identify players not currently in the depth chart, and add them to the depth chart above any player worse
 			// than them without otherwise disturbing the order of the depth chart. This is useful for adding free agents to
 			// the user's team - start them if they're better, but otherwise don't fuck with the user's depth chart.

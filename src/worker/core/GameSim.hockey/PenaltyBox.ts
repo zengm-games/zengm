@@ -83,9 +83,14 @@ class PenaltyBox {
 		const t = scoringTeam === 0 ? 1 : 0;
 		for (const entry of this.players[t]) {
 			const penaltyType = penaltyTypes[entry.penalty.type];
-			entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
-			if (entry.minutesLeft < 0) {
-				entry.minutesLeft = 0;
+			if (penaltyType.minutesReducedAfterGoal > 0) {
+				entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
+				if (entry.minutesLeft < 0) {
+					entry.minutesLeft = 0;
+				}
+
+				// Only let one guy out of the penalty box
+				break;
 			}
 		}
 

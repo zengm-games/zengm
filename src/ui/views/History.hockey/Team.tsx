@@ -65,7 +65,7 @@ const Teams = ({
 		content = team.map(t => (
 			<div className="mb-3" key={t.title}>
 				<h3>{t.title}</h3>
-				{t.players.map((p: any, i) =>
+				{t.players.map((p: any, i: number) =>
 					p ? (
 						<Player key={p.pid} i={i} p={p} season={season} userTid={userTid} />
 					) : (

@@ -15,19 +15,11 @@ const Player = ({
 	if (!p) {
 		return <div />;
 	}
-
-	let pos = p.pos;
-	if (i === 24) {
-		pos = "KR";
-	} else if (i === 25) {
-		pos = "PR";
-	}
-
 	// The wrapper div here actually matters, don't change to fragment!
 	return (
 		<div>
 			<span className={p.tid === userTid ? "table-info" : undefined}>
-				{pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
+				{p.pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
 				</a>

@@ -21,6 +21,7 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 		name: p.name,
 		tid: p.tid,
 		abbrev: p.abbrev,
+		pos: p.pos,
 		g: p.currentStats.g,
 		a: p.currentStats.a,
 		pts: p.currentStats.pts,
@@ -34,36 +35,57 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	};
 };
 
-const makeTeams = <T>(
-	players: T[],
-): [
-	{
-		title: "First Team";
-		players: T[];
-	},
-	{
-		title: "Second Team";
-		players: T[];
-	},
-	{
-		title: "Third Team";
-		players: T[];
-	},
-] => {
-	return [
+const getTopByPos = (
+	players: AwardPlayer[],
+	positions?: string[],
+	usedPids?: Set<number>,
+) => {
+	for (const p of players) {
+		if (usedPids) {
+			if (usedPids.has(p.pid)) {
+				continue;
+			}
+		}
+
+		if (positions === undefined || positions.includes(p.pos)) {
+			if (usedPids) {
+				usedPids.add(p.pid);
+			}
+
+			return p;
+		}
+	}
+};
+
+export const makeTeams = (
+	players: AwardPlayer[],
+	rookie: boolean = false,
+): any => {
+	const usedPids = new Set<number>();
+	const teamPositions = [["C"], ["W"], ["W"], ["D"], ["D"], ["G"]];
+
+	if (rookie) {
+		const teams = teamPositions.map(positions =>
+			getTopByPos(players, positions, usedPids),
+		);
+		return teams;
+	}
+
+	const teams = [
 		{
 			title: "First Team",
-			players: players.slice(0, 5),
+			players: teamPositions.map(positions =>
+				getTopByPos(players, positions, usedPids),
+			),
 		},
 		{
 			title: "Second Team",
-			players: players.slice(5, 10),
-		},
-		{
-			title: "Third Team",
-			players: players.slice(10, 15),
+			players: teamPositions.map(positions =>
+				getTopByPos(players, positions, usedPids),
+			),
 		},
 	];
+	return teams;
 };
 
 const getRealFinalsMvp = async (
@@ -142,6 +164,7 @@ const getRealFinalsMvp = async (
 			name: p.name,
 			tid: p.tid,
 			abbrev: p.abbrev,
+			pos: p.pos,
 			g: playerArray[0].g,
 			a: playerArray[0].a,
 			pts: playerArray[0].pts,
@@ -227,7 +250,7 @@ const doAwards = async (conditions: Conditions) => {
 	const mvpPlayers = getTopPlayers(
 		{
 			allowNone: true,
-			amount: 15,
+			amount: Infinity,
 			score: mvpScore,
 		},
 		players,
@@ -237,7 +260,7 @@ const doAwards = async (conditions: Conditions) => {
 	const royPlayers = getTopPlayers(
 		{
 			allowNone: true,
-			amount: 5,
+			amount: Infinity,
 			filter: royFilter,
 			score: royScore,
 		},
@@ -246,7 +269,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
-	const allRookie = royPlayers.slice(0, 5);
+	const allRookie = makeTeams(royPlayers, true);
 	const dpoyPlayers = getTopPlayers(
 		{
 			allowNone: true,

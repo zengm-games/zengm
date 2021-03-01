@@ -65,6 +65,10 @@ const mySpawn = (command, args) => {
 		"/files",
 		"--exclude",
 		"/.well-known",
+
+		// For hockey
+		"--exclude",
+		"/old",
 	];
 	if (subdomain === "beta") {
 		excludes.push("--exclude", "/sw.js*");

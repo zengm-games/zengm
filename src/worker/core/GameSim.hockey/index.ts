@@ -772,7 +772,7 @@ class GameSim {
 			const TO_FIX = goalie.compositeRating.goalkeeping;
 
 			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
-			if (r < 0.89 + shotQualityProbComponent2 + TO_FIX * 0.07) {
+			if (r < 0.9 + shotQualityProbComponent2 + TO_FIX * 0.07) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
 				this.playByPlay.logEvent({

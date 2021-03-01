@@ -1,4 +1,3 @@
-import orderBy from "lodash/orderBy";
 import {
 	getPlayers,
 	getTopPlayers,
@@ -13,7 +12,6 @@ import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 
 import type { AwardPlayer, Awards } from "../../../common/types.hockey";
-import { processPlayerStats } from "../../../common";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -86,97 +84,6 @@ export const makeTeams = (
 		},
 	];
 	return teams;
-};
-
-const getRealFinalsMvp = async (
-	players: PlayerFiltered[],
-	champTid: number,
-): Promise<AwardPlayer | undefined> => {
-	const games = await idb.cache.games.getAll(); // Last game of the season will have the two finals teams
-
-	const finalsTids = games[games.length - 1].teams.map(t => t.tid); // Get all playoff games between those two teams - that will be all finals games
-
-	const finalsGames = games.filter(
-		game =>
-			game.playoffs &&
-			finalsTids.includes(game.teams[0].tid) &&
-			finalsTids.includes(game.teams[1].tid),
-	);
-
-	if (finalsGames.length === 0) {
-		return;
-	}
-
-	// Calculate sum of game scores for each player
-	const playerInfos: Map<
-		number,
-		{
-			pid: number;
-			score: number;
-			tid: number;
-			g: number;
-			a: number;
-			pts: number;
-		}
-	> = new Map();
-
-	for (const game of finalsGames) {
-		for (const t of game.teams) {
-			for (const p of t.players) {
-				const row = processPlayerStats(p, ["g", "a", "pts"]);
-
-				const info = playerInfos.get(p.pid) || {
-					pid: p.pid,
-					score: 0,
-					tid: t.tid,
-					g: 0,
-					a: 0,
-					pts: 0,
-				};
-
-				// 75% bonus for the winning team
-				const factor = t.tid === champTid ? 1.75 : 1;
-				info.score += factor * row.pts;
-				info.pts += row.pts;
-				info.g += row.g;
-				info.a += row.a;
-				playerInfos.set(p.pid, info);
-			}
-		}
-	}
-
-	const playerArray = orderBy(
-		Array.from(playerInfos.values()),
-		"score",
-		"desc",
-	);
-
-	if (playerArray.length === 0) {
-		return;
-	}
-
-	const { pid } = playerArray[0];
-	const p = players.find(p2 => p2.pid === pid);
-
-	if (p) {
-		return {
-			pid: p.pid,
-			name: p.name,
-			tid: p.tid,
-			abbrev: p.abbrev,
-			pos: p.pos,
-			g: playerArray[0].g,
-			a: playerArray[0].a,
-			pts: playerArray[0].pts,
-			ops: 0,
-			tk: 0,
-			hit: 0,
-			dps: 0,
-			gaa: 0,
-			svPct: 0,
-			gps: 0,
-		};
-	}
 };
 
 export const mvpScore = (p: PlayerFiltered) => {
@@ -303,11 +210,27 @@ const doAwards = async (conditions: Conditions) => {
 			champTid,
 		);
 
-		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
 		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: ["pts", "trb", "ast", "ws", "ewa"],
+			stats: [
+				"keyStats",
+				"g",
+				"a",
+				"pts",
+				"hit",
+				"tk",
+				"gaa",
+				"svPct",
+				"ops",
+				"dps",
+				"gps",
+				"ps",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+			],
 			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
@@ -319,17 +242,13 @@ const doAwards = async (conditions: Conditions) => {
 			p.currentStats = p.stats;
 		}
 
-		finalsMvp = await getRealFinalsMvp(players, champTid);
-
-		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
-		if (finalsMvp === undefined) {
-			[finalsMvp] = getTopPlayers(
-				{
-					score: mvpScore,
-				},
-				champPlayers,
-			).map(getPlayerInfo);
-		}
+		// In hockey, it's the MVP of the playoffs, not just the finals
+		[finalsMvp] = getTopPlayers(
+			{
+				score: mvpScore,
+			},
+			champPlayers,
+		).map(getPlayerInfo);
 	}
 
 	const awards: Awards = {

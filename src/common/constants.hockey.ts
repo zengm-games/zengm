@@ -264,7 +264,7 @@ const AWARD_NAMES = {
 	roy: "Rookie of the Year",
 	dpoy: "Defensive Player of the Year",
 	goy: "Goalie of the Year",
-	finalsMvp: "Finals MVP",
+	finalsMvp: "Playoffs MVP",
 	allLeague: "All-League",
 	allRookie: "All-Rookie Team",
 } as const;

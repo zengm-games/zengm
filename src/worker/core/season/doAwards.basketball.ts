@@ -401,7 +401,6 @@ const doAwards = async (conditions: Conditions) => {
 			champTid,
 		);
 
-		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
 		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],

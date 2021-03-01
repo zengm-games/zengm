@@ -1,14 +1,12 @@
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
 import { GAME_NAME, WEBSITE_ROOT } from "../../common";
+import GameLinks from "./GameLinks";
 
 type Props = {
 	close: () => void;
 	show: boolean;
 };
-
-const otherSport =
-	process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 const NagModal = ({ close, show }: Props) => {
 	const adBlock = !window.freestar.freestarReloadAdSlot;
@@ -52,11 +50,7 @@ const NagModal = ({ close, show }: Props) => {
 									Subscribe to GM Gold.
 								</a>
 							</b>{" "}
-							For $5/month, you can play {GAME_NAME} and{" "}
-							<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-								{otherSport} GM
-							</a>{" "}
-							without any ads.
+							For $5/month, you can play <GameLinks /> without any ads.
 						</li>
 						<li>
 							<b>Disable your ad blocker for {GAME_NAME}.</b> To do this, click
@@ -98,16 +92,12 @@ const NagModal = ({ close, show }: Props) => {
 						If you want to support {GAME_NAME} continuing to be a non-sucky
 						game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
 						get? More like, what don't you get? You get no new features, no new
-						improvements, no new anything. Just <b>no more ads</b>, both here
-						and on{" "}
-						<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-							{otherSport} GM
-						</a>
-						. That's it. Why? For basically the same reason I won't make{" "}
-						{GAME_NAME} freemium. I don't want the free version to become a
-						crippled advertisement for the pay version. If you agree that the
-						world is a better place when anyone anywhere can play {GAME_NAME}{" "}
-						and {otherSport} GM, sign up for GM Gold today!
+						improvements, no new anything. Just <b>no more ads</b> on{" "}
+						<GameLinks thisGameText="this game" />. That's it. Why? For
+						basically the same reason I won't make {GAME_NAME} freemium. I don't
+						want the free version to become a crippled advertisement for the pay
+						version. If you agree that the world is a better place when anyone
+						anywhere can play <GameLinks noLinks />, sign up for GM Gold today!
 					</p>
 					<div className="text-center">
 						<a href="/account" className="btn btn-primary" onClick={close}>

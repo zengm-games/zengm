@@ -1,11 +1,10 @@
-import { isSport } from "../../../common";
+import { GameLinks } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import Login from "./Login";
 import Register from "./Register";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
-const otherSport = isSport("basketball") ? "Football" : "Basketball";
 
 const LoginOrRegister = () => {
 	useTitleBar({
@@ -26,12 +25,8 @@ const LoginOrRegister = () => {
 							.
 						</li>
 						<li>
-							You can sign up for GM Gold, which removes all ads from this game
-							and{" "}
-							<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-								{otherSport} GM
-							</a>
-							.
+							You can sign up for GM Gold, which removes all ads from{" "}
+							<GameLinks thisGameText="this game" />.
 						</li>
 					</ol>
 					<p>

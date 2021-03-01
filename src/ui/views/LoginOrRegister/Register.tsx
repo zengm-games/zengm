@@ -1,14 +1,8 @@
 import classNames from "classnames";
 import { Component, FormEvent } from "react";
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	isSport,
-	GAME_NAME,
-} from "../../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
-
-const otherSport = isSport("basketball") ? "Football" : "Basketball";
+import { GameLinks } from "../../components";
 
 type Props = {
 	ajaxErrorMsg: string;
@@ -106,15 +100,7 @@ class Register extends Component<Props, State> {
 			<>
 				<h2>Register</h2>
 				<p className="alert alert-primary">
-					Accounts are shared between {GAME_NAME} and{" "}
-					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-						{otherSport} GM
-					</a>
-					, so if you already have a{" "}
-					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-						{otherSport} GM
-					</a>{" "}
-					account, you don't need to create a new one.
+					Accounts are shared between <GameLinks />.
 				</p>
 				<form onSubmit={this.handleSubmit} id="register">
 					<input type="hidden" name="sport" value={process.env.SPORT} />

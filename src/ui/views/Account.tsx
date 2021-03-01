@@ -8,11 +8,11 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 	GAME_NAME,
-	isSport,
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getScript, localActions, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
+import { GameLinks } from "../components";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -263,7 +263,6 @@ const Account = ({
 	let goldPitchDiv: ReactNode = null;
 
 	if (showGoldPitch) {
-		const otherSport = isSport("basketball") ? "Football" : "Basketball";
 		goldPitchDiv = (
 			<>
 				<h2>GM Gold</h2>
@@ -297,16 +296,13 @@ const Account = ({
 							If you want to support {GAME_NAME} continuing to be a non-sucky
 							game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
 							get? More like, what don't you get? You get no new features, no
-							new improvements, no new anything. Just <b>no more ads</b>, both
-							here and on{" "}
-							<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-								{otherSport} GM
-							</a>
-							. That's it. Why? For basically the same reason I won't make{" "}
-							{GAME_NAME} freemium. I don't want the free version to become a
-							crippled advertisement for the pay version. If you agree that the
-							world is a better place when anyone anywhere can play {GAME_NAME}{" "}
-							and {otherSport} GM, sign up for GM Gold today!
+							new improvements, no new anything. Just <b>no more ads</b> on{" "}
+							<GameLinks thisGameText="this game" />. That's it. Why? For
+							basically the same reason I won't make {GAME_NAME} freemium. I
+							don't want the free version to become a crippled advertisement for
+							the pay version. If you agree that the world is a better place
+							when anyone anywhere can play <GameLinks noLinks />, sign up for
+							GM Gold today!
 						</p>
 
 						{!loggedIn || !email ? (

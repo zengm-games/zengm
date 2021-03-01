@@ -125,7 +125,7 @@ const getRatingsToBoost = (pos: string) => {
 
 	if (pos === "G") {
 		return {
-			glk: 2.05,
+			glk: 1.5,
 		};
 	}
 

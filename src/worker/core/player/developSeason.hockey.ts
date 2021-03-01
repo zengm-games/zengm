@@ -129,7 +129,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	glk: {
 		ageModifier: () => 0,
 		changeLimits: () => [-10, 10],
-		posCoeff: (pos: string) => (pos === "G" ? 1.25 : 0.1),
+		posCoeff: (pos: string) => (pos === "G" ? 2 : 0.1),
 	},
 };
 

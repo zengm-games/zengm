@@ -139,7 +139,7 @@ const useLocal = create<
 				}
 			}
 
-			set(obj);
+			set(obj as any);
 		},
 
 		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {

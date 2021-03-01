@@ -101,28 +101,28 @@ if (isSport("football") || isSport("hockey")) {
 		// See analysis/pot-estimator-hockey
 		coeffsByPos = {
 			C: {
-				intercept: 79.1097269,
-				age: -2.95872791,
-				ovr: 0.65580942,
-				interaction: 0.01372514,
+				intercept: 80.6422965,
+				age: -3.05006202,
+				ovr: 0.6486725,
+				interaction: 0.01448313,
 			},
 			W: {
-				intercept: 66.3243179,
-				age: -2.4368905,
-				ovr: 0.89954774,
-				interaction: 0.00380907,
+				intercept: 68.0307412,
+				age: -2.55261434,
+				ovr: 0.88896865,
+				interaction: 0.00506265,
 			},
 			D: {
-				intercept: 87.4661338,
-				age: -3.27339857,
-				ovr: 0.55789343,
-				interaction: 0.01753037,
+				intercept: 88.7269404,
+				age: -3.3507586,
+				ovr: 0.54694889,
+				interaction: 0.01839313,
 			},
 			G: {
-				intercept: 59.5672703,
-				age: -2.22294149,
-				ovr: 0.80157132,
-				interaction: 0.00800432,
+				intercept: 102.9871616,
+				age: -3.82414489,
+				ovr: 0.57276983,
+				interaction: 0.01685319,
 			},
 		};
 	}

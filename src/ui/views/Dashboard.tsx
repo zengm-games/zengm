@@ -5,6 +5,7 @@ import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";
 import {
+	bySport,
 	DIFFICULTY,
 	isSport,
 	SPORT_HAS_LEGENDS,
@@ -322,6 +323,17 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
+	const randomOtherSport = bySport({
+		basketball: Math.random() < 0.5 ? "football" : "hockey",
+		football: Math.random() < 0.5 ? "basketball" : "hockey",
+		hockey: Math.random() < 0.5 ? "basketball" : "football",
+	});
+	const otherSportsText = bySport({
+		basketball: "football and hockey",
+		football: "basketball and hockey",
+		hockey: "basketball and football",
+	});
+
 	return (
 		<>
 			{location.host.indexOf("beta") === 0 ? (
@@ -392,14 +404,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				)}
 
 				<a
-					href={`https://play.${
-						isSport("football") ? "basketball" : "football"
-					}-gm.com/`}
-					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${process.env.SPORT}`}
+					href="https://zengm.com/"
+					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}`}
 				>
-					{isSport("football")
-						? "Try our other game, Basketball GM!"
-						: "Try our other game, Football GM!"}
+					Try our {otherSportsText} games!
 				</a>
 			</div>
 

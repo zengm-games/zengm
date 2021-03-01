@@ -2,12 +2,10 @@ import PropTypes from "prop-types";
 import { helpers } from "../../../ui/util";
 
 const Player = ({
-	i,
 	p,
 	season,
 	userTid,
 }: {
-	i: number;
 	p: any;
 	season: number;
 	userTid: number;
@@ -16,18 +14,11 @@ const Player = ({
 		return <div />;
 	}
 
-	let pos = p.pos;
-	if (i === 24) {
-		pos = "KR";
-	} else if (i === 25) {
-		pos = "PR";
-	}
-
 	// The wrapper div here actually matters, don't change to fragment!
 	return (
 		<div>
 			<span className={p.tid === userTid ? "table-info" : undefined}>
-				{pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
+				{p.pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
 				</a>
@@ -38,7 +29,6 @@ const Player = ({
 };
 
 Player.propTypes = {
-	i: PropTypes.number.isRequired,
 	p: PropTypes.object,
 	season: PropTypes.number.isRequired,
 	userTid: PropTypes.number.isRequired,
@@ -65,9 +55,9 @@ const Teams = ({
 		content = team.map(t => (
 			<div className="mb-3" key={t.title}>
 				<h3>{t.title}</h3>
-				{t.players.map((p: any, i: number) =>
+				{t.players.map((p: any) =>
 					p ? (
-						<Player key={p.pid} i={i} p={p} season={season} userTid={userTid} />
+						<Player key={p.pid} p={p} season={season} userTid={userTid} />
 					) : (
 						""
 					),
@@ -79,9 +69,7 @@ const Teams = ({
 	} else {
 		content = team
 			.filter(p => p)
-			.map((p, i) => (
-				<Player key={p.pid} i={i} p={p} season={season} userTid={userTid} />
-			));
+			.map(p => <Player key={p.pid} p={p} season={season} userTid={userTid} />);
 	}
 
 	return (

@@ -74,9 +74,15 @@ const RosterComposition = ({
 					</p>
 					<p>
 						You don't have to follow these recommendations. You can make an
-						entire team of punters if you want. But if your roster is too
-						unbalanced, your team may not perform very well, particularly when
-						there are injuries and you have to go deep into your bench.
+						entire team of{" "}
+						{bySport({
+							basketball: "?",
+							football: "punters",
+							hockey: "goalies",
+						})}{" "}
+						if you want. But if your roster is too unbalanced, your team may not
+						perform very well, particularly when there are injuries and you have
+						to go deep into your bench.
 					</p>
 				</HelpPopover>
 			</b>

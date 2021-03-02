@@ -36,6 +36,8 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 				<div className="col-4">
 					<span style={gradientStyle(ratings.ovr)}>Ovr: {ratings.ovr}</span>
 					<br />
+					<span style={gradientStyle(ratings.oiq)}>oIQ: {ratings.oiq}</span>
+					<br />
 					<span style={gradientStyle(ratings.pss)}>Pss: {ratings.pss}</span>
 					<br />
 					<span style={gradientStyle(ratings.wst)}>Wst: {ratings.wst}</span>
@@ -43,21 +45,19 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<span style={gradientStyle(ratings.sst)}>Sst: {ratings.sst}</span>
 					<br />
 					<span style={gradientStyle(ratings.stk)}>Stk: {ratings.stk}</span>
-					<br />
-					<span style={gradientStyle(ratings.oiq)}>oIQ: {ratings.oiq}</span>
 				</div>
 				<div className="col-4">
 					<span style={gradientStyle(ratings.pot)}>
 						Pot: {Math.round(ratings.pot)}
 					</span>
 					<br />
+					<span style={gradientStyle(ratings.diq)}>dIQ: {ratings.diq}</span>
+					<br />
 					<span style={gradientStyle(ratings.chk)}>Chk: {ratings.chk}</span>
 					<br />
 					<span style={gradientStyle(ratings.blk)}>Blk: {ratings.blk}</span>
 					<br />
 					<span style={gradientStyle(ratings.fcf)}>Fcf: {ratings.fcf}</span>
-					<br />
-					<span style={gradientStyle(ratings.diq)}>dIQ: {ratings.diq}</span>
 					<br />
 					<span style={gradientStyle(ratings.glk)}>Glk: {ratings.glk}</span>
 				</div>

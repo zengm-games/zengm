@@ -1222,7 +1222,8 @@ class GameSim {
 	 */
 	probTov() {
 		return (
-			(0.14 * this.team[this.d].compositeRating.defense) /
+			(g.get("turnoverFactor") *
+				(0.14 * this.team[this.d].compositeRating.defense)) /
 			(0.5 *
 				(this.team[this.o].compositeRating.dribbling +
 					this.team[this.o].compositeRating.passing))
@@ -1254,10 +1255,11 @@ class GameSim {
 	 */
 	probStl() {
 		return (
-			(0.45 * this.team[this.d].compositeRating.defensePerimeter) /
-			(0.5 *
-				(this.team[this.o].compositeRating.dribbling +
-					this.team[this.o].compositeRating.passing))
+			g.get("stealFactor") *
+			((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
+				(0.5 *
+					(this.team[this.o].compositeRating.dribbling +
+						this.team[this.o].compositeRating.passing)))
 		);
 	}
 
@@ -1493,7 +1495,11 @@ class GameSim {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probBlk() {
-		return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
+		return (
+			g.get("blockFactor") *
+			0.2 *
+			this.team[this.d].compositeRating.blocking ** 2
+		);
 	}
 
 	/**
@@ -1949,7 +1955,8 @@ class GameSim {
 
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(2 + this.team[this.o].compositeRating.rebounding) >
+				(g.get("orbFactor") *
+					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
 			ratios = this.ratingArray("rebounding", this.d, 3);

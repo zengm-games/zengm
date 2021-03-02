@@ -72,6 +72,10 @@ type Key =
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
 	| "twoPointAccuracyFactor"
+	| "blockFactor"
+	| "stealFactor"
+	| "turnoverFactor"
+	| "orbFactor"
 	| "challengeNoDraftPicks"
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
@@ -966,6 +970,42 @@ if (isSport("basketball")) {
 			type: "float",
 			description:
 				"The baseline rate for two point percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "blockFactor",
+			name: "Block Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline block percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "stealFactor",
+			name: "Steal Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline steal percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "turnoverFactor",
+			name: "Turnover Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline turnover percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "orbFactor",
+			name: "Offensive Rebound Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline offensive rebound percentage is multiplied by this number.",
 		},
 		{
 			category: "Player Development",

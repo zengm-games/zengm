@@ -78,6 +78,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	threePointTendencyFactor: 1,
 	threePointAccuracyFactor: 1,
 	twoPointAccuracyFactor: 1,
+	blockFactor: 1,
+	stealFactor: 1,
+	turnoverFactor: 1,
+	orbFactor: 1,
 	expansionDraft: { phase: "setup" },
 
 	challengeNoDraftPicks: false,

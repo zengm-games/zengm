@@ -149,6 +149,10 @@ const optionsTmp = bySport({
 			key: "dpoy",
 		},
 		{
+			val: "Defensive Forward of the Year",
+			key: "dfoy",
+		},
+		{
 			val: "Goalie of the Year",
 			key: "goy",
 		},

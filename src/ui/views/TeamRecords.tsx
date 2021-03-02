@@ -48,6 +48,7 @@ const categories = bySport({
 	hockey: [
 		"mvp",
 		"dpoy",
+		"dfoy",
 		"roy",
 		"goy",
 		"bestRecord",

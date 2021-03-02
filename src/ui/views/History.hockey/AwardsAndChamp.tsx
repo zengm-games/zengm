@@ -174,6 +174,13 @@ const AwardsAndChamp = ({
 					userTid={userTid}
 					type="defense"
 				/>
+				<h2>{AWARD_NAMES.dfoy}</h2>
+				<Winner
+					award={awards.dfoy}
+					season={season}
+					userTid={userTid}
+					type="defense"
+				/>
 				<h2>{AWARD_NAMES.goy}</h2>
 				<Winner
 					award={awards.goy}

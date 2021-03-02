@@ -49,6 +49,7 @@ const tallyAwards = (
 	const teamAwards = {
 		mvp: 0,
 		dpoy: 0,
+		dfoy: 0,
 		goy: 0,
 		smoy: 0,
 		mip: 0,
@@ -79,6 +80,10 @@ const tallyAwards = (
 
 		if (a.dpoy && a.dpoy.tid === tid) {
 			teamAwards.dpoy++;
+		}
+
+		if (a.dfoy && a.dfoy.tid === tid) {
+			teamAwards.dfoy++;
 		}
 
 		if (a.goy && a.goy.tid === tid) {
@@ -290,6 +295,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"titles",
 		"mvp",
 		"dpoy",
+		"dfoy",
 		"goy",
 		"smoy",
 		"mip",

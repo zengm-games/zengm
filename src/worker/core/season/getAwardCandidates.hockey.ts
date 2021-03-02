@@ -1,6 +1,7 @@
 import { getPlayers, getTopPlayers } from "./awards";
 import {
 	dpoyScore,
+	dfoyFilter,
 	mvpScore,
 	goyScore,
 	royFilter,
@@ -29,6 +30,19 @@ const getAwardCandidates = async (season: number) => {
 				{
 					allowNone: true,
 					amount: 10,
+					score: dpoyScore,
+				},
+				players,
+			),
+			stats: ["tk", "hit", "dps"],
+		},
+		{
+			name: "Defensive Forward of the Year",
+			players: getTopPlayers(
+				{
+					allowNone: true,
+					amount: 10,
+					filter: dfoyFilter,
 					score: dpoyScore,
 				},
 				players,

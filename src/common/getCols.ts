@@ -2104,6 +2104,10 @@ const cols: {
 		desc: "Defensive Player of the Year",
 		sortType: "name",
 	},
+	"award:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortType: "name",
+	},
 	"award:goy": {
 		desc: "Goalie of the Year",
 		sortType: "name",
@@ -2490,6 +2494,7 @@ const titleOverrides = {
 	"count:oroy": "OROY",
 	"count:droy": "DROY",
 	"award:dpoy": "DPOY",
+	"award:dfoy": "DFOY",
 	"award:goy": "GOY",
 	"award:finalsMvp": "Finals MVP",
 	"award:mip": "MIP",

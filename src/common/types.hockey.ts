@@ -76,6 +76,7 @@ export type Awards = {
 		},
 	];
 	dpoy: AwardPlayer;
+	dfoy: AwardPlayer;
 	goy: AwardPlayer;
 	finalsMvp: AwardPlayer | undefined;
 };

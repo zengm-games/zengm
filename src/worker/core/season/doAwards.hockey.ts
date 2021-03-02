@@ -10,7 +10,6 @@ import {
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
-
 import type { AwardPlayer, Awards } from "../../../common/types.hockey";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
@@ -107,6 +106,8 @@ export const royScore = (p: PlayerFiltered) =>
 export const dpoyScore = (p: PlayerFiltered) =>
 	p.currentStats.tk / 25 + p.currentStats.hit / 25 + p.currentStats.dps;
 
+export const dfoyFilter = (p: PlayerFiltered) => p.pos === "C" || p.pos === "W";
+
 export const goyScore = (p: PlayerFiltered) => p.currentStats.gps;
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
@@ -177,6 +178,7 @@ const doAwards = async (conditions: Conditions) => {
 	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
 	const allRookie = makeTeams(royPlayers, true);
+
 	const dpoyPlayers = getTopPlayers(
 		{
 			allowNone: true,
@@ -186,6 +188,18 @@ const doAwards = async (conditions: Conditions) => {
 		players,
 	).map(getPlayerInfo);
 	const dpoy = dpoyPlayers[0];
+
+	const dfoyPlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: 1,
+			filter: dfoyFilter,
+			score: dpoyScore,
+		},
+		players,
+	).map(getPlayerInfo);
+	const dfoy = dfoyPlayers[0];
+
 	const goyPlayers = getTopPlayers(
 		{
 			allowNone: true,
@@ -256,6 +270,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecordConfs,
 		mvp,
 		dpoy,
+		dfoy,
 		goy,
 		roy,
 		finalsMvp,

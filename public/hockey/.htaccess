@@ -39,23 +39,23 @@ RewriteRule ^\.well-known/.+ - [END]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
-RewriteRule ^fonts/(.*)$ old/fonts/$1
+RewriteRule ^fonts/(.*)$ old/fonts/$1 [END]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
-RewriteRule ^gen/(.*)$ old/gen/$1
+RewriteRule ^gen/(.*)$ old/gen/$1 [END]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
-RewriteRule ^ico/(.*)$ old/ico/$1
+RewriteRule ^ico/(.*)$ old/ico/$1 [END]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
-RewriteRule ^img/(.*)$ old/img/$1
+RewriteRule ^img/(.*)$ old/img/$1 [END]
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
-RewriteRule ^.*$ old/index.html
+RewriteRule ^.*$ old/index.html [END]
 
 RewriteCond %{REQUEST_URI} !^/css
 RewriteCond %{REQUEST_URI} !^/files

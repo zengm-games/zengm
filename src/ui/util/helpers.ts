@@ -212,7 +212,7 @@ const roundOverrides: Record<
 		pts: "noDecimalPlace",
 		oppPts: "noDecimalPlace",
 		sPct: "oneDecimalPlace",
-		svPct: "oneDecimalPlace",
+		svPct: "roundWinp",
 		ppo: "noDecimalPlace",
 		ppPct: "oneDecimalPlace",
 		sa: "noDecimalPlace",

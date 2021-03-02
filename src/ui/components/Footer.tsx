@@ -20,12 +20,12 @@ const footerLinks = [
 		title: "Contact",
 	},
 	{
-		url: "https://github.com/dumbmatter/gm-games",
-		title: "GitHub",
+		url: "https://zengm.com/privacy/",
+		title: "Privacy",
 	},
 	{
-		url: `https://${WEBSITE_ROOT}/privacy-policy/`,
-		title: "Privacy",
+		url: "https://github.com/dumbmatter/gm-games",
+		title: "GitHub",
 	},
 	{
 		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,

@@ -1427,7 +1427,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:ga": {
-			desc: "Goals Aganst",
+			desc: "Goals Against",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},

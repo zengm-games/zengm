@@ -1,3 +1,5 @@
+const { bySport } = require("./buildFuncs");
+
 const genRatings = (sport /*: string*/) => {
 	const properties = {
 		fuzz: {
@@ -30,46 +32,62 @@ const genRatings = (sport /*: string*/) => {
 		},
 	};
 
-	const ratings =
-		sport === "basketball"
-			? [
-					"dnk",
-					"drb",
-					"endu",
-					"fg",
-					"ft",
-					"hgt",
-					"ins",
-					"jmp",
-					"pss",
-					"reb",
-					"spd",
-					"stre",
-					"tp",
-			  ]
-			: [
-					"hgt",
-					"stre",
-					"spd",
-					"endu",
-					"thv",
-					"thp",
-					"tha",
-					"bsc",
-					"elu",
-					"rtr",
-					"hnd",
-					"rbk",
-					"pbk",
-					"pcv",
-					"tck",
-					"prs",
-					"rns",
-					"kpw",
-					"kac",
-					"ppw",
-					"pac",
-			  ];
+	const ratings = bySport({
+		basketball: [
+			"dnk",
+			"drb",
+			"endu",
+			"fg",
+			"ft",
+			"hgt",
+			"ins",
+			"jmp",
+			"pss",
+			"reb",
+			"spd",
+			"stre",
+			"tp",
+		],
+		football: [
+			"hgt",
+			"stre",
+			"spd",
+			"endu",
+			"thv",
+			"thp",
+			"tha",
+			"bsc",
+			"elu",
+			"rtr",
+			"hnd",
+			"rbk",
+			"pbk",
+			"pcv",
+			"tck",
+			"prs",
+			"rns",
+			"kpw",
+			"kac",
+			"ppw",
+			"pac",
+		],
+		hockey: [
+			"hgt",
+			"stre",
+			"spd",
+			"endu",
+			"pss",
+			"wst",
+			"sst",
+			"stk",
+			"oiq",
+			"chk",
+			"blk",
+			"fcf",
+			"diq",
+			"glk",
+		],
+	});
 
 	// These should be validated for their numeric value, but not required because different versions of the schema might not have them
 	const oldRatings = sport === "basketball" ? ["blk", "stl"] : [];
@@ -106,107 +124,135 @@ const generateJSONSchema = (sport /*: string*/) => {
 		.charAt(0)
 		.toUpperCase()}${sport.slice(1)}`;
 
-	const depth = {};
-	if (sport === "football") {
-		depth.depth = {
-			type: "object",
-			properties: {
-				QB: {
-					type: "array",
-					items: {
-						type: "integer",
+	const depth = bySport({
+		basketball: {},
+		football: {
+			depth: {
+				type: "object",
+				properties: {
+					QB: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					RB: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					WR: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					TE: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					OL: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					DL: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					LB: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					CB: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					S: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					K: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					P: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					KR: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					PR: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
 					},
 				},
-				RB: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				WR: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				TE: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				OL: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				DL: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				LB: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				CB: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				S: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				K: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				P: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				KR: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
-				PR: {
-					type: "array",
-					items: {
-						type: "integer",
-					},
-				},
+				required: [
+					"QB",
+					"RB",
+					"WR",
+					"TE",
+					"OL",
+					"DL",
+					"LB",
+					"CB",
+					"S",
+					"K",
+					"P",
+					"KR",
+					"PR",
+				],
 			},
-			required: [
-				"QB",
-				"RB",
-				"WR",
-				"TE",
-				"OL",
-				"DL",
-				"LB",
-				"CB",
-				"S",
-				"K",
-				"P",
-				"KR",
-				"PR",
-			],
-		};
-	}
+		},
+		hockey: {
+			depth: {
+				type: "object",
+				properties: {
+					F: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					D: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					G: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+				},
+				required: ["F", "D", "G"],
+			},
+		},
+	});
 
 	return {
 		$schema: "http://json-schema.org/draft-07/schema#",
@@ -1504,9 +1550,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 									lastTen: {
 										type: "array",
 										items: {
-											type: "integer",
-											minimum: -1,
-											maximum: 1,
+											type: ["integer", "string"],
+											enum: [-1, 0, 1, "OTL"],
 										},
 									},
 									streak: {
@@ -1614,7 +1659,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 										required: ["wins", "playoffs", "money"],
 									},
 									numPlayersTradedAway: {
-										type: "integer",
+										type: "number",
 										minimum: 0,
 									},
 								},

@@ -11,11 +11,11 @@ import orderBy from "lodash/orderBy";
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
-		if (isSport("basketball")) {
-			sum += ps.ows + ps.dws;
-		} else {
-			sum += ps.av;
-		}
+		sum += bySport({
+			basketball: ps.ows + ps.dws,
+			football: ps.av,
+			hockey: ps.dps + ps.ops + ps.gps,
+		});
 	}
 
 	return sum;
@@ -86,7 +86,7 @@ const updateFrivolitiesDraftClasses = async (
 				}
 				if (
 					p.awards.some(award => {
-						if (isSport("football")) {
+						if (isSport("football") || isSport("hockey")) {
 							return award.type.includes("All-League");
 						}
 

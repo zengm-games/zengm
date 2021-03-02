@@ -114,11 +114,11 @@ const rosterAutoSort = async (
 
 					const scoresStartingC = startingC.map(pid => {
 						const p2 = players.find(p3 => p3.pid === pid);
-						return score(p2, "C");
+						return p2 ? score(p2, "C") : -Infinity;
 					});
 					const scoresStartingW = startingW.map(pid => {
 						const p2 = players.find(p3 => p3.pid === pid);
-						return score(p2, "W");
+						return p2 ? score(p2, "W") : -Infinity;
 					});
 
 					const scoreC = score(p, "C");

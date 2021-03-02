@@ -561,8 +561,8 @@ class GameSim {
 		}
 		return (
 			Math.random() <
-			(baseOdds * this.team[this.o].compositeRating.puckControl) /
-				this.team[this.d].compositeRating.takeaway
+			(baseOdds * this.team[this.d].compositeRating.takeaway) /
+				this.team[this.o].compositeRating.puckControl
 		);
 	}
 
@@ -596,6 +596,7 @@ class GameSim {
 			names: [p.name],
 		});
 		this.recordStat(this.o, p, "gv", 1);
+		this.possessionChange();
 	}
 
 	doTakeaway() {

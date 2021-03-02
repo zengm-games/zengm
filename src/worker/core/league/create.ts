@@ -421,12 +421,17 @@ export const createWithoutSaving = async (
 		if (shuffleRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
 			// Check tid to prevent draft prospects from being swapped with established players
-			const playerTids = leagueFile.players
-				.filter(p => p.tid > PLAYER.FREE_AGENT)
-				.map(p => p.tid);
+			const numPlayersToShuffle = leagueFile.players.filter(
+				p => p.tid > PLAYER.FREE_AGENT,
+			).length;
 
-			// Shuffle the teams that players are assigned to.
-			random.shuffle(playerTids);
+			const playerTids = [];
+			while (playerTids.length < numPlayersToShuffle) {
+				// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
+				const shuffled = [...activeTids];
+				random.shuffle(shuffled);
+				playerTids.push(...shuffled);
+			}
 
 			for (const p of leagueFile.players) {
 				p.transactions = [];

@@ -1,6 +1,6 @@
 This is a user-focused changelog. The entries here are things that affect gameplay, not technical details behind the scenes.
 
-* DEV: In BBGM, added support for changing the rate of steals, blocks, turnovers, and offensive rebounds. In historical leagues, they automatically change over time.
+* 2021-03-03: In BBGM, added support for changing the rate of steals, blocks, turnovers, and offensive rebounds. In historical leagues, they automatically change over time. This was done in part because I recently (2021-02-20) changed the default steal rate to be 10% lower than it was before, which some people did not like. [[1]](https://old.reddit.com/r/BasketballGM/comments/lwm2eg/version_202103030313_added_support_for_changing/)
 
 * **2021-03-02: ZenGM Hockey is here! [[1]](https://hockey.zengm.com/) [[2]](https://old.reddit.com/r/ZenGMHockey/comments/lw79il/oh_shit_new_zengm_hockey_out_now_the_past_6_years/)**
 

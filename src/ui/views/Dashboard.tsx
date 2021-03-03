@@ -17,6 +17,13 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
 import type { View } from "../../common/types";
 
+// Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
+const randomOtherSport = bySport({
+	basketball: Math.random() < 0.5 ? "football" : "hockey",
+	football: Math.random() < 0.5 ? "basketball" : "hockey",
+	hockey: Math.random() < 0.5 ? "basketball" : "football",
+});
+
 const difficultyText = (difficulty: number | undefined) => {
 	let prevText: string | undefined;
 
@@ -323,11 +330,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
-	const randomOtherSport = bySport({
-		basketball: Math.random() < 0.5 ? "football" : "hockey",
-		football: Math.random() < 0.5 ? "basketball" : "hockey",
-		hockey: Math.random() < 0.5 ? "basketball" : "football",
-	});
 	const otherSportsText = bySport({
 		basketball: "football and hockey",
 		football: "basketball and hockey",

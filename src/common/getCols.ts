@@ -2065,6 +2065,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"count:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"count:goy": {
 		desc: "Goalie of the Year",
 		sortSequence: ["desc", "asc"],
@@ -2486,6 +2491,7 @@ const titleOverrides = {
 	"count:bestRecord": "BR",
 	"count:bestRecordConf": "BRC",
 	"count:dpoy": "DPOY",
+	"count:dfoy": "DFOY",
 	"count:goy": "GOY",
 	"count:mip": "MIP",
 	"count:mvp": "MVP",

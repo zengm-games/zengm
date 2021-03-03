@@ -52,6 +52,13 @@ const getBest = <T extends PlayerWithoutKey>(
 			shouldAddPlayerPosition = true;
 		}
 
+		// Otherwise hockey had an issue with signing and releasing a 3rd goalie repeatedly
+		if (isSport("hockey")) {
+			shouldAddPlayerPosition =
+				shouldAddPlayerPosition &&
+				playersOnRoster.length < g.get("maxRosterSize");
+		}
+
 		// Don't sign minimum contract players to fill out the roster
 		if (
 			shouldAddPlayerNormal ||

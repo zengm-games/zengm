@@ -34,7 +34,7 @@ const updatePlayers = async (
 
 		let stats = undefined;
 		let statType: PlayerStatType = "perGame";
-		if (isSport("football")) {
+		if (isSport("football") || isSport("hockey")) {
 			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
 		} else {
 			if (inputs.statType === "advanced") {
@@ -57,7 +57,7 @@ const updatePlayers = async (
 			season: inputs.season,
 			statType: statType,
 		});
-		if (isSport("football")) {
+		if (isSport("football") || isSport("hockey")) {
 			const statTable = PLAYER_STATS_TABLES[inputs.statType];
 			const onlyShowIf = statTable.onlyShowIf as string[];
 			players = players.filter(p => {

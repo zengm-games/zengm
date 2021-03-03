@@ -58,7 +58,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	returns: "Returns",
 	champion: "Won Championship",
 	mvp: "Most Valuable Player",
-	finals_mvp: "Finals MVP",
+	finals_mvp: isSport("hockey") ? "Playoffs MVP" : "Finals MVP",
 	dpoy: "Defensive Player of the Year",
 	dfoy: "Defensive Forward of the Year",
 	goy: "Goalie of the Year",

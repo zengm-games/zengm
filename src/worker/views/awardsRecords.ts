@@ -141,7 +141,7 @@ const optionsTmp = bySport({
 			key: "mvp",
 		},
 		{
-			val: "Finals MVP",
+			val: "Playoffs MVP",
 			key: "finals_mvp",
 		},
 		{
@@ -200,8 +200,8 @@ type LocalPlayer = {
 
 function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	const aType = awardOptions[awardType];
-	let filter;
 
+	let filter;
 	if (awardType === "all_league") {
 		filter = (a: LocalPlayerAward) => {
 			const o = awardOptions;

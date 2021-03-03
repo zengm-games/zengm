@@ -701,7 +701,9 @@ class GameSim {
 
 		let deflector;
 		if ((type === "slapshot" || type === "wristshot") && Math.random() < 0.05) {
-			deflector = this.pickPlayer(this.o, "playmaker", ["C", "W"]);
+			deflector = this.pickPlayer(this.o, "playmaker", ["C", "W"], 1, [
+				shooter,
+			]);
 			if (deflector) {
 				this.playByPlay.logEvent({
 					type: "deflection",

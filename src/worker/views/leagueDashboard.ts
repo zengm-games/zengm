@@ -82,7 +82,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pssYdsPerGame",
 				"rusYdsPerGame",
 			] as const,
-			hockey: ["g", "a"] as const,
+			hockey: ["g", "oppG"] as const,
 		});
 		const statNames = bySport({
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],

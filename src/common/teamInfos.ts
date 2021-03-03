@@ -54,7 +54,7 @@ const teamInfos: {
 		region: "Charlotte",
 		name: "Queens",
 		pop: 1.5,
-		colors: ["#009e87", "#541f3e", "#ffffff"],
+		colors: ["#009e87", "#541f3e", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey3",
 			default: DEFAULT_JERSEY,
@@ -74,7 +74,7 @@ const teamInfos: {
 		region: "Cincinnati",
 		name: "Riots",
 		pop: 1.6,
-		colors: ["#000000", "#c11616", "#2966ef"],
+		colors: ["#222222", "#c11616", "#2966ef"],
 		jersey: bySport({
 			basketball: "jersey2",
 			default: DEFAULT_JERSEY,
@@ -94,7 +94,7 @@ const teamInfos: {
 		region: "Dallas",
 		name: "Snipers",
 		pop: 6.6,
-		colors: ["#be2026", "#2b2e81", "#ffffff"],
+		colors: ["#be2026", "#2b2e81", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey3",
 			default: DEFAULT_JERSEY,
@@ -124,7 +124,7 @@ const teamInfos: {
 		region: "Houston",
 		name: "Apollos",
 		pop: 6.2,
-		colors: ["#4c91c2", "#c4c4c3", "#ffffff"],
+		colors: ["#4c91c2", "#c4c4c3", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey4",
 			default: DEFAULT_JERSEY,
@@ -134,7 +134,7 @@ const teamInfos: {
 		region: "Indianapolis",
 		name: "Crossroads",
 		pop: 1.6,
-		colors: ["#e79f02", "#00246d", "#ffffff"],
+		colors: ["#e79f02", "#00246d", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey4",
 			default: DEFAULT_JERSEY,
@@ -184,7 +184,7 @@ const teamInfos: {
 		region: "Memphis",
 		name: "Blues",
 		pop: 1.3,
-		colors: ["#000000", "#ff6c49", "#00aedc"],
+		colors: ["#222222", "#ff6c49", "#00aedc"],
 		jersey: bySport({
 			basketball: "jersey4",
 			default: DEFAULT_JERSEY,
@@ -254,7 +254,7 @@ const teamInfos: {
 		region: "New York",
 		name: "Bankers",
 		pop: 21.5,
-		colors: ["#1e73ba", "#ff8500", "#ffffff"],
+		colors: ["#1e73ba", "#ff8500", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey5",
 			default: DEFAULT_JERSEY,
@@ -274,7 +274,7 @@ const teamInfos: {
 		region: "Orlando",
 		name: "Juice",
 		pop: 2.2,
-		colors: ["#dc5000", "#ffffff", "#0b7648"],
+		colors: ["#dc5000", "#f9f9f9", "#0b7648"],
 		jersey: bySport({
 			basketball: "jersey2",
 			default: DEFAULT_JERSEY,
@@ -344,7 +344,7 @@ const teamInfos: {
 		region: "San Diego",
 		name: "Pandas",
 		pop: 4.7,
-		colors: ["#231f20", "#ffffff", "#b2b3b3"],
+		colors: ["#231f20", "#f9f9f9", "#b2b3b3"],
 		jersey: bySport({
 			basketball: "jersey5",
 			default: DEFAULT_JERSEY,
@@ -354,7 +354,7 @@ const teamInfos: {
 		region: "Seattle",
 		name: "Symphony",
 		pop: 3.8,
-		colors: ["#47ff47", "#000000", "#8f8f8f"],
+		colors: ["#47ff47", "#222222", "#8f8f8f"],
 		jersey: bySport({
 			basketball: "jersey4",
 			default: DEFAULT_JERSEY,
@@ -404,7 +404,7 @@ const teamInfos: {
 		region: "Utah",
 		name: "Missionaries",
 		pop: 2.3,
-		colors: ["#7c7c7c", "#000000", "#aea57a"],
+		colors: ["#7c7c7c", "#222222", "#aea57a"],
 		jersey: bySport({
 			basketball: "jersey4",
 			default: DEFAULT_JERSEY,
@@ -424,7 +424,7 @@ const teamInfos: {
 		region: "Washington",
 		name: "Monuments",
 		pop: 6.2,
-		colors: ["#213063", "#c5ae6e", "#ffffff"],
+		colors: ["#213063", "#c5ae6e", "#f9f9f9"],
 		jersey: bySport({
 			basketball: "jersey3",
 			default: DEFAULT_JERSEY,

@@ -19,12 +19,14 @@ const league = require(process.argv[3]);
 let currentSeason;
 if (league.hasOwnProperty("startingSeason")) {
 	currentSeason = league.startingSeason;
-} else if (league.gameAttributes) {
+} else if (Array.isArray(league.gameAttributes)) {
 	for (const { key, value } of league.gameAttributes) {
 		if (key === "startingSeason") {
 			currentSeason = value;
 		}
 	}
+} else if (league.gameAttributes) {
+	currentSeason = league.gameAttributes.startingSeason;
 }
 
 if (typeof currentSeason !== "number" || Number.isNaN(targetSeason)) {
@@ -43,10 +45,16 @@ if (league.events) {
 }
 
 const gameAttributes = ["gracePeriodEnd", "season", "startingSeason"];
-if (league.gameAttributes) {
+if (Array.isArray(league.gameAttributes)) {
 	for (const ga of league.gameAttributes) {
 		if (gameAttributes.includes(ga.key) && typeof ga.value === "number") {
 			ga.value += diff;
+		}
+	}
+} else if (league.gameAttributes) {
+	for (const key of gameAttributes) {
+		if (typeof league.gameAttributes[key] === "number") {
+			league.gameAttributes[key] += diff;
 		}
 	}
 }

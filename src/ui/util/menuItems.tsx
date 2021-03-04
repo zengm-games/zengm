@@ -486,7 +486,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				league: true,
 				nonLeague: true,
-				path: "http://basketball-gm.com/changelog/",
+				path: "https://zengm.com/changelog/",
 				text: "Changelog",
 			},
 		],

@@ -105,28 +105,30 @@ const AwardsAndChamp = ({
 					<p>???</p>
 				)}
 				<h2>Best Record</h2>
-				{awards.bestRecordConfs.map((t: any, i: number) =>
-					t !== undefined ? (
-						<p key={t.tid}>
-							{confs[i].name}:<br />
-							<span className={t.tid === userTid ? "table-info" : undefined}>
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${t.abbrev}_${t.tid}`,
-										season,
-									])}
-								>
-									{t.region} {t.name}
-								</a>{" "}
-								({t.won}-{t.lost}
-								{t.otl !== undefined && t.otl > 0 ? <>-{t.otl}</> : null}
-								{t.tied !== undefined && t.tied > 0 ? <>-{t.tied}</> : null})
-							</span>
-							<br />
-						</p>
-					) : null,
-				)}
+				{awards.bestRecordConfs
+					.filter((a: any) => a !== undefined)
+					.map((t: any, i: number) =>
+						t !== undefined ? (
+							<p key={t.tid}>
+								{confs[i].name}:<br />
+								<span className={t.tid === userTid ? "table-info" : undefined}>
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${t.abbrev}_${t.tid}`,
+											season,
+										])}
+									>
+										{t.region} {t.name}
+									</a>{" "}
+									({t.won}-{t.lost}
+									{t.otl !== undefined && t.otl > 0 ? <>-{t.otl}</> : null}
+									{t.tied !== undefined && t.tied > 0 ? <>-{t.tied}</> : null})
+								</span>
+								<br />
+							</p>
+						) : null,
+					)}
 				<h2>{AWARD_NAMES.mvp}</h2>
 				<Winner award={awards.mvp} season={season} userTid={userTid} />
 			</div>

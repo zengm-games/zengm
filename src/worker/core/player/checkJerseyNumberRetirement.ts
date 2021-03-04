@@ -7,7 +7,7 @@ import { getThreshold } from "./madeHof.football";
 
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 12;
 
-const getValueStatsRow = (ps: any) => {
+export const getValueStatsRow = (ps: any) => {
 	return bySport({
 		basketball: (() => {
 			let value = 0;

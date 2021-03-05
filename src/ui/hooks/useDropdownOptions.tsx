@@ -108,6 +108,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	skater: "Skaters",
 	goalie: "Goalies",
 	"all|||playoffsAll": "All Games",
+	current: "Current",
 };
 
 if (isSport("hockey")) {
@@ -172,6 +173,7 @@ const useDropdownOptions = (field: string) => {
 		field === "seasons" ||
 		field === "seasonsAndCareer" ||
 		field === "seasonsAndAll" ||
+		field === "seasonsAndCurrent" ||
 		field === "seasonsAndOldDrafts" ||
 		field === "seasonsHistory"
 	) {
@@ -187,6 +189,10 @@ const useDropdownOptions = (field: string) => {
 
 		if (field === "seasonsAndAll") {
 			keys.unshift("all|||seasons");
+		}
+
+		if (field === "seasonsAndCurrent") {
+			keys.unshift("current");
 		}
 
 		if (field === "seasonsAndOldDrafts") {

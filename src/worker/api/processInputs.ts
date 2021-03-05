@@ -300,6 +300,36 @@ const history = (params: Params) => {
 	};
 };
 
+const injuries = (params: Params) => {
+	let season: number | "current";
+
+	if (params.season && params.season !== "current") {
+		season = validateSeason(params.season);
+	} else {
+		season = "current";
+	}
+
+	let abbrev;
+	let tid: number | undefined;
+
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev && params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		season,
+		tid,
+	};
+};
+
 const leaders = (params: Params) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
@@ -744,6 +774,7 @@ export default {
 	headToHead,
 	headToHeadAll,
 	history,
+	injuries,
 	leaders,
 	leagueFinances: validateSeasonOnly,
 	leagueStats,

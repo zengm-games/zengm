@@ -257,6 +257,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "injuries",
+				league: true,
+				path: ["injuries"],
+				text: "Injuries",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "playerFeats",
 				league: true,
 				path: ["player_feats"],

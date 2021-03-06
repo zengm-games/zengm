@@ -32,11 +32,11 @@ const Injuries = ({
 		"Pot Drop",
 	);
 
-	const rows = injuries.map(p => {
+	const rows = injuries.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
-			key: p.pid,
+			key: season === "current" ? p.pid : i,
 			data: [
 				<PlayerNameLabels pid={p.pid} skills={p.ratings.skills} watch={p.watch}>
 					{p.name}

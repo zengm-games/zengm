@@ -2118,7 +2118,7 @@ const cols: {
 		sortType: "name",
 	},
 	"award:finalsMvp": {
-		desc: "Finals Most Valuable Player",
+		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
 		sortType: "name",
 	},
 	"award:mip": {
@@ -2502,7 +2502,7 @@ const titleOverrides = {
 	"award:dpoy": "DPOY",
 	"award:dfoy": "DFOY",
 	"award:goy": "GOY",
-	"award:finalsMvp": "Finals MVP",
+	"award:finalsMvp": `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
 	"award:mip": "MIP",
 	"award:mvp": "MVP",
 	"award:roy": "ROY",

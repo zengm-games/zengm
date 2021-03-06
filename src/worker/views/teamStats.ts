@@ -209,12 +209,12 @@ const updateTeams = async (
 			],
 			hockey: [
 				"lost",
+				"pim",
 				"fol",
 				"gv",
 				"gaa",
 				"oppG",
 				"oppA",
-				"oppPim",
 				"oppEvG",
 				"oppPpG",
 				"oppShG",

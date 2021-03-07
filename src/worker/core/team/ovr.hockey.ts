@@ -15,7 +15,6 @@ export const getPlayersInLines = <
 >(
 	players: T[],
 ) => {
-	console.log(players);
 	const info = {
 		C: {
 			selected: [] as T[],

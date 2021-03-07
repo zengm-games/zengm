@@ -245,6 +245,7 @@ const doAwards = async (conditions: Conditions) => {
 				"tid",
 				"jerseyNumber",
 			],
+			ratings: ["pos"],
 			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
@@ -254,15 +255,20 @@ const doAwards = async (conditions: Conditions) => {
 		// For symmetry with players array
 		for (const p of champPlayers) {
 			p.currentStats = p.stats;
+			p.pos = p.ratings.pos;
 		}
 
 		// In hockey, it's the MVP of the playoffs, not just the finals
-		[finalsMvp] = getTopPlayers(
+		const p = getTopPlayers(
 			{
 				score: mvpScore,
 			},
 			champPlayers,
-		).map(getPlayerInfo);
+		)[0];
+
+		if (p) {
+			finalsMvp = getPlayerInfo(p);
+		}
 	}
 
 	const awards: Awards = {

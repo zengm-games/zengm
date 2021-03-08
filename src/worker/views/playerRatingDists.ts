@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, RATINGS } from "../../common";
+import { PHASE, PLAYER, RATINGS, bySport } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -27,8 +27,14 @@ const updatePlayers = async (
 			});
 		}
 
+		const extraRatings = bySport({
+			basketball: [],
+			football: ["ovrs", "pots"],
+			hockey: ["ovrs", "pots"],
+		});
+
 		players = await idb.getCopies.playersPlus(players, {
-			ratings: ["ovr", "ovrs", "pot", "pots", ...RATINGS],
+			ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
 			season: inputs.season,
 			showNoStats: true,
 			showRookies: true,

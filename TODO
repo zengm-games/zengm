@@ -214,6 +214,11 @@ trade filters
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
 
+force resign button under lock ratings, keep a man on one team
+- hard cap
+- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
+- @dooby moogey#2784
+
 award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
 - support adding custom awards
@@ -347,11 +352,6 @@ show ovr when live editing a player's ratings
 
 more variation in pace plz @nicidob
 - https://discord.com/channels/290013534023057409/290015468939640832/780515737139150890
-
-force resign button under lock ratings, keep a man on one team
-- hard cap
-- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
-- @dooby moogey#2784
 
 how to stop 2p from beign a negative rating
 - @nicidob says: basic summary: it's used only in "usage", but it's a small part of that, and "shoot midrange". Well... shoot midrange is like 0.8 to 0.9 PPS, while Dunks and 3s are 1.2 and 1.1 PPS. Sure, actual ratings shift the %s, but i'm not sure how extreme it'd have to get before your MR PPS isn't the "worst possible shot". So the 2p setting basically is "how likely are you to take the worst possible shot". My idea is to make the mid-range more of a "leftover"... if your 3p or dunk or LP isn't high enough, it gets picked. then higher 2p is just higher MR accuracy and its negative effect is gone. Then you can era-adjust the default
@@ -642,9 +642,6 @@ import/export players
   - import
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
-
-GM summary screen
-- https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
 
 scheduled events editor
 - eventually add/edit/delete individual events
@@ -1466,11 +1463,6 @@ advanced team stats
   - use https://www.npmjs.com/package/linear-solve to solve
 - team ortg/drtg/nrtg adjusted for strength of schedule
 
-box plus/minus
-- https://www.basketball-reference.com/about/bpm2.html
-- http://www.apbr.org/metrics/viewtopic.php?p=35755#p35755
-- VORP
-
 advanced stat table too confusing? needs vertical dividers/spacing?
 
 use something besides PER in player value formula
@@ -1599,9 +1591,6 @@ make FAs less eager to sign with bad teams
 
 newScheduleCrappy should be better
 
-international names
-  accurate faces (race)
-
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
 more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
@@ -1663,8 +1652,6 @@ no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/sta
 
 compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
   add subtype or something to feats
-
-expansion/contraction
 
 DEATH
   types

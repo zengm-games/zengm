@@ -143,9 +143,6 @@ option to exclude notable games box scores from deletion
 - finals
 - games involving your team
 
-Thanos custom mode: Half the league dies at the start of every season @myst#9056
-- setting should be a % chance for each year
-
 name/colleges revamp
 - races
   - some way to validate that all countries have races, and vice versa
@@ -216,6 +213,11 @@ trade filters
 - https://old.reddit.com/r/BasketballGM/comments/kksxpp/proposal_trade_filters/
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
+
+force resign button under lock ratings, keep a man on one team
+- hard cap
+- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
+- @dooby moogey#2784
 
 award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
@@ -390,11 +392,6 @@ trade balancing
 - FBGM should not demand as much in 2 for 1 trades? https://discord.com/channels/@me/696164463312764949/776342790586105877
 - https://old.reddit.com/r/BasketballGM/comments/k3339l/the_cpus_lack_of_value_for_draft_picks_is/
 
-force resign button under lock ratings, keep a man on one team
-- hard cap
-- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
-- @dooby moogey#2784
-
 soccer-style team names
 - instead of region and name, it's short name and long name
 - abstract any display of team name/region to handle this
@@ -416,9 +413,6 @@ genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
 
 schedule editor
-
-star icon next to year player was all star
-- maybe championship and mvp too?
 
 start in any phase
 - later
@@ -649,9 +643,6 @@ import/export players
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
 
-GM summary screen
-- https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
-
 scheduled events editor
 - eventually add/edit/delete individual events
   - needs to handle tids, like already happens for adding/removing teams
@@ -770,7 +761,6 @@ way to save/load leagues on server
 
 god mode stuff
 - more stuff on player editor
-- awards editor
 - pick all stars, and captains
 - edit list of injuries, deaths
 
@@ -847,8 +837,6 @@ manually specify draft order in god mode
 - dropdown to force lottery winners
   - would need to deal with coin flips for ties not making the top N reliable
 
-add logos to league history table?
-
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
@@ -887,8 +875,6 @@ what would it really cost to store all game sim results?
 better changelog
 - everything from CHANGELOG.made
 - show in modal
-
-way to clone a player
 
 way to bookmark trades
 
@@ -963,10 +949,6 @@ game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/
   - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
 - ask what kind of players are not common enough
-
-gm history page
-- like team history, but for the teams you GMed
-- allow switching after season without getting fired
 
 some kind of global status/finances menu, above titlebar
 - EVENTUALLY
@@ -1217,8 +1199,6 @@ Also I wonder if there is a way to present a player's value in regards to the po
 Finally I saw dumbmatter mention this in the initial post, but there really should be guaranteed rookie contracts. They are basically standard in the NFL and I don't see why a simulation wouldn't mirror this. Just feels weird all my players only want 2 year contracts when they are usually stuck with the team for 4 years at least. Just some initial thoughts, great work overall!
 
 keyStats for OL should not show tiny # of tackles
-
-Great players retire too early
 
 rookie contracts too high still?
 
@@ -1483,11 +1463,6 @@ advanced team stats
   - use https://www.npmjs.com/package/linear-solve to solve
 - team ortg/drtg/nrtg adjusted for strength of schedule
 
-box plus/minus
-- https://www.basketball-reference.com/about/bpm2.html
-- http://www.apbr.org/metrics/viewtopic.php?p=35755#p35755
-- VORP
-
 advanced stat table too confusing? needs vertical dividers/spacing?
 
 use something besides PER in player value formula
@@ -1616,9 +1591,6 @@ make FAs less eager to sign with bad teams
 
 newScheduleCrappy should be better
 
-international names
-  accurate faces (race)
-
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
 more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
@@ -1680,8 +1652,6 @@ no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/sta
 
 compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
   add subtype or something to feats
-
-expansion/contraction
 
 DEATH
   types

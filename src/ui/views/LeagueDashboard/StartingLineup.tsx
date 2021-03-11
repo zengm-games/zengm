@@ -22,7 +22,8 @@ const StartingLineup = ({
 	return (
 		<>
 			<h2>
-				{isSport("basketball") && numPlayersOnCourt >= starters.length
+				{(isSport("basketball") && numPlayersOnCourt >= starters.length) ||
+				(isSport("hockey") && numPlayersOnCourt === starters.length)
 					? "Starting Lineup"
 					: "Top Players"}
 			</h2>

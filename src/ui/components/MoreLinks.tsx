@@ -115,7 +115,7 @@ const MoreLinks = (
 		if (isSport("football") || isSport("hockey")) {
 			links.unshift({
 				url: ["depth", `${abbrev}_${tid}`],
-				name: "Depth Chart",
+				name: isSport("hockey") ? "Lines" : "Depth Chart",
 			});
 		}
 

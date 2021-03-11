@@ -80,7 +80,7 @@ const Depth = ({
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({
-		title: "Depth Chart",
+		title: isSport("hockey") ? "Lines" : "Depth Chart",
 		dropdownView: "depth",
 		dropdownFields: { teams: abbrev, depth: pos },
 		moreInfoAbbrev: abbrev,

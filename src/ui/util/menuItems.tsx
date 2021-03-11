@@ -7,7 +7,7 @@ const depthChart: MenuItemLink = {
 	active: pageID => pageID === "depth",
 	league: true,
 	path: ["depth"],
-	text: "Depth Chart",
+	text: isSport("hockey") ? "Lines" : "Depth Chart",
 };
 
 const scheduledEvents: MenuItemLink = {

@@ -13,8 +13,9 @@
 	},
 	"scripts": {
 		"start": "node tools/server.js",
-		"build": "yarn run lint && yarn test && node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
-		"deploy": "yarn run build && node tools/deploy.js",
+		"build": "node tools/build.js",
+		"deploy": "yarn run lint && yarn test && node tools/deploy.js",
+		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.js",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
 		"watch": "node tools/watch.js",
 		"lint": "concurrently --raw \"yarn run lint-js\" \"yarn run lint-ts\"",

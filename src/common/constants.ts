@@ -322,8 +322,14 @@ const JERSEYS = bySport({
 		football: "Default",
 		football2: "Shoulder flair",
 		football3: "Shoulder stripes",
+		football4: "Low flair",
 	},
-	hockey: { hockey: "Default" },
+	hockey: {
+		hockey: "Stripe",
+		hockey3: "Stripe 2",
+		hockey4: "Stripe 3",
+		hockey2: "Plain",
+	},
 });
 
 export {

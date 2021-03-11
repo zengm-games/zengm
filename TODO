@@ -1,4 +1,14 @@
+update rosters
+
+hockey dashboard, show starters, not top players https://discord.com/channels/290013534023057409/331882115119448065/818336872366342165
+
+add more worker console docs
+- https://discord.com/channels/290013534023057409/290015468939640832/819264526729478174
+- https://discord.com/channels/@me/737113743640625224/819262565032656916
+
 trade filter PR
+
+daily score summary https://discord.com/channels/@me/790622657284014120/818668678757089280
 
 New bug: if you have a pop-up window open with the roster page or whatever, and you collapsed the score bar on that, you still get the little notifications for scores in the corner even on the main window where the score bar is showing
 - also, trade in multiple windows
@@ -26,6 +36,9 @@ hockey
 - make rookies tradable after signing https://discord.com/channels/290013534023057409/816359356424912976/816478079856672779
 - factor injuries into pickPlayer formula - make them much less likely to do stuff
 - ovr PR
+- https://old.reddit.com/r/ZenGMHockey/comments/m1iow3/features_id_like_to_see_added/
+- in Hockey gm live sim prob should have 5M instead of 6 https://discord.com/channels/290013534023057409/290015591216054273/818616908734922792
+- sorting 0 toi https://discord.com/channels/290013534023057409/290015591216054273/818731278202437682
 
 search broken on most lopsided trades frivolity https://discord.com/channels/290013534023057409/290015591216054273/815062930525519893
 
@@ -59,7 +72,7 @@ add standings options
 load balancing
 - in hockey - goalie rest days
 - some probability that a player needs a day off after a game, based on their endurance rating
-  - if not given, decrease performance
+  - if not given, decrease performance (hockey goalies only?)
 - only in regular season
 - some way for user to set amount - could want to do more than is strictly needed, like for injuries or tanking
   - would need to influence mood if done too much or too little
@@ -464,6 +477,7 @@ GM face in team history page
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
 - https://old.reddit.com/r/BasketballGM/comments/ir5rbf/suggestions_for_finances_overhaul/
+- make it clear how much profit the owner wants per year
 
 redo mood system
 - some way to see how it changes during FA - show probability? show # days until willing? https://old.reddit.com/r/BasketballGM/comments/iuluuj/the_new_player_mood_system_is_now_live_in_version/g5mgi31/
@@ -1659,6 +1673,7 @@ DEATH
       give extra draft picks as compensation?
         what would the nba do?
       reset owner mood, new owner message
+      https://old.reddit.com/r/BasketballGM/comments/m087u6/could_we_get_something_like_this_as_an_extremely/
 
 screenshot
   what do i link to? Imgur landing page? or include social links directly?

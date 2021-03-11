@@ -29,6 +29,18 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 			}
 
 			if (typeof sortVal === "string") {
+				if (sortVal === "--:--") {
+					// Sort below 0
+					return -Infinity;
+				}
+
+				if (sortVal.includes(":")) {
+					const parts = sortVal.split(":");
+					const minutes = parseInt(parts[0]);
+					const seconds = parseInt(parts[1]);
+					return minutes + seconds / 60;
+				}
+
 				sortVal = sortVal.replace(/,/g, "");
 			}
 

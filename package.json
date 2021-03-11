@@ -14,7 +14,7 @@
 	"scripts": {
 		"start": "node tools/server.js",
 		"build": "node tools/build.js",
-		"deploy": "yarn run lint && yarn test && node tools/deploy.js",
+		"deploy": "node tools/deploy.js",
 		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.js",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
 		"watch": "node tools/watch.js",

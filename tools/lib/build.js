@@ -6,13 +6,15 @@ const buildJS = require("./build-js");
 const buildSW = require("./build-sw");
 
 module.exports = async () => {
-	console.log(`Building ${getSport()}...`);
+	const sport = getSport();
+
+	console.log(`Building ${sport}...`);
 
 	build.reset();
 	build.copyFiles();
 	build.buildCSS();
 
-	const jsonSchema = generateJSONSchema(getSport());
+	const jsonSchema = generateJSONSchema(sport);
 	fs.mkdirSync("build/files", { recursive: true });
 	fs.writeFileSync(
 		"build/files/league-schema.json",

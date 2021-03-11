@@ -9,11 +9,11 @@ const terser = require("rollup-plugin-terser").terser;
 const visualizer = require("rollup-plugin-visualizer");
 const getSport = require("./getSport");
 
-const sport = getSport();
-
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
 module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
+	const sport = getSport();
+
 	// This gets used in babel.config.js, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
 	if (nodeEnv !== "test") {
 		process.env.NODE_ENV = nodeEnv;

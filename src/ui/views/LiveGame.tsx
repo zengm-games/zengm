@@ -11,7 +11,7 @@ import {
 } from "react";
 import { BoxScoreRow, BoxScoreWrapper, Confetti } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { processLiveGameEvents, toWorker } from "../util";
+import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
 import { bySport, getPeriodName, isSport } from "../../common";
@@ -334,28 +334,37 @@ const LiveGame = (props: View<"liveGame">) => {
 			setPlayIndex(prev => prev + numPlays);
 		};
 
-		const menuItems = [
+		const skipMinutes = [
 			{
-				label: "1 minute",
+				minutes: 1,
 				key: "O",
-				onClick: () => {
-					playSeconds(60);
-				},
 			},
 			{
-				label: "3 minutes",
+				minutes: helpers.bound(
+					Math.round(props.quarterLength / 4),
+					1,
+					Infinity,
+				),
 				key: "T",
-				onClick: () => {
-					playSeconds(60 * 3);
-				},
 			},
 			{
-				label: "6 minutes",
+				minutes: helpers.bound(
+					Math.round(props.quarterLength / 2),
+					1,
+					Infinity,
+				),
 				key: "S",
-				onClick: () => {
-					playSeconds(60 * 6);
-				},
 			},
+		];
+
+		const menuItems = [
+			...skipMinutes.map(({ minutes, key }) => ({
+				label: `${minutes} minute${minutes === 1 ? "" : "s"}`,
+				key,
+				onClick: () => {
+					playSeconds(60 * minutes);
+				},
+			})),
 			{
 				label: `End of ${
 					boxScore.current.elamTarget !== undefined

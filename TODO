@@ -1,3 +1,5 @@
+adjust MVP formula for GPS now that subs play
+
 add more worker console docs
 - https://discord.com/channels/290013534023057409/290015468939640832/819264526729478174
 - https://discord.com/channels/@me/737113743640625224/819262565032656916
@@ -55,14 +57,6 @@ add standings options
 - playoffsByConference
 - divisionLeadersFirstPlayoffs
   - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
-
-load balancing
-- in hockey - goalie rest days
-- some probability that a player needs a day off after a game, based on their endurance rating
-  - if not given, decrease performance (hockey goalies only?)
-- only in regular season
-- some way for user to set amount - could want to do more than is strictly needed, like for injuries or tanking
-  - would need to influence mood if done too much or too little
 
 average team age on roster page
 

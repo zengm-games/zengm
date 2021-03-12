@@ -4,6 +4,7 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
+import maxBy from "lodash/maxBy";
 
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
@@ -253,6 +254,7 @@ const writePlayerStats = async (
 
 		for (let i = 0; i < result.team.length; i++) {
 			const t = result.team[i];
+			let goaliePID: number | undefined;
 
 			// This needs to be before checkStatisticalFeat
 			if (isSport("hockey")) {
@@ -261,6 +263,12 @@ const writePlayerStats = async (
 				// As in NHL, shutout only is credited if a single goalie plays the whole game
 				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
 					goalies[0].stat.so = 1;
+				}
+
+				// Goalie who played the most minutes counts towards numConsecutiveGamesG, the rest get reset
+				const goalie = maxBy(goalies, (p: any) => p.stat.min);
+				if (goalie) {
+					goaliePID = goalie.id;
 				}
 
 				// Check for gwG/gwA - can only be done by looking at complete scoring log for the game, since we're looking for the goal that is one more than what the losing team had in the game
@@ -292,7 +300,11 @@ const writePlayerStats = async (
 
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
-				if (!isSport("basketball") && p.stat.min === 0) {
+				const updatePlayer =
+					(isSport("hockey") && p.pos === "G") ||
+					isSport("basketball") ||
+					p.stat.min > 0;
+				if (!updatePlayer) {
 					continue;
 				}
 
@@ -335,6 +347,17 @@ const writePlayerStats = async (
 				const p2 = await idb.cache.players.get(p.id);
 				if (!p2) {
 					throw new Error("Invalid pid");
+				}
+
+				if (isSport("hockey")) {
+					if (p2.pid === goaliePID) {
+						if (p2.numConsecutiveGamesG === undefined) {
+							p2.numConsecutiveGamesG = 0;
+						}
+						p2.numConsecutiveGamesG += 1;
+					} else if (p2.numConsecutiveGamesG !== undefined) {
+						p2.numConsecutiveGamesG = 0;
+					}
 				}
 
 				if (!allStarGame) {

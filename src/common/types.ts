@@ -976,6 +976,9 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	watch: boolean;
 	weight: number;
 	yearsFreeAgent: number;
+
+	// Only for hockey goalies
+	numConsecutiveGamesG?: number;
 };
 
 export type Player<PlayerRatings = any> = {

@@ -28,6 +28,7 @@ export type PlayerGameSim = {
 	injured: boolean;
 	ptModifier: number;
 	ovrs: Record<Position, number>;
+	numConsecutiveGamesG?: number;
 };
 
 export type PlayersOnIce = Record<Position, PlayerGameSim[]>;

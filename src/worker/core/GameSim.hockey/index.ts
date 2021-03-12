@@ -209,6 +209,27 @@ class GameSim {
 			for (const pos of ["G", "D"] as const) {
 				const players = this.team[t].depth[pos];
 
+				// Handle rest days for goalie
+				if (pos === "G" && g.get("phase") !== PHASE.PLAYOFFS) {
+					const starter = players.find(p => !p.injured);
+					if (
+						starter &&
+						starter.numConsecutiveGamesG !== undefined &&
+						starter.numConsecutiveGamesG > 1
+					) {
+						// Swap starter and backup, if appropriate based on composite rating
+						const backup = players.find(p => !p.injured && p !== starter);
+						if (
+							backup &&
+							backup.compositeRating.goalkeeping >
+								starter.compositeRating.goalkeeping
+						) {
+							players[0] = backup;
+							players[1] = starter;
+						}
+					}
+				}
+
 				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
 
 				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
@@ -772,10 +793,13 @@ class GameSim {
 				(helpers.bound(shotQualityFactor, 0.3, 0.9) - 0.3) * (2 / 0.6) - 1;
 			const shotQualityProbComponent2 = -0.025 * shotQualityProbComponent; // -0.025 to 0.025
 
-			const TO_FIX = goalie.compositeRating.goalkeeping;
-
 			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
-			if (r < 0.9 + shotQualityProbComponent2 + TO_FIX * 0.07) {
+			if (
+				r <
+				0.9 +
+					shotQualityProbComponent2 +
+					goalie.compositeRating.goalkeeping * 0.07
+			) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
 				this.playByPlay.logEvent({

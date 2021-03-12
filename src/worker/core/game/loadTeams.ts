@@ -1,8 +1,8 @@
 import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS, isSport } from "../../../common";
+import { COMPOSITE_WEIGHTS, isSport, PHASE } from "../../../common";
 
 const processTeam = (
 	teamInput: {
@@ -118,6 +118,28 @@ const processTeam = (
 				COMPOSITE_WEIGHTS[k].weights,
 				false,
 			);
+
+			if (
+				isSport("hockey") &&
+				k === "goalkeeping" &&
+				g.get("phase") !== PHASE.PLAYOFFS
+			) {
+				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
+				if (p.numConsecutiveGamesG !== undefined) {
+					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
+				}
+
+				if (numConsecutiveGamesG > 0) {
+					console.log("before", p2.compositeRating[k]);
+					// Decrease rating by up to 40%
+					p2.compositeRating[k] *= helpers.bound(
+						1 - numConsecutiveGamesG * random.uniform(0.0, 0.09),
+						0.6,
+						1,
+					);
+					console.log("after", p2.compositeRating[k]);
+				}
+			}
 		}
 
 		if (isSport("basketball")) {

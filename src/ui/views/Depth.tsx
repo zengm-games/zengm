@@ -213,6 +213,16 @@ const Depth = ({
 				</p>
 			) : null}
 
+			{isSport("hockey") && pos === "G" ? (
+				<p className="text-warning">
+					During the regular season, your starting goalie will automatically get
+					some rest days. Rest days are based on how many consecutive games your
+					starting goalie has played and how good your backup is. If your backup
+					is very bad, your starter will start more games, but his performance
+					will suffer.
+				</p>
+			) : null}
+
 			<div className="clearfix" />
 
 			<SortableTable

@@ -16,7 +16,7 @@ const madeHof = (
 	for (const ps of p.stats) {
 		const g = ps.evG + ps.ppG + ps.shG;
 		const a = ps.evA + ps.ppA + ps.shA;
-		score += (g + a) / 25 + ps.ops + ps.dps + 0.6 * ps.gps;
+		score += (g + a) / 25 + ps.ops + ps.dps + 0.775 * ps.gps;
 		if (scoreFirstSeason === undefined) {
 			scoreFirstSeason = score;
 		}

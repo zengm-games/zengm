@@ -1530,14 +1530,17 @@ class GameSim {
 					this.team[t].stat.ptsQtrs[qtr] += pts;
 					this.playByPlay.logStat(t, undefined, "pts", pts);
 
-					for (const t2 of teamNums) {
-						const currentlyOnIce = flatten(
-							Object.values(this.playersOnIce[t2]),
-						);
-						for (const p2 of currentlyOnIce) {
-							const pm = t2 === t ? 1 : -1;
-							p2.stat.pm += pm;
-							this.playByPlay.logStat(t2, p2.id, "pm", pm);
+					// Power play goals don't count for +/-
+					if (s !== "ppG") {
+						for (const t2 of teamNums) {
+							const currentlyOnIce = flatten(
+								Object.values(this.playersOnIce[t2]),
+							);
+							for (const p2 of currentlyOnIce) {
+								const pm = t2 === t ? 1 : -1;
+								p2.stat.pm += pm;
+								this.playByPlay.logStat(t2, p2.id, "pm", pm);
+							}
 						}
 					}
 				}

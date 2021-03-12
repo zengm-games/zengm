@@ -312,6 +312,7 @@ const createLeague = async ({
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
+	randomDebutsForever,
 	confs,
 	divs,
 	teams,
@@ -337,6 +338,7 @@ const createLeague = async ({
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
+	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
@@ -471,6 +473,13 @@ const createLeague = async ({
 		...leagueFile.gameAttributes,
 		...gameAttributeOverrides,
 	};
+
+	if (
+		randomDebutsForever &&
+		leagueFile.gameAttributes.randomDebutsForever === undefined
+	) {
+		leagueFile.gameAttributes.randomDebutsForever = 1;
+	}
 
 	if (noStartingInjuries && leagueFile.players) {
 		for (const p of leagueFile.players) {

@@ -190,7 +190,7 @@ type State = {
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
-	randomization: "none" | "debuts" | "shuffle";
+	randomization: "none" | "debuts" | "debutsForever" | "shuffle";
 	teams: NewLeagueTeam[];
 	confs: Conf[];
 	divs: Div[];
@@ -756,6 +756,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					? state.realPlayerDeterminism
 					: undefined;
 
+			const actualRandomDebutsForever =
+				state.customize === "real" && state.randomization === "debutsForever";
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -763,7 +766,9 @@ const NewLeague = (props: View<"newLeague">) => {
 						type: "real",
 						season: state.season,
 						phase: state.phase,
-						randomDebuts: state.randomization === "debuts",
+						randomDebuts:
+							state.randomization === "debuts" ||
+							state.randomization === "debutsForever",
 						realDraftRatings: state.realDraftRatings,
 					};
 				} else if (state.customize === "legends") {
@@ -802,6 +807,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
+					randomDebutsForever: actualRandomDebutsForever,
 					confs: state.confs,
 					divs: state.divs,
 					teams: state.teams,
@@ -1316,6 +1322,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					{state.customize === "real" ? (
 						<option value="debuts">Random debuts</option>
 					) : null}
+					{state.customize === "real" ? (
+						<option value="debutsForever">Random debuts forever</option>
+					) : null}
 					<option value="shuffle">Shuffle rosters</option>
 				</select>
 				{state.randomization === "debuts" ? (
@@ -1323,6 +1332,13 @@ const NewLeague = (props: View<"newLeague">) => {
 						Every player's draft year is randomized. Starting teams and future
 						draft classes are all random combinations of past, current, and
 						future real players.
+					</div>
+				) : null}
+				{state.randomization === "debutsForever" ? (
+					<div className="text-muted mt-1">
+						Like random debuts, except when it runs out of draft prospects, it
+						will randomize all real players again and add them to future draft
+						classes.
 					</div>
 				) : null}
 				{state.randomization === "shuffle" ? (

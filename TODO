@@ -1,6 +1,7 @@
-add more worker console docs
-- https://discord.com/channels/290013534023057409/290015468939640832/819264526729478174
-- https://discord.com/channels/@me/737113743640625224/819262565032656916
+continuous random debuts https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/gen0k39/
+- trigger when generating draft class
+- track iteration in g and append to last name
+- when generating, active players to the back
 
 daily score summary https://discord.com/channels/@me/790622657284014120/818668678757089280
 
@@ -15,7 +16,7 @@ hockey names https://discord.com/channels/290013534023057409/331882115119448065/
 
 relatives should be more likely to go to the same college, have the same jersey number https://old.reddit.com/r/BasketballGM/comments/l9qu4x/monthly_suggestions_thread/glmnrg6/
 
-overtime scoring too high in BBGM
+overtime scoring too high in BBGM https://old.reddit.com/r/BasketballGM/comments/kndbky/ot_scoring_too_high/
 
 hockey
 - Trade engine is too willing to give up a LOT of contributors for one slightly better player. I practically was offered an entire team for one star
@@ -26,6 +27,11 @@ hockey
 - ovr PR
 - https://old.reddit.com/r/ZenGMHockey/comments/m1iow3/features_id_like_to_see_added/ - balance of roster size, rookie contract length, and young player talent
 - Sim to next Goal https://discord.com/channels/290013534023057409/290015591216054273/819440579833757706
+- W/L/T/OTL for goalie stats
+- defensement should get more assists
+  - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
+  - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqnmwkf/?context=3
+- check faceoff percentages https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
 
 search broken on most lopsided trades frivolity https://discord.com/channels/290013534023057409/290015591216054273/815062930525519893
 
@@ -59,6 +65,8 @@ add standings options
 average team age on roster page
 
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558
+
+asian names https://old.reddit.com/message/messages/xje301
 
 head to head records
 - later
@@ -820,6 +828,7 @@ FBGM
   - don't end overtime
     - https://github.com/dumbmatter/gm-games/issues/363
   - don't get recorded as team/player stats
+- rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -832,6 +841,7 @@ manually specify draft order in god mode
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
+- https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/gg8kdhi/
 
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time

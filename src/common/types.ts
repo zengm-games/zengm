@@ -422,6 +422,7 @@ export type GameAttributesLeague = {
 	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	randomDebutsForever?: number;
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined

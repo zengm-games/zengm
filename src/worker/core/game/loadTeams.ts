@@ -130,14 +130,12 @@ const processTeam = (
 				}
 
 				if (numConsecutiveGamesG > 0) {
-					console.log("before", p2.compositeRating[k]);
 					// Decrease rating by up to 40%
 					p2.compositeRating[k] *= helpers.bound(
 						1 - numConsecutiveGamesG * random.uniform(0.0, 0.09),
 						0.6,
 						1,
 					);
-					console.log("after", p2.compositeRating[k]);
 				}
 			}
 		}

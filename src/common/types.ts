@@ -1457,14 +1457,16 @@ export type RealTeamInfo = Record<
 	}
 >;
 
+export type GetLeagueOptionsReal = {
+	type: "real";
+	season: number;
+	phase: number;
+	randomDebuts: boolean;
+	realDraftRatings: "draft" | "rookie";
+};
+
 export type GetLeagueOptions =
-	| {
-			type: "real";
-			season: number;
-			phase: number;
-			randomDebuts: boolean;
-			realDraftRatings: "draft" | "rookie";
-	  }
+	| GetLeagueOptionsReal
 	| {
 			type: "legends";
 			decade:

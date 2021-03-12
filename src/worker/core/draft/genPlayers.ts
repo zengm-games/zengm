@@ -1,5 +1,5 @@
 import { isSport, PLAYER } from "../../../common";
-import { finances, player } from "..";
+import { finances, player, realRosters } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
@@ -36,9 +36,27 @@ const genPlayers = async (
 		);
 	}
 
-	const existingPlayers = (
-		await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
-	).filter(p => p.draft.year === draftYear);
+	const allDraftProspects = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		PLAYER.UNDRAFTED,
+	);
+
+	const existingPlayers = allDraftProspects.filter(
+		p => p.draft.year === draftYear,
+	);
+
+	// Trigger randomDebutsForever?
+	if (g.get("randomDebutsForever") !== undefined) {
+		// Trigger condition - draftYear has no real players in it, or the year after draftYear has no real players in it
+		const currentRealPlayers = existingPlayers.filter(p => p.real).length;
+		const nextRealPlayers = allDraftProspects.filter(
+			p => p.real && p.draft.year === draftYear + 1,
+		).length;
+		if (currentRealPlayers === 0 || nextRealPlayers === 0) {
+			await realRosters.updateRandomDebutsForever(draftYear);
+			return;
+		}
+	}
 
 	const players = await genPlayersWithoutSaving(
 		draftYear,

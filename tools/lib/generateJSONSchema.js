@@ -744,6 +744,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
+							randomDebutsForever: {
+								type: "integer",
+								minimum: 1,
+							},
 							realPlayerDeterminism: {
 								type: "number",
 								minimum: 0,

@@ -20,6 +20,7 @@ const updateRandomDebutsForever = async (draftYear: number) => {
 		basketball,
 		[],
 		currentTeams,
+		scheduledEvents,
 		lastPID,
 		{
 			type: "real",

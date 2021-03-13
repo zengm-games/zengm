@@ -1,18 +1,61 @@
 import orderBy from "lodash/orderBy";
-import { PLAYER } from "../../../common";
-import type { GetLeagueOptionsReal } from "../../../common/types";
+import { PHASE, PLAYER } from "../../../common";
+import type {
+	GetLeagueOptionsReal,
+	ScheduledEventWithoutKey,
+} from "../../../common/types";
+import { defaultGameAttributes } from "../../util";
 import formatPlayerFactory from "./formatPlayerFactory";
 import type { Basketball } from "./loadData.basketball";
+
+const getDraftClassSize = (
+	numActiveTeams: number,
+	numNewExpansionTeams: number,
+) => {
+	return Math.round(
+		(defaultGameAttributes.numDraftRounds * numActiveTeams * 7) / 6 +
+			numNewExpansionTeams * 6,
+	);
+};
+
+const processScheduledEvents = (
+	scheduledEvents: ScheduledEventWithoutKey[],
+	draftYear: number,
+) => {
+	let numTeamsDiff = 0;
+	let numNewExpansionTeams = 0;
+	for (const event of scheduledEvents) {
+		if (
+			event.season < draftYear ||
+			(event.season === draftYear && event.phase <= PHASE.DRAFT)
+		) {
+			if (event.type === "contraction") {
+				numTeamsDiff -= 1;
+			} else if (event.type === "expansionDraft") {
+				numTeamsDiff += event.info.teams.length;
+				if (event.season === draftYear && event.phase > PHASE.REGULAR_SEASON) {
+					numNewExpansionTeams += event.info.teams.length;
+				}
+			}
+		}
+	}
+
+	return {
+		numTeamsDiff,
+		numNewExpansionTeams,
+	};
+};
 
 const getDraftProspects = (
 	basketball: Basketball,
 	activePlayers: {
 		srID: string;
 	}[],
-	teams: {
+	initialTeams: {
 		tid: number;
 		srID?: string;
 	}[],
+	scheduledEvents: ScheduledEventWithoutKey[],
 	lastPID: number,
 	options: GetLeagueOptionsReal,
 ) => {
@@ -20,9 +63,12 @@ const getDraftProspects = (
 		basketball,
 		options,
 		options.season,
-		teams,
+		initialTeams,
 		lastPID,
 	);
+
+	const initialDraftYear =
+		options.phase > PHASE.DRAFT ? options.season + 1 : options.season;
 
 	const seenSlugs = new Set(activePlayers.map(p => p.srID));
 	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
@@ -40,30 +86,32 @@ const getDraftProspects = (
 			}),
 		);
 
+	// Normalize the size of draft classes, based on the number of teams and the number of expansion teams
 	if (options.randomDebuts) {
-		// For players in past draft classes, automatically move to future draft classes, so they will be correctly randomized below
-		const targetDraftClassSize = 70;
-		const draftProspectsToMove = draftProspects.filter(
-			p => p.draft.year < options.season,
-		);
-		let draftYear = options.season;
-		let draftClassSize = draftProspects.filter(p => p.draft.year === draftYear)
-			.length;
-		while (draftProspectsToMove.length > 0) {
-			while (draftClassSize >= targetDraftClassSize) {
-				draftYear += 1;
-				draftClassSize = draftProspects.filter(p => p.draft.year === draftYear)
-					.length;
+		let draftYear = initialDraftYear;
+		let draftClassSize = 0;
+		let targetDraftClassSize: number | undefined;
+		for (const p of draftProspects) {
+			if (targetDraftClassSize === undefined) {
+				draftClassSize = 0;
+				const { numTeamsDiff, numNewExpansionTeams } = processScheduledEvents(
+					scheduledEvents,
+					draftYear,
+				);
+				targetDraftClassSize = getDraftClassSize(
+					initialTeams.length + numTeamsDiff,
+					numNewExpansionTeams,
+				);
 			}
 
-			const p = draftProspectsToMove.pop();
-			if (p) {
-				p.tid = PLAYER.UNDRAFTED;
+			const diff = draftYear - p.draft.year;
+			p.draft.year += diff;
+			p.born.year += diff;
+			draftClassSize += 1;
 
-				const diff = draftYear - p.draft.year;
-				p.draft.year += diff;
-				p.born.year += diff;
-				draftClassSize += 1;
+			if (draftClassSize >= targetDraftClassSize) {
+				draftYear += 1;
+				targetDraftClassSize = undefined;
 			}
 		}
 	}

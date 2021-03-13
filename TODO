@@ -1,10 +1,10 @@
 continuous random debuts https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/gen0k39/
 - when generating, active players to the back
 - add relatives, within each iteration
-- random debuts draft class size in the old days
-  - base on current teams, and read from scheduledEvents to project size based on future contraction/expansion. same logic for forever
 - test real players leagues
   - free agents generated, for normal and legends
+  - normal random debuts mode
+  - test when starting after draft (broken on current version)
 - handle realDraftRatings setting in updateRandomDebutsForever
 - handle adding players to partially full draft class
 

@@ -357,6 +357,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			basketball,
 			players,
 			initialTeams,
+			scheduledEvents,
 			lastPID,
 			options,
 		);

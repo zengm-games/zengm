@@ -1350,27 +1350,22 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
-	const expansionSeasons = [
+	const bannedExpansionSeasons = [
+		// Because of other mergers
 		1947,
 		1948,
 		1949,
-		1961,
-		1966,
-		1967,
-		1968,
-		1970,
-		1974,
+
+		// Because of ABA merger
 		1976,
-		1980,
-		1988,
-		1989,
-		1995,
-		2004,
 	];
 	let invalidSeasonPhaseMessage: string | undefined;
-	if (state.phase > PHASE.PLAYOFFS && expansionSeasons.includes(state.season)) {
+	if (
+		state.phase > PHASE.PLAYOFFS &&
+		bannedExpansionSeasons.includes(state.season)
+	) {
 		invalidSeasonPhaseMessage =
-			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
+			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
 	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
 		invalidSeasonPhaseMessage =

@@ -29,10 +29,11 @@ goat frivolity, similar to hof but including active players
 - customizable formula?
 
 start in expansion draft offseason
-- https://www.basketball-reference.com/draft/NBA_2004_expansion.html
-- does "draft lottery" mean before or after the expansion draft?
-  - after
-- older ones that aren't actually expansion drafts - ignore? or create players?
+- NewLeague should have expansion teams available to select
+- set anything that gets set when expansion draft happens, such as on team object or teamSeason
+- confirm players can't refuse
+- confirm correct spot in lottery
+- confirm correct spot in draft
 
 show retired players in some meaningful jersey https://discord.com/channels/290013534023057409/331882115119448065/813608341829189702
 

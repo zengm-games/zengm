@@ -492,7 +492,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						oldAbbrevTo2020BBGMAbbrev(t.srID)
 					];
 				if (!teamSeasonData) {
-					throw new Error("Missing teamSeason");
+					// Must be an expansion team
+					continue;
 				}
 
 				const teamSeason = team.genSeasonRow(
@@ -568,6 +569,29 @@ const getLeague = async (options: GetLeagueOptions) => {
 				if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
 					p.tid = PLAYER.RETIRED;
 					(p as any).retiredYear = options.season;
+				}
+			}
+		}
+
+		// Assign expansion draft players to their teams
+		if (
+			options.phase >= PHASE.DRAFT_LOTTERY &&
+			basketball.expansionDrafts[options.season]
+		) {
+			for (const [abbrev, slugs] of Object.entries(
+				basketball.expansionDrafts[options.season],
+			)) {
+				const t = initialTeams.find(t => abbrev === t.abbrev);
+				console.log(abbrev, slugs);
+				console.log(initialTeams, t);
+				if (!t) {
+					throw new Error("Team not found");
+				}
+				const tid = t.tid;
+				for (const p of players) {
+					if (slugs.includes(p.srID)) {
+						p.tid = tid;
+					}
 				}
 			}
 		}

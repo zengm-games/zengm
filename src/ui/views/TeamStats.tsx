@@ -6,10 +6,6 @@ import { DataTable, PlusMinus, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 
-const legendSquare = (className: string) => {
-	return <span className={`table-${className} legend-square ml-3`} />;
-};
-
 const TeamStats = ({
 	allStats,
 	playoffs,
@@ -87,8 +83,8 @@ const TeamStats = ({
 
 	const gradientStyle = gradientStyleFactory(
 		1,
-		Math.floor(teams.length / 2),
-		Math.ceil(teams.length / 2),
+		Math.round(0.35 * teams.length),
+		Math.round(0.65 * teams.length),
 		teams.length,
 	);
 

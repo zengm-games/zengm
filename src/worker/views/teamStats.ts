@@ -144,6 +144,7 @@ const updateTeams = async (
 		const lowerIsBetter = bySport({
 			basketball: [
 				"lost",
+				"otl",
 				"tov",
 				"pf",
 				"oppFg",
@@ -180,6 +181,7 @@ const updateTeams = async (
 			],
 			football: [
 				"lost",
+				"otl",
 				"tov",
 				"fmbLost",
 				"pssInt",
@@ -209,6 +211,7 @@ const updateTeams = async (
 			],
 			hockey: [
 				"lost",
+				"otl",
 				"pim",
 				"fol",
 				"gv",

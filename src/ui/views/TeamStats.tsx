@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import type { ReactNode } from "react";
-import { getCols, helpers, prefixStatOpp } from "../util";
+import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, PlusMinus, MoreLinks } from "../components";
 import type { View } from "../../common/types";
@@ -85,7 +85,13 @@ const TeamStats = ({
 		otherStatColumns.push("winp");
 	}
 
-	const teamCount = teams.length;
+	const gradientStyle = gradientStyleFactory(
+		1,
+		Math.floor(teams.length / 2),
+		Math.ceil(teams.length / 2),
+		teams.length,
+	);
+
 	const rows = teams.map(t => {
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
@@ -151,20 +157,10 @@ const TeamStats = ({
 				const statTypeValue = t.stats.hasOwnProperty(statType)
 					? (t.stats as any)[statType]
 					: (t.seasonAttrs as any)[statType];
-				const percentile =
-					1 - allStats[statType].indexOf(statTypeValue) / (teamCount - 1);
-
-				let className;
-				if (percentile >= 2 / 3) {
-					className = "table-success";
-				} else if (percentile >= 1 / 3) {
-					className = "table-warning";
-				} else {
-					className = "table-danger";
-				}
+				const rank = teams.length - allStats[statType].indexOf(statTypeValue);
 
 				data[statType] = {
-					classNames: className,
+					style: gradientStyle(rank),
 					value,
 				};
 			}
@@ -183,16 +179,7 @@ const TeamStats = ({
 
 	return (
 		<>
-			<div className="d-sm-flex">
-				<MoreLinks type="teamStats" page="team_stats" season={season} />
-				<p className="flex-grow-1 text-right">
-					For a statistical category, among all teams, your team is in the...
-					<br />
-					{legendSquare("success")} <strong>Top third</strong>
-					{legendSquare("warning")} <strong>Middle third</strong>
-					{legendSquare("danger")} <strong>Bottom third</strong>
-				</p>
-			</div>
+			<MoreLinks type="teamStats" page="team_stats" season={season} />
 
 			<DataTable
 				cols={cols}

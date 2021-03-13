@@ -71,16 +71,22 @@ const TeamStats = ({
 		cols[cols.length - 5].title = "%";
 	}
 
+	const otherStatColumns = ["won", "lost"];
+	if (otl) {
+		otherStatColumns.push("otl");
+	}
+	if (ties) {
+		otherStatColumns.push("tied");
+	}
+	if (usePts) {
+		otherStatColumns.push("pts");
+		otherStatColumns.push("ptsPct");
+	} else {
+		otherStatColumns.push("winp");
+	}
+
 	const teamCount = teams.length;
 	const rows = teams.map(t => {
-		const otherStatColumns = ["won", "lost"];
-		if (otl) {
-			otherStatColumns.push("otl");
-		}
-		if (ties) {
-			otherStatColumns.push("tied");
-		}
-
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
 			abbrev: (

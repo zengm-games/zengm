@@ -484,7 +484,7 @@ class GameSim {
 		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
 
 		if (this.t === 0) {
-			this.t = 10;
+			this.t = 5;
 		}
 
 		this.lastScoringPlay = [];
@@ -522,8 +522,8 @@ class GameSim {
 		const catchUp =
 			!this.elamActive &&
 			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential <= 10) ||
-				(this.t <= 2 && pointDifferential <= 5) ||
+			((this.t <= 3 && pointDifferential <= -10) ||
+				(this.t <= 2 && pointDifferential <= -5) ||
 				(this.t <= 1 && pointDifferential < 0));
 		const maintainLead =
 			!this.elamActive &&

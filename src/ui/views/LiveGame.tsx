@@ -515,7 +515,7 @@ const LiveGame = (props: View<"liveGame">) => {
 										<Dropdown.Menu>
 											{fastForwardMenuItems.map(item => (
 												<Dropdown.Item
-													key={item.label}
+													key={item.key}
 													onClick={item.onClick}
 													className="kbd-parent"
 												>

@@ -1,11 +1,9 @@
 continuous random debuts https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/gen0k39/
-- when generating, active players to the back
-- add relatives, within each iteration
-- test real players leagues
-  - free agents generated, for normal and legends
-  - normal random debuts mode
-  - test when starting after draft (broken on current version)
 - handle realDraftRatings setting in updateRandomDebutsForever
+- blog
+  - new feature
+  - relatives
+  - bug fixes in normal random debuts (draft class size for old seasons, not adding complete draft class when starting after draft)
 
 daily score summary https://discord.com/channels/@me/790622657284014120/818668678757089280
 

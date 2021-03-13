@@ -3,7 +3,6 @@ import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
 import type {
 	GetLeagueOptions,
-	Relative,
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 } from "../../../common/types";
@@ -17,6 +16,7 @@ import formatPlayerFactory from "./formatPlayerFactory";
 import nerfDraftProspect from "./nerfDraftProspect";
 import getOnlyRatings from "./getOnlyRatings";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+import addRelatives from "./addRelatives";
 
 export const LATEST_SEASON = 2021;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
@@ -229,35 +229,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 	}
 
 	const basketball = await loadDataBasketball();
-
-	const addRelatives = (
-		players: {
-			name: string;
-			pid: number;
-			srID: string;
-			relatives?: Relative[];
-		}[],
-	) => {
-		for (const p of players) {
-			const relatives = basketball.relatives.filter(row => row.slug === p.srID);
-
-			const relatives2 = [];
-			for (const relative of relatives) {
-				const p2 = players.find(p2 => relative.slug2 === p2.srID);
-				if (p2) {
-					relatives2.push({
-						type: relative.type,
-						name: p2.name,
-						pid: p2.pid,
-					});
-				}
-			}
-
-			if (relatives2.length > 0) {
-				p.relatives = relatives2;
-			}
-		}
-	};
 
 	// NO PLAYERS CAN BE ADDED AFTER CALLING THIS, otherwise there will be pid collisions
 	const addFreeAgents = (
@@ -658,7 +629,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		addRelatives(players);
+		addRelatives(players, basketball.relatives);
 		addFreeAgents(players, options.season);
 
 		return {
@@ -743,7 +714,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		addRelatives(keptPlayers);
+		addRelatives(keptPlayers, basketball.relatives);
 		addFreeAgents(keptPlayers, season);
 
 		return {

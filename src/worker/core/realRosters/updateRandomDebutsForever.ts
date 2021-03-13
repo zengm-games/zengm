@@ -3,6 +3,7 @@ import { idb } from "../../db";
 import { g, random } from "../../util";
 import getDraftProspects from "./getDraftProspects";
 import loadDataBasketball from "./loadData.basketball";
+import addRelatives from "./addRelatives";
 import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE } from "../../../common";
 
 const updateRandomDebutsForever = async (
@@ -37,6 +38,12 @@ const updateRandomDebutsForever = async (
 		},
 	);
 
+	for (const p of draftProspects) {
+		p.name += ` v${iteration}`;
+	}
+
+	addRelatives(draftProspects, basketball.relatives);
+
 	// Randomize draft classes
 	const draftYears = draftProspects.map(p => p.draft.year);
 	random.shuffle(draftYears);
@@ -67,7 +74,6 @@ const updateRandomDebutsForever = async (
 			MAX_SUPPORTED_LEAGUE_VERSION,
 			true,
 		);
-		p2.lastName += ` v${iteration}`;
 		await player.updateValues(p2);
 		await idb.cache.players.put(p2);
 	}

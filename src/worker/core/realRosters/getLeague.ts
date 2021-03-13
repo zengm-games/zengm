@@ -587,10 +587,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 				if (!t) {
 					throw new Error("Team not found");
 				}
-				const tid = t.tid;
+
+				t.firstSeasonAfterExpansion = options.season + 1;
+
 				for (const p of players) {
 					if (slugs.includes(p.srID)) {
-						p.tid = tid;
+						p.tid = t.tid;
 					}
 				}
 			}

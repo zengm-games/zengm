@@ -30,8 +30,6 @@ goat frivolity, similar to hof but including active players
 
 start in expansion draft offseason
 - NewLeague should have expansion teams available to select
-- set anything that gets set when expansion draft happens, such as on team object or teamSeason
-- confirm players can't refuse
 - confirm correct spot in lottery
 - confirm correct spot in draft
 

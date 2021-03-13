@@ -83,6 +83,7 @@ const processTeams = (
 		cid: number;
 		did: number;
 		disabled?: boolean;
+		firstSeasonAfterExpansion?: number;
 	}[];
 
 	// Keep track of initial teams

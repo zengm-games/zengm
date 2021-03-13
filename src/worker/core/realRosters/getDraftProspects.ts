@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE } from "../../../common";
 import type {
 	GetLeagueOptionsReal,
 	ScheduledEventWithoutKey,

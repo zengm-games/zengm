@@ -448,6 +448,10 @@ const createLeague = async ({
 		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
 	}
 
+	if (getLeagueOptions && getLeagueOptions.type === "real") {
+		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;
+	}
+
 	// Check if we need to set godModeInPast because some custom teams are too powerful
 	if (!leagueFileInput) {
 		// Only for new leagues, not created from file!

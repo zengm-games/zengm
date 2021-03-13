@@ -137,6 +137,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	tradeDeadline: 0.6,
 	pointsFormula: wrap(""),
 	randomDebutsForever: undefined,
+	realDraftRatings: undefined,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

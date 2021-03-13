@@ -423,6 +423,7 @@ export type GameAttributesLeague = {
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
 	randomDebutsForever?: number;
+	realDraftRatings?: "draft" | "rookie";
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined

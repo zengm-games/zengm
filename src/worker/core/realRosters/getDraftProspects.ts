@@ -57,6 +57,7 @@ const getDraftProspects = (
 	}[],
 	scheduledEvents: ScheduledEventWithoutKey[],
 	lastPID: number,
+	numPlayersInitialDraftYear: number,
 	options: GetLeagueOptionsReal,
 ) => {
 	const formatPlayer = formatPlayerFactory(
@@ -89,11 +90,10 @@ const getDraftProspects = (
 	// Normalize the size of draft classes, based on the number of teams and the number of expansion teams
 	if (options.randomDebuts) {
 		let draftYear = initialDraftYear;
-		let draftClassSize = 0;
+		let draftClassSize = numPlayersInitialDraftYear;
 		let targetDraftClassSize: number | undefined;
 		for (const p of draftProspects) {
 			if (targetDraftClassSize === undefined) {
-				draftClassSize = 0;
 				const { numTeamsDiff, numNewExpansionTeams } = processScheduledEvents(
 					scheduledEvents,
 					draftYear,
@@ -112,6 +112,7 @@ const getDraftProspects = (
 			if (draftClassSize >= targetDraftClassSize) {
 				draftYear += 1;
 				targetDraftClassSize = undefined;
+				draftClassSize = 0;
 			}
 		}
 	}

@@ -53,7 +53,10 @@ const genPlayers = async (
 			p => p.real && p.draft.year === draftYear + 1,
 		).length;
 		if (currentRealPlayers === 0 || nextRealPlayers === 0) {
-			await realRosters.updateRandomDebutsForever(draftYear);
+			await realRosters.updateRandomDebutsForever(
+				draftYear,
+				currentRealPlayers,
+			);
 			return;
 		}
 	}

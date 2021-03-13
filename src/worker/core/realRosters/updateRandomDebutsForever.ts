@@ -3,9 +3,12 @@ import { idb } from "../../db";
 import { g, random } from "../../util";
 import getDraftProspects from "./getDraftProspects";
 import loadDataBasketball from "./loadData.basketball";
-import { MAX_SUPPORTED_LEAGUE_VERSION } from "../../../common";
+import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE } from "../../../common";
 
-const updateRandomDebutsForever = async (draftYear: number) => {
+const updateRandomDebutsForever = async (
+	draftYear: number,
+	numPlayersDraftYear: number,
+) => {
 	const iteration = (g.get("randomDebutsForever") ?? 1) + 1;
 
 	const basketball = await loadDataBasketball();
@@ -13,6 +16,8 @@ const updateRandomDebutsForever = async (draftYear: number) => {
 	const currentTeams = (await idb.cache.teams.getAll()).filter(
 		t => !t.disabled,
 	);
+
+	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 
 	const lastPID = idb.cache._maxIds.players;
 
@@ -22,10 +27,11 @@ const updateRandomDebutsForever = async (draftYear: number) => {
 		currentTeams,
 		scheduledEvents,
 		lastPID,
+		numPlayersDraftYear,
 		{
 			type: "real",
 			season: draftYear,
-			phase: g.get("phase"),
+			phase: PHASE.DRAFT, // Faked, so initialDraftYear is correct in getDraftProspects
 			randomDebuts: true,
 			realDraftRatings: "draft",
 		},

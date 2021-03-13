@@ -150,7 +150,7 @@ const tallyAwards = (
 
 		for (let i = 0; i < a.allLeague.length; i++) {
 			for (const p of a.allLeague[i].players) {
-				if (p.tid === tid) {
+				if (p && p.tid === tid) {
 					teamAwards.allLeague++;
 				}
 			}
@@ -159,7 +159,7 @@ const tallyAwards = (
 		if (a.allDefensive) {
 			for (let i = 0; i < a.allDefensive.length; i++) {
 				for (const p of a.allDefensive[i].players) {
-					if (p.tid === tid) {
+					if (p && p.tid === tid) {
 						teamAwards.allDefense++;
 					}
 				}

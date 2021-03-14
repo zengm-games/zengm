@@ -9,6 +9,7 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 		| {
 				abbrev: string;
 				colors: [string, string, string];
+				jersey?: string;
 				name: string;
 				region: string;
 		  }
@@ -34,6 +35,7 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 		return {
 			abbrev: ts.abbrev,
 			colors: ts.colors ?? ["#000000", "#cccccc", "#ffffff"],
+			jersey: ts.jersey,
 			name: ts.name,
 			region: ts.region,
 		};

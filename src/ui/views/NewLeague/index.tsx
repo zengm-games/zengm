@@ -1424,10 +1424,11 @@ const NewLeague = (props: View<"newLeague">) => {
 								<LeagueMenu
 									value={String(state.season)}
 									values={seasons}
-									getLeagueInfo={value =>
+									getLeagueInfo={(value, value2) =>
 										toWorker("main", "getLeagueInfo", {
 											type: "real",
 											season: parseInt(value),
+											phase: value2,
 										})
 									}
 									onLoading={value => {

@@ -43,6 +43,7 @@ const getLeagueInfo = async (
 		| {
 				type: "real";
 				season: number;
+				phase: number;
 		  }
 		| {
 				type: "legends";
@@ -72,6 +73,7 @@ const getLeagueInfo = async (
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
 			options.season,
+			options.phase,
 		);
 
 		const stores =

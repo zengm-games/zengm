@@ -95,11 +95,11 @@ const processTeams = (
 			// @ts-ignore
 			initialTeams === undefined
 		) {
-			initialTeams = helpers.deepCopy(prevState);
+			initialTeams = prevState;
 		}
 
 		if (event.type === "expansionDraft") {
-			prevState.push(...event.info.teams);
+			prevState.push(...helpers.deepCopy(event.info.teams));
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
 			const ind = prevState.findIndex(t0 => t0.tid === t.tid);
@@ -139,7 +139,7 @@ const processTeams = (
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
 	// @ts-ignore
 	if (initialTeams === undefined) {
-		initialTeams = helpers.deepCopy(prevState);
+		initialTeams = prevState;
 	}
 
 	teamEvents = helpers.deepCopy(

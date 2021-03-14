@@ -86,13 +86,12 @@ const getLeagueInfo = async (
 						"startingSeason",
 						"scheduledEvents",
 				  ];
-
 		return {
 			confs: initialGameAttributes.confs as Conf[],
 			divs: initialGameAttributes.divs as Div[],
 			startingSeason: options.season,
 			stores,
-			teams: initialTeams,
+			teams: initialTeams.filter(t => !t.disabled),
 		};
 	}
 

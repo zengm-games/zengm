@@ -95,7 +95,7 @@ const processTeams = (
 			// @ts-ignore
 			initialTeams === undefined
 		) {
-			initialTeams = prevState;
+			initialTeams = helpers.deepCopy(prevState);
 		}
 
 		if (event.type === "expansionDraft") {
@@ -139,7 +139,7 @@ const processTeams = (
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
 	// @ts-ignore
 	if (initialTeams === undefined) {
-		initialTeams = prevState;
+		initialTeams = helpers.deepCopy(prevState);
 	}
 
 	teamEvents = helpers.deepCopy(

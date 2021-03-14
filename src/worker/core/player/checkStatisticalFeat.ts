@@ -64,9 +64,18 @@ const checkStatisticalFeat = (
 		const tied = results.team[i].stat.pts === results.team[j].stat.pts;
 		const featTextArr = Object.keys(feats).map(stat => {
 			const text = `${feats[stat]} ${stat}`;
+
 			if (text === "1 shutout") {
 				return "a shutout";
 			}
+
+			// Hacky way to convert "1 assists" into "1 assist"
+			if (feats[stat] === 1 && stat.endsWith("s")) {
+				const singular = stat.slice(0, -1);
+				const vowels = ["a", "e", "i", "o", "u"];
+				return `${vowels.includes(singular[0]) ? "an" : "a"} ${singular}`;
+			}
+
 			return text;
 		});
 		let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${
@@ -89,6 +98,7 @@ const checkStatisticalFeat = (
 				featText += ", ";
 			}
 		}
+		console.log(featText);
 
 		const endPart = allStarGame
 			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`

@@ -58,7 +58,7 @@ const moodInfo = async (
 
 	// More AI players testing free agency
 	if (!thisIsAUserTeam) {
-		sumAndStuff -= 2;
+		sumAndStuff -= 3;
 	}
 
 	let contractAmount =

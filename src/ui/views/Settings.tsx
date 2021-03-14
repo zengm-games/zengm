@@ -801,7 +801,6 @@ export const options: {
 		category: "Game Modes",
 		key: "spectator",
 		name: "Spectator Mode",
-		godModeRequired: "always",
 		type: "bool",
 		description:
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",

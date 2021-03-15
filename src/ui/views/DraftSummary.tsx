@@ -112,11 +112,7 @@ const DraftSummary = ({
 				{
 					value: (
 						<div className="d-flex">
-							<PlayerNameLabels
-								pid={p.pid}
-								skills={p.currentSkills}
-								watch={p.watch}
-							>
+							<PlayerNameLabels pid={p.pid} watch={p.watch}>
 								{p.name}
 							</PlayerNameLabels>
 							<div className="ml-auto">

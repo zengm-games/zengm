@@ -98,7 +98,6 @@ const checkStatisticalFeat = (
 				featText += ", ";
 			}
 		}
-		console.log(featText);
 
 		const endPart = allStarGame
 			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`

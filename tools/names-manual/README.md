@@ -16,3 +16,5 @@ For names that are used in multiple countries (like Hispanic names) do the same 
 Except possibly for very large countries, anything more than 500 names is excessive. This is just to keep file size down, since this is a web-based game.
 
 See the CSV files in this directory for examples.
+
+https://forebears.io/canada/surnames is a good data source.

@@ -724,6 +724,7 @@ export type LocalStateUI = {
 	games: {
 		forceWin?: number;
 		gid: number;
+		overtimes?: number;
 		teams: [
 			{
 				ovr?: number;

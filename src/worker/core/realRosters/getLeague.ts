@@ -443,7 +443,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
 		let draftLotteryResults: DraftLotteryResult[] | undefined;
-		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
+		// Special case for 2020+ because we only have traded draft picks for the "current" season, we don't store history
 		const includeDraftPicks2020AndFuture =
 			options.season >= 2020 &&
 			!options.randomDebuts &&
@@ -451,7 +451,22 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]
-				.filter(dp => dp.round <= 2)
+				.filter(dp => {
+					if (dp.round > 2) {
+						return false;
+					}
+
+					// For alexnoob traded draft picks, don't include current season if starting after draft
+					if (
+						options.phase > PHASE.DRAFT &&
+						dp.season !== undefined &&
+						dp.season === options.season
+					) {
+						return false;
+					}
+
+					return true;
+				})
 				.map(dp => {
 					const [t, t2] = getDraftPickTeams(dp);
 

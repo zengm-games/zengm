@@ -1789,7 +1789,7 @@ class GameSim {
 					this.advanceYds(0);
 				}
 
-				if (Math.random() < 0.4) {
+				if (Math.random() < 0.28) {
 					this.recordStat(d, defender, "defPssDef");
 				}
 

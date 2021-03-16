@@ -1574,7 +1574,11 @@ class GameSim {
 	}
 
 	doSack(qb: PlayerGameSim) {
-		const p = this.pickPlayer(this.d, "passRushing", undefined, 5);
+		// Save, otherwise advanceYds will update them
+		const o = this.o;
+		const d = this.d;
+
+		const p = this.pickPlayer(d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -15);
 		const yds = this.boundedYds(ydsRaw);
 		const { safetyOrTouchback } = this.advanceYds(yds, {
@@ -1582,14 +1586,14 @@ class GameSim {
 		});
 		this.playByPlay.logEvent("sack", {
 			clock: this.clock,
-			t: this.o,
+			t: o,
 			names: [qb.name, p.name],
 			safety: safetyOrTouchback,
 			yds,
 		});
-		this.recordStat(this.o, qb, "pssSk");
-		this.recordStat(this.o, qb, "pssSkYds", Math.abs(yds));
-		this.recordStat(this.d, p, "defSk");
+		this.recordStat(o, qb, "pssSk");
+		this.recordStat(o, qb, "pssSkYds", Math.abs(yds));
+		this.recordStat(d, p, "defSk");
 
 		if (safetyOrTouchback) {
 			this.doSafety(p);

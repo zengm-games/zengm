@@ -21,7 +21,7 @@ const genTwoTeams = async () => {
 	});
 };
 
-const simGame = async () => {
+const initGameSim = async () => {
 	const teams = await loadTeams([0, 1]);
 	for (const t of [teams[0], teams[1]]) {
 		if (t.depth !== undefined) {
@@ -37,7 +37,7 @@ describe("worker/core/GameSim.football", () => {
 	});
 
 	test("kick a field goal when down 2 at the end of the game and there is little time left", async () => {
-		const game = await simGame();
+		const game = await initGameSim();
 
 		// Down by 2, 4th quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
@@ -53,7 +53,7 @@ describe("worker/core/GameSim.football", () => {
 	});
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
-		const game = await simGame();
+		const game = await initGameSim();
 
 		// Arbitrary score, 2nd quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
@@ -70,7 +70,7 @@ describe("worker/core/GameSim.football", () => {
 
 	test("don't punt when down late, and usually pass", async () => {
 		// Down by 7, 4th quarter, ball on own 20 yard line, 4th down, 1:30 left
-		const game = await simGame();
+		const game = await initGameSim();
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;
@@ -93,5 +93,28 @@ describe("worker/core/GameSim.football", () => {
 
 		// Should really be 2% chance
 		assert(numRun <= 10);
+	});
+
+	test("sack on 4th down gets recorded on correct team", async () => {
+		const game = await initGameSim();
+
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.scrimmage = 20;
+		game.down = 4;
+
+		// Sacks always happen, no penalties
+		game.probSack = () => 1;
+		game.checkPenalties = () => undefined;
+
+		game.doPass();
+
+		assert.strictEqual(game.team[0].stat.defSk, 0);
+		assert.strictEqual(game.team[1].stat.defSk, 1);
+
+		// Possession changed
+		assert.strictEqual(game.o, 1);
+		assert.strictEqual(game.d, 0);
 	});
 });

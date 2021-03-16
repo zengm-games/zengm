@@ -795,6 +795,7 @@ FBGM
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
 - rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
 - advanceYds makes no sense. need separate concept of "line of scrimmage" and "where the ball is". should not be incrementing the down, scoring TD/SF in a function that moves where the ball is
+  - for instance, makes no sense to call advanceYds for part of a play before a fumble occurs, because then the "turnover on downs" code will run before the fumble happens. now need that turnoverOnDowns check, which means no fumbles on 4th down
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -1728,10 +1728,6 @@ class GameSim {
 			this.recordStat(this.o, qb, "pss");
 			this.recordStat(this.o, target, "tgt");
 
-			if (Math.random() < 1 / 8) {
-				this.recordStat(this.d, defender, "defPssDef");
-			}
-
 			const complete = Math.random() < this.probComplete(qb, target, defender);
 
 			if (complete) {
@@ -1781,6 +1777,11 @@ class GameSim {
 				if (!penInfo2) {
 					this.advanceYds(0);
 				}
+
+				if (Math.random() < 0.4) {
+					this.recordStat(this.d, defender, "defPssDef");
+				}
+
 				this.playByPlay.logEvent("passIncomplete", {
 					clock: this.clock,
 					t: this.o,

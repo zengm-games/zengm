@@ -146,4 +146,48 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.o, 1);
 		assert.strictEqual(game.d, 0);
 	});
+
+	test("fumble recovered by offense should only cost one down", async () => {
+		const game = await initGameSim();
+
+		// No penalties, run the ball
+		game.checkPenalties = () => undefined;
+		game.getPlayType = () => "run";
+
+		// Keep doing it until offense recovers
+		while (true) {
+			game.awaitingKickoff = undefined;
+			game.awaitingAfterTouchdown = false;
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 20;
+			game.clock = 20;
+
+			// Just one fumble, not double fumble
+			let fumbled = false;
+			game.probFumble = () => {
+				if (fumbled) {
+					return 0;
+				}
+
+				fumbled = true;
+				return 1;
+			};
+
+			game.simPlay();
+
+			// Looking for the offense to recover, and not for a first down
+			if (game.o === 0 && game.scrimmage < 30 && !game.awaitingAfterTouchdown) {
+				break;
+			}
+		}
+
+		assert.strictEqual(game.down, 2);
+
+		// No possession change
+		assert.strictEqual(game.o, 0);
+		assert.strictEqual(game.d, 1);
+	});
 });

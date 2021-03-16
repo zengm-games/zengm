@@ -21,6 +21,8 @@ hockey
   - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
   - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqnmwkf/?context=3
 - check faceoff percentages https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
+- center/winger ratings - centers should be better defensively, what else?
+  - https://discord.com/channels/@me/778760871911751700/821247944895627264
 
 goat frivolity, similar to hof but including active players
 - https://twitter.com/Dontreach_/status/1364770043347746816
@@ -779,13 +781,6 @@ FBGM
 - OT not immediately ending after FG https://discord.com/channels/@me/769709600353681429/779567122329763840
   - i can't reproduce this
 - 0 game injury persists after game https://discord.com/channels/@me/769709600353681429/779898060947587114
-- skip down after fumble
-  - lost down after offense recovers fumble https://discord.com/channels/290013534023057409/290015591216054273/795748543326322729
-  - https://discord.com/channels/290013534023057409/290015591216054273/796159213885587466
-  - could happen if advanceYds is called multiple times, like if there are 2 fumbles on the play, or multiple penalties
-  - https://old.reddit.com/r/Football_GM/comments/llx3zu/possible_sim_bug_skipped_a_down_after_a_fumble/
-- sacks don't count if they occur on 4th down according to the play-by-play https://discord.com/channels/290013534023057409/290015591216054273/793951045629247518
-  - https://discord.com/channels/290013534023057409/290015591216054273/796419560613085235
 - multiple QBs problem
   - switch from top value to top change in team rating, for both draft and FA
   - https://github.com/nicidob/fbgm/blob/master/how_to_select.ipynb
@@ -798,9 +793,8 @@ FBGM
 - penalty on punt goes in wrong direction https://old.reddit.com/r/Football_GM/comments/l9xzhi/bug_report_penalty_goes_the_wrong_way/
 - holding on incomplete pass https://discord.com/channels/290013534023057409/290015591216054273/806339641924911154
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
-- overtime not ending after failed 4th down conversion
-  - https://github.com/dumbmatter/gm-games/issues/363
 - rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
+- advanceYds makes no sense. need separate concept of "line of scrimmage" and "where the ball is". should not be incrementing the down, scoring TD/SF in a function that moves where the ball is
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

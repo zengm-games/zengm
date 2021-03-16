@@ -824,7 +824,7 @@ class GameSim {
 
 		// Turnover on downs?
 		if (!repeatDown) {
-			if (this.down === 4) {
+			if (this.down >= 4) {
 				this.possessionChange();
 				this.scrimmage = 100 - this.scrimmage;
 				const maxToGo = 100 - this.scrimmage;
@@ -1439,7 +1439,7 @@ class GameSim {
 
 	doFumble(pFumbled: PlayerGameSim, priorYdsRaw: number) {
 		this.recordStat(this.o, pFumbled, "fmb");
-		this.scrimmage = helpers.bound(this.scrimmage + priorYdsRaw, -9, 100);
+		const newScrimmage = helpers.bound(this.scrimmage + priorYdsRaw, -9, 100);
 		const lost = Math.random() > 0.5;
 		const pForced = this.pickPlayer(this.d, "tackling");
 		this.recordStat(this.d, pForced, "defFmbFrc");
@@ -1455,21 +1455,24 @@ class GameSim {
 		if (lost) {
 			this.recordStat(this.o, pFumbled, "fmbLost");
 			this.possessionChange();
-			this.scrimmage = 100 - this.scrimmage;
+			this.scrimmage = 100 - newScrimmage;
 			this.isClockRunning = false;
 		} else {
 			// Stops if fumbled out of bounds
 			this.isClockRunning = Math.random() > 0.05;
 		}
 
-		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+		let ydsRaw = newScrimmage - this.scrimmage;
+		ydsRaw += Math.round(random.truncGauss(4, 6, -5, 15));
 
 		if (Math.random() < (lost ? 0.01 : 0.0001)) {
 			ydsRaw += random.randInt(0, 109);
 		}
 
 		const yds = this.boundedYds(ydsRaw);
-		const { safetyOrTouchback, td } = this.advanceYds(yds);
+		const { safetyOrTouchback, td } = this.advanceYds(yds, {
+			repeatDown: true,
+		});
 		let dt = Math.abs(yds) / 6;
 		this.playByPlay.logEvent("fumbleRecovery", {
 			clock: this.clock,
@@ -1665,6 +1668,9 @@ class GameSim {
 		let dt = random.randInt(2, 6);
 
 		if (Math.random() < this.probFumble(qb)) {
+			// Would be better to call advanceYards, but that could trigger a premature possession change
+			this.down += 1;
+
 			const yds = random.randInt(-1, -10);
 			return dt + this.doFumble(qb, yds);
 		}

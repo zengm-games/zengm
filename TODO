@@ -800,7 +800,6 @@ FBGM
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
 - overtime not ending after failed 4th down conversion
   - https://github.com/dumbmatter/gm-games/issues/363
-- similar to sack on 4th down bug that i fixed, anything that happens after advanceYds is called cannot use this.o and this.d because they could have been swapped
 - rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
 
 eventually

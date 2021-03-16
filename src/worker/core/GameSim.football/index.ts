@@ -1647,6 +1647,9 @@ class GameSim {
 	}
 
 	doPass() {
+		const o = this.o;
+		const d = this.d;
+
 		this.updatePlayersOnField("pass");
 		const penInfo = this.checkPenalties("beforeSnap");
 
@@ -1655,10 +1658,10 @@ class GameSim {
 			return 0;
 		}
 
-		const qb = this.getTopPlayerOnField(this.o, "QB");
+		const qb = this.getTopPlayerOnField(o, "QB");
 		this.playByPlay.logEvent("dropback", {
 			clock: this.clock,
-			t: this.o,
+			t: o,
 			names: [qb.name],
 		});
 		let dt = random.randInt(2, 6);
@@ -1675,17 +1678,17 @@ class GameSim {
 		}
 
 		const target = this.pickPlayer(
-			this.o,
+			o,
 			Math.random() < 0.2 ? "catching" : "gettingOpen",
 			["WR", "TE", "RB"],
 		);
-		const defender = this.pickPlayer(this.d, "passCoverage", ["CB", "S", "LB"]);
+		const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
 		const interception = Math.random() < this.probInt(qb);
 		let ydsRaw = Math.round(
 			random.truncGauss(
 				9.2 *
-					(this.team[this.o].compositeRating.passBlocking /
-						this.team[this.d].compositeRating.passRushing),
+					(this.team[o].compositeRating.passBlocking /
+						this.team[d].compositeRating.passRushing),
 				7,
 				-10,
 				100,
@@ -1699,10 +1702,10 @@ class GameSim {
 		let yds = this.boundedYds(ydsRaw);
 
 		if (interception) {
-			this.recordStat(this.o, qb, "pssInt");
-			this.recordStat(this.o, qb, "pss");
-			this.recordStat(this.o, target, "tgt");
-			this.recordStat(this.d, defender, "defPssDef");
+			this.recordStat(o, qb, "pssInt");
+			this.recordStat(o, qb, "pss");
+			this.recordStat(o, target, "tgt");
+			this.recordStat(d, defender, "defPssDef");
 			dt += this.doInterception(yds);
 		} else {
 			dt += Math.abs(yds) / 20;
@@ -1729,8 +1732,8 @@ class GameSim {
 				}
 			}
 
-			this.recordStat(this.o, qb, "pss");
-			this.recordStat(this.o, target, "tgt");
+			this.recordStat(o, qb, "pss");
+			this.recordStat(o, target, "tgt");
 
 			const complete = Math.random() < this.probComplete(qb, target, defender);
 
@@ -1741,16 +1744,16 @@ class GameSim {
 					td = info.td;
 				}
 
-				this.recordStat(this.o, qb, "pssCmp");
-				this.recordStat(this.o, qb, "pssYds", yds);
-				this.recordStat(this.o, qb, "pssLng", yds);
-				this.recordStat(this.o, target, "rec");
-				this.recordStat(this.o, target, "recYds", yds);
-				this.recordStat(this.o, target, "recLng", yds);
+				this.recordStat(o, qb, "pssCmp");
+				this.recordStat(o, qb, "pssYds", yds);
+				this.recordStat(o, qb, "pssLng", yds);
+				this.recordStat(o, target, "rec");
+				this.recordStat(o, target, "recYds", yds);
+				this.recordStat(o, target, "recLng", yds);
 
 				this.playByPlay.logEvent("passComplete", {
 					clock: this.clock,
-					t: this.o,
+					t: o,
 					names: [qb.name, target.name],
 					safety: safetyOrTouchback,
 					td,
@@ -1769,8 +1772,8 @@ class GameSim {
 				this.isClockRunning = Math.random() < 0.75;
 
 				if (td) {
-					this.recordStat(this.o, qb, "pssTD");
-					this.recordStat(this.o, target, "recTD");
+					this.recordStat(o, qb, "pssTD");
+					this.recordStat(o, target, "recTD");
 					this.isClockRunning = false;
 				}
 
@@ -1783,12 +1786,12 @@ class GameSim {
 				}
 
 				if (Math.random() < 0.4) {
-					this.recordStat(this.d, defender, "defPssDef");
+					this.recordStat(d, defender, "defPssDef");
 				}
 
 				this.playByPlay.logEvent("passIncomplete", {
 					clock: this.clock,
-					t: this.o,
+					t: o,
 					names: [qb.name, target.name],
 					twoPointConversionTeam: this.twoPointConversionTeam,
 					yds,
@@ -1805,6 +1808,9 @@ class GameSim {
 	}
 
 	doRun() {
+		const o = this.o;
+		const d = this.d;
+
 		this.updatePlayersOnField("run");
 		const penInfo = this.checkPenalties("beforeSnap");
 
@@ -1817,7 +1823,7 @@ class GameSim {
 		const positions: Position[] = ["RB"];
 		const rand = Math.random();
 
-		const rbs = this.playersOnField[this.o].RB || [];
+		const rbs = this.playersOnField[o].RB || [];
 
 		if (rand < 0.5 || rbs.length === 0) {
 			positions.push("QB");
@@ -1825,20 +1831,20 @@ class GameSim {
 			positions.push("WR");
 		}
 
-		const p = this.pickPlayer(this.o, "rushing", positions);
-		this.recordStat(this.o, p, "rus");
-		const qb = this.getTopPlayerOnField(this.o, "QB");
+		const p = this.pickPlayer(o, "rushing", positions);
+		this.recordStat(o, p, "rus");
+		const qb = this.getTopPlayerOnField(o, "QB");
 		this.playByPlay.logEvent("handoff", {
 			clock: this.clock,
-			t: this.o,
+			t: o,
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 		const meanYds =
 			(3.5 *
 				0.5 *
 				(p.compositeRating.rushing +
-					this.team[this.o].compositeRating.runBlocking)) /
-			this.team[this.d].compositeRating.runStopping;
+					this.team[o].compositeRating.runBlocking)) /
+			this.team[d].compositeRating.runStopping;
 		let ydsRaw = Math.round(random.truncGauss(meanYds, 6, -5, 15));
 
 		if (Math.random() < 0.01) {
@@ -1874,8 +1880,8 @@ class GameSim {
 			td = info.td;
 		}
 
-		this.recordStat(this.o, p, "rusYds", yds);
-		this.recordStat(this.o, p, "rusLng", yds);
+		this.recordStat(o, p, "rusYds", yds);
+		this.recordStat(o, p, "rusLng", yds);
 
 		if (Math.random() < this.probFumble(p)) {
 			this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
@@ -1885,7 +1891,7 @@ class GameSim {
 
 		this.playByPlay.logEvent("run", {
 			clock: this.clock,
-			t: this.o,
+			t: o,
 			names: [p.name],
 			safety: safetyOrTouchback,
 			twoPointConversionTeam: this.twoPointConversionTeam,
@@ -1895,7 +1901,7 @@ class GameSim {
 		this.isClockRunning = Math.random() < 0.85;
 
 		if (td) {
-			this.recordStat(this.o, p, "rusTD");
+			this.recordStat(o, p, "rusTD");
 			this.isClockRunning = false;
 		}
 

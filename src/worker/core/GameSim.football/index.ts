@@ -825,10 +825,8 @@ class GameSim {
 		// Turnover on downs?
 		if (!repeatDown) {
 			if (this.down === 4) {
-				this.o = this.o === 0 ? 1 : 0;
-				this.d = this.d === 0 ? 1 : 0;
+				this.possessionChange();
 				this.scrimmage = 100 - this.scrimmage;
-				this.down = 1;
 				const maxToGo = 100 - this.scrimmage;
 				this.toGo = maxToGo < 10 ? maxToGo : 10;
 				return {

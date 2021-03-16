@@ -117,4 +117,33 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.o, 1);
 		assert.strictEqual(game.d, 0);
 	});
+
+	test("OT ends after failed 4th down conversion if 1st team kicked a FG", async () => {
+		// Down by 3, overtime, ball on own 20 yard line, 4th down, 1:30 left
+		const game = await initGameSim();
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = 0;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 3;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, 0, game.team[1].stat.pts];
+		game.down = 4;
+		game.scrimmage = 20;
+		game.clock = 1.5;
+		game.overtimeState = "secondPossession";
+
+		// Sacks always happen, no penalties
+		game.getPlayType = () => "pass";
+		game.probSack = () => 1;
+		game.checkPenalties = () => undefined;
+
+		game.simPlay();
+
+		assert.strictEqual(game.overtimeState, "over");
+
+		// Possession changed
+		assert.strictEqual(game.o, 1);
+		assert.strictEqual(game.d, 0);
+	});
 });

@@ -27,11 +27,8 @@ const developSeason = async (
 		return;
 	}
 
-	const realPlayerDeterminism = helpers.bound(
-		g.get("realPlayerDeterminism"),
-		0,
-		1,
-	);
+	const realPlayerDeterminism =
+		helpers.bound(g.get("realPlayerDeterminism"), 0, 1) ** 2;
 	if (realPlayerDeterminism === 0 || srID === undefined) {
 		return;
 	}

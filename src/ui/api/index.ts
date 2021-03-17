@@ -99,7 +99,6 @@ const initAds = (goldUntil: number | undefined) => {
 					placementName: adDiv,
 					slotId: adDiv,
 				});
-				console.log("enabled_slots", adDiv);
 			}
 
 			if (adDivs.includes(AD_DIVS.mobile)) {

@@ -1,5 +1,11 @@
 import PropTypes from "prop-types";
-import { DataTable, Height, PlayerNameLabels, Weight } from "../components";
+import {
+	CountryFlag,
+	DataTable,
+	Height,
+	PlayerNameLabels,
+	Weight,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -106,16 +112,25 @@ const PlayerBios = ({
 				p.contract.amount > 0 && season === currentSeason
 					? p.contract.exp
 					: null,
-				<a
-					href={helpers.leagueUrl([
-						"frivolities",
-						"most",
-						"country",
-						window.encodeURIComponent(helpers.getCountry(p.born.loc)),
-					])}
-				>
-					{p.born.loc}
-				</a>,
+				{
+					value: (
+						<>
+							<CountryFlag country={p.born.loc} />
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"country",
+									window.encodeURIComponent(helpers.getCountry(p.born.loc)),
+								])}
+							>
+								{p.born.loc}
+							</a>
+						</>
+					),
+					sortValue: p.born.loc,
+					searchValue: p.born.loc,
+				},
 				<a
 					href={helpers.leagueUrl([
 						"frivolities",

@@ -4,6 +4,12 @@ If you have “lose best player at the end of the season” turned on, there’s
 
 flag icon on roster page
 - https://github.com/lipis/flag-icon-css
+- don't cache in service worker
+- do set long expiration in htaccess
+- thank cleve
+- roster
+- player profile
+- player bios
 
 lottery sorting
 - sort based on pts rather than winp when appropriate https://discord.com/channels/@me/778760871911751700

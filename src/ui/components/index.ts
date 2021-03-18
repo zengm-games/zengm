@@ -6,6 +6,7 @@ export { default as BoxScoreWrapper } from "./BoxScoreWrapper";
 export { default as ScoreBox } from "./ScoreBox";
 export { default as Confetti } from "./Confetti";
 export { default as Controller } from "./Controller";
+export { default as CountryFlag } from "./CountryFlag";
 export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";
 export { default as ErrorBoundary } from "./ErrorBoundary";

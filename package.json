@@ -120,6 +120,7 @@
 		"eslint-plugin-react": "^7.22.0",
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"fake-indexeddb": "^3.1.2",
+		"flag-icon-css": "^3.5.0",
 		"fs-extra": "^9.1.0",
 		"husky": "^4.3.8",
 		"import-jsx": "^4.0.0",

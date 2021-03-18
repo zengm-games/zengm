@@ -30,7 +30,9 @@ lottery sorting
 - DRY draftPicksIndexed
 - "For the team making the pick" - should be allTeams, not firstRoundTeams
 - for TIEBREAKER, need ability to pass option to orderTeams
-- test expansion teams
+- test
+  - expansion teams
+  - challenge mode
 - confirm basketball tiebreakers don't jump when starting lottery
 - genOrderNone
   - maybe just make it an option in genOrderNBA

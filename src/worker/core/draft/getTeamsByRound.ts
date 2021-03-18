@@ -211,17 +211,20 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 			? firstRound
 			: (await orderTeams(teams, allTeams)).reverse();
 
-	const rounds: MyTeam[][] = [];
+	const teamsByRound: MyTeam[][] = [];
 	const numDraftRounds = g.get("numDraftRounds");
 	for (let i = 0; i < numDraftRounds; i++) {
 		if (i === 0) {
-			rounds.push(firstRound);
+			teamsByRound.push(firstRound);
 		} else {
-			rounds.push(nthRoundBase);
+			teamsByRound.push(nthRoundBase);
 		}
 	}
 
-	return rounds;
+	return {
+		allTeams,
+		teamsByRound,
+	};
 };
 
 export default getTeamsByRound;

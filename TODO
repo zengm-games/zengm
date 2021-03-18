@@ -28,7 +28,6 @@ lottery sorting
     - tiebreaker order is the same in every round
 - delete lotterySort
 - DRY draftPicksIndexed
-- "For the team making the pick" - should be allTeams, not firstRoundTeams
 - for TIEBREAKER, need ability to pass option to orderTeams
 - test
   - expansion teams
@@ -39,7 +38,7 @@ lottery sorting
 - add a "tiedIndex" field to each team's seasonAttrs if they are tied. increment each round that a tie persists. use it to:
   - getTeamsByRound: handle TIEBREAKER_AFTER_FIRST_ROUND
     - handle case where tied teams are different in 1st round and 2nd+ round?
-  - genOrderNBA: build the "tied lottery chances split or not" thing into the NHL draft method
+  - genOrderNBA: build the "tied lottery chances split or not" thing into the NHL draft method, rather tha nconditionally calling divideChancesOverTiedTeams
 
 better gold websites
 - dedicated website, separate from game

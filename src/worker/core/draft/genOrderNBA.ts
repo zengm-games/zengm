@@ -143,7 +143,7 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	const teamsByRound = await getTeamsByRound(draftPicksIndexed);
+	const { allTeams, teamsByRound } = await getTeamsByRound(draftPicksIndexed);
 	const firstRoundTeams = teamsByRound[0];
 
 	// Draft lottery
@@ -301,7 +301,7 @@ const genOrder = async (
 				}
 
 				// For the team making the pick
-				const t = firstRoundTeams.find(t2 => t2.tid === dp.tid);
+				const t = allTeams.find(t2 => t2.tid === dp.tid);
 				let won = 0;
 				let lost = 0;
 				let otl = 0;

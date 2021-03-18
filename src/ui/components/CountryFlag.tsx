@@ -268,7 +268,9 @@ const CountryFlag = ({
 	className?: string;
 	country: string;
 }) => {
-	const country2 = helpers.getCountry(country);
+	const country2 = countryCodes[country]
+		? country
+		: helpers.getCountry(country);
 	const code = countryCodes[country2];
 	if (code) {
 		return (

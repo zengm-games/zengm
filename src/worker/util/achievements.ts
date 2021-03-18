@@ -965,7 +965,10 @@ if (isSport("hockey") || isSport("basketball")) {
 		{
 			slug: "international",
 			name: "International",
-			desc: "Win a title with no American players on your team.",
+			desc: `Win a title with no ${bySport({
+				hockey: "Canadian",
+				default: "American",
+			})} players on your team.`,
 			category: "Team Composition",
 
 			async check() {
@@ -976,8 +979,13 @@ if (isSport("hockey") || isSport("basketball")) {
 				}
 
 				const playersAll = await idb.cache.players.getAll();
-				const countUSA = playersAll.filter(p => helpers.isAmerican(p.born.loc))
-					.length;
+				const countUSA = playersAll.filter(p => {
+					if (isSport("hockey")) {
+						return helpers.getCountry(p.born.loc) === "Canada";
+					}
+
+					return helpers.isAmerican(p.born.loc);
+				}).length;
 
 				if (countUSA < playersAll.length / 2) {
 					// Handle custom rosters where nobody is from the USA by enforcing that the league must be at least half USA for this achievement to apply
@@ -990,8 +998,14 @@ if (isSport("hockey") || isSport("basketball")) {
 				);
 
 				for (const p of players) {
-					if (helpers.isAmerican(p.born.loc)) {
-						return false;
+					if (isSport("hockey")) {
+						if (helpers.getCountry(p.born.loc) === "Canada") {
+							return false;
+						}
+					} else {
+						if (helpers.isAmerican(p.born.loc)) {
+							return false;
+						}
 					}
 				}
 

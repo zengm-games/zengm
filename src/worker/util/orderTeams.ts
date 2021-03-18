@@ -614,7 +614,6 @@ const orderTeams = async <T extends BaseTeam>(
 	}
 
 	const usePts = g.get("pointsFormula", season) !== "";
-	console.log("orderTeams", usePts);
 
 	const divisionLeaders = await getDivisionLeaders(teams, allTeams, {
 		skipTiebreakers,

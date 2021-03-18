@@ -12,6 +12,7 @@ import type {
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
+import { team } from "..";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -272,6 +273,8 @@ const genOrder = async (
 		}
 	}
 
+	const usePts = g.get("pointsFormula", "current") !== "";
+
 	// Save draft lottery results separately
 	const draftLotteryResult: ReturnVal = {
 		season: g.get("season"),
@@ -300,12 +303,17 @@ const genOrder = async (
 				let lost = 0;
 				let otl = 0;
 				let tied = 0;
+				let pts;
 
 				if (t) {
 					won = t.seasonAttrs.won;
 					lost = t.seasonAttrs.lost;
 					otl = t.seasonAttrs.otl;
 					tied = t.seasonAttrs.tied;
+
+					if (usePts) {
+						pts = team.evaluatePointsFormula(t.seasonAttrs);
+					}
 				}
 
 				// For the original team
@@ -319,6 +327,7 @@ const genOrder = async (
 					lost,
 					otl,
 					tied,
+					pts,
 				};
 			}),
 	};

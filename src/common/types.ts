@@ -125,6 +125,7 @@ export type DraftLotteryResultArray = {
 	lost: number;
 	tied: number;
 	otl: number;
+	pts?: number;
 }[];
 
 export type DraftLotteryResult = {

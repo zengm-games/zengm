@@ -33,7 +33,7 @@ const countryCodes: Record<string, string> = {
 	"Czech Republic": "cz",
 	Denmark: "dk",
 	"Dominican Republic": "do",
-	"East Timor": "tp",
+	"East Timor": "tl",
 	Egypt: "eg",
 	"El Salvador": "sv",
 	England: "gb",

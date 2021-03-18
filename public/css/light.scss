@@ -13,10 +13,32 @@ $include: dz, as, ao, ar, am, au, at, az, bs, by, be, bj, bo, ba, br, bg, cm, ca
 	mz, np, nl, nz, ni, ng, kp, mk, no, pk, pa, pg, py, pe, ph, pl, pt, pr, ro, ru,
 	ws, gb, sn, rs, sk, si, za, kr, ss, es, sd, se, ch, th, tt, tr, us, ua, uy, uz,
 	ve, vn, vi;
+
+// Inlined from flag-icon.scss to save the square flag classes
 $flag-icon-css-path: "/img/flags";
-$flag-icon-rect-path: "";
-$flag-icon-square-path: "";
-@import "node_modules/flag-icon-css/sass/flag-icon.scss";
+.flag-icon {
+	background-size: contain;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	position: relative;
+	display: inline-block;
+	width: (4 / 3) * 1em;
+	line-height: 1em;
+	&:before {
+		content: "\00a0";
+	}
+	&.flag-icon-squared {
+		width: 1em;
+	}
+}
+@mixin flag-icon($country) {
+	.flag-icon-#{$country} {
+		background-image: url(#{$flag-icon-css-path}/#{$country}.svg);
+	}
+}
+@each $country in $include {
+	@include flag-icon($country);
+}
 
 // Taken from bootstrap.scss, but with unused things deleted
 @import "node_modules/bootstrap/scss/functions";

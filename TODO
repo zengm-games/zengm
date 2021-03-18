@@ -32,7 +32,6 @@ lottery sorting
 - test
   - expansion teams
   - challenge mode
-- confirm basketball tiebreakers don't jump when starting lottery
 - genOrderNone
   - maybe just make it an option in genOrderNBA
 - add a "tiedIndex" field to each team's seasonAttrs if they are tied. increment each round that a tie persists. use it to:

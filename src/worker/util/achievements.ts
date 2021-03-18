@@ -223,11 +223,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty",
 		name: "Dynasty",
-		desc: "Win 6 championships in 8 years.",
+		desc: bySport({
+			hockey: "Win 3 championships in 5 years.",
+			default: "Win 6 championships in 8 years.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(6, 8);
+			return bySport({
+				hockey: checkDynasty(3, 5),
+				default: checkDynasty(6, 8),
+			});
 		},
 
 		when: "afterPlayoffs",
@@ -235,11 +241,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty_2",
 		name: "Dynasty 2",
-		desc: "Win 8 championships in a row.",
+		desc: bySport({
+			hockey: "Win 5 championships in a row.",
+			default: "Win 8 championships in a row.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(8, 8);
+			return bySport({
+				hockey: checkDynasty(5, 5),
+				default: checkDynasty(8, 8),
+			});
 		},
 
 		when: "afterPlayoffs",
@@ -247,11 +259,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty_3",
 		name: "Dynasty 3",
-		desc: "Win 11 championships in 13 years.",
+		desc: bySport({
+			hockey: "Win 10 championships in 15 years.",
+			default: "Win 11 championships in 13 years.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(11, 13);
+			return bySport({
+				hockey: checkDynasty(10, 15),
+				default: checkDynasty(11, 13),
+			});
 		},
 
 		when: "afterPlayoffs",

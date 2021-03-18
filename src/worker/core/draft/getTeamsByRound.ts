@@ -46,12 +46,6 @@ const TIEBREAKER = bySport<"random" | "default">({
 	hockey: "default",
 });
 
-const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap", "rotate", "same">({
-	basketball: "swap",
-	football: "rotate",
-	hockey: "same",
-});
-
 const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 	basketball: "record",
 	football: "firstRound",
@@ -265,10 +259,10 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const numDraftRounds = g.get("numDraftRounds");
 	for (let i = 0; i < numDraftRounds; i++) {
 		if (i === 0) {
-			teamsByRound.push(firstRound);
+			teamsByRound.push([...firstRound]);
 		} else {
 			checkForTies(nthRound, i + 1);
-			teamsByRound.push(nthRound);
+			teamsByRound.push([...nthRound]);
 		}
 	}
 

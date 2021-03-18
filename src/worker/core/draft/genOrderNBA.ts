@@ -12,7 +12,7 @@ import type {
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -113,6 +113,12 @@ const VALID_DRAFT_TYPES = [
 	"nba1990",
 	"nhl2017",
 ] as const;
+
+const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap" | "rotate" | "same">({
+	basketball: "swap",
+	football: "rotate",
+	hockey: "same",
+});
 
 /**
  * Sets draft order and save it to the draftPicks object store.
@@ -236,6 +242,8 @@ const genOrder = async (
 		);
 	}
 
+	const firstRoundOrderAfterLottery = [];
+
 	// First round - lottery winners
 	let pick = 1;
 	for (let i = 0; i < firstN.length; i++) {
@@ -244,6 +252,7 @@ const genOrder = async (
 		if (dp !== undefined) {
 			dp.pick = pick;
 			pick += 1;
+			firstRoundOrderAfterLottery.push(firstRoundTeams[firstN[i]]);
 
 			if (!mock) {
 				logLotteryWinners(
@@ -265,6 +274,7 @@ const genOrder = async (
 			if (dp) {
 				dp.pick = pick;
 				pick += 1;
+				firstRoundOrderAfterLottery.push(firstRoundTeams[i]);
 
 				if (pick <= numLotteryTeams && !mock) {
 					logLotteryWinners(
@@ -278,6 +288,7 @@ const genOrder = async (
 			}
 		}
 	}
+	console.log("firstRoundOrderAfterLottery", firstRoundOrderAfterLottery);
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
@@ -344,6 +355,63 @@ const genOrder = async (
 
 	for (let roundIndex = 1; roundIndex < teamsByRound.length; roundIndex++) {
 		const roundTeams = teamsByRound[roundIndex];
+		const round = roundIndex + 1;
+
+		// Handle tiebreakers for the 2nd+ round (1st is already done by getTeamsByRound, but 2nd can't be done until now because it depends on lottery results for basketball/football)
+		if (TIEBREAKER_AFTER_FIRST_ROUND !== "same") {
+			for (const { rounds, teams } of Object.values(ties)) {
+				if (rounds.includes(round)) {
+					// From getTeamsByRound, teams is guaranteed to be a continuous section of roundTeams, so we can just figure out the correct order for them and then replace them in roundTeam
+					console.log(
+						"tie",
+						round,
+						teams.map(t => g.get("teamInfoCache")[t.tid].abbrev).join(","),
+					);
+					const start = roundTeams.findIndex(t => teams.includes(t));
+					const length = teams.length;
+					console.log("start", start, length);
+
+					const firstRoundOrder = firstRoundOrderAfterLottery.filter(t =>
+						teams.includes(t),
+					);
+					console.log(
+						"firstRoundOrder2",
+						round,
+						firstRoundOrder
+							.map(t => g.get("teamInfoCache")[t.tid].abbrev)
+							.join(","),
+					);
+
+					// Handle case where a team did not appear in the 1st round but does now, which probably never happens
+					for (const t of teams) {
+						if (!firstRoundOrder.includes(t)) {
+							firstRoundOrder.push(t);
+						}
+					}
+
+					// Based on roundIndex and TIEBREAKER_AFTER_FIRST_ROUND, do some permutation of firstRoundOrder
+					console.log(TIEBREAKER_AFTER_FIRST_ROUND, roundIndex % 2);
+					const newOrder = firstRoundOrder;
+					if (TIEBREAKER_AFTER_FIRST_ROUND === "swap") {
+						if (roundIndex % 2 === 1) {
+							newOrder.reverse();
+						}
+					} else if (TIEBREAKER_AFTER_FIRST_ROUND === "rotate") {
+						for (let i = 0; i < roundIndex; i++) {
+							// Move 1st team to the end of the list
+							newOrder.push(((newOrder as unknown) as any).shift());
+						}
+					}
+					console.log(
+						"newOrder",
+						round,
+						newOrder.map(t => g.get("teamInfoCache")[t.tid].abbrev).join(","),
+					);
+					roundTeams.splice(start, length, ...newOrder);
+				}
+			}
+		}
+
 		let pick = 1;
 		for (const t of roundTeams) {
 			const dp = draftPicksIndexed[t.tid]?.[roundIndex + 1];

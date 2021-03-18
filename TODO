@@ -35,6 +35,8 @@ lottery sorting
 - genOrderNone
   - maybe just make it an option in genOrderNBA
 - add a "tiedIndex" field to each team's seasonAttrs if they are tied. increment each round that a tie persists. use it to:
+  - can't just be a number, needs tieID and tieIndex, to identify it and the index
+  - can't be resolved until after the lottery, because for the NBA, the 2nd round order depends on the lottery result
   - getTeamsByRound: handle TIEBREAKER_AFTER_FIRST_ROUND
     - handle case where tied teams are different in 1st round and 2nd+ round?
   - genOrderNBA: build the "tied lottery chances split or not" thing into the NHL draft method, rather tha nconditionally calling divideChancesOverTiedTeams

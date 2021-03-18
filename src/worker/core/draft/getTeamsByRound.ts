@@ -108,9 +108,55 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 
 	type MyTeam = typeof teams[number];
 
+	const usePts = g.get("pointsFormula", "current") !== "";
+
 	////
 	// Many special cases in first round
 	////
+
+	const ties: Record<
+		string,
+		{
+			// Some ties might not appear until the 2nd round, due to 1st round sorting factoring in playoffs
+			rounds: number[];
+			teams: MyTeam[];
+		}
+	> = {};
+
+	const addTie = (tiedTeams: MyTeam[], round: number) => {
+		const key = JSON.stringify(tiedTeams.map(t => t.tid).sort((a, b) => a - b));
+
+		if (!ties[key]) {
+			ties[key] = {
+				rounds: [round],
+				teams: tiedTeams,
+			};
+		} else {
+			ties[key].rounds.push(round);
+		}
+	};
+
+	const checkForTies = (teamsToCheck: MyTeam[], round: number) => {
+		let tiedValue;
+		let tiedTeams: MyTeam[] = [];
+		for (const t of teamsToCheck) {
+			const newTiedValue = usePts ? t.seasonAttrs.pts : t.seasonAttrs.winp;
+			if (newTiedValue === tiedValue) {
+				tiedTeams.push(t);
+			} else {
+				if (tiedTeams.length > 0) {
+					addTie(tiedTeams, round);
+				}
+
+				tiedValue = newTiedValue;
+				tiedTeams = [t];
+			}
+		}
+
+		if (tiedTeams.length > 0) {
+			addTie(tiedTeams, round);
+		}
+	};
 
 	const firstRound: MyTeam[] = [];
 
@@ -120,6 +166,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const nonPlayoffTeamsOrdered = (
 		await orderTeams(nonPlayoffTeams, allTeams)
 	).reverse();
+	checkForTies(nonPlayoffTeamsOrdered, 1);
 	firstRound.push(...nonPlayoffTeamsOrdered);
 
 	const playoffTeams = teams.filter(
@@ -130,6 +177,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 			const playoffTeamsOrdered = (
 				await orderTeams(playoffTeams, allTeams)
 			).reverse();
+			checkForTies(playoffTeamsOrdered, 1);
 			firstRound.push(...playoffTeamsOrdered);
 		} else if (FIRST_ROUND_PLAYOFF_TEAMS_ORDER === "playoffs") {
 			let minPlayoffRoundsWon = Infinity;
@@ -154,6 +202,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 				const playoffRoundTeamsOrdered = (
 					await orderTeams(playoffRoundTeams, allTeams)
 				).reverse();
+				checkForTies(playoffRoundTeamsOrdered, 1);
 				firstRound.push(...playoffRoundTeamsOrdered);
 			}
 		} else {
@@ -200,13 +249,14 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 
 			for (const group of groups) {
 				const groupOrdered = (await orderTeams(group, allTeams)).reverse();
+				checkForTies(group, 1);
 				firstRound.push(...groupOrdered);
 			}
 		}
 	}
 
 	// Still needs to be adjusted for tiebreakers each round
-	const nthRoundBase =
+	const nthRound =
 		ORDER_AFTER_FIRST_ROUND === "firstRound"
 			? firstRound
 			: (await orderTeams(teams, allTeams)).reverse();
@@ -217,13 +267,15 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		if (i === 0) {
 			teamsByRound.push(firstRound);
 		} else {
-			teamsByRound.push(nthRoundBase);
+			checkForTies(nthRound, i + 1);
+			teamsByRound.push(nthRound);
 		}
 	}
 
 	return {
 		allTeams,
 		teamsByRound,
+		ties,
 	};
 };
 

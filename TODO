@@ -37,8 +37,6 @@ lottery sorting
   - getTeamsByRound: handle TIEBREAKER_AFTER_FIRST_ROUND
     - handle case where tied teams are different in 1st round and 2nd+ round?
   - genOrderNBA: build the "tied lottery chances split or not" thing into the NHL draft method
-- http://localhost/l/43/draft_lottery why MIA below CHI?
-  - little bug in divisionLeaders... should be based on allTeams, not teams
 
 better gold websites
 - dedicated website, separate from game

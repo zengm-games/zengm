@@ -549,7 +549,7 @@ export const breakTies = <T extends BaseTeam>(
 
 export const getDivisionLeaders = async <T extends BaseTeam>(
 	teams: T[],
-	allTeams: BaseAllTeams[],
+	allTeams: T[],
 	{
 		skipTiebreakers,
 		season = g.get("season"),
@@ -560,11 +560,22 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 ) => {
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
 	const divisionLeaders = new Map<number, T>();
-	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
-	const teamsDivs = Object.values(groupedByDivision);
-	if (teamsDivs.length > 1) {
-		// If there are only teams from one division here, then this is useless
-		for (const teamsDiv of teamsDivs) {
+
+	// Only look at divisions repeseted in teams
+	const dids = new Set();
+	for (const t of teams) {
+		dids.add(t.seasonAttrs.did);
+	}
+
+	// If there are only teams from one division here, then this is useless, division leaders don't matter in tiebreaker
+	if (dids.size <= 1) {
+		return divisionLeaders;
+	}
+
+	const groupedByDivision = groupBy(allTeams, (t: T) => t.seasonAttrs.did);
+	for (const [didString, teamsDiv] of Object.entries(groupedByDivision)) {
+		const did = parseInt(didString);
+		if (dids.has(did)) {
 			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
 				season,
 				skipTiebreakers,
@@ -583,7 +594,7 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
-	allTeams: BaseAllTeams[],
+	allTeams: T[],
 	{
 		addTiebreakersField,
 		skipTiebreakers,

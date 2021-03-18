@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Fragment, ReactNode } from "react";
 import {
+	CountryFlag,
 	DataTable,
 	Height,
 	PlayerPicture,
@@ -515,7 +516,7 @@ const Player2 = ({
 										),
 									])}
 								>
-									{player.born.loc}
+									{player.born.loc} <CountryFlag country={player.born.loc} />
 								</a>
 								<br />
 								{typeof player.diedYear !== "number" ? (

@@ -46,10 +46,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	await genPicks();
 
 	const draftPicks = await genOrderGetPicks(mock);
-
-	// Reorganize this to an array indexed on originalTid and round
 	const draftPicksIndexed: DraftPick[][] = [];
-
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array
 

@@ -547,6 +547,39 @@ export const breakTies = <T extends BaseTeam>(
 	return formatOutput(teams[0], "coinFlip");
 };
 
+export const getDivisionLeaders = async <T extends BaseTeam>(
+	teams: T[],
+	allTeams: BaseAllTeams[],
+	{
+		skipTiebreakers,
+		season = g.get("season"),
+	}: {
+		skipTiebreakers?: boolean;
+		season?: number;
+	} = {},
+) => {
+	// Figure out who the division leaders are, if necessary by applying tiebreakers
+	const divisionLeaders = new Map<number, T>();
+	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
+	const teamsDivs = Object.values(groupedByDivision);
+	if (teamsDivs.length > 1) {
+		// If there are only teams from one division here, then this is useless
+		for (const teamsDiv of teamsDivs) {
+			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
+				season,
+				skipTiebreakers,
+			});
+
+			const t = teamsDivSorted[0];
+			if (t) {
+				divisionLeaders.set(t.seasonAttrs.did, t);
+			}
+		}
+	}
+
+	return divisionLeaders;
+};
+
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
 const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
@@ -570,25 +603,12 @@ const orderTeams = async <T extends BaseTeam>(
 	}
 
 	const usePts = g.get("pointsFormula", season) !== "";
+	console.log("orderTeams", usePts);
 
-	// Figure out who the division leaders are, if necessary by applying tiebreakers
-	const divisionLeaders = new Map<number, T>();
-	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
-	const teamsDivs = Object.values(groupedByDivision);
-	if (teamsDivs.length > 1) {
-		// If there are only teams from one division here, then this is useless
-		for (const teamsDiv of teamsDivs) {
-			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
-				season,
-				skipTiebreakers,
-			});
-
-			const t = teamsDivSorted[0];
-			if (t) {
-				divisionLeaders.set(t.seasonAttrs.did, t);
-			}
-		}
-	}
+	const divisionLeaders = await getDivisionLeaders(teams, allTeams, {
+		skipTiebreakers,
+		season,
+	});
 
 	// First pass - order by winp and won
 	const iterees = [

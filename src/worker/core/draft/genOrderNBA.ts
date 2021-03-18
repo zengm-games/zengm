@@ -1,7 +1,6 @@
 import genPicks from "./genPicks";
 import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
-import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
@@ -12,6 +11,7 @@ import type {
 	DraftPickWithoutKey,
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
+import getTeamsByRound from "./getTeamsByRound";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -127,38 +127,10 @@ const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
 ): Promise<ReturnVal> => {
-	let teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "disabled"],
-		seasonAttrs: [
-			"playoffRoundsWon",
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
-		season: g.get("season"),
-		addDummySeason: true,
-		active: true,
-	});
-
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
 	const draftPicks = await genOrderGetPicks(mock);
-
 	const draftPicksIndexed: DraftPickWithoutKey[][] = [];
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array
@@ -170,8 +142,8 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	// Handle teams without draft picks (for challengeNoDraftPicks)
-	teams = teams.filter(t => !!draftPicksIndexed[t.tid]);
+	const teamsByRound = await getTeamsByRound(draftPicksIndexed);
+	const firstRoundTeams = teamsByRound[0];
 
 	// Draft lottery
 
@@ -185,25 +157,26 @@ const genOrder = async (
 		2 ** g.get("numGamesPlayoffSeries", "current").length -
 		g.get("numPlayoffByes", "current");
 
-	const info = getLotteryInfo(draftType, teams.length - numPlayoffTeams);
+	const info = getLotteryInfo(
+		draftType,
+		firstRoundTeams.length - numPlayoffTeams,
+	);
 	const minNumLotteryTeams = info.minNumTeams;
 	const numToPick = info.numToPick;
 	let chances = info.chances;
 
-	if (teams.length < minNumLotteryTeams) {
+	if (firstRoundTeams.length < minNumLotteryTeams) {
 		const error = new Error(
-			`Number of teams with draft picks (${teams.length}) is less than the minimum required for draft type "${draftType}"`,
+			`Number of teams with draft picks (${firstRoundTeams.length}) is less than the minimum required for draft type "${draftType}"`,
 		);
 		(error as any).notEnoughTeams = true;
 		throw error;
 	}
 
-	await lotterySort(teams);
-
 	const numLotteryTeams = helpers.bound(
-		teams.length - numPlayoffTeams,
+		firstRoundTeams.length - numPlayoffTeams,
 		minNumLotteryTeams,
-		draftType === "coinFlip" ? minNumLotteryTeams : teams.length,
+		draftType === "coinFlip" ? minNumLotteryTeams : firstRoundTeams.length,
 	);
 
 	if (numLotteryTeams < chances.length) {
@@ -214,7 +187,7 @@ const genOrder = async (
 		}
 	}
 
-	updateChances(chances, teams, true);
+	updateChances(chances, firstRoundTeams, true);
 	const chanceTotal = chances.reduce((a, b) => a + b, 0);
 	const chancePct = chances.map(c => (c / chanceTotal) * 100); // cumsum
 
@@ -235,11 +208,9 @@ const genOrder = async (
 
 		if (
 			!firstN.includes(i) &&
-			i < teams.length &&
-			draftPicksIndexed[teams[i].tid]
+			i < firstRoundTeams.length &&
+			draftPicksIndexed[firstRoundTeams[i].tid]
 		) {
-			// If one lottery winner, select after other tied teams;
-			(teams[i] as any).randVal -= teams.length;
 			firstN.push(i);
 		}
 
@@ -250,13 +221,18 @@ const genOrder = async (
 	}
 
 	if (!mock) {
-		logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
+		logLotteryChances(
+			chancePct,
+			firstRoundTeams,
+			draftPicksIndexed,
+			conditions,
+		);
 	}
 
 	// First round - lottery winners
 	let pick = 1;
 	for (let i = 0; i < firstN.length; i++) {
-		const dp = draftPicksIndexed[teams[firstN[i]].tid][1];
+		const dp = draftPicksIndexed[firstRoundTeams[firstN[i]].tid][1];
 
 		if (dp !== undefined) {
 			dp.pick = pick;
@@ -264,9 +240,9 @@ const genOrder = async (
 
 			if (!mock) {
 				logLotteryWinners(
-					teams,
+					firstRoundTeams,
 					dp.tid,
-					teams[firstN[i]].tid,
+					firstRoundTeams[firstN[i]].tid,
 					i + 1,
 					conditions,
 				);
@@ -275,16 +251,22 @@ const genOrder = async (
 	}
 
 	// First round - everyone else
-	for (let i = 0; i < teams.length; i++) {
+	for (let i = 0; i < firstRoundTeams.length; i++) {
 		if (!firstN.includes(i)) {
-			const dp = draftPicksIndexed[teams[i].tid]?.[1];
+			const dp = draftPicksIndexed[firstRoundTeams[i].tid]?.[1];
 
 			if (dp) {
 				dp.pick = pick;
 				pick += 1;
 
 				if (pick <= numLotteryTeams && !mock) {
-					logLotteryWinners(teams, dp.tid, teams[i].tid, pick, conditions);
+					logLotteryWinners(
+						firstRoundTeams,
+						dp.tid,
+						firstRoundTeams[i].tid,
+						pick,
+						conditions,
+					);
 				}
 			}
 		}
@@ -294,7 +276,7 @@ const genOrder = async (
 	const draftLotteryResult: ReturnVal = {
 		season: g.get("season"),
 		draftType,
-		result: teams // Start with teams in lottery order
+		result: firstRoundTeams // Start with teams in lottery order
 			.map(({ tid }) => {
 				return draftPicks.find(dp => {
 					// Keep only lottery picks
@@ -313,7 +295,7 @@ const genOrder = async (
 				}
 
 				// For the team making the pick
-				const t = teams.find(t2 => t2.tid === dp.tid);
+				const t = firstRoundTeams.find(t2 => t2.tid === dp.tid);
 				let won = 0;
 				let lost = 0;
 				let otl = 0;
@@ -327,7 +309,7 @@ const genOrder = async (
 				}
 
 				// For the original team
-				const i = teams.findIndex(t2 => t2.tid === dp.originalTid);
+				const i = firstRoundTeams.findIndex(t2 => t2.tid === dp.originalTid);
 				return {
 					tid: dp.tid,
 					originalTid: dp.originalTid,
@@ -345,17 +327,11 @@ const genOrder = async (
 		await idb.cache.draftLotteryResults.put(draftLotteryResult);
 	}
 
-	// Sort by winp with reverse randVal for tiebreakers.
-	teams.sort((a, b) => {
-		const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
-		return r === 0 ? (b as any).randVal - (a as any).randVal : r;
-	});
-
-	// Second+ round
-	for (let round = 2; round <= g.get("numDraftRounds"); round++) {
+	for (let roundIndex = 1; roundIndex < teamsByRound.length; roundIndex++) {
+		const roundTeams = teamsByRound[roundIndex];
 		let pick = 1;
-		for (let i = 0; i < teams.length; i++) {
-			const dp = draftPicksIndexed[teams[i].tid]?.[round];
+		for (const t of roundTeams) {
+			const dp = draftPicksIndexed[t.tid]?.[roundIndex + 1];
 
 			if (dp !== undefined) {
 				dp.pick = pick;

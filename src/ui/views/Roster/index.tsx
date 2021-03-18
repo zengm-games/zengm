@@ -4,6 +4,7 @@ import { useState } from "react";
 import arrayMove from "array-move";
 import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
+	CountryFlag,
 	HelpPopover,
 	Mood,
 	PlayerNameLabels,
@@ -207,6 +208,7 @@ const Roster = ({
 						<th title="Potential Rating">Pot</th>
 						{season === currentSeason ? <th>Contract</th> : null}
 						<th title="Years With Team">YWT</th>
+						<th title="Country"></th>
 						{statCols.map(({ desc, title }) => (
 							<th key={title} title={desc}>
 								{title}
@@ -330,6 +332,9 @@ const Roster = ({
 								</td>
 							) : null}
 							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
+							<td>
+								<CountryFlag country={p.born.loc} />
+							</td>
 							{stats.map(stat => (
 								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 							))}

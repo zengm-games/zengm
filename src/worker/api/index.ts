@@ -800,7 +800,7 @@ const discardUnsavedProgress = async () => {
 };
 
 const draftLottery = async () => {
-	const draftLotteryResult = await draft.genOrderNBA();
+	const draftLotteryResult = await draft.genOrder();
 	return draftLotteryResult;
 };
 

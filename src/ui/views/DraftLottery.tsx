@@ -313,21 +313,25 @@ const DraftLotteryTable = (props: Props) => {
 
 	const startLottery = async () => {
 		dispatch({ type: "startClicked" });
-		const { draftType, result } = await toWorker("main", "draftLottery");
-		const toReveal: number[] = [];
+		const draftLotteryResult = await toWorker("main", "draftLottery");
+		if (draftLotteryResult) {
+			const { draftType, result } = draftLotteryResult;
 
-		for (let i = 0; i < result.length; i++) {
-			const pick = result[i].pick;
-			toReveal[pick - 1] = i;
-			result[i].pick = undefined;
+			const toReveal: number[] = [];
+
+			for (let i = 0; i < result.length; i++) {
+				const pick = result[i].pick;
+				toReveal[pick - 1] = i;
+				result[i].pick = undefined;
+			}
+			toReveal.reverse();
+
+			revealState.current = "running";
+			numLeftToReveal.current = toReveal.length;
+			dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
+
+			revealPickAuto();
 		}
-		toReveal.reverse();
-
-		revealState.current = "running";
-		numLeftToReveal.current = toReveal.length;
-		dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
-
-		revealPickAuto();
 	};
 
 	const handleResume = () => {

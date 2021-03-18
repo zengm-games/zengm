@@ -7,7 +7,7 @@ import type { TeamFiltered } from "../../../common/types";
  * If isFinal is true, the remainder value is distributed randomly instead
  * of being set as a decimal value on the result.
  */
-const updateChances = (
+const divideChancesOverTiedTeams = (
 	chances: number[],
 	teams: TeamFiltered<[], ["winp"], any, number>[],
 	isFinal: boolean = false,
@@ -50,4 +50,4 @@ const updateChances = (
 	}
 };
 
-export default updateChances;
+export default divideChancesOverTiedTeams;

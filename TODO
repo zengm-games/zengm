@@ -33,6 +33,7 @@ lottery sorting
 - test expansion teams
 - genOrderNone
   - maybe just make it an option in genOrderNBA
+- divideChancesOverTiedTeams should use pts when appropriate
 - add a "tiedIndex" field to each team's seasonAttrs if they are tied. increment each round that a tie persists. use it to:
   - getTeamsByRound: handle TIEBREAKER_AFTER_FIRST_ROUND
     - handle case where tied teams are different in 1st round and 2nd+ round?

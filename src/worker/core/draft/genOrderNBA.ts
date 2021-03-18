@@ -1,7 +1,7 @@
 import genPicks from "./genPicks";
 import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
-import updateChances from "./updateChances";
+import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type {
@@ -13,6 +13,7 @@ import type {
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
 import { team } from "..";
+import { isSport } from "../../../common";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -188,7 +189,10 @@ const genOrder = async (
 		}
 	}
 
-	updateChances(chances, firstRoundTeams, true);
+	if (isSport("basketball")) {
+		divideChancesOverTiedTeams(chances, firstRoundTeams, true);
+	}
+
 	const chanceTotal = chances.reduce((a, b) => a + b, 0);
 	const chancePct = chances.map(c => (c / chanceTotal) * 100); // cumsum
 

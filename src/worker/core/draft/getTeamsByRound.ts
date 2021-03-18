@@ -11,7 +11,7 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
  * Basketball
  * - lottery is for non-playoff teams only
  * - after lottery, order is based on record, not playoff results
- * - tied teams in lottery split the total chances
+ * - tied teams in lottery split the total chances (handled in divideChancesOverTiedTeams.ts)
  * - tiebreaker is random - but make it deterministic so it doesn't jump when doing the lottery
  * - 2nd round tiebreaker is opposite of 1st round
  * - 2nd round order is just based on record, no lottery section for non-playoff teams
@@ -91,7 +91,6 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	if (g.get("phase") < PHASE.PLAYOFFS) {
 		tidPlayoffs = (await genPlayoffSeriesFromTeams(allTeams)).tidPlayoffs;
 	}
-	console.log("tidsPlayoffs", tidPlayoffs);
 
 	// Handle teams without draft picks (for challengeNoDraftPicks)
 	const teams = allTeams.filter(t => !!draftPicksIndexed[t.tid]);
@@ -121,7 +120,6 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const nonPlayoffTeamsOrdered = (
 		await orderTeams(nonPlayoffTeams, allTeams)
 	).reverse();
-	console.log("nonPlayoffTeamsOrdered", nonPlayoffTeamsOrdered);
 	firstRound.push(...nonPlayoffTeamsOrdered);
 
 	const playoffTeams = teams.filter(

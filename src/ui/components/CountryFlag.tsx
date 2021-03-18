@@ -140,6 +140,7 @@ const countryCodes: Record<string, string> = {
 	Taiwan: "tw",
 	Tunisia: "tn",
 	"United Republic of Tanzania": "tz",
+	Uganda: "ug",
 };
 
 const CountryFlag = ({

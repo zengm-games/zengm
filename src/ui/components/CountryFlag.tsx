@@ -1,6 +1,7 @@
+import classNames from "classnames";
 import { helpers } from "../util";
 
-const countryCodes = {
+const countryCodes: Record<string, string> = {
 	Algeria: "dz",
 	"American Samoa": "as",
 	Angola: "ao",
@@ -124,53 +125,28 @@ const countryCodes = {
 	"Virgin Islands": "vi",
 };
 
-export const categories = {
-	award: {
-		text: "Awards",
-		className: "badge-warning",
-	},
-	draft: {
-		text: "Draft",
-		className: "badge-darkblue",
-	},
-	league: {
-		text: "League",
-		className: "badge-secondary",
-	},
-	injury: {
-		text: "Injuries",
-		className: "badge-danger",
-	},
-	playerFeat: {
-		text: "Player Feats",
-		className: "badge-info",
-	},
-	playoffs: {
-		text: "Playoffs",
-		className: "badge-orange",
-	},
-	rare: {
-		text: "Rare Events",
-		className: "badge-dark",
-	},
-	transaction: {
-		text: "Transactions",
-		className: "badge-success",
-	},
-	team: {
-		text: "Teams",
-		className: "badge-light",
-	},
-};
-
-const CountryFlag = ({ country }: { country: string }) => {
+const CountryFlag = ({
+	className,
+	country,
+}: {
+	className?: string;
+	country: string;
+}) => {
 	const country2 = helpers.getCountry(country);
 	const code = countryCodes[country2];
 	if (code) {
-		return code;
+		return (
+			<span
+				className={classNames(
+					`flag-icon flag-icon-${code}`,
+					className ?? undefined,
+				)}
+				title={country2}
+			></span>
+		);
 	}
 
-	return "??";
+	return null;
 };
 
 export default CountryFlag;

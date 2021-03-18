@@ -5,6 +5,19 @@ $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
 $font-size-base: 0.8125rem;
 $black: #000 !default;
 
+// Country list is from CountryFlag.tsx
+$include: dz, as, ao, ar, am, au, at, az, bs, by, be, bj, bo, ba, br, bg, cm, ca,
+	cv, cf, td, cl, cn, co, cg, cr, hr, cu, cz, dk, do, tp, eg, sv, gb, ec, ee, et,
+	fi, fr, gf, ga, ge, de, gh, gr, gp, gt, gn, gw, ht, hn, hu, is, in, id, ir, ie,
+	il, it, ci, jm, jp, kz, ke, xk, kg, la, lv, lr, lt, lu, mo, ml, mx, md, me, ma,
+	mz, np, nl, nz, ni, ng, kp, mk, no, pk, pa, pg, py, pe, ph, pl, pt, pr, ro, ru,
+	ws, gb, sn, rs, sk, si, za, kr, ss, es, sd, se, ch, th, tt, tr, us, ua, uy, uz,
+	ve, vn, vi;
+$flag-icon-css-path: "/img/flags";
+$flag-icon-rect-path: "";
+$flag-icon-square-path: "";
+@import "node_modules/flag-icon-css/sass/flag-icon.scss";
+
 // Taken from bootstrap.scss, but with unused things deleted
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";

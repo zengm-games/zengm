@@ -194,6 +194,12 @@ const copyFiles = () => {
 		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
 	}
 
+	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	const flagHtaccess = `<IfModule mod_headers.c>
+	Header set Cache-Control "public,max-age=31536000"
+</IfModule>`;
+	fs.writeFileSync("build/img/flags/.htaccess", flagHtaccess);
+
 	setSport();
 };
 

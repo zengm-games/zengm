@@ -12,7 +12,6 @@ import type {
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
-import { team } from "..";
 import { isSport } from "../../../common";
 
 type ReturnVal = DraftLotteryResult & {
@@ -316,7 +315,7 @@ const genOrder = async (
 					tied = t.seasonAttrs.tied;
 
 					if (usePts) {
-						pts = team.evaluatePointsFormula(t.seasonAttrs);
+						pts = t.seasonAttrs.pts;
 					}
 				}
 

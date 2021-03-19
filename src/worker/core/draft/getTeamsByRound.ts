@@ -27,7 +27,7 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
  * - then: conference finals losers sorted by points are assigned picks 29 and 30
  * - then: finals loser
  * - then: finals winner
- * - 2nd+ round based on points only
+ * - 2nd+ round same as 1st round, but with lottery teams ordered by points
  * - tiebreaker is different than for playoffs, but i could probably get away with using the same one
  * - tiebreaker order is the same in every round
  */
@@ -49,7 +49,7 @@ const TIEBREAKER = bySport<"random" | "default">({
 const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 	basketball: "record",
 	football: "firstRound",
-	hockey: "record",
+	hockey: "firstRound",
 });
 
 const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {

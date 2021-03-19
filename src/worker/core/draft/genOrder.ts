@@ -159,7 +159,6 @@ const genOrder = async (
 		draftPicksIndexed,
 	);
 	const firstRoundTeams = teamsByRound[0];
-	console.log(ties);
 
 	const draftType = g.get("draftType");
 
@@ -300,7 +299,6 @@ const genOrder = async (
 			}
 		}
 	}
-	console.log("firstRoundOrderAfterLottery", firstRoundOrderAfterLottery);
 
 	let draftLotteryResult: ReturnVal | undefined;
 	if (draftHasLottey(draftType)) {
@@ -377,24 +375,11 @@ const genOrder = async (
 			for (const { rounds, teams } of Object.values(ties)) {
 				if (rounds.includes(round)) {
 					// From getTeamsByRound, teams is guaranteed to be a continuous section of roundTeams, so we can just figure out the correct order for them and then replace them in roundTeam
-					console.log(
-						"tie",
-						round,
-						teams.map(t => g.get("teamInfoCache")[t.tid].abbrev).join(","),
-					);
 					const start = roundTeams.findIndex(t => teams.includes(t));
 					const length = teams.length;
-					console.log("start", start, length);
 
 					const firstRoundOrder = firstRoundOrderAfterLottery.filter(t =>
 						teams.includes(t),
-					);
-					console.log(
-						"firstRoundOrder2",
-						round,
-						firstRoundOrder
-							.map(t => g.get("teamInfoCache")[t.tid].abbrev)
-							.join(","),
 					);
 
 					// Handle case where a team did not appear in the 1st round but does now, which probably never happens
@@ -405,7 +390,6 @@ const genOrder = async (
 					}
 
 					// Based on roundIndex and TIEBREAKER_AFTER_FIRST_ROUND, do some permutation of firstRoundOrder
-					console.log(TIEBREAKER_AFTER_FIRST_ROUND, roundIndex % 2);
 					const newOrder = firstRoundOrder;
 					if (TIEBREAKER_AFTER_FIRST_ROUND === "swap") {
 						if (roundIndex % 2 === 1) {
@@ -417,11 +401,6 @@ const genOrder = async (
 							newOrder.push(((newOrder as unknown) as any).shift());
 						}
 					}
-					console.log(
-						"newOrder",
-						round,
-						newOrder.map(t => g.get("teamInfoCache")[t.tid].abbrev).join(","),
-					);
 					roundTeams.splice(start, length, ...newOrder);
 				}
 			}

@@ -32,6 +32,7 @@ lottery sorting
   - expansion teams
   - challenge mode
 - build the "tied lottery chances split or not" thing into the NHL draft method, rather than conditionally calling divideChancesOverTiedTeams?
+- unit tests
 
 better gold websites
 - dedicated website, separate from game

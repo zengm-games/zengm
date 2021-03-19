@@ -12,7 +12,7 @@ import type {
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
-import { bySport, isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -202,7 +202,7 @@ const genOrder = async (
 			}
 		}
 
-		if (isSport("basketball")) {
+		if (draftType.startsWith("nba")) {
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 

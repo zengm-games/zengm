@@ -2,37 +2,6 @@ qb tying a game is being recorded as a loss in the qbs win/loss stats section
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
 
-lottery sorting
-- sort based on pts rather than winp when appropriate https://discord.com/channels/@me/778760871911751700
-- other stuff (tiebreakers, tiebreaker rotation in 2nd+ round, playoff results used in 1st round) - hardcode based on sport
-- differences
-  - basketball
-    - after lottery, order is based on record, not playoff results
-    - tied teams in lottery split the total chances
-    - tiebreaker is random - but make it deterministic so it doesn't jump when doing the lottery
-    - 2nd round tiebreaker is opposite of 1st round
-    - 2nd round order is just based on record, no lottery section for non-playoff teams
-  - football
-    - order is based on playoff results
-    - tiebreaker is different than for playoffs, but i could probably get away with using the same one
-    - tied teams rotate (like 123 -> 231 -> 312 -> 123) in later rounds. otherwise, all rounds are the same
-  - hockey
-    - lottery is like basketball, but sort based on points rather than winp
-    - then: playoff teams that did not win their divisions and did not make the conference finals, sorted by points
-    - then: playoff teams that won their divisions and did not make the conference finals, sorted by points
-    - then: conference finals losers sorted by points are assigned picks 29 and 30
-    - then: finals loser
-    - then: finals winner
-    - 2nd+ round based on points only
-    - tiebreaker is different than for playoffs, but i could probably get away with using the same one
-    - tiebreaker order is the same in every round
-- delete lotterySort
-- test
-  - expansion teams
-  - challenge mode
-- build the "tied lottery chances split or not" thing into the NHL draft method, rather than conditionally calling divideChancesOverTiedTeams?
-- unit tests
-
 better gold websites
 - dedicated website, separate from game
 - new stripe checkout https://mail.google.com/mail/u/0/#inbox/FMfcgxwLswLjSWCHtJMHJkFtKTwQXVKj

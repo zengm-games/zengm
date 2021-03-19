@@ -104,6 +104,13 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
+	const orderTeamsSettings: Parameters<typeof orderTeams>[2] =
+		TIEBREAKER === "random"
+			? {
+					tiebreakersOverride: ["coinFlip"],
+			  }
+			: undefined;
+
 	////
 	// Many special cases in first round
 	////
@@ -158,7 +165,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		t => t.seasonAttrs.playoffRoundsWon < 0 && !tidPlayoffs.includes(t.tid),
 	);
 	const nonPlayoffTeamsOrdered = (
-		await orderTeams(nonPlayoffTeams, allTeams)
+		await orderTeams(nonPlayoffTeams, allTeams, orderTeamsSettings)
 	).reverse();
 	checkForTies(nonPlayoffTeamsOrdered, 1);
 	firstRound.push(...nonPlayoffTeamsOrdered);
@@ -169,7 +176,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	if (playoffTeams.length > 0) {
 		if (FIRST_ROUND_PLAYOFF_TEAMS_ORDER === "record") {
 			const playoffTeamsOrdered = (
-				await orderTeams(playoffTeams, allTeams)
+				await orderTeams(playoffTeams, allTeams, orderTeamsSettings)
 			).reverse();
 			checkForTies(playoffTeamsOrdered, 1);
 			firstRound.push(...playoffTeamsOrdered);
@@ -194,7 +201,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 					t => t.seasonAttrs.playoffRoundsWon === playoffRoundsWon,
 				);
 				const playoffRoundTeamsOrdered = (
-					await orderTeams(playoffRoundTeams, allTeams)
+					await orderTeams(playoffRoundTeams, allTeams, orderTeamsSettings)
 				).reverse();
 				checkForTies(playoffRoundTeamsOrdered, 1);
 				firstRound.push(...playoffRoundTeamsOrdered);
@@ -242,7 +249,9 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 			}
 
 			for (const group of groups) {
-				const groupOrdered = (await orderTeams(group, allTeams)).reverse();
+				const groupOrdered = (
+					await orderTeams(group, allTeams, orderTeamsSettings)
+				).reverse();
 				checkForTies(group, 1);
 				firstRound.push(...groupOrdered);
 			}
@@ -253,7 +262,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const nthRound =
 		ORDER_AFTER_FIRST_ROUND === "firstRound"
 			? firstRound
-			: (await orderTeams(teams, allTeams)).reverse();
+			: (await orderTeams(teams, allTeams, orderTeamsSettings)).reverse();
 
 	const teamsByRound: MyTeam[][] = [];
 	const numDraftRounds = g.get("numDraftRounds");

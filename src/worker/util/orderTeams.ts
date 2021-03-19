@@ -599,10 +599,12 @@ const orderTeams = async <T extends BaseTeam>(
 		addTiebreakersField,
 		skipTiebreakers,
 		season = g.get("season"),
+		tiebreakersOverride,
 	}: {
 		addTiebreakersField?: boolean;
 		skipTiebreakers?: boolean;
 		season?: number;
+		tiebreakersOverride?: Tiebreaker[];
 	} = {},
 ): Promise<
 	(T & {
@@ -676,7 +678,7 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
-	const tiebreakers = getTiebreakers(season);
+	const tiebreakers = tiebreakersOverride ?? getTiebreakers(season);
 
 	const breakTiesOptions: BreakTiesOptions = {
 		addTiebreakersField,

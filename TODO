@@ -27,7 +27,6 @@ lottery sorting
     - tiebreaker is different than for playoffs, but i could probably get away with using the same one
     - tiebreaker order is the same in every round
 - delete lotterySort
-- for TIEBREAKER, need ability to pass option to orderTeams
 - test
   - expansion teams
   - challenge mode

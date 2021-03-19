@@ -73,7 +73,7 @@ const Footer = memo(() => {
 				>
 					<img
 						alt=""
-						src={`https://${WEBSITE_ROOT}/files/logo.png`}
+						src={`https://zengm.com/files/logo-${process.env.SPORT}.png`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",

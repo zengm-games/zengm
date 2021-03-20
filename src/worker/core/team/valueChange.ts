@@ -309,7 +309,11 @@ const getPicks = async ({
 	}
 };
 
-const EXPONENT = 7;
+const EXPONENT = bySport({
+	basketball: 7,
+	football: 6,
+	hockey: 3.5,
+});
 
 const sumValues = (
 	players: Asset[],

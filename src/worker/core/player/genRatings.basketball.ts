@@ -205,9 +205,10 @@ const genRatings = (
 		for (const rtg of rtgs) {
 			if (rtgsDevelopSlow.includes(rtg)) {
 				ratings[rtg] -= Math.round(scale / 2);
-				continue;
+			} else {
+				ratings[rtg] -= scale;
 			}
-			ratings[rtg] -= scale;
+			ratings[rtg] = helpers.bound(ratings[rtg], 0, 100);
 		}
 	}
 

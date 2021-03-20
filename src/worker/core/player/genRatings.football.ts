@@ -387,9 +387,10 @@ const genRatings = (
 		for (const rtg of rtgs) {
 			if (rtg === "spd") {
 				ratings[rtg] -= Math.round(scale);
-				continue;
+			} else {
+				ratings[rtg] -= scale;
 			}
-			ratings[rtg] -= scale;
+			ratings[rtg] = helpers.bound(ratings[rtg], 0, 100);
 		}
 	}
 

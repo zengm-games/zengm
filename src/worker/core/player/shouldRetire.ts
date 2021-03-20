@@ -63,10 +63,8 @@ const shouldRetire = (
 	}
 
 	const forceRetireAge = g.get("forceRetireAge");
-	if (forceRetireAge > g.get("draftAge")[1]) {
-		if (age >= forceRetireAge) {
-			return true;
-		}
+	if (forceRetireAge > g.get("draftAge")[1] && age >= forceRetireAge) {
+		return true;
 	}
 
 	return false;

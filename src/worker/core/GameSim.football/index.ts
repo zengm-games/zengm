@@ -1762,7 +1762,8 @@ class GameSim {
 				this.recordStat(o, target, "recYds", yds);
 				this.recordStat(o, target, "recLng", yds);
 
-				this.playByPlay.logEvent("passComplete", {
+				// Don't log here, because we need to log all the stats first, otherwise live box score will update slightly out of order
+				const completeEvent = {
 					clock: this.clock,
 					t: o,
 					names: [qb.name, target.name],
@@ -1770,12 +1771,14 @@ class GameSim {
 					td,
 					twoPointConversionTeam: this.twoPointConversionTeam,
 					yds,
-				});
+				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!penInfo2 && !td && !safetyOrTouchback && !turnoverOnDowns) {
 					if (Math.random() < this.probFumble(target)) {
 						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
+
+						this.playByPlay.logEvent("passComplete", completeEvent);
 
 						return dt + this.doFumble(target);
 					}
@@ -1787,6 +1790,8 @@ class GameSim {
 					this.recordStat(o, target, "recTD");
 					this.isClockRunning = false;
 				}
+
+				this.playByPlay.logEvent("passComplete", completeEvent);
 
 				if (safetyOrTouchback) {
 					this.doSafety();
@@ -1904,6 +1909,12 @@ class GameSim {
 				return dt + this.doFumble(p);
 			}
 		}
+		this.isClockRunning = Math.random() < 0.85;
+
+		if (td) {
+			this.recordStat(o, p, "rusTD");
+			this.isClockRunning = false;
+		}
 
 		this.playByPlay.logEvent("run", {
 			clock: this.clock,
@@ -1914,12 +1925,6 @@ class GameSim {
 			td,
 			yds,
 		});
-		this.isClockRunning = Math.random() < 0.85;
-
-		if (td) {
-			this.recordStat(o, p, "rusTD");
-			this.isClockRunning = false;
-		}
 
 		if (safetyOrTouchback) {
 			this.doSafety();

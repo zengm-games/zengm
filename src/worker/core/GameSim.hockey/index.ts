@@ -555,13 +555,13 @@ class GameSim {
 
 		this.recordStat(t2, target, "energy", -0.5);
 
+		this.recordStat(t, hitter, "hit", 1);
 		this.playByPlay.logEvent({
 			type: "hit",
 			clock: this.clock,
 			t,
 			names: [hitter.name, target.name],
 		});
-		this.recordStat(t, hitter, "hit", 1);
 
 		this.injuries({
 			type: "hit",
@@ -610,26 +610,26 @@ class GameSim {
 	doGiveaway() {
 		const p = this.pickPlayer(this.o, undefined, ["C", "W", "D"]);
 
+		this.recordStat(this.o, p, "gv", 1);
 		this.playByPlay.logEvent({
 			type: "gv",
 			clock: this.clock,
 			t: this.o,
 			names: [p.name],
 		});
-		this.recordStat(this.o, p, "gv", 1);
 		this.possessionChange();
 	}
 
 	doTakeaway() {
 		const p = this.pickPlayer(this.d, "grinder", ["C", "W", "D"]);
 
+		this.recordStat(this.d, p, "tk", 1);
 		this.playByPlay.logEvent({
 			type: "tk",
 			clock: this.clock,
 			t: this.d,
 			names: [p.name],
 		});
-		this.recordStat(this.d, p, "tk", 1);
 		this.possessionChange();
 	}
 
@@ -671,13 +671,13 @@ class GameSim {
 				? "reboundShot"
 				: random.choice(["slapshot", "wristshot", "shot"], [0.25, 0.5, 0.25]);
 
+		this.recordStat(this.o, shooter, "tsa");
 		this.playByPlay.logEvent({
 			type: type,
 			clock: this.clock,
 			t: this.o,
 			names: [shooter.name],
 		});
-		this.recordStat(this.o, shooter, "tsa");
 
 		const {
 			powerPlayTeam,
@@ -700,13 +700,13 @@ class GameSim {
 
 		if (r < 0.1 + 0.35 * this.team[this.d].compositeRating.blocking) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
+			this.recordStat(this.d, blocker, "blk", 1);
 			this.playByPlay.logEvent({
 				type: "block",
 				clock: this.clock,
 				t: this.d,
 				names: [blocker.name],
 			});
-			this.recordStat(this.d, blocker, "blk", 1);
 
 			if (type === "slapshot" || type === "wristshot") {
 				this.injuries({
@@ -804,13 +804,13 @@ class GameSim {
 			) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
+				this.recordStat(this.d, goalie, "sv");
 				this.playByPlay.logEvent({
 					type: saveType,
 					clock: this.clock,
 					t: this.d,
 					names: [goalie.name],
 				});
-				this.recordStat(this.d, goalie, "sv");
 
 				return saveType;
 			}
@@ -832,6 +832,10 @@ class GameSim {
 			assisterPIDs = [];
 		}
 
+		this.recordStat(this.o, actualShooter, `${strengthType}G`);
+		if (goalie) {
+			this.recordStat(this.d, goalie, "ga");
+		}
 		this.playByPlay.logEvent({
 			type: "goal",
 			clock: this.clock,
@@ -841,10 +845,6 @@ class GameSim {
 			shotType: deflector ? "deflection" : type,
 			goalType: strengthType,
 		});
-		this.recordStat(this.o, actualShooter, `${strengthType}G`);
-		if (goalie) {
-			this.recordStat(this.d, goalie, "ga");
-		}
 
 		this.penaltyBox.goal(this.o);
 
@@ -911,6 +911,7 @@ class GameSim {
 
 		this.penaltyBox.add(t, p, penalty);
 
+		this.recordStat(t, p, "pim", penaltyType.minutes);
 		this.playByPlay.logEvent({
 			type: "penalty",
 			clock: this.clock,
@@ -920,7 +921,6 @@ class GameSim {
 			penaltyName: penalty.name,
 			penaltyPID: p.id,
 		});
-		this.recordStat(t, p, "pim", penaltyType.minutes);
 
 		// Actually remove player from ice
 		this.updatePlayersOnIce({ type: "penalty" });

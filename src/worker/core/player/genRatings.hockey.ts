@@ -17,12 +17,9 @@ const getPos = () => {
 		cumsum += count;
 
 		if (rand < cumsum) {
-			// Hacky - make more wings
-			if (pos === "C" && Math.random() < 0.5) {
-				return "W";
-			}
-			if (pos === "D" && Math.random() < 0.25) {
-				return "W";
+			// Hacky - make more defensemen
+			if (pos === "C" && Math.random() < 0.25) {
+				return "D";
 			}
 
 			return pos;
@@ -34,18 +31,24 @@ const getPos = () => {
 
 const getRatingsToBoost = (pos: string) => {
 	if (pos === "C") {
+		// Offensive or defensive?
+		const offensive = Math.random() < 0.5;
+
 		// Scoring or passing?
 		if (Math.random() < 0.5) {
 			return {
 				stre: 1,
 				spd: 2.5,
 				endu: 1,
-				pss: 1,
+				pss: offensive ? 1 : 0.5,
 				wst: 2,
 				sst: 1.5,
-				stk: 2,
-				oiq: 1.5,
+				stk: offensive ? 1.5 : 1,
+				oiq: offensive ? 1.5 : 1,
+				chk: offensive ? 1 : 2,
+				blk: offensive ? 1 : 2,
 				fcf: 2,
+				diq: offensive ? 1 : 2,
 			};
 		}
 
@@ -53,47 +56,29 @@ const getRatingsToBoost = (pos: string) => {
 			stre: 1,
 			spd: 2.5,
 			endu: 1,
-			pss: 2,
+			pss: offensive ? 2 : 1.5,
 			wst: 1,
 			sst: 1,
-			stk: 2,
-			oiq: 2,
+			stk: offensive ? 1.5 : 1,
+			oiq: offensive ? 2 : 0.5,
+			chk: offensive ? 1 : 2,
+			blk: offensive ? 1 : 2,
 			fcf: 2,
+			diq: offensive ? 1 : 2,
 		};
 	}
 
 	if (pos === "W") {
-		// Offensive or defensive?
-		if (Math.random() < 0.5) {
-			return {
-				stre: 1,
-				spd: 1.5,
-				endu: 1,
-				pss: 1,
-				wst: 2,
-				sst: 2,
-				stk: 1,
-				oiq: 2,
-				chk: 1,
-				blk: 1,
-				fcf: 1,
-				diq: 1,
-			};
-		}
-
 		return {
-			stre: 1.5,
+			stre: 1,
 			spd: 1.5,
 			endu: 1,
 			pss: 1,
-			wst: 1.5,
-			sst: 1.5,
-			stk: 1,
-			oiq: 1,
-			chk: 1.5,
-			blk: 1.5,
+			wst: 2,
+			sst: 2,
+			stk: 1.5,
+			oiq: 2,
 			fcf: 1,
-			diq: 1.5,
 		};
 	}
 

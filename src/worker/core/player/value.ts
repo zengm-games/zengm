@@ -125,6 +125,15 @@ const value = (
 			current *= 0.25;
 			potential *= 0.25;
 		}
+	} else if (isSport("hockey")) {
+		if (pr.pos === "C") {
+			current *= 1.1;
+			potential *= 1.1;
+		}
+		if (pr.pos === "W") {
+			current *= 0.9;
+			potential *= 0.9;
+		}
 	}
 
 	// Short circuit if we don't care about potential

@@ -183,26 +183,32 @@ const genRatings = (
 		skills: [],
 	};
 
-	// If the youngest players generated aren't 19, scale player ratings to match
+	// If the youngest players generated aren't 19, scale ratings to match age
 	const age = g.get("draftAge")[0];
 	if (age != 19) {
 		// Youngest prospects != 19 will be scaled, scaling stops at age 14 and 28
-		const subAmount = helpers.bound(3 * (19 - age), -27, 21);
+		const scale = helpers.bound(3 * (19 - age), -27, 21);
+		const rtgs = [
+			"stre",
+			"endu",
+			"ins",
+			"dnk",
+			"ft",
+			"fg",
+			"tp",
+			"oiq",
+			"diq",
+		] as const;
+		// These ratings develop slowly compared to others, so they scale less. Works well in testing
+		const rtgsDevelopSlow = ["spd", "jmp", "drb", "pss", "reb"];
 
-		ratings.stre -= subAmount;
-		ratings.spd -= Math.round(subAmount / 2);
-		ratings.jmp -= Math.round(subAmount / 2);
-		ratings.endu -= subAmount;
-		ratings.ins -= subAmount;
-		ratings.dnk -= subAmount;
-		ratings.ft -= subAmount;
-		ratings.fg -= subAmount;
-		ratings.tp -= subAmount;
-		ratings.oiq -= subAmount;
-		ratings.diq -= subAmount;
-		ratings.drb -= Math.round(subAmount / 2);
-		ratings.pss -= Math.round(subAmount / 2);
-		ratings.reb -= Math.round(subAmount / 2);
+		for (const rtg of rtgs) {
+			if (rtgsDevelopSlow.includes(rtg)) {
+				ratings[rtg] -= Math.round(scale / 2);
+				continue;
+			}
+			ratings[rtg] -= scale;
+		}
 	}
 
 	// Ugly hack: Tall people can't dribble/pass very well

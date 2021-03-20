@@ -202,21 +202,30 @@ const genRatings = (
 	const age = g.get("draftAge")[0];
 	if (age != 19) {
 		// Youngest prospects != 19 will be scaled, scaling stops at age 14 and 28
-		const subAmount = helpers.bound(3 * (19 - age), -27, 21);
+		const scale = helpers.bound(3 * (19 - age), -27, 21);
+		const rtgs = [
+			"stre",
+			"spd",
+			"endu",
+			"pss",
+			"wst",
+			"sst",
+			"stk",
+			"oiq",
+			"chk",
+			"blk",
+			"fcf",
+			"diq",
+			"glk",
+		] as const;
 
-		ratings.stre -= subAmount;
-		ratings.spd -= Math.round(subAmount / 2);
-		ratings.endu -= subAmount;
-		ratings.pss -= subAmount;
-		ratings.wst -= subAmount;
-		ratings.sst -= subAmount;
-		ratings.stk -= subAmount;
-		ratings.oiq -= subAmount;
-		ratings.chk -= subAmount;
-		ratings.blk -= subAmount;
-		ratings.fcf -= subAmount;
-		ratings.diq -= subAmount;
-		ratings.glk -= subAmount;
+		for (const rtg of rtgs) {
+			if (rtg === "spd") {
+				ratings[rtg] -= Math.round(scale);
+				continue;
+			}
+			ratings[rtg] -= scale;
+		}
 	}
 
 	// Higher fuzz for draft prospects

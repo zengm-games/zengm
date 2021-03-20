@@ -87,7 +87,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	wst: {
 		ageModifier: () => 0,
 		changeLimits: () => [-10, 10],
-		posCoeff: noGoalieDecorator((pos: string) => (pos === "W" ? 2 : 0.75)),
+		posCoeff: noGoalieDecorator(() => 1.5),
 	},
 	sst: {
 		ageModifier: () => 0,

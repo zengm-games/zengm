@@ -759,12 +759,14 @@ class GameSim {
 		if (deflector) {
 			assister1 = shooter;
 		} else if (r2 < 0.99) {
+			// 20 power is to ensure top players get a lot
 			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
 				actualShooter,
 			]);
 		}
 		if (r2 < 0.8) {
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+			// 0.5 power is to ensure that everybody (including defensemen) at least get some
+			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
 				actualShooter,
 				assister1 as PlayerGameSim,
 			]);
@@ -1472,8 +1474,17 @@ class GameSim {
 
 		const weightFunc =
 			rating !== undefined
-				? (p: PlayerGameSim) =>
-						(p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
+				? (p: PlayerGameSim) => {
+						// Less likely, but not impossible, for injured players to do stuff
+						const injuryFactor = p.injured ? 0.5 : 1;
+
+						return (
+							(p.compositeRating[rating] *
+								fatigue(p.stat.energy) *
+								injuryFactor) **
+							power
+						);
+				  }
 				: undefined;
 		return random.choice(players, weightFunc);
 	}

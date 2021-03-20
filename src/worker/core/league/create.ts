@@ -548,7 +548,7 @@ export const createWithoutSaving = async (
 				} else {
 					let years;
 					if (isSport("hockey")) {
-						years = 3;
+						years = 4;
 					} else {
 						// 2 years for 2nd round, 3 years for 1st round;
 						years = Math.min(4 - round, 2);

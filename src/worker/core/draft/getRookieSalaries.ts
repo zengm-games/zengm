@@ -10,12 +10,17 @@ import { g, helpers } from "../../util";
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 const getRookieSalaries = (): number[] => {
-	if (isSport("hockey")) {
-		const minContract = g.get("minContract");
-		const maxContract = g.get("maxContract");
-		const numActiveTeams = g.get("numActiveTeams");
-		const numDraftRounds = g.get("numDraftRounds");
+	const numActiveTeams = g.get("numActiveTeams");
+	const numDraftRounds = g.get("numDraftRounds");
 
+	if (numActiveTeams === 0 || numDraftRounds === 0) {
+		return [];
+	}
+
+	const minContract = g.get("minContract");
+	const maxContract = g.get("maxContract");
+
+	if (isSport("hockey")) {
 		const earlySalary = Math.min(2 * minContract, maxContract);
 		const lateSalary = minContract;
 
@@ -100,18 +105,19 @@ const getRookieSalaries = (): number[] => {
 		500,
 	];
 
-	while (g.get("numActiveTeams") > firstRoundRookieSalaries.length) {
+	while (numActiveTeams > firstRoundRookieSalaries.length) {
 		//add first round contracts on to end of first round
 		firstRoundRookieSalaries.push(1000);
 	}
 
-	while (g.get("numActiveTeams") < firstRoundRookieSalaries.length) {
+	console.log("grs2");
+	while (numActiveTeams < firstRoundRookieSalaries.length) {
 		//remove smallest first round salaries
 		firstRoundRookieSalaries.pop();
 	}
 
 	while (
-		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) >
+		numActiveTeams * (numDraftRounds - 1) >
 		otherRoundRookieSalaries.length
 	) {
 		// Add min contracts on to end
@@ -119,7 +125,7 @@ const getRookieSalaries = (): number[] => {
 	}
 
 	while (
-		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) <
+		numActiveTeams * (numDraftRounds - 1) <
 		otherRoundRookieSalaries.length
 	) {
 		// Remove smallest salaries
@@ -130,8 +136,6 @@ const getRookieSalaries = (): number[] => {
 		otherRoundRookieSalaries,
 	);
 
-	const minContract = g.get("minContract");
-	const maxContract = g.get("maxContract");
 	if (minContract !== 500 || maxContract !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {
 			// Subtract min

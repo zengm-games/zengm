@@ -855,7 +855,12 @@ class GameSim {
 		const p0 = this.getTopPlayerOnIce(0, "faceoffs", ["C", "W", "D"]);
 		const p1 = this.getTopPlayerOnIce(1, "faceoffs", ["C", "W", "D"]);
 
-		if (Math.random() < 0.5) {
+		const winner = random.choice(
+			[p0, p1],
+			p => p.compositeRating.faceoffs ** 0.5,
+		);
+
+		if (winner === p0) {
 			this.o = 0;
 			this.d = 1;
 			this.recordStat(0, p0, "fow");

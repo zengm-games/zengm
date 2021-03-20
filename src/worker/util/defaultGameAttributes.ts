@@ -189,8 +189,8 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				minPayroll: 60000,
 				minContract: 500,
 				maxContract: 13000,
-				minRosterSize: 23,
-				maxRosterSize: 25,
+				minRosterSize: 24,
+				maxRosterSize: 26,
 				// Injury rate per player per possession, basically. But it's a little more complicated than that.
 				injuryRate: 1 / 10000,
 				draftType: "nhl2017",

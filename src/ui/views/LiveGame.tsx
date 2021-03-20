@@ -334,6 +334,20 @@ const LiveGame = (props: View<"liveGame">) => {
 			setPlayIndex(prev => prev + numPlays);
 		};
 
+		const playUntilNextScore = () => {
+			const initialPts =
+				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
+			let currentPts = initialPts;
+			let numPlays = 0;
+			while (initialPts === currentPts && !boxScore.current.gameOver) {
+				processToNextPause(true);
+				currentPts =
+					boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
+				numPlays += 1;
+			}
+			setPlayIndex(prev => prev + numPlays);
+		};
+
 		const skipMinutes = [
 			{
 				minutes: 1,
@@ -386,6 +400,25 @@ const LiveGame = (props: View<"liveGame">) => {
 				key: "U",
 				onClick: () => {
 					playUntilLastTwoMinutes();
+				},
+			});
+		}
+
+		if (
+			bySport({
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
+			menuItems.push({
+				label: `Until next ${bySport({
+					hockey: "goal",
+					default: "score",
+				})}`,
+				key: "G",
+				onClick: () => {
+					playUntilNextScore();
 				},
 			});
 		}

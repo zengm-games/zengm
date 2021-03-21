@@ -84,7 +84,6 @@ const countryCodes: Record<string, string> = {
 	"French Southern Territories": "tf",
 	Gabon: "ga",
 	Gambia: "gm",
-	Georgia: "ge",
 	Germany: "de",
 	Ghana: "gh",
 	Gibraltar: "gi",
@@ -259,6 +258,8 @@ const countryCodes: Record<string, string> = {
 	Yemen: "ye",
 	Zambia: "zm",
 	Zimbabwe: "zw",
+	// Can't handle this currently
+	// Georgia: "ge",
 };
 
 const CountryFlag = ({

@@ -259,12 +259,13 @@ const normalizeContractDemands = async ({
 	if (isSport("hockey") && hockeyRookieOverrides) {
 		rookieSalaries = draft.getRookieSalaries();
 	}
+	console.log("hi", playerInfos);
 
 	for (const info of playerInfos) {
 		if (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
-				isSport("football") ||
+				numRounds === 0 ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {
@@ -274,6 +275,7 @@ const normalizeContractDemands = async ({
 				isSport("hockey") && hockeyRookieOverrides
 					? season + 3
 					: getExpiration(p, type === "newLeague", nextSeason);
+			console.log("hi", exp);
 
 			let amount;
 

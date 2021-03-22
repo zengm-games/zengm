@@ -158,7 +158,7 @@ const genOrder = async (
 	const { allTeams, teamsByRound, ties } = await getTeamsByRound(
 		draftPicksIndexed,
 	);
-	const firstRoundTeams = teamsByRound[0];
+	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	const draftType = g.get("draftType");
 

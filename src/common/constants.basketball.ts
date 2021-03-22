@@ -440,6 +440,9 @@ const TEAM_STATS_TABLES = {
 			"ftr",
 			"tsp",
 			"efg",
+			"tovp",
+			"orbp",
+			"ftpFga",
 		],
 	},
 };

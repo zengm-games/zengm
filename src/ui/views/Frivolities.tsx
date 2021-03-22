@@ -102,6 +102,11 @@ const frivolities = {
 	],
 	"Player Rankings": [
 		{
+			urlParts: ["most", "goat"],
+			name: "Greatest players of all time",
+			description: "The best players to ever play in the league.",
+		},
+		{
 			urlParts: ["most", "no_ring"],
 			name: "Best Players Without a Ring",
 			description: "The best players who never won a title.",

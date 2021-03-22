@@ -166,7 +166,11 @@ const updatePlayers = async (
 			colName: string;
 		}[] = [];
 
-		if (type === "games_no_playoffs") {
+		if (type === "goat") {
+			title = "Greatest players of all time";
+			description = "The best players to ever play in the league.";
+			getValue = playerValue;
+		} else if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =
 				"These are the players who played the most career games while never making the playoffs.";

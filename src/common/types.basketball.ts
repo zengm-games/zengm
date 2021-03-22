@@ -27,6 +27,7 @@ export type TeamStatAttr =
 	| "tpar"
 	| "ftr"
 	| "tsp"
+	| "efg"
 	| "trb"
 	| "oppTrb"
 	| "2p"

@@ -154,6 +154,9 @@ const processStats = (
 			} else if (stat === "tsp") {
 				row[stat] = percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
 				scale = false;
+			} else if (stat === "efg") {
+				row[stat] = percentage(ts.fg + 0.5 * ts.tp, ts.fga);
+				scale = false;
 			} else if (
 				stat === "season" ||
 				stat === "playoffs" ||

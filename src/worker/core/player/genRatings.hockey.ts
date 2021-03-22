@@ -221,7 +221,7 @@ const genRatings = (
 
 		for (const rtg of rtgs) {
 			if (rtg === "spd") {
-				ratings[rtg] -= Math.round(scale);
+				ratings[rtg] -= Math.round(scale / 2);
 			} else {
 				ratings[rtg] -= scale;
 			}

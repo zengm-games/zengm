@@ -110,7 +110,6 @@ const getRookieSalaries = (): number[] => {
 		firstRoundRookieSalaries.push(1000);
 	}
 
-	console.log("grs2");
 	while (numActiveTeams < firstRoundRookieSalaries.length) {
 		//remove smallest first round salaries
 		firstRoundRookieSalaries.pop();

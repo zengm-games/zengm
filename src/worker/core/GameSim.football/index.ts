@@ -1655,6 +1655,7 @@ class GameSim {
 	doPass() {
 		const o = this.o;
 		const d = this.d;
+		const twoPointConversionTeam = this.twoPointConversionTeam;
 
 		this.updatePlayersOnField("pass");
 		const penInfo = this.checkPenalties("beforeSnap");
@@ -1769,7 +1770,7 @@ class GameSim {
 					names: [qb.name, target.name],
 					safety: safetyOrTouchback,
 					td,
-					twoPointConversionTeam: this.twoPointConversionTeam,
+					twoPointConversionTeam,
 					yds,
 				};
 
@@ -1809,7 +1810,7 @@ class GameSim {
 					clock: this.clock,
 					t: o,
 					names: [qb.name, target.name],
-					twoPointConversionTeam: this.twoPointConversionTeam,
+					twoPointConversionTeam,
 					yds,
 				});
 				this.isClockRunning = false;
@@ -1826,6 +1827,7 @@ class GameSim {
 	doRun() {
 		const o = this.o;
 		const d = this.d;
+		const twoPointConversionTeam = this.twoPointConversionTeam;
 
 		this.updatePlayersOnField("run");
 		const penInfo = this.checkPenalties("beforeSnap");
@@ -1909,6 +1911,7 @@ class GameSim {
 				return dt + this.doFumble(p);
 			}
 		}
+
 		this.isClockRunning = Math.random() < 0.85;
 
 		if (td) {
@@ -1921,7 +1924,7 @@ class GameSim {
 			t: o,
 			names: [p.name],
 			safety: safetyOrTouchback,
-			twoPointConversionTeam: this.twoPointConversionTeam,
+			twoPointConversionTeam,
 			td,
 			yds,
 		});

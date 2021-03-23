@@ -2,21 +2,24 @@ import { Fragment, memo } from "react";
 import {
 	AD_DIVS,
 	GAME_ACRONYM,
+	isSport,
 	SUBREDDIT_NAME,
 	WEBSITE_ROOT,
 } from "../../common";
 
 const footerLinks = [
 	{
-		url: `https://${WEBSITE_ROOT}/about/`,
+		url: "https://zengm.com/",
 		title: "About",
 	},
 	{
-		url: `https://${WEBSITE_ROOT}/blog/`,
+		url: `https://${
+			isSport("football") ? WEBSITE_ROOT : "basketball-gm.com"
+		}/blog/`,
 		title: "Blog",
 	},
 	{
-		url: `https://${WEBSITE_ROOT}/contact/`,
+		url: "https://zengm.com/contact/",
 		title: "Contact",
 	},
 	{

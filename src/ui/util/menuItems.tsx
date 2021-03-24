@@ -1,5 +1,5 @@
 import { takeScreenshot, toWorker } from ".";
-import { isSport } from "../../common";
+import { isSport, WEBSITE_ROOT } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
@@ -7,7 +7,7 @@ const depthChart: MenuItemLink = {
 	active: pageID => pageID === "depth",
 	league: true,
 	path: ["depth"],
-	text: "Depth Chart",
+	text: isSport("hockey") ? "Lines" : "Depth Chart",
 };
 
 const scheduledEvents: MenuItemLink = {
@@ -257,6 +257,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "injuries",
+				league: true,
+				path: ["injuries"],
+				text: "Injuries",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "playerFeats",
 				league: true,
 				path: ["player_feats"],
@@ -465,28 +472,28 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				league: true,
 				nonLeague: true,
-				path: `https://${process.env.SPORT}-gm.com/manual/`,
+				path: `https://${WEBSITE_ROOT}/manual/`,
 				text: "Manual",
 			},
 			{
 				type: "link",
 				league: true,
 				nonLeague: true,
-				path: `https://${process.env.SPORT}-gm.com/manual/customization/`,
+				path: `https://${WEBSITE_ROOT}/manual/customization/`,
 				text: "Custom Rosters",
 			},
 			{
 				type: "link",
 				league: true,
 				nonLeague: true,
-				path: `https://${process.env.SPORT}-gm.com/manual/debugging/`,
+				path: `https://${WEBSITE_ROOT}/manual/debugging/`,
 				text: "Debugging",
 			},
 			{
 				type: "link",
 				league: true,
 				nonLeague: true,
-				path: "http://basketball-gm.com/changelog/",
+				path: "https://zengm.com/changelog/",
 				text: "Changelog",
 			},
 		],

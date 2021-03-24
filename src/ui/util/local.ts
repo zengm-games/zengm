@@ -39,7 +39,6 @@ const useLocal = create<
 	godMode: false,
 	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
 	homeCourtAdvantage: 1,
-	leagueName: "",
 	lid: undefined,
 	liveGameInProgress: false,
 	spectator: false,
@@ -108,7 +107,6 @@ const useLocal = create<
 				challengeNoRatings: false,
 				games: [],
 				godMode: false,
-				leagueName: "",
 				lid: undefined,
 				liveGameInProgress: false,
 				phase: 0,
@@ -141,7 +139,7 @@ const useLocal = create<
 				}
 			}
 
-			set(obj);
+			set(obj as any);
 		},
 
 		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
@@ -151,7 +149,6 @@ const useLocal = create<
 				"godMode",
 				"homeCourtAdvantage",
 				"lid",
-				"leagueName",
 				"spectator",
 				"phase",
 				"season",

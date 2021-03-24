@@ -1,4 +1,4 @@
-import { isSport, PLAYER } from "../../../common";
+import { bySport, isSport, PLAYER } from "../../../common";
 import { player } from "..";
 import { defaultGameAttributes, g, random } from "../../util";
 import type {
@@ -33,8 +33,12 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	const draftAge = g.get("draftAge");
-	const baseAge = draftAge[0] - (draftYear - g.get("season"));
+	const baseAge =
+		bySport({
+			hockey: 18,
+			default: 19,
+		}) -
+		(draftYear - g.get("season"));
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const p: any = player.generate(
@@ -58,15 +62,21 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	for (let i = 0; i < draftAge[1] + 1; i++) {
-		let cutoff = draftAge[1] - draftAge[0]; // For football, only juniors and seniors by default.
+	const fractionPerYear = bySport({
+		hockey: 0.75,
+		default: 0.5,
+	});
 
-		if (isSport("basketball") || i >= 2) {
-			// Top 50% of players remaining enter draft, except in last year when all do
+	for (let i = 0; i < 4; i++) {
+		let cutoff = 0;
+
+		if (isSport("basketball") || isSport("hockey") || i >= 2) {
+			// Top 50% of players remaining enter draft, except in last year.
+			// For football, only juniors and seniors.
 			cutoff =
-				i === draftAge[1] - draftAge[0]
+				i === 3
 					? remaining.length
-					: Math.round(0.5 * remaining.length);
+					: Math.round(fractionPerYear * remaining.length);
 		}
 
 		remaining.sort(

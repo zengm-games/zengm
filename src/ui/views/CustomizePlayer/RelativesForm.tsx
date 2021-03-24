@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { WEBSITE_PLAY } from "../../../common";
 import { HelpPopover, RatingsStatsPopover } from "../../components";
 
 const RelativesForm = ({
@@ -75,10 +76,8 @@ const RelativesForm = ({
 										<p>
 											To find a player ID number, go to the player page for that
 											player and look at the end of the URL. For instance, if
-											the URL is https://play.
-											{process.env.SPORT}
-											-gm.com/l/19/player/6937, then the player ID number is
-											6937.
+											the URL is https://{WEBSITE_PLAY}/l/19/player/6937, then
+											the player ID number is 6937.
 										</p>
 										<p>
 											Ideally this would be a search box that would

@@ -7,7 +7,7 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { EMAIL_ADDRESS, GAME_NAME } from "../common";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 window.bbgm = { ...util };
 const {
 	compareVersions,
@@ -245,21 +245,8 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (window.freestar.freestarReloadAdSlot) {
-						const adDivs =
-							window.screen && window.screen.width < 768
-								? [`${process.env.SPORT}-gm_mobile_leaderboard`]
-								: [
-										`${process.env.SPORT}-gm_leaderboard_atf`,
-										`${process.env.SPORT}-gm_mrec_btf_1`,
-										`${process.env.SPORT}-gm_mrec_btf_2`,
-										`${process.env.SPORT}-gm_right_rail`,
-								  ];
-
-						for (const adDiv of adDivs) {
-							console.log("reload", adDiv);
-							window.freestar.freestarReloadAdSlot(adDiv);
-						}
+					if (window.freestar.refreshAllSlots) {
+						window.freestar.refreshAllSlots();
 					}
 				} else {
 					initialLoad = false;
@@ -300,7 +287,7 @@ const setupRoutes = () => {
 								<p>
 									Please{" "}
 									<a
-										href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+										href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>

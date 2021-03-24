@@ -21,7 +21,7 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 42;
+const MAX_SUPPORTED_LEAGUE_VERSION = 43;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -250,14 +250,96 @@ const SPORT_HAS_LEGENDS = bySport({
 	hockey: false,
 });
 
+const WEBSITE_PLAY = bySport({
+	basketball: "play.basketball-gm.com",
+	football: "play.football-gm.com",
+	hockey: "hockey.zengm.com",
+});
+
+const WEBSITE_ROOT = bySport({
+	basketball: "basketball-gm.com",
+	football: "football-gm.com",
+	hockey: "zengm.com/hockey",
+});
+
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
+const TIEBREAKERS = {
+	commonOpponentsRecord: "Common opponents record",
+	confRecordIfSame: "Conference record (same conf)",
+	divRecordIfSame: "Division record (same div)",
+	divWinner: "Division winner",
+	headToHeadRecord: "Head-to-head record",
+	marginOfVictory: "Margin of victory",
+	strengthOfVictory: "Strength of victory",
+	strengthOfSchedule: "Strength of schedule",
+	coinFlip: "Coin flip",
+};
+
+// This is only applied by default in hockey, but it's still used in all sports if "pts" are explicitly requested and there is no formula set
+const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
+
+const AD_DIVS = bySport({
+	basketball: {
+		mobile: "basketball-gm_mobile_leaderboard",
+		leaderboard: "basketball-gm_leaderboard_atf",
+		rectangle1: "basketball-gm_mrec_btf_1",
+		rectangle2: "basketball-gm_mrec_btf_2",
+		rail: "basketball-gm_right_rail",
+	},
+	football: {
+		mobile: "football-gm_mobile_leaderboard",
+		leaderboard: "football-gm_leaderboard_atf",
+		rectangle1: "football-gm_mrec_btf_1",
+		rectangle2: "football-gm_mrec_btf_2",
+		rail: "football-gm_right_rail",
+	},
+	hockey: {
+		mobile: "zen-gm_mobile_leaderboard",
+		leaderboard: "zen-gm_leaderboard_atf",
+		rectangle1: "zen-gm_mrec_btf_1",
+		rectangle2: "zen-gm_mrec_btf_2",
+		rail: "zen-gm_right_rail",
+	},
+});
+
+const DEFAULT_JERSEY = bySport({
+	basketball: "jersey3",
+	football: "football",
+	hockey: "hockey",
+});
+
+const JERSEYS = bySport({
+	basketball: {
+		jersey: "Plain",
+		jersey2: "Bordered",
+		jersey4: "Bordered 2",
+		jersey3: "Solid horizontal",
+		jersey5: "Pinstripes",
+	},
+	football: {
+		football: "Default",
+		football2: "Shoulder flair",
+		football3: "Shoulder stripes",
+		football4: "Low flair",
+	},
+	hockey: {
+		hockey: "Stripe",
+		hockey3: "Stripe 2",
+		hockey4: "Stripe 3",
+		hockey2: "Plain",
+	},
+});
+
 export {
+	AD_DIVS,
 	AWARD_NAMES,
 	COURT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_JERSEY,
+	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
@@ -266,6 +348,7 @@ export {
 	GAME_ACRONYM,
 	GAME_NAME,
 	GRACE_PERIOD,
+	JERSEYS,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	MOOD_TRAITS,
 	NO_LOTTERY_DRAFT_TYPES,
@@ -284,6 +367,9 @@ export {
 	POSITIONS,
 	SUBREDDIT_NAME,
 	TEAM_STATS_TABLES,
+	TIEBREAKERS,
 	TIME_BETWEEN_GAMES,
 	TWITTER_HANDLE,
+	WEBSITE_PLAY,
+	WEBSITE_ROOT,
 };

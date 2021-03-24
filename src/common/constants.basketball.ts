@@ -162,7 +162,7 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 	shotLocations: {
-		name: "Shot Locations",
+		name: "Shot Locations and Feats",
 		stats: [
 			"gp",
 			"gs",
@@ -179,6 +179,10 @@ const PLAYER_STATS_TABLES = {
 			"tp",
 			"tpa",
 			"tpp",
+			"dd",
+			"td",
+			"qd",
+			"fxf",
 		],
 		superCols: [
 			{
@@ -201,6 +205,11 @@ const PLAYER_STATS_TABLES = {
 				title: "3PT",
 				desc: "Three-Pointers",
 				colspan: 3,
+			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
 			},
 		],
 	},
@@ -321,7 +330,7 @@ const TEAM_STATS_TABLES = {
 		],
 	},
 	teamShotLocations: {
-		name: "Team Shot Locations",
+		name: "Shot Locations and Feats",
 		stats: [
 			"fgAtRim",
 			"fgaAtRim",
@@ -335,6 +344,10 @@ const TEAM_STATS_TABLES = {
 			"tp",
 			"tpa",
 			"tpp",
+			"dd",
+			"td",
+			"qd",
+			"fxf",
 		],
 		superCols: [
 			{
@@ -358,10 +371,15 @@ const TEAM_STATS_TABLES = {
 				desc: "Three-Pointers",
 				colspan: 3,
 			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
+			},
 		],
 	},
 	opponentShotLocations: {
-		name: "Opponent Shot Locations",
+		name: "Opponent Shot Locations and Feats",
 		stats: [
 			"oppFgAtRim",
 			"oppFgaAtRim",
@@ -375,6 +393,10 @@ const TEAM_STATS_TABLES = {
 			"oppTp",
 			"oppTpa",
 			"oppTpp",
+			"oppDd",
+			"oppTd",
+			"oppQd",
+			"oppFxf",
 		],
 		superCols: [
 			{
@@ -397,6 +419,11 @@ const TEAM_STATS_TABLES = {
 				title: "3PT",
 				desc: "Three-Pointers",
 				colspan: 3,
+			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
 			},
 		],
 	},

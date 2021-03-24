@@ -31,7 +31,9 @@ const Other = ({
 
 const PowerRankings = ({
 	challengeNoRatings,
+	confs,
 	currentSeason,
+	divs,
 	season,
 	teams,
 	ties,
@@ -60,7 +62,7 @@ const PowerRankings = ({
 	const superCols = [
 		{
 			title: "",
-			colspan: 2,
+			colspan: 4,
 		},
 		{
 			title: "Team Rating",
@@ -95,6 +97,8 @@ const PowerRankings = ({
 	const colNames = [
 		"#",
 		"Team",
+		"Conference",
+		"Division",
 		"Current",
 		"Healthy",
 		"W",
@@ -117,6 +121,9 @@ const PowerRankings = ({
 	}
 
 	const rows = teams.map(t => {
+		const conf = confs.find(conf => conf.cid === t.seasonAttrs.cid);
+		const div = divs.find(div => div.did === t.seasonAttrs.did);
+
 		return {
 			key: t.tid,
 			data: [
@@ -130,6 +137,8 @@ const PowerRankings = ({
 				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>,
+				conf ? conf.name.replace(" Conference", "") : null,
+				div ? div.name : null,
 				!challengeNoRatings ? (
 					t.ovr !== t.ovrCurrent ? (
 						<span className="text-danger">{t.ovrCurrent}</span>

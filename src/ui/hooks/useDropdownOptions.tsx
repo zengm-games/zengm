@@ -48,7 +48,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	perGame: "Per Game",
 	per36: "Per 36 Minutes",
 	totals: "Totals",
-	shotLocations: "Shot Locations",
+	shotLocations: "Shot Locations and Feats",
 	advanced: "Advanced",
 	gameHighs: "Game Highs",
 	passing: "Passing",
@@ -58,8 +58,9 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	returns: "Returns",
 	champion: "Won Championship",
 	mvp: "Most Valuable Player",
-	finals_mvp: "Finals MVP",
+	finals_mvp: isSport("hockey") ? "Playoffs MVP" : "Finals MVP",
 	dpoy: "Defensive Player of the Year",
+	dfoy: "Defensive Forward of the Year",
 	goy: "Goalie of the Year",
 	smoy: "Sixth Man of the Year",
 	mip: "Most Improved Player",
@@ -107,6 +108,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	skater: "Skaters",
 	goalie: "Goalies",
 	"all|||playoffsAll": "All Games",
+	current: "Current",
 };
 
 if (isSport("hockey")) {
@@ -171,6 +173,7 @@ const useDropdownOptions = (field: string) => {
 		field === "seasons" ||
 		field === "seasonsAndCareer" ||
 		field === "seasonsAndAll" ||
+		field === "seasonsAndCurrent" ||
 		field === "seasonsAndOldDrafts" ||
 		field === "seasonsHistory"
 	) {
@@ -186,6 +189,10 @@ const useDropdownOptions = (field: string) => {
 
 		if (field === "seasonsAndAll") {
 			keys.unshift("all|||seasons");
+		}
+
+		if (field === "seasonsAndCurrent") {
+			keys.unshift("current");
 		}
 
 		if (field === "seasonsAndOldDrafts") {
@@ -284,6 +291,7 @@ const useDropdownOptions = (field: string) => {
 				"mvp",
 				"finals_mvp",
 				"dpoy",
+				"dfoy",
 				"roy",
 				"goy",
 				"first_team",

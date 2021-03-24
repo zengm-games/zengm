@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
@@ -22,7 +22,7 @@ const Relatives = ({
 	const superCols = [
 		{
 			title: "",
-			colspan: 6,
+			colspan: 7,
 		},
 		{
 			title: "Relatives",
@@ -43,6 +43,7 @@ const Relatives = ({
 		"Pos",
 		"Drafted",
 		"Retired",
+		"College",
 		"Pick",
 		"Peak Ovr",
 		...(target !== undefined ? ["Relation"] : []),
@@ -73,13 +74,27 @@ const Relatives = ({
 
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
+		const college = p.college && p.college !== "" ? p.college : "None";
+
 		return {
 			key: p.pid,
 			data: [
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid} jerseyNumber={p.jerseyNumber}>
+					{p.name}
+				</PlayerNameLabels>,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
+				<a
+					href={helpers.leagueUrl([
+						"frivolities",
+						"most",
+						"college",
+						window.encodeURIComponent(college),
+					])}
+				>
+					{college}
+				</a>,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				showRatings ? p.peakOvr : null,
 				...relationArray,

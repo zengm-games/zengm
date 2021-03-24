@@ -252,7 +252,16 @@ const doAwards = async (conditions: Conditions) => {
 			"lost",
 			"tied",
 			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
 			"winp",
+			"pts",
 			"playoffRoundsWon",
 			"abbrev",
 			"region",
@@ -260,8 +269,9 @@ const doAwards = async (conditions: Conditions) => {
 			"cid",
 			"did",
 		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
-		active: true,
+		showNoStats: true,
 	});
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
@@ -315,27 +325,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		const champPlayersAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			champTid,
-		);
-
-		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
-		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
-			// Only the champions, only playoff stats
-			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: ["pts", "trb", "ast", "ws", "ewa"],
-			season: g.get("season"),
-			playoffs: true,
-			regularSeason: false,
-			tid: champTid,
-		});
-
-		// For symmetry with players array
-		for (const p of champPlayers) {
-			p.currentStats = p.stats;
-		}
-
 		finalsMvp = await getRealFinalsMvp(players, champTid);
 	}
 

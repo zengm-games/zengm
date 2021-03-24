@@ -1,4 +1,4 @@
-# Basketball GM and Football GM
+# Basketball GM, Football GM, and ZenGM Hockey
 
 Single-player sports simulation games. Make trades, set rosters, draft players,
 and try to build the next dynasty, all from within your web browser. The games
@@ -6,20 +6,27 @@ are implemented entirely in client-side JavaScript, backed by IndexedDB.
 
 Copyright (C) Jeremy Scheff. All rights reserved.
 
-* Email: commissioner@basketball-gm.com
-* Website: <https://basketball-gm.com/> and <https://football-gm.com/>
-* Development: <https://github.com/dumbmatter/gm-games>
-* Discussion: <https://www.reddit.com/r/BasketballGM/> or
-<https://www.reddit.com/r/Football_GM/> or <https://discord.gg/caPFuM9>
+Email: jeremy@zengm.com
+
+Website: <https://zengm.com/>
+
+Development: <https://github.com/dumbmatter/gm-games>
+
+Discussion:
+
+* <https://www.reddit.com/r/BasketballGM/>
+* <https://www.reddit.com/r/Football_GM/>
+* <https://www.reddit.com/r/ZenGMHockey/>
+* <https://discord.gg/caPFuM9/>
 
 **This project is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
 ## Development Info
 
-If you just want to play the game, go to <https://basketball-gm.com/> or
-<https://football-gm.com/>. Instructions below are for developers who want to
-run a copy locally so they can make changes to the code.
+If you just want to play the game, go to <https://zengm.com/>. Instructions
+below are for developers who want to run a copy locally so they can make changes
+to the code.
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy
 to help.
@@ -64,8 +71,8 @@ which will start the server and watch JS and CSS files for changes and
 recompile. This simply runs both `yarn run start` and `yarn run watch` together,
 which alternatively can be run separately if you wish.
 
-By default this will build the basketball version of the game. For football, set
-the SPORT environment variable to "football", like:
+By default this will build the basketball version of the game. For football or
+hockey, set the SPORT environment variable to "football" or "hockey", like:
 
     SPORT=football yarn run start-watch
 

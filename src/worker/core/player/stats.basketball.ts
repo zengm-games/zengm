@@ -48,6 +48,10 @@ const stats = {
 		"ba",
 		"pf",
 		"pts",
+		"dd",
+		"td",
+		"qd",
+		"fxf",
 	] as const,
 	max: [
 		"minMax",

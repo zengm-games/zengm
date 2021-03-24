@@ -58,6 +58,8 @@ const updatePlayers = async (
 				"numBrothers",
 				"numFathers",
 				"numSons",
+				"college",
+				"jerseyNumber",
 			],
 			ratings: ["ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],

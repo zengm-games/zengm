@@ -41,15 +41,22 @@ const getBest = <T extends PlayerWithoutKey>(
 		const shouldAddPlayerMinContract =
 			p.contract.amount <= g.get("minContract") &&
 			playersOnRoster.length < g.get("maxRosterSize") - 2;
-		let shouldAddPlayerPosition = false;
 
-		if (isSport("football")) {
-			if (
-				(neededPositions.has("K") && pos === "K") ||
-				(neededPositions.has("P") && pos === "P")
-			) {
-				shouldAddPlayerPosition = true;
-			}
+		let shouldAddPlayerPosition = false;
+		if (
+			(isSport("football") &&
+				((neededPositions.has("K") && pos === "K") ||
+					(neededPositions.has("P") && pos === "P"))) ||
+			(isSport("hockey") && neededPositions.has("G") && pos === "G")
+		) {
+			shouldAddPlayerPosition = true;
+		}
+
+		// Otherwise hockey had an issue with signing and releasing a 3rd goalie repeatedly
+		if (isSport("hockey")) {
+			shouldAddPlayerPosition =
+				shouldAddPlayerPosition &&
+				playersOnRoster.length < g.get("maxRosterSize");
 		}
 
 		// Don't sign minimum contract players to fill out the roster

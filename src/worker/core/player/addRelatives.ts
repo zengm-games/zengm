@@ -80,6 +80,18 @@ const addRelative = (p: Player, relative: Relative) => {
 	}
 };
 
+// 50% chance of going to the same college and having the samer jersey number
+const makeSimilar = (existingRelative: Player, newRelative: Player) => {
+	if (existingRelative.college !== "" && Math.random() < 0.5) {
+		newRelative.college = existingRelative.college;
+	}
+
+	if (existingRelative.stats.length > 0 && Math.random() < 0.5) {
+		newRelative.jerseyNumber =
+			existingRelative.stats[existingRelative.stats.length - 1].jerseyNumber;
+	}
+};
+
 export const makeSon = async (p: Player) => {
 	// Sanity check - player must not already have father
 	if (hasRelative(p, "father")) {
@@ -189,6 +201,7 @@ export const makeSon = async (p: Player) => {
 		pid: p.pid,
 		name: `${p.firstName} ${p.lastName}`,
 	});
+	makeSimilar(father, p);
 	await idb.cache.players.put(p);
 	await idb.cache.players.put(father);
 };
@@ -291,6 +304,7 @@ export const makeBrother = async (p: Player) => {
 		pid: p.pid,
 		name: `${p.firstName} ${p.lastName}`,
 	});
+	makeSimilar(brother, p);
 	await idb.cache.players.put(p);
 	await idb.cache.players.put(brother);
 };

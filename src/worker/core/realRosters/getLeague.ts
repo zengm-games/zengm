@@ -3,62 +3,25 @@ import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
 import type {
 	GetLeagueOptions,
-	Relative,
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 } from "../../../common/types";
-import type { Ratings } from "./loadData.basketball";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { defaultGameAttributes, helpers, random } from "../../util";
 import { isSport, PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import genPlayoffSeeds from "../season/genPlayoffSeeds";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
+import getDraftProspects from "./getDraftProspects";
+import formatPlayerFactory from "./formatPlayerFactory";
+import nerfDraftProspect from "./nerfDraftProspect";
+import getOnlyRatings from "./getOnlyRatings";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+import addRelatives from "./addRelatives";
 
-const LATEST_SEASON = 2021;
-const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
+export const LATEST_SEASON = 2021;
+export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
 const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
-
-const getOnlyRatings = (ratings: Ratings) => {
-	return {
-		hgt: ratings.hgt,
-		stre: ratings.stre,
-		spd: ratings.spd,
-		jmp: ratings.jmp,
-		endu: ratings.endu,
-		ins: ratings.ins,
-		dnk: ratings.dnk,
-		ft: ratings.ft,
-		fg: ratings.fg,
-		tp: ratings.tp,
-		diq: ratings.diq,
-		oiq: ratings.oiq,
-		drb: ratings.drb,
-		pss: ratings.pss,
-		reb: ratings.reb,
-	};
-};
-
-const nerfDraftProspect = (ratings: {
-	endu: number;
-	diq: number;
-	oiq: number;
-}) => {
-	const decreaseRating = (name: keyof typeof ratings, amount: number) => {
-		if (ratings[name] > amount) {
-			ratings[name] -= amount;
-		} else {
-			ratings[name] = 0;
-		}
-	};
-
-	// Arbitrarily copied from nicidob
-	decreaseRating("endu", 5);
-	decreaseRating("diq", 4);
-	decreaseRating("oiq", 4);
-};
 
 const genPlayoffSeries = (
 	basketball: Basketball,
@@ -267,282 +230,36 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 	const basketball = await loadDataBasketball();
 
-	let pid = -1;
-
-	const formatPlayer = (
-		ratings: Ratings,
-		season: number,
-		teams: any[],
-		{
-			draftProspect,
-			legends,
-			hasQueens,
-			randomDebuts,
-		}: {
-			draftProspect?: boolean;
-			legends?: boolean;
-			hasQueens?: boolean;
-			randomDebuts?: boolean;
-		} = {},
-	) => {
-		if (!legends) {
-			if (draftProspect) {
-				if (ratings.season === season) {
-					throw new Error(
-						"draftProspect should not be true when ratings.season === season",
-					);
-				}
-			} else {
-				if (ratings.season !== season) {
-					throw new Error(
-						"draftProspect should be true when ratings.season !== season",
-					);
-				}
-			}
-		}
-
-		const slug = ratings.slug;
-
-		const bio = basketball.bios[slug];
-		if (!bio) {
-			throw new Error(`No bio found for "${slug}"`);
-		}
-
-		let draft;
-		if (draftProspect || legends) {
-			draft = {
-				tid: -1,
-				originalTid: -1,
-				round: 0,
-				pick: 0,
-				year: legends ? season - 1 : ratings.season - 1,
-			};
-		} else {
-			let draftTid;
-			const draftTeam = teams.find(
-				t => oldAbbrevTo2020BBGMAbbrev(t.srID) === bio.draftAbbrev,
-			);
-			if (draftTeam) {
-				draftTid = draftTeam.tid;
-			} else {
-				draftTid = -1;
-			}
-			draft = {
-				tid: draftTid,
-				originalTid: draftTid,
-				round: bio.draftRound,
-				pick: bio.draftPick,
-				year: bio.draftYear,
-			};
-		}
-
-		let tid: number;
-		let jerseyNumber: string | undefined;
-		if (draftProspect) {
-			tid = PLAYER.UNDRAFTED;
-		} else {
-			tid = PLAYER.FREE_AGENT;
-			let statsRow;
-			if (options.type === "real" && options.phase >= PHASE.PLAYOFFS) {
-				// Search backwards - last team a player was on that season
-				for (let i = basketball.stats.length - 1; i >= 0; i--) {
-					const row = basketball.stats[i];
-					if (row.slug === slug && row.season === ratings.season) {
-						statsRow = row;
-						break;
-					}
-				}
-			} else {
-				// Search forwards - first team a player was on that season
-				statsRow = basketball.stats.find(
-					row => row.slug === slug && row.season === ratings.season,
-				);
-			}
-			const abbrev = statsRow ? statsRow.abbrev : ratings.abbrev_if_new_row;
-
-			if (statsRow) {
-				jerseyNumber = statsRow.jerseyNumber;
-			}
-
-			if (legends) {
-				const team = teams.find(t => {
-					if (hasQueens && abbrev === "NOL" && ratings.season < 2003) {
-						return oldAbbrevTo2020BBGMAbbrev(t.srID) === "CHA";
-					}
-
-					return oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev;
-				});
-				tid = team ? team.tid : PLAYER.FREE_AGENT;
-			} else {
-				if (abbrev !== undefined) {
-					const t = teams.find(
-						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
-					);
-					if (t) {
-						tid = t.tid;
-					}
-				}
-			}
-		}
-
-		if (!jerseyNumber) {
-			// Fallback (mostly for draft prospects) - pick first number in database
-			const statsRow2 = basketball.stats.find(row => row.slug === slug);
-			if (statsRow2) {
-				jerseyNumber = statsRow2.jerseyNumber;
-			}
-		}
-
-		if (tid >= PLAYER.FREE_AGENT && !draftProspect) {
-			// Ensure draft year is before the current season, because for some players like Irv Rothenberg this is not true
-			if (draft.year >= season) {
-				draft = {
-					tid: -1,
-					originalTid: -1,
-					round: 0,
-					pick: 0,
-					year: season - 1,
-				};
-			}
-		}
-
-		let injury;
-		let contract;
-		let awards;
-		if (legends) {
-			contract = {
-				amount: 6000,
-				exp: season + 3,
-			};
-		} else if (!randomDebuts) {
-			const injuryRow = basketball.injuries.find(
-				injury => injury.season === season && injury.slug === slug,
-			);
-			if (injuryRow) {
-				injury = {
-					type: injuryRow.type,
-					gamesRemaining: injuryRow.gamesRemaining,
-				};
-			}
-
-			let salaryRow = basketball.salaries.find(
-				row => row.start <= season && row.exp >= season && row.slug === slug,
-			);
-			if (season >= LATEST_SEASON) {
-				// Auto-apply extensions, otherwise will feel weird
-				const salaryRowExtension = basketball.salaries.find(
-					row => row.start > season && row.slug === slug,
-				);
-				if (salaryRowExtension) {
-					salaryRow = salaryRowExtension;
-				}
-			}
-			if (salaryRow && !draftProspect) {
-				contract = {
-					amount: salaryRow.amount / 1000,
-					exp: salaryRow.exp,
-				};
-				if (contract.exp > season + 4) {
-					// Bound at 5 year contract
-					contract.exp = season + 4;
-				}
-			}
-
-			const allAwards = basketball.awards[slug];
-
-			const awardsCustoffSeason =
-				options.type === "real" &&
-				options.phase !== undefined &&
-				options.phase > PHASE.PLAYOFFS
-					? season + 1
-					: season;
-			awards =
-				allAwards && !draftProspect
-					? helpers.deepCopy(
-							allAwards.filter(award => award.season < awardsCustoffSeason),
-					  )
-					: undefined;
-		}
-
-		let bornYear;
-		if (legends) {
-			const age = ratings.season - bio.bornYear;
-			bornYear = season - age;
-		} else {
-			bornYear = bio.bornYear;
-		}
-
-		const age = ratings.season - bornYear;
-
-		// Whitelist, to get rid of any other columns
-		const currentRatings = getOnlyRatings(ratings);
-
-		if (draftProspect) {
-			nerfDraftProspect(currentRatings);
-
-			if (
-				options.type === "real" &&
-				options.realDraftRatings === "draft" &&
-				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
-			) {
-				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
-			}
-		}
-
-		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
-
-		pid += 1;
-
-		return {
-			pid,
-			name,
-			pos: bio.pos,
-			college: bio.college,
-			born: {
-				year: bornYear,
-				loc: bio.country,
-			},
-			weight: bio.weight,
-			hgt: bio.height,
-			tid,
-			imgURL: "/img/blank-face.png",
-			real: true,
-			draft,
-			ratings: [currentRatings],
-			injury,
-			contract,
-			awards,
-			jerseyNumber,
-			srID: ratings.slug,
-		};
-	};
-
-	const addRelatives = (
+	// NO PLAYERS CAN BE ADDED AFTER CALLING THIS, otherwise there will be pid collisions
+	const addFreeAgents = (
 		players: {
-			name: string;
 			pid: number;
-			srID: string;
-			relatives?: Relative[];
+			tid: number;
 		}[],
+		season: number,
 	) => {
-		for (const p of players) {
-			const relatives = basketball.relatives.filter(row => row.slug === p.srID);
+		// Free agents were generated in 2020, so offset
+		const numExistingFreeAgents = players.filter(
+			p => p.tid === PLAYER.FREE_AGENT,
+		).length;
+		if (numExistingFreeAgents < 50) {
+			let pid = Math.max(...players.map(p => p.pid));
 
-			const relatives2 = [];
-			for (const relative of relatives) {
-				const p2 = players.find(p2 => relative.slug2 === p2.srID);
-				if (p2) {
-					relatives2.push({
-						type: relative.type,
-						name: p2.name,
-						pid: p2.pid,
-					});
-				}
-			}
+			const freeAgents2 = helpers.deepCopy(
+				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
+			);
+			for (const p of freeAgents2) {
+				let offset = FREE_AGENTS_SEASON - season;
 
-			if (relatives2.length > 0) {
-				p.relatives = relatives2;
+				// Make them a bit older so they suck
+				offset += 5;
+
+				p.born.year -= offset;
+				p.draft.year -= offset;
+				pid += 1;
+				p.pid = pid;
 			}
+			players.push(...freeAgents2);
 		}
 	};
 
@@ -562,10 +279,18 @@ const getLeague = async (options: GetLeagueOptions) => {
 			options.phase,
 		);
 
+		const formatPlayer = formatPlayerFactory(
+			basketball,
+			options,
+			options.season,
+			initialTeams,
+			-1,
+		);
+
 		const players = basketball.ratings
 			.filter(row => row.season === options.season)
 			.map(ratings =>
-				formatPlayer(ratings, options.season, initialTeams, {
+				formatPlayer(ratings, {
 					randomDebuts: options.randomDebuts,
 				}),
 			);
@@ -597,80 +322,19 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		// Free agents were generated in 2020, so offset
-		const numExistingFreeAgents = players.filter(
-			p => p.tid === PLAYER.FREE_AGENT,
-		).length;
-		if (numExistingFreeAgents < 50) {
-			const freeAgents2 = helpers.deepCopy(
-				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
-			);
-			for (const p of freeAgents2) {
-				let offset = FREE_AGENTS_SEASON - options.season;
-
-				// Make them a bit older so they suck
-				offset += 5;
-
-				p.born.year -= offset;
-				p.draft.year -= offset;
-				pid += 1;
-				p.pid = pid;
-			}
-			players.push(...freeAgents2);
-		}
-
 		// Find draft prospects, which can't include any active players
-		const seenSlugs = new Set(players.map(p => p.srID));
-		const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
-			.filter(ratings => {
-				// Only keep rookie seasons
-				const seen = seenSlugs.has(ratings.slug);
-				seenSlugs.add(ratings.slug);
-				return !seen;
-			})
-			.filter(
-				ratings => ratings.season > options.season || options.randomDebuts,
-			)
-			.map(ratings =>
-				formatPlayer(ratings, options.season, initialTeams, {
-					draftProspect: true,
-					randomDebuts: options.randomDebuts,
-				}),
-			);
-
-		if (options.randomDebuts) {
-			// For players in past draft classes, automatically move to future draft classes, so they will be correctly randomized below
-			const targetDraftClassSize = 70;
-			const draftProspectsToMove = draftProspects.filter(
-				p => p.draft.year < options.season,
-			);
-			let draftYear = options.season;
-			let draftClassSize = draftProspects.filter(
-				p => p.draft.year === draftYear,
-			).length;
-			while (draftProspectsToMove.length > 0) {
-				while (draftClassSize >= targetDraftClassSize) {
-					draftYear += 1;
-					draftClassSize = draftProspects.filter(
-						p => p.draft.year === draftYear,
-					).length;
-				}
-
-				const p = draftProspectsToMove.pop();
-				if (p) {
-					p.tid = PLAYER.UNDRAFTED;
-
-					const diff = draftYear - p.draft.year;
-					p.draft.year += diff;
-					p.born.year += diff;
-					draftClassSize += 1;
-				}
-			}
-		}
+		const lastPID = Math.max(...players.map(p => p.pid));
+		const draftProspects = getDraftProspects(
+			basketball,
+			players,
+			initialTeams,
+			scheduledEvents,
+			lastPID,
+			0,
+			options,
+		);
 
 		players.push(...draftProspects);
-
-		addRelatives(players);
 
 		if (options.randomDebuts) {
 			const toRandomize = players.filter(p => p.tid !== PLAYER.FREE_AGENT);
@@ -779,7 +443,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
 		let draftLotteryResults: DraftLotteryResult[] | undefined;
-		// Special case for 2020 because we only have traded draft picks for the "current" season, we don't store history
+		// Special case for 2020+ because we only have traded draft picks for the "current" season, we don't store history
 		const includeDraftPicks2020AndFuture =
 			options.season >= 2020 &&
 			!options.randomDebuts &&
@@ -787,7 +451,22 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]
-				.filter(dp => dp.round <= 2)
+				.filter(dp => {
+					if (dp.round > 2) {
+						return false;
+					}
+
+					// For alexnoob traded draft picks, don't include current season if starting after draft
+					if (
+						options.phase > PHASE.DRAFT &&
+						dp.season !== undefined &&
+						dp.season === options.season
+					) {
+						return false;
+					}
+
+					return true;
+				})
 				.map(dp => {
 					const [t, t2] = getDraftPickTeams(dp);
 
@@ -828,7 +507,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						oldAbbrevTo2020BBGMAbbrev(t.srID)
 					];
 				if (!teamSeasonData) {
-					throw new Error("Missing teamSeason");
+					// Must be an expansion team
+					continue;
 				}
 
 				const teamSeason = team.genSeasonRow(
@@ -908,6 +588,31 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
+		// Assign expansion draft players to their teams
+		if (
+			options.phase >= PHASE.DRAFT_LOTTERY &&
+			basketball.expansionDrafts[options.season]
+		) {
+			for (const [abbrev, slugs] of Object.entries(
+				basketball.expansionDrafts[options.season],
+			)) {
+				const t = initialTeams.find(t => abbrev === t.abbrev);
+				console.log(abbrev, slugs);
+				console.log(initialTeams, t);
+				if (!t) {
+					throw new Error("Team not found");
+				}
+
+				t.firstSeasonAfterExpansion = options.season + 1;
+
+				for (const p of players) {
+					if (slugs.includes(p.srID)) {
+						p.tid = t.tid;
+					}
+				}
+			}
+		}
+
 		// Assign drafted players to their teams
 		if (options.phase > PHASE.DRAFT) {
 			for (const dp of basketball.draftPicks[options.season]) {
@@ -965,6 +670,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
+		addRelatives(players, basketball.relatives);
+		addFreeAgents(players, options.season);
+
 		return {
 			version: 37,
 			startingSeason: options.season,
@@ -987,7 +695,13 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		const hasQueens = initialTeams.some(t => t.name === "Queens");
 
-		pid = -1;
+		const formatPlayer = formatPlayerFactory(
+			basketball,
+			options,
+			season,
+			initialTeams,
+			-1,
+		);
 
 		let players = orderBy(
 			basketball.ratings,
@@ -1000,7 +714,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					ratings.season <= legendsInfo[options.decade].end,
 			)
 			.map(ratings =>
-				formatPlayer(ratings, season, initialTeams, {
+				formatPlayer(ratings, {
 					legends: true,
 					hasQueens,
 				}),
@@ -1023,22 +737,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		addRelatives(keptPlayers);
-
-		const freeAgents2 = helpers.deepCopy(basketball.freeAgents);
-		for (const p of freeAgents2) {
-			let offset = FREE_AGENTS_SEASON - season;
-
-			// Make them a bit older so they suck
-			offset += 5;
-
-			p.born.year -= offset;
-			p.draft.year -= offset;
-			pid += 1;
-			p.pid = pid;
-		}
-		keptPlayers.push(...freeAgents2);
-
 		const gameAttributes: Record<string, unknown> = {
 			maxRosterSize: 17,
 			aiTradesFactor: 0,
@@ -1056,6 +754,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 				gameAttributes[key] = value;
 			}
 		}
+
+		addRelatives(keptPlayers, basketball.relatives);
+		addFreeAgents(keptPlayers, season);
 
 		return {
 			version: 37,

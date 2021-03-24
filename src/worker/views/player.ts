@@ -4,6 +4,7 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	isSport,
+	DEFAULT_JERSEY,
 } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
@@ -14,6 +15,8 @@ import {
 	getTeamColors,
 	getTeamInfoBySeason,
 	helpers,
+	processPlayersHallOfFame,
+	random,
 } from "../util";
 import type {
 	MinimalPlayerRatings,
@@ -206,7 +209,6 @@ const updatePlayer = async (
 			}
 		}
 
-		const teamColors = await getTeamColors(p.tid);
 		const eventsAll = orderBy(
 			[
 				...(await idb.getCopies.events({
@@ -277,7 +279,9 @@ const updatePlayer = async (
 			start: number;
 			end: number;
 			t?: {
+				tid: number;
 				colors: [string, string, string];
+				jersey?: string;
 				name: string;
 				region: string;
 			};
@@ -312,7 +316,9 @@ const updatePlayer = async (
 				let t;
 				if (ts && ts.colors && ts.name && ts.region) {
 					t = {
+						tid: ps.tid,
 						colors: ts.colors,
+						jersey: ts.jersey,
 						name: ts.name,
 						region: ts.region,
 					};
@@ -327,6 +333,30 @@ const updatePlayer = async (
 			} else if (prev) {
 				prev.end = ps.season;
 			}
+		}
+
+		let teamColors;
+		let teamJersey;
+		if (p.tid === PLAYER.RETIRED) {
+			const { legacyTid } = processPlayersHallOfFame([p])[0];
+
+			// Randomly pick a season that he played on this team, and use that for colors
+			const teamJerseyNumberInfos = jerseyNumberInfos.filter(
+				info => info.t && info.t.tid === legacyTid,
+			);
+			if (teamJerseyNumberInfos.length > 0) {
+				const info = random.choice(teamJerseyNumberInfos);
+				if (info.t) {
+					teamColors = info.t.colors;
+					teamJersey = info.t.jersey;
+				}
+			}
+		}
+		if (teamColors === undefined) {
+			teamColors = await getTeamColors(p.tid);
+		}
+		if (teamJersey === undefined) {
+			teamJersey = (await idb.cache.teams.get(p.tid))?.jersey ?? DEFAULT_JERSEY;
 		}
 
 		return {
@@ -352,6 +382,7 @@ const updatePlayer = async (
 			statTables,
 			statSummary,
 			teamColors,
+			teamJersey,
 			teamName,
 			willingToSign,
 		};

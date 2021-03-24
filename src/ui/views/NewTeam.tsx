@@ -196,6 +196,7 @@ const NewTeam = ({
 									lost={t.seasonAttrs.lost}
 									season={t.seasonAttrs.season}
 									tied={t.seasonAttrs.tied}
+									otl={t.seasonAttrs.otl}
 									won={t.seasonAttrs.won}
 									numConfs={confs.length}
 									numPlayoffRounds={numPlayoffRounds}

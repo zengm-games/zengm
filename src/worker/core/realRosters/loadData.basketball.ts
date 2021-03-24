@@ -119,6 +119,7 @@ export type Basketball = {
 			wons: [number, number];
 		}[]
 	>;
+	expansionDrafts: Record<number, Record<string, string[]>>;
 };
 
 let cachedJSON: Basketball;

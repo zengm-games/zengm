@@ -1,4 +1,5 @@
 import type { ChangeEvent } from "react";
+import { helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 
 const TeamForm = ({
@@ -138,7 +139,7 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[7]}>
 				<div className="form-group">
-					<label className={classNameLabel}>Colors</label>
+					<label className={classNameLabel}>Jersey</label>
 					<div className="d-flex">
 						{[0, 1, 2].map(j => (
 							<input
@@ -149,6 +150,17 @@ const TeamForm = ({
 								value={t.colors[j]}
 							/>
 						))}
+						<select
+							className="form-control"
+							onChange={e => handleInputChange("jersey", e)}
+							value={t.jersey}
+						>
+							{helpers.keys(JERSEYS).map(jersey => (
+								<option key={jersey} value={jersey}>
+									{JERSEYS[jersey]}
+								</option>
+							))}
+						</select>
 					</div>
 				</div>
 			</div>

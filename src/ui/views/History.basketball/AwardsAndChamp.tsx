@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { helpers } from "../../../ui/util";
 import type { ActualProps } from ".";
+import { AWARD_NAMES } from "../../../common";
 
 const Winner = ({
 	award,
@@ -91,7 +92,7 @@ const AwardsAndChamp = ({
 							</a>
 						</p>
 						<p>
-							Finals MVP:{" "}
+							{AWARD_NAMES.finalsMvp}:{" "}
 							<Winner
 								award={awards.finalsMvp}
 								finals
@@ -104,39 +105,41 @@ const AwardsAndChamp = ({
 					<p>???</p>
 				)}
 				<h2>Best Record</h2>
-				{awards.bestRecordConfs.map((t: any, i: number) =>
-					t !== undefined ? (
-						<p key={t.tid}>
-							{confs[i].name}:<br />
-							<span className={t.tid === userTid ? "table-info" : undefined}>
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${t.abbrev}_${t.tid}`,
-										season,
-									])}
-								>
-									{t.region} {t.name}
-								</a>{" "}
-								({t.won}-{t.lost}
-								{t.otl !== undefined && t.otl > 0 ? <>-{t.otl}</> : null}
-								{t.tied !== undefined && t.tied > 0 ? <>-{t.tied}</> : null})
-							</span>
-							<br />
-						</p>
-					) : null,
-				)}
-				<h2>Most Valuable Player</h2>
+				{awards.bestRecordConfs
+					.filter((a: any) => a !== undefined)
+					.map((t: any, i: number) =>
+						t !== undefined ? (
+							<p key={t.tid}>
+								{confs[i].name}:<br />
+								<span className={t.tid === userTid ? "table-info" : undefined}>
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${t.abbrev}_${t.tid}`,
+											season,
+										])}
+									>
+										{t.region} {t.name}
+									</a>{" "}
+									({t.won}-{t.lost}
+									{t.otl !== undefined && t.otl > 0 ? <>-{t.otl}</> : null}
+									{t.tied !== undefined && t.tied > 0 ? <>-{t.tied}</> : null})
+								</span>
+								<br />
+							</p>
+						) : null,
+					)}
+				<h2>{AWARD_NAMES.mvp}</h2>
 				<Winner award={awards.mvp} season={season} userTid={userTid} />
 			</div>
 			<div className="col-sm-12 col-6">
-				<h2>Defensive Player of the Year</h2>
+				<h2>{AWARD_NAMES.dpoy}</h2>
 				<Winner award={awards.dpoy} season={season} userTid={userTid} defense />
-				<h2>Sixth Man of the Year</h2>
+				<h2>{AWARD_NAMES.smoy}</h2>
 				<Winner award={awards.smoy} season={season} userTid={userTid} />
-				<h2>Most Improved Player</h2>
+				<h2>{AWARD_NAMES.mip}</h2>
 				<Winner award={awards.mip} season={season} userTid={userTid} />
-				<h2>Rookie of the Year</h2>
+				<h2>{AWARD_NAMES.roy}</h2>
 				<Winner award={awards.roy} season={season} userTid={userTid} />
 			</div>
 		</div>

@@ -2,8 +2,9 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import arrayMove from "array-move";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
+	CountryFlag,
 	HelpPopover,
 	Mood,
 	PlayerNameLabels,
@@ -179,6 +180,7 @@ const Roster = ({
 							index === numPlayersOnCourt - 1 &&
 							!isDragged,
 						"table-danger": p.hof,
+						"table-info": p.tid === tid && season !== currentSeason,
 					})
 				}
 				onChange={async ({ oldIndex, newIndex }) => {
@@ -206,6 +208,7 @@ const Roster = ({
 						<th title="Potential Rating">Pot</th>
 						{season === currentSeason ? <th>Contract</th> : null}
 						<th title="Years With Team">YWT</th>
+						<th title="Country"></th>
 						{statCols.map(({ desc, title }) => (
 							<th key={title} title={desc}>
 								{title}
@@ -244,7 +247,7 @@ const Roster = ({
 								<HelpPopover title="Player Mood">
 									See{" "}
 									<a
-										href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
+										href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>
@@ -329,6 +332,9 @@ const Roster = ({
 								</td>
 							) : null}
 							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
+							<td>
+								<CountryFlag country={p.born.loc} />
+							</td>
 							{stats.map(stat => (
 								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 							))}

@@ -48,6 +48,10 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			threePointTendencyFactor: g.get("threePointTendencyFactor"),
 			threePointAccuracyFactor: g.get("threePointAccuracyFactor"),
 			twoPointAccuracyFactor: g.get("twoPointAccuracyFactor"),
+			blockFactor: g.get("blockFactor"),
+			stealFactor: g.get("stealFactor"),
+			turnoverFactor: g.get("turnoverFactor"),
+			orbFactor: g.get("orbFactor"),
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 			challengeNoTrades: g.get("challengeNoTrades"),
@@ -55,6 +59,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeFiredLuxuryTax: g.get("challengeFiredLuxuryTax"),
 			challengeFiredMissPlayoffs: g.get("challengeFiredMissPlayoffs"),
+			challengeThanosMode: g.get("challengeThanosMode"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),
@@ -74,6 +79,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),
 			aiJerseyRetirement: g.get("aiJerseyRetirement"),
 			numPeriods: g.get("numPeriods"),
+			tiebreakers: g.get("tiebreakers"),
+			pointsFormula: g.get("pointsFormula"),
 		};
 	}
 };

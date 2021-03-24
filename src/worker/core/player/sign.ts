@@ -10,9 +10,15 @@ const sign = async (
 	contract: PlayerContract,
 	phase: Phase,
 ) => {
+	const isRookie =
+		g.get("hardCap") &&
+		p.stats.length === 0 &&
+		p.draft.year === g.get("season") &&
+		p.draft.tid === tid;
+
 	p.tid = tid;
 	p.numDaysFreeAgent = 0;
-	p.gamesUntilTradable = Math.round(0.17 * g.get("numGames")); // 14 for basketball, 3 for football
+	p.gamesUntilTradable = isRookie ? 0 : Math.round(0.17 * g.get("numGames")); // 14 for basketball, 3 for football
 
 	// Handle stats if the season is in progress
 	if (phase <= PHASE.PLAYOFFS) {
@@ -52,11 +58,6 @@ const sign = async (
 		score,
 	});
 
-	const isRookie =
-		g.get("hardCap") &&
-		p.stats.length === 0 &&
-		p.draft.year === g.get("season") &&
-		p.draft.tid === p.tid;
 	const freeAgent = !resigning && !isRookie;
 	if (freeAgent) {
 		if (!p.transactions) {

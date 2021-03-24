@@ -4,6 +4,7 @@ import {
 	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
+	isSport,
 } from "../../common";
 import logEvent from "./logEvent";
 import safeLocalStorage from "./safeLocalStorage";
@@ -26,9 +27,9 @@ const takeScreenshot = async () => {
 			: "";
 	watermark.innerHTML = `<nav class="navbar navbar-light bg-light"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
-	}; font-weight: bold">Play your own league free at ${
-		process.env.SPORT
-	}-gm.com</span></nav>
+	}; font-weight: bold">Play your own league free at ${process.env.SPORT}${
+		!isSport("hockey") ? "-gm" : ".zengm"
+	}.com</span></nav>
 	<nav class="navbar navbar-border navbar-light mb-2 px-0"><h1 class="mb-0">${
 		document.title
 	}</nav>`;

@@ -36,6 +36,7 @@ import history from "./history";
 import historyAll from "./historyAll";
 import importPlayers from "./importPlayers";
 import inbox from "./inbox";
+import injuries from "./injuries";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
@@ -121,6 +122,7 @@ export default {
 	history,
 	historyAll,
 	importPlayers,
+	injuries,
 	inbox,
 	leaders,
 	leagueDashboard,

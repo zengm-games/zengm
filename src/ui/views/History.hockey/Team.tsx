@@ -10,11 +10,15 @@ const Player = ({
 	season: number;
 	userTid: number;
 }) => {
+	if (!p) {
+		return <div />;
+	}
+
 	// The wrapper div here actually matters, don't change to fragment!
 	return (
 		<div>
 			<span className={p.tid === userTid ? "table-info" : undefined}>
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
+				{p.pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
 				</a>
@@ -25,7 +29,7 @@ const Player = ({
 };
 
 Player.propTypes = {
-	p: PropTypes.object.isRequired,
+	p: PropTypes.object,
 	season: PropTypes.number.isRequired,
 	userTid: PropTypes.number.isRequired,
 };

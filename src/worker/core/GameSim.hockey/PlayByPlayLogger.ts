@@ -6,6 +6,7 @@ type PlayByPlayEventInputScore = {
 	clock: number;
 	t: TeamNum;
 	names: [string] | [string, string] | [string, string, string];
+	pids: [number] | [number, number] | [number, number, number];
 	goalType: "ev" | "sh" | "pp";
 	shotType: string;
 };
@@ -44,7 +45,8 @@ type PlayByPlayEventInput =
 				| "block"
 				| "miss"
 				| "save"
-				| "save-freeze";
+				| "save-freeze"
+				| "deflection";
 			clock: number;
 			t: TeamNum;
 			names: [string];

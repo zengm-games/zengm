@@ -1,4 +1,3 @@
-import orderBy from "lodash/orderBy";
 import {
 	getPlayers,
 	getTopPlayers,
@@ -11,9 +10,7 @@ import {
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
-
 import type { AwardPlayer, Awards } from "../../../common/types.hockey";
-import { processPlayerStats } from "../../../common";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -21,6 +18,7 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 		name: p.name,
 		tid: p.tid,
 		abbrev: p.abbrev,
+		pos: p.pos,
 		g: p.currentStats.g,
 		a: p.currentStats.a,
 		pts: p.currentStats.pts,
@@ -34,126 +32,57 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	};
 };
 
-const makeTeams = <T>(
-	players: T[],
-): [
-	{
-		title: "First Team";
-		players: T[];
-	},
-	{
-		title: "Second Team";
-		players: T[];
-	},
-	{
-		title: "Third Team";
-		players: T[];
-	},
-] => {
-	return [
+const getTopByPos = (
+	players: AwardPlayer[],
+	positions?: string[],
+	usedPids?: Set<number>,
+) => {
+	for (const p of players) {
+		if (usedPids) {
+			if (usedPids.has(p.pid)) {
+				continue;
+			}
+		}
+
+		if (positions === undefined || positions.includes(p.pos)) {
+			if (usedPids) {
+				usedPids.add(p.pid);
+			}
+
+			return p;
+		}
+	}
+};
+
+export const makeTeams = (
+	players: AwardPlayer[],
+	rookie: boolean = false,
+): any => {
+	const usedPids = new Set<number>();
+	const teamPositions = [["C"], ["W"], ["W"], ["D"], ["D"], ["G"]];
+
+	if (rookie) {
+		const teams = teamPositions.map(positions =>
+			getTopByPos(players, positions, usedPids),
+		);
+		return teams;
+	}
+
+	const teams = [
 		{
 			title: "First Team",
-			players: players.slice(0, 5),
+			players: teamPositions.map(positions =>
+				getTopByPos(players, positions, usedPids),
+			),
 		},
 		{
 			title: "Second Team",
-			players: players.slice(5, 10),
-		},
-		{
-			title: "Third Team",
-			players: players.slice(10, 15),
+			players: teamPositions.map(positions =>
+				getTopByPos(players, positions, usedPids),
+			),
 		},
 	];
-};
-
-const getRealFinalsMvp = async (
-	players: PlayerFiltered[],
-	champTid: number,
-): Promise<AwardPlayer | undefined> => {
-	const games = await idb.cache.games.getAll(); // Last game of the season will have the two finals teams
-
-	const finalsTids = games[games.length - 1].teams.map(t => t.tid); // Get all playoff games between those two teams - that will be all finals games
-
-	const finalsGames = games.filter(
-		game =>
-			game.playoffs &&
-			finalsTids.includes(game.teams[0].tid) &&
-			finalsTids.includes(game.teams[1].tid),
-	);
-
-	if (finalsGames.length === 0) {
-		return;
-	}
-
-	// Calculate sum of game scores for each player
-	const playerInfos: Map<
-		number,
-		{
-			pid: number;
-			score: number;
-			tid: number;
-			g: number;
-			a: number;
-			pts: number;
-		}
-	> = new Map();
-
-	for (const game of finalsGames) {
-		for (const t of game.teams) {
-			for (const p of t.players) {
-				const row = processPlayerStats(p, ["g", "a", "pts"]);
-
-				const info = playerInfos.get(p.pid) || {
-					pid: p.pid,
-					score: 0,
-					tid: t.tid,
-					g: 0,
-					a: 0,
-					pts: 0,
-				};
-
-				// 75% bonus for the winning team
-				const factor = t.tid === champTid ? 1.75 : 1;
-				info.score += factor * row.pts;
-				info.pts += row.pts;
-				info.g += row.g;
-				info.a += row.a;
-				playerInfos.set(p.pid, info);
-			}
-		}
-	}
-
-	const playerArray = orderBy(
-		Array.from(playerInfos.values()),
-		"score",
-		"desc",
-	);
-
-	if (playerArray.length === 0) {
-		return;
-	}
-
-	const { pid } = playerArray[0];
-	const p = players.find(p2 => p2.pid === pid);
-
-	if (p) {
-		return {
-			pid: p.pid,
-			name: p.name,
-			tid: p.tid,
-			abbrev: p.abbrev,
-			g: playerArray[0].g,
-			a: playerArray[0].a,
-			pts: playerArray[0].pts,
-			ops: 0,
-			tk: 0,
-			hit: 0,
-			dps: 0,
-			gaa: 0,
-			svPct: 0,
-			gps: 0,
-		};
-	}
+	return teams;
 };
 
 export const mvpScore = (p: PlayerFiltered) => {
@@ -163,17 +92,23 @@ export const mvpScore = (p: PlayerFiltered) => {
 			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
 	}
 
-	return p.currentStats.pts + p.currentStats.ops + teamFactor;
+	return (
+		p.currentStats.pts / 25 +
+		p.currentStats.ps -
+		0.225 * p.currentStats.gps +
+		teamFactor
+	);
 };
 
 export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.pts + p.currentStats.ops;
+	p.currentStats.pts / 25 + p.currentStats.ps;
 
 export const dpoyScore = (p: PlayerFiltered) =>
-	p.currentStats.tk + p.currentStats.dps + p.currentStats.hit;
+	p.currentStats.tk / 25 + p.currentStats.hit / 25 + p.currentStats.dps;
 
-export const goyScore = (p: PlayerFiltered) =>
-	-p.currentStats.gaa + p.currentStats.gps;
+export const dfoyFilter = (p: PlayerFiltered) => p.pos === "C" || p.pos === "W";
+
+export const goyScore = (p: PlayerFiltered) => p.currentStats.gps;
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
@@ -195,7 +130,16 @@ const doAwards = async (conditions: Conditions) => {
 			"lost",
 			"tied",
 			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
 			"winp",
+			"pts",
 			"playoffRoundsWon",
 			"abbrev",
 			"region",
@@ -203,8 +147,9 @@ const doAwards = async (conditions: Conditions) => {
 			"cid",
 			"did",
 		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
-		active: true,
+		showNoStats: true,
 	});
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
@@ -213,7 +158,7 @@ const doAwards = async (conditions: Conditions) => {
 	const mvpPlayers = getTopPlayers(
 		{
 			allowNone: true,
-			amount: 15,
+			amount: Infinity,
 			score: mvpScore,
 		},
 		players,
@@ -223,7 +168,7 @@ const doAwards = async (conditions: Conditions) => {
 	const royPlayers = getTopPlayers(
 		{
 			allowNone: true,
-			amount: 5,
+			amount: Infinity,
 			filter: royFilter,
 			score: royScore,
 		},
@@ -232,7 +177,8 @@ const doAwards = async (conditions: Conditions) => {
 
 	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
-	const allRookie = royPlayers.slice(0, 5);
+	const allRookie = makeTeams(royPlayers, true);
+
 	const dpoyPlayers = getTopPlayers(
 		{
 			allowNone: true,
@@ -242,6 +188,18 @@ const doAwards = async (conditions: Conditions) => {
 		players,
 	).map(getPlayerInfo);
 	const dpoy = dpoyPlayers[0];
+
+	const dfoyPlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: 1,
+			filter: dfoyFilter,
+			score: dpoyScore,
+		},
+		players,
+	).map(getPlayerInfo);
+	const dfoy = dfoyPlayers[0];
+
 	const goyPlayers = getTopPlayers(
 		{
 			allowNone: true,
@@ -266,11 +224,28 @@ const doAwards = async (conditions: Conditions) => {
 			champTid,
 		);
 
-		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
 		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: ["pts", "trb", "ast", "ws", "ewa"],
+			stats: [
+				"keyStats",
+				"g",
+				"a",
+				"pts",
+				"hit",
+				"tk",
+				"gaa",
+				"svPct",
+				"ops",
+				"dps",
+				"gps",
+				"ps",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+			],
+			ratings: ["pos"],
 			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
@@ -280,18 +255,19 @@ const doAwards = async (conditions: Conditions) => {
 		// For symmetry with players array
 		for (const p of champPlayers) {
 			p.currentStats = p.stats;
+			p.pos = p.ratings.pos;
 		}
 
-		finalsMvp = await getRealFinalsMvp(players, champTid);
+		// In hockey, it's the MVP of the playoffs, not just the finals
+		const p = getTopPlayers(
+			{
+				score: mvpScore,
+			},
+			champPlayers,
+		)[0];
 
-		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
-		if (finalsMvp === undefined) {
-			[finalsMvp] = getTopPlayers(
-				{
-					score: mvpScore,
-				},
-				champPlayers,
-			).map(getPlayerInfo);
+		if (p) {
+			finalsMvp = getPlayerInfo(p);
 		}
 	}
 
@@ -300,6 +276,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecordConfs,
 		mvp,
 		dpoy,
+		dfoy,
 		goy,
 		roy,
 		finalsMvp,

@@ -83,6 +83,7 @@ const processTeams = (
 		cid: number;
 		did: number;
 		disabled?: boolean;
+		firstSeasonAfterExpansion?: number;
 	}[];
 
 	// Keep track of initial teams
@@ -98,7 +99,7 @@ const processTeams = (
 		}
 
 		if (event.type === "expansionDraft") {
-			prevState.push(...event.info.teams);
+			prevState.push(...helpers.deepCopy(event.info.teams));
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
 			const ind = prevState.findIndex(t0 => t0.tid === t.tid);

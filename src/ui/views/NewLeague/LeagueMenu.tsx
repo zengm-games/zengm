@@ -4,7 +4,7 @@ import type { LeagueInfo } from "./types";
 
 const quickValuesStyle = { height: 19 };
 
-const LeagueMenu = <T extends string>({
+const LeagueMenu = <Value extends string>({
 	getLeagueInfo,
 	onDone,
 	onLoading,
@@ -15,24 +15,24 @@ const LeagueMenu = <T extends string>({
 	values2,
 	onNewValue2,
 }: {
-	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
+	getLeagueInfo: (value: Value, value2: number) => Promise<LeagueInfo>;
 	onDone: (leagueInfo: any) => void;
-	onLoading: (value: T) => void;
-	quickValues?: T[];
-	value: T;
-	values: { key: T; value: string }[];
+	onLoading: (value: Value) => void;
+	quickValues?: Value[];
+	value: Value;
+	values: { key: Value; value: string }[];
 	value2?: number;
 	values2?: { key: number; value: string }[];
 	onNewValue2?: (key: number) => void;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
-	const handleNewValue = async (newValue: T) => {
+	const handleNewValue = async (newValue: Value, value2?: number) => {
 		waitingForInfo.current = newValue;
 		onLoading(newValue);
 
 		try {
-			const leagueInfo = await getLeagueInfo(newValue);
+			const leagueInfo = await getLeagueInfo(newValue, value2 ?? 0);
 			if (waitingForInfo.current === newValue) {
 				onDone(leagueInfo);
 			}
@@ -55,7 +55,7 @@ const LeagueMenu = <T extends string>({
 
 	// Handle initial value
 	useEffect(() => {
-		handleNewValue(value);
+		handleNewValue(value, value2);
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
@@ -72,7 +72,7 @@ const LeagueMenu = <T extends string>({
 								className="btn btn-link border-0 p-0 mb-1 ml-2"
 								style={quickValuesStyle}
 								onClick={() => {
-									handleNewValue(key);
+									handleNewValue(key, value2);
 								}}
 							>
 								{values.find(v => v.key === key)!.value}
@@ -86,7 +86,10 @@ const LeagueMenu = <T extends string>({
 					className="form-control"
 					value={value}
 					onChange={async event => {
-						await handleNewValue((event.target.value as unknown) as T);
+						await handleNewValue(
+							(event.target.value as unknown) as Value,
+							value2,
+						);
 					}}
 				>
 					{values.map(({ key, value }) => {
@@ -101,7 +104,9 @@ const LeagueMenu = <T extends string>({
 					<select
 						className="form-control"
 						onChange={event => {
-							onNewValue2(parseInt(event.target.value));
+							const value2 = parseInt(event.target.value);
+							onNewValue2(value2);
+							handleNewValue(value, value2);
 						}}
 						value={value2}
 					>
@@ -119,13 +124,14 @@ const LeagueMenu = <T extends string>({
 						onClick={() => {
 							const keys = values.map(v => v.key);
 							const random = keys[Math.floor(Math.random() * keys.length)];
-							handleNewValue(random);
 
 							if (value2 !== undefined && values2 && onNewValue2) {
 								const keys2 = values2.map(v => v.key);
 								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
 								onNewValue2(random2);
 							}
+
+							handleNewValue(random, value2);
 						}}
 					>
 						Random

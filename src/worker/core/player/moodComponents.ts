@@ -25,7 +25,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 			}
 
 			if (stats) {
-				if (stats.minAvailable && stats.minAvailable > 500) {
+				if (stats.minAvailable !== undefined && stats.minAvailable > 500) {
 					players.push({
 						pid: p.pid,
 						tid: stats.tid,
@@ -212,8 +212,13 @@ const moodComponents = async (
 					winp += 0.15;
 				}
 
-				// 25% to 75% -> -2 to 2
-				components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
+				if (isSport("hockey")) {
+					// 40% to 60% -> -2 to 2
+					components.teamPerformance = -2 + ((winp - 0.4) * 4) / 0.2;
+				} else {
+					// 25% to 75% -> -2 to 2
+					components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
+				}
 
 				// Negative matters more
 				if (isSport("basketball") && components.teamPerformance < 0) {
@@ -267,7 +272,7 @@ const moodComponents = async (
 		}
 
 		components.trades = helpers.bound(
-			-(numPlayersTradedAwayNormalized - 6) / 4,
+			-(numPlayersTradedAwayNormalized - 5) / 4,
 			-Infinity,
 			0,
 		);

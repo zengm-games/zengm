@@ -63,6 +63,7 @@ const Depth = ({
 	challengeNoRatings,
 	editable,
 	keepRosterSorted,
+	multiplePositionsWarning,
 	players,
 	pos,
 	ratings,
@@ -79,7 +80,7 @@ const Depth = ({
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({
-		title: "Depth Chart",
+		title: isSport("hockey") ? "Lines" : "Depth Chart",
 		dropdownView: "depth",
 		dropdownFields: { teams: abbrev, depth: pos },
 		moreInfoAbbrev: abbrev,
@@ -142,6 +143,12 @@ const Depth = ({
 					? "There are four lines of forwards (centers and wings) and three lines of defensemen. The top lines play the most. All the players in a line will generally play together, but when injuries or other disruptions occur, a player will be moved up from below."
 					: null}
 			</p>
+
+			{multiplePositionsWarning ? (
+				<div className="alert alert-danger d-inline-block mb-3">
+					{multiplePositionsWarning}
+				</div>
+			) : null}
 
 			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
 				{Object.keys(numStartersByPos).map(pos2 => (
@@ -206,6 +213,16 @@ const Depth = ({
 				</p>
 			) : null}
 
+			{isSport("hockey") && pos === "G" ? (
+				<p className="text-warning">
+					During the regular season, your starting goalie will automatically get
+					some rest days. Rest days are based on how many consecutive games your
+					starting goalie has played and how good your backup is. If your backup
+					is very bad, your starter will start more games, but his performance
+					will suffer.
+				</p>
+			) : null}
+
 			<div className="clearfix" />
 
 			<SortableTable
@@ -260,46 +277,64 @@ const Depth = ({
 						))}
 					</>
 				)}
-				row={({ value: p }) => (
-					<>
-						<td>
-							<PlayerNameLabels
-								pid={p.pid}
-								injury={p.injury}
-								jerseyNumber={p.stats.jerseyNumber}
-								skills={p.ratings.skills}
-								watch={p.watch}
-							>
-								{p.name}
-							</PlayerNameLabels>
-						</td>
-						<td
-							className={classNames({
-								"text-danger":
-									pos !== "KR" &&
-									pos !== "PR" &&
-									!positions.includes(p.ratings.pos),
-							})}
-						>
-							{p.ratings.pos}
-						</td>
-						<td>{p.age}</td>
-						{positions.map(position => (
-							<Fragment key={position}>
-								<td>{!challengeNoRatings ? p.ratings.ovrs[position] : null}</td>
-								<td>{!challengeNoRatings ? p.ratings.pots[position] : null}</td>
-							</Fragment>
-						))}
-						{ratings.map(rating => (
-							<td key={rating} className="table-accent">
-								{!challengeNoRatings ? p.ratings[rating] : null}
+				row={({ index, value: p }) => {
+					let highlightPosOvr: string | undefined;
+					if (
+						isSport("hockey") &&
+						pos === "F" &&
+						index < numLines * numStarters
+					) {
+						highlightPosOvr = index % numStarters === 0 ? "C" : "W";
+					}
+					return (
+						<>
+							<td>
+								<PlayerNameLabels
+									pid={p.pid}
+									injury={p.injury}
+									jerseyNumber={p.stats.jerseyNumber}
+									skills={p.ratings.skills}
+									watch={p.watch}
+								>
+									{p.name}
+								</PlayerNameLabels>
 							</td>
-						))}
-						{stats.map(stat => (
-							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
-						))}
-					</>
-				)}
+							<td
+								className={classNames({
+									"text-danger":
+										pos !== "KR" &&
+										pos !== "PR" &&
+										!positions.includes(p.ratings.pos),
+								})}
+							>
+								{p.ratings.pos}
+							</td>
+							<td>{p.age}</td>
+							{positions.map(position => (
+								<Fragment key={position}>
+									<td
+										className={
+											highlightPosOvr === position ? "table-primary" : undefined
+										}
+									>
+										{!challengeNoRatings ? p.ratings.ovrs[position] : null}
+									</td>
+									<td>
+										{!challengeNoRatings ? p.ratings.pots[position] : null}
+									</td>
+								</Fragment>
+							))}
+							{ratings.map(rating => (
+								<td key={rating} className="table-accent">
+									{!challengeNoRatings ? p.ratings[rating] : null}
+								</td>
+							))}
+							{stats.map(stat => (
+								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
+							))}
+						</>
+					);
+				}}
 			/>
 		</>
 	);

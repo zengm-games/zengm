@@ -46,8 +46,12 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "Champion";
 		} else if (type === "Finals MVP") {
 			type = "FMVP";
+		} else if (type === "Playoffs MVP") {
+			type = "PMVP";
 		} else if (type === "Defensive Player of the Year") {
 			type = "DPOY";
+		} else if (type === "Defensive Forward of the Year") {
+			type = "DFOY";
 		} else if (type === "Goalie of the Year") {
 			type = "GOY";
 		} else if (type === "Sixth Man of the Year") {

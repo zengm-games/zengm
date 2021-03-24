@@ -313,21 +313,25 @@ const DraftLotteryTable = (props: Props) => {
 
 	const startLottery = async () => {
 		dispatch({ type: "startClicked" });
-		const { draftType, result } = await toWorker("main", "draftLottery");
-		const toReveal: number[] = [];
+		const draftLotteryResult = await toWorker("main", "draftLottery");
+		if (draftLotteryResult) {
+			const { draftType, result } = draftLotteryResult;
 
-		for (let i = 0; i < result.length; i++) {
-			const pick = result[i].pick;
-			toReveal[pick - 1] = i;
-			result[i].pick = undefined;
+			const toReveal: number[] = [];
+
+			for (let i = 0; i < result.length; i++) {
+				const pick = result[i].pick;
+				toReveal[pick - 1] = i;
+				result[i].pick = undefined;
+			}
+			toReveal.reverse();
+
+			revealState.current = "running";
+			numLeftToReveal.current = toReveal.length;
+			dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
+
+			revealPickAuto();
 		}
-		toReveal.reverse();
-
-		revealState.current = "running";
-		numLeftToReveal.current = toReveal.length;
-		dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
-
-		revealPickAuto();
 	};
 
 	const handleResume = () => {
@@ -409,7 +413,17 @@ const DraftLotteryTable = (props: Props) => {
 						<tbody>
 							{result.map(
 								(
-									{ tid, originalTid, chances, pick, won, lost, otl, tied },
+									{
+										tid,
+										originalTid,
+										chances,
+										pick,
+										won,
+										lost,
+										otl,
+										tied,
+										pts,
+									},
 									i,
 								) => {
 									const pickCols = range(NUM_PICKS).map(j => {
@@ -458,9 +472,11 @@ const DraftLotteryTable = (props: Props) => {
 											</td>
 											<td>
 												<a href={helpers.leagueUrl(["standings", season])}>
+													{pts ? `${pts} pts (` : null}
 													{won}-{lost}
 													{otl > 0 ? <>-{otl}</> : null}
 													{tied > 0 ? <>-{tied}</> : null}
+													{pts ? `)` : null}
 												</a>
 											</td>
 											<td>{chances}</td>

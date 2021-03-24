@@ -15,7 +15,10 @@ const getAITids = async () => {
 				return false;
 			}
 
-			if (local.autoPlayUntil || g.get("spectator")) {
+			if (
+				(local.autoPlayUntil || g.get("spectator")) &&
+				!g.get("challengeNoTrades")
+			) {
 				return true;
 			}
 			return !g.get("userTids").includes(t.tid);

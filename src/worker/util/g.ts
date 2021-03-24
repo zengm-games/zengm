@@ -94,7 +94,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 			currentSeason += 1;
 		}
 	} else {
-		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
+		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For otl/ties/tiebreakers it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
 		if (actualPhase >= PHASE.PLAYOFFS) {
 			currentSeason += 1;
 		}

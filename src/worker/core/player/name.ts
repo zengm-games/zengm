@@ -40,6 +40,10 @@ const name = (
 		country = getFromCumSumArray(frequencies);
 	}
 
+	if (country === "Equador" && !playerBioInfo.countries[country]) {
+		country = "Ecuador";
+	}
+
 	if (!playerBioInfo.countries[country]) {
 		throw new Error(`Country "${country}" missing in playerBioInfo countries`);
 	}

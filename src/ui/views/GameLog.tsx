@@ -43,7 +43,7 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	return { currentGidInList, prevGid, nextGid };
 };
 
-const noGamesMessage = (
+const NoGamesMessage = () => (
 	<p className="alert alert-info" style={{ maxWidth: 550 }}>
 		No games found for this season. By default, box scores from old seasons are
 		automatically deleted after 3 years.{" "}
@@ -73,7 +73,7 @@ const GamesList = ({
 	}));
 
 	if (season < currentSeason && gamesList.games.length === 0) {
-		return noGamesMessage;
+		return <NoGamesMessage />;
 	}
 
 	return (
@@ -223,7 +223,7 @@ const GameLog = ({
 			/>
 
 			{noGamesAndNoBoxScore ? (
-				noGamesMessage
+				<NoGamesMessage />
 			) : (
 				<>
 					<p />

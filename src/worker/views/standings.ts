@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getTiebreakers } from "../util/orderTeams";
 
 const updateStandings = async (
 	inputs: ViewInput<"standings">,
@@ -24,6 +25,9 @@ const updateStandings = async (
 			? numPlayoffTeams / 2
 			: numPlayoffTeams;
 
+		const pointsFormula = g.get("pointsFormula", inputs.season);
+		const usePts = pointsFormula !== "";
+
 		const teams = (
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
@@ -33,6 +37,8 @@ const updateStandings = async (
 					"tied",
 					"otl",
 					"winp",
+					"pts",
+					"ptsPct",
 					"wonHome",
 					"lostHome",
 					"tiedHome",
@@ -77,13 +83,19 @@ const updateStandings = async (
 			},
 		}));
 
-		const rankingGroups: Record<"league" | "conf" | "div", typeof teams[]> = {
-			league: [await orderTeams(teams, inputs.season)],
+		const orderTeamsOptions = {
+			addTiebreakersField: true,
+			season: inputs.season,
+		};
+
+		const rankingGroups = {
+			league: [await orderTeams(teams, teams, orderTeamsOptions)],
 			conf: await Promise.all(
 				confs.map(conf =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.cid === conf.cid),
-						inputs.season,
+						teams,
+						orderTeamsOptions,
 					),
 				),
 			),
@@ -91,7 +103,8 @@ const updateStandings = async (
 				divs.map(div =>
 					orderTeams(
 						teams.filter(t => t.seasonAttrs.did === div.did),
-						inputs.season,
+						teams,
+						orderTeamsOptions,
 					),
 				),
 			),
@@ -101,8 +114,10 @@ const updateStandings = async (
 			for (const group of rankingGroups[type]) {
 				for (let i = 0; i < group.length; i++) {
 					const t = group[i];
-					t.gb[type] =
-						i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+					if (!usePts) {
+						t.gb[type] =
+							i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+					}
 					t.rank[type] = i + 1;
 				}
 			}
@@ -112,6 +127,20 @@ const updateStandings = async (
 			t.rank.playoffs = playoffsByConference ? t.rank.conf : t.rank.league;
 			if (t.rank.playoffs > maxPlayoffSeed) {
 				t.rank.playoffs = -1;
+			}
+		}
+
+		// Don't show tiebreakers when everyone is tied 0-0
+		let showTiebreakers = false;
+		for (const t of teams) {
+			if (
+				t.seasonAttrs.won > 0 ||
+				t.seasonAttrs.lost > 0 ||
+				t.seasonAttrs.tied > 0 ||
+				t.seasonAttrs.otl > 0
+			) {
+				showTiebreakers = true;
+				break;
 			}
 		}
 
@@ -135,11 +164,15 @@ const updateStandings = async (
 			maxPlayoffSeed,
 			numPlayoffByes,
 			playoffsByConference,
+			pointsFormula,
 			rankingGroups,
 			season: inputs.season,
+			showTiebreakers,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
+			tiebreakers: getTiebreakers(inputs.season),
 			type: inputs.type,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

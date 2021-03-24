@@ -4,6 +4,7 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 } from "../../../common/types";
+import { DEFAULT_JERSEY } from "../../../common";
 
 const genSeasonRow = (
 	t: Team | TeamBasic,
@@ -22,6 +23,7 @@ const genSeasonRow = (
 		abbrev: t.abbrev,
 		imgURL: t.imgURL,
 		colors: t.colors,
+		jersey: t.jersey ?? DEFAULT_JERSEY,
 		season,
 		gp: 0,
 		gpHome: 0,

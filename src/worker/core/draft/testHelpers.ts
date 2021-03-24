@@ -7,7 +7,7 @@ import { g, helpers } from "../../util";
 import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 
 const getDraftTids = async () => {
-	await draft.genOrderNBA();
+	await draft.genOrder();
 	const draftPicks = await draft.getOrder();
 	assert.strictEqual(draftPicks.length, 60);
 	return draftPicks.map(d => d.originalTid);

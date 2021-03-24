@@ -182,7 +182,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				</div>
 				<div className="col-lg-2">
 					<br />
-					Colors
+					Jersey
 				</div>
 				<div className="col-lg-1">
 					<br />

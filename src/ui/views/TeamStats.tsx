@@ -1,14 +1,10 @@
 import PropTypes from "prop-types";
 import type { ReactNode } from "react";
-import { getCols, helpers, prefixStatOpp } from "../util";
+import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, PlusMinus, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
-
-const legendSquare = (className: string) => {
-	return <span className={`table-${className} legend-square ml-3`} />;
-};
 
 const TeamStats = ({
 	allStats,
@@ -20,6 +16,7 @@ const TeamStats = ({
 	teams,
 	ties,
 	otl,
+	usePts,
 	userTid,
 }: View<"teamStats">) => {
 	useTitleBar({
@@ -41,6 +38,18 @@ const TeamStats = ({
 	if (ties) {
 		basicColNames.push("T");
 	}
+	if (usePts) {
+		basicColNames.push("PTS");
+		basicColNames.push("PTS%");
+		if (superCols) {
+			superCols[0].colspan += 2;
+		}
+	} else {
+		basicColNames.push("%");
+		if (superCols) {
+			superCols[0].colspan += 1;
+		}
+	}
 
 	const cols = getCols(
 		...basicColNames,
@@ -53,21 +62,33 @@ const TeamStats = ({
 	);
 
 	if (teamOpponent.endsWith("ShotLocations")) {
-		cols[cols.length - 3].title = "M";
-		cols[cols.length - 2].title = "A";
-		cols[cols.length - 1].title = "%";
+		cols[cols.length - 7].title = "M";
+		cols[cols.length - 6].title = "A";
+		cols[cols.length - 5].title = "%";
 	}
 
-	const teamCount = teams.length;
-	const rows = teams.map(t => {
-		const otherStatColumns = ["won", "lost"];
-		if (otl) {
-			otherStatColumns.push("otl");
-		}
-		if (ties) {
-			otherStatColumns.push("tied");
-		}
+	const otherStatColumns = ["won", "lost"];
+	if (otl) {
+		otherStatColumns.push("otl");
+	}
+	if (ties) {
+		otherStatColumns.push("tied");
+	}
+	if (usePts) {
+		otherStatColumns.push("pts");
+		otherStatColumns.push("ptsPct");
+	} else {
+		otherStatColumns.push("winp");
+	}
 
+	const gradientStyle = gradientStyleFactory(
+		1,
+		Math.round(0.35 * teams.length),
+		Math.round(0.65 * teams.length),
+		teams.length,
+	);
+
+	const rows = teams.map(t => {
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
 			abbrev: (
@@ -91,6 +112,12 @@ const TeamStats = ({
 		}
 		if (ties) {
 			data.tied = t.seasonAttrs.tied;
+		}
+		if (usePts) {
+			data.pts = Math.round(t.seasonAttrs.pts);
+			data.ptsPct = helpers.roundWinp(t.seasonAttrs.ptsPct);
+		} else {
+			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
 		}
 
 		for (const stat of stats) {
@@ -126,20 +153,10 @@ const TeamStats = ({
 				const statTypeValue = t.stats.hasOwnProperty(statType)
 					? (t.stats as any)[statType]
 					: (t.seasonAttrs as any)[statType];
-				const percentile =
-					1 - allStats[statType].indexOf(statTypeValue) / (teamCount - 1);
-
-				let className;
-				if (percentile >= 2 / 3) {
-					className = "table-success";
-				} else if (percentile >= 1 / 3) {
-					className = "table-warning";
-				} else {
-					className = "table-danger";
-				}
+				const rank = teams.length - allStats[statType].indexOf(statTypeValue);
 
 				data[statType] = {
-					classNames: className,
+					style: gradientStyle(rank),
 					value,
 				};
 			}
@@ -158,16 +175,7 @@ const TeamStats = ({
 
 	return (
 		<>
-			<div className="d-sm-flex">
-				<MoreLinks type="teamStats" page="team_stats" season={season} />
-				<p className="flex-grow-1 text-right">
-					For a statistical category, among all teams, your team is in the...
-					<br />
-					{legendSquare("success")} <strong>Top third</strong>
-					{legendSquare("warning")} <strong>Middle third</strong>
-					{legendSquare("danger")} <strong>Bottom third</strong>
-				</p>
-			</div>
+			<MoreLinks type="teamStats" page="team_stats" season={season} />
 
 			<DataTable
 				cols={cols}

@@ -37,7 +37,7 @@ const processStats = (
 		} else if (stat === "sPct") {
 			row[stat] = percentage(g, ps.s);
 		} else if (stat === "svPct") {
-			row[stat] = percentage(ps.sv, ps.sv + ps.ga);
+			row[stat] = ratio(ps.sv, ps.sv + ps.ga);
 		} else if (stat === "foPct") {
 			row[stat] = percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "gaa") {

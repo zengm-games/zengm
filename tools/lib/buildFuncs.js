@@ -81,7 +81,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 };
 
 const bySport = object => {
-	const sport = process.env.SPORT ?? "basketball";
+	const sport = getSport();
 	if (object.hasOwnProperty(sport)) {
 		return object[sport];
 	}
@@ -115,11 +115,21 @@ const setSport = () => {
 		silent: true,
 	});
 	replace({
-		regex: "ROOT_DOMAIN_NAME",
+		regex: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
 		replacement: bySport({
 			basketball: "basketball-gm.com",
 			football: "football-gm.com",
-			hockey: "hockey.zengm.com",
+			hockey: "zengm.com",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+	replace({
+		regex: "WEBSITE_ROOT",
+		replacement: bySport({
+			basketball: "basketball-gm.com",
+			football: "football-gm.com",
+			hockey: "basketball-gm.com",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -140,16 +150,6 @@ const setSport = () => {
 			basketball: "beta.basketball-gm.com",
 			football: "beta.football-gm.com",
 			hockey: "beta.hockey.zengm.com",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "MANUAL_URL",
-		replacement: bySport({
-			basketball: "basketball-gm.com/manual",
-			football: "football-gm.com/manual",
-			hockey: "zengm.com/hockey/manual",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -193,6 +193,12 @@ const copyFiles = () => {
 	if (fs.existsSync(realPlayerDataFilename)) {
 		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
 	}
+
+	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	const flagHtaccess = `<IfModule mod_headers.c>
+	Header set Cache-Control "public,max-age=31536000"
+</IfModule>`;
+	fs.writeFileSync("build/img/flags/.htaccess", flagHtaccess);
 
 	setSport();
 };
@@ -403,7 +409,13 @@ freestar.config = freestar.config || {};
 freestar.debug = window.location.search.indexOf('fsdebug') === -1 ? false : true;
 freestar.config.enabled_slots = [];
 if (window.enableLogging) {
-  !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/${sport}-gm-com";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
+  !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/${bySport(
+		{
+			basketball: "basketball-gm-com",
+			football: "football-gm-com",
+			default: "zengm-com",
+		},
+	)}";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
   freestar.initCallback = function () { freestar.newAdSlots(freestar.config.enabled_slots); }
 }
 </script>`;
@@ -426,24 +438,22 @@ if (window.enableLogging) {
 
 	replace({
 		regex: "GOOGLE_ANALYTICS_ID",
-		replacement: sport === "basketball" ? "UA-38759330-1" : "UA-38759330-2",
-		paths: ["build/index.html"],
-		silent: true,
-	});
-
-	replace({
-		regex: "BBGM_ADS_FILENAME",
-		replacement: sport === "basketball" ? "bbgm" : "fbgm",
+		replacement: bySport({
+			basketball: "UA-38759330-1",
+			football: "UA-38759330-2",
+			hockey: "UA-38759330-3",
+		}),
 		paths: ["build/index.html"],
 		silent: true,
 	});
 
 	replace({
 		regex: "BUGSNAG_API_KEY",
-		replacement:
-			sport === "basketball"
-				? "c10b95290070cb8888a7a79cc5408555"
-				: "fed8957cbfca2d1c80997897b840e6cf",
+		replacement: bySport({
+			basketball: "c10b95290070cb8888a7a79cc5408555",
+			football: "fed8957cbfca2d1c80997897b840e6cf",
+			hockey: "449e8ed576f7cbccf5c7649e936ab9ff",
+		}),
 		paths: ["build/index.html"],
 		silent: true,
 	});
@@ -477,8 +487,8 @@ qacct:"p-Ye5RY6xC03ZWz"
 		silent: true,
 	});
 
-	let facebookPixelCode = "";
-	if (!watch) {
+	const facebookPixelCode = "";
+	/*if (!watch) {
 		facebookPixelCode = `<!-- Facebook Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -504,8 +514,7 @@ src="https://www.facebook.com/tr?id=${
 		}&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Facebook Pixel Code -->`;
-	}
-
+	}*/
 	replace({
 		regex: "FACEBOOK_PIXEL_CODE",
 		replacement: facebookPixelCode,
@@ -526,6 +535,7 @@ src="https://www.facebook.com/tr?id=${
 };
 
 module.exports = {
+	bySport,
 	buildCSS,
 	copyFiles,
 	fileHash,

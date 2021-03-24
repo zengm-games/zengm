@@ -1,4 +1,4 @@
-import { PLAYER, applyRealTeamInfo, bySport } from "../../../common";
+import { PLAYER, applyRealTeamInfo, bySport, isSport } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -242,6 +242,10 @@ const newPhasePreseason = async (
 
 	// Loop through all non-retired players
 	for (const p of players) {
+		if (isSport("hockey") && p.numConsecutiveGamesG !== undefined) {
+			p.numConsecutiveGamesG = 0;
+		}
+
 		if (!repeatSeason) {
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);

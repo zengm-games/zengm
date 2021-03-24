@@ -57,11 +57,14 @@ class PenaltyBox {
 			powerPlayTeam = 0;
 		}
 
-		return powerPlayTeam;
+		return {
+			powerPlayTeam,
+			strengthDifference: Math.abs(counts[0] - counts[1]),
+		};
 	}
 
 	getShortHandedTeam() {
-		const powerPlayTeam = this.getPowerPlayTeam();
+		const { powerPlayTeam } = this.getPowerPlayTeam();
 
 		if (powerPlayTeam === 0) {
 			return 1;
@@ -80,7 +83,15 @@ class PenaltyBox {
 		const t = scoringTeam === 0 ? 1 : 0;
 		for (const entry of this.players[t]) {
 			const penaltyType = penaltyTypes[entry.penalty.type];
-			entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
+			if (penaltyType.minutesReducedAfterGoal > 0) {
+				entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
+				if (entry.minutesLeft < 0) {
+					entry.minutesLeft = 0;
+				}
+
+				// Only let one guy out of the penalty box
+				break;
+			}
 		}
 
 		this.checkIfPenaltiesOver();

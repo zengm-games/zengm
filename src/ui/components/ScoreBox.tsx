@@ -127,8 +127,12 @@ const ScoreBox = ({
 				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3.3504 * homeCourtAdvantage,
 			);
+		} else if (isSport("hockey")) {
+			spread = roundHalf(
+				(1.8 / 100) * (game.teams[0].ovr - game.teams[1].ovr) +
+					0.25 * homeCourtAdvantage,
+			);
 		} else {
-			// Just assume similar would work for football
 			spread = roundHalf(
 				(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3 * homeCourtAdvantage,
@@ -172,6 +176,7 @@ const ScoreBox = ({
 			className={classNames(
 				"flex-grow-1 score-box",
 				limitWidthToParent ? "position-relative" : undefined,
+				small ? "d-flex" : undefined,
 			)}
 			style={small ? smallStyle : undefined}
 		>
@@ -338,10 +343,16 @@ const ScoreBox = ({
 					})
 				)}
 			</div>
-			{!small && overtimes ? (
-				<div className="d-flex justify-content-end text-muted">
-					<div className="text-right text-muted p-1">{overtimes}</div>
+			{small && overtimes ? (
+				<div
+					className="text-right text-muted px-1 d-flex align-items-center"
+					style={{ height: 28 }}
+				>
+					{overtimes}
 				</div>
+			) : null}
+			{!small && overtimes ? (
+				<div className="text-right text-muted p-1">{overtimes}</div>
 			) : null}
 		</div>
 	);

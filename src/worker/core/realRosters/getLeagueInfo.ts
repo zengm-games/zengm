@@ -43,6 +43,7 @@ const getLeagueInfo = async (
 		| {
 				type: "real";
 				season: number;
+				phase: number;
 		  }
 		| {
 				type: "legends";
@@ -72,6 +73,7 @@ const getLeagueInfo = async (
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
 			options.season,
+			options.phase,
 		);
 
 		const stores =
@@ -84,13 +86,12 @@ const getLeagueInfo = async (
 						"startingSeason",
 						"scheduledEvents",
 				  ];
-
 		return {
 			confs: initialGameAttributes.confs as Conf[],
 			divs: initialGameAttributes.divs as Div[],
 			startingSeason: options.season,
 			stores,
-			teams: initialTeams,
+			teams: initialTeams.filter(t => !t.disabled),
 		};
 	}
 

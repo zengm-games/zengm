@@ -81,9 +81,9 @@ const PlayerStats = ({
 	);
 
 	if (statType === "shotLocations") {
-		cols[cols.length - 3].title = "M";
-		cols[cols.length - 2].title = "A";
-		cols[cols.length - 1].title = "%";
+		cols[cols.length - 7].title = "M";
+		cols[cols.length - 6].title = "A";
+		cols[cols.length - 5].title = "%";
 	}
 
 	let sortCol = cols.length - 1;
@@ -133,15 +133,21 @@ const PlayerStats = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.stats.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.nameAbbrev}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<PlayerNameLabels
+							injury={p.injury}
+							jerseyNumber={p.stats.jerseyNumber}
+							pid={p.pid}
+							skills={p.ratings.skills}
+							watch={p.watch}
+						>
+							{p.nameAbbrev}
+						</PlayerNameLabels>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				pos,
 				p.age,
 				<a

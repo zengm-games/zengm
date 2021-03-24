@@ -162,21 +162,30 @@ const teamAwards = async (
 		["tid"],
 		[
 			"winp",
+			"pts",
 			"won",
 			"lost",
 			"tied",
 			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
 			"cid",
 			"did",
 			"abbrev",
 			"region",
 			"name",
 		],
-		any,
+		["pts", "oppPts", "gp"],
 		number
 	>[],
 ) => {
-	const teams = await orderTeams(teamsUnsorted);
+	const teams = await orderTeams(teamsUnsorted, teamsUnsorted);
 
 	if (teams.length === 0) {
 		throw new Error("No teams found");
@@ -196,6 +205,7 @@ const teamAwards = async (
 		g.get("confs", "current").map(async c => {
 			const teamsConf = await orderTeams(
 				teams.filter(t2 => t2.seasonAttrs.cid === c.cid),
+				teams,
 			);
 			const t = teamsConf[0];
 

@@ -42,6 +42,8 @@ const updatePowerRankings = async (
 				"abbrev",
 				"region",
 				"name",
+				"cid",
+				"did",
 			],
 			stats: ["gp", "mov", "pts", "oppPts"],
 			season,
@@ -64,7 +66,7 @@ const updatePowerRankings = async (
 					});
 				}
 
-				const ratings = ["ovr", "pos"];
+				const ratings = ["ovr", "pos", "ovrs"];
 				if (isSport("basketball")) {
 					ratings.push(...RATINGS);
 				}
@@ -167,6 +169,8 @@ const updatePowerRankings = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
+			confs: g.get("confs", season),
+			divs: g.get("divs", season),
 			season,
 			teams: teamsWithRankings,
 			ties: g.get("ties", season) || ties,

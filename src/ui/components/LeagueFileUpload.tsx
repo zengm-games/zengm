@@ -9,7 +9,11 @@ import {
 	MouseEvent,
 	ChangeEvent,
 } from "react";
-import { MAX_SUPPORTED_LEAGUE_VERSION, GAME_NAME } from "../../common";
+import {
+	MAX_SUPPORTED_LEAGUE_VERSION,
+	GAME_NAME,
+	WEBSITE_ROOT,
+} from "../../common";
 
 // This is dynamically resolved with rollup-plugin-alias
 import schema from "league-schema"; // eslint-disable-line
@@ -27,7 +31,7 @@ const ErrorMessage = ({ error }: { error: Error | null }) => {
 		<>
 			{error.message} Please{" "}
 			<a
-				href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+				href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
 				rel="noopener noreferrer"
 				target="_blank"
 			>
@@ -349,7 +353,7 @@ const LeagueFileUpload = ({
 						errors. More detail is available in the JavaScript console. Also,
 						see{" "}
 						<a
-							href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
+							href={`https://${WEBSITE_ROOT}/manual/customization/json-schema/`}
 						>
 							the manual
 						</a>{" "}

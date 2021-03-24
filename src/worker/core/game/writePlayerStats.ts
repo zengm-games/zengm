@@ -4,6 +4,7 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
+import maxBy from "lodash/maxBy";
 
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
@@ -215,8 +216,14 @@ const writePlayerStats = async (
 	for (const result of results) {
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
 
-		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
+		const winningTeam =
+			result.team[0].stat.pts > result.team[1].stat.pts
+				? 0
+				: result.team[0].stat.pts < result.team[1].stat.pts
+				? 1
+				: undefined;
 
+		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
 		if (isSport("football")) {
 			for (let i = 0; i < result.team.length; i++) {
 				let maxPss = 0;
@@ -231,13 +238,13 @@ const writePlayerStats = async (
 
 				if (id !== undefined) {
 					let qbResult: "qbW" | "qbL" | "qbT";
-					const j = i === 0 ? 1 : 0;
-					if (result.team[i].stat.pts > result.team[j].stat.pts) {
-						qbResult = "qbW";
-					} else if (result.team[i].stat.pts < result.team[j].stat.pts) {
-						qbResult = "qbL";
-					} else {
+					if (winningTeam === undefined) {
 						qbResult = "qbT";
+					}
+					if (winningTeam === i) {
+						qbResult = "qbW";
+					} else {
+						qbResult = "qbL";
 					}
 
 					qbResults.set(id, qbResult);
@@ -245,8 +252,11 @@ const writePlayerStats = async (
 			}
 		}
 
-		for (const t of result.team) {
-			// This needs to be before checkStatistical Feat
+		for (let i = 0; i < result.team.length; i++) {
+			const t = result.team[i];
+			let goaliePID: number | undefined;
+
+			// This needs to be before checkStatisticalFeat
 			if (isSport("hockey")) {
 				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
 
@@ -254,12 +264,82 @@ const writePlayerStats = async (
 				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
 					goalies[0].stat.so = 1;
 				}
+
+				// Goalie who played the most minutes counts towards numConsecutiveGamesG, the rest get reset
+				const goalie = maxBy(goalies, (p: any) => p.stat.min);
+				if (goalie) {
+					goaliePID = goalie.id;
+				}
+
+				// Check for gwG/gwA - can only be done by looking at complete scoring log for the game, since we're looking for the goal that is one more than what the losing team had in the game
+				if (winningTeam === i) {
+					const j = i === 0 ? 1 : 0;
+					const winningGoalScore = result.team[j].stat.pts + 1;
+					let currentScore = 0;
+					for (const event of result.scoringSummary) {
+						if (event.type === "goal" && event.t === i) {
+							currentScore += 1;
+							if (currentScore === winningGoalScore) {
+								const scorer = t.player.find(
+									(p: any) => p.id === event.pids[0],
+								);
+								scorer.stat.gwG += 1;
+
+								const assisterPIDs = event.pids.slice(1);
+								const assisters = t.player.filter((p: any) =>
+									assisterPIDs.includes(p.id),
+								);
+								for (const assister of assisters) {
+									assister.stat.gwA += 1;
+								}
+							}
+						}
+					}
+				}
 			}
 
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
-				if (!isSport("basketball") && p.stat.min === 0) {
+				const updatePlayer =
+					(isSport("hockey") && p.pos === "G") ||
+					isSport("basketball") ||
+					p.stat.min > 0;
+				if (!updatePlayer) {
 					continue;
+				}
+
+				// In theory this could be used by checkStatisticalFeat, but wouldn't really make sense because that scales the cutoff by game length
+				if (isSport("basketball")) {
+					let numDoubles = 0;
+					let numFives = 0;
+					const doubleStats = ["pts", "ast", "stl", "blk", "trb"];
+					for (const stat of doubleStats) {
+						const value =
+							stat === "trb" ? p.stat.orb + p.stat.drb : p.stat[stat];
+						if (value >= 5) {
+							numFives += 1;
+							if (value >= 10) {
+								numDoubles += 1;
+							}
+						}
+					}
+
+					if (numDoubles >= 2) {
+						p.stat.dd = 1;
+						t.stat.dd += 1;
+						if (numDoubles >= 3) {
+							p.stat.td = 1;
+							t.stat.td += 1;
+							if (numDoubles >= 4) {
+								p.stat.qd = 1;
+								t.stat.qd += 1;
+							}
+						}
+					}
+					if (numFives >= 5) {
+						p.stat.fxf = 1;
+						t.stat.fxf += 1;
+					}
 				}
 
 				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
@@ -267,6 +347,17 @@ const writePlayerStats = async (
 				const p2 = await idb.cache.players.get(p.id);
 				if (!p2) {
 					throw new Error("Invalid pid");
+				}
+
+				if (isSport("hockey")) {
+					if (p2.pid === goaliePID) {
+						if (p2.numConsecutiveGamesG === undefined) {
+							p2.numConsecutiveGamesG = 0;
+						}
+						p2.numConsecutiveGamesG += 1;
+					} else if (p2.numConsecutiveGamesG !== undefined) {
+						p2.numConsecutiveGamesG = 0;
+					}
 				}
 
 				if (!allStarGame) {
@@ -286,8 +377,8 @@ const writePlayerStats = async (
 					// Update stats
 					if (p.stat.min > 0) {
 						for (const key of Object.keys(p.stat)) {
-							if (!ps.hasOwnProperty(key)) {
-								throw new Error(`Missing key "${key}" on ps`);
+							if (ps[key] === undefined) {
+								ps[key] = 0;
 							}
 
 							if (isSport("football") && key.endsWith("Lng")) {

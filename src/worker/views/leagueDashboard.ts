@@ -82,7 +82,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pssYdsPerGame",
 				"rusYdsPerGame",
 			] as const,
-			hockey: ["g", "a"] as const,
+			hockey: ["g", "oppG"] as const,
 		});
 		const statNames = bySport({
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
@@ -91,9 +91,30 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
-			seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
-			stats,
+			seasonAttrs: [
+				"won",
+				"lost",
+				"otl",
+				"tied",
+				"winp",
+				"pts",
+				"att",
+				"revenue",
+				"profit",
+				"cid",
+				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp", ...stats],
 			season: g.get("season"),
+			showNoStats: true,
 		});
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
@@ -110,6 +131,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const teamsConf = await orderTeams(
 			teams.filter(t => t.seasonAttrs.cid === cid),
+			teams,
 		);
 
 		for (const t2 of teamsConf) {
@@ -189,7 +211,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		]);
 
 		// League leaders
-
 		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "abbrev", "tid"],
 			stats: leaderStats,
@@ -283,16 +304,36 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Roster
-		// Find starting 5 or top 5
+		// Find starters or top 5 players
+		let starters;
+		const numPlayersOnCourt = g.get("numPlayersOnCourt");
 		if (isSport("basketball")) {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
-		} else {
-			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+			starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
+		} else if (isSport("hockey")) {
+			const t = await idb.cache.teams.get(g.get("userTid"));
+			if (t) {
+				const depth = t.depth as any;
+				const pids = [
+					depth.F[0],
+					depth.F[1],
+					depth.F[2],
+					depth.D[0],
+					depth.D[1],
+					depth.G[0],
+				];
+				starters = pids
+					.map(pid => userPlayers.find(p => p.pid === pid))
+					.filter(pid => pid !== undefined);
+			}
 		}
 
-		const numPlayersOnCourt = g.get("numPlayersOnCourt");
+		if (!starters) {
+			// Football - too many starters, just show top 5. Also fallback for hockey depth chart missing
+			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+			starters = userPlayers.slice(0, 5);
+		}
 
-		const starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders,
@@ -386,14 +427,25 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"lost",
 				"tied",
 				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
 				"winp",
+				"pts",
 				"cid",
 				"did",
 				"abbrev",
 				"region",
 				"clinchedPlayoffs",
 			],
+			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),
+			showNoStats: true,
 		});
 
 		// Find user's conference
@@ -408,22 +460,30 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const confTeams: (typeof teams[number] & {
 			rank: number;
 			gb: number;
-		})[] = await orderTeams(
-			teams
-				.filter(t => t.seasonAttrs.cid === cid)
-				.map(t => ({
-					...t,
-					rank: 0,
-					gb: 0,
-				})),
-		);
+		})[] = (
+			await orderTeams(
+				teams.filter(t => t.seasonAttrs.cid === cid),
+				teams,
+			)
+		).map(t => ({
+			...t,
+			rank: 0,
+			gb: 0,
+		}));
+
+		const pointsFormula = g.get("pointsFormula", "current");
+		const usePts = pointsFormula !== "";
 
 		let rank = 1;
 		for (const t of confTeams) {
 			if (cid === t.seasonAttrs.cid) {
 				t.rank = rank;
-				t.gb =
-					rank === 1 ? 0 : helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+				if (!usePts) {
+					t.gb =
+						rank === 1
+							? 0
+							: helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+				}
 
 				rank += 1;
 			}
@@ -436,9 +496,11 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const playoffsByConference = g.get("confs", "current").length === 2;
 
 		return {
-			confTeams: await orderTeams(confTeams),
+			confTeams,
 			numPlayoffTeams,
 			playoffsByConference,
+			pointsFormula,
+			usePts,
 		};
 	}
 };

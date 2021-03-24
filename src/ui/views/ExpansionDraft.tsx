@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
-import { PHASE } from "../../common";
+import { DEFAULT_JERSEY, PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 
 const ExpansionDraft = ({
@@ -24,6 +24,7 @@ const ExpansionDraft = ({
 		name: "",
 		imgURL: "",
 		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: DEFAULT_JERSEY,
 		pop: "1",
 		stadiumCapacity: "25000",
 		did: String(divs[divs.length - 1].did),
@@ -58,7 +59,11 @@ const ExpansionDraft = ({
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
 		const newNumProtectedPlayers = String(
-			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
+			helpers.bound(
+				parseInt(initialNumProtectedPlayers) - newTeams.length,
+				0,
+				Infinity,
+			),
 		);
 		const newNumPerTeam = String(
 			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(

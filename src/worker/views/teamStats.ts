@@ -1,6 +1,11 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput, TeamStatAttr } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	TeamStatAttr,
+	TeamSeasonAttr,
+} from "../../common/types";
 import { TEAM_STATS_TABLES, bySport } from "../../common";
 
 export const getStats = async (
@@ -9,10 +14,22 @@ export const getStats = async (
 	statsTable: {
 		stats: string[];
 	},
+	usePts: boolean,
 	tid?: number,
 ) => {
 	const stats = statsTable.stats;
-	const seasonAttrs = ["abbrev", "won", "lost", "tied", "otl"] as const;
+	const seasonAttrs: TeamSeasonAttr[] = [
+		"abbrev",
+		"won",
+		"lost",
+		"tied",
+		"otl",
+	];
+	if (usePts) {
+		seasonAttrs.push("pts", "ptsPct");
+	} else {
+		seasonAttrs.push("winp");
+	}
 	const teams = (
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
@@ -91,10 +108,14 @@ const updateTeams = async (
 			throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
 		}
 
+		const pointsFormula = g.get("pointsFormula", inputs.season);
+		const usePts = pointsFormula !== "";
+
 		const { seasonAttrs, stats, teams } = await getStats(
 			inputs.season,
 			inputs.playoffs === "playoffs",
 			statsTable,
+			usePts,
 		);
 
 		let ties = false;
@@ -123,6 +144,7 @@ const updateTeams = async (
 		const lowerIsBetter = bySport({
 			basketball: [
 				"lost",
+				"otl",
 				"tov",
 				"pf",
 				"oppFg",
@@ -159,6 +181,7 @@ const updateTeams = async (
 			],
 			football: [
 				"lost",
+				"otl",
 				"tov",
 				"fmbLost",
 				"pssInt",
@@ -188,12 +211,13 @@ const updateTeams = async (
 			],
 			hockey: [
 				"lost",
+				"otl",
+				"pim",
 				"fol",
 				"gv",
 				"gaa",
 				"oppG",
 				"oppA",
-				"oppPim",
 				"oppEvG",
 				"oppPpG",
 				"oppShG",
@@ -275,6 +299,7 @@ const updateTeams = async (
 			teams,
 			ties: g.get("ties", inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

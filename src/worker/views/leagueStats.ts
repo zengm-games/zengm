@@ -45,6 +45,9 @@ const updateLeagueStats = async (
 			maxSeason -= 1;
 		}
 
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
+
 		const seasons = [];
 		for (const season of range(g.get("startingSeason"), maxSeason + 1)) {
 			// Get all team stats for this season
@@ -53,6 +56,7 @@ const updateLeagueStats = async (
 				season,
 				inputs.playoffs === "playoffs",
 				statsTable,
+				usePts,
 				inputs.tid >= 0 ? inputs.tid : undefined,
 			);
 			stats = output.stats;
@@ -112,6 +116,7 @@ const updateLeagueStats = async (
 					if (inputs.tid >= 0 && t.tid !== inputs.tid) {
 						continue;
 					}
+					// @ts-ignore
 					sum += t.seasonAttrs[attr];
 					foundSomething = true;
 				}
@@ -137,6 +142,7 @@ const updateLeagueStats = async (
 			tid: inputs.tid,
 			ties: g.get("ties") || ties,
 			otl: g.get("otl") || otl,
+			usePts,
 		};
 	}
 };

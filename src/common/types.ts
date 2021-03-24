@@ -125,6 +125,7 @@ export type DraftLotteryResultArray = {
 	lost: number;
 	tied: number;
 	otl: number;
+	pts?: number;
 }[];
 
 export type DraftLotteryResult = {
@@ -332,6 +333,7 @@ export type ExpansionDraftSetupTeam = {
 	name: string;
 	imgURL: string | undefined;
 	colors: [string, string, string];
+	jersey?: string;
 	pop: string;
 	stadiumCapacity: string;
 	did: string;
@@ -367,6 +369,8 @@ export type GameAttributesLeague = {
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
+	thanosCooldownEnd: number | undefined;
 	confs: Conf[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;
@@ -391,7 +395,6 @@ export type GameAttributesLeague = {
 	hardCap: boolean;
 	homeCourtAdvantage: number;
 	injuryRate: number;
-	leagueName: string;
 	lid: number;
 	luxuryPayroll: number;
 	luxuryTax: number;
@@ -414,6 +417,7 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	playerMoodTraits: boolean;
+	pointsFormula: string;
 	spectator: boolean;
 	otl: boolean;
 	otherTeamsWantToHire: boolean;
@@ -421,6 +425,8 @@ export type GameAttributesLeague = {
 	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	randomDebutsForever?: number;
+	realDraftRatings?: "draft" | "rookie";
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined
@@ -443,6 +449,7 @@ export type GameAttributesLeague = {
 	startingSeason: number;
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
+	tiebreakers: (keyof typeof TIEBREAKERS)[];
 	teamInfoCache: {
 		abbrev: string;
 		region: string;
@@ -460,6 +467,10 @@ export type GameAttributesLeague = {
 	threePointTendencyFactor: number;
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
+	blockFactor: number;
+	stealFactor: number;
+	turnoverFactor: number;
+	orbFactor: number;
 	pace: number;
 	expansionDraft:
 		| {
@@ -492,6 +503,8 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
+	| "pointsFormula"
+	| "tiebreakers"
 	| "ties"
 	| "userTid"
 > & {
@@ -504,6 +517,10 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
+	pointsFormula: GameAttributeWithHistory<
+		GameAttributesLeague["pointsFormula"]
+	>;
+	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
@@ -710,6 +727,7 @@ export type LocalStateUI = {
 	games: {
 		forceWin?: number;
 		gid: number;
+		overtimes?: number;
 		teams: [
 			{
 				ovr?: number;
@@ -737,7 +755,6 @@ export type LocalStateUI = {
 	godMode: boolean;
 	hasViewedALeague: boolean;
 	homeCourtAdvantage: number;
-	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
 	spectator: boolean;
@@ -965,6 +982,9 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	watch: boolean;
 	weight: number;
 	yearsFreeAgent: number;
+
+	// Only for hockey goalies
+	numConsecutiveGamesG?: number;
 };
 
 export type Player<PlayerRatings = any> = {
@@ -1171,6 +1191,7 @@ export type Team = {
 	abbrev: string;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
 		BudgetItem
@@ -1229,15 +1250,16 @@ type TeamSeasonPlus = TeamSeason & {
 	payroll: number;
 	lastTen: string;
 	streak: string;
-
-	// Only hockey!
 	pts: number;
+	ptsDefault: number;
+	ptsPct: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
+import type { TIEBREAKERS } from "./constants";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> &
 	Record<TeamStatAttrHockey, number> & {
@@ -1279,6 +1301,7 @@ export type TeamBasic = {
 	pop: number;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 };
 
 export type TeamStatType = "perGame" | "totals";
@@ -1353,6 +1376,7 @@ export type TeamSeasonWithoutKey = {
 	abbrev: string;
 	imgURL?: string;
 	colors: [string, string, string];
+	jersey?: string;
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {
@@ -1429,6 +1453,7 @@ type IndividualRealTeamInfo = {
 	pop?: number;
 	colors?: [string, string, string];
 	imgURL?: string;
+	jersey?: string;
 };
 export type RealTeamInfo = Record<
 	string,
@@ -1437,14 +1462,16 @@ export type RealTeamInfo = Record<
 	}
 >;
 
+export type GetLeagueOptionsReal = {
+	type: "real";
+	season: number;
+	phase: number;
+	randomDebuts: boolean;
+	realDraftRatings: "draft" | "rookie";
+};
+
 export type GetLeagueOptions =
-	| {
-			type: "real";
-			season: number;
-			phase: number;
-			randomDebuts: boolean;
-			realDraftRatings: "draft" | "rookie";
-	  }
+	| GetLeagueOptionsReal
 	| {
 			type: "legends";
 			decade:

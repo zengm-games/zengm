@@ -1,10 +1,11 @@
 import { memo, useEffect } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
+import { AD_DIVS } from "../../common";
 
 const widthCutoff = 1200 + 190;
 
 let displayed = false;
 const updateSkyscraperDisplay = () => {
-	const div = document.getElementById(`${process.env.SPORT}-gm_right_rail`);
+	const div = document.getElementById(AD_DIVS.rail);
 
 	if (div) {
 		const documentElement = document.documentElement;
@@ -14,18 +15,18 @@ const updateSkyscraperDisplay = () => {
 				div.style.display = "block";
 				window.freestar.newAdSlots([
 					{
-						placementName: `${process.env.SPORT}-gm_right_rail`,
-						slotId: `${process.env.SPORT}-gm_right_rail`,
+						placementName: AD_DIVS.rail,
+						slotId: AD_DIVS.rail,
 					},
 				]);
-				console.log("newAdSlots", `${process.env.SPORT}-gm_right_rail`);
+				console.log("newAdSlots", AD_DIVS.rail);
 				displayed = true;
 			}
 		} else {
 			if (displayed && window.freestar.deleteAdSlots) {
 				div.style.display = "none";
-				window.freestar.deleteAdSlots(`${process.env.SPORT}-gm_right_rail`);
-				console.log("deleteAdSlots", `${process.env.SPORT}-gm_right_rail`);
+				window.freestar.deleteAdSlots(AD_DIVS.rail);
+				console.log("deleteAdSlots", AD_DIVS.rail);
 				displayed = false;
 			}
 		}
@@ -62,7 +63,7 @@ const Header = memo(() => {
 		<>
 			<div
 				className="banner-ad"
-				id={`${process.env.SPORT}-gm_leaderboard_atf`}
+				id={AD_DIVS.leaderboard}
 				style={{
 					display: "none",
 					textAlign: "center",
@@ -72,7 +73,7 @@ const Header = memo(() => {
 			/>
 			<div
 				className="banner-ad"
-				id={`${process.env.SPORT}-gm_mobile_leaderboard`}
+				id={AD_DIVS.mobile}
 				style={{
 					display: "none",
 					textAlign: "center",
@@ -88,7 +89,7 @@ const Header = memo(() => {
 				}}
 			>
 				<div
-					id={`${process.env.SPORT}-gm_right_rail`}
+					id={AD_DIVS.rail}
 					style={{
 						display: "none",
 					}}

@@ -71,6 +71,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
 				mvp: addAbbrev(a.mvp, teams, a.season),
 				dpoy: addAbbrev(a.dpoy, teams, a.season),
+				dfoy: addAbbrev(a.dfoy, teams, a.season),
 				goy: addAbbrev(a.goy, teams, a.season),
 				smoy: addAbbrev(a.smoy, teams, a.season),
 				mip: addAbbrev(a.mip, teams, a.season),
@@ -147,6 +148,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			finalsMvp: {},
 			mvp: {},
 			dpoy: {},
+			dfoy: {},
 			goy: {},
 			smoy: {},
 			mip: {},
@@ -162,6 +164,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			"finalsMvp",
 			"mvp",
 			"dpoy",
+			"dfoy",
 			"goy",
 			"smoy",
 			"mip",
@@ -200,7 +203,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const awardNames = bySport({
 			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
 			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
-			hockey: ["finalsMvp", "mvp", "dpoy", "goy", "roy"],
+			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
 		});
 
 		return {

@@ -1,6 +1,6 @@
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
-import { g, helpers, local, lock } from "../../util";
+import { g, helpers, local, lock, orderTeams } from "../../util";
 import type { PlayoffSeriesTeam } from "../../../common/types";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
@@ -132,8 +132,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		const { away: away1, home: home1 } = series[rnd][i];
 		const { away: away2, home: home2 } = series[rnd][i + 1]; // Find the two winning teams
 
-		let team1;
-		let team2;
+		let team1: PlayoffSeriesTeam;
+		let team2: PlayoffSeriesTeam;
 
 		if (home1.won >= numGamesToWin || !away1) {
 			team1 = helpers.deepCopy(home1);
@@ -154,20 +154,46 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		// Set home/away in the next round
 		let firstTeamHome =
 			team1.seed < team2.seed ||
-			(team1.seed === team2.seed && team1.winp >= team2.winp); // Special case for the finals, do it by winp not seed
+			(team1.seed === team2.seed && team1.winp >= team2.winp);
 
+		// Special case for the finals, do it by winp not seed
 		const playoffsByConference = g.get("confs", "current").length === 2;
-
 		if (playoffsByConference) {
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
 			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
-				firstTeamHome =
-					team1.winp > team2.winp ||
-					(team1.winp === team2.winp &&
-						(team1.seed < team2.seed ||
-							(team1.seed === team2.seed && Math.random() > 0.5)));
+				const allTeams = await idb.getCopies.teamsPlus({
+					attrs: ["tid"],
+					seasonAttrs: [
+						"winp",
+						"pts",
+						"won",
+						"lost",
+						"otl",
+						"tied",
+						"did",
+						"cid",
+						"wonDiv",
+						"lostDiv",
+						"otlDiv",
+						"tiedDiv",
+						"wonConf",
+						"lostConf",
+						"otlConf",
+						"tiedConf",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: g.get("season"),
+					showNoStats: true,
+				});
+				const finalsTeams = allTeams.filter(
+					t => t.tid === team1.tid || t.tid === team2.tid,
+				);
+				if (finalsTeams.length === 2) {
+					const orderedTeams = await orderTeams(finalsTeams, allTeams);
+					firstTeamHome = orderedTeams[0].tid === team1.tid;
+				}
 			}
 		}
 

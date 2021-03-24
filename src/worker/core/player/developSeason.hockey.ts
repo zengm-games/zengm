@@ -24,7 +24,7 @@ const posCoeffCenter = noGoalieDecorator((pos: string) =>
 	pos === "C" ? 2 : 0.5,
 );
 const posCoeffDefense = noGoalieDecorator((pos: string) =>
-	pos === "D" ? 2 : pos === "W" ? 1 : 0.5,
+	pos === "D" ? 2 : pos === "C" ? 1 : 0.5,
 );
 
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
@@ -54,7 +54,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			return -8;
 		},
 		changeLimits: () => [-12, 2],
-		posCoeff: () => 0,
+		posCoeff: () => 1,
 	},
 	endu: {
 		ageModifier: (age: number) => {
@@ -77,7 +77,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 			return -8;
 		},
 		changeLimits: () => [-11, 19],
-		posCoeff: () => 0,
+		posCoeff: () => 1,
 	},
 	pss: {
 		ageModifier: () => 0,
@@ -87,7 +87,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	wst: {
 		ageModifier: () => 0,
 		changeLimits: () => [-10, 10],
-		posCoeff: noGoalieDecorator((pos: string) => (pos === "W" ? 2 : 0.75)),
+		posCoeff: noGoalieDecorator(() => 1.5),
 	},
 	sst: {
 		ageModifier: () => 0,
@@ -97,7 +97,15 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	stk: {
 		ageModifier: () => 0,
 		changeLimits: () => [-10, 10],
-		posCoeff: posCoeffCenter,
+		posCoeff: noGoalieDecorator((pos: string) => {
+			if (pos === "W") {
+				return 2;
+			}
+			if (pos === "C") {
+				return 1.5;
+			}
+			return 0.5;
+		}),
 	},
 	oiq: {
 		ageModifier: () => 0,
@@ -129,7 +137,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	glk: {
 		ageModifier: () => 0,
 		changeLimits: () => [-10, 10],
-		posCoeff: (pos: string) => (pos === "G" ? 1.25 : 0.1),
+		posCoeff: (pos: string) => (pos === "G" ? 2 : 0.1),
 	},
 };
 

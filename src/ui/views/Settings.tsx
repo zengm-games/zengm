@@ -28,6 +28,8 @@ import {
 	GAME_NAME,
 	isSport,
 	SPORT_HAS_REAL_PLAYERS,
+	TIEBREAKERS,
+	WEBSITE_ROOT,
 } from "../../common";
 
 const godModeRequiredMessage = "Enable God Mode to change this setting";
@@ -72,6 +74,10 @@ type Key =
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
 	| "twoPointAccuracyFactor"
+	| "blockFactor"
+	| "stealFactor"
+	| "turnoverFactor"
+	| "orbFactor"
 	| "challengeNoDraftPicks"
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
@@ -79,6 +85,7 @@ type Key =
 	| "challengeLoseBestPlayer"
 	| "challengeFiredLuxuryTax"
 	| "challengeFiredMissPlayoffs"
+	| "challengeThanosMode"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
@@ -96,11 +103,14 @@ type Key =
 	| "difficulty"
 	| "stopOnInjuryGames"
 	| "stopOnInjury"
-	| "aiJerseyRetirement";
+	| "aiJerseyRetirement"
+	| "tiebreakers"
+	| "pointsFormula";
 
 type Category =
 	| "General"
 	| "Season"
+	| "Standings"
 	| "Team"
 	| "Draft"
 	| "Finances"
@@ -132,11 +142,13 @@ type Values = {
 
 export const descriptions = {
 	challengeLoseBestPlayer:
-		"At the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player).",
+		"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
 	challengeNoDraftPicks:
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
+	challengeThanosMode:
+		"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:
@@ -153,9 +165,14 @@ export const options: {
 	type: FieldType;
 	decoration?: Decoration;
 	values?: Values;
-	validator?: (value: any, output: any, props: View<"settings">) => void;
+	validator?: (
+		value: any,
+		output: any,
+		props: View<"settings">,
+	) => void | Promise<void>;
 	customForm?: true;
 	hidden?: true;
+	maxWidth?: true;
 
 	// Short, one line, shown by default
 	description?: ReactNode;
@@ -221,6 +238,67 @@ export const options: {
 				props.numActiveTeams,
 			);
 		},
+	},
+	{
+		category: "Standings",
+		key: "tiebreakers",
+		name: "Tiebreakers",
+		godModeRequired: "existingLeagueOnly",
+		descriptionLong: (
+			<>
+				<p>
+					Specify the tiebreakers used to determine how tied teams should be
+					ranked in the standings and playoffs. Available tiebreakers are:
+				</p>
+				<ul>
+					{helpers.keys(TIEBREAKERS).map(key => (
+						<li key={key}>
+							<b>{key}</b> - {TIEBREAKERS[key]}
+						</li>
+					))}
+				</ul>
+				<p>
+					If your list of tiebreakers does not include "coinFlip", it will
+					automatically be added to the end to handle the case where every
+					single other tiebreaker is tied.
+				</p>
+			</>
+		),
+		type: "jsonString",
+		validator: value => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			for (const key of value) {
+				if (typeof key !== "string") {
+					throw new Error("Array must contain only strings");
+				}
+				if (!TIEBREAKERS.hasOwnProperty(key)) {
+					throw new Error(`Invalid tiebreaker "${key}"`);
+				}
+			}
+		},
+		maxWidth: true,
+	},
+	{
+		category: "Standings",
+		key: "pointsFormula",
+		name: "Points Formula",
+		godModeRequired: "existingLeagueOnly",
+		descriptionLong: (
+			<>
+				<p>
+					You can either rank teams by winning percentage (like NBA/NFL/MLB) or
+					points (like NHL). To rank by winning percentage, leave this blank. To
+					rank by points, enter a formula here, such as <code>2*W+OTL+T</code>.
+					Available variables are W, L, OTL, and T.
+				</p>
+			</>
+		),
+		validator: async value => {
+			await toWorker("main", "validatePointsFormula", value);
+		},
+		type: "string",
 	},
 	{
 		category: "Season",
@@ -692,7 +770,7 @@ export const options: {
 				but there won't be any players who get an extra bonus/penalty for having
 				the "winning" mood trait. See{" "}
 				<a
-					href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
+					href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
 					rel="noopener noreferrer"
 					target="_blank"
 				>
@@ -748,10 +826,16 @@ export const options: {
 		type: "bool",
 	},
 	{
+		category: "Challenge Modes",
+		key: "challengeThanosMode",
+		name: "Thanos Mode",
+		type: "bool",
+		description: descriptions.challengeThanosMode,
+	},
+	{
 		category: "Game Modes",
 		key: "spectator",
 		name: "Spectator Mode",
-		godModeRequired: "always",
 		type: "bool",
 		description:
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
@@ -920,6 +1004,42 @@ if (isSport("basketball")) {
 			type: "float",
 			description:
 				"The baseline rate for two point percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "blockFactor",
+			name: "Block Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline block percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "stealFactor",
+			name: "Steal Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline steal percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "turnoverFactor",
+			name: "Turnover Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline turnover percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "orbFactor",
+			name: "Offensive Rebound Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline offensive rebound percentage is multiplied by this number.",
 		},
 		{
 			category: "Player Development",
@@ -1108,529 +1228,824 @@ if (isSport("basketball")) {
 }
 
 // See play-style-adjustments in bbgm-rosters
-const gameSimPresets =
-	process.env.SPORT === "basketball"
-		? {
-				2020: {
-					pace: 100.2,
-					threePointers: true,
-					threePointTendencyFactor: 1,
-					threePointAccuracyFactor: 1,
-					twoPointAccuracyFactor: 1,
-				},
-				2019: {
-					pace: 100,
-					threePointers: true,
-					threePointTendencyFactor: 0.946,
-					threePointAccuracyFactor: 0.994,
-					twoPointAccuracyFactor: 1,
-				},
-				2018: {
-					pace: 97.3,
-					threePointers: true,
-					threePointTendencyFactor: 0.881,
-					threePointAccuracyFactor: 1.014,
-					twoPointAccuracyFactor: 1,
-				},
-				2017: {
-					pace: 96.4,
-					threePointers: true,
-					threePointTendencyFactor: 0.827,
-					threePointAccuracyFactor: 1.003,
-					twoPointAccuracyFactor: 1,
-				},
-				2016: {
-					pace: 95.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.744,
-					threePointAccuracyFactor: 0.992,
-					twoPointAccuracyFactor: 1,
-				},
-				2015: {
-					pace: 93.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.705,
-					threePointAccuracyFactor: 0.98,
-					twoPointAccuracyFactor: 1,
-				},
-				2014: {
-					pace: 93.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.676,
-					threePointAccuracyFactor: 1.008,
-					twoPointAccuracyFactor: 1,
-				},
-				2013: {
-					pace: 92,
-					threePointers: true,
-					threePointTendencyFactor: 0.64,
-					threePointAccuracyFactor: 1.006,
-					twoPointAccuracyFactor: 0.991,
-				},
-				2012: {
-					pace: 91.3,
-					threePointers: true,
-					threePointTendencyFactor: 0.595,
-					threePointAccuracyFactor: 0.978,
-					twoPointAccuracyFactor: 0.978,
-				},
-				2011: {
-					pace: 92.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.577,
-					threePointAccuracyFactor: 1.003,
-					twoPointAccuracyFactor: 0.999,
-				},
-				2010: {
-					pace: 92.7,
-					threePointers: true,
-					threePointTendencyFactor: 0.577,
-					threePointAccuracyFactor: 0.994,
-					twoPointAccuracyFactor: 1.009,
-				},
-				2009: {
-					pace: 91.7,
-					threePointers: true,
-					threePointTendencyFactor: 0.583,
-					threePointAccuracyFactor: 1.028,
-					twoPointAccuracyFactor: 0.995,
-				},
-				2008: {
-					pace: 92.4,
-					threePointers: true,
-					threePointTendencyFactor: 0.58,
-					threePointAccuracyFactor: 1.014,
-					twoPointAccuracyFactor: 0.993,
-				},
-				2007: {
-					pace: 91.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.545,
-					threePointAccuracyFactor: 1.003,
-					twoPointAccuracyFactor: 0.995,
-				},
-				2006: {
-					pace: 90.5,
-					threePointers: true,
-					threePointTendencyFactor: 0.521,
-					threePointAccuracyFactor: 1.003,
-					twoPointAccuracyFactor: 0.98,
-				},
-				2005: {
-					pace: 90.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.512,
-					threePointAccuracyFactor: 0.997,
-					twoPointAccuracyFactor: 0.964,
-				},
-				2004: {
-					pace: 90.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.488,
-					threePointAccuracyFactor: 0.972,
-					twoPointAccuracyFactor: 0.943,
-				},
-				2003: {
-					pace: 91,
-					threePointers: true,
-					threePointTendencyFactor: 0.476,
-					threePointAccuracyFactor: 0.978,
-					twoPointAccuracyFactor: 0.949,
-				},
-				2002: {
-					pace: 90.7,
-					threePointers: true,
-					threePointTendencyFactor: 0.479,
-					threePointAccuracyFactor: 0.992,
-					twoPointAccuracyFactor: 0.954,
-				},
-				2001: {
-					pace: 91.3,
-					threePointers: true,
-					threePointTendencyFactor: 0.443,
-					threePointAccuracyFactor: 0.992,
-					twoPointAccuracyFactor: 0.946,
-				},
-				2000: {
-					pace: 93.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.435,
-					threePointAccuracyFactor: 0.989,
-					twoPointAccuracyFactor: 0.96,
-				},
-				1999: {
-					pace: 88.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.438,
-					threePointAccuracyFactor: 0.95,
-					twoPointAccuracyFactor: 0.937,
-				},
-				1998: {
-					pace: 90.3,
-					threePointers: true,
-					threePointTendencyFactor: 0.417,
-					threePointAccuracyFactor: 0.969,
-					twoPointAccuracyFactor: 0.965,
-				},
-				1997: {
-					pace: 90.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.551,
-					threePointAccuracyFactor: 1.008,
-					twoPointAccuracyFactor: 0.985,
-				},
-				1996: {
-					pace: 91.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.518,
-					threePointAccuracyFactor: 1.028,
-					twoPointAccuracyFactor: 0.996,
-				},
-				1995: {
-					pace: 92.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.485,
-					threePointAccuracyFactor: 1.006,
-					twoPointAccuracyFactor: 1.007,
-				},
-				1994: {
-					pace: 95.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.31,
-					threePointAccuracyFactor: 0.933,
-					twoPointAccuracyFactor: 0.991,
-				},
-				1993: {
-					pace: 96.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.274,
-					threePointAccuracyFactor: 0.941,
-					twoPointAccuracyFactor: 1.003,
-				},
-				1992: {
-					pace: 96.6,
-					threePointers: true,
-					threePointTendencyFactor: 0.232,
-					threePointAccuracyFactor: 0.927,
-					twoPointAccuracyFactor: 0.997,
-				},
-				1991: {
-					pace: 97.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.214,
-					threePointAccuracyFactor: 0.896,
-					twoPointAccuracyFactor: 1.001,
-				},
-				1990: {
-					pace: 98.3,
-					threePointers: true,
-					threePointTendencyFactor: 0.199,
-					threePointAccuracyFactor: 0.927,
-					twoPointAccuracyFactor: 1.001,
-				},
-				1989: {
-					pace: 100.6,
-					threePointers: true,
-					threePointTendencyFactor: 0.193,
-					threePointAccuracyFactor: 0.905,
-					twoPointAccuracyFactor: 1.004,
-				},
-				1988: {
-					pace: 99.6,
-					threePointers: true,
-					threePointTendencyFactor: 0.149,
-					threePointAccuracyFactor: 0.885,
-					twoPointAccuracyFactor: 1.005,
-				},
-				1987: {
-					pace: 100.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.14,
-					threePointAccuracyFactor: 0.843,
-					twoPointAccuracyFactor: 1.006,
-				},
-				1986: {
-					pace: 102.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.095,
-					threePointAccuracyFactor: 0.79,
-					twoPointAccuracyFactor: 1.016,
-				},
-				1985: {
-					pace: 102.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.092,
-					threePointAccuracyFactor: 0.79,
-					twoPointAccuracyFactor: 1.023,
-				},
-				1984: {
-					pace: 101.4,
-					threePointers: true,
-					threePointTendencyFactor: 0.068,
-					threePointAccuracyFactor: 0.7,
-					twoPointAccuracyFactor: 1.023,
-				},
-				1983: {
-					pace: 103.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.065,
-					threePointAccuracyFactor: 0.667,
-					twoPointAccuracyFactor: 1.009,
-				},
-				1982: {
-					pace: 100.9,
-					threePointers: true,
-					threePointTendencyFactor: 0.065,
-					threePointAccuracyFactor: 0.734,
-					twoPointAccuracyFactor: 1.02,
-				},
-				1981: {
-					pace: 101.8,
-					threePointers: true,
-					threePointTendencyFactor: 0.06,
-					threePointAccuracyFactor: 0.686,
-					twoPointAccuracyFactor: 1.008,
-				},
-				1980: {
-					pace: 103.1,
-					threePointers: true,
-					threePointTendencyFactor: 0.08,
-					threePointAccuracyFactor: 0.784,
-					twoPointAccuracyFactor: 1,
-				},
-				1979: {
-					pace: 105.8,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.99575,
-				},
-				1978: {
-					pace: 106.7,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9762,
-				},
-				1977: {
-					pace: 106.5,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9694,
-				},
-				1976: {
-					pace: 105.5,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9575,
-				},
-				1975: {
-					pace: 104.5,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9558,
-				},
-				1974: {
-					pace: 107.8,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.95835,
-				},
-				1973: {
-					pace: 110.385,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9541,
-				},
-				1972: {
-					pace: 109.785,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9507,
-				},
-				1971: {
-					pace: 112.988,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9507,
-				},
-				1970: {
-					pace: 114.811,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.96005,
-				},
-				1969: {
-					pace: 114.571,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9439,
-				},
-				1968: {
-					pace: 117.058,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.95325,
-				},
-				1967: {
-					pace: 119.602,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9439,
-				},
-				1966: {
-					pace: 118.921,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.92945,
-				},
-				1965: {
-					pace: 115.617,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.91755,
-				},
-				1964: {
-					pace: 114.689,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.92945,
-				},
-				1963: {
-					pace: 117.316,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9439,
-				},
-				1962: {
-					pace: 125.168,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9269,
-				},
-				1961: {
-					pace: 127.219,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.9065,
-				},
-				1960: {
-					pace: 126.113,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.898,
-				},
-				1959: {
-					pace: 118.68,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.8725,
-				},
-				1958: {
-					pace: 118.564,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.8521,
-				},
-				1957: {
-					pace: 109.736,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.84615,
-				},
-				1956: {
-					pace: 106.17,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.85805,
-				},
-				1955: {
-					pace: 101,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.8455,
-				},
-				1954: {
-					pace: 93,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.8333,
-				},
-				1953: {
-					pace: 95,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.83,
-				},
-				1952: {
-					pace: 97,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.8,
-					twoPointAccuracyFactor: 0.8232,
-				},
-				1951: {
-					pace: 99,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.7,
-					twoPointAccuracyFactor: 0.81,
-				},
-				1950: {
-					pace: 99,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.7,
-					twoPointAccuracyFactor: 0.79,
-				},
-				1949: {
-					pace: 104,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.7,
-					twoPointAccuracyFactor: 0.77,
-				},
-				1948: {
-					pace: 108,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.6,
-					twoPointAccuracyFactor: 0.71,
-				},
-				1947: {
-					pace: 104,
-					threePointers: false,
-					threePointTendencyFactor: 0.025,
-					threePointAccuracyFactor: 0.6,
-					twoPointAccuracyFactor: 0.7,
-				},
-		  }
-		: undefined;
+const gameSimPresets = isSport("basketball")
+	? {
+			2020: {
+				pace: 100.2,
+				threePointers: true,
+				threePointTendencyFactor: 1,
+				threePointAccuracyFactor: 1,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1,
+				stealFactor: 1.09,
+				turnoverFactor: 1,
+				orbFactor: 1,
+			},
+			2019: {
+				pace: 100,
+				threePointers: true,
+				threePointTendencyFactor: 0.946,
+				threePointAccuracyFactor: 0.994,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1,
+				stealFactor: 1.1,
+				turnoverFactor: 1,
+				orbFactor: 1,
+			},
+			2018: {
+				pace: 97.3,
+				threePointers: true,
+				threePointTendencyFactor: 0.881,
+				threePointAccuracyFactor: 1.014,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1,
+				stealFactor: 1.14,
+				turnoverFactor: 1,
+				orbFactor: 1,
+			},
+			2017: {
+				pace: 96.4,
+				threePointers: true,
+				threePointTendencyFactor: 0.827,
+				threePointAccuracyFactor: 1.003,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1,
+				stealFactor: 1.16,
+				turnoverFactor: 1,
+				orbFactor: 1,
+			},
+			2016: {
+				pace: 95.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.744,
+				threePointAccuracyFactor: 0.992,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1.1,
+				stealFactor: 1.16,
+				turnoverFactor: 1.01,
+				orbFactor: 1,
+			},
+			2015: {
+				pace: 93.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.705,
+				threePointAccuracyFactor: 0.98,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1.1,
+				stealFactor: 1.15,
+				turnoverFactor: 1.02,
+				orbFactor: 1.024375,
+			},
+			2014: {
+				pace: 93.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.676,
+				threePointAccuracyFactor: 1.008,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1.1,
+				stealFactor: 1.13,
+				turnoverFactor: 1.03,
+				orbFactor: 1.024375,
+			},
+			2013: {
+				pace: 92,
+				threePointers: true,
+				threePointTendencyFactor: 0.64,
+				threePointAccuracyFactor: 1.006,
+				twoPointAccuracyFactor: 0.991,
+				blockFactor: 1.1,
+				stealFactor: 1.15,
+				turnoverFactor: 1.04,
+				orbFactor: 1.041625,
+			},
+			2012: {
+				pace: 91.3,
+				threePointers: true,
+				threePointTendencyFactor: 0.595,
+				threePointAccuracyFactor: 0.978,
+				twoPointAccuracyFactor: 0.978,
+				blockFactor: 1.1,
+				stealFactor: 1.14,
+				turnoverFactor: 1.04,
+				orbFactor: 1.0555,
+			},
+			2011: {
+				pace: 92.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.577,
+				threePointAccuracyFactor: 1.003,
+				twoPointAccuracyFactor: 0.999,
+				blockFactor: 1.1,
+				stealFactor: 1.08,
+				turnoverFactor: 1.03,
+				orbFactor: 1.034875,
+			},
+			2010: {
+				pace: 92.7,
+				threePointers: true,
+				threePointTendencyFactor: 0.577,
+				threePointAccuracyFactor: 0.994,
+				twoPointAccuracyFactor: 1.009,
+				blockFactor: 1.1,
+				stealFactor: 1.09,
+				turnoverFactor: 1.02,
+				orbFactor: 1.031125,
+			},
+			2009: {
+				pace: 91.7,
+				threePointers: true,
+				threePointTendencyFactor: 0.583,
+				threePointAccuracyFactor: 1.028,
+				twoPointAccuracyFactor: 0.995,
+				blockFactor: 1.1,
+				stealFactor: 1.1,
+				turnoverFactor: 1.02,
+				orbFactor: 1.041625,
+			},
+			2008: {
+				pace: 92.4,
+				threePointers: true,
+				threePointTendencyFactor: 0.58,
+				threePointAccuracyFactor: 1.014,
+				twoPointAccuracyFactor: 0.993,
+				blockFactor: 1.1,
+				stealFactor: 1.1,
+				turnoverFactor: 1.02,
+				orbFactor: 1.041625,
+			},
+			2007: {
+				pace: 91.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.545,
+				threePointAccuracyFactor: 1.003,
+				twoPointAccuracyFactor: 0.995,
+				blockFactor: 1.1,
+				stealFactor: 1.02,
+				turnoverFactor: 1.06,
+				orbFactor: 1.041625,
+			},
+			2006: {
+				pace: 90.5,
+				threePointers: true,
+				threePointTendencyFactor: 0.521,
+				threePointAccuracyFactor: 1.003,
+				twoPointAccuracyFactor: 0.98,
+				blockFactor: 1.1,
+				stealFactor: 1.09,
+				turnoverFactor: 1.04,
+				orbFactor: 1.04875,
+			},
+			2005: {
+				pace: 90.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.512,
+				threePointAccuracyFactor: 0.997,
+				twoPointAccuracyFactor: 0.964,
+				blockFactor: 1.1,
+				stealFactor: 1.14,
+				turnoverFactor: 1.04,
+				orbFactor: 1.079875,
+			},
+			2004: {
+				pace: 90.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.488,
+				threePointAccuracyFactor: 0.972,
+				twoPointAccuracyFactor: 0.943,
+				blockFactor: 1.2,
+				stealFactor: 1.16,
+				turnoverFactor: 1.07,
+				orbFactor: 1.086625,
+			},
+			2003: {
+				pace: 91,
+				threePointers: true,
+				threePointTendencyFactor: 0.476,
+				threePointAccuracyFactor: 0.978,
+				twoPointAccuracyFactor: 0.949,
+				blockFactor: 1.2,
+				stealFactor: 1.16,
+				turnoverFactor: 1.06,
+				orbFactor: 1.079875,
+			},
+			2002: {
+				pace: 90.7,
+				threePointers: true,
+				threePointTendencyFactor: 0.479,
+				threePointAccuracyFactor: 0.992,
+				twoPointAccuracyFactor: 0.954,
+				blockFactor: 1.2,
+				stealFactor: 1.17,
+				turnoverFactor: 1.04,
+				orbFactor: 1.090375,
+			},
+			2001: {
+				pace: 91.3,
+				threePointers: true,
+				threePointTendencyFactor: 0.443,
+				threePointAccuracyFactor: 0.992,
+				twoPointAccuracyFactor: 0.946,
+				blockFactor: 1.2,
+				stealFactor: 1.15,
+				turnoverFactor: 1.06,
+				orbFactor: 1.0765,
+			},
+			2000: {
+				pace: 93.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.435,
+				threePointAccuracyFactor: 0.989,
+				twoPointAccuracyFactor: 0.96,
+				blockFactor: 1.2,
+				stealFactor: 1.17,
+				turnoverFactor: 1.07,
+				orbFactor: 1.086625,
+			},
+			1999: {
+				pace: 88.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.438,
+				threePointAccuracyFactor: 0.95,
+				twoPointAccuracyFactor: 0.937,
+				blockFactor: 1.2,
+				stealFactor: 1.17,
+				turnoverFactor: 1.09,
+				orbFactor: 1.111,
+			},
+			1998: {
+				pace: 90.3,
+				threePointers: true,
+				threePointTendencyFactor: 0.417,
+				threePointAccuracyFactor: 0.969,
+				twoPointAccuracyFactor: 0.965,
+				blockFactor: 1.2,
+				stealFactor: 1.23,
+				turnoverFactor: 1.09,
+				orbFactor: 1.1215,
+			},
+			1997: {
+				pace: 90.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.551,
+				threePointAccuracyFactor: 1.008,
+				twoPointAccuracyFactor: 0.985,
+				blockFactor: 1.2,
+				stealFactor: 1.21,
+				turnoverFactor: 1.09,
+				orbFactor: 1.107625,
+			},
+			1996: {
+				pace: 91.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.518,
+				threePointAccuracyFactor: 1.028,
+				twoPointAccuracyFactor: 0.996,
+				blockFactor: 1.2,
+				stealFactor: 1.15,
+				turnoverFactor: 1.09,
+				orbFactor: 1.100875,
+			},
+			1995: {
+				pace: 92.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.485,
+				threePointAccuracyFactor: 1.006,
+				twoPointAccuracyFactor: 1.007,
+				blockFactor: 1.2,
+				stealFactor: 1.18,
+				turnoverFactor: 1.09,
+				orbFactor: 1.107625,
+			},
+			1994: {
+				pace: 95.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.31,
+				threePointAccuracyFactor: 0.933,
+				twoPointAccuracyFactor: 0.991,
+				blockFactor: 1.2,
+				stealFactor: 1.25,
+				turnoverFactor: 1.07,
+				orbFactor: 1.128625,
+			},
+			1993: {
+				pace: 96.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.274,
+				threePointAccuracyFactor: 0.941,
+				twoPointAccuracyFactor: 1.003,
+				blockFactor: 1.1,
+				stealFactor: 1.23,
+				turnoverFactor: 1.06,
+				orbFactor: 1.118125,
+			},
+			1992: {
+				pace: 96.6,
+				threePointers: true,
+				threePointTendencyFactor: 0.232,
+				threePointAccuracyFactor: 0.927,
+				twoPointAccuracyFactor: 0.997,
+				blockFactor: 1.1,
+				stealFactor: 1.21,
+				turnoverFactor: 1.06,
+				orbFactor: 1.135375,
+			},
+			1991: {
+				pace: 97.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.214,
+				threePointAccuracyFactor: 0.896,
+				twoPointAccuracyFactor: 1.001,
+				blockFactor: 1.1,
+				stealFactor: 1.2,
+				turnoverFactor: 1.06,
+				orbFactor: 1.118125,
+			},
+			1990: {
+				pace: 98.3,
+				threePointers: true,
+				threePointTendencyFactor: 0.199,
+				threePointAccuracyFactor: 0.927,
+				twoPointAccuracyFactor: 1.001,
+				blockFactor: 1.1,
+				stealFactor: 1.16,
+				turnoverFactor: 1.06,
+				orbFactor: 1.111,
+			},
+			1989: {
+				pace: 100.6,
+				threePointers: true,
+				threePointTendencyFactor: 0.193,
+				threePointAccuracyFactor: 0.905,
+				twoPointAccuracyFactor: 1.004,
+				blockFactor: 1.1,
+				stealFactor: 1.2,
+				turnoverFactor: 1.09,
+				orbFactor: 1.1215,
+			},
+			1988: {
+				pace: 99.6,
+				threePointers: true,
+				threePointTendencyFactor: 0.149,
+				threePointAccuracyFactor: 0.885,
+				twoPointAccuracyFactor: 1.005,
+				blockFactor: 1.1,
+				stealFactor: 1.12,
+				turnoverFactor: 1.07,
+				orbFactor: 1.118125,
+			},
+			1987: {
+				pace: 100.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.14,
+				threePointAccuracyFactor: 0.843,
+				twoPointAccuracyFactor: 1.006,
+				blockFactor: 1.1,
+				stealFactor: 1.08,
+				turnoverFactor: 1.07,
+				orbFactor: 1.128625,
+			},
+			1986: {
+				pace: 102.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.095,
+				threePointAccuracyFactor: 0.79,
+				twoPointAccuracyFactor: 1.016,
+				blockFactor: 1.1,
+				stealFactor: 1.06,
+				turnoverFactor: 1.1,
+				orbFactor: 1.10425,
+			},
+			1985: {
+				pace: 102.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.092,
+				threePointAccuracyFactor: 0.79,
+				twoPointAccuracyFactor: 1.023,
+				blockFactor: 1.1,
+				stealFactor: 1.03,
+				turnoverFactor: 1.1,
+				orbFactor: 1.107625,
+			},
+			1984: {
+				pace: 101.4,
+				threePointers: true,
+				threePointTendencyFactor: 0.068,
+				threePointAccuracyFactor: 0.7,
+				twoPointAccuracyFactor: 1.023,
+				blockFactor: 1.1,
+				stealFactor: 1.03,
+				turnoverFactor: 1.1,
+				orbFactor: 1.107625,
+			},
+			1983: {
+				pace: 103.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.065,
+				threePointAccuracyFactor: 0.667,
+				twoPointAccuracyFactor: 1.009,
+				blockFactor: 1.1,
+				stealFactor: 1.01,
+				turnoverFactor: 1.13,
+				orbFactor: 1.1215,
+			},
+			1982: {
+				pace: 100.9,
+				threePointers: true,
+				threePointTendencyFactor: 0.065,
+				threePointAccuracyFactor: 0.734,
+				twoPointAccuracyFactor: 1.02,
+				blockFactor: 1.1,
+				stealFactor: 1,
+				turnoverFactor: 1.1,
+				orbFactor: 1.11475,
+			},
+			1981: {
+				pace: 101.8,
+				threePointers: true,
+				threePointTendencyFactor: 0.06,
+				threePointAccuracyFactor: 0.686,
+				twoPointAccuracyFactor: 1.008,
+				blockFactor: 1.1,
+				stealFactor: 1.05,
+				turnoverFactor: 1.13,
+				orbFactor: 1.118125,
+			},
+			1980: {
+				pace: 103.1,
+				threePointers: true,
+				threePointTendencyFactor: 0.08,
+				threePointAccuracyFactor: 0.784,
+				twoPointAccuracyFactor: 1,
+				blockFactor: 1.1,
+				stealFactor: 1.08,
+				turnoverFactor: 1.13,
+				orbFactor: 1.128625,
+			},
+			1979: {
+				pace: 105.8,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.99575,
+				blockFactor: 1.1,
+				stealFactor: 1,
+				turnoverFactor: 1.14,
+				orbFactor: 1.111,
+			},
+			1978: {
+				pace: 106.7,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9762,
+				blockFactor: 1,
+				stealFactor: 1.07,
+				turnoverFactor: 1.14,
+				orbFactor: 1.107625,
+			},
+			1977: {
+				pace: 106.5,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9694,
+				blockFactor: 1,
+				stealFactor: 1.03,
+				turnoverFactor: 1.16,
+				orbFactor: 1.111,
+			},
+			1976: {
+				pace: 105.5,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9575,
+				blockFactor: 1,
+				stealFactor: 0.98,
+				turnoverFactor: 1.14,
+				orbFactor: 1.09375,
+			},
+			1975: {
+				pace: 104.5,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9558,
+				blockFactor: 1,
+				stealFactor: 0.94,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1974: {
+				pace: 107.8,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.95835,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.097125,
+			},
+			1973: {
+				pace: 110.385,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9541,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1972: {
+				pace: 109.785,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9507,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1971: {
+				pace: 112.988,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9507,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1970: {
+				pace: 114.811,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.96005,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1969: {
+				pace: 114.571,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9439,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1968: {
+				pace: 117.058,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.95325,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1967: {
+				pace: 119.602,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9439,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1966: {
+				pace: 118.921,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.92945,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1965: {
+				pace: 115.617,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.91755,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1964: {
+				pace: 114.689,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.92945,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1963: {
+				pace: 117.316,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9439,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1962: {
+				pace: 125.168,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9269,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1961: {
+				pace: 127.219,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.9065,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1960: {
+				pace: 126.113,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.898,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1959: {
+				pace: 118.68,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.8725,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1958: {
+				pace: 118.564,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.8521,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1957: {
+				pace: 109.736,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.84615,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1956: {
+				pace: 106.17,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.85805,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1955: {
+				pace: 101,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.8455,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1954: {
+				pace: 93,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.8333,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1953: {
+				pace: 95,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.83,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1952: {
+				pace: 97,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.8,
+				twoPointAccuracyFactor: 0.8232,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1951: {
+				pace: 99,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.7,
+				twoPointAccuracyFactor: 0.81,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1950: {
+				pace: 99,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.7,
+				twoPointAccuracyFactor: 0.79,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1949: {
+				pace: 104,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.7,
+				twoPointAccuracyFactor: 0.77,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1948: {
+				pace: 108,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.6,
+				twoPointAccuracyFactor: 0.71,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+			1947: {
+				pace: 104,
+				threePointers: false,
+				threePointTendencyFactor: 0.025,
+				threePointAccuracyFactor: 0.6,
+				twoPointAccuracyFactor: 0.7,
+				blockFactor: 1,
+				stealFactor: 0.9,
+				turnoverFactor: 1.15,
+				orbFactor: 1.09375,
+			},
+	  }
+	: undefined;
 
 const encodeDecodeFunctions = {
 	bool: {
@@ -1730,6 +2145,9 @@ const categories: {
 		name: "Season",
 	},
 	{
+		name: "Standings",
+	},
+	{
 		name: "Team",
 	},
 	{
@@ -1799,6 +2217,7 @@ const Input = ({
 	decoration,
 	disabled,
 	id,
+	maxWidth,
 	onChange,
 	type,
 	value,
@@ -1807,6 +2226,7 @@ const Input = ({
 	decoration?: Decoration;
 	disabled?: boolean;
 	id: string;
+	maxWidth?: true;
 	name: string;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -1821,7 +2241,10 @@ const Input = ({
 		id,
 		onChange,
 		style:
-			!decoration && type !== "rangePercent" && type !== "floatValuesOrCustom"
+			!decoration &&
+			type !== "rangePercent" &&
+			type !== "floatValuesOrCustom" &&
+			!maxWidth
 				? inputStyle
 				: undefined,
 		value,
@@ -1952,6 +2375,7 @@ const Option = ({
 	description,
 	descriptionLong,
 	decoration,
+	maxWidth,
 	onChange,
 	type,
 	value,
@@ -1964,6 +2388,7 @@ const Option = ({
 	description?: ReactNode;
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
+	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
 	value: string;
@@ -1975,7 +2400,7 @@ const Option = ({
 	return (
 		<>
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
-				<div className="mr-auto">
+				<div className="mr-auto text-nowrap">
 					<label
 						className="mb-0"
 						htmlFor={id}
@@ -2003,7 +2428,7 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className="ml-5">
+				<div className={classNames("ml-5", maxWidth ? "w-100" : undefined)}>
 					{customForm ? (
 						customForm
 					) : (
@@ -2011,6 +2436,7 @@ const Option = ({
 							type={type}
 							disabled={disabled}
 							id={id}
+							maxWidth={maxWidth}
 							name={name}
 							onChange={onChange}
 							value={value}
@@ -2173,7 +2599,7 @@ const Settings = (props: View<"settings">) => {
 			const { key, name, validator } = option;
 			try {
 				if (validator) {
-					validator(output[key], output, props);
+					await validator(output[key], output, props);
 				}
 			} catch (error) {
 				setSubmitting(false);
@@ -2260,7 +2686,7 @@ const Settings = (props: View<"settings">) => {
 								) : null}
 							</h2>
 							{category.name === "Game Simulation" &&
-							process.env.SPORT === "basketball" &&
+							isSport("basketball") &&
 							gameSimPresets &&
 							(godMode || showGodModeSettings) ? (
 								<div className="form-inline mb-3">
@@ -2310,6 +2736,7 @@ const Settings = (props: View<"settings">) => {
 										descriptionLong,
 										godModeRequired,
 										key,
+										maxWidth,
 										name,
 										type,
 										values,
@@ -2379,6 +2806,7 @@ const Settings = (props: View<"settings">) => {
 													description={description}
 													descriptionLong={descriptionLong}
 													customForm={customFormNode}
+													maxWidth={maxWidth}
 												/>
 											</div>
 										);

@@ -8,9 +8,33 @@ import type {
 import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
 
-type MyTeam = TeamFiltered<["tid"], ["cid", "did", "winp", "won"], any, number>;
+type MyTeam = TeamFiltered<
+	["tid"],
+	[
+		"cid",
+		"did",
+		"won",
+		"lost",
+		"tied",
+		"otl",
+		"winp",
+		"pts",
+		"wonDiv",
+		"lostDiv",
+		"tiedDiv",
+		"otlDiv",
+		"wonConf",
+		"lostConf",
+		"tiedConf",
+		"otlConf",
+	],
+	["pts", "oppPts", "gp"],
+	number
+>;
 
-const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
+type MinimalTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
+
+const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
 	return {
 		tid: t.tid,
 		cid: t.seasonAttrs.cid,
@@ -22,7 +46,7 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 
 // In a 2 conference playoff, this should be called once with each side of the bracket
 export const makeMatchups = (
-	teams: MyTeam[],
+	teams: MinimalTeam[],
 	numPlayoffTeams: number,
 	numPlayoffByes: number,
 ) => {
@@ -54,7 +78,12 @@ const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 	return tidPlayoffs;
 };
 
-export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
+export const genPlayoffSeriesFromTeams = async (
+	teams: MyTeam[],
+	orderTeamsOptions?: {
+		skipTiebreakers?: boolean;
+	},
+) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	let playoffsByConference = g.get("confs", "current").length === 2;
 
@@ -91,7 +120,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
 					const round = await makeMatchups(
-						await orderTeams(teamsConf),
+						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
 					);
@@ -112,14 +141,14 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 				);
 				if (teamsConf.length > 0) {
 					// This sort determines conference champ. Sort inside makeMatchups will determine overall #1 seed
-					const sorted = await orderTeams(teamsConf);
+					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
 					teamsFinals.push(sorted[0]);
 				}
 			}
 
 			if (teamsFinals.length === 2) {
 				const round = await makeMatchups(
-					await orderTeams(teamsFinals),
+					await orderTeams(teamsFinals, teams, orderTeamsOptions),
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
 				);
@@ -137,7 +166,7 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 		series = range(numRounds).map(() => []);
 
 		const round = await makeMatchups(
-			await orderTeams(teams),
+			await orderTeams(teams, teams, orderTeamsOptions),
 			numPlayoffTeams,
 			numPlayoffByes,
 		);
@@ -153,8 +182,27 @@ export const genPlayoffSeriesFromTeams = async (teams: MyTeam[]) => {
 const genPlayoffSeries = async () => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
-		seasonAttrs: ["cid", "did", "winp", "won"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
+		showNoStats: true,
 	});
 
 	return genPlayoffSeriesFromTeams(teams);

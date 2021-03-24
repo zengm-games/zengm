@@ -28,6 +28,7 @@ export type PlayerGameSim = {
 	injured: boolean;
 	ptModifier: number;
 	ovrs: Record<Position, number>;
+	numConsecutiveGamesG?: number;
 };
 
 export type PlayersOnIce = Record<Position, PlayerGameSim[]>;
@@ -40,4 +41,7 @@ export type TeamGameSim = {
 	player: PlayerGameSim[];
 	compositeRating: any;
 	depth: Record<"F" | "D" | "G", PlayerGameSim[]>;
+	synergy: {
+		reb: number;
+	};
 };

@@ -3,11 +3,6 @@
 // not present in this file: transiently derived things, like FG%
 const stats = {
 	derived: [
-		"w",
-		"l",
-		"t",
-		"otl",
-
 		// Shutouts
 		"so",
 

@@ -28,6 +28,7 @@ const LeagueDashboard = ({
 	payroll,
 	playoffRoundsWon,
 	playoffsByConference,
+	pointsFormula,
 	profit,
 	rank,
 	region,
@@ -42,6 +43,7 @@ const LeagueDashboard = ({
 	teamLeaders,
 	teamStats,
 	tied,
+	usePts,
 	userTid,
 	won,
 }: View<"leagueDashboard">) => {
@@ -76,6 +78,8 @@ const LeagueDashboard = ({
 									confTeams={confTeams}
 									numPlayoffTeams={numPlayoffTeams}
 									playoffsByConference={playoffsByConference}
+									pointsFormula={pointsFormula}
+									usePts={usePts}
 									userTid={userTid}
 								/>
 							</div>

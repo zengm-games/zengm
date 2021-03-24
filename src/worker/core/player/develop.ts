@@ -27,7 +27,7 @@ export const bootstrapPot = async ({
 		return pos ? ratings.ovrs[pos] : ratings.ovr;
 	}
 
-	if (isSport("football")) {
+	if (isSport("football") || isSport("hockey")) {
 		if (pos === undefined) {
 			throw new Error("pos is required for potEstimator");
 		}

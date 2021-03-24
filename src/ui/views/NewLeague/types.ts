@@ -12,6 +12,7 @@ export type NewLeagueTeam = {
 	colors?: [string, string, string];
 	srID?: string;
 	disabled?: boolean;
+	jersey?: string;
 	cid: number;
 	did: number;
 };

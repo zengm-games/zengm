@@ -36,6 +36,7 @@ export type AwardPlayer = {
 	name: string;
 	tid: number;
 	abbrev: string;
+	pos: string;
 	g: number;
 	a: number;
 	pts: number;
@@ -75,6 +76,7 @@ export type Awards = {
 		},
 	];
 	dpoy: AwardPlayer;
+	dfoy: AwardPlayer;
 	goy: AwardPlayer;
 	finalsMvp: AwardPlayer | undefined;
 };

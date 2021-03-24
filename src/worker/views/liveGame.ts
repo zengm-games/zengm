@@ -146,6 +146,7 @@ const updatePlayByPlay = async (
 			finals,
 			initialBoxScore: boxScore,
 			otl,
+			quarterLength: g.get("quarterLength"),
 		};
 	}
 };

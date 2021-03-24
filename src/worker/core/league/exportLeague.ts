@@ -1,6 +1,7 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
 import { g, local } from "../../util";
+import getName from "./getName";
 
 /* Export existing active league.
  *
@@ -30,9 +31,10 @@ const exportLeague = async (
 	// phaseText is needed if a phase is set in gameAttributes.
 	// name is only used for the file name of the exported roster file.
 	if (options.meta) {
+		const leagueName = await getName();
 		exportedLeague.meta = {
 			phaseText: local.phaseText,
-			name: g.get("leagueName"),
+			name: leagueName,
 		};
 	}
 

@@ -21,6 +21,10 @@ const straightThrough = [
 	"ortg",
 	"dws",
 	"ows",
+	"dd",
+	"td",
+	"qd",
+	"fxf",
 ];
 
 const percentage = (numerator: number, denominator: number) => {

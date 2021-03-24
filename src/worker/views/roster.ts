@@ -31,6 +31,7 @@ const updateRoster = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("newPhase"))) ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
@@ -85,6 +86,7 @@ const updateRoster = async (
 			"draft",
 			"name",
 			"age",
+			"born",
 			"contract",
 			"cashOwed",
 			"rosterOrder",
@@ -97,7 +99,7 @@ const updateRoster = async (
 			"mood",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
-		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
+		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
 		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber"];
 
 		let players: any[];

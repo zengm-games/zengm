@@ -309,7 +309,11 @@ const getPicks = async ({
 	}
 };
 
-const EXPONENT = 7;
+const EXPONENT = bySport({
+	basketball: 7,
+	football: 6,
+	hockey: 3.5,
+});
 
 const sumValues = (
 	players: Asset[],
@@ -402,6 +406,7 @@ const refreshCache = async () => {
 				pid: p.pid,
 				ratings: {
 					ovr: p.ratings[p.ratings.length - 1].ovr,
+					ovrs: p.ratings[p.ratings.length - 1].ovrs,
 					pos: p.ratings[p.ratings.length - 1].pos,
 				},
 			})),

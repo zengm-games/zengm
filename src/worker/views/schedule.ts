@@ -1,4 +1,4 @@
-import { season, player, team } from "../core";
+import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
@@ -24,19 +24,15 @@ export const getUpcoming = async ({
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const healthyPlayers = playersRaw
-		.filter(p => p.injury.gamesRemaining === 0)
-		.map(p => ({
-			pid: p.pid,
-			ratings: {
-				ovr: player.fuzzRating(
-					p.ratings[p.ratings.length - 1].ovr,
-					p.ratings[p.ratings.length - 1].fuzz,
-				),
-				pos: p.ratings[p.ratings.length - 1].pos,
-			},
-			tid: p.tid,
-		}));
+	const healthyPlayers = await idb.getCopies.playersPlus(
+		playersRaw.filter(p => p.injury.gamesRemaining === 0),
+		{
+			attrs: ["tid", "pid"],
+			ratings: ["ovr", "pos", "ovrs"],
+			season: g.get("season"),
+			fuzz: true,
+		},
+	);
 
 	const ovrsCache = new Map<number, number>();
 

@@ -14,6 +14,7 @@ const getCategoriesAndStats = () => {
 			minStats: string[];
 			minValue: number[];
 			sortAscending?: true;
+			filter?: (p: any) => boolean;
 		}[]
 	>({
 		basketball: [
@@ -407,6 +408,7 @@ const getCategoriesAndStats = () => {
 				data: [],
 				minStats: [],
 				minValue: [],
+				filter: p => p.ratings.pos !== "G",
 			},
 			{
 				name: "Penalty Minutes",
@@ -425,6 +427,7 @@ const getCategoriesAndStats = () => {
 				data: [],
 				minStats: [],
 				minValue: [],
+				filter: p => p.ratings.pos !== "G",
 			},
 			{
 				name: "Blocks",
@@ -603,7 +606,7 @@ const updateLeaders = async (
 
 		players = await idb.getCopies.playersPlus(players, {
 			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
-			ratings: ["skills"],
+			ratings: ["skills", "pos"],
 			stats: ["abbrev", "tid", ...stats],
 			season: inputs.season,
 			playoffs: inputs.playoffs === "playoffs",
@@ -626,26 +629,30 @@ const updateLeaders = async (
 
 			for (const p of players) {
 				// Test if the player meets the minimum statistical requirements for this category
-				let pass = cat.minStats.length === 0;
+				let pass = cat.minStats.length === 0 && (!cat.filter || cat.filter(p));
 
-				for (let k = 0; k < cat.minStats.length; k++) {
-					// In basketball, everything except gp is a per-game average, so we need to scale them by games played
-					let playerValue;
-					if (!isSport("basketball") || cat.minStats[k] === "gp") {
-						playerValue = p.stats[cat.minStats[k]];
-					} else {
-						playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
-					}
+				if (!pass) {
+					for (let k = 0; k < cat.minStats.length; k++) {
+						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
+						let playerValue;
+						if (!isSport("basketball") || cat.minStats[k] === "gp") {
+							playerValue = p.stats[cat.minStats[k]];
+						} else {
+							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
+						}
 
-					// Compare against value normalized for team games played
-					const gpTeam = gps[p.stats.tid];
-					if (
-						gpTeam !== undefined &&
-						playerValue >=
-							Math.ceil((cat.minValue[k] * factor * gpTeam) / g.get("numGames"))
-					) {
-						pass = true;
-						break; // If one is true, don't need to check the others
+						// Compare against value normalized for team games played
+						const gpTeam = gps[p.stats.tid];
+						if (
+							gpTeam !== undefined &&
+							playerValue >=
+								Math.ceil(
+									(cat.minValue[k] * factor * gpTeam) / g.get("numGames"),
+								)
+						) {
+							pass = true;
+							break; // If one is true, don't need to check the others
+						}
 					}
 				}
 
@@ -671,6 +678,8 @@ const updateLeaders = async (
 
 			// @ts-ignore
 			delete cat.minValue;
+
+			delete cat.filter;
 		}
 
 		return {

@@ -1,6 +1,6 @@
 import { helpers, g } from "../../util";
 import type { Team } from "../../../common/types";
-import { isSport, POSITIONS } from "../../../common";
+import { DEFAULT_JERSEY, isSport, POSITIONS } from "../../../common";
 
 /**
  * Create a new team object.
@@ -64,6 +64,7 @@ const generate = (tm: any): Team => {
 		strategy,
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
+		jersey: tm.jersey ?? DEFAULT_JERSEY,
 		pop: tm.pop ?? 0,
 		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),
 		retiredJerseyNumbers: tm.retiredJerseyNumbers ?? [],

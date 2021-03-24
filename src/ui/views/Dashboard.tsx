@@ -5,15 +5,24 @@ import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";
 import {
+	bySport,
 	DIFFICULTY,
 	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
+	WEBSITE_PLAY,
 } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
 import type { View } from "../../common/types";
+
+// Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
+const randomOtherSport = bySport({
+	basketball: Math.random() < 0.5 ? "football" : "hockey",
+	football: Math.random() < 0.5 ? "basketball" : "hockey",
+	hockey: Math.random() < 0.5 ? "basketball" : "football",
+});
 
 const difficultyText = (difficulty: number | undefined) => {
 	let prevText: string | undefined;
@@ -321,6 +330,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
+	const otherSportsText = bySport({
+		basketball: "football and hockey",
+		football: "basketball and hockey",
+		hockey: "basketball and football",
+	});
+
 	return (
 		<>
 			{location.host.indexOf("beta") === 0 ? (
@@ -330,15 +345,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				>
 					You are on the beta site. Sometimes new features are tested on the
 					beta site, but most of the time it gets updated less frequently than{" "}
-					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
-						the main site
-					</a>
-					. So unless you're testing some specific thing, you probably should be
-					playing on{" "}
-					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
-						the main site
-					</a>
-					.
+					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>. So unless
+					you're testing some specific thing, you probably should be playing on{" "}
+					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>.
 				</p>
 			) : null}
 			<div
@@ -397,14 +406,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				)}
 
 				<a
-					href={`https://play.${
-						isSport("football") ? "basketball" : "football"
-					}-gm.com/`}
-					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${process.env.SPORT}`}
+					href="https://zengm.com/"
+					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}`}
 				>
-					{isSport("football")
-						? "Try our other game, Basketball GM!"
-						: "Try our other game, Football GM!"}
+					Try our {otherSportsText} games!
 				</a>
 			</div>
 
@@ -424,6 +429,13 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						rows={rows}
 					/>
 				</>
+			) : null}
+
+			{isSport("hockey") ? (
+				<p className="mb-0">
+					If you're looking for your old leagues in the old version of ZenGM
+					Hockey, <a href="http://hockey.zengm.com/">click here</a>.
+				</p>
 			) : null}
 		</>
 	);

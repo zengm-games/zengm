@@ -102,6 +102,7 @@ const TopStuff = ({
 					season={season}
 					won={t.seasonAttrs.won}
 					lost={t.seasonAttrs.lost}
+					otl={t.seasonAttrs.otl}
 					tied={t.seasonAttrs.tied}
 					playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
 					option="noSeason"
@@ -184,7 +185,9 @@ const TopStuff = ({
 			/>
 			{season !== currentSeason ? (
 				<p>
-					Players in the Hall of Fame are{" "}
+					Players still on this team are{" "}
+					<span className="text-info">highlighted in blue</span>. Players in the
+					Hall of Fame are{" "}
 					<span className="text-danger">highlighted in red</span>.
 				</p>
 			) : null}

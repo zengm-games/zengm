@@ -55,6 +55,10 @@ const writeTeamStats = async (results: GameResults) => {
 				att *= 1.5; // Playoff bonus
 			}
 
+			if (isSport("hockey")) {
+				att *= 1.05;
+			}
+
 			ticketPrice = t.budget.ticketPrice.amount;
 
 			// The exponential factor was hand-tuned to make this work in 1965
@@ -85,7 +89,7 @@ const writeTeamStats = async (results: GameResults) => {
 			healthPaid = t.budget.health.amount / g.get("numGames");
 			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
 
-			if (isSport("basketball")) {
+			if (isSport("basketball") || isSport("hockey")) {
 				merchRevenue = ((g.get("salaryCap") / 90000) * 4.5 * att) / 1000;
 
 				if (merchRevenue > 250) {
@@ -232,6 +236,10 @@ const writeTeamStats = async (results: GameResults) => {
 		for (const key of Object.keys(results.team[t1].stat)) {
 			if (skip.includes(key)) {
 				continue;
+			}
+
+			if (teamStats[key] === undefined) {
+				teamStats[key] = 0;
 			}
 
 			if (isSport("football") && key.endsWith("Lng")) {

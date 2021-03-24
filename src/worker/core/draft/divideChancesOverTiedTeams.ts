@@ -1,5 +1,6 @@
 import countBy from "lodash/countBy";
 import type { TeamFiltered } from "../../../common/types";
+import { g } from "../../util";
 
 /**
  * Divide the combinations between teams with tied records.
@@ -7,12 +8,16 @@ import type { TeamFiltered } from "../../../common/types";
  * If isFinal is true, the remainder value is distributed randomly instead
  * of being set as a decimal value on the result.
  */
-const updateChances = (
+const divideChancesOverTiedTeams = (
 	chances: number[],
-	teams: TeamFiltered<[], ["winp"], any, number>[],
+	teams: TeamFiltered<[], ["pts", "winp"], any, number>[],
 	isFinal: boolean = false,
 ) => {
-	const wps0 = countBy(teams.slice(0, chances.length), t => t.seasonAttrs.winp);
+	const usePts = g.get("pointsFormula", "current") !== "";
+
+	const wps0 = countBy(teams.slice(0, chances.length), t =>
+		usePts ? t.seasonAttrs.pts : t.seasonAttrs.winp,
+	);
 	const wps = Object.entries(wps0)
 		.map(x => [Number(x[0]), Number(x[1])])
 		.sort((a, b) => a[0] - b[0]);
@@ -50,4 +55,4 @@ const updateChances = (
 	}
 };
 
-export default updateChances;
+export default divideChancesOverTiedTeams;

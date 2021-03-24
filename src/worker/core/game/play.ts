@@ -111,18 +111,21 @@ const play = async (
 			}),
 		);
 
-		if (g.get("phase") === PHASE.PLAYOFFS) {
-			// Update playoff series W/L
-			await updatePlayoffSeries(results, conditions);
-		} else {
-			// Update clinchedPlayoffs
-			await team.updateClinchedPlayoffs(false, conditions);
-		}
-
 		// Delete finished games from schedule
 		for (const gid of gidsFinished) {
 			if (typeof gid === "number") {
 				await idb.cache.schedule.delete(gid);
+			}
+		}
+
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			// Update playoff series W/L
+			await updatePlayoffSeries(results, conditions);
+		} else {
+			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccruate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
+			const schedule = await season.getSchedule();
+			if (schedule.length > 0) {
+				await team.updateClinchedPlayoffs(false, conditions);
 			}
 		}
 

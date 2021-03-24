@@ -379,6 +379,26 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:dd": {
+			desc: "Double Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:td": {
+			desc: "Triple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:qd": {
+			desc: "Quadruple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fxf": {
+			desc: "Five by Fives",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 	football: {
 		"pos:QB": {
@@ -1311,26 +1331,6 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
-		"stat:w": {
-			desc: "Wins",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:l": {
-			desc: "Losses",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:t": {
-			desc: "Ties",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
-		"stat:otl": {
-			desc: "Overtime Losses",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-		},
 		"stat:pm": {
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],
@@ -1427,7 +1427,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:ga": {
-			desc: "Goals Aganst",
+			desc: "Goals Against",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1719,6 +1719,11 @@ const cols: {
 		sortType: "number",
 	},
 	From: {},
+	GB: {
+		desc: "Games Back",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Games: {
 		desc: "Number of Games",
 		sortSequence: ["desc", "asc"],
@@ -1872,6 +1877,16 @@ const cols: {
 	"Profit (YTD)": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
+	},
+	PTS: {
+		desc: "Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PTS%": {
+		desc: "Points Divided By Maximum Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	Received: {
 		desc: "Assets Received in Trade",
@@ -2050,6 +2065,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"count:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"count:goy": {
 		desc: "Goalie of the Year",
 		sortSequence: ["desc", "asc"],
@@ -2089,12 +2109,16 @@ const cols: {
 		desc: "Defensive Player of the Year",
 		sortType: "name",
 	},
+	"award:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortType: "name",
+	},
 	"award:goy": {
 		desc: "Goalie of the Year",
 		sortType: "name",
 	},
 	"award:finalsMvp": {
-		desc: "Finals Most Valuable Player",
+		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
 		sortType: "name",
 	},
 	"award:mip": {
@@ -2199,6 +2223,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:fgMidRange": "M",
 		"stat:fgaMidRange": "A",
 		"stat:fgpMidRange": "%",
+		"stat:dd": "DD",
+		"stat:td": "TD",
+		"stat:qd": "QD",
+		"stat:fxf": "5x5",
 	},
 	football: {
 		"pos:QB": "QB",
@@ -2463,6 +2491,7 @@ const titleOverrides = {
 	"count:bestRecord": "BR",
 	"count:bestRecordConf": "BRC",
 	"count:dpoy": "DPOY",
+	"count:dfoy": "DFOY",
 	"count:goy": "GOY",
 	"count:mip": "MIP",
 	"count:mvp": "MVP",
@@ -2471,8 +2500,9 @@ const titleOverrides = {
 	"count:oroy": "OROY",
 	"count:droy": "DROY",
 	"award:dpoy": "DPOY",
+	"award:dfoy": "DFOY",
 	"award:goy": "GOY",
-	"award:finalsMvp": "Finals MVP",
+	"award:finalsMvp": `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
 	"award:mip": "MIP",
 	"award:mvp": "MVP",
 	"award:roy": "ROY",

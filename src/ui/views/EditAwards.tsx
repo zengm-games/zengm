@@ -81,7 +81,7 @@ const EditAwards = ({
 					};
 				}
 			}
-		} else if (type == "dpoy") {
+		} else if (type == "dpoy" || type === "dfoy") {
 			if (p?.pid == undefined) {
 				newAwards[type] = undefined;
 			} else {

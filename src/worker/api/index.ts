@@ -92,6 +92,7 @@ import {
 } from "../core/season/awards";
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
+import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -306,10 +307,12 @@ const createLeague = async ({
 	challengeLoseBestPlayer,
 	challengeFiredLuxuryTax,
 	challengeFiredMissPlayoffs,
+	challengeThanosMode,
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
+	randomDebutsForever,
 	confs,
 	divs,
 	teams,
@@ -330,10 +333,12 @@ const createLeague = async ({
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
+	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
@@ -433,6 +438,7 @@ const createLeague = async ({
 		challengeLoseBestPlayer,
 		challengeFiredLuxuryTax,
 		challengeFiredMissPlayoffs,
+		challengeThanosMode,
 		equalizeRegions,
 		confs,
 		divs,
@@ -440,6 +446,10 @@ const createLeague = async ({
 
 	if (realPlayerDeterminism !== undefined) {
 		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
+	}
+
+	if (getLeagueOptions && getLeagueOptions.type === "real") {
+		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;
 	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful
@@ -467,6 +477,13 @@ const createLeague = async ({
 		...leagueFile.gameAttributes,
 		...gameAttributeOverrides,
 	};
+
+	if (
+		randomDebutsForever &&
+		leagueFile.gameAttributes.randomDebutsForever === undefined
+	) {
+		leagueFile.gameAttributes.randomDebutsForever = 1;
+	}
 
 	if (noStartingInjuries && leagueFile.players) {
 		for (const p of leagueFile.players) {
@@ -783,7 +800,7 @@ const discardUnsavedProgress = async () => {
 };
 
 const draftLottery = async () => {
-	const draftLotteryResult = await draft.genOrderNBA();
+	const draftLotteryResult = await draft.genOrder();
 	return draftLotteryResult;
 };
 
@@ -1129,9 +1146,8 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
-	const filename = `${GAME_ACRONYM}_draft_class_${g.get(
-		"leagueName",
-	)}_${season}.json`;
+	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
 
 	return {
 		filename,
@@ -1169,7 +1185,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		delete p.yearsFreeAgent;
 	}
 
-	const filename = `${GAME_ACRONYM}_players_${g.get("leagueName")}_${g.get(
+	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const filename = `${GAME_ACRONYM}_players_${leagueName}_${g.get(
 		"season",
 	)}.json`;
 
@@ -1190,13 +1207,8 @@ const getLeagueInfo = async (
 	return realRosters.getLeagueInfo(options);
 };
 
-const getLeagueName = async () => {
-	const l = await idb.meta.get("leagues", g.get("lid"));
-	if (l) {
-		return l.name;
-	}
-
-	return "Unknown league";
+const getLeagueName = () => {
+	return league.getName();
 };
 
 const getLocal = async (name: keyof Local) => {
@@ -2046,7 +2058,10 @@ const retiredJerseyNumberUpsert = async (
 	}
 
 	// Insert or update?
+	let saveEvent = false;
 	if (i === undefined) {
+		saveEvent = true;
+
 		if (!t.retiredJerseyNumbers) {
 			t.retiredJerseyNumbers = [];
 		}
@@ -2064,20 +2079,27 @@ const retiredJerseyNumberUpsert = async (
 			throw new Error("Invalid index");
 		}
 
+		const prevNumber = t.retiredJerseyNumbers[i].number;
+		if (prevNumber !== info.number) {
+			saveEvent = true;
+		}
+
 		t.retiredJerseyNumbers[i] = {
 			...info,
 			score,
 		};
 	}
 
-	logEvent({
-		type: "retiredJersey",
-		text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
-		showNotification: false,
-		pids: info.pid ? [info.pid] : [],
-		tids: [t.tid],
-		score: 20,
-	});
+	if (saveEvent) {
+		logEvent({
+			type: "retiredJersey",
+			text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
+			showNotification: false,
+			pids: info.pid ? [info.pid] : [],
+			tids: [t.tid],
+			score: 20,
+		});
+	}
 
 	await idb.cache.teams.put(t);
 
@@ -2564,7 +2586,7 @@ const updateOptions = async (
 	},
 ) => {
 	const validateRealTeamInfo = (abbrev: string, teamInfo: any) => {
-		const strings = ["abbrev", "region", "name", "imgURL"];
+		const strings = ["abbrev", "region", "name", "imgURL", "jersey"];
 		const numbers = ["pop"];
 		for (const [key, value] of Object.entries(teamInfo as any)) {
 			if (strings.includes(key)) {
@@ -2712,6 +2734,7 @@ const updateTeamInfo = async (
 		pop: number | string;
 		stadiumCapacity: number | string;
 		colors: [string, string, string];
+		jersey: string;
 		disabled?: boolean;
 	}[],
 ) => {
@@ -2742,6 +2765,7 @@ const updateTeamInfo = async (
 		}
 
 		t.colors = newTeam.colors;
+		t.jersey = newTeam.jersey;
 
 		t.pop = parseFloat(newTeam.pop as string);
 		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string, 10);
@@ -2808,6 +2832,7 @@ const updateTeamInfo = async (
 				teamSeason.abbrev = t.abbrev;
 				teamSeason.imgURL = t.imgURL;
 				teamSeason.colors = t.colors;
+				teamSeason.jersey = t.jersey;
 				teamSeason.pop = t.pop;
 				teamSeason.stadiumCapacity = t.stadiumCapacity;
 
@@ -2895,6 +2920,8 @@ const upsertCustomizedPlayer = async (
 
 		p.ratings[r].season = p.draft.year;
 	} else if (p.tid !== PLAYER.RETIRED) {
+		p.retiredYear = Infinity;
+
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
 		p.ratings[r].season = g.get("season");
 	}
@@ -3082,6 +3109,12 @@ const updateTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
+const validatePointsFormula = async (pointsFormula: string) => {
+	if (pointsFormula !== "") {
+		new PointsFormulaEvaluator(pointsFormula);
+	}
+};
+
 export default {
 	actions,
 	acceptContractNegotiation,
@@ -3167,4 +3200,5 @@ export default {
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,
+	validatePointsFormula,
 };

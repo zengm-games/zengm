@@ -1,26 +1,34 @@
 import { Fragment, memo } from "react";
-import { GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+import {
+	AD_DIVS,
+	GAME_ACRONYM,
+	isSport,
+	SUBREDDIT_NAME,
+	WEBSITE_ROOT,
+} from "../../common";
 
 const footerLinks = [
 	{
-		url: `https://${process.env.SPORT}-gm.com/about/`,
+		url: "https://zengm.com/",
 		title: "About",
 	},
 	{
-		url: `https://${process.env.SPORT}-gm.com/blog/`,
+		url: `https://${
+			isSport("football") ? WEBSITE_ROOT : "basketball-gm.com"
+		}/blog/`,
 		title: "Blog",
 	},
 	{
-		url: `https://${process.env.SPORT}-gm.com/contact/`,
+		url: "https://zengm.com/contact/",
 		title: "Contact",
+	},
+	{
+		url: "https://zengm.com/privacy/",
+		title: "Privacy",
 	},
 	{
 		url: "https://github.com/dumbmatter/gm-games",
 		title: "GitHub",
-	},
-	{
-		url: `https://${process.env.SPORT}-gm.com/privacy-policy/`,
-		title: "Privacy",
 	},
 	{
 		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,
@@ -45,7 +53,7 @@ const Footer = memo(() => {
 				}}
 			>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_1`}
+					id={AD_DIVS.rectangle1}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -68,7 +76,7 @@ const Footer = memo(() => {
 				>
 					<img
 						alt=""
-						src={`https://${process.env.SPORT}-gm.com/files/logo.png`}
+						src={`https://zengm.com/files/logo-${process.env.SPORT}.png`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",
@@ -76,7 +84,7 @@ const Footer = memo(() => {
 					/>
 				</div>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_2`}
+					id={AD_DIVS.rectangle2}
 					style={{
 						display: "none",
 						textAlign: "center",

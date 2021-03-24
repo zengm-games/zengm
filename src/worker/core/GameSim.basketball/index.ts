@@ -484,7 +484,7 @@ class GameSim {
 		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
 
 		if (this.t === 0) {
-			this.t = 10;
+			this.t = 5;
 		}
 
 		this.lastScoringPlay = [];
@@ -522,8 +522,8 @@ class GameSim {
 		const catchUp =
 			!this.elamActive &&
 			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential <= 10) ||
-				(this.t <= 2 && pointDifferential <= 5) ||
+			((this.t <= 3 && pointDifferential <= -10) ||
+				(this.t <= 2 && pointDifferential <= -5) ||
 				(this.t <= 1 && pointDifferential < 0));
 		const maintainLead =
 			!this.elamActive &&
@@ -1222,7 +1222,8 @@ class GameSim {
 	 */
 	probTov() {
 		return (
-			(0.14 * this.team[this.d].compositeRating.defense) /
+			(g.get("turnoverFactor") *
+				(0.14 * this.team[this.d].compositeRating.defense)) /
 			(0.5 *
 				(this.team[this.o].compositeRating.dribbling +
 					this.team[this.o].compositeRating.passing))
@@ -1254,10 +1255,11 @@ class GameSim {
 	 */
 	probStl() {
 		return (
-			(0.55 * this.team[this.d].compositeRating.defensePerimeter) /
-			(0.5 *
-				(this.team[this.o].compositeRating.dribbling +
-					this.team[this.o].compositeRating.passing))
+			g.get("stealFactor") *
+			((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
+				(0.5 *
+					(this.team[this.o].compositeRating.dribbling +
+						this.team[this.o].compositeRating.passing)))
 		);
 	}
 
@@ -1267,7 +1269,7 @@ class GameSim {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
-		const ratios = this.ratingArray("stealing", this.d, 5);
+		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
 		this.recordPlay("stl", this.d, [
@@ -1448,9 +1450,11 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
-			this.doPf(this.d, type === "threePointer" ? "pfTP" : "pfFG", shooter);
+			const threePointer = type === "threePointer" && g.get("threePointers");
 
-			if (type === "threePointer" && g.get("threePointers")) {
+			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
+
+			if (threePointer) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
 
@@ -1491,7 +1495,11 @@ class GameSim {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probBlk() {
-		return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
+		return (
+			g.get("blockFactor") *
+			0.2 *
+			this.team[this.d].compositeRating.blocking ** 2
+		);
 	}
 
 	/**
@@ -1947,7 +1955,8 @@ class GameSim {
 
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(2 + this.team[this.o].compositeRating.rebounding) >
+				(g.get("orbFactor") *
+					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
 			ratios = this.ratingArray("rebounding", this.d, 3);

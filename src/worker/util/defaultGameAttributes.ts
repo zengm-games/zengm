@@ -1,10 +1,18 @@
 import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
+	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
 } from "../../common";
 import type { GameAttributesLeagueWithHistory } from "../../common/types";
+
+const wrap = <T>(value: T) => [
+	{
+		start: -Infinity,
+		value,
+	},
+];
 
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
@@ -28,30 +36,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	otherTeamsWantToHire: false,
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]
-	confs: [
-		{
-			start: -Infinity,
-			value: DEFAULT_CONFS,
-		},
-	],
-	divs: [
-		{
-			start: -Infinity,
-			value: DEFAULT_DIVS,
-		},
-	],
-	numGamesPlayoffSeries: [
-		{
-			start: -Infinity,
-			value: [7, 7, 7, 7],
-		},
-	],
-	numPlayoffByes: [
-		{
-			start: -Infinity,
-			value: 0,
-		},
-	],
+	confs: wrap(DEFAULT_CONFS),
+	divs: wrap(DEFAULT_DIVS),
+	numGamesPlayoffSeries: wrap([7, 7, 7, 7]),
+	numPlayoffByes: wrap(0),
 	aiTradesFactor: 1,
 	autoDeleteOldBoxScores: true,
 	stopOnInjury: false,
@@ -70,18 +58,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	hardCap: false,
 
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
-	ties: [
-		{
-			start: -Infinity,
-			value: false,
-		},
-	],
-	otl: [
-		{
-			start: -Infinity,
-			value: false,
-		},
-	],
+	ties: wrap(false),
+	otl: wrap(false),
 
 	draftType: "nba2019",
 	numDraftRounds: 2,
@@ -102,6 +80,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	threePointTendencyFactor: 1,
 	threePointAccuracyFactor: 1,
 	twoPointAccuracyFactor: 1,
+	blockFactor: 1,
+	stealFactor: 1,
+	turnoverFactor: 1,
+	orbFactor: 1,
 	expansionDraft: { phase: "setup" },
 
 	challengeNoDraftPicks: false,
@@ -111,6 +93,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	challengeLoseBestPlayer: false,
 	challengeFiredLuxuryTax: false,
 	challengeFiredMissPlayoffs: false,
+	challengeThanosMode: false,
+	thanosCooldownEnd: undefined,
 	repeatSeason: undefined,
 	equalizeRegions: false,
 	realPlayerDeterminism: 0,
@@ -122,6 +106,19 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
+	tiebreakers: [
+		{
+			start: -Infinity,
+			value: [
+				"headToHeadRecord",
+				"divWinner",
+				"divRecordIfSame",
+				"confRecordIfSame",
+				"marginOfVictory",
+				"coinFlip",
+			],
+		},
+	],
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -134,31 +131,28 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	userTids: [0],
 	season: 0,
 	startingSeason: 0,
-	leagueName: "",
 	teamInfoCache: [],
 	gracePeriodEnd: 0,
 	numTeams: 0,
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 	tradeDeadline: 0.6,
+	pointsFormula: wrap(""),
+	randomDebutsForever: undefined,
+	realDraftRatings: undefined,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
-export const footballOverrides =
+export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
 				numGames: 16,
 				quarterLength: 15,
-				numGamesPlayoffSeries: [1, 1, 1, 1],
-				numPlayoffByes: 2,
+				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
+				numPlayoffByes: wrap(2),
 				stopOnInjuryGames: 1,
 				hardCap: true,
-				ties: [
-					{
-						start: -Infinity,
-						value: true,
-					},
-				],
+				ties: wrap(true),
 				draftType: "noLottery",
 				numDraftRounds: 7,
 				draftAge: [21, 22],
@@ -175,26 +169,39 @@ export const footballOverrides =
 				sonRate: 0.005,
 				brotherRate: 0.005,
 				allStarGame: null,
+				tiebreakers: wrap([
+					"headToHeadRecord",
+					"divRecordIfSame",
+					"commonOpponentsRecord",
+					"confRecordIfSame",
+					"strengthOfVictory",
+					"strengthOfSchedule",
+					"marginOfVictory",
+					"coinFlip",
+				]),
 		  }
 		: {};
 
-export const hockeyOverrides =
+export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("hockey")
 		? {
 				quarterLength: 20,
 				numPeriods: 3,
-				minRosterSize: 23,
-				maxRosterSize: 25,
+				hardCap: true,
+				salaryCap: 80000,
+				minPayroll: 60000,
+				minContract: 500,
+				maxContract: 13000,
+				minRosterSize: 24,
+				maxRosterSize: 26,
+				// Injury rate per player per possession, basically. But it's a little more complicated than that.
+				injuryRate: 1 / 10000,
 				draftType: "nhl2017",
 				numDraftRounds: 4,
 				allStarGame: null,
 				numPlayersOnCourt: 6,
-				otl: [
-					{
-						start: -Infinity,
-						value: true,
-					},
-				],
+				otl: wrap(true),
+				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
 		  }
 		: {};
 

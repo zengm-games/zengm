@@ -84,7 +84,6 @@ export type TeamInfo = TeamBasic & {
 
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = async (
-	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
 	shuffleRosters: boolean,
@@ -158,9 +157,9 @@ export const createWithoutSaving = async (
 	const gameAttributes = createGameAttributes({
 		difficulty,
 		leagueFile,
-		leagueName,
 		teamInfos,
 		userTid,
+		version: leagueFile.version,
 	});
 
 	// Validation of some identifiers
@@ -244,6 +243,7 @@ export const createWithoutSaving = async (
 					"abbrev",
 					"imgURL",
 					"colors",
+					"jersey",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
 					if (
@@ -421,12 +421,17 @@ export const createWithoutSaving = async (
 		if (shuffleRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
 			// Check tid to prevent draft prospects from being swapped with established players
-			const playerTids = leagueFile.players
-				.filter(p => p.tid > PLAYER.FREE_AGENT)
-				.map(p => p.tid);
+			const numPlayersToShuffle = leagueFile.players.filter(
+				p => p.tid > PLAYER.FREE_AGENT,
+			).length;
 
-			// Shuffle the teams that players are assigned to.
-			random.shuffle(playerTids);
+			const playerTids = [];
+			while (playerTids.length < numPlayersToShuffle) {
+				// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
+				const shuffled = [...activeTids];
+				random.shuffle(shuffled);
+				playerTids.push(...shuffled);
+			}
 
 			for (const p of leagueFile.players) {
 				p.transactions = [];
@@ -545,9 +550,14 @@ export const createWithoutSaving = async (
 					// Guarantee contracts for undrafted players are overwritten below
 					p.contract.exp = -Infinity;
 				} else {
-					const years = 4 - round;
+					let years;
+					if (isSport("hockey")) {
+						years = 3;
+					} else {
+						// 2 years for 2nd round, 3 years for 1st round;
+						years = Math.min(4 - round, 2);
+					}
 
-					// 2 years for 2nd round, 3 years for 1st round;
 					player.setContract(
 						p,
 						{
@@ -826,7 +836,6 @@ const create = async ({
 	realPlayers?: boolean;
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(
-		name,
 		tid,
 		leagueFile,
 		shuffleRosters,

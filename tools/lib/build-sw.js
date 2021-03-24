@@ -7,8 +7,6 @@ const terser = require("rollup-plugin-terser").terser;
 const rollup = require("rollup");
 const workboxBuild = require("workbox-build");
 
-console.log("Generating sw.js...");
-
 const getRev = () => {
 	const files = fs.readdirSync("build/gen");
 	for (const file of files) {
@@ -48,7 +46,10 @@ const bundle = async () => {
 		input: "build/sw.js",
 		plugins: [
 			replace({
-				"process.env.NODE_ENV": JSON.stringify("production"),
+				preventAssignment: true,
+				values: {
+					"process.env.NODE_ENV": JSON.stringify("production"),
+				},
 			}),
 			babel({
 				babelHelpers: "bundled",
@@ -70,20 +71,17 @@ const bundle = async () => {
 	});
 };
 
-(async () => {
-	try {
-		await injectManifest();
-		await bundle();
+const buildSW = async () => {
+	await injectManifest();
+	await bundle();
 
-		const rev = getRev();
-		replace2({
-			regex: "REV_GOES_HERE",
-			replacement: rev,
-			paths: ["build/sw.js"],
-			silent: true,
-		});
-	} catch (error) {
-		console.error(error);
-		process.exit(1);
-	}
-})();
+	const rev = getRev();
+	replace2({
+		regex: "REV_GOES_HERE",
+		replacement: rev,
+		paths: ["build/sw.js"],
+		silent: true,
+	});
+};
+
+module.exports = buildSW;

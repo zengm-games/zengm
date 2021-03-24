@@ -15,6 +15,7 @@ import {
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	gameAttributesArrayToObject,
+	WEBSITE_ROOT,
 } from "../../../common";
 import { LeagueFileUpload, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -189,7 +190,7 @@ type State = {
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
-	randomization: "none" | "debuts" | "shuffle";
+	randomization: "none" | "debuts" | "debutsForever" | "shuffle";
 	teams: NewLeagueTeam[];
 	confs: Conf[];
 	divs: Div[];
@@ -205,6 +206,7 @@ type State = {
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -298,6 +300,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeFiredMissPlayoffs";
+	  }
+	| {
+			type: "toggleChallengeThanosMode";
 	  }
 	| {
 			type: "toggleEqualizeRegions";
@@ -444,6 +449,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeLoseBestPlayer: boolean;
 				challengeFiredLuxuryTax: boolean;
 				challengeFiredMissPlayoffs: boolean;
+				challengeThanosMode: boolean;
 				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
@@ -455,6 +461,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 				challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
 				challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
+				challengeThanosMode: state.challengeThanosMode,
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -580,6 +587,13 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				challengeFiredMissPlayoffs: !state.challengeFiredMissPlayoffs,
 			};
+
+		case "toggleChallengeThanosMode":
+			return {
+				...state,
+				challengeThanosMode: !state.challengeThanosMode,
+			};
+
 		case "toggleEqualizeRegions":
 			return {
 				...state,
@@ -684,6 +698,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeLoseBestPlayer: false,
 				challengeFiredLuxuryTax: false,
 				challengeFiredMissPlayoffs: false,
+				challengeThanosMode: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
@@ -741,6 +756,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					? state.realPlayerDeterminism
 					: undefined;
 
+			const actualRandomDebutsForever =
+				state.customize === "real" && state.randomization === "debutsForever";
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -748,7 +766,9 @@ const NewLeague = (props: View<"newLeague">) => {
 						type: "real",
 						season: state.season,
 						phase: state.phase,
-						randomDebuts: state.randomization === "debuts",
+						randomDebuts:
+							state.randomization === "debuts" ||
+							state.randomization === "debutsForever",
 						realDraftRatings: state.realDraftRatings,
 					};
 				} else if (state.customize === "legends") {
@@ -782,10 +802,12 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 					challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
 					challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
+					challengeThanosMode: state.challengeThanosMode,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
+					randomDebutsForever: actualRandomDebutsForever,
 					confs: state.confs,
 					divs: state.divs,
 					teams: state.teams,
@@ -828,6 +850,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeLoseBestPlayer,
 			state.challengeFiredLuxuryTax,
 			state.challengeFiredMissPlayoffs,
+			state.challengeThanosMode,
 			state.confs,
 			state.customize,
 			state.difficulty,
@@ -951,6 +974,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					setCustomizeTeamsUI(false);
 				}}
 				onSave={({ confs, divs, teams }) => {
+					console.log("onSave", teams);
 					dispatch({
 						type: "setTeams",
 						confs,
@@ -1128,6 +1152,25 @@ const NewLeague = (props: View<"newLeague">) => {
 					You're fired if you miss the playoffs
 				</label>
 			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeThanosMode"
+					checked={state.challengeThanosMode}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeThanosMode" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeThanosMode"
+				>
+					Thanos Mode
+					<br />
+					<span className="text-muted">{descriptions.challengeThanosMode}</span>
+				</label>
+			</div>
 		</div>,
 		<div key="other" className="mb-3">
 			<label>Other</label>
@@ -1279,6 +1322,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					{state.customize === "real" ? (
 						<option value="debuts">Random debuts</option>
 					) : null}
+					{state.customize === "real" ? (
+						<option value="debutsForever">Random debuts forever</option>
+					) : null}
 					<option value="shuffle">Shuffle rosters</option>
 				</select>
 				{state.randomization === "debuts" ? (
@@ -1286,6 +1332,13 @@ const NewLeague = (props: View<"newLeague">) => {
 						Every player's draft year is randomized. Starting teams and future
 						draft classes are all random combinations of past, current, and
 						future real players.
+					</div>
+				) : null}
+				{state.randomization === "debutsForever" ? (
+					<div className="text-muted mt-1">
+						Like random debuts, except when it runs out of draft prospects, it
+						will randomize all real players again and add them to future draft
+						classes.
 					</div>
 				) : null}
 				{state.randomization === "shuffle" ? (
@@ -1297,27 +1350,22 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
-	const expansionSeasons = [
+	const bannedExpansionSeasons = [
+		// Because of other mergers
 		1947,
 		1948,
 		1949,
-		1961,
-		1966,
-		1967,
-		1968,
-		1970,
-		1974,
+
+		// Because of ABA merger
 		1976,
-		1980,
-		1988,
-		1989,
-		1995,
-		2004,
 	];
 	let invalidSeasonPhaseMessage: string | undefined;
-	if (state.phase > PHASE.PLAYOFFS && expansionSeasons.includes(state.season)) {
+	if (
+		state.phase > PHASE.PLAYOFFS &&
+		bannedExpansionSeasons.includes(state.season)
+	) {
 		invalidSeasonPhaseMessage =
-			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
+			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
 	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
 		invalidSeasonPhaseMessage =
@@ -1376,10 +1424,11 @@ const NewLeague = (props: View<"newLeague">) => {
 								<LeagueMenu
 									value={String(state.season)}
 									values={seasons}
-									getLeagueInfo={value =>
+									getLeagueInfo={(value, value2) =>
 										toWorker("main", "getLeagueInfo", {
 											type: "real",
 											season: parseInt(value),
+											phase: value2,
 										})
 									}
 									onLoading={value => {
@@ -1698,7 +1747,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												other data. You can create a league file by going to
 												Tools &gt; Export within a league, or by{" "}
 												<a
-													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+													href={`https://${WEBSITE_ROOT}/manual/customization/`}
 												>
 													creating a custom league file
 												</a>

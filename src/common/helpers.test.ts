@@ -60,15 +60,17 @@ describe("common/helpers", () => {
 		});
 
 		test("truncate trailing 0s", () => {
-			assert.strictEqual(helpers.formatCurrency(64363.99, "Q", 2), "$64363.99");
-			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
-			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
-			assert.strictEqual(helpers.formatCurrency(64363.0, "Q", 2), "$64363");
-			assert.strictEqual(helpers.formatCurrency(64363, "Q", 2), "$64363");
+			assert.strictEqual(
+				helpers.formatCurrency(64363.99, "Q", 2),
+				"$64363.99Q",
+			);
+			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9Q");
+			assert.strictEqual(helpers.formatCurrency(64363.0, "Q", 2), "$64363Q");
+			assert.strictEqual(helpers.formatCurrency(64363, "Q", 2), "$64363Q");
 		});
 	});
 
-	describe.only("getPopRanks", () => {
+	describe("getPopRanks", () => {
 		const makeObj = (pops: number[]) =>
 			pops.map((pop, i) => ({
 				pop,

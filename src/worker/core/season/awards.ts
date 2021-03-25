@@ -87,6 +87,10 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"krYds",
 				"prTD",
 				"prYds",
+				"pssYds",
+				"rusYds",
+				"recYds",
+				"ydsFromScrimmage",
 				"season",
 				"abbrev",
 				"tid",
@@ -268,6 +272,9 @@ const leagueLeaders = (
 				type: cat.name,
 			});
 		}
+		console.log(cat);
+		console.log(cat.stat);
+		console.log(p);
 	}
 };
 

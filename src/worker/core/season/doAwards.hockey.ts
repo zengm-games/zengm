@@ -157,17 +157,17 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			name: "League Points Leader",
 			stat: "pts",
-			minValue: 35,
+			minValue: 0,
 		},
 		{
 			name: "League Goals Leader",
 			stat: "g",
-			minValue: 10,
+			minValue: 0,
 		},
 		{
 			name: "League Assists Leader",
 			stat: "a",
-			minValue: 15,
+			minValue: 0,
 		},
 	];
 	leagueLeaders(players, categories, awardsByPlayer);

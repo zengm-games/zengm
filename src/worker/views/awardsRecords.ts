@@ -143,7 +143,7 @@ const optionsTmp = bySport({
 			key: "rcv_leader",
 		},
 		{
-			val: "League Scrimmage Leader",
+			val: "League Scrimmage Yards Leader",
 			key: "scr_leader",
 		},
 	],

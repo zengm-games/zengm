@@ -31,7 +31,7 @@ const awardsOrder = [
 	"League Passing Leader",
 	"League Rushing Leader",
 	"League Receiving Leader",
-	"League Scrimmage Leader",
+	"League Scrimmage Yards Leader",
 	"League Points Leader",
 	"League Goals Leader",
 ];

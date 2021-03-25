@@ -83,7 +83,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	pss_leader: "League Passing Leader",
 	rush_leader: "League Rushing Leader",
 	rcv_leader: "League Receiving Leader",
-	scr_leader: "League Scrimmage Leader",
+	scr_leader: "League Scrimmage Yards Leader",
 	pts_leader: "League Points Leader",
 	g_leader: "League Goals Leader",
 	ast_leader: "League Assists Leader",

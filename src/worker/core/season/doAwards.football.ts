@@ -279,22 +279,22 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			name: "League Passing Leader",
 			stat: "pssYds",
-			minValue: 2500,
+			minValue: 2000,
 		},
 		{
 			name: "League Rushing Leader",
 			stat: "rusYds",
-			minValue: 1000,
+			minValue: 700,
 		},
 		{
 			name: "League Receiving Leader",
 			stat: "recYds",
-			minValue: 1000,
+			minValue: 700,
 		},
 		{
 			name: "League Scrimmage Leader",
 			stat: "ydsFromScrimmage",
-			minValue: 1000,
+			minValue: 700,
 		},
 	];
 	leagueLeaders(players, categories, awardsByPlayer);

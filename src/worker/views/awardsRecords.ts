@@ -131,19 +131,19 @@ const optionsTmp = bySport({
 			key: "all_league",
 		},
 		{
-			val: "League Passing Yds Leader",
+			val: "League Passing Leader",
 			key: "pss_leader",
 		},
 		{
-			val: "League Rushing Yds Leader",
+			val: "League Rushing Leader",
 			key: "rush_leader",
 		},
 		{
-			val: "League Receiving Yds Leader",
+			val: "League Receiving Leader",
 			key: "rcv_leader",
 		},
 		{
-			val: "League Scrimmage Yds Leader",
+			val: "League Scrimmage Leader",
 			key: "scr_leader",
 		},
 	],

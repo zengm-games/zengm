@@ -197,6 +197,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:ftpFga": {
+			desc: "Free Throw Factor",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:ftr": {
 			desc: "Free Throw Attempt Rate (FTA / FGA)",
 			sortSequence: ["desc", "asc"],
@@ -2188,6 +2193,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ft": "FT",
 		"stat:fta": "FTA",
 		"stat:ftr": "FTr",
+		"stat:ftpFga": "FT/FGA",
 		"stat:gmsc": "GmSc",
 		"stat:nrtg": "NRtg",
 		"stat:orb": "ORB",

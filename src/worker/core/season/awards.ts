@@ -272,9 +272,6 @@ const leagueLeaders = (
 				type: cat.name,
 			});
 		}
-		console.log(cat);
-		console.log(cat.stat);
-		console.log(p);
 	}
 };
 

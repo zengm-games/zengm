@@ -198,7 +198,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:ftpFga": {
-			desc: "Free Throw Factor",
+			desc: "Free Throws per Field Goal Attempted",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},

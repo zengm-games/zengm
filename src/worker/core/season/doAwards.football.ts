@@ -275,7 +275,29 @@ const doAwards = async (conditions: Conditions) => {
 	});
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
-	leagueLeaders(players, [], awardsByPlayer);
+	const categories = [
+		{
+			name: "League Passing Leader",
+			stat: "pssYds",
+			minValue: 2000,
+		},
+		{
+			name: "League Rushing Leader",
+			stat: "rusYds",
+			minValue: 700,
+		},
+		{
+			name: "League Receiving Leader",
+			stat: "recYds",
+			minValue: 700,
+		},
+		{
+			name: "League Scrimmage Leader",
+			stat: "ydsFromScrimmage",
+			minValue: 700,
+		},
+	];
+	leagueLeaders(players, categories, awardsByPlayer);
 
 	const avPlayers = getTopPlayers(
 		{

@@ -28,6 +28,12 @@ const awardsOrder = [
 	"League Assists Leader",
 	"League Steals Leader",
 	"League Blocks Leader",
+	"League Passing Leader",
+	"League Rushing Leader",
+	"League Receiving Leader",
+	"League Scrimmage Leader",
+	"League Points Leader",
+	"League Goals Leader",
 ];
 
 const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {

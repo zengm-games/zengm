@@ -154,6 +154,18 @@ const processStats = (
 			} else if (stat === "tsp") {
 				row[stat] = percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
 				scale = false;
+			} else if (stat === "efg") {
+				row[stat] = percentage(ts.fg + 0.5 * ts.tp, ts.fga);
+				scale = false;
+			} else if (stat === "tovp") {
+				row[stat] = percentage(ts.tov, ts.fga + 0.44 * ts.fta + ts.tov);
+				scale = false;
+			} else if (stat === "orbp") {
+				row[stat] = percentage(ts.orb, ts.orb + ts.oppDrb);
+				scale = false;
+			} else if (stat === "ftpFga") {
+				row[stat] = percentage(ts.ft, ts.fga);
+				scale = false;
 			} else if (
 				stat === "season" ||
 				stat === "playoffs" ||

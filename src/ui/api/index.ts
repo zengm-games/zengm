@@ -199,7 +199,10 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.freestar.refreshAllSlots;
+	const adBlock =
+		!window.freestar.refreshAllSlots ||
+		!window.googletag ||
+		!window.googletag.pubads;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

@@ -245,7 +245,11 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (window.freestar.refreshAllSlots && window.googletag.pubads) {
+					if (
+						window.freestar.refreshAllSlots &&
+						window.googletag &&
+						window.googletag.pubads
+					) {
 						window.freestar.refreshAllSlots();
 					}
 				} else {

@@ -11,7 +11,12 @@ const updateSkyscraperDisplay = () => {
 		const documentElement = document.documentElement;
 
 		if (documentElement && documentElement.clientWidth >= widthCutoff) {
-			if (!displayed && window.freestar.newAdSlots && window.googletag.pubads) {
+			if (
+				!displayed &&
+				window.freestar.newAdSlots &&
+				window.googletag &&
+				window.googletag.pubads
+			) {
 				div.style.display = "block";
 				window.freestar.newAdSlots([
 					{
@@ -26,6 +31,7 @@ const updateSkyscraperDisplay = () => {
 			if (
 				displayed &&
 				window.freestar.deleteAdSlots &&
+				window.googletag &&
 				window.googletag.pubads
 			) {
 				div.style.display = "none";

@@ -1,11 +1,5 @@
 import { Fragment, memo } from "react";
-import {
-	AD_DIVS,
-	GAME_ACRONYM,
-	isSport,
-	SUBREDDIT_NAME,
-	WEBSITE_ROOT,
-} from "../../common";
+import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [
 	{
@@ -13,9 +7,7 @@ const footerLinks = [
 		title: "About",
 	},
 	{
-		url: `https://${
-			isSport("football") ? WEBSITE_ROOT : "basketball-gm.com"
-		}/blog/`,
+		url: "https://zengm.com/blog/",
 		title: "Blog",
 	},
 	{

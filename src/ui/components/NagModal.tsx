@@ -9,7 +9,7 @@ type Props = {
 };
 
 const NagModal = ({ close, show }: Props) => {
-	const adBlock = !window.freestar.refreshAllSlots;
+	const adBlock = !window.freestar.refreshAllSlots || !window.googletag.pubads;
 	return (
 		<Modal show={show} onHide={close}>
 			<Modal.Header closeButton>

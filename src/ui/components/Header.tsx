@@ -11,7 +11,7 @@ const updateSkyscraperDisplay = () => {
 		const documentElement = document.documentElement;
 
 		if (documentElement && documentElement.clientWidth >= widthCutoff) {
-			if (!displayed && window.freestar.newAdSlots) {
+			if (!displayed && window.freestar.newAdSlots && window.googletag.pubads) {
 				div.style.display = "block";
 				window.freestar.newAdSlots([
 					{
@@ -23,7 +23,11 @@ const updateSkyscraperDisplay = () => {
 				displayed = true;
 			}
 		} else {
-			if (displayed && window.freestar.deleteAdSlots) {
+			if (
+				displayed &&
+				window.freestar.deleteAdSlots &&
+				window.googletag.pubads
+			) {
 				div.style.display = "none";
 				window.freestar.deleteAdSlots(AD_DIVS.rail);
 				console.log("deleteAdSlots", AD_DIVS.rail);

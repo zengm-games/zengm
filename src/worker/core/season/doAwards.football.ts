@@ -292,7 +292,7 @@ const doAwards = async (conditions: Conditions) => {
 			minValue: 0,
 		},
 		{
-			name: "League Scrimmage Leader",
+			name: "League Scrimmage Yards Leader",
 			stat: "ydsFromScrimmage",
 			minValue: 0,
 		},

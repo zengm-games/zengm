@@ -130,6 +130,22 @@ const optionsTmp = bySport({
 			val: "All-League",
 			key: "all_league",
 		},
+		{
+			val: "League Passing Yds Leader",
+			key: "pss_leader",
+		},
+		{
+			val: "League Rushing Yds Leader",
+			key: "rush_leader",
+		},
+		{
+			val: "League Receiving Yds Leader",
+			key: "rcv_leader",
+		},
+		{
+			val: "League Scrimmage Yds Leader",
+			key: "scr_leader",
+		},
 	],
 	hockey: [
 		{
@@ -171,6 +187,18 @@ const optionsTmp = bySport({
 		{
 			val: "All-League",
 			key: "all_league",
+		},
+		{
+			val: "League Points Leader",
+			key: "pts_leader",
+		},
+		{
+			val: "League Goals Leader",
+			key: "g_leader",
+		},
+		{
+			val: "League Assists Leader",
+			key: "ast_leader",
 		},
 	],
 });

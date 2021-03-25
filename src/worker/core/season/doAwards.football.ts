@@ -277,22 +277,22 @@ const doAwards = async (conditions: Conditions) => {
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	const categories = [
 		{
-			name: "League Passing Yds Leader",
+			name: "League Passing Leader",
 			stat: "pssYds",
 			minValue: 2500,
 		},
 		{
-			name: "League Rushing Yds Leader",
+			name: "League Rushing Leader",
 			stat: "rusYds",
 			minValue: 1000,
 		},
 		{
-			name: "League Receiving Yds Leader",
+			name: "League Receiving Leader",
 			stat: "recYds",
 			minValue: 1000,
 		},
 		{
-			name: "League Scrimmage Yds Leader",
+			name: "League Scrimmage Leader",
 			stat: "ydsFromScrimmage",
 			minValue: 1000,
 		},

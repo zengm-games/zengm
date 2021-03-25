@@ -198,6 +198,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				injuryRate: 1 / 10000,
 				draftType: "nhl2017",
 				numDraftRounds: 4,
+				draftAge: [18, 21],
 				allStarGame: null,
 				numPlayersOnCourt: 6,
 				otl: wrap(true),

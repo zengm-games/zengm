@@ -33,12 +33,8 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	const baseAge =
-		bySport({
-			hockey: 18,
-			default: 19,
-		}) -
-		(draftYear - g.get("season"));
+	const draftAge = g.get("draftAge");
+	const baseAge = draftAge[0] - (draftYear - g.get("season"));
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const p: any = player.generate(
@@ -67,14 +63,15 @@ const genPlayersWithoutSaving = async (
 		default: 0.5,
 	});
 
-	for (let i = 0; i < 4; i++) {
+	const minMaxAgeDiff = draftAge[1] - draftAge[0];
+	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
 		let cutoff = 0;
 
 		if (isSport("basketball") || isSport("hockey") || i >= 2) {
 			// Top 50% of players remaining enter draft, except in last year.
 			// For football, only juniors and seniors.
 			cutoff =
-				i === 3
+				i === minMaxAgeDiff
 					? remaining.length
 					: Math.round(fractionPerYear * remaining.length);
 		}

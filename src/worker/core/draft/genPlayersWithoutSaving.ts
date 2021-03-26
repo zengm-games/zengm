@@ -69,18 +69,25 @@ const genPlayersWithoutSaving = async (
 		default: 0.5,
 	});
 
+	// Develop football players twice
+	if (isSport("football")) {
+		for (let i = 0; i < 2; i++) {
+			for (const p of remaining) {
+				await player.develop(p, 1, true);
+			}
+		}
+	}
+
 	const minMaxAgeDiff = draftAge[1] - draftAge[0];
-	for (let i = !isSport("football") ? 0 : -2; i < minMaxAgeDiff + 1; i++) {
+	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
 		let cutoff = 0;
 
-		if (i >= 0) {
-			// Top 50% of players remaining enter draft, except in last year.
-			// For football, only juniors and seniors.
-			cutoff =
-				i === minMaxAgeDiff
-					? remaining.length
-					: Math.round(fractionPerYear * remaining.length);
-		}
+		// Top 50% of players remaining enter draft, except in last year.
+		// For football, only juniors and seniors.
+		cutoff =
+			i === minMaxAgeDiff
+				? remaining.length
+				: Math.round(fractionPerYear * remaining.length);
 
 		remaining.sort(
 			(a, b) =>

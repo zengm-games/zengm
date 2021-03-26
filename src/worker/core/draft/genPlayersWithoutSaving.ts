@@ -33,10 +33,13 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
+	/* The distribution of football rookies in the default FBGM was written to assume they were generated at 19 and then developed for 2 seasons.
+	 If `draftAge` existed when that code was written, it would not have made sense to include those 2 seasons.
+	 But doing something about that is much more difficult, so we want to keep the 2 seasons of extra development for FBGM currently */
+
 	const draftAge = g.get("draftAge");
-	const baseAge = !isSport("football")
-		? draftAge[0] - (draftYear - g.get("season"))
-		: draftAge[0] - 2 - (draftYear - g.get("season"));
+	let baseAge = draftAge[0] - (draftYear - g.get("season"));
+	if (isSport("football")) baseAge -= 2;
 
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {

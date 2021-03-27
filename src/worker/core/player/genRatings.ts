@@ -27,8 +27,14 @@ const genRatings = (season: number, scoutingRank: number) => {
 	const age = helpers.bound(g.get("draftAges")[0], -Infinity, 30);
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
+		const exponent = bySport({
+			basketball: 0.8,
+			football: 0.85,
+			hockey: 0.75,
+		});
+
 		const scale = Math.round(
-			3 * Math.sign(ageDiff) * Math.abs(ageDiff) ** 0.75,
+			3 * Math.sign(ageDiff) * Math.abs(ageDiff) ** exponent,
 		);
 
 		const rtgs = bySport({

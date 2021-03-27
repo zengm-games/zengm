@@ -23,26 +23,17 @@ const genRatings = (season: number, scoutingRank: number) => {
 		hockey: 18,
 	});
 
-	// Non default age prospects will be scaled, see https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/
+	// Apply bonus/penalty based on age, to simulate extra/fewer years of development that a player should have gotten. For older players, this is bounded by an upper limit, because players stop developing eventually. You might think player.develop should be used here, at least for old players, but that would result in old players all being horrible, which is no fun.
 	const age = helpers.bound(
 		g.get("draftAges")[0],
-		14,
+		-Infinity,
 		isSport("hockey") ? 26 : 30,
 	);
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
-		// ageDiff matters more for players younger than normal, because young players develop faster
-		let scaleFactor = 3;
-		if (ageDiff < 0) {
-			const exponent = bySport({
-				basketball: 1.5,
-				football: 0.75,
-				hockey: 1.25,
-			});
-			scaleFactor = 3 + 0.2 * Math.abs(ageDiff) ** exponent;
-		}
-
-		const scale = Math.round(scaleFactor * ageDiff);
+		const scale = Math.round(
+			3 * Math.sign(ageDiff) * Math.abs(ageDiff) ** 0.75,
+		);
 
 		const rtgs = bySport({
 			basketball: [

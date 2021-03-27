@@ -1,7 +1,5 @@
-import { PHASE } from "../../../common";
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
-import posHockey from "./pos.hockey";
 import { g, helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.hockey";
 import type { PlayerRatings } from "../../../common/types.hockey";

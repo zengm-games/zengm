@@ -1,8 +1,6 @@
-import { PHASE } from "../../../common";
 import genFuzz from "./genFuzz";
 import heightToRating from "./heightToRating";
 import limitRating from "./limitRating";
-import posBasketball from "./pos.basketball";
 import { g, helpers, random } from "../../util";
 import type {
 	PlayerRatings,

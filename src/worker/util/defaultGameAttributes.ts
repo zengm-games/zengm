@@ -63,7 +63,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	draftType: "nba2019",
 	numDraftRounds: 2,
-	draftAges: [19, 22],
+	draftAges: [0, 0],
 	defaultStadiumCapacity: DEFAULT_STADIUM_CAPACITY,
 	playersRefuseToNegotiate: true,
 	allStarGame: 0.7,

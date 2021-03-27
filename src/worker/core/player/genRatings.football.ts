@@ -1,7 +1,5 @@
-import { PHASE } from "../../../common";
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
-import posFootball from "./pos.football";
 import { g, helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";

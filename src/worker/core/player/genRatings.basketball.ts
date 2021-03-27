@@ -1,7 +1,7 @@
 import genFuzz from "./genFuzz";
 import heightToRating from "./heightToRating";
 import limitRating from "./limitRating";
-import { g, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import type {
 	PlayerRatings,
 	RatingKey,

@@ -1,6 +1,6 @@
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
-import { g, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";
 

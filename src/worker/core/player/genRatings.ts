@@ -24,9 +24,11 @@ const genRatings = (season: number, scoutingRank: number) => {
 	});
 
 	// Non default age prospects will be scaled, see https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/
-	const age = isSport("hockey")
-		? helpers.bound(g.get("draftAges")[0], 13, 26)
-		: helpers.bound(g.get("draftAges")[0], 14, 30);
+	const age = helpers.bound(
+		g.get("draftAges")[0],
+		14,
+		isSport("hockey") ? 26 : 30,
+	);
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
 		// ageDiff matters more for players younger than normal, because young players develop faster
@@ -35,7 +37,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 			const exponent = bySport({
 				basketball: 1.5,
 				football: 0.75,
-				hockey: 1,
+				hockey: 1.25,
 			});
 			scaleFactor = 3 + 0.2 * Math.abs(ageDiff) ** exponent;
 		}

@@ -30,11 +30,14 @@ const genRatings = (season: number, scoutingRank: number) => {
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
 		// ageDiff matters more for players younger than normal, because young players develop faster
-		let scaleFactor;
+		let scaleFactor = 3;
 		if (ageDiff < 0) {
-			scaleFactor = 3 + 0.2 * Math.abs(ageDiff) ** 1.5;
-		} else {
-			scaleFactor = 3;
+			const exponent = bySport({
+				basketball: 1.5,
+				football: 0.75,
+				hockey: 1,
+			});
+			scaleFactor = 3 + 0.2 * Math.abs(ageDiff) ** exponent;
 		}
 
 		const scale = Math.round(scaleFactor * ageDiff);

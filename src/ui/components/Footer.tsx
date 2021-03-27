@@ -19,7 +19,7 @@ const footerLinks = [
 		title: "Privacy",
 	},
 	{
-		url: "https://github.com/dumbmatter/gm-games",
+		url: "https://github.com/zengm-games/zengm",
 		title: "GitHub",
 	},
 	{

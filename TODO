@@ -1,3 +1,5 @@
+2OT in FBGM box score https://discord.com/channels/290013534023057409/290015591216054273/825055764019544084
+
 move foul rate factor down https://discord.com/channels/290013534023057409/331882115119448065/824741939463061504
 
 settings re-design
@@ -291,7 +293,7 @@ typescript 4.1 stuff
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 nicidob new ovr formula
-- basketball: https://github.com/dumbmatter/gm-games/pull/275/files
+- basketball: https://github.com/zengm-games/zengm/pull/275/files
 - football: https://paste.ubuntu.com/p/H5pPmb3r6J/
   - nicodob says:
     - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
@@ -965,7 +967,7 @@ teams play better/worse when down/up
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
-- https://github.com/dumbmatter/gm-games/pull/276
+- https://github.com/zengm-games/zengm/pull/276
 
 GUI to add countries, colleges, and names
 

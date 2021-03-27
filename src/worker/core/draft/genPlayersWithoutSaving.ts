@@ -35,7 +35,10 @@ const genPlayersWithoutSaving = async (
 
 	const draftAge = g.get("draftAge");
 	let baseAge = draftAge[0] - (draftYear - g.get("season"));
-	if (isSport("football")) baseAge -= 2;
+	if (isSport("football")) {
+		// See below comment about FBGM
+		baseAge -= 2;
+	}
 	const minMaxAgeDiff = draftAge[1] - draftAge[0];
 
 	let remaining = [];
@@ -84,10 +87,8 @@ const genPlayersWithoutSaving = async (
 	}
 
 	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
-		let cutoff = 0;
-
 		// The % of players declaring each year is determined by fractionPerYear, except in last year when all players declare.
-		cutoff =
+		const cutoff =
 			i === minMaxAgeDiff
 				? remaining.length
 				: Math.round(fractionPerYear * remaining.length);

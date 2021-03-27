@@ -199,7 +199,7 @@ const genRatings = (
 	};
 
 	const age = g.get("draftAge")[0];
-	if (age != 18) {
+	if (age !== 18) {
 		// Youngest prospects != 18 will be scaled, scaling stops at age 14 and 28
 		const scale = helpers.bound(3 * (19 - age), -27, 21);
 		const rtgs = [

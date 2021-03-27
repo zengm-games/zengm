@@ -33,13 +33,10 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	/* The distribution of football rookies in the default FBGM was written to assume they were generated at 19 and then developed for 2 seasons.
-	 If `draftAge` existed when that code was written, it would not have made sense to include those 2 seasons.
-	 But doing something about that is much more difficult, so we want to keep the 2 seasons of extra development for FBGM currently */
-
 	const draftAge = g.get("draftAge");
 	let baseAge = draftAge[0] - (draftYear - g.get("season"));
 	if (isSport("football")) baseAge -= 2;
+	const minMaxAgeDiff = draftAge[1] - draftAge[0];
 
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
@@ -64,12 +61,20 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	const fractionPerYear = bySport({
-		hockey: 0.75,
-		default: 0.5,
+	// To improve the distribution of DP ages in leagues with modified draftAge, this code will change
+	// the % of players who declare for draft to work better with modified draftAge settings
+	const fractionRemainingInLastYear = bySport({
+		basketball: 1 / 16,
+		football: 1 / 4,
+		hockey: 1 / 256,
 	});
+	// By default: Football/Basketball = 0.5, Hockey = 0.75
+	const fractionPerYear =
+		1 - fractionRemainingInLastYear ** (1 / (minMaxAgeDiff + 1));
 
-	// Develop football players twice
+	// FBGM was originally written to assume players were generated at 19 and developed for two seasons before declaring.
+	// If `draftAge` existed when FBGM was written, it would not make sense to do that. Doing something about that now
+	// is difficult, so we want to keep developing prospects for 2 seasons currently.
 	if (isSport("football")) {
 		for (let i = 0; i < 2; i++) {
 			for (const p of remaining) {
@@ -78,12 +83,10 @@ const genPlayersWithoutSaving = async (
 		}
 	}
 
-	const minMaxAgeDiff = draftAge[1] - draftAge[0];
 	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
 		let cutoff = 0;
 
-		// Top 50% of players remaining enter draft, except in last year.
-		// For football, only juniors and seniors.
+		// The % of players declaring each year is determined by fractionPerYear, except in last year when all players declare.
 		cutoff =
 			i === minMaxAgeDiff
 				? remaining.length

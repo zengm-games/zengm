@@ -473,10 +473,10 @@ export const createWithoutSaving = async (
 	} else {
 		players = [];
 
-		// Generate past 20 years of draft classes, unless forceRetireAge and draftAge make that infeasible
+		// Generate past 20 years of draft classes, unless forceRetireAge and draftAges make that infeasible
 
 		let seasonsSimmed = 20;
-		const forceRetireAgeDiff = g.get("forceRetireAge") - g.get("draftAge")[1];
+		const forceRetireAgeDiff = g.get("forceRetireAge") - g.get("draftAges")[1];
 		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
 			seasonsSimmed = forceRetireAgeDiff;
 		}

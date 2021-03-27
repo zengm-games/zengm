@@ -543,7 +543,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "array",
 								minItems: 1,
 							},
-							draftAge: {
+							draftAges: {
 								type: "array",
 								items: {
 									type: "integer",

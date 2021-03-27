@@ -24,15 +24,15 @@ const genPlayersWithoutSaving = async (
 
 	let numPlayers = baseNumPlayers - existingPlayers.length;
 
-	// Based on draftAge and forceRetireAge settings, check how many players we need per draft class to fill the league
-	const draftAge = g.get("draftAge");
+	// Based on draftAges and forceRetireAge settings, check how many players we need per draft class to fill the league
+	const draftAges = g.get("draftAges");
 	const forceRetireAge = g.get("forceRetireAge");
-	if (forceRetireAge > draftAge[1]) {
+	if (forceRetireAge > draftAges[1]) {
 		const numActivePlayers =
 			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
 
 		const numSeasonsPerPlayer = Math.floor(
-			forceRetireAge - (draftAge[1] + draftAge[0]) / 2,
+			forceRetireAge - (draftAges[1] + draftAges[0]) / 2,
 		);
 		const numPlayersNeededPerYear = Math.ceil(
 			numActivePlayers / numSeasonsPerPlayer,
@@ -53,12 +53,12 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	let baseAge = draftAge[0] - (draftYear - g.get("season"));
+	let baseAge = draftAges[0] - (draftYear - g.get("season"));
 	if (isSport("football")) {
 		// See below comment about FBGM
 		baseAge -= 2;
 	}
-	const minMaxAgeDiff = draftAge[1] - draftAge[0];
+	const minMaxAgeDiff = draftAges[1] - draftAges[0];
 
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
@@ -83,8 +83,8 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	// To improve the distribution of DP ages in leagues with modified draftAge, this code will change
-	// the % of players who declare for draft to work better with modified draftAge settings
+	// To improve the distribution of DP ages in leagues with modified draftAges, this code will change
+	// the % of players who declare for draft to work better with modified draftAges settings
 	const fractionRemainingInLastYear = bySport({
 		basketball: 1 / 16,
 		football: 1 / 4,
@@ -95,7 +95,7 @@ const genPlayersWithoutSaving = async (
 		1 - fractionRemainingInLastYear ** (1 / (minMaxAgeDiff + 1));
 
 	// FBGM was originally written to assume players were generated at 19 and developed for two seasons before declaring.
-	// If `draftAge` existed when FBGM was written, it would not make sense to do that. Doing something about that now
+	// If `draftAges` existed when FBGM was written, it would not make sense to do that. Doing something about that now
 	// is difficult, so we want to keep developing prospects for 2 seasons currently.
 	if (isSport("football")) {
 		for (let i = 0; i < 2; i++) {

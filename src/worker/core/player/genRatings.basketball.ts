@@ -151,14 +151,6 @@ const genRatings = (
 		);
 	}
 
-	// Small chance of freakish ability in 2 categories
-	/*for (let i = 0; i < 2; i++) {
-         if (Math.random() < 0.2) {
-             const key = random.choice(Object.keys(rawRatings));
-             rawRatings[key] = limitRating(rawRatings[key] + random.realGauss(20, 5));
-         }
-     }*/
-
 	const ratings = {
 		stre: rawRatings.stre,
 		spd: rawRatings.spd,
@@ -183,64 +175,6 @@ const genRatings = (
 		skills: [],
 	};
 
-	// Youngest prospects !== 19 will be scaled, scaling stops at age 14 and 30
-	let age = g.get("draftAges")[0];
-	age = helpers.bound(age, 14, 30);
-	if (age !== 19) {
-		const scale = 3 * (19 - age);
-		const rtgs = [
-			"stre",
-			"endu",
-			"ins",
-			"dnk",
-			"ft",
-			"fg",
-			"tp",
-			"oiq",
-			"diq",
-		] as const;
-		// These ratings develop slowly compared to others, so they scale less. Works well in testing
-		const rtgsDevelopSlow = ["spd", "jmp", "drb", "pss", "reb"];
-
-		for (const rtg of rtgs) {
-			if (rtgsDevelopSlow.includes(rtg)) {
-				ratings[rtg] -= Math.round(scale / 2);
-			} else {
-				ratings[rtg] -= scale;
-			}
-			ratings[rtg] = helpers.bound(ratings[rtg], 0, 100);
-		}
-	}
-
-	// Ugly hack: Tall people can't dribble/pass very well
-	/*if (ratings.hgt > 40) {
-         ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
-         ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
-     } else {
-         ratings.drb = limitRating(ratings.drb + 10);
-         ratings.pss = limitRating(ratings.pss + 10);
-     }*/
-	// Higher fuzz for draft prospects
-
-	let factor = 1;
-
-	if (g.get("phase") >= PHASE.RESIGN_PLAYERS) {
-		if (season === g.get("season") + 2) {
-			factor = Math.sqrt(2);
-		} else if (season >= g.get("season") + 3) {
-			factor = 2;
-		}
-	} else {
-		if (season === g.get("season") + 1) {
-			factor = Math.sqrt(2);
-		} else if (season >= g.get("season") + 2) {
-			factor = 2;
-		}
-	}
-
-	ratings.fuzz *= factor;
-
-	ratings.pos = posBasketball(ratings);
 	return {
 		heightInInches,
 		ratings,

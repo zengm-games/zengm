@@ -415,7 +415,18 @@ export const options: {
 		key: "draftAges",
 		name: "Age of draft prospects",
 		godModeRequired: "existingLeagueOnly",
-		description: "Set the minimum/maximum age of generated draft prospects.",
+		description: (
+			<>
+				Set the minimum/maximum age of generated draft prospects.{" "}
+				<a
+					href="https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					More info.
+				</a>
+			</>
+		),
 		type: "jsonString",
 		validator: value => {
 			if (!Array.isArray(value)) {

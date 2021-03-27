@@ -183,11 +183,11 @@ const genRatings = (
 		skills: [],
 	};
 
-	// If the youngest players generated aren't 19, scale ratings to match age
-	const age = g.get("draftAge")[0];
+	// Youngest prospects !== 19 will be scaled, scaling stops at age 14 and 30
+	let age = g.get("draftAge")[0];
+	age = helpers.bound(age, 14, 30);
 	if (age !== 19) {
-		// Youngest prospects != 19 will be scaled, scaling stops at age 14 and 28
-		const scale = helpers.bound(3 * (19 - age), -27, 21);
+		const scale = 3 * (19 - age);
 		const rtgs = [
 			"stre",
 			"endu",

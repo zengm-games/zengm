@@ -357,11 +357,11 @@ const genRatings = (
 		pots: { ...defaultOvrsOrPots },
 	};
 
-	// If the youngest players generated aren't 21, scale player ratings to match
-	const age = g.get("draftAge")[0];
+	// Youngest prospects !== 21 will be scaled, scaling stops at age 14 and 30
+	let age = g.get("draftAge")[0];
+	age = helpers.bound(age, 14, 30);
 	if (age !== 21) {
-		// Youngest prospects != 21 will be scaled, scaling stops at age 14 and 28
-		const scale = helpers.bound(3 * (21 - age), -27, 21);
+		const scale = 3 * (21 - age);
 		const rtgs = [
 			"stre",
 			"spd",

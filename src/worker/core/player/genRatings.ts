@@ -27,8 +27,18 @@ const genRatings = (season: number, scoutingRank: number) => {
 	const age = isSport("hockey")
 		? helpers.bound(g.get("draftAges")[0], 13, 26)
 		: helpers.bound(g.get("draftAges")[0], 14, 30);
-	if (age !== DEFAULT_AGE) {
-		const scale = 3 * (DEFAULT_AGE - age);
+	const ageDiff = age - DEFAULT_AGE;
+	if (ageDiff !== 0) {
+		// ageDiff matters more for players younger than normal, because young players develop faster
+		let scaleFactor;
+		if (ageDiff < 0) {
+			scaleFactor = 3 + 0.2 * Math.abs(ageDiff) ** 1.5;
+		} else {
+			scaleFactor = 3;
+		}
+
+		const scale = Math.round(scaleFactor * ageDiff);
+
 		const rtgs = bySport({
 			basketball: [
 				"stre",
@@ -84,11 +94,16 @@ const genRatings = (season: number, scoutingRank: number) => {
 		});
 
 		for (const rtg of rtgs) {
-			const amount = rtgsDevelopSlow.includes(rtg)
-				? Math.round(scale / 2)
-				: scale;
 			(ratings as any)[rtg] = helpers.bound(
-				(ratings as any)[rtg] - amount,
+				(ratings as any)[rtg] + scale,
+				0,
+				100,
+			);
+		}
+
+		for (const rtg of rtgsDevelopSlow) {
+			(ratings as any)[rtg] = helpers.bound(
+				(ratings as any)[rtg] + Math.round(scale / 2),
 				0,
 				100,
 			);

@@ -358,7 +358,7 @@ const genRatings = (
 	};
 
 	// If the youngest players generated aren't 21, scale player ratings to match
-	const age = g.get("draftAge")[0];
+	const age = g.get("draftAges")[0];
 	if (age !== 21) {
 		// Youngest prospects != 21 will be scaled, scaling stops at age 14 and 28
 		const scale = helpers.bound(3 * (21 - age), -27, 21);

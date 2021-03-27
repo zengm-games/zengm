@@ -44,7 +44,7 @@ type Key =
 	| "numPlayoffByes"
 	| "draftType"
 	| "numSeasonsFutureDraftPicks"
-	| "draftAge"
+	| "draftAges"
 	| "salaryCap"
 	| "minPayroll"
 	| "luxuryPayroll"
@@ -412,7 +412,7 @@ export const options: {
 	},
 	{
 		category: "Draft",
-		key: "draftAge",
+		key: "draftAges",
 		name: "Age of draft prospects",
 		godModeRequired: "existingLeagueOnly",
 		description: "Set the minimum/maximum age of generated draft prospects.",

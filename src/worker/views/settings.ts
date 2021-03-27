@@ -35,7 +35,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"), // Always get latest value
 			numPlayoffByes: g.get("numPlayoffByes"), // Always get latest value
 			draftType: g.get("draftType"),
-			draftAge: g.get("draftAge"),
+			draftAges: g.get("draftAges"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			allStarGame: g.get("allStarGame"),
 			budget: g.get("budget"),

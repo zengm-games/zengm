@@ -22,7 +22,27 @@ const genPlayersWithoutSaving = async (
 		normalNumPlayers,
 	);
 
-	const numPlayers = baseNumPlayers - existingPlayers.length;
+	let numPlayers = baseNumPlayers - existingPlayers.length;
+
+	// Based on draftAge and forceRetireAge settings, check how many players we need per draft class to fill the league
+	const draftAge = g.get("draftAge");
+	const forceRetireAge = g.get("forceRetireAge");
+	if (forceRetireAge > draftAge[1]) {
+		const numActivePlayers =
+			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
+
+		const numSeasonsPerPlayer = Math.floor(
+			forceRetireAge - (draftAge[1] + draftAge[0]) / 2,
+		);
+		const numPlayersNeededPerYear = Math.ceil(
+			numActivePlayers / numSeasonsPerPlayer,
+		);
+
+		if (numPlayersNeededPerYear > numPlayers) {
+			numPlayers = numPlayersNeededPerYear;
+		}
+	}
+
 	if (numPlayers <= 0) {
 		return [];
 	}
@@ -33,7 +53,6 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	const draftAge = g.get("draftAge");
 	let baseAge = draftAge[0] - (draftYear - g.get("season"));
 	if (isSport("football")) {
 		// See below comment about FBGM

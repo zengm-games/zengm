@@ -24,11 +24,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 	});
 
 	// Apply bonus/penalty based on age, to simulate extra/fewer years of development that a player should have gotten. For older players, this is bounded by an upper limit, because players stop developing eventually. You might think player.develop should be used here, at least for old players, but that would result in old players all being horrible, which is no fun.
-	const age = helpers.bound(
-		g.get("draftAges")[0],
-		-Infinity,
-		isSport("hockey") ? 26 : 30,
-	);
+	const age = helpers.bound(g.get("draftAges")[0], -Infinity, 30);
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
 		const scale = Math.round(

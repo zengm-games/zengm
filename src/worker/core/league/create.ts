@@ -475,9 +475,11 @@ export const createWithoutSaving = async (
 
 		// Generate past 20 years of draft classes, unless forceRetireAge and draftAge make that infeasible
 
-		const defaultSeasonsSimmed = 20;
+		let seasonsSimmed = 20;
 		const forceRetireAgeDiff = g.get("forceRetireAge") - g.get("draftAge")[1];
-		const seasonsSimmed = Math.min(forceRetireAgeDiff, defaultSeasonsSimmed);
+		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
+			seasonsSimmed = forceRetireAgeDiff;
+		}
 
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
 		const NUM_PAST_SEASONS = seasonsSimmed + seasonOffset;

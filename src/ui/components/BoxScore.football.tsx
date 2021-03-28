@@ -269,9 +269,9 @@ const ScoringSummary = memo(
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
 						if (event.quarter.startsWith("OT")) {
-							const overtime = parseInt(event.quarter.replace("OT", ""));
-							if (overtime > 1) {
-								quarterText = `${helpers.ordinal(overtime)} overtime`;
+							const overtimes = parseInt(event.quarter.replace("OT", ""));
+							if (overtimes > 1) {
+								quarterText = `${helpers.ordinal(overtimes)} overtime`;
 							} else {
 								quarterText = "Overtime";
 							}

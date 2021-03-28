@@ -174,7 +174,12 @@ const ScoringSummary = memo(
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
 						if (event.quarter > numPeriods) {
-							quarterText = "Overtime";
+							const overtimes = event.quarter - numPeriods;
+							if (overtimes > 1) {
+								quarterText = `${helpers.ordinal(overtimes)} overtime`;
+							} else {
+								quarterText = "Overtime";
+							}
 						} else {
 							quarterText = `${helpers.ordinal(event.quarter)} ${getPeriodName(
 								numPeriods,

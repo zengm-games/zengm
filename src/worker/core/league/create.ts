@@ -473,10 +473,24 @@ export const createWithoutSaving = async (
 	} else {
 		players = [];
 
-		// Generate past 20 years of draft classes
+		// Generate past 20 years of draft classes, unless forceRetireAge/draftAges make that infeasible
+		let seasonsSimmed = 20;
+		const forceRetireAge = g.get("forceRetireAge");
+		const draftAges = g.get("draftAges");
+		const forceRetireAgeDiff = forceRetireAge - draftAges[1];
+		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
+			seasonsSimmed = forceRetireAgeDiff;
+		} else {
+			// Maybe add some extra seasons, for leagues when players start young
+			const estimatedRetireAge = forceRetireAgeDiff > 0 ? forceRetireAge : 35;
+			const estimatedRetireAgeDiff = estimatedRetireAge - draftAges[1];
+			if (estimatedRetireAgeDiff > seasonsSimmed) {
+				seasonsSimmed = estimatedRetireAgeDiff;
+			}
+		}
 
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
-		const NUM_PAST_SEASONS = 20 + seasonOffset;
+		const NUM_PAST_SEASONS = seasonsSimmed + seasonOffset;
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();

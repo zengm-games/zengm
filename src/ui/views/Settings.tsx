@@ -44,6 +44,7 @@ type Key =
 	| "numPlayoffByes"
 	| "draftType"
 	| "numSeasonsFutureDraftPicks"
+	| "draftAges"
 	| "salaryCap"
 	| "minPayroll"
 	| "luxuryPayroll"
@@ -60,6 +61,7 @@ type Key =
 	| "tragicDeathRate"
 	| "brotherRate"
 	| "sonRate"
+	| "forceRetireAge"
 	| "homeCourtAdvantage"
 	| "rookieContractLengths"
 	| "rookiesCanRefuse"
@@ -409,6 +411,41 @@ export const options: {
 		},
 	},
 	{
+		category: "Draft",
+		key: "draftAges",
+		name: "Age of draft prospects",
+		godModeRequired: "existingLeagueOnly",
+		description: (
+			<>
+				Set the minimum/maximum age of generated draft prospects.{" "}
+				<a
+					href="https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					More info.
+				</a>
+			</>
+		),
+		type: "jsonString",
+		validator: value => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			if (value.length != 2) {
+				throw new Error("Must have 2 numbers");
+			}
+			if (value[0] > value[1]) {
+				throw new Error("Max age can't be less than min age!");
+			}
+			for (const num of value) {
+				if (!Number.isInteger(num)) {
+					throw new Error("Array must contain only integers");
+				}
+			}
+		},
+	},
+	{
 		category: "Finances",
 		key: "salaryCap",
 		name: "Salary Cap",
@@ -659,6 +696,15 @@ export const options: {
 		type: "float",
 		description:
 			"The probability that a new player will be the son of an existing player.",
+	},
+	{
+		category: "Events",
+		key: "forceRetireAge",
+		name: "Force Retire at Age",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
+		description:
+			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",
 	},
 	{
 		category: "Contracts",
@@ -913,7 +959,7 @@ if (isSport("basketball")) {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length < 3 || value.length > 3) {
+				if (value.length != 3) {
 					throw new Error("Must have 3 numbers");
 				}
 				for (const num of value) {

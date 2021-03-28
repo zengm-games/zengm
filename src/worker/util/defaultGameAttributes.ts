@@ -52,6 +52,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	// The probability that a new player will be the son or brother of an existing player. In practice, the observed number may be smaller than this because sometimes a valid match will not be found.
 	sonRate: 0.02,
 	brotherRate: 0.02,
+	forceRetireAge: 0,
 
 	easyDifficultyInPast: false,
 	hardCap: false,
@@ -62,6 +63,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	draftType: "nba2019",
 	numDraftRounds: 2,
+	draftAges: [19, 22],
 	defaultStadiumCapacity: DEFAULT_STADIUM_CAPACITY,
 	playersRefuseToNegotiate: true,
 	allStarGame: 0.7,
@@ -153,6 +155,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				ties: wrap(true),
 				draftType: "noLottery",
 				numDraftRounds: 7,
+				draftAges: [21, 22],
 				salaryCap: 200000,
 				minPayroll: 150000,
 				minContract: 500,
@@ -195,6 +198,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				injuryRate: 1 / 10000,
 				draftType: "nhl2017",
 				numDraftRounds: 4,
+				draftAges: [18, 21],
 				allStarGame: null,
 				numPlayersOnCourt: 6,
 				otl: wrap(true),

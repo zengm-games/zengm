@@ -59,7 +59,7 @@
 		"react-confirm": "^0.1.23",
 		"react-dom": "^17.0.2",
 		"react-select": "^4.3.0",
-		"react-sortable-hoc": "^1.11.0",
+		"react-sortable-hoc": "^2.0.0",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.2.0",
 		"workbox-google-analytics": "^6.1.2",

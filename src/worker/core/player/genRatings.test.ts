@@ -1,7 +1,7 @@
 /**
  * This is not actually a test, it's a script to see what the quartiles of ovr ratings look like for different draftAge settings, for use when parametrizing the age adjustment in genRatings.
  *
- * Run this like:
+ * Run this like (after unskipping the test):
  *
  * $ SPORT=basketball yarn jest src/worker/core/player/genRatings.test.ts | grep QUARTILES
  *
@@ -42,8 +42,8 @@ const printQuartiles = async (age?: number) => {
 	);
 };
 
-describe("worker/core/player/genRatings", () => {
-	test("no error with restricted draftAges and forceRetireAge settings", async () => {
+describe.skip("worker/core/player/genRatings", () => {
+	test("this is not actually a test, see comment at the top of the file", async () => {
 		await printQuartiles();
 
 		for (const age of range(0, 50, 5)) {

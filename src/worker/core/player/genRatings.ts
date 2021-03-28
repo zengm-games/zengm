@@ -29,7 +29,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 	if (ageDiff !== 0) {
 		const exponent = bySport({
 			basketball: 0.8,
-			football: 0.85,
+			football: 1,
 			hockey: 0.75,
 		});
 

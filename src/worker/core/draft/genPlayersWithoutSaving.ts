@@ -6,6 +6,41 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 
+// To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
+const defaultFractionPerYear = bySport({
+	basketball: 0.5,
+	football: 0.5,
+	hockey: 0.75,
+});
+
+// For default values of numYearsBeforeLastYear, output is: basketball/football = 0.5, hockey = 0.75
+const getFractionPerYear = (ageGap: number) => {
+	if (ageGap === 0) {
+		return 1;
+	}
+
+	// For small number of years, just do default - this handles the defaults for all sports currently
+	if (ageGap <= 3) {
+		return defaultFractionPerYear;
+	}
+
+	// Find fractionPerYear such that the amount remaining in the last year is below 1/ageGap. This will result in a larger number of players in the last year than the year before (or possibly many years before), but that's okay I guess.
+	for (let fractionPerYear = 0; fractionPerYear < 1; fractionPerYear += 0.01) {
+		let result = 1;
+		let enteringDraftThisYear = 0;
+		for (let i = 0; i < ageGap; i++) {
+			enteringDraftThisYear = result * fractionPerYear;
+			result -= enteringDraftThisYear;
+		}
+		if (result < 1 / ageGap) {
+			return fractionPerYear;
+		}
+	}
+
+	// Should never happen
+	return 1 / ageGap;
+};
+
 const genPlayersWithoutSaving = async (
 	draftYear: number,
 	scoutingRank: number,
@@ -83,16 +118,7 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	// To improve the distribution of DP ages in leagues with modified draftAges, this code will change
-	// the % of players who declare for draft to work better with modified draftAges settings
-	const fractionRemainingInLastYear = bySport({
-		basketball: 1 / 16,
-		football: 1 / 4,
-		hockey: 1 / 256,
-	});
-	// By default: Football/Basketball = 0.5, Hockey = 0.75
-	const fractionPerYear =
-		1 - fractionRemainingInLastYear ** (1 / (minMaxAgeDiff + 1));
+	const fractionPerYear = getFractionPerYear(minMaxAgeDiff);
 
 	// FBGM was originally written to assume players were generated at 19 and developed for two seasons before declaring.
 	// If `draftAges` existed when FBGM was written, it would not make sense to do that. Doing something about that now

@@ -64,6 +64,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 				"pcv",
 				"tck",
 				"prs",
+				"rns",
 				"kpw",
 				"kac",
 				"ppw",

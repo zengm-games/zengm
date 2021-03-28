@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../../common";
+import { bySport, PHASE } from "../../../common";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import { g, helpers } from "../../util";
 import genRatingsBasketball from "./genRatings.basketball";

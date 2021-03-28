@@ -16,6 +16,7 @@ const mimeTypes = {
 	".json": "application/json",
 	".map": "application/json",
 	".png": "image/png",
+	".svg": "image/svg+xml",
 	".webmanifest": "application/manifest+json",
 	".woff": "font/woff",
 	".woff2": "font/woff2",

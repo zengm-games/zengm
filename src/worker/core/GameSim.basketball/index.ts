@@ -2163,10 +2163,11 @@ class GameSim {
 					)}`,
 				];
 			} else if (type === "overtime") {
+				const count = this.team[0].stat.ptsQtrs.length - this.numPeriods;
 				texts = [
-					`Start of ${helpers.ordinal(
-						this.team[0].stat.ptsQtrs.length - this.numPeriods,
-					)} overtime period`,
+					`Start of ${
+						count === 1 ? "" : `${helpers.ordinal(count)} `
+					} overtime`,
 				];
 			} else if (type === "gameOver") {
 				texts = ["End of game"];

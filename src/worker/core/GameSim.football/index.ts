@@ -255,6 +255,7 @@ class GameSim {
 		this.twoMinuteWarningHappened = false;
 		this.playByPlay.logEvent("overtime", {
 			clock: this.clock,
+			overtimes: this.overtimes,
 		});
 		this.o = Math.random() < 0.5 ? 0 : 1;
 		this.d = this.o === 0 ? 1 : 0;

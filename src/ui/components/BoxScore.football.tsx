@@ -268,8 +268,13 @@ const ScoringSummary = memo(
 				<tbody>
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
-						if (event.quarter === "OT") {
-							quarterText = "Overtime";
+						if (event.quarter.startsWith("OT")) {
+							const overtime = parseInt(event.quarter.replace("OT", ""));
+							if (overtime > 1) {
+								quarterText = `${helpers.ordinal(overtime)} overtime`;
+							} else {
+								quarterText = "Overtime";
+							}
 						} else {
 							const quarter = parseInt(event.quarter.replace("Q", ""));
 							if (!Number.isNaN(quarter)) {

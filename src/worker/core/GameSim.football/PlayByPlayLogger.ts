@@ -73,6 +73,7 @@ class PlayByPlayLogger {
 			offense,
 			penaltyName,
 			quarter,
+			overtimes,
 			safety,
 			success,
 			t,
@@ -90,6 +91,7 @@ class PlayByPlayLogger {
 			offense?: boolean;
 			penaltyName?: string;
 			quarter?: number;
+			overtimes?: number;
 			safety?: boolean;
 			success?: boolean;
 			t?: TeamNum;
@@ -148,18 +150,23 @@ class PlayByPlayLogger {
 
 				text = `${names[0]} was injured!`;
 			} else if (type === "quarter") {
-				text = `Start of ${helpers.ordinal(quarter)} ${getPeriodName(
-					g.get("numPeriods"),
-				)}`;
-
 				if (quarter === undefined) {
 					throw new Error("Missing quarter");
 				}
 
+				text = `Start of ${helpers.ordinal(quarter)} ${getPeriodName(
+					g.get("numPeriods"),
+				)}`;
+
 				this.quarter = `Q${quarter}`;
 			} else if (type === "overtime") {
-				text = "Start of overtime";
-				this.quarter = "OT";
+				if (overtimes === undefined) {
+					throw new Error("Missing overtimes");
+				}
+				this.quarter = `OT${overtimes}`;
+				text = `Start of ${
+					overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
+				} overtime`;
 			} else if (type === "gameOver") {
 				text = "End of game";
 			} else if (type === "kickoff") {

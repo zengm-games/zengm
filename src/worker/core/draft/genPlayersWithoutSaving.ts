@@ -59,16 +59,14 @@ const genPlayersWithoutSaving = async (
 
 	let numPlayers = baseNumPlayers - existingPlayers.length;
 
-	// Based on draftAges and forceRetireAge settings, check how many players we need per draft class to fill the league
+	// Based on draftAges and forceRetireAge settings, check how many players we need per draft class to fill the league. KEEP IN SYNC WITH LEAGUE CREATION seasonsSimmed
 	const draftAges = g.get("draftAges");
 	const forceRetireAge = g.get("forceRetireAge");
 	if (forceRetireAge > draftAges[1]) {
 		const numActivePlayers =
 			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
 
-		const numSeasonsPerPlayer = Math.floor(
-			forceRetireAge - (draftAges[1] + draftAges[0]) / 2,
-		);
+		const numSeasonsPerPlayer = Math.floor(forceRetireAge - draftAges[1]);
 		const numPlayersNeededPerYear = Math.ceil(
 			numActivePlayers / numSeasonsPerPlayer,
 		);

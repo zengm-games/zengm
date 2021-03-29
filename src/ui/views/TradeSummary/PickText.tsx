@@ -51,7 +51,7 @@ const PickText = ({
 					{asset.season}
 				</a>
 			)}{" "}
-			{helpers.ordinal(asset.round)} round pick
+			{helpers.ordinal(asset.round)} around pick
 			{details.length > 0 ? (
 				<>
 					{" "}

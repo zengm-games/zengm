@@ -1498,6 +1498,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									tid: newTeam.tid,
 								});
 							}}
+							disabled={disableWhileLoadingLeagueFile}
 						/>
 						<div className="input-group mb-1">
 							<select

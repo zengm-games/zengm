@@ -4,12 +4,14 @@ const NextPrevButtons = <T extends unknown>({
 	currentItem,
 	items,
 	reverse,
+	disabled,
 	onChange,
 	style,
 }: {
 	currentItem?: T;
 	items: T[];
 	reverse?: boolean;
+	disabled?: boolean;
 	onChange: (newItem: T) => void;
 	style?: CSSProperties;
 }) => {
@@ -17,7 +19,7 @@ const NextPrevButtons = <T extends unknown>({
 
 	const buttonInfo = [
 		{
-			disabled: index <= 0,
+			disabled: disabled || index <= 0,
 			onClick: (event: SyntheticEvent) => {
 				event.preventDefault();
 				const newItem = items[index - 1];
@@ -27,7 +29,7 @@ const NextPrevButtons = <T extends unknown>({
 			},
 		},
 		{
-			disabled: index >= items.length - 1,
+			disabled: disabled || index >= items.length - 1,
 			onClick: (event: SyntheticEvent) => {
 				event.preventDefault();
 				const newItem = items[index + 1];

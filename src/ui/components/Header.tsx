@@ -11,33 +11,25 @@ const updateSkyscraperDisplay = () => {
 		const documentElement = document.documentElement;
 
 		if (documentElement && documentElement.clientWidth >= widthCutoff) {
-			if (
-				!displayed &&
-				window.freestar.newAdSlots &&
-				window.googletag &&
-				window.googletag.pubads
-			) {
-				div.style.display = "block";
-				window.freestar.newAdSlots([
-					{
-						placementName: AD_DIVS.rail,
-						slotId: AD_DIVS.rail,
-					},
-				]);
-				console.log("newAdSlots", AD_DIVS.rail);
-				displayed = true;
+			if (!displayed) {
+				window.freestar.queue.push(() => {
+					div.style.display = "block";
+					window.freestar.newAdSlots([
+						{
+							placementName: AD_DIVS.rail,
+							slotId: AD_DIVS.rail,
+						},
+					]);
+					displayed = true;
+				});
 			}
 		} else {
-			if (
-				displayed &&
-				window.freestar.deleteAdSlots &&
-				window.googletag &&
-				window.googletag.pubads
-			) {
-				div.style.display = "none";
-				window.freestar.deleteAdSlots(AD_DIVS.rail);
-				console.log("deleteAdSlots", AD_DIVS.rail);
-				displayed = false;
+			if (displayed) {
+				window.freestar.queue.push(() => {
+					div.style.display = "none";
+					window.freestar.deleteAdSlots(AD_DIVS.rail);
+					displayed = false;
+				});
 			}
 		}
 	}

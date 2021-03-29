@@ -245,12 +245,10 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (
-						window.freestar.refreshAllSlots &&
-						window.googletag &&
-						window.googletag.pubads
-					) {
-						window.freestar.refreshAllSlots();
+					if (window.freestar.refreshAllSlots) {
+						window.freestar.queue.push(() => {
+							window.freestar.refreshAllSlots();
+						});
 					}
 				} else {
 					initialLoad = false;

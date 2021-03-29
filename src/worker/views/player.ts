@@ -127,7 +127,7 @@ const updatePlayer = async (
 					salaries: any[];
 					salariesTotal: any;
 					untradable: any;
-					untradableMsg: string;
+					untradableMsg?: string;
 					ratings: (MinimalPlayerRatings & {
 						abbrev: string;
 						age: number;

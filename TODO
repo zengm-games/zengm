@@ -1,4 +1,10 @@
-move foul rate factor down https://discord.com/channels/290013534023057409/331882115119448065/824741939463061504
+draft class quality setting
+- by default, it's random
+- override in "regen draft class"
+- influence the new mode for real draft rankings
+- check 0 age players in all
+
+award editing in hockey bugs? https://discord.com/channels/290013534023057409/290015591216054273/825465168896065536
 
 settings re-design
 - all settings should be editable when creating a new league

@@ -920,15 +920,6 @@ if (isSport("basketball")) {
 		},
 		{
 			category: "Game Simulation",
-			key: "foulRateFactor",
-			name: "Foul Rate Factor",
-			godModeRequired: "always",
-			type: "float",
-			description:
-				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
-		},
-		{
-			category: "Game Simulation",
 			key: "foulsNeededToFoulOut",
 			name: "# Fouls Needed to Foul Out",
 			godModeRequired: "always",
@@ -1051,6 +1042,15 @@ if (isSport("basketball")) {
 			type: "float",
 			description:
 				"The baseline offensive rebound percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "foulRateFactor",
+			name: "Foul Rate Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
 			category: "Player Development",

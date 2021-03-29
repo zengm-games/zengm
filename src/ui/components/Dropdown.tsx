@@ -62,10 +62,11 @@ const Select = ({
 			<NextPrevButtons
 				currentItem={currentItem}
 				items={options}
-				reverse={field.startsWith("seasons")}
 				onChange={newItem => {
 					handleChange(newItem.key);
 				}}
+				reverse={field.startsWith("seasons")}
+				style={{ marginLeft: 2 }}
 			/>
 		);
 	}

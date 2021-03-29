@@ -1,15 +1,17 @@
-import type { SyntheticEvent } from "react";
+import type { CSSProperties, SyntheticEvent } from "react";
 
 const NextPrevButtons = <T extends unknown>({
 	currentItem,
 	items,
 	reverse,
 	onChange,
+	style,
 }: {
 	currentItem?: T;
 	items: T[];
 	reverse?: boolean;
 	onChange: (newItem: T) => void;
+	style?: CSSProperties;
 }) => {
 	const index = items.indexOf(currentItem as any);
 
@@ -42,7 +44,7 @@ const NextPrevButtons = <T extends unknown>({
 	}
 
 	return (
-		<div className="btn-group" style={{ marginLeft: 2 }}>
+		<div className="btn-group" style={style}>
 			<button
 				className="btn btn-light-bordered btn-xs"
 				disabled={buttonInfo[0].disabled}

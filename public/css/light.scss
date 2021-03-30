@@ -1221,7 +1221,7 @@ a.anchor {
 	}
 	&[data-popper-placement="right"] {
 		margin-left: 8px !important;
-		margin-top: -8px !important;
+		margin-top: -11px !important;
 	}
 	&[data-popper-placement="bottom"] {
 		margin-left: -4px !important;
@@ -1229,7 +1229,7 @@ a.anchor {
 	}
 	&[data-popper-placement="left"] {
 		margin-right: 8px !important;
-		margin-top: -8px !important;
+		margin-top: -11px !important;
 	}
 }
 .popover-margin-fix-2 {
@@ -1239,6 +1239,6 @@ a.anchor {
 	}
 	&[data-popper-placement="right"],
 	&[data-popper-placement="left"] {
-		margin-top: -4px !important;
+		margin-top: -7px !important;
 	}
 }

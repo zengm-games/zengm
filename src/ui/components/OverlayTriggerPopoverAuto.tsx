@@ -10,22 +10,19 @@ const OverlayTriggerPopoverAuto = ({
 	popoverID,
 }: {
 	children: OverlayTriggerProps["children"];
-	onEnter: OverlayTriggerProps["onEnter"];
+	onEnter?: OverlayTriggerProps["onEnter"];
 	popoverContent: ReactNode;
 	popoverID: string;
 }) => {
 	const prevPopperPlacement = useRef<string | undefined>();
 
 	// Apply class here based on best guess of what we'll actually want in onEnter, to minimize flicker
+	const className = prevPopperPlacement.current
+		? "popover-margin-fix-2"
+		: "popover-margin-fix-1";
+
 	const popover = (
-		<Popover
-			id={popoverID}
-			className={
-				prevPopperPlacement.current
-					? "popover-margin-fix-2"
-					: "popover-margin-fix-1"
-			}
-		>
+		<Popover id={popoverID} className={className}>
 			{popoverContent}
 		</Popover>
 	);

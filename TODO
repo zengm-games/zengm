@@ -1,8 +1,4 @@
-popover position bug
-- make work for HelpPopover too - abstract it out
-- work for all positions
-- on switch of position, need to reset initialPopoverRender
-  - needs to reset each time, so maybe it should be "last rendered direction" and then check if that changed
+flicker on helppopover reopen
 
 draft class quality setting
 - by default, it's random

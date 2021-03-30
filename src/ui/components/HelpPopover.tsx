@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import { OverlayTrigger, Popover } from "react-bootstrap";
+import { Popover } from "react-bootstrap";
 import type { ReactNode } from "react";
+import OverlayTriggerPopoverAuto from "./OverlayTriggerPopoverAuto";
 
 const HelpPopover = ({
 	children,
@@ -20,22 +21,18 @@ const HelpPopover = ({
 	}
 	className += " glyphicon glyphicon-question-sign help-icon";
 
-	const popover = (
-		<Popover id={title}>
-			<Popover.Title as="h3">{title}</Popover.Title>
-			<Popover.Content>{children}</Popover.Content>
-		</Popover>
-	);
-
 	return (
-		<OverlayTrigger
-			trigger="click"
-			placement="auto"
-			overlay={popover}
-			rootClose
+		<OverlayTriggerPopoverAuto
+			popoverContent={
+				<>
+					<Popover.Title as="h3">{title}</Popover.Title>
+					<Popover.Content>{children}</Popover.Content>
+				</>
+			}
+			popoverID={title}
 		>
 			<span className={className} style={style} />
-		</OverlayTrigger>
+		</OverlayTriggerPopoverAuto>
 	);
 };
 

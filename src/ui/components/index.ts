@@ -43,6 +43,7 @@ export { default as RosterSalarySummary } from "./RosterSalarySummary";
 export { default as SafeHtml } from "./SafeHtml";
 export { default as SideBar } from "./SideBar";
 export { default as SkillsBlock } from "./SkillsBlock";
+export { default as Skyscraper } from "./Skyscraper";
 export { default as SortableTable } from "./SortableTable";
 export { default as StatWithChange } from "./StatWithChange";
 export { default as WatchBlock } from "./WatchBlock";

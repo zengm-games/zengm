@@ -17,6 +17,7 @@ import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import Notifications from "./Notifications";
 import SideBar from "./SideBar";
+import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
 import type { Context } from "../router";
@@ -295,14 +296,19 @@ const Controller = () => {
 			<LeagueTopBar />
 			<TitleBar />
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
-				<Header />
 				<SideBar pageID={pageID} />
-				<main className="p402_premium" id="actual-content">
-					<div id="actual-actual-content" className="clearfix">
-						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
+				<div className="d-flex">
+					<div className="w-100">
+						<Header />
+						<main className="p402_premium" id="actual-content">
+							<div id="actual-actual-content" className="clearfix">
+								<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
+							</div>
+						</main>
+						<Footer />
 					</div>
-				</main>
-				<Footer />
+					<Skyscraper />
+				</div>
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />

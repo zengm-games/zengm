@@ -109,23 +109,18 @@ h5 {
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.padding-for-skyscraper {
-		padding-right: 190px;
-	}
 	.skyscraper-wrapper {
 		display: block;
-		position: absolute;
-		top: 0;
+		position: sticky;
+		top: 60px;
 		right: 0;
 		height: 600px;
-		width: 190px;
 	}
 	#basketball-gm_right_rail,
 	#football-gm_right_rail,
 	#zen-gm_right_rail {
 		width: 160px;
 		height: 600px;
-		margin: 0 auto;
 	}
 }
 

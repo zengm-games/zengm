@@ -164,7 +164,7 @@ const processStats = (
 				row[stat] = percentage(ts.orb, ts.orb + ts.oppDrb);
 				scale = false;
 			} else if (stat === "ftpFga") {
-				row[stat] = percentage(ts.ft, ts.fga);
+				row[stat] = ts.ft / ts.fga;
 				scale = false;
 			} else if (
 				stat === "season" ||

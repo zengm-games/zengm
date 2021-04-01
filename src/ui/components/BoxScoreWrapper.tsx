@@ -143,12 +143,12 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 					const efg = (100 * (t.fg + t.tp / 2)) / t.fga;
 					const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
 					const orbp = (100 * t.orb) / (t.orb + t2.drb);
-					const ftpfga = t.ft / t.fga;
+					const ftpFga = t.ft / t.fga;
 
 					const efg2 = (100 * (t2.fg + t2.tp / 2)) / t2.fga;
 					const tovp2 = (100 * t2.tov) / (t2.fga + 0.44 * t2.fta + t2.tov);
 					const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
-					const ftpfga2 = t2.ft / t2.fga;
+					const ftpFga2 = t2.ft / t2.fga;
 
 					return (
 						<tr key={t.abbrev}>
@@ -161,8 +161,8 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 							<td className={orbp > orbp2 ? "table-success" : undefined}>
 								{helpers.roundStat(orbp, "orbp")}
 							</td>
-							<td className={ftpfga > ftpfga2 ? "table-success" : undefined}>
-								{helpers.roundStat(ftpfga, "ftpfga")}
+							<td className={ftpFga > ftpFga2 ? "table-success" : undefined}>
+								{helpers.roundStat(ftpFga, "ftpFga")}
 							</td>
 						</tr>
 					);

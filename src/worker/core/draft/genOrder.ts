@@ -371,7 +371,8 @@ const genOrder = async (
 		const round = roundIndex + 1;
 
 		// Handle tiebreakers for the 2nd+ round (1st is already done by getTeamsByRound, but 2nd can't be done until now because it depends on lottery results for basketball/football)
-		if (TIEBREAKER_AFTER_FIRST_ROUND !== "same") {
+		// Skip random drafts because this code assumes teams appear in the same order every round, which is not true there!
+		if (draftType !== "random" && TIEBREAKER_AFTER_FIRST_ROUND !== "same") {
 			for (const { rounds, teams } of Object.values(ties)) {
 				if (rounds.includes(round)) {
 					// From getTeamsByRound, teams is guaranteed to be a continuous section of roundTeams, so we can just figure out the correct order for them and then replace them in roundTeam

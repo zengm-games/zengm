@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
-import { AWARD_NAMES, isSport, SIMPLE_AWARDS } from "../../common";
+import { AWARD_NAMES, bySport, isSport, SIMPLE_AWARDS } from "../../common";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -17,6 +17,55 @@ const Position = ({ index, p }: { index: number; p: any }) => {
 		pos = "PR";
 	}
 	return <div style={{ width: 26, marginTop: 10 }}>{pos}</div>;
+};
+
+const makeAwardPlayer = (
+	p: any,
+	{
+		type,
+		pos,
+	}: {
+		type?: "defense";
+		pos?: string;
+	} = {},
+) => {
+	return {
+		pid: p.pid,
+		name: p.name,
+		tid: p.stats.tid,
+		abbrev: p.stats.abbrev,
+		...bySport<any>({
+			basketball:
+				type === "defense"
+					? {
+							trb: p.stats.trb,
+							blk: p.stats.blk,
+							stl: p.stats.stl,
+					  }
+					: {
+							pts: p.stats.pts,
+							trb: p.stats.trb,
+							ast: p.stats.ast,
+					  },
+			football: {
+				pos: pos ?? p.ratings.pos,
+				keyStats: p.stats.keyStats,
+			},
+			hockey: {
+				pos: pos ?? p.ratings.pos,
+				a: p.stats.a,
+				dps: p.stats.dps,
+				g: p.stats.g,
+				gaa: p.stats.gaa,
+				gps: p.stats.gps,
+				hit: p.stats.hit,
+				ops: p.stats.ops,
+				pts: p.stats.pts,
+				svPct: p.stats.svPct,
+				tk: p.stats.tk,
+			},
+		}),
+	};
 };
 
 const EditAwards = ({
@@ -60,51 +109,15 @@ const EditAwards = ({
 			if (p?.pid == undefined) {
 				newAwards[type] = undefined;
 			} else {
-				if (isSport("basketball")) {
-					newAwards[type] = {
-						pid: p.pid,
-						name: p.name,
-						tid: p.stats.tid,
-						abbrev: p.stats.abbrev,
-						pts: p.stats.pts,
-						trb: p.stats.trb,
-						ast: p.stats.ast,
-					};
-				} else {
-					newAwards[type] = {
-						pid: p.pid,
-						name: p.name,
-						tid: p.stats.tid,
-						abbrev: p.stats.abbrev,
-						keyStats: p.stats.keyStats,
-						pos: p.ratings.pos,
-					};
-				}
+				newAwards[type] = makeAwardPlayer(p);
 			}
 		} else if (type == "dpoy" || type === "dfoy") {
 			if (p?.pid == undefined) {
 				newAwards[type] = undefined;
 			} else {
-				if (isSport("basketball")) {
-					newAwards[type] = {
-						pid: p.pid,
-						name: p.name,
-						tid: p.stats.tid,
-						abbrev: p.stats.abbrev,
-						trb: p.stats.trb,
-						blk: p.stats.blk,
-						stl: p.stats.stl,
-					};
-				} else {
-					newAwards[type] = {
-						pid: p.pid,
-						name: p.name,
-						tid: p.stats.tid,
-						abbrev: p.stats.abbrev,
-						keyStats: p.stats.keyStats,
-						pos: p.ratings.pos,
-					};
-				}
+				newAwards[type] = makeAwardPlayer(p, {
+					type: "defense",
+				});
 			}
 		} else if (type == "allDefensive") {
 			if (p?.pid == undefined) {
@@ -126,28 +139,13 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (isSport("basketball")) {
-						newAwards[type][teamNumber].players[playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							trb: p.stats.trb,
-							blk: p.stats.blk,
-							stl: p.stats.stl,
-						};
-					} else {
-						newAwards[type][teamNumber].players[playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos:
-								newAwards[type][teamNumber].players[playerNumber]?.pos ??
-								p.ratings.pos,
-						};
-					}
+					newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
+						p,
+						{
+							type: "defense",
+							pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
+						},
+					);
 				}
 			}
 		} else if (type == "allLeague") {
@@ -170,28 +168,12 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (isSport("basketball")) {
-						newAwards[type][teamNumber].players[playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							pts: p.stats.pts,
-							trb: p.stats.trb,
-							ast: p.stats.ast,
-						};
-					} else {
-						newAwards[type][teamNumber].players[playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							keyStats: p.stats.keyStats,
-							pos:
-								newAwards[type][teamNumber].players[playerNumber]?.pos ??
-								p.ratings.pos,
-						};
-					}
+					newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
+						p,
+						{
+							pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
+						},
+					);
 				}
 			}
 		} else if (type == "allRookie") {
@@ -212,26 +194,9 @@ const EditAwards = ({
 					});
 					error = true;
 				} else {
-					if (isSport("basketball")) {
-						newAwards[type][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							pts: p.stats.pts,
-							trb: p.stats.trb,
-							ast: p.stats.ast,
-						};
-					} else {
-						newAwards[type][playerNumber] = {
-							pid: p.pid,
-							name: p.name,
-							tid: p.stats.tid,
-							abbrev: p.stats.abbrev,
-							pos: newAwards[type][playerNumber]?.pos ?? p.ratings.pos,
-							keyStats: p.stats.keyStats,
-						};
-					}
+					newAwards[type][playerNumber] = makeAwardPlayer(p, {
+						pos: newAwards[type][playerNumber]?.pos,
+					});
 				}
 			}
 		}

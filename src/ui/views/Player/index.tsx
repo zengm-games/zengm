@@ -516,7 +516,8 @@ const Player2 = ({
 										),
 									])}
 								>
-									{player.born.loc} <CountryFlag country={player.born.loc} />
+									{player.born.loc}
+									<CountryFlag className="ml-1" country={player.born.loc} />
 								</a>
 								<br />
 								{typeof player.diedYear !== "number" ? (

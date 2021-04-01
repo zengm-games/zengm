@@ -115,7 +115,6 @@ const PlayerBios = ({
 				{
 					value: (
 						<>
-							<CountryFlag className="mr-1" country={p.born.loc} />
 							<a
 								href={helpers.leagueUrl([
 									"frivolities",
@@ -124,6 +123,7 @@ const PlayerBios = ({
 									window.encodeURIComponent(helpers.getCountry(p.born.loc)),
 								])}
 							>
+								<CountryFlag className="mr-1" country={p.born.loc} />
 								{p.born.loc}
 							</a>
 						</>

@@ -333,7 +333,16 @@ const Roster = ({
 							) : null}
 							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
 							<td>
-								<CountryFlag country={p.born.loc} />
+								<a
+									href={helpers.leagueUrl([
+										"frivolities",
+										"most",
+										"country",
+										window.encodeURIComponent(helpers.getCountry(p.born.loc)),
+									])}
+								>
+									<CountryFlag country={p.born.loc} />
+								</a>
 							</td>
 							{stats.map(stat => (
 								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>

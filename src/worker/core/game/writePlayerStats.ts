@@ -214,7 +214,7 @@ const writePlayerStats = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	for (const result of results) {
-		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
+		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
 
 		const winningTeam =
 			result.team[0].stat.pts > result.team[1].stat.pts
@@ -223,30 +223,36 @@ const writePlayerStats = async (
 				? 1
 				: undefined;
 
-		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
-		if (isSport("football")) {
+		const qbgResults = new Map<number, "W" | "L" | "OTL" | "T">();
+		if (isSport("football") || isSport("hockey")) {
+			const otl = result.overtimes > 0 && g.get("otl", "current");
+
 			for (let i = 0; i < result.team.length; i++) {
-				let maxPss = 0;
+				let maxStat = 0;
 				let id;
 
+				const stat = isSport("football") ? "pss" : "sv";
+
 				for (const p of result.team[i].player) {
-					if (p.stat.pss > maxPss) {
+					if (p.stat[stat] > maxStat) {
 						id = p.id;
-						maxPss = p.stat.pss;
+						maxStat = p.stat[stat];
 					}
 				}
 
 				if (id !== undefined) {
-					let qbResult: "qbW" | "qbL" | "qbT";
+					let qbgResult: "W" | "L" | "OTL" | "T";
 					if (winningTeam === undefined) {
-						qbResult = "qbT";
+						qbgResult = "T";
 					} else if (winningTeam === i) {
-						qbResult = "qbW";
+						qbgResult = "W";
+					} else if (otl) {
+						qbgResult = "OTL";
 					} else {
-						qbResult = "qbL";
+						qbgResult = "L";
 					}
 
-					qbResults.set(id, qbResult);
+					qbgResults.set(id, qbgResult);
 				}
 			}
 		}
@@ -264,7 +270,7 @@ const writePlayerStats = async (
 					goalies[0].stat.so = 1;
 				}
 
-				// Goalie who played the most minutes counts towards numConsecutiveGamesG, the rest get reset
+				// Goalie who played the most minutes counts towards numConsecutiveGamesG, the rest get reset. Would be nice to have this use the same criteria as qbgResults, but 99.99% of the time they'll be the same.
 				const goalie = maxBy(goalies, (p: any) => p.stat.min);
 				if (goalie) {
 					goaliePID = goalie.id;
@@ -391,10 +397,14 @@ const writePlayerStats = async (
 
 						ps.gp += 1;
 
-						if (isSport("football")) {
-							const stat = qbResults.get(p.id);
-							if (stat) {
-								ps[stat] += 1;
+						if (isSport("football") || isSport("hockey")) {
+							const result = qbgResults.get(p.id);
+							if (result) {
+								const key = isSport("football") ? `qb${result}` : `g${result}`;
+								if (ps[key] === undefined) {
+									ps[key] = 0;
+								}
+								ps[key] += 1;
 							}
 						}
 

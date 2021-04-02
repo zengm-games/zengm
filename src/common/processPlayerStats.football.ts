@@ -52,14 +52,16 @@ const processStats = (
 		} else if (stat === "defTck") {
 			row[stat] = ps.defTckSolo + ps.defTckAst;
 		} else if (stat === "qbRec") {
-			if (
-				ps.qbW !== undefined &&
-				ps.qbL !== undefined &&
-				ps.qbT !== undefined
-			) {
-				row[stat] = `${ps.qbW}-${ps.qbL}-${ps.qbT}`;
+			if (ps.qbW !== undefined && ps.qbL !== undefined) {
+				row[stat] = `${ps.qbW}-${ps.qbL}`;
+				if (ps.qbOTL > 0) {
+					row[stat] += `-${ps.qbOTL}`;
+				}
+				if (ps.qbT > 0) {
+					row[stat] += `-${ps.qbT}`;
+				}
 			} else {
-				row[stat] = "0-0-0";
+				row[stat] = "0-0";
 			}
 		} else if (stat === "pssTDPct") {
 			row[stat] = percentage(ps.pssTD, ps.pss);

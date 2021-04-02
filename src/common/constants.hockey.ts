@@ -75,7 +75,7 @@ const PLAYER_SUMMARY = {
 	summaryGoalie: {
 		name: "SummaryGoalie",
 		onlyShowIf: ["G"],
-		stats: ["gp", "gaa", "svPct", "gps"],
+		stats: ["gp", "gRec", "so", "gaa", "svPct", "gps"],
 	},
 };
 
@@ -84,6 +84,7 @@ const PLAYER_STATS_TABLES = {
 		name: "Goalie",
 		stats: [
 			"gp",
+			"gRec",
 			"ga",
 			"sa",
 			"sv",

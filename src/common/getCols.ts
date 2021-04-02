@@ -1536,6 +1536,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:gRec": {
+			desc: "Team record as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
 	},
 });
 const cols: {
@@ -2473,6 +2478,7 @@ const sportSpecificTitleOverrides = bySport({
 		PA: "GA",
 		"PS/g": "GF",
 		"PA/g": "GA",
+		"stat:gRec": "Rec",
 	},
 });
 

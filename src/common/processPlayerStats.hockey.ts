@@ -44,6 +44,18 @@ const processStats = (
 			row[stat] = ratio(ps.ga, ps.gp);
 		} else if (stat === "amin") {
 			row[stat] = ratio(ps.min, ps.gp);
+		} else if (stat === "gRec") {
+			if (ps.gW !== undefined && ps.gL !== undefined) {
+				row[stat] = `${ps.gW}-${ps.gL}`;
+				if (ps.gOTL > 0) {
+					row[stat] += `-${ps.gOTL}`;
+				}
+				if (ps.gT > 0) {
+					row[stat] += `-${ps.gT}`;
+				}
+			} else {
+				row[stat] = "0-0";
+			}
 		} else if (stat === "age") {
 			if (bornYear === undefined) {
 				throw new Error(

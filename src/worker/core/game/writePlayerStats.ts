@@ -240,8 +240,7 @@ const writePlayerStats = async (
 					let qbResult: "qbW" | "qbL" | "qbT";
 					if (winningTeam === undefined) {
 						qbResult = "qbT";
-					}
-					if (winningTeam === i) {
+					} else if (winningTeam === i) {
 						qbResult = "qbW";
 					} else {
 						qbResult = "qbL";

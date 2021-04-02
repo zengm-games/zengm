@@ -8,7 +8,7 @@
  * It's in jest rather than node.js because jest has all the imports and crap set up.
  */
 
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
 import { createWithoutSaving } from "../league/create";
 

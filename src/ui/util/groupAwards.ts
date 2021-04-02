@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy";
+import groupBy from "lodash-es/groupBy";
 import type { Player } from "../../common/types";
 import helpers from "./helpers";
 

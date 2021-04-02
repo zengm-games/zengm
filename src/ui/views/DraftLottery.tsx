@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import PropTypes from "prop-types";
 import { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";

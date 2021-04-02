@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import groupBy from "lodash/groupBy";
+import groupBy from "lodash-es/groupBy";
 import PropTypes from "prop-types";
 import { Component, Fragment } from "react";
 import type { MouseEvent, ReactNode } from "react";

@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { draft, player } from "..";
 
 const avgRatingDists = async (numPlayers: number = 100) => {

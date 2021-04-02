@@ -6,7 +6,7 @@ import type {
 	MinimalPlayerRatings,
 } from "../../common/types";
 import { bySport, isSport, PHASE } from "../../common";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;

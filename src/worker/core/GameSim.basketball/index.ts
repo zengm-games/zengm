@@ -1,6 +1,6 @@
 import { g, helpers, random } from "../../util";
 import { getPeriodName, PHASE } from "../../../common";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 
 type PlayType =

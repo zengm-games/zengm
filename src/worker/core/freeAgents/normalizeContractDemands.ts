@@ -3,7 +3,7 @@ import { PLAYER, PHASE, isSport } from "../../../common";
 import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;

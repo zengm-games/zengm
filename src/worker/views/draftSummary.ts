@@ -2,7 +2,7 @@ import { bySport, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
-import maxBy from "lodash/maxBy";
+import maxBy from "lodash-es/maxBy";
 
 const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 	// Update every time because anything could change this (unless all players from class are retired)

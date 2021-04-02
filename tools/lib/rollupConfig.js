@@ -79,6 +79,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		plugins.push(
 			visualizer({
 				filename: statsFilename,
+				gzipSize: true,
 				sourcemap: true,
 				template: "sunburst",
 			}),

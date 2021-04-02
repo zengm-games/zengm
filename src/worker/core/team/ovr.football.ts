@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../../worker/util";
 
 const ovr = (

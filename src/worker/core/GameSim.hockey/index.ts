@@ -15,9 +15,9 @@ import type {
 	TeamGameSim,
 	TeamNum,
 } from "./types";
-import orderBy from "lodash/orderBy";
-import flatten from "lodash/flatten";
-import range from "lodash/range";
+import orderBy from "lodash-es/orderBy";
+import flatten from "lodash-es/flatten";
+import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";

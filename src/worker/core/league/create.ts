@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { isSport, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";

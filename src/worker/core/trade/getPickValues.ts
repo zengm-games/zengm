@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";

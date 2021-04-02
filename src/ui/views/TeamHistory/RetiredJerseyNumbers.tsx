@@ -2,7 +2,7 @@ import { useState, ChangeEvent } from "react";
 import { JerseyNumber } from "../../components";
 import { helpers, confirm, toWorker, logEvent } from "../../util";
 import type { View } from "../../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { PLAYER } from "../../../common";
 
 const RetiredJerseyNumbers = ({

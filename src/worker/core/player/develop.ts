@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { isSport, PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";

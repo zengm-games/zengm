@@ -24,7 +24,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,

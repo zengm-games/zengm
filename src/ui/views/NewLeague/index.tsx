@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useCallback, useState, useReducer } from "react";
 import type { ReactNode } from "react";

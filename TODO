@@ -25,8 +25,9 @@ settings re-design
   - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 - would it look better as a table, with no horizontal space between the lists?
 - at small screen sizes
-  - bottom bar should be 100% width
+  - still overflow sometimes
   - would be nice to expand the highlighting of settings all the way to the edge of the screen, and get rid of rounding
+  - rounding of god mode button in btn-group alone
 
 hockey new lottery
 - revert chances changes for old method

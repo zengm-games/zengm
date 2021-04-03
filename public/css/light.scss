@@ -1129,11 +1129,19 @@ button.live-game-sim-more {
 }
 
 .settings-buttons {
-	position: -webkit-sticky; // Safari
 	position: sticky;
 
 	// To make it go over the Bootstrap custom form controls, like switch
 	z-index: 2;
+}
+@include media-breakpoint-down(md) {
+	.settings-buttons {
+		position: fixed;
+		width: 100%;
+		left: 0;
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
 }
 
 a.anchor {

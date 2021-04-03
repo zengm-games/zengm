@@ -1134,14 +1134,33 @@ a.anchor {
 	visibility: hidden;
 }
 
-.settings-shortcuts {
-	align-self: flex-start;
-	position: sticky;
-	top: 60px;
+.settings-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
+}
+.settings-shortcuts li {
+	display: inline;
+	&:not(:last-child):not(:first-child):after {
+		content: " | ";
+	}
 }
 @include media-breakpoint-up(lg) {
+	.settings-wrapper {
+		flex-direction: row;
+	}
 	.settings-shortcuts {
-		display: block !important;
+		align-self: flex-start;
+		position: sticky;
+		top: 60px;
+		margin-left: 1rem;
+
+		li {
+			margin-bottom: 0.25rem;
+			display: block;
+			&:not(:last-child):not(:first-child):after {
+				content: none;
+			}
+		}
 	}
 }
 

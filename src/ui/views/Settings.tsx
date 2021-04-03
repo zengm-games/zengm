@@ -2497,7 +2497,6 @@ const GodModeSettingsButton = ({
 	godMode: boolean;
 	onClick: () => void;
 }) => {
-	console.log("GodModeSettingsButton", children, godMode, className);
 	if (godMode) {
 		return null;
 	}
@@ -2685,7 +2684,7 @@ const Settings = (props: View<"settings">) => {
 	};
 
 	return (
-		<div className="d-flex">
+		<div className="settings-wrapper">
 			<form onSubmit={handleFormSubmit} style={{ maxWidth: 1400 }}>
 				<GodModeSettingsButton
 					className="mb-5 d-sm-none"
@@ -2901,12 +2900,11 @@ const Settings = (props: View<"settings">) => {
 					</button>
 				</div>
 			</form>
-
-			<div className="d-none settings-shortcuts ml-3 flex-shrink-0">
+			<div className="settings-shortcuts flex-shrink-0">
 				<ul className="list-unstyled">
-					<li className="mb-1">Shortcuts:</li>
+					<li>Shortcuts: </li>
 					{currentCategoryNames.map(name => (
-						<li key={name} className="mb-1">
+						<li key={name} className="settings-shortcut">
 							<a href={`#${name}`}>{name}</a>
 						</li>
 					))}

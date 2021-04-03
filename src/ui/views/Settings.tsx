@@ -2682,8 +2682,8 @@ const Settings = (props: View<"settings">) => {
 	};
 
 	return (
-		<div className="settings-wrapper">
-			<form onSubmit={handleFormSubmit} style={{ maxWidth: 1400 }}>
+		<div className="settings-wrapper mt-lg-2">
+			<form onSubmit={handleFormSubmit} style={{ maxWidth: 2100 }}>
 				<GodModeSettingsButton
 					className="mb-5 d-sm-none"
 					godMode={godMode}
@@ -2712,7 +2712,7 @@ const Settings = (props: View<"settings">) => {
 					return (
 						<Fragment key={category.name}>
 							<a className="anchor" id={category.name} />
-							<h2>
+							<h2 className="mb-3">
 								{category.name}
 								{category.helpText ? (
 									<HelpPopover title={category.name} className="ml-1">
@@ -2830,12 +2830,15 @@ const Settings = (props: View<"settings">) => {
 										// Similar logic could extend this to 3 columns or more, if necessary
 										const lastInCol = i === catOptions.length - 1;
 										const lastInCol2 = lastInCol || i === catOptions.length - 2;
+										const lastInCol3 =
+											lastInCol2 || i === catOptions.length - 3;
 
 										const firstInCol = i === 0;
 										const firstInCol2 = firstInCol || i === 1;
+										const firstInCol3 = firstInCol2 || i === 2;
 
 										return (
-											<div key={key} className="col-md-6 d-flex">
+											<div key={key} className="col-md-6 col-xxl-4 d-flex">
 												<div
 													className={classNames("fake-list-group-item border", {
 														"rounded-bottom": lastInCol,
@@ -2844,6 +2847,9 @@ const Settings = (props: View<"settings">) => {
 														"rounded-md-bottom": lastInCol2,
 														"rounded-md-top": firstInCol2,
 														"border-md-top": firstInCol2,
+														"rounded-xxl-bottom": lastInCol3,
+														"rounded-xxl-top": firstInCol3,
+														"border-xxl-top": firstInCol3,
 													})}
 												>
 													<Option

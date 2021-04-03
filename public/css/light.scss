@@ -849,6 +849,10 @@ tr.table-warning:hover > td {
 	.d-xxl-inline {
 		display: inline !important;
 	}
+	.col-xxl-4 {
+		flex: 0 0 33.33333%;
+		max-width: 33.33333%;
+	}
 	/*.d-xxl-inline-block {
 	display: inline-block !important; }
   .d-xxl-block {
@@ -1106,6 +1110,20 @@ button.live-game-sim-more {
 		border-top-right-radius: $border-radius !important;
 	}
 	.border-md-top {
+		border-top: $border-width solid $border-color !important;
+	}
+}
+@media (min-width: 1600px) {
+	// Keep in sync with node_modules/bootstrap/scss/utilities/_borders.scss
+	.rounded-xxl-bottom {
+		border-bottom-right-radius: $border-radius !important;
+		border-bottom-left-radius: $border-radius !important;
+	}
+	.rounded-xxl-top {
+		border-top-left-radius: $border-radius !important;
+		border-top-right-radius: $border-radius !important;
+	}
+	.border-xxl-top {
 		border-top: $border-width solid $border-color !important;
 	}
 }

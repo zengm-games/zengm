@@ -2891,13 +2891,15 @@ const Settings = (props: View<"settings">) => {
 						>
 							{godMode ? "Disable God Mode" : "Enable God Mode"}
 						</button>
-						<GodModeSettingsButton
-							className="d-none d-sm-block"
-							godMode={godMode}
-							onClick={toggleGodModeSettings}
-						>
-							{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-						</GodModeSettingsButton>
+						{!godMode ? (
+							<GodModeSettingsButton
+								className="d-none d-sm-block"
+								godMode={godMode}
+								onClick={toggleGodModeSettings}
+							>
+								{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+							</GodModeSettingsButton>
+						) : null}
 					</div>
 					<button className="btn btn-primary ml-auto" disabled={submitting}>
 						Save Settings

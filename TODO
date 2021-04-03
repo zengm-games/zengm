@@ -26,7 +26,6 @@ settings re-design
 - would it look better as a table, with no horizontal space between the lists?
 - at small screen sizes
   - still overflow sometimes
-  - rounding of god mode button in btn-group alone
 
 hockey new lottery
 - revert chances changes for old method

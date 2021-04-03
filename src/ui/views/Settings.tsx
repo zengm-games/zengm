@@ -212,7 +212,7 @@ export const options: {
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
-		description: (
+		descriptionLong: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
 				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
@@ -935,7 +935,7 @@ if (isSport("basketball")) {
 			key: "foulsUntilBonus",
 			name: "# of Fouls Until Teams Enter Bonus",
 			godModeRequired: "always",
-			description: (
+			descriptionLong: (
 				<>
 					This is the number of team fouls required for the opponent to get
 					bonus FTs for a non-shooting foul. You must enter a valid JSON array
@@ -2655,7 +2655,7 @@ const Settings = (props: View<"settings">) => {
 
 	return (
 		<div className="d-flex">
-			<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
+			<form onSubmit={handleFormSubmit} style={{ maxWidth: 1400 }}>
 				{!godMode ? (
 					<button
 						type="button"
@@ -2738,20 +2738,23 @@ const Settings = (props: View<"settings">) => {
 									</select>
 								</div>
 							) : null}
-							<div className="list-group mb-5">
+							<div className="row mb-5">
 								{catOptions.map(
-									({
-										customForm,
-										decoration,
-										description,
-										descriptionLong,
-										godModeRequired,
-										key,
-										maxWidth,
-										name,
-										type,
-										values,
-									}) => {
+									(
+										{
+											customForm,
+											decoration,
+											description,
+											descriptionLong,
+											godModeRequired,
+											key,
+											maxWidth,
+											name,
+											type,
+											values,
+										},
+										i,
+									) => {
 										const enabled = godMode || !godModeRequired;
 										const id = `settings-${category.name}-${name}`;
 
@@ -2800,25 +2803,40 @@ const Settings = (props: View<"settings">) => {
 											}
 										}
 
+										// Similar logic could extend this to 3 columns or more, if necessary
+										const lastInCol = i === catOptions.length - 1;
+										const lastInCol2 = lastInCol || i === catOptions.length - 2;
+
+										const firstInCol = i === 0;
+										const firstInCol2 = firstInCol || i === 1;
+
 										return (
-											<div
-												key={key}
-												className="list-group-item list-group-item-settings"
-											>
-												<Option
-													type={type}
-													disabled={!enabled}
-													id={id}
-													onChange={handleChange(key, type)}
-													value={state[key]}
-													values={values}
-													decoration={decoration}
-													name={name}
-													description={description}
-													descriptionLong={descriptionLong}
-													customForm={customFormNode}
-													maxWidth={maxWidth}
-												/>
+											<div key={key} className="col-md-6 d-flex">
+												<div
+													className={classNames("fake-list-group-item border", {
+														"rounded-bottom": lastInCol,
+														"rounded-top": firstInCol,
+														"border-top-0": !firstInCol,
+														"rounded-md-bottom": lastInCol2,
+														"rounded-md-top": firstInCol2,
+														"border-md-top": firstInCol2,
+													})}
+												>
+													<Option
+														type={type}
+														disabled={!enabled}
+														id={id}
+														onChange={handleChange(key, type)}
+														value={state[key]}
+														values={values}
+														decoration={decoration}
+														name={name}
+														description={description}
+														descriptionLong={descriptionLong}
+														customForm={customFormNode}
+														maxWidth={maxWidth}
+													/>
+												</div>
 											</div>
 										);
 									},
@@ -2848,7 +2866,7 @@ const Settings = (props: View<"settings">) => {
 				</div>
 			</form>
 
-			<div className="d-none settings-shortcuts ml-3">
+			<div className="d-none settings-shortcuts ml-3 flex-shrink-0">
 				<ul className="list-unstyled">
 					<li className="mb-1">Shortcuts:</li>
 					{currentCategoryNames.map(name => (

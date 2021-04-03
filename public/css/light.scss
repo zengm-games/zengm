@@ -1091,12 +1091,30 @@ button.live-game-sim-more {
 	margin-bottom: 0 !important;
 }
 
+.fake-list-group-item {
+	padding: 0.75rem 1.25rem;
+	width: 100%;
+}
+@include media-breakpoint-up(md) {
+	// Keep in sync with node_modules/bootstrap/scss/utilities/_borders.scss
+	.rounded-md-bottom {
+		border-bottom-right-radius: $border-radius !important;
+		border-bottom-left-radius: $border-radius !important;
+	}
+	.rounded-md-top {
+		border-top-left-radius: $border-radius !important;
+		border-top-right-radius: $border-radius !important;
+	}
+	.border-md-top {
+		border-top: $border-width solid $border-color !important;
+	}
+}
 @include media-breakpoint-down(xs) {
-	.list-group-item-settings {
+	.fake-list-group-item {
 		padding-right: 0;
 		padding-left: 0;
-		border-right: 0;
-		border-left: 0;
+		border-right: 0 !important;
+		border-left: 0 !important;
 		border-radius: 0 !important;
 	}
 }
@@ -1121,7 +1139,7 @@ a.anchor {
 	position: sticky;
 	top: 60px;
 }
-@media (min-width: 900px) {
+@include media-breakpoint-up(lg) {
 	.settings-shortcuts {
 		display: block !important;
 	}

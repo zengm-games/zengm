@@ -2486,6 +2486,33 @@ const Option = ({
 	);
 };
 
+const GodModeSettingsButton = ({
+	children,
+	className,
+	godMode,
+	onClick,
+}: {
+	children: any;
+	className?: string;
+	godMode: boolean;
+	onClick: () => void;
+}) => {
+	console.log("GodModeSettingsButton", children, godMode, className);
+	if (godMode) {
+		return null;
+	}
+
+	return (
+		<button
+			type="button"
+			className={classNames("btn btn-secondary", className)}
+			onClick={onClick}
+		>
+			{children}
+		</button>
+	);
+};
+
 const Settings = (props: View<"settings">) => {
 	const { godMode, godModeInPast } = props;
 
@@ -2653,20 +2680,20 @@ const Settings = (props: View<"settings">) => {
 		bottom += 52;
 	}
 
+	const toggleGodModeSettings = () => {
+		setShowGodModeSettings(show => !show);
+	};
+
 	return (
 		<div className="d-flex">
 			<form onSubmit={handleFormSubmit} style={{ maxWidth: 1400 }}>
-				{!godMode ? (
-					<button
-						type="button"
-						className="btn btn-secondary mb-5"
-						onClick={() => {
-							setShowGodModeSettings(show => !show);
-						}}
-					>
-						{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-					</button>
-				) : null}
+				<GodModeSettingsButton
+					className="mb-5 d-sm-none"
+					godMode={godMode}
+					onClick={toggleGodModeSettings}
+				>
+					{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+				</GodModeSettingsButton>
 
 				{categories.map(category => {
 					if (!groupedOptions[category.name]) {
@@ -2850,16 +2877,25 @@ const Settings = (props: View<"settings">) => {
 					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
 					style={{ bottom }}
 				>
-					<button
-						className={classNames(
-							"btn border-0",
-							godMode ? "btn-secondary" : "btn-god-mode",
-						)}
-						onClick={handleGodModeToggle}
-						type="button"
-					>
-						{godMode ? "Disable God Mode" : "Enable God Mode"}
-					</button>
+					<div className="btn-group">
+						<GodModeSettingsButton
+							className="d-none d-sm-block"
+							godMode={godMode}
+							onClick={toggleGodModeSettings}
+						>
+							{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+						</GodModeSettingsButton>
+						<button
+							className={classNames(
+								"btn border-0",
+								godMode ? "btn-secondary" : "btn-god-mode",
+							)}
+							onClick={handleGodModeToggle}
+							type="button"
+						>
+							{godMode ? "Disable God Mode" : "Enable God Mode"}
+						</button>
+					</div>
 					<button className="btn btn-primary ml-auto" disabled={submitting}>
 						Save Settings
 					</button>

@@ -2386,6 +2386,7 @@ const Option = ({
 	description,
 	descriptionLong,
 	decoration,
+	godModeRequired,
 	maxWidth,
 	onChange,
 	type,
@@ -2399,6 +2400,7 @@ const Option = ({
 	description?: ReactNode;
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
+	godModeRequired?: "always" | "existingLeagueOnly";
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -2422,10 +2424,12 @@ const Option = ({
 							}
 						}}
 					>
-						<span
-							className="legend-square god-mode mr-1"
-							title={godModeRequiredMessage}
-						/>
+						{godModeRequired ? (
+							<span
+								className="legend-square god-mode mr-1"
+								title={godModeRequiredMessage}
+							/>
+						) : null}
 						{name}
 					</label>
 					{descriptionLong ? (
@@ -2865,6 +2869,7 @@ const Settings = (props: View<"settings">) => {
 														descriptionLong={descriptionLong}
 														customForm={customFormNode}
 														maxWidth={maxWidth}
+														godModeRequired={godModeRequired}
 													/>
 												</div>
 											</div>

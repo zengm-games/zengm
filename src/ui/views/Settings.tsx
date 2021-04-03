@@ -32,7 +32,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../common";
 
-const godModeRequiredMessage = "Enable God Mode to change this setting";
+const godModeRequiredMessage = "This setting can only be changed in God Mode.";
 
 type Key =
 	| "numGames"
@@ -2422,12 +2422,10 @@ const Option = ({
 							}
 						}}
 					>
-						{disabled ? (
-							<span
-								className="legend-square god-mode mr-1"
-								title={godModeRequiredMessage}
-							/>
-						) : null}
+						<span
+							className="legend-square god-mode mr-1"
+							title={godModeRequiredMessage}
+						/>
 						{name}
 					</label>
 					{descriptionLong ? (
@@ -2517,7 +2515,7 @@ const Settings = (props: View<"settings">) => {
 
 	useTitleBar({ title: "League Settings" });
 
-	const [showGodModeSettings, setShowGodModeSettings] = useState(false);
+	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
 	useEffect(() => {
 		localActions.update({
@@ -2877,13 +2875,6 @@ const Settings = (props: View<"settings">) => {
 					style={{ bottom }}
 				>
 					<div className="btn-group">
-						<GodModeSettingsButton
-							className="d-none d-sm-block"
-							godMode={godMode}
-							onClick={toggleGodModeSettings}
-						>
-							{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-						</GodModeSettingsButton>
 						<button
 							className={classNames(
 								"btn border-0",
@@ -2894,6 +2885,13 @@ const Settings = (props: View<"settings">) => {
 						>
 							{godMode ? "Disable God Mode" : "Enable God Mode"}
 						</button>
+						<GodModeSettingsButton
+							className="d-none d-sm-block"
+							godMode={godMode}
+							onClick={toggleGodModeSettings}
+						>
+							{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+						</GodModeSettingsButton>
 					</div>
 					<button className="btn btn-primary ml-auto" disabled={submitting}>
 						Save Settings

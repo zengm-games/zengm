@@ -26,7 +26,6 @@ settings re-design
 - would it look better as a table, with no horizontal space between the lists?
 - at small screen sizes
   - still overflow sometimes
-  - would be nice to expand the highlighting of settings all the way to the edge of the screen, and get rid of rounding
   - rounding of god mode button in btn-group alone
 
 hockey new lottery

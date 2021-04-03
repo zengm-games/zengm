@@ -2837,7 +2837,10 @@ const Settings = (props: View<"settings">) => {
 										const striped3 = Math.floor(i / 3) % 2 === 0;
 
 										return (
-											<div key={key} className="col-md-6 col-xxl-4 ">
+											<div
+												key={key}
+												className="settings-col col-md-6 col-xxl-4"
+											>
 												<div
 													className={classNames(
 														"fake-list-group-item rounded",

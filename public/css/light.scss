@@ -1128,6 +1128,18 @@ button.live-game-sim-more {
 	}
 }
 
+@include media-breakpoint-down(md) {
+	// Make it so the striped-bg color goes all the way to the edge of the screen
+	.settings-col {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.fake-list-group-item {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}
+
 .settings-buttons {
 	position: sticky;
 

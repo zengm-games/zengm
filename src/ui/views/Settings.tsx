@@ -603,7 +603,7 @@ export const options: {
 	{
 		category: "Events",
 		key: "aiTradesFactor",
-		name: "Trades Between AI Teams Factor",
+		name: "AI-to-AI Trades Factor",
 		godModeRequired: "always",
 		type: "float",
 		description:
@@ -933,7 +933,7 @@ if (isSport("basketball")) {
 		{
 			category: "Game Simulation",
 			key: "foulsUntilBonus",
-			name: "# of Fouls Until Teams Enter Bonus",
+			name: "# Fouls Until Bonus",
 			godModeRequired: "always",
 			descriptionLong: (
 				<>
@@ -1037,7 +1037,7 @@ if (isSport("basketball")) {
 		{
 			category: "Game Simulation",
 			key: "orbFactor",
-			name: "Offensive Rebound Tendency Factor",
+			name: "Off Reb Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
 			description:

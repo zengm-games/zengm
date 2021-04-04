@@ -2773,7 +2773,7 @@ const Settings = (props: View<"settings">) => {
 									</select>
 								</div>
 							) : null}
-							<div className="row mb-5">
+							<div className="row mb-5 mb-md-3">
 								{catOptions.map(
 									(
 										{
@@ -2838,33 +2838,18 @@ const Settings = (props: View<"settings">) => {
 											}
 										}
 
-										// Similar logic could extend this to 4 columns or more, if necessary
-										const lastInCol = i === catOptions.length - 1;
-										const lastInCol2 = lastInCol || i === catOptions.length - 2;
-										const lastInCol3 =
-											lastInCol2 || i === catOptions.length - 3;
-
-										const firstInCol = i === 0;
-										const firstInCol2 = firstInCol || i === 1;
-										const firstInCol3 = firstInCol2 || i === 2;
-
 										return (
 											<div
 												key={key}
 												className="settings-col col-md-6 col-xxl-4 d-flex"
 											>
 												<div
-													className={classNames("fake-list-group-item border", {
-														"rounded-bottom": lastInCol,
-														"rounded-top": firstInCol,
-														"border-top-0": !firstInCol,
-														"rounded-md-bottom": lastInCol2,
-														"rounded-md-top": firstInCol2,
-														"border-md-top": firstInCol2,
-														"rounded-xxl-bottom": lastInCol3,
-														"rounded-xxl-top": firstInCol3,
-														"border-xxl-top": firstInCol3,
-													})}
+													className={classNames(
+														"fake-list-group-item rounded",
+														{
+															"settings-striped-bg-alt": i % 2 === 1,
+														},
+													)}
 												>
 													<Option
 														type={type}

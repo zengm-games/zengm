@@ -57,6 +57,11 @@ const stats = {
 
 		// Saves
 		"sv",
+
+		"gW",
+		"gL",
+		"gT",
+		"gOTL",
 	] as const,
 	max: [
 		"minMax",

@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { DraftPick } from "../../../common/types";

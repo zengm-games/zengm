@@ -1,8 +1,6 @@
-import { PHASE } from "../../../common";
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
-import posFootball from "./pos.football";
-import { g, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";
 
@@ -356,45 +354,6 @@ const genRatings = (
 		ovrs: { ...defaultOvrsOrPots },
 		pots: { ...defaultOvrsOrPots },
 	};
-
-	// Higher fuzz for draft prospects
-	if (g.get("phase") >= PHASE.RESIGN_PLAYERS) {
-		if (season === g.get("season") + 2) {
-			ratings.fuzz *= Math.sqrt(2);
-		} else if (season >= g.get("season") + 3) {
-			ratings.fuzz *= 2;
-		}
-	} else {
-		if (season === g.get("season") + 1) {
-			ratings.fuzz *= Math.sqrt(2);
-		} else if (season >= g.get("season") + 2) {
-			ratings.fuzz *= 2;
-		}
-	}
-
-	ratings.pos = posFootball(ratings);
-
-	/*info[`${pos}->${ratings.pos}`] =
-		info[`${pos}->${ratings.pos}`] === undefined
-			? 1
-			: info[`${pos}->${ratings.pos}`] + 1;
-	infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
-	infoOut[ratings.pos] =
-		infoOut[ratings.pos] === undefined ? 1 : infoOut[ratings.pos] + 1;
-	clearTimeout(timeoutID);
-     timeoutID = setTimeout(() => {
-         console.log(info);
-         for (const pos2 of POSITIONS) {
-             if (infoIn.hasOwnProperty(pos2)) {
-                 console.log(pos2, infoIn[pos2], infoOut[pos2]);
-             }
-         }
-	 }, 1000);*/
-
-	/*    if (pos === "DL" && ratings.pos === "LB") {
-         console.log(ratings);
-         debugger;
-     }*/
 
 	return {
 		heightInInches: heightToInches(ratings.hgt),

@@ -1,4 +1,4 @@
-import flatten from "lodash/flatten";
+import flatten from "lodash-es/flatten";
 import { g, random } from "../../../worker/util";
 import newScheduleCrappy from "./newScheduleCrappy";
 

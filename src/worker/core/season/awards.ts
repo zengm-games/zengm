@@ -4,6 +4,7 @@ import {
 	SIMPLE_AWARDS,
 	AWARD_NAMES,
 	bySport,
+	isSport,
 } from "../../../common";
 import { idb } from "../../db";
 import {
@@ -87,6 +88,10 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"krYds",
 				"prTD",
 				"prYds",
+				"pssYds",
+				"rusYds",
+				"recYds",
+				"ydsFromScrimmage",
 				"season",
 				"abbrev",
 				"tid",
@@ -241,16 +246,23 @@ const leagueLeaders = (
 	}[],
 	awardsByPlayer: AwardsByPlayer,
 ) => {
+	const numGames = g.get("numGames");
 	const factor =
-		(g.get("numGames") / defaultGameAttributes.numGames) *
-		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
+		(numGames / defaultGameAttributes.numGames) * helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
 		const p = players
 			.filter(p2 => {
+				// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
+				let playerValue;
+				if (!isSport("basketball")) {
+					playerValue = p2.currentStats[cat.stat];
+				} else {
+					playerValue = p2.currentStats[cat.stat] * p2.currentStats.gp;
+				}
 				return (
-					p2.currentStats[cat.stat] * p2.currentStats.gp >=
-						cat.minValue * factor || p2.currentStats.gp >= 70 * factor
+					playerValue >= cat.minValue * factor ||
+					p2.currentStats.gp >= 0.85 * numGames
 				);
 			})
 			.reduce((maxPlayer, currentPlayer) => {

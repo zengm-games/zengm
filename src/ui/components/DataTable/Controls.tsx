@@ -9,6 +9,11 @@ const hideAllControlsStyle = {
 	marginTop: -30,
 };
 
+const style = {
+	height: 27,
+	marginRight: 6,
+};
+
 const Controls = ({
 	enableFilters,
 	hideAllControls,
@@ -45,28 +50,25 @@ const Controls = ({
 		>
 			{!hideAllControls ? (
 				<>
-					<HelpPopover
-						style={{
-							padding: 6,
-						}}
-						title="Filtering"
-					>
-						<p>
-							The main search box looks in all columns, but you can filter on
-							the values in specific columns by clicking the "Filter" button{" "}
-							<span className="glyphicon glyphicon-filter" /> and entering text
-							below the column headers.
-						</p>
-						<p>
-							For numeric columns, you can enter "&gt;50" to show values greater
-							than or equal to 50, "&lt;50" for the opposite, and "=50" for
-							values exactly equal to 50.
-						</p>
-						<p>
-							You can also filter on multiple values at once. For example, enter{" "}
-							{positionFilterText}.
-						</p>
-					</HelpPopover>
+					<div className="d-flex align-items-center" style={style}>
+						<HelpPopover title="Filtering">
+							<p>
+								The main search box looks in all columns, but you can filter on
+								the values in specific columns by clicking the "Filter" button{" "}
+								<span className="glyphicon glyphicon-filter" /> and entering
+								text below the column headers.
+							</p>
+							<p>
+								For numeric columns, you can enter "&gt;50" to show values
+								greater than or equal to 50, "&lt;50" for the opposite, and
+								"=50" for values exactly equal to 50.
+							</p>
+							<p>
+								You can also filter on multiple values at once. For example,
+								enter {positionFilterText}.
+							</p>
+						</HelpPopover>
+					</div>
 					<a
 						className={classNames(
 							"btn btn-sm btn-light-bordered cursor-pointer",
@@ -75,10 +77,7 @@ const Controls = ({
 							},
 						)}
 						onClick={onToggleFilters}
-						style={{
-							height: 27,
-							marginRight: 6,
-						}}
+						style={style}
 						title="Filter"
 					>
 						<span className="glyphicon glyphicon-filter" />

@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
 import {

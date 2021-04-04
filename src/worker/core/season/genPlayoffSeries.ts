@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { g, helpers, orderTeams } from "../../util";
 import type {
 	TeamFiltered,

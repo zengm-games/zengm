@@ -1,5 +1,5 @@
 import { unwrap } from "idb";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	isSport,
 	MAX_SUPPORTED_LEAGUE_VERSION,

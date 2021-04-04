@@ -66,11 +66,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 						if (dpids[i].includes(picks[j].dpid)) {
 							s.teams[i].picks.push({
 								dpid: picks[j].dpid,
-								desc: `${picks[j].season} ${helpers.ordinal(
-									picks[j].round,
-								)} round pick (${
-									g.get("teamInfoCache")[picks[j].originalTid]?.abbrev
-								})`,
+								desc: helpers.pickDesc(picks[j], "short"),
 							});
 						}
 					}

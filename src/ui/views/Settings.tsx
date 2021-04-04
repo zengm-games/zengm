@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import classNames from "classnames";
-import groupBy from "lodash/groupBy";
+import groupBy from "lodash-es/groupBy";
 import PropTypes from "prop-types";
 import {
 	Fragment,
@@ -32,7 +32,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../common";
 
-const godModeRequiredMessage = "Enable God Mode to change this setting";
+const godModeRequiredMessage = "This setting can only be changed in God Mode.";
 
 type Key =
 	| "numGames"
@@ -44,6 +44,7 @@ type Key =
 	| "numPlayoffByes"
 	| "draftType"
 	| "numSeasonsFutureDraftPicks"
+	| "draftAges"
 	| "salaryCap"
 	| "minPayroll"
 	| "luxuryPayroll"
@@ -60,6 +61,7 @@ type Key =
 	| "tragicDeathRate"
 	| "brotherRate"
 	| "sonRate"
+	| "forceRetireAge"
 	| "homeCourtAdvantage"
 	| "rookieContractLengths"
 	| "rookiesCanRefuse"
@@ -210,7 +212,7 @@ export const options: {
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
-		description: (
+		descriptionLong: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
 				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
@@ -409,6 +411,41 @@ export const options: {
 		},
 	},
 	{
+		category: "Draft",
+		key: "draftAges",
+		name: "Age of draft prospects",
+		godModeRequired: "existingLeagueOnly",
+		description: (
+			<>
+				Set the minimum/maximum age of generated draft prospects.{" "}
+				<a
+					href="https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					More info.
+				</a>
+			</>
+		),
+		type: "jsonString",
+		validator: value => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			if (value.length != 2) {
+				throw new Error("Must have 2 numbers");
+			}
+			if (value[0] > value[1]) {
+				throw new Error("Max age can't be less than min age!");
+			}
+			for (const num of value) {
+				if (!Number.isInteger(num)) {
+					throw new Error("Array must contain only integers");
+				}
+			}
+		},
+	},
+	{
 		category: "Finances",
 		key: "salaryCap",
 		name: "Salary Cap",
@@ -444,7 +481,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "minContract",
-		name: "Minimum Contract",
+		name: "Min Contract",
 		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
@@ -475,7 +512,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "minContractLength",
-		name: "Minimum Contract Length",
+		name: "Min Contract Length",
 		godModeRequired: "always",
 		type: "int",
 		validator: value => {
@@ -487,7 +524,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "maxContractLength",
-		name: "Maximum Contract Length",
+		name: "Max Contract Length",
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
@@ -566,7 +603,7 @@ export const options: {
 	{
 		category: "Events",
 		key: "aiTradesFactor",
-		name: "Trades Between AI Teams Factor",
+		name: "AI-to-AI Trades Factor",
 		godModeRequired: "always",
 		type: "float",
 		description:
@@ -661,6 +698,15 @@ export const options: {
 			"The probability that a new player will be the son of an existing player.",
 	},
 	{
+		category: "Events",
+		key: "forceRetireAge",
+		name: "Force Retire at Age",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
+		description:
+			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",
+	},
+	{
 		category: "Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
@@ -727,7 +773,7 @@ export const options: {
 		name: "Player Mood Traits",
 		godModeRequired: "existingLeagueOnly",
 		type: "bool",
-		description: (
+		descriptionLong: (
 			<>
 				This controls the existence of player mood traits (fame, loyalty, money,
 				winning). Even if you disable it, the player mood system will still
@@ -874,17 +920,8 @@ if (isSport("basketball")) {
 		},
 		{
 			category: "Game Simulation",
-			key: "foulRateFactor",
-			name: "Foul Rate Factor",
-			godModeRequired: "always",
-			type: "float",
-			description:
-				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
-		},
-		{
-			category: "Game Simulation",
 			key: "foulsNeededToFoulOut",
-			name: "# Fouls Needed to Foul Out",
+			name: "Foul Out Limit",
 			godModeRequired: "always",
 			type: "int",
 			validator: value => {
@@ -896,9 +933,9 @@ if (isSport("basketball")) {
 		{
 			category: "Game Simulation",
 			key: "foulsUntilBonus",
-			name: "# of Fouls Until Teams Enter Bonus",
+			name: "# Fouls Until Bonus",
 			godModeRequired: "always",
-			description: (
+			descriptionLong: (
 				<>
 					This is the number of team fouls required for the opponent to get
 					bonus FTs for a non-shooting foul. You must enter a valid JSON array
@@ -913,7 +950,7 @@ if (isSport("basketball")) {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length < 3 || value.length > 3) {
+				if (value.length != 3) {
 					throw new Error("Must have 3 numbers");
 				}
 				for (const num of value) {
@@ -1000,11 +1037,20 @@ if (isSport("basketball")) {
 		{
 			category: "Game Simulation",
 			key: "orbFactor",
-			name: "Offensive Rebound Tendency Factor",
+			name: "Off Reb Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
 			description:
 				"The baseline offensive rebound percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "foulRateFactor",
+			name: "Foul Rate Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
 			category: "Player Development",
@@ -2340,6 +2386,7 @@ const Option = ({
 	description,
 	descriptionLong,
 	decoration,
+	godModeRequired,
 	maxWidth,
 	onChange,
 	type,
@@ -2353,6 +2400,7 @@ const Option = ({
 	description?: ReactNode;
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
+	godModeRequired?: "always" | "existingLeagueOnly";
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -2376,13 +2424,20 @@ const Option = ({
 							}
 						}}
 					>
-						{disabled ? (
+						{godModeRequired ? (
 							<span
 								className="legend-square god-mode mr-1"
 								title={godModeRequiredMessage}
 							/>
 						) : null}
-						{name}
+						{name.endsWith(" Factor") ? (
+							<>
+								{name.replace(" Factor", "")}
+								<span className="d-none d-lg-inline"> Factor</span>
+							</>
+						) : (
+							name
+						)}
 					</label>
 					{descriptionLong ? (
 						<span
@@ -2440,12 +2495,38 @@ const Option = ({
 	);
 };
 
+const GodModeSettingsButton = ({
+	children,
+	className,
+	godMode,
+	onClick,
+}: {
+	children: any;
+	className?: string;
+	godMode: boolean;
+	onClick: () => void;
+}) => {
+	if (godMode) {
+		return null;
+	}
+
+	return (
+		<button
+			type="button"
+			className={classNames("btn btn-secondary", className)}
+			onClick={onClick}
+		>
+			{children}
+		</button>
+	);
+};
+
 const Settings = (props: View<"settings">) => {
 	const { godMode, godModeInPast } = props;
 
 	useTitleBar({ title: "League Settings" });
 
-	const [showGodModeSettings, setShowGodModeSettings] = useState(false);
+	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
 	useEffect(() => {
 		localActions.update({
@@ -2607,20 +2688,20 @@ const Settings = (props: View<"settings">) => {
 		bottom += 52;
 	}
 
+	const toggleGodModeSettings = () => {
+		setShowGodModeSettings(show => !show);
+	};
+
 	return (
-		<div className="d-flex">
-			<form onSubmit={handleFormSubmit} style={{ maxWidth: 700 }}>
-				{!godMode ? (
-					<button
-						type="button"
-						className="btn btn-secondary mb-5"
-						onClick={() => {
-							setShowGodModeSettings(show => !show);
-						}}
-					>
-						{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-					</button>
-				) : null}
+		<div className="settings-wrapper mt-lg-2">
+			<form onSubmit={handleFormSubmit} style={{ maxWidth: 2100 }}>
+				<GodModeSettingsButton
+					className="mb-5 d-sm-none"
+					godMode={godMode}
+					onClick={toggleGodModeSettings}
+				>
+					{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+				</GodModeSettingsButton>
 
 				{categories.map(category => {
 					if (!groupedOptions[category.name]) {
@@ -2642,7 +2723,7 @@ const Settings = (props: View<"settings">) => {
 					return (
 						<Fragment key={category.name}>
 							<a className="anchor" id={category.name} />
-							<h2>
+							<h2 className="mb-3">
 								{category.name}
 								{category.helpText ? (
 									<HelpPopover title={category.name} className="ml-1">
@@ -2692,20 +2773,23 @@ const Settings = (props: View<"settings">) => {
 									</select>
 								</div>
 							) : null}
-							<div className="list-group mb-5">
+							<div className="row mb-5 mb-md-3">
 								{catOptions.map(
-									({
-										customForm,
-										decoration,
-										description,
-										descriptionLong,
-										godModeRequired,
-										key,
-										maxWidth,
-										name,
-										type,
-										values,
-									}) => {
+									(
+										{
+											customForm,
+											decoration,
+											description,
+											descriptionLong,
+											godModeRequired,
+											key,
+											maxWidth,
+											name,
+											type,
+											values,
+										},
+										i,
+									) => {
 										const enabled = godMode || !godModeRequired;
 										const id = `settings-${category.name}-${name}`;
 
@@ -2757,22 +2841,32 @@ const Settings = (props: View<"settings">) => {
 										return (
 											<div
 												key={key}
-												className="list-group-item list-group-item-settings"
+												className="settings-col col-md-6 col-xxl-4 d-flex"
 											>
-												<Option
-													type={type}
-													disabled={!enabled}
-													id={id}
-													onChange={handleChange(key, type)}
-													value={state[key]}
-													values={values}
-													decoration={decoration}
-													name={name}
-													description={description}
-													descriptionLong={descriptionLong}
-													customForm={customFormNode}
-													maxWidth={maxWidth}
-												/>
+												<div
+													className={classNames(
+														"fake-list-group-item rounded",
+														{
+															"settings-striped-bg-alt": i % 2 === 1,
+														},
+													)}
+												>
+													<Option
+														type={type}
+														disabled={!enabled}
+														id={id}
+														onChange={handleChange(key, type)}
+														value={state[key]}
+														values={values}
+														decoration={decoration}
+														name={name}
+														description={description}
+														descriptionLong={descriptionLong}
+														customForm={customFormNode}
+														maxWidth={maxWidth}
+														godModeRequired={godModeRequired}
+													/>
+												</div>
 											</div>
 										);
 									},
@@ -2786,27 +2880,37 @@ const Settings = (props: View<"settings">) => {
 					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
 					style={{ bottom }}
 				>
-					<button
-						className={classNames(
-							"btn border-0",
-							godMode ? "btn-secondary" : "btn-god-mode",
-						)}
-						onClick={handleGodModeToggle}
-						type="button"
-					>
-						{godMode ? "Disable God Mode" : "Enable God Mode"}
-					</button>
+					<div className="btn-group">
+						<button
+							className={classNames(
+								"btn border-0",
+								godMode ? "btn-secondary" : "btn-god-mode",
+							)}
+							onClick={handleGodModeToggle}
+							type="button"
+						>
+							{godMode ? "Disable God Mode" : "Enable God Mode"}
+						</button>
+						{!godMode ? (
+							<GodModeSettingsButton
+								className="d-none d-sm-block"
+								godMode={godMode}
+								onClick={toggleGodModeSettings}
+							>
+								{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+							</GodModeSettingsButton>
+						) : null}
+					</div>
 					<button className="btn btn-primary ml-auto" disabled={submitting}>
 						Save Settings
 					</button>
 				</div>
 			</form>
-
-			<div className="d-none settings-shortcuts ml-3">
+			<div className="settings-shortcuts flex-shrink-0">
 				<ul className="list-unstyled">
-					<li className="mb-1">Shortcuts:</li>
+					<li>Shortcuts: </li>
 					{currentCategoryNames.map(name => (
-						<li key={name} className="mb-1">
+						<li key={name} className="settings-shortcut">
 							<a href={`#${name}`}>{name}</a>
 						</li>
 					))}

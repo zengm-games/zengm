@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],

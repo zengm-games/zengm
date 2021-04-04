@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import PropTypes from "prop-types";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
@@ -48,8 +48,8 @@ const genPlayerRows = (
 				/>,
 				<input
 					type="checkbox"
-					title="Exclude this player from counter offers"
-					checked={p.excluded}
+					title={p.untradableMsg ?? "Exclude this player from counter offers"}
+					checked={p.excluded || p.untradable}
 					disabled={p.untradable}
 					onChange={() => {
 						handleToggle(userOrOther, "player", "exclude", p.pid);
@@ -73,7 +73,7 @@ const genPlayerRows = (
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {
-				"table-danger": p.excluded && !p.included,
+				"table-danger": (p.excluded || p.untradable) && !p.included,
 				"table-success": p.included,
 			},
 		};

@@ -1,5 +1,5 @@
-import groupBy from "lodash/groupBy";
-import orderBy from "lodash/orderBy";
+import groupBy from "lodash-es/groupBy";
+import orderBy from "lodash-es/orderBy";
 import { helpers } from ".";
 import { isSport, TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";

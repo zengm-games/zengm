@@ -6,7 +6,7 @@ const isUntradable = (
 	p: Player | PlayerWithoutKey,
 ): {
 	untradable: boolean;
-	untradableMsg: string;
+	untradableMsg?: string;
 } => {
 	if (!g.get("godMode")) {
 		if (
@@ -32,7 +32,6 @@ const isUntradable = (
 
 	return {
 		untradable: false,
-		untradableMsg: "",
 	};
 };
 

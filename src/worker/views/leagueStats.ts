@@ -1,7 +1,7 @@
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getStats } from "./teamStats";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PHASE, TEAM_STATS_TABLES } from "../../common";
 
 const updateLeagueStats = async (

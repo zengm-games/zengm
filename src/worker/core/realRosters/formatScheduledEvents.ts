@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
 import type { ScheduledEventWithoutKey } from "../../../common/types";
 import { PHASE } from "../../../common";

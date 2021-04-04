@@ -15,9 +15,9 @@ import type {
 	TeamGameSim,
 	TeamNum,
 } from "./types";
-import orderBy from "lodash/orderBy";
-import flatten from "lodash/flatten";
-import range from "lodash/range";
+import orderBy from "lodash-es/orderBy";
+import flatten from "lodash-es/flatten";
+import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
@@ -862,23 +862,26 @@ class GameSim {
 			p => p.compositeRating.faceoffs ** 0.5,
 		);
 
+		let names: [string, string];
 		if (winner === p0) {
 			this.o = 0;
 			this.d = 1;
 			this.recordStat(0, p0, "fow");
 			this.recordStat(1, p1, "fol");
+			names = [p0.name, p1.name];
 		} else {
 			this.o = 1;
 			this.d = 0;
 			this.recordStat(1, p1, "fow");
 			this.recordStat(0, p0, "fol");
+			names = [p1.name, p0.name];
 		}
 
 		this.playByPlay.logEvent({
 			type: "faceoff",
 			clock: this.clock,
 			t: this.o,
-			names: [p0.name, p1.name],
+			names,
 		});
 
 		this.advanceClock();

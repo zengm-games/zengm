@@ -1,5 +1,5 @@
 import { csvFormatRows } from "d3-dsv";
-import flatten from "lodash/flatten";
+import flatten from "lodash-es/flatten";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -83,7 +83,7 @@ import type {
 	Div,
 	LocalStateUI,
 } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	AwardsByPlayer,

@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import { PHASE } from "../../common";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
 
 const getTeamOvr = async (tid: number) => {

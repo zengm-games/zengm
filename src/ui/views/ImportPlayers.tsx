@@ -9,7 +9,7 @@ import {
 	MoreLinks,
 } from "../components";
 import type { View } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const ImportPlayers = ({
 	challengeNoRatings,

@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PHASE } from "../../../common";
 import { g, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";

@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { bySport, PHASE } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
@@ -46,7 +46,21 @@ const updateAwards = async (
 			stats: bySport({
 				basketball: ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"],
 				football: ["abbrev", "tid", "keyStats"],
-				hockey: ["abbrev", "tid", "keyStats"],
+				hockey: [
+					"abbrev",
+					"tid",
+					"keyStats",
+					"a",
+					"dps",
+					"g",
+					"gaa",
+					"gps",
+					"hit",
+					"ops",
+					"pts",
+					"svPct",
+					"tk",
+				],
 			}),
 			fuzz: true,
 			mergeStats: true,

@@ -310,7 +310,7 @@ const teamInfos: {
 		region: "Philadelphia",
 		name: "Cheesesteaks",
 		pop: 5.5,
-		colors: ["#46bae6", "#ffdb33", "d9771f"],
+		colors: ["#46bae6", "#ffdb33", "#d9771f"],
 		jersey: bySport({
 			basketball: "jersey2",
 			football: "football",

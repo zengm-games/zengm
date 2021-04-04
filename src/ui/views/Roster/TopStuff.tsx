@@ -1,6 +1,10 @@
 import PropTypes from "prop-types";
 import { useState, CSSProperties } from "react";
-import { RecordAndPlayoffs, RosterComposition } from "../../components";
+import {
+	RecordAndPlayoffs,
+	RosterComposition,
+	PlusMinus,
+} from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import type { View } from "../../../common/types";
@@ -115,17 +119,13 @@ const TopStuff = ({
 			"Season not found"
 		);
 
-	let marginOfVictory: string;
+	let marginOfVictory = 0;
 	if (isSport("football") || isSport("hockey")) {
 		if (t.stats.gp !== 0) {
-			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
-				1,
-			);
-		} else {
-			marginOfVictory = "0.0";
+			marginOfVictory = (t.stats.pts - t.stats.oppPts) / t.stats.gp;
 		}
 	} else {
-		marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
+		marginOfVictory = t.stats.pts - t.stats.oppPts;
 	}
 
 	return (
@@ -149,7 +149,7 @@ const TopStuff = ({
 							</>
 						) : null}
 						<span title="Average margin of victory">Average MOV</span>:{" "}
-						{marginOfVictory}
+						<PlusMinus>{marginOfVictory}</PlusMinus>
 					</div>
 
 					{season === currentSeason || isSport("football") ? (

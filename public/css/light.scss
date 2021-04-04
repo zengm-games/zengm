@@ -109,23 +109,18 @@ h5 {
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.padding-for-skyscraper {
-		padding-right: 190px;
-	}
 	.skyscraper-wrapper {
 		display: block;
-		position: absolute;
-		top: 0;
+		position: sticky;
+		top: 60px;
 		right: 0;
 		height: 600px;
-		width: 190px;
 	}
 	#basketball-gm_right_rail,
 	#football-gm_right_rail,
 	#zen-gm_right_rail {
 		width: 160px;
 		height: 600px;
-		margin: 0 auto;
 	}
 }
 
@@ -854,6 +849,10 @@ tr.table-warning:hover > td {
 	.d-xxl-inline {
 		display: inline !important;
 	}
+	.col-xxl-4 {
+		flex: 0 0 33.33333%;
+		max-width: 33.33333%;
+	}
 	/*.d-xxl-inline-block {
 	display: inline-block !important; }
   .d-xxl-block {
@@ -1096,22 +1095,58 @@ button.live-game-sim-more {
 	margin-bottom: 0 !important;
 }
 
+.fake-list-group-item {
+	background-color: $table-accent-bg;
+	padding: 0.5rem 1rem;
+	width: 100%;
+}
+.settings-striped-bg-alt {
+	background-color: inherit;
+}
+@include media-breakpoint-up(md) {
+	.settings-striped-bg-alt {
+		background-color: $table-accent-bg;
+	}
+	.fake-list-group-item {
+		margin-bottom: 30px;
+	}
+}
 @include media-breakpoint-down(xs) {
-	.list-group-item-settings {
+	.fake-list-group-item {
 		padding-right: 0;
 		padding-left: 0;
-		border-right: 0;
-		border-left: 0;
+		border-right: 0 !important;
+		border-left: 0 !important;
 		border-radius: 0 !important;
 	}
 }
 
+@include media-breakpoint-down(sm) {
+	// Make it so the striped-bg color goes all the way to the edge of the screen
+	.settings-col {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.fake-list-group-item {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}
+
 .settings-buttons {
-	position: -webkit-sticky; // Safari
 	position: sticky;
 
 	// To make it go over the Bootstrap custom form controls, like switch
 	z-index: 2;
+}
+@include media-breakpoint-down(md) {
+	.settings-buttons {
+		position: fixed;
+		width: 100%;
+		left: 0;
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
 }
 
 a.anchor {
@@ -1121,25 +1156,34 @@ a.anchor {
 	visibility: hidden;
 }
 
-.settings-shortcuts {
-	align-self: flex-start;
-	position: sticky;
-	top: 60px;
+.settings-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
 }
-@media (min-width: 900px) {
-	.settings-shortcuts {
-		display: block !important;
+.settings-shortcuts li {
+	display: inline;
+	&:not(:last-child):not(:first-child):after {
+		content: " | ";
 	}
 }
+@include media-breakpoint-up(lg) {
+	.settings-wrapper {
+		flex-direction: row;
+	}
+	.settings-shortcuts {
+		align-self: flex-start;
+		position: sticky;
+		top: 60px;
+		margin-left: 1rem;
 
-.rounded-top-0 {
-	border-top-right-radius: 0rem !important;
-	border-top-left-radius: 0rem !important;
-}
-
-.rounded-bottom-0 {
-	border-bottom-right-radius: 0rem !important;
-	border-bottom-left-radius: 0rem !important;
+		li {
+			margin-bottom: 0.25rem;
+			display: block;
+			&:not(:last-child):not(:first-child):after {
+				content: none;
+			}
+		}
+	}
 }
 
 #basketball-gm_mobile_leaderboard,
@@ -1211,4 +1255,34 @@ a.anchor {
 :root {
 	--gradient-base-danger: #{derive-rgb-values-from-hex(lighten($danger, 20%))};
 	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
+}
+
+// Hacky fix for https://github.com/react-bootstrap/react-bootstrap/issues/5270
+.popover-margin-fix-1 {
+	&[data-popper-placement="top"] {
+		margin-left: -4px !important;
+		margin-bottom: 8px !important;
+	}
+	&[data-popper-placement="right"] {
+		margin-left: 8px !important;
+		margin-top: -11px !important;
+	}
+	&[data-popper-placement="bottom"] {
+		margin-left: -4px !important;
+		margin-top: 8px !important;
+	}
+	&[data-popper-placement="left"] {
+		margin-right: 8px !important;
+		margin-top: -11px !important;
+	}
+}
+.popover-margin-fix-2 {
+	&[data-popper-placement="top"],
+	&[data-popper-placement="bottom"] {
+		margin-left: -4px !important;
+	}
+	&[data-popper-placement="right"],
+	&[data-popper-placement="left"] {
+		margin-top: -7px !important;
+	}
 }

@@ -280,6 +280,7 @@ const CountryFlag = ({
 					`flag-icon flag-icon-${code}`,
 					className ?? undefined,
 				)}
+				data-no-row-highlight="true"
 				title={country2}
 			></span>
 		);

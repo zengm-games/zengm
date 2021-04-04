@@ -58,12 +58,6 @@ const initAds = (goldUntil: number | undefined) => {
 
 	if (!hideAds) {
 		window.freestar.queue.push(() => {
-			// Add margin for skyscraper on right
-			const container = document.getElementsByClassName("bbgm-container")[0];
-			if (container instanceof HTMLElement) {
-				container.classList.add("padding-for-skyscraper");
-			}
-
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
 			// const divsMobile: string[] = [];
@@ -199,7 +193,10 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.freestar.freestarReloadAdSlot;
+	const adBlock =
+		!window.freestar.refreshAllSlots ||
+		!window.googletag ||
+		!window.googletag.pubads;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

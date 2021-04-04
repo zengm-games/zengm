@@ -377,12 +377,14 @@ export type GameAttributesLeague = {
 	difficulty: number;
 	divs: Div[];
 	draftType: DraftType;
+	draftAges: [number, number];
 	easyDifficultyInPast: boolean;
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;
 	elamPoints: number;
 	equalizeRegions: boolean;
+	forceRetireAge: number;
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: number[];
 	foulRateFactor: number;

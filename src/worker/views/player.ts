@@ -24,7 +24,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -127,7 +127,7 @@ const updatePlayer = async (
 					salaries: any[];
 					salariesTotal: any;
 					untradable: any;
-					untradableMsg: string;
+					untradableMsg?: string;
 					ratings: (MinimalPlayerRatings & {
 						abbrev: string;
 						age: number;

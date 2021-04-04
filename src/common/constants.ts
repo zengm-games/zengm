@@ -259,7 +259,7 @@ const WEBSITE_PLAY = bySport({
 const WEBSITE_ROOT = bySport({
 	basketball: "basketball-gm.com",
 	football: "football-gm.com",
-	hockey: "basketball-gm.com",
+	hockey: "zengm.com/hockey",
 });
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process

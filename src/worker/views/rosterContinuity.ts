@@ -1,8 +1,8 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 async function updateSeasons(
 	inputs: unknown,

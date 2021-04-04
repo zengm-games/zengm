@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { isSport, PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";

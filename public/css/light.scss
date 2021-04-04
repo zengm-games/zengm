@@ -1096,35 +1096,48 @@ button.live-game-sim-more {
 }
 
 .fake-list-group-item {
-	padding: 0.5rem;
+	background-color: $table-accent-bg;
+	padding: 0.75rem 1.25rem;
 	width: 100%;
 }
 .settings-striped-bg-1 {
 	background-color: $table-accent-bg;
 }
 @include media-breakpoint-up(md) {
-	.settings-striped-bg-1 {
-		background-color: inherit;
+	// Keep in sync with node_modules/bootstrap/scss/utilities/_borders.scss
+	.rounded-md-bottom {
+		border-bottom-right-radius: $border-radius !important;
+		border-bottom-left-radius: $border-radius !important;
 	}
-	.settings-striped-bg-2 {
-		background-color: $table-accent-bg;
+	.rounded-md-top {
+		border-top-left-radius: $border-radius !important;
+		border-top-right-radius: $border-radius !important;
+	}
+	.border-md-top {
+		border-top: $border-width solid $border-color !important;
 	}
 }
 @media (min-width: 1600px) {
-	.settings-striped-bg-1 {
-		background-color: inherit;
+	// Keep in sync with node_modules/bootstrap/scss/utilities/_borders.scss
+	.rounded-xxl-bottom {
+		border-bottom-right-radius: $border-radius !important;
+		border-bottom-left-radius: $border-radius !important;
 	}
-	.settings-striped-bg-2 {
-		background-color: inherit;
+	.rounded-xxl-top {
+		border-top-left-radius: $border-radius !important;
+		border-top-right-radius: $border-radius !important;
 	}
-	.settings-striped-bg-3 {
-		background-color: $table-accent-bg;
+	.border-xxl-top {
+		border-top: $border-width solid $border-color !important;
 	}
 }
 @include media-breakpoint-down(xs) {
 	.fake-list-group-item {
 		padding-right: 0;
 		padding-left: 0;
+		border-right: 0 !important;
+		border-left: 0 !important;
+		border-radius: 0 !important;
 	}
 }
 
@@ -1138,6 +1151,16 @@ button.live-game-sim-more {
 		padding-left: 15px;
 		padding-right: 15px;
 	}
+}
+
+.rounded-top-0 {
+	border-top-right-radius: 0rem !important;
+	border-top-left-radius: 0rem !important;
+}
+
+.rounded-bottom-0 {
+	border-bottom-right-radius: 0rem !important;
+	border-bottom-left-radius: 0rem !important;
 }
 
 .settings-buttons {

@@ -2839,24 +2839,32 @@ const Settings = (props: View<"settings">) => {
 										}
 
 										// Similar logic could extend this to 4 columns or more, if necessary
-										const striped1 = i % 2 === 0;
-										const striped2 = Math.floor(i / 2) % 2 === 0;
-										const striped3 = Math.floor(i / 3) % 2 === 0;
+										const lastInCol = i === catOptions.length - 1;
+										const lastInCol2 = lastInCol || i === catOptions.length - 2;
+										const lastInCol3 =
+											lastInCol2 || i === catOptions.length - 3;
+
+										const firstInCol = i === 0;
+										const firstInCol2 = firstInCol || i === 1;
+										const firstInCol3 = firstInCol2 || i === 2;
 
 										return (
 											<div
 												key={key}
-												className="settings-col col-md-6 col-xxl-4"
+												className="settings-col col-md-6 col-xxl-4 d-flex"
 											>
 												<div
-													className={classNames(
-														"fake-list-group-item rounded",
-														{
-															"settings-striped-bg-1": striped1,
-															"settings-striped-bg-2": striped2,
-															"settings-striped-bg-3": striped3,
-														},
-													)}
+													className={classNames("fake-list-group-item border", {
+														"rounded-bottom": lastInCol,
+														"rounded-top": firstInCol,
+														"border-top-0": !firstInCol,
+														"rounded-md-bottom": lastInCol2,
+														"rounded-md-top": firstInCol2,
+														"border-md-top": firstInCol2,
+														"rounded-xxl-bottom": lastInCol3,
+														"rounded-xxl-top": firstInCol3,
+														"border-xxl-top": firstInCol3,
+													})}
 												>
 													<Option
 														type={type}

@@ -481,7 +481,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "minContract",
-		name: "Minimum Contract",
+		name: "Min Contract",
 		godModeRequired: "always",
 		type: "float1000",
 		decoration: "currency",
@@ -512,7 +512,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "minContractLength",
-		name: "Minimum Contract Length",
+		name: "Min Contract Length",
 		godModeRequired: "always",
 		type: "int",
 		validator: value => {
@@ -524,7 +524,7 @@ export const options: {
 	{
 		category: "Contracts",
 		key: "maxContractLength",
-		name: "Maximum Contract Length",
+		name: "Max Contract Length",
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
@@ -921,7 +921,7 @@ if (isSport("basketball")) {
 		{
 			category: "Game Simulation",
 			key: "foulsNeededToFoulOut",
-			name: "# Fouls Needed to Foul Out",
+			name: "Foul Out Limit",
 			godModeRequired: "always",
 			type: "int",
 			validator: value => {
@@ -2430,7 +2430,14 @@ const Option = ({
 								title={godModeRequiredMessage}
 							/>
 						) : null}
-						{name}
+						{name.endsWith(" Factor") ? (
+							<>
+								{name.replace(" Factor", "")}
+								<span className="d-none d-lg-inline"> Factor</span>
+							</>
+						) : (
+							name
+						)}
 					</label>
 					{descriptionLong ? (
 						<span

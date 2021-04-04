@@ -1128,7 +1128,7 @@ button.live-game-sim-more {
 	}
 }
 
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(sm) {
 	// Make it so the striped-bg color goes all the way to the edge of the screen
 	.settings-col {
 		padding-left: 0;

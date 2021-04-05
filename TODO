@@ -1,3 +1,35 @@
+for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
+- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
+- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
+
+award voter fatigue
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gr1e6r4/
+
+all star game num players should change with settings
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpb9qoc/
+
+totals per team on gm history page
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpk0i4b/
+
+When exporting draft classes from the past of the league, it also exports injuries that the players from that draft class had during the season
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/grbcap6/
+
+Could the pick filter be tweaked so that just typing '1-' and '2-' would show the first and second round picks, respectively. It's now difficult to e.g. filter out the second rounders as you'd need to combine all 1-1 through 1-9.
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/grcfzwo/
+
+paginate retired numbers
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gs30nqc/
+
+player injury table, add sub of games in footer
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gse4jjw/
+
+more balanced hockey contract amounts
+- https://old.reddit.com/r/ZenGMHockey/comments/mk0oyt/slight_salary_boost_for_average_players/
+
+zgmh, finals home ice should ignore the division leaders bonus for the standings https://discord.com/channels/@me/778760871911751700/828695386771423232
+- isn't there an orderTeams option for this?
+
 ad stuff
 - skyscraper sticky
   - compare I:PV, CPM, and RPM before and after
@@ -303,10 +335,6 @@ FBGM too many very short players
 on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
 
 Maybe another frivolty to say which players were the best with a certain pick, e.g. 1-3 would be Michael Jordan IRL, 1-1 would be LeBron James, etc @lewie100
-
-for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
-- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
-- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 
 trade summary charts future
 - some indication for winning a championship, special marker?

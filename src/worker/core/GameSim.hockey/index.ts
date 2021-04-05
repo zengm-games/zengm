@@ -941,6 +941,7 @@ class GameSim {
 			}
 
 			if (this.checkPenalty()) {
+				this.faceoff();
 				return;
 			}
 

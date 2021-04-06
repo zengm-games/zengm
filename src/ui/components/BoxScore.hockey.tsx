@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols } from "../util";
-import { getPeriodName, helpers, processPlayerStats } from "../../common";
+import { getCols, helpers } from "../util";
+import { getPeriodName, processPlayerStats } from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
 
@@ -65,6 +65,49 @@ const StatsTable = ({
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
 	const sorts = sortsByType[type];
 
+	const players = t.players
+		.map(p => {
+			return {
+				...p,
+				processed: processPlayerStats(p, stats),
+			};
+		})
+		.filter(
+			p =>
+				(type === "skaters" && p.gpSkater > 0) ||
+				(type === "goalies" && p.gpGoalie > 0),
+		)
+		.sort((a, b) => {
+			for (const sort of sorts) {
+				if (b.processed[sort] !== a.processed[sort]) {
+					return b.processed[sort] - a.processed[sort];
+				}
+			}
+			return 0;
+		});
+
+	const showFooter = players.length > 1;
+	const sumsByStat: Record<string, number> = {};
+	if (showFooter) {
+		for (const stat of stats) {
+			if (stat === "svPct") {
+				sumsByStat[stat] = helpers.percentage(sumsByStat.sv, sumsByStat.sa);
+			} else if (stat === "foPct") {
+				sumsByStat[stat] = helpers.percentage(
+					sumsByStat.fow,
+					sumsByStat.fow + sumsByStat.fol,
+				);
+			} else if (stat === "sPct") {
+				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s);
+			} else {
+				sumsByStat[stat] = 0;
+				for (const p of players) {
+					sumsByStat[stat] += p.processed[stat];
+				}
+			}
+		}
+	}
+
 	return (
 		<div key={t.abbrev} className="mb-3">
 			<ResponsiveTableWrapper>
@@ -82,36 +125,30 @@ const StatsTable = ({
 						</tr>
 					</thead>
 					<tbody>
-						{t.players
-							.map(p => {
-								return {
-									...p,
-									processed: processPlayerStats(p, stats),
-								};
-							})
-							.filter(
-								p =>
-									(type === "skaters" && p.gpSkater > 0) ||
-									(type === "goalies" && p.gpGoalie > 0),
-							)
-							.sort((a, b) => {
-								for (const sort of sorts) {
-									if (b.processed[sort] !== a.processed[sort]) {
-										return b.processed[sort] - a.processed[sort];
-									}
-								}
-								return 0;
-							})
-							.map((p, i) => (
-								<Row
-									key={p.pid}
-									i={i}
-									p={p}
-									stats={stats}
-									forceUpdate={forceRowUpdate}
-								/>
-							))}
+						{players.map((p, i) => (
+							<Row
+								key={p.pid}
+								i={i}
+								p={p}
+								stats={stats}
+								forceUpdate={forceRowUpdate}
+							/>
+						))}
 					</tbody>
+					{showFooter ? (
+						<tfoot>
+							<tr>
+								<th colSpan={2}>Total</th>
+								{stats.map(stat => (
+									<th key={stat}>
+										{stat === "pm"
+											? null
+											: helpers.roundStat(sumsByStat[stat], stat, true)}
+									</th>
+								))}
+							</tr>
+						</tfoot>
+					) : null}
 				</table>
 			</ResponsiveTableWrapper>
 		</div>

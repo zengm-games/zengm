@@ -1,14 +1,6 @@
 import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
 
-const percentage = (numerator: number, denominator: number) => {
-	if (denominator > 0) {
-		return (100 * numerator) / denominator;
-	}
-
-	return 0;
-};
-
 const qbRat = (ps: PlayerStats) => {
 	const a = helpers.bound((ps.pssCmp / ps.pss - 0.3) * 5, 0, 2.375);
 	const b = helpers.bound((ps.pssYds / ps.pss - 3) * 0.25, 0, 2.375);
@@ -27,7 +19,7 @@ const processStats = (
 
 	for (const stat of stats) {
 		if (stat === "cmpPct") {
-			row[stat] = percentage(ps.pssCmp, ps.pss);
+			row[stat] = helpers.percentage(ps.pssCmp, ps.pss);
 		} else if (stat === "qbRat") {
 			row[stat] = qbRat(ps);
 		} else if (stat === "rusYdsPerAtt") {
@@ -39,12 +31,12 @@ const processStats = (
 		} else if (stat === "fga") {
 			row[stat] = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
 		} else if (stat === "fgPct") {
-			row[stat] = percentage(
+			row[stat] = helpers.percentage(
 				ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50,
 				ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50,
 			);
 		} else if (stat === "xpPct") {
-			row[stat] = percentage(ps.xp, ps.xpa);
+			row[stat] = helpers.percentage(ps.xp, ps.xpa);
 		} else if (stat === "kickingPts") {
 			row[stat] = 3 * (ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50) + ps.xp;
 		} else if (stat === "pntYdsPerAtt") {
@@ -64,9 +56,9 @@ const processStats = (
 				row[stat] = "0-0";
 			}
 		} else if (stat === "pssTDPct") {
-			row[stat] = percentage(ps.pssTD, ps.pss);
+			row[stat] = helpers.percentage(ps.pssTD, ps.pss);
 		} else if (stat === "pssIntPct") {
-			row[stat] = percentage(ps.pssInt, ps.pss);
+			row[stat] = helpers.percentage(ps.pssInt, ps.pss);
 		} else if (stat === "pssYdsPerAtt") {
 			row[stat] = ps.pssYds / ps.pss;
 		} else if (stat === "pssAdjYdsPerAtt") {
@@ -82,7 +74,7 @@ const processStats = (
 				(ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt - ps.pssSkYds) /
 				(ps.pss + ps.pssSk);
 		} else if (stat === "pssSkPct") {
-			row[stat] = percentage(ps.pssSk, ps.pssSk + ps.pss);
+			row[stat] = helpers.percentage(ps.pssSk, ps.pssSk + ps.pss);
 		} else if (stat === "rusYdsPerGame") {
 			row[stat] = ps.rusYds / ps.gp;
 		} else if (stat === "rusPerGame") {
@@ -94,7 +86,7 @@ const processStats = (
 		} else if (stat === "recYdsPerGame") {
 			row[stat] = ps.recYds / ps.gp;
 		} else if (stat === "recCatchPct") {
-			row[stat] = percentage(ps.rec, ps.tgt);
+			row[stat] = helpers.percentage(ps.rec, ps.tgt);
 		} else if (stat === "touches") {
 			row[stat] = ps.rus + ps.rec;
 		} else if (stat === "ydsPerTouch") {
@@ -137,11 +129,11 @@ const processStats = (
 			}
 
 			if (role === "passer") {
-				row[stat] = `${percentage(ps.pssCmp, ps.pss).toFixed(
-					1,
-				)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${ps.pssTD} TD, ${
-					ps.pssInt
-				} int, ${qbRat(ps).toFixed(1)} QBRat`;
+				row[stat] = `${helpers
+					.percentage(ps.pssCmp, ps.pss)
+					.toFixed(1)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${
+					ps.pssTD
+				} TD, ${ps.pssInt} int, ${qbRat(ps).toFixed(1)} QBRat`;
 			} else if (role === "rusher") {
 				row[stat] = `${helpers.numberWithCommas(
 					ps.rus,
@@ -160,7 +152,7 @@ const processStats = (
 				} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
 			} else if (role === "kicker") {
 				const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
-				row[stat] = `${fgm} FGs, ${percentage(fgm, fga).toFixed(1)}%`;
+				row[stat] = `${fgm} FGs, ${helpers.percentage(fgm, fga).toFixed(1)}%`;
 			} else if (role === "punter") {
 				row[stat] = `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(
 					1,

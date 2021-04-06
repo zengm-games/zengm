@@ -1,12 +1,5 @@
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
-
-const percentage = (numerator: number, denominator: number) => {
-	if (denominator > 0) {
-		return (100 * numerator) / denominator;
-	}
-
-	return 0;
-};
+import { helpers } from "../../util";
 
 const processStats = (
 	ts: TeamStats,
@@ -51,9 +44,9 @@ const processStats = (
 			} else if (stat === "ply") {
 				row[stat] = ts.pss + ts.rus + ts.pssSk;
 			} else if (stat === "drivesScoringPct") {
-				row[stat] = percentage(ts.pssTD + ts.rusTD, ts.drives);
+				row[stat] = helpers.percentage(ts.pssTD + ts.rusTD, ts.drives);
 			} else if (stat === "drivesTurnoverPct") {
-				row[stat] = percentage(ts.fmbLost + ts.pssInt, ts.drives);
+				row[stat] = helpers.percentage(ts.fmbLost + ts.pssInt, ts.drives);
 			} else if (stat === "avgFieldPosition") {
 				row[stat] = ts.totStartYds / ts.drives;
 			} else if (stat === "timePerDrive") {
@@ -78,9 +71,12 @@ const processStats = (
 			} else if (stat === "oppPly") {
 				row[stat] = ts.oppPss + ts.oppRus + ts.oppPssSk;
 			} else if (stat === "oppDrivesScoringPct") {
-				row[stat] = percentage(ts.oppPssTD + ts.oppRusTD, ts.oppDrives);
+				row[stat] = helpers.percentage(ts.oppPssTD + ts.oppRusTD, ts.oppDrives);
 			} else if (stat === "oppDrivesTurnoverPct") {
-				row[stat] = percentage(ts.oppFmbLost + ts.oppPssInt, ts.oppDrives);
+				row[stat] = helpers.percentage(
+					ts.oppFmbLost + ts.oppPssInt,
+					ts.oppDrives,
+				);
 			} else if (stat === "oppAvgFieldPosition") {
 				row[stat] = ts.oppTotStartYds / ts.oppDrives;
 			} else if (stat === "oppTimePerDrive") {

@@ -63,7 +63,7 @@ const initAds = (goldUntil: number | undefined) => {
 			// const divsMobile: string[] = [];
 			const showDivsDesktop = [
 				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
+				"distroscale",
 				AD_DIVS.rectangle2,
 				"skyscraper-wrapper",
 			];
@@ -80,11 +80,7 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivsDesktop = [
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
+			const adDivsDesktop = [AD_DIVS.leaderboard, AD_DIVS.rectangle2];
 			const adDivs =
 				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
 

@@ -39,29 +39,27 @@ const Footer = memo(() => {
 			<p className="clearfix" />
 
 			<div
-				className="banner-ad"
+				className="banner-ad d-flex justify-content-between align-items-center"
 				style={{
-					position: "relative",
+					height: 250,
 				}}
 			>
-				<div
-					id={AD_DIVS.rectangle1}
+				<iframe
+					id="distroscale"
+					src="/files/distroscale.html"
+					height="225"
+					width="400"
+					title="Ad"
+					className="border-0 flex-shrink-0"
 					style={{
 						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						left: 0,
 					}}
-					data-refresh-time="-1"
-				/>
+				></iframe>
 				<div
 					id="bbgm-ads-logo"
+					className="mx-2"
 					style={{
 						display: "none",
-						height: "250px",
-						margin: "5px 310px 0 310px",
 						alignItems: "center",
 						justifyContent: "center",
 					}}
@@ -70,20 +68,16 @@ const Footer = memo(() => {
 						alt=""
 						src={`https://zengm.com/files/logo-${process.env.SPORT}.png`}
 						style={{
-							maxHeight: "100%",
+							maxHeight: 250,
 							maxWidth: "100%",
 						}}
 					/>
 				</div>
 				<div
 					id={AD_DIVS.rectangle2}
+					className="flex-shrink-0"
 					style={{
 						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						right: 0,
 					}}
 					data-refresh-time="-1"
 				/>

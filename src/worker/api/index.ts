@@ -1146,6 +1146,17 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
+	// When exporting a past draft class, don't include current injuries
+	if (
+		season < g.get("season") ||
+		(season === g.get("season") && g.get("phase") > PHASE.DRAFT)
+	) {
+		for (const p of data.players) {
+			delete p.injury;
+			delete p.injuries;
+		}
+	}
+
 	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
 	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
 

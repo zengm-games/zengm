@@ -18,6 +18,7 @@ const JerseyNumber = ({
 	start,
 	end,
 	t,
+	retired,
 }: {
 	className?: string;
 	number: string;
@@ -28,6 +29,7 @@ const JerseyNumber = ({
 		name: string;
 		region: string;
 	};
+	retired?: boolean;
 }) => {
 	const colors = getValidTeamColors(t);
 
@@ -44,6 +46,14 @@ const JerseyNumber = ({
 		text += `${start}-${end}`;
 	}
 
+	if (retired) {
+		text += " (retired)";
+	}
+
+	const border = retired
+		? "4px double var(--yellow)"
+		: `2px solid ${colors[2]}`;
+
 	return (
 		<OverlayTrigger
 			overlay={<Tooltip id={id}>{text}</Tooltip>}
@@ -54,7 +64,7 @@ const JerseyNumber = ({
 				style={{
 					width: 55,
 					height: 50,
-					border: `2px solid ${colors[2]}`,
+					border,
 					backgroundColor: colors[0],
 					color: colors[1],
 					fontSize: 32,

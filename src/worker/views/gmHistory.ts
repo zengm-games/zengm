@@ -1,7 +1,8 @@
+import flatten from "lodash-es/flatten";
 import { idb, iterate } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
-import { getHistory } from "./teamHistory";
+import { getHistory, getHistoryTeam } from "./teamHistory";
 
 const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -10,26 +11,33 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameAttributes")
 	) {
 		const seasonsByTid: Record<number, Set<number>> = {};
-		const teamSeasons: TeamSeason[] = [];
+		const teamSeasonsByTeam: TeamSeason[][] = [];
 		const teamSeasonsIndex = idb.league
 			.transaction("teamSeasons")
 			.store.index("season, tid");
+		let prevTid: number | undefined;
 		for (
 			let season = g.get("startingSeason");
 			season <= g.get("season");
 			season++
 		) {
+			const tid = g.get("userTid", season);
+			if (tid !== prevTid) {
+				prevTid = tid;
+				teamSeasonsByTeam.push([]);
+			}
+
 			let ts;
 			if (season === g.get("season")) {
 				ts = await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
-					g.get("userTid", season),
+					tid,
 					g.get("season"),
 				]);
 			} else {
-				ts = await teamSeasonsIndex.get([season, g.get("userTid", season)]);
+				ts = await teamSeasonsIndex.get([season, tid]);
 			}
 			if (ts) {
-				teamSeasons.push(ts);
+				teamSeasonsByTeam[teamSeasonsByTeam.length - 1].push(ts);
 
 				if (!seasonsByTid[ts.tid]) {
 					seasonsByTid[ts.tid] = new Set();
@@ -38,7 +46,15 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const tids = new Set(teamSeasons.map(ts => ts.tid));
+		const teamHistories = [];
+		for (const teamSeasons of teamSeasonsByTeam) {
+			teamHistories.push(await getHistoryTeam(teamSeasons));
+		}
+		teamHistories.reverse();
+
+		const allTeamSeasons = flatten(teamSeasonsByTeam);
+
+		const tids = new Set(allTeamSeasons.map(ts => ts.tid));
 
 		const players: Player[] = [];
 		await iterate(
@@ -65,7 +81,10 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 		);
 
-		return getHistory(teamSeasons, players, true);
+		return {
+			...(await getHistory(allTeamSeasons, players, true)),
+			teamHistories,
+		};
 	}
 };
 

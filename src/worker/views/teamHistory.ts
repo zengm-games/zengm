@@ -9,11 +9,7 @@ import type {
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 
-export const getHistory = async (
-	teamSeasons: TeamSeason[],
-	playersAll: Player[],
-	gmHistory?: boolean,
-) => {
+export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 	let bestRecord;
 	let worstRecord;
 	let bestWinp = -Infinity;
@@ -104,6 +100,35 @@ export const getHistory = async (
 
 	history.reverse(); // Show most recent season first
 
+	const totalWinp = helpers.calcWinp({
+		won: totalWon,
+		lost: totalLost,
+		tied: totalTied,
+		otl: totalOtl,
+	});
+
+	return {
+		history,
+		totalWon,
+		totalLost,
+		totalTied,
+		totalOtl,
+		totalWinp,
+		playoffAppearances,
+		finalsAppearances,
+		championships,
+		bestRecord,
+		worstRecord,
+	};
+};
+
+export const getHistory = async (
+	teamSeasons: TeamSeason[],
+	playersAll: Player[],
+	gmHistory?: boolean,
+) => {
+	const teamHistory = await getHistoryTeam(teamSeasons);
+
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
 		football: ["gp", "keyStats", "av"],
@@ -143,27 +168,10 @@ export const getHistory = async (
 		delete p.stats;
 	}
 
-	const totalWinp = helpers.calcWinp({
-		won: totalWon,
-		lost: totalLost,
-		tied: totalTied,
-		otl: totalOtl,
-	});
-
 	return {
-		history,
+		...teamHistory,
 		players,
 		stats,
-		totalWon,
-		totalLost,
-		totalTied,
-		totalOtl,
-		totalWinp,
-		playoffAppearances,
-		finalsAppearances,
-		championships,
-		bestRecord,
-		worstRecord,
 		userTid: g.get("userTid"),
 	};
 };

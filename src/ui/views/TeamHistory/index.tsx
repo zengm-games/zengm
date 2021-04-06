@@ -53,6 +53,7 @@ const TeamHistory = ({
 						worstRecord={worstRecord}
 					/>
 
+					<h2 className="mt-3">Seasons</h2>
 					<Seasons history={history} />
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">

@@ -191,7 +191,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 					t => t.tid === team1.tid || t.tid === team2.tid,
 				);
 				if (finalsTeams.length === 2) {
-					const orderedTeams = await orderTeams(finalsTeams, allTeams);
+					const orderedTeams = await orderTeams(finalsTeams, allTeams, {
+						skipDivisionLeaders: true,
+					});
 					firstTeamHome = orderedTeams[0].tid === team1.tid;
 				}
 			}

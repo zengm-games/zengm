@@ -31,7 +31,7 @@ const Footer = ({
 				<tr key={i}>
 					{colOrder.map(({ colIndex }) => {
 						const value = row[colIndex];
-						if (value !== null && value.hasOwnProperty("value")) {
+						if (value != null && value.hasOwnProperty("value")) {
 							return (
 								<th className={classNames(value.classNames)} key={colIndex}>
 									{value.value}

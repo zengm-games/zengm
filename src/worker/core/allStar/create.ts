@@ -22,8 +22,8 @@ const create = async (conditions: Conditions) => {
 	};
 	const players = await getPlayers(g.get("season"));
 
-	// 12, for a default league
-	const NUM_ALL_STARS = g.get("minRosterSize") + 2;
+	// 12 per team, for a default league
+	const NUM_ALL_STARS = 2 * (g.get("minRosterSize") + 2);
 
 	const score = (p: PlayerFiltered) =>
 		bySport({

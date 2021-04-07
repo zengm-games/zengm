@@ -60,19 +60,15 @@ const initAds = (goldUntil: number | undefined) => {
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
-			// const divsMobile: string[] = [];
-			const showDivsDesktop = [
+			const divsDesktop = [
 				AD_DIVS.leaderboard,
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
-				"skyscraper-wrapper",
 			];
-			const showDivs =
-				window.screen && window.screen.width < 768
-					? divsMobile
-					: showDivsDesktop;
+			const divs =
+				window.screen && window.screen.width < 768 ? divsMobile : divsDesktop;
 
-			for (const id of showDivs) {
+			for (const id of divs) {
 				const div = document.getElementById(id);
 
 				if (div) {
@@ -80,22 +76,14 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivsDesktop = [
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
-			const adDivs =
-				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
-
-			for (const adDiv of adDivs) {
+			for (const id of divs) {
 				window.freestar.config.enabled_slots.push({
-					placementName: adDiv,
-					slotId: adDiv,
+					placementName: id,
+					slotId: id,
 				});
 			}
 
-			if (adDivs.includes(AD_DIVS.mobile)) {
+			if (divs.includes(AD_DIVS.mobile)) {
 				localActions.update({
 					stickyFooterAd: true,
 				});

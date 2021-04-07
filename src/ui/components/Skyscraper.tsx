@@ -65,19 +65,12 @@ const Skyscraper = memo(() => {
 		// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 		<>
 			<div
-				className="banner-ad skyscraper-wrapper ml-3 flex-shrink-0"
-				id="skyscraper-wrapper"
+				className="banner-ad ml-3 flex-shrink-0"
+				id={AD_DIVS.rail}
 				style={{
 					display: "none",
 				}}
-			>
-				<div
-					id={AD_DIVS.rail}
-					style={{
-						display: "none",
-					}}
-				/>
-			</div>
+			></div>
 		</>
 	);
 });

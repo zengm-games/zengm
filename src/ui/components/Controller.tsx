@@ -73,6 +73,11 @@ const reducer = (state: State, action: any) => {
 	}
 };
 
+const minHeight100 = {
+	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason
+	minHeight: "100%",
+};
+
 const Controller = () => {
 	const [state, dispatch] = useReducer(reducer, {
 		Component: undefined,
@@ -297,7 +302,7 @@ const Controller = () => {
 			<TitleBar />
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 h-100">
 				<SideBar pageID={pageID} />
-				<div className="d-flex h-100">
+				<div className="d-flex" style={minHeight100}>
 					<div className="w-100 d-flex flex-column">
 						<Header />
 						<main className="p402_premium" id="actual-content">

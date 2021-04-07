@@ -104,21 +104,15 @@ h5 {
 	padding: 0 15px;
 	width: 100%;
 }
-.skyscraper-wrapper {
-	display: none;
-}
 
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.skyscraper-wrapper {
+	#basketball-gm_right_rail,
+	#football-gm_right_rail,
+	#zen-gm_right_rail {
 		display: block;
 		position: sticky;
 		top: 60px;
 		right: 0;
-		height: 600px;
-	}
-	#basketball-gm_right_rail,
-	#football-gm_right_rail,
-	#zen-gm_right_rail {
 		width: 160px;
 		height: 600px;
 	}

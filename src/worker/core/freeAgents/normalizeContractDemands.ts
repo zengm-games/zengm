@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, isSport } from "../../../common";
+import { PLAYER, PHASE, isSport, bySport } from "../../../common";
 import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -86,12 +86,11 @@ const normalizeContractDemands = async ({
 	nextSeason?: boolean;
 }) => {
 	// Higher means more unequal salaries
-	let PARAM;
-	if (isSport("basketball") || isSport("hockey")) {
-		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
-	} else {
-		PARAM = 1;
-	}
+	const PARAM = bySport({
+		basketball: 0.5 * (type === "newLeague" ? 5 : 15),
+		football: 1,
+		hockey: 2.5,
+	});
 
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");

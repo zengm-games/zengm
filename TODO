@@ -3,11 +3,9 @@ for shot type distributions, base it on real player ratings (model ratings -> sh
 - last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 - https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
 
-more balanced hockey contract amounts
-- https://old.reddit.com/r/ZenGMHockey/comments/mk0oyt/slight_salary_boost_for_average_players/
-
 ad stuff
 - skyscraper sticky
+  - not that sticky, still goes away when scrolling down...
   - compare I:PV, CPM, and RPM before and after
 - CPM from skyscraper and leaderboard really worth it? why not add at bottom? could fit like 4-5 squares there
 - mobile - would bigger ad unit at bottom work just as well?

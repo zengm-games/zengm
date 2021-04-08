@@ -16,6 +16,7 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types";
 import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -74,6 +75,13 @@ const initAds = (goldUntil: number | undefined) => {
 				if (div) {
 					div.style.removeProperty("display");
 				}
+			}
+
+			// Special case for rail, to tell it there is no BBGM gold
+			const rail = document.getElementById(AD_DIVS.rail);
+			if (rail) {
+				delete rail.dataset.gold;
+				updateSkyscraperDisplay();
 			}
 
 			for (const id of divs) {

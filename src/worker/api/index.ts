@@ -1404,8 +1404,8 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	return augmentOffers(offers);
 };
 
-const getVersionWorker = async () => {
-	return "REV_GOES_HERE";
+const ping = async () => {
+	return;
 };
 
 const handleUploadedDraftClass = async (
@@ -3163,7 +3163,7 @@ export default {
 	getRandomName,
 	getRandomRatings,
 	getTradingBlockOffers,
-	getVersionWorker,
+	ping,
 	handleUploadedDraftClass,
 	importPlayers,
 	init,

@@ -16,8 +16,6 @@ declare global {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
-		bbgmVersionUI: string;
-		bbgmVersionWorker: string;
 		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
 		freestar: any;

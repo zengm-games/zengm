@@ -227,15 +227,7 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
-		paths: watch
-			? ["build/index.html"]
-			: [
-					"build/index.html",
-					`build/gen/ui-${rev}.js`,
-					`build/gen/ui-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-					`build/gen/worker-legacy-${rev}.js`,
-			  ],
+		paths: ["build/index.html"],
 		silent: true,
 	});
 

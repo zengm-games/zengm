@@ -47,17 +47,11 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	// Put in DOM element and global variable because the former is used before React takes over and the latter is used after
-	const bbgmVersionUI = "REV_GOES_HERE";
-	window.bbgmVersionUI = bbgmVersionUI;
-
 	if (window.withGoodUI) {
 		window.withGoodUI();
 	}
 
-	toWorker("main", "getVersionWorker").then(bbgmVersionWorker => {
-		window.bbgmVersionWorker = bbgmVersionWorker;
-
+	toWorker("main", "ping").then(() => {
 		if (window.withGoodWorker) {
 			window.withGoodWorker();
 		}

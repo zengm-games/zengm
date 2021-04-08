@@ -218,17 +218,14 @@ FACEBOOK_PIXEL_CODE
           return;
         }
 
-        var idb = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-        var keyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.mozIDBKeyRange;
-
         try {
-          keyRange.only([1]);
+          window.IDBKeyRange.only([1]);
         } catch (e) {
           cb("bad");
           return;
         }
 
-        var openRequest = idb.open('__detectIDB_test2', 1);
+        var openRequest = window.indexedDB.open('__detectIDB_test2', 1);
 
         openRequest.onerror = function (evt) {
           console.error("Error openining test database:");

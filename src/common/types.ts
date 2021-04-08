@@ -25,7 +25,6 @@ declare global {
 		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
-		leagueFileHashes: Record<string, string>;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;

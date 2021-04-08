@@ -451,8 +451,8 @@ if (window.enableLogging) {
 		silent: true,
 	});
 
-	let quantcastCode = "";
-	if (!watch && sport === "basketball") {
+	const quantcastCode = "";
+	/*if (!watch && sport === "basketball") {
 		quantcastCode = `<script type="text/javascript">
 if (window.enableLogging) {
 var _qevents = _qevents || [];(function() {
@@ -471,8 +471,7 @@ qacct:"p-Ye5RY6xC03ZWz"
 <img src="//pixel.quantserve.com/pixel/p-Ye5RY6xC03ZWz.gif" border="0" height="1" width="1" alt="Quantcast"/>
 </div>
 </noscript>`;
-	}
-
+	}*/
 	replace({
 		regex: "QUANTCAST_CODE",
 		replacement: quantcastCode,

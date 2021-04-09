@@ -11,13 +11,7 @@ import {
 	useEffect,
 } from "react";
 import { HelpPopover } from "../../components";
-import {
-	confirm,
-	localActions,
-	logEvent,
-	toWorker,
-	useLocalShallow,
-} from "../../util";
+import { confirm, localActions, logEvent, useLocalShallow } from "../../util";
 import type { View } from "../../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { isSport } from "../../../common";
@@ -1309,12 +1303,15 @@ const GodModeSettingsButton = ({
 	);
 };
 
+const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
+type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
+
 const SettingsForm = (
 	props: View<"settings"> & {
-		onSave: (settings: Partial<Record<Key, any>>) => void;
+		onSave: (settings: Partial<Record<Key | SpecialStateBoolean, any>>) => void;
 	},
 ) => {
-	const { godMode, godModeInPast, onSave } = props;
+	const { godModeInPast, onSave } = props;
 
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
@@ -1334,37 +1331,14 @@ const SettingsForm = (
 		stickyFooterAd: state.stickyFooterAd,
 	}));
 
-	const handleGodModeToggle = async () => {
-		let proceed: any = true;
-		if (!godMode && !godModeInPast) {
-			proceed = await confirm(
-				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
-				{
-					okText: "Enable God Mode",
-				},
-			);
-		}
-
-		if (proceed) {
-			const attrs: {
-				godMode: boolean;
-				godModeInPast?: true;
-			} = { godMode: !godMode };
-
-			if (attrs.godMode) {
-				attrs.godModeInPast = true;
-			}
-
-			await toWorker("main", "updateGameAttributes", attrs);
-			localActions.update({ godMode: attrs.godMode });
-		}
-	};
-
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
-	const [state, setState] = useState<Record<Key, string>>(() => {
+	const [state, setState] = useState<
+		Record<Key, string> & Record<SpecialStateBoolean, boolean>
+	>(() => {
 		// @ts-ignore
-		const initialState: Record<Key, string> = {};
+		const initialState: Record<Key, string> &
+			Record<SpecialStateBoolean, boolean> = {};
 		for (const { key, type, values } of settings) {
 			const value = props[key];
 
@@ -1374,8 +1348,41 @@ const SettingsForm = (
 
 			initialState[key] = stringify ? stringify(value, values) : value;
 		}
+
+		for (const key of SPECIAL_STATE_BOOLEANS) {
+			initialState[key] = props[key];
+		}
+
 		return initialState;
 	});
+	const godMode = !!state.godMode;
+
+	const handleGodModeToggle = async () => {
+		let proceed: any = true;
+		if (!state.godMode && !state.godModeInPast && !godModeInPast) {
+			proceed = await confirm(
+				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
+				{
+					okText: "Enable God Mode",
+				},
+			);
+		}
+
+		if (proceed) {
+			if (state.godMode) {
+				setState(prevState => ({
+					...prevState,
+					godMode: false,
+				}));
+			} else {
+				setState(prevState => ({
+					...prevState,
+					godMode: true,
+					godModeInPast: true,
+				}));
+			}
+		}
+	};
 
 	const handleChange = (name: Key, type: FieldType) => (
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -1407,7 +1414,7 @@ const SettingsForm = (
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output: Partial<Record<Key, any>> = {};
+		const output: Partial<Record<Key | SpecialStateBoolean, any>> = {};
 		for (const option of settings) {
 			const { key, name, type } = option;
 			const value = state[key];
@@ -1428,6 +1435,10 @@ const SettingsForm = (
 				});
 				return;
 			}
+		}
+
+		for (const key of SPECIAL_STATE_BOOLEANS) {
+			output[key] = state[key];
 		}
 
 		// Run validation functions at the end, so all values are available
@@ -1707,6 +1718,7 @@ const SettingsForm = (
 
 SettingsForm.propTypes = {
 	godMode: PropTypes.bool.isRequired,
+	godModeInPast: PropTypes.bool.isRequired,
 	luxuryPayroll: PropTypes.number.isRequired,
 	luxuryTax: PropTypes.number.isRequired,
 	maxContract: PropTypes.number.isRequired,

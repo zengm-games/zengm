@@ -17,7 +17,6 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
-  - god mode toggle refactor - make it only apply on save
   - put on separate page, like customize teams
   - need buttons to cancel and reset to default (but what is "default" for a real players league or league file?)
   - also new league has some extra settings that don't persist

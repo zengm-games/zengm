@@ -35,7 +35,7 @@ import type {
 	Conf,
 } from "../../../common/types";
 import classNames from "classnames";
-import { descriptions } from "../Settings";
+import { descriptions } from "../Settings/settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";

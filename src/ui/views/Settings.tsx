@@ -1196,7 +1196,7 @@ options.push(
 	{
 		category: "General",
 		key: "stopOnInjuryGames",
-		name: "Stop On Injury Longer Than",
+		name: "Stop On Injury",
 		type: "int",
 		description:
 			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
@@ -1205,7 +1205,7 @@ options.push(
 	{
 		category: "General",
 		key: "stopOnInjury",
-		name: "Stop On Injury Longer Than",
+		name: "Stop On Injury",
 		type: "bool",
 		hidden: true,
 	},

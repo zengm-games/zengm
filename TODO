@@ -19,7 +19,7 @@ settings re-design
 - all settings should be editable when creating a new league
   - god mode toggle refactor - make it only apply on save
   - allow different onSubmit
-  - put below "more options" on new league page
+  - put on separate page, like customize teams
   - also new league has some extra settings that don't persist
     - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations
   - make sure it handles default values of settings for real player leagues and league files

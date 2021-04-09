@@ -1534,6 +1534,7 @@ class GameSim {
 			repeatDown: true,
 		});
 		let dt = Math.abs(yds) / 8;
+		this.recordStat(this.o, p, "defPssDef");
 		this.recordStat(this.o, p, "defInt");
 		this.playByPlay.logEvent("interception", {
 			clock: this.clock,
@@ -1693,7 +1694,6 @@ class GameSim {
 			Math.random() < 0.2 ? "catching" : "gettingOpen",
 			["WR", "TE", "RB"],
 		);
-		const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
 		const interception = Math.random() < this.probInt(qb);
 		let ydsRaw = Math.round(
 			random.truncGauss(
@@ -1716,7 +1716,6 @@ class GameSim {
 			this.recordStat(o, qb, "pssInt");
 			this.recordStat(o, qb, "pss");
 			this.recordStat(o, target, "tgt");
-			this.recordStat(d, defender, "defPssDef");
 			dt += this.doInterception(yds);
 		} else {
 			dt += Math.abs(yds) / 20;
@@ -1747,6 +1746,7 @@ class GameSim {
 			this.recordStat(o, qb, "pss");
 			this.recordStat(o, target, "tgt");
 
+			const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
 			const complete = Math.random() < this.probComplete(qb, target, defender);
 
 			if (complete) {

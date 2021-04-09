@@ -1309,8 +1309,12 @@ const GodModeSettingsButton = ({
 	);
 };
 
-const SettingsForm = (props: View<"settings">) => {
-	const { godMode, godModeInPast } = props;
+const SettingsForm = (
+	props: View<"settings"> & {
+		onSave: (settings: Partial<Record<Key, any>>) => void;
+	},
+) => {
+	const { godMode, godModeInPast, onSave } = props;
 
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
@@ -1446,7 +1450,7 @@ const SettingsForm = (props: View<"settings">) => {
 		}
 
 		try {
-			await toWorker("main", "updateGameAttributesGodMode", output);
+			await onSave(output);
 		} catch (error) {
 			console.error(error);
 			setSubmitting(false);
@@ -1460,11 +1464,6 @@ const SettingsForm = (props: View<"settings">) => {
 		}
 
 		setSubmitting(false);
-		logEvent({
-			type: "success",
-			text: "League settings successfully updated.",
-			saveToDb: false,
-		});
 	};
 
 	const currentCategoryNames: Category[] = [];

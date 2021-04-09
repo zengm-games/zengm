@@ -17,13 +17,14 @@ const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 const MultiTeamMenu = () => {
 	const state = useLocalShallow(state2 => ({
 		stickyFooterAd: state2.stickyFooterAd,
+		stickyFormButtons: state2.stickyFormButtons,
 		teamInfoCache: state2.teamInfoCache,
 		userTid: state2.userTid,
 		userTids: state2.userTids,
 	}));
 
 	// Hide if not multi team or not loaded yet
-	if (state.userTids.length <= 1) {
+	if (state.userTids.length <= 1 || state.stickyFormButtons) {
 		return null;
 	}
 

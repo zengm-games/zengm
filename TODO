@@ -1,3 +1,5 @@
+on mobile, multi team menu overlaps with the "save" button https://discord.com/channels/290013534023057409/290015591216054273/829778683509342308
+
 for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
 - even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
 - last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
@@ -999,12 +1001,6 @@ Game list redesign
   - show player with highest game score under completed game
 
 teamRegion in playersPlus needed?
-
-sw cache issue
-- might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
-- could also store quota amount in log
-- looks like it could be old sw staying active somehow
-- try to reproduce on low disk space
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 

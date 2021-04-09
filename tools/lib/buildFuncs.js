@@ -222,8 +222,6 @@ const reset = () => {
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
-	const sport = getSport();
-
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
@@ -452,7 +450,8 @@ if (window.enableLogging) {
 	});
 
 	const quantcastCode = "";
-	/*if (!watch && sport === "basketball") {
+	/*const sport = getSport();
+	if (!watch && sport === "basketball") {
 		quantcastCode = `<script type="text/javascript">
 if (window.enableLogging) {
 var _qevents = _qevents || [];(function() {

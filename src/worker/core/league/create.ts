@@ -477,13 +477,14 @@ export const createWithoutSaving = async (
 		let seasonsSimmed = 20;
 		const forceRetireAge = g.get("forceRetireAge");
 		const draftAges = g.get("draftAges");
-		const forceRetireAgeDiff = forceRetireAge - draftAges[1];
+		const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2);
+		const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
 		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
 			seasonsSimmed = forceRetireAgeDiff;
 		} else {
 			// Maybe add some extra seasons, for leagues when players start young
 			const estimatedRetireAge = forceRetireAgeDiff > 0 ? forceRetireAge : 35;
-			const estimatedRetireAgeDiff = estimatedRetireAge - draftAges[1];
+			const estimatedRetireAgeDiff = estimatedRetireAge - averageDraftAge;
 			if (estimatedRetireAgeDiff > seasonsSimmed) {
 				seasonsSimmed = estimatedRetireAgeDiff;
 			}

@@ -12,6 +12,7 @@ import {
 	isSport,
 	bySport,
 	gameAttributesArrayToObject,
+	gameAttributeHasHistory,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -94,6 +95,7 @@ import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
+import { wrap } from "../util/g";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -417,7 +419,9 @@ const createLeague = async ({
 
 	const { repeatSeason, ...otherSettings } = settings;
 
-	const gameAttributeOverrides: Record<string, any> = {
+	const gameAttributeOverrides: Partial<
+		Record<keyof GameAttributesLeague, any>
+	> = {
 		equalizeRegions,
 		confs,
 		divs,
@@ -453,10 +457,14 @@ const createLeague = async ({
 		}
 	}
 
-	leagueFile.gameAttributes = {
-		...leagueFile.gameAttributes,
-		...gameAttributeOverrides,
-	};
+	for (const key of helpers.keys(gameAttributeOverrides)) {
+		// If we're overriding a value with history, keep the history
+		leagueFile.gameAttributes[key] = wrap(
+			leagueFile.gameAttributes,
+			key,
+			gameAttributeOverrides[key],
+		);
+	}
 
 	if (
 		randomDebutsForever &&

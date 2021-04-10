@@ -1230,7 +1230,7 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className={classNames("ml-5", maxWidth ? "w-100" : undefined)}>
+				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
 					{customForm ? (
 						customForm
 					) : (

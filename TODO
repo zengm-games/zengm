@@ -28,17 +28,16 @@ settings re-design
   - don't lose history by discarding wrapped values. could solve in worker, by maing the "merge settings and game attributes" code handle it
   - godModeRequired value of "existingLeagueOnly" should be used here
   - test
-    - toWorker works for validatePointsFormula
     - repeatSeason applied correctly
   - warning when leaving page with edits to default settings/teams
     - add in useEffect - maybe do same for live game?
-  - settings save bar behaving weirdly on mobile due to overflow
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
   - blog
     - settings that make sense only when edited prior to league (like draft ages or num players on court)
     - settings that can be changed prior to league outside of god mode
   - move unwrap function to common
+  - make buttons UI consistent for teams and settings customization
 - some settings should only be editable in offseason
   - playoff structure
 - to add

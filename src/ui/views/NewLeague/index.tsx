@@ -55,6 +55,21 @@ export const unwrap = <T extends keyof GameAttributesLeague>(
 	return gameAttributes[key];
 };
 
+const animationVariants = {
+	visible: {
+		x: 0,
+		transition: { duration: 50, ease: "easeInOut" },
+	},
+	left: {
+		x: "-100vw",
+		transition: { duration: 50, ease: "easeInOut" },
+	},
+	right: {
+		x: "100vw",
+		transition: { duration: 50, ease: "easeInOut" },
+	},
+};
+
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
 	realTeamInfo: RealTeamInfo | undefined,
@@ -879,10 +894,10 @@ const NewLeague = (props: View<"newLeague">) => {
 		subPage = (
 			<motion.div
 				key="screen-teams"
-				initial={{ x: "100vw" }}
-				animate={{ x: 0 }}
-				exit={{ x: "100vw" }}
-				transition={{ duration: 0.5 }}
+				variants={animationVariants}
+				initial="right"
+				animate="visible"
+				exit="right"
 			>
 				<CustomizeTeams
 					onCancel={() => {
@@ -923,10 +938,10 @@ const NewLeague = (props: View<"newLeague">) => {
 		subPage = (
 			<motion.div
 				key="screen-settings"
-				initial={{ x: "100vw" }}
-				animate={{ x: 0 }}
-				exit={{ x: "100vw" }}
-				transition={{ duration: 0.5 }}
+				variants={animationVariants}
+				initial="right"
+				animate="visible"
+				exit="right"
 			>
 				<CustomizeSettings
 					onCancel={() => {
@@ -1157,10 +1172,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			) : (
 				<motion.form
 					key="screen-main"
-					initial={{ x: "-100vw" }}
-					animate={{ x: 0 }}
-					exit={{ x: "-100vw" }}
-					transition={{ duration: 0.4 }}
+					variants={animationVariants}
+					initial="left"
+					animate="visible"
+					exit="left"
 					onSubmit={handleSubmit}
 					style={{ maxWidth: 800 }}
 				>

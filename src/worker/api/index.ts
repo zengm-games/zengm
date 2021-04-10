@@ -93,6 +93,7 @@ import {
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
+import type { Settings } from "../views/settings";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -300,7 +301,6 @@ const createLeague = async ({
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
@@ -308,6 +308,7 @@ const createLeague = async ({
 	confs,
 	divs,
 	teams,
+	settings,
 }: {
 	name: string;
 	tid: number;
@@ -318,7 +319,6 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
@@ -326,6 +326,7 @@ const createLeague = async ({
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
+	settings: Omit<Settings, "numActiveTeams">;
 }): Promise<number> => {
 	const keys = [...keptKeys, "version"];
 
@@ -414,10 +415,13 @@ const createLeague = async ({
 		}
 	}
 
+	const { repeatSeason, ...otherSettings } = settings;
+
 	const gameAttributeOverrides: Record<string, any> = {
 		equalizeRegions,
 		confs,
 		divs,
+		...otherSettings,
 	};
 
 	if (realPlayerDeterminism !== undefined) {

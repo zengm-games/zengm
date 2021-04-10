@@ -201,7 +201,6 @@ type State = {
 	keptKeys: string[];
 	expandOptions: boolean;
 	equalizeRegions: boolean;
-	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
 	realDraftRatings: "rookie" | "draft";
@@ -276,9 +275,6 @@ type Action =
 	  }
 	| {
 			type: "toggleEqualizeRegions";
-	  }
-	| {
-			type: "toggleRepeatSeason";
 	  }
 	| { type: "toggleNoStartingInjuries" }
 	| {
@@ -414,11 +410,9 @@ const reducer = (state: State, action: Action): State => {
 			const gameAttributeOverrides: {
 				equalizeRegions: boolean;
 				expandOptions: boolean;
-				repeatSeason: boolean;
 			} = {
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
-				repeatSeason: state.repeatSeason,
 			};
 
 			// gameAttributes was already converted to an object before dispatching this action
@@ -504,12 +498,6 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				equalizeRegions: !state.equalizeRegions,
-			};
-
-		case "toggleRepeatSeason":
-			return {
-				...state,
-				repeatSeason: !state.repeatSeason,
 			};
 
 		case "toggleNoStartingInjuries":
@@ -599,7 +587,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				allKeys,
 				keptKeys,
 				expandOptions: false,
-				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
@@ -696,7 +683,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					importLid: props.lid,
 					getLeagueOptions,
 					actualStartingSeason,
-					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
@@ -704,6 +690,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					confs: state.confs,
 					divs: state.divs,
 					teams: state.teams,
+					settings: state.settings,
 				});
 
 				let type: string = state.customize;
@@ -752,9 +739,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.randomization,
 			state.realDraftRatings,
 			state.realPlayerDeterminism,
-			state.repeatSeason,
 			state.season,
 			startingSeason,
+			state.settings,
 			state.teams,
 			state.tid,
 			title,
@@ -970,22 +957,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					</label>
 				</div>
 			) : null}
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-repeatSeason"
-					checked={state.repeatSeason}
-					onChange={() => {
-						dispatch({ type: "toggleRepeatSeason" });
-					}}
-				/>
-				<label className="form-check-label" htmlFor="new-league-repeatSeason">
-					Groundhog Day
-					<br />
-					<span className="text-muted">{descriptions.repeatSeason}</span>
-				</label>
-			</div>
 		</div>,
 	];
 

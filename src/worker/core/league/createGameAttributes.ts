@@ -1,10 +1,15 @@
-import { DIFFICULTY, gameAttributeHasHistory, PHASE } from "../../../common";
+import {
+	DIFFICULTY,
+	gameAttributeHasHistory,
+	PHASE,
+	unwrapGameAttribute,
+} from "../../../common";
 import type {
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../../common/types";
 import { defaultGameAttributes, helpers } from "../../util";
-import { unwrap, wrap } from "../../util/g";
+import { wrap } from "../../util/g";
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
@@ -124,13 +129,16 @@ const createGameAttributes = ({
 	}
 
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
-	const oldNumGames = unwrap(gameAttributes, "numGamesPlayoffSeries");
+	const oldNumGames = unwrapGameAttribute(
+		gameAttributes,
+		"numGamesPlayoffSeries",
+	);
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
 		helpers.validateRoundsByes(
 			oldNumGames.length,
-			unwrap(gameAttributes, "numPlayoffByes"),
+			unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
 			gameAttributes.numActiveTeams,
 		);
 	} catch (error) {

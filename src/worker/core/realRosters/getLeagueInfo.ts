@@ -1,6 +1,5 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
-import type { Conf, Div } from "../../../common/types";
 import { isSport } from "../../../common";
 import getGameAttributes from "./getGameAttributes";
 

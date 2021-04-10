@@ -10,11 +10,11 @@ import {
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
-	gameAttributeHasHistory,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
+	unwrapGameAttribute,
 } from "../../../common";
 import { LeagueFileUpload, NextPrevButtons, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -32,7 +32,6 @@ import type {
 	GetLeagueOptions,
 	Div,
 	Conf,
-	GameAttributesLeague,
 } from "../../../common/types";
 import classNames from "classnames";
 import { descriptions } from "../Settings/settings";
@@ -42,18 +41,6 @@ import type { LeagueInfo, NewLeagueTeam } from "./types";
 import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
-
-// Get latest value
-export const unwrap = <T extends keyof GameAttributesLeague>(
-	gameAttributes: any,
-	key: T,
-): GameAttributesLeague[T] => {
-	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key][gameAttributes[key].length - 1].value;
-	}
-
-	return gameAttributes[key];
-};
 
 const animationVariants = {
 	visible: {
@@ -453,7 +440,10 @@ const reducer = (state: State, action: Action): State => {
 			// gameAttributes was already converted to an object before dispatching this action
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
 				for (const key of helpers.keys(newSettings)) {
-					const value = unwrap(action.leagueFile.gameAttributes, key);
+					const value = unwrapGameAttribute(
+						action.leagueFile.gameAttributes,
+						key,
+					);
 					if (value !== undefined) {
 						if (key === "repeatSeason") {
 							newSettings[key] = !!value;
@@ -464,10 +454,13 @@ const reducer = (state: State, action: Action): State => {
 				}
 
 				if (action.leagueFile.gameAttributes.confs) {
-					confs = unwrap(action.leagueFile.gameAttributes, "confs");
+					confs = unwrapGameAttribute(
+						action.leagueFile.gameAttributes,
+						"confs",
+					);
 				}
 				if (action.leagueFile.gameAttributes.divs) {
-					divs = unwrap(action.leagueFile.gameAttributes, "divs");
+					divs = unwrapGameAttribute(action.leagueFile.gameAttributes, "divs");
 				}
 			}
 
@@ -503,7 +496,7 @@ const reducer = (state: State, action: Action): State => {
 			const newSettings = helpers.deepCopy(action.defaultSettings);
 
 			for (const key of helpers.keys(newSettings)) {
-				const value = unwrap(action.gameAttributes, key);
+				const value = unwrapGameAttribute(action.gameAttributes, key);
 				if (value !== undefined) {
 					if (key === "repeatSeason") {
 						newSettings[key] = !!value;
@@ -513,8 +506,8 @@ const reducer = (state: State, action: Action): State => {
 				}
 			}
 
-			const confs = unwrap(action.gameAttributes, "confs");
-			const divs = unwrap(action.gameAttributes, "divs");
+			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
+			const divs = unwrapGameAttribute(action.gameAttributes, "divs");
 
 			return {
 				...state,

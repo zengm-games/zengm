@@ -36,7 +36,6 @@ settings re-design
   - blog
     - settings that make sense only when edited prior to league (like draft ages or num players on court)
     - settings that can be changed prior to league outside of god mode
-  - move unwrap function to common
   - make buttons UI consistent for teams and settings customization
 - some settings should only be editable in offseason
   - playoff structure

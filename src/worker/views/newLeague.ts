@@ -6,127 +6,187 @@ import {
 	newLeagueGodModeLimits,
 } from "../util";
 import type { Settings } from "./settings";
-import { unwrap } from "../util/g";
+import { unwrapGameAttribute } from "../../common";
 
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	const godModeLimits = newLeagueGodModeLimits();
 
 	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
-		godMode: unwrap(defaultGameAttributes, "godMode"),
-		godModeInPast: unwrap(defaultGameAttributes, "godModeInPast"),
-		numGames: unwrap(defaultGameAttributes, "numGames"),
-		quarterLength: unwrap(defaultGameAttributes, "quarterLength"),
-		maxRosterSize: unwrap(defaultGameAttributes, "maxRosterSize"),
-		minRosterSize: unwrap(defaultGameAttributes, "minRosterSize"),
-		salaryCap: unwrap(defaultGameAttributes, "salaryCap"),
-		minPayroll: unwrap(defaultGameAttributes, "minPayroll"),
-		luxuryPayroll: unwrap(defaultGameAttributes, "luxuryPayroll"),
-		luxuryTax: unwrap(defaultGameAttributes, "luxuryTax"),
-		minContract: unwrap(defaultGameAttributes, "minContract"),
-		maxContract: unwrap(defaultGameAttributes, "maxContract"),
-		minContractLength: unwrap(defaultGameAttributes, "minContractLength"),
-		maxContractLength: unwrap(defaultGameAttributes, "maxContractLength"),
-		aiTradesFactor: unwrap(defaultGameAttributes, "aiTradesFactor"),
-		injuryRate: unwrap(defaultGameAttributes, "injuryRate"),
-		homeCourtAdvantage: unwrap(defaultGameAttributes, "homeCourtAdvantage"),
-		rookieContractLengths: unwrap(
+		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
+		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
+		numGames: unwrapGameAttribute(defaultGameAttributes, "numGames"),
+		quarterLength: unwrapGameAttribute(defaultGameAttributes, "quarterLength"),
+		maxRosterSize: unwrapGameAttribute(defaultGameAttributes, "maxRosterSize"),
+		minRosterSize: unwrapGameAttribute(defaultGameAttributes, "minRosterSize"),
+		salaryCap: unwrapGameAttribute(defaultGameAttributes, "salaryCap"),
+		minPayroll: unwrapGameAttribute(defaultGameAttributes, "minPayroll"),
+		luxuryPayroll: unwrapGameAttribute(defaultGameAttributes, "luxuryPayroll"),
+		luxuryTax: unwrapGameAttribute(defaultGameAttributes, "luxuryTax"),
+		minContract: unwrapGameAttribute(defaultGameAttributes, "minContract"),
+		maxContract: unwrapGameAttribute(defaultGameAttributes, "maxContract"),
+		minContractLength: unwrapGameAttribute(
+			defaultGameAttributes,
+			"minContractLength",
+		),
+		maxContractLength: unwrapGameAttribute(
+			defaultGameAttributes,
+			"maxContractLength",
+		),
+		aiTradesFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"aiTradesFactor",
+		),
+		injuryRate: unwrapGameAttribute(defaultGameAttributes, "injuryRate"),
+		homeCourtAdvantage: unwrapGameAttribute(
+			defaultGameAttributes,
+			"homeCourtAdvantage",
+		),
+		rookieContractLengths: unwrapGameAttribute(
 			defaultGameAttributes,
 			"rookieContractLengths",
 		),
-		rookiesCanRefuse: unwrap(defaultGameAttributes, "rookiesCanRefuse"),
-		tragicDeathRate: unwrap(defaultGameAttributes, "tragicDeathRate"),
-		brotherRate: unwrap(defaultGameAttributes, "brotherRate"),
-		sonRate: unwrap(defaultGameAttributes, "sonRate"),
-		forceRetireAge: unwrap(defaultGameAttributes, "forceRetireAge"),
-		hardCap: unwrap(defaultGameAttributes, "hardCap"),
-		numGamesPlayoffSeries: unwrap(
+		rookiesCanRefuse: unwrapGameAttribute(
+			defaultGameAttributes,
+			"rookiesCanRefuse",
+		),
+		tragicDeathRate: unwrapGameAttribute(
+			defaultGameAttributes,
+			"tragicDeathRate",
+		),
+		brotherRate: unwrapGameAttribute(defaultGameAttributes, "brotherRate"),
+		sonRate: unwrapGameAttribute(defaultGameAttributes, "sonRate"),
+		forceRetireAge: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceRetireAge",
+		),
+		hardCap: unwrapGameAttribute(defaultGameAttributes, "hardCap"),
+		numGamesPlayoffSeries: unwrapGameAttribute(
 			defaultGameAttributes,
 			"numGamesPlayoffSeries",
 		),
-		numPlayoffByes: unwrap(defaultGameAttributes, "numPlayoffByes"),
-		draftType: unwrap(defaultGameAttributes, "draftType"),
-		draftAges: unwrap(defaultGameAttributes, "draftAges"),
-		playersRefuseToNegotiate: unwrap(
+		numPlayoffByes: unwrapGameAttribute(
+			defaultGameAttributes,
+			"numPlayoffByes",
+		),
+		draftType: unwrapGameAttribute(defaultGameAttributes, "draftType"),
+		draftAges: unwrapGameAttribute(defaultGameAttributes, "draftAges"),
+		playersRefuseToNegotiate: unwrapGameAttribute(
 			defaultGameAttributes,
 			"playersRefuseToNegotiate",
 		),
-		allStarGame: unwrap(defaultGameAttributes, "allStarGame"),
-		budget: unwrap(defaultGameAttributes, "budget"),
-		numSeasonsFutureDraftPicks: unwrap(
+		allStarGame: unwrapGameAttribute(defaultGameAttributes, "allStarGame"),
+		budget: unwrapGameAttribute(defaultGameAttributes, "budget"),
+		numSeasonsFutureDraftPicks: unwrapGameAttribute(
 			defaultGameAttributes,
 			"numSeasonsFutureDraftPicks",
 		),
-		foulRateFactor: unwrap(defaultGameAttributes, "foulRateFactor"),
-		foulsNeededToFoulOut: unwrap(defaultGameAttributes, "foulsNeededToFoulOut"),
-		foulsUntilBonus: unwrap(defaultGameAttributes, "foulsUntilBonus"),
-		threePointers: unwrap(defaultGameAttributes, "threePointers"),
-		pace: unwrap(defaultGameAttributes, "pace"),
-		threePointTendencyFactor: unwrap(
+		foulRateFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"foulRateFactor",
+		),
+		foulsNeededToFoulOut: unwrapGameAttribute(
+			defaultGameAttributes,
+			"foulsNeededToFoulOut",
+		),
+		foulsUntilBonus: unwrapGameAttribute(
+			defaultGameAttributes,
+			"foulsUntilBonus",
+		),
+		threePointers: unwrapGameAttribute(defaultGameAttributes, "threePointers"),
+		pace: unwrapGameAttribute(defaultGameAttributes, "pace"),
+		threePointTendencyFactor: unwrapGameAttribute(
 			defaultGameAttributes,
 			"threePointTendencyFactor",
 		),
-		threePointAccuracyFactor: unwrap(
+		threePointAccuracyFactor: unwrapGameAttribute(
 			defaultGameAttributes,
 			"threePointAccuracyFactor",
 		),
-		twoPointAccuracyFactor: unwrap(
+		twoPointAccuracyFactor: unwrapGameAttribute(
 			defaultGameAttributes,
 			"twoPointAccuracyFactor",
 		),
-		blockFactor: unwrap(defaultGameAttributes, "blockFactor"),
-		stealFactor: unwrap(defaultGameAttributes, "stealFactor"),
-		turnoverFactor: unwrap(defaultGameAttributes, "turnoverFactor"),
-		orbFactor: unwrap(defaultGameAttributes, "orbFactor"),
-		challengeNoDraftPicks: unwrap(
+		blockFactor: unwrapGameAttribute(defaultGameAttributes, "blockFactor"),
+		stealFactor: unwrapGameAttribute(defaultGameAttributes, "stealFactor"),
+		turnoverFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"turnoverFactor",
+		),
+		orbFactor: unwrapGameAttribute(defaultGameAttributes, "orbFactor"),
+		challengeNoDraftPicks: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeNoDraftPicks",
 		),
-		challengeNoFreeAgents: unwrap(
+		challengeNoFreeAgents: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeNoFreeAgents",
 		),
-		challengeNoTrades: unwrap(defaultGameAttributes, "challengeNoTrades"),
-		challengeLoseBestPlayer: unwrap(
+		challengeNoTrades: unwrapGameAttribute(
+			defaultGameAttributes,
+			"challengeNoTrades",
+		),
+		challengeLoseBestPlayer: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeLoseBestPlayer",
 		),
-		challengeNoRatings: unwrap(defaultGameAttributes, "challengeNoRatings"),
-		challengeFiredLuxuryTax: unwrap(
+		challengeNoRatings: unwrapGameAttribute(
+			defaultGameAttributes,
+			"challengeNoRatings",
+		),
+		challengeFiredLuxuryTax: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeFiredLuxuryTax",
 		),
-		challengeFiredMissPlayoffs: unwrap(
+		challengeFiredMissPlayoffs: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeFiredMissPlayoffs",
 		),
-		challengeThanosMode: unwrap(defaultGameAttributes, "challengeThanosMode"),
-		realPlayerDeterminism: unwrap(
+		challengeThanosMode: unwrapGameAttribute(
+			defaultGameAttributes,
+			"challengeThanosMode",
+		),
+		realPlayerDeterminism: unwrapGameAttribute(
 			defaultGameAttributes,
 			"realPlayerDeterminism",
 		),
-		repeatSeason: !!unwrap(defaultGameAttributes, "repeatSeason"),
-		ties: unwrap(defaultGameAttributes, "ties"),
-		otl: unwrap(defaultGameAttributes, "otl"),
-		spectator: unwrap(defaultGameAttributes, "spectator"),
-		elam: unwrap(defaultGameAttributes, "elam"),
-		elamASG: unwrap(defaultGameAttributes, "elamASG"),
-		elamMinutes: unwrap(defaultGameAttributes, "elamMinutes"),
-		elamPoints: unwrap(defaultGameAttributes, "elamPoints"),
-		playerMoodTraits: unwrap(defaultGameAttributes, "playerMoodTraits"),
-		numPlayersOnCourt: unwrap(defaultGameAttributes, "numPlayersOnCourt"),
-		numDraftRounds: unwrap(defaultGameAttributes, "numDraftRounds"),
-		tradeDeadline: unwrap(defaultGameAttributes, "tradeDeadline"),
-		autoDeleteOldBoxScores: unwrap(
+		repeatSeason: !!unwrapGameAttribute(defaultGameAttributes, "repeatSeason"),
+		ties: unwrapGameAttribute(defaultGameAttributes, "ties"),
+		otl: unwrapGameAttribute(defaultGameAttributes, "otl"),
+		spectator: unwrapGameAttribute(defaultGameAttributes, "spectator"),
+		elam: unwrapGameAttribute(defaultGameAttributes, "elam"),
+		elamASG: unwrapGameAttribute(defaultGameAttributes, "elamASG"),
+		elamMinutes: unwrapGameAttribute(defaultGameAttributes, "elamMinutes"),
+		elamPoints: unwrapGameAttribute(defaultGameAttributes, "elamPoints"),
+		playerMoodTraits: unwrapGameAttribute(
+			defaultGameAttributes,
+			"playerMoodTraits",
+		),
+		numPlayersOnCourt: unwrapGameAttribute(
+			defaultGameAttributes,
+			"numPlayersOnCourt",
+		),
+		numDraftRounds: unwrapGameAttribute(
+			defaultGameAttributes,
+			"numDraftRounds",
+		),
+		tradeDeadline: unwrapGameAttribute(defaultGameAttributes, "tradeDeadline"),
+		autoDeleteOldBoxScores: unwrapGameAttribute(
 			defaultGameAttributes,
 			"autoDeleteOldBoxScores",
 		),
-		difficulty: unwrap(defaultGameAttributes, "difficulty"),
-		stopOnInjury: unwrap(defaultGameAttributes, "stopOnInjury"),
-		stopOnInjuryGames: unwrap(defaultGameAttributes, "stopOnInjuryGames"),
-		aiJerseyRetirement: unwrap(defaultGameAttributes, "aiJerseyRetirement"),
-		numPeriods: unwrap(defaultGameAttributes, "numPeriods"),
-		tiebreakers: unwrap(defaultGameAttributes, "tiebreakers"),
-		pointsFormula: unwrap(defaultGameAttributes, "pointsFormula"),
+		difficulty: unwrapGameAttribute(defaultGameAttributes, "difficulty"),
+		stopOnInjury: unwrapGameAttribute(defaultGameAttributes, "stopOnInjury"),
+		stopOnInjuryGames: unwrapGameAttribute(
+			defaultGameAttributes,
+			"stopOnInjuryGames",
+		),
+		aiJerseyRetirement: unwrapGameAttribute(
+			defaultGameAttributes,
+			"aiJerseyRetirement",
+		),
+		numPeriods: unwrapGameAttribute(defaultGameAttributes, "numPeriods"),
+		tiebreakers: unwrapGameAttribute(defaultGameAttributes, "tiebreakers"),
+		pointsFormula: unwrapGameAttribute(defaultGameAttributes, "pointsFormula"),
 	};
 
 	if (lid !== undefined) {

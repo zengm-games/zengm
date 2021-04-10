@@ -1135,9 +1135,7 @@ button.live-game-sim-more {
 }
 @include media-breakpoint-down(md) {
 	.settings-buttons {
-		position: fixed;
-		width: 100%;
-		left: 0;
+		margin: 0 -15px;
 		border-top-left-radius: 0 !important;
 		border-top-right-radius: 0 !important;
 	}

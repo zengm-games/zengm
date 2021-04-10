@@ -39,7 +39,9 @@ import { descriptions } from "../Settings/settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";
+import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams from "./CustomizeTeams";
+import type { Settings } from "../../../worker/views/settings";
 
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
@@ -212,6 +214,7 @@ type State = {
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
 	realDraftRatings: "rookie" | "draft";
+	settings: Settings;
 };
 
 type Action =
@@ -634,7 +637,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [customizeTeamsUI, setCustomizeTeamsUI] = useState(false);
+	const [currentScreen, setCurrentScreen] = useState<
+		"default" | "teams" | "settings"
+	>("default");
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -704,6 +709,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
 				realDraftRatings: "rookie",
+				settings: props.defaultSettings,
 			};
 		},
 	);
@@ -962,26 +968,32 @@ const NewLeague = (props: View<"newLeague">) => {
 		});
 	};
 
+	let pageTitle = title;
+	if (currentScreen === "teams") {
+		pageTitle += " » Customize Teams";
+	} else if (currentScreen === "settings") {
+		pageTitle += " » Customize Settings";
+	}
+
 	useTitleBar({
-		title: customizeTeamsUI ? `${title} » Customize Teams` : title,
+		title: pageTitle,
 		hideNewWindow: true,
 	});
 
-	if (customizeTeamsUI) {
+	if (currentScreen === "teams") {
 		return (
 			<CustomizeTeams
 				onCancel={() => {
-					setCustomizeTeamsUI(false);
+					setCurrentScreen("default");
 				}}
 				onSave={({ confs, divs, teams }) => {
-					console.log("onSave", teams);
 					dispatch({
 						type: "setTeams",
 						confs,
 						divs,
 						teams: helpers.addPopRank(teams),
 					});
-					setCustomizeTeamsUI(false);
+					setCurrentScreen("default");
 				}}
 				initialConfs={state.confs}
 				initialDivs={state.divs}
@@ -994,6 +1006,22 @@ const NewLeague = (props: View<"newLeague">) => {
 					};
 				}}
 				godModeLimits={props.godModeLimits}
+			/>
+		);
+	} else if (currentScreen === "settings") {
+		return (
+			<CustomizeSettings
+				onCancel={() => {
+					setCurrentScreen("default");
+				}}
+				onSave={settings => {
+					console.log("onSave", settings);
+					setCurrentScreen("default");
+				}}
+				initial={state.settings}
+				getDefault={() => {
+					return state.settings;
+				}}
 			/>
 		);
 	}
@@ -1530,7 +1558,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										disabled={disableWhileLoadingLeagueFile}
 										type="button"
 										onClick={() => {
-											setCustomizeTeamsUI(true);
+											setCurrentScreen("teams");
 										}}
 									>
 										Customize
@@ -1596,6 +1624,18 @@ const NewLeague = (props: View<"newLeague">) => {
 						</select>
 						<span className="text-muted">{descriptions.difficulty}</span>
 					</div>
+
+					<button
+						className="btn btn-link p-0 mb-3"
+						type="button"
+						onClick={() => {
+							setCurrentScreen("settings");
+						}}
+					>
+						<span className="glyphicon glyphicon-triangle-right"></span>
+						League settings
+					</button>
+					<p></p>
 
 					{moreOptions.length > 0 ? (
 						<>

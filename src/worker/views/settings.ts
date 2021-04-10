@@ -1,12 +1,96 @@
 import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { GameAttributesLeague, UpdateEvents } from "../../common/types";
+
+export const keys = [
+	"godMode",
+	"godModeInPast",
+	"numGames",
+	"numActiveTeams",
+	"quarterLength",
+	"maxRosterSize",
+	"minRosterSize",
+	"salaryCap",
+	"minPayroll",
+	"luxuryPayroll",
+	"luxuryTax",
+	"minContract",
+	"maxContract",
+	"minContractLength",
+	"maxContractLength",
+	"aiTradesFactor",
+	"injuryRate",
+	"homeCourtAdvantage",
+	"rookieContractLengths",
+	"rookiesCanRefuse",
+	"tragicDeathRate",
+	"brotherRate",
+	"sonRate",
+	"forceRetireAge",
+	"hardCap",
+	"numGamesPlayoffSeries",
+	"numPlayoffByes",
+	"draftType",
+	"draftAges",
+	"playersRefuseToNegotiate",
+	"allStarGame",
+	"budget",
+	"numSeasonsFutureDraftPicks",
+	"foulRateFactor",
+	"foulsNeededToFoulOut",
+	"foulsUntilBonus",
+	"threePointers",
+	"pace",
+	"threePointTendencyFactor",
+	"threePointAccuracyFactor",
+	"twoPointAccuracyFactor",
+	"blockFactor",
+	"stealFactor",
+	"turnoverFactor",
+	"orbFactor",
+	"challengeNoDraftPicks",
+	"challengeNoFreeAgents",
+	"challengeNoTrades",
+	"challengeLoseBestPlayer",
+	"challengeNoRatings",
+	"challengeFiredLuxuryTax",
+	"challengeFiredMissPlayoffs",
+	"challengeThanosMode",
+	"realPlayerDeterminism",
+	"repeatSeason",
+	"ties",
+	"otl",
+	"spectator",
+	"elam",
+	"elamASG",
+	"elamMinutes",
+	"elamPoints",
+	"playerMoodTraits",
+	"numPlayersOnCourt",
+	"numDraftRounds",
+	"tradeDeadline",
+	"autoDeleteOldBoxScores",
+	"difficulty",
+	"stopOnInjury",
+	"stopOnInjuryGames",
+	"aiJerseyRetirement",
+	"numPeriods",
+	"tiebreakers",
+	"pointsFormula",
+] as const;
+
+export type Settings = Pick<
+	GameAttributesLeague,
+	Exclude<typeof keys[number], "repeatSeason">
+> & {
+	repeatSeason: boolean;
+};
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
 	) {
-		return {
+		const settings: Settings = {
 			godMode: g.get("godMode"),
 			godModeInPast: g.get("godModeInPast"),
 			numGames: g.get("numGames"),
@@ -32,8 +116,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			sonRate: g.get("sonRate"),
 			forceRetireAge: g.get("forceRetireAge"),
 			hardCap: g.get("hardCap"),
-			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"), // Always get latest value
-			numPlayoffByes: g.get("numPlayoffByes"), // Always get latest value
+			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"),
+			numPlayoffByes: g.get("numPlayoffByes"),
 			draftType: g.get("draftType"),
 			draftAges: g.get("draftAges"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
@@ -82,6 +166,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tiebreakers: g.get("tiebreakers"),
 			pointsFormula: g.get("pointsFormula"),
 		};
+
+		return settings;
 	}
 };
 

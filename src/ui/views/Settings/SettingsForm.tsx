@@ -12,11 +12,11 @@ import {
 } from "react";
 import { HelpPopover } from "../../components";
 import { confirm, localActions, logEvent, useLocalShallow } from "../../util";
-import type { View } from "../../../common/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { isSport } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
+import type { Settings } from "../../../worker/views/settings";
 
 const godModeRequiredMessage = "This setting can only be changed in God Mode.";
 
@@ -1307,8 +1307,8 @@ const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 
 const SettingsForm = (
-	props: View<"settings"> & {
-		onSave: (settings: Partial<Record<Key | SpecialStateBoolean, any>>) => void;
+	props: Settings & {
+		onSave: (settings: Settings) => void;
 	},
 ) => {
 	const { godModeInPast, onSave } = props;
@@ -1414,7 +1414,7 @@ const SettingsForm = (
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output: Partial<Record<Key | SpecialStateBoolean, any>> = {};
+		const output = ({} as unknown) as Settings;
 		for (const option of settings) {
 			const { key, name, type } = option;
 			const value = state[key];
@@ -1424,6 +1424,7 @@ const SettingsForm = (
 			const parse = encodeDecodeFunctions[type].parse;
 
 			try {
+				// @ts-ignore
 				output[key] = parse ? parse(value) : value;
 			} catch (error) {
 				setSubmitting(false);

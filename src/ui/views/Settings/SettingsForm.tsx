@@ -1026,7 +1026,6 @@ const Input = ({
 	value: string;
 	values?: Values;
 }) => {
-	console.log("typeof value", typeof value, value);
 	const title = disabled ? godModeRequiredMessage : undefined;
 	const commonProps = {
 		className: "form-control",

@@ -42,6 +42,10 @@ import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
 
+const unwrap = (value: any) => {
+	return gameAttributeHasHistory(value) ? value[value.length - 1].value : value;
+};
+
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
 	realTeamInfo: RealTeamInfo | undefined,
@@ -424,7 +428,7 @@ const reducer = (state: State, action: Action): State => {
 			// gameAttributes was already converted to an object before dispatching this action
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
 				for (const key of helpers.keys(newSettings)) {
-					const value = action.leagueFile.gameAttributes[key];
+					const value = unwrap(action.leagueFile.gameAttributes[key]);
 					if (value !== undefined) {
 						if (key === "repeatSeason") {
 							newSettings[key] = !!value;
@@ -435,16 +439,10 @@ const reducer = (state: State, action: Action): State => {
 				}
 
 				if (action.leagueFile.gameAttributes.confs) {
-					const value = action.leagueFile.gameAttributes.confs;
-					confs = gameAttributeHasHistory(value)
-						? value[value.length - 1].value
-						: value;
+					confs = unwrap(action.leagueFile.gameAttributes.confs);
 				}
 				if (action.leagueFile.gameAttributes.divs) {
-					const value = action.leagueFile.gameAttributes.divs;
-					divs = gameAttributeHasHistory(value)
-						? value[value.length - 1].value
-						: value;
+					divs = unwrap(action.leagueFile.gameAttributes.divs);
 				}
 			}
 

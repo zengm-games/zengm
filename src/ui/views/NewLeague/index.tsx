@@ -256,12 +256,17 @@ type Action =
 			tid: number;
 	  }
 	| {
+			type: "setSettings";
+			settings: State["settings"];
+	  }
+	| {
 			type: "loadingLeagueFile";
 	  }
 	| {
 			type: "newLeagueFile";
 			leagueFile: any;
 			teams: NewLeagueTeam[];
+			defaultSettings: State["settings"];
 	  }
 	| {
 			type: "newLeagueInfo";
@@ -389,6 +394,13 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
+		case "setSettings": {
+			return {
+				...state,
+				settings: helpers.deepCopy(action.settings),
+			};
+		}
+
 		case "loadingLeagueFile":
 			return {
 				...state,
@@ -407,27 +419,18 @@ const reducer = (state: State, action: Action): State => {
 			let confs = DEFAULT_CONFS;
 			let divs = DEFAULT_DIVS;
 
-			const gameAttributeOverrides: {
-				equalizeRegions: boolean;
-				expandOptions: boolean;
-			} = {
-				equalizeRegions: state.equalizeRegions,
-				expandOptions: state.expandOptions,
-			};
+			const newSettings = helpers.deepCopy(action.defaultSettings);
 
 			// gameAttributes was already converted to an object before dispatching this action
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
-				for (const key of helpers.keys(gameAttributeOverrides)) {
+				for (const key of helpers.keys(newSettings)) {
 					const value = action.leagueFile.gameAttributes[key];
-
-					// For most settings this passes through the boolean value. For repeatSeason it converts that to a boolean, and it'll be filled later with the actual correct value.
-					const booleanValue = !!value;
-					if (
-						(gameAttributeOverrides as any)[key] !== undefined &&
-						(gameAttributeOverrides as any)[key] !== booleanValue
-					) {
-						(gameAttributeOverrides as any)[key] = booleanValue;
-						gameAttributeOverrides.expandOptions = true;
+					if (value !== undefined) {
+						if (key === "repeatSeason") {
+							newSettings[key] = !!value;
+						} else {
+							(newSettings[key] as any) = value;
+						}
 					}
 				}
 
@@ -455,7 +458,7 @@ const reducer = (state: State, action: Action): State => {
 				divs,
 				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
-				...gameAttributeOverrides,
+				settings: newSettings,
 			};
 		}
 
@@ -795,6 +798,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					props.realTeamInfo,
 					newLeagueFile.startingSeason,
 				),
+				defaultSettings: props.defaultSettings,
 			});
 
 			// Need to update team and difficulty dropdowns?
@@ -815,7 +819,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 			}
 		},
-		[props.realTeamInfo],
+		[props.defaultSettings, props.realTeamInfo],
 	);
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
@@ -889,7 +893,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					setCurrentScreen("default");
 				}}
 				onSave={settings => {
-					console.log("onSave", settings);
+					dispatch({ type: "setSettings", settings });
 					setCurrentScreen("default");
 				}}
 				initial={{

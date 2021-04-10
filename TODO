@@ -27,14 +27,20 @@ settings re-design
   - also new league has some extra settings that don't persist
     - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations
   - make sure it handles default values of settings for real player leagues and league files
-    - start with default, apply any changes from league file
+    - handle unwrapping wrapped game attributes on moving it to settings
+      - unify code with other use of gameAttributeHasHistory
+      - confirm works with exported league file
+      - PROBLEM: this would lose history by discarding wrapped values. could solve in worker, by maing the "merge settings and game attributes" code handle it
+    - real players - getLeagueInfo will need to return gameAttributes, and then use settings the gameAttributes from getLeague in the worker
   - godModeRequired value of "existingLeagueOnly" should be used here
   - test
     - toWorker works for validatePointsFormula
+    - repeatSeason applied correctly
   - warning when leaving page with edits to default settings/teams
     - add in useEffect - maybe do same for live game?
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
+  - animations on switching screen
   - blog
     - settings that make sense only when edited prior to league (like draft ages or num players on court)
     - settings that can be changed prior to league outside of god mode

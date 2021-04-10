@@ -11,7 +11,6 @@ import {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	gameAttributeHasHistory,
-	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	gameAttributesArrayToObject,
@@ -201,14 +200,6 @@ type State = {
 	allKeys: string[];
 	keptKeys: string[];
 	expandOptions: boolean;
-	challengeNoDraftPicks: boolean;
-	challengeNoFreeAgents: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	challengeLoseBestPlayer: boolean;
-	challengeFiredLuxuryTax: boolean;
-	challengeFiredMissPlayoffs: boolean;
-	challengeThanosMode: boolean;
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -282,30 +273,6 @@ type Action =
 	  }
 	| {
 			type: "toggleExpandOptions";
-	  }
-	| {
-			type: "toggleChallengeNoDraftPicks";
-	  }
-	| {
-			type: "toggleChallengeNoFreeAgents";
-	  }
-	| {
-			type: "toggleChallengeNoRatings";
-	  }
-	| {
-			type: "toggleChallengeNoTrades";
-	  }
-	| {
-			type: "toggleChallengeLoseBestPlayer";
-	  }
-	| {
-			type: "toggleChallengeFiredLuxuryTax";
-	  }
-	| {
-			type: "toggleChallengeFiredMissPlayoffs";
-	  }
-	| {
-			type: "toggleChallengeThanosMode";
 	  }
 	| {
 			type: "toggleEqualizeRegions";
@@ -445,26 +412,10 @@ const reducer = (state: State, action: Action): State => {
 			let divs = DEFAULT_DIVS;
 
 			const gameAttributeOverrides: {
-				challengeNoDraftPicks: boolean;
-				challengeNoFreeAgents: boolean;
-				challengeNoRatings: boolean;
-				challengeNoTrades: boolean;
-				challengeLoseBestPlayer: boolean;
-				challengeFiredLuxuryTax: boolean;
-				challengeFiredMissPlayoffs: boolean;
-				challengeThanosMode: boolean;
 				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
 			} = {
-				challengeNoDraftPicks: state.challengeNoDraftPicks,
-				challengeNoFreeAgents: state.challengeNoFreeAgents,
-				challengeNoRatings: state.challengeNoRatings,
-				challengeNoTrades: state.challengeNoTrades,
-				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
-				challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
-				challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
-				challengeThanosMode: state.challengeThanosMode,
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -547,54 +498,6 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				expandOptions: !state.expandOptions,
-			};
-
-		case "toggleChallengeNoDraftPicks":
-			return {
-				...state,
-				challengeNoDraftPicks: !state.challengeNoDraftPicks,
-			};
-
-		case "toggleChallengeNoFreeAgents":
-			return {
-				...state,
-				challengeNoFreeAgents: !state.challengeNoFreeAgents,
-			};
-
-		case "toggleChallengeNoRatings":
-			return {
-				...state,
-				challengeNoRatings: !state.challengeNoRatings,
-			};
-
-		case "toggleChallengeNoTrades":
-			return {
-				...state,
-				challengeNoTrades: !state.challengeNoTrades,
-			};
-
-		case "toggleChallengeLoseBestPlayer":
-			return {
-				...state,
-				challengeLoseBestPlayer: !state.challengeLoseBestPlayer,
-			};
-
-		case "toggleChallengeFiredLuxuryTax":
-			return {
-				...state,
-				challengeFiredLuxuryTax: !state.challengeFiredLuxuryTax,
-			};
-
-		case "toggleChallengeFiredMissPlayoffs":
-			return {
-				...state,
-				challengeFiredMissPlayoffs: !state.challengeFiredMissPlayoffs,
-			};
-
-		case "toggleChallengeThanosMode":
-			return {
-				...state,
-				challengeThanosMode: !state.challengeThanosMode,
 			};
 
 		case "toggleEqualizeRegions":
@@ -696,14 +599,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				allKeys,
 				keptKeys,
 				expandOptions: false,
-				challengeNoDraftPicks: false,
-				challengeNoFreeAgents: false,
-				challengeNoRatings: false,
-				challengeNoTrades: false,
-				challengeLoseBestPlayer: false,
-				challengeFiredLuxuryTax: false,
-				challengeFiredMissPlayoffs: false,
-				challengeThanosMode: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
@@ -801,14 +696,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					importLid: props.lid,
 					getLeagueOptions,
 					actualStartingSeason,
-					challengeNoDraftPicks: state.challengeNoDraftPicks,
-					challengeNoFreeAgents: state.challengeNoFreeAgents,
-					challengeNoRatings: state.challengeNoRatings,
-					challengeNoTrades: state.challengeNoTrades,
-					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
-					challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
-					challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
-					challengeThanosMode: state.challengeThanosMode,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
@@ -849,14 +736,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 		},
 		[
-			state.challengeNoDraftPicks,
-			state.challengeNoFreeAgents,
-			state.challengeNoRatings,
-			state.challengeNoTrades,
-			state.challengeLoseBestPlayer,
-			state.challengeFiredLuxuryTax,
-			state.challengeFiredMissPlayoffs,
-			state.challengeThanosMode,
 			state.confs,
 			state.customize,
 			state.difficulty,
@@ -1053,161 +932,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				state.pendingInitialLeagueInfo));
 
 	const moreOptions: ReactNode[] = [
-		<div key="challenge" className="mb-3">
-			<label>Challenge modes</label>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoDraftPicks"
-					checked={state.challengeNoDraftPicks}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoDraftPicks" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoDraftPicks"
-				>
-					No draft picks
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeNoDraftPicks}
-					</span>
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoFreeAgents"
-					checked={state.challengeNoFreeAgents}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoFreeAgents" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoFreeAgents"
-				>
-					No free agents
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeNoFreeAgents}
-					</span>
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoTrades"
-					checked={state.challengeNoTrades}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoTrades" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoTrades"
-				>
-					No trades
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoRatings"
-					checked={state.challengeNoRatings}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoRatings" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoRatings"
-				>
-					No visible player ratings
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeLoseBestPlayer"
-					checked={state.challengeLoseBestPlayer}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeLoseBestPlayer" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeLoseBestPlayer"
-				>
-					Lose best player every season
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeLoseBestPlayer}
-					</span>
-				</label>
-			</div>
-			{!isSport("football") || state.challengeFiredLuxuryTax ? (
-				<div className="form-check mb-2">
-					<input
-						className="form-check-input"
-						type="checkbox"
-						id="new-league-challengeFiredLuxuryTax"
-						checked={state.challengeFiredLuxuryTax}
-						onChange={() => {
-							dispatch({ type: "toggleChallengeFiredLuxuryTax" });
-						}}
-					/>
-					<label
-						className="form-check-label"
-						htmlFor="new-league-challengeFiredLuxuryTax"
-					>
-						You're fired if you pay the luxury tax
-					</label>
-				</div>
-			) : null}
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeFiredMissPlayoffs"
-					checked={state.challengeFiredMissPlayoffs}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeFiredMissPlayoffs" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeFiredMissPlayoffs"
-				>
-					You're fired if you miss the playoffs
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeThanosMode"
-					checked={state.challengeThanosMode}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeThanosMode" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeThanosMode"
-				>
-					Thanos Mode
-					<br />
-					<span className="text-muted">{descriptions.challengeThanosMode}</span>
-				</label>
-			</div>
-		</div>,
 		<div key="other" className="mb-3">
 			<label>Other</label>
 			<div className="form-check mb-2">

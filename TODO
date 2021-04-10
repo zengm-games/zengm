@@ -19,6 +19,9 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
+  - what settings should be on sub-page, and what should be on main page?
+    - difficulty
+  - any left on main page, store in settings rather than root of state
   - actually use settings when creating new league
   - need buttons to cancel and reset to default (but what is "default" for a real players league or league file?)
   - also new league has some extra settings that don't persist
@@ -28,6 +31,8 @@ settings re-design
   - godModeRequired value of "existingLeagueOnly" should be used here
   - test
     - toWorker works for validatePointsFormula
+  - warning when leaving page with edits to default settings/teams
+    - add in useEffect - maybe do same for live game?
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
   - blog

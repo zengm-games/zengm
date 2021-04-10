@@ -13,14 +13,6 @@ import type { View } from "../../../common/types";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 
 export const descriptions = {
-	challengeLoseBestPlayer:
-		"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
-	challengeNoDraftPicks:
-		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
-	challengeNoFreeAgents:
-		"You are not allowed to sign free agents, except to minimum contracts.",
-	challengeThanosMode:
-		"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 	realPlayerDeterminism:
@@ -668,14 +660,16 @@ export const settings: {
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
-		description: descriptions.challengeNoDraftPicks,
+		description:
+			"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
-		description: descriptions.challengeNoFreeAgents,
+		description:
+			"You are not allowed to sign free agents, except to minimum contracts.",
 	},
 	{
 		category: "Challenge Modes",
@@ -694,13 +688,16 @@ export const settings: {
 		key: "challengeLoseBestPlayer",
 		name: "Lose Best Player",
 		type: "bool",
-		description: descriptions.challengeLoseBestPlayer,
+		description:
+			"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeFiredLuxuryTax",
 		name: "You're Fired If You Pay The Luxury Tax",
 		type: "bool",
+		description:
+			"The luxury tax only exists if you have the hard cap disabled.",
 	},
 	{
 		category: "Challenge Modes",
@@ -713,7 +710,8 @@ export const settings: {
 		key: "challengeThanosMode",
 		name: "Thanos Mode",
 		type: "bool",
-		description: descriptions.challengeThanosMode,
+		description:
+			"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	},
 	{
 		category: "Game Modes",

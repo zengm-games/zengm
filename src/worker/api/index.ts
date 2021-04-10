@@ -300,14 +300,6 @@ const createLeague = async ({
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	challengeNoDraftPicks,
-	challengeNoFreeAgents,
-	challengeNoRatings,
-	challengeNoTrades,
-	challengeLoseBestPlayer,
-	challengeFiredLuxuryTax,
-	challengeFiredMissPlayoffs,
-	challengeThanosMode,
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
@@ -326,14 +318,6 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	challengeNoDraftPicks: boolean;
-	challengeNoFreeAgents: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	challengeLoseBestPlayer: boolean;
-	challengeFiredLuxuryTax: boolean;
-	challengeFiredMissPlayoffs: boolean;
-	challengeThanosMode: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
@@ -431,14 +415,6 @@ const createLeague = async ({
 	}
 
 	const gameAttributeOverrides: Record<string, any> = {
-		challengeNoDraftPicks,
-		challengeNoFreeAgents,
-		challengeNoRatings,
-		challengeNoTrades,
-		challengeLoseBestPlayer,
-		challengeFiredLuxuryTax,
-		challengeFiredMissPlayoffs,
-		challengeThanosMode,
 		equalizeRegions,
 		confs,
 		divs,

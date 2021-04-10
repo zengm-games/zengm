@@ -1,7 +1,7 @@
 import { g } from "../util";
 import type { GameAttributesLeague, UpdateEvents } from "../../common/types";
 
-export const keys = [
+const keys = [
 	"godMode",
 	"godModeInPast",
 	"numGames",

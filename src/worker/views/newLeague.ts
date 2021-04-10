@@ -11,11 +11,10 @@ import { unwrap } from "../util/g";
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	const godModeLimits = newLeagueGodModeLimits();
 
-	const defaultSettings: Settings = {
+	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
 		godMode: unwrap(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrap(defaultGameAttributes, "godModeInPast"),
 		numGames: unwrap(defaultGameAttributes, "numGames"),
-		numActiveTeams: unwrap(defaultGameAttributes, "numActiveTeams"),
 		quarterLength: unwrap(defaultGameAttributes, "quarterLength"),
 		maxRosterSize: unwrap(defaultGameAttributes, "maxRosterSize"),
 		minRosterSize: unwrap(defaultGameAttributes, "minRosterSize"),

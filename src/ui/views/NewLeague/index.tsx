@@ -214,7 +214,7 @@ type State = {
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
 	realDraftRatings: "rookie" | "draft";
-	settings: Settings;
+	settings: Omit<Settings, "numActiveTeams">;
 };
 
 type Action =
@@ -1008,7 +1008,15 @@ const NewLeague = (props: View<"newLeague">) => {
 				godModeLimits={props.godModeLimits}
 			/>
 		);
-	} else if (currentScreen === "settings") {
+	}
+
+	const keptKeysIsAvailable = state.customize.startsWith("custom");
+	const displayedTeams =
+		!keptKeysIsAvailable || state.keptKeys.includes("teams")
+			? state.teams
+			: teamsDefault;
+
+	if (currentScreen === "settings") {
 		return (
 			<CustomizeSettings
 				onCancel={() => {
@@ -1018,19 +1026,19 @@ const NewLeague = (props: View<"newLeague">) => {
 					console.log("onSave", settings);
 					setCurrentScreen("default");
 				}}
-				initial={state.settings}
+				initial={{
+					...state.settings,
+					numActiveTeams: displayedTeams.length,
+				}}
 				getDefault={() => {
-					return state.settings;
+					return {
+						...state.settings,
+						numActiveTeams: displayedTeams.length,
+					};
 				}}
 			/>
 		);
 	}
-
-	const keptKeysIsAvailable = state.customize.startsWith("custom");
-	const displayedTeams =
-		!keptKeysIsAvailable || state.keptKeys.includes("teams")
-			? state.teams
-			: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
 		((state.customize === "custom-rosters" ||

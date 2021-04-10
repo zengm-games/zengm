@@ -1229,6 +1229,10 @@ const NewLeague = (props: View<"newLeague">) => {
 													type: "real",
 													season: parseInt(value),
 													phase: value2,
+													randomDebuts:
+														state.randomization === "debuts" ||
+														state.randomization === "debutsForever",
+													realDraftRatings: state.realDraftRatings,
 												})
 											}
 											onLoading={value => {

@@ -2,6 +2,7 @@ import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import { isSport } from "../../../common";
 import getGameAttributes from "./getGameAttributes";
+import type { GetLeagueOptions } from "../../../common/types";
 
 export const legendsInfo = {
 	"1950s": {
@@ -38,26 +39,7 @@ export const legendsInfo = {
 	},
 };
 
-const getLeagueInfo = async (
-	options:
-		| {
-				type: "real";
-				season: number;
-				phase: number;
-		  }
-		| {
-				type: "legends";
-				decade:
-					| "1950s"
-					| "1960s"
-					| "1970s"
-					| "1980s"
-					| "1990s"
-					| "2000s"
-					| "2010s"
-					| "all";
-		  },
-) => {
+const getLeagueInfo = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}

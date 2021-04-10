@@ -879,9 +879,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		subPage = (
 			<motion.div
 				key="screen-teams"
-				initial={{ scaleY: 0 }}
-				animate={{ scaleY: 1 }}
-				exit={{ scaleY: 0 }}
+				initial={{ x: "100vw" }}
+				animate={{ x: 0 }}
+				exit={{ x: "100vw" }}
 				transition={{ duration: 0.5 }}
 			>
 				<CustomizeTeams
@@ -923,9 +923,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		subPage = (
 			<motion.div
 				key="screen-settings"
-				initial={{ scaleY: 0 }}
-				animate={{ scaleY: 1 }}
-				exit={{ scaleY: 0 }}
+				initial={{ x: "100vw" }}
+				animate={{ x: 0 }}
+				exit={{ x: "100vw" }}
 				transition={{ duration: 0.5 }}
 			>
 				<CustomizeSettings
@@ -1151,16 +1151,16 @@ const NewLeague = (props: View<"newLeague">) => {
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
 	return (
-		<AnimatePresence exitBeforeEnter>
+		<AnimatePresence initial={false}>
 			{subPage ? (
 				subPage
 			) : (
 				<motion.form
 					key="screen-main"
-					initial={{ scaleY: 0 }}
-					animate={{ scaleY: 1 }}
-					exit={{ scaleY: 0 }}
-					transition={{ duration: 0.5 }}
+					initial={{ x: "-100vw" }}
+					animate={{ x: 0 }}
+					exit={{ x: "-100vw" }}
+					transition={{ duration: 0.4 }}
 					onSubmit={handleSubmit}
 					style={{ maxWidth: 800 }}
 				>

@@ -20,7 +20,9 @@ export type NewLeagueTeam = {
 export type LeagueInfo = {
 	startingSeason: number;
 	stores: string[];
-	confs: Conf[];
-	divs: Div[];
+	gameAttributes: Record<string, unknown> & {
+		confs: Conf[];
+		divs: Div[];
+	};
 	teams: NewLeagueTeam[];
 };

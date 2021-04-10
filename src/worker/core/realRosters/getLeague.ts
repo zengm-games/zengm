@@ -17,10 +17,11 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import getOnlyRatings from "./getOnlyRatings";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import addRelatives from "./addRelatives";
+import getGameAttributes from "./getGameAttributes";
 
 export const LATEST_SEASON = 2021;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
-const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
+export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
 const genPlayoffSeries = (
@@ -398,21 +399,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const gameAttributes: Record<string, unknown> = {
-			maxRosterSize: 17,
-			...initialGameAttributes,
-		};
-
-		if (
-			options.season >= FIRST_SEASON_WITH_ALEXNOOB_ROSTERS &&
-			!options.randomDebuts
-		) {
-			gameAttributes.numSeasonsFutureDraftPicks = 7;
-		}
-
-		if (options.phase !== PHASE.PRESEASON) {
-			gameAttributes.phase = options.phase;
-		}
+		const gameAttributes = getGameAttributes(initialGameAttributes, options);
 
 		const getDraftPickTeams = (
 			dp: Basketball["draftPicks"][number][number],
@@ -737,23 +724,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const gameAttributes: Record<string, unknown> = {
-			maxRosterSize: 17,
-			aiTradesFactor: 0,
-		};
-
-		const ignoreGameAttributes = [
-			"salaryCap",
-			"luxuryPayroll",
-			"minPayroll",
-			"minContract",
-			"maxContract",
-		];
-		for (const [key, value] of Object.entries(initialGameAttributes)) {
-			if (!ignoreGameAttributes.includes(key)) {
-				gameAttributes[key] = value;
-			}
-		}
+		const gameAttributes = getGameAttributes(initialGameAttributes, options);
 
 		addRelatives(keptPlayers, basketball.relatives);
 		addFreeAgents(keptPlayers, season);

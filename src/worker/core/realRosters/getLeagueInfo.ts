@@ -2,6 +2,7 @@ import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import type { Conf, Div } from "../../../common/types";
 import { isSport } from "../../../common";
+import getGameAttributes from "./getGameAttributes";
 
 export const legendsInfo = {
 	"1950s": {
@@ -87,8 +88,7 @@ const getLeagueInfo = async (
 						"scheduledEvents",
 				  ];
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: options.season,
 			stores,
 			teams: initialTeams.filter(t => !t.disabled),
@@ -107,8 +107,7 @@ const getLeagueInfo = async (
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
 
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: legendsInfo[options.decade].end,
 			stores,
 			teams: initialTeams,

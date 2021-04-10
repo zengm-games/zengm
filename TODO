@@ -32,9 +32,9 @@ settings re-design
     - repeatSeason applied correctly
   - warning when leaving page with edits to default settings/teams
     - add in useEffect - maybe do same for live game?
+  - settings save bar not working on mobile, but only on new league screen
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
-  - animations on switching screen
   - blog
     - settings that make sense only when edited prior to league (like draft ages or num players on court)
     - settings that can be changed prior to league outside of god mode

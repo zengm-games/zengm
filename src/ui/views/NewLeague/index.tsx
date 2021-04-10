@@ -58,15 +58,16 @@ export const unwrap = <T extends keyof GameAttributesLeague>(
 const animationVariants = {
 	visible: {
 		x: 0,
-		transition: { duration: 50, ease: "easeInOut" },
+		opacity: 1,
+		transition: { duration: 0.25, ease: "easeInOut" },
 	},
 	left: {
-		x: "-100vw",
-		transition: { duration: 50, ease: "easeInOut" },
+		x: "-75vw",
+		transition: { duration: 0.25, ease: "easeInOut" },
 	},
 	right: {
-		x: "100vw",
-		transition: { duration: 50, ease: "easeInOut" },
+		x: "75vw",
+		transition: { duration: 0.25, ease: "easeInOut" },
 	},
 };
 
@@ -879,9 +880,9 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	let pageTitle = title;
 	if (currentScreen === "teams") {
-		pageTitle += " » Customize Teams";
+		pageTitle = "Customize Teams";
 	} else if (currentScreen === "settings") {
-		pageTitle += " » Customize Settings";
+		pageTitle = "Customize Settings";
 	}
 
 	useTitleBar({
@@ -1165,8 +1166,9 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
+	// exitBeforeEnter sucks (makes transition slower) but otherwise it jumps at the end because it stacks the divs vertically, and I couldn't figure out how to work around that
 	return (
-		<AnimatePresence initial={false}>
+		<AnimatePresence exitBeforeEnter initial={false}>
 			{subPage ? (
 				subPage
 			) : (

@@ -5,15 +5,17 @@ const CustomizeSettings = ({
 	onCancel,
 	onSave,
 	initial,
+	saveText,
 }: {
 	onCancel: () => void;
 	onSave: (settings: Settings) => void;
 	initial: Settings;
+	saveText: string;
 }) => {
 	return (
 		<SettingsForm
 			onSave={onSave}
-			saveText="Create League"
+			saveText={saveText}
 			onCancel={onCancel}
 			{...initial}
 			newLeague

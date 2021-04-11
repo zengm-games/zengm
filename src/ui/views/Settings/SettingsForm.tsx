@@ -1531,7 +1531,7 @@ const SettingsForm = ({
 					disabled={submitting}
 					onClick={toggleGodModeSettings}
 				>
-					{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+					{showGodModeSettings ? "Hide" : "Show"} God Mode Settings
 				</GodModeSettingsButton>
 
 				{categories.map(category => {

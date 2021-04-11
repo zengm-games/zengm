@@ -866,6 +866,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			? state.teams
 			: teamsDefault;
 
+	const createLeagueText =
+		props.lid !== undefined ? "Import League" : "Create League";
+
 	if (currentScreen === "settings") {
 		subPage = (
 			<motion.div
@@ -878,7 +881,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					// HACK HACK HACK
 					// CustomizeSettings has a sticky div inside it, and mobile Chrome (and maybe others) get confused by the `transform: translateX(0vw) translateZ(0px);` CSS that framer-motion leaves hanging around
 					if (definition === "visible") {
-						console.log("COMPLETE", definition);
 						const parent = document.getElementById("actual-actual-content");
 						if (parent) {
 							const animatedDiv = parent.children[0] as
@@ -903,6 +905,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						numActiveTeams: displayedTeams.length,
 						difficulty: state.difficulty,
 					}}
+					saveText={createLeagueText}
 				/>
 			</motion.div>
 		);
@@ -1386,7 +1389,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										!!invalidSeasonPhaseMessage
 									}
 								>
-									{props.lid !== undefined ? "Import League" : "Create League"}
+									{createLeagueText}
 								</button>
 
 								<button

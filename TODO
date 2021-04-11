@@ -24,8 +24,6 @@ settings re-design
       - realDraftRatings
       - randomDebutsForever
   - any left on main page, store in settings rather than root of state
-  - need buttons to...
-    - reset to default (but what is "default" for a real players league or league file?)
   - also new league has some extra settings that don't persist
     - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations
   - test

@@ -5,12 +5,10 @@ const CustomizeSettings = ({
 	onCancel,
 	onSave,
 	initial,
-	getDefault,
 }: {
 	onCancel: () => void;
 	onSave: (settings: Settings) => void;
 	initial: Settings;
-	getDefault: () => Settings;
 }) => {
 	return (
 		<SettingsForm

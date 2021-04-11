@@ -903,12 +903,6 @@ const NewLeague = (props: View<"newLeague">) => {
 						numActiveTeams: displayedTeams.length,
 						difficulty: state.difficulty,
 					}}
-					getDefault={() => {
-						return {
-							...state.settings,
-							numActiveTeams: displayedTeams.length,
-						};
-					}}
 				/>
 			</motion.div>
 		);

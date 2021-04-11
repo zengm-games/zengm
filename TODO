@@ -19,8 +19,6 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
-  - <div style="transform: translateX(0vw) translateZ(0px); opacity: 1;"> from framer-motion still causing div sticky weirdness on mobile
-    - https://achrafkassioui.com/blog/position-fixed-and-CSS-transforms/ or similar hacky approach
   - what settings should be on sub-page, and what should be on main page?
     - api/index/createLeague
       - realDraftRatings

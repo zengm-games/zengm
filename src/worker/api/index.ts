@@ -450,6 +450,8 @@ const createLeague = async ({
 		}
 	}
 
+	leagueFile.gameAttributes = leagueFile.gameAttributes ?? {};
+
 	for (const key of helpers.keys(gameAttributeOverrides)) {
 		// If we're overriding a value with history, keep the history
 		leagueFile.gameAttributes[key] = wrap(

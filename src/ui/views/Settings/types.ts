@@ -71,7 +71,8 @@ export type Key =
 	| "tiebreakers"
 	| "pointsFormula"
 	| "equalizeRegions"
-	| "noStartingInjuries";
+	| "noStartingInjuries"
+	| "realDraftRatings";
 
 export type Category =
 	| "New League"

@@ -192,6 +192,11 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			"equalizeRegions",
 		),
 		noStartingInjuries: false,
+
+		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
+		realDraftRatings:
+			unwrapGameAttribute(defaultGameAttributes, "realDraftRatings") ??
+			"rookie",
 	};
 
 	if (lid !== undefined) {

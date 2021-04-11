@@ -77,14 +77,19 @@ const keys = [
 	"tiebreakers",
 	"pointsFormula",
 	"equalizeRegions",
+	"realDraftRatings",
 ] as const;
 
 export type Settings = Pick<
 	GameAttributesLeague,
-	Exclude<typeof keys[number], "repeatSeason">
+	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings">
 > & {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
+	realDraftRatings: Exclude<
+		GameAttributesLeague["realDraftRatings"],
+		undefined
+	>;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -169,6 +174,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			pointsFormula: g.get("pointsFormula"),
 			equalizeRegions: g.get("equalizeRegions"),
 			noStartingInjuries: false,
+
+			// Might as well be undefined, because it will never be saved from this form, only the new league form
+			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
 		};
 
 		return settings;

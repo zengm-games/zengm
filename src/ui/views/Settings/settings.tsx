@@ -58,6 +58,34 @@ export const settings: {
 		type: "bool",
 	},
 	{
+		category: "New League",
+		key: "realDraftRatings",
+		name: "Real Draft Prospect Ratings",
+		godModeRequired: "existingLeagueOnly",
+		viewableOnlyWhen: "newLeagueWithPlayers",
+		type: "string",
+		values: [
+			{ key: "rookie", value: "Based on rookie season stats" },
+			{ key: "draft", value: "Based on draft position" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Based on rookie season stats:</b> Player ratings for draft
+					prospects are based on their rookie season stats. Players who
+					overperformed or underperformed their real draft positions as rookies
+					will be ranked differently than they were in reality.
+				</p>
+				<p>
+					<b>Based on draft position:</b> Player ratings for draft prospects are
+					based on the position they were drafted. Every #1 pick will have a
+					high rating, even if in reality he was a bust. Every late pick will
+					have a low rating, even if in reality he became a star.
+				</p>
+			</>
+		),
+	},
+	{
 		category: "Season",
 		key: "numGames",
 		name: "# Games Per Season",

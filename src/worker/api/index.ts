@@ -418,8 +418,9 @@ const createLeague = async ({
 		...otherSettings,
 	};
 
-	if (getLeagueOptions && getLeagueOptions.type === "real") {
-		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;
+	// This setting is allowed to be undefined, so make it that way when appropriate
+	if (!getLeagueOptions || getLeagueOptions.type !== "real") {
+		delete gameAttributeOverrides.realDraftRatings;
 	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful

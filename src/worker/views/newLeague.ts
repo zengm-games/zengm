@@ -187,6 +187,11 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		numPeriods: unwrapGameAttribute(defaultGameAttributes, "numPeriods"),
 		tiebreakers: unwrapGameAttribute(defaultGameAttributes, "tiebreakers"),
 		pointsFormula: unwrapGameAttribute(defaultGameAttributes, "pointsFormula"),
+		equalizeRegions: unwrapGameAttribute(
+			defaultGameAttributes,
+			"equalizeRegions",
+		),
+		noStartingInjuries: false,
 	};
 
 	if (lid !== undefined) {

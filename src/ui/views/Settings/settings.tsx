@@ -30,6 +30,7 @@ export const settings: {
 		output: any,
 		props: View<"settings">,
 	) => void | Promise<void>;
+	viewableOnlyWhen?: "newLeague" | "newLeagueWithPlayers";
 	customForm?: true;
 	hidden?: true;
 	maxWidth?: true;
@@ -40,6 +41,22 @@ export const settings: {
 	// Longer than one line, hidden by default
 	descriptionLong?: ReactNode;
 }[] = [
+	{
+		category: "New League",
+		key: "equalizeRegions",
+		name: "Equalize Region Populations",
+		godModeRequired: "existingLeagueOnly",
+		viewableOnlyWhen: "newLeague",
+		type: "bool",
+	},
+	{
+		category: "New League",
+		key: "noStartingInjuries",
+		name: "No Starting Injuries",
+		godModeRequired: "existingLeagueOnly",
+		viewableOnlyWhen: "newLeagueWithPlayers",
+		type: "bool",
+	},
 	{
 		category: "Season",
 		key: "numGames",

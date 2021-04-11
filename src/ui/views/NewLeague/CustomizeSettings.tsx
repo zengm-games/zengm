@@ -6,11 +6,13 @@ const CustomizeSettings = ({
 	onSave,
 	initial,
 	saveText,
+	hasPlayers,
 }: {
 	onCancel: () => void;
 	onSave: (settings: Settings) => void;
 	initial: Settings;
 	saveText: string;
+	hasPlayers: boolean;
 }) => {
 	return (
 		<SettingsForm
@@ -18,7 +20,7 @@ const CustomizeSettings = ({
 			saveText={saveText}
 			onCancel={onCancel}
 			{...initial}
-			newLeague
+			newLeagueType={hasPlayers ? "newLeagueWithPlayers" : "newLeague"}
 		/>
 	);
 };

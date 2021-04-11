@@ -76,6 +76,7 @@ const keys = [
 	"numPeriods",
 	"tiebreakers",
 	"pointsFormula",
+	"equalizeRegions",
 ] as const;
 
 export type Settings = Pick<
@@ -83,6 +84,7 @@ export type Settings = Pick<
 	Exclude<typeof keys[number], "repeatSeason">
 > & {
 	repeatSeason: boolean;
+	noStartingInjuries: boolean;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -165,6 +167,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPeriods: g.get("numPeriods"),
 			tiebreakers: g.get("tiebreakers"),
 			pointsFormula: g.get("pointsFormula"),
+			equalizeRegions: g.get("equalizeRegions"),
+			noStartingInjuries: false,
 		};
 
 		return settings;

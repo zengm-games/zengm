@@ -946,6 +946,9 @@ const categories: {
 	helpText?: ReactNode;
 }[] = [
 	{
+		name: "New League",
+	},
+	{
 		name: "General",
 	},
 	{
@@ -1331,16 +1334,18 @@ type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 const SettingsForm = ({
 	onCancel,
 	onSave,
-	newLeague,
+	newLeagueType,
 	saveText = "Save Settings",
 	...props
 }: Settings & {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
-	newLeague?: boolean;
+	newLeagueType?: "newLeague" | "newLeagueWithPlayers";
 	saveText?: string;
 }) => {
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
+
+	const newLeague = !!newLeagueType;
 
 	useEffect(() => {
 		localActions.update({
@@ -1441,8 +1446,14 @@ const SettingsForm = ({
 		event.preventDefault();
 		setSubmitting(true);
 
+		// Filter out the new league only ones when appropriate
+		const filteredSettings = settings.filter(setting => {
+			return newLeague || !setting.viewableOnlyWhen;
+		});
+		console.log(settings, filteredSettings);
+
 		const output = ({} as unknown) as Settings;
-		for (const option of settings) {
+		for (const option of filteredSettings) {
 			const { key, name, type } = option;
 			const value = state[key];
 
@@ -1470,7 +1481,7 @@ const SettingsForm = ({
 		}
 
 		// Run validation functions at the end, so all values are available
-		for (const option of settings) {
+		for (const option of filteredSettings) {
 			const { key, name, validator } = option;
 			try {
 				if (validator) {
@@ -1540,9 +1551,15 @@ const SettingsForm = ({
 					}
 
 					const catOptions = groupedOptions[category.name].filter(option => {
+						const visibleWithNewLeagueSetting =
+							newLeagueType === option.viewableOnlyWhen ||
+							(newLeagueType === "newLeagueWithPlayers" &&
+								option.viewableOnlyWhen === "newLeague") ||
+							(newLeague && !option.viewableOnlyWhen);
 						return (
 							(showGodModeSettings ||
 								settingIsEnabled(option.godModeRequired)) &&
+							visibleWithNewLeagueSetting &&
 							!option.hidden
 						);
 					});

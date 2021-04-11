@@ -215,8 +215,6 @@ type State = {
 	allKeys: string[];
 	keptKeys: string[];
 	expandOptions: boolean;
-	equalizeRegions: boolean;
-	noStartingInjuries: boolean;
 	realDraftRatings: "rookie" | "draft";
 	settings: Omit<Settings, "numActiveTeams">;
 };
@@ -288,10 +286,6 @@ type Action =
 	| {
 			type: "toggleExpandOptions";
 	  }
-	| {
-			type: "toggleEqualizeRegions";
-	  }
-	| { type: "toggleNoStartingInjuries" }
 	| {
 			type: "setRealDraftRatings";
 			realDraftRatings: "rookie" | "draft";
@@ -513,18 +507,6 @@ const reducer = (state: State, action: Action): State => {
 				expandOptions: !state.expandOptions,
 			};
 
-		case "toggleEqualizeRegions":
-			return {
-				...state,
-				equalizeRegions: !state.equalizeRegions,
-			};
-
-		case "toggleNoStartingInjuries":
-			return {
-				...state,
-				noStartingInjuries: !state.noStartingInjuries,
-			};
-
 		case "setRealDraftRatings":
 			return {
 				...state,
@@ -600,8 +582,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				allKeys,
 				keptKeys,
 				expandOptions: false,
-				noStartingInjuries: false,
-				equalizeRegions: false,
 				realDraftRatings: "rookie",
 				settings: props.defaultSettings,
 			};
@@ -683,8 +663,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				importLid: props.lid,
 				getLeagueOptions,
 				actualStartingSeason,
-				noStartingInjuries: state.noStartingInjuries,
-				equalizeRegions: state.equalizeRegions,
 				randomDebutsForever: actualRandomDebutsForever,
 				confs: state.confs,
 				divs: state.divs,
@@ -906,6 +884,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						difficulty: state.difficulty,
 					}}
 					saveText={createLeagueText}
+					hasPlayers={state.keptKeys.includes("players")}
 				/>
 			</motion.div>
 		);
@@ -923,47 +902,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: ReactNode[] = [
-		<div key="other" className="mb-3">
-			<label>Other</label>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-equalizeRegions"
-					checked={state.equalizeRegions}
-					onChange={() => {
-						dispatch({ type: "toggleEqualizeRegions" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-equalizeRegions"
-				>
-					Equalize region populations
-				</label>
-			</div>
-			{state.keptKeys.includes("players") ? (
-				<div className="form-check mb-2">
-					<input
-						className="form-check-input"
-						type="checkbox"
-						id="new-league-noStartingInjuries"
-						checked={state.noStartingInjuries}
-						onChange={() => {
-							dispatch({ type: "toggleNoStartingInjuries" });
-						}}
-					/>
-					<label
-						className="form-check-label"
-						htmlFor="new-league-noStartingInjuries"
-					>
-						No starting injuries
-					</label>
-				</div>
-			) : null}
-		</div>,
-	];
+	const moreOptions: ReactNode[] = [];
 
 	if (
 		(state.customize === "real" || state.customize === "legends") &&
@@ -1291,7 +1230,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										</button>
 									</div>
 								</div>
-								{!state.equalizeRegions ? (
+								{!state.settings.equalizeRegions ? (
 									<PopText
 										className="text-muted"
 										tid={state.tid}

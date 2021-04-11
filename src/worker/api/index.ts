@@ -301,8 +301,6 @@ const createLeague = async ({
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	noStartingInjuries,
-	equalizeRegions,
 	randomDebutsForever,
 	confs,
 	divs,
@@ -317,8 +315,6 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	noStartingInjuries: boolean;
-	equalizeRegions: boolean;
 	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
@@ -412,12 +408,11 @@ const createLeague = async ({
 		}
 	}
 
-	const { repeatSeason, ...otherSettings } = settings;
+	const { repeatSeason, noStartingInjuries, ...otherSettings } = settings;
 
 	const gameAttributeOverrides: Partial<
 		Record<keyof GameAttributesLeague, any>
 	> = {
-		equalizeRegions,
 		confs,
 		divs,
 		...otherSettings,

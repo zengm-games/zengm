@@ -1325,14 +1325,18 @@ const GodModeSettingsButton = ({
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 
-const SettingsForm = (
-	props: Settings & {
-		onSave: (settings: Settings) => void;
-		newLeague?: boolean;
-	},
-) => {
-	const { godModeInPast, onSave, newLeague } = props;
-
+const SettingsForm = ({
+	onCancel,
+	onSave,
+	newLeague,
+	saveText = "Save Settings",
+	...props
+}: Settings & {
+	onCancel?: () => void;
+	onSave: (settings: Settings) => void;
+	newLeague?: boolean;
+	saveText?: string;
+}) => {
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
 	useEffect(() => {
@@ -1379,7 +1383,7 @@ const SettingsForm = (
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
-		if (!state.godMode && !state.godModeInPast && !godModeInPast) {
+		if (!state.godMode && !state.godModeInPast && !props.godModeInPast) {
 			proceed = await confirm(
 				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
 				{
@@ -1705,6 +1709,24 @@ const SettingsForm = (
 					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
 					style={{ bottom }}
 				>
+					<div className="btn-group mr-auto">
+						<button
+							className="btn btn-primary"
+							disabled={submitting}
+							type="submit"
+						>
+							{saveText}
+						</button>
+						{onCancel ? (
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={onCancel}
+							>
+								Cancel
+							</button>
+						) : null}
+					</div>
 					<div className="btn-group">
 						<button
 							className={classNames(
@@ -1726,9 +1748,6 @@ const SettingsForm = (
 							</GodModeSettingsButton>
 						) : null}
 					</div>
-					<button className="btn btn-primary ml-auto" disabled={submitting}>
-						Save Settings
-					</button>
 				</div>
 			</form>
 			<div className="settings-shortcuts flex-shrink-0">

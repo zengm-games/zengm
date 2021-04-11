@@ -19,13 +19,15 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
+  - <div style="transform: translateX(0vw) translateZ(0px); opacity: 1;"> from framer-motion still causing div sticky weirdness on mobile
+    - test on actual mobile device
+    - https://achrafkassioui.com/blog/position-fixed-and-CSS-transforms/ or similar hacky approach
   - what settings should be on sub-page, and what should be on main page?
     - api/index/createLeague
       - realDraftRatings
       - randomDebutsForever
   - any left on main page, store in settings rather than root of state
   - need buttons to...
-    - cancel (discard settings changes, go back)
     - reset to default (but what is "default" for a real players league or league file?)
   - also new league has some extra settings that don't persist
     - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations

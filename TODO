@@ -20,7 +20,6 @@ draft class quality setting
 settings re-design
 - all settings should be editable when creating a new league
   - <div style="transform: translateX(0vw) translateZ(0px); opacity: 1;"> from framer-motion still causing div sticky weirdness on mobile
-    - test on actual mobile device
     - https://achrafkassioui.com/blog/position-fixed-and-CSS-transforms/ or similar hacky approach
   - what settings should be on sub-page, and what should be on main page?
     - api/index/createLeague
@@ -33,8 +32,8 @@ settings re-design
     - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations
   - test
     - repeatSeason applied correctly
-  - warning when leaving page with edits to default settings/teams
-    - add in useEffect - maybe do same for live game?
+    - import league warning modal
+  - disable all form fields when submitting
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
   - blog

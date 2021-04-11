@@ -1300,11 +1300,13 @@ const GodModeSettingsButton = ({
 	children,
 	className,
 	godMode,
+	disabled,
 	onClick,
 }: {
 	children: any;
 	className?: string;
 	godMode: boolean;
+	disabled?: boolean;
 	onClick: () => void;
 }) => {
 	if (godMode) {
@@ -1315,6 +1317,7 @@ const GodModeSettingsButton = ({
 		<button
 			type="button"
 			className={classNames("btn btn-secondary", className)}
+			disabled={disabled}
 			onClick={onClick}
 		>
 			{children}
@@ -1525,6 +1528,7 @@ const SettingsForm = ({
 				<GodModeSettingsButton
 					className="mb-5 d-sm-none"
 					godMode={godMode}
+					disabled={submitting}
 					onClick={toggleGodModeSettings}
 				>
 					{showGodModeSettings ? "Hide" : "Show"} God Mode settings
@@ -1721,6 +1725,7 @@ const SettingsForm = ({
 							<button
 								className="btn btn-secondary"
 								type="button"
+								disabled={submitting}
 								onClick={onCancel}
 							>
 								Cancel
@@ -1735,6 +1740,7 @@ const SettingsForm = ({
 							)}
 							onClick={handleGodModeToggle}
 							type="button"
+							disabled={submitting}
 						>
 							{godMode ? "Disable God Mode" : "Enable God Mode"}
 						</button>
@@ -1742,6 +1748,7 @@ const SettingsForm = ({
 							<GodModeSettingsButton
 								className="d-none d-sm-block"
 								godMode={godMode}
+								disabled={submitting}
 								onClick={toggleGodModeSettings}
 							>
 								{showGodModeSettings ? "Hide" : "Show"} God Mode settings

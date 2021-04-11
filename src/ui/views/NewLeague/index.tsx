@@ -271,10 +271,6 @@ type Action =
 			tid: number;
 	  }
 	| {
-			type: "setSettings";
-			settings: State["settings"];
-	  }
-	| {
 			type: "loadingLeagueFile";
 	  }
 	| {
@@ -402,13 +398,6 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				tid,
-			};
-		}
-
-		case "setSettings": {
-			return {
-				...state,
-				settings: helpers.deepCopy(action.settings),
 			};
 		}
 
@@ -633,136 +622,109 @@ const NewLeague = (props: View<"newLeague">) => {
 		title = "New Real Players League";
 	}
 
-	const handleSubmit = useCallback(
-		async event => {
-			event.preventDefault();
+	const createLeague = async (settingsOverride?: State["settings"]) => {
+		if (props.lid !== undefined) {
+			const result = await confirm(
+				`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
+				{
+					okText: title,
+				},
+			);
+			if (!result) {
+				return;
+			}
+		}
 
-			if (props.lid !== undefined) {
-				const result = await confirm(
-					`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
-					{
-						okText: title,
-					},
-				);
-				if (!result) {
-					return;
-				}
+		dispatch({
+			type: "submit",
+		});
+
+		const actualShuffleRosters = state.keptKeys.includes("players")
+			? state.randomization === "shuffle"
+			: false;
+
+		const actualDifficulty = state.difficulty;
+
+		const actualStartingSeason =
+			state.customize === "default" ? startingSeason : undefined;
+
+		const actualRandomDebutsForever =
+			state.customize === "real" && state.randomization === "debutsForever";
+
+		try {
+			let getLeagueOptions: GetLeagueOptions | undefined;
+			if (state.customize === "real") {
+				getLeagueOptions = {
+					type: "real",
+					season: state.season,
+					phase: state.phase,
+					randomDebuts:
+						state.randomization === "debuts" ||
+						state.randomization === "debutsForever",
+					realDraftRatings: state.realDraftRatings,
+				};
+			} else if (state.customize === "legends") {
+				getLeagueOptions = {
+					type: "legends",
+					decade: state.legend as any,
+				};
 			}
 
-			dispatch({
-				type: "submit",
+			const teamRegionName = getTeamRegionName(state.teams, state.tid);
+			safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
+			if (state.customize === "real") {
+				safeLocalStorage.setItem("prevSeason", String(state.season));
+				safeLocalStorage.setItem("prevPhase", String(state.phase));
+			}
+
+			const lid = await toWorker("main", "createLeague", {
+				name,
+				tid: state.tid,
+				leagueFileInput: state.leagueFile,
+				keptKeys: state.keptKeys,
+				shuffleRosters: actualShuffleRosters,
+				difficulty: actualDifficulty,
+				importLid: props.lid,
+				getLeagueOptions,
+				actualStartingSeason,
+				noStartingInjuries: state.noStartingInjuries,
+				equalizeRegions: state.equalizeRegions,
+				randomDebutsForever: actualRandomDebutsForever,
+				confs: state.confs,
+				divs: state.divs,
+				teams: state.teams,
+				settings: settingsOverride ?? state.settings,
 			});
 
-			const actualShuffleRosters = state.keptKeys.includes("players")
-				? state.randomization === "shuffle"
-				: false;
-
-			const actualDifficulty = state.difficulty;
-
-			const actualStartingSeason =
-				state.customize === "default" ? startingSeason : undefined;
-
-			const actualRandomDebutsForever =
-				state.customize === "real" && state.randomization === "debutsForever";
-
-			try {
-				let getLeagueOptions: GetLeagueOptions | undefined;
-				if (state.customize === "real") {
-					getLeagueOptions = {
-						type: "real",
-						season: state.season,
-						phase: state.phase,
-						randomDebuts:
-							state.randomization === "debuts" ||
-							state.randomization === "debutsForever",
-						realDraftRatings: state.realDraftRatings,
-					};
-				} else if (state.customize === "legends") {
-					getLeagueOptions = {
-						type: "legends",
-						decade: state.legend as any,
-					};
-				}
-
-				const teamRegionName = getTeamRegionName(state.teams, state.tid);
-				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
-				if (state.customize === "real") {
-					safeLocalStorage.setItem("prevSeason", String(state.season));
-					safeLocalStorage.setItem("prevPhase", String(state.phase));
-				}
-
-				const lid = await toWorker("main", "createLeague", {
-					name,
-					tid: state.tid,
-					leagueFileInput: state.leagueFile,
-					keptKeys: state.keptKeys,
-					shuffleRosters: actualShuffleRosters,
-					difficulty: actualDifficulty,
-					importLid: props.lid,
-					getLeagueOptions,
-					actualStartingSeason,
-					noStartingInjuries: state.noStartingInjuries,
-					equalizeRegions: state.equalizeRegions,
-					randomDebutsForever: actualRandomDebutsForever,
-					confs: state.confs,
-					divs: state.divs,
-					teams: state.teams,
-					settings: state.settings,
-				});
-
-				let type: string = state.customize;
-				if (type === "real") {
-					type = String(state.season);
-				}
-				if (type === "legends") {
-					type = String(state.legend);
-				}
-				if (window.enableLogging && window.gtag) {
-					window.gtag("event", "new_league", {
-						event_category: type,
-						event_label: teamRegionName,
-						value: lid,
-					});
-				}
-
-				realtimeUpdate([], `/l/${lid}`);
-			} catch (err) {
-				dispatch({
-					type: "error",
-				});
-				console.log(err);
-				logEvent({
-					type: "error",
-					text: err.message,
-					persistent: true,
-					saveToDb: false,
+			let type: string = state.customize;
+			if (type === "real") {
+				type = String(state.season);
+			}
+			if (type === "legends") {
+				type = String(state.legend);
+			}
+			if (window.enableLogging && window.gtag) {
+				window.gtag("event", "new_league", {
+					event_category: type,
+					event_label: teamRegionName,
+					value: lid,
 				});
 			}
-		},
-		[
-			state.confs,
-			state.customize,
-			state.difficulty,
-			state.divs,
-			state.equalizeRegions,
-			state.keptKeys,
-			state.leagueFile,
-			state.legend,
-			name,
-			props.lid,
-			props.name,
-			state.noStartingInjuries,
-			state.phase,
-			state.randomization,
-			state.realDraftRatings,
-			state.season,
-			startingSeason,
-			state.settings,
-			state.teams,
-			state.tid,
-			title,
-		],
-	);
+
+			realtimeUpdate([], `/l/${lid}`);
+		} catch (err) {
+			dispatch({
+				type: "error",
+			});
+			console.log(err);
+			logEvent({
+				type: "error",
+				text: err.message,
+				persistent: true,
+				saveToDb: false,
+			});
+		}
+	};
 
 	const handleNewLeagueFile = useCallback(
 		(err, newLeagueFile) => {
@@ -921,9 +883,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					onCancel={() => {
 						setCurrentScreen("default");
 					}}
-					onSave={settings => {
-						dispatch({ type: "setSettings", settings });
-						setCurrentScreen("default");
+					onSave={async settings => {
+						await createLeague(settings);
 					}}
 					initial={{
 						...state.settings,
@@ -1120,7 +1081,10 @@ const NewLeague = (props: View<"newLeague">) => {
 					initial="left"
 					animate="visible"
 					exit="left"
-					onSubmit={handleSubmit}
+					onSubmit={async event => {
+						event.preventDefault();
+						await createLeague();
+					}}
 					style={{ maxWidth: 800 }}
 				>
 					{props.lid !== undefined ? (
@@ -1360,18 +1324,6 @@ const NewLeague = (props: View<"newLeague">) => {
 								<span className="text-muted">{descriptions.difficulty}</span>
 							</div>
 
-							<button
-								className="btn btn-link p-0 mb-3"
-								type="button"
-								onClick={() => {
-									setCurrentScreen("settings");
-								}}
-							>
-								<span className="glyphicon glyphicon-triangle-right"></span>
-								League settings
-							</button>
-							<p></p>
-
 							{moreOptions.length > 0 ? (
 								<>
 									<button
@@ -1417,10 +1369,10 @@ const NewLeague = (props: View<"newLeague">) => {
 								</>
 							) : null}
 
-							<div className="text-center">
+							<div className="text-center mt-3">
 								<button
 									type="submit"
-									className="btn btn-lg btn-primary mt-3"
+									className="btn btn-lg btn-primary mr-2"
 									disabled={
 										state.creating ||
 										disableWhileLoadingLeagueFile ||
@@ -1428,6 +1380,16 @@ const NewLeague = (props: View<"newLeague">) => {
 									}
 								>
 									{props.lid !== undefined ? "Import League" : "Create League"}
+								</button>
+
+								<button
+									className="btn btn-lg btn-secondary"
+									type="button"
+									onClick={() => {
+										setCurrentScreen("settings");
+									}}
+								>
+									Customize Settings
 								</button>
 							</div>
 						</div>

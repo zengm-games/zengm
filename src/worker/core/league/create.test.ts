@@ -7,7 +7,12 @@ import type { ThenArg } from "../../../common/types";
 describe("worker/core/league/create", () => {
 	let leagueData: ThenArg<ReturnType<typeof createWithoutSaving>>;
 	beforeAll(async () => {
-		leagueData = await createWithoutSaving(0, { startingSeason: 2015 }, false);
+		leagueData = await createWithoutSaving(
+			0,
+			{ startingSeason: 2015 },
+			false,
+			0,
+		);
 	});
 
 	test("create all necessary object stores", () => {
@@ -102,6 +107,7 @@ describe("worker/core/league/create", () => {
 				},
 			},
 			false,
+			0,
 		);
 
 		assert(leagueData);

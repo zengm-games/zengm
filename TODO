@@ -26,6 +26,7 @@ settings re-design
         - maybe put settings on separate screen?
           - in that case, move difficulty state back to reducer
   - what settings should be on sub-page, and what should be on main page?
+    - difficulty
     - api/index/createLeague
       - realDraftRatings
       - randomDebutsForever

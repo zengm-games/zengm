@@ -14,11 +14,13 @@ import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 const createGameAttributes = ({
+	difficulty,
 	leagueFile,
 	teamInfos,
 	userTid,
 	version,
 }: {
+	difficulty: number;
 	leagueFile: LeagueFile;
 	teamInfos: TeamInfo[];
 	userTid: number;
@@ -47,18 +49,26 @@ const createGameAttributes = ({
 		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
+		difficulty,
 	};
 
 	if (leagueFile.gameAttributes) {
 		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
-			// userTid is handled special below
-			if (key !== "userTid") {
-				(gameAttributes as any)[key] = value;
-			}
+			// Set default for anything except these, since they can be overwritten by form input.
+			if (key !== "difficulty") {
+				// userTid is handled special below
+				if (key !== "userTid") {
+					(gameAttributes as any)[key] = value;
+				}
 
-			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
-			if (Array.isArray(value) && value.length > 0 && value[0].start === null) {
-				value[0].start = -Infinity;
+				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
+				if (
+					Array.isArray(value) &&
+					value.length > 0 &&
+					value[0].start === null
+				) {
+					value[0].start = -Infinity;
+				}
 			}
 		}
 
@@ -114,7 +124,7 @@ const createGameAttributes = ({
 
 	// Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
 	// when creating a new league.
-	if (gameAttributes.difficulty <= DIFFICULTY.Easy) {
+	if (difficulty <= DIFFICULTY.Easy) {
 		gameAttributes.easyDifficultyInPast = true;
 	}
 

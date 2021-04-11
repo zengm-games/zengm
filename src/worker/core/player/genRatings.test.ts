@@ -26,6 +26,7 @@ const printQuartiles = async (age?: number) => {
 			gameAttributes,
 		},
 		false,
+		0,
 	);
 	const ovrs = (leagueData.players as any[])
 		.filter(p => p.tid >= PLAYER.FREE_AGENT)

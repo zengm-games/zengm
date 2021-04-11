@@ -196,6 +196,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		if (l) {
 			return {
 				lid,
+				difficulty: l.difficulty,
 				name: l.name,
 				type,
 				godModeLimits,
@@ -213,6 +214,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 
 	return {
 		lid: undefined,
+		difficulty: undefined,
 		name: `League ${newLid}`,
 		realTeamInfo,
 		type,

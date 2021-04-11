@@ -15,10 +15,6 @@ import type { Category, Decoration, FieldType, Key, Values } from "./types";
 export const descriptions = {
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
-	realPlayerDeterminism:
-		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
-	repeatSeason:
-		"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions.",
 };
 
 export const settings: {
@@ -926,11 +922,17 @@ if (isSport("basketball")) {
 			category: "Player Development",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
-			godModeRequired: "always",
+			godModeRequired: "existingLeagueOnly",
 			type: "rangePercent",
 			descriptionLong: (
 				<>
-					<p>{descriptions.realPlayerDeterminism}</p>
+					<p>
+						By default, BBGM's player development algorithm does not take into
+						account what we know about a real player's future performance. That
+						corresponds to 0% in this setting. Increase determinism to 100% and
+						real player ratings will be based entirely on their real life
+						development curve. Anything in between is a mix.
+					</p>
 					<p>
 						This has no impact on "random players"" leagues or randomly
 						generated players in "real players" leagues.
@@ -1038,8 +1040,8 @@ settings.push(
 		name: "Groundhog Day",
 		godModeRequired: "always",
 		type: "bool",
-		description: `${descriptions.repeatSeason} Groundhog Day can be enabled at any point in the season prior to the
-				draft.`,
+		description:
+			"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions. Groundhog Day can be enabled at any point in the season prior to the draft.",
 	},
 	{
 		category: "General",

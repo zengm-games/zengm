@@ -303,7 +303,6 @@ const createLeague = async ({
 	actualStartingSeason,
 	noStartingInjuries,
 	equalizeRegions,
-	realPlayerDeterminism,
 	randomDebutsForever,
 	confs,
 	divs,
@@ -320,7 +319,6 @@ const createLeague = async ({
 	actualStartingSeason: string | undefined;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
-	realPlayerDeterminism: number | undefined;
 	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
@@ -424,10 +422,6 @@ const createLeague = async ({
 		divs,
 		...otherSettings,
 	};
-
-	if (realPlayerDeterminism !== undefined) {
-		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
-	}
 
 	if (getLeagueOptions && getLeagueOptions.type === "real") {
 		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;

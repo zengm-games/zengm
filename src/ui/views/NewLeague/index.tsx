@@ -217,7 +217,6 @@ type State = {
 	expandOptions: boolean;
 	equalizeRegions: boolean;
 	noStartingInjuries: boolean;
-	realPlayerDeterminism: number;
 	realDraftRatings: "rookie" | "draft";
 	settings: Omit<Settings, "numActiveTeams">;
 };
@@ -297,10 +296,6 @@ type Action =
 			type: "toggleEqualizeRegions";
 	  }
 	| { type: "toggleNoStartingInjuries" }
-	| {
-			type: "setRealPlayerDeterminism";
-			realPlayerDeterminism: number;
-	  }
 	| {
 			type: "setRealDraftRatings";
 			realDraftRatings: "rookie" | "draft";
@@ -544,12 +539,6 @@ const reducer = (state: State, action: Action): State => {
 				noStartingInjuries: !state.noStartingInjuries,
 			};
 
-		case "setRealPlayerDeterminism":
-			return {
-				...state,
-				realPlayerDeterminism: action.realPlayerDeterminism,
-			};
-
 		case "setRealDraftRatings":
 			return {
 				...state,
@@ -626,7 +615,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				expandOptions: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
-				realPlayerDeterminism: 0,
 				realDraftRatings: "rookie",
 				settings: props.defaultSettings,
 			};
@@ -673,12 +661,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			const actualStartingSeason =
 				state.customize === "default" ? startingSeason : undefined;
 
-			const actualRealPlayerDeterminism =
-				(state.customize === "real" || state.customize === "legends") &&
-				state.keptKeys.includes("players")
-					? state.realPlayerDeterminism
-					: undefined;
-
 			const actualRandomDebutsForever =
 				state.customize === "real" && state.randomization === "debutsForever";
 
@@ -719,7 +701,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					actualStartingSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
-					realPlayerDeterminism: actualRealPlayerDeterminism,
 					randomDebutsForever: actualRandomDebutsForever,
 					confs: state.confs,
 					divs: state.divs,
@@ -771,7 +752,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.phase,
 			state.randomization,
 			state.realDraftRatings,
-			state.realPlayerDeterminism,
 			state.season,
 			startingSeason,
 			state.settings,
@@ -1045,37 +1025,6 @@ const NewLeague = (props: View<"newLeague">) => {
 						if in reality he became a star.
 					</div>
 				) : null}
-			</div>,
-		);
-
-		moreOptions.unshift(
-			<div key="realPlayerDeterminism" className="form-group">
-				<label htmlFor="new-league-realPlayerDeterminism">
-					Real player development determinism
-				</label>
-				<div className="d-flex">
-					<input
-						id="new-league-realPlayerDeterminism"
-						type="range"
-						className="form-control-range"
-						min="0"
-						max="1"
-						step="0.05"
-						value={state.realPlayerDeterminism}
-						onChange={event => {
-							dispatch({
-								type: "setRealPlayerDeterminism",
-								realPlayerDeterminism: parseFloat(event.target.value as any),
-							});
-						}}
-					/>
-					<div className="text-right" style={{ minWidth: 40 }}>
-						{Math.round(state.realPlayerDeterminism * 100)}%
-					</div>
-				</div>
-				<div className="text-muted mt-1">
-					{descriptions.realPlayerDeterminism}
-				</div>
 			</div>,
 		);
 	}

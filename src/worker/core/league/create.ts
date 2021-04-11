@@ -87,7 +87,6 @@ export const createWithoutSaving = async (
 	tid: number,
 	leagueFile: LeagueFile,
 	shuffleRosters: boolean,
-	difficulty: number,
 ) => {
 	const teamsDefault = helpers.getTeamsDefault();
 
@@ -155,7 +154,6 @@ export const createWithoutSaving = async (
 
 	// Also mutates teamInfos
 	const gameAttributes = createGameAttributes({
-		difficulty,
 		leagueFile,
 		teamInfos,
 		userTid,
@@ -834,7 +832,6 @@ const create = async ({
 	tid,
 	leagueFile,
 	shuffleRosters = false,
-	difficulty = 0,
 	importLid,
 	realPlayers,
 }: {
@@ -842,16 +839,10 @@ const create = async ({
 	tid: number;
 	leagueFile: LeagueFile;
 	shuffleRosters?: boolean;
-	difficulty?: number;
 	importLid?: number | undefined | null;
 	realPlayers?: boolean;
 }): Promise<number> => {
-	const leagueData = await createWithoutSaving(
-		tid,
-		leagueFile,
-		shuffleRosters,
-		difficulty,
-	);
+	const leagueData = await createWithoutSaving(tid, leagueFile, shuffleRosters);
 
 	let phaseText;
 
@@ -876,7 +867,7 @@ const create = async ({
 		teamRegion: leagueData.teams[userTid].region,
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
-		difficulty,
+		difficulty: leagueData.gameAttributes.difficulty,
 		created: new Date(),
 		lastPlayed: new Date(),
 		startingSeason: g.get("startingSeason"),

@@ -203,7 +203,6 @@ type State = {
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
 	phase: number;
-	difficulty: number;
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
@@ -359,7 +358,10 @@ const reducer = (state: State, action: Action): State => {
 		case "setDifficulty":
 			return {
 				...state,
-				difficulty: parseFloat(action.difficulty),
+				settings: {
+					...state.settings,
+					difficulty: parseFloat(action.difficulty),
+				},
 			};
 
 		case "setPhase":
@@ -610,7 +612,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize,
 				season,
 				legend: "all",
-				difficulty: props.difficulty ?? DIFFICULTY.Normal,
 				phase,
 				leagueFile,
 				loadingLeagueFile: false,
@@ -669,8 +670,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				? state.randomization === "shuffle"
 				: false;
 
-			const actualDifficulty = state.difficulty;
-
 			const actualStartingSeason =
 				state.customize === "default" ? startingSeason : undefined;
 
@@ -715,7 +714,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					leagueFileInput: state.leagueFile,
 					keptKeys: state.keptKeys,
 					shuffleRosters: actualShuffleRosters,
-					difficulty: actualDifficulty,
 					importLid: props.lid,
 					getLeagueOptions,
 					actualStartingSeason,
@@ -761,7 +759,6 @@ const NewLeague = (props: View<"newLeague">) => {
 		[
 			state.confs,
 			state.customize,
-			state.difficulty,
 			state.divs,
 			state.equalizeRegions,
 			state.keptKeys,
@@ -844,11 +841,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					if (typeof tid === "number" && !Number.isNaN(tid)) {
 						dispatch({ type: "setTid", tid });
 					}
-				}
-
-				const difficulty = newLeagueFile.gameAttributes.difficulty;
-				if (typeof difficulty === "number" && !Number.isNaN(difficulty)) {
-					dispatch({ type: "setDifficulty", difficulty: String(difficulty) });
 				}
 			}
 		},
@@ -1395,15 +1387,17 @@ const NewLeague = (props: View<"newLeague">) => {
 											difficulty: event.target.value,
 										});
 									}}
-									value={state.difficulty}
+									value={state.settings.difficulty}
 								>
 									{Object.entries(DIFFICULTY).map(([text, numeric]) => (
 										<option key={numeric} value={numeric}>
 											{text}
 										</option>
 									))}
-									{!Object.values(DIFFICULTY).includes(state.difficulty) ? (
-										<option value={state.difficulty}>
+									{!Object.values(DIFFICULTY).includes(
+										state.settings.difficulty,
+									) ? (
+										<option value={state.settings.difficulty}>
 											Custom (from league file)
 										</option>
 									) : null}
@@ -1640,7 +1634,6 @@ const NewLeague = (props: View<"newLeague">) => {
 };
 
 NewLeague.propTypes = {
-	difficulty: PropTypes.number,
 	lid: PropTypes.number,
 	name: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,

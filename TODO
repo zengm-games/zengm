@@ -20,7 +20,6 @@ draft class quality setting
 settings re-design
 - all settings should be editable when creating a new league
   - what settings should be on sub-page, and what should be on main page?
-    - difficulty
     - api/index/createLeague
       - realPlayerDeterminism
       - realDraftRatings

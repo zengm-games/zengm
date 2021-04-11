@@ -1450,7 +1450,6 @@ const SettingsForm = ({
 		const filteredSettings = settings.filter(setting => {
 			return newLeague || !setting.viewableOnlyWhen;
 		});
-		console.log(settings, filteredSettings);
 
 		const output = ({} as unknown) as Settings;
 		for (const option of filteredSettings) {
@@ -1660,6 +1659,7 @@ const SettingsForm = ({
 																type="checkbox"
 																className="custom-control-input"
 																checked={checked}
+																disabled={!enabled || submitting}
 																onChange={handleChange(key2, "bool")}
 																id={id + "2"}
 																value={state[key2]}
@@ -1672,7 +1672,7 @@ const SettingsForm = ({
 														<div className="input-group">
 															<input
 																id={id}
-																disabled={!checked}
+																disabled={!checked || !enabled || submitting}
 																className="form-control"
 																type="text"
 																onChange={handleChange(key, type)}
@@ -1702,7 +1702,7 @@ const SettingsForm = ({
 												>
 													<Option
 														type={type}
-														disabled={!enabled}
+														disabled={!enabled || submitting}
 														id={id}
 														onChange={handleChange(key, type)}
 														value={state[key]}

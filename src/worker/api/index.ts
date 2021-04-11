@@ -297,7 +297,6 @@ const createLeague = async ({
 	tid,
 	leagueFileInput,
 	shuffleRosters,
-	difficulty,
 	importLid,
 	getLeagueOptions,
 	keptKeys,
@@ -314,7 +313,6 @@ const createLeague = async ({
 	tid: number;
 	leagueFileInput: any;
 	shuffleRosters: boolean;
-	difficulty: number;
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
@@ -489,7 +487,6 @@ const createLeague = async ({
 		tid,
 		leagueFile,
 		shuffleRosters,
-		difficulty,
 		importLid,
 		realPlayers: !!getLeagueOptions,
 	});

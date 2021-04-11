@@ -643,8 +643,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			? state.randomization === "shuffle"
 			: false;
 
-		const actualDifficulty = state.difficulty;
-
 		const actualStartingSeason =
 			state.customize === "default" ? startingSeason : undefined;
 
@@ -683,7 +681,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				leagueFileInput: state.leagueFile,
 				keptKeys: state.keptKeys,
 				shuffleRosters: actualShuffleRosters,
-				difficulty: actualDifficulty,
 				importLid: props.lid,
 				getLeagueOptions,
 				actualStartingSeason,
@@ -889,6 +886,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					initial={{
 						...state.settings,
 						numActiveTeams: displayedTeams.length,
+						difficulty: state.difficulty,
 					}}
 					getDefault={() => {
 						return {

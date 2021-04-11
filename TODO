@@ -19,15 +19,7 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
-  - new real players league -> settings -> save -> handleNewLeagueInfo is called again, overwriting previous value
-    - handleNewValue is called during LeagueMenu initial rendering
-      - could store [value, value2] somewhere and use that to know when to skip re-pulling
-      - but... broader problem. edit settings and then change from 2020 to 2021, and all settings are geonerd
-        - maybe put settings on separate screen?
-          - in that case, move difficulty state back to reducer
   - what settings should be on sub-page, and what should be on main page?
-    - difficulty
-      - use it to init the settings, and that's it. get rid of it elsewhere (see commit 4f649da22)
     - api/index/createLeague
       - realDraftRatings
       - randomDebutsForever

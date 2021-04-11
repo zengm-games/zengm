@@ -307,6 +307,32 @@ const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
 	return closestNewTeam ? closestNewTeam.tid : newTeams.length - 1;
 };
 
+const getSettingsFromGameAttributes = (
+	gameAttributes: Record<string, unknown> | undefined,
+	defaultSettings: State["settings"],
+) => {
+	const newSettings = helpers.deepCopy(defaultSettings);
+
+	if (gameAttributes) {
+		for (const key of helpers.keys(newSettings)) {
+			if (key === "noStartingInjuries") {
+				continue;
+			}
+
+			const value = unwrapGameAttribute(gameAttributes, key);
+			if (value !== undefined) {
+				if (key === "repeatSeason") {
+					newSettings[key] = !!value;
+				} else {
+					(newSettings[key] as any) = value;
+				}
+			}
+		}
+	}
+
+	return newSettings;
+};
+
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "submit":
@@ -412,24 +438,12 @@ const reducer = (state: State, action: Action): State => {
 			let confs = DEFAULT_CONFS;
 			let divs = DEFAULT_DIVS;
 
-			const newSettings = helpers.deepCopy(action.defaultSettings);
+			const newSettings = getSettingsFromGameAttributes(
+				action.leagueFile.gameAttributes,
+				action.defaultSettings,
+			);
 
-			// gameAttributes was already converted to an object before dispatching this action
-			if (action.leagueFile && action.leagueFile.gameAttributes) {
-				for (const key of helpers.keys(newSettings)) {
-					const value = unwrapGameAttribute(
-						action.leagueFile.gameAttributes,
-						key,
-					);
-					if (value !== undefined) {
-						if (key === "repeatSeason") {
-							newSettings[key] = !!value;
-						} else {
-							(newSettings[key] as any) = value;
-						}
-					}
-				}
-
+			if (action.leagueFile.gameAttributes) {
 				if (action.leagueFile.gameAttributes.confs) {
 					confs = unwrapGameAttribute(
 						action.leagueFile.gameAttributes,
@@ -470,18 +484,10 @@ const reducer = (state: State, action: Action): State => {
 				oldAllKeys: state.allKeys,
 			});
 
-			const newSettings = helpers.deepCopy(action.defaultSettings);
-
-			for (const key of helpers.keys(newSettings)) {
-				const value = unwrapGameAttribute(action.gameAttributes, key);
-				if (value !== undefined) {
-					if (key === "repeatSeason") {
-						newSettings[key] = !!value;
-					} else {
-						(newSettings[key] as any) = value;
-					}
-				}
-			}
+			const newSettings = getSettingsFromGameAttributes(
+				action.gameAttributes,
+				action.defaultSettings,
+			);
 
 			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
 			const divs = unwrapGameAttribute(action.gameAttributes, "divs");

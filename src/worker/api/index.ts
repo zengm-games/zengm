@@ -12,7 +12,6 @@ import {
 	isSport,
 	bySport,
 	gameAttributesArrayToObject,
-	gameAttributeHasHistory,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";

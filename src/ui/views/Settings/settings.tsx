@@ -278,7 +278,7 @@ export const settings: {
 		category: "Draft",
 		key: "draftAges",
 		name: "Age of draft prospects",
-		godModeRequired: "existingLeagueOnly",
+		godModeRequired: "always",
 		description: (
 			<>
 				Set the minimum/maximum age of generated draft prospects.{" "}
@@ -565,7 +565,7 @@ export const settings: {
 		category: "Events",
 		key: "forceRetireAge",
 		name: "Force Retire at Age",
-		godModeRequired: "existingLeagueOnly",
+		godModeRequired: "always",
 		type: "int",
 		description:
 			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",

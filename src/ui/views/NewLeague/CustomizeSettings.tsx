@@ -12,7 +12,7 @@ const CustomizeSettings = ({
 	initial: Settings;
 	getDefault: () => Settings;
 }) => {
-	return <SettingsForm onSave={onSave} {...initial} />;
+	return <SettingsForm onSave={onSave} {...initial} newLeague />;
 };
 
 export default CustomizeSettings;

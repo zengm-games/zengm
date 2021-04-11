@@ -18,7 +18,21 @@ import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 
-const godModeRequiredMessage = "This setting can only be changed in God Mode.";
+const settingNeedsGodMode = (
+	godModeRequired?: "always" | "existingLeagueOnly",
+	newLeague?: boolean,
+) => {
+	return !!godModeRequired && (!newLeague || godModeRequired === "always");
+};
+
+const godModeRequiredMessage = (
+	godModeRequired?: "always" | "existingLeagueOnly",
+) => {
+	if (godModeRequired === "existingLeagueOnly") {
+		return "This setting can only be changed in God Mode or when creating a new league.";
+	}
+	return "This setting can only be changed in God Mode.";
+};
 
 // See play-style-adjustments in bbgm-rosters
 const gameSimPresets = isSport("basketball")
@@ -1009,6 +1023,7 @@ const inputStyle = {
 const Input = ({
 	decoration,
 	disabled,
+	godModeRequired,
 	id,
 	maxWidth,
 	onChange,
@@ -1018,6 +1033,7 @@ const Input = ({
 }: {
 	decoration?: Decoration;
 	disabled?: boolean;
+	godModeRequired?: "always" | "existingLeagueOnly";
 	id: string;
 	maxWidth?: true;
 	name: string;
@@ -1026,7 +1042,7 @@ const Input = ({
 	value: string;
 	values?: Values;
 }) => {
-	const title = disabled ? godModeRequiredMessage : undefined;
+	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 	const commonProps = {
 		className: "form-control",
 		disabled,
@@ -1169,6 +1185,7 @@ const Option = ({
 	descriptionLong,
 	decoration,
 	godModeRequired,
+	newLeague,
 	maxWidth,
 	onChange,
 	type,
@@ -1183,6 +1200,7 @@ const Option = ({
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
 	godModeRequired?: "always" | "existingLeagueOnly";
+	newLeague?: boolean;
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -1206,10 +1224,10 @@ const Option = ({
 							}
 						}}
 					>
-						{godModeRequired ? (
+						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span
 								className="legend-square god-mode mr-1"
-								title={godModeRequiredMessage}
+								title={godModeRequiredMessage(godModeRequired)}
 							/>
 						) : null}
 						{name.endsWith(" Factor") ? (
@@ -1237,6 +1255,7 @@ const Option = ({
 						<Input
 							type={type}
 							disabled={disabled}
+							godModeRequired={godModeRequired}
 							id={id}
 							maxWidth={maxWidth}
 							name={name}
@@ -1309,9 +1328,10 @@ type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 const SettingsForm = (
 	props: Settings & {
 		onSave: (settings: Settings) => void;
+		newLeague?: boolean;
 	},
 ) => {
-	const { godModeInPast, onSave } = props;
+	const { godModeInPast, onSave, newLeague } = props;
 
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
@@ -1489,6 +1509,12 @@ const SettingsForm = (
 		setShowGodModeSettings(show => !show);
 	};
 
+	const settingIsEnabled = (
+		godModeRequired?: "always" | "existingLeagueOnly",
+	) => {
+		return godMode || !settingNeedsGodMode(godModeRequired, newLeague);
+	};
+
 	return (
 		<div className="settings-wrapper mt-lg-2">
 			<form onSubmit={handleFormSubmit} style={{ maxWidth: 2100 }}>
@@ -1507,7 +1533,8 @@ const SettingsForm = (
 
 					const catOptions = groupedOptions[category.name].filter(option => {
 						return (
-							(godMode || showGodModeSettings || !option.godModeRequired) &&
+							(showGodModeSettings ||
+								settingIsEnabled(option.godModeRequired)) &&
 							!option.hidden
 						);
 					});
@@ -1587,7 +1614,7 @@ const SettingsForm = (
 										},
 										i,
 									) => {
-										const enabled = godMode || !godModeRequired;
+										const enabled = settingIsEnabled(godModeRequired);
 										const id = `settings-${category.name}-${name}`;
 
 										let customFormNode;
@@ -1662,6 +1689,7 @@ const SettingsForm = (
 														customForm={customFormNode}
 														maxWidth={maxWidth}
 														godModeRequired={godModeRequired}
+														newLeague={newLeague}
 													/>
 												</div>
 											</div>

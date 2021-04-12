@@ -56,6 +56,20 @@ const animationVariants = {
 	},
 };
 
+const onAnimationCompleteHack = (definition: string) => {
+	// HACK HACK HACK
+	// CustomizeSettings has a sticky div inside it, and mobile Chrome (and maybe others) get confused by the `transform: translateX(0vw) translateZ(0px);` CSS that framer-motion leaves hanging around
+	if (definition === "visible") {
+		const parent = document.getElementById("actual-actual-content");
+		if (parent) {
+			const animatedDiv = parent.children[0] as HTMLDivElement | undefined;
+			if (animatedDiv) {
+				animatedDiv.style.transform = "";
+			}
+		}
+	}
+};
+
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
 	realTeamInfo: RealTeamInfo | undefined,
@@ -787,6 +801,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				initial="right"
 				animate="visible"
 				exit="right"
+				onAnimationComplete={onAnimationCompleteHack}
 			>
 				<CustomizeTeams
 					onCancel={() => {
@@ -834,21 +849,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				initial="right"
 				animate="visible"
 				exit="right"
-				onAnimationComplete={definition => {
-					// HACK HACK HACK
-					// CustomizeSettings has a sticky div inside it, and mobile Chrome (and maybe others) get confused by the `transform: translateX(0vw) translateZ(0px);` CSS that framer-motion leaves hanging around
-					if (definition === "visible") {
-						const parent = document.getElementById("actual-actual-content");
-						if (parent) {
-							const animatedDiv = parent.children[0] as
-								| HTMLDivElement
-								| undefined;
-							if (animatedDiv) {
-								animatedDiv.style.transform = "";
-							}
-						}
-					}
-				}}
+				onAnimationComplete={onAnimationCompleteHack}
 			>
 				<CustomizeSettings
 					onCancel={() => {

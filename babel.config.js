@@ -22,7 +22,7 @@ module.exports = api => {
 		], // Chrome 80, Firefox 72, Safari 13.1
 	];
 
-	// For module/nomodule switch, cutoffs are Chrome 60, Firefox 54, and Safari 10.1. So technically this is broken for Firefox 55, but nobody uses that.
+	// For module/nomodule switch, cutoffs are Chrome 60, Firefox 54, and Safari 10.1 https://philipwalton.com/articles/deploying-es2015-code-in-production-today/ so technically this is broken for Firefox 55 and Safari 11. For Safari 10.1, a bug https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc results in both bundles being loaded, and the legacy one takes precedence. Maybe that helps in Firefox 55, which seems to work.
 	if (process.env.LEGACY) {
 		plugins.push(
 			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Firefox 55, Safari 11.1

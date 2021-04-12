@@ -28,12 +28,12 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 		if (watch) {
 			outFilename = `build/gen/${filename}.css`;
 
-			replace({
+			/*replace({
 				regex: `-CSS_HASH_${filename.toUpperCase()}`,
 				replacement: "",
 				paths: ["build/index.html"],
 				silent: true,
-			});
+			});*/
 		} else {
 			const hash = fileHash(source);
 			outFilename = `build/gen/${filename}-${hash}.css`;
@@ -94,6 +94,7 @@ const bySport = object => {
 };
 
 const setSport = () => {
+	return;
 	replace({
 		regex: "GAME_NAME",
 		replacement: bySport({

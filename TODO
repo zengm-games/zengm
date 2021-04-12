@@ -3,6 +3,9 @@ index.html
   - really only need for dev
   - prod
     - legacy bundle
+  - having trouble with the react 17 jsx transform
+    - https://vitejs.dev/config/#esbuild says jsxInject: `import React from 'react'` but that gives me runtime errors (dupe React)
+    - could go back and add "import React" everywhere, but eh...
 
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json

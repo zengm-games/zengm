@@ -33,76 +33,16 @@ const getRookieSalaries = (): number[] => {
 	}
 
 	// Default for first round
-	const firstRoundRookieSalaries = [
-		5000,
-		4500,
-		4000,
-		3500,
-		3000,
-		2750,
-		2500,
-		2250,
-		2000,
-		1900,
-		1800,
-		1700,
-		1600,
-		1500,
-		1400,
-		1300,
-		1200,
-		1100,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-	];
+	const firstRoundRookieSalaries = g.get("rookieScale")[0];
 
 	// Default for all subsequent rounds
-	const otherRoundRookieSalaries = [
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-	];
+	const otherRoundRookieSalaries = g.get("rookieScale")[1];
 
 	while (g.get("numActiveTeams") > firstRoundRookieSalaries.length) {
 		//add first round contracts on to end of first round
-		firstRoundRookieSalaries.push(1000);
+		firstRoundRookieSalaries.push(
+			firstRoundRookieSalaries[firstRoundRookieSalaries.length - 1],
+		);
 	}
 
 	while (g.get("numActiveTeams") < firstRoundRookieSalaries.length) {
@@ -115,7 +55,11 @@ const getRookieSalaries = (): number[] => {
 		otherRoundRookieSalaries.length
 	) {
 		// Add min contracts on to end
-		otherRoundRookieSalaries.push(500);
+		otherRoundRookieSalaries.push(
+			otherRoundRookieSalaries[
+				otherRoundRookieSalaries[otherRoundRookieSalaries.length - 1]
+			],
+		);
 	}
 
 	while (

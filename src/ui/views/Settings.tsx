@@ -86,6 +86,7 @@ type Key =
 	| "challengeThanosMode"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
+	| "rookieScale"
 	| "ties"
 	| "otl"
 	| "spectator"
@@ -719,6 +720,13 @@ export const options: {
 		key: "playersRefuseToNegotiate",
 		name: "Players Can Refuse To Negotiate",
 		godModeRequired: "always",
+		type: "bool",
+	},
+	{
+		category: "Contracts",
+		key: "rookieScale",
+		name: "Rookie scale",
+		godModeRequired: "existingLeagueOnly",
 		type: "bool",
 	},
 	{

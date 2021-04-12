@@ -2,6 +2,8 @@ If you play a league with draft type:"no draft, rookies as free agents" ; random
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
 
+players under 19 should not have colleges
+
 show ovr live in player editor
 
 for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob

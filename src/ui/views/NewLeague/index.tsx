@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useCallback, useState, useReducer } from "react";
-import type { ReactNode } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -305,7 +304,7 @@ const getSettingsFromGameAttributes = (
 
 	if (gameAttributes) {
 		for (const key of helpers.keys(newSettings)) {
-			if (key === "noStartingInjuries") {
+			if (key === "noStartingInjuries" || key === "randomization") {
 				continue;
 			}
 

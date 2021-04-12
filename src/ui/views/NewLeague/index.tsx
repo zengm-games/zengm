@@ -206,7 +206,6 @@ type State = {
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
-	randomization: "none" | "debuts" | "debutsForever" | "shuffle";
 	teams: NewLeagueTeam[];
 	confs: Conf[];
 	divs: Div[];
@@ -247,10 +246,6 @@ type Action =
 	| {
 			type: "setLegend";
 			legend: string;
-	  }
-	| {
-			type: "setRandomization";
-			randomization: State["randomization"];
 	  }
 	| {
 			type: "setSeason";
@@ -383,12 +378,6 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				legend: action.legend,
-			};
-
-		case "setRandomization":
-			return {
-				...state,
-				randomization: action.randomization,
 			};
 
 		case "setSeason":
@@ -568,7 +557,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				phase,
 				leagueFile,
 				loadingLeagueFile: false,
-				randomization: "none",
 				teams: teamsDefault,
 				confs: DEFAULT_CONFS,
 				divs: DEFAULT_DIVS,
@@ -615,14 +603,11 @@ const NewLeague = (props: View<"newLeague">) => {
 		const settings = settingsOverride ?? state.settings;
 
 		const actualShuffleRosters = state.keptKeys.includes("players")
-			? state.randomization === "shuffle"
+			? settings.randomization === "shuffle"
 			: false;
 
 		const actualStartingSeason =
 			state.customize === "default" ? startingSeason : undefined;
-
-		const actualRandomDebutsForever =
-			state.customize === "real" && state.randomization === "debutsForever";
 
 		try {
 			let getLeagueOptions: GetLeagueOptions | undefined;
@@ -632,8 +617,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					season: state.season,
 					phase: state.phase,
 					randomDebuts:
-						state.randomization === "debuts" ||
-						state.randomization === "debutsForever",
+						settings.randomization === "debuts" ||
+						settings.randomization === "debutsForever",
 					realDraftRatings: settings.realDraftRatings,
 				};
 			} else if (state.customize === "legends") {
@@ -659,7 +644,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				importLid: props.lid,
 				getLeagueOptions,
 				actualStartingSeason,
-				randomDebutsForever: actualRandomDebutsForever,
 				confs: state.confs,
 				divs: state.divs,
 				teams: state.teams,
@@ -898,55 +882,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: ReactNode[] = [];
-
-	if (state.keptKeys.includes("players") || state.customize === "real") {
-		moreOptions.unshift(
-			<div key="randomization" className="form-group">
-				<label htmlFor="new-league-randomization">Randomization</label>
-				<select
-					id="new-league-randomization"
-					className="form-control"
-					onChange={event => {
-						dispatch({
-							type: "setRandomization",
-							randomization: event.target.value as any,
-						});
-					}}
-					value={state.randomization}
-				>
-					<option value="none">None</option>
-					{state.customize === "real" ? (
-						<option value="debuts">Random debuts</option>
-					) : null}
-					{state.customize === "real" ? (
-						<option value="debutsForever">Random debuts forever</option>
-					) : null}
-					<option value="shuffle">Shuffle rosters</option>
-				</select>
-				{state.randomization === "debuts" ? (
-					<div className="text-muted mt-1">
-						Every player's draft year is randomized. Starting teams and future
-						draft classes are all random combinations of past, current, and
-						future real players.
-					</div>
-				) : null}
-				{state.randomization === "debutsForever" ? (
-					<div className="text-muted mt-1">
-						Like random debuts, except when it runs out of draft prospects, it
-						will randomize all real players again and add them to future draft
-						classes.
-					</div>
-				) : null}
-				{state.randomization === "shuffle" ? (
-					<div className="text-muted mt-1">
-						All active players are placed on random teams.
-					</div>
-				) : null}
-			</div>,
-		);
-	}
-
 	const bannedExpansionSeasons = [
 		// Because of other mergers
 		1947,
@@ -1045,8 +980,8 @@ const NewLeague = (props: View<"newLeague">) => {
 													season: parseInt(value),
 													phase: value2,
 													randomDebuts:
-														state.randomization === "debuts" ||
-														state.randomization === "debutsForever",
+														state.settings.randomization === "debuts" ||
+														state.settings.randomization === "debutsForever",
 													realDraftRatings: state.settings.realDraftRatings,
 												})
 											}
@@ -1225,51 +1160,6 @@ const NewLeague = (props: View<"newLeague">) => {
 								</select>
 								<span className="text-muted">{descriptions.difficulty}</span>
 							</div>
-
-							{moreOptions.length > 0 ? (
-								<>
-									<button
-										className="btn btn-link p-0 mb-3"
-										type="button"
-										onClick={() => dispatch({ type: "toggleExpandOptions" })}
-									>
-										<AnimatePresence initial={false}>
-											<motion.span
-												animate={state.expandOptions ? "open" : "collapsed"}
-												variants={{
-													open: { rotate: 90 },
-													collapsed: { rotate: 0 },
-												}}
-												transition={{
-													duration: 0.3,
-													type: "tween",
-												}}
-												className="glyphicon glyphicon-triangle-right"
-											/>
-										</AnimatePresence>{" "}
-										More options
-									</button>
-									<AnimatePresence initial={false}>
-										{state.expandOptions ? (
-											<motion.div
-												initial="collapsed"
-												animate="open"
-												exit="collapsed"
-												variants={{
-													open: { opacity: 1, height: "auto" },
-													collapsed: { opacity: 0, height: 0 },
-												}}
-												transition={{
-													duration: 0.3,
-													type: "tween",
-												}}
-											>
-												{moreOptions}
-											</motion.div>
-										) : null}
-									</AnimatePresence>
-								</>
-							) : null}
 
 							<div className="text-center mt-3">
 								<button

@@ -301,7 +301,6 @@ const createLeague = async ({
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	randomDebutsForever,
 	confs,
 	divs,
 	teams,
@@ -315,7 +314,6 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
@@ -408,7 +406,13 @@ const createLeague = async ({
 		}
 	}
 
-	const { repeatSeason, noStartingInjuries, ...otherSettings } = settings;
+	// Single out all the weird settings that don't go directly into gameAttributes
+	const {
+		noStartingInjuries,
+		randomization,
+		repeatSeason,
+		...otherSettings
+	} = settings;
 
 	const gameAttributeOverrides: Partial<
 		Record<keyof GameAttributesLeague, any>
@@ -456,7 +460,7 @@ const createLeague = async ({
 	}
 
 	if (
-		randomDebutsForever &&
+		randomization === "debutsForever" &&
 		leagueFile.gameAttributes.randomDebutsForever === undefined
 	) {
 		leagueFile.gameAttributes.randomDebutsForever = 1;

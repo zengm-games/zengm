@@ -90,6 +90,7 @@ export type Settings = Pick<
 		GameAttributesLeague["realDraftRatings"],
 		undefined
 	>;
+	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -177,6 +178,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+			randomization: "none",
 		};
 
 		return settings;

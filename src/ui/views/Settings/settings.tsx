@@ -43,19 +43,34 @@ export const settings: {
 }[] = [
 	{
 		category: "New League",
-		key: "equalizeRegions",
-		name: "Equalize Region Populations",
-		godModeRequired: "existingLeagueOnly",
-		viewableOnlyWhen: "newLeague",
-		type: "bool",
-	},
-	{
-		category: "New League",
-		key: "noStartingInjuries",
-		name: "No Starting Injuries",
+		key: "randomization",
+		name: "Randomization",
 		godModeRequired: "existingLeagueOnly",
 		viewableOnlyWhen: "newLeagueWithPlayers",
-		type: "bool",
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "debuts", value: "Random debuts" },
+			{ key: "debutsForever", value: "Random debuts forever" },
+			{ key: "shuffle", value: "Shuffle rosters" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Random debuts:</b> Every player's draft year is randomized.
+					Starting teams and future draft classes are all random combinations of
+					past, current, and future real players.
+				</p>
+				<p>
+					<b>Random debuts forever:</b> Like random debuts, except when it runs
+					out of draft prospects, it will randomize all real players again and
+					add them to future draft classes.
+				</p>
+				<p>
+					<b>Shuffle rosters:</b> All active players are placed on random teams.
+				</p>
+			</>
+		),
 	},
 	{
 		category: "New League",
@@ -84,6 +99,22 @@ export const settings: {
 				</p>
 			</>
 		),
+	},
+	{
+		category: "New League",
+		key: "equalizeRegions",
+		name: "Equalize Region Populations",
+		godModeRequired: "existingLeagueOnly",
+		viewableOnlyWhen: "newLeague",
+		type: "bool",
+	},
+	{
+		category: "New League",
+		key: "noStartingInjuries",
+		name: "No Starting Injuries",
+		godModeRequired: "existingLeagueOnly",
+		viewableOnlyWhen: "newLeagueWithPlayers",
+		type: "bool",
 	},
 	{
 		category: "Season",

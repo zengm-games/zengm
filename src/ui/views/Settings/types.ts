@@ -72,7 +72,8 @@ export type Key =
 	| "pointsFormula"
 	| "equalizeRegions"
 	| "noStartingInjuries"
-	| "realDraftRatings";
+	| "realDraftRatings"
+	| "randomization";
 
 export type Category =
 	| "New League"

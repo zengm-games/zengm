@@ -377,7 +377,7 @@ export const settings: {
 	{
 		category: "Draft",
 		key: "draftAges",
-		name: "Age of draft prospects",
+		name: "Age of Draft Prospects",
 		godModeRequired: "always",
 		description: (
 			<>

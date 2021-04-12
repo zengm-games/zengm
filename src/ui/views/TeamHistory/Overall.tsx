@@ -13,6 +13,7 @@ const Overall = ({
 	totalWinp,
 	totalWon,
 	worstRecord,
+	title = "Overall",
 }: Pick<
 	View<"teamHistory">,
 	| "bestRecord"
@@ -25,7 +26,9 @@ const Overall = ({
 	| "totalWinp"
 	| "totalWon"
 	| "worstRecord"
->) => {
+> & {
+	title?: string;
+}) => {
 	let record = `${totalWon}-${totalLost}`;
 	if (totalOtl > 0) {
 		record += `-${totalOtl}`;
@@ -36,8 +39,8 @@ const Overall = ({
 
 	return (
 		<>
-			<h2>Overall</h2>
-			<p>
+			<h2>{title}</h2>
+			<div className="mb-2">
 				Record: {record} ({helpers.roundWinp(totalWinp)})
 				<br />
 				Playoff Appearances: {playoffAppearances}
@@ -75,7 +78,7 @@ const Overall = ({
 				) : (
 					"???"
 				)}
-			</p>
+			</div>
 		</>
 	);
 };

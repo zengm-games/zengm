@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "..";

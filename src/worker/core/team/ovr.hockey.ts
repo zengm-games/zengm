@@ -114,13 +114,13 @@ const ovr = (
 		}
 	}
 
-	// See analysis/team-ovr-hockey
+	// See analysis/team-ovr-hockey - divide by 10 due to quarter length in that data
 	const predictedMOV =
-		-6.391024667200881 +
-		0.026726609 * aggregated.C +
-		0.031993128 * aggregated.W +
-		0.023279575 * aggregated.D +
-		0.032256618 * aggregated.G;
+		-6.786793385826883 +
+		0.033908896 * aggregated.C +
+		0.032181329 * aggregated.W +
+		0.032837313 * aggregated.D +
+		0.022552802 * aggregated.G;
 
 	if (onlyPos) {
 		// In this case, we're ultimately using the value to compute a rank, so we don't care about the scale. And bounding the scale to be positive below makes it always 0.

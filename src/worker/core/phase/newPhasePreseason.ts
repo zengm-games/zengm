@@ -7,7 +7,7 @@ import type {
 	PhaseReturn,
 	RealTeamInfo,
 } from "../../../common/types";
-import groupBy from "lodash/groupBy";
+import groupBy from "lodash-es/groupBy";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

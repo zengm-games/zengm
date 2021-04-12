@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { isSport, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
@@ -473,10 +473,25 @@ export const createWithoutSaving = async (
 	} else {
 		players = [];
 
-		// Generate past 20 years of draft classes
+		// Generate past 20 years of draft classes, unless forceRetireAge/draftAges make that infeasible
+		let seasonsSimmed = 20;
+		const forceRetireAge = g.get("forceRetireAge");
+		const draftAges = g.get("draftAges");
+		const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2);
+		const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
+		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
+			seasonsSimmed = forceRetireAgeDiff;
+		} else {
+			// Maybe add some extra seasons, for leagues when players start young
+			const estimatedRetireAge = forceRetireAgeDiff > 0 ? forceRetireAge : 35;
+			const estimatedRetireAgeDiff = estimatedRetireAge - averageDraftAge;
+			if (estimatedRetireAgeDiff > seasonsSimmed) {
+				seasonsSimmed = estimatedRetireAgeDiff;
+			}
+		}
 
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
-		const NUM_PAST_SEASONS = 20 + seasonOffset;
+		const NUM_PAST_SEASONS = seasonsSimmed + seasonOffset;
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();

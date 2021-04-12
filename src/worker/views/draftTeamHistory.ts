@@ -6,7 +6,7 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../common/types";
-import maxBy from "lodash/maxBy";
+import maxBy from "lodash-es/maxBy";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,

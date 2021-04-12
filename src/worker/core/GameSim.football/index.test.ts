@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import assert from "assert";
 import GameSim from ".";
 import { player, team } from "..";

@@ -1,7 +1,7 @@
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../common";
 
 const updateHeadToHeadAll = async (

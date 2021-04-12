@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../../common";
 import type {
 	GetLeagueOptionsReal,

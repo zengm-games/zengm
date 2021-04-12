@@ -86,6 +86,7 @@ const updateRoster = async (
 			"draft",
 			"name",
 			"age",
+			"born",
 			"contract",
 			"cashOwed",
 			"rosterOrder",

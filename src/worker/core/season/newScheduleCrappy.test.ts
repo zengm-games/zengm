@@ -2,7 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import newScheduleCrappy from "./newScheduleCrappy";
 import { g } from "../../../worker/util";
-import range from "lodash/range";
+import range from "lodash-es/range";
 
 const makeTeams = (numTeams: number) => {
 	return range(numTeams).map(tid => ({

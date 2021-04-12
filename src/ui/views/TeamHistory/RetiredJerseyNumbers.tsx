@@ -2,8 +2,11 @@ import { useState, ChangeEvent } from "react";
 import { JerseyNumber } from "../../components";
 import { helpers, confirm, toWorker, logEvent } from "../../util";
 import type { View } from "../../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { PLAYER } from "../../../common";
+import classNames from "classnames";
+
+const PAGE_SIZE = 12;
 
 const RetiredJerseyNumbers = ({
 	godMode,
@@ -16,6 +19,8 @@ const RetiredJerseyNumbers = ({
 	View<"teamHistory">,
 	"godMode" | "players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
 >) => {
+	const [page, setPage] = useState(0);
+
 	const [editing, setEditing] = useState<
 		| {
 				type: "edit";
@@ -222,7 +227,8 @@ const RetiredJerseyNumbers = ({
 		);
 	}
 
-	const deleteRetiredJersey = async (i: number) => {
+	const deleteRetiredJersey = async (j: number) => {
+		const i = page * PAGE_SIZE + j;
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -239,7 +245,8 @@ const RetiredJerseyNumbers = ({
 		}
 	};
 
-	const editRetiredJersey = (i: number) => {
+	const editRetiredJersey = (j: number) => {
+		const i = page * PAGE_SIZE + j;
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -269,13 +276,34 @@ const RetiredJerseyNumbers = ({
 		});
 	};
 
+	if (retiredJerseyNumbers.length <= PAGE_SIZE && page !== 0) {
+		setPage(0);
+	}
+
+	const pagination = retiredJerseyNumbers.length > PAGE_SIZE;
+	const maxPage = Math.ceil(retiredJerseyNumbers.length / PAGE_SIZE) - 1;
+	const enablePrevious = pagination && page > 0;
+	const enableNext = pagination && page < maxPage;
+
+	let retiredJerseyNumbersToDisplay;
+	if (pagination) {
+		const indexStart = page * PAGE_SIZE;
+		const indexEnd = indexStart + PAGE_SIZE;
+		retiredJerseyNumbersToDisplay = retiredJerseyNumbers.slice(
+			indexStart,
+			indexEnd,
+		);
+	} else {
+		retiredJerseyNumbersToDisplay = retiredJerseyNumbers;
+	}
+
 	return (
 		<>
 			{retiredJerseyNumbers.length === 0 ? (
 				<p>None yet!</p>
 			) : (
 				<div className="row">
-					{retiredJerseyNumbers.map((row, i) => (
+					{retiredJerseyNumbersToDisplay.map((row, i) => (
 						<div
 							key={i}
 							className="col-md-6 col-lg-4 d-flex align-items-center mb-3"
@@ -340,11 +368,40 @@ const RetiredJerseyNumbers = ({
 					))}
 				</div>
 			)}
-			{godMode || tid === userTid ? (
-				<button className="btn btn-secondary mb-3" onClick={addRetiredJersey}>
-					Add Retired Jersey Number
-				</button>
-			) : null}
+			<div
+				className={classNames("d-flex", {
+					"mb-3": godMode || tid === userTid || pagination,
+				})}
+			>
+				{godMode || tid === userTid ? (
+					<button className="btn btn-secondary" onClick={addRetiredJersey}>
+						Add Retired Jersey Number
+					</button>
+				) : null}
+
+				{pagination ? (
+					<div className="btn-group ml-auto">
+						<button
+							className="btn btn-light-bordered"
+							disabled={!enablePrevious}
+							onClick={() => {
+								setPage(page - 1);
+							}}
+						>
+							Previous
+						</button>
+						<button
+							className="btn btn-light-bordered"
+							disabled={!enableNext}
+							onClick={() => {
+								setPage(page + 1);
+							}}
+						>
+							Next
+						</button>
+					</div>
+				) : null}
+			</div>
 		</>
 	);
 };

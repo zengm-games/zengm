@@ -1,5 +1,5 @@
 import { csvFormatRows } from "d3-dsv";
-import flatten from "lodash/flatten";
+import flatten from "lodash-es/flatten";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -83,7 +83,7 @@ import type {
 	Div,
 	LocalStateUI,
 } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	AwardsByPlayer,
@@ -800,7 +800,7 @@ const discardUnsavedProgress = async () => {
 };
 
 const draftLottery = async () => {
-	const draftLotteryResult = await draft.genOrderNBA();
+	const draftLotteryResult = await draft.genOrder();
 	return draftLotteryResult;
 };
 
@@ -1146,6 +1146,17 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
+	// When exporting a past draft class, don't include current injuries
+	if (
+		season < g.get("season") ||
+		(season === g.get("season") && g.get("phase") > PHASE.DRAFT)
+	) {
+		for (const p of data.players) {
+			delete p.injury;
+			delete p.injuries;
+		}
+	}
+
 	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
 	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
 
@@ -1393,8 +1404,8 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	return augmentOffers(offers);
 };
 
-const getVersionWorker = async () => {
-	return "REV_GOES_HERE";
+const ping = async () => {
+	return;
 };
 
 const handleUploadedDraftClass = async (
@@ -3152,7 +3163,7 @@ export default {
 	getRandomName,
 	getRandomRatings,
 	getTradingBlockOffers,
-	getVersionWorker,
+	ping,
 	handleUploadedDraftClass,
 	importPlayers,
 	init,

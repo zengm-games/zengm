@@ -1,6 +1,6 @@
 import assert from "assert";
 import helpers from "./helpers";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { breakTies } from "./orderTeams";
 import type { HeadToHead } from "../../common/types";
 

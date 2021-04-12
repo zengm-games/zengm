@@ -17,6 +17,7 @@ import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import Notifications from "./Notifications";
 import SideBar from "./SideBar";
+import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
 import type { Context } from "../router";
@@ -70,6 +71,11 @@ const reducer = (state: State, action: any) => {
 		default:
 			throw new Error(`Unknown action type "${action.type}"`);
 	}
+};
+
+const minHeight100 = {
+	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason
+	minHeight: "100%",
 };
 
 const Controller = () => {
@@ -294,15 +300,20 @@ const Controller = () => {
 			<NavBar updating={loading} />
 			<LeagueTopBar />
 			<TitleBar />
-			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
-				<Header />
+			<div className="bbgm-container position-relative mt-2 flex-grow-1 h-100">
 				<SideBar pageID={pageID} />
-				<main className="p402_premium" id="actual-content">
-					<div id="actual-actual-content" className="clearfix">
-						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
+				<div className="d-flex" style={minHeight100}>
+					<div className="w-100 d-flex flex-column">
+						<Header />
+						<main className="p402_premium" id="actual-content">
+							<div id="actual-actual-content" className="clearfix">
+								<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
+							</div>
+						</main>
+						<Footer />
 					</div>
-				</main>
-				<Footer />
+					<Skyscraper />
+				</div>
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />

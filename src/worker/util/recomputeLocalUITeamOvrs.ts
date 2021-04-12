@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { player, team } from "../core";
 import { idb } from "../db";
 import g from "./g";

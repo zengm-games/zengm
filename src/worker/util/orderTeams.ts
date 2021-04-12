@@ -1,5 +1,5 @@
-import groupBy from "lodash/groupBy";
-import orderBy from "lodash/orderBy";
+import groupBy from "lodash-es/groupBy";
+import orderBy from "lodash-es/orderBy";
 import { helpers } from ".";
 import { isSport, TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";
@@ -547,18 +547,73 @@ export const breakTies = <T extends BaseTeam>(
 	return formatOutput(teams[0], "coinFlip");
 };
 
-// This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
-const orderTeams = async <T extends BaseTeam>(
+export const getDivisionLeaders = async <T extends BaseTeam>(
 	teams: T[],
-	allTeams: BaseAllTeams[],
+	allTeams: T[],
 	{
-		addTiebreakersField,
+		skipDivisionLeaders,
 		skipTiebreakers,
 		season = g.get("season"),
 	}: {
-		addTiebreakersField?: boolean;
+		skipDivisionLeaders?: boolean;
 		skipTiebreakers?: boolean;
 		season?: number;
+	} = {},
+) => {
+	// Figure out who the division leaders are, if necessary by applying tiebreakers
+	const divisionLeaders = new Map<number, T>();
+
+	// This is useful for a finals matchup, where we want home court determined based on team records without regard for division leaders, like the NHL
+	if (skipDivisionLeaders) {
+		return divisionLeaders;
+	}
+
+	// Only look at divisions repeseted in teams
+	const dids = new Set();
+	for (const t of teams) {
+		dids.add(t.seasonAttrs.did);
+	}
+
+	// If there are only teams from one division here, then this is useless, division leaders don't matter in tiebreaker
+	if (dids.size <= 1) {
+		return divisionLeaders;
+	}
+
+	const groupedByDivision = groupBy(allTeams, (t: T) => t.seasonAttrs.did);
+	for (const [didString, teamsDiv] of Object.entries(groupedByDivision)) {
+		const did = parseInt(didString);
+		if (dids.has(did)) {
+			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
+				season,
+				skipTiebreakers,
+			});
+
+			const t = teamsDivSorted[0];
+			if (t) {
+				divisionLeaders.set(t.seasonAttrs.did, t);
+			}
+		}
+	}
+
+	return divisionLeaders;
+};
+
+// This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
+const orderTeams = async <T extends BaseTeam>(
+	teams: T[],
+	allTeams: T[],
+	{
+		addTiebreakersField,
+		skipDivisionLeaders,
+		skipTiebreakers,
+		season = g.get("season"),
+		tiebreakersOverride,
+	}: {
+		addTiebreakersField?: boolean;
+		skipDivisionLeaders?: boolean;
+		skipTiebreakers?: boolean;
+		season?: number;
+		tiebreakersOverride?: Tiebreaker[];
 	} = {},
 ): Promise<
 	(T & {
@@ -571,24 +626,11 @@ const orderTeams = async <T extends BaseTeam>(
 
 	const usePts = g.get("pointsFormula", season) !== "";
 
-	// Figure out who the division leaders are, if necessary by applying tiebreakers
-	const divisionLeaders = new Map<number, T>();
-	const groupedByDivision = groupBy(teams, (t: T) => t.seasonAttrs.did);
-	const teamsDivs = Object.values(groupedByDivision);
-	if (teamsDivs.length > 1) {
-		// If there are only teams from one division here, then this is useless
-		for (const teamsDiv of teamsDivs) {
-			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
-				season,
-				skipTiebreakers,
-			});
-
-			const t = teamsDivSorted[0];
-			if (t) {
-				divisionLeaders.set(t.seasonAttrs.did, t);
-			}
-		}
-	}
+	const divisionLeaders = await getDivisionLeaders(teams, allTeams, {
+		skipDivisionLeaders,
+		skipTiebreakers,
+		season,
+	});
 
 	// First pass - order by winp and won
 	const iterees = [
@@ -646,7 +688,7 @@ const orderTeams = async <T extends BaseTeam>(
 		tiedGroups.push(currentTiedGroup);
 	}
 
-	const tiebreakers = getTiebreakers(season);
+	const tiebreakers = tiebreakersOverride ?? getTiebreakers(season);
 
 	const breakTiesOptions: BreakTiesOptions = {
 		addTiebreakersField,

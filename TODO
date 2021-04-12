@@ -1,3 +1,48 @@
+for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
+- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
+- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
+
+ad stuff
+- skyscraper sticky
+  - compare I:PV, CPM, and RPM before and after
+- CPM from skyscraper and leaderboard really worth it? why not add at bottom? could fit like 4-5 squares there
+- mobile - would bigger ad unit at bottom work just as well?
+
+draft class quality setting
+- by default, it's random
+- override in "regen draft class"
+- influence the new mode for real draft rankings
+- check 0 age players in all
+
+settings re-design
+- all settings should be editable when creating a new league
+  - put on separate page, like customize teams
+  - need buttons to cancel and reset to default (but what is "default" for a real players league or league file?)
+  - also new league has some extra settings that don't persist
+    - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues), and starting injuries (only if players are defined), equalize region populations
+  - make sure it handles default values of settings for real player leagues and league files
+  - godModeRequired value of "existingLeagueOnly" should be used here
+  - test
+    - toWorker works for validatePointsFormula
+  - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
+  - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
+- some settings should only be editable in offseason
+  - playoff structure
+- to add
+  - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
+
+hockey new lottery
+- revert chances changes for old method
+
+If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
+
+better gold websites
+- dedicated website, separate from game
+- new stripe checkout https://mail.google.com/mail/u/0/#inbox/FMfcgxwLswLjSWCHtJMHJkFtKTwQXVKj
+
+bbgm ai teams keep dynasties together too easily?
+
 daily score summary https://discord.com/channels/@me/790622657284014120/818668678757089280
 
 New bug: if you have a pop-up window open with the roster page or whatever, and you collapsed the score bar on that, you still get the little notifications for scores in the corner even on the main window where the score bar is showing
@@ -5,24 +50,9 @@ New bug: if you have a pop-up window open with the roster page or whatever, and 
 
 teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.com/channels/290013534023057409/290015591216054273/817944239442624522
 
-https://old.reddit.com/r/ZenGMHockey/comments/lyngkz/unrealistic_defensemen_and_goalie_stats/
-
 hockey
-- Trade engine is too willing to give up a LOT of contributors for one slightly better player. I practically was offered an entire team for one star
-- tiebreaker not kicking in when points are tied https://discord.com/channels/290013534023057409/290015591216054273/816387844829478953
 - game sim performance
-- make rookies tradable after signing https://discord.com/channels/290013534023057409/816359356424912976/816478079856672779
-- factor injuries into pickPlayer formula - make them much less likely to do stuff
 - ovr PR
-- https://old.reddit.com/r/ZenGMHockey/comments/m1iow3/features_id_like_to_see_added/ - balance of roster size, rookie contract length, and young player talent
-- Sim to next Goal https://discord.com/channels/290013534023057409/290015591216054273/819440579833757706
-- W/L/T/OTL for goalie stats
-- defensement should get more assists
-  - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
-  - https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqnmwkf/?context=3
-- check faceoff percentages https://old.reddit.com/r/ZenGMHockey/comments/m370eg/in_the_regular_season_goalies_now_need_rest_days/gqniyn9/?context=3
-- center/winger ratings - centers should be better defensively, what else?
-  - https://discord.com/channels/@me/778760871911751700/821247944895627264
 
 goat frivolity, similar to hof but including active players
 - https://twitter.com/Dontreach_/status/1364770043347746816
@@ -32,9 +62,8 @@ player of the game in box score https://discord.com/channels/@me/810011526097534
 
 change point value of 2/3 pointers https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/gjtthn2/
 
-store w/l/t/otl for all players, similar to qbRecord
+store w/l/t/otl for all players, similar to qbgRecord
 - some kind of playing time cutoff for when a game counts for a player?
-- what is done for goalies in hockey?
 
 add standings options
 - playoffsByConference
@@ -64,11 +93,6 @@ free agents should be more willing to sign with teams that overpay
 - https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
 
 warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
-
-for RPDD, do `ratings = ratings + ((1-RPD) * progs + RPD * real_progs)` rather than averaging the ratings each year
-- or store the actual random ratings separately, and average them in. rather than doing a moving average and combining the real+random each iteration. because moving average means it converges for most %s.
-  - that might be better, it'd work with the different draft settings too
-- https://discord.com/channels/290013534023057409/331882115119448065/802930498342879240
 
 store results of trading block in database
 
@@ -127,22 +151,6 @@ name/colleges revamp
   - update docs
 - global default... should it override individual countries?
   - see comments in PlayerBioInfo in types.ts
-- flag icon on roster page
-  - https://github.com/lipis/flag-icon-css
-
-settings re-design
-- all settings should be editable when creating a new league
-  - ...including God Mode settings, like "# Players On Court" which alter the number of players in a league
-  - also new league has some extra settings that don't persist, like randomization and no starting injuries
-  - ui... below form? separate page? part of flow (like optional 2nd page before league creation)?
-  - make sure it handles setting the season for pace etc in real players leagues
-  - godModeRequired value of "existingLeagueOnly" should be used here
-  - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
-  - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
-- some settings should only be editable in offseason
-  - playoff structure
-- to add
-  - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
 allow import/export of league settings from New League page
 
@@ -182,6 +190,10 @@ add some more built-in teams
   - logos should work for both basketball and football
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
+- next
+  - Hockey cities: Edmonton, Winnipeg, New Jersey
+  - World cities: London, Beijing, Tokyo, Paris
+  - By BBGM userbase: Manila, Syndney, São Paulo
 
 "find players" form
 - customizable search boxes for stats/ratings
@@ -280,17 +292,12 @@ ability to switch back to prior year
 
 When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
 
-next/prev buttons
-- players on team https://cdn.discordapp.com/attachments/331882115119448065/769707985559224330/unknown.png
-
-expansion draft per team limit https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gbvj9a7/
-
 typescript 4.1 stuff
 
 draft prospects in watch list should show ratings (not 0/0) @alphy#5106
 
 nicidob new ovr formula
-- basketball: https://github.com/dumbmatter/gm-games/pull/275/files
+- basketball: https://github.com/zengm-games/zengm/pull/275/files
 - football: https://paste.ubuntu.com/p/H5pPmb3r6J/
   - nicodob says:
     - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
@@ -309,10 +316,6 @@ FBGM too many very short players
 on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
 
 Maybe another frivolty to say which players were the best with a certain pick, e.g. 1-3 would be Michael Jordan IRL, 1-1 would be LeBron James, etc @lewie100
-
-for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
-- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
-- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 
 trade summary charts future
 - some indication for winning a championship, special marker?
@@ -598,10 +601,6 @@ The spending page needs to fixed. Either change the "finances" so you select "sp
 
 in fbgm players recover from injury during the FA period if they are in FA, but not if they are on a team
 
-popover positioning
-- https://old.reddit.com/r/BasketballGM/comments/hmgodu/bug_first_click_on_a_players_ratings_places_popup/fx5zhtl/?context=3
-- https://github.com/react-bootstrap/react-bootstrap/issues/5270
-
 in GM DL/LB/S are kinda the same. In real life, they're usually humans of different sizes
 - 40 times tell the defensive positions apart: 4.5 for CB, 4.7 for LB, 4.8 for DE
 - shuttle times tell DE/DT from LB
@@ -795,6 +794,11 @@ FBGM
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
 - rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
 - advanceYds makes no sense. need separate concept of "line of scrimmage" and "where the ball is". should not be incrementing the down, scoring TD/SF in a function that moves where the ball is
+  - for instance, makes no sense to call advanceYds for part of a play before a fumble occurs, because then the "turnover on downs" code will run before the fumble happens. now need that turnoverOnDowns check, which means no fumbles on 4th down
+- wrong yardage for TD, then wrong team's kicker kicks xp
+  - https://discord.com/channels/290013534023057409/290015591216054273/824808266008625204
+- ovr revamp
+  - base on composite ratings directly? https://discord.com/channels/290013534023057409/569726303926878219/822286234612924416
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -959,7 +963,7 @@ teams play better/worse when down/up
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
-- https://github.com/dumbmatter/gm-games/pull/276
+- https://github.com/zengm-games/zengm/pull/276
 
 GUI to add countries, colleges, and names
 
@@ -999,12 +1003,6 @@ Game list redesign
   - show player with highest game score under completed game
 
 teamRegion in playersPlus needed?
-
-sw cache issue
-- might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
-- could also store quota amount in log
-- looks like it could be old sw staying active somehow
-- try to reproduce on low disk space
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
@@ -1352,6 +1350,7 @@ Don't allow play if versions in tabs don't match
 React.StrictMode
 - react-sortable-hoc findDOMNode
   - switch to react-movable works, except in Safari https://github.com/tajo/react-movable/issues/30
+  - should be fixed now in 2.0
 - reactstrap findDOMNode
 
 to send notification to correct screen, need `conditions` in views/allStars (and other getOrCreate calls). should be possible right? yeah, could request hostID from shared worker, and then sent it to runBefore functions, but... is it worth it? maybe not

@@ -1,22 +1,17 @@
 import { Fragment, memo } from "react";
-import {
-	AD_DIVS,
-	GAME_ACRONYM,
-	SUBREDDIT_NAME,
-	WEBSITE_ROOT,
-} from "../../common";
+import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [
 	{
-		url: `https://${WEBSITE_ROOT}/about/`,
+		url: "https://zengm.com/",
 		title: "About",
 	},
 	{
-		url: `https://${WEBSITE_ROOT}/blog/`,
+		url: "https://zengm.com/blog/",
 		title: "Blog",
 	},
 	{
-		url: `https://${WEBSITE_ROOT}/contact/`,
+		url: "https://zengm.com/contact/",
 		title: "Contact",
 	},
 	{
@@ -24,7 +19,7 @@ const footerLinks = [
 		title: "Privacy",
 	},
 	{
-		url: "https://github.com/dumbmatter/gm-games",
+		url: "https://github.com/zengm-games/zengm",
 		title: "GitHub",
 	},
 	{
@@ -73,7 +68,7 @@ const Footer = memo(() => {
 				>
 					<img
 						alt=""
-						src={`https://${WEBSITE_ROOT}/files/logo.png`}
+						src={`https://zengm.com/files/logo-${process.env.SPORT}.png`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",

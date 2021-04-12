@@ -1,6 +1,6 @@
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import { idb } from "../../db";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { random, helpers } from "../../util";
 import { bySport, isSport } from "../../../common";
 

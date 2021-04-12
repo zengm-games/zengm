@@ -10,7 +10,7 @@ Email: jeremy@zengm.com
 
 Website: <https://zengm.com/>
 
-Development: <https://github.com/dumbmatter/gm-games>
+Development: <https://github.com/zengm-games/zengm>
 
 Discussion:
 
@@ -192,7 +192,7 @@ GitHub. Then make your changes in a new branch. Confirm that the tests
 a pull request.
 
 It's also probably a good idea to create an [issue on
-GitHub](https://github.com/dumbmatter/gm-games/issues) before you start working
+GitHub](https://github.com/zengm-games/zengm/issues) before you start working
 on something to keep me in the loop.
 
 ## Less Important Development Info

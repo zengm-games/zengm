@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { Component, SyntheticEvent, MouseEvent, ReactNode } from "react";
 import Controls from "./Controls";

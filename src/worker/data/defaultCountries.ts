@@ -10,7 +10,7 @@ const groups = {
 		"Costa Rica",
 		"Cuba",
 		"El Salvador",
-		"Equador",
+		"Ecuador",
 		"Guatemala",
 		"Honduras",
 		"Mexico",

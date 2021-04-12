@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	PHASE,
 	TEAM_STATS_TABLES,
@@ -80,6 +80,13 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	apg_leader: "League Assists Leader",
 	spg_leader: "League Steals Leader",
 	bpg_leader: "League Blocks Leader",
+	pss_leader: "League Passing Leader",
+	rush_leader: "League Rushing Leader",
+	rcv_leader: "League Receiving Leader",
+	scr_leader: "League Scrimmage Yards Leader",
+	pts_leader: "League Points Leader",
+	g_leader: "League Goals Leader",
+	ast_leader: "League Assists Leader",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",
 	"all|||types": "All Types",
@@ -285,6 +292,10 @@ const useDropdownOptions = (field: string) => {
 				"first_team",
 				"second_team",
 				"all_league",
+				"pss_leader",
+				"rush_leader",
+				"rcv_leader",
+				"scr_leader",
 			],
 			hockey: [
 				"champion",
@@ -297,6 +308,9 @@ const useDropdownOptions = (field: string) => {
 				"first_team",
 				"second_team",
 				"all_league",
+				"pts_leader",
+				"g_leader",
+				"ast_leader",
 			],
 		});
 	} else if (field === "eventType") {

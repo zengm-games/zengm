@@ -227,14 +227,14 @@ const overtimeCounter = (n: number): string => {
 	}
 };
 
-const pickDesc = (dp: DraftPick): string => {
+const pickDesc = (dp: DraftPick, short?: "short"): string => {
 	const season =
 		dp.season === "fantasy"
 			? "Fantasy draft"
 			: dp.season === "expansion"
 			? "Expansion draft"
 			: dp.season;
-	let desc = `${season} ${commonHelpers.ordinal(dp.round)} round pick`;
+
 	const extras: string[] = [];
 
 	if (dp.pick > 0) {
@@ -247,6 +247,10 @@ const pickDesc = (dp: DraftPick): string => {
 		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid]?.abbrev}`);
 	}
 
+	let desc = `${season} ${commonHelpers.ordinal(dp.round)}`;
+	if (extras.length === 0 || !short) {
+		desc += " round pick";
+	}
 	if (extras.length > 0) {
 		desc += ` (${extras.join(", ")})`;
 	}

@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
+import { Modal, Popover } from "react-bootstrap";
+import OverlayTriggerPopoverAuto from "./OverlayTriggerPopoverAuto";
 
 const isMobile = () => window.screen && window.screen.width < 768;
 
@@ -57,22 +58,14 @@ const ResponsivePopover = ({
 		);
 	}
 
-	const popover = (
-		<Popover id={id}>
-			<Popover.Content>{popoverContent}</Popover.Content>
-		</Popover>
-	);
-
 	return (
-		<OverlayTrigger
-			trigger="click"
-			placement="auto"
-			overlay={popover}
-			rootClose
+		<OverlayTriggerPopoverAuto
+			popoverContent={<Popover.Content>{popoverContent}</Popover.Content>}
+			popoverID={id}
 			onEnter={toggle}
 		>
 			{renderTarget({}) as any}
-		</OverlayTrigger>
+		</OverlayTriggerPopoverAuto>
 	);
 };
 

@@ -6,41 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FF7F2A"/>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="shortcut icon" href="/ico/icon64.png">
-    <link rel="apple-touch-icon" href="/ico/icon192.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/ico/icon.svg">
+    <link rel="apple-touch-icon" href="/ico/apple-touch-icon.png">
 
     <meta name="Description" content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
 
     <script type="text/javascript">
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
-      function isBuggyFirefox() {
-        var ua = navigator.userAgent;
-        if (!ua || ua.indexOf("Firefox") < 0 || ua.indexOf("Gecko") < 0) {
-          return false;
-        }
-
-        var matches = ua.match(/rv:(\d+)/);
-        if (matches.length !== 2) {
-          return false;
-        }
-
-        var version = parseInt(matches[1]);
-        if (isNaN(version)) {
-          return false;
-        }
-
-        return version >= 57 && version <= 64;
-      }
-
       window.bbgmVersion = "REV_GOES_HERE";
-      window.bbgmVersionUI = "???";
-      window.bbgmVersionWorker = "???";
-      window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
-
-      window.leagueFileHashes = {};
+      window.useSharedWorker = typeof SharedWorker !== 'undefined';
 
       function loadCSS(filename){
         var el = document.createElement("link");
@@ -242,17 +218,14 @@ FACEBOOK_PIXEL_CODE
           return;
         }
 
-        var idb = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-        var keyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.mozIDBKeyRange;
-
         try {
-          keyRange.only([1]);
+          window.IDBKeyRange.only([1]);
         } catch (e) {
           cb("bad");
           return;
         }
 
-        var openRequest = idb.open('__detectIDB_test2', 1);
+        var openRequest = window.indexedDB.open('__detectIDB_test2', 1);
 
         openRequest.onerror = function (evt) {
           console.error("Error openining test database:");

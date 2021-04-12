@@ -194,19 +194,26 @@ const copyFiles = () => {
 		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
 	}
 
+	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	const flagHtaccess = `<IfModule mod_headers.c>
+	Header set Cache-Control "public,max-age=31536000"
+</IfModule>`;
+	fs.writeFileSync("build/img/flags/.htaccess", flagHtaccess);
+
 	setSport();
 };
 
 const genRev = () => {
-	const d = new Date();
-	const date = d.toISOString().split("T")[0].replace(/-/g, ".");
-	const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
+	const date = new Date();
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	const minutes = String(date.getMinutes() + 60 * date.getHours()).padStart(
 		4,
 		"0",
 	);
-	const rev = `${date}.${minutes}`;
 
-	return rev;
+	return `${year}.${month}.${day}.${minutes}`;
 };
 
 const reset = () => {
@@ -215,20 +222,10 @@ const reset = () => {
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
-	const sport = getSport();
-
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
-		paths: watch
-			? ["build/index.html"]
-			: [
-					"build/index.html",
-					`build/gen/ui-${rev}.js`,
-					`build/gen/ui-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-					`build/gen/worker-legacy-${rev}.js`,
-			  ],
+		paths: ["build/index.html"],
 		silent: true,
 	});
 
@@ -452,7 +449,8 @@ if (window.enableLogging) {
 		silent: true,
 	});
 
-	let quantcastCode = "";
+	const quantcastCode = "";
+	/*const sport = getSport();
 	if (!watch && sport === "basketball") {
 		quantcastCode = `<script type="text/javascript">
 if (window.enableLogging) {
@@ -472,8 +470,7 @@ qacct:"p-Ye5RY6xC03ZWz"
 <img src="//pixel.quantserve.com/pixel/p-Ye5RY6xC03ZWz.gif" border="0" height="1" width="1" alt="Quantcast"/>
 </div>
 </noscript>`;
-	}
-
+	}*/
 	replace({
 		regex: "QUANTCAST_CODE",
 		replacement: quantcastCode,

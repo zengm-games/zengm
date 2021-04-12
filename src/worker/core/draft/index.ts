@@ -1,7 +1,6 @@
 import afterPicks from "./afterPicks";
 import deleteLotteryResultIfNoDraftYet from "./deleteLotteryResultIfNoDraftYet";
 import genOrder from "./genOrder";
-import genOrderNBA from "./genOrderNBA";
 import genOrderFantasy from "./genOrderFantasy";
 import genPicks from "./genPicks";
 import genPlayers from "./genPlayers";
@@ -15,7 +14,6 @@ export default {
 	afterPicks,
 	deleteLotteryResultIfNoDraftYet,
 	genOrder,
-	genOrderNBA,
 	genOrderFantasy,
 	genPicks,
 	genPlayers,

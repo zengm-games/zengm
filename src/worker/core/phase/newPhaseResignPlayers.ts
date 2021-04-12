@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import {
 	contractNegotiation,
@@ -187,14 +187,14 @@ const newPhaseResignPlayers = async (
 				// Always sign rookies, and give them smaller contracts
 				if (draftPick) {
 					// Hockey already has rookie salaries set correctly in normalizeContractDemands
-					if (!isSport("hockey")) {
+					if (isSport("football")) {
 						contract.amount /= 2;
-					}
 
-					if (contract.amount < g.get("minContract")) {
-						contract.amount = g.get("minContract");
-					} else {
-						contract.amount = helpers.roundContract(contract.amount);
+						if (contract.amount < g.get("minContract")) {
+							contract.amount = g.get("minContract");
+						} else {
+							contract.amount = helpers.roundContract(contract.amount);
+						}
 					}
 
 					reSignPlayer = true;

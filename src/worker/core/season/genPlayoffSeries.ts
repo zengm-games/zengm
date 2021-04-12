@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { g, helpers, orderTeams } from "../../util";
 import type {
 	TeamFiltered,
@@ -140,7 +140,7 @@ export const genPlayoffSeriesFromTeams = async (
 					t => t.seasonAttrs.cid === cid,
 				);
 				if (teamsConf.length > 0) {
-					// This sort determines conference champ. Sort inside makeMatchups will determine overall #1 seed
+					// This sort determines conference champ. Sort inside makeMatchups call will determine overall #1 seed
 					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
 					teamsFinals.push(sorted[0]);
 				}

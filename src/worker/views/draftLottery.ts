@@ -102,7 +102,7 @@ const updateDraftLottery = async (
 		// View projected draft lottery for this season
 		let draftLotteryResult;
 		try {
-			draftLotteryResult = await draft.genOrderNBA(true);
+			draftLotteryResult = await draft.genOrder(true);
 		} catch (error) {
 			console.log(error);
 			if (!(error as any).notEnoughTeams) {

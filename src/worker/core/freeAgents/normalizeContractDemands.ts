@@ -1,9 +1,9 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, isSport } from "../../../common";
+import { PLAYER, PHASE, isSport, bySport } from "../../../common";
 import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -86,12 +86,11 @@ const normalizeContractDemands = async ({
 	nextSeason?: boolean;
 }) => {
 	// Higher means more unequal salaries
-	let PARAM;
-	if (isSport("basketball") || isSport("hockey")) {
-		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
-	} else {
-		PARAM = 1;
-	}
+	const PARAM = bySport({
+		basketball: 0.5 * (type === "newLeague" ? 5 : 15),
+		football: 1,
+		hockey: 2.5,
+	});
 
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");
@@ -264,7 +263,7 @@ const normalizeContractDemands = async ({
 		if (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
-				isSport("football") ||
+				numRounds === 0 ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {
@@ -276,7 +275,6 @@ const normalizeContractDemands = async ({
 					: getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
-
 			if (numRounds === 0) {
 				amount = player.genContract(p, type === "newLeague").amount;
 			} else {

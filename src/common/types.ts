@@ -16,8 +16,6 @@ declare global {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
-		bbgmVersionUI: string;
-		bbgmVersionWorker: string;
 		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
 		freestar: any;
@@ -25,7 +23,6 @@ declare global {
 		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
-		leagueFileHashes: Record<string, string>;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
@@ -125,6 +122,7 @@ export type DraftLotteryResultArray = {
 	lost: number;
 	tied: number;
 	otl: number;
+	pts?: number;
 }[];
 
 export type DraftLotteryResult = {
@@ -376,12 +374,14 @@ export type GameAttributesLeague = {
 	difficulty: number;
 	divs: Div[];
 	draftType: DraftType;
+	draftAges: [number, number];
 	easyDifficultyInPast: boolean;
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;
 	elamPoints: number;
 	equalizeRegions: boolean;
+	forceRetireAge: number;
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: number[];
 	foulRateFactor: number;

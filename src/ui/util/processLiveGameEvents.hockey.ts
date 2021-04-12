@@ -63,7 +63,10 @@ const getText = (
 		showTeamAndClock = false;
 	}
 	if (event.type === "overtime") {
-		text = "Start of overtime";
+		const overtimes = event.quarter - boxScore.numPeriods;
+		text = `Start of ${
+			overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
+		} overtime`;
 		showTeamAndClock = false;
 	}
 	if (event.type === "gameOver") {

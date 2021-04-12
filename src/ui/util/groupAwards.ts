@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy";
+import groupBy from "lodash-es/groupBy";
 import type { Player } from "../../common/types";
 import helpers from "./helpers";
 
@@ -28,6 +28,12 @@ const awardsOrder = [
 	"League Assists Leader",
 	"League Steals Leader",
 	"League Blocks Leader",
+	"League Passing Leader",
+	"League Rushing Leader",
+	"League Receiving Leader",
+	"League Scrimmage Yards Leader",
+	"League Points Leader",
+	"League Goals Leader",
 ];
 
 const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {

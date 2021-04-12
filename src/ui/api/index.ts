@@ -16,6 +16,7 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types";
 import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -58,27 +59,17 @@ const initAds = (goldUntil: number | undefined) => {
 
 	if (!hideAds) {
 		window.freestar.queue.push(() => {
-			// Add margin for skyscraper on right
-			const container = document.getElementsByClassName("bbgm-container")[0];
-			if (container instanceof HTMLElement) {
-				container.classList.add("padding-for-skyscraper");
-			}
-
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
-			// const divsMobile: string[] = [];
-			const showDivsDesktop = [
+			const divsDesktop = [
 				AD_DIVS.leaderboard,
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
-				"skyscraper-wrapper",
 			];
-			const showDivs =
-				window.screen && window.screen.width < 768
-					? divsMobile
-					: showDivsDesktop;
+			const divs =
+				window.screen && window.screen.width < 768 ? divsMobile : divsDesktop;
 
-			for (const id of showDivs) {
+			for (const id of divs) {
 				const div = document.getElementById(id);
 
 				if (div) {
@@ -86,23 +77,21 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivsDesktop = [
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
-			const adDivs =
-				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
-
-			for (const adDiv of adDivs) {
-				window.freestar.config.enabled_slots.push({
-					placementName: adDiv,
-					slotId: adDiv,
-				});
-				console.log("enabled_slots", adDiv);
+			// Special case for rail, to tell it there is no BBGM gold
+			const rail = document.getElementById(AD_DIVS.rail);
+			if (rail) {
+				delete rail.dataset.gold;
+				updateSkyscraperDisplay();
 			}
 
-			if (adDivs.includes(AD_DIVS.mobile)) {
+			for (const id of divs) {
+				window.freestar.config.enabled_slots.push({
+					placementName: id,
+					slotId: id,
+				});
+			}
+
+			if (divs.includes(AD_DIVS.mobile)) {
 				localActions.update({
 					stickyFooterAd: true,
 				});
@@ -200,7 +189,10 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.freestar.freestarReloadAdSlot;
+	const adBlock =
+		!window.freestar.refreshAllSlots ||
+		!window.googletag ||
+		!window.googletag.pubads;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

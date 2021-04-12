@@ -15,9 +15,9 @@ import type {
 	TeamGameSim,
 	TeamNum,
 } from "./types";
-import orderBy from "lodash/orderBy";
-import flatten from "lodash/flatten";
-import range from "lodash/range";
+import orderBy from "lodash-es/orderBy";
+import flatten from "lodash-es/flatten";
+import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
@@ -555,13 +555,13 @@ class GameSim {
 
 		this.recordStat(t2, target, "energy", -0.5);
 
+		this.recordStat(t, hitter, "hit", 1);
 		this.playByPlay.logEvent({
 			type: "hit",
 			clock: this.clock,
 			t,
 			names: [hitter.name, target.name],
 		});
-		this.recordStat(t, hitter, "hit", 1);
 
 		this.injuries({
 			type: "hit",
@@ -610,26 +610,26 @@ class GameSim {
 	doGiveaway() {
 		const p = this.pickPlayer(this.o, undefined, ["C", "W", "D"]);
 
+		this.recordStat(this.o, p, "gv", 1);
 		this.playByPlay.logEvent({
 			type: "gv",
 			clock: this.clock,
 			t: this.o,
 			names: [p.name],
 		});
-		this.recordStat(this.o, p, "gv", 1);
 		this.possessionChange();
 	}
 
 	doTakeaway() {
 		const p = this.pickPlayer(this.d, "grinder", ["C", "W", "D"]);
 
+		this.recordStat(this.d, p, "tk", 1);
 		this.playByPlay.logEvent({
 			type: "tk",
 			clock: this.clock,
 			t: this.d,
 			names: [p.name],
 		});
-		this.recordStat(this.d, p, "tk", 1);
 		this.possessionChange();
 	}
 
@@ -671,13 +671,13 @@ class GameSim {
 				? "reboundShot"
 				: random.choice(["slapshot", "wristshot", "shot"], [0.25, 0.5, 0.25]);
 
+		this.recordStat(this.o, shooter, "tsa");
 		this.playByPlay.logEvent({
 			type: type,
 			clock: this.clock,
 			t: this.o,
 			names: [shooter.name],
 		});
-		this.recordStat(this.o, shooter, "tsa");
 
 		const {
 			powerPlayTeam,
@@ -700,13 +700,13 @@ class GameSim {
 
 		if (r < 0.1 + 0.35 * this.team[this.d].compositeRating.blocking) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
+			this.recordStat(this.d, blocker, "blk", 1);
 			this.playByPlay.logEvent({
 				type: "block",
 				clock: this.clock,
 				t: this.d,
 				names: [blocker.name],
 			});
-			this.recordStat(this.d, blocker, "blk", 1);
 
 			if (type === "slapshot" || type === "wristshot") {
 				this.injuries({
@@ -759,12 +759,14 @@ class GameSim {
 		if (deflector) {
 			assister1 = shooter;
 		} else if (r2 < 0.99) {
+			// 20 power is to ensure top players get a lot
 			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
 				actualShooter,
 			]);
 		}
 		if (r2 < 0.8) {
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+			// 0.5 power is to ensure that everybody (including defensemen) at least get some
+			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
 				actualShooter,
 				assister1 as PlayerGameSim,
 			]);
@@ -802,13 +804,13 @@ class GameSim {
 			) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
+				this.recordStat(this.d, goalie, "sv");
 				this.playByPlay.logEvent({
 					type: saveType,
 					clock: this.clock,
 					t: this.d,
 					names: [goalie.name],
 				});
-				this.recordStat(this.d, goalie, "sv");
 
 				return saveType;
 			}
@@ -830,6 +832,10 @@ class GameSim {
 			assisterPIDs = [];
 		}
 
+		this.recordStat(this.o, actualShooter, `${strengthType}G`);
+		if (goalie) {
+			this.recordStat(this.d, goalie, "ga");
+		}
 		this.playByPlay.logEvent({
 			type: "goal",
 			clock: this.clock,
@@ -839,10 +845,6 @@ class GameSim {
 			shotType: deflector ? "deflection" : type,
 			goalType: strengthType,
 		});
-		this.recordStat(this.o, actualShooter, `${strengthType}G`);
-		if (goalie) {
-			this.recordStat(this.d, goalie, "ga");
-		}
 
 		this.penaltyBox.goal(this.o);
 
@@ -855,23 +857,31 @@ class GameSim {
 		const p0 = this.getTopPlayerOnIce(0, "faceoffs", ["C", "W", "D"]);
 		const p1 = this.getTopPlayerOnIce(1, "faceoffs", ["C", "W", "D"]);
 
-		if (Math.random() < 0.5) {
+		const winner = random.choice(
+			[p0, p1],
+			p => p.compositeRating.faceoffs ** 0.5,
+		);
+
+		let names: [string, string];
+		if (winner === p0) {
 			this.o = 0;
 			this.d = 1;
 			this.recordStat(0, p0, "fow");
 			this.recordStat(1, p1, "fol");
+			names = [p0.name, p1.name];
 		} else {
 			this.o = 1;
 			this.d = 0;
 			this.recordStat(1, p1, "fow");
 			this.recordStat(0, p0, "fol");
+			names = [p1.name, p0.name];
 		}
 
 		this.playByPlay.logEvent({
 			type: "faceoff",
 			clock: this.clock,
 			t: this.o,
-			names: [p0.name, p1.name],
+			names,
 		});
 
 		this.advanceClock();
@@ -904,6 +914,7 @@ class GameSim {
 
 		this.penaltyBox.add(t, p, penalty);
 
+		this.recordStat(t, p, "pim", penaltyType.minutes);
 		this.playByPlay.logEvent({
 			type: "penalty",
 			clock: this.clock,
@@ -913,7 +924,6 @@ class GameSim {
 			penaltyName: penalty.name,
 			penaltyPID: p.id,
 		});
-		this.recordStat(t, p, "pim", penaltyType.minutes);
 
 		// Actually remove player from ice
 		this.updatePlayersOnIce({ type: "penalty" });
@@ -931,6 +941,7 @@ class GameSim {
 			}
 
 			if (this.checkPenalty()) {
+				this.faceoff();
 				return;
 			}
 
@@ -1467,8 +1478,17 @@ class GameSim {
 
 		const weightFunc =
 			rating !== undefined
-				? (p: PlayerGameSim) =>
-						(p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
+				? (p: PlayerGameSim) => {
+						// Less likely, but not impossible, for injured players to do stuff
+						const injuryFactor = p.injured ? 0.5 : 1;
+
+						return (
+							(p.compositeRating[rating] *
+								fatigue(p.stat.energy) *
+								injuryFactor) **
+							power
+						);
+				  }
 				: undefined;
 		return random.choice(players, weightFunc);
 	}

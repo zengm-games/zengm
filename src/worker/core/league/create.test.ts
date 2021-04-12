@@ -95,4 +95,21 @@ describe("worker/core/league/create", () => {
 	test("initialize players object store", async () => {
 		assert.strictEqual(leagueData.players.length, 30 * 13 + 150 + 70 * 3);
 	});
+
+	test("no error with restricted draftAges and forceRetireAge settings", async () => {
+		const leagueData = await createWithoutSaving(
+			0,
+			{
+				startingSeason: 2021,
+				gameAttributes: {
+					draftAges: [19, 19],
+					forceRetireAge: 20,
+				},
+			},
+			false,
+			0,
+		);
+
+		assert(leagueData);
+	});
 });

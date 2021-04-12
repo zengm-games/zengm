@@ -40,8 +40,8 @@ const updateInjuries = async (
 						...p,
 						type: p.injury.type,
 						games: p.injury.gamesRemaining,
-						ovrDrop: injury.ovrDrop,
-						potDrop: injury.potDrop,
+						ovrDrop: injury?.ovrDrop,
+						potDrop: injury?.potDrop,
 					});
 				}
 			} else {

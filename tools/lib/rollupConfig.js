@@ -6,7 +6,7 @@ const json = require("@rollup/plugin-json");
 const resolve = require("@rollup/plugin-node-resolve").default;
 const replace = require("@rollup/plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
-const visualizer = require("rollup-plugin-visualizer");
+const visualizer = require("rollup-plugin-visualizer").visualizer;
 const getSport = require("./getSport");
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
@@ -79,6 +79,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		plugins.push(
 			visualizer({
 				filename: statsFilename,
+				gzipSize: true,
 				sourcemap: true,
 				template: "sunburst",
 			}),

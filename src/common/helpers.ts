@@ -1,7 +1,7 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 import type { TeamBasic, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
 
 const getPopRanks = (
@@ -1033,6 +1033,7 @@ const isAmerican = (loc: string) => {
 
 	const parts = loc.split(", ");
 	const state = parts[parts.length - 1];
+
 	return states.includes(state);
 };
 
@@ -1138,6 +1139,18 @@ const getExpansionDraftMinimumPlayersPerActiveTeam = (
 	);
 };
 
+const ratio = (numerator: number, denominator: number) => {
+	if (denominator > 0) {
+		return numerator / denominator;
+	}
+
+	return 0;
+};
+
+const percentage = (numerator: number, denominator: number) => {
+	return 100 * ratio(numerator, denominator);
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1158,4 +1171,6 @@ export default {
 	keys,
 	validateRoundsByes,
 	roundsWonText,
+	ratio,
+	percentage,
 };

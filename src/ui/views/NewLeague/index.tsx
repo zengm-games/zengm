@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useCallback, useState, useReducer } from "react";
 import type { ReactNode } from "react";
@@ -17,7 +17,7 @@ import {
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
 } from "../../../common";
-import { LeagueFileUpload, PopText } from "../../components";
+import { LeagueFileUpload, NextPrevButtons, PopText } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
@@ -35,7 +35,7 @@ import type {
 	Conf,
 } from "../../../common/types";
 import classNames from "classnames";
-import { descriptions } from "../Settings";
+import { descriptions } from "../Settings/settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";
@@ -1372,6 +1372,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			"Sorry, I'm not allowed to share the results of the 2021 season yet.";
 	}
 
+	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
+
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 			{props.lid !== undefined ? (
@@ -1484,7 +1486,20 @@ const NewLeague = (props: View<"newLeague">) => {
 					) : null}
 
 					<div className="form-group">
-						<label htmlFor="new-league-team">Pick your team</label>
+						<label htmlFor="new-league-team" className="mr-2">
+							Pick your team
+						</label>
+						<NextPrevButtons
+							currentItem={sortedDisplayedTeams.find(t => t.tid === state.tid)}
+							items={sortedDisplayedTeams}
+							onChange={newTeam => {
+								dispatch({
+									type: "setTid",
+									tid: newTeam.tid,
+								});
+							}}
+							disabled={disableWhileLoadingLeagueFile}
+						/>
 						<div className="input-group mb-1">
 							<select
 								id="new-league-team"
@@ -1498,7 +1513,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									});
 								}}
 							>
-								{orderBy(displayedTeams, ["region", "name"]).map(t => {
+								{sortedDisplayedTeams.map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
 											{showLoadingIndicator

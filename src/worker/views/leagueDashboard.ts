@@ -460,16 +460,16 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const confTeams: (typeof teams[number] & {
 			rank: number;
 			gb: number;
-		})[] = await orderTeams(
-			teams
-				.filter(t => t.seasonAttrs.cid === cid)
-				.map(t => ({
-					...t,
-					rank: 0,
-					gb: 0,
-				})),
-			teams,
-		);
+		})[] = (
+			await orderTeams(
+				teams.filter(t => t.seasonAttrs.cid === cid),
+				teams,
+			)
+		).map(t => ({
+			...t,
+			rank: 0,
+			gb: 0,
+		}));
 
 		const pointsFormula = g.get("pointsFormula", "current");
 		const usePts = pointsFormula !== "";

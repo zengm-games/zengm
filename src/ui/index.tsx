@@ -7,7 +7,7 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { AD_DIVS, EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 window.bbgm = { ...util };
 const {
 	compareVersions,
@@ -47,17 +47,11 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	// Put in DOM element and global variable because the former is used before React takes over and the latter is used after
-	const bbgmVersionUI = "REV_GOES_HERE";
-	window.bbgmVersionUI = bbgmVersionUI;
-
 	if (window.withGoodUI) {
 		window.withGoodUI();
 	}
 
-	toWorker("main", "getVersionWorker").then(bbgmVersionWorker => {
-		window.bbgmVersionWorker = bbgmVersionWorker;
-
+	toWorker("main", "ping").then(() => {
 		if (window.withGoodWorker) {
 			window.withGoodWorker();
 		}
@@ -245,20 +239,10 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (window.freestar.freestarReloadAdSlot) {
-						const adDivs =
-							window.screen && window.screen.width < 768
-								? [AD_DIVS.mobile]
-								: [
-										AD_DIVS.leaderboard,
-										AD_DIVS.rectangle1,
-										AD_DIVS.rectangle2,
-										AD_DIVS.rail,
-								  ];
-
-						for (const adDiv of adDivs) {
-							window.freestar.freestarReloadAdSlot(adDiv);
-						}
+					if (window.freestar.refreshAllSlots) {
+						window.freestar.queue.push(() => {
+							window.freestar.refreshAllSlots();
+						});
 					}
 				} else {
 					initialLoad = false;

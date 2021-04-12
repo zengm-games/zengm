@@ -1,12 +1,12 @@
 import assert from "assert";
 import { loadTeamSeasons } from "./testHelpers";
 import lotterySort from "./lotterySort";
-import updateChances from "./updateChances";
+import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";
 import { idb } from "../../db";
 import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 
-describe("worker/core/draft/updateChances", () => {
+describe("worker/core/draft/divideChancesOverTiedTeams", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();
 		idb.league = testHelpers.mockIDBLeague();
@@ -53,7 +53,7 @@ describe("worker/core/draft/updateChances", () => {
 			[10, 11, 12],
 		];
 		await lotterySort(teams);
-		updateChances(chances, teams, false);
+		divideChancesOverTiedTeams(chances, teams, false);
 
 		for (let i = 0; i < sameRec.length; i++) {
 			const tids = sameRec[i];
@@ -69,7 +69,7 @@ describe("worker/core/draft/updateChances", () => {
 		}
 
 		// test if isFinal is true
-		updateChances(chances, teams, true);
+		divideChancesOverTiedTeams(chances, teams, true);
 
 		for (let i = 0; i < sameRec.length; i++) {
 			const tids = sameRec[i];

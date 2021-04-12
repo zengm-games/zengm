@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Fragment, ReactNode } from "react";
 import {
+	CountryFlag,
 	DataTable,
 	Height,
 	PlayerPicture,
@@ -245,7 +246,7 @@ const StatsSummary = ({
 	const separatorAfter = bySport({
 		basketball: [0, 4, 8],
 		football: [0, 2],
-		hockey: [0, 5],
+		hockey: onlyShowIf?.includes("G") ? [0, 3] : [0, 5],
 	});
 
 	return (
@@ -516,6 +517,7 @@ const Player2 = ({
 									])}
 								>
 									{player.born.loc}
+									<CountryFlag className="ml-1" country={player.born.loc} />
 								</a>
 								<br />
 								{typeof player.diedYear !== "number" ? (

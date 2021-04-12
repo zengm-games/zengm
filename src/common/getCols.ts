@@ -197,6 +197,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:ftpFga": {
+			desc: "Free Throws per Field Goal Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:ftr": {
 			desc: "Free Throw Attempt Rate (FTA / FGA)",
 			sortSequence: ["desc", "asc"],
@@ -1531,6 +1536,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:gRec": {
+			desc: "Team record as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
 	},
 });
 const cols: {
@@ -2188,6 +2198,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ft": "FT",
 		"stat:fta": "FTA",
 		"stat:ftr": "FTr",
+		"stat:ftpFga": "FT/FGA",
 		"stat:gmsc": "GmSc",
 		"stat:nrtg": "NRtg",
 		"stat:orb": "ORB",
@@ -2467,6 +2478,7 @@ const sportSpecificTitleOverrides = bySport({
 		PA: "GA",
 		"PS/g": "GF",
 		"PA/g": "GA",
+		"stat:gRec": "Rec",
 	},
 });
 

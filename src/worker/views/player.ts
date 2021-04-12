@@ -24,7 +24,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -127,7 +127,7 @@ const updatePlayer = async (
 					salaries: any[];
 					salariesTotal: any;
 					untradable: any;
-					untradableMsg: string;
+					untradableMsg?: string;
 					ratings: (MinimalPlayerRatings & {
 						abbrev: string;
 						age: number;
@@ -274,6 +274,8 @@ const updatePlayer = async (
 			teamName = "Retired";
 		}
 
+		const teams = await idb.cache.teams.getAll();
+
 		const jerseyNumberInfos: {
 			number: string;
 			start: number;
@@ -285,6 +287,7 @@ const updatePlayer = async (
 				name: string;
 				region: string;
 			};
+			retired: boolean;
 		}[] = [];
 		for (const ps of p.stats) {
 			const jerseyNumber = ps.jerseyNumber;
@@ -324,11 +327,20 @@ const updatePlayer = async (
 					};
 				}
 
+				let retired = false;
+				const t2 = teams[ps.tid];
+				if (t2 && t2.retiredJerseyNumbers) {
+					retired = t2.retiredJerseyNumbers.some(
+						info => info.pid === inputs.pid && info.number === jerseyNumber,
+					);
+				}
+
 				jerseyNumberInfos.push({
 					number: jerseyNumber,
 					start: ps.season,
 					end: ps.season,
 					t,
+					retired,
 				});
 			} else if (prev) {
 				prev.end = ps.season;

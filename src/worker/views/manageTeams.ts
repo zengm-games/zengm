@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g } from "../util";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { DEFAULT_JERSEY } from "../../common";
 
 const updateTeamInfo = async () => {

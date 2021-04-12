@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import getPlayers from "./getPlayers";
 import type { Position } from "../../../common/types.football";
 import type { PlayerGameSim, PlayersOnField } from "./types";

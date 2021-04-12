@@ -223,11 +223,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty",
 		name: "Dynasty",
-		desc: "Win 6 championships in 8 years.",
+		desc: bySport({
+			basketball: "Win 6 championships in 8 years.",
+			default: "Win 3 championships in 5 years.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(6, 8);
+			return bySport({
+				basketball: checkDynasty(6, 8),
+				default: checkDynasty(3, 5),
+			});
 		},
 
 		when: "afterPlayoffs",
@@ -235,11 +241,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty_2",
 		name: "Dynasty 2",
-		desc: "Win 8 championships in a row.",
+		desc: bySport({
+			basketball: "Win 8 championships in a row.",
+			default: "Win 5 championships in a row.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(8, 8);
+			return bySport({
+				basketball: checkDynasty(8, 8),
+				default: checkDynasty(5, 5),
+			});
 		},
 
 		when: "afterPlayoffs",
@@ -247,11 +259,17 @@ const achievements: Achievement[] = [
 	{
 		slug: "dynasty_3",
 		name: "Dynasty 3",
-		desc: "Win 11 championships in 13 years.",
+		desc: bySport({
+			basketball: "Win 11 championships in 13 years.",
+			default: "Win 10 championships in 15 years.",
+		}),
 		category: "Multiple Seasons",
 
 		check() {
-			return checkDynasty(11, 13);
+			return bySport({
+				basketball: checkDynasty(11, 13),
+				default: checkDynasty(10, 15),
+			});
 		},
 
 		when: "afterPlayoffs",
@@ -947,7 +965,10 @@ if (isSport("hockey") || isSport("basketball")) {
 		{
 			slug: "international",
 			name: "International",
-			desc: "Win a title with no American players on your team.",
+			desc: `Win a title with no ${bySport({
+				hockey: "Canadian",
+				default: "American",
+			})} players on your team.`,
 			category: "Team Composition",
 
 			async check() {
@@ -958,8 +979,13 @@ if (isSport("hockey") || isSport("basketball")) {
 				}
 
 				const playersAll = await idb.cache.players.getAll();
-				const countUSA = playersAll.filter(p => helpers.isAmerican(p.born.loc))
-					.length;
+				const countUSA = playersAll.filter(p => {
+					if (isSport("hockey")) {
+						return helpers.getCountry(p.born.loc) === "Canada";
+					}
+
+					return helpers.isAmerican(p.born.loc);
+				}).length;
 
 				if (countUSA < playersAll.length / 2) {
 					// Handle custom rosters where nobody is from the USA by enforcing that the league must be at least half USA for this achievement to apply
@@ -972,8 +998,14 @@ if (isSport("hockey") || isSport("basketball")) {
 				);
 
 				for (const p of players) {
-					if (helpers.isAmerican(p.born.loc)) {
-						return false;
+					if (isSport("hockey")) {
+						if (helpers.getCountry(p.born.loc) === "Canada") {
+							return false;
+						}
+					} else {
+						if (helpers.isAmerican(p.born.loc)) {
+							return false;
+						}
 					}
 				}
 

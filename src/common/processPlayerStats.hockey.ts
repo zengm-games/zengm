@@ -1,16 +1,5 @@
+import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
-
-const ratio = (numerator: number, denominator: number) => {
-	if (denominator > 0) {
-		return numerator / denominator;
-	}
-
-	return 0;
-};
-
-const percentage = (numerator: number, denominator: number) => {
-	return 100 * ratio(numerator, denominator);
-};
 
 const processStats = (
 	ps: PlayerStats,
@@ -35,15 +24,27 @@ const processStats = (
 		} else if (stat === "sa") {
 			row[stat] = ps.sv + ps.ga;
 		} else if (stat === "sPct") {
-			row[stat] = percentage(g, ps.s);
+			row[stat] = helpers.percentage(g, ps.s);
 		} else if (stat === "svPct") {
-			row[stat] = ratio(ps.sv, ps.sv + ps.ga);
+			row[stat] = helpers.ratio(ps.sv, ps.sv + ps.ga);
 		} else if (stat === "foPct") {
-			row[stat] = percentage(ps.fow, ps.fow + ps.fol);
+			row[stat] = helpers.percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "gaa") {
-			row[stat] = ratio(ps.ga, ps.gp);
+			row[stat] = helpers.ratio(ps.ga, ps.gp);
 		} else if (stat === "amin") {
-			row[stat] = ratio(ps.min, ps.gp);
+			row[stat] = helpers.ratio(ps.min, ps.gp);
+		} else if (stat === "gRec") {
+			if (ps.gW !== undefined && ps.gL !== undefined) {
+				row[stat] = `${ps.gW}-${ps.gL}`;
+				if (ps.gOTL > 0) {
+					row[stat] += `-${ps.gOTL}`;
+				}
+				if (ps.gT > 0) {
+					row[stat] += `-${ps.gT}`;
+				}
+			} else {
+				row[stat] = "0-0";
+			}
 		} else if (stat === "age") {
 			if (bornYear === undefined) {
 				throw new Error(
@@ -65,8 +66,8 @@ const processStats = (
 			if (role === "skater") {
 				row[stat] = `${g} G, ${a} A, ${pts} P`;
 			} else if (role === "goalie") {
-				const svPct = percentage(ps.sv, ps.sv + ps.ga);
-				const gaa = ratio(ps.ga, ps.gp);
+				const svPct = helpers.percentage(ps.sv, ps.sv + ps.ga);
+				const gaa = helpers.ratio(ps.ga, ps.gp);
 				row[stat] = `${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
 			} else {
 				row[stat] = "";

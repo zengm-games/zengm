@@ -30,7 +30,12 @@ const createFilterFunction = (
 				}
 
 				if (searchType === "draftPick") {
-					number = getSortVal(number, "draftPick");
+					if (direction) {
+						number = getSortVal(number, "draftPick");
+					} else {
+						// No direction? Just treat it like text search
+						number = undefined;
+					}
 				} else {
 					number = parseFloat(number);
 				}

@@ -1,10 +1,3 @@
-index.html
-- vite
-  - really only need for dev
-  - prod
-    - legacy bundle
-- https://github.com/babel/preset-modules
-
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
@@ -1451,9 +1444,6 @@ new adv stats in roster page?
 - OR, wait for BPM?
 
 per 100 possessions and totals toggle on team stats page
-
-remove babel plugins
-- https://github.com/babel/babel/blob/71e7a7b1e0df42df4ee47a01a6218adf40e99cda/packages/babel-compat-data/data/plugins.json
 
 remove polyfills
 - get rid of getAll polyfill when safari 10.x usage goes to 0

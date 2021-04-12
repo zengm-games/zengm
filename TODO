@@ -3,7 +3,6 @@ index.html
   - really only need for dev
   - prod
     - legacy bundle
-- https://github.com/babel/preset-modules
 
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json

@@ -10,8 +10,8 @@ import {
 	FormEvent,
 	useEffect,
 } from "react";
-import { HelpPopover } from "../../components";
-import { confirm, localActions, logEvent, useLocalShallow } from "../../util";
+import { HelpPopover, StickyBottomButtons } from "../../components";
+import { confirm, localActions, logEvent } from "../../util";
 import { AnimatePresence, motion } from "framer-motion";
 import { isSport } from "../../../common";
 import { settings } from "./settings";
@@ -1359,10 +1359,6 @@ const SettingsForm = ({
 		};
 	});
 
-	const { stickyFooterAd } = useLocalShallow(state => ({
-		stickyFooterAd: state.stickyFooterAd,
-	}));
-
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
 	const [state, setState] = useState<
@@ -1524,11 +1520,6 @@ const SettingsForm = ({
 	};
 
 	const currentCategoryNames: Category[] = [];
-
-	let bottom = 0;
-	if (stickyFooterAd) {
-		bottom += 52;
-	}
 
 	const toggleGodModeSettings = () => {
 		setShowGodModeSettings(show => !show);
@@ -1728,10 +1719,7 @@ const SettingsForm = ({
 					);
 				})}
 
-				<div
-					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
-					style={{ bottom }}
-				>
+				<StickyBottomButtons>
 					<div className="btn-group">
 						<button
 							className={classNames(
@@ -1774,7 +1762,7 @@ const SettingsForm = ({
 							{saveText}
 						</button>
 					</div>
-				</div>
+				</StickyBottomButtons>
 			</form>
 			<div className="settings-shortcuts flex-shrink-0">
 				<ul className="list-unstyled">

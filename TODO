@@ -26,6 +26,7 @@ settings re-design
     - settings that make sense only when edited prior to league (like draft ages or num players on court)
     - settings that can be changed prior to league outside of god mode
   - make buttons UI consistent for teams and settings customization
+    - make sure to use hack for framer-motion
 - some settings should only be editable in offseason
   - playoff structure
 - to add

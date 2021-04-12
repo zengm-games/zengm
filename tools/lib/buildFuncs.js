@@ -222,6 +222,15 @@ const reset = () => {
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
+	if (watch) {
+		replace({
+			regex: "-REV_GOES_HERE\\.js",
+			replacement: ".js",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+	}
+
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
@@ -512,15 +521,6 @@ src="https://www.facebook.com/tr?id=${
 		paths: ["build/index.html"],
 		silent: true,
 	});
-
-	if (watch) {
-		replace({
-			regex: '-" \\+ bbgmVersion \\+ "',
-			replacement: "",
-			paths: ["build/index.html"],
-			silent: true,
-		});
-	}
 
 	return rev;
 };

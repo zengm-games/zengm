@@ -5,8 +5,8 @@ const workerPath =
 		? `/gen/worker-${window.bbgmVersion}.js`
 		: "/gen/worker.js";
 const worker = window.useSharedWorker
-	? new SharedWorker(workerPath)
-	: new Worker(workerPath);
+	? new SharedWorker(workerPath, { type: "module" })
+	: new Worker(workerPath, { type: "module" });
 
 export const promiseWorker = new PWBHost(worker);
 promiseWorker.registerError(e => {

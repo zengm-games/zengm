@@ -78,6 +78,11 @@ const minHeight100 = {
 	minHeight: "100%",
 };
 
+const minWidth0 = {
+	// Fix for responsive table not being triggered by flexbox limits, and skyscraper ad overflowing content https://stackoverflow.com/a/36247448/786644
+	minWidth: 0,
+};
+
 const Controller = () => {
 	const [state, dispatch] = useReducer(reducer, {
 		Component: undefined,
@@ -303,7 +308,7 @@ const Controller = () => {
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 h-100">
 				<SideBar pageID={pageID} />
 				<div className="d-flex" style={minHeight100}>
-					<div className="w-100 d-flex flex-column">
+					<div className="w-100 d-flex flex-column" style={minWidth0}>
 						<Header />
 						<main className="p402_premium" id="actual-content">
 							<div id="actual-actual-content" className="clearfix">

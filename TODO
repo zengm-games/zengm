@@ -2,7 +2,8 @@ If you play a league with draft type:"no draft, rookies as free agents" ; random
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
 
-players under 19 should not have colleges
+When I open up a new league under "New Custom League" or whatever, I turned on real players and all of the settings that come with the real players except the generic real teams, which I turned off. However, when I turned off the real teams, the same teams are there, instead of the original pre-expansion teams
+- https://discord.com/channels/290013534023057409/290015591216054273/824291603425263636
 
 show ovr live in player editor
 
@@ -15,6 +16,9 @@ ad stuff
 - skyscraper sticky
   - compare I:PV, CPM, and RPM before and after
 - CPM from skyscraper and leaderboard really worth it? why not add at bottom? could fit like 4-5 squares there
+  - especially for skyscraper
+- sometimes leaderboard displays a small ad, like 320x50... in that case, why not show two of them? didn't you say you could do that?
+- add another ad at the top, for wide screens?
 - mobile - would bigger ad unit at bottom work just as well?
 
 draft class quality setting

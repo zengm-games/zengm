@@ -199,6 +199,14 @@ const genPlayersWithoutSaving = async (
 		delete p.fudgeFactor; // Update player values after ratings changes
 	}
 
+	// No college for players 18 or younger
+	for (const p of enteringDraft) {
+		const ageAtDraft = p.draft.year - p.born.year;
+		if (ageAtDraft <= 18) {
+			p.college = "";
+		}
+	}
+
 	return enteringDraft;
 };
 

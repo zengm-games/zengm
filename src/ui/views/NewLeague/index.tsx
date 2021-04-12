@@ -865,6 +865,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					}}
 					saveText={createLeagueText}
 					hasPlayers={state.keptKeys.includes("players")}
+					// Don't want legends for this!
+					realPlayers={state.customize === "real"}
 				/>
 			</motion.div>
 		);

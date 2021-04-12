@@ -938,8 +938,6 @@ const encodeDecodeFunctions = {
 	},
 };
 
-const groupedOptions = groupBy(settings, "category");
-
 // Specified order
 const categories: {
 	name: Category;
@@ -1334,18 +1332,20 @@ type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 const SettingsForm = ({
 	onCancel,
 	onSave,
-	newLeagueType,
+	hasPlayers,
+	newLeague,
+	realPlayers,
 	saveText = "Save Settings",
 	...props
 }: Settings & {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
-	newLeagueType?: "newLeague" | "newLeagueWithPlayers";
+	hasPlayers?: boolean;
+	newLeague?: boolean;
+	realPlayers?: boolean;
 	saveText?: string;
 }) => {
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
-
-	const newLeague = !!newLeagueType;
 
 	useEffect(() => {
 		localActions.update({
@@ -1442,14 +1442,22 @@ const SettingsForm = ({
 		}
 	};
 
+	// Filter out the new league only ones when appropriate
+	const filteredSettings = settings.filter(setting => {
+		return (
+			!setting.showOnlyIf ||
+			setting.showOnlyIf({
+				hasPlayers,
+				newLeague,
+				realPlayers,
+			})
+		);
+	});
+	const groupedSettings = groupBy(filteredSettings, "category");
+
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setSubmitting(true);
-
-		// Filter out the new league only ones when appropriate
-		const filteredSettings = settings.filter(setting => {
-			return newLeague || !setting.viewableOnlyWhen;
-		});
 
 		const output = ({} as unknown) as Settings;
 		for (const option of filteredSettings) {
@@ -1545,20 +1553,14 @@ const SettingsForm = ({
 				</GodModeSettingsButton>
 
 				{categories.map(category => {
-					if (!groupedOptions[category.name]) {
+					if (!groupedSettings[category.name]) {
 						return null;
 					}
 
-					const catOptions = groupedOptions[category.name].filter(option => {
-						const visibleWithNewLeagueSetting =
-							newLeagueType === option.viewableOnlyWhen ||
-							(newLeagueType === "newLeagueWithPlayers" &&
-								option.viewableOnlyWhen === "newLeague") ||
-							(newLeague && !option.viewableOnlyWhen);
+					const catOptions = groupedSettings[category.name].filter(option => {
 						return (
 							(showGodModeSettings ||
 								settingIsEnabled(option.godModeRequired)) &&
-							visibleWithNewLeagueSetting &&
 							!option.hidden
 						);
 					});

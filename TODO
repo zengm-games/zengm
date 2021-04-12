@@ -19,20 +19,6 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
-  - what settings should be on sub-page, and what should be on main page?
-    - api/index/createLeague
-      - realDraftRatings
-        - only for (state.customize === "real" || state.customize === "legends") && state.keptKeys.includes("players")
-          - change newLeague back to boolean, pass in booleans for all these variables, and add a showOnlyIf callback function in settings.ts
-            - comment about diff between showOnlyIf and hidden
-      - randomization
-        - debuts and debutsForever only available when state.customize === "real"
-          - description too
-          - two separate entries for same key, with different showOnlyIf? Or some ability to make contents of settings entries dynamic?
-        - don't store in DB, except for randomDebutsForever
-        - only for state.keptKeys.includes("players") || state.customize === "real
-  - also new league has some extra settings that don't persist
-    - Make a new category only for new leagues: randomization, real draft prospect ratings (only real players leagues)
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
   - blog

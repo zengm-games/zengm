@@ -30,7 +30,13 @@ export const settings: {
 		output: any,
 		props: View<"settings">,
 	) => void | Promise<void>;
-	viewableOnlyWhen?: "newLeague" | "newLeagueWithPlayers";
+
+	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
+	showOnlyIf?: (params: {
+		hasPlayers?: boolean;
+		newLeague?: boolean;
+		realPlayers?: boolean;
+	}) => boolean | undefined;
 	customForm?: true;
 	hidden?: true;
 	maxWidth?: true;
@@ -46,7 +52,8 @@ export const settings: {
 		key: "randomization",
 		name: "Randomization",
 		godModeRequired: "existingLeagueOnly",
-		viewableOnlyWhen: "newLeagueWithPlayers",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
 		type: "string",
 		values: [
 			{ key: "none", value: "None" },
@@ -74,10 +81,31 @@ export const settings: {
 	},
 	{
 		category: "New League",
+		key: "randomization",
+		name: "Randomization",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && !realPlayers,
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "shuffle", value: "Shuffle rosters" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Shuffle rosters:</b> All active players are placed on random teams.
+				</p>
+			</>
+		),
+	},
+	{
+		category: "New League",
 		key: "realDraftRatings",
 		name: "Real Draft Prospect Ratings",
 		godModeRequired: "existingLeagueOnly",
-		viewableOnlyWhen: "newLeagueWithPlayers",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
 		type: "string",
 		values: [
 			{ key: "rookie", value: "Based on rookie season stats" },
@@ -105,7 +133,7 @@ export const settings: {
 		key: "equalizeRegions",
 		name: "Equalize Region Populations",
 		godModeRequired: "existingLeagueOnly",
-		viewableOnlyWhen: "newLeague",
+		showOnlyIf: ({ newLeague }) => newLeague,
 		type: "bool",
 	},
 	{
@@ -113,7 +141,7 @@ export const settings: {
 		key: "noStartingInjuries",
 		name: "No Starting Injuries",
 		godModeRequired: "existingLeagueOnly",
-		viewableOnlyWhen: "newLeagueWithPlayers",
+		showOnlyIf: ({ newLeague, hasPlayers }) => newLeague && hasPlayers,
 		type: "bool",
 	},
 	{

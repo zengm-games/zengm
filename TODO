@@ -19,6 +19,7 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
+  - test random debuts forever league on import, should have correct setting
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
   - blog

@@ -1732,25 +1732,6 @@ const SettingsForm = ({
 					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
 					style={{ bottom }}
 				>
-					<div className="btn-group mr-auto">
-						<button
-							className="btn btn-primary"
-							disabled={submitting}
-							type="submit"
-						>
-							{saveText}
-						</button>
-						{onCancel ? (
-							<button
-								className="btn btn-secondary"
-								type="button"
-								disabled={submitting}
-								onClick={onCancel}
-							>
-								Cancel
-							</button>
-						) : null}
-					</div>
 					<div className="btn-group">
 						<button
 							className={classNames(
@@ -1773,6 +1754,25 @@ const SettingsForm = ({
 								{showGodModeSettings ? "Hide" : "Show"} God Mode settings
 							</GodModeSettingsButton>
 						) : null}
+					</div>
+					<div className="btn-group ml-auto">
+						{onCancel ? (
+							<button
+								className="btn btn-secondary"
+								type="button"
+								disabled={submitting}
+								onClick={onCancel}
+							>
+								Cancel
+							</button>
+						) : null}
+						<button
+							className="btn btn-primary"
+							disabled={submitting}
+							type="submit"
+						>
+							{saveText}
+						</button>
 					</div>
 				</div>
 			</form>

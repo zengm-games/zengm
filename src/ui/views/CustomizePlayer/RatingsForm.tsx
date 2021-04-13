@@ -65,6 +65,18 @@ const RatingsForm = ({
 		};
 	}, [ratingsRow]);
 
+	const fuzzRating = (
+		ratingsRow: any,
+		rating: string,
+		ratingOverride?: number,
+	) => {
+		const raw = ratingOverride ?? ratingsRow[rating];
+
+		return godMode || rating === "hgt"
+			? raw
+			: Math.round(helpers.bound(raw + ratingsRow.fuzz, 0, 100));
+	};
+
 	return (
 		<>
 			{rows.map((row, i) => {
@@ -75,7 +87,7 @@ const RatingsForm = ({
 							{Number.isNaN(ovr) ? (
 								<span className="text-danger">error</span>
 							) : (
-								ovr
+								fuzzRating(ratingsRow, "ovr", ovr)
 							)}
 						</p>
 						<div className="row">
@@ -98,18 +110,7 @@ const RatingsForm = ({
 																	onChange={event => {
 																		handleChange("rating", rating, event);
 																	}}
-																	value={
-																		godMode || rating === "hgt"
-																			? ratingsRow[rating]
-																			: Math.round(
-																					helpers.bound(
-																						ratingsRow[rating] +
-																							ratingsRow.fuzz,
-																						0,
-																						100,
-																					),
-																			  )
-																	}
+																	value={fuzzRating(ratingsRow, rating)}
 																	disabled={!godMode}
 																/>
 															</div>

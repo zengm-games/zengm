@@ -1,3 +1,12 @@
+real player stats
+- in separate json file, only loaded if selected
+- options:
+  - just this season's stats
+  - all stats for active players
+  - all stats for active and retired players
+- yearsWithTeam
+- statsTids
+
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
@@ -50,6 +59,7 @@ teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.
 hockey
 - game sim performance
 - ovr PR
+- why everyone wants 3 year contracts @AtomicDelirium
 
 goat frivolity, similar to hof but including active players
 - https://twitter.com/Dontreach_/status/1364770043347746816
@@ -142,7 +152,11 @@ option to exclude notable games box scores from deletion
 - finals
 - games involving your team
 
-name/colleges revamp
+name/colleges
+- UI to edit, from league settings
+- special entries in frequencies
+  - _random - uniform random of all built-in countries
+  - _default - built-in countries at their default probability
 - races
   - some way to validate that all countries have races, and vice versa
   - update docs

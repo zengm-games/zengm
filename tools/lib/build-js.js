@@ -50,6 +50,7 @@ const buildJS = async () => {
 	delete process.env.LEGACY;
 
 	build.setTimestamps(rev);
+	build.minifyIndexHTML();
 
 	const realPlayerDataFilename = "build/gen/real-player-data.json";
 	if (fs.existsSync(realPlayerDataFilename)) {

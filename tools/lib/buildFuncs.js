@@ -2,6 +2,7 @@ const CleanCSS = require("clean-css");
 const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
+const htmlmin = require("html-minifier-terser");
 const sass = require("node-sass");
 const path = require("path");
 const replace = require("replace");
@@ -525,6 +526,19 @@ src="https://www.facebook.com/tr?id=${
 	return rev;
 };
 
+const minifyIndexHTML = () => {
+	const content = fs.readFileSync("build/index.html", "utf8");
+	const minified = htmlmin.minify(content, {
+		collapseBooleanAttributes: true,
+		collapseWhitespace: true,
+		minifyCSS: true,
+		minifyJS: true,
+		removeComments: true,
+		useShortDoctype: true,
+	});
+	fs.writeFileSync("build/index.html", minified);
+};
+
 module.exports = {
 	bySport,
 	buildCSS,
@@ -533,4 +547,5 @@ module.exports = {
 	genRev,
 	reset,
 	setTimestamps,
+	minifyIndexHTML,
 };

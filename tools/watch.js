@@ -10,6 +10,7 @@ fs.unlinkSync("build/sw.js");
 
 const rev = build.genRev();
 build.setTimestamps(rev, true);
+build.minifyIndexHTML();
 
 const renderWatchProgress = importJsx("./lib/renderWatchProgress");
 renderWatchProgress();

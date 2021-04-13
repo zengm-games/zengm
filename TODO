@@ -803,6 +803,8 @@ FBGM
   - https://discord.com/channels/290013534023057409/290015591216054273/824808266008625204
 - ovr revamp
   - base on composite ratings directly? https://discord.com/channels/290013534023057409/569726303926878219/822286234612924416
+- 1st and 10, 10 yard run, fumble, recovered by offense 1 yard back -> 1st down, because it's assessed when moving forward 10 yards
+  - "fumble recovered by offense should only cost one down" test
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

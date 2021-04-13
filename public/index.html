@@ -12,8 +12,7 @@
 
     <meta name="Description" content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
-    <script type="module" src="/gen/ui-REV_GOES_HERE.js" async></script>
-    <script nomodule src="/gen/ui-legacy-REV_GOES_HERE.js" async></script>
+    <link rel="modulepreload" href="/gen/ui-REV_GOES_HERE.js">
     <link rel="modulepreload" href="/gen/worker-REV_GOES_HERE.js">
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
@@ -169,16 +168,30 @@ var timeoutID = setTimeout(function () {
   startupErrorUnknown.style.display = "block";
 }, 6000);
 
+function checkModern() {
+  try {
+    eval("var x = {}; x ?? x?.y;");
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 function withGoodBrowser() {
   startupBrowser.innerHTML += " done!";
   startupUI.innerHTML = "Loading UI...";
   startupWorker.innerHTML = "Loading backend...";
 
-  if (window.bbgmInit) {
-    window.bbgmInit();
-  } else {
-    window.bbgmReady = true;
+  var body = document.getElementsByTagName('body').item(0);
+  var script = document.createElement('script');
+  if (checkModern()) {
+    // Needs to be module for modulepreload
+    script.type = "module";
+    script.src = "/gen/ui-" + bbgmVersion + ".js";
+  } else  {
+    script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
   }
+  body.appendChild(script);
 }
 
 var count = 0;
@@ -215,7 +228,7 @@ for (var i = 0; i < 12; i++) {
 }
 
 // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
-var goodIDB = function (cb) {
+function goodIDB(cb) {
   try {
     if (typeof window.indexedDB === "undefined") {
       cb("bad");
@@ -293,7 +306,7 @@ var goodIDB = function (cb) {
   };
 };
 
-var checkBrowser = function () {
+function checkBrowser() {
   try {
     eval("const s = Symbol(); let f = x => 1");
     return true;

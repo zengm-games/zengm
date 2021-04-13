@@ -309,7 +309,7 @@ const setupRoutes = () => {
 	});
 };
 
-window.bbgmInit = async () => {
+(async () => {
 	promiseWorker.register(([name, ...params]) => {
 		if (!api.hasOwnProperty(name)) {
 			throw new Error(
@@ -331,8 +331,4 @@ window.bbgmInit = async () => {
 	if ("serviceWorker" in navigator) {
 		navigator.serviceWorker.register("/sw.js");
 	}
-};
-
-if (window.bbgmReady) {
-	window.bbgmInit();
-}
+})();

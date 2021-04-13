@@ -230,6 +230,13 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 			paths: ["build/index.html"],
 			silent: true,
 		});
+
+		replace({
+			regex: '-" \\+ bbgmVersion \\+ "',
+			replacement: "",
+			paths: ["build/index.html"],
+			silent: true,
+		});
 	}
 
 	replace({

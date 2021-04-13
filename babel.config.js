@@ -6,6 +6,31 @@ module.exports = api => {
 		JSON.stringify([process.env.LEGACY, process.env.NODE_ENV]),
 	);
 
+	const plugins = [require("./tools/babel-plugin-sport-functions")];
+
+	if (process.env.LEGACY) {
+		plugins.push(
+			[
+				"@babel/plugin-proposal-optional-chaining",
+				{
+					loose: true,
+				},
+			], // Chrome 80, Firefox 74, Safari 13.1
+			[
+				"@babel/plugin-proposal-nullish-coalescing-operator",
+				{
+					loose: true,
+				},
+			], // Chrome 80, Firefox 72, Safari 13.1
+			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Firefox 55, Safari 11.1
+			"@babel/plugin-transform-for-of", // Chrome 51, Firefox 53
+			"@babel/plugin-transform-parameters", // Firefox 53
+			"@babel/plugin-transform-destructuring", // Chrome 51, Firefox 53
+			"@babel/plugin-transform-exponentiation-operator", // Chrome 52, Firefox 52, Safari 10.1
+			"@babel/plugin-transform-async-to-generator", // Chrome 55, Firefox 52, Safari 11
+		);
+	}
+
 	return {
 		presets: [
 			[
@@ -18,25 +43,8 @@ module.exports = api => {
 				},
 			],
 			"@babel/preset-typescript",
-			[
-				"@babel/preset-env",
-				{
-					bugfixes: true,
-					loose: true,
-					targets: process.env.LEGACY
-						? {
-								chrome: "49",
-								firefox: "47",
-								safari: "10",
-						  }
-						: {
-								esmodules: true,
-						  },
-					exclude: ["@babel/plugin-transform-regenerator"],
-				},
-			],
 		],
-		plugins: [require("./tools/babel-plugin-sport-functions")],
+		plugins,
 		env: {
 			test: {
 				plugins: ["@babel/plugin-transform-modules-commonjs"],

@@ -80,24 +80,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 		return {
 			minNumTeams: 3,
 			numToPick: 3,
-			chances: [
-				185,
-				135,
-				115,
-				95,
-				85,
-				75,
-				65,
-				60,
-				45,
-				35,
-				30,
-				25,
-				20,
-				15,
-				10,
-				5,
-			],
+			chances: [185, 135, 115, 95, 85, 75, 65, 60, 50, 35, 30, 25, 20, 15, 10],
 		};
 	}
 

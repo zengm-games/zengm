@@ -2,9 +2,6 @@ If you play a league with draft type:"no draft, rookies as free agents" ; random
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
 
-When I open up a new league under "New Custom League" or whatever, I turned on real players and all of the settings that come with the real players except the generic real teams, which I turned off. However, when I turned off the real teams, the same teams are there, instead of the original pre-expansion teams
-- https://discord.com/channels/290013534023057409/290015591216054273/824291603425263636
-
 for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
 - even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
 - last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
@@ -33,8 +30,7 @@ settings re-design
 - to add
   - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
-hockey new lottery
-- revert chances changes for old method
+hockey new lottery nhl2021
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
 

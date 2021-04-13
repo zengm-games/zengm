@@ -35,7 +35,7 @@ const injectManifest = async () => {
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
 		globIgnores: [
 			"gen/*-legacy-*.js",
-			"gen/real-player-data*.json",
+			"gen/real-player-*.json",
 			"upgrade-39/*",
 		],
 

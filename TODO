@@ -9,6 +9,8 @@ real player stats
   - yearsWithTeam
 - store stats row as an array or object? does it matter for quota usage?
 - service worker cache
+- how does it handle disbanded teams?
+- teamStats, teamSeasons
 
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json

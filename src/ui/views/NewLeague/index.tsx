@@ -321,7 +321,11 @@ const getSettingsFromGameAttributes = (
 
 	if (gameAttributes) {
 		for (const key of helpers.keys(newSettings)) {
-			if (key === "noStartingInjuries" || key === "randomization") {
+			if (
+				key === "noStartingInjuries" ||
+				key === "randomization" ||
+				key === "realStats"
+			) {
 				continue;
 			}
 
@@ -641,6 +645,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						settings.randomization === "debuts" ||
 						settings.randomization === "debutsForever",
 					realDraftRatings: settings.realDraftRatings,
+					realStats: settings.realStats,
 				};
 			} else if (state.customize === "legends") {
 				getLeagueOptions = {

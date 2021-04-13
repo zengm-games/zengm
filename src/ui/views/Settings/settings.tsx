@@ -145,6 +145,20 @@ export const settings: {
 		type: "bool",
 	},
 	{
+		category: "New League",
+		key: "realStats",
+		name: "Historical Stats",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "lastSeason", value: "Last season, active players only" },
+			{ key: "allSeasonsActive", value: "All seasons, active players only" },
+		],
+	},
+	{
 		category: "Season",
 		key: "numGames",
 		name: "# Games Per Season",

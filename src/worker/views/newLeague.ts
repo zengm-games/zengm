@@ -193,6 +193,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		),
 		noStartingInjuries: false,
 		randomization: "none",
+		realStats: "none",
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

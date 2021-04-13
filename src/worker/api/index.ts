@@ -411,6 +411,11 @@ const createLeague = async ({
 		noStartingInjuries,
 		randomization,
 		repeatSeason,
+
+		// realStats is already in getLeagueOptions
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		realStats,
+
 		...otherSettings
 	} = settings;
 

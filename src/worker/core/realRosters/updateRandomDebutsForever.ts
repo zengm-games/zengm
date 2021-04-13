@@ -35,6 +35,7 @@ const updateRandomDebutsForever = async (
 			phase: PHASE.DRAFT, // Faked, so initialDraftYear is correct in getDraftProspects
 			randomDebuts: true,
 			realDraftRatings: g.get("realDraftRatings") ?? "draft",
+			realStats: "none",
 		},
 	);
 

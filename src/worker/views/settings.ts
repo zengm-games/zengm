@@ -1,5 +1,9 @@
 import { g } from "../util";
-import type { GameAttributesLeague, UpdateEvents } from "../../common/types";
+import type {
+	GameAttributesLeague,
+	GetLeagueOptionsReal,
+	UpdateEvents,
+} from "../../common/types";
 
 const keys = [
 	"godMode",
@@ -91,6 +95,7 @@ export type Settings = Pick<
 		undefined
 	>;
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
+	realStats: GetLeagueOptionsReal["realStats"];
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -179,6 +184,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
 			randomization: "none",
+			realStats: "none",
 		};
 
 		return settings;

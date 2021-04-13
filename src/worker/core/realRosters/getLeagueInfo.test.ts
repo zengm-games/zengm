@@ -16,7 +16,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					"..",
 					"..",
 					"data",
-					"real-player-data-basketball.json",
+					"real-player-data.basketball.json",
 				),
 				"utf8",
 			),
@@ -41,6 +41,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			8,
@@ -54,6 +55,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			30,
@@ -69,6 +71,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			29,
@@ -81,6 +84,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.DRAFT_LOTTERY,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			30,
@@ -96,6 +100,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			17,
@@ -108,6 +113,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					phase: PHASE.DRAFT_LOTTERY,
 					randomDebuts: false,
 					realDraftRatings: "rookie",
+					realStats: "none",
 				})
 			).teams.length,
 			11,

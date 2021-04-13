@@ -1709,6 +1709,10 @@ const lockSet = async (name: LockName, value: boolean) => {
 	await lock.set(name, value);
 };
 
+const ovr = async (ratings: MinimalPlayerRatings, pos: string) => {
+	return player.ovr(ratings, pos);
+};
+
 const ratingsStatsPopoverInfo = async (pid: number) => {
 	const blankObj = {
 		name: undefined,
@@ -3148,6 +3152,7 @@ export default {
 	importPlayers,
 	init,
 	lockSet,
+	ovr,
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,

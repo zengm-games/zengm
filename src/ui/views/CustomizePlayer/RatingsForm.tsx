@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import { Fragment, ChangeEvent } from "react";
+import { Fragment, ChangeEvent, useState, useEffect } from "react";
 import { bySport } from "../../../common";
-import { getCols, helpers } from "../../util";
+import { getCols, helpers, toWorker } from "../../util";
 
 const rows = bySport<
 	{
@@ -49,53 +49,80 @@ const RatingsForm = ({
 	) => void;
 	ratingsRow: any;
 }) => {
+	const [ovr, setOvr] = useState(ratingsRow.ovr);
+
+	useEffect(() => {
+		let mounted = true;
+		(async () => {
+			const newOvr = await toWorker("main", "ovr", ratingsRow, ratingsRow.pos);
+			if (mounted) {
+				setOvr(newOvr);
+			}
+		})();
+
+		return () => {
+			mounted = false;
+		};
+	}, [ratingsRow]);
+
 	return (
 		<>
 			{rows.map((row, i) => {
 				return (
-					<div className="row" key={i}>
-						{row.map((block, j) => {
-							return (
-								<div key={j} className="col-4">
-									{Object.entries(block).map(([title, ratings]) => {
-										return (
-											<Fragment key={title}>
-												<h3>{title}</h3>
-												{ratings.map(rating => {
-													return (
-														<div key={rating} className="form-group">
-															<label>
-																{getCols(`rating:${rating}`)[0].desc}
-															</label>
-															<input
-																type="text"
-																className="form-control"
-																onChange={event => {
-																	handleChange("rating", rating, event);
-																}}
-																value={
-																	godMode || rating === "hgt"
-																		? ratingsRow[rating]
-																		: Math.round(
-																				helpers.bound(
-																					ratingsRow[rating] + ratingsRow.fuzz,
-																					0,
-																					100,
-																				),
-																		  )
-																}
-																disabled={!godMode}
-															/>
-														</div>
-													);
-												})}
-											</Fragment>
-										);
-									})}
-								</div>
-							);
-						})}
-					</div>
+					<Fragment key={i}>
+						<p>
+							Overall:{" "}
+							{Number.isNaN(ovr) ? (
+								<span className="text-danger">error</span>
+							) : (
+								ovr
+							)}
+						</p>
+						<div className="row">
+							{row.map((block, j) => {
+								return (
+									<div key={j} className="col-4">
+										{Object.entries(block).map(([title, ratings]) => {
+											return (
+												<Fragment key={title}>
+													<h3>{title}</h3>
+													{ratings.map(rating => {
+														return (
+															<div key={rating} className="form-group">
+																<label>
+																	{getCols(`rating:${rating}`)[0].desc}
+																</label>
+																<input
+																	type="text"
+																	className="form-control"
+																	onChange={event => {
+																		handleChange("rating", rating, event);
+																	}}
+																	value={
+																		godMode || rating === "hgt"
+																			? ratingsRow[rating]
+																			: Math.round(
+																					helpers.bound(
+																						ratingsRow[rating] +
+																							ratingsRow.fuzz,
+																						0,
+																						100,
+																					),
+																			  )
+																	}
+																	disabled={!godMode}
+																/>
+															</div>
+														);
+													})}
+												</Fragment>
+											);
+										})}
+									</div>
+								);
+							})}
+						</div>
+					</Fragment>
 				);
 			})}
 

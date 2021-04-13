@@ -342,11 +342,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;
 			} else if (type === "rating") {
-				if (field === "locked") {
-					p.ratings[p.ratings.length - 1][field] = checked;
-				} else {
-					p.ratings[p.ratings.length - 1][field] = val;
-				}
+				p.ratings[p.ratings.length - 1] = {
+					...p.ratings[p.ratings.length - 1],
+					[field]: field === "locked" ? checked : val,
+				};
 			} else if (type === "face") {
 				if (["eye", "hair", "mouth", "nose"].includes(field)) {
 					p[type][field].id = val;
@@ -542,7 +541,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			<form onSubmit={handleSubmit}>
 				<div className="row">
-					<div className="col-md-7">
+					<div className="col-md-7 mb-3">
 						<h2>Attributes</h2>
 
 						<div className="row">
@@ -895,7 +894,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						{pictureDiv}
 					</div>
 
-					<div className="col-md-5">
+					<div className="col-md-5 mb-3">
 						<div className="float-right d-flex flex-column">
 							<button
 								type="button"
@@ -959,8 +958,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<h2>Ratings</h2>
 
-						<p>All ratings are on a scale of 0 to 100.</p>
-
 						<RatingsForm
 							godMode={godMode}
 							handleChange={handleChange}
@@ -977,7 +974,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					</div>
 				</div>
 
-				<br />
 				<div className="text-center">
 					<button
 						type="submit"

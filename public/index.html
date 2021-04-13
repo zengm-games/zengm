@@ -222,9 +222,13 @@ var goodIDB = function (cb) {
       return;
     }
   } catch (err) {
-    console.error("Error accessing window.indexedDB");
     console.error(err);
     cb("open-failed");
+    return;
+  }
+
+  if (localStorage.getItem("goodIDB")) {
+    cb("good");
     return;
   }
 
@@ -238,7 +242,6 @@ var goodIDB = function (cb) {
   var openRequest = window.indexedDB.open('__detectIDB_test2', 1);
 
   openRequest.onerror = function (evt) {
-    console.error("Error openining test database:");
     console.error(evt.target.error);
     if (evt.target.error.message.indexOf("aborted") >= 0 || evt.target.error.message.indexOf("full") >= 0) {
       // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
@@ -317,6 +320,8 @@ goodIDB(function (idbResult) {
     startupError.style.display = "block";
     clearTimeout(timeoutID);
   } else {
+    localStorage.setItem("goodIDB", "1")
+
     withGoodBrowser();
   }
 });

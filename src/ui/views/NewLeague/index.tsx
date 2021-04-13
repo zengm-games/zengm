@@ -215,7 +215,10 @@ type State = {
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
 	phase: number;
+
+	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
+
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
@@ -614,6 +617,11 @@ const NewLeague = (props: View<"newLeague">) => {
 		});
 
 		const settings = settingsOverride ?? state.settings;
+
+		// If no settingsOverride, then use difficulty from state, since user may have selected a new value
+		if (!settingsOverride) {
+			settings.difficulty = state.difficulty;
+		}
 
 		const actualShuffleRosters = state.keptKeys.includes("players")
 			? settings.randomization === "shuffle"

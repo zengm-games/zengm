@@ -13,6 +13,8 @@ real player stats
 - how does it handle disbanded teams?
 - teamStats, teamSeasons
 - do something about 6th man award back before starts were tracked
+- when loading all stats, jersey numbers duplicated, sorting issue?
+  - sort playoffs in bbgm-rosters
 
 draft classes won't export with auto save off https://discord.com/channels/290013534023057409/290015591216054273/831675686052823080
 

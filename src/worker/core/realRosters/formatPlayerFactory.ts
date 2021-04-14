@@ -270,36 +270,48 @@ const formatPlayerFactory = async (
 
 		let stats: any;
 		if (options.type === "real" && basketballStats) {
+			let statsTemp: BasketballStats | undefined;
+
+			const statsSeason =
+				options.phase > PHASE.REGULAR_SEASON
+					? options.season
+					: options.season - 1;
+			const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
+
 			if (options.realStats === "lastSeason") {
-				const statsSeason =
-					options.phase > PHASE.REGULAR_SEASON
-						? options.season
-						: options.season - 1;
-				const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
-				stats = basketballStats
-					.filter(
-						row =>
-							row.slug === slug &&
-							row.season === statsSeason &&
-							(includePlayoffs || !row.playoffs),
-					)
-					.map(row => {
-						const tid = getTidNormal(row.abbrev);
-						if (tid === undefined) {
-							throw new Error("tid not found");
-						}
+				statsTemp = basketballStats.filter(
+					row =>
+						row.slug === slug &&
+						row.season === statsSeason &&
+						(includePlayoffs || !row.playoffs),
+				);
+			} else if (options.realStats === "allSeasonsActive") {
+				statsTemp = basketballStats.filter(
+					row =>
+						row.slug === slug &&
+						row.season <= statsSeason &&
+						(includePlayoffs || !row.playoffs || row.season < statsSeason),
+				);
+			}
 
-						const newRow: Omit<typeof row, "slug" | "abbrev"> & {
-							tid: number;
-						} = {
-							...row,
-							tid,
-						};
-						delete (newRow as any).slug;
-						delete (newRow as any).abbrev;
+			if (statsTemp) {
+				stats = statsTemp.map(row => {
+					const tid = getTidNormal(row.abbrev);
+					if (tid === undefined) {
+						throw new Error("tid not found");
+					}
 
-						return newRow;
-					});
+					const newRow: Omit<typeof row, "slug" | "abbrev"> & {
+						tid: number;
+					} = {
+						...row,
+						tid,
+					};
+					delete (newRow as any).slug;
+					delete (newRow as any).abbrev;
+
+					return newRow;
+				});
 			}
 		}
 

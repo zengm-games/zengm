@@ -9,7 +9,6 @@ import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "./awards";
-
 import { idb } from "../../db";
 import { defaultGameAttributes, g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
@@ -203,8 +202,15 @@ export const dpoyScore = (p: PlayerFiltered) =>
 	((p.currentStats.blk + p.currentStats.stl) * p.currentStats.gp) /
 		defaultGameAttributes.numGames;
 
-export const smoyFilter = (p: PlayerFiltered) =>
-	p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
+// Handle case where GS is not available, which happens when loading historical stats
+export const getSmoyFilter = (players: PlayerFiltered[]) => {
+	if (players.some(p => p.currentStats.gs > 0)) {
+		return (p: PlayerFiltered) =>
+			p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
+	}
+
+	return () => false;
+};
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
@@ -346,16 +352,20 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
+
 	const mvp = mvpPlayers[0];
+
 	const allLeague = makeTeams(mvpPlayers);
+
 	const [smoy] = getTopPlayersOffense(
 		{
 			allowNone: true,
-			filter: smoyFilter,
+			filter: getSmoyFilter(players),
 			score: smoyScore,
 		},
 		players,
 	);
+
 	const royPlayers = getTopPlayersOffense(
 		{
 			allowNone: true,

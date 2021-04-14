@@ -1,15 +1,8 @@
 real player stats
-- in separate json file, only loaded if selected
-- options:
-  - just this season's stats
-  - all stats for active players
-  - all stats for active and retired players
-- statsBlank entries
-- game highs
-- store stats row as an array or object? does it matter for quota usage?
+- all stats for active and retired players
+  - teamStats, teamSeasons
+  - hall of fame
 - test to confirm CacheOnlyOneItemPlugin is working
-- teamStats, teamSeasons
-- do something about 6th man award back before starts were tracked
 - blog/changes
 - set startingSeason so past season stats are viewable on normal pages?
 

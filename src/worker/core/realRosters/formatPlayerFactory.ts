@@ -1,3 +1,4 @@
+import loadStatsBasketball, { BasketballStats } from "./loadStats.basketball";
 import { helpers, PHASE, PLAYER } from "../../../common";
 import type { GetLeagueOptions } from "../../../common/types";
 import { LATEST_SEASON, LATEST_SEASON_WITH_DRAFT_POSITIONS } from "./getLeague";
@@ -7,7 +8,7 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 
-const formatPlayerFactory = (
+const formatPlayerFactory = async (
 	basketball: Basketball,
 	options: GetLeagueOptions,
 	season: number,
@@ -18,6 +19,31 @@ const formatPlayerFactory = (
 	initialPid: number,
 ) => {
 	let pid = initialPid;
+
+	let basketballStats: BasketballStats | undefined;
+	if (options.type === "real" && options.realStats !== "none") {
+		basketballStats = await loadStatsBasketball();
+	}
+
+	const tidCache: Record<string, number | undefined> = {};
+	const getTidNormal = (abbrev?: string): number | undefined => {
+		if (abbrev === undefined) {
+			return;
+		}
+		if (tidCache.hasOwnProperty(abbrev)) {
+			return tidCache[abbrev];
+		}
+
+		const t = teams.find(
+			t => t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+		);
+
+		const tid = t?.tid;
+
+		tidCache[abbrev] = tid;
+
+		return tid;
+	};
 
 	return (
 		ratings: Ratings,
@@ -129,15 +155,9 @@ const formatPlayerFactory = (
 				});
 				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
-				if (abbrev !== undefined) {
-					const t = teams.find(
-						t =>
-							t.srID !== undefined &&
-							oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
-					);
-					if (t) {
-						tid = t.tid;
-					}
+				const newTid = getTidNormal(abbrev);
+				if (newTid !== undefined) {
+					tid = newTid;
 				}
 			}
 		}
@@ -248,6 +268,41 @@ const formatPlayerFactory = (
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
 
+		let stats: any;
+		if (options.type === "real" && basketballStats) {
+			if (options.realStats === "lastSeason") {
+				const statsSeason =
+					options.phase > PHASE.REGULAR_SEASON
+						? options.season
+						: options.season - 1;
+				const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
+				stats = basketballStats
+					.filter(
+						row =>
+							row.slug === slug &&
+							row.season === statsSeason &&
+							(includePlayoffs || !row.playoffs),
+					)
+					.map(row => {
+						const tid = getTidNormal(row.abbrev);
+						if (tid === undefined) {
+							throw new Error("tid not found");
+						}
+
+						const newRow: Omit<typeof row, "slug" | "abbrev"> & {
+							tid: number;
+						} = {
+							...row,
+							tid,
+						};
+						delete (newRow as any).slug;
+						delete (newRow as any).abbrev;
+
+						return newRow;
+					});
+			}
+		}
+
 		pid += 1;
 
 		return {
@@ -266,6 +321,7 @@ const formatPlayerFactory = (
 			real: true,
 			draft,
 			ratings: [currentRatings],
+			stats,
 			injury,
 			contract,
 			awards,

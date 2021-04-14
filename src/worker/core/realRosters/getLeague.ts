@@ -280,7 +280,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			options.phase,
 		);
 
-		const formatPlayer = formatPlayerFactory(
+		const formatPlayer = await formatPlayerFactory(
 			basketball,
 			options,
 			options.season,
@@ -325,7 +325,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		// Find draft prospects, which can't include any active players
 		const lastPID = Math.max(...players.map(p => p.pid));
-		const draftProspects = getDraftProspects(
+		const draftProspects = await getDraftProspects(
 			basketball,
 			players,
 			initialTeams,
@@ -682,7 +682,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		const hasQueens = initialTeams.some(t => t.name === "Queens");
 
-		const formatPlayer = formatPlayerFactory(
+		const formatPlayer = await formatPlayerFactory(
 			basketball,
 			options,
 			season,

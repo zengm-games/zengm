@@ -22,7 +22,7 @@ const updateRandomDebutsForever = async (
 
 	const lastPID = idb.cache._maxIds.players;
 
-	const draftProspects = getDraftProspects(
+	const draftProspects = await getDraftProspects(
 		basketball,
 		[],
 		currentTeams,

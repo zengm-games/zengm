@@ -5,6 +5,7 @@ real player stats
   - all stats for active players
   - all stats for active and retired players
 - statsBlank entries
+- game highs
 - store stats row as an array or object? does it matter for quota usage?
 - https://stackoverflow.com/q/67085513/786644
 - teamStats, teamSeasons

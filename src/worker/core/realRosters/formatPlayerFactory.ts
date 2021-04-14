@@ -7,6 +7,7 @@ import type { Basketball, Ratings } from "./loadData.basketball";
 import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
+import { getEWA } from "../../util/advStats.basketball";
 
 const MINUTES_PER_GAME = 48;
 
@@ -307,10 +308,12 @@ const formatPlayerFactory = async (
 					const newRow: Omit<typeof row, "slug" | "abbrev"> & {
 						tid: number;
 						minAvailable: number;
+						ewa: number;
 					} = {
 						...row,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
+						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos),
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;

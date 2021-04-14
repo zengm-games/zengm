@@ -48,7 +48,6 @@ export type BasketballStats = {
 	td?: number;
 	qd?: number;
 	fxf?: number;
-	ewa?: number;
 	minAvailable?: number;
 }[];
 

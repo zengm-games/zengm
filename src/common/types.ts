@@ -1465,7 +1465,7 @@ export type GetLeagueOptionsReal = {
 	phase: number;
 	randomDebuts: boolean;
 	realDraftRatings: "draft" | "rookie";
-	realStats: "none" | "lastSeason" | "allActive" | "all";
+	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 };
 
 export type GetLeagueOptions =

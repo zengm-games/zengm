@@ -156,7 +156,11 @@ export const settings: {
 			{ key: "none", value: "None" },
 			{ key: "lastSeason", value: "Last season, active players only" },
 			{ key: "allActive", value: "All seasons, active players only" },
-			{ key: "all", value: "All seasons, active and retired players" },
+			{
+				key: "allActiveHOF",
+				value: "All seasons, active and and Hall of Fame players only",
+			},
+			{ key: "all", value: "All seasons, teams, and players" },
 		],
 	},
 	{

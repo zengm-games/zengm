@@ -1,10 +1,6 @@
 import { registerQuotaErrorCallback } from "workbox-core/registerQuotaErrorCallback.js";
 import * as googleAnalytics from "workbox-google-analytics";
-import {
-	cleanupOutdatedCaches,
-	createHandlerBoundToURL,
-	precacheAndRoute,
-} from "workbox-precaching";
+import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
@@ -62,9 +58,6 @@ const navigationRoute = new NavigationRoute(handler, {
 	],
 });
 registerRoute(navigationRoute);
-
-// https://developers.google.com/web/tools/workbox/guides/migrations/migrate-from-v3
-cleanupOutdatedCaches();
 
 googleAnalytics.initialize();
 

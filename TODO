@@ -6,6 +6,7 @@ real player stats
   - make sure it handles toronto (contracted than re-expanded)
   - since this changes tids by keeping around the disbanded teams, does that break team selection in new leagues?
   - hall of fame
+    - make sure HoF awards only appear for retired players, or if they need to appear for active players, set hof boolean
   - league history
     - needs awards object
 - all stats for active, plus HoF

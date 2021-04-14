@@ -9,9 +9,22 @@ import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
 registerRoute(
-	new RegExp("/gen/real-player-data.*"),
+	new RegExp("/gen/real-player-data-*"),
 	new CacheFirst({
 		cacheName: "real-player-data",
+		plugins: [
+			new ExpirationPlugin({
+				maxEntries: 1,
+				purgeOnQuotaError: true,
+			}),
+		],
+	}),
+);
+
+registerRoute(
+	new RegExp("/gen/real-player-stats-*"),
+	new CacheFirst({
+		cacheName: "real-player-stats",
 		plugins: [
 			new ExpirationPlugin({
 				maxEntries: 1,

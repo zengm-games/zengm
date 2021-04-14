@@ -150,6 +150,10 @@ const getAbbrev = (tid: number | string): string => {
 		return "DP";
 	}
 
+	if (tid === PLAYER.DOES_NOT_EXIST) {
+		return "DNE";
+	}
+
 	if (tid < 0 || Number.isNaN(tid)) {
 		// Weird or retired
 		return "";

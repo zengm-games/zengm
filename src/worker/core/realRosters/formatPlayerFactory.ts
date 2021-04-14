@@ -298,9 +298,10 @@ const formatPlayerFactory = async (
 
 			if (statsTemp && statsTemp.length > 0) {
 				stats = statsTemp.map(row => {
-					const tid = getTidNormal(row.abbrev);
+					let tid = getTidNormal(row.abbrev);
 					if (tid === undefined) {
-						throw new Error("tid not found");
+						// Team was disbanded
+						tid = PLAYER.DOES_NOT_EXIST;
 					}
 
 					const newRow: Omit<typeof row, "slug" | "abbrev"> & {

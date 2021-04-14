@@ -7,7 +7,6 @@ real player stats
 - statsBlank entries
 - store stats row as an array or object? does it matter for quota usage?
 - service worker cache
-- how does it handle disbanded teams?
 - teamStats, teamSeasons
 - do something about 6th man award back before starts were tracked
 - blog/changes

@@ -4,15 +4,15 @@ real player stats
   - just this season's stats
   - all stats for active players
   - all stats for active and retired players
-- minAvailable compoute dynamically in zengm, not bbgm-rosters
-- statsTids
 - statsBlank entries
-  - yearsWithTeam
+- yearsWithTeam
 - store stats row as an array or object? does it matter for quota usage?
 - service worker cache
 - how does it handle disbanded teams?
 - teamStats, teamSeasons
 - do something about 6th man award back before starts were tracked
+- blog/changes
+- set startingSeason so past season stats are viewable on normal pages?
 
 draft classes won't export with auto save off https://discord.com/channels/290013534023057409/290015591216054273/831675686052823080
 

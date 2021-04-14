@@ -8,6 +8,8 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 
+const MINUTES_PER_GAME = 48;
+
 const formatPlayerFactory = async (
 	basketball: Basketball,
 	options: GetLeagueOptions,
@@ -303,9 +305,11 @@ const formatPlayerFactory = async (
 
 					const newRow: Omit<typeof row, "slug" | "abbrev"> & {
 						tid: number;
+						minAvailable: number;
 					} = {
 						...row,
 						tid,
+						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;

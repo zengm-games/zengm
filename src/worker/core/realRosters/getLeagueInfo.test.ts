@@ -16,7 +16,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					"..",
 					"..",
 					"data",
-					"real-player-data-basketball.json",
+					"real-player-data.basketball.json",
 				),
 				"utf8",
 			),

@@ -276,6 +276,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			initialTeams,
 		} = formatScheduledEvents(
 			scheduledEventsAll,
+			options.realStats === "all",
 			options.season,
 			options.phase,
 		);
@@ -584,8 +585,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 				basketball.expansionDrafts[options.season],
 			)) {
 				const t = initialTeams.find(t => abbrev === t.abbrev);
-				console.log(abbrev, slugs);
-				console.log(initialTeams, t);
 				if (!t) {
 					throw new Error("Team not found");
 				}
@@ -677,6 +676,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const season = legendsInfo[options.decade].end;
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
+			false,
 			season,
 		);
 

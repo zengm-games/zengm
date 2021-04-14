@@ -155,7 +155,7 @@ export const settings: {
 		values: [
 			{ key: "none", value: "None" },
 			{ key: "lastSeason", value: "Last season, active players only" },
-			{ key: "allSeasonsActive", value: "All seasons, active players only" },
+			{ key: "allActive", value: "All seasons, active players only" },
 			{ key: "all", value: "All seasons, active and retired players" },
 		],
 	},

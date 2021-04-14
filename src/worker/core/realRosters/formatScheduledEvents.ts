@@ -58,6 +58,7 @@ const processTeams = (
 	events: ScheduledEventWithoutKey[],
 	season: number,
 	phase: number,
+	keepAllTeams: boolean,
 ) => {
 	let teamEvents = [];
 
@@ -99,22 +100,41 @@ const processTeams = (
 		}
 
 		if (event.type === "expansionDraft") {
-			prevState.push(...helpers.deepCopy(event.info.teams));
+			for (const t of event.info.teams) {
+				const ind = prevState.findIndex(t0 => t0.tid === t.tid);
+				const t0 = prevState[ind];
+				if (t0) {
+					// Re-expanding a contracted team, probably with keepAllTeams
+					prevState[ind] = {
+						...t0,
+						...t,
+					};
+					if (prevState[ind].disabled) {
+						delete prevState[ind].disabled;
+					}
+				} else {
+					prevState.push({
+						...t,
+					});
+				}
+			}
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
 			const ind = prevState.findIndex(t0 => t0.tid === t.tid);
 			const t0 = prevState[ind];
 			if (!t0) {
-				console.log(event);
 				throw new Error(`teamInfo before expansionDraft for tid ${t.tid}`);
 			}
 			prevState[ind] = {
 				...t0,
 				...t,
 			};
+			if (prevState[ind].disabled) {
+				delete prevState[ind].disabled;
+			}
 		} else if (event.type === "contraction") {
-			if (event.season === season && event.phase <= phase) {
-				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs.
+			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
+				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".
 				const t = prevState.find(t => t.tid === event.info.tid);
 				t.disabled = true;
 			} else {
@@ -218,6 +238,7 @@ const processTeams = (
 
 const formatScheduledEvents = (
 	events: any[],
+	keepAllTeams: boolean,
 	season: number,
 	phase: number = PHASE.PRESEASON,
 ) => {
@@ -244,6 +265,7 @@ const formatScheduledEvents = (
 		eventsSorted,
 		season,
 		phase,
+		keepAllTeams,
 	);
 
 	return {

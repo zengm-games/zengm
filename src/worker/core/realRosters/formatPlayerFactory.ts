@@ -289,7 +289,7 @@ const formatPlayerFactory = async (
 						(includePlayoffs || !row.playoffs),
 				);
 			} else if (
-				options.realStats === "allSeasonsActive" ||
+				options.realStats === "allActive" ||
 				options.realStats === "all"
 			) {
 				statsTemp = basketballStats.filter(

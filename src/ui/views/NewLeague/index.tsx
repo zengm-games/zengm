@@ -998,6 +998,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														state.settings.randomization === "debuts" ||
 														state.settings.randomization === "debutsForever",
 													realDraftRatings: state.settings.realDraftRatings,
+													realStats: state.settings.realStats,
 												})
 											}
 											onLoading={value => {

@@ -296,7 +296,7 @@ const formatPlayerFactory = async (
 				);
 			}
 
-			if (statsTemp) {
+			if (statsTemp && statsTemp.length > 0) {
 				stats = statsTemp.map(row => {
 					const tid = getTidNormal(row.abbrev);
 					if (tid === undefined) {

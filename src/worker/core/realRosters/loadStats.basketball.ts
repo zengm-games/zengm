@@ -4,7 +4,6 @@ export type BasketballStats = {
 	abbrev: string;
 	playoffs: boolean;
 	jerseyNumber: string;
-	yearsWithTeam: number;
 	gp?: number;
 	gs?: number;
 	min?: number;

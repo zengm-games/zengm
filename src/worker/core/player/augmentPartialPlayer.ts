@@ -360,10 +360,18 @@ const augmentPartialPlayer = async (
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
 
+		let yearsWithTeam = 1;
+		let prevTid;
 		for (const ps of p.stats) {
-			// Could be calculated correctly if I wasn't lazy
 			if (ps.yearsWithTeam === undefined) {
-				ps.yearsWithTeam = 1;
+				if (ps.tid !== prevTid) {
+					prevTid = ps.tid;
+					yearsWithTeam = 1;
+				} else if (!ps.playoffs) {
+					yearsWithTeam += 1;
+				}
+
+				ps.yearsWithTeam = yearsWithTeam;
 			}
 
 			// If needed, set missing +/-, blocks against to 0

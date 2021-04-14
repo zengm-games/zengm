@@ -105,6 +105,7 @@ type Key =
 	| "stopOnInjury"
 	| "aiJerseyRetirement"
 	| "tiebreakers"
+	| "goatFormula"
 	| "pointsFormula";
 
 type Category =
@@ -1216,6 +1217,16 @@ options.push(
 		type: "bool",
 		description:
 			"This will automatically delete box scores older than the past three seasons because box scores use a lot of disk space. See Tools > Delete Old Data for more.",
+	},
+	{
+		category: "General",
+		key: "goatFormula",
+		name: "GOAT Formula",
+		description: "Does stuff n things",
+		validator: async value => {
+			await toWorker("main", "validatePointsFormula", value);
+		},
+		type: "string",
 	},
 );
 

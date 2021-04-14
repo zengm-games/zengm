@@ -137,6 +137,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 	tradeDeadline: 0.6,
+	goatFormula: wrap(""),
 	pointsFormula: wrap(""),
 	randomDebutsForever: undefined,
 	realDraftRatings: undefined,

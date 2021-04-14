@@ -80,6 +80,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			aiJerseyRetirement: g.get("aiJerseyRetirement"),
 			numPeriods: g.get("numPeriods"),
 			tiebreakers: g.get("tiebreakers"),
+			goatFormula: g.get("goatFormula"),
 			pointsFormula: g.get("pointsFormula"),
 		};
 	}

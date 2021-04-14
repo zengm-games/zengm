@@ -152,6 +152,35 @@ const BoxScore = ({
 								</tfoot>
 							</table>
 						</ResponsiveTableWrapper>
+						<ResponsiveTableWrapper>
+							<table className="table table-striped table-bordered table-sm table-hover">
+								<thead>
+									<tr>
+										<th>Name</th>
+										{typeof t.players[0].abbrev === "string" ? (
+											<th>Team</th>
+										) : null}
+										<th>Pos</th>
+										<th>MP</th>
+										<th>TS%</th>
+										<th>eFG%</th>
+										<th>3PAr</th>
+										<th>FTr</th>
+										<th>ORB%</th>
+										<th>DRB%</th>
+										<th>TRB%</th>
+										<th>AST%</th>
+										<th>STL%</th>
+										<th>BLK%</th>
+										<th>TOV%</th>
+										<th>USG%</th>
+										<th>ORtg</th>
+										<th>DRtg</th>
+										<th>BPM</th>
+									</tr>
+								</thead>
+							</table>
+						</ResponsiveTableWrapper>
 					</div>
 				);
 			})}

@@ -610,6 +610,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							gameOver: {
 								type: "boolean",
 							},
+							goatFormula: {
+								type: "array",
+								minItems: 1,
+							},
 							godMode: {
 								type: "boolean",
 							},

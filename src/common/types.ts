@@ -417,6 +417,7 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	playerMoodTraits: boolean;
+	goatFormula: string;
 	pointsFormula: string;
 	spectator: boolean;
 	otl: boolean;

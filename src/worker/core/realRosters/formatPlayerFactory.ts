@@ -288,7 +288,10 @@ const formatPlayerFactory = async (
 						row.season === statsSeason &&
 						(includePlayoffs || !row.playoffs),
 				);
-			} else if (options.realStats === "allSeasonsActive") {
+			} else if (
+				options.realStats === "allSeasonsActive" ||
+				options.realStats === "all"
+			) {
 				statsTemp = basketballStats.filter(
 					row =>
 						row.slug === slug &&

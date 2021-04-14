@@ -1,10 +1,15 @@
 real player stats
 - all stats for active and retired players
+  - contracted teams
+    - start in 1950 after playoffs and it makes them
   - teamStats, teamSeasons
   - hall of fame
 - test to confirm CacheOnlyOneItemPlugin is working
+- make default "last season"?
+  - if i do this, might as well merge the two data files
 - blog/changes
 - set startingSeason so past season stats are viewable on normal pages?
+  - or should there be another value for this, if startingSeason is used elsewhere too?
 
 enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
 - if you disable the team you're controlling, it switches you to another team. do that for the whole list

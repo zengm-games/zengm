@@ -1,8 +1,8 @@
 real player stats
 - all stats for active and retired players
   - player awards in awards object
-    - award winner team
-    - award winner stats
+    - award winner team abbrevs
+      - or change season summary page to not use it, like historyAll already doesn't use it. anywhere else uses it?
     - all league teams
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly

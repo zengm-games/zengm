@@ -265,7 +265,12 @@ const formatPlayerFactory = async (
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
 
-		let stats: any;
+		type StatsRow = Omit<BasketballStats[number], "slug" | "abbrev"> & {
+			tid: number;
+			minAvailable: number;
+			ewa: number;
+		};
+		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
 			let statsTemp: BasketballStats | undefined;
 
@@ -303,11 +308,7 @@ const formatPlayerFactory = async (
 						tid = PLAYER.DOES_NOT_EXIST;
 					}
 
-					const newRow: Omit<typeof row, "slug" | "abbrev"> & {
-						tid: number;
-						minAvailable: number;
-						ewa: number;
-					} = {
+					const newRow: StatsRow = {
 						...row,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,

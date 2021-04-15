@@ -1,4 +1,4 @@
-import { AWARD_NAMES, PHASE } from "../../../common";
+import { AWARD_NAMES, PHASE, PLAYER } from "../../../common";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
@@ -74,82 +74,141 @@ type AwardPlayerOutput<Defensive> = Defensive extends true
 	? AwardPlayerDefense
 	: AwardPlayer;
 
-const awardPlayer = <Defensive extends true | false>(
-	slug: string | undefined,
-	defensive: Defensive,
-	playoffs?: boolean,
-): AwardPlayerOutput<Defensive> | undefined => {
-	if (!slug || !playersBySlug) {
-		return;
-	}
+const fillInPlayers = (awards: Awards<string, string>): Awards => {
+	const awardPlayer = <Defensive extends true | false>(
+		slug: string | undefined,
+		defensive: Defensive,
+		playoffs?: true,
+	): AwardPlayerOutput<Defensive> | undefined => {
+		if (!slug || !playersBySlug) {
+			return;
+		}
 
-	const p = playersBySlug[slug];
-	if (!p) {
-		return;
-	}
+		const p = playersBySlug[slug];
+		if (!p) {
+			return;
+		}
 
-	const base = {
-		pid: p.pid,
-		name: p.name,
-		tid: -7,
-		abbrev: "DNE",
-	};
+		let tid = PLAYER.DOES_NOT_EXIST;
+		let stats;
+		if (p.stats) {
+			for (const row of p.stats) {
+				if (row.season === awards.season && row.playoffs === playoffs) {
+					stats = row;
+				} else if (row.season > awards.season) {
+					break;
+				}
+			}
+		}
 
-	if (defensive) {
+		if (stats) {
+			tid = stats.tid;
+		}
+
+		const base = {
+			pid: p.pid,
+			name: p.name,
+			tid,
+			abbrev: "DNE",
+		};
+
+		let trb = 0;
+		if (stats && stats.gp !== undefined && stats.gp > 0) {
+			if (stats.drb !== undefined) {
+				trb = (stats.drb + (stats.orb ?? 0)) / stats.gp;
+			}
+		}
+
+		if (defensive) {
+			let blk = 0;
+			let stl = 0;
+			if (stats && stats.gp !== undefined && stats.gp > 0) {
+				if (stats.blk !== undefined) {
+					blk = stats.blk / stats.gp;
+				}
+				if (stats.stl !== undefined) {
+					stl = stats.stl / stats.gp;
+				}
+			}
+
+			return {
+				...base,
+				trb,
+				blk,
+				stl,
+			} as AwardPlayerOutput<Defensive>;
+		}
+
+		let pts = 0;
+		let ast = 0;
+		if (stats && stats.gp !== undefined && stats.gp > 0) {
+			if (stats.pts !== undefined) {
+				pts = stats.pts / stats.gp;
+			}
+			if (stats.ast !== undefined) {
+				ast = stats.ast / stats.gp;
+			}
+		}
+
 		return {
 			...base,
-			trb: 0,
-			blk: 0,
-			stl: 0,
+			pts,
+			trb,
+			ast,
 		} as AwardPlayerOutput<Defensive>;
-	}
+	};
 
-	return {
-		...base,
-		pts: 0,
-		trb: 0,
-		ast: 0,
-	} as AwardPlayerOutput<Defensive>;
-};
-
-const fillInPlayers = (awards: Awards<string, string>): Awards => {
 	return {
 		season: awards.season,
 		bestRecord: awards.bestRecord,
 		bestRecordConfs: awards.bestRecordConfs,
 
 		roy: awardPlayer(awards.roy, false),
-		allRookie: [],
+		allRookie: awards.allRookie.map(slug =>
+			awardPlayer(slug, false),
+		) as AwardPlayer[],
 		mip: awardPlayer(awards.mip, false),
 		mvp: awardPlayer(awards.mvp, false),
 		smoy: awardPlayer(awards.smoy, false),
 		allLeague: [
 			{
 				title: "First Team",
-				players: [],
+				players: awards.allLeague[0].players.map(slug =>
+					awardPlayer(slug, false),
+				) as AwardPlayer[],
 			},
 			{
 				title: "Second Team",
-				players: [],
+				players: awards.allLeague[1].players.map(slug =>
+					awardPlayer(slug, false),
+				) as AwardPlayer[],
 			},
 			{
 				title: "Third Team",
-				players: [],
+				players: awards.allLeague[2].players.map(slug =>
+					awardPlayer(slug, false),
+				) as AwardPlayer[],
 			},
 		],
 		dpoy: awardPlayer(awards.dpoy, true),
 		allDefensive: [
 			{
 				title: "First Team",
-				players: [],
+				players: awards.allDefensive[0].players.map(slug =>
+					awardPlayer(slug, true),
+				) as AwardPlayerDefense[],
 			},
 			{
 				title: "Second Team",
-				players: [],
+				players: awards.allDefensive[1].players.map(slug =>
+					awardPlayer(slug, true),
+				) as AwardPlayerDefense[],
 			},
 			{
 				title: "Third Team",
-				players: [],
+				players: awards.allDefensive[2].players.map(slug =>
+					awardPlayer(slug, true),
+				) as AwardPlayerDefense[],
 			},
 		],
 		finalsMvp: awardPlayer(awards.finalsMvp, false, true),

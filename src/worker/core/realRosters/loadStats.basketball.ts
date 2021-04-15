@@ -2,7 +2,7 @@ export type BasketballStats = {
 	slug: string;
 	season: number;
 	abbrev: string;
-	playoffs: boolean;
+	playoffs?: true;
 	jerseyNumber: string;
 	gp?: number;
 	gs?: number;

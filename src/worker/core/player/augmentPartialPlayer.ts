@@ -25,9 +25,6 @@ const augmentPartialPlayer = async (
 	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
-	if (p.pid === 3571) {
-		console.log(version, JSON.parse(JSON.stringify(p)));
-	}
 
 	if (p.born === undefined) {
 		age = random.randInt(19, 35);

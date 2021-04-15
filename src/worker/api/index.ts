@@ -95,6 +95,7 @@ import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
 import { wrap } from "../util/g";
+import { defaultRealStats } from "../views/newLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -344,7 +345,8 @@ const createLeague = async ({
 		) {
 			const leagueInfo = await realRosters.getLeagueInfo({
 				...getLeagueOptions,
-				realStats: "none",
+				realStats: "all",
+				leagueInfoKeepAllTeams: true,
 			});
 			const abbrev = leagueInfo.teams[tid].abbrev;
 			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);

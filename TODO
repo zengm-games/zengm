@@ -7,8 +7,7 @@ real player stats
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
   - retired jersey numbers?
   - pot calculation slow? use estimate for past seasons?
-- still an issue with tid of initial selected team
-  - should go away after i change the default value of realStats in newLeague.ts back to something besides "all"
+  - gm history start date?
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?
   - not on mobile!

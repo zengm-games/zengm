@@ -2,9 +2,6 @@ real player stats
 - all stats for active and retired players
   - teamSeasons
     - start after playoffs and it makes them
-    - start in 1950 after playoffs and it makes them for disabled teams too
-  - make sure it handles toronto (contracted than re-expanded)
-  - since this changes tids by keeping around the disbanded teams, does that break team selection in new leagues?
   - league history
     - needs awards object
 - test to confirm CacheOnlyOneItemPlugin is working

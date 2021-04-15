@@ -321,8 +321,9 @@ const createLeague = async ({
 }): Promise<number> => {
 	const keys = [...keptKeys, "version"];
 
+	let actualTid = tid;
 	if (getLeagueOptions) {
-		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+		const realLeague = await realRosters.getLeague(getLeagueOptions);
 
 		if (
 			getLeagueOptions.type === "real" &&
@@ -330,6 +331,24 @@ const createLeague = async ({
 		) {
 			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
 		}
+
+		// Since inactive teams are included if realStats=="all", need to translate tid too
+		if (
+			getLeagueOptions.type === "real" &&
+			getLeagueOptions.realStats === "all"
+		) {
+			const leagueInfo = await realRosters.getLeagueInfo({
+				...getLeagueOptions,
+				realStats: "none",
+			});
+			const abbrev = leagueInfo.teams[tid].abbrev;
+			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);
+			if (!abbrev || actualTid < 0) {
+				throw new Error("Error finding tid");
+			}
+		}
+
+		leagueFileInput = realLeague;
 	}
 
 	const leagueFile: any = {};
@@ -489,7 +508,7 @@ const createLeague = async ({
 
 	const lid = await league.create({
 		name,
-		tid,
+		tid: actualTid,
 		leagueFile,
 		shuffleRosters,
 		importLid,

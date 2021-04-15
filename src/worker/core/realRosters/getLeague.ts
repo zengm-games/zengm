@@ -450,7 +450,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const gameAttributes = getGameAttributes(initialGameAttributes, options);
+		const gameAttributes = {
+			...getGameAttributes(initialGameAttributes, options),
+			season: options.season,
+		};
 
 		const getDraftPickTeams = (
 			dp: Basketball["draftPicks"][number][number],
@@ -711,7 +714,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		return {
 			version: 37,
-			startingSeason: options.season,
+			startingSeason: options.realStats === "all" ? 1947 : options.season,
 			players,
 			teams: initialTeams,
 			scheduledEvents,

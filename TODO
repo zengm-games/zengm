@@ -11,8 +11,6 @@ real player stats
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - blog/changes
-- set startingSeason so past season stats are viewable on normal pages?
-  - or should there be another value for this, if startingSeason is used elsewhere too?
 
 enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
 - if you disable the team you're controlling, it switches you to another team. do that for the whole list

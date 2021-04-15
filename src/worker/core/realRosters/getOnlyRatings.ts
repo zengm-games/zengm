@@ -16,20 +16,14 @@ type OnlyRatings = {
 	drb: number;
 	pss: number;
 	reb: number;
+	season?: number;
 };
 
-type OnlyRatingsAndSeason = OnlyRatings & {
-	season: number;
-};
-
-const getOnlyRatings = <
-	KeepSeason extends boolean,
-	Output = KeepSeason extends true ? OnlyRatings : OnlyRatingsAndSeason
->(
+const getOnlyRatings = (
 	ratings: Ratings,
-	keepSeason: KeepSeason,
-): Output => {
-	const newRatings: OnlyRatings = {
+	keepSeason?: boolean,
+): OnlyRatings => {
+	const newRatings = {
 		hgt: ratings.hgt,
 		stre: ratings.stre,
 		spd: ratings.spd,

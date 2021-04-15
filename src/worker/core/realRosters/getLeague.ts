@@ -1,4 +1,4 @@
-import loadDataBasketball, { Basketball, Ratings } from "./loadData.basketball";
+import loadDataBasketball, { Basketball } from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import groupBy from "lodash-es/groupBy";
 import orderBy from "lodash-es/orderBy";

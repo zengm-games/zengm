@@ -904,6 +904,56 @@ const encodeDecodeFunctions = {
 			return parsed;
 		},
 	},
+	rookieScale: {
+		stringify: (value:number[][]) =>{
+			var val =  "{" + String(value[0]) + "};{"+  String(value[1]) + "}"
+			console.log(value)
+			console.log(val)
+			return val
+		},
+		parse: (value: string) => {
+			console.log(value)
+			var values = value.split(";")
+			if(values.length != 2 || !value.match("\{.*\}\s*;\s*\{.*\}")){
+				throw new Error("Must have two array with brackets separated by a ;. i.e. {1000,800};{1000;750}");
+			}
+			
+			var val0 = values[0]	
+			var val1 = values[1]
+			
+			var scale0 = (val0.match(/\{(.*?)\}/) || ["",""])[1].split(",").map((x,i) => {
+				if(i==0 && x==""){
+					throw new Error("First round scale must have at least one number")
+				}
+				var num = Number(x);
+				if (Number.isNaN(num)){
+					throw new Error(x + " is not a number. Rookie scales must be composed of numbers")
+				}else{
+					return num;
+				}
+			});
+			var scale1 = (val1.match(/\{(.*?)\}/) || ["",""])[1].split(",").map((x,i) => {
+				if(i==0 && x==""){
+					throw new Error("Second round scale must have at least one number")
+				}
+				var num = Number(x);
+				if (Number.isNaN(num)){
+					throw new Error(x + " is not a number. Rookie scales must be composed of numbers")
+				}else{
+					return num;
+				}
+			});
+
+			if(scale0.length<1){
+				throw new Error("Rookie scale of first round must have at least one value")				
+			}
+			if(scale1.length<1){
+				throw new Error("Rookie scale of second round must have at least one value")				
+			}
+								
+			return [scale0,scale1];
+		}
+	},
 	string: {},
 	jsonString: {
 		stringify: (value: any) => JSON.stringify(value),
@@ -1038,7 +1088,7 @@ const Input = ({
 	id: string;
 	maxWidth?: true;
 	name: string;
-	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 	type: FieldType;
 	value: string;
 	values?: Values;
@@ -1077,6 +1127,11 @@ const Input = ({
 				<label className="custom-control-label" htmlFor={id}></label>
 			</div>
 		);
+	} else if (type === "rookieScale"){
+		inputElement = (
+			<textarea rows={3} value={value} onChange={onChange} style={{width: "90%"}} disabled={disabled}/>
+		);
+
 	} else if (type === "rangePercent") {
 		inputElement = (
 			<div className="d-flex" style={inputStyle}>
@@ -1095,7 +1150,8 @@ const Input = ({
 				</div>
 			</div>
 		);
-	} else if (values) {
+
+		} else if (values) {
 		if (type === "floatValuesOrCustom") {
 			const parsed = JSON.parse(value);
 			const selectValue =
@@ -1203,17 +1259,17 @@ const Option = ({
 	godModeRequired?: "always" | "existingLeagueOnly";
 	newLeague?: boolean;
 	maxWidth?: true;
-	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 	type: FieldType;
 	value: string;
 	values?: Values;
 	customForm?: ReactNode;
 }) => {
 	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
-
+	
 	return (
 		<>
-			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
+			<div className="d-flex align-items-center" style={type!="rookieScale" ? { minHeight: 33  } : { minHeight: 33  ,flexDirection:"column"}}>
 				<div className="mr-auto text-nowrap">
 					<label
 						className="mb-0"
@@ -1413,11 +1469,14 @@ const SettingsForm = ({
 	};
 
 	const handleChange = (name: Key, type: FieldType) => (
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
 	) => {
 		let value: string;
 		if (type === "bool") {
 			value = String((event.target as any).checked);
+		}else if (type === "rookieScale") {
+			value = event.target.value;
+			console.log(state)
 		} else if (type === "floatValuesOrCustom") {
 			if (event.target.value === "custom") {
 				value = JSON.stringify([true, JSON.parse(state[name])[1]]);

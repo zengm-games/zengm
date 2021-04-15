@@ -335,7 +335,7 @@ export const settings: {
 		),
 		type: "string",
 		values: [
-			{ key: "nba2019", value: "NBA 2019" },
+			{ key: "nba2019", value: "NBA 2019" },  
 			{ key: "nba1994", value: "NBA 1994" },
 			{ key: "nba1990", value: "NBA 1990" },
 			{ key: "nhl2017", value: "NHL 2017" },
@@ -500,6 +500,84 @@ export const settings: {
 					"Value cannot be less than the minimum contract amount",
 				);
 			}
+		},
+	},
+	{
+		category: "Contracts",
+		key: "rookieScale",
+		name: "Rookie Scale",
+		godModeRequired: "always",
+		type: "bool",
+		description: (
+			<p>
+				If enabled the rookies have to be signed to a fixed salary, determined by the Rookie Scales setting
+			</p>
+		)
+	},
+	{
+		category: "Contracts",
+		key: "automaticRookieScale",
+		name: "Automatic Rookie Scale",
+		godModeRequired: "always",
+		type: "bool",
+		description: (
+			<p>
+				If enabled the rookie scale is fixed for the max and mins contracts
+			</p>
+		)
+	},
+	{
+		category: "Contracts",
+		key: "rookieScaleMaxContract",
+		name: "Rookie Scale Max Contract ratio",
+		godModeRequired: "always",
+		type: "float",
+		descriptionLong: (
+			<p>
+				if Automatic Rookie Scale is enabled this determines the maximum contract of the rookie scale as a fraction of the max contract.
+			</p>
+		)
+	},
+	{
+		category: "Contracts",
+		maxWidth: true,
+		key: "rookieScales",
+		name: "Rookie Scales",
+		godModeRequired: "always",
+		type: "rookieScale",
+		descriptionLong: (
+			<>
+				<p>
+					If the Hard Cap is enabled these values establish the rookie salary for each position in the draft. 
+					</p>
+					<p>
+					The first scale belongs to the first round (ordered by position), the second to the second and following rounds. It does not matter if you put less 
+					values than the number of teams, the scale will be filled with the last value, as long as you have one value.
+
+					<a
+						href="https://en.wikipedia.org/wiki/NBA_salary_cap#Rookie_scale_salary"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Rookie scale salary
+					</a>
+					</p>
+				
+			</>
+		),
+		validator: (value, output) => {
+			console.log(value)
+			if(value[0])
+			if(value.length<2){
+				if (value < 1) {
+					throw new Error("Rookie scale must have two ");
+				} else if(value[0].length<1){
+					throw new Error("Rookie scale of first round must have at least one value")
+				} else if(value[1].length<1){
+					throw new Error("Rookie scale of second round must have at least one value")
+				}
+			}
+
 		},
 	},
 	{

@@ -357,7 +357,6 @@ export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: number | null;
 	autoDeleteOldBoxScores: boolean;
-	automaticRookieScale: boolean;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;
@@ -416,9 +415,7 @@ export type GameAttributesLeague = {
 	numTeams: number;
 	playerMoodTraits: boolean;
 	pointsFormula: string;
-	rookieScale: boolean;
-	rookieScaleMaxContract: number;
-	rookieScales: number[][];
+	rookieScale: number[][];
 	spectator: boolean;
 	otl: boolean;
 	otherTeamsWantToHire: boolean;

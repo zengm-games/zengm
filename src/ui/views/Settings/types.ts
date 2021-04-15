@@ -35,10 +35,6 @@ export type Key =
 	| "foulsUntilBonus"
 	| "threePointers"
 	| "pace"
-	| "automaticRookieScale"
-	| "rookieScaleMaxContract"
-	| "rookieScale"
-	| "rookieScales"
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
 	| "twoPointAccuracyFactor"
@@ -104,8 +100,7 @@ export type FieldType =
 	| "jsonString"
 	| "string"
 	| "rangePercent"
-	| "floatValuesOrCustom"
-	| "rookieScale";
+	| "floatValuesOrCustom";
 
 export type Decoration = "currency" | "percent";
 

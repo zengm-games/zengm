@@ -1,6 +1,11 @@
 real player stats
 - all stats for active and retired players
+  - bugs
+    - 2021 -> andrew wiggins is missing regular season stats
+    - draft season history -> no stats for anybody
+    - 2021 -> team history -> no players shown
   - "at draft" ratings, probably do this for all leagues
+    - added support in augmentPartialPlayer, but need to add row of draft ratings to each player in league creation
   - gm history start date?
     - what is this: leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason
 - test with real team overrides
@@ -11,6 +16,7 @@ real player stats
   - limitations
     - no team stats
     - "no data" treated as "0" when computing averages of stats that are only available some years
+    - no retired jerseys
 - later
   - retired jersey numbers
 

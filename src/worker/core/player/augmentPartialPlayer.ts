@@ -130,13 +130,7 @@ const augmentPartialPlayer = async (
 		p.draft.pick = 0;
 	}
 
-	if (typeof p.draft.pot !== "number") {
-		p.draft.pot = 0;
-	}
-
-	if (typeof p.draft.ovr !== "number") {
-		p.draft.ovr = 0;
-	}
+	// ovr and pot set later, to make overriding from ratings easier
 
 	// Fix always-missing info
 	const offset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
@@ -319,6 +313,23 @@ const augmentPartialPlayer = async (
 				r.pos = pos(r);
 			}
 		}
+
+		if (r.season === p.draft.year) {
+			if (typeof p.draft.pot !== "number") {
+				p.draft.pot = r.pot;
+			}
+			if (typeof p.draft.ovr !== "number") {
+				p.draft.ovr = r.ovr;
+			}
+		}
+	}
+
+	// Not in initial object, and not in ratings
+	if (typeof p.draft.pot !== "number") {
+		p.draft.pot = 0;
+	}
+	if (typeof p.draft.ovr !== "number") {
+		p.draft.ovr = 0;
 	}
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time

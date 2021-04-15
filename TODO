@@ -3,8 +3,6 @@ real player stats
   - "at draft" ratings, probably do this for all leagues
     - added support in augmentPartialPlayer, but need to add row of draft ratings to each player in league creation
   - gm history start date?
-- test with real team overrides
-  - team name update in old seasons not applying
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - test to confirm CacheOnlyOneItemPlugin is working

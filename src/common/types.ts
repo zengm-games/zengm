@@ -1374,6 +1374,9 @@ export type TeamSeasonWithoutKey = {
 	imgURL?: string;
 	colors: [string, string, string];
 	jersey?: string;
+
+	// Only used in historical leagues when realStats="all"
+	srID?: string;
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {

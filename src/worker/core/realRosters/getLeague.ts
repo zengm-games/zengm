@@ -424,6 +424,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						teamSeason[key] = teamSeasonData[key];
 					}
 
+					teamSeason.srID = t.srID;
+
 					for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
 						const round = seasonPlayoffSeries.series[i];
 						for (const matchup of round) {
@@ -626,7 +628,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}),
 			)
 			.filter(p => p.tid >= 0);
-		console.log("players", players);
 
 		const keptPlayers = [];
 		const numPlayersPerTeam = Array(initialTeams.length).fill(0);

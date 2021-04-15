@@ -412,7 +412,7 @@ const createLeague = async ({
 				if (getLeagueOptions && t.seasons) {
 					for (const teamSeason of t.seasons) {
 						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
-							srIDOverride: t.srID,
+							srIDOverride: teamSeason.srID ?? t.srID,
 						});
 					}
 				}

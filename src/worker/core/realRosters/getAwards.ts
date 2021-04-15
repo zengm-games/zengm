@@ -303,6 +303,18 @@ const getAwards = (
 			const short = invertedAwardNames[type];
 			if (short && simple.hasOwnProperty(short)) {
 				simple[short] = slug;
+			} else if (type === "First Team All-League") {
+				allLeague1.push(slug);
+			} else if (type === "Second Team All-League") {
+				allLeague2.push(slug);
+			} else if (type === "Third Team All-League") {
+				allLeague3.push(slug);
+			} else if (type === "First Team All-Defensive") {
+				allDefensive1.push(slug);
+			} else if (type === "Second Team All-Defensive") {
+				allDefensive2.push(slug);
+			} else if (type === "Third Team All-Defensive") {
+				allDefensive3.push(slug);
 			}
 		}
 		console.log(season, simple);

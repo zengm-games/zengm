@@ -10,15 +10,29 @@ import {
 	FormEvent,
 	useEffect,
 } from "react";
-import { HelpPopover } from "../../components";
-import { confirm, localActions, logEvent, useLocalShallow } from "../../util";
-import type { View } from "../../../common/types";
+import { HelpPopover, StickyBottomButtons } from "../../components";
+import { confirm, localActions, logEvent } from "../../util";
 import { AnimatePresence, motion } from "framer-motion";
 import { isSport } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
+import type { Settings } from "../../../worker/views/settings";
 
-const godModeRequiredMessage = "This setting can only be changed in God Mode.";
+const settingNeedsGodMode = (
+	godModeRequired?: "always" | "existingLeagueOnly",
+	newLeague?: boolean,
+) => {
+	return !!godModeRequired && (!newLeague || godModeRequired === "always");
+};
+
+const godModeRequiredMessage = (
+	godModeRequired?: "always" | "existingLeagueOnly",
+) => {
+	if (godModeRequired === "existingLeagueOnly") {
+		return "This setting can only be changed in God Mode or when creating a new league.";
+	}
+	return "This setting can only be changed in God Mode.";
+};
 
 // See play-style-adjustments in bbgm-rosters
 const gameSimPresets = isSport("basketball")
@@ -924,13 +938,14 @@ const encodeDecodeFunctions = {
 	},
 };
 
-const groupedOptions = groupBy(settings, "category");
-
 // Specified order
 const categories: {
 	name: Category;
 	helpText?: ReactNode;
 }[] = [
+	{
+		name: "New League",
+	},
 	{
 		name: "General",
 	},
@@ -1009,6 +1024,7 @@ const inputStyle = {
 const Input = ({
 	decoration,
 	disabled,
+	godModeRequired,
 	id,
 	maxWidth,
 	onChange,
@@ -1018,6 +1034,7 @@ const Input = ({
 }: {
 	decoration?: Decoration;
 	disabled?: boolean;
+	godModeRequired?: "always" | "existingLeagueOnly";
 	id: string;
 	maxWidth?: true;
 	name: string;
@@ -1026,7 +1043,7 @@ const Input = ({
 	value: string;
 	values?: Values;
 }) => {
-	const title = disabled ? godModeRequiredMessage : undefined;
+	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 	const commonProps = {
 		className: "form-control",
 		disabled,
@@ -1169,6 +1186,7 @@ const Option = ({
 	descriptionLong,
 	decoration,
 	godModeRequired,
+	newLeague,
 	maxWidth,
 	onChange,
 	type,
@@ -1183,6 +1201,7 @@ const Option = ({
 	descriptionLong?: ReactNode;
 	decoration?: Decoration;
 	godModeRequired?: "always" | "existingLeagueOnly";
+	newLeague?: boolean;
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -1206,10 +1225,10 @@ const Option = ({
 							}
 						}}
 					>
-						{godModeRequired ? (
+						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span
 								className="legend-square god-mode mr-1"
-								title={godModeRequiredMessage}
+								title={godModeRequiredMessage(godModeRequired)}
 							/>
 						) : null}
 						{name.endsWith(" Factor") ? (
@@ -1230,13 +1249,14 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className={classNames("ml-5", maxWidth ? "w-100" : undefined)}>
+				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
 					{customForm ? (
 						customForm
 					) : (
 						<Input
 							type={type}
 							disabled={disabled}
+							godModeRequired={godModeRequired}
 							id={id}
 							maxWidth={maxWidth}
 							name={name}
@@ -1281,11 +1301,13 @@ const GodModeSettingsButton = ({
 	children,
 	className,
 	godMode,
+	disabled,
 	onClick,
 }: {
 	children: any;
 	className?: string;
 	godMode: boolean;
+	disabled?: boolean;
 	onClick: () => void;
 }) => {
 	if (godMode) {
@@ -1296,6 +1318,7 @@ const GodModeSettingsButton = ({
 		<button
 			type="button"
 			className={classNames("btn btn-secondary", className)}
+			disabled={disabled}
 			onClick={onClick}
 		>
 			{children}
@@ -1306,13 +1329,22 @@ const GodModeSettingsButton = ({
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 
-const SettingsForm = (
-	props: View<"settings"> & {
-		onSave: (settings: Partial<Record<Key | SpecialStateBoolean, any>>) => void;
-	},
-) => {
-	const { godModeInPast, onSave } = props;
-
+const SettingsForm = ({
+	onCancel,
+	onSave,
+	hasPlayers,
+	newLeague,
+	realPlayers,
+	saveText = "Save Settings",
+	...props
+}: Settings & {
+	onCancel?: () => void;
+	onSave: (settings: Settings) => void;
+	hasPlayers?: boolean;
+	newLeague?: boolean;
+	realPlayers?: boolean;
+	saveText?: string;
+}) => {
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
 
 	useEffect(() => {
@@ -1326,10 +1358,6 @@ const SettingsForm = (
 			});
 		};
 	});
-
-	const { stickyFooterAd } = useLocalShallow(state => ({
-		stickyFooterAd: state.stickyFooterAd,
-	}));
 
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
@@ -1359,7 +1387,7 @@ const SettingsForm = (
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
-		if (!state.godMode && !state.godModeInPast && !godModeInPast) {
+		if (!state.godMode && !state.godModeInPast && !props.godModeInPast) {
 			proceed = await confirm(
 				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
 				{
@@ -1410,12 +1438,25 @@ const SettingsForm = (
 		}
 	};
 
+	// Filter out the new league only ones when appropriate
+	const filteredSettings = settings.filter(setting => {
+		return (
+			!setting.showOnlyIf ||
+			setting.showOnlyIf({
+				hasPlayers,
+				newLeague,
+				realPlayers,
+			})
+		);
+	});
+	const groupedSettings = groupBy(filteredSettings, "category");
+
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output: Partial<Record<Key | SpecialStateBoolean, any>> = {};
-		for (const option of settings) {
+		const output = ({} as unknown) as Settings;
+		for (const option of filteredSettings) {
 			const { key, name, type } = option;
 			const value = state[key];
 
@@ -1424,6 +1465,7 @@ const SettingsForm = (
 			const parse = encodeDecodeFunctions[type].parse;
 
 			try {
+				// @ts-ignore
 				output[key] = parse ? parse(value) : value;
 			} catch (error) {
 				setSubmitting(false);
@@ -1442,7 +1484,7 @@ const SettingsForm = (
 		}
 
 		// Run validation functions at the end, so all values are available
-		for (const option of settings) {
+		for (const option of filteredSettings) {
 			const { key, name, validator } = option;
 			try {
 				if (validator) {
@@ -1479,13 +1521,14 @@ const SettingsForm = (
 
 	const currentCategoryNames: Category[] = [];
 
-	let bottom = 0;
-	if (stickyFooterAd) {
-		bottom += 52;
-	}
-
 	const toggleGodModeSettings = () => {
 		setShowGodModeSettings(show => !show);
+	};
+
+	const settingIsEnabled = (
+		godModeRequired?: "always" | "existingLeagueOnly",
+	) => {
+		return godMode || !settingNeedsGodMode(godModeRequired, newLeague);
 	};
 
 	return (
@@ -1494,19 +1537,21 @@ const SettingsForm = (
 				<GodModeSettingsButton
 					className="mb-5 d-sm-none"
 					godMode={godMode}
+					disabled={submitting}
 					onClick={toggleGodModeSettings}
 				>
-					{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+					{showGodModeSettings ? "Hide" : "Show"} God Mode Settings
 				</GodModeSettingsButton>
 
 				{categories.map(category => {
-					if (!groupedOptions[category.name]) {
+					if (!groupedSettings[category.name]) {
 						return null;
 					}
 
-					const catOptions = groupedOptions[category.name].filter(option => {
+					const catOptions = groupedSettings[category.name].filter(option => {
 						return (
-							(godMode || showGodModeSettings || !option.godModeRequired) &&
+							(showGodModeSettings ||
+								settingIsEnabled(option.godModeRequired)) &&
 							!option.hidden
 						);
 					});
@@ -1586,7 +1631,7 @@ const SettingsForm = (
 										},
 										i,
 									) => {
-										const enabled = godMode || !godModeRequired;
+										const enabled = settingIsEnabled(godModeRequired);
 										const id = `settings-${category.name}-${name}`;
 
 										let customFormNode;
@@ -1607,6 +1652,7 @@ const SettingsForm = (
 																type="checkbox"
 																className="custom-control-input"
 																checked={checked}
+																disabled={!enabled || submitting}
 																onChange={handleChange(key2, "bool")}
 																id={id + "2"}
 																value={state[key2]}
@@ -1619,7 +1665,7 @@ const SettingsForm = (
 														<div className="input-group">
 															<input
 																id={id}
-																disabled={!checked}
+																disabled={!checked || !enabled || submitting}
 																className="form-control"
 																type="text"
 																onChange={handleChange(key, type)}
@@ -1649,7 +1695,7 @@ const SettingsForm = (
 												>
 													<Option
 														type={type}
-														disabled={!enabled}
+														disabled={!enabled || submitting}
 														id={id}
 														onChange={handleChange(key, type)}
 														value={state[key]}
@@ -1661,6 +1707,7 @@ const SettingsForm = (
 														customForm={customFormNode}
 														maxWidth={maxWidth}
 														godModeRequired={godModeRequired}
+														newLeague={newLeague}
 													/>
 												</div>
 											</div>
@@ -1672,10 +1719,7 @@ const SettingsForm = (
 					);
 				})}
 
-				<div
-					className="alert-secondary rounded-top p-2 d-flex settings-buttons"
-					style={{ bottom }}
-				>
+				<StickyBottomButtons>
 					<div className="btn-group">
 						<button
 							className={classNames(
@@ -1684,6 +1728,7 @@ const SettingsForm = (
 							)}
 							onClick={handleGodModeToggle}
 							type="button"
+							disabled={submitting}
 						>
 							{godMode ? "Disable God Mode" : "Enable God Mode"}
 						</button>
@@ -1691,16 +1736,33 @@ const SettingsForm = (
 							<GodModeSettingsButton
 								className="d-none d-sm-block"
 								godMode={godMode}
+								disabled={submitting}
 								onClick={toggleGodModeSettings}
 							>
 								{showGodModeSettings ? "Hide" : "Show"} God Mode settings
 							</GodModeSettingsButton>
 						) : null}
 					</div>
-					<button className="btn btn-primary ml-auto" disabled={submitting}>
-						Save Settings
-					</button>
-				</div>
+					<div className="btn-group ml-auto">
+						{onCancel ? (
+							<button
+								className="btn btn-secondary"
+								type="button"
+								disabled={submitting}
+								onClick={onCancel}
+							>
+								Cancel
+							</button>
+						) : null}
+						<button
+							className="btn btn-primary"
+							disabled={submitting}
+							type="submit"
+						>
+							{saveText}
+						</button>
+					</div>
+				</StickyBottomButtons>
 			</form>
 			<div className="settings-shortcuts flex-shrink-0">
 				<ul className="list-unstyled">

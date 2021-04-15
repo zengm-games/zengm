@@ -13,20 +13,8 @@ import type { View } from "../../../common/types";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 
 export const descriptions = {
-	challengeLoseBestPlayer:
-		"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
-	challengeNoDraftPicks:
-		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
-	challengeNoFreeAgents:
-		"You are not allowed to sign free agents, except to minimum contracts.",
-	challengeThanosMode:
-		"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
-	realPlayerDeterminism:
-		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
-	repeatSeason:
-		"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions.",
 };
 
 export const settings: {
@@ -42,6 +30,13 @@ export const settings: {
 		output: any,
 		props: View<"settings">,
 	) => void | Promise<void>;
+
+	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
+	showOnlyIf?: (params: {
+		hasPlayers?: boolean;
+		newLeague?: boolean;
+		realPlayers?: boolean;
+	}) => boolean | undefined;
 	customForm?: true;
 	hidden?: true;
 	maxWidth?: true;
@@ -52,6 +47,103 @@ export const settings: {
 	// Longer than one line, hidden by default
 	descriptionLong?: ReactNode;
 }[] = [
+	{
+		category: "New League",
+		key: "randomization",
+		name: "Randomization",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "debuts", value: "Random debuts" },
+			{ key: "debutsForever", value: "Random debuts forever" },
+			{ key: "shuffle", value: "Shuffle rosters" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Random debuts:</b> Every player's draft year is randomized.
+					Starting teams and future draft classes are all random combinations of
+					past, current, and future real players.
+				</p>
+				<p>
+					<b>Random debuts forever:</b> Like random debuts, except when it runs
+					out of draft prospects, it will randomize all real players again and
+					add them to future draft classes.
+				</p>
+				<p>
+					<b>Shuffle rosters:</b> All active players are placed on random teams.
+				</p>
+			</>
+		),
+	},
+	{
+		category: "New League",
+		key: "randomization",
+		name: "Randomization",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && !realPlayers,
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "shuffle", value: "Shuffle rosters" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Shuffle rosters:</b> All active players are placed on random teams.
+				</p>
+			</>
+		),
+	},
+	{
+		category: "New League",
+		key: "realDraftRatings",
+		name: "Real Draft Prospect Ratings",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
+		type: "string",
+		values: [
+			{ key: "rookie", value: "Based on rookie season stats" },
+			{ key: "draft", value: "Based on draft position" },
+		],
+		descriptionLong: (
+			<>
+				<p>
+					<b>Based on rookie season stats:</b> Player ratings for draft
+					prospects are based on their rookie season stats. Players who
+					overperformed or underperformed their real draft positions as rookies
+					will be ranked differently than they were in reality.
+				</p>
+				<p>
+					<b>Based on draft position:</b> Player ratings for draft prospects are
+					based on the position they were drafted. Every #1 pick will have a
+					high rating, even if in reality he was a bust. Every late pick will
+					have a low rating, even if in reality he became a star.
+				</p>
+			</>
+		),
+	},
+	{
+		category: "New League",
+		key: "equalizeRegions",
+		name: "Equalize Region Populations",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague }) => newLeague,
+		type: "bool",
+	},
+	{
+		category: "New League",
+		key: "noStartingInjuries",
+		name: "No Starting Injuries",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers }) => newLeague && hasPlayers,
+		type: "bool",
+	},
 	{
 		category: "Season",
 		key: "numGames",
@@ -285,8 +377,8 @@ export const settings: {
 	{
 		category: "Draft",
 		key: "draftAges",
-		name: "Age of draft prospects",
-		godModeRequired: "existingLeagueOnly",
+		name: "Age of Draft Prospects",
+		godModeRequired: "always",
 		description: (
 			<>
 				Set the minimum/maximum age of generated draft prospects.{" "}
@@ -573,7 +665,7 @@ export const settings: {
 		category: "Events",
 		key: "forceRetireAge",
 		name: "Force Retire at Age",
-		godModeRequired: "existingLeagueOnly",
+		godModeRequired: "always",
 		type: "int",
 		description:
 			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",
@@ -668,14 +760,16 @@ export const settings: {
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
-		description: descriptions.challengeNoDraftPicks,
+		description:
+			"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
-		description: descriptions.challengeNoFreeAgents,
+		description:
+			"You are not allowed to sign free agents, except to minimum contracts.",
 	},
 	{
 		category: "Challenge Modes",
@@ -694,13 +788,16 @@ export const settings: {
 		key: "challengeLoseBestPlayer",
 		name: "Lose Best Player",
 		type: "bool",
-		description: descriptions.challengeLoseBestPlayer,
+		description:
+			"At the end of the playoffs every season, the best player on your team will either retire (if real player) or die a tragic death (if random player).",
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeFiredLuxuryTax",
 		name: "You're Fired If You Pay The Luxury Tax",
 		type: "bool",
+		description:
+			"The luxury tax only exists if you have the hard cap disabled.",
 	},
 	{
 		category: "Challenge Modes",
@@ -713,7 +810,8 @@ export const settings: {
 		key: "challengeThanosMode",
 		name: "Thanos Mode",
 		type: "bool",
-		description: descriptions.challengeThanosMode,
+		description:
+			"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
 	},
 	{
 		category: "Game Modes",
@@ -928,11 +1026,17 @@ if (isSport("basketball")) {
 			category: "Player Development",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
-			godModeRequired: "always",
+			godModeRequired: "existingLeagueOnly",
 			type: "rangePercent",
 			descriptionLong: (
 				<>
-					<p>{descriptions.realPlayerDeterminism}</p>
+					<p>
+						By default, BBGM's player development algorithm does not take into
+						account what we know about a real player's future performance. That
+						corresponds to 0% in this setting. Increase determinism to 100% and
+						real player ratings will be based entirely on their real life
+						development curve. Anything in between is a mix.
+					</p>
 					<p>
 						This has no impact on "random players"" leagues or randomly
 						generated players in "real players" leagues.
@@ -1040,8 +1144,8 @@ settings.push(
 		name: "Groundhog Day",
 		godModeRequired: "always",
 		type: "bool",
-		description: `${descriptions.repeatSeason} Groundhog Day can be enabled at any point in the season prior to the
-				draft.`,
+		description:
+			"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions. Groundhog Day can be enabled at any point in the season prior to the draft.",
 	},
 	{
 		category: "General",

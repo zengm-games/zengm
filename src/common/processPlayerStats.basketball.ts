@@ -6,7 +6,6 @@ const straightThrough = [
 	"gs",
 	"per",
 	"ewa",
-	"bpm",
 	"obpm",
 	"dbpm",
 	"vorp",
@@ -88,6 +87,9 @@ const processStats = (
 			scale = false;
 		} else if (stat === "ws48") {
 			row.ws48 = ((ps.dws + ps.ows) * 48) / ps.min;
+			scale = false;
+		} else if (stat === "bpm") {
+			row.bpm = ps.dbpm + ps.obpm;
 			scale = false;
 		} else if (stat === "trb") {
 			row[stat] = ps.drb + ps.orb;

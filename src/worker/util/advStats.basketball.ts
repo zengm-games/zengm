@@ -485,7 +485,6 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	return {
-		bpm: BPM,
 		obpm: OBPM,
 		dbpm: DBPM,
 		vorp: VORP,

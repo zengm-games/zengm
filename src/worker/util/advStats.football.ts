@@ -402,7 +402,7 @@ const advStats = async () => {
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
-				if (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos)) {
+				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos))) {
 					const p = players.find(p3 => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;

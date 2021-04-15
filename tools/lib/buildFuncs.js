@@ -2,6 +2,7 @@ const CleanCSS = require("clean-css");
 const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
+const htmlmin = require("html-minifier-terser");
 const sass = require("node-sass");
 const path = require("path");
 const replace = require("replace");
@@ -188,7 +189,7 @@ const copyFiles = () => {
 
 	const realPlayerDataFilename = path.join(
 		"data",
-		`real-player-data-${sport}.json`,
+		`real-player-data.${sport}.json`,
 	);
 	if (fs.existsSync(realPlayerDataFilename)) {
 		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
@@ -222,6 +223,22 @@ const reset = () => {
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
+	if (watch) {
+		replace({
+			regex: "-REV_GOES_HERE\\.js",
+			replacement: ".js",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+
+		replace({
+			regex: '-" \\+ bbgmVersion \\+ "',
+			replacement: "",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+	}
+
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
@@ -513,16 +530,20 @@ src="https://www.facebook.com/tr?id=${
 		silent: true,
 	});
 
-	if (watch) {
-		replace({
-			regex: '-" \\+ bbgmVersion \\+ "',
-			replacement: "",
-			paths: ["build/index.html"],
-			silent: true,
-		});
-	}
-
 	return rev;
+};
+
+const minifyIndexHTML = () => {
+	const content = fs.readFileSync("build/index.html", "utf8");
+	const minified = htmlmin.minify(content, {
+		collapseBooleanAttributes: true,
+		collapseWhitespace: true,
+		minifyCSS: true,
+		minifyJS: true,
+		removeComments: true,
+		useShortDoctype: true,
+	});
+	fs.writeFileSync("build/index.html", minified);
 };
 
 module.exports = {
@@ -533,4 +554,5 @@ module.exports = {
 	genRev,
 	reset,
 	setTimestamps,
+	minifyIndexHTML,
 };

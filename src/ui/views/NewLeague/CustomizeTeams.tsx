@@ -7,6 +7,7 @@ import arrayMove from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
+import { StickyBottomButtons } from "../../components";
 import { logEvent } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -683,9 +684,9 @@ const Conference = ({
 				))}
 			</div>
 
-			<div className="card-body p-0 m-3">
+			<div className="card-body p-0 m-3 d-flex">
 				<button
-					className="btn btn-secondary"
+					className="btn btn-secondary ml-auto"
 					onClick={() => {
 						dispatch({ type: "addDiv", cid: conf.cid });
 					}}
@@ -805,20 +806,6 @@ const CustomizeTeams = ({
 
 	return (
 		<>
-			<div className="mb-3">
-				<button
-					className="btn btn-danger"
-					onClick={() => {
-						const info = getDefaultConfsDivsTeams();
-						dispatch({
-							type: "setState",
-							...info,
-						});
-					}}
-				>
-					Reset All
-				</button>
-			</div>
 			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
@@ -835,50 +822,73 @@ const CustomizeTeams = ({
 					availableBuiltInTeams={availableBuiltInTeams}
 				/>
 			))}
-			<button
-				className="btn btn-secondary"
-				onClick={() => {
-					dispatch({ type: "addConf" });
-				}}
-			>
-				Add Conference
-			</button>
-
-			<form
-				className="mt-3"
-				onSubmit={event => {
-					event.preventDefault();
-
-					if (abbrevsUsedMultipleTimes.length > 0) {
-						logEvent({
-							type: "error",
-							text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
-								", ",
-							)}`,
-							saveToDb: false,
-						});
-						return;
-					}
-
-					if (teams.length < 2) {
-						logEvent({
-							type: "error",
-							text: "Your league must have at least 2 teams in it.",
-							saveToDb: false,
-						});
-						return;
-					}
-
-					onSave({ confs, divs, teams });
-				}}
-			>
-				<button className="btn btn-primary mr-2" type="submit">
-					Save Teams
+			<div className="mb-3 d-flex">
+				<button
+					className="btn btn-secondary ml-auto"
+					onClick={() => {
+						dispatch({ type: "addConf" });
+					}}
+					style={{
+						marginRight: 15,
+					}}
+				>
+					Add Conference
 				</button>
-				<button className="btn btn-secondary" type="button" onClick={onCancel}>
-					Cancel
+			</div>
+
+			<StickyBottomButtons>
+				<button
+					className="btn btn-danger"
+					onClick={() => {
+						const info = getDefaultConfsDivsTeams();
+						dispatch({
+							type: "setState",
+							...info,
+						});
+					}}
+				>
+					Reset All
 				</button>
-			</form>
+				<form
+					className="btn-group ml-auto"
+					onSubmit={event => {
+						event.preventDefault();
+
+						if (abbrevsUsedMultipleTimes.length > 0) {
+							logEvent({
+								type: "error",
+								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
+									", ",
+								)}`,
+								saveToDb: false,
+							});
+							return;
+						}
+
+						if (teams.length < 2) {
+							logEvent({
+								type: "error",
+								text: "Your league must have at least 2 teams in it.",
+								saveToDb: false,
+							});
+							return;
+						}
+
+						onSave({ confs, divs, teams });
+					}}
+				>
+					<button
+						className="btn btn-secondary"
+						type="button"
+						onClick={onCancel}
+					>
+						Cancel
+					</button>
+					<button className="btn btn-primary mr-2" type="submit">
+						Save Teams
+					</button>
+				</form>
+			</StickyBottomButtons>
 
 			<UpsertTeamModal
 				key={editingInfo.type === "edit" ? editingInfo.tid : editingInfo.type}

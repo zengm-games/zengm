@@ -69,9 +69,14 @@ export type Key =
 	| "stopOnInjury"
 	| "aiJerseyRetirement"
 	| "tiebreakers"
-	| "pointsFormula";
+	| "pointsFormula"
+	| "equalizeRegions"
+	| "noStartingInjuries"
+	| "realDraftRatings"
+	| "randomization";
 
 export type Category =
+	| "New League"
 	| "General"
 	| "Season"
 	| "Standings"

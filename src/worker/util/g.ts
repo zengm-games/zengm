@@ -113,16 +113,4 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	return cloned;
 };
 
-// Get latest value
-export const unwrap = <T extends keyof GameAttributesLeague>(
-	gameAttributes: any,
-	key: T,
-): GameAttributesLeague[T] => {
-	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key][gameAttributes[key].length - 1].value;
-	}
-
-	return gameAttributes[key];
-};
-
 export default g;

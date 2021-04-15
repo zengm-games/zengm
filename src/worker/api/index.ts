@@ -93,6 +93,8 @@ import {
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
+import type { Settings } from "../views/settings";
+import { wrap } from "../util/g";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -295,53 +297,27 @@ const createLeague = async ({
 	tid,
 	leagueFileInput,
 	shuffleRosters,
-	difficulty,
 	importLid,
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	challengeNoDraftPicks,
-	challengeNoFreeAgents,
-	challengeNoRatings,
-	challengeNoTrades,
-	challengeLoseBestPlayer,
-	challengeFiredLuxuryTax,
-	challengeFiredMissPlayoffs,
-	challengeThanosMode,
-	repeatSeason,
-	noStartingInjuries,
-	equalizeRegions,
-	realPlayerDeterminism,
-	randomDebutsForever,
 	confs,
 	divs,
 	teams,
+	settings,
 }: {
 	name: string;
 	tid: number;
 	leagueFileInput: any;
 	shuffleRosters: boolean;
-	difficulty: number;
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	challengeNoDraftPicks: boolean;
-	challengeNoFreeAgents: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	challengeLoseBestPlayer: boolean;
-	challengeFiredLuxuryTax: boolean;
-	challengeFiredMissPlayoffs: boolean;
-	challengeThanosMode: boolean;
-	repeatSeason: boolean;
-	noStartingInjuries: boolean;
-	equalizeRegions: boolean;
-	realPlayerDeterminism: number | undefined;
-	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
+	settings: Omit<Settings, "numActiveTeams">;
 }): Promise<number> => {
 	const keys = [...keptKeys, "version"];
 
@@ -430,26 +406,25 @@ const createLeague = async ({
 		}
 	}
 
-	const gameAttributeOverrides: Record<string, any> = {
-		challengeNoDraftPicks,
-		challengeNoFreeAgents,
-		challengeNoRatings,
-		challengeNoTrades,
-		challengeLoseBestPlayer,
-		challengeFiredLuxuryTax,
-		challengeFiredMissPlayoffs,
-		challengeThanosMode,
-		equalizeRegions,
+	// Single out all the weird settings that don't go directly into gameAttributes
+	const {
+		noStartingInjuries,
+		randomization,
+		repeatSeason,
+		...otherSettings
+	} = settings;
+
+	const gameAttributeOverrides: Partial<
+		Record<keyof GameAttributesLeague, any>
+	> = {
 		confs,
 		divs,
+		...otherSettings,
 	};
 
-	if (realPlayerDeterminism !== undefined) {
-		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
-	}
-
-	if (getLeagueOptions && getLeagueOptions.type === "real") {
-		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;
+	// This setting is allowed to be undefined, so make it that way when appropriate
+	if (!getLeagueOptions || getLeagueOptions.type !== "real") {
+		delete gameAttributeOverrides.realDraftRatings;
 	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful
@@ -473,13 +448,19 @@ const createLeague = async ({
 		}
 	}
 
-	leagueFile.gameAttributes = {
-		...leagueFile.gameAttributes,
-		...gameAttributeOverrides,
-	};
+	leagueFile.gameAttributes = leagueFile.gameAttributes ?? {};
+
+	for (const key of helpers.keys(gameAttributeOverrides)) {
+		// If we're overriding a value with history, keep the history
+		leagueFile.gameAttributes[key] = wrap(
+			leagueFile.gameAttributes,
+			key,
+			gameAttributeOverrides[key],
+		);
+	}
 
 	if (
-		randomDebutsForever &&
+		randomization === "debutsForever" &&
 		leagueFile.gameAttributes.randomDebutsForever === undefined
 	) {
 		leagueFile.gameAttributes.randomDebutsForever = 1;
@@ -506,7 +487,6 @@ const createLeague = async ({
 		tid,
 		leagueFile,
 		shuffleRosters,
-		difficulty,
 		importLid,
 		realPlayers: !!getLeagueOptions,
 	});
@@ -1727,6 +1707,10 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
 const lockSet = async (name: LockName, value: boolean) => {
 	await lock.set(name, value);
+};
+
+const ovr = async (ratings: MinimalPlayerRatings, pos: string) => {
+	return player.ovr(ratings, pos);
 };
 
 const ratingsStatsPopoverInfo = async (pid: number) => {
@@ -3168,6 +3152,7 @@ export default {
 	importPlayers,
 	init,
 	lockSet,
+	ovr,
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,

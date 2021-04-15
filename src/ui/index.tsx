@@ -327,4 +327,8 @@ const setupRoutes = () => {
 	await setupEnv();
 	render();
 	await setupRoutes();
+
+	if ("serviceWorker" in navigator) {
+		navigator.serviceWorker.register("/sw.js");
+	}
 })();

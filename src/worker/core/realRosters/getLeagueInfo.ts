@@ -1,7 +1,8 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
-import type { Conf, Div } from "../../../common/types";
 import { isSport } from "../../../common";
+import getGameAttributes from "./getGameAttributes";
+import type { GetLeagueOptions } from "../../../common/types";
 
 export const legendsInfo = {
 	"1950s": {
@@ -38,26 +39,7 @@ export const legendsInfo = {
 	},
 };
 
-const getLeagueInfo = async (
-	options:
-		| {
-				type: "real";
-				season: number;
-				phase: number;
-		  }
-		| {
-				type: "legends";
-				decade:
-					| "1950s"
-					| "1960s"
-					| "1970s"
-					| "1980s"
-					| "1990s"
-					| "2000s"
-					| "2010s"
-					| "all";
-		  },
-) => {
+const getLeagueInfo = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
@@ -87,8 +69,7 @@ const getLeagueInfo = async (
 						"scheduledEvents",
 				  ];
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: options.season,
 			stores,
 			teams: initialTeams.filter(t => !t.disabled),
@@ -107,8 +88,7 @@ const getLeagueInfo = async (
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
 
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: legendsInfo[options.decade].end,
 			stores,
 			teams: initialTeams,

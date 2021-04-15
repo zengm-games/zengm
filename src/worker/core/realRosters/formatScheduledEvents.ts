@@ -10,6 +10,7 @@ const processGameAttributes = (
 	events: any[],
 	season: number,
 	phase: number,
+	gameAttributesHistory?: boolean,
 ) => {
 	let gameAttributeEvents = [];
 
@@ -21,7 +22,7 @@ const processGameAttributes = (
 
 	let initialGameAttributes;
 
-	// Remove gameAttributes individual property dupes, and find what the gameAttributes state was at the beginning of the given season
+	// Fine what the gameAttributes state was at the beginning of the given season/phase
 	const prevState: any = {};
 	for (const event of gameAttributeEvents) {
 		if (
@@ -34,11 +35,7 @@ const processGameAttributes = (
 		}
 
 		for (const [key, value] of Object.entries(event.info)) {
-			if (value === prevState[key]) {
-				delete event.info[key];
-			} else {
-				prevState[key] = value;
-			}
+			prevState[key] = value;
 		}
 	}
 
@@ -245,10 +242,12 @@ const processTeams = (
 const formatScheduledEvents = (
 	events: any[],
 	{
+		gameAttributesHistory,
 		keepAllTeams,
 		season,
 		phase = PHASE.PRESEASON,
 	}: {
+		gameAttributesHistory?: boolean;
 		keepAllTeams: boolean;
 		season: number;
 		phase?: number;
@@ -271,6 +270,7 @@ const formatScheduledEvents = (
 		eventsSorted,
 		season,
 		phase,
+		gameAttributesHistory,
 	);
 
 	const { teamEvents, initialTeams } = processTeams(

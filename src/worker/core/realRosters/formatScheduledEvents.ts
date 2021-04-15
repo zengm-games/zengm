@@ -266,11 +266,13 @@ const formatScheduledEvents = (
 	{
 		gameAttributesHistory,
 		keepAllTeams,
+		onlyTeams,
 		season,
 		phase = PHASE.PRESEASON,
 	}: {
 		gameAttributesHistory?: boolean;
 		keepAllTeams: boolean;
+		onlyTeams?: boolean;
 		season: number;
 		phase?: number;
 	},
@@ -288,18 +290,26 @@ const formatScheduledEvents = (
 
 	const eventsSorted = orderBy(events, ["season", "phase", "type"]);
 
-	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
-		eventsSorted,
-		season,
-		phase,
-		gameAttributesHistory,
-	);
-
 	const { teamEvents, initialTeams } = processTeams(
 		eventsSorted,
 		season,
 		phase,
 		keepAllTeams,
+	);
+
+	if (onlyTeams) {
+		return {
+			scheduledEvents: [],
+			initialGameAttributes: {},
+			initialTeams,
+		};
+	}
+
+	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
+		eventsSorted,
+		season,
+		phase,
+		gameAttributesHistory,
 	);
 
 	return {

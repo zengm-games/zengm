@@ -356,10 +356,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 					season < options.season ||
 					(season === options.season && options.phase > PHASE.PLAYOFFS);
 
+				// Kind of wasteful to re-run this N times, since each time builds off the previous one...
 				const { initialTeams: initialTeamsSeason } = formatScheduledEvents(
 					scheduledEventsAll,
 					{
 						keepAllTeams: options.realStats === "all",
+						onlyTeams: true,
 						season,
 						phase: PHASE.PLAYOFFS,
 					},
@@ -624,6 +626,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}),
 			)
 			.filter(p => p.tid >= 0);
+		console.log("players", players);
 
 		const keptPlayers = [];
 		const numPlayersPerTeam = Array(initialTeams.length).fill(0);

@@ -1,16 +1,13 @@
 real player stats
 - all stats for active and retired players
-  - initialTeamsSeason
-    - should not require processing whole list of events repeatedly
-    - also check cases where only teams are needed and not other return values
   - retired jersey numbers?
   - pot calculation slow? use estimate for past seasons?
   - gm history start date?
     - what is this: leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason
 - test with real team overrides
-- test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?
   - not on mobile!
+- test to confirm CacheOnlyOneItemPlugin is working
 - blog/changes
   - limitations
     - no team stats

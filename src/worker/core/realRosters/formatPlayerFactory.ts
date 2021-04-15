@@ -109,7 +109,7 @@ const formatPlayerFactory = async (
 		let jerseyNumber: string | undefined;
 		if (draftProspect) {
 			tid = PLAYER.UNDRAFTED;
-		} else if (ratings.season < season) {
+		} else if (!legends && ratings.season < season) {
 			tid = PLAYER.RETIRED;
 		} else {
 			tid = PLAYER.FREE_AGENT;

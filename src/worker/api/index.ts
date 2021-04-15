@@ -319,17 +319,22 @@ const createLeague = async ({
 	teams: NewLeagueTeam[];
 	settings: Omit<Settings, "numActiveTeams">;
 }): Promise<number> => {
-	const keys = [...keptKeys, "version"];
+	const keys = new Set([...keptKeys, "version"]);
 
 	let actualTid = tid;
 	if (getLeagueOptions) {
 		const realLeague = await realRosters.getLeague(getLeagueOptions);
 
-		if (
-			getLeagueOptions.type === "real" &&
-			getLeagueOptions.phase >= PHASE.PLAYOFFS
-		) {
-			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+		if (getLeagueOptions.type === "real") {
+			if (getLeagueOptions.realStats === "all") {
+				keys.add("playoffSeries");
+			}
+
+			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+				keys.add("playoffSeries");
+				keys.add("draftLotteryResults");
+				keys.add("draftPicks");
+			}
 		}
 
 		// Since inactive teams are included if realStats=="all", need to translate tid too

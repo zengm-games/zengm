@@ -368,10 +368,24 @@ const getLeague = async (options: GetLeagueOptions) => {
 					season,
 					completeBracket,
 				);
+				playoffSeries.push(seasonPlayoffSeries);
+
+				// Find who actually won title
+				let champTid: number | undefined;
+				if (completeBracket) {
+					const { home, away } = seasonPlayoffSeries.series[
+						seasonPlayoffSeries.series.length - 1
+					][0];
+					if (away) {
+						champTid = (home.won > away.won ? home : away).tid;
+					}
+				}
 
 				const numActiveTeams = initialTeamsSeason.filter(t => !t.disabled)
 					.length;
+
 				for (const t of initialTeamsSeason) {
+					const t2 = initialTeams.find(t2 => t2.tid === t.tid);
 					const teamSeasonData =
 						basketball.teamSeasons[season][oldAbbrevTo2020BBGMAbbrev(t.srID)];
 					if (!teamSeasonData) {
@@ -379,76 +393,77 @@ const getLeague = async (options: GetLeagueOptions) => {
 						continue;
 					}
 
-					if (
-						season < options.season ||
-						(season === options.season && options.phase > PHASE.REGULAR_SEASON)
-					) {
-						const teamSeason = team.genSeasonRow(
-							t,
-							undefined,
-							numActiveTeams,
-							season,
-							defaultGameAttributes.defaultStadiumCapacity,
-						);
-						const keys = [
-							"won",
-							"lost",
-							"wonHome",
-							"lostHome",
-							"wonAway",
-							"lostAway",
-							"wonDiv",
-							"lostDiv",
-							"wonConf",
-							"lostConf",
-						] as const;
-						for (const key of keys) {
-							teamSeason[key] = teamSeasonData[key];
-						}
-
-						for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
-							const round = seasonPlayoffSeries.series[i];
-							for (const matchup of round) {
-								if (
-									(matchup.away && matchup.away.tid === t.tid) ||
-									matchup.home.tid === t.tid
-								) {
-									if (i === 0) {
-										teamSeason.clinchedPlayoffs = "x";
-									}
-									if (i === 0 || options.phase > PHASE.PLAYOFFS) {
-										// Only record the first round, if this is the playoffs phase
-										teamSeason.playoffRoundsWon = i;
-									}
-								}
-							}
-						}
-
-						// Find who actually won title
-						if (completeBracket) {
-							const { home, away } = seasonPlayoffSeries.series[
-								seasonPlayoffSeries.series.length - 1
-							][0];
-							if (away) {
-								const champ = (home.won > away.won ? home : away).tid;
-								if (teamSeason.tid === champ) {
-									teamSeason.playoffRoundsWon += 1;
-								}
-							}
-						}
-
-						if (!(t as any).seasons) {
-							(t as any).seasons = [];
-						}
-						(t as any).seasons.push(teamSeason);
+					const teamSeason = team.genSeasonRow(
+						t,
+						undefined,
+						numActiveTeams,
+						season,
+						defaultGameAttributes.defaultStadiumCapacity,
+					);
+					const keys = [
+						"won",
+						"lost",
+						"wonHome",
+						"lostHome",
+						"wonAway",
+						"lostAway",
+						"wonDiv",
+						"lostDiv",
+						"wonConf",
+						"lostConf",
+					] as const;
+					for (const key of keys) {
+						teamSeason[key] = teamSeasonData[key];
 					}
-				}
 
-				playoffSeries.push(seasonPlayoffSeries);
+					for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
+						const round = seasonPlayoffSeries.series[i];
+						for (const matchup of round) {
+							if (
+								(matchup.away && matchup.away.tid === t.tid) ||
+								matchup.home.tid === t.tid
+							) {
+								if (i === 0) {
+									teamSeason.clinchedPlayoffs = "x";
+								}
+								teamSeason.playoffRoundsWon = i;
+							}
+						}
+					}
+
+					if (champTid !== undefined && teamSeason.tid === champTid) {
+						teamSeason.playoffRoundsWon += 1;
+					}
+
+					if (!(t2 as any).seasons) {
+						(t2 as any).seasons = [];
+					}
+					(t2 as any).seasons.push(teamSeason);
+				}
+			}
+
+			// Add dummy entry for current season, otherwise league.create gets confused by all the other entries and thinks the last one should be moved to the current season
+			if (options.phase === PHASE.PRESEASON) {
+				const activeTeams = initialTeams.filter(t => !t.disabled);
+
+				for (const t of activeTeams) {
+					const teamSeason = team.genSeasonRow(
+						t,
+						undefined,
+						activeTeams.length,
+						options.season,
+						defaultGameAttributes.defaultStadiumCapacity,
+					);
+
+					if (!(t as any).seasons) {
+						(t as any).seasons = [];
+					}
+					(t as any).seasons.push(teamSeason);
+				}
 			}
 		}
 
-		// Make players as retired - don't delete, so we have full season stats and awards.
+		// Mark players as retired - don't delete, so we have full season stats and awards.
 		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
 		// Skip 2021 because we don't have 2021 data yet!
 		if (options.phase > PHASE.PLAYOFFS && options.season < 2021) {

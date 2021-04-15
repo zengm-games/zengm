@@ -1,13 +1,15 @@
 real player stats
 - all stats for active and retired players
-  - teamSeasons
-    - start after playoffs and it makes them
   - league history
     - needs awards object
   - initialTeamsSeason
-    - needs to be used for standings too?
     - should not require processing whole list of events repeatedly
-  - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
+    - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
+  - retired jersey numbers?
+  - start league in 2021, ratings seem low?
+    - ovrs are all wrong, but i think that's it
+- still an issue with tid of initial selected team
+  - should go away after i change the default value of realStats in newLeague.ts back to something besides "all"
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?
   - not on mobile!

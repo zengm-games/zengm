@@ -4,8 +4,10 @@ real player stats
     - start after playoffs and it makes them
   - league history
     - needs awards object
-  - after adding playoff series, why did it start including record of this season, even when starting in preseason?
-  - start in a sufficiently late year (like 1984) and earlier year brackets (like 1975) are just missing matchups
+  - initialTeamsSeason
+    - needs to be used for standings too?
+    - should not require processing whole list of events repeatedly
+  - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?
   - not on mobile!

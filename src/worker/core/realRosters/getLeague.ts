@@ -351,85 +351,98 @@ const getLeague = async (options: GetLeagueOptions) => {
 				season <= playoffSeriesRange[1];
 				season++
 			) {
-				console.log(season, initialTeams);
 				const completeBracket =
 					season < options.season ||
 					(season === options.season && options.phase > PHASE.PLAYOFFS);
 
+				const { initialTeams: initialTeamsSeason } = formatScheduledEvents(
+					scheduledEventsAll,
+					options.realStats === "all",
+					season,
+					PHASE.PLAYOFFS,
+				);
+
 				const seasonPlayoffSeries = genPlayoffSeries(
 					basketball,
-					initialTeams,
+					initialTeamsSeason,
 					season,
 					completeBracket,
 				);
 
-				for (const t of initialTeams) {
+				const numActiveTeams = initialTeamsSeason.filter(t => !t.disabled)
+					.length;
+				for (const t of initialTeamsSeason) {
 					const teamSeasonData =
-						basketball.teamSeasons[options.season][
-							oldAbbrevTo2020BBGMAbbrev(t.srID)
-						];
+						basketball.teamSeasons[season][oldAbbrevTo2020BBGMAbbrev(t.srID)];
 					if (!teamSeasonData) {
 						// Must be an expansion team
 						continue;
 					}
 
-					const teamSeason = team.genSeasonRow(
-						t,
-						undefined,
-						initialTeams.length,
-						options.season,
-						defaultGameAttributes.defaultStadiumCapacity,
-					);
-					const keys = [
-						"won",
-						"lost",
-						"wonHome",
-						"lostHome",
-						"wonAway",
-						"lostAway",
-						"wonDiv",
-						"lostDiv",
-						"wonConf",
-						"lostConf",
-					] as const;
-					for (const key of keys) {
-						teamSeason[key] = teamSeasonData[key];
-					}
+					if (
+						season < options.season ||
+						(season === options.season && options.phase > PHASE.REGULAR_SEASON)
+					) {
+						const teamSeason = team.genSeasonRow(
+							t,
+							undefined,
+							numActiveTeams,
+							season,
+							defaultGameAttributes.defaultStadiumCapacity,
+						);
+						const keys = [
+							"won",
+							"lost",
+							"wonHome",
+							"lostHome",
+							"wonAway",
+							"lostAway",
+							"wonDiv",
+							"lostDiv",
+							"wonConf",
+							"lostConf",
+						] as const;
+						for (const key of keys) {
+							teamSeason[key] = teamSeasonData[key];
+						}
 
-					for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
-						const round = seasonPlayoffSeries.series[i];
-						for (const matchup of round) {
-							if (
-								(matchup.away && matchup.away.tid === t.tid) ||
-								matchup.home.tid === t.tid
-							) {
-								if (i === 0) {
-									teamSeason.clinchedPlayoffs = "x";
-								}
-								if (i === 0 || options.phase > PHASE.PLAYOFFS) {
-									// Only record the first round, if this is the playoffs phase
-									teamSeason.playoffRoundsWon = i;
+						for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
+							const round = seasonPlayoffSeries.series[i];
+							for (const matchup of round) {
+								if (
+									(matchup.away && matchup.away.tid === t.tid) ||
+									matchup.home.tid === t.tid
+								) {
+									if (i === 0) {
+										teamSeason.clinchedPlayoffs = "x";
+									}
+									if (i === 0 || options.phase > PHASE.PLAYOFFS) {
+										// Only record the first round, if this is the playoffs phase
+										teamSeason.playoffRoundsWon = i;
+									}
 								}
 							}
 						}
-					}
 
-					// Find who actually won title
-					if (completeBracket) {
-						const { home, away } = seasonPlayoffSeries.series[
-							seasonPlayoffSeries.series.length - 1
-						][0];
-						if (away) {
-							const champ = (home.won > away.won ? home : away).tid;
-							if (teamSeason.tid === champ) {
-								teamSeason.playoffRoundsWon += 1;
+						// Find who actually won title
+						if (completeBracket) {
+							const { home, away } = seasonPlayoffSeries.series[
+								seasonPlayoffSeries.series.length - 1
+							][0];
+							if (away) {
+								const champ = (home.won > away.won ? home : away).tid;
+								if (teamSeason.tid === champ) {
+									teamSeason.playoffRoundsWon += 1;
+								}
 							}
 						}
-					}
 
-					(t as any).seasons = [teamSeason];
+						if (!(t as any).seasons) {
+							(t as any).seasons = [];
+						}
+						(t as any).seasons.push(teamSeason);
+					}
 				}
-				console.log(season, seasonPlayoffSeries);
 
 				playoffSeries.push(seasonPlayoffSeries);
 			}

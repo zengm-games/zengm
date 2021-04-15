@@ -171,7 +171,6 @@ const getRealFinalsMvp = async (
 			pid: p.pid,
 			name: p.name,
 			tid: p.tid,
-			abbrev: p.abbrev,
 			pts: playerArray[0].pts / playerArray[0].gp,
 			trb: playerArray[0].trb / playerArray[0].gp,
 			ast: playerArray[0].ast / playerArray[0].gp,

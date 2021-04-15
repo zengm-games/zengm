@@ -109,7 +109,6 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 			pid: p.pid,
 			name: p.name,
 			tid,
-			abbrev: "DNE",
 		};
 
 		let trb = 0;

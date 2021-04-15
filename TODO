@@ -1,9 +1,7 @@
 real player stats
 - all stats for active and retired players
   - player awards in awards object
-    - award winner team abbrevs
-      - or change season summary page to not use it, like historyAll already doesn't use it. anywhere else uses it?
-        - would have to do all league teams too
+    - start in 2021, go back to 1973, some players have tid -7
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI

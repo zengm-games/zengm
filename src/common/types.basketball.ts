@@ -55,7 +55,6 @@ export type AwardPlayer = {
 	pid: number;
 	name: string;
 	tid: number;
-	abbrev: string;
 	pts: number;
 	trb: number;
 	ast: number;
@@ -65,7 +64,6 @@ export type AwardPlayerDefense = {
 	pid: number;
 	name: string;
 	tid: number;
-	abbrev: string;
 	trb: number;
 	blk: number;
 	stl: number;

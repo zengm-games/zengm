@@ -1,7 +1,5 @@
 real player stats
 - all stats for active and retired players
-  - "at draft" ratings, probably do this for all leagues
-    - added support in augmentPartialPlayer, but need to add row of draft ratings to each player in league creation
   - gm history start date?
 - make default lastSeason, or maybe HoF?
   - not on mobile!

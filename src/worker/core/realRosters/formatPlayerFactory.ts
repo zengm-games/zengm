@@ -244,13 +244,20 @@ const formatPlayerFactory = async (
 			bornYear = bio.bornYear;
 		}
 
-		const age = ratings.season - bornYear;
-
 		// Whitelist, to get rid of any other columns
 		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
 
-		if (draftProspect) {
-			const currentRatings = processedRatings[processedRatings.length - 1];
+		const addDummyRookieRatings =
+			options.type === "real" && options.realStats === "all";
+		if (addDummyRookieRatings) {
+			processedRatings.unshift({
+				...processedRatings[0],
+				season: draft.year,
+			});
+		}
+
+		if (draftProspect || addDummyRookieRatings) {
+			const currentRatings = processedRatings[0];
 
 			nerfDraftProspect(currentRatings);
 
@@ -259,6 +266,7 @@ const formatPlayerFactory = async (
 				options.realDraftRatings === "draft" &&
 				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
 			) {
+				const age = currentRatings.season! - bornYear;
 				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
 			}
 		}

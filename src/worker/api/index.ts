@@ -402,7 +402,7 @@ const createLeague = async ({
 		| undefined;
 	if (realTeamInfo) {
 		const currentSeason =
-			leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason;
+			leagueFile.gameAttributes?.season ?? leagueFile.startingSeason;
 
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {

@@ -68,25 +68,6 @@ const formatPlayerFactory = async (
 
 		const ratings = allRatings[allRatings.length - 1];
 
-		if (options.type !== "legends") {
-			if (draftProspect) {
-				if (ratings.season === season) {
-					throw new Error(
-						"draftProspect should not be true when ratings.season === season",
-					);
-				}
-			} else {
-				if (
-					(options.realStats !== "all" && ratings.season !== season) ||
-					(options.realStats === "all" && season > options.season)
-				) {
-					throw new Error(
-						"draftProspect should be true when ratings.season !== season",
-					);
-				}
-			}
-		}
-
 		const slug = ratings.slug;
 
 		const bio = basketball.bios[slug];

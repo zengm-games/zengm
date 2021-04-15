@@ -5,17 +5,12 @@ real player stats
     - start in 1950 after playoffs and it makes them for disabled teams too
   - make sure it handles toronto (contracted than re-expanded)
   - since this changes tids by keeping around the disbanded teams, does that break team selection in new leagues?
-  - hall of fame
-    - make sure HoF awards only appear for retired players, or if they need to appear for active players, set hof boolean
   - league history
     - needs awards object
-- all stats for active, plus HoF
-  - filter out non-hof somehow, i guess when first making ratingsRows
-    - ratingsRows should also be improved for allActive and lastSeason
 - old seasons with trb only and no orb/drb
 - test to confirm CacheOnlyOneItemPlugin is working
-- make default "last season"?
-  - if i do this, might as well merge the two data files
+- make default lastSeason, or maybe HoF?
+  - not on mobile!
 - blog/changes
 - set startingSeason so past season stats are viewable on normal pages?
   - or should there be another value for this, if startingSeason is used elsewhere too?

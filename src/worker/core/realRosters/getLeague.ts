@@ -291,18 +291,55 @@ const getLeague = async (options: GetLeagueOptions) => {
 		);
 
 		const ratingsRows = basketball.ratings.filter(row => {
-			if (options.realStats === "all") {
+			if (
+				options.realStats === "all" ||
+				options.realStats === "allActive" ||
+				options.realStats === "allActiveHOF"
+			) {
 				return row.season <= options.season;
 			}
 
-			if (options.realStats === "allActiveHOF") {
-				return row.season <= options.season;
+			if (options.realStats === "lastSeason") {
+				const lastSeason =
+					options.phase > PHASE.REGULAR_SEASON
+						? options.season
+						: options.season - 1;
+				return row.season >= lastSeason && row.season <= options.season;
 			}
 
 			return row.season === options.season;
 		});
 
-		const groupedRatings = Object.values(groupBy(ratingsRows, "slug"));
+		let groupedRatings = Object.values(groupBy(ratingsRows, "slug"));
+		if (options.realStats === "allActive") {
+			// Only keep players who are active this season
+			groupedRatings = groupedRatings.filter(allRatings => {
+				const lastRatings = allRatings[allRatings.length - 1];
+				return lastRatings.season === options.season;
+			});
+		} else if (options.realStats === "allActiveHOF") {
+			// Only keep players who are active this season or in the HoF
+
+			const hofSlugs = new Set();
+			for (const [slug, awards] of Object.entries(basketball.awards)) {
+				if (awards) {
+					for (const award of awards) {
+						if (award.type === "Inducted into the Hall of Fame") {
+							hofSlugs.add(slug);
+							continue;
+						}
+					}
+				}
+			}
+
+			groupedRatings = groupedRatings.filter(allRatings => {
+				const lastRatings = allRatings[allRatings.length - 1];
+				return (
+					lastRatings.season === options.season ||
+					hofSlugs.has(lastRatings.slug)
+				);
+			});
+		}
 
 		const players = groupedRatings.map(ratings =>
 			formatPlayer(ratings, {

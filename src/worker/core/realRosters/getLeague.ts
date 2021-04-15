@@ -1,5 +1,6 @@
 import loadDataBasketball, { Basketball, Ratings } from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
+import groupBy from "lodash-es/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type {
 	GetLeagueOptions,
@@ -289,36 +290,21 @@ const getLeague = async (options: GetLeagueOptions) => {
 			-1,
 		);
 
-		const ratingsRows = basketball.ratings.filter(
-			row => row.season === options.season,
-		);
-
-		if (options.realStats === "all" || options.realStats === "allActiveHOF") {
-			// Add last season for each retired player
-			const activeOrFutureSlugs = new Set(
-				basketball.ratings
-					.filter(row => row.season >= options.season)
-					.map(row => row.slug),
-			);
-			const retiredPlayersBySlug: Record<string, Ratings> = {};
-			for (const row of basketball.ratings) {
-				if (activeOrFutureSlugs.has(row.slug)) {
-					continue;
-				}
-
-				if (retiredPlayersBySlug[row.slug]) {
-					if (row.season > retiredPlayersBySlug[row.slug].season) {
-						retiredPlayersBySlug[row.slug] = row;
-					}
-				} else {
-					retiredPlayersBySlug[row.slug] = row;
-				}
+		const ratingsRows = basketball.ratings.filter(row => {
+			if (options.realStats === "all") {
+				return row.season <= options.season;
 			}
 
-			ratingsRows.push(...Object.values(retiredPlayersBySlug));
-		}
+			if (options.realStats === "allActiveHOF") {
+				return row.season <= options.season;
+			}
 
-		const players = ratingsRows.map(ratings =>
+			return row.season === options.season;
+		});
+
+		const groupedRatings = Object.values(groupBy(ratingsRows, "slug"));
+
+		const players = groupedRatings.map(ratings =>
 			formatPlayer(ratings, {
 				randomDebuts: options.randomDebuts,
 			}),

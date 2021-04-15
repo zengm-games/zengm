@@ -173,7 +173,6 @@ const updateRoster = async (
 			}
 		} else {
 			// Show all players with stats for the given team and year
-			// Needs all seasons because of YWT!
 			const playersAll = await idb.getCopies.players({
 				statsTid: inputs.tid,
 			});

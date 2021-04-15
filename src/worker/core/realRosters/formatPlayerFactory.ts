@@ -49,7 +49,7 @@ const formatPlayerFactory = async (
 	};
 
 	return (
-		ratings: Ratings,
+		ratingsInput: Ratings[] | Ratings,
 		{
 			draftProspect,
 			legends,
@@ -62,6 +62,12 @@ const formatPlayerFactory = async (
 			randomDebuts?: boolean;
 		} = {},
 	) => {
+		const allRatings = Array.isArray(ratingsInput)
+			? ratingsInput
+			: [ratingsInput];
+
+		const ratings = allRatings[allRatings.length - 1];
+
 		if (options.type !== "legends") {
 			if (draftProspect) {
 				if (ratings.season === season) {
@@ -260,9 +266,11 @@ const formatPlayerFactory = async (
 		const age = ratings.season - bornYear;
 
 		// Whitelist, to get rid of any other columns
-		const currentRatings = getOnlyRatings(ratings);
+		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
 
 		if (draftProspect) {
+			const currentRatings = processedRatings[processedRatings.length - 1];
+
 			nerfDraftProspect(currentRatings);
 
 			if (
@@ -354,7 +362,7 @@ const formatPlayerFactory = async (
 			imgURL: "/img/blank-face.png",
 			real: true,
 			draft,
-			ratings: [currentRatings],
+			ratings: processedRatings,
 			stats,
 			injury,
 			contract,

@@ -99,7 +99,7 @@ export type Awards = {
 			players: AwardPlayer[];
 		},
 	];
-	dpoy: AwardPlayerDefense;
+	dpoy: AwardPlayerDefense | undefined;
 	allDefensive: [
 		{
 			title: "First Team";

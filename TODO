@@ -1,17 +1,19 @@
 real player stats
 - all stats for active and retired players
-  - league history
-    - needs awards object
+  - player awards in awards object
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
   - retired jersey numbers?
   - pot calculation slow? use estimate for past seasons?
   - gm history start date?
+- test with real team overrides
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - blog/changes
+
+hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
 
 enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
 - if you disable the team you're controlling, it switches you to another team. do that for the whole list

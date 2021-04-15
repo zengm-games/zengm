@@ -1,6 +1,9 @@
 import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
-import type { ScheduledEventWithoutKey } from "../../../common/types";
+import type {
+	ScheduledEventWithoutKey,
+	TeamSeasonWithoutKey,
+} from "../../../common/types";
 import { PHASE } from "../../../common";
 
 const processGameAttributes = (
@@ -85,6 +88,7 @@ const processTeams = (
 		did: number;
 		disabled?: boolean;
 		firstSeasonAfterExpansion?: number;
+		seasons?: TeamSeasonWithoutKey[];
 	}[];
 
 	// Keep track of initial teams

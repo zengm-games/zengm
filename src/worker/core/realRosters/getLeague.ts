@@ -19,6 +19,7 @@ import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import addRelatives from "./addRelatives";
 import genPlayoffSeries from "./genPlayoffSeries";
 import getGameAttributes from "./getGameAttributes";
+import getAwards from "./getAwards";
 
 export const LATEST_SEASON = 2021;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
@@ -386,6 +387,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 				for (const t of initialTeamsSeason) {
 					const t2 = initialTeams.find(t2 => t2.tid === t.tid);
+					if (!t2) {
+						throw new Error("t2 not found");
+					}
 					const teamSeasonData =
 						basketball.teamSeasons[season][oldAbbrevTo2020BBGMAbbrev(t.srID)];
 					if (!teamSeasonData) {
@@ -435,10 +439,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 						teamSeason.playoffRoundsWon += 1;
 					}
 
-					if (!(t2 as any).seasons) {
-						(t2 as any).seasons = [];
+					if (!t2.seasons) {
+						t2.seasons = [];
 					}
-					(t2 as any).seasons.push(teamSeason);
+					t2.seasons.push(teamSeason);
 				}
 			}
 
@@ -455,13 +459,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 						defaultGameAttributes.defaultStadiumCapacity,
 					);
 
-					if (!(t as any).seasons) {
-						(t as any).seasons = [];
+					if (!t.seasons) {
+						t.seasons = [];
 					}
-					(t as any).seasons.push(teamSeason);
+					t.seasons.push(teamSeason);
 				}
 			}
 		}
+
+		const awards = getAwards(basketball.awards, initialTeams, options);
 
 		// Mark players as retired - don't delete, so we have full season stats and awards.
 		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
@@ -575,6 +581,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			draftPicks,
 			draftLotteryResults,
 			playoffSeries,
+			awards,
 		};
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;

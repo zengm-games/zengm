@@ -328,13 +328,14 @@ const createLeague = async ({
 
 		if (getLeagueOptions.type === "real") {
 			if (getLeagueOptions.realStats === "all") {
+				keys.add("awards");
 				keys.add("playoffSeries");
 			}
 
 			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
-				keys.add("playoffSeries");
 				keys.add("draftLotteryResults");
 				keys.add("draftPicks");
+				keys.add("playoffSeries");
 			}
 		}
 
@@ -345,7 +346,7 @@ const createLeague = async ({
 		) {
 			const leagueInfo = await realRosters.getLeagueInfo({
 				...getLeagueOptions,
-				realStats: "all",
+				realStats: defaultRealStats,
 				leagueInfoKeepAllTeams: true,
 			});
 			const abbrev = leagueInfo.teams[tid].abbrev;

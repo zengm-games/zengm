@@ -3,6 +3,7 @@ real player stats
   - teamSeasons
     - start after playoffs and it makes them
     - start in 1950 after playoffs and it makes them for disabled teams too
+  - http://localhost/l/25/roster/WAS_11/1950 missing players
   - make sure it handles toronto (contracted than re-expanded)
   - since this changes tids by keeping around the disbanded teams, does that break team selection in new leagues?
   - hall of fame
@@ -10,6 +11,8 @@ real player stats
   - league history
     - needs awards object
 - all stats for active, plus HoF
+  - filter out non-hof somehow, i guess with retiredPlayersBySlug
+- old seasons with trb only and no orb/drb
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default "last season"?
   - if i do this, might as well merge the two data files

@@ -62,7 +62,7 @@ const formatPlayerFactory = async (
 			randomDebuts?: boolean;
 		} = {},
 	) => {
-		if (!legends) {
+		if (options.type !== "legends") {
 			if (draftProspect) {
 				if (ratings.season === season) {
 					throw new Error(
@@ -70,7 +70,10 @@ const formatPlayerFactory = async (
 					);
 				}
 			} else {
-				if (ratings.season !== season) {
+				if (
+					(options.realStats !== "all" && ratings.season !== season) ||
+					(options.realStats === "all" && season > options.season)
+				) {
 					throw new Error(
 						"draftProspect should be true when ratings.season !== season",
 					);
@@ -119,6 +122,8 @@ const formatPlayerFactory = async (
 		let jerseyNumber: string | undefined;
 		if (draftProspect) {
 			tid = PLAYER.UNDRAFTED;
+		} else if (ratings.season < season) {
+			tid = PLAYER.RETIRED;
 		} else {
 			tid = PLAYER.FREE_AGENT;
 			let statsRow;
@@ -165,7 +170,7 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		if (!jerseyNumber) {
+		if (!jerseyNumber && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
 			const statsRow2 = basketball.stats.find(row => row.slug === slug);
 			if (statsRow2) {
@@ -289,6 +294,7 @@ const formatPlayerFactory = async (
 						(includePlayoffs || !row.playoffs),
 				);
 			} else if (
+				options.realStats === "allActiveHOF" ||
 				options.realStats === "allActive" ||
 				options.realStats === "all"
 			) {
@@ -326,6 +332,11 @@ const formatPlayerFactory = async (
 			}
 		}
 
+		const hof =
+			!!awards &&
+			awards.some(award => award.type === "Inducted into the Hall of Fame");
+		const retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
+
 		pid += 1;
 
 		return {
@@ -349,6 +360,8 @@ const formatPlayerFactory = async (
 			contract,
 			awards,
 			jerseyNumber,
+			hof,
+			retiredYear,
 			srID: ratings.slug,
 		};
 	};

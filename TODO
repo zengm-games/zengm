@@ -12,6 +12,9 @@ real player stats
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - blog/changes
+  - limitations
+    - no team stats
+    - "no data" treated as "0" when computing averages of stats that are only available some years
 
 hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
 

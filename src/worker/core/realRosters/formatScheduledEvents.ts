@@ -30,7 +30,9 @@ const processGameAttributes = (
 			initialGameAttributes === undefined
 		) {
 			initialGameAttributes = helpers.deepCopy(prevState);
+			break;
 		}
+
 		for (const [key, value] of Object.entries(event.info)) {
 			if (value === prevState[key]) {
 				delete event.info[key];
@@ -242,9 +244,15 @@ const processTeams = (
 
 const formatScheduledEvents = (
 	events: any[],
-	keepAllTeams: boolean,
-	season: number,
-	phase: number = PHASE.PRESEASON,
+	{
+		keepAllTeams,
+		season,
+		phase = PHASE.PRESEASON,
+	}: {
+		keepAllTeams: boolean;
+		season: number;
+		phase?: number;
+	},
 ) => {
 	for (const event of events) {
 		if (

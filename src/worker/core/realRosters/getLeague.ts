@@ -76,12 +76,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 			scheduledEvents,
 			initialGameAttributes,
 			initialTeams,
-		} = formatScheduledEvents(
-			scheduledEventsAll,
-			options.realStats === "all",
-			options.season,
-			options.phase,
-		);
+		} = formatScheduledEvents(scheduledEventsAll, {
+			keepAllTeams: options.realStats === "all",
+			season: options.season,
+			phase: options.phase,
+		});
 
 		const formatPlayer = await formatPlayerFactory(
 			basketball,
@@ -358,9 +357,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 				const { initialTeams: initialTeamsSeason } = formatScheduledEvents(
 					scheduledEventsAll,
-					options.realStats === "all",
-					season,
-					PHASE.PLAYOFFS,
+					{
+						keepAllTeams: options.realStats === "all",
+						season,
+						phase: PHASE.PLAYOFFS,
+					},
 				);
 
 				const seasonPlayoffSeries = genPlayoffSeries(
@@ -589,8 +590,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const season = legendsInfo[options.decade].end;
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
-			false,
-			season,
+			{
+				keepAllTeams: false,
+				season,
+			},
 		);
 
 		const hasQueens = initialTeams.some(t => t.name === "Queens");

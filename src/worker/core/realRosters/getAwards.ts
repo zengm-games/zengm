@@ -318,8 +318,6 @@ const getAwards = (
 				allDefensive3.push(slug);
 			} else if (type === AWARD_NAMES.allRookie) {
 				allRookie.push(slug);
-			} else {
-				console.log(type, slug);
 			}
 		}
 
@@ -368,7 +366,6 @@ const getAwards = (
 		allAwards.push(awards);
 	}
 
-	console.log(allAwards);
 	return allAwards.map(fillInPlayers);
 };
 

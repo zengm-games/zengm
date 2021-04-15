@@ -54,9 +54,11 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 	if (options.type === "real") {
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
-			options.realStats === "all",
-			options.season,
-			options.phase,
+			{
+				keepAllTeams: options.realStats === "all",
+				season: options.season,
+				phase: options.phase,
+			},
 		);
 
 		const stores =
@@ -85,8 +87,10 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
-			false,
-			lastSeason,
+			{
+				keepAllTeams: false,
+				season: lastSeason,
+			},
 		);
 
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];

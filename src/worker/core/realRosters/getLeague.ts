@@ -467,7 +467,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const awards = getAwards(basketball.awards, initialTeams, options);
+		const awards = getAwards(basketball.awards, players, initialTeams, options);
 
 		// Mark players as retired - don't delete, so we have full season stats and awards.
 		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.

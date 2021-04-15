@@ -2,12 +2,20 @@ import { AWARD_NAMES, PHASE } from "../../../common";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
+	ThenArg,
 } from "../../../common/types";
-import type { Awards } from "../../../common/types.basketball";
+import type {
+	AwardPlayer,
+	AwardPlayerDefense,
+	Awards,
+} from "../../../common/types.basketball";
+import type formatPlayerFactory from "./formatPlayerFactory";
 import type formatScheduledEvents from "./formatScheduledEvents";
 import type { Basketball } from "./loadData.basketball";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
+
+type Player = ReturnType<ThenArg<ReturnType<typeof formatPlayerFactory>>>;
 
 type AwardsBySeason = Record<
 	number,
@@ -19,7 +27,7 @@ type AwardsBySeason = Record<
 
 let awardsBySeason: AwardsBySeason | undefined;
 
-const initAwardsBySeason = (awards: Basketball["awards"]): AwardsBySeason => {
+const initAwardsBySeason = (awards: Basketball["awards"]) => {
 	const bySeason: AwardsBySeason = {};
 
 	for (const [slug, awardsPlayer] of Object.entries(awards)) {
@@ -40,6 +48,15 @@ const initAwardsBySeason = (awards: Basketball["awards"]): AwardsBySeason => {
 	return bySeason;
 };
 
+let playersBySlug: Record<string, Player> | undefined;
+const initPlayersBySlug = (players: Player[]) => {
+	const bySlug: Record<string, Player> = {};
+	for (const p of players) {
+		bySlug[p.srID] = p;
+	}
+	return bySlug;
+};
+
 const awardTeam = (teamSeason: TeamSeasonWithoutKey) => {
 	return {
 		tid: teamSeason.tid,
@@ -53,8 +70,95 @@ const awardTeam = (teamSeason: TeamSeasonWithoutKey) => {
 	};
 };
 
+type AwardPlayerOutput<Defensive> = Defensive extends true
+	? AwardPlayerDefense
+	: AwardPlayer;
+
+const awardPlayer = <Defensive extends true | false>(
+	slug: string | undefined,
+	defensive: Defensive,
+	playoffs?: boolean,
+): AwardPlayerOutput<Defensive> | undefined => {
+	if (!slug || !playersBySlug) {
+		return;
+	}
+
+	const p = playersBySlug[slug];
+	if (!p) {
+		return;
+	}
+
+	const base = {
+		pid: p.pid,
+		name: p.name,
+		tid: -7,
+		abbrev: "DNE",
+	};
+
+	if (defensive) {
+		return {
+			...base,
+			trb: 0,
+			blk: 0,
+			stl: 0,
+		} as AwardPlayerOutput<Defensive>;
+	}
+
+	return {
+		...base,
+		pts: 0,
+		trb: 0,
+		ast: 0,
+	} as AwardPlayerOutput<Defensive>;
+};
+
+const fillInPlayers = (awards: Awards<string, string>): Awards => {
+	return {
+		season: awards.season,
+		bestRecord: awards.bestRecord,
+		bestRecordConfs: awards.bestRecordConfs,
+
+		roy: awardPlayer(awards.roy, false),
+		allRookie: [],
+		mip: awardPlayer(awards.mip, false),
+		mvp: awardPlayer(awards.mvp, false),
+		smoy: awardPlayer(awards.smoy, false),
+		allLeague: [
+			{
+				title: "First Team",
+				players: [],
+			},
+			{
+				title: "Second Team",
+				players: [],
+			},
+			{
+				title: "Third Team",
+				players: [],
+			},
+		],
+		dpoy: awardPlayer(awards.dpoy, true),
+		allDefensive: [
+			{
+				title: "First Team",
+				players: [],
+			},
+			{
+				title: "Second Team",
+				players: [],
+			},
+			{
+				title: "Third Team",
+				players: [],
+			},
+		],
+		finalsMvp: awardPlayer(awards.finalsMvp, false, true),
+	};
+};
+
 const getAwards = (
 	awards: Basketball["awards"],
+	players: Player[],
 	teams: Teams,
 	options: GetLeagueOptionsReal,
 ) => {
@@ -69,6 +173,9 @@ const getAwards = (
 
 	if (!awardsBySeason) {
 		awardsBySeason = initAwardsBySeason(awards);
+	}
+	if (!playersBySlug) {
+		playersBySlug = initPlayersBySlug(players);
 	}
 
 	const seasonsRange = [1947, options.season - 1];
@@ -187,7 +294,7 @@ const getAwards = (
 	}
 
 	console.log(allAwards);
-	return allAwards;
+	return allAwards.map(fillInPlayers);
 };
 
 export default getAwards;

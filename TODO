@@ -1,7 +1,8 @@
 real player stats
 - all stats for active and retired players
   - player awards in awards object
-    - simple awards
+    - award winner team
+    - award winner stats
     - all league teams
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly

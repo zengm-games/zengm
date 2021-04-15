@@ -8,7 +8,7 @@ import {
 } from "../../../common";
 import gameAttributesToUI from "./gameAttributesToUI";
 
-const ALWAYS_WRAP = [
+export const ALWAYS_WRAP = [
 	"confs",
 	"divs",
 	"numGamesPlayoffSeries",

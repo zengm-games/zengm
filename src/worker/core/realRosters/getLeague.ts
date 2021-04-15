@@ -77,6 +77,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			initialGameAttributes,
 			initialTeams,
 		} = formatScheduledEvents(scheduledEventsAll, {
+			gameAttributesHistory: options.realStats === "all",
 			keepAllTeams: options.realStats === "all",
 			season: options.season,
 			phase: options.phase,

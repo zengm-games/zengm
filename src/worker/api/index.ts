@@ -488,6 +488,10 @@ const createLeague = async ({
 			leagueFile.gameAttributes,
 			key,
 			gameAttributeOverrides[key],
+			{
+				season: leagueFile.gameAttributes.season ?? leagueFile.startingSeason,
+				phase: leagueFile.gameAttributes.phase ?? PHASE.PRESEASON,
+			},
 		);
 	}
 

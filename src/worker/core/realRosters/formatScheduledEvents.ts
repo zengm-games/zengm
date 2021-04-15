@@ -4,7 +4,9 @@ import type {
 	ScheduledEventWithoutKey,
 	TeamSeasonWithoutKey,
 } from "../../../common/types";
-import { PHASE } from "../../../common";
+import { gameAttributeHasHistory, PHASE } from "../../../common";
+import { ALWAYS_WRAP } from "../league/loadGameAttributes";
+import { wrap } from "../../util/g";
 
 const processGameAttributes = (
 	events: any[],
@@ -35,7 +37,27 @@ const processGameAttributes = (
 		}
 
 		for (const [key, value] of Object.entries(event.info)) {
-			prevState[key] = value;
+			if (
+				!gameAttributesHistory ||
+				!prevState.hasOwnProperty(key) ||
+				!ALWAYS_WRAP.includes(key)
+			) {
+				prevState[key] = value;
+			} else {
+				if (!gameAttributeHasHistory(prevState[key])) {
+					prevState[key] = [
+						{
+							start: -Infinity,
+							value: prevState[key],
+						},
+					];
+				}
+
+				prevState[key] = wrap(prevState, key as any, value, {
+					season: event.season,
+					phase: event.phase,
+				});
+			}
 		}
 	}
 

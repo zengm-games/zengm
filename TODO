@@ -2,11 +2,11 @@ real player stats
 - all stats for active and retired players
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
-    - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
-      - "League Champions" blank for old years (1940s, at least) on season summary / history page
+    - also check cases where only teams are needed and not other return values
   - retired jersey numbers?
   - pot calculation slow? use estimate for past seasons?
   - gm history start date?
+    - what is this: leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason
 - test with real team overrides
 - test to confirm CacheOnlyOneItemPlugin is working
 - make default lastSeason, or maybe HoF?

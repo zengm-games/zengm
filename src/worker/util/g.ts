@@ -63,6 +63,10 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	gameAttributes: any,
 	key: T,
 	value: GameAttributesLeague[T],
+	override?: {
+		season: number;
+		phase: number;
+	},
 ) => {
 	// @ts-ignore
 	const gameAttribute = gameAttributes[key];
@@ -75,16 +79,24 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 
 	const latestRow = cloned[cloned.length - 1];
 
-	let currentSeason =
-		gameAttributes.season !== undefined
-			? gameAttributes.season
-			: g.get("season");
+	let currentSeason;
+	let actualPhase;
 
-	let actualPhase = gameAttributes.phase ?? g.get("phase");
-	if (actualPhase < 0) {
-		const nextPhase = g.get("nextPhase");
-		if (nextPhase !== undefined) {
-			actualPhase = nextPhase;
+	if (override) {
+		currentSeason = override.season;
+		actualPhase = override.phase;
+	} else {
+		currentSeason =
+			gameAttributes.season !== undefined
+				? gameAttributes.season
+				: g.get("season");
+
+		actualPhase = gameAttributes.phase ?? g.get("phase");
+		if (actualPhase < 0) {
+			const nextPhase = g.get("nextPhase");
+			if (nextPhase !== undefined) {
+				actualPhase = nextPhase;
+			}
 		}
 	}
 

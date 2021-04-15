@@ -78,7 +78,7 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 	const awardPlayer = <Defensive extends true | false>(
 		slug: string | undefined,
 		defensive: Defensive,
-		playoffs?: true,
+		playoffs: boolean = false,
 	): AwardPlayerOutput<Defensive> | undefined => {
 		if (!slug || !playersBySlug) {
 			return;

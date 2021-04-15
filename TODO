@@ -5,6 +5,8 @@ real player stats
   - gm history start date?
     - what is this: leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason
 - test with real team overrides
+  - oldest logo applying to current season, other logos seem ok maybe
+  - team name update in old seasons not applying
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - test to confirm CacheOnlyOneItemPlugin is working

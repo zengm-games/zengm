@@ -69,7 +69,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	// Contract
 	if (!fantasyOrExpansionDraft) {
-		if (g.get("hardCap")) {
+		if (g.get("rookieScale") === false) {
 			// Make it an expiring contract, so player immediately becomes a free agent
 			player.setContract(
 				p,

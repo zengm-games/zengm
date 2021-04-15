@@ -81,9 +81,6 @@ const genPlayoffSeries = (
 	for (const series of firstRound) {
 		firstRoundMatchups.push(genHomeAway(series));
 	}
-	if (season === 1975) {
-		console.log("firstRoundMatchups", firstRoundMatchups);
-	}
 
 	let numPlayoffTeams = 2 * firstRoundMatchups.length;
 	let numPlayoffByes = 0;
@@ -101,9 +98,6 @@ const genPlayoffSeries = (
 				numPlayoffByes += 1;
 			}
 		}
-	}
-	if (season === 1975) {
-		console.log("teams and byes", numPlayoffTeams, numPlayoffByes);
 	}
 	const numRounds = Math.log2(firstRoundMatchups.length);
 	const series: typeof firstRoundMatchups[] = [];
@@ -152,17 +146,11 @@ const genPlayoffSeries = (
 		series[0] = matchups;
 	} else {
 		const confSeeds = genPlayoffSeeds(numPlayoffTeams / 2, numPlayoffByes / 2);
-		if (season === 1975) {
-			console.log("confSeeds", confSeeds);
-		}
 		const cids = [0, 1];
 		for (const cid of cids) {
 			const confMatchups = firstRoundMatchups.filter(
 				matchup => matchup.home.cid === cid,
 			);
-			if (season === 1975) {
-				console.log(cid, confMatchups);
-			}
 			for (const seeds of confSeeds) {
 				const matchup = confMatchups.find(
 					matchup =>
@@ -174,9 +162,6 @@ const genPlayoffSeries = (
 				}
 			}
 		}
-	}
-	if (season === 1975) {
-		console.log(series[0]);
 	}
 
 	// If necessary, add matchups for rounds after the first round

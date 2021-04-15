@@ -6,8 +6,7 @@ real player stats
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
   - retired jersey numbers?
-  - start league in 2021, ratings seem low?
-    - ovrs are all wrong, but i think that's it
+  - pot calculation slow? use estimate for past seasons?
 - still an issue with tid of initial selected team
   - should go away after i change the default value of realStats in newLeague.ts back to something besides "all"
 - test to confirm CacheOnlyOneItemPlugin is working

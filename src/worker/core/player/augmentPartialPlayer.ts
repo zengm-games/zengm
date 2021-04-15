@@ -25,6 +25,9 @@ const augmentPartialPlayer = async (
 	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
+	if (p.pid === 3571) {
+		console.log(version, JSON.parse(JSON.stringify(p)));
+	}
 
 	if (p.born === undefined) {
 		age = random.randInt(19, 35);
@@ -290,11 +293,11 @@ const augmentPartialPlayer = async (
 		}
 
 		if (r.skills === undefined) {
-			r.skills = skills(p.ratings[0]);
+			r.skills = skills(r);
 		}
 
 		if (r.ovr === undefined) {
-			r.ovr = ovr(p.ratings[0]);
+			r.ovr = ovr(r);
 		}
 
 		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {

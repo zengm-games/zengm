@@ -1,7 +1,6 @@
 real player stats
 - all stats for active and retired players
-  - retired jersey numbers?
-  - pot calculation slow? use estimate for past seasons?
+  - "at draft" ratings, probably do this for all leagues
   - gm history start date?
     - what is this: leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason
 - test with real team overrides
@@ -12,6 +11,8 @@ real player stats
   - limitations
     - no team stats
     - "no data" treated as "0" when computing averages of stats that are only available some years
+- later
+  - retired jersey numbers
 
 hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
 

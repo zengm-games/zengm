@@ -32,6 +32,8 @@ const augmentPartialPlayer = async (
 		age = g.get("startingSeason") - p.born.year;
 	}
 
+	const currentSeason = g.get("season");
+
 	if (
 		p.name !== undefined &&
 		(p.firstName === undefined || p.lastName === undefined)
@@ -106,7 +108,7 @@ const augmentPartialPlayer = async (
 
 	if (typeof p.draft.year !== "number") {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			p.draft.year = g.get("season");
+			p.draft.year = currentSeason;
 		} else {
 			p.draft.year = pg.draft.year;
 		}
@@ -141,7 +143,7 @@ const augmentPartialPlayer = async (
 
 	if (p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (version === undefined || version <= 32) {
-			p.ratings[0].season = g.get("season") + offset;
+			p.ratings[0].season = currentSeason + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			p.ratings[0].season = p.draft.year;
@@ -149,7 +151,7 @@ const augmentPartialPlayer = async (
 	} else if (p.tid === PLAYER.UNDRAFTED_2) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.get("season") + 1 + offset;
+			p.ratings[0].season = currentSeason + 1 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -159,7 +161,7 @@ const augmentPartialPlayer = async (
 	} else if (p.tid === PLAYER.UNDRAFTED_3) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.get("season") + 2 + offset;
+			p.ratings[0].season = currentSeason + 2 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -170,21 +172,21 @@ const augmentPartialPlayer = async (
 		for (const r of p.ratings) {
 			if (r.season === undefined) {
 				r.season =
-					typeof p.retiredYear === "number" ? p.retiredYear : g.get("season");
+					typeof p.retiredYear === "number" ? p.retiredYear : currentSeason;
 			}
 		}
 	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (p.ratings[0].season === undefined) {
-			p.ratings[0].season = g.get("season");
+			p.ratings[0].season = currentSeason;
 		}
 
 		// Fix improperly-set season in ratings
 		if (
 			p.ratings.length === 1 &&
-			p.ratings[0].season < g.get("season") &&
+			p.ratings[0].season < currentSeason &&
 			p.tid !== PLAYER.RETIRED
 		) {
-			p.ratings[0].season = g.get("season");
+			p.ratings[0].season = currentSeason;
 		}
 	}
 
@@ -303,6 +305,9 @@ const augmentPartialPlayer = async (
 				ratings: r,
 				age: r.season - p.born.year,
 				srID: p.srID,
+
+				// Just do a rough estimate for old pot, doesn't matter much
+				usePotEstimator: r.season < currentSeason,
 			});
 		}
 
@@ -327,7 +332,7 @@ const augmentPartialPlayer = async (
 			p,
 			{
 				amount: g.get("minContract"),
-				exp: g.get("season"),
+				exp: currentSeason,
 			},
 			p.tid >= 0,
 		);
@@ -395,7 +400,7 @@ const augmentPartialPlayer = async (
 		if (g.get("phase") === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
-			if (p.tid >= 0 && lastSeason < g.get("season")) {
+			if (p.tid >= 0 && lastSeason < currentSeason) {
 				await addStatsRow(p, false, {
 					ignoreJerseyNumberConflicts,
 				});

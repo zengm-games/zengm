@@ -265,7 +265,11 @@ const formatPlayerFactory = async (
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
 
-		type StatsRow = Omit<BasketballStats[number], "slug" | "abbrev"> & {
+		type StatsRow = Omit<
+			BasketballStats[number],
+			"slug" | "abbrev" | "playoffs"
+		> & {
+			playoffs: boolean;
 			tid: number;
 			minAvailable: number;
 			ewa: number;
@@ -310,6 +314,7 @@ const formatPlayerFactory = async (
 
 					const newRow: StatsRow = {
 						...row,
+						playoffs: !!row.playoffs,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
 						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos),

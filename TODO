@@ -1,6 +1,4 @@
 real player stats
-- all stats for active and retired players
-  - gm history start date?
 - make default lastSeason, or maybe HoF?
   - not on mobile!
 - test to confirm CacheOnlyOneItemPlugin is working

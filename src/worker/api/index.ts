@@ -518,6 +518,23 @@ const createLeague = async ({
 		importLid = await getNewLeagueLid();
 	}
 
+	if (
+		getLeagueOptions &&
+		getLeagueOptions.type === "real" &&
+		getLeagueOptions.realStats === "all"
+	) {
+		// startingSeason is 1947, so use userTid history to denote when user actually started managing team
+		leagueFile.gameAttributes.userTid = [
+			{ start: -Infinity, value: PLAYER.DOES_NOT_EXIST },
+			{
+				start: leagueFile.gameAttributes.season,
+				value: leagueFile.gameAttributes.userTid,
+			},
+		];
+	}
+
+	console.log("leagueFile.gameAttributes", leagueFile.gameAttributes);
+
 	const lid = await league.create({
 		name,
 		tid: actualTid,

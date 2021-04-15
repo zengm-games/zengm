@@ -48,7 +48,12 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const teamHistories = [];
 		for (const teamSeasons of teamSeasonsByTeam) {
-			teamHistories.push(await getHistoryTeam(teamSeasons));
+			const group = await getHistoryTeam(teamSeasons);
+
+			// This is to filter out when tid is DOES_NOT_EXIST when realStats=="all"
+			if (group.history.length > 0) {
+				teamHistories.push(group);
+			}
 		}
 		teamHistories.reverse();
 

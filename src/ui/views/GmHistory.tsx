@@ -40,18 +40,20 @@ const GmHistory = ({
 
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
-					<Overall
-						bestRecord={bestRecord}
-						championships={championships}
-						finalsAppearances={finalsAppearances}
-						playoffAppearances={playoffAppearances}
-						totalLost={totalLost}
-						totalTied={totalTied}
-						totalOtl={totalOtl}
-						totalWinp={totalWinp}
-						totalWon={totalWon}
-						worstRecord={worstRecord}
-					/>
+					{teamHistories.length !== 1 ? (
+						<Overall
+							bestRecord={bestRecord}
+							championships={championships}
+							finalsAppearances={finalsAppearances}
+							playoffAppearances={playoffAppearances}
+							totalLost={totalLost}
+							totalTied={totalTied}
+							totalOtl={totalOtl}
+							totalWinp={totalWinp}
+							totalWon={totalWon}
+							worstRecord={worstRecord}
+						/>
+					) : null}
 
 					{teamHistories.map((teamHistory, i) => (
 						<div key={i} className="mt-3">

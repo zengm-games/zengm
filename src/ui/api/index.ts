@@ -66,8 +66,7 @@ const initAds = (goldUntil: number | undefined) => {
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
 			];
-			const divs =
-				window.screen && window.screen.width < 768 ? divsMobile : divsDesktop;
+			const divs = window.mobile ? divsMobile : divsDesktop;
 
 			for (const id of divs) {
 				const div = document.getElementById(id);
@@ -115,7 +114,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (window.screen && window.screen.width >= 768) {
+			if (window.mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 

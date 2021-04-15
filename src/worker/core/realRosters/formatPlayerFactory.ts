@@ -248,7 +248,10 @@ const formatPlayerFactory = async (
 		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
 
 		const addDummyRookieRatings =
-			options.type === "real" && options.realStats === "all";
+			options.type === "real" &&
+			(options.realStats === "all" ||
+				options.realStats === "allActive" ||
+				options.realStats === "allActiveHOF");
 		if (addDummyRookieRatings) {
 			processedRatings.unshift({
 				...processedRatings[0],

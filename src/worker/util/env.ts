@@ -4,6 +4,7 @@ import type { Env } from "../../common/types";
 const env: Env = {
 	enableLogging: false,
 	heartbeatID: "",
+	mobile: false,
 	useSharedWorker: false,
 };
 

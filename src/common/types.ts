@@ -8,6 +8,7 @@ import type { Bugsnag } from "@bugsnag/browser";
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
+	mobile: boolean;
 	useSharedWorker: boolean;
 };
 
@@ -23,6 +24,7 @@ declare global {
 		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
+		mobile: boolean;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;

@@ -175,6 +175,7 @@ const setupEnv = async () => {
 	const env: Env = {
 		enableLogging: window.enableLogging,
 		heartbeatID,
+		mobile: window.mobile,
 		useSharedWorker: window.useSharedWorker,
 	};
 	await toWorker("main", "init", env);

@@ -20,6 +20,7 @@
     <script>
 window.bbgmVersion = "REV_GOES_HERE";
 window.useSharedWorker = typeof SharedWorker !== 'undefined';
+window.mobile = window.screen.width < 768;
 
 function loadCSS(filename){
   var el = document.createElement("link");

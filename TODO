@@ -1,8 +1,7 @@
 real player stats
-- make default lastSeason, or maybe HoF?
-  - not on mobile!
 - test to confirm CacheOnlyOneItemPlugin is working
 - blog/changes
+  - default on desktop/mobile
   - limitations
     - no team stats
     - "no data" treated as "0" when computing averages of stats that are only available some years

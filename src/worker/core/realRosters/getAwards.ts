@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { AWARD_NAMES, PHASE } from "../../../common";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
@@ -62,6 +62,11 @@ const getAwards = (
 		return;
 	}
 
+	const invertedAwardNames: Record<string, string> = {};
+	for (const [short, long] of Object.entries(AWARD_NAMES)) {
+		invertedAwardNames[long] = short;
+	}
+
 	if (!awardsBySeason) {
 		awardsBySeason = initAwardsBySeason(awards);
 	}
@@ -111,51 +116,77 @@ const getAwards = (
 	}
 
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
-		const awards: Awards = {
+		const seasonAwards = awardsBySeason[season] ?? [];
+		const simple: Record<string, string | undefined> = {
+			roy: undefined,
+			mip: undefined,
+			mvp: undefined,
+			smoy: undefined,
+			dpoy: undefined,
+			finalsMvp: undefined,
+		};
+		const allLeague1: string[] = [];
+		const allLeague2: string[] = [];
+		const allLeague3: string[] = [];
+		const allDefensive1: string[] = [];
+		const allDefensive2: string[] = [];
+		const allDefensive3: string[] = [];
+		const allRookie: string[] = [];
+
+		for (const { slug, type } of seasonAwards) {
+			const short = invertedAwardNames[type];
+			if (short && simple.hasOwnProperty(short)) {
+				simple[short] = slug;
+			}
+		}
+		console.log(season, simple);
+
+		const awards: Awards<string, string> = {
 			season,
 			bestRecord: awardTeam(bestRecordInfoBySeason[season].best),
 			bestRecordConfs: bestRecordInfoBySeason[season].bestConfs.map(awardTeam),
 
-			roy: undefined,
-			allRookie: [],
-			mip: undefined,
-			mvp: undefined,
-			smoy: undefined,
+			roy: simple.roy,
+			allRookie,
+			mip: simple.mip,
+			mvp: simple.mvp,
+			smoy: simple.smoy,
 			allLeague: [
 				{
 					title: "First Team",
-					players: [],
+					players: allLeague1,
 				},
 				{
 					title: "Second Team",
-					players: [],
+					players: allLeague2,
 				},
 				{
 					title: "Third Team",
-					players: [],
+					players: allLeague3,
 				},
 			],
-			dpoy: undefined,
+			dpoy: simple.dpoy,
 			allDefensive: [
 				{
 					title: "First Team",
-					players: [],
+					players: allDefensive1,
 				},
 				{
 					title: "Second Team",
-					players: [],
+					players: allDefensive2,
 				},
 				{
 					title: "Third Team",
-					players: [],
+					players: allDefensive3,
 				},
 			],
-			finalsMvp: undefined,
+			finalsMvp: simple.finalsMvp,
 		};
 
 		allAwards.push(awards);
 	}
 
+	console.log(allAwards);
 	return allAwards;
 };
 

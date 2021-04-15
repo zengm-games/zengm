@@ -1,6 +1,8 @@
 real player stats
 - all stats for active and retired players
   - player awards in awards object
+    - simple awards
+    - all league teams
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI

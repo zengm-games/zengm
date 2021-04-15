@@ -1,10 +1,9 @@
 real player stats
 - all stats for active and retired players
-  - player awards in awards object
-    - start in 2021, go back to 1973, some players have tid -7
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI
+      - "League Champions" blank for old years (1940s, at least) on season summary / history page
   - retired jersey numbers?
   - pot calculation slow? use estimate for past seasons?
   - gm history start date?

@@ -103,6 +103,8 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 
 		if (stats) {
 			tid = stats.tid;
+		} else {
+			console.log("tid not found", awards.season, slug, defensive, playoffs, p);
 		}
 
 		const base = {

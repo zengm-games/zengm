@@ -4,8 +4,6 @@ real player stats
     - award winner team abbrevs
       - or change season summary page to not use it, like historyAll already doesn't use it. anywhere else uses it?
         - would have to do all league teams too
-    - all league teams
-    - all rookie team
   - initialTeamsSeason
     - should not require processing whole list of events repeatedly
     - needs to store history of gameAttributes that changed over time, such as numGamesPlayoffSeries for the playoffs UI

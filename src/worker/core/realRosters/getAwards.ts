@@ -315,9 +315,12 @@ const getAwards = (
 				allDefensive2.push(slug);
 			} else if (type === "Third Team All-Defensive") {
 				allDefensive3.push(slug);
+			} else if (type === AWARD_NAMES.allRookie) {
+				allRookie.push(slug);
+			} else {
+				console.log(type, slug);
 			}
 		}
-		console.log(season, simple);
 
 		const awards: Awards<string, string> = {
 			season,

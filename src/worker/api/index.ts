@@ -533,8 +533,6 @@ const createLeague = async ({
 		];
 	}
 
-	console.log("leagueFile.gameAttributes", leagueFile.gameAttributes);
-
 	const lid = await league.create({
 		name,
 		tid: actualTid,

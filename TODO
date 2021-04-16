@@ -1,9 +1,6 @@
 real player stats
 - bugs
   - league leaders limits https://discord.com/channels/290013534023057409/290015591216054273/832387420191326259
-  - worst teams includes 0-0 team https://discord.com/channels/290013534023057409/290015591216054273/832395025584357377
-  - best non-playoff teams includes playoff team https://discord.com/channels/290013534023057409/290015591216054273/832395135819055104
-- contract history
 - test to confirm CacheOnlyOneItemPlugin is working
 - blog/changes
   - default on desktop/mobile
@@ -13,6 +10,7 @@ real player stats
     - no retired jerseys
 - later
   - retired jersey numbers
+  - contract history
 
 hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
 

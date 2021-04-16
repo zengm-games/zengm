@@ -61,7 +61,7 @@ export const settings: {
 			{ key: "allActive", value: "All seasons, active players only" },
 			{
 				key: "allActiveHOF",
-				value: "All seasons, active and and Hall of Fame players only",
+				value: "All seasons, active and Hall of Fame players only",
 			},
 			{ key: "all", value: "All seasons, teams, and players" },
 		],

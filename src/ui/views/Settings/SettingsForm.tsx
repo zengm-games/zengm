@@ -914,7 +914,7 @@ const encodeDecodeFunctions = {
 			var values = value.split(";");
 			if (values.length != 2 || !value.match("{.*}s*;s*{.*}")) {
 				throw new Error(
-					"Must have two array with brackets separated by a ;. i.e. {1000,800};{1000;750}",
+					"Must have two array with brackets separated by a ;. i.e. {1000,800};{1000,750}",
 				);
 			}
 

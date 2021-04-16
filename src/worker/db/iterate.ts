@@ -13,12 +13,18 @@ import type { LeagueDB } from "./connectLeague";
 // If you don't care about Firefox <60 for a feature and want to use await in the callback, just use a cursor and loop from idb https://github.com/jakearchibald/idb#idbcursor-enhancements
 const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 	store:
-		| IDBPObjectStore<LeagueDB, StoreNames<LeagueDB>[], StoreName>
+		| IDBPObjectStore<
+				LeagueDB,
+				StoreNames<LeagueDB>[],
+				StoreName,
+				IDBTransactionMode
+		  >
 		| IDBPIndex<
 				LeagueDB,
 				StoreNames<LeagueDB>[],
 				StoreName,
-				IndexNames<LeagueDB, StoreName>
+				IndexNames<LeagueDB, StoreName>,
+				IDBTransactionMode
 		  >,
 	key: StoreKey<LeagueDB, StoreName> | IDBKeyRange | undefined = undefined,
 	direction: "next" | "nextunique" | "prev" | "prevunique" = "next",

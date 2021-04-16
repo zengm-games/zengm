@@ -1260,7 +1260,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														time.
 													</p>
 													<p className="mb-0">
-														<a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">
+														<a href="https://zengm.com/blog/2020/05/legends-leagues/">
 															More details
 														</a>
 													</p>

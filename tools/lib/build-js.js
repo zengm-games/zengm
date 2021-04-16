@@ -52,30 +52,30 @@ const buildJS = async () => {
 	build.setTimestamps(rev);
 	build.minifyIndexHTML();
 
-	const realPlayerDataFilename = "build/gen/real-player-data.json";
-	if (fs.existsSync(realPlayerDataFilename)) {
-		const string = fs.readFileSync(realPlayerDataFilename);
-		const compressed = JSON.stringify(JSON.parse(string));
-		fs.writeFileSync(realPlayerDataFilename, compressed);
+	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
+	for (const filename of realPlayerFilenames) {
+		const filePath = `build/gen/${filename}.json`;
+		if (fs.existsSync(filePath)) {
+			const string = fs.readFileSync(filePath);
+			const compressed = JSON.stringify(JSON.parse(string));
+			fs.writeFileSync(filePath, compressed);
 
-		const hash = build.fileHash(compressed);
-		const newFilename = realPlayerDataFilename.replace(
-			".json",
-			`-${hash}.json`,
-		);
-		fse.moveSync(realPlayerDataFilename, newFilename);
+			const hash = build.fileHash(compressed);
+			const newFilename = filePath.replace(".json", `-${hash}.json`);
+			fse.moveSync(filePath, newFilename);
 
-		const sport = getSport();
-		if (sport === "basketball") {
-			replace({
-				regex: "/gen/real-player-data.json",
-				replacement: `/gen/real-player-data-${hash}.json`,
-				paths: [
-					`build/gen/worker-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-				],
-				silent: true,
-			});
+			const sport = getSport();
+			if (sport === "basketball") {
+				replace({
+					regex: `/gen/${filename}.json`,
+					replacement: `/gen/${filename}-${hash}.json`,
+					paths: [
+						`build/gen/worker-legacy-${rev}.js`,
+						`build/gen/worker-${rev}.js`,
+					],
+					silent: true,
+				});
+			}
 		}
 	}
 };

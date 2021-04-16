@@ -187,12 +187,12 @@ const copyFiles = () => {
 		fse.removeSync(`build/${folder}`);
 	}
 
-	const realPlayerDataFilename = path.join(
-		"data",
-		`real-player-data.${sport}.json`,
-	);
-	if (fs.existsSync(realPlayerDataFilename)) {
-		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
+	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
+	for (const filename of realPlayerFilenames) {
+		const sourcePath = path.join("data", `${filename}.${sport}.json`);
+		if (fs.existsSync(sourcePath)) {
+			fse.copySync(sourcePath, `build/gen/${filename}.json`);
+		}
 	}
 
 	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");

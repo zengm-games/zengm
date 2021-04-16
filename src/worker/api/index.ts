@@ -95,6 +95,7 @@ import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
 import { wrap } from "../util/g";
+import { getDefaultRealStats } from "../views/newLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -319,17 +320,43 @@ const createLeague = async ({
 	teams: NewLeagueTeam[];
 	settings: Omit<Settings, "numActiveTeams">;
 }): Promise<number> => {
-	const keys = [...keptKeys, "version"];
+	const keys = new Set([...keptKeys, "version"]);
 
+	let actualTid = tid;
 	if (getLeagueOptions) {
-		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+		const realLeague = await realRosters.getLeague(getLeagueOptions);
 
+		if (getLeagueOptions.type === "real") {
+			if (getLeagueOptions.realStats === "all") {
+				keys.add("awards");
+				keys.add("playoffSeries");
+			}
+
+			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+				keys.add("draftLotteryResults");
+				keys.add("draftPicks");
+				keys.add("playoffSeries");
+			}
+		}
+
+		// Since inactive teams are included if realStats=="all", need to translate tid too
 		if (
 			getLeagueOptions.type === "real" &&
-			getLeagueOptions.phase >= PHASE.PLAYOFFS
+			getLeagueOptions.realStats === "all"
 		) {
-			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+			const leagueInfo = await realRosters.getLeagueInfo({
+				...getLeagueOptions,
+				realStats: getDefaultRealStats(),
+				leagueInfoKeepAllTeams: true,
+			});
+			const abbrev = leagueInfo.teams[tid].abbrev;
+			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);
+			if (!abbrev || actualTid < 0) {
+				throw new Error("Error finding tid");
+			}
 		}
+
+		leagueFileInput = realLeague;
 	}
 
 	const leagueFile: any = {};
@@ -375,7 +402,7 @@ const createLeague = async ({
 		| undefined;
 	if (realTeamInfo) {
 		const currentSeason =
-			leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason;
+			leagueFile.gameAttributes?.season ?? leagueFile.startingSeason;
 
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
@@ -385,7 +412,7 @@ const createLeague = async ({
 				if (getLeagueOptions && t.seasons) {
 					for (const teamSeason of t.seasons) {
 						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
-							srIDOverride: t.srID,
+							srIDOverride: teamSeason.srID ?? t.srID,
 						});
 					}
 				}
@@ -411,6 +438,11 @@ const createLeague = async ({
 		noStartingInjuries,
 		randomization,
 		repeatSeason,
+
+		// realStats is already in getLeagueOptions
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		realStats,
+
 		...otherSettings
 	} = settings;
 
@@ -456,6 +488,10 @@ const createLeague = async ({
 			leagueFile.gameAttributes,
 			key,
 			gameAttributeOverrides[key],
+			{
+				season: leagueFile.gameAttributes.season ?? leagueFile.startingSeason,
+				phase: leagueFile.gameAttributes.phase ?? PHASE.PRESEASON,
+			},
 		);
 	}
 
@@ -482,9 +518,24 @@ const createLeague = async ({
 		importLid = await getNewLeagueLid();
 	}
 
+	if (
+		getLeagueOptions &&
+		getLeagueOptions.type === "real" &&
+		getLeagueOptions.realStats === "all"
+	) {
+		// startingSeason is 1947, so use userTid history to denote when user actually started managing team
+		leagueFile.gameAttributes.userTid = [
+			{ start: -Infinity, value: PLAYER.DOES_NOT_EXIST },
+			{
+				start: leagueFile.gameAttributes.season,
+				value: leagueFile.gameAttributes.userTid,
+			},
+		];
+	}
+
 	const lid = await league.create({
 		name,
-		tid,
+		tid: actualTid,
 		leagueFile,
 		shuffleRosters,
 		importLid,

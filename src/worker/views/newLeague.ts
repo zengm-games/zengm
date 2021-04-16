@@ -2,11 +2,16 @@ import { idb } from "../db";
 import type { ViewInput, RealTeamInfo } from "../../common/types";
 import {
 	defaultGameAttributes,
+	env,
 	getNewLeagueLid,
 	newLeagueGodModeLimits,
 } from "../util";
 import type { Settings } from "./settings";
 import { unwrapGameAttribute } from "../../common";
+
+export const getDefaultRealStats = () => {
+	return env.mobile ? "none" : "allActiveHOF";
+};
 
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	const godModeLimits = newLeagueGodModeLimits();
@@ -193,6 +198,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		),
 		noStartingInjuries: false,
 		randomization: "none",
+		realStats: getDefaultRealStats(),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

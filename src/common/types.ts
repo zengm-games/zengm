@@ -8,6 +8,7 @@ import type { Bugsnag } from "@bugsnag/browser";
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
+	mobile: boolean;
 	useSharedWorker: boolean;
 };
 
@@ -23,6 +24,7 @@ declare global {
 		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
+		mobile: boolean;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
@@ -1374,6 +1376,9 @@ export type TeamSeasonWithoutKey = {
 	imgURL?: string;
 	colors: [string, string, string];
 	jersey?: string;
+
+	// Only used in historical leagues when realStats="all"
+	srID?: string;
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {
@@ -1465,6 +1470,8 @@ export type GetLeagueOptionsReal = {
 	phase: number;
 	randomDebuts: boolean;
 	realDraftRatings: "draft" | "rookie";
+	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
+	leagueInfoKeepAllTeams?: boolean;
 };
 
 export type GetLeagueOptions =

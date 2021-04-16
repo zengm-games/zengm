@@ -1,14 +1,29 @@
 real player stats
-- in separate json file, only loaded if selected
-- options:
-  - just this season's stats
-  - all stats for active players
-  - all stats for active and retired players
-- statsTids
-- statsBlank entries
-  - yearsWithTeam
-- store stats row as an array or object? does it matter for quota usage?
-- service worker cache
+- test to confirm CacheOnlyOneItemPlugin is working
+- blog/changes
+  - default on desktop/mobile
+  - limitations
+    - no team stats
+    - "no data" treated as "0" when computing averages of stats that are only available some years
+    - no retired jerseys
+- later
+  - retired jersey numbers
+  - contract history
+
+hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
+
+wasted screen space on standings https://discord.com/channels/290013534023057409/290015591216054273/832366795091607642
+
+start league in 1950 after playoffs, go to customize settings, and there is an error about the playoff settings
+- should be smart enough to recognize that the validation should run off of the upcoming scheduled change. or run validation against teams that were active previous season
+
+enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
+- if you disable the team you're controlling, it switches you to another team. do that for the whole list
+- https://discord.com/channels/@me/831754887058423819/831759448284463134
+
+draft classes won't export with auto save off https://discord.com/channels/290013534023057409/290015591216054273/831675686052823080
+
+"suggest" button next to position dropdown on player editor https://old.reddit.com/r/BasketballGM/comments/mq8ugr/a_players_overall_rating_is_now_displayed_live/gufrqdk/?context=3
 
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json

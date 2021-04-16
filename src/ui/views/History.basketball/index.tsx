@@ -61,13 +61,6 @@ const History = (props: View<"history">) => {
 						team={awards.allLeague}
 						userTid={userTid}
 					/>
-					<Team
-						className="mb-3"
-						name="All-Rookie Team"
-						season={season}
-						team={awards.allRookie}
-						userTid={userTid}
-					/>
 				</div>
 				<div className="col-md-3 col-sm-4 col-6">
 					<Team
@@ -76,6 +69,13 @@ const History = (props: View<"history">) => {
 						nested
 						season={season}
 						team={awards.allDefensive}
+						userTid={userTid}
+					/>
+					<Team
+						className="mb-3"
+						name="All-Rookie Team"
+						season={season}
+						team={awards.allRookie}
 						userTid={userTid}
 					/>
 				</div>

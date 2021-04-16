@@ -6,12 +6,14 @@ import {
 	mvpScore,
 	royFilter,
 	royScore,
-	smoyFilter,
+	getSmoyFilter,
 	smoyScore,
 } from "./doAwards.basketball";
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);
+
+	const smoyFilter = getSmoyFilter(players);
 
 	const awardCandidates = [
 		{

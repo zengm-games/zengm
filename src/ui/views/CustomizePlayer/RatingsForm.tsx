@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Fragment, ChangeEvent, useState, useEffect } from "react";
-import { bySport } from "../../../common";
+import { bySport, RATINGS } from "../../../common";
 import { getCols, helpers, toWorker } from "../../util";
 
 const rows = bySport<
@@ -54,7 +54,19 @@ const RatingsForm = ({
 	useEffect(() => {
 		let mounted = true;
 		(async () => {
-			const newOvr = await toWorker("main", "ovr", ratingsRow, ratingsRow.pos);
+			const boundedRatings = {
+				...ratingsRow,
+			};
+			for (const key of RATINGS) {
+				boundedRatings[key] = helpers.bound(boundedRatings[key], 0, 100);
+			}
+
+			const newOvr = await toWorker(
+				"main",
+				"ovr",
+				boundedRatings,
+				boundedRatings.pos,
+			);
 			if (mounted) {
 				setOvr(newOvr);
 			}

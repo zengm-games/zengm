@@ -16,6 +16,9 @@ hockey - torn acl -> spd increase https://discord.com/channels/29001353402305740
 
 wasted screen space on standings https://discord.com/channels/290013534023057409/290015591216054273/832366795091607642
 
+start league in 1950 after playoffs, go to customize settings, and there is an error about the playoff settings
+- should be smart enough to recognize that the validation should run off of the upcoming scheduled change. or run validation against teams that were active previous season
+
 enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
 - if you disable the team you're controlling, it switches you to another team. do that for the whole list
 - https://discord.com/channels/@me/831754887058423819/831759448284463134

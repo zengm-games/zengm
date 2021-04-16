@@ -522,7 +522,10 @@ export const settings: {
 		godModeRequired: "always",
 		type: "bool",
 		description: (
-			<p>If enabled the rookie scale is fixed for the max and mins contracts</p>
+			<p>
+				If enabled the rookie scale is fixed for the max and mins contracts,
+				earning the top pick a fixed percentage of the max contract.
+			</p>
 		),
 	},
 	{
@@ -533,8 +536,8 @@ export const settings: {
 		type: "float",
 		descriptionLong: (
 			<p>
-				if Automatic Rookie Scale is enabled this determines the maximum
-				contract of the rookie scale as a fraction of the max contract.
+				If Automatic Rookie Scale is enabled this determines the maximum
+				contract of the rookie scale as a percentage of the max contract.
 			</p>
 		),
 	},

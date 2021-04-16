@@ -79,12 +79,14 @@ const getRookieSalaries = (): number[] => {
 	);
 
 	const maxContractScale = rookieSalaries[0];
-	if (minContract !== 500 || (maxContract !== 20000 && autoRookieScale)) {
+	if (minContract !== 500 || maxContract !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {
-			rookieSalaries[i] =
-				(rookieSalaries[i] / maxContractScale) *
-					(rookieScaleMaxContract * maxContract - minContract) +
-				minContract;
+			if (autoRookieScale) {
+				rookieSalaries[i] =
+					(rookieSalaries[i] / maxContractScale) *
+						(rookieScaleMaxContract * maxContract - minContract) +
+					minContract;
+			}
 			rookieSalaries[i] = helpers.roundContract(rookieSalaries[i]);
 
 			rookieSalaries[i] = helpers.bound(

@@ -81,6 +81,25 @@ export const settings: {
 	},
 	{
 		category: "New League",
+		key: "realStats",
+		name: "Historical Stats",
+		godModeRequired: "existingLeagueOnly",
+		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+			newLeague && hasPlayers && realPlayers,
+		type: "string",
+		values: [
+			{ key: "none", value: "None" },
+			{ key: "lastSeason", value: "Last season, active players only" },
+			{ key: "allActive", value: "All seasons, active players only" },
+			{
+				key: "allActiveHOF",
+				value: "All seasons, active and and Hall of Fame players only",
+			},
+			{ key: "all", value: "All seasons, teams, and players" },
+		],
+	},
+	{
+		category: "New League",
 		key: "randomization",
 		name: "Randomization",
 		godModeRequired: "existingLeagueOnly",
@@ -143,25 +162,6 @@ export const settings: {
 		godModeRequired: "existingLeagueOnly",
 		showOnlyIf: ({ newLeague, hasPlayers }) => newLeague && hasPlayers,
 		type: "bool",
-	},
-	{
-		category: "New League",
-		key: "realStats",
-		name: "Historical Stats",
-		godModeRequired: "existingLeagueOnly",
-		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
-			newLeague && hasPlayers && realPlayers,
-		type: "string",
-		values: [
-			{ key: "none", value: "None" },
-			{ key: "lastSeason", value: "Last season, active players only" },
-			{ key: "allActive", value: "All seasons, active players only" },
-			{
-				key: "allActiveHOF",
-				value: "All seasons, active and and Hall of Fame players only",
-			},
-			{ key: "all", value: "All seasons, teams, and players" },
-		],
 	},
 	{
 		category: "Season",

@@ -154,8 +154,8 @@ const shuntingYard = (string: string) => {
 };
 
 class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
-	symbols: Symbols;
-	tokens: (string | number)[];
+	private symbols: Symbols;
+	private tokens: (string | number)[];
 
 	constructor(equation: string, symbols: Symbols) {
 		this.symbols = symbols;
@@ -164,7 +164,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		);
 	}
 
-	partiallyEvaluate(tokens: string[]) {
+	private partiallyEvaluate(tokens: string[]) {
 		const processed: (string | number)[] = [];
 
 		for (const token of tokens) {

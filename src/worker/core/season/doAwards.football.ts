@@ -20,7 +20,6 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 		name: p.name,
 		pos: p.pos,
 		tid: p.tid,
-		abbrev: p.abbrev,
 		keyStats: p.currentStats.keyStats,
 	};
 };
@@ -218,7 +217,6 @@ const getRealFinalsMvp = async (
 			pid: p.pid,
 			name: p.name,
 			tid: p.tid,
-			abbrev: p.abbrev,
 			pos: p.pos,
 			keyStats: "",
 		};

@@ -1,12 +1,18 @@
 import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
-import type { ScheduledEventWithoutKey } from "../../../common/types";
-import { PHASE } from "../../../common";
+import type {
+	ScheduledEventWithoutKey,
+	TeamSeasonWithoutKey,
+} from "../../../common/types";
+import { gameAttributeHasHistory, PHASE } from "../../../common";
+import { ALWAYS_WRAP } from "../league/loadGameAttributes";
+import { wrap } from "../../util/g";
 
 const processGameAttributes = (
 	events: any[],
 	season: number,
 	phase: number,
+	gameAttributesHistory?: boolean,
 ) => {
 	let gameAttributeEvents = [];
 
@@ -18,7 +24,7 @@ const processGameAttributes = (
 
 	let initialGameAttributes;
 
-	// Remove gameAttributes individual property dupes, and find what the gameAttributes state was at the beginning of the given season
+	// Fine what the gameAttributes state was at the beginning of the given season/phase
 	const prevState: any = {};
 	for (const event of gameAttributeEvents) {
 		if (
@@ -27,12 +33,30 @@ const processGameAttributes = (
 			initialGameAttributes === undefined
 		) {
 			initialGameAttributes = helpers.deepCopy(prevState);
+			break;
 		}
+
 		for (const [key, value] of Object.entries(event.info)) {
-			if (value === prevState[key]) {
-				delete event.info[key];
-			} else {
+			if (
+				!gameAttributesHistory ||
+				!prevState.hasOwnProperty(key) ||
+				!ALWAYS_WRAP.includes(key)
+			) {
 				prevState[key] = value;
+			} else {
+				if (!gameAttributeHasHistory(prevState[key])) {
+					prevState[key] = [
+						{
+							start: -Infinity,
+							value: prevState[key],
+						},
+					];
+				}
+
+				prevState[key] = wrap(prevState, key as any, value, {
+					season: event.season,
+					phase: event.phase,
+				});
 			}
 		}
 	}
@@ -58,6 +82,7 @@ const processTeams = (
 	events: ScheduledEventWithoutKey[],
 	season: number,
 	phase: number,
+	keepAllTeams: boolean,
 ) => {
 	let teamEvents = [];
 
@@ -84,6 +109,7 @@ const processTeams = (
 		did: number;
 		disabled?: boolean;
 		firstSeasonAfterExpansion?: number;
+		seasons?: TeamSeasonWithoutKey[];
 	}[];
 
 	// Keep track of initial teams
@@ -99,22 +125,41 @@ const processTeams = (
 		}
 
 		if (event.type === "expansionDraft") {
-			prevState.push(...helpers.deepCopy(event.info.teams));
+			for (const t of event.info.teams) {
+				const ind = prevState.findIndex(t0 => t0.tid === t.tid);
+				const t0 = prevState[ind];
+				if (t0) {
+					// Re-expanding a contracted team, probably with keepAllTeams
+					prevState[ind] = {
+						...t0,
+						...t,
+					};
+					if (prevState[ind].disabled) {
+						delete prevState[ind].disabled;
+					}
+				} else {
+					prevState.push({
+						...t,
+					});
+				}
+			}
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
 			const ind = prevState.findIndex(t0 => t0.tid === t.tid);
 			const t0 = prevState[ind];
 			if (!t0) {
-				console.log(event);
 				throw new Error(`teamInfo before expansionDraft for tid ${t.tid}`);
 			}
 			prevState[ind] = {
 				...t0,
 				...t,
 			};
+			if (prevState[ind].disabled) {
+				delete prevState[ind].disabled;
+			}
 		} else if (event.type === "contraction") {
-			if (event.season === season && event.phase <= phase) {
-				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs.
+			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
+				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".
 				const t = prevState.find(t => t.tid === event.info.tid);
 				t.disabled = true;
 			} else {
@@ -218,8 +263,19 @@ const processTeams = (
 
 const formatScheduledEvents = (
 	events: any[],
-	season: number,
-	phase: number = PHASE.PRESEASON,
+	{
+		gameAttributesHistory,
+		keepAllTeams,
+		onlyTeams,
+		season,
+		phase = PHASE.PRESEASON,
+	}: {
+		gameAttributesHistory?: boolean;
+		keepAllTeams: boolean;
+		onlyTeams?: boolean;
+		season: number;
+		phase?: number;
+	},
 ) => {
 	for (const event of events) {
 		if (
@@ -234,16 +290,26 @@ const formatScheduledEvents = (
 
 	const eventsSorted = orderBy(events, ["season", "phase", "type"]);
 
-	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
-		eventsSorted,
-		season,
-		phase,
-	);
-
 	const { teamEvents, initialTeams } = processTeams(
 		eventsSorted,
 		season,
 		phase,
+		keepAllTeams,
+	);
+
+	if (onlyTeams) {
+		return {
+			scheduledEvents: [],
+			initialGameAttributes: {},
+			initialTeams,
+		};
+	}
+
+	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
+		eventsSorted,
+		season,
+		phase,
+		gameAttributesHistory,
 	);
 
 	return {

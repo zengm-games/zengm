@@ -51,7 +51,6 @@ export type AwardPlayer = {
 	pid: number;
 	name: string;
 	tid: number;
-	abbrev: string;
 	pos: string;
 	keyStats: string;
 };

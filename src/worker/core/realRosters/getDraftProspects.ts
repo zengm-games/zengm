@@ -46,7 +46,7 @@ const processScheduledEvents = (
 	};
 };
 
-const getDraftProspects = (
+const getDraftProspects = async (
 	basketball: Basketball,
 	activePlayers: {
 		srID: string;
@@ -60,7 +60,7 @@ const getDraftProspects = (
 	numPlayersInitialDraftYear: number,
 	options: GetLeagueOptionsReal,
 ) => {
-	const formatPlayer = formatPlayerFactory(
+	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		options,
 		options.season,

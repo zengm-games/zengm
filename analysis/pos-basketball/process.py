@@ -7,7 +7,7 @@ import seaborn as sns
 from collections import defaultdict
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, '../../data/real-player-data-basketball.json')
+filename = os.path.join(dirname, '../../data/real-player-data.basketball.json')
 data = json.load(open(filename,'rb'))
 
 df = pd.DataFrame(data['ratings'])

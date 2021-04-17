@@ -106,6 +106,7 @@ describe("worker/core/GameSim.football", () => {
 
 		// Sacks always happen, no penalties
 		game.probSack = () => 1;
+		game.probFumble = () => 0;
 		game.checkPenalties = () => undefined;
 
 		game.doPass();
@@ -147,6 +148,8 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.d, 0);
 	});
 
+	// This test is a bit flaky because a run of 10 yards followed by a fumble recovery of -1 yards results in a 1st down :(
+	// That's why this checks for scrimmage under 25 rather than 30, to give it some cushion.
 	test("fumble recovered by offense should only cost one down", async () => {
 		const game = await initGameSim();
 
@@ -179,7 +182,7 @@ describe("worker/core/GameSim.football", () => {
 			game.simPlay();
 
 			// Looking for the offense to recover, and not for a first down
-			if (game.o === 0 && game.scrimmage < 30 && !game.awaitingAfterTouchdown) {
+			if (game.o === 0 && game.scrimmage < 25 && !game.awaitingAfterTouchdown) {
 				break;
 			}
 		}

@@ -9,7 +9,6 @@ import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "./awards";
-
 import { idb } from "../../db";
 import { defaultGameAttributes, g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
@@ -24,7 +23,6 @@ const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 		pid: p.pid,
 		name: p.name,
 		tid: p.tid,
-		abbrev: p.abbrev,
 		pts: p.currentStats.pts,
 		trb: p.currentStats.trb,
 		ast: p.currentStats.ast,
@@ -36,7 +34,6 @@ const getPlayerInfoDefense = (p: PlayerFiltered): AwardPlayerDefense => {
 		pid: p.pid,
 		name: p.name,
 		tid: p.tid,
-		abbrev: p.abbrev,
 		trb: p.currentStats.trb,
 		blk: p.currentStats.blk,
 		stl: p.currentStats.stl,
@@ -172,7 +169,6 @@ const getRealFinalsMvp = async (
 			pid: p.pid,
 			name: p.name,
 			tid: p.tid,
-			abbrev: p.abbrev,
 			pts: playerArray[0].pts / playerArray[0].gp,
 			trb: playerArray[0].trb / playerArray[0].gp,
 			ast: playerArray[0].ast / playerArray[0].gp,
@@ -203,8 +199,15 @@ export const dpoyScore = (p: PlayerFiltered) =>
 	((p.currentStats.blk + p.currentStats.stl) * p.currentStats.gp) /
 		defaultGameAttributes.numGames;
 
-export const smoyFilter = (p: PlayerFiltered) =>
-	p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
+// Handle case where GS is not available, which happens when loading historical stats
+export const getSmoyFilter = (players: PlayerFiltered[]) => {
+	if (players.some(p => p.currentStats.gs > 0)) {
+		return (p: PlayerFiltered) =>
+			p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
+	}
+
+	return () => false;
+};
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
@@ -346,16 +349,20 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
+
 	const mvp = mvpPlayers[0];
+
 	const allLeague = makeTeams(mvpPlayers);
+
 	const [smoy] = getTopPlayersOffense(
 		{
 			allowNone: true,
-			filter: smoyFilter,
+			filter: getSmoyFilter(players),
 			score: smoyScore,
 		},
 		players,
 	);
+
 	const royPlayers = getTopPlayersOffense(
 		{
 			allowNone: true,

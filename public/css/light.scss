@@ -104,21 +104,15 @@ h5 {
 	padding: 0 15px;
 	width: 100%;
 }
-.skyscraper-wrapper {
-	display: none;
-}
 
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.skyscraper-wrapper {
+	#basketball-gm_right_rail,
+	#football-gm_right_rail,
+	#zen-gm_right_rail {
 		display: block;
 		position: sticky;
 		top: 60px;
 		right: 0;
-		height: 600px;
-	}
-	#basketball-gm_right_rail,
-	#football-gm_right_rail,
-	#zen-gm_right_rail {
 		width: 160px;
 		height: 600px;
 	}
@@ -1141,9 +1135,7 @@ button.live-game-sim-more {
 }
 @include media-breakpoint-down(md) {
 	.settings-buttons {
-		position: fixed;
-		width: 100%;
-		left: 0;
+		margin: 0 -15px;
 		border-top-left-radius: 0 !important;
 		border-top-right-radius: 0 !important;
 	}
@@ -1187,7 +1179,8 @@ a.anchor {
 }
 
 #basketball-gm_mobile_leaderboard,
-#football-gm_mobile_leaderboard {
+#football-gm_mobile_leaderboard,
+#zen-gm_mobile_leaderboard {
 	z-index: 1000; // Behind sidebar
 	bottom: 0;
 	padding-top: 2px;

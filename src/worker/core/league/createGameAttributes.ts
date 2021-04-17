@@ -1,21 +1,24 @@
-import { DIFFICULTY, gameAttributeHasHistory, PHASE } from "../../../common";
+import {
+	DIFFICULTY,
+	gameAttributeHasHistory,
+	PHASE,
+	unwrapGameAttribute,
+} from "../../../common";
 import type {
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../../common/types";
 import { defaultGameAttributes, helpers } from "../../util";
-import { unwrap, wrap } from "../../util/g";
+import { wrap } from "../../util/g";
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 const createGameAttributes = ({
-	difficulty,
 	leagueFile,
 	teamInfos,
 	userTid,
 	version,
 }: {
-	difficulty: number;
 	leagueFile: LeagueFile;
 	teamInfos: TeamInfo[];
 	userTid: number;
@@ -44,26 +47,18 @@ const createGameAttributes = ({
 		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
-		difficulty,
 	};
 
 	if (leagueFile.gameAttributes) {
 		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
-			// Set default for anything except these, since they can be overwritten by form input.
-			if (key !== "difficulty") {
-				// userTid is handled special below
-				if (key !== "userTid") {
-					(gameAttributes as any)[key] = value;
-				}
+			// userTid is handled special below
+			if (key !== "userTid") {
+				(gameAttributes as any)[key] = value;
+			}
 
-				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
-				if (
-					Array.isArray(value) &&
-					value.length > 0 &&
-					value[0].start === null
-				) {
-					value[0].start = -Infinity;
-				}
+			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
+			if (Array.isArray(value) && value.length > 0 && value[0].start === null) {
+				value[0].start = -Infinity;
 			}
 		}
 
@@ -119,18 +114,21 @@ const createGameAttributes = ({
 
 	// Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
 	// when creating a new league.
-	if (difficulty <= DIFFICULTY.Easy) {
+	if (gameAttributes.difficulty <= DIFFICULTY.Easy) {
 		gameAttributes.easyDifficultyInPast = true;
 	}
 
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
-	const oldNumGames = unwrap(gameAttributes, "numGamesPlayoffSeries");
+	const oldNumGames = unwrapGameAttribute(
+		gameAttributes,
+		"numGamesPlayoffSeries",
+	);
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
 		helpers.validateRoundsByes(
 			oldNumGames.length,
-			unwrap(gameAttributes, "numPlayoffByes"),
+			unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
 			gameAttributes.numActiveTeams,
 		);
 	} catch (error) {

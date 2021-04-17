@@ -129,7 +129,7 @@ const MultiTeamMode = ({
 
 			<p>
 				For more details,{" "}
-				<a href="https://basketball-gm.com/blog/2015/03/new-feature-multi-team-mode/">
+				<a href="https://zengm.com/blog/2015/03/new-feature-multi-team-mode/">
 					read this blog post
 				</a>
 				. But basically,{" "}

@@ -1,3 +1,4 @@
+import loadStatsBasketball, { BasketballStats } from "./loadStats.basketball";
 import { helpers, PHASE, PLAYER } from "../../../common";
 import type { GetLeagueOptions } from "../../../common/types";
 import { LATEST_SEASON, LATEST_SEASON_WITH_DRAFT_POSITIONS } from "./getLeague";
@@ -6,8 +7,11 @@ import type { Basketball, Ratings } from "./loadData.basketball";
 import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
+import { getEWA } from "../../util/advStats.basketball";
 
-const formatPlayerFactory = (
+const MINUTES_PER_GAME = 48;
+
+const formatPlayerFactory = async (
 	basketball: Basketball,
 	options: GetLeagueOptions,
 	season: number,
@@ -19,8 +23,33 @@ const formatPlayerFactory = (
 ) => {
 	let pid = initialPid;
 
+	let basketballStats: BasketballStats | undefined;
+	if (options.type === "real" && options.realStats !== "none") {
+		basketballStats = await loadStatsBasketball();
+	}
+
+	const tidCache: Record<string, number | undefined> = {};
+	const getTidNormal = (abbrev?: string): number | undefined => {
+		if (abbrev === undefined) {
+			return;
+		}
+		if (tidCache.hasOwnProperty(abbrev)) {
+			return tidCache[abbrev];
+		}
+
+		const t = teams.find(
+			t => t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+		);
+
+		const tid = t?.tid;
+
+		tidCache[abbrev] = tid;
+
+		return tid;
+	};
+
 	return (
-		ratings: Ratings,
+		ratingsInput: Ratings[] | Ratings,
 		{
 			draftProspect,
 			legends,
@@ -33,21 +62,11 @@ const formatPlayerFactory = (
 			randomDebuts?: boolean;
 		} = {},
 	) => {
-		if (!legends) {
-			if (draftProspect) {
-				if (ratings.season === season) {
-					throw new Error(
-						"draftProspect should not be true when ratings.season === season",
-					);
-				}
-			} else {
-				if (ratings.season !== season) {
-					throw new Error(
-						"draftProspect should be true when ratings.season !== season",
-					);
-				}
-			}
-		}
+		const allRatings = Array.isArray(ratingsInput)
+			? ratingsInput
+			: [ratingsInput];
+
+		const ratings = allRatings[allRatings.length - 1];
 
 		const slug = ratings.slug;
 
@@ -90,6 +109,8 @@ const formatPlayerFactory = (
 		let jerseyNumber: string | undefined;
 		if (draftProspect) {
 			tid = PLAYER.UNDRAFTED;
+		} else if (!legends && ratings.season < season) {
+			tid = PLAYER.RETIRED;
 		} else {
 			tid = PLAYER.FREE_AGENT;
 			let statsRow;
@@ -129,20 +150,14 @@ const formatPlayerFactory = (
 				});
 				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
-				if (abbrev !== undefined) {
-					const t = teams.find(
-						t =>
-							t.srID !== undefined &&
-							oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
-					);
-					if (t) {
-						tid = t.tid;
-					}
+				const newTid = getTidNormal(abbrev);
+				if (newTid !== undefined) {
+					tid = newTid;
 				}
 			}
 		}
 
-		if (!jerseyNumber) {
+		if (!jerseyNumber && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
 			const statsRow2 = basketball.stats.find(row => row.slug === slug);
 			if (statsRow2) {
@@ -229,12 +244,25 @@ const formatPlayerFactory = (
 			bornYear = bio.bornYear;
 		}
 
-		const age = ratings.season - bornYear;
-
 		// Whitelist, to get rid of any other columns
-		const currentRatings = getOnlyRatings(ratings);
+		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
 
-		if (draftProspect) {
+		const addDummyRookieRatings =
+			!draftProspect &&
+			options.type === "real" &&
+			(options.realStats === "all" ||
+				options.realStats === "allActive" ||
+				options.realStats === "allActiveHOF");
+		if (addDummyRookieRatings) {
+			processedRatings.unshift({
+				...processedRatings[0],
+				season: draft.year,
+			});
+		}
+
+		if (draftProspect || addDummyRookieRatings) {
+			const currentRatings = processedRatings[0];
+
 			nerfDraftProspect(currentRatings);
 
 			if (
@@ -242,11 +270,79 @@ const formatPlayerFactory = (
 				options.realDraftRatings === "draft" &&
 				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
 			) {
+				const age = currentRatings.season! - bornYear;
 				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
 			}
 		}
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
+
+		type StatsRow = Omit<
+			BasketballStats[number],
+			"slug" | "abbrev" | "playoffs"
+		> & {
+			playoffs: boolean;
+			tid: number;
+			minAvailable: number;
+			ewa: number;
+		};
+		let stats: StatsRow[] | undefined;
+		if (options.type === "real" && basketballStats) {
+			let statsTemp: BasketballStats | undefined;
+
+			const statsSeason =
+				options.phase > PHASE.REGULAR_SEASON
+					? options.season
+					: options.season - 1;
+			const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
+
+			if (options.realStats === "lastSeason") {
+				statsTemp = basketballStats.filter(
+					row =>
+						row.slug === slug &&
+						row.season === statsSeason &&
+						(includePlayoffs || !row.playoffs),
+				);
+			} else if (
+				options.realStats === "allActiveHOF" ||
+				options.realStats === "allActive" ||
+				options.realStats === "all"
+			) {
+				statsTemp = basketballStats.filter(
+					row =>
+						row.slug === slug &&
+						row.season <= statsSeason &&
+						(includePlayoffs || !row.playoffs || row.season < statsSeason),
+				);
+			}
+
+			if (statsTemp && statsTemp.length > 0) {
+				stats = statsTemp.map(row => {
+					let tid = getTidNormal(row.abbrev);
+					if (tid === undefined) {
+						// Team was disbanded
+						tid = PLAYER.DOES_NOT_EXIST;
+					}
+
+					const newRow: StatsRow = {
+						...row,
+						playoffs: !!row.playoffs,
+						tid,
+						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
+						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos),
+					};
+					delete (newRow as any).slug;
+					delete (newRow as any).abbrev;
+
+					return newRow;
+				});
+			}
+		}
+
+		const hof =
+			!!awards &&
+			awards.some(award => award.type === "Inducted into the Hall of Fame");
+		const retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
 
 		pid += 1;
 
@@ -265,11 +361,14 @@ const formatPlayerFactory = (
 			imgURL: "/img/blank-face.png",
 			real: true,
 			draft,
-			ratings: [currentRatings],
+			ratings: processedRatings,
+			stats,
 			injury,
 			contract,
 			awards,
 			jerseyNumber,
+			hof,
+			retiredYear,
 			srID: ratings.slug,
 		};
 	};

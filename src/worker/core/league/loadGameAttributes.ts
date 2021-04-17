@@ -1,9 +1,24 @@
 import { league } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g } from "../../util";
-import { gameAttributeHasHistory, helpers } from "../../../common";
-import { unwrap } from "../../util/g";
+import {
+	gameAttributeHasHistory,
+	helpers,
+	unwrapGameAttribute,
+} from "../../../common";
 import gameAttributesToUI from "./gameAttributesToUI";
+
+export const ALWAYS_WRAP = [
+	"confs",
+	"divs",
+	"numGamesPlayoffSeries",
+	"numPlayoffByes",
+	"otl",
+	"pointsFormula",
+	"tiebreakers",
+	"ties",
+	"userTid",
+];
 
 /**
  * Load game attributes from the database and update the global variable g.
@@ -13,20 +28,8 @@ import gameAttributesToUI from "./gameAttributesToUI";
 const loadGameAttributes = async () => {
 	const gameAttributes = await idb.cache.gameAttributes.getAll();
 
-	const alwaysWrap = [
-		"confs",
-		"divs",
-		"numGamesPlayoffSeries",
-		"numPlayoffByes",
-		"otl",
-		"pointsFormula",
-		"tiebreakers",
-		"ties",
-		"userTid",
-	];
-
 	for (const { key, value } of gameAttributes) {
-		if (alwaysWrap.includes(key) && !gameAttributeHasHistory(value)) {
+		if (ALWAYS_WRAP.includes(key) && !gameAttributeHasHistory(value)) {
 			// Wrap on load to avoid IndexedDB upgrade
 			g.setWithoutSavingToDB(key, [
 				{
@@ -72,7 +75,7 @@ const loadGameAttributes = async () => {
 				// If numPlayoffRounds was set back before numGamesPlayoffSeries existed, use that
 				await league.setGameAttributes({
 					numGamesPlayoffSeries: league.getValidNumGamesPlayoffSeries(
-						unwrap(defaultGameAttributes, "numGamesPlayoffSeries"),
+						unwrapGameAttribute(defaultGameAttributes, "numGamesPlayoffSeries"),
 						(g as any).numPlayoffRounds,
 						g.get("numActiveTeams"),
 					),

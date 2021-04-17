@@ -22,7 +22,7 @@ const updateRandomDebutsForever = async (
 
 	const lastPID = idb.cache._maxIds.players;
 
-	const draftProspects = getDraftProspects(
+	const draftProspects = await getDraftProspects(
 		basketball,
 		[],
 		currentTeams,
@@ -35,6 +35,7 @@ const updateRandomDebutsForever = async (
 			phase: PHASE.DRAFT, // Faked, so initialDraftYear is correct in getDraftProspects
 			randomDebuts: true,
 			realDraftRatings: g.get("realDraftRatings") ?? "draft",
+			realStats: "none",
 		},
 	);
 

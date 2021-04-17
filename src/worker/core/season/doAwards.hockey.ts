@@ -17,7 +17,6 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 		pid: p.pid,
 		name: p.name,
 		tid: p.tid,
-		abbrev: p.abbrev,
 		pos: p.pos,
 		g: p.currentStats.g,
 		a: p.currentStats.a,

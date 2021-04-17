@@ -4,13 +4,19 @@ import { AD_DIVS } from "../../common";
 const widthCutoff = 1200 + 190;
 
 let displayed = false;
-const updateSkyscraperDisplay = () => {
+export const updateSkyscraperDisplay = () => {
 	const div = document.getElementById(AD_DIVS.rail);
 
 	if (div) {
+		const gold = !!div.dataset.gold;
+
 		const documentElement = document.documentElement;
 
-		if (documentElement && documentElement.clientWidth >= widthCutoff) {
+		if (
+			documentElement &&
+			documentElement.clientWidth >= widthCutoff &&
+			!gold
+		) {
 			if (!displayed) {
 				window.freestar.queue.push(() => {
 					div.style.display = "block";
@@ -24,7 +30,7 @@ const updateSkyscraperDisplay = () => {
 				});
 			}
 		} else {
-			if (displayed) {
+			if (displayed || gold) {
 				window.freestar.queue.push(() => {
 					div.style.display = "none";
 					window.freestar.deleteAdSlots(AD_DIVS.rail);
@@ -65,19 +71,13 @@ const Skyscraper = memo(() => {
 		// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 		<>
 			<div
-				className="banner-ad skyscraper-wrapper ml-3 flex-shrink-0"
-				id="skyscraper-wrapper"
+				className="banner-ad ml-3 flex-shrink-0"
+				id={AD_DIVS.rail}
+				data-gold="true"
 				style={{
 					display: "none",
 				}}
-			>
-				<div
-					id={AD_DIVS.rail}
-					style={{
-						display: "none",
-					}}
-				/>
-			</div>
+			></div>
 		</>
 	);
 });

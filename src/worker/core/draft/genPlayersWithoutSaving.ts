@@ -52,29 +52,31 @@ const genPlayersWithoutSaving = async (
 	const normalNumPlayers = Math.round(
 		(defaultGameAttributes.numDraftRounds * g.get("numActiveTeams") * 7) / 6,
 	);
-	const baseNumPlayers = Math.max(
+	let baseNumPlayers = Math.max(
 		Math.round((g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6),
 		normalNumPlayers,
 	);
 
-	let numPlayers = baseNumPlayers - existingPlayers.length;
-
 	// Based on draftAges and forceRetireAge settings, check how many players we need per draft class to fill the league. KEEP IN SYNC WITH LEAGUE CREATION seasonsSimmed
 	const draftAges = g.get("draftAges");
 	const forceRetireAge = g.get("forceRetireAge");
-	if (forceRetireAge > draftAges[1]) {
+	const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2); // Ideally this would be more intelligently determined, based on getFractionPerYear
+	const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
+	if (forceRetireAgeDiff > 0) {
 		const numActivePlayers =
 			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
 
-		const numSeasonsPerPlayer = Math.floor(forceRetireAge - draftAges[1]);
+		const numSeasonsPerPlayer = forceRetireAgeDiff;
 		const numPlayersNeededPerYear = Math.ceil(
 			numActivePlayers / numSeasonsPerPlayer,
 		);
 
-		if (numPlayersNeededPerYear > numPlayers) {
-			numPlayers = numPlayersNeededPerYear;
+		if (numPlayersNeededPerYear > baseNumPlayers) {
+			baseNumPlayers = numPlayersNeededPerYear;
 		}
 	}
+
+	const numPlayers = baseNumPlayers - existingPlayers.length;
 
 	if (numPlayers <= 0) {
 		return [];
@@ -195,6 +197,14 @@ const genPlayersWithoutSaving = async (
 
 	for (const p of enteringDraft) {
 		delete p.fudgeFactor; // Update player values after ratings changes
+	}
+
+	// No college for players 18 or younger
+	for (const p of enteringDraft) {
+		const ageAtDraft = p.draft.year - p.born.year;
+		if (ageAtDraft <= 18) {
+			p.college = "";
+		}
 	}
 
 	return enteringDraft;

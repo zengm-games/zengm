@@ -47,17 +47,11 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	// Put in DOM element and global variable because the former is used before React takes over and the latter is used after
-	const bbgmVersionUI = "REV_GOES_HERE";
-	window.bbgmVersionUI = bbgmVersionUI;
-
 	if (window.withGoodUI) {
 		window.withGoodUI();
 	}
 
-	toWorker("main", "getVersionWorker").then(bbgmVersionWorker => {
-		window.bbgmVersionWorker = bbgmVersionWorker;
-
+	toWorker("main", "ping").then(() => {
 		if (window.withGoodWorker) {
 			window.withGoodWorker();
 		}
@@ -181,6 +175,7 @@ const setupEnv = async () => {
 	const env: Env = {
 		enableLogging: window.enableLogging,
 		heartbeatID,
+		mobile: window.mobile,
 		useSharedWorker: window.useSharedWorker,
 	};
 	await toWorker("main", "init", env);
@@ -333,4 +328,8 @@ const setupRoutes = () => {
 	await setupEnv();
 	render();
 	await setupRoutes();
+
+	if ("serviceWorker" in navigator) {
+		navigator.serviceWorker.register("/sw.js");
+	}
 })();

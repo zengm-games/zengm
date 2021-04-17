@@ -1,10 +1,10 @@
 import { idb } from "../../db";
 import { g, helpers, initUILocalGames, local } from "../../util";
-import { unwrap, wrap } from "../../util/g";
+import { wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
-import { DIFFICULTY } from "../../../common";
+import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -30,7 +30,7 @@ const setGameAttributes = async (
 	}
 
 	for (const key of helpers.keys(gameAttributes)) {
-		const currentValue = unwrap(g, key);
+		const currentValue = unwrapGameAttribute(g, key);
 
 		if (
 			// @ts-ignore

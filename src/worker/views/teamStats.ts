@@ -169,6 +169,7 @@ const updateTeams = async (
 				"oppMov",
 				"pl",
 				"drtg",
+				"tovp",
 				"oppFgAtRim",
 				"oppFgaAtRim",
 				"oppFgpAtRim",

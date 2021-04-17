@@ -25,11 +25,17 @@ const injectManifest = async () => {
 		swSrc: "public/sw.js",
 		swDest: "build/sw.js",
 		globDirectory: "build",
-		globPatterns: ["**/*.{js,css,html}", "fonts/*.woff2", "img/logos/*.png"],
+		globPatterns: [
+			"**/*.{js,css,html}",
+			"fonts/*.woff2",
+			"img/logos/*.png",
+			"ico/logo.png",
+			"ico/logo-gold.png",
+		],
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
 		globIgnores: [
 			"gen/*-legacy-*.js",
-			"gen/real-player-data*.json",
+			"gen/real-player-*.json",
 			"upgrade-39/*",
 		],
 

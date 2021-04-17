@@ -1,7 +1,49 @@
+real player stats
+- test to confirm CacheOnlyOneItemPlugin is working
+- later
+  - diedYear
+  - retired jersey numbers
+  - contract history
+
+add option to hide inactive teams from dropdowns https://discord.com/channels/@me/756332440980684821/832714010226458635
+
+create new 2021 league with realStats="all", go to season summary, best record teams still show up with their default names even if you have real team info override
+- really should get rid of abbrev/region/name from that object and just store tid
+
+Click on a draft prospects draft year and it takes you to some blank page instead of the draft scouting page. https://discord.com/channels/290013534023057409/290015591216054273/832662626298757153
+
+Block numbers increase by >33% in playoffs, this is a bit too much!!! https://discord.com/channels/290013534023057409/290015591216054273/832653523644710953
+
+hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
+
+wasted screen space on standings https://discord.com/channels/290013534023057409/290015591216054273/832366795091607642
+
+start league in 1950 after playoffs, go to customize settings, and there is an error about the playoff settings
+- should be smart enough to recognize that the validation should run off of the upcoming scheduled change. or run validation against teams that were active previous season
+
+enable multi team mode. disable one of the teams (not the one you're actively controlling). go to free agents page and switch to the disabled team - error.
+- if you disable the team you're controlling, it switches you to another team. do that for the whole list
+- https://discord.com/channels/@me/831754887058423819/831759448284463134
+
+draft classes won't export with auto save off https://discord.com/channels/290013534023057409/290015591216054273/831675686052823080
+
+"suggest" button next to position dropdown on player editor https://old.reddit.com/r/BasketballGM/comments/mq8ugr/a_players_overall_rating_is_now_displayed_live/gufrqdk/?context=3
+
+If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
+- https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
+- https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032
+
+for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
+- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
+- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
+- https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
+
 ad stuff
-- skyscraper sticky
-  - compare I:PV, CPM, and RPM before and after
+- https://mail.google.com/mail/u/0/#sent/KtbxLthVctNVLxBrRBdGxbpcLVdvwHlGQq
 - CPM from skyscraper and leaderboard really worth it? why not add at bottom? could fit like 4-5 squares there
+  - especially for skyscraper
+- sometimes leaderboard displays a small ad, like 320x50... in that case, why not show two of them? didn't you say you could do that?
+- add another ad at the top, for wide screens?
 - mobile - would bigger ad unit at bottom work just as well?
 
 draft class quality setting
@@ -12,10 +54,6 @@ draft class quality setting
 
 settings re-design
 - all settings should be editable when creating a new league
-  - god mode toggle refactor
-  - also new league has some extra settings that don't persist, like randomization and no starting injuries
-  - make sure it handles setting the season for pace etc in real players leagues
-  - godModeRequired value of "existingLeagueOnly" should be used here
   - https://old.reddit.com/r/BasketballGM/comments/jltrgv/monthly_suggestions_thread/gd4kwuf/
   - https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghz5j6v/
 - some settings should only be editable in offseason
@@ -23,8 +61,7 @@ settings re-design
 - to add
   - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
-hockey new lottery
-- revert chances changes for old method
+hockey new lottery nhl2021
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
 
@@ -44,6 +81,7 @@ teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.
 hockey
 - game sim performance
 - ovr PR
+- why everyone wants 3 year contracts @AtomicDelirium
 
 player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
 
@@ -132,7 +170,11 @@ option to exclude notable games box scores from deletion
 - finals
 - games involving your team
 
-name/colleges revamp
+name/colleges
+- UI to edit, from league settings
+- special entries in frequencies
+  - _random - uniform random of all built-in countries
+  - _default - built-in countries at their default probability
 - races
   - some way to validate that all countries have races, and vice versa
   - update docs
@@ -177,6 +219,10 @@ add some more built-in teams
   - logos should work for both basketball and football
 - maybe: Providence, Columbus, Ottawa, Calgary, Louisville, Nashville
 - foreign: Tokyo, Delhi, Shanghai, São Paulo, Cairo, Beijing, Karachi, Buenos Aires, Istanbul, Manila, Lagos, Kinshasa, Moscow, Paris, Bogotá, Jakarta, Lima, Bangkok, Seoul, London, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw, Sydney
+- next
+  - Hockey cities: Edmonton, Winnipeg, New Jersey
+  - World cities: London, Beijing, Tokyo, Paris
+  - By BBGM userbase: Manila, Syndney, São Paulo
 
 "find players" form
 - customizable search boxes for stats/ratings
@@ -299,10 +345,6 @@ FBGM too many very short players
 on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
 
 Maybe another frivolty to say which players were the best with a certain pick, e.g. 1-3 would be Michael Jordan IRL, 1-1 would be LeBron James, etc @lewie100
-
-for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
-- even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
-- last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 
 trade summary charts future
 - some indication for winning a championship, special marker?
@@ -777,6 +819,7 @@ FBGM
   - trades - maybe 50/50? otherwise too easy to scam?
 - small thing its difficult to trade in fbgm because teams are permanently in the contending strategy no matter how bad they are https://discord.com/channels/290013534023057409/331882115119448065/800250593049837590
 - penalty on punt goes in wrong direction https://old.reddit.com/r/Football_GM/comments/l9xzhi/bug_report_penalty_goes_the_wrong_way/
+  - https://discord.com/channels/290013534023057409/290015591216054273/831277650165104650
 - holding on incomplete pass https://discord.com/channels/290013534023057409/290015591216054273/806339641924911154
 - inappropriate spot foul? https://discord.com/channels/290013534023057409/290015591216054273/810358905988579359
 - rookie contracts https://old.reddit.com/r/Football_GM/comments/kvf6cw/please_fix_rookie_contracts/
@@ -786,6 +829,8 @@ FBGM
   - https://discord.com/channels/290013534023057409/290015591216054273/824808266008625204
 - ovr revamp
   - base on composite ratings directly? https://discord.com/channels/290013534023057409/569726303926878219/822286234612924416
+- 1st and 10, 10 yard run, fumble, recovered by offense 1 yard back -> 1st down, because it's assessed when moving forward 10 yards
+  - "fumble recovered by offense should only cost one down" test
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -990,12 +1035,6 @@ Game list redesign
   - show player with highest game score under completed game
 
 teamRegion in playersPlus needed?
-
-sw cache issue
-- might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
-- could also store quota amount in log
-- looks like it could be old sw staying active somehow
-- try to reproduce on low disk space
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
@@ -1434,9 +1473,6 @@ new adv stats in roster page?
 - OR, wait for BPM?
 
 per 100 possessions and totals toggle on team stats page
-
-remove babel plugins
-- https://github.com/babel/babel/blob/71e7a7b1e0df42df4ee47a01a6218adf40e99cda/packages/babel-compat-data/data/plugins.json
 
 remove polyfills
 - get rid of getAll polyfill when safari 10.x usage goes to 0

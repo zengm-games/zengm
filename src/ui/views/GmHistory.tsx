@@ -9,10 +9,10 @@ const GmHistory = ({
 	bestRecord,
 	championships,
 	finalsAppearances,
-	history,
 	players,
 	playoffAppearances,
 	stats,
+	teamHistories,
 	totalLost,
 	totalTied,
 	totalOtl,
@@ -40,20 +40,39 @@ const GmHistory = ({
 
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
-					<Overall
-						bestRecord={bestRecord}
-						championships={championships}
-						finalsAppearances={finalsAppearances}
-						playoffAppearances={playoffAppearances}
-						totalLost={totalLost}
-						totalTied={totalTied}
-						totalOtl={totalOtl}
-						totalWinp={totalWinp}
-						totalWon={totalWon}
-						worstRecord={worstRecord}
-					/>
+					{teamHistories.length !== 1 ? (
+						<Overall
+							bestRecord={bestRecord}
+							championships={championships}
+							finalsAppearances={finalsAppearances}
+							playoffAppearances={playoffAppearances}
+							totalLost={totalLost}
+							totalTied={totalTied}
+							totalOtl={totalOtl}
+							totalWinp={totalWinp}
+							totalWon={totalWon}
+							worstRecord={worstRecord}
+						/>
+					) : null}
 
-					<Seasons history={history} />
+					{teamHistories.map((teamHistory, i) => (
+						<div key={i} className="mt-3">
+							<Overall
+								bestRecord={teamHistory.bestRecord}
+								championships={teamHistory.championships}
+								finalsAppearances={teamHistory.finalsAppearances}
+								playoffAppearances={teamHistory.playoffAppearances}
+								totalLost={teamHistory.totalLost}
+								totalTied={teamHistory.totalTied}
+								totalOtl={teamHistory.totalOtl}
+								totalWinp={teamHistory.totalWinp}
+								totalWon={teamHistory.totalWon}
+								worstRecord={teamHistory.worstRecord}
+								title={teamHistory.history[0].name}
+							/>
+							<Seasons history={teamHistory.history} />
+						</div>
+					))}
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<p>

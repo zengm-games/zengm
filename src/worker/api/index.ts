@@ -93,6 +93,9 @@ import {
 import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
+import type { Settings } from "../views/settings";
+import { wrap } from "../util/g";
+import { getDefaultRealStats } from "../views/newLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -295,65 +298,65 @@ const createLeague = async ({
 	tid,
 	leagueFileInput,
 	shuffleRosters,
-	difficulty,
 	importLid,
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
-	challengeNoDraftPicks,
-	challengeNoFreeAgents,
-	challengeNoRatings,
-	challengeNoTrades,
-	challengeLoseBestPlayer,
-	challengeFiredLuxuryTax,
-	challengeFiredMissPlayoffs,
-	challengeThanosMode,
-	repeatSeason,
-	noStartingInjuries,
-	equalizeRegions,
-	realPlayerDeterminism,
-	randomDebutsForever,
 	confs,
 	divs,
 	teams,
+	settings,
 }: {
 	name: string;
 	tid: number;
 	leagueFileInput: any;
 	shuffleRosters: boolean;
-	difficulty: number;
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
-	challengeNoDraftPicks: boolean;
-	challengeNoFreeAgents: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	challengeLoseBestPlayer: boolean;
-	challengeFiredLuxuryTax: boolean;
-	challengeFiredMissPlayoffs: boolean;
-	challengeThanosMode: boolean;
-	repeatSeason: boolean;
-	noStartingInjuries: boolean;
-	equalizeRegions: boolean;
-	realPlayerDeterminism: number | undefined;
-	randomDebutsForever: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeam[];
+	settings: Omit<Settings, "numActiveTeams">;
 }): Promise<number> => {
-	const keys = [...keptKeys, "version"];
+	const keys = new Set([...keptKeys, "version"]);
 
+	let actualTid = tid;
 	if (getLeagueOptions) {
-		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+		const realLeague = await realRosters.getLeague(getLeagueOptions);
 
+		if (getLeagueOptions.type === "real") {
+			if (getLeagueOptions.realStats === "all") {
+				keys.add("awards");
+				keys.add("playoffSeries");
+			}
+
+			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+				keys.add("draftLotteryResults");
+				keys.add("draftPicks");
+				keys.add("playoffSeries");
+			}
+		}
+
+		// Since inactive teams are included if realStats=="all", need to translate tid too
 		if (
 			getLeagueOptions.type === "real" &&
-			getLeagueOptions.phase >= PHASE.PLAYOFFS
+			getLeagueOptions.realStats === "all"
 		) {
-			keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
+			const leagueInfo = await realRosters.getLeagueInfo({
+				...getLeagueOptions,
+				realStats: getDefaultRealStats(),
+				leagueInfoKeepAllTeams: true,
+			});
+			const abbrev = leagueInfo.teams[tid].abbrev;
+			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);
+			if (!abbrev || actualTid < 0) {
+				throw new Error("Error finding tid");
+			}
 		}
+
+		leagueFileInput = realLeague;
 	}
 
 	const leagueFile: any = {};
@@ -399,7 +402,7 @@ const createLeague = async ({
 		| undefined;
 	if (realTeamInfo) {
 		const currentSeason =
-			leagueFile.gameAttributes?.currentSeason ?? leagueFile.startingSeason;
+			leagueFile.gameAttributes?.season ?? leagueFile.startingSeason;
 
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
@@ -409,7 +412,7 @@ const createLeague = async ({
 				if (getLeagueOptions && t.seasons) {
 					for (const teamSeason of t.seasons) {
 						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
-							srIDOverride: t.srID,
+							srIDOverride: teamSeason.srID ?? t.srID,
 						});
 					}
 				}
@@ -430,26 +433,30 @@ const createLeague = async ({
 		}
 	}
 
-	const gameAttributeOverrides: Record<string, any> = {
-		challengeNoDraftPicks,
-		challengeNoFreeAgents,
-		challengeNoRatings,
-		challengeNoTrades,
-		challengeLoseBestPlayer,
-		challengeFiredLuxuryTax,
-		challengeFiredMissPlayoffs,
-		challengeThanosMode,
-		equalizeRegions,
+	// Single out all the weird settings that don't go directly into gameAttributes
+	const {
+		noStartingInjuries,
+		randomization,
+		repeatSeason,
+
+		// realStats is already in getLeagueOptions
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		realStats,
+
+		...otherSettings
+	} = settings;
+
+	const gameAttributeOverrides: Partial<
+		Record<keyof GameAttributesLeague, any>
+	> = {
 		confs,
 		divs,
+		...otherSettings,
 	};
 
-	if (realPlayerDeterminism !== undefined) {
-		gameAttributeOverrides.realPlayerDeterminism = realPlayerDeterminism;
-	}
-
-	if (getLeagueOptions && getLeagueOptions.type === "real") {
-		gameAttributeOverrides.realDraftRatings = getLeagueOptions.realDraftRatings;
+	// This setting is allowed to be undefined, so make it that way when appropriate
+	if (!getLeagueOptions || getLeagueOptions.type !== "real") {
+		delete gameAttributeOverrides.realDraftRatings;
 	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful
@@ -473,13 +480,23 @@ const createLeague = async ({
 		}
 	}
 
-	leagueFile.gameAttributes = {
-		...leagueFile.gameAttributes,
-		...gameAttributeOverrides,
-	};
+	leagueFile.gameAttributes = leagueFile.gameAttributes ?? {};
+
+	for (const key of helpers.keys(gameAttributeOverrides)) {
+		// If we're overriding a value with history, keep the history
+		leagueFile.gameAttributes[key] = wrap(
+			leagueFile.gameAttributes,
+			key,
+			gameAttributeOverrides[key],
+			{
+				season: leagueFile.gameAttributes.season ?? leagueFile.startingSeason,
+				phase: leagueFile.gameAttributes.phase ?? PHASE.PRESEASON,
+			},
+		);
+	}
 
 	if (
-		randomDebutsForever &&
+		randomization === "debutsForever" &&
 		leagueFile.gameAttributes.randomDebutsForever === undefined
 	) {
 		leagueFile.gameAttributes.randomDebutsForever = 1;
@@ -501,12 +518,26 @@ const createLeague = async ({
 		importLid = await getNewLeagueLid();
 	}
 
+	if (
+		getLeagueOptions &&
+		getLeagueOptions.type === "real" &&
+		getLeagueOptions.realStats === "all"
+	) {
+		// startingSeason is 1947, so use userTid history to denote when user actually started managing team
+		leagueFile.gameAttributes.userTid = [
+			{ start: -Infinity, value: PLAYER.DOES_NOT_EXIST },
+			{
+				start: leagueFile.gameAttributes.season,
+				value: leagueFile.gameAttributes.userTid,
+			},
+		];
+	}
+
 	const lid = await league.create({
 		name,
-		tid,
+		tid: actualTid,
 		leagueFile,
 		shuffleRosters,
-		difficulty,
 		importLid,
 		realPlayers: !!getLeagueOptions,
 	});
@@ -1146,6 +1177,17 @@ const exportDraftClass = async (season: number) => {
 		weight: p.weight,
 	}));
 
+	// When exporting a past draft class, don't include current injuries
+	if (
+		season < g.get("season") ||
+		(season === g.get("season") && g.get("phase") > PHASE.DRAFT)
+	) {
+		for (const p of data.players) {
+			delete p.injury;
+			delete p.injuries;
+		}
+	}
+
 	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
 	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
 
@@ -1393,8 +1435,8 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	return augmentOffers(offers);
 };
 
-const getVersionWorker = async () => {
-	return "REV_GOES_HERE";
+const ping = async () => {
+	return;
 };
 
 const handleUploadedDraftClass = async (
@@ -1716,6 +1758,10 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
 const lockSet = async (name: LockName, value: boolean) => {
 	await lock.set(name, value);
+};
+
+const ovr = async (ratings: MinimalPlayerRatings, pos: string) => {
+	return player.ovr(ratings, pos);
 };
 
 const ratingsStatsPopoverInfo = async (pid: number) => {
@@ -3152,11 +3198,12 @@ export default {
 	getRandomName,
 	getRandomRatings,
 	getTradingBlockOffers,
-	getVersionWorker,
+	ping,
 	handleUploadedDraftClass,
 	importPlayers,
 	init,
 	lockSet,
+	ovr,
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,

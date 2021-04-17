@@ -3,7 +3,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	GameAttributesLeague,
 } from "../../../common/types";
-import { unwrap } from "../../util/g";
+import { unwrapGameAttribute } from "../../../common";
 
 const gameAttributesToUI = async (
 	gameAttributes: GameAttributesLeagueWithHistory,
@@ -27,7 +27,7 @@ const gameAttributesToUI = async (
 	let updated = false;
 	for (const key of keys) {
 		if (gameAttributes.hasOwnProperty(key)) {
-			(update as any)[key] = unwrap(gameAttributes, key);
+			(update as any)[key] = unwrapGameAttribute(gameAttributes, key);
 			updated = true;
 		}
 	}

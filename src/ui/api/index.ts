@@ -16,6 +16,7 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types";
 import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -60,19 +61,14 @@ const initAds = (goldUntil: number | undefined) => {
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
-			// const divsMobile: string[] = [];
-			const showDivsDesktop = [
+			const divsDesktop = [
 				AD_DIVS.leaderboard,
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
-				"skyscraper-wrapper",
 			];
-			const showDivs =
-				window.screen && window.screen.width < 768
-					? divsMobile
-					: showDivsDesktop;
+			const divs = window.mobile ? divsMobile : divsDesktop;
 
-			for (const id of showDivs) {
+			for (const id of divs) {
 				const div = document.getElementById(id);
 
 				if (div) {
@@ -80,22 +76,21 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivsDesktop = [
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
-			const adDivs =
-				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
+			// Special case for rail, to tell it there is no BBGM gold
+			const rail = document.getElementById(AD_DIVS.rail);
+			if (rail) {
+				delete rail.dataset.gold;
+				updateSkyscraperDisplay();
+			}
 
-			for (const adDiv of adDivs) {
+			for (const id of divs) {
 				window.freestar.config.enabled_slots.push({
-					placementName: adDiv,
-					slotId: adDiv,
+					placementName: id,
+					slotId: id,
 				});
 			}
 
-			if (adDivs.includes(AD_DIVS.mobile)) {
+			if (divs.includes(AD_DIVS.mobile)) {
 				localActions.update({
 					stickyFooterAd: true,
 				});
@@ -119,7 +114,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (window.screen && window.screen.width >= 768) {
+			if (window.mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 

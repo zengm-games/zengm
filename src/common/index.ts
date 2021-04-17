@@ -11,3 +11,4 @@ export { default as helpers } from "./helpers";
 export { default as isSport } from "./isSport";
 export { default as posRatings } from "./posRatings";
 export { default as processPlayerStats } from "./processPlayerStats";
+export { default as unwrapGameAttribute } from "./unwrapGameAttribute";

@@ -44,6 +44,34 @@ type Team = TeamFiltered<
 	number
 >;
 
+const prls = {
+	PG: 11,
+	G: 10.75,
+	SG: 10.5,
+	GF: 10.5,
+	SF: 10.5,
+	F: 11,
+	PF: 11.5,
+	FC: 11.05,
+	C: 10.6,
+};
+
+export const getEWA = (per: number, min: number, pos: string) => {
+	let prl;
+
+	if (prls.hasOwnProperty(pos)) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
+		prl = prls[pos];
+	} else {
+		// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+		prl = 10.75;
+	}
+
+	const va = (min * (per - prl)) / 67;
+	return (va / 30) * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
+};
+
 // http://www.basketball-reference.com/about/per.html
 const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map(t => {
@@ -121,32 +149,8 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	// Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 	const EWA: number[] = []; // Position Replacement Levels
 
-	const prls = {
-		PG: 11,
-		G: 10.75,
-		SG: 10.5,
-		GF: 10.5,
-		SF: 10.5,
-		F: 11,
-		PF: 11.5,
-		FC: 11.05,
-		C: 10.6,
-	};
-
 	for (let i = 0; i < players.length; i++) {
-		let prl;
-
-		if (prls.hasOwnProperty(players[i].ratings.pos)) {
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			prl = prls[players[i].ratings.pos];
-		} else {
-			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
-			prl = 10.75;
-		}
-
-		const va = (players[i].stats.min * (PER[i] - prl)) / 67;
-		EWA[i] = (va / 30) * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
+		EWA[i] = getEWA(PER[i], players[i].stats.min, players[i].ratings.pos);
 	}
 
 	return {
@@ -485,7 +489,6 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	return {
-		bpm: BPM,
 		obpm: OBPM,
 		dbpm: DBPM,
 		vorp: VORP,

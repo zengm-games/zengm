@@ -551,15 +551,22 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 	teams: T[],
 	allTeams: T[],
 	{
+		skipDivisionLeaders,
 		skipTiebreakers,
 		season = g.get("season"),
 	}: {
+		skipDivisionLeaders?: boolean;
 		skipTiebreakers?: boolean;
 		season?: number;
 	} = {},
 ) => {
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
 	const divisionLeaders = new Map<number, T>();
+
+	// This is useful for a finals matchup, where we want home court determined based on team records without regard for division leaders, like the NHL
+	if (skipDivisionLeaders) {
+		return divisionLeaders;
+	}
 
 	// Only look at divisions repeseted in teams
 	const dids = new Set();
@@ -597,11 +604,13 @@ const orderTeams = async <T extends BaseTeam>(
 	allTeams: T[],
 	{
 		addTiebreakersField,
+		skipDivisionLeaders,
 		skipTiebreakers,
 		season = g.get("season"),
 		tiebreakersOverride,
 	}: {
 		addTiebreakersField?: boolean;
+		skipDivisionLeaders?: boolean;
 		skipTiebreakers?: boolean;
 		season?: number;
 		tiebreakersOverride?: Tiebreaker[];
@@ -618,6 +627,7 @@ const orderTeams = async <T extends BaseTeam>(
 	const usePts = g.get("pointsFormula", season) !== "";
 
 	const divisionLeaders = await getDivisionLeaders(teams, allTeams, {
+		skipDivisionLeaders,
 		skipTiebreakers,
 		season,
 	});

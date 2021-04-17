@@ -1,4 +1,4 @@
-import { unwrap } from "idb";
+import { StoreNames, unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
 	isSport,
@@ -152,6 +152,12 @@ export interface LeagueDB extends DBSchema {
 	};
 }
 
+type VersionChangeTransaction = IDBPTransaction<
+	LeagueDB,
+	StoreNames<LeagueDB>[],
+	"versionchange"
+>;
+
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
@@ -263,7 +269,7 @@ const upgrade31 = (tx: IDBTransaction) => {
 	};
 };
 
-const upgrade33 = (transaction: IDBPTransaction<LeagueDB>) => {
+const upgrade33 = (transaction: VersionChangeTransaction) => {
 	const tx = unwrap(transaction);
 	tx.objectStore("gameAttributes").get("season").onsuccess = (event: any) => {
 		if (event.target.result === undefined) {
@@ -313,7 +319,7 @@ const upgrade33 = (transaction: IDBPTransaction<LeagueDB>) => {
 	};
 };
 
-const upgrade38 = (transaction: IDBPTransaction<LeagueDB>) => {
+const upgrade38 = (transaction: VersionChangeTransaction) => {
 	const tx = unwrap(transaction);
 	const scheduleStore = tx.objectStore("schedule");
 	scheduleStore.getAll().onsuccess = (event: any) => {
@@ -464,7 +470,7 @@ const migrate = ({
 	db: IDBPDatabase<LeagueDB>;
 	lid: number;
 	oldVersion: number;
-	transaction: IDBPTransaction<LeagueDB>;
+	transaction: VersionChangeTransaction;
 }) => {
 	console.log(db, lid, oldVersion, transaction);
 	let upgradeMsg = `Upgrading league${lid} database from version ${oldVersion} to version ${db.version}.`;

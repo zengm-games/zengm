@@ -3,13 +3,13 @@ import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal, toWorker } from "../util";
 import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
-import { options } from "./Settings";
+import { settings } from "./Settings/settings";
 import { Dropdown } from "react-bootstrap";
 
 const godModeOptions: Partial<
-	Record<typeof options[number]["key"], typeof options[number]>
+	Record<typeof settings[number]["key"], typeof settings[number]>
 > = {};
-for (const option of options) {
+for (const option of settings) {
 	godModeOptions[option.key] = option;
 }
 

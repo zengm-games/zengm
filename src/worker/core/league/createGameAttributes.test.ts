@@ -6,7 +6,6 @@ import { PHASE } from "../../../common";
 describe("worker/core/league/createGameAttributes", () => {
 	test("save integer in wrapped format", () => {
 		const gameAttributes = createGameAttributes({
-			difficulty: 0,
 			leagueFile: { startingSeason: 2015 },
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -19,7 +18,6 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history", () => {
 		const gameAttributes = createGameAttributes({
-			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -42,7 +40,6 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history while selecting a new team", () => {
 		const gameAttributes = createGameAttributes({
-			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -66,7 +63,6 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history while selecting a new team, overwriting current season", () => {
 		const gameAttributes = createGameAttributes({
-			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -89,7 +85,6 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("new team after playoffs", () => {
 		const gameAttributes = createGameAttributes({
-			difficulty: 0,
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -114,7 +109,6 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	describe("tiebreakers", () => {
 		const defaultArgs = {
-			difficulty: 0,
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		};

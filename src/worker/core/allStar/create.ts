@@ -12,14 +12,6 @@ import type {
 } from "../../../common/types";
 import { bySport } from "../../../common";
 
-const NUM_ALL_STARS =
-	2 *
-	bySport({
-		basketball: 12,
-		football: 40,
-		hockey: 12,
-	});
-
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
 		season: g.get("season"),
@@ -29,6 +21,9 @@ const create = async (conditions: Conditions) => {
 		finalized: false,
 	};
 	const players = await getPlayers(g.get("season"));
+
+	// 12 per team, for a default league
+	const NUM_ALL_STARS = 2 * (g.get("minRosterSize") + 2);
 
 	const score = (p: PlayerFiltered) =>
 		bySport({

@@ -142,6 +142,28 @@ const pickPlayer = (
 	return 0;
 };
 
+// Return the indexes of the elements in ovrs, sorted from smallest to largest.
+// So [50, 70, 10, 20, 60] => [2, 3, 0, 4, 1]
+// The set is to handle ties.
+// The descending sort and reverse is so ties are handled with the later entry in ovrs getting the lower index, like:
+// [0, 0, 0, 0, 0] => [4, 3, 2, 1, 0]
+const getSortedIndexes = (ovrs: number[]) => {
+	const ovrsSortedDesc = [...ovrs].sort((a, b) => b - a);
+	const usedIndexes = new Set();
+	const sortedIndexes = ovrsSortedDesc
+		.map(ovr => {
+			let index = ovrs.indexOf(ovr);
+			while (usedIndexes.has(index)) {
+				index += 1;
+			}
+			usedIndexes.add(index);
+			return index;
+		})
+		.reverse();
+
+	return sortedIndexes;
+};
+
 class GameSim {
 	id: number;
 
@@ -257,7 +279,7 @@ class GameSim {
 		this.elamDone = false;
 		this.elamTarget = 0;
 
-		this.fatigueFactor = 0.051;
+		this.fatigueFactor = 0.055;
 
 		if (g.get("phase") === PHASE.PLAYOFFS) {
 			this.fatigueFactor /= 1.85;
@@ -758,8 +780,10 @@ class GameSim {
 				ovrs = getOvrs(true);
 			}
 
-			// Loop through players on court (in inverse order of current roster position)
-			for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
+			const ovrsOnCourt = this.playersOnCourt[t].map(p => ovrs[p]);
+
+			// Sub off the lowest ovr guy first
+			for (const pp of getSortedIndexes(ovrsOnCourt)) {
 				const p = this.playersOnCourt[t][pp];
 				const onCourtIsIneligible = ovrs[p] === -Infinity;
 				this.playersOnCourt[t][pp] = p; // Don't sub out guy shooting FTs!

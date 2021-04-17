@@ -2,6 +2,7 @@ const CleanCSS = require("clean-css");
 const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
+const htmlmin = require("html-minifier-terser");
 const sass = require("node-sass");
 const path = require("path");
 const replace = require("replace");
@@ -186,12 +187,12 @@ const copyFiles = () => {
 		fse.removeSync(`build/${folder}`);
 	}
 
-	const realPlayerDataFilename = path.join(
-		"data",
-		`real-player-data-${sport}.json`,
-	);
-	if (fs.existsSync(realPlayerDataFilename)) {
-		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
+	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
+	for (const filename of realPlayerFilenames) {
+		const sourcePath = path.join("data", `${filename}.${sport}.json`);
+		if (fs.existsSync(sourcePath)) {
+			fse.copySync(sourcePath, `build/gen/${filename}.json`);
+		}
 	}
 
 	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
@@ -204,15 +205,16 @@ const copyFiles = () => {
 };
 
 const genRev = () => {
-	const d = new Date();
-	const date = d.toISOString().split("T")[0].replace(/-/g, ".");
-	const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
+	const date = new Date();
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	const minutes = String(date.getMinutes() + 60 * date.getHours()).padStart(
 		4,
 		"0",
 	);
-	const rev = `${date}.${minutes}`;
 
-	return rev;
+	return `${year}.${month}.${day}.${minutes}`;
 };
 
 const reset = () => {
@@ -221,20 +223,26 @@ const reset = () => {
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
-	const sport = getSport();
+	if (watch) {
+		replace({
+			regex: "-REV_GOES_HERE\\.js",
+			replacement: ".js",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+
+		replace({
+			regex: '-" \\+ bbgmVersion \\+ "',
+			replacement: "",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+	}
 
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
-		paths: watch
-			? ["build/index.html"]
-			: [
-					"build/index.html",
-					`build/gen/ui-${rev}.js`,
-					`build/gen/ui-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-					`build/gen/worker-legacy-${rev}.js`,
-			  ],
+		paths: ["build/index.html"],
 		silent: true,
 	});
 
@@ -458,7 +466,8 @@ if (window.enableLogging) {
 		silent: true,
 	});
 
-	let quantcastCode = "";
+	const quantcastCode = "";
+	/*const sport = getSport();
 	if (!watch && sport === "basketball") {
 		quantcastCode = `<script type="text/javascript">
 if (window.enableLogging) {
@@ -478,8 +487,7 @@ qacct:"p-Ye5RY6xC03ZWz"
 <img src="//pixel.quantserve.com/pixel/p-Ye5RY6xC03ZWz.gif" border="0" height="1" width="1" alt="Quantcast"/>
 </div>
 </noscript>`;
-	}
-
+	}*/
 	replace({
 		regex: "QUANTCAST_CODE",
 		replacement: quantcastCode,
@@ -522,16 +530,20 @@ src="https://www.facebook.com/tr?id=${
 		silent: true,
 	});
 
-	if (watch) {
-		replace({
-			regex: '-" \\+ bbgmVersion \\+ "',
-			replacement: "",
-			paths: ["build/index.html"],
-			silent: true,
-		});
-	}
-
 	return rev;
+};
+
+const minifyIndexHTML = () => {
+	const content = fs.readFileSync("build/index.html", "utf8");
+	const minified = htmlmin.minify(content, {
+		collapseBooleanAttributes: true,
+		collapseWhitespace: true,
+		minifyCSS: true,
+		minifyJS: true,
+		removeComments: true,
+		useShortDoctype: true,
+	});
+	fs.writeFileSync("build/index.html", minified);
 };
 
 module.exports = {
@@ -542,4 +554,5 @@ module.exports = {
 	genRev,
 	reset,
 	setTimestamps,
+	minifyIndexHTML,
 };

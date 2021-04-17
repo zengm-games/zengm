@@ -86,12 +86,12 @@ const changes = [
 	{
 		date: "2014-02-15",
 		msg:
-			'<a href="https://basketball-gm.com/blog/2014/02/new-improved-trade-ai/" target="_blank">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.',
+			'<a href="https://zengm.com/blog/2014/02/new-improved-trade-ai/" target="_blank">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.',
 	},
 	{
 		date: "2014-03-03",
 		msg:
-			'<a href="https://basketball-gm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>',
+			'<a href="https://zengm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>',
 	},
 	{
 		date: "2014-03-05",
@@ -105,7 +105,7 @@ const changes = [
 	{
 		date: "2014-06-17",
 		msg:
-			'New customization features: <a href="https://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/">full league import/export and custom draft class import</a>.',
+			'New customization features: <a href="https://zengm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/">full league import/export and custom draft class import</a>.',
 	},
 	{
 		date: "2014-07-05",
@@ -115,7 +115,7 @@ const changes = [
 	{
 		date: "2014-09-28",
 		msg:
-			'Player development should now be much more realistic. <a href="https://basketball-gm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>',
+			'Player development should now be much more realistic. <a href="https://zengm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>',
 	},
 	{
 		date: "2014-12-05",
@@ -157,7 +157,7 @@ const changes = [
 	{
 		date: "2016-01-31",
 		msg:
-			'Serious injuries will now sometimes result in <a href="https://basketball-gm.com/blog/2016/01/injuries-can-have-long-term-effects/">decreased athleticism ratings</a>.',
+			'Serious injuries will now sometimes result in <a href="https://zengm.com/blog/2016/01/injuries-can-have-long-term-effects/">decreased athleticism ratings</a>.',
 	},
 	{
 		date: "2016-02-06",
@@ -180,7 +180,7 @@ const changes = [
 	{
 		date: "2017-04-01",
 		msg:
-			'<a href="https://basketball-gm.com/blog/2017/04/basketball-gm-4-0-is-here/">Basketball GM 4.0 is here!</a> This is not an April Fool\'s Day joke! Everything should be crazy fast now.',
+			'<a href="https://zengm.com/blog/2017/04/basketball-gm-4-0-is-here/">Basketball GM 4.0 is here!</a> This is not an April Fool\'s Day joke! Everything should be crazy fast now.',
 	},
 	{
 		date: "2017-05-21",
@@ -200,27 +200,27 @@ const changes = [
 	{
 		date: "2018-03-08",
 		msg:
-			'Major changes to player ratings and development! <a href="https://basketball-gm.com/blog/2018/03/player-ratings-and-development-changes-are-live/">Read about it here.</a>',
+			'Major changes to player ratings and development! <a href="https://zengm.com/blog/2018/03/player-ratings-and-development-changes-are-live/">Read about it here.</a>',
 	},
 	{
 		date: "2018-10-07",
 		msg:
-			'Lots of minor UI improvements, especially on mobile. And <a href="/options">a dark theme is available in the options</a>! <a href="https://basketball-gm.com/blog/2018/10/lots-of-small-ui-improvements/">Read about it here.</a> Also since sometimes I forget to update the in-game notifications, check out <a href="https://basketball-gm.com/blog/">the BBGM blog</a> for other news.',
+			'Lots of minor UI improvements, especially on mobile. And <a href="/options">a dark theme is available in the options</a>! <a href="https://zengm.com/blog/2018/10/lots-of-small-ui-improvements/">Read about it here.</a> Also since sometimes I forget to update the in-game notifications, check out <a href="https://zengm.com/blog/">the BBGM blog</a> for other news.',
 	},
 	{
 		date: "2018-10-15",
 		msg:
-			'You can mark players and picks as "untouchable" when making a trade, to see if the AI can make a counter offer without them. <a href="https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/">More details</a>',
+			'You can mark players and picks as "untouchable" when making a trade, to see if the AI can make a counter offer without them. <a href="https://zengm.com/blog/2018/10/untouchable-players-and-picks-in-trades/">More details</a>',
 	},
 	{
 		date: "2018-11-11",
 		msg:
-			'New God Mode options: hard/soft cap and playoff byes. <a href="https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes">More details</a>',
+			'New God Mode options: hard/soft cap and playoff byes. <a href="https://zengm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes">More details</a>',
 	},
 	{
 		date: "2019-05-27",
 		msg:
-			'A few fun tools are now available on the Tools > Frivolities page within a league. <a href="https://basketball-gm.com/blog/2019/05/frivolities/">More details</a>',
+			'A few fun tools are now available on the Tools > Frivolities page within a league. <a href="https://zengm.com/blog/2019/05/frivolities/">More details</a>',
 	},
 	{
 		date: "2019-07-28",
@@ -230,7 +230,7 @@ const changes = [
 	{
 		date: "2019-09-30",
 		msg:
-			'The All-Star game is here! Keep playing and you\'ll see it, or <a href="https://basketball-gm.com/blog/2019/09/all-star-game/">read the blog for details</a>.',
+			'The All-Star game is here! Keep playing and you\'ll see it, or <a href="https://zengm.com/blog/2019/09/all-star-game/">read the blog for details</a>.',
 	},
 	{
 		date: "2019-10-07",
@@ -239,17 +239,17 @@ const changes = [
 	},
 	{
 		date: "2019-11-13",
-		msg: `More realistic play-by-plays in live game sim, and an improved ovr rating formula. <a href="https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/">More details</a>`,
+		msg: `More realistic play-by-plays in live game sim, and an improved ovr rating formula. <a href="https://zengm.com/blog/2019/11/game-simulation-ovr-beta/">More details</a>`,
 	},
 	{
 		date: "2019-11-20",
 		msg:
-			'Each team now has a numeric rating from 0-100, viewable on the Roster page or on the new improved Power Rankings, which should be a lot more meaningful now than they used to be. <a href="https://basketball-gm.com/blog/2019/11/team-ratings/">More details</a>',
+			'Each team now has a numeric rating from 0-100, viewable on the Roster page or on the new improved Power Rankings, which should be a lot more meaningful now than they used to be. <a href="https://zengm.com/blog/2019/11/team-ratings/">More details</a>',
 	},
 	{
 		date: "2020-02-03",
 		msg:
-			'Players are assigned a college when they are generated, and a new college summary page is at Tools > Frivolities > College. <a href="https://basketball-gm.com/blog/2020/02/colleges/">More details</a>',
+			'Players are assigned a college when they are generated, and a new college summary page is at Tools > Frivolities > College. <a href="https://zengm.com/blog/2020/02/colleges/">More details</a>',
 	},
 	{
 		date: "2020-04-16",
@@ -258,27 +258,27 @@ const changes = [
 	{
 		date: "2020-04-25",
 		msg:
-			'When creating a new league, you now have the option of using real players. <a href="https://basketball-gm.com/blog/2020/04/real-players/">More details</a>',
+			'When creating a new league, you now have the option of using real players. <a href="https://zengm.com/blog/2020/04/real-players/">More details</a>',
 	},
 	{
 		date: "2020-04-30",
 		msg:
-			'When creating a new league, you now have the option of using real historical rosters back to 2005. <a href="https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/">More details</a>',
+			'When creating a new league, you now have the option of using real historical rosters back to 2005. <a href="https://zengm.com/blog/2020/04/real-rosters-back-to-2005/">More details</a>',
 	},
 	{
 		date: "2020-05-11",
 		msg:
-			'Real historical rosters back to 1956, including all future draft prospects, team relocations, expansion drafts, salary cap changes, and more! <a href="https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/">More details</a>',
+			'Real historical rosters back to 1956, including all future draft prospects, team relocations, expansion drafts, salary cap changes, and more! <a href="https://zengm.com/blog/2020/05/beta-real-rosters-back-to-1956/">More details</a>',
 	},
 	{
 		date: "2020-05-12",
 		msg:
-			'Added 4 new draft lottery types, to improve the accuracy of historical leagues. <a href="https://basketball-gm.com/blog/2020/05/more-draft-lottery-types/">More details</a>',
+			'Added 4 new draft lottery types, to improve the accuracy of historical leagues. <a href="https://zengm.com/blog/2020/05/more-draft-lottery-types/">More details</a>',
 	},
 	{
 		date: "2020-05-19",
 		msg:
-			'You can now create a "legends" league filled with the best players in each franchise\'s history. <a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">More details</a>',
+			'You can now create a "legends" league filled with the best players in each franchise\'s history. <a href="https://zengm.com/blog/2020/05/legends-leagues/">More details</a>',
 	},
 	{
 		date: "2020-05-24",
@@ -288,17 +288,17 @@ const changes = [
 	{
 		date: "2020-05-26",
 		msg:
-			'12 new frivolities, available within a league at at Tools > Frivolities. <a href="https://basketball-gm.com/blog/2020/05/new-frivolities/">More details</a>',
+			'12 new frivolities, available within a league at at Tools > Frivolities. <a href="https://zengm.com/blog/2020/05/new-frivolities/">More details</a>',
 	},
 	{
 		date: "2020-06-03",
 		msg:
-			'Real rosters back to 1947 and support for contraction at Tools > Manage Teams. <a href="https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
+			'Real rosters back to 1947 and support for contraction at Tools > Manage Teams. <a href="https://zengm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
 	},
 	{
 		date: "2020-06-13",
 		msg:
-			'A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), player development realism, and more. <a href="https://basketball-gm.com/blog/2020/06/league-creation-options/">More details</a>',
+			'A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), player development realism, and more. <a href="https://zengm.com/blog/2020/06/league-creation-options/">More details</a>',
 	},
 	{
 		date: "2020-06-16",
@@ -313,27 +313,27 @@ const changes = [
 	{
 		date: "2020-08-01",
 		msg:
-			'Players now have jersey numbers, and teams can retire jersey numbers of former players. <a href="https://basketball-gm.com/blog/2020/08/jersey-numbers/">More details</a>',
+			'Players now have jersey numbers, and teams can retire jersey numbers of former players. <a href="https://zengm.com/blog/2020/08/jersey-numbers/">More details</a>',
 	},
 	{
 		date: "2020-08-10",
 		msg:
-			'The contract generation algorithm has been rewritten. You should no longer see players ask for too much money and go unsigned. <a href="https://basketball-gm.com/blog/2020/08/smarter-contract-generation/">More details</a>',
+			'The contract generation algorithm has been rewritten. You should no longer see players ask for too much money and go unsigned. <a href="https://zengm.com/blog/2020/08/smarter-contract-generation/">More details</a>',
 	},
 	{
 		date: "2020-08-20",
 		msg:
-			'Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. <a href="https://basketball-gm.com/blog/2020/08/gm-history/">More details</a>',
+			'Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. <a href="https://zengm.com/blog/2020/08/gm-history/">More details</a>',
 	},
 	{
 		date: "2020-08-22",
 		msg:
-			'New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It\'s like auto play, but you can proceed at your own pace. <a href="https://basketball-gm.com/blog/2020/08/spectator-mode/">More details</a>',
+			'New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It\'s like auto play, but you can proceed at your own pace. <a href="https://zengm.com/blog/2020/08/spectator-mode/">More details</a>',
 	},
 	{
 		date: "2020-08-29",
 		msg:
-			'Single game highs for players are now tracked for all stats - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". <a href="https://basketball-gm.com/blog/2020/08/game-highs/">More details</a>',
+			'Single game highs for players are now tracked for all stats - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". <a href="https://zengm.com/blog/2020/08/game-highs/">More details</a>',
 	},
 	{
 		date: "2020-08-31",
@@ -343,22 +343,27 @@ const changes = [
 	{
 		date: "2020-09-17",
 		msg:
-			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-mood/">More details</a>',
+			'New player mood system! <a href="https://zengm.com/blog/2020/09/player-mood/">More details</a>',
 	},
 	{
 		date: "2020-10-25",
 		msg:
-			'AI teams are affected by player mood when re-signing players, and you can see a player\'s mood toward his current team. <a href="https://basketball-gm.com/blog/2020/10/player-mood-ai-re-signings/">More details</a>',
+			'AI teams are affected by player mood when re-signing players, and you can see a player\'s mood toward his current team. <a href="https://zengm.com/blog/2020/10/player-mood-ai-re-signings/">More details</a>',
 	},
 	{
 		date: "2020-11-15",
 		msg:
-			'Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. <a href="https://basketball-gm.com/blog/2020/11/trade-details/">More details</a>',
+			'Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. <a href="https://zengm.com/blog/2020/11/trade-details/">More details</a>',
 	},
 	{
 		date: "2020-11-28",
 		msg:
 			"An early version of the 2021 rosters is available when creating a new real players league.",
+	},
+	{
+		date: "2021-04-16",
+		msg:
+			'New "Historical Stats" setting allows you to import historical data (player stats, ratings, awards, standings, playoff brackets) in new real players leagues. <a href="https://zengm.com/blog/2021/04/historical-stats/">More details</a>',
 	},
 ];
 

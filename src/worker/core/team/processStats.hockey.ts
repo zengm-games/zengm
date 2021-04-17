@@ -1,16 +1,5 @@
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
-
-const ratio = (numerator: number, denominator: number) => {
-	if (denominator > 0) {
-		return numerator / denominator;
-	}
-
-	return 0;
-};
-
-const percentage = (numerator: number, denominator: number) => {
-	return 100 * ratio(numerator, denominator);
-};
+import { helpers } from "../../util";
 
 const processStats = (
 	ts: TeamStats,
@@ -46,15 +35,15 @@ const processStats = (
 			} else if (stat === "sa") {
 				row[stat] = ts.sv + oppG;
 			} else if (stat === "sPct") {
-				row[stat] = percentage(g, ts.s);
+				row[stat] = helpers.percentage(g, ts.s);
 			} else if (stat === "svPct") {
-				row[stat] = ratio(ts.sv, ts.sv + oppG);
+				row[stat] = helpers.ratio(ts.sv, ts.sv + oppG);
 			} else if (stat === "foPct") {
-				row[stat] = percentage(ts.fow, ts.fow + ts.fol);
+				row[stat] = helpers.percentage(ts.fow, ts.fow + ts.fol);
 			} else if (stat === "ppPct") {
-				row[stat] = percentage(ts.ppG, ts.ppo);
+				row[stat] = helpers.percentage(ts.ppG, ts.ppo);
 			} else if (stat === "gaa") {
-				row[stat] = ratio(oppG, ts.gp);
+				row[stat] = helpers.ratio(oppG, ts.gp);
 			} else if (stat === "oppG") {
 				row[stat] = oppG;
 			} else if (stat === "oppA") {
@@ -62,15 +51,15 @@ const processStats = (
 			} else if (stat === "oppAa") {
 				row[stat] = ts.oppSv + g;
 			} else if (stat === "oppSPct") {
-				row[stat] = percentage(oppG, ts.oppS);
+				row[stat] = helpers.percentage(oppG, ts.oppS);
 			} else if (stat === "oppSvPct") {
-				row[stat] = ratio(ts.oppSv, ts.oppSv + oppG);
+				row[stat] = helpers.ratio(ts.oppSv, ts.oppSv + oppG);
 			} else if (stat === "oppFoPct") {
-				row[stat] = percentage(ts.oppFow, ts.oppFow + ts.oppFol);
+				row[stat] = helpers.percentage(ts.oppFow, ts.oppFow + ts.oppFol);
 			} else if (stat === "oppPpPct") {
-				row[stat] = percentage(ts.oppPpG, ts.oppPpo);
+				row[stat] = helpers.percentage(ts.oppPpG, ts.oppPpo);
 			} else if (stat === "oppGaa") {
-				row[stat] = ratio(g, ts.gp);
+				row[stat] = helpers.ratio(g, ts.gp);
 			} else {
 				row[stat] = ts[stat];
 			}

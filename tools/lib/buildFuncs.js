@@ -157,7 +157,7 @@ const setSport = () => {
 	});
 };
 
-const copyFiles = () => {
+const copyFiles = watch => {
 	const foldersToIgnore = ["basketball", "css", "football", "hockey"];
 
 	fse.copySync("public", "build", {
@@ -167,6 +167,11 @@ const copyFiles = () => {
 				if (filename.startsWith(path.join("public", folder))) {
 					return false;
 				}
+			}
+
+			// Remove service worker, so I don't have to deal with it being wonky in dev
+			if (watch && filename === path.join("public", "sw.js")) {
+				return false;
 			}
 
 			return true;

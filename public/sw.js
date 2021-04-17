@@ -4,6 +4,7 @@ import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
+// Why this rather than ExpirationPlugin with maxEntries? It's smaller code, but more importantly, ExpirationPlugin adds to cache before checking maxEntries. With maxEntries of 1 and several MB per resource, that could prematurely trigger a quota error.
 class CacheOnlyOneItemPlugin {
 	constructor(cacheName) {
 		this._cacheName = cacheName;

@@ -248,6 +248,7 @@ const formatPlayerFactory = async (
 		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
 
 		const addDummyRookieRatings =
+			!draftProspect &&
 			options.type === "real" &&
 			(options.realStats === "all" ||
 				options.realStats === "allActive" ||

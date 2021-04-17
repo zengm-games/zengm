@@ -1134,48 +1134,46 @@ const exportDraftClass = async (season: number) => {
 			g.get("phase") >= 0 &&
 			g.get("phase") <= PHASE.DRAFT_LOTTERY);
 
-	const data = await league.exportLeague(["players"], {
-		meta: false,
-		filter: {
-			players: p => {
-				// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
-				if (onlyUndrafted && p.tid !== PLAYER.UNDRAFTED) {
-					return false;
-				}
-
-				return p.draft.year === season;
-			},
-		},
+	let players = await idb.getCopies.players({
+		draftYear: season,
 	});
-	data.startingSeason = season;
 
-	data.players = data.players.map((p: Player) => ({
-		born: p.born,
-		college: p.college,
-		draft: {
-			...p.draft,
-			round: 0,
-			pick: 0,
-			tid: -1,
-			originalTid: -1,
-			year: season,
-		},
-		face: p.face,
-		firstName: p.firstName,
-		hgt: p.hgt,
-		imgURL: p.imgURL,
-		injury: p.injury,
-		injuries: p.injuries,
-		lastName: p.lastName,
-		pid: p.pid,
-		pos: p.pos,
-		ratings: p.ratings.slice(0, 1),
-		real: p.real,
-		relatives: p.relatives,
-		srID: p.srID,
-		tid: PLAYER.UNDRAFTED,
-		weight: p.weight,
-	}));
+	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
+	if (onlyUndrafted) {
+		players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
+	}
+
+	const data: any = {
+		version: idb.league.version,
+		startingSeason: season,
+		players: players.map(p => ({
+			born: p.born,
+			college: p.college,
+			draft: {
+				...p.draft,
+				round: 0,
+				pick: 0,
+				tid: -1,
+				originalTid: -1,
+				year: season,
+			},
+			face: p.face,
+			firstName: p.firstName,
+			hgt: p.hgt,
+			imgURL: p.imgURL,
+			injury: p.injury,
+			injuries: p.injuries,
+			lastName: p.lastName,
+			pid: p.pid,
+			pos: p.pos,
+			ratings: p.ratings.slice(0, 1),
+			real: p.real,
+			relatives: p.relatives,
+			srID: p.srID,
+			tid: PLAYER.UNDRAFTED,
+			weight: p.weight,
+		})),
+	};
 
 	// When exporting a past draft class, don't include current injuries
 	if (

@@ -16,8 +16,6 @@ hockey - torn acl -> spd increase https://discord.com/channels/29001353402305740
 start league in 1950 after playoffs, go to customize settings, and there is an error about the playoff settings
 - should be smart enough to recognize that the validation should run off of the upcoming scheduled change. or run validation against teams that were active previous season
 
-"suggest" button next to position dropdown on player editor https://old.reddit.com/r/BasketballGM/comments/mq8ugr/a_players_overall_rating_is_now_displayed_live/gufrqdk/?context=3
-
 If you play a league with draft type:"no draft, rookies as free agents" ; random generated players still have a draft history
 - https://raw.githubusercontent.com/alexnoob/BasketBall-GM-Rosters/master/ABA2000_2020-21.json
 - https://discord.com/channels/290013534023057409/290015591216054273/830366298184876032

@@ -1241,6 +1241,10 @@ const generateFace = (country: string) => {
 	return face.generate(race);
 };
 
+const getAutoPos = (ratings: any) => {
+	return player.pos(ratings);
+};
+
 const getLeagueInfo = async (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
@@ -3188,6 +3192,7 @@ export default {
 	exportPlayerGamesCsv,
 	exportPlayers,
 	generateFace,
+	getAutoPos,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,

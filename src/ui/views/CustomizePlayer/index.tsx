@@ -654,25 +654,63 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Position</label>
-								<select
-									className="form-control"
-									onChange={handleChange.bind(null, "rating", "pos")}
-									value={p.ratings[r].pos}
-									disabled={!godMode && p.tid !== PLAYER.RETIRED}
-								>
-									{POSITIONS.filter(pos => {
-										if (isSport("football") && bannedPositions.includes(pos)) {
-											return false;
-										}
-										return true;
-									}).map(pos => {
-										return (
-											<option key={pos} value={pos}>
-												{pos}
-											</option>
-										);
-									})}
-								</select>
+								<div className="input-group">
+									<select
+										className="form-control"
+										onChange={handleChange.bind(null, "rating", "pos")}
+										value={p.ratings[r].pos}
+										disabled={!godMode && p.tid !== PLAYER.RETIRED}
+									>
+										{POSITIONS.filter(pos => {
+											if (
+												isSport("football") &&
+												bannedPositions.includes(pos)
+											) {
+												return false;
+											}
+											return true;
+										}).map(pos => {
+											return (
+												<option key={pos} value={pos}>
+													{pos}
+												</option>
+											);
+										})}
+									</select>
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											type="button"
+											onClick={async event => {
+												event.preventDefault();
+
+												const pos = await toWorker(
+													"main",
+													"getAutoPos",
+													p.ratings[r],
+												);
+
+												setState(prevState => {
+													const p = {
+														...prevState.p,
+													};
+													p.ratings = [...p.ratings];
+													p.ratings[r] = {
+														...p.ratings[r],
+														pos,
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+										>
+											Auto
+										</button>
+									</div>
+								</div>
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Jersey Number</label>

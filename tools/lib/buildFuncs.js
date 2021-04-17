@@ -28,13 +28,6 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 		let outFilename;
 		if (watch) {
 			outFilename = `build/gen/${filename}.css`;
-
-			replace({
-				regex: `-CSS_HASH_${filename.toUpperCase()}`,
-				replacement: "",
-				paths: ["build/index.html"],
-				silent: true,
-			});
 		} else {
 			const hash = fileHash(source);
 			outFilename = `build/gen/${filename}-${hash}.css`;
@@ -238,6 +231,13 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 
 		replace({
 			regex: '-" \\+ bbgmVersion \\+ "',
+			replacement: "",
+			paths: ["build/index.html"],
+			silent: true,
+		});
+
+		replace({
+			regex: `-CSS_HASH_(LIGHT|DARK)`,
 			replacement: "",
 			paths: ["build/index.html"],
 			silent: true,

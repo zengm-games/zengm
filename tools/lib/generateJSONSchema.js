@@ -622,6 +622,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							hardCap: {
 								type: "boolean",
 							},
+							hideDisabledTeams: {
+								type: "boolean",
+							},
 							homeCourtAdvantage: {
 								type: "number",
 							},

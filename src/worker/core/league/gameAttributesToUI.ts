@@ -12,6 +12,7 @@ const gameAttributesToUI = async (
 	const keys = [
 		"challengeNoRatings",
 		"godMode",
+		"hideDisabledTeams",
 		"homeCourtAdvantage",
 		"lid",
 		"spectator",

@@ -196,6 +196,10 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			defaultGameAttributes,
 			"equalizeRegions",
 		),
+		hideDisabledTeams: unwrapGameAttribute(
+			defaultGameAttributes,
+			"hideDisabledTeams",
+		),
 		noStartingInjuries: false,
 		randomization: "none",
 		realStats: getDefaultRealStats(),

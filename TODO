@@ -4,8 +4,6 @@ real player stats
   - retired jersey numbers
   - contract history
 
-add option to hide inactive teams from dropdowns https://discord.com/channels/@me/756332440980684821/832714010226458635
-
 create new 2021 league with realStats="all", go to season summary, best record teams still show up with their default names even if you have real team info override
 - really should get rid of abbrev/region/name from that object and just store tid
 

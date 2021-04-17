@@ -82,6 +82,7 @@ const keys = [
 	"pointsFormula",
 	"equalizeRegions",
 	"realDraftRatings",
+	"hideDisabledTeams",
 ] as const;
 
 export type Settings = Pick<
@@ -179,6 +180,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tiebreakers: g.get("tiebreakers"),
 			pointsFormula: g.get("pointsFormula"),
 			equalizeRegions: g.get("equalizeRegions"),
+			hideDisabledTeams: g.get("hideDisabledTeams"),
 			noStartingInjuries: false,
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form

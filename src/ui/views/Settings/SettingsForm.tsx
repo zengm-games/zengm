@@ -1015,6 +1015,9 @@ const categories: {
 	{
 		name: "Player Development",
 	},
+	{
+		name: "UI",
+	},
 ];
 
 const inputStyle = {

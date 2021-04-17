@@ -1212,6 +1212,14 @@ settings.push(
 		description:
 			"This will automatically delete box scores older than the past three seasons because box scores use a lot of disk space. See Tools > Delete Old Data for more.",
 	},
+	{
+		category: "UI",
+		key: "hideDisabledTeams",
+		name: "Hide Inactive Teams",
+		type: "bool",
+		descriptionLong:
+			"This will hide inactive teams from dropdown menus at the top of many pages, such as the roster page.",
+	},
 );
 
 if (isSport("basketball")) {

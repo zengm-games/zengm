@@ -32,6 +32,7 @@ const useTitleBar = ({
 	moreInfoTid?: number;
 } = {}) => {
 	const state = useLocalShallow(state2 => ({
+		hideDisabledTeams: state2.hideDisabledTeams,
 		teamInfoCache: state2.teamInfoCache,
 	}));
 

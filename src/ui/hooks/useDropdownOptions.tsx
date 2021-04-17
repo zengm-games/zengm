@@ -11,19 +11,26 @@ import type { LocalStateUI } from "../../common/types";
 
 export const getSortedTeams = ({
 	teamInfoCache,
+	hideDisabledTeams,
 }: {
 	teamInfoCache: LocalStateUI["teamInfoCache"];
+	hideDisabledTeams: boolean;
 }) => {
 	const array = [
 		...orderBy(
 			teamInfoCache.filter(t => !t.disabled),
 			["region", "name", "tid"],
 		),
-		...orderBy(
-			teamInfoCache.filter(t => t.disabled),
-			["region", "name", "tid"],
-		),
 	];
+
+	if (!hideDisabledTeams) {
+		array.push(
+			...orderBy(
+				teamInfoCache.filter(t => t.disabled),
+				["region", "name", "tid"],
+			),
+		);
+	}
 
 	const object: { [key: string]: string | undefined } = {};
 	for (const t of array) {
@@ -156,6 +163,7 @@ export const getDropdownValue = (
 
 const useDropdownOptions = (field: string) => {
 	const state = useLocalShallow(state2 => ({
+		hideDisabledTeams: state2.hideDisabledTeams,
 		phase: state2.phase,
 		season: state2.season,
 		startingSeason: state2.startingSeason,

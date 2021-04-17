@@ -392,6 +392,7 @@ export type GameAttributesLeague = {
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
 	hardCap: boolean;
+	hideDisabledTeams: boolean;
 	homeCourtAdvantage: number;
 	injuryRate: number;
 	lid: number;
@@ -753,6 +754,7 @@ export type LocalStateUI = {
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;
+	hideDisabledTeams: boolean;
 	homeCourtAdvantage: number;
 	lid?: number;
 	liveGameInProgress: boolean;

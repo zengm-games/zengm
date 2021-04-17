@@ -74,7 +74,8 @@ export type Key =
 	| "noStartingInjuries"
 	| "realDraftRatings"
 	| "randomization"
-	| "realStats";
+	| "realStats"
+	| "hideDisabledTeams";
 
 export type Category =
 	| "New League"
@@ -90,7 +91,8 @@ export type Category =
 	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"
-	| "Player Development";
+	| "Player Development"
+	| "UI";
 
 export type FieldType =
 	| "bool"

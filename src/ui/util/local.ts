@@ -38,6 +38,7 @@ const useLocal = create<
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
+	hideDisabledTeams: false,
 	homeCourtAdvantage: 1,
 	lid: undefined,
 	liveGameInProgress: false,
@@ -107,6 +108,7 @@ const useLocal = create<
 				challengeNoRatings: false,
 				games: [],
 				godMode: false,
+				hideDisabledTeams: false,
 				lid: undefined,
 				liveGameInProgress: false,
 				phase: 0,
@@ -147,6 +149,7 @@ const useLocal = create<
 			const keys = [
 				"challengeNoRatings",
 				"godMode",
+				"hideDisabledTeams",
 				"homeCourtAdvantage",
 				"lid",
 				"spectator",

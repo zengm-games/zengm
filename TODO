@@ -13,8 +13,6 @@ Block numbers increase by >33% in playoffs, this is a bit too much!!! https://di
 
 hockey - torn acl -> spd increase https://discord.com/channels/290013534023057409/290015591216054273/832091096720998430
 
-wasted screen space on standings https://discord.com/channels/290013534023057409/290015591216054273/832366795091607642
-
 start league in 1950 after playoffs, go to customize settings, and there is an error about the playoff settings
 - should be smart enough to recognize that the validation should run off of the upcoming scheduled change. or run validation against teams that were active previous season
 

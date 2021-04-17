@@ -9,8 +9,6 @@ import { isSport, TIEBREAKERS } from "../../common";
 
 type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
 
-const MAX_WIDTH = 1320;
-
 const record = (
 	seasonAttrs: StandingsTeam["seasonAttrs"],
 	type: "Home" | "Away" | "Div" | "Conf",
@@ -171,7 +169,7 @@ const GroupStandings = ({
 			<table className="table table-striped table-bordered table-sm table-hover">
 				<thead>
 					<tr>
-						<th style={width100}>{name}</th>
+						<th style={{ minWidth: 215 }}>{name}</th>
 						<th>W</th>
 						<th>L</th>
 						{otl ? <th>OTL</th> : null}
@@ -479,17 +477,19 @@ const Standings = ({
 	if (!showSmallPlayoffStandings) {
 		// No small standings
 		allStandings = (
-			<div style={{ maxWidth: 0.75 * MAX_WIDTH - 30 }}>{groupStandings}</div>
+			<div className="d-flex">
+				<div style={{ minWidth: 0 }}>{groupStandings}</div>
+			</div>
 		);
 	} else if (playoffsByConference) {
 		// Show small standings alongside each conference
 		allStandings = (
-			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
+			<Fragment>
 				{groupStandings.map((confStandings, i) => {
 					return (
-						<Fragment key={i}>
-							<div className="col-md-9">{confStandings}</div>
-							<div className="col-md-3 d-none d-md-block">
+						<div className="d-flex" key={i}>
+							<div style={{ minWidth: 0 }}>{confStandings}</div>
+							<div className="d-none d-md-block ml-3" style={{ minWidth: 200 }}>
 								<h2>&nbsp;</h2>
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
@@ -501,17 +501,17 @@ const Standings = ({
 									usePts={usePts}
 								/>
 							</div>
-						</Fragment>
+						</div>
 					);
 				})}
-			</div>
+			</Fragment>
 		);
 	} else {
 		// Show small standings for whole league
 		allStandings = (
-			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
-				<div className="col-md-9">{groupStandings}</div>
-				<div className="col-md-3 d-none d-md-block">
+			<div className="d-flex">
+				<div>{groupStandings}</div>
+				<div className="d-none d-md-block ml-3" style={{ minWidth: 200 }}>
 					<h2>&nbsp;</h2>
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}

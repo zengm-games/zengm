@@ -137,6 +137,7 @@ const choice = <T>(x: T[], weightInput?: ((a: T) => number) | number[]): T => {
 	} else {
 		weights = x.map(weightInput);
 	}
+	weights = weights.map(weight => (weight < 0 ? Number.MIN_VALUE : weight));
 
 	const cumsums = weights.reduce<number[]>((array, weight, i) => {
 		if (i === 0) {

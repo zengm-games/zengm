@@ -1,5 +1,4 @@
 real player stats
-- test to confirm CacheOnlyOneItemPlugin is working
 - later
   - diedYear
   - retired jersey numbers
@@ -9,8 +8,6 @@ add option to hide inactive teams from dropdowns https://discord.com/channels/@m
 
 create new 2021 league with realStats="all", go to season summary, best record teams still show up with their default names even if you have real team info override
 - really should get rid of abbrev/region/name from that object and just store tid
-
-Click on a draft prospects draft year and it takes you to some blank page instead of the draft scouting page. https://discord.com/channels/290013534023057409/290015591216054273/832662626298757153
 
 Block numbers increase by >33% in playoffs, this is a bit too much!!! https://discord.com/channels/290013534023057409/290015591216054273/832653523644710953
 

@@ -177,13 +177,26 @@ const draftLottery = (params: Params) => {
 };
 
 const draftSummary = (params: Params) => {
-	let season = validateSeason(params.season); // Draft hasn't happened yet this year
+	let season: number;
 
-	if (g.get("phase") < PHASE.DRAFT) {
-		if (season === g.get("season")) {
-			// View last season by default
-			season = g.get("season") - 1;
-		}
+	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
+	const currentSeason = g.get("season");
+
+	if (params.season === undefined && !draftAlreadyHappened) {
+		// View last season by default
+		season = currentSeason - 1;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	if (
+		season > currentSeason ||
+		(season === currentSeason && !draftAlreadyHappened)
+	) {
+		// Future draft class
+		return {
+			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+		};
 	}
 
 	return {

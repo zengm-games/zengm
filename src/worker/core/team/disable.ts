@@ -20,13 +20,16 @@ const disable = async (tid: number) => {
 	t.disabled = true;
 	await idb.cache.teams.put(t);
 
-	if (tid === g.get("userTid")) {
+	const prevUserTid = g.get("userTid");
+	const prevUserTids = g.get("userTids");
+
+	if (tid === prevUserTid) {
 		// If there is an unread message from the owner, it's not doing any good now
 		await deleteUnreadMessages();
 
-		if (g.get("userTids").length > 1) {
-			// If it's multi team mode, just move to the next team
-			const newUserTids = g.get("userTids").filter(userTid => userTid !== tid);
+		if (prevUserTids.length > 1) {
+			// If it's multi team mode, just move to another team
+			const newUserTids = prevUserTids.filter(userTid => userTid !== tid);
 			const newUserTid = random.choice(newUserTids);
 			await league.setGameAttributes({
 				userTid: newUserTid,
@@ -40,6 +43,11 @@ const disable = async (tid: number) => {
 			await updateStatus();
 			await updatePlayMenu();
 		}
+	} else if (prevUserTids.includes(tid)) {
+		const newUserTids = prevUserTids.filter(userTid => userTid !== tid);
+		await league.setGameAttributes({
+			userTids: newUserTids,
+		});
 	}
 
 	// Delete draft picks, and return traded ones to original owner

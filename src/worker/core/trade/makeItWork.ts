@@ -114,7 +114,10 @@ const tryAddAsset = async (
 	}
 
 	// If we've already added 5 assets or there are no more to try, stop
-	if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
+	if (assets.length === 0) {
+		return;
+	}
+	if (initialSign === -1 && added >= 5) {
 		return;
 	}
 

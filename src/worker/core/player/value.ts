@@ -147,7 +147,9 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
-	return valueCombineOvrPot(current, potential, age);
+	const combined = valueCombineOvrPot(current, potential, age);
+
+	return combined < 0 ? Number.MIN_VALUE : combined;
 };
 
 export default value;

@@ -343,6 +343,7 @@ const formatPlayerFactory = async (
 			!!awards &&
 			awards.some(award => award.type === "Inducted into the Hall of Fame");
 		const retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
+		const diedYear = tid === PLAYER.RETIRED ? bio.diedYear : undefined;
 
 		pid += 1;
 
@@ -355,6 +356,7 @@ const formatPlayerFactory = async (
 				year: bornYear,
 				loc: bio.country,
 			},
+			diedYear,
 			weight: bio.weight,
 			hgt: bio.height,
 			tid,

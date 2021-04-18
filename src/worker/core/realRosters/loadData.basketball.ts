@@ -41,6 +41,7 @@ export type Basketball = {
 		| {
 				name: string;
 				bornYear: number;
+				diedYear: number;
 				country: string;
 				weight: number;
 				pos: string;

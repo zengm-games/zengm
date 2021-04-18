@@ -681,6 +681,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										<button
 											className="btn btn-secondary"
 											type="button"
+											disabled={!godMode}
 											onClick={async event => {
 												event.preventDefault();
 

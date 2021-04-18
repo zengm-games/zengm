@@ -131,7 +131,7 @@ const LeagueStats = ({
 			data.tied = formatMaybeInteger(s.stats.tied);
 		}
 		if (usePts) {
-			data.pts = formatMaybeInteger(s.stats.pts);
+			data.ptsPts = formatMaybeInteger(s.stats.ptsPts);
 			data.ptsPct = helpers.roundWinp(s.stats.ptsPct);
 		} else {
 			data.winp = helpers.roundWinp(s.stats.winp);

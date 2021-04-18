@@ -114,7 +114,7 @@ const TeamStats = ({
 			data.tied = t.seasonAttrs.tied;
 		}
 		if (usePts) {
-			data.pts = Math.round(t.seasonAttrs.pts);
+			data.ptsPts = Math.round(t.seasonAttrs.pts);
 			data.ptsPct = helpers.roundWinp(t.seasonAttrs.ptsPct);
 		} else {
 			data.winp = helpers.roundWinp(t.seasonAttrs.winp);

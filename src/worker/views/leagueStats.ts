@@ -121,7 +121,9 @@ const updateLeagueStats = async (
 					foundSomething = true;
 				}
 
-				row.stats[attr] =
+				// Don't overwrite pts
+				const statsKey = attr === "pts" ? "ptsPts" : attr;
+				row.stats[statsKey] =
 					inputs.tid < 0 && teams.length !== 0 ? sum / teams.length : sum;
 			}
 

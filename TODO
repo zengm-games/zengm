@@ -7,8 +7,6 @@ real player stats
 
 auto buttons to height in player editor https://discord.com/channels/290013534023057409/331882115119448065/833532089281282058
 
-toUpperCase points formula https://discord.com/channels/290013534023057409/331882115119448065/833298374387171368
-
 create new 2021 league with realStats="all", go to season summary, best record teams still show up with their default names even if you have real team info override
 - really should get rid of abbrev/region/name from that object and just store tid
 

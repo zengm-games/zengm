@@ -1,42 +1,70 @@
-const fs = require("fs");
-const rollup = require("rollup");
 const { parentPort, workerData } = require("worker_threads");
-const rollupConfig = require("./rollupConfig");
+const esbuild = require("esbuild");
+const alias = require("esbuild-plugin-alias");
+const path = require("path");
+const getSport = require("./getSport");
 
-const { name } = workerData;
+(async () => {
+	const { name } = workerData;
 
-const file = `build/gen/${name}.js`;
+	const outfile = `build/gen/${name}.js`;
 
-const watcher = rollup.watch({
-	...rollupConfig("development"),
-	input: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
-	output: {
-		name,
-		file,
-		format: "iife",
-		indent: false,
+	const sport = getSport();
+
+	parentPort.postMessage({
+		type: "start",
+	});
+
+	await esbuild.build({
+		entryPoints: [`src/${name}/index.${name === "ui" ? "tsx" : "ts"}`],
+		bundle: true,
 		sourcemap: true,
-	},
-	treeshake: false,
-});
+		inject: ["tools/lib/react-shim.js"],
+		define: {
+			"process.env.NODE_ENV": '"development"',
+			"process.env.SPORT": JSON.stringify(sport),
+		},
+		outfile,
+		plugins: [
+			// Not sure why this is required, docs say it should pick up on tsconfig.json settings
+			alias({
+				"player-names": path.join(
+					__dirname,
+					"../../src/worker/data/names-test.json",
+				),
+				"league-schema": path.join(
+					__dirname,
+					"../../build/files/league-schema.json",
+				),
+				"bbgm-polyfills": path.join(
+					__dirname,
+					"../../src/common/polyfills-noop.ts",
+				),
+			}),
+		],
+		watch: {
+			// https://esbuild.github.io/api/#incremental if polling watch is too slow
 
-watcher.on("event", event => {
-	if (event.code === "START") {
-		parentPort.postMessage({
-			type: "start",
-		});
+			onRebuild(error) {
+				if (error) {
+					parentPort.postMessage({
+						type: "error",
+						error,
+					});
+				} else {
+					// No way to know when it started, but it's so fast it doesn't really matter
+					parentPort.postMessage({
+						type: "start",
+					});
+					parentPort.postMessage({
+						type: "end",
+					});
+				}
+			},
+		},
+	});
 
-		fs.writeFileSync(file, 'console.log("Bundling...")');
-	} else if (event.code === "BUNDLE_END") {
-		parentPort.postMessage({
-			type: "end",
-		});
-	} else if (event.code === "ERROR" || event.code === "FATAL") {
-		delete event.error.watchFiles;
-		parentPort.postMessage({
-			type: "error",
-			error: event.error,
-		});
-		fs.writeFileSync(file, `console.error(${JSON.stringify(event.error)})`);
-	}
-});
+	parentPort.postMessage({
+		type: "end",
+	});
+})();

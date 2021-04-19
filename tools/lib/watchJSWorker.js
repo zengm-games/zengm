@@ -4,6 +4,36 @@ const alias = require("esbuild-plugin-alias");
 const path = require("path");
 const getSport = require("./getSport");
 
+const fs = require("fs/promises");
+const babel = require("@babel/core");
+const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
+
+// Use babel to run babel-plugin-sport-functions
+const pluginSportFunctions = {
+	name: "plugin-sport-functions",
+	setup(build) {
+		build.onLoad({ filter: /\.tsx?$/ }, async args => {
+			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
+
+			const text = await fs.readFile(args.path, "utf8");
+			if (!text.includes("bySport") && !text.includes("isSport")) {
+				return { contents: text, loader };
+			}
+
+			const result = await babel.transformAsync(text, {
+				babelrc: false,
+				configFile: false,
+				filename: args.path,
+				plugins: [
+					["@babel/plugin-syntax-typescript", { isTSX: true }],
+					babelPluginSportFunctions,
+				],
+			});
+			return { contents: result.code, loader };
+		});
+	},
+};
+
 (async () => {
 	const { name } = workerData;
 
@@ -41,6 +71,7 @@ const getSport = require("./getSport");
 					"../../src/common/polyfills-noop.ts",
 				),
 			}),
+			pluginSportFunctions,
 		],
 		watch: {
 			// https://esbuild.github.io/api/#incremental if polling watch is too slow

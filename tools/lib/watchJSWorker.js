@@ -10,21 +10,11 @@ const getSport = require("./getSport");
 
 const babelCache = {};
 
-// Use babel to run babel-plugin-sport-functions, and also hackiley identify when a build starts. This is needed because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport.
-const pluginSportFunctionsAndStartTime = {
-	name: "plugin-sport-functions",
+// Use babel to run babel-plugin-sport-functions. This is needed because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport.
+const pluginSportFunctions = {
+	name: "sport-functions",
 	setup(build) {
-		build.onLoad({ filter: /\.tsx?$/ }, async args => {
-			// No better way to know when a build starts
-			if (
-				args.path.endsWith("/src/worker/index.ts") ||
-				args.path.endsWith("/src/ui/index.tsx")
-			) {
-				parentPort.postMessage({
-					type: "start",
-				});
-			}
-
+		build.onLoad({ filter: /\.tsx?$/, namespace: "file" }, async args => {
 			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
 
 			const { mtimeMs } = await fs.stat(args.path);
@@ -62,15 +52,31 @@ const pluginSportFunctionsAndStartTime = {
 	},
 };
 
+// No built-in way to identify when a rebuild starts, so do this
+const pluginStartTime = infile => {
+	const filter = new RegExp(infile.replace(".", "\\."));
+	return {
+		name: "start-time",
+		setup(build) {
+			build.onResolve({ filter, namespace: "file" }, () => {
+				parentPort.postMessage({
+					type: "start",
+				});
+			});
+		},
+	};
+};
+
 (async () => {
 	const { name } = workerData;
 
+	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
 	const outfile = `build/gen/${name}.js`;
 
 	const sport = getSport();
 
 	await esbuild.build({
-		entryPoints: [`src/${name}/index.${name === "ui" ? "tsx" : "ts"}`],
+		entryPoints: [infile],
 		bundle: true,
 		sourcemap: true,
 		inject: ["tools/lib/react-shim.js"],
@@ -95,7 +101,8 @@ const pluginSportFunctionsAndStartTime = {
 					"../../src/common/polyfills-noop.ts",
 				),
 			}),
-			pluginSportFunctionsAndStartTime,
+			pluginStartTime(infile),
+			pluginSportFunctions,
 		],
 		watch: {
 			onRebuild(error) {

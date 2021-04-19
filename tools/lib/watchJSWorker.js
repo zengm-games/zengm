@@ -84,7 +84,7 @@ const pluginSportFunctionsAndStartTime = {
 			alias({
 				"player-names": path.join(
 					__dirname,
-					"../../src/worker/data/names-test.json",
+					"../../src/worker/data/names.json",
 				),
 				"league-schema": path.join(
 					__dirname,

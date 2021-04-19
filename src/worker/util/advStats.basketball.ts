@@ -99,7 +99,6 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	for (let i = 0; i < players.length; i++) {
 		const t = teams.find(t => t.tid === players[i].tid);
 		if (!t) {
-			console.log(players[i].tid);
 			throw new Error("No team found");
 		}
 
@@ -216,10 +215,13 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 			teamAdjOBPM: number;
 		}
 	> = {};
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
-		const off_rate = t.stats.ortg - league.ortg / teams.length;
-		const def_rate = league.drtg / teams.length - t.stats.drtg;
+
+	// Count number of teams, which matters for the playoffs
+	const numTeams = teams.filter(t => t.stats.gp > 0).length;
+
+	for (const t of teams) {
+		const off_rate = t.stats.ortg - league.ortg / numTeams;
+		const def_rate = league.drtg / numTeams - t.stats.drtg;
 		const team_rate = off_rate + def_rate;
 		const pace = t.stats.pace;
 		const avg_lead = (team_rate * pace) / 200;
@@ -229,7 +231,6 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		const lead_bonus = (0.35 / 2) * avg_lead;
 		const adj_team_rate = team_rate + lead_bonus;
 		const adj_off_rate = off_rate + lead_bonus;
-		//console.log('adj',adj_team_rate,adj_off_rate);
 
 		teamAverages[t.tid] = {
 			tmRate: adj_team_rate,
@@ -476,29 +477,10 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 		BPM[i] = rawBPM;
 		OBPM[i] = rawOBPM;
-		if (players[i].pid === 179) {
-			console.log(rawBPM, rawOBPM);
-		}
 
 		teamAverages[players[i].tid].teamBPM += rawBPM * minp;
 		teamAverages[players[i].tid].teamOBPM += rawOBPM * minp;
 	}
-	console.log(
-		"tmRate",
-		Object.values(teamAverages).map(x => x.tmRate),
-	);
-	console.log(
-		"ofRate",
-		Object.values(teamAverages).map(x => x.ofRate),
-	);
-	console.log(
-		"teamBPM",
-		Object.values(teamAverages).map(x => x.teamBPM),
-	);
-	console.log(
-		"teamOBPM",
-		Object.values(teamAverages).map(x => x.teamOBPM),
-	);
 
 	for (const t of teams) {
 		teamAverages[t.tid].teamAdjBPM =
@@ -506,30 +488,15 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		teamAverages[t.tid].teamAdjOBPM =
 			(teamAverages[t.tid].ofRate - teamAverages[t.tid].teamOBPM) / 5;
 	}
-	console.log(
-		"teamAdjBPM",
-		Object.values(teamAverages).map(x => x.teamAdjBPM),
-	);
-	console.log(
-		"teamAdjOBPM",
-		Object.values(teamAverages).map(x => x.teamAdjOBPM),
-	);
 	const DBPM: number[] = [];
 	const VORP: number[] = [];
 	for (let i = 0; i < players.length; i++) {
-		if (players[i].pid === 179) {
-			console.log(teamAverages[1].teamAdjBPM, teamAverages[1].teamAdjOBPM);
-		}
 		BPM[i] += teamAverages[players[i].tid].teamAdjBPM;
 		OBPM[i] += teamAverages[players[i].tid].teamAdjOBPM;
 		DBPM[i] = BPM[i] - OBPM[i];
-		if (players[i].pid === 179) {
-			console.log(BPM[i], OBPM[i], DBPM[i]);
-		}
 
 		const t = teams.find(t => t.tid === players[i].tid);
 		if (!t) {
-			console.log(players[i].tid);
 			throw new Error("No team found");
 		}
 

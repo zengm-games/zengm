@@ -1,4 +1,5 @@
 import evaluatePointsFormula from "./evaluatePointsFormula";
+import ptsMax from "./ptsMax";
 
 const ptsPct = (ts: {
 	won: number;
@@ -7,21 +8,13 @@ const ptsPct = (ts: {
 	otl: number;
 	season: number;
 }) => {
-	const dummyRow = {
-		won: ts.won + ts.lost + ts.tied + ts.otl,
-		lost: 0,
-		tied: 0,
-		otl: 0,
-	};
+	const max = ptsMax(ts);
 
-	if (dummyRow.won > 0) {
+	if (max !== 0) {
 		return (
 			evaluatePointsFormula(ts, {
 				season: ts.season,
-			}) /
-			evaluatePointsFormula(dummyRow, {
-				season: ts.season,
-			})
+			}) / max
 		);
 	}
 

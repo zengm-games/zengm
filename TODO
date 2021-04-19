@@ -129,10 +129,6 @@ sim substitutions faster in live sim
 bold scoring plays in live sim
 - https://discord.com/channels/290013534023057409/331882115119448065/799434734101856312
 
-new constants
-- url
-- some better way of linking to other sports
-
 real players prospect rating options
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)
 
@@ -147,6 +143,7 @@ league name being stored in file name
 - https://discord.com/channels/@me/682666234604552221/796152730036731974
 
 force tie, in addition to force win (only when ties are possible)
+- force win eventually boosts bad team. what should force tie do? more complicated
 
 scheduled events documentation
 - https://old.reddit.com/r/BasketballGM/comments/k7g2yu/tutorial_how_to_schedule_an_expansion_draft_in_a/

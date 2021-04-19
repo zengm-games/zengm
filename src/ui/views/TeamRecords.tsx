@@ -67,6 +67,7 @@ const TeamRecords = ({
 	teams,
 	ties,
 	otl,
+	usePts,
 	userTid,
 }: View<"teamRecords">) => {
 	const [showHistorical, setShowHistorical] = useState(true);
@@ -96,7 +97,7 @@ const TeamRecords = ({
 		"L",
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
-		"%",
+		...(usePts ? ["PTS", "PTS%"] : ["%"]),
 		"Playoffs",
 		"Last",
 		"Finals",
@@ -126,7 +127,9 @@ const TeamRecords = ({
 					t.lost,
 					...(otl ? [t.otl] : []),
 					...(ties ? [t.tied] : []),
-					helpers.roundWinp(t.winp),
+					...(usePts
+						? [t.pts, helpers.roundWinp(t.ptsPct)]
+						: [helpers.roundWinp(t.winp)]),
 					t.playoffs,
 					t.lastPlayoffs,
 					t.finals,

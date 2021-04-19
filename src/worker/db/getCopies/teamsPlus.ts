@@ -173,6 +173,8 @@ const processSeasonAttrs = async <
 					row.pts = team.evaluatePointsFormula(ts, {
 						season: ts.season,
 					});
+				} else if (attr === "ptsMax") {
+					row.ptsMax = team.ptsMax(ts);
 				} else if (attr === "ptsPct") {
 					row.ptsPct = team.ptsPct(ts);
 				} else if (attr === "ptsDefault") {

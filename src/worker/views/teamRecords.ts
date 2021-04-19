@@ -198,6 +198,8 @@ const getRowInfo = (
 		lost: number;
 		tied: number;
 		otl: number;
+		pts: number;
+		ptsMax: number;
 		playoffRoundsWon: number;
 	}[],
 	awards: any[],
@@ -241,6 +243,9 @@ const getRowInfo = (
 		lost: sumBy(seasonAttrs, "lost"),
 		tied: sumBy(seasonAttrs, "tied"),
 		otl: sumBy(seasonAttrs, "otl"),
+		pts: sumBy(seasonAttrs, "pts"),
+		ptsMax: sumBy(seasonAttrs, "ptsMax"),
+		ptsPct: 0,
 		winp: 0,
 		playoffs,
 		finals,
@@ -256,6 +261,7 @@ const getRowInfo = (
 		),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
+	rowInfo.ptsPct = rowInfo.ptsMax !== 0 ? rowInfo.pts / rowInfo.ptsMax : 0;
 	return rowInfo;
 };
 
@@ -274,6 +280,9 @@ type Team = {
 	lost: number;
 	tied: number;
 	otl: number;
+	pts: number;
+	ptsMax: number;
+	ptsPct: number;
 	winp: number;
 	playoffs: number;
 	finals: number;
@@ -290,6 +299,8 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"lost",
 		"tied",
 		"otl",
+		"pts",
+		"ptsMax",
 		"playoffs",
 		"finals",
 		"titles",
@@ -331,6 +342,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 			: 0;
 	output.sortValue = 0;
 	output.winp = helpers.calcWinp(output);
+	output.ptsPct = output.pts / output.ptsMax;
 
 	return output;
 };
@@ -360,6 +372,8 @@ const updateTeamRecords = async (
 					"lost",
 					"tied",
 					"otl",
+					"pts",
+					"ptsMax",
 					"playoffRoundsWon",
 				],
 			}),
@@ -490,12 +504,16 @@ const updateTeamRecords = async (
 			}
 		}
 
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
+
 		return {
 			byType,
 			filter,
 			teams,
 			ties: g.get("ties") || ties,
 			otl: g.get("otl") || otl,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

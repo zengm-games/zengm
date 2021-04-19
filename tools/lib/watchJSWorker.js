@@ -10,7 +10,7 @@ const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
 
 const babelCache = {};
 
-// Use babel to run babel-plugin-sport-functions, and also hackiley identify when a build starts
+// Use babel to run babel-plugin-sport-functions, and also hackiley identify when a build starts. This is needed because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport.
 const pluginSportFunctionsAndStartTime = {
 	name: "plugin-sport-functions",
 	setup(build) {
@@ -35,7 +35,7 @@ const pluginSportFunctionsAndStartTime = {
 			const text = await fs.readFile(args.path, "utf8");
 
 			let contents;
-			if (text.includes("bySport") || text.includes("isSport")) {
+			if (text.includes("bySport")) {
 				const result = await babel.transformAsync(text, {
 					babelrc: false,
 					configFile: false,
@@ -98,8 +98,6 @@ const pluginSportFunctionsAndStartTime = {
 			pluginSportFunctionsAndStartTime,
 		],
 		watch: {
-			// https://esbuild.github.io/api/#incremental if polling watch is too slow
-
 			onRebuild(error) {
 				if (error) {
 					parentPort.postMessage({

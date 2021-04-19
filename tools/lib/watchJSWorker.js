@@ -15,37 +15,42 @@ const pluginSportFunctions = {
 	name: "sport-functions",
 	setup(build) {
 		build.onLoad({ filter: /\.tsx?$/, namespace: "file" }, async args => {
-			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
-
 			const { mtimeMs } = await fs.stat(args.path);
 			if (babelCache[args.path] && babelCache[args.path].mtimeMs === mtimeMs) {
 				return babelCache[args.path].result;
 			}
 
+			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
+
 			const text = await fs.readFile(args.path, "utf8");
 
-			let contents;
+			// result is undefined if no match, meaning just do normal stuff
+			let result;
 			if (text.includes("bySport")) {
-				const result = await babel.transformAsync(text, {
-					babelrc: false,
-					configFile: false,
-					sourceMaps: "inline",
-					plugins: [
-						[babelPluginSyntaxTypescript, { isTSX: true }],
-						babelPluginSportFunctions,
-					],
-				});
-				contents = result.code;
-			} else {
-				contents = text;
-			}
+				const contents = (
+					await babel.transformAsync(text, {
+						babelrc: false,
+						configFile: false,
+						sourceMaps: "inline",
+						plugins: [
+							[babelPluginSyntaxTypescript, { isTSX: true }],
+							babelPluginSportFunctions,
+						],
+					})
+				).code;
 
-			const result = { contents, loader };
+				result = { contents, loader };
+			}
 
 			babelCache[args.path] = {
 				mtimeMs,
 				result,
 			};
+
+			if (result === undefined) {
+				// Might as well return the text, since we have it in memory already
+				result = { contents: text, loader };
+			}
 
 			return result;
 		});

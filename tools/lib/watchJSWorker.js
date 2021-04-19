@@ -13,6 +13,16 @@ const pluginSportFunctions = {
 	name: "plugin-sport-functions",
 	setup(build) {
 		build.onLoad({ filter: /\.tsx?$/ }, async args => {
+			// No better way to know when a build starts
+			if (
+				args.path.endsWith("/src/worker/index.ts") ||
+				args.path.endsWith("/src/ui/index.tsx")
+			) {
+				parentPort.postMessage({
+					type: "start",
+				});
+			}
+
 			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
 
 			const text = await fs.readFile(args.path, "utf8");
@@ -40,10 +50,6 @@ const pluginSportFunctions = {
 	const outfile = `build/gen/${name}.js`;
 
 	const sport = getSport();
-
-	parentPort.postMessage({
-		type: "start",
-	});
 
 	await esbuild.build({
 		entryPoints: [`src/${name}/index.${name === "ui" ? "tsx" : "ts"}`],
@@ -83,10 +89,6 @@ const pluginSportFunctions = {
 						error,
 					});
 				} else {
-					// No way to know when it started, but it's so fast it doesn't really matter
-					parentPort.postMessage({
-						type: "start",
-					});
 					parentPort.postMessage({
 						type: "end",
 					});

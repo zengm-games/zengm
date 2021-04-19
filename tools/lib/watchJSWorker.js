@@ -8,8 +8,10 @@ const fs = require("fs/promises");
 const babel = require("@babel/core");
 const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
 
-// Use babel to run babel-plugin-sport-functions
-const pluginSportFunctions = {
+const babelCache = {};
+
+// Use babel to run babel-plugin-sport-functions, and also hackiley identify when a build starts
+const pluginSportFunctionsAndStartTime = {
 	name: "plugin-sport-functions",
 	setup(build) {
 		build.onLoad({ filter: /\.tsx?$/ }, async args => {
@@ -25,21 +27,36 @@ const pluginSportFunctions = {
 
 			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
 
-			const text = await fs.readFile(args.path, "utf8");
-			if (!text.includes("bySport") && !text.includes("isSport")) {
-				return { contents: text, loader };
+			const { mtimeMs } = await fs.stat(args.path);
+			if (babelCache[args.path] && babelCache[args.path].mtimeMs === mtimeMs) {
+				return babelCache[args.path].result;
 			}
 
-			const result = await babel.transformAsync(text, {
-				babelrc: false,
-				configFile: false,
-				filename: args.path,
-				plugins: [
-					["@babel/plugin-syntax-typescript", { isTSX: true }],
-					babelPluginSportFunctions,
-				],
-			});
-			return { contents: result.code, loader };
+			const text = await fs.readFile(args.path, "utf8");
+
+			let contents;
+			if (text.includes("bySport") || text.includes("isSport")) {
+				const result = await babel.transformAsync(text, {
+					babelrc: false,
+					configFile: false,
+					filename: args.path,
+					plugins: [
+						["@babel/plugin-syntax-typescript", { isTSX: true }],
+						babelPluginSportFunctions,
+					],
+				});
+				contents = result.code;
+			} else {
+				contents = text;
+			}
+
+			const result = { contents, loader };
+
+			babelCache[args.path] = {
+				mtimeMs,
+				result,
+			};
+			return result;
 		});
 	},
 };
@@ -77,7 +94,7 @@ const pluginSportFunctions = {
 					"../../src/common/polyfills-noop.ts",
 				),
 			}),
-			pluginSportFunctions,
+			pluginSportFunctionsAndStartTime,
 		],
 		watch: {
 			// https://esbuild.github.io/api/#incremental if polling watch is too slow

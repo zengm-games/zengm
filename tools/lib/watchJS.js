@@ -27,10 +27,6 @@ const watchJS = (updateStart, updateEnd, updateError) => {
 	}
 };
 
-watchJS(
-	filename => console.log("updateStart", filename),
-	filename => console.log("updateEnd", filename),
-	(filename, error) => console.log("updateError", filename, error),
-);
+// watchJS((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));
 
 module.exports = watchJS;

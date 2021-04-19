@@ -2,11 +2,11 @@ const { parentPort, workerData } = require("worker_threads");
 const esbuild = require("esbuild");
 const alias = require("esbuild-plugin-alias");
 const path = require("path");
-const getSport = require("./getSport");
-
 const fs = require("fs/promises");
 const babel = require("@babel/core");
+const babelPluginSyntaxTypescript = require("@babel/plugin-syntax-typescript");
 const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
+const getSport = require("./getSport");
 
 const babelCache = {};
 
@@ -41,7 +41,7 @@ const pluginSportFunctionsAndStartTime = {
 					configFile: false,
 					sourceMaps: "inline",
 					plugins: [
-						["@babel/plugin-syntax-typescript", { isTSX: true }],
+						[babelPluginSyntaxTypescript, { isTSX: true }],
 						babelPluginSportFunctions,
 					],
 				});

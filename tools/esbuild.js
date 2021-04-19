@@ -3,7 +3,14 @@ const alias = require("esbuild-plugin-alias");
 const path = require("path");
 const getSport = require("./lib/getSport");
 
-// Currently this is not used for anything. Eventually maybe it cna replace the current rollup build script. Would need to do something about my custom babel plugin (maybe run it on any file that includes isSport/bySport), and I also thing rollup still ultimately produces a smaller bundle size.
+/**
+ * Currently this is not used for anything. Eventually maybe it cna replace the current rollup build script. Would need to do:
+ *
+ * - Run pluginSportFunctions on both isSport and bySport
+ * - Do something about extra rollup plugins (like blacklist)
+ * - Compare bundle size (maybe still use terser)
+ * - Figure out what targets to use for the prod/legacy builds, and confirm it all works
+ */
 
 (async () => {
 	const sport = getSport();

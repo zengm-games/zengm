@@ -56,7 +56,10 @@ const Confirm = confirmable(({ show, proceed, p }: any) => {
 								{numbers.map(number => (
 									<option key={number} value={number}>
 										#{number} (
-										{helpers.yearRanges(p.retirableJerseyNumbers[number])})
+										{helpers
+											.yearRanges(p.retirableJerseyNumbers[number])
+											.join(", ")}
+										)
 									</option>
 								))}
 							</select>

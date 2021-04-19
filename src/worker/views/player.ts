@@ -276,57 +276,47 @@ const updatePlayer = async (
 
 		const teams = await idb.cache.teams.getAll();
 
-		const jerseyNumberInfos: {
-			number: string;
-			start: number;
-			end: number;
-			t?: {
-				tid: number;
-				colors: [string, string, string];
-				jersey?: string;
-				name: string;
-				region: string;
-			};
-			retired: boolean;
-		}[] = [];
+		const jerseyNumberInfosObject: Record<
+			string,
+			{
+				number: string;
+				start: number;
+				end: number;
+				t?: {
+					tid: number;
+					colors: [string, string, string];
+					jersey?: string;
+					name: string;
+					region: string;
+				};
+				retired: boolean;
+			}
+		> = [];
 		for (const ps of p.stats) {
 			const jerseyNumber = ps.jerseyNumber;
 			if (jerseyNumber === undefined) {
 				continue;
 			}
 
-			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
-
 			const ts = await getTeamInfoBySeason(ps.tid, ps.season);
-
-			let newRow = false;
-			if (prev === undefined || jerseyNumber !== prev.number) {
-				newRow = true;
-			} else {
-				if (ts) {
-					if (
-						!prev.t ||
-						prev.t.name !== ts.name ||
-						prev.t.region !== ts.region ||
-						JSON.stringify(prev.t.colors) !== JSON.stringify(ts.colors)
-					) {
-						newRow = true;
-					}
-				}
+			let t;
+			if (ts && ts.colors && ts.name && ts.region) {
+				t = {
+					tid: ps.tid,
+					colors: ts.colors,
+					jersey: ts.jersey,
+					name: ts.name,
+					region: ts.region,
+				};
 			}
 
-			if (newRow) {
-				let t;
-				if (ts && ts.colors && ts.name && ts.region) {
-					t = {
-						tid: ps.tid,
-						colors: ts.colors,
-						jersey: ts.jersey,
-						name: ts.name,
-						region: ts.region,
-					};
-				}
+			const key = JSON.stringify([jerseyNumber, t]);
 
+			const prev = jerseyNumberInfosObject[key];
+
+			if (prev) {
+				prev.end = ps.season;
+			} else {
 				let retired = false;
 				const t2 = teams[ps.tid];
 				if (t2 && t2.retiredJerseyNumbers) {
@@ -335,17 +325,17 @@ const updatePlayer = async (
 					);
 				}
 
-				jerseyNumberInfos.push({
+				jerseyNumberInfosObject[key] = {
 					number: jerseyNumber,
 					start: ps.season,
 					end: ps.season,
 					t,
 					retired,
-				});
-			} else if (prev) {
-				prev.end = ps.season;
+				};
 			}
 		}
+
+		const jerseyNumberInfos = Object.values(jerseyNumberInfosObject);
 
 		let teamColors;
 		let teamJersey;

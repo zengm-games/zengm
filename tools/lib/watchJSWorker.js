@@ -39,7 +39,7 @@ const pluginSportFunctionsAndStartTime = {
 				const result = await babel.transformAsync(text, {
 					babelrc: false,
 					configFile: false,
-					filename: args.path,
+					sourceMaps: "inline",
 					plugins: [
 						["@babel/plugin-syntax-typescript", { isTSX: true }],
 						babelPluginSportFunctions,
@@ -56,6 +56,7 @@ const pluginSportFunctionsAndStartTime = {
 				mtimeMs,
 				result,
 			};
+
 			return result;
 		});
 	},

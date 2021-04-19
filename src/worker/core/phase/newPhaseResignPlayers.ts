@@ -11,6 +11,7 @@ import {
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
+import getRookieSalaries from "../draft/getRookieSalaries";
 
 const newPhaseResignPlayers = async (
 	conditions: Conditions,
@@ -188,12 +189,26 @@ const newPhaseResignPlayers = async (
 				if (draftPick) {
 					// Hockey already has rookie salaries set correctly in normalizeContractDemands
 					if (isSport("football")) {
-						contract.amount /= 2;
+						if (g.get("rookieScale")) {
+							const dp = p.draft;
+							const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
 
-						if (contract.amount < g.get("minContract")) {
-							contract.amount = g.get("minContract");
+							let years = g.get("rookieContractLengths")[
+								Math.min(
+									g.get("rookieContractLengths").length - 1,
+									dp.round - 1,
+								)
+							];
+							contract.amount = getRookieSalaries()[i];
+							contract.exp = g.get("season") + years;
 						} else {
-							contract.amount = helpers.roundContract(contract.amount);
+							contract.amount /= 2;
+
+							if (contract.amount < g.get("minContract")) {
+								contract.amount = g.get("minContract");
+							} else {
+								contract.amount = helpers.roundContract(contract.amount);
+							}
 						}
 					}
 

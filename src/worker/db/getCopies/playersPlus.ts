@@ -29,6 +29,7 @@ type PlayersPlusOptionsRequired = {
 	numGamesRemaining: number;
 	statType: PlayerStatType;
 	mergeStats: boolean;
+	draft: boolean;
 };
 
 const processAttrs = (
@@ -667,6 +668,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		showNoStats,
 		showRetired,
 		showRookies,
+		draft,
 	} = options;
 
 	const output: any = {};
@@ -710,6 +712,10 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 
 	if (attrs.length > 0) {
 		processAttrs(output, p, options);
+	}
+
+	if (draft) {
+		output.draft = p.draft;
 	}
 
 	return output;
@@ -763,6 +769,7 @@ const getCopies = async (
 		numGamesRemaining = 0,
 		statType = "perGame",
 		mergeStats = false,
+		draft = false,
 	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
 	const options: PlayersPlusOptionsRequired = {
@@ -781,6 +788,7 @@ const getCopies = async (
 		numGamesRemaining,
 		statType,
 		mergeStats,
+		draft,
 	};
 
 	return players

@@ -1010,6 +1010,7 @@ export type PlayersPlusOptions = {
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: boolean;
+	draft?: boolean;
 };
 
 export type Race = "asian" | "black" | "brown" | "white";

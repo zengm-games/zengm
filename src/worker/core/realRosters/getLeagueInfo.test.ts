@@ -2,24 +2,12 @@ import assert from "assert";
 import { PHASE } from "../../../common";
 import getLeagueInfo from "./getLeagueInfo";
 import * as fs from "fs";
-import * as path from "path";
 
 describe("worker/core/realRosters/getLeagueInfo", () => {
 	let originalFetch: any;
 	beforeAll(() => {
 		const realPlayerData = JSON.parse(
-			fs.readFileSync(
-				path.join(
-					__dirname,
-					"..",
-					"..",
-					"..",
-					"..",
-					"data",
-					"real-player-data.basketball.json",
-				),
-				"utf8",
-			),
+			fs.readFileSync("data/real-player-data.basketball.json", "utf8"),
 		);
 		originalFetch = global.fetch;
 		(global as any).fetch = async () => {

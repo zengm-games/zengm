@@ -1,6 +1,6 @@
-const cheerio = require("cheerio");
-const fs = require("fs");
-const path = require("path");
+import cheerio from "cheerio";
+import fs from "fs";
+import path from "path";
 
 // Scrape all https://www.basketball-reference.com/friv/colleges.fcgi?college=acadia
 const folder = "/media/external/BBGM/basketball-colleges/html";

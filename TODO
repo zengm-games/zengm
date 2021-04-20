@@ -1,4 +1,5 @@
-rollup exports package.json field
+ESM tools
+- when done set module: true in package.json and change back to .js
 
 disable injuries without god mode before league? https://discord.com/channels/@me/831754887058423819/833206526780768277
 

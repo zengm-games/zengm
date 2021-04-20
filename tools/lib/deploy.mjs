@@ -1,9 +1,9 @@
-const { spawn } = require("child_process");
-const cloudflare = require("cloudflare");
-const build = require("./build");
-const buildFuncs = require("./buildFuncs");
-const getSport = require("./getSport");
-const cloudflareConfig = require("../../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
+import { spawn } from "child_process";
+import cloudflare from "cloudflare";
+import { readFile } from 'fs/promises';
+import build from "./build.js";
+import buildFuncs from "./buildFuncs.js";
+import getSport from "./getSport.js";
 
 const getSubdomain = () => {
 	if (process.argv[2] === "beta" || process.argv[2] === "play") {
@@ -33,6 +33,8 @@ const mySpawn = (command, args) => {
 };
 
 const deploy = async () => {
+	const cloudflareConfig = JSON.parse(await readFile(new URL("../../../../.config/cloudflare.json", import.meta.url)));
+
 	await build();
 
 	const subdomain = getSubdomain();
@@ -110,4 +112,4 @@ const deploy = async () => {
 	console.log("\nDone!");
 };
 
-module.exports = deploy;
+export default deploy;

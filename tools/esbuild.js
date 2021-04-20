@@ -4,7 +4,7 @@ const path = require("path");
 const getSport = require("./lib/getSport");
 
 /**
- * Currently this is not used for anything. Eventually maybe it cna replace the current rollup build script. Would need to do:
+ * Currently this is not used for anything. Eventually maybe it can replace the current rollup build script. Would need to do:
  *
  * - Figure out what to do with Karma and Jest
  * - Run pluginSportFunctions on both isSport and bySport

@@ -291,7 +291,7 @@ const updatePlayer = async (
 				};
 				retired: boolean;
 			}
-		> = [];
+		> = {};
 		for (const ps of p.stats) {
 			const jerseyNumber = ps.jerseyNumber;
 			if (jerseyNumber === undefined) {

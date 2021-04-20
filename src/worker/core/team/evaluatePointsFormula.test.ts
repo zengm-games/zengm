@@ -79,7 +79,7 @@ describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
 				new PointsFormulaEvaluator("aBc+5");
 			},
 			{
-				message: 'Invalid variable "aBc"',
+				message: 'Invalid variable "ABC"',
 			},
 		);
 	});

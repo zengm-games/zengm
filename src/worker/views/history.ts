@@ -39,7 +39,8 @@ const updateHistory = async (
 		});
 
 		const addAbbrev = (obj: any) => {
-			if (obj === undefined) {
+			// Not sure why this would ever be null, but somebody said it was
+			if (obj == undefined) {
 				return;
 			}
 

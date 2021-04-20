@@ -310,7 +310,14 @@ const updatePlayer = async (
 				};
 			}
 
-			const key = JSON.stringify([jerseyNumber, t]);
+			// Don't include jersey in key, because it's not visible in the jersey number display
+			const key = JSON.stringify([
+				jerseyNumber,
+				t?.tid,
+				t?.colors,
+				t?.name,
+				t?.region,
+			]);
 
 			const prev = jerseyNumberInfosObject[key];
 

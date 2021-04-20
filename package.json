@@ -15,7 +15,7 @@
 		"start": "node tools/server.js",
 		"build": "node tools/build.mjs",
 		"deploy": "yarn run lint && yarn test && node tools/deploy.mjs",
-		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.js",
+		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.mjs",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
 		"watch": "node tools/watch.js",
 		"lint": "concurrently --raw \"yarn run lint-js\" \"yarn run lint-ts\"",

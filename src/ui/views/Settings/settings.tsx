@@ -97,6 +97,16 @@ export const settings: {
 				</p>
 			</>
 		),
+		validator: (value, output) => {
+			if (
+				(value === "debuts" || value === "debutsForever") &&
+				output.realStats !== "none"
+			) {
+				throw new Error(
+					'Random debuts mode currently only works with "Historical Stat" set to "None"',
+				);
+			}
+		},
 	},
 	{
 		category: "New League",

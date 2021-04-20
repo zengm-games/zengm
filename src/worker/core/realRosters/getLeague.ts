@@ -190,7 +190,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 		players.push(...draftProspects);
 
 		if (options.randomDebuts) {
-			const toRandomize = players.filter(p => p.tid !== PLAYER.FREE_AGENT);
+			const toRandomize = players.filter(
+				p => p.tid !== PLAYER.FREE_AGENT && p.tid !== PLAYER.RETIRED,
+			);
 
 			const draftYears = toRandomize.map(p => p.draft.year);
 			random.shuffle(draftYears);

@@ -20,7 +20,7 @@ import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
-import type { ClassValue } from "classnames/types";
+import type { Argument } from "classnames";
 import arrayMove from "array-move";
 
 export type SortBy = [number, SortOrder];
@@ -58,13 +58,13 @@ export type Props = {
 		data: (
 			| ReactNode
 			| {
-					classNames?: ClassValue;
+					classNames?: Argument;
 					value: ReactNode;
 					searchValue?: string;
 					sortValue?: string | number;
 			  }
 		)[];
-		classNames?: ClassValue;
+		classNames?: Argument;
 	}[];
 	small?: boolean;
 	striped?: boolean;

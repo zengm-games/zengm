@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
-import type { ClassValue } from "classnames/types";
+import type { Argument } from "classnames";
 
 const Row = ({
 	row,
 }: {
 	row: {
-		classNames?: ClassValue;
+		classNames?: Argument;
 		data: any[];
 	};
 }) => {

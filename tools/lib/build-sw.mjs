@@ -1,11 +1,11 @@
-const fs = require("fs");
-const replace2 = require("replace");
-const babel = require("@rollup/plugin-babel").default;
-const replace = require("@rollup/plugin-replace");
-const resolve = require("@rollup/plugin-node-resolve").default;
-const terser = require("rollup-plugin-terser").terser;
-const rollup = require("rollup");
-const workboxBuild = require("workbox-build");
+import fs from "fs";
+import replace2 from "replace";
+import { babel } from "@rollup/plugin-babel";
+import replace from "@rollup/plugin-replace";
+import resolve from "@rollup/plugin-node-resolve";
+import { terser } from "rollup-plugin-terser";
+import * as rollup from "rollup";
+import workboxBuild from "workbox-build";
 
 const getRev = () => {
 	const files = fs.readdirSync("build/gen");
@@ -90,4 +90,4 @@ const buildSW = async () => {
 	});
 };
 
-module.exports = buildSW;
+export default buildSW;

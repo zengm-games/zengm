@@ -1,8 +1,8 @@
-const _ = require("lodash");
-const cheerio = require("cheerio");
-const fs = require("fs");
-const path = require("path");
-const { juniors, provinces, states } = require("./lib/namesHelpers");
+import _ from "lodash";
+import cheerio from "cheerio";
+import fs from "fs";
+import path from "path";
+import { juniors, provinces, states } from "./lib/namesHelpers.mjs";
 
 const namesBasketball = () => {
 	// Run this on the output of something like:
@@ -441,4 +441,4 @@ const namesBasketball = () => {
 	return { fnsByCountry, lnsByCountry };
 };
 
-module.exports = namesBasketball;
+export default namesBasketball;

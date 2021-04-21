@@ -1,3 +1,3 @@
-import build from "./lib/build.js";
+import build from "./lib/build.mjs";
 
 await build();

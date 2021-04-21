@@ -69,7 +69,7 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 		outfile,
 		bundle: true,
 		sourcemap: true,
-		inject: ["tools/lib/react-shim.js"],
+		inject: ["tools/lib/react-shim.mjs"],
 		define: {
 			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),

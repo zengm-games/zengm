@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import cloudflare from "cloudflare";
 import { readFile } from 'fs/promises';
-import build from "./build.js";
+import build from "./build.mjs";
 import buildFuncs from "./buildFuncs.js";
 import getSport from "./getSport.js";
 

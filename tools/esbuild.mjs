@@ -1,9 +1,5 @@
 import esbuild from "esbuild";
-import alias from "esbuild-plugin-alias";
-import path from "path";
-import getSport from "./lib/getSport.js";
-
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+import esbuildConfig from "./lib/esbuildConfig.js";
 
 /**
  * Currently this is not used for anything. Eventually maybe it can replace the current rollup build script. Would need to do:
@@ -19,38 +15,15 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
  *   - Could still use babel on output
  */
 
-const sport = getSport();
 
 const names = ["ui", "worker"];
 await Promise.all(
 	names.map(async name => {
 		await esbuild.build({
-			entryPoints: [`src/${name}/index.${name === "ui" ? "tsx" : "ts"}`],
-			bundle: true,
-			sourcemap: true,
-			inject: ["tools/lib/react-shim.js"],
-			define: {
-				"process.env.NODE_ENV": '"development"',
-				"process.env.SPORT": JSON.stringify(sport),
-			},
-			outfile: `build/gen/${name}.js`,
-			plugins: [
-				// Not sure why this is required, docs say it should pick up on tsconfig.json settings
-				alias({
-					"player-names": path.join(
-						__dirname,
-						"../src/worker/data/names-test.json",
-					),
-					"league-schema": path.join(
-						__dirname,
-						"../build/files/league-schema.json",
-					),
-					"bbgm-polyfills": path.join(
-						__dirname,
-						"../src/common/polyfills-noop.ts",
-					),
-				}),
-			],
+			...esbuildConfig({
+				name,
+				nodeEnv: "production",
+			}),
 		});
 	}),
 );

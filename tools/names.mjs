@@ -1,9 +1,11 @@
-const { csvParse } = require("d3-dsv");
-const fs = require("fs");
-const path = require("path");
-const namesBasketball = require("./names-basketball");
-const namesFootball = require("./names-football");
-const { JSONstringifyOrder, filterAndOutput } = require("./lib/namesHelpers");
+import { csvParse } from "d3-dsv";
+import fs from "fs";
+import path from "path";
+import namesBasketball from "./names-basketball.mjs";
+import namesFootball from "./names-football.mjs";
+import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.mjs";
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(

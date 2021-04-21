@@ -1,11 +1,11 @@
-const fs = require("fs");
-const build = require("./buildFuncs");
-const generateJSONSchema = require("./generateJSONSchema");
-const getSport = require("./getSport");
-const buildJS = require("./build-js");
-const buildSW = require("./build-sw");
+import fs from "fs";
+import build from "./buildFuncs.js";
+import generateJSONSchema from "./generateJSONSchema.js";
+import getSport from "./getSport.js";
+import buildJS from "./build-js.mjs";
+import buildSW from "./build-sw.mjs";
 
-module.exports = async () => {
+export default async () => {
 	const sport = getSport();
 
 	console.log(`Building ${sport}...`);

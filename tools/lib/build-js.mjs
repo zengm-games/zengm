@@ -1,10 +1,10 @@
-const fs = require("fs");
-const fse = require("fs-extra");
-const rollup = require("rollup");
-const build = require("./buildFuncs");
-const getSport = require("./getSport");
-const replace = require("replace");
-const rollupConfig = require("./rollupConfig");
+import fs from "fs";
+import fse from "fs-extra";
+import * as rollup from "rollup";
+import build from "./buildFuncs.js";
+import getSport from "./getSport.js";
+import replace from "replace";
+import rollupConfig from "./rollupConfig.js";
 
 const rev = build.genRev();
 console.log(rev);
@@ -80,4 +80,4 @@ const buildJS = async () => {
 	}
 };
 
-module.exports = buildJS;
+export default buildJS;

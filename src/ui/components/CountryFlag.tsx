@@ -258,7 +258,7 @@ const countryCodes: Record<string, string> = {
 	Yemen: "ye",
 	Zambia: "zm",
 	Zimbabwe: "zw",
-	// Can't handle this currently
+	// Uncomment this after the "USA" suffix has been there for a bit
 	// Georgia: "ge",
 };
 
@@ -276,10 +276,7 @@ const CountryFlag = ({
 	if (code) {
 		return (
 			<span
-				className={classNames(
-					`flag-icon flag-icon-${code}`,
-					className ?? undefined,
-				)}
+				className={classNames(`flag-icon flag-icon-${code}`, className)}
 				data-no-row-highlight="true"
 				title={country2}
 			></span>

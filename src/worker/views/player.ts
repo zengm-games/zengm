@@ -276,25 +276,23 @@ const updatePlayer = async (
 
 		const teams = await idb.cache.teams.getAll();
 
-		const jerseyNumberInfosObject: Record<
-			string,
-			{
-				number: string;
-				start: number;
-				end: number;
-				t?: {
-					tid: number;
-					colors: [string, string, string];
-					jersey?: string;
-					name: string;
-					region: string;
-				};
-				retired: boolean;
-			}
-		> = {};
+		const jerseyNumberInfos: {
+			number: string;
+			start: number;
+			end: number;
+			t?: {
+				tid: number;
+				colors: [string, string, string];
+				jersey?: string;
+				name: string;
+				region: string;
+			};
+			retired: boolean;
+		}[] = [];
+		let prevKey: string = "";
 		for (const ps of p.stats) {
 			const jerseyNumber = ps.jerseyNumber;
-			if (jerseyNumber === undefined) {
+			if (jerseyNumber === undefined || ps.gp === 0) {
 				continue;
 			}
 
@@ -319,9 +317,8 @@ const updatePlayer = async (
 				t?.region,
 			]);
 
-			const prev = jerseyNumberInfosObject[key];
-
-			if (prev) {
+			if (key === prevKey) {
+				const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
 				prev.end = ps.season;
 			} else {
 				let retired = false;
@@ -332,17 +329,17 @@ const updatePlayer = async (
 					);
 				}
 
-				jerseyNumberInfosObject[key] = {
+				jerseyNumberInfos.push({
 					number: jerseyNumber,
 					start: ps.season,
 					end: ps.season,
 					t,
 					retired,
-				};
+				});
 			}
-		}
 
-		const jerseyNumberInfos = Object.values(jerseyNumberInfosObject);
+			prevKey = key;
+		}
 
 		let teamColors;
 		let teamJersey;

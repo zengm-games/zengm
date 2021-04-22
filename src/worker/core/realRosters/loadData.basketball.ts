@@ -121,6 +121,14 @@ export type Basketball = {
 		}[]
 	>;
 	expansionDrafts: Record<number, Record<string, string[]>>;
+	retiredJerseyNumbers: Record<
+		string,
+		{
+			number: string;
+			season: number;
+			slug: string;
+		}[]
+	>;
 };
 
 let cachedJSON: Basketball;

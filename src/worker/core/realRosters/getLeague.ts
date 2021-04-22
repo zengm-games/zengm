@@ -17,6 +17,7 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import getOnlyRatings from "./getOnlyRatings";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import addRelatives from "./addRelatives";
+import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers";
 import genPlayoffSeries from "./genPlayoffSeries";
 import getGameAttributes from "./getGameAttributes";
 import getAwards from "./getAwards";
@@ -580,6 +581,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		addRelatives(players, basketball.relatives);
 		addFreeAgents(players, options.season);
+		addRetiredJerseyNumbers({
+			teams: initialTeams,
+			players,
+			season: options.season,
+			phase: options.phase,
+			allBios: basketball.bios,
+			allRetiredJerseyNumbers: basketball.retiredJerseyNumbers,
+		});
 
 		return {
 			version: 37,

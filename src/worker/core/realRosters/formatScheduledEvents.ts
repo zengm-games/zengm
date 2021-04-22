@@ -2,6 +2,7 @@ import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
 import type {
 	ScheduledEventWithoutKey,
+	Team,
 	TeamSeasonWithoutKey,
 } from "../../../common/types";
 import { gameAttributeHasHistory, PHASE } from "../../../common";
@@ -110,6 +111,7 @@ const processTeams = (
 		disabled?: boolean;
 		firstSeasonAfterExpansion?: number;
 		seasons?: TeamSeasonWithoutKey[];
+		retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
 	}[];
 
 	// Keep track of initial teams

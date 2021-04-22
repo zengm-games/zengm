@@ -113,6 +113,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		});
 
 		let groupedRatings = Object.values(groupBy(ratingsRows, "slug"));
+		const hofSlugs = new Set();
 		if (options.realStats === "allActive") {
 			// Only keep players who are active this season
 			groupedRatings = groupedRatings.filter(allRatings => {
@@ -121,8 +122,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			});
 		} else if (options.realStats === "allActiveHOF") {
 			// Only keep players who are active this season or in the HoF
-
-			const hofSlugs = new Set();
 			for (const [slug, awards] of Object.entries(basketball.awards)) {
 				if (awards) {
 					for (const award of awards) {
@@ -148,6 +147,28 @@ const getLeague = async (options: GetLeagueOptions) => {
 				randomDebuts: options.randomDebuts,
 			}),
 		);
+
+		// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started
+		if (hofSlugs.size > 0) {
+			for (const p of players) {
+				if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
+					p.hof = true;
+					if (!p.awards) {
+						p.awards = [];
+					}
+
+					const season =
+						options.phase <= PHASE.PLAYOFFS
+							? options.season - 1
+							: options.season;
+
+					p.awards.push({
+						type: "Inducted into the Hall of Fame",
+						season,
+					});
+				}
+			}
+		}
 
 		// Heal injuries, if necessary
 		let gamesToHeal = 0;

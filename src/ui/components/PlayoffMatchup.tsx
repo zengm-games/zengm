@@ -77,7 +77,7 @@ const Team = ({
 				"text-muted": lost,
 			})}
 		>
-			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center">
+			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
 				{team.imgURL ? (
 					<img
 						className="mw-100 mh-100"
@@ -91,7 +91,7 @@ const Team = ({
 				{team.seed}.<br />
 				&nbsp;
 			</div>
-			<div className="mr-1">
+			<div className="mr-1 overflow-hidden">
 				<a
 					className={classNames({
 						"text-muted": lost,

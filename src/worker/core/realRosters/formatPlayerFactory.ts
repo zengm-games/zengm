@@ -181,6 +181,7 @@ const formatPlayerFactory = async (
 		let injury;
 		let contract;
 		let awards;
+		let salaries;
 		if (legends) {
 			contract = {
 				amount: 6000,
@@ -197,26 +198,51 @@ const formatPlayerFactory = async (
 				};
 			}
 
-			let salaryRow = basketball.salaries.find(
-				row => row.start <= season && row.exp >= season && row.slug === slug,
-			);
-			if (season >= LATEST_SEASON) {
-				// Auto-apply extensions, otherwise will feel weird
-				const salaryRowExtension = basketball.salaries.find(
-					row => row.start > season && row.slug === slug,
-				);
-				if (salaryRowExtension) {
-					salaryRow = salaryRowExtension;
+			const salaryRows = basketball.salaries.filter(row => {
+				if (row.slug !== slug) {
+					return false;
 				}
-			}
-			if (salaryRow && !draftProspect) {
-				contract = {
-					amount: salaryRow.amount / 1000,
-					exp: salaryRow.exp,
-				};
-				if (contract.exp > season + 4) {
-					// Bound at 5 year contract
-					contract.exp = season + 4;
+
+				// Auto-apply extensions, otherwise will feel weird
+				if (season >= LATEST_SEASON) {
+					return true;
+				}
+
+				return row.start <= season;
+			});
+
+			if (salaryRows.length > 0 && !draftProspect) {
+				// Complicated stuff rather than just taking last entry because these can be out of order, particularly due to merging data sources
+				let salaryRow = salaryRows.find(
+					row => row.start <= season && row.exp >= season,
+				);
+				if (season >= LATEST_SEASON) {
+					// Auto-apply extensions, otherwise will feel weird
+					const salaryRowExtension = salaryRows.find(row => row.start > season);
+					if (salaryRowExtension) {
+						salaryRow = salaryRowExtension;
+					}
+				}
+
+				if (salaryRow) {
+					contract = {
+						amount: salaryRow.amount / 1000,
+						exp: salaryRow.exp,
+					};
+					if (contract.exp > season + 4) {
+						// Bound at 5 year contract
+						contract.exp = season + 4;
+					}
+				}
+
+				salaries = [];
+				for (const row of salaryRows) {
+					for (let season = row.start; season <= row.exp; season++) {
+						salaries.push({
+							amount: row.amount / 1000,
+							season,
+						});
+					}
 				}
 			}
 
@@ -367,6 +393,7 @@ const formatPlayerFactory = async (
 			stats,
 			injury,
 			contract,
+			salaries,
 			awards,
 			jerseyNumber,
 			hof,

@@ -5,7 +5,7 @@ import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
 
-const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 12;
+const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 50;
 
 export const getValueStatsRow = (ps: any) => {
 	return bySport({

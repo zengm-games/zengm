@@ -48,7 +48,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 					onChange={event => {
 						setCode(event.target.value);
 						if (status.type === "done") {
-							setStatus("init");
+							setStatus({ type: "init" });
 						}
 					}}
 					value={code}

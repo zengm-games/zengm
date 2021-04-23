@@ -47,6 +47,9 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 					rows={10}
 					onChange={event => {
 						setCode(event.target.value);
+						if (status.type === "done") {
+							setStatus("init");
+						}
 					}}
 					value={code}
 				/>
@@ -68,6 +71,9 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 					</button>
 					{status.type === "error" ? (
 						<div className="text-danger ml-3 font-weight-bold">Error!</div>
+					) : null}
+					{status.type === "done" ? (
+						<div className="text-success ml-3">Done</div>
 					) : null}
 				</div>
 				{status.type === "error" ? (

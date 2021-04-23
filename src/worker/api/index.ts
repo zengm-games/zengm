@@ -854,13 +854,8 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 };
 
 const evalOnWorker = async (code: string) => {
-	let _asyncFunction: () => Promise<void>;
-
-	const wrapper = `_asyncFunction = async function() {${code}}`;
-	eval(wrapper);
-
-	// @ts-ignore
-	return _asyncFunction();
+	// https://stackoverflow.com/a/63972569/786644
+	await Object.getPrototypeOf(async function () {}).constructor(code)();
 };
 
 // exportPlayerAveragesCsv(2015) - just 2015 stats

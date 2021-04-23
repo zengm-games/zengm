@@ -853,6 +853,16 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	}
 };
 
+const evalOnWorker = async (code: string) => {
+	let _asyncFunction: () => Promise<void>;
+
+	const wrapper = `_asyncFunction = async function() {${code}}`;
+	eval(wrapper);
+
+	// @ts-ignore
+	return _asyncFunction();
+};
+
 // exportPlayerAveragesCsv(2015) - just 2015 stats
 // exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | "all") => {
@@ -2251,7 +2261,6 @@ const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
 
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	if (key === "autoSave" && value === false) {
-		await league.setGameAttributes({ godModeInPast: true });
 		await idb.cache.flush();
 	}
 
@@ -3186,6 +3195,7 @@ export default {
 	discardUnsavedProgress,
 	draftLottery,
 	draftUser,
+	evalOnWorker,
 	exportDraftClass,
 	exportLeague,
 	exportPlayerAveragesCsv,

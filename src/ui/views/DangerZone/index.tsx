@@ -1,71 +1,9 @@
-import { useState } from "react";
-import { isSport, PHASE } from "../../common";
-import type { View } from "../../common/types";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../util";
-
-const AutoSave = ({ autoSave }: { autoSave: boolean }) => {
-	const [processing, setProcessing] = useState(false);
-	const [autoSaveTemp, setAutoSaveTemp] = useState(autoSave);
-
-	return (
-		<>
-			<p>
-				Current auto save status:{" "}
-				{autoSaveTemp ? (
-					<span className="text-success">enabled</span>
-				) : (
-					<span className="text-danger">disabled</span>
-				)}
-			</p>
-
-			{autoSaveTemp ? (
-				<button
-					className="btn btn-light-bordered"
-					disabled={processing}
-					onClick={async () => {
-						setProcessing(true);
-						await toWorker("main", "setLocal", "autoSave", false);
-						setAutoSaveTemp(false);
-						setProcessing(false);
-					}}
-				>
-					Disable auto save
-				</button>
-			) : (
-				<>
-					<button
-						className="btn btn-success"
-						disabled={processing}
-						onClick={async () => {
-							setProcessing(true);
-							await toWorker("main", "setLocal", "autoSave", true);
-							setAutoSaveTemp(true);
-							setProcessing(false);
-						}}
-					>
-						Save current progress and enable auto save
-					</button>
-					<div className="mt-3">
-						<button
-							className="btn btn-danger"
-							disabled={processing}
-							onClick={async () => {
-								setProcessing(true);
-								await toWorker("main", "discardUnsavedProgress");
-								await toWorker("main", "setLocal", "autoSave", false);
-								setAutoSaveTemp(false);
-								setProcessing(false);
-							}}
-						>
-							Go back to previous save state
-						</button>
-					</div>
-				</>
-			)}
-		</>
-	);
-};
+import { isSport, PHASE, WEBSITE_ROOT } from "../../../common";
+import type { View } from "../../../common/types";
+import useTitleBar from "../../hooks/useTitleBar";
+import { helpers, logEvent, toWorker } from "../../util";
+import AutoSave from "./AutoSave";
+import WorkerConsole from "./WorkerConsole";
 
 const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 	useTitleBar({
@@ -243,12 +181,25 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 					to another league, auto save will be enabled again.
 				</p>
 
-				<p className="alert alert-danger">
-					<b>Warning!</b> Once you disable auto save, you will not be awarded
-					any achievements for this league, even after re-enabling auto save.
+				<AutoSave autoSave={autoSave} godMode={godMode} />
+
+				<h2 className="mt-5">Worker console</h2>
+
+				<p>
+					If all the God Mode settings aren't enough for you, you can do more
+					advanced customization by running some code that modifies your league.{" "}
+					<a href={`https://${WEBSITE_ROOT}/manual/worker-console/`}>
+						Click here for more information and some example code snippets.
+					</a>
 				</p>
 
-				<AutoSave autoSave={autoSave} />
+				<p className="alert alert-danger">
+					<b>Warning!</b> Please make sure the code you enter here comes from a
+					trusted source. Malicious code could edit or delete any of your saved
+					leagues.
+				</p>
+
+				<WorkerConsole godMode={godMode} />
 			</div>
 		</div>
 	);

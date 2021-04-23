@@ -97,11 +97,24 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 					className="btn btn-primary"
 					disabled={status === "Exporting..."}
 				>
-					Export Stats
+					{status === "Exporting..." ? (
+						<>
+							<span
+								className="spinner-border spinner-border-sm"
+								role="status"
+								aria-hidden="true"
+							></span>{" "}
+							Processing
+						</>
+					) : (
+						"Export Stats"
+					)}
 				</button>
 			</form>
 
-			{status ? <p className="mt-3">{status}</p> : null}
+			{status && status !== "Exporting..." ? (
+				<p className="mt-3">{status}</p>
+			) : null}
 		</>
 	);
 };

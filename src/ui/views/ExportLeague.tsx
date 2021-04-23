@@ -164,7 +164,18 @@ const ExportLeague = () => {
 							className="btn btn-primary"
 							disabled={status === "Exporting..."}
 						>
-							{status === "Exporting..." ? "Exporting..." : "Export League"}
+							{status === "Exporting..." ? (
+								<>
+									<span
+										className="spinner-border spinner-border-sm"
+										role="status"
+										aria-hidden="true"
+									></span>{" "}
+									Processing
+								</>
+							) : (
+								"Export League"
+							)}
 						</button>
 					</div>
 				</div>

@@ -1187,7 +1187,18 @@ const NewLeague = (props: View<"newLeague">) => {
 										!!invalidSeasonPhaseMessage
 									}
 								>
-									{createLeagueText}
+									{state.creating ? (
+										<>
+											<span
+												className="spinner-border spinner-border-sm"
+												role="status"
+												aria-hidden="true"
+											></span>{" "}
+											Processing
+										</>
+									) : (
+										createLeagueText
+									)}
 								</button>
 
 								<button

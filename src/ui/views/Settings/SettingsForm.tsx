@@ -1762,7 +1762,18 @@ const SettingsForm = ({
 							disabled={submitting}
 							type="submit"
 						>
-							{saveText}
+							{newLeague && submitting ? (
+								<>
+									<span
+										className="spinner-border spinner-border-sm"
+										role="status"
+										aria-hidden="true"
+									></span>{" "}
+									Processing
+								</>
+							) : (
+								saveText
+							)}
 						</button>
 					</div>
 				</StickyBottomButtons>

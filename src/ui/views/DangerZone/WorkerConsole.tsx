@@ -60,7 +60,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 									role="status"
 									aria-hidden="true"
 								></span>{" "}
-								Running...
+								Processing
 							</>
 						) : (
 							"Run code"

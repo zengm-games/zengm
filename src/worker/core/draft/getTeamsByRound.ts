@@ -165,7 +165,12 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		t => t.seasonAttrs.playoffRoundsWon < 0 && !tidPlayoffs.includes(t.tid),
 	);
 	const nonPlayoffTeamsOrdered = (
-		await orderTeams(nonPlayoffTeams, allTeams, orderTeamsSettings)
+		await orderTeams(nonPlayoffTeams, allTeams, {
+			...orderTeamsSettings,
+
+			// If division leaders matter for playoff seeding, then they should not matter here. But for expansion teams, that can cause a problem, if a new division is added at the same time, they will appear as the only member because they have no entry there
+			skipDivisionLeaders: true,
+		})
 	).reverse();
 	checkForTies(nonPlayoffTeamsOrdered, 1);
 	firstRound.push(...nonPlayoffTeamsOrdered);

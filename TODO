@@ -2,20 +2,30 @@ scheduled events editor
 - add/edit
   - expansion draft - distinction between existing tid and new tid
   - game attributes - share code with league settings
-  - team info - how to handle srID? sometimes needs to change over time
-    - team changeable only when creating new
+  - team info
+    - need to get from worker, for jersey and other stuff
+    - how to handle srID? sometimes needs to change over time
+    - team changeable only when creating new?
+    - use TeamForm. add option to hide any field, not just status
   - check
     - only allow one expansionDraft per season+phase
     - only allow one teamInfo per season+phase+tid
   - needs to do similar processing of future events as a delete
     - contraction
-      - delete upcoming contraction
+      - on add
+        - delete upcoming contraction
+      - on edit
+        - needs to handle all the things that deleting does, including rewriting tids of potentially anything when changing the season/phase
     - expansion draft
-      - delete team from upcoming expansion draft, if re-activaing a disabled team
-      - update tids of future expansion teams, if adding a new franchise
+      - on add
+        - delete team from upcoming expansion draft, if re-activaing a disabled team
+        - update tids of future expansion teams, if adding a new franchise
+      - on edit
+        - needs to handle all the things that deleting does, including rewriting tids of potentially anything when changing the season/phase
     - show warning about how this will happen in the UI, like error in ScheduledEventEditor
 - test complicated scenarios
   - multiple contract/expand of the same franchise
+    - tid correct on "new expand -> contract -> re expand" if "new expand" is deleted?
   - interplay between teamInfo and cid/did
   - teamInfo of disabled team should still work, why not
 - god mode?

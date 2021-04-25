@@ -1,5 +1,6 @@
 import type { UpdateEvents } from "../../common/types";
 import { idb } from "../db";
+import { g } from "../util";
 import { getSortedScheduledEvents } from "../util/processScheduledEvents";
 
 const updateScheduledEvents = async (
@@ -16,6 +17,8 @@ const updateScheduledEvents = async (
 		);
 
 		return {
+			confs: g.get("confs"),
+			divs: g.get("divs"),
 			scheduledEvents,
 		};
 	}

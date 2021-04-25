@@ -15,8 +15,9 @@ import type {
 } from "../../../common/types";
 import { helpers, logEvent, useLocalShallow } from "../../util";
 import EditInfoContraction from "./EditInfoContraction";
+import EditInfoTeamInfo from "./EditInfoTeamInfo";
 
-type StateInfo =
+export type StateInfo =
 	| {
 			type: "contraction";
 			tid: number;
@@ -275,6 +276,28 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 									tid,
 								}));
 							}}
+						/>
+					) : null}
+					{info.type === "teamInfo" ? (
+						<EditInfoTeamInfo
+							existingScheduledEvent={!!prevScheduledEvent}
+							info={info}
+							teams={teams}
+							onChange={(key, value) => {
+								setInfo(prevInfo => ({
+									...prevInfo,
+									[key]: value,
+								}));
+							}}
+							onDelete={key => {
+								setInfo(prevInfo => {
+									const newInfo = { ...prevInfo };
+									delete newInfo[key];
+									return newInfo;
+								});
+							}}
+							confs={confs}
+							divs={divs}
 						/>
 					) : null}
 					{error ? (

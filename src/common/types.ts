@@ -286,7 +286,6 @@ export type ScheduledEventTeamInfo = {
 		srID?: string;
 		name?: string;
 		pop?: number;
-		cid?: number;
 		did?: number;
 		abbrev?: string;
 		imgURL?: string;

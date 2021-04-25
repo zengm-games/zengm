@@ -727,6 +727,7 @@ const deleteScheduledEvents = async (ids: number[]) => {
 			const { pastEvents, futureEvents } = getPastFutureScheduledEvents(
 				scheduledEvent,
 				await idb.getCopies.scheduledEvents(),
+				"past",
 			);
 
 			if (scheduledEvent.type === "contraction") {
@@ -794,6 +795,7 @@ const deleteScheduledEvents = async (ids: number[]) => {
 					const { futureEvents } = await getPastFutureScheduledEvents(
 						scheduledEvent,
 						await idb.getCopies.scheduledEvents(),
+						"past",
 					);
 
 					const minTidRemoved = Math.min(...tidsRemoved);

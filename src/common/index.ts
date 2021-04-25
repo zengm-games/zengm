@@ -8,6 +8,7 @@ export { default as gameAttributesArrayToObject } from "./gameAttributesArrayToO
 export { default as getCols } from "./getCols";
 export { default as getPastFutureScheduledEvents } from "./getPastFutureScheduledEvents";
 export { default as getPeriodName } from "./getPeriodName";
+export { default as getScheduleEventSortValue } from "./getScheduleEventSortValue";
 export { default as helpers } from "./helpers";
 export { default as isSport } from "./isSport";
 export { default as posRatings } from "./posRatings";

@@ -69,8 +69,10 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 		{
 			phase,
 			season: seasonInt,
+			type: type ?? "contraction",
 		},
 		scheduledEvents,
+		"future",
 	);
 
 	let teams = teamInfoCache.map((t, tid) => ({
@@ -117,7 +119,9 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 		if (type === "contraction") {
 			return {
 				type: "contraction",
-				tid: teams[0].tid,
+				tid: prevScheduledEvent
+					? (prevScheduledEvent as any).info.tid
+					: teams[0].tid,
 			};
 		}
 
@@ -127,6 +131,9 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 	});
 
 	const save = () => {
+		const base = {};
+		if (info.type === "contraction") {
+		}
 		if (t === undefined || controlledTeam === undefined) {
 			return;
 		}

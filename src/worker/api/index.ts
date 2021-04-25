@@ -82,6 +82,7 @@ import type {
 	Conf,
 	Div,
 	LocalStateUI,
+	ScheduledEvent,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -704,6 +705,30 @@ const deleteOldData = async (options: {
 	await idb.cache.fill();
 };
 
+const getPastUpcomingScheduledEvents = async (
+	scheduledEvent: ScheduledEvent,
+) => {
+	const allEvents = await idb.getCopies.scheduledEvents();
+	const pastEvents = [];
+	const futureEvents = [];
+	for (const otherEvent of allEvents) {
+		if (
+			otherEvent.season > scheduledEvent.season ||
+			(otherEvent.season === scheduledEvent.season &&
+				otherEvent.phase > scheduledEvent.phase)
+		) {
+			futureEvents.push(otherEvent);
+		} else {
+			pastEvents.push(otherEvent);
+		}
+	}
+
+	return {
+		pastEvents,
+		futureEvents,
+	};
+};
+
 const deleteScheduledEvents = async (ids: number[]) => {
 	const scheduledEvents = await idb.getCopies.scheduledEvents();
 
@@ -722,42 +747,32 @@ const deleteScheduledEvents = async (ids: number[]) => {
 			scheduledEvent.type !== "teamInfo"
 		) {
 			// Get fresh from cache, in case it has changed while processing another event
-			const allEvents = await idb.getCopies.scheduledEvents();
-			const pastEvents = [];
-			const upcomingEvents = [];
-			for (const otherEvent of allEvents) {
-				if (
-					otherEvent.season > scheduledEvent.season ||
-					(otherEvent.season === scheduledEvent.season &&
-						otherEvent.phase > scheduledEvent.phase)
-				) {
-					upcomingEvents.push(otherEvent);
-				} else {
-					pastEvents.push(otherEvent);
-				}
-			}
+			const { pastEvents, futureEvents } = await getPastUpcomingScheduledEvents(
+				scheduledEvent,
+			);
 
 			if (scheduledEvent.type === "contraction") {
 				// Delete next expasionDraft event including this franchise
-				for (const otherEvent of upcomingEvents) {
+				for (const futureEvent of futureEvents) {
 					if (
-						otherEvent.type === "expansionDraft" &&
-						otherEvent.info.teams.some(t => t.tid === scheduledEvent.info.tid)
+						futureEvent.type === "expansionDraft" &&
+						futureEvent.info.teams.some(t => t.tid === scheduledEvent.info.tid)
 					) {
-						if (otherEvent.info.teams.length === 1) {
+						if (futureEvent.info.teams.length === 1) {
 							// Delete whole expansion draft, if only this team
-							await idb.cache.scheduledEvents.delete(otherEvent.id);
+							await idb.cache.scheduledEvents.delete(futureEvent.id);
 						} else {
 							// Delete just this team from expansion draft
-							otherEvent.info.teams = otherEvent.info.teams.filter(
+							futureEvent.info.teams = futureEvent.info.teams.filter(
 								t => t.tid !== scheduledEvent.info.tid,
 							);
-							await idb.cache.scheduledEvents.put(otherEvent);
+							await idb.cache.scheduledEvents.put(futureEvent);
 						}
 						break;
 					}
 				}
 			} else if (scheduledEvent.type === "expansionDraft") {
+				const tidsRemoved: number[] = [];
 				for (const t of scheduledEvent.info.teams) {
 					const teamExistedBeforeThisExpansionDraft =
 						!!g.get("teamInfoCache")[t.tid] ||
@@ -767,26 +782,64 @@ const deleteScheduledEvents = async (ids: number[]) => {
 								pastEvent.info.teams.some(t2 => t2.tid === t.tid),
 						);
 
+					if (!teamExistedBeforeThisExpansionDraft) {
+						tidsRemoved.push(t.tid);
+					}
+
 					// Delete any contraction/teamInfo events up until there is an expansionDraft including this franchise
-					for (const otherEvent of upcomingEvents) {
+					for (const futureEvent of futureEvents) {
 						if (
-							otherEvent.type === "teamInfo" &&
+							futureEvent.type === "teamInfo" &&
 							!teamExistedBeforeThisExpansionDraft &&
-							otherEvent.info.tid === t.tid
+							futureEvent.info.tid === t.tid
 						) {
 							// Only delete if !teamExistedBeforeThisExpansionDraft because it's fine to update a disabled team
-							await idb.cache.scheduledEvents.delete(otherEvent.id);
+							await idb.cache.scheduledEvents.delete(futureEvent.id);
 						} else if (
-							otherEvent.type === "contraction" &&
-							otherEvent.info.tid === t.tid
+							futureEvent.type === "contraction" &&
+							futureEvent.info.tid === t.tid
 						) {
-							await idb.cache.scheduledEvents.delete(otherEvent.id);
+							await idb.cache.scheduledEvents.delete(futureEvent.id);
 						} else if (
-							otherEvent.type === "expansionDraft" &&
-							otherEvent.info.teams.some(t2 => t2.tid === t.tid)
+							futureEvent.type === "expansionDraft" &&
+							futureEvent.info.teams.some(t2 => t2.tid === t.tid)
 						) {
 							// We found another expansion draft with this franchise, so further teamInfo/contraction events are okay
 							break;
+						}
+					}
+				}
+
+				// If we completely deleted a future expansion team, adjust team ID numbers of other future expansion teams
+				if (tidsRemoved.length > 0) {
+					// Fresh events again, because some were deleted above and we don't want to add them back
+					const { futureEvents } = await getPastUpcomingScheduledEvents(
+						scheduledEvent,
+					);
+
+					const minTidRemoved = Math.min(...tidsRemoved);
+
+					const adjustTid = (tid: number) => {
+						const tidsBelow = tidsRemoved.filter(tid2 => tid2 < tid);
+						return tid - tidsBelow.length;
+					};
+
+					for (const futureEvent of futureEvents) {
+						if (
+							(futureEvent.type === "teamInfo" ||
+								futureEvent.type === "contraction") &&
+							futureEvent.info.tid > minTidRemoved
+						) {
+							futureEvent.info.tid = adjustTid(futureEvent.info.tid);
+							await idb.cache.scheduledEvents.put(futureEvent);
+						} else if (
+							futureEvent.type === "expansionDraft" &&
+							futureEvent.info.teams.some(t => t.tid > minTidRemoved)
+						) {
+							for (const t of futureEvent.info.teams) {
+								t.tid = adjustTid(t.tid);
+							}
+							await idb.cache.scheduledEvents.put(futureEvent);
 						}
 					}
 				}

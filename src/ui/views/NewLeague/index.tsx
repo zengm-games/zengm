@@ -921,6 +921,11 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
+	const disableCreateButton =
+		state.creating ||
+		disableWhileLoadingLeagueFile ||
+		!!invalidSeasonPhaseMessage;
+
 	// exitBeforeEnter sucks (makes transition slower) but otherwise it jumps at the end because it stacks the divs vertically, and I couldn't figure out how to work around that
 	return (
 		<AnimatePresence exitBeforeEnter initial={false}>
@@ -1181,11 +1186,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								<button
 									type="submit"
 									className="btn btn-lg btn-primary mr-2"
-									disabled={
-										state.creating ||
-										disableWhileLoadingLeagueFile ||
-										!!invalidSeasonPhaseMessage
-									}
+									disabled={disableCreateButton}
 								>
 									{state.creating ? (
 										<>
@@ -1203,6 +1204,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 								<button
 									className="btn btn-lg btn-secondary"
+									disabled={disableCreateButton}
 									type="button"
 									onClick={() => {
 										setCurrentScreen("settings");

@@ -250,10 +250,6 @@ const ViewEvent = ({
 	throw new Error("Invalid type");
 };
 
-const bulkDelete = (type: string) => async () => {
-	await toWorker("main", "deleteScheduledEvents", type);
-};
-
 const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 	useTitleBar({
 		title: "Scheduled Events",

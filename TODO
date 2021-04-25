@@ -3,6 +3,7 @@ scheduled events editor
   - expansion draft - distinction between existing tid and new tid
   - game attributes - share code with league settings
   - team info - how to handle srID? sometimes needs to change over time
+    - team changeable only when creating new
   - check
     - only allow one expansionDraft per season+phase
     - only allow one teamInfo per season+phase+tid

@@ -29,6 +29,15 @@ type StateInfo =
 	  }
 	| {
 			type: "teamInfo";
+			tid: number;
+			region?: string;
+			srID?: string;
+			name?: string;
+			pop?: string;
+			did?: number;
+			abbrev?: string;
+			imgURL?: string;
+			colors?: [string, string, string];
 	  };
 
 const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
@@ -125,6 +134,35 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 					: teams[0].tid,
 			};
 		}
+		if (type === "teamInfo") {
+			const base: DiscriminateUnion<StateInfo, "type", "teamInfo"> = {
+				type: "teamInfo",
+				tid: prevScheduledEvent
+					? (prevScheduledEvent as any).info.tid
+					: teams[0].tid,
+			};
+
+			if (prevScheduledEvent) {
+				const keys = [
+					"region",
+					"srID",
+					"name",
+					"pop",
+					"did",
+					"abbrev",
+					"imgURL",
+					"colors",
+				] as const;
+				for (const key of keys) {
+					const value = (prevScheduledEvent as any).info[key];
+					if (value !== undefined) {
+						base[key] = key === "pop" ? String(value) : value;
+					}
+				}
+			}
+
+			return base;
+		}
 
 		return {
 			type: "gameAttributes",
@@ -164,7 +202,7 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 	) {
 		error = "You cannot schedule events in the past.";
 	} else if (
-		info.type === "contraction" &&
+		(info.type === "contraction" || info.type === "teamInfo") &&
 		scheduledEvents.some(
 			scheduledEvent =>
 				scheduledEvent.season === seasonInt &&
@@ -175,8 +213,9 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 		)
 	) {
 		// Only allow one contraction per season+phase+tid
-		error =
-			"There is already a scheduled contraction for this team in the same season and phase.";
+		error = `There is already a scheduled ${
+			info.type === "contraction" ? "contraction" : "team info change"
+		} for this team in the same season and phase.`;
 	}
 
 	return (

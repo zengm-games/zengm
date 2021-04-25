@@ -1,5 +1,6 @@
 import type { UpdateEvents } from "../../common/types";
 import { idb } from "../db";
+import { getSortedScheduledEvents } from "../util/processScheduledEvents";
 
 const updateScheduledEvents = async (
 	inputs: unknown,
@@ -10,7 +11,9 @@ const updateScheduledEvents = async (
 		updateEvents.includes("newPhase") ||
 		updateEvents.includes("scheduledEvents")
 	) {
-		const scheduledEvents = await idb.getCopies.scheduledEvents();
+		const scheduledEvents = getSortedScheduledEvents(
+			await idb.getCopies.scheduledEvents(),
+		);
 
 		return {
 			scheduledEvents,

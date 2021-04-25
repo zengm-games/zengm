@@ -1,3 +1,4 @@
+import orderBy from "lodash-es/orderBy";
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { formatType } from ".";
@@ -12,6 +13,22 @@ import type {
 	ScheduledEventWithoutKey,
 } from "../../../common/types";
 import { helpers, logEvent, useLocalShallow } from "../../util";
+import EditInfoContraction from "./EditInfoContraction";
+
+type StateInfo =
+	| {
+			type: "contraction";
+			tid: number;
+	  }
+	| {
+			type: "expansionDraft";
+	  }
+	| {
+			type: "gameAttributes";
+	  }
+	| {
+			type: "teamInfo";
+	  };
 
 const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 	prevScheduledEvent,
@@ -28,34 +45,86 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 }) => {
 	type MyScheduledEvent = NonNullable<typeof prevScheduledEvent>;
 
-	const { phase, season, teamInfoCache } = useLocalShallow(state => ({
+	const {
+		phase: currentPhase,
+		season: currentSeason,
+		teamInfoCache,
+	} = useLocalShallow(state => ({
 		phase: state.phase,
 		season: state.season,
 		teamInfoCache: state.teamInfoCache,
 	}));
 
-	const [state, setState] = useState(() => {
-		const common = {
-			phase: prevScheduledEvent ? prevScheduledEvent.phase : phase,
-			season: prevScheduledEvent
-				? String(prevScheduledEvent.season)
-				: String(season),
-		};
-
-		return {
-			...common,
-		};
-	});
-
-	const seasonInt = parseInt(state.season);
+	const [phase, setPhase] = useState(
+		prevScheduledEvent ? prevScheduledEvent.phase : currentPhase,
+	);
+	const [season, setSeason] = useState(
+		prevScheduledEvent
+			? String(prevScheduledEvent.season)
+			: String(currentSeason),
+	);
+	const seasonInt = parseInt(season);
 
 	const { pastEvents, futureEvents } = getPastFutureScheduledEvents(
 		{
-			phase: state.phase,
+			phase,
 			season: seasonInt,
 		},
 		scheduledEvents,
 	);
+
+	let teams = teamInfoCache.map((t, tid) => ({
+		...t,
+		tid,
+		disabled: !!t.disabled,
+		future: false,
+	}));
+	for (const pastEvent of pastEvents) {
+		if (pastEvent.type === "contraction" || pastEvent.type === "teamInfo") {
+			const t = teams.find(t => t.tid === pastEvent.info.tid);
+			if (!t) {
+				continue;
+			}
+
+			if (pastEvent.type === "contraction") {
+				t.disabled = true;
+			} else if (pastEvent.type === "teamInfo") {
+				for (const [key, value] of Object.entries(pastEvent.info)) {
+					(t as any)[key] = value;
+				}
+			}
+		} else if (pastEvent.type === "expansionDraft") {
+			for (const newTeam of pastEvent.info.teams) {
+				const t = teams.find(t => t.tid === newTeam.tid);
+				if (t) {
+					for (const [key, value] of Object.entries(newTeam)) {
+						(t as any)[key] = value;
+					}
+					t.disabled = false;
+				} else {
+					teams.push({
+						...newTeam,
+						disabled: false,
+						future: true,
+					});
+				}
+			}
+		}
+	}
+	teams = orderBy(teams, ["region", "name", "tid"]);
+
+	const [info, setInfo] = useState<StateInfo>(() => {
+		if (type === "contraction") {
+			return {
+				type: "contraction",
+				tid: teams[0].tid,
+			};
+		}
+
+		return {
+			type: "gameAttributes",
+		};
+	});
 
 	const save = () => {
 		if (t === undefined || controlledTeam === undefined) {
@@ -120,33 +189,27 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 					}}
 				>
 					<div className="row">
-						<div className="form-group col">
+						<div className="form-group col-6">
 							<label htmlFor="scheduled-event-season">Season</label>
 							<input
 								id="scheduled-event-season"
 								type="text"
 								className="form-control"
 								onChange={event => {
-									setState(prevState => ({
-										...prevState,
-										season: event.target.value,
-									}));
+									setSeason(event.target.value);
 								}}
-								value={state.season}
+								value={season}
 							/>
 						</div>
-						<div className="form-group col">
+						<div className="form-group col-6">
 							<label htmlFor="scheduled-event-phase">Phase</label>
 							<select
 								id="scheduled-event-phase"
 								className="form-control"
 								onChange={event => {
-									setState(prevState => ({
-										...prevState,
-										phase: parseInt(event.target.value),
-									}));
+									setPhase(parseInt(event.target.value));
 								}}
-								value={state.phase}
+								value={phase}
 							>
 								<option value={PHASE.PRESEASON}>
 									{helpers.upperCaseFirstLetter(PHASE_TEXT[PHASE.PRESEASON])}
@@ -159,6 +222,18 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 							</select>
 						</div>
 					</div>
+					{info.type === "contraction" ? (
+						<EditInfoContraction
+							tid={info.tid}
+							teams={teams}
+							onChange={tid => {
+								setInfo(prevInfo => ({
+									...prevInfo,
+									tid,
+								}));
+							}}
+						/>
+					) : null}
 					<button className="d-none" type="submit"></button>
 				</form>
 			</Modal.Body>

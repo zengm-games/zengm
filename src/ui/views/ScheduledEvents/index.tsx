@@ -420,6 +420,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 				</Dropdown>
 				<button
 					className="btn btn-danger mx-2"
+					disabled={checked.size === 0}
 					onClick={async () => {
 						await toWorker(
 							"main",

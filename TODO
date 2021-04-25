@@ -1,6 +1,9 @@
 scheduled events editor
 - add/edit
+  - contraction - make sure edited team is available
+  - expansion draft - distinction between existing tid and new tid
   - game attributes - share code with god mode settings
+  - team info - how to handle srID? sometimes needs to change over time
   - check
     - season+phase is in future
     - dupe one already existing
@@ -8,11 +11,13 @@ scheduled events editor
       - only allow one contraction per season+phase+tid
       - only allow one teamInfo per season+phase+tid
       - show these constraints in the editor UI
+  - saving an edit needs to do similar processing as saving an add
 - test complicated scenarios
   - multiple contract/expand of the same franchise
   - interplay between teamInfo and cid/did
   - teamInfo of disabled team should still work, why not
 - god mode?
+- test auto play from 1947 to present
 
 add support for action buttons in table, linked to a checkbox column in the first column
 - buttons replace the page option in the top left

@@ -9,6 +9,7 @@ import type {
 	RealTeamInfo,
 } from "../../common/types";
 import { PHASE, applyRealTeamInfo } from "../../common";
+import orderBy from "lodash-es/orderBy";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -328,6 +329,24 @@ const processContraction = async (
 	return [text];
 };
 
+export const getSortedScheduledEvents = (scheduledEvents: ScheduledEvent[]) => {
+	return orderBy(scheduledEvents, [
+		scheduledEvent => {
+			switch (scheduledEvent.type) {
+				case "gameAttributes":
+					return 0;
+				case "teamInfo":
+					return 1;
+				case "contraction":
+					return 2;
+				case "expansionDraft":
+					return 3;
+			}
+		},
+		"id",
+	]);
+};
+
 const processScheduledEvents = async (
 	season: number,
 	phase: number,
@@ -337,7 +356,9 @@ const processScheduledEvents = async (
 		return;
 	}
 
-	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
+	const scheduledEvents = getSortedScheduledEvents(
+		await idb.cache.scheduledEvents.getAll(),
+	);
 	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
 

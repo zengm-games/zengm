@@ -1,15 +1,18 @@
 scheduled events editor
 - add/edit
-  - check for dupe one already existing
-    - only allow one expansionDraft per season+phase
-    - only allow one contraction per season+phase+tid
-    - only allow one teamInfo per season+phase+tid
-    - show these constraints in the editor UI
   - game attributes - share code with god mode settings
+  - check
+    - season+phase is in future
+    - dupe one already existing
+      - only allow one expansionDraft per season+phase
+      - only allow one contraction per season+phase+tid
+      - only allow one teamInfo per season+phase+tid
+      - show these constraints in the editor UI
 - test complicated scenarios
   - multiple contract/expand of the same franchise
   - interplay between teamInfo and cid/did
   - teamInfo of disabled team should still work, why not
+- god mode?
 
 add support for action buttons in table, linked to a checkbox column in the first column
 - buttons replace the page option in the top left

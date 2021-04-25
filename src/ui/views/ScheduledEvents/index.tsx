@@ -1,11 +1,12 @@
-import useTitleBar from "../hooks/useTitleBar";
-import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
-import { helpers, getCols, useLocal, toWorker } from "../util";
-import { DataTable } from "../components";
-import { PHASE_TEXT } from "../../common";
-import { settings } from "./Settings/settings";
+import useTitleBar from "../../hooks/useTitleBar";
+import type { View, ScheduledEvent, LocalStateUI } from "../../../common/types";
+import { helpers, getCols, useLocal, toWorker } from "../../util";
+import { DataTable } from "../../components";
+import { PHASE_TEXT } from "../../../common";
+import { settings } from "../Settings/settings";
 import { Dropdown } from "react-bootstrap";
 import { useState } from "react";
+import ScheduledEventEditor from "./ScheduledEventEditor";
 
 const godModeOptions: Partial<
 	Record<typeof settings[number]["key"], typeof settings[number]>
@@ -79,7 +80,7 @@ const formatSeason = (scheduledEvent: ScheduledEvent) => {
 	);
 };
 
-const formatType = (type: ScheduledEvent["type"]) => {
+export const formatType = (type?: ScheduledEvent["type"]) => {
 	if (type === "contraction") {
 		return "Contraction";
 	}
@@ -95,6 +96,8 @@ const formatType = (type: ScheduledEvent["type"]) => {
 	if (type === "teamInfo") {
 		return "Team info";
 	}
+
+	return "???";
 };
 
 const TeamNameBlock = ({
@@ -257,6 +260,11 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 
 	const [checked, setChecked] = useState<Set<number>>(new Set());
 
+	const [editingInfo, setEditingInfo] = useState<{
+		type?: ScheduledEvent["type"];
+		scheduledEvent?: ScheduledEvent;
+	}>({});
+
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	if (scheduledEvents.length === 0) {
@@ -280,6 +288,12 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 			}
 		}
 		setChecked(newChecked);
+	};
+
+	const newScheduledEvent = (type: ScheduledEvent["type"]) => {
+		setEditingInfo({
+			type,
+		});
 	};
 
 	const cols = getCols("", "Season", "Type", "Details", "Actions");
@@ -315,6 +329,12 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 				<>
 					<button
 						className="mr-2 btn btn-link p-0 border-0 text-reset"
+						onClick={() => {
+							setEditingInfo({
+								type: scheduledEvent.type,
+								scheduledEvent,
+							});
+						}}
 						title="Edit"
 						type="button"
 					>
@@ -417,28 +437,28 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					<Dropdown.Menu>
 						<Dropdown.Item
 							onClick={() => {
-								bulkSelect("contraction");
+								newScheduledEvent("contraction");
 							}}
 						>
 							Contraction
 						</Dropdown.Item>
 						<Dropdown.Item
 							onClick={() => {
-								bulkSelect("expansionDraft");
+								newScheduledEvent("expansionDraft");
 							}}
 						>
 							Expansion draft
 						</Dropdown.Item>
 						<Dropdown.Item
 							onClick={() => {
-								bulkSelect("teamInfo");
+								newScheduledEvent("teamInfo");
 							}}
 						>
 							Team info
 						</Dropdown.Item>
 						<Dropdown.Item
 							onClick={() => {
-								bulkSelect("gameAttributes");
+								newScheduledEvent("gameAttributes");
 							}}
 						>
 							League settings
@@ -446,11 +466,30 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					</Dropdown.Menu>
 				</Dropdown>
 			</div>
+
 			<DataTable
 				cols={cols}
 				defaultSort={[1, "asc"]}
 				name="ScheduledEvents"
 				rows={rows}
+			/>
+
+			<ScheduledEventEditor
+				key={
+					editingInfo.scheduledEvent
+						? editingInfo.scheduledEvent.id
+						: editingInfo.type ?? "none"
+				}
+				type={editingInfo.type}
+				prevScheduledEvent={editingInfo.scheduledEvent}
+				scheduledEvents={scheduledEvents}
+				onSave={scheduledEvent => {
+					console.log("onSave", scheduledEvent);
+					setEditingInfo({});
+				}}
+				onCancel={() => {
+					setEditingInfo({});
+				}}
 			/>
 		</>
 	);

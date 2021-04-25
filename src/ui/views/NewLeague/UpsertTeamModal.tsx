@@ -137,9 +137,7 @@ const UpsertTeamModal = ({
 			<Modal.Body>
 				{controlledTeam ? (
 					<form
-						id="foo"
 						onSubmit={event => {
-							console.log("onSubmit");
 							event.preventDefault();
 							save();
 						}}

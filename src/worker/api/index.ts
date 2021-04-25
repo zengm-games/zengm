@@ -12,6 +12,7 @@ import {
 	isSport,
 	bySport,
 	gameAttributesArrayToObject,
+	getPastFutureScheduledEvents,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -705,30 +706,6 @@ const deleteOldData = async (options: {
 	await idb.cache.fill();
 };
 
-const getPastUpcomingScheduledEvents = async (
-	scheduledEvent: ScheduledEvent,
-) => {
-	const allEvents = await idb.getCopies.scheduledEvents();
-	const pastEvents = [];
-	const futureEvents = [];
-	for (const otherEvent of allEvents) {
-		if (
-			otherEvent.season > scheduledEvent.season ||
-			(otherEvent.season === scheduledEvent.season &&
-				otherEvent.phase > scheduledEvent.phase)
-		) {
-			futureEvents.push(otherEvent);
-		} else {
-			pastEvents.push(otherEvent);
-		}
-	}
-
-	return {
-		pastEvents,
-		futureEvents,
-	};
-};
-
 const deleteScheduledEvents = async (ids: number[]) => {
 	const scheduledEvents = await idb.getCopies.scheduledEvents();
 
@@ -747,8 +724,9 @@ const deleteScheduledEvents = async (ids: number[]) => {
 			scheduledEvent.type !== "teamInfo"
 		) {
 			// Get fresh from cache, in case it has changed while processing another event
-			const { pastEvents, futureEvents } = await getPastUpcomingScheduledEvents(
+			const { pastEvents, futureEvents } = getPastFutureScheduledEvents(
 				scheduledEvent,
+				await idb.getCopies.scheduledEvents(),
 			);
 
 			if (scheduledEvent.type === "contraction") {
@@ -813,8 +791,9 @@ const deleteScheduledEvents = async (ids: number[]) => {
 				// If we completely deleted a future expansion team, adjust team ID numbers of other future expansion teams
 				if (tidsRemoved.length > 0) {
 					// Fresh events again, because some were deleted above and we don't want to add them back
-					const { futureEvents } = await getPastUpcomingScheduledEvents(
+					const { futureEvents } = await getPastFutureScheduledEvents(
 						scheduledEvent,
+						await idb.getCopies.scheduledEvents(),
 					);
 
 					const minTidRemoved = Math.min(...tidsRemoved);

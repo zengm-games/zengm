@@ -6,6 +6,7 @@ export { default as fetchWrapper } from "./fetchWrapper";
 export { default as gameAttributeHasHistory } from "./gameAttributeHasHistory";
 export { default as gameAttributesArrayToObject } from "./gameAttributesArrayToObject";
 export { default as getCols } from "./getCols";
+export { default as getPastFutureScheduledEvents } from "./getPastFutureScheduledEvents";
 export { default as getPeriodName } from "./getPeriodName";
 export { default as helpers } from "./helpers";
 export { default as isSport } from "./isSport";

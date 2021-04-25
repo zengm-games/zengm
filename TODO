@@ -1,17 +1,18 @@
 scheduled events editor
 - add/edit
-  - contraction - make sure edited team is available
   - expansion draft - distinction between existing tid and new tid
-  - game attributes - share code with god mode settings
+  - game attributes - share code with league settings
   - team info - how to handle srID? sometimes needs to change over time
   - check
-    - season+phase is in future
-    - dupe one already existing
-      - only allow one expansionDraft per season+phase
-      - only allow one contraction per season+phase+tid
-      - only allow one teamInfo per season+phase+tid
-      - show these constraints in the editor UI
-  - saving an edit needs to do similar processing as saving an add
+    - only allow one expansionDraft per season+phase
+    - only allow one teamInfo per season+phase+tid
+  - needs to do similar processing of future events as a delete
+    - contraction
+      - delete upcoming contraction
+    - expansion draft
+      - delete team from upcoming expansion draft, if re-activaing a disabled team
+      - update tids of future expansion teams, if adding a new franchise
+    - show warning about how this will happen in the UI, like error in ScheduledEventEditor
 - test complicated scenarios
   - multiple contract/expand of the same franchise
   - interplay between teamInfo and cid/did

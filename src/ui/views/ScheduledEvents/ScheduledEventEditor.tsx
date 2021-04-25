@@ -156,6 +156,29 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 		}
 	};
 
+	let error: string | undefined;
+
+	if (
+		seasonInt < currentSeason ||
+		(seasonInt === currentSeason && phase < currentPhase)
+	) {
+		error = "You cannot schedule events in the past.";
+	} else if (
+		info.type === "contraction" &&
+		scheduledEvents.some(
+			scheduledEvent =>
+				scheduledEvent.season === seasonInt &&
+				scheduledEvent.phase === phase &&
+				scheduledEvent.type === info.type &&
+				scheduledEvent !== prevScheduledEvent &&
+				scheduledEvent.info.tid === info.tid,
+		)
+	) {
+		// Only allow one contraction per season+phase+tid
+		error =
+			"There is already a scheduled contraction for this team in the same season and phase.";
+	}
+
 	return (
 		<Modal size="lg" show={type !== undefined} onHide={onCancel}>
 			<Modal.Header closeButton>
@@ -215,14 +238,19 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 							}}
 						/>
 					) : null}
-					<button className="d-none" type="submit"></button>
+					{error ? (
+						<div className="alert alert-danger mb-0">
+							<b>Error!</b> {error}
+						</div>
+					) : null}
+					<button className="d-none" disabled={!!error} type="submit"></button>
 				</form>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-secondary" onClick={onCancel}>
 					Cancel
 				</button>
-				<button className="btn btn-primary" onClick={save}>
+				<button className="btn btn-primary" disabled={!!error} onClick={save}>
 					Save
 				</button>
 			</Modal.Footer>

@@ -221,13 +221,20 @@ const processTeams = (
 				maxSeenTid = newTid;
 			}
 
-			return {
+			const event2 = {
 				...event,
 				info: {
 					...event.info,
 					tid: newTid,
 				},
 			};
+
+			// Delete cid from these events, because I was too lazy to refactor team creation to not need cid in initialTeams, so cid is still in the real team data
+			if (event2.type === "teamInfo") {
+				delete (event2.info as any).cid;
+			}
+
+			return event2;
 		} else if (event.type === "expansionDraft") {
 			return {
 				...event,

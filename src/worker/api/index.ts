@@ -77,13 +77,10 @@ import type {
 	GetLeagueOptions,
 	TeamSeason,
 	TeamSeasonWithoutKey,
-	ScheduledEventGameAttributes,
-	ScheduledEventTeamInfo,
 	ScheduleGameWithoutKey,
 	Conf,
 	Div,
 	LocalStateUI,
-	ScheduledEvent,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {

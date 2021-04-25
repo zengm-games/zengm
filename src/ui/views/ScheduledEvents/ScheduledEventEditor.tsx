@@ -9,6 +9,7 @@ import {
 } from "../../../common";
 import type {
 	DiscriminateUnion,
+	Phase,
 	ScheduledEvent,
 	ScheduledEventWithoutKey,
 } from "../../../common/types";
@@ -55,7 +56,7 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 		teamInfoCache: state.teamInfoCache,
 	}));
 
-	const [phase, setPhase] = useState(
+	const [phase, setPhase] = useState<Phase>(
 		prevScheduledEvent ? prevScheduledEvent.phase : currentPhase,
 	);
 	const [season, setSeason] = useState(
@@ -131,55 +132,28 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 	});
 
 	const save = () => {
-		const base = {};
-		if (info.type === "contraction") {
-		}
-		if (t === undefined || controlledTeam === undefined) {
-			return;
-		}
-		const did = parseInt(controlledTeam.did);
-		const div = divs.find(div => div.did === did);
-		if (!div) {
-			return;
-		}
-
-		const edited = {
-			...t,
-			region: controlledTeam.region,
-			name: controlledTeam.name,
-			abbrev: controlledTeam.abbrev,
-			pop: parseFloat(controlledTeam.pop),
-			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
-			colors: controlledTeam.colors,
-			jersey: controlledTeam.jersey,
-			did,
-			cid: div.cid,
-			imgURL: controlledTeam.imgURL,
+		const base: {
+			season: number;
+			phase: Phase;
+			id?: number;
+		} = {
+			season: seasonInt,
+			phase,
 		};
 
-		const errors = [];
-		let errorMessage: string | undefined;
-		if (Number.isNaN(edited.pop)) {
-			errors.push("Population");
-		}
-		if (Number.isNaN(edited.stadiumCapacity)) {
-			errors.push("Stadium Capacity");
-		}
-		if (errors.length === 1) {
-			errorMessage = `${errors[0]} must be a number.`;
-		} else if (errors.length > 1) {
-			errorMessage = `${errors[0]} and ${errors[1]} must be numbers.`;
-		}
-		if (errorMessage) {
-			logEvent({
-				type: "error",
-				text: errorMessage,
-				saveToDb: false,
-			});
-			return;
+		if (prevScheduledEvent) {
+			base.id = prevScheduledEvent.id;
 		}
 
-		onSave(edited);
+		if (info.type === "contraction") {
+			onSave({
+				...base,
+				type: "contraction",
+				info: {
+					tid: info.tid,
+				},
+			});
+		}
 	};
 
 	return (
@@ -214,7 +188,7 @@ const ScheduledEventEditor = <Type extends ScheduledEvent["type"]>({
 								id="scheduled-event-phase"
 								className="form-control"
 								onChange={event => {
-									setPhase(parseInt(event.target.value));
+									setPhase(parseInt(event.target.value) as Phase);
 								}}
 								value={phase}
 							>

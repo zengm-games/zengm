@@ -759,7 +759,7 @@ export type LocalStateUI = {
 	lid?: number;
 	liveGameInProgress: boolean;
 	spectator: boolean;
-	phase: number;
+	phase: Phase;
 	phaseText: string;
 	playMenuOptions: Option[];
 	popup: boolean;

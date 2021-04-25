@@ -1,3 +1,15 @@
+scheduled events editor
+- eventually add/edit/delete individual events
+  - needs to handle tids, like already happens for adding/removing teams
+  - warn about breakage, like a team changing divisions if division expansion doesn't happen
+  - delete, or just disable?
+    - if delete expansion, need to delete future events for that tid and adjust other tids
+    - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
+  - add - check for dupe one already existing (by season+type and maybe tid)
+  - edit
+    - game attributes - share code with god mode settings
+    - open modal on click "edit", or inline form
+
 new nfl jersey numbers https://discord.com/channels/290013534023057409/331882115119448065/834854747303313448
 
 disable injuries without god mode before league? https://discord.com/channels/@me/831754887058423819/833206526780768277
@@ -633,18 +645,6 @@ import/export players
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
 
-scheduled events editor
-- eventually add/edit/delete individual events
-  - needs to handle tids, like already happens for adding/removing teams
-  - warn about breakage, like a team changing divisions if division expansion doesn't happen
-  - delete, or just disable?
-    - if delete expansion, need to delete future events for that tid and adjust other tids
-    - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
-  - add - check for dupe one already existing (by season+type and maybe tid)
-  - edit
-    - game attributes - share code with god mode settings
-    - open modal on click "edit", or inline form
-
 more realistic free agents when generating league
 - look at retired young players from previous season
 
@@ -840,9 +840,6 @@ team needs/synergy display on roster
 
 BAA teams should enter with intact rosters, not expansion draft
 
-way to bulk delete leagues
-- replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button
-
 handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
 - any abbrev returned in stats or ratings from playersPlus is wrong
   -  see tidAndSeasonToAbbrev in most.ts for how to do it right
@@ -1017,8 +1014,6 @@ Game list redesign
   - show ovr in box score too
   - show player with highest game score under completed game
 
-teamRegion in playersPlus needed?
-
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
 Jofish - when you make a move that causes an error in your roster (i.e. not enough/too many players) and try to simulate the all-star game, it freezes. I understand that the game still has to check if the rosters are proper, however, there is no warning given. Even though it doesn't make sense that the user's roster has to comply within the league even though it's the all-star game, a simple warning given would be nice
@@ -1052,8 +1047,6 @@ typescript
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
-
-unify "More" links
 
 switch Dropdown to DropdownLinks rather than Select?
 - see how react-dropdown or react-select deal with tons of options
@@ -1104,9 +1097,6 @@ god mode options
 - salary cap growth
 - inflation of other revenue/expenses
 - make them constant, or from a random distribution?
-
-bundle size by removing dependency (tested by adding to "external" in rollup config)
-- lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
 
 keep box scores with feats, and ASG
 
@@ -1254,14 +1244,6 @@ AV advanced stat
   - need all pro modifier - but this is circular reasoning, since that comes from AV!
   - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
 
-what's the end state here? options:
-- everything is in deion, and process.env.SPORT governs the output
-  - that'd be nice, but probably unrealistic
-- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...}) - probably this one!!!!!!!
-  - e.g. views.. put routes.js and views/index.js in deion. but views/index.js will only have common ones. for others, pass into DeionUI, and reference both sets of views in genPage in routes.js
-  - do this, but try to also do the process.env.SPORT solution when possible
-- deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
-
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
 
@@ -1285,9 +1267,6 @@ type better
 split more from deion
 - processInputs for views only in one sport (depth, shot locations)
 - worker API functions only in one sport (depth)
-
-yarn workspaces
-- see branch football-yarn-workspaces - all works except karma
 
 show game stats in player page
 

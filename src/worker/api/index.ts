@@ -523,12 +523,17 @@ const createLeague = async ({
 		getLeagueOptions.type === "real" &&
 		getLeagueOptions.realStats === "all"
 	) {
+		let start = leagueFile.gameAttributes.season;
+		if (getLeagueOptions.phase > PHASE.PLAYOFFS) {
+			start += 1;
+		}
+
 		// startingSeason is 1947, so use userTid history to denote when user actually started managing team
 		leagueFile.gameAttributes.userTid = [
 			{ start: -Infinity, value: PLAYER.DOES_NOT_EXIST },
 			{
-				start: leagueFile.gameAttributes.season,
-				value: leagueFile.gameAttributes.userTid,
+				start,
+				value: actualTid,
 			},
 		];
 	}

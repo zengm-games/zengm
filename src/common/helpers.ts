@@ -1043,9 +1043,12 @@ const getCountry = (bornLoc?: string) => {
 	if (isAmerican(name)) {
 		name = "USA";
 	} else {
-		const parts = name.split(", ");
-		if (parts.length > 1) {
-			name = parts[parts.length - 1];
+		// Find part after last comma/colon
+		for (const delimiter of [", ", ": "]) {
+			const parts = name.split(delimiter);
+			if (parts.length > 1) {
+				name = parts[parts.length - 1];
+			}
 		}
 	}
 

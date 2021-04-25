@@ -5,6 +5,7 @@ import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
 import { settings } from "./Settings/settings";
 import { Dropdown } from "react-bootstrap";
+import { useState } from "react";
 
 const godModeOptions: Partial<
 	Record<typeof settings[number]["key"], typeof settings[number]>
@@ -84,7 +85,7 @@ const formatType = (type: ScheduledEvent["type"]) => {
 	}
 
 	if (type === "expansionDraft") {
-		return "Expansion";
+		return "Expansion draft";
 	}
 
 	if (type === "gameAttributes") {
@@ -258,6 +259,8 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		title: "Scheduled Events",
 	});
 
+	const [checked, setChecked] = useState<Set<number>>(new Set());
+
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	if (scheduledEvents.length === 0) {
@@ -273,13 +276,36 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		);
 	}
 
-	const cols = getCols("Season", "Type", "");
-	cols[2].width = "100%";
+	const bulkSelect = (type: "all" | "none" | ScheduledEvent["type"]) => {
+		const newChecked = new Set<number>();
+		for (const scheduledEvent of scheduledEvents) {
+			if (type === "all" || type === scheduledEvent.type) {
+				newChecked.add(scheduledEvent.id);
+			}
+		}
+		setChecked(newChecked);
+	};
+
+	const cols = getCols("", "Season", "Type", "Details", "Actions");
+	cols[3].width = "100%";
 
 	const rows = scheduledEvents.map(scheduledEvent => {
 		return {
 			key: scheduledEvent.id,
 			data: [
+				<input
+					type="checkbox"
+					checked={checked.has(scheduledEvent.id)}
+					onChange={() => {
+						const newChecked = new Set([...checked]);
+						if (checked.has(scheduledEvent.id)) {
+							newChecked.delete(scheduledEvent.id);
+						} else {
+							newChecked.add(scheduledEvent.id);
+						}
+						setChecked(newChecked);
+					}}
+				/>,
 				{
 					value: formatSeason(scheduledEvent),
 					sortValue: `${scheduledEvent.season} ${scheduledEvent.phase} ${scheduledEvent.id}`,
@@ -290,52 +316,143 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					current={scheduledEvent}
 					teamInfoCache={teamInfoCache}
 				/>,
+				<>
+					<button
+						className="mr-2 btn btn-link p-0 border-0 text-reset"
+						title="Edit"
+						type="button"
+					>
+						<span
+							className="glyphicon glyphicon-edit"
+							data-no-row-highlight="true"
+						/>
+					</button>
+					<button
+						className="btn btn-link text-danger p-0 border-0"
+						onClick={async () => {
+							await toWorker("main", "deleteScheduledEvents", [
+								scheduledEvent.id,
+							]);
+						}}
+						title="Delete"
+						type="button"
+					>
+						<span
+							className="glyphicon glyphicon-remove"
+							data-no-row-highlight="true"
+						/>
+					</button>
+				</>,
 			],
 		};
 	});
 
 	return (
 		<>
-			<p>
-				Eventually this will support creating, updating, and deleting individual
-				scheduled events. But for now, all you can do is view scheduled events
-				and apply some bulk operations, like removing all scheduled team
-				contractions.
-			</p>
-			<Dropdown>
-				<Dropdown.Toggle variant="danger" id="scheduled-events-bulk-delete">
-					Bulk delete
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					<Dropdown.Item onClick={bulkDelete("all")}>
-						All scheduled events
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("expansionDraft")}>
-						Expansion teams
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("contraction")}>
-						Team contractions
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("teamInfo")}>
-						Team info changes
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("confs")}>
-						Conference/division changes
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("finance")}>
-						League finance changes
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("rules")}>
-						League rule changes
-					</Dropdown.Item>
-					<Dropdown.Item onClick={bulkDelete("styleOfPlay")}>
-						Style of play changes
-					</Dropdown.Item>
-				</Dropdown.Menu>
-			</Dropdown>
+			<div className="d-flex">
+				<Dropdown>
+					<Dropdown.Toggle
+						variant="secondary"
+						id="scheduled-events-bulk-select"
+					>
+						Bulk select
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("all");
+							}}
+						>
+							All
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("none");
+							}}
+						>
+							None
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("contraction");
+							}}
+						>
+							Contraction
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("expansionDraft");
+							}}
+						>
+							Expansion draft
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("teamInfo");
+							}}
+						>
+							Team info
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("gameAttributes");
+							}}
+						>
+							League settings
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+				<button
+					className="btn btn-danger mx-2"
+					onClick={async () => {
+						await toWorker(
+							"main",
+							"deleteScheduledEvents",
+							Array.from(checked),
+						);
+					}}
+				>
+					Delete selected
+				</button>
+				<Dropdown>
+					<Dropdown.Toggle variant="success" id="scheduled-events-bulk-select">
+						New event
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("contraction");
+							}}
+						>
+							Contraction
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("expansionDraft");
+							}}
+						>
+							Expansion draft
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("teamInfo");
+							}}
+						>
+							Team info
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								bulkSelect("gameAttributes");
+							}}
+						>
+							League settings
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+			</div>
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={[1, "asc"]}
 				name="ScheduledEvents"
 				rows={rows}
 			/>

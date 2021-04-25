@@ -1,14 +1,27 @@
 scheduled events editor
 - eventually add/edit/delete individual events
-  - needs to handle tids, like already happens for adding/removing teams
-  - warn about breakage, like a team changing divisions if division expansion doesn't happen
-  - delete, or just disable?
-    - if delete expansion, need to delete future events for that tid and adjust other tids
-    - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
-  - add - check for dupe one already existing (by season+type and maybe tid)
+  - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
+  - add - check for dupe one already existing
+    - only allow one expansionDraft per season+phase
+    - only allow one contraction per season+phase+tid
+    - only allow one teamInfo per season+phase+tid
+    - show these constraints in the editor UI
   - edit
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
+  - test complicated scenarios
+    - multiple contract/expand of the same franchise
+    - interplay between teamInfo and cid/did
+    - teamInfo of disabled team should still work, why not
+
+add support for action buttons in table, linked to a checkbox column in the first column
+- buttons replace the page option in the top left
+- use on
+  - scheduled events
+  - import/export players
+  - trade
+
+playoff series W/L in live sim double incrementing https://discord.com/channels/290013534023057409/290015591216054273/835678883466313769
 
 new nfl jersey numbers https://discord.com/channels/290013534023057409/331882115119448065/834854747303313448
 

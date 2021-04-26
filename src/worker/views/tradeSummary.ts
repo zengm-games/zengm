@@ -10,7 +10,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import { player } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
@@ -166,6 +166,7 @@ const getSeasonsToPlot = async (
 	for (let i = start; i <= end; i++) {
 		type Team = {
 			winp?: number;
+			ptsPct?: number;
 			won?: number;
 			lost?: number;
 			tied?: number;
@@ -198,6 +199,8 @@ const getSeasonsToPlot = async (
 				teams[j].tied = teamSeason.tied;
 				teams[j].otl = teamSeason.otl;
 				teams[j].winp = helpers.calcWinp(teamSeason);
+				teams[j].ptsPct = team.ptsPct(teamSeason);
+				console.log(teamSeason, teams[j].winp, teams[j].ptsPct);
 			}
 
 			teams[j].stat = statSumsBySeason[j][i];
@@ -418,6 +421,9 @@ const updateTradeSummary = async (
 			statSumsBySeason,
 		);
 
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
+
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			eid,
@@ -426,6 +432,7 @@ const updateTradeSummary = async (
 			phase: event.phase,
 			stat: bySport({ basketball: "WS", football: "AV", hockey: "PS" }),
 			seasonsToPlot,
+			usePts,
 		};
 	}
 };

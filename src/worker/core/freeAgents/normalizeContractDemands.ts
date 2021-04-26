@@ -270,7 +270,7 @@ const normalizeContractDemands = async ({
 			const p = info.p;
 
 			const exp =
-				isSport("hockey") && hockeyRookieOverrides
+				isSport("hockey") && hockeyRookieOverrides && p.draft.year === season
 					? season + 3
 					: getExpiration(p, type === "newLeague", nextSeason);
 

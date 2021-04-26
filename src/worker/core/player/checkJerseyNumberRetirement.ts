@@ -5,7 +5,8 @@ import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
 
-const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 50;
+// Higher in basketball, because real player leagues have a lot
+const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = isSport("basketball") ? 30 : 12;
 
 export const getValueStatsRow = (ps: any) => {
 	return bySport({

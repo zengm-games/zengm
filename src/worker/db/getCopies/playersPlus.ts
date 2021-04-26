@@ -676,7 +676,6 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		season,
 		showNoStats,
 		showRetired,
-		showDraftProspectRookieRatings,
 		showRookies,
 	} = options;
 

@@ -779,7 +779,8 @@ const deleteScheduledEvents = async (type: string) => {
 			}
 		} else if (type === "confs") {
 			if (event.type === "teamInfo") {
-				await deleteFromTeamInfoScheduledEvent(["cid", "did"], event);
+				// cid is legacy
+				await deleteFromTeamInfoScheduledEvent(["cid", "did"] as any, event);
 			}
 
 			if (event.type === "gameAttributes") {

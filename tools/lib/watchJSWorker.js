@@ -2,19 +2,20 @@ const { parentPort, workerData } = require("worker_threads");
 const esbuild = require("esbuild");
 const esbuildConfig = require("./esbuildConfig");
 
-// No built-in way to identify when a rebuild starts, so do this
-const pluginStartTime = infile => {
-	const filter = new RegExp(infile.replace(".", "\\."));
-	return {
-		name: "start-time",
-		setup(build) {
-			build.onResolve({ filter, namespace: "file" }, () => {
-				parentPort.postMessage({
-					type: "start",
-				});
+const pluginStartEnd = {
+	name: "start-end",
+	setup(build) {
+		build.onStart(() => {
+			parentPort.postMessage({
+				type: "start",
 			});
-		},
-	};
+		});
+		build.onEnd(() => {
+			parentPort.postMessage({
+				type: "end",
+			});
+		});
+	},
 };
 
 (async () => {
@@ -25,7 +26,7 @@ const pluginStartTime = infile => {
 		nodeEnv: "development",
 	});
 
-	config.plugins.push(pluginStartTime(config.entryPoints[0]));
+	config.plugins.push(pluginStartEnd);
 
 	await esbuild.build({
 		...config,
@@ -36,16 +37,8 @@ const pluginStartTime = infile => {
 						type: "error",
 						error,
 					});
-				} else {
-					parentPort.postMessage({
-						type: "end",
-					});
 				}
 			},
 		},
-	});
-
-	parentPort.postMessage({
-		type: "end",
 	});
 })();

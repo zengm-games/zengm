@@ -23,6 +23,7 @@ type PlayersPlusOptionsRequired = {
 	regularSeason: boolean;
 	showNoStats: boolean;
 	showRookies: boolean;
+	showDraftProspectRookieRatings: boolean;
 	showRetired: boolean;
 	fuzz: boolean;
 	oldStats: boolean;
@@ -238,6 +239,7 @@ const processRatings = (
 	{
 		fuzz,
 		ratings,
+		showDraftProspectRookieRatings,
 		showRetired,
 		stats,
 		season,
@@ -245,6 +247,14 @@ const processRatings = (
 	}: PlayersPlusOptionsRequired,
 ) => {
 	let playerRatings = p.ratings;
+
+	if (
+		showDraftProspectRookieRatings &&
+		p.tid === PLAYER.UNDRAFTED &&
+		season !== undefined
+	) {
+		season = p.draft.year;
+	}
 
 	// If we're returning all seasons for a specific team, filter ratings to match stats
 	if (season === undefined && tid !== undefined) {
@@ -666,6 +676,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		season,
 		showNoStats,
 		showRetired,
+		showDraftProspectRookieRatings,
 		showRookies,
 	} = options;
 
@@ -758,6 +769,7 @@ const getCopies = async (
 		showNoStats = false,
 		showRookies = false,
 		showRetired = false,
+		showDraftProspectRookieRatings = false,
 		fuzz = false,
 		oldStats = false,
 		numGamesRemaining = 0,
@@ -775,6 +787,7 @@ const getCopies = async (
 		regularSeason,
 		showNoStats,
 		showRookies,
+		showDraftProspectRookieRatings,
 		showRetired,
 		fuzz,
 		oldStats,

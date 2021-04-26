@@ -81,6 +81,7 @@ const updatePlayers = async (
 			showNoStats: true,
 			showRookies: true,
 			showRetired: true,
+			showDraftProspectRookieRatings: true,
 			oldStats: true,
 		});
 

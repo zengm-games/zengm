@@ -1003,6 +1003,7 @@ export type PlayersPlusOptions = {
 	regularSeason?: boolean;
 	showNoStats?: boolean;
 	showRookies?: boolean;
+	showDraftProspectRookieRatings?: boolean;
 	showRetired?: boolean;
 	fuzz?: boolean;
 	oldStats?: boolean;

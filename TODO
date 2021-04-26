@@ -1,6 +1,8 @@
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 
+Playing time (+/-/0/++) carries over if a player is drafted in an expansion draft, so expansion team would have the PT setting that X player had on their old team https://discord.com/channels/290013534023057409/290015591216054273/836304456738930719
+
 playoff series W/L in live sim double incrementing https://discord.com/channels/290013534023057409/290015591216054273/835678883466313769
 
 disable injuries without god mode before league? https://discord.com/channels/@me/831754887058423819/833206526780768277

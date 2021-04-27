@@ -64,28 +64,28 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	passRushing: {
 		ratings: ["hgt", "stre", "spd", "prs", "tck"],
-		weights: [1, 1, 0.5, 1, 0.25],
+		weights: [1, 1, 0.5, 1, 0.1],
 		skill: {
 			label: "PR",
 		},
 	},
 	runStopping: {
 		ratings: ["hgt", "stre", "spd", "rns", "tck"],
-		weights: [0.5, 1, 0.5, 1, 1],
+		weights: [0.5, 1, 0.5, 1, 0.25],
 		skill: {
 			label: "RS",
 		},
 	},
 	passCoverage: {
-		ratings: ["hgt", "spd", "pcv", "tck"],
-		weights: [0.1, 1, 1, 0.25],
+		ratings: ["hgt", "spd", "pcv"],
+		weights: [0.1, 1, 1],
 		skill: {
 			label: "L",
 		},
 	},
 	tackling: {
 		ratings: ["spd", "stre", "tck"],
-		weights: [1, 1, 1],
+		weights: [1, 1, 2.5],
 	},
 	avoidingSacks: {
 		ratings: ["thv", "elu", "stre"],

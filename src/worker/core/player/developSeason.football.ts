@@ -180,7 +180,7 @@ const developSeason = (
 		const ageModifier = ratingsFormulas[key].ageModifier(age);
 		const changeLimits = ratingsFormulas[key].changeLimits(age);
 
-		if (ratings[key] < 40) {
+		if (ratings[key] < 40 && Math.random() < 0.9) {
 			// Players who are bad at something should stay bad
 			const maxChange = Math.floor(ratings[key] / 10);
 

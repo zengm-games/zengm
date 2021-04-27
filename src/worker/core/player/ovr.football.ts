@@ -1,130 +1,100 @@
 import { helpers } from "../../../worker/util";
 import type { PlayerRatings, Position } from "../../../common/types.football";
+import { COMPOSITE_WEIGHTS } from "../../../common/constants.football";
+import compositeRating from "./compositeRating";
 
 const info = {
 	QB: {
-		hgt: [1, 1],
-		spd: [1, 1],
-		endu: [1, 1],
-		thv: [8, 1.5],
-		thp: [4, 1.5],
-		tha: [8, 1.5],
-		bsc: [1, 1],
-		elu: [1, 1],
+		passingAccuracy: [3, 1],
+		passingDeep: [3, 1],
+		passingVision: [3, 1],
+		athleticism: [1, 1],
+		rushing: [1, 1],
+		avoidingSacks: [1, 1],
+		ballSecurity: [1, 1],
+		constant0: [-1.25, 1],
 	},
 	RB: {
-		stre: [4, 1],
-		spd: [8, 1],
-		endu: [1, 1],
-		elu: [8, 2],
-		rtr: [1, 1],
-		hnd: [2, 1],
-		bsc: [4, 1],
-		rbk: [1, 1],
-		pbk: [2, 1],
+		rushing: [10, 1],
+		catching: [2, 1],
+		gettingOpen: [1, 1],
+		passBlocking: [1, 1],
+		runBlocking: [1, 1],
+		ballSecurity: [1, 1],
+		constant0: [-1, 1],
 	},
 	WR: {
-		hgt: [2, 1],
-		stre: [1, 1],
-		spd: [4, 2],
-		endu: [1, 1],
-		elu: [1, 1],
-		rtr: [4, 1],
-		hnd: [8, 1],
-		bsc: [1, 1],
-		rbk: [1, 1],
+		catching: [5, 1],
+		gettingOpen: [5, 1],
+		rushing: [1, 1],
+		ballSecurity: [1, 1],
+		constant0: [1.75, 1],
 	},
 	TE: {
-		hgt: [4, 1],
-		stre: [4, 2],
-		spd: [1, 1],
-		endu: [1, 1],
-		elu: [1, 1],
-		rtr: [4, 1],
-		hnd: [4, 1],
-		bsc: [1, 1],
-		rbk: [2, 1],
+		catching: [2, 1],
+		gettingOpen: [2, 1],
+		passBlocking: [2, 1],
+		runBlocking: [2, 1],
+		constant0: [-0.5, 1],
 	},
 	OL: {
-		hgt: [1, 1],
-		stre: [2, 3],
-		spd: [1, 1],
-		rbk: [2, 1],
-		pbk: [2, 1],
+		passBlocking: [3, 1],
+		runBlocking: [3, 1],
+		constant0: [0.75, 1],
 	},
 	DL: {
-		hgt: [4, 3],
-		stre: [8, 3],
-		spd: [2, 1],
-		endu: [1, 1],
-		prs: [8, 1],
-		rns: [8, 1],
-		hnd: [1, 1],
+		passRushing: [5, 1],
+		runStopping: [5, 1],
+		tackling: [1, 1],
+		constant0: [0.9, 1],
 	},
 	LB: {
-		hgt: [2, 3],
-		stre: [4, 1],
-		spd: [4, 1],
-		endu: [1, 1],
-		pcv: [2, 1],
-		tck: [8, 1],
-		prs: [2, 1],
-		rns: [2, 1],
-		hnd: [1, 1],
+		passRushing: [2, 1],
+		runStopping: [2, 1],
+		passCoverage: [1, 1],
+		tackling: [4, 1],
+		constant0: [-0.75, 1],
 	},
 	CB: {
-		hgt: [1, 1],
-		stre: [1, 1],
-		spd: [8, 2],
-		endu: [1, 1],
-		pcv: [8, 1],
-		rns: [1, 1],
-		hnd: [2, 1],
+		passCoverage: [4.2, 1],
+		constant0: [1, 1],
 	},
 	S: {
-		hgt: [1, 1],
-		stre: [3, 1],
-		spd: [4, 1.5],
-		endu: [1, 1],
-		pcv: [4, 1],
-		tck: [4, 1],
-		rns: [2, 1],
-		hnd: [2, 1],
+		passCoverage: [2, 1],
+		tackling: [1, 1],
+		constant0: [0.1, 1],
 	},
 	K: {
-		kpw: [1, 1],
-		kac: [1, 1],
+		kickingPower: [1, 1],
+		kickingAccuracy: [1, 1],
 	},
 	P: {
-		ppw: [1, 1],
-		pac: [1, 1],
+		punting: [1, 1],
 	},
 	KR: {
-		stre: [1, 1],
-		spd: [4, 1],
-		elu: [4, 1],
-		hnd: [2, 1],
-		bsc: [8, 1],
+		rushing: [2, 1],
+		ballSecurity: [1, 1],
 	},
 	PR: {
-		stre: [1, 1],
-		spd: [4, 1],
-		elu: [4, 1],
-		hnd: [8, 1],
-		bsc: [8, 1],
+		rushing: [1, 1],
+		ballSecurity: [1, 1],
 	},
-};
-
-// Handle some nonlinear interactions
-const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
-	RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 300, 6, 20),
-	WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 5),
-	TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 2, 10),
-	LB: ratings => helpers.bound(ratings.tck / 30, 2, 5),
-	S: ratings => helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 2, 15),
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {
+	const compositeRatings: Record<string, number> = {
+		constant0: 0,
+	};
+
+	for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
+		compositeRatings[k] = compositeRating(
+			ratings,
+			COMPOSITE_WEIGHTS[k].ratings,
+			COMPOSITE_WEIGHTS[k].weights,
+			false,
+		);
+	}
+
 	const pos2 = pos ?? ratings.pos;
 	let r = 0;
 
@@ -135,39 +105,36 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
 			// @ts-ignore
-			r += coeff * powerFactor * ratings[key] ** power;
+			r += coeff * powerFactor * compositeRatings[key] ** power;
 			sumCoeffs += coeff;
 		}
 
 		r /= sumCoeffs;
-
-		if (bonuses.hasOwnProperty(pos2)) {
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			r += bonuses[pos2](ratings);
-		}
 	} else {
 		throw new Error(`Unknown position: "${pos2}"`);
 	}
 
-	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
-	// +8 at 68
-	// +4 at 50
-	// -5 at 42
-	// -10 at 31
-	let fudgeFactor = 0;
+	r *= 100;
 
+	// Fudge factor to keep ovr ratings the same as they used to be (back before 2021 ratings rescaling)
+	// +26 at 68
+	// +13 at 50
+	// -17 at 42
+	// -34 at 31
+	let fudgeFactor = 0;
 	if (r >= 68) {
-		fudgeFactor = 8;
+		fudgeFactor = 26;
 	} else if (r >= 50) {
-		fudgeFactor = 4 + (r - 50) * (4 / 18);
+		fudgeFactor = 13 + (r - 50) * (13 / 18);
 	} else if (r >= 42) {
-		fudgeFactor = -5 + (r - 42) * (10 / 8);
+		fudgeFactor = -17 + (r - 42) * (30 / 8);
 	} else if (r >= 31) {
-		fudgeFactor = -5 - (42 - r) * (5 / 11);
+		fudgeFactor = -17 - (42 - r) * (17 / 11);
 	} else {
-		fudgeFactor = -10;
+		fudgeFactor = -34;
 	}
+
+	r -= 19;
 
 	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 

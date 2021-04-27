@@ -16,23 +16,6 @@ const getPos = () => {
 		cumsum += count;
 
 		if (rand < cumsum) {
-			// HACK HACK HACK: Too many OLs, too few QB and S
-			if (pos === "OL" || pos === "RB") {
-				const rand2 = Math.random();
-
-				if (rand2 < 0.15) {
-					return "S";
-				}
-			}
-
-			if (pos === "RB") {
-				const rand2 = Math.random();
-
-				if (rand2 < 0.5) {
-					return "S";
-				}
-			}
-
 			return pos;
 		}
 	}
@@ -88,10 +71,10 @@ const getRatingsToBoost = (pos: string) => {
 			hgt: 1,
 			stre: 0.5,
 			spd: 0.5,
-			elu: 0.25,
-			rtr: 1,
+			elu: -0.25,
+			rtr: 0.75,
 			hnd: 0.75,
-			rbk: 0.5,
+			rbk: 0.25,
 			tck: -1,
 			prs: -1,
 			rns: -1,
@@ -127,6 +110,8 @@ const getRatingsToBoost = (pos: string) => {
 			bsc: -1,
 			hnd: -1,
 			rtr: -1,
+			rbk: -1,
+			pbk: -1,
 		};
 	}
 
@@ -135,14 +120,16 @@ const getRatingsToBoost = (pos: string) => {
 			hgt: 0.5,
 			stre: 0.5,
 			spd: 0.25,
-			pcv: 0.5,
-			tck: 1.5,
+			pcv: 0.25,
+			tck: 1,
 			prs: 0.75,
 			rns: 0.75,
 			elu: -1,
 			bsc: -1,
 			hnd: -1,
 			rtr: -0.75,
+			rbk: -1,
+			pbk: -1,
 		};
 	}
 
@@ -151,10 +138,15 @@ const getRatingsToBoost = (pos: string) => {
 			hgt: -0.5,
 			spd: 1.25,
 			pcv: 1.25,
+			tck: -0.5,
 			hnd: -0.5,
 			elu: -1,
 			bsc: -1,
 			rtr: -0.25,
+			rbk: -1,
+			pbk: -1,
+			prs: -1,
+			rns: -1,
 		};
 	}
 
@@ -163,13 +155,15 @@ const getRatingsToBoost = (pos: string) => {
 			hgt: -0.5,
 			stre: 0.5,
 			spd: 1,
-			pcv: 1,
+			pcv: 0.75,
 			tck: 0.75,
-			rns: 0.5,
+			prs: -0.5,
 			hnd: -1,
 			elu: -1,
 			bsc: -1,
 			rtr: -1,
+			rbk: -1,
+			pbk: -1,
 		};
 	}
 
@@ -295,10 +289,18 @@ const genRatings = (
 		rawRatings.pac = random.randInt(0, 10);
 	}
 
-	if (pos === "DL") {
-		rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
-		rawRatings.prs = helpers.bound(rawRatings.prs, 40, Infinity);
-		rawRatings.rns = helpers.bound(rawRatings.rns, 40, Infinity);
+	if (pos === "RB") {
+		rawRatings.elu = helpers.bound(rawRatings.elu, 60, Infinity);
+	}
+
+	if (pos === "WR") {
+		rawRatings.rtr = helpers.bound(rawRatings.rtr, 60, Infinity);
+		rawRatings.hnd = helpers.bound(rawRatings.hnd, 60, Infinity);
+	}
+
+	if (pos === "TE") {
+		rawRatings.stre = helpers.bound(rawRatings.stre, 40, Infinity);
+		rawRatings.rbk = helpers.bound(rawRatings.rbk, 30, Infinity);
 	}
 
 	if (pos === "OL") {
@@ -307,9 +309,22 @@ const genRatings = (
 		rawRatings.pbk = helpers.bound(rawRatings.pbk, 40, Infinity);
 	}
 
-	if (pos === "TE") {
-		rawRatings.stre = helpers.bound(rawRatings.stre, 40, Infinity);
-		rawRatings.rbk = helpers.bound(rawRatings.rbk, 30, Infinity);
+	if (pos === "DL") {
+		rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
+		rawRatings.prs = helpers.bound(rawRatings.prs, 40, Infinity);
+		rawRatings.rns = helpers.bound(rawRatings.rns, 40, Infinity);
+	}
+
+	if (pos === "LB") {
+		rawRatings.tck = helpers.bound(rawRatings.tck, 60, Infinity);
+	}
+
+	if (pos === "CB") {
+		rawRatings.spd = helpers.bound(rawRatings.spd, 60, Infinity);
+	}
+
+	if (pos === "S") {
+		rawRatings.spd = helpers.bound(rawRatings.spd, 50, Infinity);
 	}
 
 	for (const rating of ["hgt", "spd"] as const) {

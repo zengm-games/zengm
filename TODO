@@ -1,23 +1,16 @@
-in GM DL/LB/S are kinda the same. In real life, they're usually humans of different sizes
-- 40 times tell the defensive positions apart: 4.5 for CB, 4.7 for LB, 4.8 for DE
-- shuttle times tell DE/DT from LB
-- S should be closer to CB than LB, and there should be less jumping around from genRatings.football
-- player generator should be more rigid, based on input position. especially for offense/defense, like CBs who are decent RBs
-  - could throw out ones who slide over to other position
-  - or add less randomness
-  - or change ovr formula
-- "a decent chunk of DBs in real life produce stats that FBGM never generates"
-  - needs more positive outliers
-  
 fbgm2
-- player ratings/development
 - contracts
 - skill cutoffs
 - rushing QBs
 - award formulas
+- blog
+  - more distinct ratings across positions
+  - more accurate ovr formula
 
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
+
+exclude debug functions from prod build
 
 view console.log output from worker console UI https://discord.com/channels/290013534023057409/331882115119448065/836521637103796224
 

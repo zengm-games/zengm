@@ -12,7 +12,7 @@ const info = {
 		rushing: [1, 1],
 		avoidingSacks: [1, 1],
 		ballSecurity: [1, 1],
-		constant0: [-1.25, 1],
+		constant0: [-0.25, 1],
 	},
 	RB: {
 		rushing: [10, 1],
@@ -21,14 +21,14 @@ const info = {
 		passBlocking: [1, 1],
 		runBlocking: [1, 1],
 		ballSecurity: [1, 1],
-		constant0: [-1, 1],
+		constant0: [-1.25, 1],
 	},
 	WR: {
 		catching: [5, 1],
 		gettingOpen: [5, 1],
 		rushing: [1, 1],
 		ballSecurity: [1, 1],
-		constant0: [1.75, 1],
+		constant0: [1.5, 1],
 	},
 	TE: {
 		catching: [2, 1],
@@ -46,7 +46,7 @@ const info = {
 		passRushing: [5, 1],
 		runStopping: [5, 1],
 		tackling: [1, 1],
-		constant0: [0.9, 1],
+		constant0: [0.75, 1],
 	},
 	LB: {
 		passRushing: [2, 1],
@@ -122,7 +122,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	// -17 at 42
 	// -34 at 31
 	let fudgeFactor = 0;
-	if (r >= 68) {
+	/*if (r >= 68) {
 		fudgeFactor = 26;
 	} else if (r >= 50) {
 		fudgeFactor = 13 + (r - 50) * (13 / 18);
@@ -134,7 +134,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		fudgeFactor = -34;
 	}
 
-	r -= 19;
+	r -= 19;*/
 
 	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 

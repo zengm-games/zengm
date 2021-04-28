@@ -71,7 +71,7 @@ const getRatingsToBoost = (pos: string) => {
 			hgt: 1,
 			stre: 0.5,
 			spd: 0.5,
-			elu: -0.25,
+			elu: -0.5,
 			rtr: 0.75,
 			hnd: 0.75,
 			rbk: 0.25,
@@ -290,12 +290,12 @@ const genRatings = (
 	}
 
 	if (pos === "RB") {
-		rawRatings.elu = helpers.bound(rawRatings.elu, 60, Infinity);
+		rawRatings.elu = helpers.bound(rawRatings.elu, 50, Infinity);
 	}
 
 	if (pos === "WR") {
-		rawRatings.rtr = helpers.bound(rawRatings.rtr, 60, Infinity);
-		rawRatings.hnd = helpers.bound(rawRatings.hnd, 60, Infinity);
+		rawRatings.rtr = helpers.bound(rawRatings.rtr, 50, Infinity);
+		rawRatings.hnd = helpers.bound(rawRatings.hnd, 50, Infinity);
 	}
 
 	if (pos === "TE") {
@@ -316,7 +316,7 @@ const genRatings = (
 	}
 
 	if (pos === "LB") {
-		rawRatings.tck = helpers.bound(rawRatings.tck, 60, Infinity);
+		rawRatings.tck = helpers.bound(rawRatings.tck, 50, Infinity);
 	}
 
 	if (pos === "CB") {

@@ -42,6 +42,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.2, 1],
 		skill: {
 			label: "H",
+			cutoff: 0.69,
 		},
 	},
 	gettingOpen: {
@@ -67,6 +68,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1, 0.5, 1, 0.1],
 		skill: {
 			label: "PR",
+			cutoff: 0.63,
 		},
 	},
 	runStopping: {
@@ -74,6 +76,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 0.5, 1, 0.25],
 		skill: {
 			label: "RS",
+			cutoff: 0.63,
 		},
 	},
 	passCoverage: {

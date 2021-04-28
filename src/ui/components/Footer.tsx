@@ -61,7 +61,7 @@ const Footer = memo(() => {
 					style={{
 						display: "none",
 						height: "250px",
-						margin: "5px 310px 0 310px",
+						margin: "5px 320px 0 320px",
 						alignItems: "center",
 						justifyContent: "center",
 					}}

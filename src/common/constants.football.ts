@@ -7,6 +7,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2],
 		skill: {
 			label: "Pa",
+			cutoff: 0.71,
 		},
 	},
 	passingDeep: {
@@ -14,6 +15,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.1, 0.2],
 		skill: {
 			label: "Pd",
+			cutoff: 0.71,
 		},
 	},
 	passingVision: {
@@ -42,7 +44,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.2, 1],
 		skill: {
 			label: "H",
-			cutoff: 0.69,
+			cutoff: 0.73,
 		},
 	},
 	gettingOpen: {
@@ -54,6 +56,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 0.2, 1],
 		skill: {
 			label: "Bp",
+			cutoff: 0.63,
 		},
 	},
 	runBlocking: {
@@ -76,7 +79,6 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 0.5, 1, 0.25],
 		skill: {
 			label: "RS",
-			cutoff: 0.63,
 		},
 	},
 	passCoverage: {
@@ -84,6 +86,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.1, 1, 1],
 		skill: {
 			label: "L",
+			cutoff: 0.72,
 		},
 	},
 	tackling: {

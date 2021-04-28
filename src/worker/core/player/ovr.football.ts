@@ -12,7 +12,7 @@ const info = {
 		rushing: [1, 1],
 		avoidingSacks: [1, 1],
 		ballSecurity: [1, 1],
-		constant0: [-0.25, 1],
+		constant0: [-1.25, 1],
 	},
 	RB: {
 		rushing: [10, 1],
@@ -28,7 +28,7 @@ const info = {
 		gettingOpen: [5, 1],
 		rushing: [1, 1],
 		ballSecurity: [1, 1],
-		constant0: [1.5, 1],
+		constant0: [1.25, 1],
 	},
 	TE: {
 		catching: [2, 1],
@@ -46,7 +46,7 @@ const info = {
 		passRushing: [5, 1],
 		runStopping: [5, 1],
 		tackling: [1, 1],
-		constant0: [0.75, 1],
+		constant0: [0.25, 1],
 	},
 	LB: {
 		passRushing: [2, 1],
@@ -117,24 +117,25 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	r *= 100;
 
 	// Fudge factor to keep ovr ratings the same as they used to be (back before 2021 ratings rescaling)
-	// +26 at 68
-	// +13 at 50
-	// -17 at 42
-	// -34 at 31
+	// +15 at 68
+	// +5 at 62
+	// +0 at 59
+	// -5 at 52
+	// -15 at 40
 	let fudgeFactor = 0;
-	/*if (r >= 68) {
-		fudgeFactor = 26;
-	} else if (r >= 50) {
-		fudgeFactor = 13 + (r - 50) * (13 / 18);
-	} else if (r >= 42) {
-		fudgeFactor = -17 + (r - 42) * (30 / 8);
-	} else if (r >= 31) {
-		fudgeFactor = -17 - (42 - r) * (17 / 11);
+	if (r >= 68) {
+		fudgeFactor = 15;
+	} else if (r >= 62) {
+		fudgeFactor = 5 + (r - 62) * (10 / 6);
+	} else if (r >= 59) {
+		fudgeFactor = (r - 59) * (5 / 3);
+	} else if (r >= 52) {
+		fudgeFactor = -5 + (r - 52) * (5 / 7);
+	} else if (r >= 40) {
+		fudgeFactor = -15 + (r - 40) * (10 / 12);
 	} else {
-		fudgeFactor = -34;
+		fudgeFactor = -15;
 	}
-
-	r -= 19;*/
 
 	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 

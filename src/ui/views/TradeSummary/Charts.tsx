@@ -253,7 +253,7 @@ const Charts = ({
 				}
 			}
 		};
-	}, [node, node2, phase, season, seasonsToPlot, teams]);
+	}, [node, node2, phase, season, seasonsToPlot, teams, valueKey]);
 
 	return (
 		<>

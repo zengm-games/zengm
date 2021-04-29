@@ -528,7 +528,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 			for (const [abbrev, slugs] of Object.entries(
 				basketball.expansionDrafts[options.season],
 			)) {
-				const t = initialTeams.find(t => abbrev === t.abbrev);
+				const t = initialTeams.find(
+					t => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
+				);
 				if (!t) {
 					throw new Error("Team not found");
 				}

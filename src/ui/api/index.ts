@@ -114,7 +114,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (window.mobile) {
+			if (!window.mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 

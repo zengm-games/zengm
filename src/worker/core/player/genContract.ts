@@ -21,7 +21,7 @@ const genContract = (
 	noLimit: boolean = false,
 ): PlayerContract => {
 	const ratings = p.ratings[p.ratings.length - 1];
-	let factor = g.get("hardCap") ? 1.75 : 3.4;
+	let factor = g.get("hardCap") ? 1.5 : 3.4;
 	let factor2 = 1;
 
 	if (isSport("football")) {

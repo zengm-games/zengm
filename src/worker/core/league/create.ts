@@ -638,7 +638,7 @@ export const createWithoutSaving = async (
 			}
 
 			// Keep rookie contract, or no?
-			if (p.contract.exp >= g.get("season")) {
+			if (p.contract.exp >= g.get("season") && !g.get("hardCap")) {
 				delete p.contract.temp;
 			}
 

@@ -47,7 +47,7 @@ const genContract = (
 		g.get("minContract");
 
 	if (randomizeAmount) {
-		// amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
+		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
 	}
 
 	if (!noLimit) {

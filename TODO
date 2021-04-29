@@ -2,6 +2,7 @@ fbgm2
 - rushing QBs
 - award formulas
 - test if new ovr is more predictive of team success
+  - replace team_ur with new league file
 - test if team ovr formula is better now
 - retirement age
 - ovr normalization

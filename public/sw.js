@@ -13,13 +13,17 @@ class CacheOnlyOneItemPlugin {
 	}
 
 	async cacheWillUpdate({ response }) {
-		// Since we're only storing one item in the cache, just delete all old items
-		const cache = await self.caches.open(this._cacheName);
-		const keys = await cache.keys();
-		for (const key of keys) {
-			await cache.delete(key);
+		// Only cache successful response
+		if (response.status === 200) {
+			// Since we're only storing one item in the cache, just delete all old items
+			const cache = await self.caches.open(this._cacheName);
+			const keys = await cache.keys();
+			for (const key of keys) {
+				await cache.delete(key);
+			}
+			return response;
 		}
-		return response;
+		return null;
 	}
 
 	async deleteCache() {

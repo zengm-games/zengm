@@ -22,23 +22,32 @@ const genContract = (
 ): PlayerContract => {
 	const ratings = p.ratings[p.ratings.length - 1];
 	let factor = g.get("hardCap") ? 1.75 : 3.4;
+	let factor2 = 1;
 
 	if (isSport("football")) {
 		if (ratings.pos === "QB") {
-			factor *= 1.5;
+			if (p.value >= 85) {
+				factor2 *= 1.25;
+			} else if (p.value >= 70) {
+				factor2 *= 0.75 + ((p.value - 70) * 0.5) / 15;
+			} else if (p.value >= 60) {
+				factor2 *= 0.25 + ((p.value - 60) * 0.5) / 10;
+			} else {
+				factor2 *= 0.25;
+			}
 		} else if (ratings.pos === "K" || ratings.pos === "P") {
 			factor *= 0.25;
 		}
 	}
 
 	let amount =
-		(p.value / 100 - 0.47) *
+		((factor2 * p.value) / 100 - 0.47) *
 			factor *
 			(g.get("maxContract") - g.get("minContract")) +
 		g.get("minContract");
 
 	if (randomizeAmount) {
-		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
+		// amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
 	}
 
 	if (!noLimit) {

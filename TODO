@@ -1,11 +1,22 @@
 fbgm2
 - contracts
+  - play a few seasons, average payroll increases, why?
+    - check talent level
+  - check actual genContract calls for differences, maybe value is not set right in new league?
+    - run genContract on all players in new league, does it change?
+    - rookie contracts in new league?
 - rushing QBs
 - award formulas
 - test if new ovr is more predictive of team success
+- test if team ovr formula is better now
+- retirement age
+- ovr normalization
 - blog
   - more distinct ratings across positions
   - more accurate ovr formula
+
+relatives editor use name search like awards https://discord.com/channels/290013534023057409/290013534023057409/836988210327715960
+- jersey retire too https://discord.com/channels/290013534023057409/290013534023057409/836989205438660689
 
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated

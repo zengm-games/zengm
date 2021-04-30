@@ -21,6 +21,7 @@ import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers";
 import genPlayoffSeries from "./genPlayoffSeries";
 import getGameAttributes from "./getGameAttributes";
 import getAwards from "./getAwards";
+import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 
 export const LATEST_SEASON = 2021;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
@@ -598,6 +599,21 @@ const getLeague = async (options: GetLeagueOptions) => {
 						// Bound at 5 year contract
 						p.contract.exp = options.season + 5;
 					}
+				}
+
+				const currentRatings = p.ratings[0];
+				currentRatings.season = options.season;
+				nerfDraftProspect(currentRatings);
+				if (
+					options.type === "real" &&
+					options.realDraftRatings === "draft" &&
+					p.draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
+				) {
+					const age = currentRatings.season! - p.born.year;
+					setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
+						draftRound: p.draft.round,
+						draftPick: p.draft.pick,
+					});
 				}
 			}
 		}

@@ -96,6 +96,13 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"abbrev",
 				"tid",
 				"jerseyNumber",
+				"defIntTD",
+				"defFmbTD",
+				"defSft",
+				"defSk",
+				"defTck",
+				"defInt",
+				"defPssDef",
 			],
 			hockey: [
 				"keyStats",

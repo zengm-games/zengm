@@ -231,13 +231,24 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return posMultiplier * p.currentStats.av;
 };
 export const dpoyScore = (p: PlayerFiltered) => {
-	let posBonus = 0;
-	if (p.pos === "S" || p.pos === "CB") {
-		posBonus = 3.9;
-	} else if (p.pos === "LB") {
-		posBonus = 1.9;
-	}
-	return posBonus + p.currentStats.av;
+	const posBonus = p.pos === "LB" ? 2 : 0;
+	return (
+		posBonus +
+		p.currentStats.av +
+		1.5 * p.currentStats.defSk +
+		p.currentStats.defTck / 12 +
+		p.currentStats.defInt * 4 +
+		p.currentStats.defPssDef +
+		5 *
+			(p.currentStats.defFmbTD +
+				p.currentStats.defIntTD +
+				p.currentStats.defSft)
+	);
+};
+
+const rookieFilter = (p: PlayerFiltered) => {
+	// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+	return p.draft.year === p.currentStats.season - 1;
 };
 
 const doAwards = async (conditions: Conditions) => {
@@ -321,21 +332,39 @@ const doAwards = async (conditions: Conditions) => {
 	const mvp = getTopByPos(mvpPlayers);
 	const dpoy = getTopByPos(dpoyPlayers, ["DL", "LB", "S", "CB"]);
 	const allLeague = makeTeams(avPlayers);
-	const royPlayers = getTopPlayers(
+
+	const oroyPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: Infinity,
-			filter: p => {
-				// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-				return p.draft.year === p.currentStats.season - 1;
-			},
+			filter: rookieFilter,
+			score: mvpScore,
+		},
+		players,
+	);
+	const oroy = getTopByPos(oroyPlayers, ["QB", "RB", "WR", "TE", "OL"]);
+
+	const droyPlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: Infinity,
+			filter: rookieFilter,
+			score: dpoyScore,
+		},
+		players,
+	);
+	const droy = getTopByPos(droyPlayers, ["DL", "LB", "S", "CB"]);
+
+	const allRookiePlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: Infinity,
+			filter: rookieFilter,
 			score: avScore,
 		},
 		players,
 	);
-	const oroy = getTopByPos(royPlayers, ["QB", "RB", "WR", "TE", "OL"]);
-	const droy = getTopByPos(royPlayers, ["DL", "LB", "S", "CB"]);
-	const allRookie = makeTeams(royPlayers, true);
+	const allRookie = makeTeams(allRookiePlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
 		t =>

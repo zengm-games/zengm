@@ -1,5 +1,10 @@
 fbgm2
-- rushing QBs
+- generate rushing QBs
+- game sim
+  - kneeling at end of game
+  - don't scramble if it's hail mary time
+  - EPA based play selection?
+    - nflscrapR https://old.reddit.com/message/messages/1151cu2
 - award formulas
 - test if new ovr is more predictive of team success
   - replace team_ur with new league file
@@ -10,6 +15,7 @@ fbgm2
   - more distinct ratings across positions
   - more accurate ovr formula
   - fixed bug where some salaries were lower in the first season of a new league than in subsequent seasons
+  - added QB scrambles
 
 relatives editor use name search like awards https://discord.com/channels/290013534023057409/290013534023057409/836988210327715960
 - jersey retire too https://discord.com/channels/290013534023057409/290013534023057409/836989205438660689

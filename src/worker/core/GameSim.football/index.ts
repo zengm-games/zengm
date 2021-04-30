@@ -1689,6 +1689,12 @@ class GameSim {
 			return this.doSack(qb);
 		}
 
+		const qbOvrRB = this.playersOnField[o].QB?.[0]?.ovrs.RB ?? 0;
+		const probScramble = 0.01 + (0.4 * (qbOvrRB - 30)) / 100;
+		if (probScramble > Math.random()) {
+			return this.doRun(true);
+		}
+
 		const target = this.pickPlayer(
 			o,
 			Math.random() < 0.2 ? "catching" : "gettingOpen",
@@ -1825,7 +1831,7 @@ class GameSim {
 		return dt;
 	}
 
-	doRun() {
+	doRun(qbScramble: boolean = false) {
 		const o = this.o;
 		const d = this.d;
 		const twoPointConversionTeam = this.twoPointConversionTeam;
@@ -1839,15 +1845,20 @@ class GameSim {
 		}
 
 		// Usually do normal run, but sometimes do special stuff
-		const positions: Position[] = ["RB"];
-		const rand = Math.random();
+		let positions: Position[];
+		if (qbScramble) {
+			positions = ["QB"];
+		} else {
+			positions = ["RB"];
+			const rand = Math.random();
 
-		const rbs = this.playersOnField[o].RB || [];
+			const rbs = this.playersOnField[o].RB || [];
 
-		if (rand < 0.5 || rbs.length === 0) {
-			positions.push("QB");
-		} else if (rand < 0.6 || rbs.length === 0) {
-			positions.push("WR");
+			if (rand < 0.5 || rbs.length === 0) {
+				positions.push("QB");
+			} else if (rand < 0.59 || rbs.length === 0) {
+				positions.push("WR");
+			}
 		}
 
 		const p = this.pickPlayer(o, "rushing", positions);

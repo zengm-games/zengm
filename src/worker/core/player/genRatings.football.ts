@@ -25,6 +25,23 @@ const getPos = () => {
 
 const getRatingsToBoost = (pos: string) => {
 	if (pos === "QB") {
+		// Running QB
+		if (Math.random() < 0.15) {
+			return {
+				hgt: 0.9,
+				spd: 1.25,
+				thv: 0.85,
+				thp: 2,
+				tha: 1.5,
+				bsc: 1,
+				elu: 1.25,
+				hnd: 0.25,
+				tck: -1,
+				prs: -1,
+				rns: -1,
+			};
+		}
+
 		return {
 			hgt: 1,
 			spd: 0.5,

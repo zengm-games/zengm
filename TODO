@@ -4,6 +4,7 @@ fbgm2
   - EPA based play selection?
     - nflscrapR https://old.reddit.com/message/messages/1151cu2
 - test if team ovr formula is better now
+- console.logs
 - blog
   - more distinct ratings across positions
   - more accurate ovr formula
@@ -15,8 +16,18 @@ fbgm2
 
 benchmark realRosters.addRelatives, should be improved?
 
+show team record and ovr on trading block, for picks (including traded picks) https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtprmml/
+
+in god mode, add button to switch to controlling a team directly on the roster page https://discord.com/channels/290013534023057409/331882115119448065/837416287948111942
+
 relatives editor use name search like awards https://discord.com/channels/290013534023057409/290013534023057409/836988210327715960
 - jersey retire too https://discord.com/channels/290013534023057409/290013534023057409/836989205438660689
+
+team rating should do something sensible if roster size or num players on court is different https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/guoseqe/
+
+draft lottery animation for random draft https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtokjf0/
+
+no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
 
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated

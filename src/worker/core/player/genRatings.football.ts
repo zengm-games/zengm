@@ -1,6 +1,5 @@
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
-import posFootball from "./pos.football";
 import { helpers, random } from "../../util";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";
@@ -224,10 +223,10 @@ const heightToInches = (hgt: number) => {
 	return Math.round(64 + (hgt * (82 - 64)) / 100);
 };
 
-const info: any = {};
+/*const info: any = {};
 const infoIn: any = {};
 const infoOut: any = {};
-let timeoutID: any;
+let timeoutID: any;*/
 
 const initialRating = () => limitRating(random.truncGauss(10, 10, 0, 40));
 
@@ -388,7 +387,7 @@ const genRatings = (
 		pots: { ...defaultOvrsOrPots },
 	};
 
-	const pos2 = posFootball(ratings);
+	/*const pos2 = posFootball(ratings);
 	info[`${pos}->${pos2}`] =
 		info[`${pos}->${pos2}`] === undefined ? 1 : info[`${pos}->${pos2}`] + 1;
 	infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
@@ -401,7 +400,7 @@ const genRatings = (
 				console.log(pos2, infoIn[pos2], infoOut[pos2]);
 			}
 		}
-	}, 1000);
+	}, 1000);*/
 
 	/*    if (pos === "DL" && pos2 === "LB") {
          console.log(ratings);

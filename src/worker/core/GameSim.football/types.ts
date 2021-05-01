@@ -25,7 +25,8 @@ export type PlayType =
 	| "offsettingPenalties"
 	| "penalty"
 	| "timeout"
-	| "twoMinuteWarning";
+	| "twoMinuteWarning"
+	| "kneel";
 
 export type TeamNum = 0 | 1;
 

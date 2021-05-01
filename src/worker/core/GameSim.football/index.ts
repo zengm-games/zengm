@@ -500,6 +500,23 @@ class GameSim {
 			return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
 		}
 
+		if (quarter >= this.numPeriods && ptsDown < 0 && this.scrimmage > 10) {
+			// Does it make sense to kneel? Depends on clock time and opponent timeouts
+			const downsRemaining = 4 - this.down;
+			const timeoutDownsRemaining = Math.min(
+				this.timeouts[this.d] + (this.clock > 2 ? 1 : 0),
+				downsRemaining,
+			);
+			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
+
+			const timeRemainingAfterKeels =
+				this.clock -
+				(timeoutDownsRemaining * 2 + clockRunningDownsRemaining * 42) / 60;
+			if (timeRemainingAfterKeels < 0) {
+				return "kneel";
+			}
+		}
+
 		// Don't kick a FG when we really need a touchdown!
 		const needTouchdown =
 			quarter >= this.numPeriods && ptsDown > 3 && this.clock <= 2;
@@ -623,6 +640,8 @@ class GameSim {
 			dt = this.doPass();
 		} else if (playType === "run") {
 			dt = this.doRun();
+		} else if (playType === "kneel") {
+			dt = this.doKneel();
 		} else {
 			throw new Error(`Unknown playType "${playType}"`);
 		}
@@ -713,7 +732,9 @@ class GameSim {
 		}
 
 		this.updatePlayingTime(dt);
-		this.injuries();
+		if (playType !== "kneel") {
+			this.injuries();
+		}
 
 		if (
 			this.overtimeState === "bothTeamsPossessed" &&
@@ -1948,6 +1969,35 @@ class GameSim {
 		if (penInfo2) {
 			penInfo2.doLog();
 		}
+
+		return dt;
+	}
+
+	doKneel() {
+		const o = this.o;
+
+		this.updatePlayersOnField("run");
+
+		const qb = this.getTopPlayerOnField(o, "QB");
+
+		const yds = random.randInt(0, -3);
+
+		this.advanceYds(yds);
+
+		this.recordStat(o, qb, "rus");
+		this.recordStat(o, qb, "rusYds", yds);
+		this.recordStat(o, qb, "rusLng", yds);
+
+		// Set this to false, because we handle it all in dt
+		this.isClockRunning = false;
+
+		const dt = random.randInt(42, 44);
+
+		this.playByPlay.logEvent("kneel", {
+			clock: this.clock,
+			t: o,
+			names: [qb.name],
+		});
 
 		return dt;
 	}

@@ -417,6 +417,12 @@ class PlayByPlayLogger {
 				text = `Time out, ${offense ? "offense" : "defense"}`;
 			} else if (type === "twoMinuteWarning") {
 				text = "Two minute warning";
+			} else if (type === "kneel") {
+				if (names === undefined) {
+					throw new Error("Missing names");
+				}
+
+				text = `${names[0]} kneels`;
 			} else {
 				throw new Error(`No text for "${type}"`);
 			}

@@ -1,6 +1,5 @@
 fbgm2
 - game sim
-  - kneeling at end of game
   - don't scramble if it's hail mary time
   - EPA based play selection?
     - nflscrapR https://old.reddit.com/message/messages/1151cu2
@@ -13,6 +12,7 @@ fbgm2
   - fixed bug where some salaries were lower in the first season of a new league than in subsequent seasons
   - added QB scrambles, and the player generator generates some hybrid QBs
   - new formula for defensive awards, based more on traditional stats than AV
+  - kneeling at end of game
 
 benchmark realRosters.addRelatives, should be improved?
 

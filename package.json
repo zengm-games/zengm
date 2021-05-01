@@ -12,7 +12,7 @@
 		"url": "https://github.com/zengm-games/zengm.git"
 	},
 	"scripts": {
-		"start": "node tools/server.js",
+		"start": "node tools/server.mjs",
 		"build": "node tools/build.mjs",
 		"deploy": "yarn run lint && yarn test && node tools/deploy.mjs",
 		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.mjs",

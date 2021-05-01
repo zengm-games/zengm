@@ -45,7 +45,7 @@ const shouldRetire = (
 	} else {
 		const maxAge = bySport({
 			basketball: 0,
-			football: pos === "QB" || pos === "P" || pos === "K" ? 33 : 29,
+			football: pos === "QB" || pos === "P" || pos === "K" ? 35 : 32,
 			hockey: 36,
 		});
 		const minPot = 50;

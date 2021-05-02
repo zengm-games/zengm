@@ -89,6 +89,10 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 					__dirname,
 					"../../src/common/polyfills-noop.ts",
 				),
+				"bbgm-debug": path.join(
+					__dirname,
+					"../../src/worker/core/debug/index.ts",
+				),
 			}),
 			pluginSportFunctions(nodeEnv),
 		],

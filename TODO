@@ -25,8 +25,6 @@ no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/co
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 
-exclude debug functions from prod build
-
 view console.log output from worker console UI https://discord.com/channels/290013534023057409/331882115119448065/836521637103796224
 
 trade value of players vs picks as difficulty changes https://mail.google.com/mail/u/0/#inbox/FMfcgxwLtkQskcMSQwdhHzQvdwXMKqSG

@@ -2,6 +2,7 @@ module.exports = {
 	moduleNameMapper: {
 		"^player-names$": "<rootDir>/src/worker/data/names-test.json",
 		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-noop.ts",
+		"^bbgm-debug$": "<rootDir>/src/worker/core/debug/index.ts",
 
 		// This is assumed to be generated prior to rollup being started
 		"^league-schema$": "<rootDir>/build/files/league-schema.json",

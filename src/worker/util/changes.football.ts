@@ -93,6 +93,11 @@ const changes = [
 		msg:
 			'Transaction logs for trades are now dynamically updated to include the players selected by traded draft picks, and they link to a new Trade Summary page showing more details about completed trades. <a href="https://zengm.com/blog/2020/11/trade-details/">More details</a>',
 	},
+	{
+		date: "2021-05-02",
+		msg:
+			'New more accurate player and team ovr formulas, and some other updates. <a href="https://zengm.com/blog/2021/05/football-updates-ovr/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -1643,7 +1643,7 @@ class GameSim {
 
 	probInt(qb: PlayerGameSim) {
 		return (
-			(((0.03 * this.team[this.d].compositeRating.passCoverage) /
+			(((0.02 * this.team[this.d].compositeRating.passCoverage) /
 				(0.5 *
 					(qb.compositeRating.passingVision +
 						qb.compositeRating.passingAccuracy))) *
@@ -1671,7 +1671,7 @@ class GameSim {
 				this.team[this.o].compositeRating.passBlocking /
 					this.team[this.d].compositeRating.passRushing,
 			);
-		const p = 0.13 + 0.4 * factor ** 1.25;
+		const p = 0.24 + 0.4 * factor ** 1.25;
 		return helpers.bound(p, 0, 0.95);
 	}
 

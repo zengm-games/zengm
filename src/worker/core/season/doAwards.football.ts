@@ -47,41 +47,109 @@ const getTopByPos = (
 };
 
 export const makeTeams = (
-	players: PlayerFiltered[],
+	playersOffense: PlayerFiltered[],
+	playersDefense: PlayerFiltered[],
 	rookie: boolean = false,
 ): any => {
 	const usedPids = new Set<number>();
-	const teamPositions = [
-		["QB"],
-		["RB"],
-		["RB", "WR"],
-		["WR"],
-		["WR"],
-		["TE"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["DL"],
-		["DL"],
-		["DL"],
-		["DL"],
-		["LB"],
-		["LB"],
-		["LB"],
-		["S"],
-		["S"],
-		["CB"],
-		["CB"],
+	const slots = [
+		{
+			positions: ["QB"],
+			players: playersOffense,
+		},
+		{
+			positions: ["RB"],
+			players: playersOffense,
+		},
+		{
+			positions: ["RB", "WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["TE"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["S"],
+			players: playersDefense,
+		},
+		{
+			positions: ["S"],
+			players: playersDefense,
+		},
+		{
+			positions: ["CB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["CB"],
+			players: playersDefense,
+		},
 	];
+
 	const kickers = getTopPlayers(
 		{
 			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.fg,
 		},
-		players,
+		playersOffense,
 	);
 	const punters = getTopPlayers(
 		{
@@ -89,7 +157,7 @@ export const makeTeams = (
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.pntYds,
 		},
-		players,
+		playersOffense,
 	);
 	const kickReturners = getTopPlayers(
 		{
@@ -98,7 +166,7 @@ export const makeTeams = (
 			score: (p: PlayerFiltered) =>
 				p.currentStats.krYds + 500 * p.currentStats.krTD,
 		},
-		players,
+		playersOffense,
 	);
 	const puntReturners = getTopPlayers(
 		{
@@ -107,14 +175,12 @@ export const makeTeams = (
 			score: (p: PlayerFiltered) =>
 				p.currentStats.prYds + 500 * p.currentStats.prTD,
 		},
-		players,
+		playersOffense,
 	);
 
 	if (rookie) {
 		return [
-			...teamPositions.map(positions =>
-				getTopByPos(players, positions, usedPids),
-			),
+			...slots.map(slot => getTopByPos(slot.players, slot.positions, usedPids)),
 			kickers[0],
 			punters[0],
 			kickReturners[0],
@@ -126,8 +192,8 @@ export const makeTeams = (
 		{
 			title: "First Team",
 			players: [
-				...teamPositions.map(positions =>
-					getTopByPos(players, positions, usedPids),
+				...slots.map(slot =>
+					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[0],
 				punters[0],
@@ -138,8 +204,8 @@ export const makeTeams = (
 		{
 			title: "Second Team",
 			players: [
-				...teamPositions.map(positions =>
-					getTopByPos(players, positions, usedPids),
+				...slots.map(slot =>
+					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[1],
 				punters[1],
@@ -222,8 +288,6 @@ const getRealFinalsMvp = async (
 		};
 	}
 };
-
-export const avScore = (p: PlayerFiltered) => p.currentStats.av;
 
 const SKILL_POSITIONS = ["QB", "RB", "WR", "TE"];
 export const mvpScore = (p: PlayerFiltered) => {
@@ -308,13 +372,6 @@ const doAwards = async (conditions: Conditions) => {
 	];
 	leagueLeaders(players, categories, awardsByPlayer);
 
-	const avPlayers = getTopPlayers(
-		{
-			amount: Infinity,
-			score: avScore,
-		},
-		players,
-	);
 	const mvpPlayers = getTopPlayers(
 		{
 			amount: Infinity,
@@ -331,7 +388,7 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	const mvp = getTopByPos(mvpPlayers);
 	const dpoy = getTopByPos(dpoyPlayers, ["DL", "LB", "S", "CB"]);
-	const allLeague = makeTeams(avPlayers);
+	const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
 
 	const oroyPlayers = getTopPlayers(
 		{
@@ -355,16 +412,7 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	const droy = getTopByPos(droyPlayers, ["DL", "LB", "S", "CB"]);
 
-	const allRookiePlayers = getTopPlayers(
-		{
-			allowNone: true,
-			amount: Infinity,
-			filter: rookieFilter,
-			score: avScore,
-		},
-		players,
-	);
-	const allRookie = makeTeams(allRookiePlayers, true);
+	const allRookie = makeTeams(oroyPlayers, droyPlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
 		t =>

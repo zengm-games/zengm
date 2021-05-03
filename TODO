@@ -1,12 +1,12 @@
 fbgm2
-- qb draft position https://discord.com/channels/290013534023057409/290015591216054273/838450803219365908
-- qb trade value https://discord.com/channels/290013534023057409/290015591216054273/838609570032910346
-- use dpoyScore for defensive players on all league team
 - game sim
   - don't scramble if it's hail mary time
   - EPA based play selection?
     - nflscrapR https://old.reddit.com/message/messages/1151cu2
 - test if team ovr formula is better now
+
+salary cap growth setting
+- random number between min and max?
 
 does trading block give best offers? should it?
 
@@ -1113,7 +1113,6 @@ team rating
 
 god mode options
 - population growth
-- salary cap growth
 - inflation of other revenue/expenses
 - make them constant, or from a random distribution?
 

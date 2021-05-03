@@ -1,6 +1,7 @@
+import groupBy from "lodash-es/groupBy";
 import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
@@ -723,11 +724,9 @@ export const createWithoutSaving = async (
 				break;
 			}
 		}
+		keptPlayers = keptPlayers.filter(p => p.tid === PLAYER.UNDRAFTED);
 
-		// Finally, free agents
-		for (let i = 0; i < maxNumFreeAgents; i++) {
-			const p = keptPlayers[i];
-
+		const addToFreeAgents = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (p) {
 				// So half will be eligible to retire after the first season
@@ -744,6 +743,32 @@ export const createWithoutSaving = async (
 				p.contract.temp = true;
 				player.addToFreeAgents(p);
 				players.push(p);
+			}
+		};
+
+		// Finally, free agents
+		if (Object.keys(POSITION_COUNTS).length === 0) {
+			for (let i = 0; i < maxNumFreeAgents; i++) {
+				addToFreeAgents(keptPlayers[i]);
+			}
+		} else {
+			// POSITION_COUNTS exists, so use it to keep a balanced list of free agents
+			let positionCountsSum = 0;
+			for (const positionCount of Object.values(POSITION_COUNTS)) {
+				positionCountsSum += positionCount;
+			}
+
+			const groupedPlayers = groupBy(keptPlayers, p => p.ratings[0].pos);
+
+			for (const [pos, positionCount] of Object.entries(POSITION_COUNTS)) {
+				const limit = Math.round(
+					(maxNumFreeAgents * positionCount) / positionCountsSum,
+				);
+				console.log(pos, limit);
+
+				for (let i = 0; i < limit; i++) {
+					addToFreeAgents(groupedPlayers[pos][i]);
+				}
 			}
 		}
 	}

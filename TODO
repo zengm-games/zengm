@@ -1,9 +1,15 @@
 fbgm2
+- 17 game season plays 16 games https://discord.com/channels/290013534023057409/290015591216054273/838454125409861693
+- qb draft position https://discord.com/channels/290013534023057409/290015591216054273/838450803219365908
+- qb trade value https://discord.com/channels/290013534023057409/290015591216054273/838609570032910346
+- use dpoyScore for defensive players on all league team
 - game sim
   - don't scramble if it's hail mary time
   - EPA based play selection?
     - nflscrapR https://old.reddit.com/message/messages/1151cu2
 - test if team ovr formula is better now
+
+does trading block give best offers? should it?
 
 benchmark realRosters.addRelatives, should be improved?
 

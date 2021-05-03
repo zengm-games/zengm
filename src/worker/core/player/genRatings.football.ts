@@ -1,6 +1,7 @@
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
 import { helpers, random } from "../../util";
+// import posFootball from "./pos.football";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";
 
@@ -401,11 +402,6 @@ const genRatings = (
 			}
 		}
 	}, 1000);*/
-
-	/*    if (pos === "DL" && pos2 === "LB") {
-         console.log(ratings);
-         debugger;
-     }*/
 
 	return {
 		heightInInches: heightToInches(ratings.hgt),

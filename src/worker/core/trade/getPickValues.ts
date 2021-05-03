@@ -1,4 +1,4 @@
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "../../../common/groupBy";
 import range from "lodash-es/range";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";

@@ -1,4 +1,5 @@
 import { AWARD_NAMES, PHASE, PLAYER } from "../../../common";
+import { groupByUnique } from "../../../common/groupBy";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
@@ -49,13 +50,6 @@ const initAwardsBySeason = (awards: Basketball["awards"]) => {
 };
 
 let playersBySlug: Record<string, Player> | undefined;
-const initPlayersBySlug = (players: Player[]) => {
-	const bySlug: Record<string, Player> = {};
-	for (const p of players) {
-		bySlug[p.srID] = p;
-	}
-	return bySlug;
-};
 
 const awardTeam = (teamSeason: TeamSeasonWithoutKey) => {
 	return {
@@ -235,7 +229,7 @@ const getAwards = (
 		awardsBySeason = initAwardsBySeason(awards);
 	}
 	if (!playersBySlug) {
-		playersBySlug = initPlayersBySlug(players);
+		playersBySlug = groupByUnique(players, "srID");
 	}
 
 	const seasonsRange = [1947, options.season - 1];

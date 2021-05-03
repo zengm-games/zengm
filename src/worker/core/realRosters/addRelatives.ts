@@ -1,4 +1,4 @@
-import groupBy from "lodash-es/groupBy";
+import { groupBy, groupByUnique } from "../../../common/groupBy";
 import type { Relative } from "../../../common/types";
 import type { Basketball } from "./loadData.basketball";
 
@@ -17,12 +17,8 @@ const addRelatives = (
 		allRelativesBySlug = groupBy(allRelatives, "slug");
 	}
 
-	const playersBySlug: Record<string, typeof players[number] | undefined> = {};
-	for (const p of players) {
-		playersBySlug[p.srID] = p;
-	}
+	const playersBySlug = groupByUnique(players, "srID");
 
-	console.time("foo");
 	for (const p of players) {
 		const relatives = allRelativesBySlug[p.srID];
 		if (!relatives) {
@@ -45,7 +41,6 @@ const addRelatives = (
 			p.relatives = relatives2;
 		}
 	}
-	console.timeEnd("foo");
 };
 
 export default addRelatives;

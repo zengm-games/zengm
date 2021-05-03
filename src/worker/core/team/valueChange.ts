@@ -8,7 +8,7 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "../../../common/groupBy";
 
 type Asset = {
 	value: number;

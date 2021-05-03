@@ -1,4 +1,4 @@
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";

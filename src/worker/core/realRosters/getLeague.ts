@@ -1,6 +1,6 @@
 import loadDataBasketball, { Basketball } from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type {
 	GetLeagueOptions,

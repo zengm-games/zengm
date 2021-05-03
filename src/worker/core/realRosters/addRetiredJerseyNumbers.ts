@@ -1,4 +1,5 @@
 import { PHASE, PLAYER } from "../../../common";
+import { groupByUnique } from "../../../common/groupBy";
 import type { Team } from "../../../common/types";
 import type { Basketball } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
@@ -26,15 +27,11 @@ const addRetiredJerseyNumbers = ({
 	allBios: Basketball["bios"];
 	allRetiredJerseyNumbers: Basketball["retiredJerseyNumbers"];
 }) => {
-	const playersBySlug: Record<string, typeof players[number] | undefined> = {};
-	for (const p of players) {
-		playersBySlug[p.srID] = p;
-	}
+	const playersBySlug = groupByUnique(players, "srID");
 
-	const teamsBySlug: Record<string, typeof teams[number] | undefined> = {};
-	for (const t of teams) {
-		teamsBySlug[oldAbbrevTo2020BBGMAbbrev(t.srID)] = t;
-	}
+	const teamsBySlug = groupByUnique(teams, t =>
+		oldAbbrevTo2020BBGMAbbrev(t.srID),
+	);
 
 	for (const [teamSlug, rows] of Object.entries(allRetiredJerseyNumbers)) {
 		const t = teamsBySlug[teamSlug];

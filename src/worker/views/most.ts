@@ -11,7 +11,7 @@ import type {
 	ViewInput,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "../../common/groupBy";
 import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";

@@ -764,7 +764,6 @@ export const createWithoutSaving = async (
 				const limit = Math.round(
 					(maxNumFreeAgents * positionCount) / positionCountsSum,
 				);
-				console.log(pos, limit);
 
 				for (let i = 0; i < limit; i++) {
 					addToFreeAgents(groupedPlayers[pos][i]);

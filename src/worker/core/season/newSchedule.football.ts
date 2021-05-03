@@ -3,9 +3,7 @@ import { g, random } from "../../../worker/util";
 import newScheduleCrappy from "./newScheduleCrappy";
 
 /**
- * Creates a new regular season schedule for 30 teams.
- *
- * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
+ * This makes an NFL-like schedule in terms of conference matchups, division matchups, and home/away games.
  *
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
@@ -46,6 +44,8 @@ const newScheduleDefault = (
 	// Constraint: 5 home games vs. teams from other divisions
 	let failures = 0;
 
+	const SEVENTEEN_GAMES = g.get("numGames") === 17;
+
 	while (true) {
 		const newTids: [number, number][] = [];
 		let success = true; // Copy, so each iteration of the while loop this is reset
@@ -73,6 +73,41 @@ const newScheduleDefault = (
 				newTids.push([t.tid, t2.tid]);
 				homeGames2[t.tid] += 1;
 				awayGames2[t2.tid] += 1;
+			}
+		}
+
+		// If 17 game season, add another non-division game for each team
+		if (SEVENTEEN_GAMES) {
+			const randomOrderTeams = [...teams];
+			random.shuffle(randomOrderTeams);
+
+			const home = new Set<typeof teams[number]>();
+			const away = new Set<typeof teams[number]>();
+			for (let i = 0; i < randomOrderTeams.length; i++) {
+				const t = randomOrderTeams[i];
+				if (i < randomOrderTeams.length / 2) {
+					home.add(t);
+				} else {
+					away.add(t);
+				}
+			}
+
+			for (const t of home) {
+				let found = false;
+				for (const t2 of away) {
+					if (t.seasonAttrs.did !== t2.seasonAttrs.did) {
+						newTids.push([t.tid, t2.tid]);
+						console.log("found", [t.tid, t2.tid]);
+						away.delete(t2);
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					success = false;
+					break;
+				}
 			}
 		}
 

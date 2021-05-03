@@ -708,8 +708,15 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "boolean",
 							},
 							pointsFormula: {
-								type: "array",
-								minItems: 1,
+								oneOf: [
+									{
+										type: "array",
+										minItems: 1,
+									},
+									{
+										type: "string",
+									},
+								],
 							},
 							nextPhase: {
 								// Shouldn't actually be null, but legacy

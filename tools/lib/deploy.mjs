@@ -49,7 +49,8 @@ const deploy = async () => {
 
 	// Copy gen first, so index.html never links to partial file
 	// files is here because real-player-data was briefly there in May 2020, so we don't want to delete it
-	const copyAndKeep = ["gen", "files"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
+	// .well-known is here because we never want to delete anything in it
+	const copyAndKeep = ["gen", "files", ".well-known"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
 		console.log(`Copying ${folder}...`);
 		await mySpawn("rsync", [

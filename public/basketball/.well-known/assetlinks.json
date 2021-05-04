@@ -1,0 +1,12 @@
+[
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "com.basketball_gm.play.twa",
+			"sha256_cert_fingerprints": [
+				"2A:A5:9F:98:95:97:03:76:ED:2D:7C:A7:7C:95:B3:1C:9B:86:28:82:5C:9A:3E:40:D3:7A:16:03:30:0E:2F:D8"
+			]
+		}
+	}
+]

@@ -20,14 +20,17 @@ const addRetiredJerseyNumbers = ({
 		name: string;
 		pid: number;
 		tid: number;
-		srID: string;
+		srID?: string;
 	}[];
 	season: number;
 	phase: number;
 	allBios: Basketball["bios"];
 	allRetiredJerseyNumbers: Basketball["retiredJerseyNumbers"];
 }) => {
-	const playersBySlug = groupByUnique(players, "srID");
+	const playersBySlug = groupByUnique(
+		players.filter(p => p.srID !== undefined),
+		"srID",
+	);
 
 	const teamsBySlug = groupByUnique(teams, t =>
 		oldAbbrevTo2020BBGMAbbrev(t.srID),

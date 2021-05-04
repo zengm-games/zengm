@@ -200,7 +200,6 @@ const getSeasonsToPlot = async (
 				teams[j].otl = teamSeason.otl;
 				teams[j].winp = helpers.calcWinp(teamSeason);
 				teams[j].ptsPct = team.ptsPct(teamSeason);
-				console.log(teamSeason, teams[j].winp, teams[j].ptsPct);
 			}
 
 			teams[j].stat = statSumsBySeason[j][i];

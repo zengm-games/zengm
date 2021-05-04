@@ -348,7 +348,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			setPlayIndex(prev => prev + numPlays);
 		};
 
-		const skipMinutes = [
+		let skipMinutes = [
 			{
 				minutes: 1,
 				key: "O",
@@ -370,6 +370,17 @@ const LiveGame = (props: View<"liveGame">) => {
 				key: "S",
 			},
 		];
+
+		// Dedupe
+		const skipMinutesValues = new Set();
+		skipMinutes = skipMinutes.filter(({ minutes }) => {
+			if (skipMinutesValues.has(minutes)) {
+				return false;
+			}
+
+			skipMinutesValues.add(minutes);
+			return true;
+		});
 
 		const menuItems = [
 			...skipMinutes.map(({ minutes, key }) => ({

@@ -1,9 +1,19 @@
+twa
+- https://developer.chrome.com/docs/android/trusted-web-activity/query-parameters/
+
 fbgm2
 - game sim
   - don't scramble if it's hail mary time
   - EPA based play selection?
     - nflscrapR https://old.reddit.com/message/messages/1151cu2
 - test if team ovr formula is better now
+
+trade finder, with salary cap rules enforced
+- add checkbox to trading block, trade page
+- add another "what would make this deal work?" button
+- how should it work?
+  - could work same as now, but never add a player that takes it above the limit, and then have an extra step at the end where it tries to add filler salary
+  - even better - filler salary could be added up front, to allow taking a bigger contract back... but how exactly?
 
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?

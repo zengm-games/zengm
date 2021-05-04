@@ -197,7 +197,10 @@ const augmentPartialPlayer = async (
 
 	const r2 = p.ratings[p.ratings.length - 1];
 
-	if (isSport("football") && (!r2.ovrs || !r2.pots || !r2.pos)) {
+	if (
+		(isSport("football") || isSport("hockey")) &&
+		(!r2.ovrs || !r2.pots || !r2.pos)
+	) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
 		await develop(p, 0);
 	}

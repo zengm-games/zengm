@@ -2,8 +2,6 @@ import fs from "fs";
 import http from "http";
 import path from "path";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
 const port = 3000;
 
 const mimeTypes = {
@@ -31,7 +29,7 @@ const sendFile = (res, filename) => {
 		console.log(`Unknown mime type for extension ${ext}`);
 	}
 
-	fs.createReadStream(path.join(__dirname, "../build", filename)).pipe(res);
+	fs.createReadStream(path.join("build", filename)).pipe(res);
 };
 
 const showStatic = (req, res) => {

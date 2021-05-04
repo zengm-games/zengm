@@ -86,7 +86,7 @@ const attempt = async (valueChangeKey: number) => {
 		},
 	];
 
-	const teams = await makeItWork(teams0, false, valueChangeKey);
+	const teams = await makeItWork(teams0, false, 5, valueChangeKey);
 
 	if (!teams) {
 		return false;

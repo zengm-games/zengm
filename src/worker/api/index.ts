@@ -1347,7 +1347,11 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			];
 
 			if (tid !== g.get("userTid")) {
-				const teams2 = await trade.makeItWork(teams, true);
+				const teams2 = await trade.makeItWork(
+					teams,
+					true,
+					4 + userPids.length + userDpids.length,
+				);
 
 				if (teams2) {
 					const summary = await trade.summary(teams2);

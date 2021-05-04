@@ -8,12 +8,9 @@ fbgm2
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
 
-spamming "what would make this work" shouldn't keep adding assets
-
 salary cap growth setting
 - random number between min and max?
-
-does trading block give best offers? should it?
+- https://discord.com/channels/290013534023057409/290015468939640832/838829528822054923
 
 add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 

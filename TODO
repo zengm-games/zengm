@@ -1,3 +1,5 @@
+counter proposals too jumpy, get rid of that extra iteration at the end maybe?
+
 twa
 - bbgm
 - other games
@@ -50,10 +52,6 @@ view console.log output from worker console UI https://discord.com/channels/2900
 
 trade value of players vs picks as difficulty changes https://mail.google.com/mail/u/0/#inbox/FMfcgxwLtkQskcMSQwdhHzQvdwXMKqSG
 
-random debuts starting at draft - no players on rosters https://discord.com/channels/290013534023057409/331882115119448065/836444807186481182
-
-Playing time (+/-/0/++) carries over if a player is drafted in an expansion draft, so expansion team would have the PT setting that X player had on their old team https://discord.com/channels/290013534023057409/290015591216054273/836304456738930719
-
 playoff series W/L in live sim double incrementing https://discord.com/channels/290013534023057409/290015591216054273/835678883466313769
 
 disable injuries without god mode before league? https://discord.com/channels/@me/831754887058423819/833206526780768277
@@ -75,14 +73,6 @@ for shot type distributions, base it on real player ratings (model ratings -> sh
 - even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
 - last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 - https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
-
-ad stuff
-- https://mail.google.com/mail/u/0/#sent/KtbxLthVctNVLxBrRBdGxbpcLVdvwHlGQq
-- CPM from skyscraper and leaderboard really worth it? why not add at bottom? could fit like 4-5 squares there
-  - especially for skyscraper
-- sometimes leaderboard displays a small ad, like 320x50... in that case, why not show two of them? didn't you say you could do that?
-- add another ad at the top, for wide screens?
-- mobile - would bigger ad unit at bottom work just as well?
 
 draft class quality setting
 - by default, it's random

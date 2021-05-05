@@ -229,7 +229,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 				p.draft.year = draftYears[i];
 				p.born.year += diff;
 
-				if (p.draft.year < options.season) {
+				if (
+					p.draft.year < options.season ||
+					(p.draft.year === options.season && options.phase > PHASE.DRAFT)
+				) {
 					// Active player on a team
 					const tid = tids.pop();
 					if (tid === undefined) {
@@ -237,6 +240,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 					}
 
 					p.tid = tid;
+					console.log(
+						"active",
+						p.draft.year < options.season,
+						p.draft.year === options.season && options.phase > PHASE.DRAFT,
+						p.tid,
+					);
 
 					const targetRatingsSeason = options.season - diff;
 
@@ -505,7 +514,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 		// Mark players as retired - don't delete, so we have full season stats and awards.
 		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
 		// Skip 2021 because we don't have 2021 data yet!
-		if (options.phase > PHASE.PLAYOFFS && options.season < 2021) {
+		if (
+			options.phase > PHASE.PLAYOFFS &&
+			options.season < 2021 &&
+			!options.randomDebuts
+		) {
 			const nextSeasonSlugs = new Set();
 			for (const row of basketball.ratings) {
 				if (row.season === options.season + 1) {
@@ -524,7 +537,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 		// Assign expansion draft players to their teams
 		if (
 			options.phase >= PHASE.DRAFT_LOTTERY &&
-			basketball.expansionDrafts[options.season]
+			basketball.expansionDrafts[options.season] &&
+			!options.randomDebuts
 		) {
 			for (const [abbrev, slugs] of Object.entries(
 				basketball.expansionDrafts[options.season],
@@ -547,7 +561,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		// Assign drafted players to their teams
-		if (options.phase > PHASE.DRAFT) {
+		if (options.phase > PHASE.DRAFT && !options.randomDebuts) {
 			for (const dp of basketball.draftPicks[options.season]) {
 				if (!dp.slug) {
 					continue;

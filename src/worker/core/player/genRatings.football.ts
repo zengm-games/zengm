@@ -1,7 +1,7 @@
 import genFuzz from "./genFuzz";
 import limitRating from "./limitRating";
 import { helpers, random } from "../../util";
-// import posFootball from "./pos.football";
+import posFootball from "./pos.football";
 import { POSITION_COUNTS } from "../../../common/constants.football";
 import type { PlayerRatings } from "../../../common/types.football";
 
@@ -77,6 +77,8 @@ const getRatingsToBoost = (pos: string) => {
 			elu: 0.5,
 			rtr: 1,
 			hnd: 1,
+			rbk: -0.5,
+			pbk: -0.5,
 			tck: -1,
 			prs: -1,
 			rns: -1,
@@ -86,12 +88,13 @@ const getRatingsToBoost = (pos: string) => {
 	if (pos === "TE") {
 		return {
 			hgt: 1,
-			stre: 0.5,
+			stre: 0.7,
 			spd: 0.5,
 			elu: -0.5,
-			rtr: 0.75,
-			hnd: 0.75,
-			rbk: 0.25,
+			rtr: 0.8,
+			hnd: 0.8,
+			rbk: 0.7,
+			pbk: 0.7,
 			tck: -1,
 			prs: -1,
 			rns: -1,
@@ -224,10 +227,10 @@ const heightToInches = (hgt: number) => {
 	return Math.round(64 + (hgt * (82 - 64)) / 100);
 };
 
-/*const info: any = {};
+const info: any = {};
 const infoIn: any = {};
 const infoOut: any = {};
-let timeoutID: any;*/
+let timeoutID: any;
 
 const initialRating = () => limitRating(random.truncGauss(10, 10, 0, 40));
 
@@ -388,7 +391,7 @@ const genRatings = (
 		pots: { ...defaultOvrsOrPots },
 	};
 
-	/*const pos2 = posFootball(ratings);
+	const pos2 = posFootball(ratings);
 	info[`${pos}->${pos2}`] =
 		info[`${pos}->${pos2}`] === undefined ? 1 : info[`${pos}->${pos2}`] + 1;
 	infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
@@ -401,7 +404,7 @@ const genRatings = (
 				console.log(pos2, infoIn[pos2], infoOut[pos2]);
 			}
 		}
-	}, 1000);*/
+	}, 1000);
 
 	return {
 		heightInInches: heightToInches(ratings.hgt),

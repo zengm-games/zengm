@@ -35,7 +35,7 @@ const info = {
 		gettingOpen: [2, 1],
 		passBlocking: [2, 1],
 		runBlocking: [2, 1],
-		constant0: [-0.5, 1],
+		constant0: [-0.525, 1],
 	},
 	OL: {
 		passBlocking: [3, 1],

@@ -26,14 +26,10 @@ const genContract = (
 
 	if (isSport("football")) {
 		if (ratings.pos === "QB") {
-			if (p.value >= 85) {
+			if (p.value >= 75) {
 				factor2 *= 1.25;
-			} else if (p.value >= 70) {
-				factor2 *= 0.75 + ((p.value - 70) * 0.5) / 15;
-			} else if (p.value >= 60) {
-				factor2 *= 0.25 + ((p.value - 60) * 0.5) / 10;
-			} else {
-				factor2 *= 0.25;
+			} else if (p.value >= 50) {
+				factor2 *= 0.75 + ((p.value - 50) * 0.5) / 25;
 			}
 		} else if (ratings.pos === "K" || ratings.pos === "P") {
 			factor *= 0.25;

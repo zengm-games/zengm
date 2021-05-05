@@ -282,6 +282,7 @@ class GameSim {
 
 				const centers = [];
 				const wings = [];
+				const notInDefinedLines = [];
 
 				for (let i = 0; i < players.length; i++) {
 					const p = players[i];
@@ -291,14 +292,17 @@ class GameSim {
 
 					// For the 4 defined lines, first of the 3 players is the center
 					if (i >= numInDepthChart) {
-						centers.push(p);
-						wings.push(p);
+						notInDefinedLines.push(p);
 					} else if (i % NUM_PLAYERS_PER_LINE[pos] === 0) {
 						centers.push(p);
 					} else {
 						wings.push(p);
 					}
 				}
+
+				// This ensures that any subs from the bench will be taken based on how good they are as a C/W (previously, it'd just take the best ovr player)
+				centers.push(...orderBy(notInDefinedLines, p => p.ovrs.C, "desc"));
+				wings.push(...orderBy(notInDefinedLines, p => p.ovrs.W, "desc"));
 
 				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
 				for (const line of lines) {

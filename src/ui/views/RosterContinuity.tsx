@@ -17,7 +17,7 @@ const RosterContinuity = ({
 	abbrevs,
 	season,
 	seasons,
-	userTid,
+	userAbbrev,
 }: View<"rosterContinuity">) => {
 	useTitleBar({
 		title: "Roster Continuity",
@@ -28,7 +28,7 @@ const RosterContinuity = ({
 		...abbrevs.map(
 			(abbrev, i): Col => {
 				return {
-					classNames: userTid === i ? "table-info" : undefined,
+					classNames: userAbbrev === abbrev ? "table-info" : undefined,
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 					title: abbrev,
@@ -76,7 +76,6 @@ RosterContinuity.propTypes = {
 	abbrevs: PropTypes.arrayOf(PropTypes.string).isRequired,
 	season: PropTypes.number.isRequired,
 	seasons: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default RosterContinuity;

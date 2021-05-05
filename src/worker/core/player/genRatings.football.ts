@@ -59,7 +59,8 @@ const getRatingsToBoost = (pos: string) => {
 
 	if (pos === "RB") {
 		return {
-			spd: 1,
+			stre: 0.25,
+			spd: 1.3,
 			bsc: 1,
 			elu: 1,
 			rtr: 0.5,

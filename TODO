@@ -1,3 +1,13 @@
+use team ovr for determining value of free agents, draft picks
+- https://github.com/zengm-games/zengm/issues/380
+- new team ovr data for fbgm, with injuries and subs
+- team ovr formulas should handle any number of players at each position, maybe with exponential decay, and maybe with something to account for the number of starters
+- team ovr function needs ability to use "value" or "pot" rather than ovr
+- use in free agency
+  - don't want to have to compute this for every (team, prospect), maybe just look at a subset?
+- use in draft
+  - probably only need to compute for the top N prospects
+
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 
 twa
@@ -71,8 +81,11 @@ If you play a league with draft type:"no draft, rookies as free agents" ; random
 
 for shot type distributions, base it on real player ratings (model ratings -> shot distribution) "y= softmax(Wx) with x being ratings and y being the shot distribution." @nicidob
 - even more fun... you can implement ideas like "midrange is the leftover shot" if you fix the logit value for the mid-range to a constant and just learn parameters for the other shots.
+  - decay for non-starters... depends on # of starters, maybe? different if 1 starter or 5?
 - last perk: you can do this independently for every single year (or batch the years) and either use those parameters raw or smooth them and get more fun historical curves that aren't just "3p tendency"
 - https://old.reddit.com/r/BasketballGM/comments/luvq8s/monthly_suggestions_thread/gpbdvg2/
+- make some flag to enable this for certain sports only, and do one at a time
+- get rid of hacky position balance code for signing free agents, hopefully no longer needed
 
 draft class quality setting
 - by default, it's random
@@ -104,6 +117,8 @@ New bug: if you have a pop-up window open with the roster page or whatever, and 
 teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.com/channels/290013534023057409/290015591216054273/817944239442624522
 
 hockey
+- rather than no goalie fatigue in playoffs, maybe make it a small amount of fatigue?
+  - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
 - game sim performance
 - ovr PR
 

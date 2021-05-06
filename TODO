@@ -4,8 +4,6 @@ use team ovr for determining value of free agents, draft picks
 - team ovr formulas should handle any number of players at each position, maybe with exponential decay, and maybe with something to account for the number of starters
 - use in free agency
   - don't want to have to compute this for every (team, prospect), maybe just look at a subset?
-- use in draft
-  - probably only need to compute for the top N prospects
 - football
 - hockey
 

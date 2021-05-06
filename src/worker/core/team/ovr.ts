@@ -15,6 +15,7 @@ const ovr = (
 	options: {
 		pos?: string;
 		rating?: string;
+		wholeRoster?: boolean;
 	} = {},
 ) => {
 	return bySport({
@@ -23,6 +24,7 @@ const ovr = (
 		}),
 		football: ovrFootball(players, {
 			onlyPos: options.pos,
+			wholeRoster: options.wholeRoster,
 		}),
 		hockey: ovrHockey(players as any, {
 			onlyPos: options.pos,

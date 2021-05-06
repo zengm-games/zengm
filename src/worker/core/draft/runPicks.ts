@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
@@ -9,6 +9,61 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../../common/types";
+import { team } from "..";
+
+const DRAFT_BY_TEAM_OVR = isSport("football");
+
+const getTeamOvrDiffByPid = async (
+	tid: number,
+	players: Player<MinimalPlayerRatings>[],
+) => {
+	const diffs: Record<number, number> = {};
+
+	if (!DRAFT_BY_TEAM_OVR) {
+		return diffs;
+	}
+
+	const teamPlayersRaw = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		tid,
+	);
+	const teamPlayers = await idb.getCopies.playersPlus(teamPlayersRaw, {
+		attrs: ["value"],
+		ratings: ["ovr", "ovrs", "pos"],
+		season: g.get("season"),
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+		tid,
+	});
+
+	const baseline = team.ovr(teamPlayers, {
+		wholeRoster: true,
+	});
+
+	for (const p of players) {
+		const ratings = p.ratings[p.ratings.length - 1];
+		diffs[p.pid] =
+			team.ovr(
+				[
+					...teamPlayers,
+					{
+						value: p.value,
+						ratings: {
+							ovr: ratings.ovr,
+							ovrs: ratings.ovrs,
+							pos: ratings.pos,
+						},
+					},
+				],
+				{
+					wholeRoster: true,
+				},
+			) - baseline;
+	}
+
+	return diffs;
+};
 
 /**
  * Simulate draft picks until it's the user's turn or the draft is over.
@@ -107,9 +162,26 @@ const runPicks = async (
 					}
 				}
 
-				const selection = random.choice(playersAll, p => p.value ** 69);
+				const teamOvrDiffByPid = await getTeamOvrDiffByPid(dp.tid, playersAll);
 
-				// 0=best prospect, 1=next best prospect, etc.
+				const score = (p: Player<MinimalPlayerRatings>) => {
+					if (DRAFT_BY_TEAM_OVR) {
+						return (teamOvrDiffByPid[p.pid] + 0.05 * p.value) ** 40;
+					}
+
+					return p.value ** 69;
+				};
+				/*let sum = 0;
+				for (const p of playersAll) {
+					sum += score(p);
+				}
+				for (const p of playersAll) {
+					console.log(p.firstName, p.lastName, teamOvrDiffByPid[p.pid], 0.025 * p.value, score(p) / sum);
+				}
+				console.log(sum);*/
+
+				const selection = random.choice(playersAll, score);
+
 				const pid = selection.pid;
 				await selectPlayer(dp, pid);
 				pids.push(pid);

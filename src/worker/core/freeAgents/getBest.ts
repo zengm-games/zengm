@@ -82,8 +82,6 @@ const getBest = <T extends PlayerWithoutKey>(
 			return p;
 		}
 	}
-
-	console.log("getBest failed", playersSorted);
 };
 
 export default getBest;

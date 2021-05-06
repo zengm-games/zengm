@@ -1,4 +1,6 @@
 import orderBy from "lodash-es/orderBy";
+import { POSITION_COUNTS } from "../../../common/constants.football";
+import type { PrimaryPosition } from "../../../common/types.football";
 import { helpers } from "../../../worker/util";
 
 // See analysis/team-ovr-football
@@ -22,60 +24,55 @@ const ovr = (
 	},
 ) => {
 	// minLength - number of players at this position who typically play in a game, barring injuries. These are the only players used when wholeRoster is false (normal power rankings).
-	const info = {
+	const info: Record<
+		PrimaryPosition,
+		{
+			values: number[];
+			weights: number[];
+		}
+	> = {
 		QB: {
-			values: [] as number[],
-			minLength: 1,
+			values: [],
 			weights: [0.14020132],
 		},
 		RB: {
-			values: [] as number[],
-			minLength: 2,
-			weights: [0.04154452, 0.00650348],
+			values: [],
+			weights: [0.04154452],
 		},
 		TE: {
-			values: [] as number[],
-			minLength: 2,
-			weights: [0.02776459, 0.005],
+			values: [],
+			weights: [0.02776459],
 		},
 		WR: {
-			values: [] as number[],
-			minLength: 5,
-			weights: [0.02381475, 0.01436188, 0.01380022, 0.005, 0.005],
+			values: [],
+			weights: [0.02381475, 0.01436188, 0.01380022],
 		},
 		OL: {
-			values: [] as number[],
-			minLength: 5,
+			values: [],
 			weights: [0.1362113, 0.10290326, 0.07238786, 0.07662868, 0.08502353],
 		},
 		CB: {
-			values: [] as number[],
-			minLength: 3,
-			weights: [0.07704007, 0.06184627, 0.03215704],
+			values: [],
+			weights: [0.07704007, 0.06184627],
 		},
 		S: {
-			values: [] as number[],
-			minLength: 3,
-			weights: [0.04717957, 0.03800769, 0.00527162],
+			values: [],
+			weights: [0.04717957, 0.03800769],
 		},
 		LB: {
-			values: [] as number[],
-			minLength: 4,
-			weights: [0.05825392, 0.0242329, 0.00794022, 0.005],
+			values: [],
+			weights: [0.05825392, 0.0242329],
 		},
 		DL: {
-			values: [] as number[],
-			minLength: 4,
+			values: [],
 			weights: [0.17763777, 0.12435656, 0.09421874, 0.07085633],
 		},
 		K: {
-			values: [] as number[],
-			minLength: 1,
+			values: [],
 			weights: [0.04497254],
 		},
 		P: {
-			values: [] as number[],
-			minLength: 1,
+			values: [],
 			weights: [0.0408595],
 		},
 	};
@@ -106,10 +103,14 @@ const ovr = (
 	}
 
 	const INTERCEPT = -97.2246364425006;
-	const DEFAULT_OVR = 30;
+	const DEFAULT_OVR = 0;
 
 	let predictedMOV = INTERCEPT;
-	for (const { values, minLength, weights } of Object.values(info)) {
+	for (const pos of helpers.keys(info)) {
+		const { values, weights } = info[pos];
+
+		const minLength = weights.length;
+
 		const numToInclude = wholeRoster
 			? Math.max(values.length, minLength)
 			: minLength;
@@ -122,9 +123,15 @@ const ovr = (
 			// Extrapolate weight for bench players
 			if (weight === undefined) {
 				// Decay slower for positions with many players, because injury substitutions will be more likely
-				const base = (1 + minLength) * 0.1;
+				const base = (3 + minLength) * 0.05;
 				const lastWeight = weights[weights.length - 1];
-				const exponent = i - minLength + 1;
+				let exponent = i - minLength + 1;
+
+				// Penalty for exceeding normal roster limits
+				if (i >= POSITION_COUNTS[pos]) {
+					exponent += 2;
+				}
+
 				weight = lastWeight * base ** exponent;
 			}
 

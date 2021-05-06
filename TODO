@@ -2,7 +2,9 @@ use team ovr for determining value of free agents, draft picks
 - https://github.com/zengm-games/zengm/issues/380
 - new team ovr data for fbgm
 - team ovr formulas should handle any number of players at each position, maybe with exponential decay, and maybe with something to account for the number of starters
-- benchmarke getBest (especially in league creation)
+- benchmark getBest (especially in league creation)
+- metric
+  - fraction of top 10 QBs who are backups
 - use in free agency
   - don't want to have to compute this for every (team, prospect), maybe just look at a subset?
 - football

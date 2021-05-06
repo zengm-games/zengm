@@ -43,24 +43,24 @@ export const getTeamOvrDiffs = (
 
 	return players.map(p => {
 		const ratings = p.ratings[p.ratings.length - 1];
-		return (
-			team.ovr(
-				[
-					...teamPlayers2,
-					{
-						value: p.value,
-						ratings: {
-							ovr: ratings.ovr,
-							ovrs: ratings.ovrs,
-							pos: ratings.pos,
-						},
-					},
-				],
+		const newOvr = team.ovr(
+			[
+				...teamPlayers2,
 				{
-					wholeRoster: true,
+					value: p.value,
+					ratings: {
+						ovr: ratings.ovr,
+						ovrs: ratings.ovrs,
+						pos: ratings.pos,
+					},
 				},
-			) - baseline
+			],
+			{
+				wholeRoster: true,
+			},
 		);
+
+		return newOvr - baseline;
 	});
 };
 

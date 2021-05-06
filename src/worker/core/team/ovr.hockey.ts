@@ -69,7 +69,11 @@ const ovr = (
 			pos: string;
 		};
 	}[],
-	onlyPos?: string,
+	{
+		onlyPos,
+	}: {
+		onlyPos?: string;
+	},
 ) => {
 	const info = getPlayersInLines(players);
 

@@ -17,9 +17,15 @@ const ovr = (
 	} = {},
 ) => {
 	return bySport({
-		basketball: ovrBasketball(players, options.rating),
-		football: ovrFootball(players, options.pos),
-		hockey: ovrHockey(players as any, options.pos),
+		basketball: ovrBasketball(players, {
+			rating: options.rating,
+		}),
+		football: ovrFootball(players, {
+			onlyPos: options.pos,
+		}),
+		hockey: ovrHockey(players as any, {
+			onlyPos: options.pos,
+		}),
 	});
 };
 

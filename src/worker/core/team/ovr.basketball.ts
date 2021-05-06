@@ -7,7 +7,11 @@ const ovr = (
 			pos: string;
 		};
 	}[],
-	rating?: string,
+	{
+		rating,
+	}: {
+		rating?: string;
+	},
 ) => {
 	const ratings = players
 		.slice()

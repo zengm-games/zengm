@@ -7,6 +7,7 @@ import { helpers } from "../../../worker/util";
 // wholeRoster=true is used for computing team value of the whole roster
 const ovr = (
 	players: {
+		value: number;
 		ratings: {
 			ovr: number;
 			pos: string;
@@ -23,86 +24,98 @@ const ovr = (
 	// minLength - number of players at this position who typically play in a game, barring injuries. These are the only players used when wholeRoster is false (normal power rankings).
 	const info = {
 		QB: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 1,
 			weights: [0.14020132],
 		},
 		RB: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 2,
 			weights: [0.04154452, 0.00650348],
 		},
 		TE: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 2,
 			weights: [0.02776459, 0.005],
 		},
 		WR: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 5,
 			weights: [0.02381475, 0.01436188, 0.01380022, 0.005, 0.005],
 		},
 		OL: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 5,
 			weights: [0.1362113, 0.10290326, 0.07238786, 0.07662868, 0.08502353],
 		},
 		CB: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 3,
 			weights: [0.07704007, 0.06184627, 0.03215704],
 		},
 		S: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 3,
 			weights: [0.04717957, 0.03800769, 0.00527162],
 		},
 		LB: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 4,
 			weights: [0.05825392, 0.0242329, 0.00794022, 0.005],
 		},
 		DL: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 4,
 			weights: [0.17763777, 0.12435656, 0.09421874, 0.07085633],
 		},
 		K: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 1,
 			weights: [0.04497254],
 		},
 		P: {
-			ovrs: [] as number[],
+			values: [] as number[],
 			minLength: 1,
 			weights: [0.0408595],
 		},
 	};
 
-	const ratings = orderBy(
-		players.map(p => p.ratings),
-		"ovr",
+	const playerInfo = orderBy(
+		players.map(p => {
+			if (wholeRoster) {
+				return {
+					pos: p.ratings.pos,
+					value: p.value,
+				};
+			}
+
+			return {
+				pos: p.ratings.pos,
+				value: p.ratings.ovr,
+			};
+		}),
+		"value",
 		"desc",
 	);
 
-	for (const { ovr, pos } of ratings) {
+	for (const { pos, value } of playerInfo) {
 		const infoPos = (info as any)[pos] as typeof info["P"] | undefined;
 		if (infoPos && (onlyPos === undefined || onlyPos === pos)) {
-			infoPos.ovrs.push(ovr);
+			infoPos.values.push(value);
 		}
 	}
 
 	const INTERCEPT = -97.2246364425006;
-	const DEFAULT_OVR = 20;
+	const DEFAULT_OVR = 30;
 
 	let predictedMOV = INTERCEPT;
-	for (const { ovrs, minLength, weights } of Object.values(info)) {
+	for (const { values, minLength, weights } of Object.values(info)) {
 		const numToInclude = wholeRoster
-			? Math.max(ovrs.length, minLength)
+			? Math.max(values.length, minLength)
 			: minLength;
 		for (let i = 0; i < numToInclude; i++) {
 			// Use DEFAULT_OVR if there are fewer than minLength players at this position
-			const ovr = ovrs[i] ?? DEFAULT_OVR;
+			const value = values[i] ?? DEFAULT_OVR;
 
 			let weight = weights[i];
 
@@ -115,7 +128,7 @@ const ovr = (
 				weight = lastWeight * base ** exponent;
 			}
 
-			predictedMOV += weight * ovr;
+			predictedMOV += weight * value;
 		}
 	}
 

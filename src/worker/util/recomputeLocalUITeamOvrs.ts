@@ -11,9 +11,9 @@ const recomputeLocalUITeamOvrs = async () => {
 			Infinity,
 		])
 	).map(p => ({
-		pid: p.pid,
 		tid: p.tid,
 		injury: p.injury,
+		value: p.value,
 		ratings: {
 			ovr: player.fuzzRating(
 				p.ratings[p.ratings.length - 1].ovr,

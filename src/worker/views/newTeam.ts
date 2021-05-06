@@ -7,6 +7,7 @@ import { team } from "../core";
 const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: ["value"],
 		ratings: ["ovr", "pot", "ovrs", "pos"],
 		season: g.get("season"),
 		tid,

@@ -826,7 +826,10 @@ export const createWithoutSaving = async (
 		if (teamInfos[i].strategy === undefined) {
 			const teamPlayers = players
 				.filter(p => p.tid === i)
-				.map(p => ({ ratings: p.ratings[p.ratings.length - 1] }));
+				.map(p => ({
+					value: p.value,
+					ratings: p.ratings[p.ratings.length - 1],
+				}));
 			const ovr = team.ovr(teamPlayers);
 			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}

@@ -27,7 +27,7 @@ export const getUpcoming = async ({
 	const healthyPlayers = await idb.getCopies.playersPlus(
 		playersRaw.filter(p => p.injury.gamesRemaining === 0),
 		{
-			attrs: ["tid", "pid"],
+			attrs: ["tid", "pid", "value"],
 			ratings: ["ovr", "pos", "ovrs"],
 			season: g.get("season"),
 			fuzz: true,

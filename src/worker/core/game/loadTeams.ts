@@ -45,7 +45,7 @@ const processTeam = (
 	const playersCurrent = players
 		.filter((p: any) => p.injury.gamesRemaining === 0)
 		.map(p => ({
-			pid: p.pid,
+			value: p.value,
 			ratings: {
 				ovr: player.fuzzRating(
 					p.ratings[p.ratings.length - 1].ovr,

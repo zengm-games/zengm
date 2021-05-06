@@ -72,7 +72,7 @@ const updatePowerRankings = async (
 				}
 
 				teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
-					attrs: ["tid", "injury"],
+					attrs: ["tid", "injury", "value"],
 					ratings,
 					stats: ["season", "tid"],
 					season,

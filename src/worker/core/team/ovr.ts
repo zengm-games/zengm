@@ -5,6 +5,7 @@ import ovrHockey from "./ovr.hockey";
 
 const ovr = (
 	players: {
+		value: number;
 		ratings: {
 			ovr: number;
 			ovrs: Record<string, number> | undefined;

@@ -694,6 +694,14 @@ export const createWithoutSaving = async (
 		}
 		keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
 
+		// Needed for getBest, doesn't need to be perfect
+		for (const p of keptPlayers) {
+			p.value = player.value(p, {
+				ovrMean: 47,
+				ovrStd: 10,
+			});
+		}
+
 		// Then add other players, up to the limit
 		while (true) {
 			// Random order tids, so no team is a superpower
@@ -713,6 +721,7 @@ export const createWithoutSaving = async (
 				);
 
 				if (p) {
+					keptPlayers = keptPlayers.filter(p2 => p2 !== p);
 					await addPlayerToTeam(p, currentTid);
 				} else {
 					console.log(currentTid, "can't find player");
@@ -724,9 +733,10 @@ export const createWithoutSaving = async (
 				break;
 			}
 		}
-		keptPlayers = keptPlayers.filter(p => p.tid === PLAYER.UNDRAFTED);
 
-		const addToFreeAgents = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+		const addToFreeAgents = (
+			p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
+		) => {
 			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (p) {
 				// So half will be eligible to retire after the first season
@@ -760,9 +770,9 @@ export const createWithoutSaving = async (
 
 			const groupedPlayers = groupBy(keptPlayers, p => p.ratings[0].pos);
 
-			for (const [pos, positionCount] of Object.entries(POSITION_COUNTS)) {
+			for (const pos of Object.keys(groupedPlayers)) {
 				const limit = Math.round(
-					(maxNumFreeAgents * positionCount) / positionCountsSum,
+					(maxNumFreeAgents * POSITION_COUNTS[pos]) / positionCountsSum,
 				);
 
 				for (let i = 0; i < limit; i++) {

@@ -126,7 +126,10 @@ const uniformSeed = (seed: number): number => {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-const choice = <T>(x: T[], weightInput?: ((a: T) => number) | number[]): T => {
+const choice = <T>(
+	x: T[],
+	weightInput?: ((a: T, index: number) => number) | number[],
+): T => {
 	if (weightInput === undefined) {
 		return x[Math.floor(Math.random() * x.length)];
 	}

@@ -1,4 +1,5 @@
 import bySport from "./bySport";
+import isSport from "./isSport";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 import * as constantsHockey from "./constants.hockey";
@@ -20,6 +21,8 @@ const DIFFICULTY = {
 	Hard: 0.25,
 	Insane: 1,
 };
+
+const DRAFT_BY_TEAM_OVR = isSport("football");
 
 const MAX_SUPPORTED_LEAGUE_VERSION = 43;
 
@@ -348,6 +351,7 @@ export {
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
 	DIFFICULTY,
+	DRAFT_BY_TEAM_OVR,
 	EMAIL_ADDRESS,
 	FACEBOOK_USERNAME,
 	GAME_ACRONYM,

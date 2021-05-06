@@ -1,4 +1,4 @@
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
@@ -8,14 +8,13 @@ import type {
 	Conditions,
 	MinimalPlayerRatings,
 	Player,
+	PlayerWithoutKey,
 } from "../../../common/types";
-import { team } from "..";
+import { player, team } from "..";
 
-const DRAFT_BY_TEAM_OVR = isSport("football");
-
-const getTeamOvrDiffByPid = async (
-	tid: number,
-	players: Player<MinimalPlayerRatings>[],
+export const getTeamOvrDiffs = (
+	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
+	players: PlayerWithoutKey<MinimalPlayerRatings>[],
 ) => {
 	const diffs: Record<number, number> = {};
 
@@ -23,30 +22,31 @@ const getTeamOvrDiffByPid = async (
 		return diffs;
 	}
 
-	const teamPlayersRaw = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		tid,
-	);
-	const teamPlayers = await idb.getCopies.playersPlus(teamPlayersRaw, {
-		attrs: ["value"],
-		ratings: ["ovr", "ovrs", "pos"],
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-		tid,
-	});
+	const teamPlayers2 = teamPlayers.map(p => ({
+		value: p.value,
+		ratings: {
+			ovr: player.fuzzRating(
+				p.ratings[p.ratings.length - 1].ovr,
+				p.ratings[p.ratings.length - 1].fuzz,
+			),
+			ovrs: player.fuzzOvrs(
+				p.ratings[p.ratings.length - 1].ovrs,
+				p.ratings[p.ratings.length - 1].fuzz,
+			),
+			pos: p.ratings[p.ratings.length - 1].pos,
+		},
+	}));
 
-	const baseline = team.ovr(teamPlayers, {
+	const baseline = team.ovr(teamPlayers2, {
 		wholeRoster: true,
 	});
 
-	for (const p of players) {
+	return players.map(p => {
 		const ratings = p.ratings[p.ratings.length - 1];
-		diffs[p.pid] =
+		return (
 			team.ovr(
 				[
-					...teamPlayers,
+					...teamPlayers2,
 					{
 						value: p.value,
 						ratings: {
@@ -59,10 +59,9 @@ const getTeamOvrDiffByPid = async (
 				{
 					wholeRoster: true,
 				},
-			) - baseline;
-	}
-
-	return diffs;
+			) - baseline
+		);
+	});
 };
 
 /**
@@ -162,11 +161,15 @@ const runPicks = async (
 					}
 				}
 
-				const teamOvrDiffByPid = await getTeamOvrDiffByPid(dp.tid, playersAll);
+				const teamPlayers = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					dp.tid,
+				);
+				const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
 
-				const score = (p: Player<MinimalPlayerRatings>) => {
+				const score = (p: Player<MinimalPlayerRatings>, i: number) => {
 					if (DRAFT_BY_TEAM_OVR) {
-						return (teamOvrDiffByPid[p.pid] + 0.05 * p.value) ** 40;
+						return (teamOvrDiffs[i] + 0.05 * p.value) ** 40;
 					}
 
 					return p.value ** 69;
@@ -175,8 +178,9 @@ const runPicks = async (
 				for (const p of playersAll) {
 					sum += score(p);
 				}
-				for (const p of playersAll) {
-					console.log(p.firstName, p.lastName, teamOvrDiffByPid[p.pid], 0.025 * p.value, score(p) / sum);
+				for (let i = 0; i < playersAll.length; i++) {
+					const p = playersAll[i];
+					console.log(p.firstName, p.lastName, teamOvrDiffs[i], 0.05 * p.value, score(p) / sum);
 				}
 				console.log(sum);*/
 

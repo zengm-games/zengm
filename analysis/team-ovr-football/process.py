@@ -122,7 +122,7 @@ cols = get_cols()
 dataset = pd.DataFrame(cols)
 
 reg = LinearRegression(normalize=True)
-fit_cols = ['QB1', 'RB1', 'TE1', 'WR1', 'WR2', 'WR3', 'OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'CB1', 'CB2', 'S1', 'S2', 'LB1', 'LB2', 'LB3', 'DL1', 'DL2', 'DL3', 'DL4', 'K', 'P']
+fit_cols = ['QB1', 'RB1', 'TE1', 'WR1', 'WR2', 'WR3', 'OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'CB1', 'CB2', 'S1', 'S2', 'LB1', 'LB2', 'DL1', 'DL2', 'DL3', 'DL4', 'K', 'P']
 reg.fit(dataset[fit_cols], dataset['mov'])
 dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
 

@@ -10,6 +10,7 @@ use team ovr for determining value of free agents, draft picks
 - football
   - confirm K/P being signed
 - hockey
+  - share code with ovr.football.ts
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 

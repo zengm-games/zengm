@@ -9,7 +9,6 @@ import genStatsRow from "./genStatsRow";
 import generate from "./generate";
 import getContracts from "./getContracts";
 import getDepthPlayers from "./getDepthPlayers";
-import getNeededPositions from "./getNeededPositions";
 import getPayroll from "./getPayroll";
 import getPayrolls from "./getPayrolls";
 import ovr from "./ovr";
@@ -35,7 +34,6 @@ export default {
 	generate,
 	getContracts,
 	getDepthPlayers,
-	getNeededPositions,
 	getPayroll,
 	getPayrolls,
 	ovr,

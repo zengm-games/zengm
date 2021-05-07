@@ -600,20 +600,10 @@ export const createWithoutSaving = async (
 		const numPlayerPerTeam = Math.max(
 			g.get("maxRosterSize") - 2,
 			g.get("minRosterSize"),
-		);
-
-		// 13 for basketball
+		); // 13 for basketball
 		const maxNumFreeAgents = Math.round(
 			(activeTids.length / 3) * g.get("maxRosterSize"),
-		);
-
-		// 150 for basketball
-		// Would use value, but it doesn't exist yet
-		keptPlayers.sort(
-			(a, b) =>
-				b.ratings[b.ratings.length - 1].pot -
-				a.ratings[a.ratings.length - 1].pot,
-		);
+		); // 150 for basketball
 
 		// Keep track of number of players on each team
 		const numPlayersByTid: Record<number, number> = {};
@@ -703,13 +693,14 @@ export const createWithoutSaving = async (
 		}
 		keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
 
-		// Needed for getBest, doesn't need to be perfect
+		// value is needed for getBest (if DRAFT_BY_TEAM_OVR), and sorting, but doesn't need to be scaled correctly
 		for (const p of keptPlayers) {
 			p.value = player.value(p, {
 				ovrMean: 47,
 				ovrStd: 10,
 			});
 		}
+		keptPlayers.sort((a, b) => b.value - a.value);
 
 		// Then add other players, up to the limit
 		while (true) {

@@ -1,22 +1,43 @@
-import { team } from "..";
 import { g } from "../../util";
 import type { PlayerWithoutKey } from "../../../common/types";
-import { DRAFT_BY_TEAM_OVR, isSport } from "../../../common";
+import { DRAFT_BY_TEAM_OVR } from "../../../common";
 import { getTeamOvrDiffs } from "../draft/runPicks";
 import orderBy from "lodash-es/orderBy";
 
 // Find the best available free agent for a team.
-// playersAvailable should be sorted - best players first, worst players last. It will be mutated if a player is found, to remove the found player.
+// playersAvailable should be sorted - best players first, worst players last.
 // If payroll is not supplied, don't do salary cap check (like when creating new league).
 const getBest = <T extends PlayerWithoutKey>(
 	playersOnRoster: T[],
 	playersAvailable: T[],
 	payroll?: number,
 ): T | void => {
+	const maxRosterSize = g.get("maxRosterSize");
+	const minContract = g.get("minContract");
+	const salaryCap = g.get("salaryCap");
+
 	let playersSorted: T[];
 	if (DRAFT_BY_TEAM_OVR) {
-		const teamOvrDiffs = getTeamOvrDiffs(playersOnRoster, playersAvailable);
-		const wrapper = playersAvailable.map((p, i) => ({
+		// playersAvailable is sorted by value. So if we hit a player at a minimum contract at a position, no player with lower value needs to be considered
+		const seenMinContractAtPos = new Set();
+		const playersAvailableFiltered = playersAvailable.filter(p => {
+			const pos = p.ratings[p.ratings.length - 1].pos;
+			if (seenMinContractAtPos.has(pos)) {
+				return false;
+			}
+
+			if (p.contract.amount <= minContract) {
+				seenMinContractAtPos.add(pos);
+			}
+
+			return true;
+		});
+
+		const teamOvrDiffs = getTeamOvrDiffs(
+			playersOnRoster,
+			playersAvailableFiltered,
+		);
+		const wrapper = playersAvailableFiltered.map((p, i) => ({
 			p,
 			teamOvrDiff: teamOvrDiffs[i],
 		}));
@@ -25,53 +46,15 @@ const getBest = <T extends PlayerWithoutKey>(
 		playersSorted = playersAvailable;
 	}
 
-	const neededPositions = team.getNeededPositions(playersOnRoster);
-	const useNeededPositions = Math.random() < 0.9;
-
-	for (let i = 0; i < playersSorted.length; i++) {
-		const p = playersSorted[i];
-		/*const pos = p.ratings[p.ratings.length - 1].pos;
-
-		if (neededPositions.size > 0 && useNeededPositions) {
-			// Skip players if team already has enough at this position
-			if (!neededPositions.has(pos)) {
-				continue;
-			}
-		} else if (isSport("football") && !useNeededPositions) {
-			// Skip signing extra QBs, otherwise too many will be signed because values are higher
-			const pos = p.ratings[p.ratings.length - 1].pos;
-
-			if (pos === "QB") {
-				continue;
-			}
-		}*/
-
+	for (const p of playersSorted) {
 		const salaryCapCheck =
-			payroll === undefined ||
-			p.contract.amount + payroll <= g.get("salaryCap");
+			payroll === undefined || p.contract.amount + payroll <= salaryCap;
 
 		const shouldAddPlayerNormal =
-			salaryCapCheck && p.contract.amount > g.get("minContract");
+			salaryCapCheck && p.contract.amount > minContract;
 		const shouldAddPlayerMinContract =
-			p.contract.amount <= g.get("minContract") &&
-			playersOnRoster.length < g.get("maxRosterSize") - 2;
-
-		/*let shouldAddPlayerPosition = false;
-		if (
-			(isSport("football") &&
-				((neededPositions.has("K") && pos === "K") ||
-					(neededPositions.has("P") && pos === "P"))) ||
-			(isSport("hockey") && neededPositions.has("G") && pos === "G")
-		) {
-			shouldAddPlayerPosition = true;
-		}
-
-		// Otherwise hockey had an issue with signing and releasing a 3rd goalie repeatedly
-		if (isSport("hockey")) {
-			shouldAddPlayerPosition =
-				shouldAddPlayerPosition &&
-				playersOnRoster.length < g.get("maxRosterSize");
-		}*/
+			p.contract.amount <= minContract &&
+			playersOnRoster.length < maxRosterSize - 2;
 
 		// Don't sign minimum contract players to fill out the roster
 		if (

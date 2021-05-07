@@ -1,7 +1,13 @@
 import { groupBy } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
+import {
+	DRAFT_BY_TEAM_OVR,
+	isSport,
+	PHASE,
+	PLAYER,
+	POSITION_COUNTS,
+} from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
@@ -507,14 +513,17 @@ export const createWithoutSaving = async (
 				[],
 			);
 
-			// Very rough simulation of a draft
-			for (const p of draftClass) {
-				// Temp, just for draft ordering
-				p.value = player.value(p, {
-					ovrMean: 47,
-					ovrStd: 10,
-				});
+			if (DRAFT_BY_TEAM_OVR) {
+				for (const p of draftClass) {
+					// Temp, just for draft ordering
+					p.value = player.value(p, {
+						ovrMean: 47,
+						ovrStd: 10,
+					});
+				}
 			}
+
+			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, "value", "desc");
 			for (const p of draftClass) {
 				// Reset

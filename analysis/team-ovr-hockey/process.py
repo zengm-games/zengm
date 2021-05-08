@@ -71,6 +71,7 @@ def get_cols():
 
             return ovrs_by_pos
 
+        count = 0
         for t in data['teams']:
             tid = t['tid']
             for ts in t['stats']:
@@ -104,7 +105,9 @@ def get_cols():
                     cols['G1'].append(ovrs['G'][0] if len(ovrs['G']) >= 1 else default_ovr)
                     cols['G2'].append(ovrs['G'][1] if len(ovrs['G']) >= 2 else default_ovr)
 
-        for i in range(len(cols['C1'])):
+                    count += 1
+
+        for i in range(count):
             cols['C'].append((cols['C1'][i] + cols['C2'][i] + cols['C3'][i] + 0.5 * cols['C4'][i]) / 3.5)
             cols['W'].append((cols['W1'][i] + cols['W2'][i] + cols['W3'][i] + cols['W4'][i] + cols['W5'][i] + cols['W6'][i] + 0.5 * cols['W7'][i] + 0.5 * cols['W8'][i]) / 7)
             cols['D'].append((cols['D1'][i] + cols['D2'][i] + cols['D3'][i] + cols['D4'][i] + cols['D5'][i] + cols['D6'][i]) / 6)
@@ -120,7 +123,7 @@ dataset = pd.DataFrame(cols)
 dataset['mov'] /= 10
 
 reg = LinearRegression(normalize=True)
-fit_cols = ['C1', 'C2', 'C3', 'C4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'G1']
+fit_cols = ['C1', 'C2', 'C3', 'C4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'G1', 'G2']
 # fit_cols = ['C', 'W', 'D', 'G']
 
 reg.fit(dataset[fit_cols], dataset['mov'])

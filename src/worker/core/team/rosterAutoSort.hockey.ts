@@ -1,9 +1,11 @@
 import { idb } from "../../db";
 import { g } from "../../util";
-import { NUM_LINES } from "../../../common/constants.hockey";
+import {
+	NUM_LINES,
+	NUM_PLAYERS_PER_LINE,
+} from "../../../common/constants.hockey";
 import type { Position } from "../../../common/types.hockey";
 import type { PlayerFiltered } from "../../../common/types";
-import { getPlayersInLines } from "./ovr.hockey";
 
 const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
@@ -15,7 +17,7 @@ const score = (p: PlayerFiltered, pos: Position) => {
 	return tempScore;
 };
 
-export const sortFunction = (pos: Position) => (
+const sortFunction = (pos: Position) => (
 	a: PlayerFiltered,
 	b: PlayerFiltered,
 ) => {
@@ -25,6 +27,63 @@ export const sortFunction = (pos: Position) => (
 		return b.pid - a.pid;
 	}
 	return diff;
+};
+
+const getPlayersInLines = <
+	T extends {
+		ratings: {
+			ovrs: Record<string, number>;
+			pos: string;
+		};
+	}
+>(
+	players: T[],
+) => {
+	const info = {
+		C: {
+			selected: [] as T[],
+			minLength: NUM_LINES.F * 1,
+			sorted: [...players].sort(sortFunction("C")),
+		},
+		W: {
+			selected: [] as T[],
+			minLength: NUM_LINES.F * 2,
+			sorted: [...players].sort(sortFunction("W")),
+		},
+		D: {
+			selected: [] as T[],
+			minLength: NUM_LINES.D * NUM_PLAYERS_PER_LINE.D,
+			sorted: [...players].sort(sortFunction("D")),
+		},
+		G: {
+			selected: [] as T[],
+			minLength: NUM_LINES.G * NUM_PLAYERS_PER_LINE.G,
+			sorted: [...players].sort(sortFunction("G")),
+		},
+	};
+
+	const maxLength = Math.max(...Object.values(info).map(x => x.minLength));
+
+	// Set starters (in lines)
+	const playersUsed = new Set<typeof players[number]>();
+	for (let i = 0; i < maxLength; i++) {
+		for (const pos of ["G", "C", "D", "W"] as const) {
+			const { selected, minLength, sorted } = info[pos];
+			if (selected.length >= minLength) {
+				continue;
+			}
+
+			for (const p of sorted) {
+				if (!playersUsed.has(p)) {
+					selected.push(p);
+					playersUsed.add(p);
+					break;
+				}
+			}
+		}
+	}
+
+	return info;
 };
 
 const rosterAutoSort = async (

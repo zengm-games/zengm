@@ -1,95 +1,28 @@
 import { helpers } from "../../../worker/util";
-import { sortFunction } from "./rosterAutoSort.hockey";
 import type { Position } from "../../../common/types.hockey";
 import ovrByPosFactory from "./ovrByPosFactory";
-import {
-	NUM_LINES,
-	NUM_PLAYERS_PER_LINE,
-} from "../../../common/constants.hockey";
 
-export const getPlayersInLines = <
-	T extends {
-		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
-		};
-	}
->(
-	players: T[],
-) => {
-	const info = {
-		C: {
-			selected: [] as T[],
-			minLength: NUM_LINES.F * 1,
-			sorted: [...players].sort(sortFunction("C")),
-		},
-		W: {
-			selected: [] as T[],
-			minLength: NUM_LINES.F * 2,
-			sorted: [...players].sort(sortFunction("W")),
-		},
-		D: {
-			selected: [] as T[],
-			minLength: NUM_LINES.D * NUM_PLAYERS_PER_LINE.D,
-			sorted: [...players].sort(sortFunction("D")),
-		},
-		G: {
-			selected: [] as T[],
-			minLength: NUM_LINES.G * NUM_PLAYERS_PER_LINE.G,
-			sorted: [...players].sort(sortFunction("G")),
-		},
-	};
+// See analysis/team-ovr-hockey
 
-	const maxLength = Math.max(...Object.values(info).map(x => x.minLength));
-
-	// Set starters (in lines)
-	const playersUsed = new Set<typeof players[number]>();
-	for (let i = 0; i < maxLength; i++) {
-		for (const pos of ["G", "C", "D", "W"] as const) {
-			const { selected, minLength, sorted } = info[pos];
-			if (selected.length >= minLength) {
-				continue;
-			}
-
-			for (const p of sorted) {
-				if (!playersUsed.has(p)) {
-					selected.push(p);
-					playersUsed.add(p);
-					break;
-				}
-			}
-		}
-	}
-
-	return info;
-};
-
-// See analysis/team-ovr-football
-
-const intercept = -6.7144658736958;
+const intercept = -9.269895772377641;
 
 // minLength - number of players at this position who typically play in a game, barring injuries. These are the only players used when wholeRoster is false (normal power rankings).
 const weights: Record<Position, number[]> = {
-	C: [0.005202835, 0.00877654, 0.009185773, 0.004233644],
+	C: [0.01062436, 0.0118963, 0.01141282, 0.00359347],
 	W: [
-		0.005874235,
-		0.003400263,
-		0.007665829,
-		0.005394165,
-		0.005760525,
-		0.003762088,
-		0.000313671,
-		0.001586573,
+		0.00802799,
+		0.00832277,
+		0.00866636,
+		0.01008319,
+		0.00829227,
+		0.00416982,
+		0.00298089,
+		0.00208876,
 	],
-	D: [
-		0.005936901,
-		0.006073251,
-		0.004355857,
-		0.003416357,
-		0.004270886,
-		0.0009828,
-	],
-	G: [0.032293141],
+	D: [0.00724259, 0.0083376, 0.00655347, 0.0074967, 0.0069662, 0.0031725],
+
+	// Manually redistributed/adjusted, because we kind of only want the first goalie to count for predicting MOV
+	G: [0.02535527, 0.0062926],
 };
 
 const scale = (predictedMOV: number) => {

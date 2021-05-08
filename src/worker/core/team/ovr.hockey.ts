@@ -1,5 +1,7 @@
 import { helpers } from "../../../worker/util";
 import { sortFunction } from "./rosterAutoSort.hockey";
+import type { Position } from "../../../common/types.hockey";
+import ovrByPosFactory from "./ovrByPosFactory";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -62,78 +64,40 @@ export const getPlayersInLines = <
 	return info;
 };
 
-const ovr = (
-	players: {
-		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
-		};
-	}[],
-	{
-		onlyPos,
-	}: {
-		onlyPos?: string;
-	},
-) => {
-	const info = getPlayersInLines(players);
+// See analysis/team-ovr-football
 
-	const ovrs = {
-		C: [] as number[],
-		W: [] as number[],
-		D: [] as number[],
-		G: [] as number[],
-	};
+const intercept = -6.7144658736958;
 
-	for (const pos of helpers.keys(info)) {
-		const { selected, minLength } = info[pos];
-		ovrs[pos] = selected.map(p => p.ratings.ovrs[pos]);
+// minLength - number of players at this position who typically play in a game, barring injuries. These are the only players used when wholeRoster is false (normal power rankings).
+const weights: Record<Position, number[]> = {
+	C: [0.005202835, 0.00877654, 0.009185773, 0.004233644],
+	W: [
+		0.005874235,
+		0.003400263,
+		0.007665829,
+		0.005394165,
+		0.005760525,
+		0.003762088,
+		0.000313671,
+		0.001586573,
+	],
+	D: [
+		0.005936901,
+		0.006073251,
+		0.004355857,
+		0.003416357,
+		0.004270886,
+		0.0009828,
+	],
+	G: [0.032293141],
+};
 
-		// Pad to minimum lengths
-		while (ovrs[pos].length < minLength) {
-			ovrs[pos].push(20);
-		}
-	}
-
-	const aggregated = {
-		C: (ovrs.C[0] + ovrs.C[1] + ovrs.C[2] + 0.5 * ovrs.C[3]) / 3.5,
-		W:
-			(ovrs.W[0] +
-				ovrs.W[1] +
-				ovrs.W[2] +
-				ovrs.W[3] +
-				ovrs.W[4] +
-				ovrs.W[5] +
-				0.5 * ovrs.W[6] +
-				0.5 * ovrs.W[7]) /
-			7,
-		D:
-			(ovrs.D[0] + ovrs.D[1] + ovrs.D[2] + ovrs.D[3] + ovrs.D[4] + ovrs.D[5]) /
-			6,
-		G: ovrs.G[0],
-	};
-
-	for (const pos of helpers.keys(aggregated)) {
-		if (onlyPos !== pos && onlyPos !== undefined) {
-			aggregated[pos] = 0;
-		}
-	}
-
-	// See analysis/team-ovr-hockey - divide by 10 due to quarter length in that data
-	const predictedMOV =
-		-6.786793385826883 +
-		0.033908896 * aggregated.C +
-		0.032181329 * aggregated.W +
-		0.032837313 * aggregated.D +
-		0.022552802 * aggregated.G;
-
-	if (onlyPos) {
-		// In this case, we're ultimately using the value to compute a rank, so we don't care about the scale. And bounding the scale to be positive below makes it always 0.
-		return predictedMOV;
-	}
-
+const scale = (predictedMOV: number) => {
 	// Translate from -0.9/0.9 to 0/100 scale
 	const rawOVR = (predictedMOV * 100) / 1.8 + 50;
 	return helpers.bound(Math.round(rawOVR), 0, Infinity);
 };
+
+const ovr = ovrByPosFactory(weights, intercept, scale);
 
 export default ovr;

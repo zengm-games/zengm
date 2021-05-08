@@ -4,9 +4,10 @@ use team ovr for determining value of free agents, draft picks
 - metric
   - fraction of top 10 QBs who are backups
 - football
+  - play around with weight decay in ovrByPosFactory
   - confirm K/P being signed
 - hockey
-  - share code with ovr.football.ts
+  - confirm G being signed
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 
@@ -41,6 +42,7 @@ add league average to team stats and league stats tables https://discord.com/cha
 AI teams too likely to re-sign stars?
 
 why is file size so different between old and new JSONs in analysis/team-ovr-football?
+- same in team-ovr-hockey
 
 show team record and ovr on trading block, for picks (including traded picks) https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtprmml/
 

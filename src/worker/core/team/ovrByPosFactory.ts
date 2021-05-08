@@ -3,8 +3,6 @@ import { POSITION_COUNTS } from "../../../common/constants";
 
 const DEFAULT_OVR = 0;
 
-// onlyPos=true is used for position-specific rankings
-// wholeRoster=true is used for computing team value of the whole roster, like for determining who to draft or sign
 const ovrByPosFactory = (
 	weightsByPos: Record<string, number[]>,
 	intercept: number,
@@ -89,7 +87,6 @@ const ovrByPosFactory = (
 			predictedMOV += weight * value;
 		}
 	}
-	console.log("predictedMOV", predictedMOV, valuesByPos, players);
 
 	if (onlyPos || wholeRoster) {
 		// In this case, we're ultimately using the value to compute a rank or some other relative score, so we don't care about the scale. And bounding the scale to be positive below makes it always 0.

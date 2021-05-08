@@ -8,6 +8,7 @@ import type {
 	UpdateEvents,
 } from "../../common/types";
 import range from "lodash-es/range";
+import getRookieSalaries from "../core/draft/getRookieSalaries";
 
 const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	let growthFactor = 0.15;
@@ -133,14 +134,41 @@ const updateNegotiation = async (
 		}
 
 		p.mood = await player.moodInfos(p2);
-
-		const contractOptions = generateContractOptions(
+		let isRookie = undefined;
+		if (process.env.SPORT === "football") {
+			isRookie =
+				g.get("rookieScale") === true &&
+				p2.stats.length === 0 &&
+				p2.draft.year === g.get("season") &&
+				g.get("phase") === 7;
+		}
+		let contractOptions = generateContractOptions(
 			{
 				amount: p.mood.user.contractAmount / 1000,
 				exp: p.contract.exp,
 			},
 			p.ratings.ovr,
 		);
+		if (isRookie === true) {
+			const dp = p2.draft;
+			const rookieSalaries = getRookieSalaries();
+			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
+
+			let years = g.get("rookieContractLengths")[dp.round - 1];
+			if (years === undefined) {
+				years = g.get("rookieContractLengths")[
+					g.get("rookieContractLengths").length - 1
+				];
+			}
+			contractOptions = [
+				{
+					exp: g.get("season") + years,
+					years: years,
+					amount: rookieSalaries[i] / 1000,
+					smallestAmount: true,
+				},
+			];
+		}
 		if (
 			contractOptions.length === 0 &&
 			g.get("phase") === PHASE.RESIGN_PLAYERS

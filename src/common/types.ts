@@ -358,6 +358,7 @@ export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: number | null;
 	autoDeleteOldBoxScores: boolean;
+	automaticRookieScale: boolean;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;
@@ -417,6 +418,9 @@ export type GameAttributesLeague = {
 	numTeams: number;
 	playerMoodTraits: boolean;
 	pointsFormula: string;
+	rookieScale: boolean;
+	rookieScaleMaxContract: number;
+	rookieScales: number[][];
 	spectator: boolean;
 	otl: boolean;
 	otherTeamsWantToHire: boolean;
@@ -1010,6 +1014,7 @@ export type PlayersPlusOptions = {
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: boolean;
+	draft?: boolean;
 };
 
 export type Race = "asian" | "black" | "brown" | "white";

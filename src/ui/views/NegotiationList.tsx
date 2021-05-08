@@ -23,6 +23,10 @@ const NegotiationList = ({
 	stats,
 	sumContracts,
 	userPlayers,
+	rookieScale,
+	season,
+	numActiveTeams,
+	yearsRookieContracts,
 }: View<"negotiationList">) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
@@ -45,8 +49,8 @@ const NegotiationList = ({
 		"Exp",
 		"Negotiate",
 	);
-
 	const rows = players.map(p => {
+		const isRookie = rookieScale != undefined && p.draft.year === season;
 		return {
 			key: p.pid,
 			data: [
@@ -74,8 +78,19 @@ const NegotiationList = ({
 					maxWidth: true,
 					p,
 				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
-				p.contract.exp,
+				isRookie && rookieScale != undefined
+					? helpers.formatCurrency(
+							rookieScale[
+								p.draft.pick - 1 + numActiveTeams * (p.draft.round - 1)
+							] / 1000,
+							"M",
+					  )
+					: helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
+				isRookie && rookieScale != undefined
+					? yearsRookieContracts[
+							Math.min(yearsRookieContracts.length - 1, p.draft.round - 1)
+					  ] + season
+					: p.contract.exp,
 				{
 					value: (
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

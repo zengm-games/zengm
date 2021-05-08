@@ -1,5 +1,6 @@
 import { bySport, PLAYER } from "../../common";
 import { player, team } from "../core";
+import getRookieSalaries from "../core/draft/getRookieSalaries";
 import { idb } from "../db";
 import { g } from "../util";
 
@@ -50,6 +51,7 @@ const updateNegotiationList = async () => {
 		tid: userTid,
 		showNoStats: true,
 		fuzz: true,
+		draft: true,
 	});
 
 	let sumContracts = 0;
@@ -70,6 +72,13 @@ const updateNegotiationList = async () => {
 		showNoStats: true,
 		showRookies: true,
 	});
+	const rookieScale =
+		g.get("rookieScale") && process.env.SPORT === "football"
+			? getRookieSalaries()
+			: undefined;
+	const season = g.get("season");
+	const numActiveTeams = g.get("numActiveTeams");
+	const yearsRookieContracts = g.get("rookieContractLengths");
 
 	return {
 		capSpace,
@@ -83,6 +92,10 @@ const updateNegotiationList = async () => {
 		stats,
 		sumContracts,
 		userPlayers,
+		rookieScale,
+		season,
+		numActiveTeams,
+		yearsRookieContracts,
 	};
 };
 

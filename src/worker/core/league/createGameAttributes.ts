@@ -44,6 +44,10 @@ const createGameAttributes = ({
 			name: t.name,
 			region: t.region,
 		})),
+		rookieScales: defaultGameAttributes.rookieScales,
+		rookieScale: defaultGameAttributes.rookieScale,
+		automaticRookieScale: defaultGameAttributes.automaticRookieScale,
+		rookieScaleMaxContract: defaultGameAttributes.rookieScaleMaxContract,
 		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter(t => !t.disabled).length,

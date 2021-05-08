@@ -1,5 +1,4 @@
 import bySport from "./bySport";
-import isSport from "./isSport";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 import * as constantsHockey from "./constants.hockey";
@@ -22,7 +21,11 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const DRAFT_BY_TEAM_OVR = isSport("football");
+const DRAFT_BY_TEAM_OVR = bySport({
+	basketball: false,
+	football: true,
+	hockey: true,
+});
 
 const MAX_SUPPORTED_LEAGUE_VERSION = 43;
 

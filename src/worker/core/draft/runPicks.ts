@@ -16,10 +16,8 @@ export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
 	players: PlayerWithoutKey<MinimalPlayerRatings>[],
 ) => {
-	const diffs: Record<number, number> = {};
-
 	if (!DRAFT_BY_TEAM_OVR) {
-		return diffs;
+		return [];
 	}
 
 	const teamPlayers2 = teamPlayers.map(p => ({

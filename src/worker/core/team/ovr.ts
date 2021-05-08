@@ -30,6 +30,7 @@ const ovr = (
 		}),
 		hockey: ovrHockey(players as any, {
 			onlyPos: options.pos,
+			wholeRoster: options.wholeRoster,
 		}),
 	});
 };

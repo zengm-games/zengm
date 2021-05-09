@@ -131,7 +131,7 @@ const PLAYER_SUMMARY = {
 
 const PLAYER_STATS_TABLES = {
 	regular: {
-		name: "Stats",
+		name: "Per Game",
 		stats: [
 			"gp",
 			"gs",

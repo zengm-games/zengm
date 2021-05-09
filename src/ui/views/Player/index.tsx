@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import {
 	CountryFlag,
 	DataTable,
@@ -70,17 +70,25 @@ const StatsTable = ({
 	name,
 	onlyShowIf,
 	p,
-	playoffs = false,
 	stats,
 	superCols,
 }: {
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
-	playoffs?: boolean;
 	stats: string[];
 	superCols?: any[];
 }) => {
+	const hasRegularSeasonStats = p.careerStats.gp > 0;
+	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
+
+	// Show playoffs by default if that's all we have
+	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
+
+	if (!hasRegularSeasonStats && !hasPlayoffStats) {
+		return null;
+	}
+
 	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
 	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
 
@@ -122,7 +130,37 @@ const StatsTable = ({
 
 	return (
 		<>
-			<h3>{name}</h3>
+			<h2>{name}</h2>
+			<ul className="nav nav-tabs border-bottom-0">
+				<li className="nav-item">
+					<a
+						className={classNames("nav-link", {
+							active: !playoffs,
+							"border-bottom": !playoffs,
+						})}
+						onClick={event => {
+							event.preventDefault();
+							setPlayoffs(false);
+						}}
+					>
+						Regular Season
+					</a>
+				</li>
+				<li className="nav-item">
+					<a
+						className={classNames("nav-link", {
+							active: playoffs,
+							"border-bottom": playoffs,
+						})}
+						onClick={event => {
+							event.preventDefault();
+							setPlayoffs(true);
+						}}
+					>
+						Playoffs
+					</a>
+				</li>
+			</ul>
 			<DataTable
 				className="mb-3"
 				cols={cols}
@@ -700,38 +738,16 @@ const Player2 = ({
 				<Note note={player.note} pid={player.pid} />
 			</div>
 
-			{player.careerStats.gp > 0 ? (
-				<>
-					<h2>Regular Season</h2>
-					{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
-						<StatsTable
-							key={name}
-							name={name}
-							onlyShowIf={onlyShowIf}
-							stats={stats}
-							superCols={superCols}
-							p={player}
-						/>
-					))}
-				</>
-			) : null}
-
-			{player.careerStatsPlayoffs.gp > 0 ? (
-				<>
-					<h2>Playoffs</h2>
-					{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
-						<StatsTable
-							key={name}
-							name={name}
-							onlyShowIf={onlyShowIf}
-							stats={stats}
-							superCols={superCols}
-							p={player}
-							playoffs
-						/>
-					))}
-				</>
-			) : null}
+			{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
+				<StatsTable
+					key={name}
+					name={name}
+					onlyShowIf={onlyShowIf}
+					stats={stats}
+					superCols={superCols}
+					p={player}
+				/>
+			))}
 
 			<>
 				<h2>Ratings</h2>

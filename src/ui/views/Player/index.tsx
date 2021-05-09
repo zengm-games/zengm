@@ -639,7 +639,7 @@ const Player2 = ({
 									Clone
 								</a>
 							) : null}
-							{godMode ? (
+							{godMode && injured ? (
 								<button
 									className="btn btn-god-mode"
 									onClick={async () => {
@@ -648,7 +648,7 @@ const Player2 = ({
 										realtimeUpdate();
 									}}
 								>
-									Clear Injury
+									Heal Injury
 								</button>
 							) : null}
 							{!godMode ? buttonsAvailableOutsideGodMode : null}

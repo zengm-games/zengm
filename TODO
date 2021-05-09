@@ -1,7 +1,17 @@
-use team ovr for determining value of free agents, draft picks
-- https://github.com/zengm-games/zengm/issues/380
+tabs for regular season and playoff stats on player pages https://discord.com/channels/290013534023057409/331882115119448065/840605899776589847
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
+- https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
+
+teams run starting lineups with terrible guards because most GFs became SFs or Fs, even though their passing and dribbling are far better than whichever short guy now gets to start. the logic for who's on the floor when should probably be changed. https://discord.com/channels/290013534023057409/331882115119448065/840121129389391882
+
+Re-enabling auto-save while auto-playing sometimes breaks the game. Uncaught (in promise) Error: Primary key "2480" already exists in "games" https://discord.com/channels/290013534023057409/290015591216054273/840126335501991957
+
+Live-simming a game being played by CPU teams in playoffs before simming your game on the same day causes the top game bar to stop updating. https://discord.com/channels/290013534023057409/290015591216054273/840604799539871744
+
+On the team stats "shot locations and feats" page, it shows total Feats for the team version, but an average for the opponent version. https://discord.com/channels/290013534023057409/290015591216054273/840388706594324490
+
+better contracts in new league - respond to settings for length https://discord.com/channels/290013534023057409/331882115119448065/840735778313338920
 
 twa
 - bbgm

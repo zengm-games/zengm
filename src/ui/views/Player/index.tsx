@@ -604,7 +604,21 @@ const Player2 = ({
 									Clone
 								</a>
 							) : null}
-							{showTradeFor || showTradingBlock ? (
+							{godMode ? (
+								<button
+									className="btn btn-god-mode"
+									onClick={async () => {
+										await toWorker("main", "clearInjury", player.pid);
+
+										realtimeUpdate();
+									}}
+								>
+									Clear Injury
+								</button>
+							) : null}
+						</div>
+						<div className="mt-2">
+							{!spectator && (showTradeFor || showTradingBlock) ? (
 								<button
 									className="btn btn-light-bordered"
 									disabled={player.untradable}

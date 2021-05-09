@@ -256,6 +256,18 @@ const checkParticipationAchievement = async (
 	}
 };
 
+const clearInjury = async (pid: number) => {
+	const p = await idb.cache.players.get(pid);
+	if (p) {
+		p.injury = {
+			type: "Healthy",
+			gamesRemaining: 0,
+		};
+		await idb.cache.players.put(p);
+	}
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const clearWatchList = async () => {
 	const pids = new Set();
 	const players = await idb.cache.players.getAll();
@@ -3191,6 +3203,7 @@ export default {
 	cancelContractNegotiation,
 	checkParticipationAchievement,
 	clearTrade,
+	clearInjury,
 	clearWatchList,
 	countNegotiations,
 	createLeague,

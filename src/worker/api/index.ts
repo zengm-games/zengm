@@ -264,8 +264,8 @@ const clearInjury = async (pid: number) => {
 			gamesRemaining: 0,
 		};
 		await idb.cache.players.put(p);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
-	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const clearWatchList = async () => {

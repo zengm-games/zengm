@@ -463,6 +463,41 @@ const Player2 = ({
 
 	const awardsGrouped = groupAwards(player.awards);
 
+	const buttonsAvailableOutsideGodMode = (
+		<>
+			{!spectator && (showTradeFor || showTradingBlock) ? (
+				<button
+					className="btn btn-light-bordered"
+					disabled={player.untradable}
+					onClick={() => {
+						if (showTradeFor) {
+							toWorker("actions", "tradeFor", { pid: player.pid });
+						} else {
+							toWorker("actions", "addToTradingBlock", player.pid);
+						}
+					}}
+					title={player.untradableMsg}
+				>
+					{showTradeFor ? "Trade For" : <>Add To Trading Block</>}
+				</button>
+			) : null}
+			{!spectator && freeAgent ? (
+				<button
+					className="btn btn-light-bordered"
+					disabled={!willingToSign}
+					onClick={() => toWorker("actions", "negotiate", player.pid)}
+					title={
+						willingToSign
+							? undefined
+							: `${player.name} refuses to negotiate with you`
+					}
+				>
+					Negotiate Contract
+				</button>
+			) : null}
+		</>
+	);
+
 	return (
 		<>
 			<div className="mb-3">
@@ -616,46 +651,11 @@ const Player2 = ({
 									Clear Injury
 								</button>
 							) : null}
+							{!godMode ? buttonsAvailableOutsideGodMode : null}
 						</div>
-						<div className="mt-2">
-							{!spectator && (showTradeFor || showTradingBlock) ? (
-								<button
-									className="btn btn-light-bordered"
-									disabled={player.untradable}
-									onClick={() => {
-										if (showTradeFor) {
-											toWorker("actions", "tradeFor", { pid: player.pid });
-										} else {
-											toWorker("actions", "addToTradingBlock", player.pid);
-										}
-									}}
-									title={player.untradableMsg}
-								>
-									{showTradeFor ? (
-										"Trade For"
-									) : (
-										<>
-											<span className="d-none d-md-inline">Add To </span>Trading
-											Block
-										</>
-									)}
-								</button>
-							) : null}
-							{!spectator && freeAgent ? (
-								<button
-									className="btn btn-light-bordered"
-									disabled={!willingToSign}
-									onClick={() => toWorker("actions", "negotiate", player.pid)}
-									title={
-										willingToSign
-											? undefined
-											: `${player.name} refuses to negotiate with you`
-									}
-								>
-									Negotiate Contract
-								</button>
-							) : null}
-						</div>
+						{godMode ? (
+							<div className="mt-2">{buttonsAvailableOutsideGodMode}</div>
+						) : null}
 						{player.careerStats.gp > 0 ? (
 							<>
 								{statSummary.map(({ name, onlyShowIf, stats }) => (

@@ -311,7 +311,7 @@ const getPicks = async ({
 
 const EXPONENT = bySport({
 	basketball: 7,
-	football: 6,
+	football: 3,
 	hockey: 3.5,
 });
 

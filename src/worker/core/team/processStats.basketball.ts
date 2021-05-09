@@ -167,7 +167,11 @@ const processStats = (
 				stat === "dd" ||
 				stat === "td" ||
 				stat === "qd" ||
-				stat === "fxf"
+				stat === "fxf" ||
+				stat === "oppDd" ||
+				stat === "oppTd" ||
+				stat === "oppQd" ||
+				stat === "oppFxf"
 			) {
 				row[stat] = ts[stat];
 				scale = false;

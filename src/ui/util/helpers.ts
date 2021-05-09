@@ -73,6 +73,10 @@ const roundOverrides: Record<
 		td: "noDecimalPlace",
 		qd: "noDecimalPlace",
 		fxf: "noDecimalPlace",
+		oppDd: "noDecimalPlace",
+		oppTd: "noDecimalPlace",
+		oppQd: "noDecimalPlace",
+		oppFxf: "noDecimalPlace",
 	},
 	football: {
 		gp: "noDecimalPlace",

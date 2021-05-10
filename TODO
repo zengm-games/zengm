@@ -1,8 +1,6 @@
 bundle size
 - defer
   - faces.js - include in service worker, and preload
-  - screenshot - include in service worker
-    - also include most of takeScreenshot.ts
   - is there a meaningful distinction between including in service worker and preloading?
   - confirm works in old browsers
     - https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js

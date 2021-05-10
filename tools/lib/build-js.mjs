@@ -28,6 +28,7 @@ const buildFile = async (name, legacy) => {
 		indent: false,
 		sourcemap: true,
 		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,
+		chunkFileNames: `chunk-${legacy ? "legacy-" : ""}[hash].js`,
 		dir: "build/gen",
 	});
 };

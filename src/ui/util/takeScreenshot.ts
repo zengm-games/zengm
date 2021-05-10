@@ -1,4 +1,3 @@
-import html2canvas from "html2canvas";
 import {
 	fetchWrapper,
 	GAME_NAME,
@@ -10,6 +9,8 @@ import logEvent from "./logEvent";
 import safeLocalStorage from "./safeLocalStorage";
 
 const takeScreenshot = async () => {
+	const { default: html2canvas } = await import("html2canvas");
+
 	const theme = safeLocalStorage.getItem("theme") === "dark" ? "dark" : "light";
 
 	const contentEl = document.getElementById("actual-actual-content");

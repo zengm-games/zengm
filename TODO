@@ -9,6 +9,7 @@ bundle size
     - https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
   - and confirm in new browsers, if worker is importing module
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
+- confirm cache header
 
 fix e2e tests
 - need to make json data files available

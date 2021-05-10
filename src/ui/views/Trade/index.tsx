@@ -145,9 +145,11 @@ const Trade = (props: View<"trade">) => {
 		setState(prevState => ({ ...prevState, asking: false, message }));
 	};
 
-	const handleClickClear = async () => {
+	const handleClickClear = (
+		type: "all" | "other" | "user" | "keepUntradeable",
+	) => async () => {
 		setState(prevState => ({ ...prevState, message: null }));
-		await toWorker("main", "clearTrade");
+		await toWorker("main", "clearTrade", type);
 	};
 
 	const handleClickForceTrade = () => {
@@ -242,6 +244,12 @@ const Trade = (props: View<"trade">) => {
 		summary.teams[1].trade.length;
 
 	const otherTeamIndex = teams.findIndex(t => t.tid === otherTid);
+
+	const otherTeam = teams[otherTeamIndex];
+	const otherTeamName = otherTeam
+		? `${otherTeam.region} ${otherTeam.name}`
+		: "Other team";
+	const teamNames = [otherTeamName, userTeamName] as [string, string];
 
 	return (
 		<>
@@ -374,6 +382,7 @@ const Trade = (props: View<"trade">) => {
 											handleClickForceTrade={handleClickForceTrade}
 											handleClickPropose={handleClickPropose}
 											numAssets={numAssets}
+											teamNames={teamNames}
 										/>
 									</div>
 								) : challengeNoTrades ? (

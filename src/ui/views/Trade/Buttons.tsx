@@ -1,3 +1,5 @@
+import { ButtonGroup, Dropdown } from "react-bootstrap";
+
 const Buttons = ({
 	asking,
 	enablePropose,
@@ -8,16 +10,20 @@ const Buttons = ({
 	handleClickForceTrade,
 	handleClickPropose,
 	numAssets,
+	teamNames,
 }: {
 	asking: boolean;
 	enablePropose: boolean;
 	forceTrade: boolean;
 	godMode: boolean;
 	handleClickAsk: () => void;
-	handleClickClear: () => void;
+	handleClickClear: (
+		type: "all" | "other" | "user" | "keepUntradeable",
+	) => () => void;
 	handleClickForceTrade: () => void;
 	handleClickPropose: () => void;
 	numAssets: number;
+	teamNames: [string, string];
 }) => {
 	return (
 		<>
@@ -52,13 +58,32 @@ const Buttons = ({
 				>
 					Propose Trade
 				</button>
-				<button
-					type="submit"
-					className="btn btn-secondary"
-					onClick={handleClickClear}
-				>
-					Clear Trade
-				</button>
+				<Dropdown as={ButtonGroup}>
+					<button
+						type="submit"
+						className="btn btn-secondary"
+						onClick={handleClickClear("all")}
+					>
+						Clear
+					</button>
+
+					<Dropdown.Toggle split variant="secondary" id="clear-trade-more" />
+
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={handleClickClear("all")}>
+							All (default)
+						</Dropdown.Item>
+						<Dropdown.Item onClick={handleClickClear("other")}>
+							{teamNames[0]} only
+						</Dropdown.Item>
+						<Dropdown.Item onClick={handleClickClear("user")}>
+							{teamNames[1]} only
+						</Dropdown.Item>
+						<Dropdown.Item onClick={handleClickClear("keepUntradeable")}>
+							Keep untradeable
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</div>
 		</>
 	);

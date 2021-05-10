@@ -3108,8 +3108,10 @@ const upsertCustomizedPlayer = async (
 	return p.pid;
 };
 
-const clearTrade = async () => {
-	await trade.clear();
+const clearTrade = async (
+	type: "all" | "other" | "user" | "keepUntradeable",
+) => {
+	await trade.clear(type);
 	await toUI("realtimeUpdate", []);
 };
 

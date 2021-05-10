@@ -1,5 +1,4 @@
 names refactor
-- fix tests
 - compare bundle size before/after
 - confirm cache header
 

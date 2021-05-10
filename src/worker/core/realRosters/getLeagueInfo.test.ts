@@ -1,25 +1,8 @@
 import assert from "assert";
 import { PHASE } from "../../../common";
 import getLeagueInfo from "./getLeagueInfo";
-import * as fs from "fs";
 
 describe("worker/core/realRosters/getLeagueInfo", () => {
-	let originalFetch: any;
-	beforeAll(() => {
-		const realPlayerData = JSON.parse(
-			fs.readFileSync("data/real-player-data.basketball.json", "utf8"),
-		);
-		originalFetch = global.fetch;
-		(global as any).fetch = async () => {
-			return {
-				json: async () => realPlayerData,
-			};
-		};
-	});
-	afterAll(() => {
-		global.fetch = originalFetch;
-	});
-
 	test("returns correct number of teams", async () => {
 		assert.strictEqual(
 			(

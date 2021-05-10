@@ -3,9 +3,15 @@ bundle size
   - ajv and schema - include in service worker
   - faces.js - include in service worker, and preload
   - screenshot - include in service worker
+    - also include most of takeScreenshot.ts
   - is there a meaningful distinction between including in service worker and preloading?
   - confirm works in old browsers
     - https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
+  - and confirm in new browsers, if worker is importing module
+- use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
+
+fix e2e tests
+- need to make json data files available
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194

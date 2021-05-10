@@ -17,28 +17,18 @@ const BLACKLIST = {
 const buildFile = async (name, legacy) => {
 	const bundle = await rollup.rollup({
 		...rollupConfig("production", BLACKLIST[name], `stats-${name}.html`),
-		input: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
+		input: {
+			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
+		},
 	});
-
-	const outFile = legacy
-		? `build/gen/${name}-legacy-${rev}.js`
-		: `build/gen/${name}-${rev}.js`;
 
 	await bundle.write({
 		compact: true,
-		file: outFile,
-		format: "iife",
+		format: legacy ? "system" : "es",
 		indent: false,
-		name,
 		sourcemap: true,
-	});
-
-	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
-	replace({
-		regex: ";//# sourceMappingURL",
-		replacement: ";\n//# sourceMappingURL",
-		paths: [outFile],
-		silent: true,
+		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,
+		dir: "build/gen",
 	});
 };
 
@@ -48,6 +38,15 @@ const buildJS = async () => {
 	process.env.LEGACY = "LEGACY";
 	await Promise.all(["ui", "worker"].map(name => buildFile(name, true)));
 	delete process.env.LEGACY;
+
+	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
+	const replacePaths = fs.readdirSync("build/gen").filter(filename => filename.endsWith(".js")).map(filename => `build/gen/${filename}`);
+	replace({
+		regex: ";//# sourceMappingURL",
+		replacement: ";\n//# sourceMappingURL",
+		paths: replacePaths,
+		silent: true,
+	});
 
 	build.setTimestamps(rev);
 	build.minifyIndexHTML();

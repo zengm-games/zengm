@@ -1,4 +1,4 @@
-import { helpers } from ".";
+import helpers from "./helpers";
 import type { SortOrder, SortType } from "./types";
 import type { Col } from "../ui/components/DataTable";
 import bySport from "./bySport";

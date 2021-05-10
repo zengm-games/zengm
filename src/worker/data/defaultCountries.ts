@@ -1,6 +1,10 @@
 // This is dynamically resolved with rollup-plugin-alias
 import { bySport } from "../../common";
 
+// Would be nice to put this stuff in names.json, but need a way to make it sport specific.
+
+// Countries in default names will be added to this in loadNames.ts, so be careful using this anywhere else!
+
 const groups = {
 	hispanic: [
 		"Argentina",
@@ -232,7 +236,5 @@ if (process.env.NODE_ENV === "test") {
 		},
 	});
 }
-
-// Countries in default names will be added to this in loadNames.ts, so be careful using this anywhere else!
 
 export { defaultCountries, groups };

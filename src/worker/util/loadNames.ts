@@ -74,7 +74,6 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		};
 		console.log(JSONstringifyOrder(defaultCountries, 4));*/
 	}
-	console.log("defaultCountries", defaultCountries);
 
 	let gPlayerBioInfo = g.get("playerBioInfo");
 	const gNames: NamesLegacy | undefined = (g as any).names;

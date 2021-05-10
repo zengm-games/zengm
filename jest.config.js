@@ -1,6 +1,5 @@
 module.exports = {
 	moduleNameMapper: {
-		"^player-names$": "<rootDir>/src/worker/data/names-test.json",
 		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-noop.ts",
 		"^bbgm-debug$": "<rootDir>/src/worker/core/debug/index.ts",
 

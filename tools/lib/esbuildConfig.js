@@ -77,10 +77,6 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 		plugins: [
 			// Not sure why this is required, docs say it should pick up on tsconfig.json settings
 			alias({
-				"player-names": path.join(
-					__dirname,
-					"../../src/worker/data/names.json",
-				),
 				"league-schema": path.join(
 					__dirname,
 					"../../build/files/league-schema.json",

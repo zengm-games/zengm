@@ -23,9 +23,17 @@ const buildFile = async (name, legacy) => {
 		preserveEntrySignatures: false,
 	});
 
+	let format;
+	if (legacy) {
+		// SystemJS for chunk loading in UI. IIFE for worker.
+		format = name === "ui" ? "system" : "iife";
+	} else {
+		format = "es";
+	}
+
 	await bundle.write({
 		compact: true,
-		format: legacy ? "system" : "es",
+		format,
 		indent: false,
 		sourcemap: true,
 		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,

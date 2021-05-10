@@ -162,15 +162,20 @@ function withGoodBrowser() {
   startupWorker.innerHTML = "Loading backend...";
 
   var body = document.getElementsByTagName('body').item(0);
-  var script = document.createElement('script');
   if (checkModern()) {
-    // Needs to be module for modulepreload
-    script.type = "module";
+    var script = document.createElement('script');
+    script.type = "module"; // Needs to be module for modulepreload
     script.src = "/gen/ui-" + bbgmVersion + ".js";
+    body.appendChild(script);
   } else  {
-    script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
+    // Need SystemJS for chunk loading
+    var systemJsLoaderTag = document.createElement("script");
+    systemJsLoaderTag.src = "https://unpkg.com/systemjs@6.8.3/dist/s.min.js";
+    systemJsLoaderTag.addEventListener("load", function () {
+      System.import("/gen/ui-legacy-" + bbgmVersion + ".js");
+    });
+    body.appendChild(systemJsLoaderTag);
   }
-  body.appendChild(script);
 }
 
 var count = 0;

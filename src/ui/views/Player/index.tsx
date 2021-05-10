@@ -81,7 +81,6 @@ const StatsTable = ({
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
-	console.log(p.careerStats.gp, p.careerStatsPlayoffs.gp);
 
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
@@ -185,7 +184,7 @@ const StatsTable = ({
 					...stats.map(stat => formatStatGameHigh(careerStats, stat)),
 				]}
 				hideAllControls
-				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
+				name={`Player:${name}`}
 				rows={playerStats.map((ps, i) => {
 					return {
 						key: i,

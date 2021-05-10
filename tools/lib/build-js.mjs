@@ -20,6 +20,7 @@ const buildFile = async (name, legacy) => {
 		input: {
 			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
 		},
+		preserveEntrySignatures: false,
 	});
 
 	await bundle.write({

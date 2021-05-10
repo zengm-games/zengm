@@ -52,7 +52,7 @@ const styleStatus = {
 	maxWidth: 400,
 };
 
-type Props = {
+export type LeagueFileUploadProps = {
 	// onDone is called in errback style when parsing is done or when an error occurs
 	onDone: (b: Error | null, a?: any) => void;
 	disabled?: boolean;
@@ -127,7 +127,7 @@ const LeagueFileUpload = ({
 	hideLoadedMessage,
 	onDone,
 	onLoading,
-}: Props) => {
+}: LeagueFileUploadProps) => {
 	const [url, setURL] = useState("");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);

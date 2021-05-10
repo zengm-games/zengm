@@ -1,6 +1,7 @@
 bundle size
+- bugsnag in bundle
 - defer
-  - ajv and schema - include in service worker
+  - ErrorBoundary for when LeagueFileUpload fails to load https://reactjs.org/docs/code-splitting.html
   - faces.js - include in service worker, and preload
   - screenshot - include in service worker
     - also include most of takeScreenshot.ts

@@ -1,3 +1,6 @@
+import { Suspense, lazy } from "react";
+import type { LeagueFileUploadProps } from "./LeagueFileUpload";
+
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
 export { default as BoxScore } from "./BoxScore";
@@ -17,7 +20,6 @@ export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as JerseyNumber } from "./JerseyNumber";
-export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as PlusMinus } from "./PlusMinus";
 export { default as Mood } from "./Mood";
 export { default as MoreLinks } from "./MoreLinks";
@@ -49,3 +51,11 @@ export { default as StatWithChange } from "./StatWithChange";
 export { default as StickyBottomButtons } from "./StickyBottomButtons";
 export { default as WatchBlock } from "./WatchBlock";
 export { default as Weight } from "./Weight";
+
+const LeagueFileUploadLazy = lazy(() => import("./LeagueFileUpload"));
+
+export const LeagueFileUpload = (props: LeagueFileUploadProps) => (
+	<Suspense fallback={<div>Loading...</div>}>
+		<LeagueFileUploadLazy {...props} />
+	</Suspense>
+);

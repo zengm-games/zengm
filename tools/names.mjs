@@ -1,8 +1,6 @@
 import { csvParse } from "d3-dsv";
 import fs from "fs";
 import path from "path";
-import namesBasketball from "./names-basketball.mjs";
-import namesFootball from "./names-football.mjs";
 import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.mjs";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -22,8 +20,8 @@ const countryFreqs = ({ fnsByCountry }) => {
 	);
 };
 
-const basketball = namesBasketball();
-const football = namesFootball();
+const basketball = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/basketball.json")));
+const football = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/football.json")));
 
 const countriesBasketball = countryFreqs(basketball);
 const countriesFootball = countryFreqs(football);

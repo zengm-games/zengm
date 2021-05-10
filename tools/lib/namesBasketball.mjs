@@ -2,7 +2,7 @@ import _ from "lodash";
 import cheerio from "cheerio";
 import fs from "fs";
 import path from "path";
-import { juniors, provinces, states } from "./lib/namesHelpers.mjs";
+import { juniors, provinces, states } from "./namesHelpers.mjs";
 
 const namesBasketball = () => {
 	// Run this on the output of something like:

@@ -1,5 +1,4 @@
 // This is dynamically resolved with rollup-plugin-alias
-import names from "player-names"; // eslint-disable-line
 import { bySport } from "../../common";
 
 const groups = {
@@ -234,26 +233,6 @@ if (process.env.NODE_ENV === "test") {
 	});
 }
 
-const possiblyMissingCountries = Object.keys(names);
-for (const countries of Object.values(groups)) {
-	possiblyMissingCountries.push(...countries);
-}
-for (const country of possiblyMissingCountries) {
-	if (defaultCountries[country] === undefined) {
-		defaultCountries[country] = 0.2;
-	}
-}
-
-/*// https://stackoverflow.com/a/53593328
-const JSONstringifyOrder = (obj, space) => {
-	var allKeys = [];
-	JSON.stringify(obj, (key, value) => {
-		allKeys.push(key);
-		return value;
-	});
-	allKeys.sort();
-	return JSON.stringify(obj, allKeys, space);
-};
-console.log(JSONstringifyOrder(defaultCountries, 4));*/
+// Countries in default names will be added to this in loadNames.ts, so be careful using this anywhere else!
 
 export { defaultCountries, groups };

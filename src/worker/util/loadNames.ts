@@ -51,7 +51,30 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		const names = await response.json();
 		defaultNamesCountries = names.countries;
 		defaultNamesGroups = names.groups;
+
+		const possiblyMissingCountries = Object.keys(defaultNamesCountries);
+		for (const countries of Object.values(groups)) {
+			possiblyMissingCountries.push(...countries);
+		}
+		for (const country of possiblyMissingCountries) {
+			if (defaultCountries[country] === undefined) {
+				defaultCountries[country] = 0.2;
+			}
+		}
+
+		/*// https://stackoverflow.com/a/53593328
+		const JSONstringifyOrder = (obj, space) => {
+			var allKeys = [];
+			JSON.stringify(obj, (key, value) => {
+				allKeys.push(key);
+				return value;
+			});
+			allKeys.sort();
+			return JSON.stringify(obj, allKeys, space);
+		};
+		console.log(JSONstringifyOrder(defaultCountries, 4));*/
 	}
+	console.log("defaultCountries", defaultCountries);
 
 	let gPlayerBioInfo = g.get("playerBioInfo");
 	const gNames: NamesLegacy | undefined = (g as any).names;

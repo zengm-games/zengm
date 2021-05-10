@@ -1,16 +1,12 @@
 bundle size
 - defer
-  - faces.js - include in service worker, and preload
-  - is there a meaningful distinction between including in service worker and preloading?
-  - confirm works in old browsers
-    - https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
-  - and confirm in new browsers, if worker is importing module
+  - faces.js
+  - framer-motion
+  - react-select
+  - all views? https://reactjs.org/docs/code-splitting.html#route-based-code-splitting
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
 - confirm cache header
 - confirm bugnsag working
-
-fix e2e tests
-- need to make json data files available
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194

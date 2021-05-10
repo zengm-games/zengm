@@ -45,6 +45,7 @@ const groups = {
 let defaultCountries: Record<string, number>;
 
 if (process.env.NODE_ENV === "test") {
+	// Keep in sync with loadNames.ts
 	defaultCountries = {
 		Angola: 8,
 		Argentina: 71,

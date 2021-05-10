@@ -47,10 +47,30 @@ let defaultNamesGroups: Record<
 
 const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 	if (!defaultNamesCountries || !defaultNamesGroups) {
-		const response = await fetch("/gen/names.json");
-		const names = await response.json();
-		defaultNamesCountries = names.countries;
-		defaultNamesGroups = names.groups;
+		if (process.env.NODE_ENV === "test") {
+			const dummyNames = {
+				first: { FirstName: 1 },
+				last: { LastName: 1 },
+			};
+
+			// Keep in sync with defaultCountries.ts
+			defaultNamesCountries = {
+				Angola: dummyNames,
+				Argentina: dummyNames,
+				Australia: dummyNames,
+				Austria: dummyNames,
+			};
+			defaultNamesGroups = {
+				hispanic: dummyNames,
+				korean: dummyNames,
+				portuguese: dummyNames,
+			};
+		} else {
+			const response = await fetch("/gen/names.json");
+			const names = await response.json();
+			defaultNamesCountries = names.countries;
+			defaultNamesGroups = names.groups;
+		}
 
 		const possiblyMissingCountries = Object.keys(defaultNamesCountries);
 		for (const countries of Object.values(groups)) {

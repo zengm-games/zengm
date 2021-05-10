@@ -53,11 +53,10 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 		};
 	}
 
-	const filename = path.join(__dirname, "../../src/worker/data/names.json");
-	fs.writeFileSync(filename, JSONstringifyOrder(countries, "\t"));
-	console.log(`Wrote data to ${filename}`);
-
-	return dropped;
+	return {
+		dropped,
+		namesByCountry: countries,
+	};
 };
 
 const juniors = [

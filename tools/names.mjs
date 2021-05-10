@@ -99,14 +99,13 @@ const getOverrides = () => {
 		}
 	}
 
-	const filename = path.join(__dirname, "../src/worker/data/names-groups.json");
-	fs.writeFileSync(filename, JSONstringifyOrder(groups, "\t"));
-	console.log(`Wrote data to ${filename}`);
-
-	return names;
+	return {
+		overrides: names,
+		groups,
+	};
 };
 
-const overrides = getOverrides();
+const { groups, overrides } = getOverrides();
 
 const fnsByCountry = combineNames([
 	basketball.fnsByCountry,
@@ -119,7 +118,11 @@ const lnsByCountry = combineNames([
 	overrides.last,
 ]);
 
-const dropped = filterAndOutput(fnsByCountry, lnsByCountry);
+const { dropped, namesByCountry } = filterAndOutput(fnsByCountry, lnsByCountry);
+
+const filename = path.join(__dirname, "../data/names.json");
+fs.writeFileSync(filename, JSONstringifyOrder({ countries: namesByCountry, groups}, "\t"));
+console.log(`Wrote data to ${filename}`);
 
 for (const freq of [countriesBasketball, countriesFootball]) {
 	for (const country of dropped) {

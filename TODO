@@ -1,11 +1,13 @@
 names refactor
-- put all name stuff (base and groups) in one JSON file
-- move JSON file to data folder, load like other JSON data files, but include in service worker
+- anywhere meaningful player.generate is called, pass in a random name
 - add to htaccess with long cache
 - fix tests
-  - names-test still?
+  - names-test still needed?
+- defaultCountries needs to be async too, i guess
+  - or move to names.json, since it's only used in loadNames
 - delete old JSON files from src/worker/data
 - delete player-names alias and import
+- compare bundle size before/after
 
 bundle size
 - defer

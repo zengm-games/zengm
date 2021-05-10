@@ -52,8 +52,8 @@ const buildJS = async () => {
 	build.setTimestamps(rev);
 	build.minifyIndexHTML();
 
-	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
-	for (const filename of realPlayerFilenames) {
+	const jsonFiles = ["names", "real-player-data", "real-player-stats"];
+	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
 		if (fs.existsSync(filePath)) {
 			const string = fs.readFileSync(filePath);

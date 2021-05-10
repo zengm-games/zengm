@@ -28,6 +28,7 @@ const injectManifest = async () => {
 		globPatterns: [
 			"**/*.{js,css,html}",
 			"fonts/*.woff2",
+			"gen/*.json",
 			"img/logos/*.png",
 			"ico/logo.png",
 			"ico/logo-gold.png",

@@ -1259,8 +1259,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 	};
 };
 
-const generateFace = (country: string) => {
-	const { race } = player.name(helpers.getCountry(country));
+const generateFace = async (country: string) => {
+	const { race } = await player.name(helpers.getCountry(country));
 	return face.generate(race);
 };
 
@@ -1284,19 +1284,21 @@ const getLocal = async (name: keyof Local) => {
 
 const getRandomCollege = async () => {
 	// Don't use real country, since most have no colleges by default
-	const { college } = player.name("None");
+	const { college } = await player.name("None");
 	return college;
 };
 
-const getRandomCountry = () => {
-	const playerBioInfo = local.playerBioInfo ?? loadNames();
+const getRandomCountry = async () => {
+	const playerBioInfo = local.playerBioInfo ?? (await loadNames());
 
 	// Equal odds of every country, otherwise it's too commonly USA - no fun!
 	return random.choice(playerBioInfo.frequencies)[0];
 };
 
 const getRandomName = async (country: string) => {
-	const { firstName, lastName } = player.name(helpers.getCountry(country));
+	const { firstName, lastName } = await player.name(
+		helpers.getCountry(country),
+	);
 	return { firstName, lastName };
 };
 

@@ -12,17 +12,17 @@ const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
 	return foundRow[0];
 };
 
-const name = (
+const name = async (
 	countryOverride?: string,
-): {
+): Promise<{
 	college: string;
 	country: string;
 	firstName: string;
 	lastName: string;
 	race: Race;
-} => {
+}> => {
 	// This makes it wait until g is loaded before calling loadNames, so user-defined playerBioInfo will be used if provided
-	const playerBioInfo = local.playerBioInfo ?? loadNames();
+	const playerBioInfo = local.playerBioInfo ?? (await loadNames());
 
 	if (local.playerBioInfo === undefined) {
 		local.playerBioInfo = playerBioInfo;

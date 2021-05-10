@@ -15,11 +15,6 @@
     <link rel="modulepreload" href="/gen/ui-REV_GOES_HERE.js">
     <link rel="modulepreload" href="/gen/worker-REV_GOES_HERE.js">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9206221100785361"
-     crossorigin="anonymous"></script>
-
-    <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
-
     <script>
 window.bbgmVersion = "REV_GOES_HERE";
 window.useSharedWorker = typeof SharedWorker !== 'undefined';
@@ -81,39 +76,16 @@ if (window.enableLogging) {
   };
 }
 
-var releaseStage = "unknown";
+window.releaseStage = "unknown";
 if (location.host.indexOf("localhost") === 0) {
-  releaseStage = "development";
+  window.releaseStage = "development";
 } else if (location.host.indexOf("BETA_SUBDOMAIN") === 0) {
-  releaseStage = "beta";
+  window.releaseStage = "beta";
 } else if (location.host.indexOf("PLAY_SUBDOMAIN") === 0) {
-  releaseStage = "production";
+  window.releaseStage = "production";
 }
 
-if (window.bugsnag) {
-  window.bugsnagClient = window.bugsnag({
-    apiKey: "BUGSNAG_API_KEY",
-    appVersion: window.bbgmVersion,
-    autoCaptureSessions: false,
-    beforeSend: function (report) {
-      // Normalize league URLs to all look the same
-      if (report && typeof report.context === "string") {
-        report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
-      }
-
-      if (report && typeof report.errorMessage === "string") {
-        var skip = ["ResizeObserver loop limit exceeded"];
-        for (var i = 0; i < skip.length; i++) {
-          if (report.errorMessage.includes(skip[i])) {
-            report.ignore();
-          }
-        }
-      }
-    },
-    notifyReleaseStages: ["beta", "production"],
-    releaseStage: releaseStage
-  });
-}
+window.bugsnagKey = "BUGSNAG_API_KEY";
     </script>
 BANNER_ADS_CODE
 QUANTCAST_CODE

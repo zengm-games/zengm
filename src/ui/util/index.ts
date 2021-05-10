@@ -1,3 +1,4 @@
+import Bugsnag from "@bugsnag/browser";
 import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
@@ -17,13 +18,11 @@ try {
 }
 
 export const promiseWorker = new PWBHost(worker);
-promiseWorker.registerError(e => {
-	if (window.bugsnagClient) {
-		window.bugsnagClient.notify(e);
-	}
+promiseWorker.registerError(error => {
+	Bugsnag.notify(error);
 
 	console.error("Error from worker:");
-	console.error(e);
+	console.error(error);
 });
 
 export { default as ads } from "./ads";

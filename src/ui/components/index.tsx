@@ -57,7 +57,7 @@ export { ErrorBoundary };
 const LeagueFileUploadLazy = lazy(() => import("./LeagueFileUpload"));
 
 export const LeagueFileUpload = (props: LeagueFileUploadProps) => (
-	<ErrorBoundary>
+	<ErrorBoundary local>
 		<Suspense fallback={<div>Loading...</div>}>
 			<LeagueFileUploadLazy {...props} />
 		</Suspense>

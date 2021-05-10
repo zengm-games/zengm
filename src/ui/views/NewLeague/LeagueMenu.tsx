@@ -1,3 +1,4 @@
+import Bugsnag from "@bugsnag/browser";
 import { useEffect, useRef } from "react";
 import { logEvent } from "../../util";
 import type { LeagueInfo } from "./types";
@@ -38,9 +39,7 @@ const LeagueMenu = <Value extends string>({
 			}
 		} catch (error) {
 			console.error(error);
-			if (window.bugsnagClient) {
-				window.bugsnagClient.notify(error);
-			}
+			Bugsnag.notify(error);
 			logEvent({
 				type: "error",
 				text: `Error loading real team data: ${error.message}`,

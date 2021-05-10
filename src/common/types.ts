@@ -3,7 +3,6 @@ import type { MouseEvent, ReactNode } from "react";
 import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
-import type { Bugsnag } from "@bugsnag/browser";
 
 export type Env = {
 	enableLogging: boolean;
@@ -17,7 +16,7 @@ declare global {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
-		bugsnagClient?: Bugsnag.Client;
+		bugsnagKey: string;
 		enableLogging: boolean;
 		freestar: any;
 		getTheme: () => string;
@@ -25,6 +24,7 @@ declare global {
 		googletag: any;
 		heartbeatID: string;
 		mobile: boolean;
+		releaseStage: string;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;

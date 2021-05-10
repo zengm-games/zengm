@@ -1,8 +1,8 @@
 import * as React from "react";
-import bugsnagReact from "@bugsnag/plugin-react";
+import Bugsnag from "@bugsnag/browser";
 import useTitleBar from "../hooks/useTitleBar";
 
-const Fallback = ({ error, info }: { error: Error; info?: any }) => {
+const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
 	console.log(error, info);
 	useTitleBar({
 		title: "Error",
@@ -11,55 +11,33 @@ const Fallback = ({ error, info }: { error: Error; info?: any }) => {
 	return <p>{error.message}</p>;
 };
 
-type Props = {
+const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
+	console.log(error, info);
+	return (
+		<p>
+			<span className="text-danger">Error:</span> {error.message}
+		</p>
+	);
+};
+
+const ErrorBoundaryBugsnag = Bugsnag.getPlugin("react")!.createErrorBoundary(
+	React,
+);
+
+const ErrorBoundary = ({
+	children,
+	local,
+}: {
 	children: any;
-};
-type State = {
-	error: Error | undefined;
-};
-let ErrorBoundaryTemp;
-
-if (window.bugsnagClient) {
-	window.bugsnagClient.use(bugsnagReact, React);
-	const ErrorBoundaryBugsnag = window.bugsnagClient.getPlugin("react");
-
-	ErrorBoundaryTemp = ({ children }: { children: any }) => (
-		<ErrorBoundaryBugsnag FallbackComponent={Fallback}>
+	local?: boolean;
+}) => {
+	return (
+		<ErrorBoundaryBugsnag
+			FallbackComponent={local ? FallbackLocal : FallbackGlobal}
+		>
 			{children}
 		</ErrorBoundaryBugsnag>
 	);
-} else {
-	class ErrorBoundaryDefault extends React.Component<Props, State> {
-		constructor(props: Props) {
-			super(props);
-			this.state = {
-				error: undefined,
-			};
-		}
-
-		static getDerivedStateFromError(error: Error) {
-			// Update state so the next render will show the fallback UI.
-			return {
-				error,
-			};
-		}
-
-		componentDidCatch(error: Error, info: any) {
-			console.log("componentDidCatch", error, info);
-		}
-
-		render() {
-			if (this.state.error) {
-				return <Fallback error={this.state.error} />;
-			}
-
-			return this.props.children;
-		}
-	}
-
-	ErrorBoundaryTemp = ErrorBoundaryDefault;
-}
-
-const ErrorBoundary = ErrorBoundaryTemp;
+};
 
 export default ErrorBoundary;

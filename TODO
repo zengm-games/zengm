@@ -1,7 +1,9 @@
 bundle size
 - bugsnag in bundle
+- then errorboundary specific to leaguefileupload
 - defer
   - ErrorBoundary for when LeagueFileUpload fails to load https://reactjs.org/docs/code-splitting.html
+    - clearer indication that it's an error. normal errors too?
   - faces.js - include in service worker, and preload
   - screenshot - include in service worker
     - also include most of takeScreenshot.ts

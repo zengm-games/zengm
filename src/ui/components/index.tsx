@@ -12,7 +12,6 @@ export { default as Controller } from "./Controller";
 export { default as CountryFlag } from "./CountryFlag";
 export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";
-export { default as ErrorBoundary } from "./ErrorBoundary";
 export { default as Footer } from "./Footer";
 export { default as ForceWin } from "./ForceWin";
 export { default as GameLinks } from "./GameLinks";
@@ -52,10 +51,15 @@ export { default as StickyBottomButtons } from "./StickyBottomButtons";
 export { default as WatchBlock } from "./WatchBlock";
 export { default as Weight } from "./Weight";
 
+import ErrorBoundary from "./ErrorBoundary";
+export { ErrorBoundary };
+
 const LeagueFileUploadLazy = lazy(() => import("./LeagueFileUpload"));
 
 export const LeagueFileUpload = (props: LeagueFileUploadProps) => (
-	<Suspense fallback={<div>Loading...</div>}>
-		<LeagueFileUploadLazy {...props} />
-	</Suspense>
+	<ErrorBoundary>
+		<Suspense fallback={<div>Loading...</div>}>
+			<LeagueFileUploadLazy {...props} />
+		</Suspense>
+	</ErrorBoundary>
 );

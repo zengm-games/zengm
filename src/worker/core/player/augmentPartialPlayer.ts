@@ -3,6 +3,7 @@ import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
+import name from "./name";
 import ovr from "./ovr";
 import pos from "./pos";
 import setContract from "./setContract";
@@ -51,6 +52,7 @@ const augmentPartialPlayer = async (
 		g.get("startingSeason") - (age - 18),
 		true,
 		scoutingRank,
+		await name(),
 	);
 
 	// Optional things

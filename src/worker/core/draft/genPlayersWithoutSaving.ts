@@ -97,12 +97,14 @@ const genPlayersWithoutSaving = async (
 
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
-		const p: any = player.generate(
+		const name = await player.name();
+		const p: any = await player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
 			draftYear,
 			false,
 			scoutingRank,
+			name,
 		);
 
 		// Just for ovr/pot

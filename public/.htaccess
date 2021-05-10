@@ -23,6 +23,12 @@
   </IfModule>
 </FilesMatch>
 
+<FilesMatch "^names-.*\.json$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public,max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
 <FilesMatch "^(index.html|sw.js)$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache"

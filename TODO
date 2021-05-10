@@ -1,9 +1,7 @@
 names refactor
-- anywhere meaningful player.generate is called, pass in a random name
-- add to htaccess with long cache
 - fix tests
-- delete old JSON files from src/worker/data
 - compare bundle size before/after
+- confirm cache header
 
 bundle size
 - defer

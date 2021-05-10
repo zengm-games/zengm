@@ -81,9 +81,18 @@ const StatsTable = ({
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
+	console.log(p.careerStats.gp, p.careerStatsPlayoffs.gp);
 
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
+
+	// If game sim means we switch from having no stats to having some stats, make sure we're showing what we have
+	if (hasRegularSeasonStats && !hasPlayoffStats && playoffs) {
+		setPlayoffs(false);
+	}
+	if (!hasRegularSeasonStats && hasPlayoffStats && !playoffs) {
+		setPlayoffs(true);
+	}
 
 	if (!hasRegularSeasonStats && !hasPlayoffStats) {
 		return null;
@@ -132,34 +141,38 @@ const StatsTable = ({
 		<>
 			<h2>{name}</h2>
 			<ul className="nav nav-tabs border-bottom-0">
-				<li className="nav-item">
-					<a
-						className={classNames("nav-link", {
-							active: !playoffs,
-							"border-bottom": !playoffs,
-						})}
-						onClick={event => {
-							event.preventDefault();
-							setPlayoffs(false);
-						}}
-					>
-						Regular Season
-					</a>
-				</li>
-				<li className="nav-item">
-					<a
-						className={classNames("nav-link", {
-							active: playoffs,
-							"border-bottom": playoffs,
-						})}
-						onClick={event => {
-							event.preventDefault();
-							setPlayoffs(true);
-						}}
-					>
-						Playoffs
-					</a>
-				</li>
+				{hasRegularSeasonStats ? (
+					<li className="nav-item">
+						<a
+							className={classNames("nav-link", {
+								active: !playoffs,
+								"border-bottom": !playoffs,
+							})}
+							onClick={event => {
+								event.preventDefault();
+								setPlayoffs(false);
+							}}
+						>
+							Regular Season
+						</a>
+					</li>
+				) : null}
+				{hasPlayoffStats ? (
+					<li className="nav-item">
+						<a
+							className={classNames("nav-link", {
+								active: playoffs,
+								"border-bottom": playoffs,
+							})}
+							onClick={event => {
+								event.preventDefault();
+								setPlayoffs(true);
+							}}
+						>
+							Playoffs
+						</a>
+					</li>
+				) : null}
 			</ul>
 			<DataTable
 				className="mb-3"

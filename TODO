@@ -1,3 +1,10 @@
+regular season / playoffs toggle bugs
+- can't save edited columns for playoffs view
+  - probably should just be the same for both views
+
+
+some ui to show when an update is available, or to check for updates. especially for twa
+
 bundle size
 - defer
   - faces.js

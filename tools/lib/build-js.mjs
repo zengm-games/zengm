@@ -2,7 +2,6 @@ import fs from "fs";
 import fse from "fs-extra";
 import * as rollup from "rollup";
 import build from "./buildFuncs.js";
-import getSport from "./getSport.js";
 import replace from "replace";
 import rollupConfig from "./rollupConfig.js";
 
@@ -73,18 +72,15 @@ const buildJS = async () => {
 			const newFilename = filePath.replace(".json", `-${hash}.json`);
 			fse.moveSync(filePath, newFilename);
 
-			const sport = getSport();
-			if (sport === "basketball") {
-				replace({
-					regex: `/gen/${filename}.json`,
-					replacement: `/gen/${filename}-${hash}.json`,
-					paths: [
-						`build/gen/worker-legacy-${rev}.js`,
-						`build/gen/worker-${rev}.js`,
-					],
-					silent: true,
-				});
-			}
+			replace({
+				regex: `/gen/${filename}.json`,
+				replacement: `/gen/${filename}-${hash}.json`,
+				paths: [
+					`build/gen/worker-legacy-${rev}.js`,
+					`build/gen/worker-${rev}.js`,
+				],
+				silent: true,
+			});
 		}
 	}
 };

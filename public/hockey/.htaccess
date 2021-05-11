@@ -5,9 +5,9 @@
   </IfModule>
 </FilesMatch>
 
-<FilesMatch "^(ui|worker)-.*\.js$">
+<FilesMatch "^(chunk|ui|worker)-.*\.js$">
   <IfModule mod_headers.c>
-    Header set Cache-Control "max-age=31536000"
+    Header set Cache-Control "public,max-age=31536000"
   </IfModule>
 </FilesMatch>
 
@@ -17,9 +17,9 @@
   </IfModule>
 </FilesMatch>
 
-<FilesMatch "^real-player-.*\.json$">
+<FilesMatch "^(names|real-player)-.*\.json$">
   <IfModule mod_headers.c>
-    Header set Cache-Control "max-age=31536000"
+    Header set Cache-Control "public,max-age=31536000"
   </IfModule>
 </FilesMatch>
 

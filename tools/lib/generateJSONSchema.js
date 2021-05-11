@@ -27,7 +27,7 @@ const genRatings = (sport /*: string*/) => {
 		skills: {
 			type: "array",
 			items: {
-				ref: "#/definitions/playerSkill",
+				$ref: "#/definitions/playerSkill",
 			},
 		},
 	};
@@ -93,7 +93,7 @@ const genRatings = (sport /*: string*/) => {
 	const oldRatings = sport === "basketball" ? ["blk", "stl"] : [];
 	const newRatings = sport === "basketball" ? ["diq", "oiq"] : [];
 
-	for (const rating of [...ratings, oldRatings, newRatings]) {
+	for (const rating of [...ratings, ...oldRatings, ...newRatings]) {
 		properties[rating] = {
 			type: "number",
 			minimum: 0,
@@ -269,7 +269,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						minimum: 0,
 					},
 					rank: {
-						type: "integer",
+						type: "number",
 						minimum: 1,
 					},
 				},
@@ -283,7 +283,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						exclusiveMinimum: 0,
 					},
 					exp: {
-						type: "string",
+						type: "number",
 					},
 				},
 				required: ["amount", "exp"],
@@ -293,7 +293,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 				properties: {
 					gamesRemaining: {
 						type: "integer",
-						exclusiveMinimum: 0,
+						minimum: 0,
 					},
 					type: {
 						type: "string",
@@ -328,7 +328,23 @@ const generateJSONSchema = (sport /*: string*/) => {
 			},
 			playerSkill: {
 				type: "string",
-				enum: ["3", "A", "B", "Di", "Dp", "Po", "Ps", "R"],
+				enum: bySport({
+					basketball: ["3", "A", "B", "Di", "Dp", "Po", "Ps", "R", "V"],
+					football: [
+						"Pa",
+						"Pd",
+						"Ps",
+						"A",
+						"X",
+						"H",
+						"Bp",
+						"Br",
+						"PR",
+						"RS",
+						"L",
+					],
+					hockey: ["Pm", "Pw", "G", "E", "S"],
+				}),
 			},
 			tradeTeam: {
 				type: "object",
@@ -436,30 +452,33 @@ const generateJSONSchema = (sport /*: string*/) => {
 						result: {
 							type: "array",
 							items: {
-								tid: {
-									type: "integer",
+								type: "object",
+								properties: {
+									tid: {
+										type: "integer",
+									},
+									originalTid: {
+										type: "integer",
+									},
+									chances: {
+										type: "integer",
+										minimum: 1,
+									},
+									pick: {
+										type: "integer",
+										minimum: 1,
+									},
+									won: {
+										type: "integer",
+										minimum: 0,
+									},
+									lost: {
+										type: "integer",
+										minimum: 0,
+									},
 								},
-								originalTid: {
-									type: "integer",
-								},
-								chances: {
-									type: "integer",
-									minimum: 1,
-								},
-								pick: {
-									type: "integer",
-									minimum: 1,
-								},
-								won: {
-									type: "integer",
-									minimum: 0,
-								},
-								lost: {
-									type: "integer",
-									minimum: 0,
-								},
+								required: ["tid", "originalTid", "chances", "won", "lost"],
 							},
-							required: ["tid", "originalTid", "chances", "won", "lost"],
 						},
 					},
 					required: ["season", "result"],
@@ -1100,7 +1119,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "string",
 						},
 						contract: {
-							ref: "#/definitions/playerContract",
+							$ref: "#/definitions/playerContract",
 						},
 						diedYear: {
 							type: "integer",
@@ -1132,7 +1151,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								skills: {
 									type: "array",
 									items: {
-										ref: "#/definitions/playerSkill",
+										$ref: "#/definitions/playerSkill",
 									},
 								},
 							},
@@ -1179,7 +1198,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 						},
 						injury: {
-							ref: "#/definitions/playerInjury",
+							$ref: "#/definitions/playerInjury",
 						},
 						jerseyNumber: {
 							type: "string",
@@ -1317,10 +1336,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 									type: "object",
 									properties: {
 										home: {
-											ref: "#/definitions/playoffSeriesTeam",
+											$ref: "#/definitions/playoffSeriesTeam",
 										},
 										away: {
-											ref: "#/definitions/playoffSeriesTeam",
+											$ref: "#/definitions/playoffSeriesTeam",
 										},
 										gids: {
 											type: "array",
@@ -1352,7 +1371,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 						},
 						contract: {
-							ref: "#/definitions/playerContract",
+							$ref: "#/definitions/playerContract",
 						},
 					},
 					required: ["pid", "tid", "contract"],
@@ -1606,22 +1625,22 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "object",
 										properties: {
 											luxuryTaxShare: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											merch: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											sponsor: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											ticket: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											nationalTv: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											localTv: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 										},
 										required: [
@@ -1637,25 +1656,25 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "object",
 										properties: {
 											salary: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											luxuryTax: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											minTax: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											scouting: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											coaching: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											health: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 											facilities: {
-												ref: "#/definitions/budgetItem",
+												$ref: "#/definitions/budgetItem",
 											},
 										},
 										required: [
@@ -1756,10 +1775,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "array",
 							items: [
 								{
-									ref: "#/definitions/tradeTeam",
+									$ref: "#/definitions/tradeTeam",
 								},
 								{
-									ref: "#/definitions/tradeTeam",
+									$ref: "#/definitions/tradeTeam",
 								},
 							],
 						},

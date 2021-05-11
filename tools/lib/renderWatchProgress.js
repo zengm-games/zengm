@@ -77,9 +77,8 @@ const File = ({ filename, info }) => {
 		);
 	}
 
-	const time = (info.building
-		? info.dateStart
-		: info.dateEnd
+	const time = (
+		info.building ? info.dateStart : info.dateEnd
 	).toLocaleTimeString();
 	const numMillisecondsSinceTime = new Date() - info.dateEnd;
 
@@ -158,13 +157,11 @@ const Watch = () => {
 		// Needs to run first, to create output folder
 		watchFiles(updateStart, updateEnd, updateError);
 
-		// This will complete its initial write before watchJS runs, which is good because then the schema
-		// file will be available to be included in the JS bundle.
-		watchJSONSchema(updateStart, updateEnd, updateError);
+		// Schema is needed for JS bunlde, and watchJSONSchema is async
+		watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
+			watchJS(updateStart, updateEnd, updateError);
+		});
 
-		watchJS(updateStart, updateEnd, updateError);
-
-		// Since watchJS is async, this will run in parallel
 		watchCSS(updateStart, updateEnd, updateError);
 	}, []);
 

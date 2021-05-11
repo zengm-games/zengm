@@ -1,6 +1,6 @@
 import fs from "fs";
 import build from "./buildFuncs.js";
-import generateJSONSchema from "./generateJSONSchema.js";
+import generateJSONSchema from "./generateJSONSchema.mjs";
 import getSport from "./getSport.js";
 import buildJS from "./build-js.mjs";
 import buildSW from "./build-sw.mjs";

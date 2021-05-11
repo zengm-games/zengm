@@ -1,4 +1,5 @@
-const { bySport } = require("./buildFuncs");
+import buildFuncs from "./buildFuncs.js";
+const { bySport } = buildFuncs;
 
 const genRatings = (sport /*: string*/) => {
 	const properties = {
@@ -1791,4 +1792,4 @@ const generateJSONSchema = (sport /*: string*/) => {
 	};
 };
 
-module.exports = generateJSONSchema;
+export default generateJSONSchema;

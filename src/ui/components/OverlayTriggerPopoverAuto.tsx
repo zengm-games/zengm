@@ -19,7 +19,7 @@ const OverlayTriggerPopoverAuto = ({
 	// Apply class here based on best guess of what we'll actually want in onEnter, to minimize flicker. But different browsers handle it differently, so only Chrome gets the nice behavior, others default to popover-margin-fix-1 so it never overlaps the icon (but there is a flicker on repeated openings)
 	const className =
 		prevPopperPlacement.current && navigator.userAgent.includes("Chrome")
-			? "popover-margin-fix-2"
+			? undefined
 			: "popover-margin-fix-1";
 
 	const popover = (
@@ -38,10 +38,8 @@ const OverlayTriggerPopoverAuto = ({
 			onEntered={node => {
 				if (prevPopperPlacement.current === node.dataset.popperPlacement) {
 					node.classList.remove("popover-margin-fix-1");
-					node.classList.add("popover-margin-fix-2");
 				} else {
 					prevPopperPlacement.current = node.dataset.popperPlacement;
-					node.classList.remove("popover-margin-fix-2");
 					node.classList.add("popover-margin-fix-1");
 				}
 			}}

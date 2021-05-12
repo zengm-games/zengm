@@ -67,6 +67,7 @@
 		"workbox-google-analytics": "^6.1.5",
 		"workbox-precaching": "^6.1.5",
 		"workbox-routing": "^6.1.5",
+		"workbox-window": "^6.1.5",
 		"zustand": "^3.5.1"
 	},
 	"devDependencies": {

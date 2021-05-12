@@ -70,4 +70,8 @@ self.addEventListener("message", event => {
 	if (event.data === "getSWVersion") {
 		event.ports[0].postMessage("REV_GOES_HERE");
 	}
+
+	if (event.data && event.data.type === "SKIP_WAITING") {
+		self.skipWaiting();
+	}
 });

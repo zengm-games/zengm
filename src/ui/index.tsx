@@ -93,7 +93,8 @@ const handleVersion = async () => {
 				let registrations: readonly ServiceWorkerRegistration[] = [];
 
 				if (window.navigator.serviceWorker) {
-					registrations = await window.navigator.serviceWorker.getRegistrations();
+					registrations =
+						await window.navigator.serviceWorker.getRegistrations();
 				}
 
 				const getSWVersion = () => {
@@ -326,8 +327,5 @@ const setupRoutes = () => {
 	await setupEnv();
 	render();
 	await setupRoutes();
-
-	if ("serviceWorker" in navigator) {
-		navigator.serviceWorker.register("/sw.js");
-	}
+	await import("./util/initServiceWorker");
 })();

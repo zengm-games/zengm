@@ -182,11 +182,8 @@ export type TradeEventTeams = {
 	assets: TradeEventAsset[];
 }[];
 
-export type DiscriminateUnion<
-	T,
-	K extends keyof T,
-	V extends T[K]
-> = T extends Record<K, V> ? T : never;
+export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
+	T extends Record<K, V> ? T : never;
 
 export type EventBBGMWithoutKey =
 	| {
@@ -633,6 +630,7 @@ export type LogEventSaveOptions = DistributiveOmit<
 
 export type LogEventShowOptions = {
 	extraClass?: string;
+	htmlIsSafe?: boolean;
 	persistent: boolean;
 	text: string;
 	type: string;
@@ -1274,7 +1272,7 @@ export type TeamFiltered<
 	Attrs extends Readonly<TeamAttr[]> | undefined = undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined = undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined = undefined,
-	Season extends number | undefined = undefined
+	Season extends number | undefined = undefined,
 > = (Attrs extends Readonly<TeamAttr[]>
 	? Pick<Team, Attrs[number]>
 	: Record<string, unknown>) &

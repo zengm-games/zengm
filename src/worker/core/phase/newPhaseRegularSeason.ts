@@ -110,8 +110,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 						read: false,
 						from: "The Commissioner",
 						year: g.get("season"),
-						text:
-							'<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">you can find a user-made list of them here</a>.</p>',
+						text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">you can find a user-made list of them here</a>.</p>',
 					});
 				}
 			}
@@ -149,7 +148,8 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></center></div>`,
+				htmlIsSafe: true,
+				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onclick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></center></div>`,
 				type: "info",
 			});
 		}

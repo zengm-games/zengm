@@ -8,6 +8,7 @@ const saveEvent = () => {
 
 const showEvent = ({
 	extraClass,
+	htmlIsSafe,
 	persistent,
 	text,
 	type,
@@ -47,6 +48,7 @@ const showEvent = ({
 	if (showNotification) {
 		notify(text, title, {
 			extraClass,
+			htmlIsSafe,
 			persistent,
 		});
 

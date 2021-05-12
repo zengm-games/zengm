@@ -11,6 +11,7 @@ const NOTIFICATION_TIMEOUT = 8000;
 
 const Notification = ({
 	extraClass,
+	htmlIsSafe,
 	message,
 	persistent,
 	title,
@@ -61,7 +62,7 @@ const Notification = ({
 					<br />
 				</>
 			) : null}
-			<SafeHtml dirty={message} />
+			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
 			<button
 				className="notification-close"
 				onClick={remove}

@@ -29,16 +29,17 @@
 }
 
 .notification-close-all {
-	background-color: #000;
+	// Use this rather than opacity to set transpacency so it doesn't affect button children
+	background-color: rgba(0, 0, 0, 0.8);
+
 	border-radius: 3px;
 	box-shadow: #999 0 0 12px;
 	color: #c0c0c0; // Try to match normal close button
-	opacity: 0.8;
 
 	&:hover {
 		box-shadow: #000 0 0 12px;
 		color: #fff;
-		opacity: 1;
+		background-color: rgba(0, 0, 0, 1);
 	}
 
 	font-size: 20px;
@@ -54,12 +55,13 @@
 }
 
 .notification {
-	background-color: #000;
+	// Use this rather than opacity to set transpacency so it doesn't affect button children
+	background-color: rgba(0, 0, 0, 0.8);
+
 	border-radius: 3px;
 	box-shadow: #999 0 0 12px;
 	color: #fff;
 	margin: 0 0 6px;
-	opacity: 0.8;
 	padding: 6px 12px;
 	pointer-events: auto;
 	position: relative;
@@ -68,7 +70,7 @@
 
 	&:hover {
 		box-shadow: #000 0 0 12px;
-		opacity: 1;
+		background-color: rgba(0, 0, 0, 1);
 	}
 
 	a {

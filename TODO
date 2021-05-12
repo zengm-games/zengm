@@ -1371,10 +1371,6 @@ login -> account -> doesn't say logged in, sometimes? but account shows in navba
   - only in firefox?
   - no, user says chrome too
 
-service worker - workbox
-- more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
-  - workbox-window
-
 https://developers.google.com/web/fundamentals/app-install-banners/
 
 after preseason, after player development, recalculate player value

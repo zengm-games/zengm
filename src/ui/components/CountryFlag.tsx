@@ -85,6 +85,7 @@ const countryCodes: Record<string, string> = {
 	Gabon: "ga",
 	Gambia: "gm",
 	Germany: "de",
+	Georgia: "ge",
 	Ghana: "gh",
 	Gibraltar: "gi",
 	Greece: "gr",
@@ -258,8 +259,6 @@ const countryCodes: Record<string, string> = {
 	Yemen: "ye",
 	Zambia: "zm",
 	Zimbabwe: "zw",
-	// Uncomment this after the "USA" suffix has been there for a bit
-	// Georgia: "ge",
 };
 
 const CountryFlag = ({

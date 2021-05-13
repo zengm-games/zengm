@@ -1,6 +1,10 @@
 check for service worker update in background?
 - wb.update() kind of works, but is flaky. not worth it
   - or only call it if we can guarantee a sw is currently active?
+- any issue with active/controllign logic currently?
+- only show one update available notification at a time
+  - cb after notification is closed
+- activated but not controlling. update available. refresh button won't work then?
 
 teams shouldn't offer nothing on trading block
 

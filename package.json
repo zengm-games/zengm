@@ -64,6 +64,7 @@
 		"react-sortable-hoc": "^2.0.0",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.2.0",
+		"workbox-core": "^6.1.5",
 		"workbox-google-analytics": "^6.1.5",
 		"workbox-precaching": "^6.1.5",
 		"workbox-routing": "^6.1.5",

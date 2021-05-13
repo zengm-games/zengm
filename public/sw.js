@@ -1,4 +1,5 @@
 import { registerQuotaErrorCallback } from "workbox-core/registerQuotaErrorCallback.js";
+import { clientsClaim } from "workbox-core";
 import * as googleAnalytics from "workbox-google-analytics";
 import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { CacheFirst } from "workbox-strategies";
@@ -64,8 +65,6 @@ const navigationRoute = new NavigationRoute(handler, {
 });
 registerRoute(navigationRoute);
 
-googleAnalytics.initialize();
-
 self.addEventListener("message", event => {
 	if (event.data === "getSWVersion") {
 		event.ports[0].postMessage("REV_GOES_HERE");
@@ -75,3 +74,8 @@ self.addEventListener("message", event => {
 		self.skipWaiting();
 	}
 });
+
+// Without this, can get into weird situations with the update checking logic in initServiceWorker, where a service worker has activated but is not yet contorlling the page, so we can't use the service worker to trigger refreshes
+clientsClaim();
+
+googleAnalytics.initialize();

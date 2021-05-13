@@ -2,22 +2,15 @@ import { Workbox } from "workbox-window";
 import { GAME_NAME } from "../../common";
 import logEvent from "./logEvent";
 
+const ONE_MINUTE = 60 * 1000;
+const ONE_HOUR = 60 * 60 * 1000;
+
 if ("serviceWorker" in navigator) {
 	const wb = new Workbox("/sw.js");
 
-	wb.addEventListener("activated", event => {
-		if (!event.isUpdate) {
-			logEvent({
-				extraClass: "",
-				type: "info",
-				text: `${GAME_NAME} is now fully loaded and will continue to work even if you are offline.`,
-				saveToDb: false,
-				persistent: true,
-			});
-		}
-	});
+	let updateAvailable = false;
 
-	wb.addEventListener("waiting", () => {
+	const showUpdateAvailableNotification = () => {
 		(window as any)._wb_updateAndRefresh = (button: HTMLButtonElement) => {
 			button.disabled = true;
 			button.innerHTML =
@@ -33,14 +26,56 @@ if ("serviceWorker" in navigator) {
 			saveToDb: false,
 			persistent: true,
 		});
+
+		updateAvailable = true;
+	};
+
+	wb.addEventListener("activated", event => {
+		console.log("activated", event);
+		if (event.isExternal) {
+			// Maybe another tab? Or (for reasons I don't understand) the first tab opened, if it was only opened once, even though clientsClaim is used in the sw and controlling event fires, and then an update happens
+			window.location.reload();
+		} else if (!event.isUpdate) {
+			logEvent({
+				extraClass: "",
+				type: "info",
+				text: `${GAME_NAME} is now fully loaded and will continue to work even if you are offline.`,
+				saveToDb: false,
+				persistent: true,
+			});
+		}
+	});
+
+	wb.addEventListener("waiting", event => {
+		console.log("waiting", event);
+
+		showUpdateAvailableNotification();
 	});
 
 	// Should only happen when a new service worker takes over for a previous one, which should only happen in response to clicking the refresh button in response to the "waiting" event
 	wb.addEventListener("controlling", event => {
-		if (event.isUpdate) {
+		console.log("controlling", event);
+		if (event.isUpdate || event.isExternal) {
 			window.location.reload();
 		}
 	});
 
 	wb.register();
+
+	// Check for updates in the background
+	window.wb = wb;
+	const watchForUpdates = () => {
+		setTimeout(async () => {
+			console.log("checking for updates", updateAvailable);
+			if (updateAvailable) {
+				showUpdateAvailableNotification();
+			} else {
+				await wb.update();
+			}
+
+			watchForUpdates();
+		}, ONE_MINUTE);
+	};
+
+	watchForUpdates();
 }

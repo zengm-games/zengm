@@ -19,7 +19,6 @@ if ("serviceWorker" in navigator) {
 
 	wb.addEventListener("waiting", () => {
 		(window as any)._wb_updateAndRefresh = (button: HTMLButtonElement) => {
-			console.log(button);
 			button.disabled = true;
 			button.innerHTML =
 				'<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating';

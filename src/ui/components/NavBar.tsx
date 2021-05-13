@@ -59,32 +59,20 @@ const NavBar = ({ updating }: Props) => {
 	);
 
 	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals	// game. This is needed because game sim happens before the results are displayed in liveGame.
-	const phaseStatusBlock = liveGameInProgress ? (
-		<span
-			className="navbar-text"
+	const phaseStatusBlock = (
+		<div
+			className="navbar-text flex-shrink-1 overflow-hidden"
 			style={{
 				lineHeight: 1.35,
 				marginLeft: 16,
+				minWidth: 0,
 				padding: 0,
 			}}
 		>
-			Live game
+			{liveGameInProgress ? "Live game" : phaseText}
 			<br />
-			in progress
-		</span>
-	) : (
-		<span
-			className="navbar-text"
-			style={{
-				lineHeight: 1.35,
-				marginLeft: 16,
-				padding: 0,
-			}}
-		>
-			{phaseText}
-			<br />
-			{statusText}
-		</span>
+			{liveGameInProgress ? "in progress" : statusText}
+		</div>
 	);
 
 	return (
@@ -92,7 +80,7 @@ const NavBar = ({ updating }: Props) => {
 			bg="light"
 			expand="sm"
 			fixed="top"
-			className="navbar-border"
+			className="navbar-border flex-nowrap"
 			role="banner"
 		>
 			<button

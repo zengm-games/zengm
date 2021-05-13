@@ -9,6 +9,7 @@ const saveEvent = () => {
 const showEvent = ({
 	extraClass,
 	htmlIsSafe,
+	onClose,
 	persistent,
 	text,
 	type,
@@ -49,6 +50,7 @@ const showEvent = ({
 		notify(text, title, {
 			extraClass,
 			htmlIsSafe,
+			onClose,
 			persistent,
 		});
 

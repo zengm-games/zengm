@@ -10,6 +10,7 @@ import type {
 type LogEventOptions = {
 	extraClass?: string;
 	htmlIsSafe?: boolean;
+	onClose?: () => void;
 	persistent?: boolean;
 	saveToDb?: boolean;
 	showNotification?: boolean;
@@ -23,6 +24,7 @@ function createLogger(
 		{
 			extraClass,
 			htmlIsSafe,
+			onClose,
 			persistent = false,
 			saveToDb = true,
 			showNotification = true,
@@ -44,6 +46,7 @@ function createLogger(
 				{
 					extraClass,
 					htmlIsSafe,
+					onClose,
 					persistent,
 					text: event.text,
 					type: event.type,

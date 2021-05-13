@@ -118,6 +118,9 @@ const Notifications = () => {
 
 						if (numToDelete > 0) {
 							numToDelete -= 1;
+							if (notification.onClose) {
+								notification.onClose();
+							}
 							return false;
 						}
 
@@ -166,6 +169,11 @@ const Notifications = () => {
 					className="notification-close-all"
 					title="Dismiss all notifications"
 					onClick={() => {
+						for (const notification of notifications) {
+							if (notification.onClose) {
+								notification.onClose();
+							}
+						}
 						setNotifications([]);
 					}}
 					style={{
@@ -194,7 +202,16 @@ const Notifications = () => {
 								{...notification}
 								remove={() => {
 									setNotifications(currentNotifications =>
-										currentNotifications.filter(n => n !== notification),
+										currentNotifications.filter(n => {
+											if (n === notification) {
+												if (notification.onClose) {
+													notification.onClose();
+												}
+												return false;
+											}
+
+											return true;
+										}),
 									);
 								}}
 							/>

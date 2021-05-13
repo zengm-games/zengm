@@ -631,6 +631,7 @@ export type LogEventSaveOptions = DistributiveOmit<
 export type LogEventShowOptions = {
 	extraClass?: string;
 	htmlIsSafe?: boolean;
+	onClose?: () => void;
 	persistent: boolean;
 	text: string;
 	type: string;

@@ -6,6 +6,7 @@ export type Message = {
 	title?: string;
 	extraClass?: string;
 	htmlIsSafe?: boolean;
+	onClose?: () => void;
 	persistent: boolean;
 };
 
@@ -22,10 +23,12 @@ const notify = (
 	{
 		extraClass,
 		htmlIsSafe,
+		onClose,
 		persistent = false,
 	}: {
 		extraClass?: string;
 		htmlIsSafe?: boolean;
+		onClose?: () => void;
 		persistent?: boolean;
 	} = {},
 ) => {
@@ -35,6 +38,7 @@ const notify = (
 		title,
 		extraClass,
 		htmlIsSafe,
+		onClose,
 		persistent,
 	});
 

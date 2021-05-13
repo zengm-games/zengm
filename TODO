@@ -1,8 +1,6 @@
 check for service worker update in background?
 - wb.update() kind of works, but is flaky. not worth it
-
-top bar overflow on iphone se https://discord.com/channels/290013534023057409/290015591216054273/842236647634632784
-- also 8? https://discord.com/channels/290013534023057409/290015591216054273/842239837926850579
+  - or only call it if we can guarantee a sw is currently active?
 
 teams shouldn't offer nothing on trading block
 

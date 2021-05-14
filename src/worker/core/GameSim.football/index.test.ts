@@ -28,7 +28,10 @@ const initGameSim = async () => {
 			t.depth = team.getDepthPlayers(t.depth, t.player);
 		}
 	}
-	return new GameSim(0, [teams[0], teams[1]], false);
+	return new GameSim({
+		gid: 0,
+		teams: [teams[0], teams[1]],
+	});
 };
 
 describe("worker/core/GameSim.football", () => {

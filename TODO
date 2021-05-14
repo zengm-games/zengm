@@ -1,3 +1,6 @@
+add states to USA players https://old.reddit.com/r/BasketballGM/comments/nbysr9/in_version_202105131370_players_from_the_country/gy40yyt/
+- weight by population
+
 teams shouldn't offer nothing on trading block
 
 bundle size
@@ -6,6 +9,8 @@ bundle size
   - framer-motion
   - react-select
   - all views? https://reactjs.org/docs/code-splitting.html#route-based-code-splitting
+    - how many is too many?
+    - performance hit if the current view is not in the main bundle?
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
 - confirm cache header
 - confirm bugnsag working

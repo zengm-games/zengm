@@ -228,12 +228,17 @@ class GameSim {
 	 *
 	 * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
 	 */
-	constructor(
-		gid: number,
-		teams: [TeamGameSim, TeamGameSim],
-		doPlayByPlay: boolean,
-		homeCourtFactor: number = 1,
-	) {
+	constructor({
+		gid,
+		teams,
+		doPlayByPlay = false,
+		homeCourtFactor = 1,
+	}: {
+		gid: number;
+		teams: [TeamGameSim, TeamGameSim];
+		doPlayByPlay?: boolean;
+		homeCourtFactor?: number;
+	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
 		}
@@ -1323,8 +1328,8 @@ class GameSim {
 		}
 
 		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
-		let shootingThreePointerScaled = this.team[this.o].player[p].compositeRating
-			.shootingThreePointer;
+		let shootingThreePointerScaled =
+			this.team[this.o].player[p].compositeRating.shootingThreePointer;
 
 		if (shootingThreePointerScaled > 0.55) {
 			shootingThreePointerScaled =

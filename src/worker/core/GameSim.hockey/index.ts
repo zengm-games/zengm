@@ -96,12 +96,17 @@ class GameSim {
 
 	synergyFactor: number;
 
-	constructor(
-		gid: number,
-		teams: [TeamGameSim, TeamGameSim],
-		doPlayByPlay: boolean,
-		homeCourtFactor: number = 1,
-	) {
+	constructor({
+		gid,
+		teams,
+		doPlayByPlay = false,
+		homeCourtFactor = 1,
+	}: {
+		gid: number;
+		teams: [TeamGameSim, TeamGameSim];
+		doPlayByPlay?: boolean;
+		homeCourtFactor?: number;
+	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
@@ -683,10 +688,8 @@ class GameSim {
 			names: [shooter.name],
 		});
 
-		const {
-			powerPlayTeam,
-			strengthDifference,
-		} = this.penaltyBox.getPowerPlayTeam();
+		const { powerPlayTeam, strengthDifference } =
+			this.penaltyBox.getPowerPlayTeam();
 		let strengthType: "ev" | "sh" | "pp" = "ev";
 		if (powerPlayTeam === this.d) {
 			strengthType = "sh";
@@ -1142,9 +1145,8 @@ class GameSim {
 		for (let i = 0; i < newLine.length; i++) {
 			const p = newLine[i];
 			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
-				let nextLine = this.lines[t][pos][
-					(this.currentLine[t][pos] + 1) % NUM_LINES[pos]
-				];
+				let nextLine =
+					this.lines[t][pos][(this.currentLine[t][pos] + 1) % NUM_LINES[pos]];
 				if (nextLine.length === 0 && this.currentLine[t][pos] !== 0) {
 					// This could happen if a line is empty due to a ton of injuries
 					nextLine = this.lines[t][pos][0];

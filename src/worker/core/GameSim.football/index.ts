@@ -1711,7 +1711,7 @@ class GameSim {
 		}
 
 		const qbOvrRB = this.playersOnField[o].QB?.[0]?.ovrs.RB ?? 0;
-		const probScramble = 0.01 + (0.4 * (qbOvrRB - 30)) / 100;
+		const probScramble = 0.01 + Math.min(0, (0.4 * (qbOvrRB - 30)) / 100);
 		if (probScramble > Math.random()) {
 			return this.doRun(true);
 		}

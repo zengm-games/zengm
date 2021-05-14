@@ -1034,6 +1034,10 @@ const isAmerican = (loc: string) => {
 	const parts = loc.split(", ");
 	const state = parts[parts.length - 1];
 
+	if (state === "Georgia") {
+		return false;
+	}
+
 	return states.includes(state);
 };
 

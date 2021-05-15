@@ -59,7 +59,7 @@ const connectIndexedDB = async <DBTypes>({
 		terminated() {
 			logEvent({
 				type: "error",
-				text: "Something bad happened. Please try reloading the game.",
+				text: "Something bad happened. Please try restarting your browser.",
 				saveToDb: false,
 				persistent: true,
 			});

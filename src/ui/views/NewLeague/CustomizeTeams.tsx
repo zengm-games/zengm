@@ -799,10 +799,13 @@ const CustomizeTeams = ({
 		did: -1,
 		abbrev,
 	}));
-	const availableBuiltInTeams: NewLeagueTeam[] = getTeamInfos(param).map(t => ({
-		...t,
-		popRank: -1,
-	}));
+	const availableBuiltInTeams: NewLeagueTeam[] = orderBy(
+		getTeamInfos(param).map(t => ({
+			...t,
+			popRank: -1,
+		})),
+		["region", "name"],
+	);
 
 	return (
 		<>

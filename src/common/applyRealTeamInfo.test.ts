@@ -18,7 +18,7 @@ describe("common/applyRealTeamInfo", () => {
 		assert.strictEqual(t.name, "Gold Club");
 		assert.strictEqual(t.pop, 5.3);
 		assert.deepStrictEqual(t.colors, ["#5c4a99", "#f0e81c", "#211e1e"]);
-		assert.strictEqual(t.imgURL, "/img/logos/ATL.png");
+		assert.strictEqual(t.imgURL, "/img/logos-primary/ATL.png");
 		t.srID = "foo";
 
 		const realTeamInfo: RealTeamInfo = {

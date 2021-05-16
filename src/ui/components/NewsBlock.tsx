@@ -184,6 +184,7 @@ const NewsBlock = ({
 	teams: {
 		abbrev: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		region: string;
 	}[];
 }) => {
@@ -200,13 +201,17 @@ const NewsBlock = ({
 
 			teamName = (
 				<>
-					{teamInfo.imgURL ? (
+					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
 						<a
 							href={rosterURL}
 							className="align-self-center p-1"
 							style={logoStyle}
 						>
-							<img className="mw-100 mh-100" src={teamInfo.imgURL} alt="" />
+							<img
+								className="mw-100 mh-100"
+								src={teamInfo.imgURLSmall ?? teamInfo.imgURL}
+								alt=""
+							/>
 						</a>
 					) : null}
 					<a href={rosterURL} className="align-self-center pl-1">
@@ -236,8 +241,12 @@ const NewsBlock = ({
 					className="align-self-center p-1"
 					style={logoStyle}
 				>
-					{teamInfo.imgURL ? (
-						<img className="mw-100 mh-100" src={teamInfo.imgURL} alt="" />
+					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
+						<img
+							className="mw-100 mh-100"
+							src={teamInfo.imgURLSmall ?? teamInfo.imgURL}
+							alt=""
+						/>
 					) : (
 						teamInfo.abbrev
 					)}

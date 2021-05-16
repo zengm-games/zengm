@@ -2670,7 +2670,14 @@ const updateOptions = async (
 	},
 ) => {
 	const validateRealTeamInfo = (abbrev: string, teamInfo: any) => {
-		const strings = ["abbrev", "region", "name", "imgURL", "jersey"];
+		const strings = [
+			"abbrev",
+			"region",
+			"name",
+			"imgURL",
+			"imgURLSmall",
+			"jersey",
+		];
 		const numbers = ["pop"];
 		for (const [key, value] of Object.entries(teamInfo as any)) {
 			if (strings.includes(key)) {

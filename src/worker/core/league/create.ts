@@ -136,7 +136,7 @@ export const createWithoutSaving = async (
 				const t2 = teamsDefault[i];
 
 				for (const prop of helpers.keys(t2)) {
-					if (!t.hasOwnProperty(prop)) {
+					if (!t.hasOwnProperty(prop) && prop !== "imgURLSmall") {
 						t[prop] = t2[prop];
 					}
 				}

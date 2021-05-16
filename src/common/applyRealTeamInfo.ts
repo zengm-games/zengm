@@ -1,4 +1,4 @@
-import type { Team, RealTeamInfo } from "./types";
+import type { IndividualRealTeamInfo, Team, RealTeamInfo } from "./types";
 
 const POTENTIAL_OVERRIDES = [
 	"abbrev",
@@ -8,10 +8,34 @@ const POTENTIAL_OVERRIDES = [
 	"colors",
 	"jersey",
 	"imgURL",
+	"imgURLSmall",
 ] as const;
 
+type MyTeam = Partial<Pick<Team, typeof POTENTIAL_OVERRIDES[number] | "srID">>;
+
+const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
+	let updated = false;
+	let updatedImgURL = false;
+	for (const key of POTENTIAL_OVERRIDES) {
+		if (realInfo[key] && realInfo[key] !== (t as any)[key]) {
+			(t as any)[key] = realInfo[key];
+			updated = true;
+
+			if (key === "imgURL") {
+				updatedImgURL = true;
+			}
+		}
+	}
+
+	if (updatedImgURL && realInfo.imgURLSmall === undefined) {
+		delete (t as any).imgURLSmall;
+	}
+
+	return updated;
+};
+
 const applyRealTeamInfo = (
-	t: Partial<Pick<Team, typeof POTENTIAL_OVERRIDES[number] | "srID">>,
+	t: MyTeam,
 	realTeamInfo: RealTeamInfo,
 	season: number,
 	options: {
@@ -32,12 +56,7 @@ const applyRealTeamInfo = (
 
 	// Apply the base attributes first
 	if (!options.exactSeason) {
-		for (const key of POTENTIAL_OVERRIDES) {
-			if (realInfoRoot[key] && realInfoRoot[key] !== (t as any)[key]) {
-				(t as any)[key] = realInfoRoot[key];
-				updated = true;
-			}
-		}
+		updated = applyToObject(t, realInfoRoot);
 	}
 
 	// Need to add a season override?
@@ -64,14 +83,9 @@ const applyRealTeamInfo = (
 	const realInfoSeason = realInfoSeasons[seasonToUse];
 
 	// Apply, like above
-	for (const key of POTENTIAL_OVERRIDES) {
-		if (realInfoSeason[key] && realInfoSeason[key] !== (t as any)[key]) {
-			(t as any)[key] = realInfoSeason[key];
-			updated = true;
-		}
-	}
+	const updated2 = applyToObject(t, realInfoSeason);
 
-	return updated;
+	return updated || updated2;
 };
 
 export default applyRealTeamInfo;

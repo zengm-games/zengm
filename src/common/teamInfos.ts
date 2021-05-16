@@ -64,17 +64,6 @@ const teamInfos: {
 			hockey: "hockey4",
 		}),
 	},
-	CHI: {
-		region: "Chicago",
-		name: "Whirlwinds",
-		pop: 9.1,
-		colors: ["#ef670a", "#caeaf9", "#d3d3d3"],
-		jersey: bySport({
-			basketball: "jersey2",
-			football: "football2",
-			hockey: "hockey3",
-		}),
-	},
 	CIN: {
 		region: "Cincinnati",
 		name: "Riots",
@@ -240,17 +229,6 @@ const teamInfos: {
 			hockey: "hockey",
 		}),
 	},
-	MON: {
-		region: "Montreal",
-		name: "Mounties",
-		pop: 3.5,
-		colors: ["#ed1d3d", "#eac494", "#f2b316"],
-		jersey: bySport({
-			basketball: "jersey2",
-			football: "football4",
-			hockey: "hockey4",
-		}),
-	},
 	MXC: {
 		region: "Mexico City",
 		name: "Aztecs",
@@ -383,50 +361,6 @@ const teamInfos: {
 			hockey: "hockey4",
 		}),
 	},
-	SEA: {
-		region: "Seattle",
-		name: "Symphony",
-		pop: 3.8,
-		colors: ["#47ff47", "#000000", "#8f8f8f"],
-		jersey: bySport({
-			basketball: "jersey4",
-			football: "football4",
-			hockey: "hockey",
-		}),
-	},
-	SF: {
-		region: "San Francisco",
-		name: "Venture Capitalists",
-		pop: 6.5,
-		colors: ["#0e442e", "#d75f27", "#e7d3ae"],
-		jersey: bySport({
-			basketball: "jersey3",
-			football: "football3",
-			hockey: "hockey3",
-		}),
-	},
-	STL: {
-		region: "St. Louis",
-		name: "Spirits",
-		pop: 2.2,
-		colors: ["#133cd1", "#c0c1c2", "#3a3a3a"],
-		jersey: bySport({
-			basketball: "jersey2",
-			football: "football",
-			hockey: "hockey4",
-		}),
-	},
-	TOR: {
-		region: "Toronto",
-		name: "Beavers",
-		pop: 6.6,
-		colors: ["#832525", "#a17266", "#5e372c"],
-		jersey: bySport({
-			basketball: "jersey2",
-			football: "football3",
-			hockey: "hockey3",
-		}),
-	},
 	TPA: {
 		region: "Tampa",
 		name: "Turtles",
@@ -471,13 +405,169 @@ const teamInfos: {
 			hockey: "hockey3",
 		}),
 	},
-};
 
-teamInfos.LAL = teamInfos.LA;
-teamInfos.LAC = teamInfos.LAE;
-teamInfos.GS = {
-	...teamInfos.SF,
-	region: "Golden State",
+	// 2021-05-16 - new teams
+
+	AUS: {
+		region: "Austin",
+		name: "Armadillos",
+		pop: 1.7,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	BUF: {
+		region: "Buffalo",
+		name: "Wings",
+		pop: 1.1,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	HAW: {
+		region: "Hawaii",
+		name: "Honu",
+		pop: 1,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	JAX: {
+		region: "Jacksonville",
+		name: "Gators",
+		pop: 1.5,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	OTT: {
+		region: "Ottawa",
+		name: "Spiders",
+		pop: 1.5,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	SF: {
+		region: "San Francisco",
+		name: "Unicorns",
+		pop: 5.5,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	TOR: {
+		region: "Toronto",
+		name: "Raccoons",
+		pop: 6.6,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+	VB: {
+		region: "Virginia Beach",
+		name: "Colonists",
+		pop: 1.7,
+		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: bySport({
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
+
+	// 2021-05-16 - relocated
+
+	CGY: {
+		region: "Calgary",
+		name: "Mounties",
+		pop: 1.4,
+		colors: ["#ed1d3d", "#eac494", "#f2b316"],
+		jersey: bySport({
+			basketball: "jersey2",
+			football: "football4",
+			hockey: "hockey4",
+		}),
+	},
+	MON: {
+		region: "Montreal",
+		name: "Beavers",
+		pop: 4,
+		colors: ["#832525", "#a17266", "#5e372c"],
+		jersey: bySport({
+			basketball: "jersey2",
+			football: "football3",
+			hockey: "hockey3",
+		}),
+	},
+	SJ: {
+		region: "San Jose",
+		name: "Venture Capitalists",
+		pop: 1,
+		colors: ["#0e442e", "#d75f27", "#e7d3ae"],
+		jersey: bySport({
+			basketball: "jersey3",
+			football: "football3",
+			hockey: "hockey3",
+		}),
+	},
+
+	// 2021-05-16 - rebranded
+
+	CHI: {
+		region: "Chicago",
+		name: "Whirlwinds",
+		pop: 9.1,
+		colors: ["#ef670a", "#caeaf9", "#d3d3d3"],
+		jersey: bySport({
+			basketball: "jersey2",
+			football: "football2",
+			hockey: "hockey3",
+		}),
+	},
+	SEA: {
+		region: "Seattle",
+		name: "Symphony",
+		pop: 3.8,
+		colors: ["#47ff47", "#000000", "#8f8f8f"],
+		jersey: bySport({
+			basketball: "jersey4",
+			football: "football4",
+			hockey: "hockey",
+		}),
+	},
+	STL: {
+		region: "St. Louis",
+		name: "Spirits",
+		pop: 2.2,
+		colors: ["#133cd1", "#c0c1c2", "#3a3a3a"],
+		jersey: bySport({
+			basketball: "jersey2",
+			football: "football",
+			hockey: "hockey4",
+		}),
+	},
 };
 
 export default teamInfos;

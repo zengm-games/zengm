@@ -216,8 +216,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "participation",
 		name: "Participation",
-		desc:
-			"You get an achievement just for creating an account, you special snowflake!",
+		desc: "You get an achievement just for creating an account, you special snowflake!",
 		category: "Meta",
 	},
 	{
@@ -323,8 +322,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "hacker",
 		name: "Hacker",
-		desc:
-			"Privately report a security issue in the account system or some other part of the site.",
+		desc: "Privately report a security issue in the account system or some other part of the site.",
 		category: "Meta",
 	},
 	{
@@ -393,7 +391,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "homegrown",
 		name: "Homegrown",
-		desc: "Win a title with only players you drafted.",
+		desc: "Win a title with only players your team drafted.",
 		category: "Team Composition",
 
 		async check() {

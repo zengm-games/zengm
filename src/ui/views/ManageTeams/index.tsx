@@ -82,14 +82,16 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		teams: props.teams,
 	});
 
-	const handleInputChange = (tid: number) => (
-		field: string,
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		const value = event.target.value;
+	const handleInputChange =
+		(tid: number) =>
+		(
+			field: string,
+			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		) => {
+			const value = event.target.value;
 
-		dispatch({ type: "updateTeam", tid, field, value });
-	};
+			dispatch({ type: "updateTeam", tid, field, value });
+		};
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
@@ -154,7 +156,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					<br />
 					Region
 				</div>
-				<div className="col-lg-2">
+				<div className="col-lg-1">
 					<br />
 					Name
 				</div>
@@ -180,6 +182,10 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					<br />
 					Logo URL
 				</div>
+				<div className="col-lg-1">
+					<br />
+					Small Logo
+				</div>
 				<div className="col-lg-2">
 					<br />
 					Jersey
@@ -197,7 +203,8 @@ const ManageTeams = (props: View<"manageTeams">) => {
 							<TeamForm
 								classNamesCol={[
 									"col-6 col-lg-2",
-									"col-6 col-lg-2",
+									"col-6 col-lg-1",
+									"col-6 col-lg-1",
 									"col-6 col-lg-1",
 									"col-6 col-lg-1",
 									"col-6 col-lg-1",

@@ -24,6 +24,7 @@ const TeamForm = ({
 		string,
 		string,
 		string,
+		string,
 	];
 	classNameLabel?: string;
 	confs: View<"manageTeams">["confs"];
@@ -139,6 +140,17 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[7]}>
 				<div className="form-group">
+					<label className={classNameLabel}>Small Logo</label>
+					<input
+						type="text"
+						className="form-control"
+						onChange={e => handleInputChange("imgURLSmall", e)}
+						value={t.imgURLSmall}
+					/>
+				</div>
+			</div>
+			<div className={classNamesCol[8]}>
+				<div className="form-group">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="d-flex">
 						{[0, 1, 2].map(j => (
@@ -165,7 +177,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			{!hideStatus ? (
-				<div className={classNamesCol[8]}>
+				<div className={classNamesCol[9]}>
 					<div className="form-group">
 						<label className={classNameLabel}>Status</label>
 						<select

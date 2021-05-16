@@ -452,6 +452,7 @@ export type GameAttributesLeague = {
 		region: string;
 		name: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		disabled?: boolean;
 	}[];
 	ties: boolean;

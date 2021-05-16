@@ -2822,6 +2822,7 @@ const updateTeamInfo = async (
 		name: string;
 		abbrev: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		pop: number | string;
 		stadiumCapacity: number | string;
 		colors: [string, string, string];
@@ -2853,6 +2854,9 @@ const updateTeamInfo = async (
 
 		if (newTeam.hasOwnProperty("imgURL")) {
 			t.imgURL = newTeam.imgURL;
+		}
+		if (newTeam.hasOwnProperty("imgURLSmall")) {
+			t.imgURLSmall = newTeam.imgURLSmall;
 		}
 
 		t.colors = newTeam.colors;
@@ -2920,13 +2924,24 @@ const updateTeamInfo = async (
 				teamSeason.name = t.name;
 				teamSeason.abbrev = t.abbrev;
 				teamSeason.imgURL = t.imgURL;
+				if (t.imgURLSmall) {
+					teamSeason.imgURLSmall = t.imgURLSmall;
+				}
 				teamSeason.colors = t.colors;
 				teamSeason.jersey = t.jersey;
 				teamSeason.pop = t.pop;
 				teamSeason.stadiumCapacity = t.stadiumCapacity;
 
+				if (teamSeason.imgURLSmall === "") {
+					delete teamSeason.imgURLSmall;
+				}
+
 				await idb.cache.teamSeasons.put(teamSeason);
 			}
+		}
+
+		if (t.imgURLSmall === "") {
+			delete t.imgURLSmall;
 		}
 	}
 
@@ -2938,7 +2953,7 @@ const updateTeamInfo = async (
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
+			imgURLSmall: t.imgURLSmall === "" ? undefined : t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),

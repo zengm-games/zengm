@@ -48,7 +48,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "imgURL"],
+			attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
 			seasonAttrs: [
 				"season",
 				"playoffRoundsWon",
@@ -60,6 +60,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"region",
 				"name",
 				"imgURL",
+				"imgURLSmall",
 			],
 			addDummySeason: true,
 		});
@@ -132,8 +133,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						lost: teamSeason ? teamSeason.lost : 0,
 						tied: teamSeason ? teamSeason.tied : 0,
 						otl: teamSeason ? teamSeason.otl : 0,
-						imgURL:
-							teamSeason && teamSeason.imgURL ? teamSeason.imgURL : t.imgURL,
+						imgURL: teamSeason?.imgURL ?? t.imgURL,
+						imgURLSmall: teamSeason?.imgURLSmall ?? t.imgURLSmall,
 						count: 0,
 					};
 				};

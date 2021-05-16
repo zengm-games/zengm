@@ -101,9 +101,14 @@ const formatTeam = (
 		classNames: t.tid === userTid ? "table-info p-0 pr-1" : "p-0 pr-1",
 		value: (
 			<div className="d-flex align-items-center">
-				{t.imgURL ? (
+				{t.imgURL || t.imgURLSmall ? (
 					<div className="playoff-matchup-logo mr-2 d-flex align-items-center justify-content-center">
-						<img className="mw-100 mh-100" src={t.imgURL} alt="" />
+						<img
+							className="mw-100 mh-100"
+							src={t.imgURLSmall ?? t.imgURL}
+							alt=""
+							style={{ padding: 2 }}
+						/>
 					</div>
 				) : null}
 				<div className="mr-auto">

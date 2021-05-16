@@ -771,6 +771,7 @@ export type LocalStateUI = {
 		region: string;
 		name: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		disabled?: boolean;
 	}[];
 	units: "metric" | "us";

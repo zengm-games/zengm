@@ -266,7 +266,9 @@ const ScoreBox = ({
 								: `All-Star Team ${i === 0 ? 2 : 1}`;
 							rosterURL = helpers.leagueUrl(["all_star_history"]);
 						} else {
-							imgURL = teamInfoCache[t.tid]?.imgURL;
+							imgURL =
+								teamInfoCache[t.tid]?.imgURLSmall ??
+								teamInfoCache[t.tid]?.imgURL;
 							teamName = small
 								? teamInfoCache[t.tid]?.abbrev
 								: `${teamInfoCache[t.tid]?.region} ${

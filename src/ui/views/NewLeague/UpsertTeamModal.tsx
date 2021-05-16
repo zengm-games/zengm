@@ -77,6 +77,7 @@ const UpsertTeamModal = ({
 			jersey: t.jersey ?? DEFAULT_JERSEY,
 			did: String(t.did),
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 		};
 	});
 
@@ -102,6 +103,10 @@ const UpsertTeamModal = ({
 			did,
 			cid: div.cid,
 			imgURL: controlledTeam.imgURL,
+			imgURLSmall:
+				controlledTeam.imgURLSmall === ""
+					? undefined
+					: controlledTeam.imgURLSmall,
 		};
 
 		const errors = [];
@@ -139,7 +144,6 @@ const UpsertTeamModal = ({
 					<form
 						id="foo"
 						onSubmit={event => {
-							console.log("onSubmit");
 							event.preventDefault();
 							save();
 						}}
@@ -147,6 +151,7 @@ const UpsertTeamModal = ({
 						<div className="row">
 							<TeamForm
 								classNamesCol={[
+									"col-6",
 									"col-6",
 									"col-6",
 									"col-6",

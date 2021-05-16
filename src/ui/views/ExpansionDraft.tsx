@@ -97,29 +97,31 @@ const ExpansionDraft = ({
 		);
 	}
 
-	const handleInputChange = (i: number) => async (
-		field: string,
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		const value = event.target.value;
+	const handleInputChange =
+		(i: number) =>
+		async (
+			field: string,
+			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		) => {
+			const value = event.target.value;
 
-		const t: any = {
-			...teams[i],
-		};
+			const t: any = {
+				...teams[i],
+			};
 
-		if (field.startsWith("colors")) {
-			const ind = parseInt(field.replace("colors", ""));
-			if (ind >= 0 && ind <= 2) {
-				t.colors[ind] = value;
+			if (field.startsWith("colors")) {
+				const ind = parseInt(field.replace("colors", ""));
+				if (ind >= 0 && ind <= 2) {
+					t.colors[ind] = value;
+				}
+			} else {
+				t[field] = value;
 			}
-		} else {
-			t[field] = value;
-		}
 
-		const newTeams = [...teams];
-		newTeams[i] = t;
-		await setTeams(newTeams);
-	};
+			const newTeams = [...teams];
+			newTeams[i] = t;
+			await setTeams(newTeams);
+		};
 
 	const deleteTeam = (i: number) => async (event: MouseEvent) => {
 		event.preventDefault();
@@ -158,34 +160,33 @@ const ExpansionDraft = ({
 		}
 	};
 
-	const handleTakeControl = (i: number) => async (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newTeams = [...teams];
-		if (!event.target.checked) {
-			newTeams[i] = {
-				...newTeams[i],
-				takeControl: false,
-			};
-		} else {
-			if (multiTeamMode) {
+	const handleTakeControl =
+		(i: number) => async (event: ChangeEvent<HTMLInputElement>) => {
+			const newTeams = [...teams];
+			if (!event.target.checked) {
 				newTeams[i] = {
 					...newTeams[i],
-					takeControl: true,
+					takeControl: false,
 				};
 			} else {
-				for (let j = 0; j < newTeams.length; j++) {
-					// Only allow one to be checked
-					newTeams[j] = {
-						...newTeams[j],
-						takeControl: i === j,
+				if (multiTeamMode) {
+					newTeams[i] = {
+						...newTeams[i],
+						takeControl: true,
 					};
+				} else {
+					for (let j = 0; j < newTeams.length; j++) {
+						// Only allow one to be checked
+						newTeams[j] = {
+							...newTeams[j],
+							takeControl: i === j,
+						};
+					}
 				}
 			}
-		}
 
-		await setTeams(newTeams);
-	};
+			await setTeams(newTeams);
+		};
 
 	const currentAbbrevs = teams.map(t => t.abbrev);
 
@@ -219,6 +220,7 @@ const ExpansionDraft = ({
 									<div className="card-body row">
 										<TeamForm
 											classNamesCol={[
+												"col-6",
 												"col-6",
 												"col-6",
 												"col-6",

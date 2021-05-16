@@ -9,6 +9,7 @@ export type NewLeagueTeam = {
 	popRank: number;
 	stadiumCapacity?: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors?: [string, string, string];
 	srID?: string;
 	disabled?: boolean;

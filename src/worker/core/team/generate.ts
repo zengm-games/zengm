@@ -20,8 +20,11 @@ const generate = (tm: any): Team => {
 		region: tm.region,
 		name: tm.name,
 		abbrev: tm.abbrev,
+
+		// imgURL is always a string, imgURLSmall is undefined if not present
 		imgURL: tm.imgURL ?? "",
-		imgURLSmall: tm.imgURLSmall,
+		imgURLSmall: tm.imgURLSmall === "" ? undefined : tm.imgURLSmall,
+
 		budget: {
 			ticketPrice: {
 				amount: tm.hasOwnProperty("budget")

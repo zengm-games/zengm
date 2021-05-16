@@ -785,7 +785,15 @@ const deleteScheduledEvents = async (type: string) => {
 		} else if (type === "teamInfo") {
 			if (event.type === "teamInfo") {
 				await deleteFromTeamInfoScheduledEvent(
-					["region", "name", "pop", "abbrev", "imgURL", "colors"],
+					[
+						"region",
+						"name",
+						"pop",
+						"abbrev",
+						"imgURL",
+						"imgURLSmall",
+						"colors",
+					],
 					event,
 				);
 			}

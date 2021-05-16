@@ -33,6 +33,7 @@ const processTeamInfo = async (
 		region: t.region,
 		name: t.name,
 		imgURL: t.imgURL,
+		imgURLSmall: t.imgURLSmall,
 	};
 	Object.assign(t, info);
 

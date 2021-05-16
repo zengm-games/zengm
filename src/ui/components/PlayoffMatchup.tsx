@@ -6,6 +6,7 @@ type SeriesTeam = {
 	abbrev: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	regularSeason: {
 		won: number;
@@ -22,6 +23,10 @@ type SeriesTeam = {
 
 const faded = {
 	opacity: 0.3,
+	padding: 2,
+};
+const notFaded = {
+	padding: 2,
 };
 
 const Team = ({
@@ -68,6 +73,7 @@ const Team = ({
 			</a>
 		);
 	};
+	console.log(team);
 
 	return (
 		<li
@@ -78,11 +84,11 @@ const Team = ({
 			})}
 		>
 			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
-				{team.imgURL ? (
+				{team.imgURL || team.imgURLSmall ? (
 					<img
 						className="mw-100 mh-100"
-						style={lost ? faded : undefined}
-						src={team.imgURL}
+						style={lost ? faded : notFaded}
+						src={team.imgURLSmall ?? team.imgURL}
 						alt=""
 					/>
 				) : null}

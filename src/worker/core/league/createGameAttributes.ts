@@ -41,6 +41,7 @@ const createGameAttributes = ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),

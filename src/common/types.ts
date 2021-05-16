@@ -1102,6 +1102,7 @@ export type PlayoffSeriesTeam = {
 	abbrev?: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	// undefined means game hasn't happened yet
 	region?: string;
@@ -1190,6 +1191,7 @@ export type Team = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
 	budget: Record<
@@ -1301,6 +1303,7 @@ export type TeamBasic = {
 	abbrev: string;
 	pop: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
 };
@@ -1376,6 +1379,7 @@ export type TeamSeasonWithoutKey = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
 

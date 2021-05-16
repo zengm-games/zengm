@@ -1782,8 +1782,8 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	}
 
 	// Send options to all new tabs
-	const options = (((await idb.meta.get("attributes", "options")) ||
-		{}) as unknown) as Options;
+	const options = ((await idb.meta.get("attributes", "options")) ||
+		{}) as unknown as Options;
 	await toUI("updateLocal", [{ units: options.units }], conditions);
 };
 
@@ -2883,13 +2883,11 @@ const updateTeamInfo = async (
 
 		// Also apply team info changes to this season
 		if (g.get("phase") < PHASE.PLAYOFFS) {
-			let teamSeason:
-				| TeamSeason
-				| TeamSeasonWithoutKey
-				| undefined = await idb.cache.teamSeasons.indexGet(
-				"teamSeasonsByTidSeason",
-				[t.tid, g.get("season")],
-			);
+			let teamSeason: TeamSeason | TeamSeasonWithoutKey | undefined =
+				await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+					t.tid,
+					g.get("season"),
+				]);
 
 			if (enableTeam) {
 				const prevSeason = await idb.cache.teamSeasons.indexGet(
@@ -2925,6 +2923,7 @@ const updateTeamInfo = async (
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),
@@ -3096,9 +3095,8 @@ const upsertCustomizedPlayer = async (
 				const newJerseyNumber = await player.genJerseyNumber(teammate);
 
 				if (teammate.stats.length > 0) {
-					teammate.stats[
-						teammate.stats.length - 1
-					].jerseyNumber = newJerseyNumber;
+					teammate.stats[teammate.stats.length - 1].jerseyNumber =
+						newJerseyNumber;
 				} else {
 					teammate.jerseyNumber = newJerseyNumber;
 				}

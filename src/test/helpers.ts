@@ -124,6 +124,7 @@ const resetG = () => {
 			abbrev: t.abbrev,
 			disabled: false,
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),

@@ -174,6 +174,7 @@ const newPhasePreseason = async (
 				abbrev: t.abbrev,
 				disabled: t.disabled,
 				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
 				name: t.name,
 				region: t.region,
 			})),
@@ -338,9 +339,8 @@ const newPhasePreseason = async (
 
 				for (const p of conflicts) {
 					if (p !== playerWhoKeepsIt) {
-						p.stats[
-							p.stats.length - 1
-						].jerseyNumber = await player.genJerseyNumber(p);
+						p.stats[p.stats.length - 1].jerseyNumber =
+							await player.genJerseyNumber(p);
 					}
 				}
 			}

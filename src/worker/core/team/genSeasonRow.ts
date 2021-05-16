@@ -124,6 +124,11 @@ const genSeasonRow = (
 		newSeason.pop = t.pop;
 	}
 
+	if (typeof t.imgURLSmall === "string") {
+		// @ts-ignore
+		newSeason.imgURLSmall = t.imgURLSmall;
+	}
+
 	// @ts-ignore
 	if (typeof t.stadiumCapacity === "number") {
 		// @ts-ignore

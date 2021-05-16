@@ -26,6 +26,11 @@ const augmentSeries = async (
 			otl: g.get("otl", season) ? 0 : undefined,
 		};
 
+		const imgURLSmall = g.get("teamInfoCache")[obj.tid]?.imgURLSmall;
+		if (imgURLSmall) {
+			obj.imgURLSmall = imgURLSmall;
+		}
+
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
 		if (teamSeason) {
 			if (teamSeason.abbrev) {

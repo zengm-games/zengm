@@ -21,6 +21,7 @@ const generate = (tm: any): Team => {
 		name: tm.name,
 		abbrev: tm.abbrev,
 		imgURL: tm.imgURL ?? "",
+		imgURLSmall: tm.imgURLSmall,
 		budget: {
 			ticketPrice: {
 				amount: tm.hasOwnProperty("budget")

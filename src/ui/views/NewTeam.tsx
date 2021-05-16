@@ -174,7 +174,7 @@ const NewTeam = ({
 				<div className="d-flex mt-3">
 					{t.imgURL ? (
 						<div
-							style={{ width: 90 }}
+							style={{ width: 128 }}
 							className="mr-3 d-flex align-items-center justify-content-center"
 						>
 							<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>

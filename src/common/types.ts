@@ -328,6 +328,7 @@ export type ExpansionDraftSetupTeam = {
 	region: string;
 	name: string;
 	imgURL: string | undefined;
+	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
 	pop: string;

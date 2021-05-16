@@ -217,54 +217,58 @@ const ExpansionDraft = ({
 						return (
 							<div key={i} className="col-xl-4 col-lg-6 mb-3">
 								<div className="card">
-									<div className="card-body row">
-										<TeamForm
-											classNamesCol={[
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-											]}
-											confs={confs}
-											disableStadiumCapacity={!godMode}
-											divs={divs}
-											handleInputChange={handleInputChange(i)}
-											hideStatus
-											t={t}
-										/>
-										<div className="col-6">
-											<div className="form-check mt-2">
-												<input
-													className="form-check-input"
-													type="checkbox"
-													id={`expansion-control-team-${i}`}
-													checked={t.takeControl}
-													onChange={handleTakeControl(i)}
-												/>
-												<label
-													className="form-check-label"
-													htmlFor={`expansion-control-team-${i}`}
-												>
-													{multiTeamMode
-														? "Add team to multi team mode"
-														: "Switch to controlling this team"}
-												</label>
-											</div>
+									<div className="card-body">
+										<div className="row">
+											<TeamForm
+												classNamesCol={[
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+												]}
+												confs={confs}
+												disableStadiumCapacity={!godMode}
+												divs={divs}
+												handleInputChange={handleInputChange(i)}
+												hideStatus
+												t={t}
+											/>
 										</div>
-										<div className="col-6 text-right">
-											<button
-												type="button"
-												className="btn btn-danger"
-												onClick={deleteTeam(i)}
-											>
-												Remove Team
-											</button>
+										<div className="row">
+											<div className="col-6">
+												<div className="form-check mt-2">
+													<input
+														className="form-check-input"
+														type="checkbox"
+														id={`expansion-control-team-${i}`}
+														checked={t.takeControl}
+														onChange={handleTakeControl(i)}
+													/>
+													<label
+														className="form-check-label"
+														htmlFor={`expansion-control-team-${i}`}
+													>
+														{multiTeamMode
+															? "Add team to multi team mode"
+															: "Switch to controlling this team"}
+													</label>
+												</div>
+											</div>
+											<div className="col-6 text-right">
+												<button
+													type="button"
+													className="btn btn-danger"
+													onClick={deleteTeam(i)}
+												>
+													Remove Team
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>

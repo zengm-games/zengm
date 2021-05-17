@@ -1,13 +1,7 @@
 import { groupBy } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import {
-	DRAFT_BY_TEAM_OVR,
-	isSport,
-	PHASE,
-	PLAYER,
-	POSITION_COUNTS,
-} from "../../../common";
+import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {

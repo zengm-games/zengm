@@ -513,8 +513,8 @@ export const createWithoutSaving = async (
 				[],
 			);
 
+			// value is needed for ordering the historical draft class. This is value AT THE TIME OF THE DRAFT! Will be regenerated below for subsequent use.
 			for (const p of draftClass) {
-				// Temp, just for draft ordering
 				p.value = player.value(p, {
 					ovrMean: 47,
 					ovrStd: 10,
@@ -523,10 +523,6 @@ export const createWithoutSaving = async (
 
 			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, "value", "desc");
-			for (const p of draftClass) {
-				// Reset
-				p.value = 0;
-			}
 			const tids = [...activeTids];
 			random.shuffle(tids);
 
@@ -602,6 +598,15 @@ export const createWithoutSaving = async (
 		const maxNumFreeAgents = Math.round(
 			(activeTids.length / 3) * g.get("maxRosterSize"),
 		); // 150 for basketball
+
+		// Needed for sorting the keptPlayers array and inside getBest (only if DRAFT_BY_TEAM_OVR)
+		for (const p of keptPlayers) {
+			p.value = player.value(p, {
+				ovrMean: 47,
+				ovrStd: 10,
+			});
+		}
+		keptPlayers.sort((a, b) => b.value - a.value);
 
 		// Keep track of number of players on each team
 		const numPlayersByTid: Record<number, number> = {};
@@ -690,15 +695,6 @@ export const createWithoutSaving = async (
 			}
 		}
 		keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
-
-		// value is needed for getBest (if DRAFT_BY_TEAM_OVR), and sorting, but doesn't need to be scaled correctly
-		for (const p of keptPlayers) {
-			p.value = player.value(p, {
-				ovrMean: 47,
-				ovrStd: 10,
-			});
-		}
-		keptPlayers.sort((a, b) => b.value - a.value);
 
 		// Then add other players, up to the limit
 		while (true) {

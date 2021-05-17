@@ -513,14 +513,12 @@ export const createWithoutSaving = async (
 				[],
 			);
 
-			if (DRAFT_BY_TEAM_OVR) {
-				for (const p of draftClass) {
-					// Temp, just for draft ordering
-					p.value = player.value(p, {
-						ovrMean: 47,
-						ovrStd: 10,
-					});
-				}
+			for (const p of draftClass) {
+				// Temp, just for draft ordering
+				p.value = player.value(p, {
+					ovrMean: 47,
+					ovrStd: 10,
+				});
 			}
 
 			// Very rough simulation of a draft

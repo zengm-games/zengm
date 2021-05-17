@@ -73,7 +73,6 @@ const Team = ({
 			</a>
 		);
 	};
-	console.log(team);
 
 	return (
 		<li

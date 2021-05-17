@@ -58,8 +58,6 @@ class GameSim {
 
 	playersOnIce: [PlayersOnIce, PlayersOnIce];
 
-	subsEveryN: number;
-
 	overtime: boolean;
 
 	overtimes: number;
@@ -147,7 +145,6 @@ class GameSim {
 		this.o = 0;
 		this.d = 1;
 		this.updatePlayersOnIce({ type: "starters" });
-		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
 		this.overtime = false;
 		this.overtimes = 0;

@@ -7,7 +7,6 @@ export const noSmallLogo = [
 	"LAE",
 	"LV",
 	"MIL",
-	"MON",
 	"SJ",
 	"VAN",
 ];
@@ -43,11 +42,11 @@ const getTeamInfos = (
 		} = {
 			...t,
 			...teamInfos[actualAbbrev],
-			imgURL: `/img/logos-primary/${actualAbbrev}.png`,
+			imgURL: `/img/logos-primary/${actualAbbrev}.svg`,
 		};
 
 		if (!noSmallLogo.includes(actualAbbrev)) {
-			info.imgURLSmall = `/img/logos-secondary/${actualAbbrev}.png`;
+			info.imgURLSmall = `/img/logos-secondary/${actualAbbrev}.svg`;
 		}
 
 		return info;

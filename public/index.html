@@ -96,12 +96,12 @@ FACEBOOK_PIXEL_CODE
 
     <div id="content" class="h-100 d-flex flex-column">
       <div style="margin: 0 15px">
-        <div style="max-width: 360px; margin: 0 auto">
+        <div style="max-width: 372px; margin: 0 auto">
           <h1 style="text-align: center">Loading...</h1>
 
           <p style="clear: both; margin-bottom: 3em"></p>
 
-          <div style="display: flex; flex-wrap: wrap; justify-content: center; margin: 0 -15px">
+          <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; justify-content: center; margin: 0 -15px">
             <div class="team-picture-splash" id="team-picture-0"></div>
             <div class="team-picture-splash" id="team-picture-1"></div>
             <div class="team-picture-splash" id="team-picture-2"></div>
@@ -206,9 +206,60 @@ function shuffle(array) {
   return array;
 }
 
-var abbrevs = shuffle(["ATL", "BAL", "BKN", "BOS", "CHA", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "IND", "KC", "LA", "LAE", "LV", "MEM", "MIA", "MIL", "MIN", "MON", "MXC", "NOL", "NYC", "OKC", "ORL", "PHI", "PHO", "PIT", "POR", "SA", "SAC", "SD", "SEA", "SF", "STL", "TOR", "TPA", "UTA", "VAN", "WAS"]);
+var abbrevs = shuffle([
+  "ATL",
+  "BAL",
+  "BOS",
+  "BKN",
+  "CHA",
+  "CIN",
+  "CLE",
+  "DAL",
+  "DEN",
+  "DET",
+  "HOU",
+  "IND",
+  "KC",
+  "LA",
+  "LAE",
+  "LV",
+  "MEM",
+  "MIA",
+  "MIL",
+  "MIN",
+  "MXC",
+  "NOL",
+  "NYC",
+  "OKC",
+  "ORL",
+  "PHI",
+  "PHO",
+  "PIT",
+  "POR",
+  "SA",
+  "SAC",
+  "SD",
+  "TPA",
+  "UTA",
+  "VAN",
+  "WAS",
+  "AUS",
+  "BUF",
+  "HAW",
+  "JAX",
+  "OTT",
+  "SF",
+  "TOR",
+  "VB",
+  "CGY",
+  "MON",
+  "SJ",
+  "CHI",
+  "SEA",
+  "STL",
+]);
 for (var i = 0; i < 12; i++) {
-  document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
+  document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos-primary/' + abbrevs[i] + '.svg)';
 }
 
 // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d

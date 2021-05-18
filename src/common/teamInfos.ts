@@ -466,7 +466,7 @@ const teamInfos: {
 	SF: {
 		region: "San Francisco",
 		name: "Unicorns",
-		pop: 5.5,
+		pop: 6.5,
 		colors: ["#676ee7", "#48edfe", "#fe696e"],
 		jersey: bySport({
 			basketball: "jersey3",
@@ -524,7 +524,7 @@ const teamInfos: {
 	SJ: {
 		region: "San Jose",
 		name: "Venture Capitalists",
-		pop: 1,
+		pop: 6.5,
 		colors: ["#0e442e", "#d75f27", "#e7d3ae"],
 		jersey: bySport({
 			basketball: "jersey3",

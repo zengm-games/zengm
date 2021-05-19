@@ -31,6 +31,7 @@ const injectManifest = async () => {
 			"gen/*.json",
 			"img/logos-primary/*.svg",
 			"img/logos-secondary/*.svg",
+			"ico/logo.svg",
 			"ico/logo.png",
 			"ico/logo-gold.png",
 		],

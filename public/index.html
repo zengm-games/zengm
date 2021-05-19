@@ -92,31 +92,14 @@ QUANTCAST_CODE
 FACEBOOK_PIXEL_CODE
   </head>
 
-  <body class="h-100">
+  <body class="h-100" style="padding-top: 52px">
 
     <div id="content" class="h-100 d-flex flex-column">
       <div style="margin: 0 15px">
-        <div style="max-width: 372px; margin: 0 auto">
-          <h1 style="text-align: center">Loading...</h1>
-
-          <p style="clear: both; margin-bottom: 3em"></p>
-
-          <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; justify-content: center; margin: 0 -15px">
-            <div class="team-picture-splash" id="team-picture-0"></div>
-            <div class="team-picture-splash" id="team-picture-1"></div>
-            <div class="team-picture-splash" id="team-picture-2"></div>
-            <div class="team-picture-splash" id="team-picture-3"></div>
-            <div class="team-picture-splash" id="team-picture-4"></div>
-            <div class="team-picture-splash" id="team-picture-5"></div>
-            <div class="team-picture-splash" id="team-picture-6"></div>
-            <div class="team-picture-splash" id="team-picture-7"></div>
-            <div class="team-picture-splash" id="team-picture-8"></div>
-            <div class="team-picture-splash" id="team-picture-9"></div>
-            <div class="team-picture-splash" id="team-picture-10"></div>
-            <div class="team-picture-splash" id="team-picture-11"></div>
+        <div style="max-width: 360px; margin: 0 auto; font-size: 16px">
+          <div style="text-align: center; margin: 48px 0 100px 0">
+            <img id="loading-icon" src="/ico/icon.svg" width="48" height="48" class="spin" style="animation-play-state: runnung" alt="">
           </div>
-
-          <p style="clear: both; margin-bottom: 3em"></p>
 
           <p>GAME_NAME vREV_GOES_HERE</p>
           <div id="startup-browser">Checking browser...</div>
@@ -124,11 +107,11 @@ FACEBOOK_PIXEL_CODE
             <p><b>Error!</b> JavaScript is disabled in your browser. Please enable JavaScript to play GAME_NAME.</p>
           </noscript>
           <div id="startup-ui"></div>
-          <p id="startup-worker"></p>
+          <div id="startup-worker"></div>
 
-          <div class="alert alert-danger" id="startup-error" style="display: none"></div>
+          <div class="alert alert-danger mt-3" id="startup-error" style="display: none"></div>
 
-          <div class="alert alert-danger" id="startup-error-unknown" style="display: none">
+          <div class="alert alert-danger mt-3" id="startup-error-unknown" style="display: none">
             <p>This should only take a few seconds on a fast connection.</p>
             <p>If it gets stuck for a while, read <a href="https://WEBSITE_ROOT/manual/debugging/">the debugging instructions</a> and <a href="https://WEBSITE_ROOT/contact/">ask for help</a> if it still isn't working.</p>
           </div>
@@ -137,14 +120,11 @@ FACEBOOK_PIXEL_CODE
     </div>
 
     <script>
-var startupBrowser = document.getElementById("startup-browser");
 var startupUI = document.getElementById("startup-ui");
 var startupWorker = document.getElementById("startup-worker");
-var startupError = document.getElementById("startup-error");
-var startupErrorUnknown = document.getElementById("startup-error-unknown");
 
 var timeoutID = setTimeout(function () {
-  startupErrorUnknown.style.display = "block";
+  document.getElementById("startup-error-unknown").style.display = "block";
 }, 6000);
 
 function checkModern() {
@@ -157,7 +137,7 @@ function checkModern() {
 };
 
 function withGoodBrowser() {
-  startupBrowser.innerHTML += " done!";
+  document.getElementById("startup-browser").innerHTML += " done!";
   startupUI.innerHTML = "Loading UI...";
   startupWorker.innerHTML = "Loading backend...";
 
@@ -192,74 +172,6 @@ function withGoodWorker() {
   if (count === 2) {
     clearTimeout(timeoutID);
   }
-}
-
-function shuffle(array) {
-  var counter = array.length;
-  while (counter > 0) {
-    var index = Math.floor(Math.random() * counter);
-    counter--;
-    var temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
-  }
-  return array;
-}
-
-var abbrevs = shuffle([
-  "ATL",
-  "BAL",
-  "BOS",
-  "BKN",
-  "CHA",
-  "CIN",
-  "CLE",
-  "DAL",
-  "DEN",
-  "DET",
-  "HOU",
-  "IND",
-  "KC",
-  "LA",
-  "LAE",
-  "LV",
-  "MEM",
-  "MIA",
-  "MIL",
-  "MIN",
-  "MXC",
-  "NOL",
-  "NYC",
-  "OKC",
-  "ORL",
-  "PHI",
-  "PHO",
-  "PIT",
-  "POR",
-  "SA",
-  "SAC",
-  "SD",
-  "TPA",
-  "UTA",
-  "VAN",
-  "WAS",
-  "AUS",
-  "BUF",
-  "HAW",
-  "JAX",
-  "OTT",
-  "SF",
-  "TOR",
-  "VB",
-  "CGY",
-  "MON",
-  "SJ",
-  "CHI",
-  "SEA",
-  "STL",
-]);
-for (var i = 0; i < 12; i++) {
-  document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos-primary/' + abbrevs[i] + '.svg)';
 }
 
 // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
@@ -364,8 +276,12 @@ goodIDB(function (idbResult) {
       errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 10.3 or higher to play GAME_NAME. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
     }
 
+    var startupError = document.getElementById("startup-error");
     startupError.innerHTML = errorMsg;
     startupError.style.display = "block";
+
+    document.getElementById("loading-icon").style.animationPlayState = "paused";
+
     clearTimeout(timeoutID);
   } else {
     localStorage.setItem("goodIDB", "1")

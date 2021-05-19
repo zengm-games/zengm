@@ -81,10 +81,6 @@ $flag-icon-css-path: "/img/flags";
 @import "glyphicons";
 @import "sidebar";
 
-body {
-	padding-top: 52px;
-}
-
 h1 {
 	font-size: 24px;
 }
@@ -391,15 +387,6 @@ table {
 	background-size: contain;
 	width: 128px;
 	height: 128px;
-}
-
-.team-picture-splash {
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-size: contain;
-	width: 90px;
-	height: 90px;
-	float: left;
 }
 
 .skill {

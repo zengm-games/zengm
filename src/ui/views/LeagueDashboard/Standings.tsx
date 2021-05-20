@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { helpers } from "../../util";
-import { ColPtsOrGB } from "../Standings";
+import { ColPtsOrGB, TeamColumn } from "../Standings";
 import type { View } from "../../../common/types";
 
 const width100 = {
@@ -46,20 +46,7 @@ const Standings = ({
 								"table-info": t.tid === userTid,
 							})}
 						>
-							<td>
-								{t.rank}.{" "}
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${t.seasonAttrs.abbrev}_${t.tid}`,
-									])}
-								>
-									{t.seasonAttrs.region}
-								</a>
-								{t.seasonAttrs.clinchedPlayoffs
-									? ` ${t.seasonAttrs.clinchedPlayoffs}`
-									: null}
-							</td>
+							<TeamColumn rank={t.rank} rankWidth={15} t={t} />
 							<td className="text-right">
 								{usePts ? Math.round(t.seasonAttrs.pts) : t.gb}
 							</td>

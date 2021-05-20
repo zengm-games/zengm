@@ -8,7 +8,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import useClickable from "../hooks/useClickable";
-import type { View } from "../../common/types";
+import type { TeamSeason, View } from "../../common/types";
 import { isSport, TIEBREAKERS } from "../../common";
 
 type StandingsTeam =
@@ -33,7 +33,7 @@ const record = (
 	return text;
 };
 
-const TeamColumn = ({
+export const TeamColumn = ({
 	rank,
 	rankWidth,
 	season,
@@ -42,8 +42,17 @@ const TeamColumn = ({
 }: {
 	rank: number | null;
 	rankWidth?: number;
-	season: number;
-	t: StandingsTeam;
+	season?: number;
+	t: {
+		tid: number;
+		seasonAttrs: Pick<
+			TeamSeason,
+			"abbrev" | "clinchedPlayoffs" | "imgURL" | "imgURLSmall" | "region"
+		> & {
+			// Only required with includeName
+			name?: string;
+		};
+	};
 	includeName?: boolean;
 }) => {
 	return (
@@ -70,7 +79,7 @@ const TeamColumn = ({
 						href={helpers.leagueUrl([
 							"roster",
 							`${t.seasonAttrs.abbrev}_${t.tid}`,
-							season,
+							...(season !== undefined ? [season] : []),
 						])}
 					>
 						{t.seasonAttrs.region}
@@ -301,7 +310,7 @@ const SmallStandingsRow = ({
 		>
 			<TeamColumn
 				rank={playoffsByConference ? t.rank.conf : t.rank.league}
-				rankWidth={16}
+				rankWidth={15}
 				season={season}
 				t={t}
 			/>

@@ -442,6 +442,8 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"abbrev",
 				"region",
 				"clinchedPlayoffs",
+				"imgURL",
+				"imgURLSmall",
 			],
 			stats: ["pts", "oppPts", "gp"],
 			season: g.get("season"),

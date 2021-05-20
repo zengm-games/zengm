@@ -48,6 +48,7 @@ export { default as Skyscraper } from "./Skyscraper";
 export { default as SortableTable } from "./SortableTable";
 export { default as StatWithChange } from "./StatWithChange";
 export { default as StickyBottomButtons } from "./StickyBottomButtons";
+export { default as TeamLogoInline } from "./TeamLogoInline";
 export { default as WatchBlock } from "./WatchBlock";
 export { default as Weight } from "./Weight";
 

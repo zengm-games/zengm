@@ -63,6 +63,8 @@ const updateStandings = async (
 					"region",
 					"name",
 					"clinchedPlayoffs",
+					"imgURL",
+					"imgURLSmall",
 				],
 				stats: ["pts", "oppPts", "gp"],
 				season: inputs.season,

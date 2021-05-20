@@ -1,13 +1,18 @@
 import classNames from "classnames";
 import { CSSProperties, Fragment } from "react";
-import { ResponsiveTableWrapper, MovOrDiff } from "../components";
+import {
+	ResponsiveTableWrapper,
+	MovOrDiff,
+	TeamLogoInline,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
 import { isSport, TIEBREAKERS } from "../../common";
 
-type StandingsTeam = View<"standings">["rankingGroups"]["league"][number][number];
+type StandingsTeam =
+	View<"standings">["rankingGroups"]["league"][number][number];
 
 const record = (
 	seasonAttrs: StandingsTeam["seasonAttrs"],
@@ -57,20 +62,31 @@ const GroupStandingsRow = ({
 			})}
 			onClick={toggleClicked}
 		>
-			<td>
-				{t.rank.playoffs > 0 ? `${t.rank.playoffs}. ` : null}
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${t.seasonAttrs.abbrev}_${t.tid}`,
-						season,
-					])}
-				>
-					{t.seasonAttrs.region} {t.seasonAttrs.name}
-				</a>
-				{t.seasonAttrs.clinchedPlayoffs
-					? ` ${t.seasonAttrs.clinchedPlayoffs}`
-					: null}
+			<td className="py-1">
+				<div className="d-flex align-items-center">
+					<div style={{ width: 16 }}>
+						{t.rank.playoffs > 0 ? `${t.rank.playoffs}.` : null}
+					</div>
+					<TeamLogoInline
+						imgURL={t.seasonAttrs.imgURL}
+						imgURLSmall={t.seasonAttrs.imgURLSmall}
+						size={24}
+					/>
+					<div style={{ marginLeft: 6 }}>
+						<a
+							href={helpers.leagueUrl([
+								"roster",
+								`${t.seasonAttrs.abbrev}_${t.tid}`,
+								season,
+							])}
+						>
+							{t.seasonAttrs.region} {t.seasonAttrs.name}
+						</a>
+						{t.seasonAttrs.clinchedPlayoffs
+							? ` ${t.seasonAttrs.clinchedPlayoffs}`
+							: null}
+					</div>
+				</div>
 			</td>
 			<td>{t.seasonAttrs.won}</td>
 			<td>{t.seasonAttrs.lost}</td>
@@ -166,7 +182,7 @@ const GroupStandings = ({
 }) => {
 	return (
 		<ResponsiveTableWrapper>
-			<table className="table table-striped table-bordered table-sm table-hover">
+			<table className="table table-striped table-bordered table-sm table-hover align-middle-all">
 				<thead>
 					<tr>
 						<th style={{ minWidth: 215 }}>{name}</th>

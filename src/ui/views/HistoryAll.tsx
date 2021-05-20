@@ -1,5 +1,10 @@
 import PropTypes from "prop-types";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import {
+	DataTable,
+	MoreLinks,
+	PlayerNameLabels,
+	TeamLogoInline,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -98,20 +103,15 @@ const formatTeam = (
 	}
 
 	return {
-		classNames: t.tid === userTid ? "table-info p-0 pr-1" : "p-0 pr-1",
+		classNames: t.tid === userTid ? "table-info py-1" : "py-1",
 		value: (
 			<div className="d-flex align-items-center">
-				{t.imgURL || t.imgURLSmall ? (
-					<div className="playoff-matchup-logo mr-2 d-flex align-items-center justify-content-center">
-						<img
-							className="mw-100 mh-100"
-							src={t.imgURLSmall ?? t.imgURL}
-							alt=""
-							style={{ padding: 2 }}
-						/>
-					</div>
-				) : null}
-				<div className="mr-auto">
+				<TeamLogoInline
+					imgURL={t.imgURL}
+					imgURLSmall={t.imgURLSmall}
+					size={24}
+				/>
+				<div className="ml-1 mr-auto">
 					{t.seed}. {teamName(t, season)}
 				</div>
 				<CountBadge count={t.count} />

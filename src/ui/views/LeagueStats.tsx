@@ -155,7 +155,7 @@ const LeagueStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}
-				name={`TeamStats${teamOpponent}`}
+				name={`LeagueStats${teamOpponent}`}
 				pagination={pagination}
 				rows={rows}
 				superCols={superCols}

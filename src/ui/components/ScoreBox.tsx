@@ -295,11 +295,7 @@ const ScoreBox = ({
 								)}
 							>
 								{imgURL || allStarGame ? (
-									<TeamLogoInline
-										imgURL={imgURL}
-										size={24}
-										style={{ marginLeft: 1 }}
-									/>
+									<TeamLogoInline imgURL={imgURL} style={{ marginLeft: 1 }} />
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
 									{t.playoffs ? (

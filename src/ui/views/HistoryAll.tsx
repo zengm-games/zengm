@@ -106,11 +106,7 @@ const formatTeam = (
 		classNames: t.tid === userTid ? "table-info py-1" : "py-1",
 		value: (
 			<div className="d-flex align-items-center">
-				<TeamLogoInline
-					imgURL={t.imgURL}
-					imgURLSmall={t.imgURLSmall}
-					size={24}
-				/>
+				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
 				<div className="ml-1 mr-auto">
 					{t.seed}. {teamName(t, season)}
 				</div>

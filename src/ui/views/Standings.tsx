@@ -33,6 +33,58 @@ const record = (
 	return text;
 };
 
+const TeamColumn = ({
+	rank,
+	rankWidth,
+	season,
+	t,
+	includeName,
+}: {
+	rank: number | null;
+	rankWidth?: number;
+	season: number;
+	t: StandingsTeam;
+	includeName?: boolean;
+}) => {
+	return (
+		<td className="py-1">
+			<div className="d-flex align-items-center">
+				<div
+					style={
+						rankWidth
+							? { width: rankWidth }
+							: {
+									minWidth: 8,
+							  }
+					}
+				>
+					{rank !== null ? rank : null}
+				</div>
+				<TeamLogoInline
+					imgURL={t.seasonAttrs.imgURL}
+					imgURLSmall={t.seasonAttrs.imgURLSmall}
+					className="mx-1"
+				/>
+				<div>
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${t.seasonAttrs.abbrev}_${t.tid}`,
+							season,
+						])}
+					>
+						{t.seasonAttrs.region}
+						{includeName ? ` ${t.seasonAttrs.name}` : null}
+					</a>
+					{t.seasonAttrs.clinchedPlayoffs
+						? ` ${t.seasonAttrs.clinchedPlayoffs}`
+						: null}
+				</div>
+			</div>
+		</td>
+	);
+};
+
 const GroupStandingsRow = ({
 	season,
 	separator,
@@ -62,32 +114,12 @@ const GroupStandingsRow = ({
 			})}
 			onClick={toggleClicked}
 		>
-			<td className="py-1">
-				<div className="d-flex align-items-center">
-					<div style={{ width: 16 }}>
-						{t.rank.playoffs > 0 ? `${t.rank.playoffs}.` : null}
-					</div>
-					<TeamLogoInline
-						imgURL={t.seasonAttrs.imgURL}
-						imgURLSmall={t.seasonAttrs.imgURLSmall}
-						size={24}
-					/>
-					<div style={{ marginLeft: 6 }}>
-						<a
-							href={helpers.leagueUrl([
-								"roster",
-								`${t.seasonAttrs.abbrev}_${t.tid}`,
-								season,
-							])}
-						>
-							{t.seasonAttrs.region} {t.seasonAttrs.name}
-						</a>
-						{t.seasonAttrs.clinchedPlayoffs
-							? ` ${t.seasonAttrs.clinchedPlayoffs}`
-							: null}
-					</div>
-				</div>
-			</td>
+			<TeamColumn
+				rank={t.rank.playoffs > 0 ? t.rank.playoffs : null}
+				season={season}
+				t={t}
+				includeName
+			/>
 			<td>{t.seasonAttrs.won}</td>
 			<td>{t.seasonAttrs.lost}</td>
 			{otl ? <td>{t.seasonAttrs.otl}</td> : null}
@@ -267,21 +299,12 @@ const SmallStandingsRow = ({
 			})}
 			onClick={toggleClicked}
 		>
-			<td>
-				{playoffsByConference ? t.rank.conf : t.rank.league}.{" "}
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${t.seasonAttrs.abbrev}_${t.tid}`,
-						season,
-					])}
-				>
-					{t.seasonAttrs.region}
-				</a>
-				{t.seasonAttrs.clinchedPlayoffs
-					? ` ${t.seasonAttrs.clinchedPlayoffs}`
-					: null}
-			</td>
+			<TeamColumn
+				rank={playoffsByConference ? t.rank.conf : t.rank.league}
+				rankWidth={16}
+				season={season}
+				t={t}
+			/>
 			<td className="text-right">
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
@@ -313,7 +336,7 @@ const SmallStandings = ({
 	teams: StandingsTeam[];
 }) => {
 	return (
-		<table className="table table-striped table-bordered table-sm">
+		<table className="table table-striped table-bordered table-sm align-middle-all">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>

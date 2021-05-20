@@ -1,12 +1,14 @@
 const TeamLogoInline = ({
+	className,
 	imgURL,
 	imgURLSmall,
-	size,
+	size = 24,
 	style,
 }: {
+	className?: string;
 	imgURL?: string;
 	imgURLSmall?: string;
-	size: number;
+	size?: number;
 	style?: React.CSSProperties;
 }) => {
 	const actualImgURL = imgURLSmall ?? imgURL;
@@ -16,7 +18,9 @@ const TeamLogoInline = ({
 
 	return (
 		<div
-			className="d-flex align-items-center justify-content-center"
+			className={`d-flex align-items-center justify-content-center${
+				className ? ` ${className}` : ""
+			}`}
 			style={{ height: size, width: size, ...style }}
 		>
 			<img className="mw-100 mh-100" src={actualImgURL} alt="" />

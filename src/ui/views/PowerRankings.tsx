@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, TeamLogoInline } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
 import { wrappedMovOrDiff } from "../components/MovOrDiff";
@@ -128,15 +128,28 @@ const PowerRankings = ({
 			key: t.tid,
 			data: [
 				t.rank,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${t.seasonAttrs.abbrev}_${t.tid}`,
-						season,
-					])}
-				>
-					{t.seasonAttrs.region} {t.seasonAttrs.name}
-				</a>,
+				{
+					value: (
+						<div className="d-flex align-items-center">
+							<TeamLogoInline
+								imgURL={t.seasonAttrs.imgURL}
+								imgURLSmall={t.seasonAttrs.imgURLSmall}
+							/>
+							<div className="ml-1">
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${t.seasonAttrs.abbrev}_${t.tid}`,
+										season,
+									])}
+								>
+									{t.seasonAttrs.region} {t.seasonAttrs.name}
+								</a>
+							</div>
+						</div>
+					),
+					sortValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name}`,
+				},
 				conf ? conf.name.replace(" Conference", "") : null,
 				div ? div.name : null,
 				!challengeNoRatings ? (
@@ -189,6 +202,7 @@ const PowerRankings = ({
 			</p>
 
 			<DataTable
+				className="align-middle-all"
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="PowerRankings"

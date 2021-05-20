@@ -44,6 +44,8 @@ const updatePowerRankings = async (
 				"name",
 				"cid",
 				"did",
+				"imgURL",
+				"imgURLSmall",
 			],
 			stats: ["gp", "mov", "pts", "oppPts"],
 			season,

@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
 import type { ReactNode } from "react";
+import TeamLogoInline from "./TeamLogoInline";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -294,11 +295,11 @@ const ScoreBox = ({
 								)}
 							>
 								{imgURL || allStarGame ? (
-									<div className="score-box-logo d-flex align-items-center justify-content-center">
-										{imgURL ? (
-											<img className="mw-100 mh-100" src={imgURL} alt="" />
-										) : null}
-									</div>
+									<TeamLogoInline
+										imgURL={imgURL}
+										size={24}
+										style={{ marginLeft: 1 }}
+									/>
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
 									{t.playoffs ? (

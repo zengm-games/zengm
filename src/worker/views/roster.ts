@@ -153,14 +153,14 @@ const updateRoster = async (
 			}
 
 			for (const p of players) {
-				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+				// Can alway release player, even if below the minimum roster limit, cause why not .Except in the playoffs.
 				if (
 					inputs.tid === g.get("userTid") &&
 					(g.get("phase") !== PHASE.PLAYOFFS ||
-						players.length > g.get("maxRosterSize")) &&
+						(g.get("phase") === PHASE.PLAYOFFS &&
+							players.length > g.get("minRosterSize"))) &&
 					!g.get("gameOver") &&
 					!g.get("otherTeamsWantToHire") &&
-					players.length > g.get("numPlayersOnCourt") &&
 					g.get("phase") !== PHASE.FANTASY_DRAFT &&
 					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {

@@ -129,18 +129,18 @@ const Offer = (props: OfferProps) => {
 				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
 				{helpers.formatCurrency(payroll / 1000, "M")} payroll
 			</p>
-			<p className="text-danger">{warning}</p>
-			<div className="row" style={{ clear: "both" }}>
+			<div className="row">
 				{offerPlayers}
 				{offerPicks}
 				{picks.length === 0 && players.length === 0 ? (
 					<div className="col-12">Nothing.</div>
 				) : null}
 			</div>
+			{warning ? <p className="text-danger">{warning}</p> : null}
 
 			<button
 				type="submit"
-				className="btn btn-light-bordered"
+				className="btn btn-light-bordered mb-4"
 				onClick={() => handleClickNegotiate(tid, pids, dpids)}
 			>
 				Negotiate

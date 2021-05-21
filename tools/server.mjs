@@ -22,14 +22,23 @@ const mimeTypes = {
 	".woff2": "font/woff2",
 };
 const sendFile = (res, filename) => {
-	const ext = path.extname(filename);
-	if (mimeTypes.hasOwnProperty(ext)) {
-		res.writeHead(200, { "Content-Type": mimeTypes[ext] });
-	} else {
-		console.log(`Unknown mime type for extension ${ext}`);
-	}
+	const filePath = path.join("build", filename);
+	if (fs.existsSync(filePath)) {
+		const ext = path.extname(filename);
+		if (mimeTypes.hasOwnProperty(ext)) {
+			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
+		} else {
+			console.log(`Unknown mime type for extension ${ext}`);
+		}
 
-	fs.createReadStream(path.join("build", filename)).pipe(res);
+		fs.createReadStream(filePath).pipe(res);
+	} else {
+		console.log(`404 ${filename}`);
+		res.writeHead(404, {
+			'Content-Type': 'text/plain'
+		});
+		res.end("404 Not Found");
+	}
 };
 
 const showStatic = (req, res) => {

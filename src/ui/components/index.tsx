@@ -31,7 +31,6 @@ export { default as NextPrevButtons } from "./NextPrevButtons";
 export { default as NewWindowLink } from "./NewWindowLink";
 export { default as NewsBlock } from "./NewsBlock";
 export { default as PlayerNameLabels } from "./PlayerNameLabels";
-export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as PopText } from "./PopText";
 export { default as RatingWithChange } from "./RatingWithChange";
@@ -56,11 +55,21 @@ import ErrorBoundary from "./ErrorBoundary";
 export { ErrorBoundary };
 
 const LeagueFileUploadLazy = lazy(() => import("./LeagueFileUpload"));
-
 export const LeagueFileUpload = (props: LeagueFileUploadProps) => (
 	<ErrorBoundary local>
 		<Suspense fallback={<div>Loading...</div>}>
 			<LeagueFileUploadLazy {...props} />
+		</Suspense>
+	</ErrorBoundary>
+);
+
+const PlayerPictureLazy = lazy(() => import("./PlayerPicture"));
+export const PlayerPicture = (
+	props: Parameters<typeof PlayerPictureLazy>[0],
+) => (
+	<ErrorBoundary local>
+		<Suspense fallback={<div className="mt-3">Loading...</div>}>
+			<PlayerPictureLazy {...props} />
 		</Suspense>
 	</ErrorBoundary>
 );

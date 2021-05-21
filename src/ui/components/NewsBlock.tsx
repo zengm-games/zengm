@@ -1,4 +1,4 @@
-import PlayerPicture from "./PlayerPicture";
+import { PlayerPicture } from ".";
 import SafeHtml from "./SafeHtml";
 import classNames from "classnames";
 import { helpers } from "../util";

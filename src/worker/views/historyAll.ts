@@ -134,7 +134,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						tied: teamSeason ? teamSeason.tied : 0,
 						otl: teamSeason ? teamSeason.otl : 0,
 						imgURL: teamSeason?.imgURL ?? t.imgURL,
-						imgURLSmall: teamSeason?.imgURLSmall ?? t.imgURLSmall,
+						imgURLSmall:
+							teamSeason?.imgURLSmall ?? teamSeason?.imgURL ?? t.imgURLSmall,
 						count: 0,
 					};
 				};

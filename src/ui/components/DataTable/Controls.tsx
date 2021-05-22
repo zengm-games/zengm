@@ -37,9 +37,9 @@ const Controls = ({
 }) => {
 	const positionFilterText = bySport({
 		basketball:
-			'"WR|TE" under a Position column to display wide receivers and tight ends',
-		football:
 			'"C|PF" under a Position column to display centers and power forwards',
+		football:
+			'"WR|TE" under a Position column to display wide receivers and tight ends',
 		hockey: '"C|W" under a Position column to display centers and wingers',
 	});
 

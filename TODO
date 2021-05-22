@@ -1,6 +1,15 @@
+get rid of filter box https://discord.com/channels/290013534023057409/290013534023057409/845418306570944512
+
+Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
+
 checkbox to auto set ticket prices https://discord.com/channels/290013534023057409/331882115119448065/843670732679938068
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
 - how does this interact with inflation adjustment?
+- compute directly, at least to init?
+  - or every day, why not? need some way to control for hype
+  - invert or search?
+- playoffs? auto adjust?
+- did it change much? do default finances settings need to change?
 
 randomly generated players don't get the "rookies resign" bonus https://discord.com/channels/290013534023057409/290015591216054273/843522152526512138
 
@@ -844,6 +853,7 @@ FBGM
 - 1st and 10, 10 yard run, fumble, recovered by offense 1 yard back -> 1st down, because it's assessed when moving forward 10 yards
   - "fumble recovered by offense should only cost one down" test
 - When an interception happens on the passer's side of field, the team that picks off the ball starts off from their own side https://discord.com/channels/@me/790622657284014120/840993492158644245
+- opposing kicker kicks XP https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXSSVJvRrWwqvGVzdxLfJLcJM
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -473,9 +473,10 @@ if (window.enableLogging) {
 		silent: true,
 	});
 
+	const sport = getSport();
+
 	const quantcastCode = "";
-	/*const sport = getSport();
-	if (!watch && sport === "basketball") {
+	/*if (!watch && sport === "basketball") {
 		quantcastCode = `<script type="text/javascript">
 if (window.enableLogging) {
 var _qevents = _qevents || [];(function() {
@@ -502,8 +503,8 @@ qacct:"p-Ye5RY6xC03ZWz"
 		silent: true,
 	});
 
-	const facebookPixelCode = "";
-	/*if (!watch) {
+	let facebookPixelCode = "";
+	if (!watch && sport === "basketball") {
 		facebookPixelCode = `<!-- Facebook Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -514,22 +515,14 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '${
-			process.env.SPORT === "basketball"
-				? "1285618145138713"
-				: "216939956468092"
-		}');
+fbq('init', '1285618145138713');
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=${
-			process.env.SPORT === "basketball"
-				? "1285618145138713"
-				: "216939956468092"
-		}&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=1285618145138713&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Facebook Pixel Code -->`;
-	}*/
+	}
 	replace({
 		regex: "FACEBOOK_PIXEL_CODE",
 		replacement: facebookPixelCode,

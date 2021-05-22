@@ -527,9 +527,8 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [currentScreen, setCurrentScreen] = useState<
-		"default" | "teams" | "settings"
-	>("default");
+	const [currentScreen, setCurrentScreen] =
+		useState<"default" | "teams" | "settings">("default");
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -899,9 +898,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const bannedExpansionSeasons = [
 		// Because of other mergers
-		1947,
-		1948,
-		1949,
+		1947, 1948, 1949,
 
 		// Because of ABA merger
 		1976,
@@ -914,9 +911,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
+	if (state.season === 2021 && state.phase > PHASE.PLAYOFFS) {
 		invalidSeasonPhaseMessage =
-			"Sorry, I'm not allowed to share the results of the 2021 season yet.";
+			"Sorry, I'm not allowed to share the results of the 2021 playoffs yet.";
 	}
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
@@ -1004,13 +1001,6 @@ const NewLeague = (props: View<"newLeague">) => {
 											onLoading={value => {
 												const season = parseInt(value);
 												dispatch({ type: "setSeason", season });
-
-												if (season === 2021) {
-													dispatch({
-														type: "setPhase",
-														phase: PHASE.PRESEASON,
-													});
-												}
 											}}
 											onDone={handleNewLeagueInfo}
 											quickValues={[

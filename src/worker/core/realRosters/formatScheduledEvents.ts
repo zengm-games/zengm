@@ -79,6 +79,29 @@ const processGameAttributes = (
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
+const fixTeam = (
+	mergedTeam: {
+		disabled?: boolean;
+		imgURL?: string;
+		imgURLSmall?: string;
+	},
+	newTeam: {
+		imgURL?: string;
+		imgURLSmall?: string;
+	},
+) => {
+	if (mergedTeam.disabled) {
+		delete mergedTeam.disabled;
+	}
+
+	// If imgURL is defined in scheduled event but imgURLSmall is not, delete old imgURLSmall. Otherwise LAC wind up having a the Wings logo in imgURLSmall!
+	const deleteImgURLSmall =
+		newTeam.imgURL && !newTeam.imgURLSmall && mergedTeam.imgURLSmall;
+	if (deleteImgURLSmall) {
+		delete mergedTeam.imgURLSmall;
+	}
+};
+
 const processTeams = (
 	events: ScheduledEventWithoutKey[],
 	season: number,
@@ -104,6 +127,7 @@ const processTeams = (
 		colors: [string, string, string];
 		abbrev: string;
 		imgURL: string;
+		imgURLSmall?: string;
 		srID: string;
 		tid: number;
 		cid: number;
@@ -136,9 +160,7 @@ const processTeams = (
 						...t0,
 						...t,
 					};
-					if (prevState[ind].disabled) {
-						delete prevState[ind].disabled;
-					}
+					fixTeam(prevState[ind], t);
 				} else {
 					prevState.push({
 						...t,
@@ -156,9 +178,7 @@ const processTeams = (
 				...t0,
 				...t,
 			};
-			if (prevState[ind].disabled) {
-				delete prevState[ind].disabled;
-			}
+			fixTeam(prevState[ind], t);
 		} else if (event.type === "contraction") {
 			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
 				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".

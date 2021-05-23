@@ -37,6 +37,13 @@ const processTeamInfo = async (
 	};
 	Object.assign(t, info);
 
+	// If imgURL is defined in scheduled event but imgURLSmall is not, delete old imgURLSmall. Otherwise LAC wind up having a the Wings logo in imgURLSmall!
+	const deleteImgURLSmall = info.imgURL && !info.imgURLSmall && t.imgURLSmall;
+
+	if (deleteImgURLSmall) {
+		delete t.imgURLSmall;
+	}
+
 	// Make sure this didn't fuck up the cid somehow, such as if the user moved a team to a new conference, but then the scheduled event only has the div because it assumes conference didn't change. THIS WOULD BE LESS LIKELY TO HAPPEN IF NEW DIVS/CONFS WERE NOT CREATED BEFORE TEAM DID/CID VALUES WERE UPDATED! https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkRDqKPHCkJdLXcZvNCxhbGzn
 	const divs = g.get("divs");
 	const div = divs.find(div => div.did === t.did) ?? divs[0];
@@ -59,6 +66,9 @@ const processTeamInfo = async (
 		);
 	}
 	Object.assign(teamSeason, info);
+	if (deleteImgURLSmall) {
+		delete teamSeason.imgURLSmall;
+	}
 	await idb.cache.teamSeasons.put(teamSeason);
 
 	let updatedRegionName;

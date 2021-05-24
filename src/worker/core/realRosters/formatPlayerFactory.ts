@@ -1,6 +1,6 @@
 import loadStatsBasketball, { BasketballStats } from "./loadStats.basketball";
 import { helpers, PHASE, PLAYER } from "../../../common";
-import type { GetLeagueOptions } from "../../../common/types";
+import type { GetLeagueOptions, PlayerInjury } from "../../../common/types";
 import { LATEST_SEASON, LATEST_SEASON_WITH_DRAFT_POSITIONS } from "./getLeague";
 import getOnlyRatings from "./getOnlyRatings";
 import type { Basketball, Ratings } from "./loadData.basketball";
@@ -178,7 +178,6 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		let injury;
 		let contract;
 		let awards;
 		let salaries;
@@ -188,16 +187,6 @@ const formatPlayerFactory = async (
 				exp: season + 3,
 			};
 		} else if (!randomDebuts) {
-			const injuryRow = basketball.injuries.find(
-				injury => injury.season === season && injury.slug === slug,
-			);
-			if (injuryRow) {
-				injury = {
-					type: injuryRow.type,
-					gamesRemaining: injuryRow.gamesRemaining,
-				};
-			}
-
 			const salaryRows = basketball.salaries.filter(row => {
 				if (row.slug !== slug) {
 					return false;
@@ -402,7 +391,7 @@ const formatPlayerFactory = async (
 			draft,
 			ratings: processedRatings,
 			stats,
-			injury,
+			injury: undefined as PlayerInjury | undefined,
 			contract,
 			salaries,
 			awards,

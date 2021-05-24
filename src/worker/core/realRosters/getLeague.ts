@@ -6,9 +6,10 @@ import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
 	DraftLotteryResult,
+	GameAttributesLeague,
 } from "../../../common/types";
 import { defaultGameAttributes, helpers, random } from "../../util";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER, unwrapGameAttribute } from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import getDraftProspects from "./getDraftProspects";
@@ -22,6 +23,7 @@ import genPlayoffSeries from "./genPlayoffSeries";
 import getGameAttributes from "./getGameAttributes";
 import getAwards from "./getAwards";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
+import getInjury from "./getInjury";
 
 export const LATEST_SEASON = 2021;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
@@ -74,16 +76,13 @@ const getLeague = async (options: GetLeagueOptions) => {
 	];
 
 	if (options.type === "real") {
-		const {
-			scheduledEvents,
-			initialGameAttributes,
-			initialTeams,
-		} = formatScheduledEvents(scheduledEventsAll, {
-			gameAttributesHistory: options.realStats === "all",
-			keepAllTeams: options.realStats === "all",
-			season: options.season,
-			phase: options.phase,
-		});
+		const { scheduledEvents, initialGameAttributes, initialTeams } =
+			formatScheduledEvents(scheduledEventsAll, {
+				gameAttributesHistory: options.realStats === "all",
+				keepAllTeams: options.realStats === "all",
+				season: options.season,
+				phase: options.phase,
+			});
 
 		const formatPlayer = await formatPlayerFactory(
 			basketball,
@@ -171,33 +170,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		// Heal injuries, if necessary
-		let gamesToHeal = 0;
-		if (options.phase >= PHASE.PLAYOFFS) {
-			// Regular season
-			gamesToHeal +=
-				initialGameAttributes.numGames ?? defaultGameAttributes.numGames;
-		}
-		if (options.phase >= PHASE.DRAFT) {
-			// Offseason
-			gamesToHeal += defaultGameAttributes.numGames;
-		}
-		if (gamesToHeal > 0) {
-			for (const p of players) {
-				if (!p.injury) {
-					continue;
-				}
-				if (p.injury.gamesRemaining <= gamesToHeal) {
-					p.injury = {
-						type: "Healthy",
-						gamesRemaining: 0,
-					};
-				} else {
-					p.injury.gamesRemaining -= gamesToHeal;
-				}
-			}
-		}
-
 		// Find draft prospects, which can't include any active players
 		const lastPID = Math.max(...players.map(p => p.pid));
 		const draftProspects = await getDraftProspects(
@@ -211,6 +183,37 @@ const getLeague = async (options: GetLeagueOptions) => {
 		);
 
 		players.push(...draftProspects);
+
+		// Injuries - do this here rather than in formatPlayerFactory so we have access to initialGameAttributes
+		const getUnwrappedGameAttributeOrDefault = <
+			Key extends keyof GameAttributesLeague,
+		>(
+			key: Key,
+		): GameAttributesLeague[Key] => {
+			if (initialGameAttributes[key]) {
+				return unwrapGameAttribute(initialGameAttributes, key);
+			}
+
+			return unwrapGameAttribute(defaultGameAttributes, key);
+		};
+		for (const p of players) {
+			if (p.srID) {
+				const injury = getInjury({
+					injuries: basketball.injuries,
+					slug: p.srID,
+					season: options.season,
+					phase: options.phase,
+					numGames: getUnwrappedGameAttributeOrDefault("numGames"),
+					numGamesPlayoffSeries: getUnwrappedGameAttributeOrDefault(
+						"numGamesPlayoffSeries",
+					),
+					draftProspect: p.tid === PLAYER.UNDRAFTED,
+				});
+				if (injury) {
+					p.injury = injury;
+				}
+			}
+		}
 
 		if (options.randomDebuts) {
 			const toRandomize = players.filter(
@@ -412,16 +415,18 @@ const getLeague = async (options: GetLeagueOptions) => {
 				// Find who actually won title
 				let champTid: number | undefined;
 				if (completeBracket) {
-					const { home, away } = seasonPlayoffSeries.series[
-						seasonPlayoffSeries.series.length - 1
-					][0];
+					const { home, away } =
+						seasonPlayoffSeries.series[
+							seasonPlayoffSeries.series.length - 1
+						][0];
 					if (away) {
 						champTid = (home.won > away.won ? home : away).tid;
 					}
 				}
 
-				const numActiveTeams = initialTeamsSeason.filter(t => !t.disabled)
-					.length;
+				const numActiveTeams = initialTeamsSeason.filter(
+					t => !t.disabled,
+				).length;
 
 				for (const t of initialTeamsSeason) {
 					const t2 = initialTeams.find(t2 => t2.tid === t.tid);

@@ -1,4 +1,4 @@
-import type { ScheduledEventWithoutKey } from "../../../common/types";
+import type { Phase, ScheduledEventWithoutKey } from "../../../common/types";
 
 export type Ratings = {
 	slug: string;
@@ -66,12 +66,16 @@ export type Basketball = {
 		exp: number;
 		amount: number;
 	}[];
-	injuries: {
-		slug: string;
-		season: number;
-		type: string;
-		gamesRemaining: number;
-	}[];
+	injuries: Record<
+		string,
+		| {
+				season: number;
+				phase: Phase;
+				type: string;
+				gamesRemaining: number;
+		  }[]
+		| undefined
+	>;
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
 	draftPicks: Record<

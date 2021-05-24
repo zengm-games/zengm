@@ -151,6 +151,7 @@ const AssetList = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 	playerCols[0].sortSequence = [];
+	playerCols[0].noSearch = true;
 	playerCols[2].width = "100%";
 
 	const playerRows = genPlayerRows(

@@ -310,6 +310,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		...stats.map(stat => `stat:${stat}`),
 	);
 	cols[0].sortSequence = [];
+	cols[0].noSearch = true;
 
 	const rows = userRoster.map(p => {
 		return {

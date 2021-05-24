@@ -86,3 +86,54 @@ export const getActualAttendance = ({
 
 	return attendance;
 };
+
+export const getAutoTicketPrice = ({
+	hype,
+	pop,
+	stadiumCapacity,
+	teamSeasons,
+}: {
+	hype: number;
+	pop: number;
+	stadiumCapacity: number;
+	teamSeasons: TeamSeason[];
+}) => {
+	let autoTicketPrice = 50;
+
+	if (stadiumCapacity <= 0) {
+		return autoTicketPrice;
+	}
+
+	// Whether this is true or false, same getAutoTicketPrice returns the same value
+	const playoffs = false;
+
+	const baseAttendance = getBaseAttendance({
+		hype,
+		pop,
+		playoffs,
+	});
+
+	const getAttendance = () =>
+		getActualAttendance({
+			baseAttendance,
+			randomize: false,
+			stadiumCapacity,
+			teamSeasons,
+			ticketPrice: getAdjustedTicketPrice(autoTicketPrice, playoffs),
+		});
+
+	const directionToMove = getAttendance() >= stadiumCapacity ? 1 : -1;
+
+	while (true) {
+		autoTicketPrice += directionToMove;
+		if (directionToMove === 1) {
+			if (getAttendance() < stadiumCapacity) {
+				return autoTicketPrice - 1;
+			}
+		} else {
+			if (getAttendance() >= stadiumCapacity) {
+				return autoTicketPrice;
+			}
+		}
+	}
+};

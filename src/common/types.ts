@@ -1235,6 +1235,9 @@ export type Team = {
 	disabled: boolean;
 	keepRosterSorted: boolean;
 
+	// Optional because no upgrade
+	autoTicketPrice?: boolean;
+
 	// Optional because no upgrade. Otherwise, would make this empty array by default
 	retiredJerseyNumbers?: {
 		number: string;

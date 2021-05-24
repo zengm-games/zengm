@@ -6,6 +6,7 @@ import type { GameResults } from "../../../common/types";
 import {
 	getActualAttendance,
 	getAdjustedTicketPrice,
+	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance";
 
@@ -56,6 +57,22 @@ const writeTeamStats = async (results: GameResults) => {
 				pop: teamSeason.pop,
 				playoffs,
 			});
+
+			if (
+				t.autoTicketPrice === true ||
+				t.autoTicketPrice === undefined ||
+				!g.get("userTids").includes(t.tid)
+			) {
+				const ticketPrice = getAutoTicketPrice({
+					hype: teamSeason.hype,
+					pop: teamSeason.pop,
+					stadiumCapacity: teamSeason.stadiumCapacity,
+					teamSeasons,
+				});
+				if (ticketPrice !== t.budget.ticketPrice.amount) {
+					t.budget.ticketPrice.amount = ticketPrice;
+				}
+			}
 
 			adjustedTicketPrice = getAdjustedTicketPrice(
 				t.budget.ticketPrice.amount,

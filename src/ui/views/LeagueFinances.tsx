@@ -28,30 +28,28 @@ const LeagueFinances = ({
 	// Since we don't store historical salary cap data, only show cap space for current season
 	const showCapSpace = season === currentSeason;
 
+	// Same for ticket price
+	const showTicketPrice = season === currentSeason && budget;
+
 	const cols = budget
 		? getCols(
 				"Team",
 				"Pop",
 				"Avg Attendance",
+				...(showTicketPrice ? ["Ticket Price"] : []),
 				"Revenue (YTD)",
 				"Profit (YTD)",
 				"Cash",
 				"Payroll",
-				"Cap Space",
-				"Roster Spots",
+				...(showCapSpace ? ["Cap Space", "Roster Spots"] : []),
 		  )
 		: getCols(
 				"Team",
 				"Pop",
 				"Avg Attendance",
 				"Payroll",
-				"Cap Space",
-				"Roster Spots",
+				...(showCapSpace ? ["Cap Space", "Roster Spots"] : []),
 		  );
-	if (!showCapSpace) {
-		cols.pop();
-		cols.pop();
-	}
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -71,6 +69,9 @@ const LeagueFinances = ({
 			</a>,
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
+			...(showTicketPrice
+				? [helpers.formatCurrency(Math.round(t.budget.ticketPrice.amount))]
+				: []),
 			...(budget
 				? [
 						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),

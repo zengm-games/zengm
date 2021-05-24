@@ -4,9 +4,13 @@ checkbox to auto set ticket prices https://discord.com/channels/2900135340230574
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
 - compute directly, at least to init?
   - if auto, recompute ticket price before each game
+- round all generated ticket prices to nearest dollar
+  - new league
+  - inflation adjustment
 - after
   - did it change much? do default finances settings need to change?
   - how does this interact with inflation adjustment?
+  - how does this interact with the "budget" setting?
   - performance?
 - t.autoTicketPrice
   - toggle button, and explanation
@@ -14,12 +18,12 @@ checkbox to auto set ticket prices https://discord.com/channels/2900135340230574
     - for undefined, always check box, because that's how it's actually applied
   - make sure init in new league (pass to team.generate explicitly, only if not loading from uploaded league file?)
 - some UI indicating that ticket price adjusts automaticall in the playoffs
-- show ticket price in league finances
 - blog
   - playoff adjustment
   - auto ticket price
     - defaulted to enabled even in existing leagues, cause i figure pretty much everyone will want it
     - randomness still game to game
+  - ticket price on league finances page
 
 ajv warnings in console when used
 

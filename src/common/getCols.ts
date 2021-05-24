@@ -112,8 +112,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:astp": {
-			desc:
-				"Percentage of teammate field goals a player assisted while on the floor",
+			desc: "Percentage of teammate field goals a player assisted while on the floor",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -253,8 +252,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pl": {
-			desc:
-				"Pythagorean Losses (expected losses based on points scored and allowed)",
+			desc: "Pythagorean Losses (expected losses based on points scored and allowed)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -264,8 +262,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pw": {
-			desc:
-				"Pythagorean Wins (expected wins based on points scored and allowed)",
+			desc: "Pythagorean Wins (expected wins based on points scored and allowed)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1131,8 +1128,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pssAdjYdsPerAtt": {
-			desc:
-				"Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
+			desc: "Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1152,8 +1148,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pssAdjNetYdsPerAtt": {
-			desc:
-				"Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
+			desc: "Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1218,8 +1213,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:allPurposeYds": {
-			desc:
-				"All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
+			desc: "All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1947,6 +1941,9 @@ const cols: {
 		desc: "Ties",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
+	},
+	"Ticket Price": {
+		sortSequence: ["desc", "asc"],
 	},
 	OTL: {
 		desc: "Overtime Losses",

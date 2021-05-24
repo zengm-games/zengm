@@ -19,7 +19,7 @@ const updateLeagueFinances = async (
 
 		const teams = (
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
+				attrs: ["tid", "budget"],
 				seasonAttrs: [
 					"att",
 					"revenue",

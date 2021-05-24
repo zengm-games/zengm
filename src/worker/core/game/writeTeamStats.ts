@@ -18,7 +18,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 	let baseAttendance = 0;
 	let attendance = 0;
-	let ticketPrice = 0;
+	let adjustedTicketPrice = 0;
 
 	for (const t1 of [0, 1]) {
 		const t2 = t1 === 1 ? 0 : 1;
@@ -57,7 +57,7 @@ const writeTeamStats = async (results: GameResults) => {
 				playoffs,
 			});
 
-			ticketPrice = getAdjustedTicketPrice(
+			adjustedTicketPrice = getAdjustedTicketPrice(
 				t.budget.ticketPrice.amount,
 				playoffs,
 			);
@@ -132,12 +132,12 @@ const writeTeamStats = async (results: GameResults) => {
 				randomize: true,
 				stadiumCapacity: teamSeason.stadiumCapacity,
 				teamSeasons,
-				ticketPrice,
+				adjustedTicketPrice,
 			});
 		}
 
 		// This doesn't really make sense
-		let ticketRevenue = (ticketPrice * attendance) / 1000; // [thousands of dollars]
+		let ticketRevenue = (adjustedTicketPrice * attendance) / 1000; // [thousands of dollars]
 
 		// Hype - relative to the expectations of prior seasons
 		if (teamSeason.gp > 5 && g.get("phase") !== PHASE.PLAYOFFS) {

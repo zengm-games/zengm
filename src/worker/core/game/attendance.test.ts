@@ -24,13 +24,16 @@ describe("worker/core/game/attendance", () => {
 			pop,
 			playoffs,
 		});
-		const ticketPrice = getAdjustedTicketPrice(rawTicketPrice, playoffs);
+		const adjustedTicketPrice = getAdjustedTicketPrice(
+			rawTicketPrice,
+			playoffs,
+		);
 		const attendance = getActualAttendance({
 			baseAttendance,
 			randomize: false,
 			stadiumCapacity,
 			teamSeasons: [],
-			ticketPrice,
+			adjustedTicketPrice,
 		});
 
 		playoffs = true;
@@ -39,7 +42,7 @@ describe("worker/core/game/attendance", () => {
 			pop,
 			playoffs,
 		});
-		const ticketPricePlayoffs = getAdjustedTicketPrice(
+		const adjustedTicketPricePlayoffs = getAdjustedTicketPrice(
 			rawTicketPrice,
 			playoffs,
 		);
@@ -48,11 +51,11 @@ describe("worker/core/game/attendance", () => {
 			randomize: false,
 			stadiumCapacity,
 			teamSeasons: [],
-			ticketPrice: ticketPricePlayoffs,
+			adjustedTicketPrice: adjustedTicketPricePlayoffs,
 		});
 
 		assert(baseAttendancePlayoffs > baseAttendance);
-		assert(ticketPricePlayoffs > ticketPrice);
+		assert(adjustedTicketPricePlayoffs > adjustedTicketPrice);
 		assert.strictEqual(attendancePlayoffs, attendance);
 	});
 
@@ -75,25 +78,31 @@ describe("worker/core/game/attendance", () => {
 				pop,
 				playoffs,
 			});
-			const ticketPrice = getAdjustedTicketPrice(rawTicketPrice, playoffs);
+			const adjustedTicketPrice = getAdjustedTicketPrice(
+				rawTicketPrice,
+				playoffs,
+			);
 			const attendance = getActualAttendance({
 				baseAttendance,
 				randomize: false,
 				stadiumCapacity,
 				teamSeasons: [],
-				ticketPrice,
+				adjustedTicketPrice,
 			});
 
 			// The given ticket price is low enough to fill the stadium
 			assert.strictEqual(attendance, stadiumCapacity);
 
-			const ticketPrice2 = getAdjustedTicketPrice(rawTicketPrice + 1, playoffs);
+			const adjustedTicketPrice2 = getAdjustedTicketPrice(
+				rawTicketPrice + 1,
+				playoffs,
+			);
 			const attendance2 = getActualAttendance({
 				baseAttendance,
 				randomize: false,
 				stadiumCapacity,
 				teamSeasons: [],
-				ticketPrice: ticketPrice2,
+				adjustedTicketPrice: adjustedTicketPrice2,
 			});
 
 			// Raising the ticket price by just $1 will not fill the stadium

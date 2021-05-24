@@ -48,17 +48,17 @@ export const getActualAttendance = ({
 	randomize,
 	stadiumCapacity,
 	teamSeasons,
-	ticketPrice,
+	adjustedTicketPrice,
 }: {
 	baseAttendance: number;
 	randomize: boolean;
 	stadiumCapacity: number;
 	teamSeasons: TeamSeason[];
-	ticketPrice: number;
+	adjustedTicketPrice: number;
 }) => {
 	// Ticket price adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps. The exponential factor was hand-tuned to make this work in 1965.
 	const relativeTicketPrice =
-		ticketPrice * (90000 / g.get("salaryCap")) ** 0.75;
+		adjustedTicketPrice * (90000 / g.get("salaryCap")) ** 0.75;
 
 	let attendance = baseAttendance;
 
@@ -119,7 +119,7 @@ export const getAutoTicketPrice = ({
 			randomize: false,
 			stadiumCapacity,
 			teamSeasons,
-			ticketPrice: getAdjustedTicketPrice(autoTicketPrice, playoffs),
+			adjustedTicketPrice: getAdjustedTicketPrice(autoTicketPrice, playoffs),
 		});
 
 	const directionToMove = getAttendance() >= stadiumCapacity ? 1 : -1;

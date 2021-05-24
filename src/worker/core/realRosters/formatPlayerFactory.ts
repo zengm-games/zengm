@@ -254,16 +254,21 @@ const formatPlayerFactory = async (
 
 			const allAwards = basketball.awards[slug];
 
-			const awardsCustoffSeason =
-				options.type === "real" &&
-				options.phase !== undefined &&
-				options.phase > PHASE.PLAYOFFS
+			const awardsCutoffSeason =
+				options.type === "real" && options.phase > PHASE.PLAYOFFS
 					? season + 1
 					: season;
 			awards =
 				allAwards && !draftProspect
 					? helpers.deepCopy(
-							allAwards.filter(award => award.season < awardsCustoffSeason),
+							allAwards.filter(
+								award =>
+									award.season < awardsCutoffSeason ||
+									(options.type === "real" &&
+										options.phase === PHASE.PLAYOFFS &&
+										award.season < awardsCutoffSeason + 1 &&
+										award.type.includes("All-Star")),
+							),
 					  )
 					: undefined;
 		}

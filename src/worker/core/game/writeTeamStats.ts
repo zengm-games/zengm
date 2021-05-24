@@ -3,7 +3,11 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { GameResults } from "../../../common/types";
-import { getActualAttendance, getBaseAttendance } from "./attendance";
+import {
+	getActualAttendance,
+	getAdjustedTicketPrice,
+	getBaseAttendance,
+} from "./attendance";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -45,13 +49,18 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// Attendance - base calculation now, which is used for other revenue estimates
 		if (t1 === 0) {
+			const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 			baseAttendance = getBaseAttendance({
 				hype: teamSeason.hype,
 				pop: teamSeason.pop,
-				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+				playoffs,
 			});
 
-			ticketPrice = t.budget.ticketPrice.amount;
+			ticketPrice = getAdjustedTicketPrice(
+				t.budget.ticketPrice.amount,
+				playoffs,
+			);
 		}
 
 		// Some things are only paid for regular season games.
@@ -123,7 +132,7 @@ const writeTeamStats = async (results: GameResults) => {
 				randomize: true,
 				stadiumCapacity: teamSeason.stadiumCapacity,
 				teamSeasons,
-				ticketPrice: t.budget.ticketPrice.amount,
+				ticketPrice,
 			});
 		}
 

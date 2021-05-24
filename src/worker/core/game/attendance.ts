@@ -3,6 +3,8 @@ import { isSport } from "../../../common";
 import type { TeamSeason } from "../../../common/types";
 import { g, helpers, random } from "../../util";
 
+const PLAYOFF_ATTENDANCE_FACTOR = 1.5;
+
 export const getBaseAttendance = ({
 	hype,
 	pop,
@@ -22,10 +24,22 @@ export const getBaseAttendance = ({
 	}
 
 	if (playoffs) {
-		baseAttendance *= 1.5; // Playoff bonus
+		baseAttendance *= PLAYOFF_ATTENDANCE_FACTOR;
 	}
 
 	return baseAttendance;
+};
+
+// In the playoffs, auto-adjust ticket price up, accounting for the increase in baseAttendance
+export const getAdjustedTicketPrice = (
+	ticketPrice: number,
+	playoffs: boolean,
+) => {
+	if (!playoffs) {
+		return ticketPrice;
+	}
+
+	return Math.sqrt(PLAYOFF_ATTENDANCE_FACTOR) * ticketPrice;
 };
 
 // teamSeasons is last 3 seasons

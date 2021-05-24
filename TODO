@@ -2,12 +2,16 @@ Don't allow sim to preseason while user is over roster limit? If the "sign a ton
 
 checkbox to auto set ticket prices https://discord.com/channels/290013534023057409/331882115119448065/843670732679938068
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
-- how does this interact with inflation adjustment?
 - compute directly, at least to init?
-  - or every day, why not? need some way to control for hype
-  - invert or search?
-- playoffs? auto adjust?
-- did it change much? do default finances settings need to change?
+  - if auto, recompute ticket price before each game
+- after
+  - did it change much? do default finances settings need to change?
+  - how does this interact with inflation adjustment?
+- some UI indicating that ticket price adjusts automaticall in the playoffs
+- blog
+  - playoff adjustment
+
+ajv warnings in console when used
 
 fbgm trade rate
 

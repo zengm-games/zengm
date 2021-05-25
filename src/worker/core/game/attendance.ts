@@ -134,7 +134,7 @@ export const getAutoTicketPrice = ({
 				return autoTicketPrice - 1;
 			}
 		} else {
-			if (getAttendance() >= stadiumCapacity) {
+			if (getAttendance() >= stadiumCapacity || autoTicketPrice === 1) {
 				return autoTicketPrice;
 			}
 		}

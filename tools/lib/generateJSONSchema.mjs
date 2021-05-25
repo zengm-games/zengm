@@ -436,7 +436,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minimum: 0,
 						},
 						season: {
-							type: ["integer", "string"],
+							anyOf: [
+								{
+									type: "integer",
+								},
+								{
+									type: "string",
+								}
+							],
 						},
 					},
 					required: ["tid", "originalTid", "round", "season"],
@@ -508,7 +515,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							allStarGame: {
 								// boolean is legacy
-								type: ["boolean", "number", "null"],
+								anyOf: [
+									{
+										type: "boolean",
+									},
+									{
+										type: "number",
+									},
+									{
+										type: "null",
+									}
+								],
 							},
 							autoDeleteOldBoxScores: {
 								type: "boolean",
@@ -740,7 +757,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							nextPhase: {
 								// Shouldn't actually be null, but legacy
-								type: ["integer", "null"],
+								anyOf: [
+									{
+										type: "integer",
+									},
+									{
+										type: "null",
+									}
+								],
 							},
 							numDraftRounds: {
 								type: "integer",
@@ -759,7 +783,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minimum: 1,
 							},
 							numPlayoffByes: {
-								type: ["integer", "array"],
+								anyOf: [
+									{
+										type: "integer",
+									},
+									{
+										type: "array",
+									},
+								],
 							},
 							numSeasonsFutureDraftPicks: {
 								type: "integer",
@@ -838,10 +869,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minItems: 1,
 							},
 							ties: {
-								type: ["boolean", "array"],
+								anyOf: [
+									{
+										type: "boolean",
+									},
+									{
+										type: "array",
+									}
+								],
 							},
 							otl: {
-								type: ["boolean", "array"],
+								anyOf: [
+									{
+										type: "boolean",
+									},
+									{
+										type: "array",
+									}
+								],
 							},
 							thanosCooldownEnd: {
 								type: "number",
@@ -1253,7 +1298,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 						},
 						retiredYear: {
-							type: ["integer", "null"],
+							anyOf: [
+								{
+									type: "integer",
+								},
+								{
+									type: "null",
+								}
+							],
 						},
 						rosterOrder: {
 							type: "integer",
@@ -1308,7 +1360,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "boolean",
 						},
 						weight: {
-							type: ["number", "null"],
+							anyOf: [
+								{
+									type: "number",
+								},
+								{
+									type: "null",
+								}
+							],
 						},
 						yearsFreeAgent: {
 							type: "integer",
@@ -1598,7 +1657,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 									lastTen: {
 										type: "array",
 										items: {
-											type: ["integer", "string"],
+											anyOf: [
+												{
+													type: "integer",
+												},
+												{
+													type: "string",
+												}
+											],
 											enum: [-1, 0, 1, "OTL"],
 										},
 									},
@@ -1782,6 +1848,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 									$ref: "#/definitions/tradeTeam",
 								},
 							],
+							minItems: 2,
+							maxItems: 2,
 						},
 					},
 					required: ["rid", "teams"],

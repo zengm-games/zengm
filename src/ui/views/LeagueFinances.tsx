@@ -70,7 +70,7 @@ const LeagueFinances = ({
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 			...(showTicketPrice
-				? [helpers.formatCurrency(Math.round(t.budget.ticketPrice.amount))]
+				? [helpers.formatCurrency(t.budget.ticketPrice.amount, "", 2)]
 				: []),
 			...(budget
 				? [

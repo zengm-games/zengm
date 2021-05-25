@@ -2,6 +2,7 @@ import assert from "assert";
 import helpers from "../../../test/helpers";
 import {
 	getActualAttendance,
+	getActualAttendanceInverted,
 	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,
@@ -65,7 +66,7 @@ describe("worker/core/game/attendance", () => {
 		const playoffs = false;
 
 		// Test for small and large stadiumCapacity, to test its ability to find a high and low ticket price
-		for (const stadiumCapacity of [1, 100000]) {
+		for (const stadiumCapacity of [500, 100000]) {
 			const rawTicketPrice = getAutoTicketPrice({
 				stadiumCapacity,
 				hype,

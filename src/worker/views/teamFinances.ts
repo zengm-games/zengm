@@ -3,6 +3,7 @@ import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getAutoTicketPriceByTid } from "../core/game/attendance";
 
 const updateTeamFinances = async (
 	inputs: ViewInput<"teamFinances">,
@@ -188,8 +189,11 @@ const updateTeamFinances = async (
 			return max;
 		}, 0);
 
+		const autoTicketPrice = await getAutoTicketPriceByTid(inputs.tid);
+
 		return {
 			abbrev: inputs.abbrev,
+			autoTicketPrice,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			hardCap: g.get("hardCap"),
 			numGames: g.get("numGames"),

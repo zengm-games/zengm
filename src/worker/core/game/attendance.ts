@@ -1,6 +1,7 @@
 import { finances } from "..";
 import { isSport } from "../../../common";
 import type { TeamSeason } from "../../../common/types";
+import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 
 const PLAYOFF_ATTENDANCE_FACTOR = 1.5;
@@ -136,4 +137,27 @@ export const getAutoTicketPrice = ({
 			}
 		}
 	}
+};
+
+export const getAutoTicketPriceByTid = async (tid: number) => {
+	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+		"teamSeasonsByTidSeason",
+		[
+			[tid, g.get("season") - 2],
+			[tid, g.get("season")],
+		],
+	);
+
+	if (teamSeasons.length === 0) {
+		throw new Error("No team season found");
+	}
+
+	const teamSeason = teamSeasons[teamSeasons.length - 1];
+
+	return getAutoTicketPrice({
+		hype: teamSeason.hype,
+		pop: teamSeason.pop,
+		stadiumCapacity: teamSeason.stadiumCapacity,
+		teamSeasons,
+	});
 };

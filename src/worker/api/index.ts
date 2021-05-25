@@ -96,6 +96,7 @@ import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
 import { wrap } from "../util/g";
 import { getDefaultRealStats } from "../views/newLeague";
+import { getAutoTicketPriceByTid } from "../core/game/attendance";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -2485,7 +2486,9 @@ const updateBudget = async (
 	adjustForInflation: boolean,
 	autoTicketPrice: boolean,
 ) => {
-	const t = await idb.cache.teams.get(g.get("userTid"));
+	const userTid = g.get("userTid");
+
+	const t = await idb.cache.teams.get(userTid);
 	if (!t) {
 		throw new Error("Invalid tid");
 	}
@@ -2495,6 +2498,10 @@ const updateBudget = async (
 		if (budgetAmounts[key] === budgetAmounts[key]) {
 			t.budget[key].amount = budgetAmounts[key];
 		}
+	}
+
+	if (autoTicketPrice && !t.autoTicketPrice) {
+		t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(userTid);
 	}
 
 	t.adjustForInflation = adjustForInflation;

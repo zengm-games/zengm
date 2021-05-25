@@ -13,6 +13,7 @@ import type { View, Phase } from "../../common/types";
 import { PHASE } from "../../common";
 
 type FinancesFormProps = {
+	autoTicketPrice: number;
 	challengeNoRatings: boolean;
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
@@ -168,6 +169,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 
 	render() {
 		const {
+			autoTicketPrice,
 			challengeNoRatings,
 			gameSimInProgress,
 			noSeasonData,
@@ -201,13 +203,22 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 						<div className="input-group-prepend">
 							<div className="input-group-text">$</div>
 						</div>
-						<input
-							type="text"
-							className="form-control"
-							disabled={formDisabled || this.state.autoTicketPrice}
-							onChange={this.handleChanges.ticketPrice}
-							value={this.state.ticketPrice}
-						/>
+						{this.state.autoTicketPrice ? (
+							<input
+								type="text"
+								className="form-control"
+								disabled
+								value={autoTicketPrice}
+							/>
+						) : (
+							<input
+								type="text"
+								className="form-control"
+								disabled={formDisabled || this.state.autoTicketPrice}
+								onChange={this.handleChanges.ticketPrice}
+								value={this.state.ticketPrice}
+							/>
+						)}
 					</div>
 					<div className="float-left finances-settings-text">
 						Leaguewide rank: #{t.budget.ticketPrice.rank}
@@ -502,6 +513,7 @@ const highlightZeroNegative = (amount: number) => {
 
 const TeamFinances = ({
 	abbrev,
+	autoTicketPrice,
 	barData,
 	barSeasons,
 	budget,
@@ -761,6 +773,7 @@ const TeamFinances = ({
 				{budget ? (
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
+							autoTicketPrice={autoTicketPrice}
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}

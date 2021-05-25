@@ -1079,6 +1079,7 @@ const create = async ({
 			t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
 		}
 	}
+	await finances.updateRanks(["budget"]);
 
 	await idb.cache.flush();
 	await idb.cache.fill(); // Otherwise it keeps everything in memory!

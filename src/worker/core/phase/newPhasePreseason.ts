@@ -168,6 +168,7 @@ const newPhasePreseason = async (
 			await idb.cache.teams.put(t);
 		}
 	}
+	await finances.updateRanks(["budget"]);
 
 	if (updatedTeams) {
 		await league.setGameAttributes({

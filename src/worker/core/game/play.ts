@@ -154,7 +154,8 @@ const play = async (
 				await trade.betweenAiTeams();
 			}
 
-			await finances.updateRanks(["expenses", "revenues"]);
+			// Budget is just for ticket prices
+			await finances.updateRanks(["budget", "expenses", "revenues"]);
 
 			local.minFractionDiffs = undefined;
 

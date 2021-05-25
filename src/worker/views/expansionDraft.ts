@@ -42,7 +42,7 @@ const updateExpansionDraft = async () => {
 			imgURL: t.imgURL,
 			imgURLSmall: t.imgURLSmall,
 			colors: t.colors,
-			jersey: DEFAULT_JERSEY,
+			jersey: t.jersey,
 			pop: String(t.pop),
 			stadiumCapacity: String(g.get("defaultStadiumCapacity")),
 			did: String(t.did),

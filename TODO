@@ -1,15 +1,10 @@
+Also, default jersey types don’t show up when doing an expansion draft. It’s always solid horizontal by default... it has the default type on “customize teams” when you add a team. https://discord.com/channels/290013534023057409/290015591216054273/846811374419836989
+
 Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
 
 checkbox to auto set ticket prices
-- blog
-  - playoff adjustment
-  - auto ticket price
-    - varies as inputs change (hype, etc)
-    - defaulted to enabled even in existing leagues, cause i figure pretty much everyone will want it
-    - randomness still game to game
-    - decreased attendance globally by 25%, to account for the fact that using auto ticket price makes so much more money for teams that don't micromanage (including the old AI teams, and maybe many user teams - I guess this will make the game harder for people who micromanaged attendance!)
-  - ticket price on league finances page
-  - changes notification
+- ticket price ranks need to update after price changes
+- changes notification
 
 faceoff from penalty box after period ends https://discord.com/channels/@me/778760871911751700/845898372672913409
 

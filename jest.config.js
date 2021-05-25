@@ -11,4 +11,7 @@ module.exports = {
 
 	// https://stackoverflow.com/a/43197503/786644
 	transformIgnorePatterns: ["<rootDir>/node_modules/(?!lodash-es)"],
+
+	// https://jestjs.io/blog/2021/05/25/jest-27
+	testEnvironment: "jsdom",
 };

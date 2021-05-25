@@ -65,13 +65,9 @@ export const getActualAttendance = ({
 	// Adjustment added after auto ticket prices, to keep overall finances about the same as before auto ticket prices existed
 	attendance *= bySport({
 		basketball: 0.75,
-		football: 0.25,
+		football: 0.0575,
 		hockey: 0.35,
 	});
-
-	if (isSport("football")) {
-		attendance *= 0.23;
-	}
 
 	if (randomize) {
 		attendance = random.gauss(attendance, 1000);

@@ -4,7 +4,6 @@ checkbox to auto set ticket prices https://discord.com/channels/2900135340230574
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
 - round all generated ticket prices to nearest dollar
   - new league
-  - inflation adjustment
 - after
   - did it change much? do default finances settings need to change?
   - how does this interact with
@@ -12,10 +11,12 @@ checkbox to auto set ticket prices https://discord.com/channels/2900135340230574
     - the "budget" setting?
     - initial value in new league?
     - set value after toggling on?
-  - performance?
+- test
+  - historical league
 - blog
   - playoff adjustment
   - auto ticket price
+    - varies as inputs change (hype, etc)
     - defaulted to enabled even in existing leagues, cause i figure pretty much everyone will want it
     - randomness still game to game
   - ticket price on league finances page

@@ -5,6 +5,7 @@ import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
 import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
+import { getAutoTicketPriceByTid } from "../game/attendance";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -105,18 +106,24 @@ const setGameAttributes = async (
 									Math.round((t.budget[key].amount * factor) / 10) * 10;
 							}
 
-							const factor =
-								helpers.defaultTicketPrice(t.budget.ticketPrice.rank, value) /
-								helpers.defaultTicketPrice(t.budget.ticketPrice.rank);
+							if (t.autoTicketPrice) {
+								t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(
+									t.tid,
+								);
+							} else {
+								const factor =
+									helpers.defaultTicketPrice(t.budget.ticketPrice.rank, value) /
+									helpers.defaultTicketPrice(t.budget.ticketPrice.rank);
 
-							t.budget.ticketPrice.amount = parseFloat(
-								(t.budget.ticketPrice.amount * factor).toFixed(2),
-							);
+								t.budget.ticketPrice.amount = parseFloat(
+									(t.budget.ticketPrice.amount * factor).toFixed(2),
+								);
+							}
 
 							updated = true;
 						}
 					} else {
-						team.autoBudgetSettings(t, popRank, value);
+						await team.autoBudgetSettings(t, popRank, value);
 					}
 
 					if (updated) {

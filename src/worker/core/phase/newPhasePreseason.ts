@@ -161,8 +161,9 @@ const newPhasePreseason = async (
 			local.autoPlayUntil ||
 			g.get("spectator")
 		) {
-			team.autoBudgetSettings(t, popRanks[i]);
+			await team.autoBudgetSettings(t, popRanks[i]);
 			t.adjustForInflation = true;
+			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
 			await idb.cache.teams.put(t);
 		}

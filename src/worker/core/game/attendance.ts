@@ -98,7 +98,7 @@ export const getActualAttendance = ({
 };
 
 // Takes attendance (stadiumCapacity) and returns ticketPrice, rather than taking adjustedTicketPrice and returning attendance. This assumes baseAttendance was calculated with playoffs: false
-export const getActualAttendanceInverted = ({
+const getActualAttendanceInverted = ({
 	baseAttendance,
 	stadiumCapacity,
 	teamSeasons,

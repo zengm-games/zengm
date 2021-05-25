@@ -2,7 +2,6 @@ import assert from "assert";
 import helpers from "../../../test/helpers";
 import {
 	getActualAttendance,
-	getActualAttendanceInverted,
 	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,

@@ -770,13 +770,15 @@ function formatCurrency(
 	let numberString = abs.toFixed(precision);
 
 	// Remove last digits if 0
-	for (let i = 0; i < precision; i++) {
-		if (numberString[numberString.length - 1] === "0") {
+	if (append !== "") {
+		for (let i = 0; i < precision; i++) {
+			if (numberString[numberString.length - 1] === "0") {
+				numberString = numberString.slice(0, -1);
+			}
+		}
+		if (numberString[numberString.length - 1] === ".") {
 			numberString = numberString.slice(0, -1);
 		}
-	}
-	if (numberString[numberString.length - 1] === ".") {
-		numberString = numberString.slice(0, -1);
 	}
 
 	return `${sign}$${numberString}${append}`;

@@ -32,6 +32,7 @@ type FinancesFormState = {
 	scouting: string;
 	ticketPrice: string;
 	adjustForInflation: boolean;
+	autoTicketPrice: boolean;
 };
 
 type HandleChanges = {
@@ -41,7 +42,10 @@ type HandleChanges = {
 	scouting: (event: ChangeEvent<HTMLInputElement>) => void;
 	ticketPrice: (event: ChangeEvent<HTMLInputElement>) => void;
 	adjustForInflation: (event: ChangeEvent<HTMLInputElement>) => void;
+	autoTicketPrice: (event: ChangeEvent<HTMLInputElement>) => void;
 };
+
+const paddingLeft100 = { paddingLeft: 100 };
 
 class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	handleChanges: HandleChanges;
@@ -57,6 +61,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			scouting: String(props.t.budget.scouting.amount),
 			ticketPrice: String(props.t.budget.ticketPrice.amount),
 			adjustForInflation: props.t.adjustForInflation,
+			autoTicketPrice: props.t.autoTicketPrice,
 		};
 		this.handleChanges = {
 			coaching: this.handleChange.bind(this, "coaching"),
@@ -65,6 +70,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			scouting: this.handleChange.bind(this, "scouting"),
 			ticketPrice: this.handleChange.bind(this, "ticketPrice"),
 			adjustForInflation: this.handleChange.bind(this, "adjustForInflation"),
+			autoTicketPrice: this.handleChange.bind(this, "autoTicketPrice"),
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
@@ -81,6 +87,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 				scouting: nextProps.t.budget.scouting.amount,
 				ticketPrice: nextProps.t.budget.ticketPrice.amount,
 				adjustForInflation: nextProps.t.adjustForInflation,
+				autoTicketPrice: nextProps.t.autoTicketPrice,
 			};
 		}
 
@@ -88,11 +95,11 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	}
 
 	handleChange(name: keyof HandleChanges, e: ChangeEvent<HTMLInputElement>) {
-		if (name === "adjustForInflation") {
+		if (name === "adjustForInflation" || name === "autoTicketPrice") {
 			this.setState({
 				dirty: true,
-				adjustForInflation: e.target.checked,
-			});
+				[name]: e.target.checked,
+			} as any);
 			return;
 		}
 
@@ -144,6 +151,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			"updateBudget",
 			budgetAmounts,
 			this.state.adjustForInflation,
+			this.state.autoTicketPrice,
 		);
 
 		logEvent({
@@ -196,7 +204,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 						<input
 							type="text"
 							className="form-control"
-							disabled={formDisabled}
+							disabled={formDisabled || this.state.autoTicketPrice}
 							onChange={this.handleChanges.ticketPrice}
 							value={this.state.ticketPrice}
 						/>
@@ -205,7 +213,31 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 						Leaguewide rank: #{t.budget.ticketPrice.rank}
 					</div>
 				</div>
-				<p />
+				<div className="row mt-1 mb-3" style={paddingLeft100}>
+					<div className="form-check">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								onChange={this.handleChanges.autoTicketPrice}
+								type="checkbox"
+								checked={this.state.autoTicketPrice}
+								disabled={formDisabled}
+							/>
+							Auto ticket price
+						</label>
+						<HelpPopover title="Auto ticket price" className="ml-1">
+							<p>
+								When enabled, your ticket price will be set to the maximum value
+								possible while still selling out most games.
+							</p>
+							<p>
+								In the playoffs, ticket prices automatically adjust to account
+								for increased demand. That happens regardless of the "auto
+								ticket price" setting.
+							</p>
+						</HelpPopover>
+					</div>
+				</div>
 				<h3>
 					Expense Settings{" "}
 					<HelpPopover title="Expense Settings">
@@ -332,7 +364,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 						)}
 					</div>
 				</div>
-				<div className="row mt-3" style={{ paddingLeft: 100 }}>
+				<div className="row mt-1" style={paddingLeft100}>
 					<div className="form-check">
 						<label className="form-check-label">
 							<input
@@ -353,7 +385,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 					</div>
 				</div>
 				{tid === userTid && !spectator ? (
-					<div className="row mt-3" style={{ paddingLeft: 100 }}>
+					<div className="row mt-5" style={paddingLeft100}>
 						<button
 							className="btn btn-large btn-primary"
 							disabled={formDisabled || this.state.saving}

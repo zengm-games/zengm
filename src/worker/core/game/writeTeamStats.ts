@@ -58,11 +58,7 @@ const writeTeamStats = async (results: GameResults) => {
 				playoffs,
 			});
 
-			if (
-				t.autoTicketPrice === true ||
-				t.autoTicketPrice === undefined ||
-				!g.get("userTids").includes(t.tid)
-			) {
+			if (t.autoTicketPrice !== false || !g.get("userTids").includes(t.tid)) {
 				const ticketPrice = getAutoTicketPrice({
 					hype: teamSeason.hype,
 					pop: teamSeason.pop,

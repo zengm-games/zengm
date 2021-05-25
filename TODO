@@ -2,21 +2,17 @@ Don't allow sim to preseason while user is over roster limit? If the "sign a ton
 
 checkbox to auto set ticket prices https://discord.com/channels/290013534023057409/331882115119448065/843670732679938068
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
-- compute directly, at least to init?
-  - if auto, recompute ticket price before each game
 - round all generated ticket prices to nearest dollar
   - new league
   - inflation adjustment
 - after
   - did it change much? do default finances settings need to change?
-  - how does this interact with inflation adjustment?
-  - how does this interact with the "budget" setting?
+  - how does this interact with
+    - inflation adjustment?
+    - the "budget" setting?
+    - initial value in new league?
+    - set value after toggling on?
   - performance?
-- t.autoTicketPrice
-  - toggle button, and explanation
-    - for AI team, always check box, because that's how it's actually applied
-    - for undefined, always check box, because that's how it's actually applied
-  - make sure init in new league (pass to team.generate explicitly, only if not loading from uploaded league file?)
 - some UI indicating that ticket price adjusts automaticall in the playoffs
 - blog
   - playoff adjustment

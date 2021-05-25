@@ -165,12 +165,20 @@ const updateTeamFinances = async (
 
 		// Get stuff for the finances form
 		const t = await idb.getCopy.teamsPlus({
-			attrs: ["budget", "adjustForInflation"],
+			attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,
 			addDummySeason: true,
 		});
+
+		if (!t) {
+			throw new Error("Team not found");
+		}
+
+		// undefined is true (for upgrades), and AI teams are always true
+		t.autoTicketPrice =
+			t.autoTicketPrice !== false || !g.get("userTids").includes(inputs.tid);
 
 		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
 			if (teamSeason.stadiumCapacity > max) {

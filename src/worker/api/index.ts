@@ -2483,6 +2483,7 @@ const updateBudget = async (
 		ticketPrice: number;
 	},
 	adjustForInflation: boolean,
+	autoTicketPrice: boolean,
 ) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	if (!t) {
@@ -2497,6 +2498,7 @@ const updateBudget = async (
 	}
 
 	t.adjustForInflation = adjustForInflation;
+	t.autoTicketPrice = autoTicketPrice;
 
 	await idb.cache.teams.put(t);
 	await finances.updateRanks(["budget"]);

@@ -48,7 +48,7 @@ const writeTeamStats = async (results: GameResults) => {
 			throw new Error("Invalid tid");
 		}
 
-		// Attendance - base calculation now, which is used for other revenue estimates
+		// Attendance - base calculation now, which is used for other revenue estimates. Base on the home team
 		if (t1 === 0) {
 			const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 

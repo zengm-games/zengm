@@ -15,8 +15,7 @@ export const getBaseAttendance = ({
 	pop: number;
 	playoffs: boolean;
 }) => {
-	// Base on home team
-	let baseAttendance = 10000 + (0.1 + 0.9 * hype ** 2) * pop * 1000000 * 0.01; // Base attendance - between 2% and 0.2% of the region
+	let baseAttendance = 10000 + (0.1 + 0.9 * hype ** 2) * pop * 1000000 * 0.01;
 
 	if (isSport("hockey")) {
 		baseAttendance *= 1.05;
@@ -62,6 +61,9 @@ export const getActualAttendance = ({
 		adjustedTicketPrice * (90000 / g.get("salaryCap")) ** 0.75;
 
 	let attendance = baseAttendance;
+
+	// Adjustment added after auto ticket prices, to keep overall finances about the same
+	attendance *= 0.75;
 
 	if (isSport("football")) {
 		attendance *= 0.23;

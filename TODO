@@ -3,12 +3,9 @@ Don't allow sim to preseason while user is over roster limit? If the "sign a ton
 checkbox to auto set ticket prices https://discord.com/channels/290013534023057409/331882115119448065/843670732679938068
 - https://discord.com/channels/290013534023057409/290015468939640832/845109884105392189
 - after
-  - did it change much? do default finances settings need to change?
   - how does this interact with
     - inflation adjustment?
     - the "budget" setting?
-    - initial value in new league?
-    - set value after toggling on?
 - test
   - historical league
 - blog
@@ -17,6 +14,7 @@ checkbox to auto set ticket prices https://discord.com/channels/2900135340230574
     - varies as inputs change (hype, etc)
     - defaulted to enabled even in existing leagues, cause i figure pretty much everyone will want it
     - randomness still game to game
+    - decreased attendance globally by 25%, to account for the fact that using auto ticket price makes so much more money for teams that don't micromanage (including the old AI teams, and maybe many user teams - I guess this will make the game harder for people who micromanaged attendance!)
   - ticket price on league finances page
 
 ajv warnings in console when used

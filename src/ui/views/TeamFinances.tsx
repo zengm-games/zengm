@@ -10,7 +10,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
-import { PHASE } from "../../common";
+import { getAdjustedTicketPrice, PHASE } from "../../common";
 
 type FinancesFormProps = {
 	autoTicketPrice: number;
@@ -48,6 +48,14 @@ type HandleChanges = {
 
 const paddingLeft100 = { paddingLeft: 100 };
 
+const formatTicketPrice = (ticketPrice: number) => {
+	// Never show just one decimal place, because it's cents
+	if (!Number.isInteger(ticketPrice) && Number.isInteger(ticketPrice * 10)) {
+		return ticketPrice.toFixed(2);
+	}
+	return String(ticketPrice);
+};
+
 class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	handleChanges: HandleChanges;
 
@@ -60,10 +68,16 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			health: String(props.t.budget.health.amount),
 			saving: false,
 			scouting: String(props.t.budget.scouting.amount),
-			ticketPrice: String(props.t.budget.ticketPrice.amount),
+			ticketPrice: formatTicketPrice(props.t.budget.ticketPrice.amount),
 			adjustForInflation: props.t.adjustForInflation,
 			autoTicketPrice: props.t.autoTicketPrice,
 		};
+		console.log(
+			"hi",
+			props.t.budget.ticketPrice.amount,
+			formatTicketPrice(props.t.budget.ticketPrice.amount),
+			this.state.ticketPrice,
+		);
 		this.handleChanges = {
 			coaching: this.handleChange.bind(this, "coaching"),
 			facilities: this.handleChange.bind(this, "facilities"),
@@ -82,11 +96,11 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 	) {
 		if (!prevState.dirty) {
 			return {
-				coaching: nextProps.t.budget.coaching.amount,
-				facilities: nextProps.t.budget.facilities.amount,
-				health: nextProps.t.budget.health.amount,
-				scouting: nextProps.t.budget.scouting.amount,
-				ticketPrice: nextProps.t.budget.ticketPrice.amount,
+				coaching: String(nextProps.t.budget.coaching.amount),
+				facilities: String(nextProps.t.budget.facilities.amount),
+				health: String(nextProps.t.budget.health.amount),
+				scouting: String(nextProps.t.budget.scouting.amount),
+				ticketPrice: formatTicketPrice(nextProps.t.budget.ticketPrice.amount),
 				adjustForInflation: nextProps.t.adjustForInflation,
 				autoTicketPrice: nextProps.t.autoTicketPrice,
 			};
@@ -173,6 +187,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			challengeNoRatings,
 			gameSimInProgress,
 			noSeasonData,
+			phase,
 			spectator,
 			t,
 			tid,
@@ -208,7 +223,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 								type="text"
 								className="form-control"
 								disabled
-								value={autoTicketPrice}
+								value={formatTicketPrice(autoTicketPrice)}
 							/>
 						) : (
 							<input
@@ -224,6 +239,19 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 						Leaguewide rank: #{t.budget.ticketPrice.rank}
 					</div>
 				</div>
+				{phase === PHASE.PLAYOFFS ? (
+					<div className="row mb-1 text-warning" style={paddingLeft100}>
+						Playoffs price:{" "}
+						{helpers.formatCurrency(
+							getAdjustedTicketPrice(
+								this.state.autoTicketPrice
+									? autoTicketPrice
+									: parseFloat(this.state.ticketPrice),
+								true,
+							),
+						)}
+					</div>
+				) : null}
 				<div className="row mt-1 mb-3" style={paddingLeft100}>
 					<div className="form-check">
 						<label className="form-check-label">

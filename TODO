@@ -1,9 +1,6 @@
 Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
 
 checkbox to auto set ticket prices
-- don't export getActualAttendanceInverted unless needed in test
-- test
-  - historical league
 - blog
   - playoff adjustment
   - auto ticket price

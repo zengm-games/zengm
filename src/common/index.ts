@@ -5,6 +5,7 @@ export { default as createLogger } from "./createLogger";
 export { default as fetchWrapper } from "./fetchWrapper";
 export { default as gameAttributeHasHistory } from "./gameAttributeHasHistory";
 export { default as gameAttributesArrayToObject } from "./gameAttributesArrayToObject";
+export { default as getAdjustedTicketPrice } from "./getAdjustedTicketPrice";
 export { default as getCols } from "./getCols";
 export { default as getPeriodName } from "./getPeriodName";
 export { default as helpers } from "./helpers";

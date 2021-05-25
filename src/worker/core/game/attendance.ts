@@ -1,10 +1,13 @@
 import { finances } from "..";
 import { bySport, isSport } from "../../../common";
+import getAdjustedTicketPrice, {
+	PLAYOFF_ATTENDANCE_FACTOR,
+} from "../../../common/getAdjustedTicketPrice";
 import type { TeamSeason } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 
-const PLAYOFF_ATTENDANCE_FACTOR = 1.5;
+export { getAdjustedTicketPrice };
 
 export const getBaseAttendance = ({
 	hype,
@@ -28,18 +31,6 @@ export const getBaseAttendance = ({
 	}
 
 	return baseAttendance;
-};
-
-// In the playoffs, auto-adjust ticket price up, accounting for the increase in baseAttendance
-export const getAdjustedTicketPrice = (
-	ticketPrice: number,
-	playoffs: boolean,
-) => {
-	if (!playoffs) {
-		return ticketPrice;
-	}
-
-	return Math.sqrt(PLAYOFF_ATTENDANCE_FACTOR) * ticketPrice;
 };
 
 // Ticket price adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps. The exponential factor was hand-tuned to make this work in 1965.

@@ -26,6 +26,7 @@ import type {
 	DraftPickWithoutKey,
 } from "../../../common/types";
 import createGameAttributes from "./createGameAttributes";
+import { getAutoTicketPriceByTid } from "../game/attendance";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
 	const values = new Set();
@@ -1070,6 +1071,13 @@ const create = async ({
 			showNotification: false,
 			score: 20,
 		});
+	}
+
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		if (!t.disabled && t.autoTicketPrice !== false) {
+			t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
+		}
 	}
 
 	await idb.cache.flush();

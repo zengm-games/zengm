@@ -2500,7 +2500,7 @@ const updateBudget = async (
 		}
 	}
 
-	if (autoTicketPrice && !t.autoTicketPrice) {
+	if (autoTicketPrice && t.autoTicketPrice === false) {
 		t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(userTid);
 	}
 

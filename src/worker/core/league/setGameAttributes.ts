@@ -106,7 +106,7 @@ const setGameAttributes = async (
 									Math.round((t.budget[key].amount * factor) / 10) * 10;
 							}
 
-							if (t.autoTicketPrice) {
+							if (t.autoTicketPrice !== false) {
 								t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(
 									t.tid,
 								);

@@ -1944,6 +1944,7 @@ const cols: {
 	},
 	"Ticket Price": {
 		sortSequence: ["desc", "asc"],
+		sortType: "currency",
 	},
 	OTL: {
 		desc: "Overtime Losses",

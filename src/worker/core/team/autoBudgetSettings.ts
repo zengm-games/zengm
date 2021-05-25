@@ -19,7 +19,7 @@ const autoBudgetSettings = async (
 	const defaultBudgetAmount = helpers.defaultBudgetAmount(popRank, salaryCap);
 
 	let defaultTicketPrice;
-	if (t.autoTicketPrice) {
+	if (t.autoTicketPrice !== false) {
 		defaultTicketPrice = await getAutoTicketPriceByTid(t.tid);
 	} else {
 		defaultTicketPrice = helpers.defaultTicketPrice(popRank, salaryCap);

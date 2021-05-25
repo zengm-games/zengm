@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 import type { TeamSeason } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
@@ -62,8 +62,12 @@ export const getActualAttendance = ({
 
 	let attendance = baseAttendance;
 
-	// Adjustment added after auto ticket prices, to keep overall finances about the same
-	attendance *= 0.75;
+	// Adjustment added after auto ticket prices, to keep overall finances about the same as before auto ticket prices existed
+	attendance *= bySport({
+		basketball: 0.75,
+		football: 0.25,
+		hockey: 0.35,
+	});
 
 	if (isSport("football")) {
 		attendance *= 0.23;

@@ -12,6 +12,6 @@ module.exports = {
 	// https://stackoverflow.com/a/43197503/786644
 	transformIgnorePatterns: ["<rootDir>/node_modules/(?!lodash-es)"],
 
-	// https://jestjs.io/blog/2021/05/25/jest-27
+	// This is not needed for most tests, but getting rid of it somehow slows down src/worker/core/league/create.test.ts so might as well keep it
 	testEnvironment: "jsdom",
 };

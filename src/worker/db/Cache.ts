@@ -202,6 +202,7 @@ class Cache {
 		number,
 		{
 			resolve: () => void;
+			timeoutID: number;
 			validStatuses: Status[];
 		}
 	>;
@@ -550,12 +551,7 @@ class Cache {
 				this._requestInd += 1;
 				const ind = this._requestInd;
 
-				this._requestQueue.set(ind, {
-					resolve,
-					validStatuses,
-				});
-
-				setTimeout(() => {
+				const timeoutID = setTimeout(() => {
 					reject(
 						new Error(
 							`Timeout while waiting for valid status (${validStatuses.join(
@@ -565,7 +561,13 @@ class Cache {
 					);
 
 					this._requestQueue.delete(ind);
-				}, 30000);
+				}, 30000) as unknown as number;
+
+				this._requestQueue.set(ind, {
+					resolve,
+					timeoutID,
+					validStatuses,
+				});
 			});
 		}
 	}
@@ -575,6 +577,7 @@ class Cache {
 
 		for (const [ind, entry] of this._requestQueue.entries()) {
 			if (entry.validStatuses.includes(status)) {
+				self.clearTimeout(entry.timeoutID);
 				entry.resolve();
 
 				this._requestQueue.delete(ind);

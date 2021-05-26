@@ -29,7 +29,7 @@ describe("worker/db/Cache", () => {
 			assert.strictEqual(typeof p, "undefined");
 		});
 
-		test(`wait until filling complete before resolving query`, async () => {
+		test("wait until filling complete before resolving query", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 
 			idb.cache._status = "filling";

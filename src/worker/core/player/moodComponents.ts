@@ -156,7 +156,7 @@ const moodComponents = async (
 						won: previousSeason ? previousSeason.won : 0,
 						lost: previousSeason ? previousSeason.lost : 0,
 						tied: previousSeason ? previousSeason.tied ?? 0 : 1,
-						otl: previousSeason ? previousSeason.otl ?? 0 : 1,
+						otl: previousSeason ? previousSeason.otl ?? 0 : 0,
 					};
 
 					const fractionComplete =

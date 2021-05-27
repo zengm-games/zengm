@@ -1,38 +1,21 @@
-import { Component, FormEvent } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 
-type Props = {
-	ajaxErrorMsg: string;
-};
-type State = {
-	errorMessage: string | undefined;
-};
+const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const formRef = useRef<HTMLFormElement>(null);
 
-class Login extends Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			errorMessage: undefined,
-		};
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 
-	async handleSubmit(e: FormEvent) {
-		e.preventDefault();
-		this.setState({
-			errorMessage: undefined,
-		});
+		setErrorMessage(undefined);
 
-		const element = document.getElementById("login");
-		if (!(element instanceof HTMLFormElement)) {
-			this.setState({
-				errorMessage: "login element not found",
-			});
+		if (!formRef.current) {
 			throw new Error("login element not found");
 		}
 
-		const formData = new FormData(element);
+		const formData = new FormData(formRef.current);
 
 		try {
 			const data = await fetchWrapper({
@@ -53,52 +36,47 @@ class Login extends Component<Props, State> {
 				await toWorker("main", "checkParticipationAchievement", false);
 				realtimeUpdate(["account"], "/account");
 			} else {
-				this.setState({
-					errorMessage: "Invalid username or password.",
-				});
+				setErrorMessage("Invalid username or password.");
 			}
-		} catch (err) {
-			this.setState({
-				errorMessage: this.props.ajaxErrorMsg,
-			});
+		} catch (error) {
+			console.error(error);
+			setErrorMessage(ajaxErrorMsg);
 		}
-	}
+	};
 
-	override render() {
-		return (
-			<>
-				<h2>Login</h2>
-				<form onSubmit={this.handleSubmit} id="login">
-					<input type="hidden" name="sport" value={process.env.SPORT} />
-					<div className="form-group">
-						<label htmlFor="login-username">Username</label>
-						<input
-							type="text"
-							className="form-control"
-							id="login-username"
-							name="username"
-							required
-						/>
-					</div>
-					<div className="form-group">
-						<label htmlFor="login-password">Password</label>
-						<input
-							type="password"
-							className="form-control"
-							id="login-password"
-							name="password"
-							required
-						/>
-					</div>
-					<button type="submit" className="btn btn-primary">
-						Login
-					</button>
-					<p className="text-danger mt-3">{this.state.errorMessage}</p>
-				</form>
-				<a href="/account/lost_password">Lost password?</a>
-			</>
-		);
-	}
-}
+	return (
+		<>
+			<h2>Login</h2>
+			<form onSubmit={handleSubmit} ref={formRef}>
+				<input type="hidden" name="sport" value={process.env.SPORT} />
+				<div className="form-group">
+					<label htmlFor="login-username">Username</label>
+					<input
+						type="text"
+						className="form-control"
+						id="login-username"
+						name="username"
+						required
+					/>
+				</div>
+				<div className="form-group">
+					<label htmlFor="login-password">Password</label>
+					<input
+						type="password"
+						className="form-control"
+						id="login-password"
+						name="password"
+						required
+					/>
+				</div>
+				<button type="submit" className="btn btn-primary">
+					Login
+				</button>
+				<p className="text-danger mt-3">{errorMessage}</p>
+			</form>
+			<a href="/account/lost_password">Lost password?</a>
+		</>
+	);
+};
 
 export default Login;

@@ -1,6 +1,7 @@
 import { Component, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
+
 type Props = {
 	ajaxErrorMsg: string;
 };
@@ -63,7 +64,7 @@ class Login extends Component<Props, State> {
 		}
 	}
 
-	render() {
+	override render() {
 		return (
 			<>
 				<h2>Login</h2>

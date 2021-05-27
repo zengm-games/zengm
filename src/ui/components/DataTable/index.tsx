@@ -393,7 +393,7 @@ class DataTable extends Component<Props, State> {
 		});
 	}
 
-	render() {
+	override render() {
 		// Put this in useEffect
 		if (
 			this.props.name !== this.settingsCache.name ||

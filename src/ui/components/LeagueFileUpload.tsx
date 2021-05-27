@@ -16,6 +16,7 @@ import {
 } from "../../common";
 
 // This is dynamically resolved with rollup-plugin-alias
+// @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {

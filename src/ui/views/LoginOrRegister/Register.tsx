@@ -95,7 +95,7 @@ class Register extends Component<Props, State> {
 		}
 	}
 
-	render() {
+	override render() {
 		return (
 			<>
 				<h2>Register</h2>

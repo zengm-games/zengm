@@ -324,8 +324,8 @@ export const createWithoutSaving = async (
 
 	if (
 		leagueFile.hasOwnProperty("trade") &&
-		Array.isArray(trade) &&
-		trade.length === 1
+		Array.isArray(leagueFile.trade) &&
+		leagueFile.trade.length === 1
 	) {
 		trade = leagueFile.trade;
 	} else {

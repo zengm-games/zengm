@@ -17,6 +17,7 @@
 		"esModuleInterop": true,
 		"strict": true,
 		"importsNotUsedAsValues": "error",
-		"module": "es2020"
+		"module": "es2020",
+		"noImplicitOverride": true
 	}
 }

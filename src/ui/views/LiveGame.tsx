@@ -26,7 +26,7 @@ type PlayerRowProps = {
 class PlayerRow extends Component<PlayerRowProps> {
 	prevInGame: boolean | undefined;
 
-	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
+	// Can't just switch to hooks and React.memo because p is mutated, so there is no way to access the previous value of inGame in the memo callback function
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
 			basketball: !!(

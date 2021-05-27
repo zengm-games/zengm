@@ -3,7 +3,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import Login from "./Login";
 import Register from "./Register";
 
-const ajaxErrorMsg =
+export const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
 
 const LoginOrRegister = () => {

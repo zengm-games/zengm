@@ -5,9 +5,7 @@ import { ACCOUNT_API_URL, EMAIL_ADDRESS, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
-
-const ajaxErrorMsg =
-	"Error connecting to server. Check your Internet connection or try again later.";
+import { ajaxErrorMsg } from "./LoginOrRegister";
 
 type State = {
 	globalMessage?: ReactNode;

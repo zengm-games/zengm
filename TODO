@@ -851,6 +851,7 @@ FBGM
   - "fumble recovered by offense should only cost one down" test
 - When an interception happens on the passer's side of field, the team that picks off the ball starts off from their own side https://discord.com/channels/@me/790622657284014120/840993492158644245
 - opposing kicker kicks XP https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXSSVJvRrWwqvGVzdxLfJLcJM
+- interception does not change possession https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXSdhzzgXLSRMBzfwrZTdGWxL
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

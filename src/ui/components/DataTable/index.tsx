@@ -112,9 +112,13 @@ class DataTable extends Component<Props, State> {
 		this.handlePerPage = this.handlePerPage.bind(this);
 		this.handleSearch = this.handleSearch.bind(this);
 		this.handleSelectColumns = this.handleSelectColumns.bind(this);
-		this.settingsCache = new SettingsCache(
-			props.name,
-			!!props.disableSettingsCache,
+		this.settingsCache = this.getNewSettingsCache();
+	}
+
+	getNewSettingsCache() {
+		return new SettingsCache(
+			this.props.name,
+			!!this.props.disableSettingsCache,
 		);
 	}
 
@@ -390,6 +394,14 @@ class DataTable extends Component<Props, State> {
 	}
 
 	render() {
+		// Put this in useEffect
+		if (
+			this.props.name !== this.settingsCache.name ||
+			!!this.props.disableSettingsCache !== this.settingsCache.disabled
+		) {
+			this.settingsCache = this.getNewSettingsCache();
+		}
+
 		const {
 			bordered,
 			className,

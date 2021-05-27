@@ -14,7 +14,6 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 		if (!formRef.current) {
 			throw new Error("login element not found");
 		}
-
 		const formData = new FormData(formRef.current);
 
 		try {

@@ -3,12 +3,14 @@ import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
+	const [submitting, setSubmitting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const formRef = useRef<HTMLFormElement>(null);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
+		setSubmitting(true);
 		setErrorMessage(undefined);
 
 		if (!formRef.current) {
@@ -35,10 +37,12 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				await toWorker("main", "checkParticipationAchievement", false);
 				realtimeUpdate(["account"], "/account");
 			} else {
+				setSubmitting(false);
 				setErrorMessage("Invalid username or password.");
 			}
 		} catch (error) {
 			console.error(error);
+			setSubmitting(false);
 			setErrorMessage(ajaxErrorMsg);
 		}
 	};
@@ -68,8 +72,19 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						required
 					/>
 				</div>
-				<button type="submit" className="btn btn-primary">
-					Login
+				<button type="submit" disabled={submitting} className="btn btn-primary">
+					{submitting ? (
+						<>
+							<span
+								className="spinner-border spinner-border-sm"
+								role="status"
+								aria-hidden="true"
+							></span>{" "}
+							Processing
+						</>
+					) : (
+						"Login"
+					)}
 				</button>
 				<p className="text-danger mt-3">{errorMessage}</p>
 			</form>

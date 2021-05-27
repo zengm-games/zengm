@@ -5,6 +5,7 @@ import { localActions, realtimeUpdate, toWorker } from "../../util";
 import { GameLinks } from "../../components";
 
 type State = {
+	submitting: boolean;
 	errorMessageEmail: string | undefined;
 	errorMessageOverall: string | undefined;
 	errorMessagePassword: string | undefined;
@@ -14,6 +15,7 @@ type State = {
 
 const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [state, setState] = useState<State>({
+		submitting: false,
 		errorMessageEmail: undefined,
 		errorMessageOverall: undefined,
 		errorMessagePassword: undefined,
@@ -22,9 +24,10 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	});
 	const formRef = useRef<HTMLFormElement>(null);
 
-	const handleSubmit = async (e: FormEvent) => {
-		e.preventDefault();
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 		setState({
+			submitting: true,
 			errorMessageEmail: undefined,
 			errorMessageOverall: undefined,
 			errorMessagePassword: undefined,
@@ -75,13 +78,15 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 
 				setState(state2 => ({
 					...state2,
-					updatedState,
+					...updatedState,
+					submitting: false,
 				}));
 			}
 		} catch (error) {
 			console.error(error);
 			setState(state2 => ({
 				...state2,
+				submitting: false,
 				errorMessageOverall: ajaxErrorMsg,
 			}));
 		}
@@ -182,8 +187,23 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Join the mailing list (one email per quarter)
 					</label>
 				</div>
-				<button type="submit" className="btn btn-primary">
-					Create New Account
+				<button
+					type="submit"
+					disabled={state.submitting}
+					className="btn btn-primary"
+				>
+					{state.submitting ? (
+						<>
+							<span
+								className="spinner-border spinner-border-sm"
+								role="status"
+								aria-hidden="true"
+							></span>{" "}
+							Processing
+						</>
+					) : (
+						"Create New Account"
+					)}
 				</button>
 				<p className="text-danger mt-3">{state.errorMessageOverall}</p>
 			</form>

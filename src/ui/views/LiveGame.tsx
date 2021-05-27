@@ -27,7 +27,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 	prevInGame: boolean | undefined;
 
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
-	override shouldComponentUpdate(nextProps: PlayerRowProps) {
+	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
 			basketball: !!(
 				this.prevInGame ||
@@ -44,7 +44,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 		});
 	}
 
-	override render() {
+	render() {
 		const { p, ...props } = this.props;
 
 		// Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value

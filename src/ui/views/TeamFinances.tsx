@@ -181,7 +181,7 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 		});
 	}
 
-	override render() {
+	render() {
 		const {
 			autoTicketPrice,
 			challengeNoRatings,

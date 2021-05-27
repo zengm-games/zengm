@@ -145,7 +145,7 @@
 		"mocha": "^8.4.0",
 		"patch-package": "^6.4.7",
 		"postinstall-postinstall": "^2.1.0",
-		"prettier": "prettier/prettier",
+		"prettier": "^2.3.0",
 		"prop-types": "^15.7.2",
 		"replace": "^1.2.1",
 		"rollup": "^2.50.2",

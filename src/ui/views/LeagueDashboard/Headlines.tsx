@@ -27,19 +27,19 @@ const throttleRender = (wait: number) => {
 				);
 			}
 
-			override shouldComponentUpdate(nextProps: Props, nextState: State) {
+			shouldComponentUpdate(nextProps: Props, nextState: State) {
 				return this.state !== nextState;
 			}
 
-			override UNSAFE_componentWillReceiveProps(nextProps: Props) {
+			UNSAFE_componentWillReceiveProps(nextProps: Props) {
 				this.throttledSetState({ props: nextProps });
 			}
 
-			override componentWillUnmount() {
+			componentWillUnmount() {
 				this.throttledSetState.cancel();
 			}
 
-			override render() {
+			render() {
 				return createElement(component, this.state.props);
 			}
 		}

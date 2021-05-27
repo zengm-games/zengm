@@ -34,7 +34,7 @@ class StripeButton extends Component<StripeButtonProps, StripeButtonState> {
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	override componentDidMount() {
+	componentDidMount() {
 		(async () => {
 			if (!window.StripeCheckout) {
 				await getScript("https://checkout.stripe.com/checkout.js");
@@ -88,7 +88,7 @@ class StripeButton extends Component<StripeButtonProps, StripeButtonState> {
 		}
 	}
 
-	override render() {
+	render() {
 		return (
 			<button
 				className="btn btn-lg btn-primary"
@@ -187,7 +187,7 @@ class UserInfo extends Component<UserInfoProps, UserInfoState> {
 		}
 	}
 
-	override render() {
+	render() {
 		const {
 			goldUntilDateString,
 			loggedIn,

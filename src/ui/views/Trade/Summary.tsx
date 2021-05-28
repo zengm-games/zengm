@@ -17,24 +17,8 @@ const Summary = forwardRef(
 							"mb-md-3": i === 0,
 						})}
 					>
-						<h4 className="font-weight-bold">{t.name}</h4>
-						<h4 className="mb-1">Trade Away:</h4>
-						<ul className="list-unstyled">
-							{t.trade.map(p => (
-								<li key={`p${p.pid}`}>
-									<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
-									{helpers.formatCurrency(p.contract.amount, "M")})
-								</li>
-							))}
-							{t.picks.map(pick => (
-								<li key={pick.dpid}>{pick.desc}</li>
-							))}
-							<li className="mt-1">
-								{helpers.formatCurrency(t.total, "M")} Total
-							</li>
-						</ul>
-						<h4 className="mb-1">Receive:</h4>
-						<ul className="list-unstyled">
+						<h4 className="font-weight-bold">{t.name} recieve:</h4>
+						<ul className="list-unstyled mb-2">
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>
 									<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (

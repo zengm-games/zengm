@@ -28,7 +28,7 @@ const Buttons = ({
 	return (
 		<>
 			{godMode ? (
-				<div className="mt-2">
+				<div className="mb-2">
 					<label className="god-mode god-mode-text mb-0">
 						<input
 							type="checkbox"
@@ -42,14 +42,14 @@ const Buttons = ({
 			<div>
 				<button
 					type="submit"
-					className="btn btn-secondary mt-2"
+					className="btn btn-secondary mb-2"
 					disabled={asking || numAssets === 0}
 					onClick={handleClickAsk}
 				>
 					{asking ? "Waiting for answer..." : "What would make this deal work?"}
 				</button>
 			</div>
-			<div className="btn-group mt-2">
+			<div className="btn-group">
 				<button
 					type="submit"
 					className="btn btn-primary"

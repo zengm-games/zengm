@@ -145,12 +145,11 @@ const Trade = (props: View<"trade">) => {
 		setState(prevState => ({ ...prevState, asking: false, message }));
 	};
 
-	const handleClickClear = (
-		type: "all" | "other" | "user" | "keepUntradeable",
-	) => async () => {
-		setState(prevState => ({ ...prevState, message: null }));
-		await toWorker("main", "clearTrade", type);
-	};
+	const handleClickClear =
+		(type: "all" | "other" | "user" | "keepUntradeable") => async () => {
+			setState(prevState => ({ ...prevState, message: null }));
+			await toWorker("main", "clearTrade", type);
+		};
 
 	const handleClickForceTrade = () => {
 		setState(prevState => ({
@@ -345,20 +344,17 @@ const Trade = (props: View<"trade">) => {
 							summary={summary}
 						/>
 
-						<div className="py-1" ref={summaryControls}>
+						<div ref={summaryControls}>
 							{summary.warning ? (
-								<div className="alert alert-danger mb-0">
+								<div className="alert alert-danger mb-2">
 									<strong>Warning!</strong> {summary.warning}
 								</div>
 							) : null}
 							{state.message ? (
 								<div
 									className={classNames(
-										"alert mb-0",
+										"alert mb-2",
 										state.accepted ? "alert-success" : "alert-info",
-										{
-											"mt-2": summary.warning,
-										},
 									)}
 								>
 									{state.message}

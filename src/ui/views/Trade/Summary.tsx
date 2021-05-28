@@ -9,11 +9,11 @@ const Summary = forwardRef(
 		ref: any,
 	) => {
 		return (
-			<div className="row trade-items" ref={ref}>
+			<div className="row trade-items mb-3" ref={ref}>
 				{summary.teams.map((t, i) => (
 					<div
 						key={i}
-						className={classNames("col-md-12 col-6", {
+						className={classNames("col-md-12 col-6 d-flex flex-column", {
 							"mb-md-3": i === 0,
 						})}
 					>
@@ -33,7 +33,7 @@ const Summary = forwardRef(
 								Total
 							</li>
 						</ul>
-						<h4>
+						<h4 className="mt-auto">
 							Payroll after trade:{" "}
 							<span
 								className={
@@ -43,7 +43,9 @@ const Summary = forwardRef(
 								{helpers.formatCurrency(t.payrollAfterTrade, "M")}
 							</span>
 						</h4>
-						<h4>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</h4>
+						<h4 className="mb-0">
+							Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+						</h4>
 					</div>
 				))}
 			</div>

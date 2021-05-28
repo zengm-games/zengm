@@ -17,8 +17,8 @@ const Summary = forwardRef(
 							"mb-md-3": i === 0,
 						})}
 					>
-						<h4 className="font-weight-bold">{t.name} recieve:</h4>
-						<ul className="list-unstyled mb-2">
+						<h4 className="font-weight-bold mb-1">{t.name} recieve:</h4>
+						<ul className="list-unstyled mb-1">
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>
 									<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
@@ -30,10 +30,10 @@ const Summary = forwardRef(
 							))}
 							<li className="mt-1">
 								{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
-								Total
+								total
 							</li>
 						</ul>
-						<h4 className="mt-auto">
+						<p className="mt-auto mb-0">
 							Payroll after trade:{" "}
 							<span
 								className={
@@ -42,10 +42,10 @@ const Summary = forwardRef(
 							>
 								{helpers.formatCurrency(t.payrollAfterTrade, "M")}
 							</span>
-						</h4>
-						<h4 className="mb-0">
+						</p>
+						<p className="mb-0">
 							Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-						</h4>
+						</p>
 					</div>
 				))}
 			</div>

@@ -206,8 +206,9 @@ const Trade = (props: View<"trade">) => {
 		if (summaryControls.current && summaryText.current) {
 			// Keep in sync with .trade-affix
 			if (window.matchMedia("(min-width:768px)").matches) {
+				// 60 for top navbar, 24 for spacing between asset list and trade controls
 				const newHeight =
-					window.innerHeight - 60 - summaryControls.current.clientHeight;
+					window.innerHeight - 60 - 24 - summaryControls.current.clientHeight;
 				summaryText.current.style.maxHeight = `${newHeight}px`;
 			} else if (summaryText.current.style.maxHeight !== "") {
 				summaryText.current.style.removeProperty("height");
@@ -346,15 +347,18 @@ const Trade = (props: View<"trade">) => {
 
 						<div ref={summaryControls}>
 							{summary.warning ? (
-								<div className="alert alert-danger mb-2">
+								<div className="alert alert-danger mb-0">
 									<strong>Warning!</strong> {summary.warning}
 								</div>
 							) : null}
 							{state.message ? (
 								<div
 									className={classNames(
-										"alert mb-2",
+										"alert mb-0",
 										state.accepted ? "alert-success" : "alert-info",
+										{
+											"mt-2": summary.warning,
+										},
 									)}
 								>
 									{state.message}
@@ -364,6 +368,7 @@ const Trade = (props: View<"trade">) => {
 							<div
 								className={classNames({
 									"trade-extra-margin-bottom": multiTeamMode,
+									"mt-3": summary.warning || state.message,
 								})}
 							>
 								{!noTradingAllowed ? (

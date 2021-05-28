@@ -15,11 +15,13 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
  * - tiebreaker is random - but make it deterministic so it doesn't jump when doing the lottery
  * - 2nd round tiebreaker is opposite of 1st round
  * - 2nd round order is just based on record, no lottery section for non-playoff teams
+ *
  * Football
  * - order is based on playoff results
  * - tiebreaker is different than for playoffs, but i could probably get away with using the same one
  * - tied teams rotate (like 123 -> 231 -> 312 -> 123) in later rounds
  * - besides tiebreakers, order is same in all rounds
+ *
  * Hockey
  * - lottery is like basketball, but sort based on points rather than winp
  * - then: playoff teams that did not win their divisions and did not make the conference finals, sorted by points

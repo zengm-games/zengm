@@ -32,6 +32,13 @@ bundle size
     - how many is too many?
     - performance hit if the current view is not in the main bundle?
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
+  - do es module imports work inside a worker in firefox?
+    - https://web.dev/module-workers/
+    - https://caniuse.com/mdn-api_worker_worker_ecmascript_modules
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1247687
+  - for legacy bundle, need to include systemjs loader in worker, so it can load modules and init itself
+  - remove blacklist plugin
+  - do main and legacy builds in parallel
 - confirm cache header
 - confirm bugnsag working
 
@@ -47,11 +54,6 @@ Re-enabling auto-save while auto-playing sometimes breaks the game. Uncaught (in
 Live-simming a game being played by CPU teams in playoffs before simming your game on the same day causes the top game bar to stop updating. https://discord.com/channels/290013534023057409/290015591216054273/840604799539871744
 
 better contracts in new league - respond to settings for length https://discord.com/channels/290013534023057409/331882115119448065/840735778313338920
-
-twa
-- bbgm
-- other games
-- document how built
 
 fbgm2
 - game sim

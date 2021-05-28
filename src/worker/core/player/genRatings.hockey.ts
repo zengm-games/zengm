@@ -35,6 +35,7 @@ const getRatingsToBoost = (pos: string) => {
 		// Scoring or passing?
 		if (Math.random() < 0.5) {
 			return {
+				hgt: 1.05,
 				stre: 1,
 				spd: 2.5,
 				endu: 1,
@@ -51,6 +52,7 @@ const getRatingsToBoost = (pos: string) => {
 		}
 
 		return {
+			hgt: 1.05,
 			stre: 1,
 			spd: 2.5,
 			endu: 1,
@@ -68,6 +70,7 @@ const getRatingsToBoost = (pos: string) => {
 
 	if (pos === "W") {
 		return {
+			hgt: 1.05,
 			stre: 1,
 			spd: 1.5,
 			endu: 1,
@@ -108,6 +111,7 @@ const getRatingsToBoost = (pos: string) => {
 
 	if (pos === "G") {
 		return {
+			hgt: 1.25,
 			glk: 1.5,
 		};
 	}

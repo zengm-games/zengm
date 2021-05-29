@@ -9,7 +9,7 @@ import safeLocalStorage from "./safeLocalStorage";
 type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
-	resetLeague: () => void;
+	resetLeague: (lid?: number) => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
@@ -102,21 +102,19 @@ const useLocal = create<
 			});
 		},
 
-		// Reset any values specific to a league
-		resetLeague() {
+		// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
+		resetLeague(lid?: number) {
 			set({
 				challengeNoRatings: false,
 				games: [],
 				godMode: false,
 				hideDisabledTeams: false,
-				lid: undefined,
+				lid,
 				liveGameInProgress: false,
 				phase: 0,
-				phaseText: "",
 				playMenuOptions: [],
 				season: 0,
 				startingSeason: 0,
-				statusText: "Idle",
 				teamInfoCache: [],
 				userTid: 0,
 				userTids: [],

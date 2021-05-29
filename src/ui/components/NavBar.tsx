@@ -46,7 +46,6 @@ const NavBar = ({ updating }: Props) => {
 
 	// Checking lid too helps with some flicker
 	const inLeague = viewInfo?.inLeague && lid !== undefined;
-	// console.log(inLeague, lid, {...viewInfo})
 
 	if (popup) {
 		return <div />;

@@ -16,7 +16,8 @@ const close = async (disconnect?: boolean) => {
 	}
 
 	if (g.get("lid") !== undefined && idb.league !== undefined) {
-		if (local.leagueLoaded) {
+		// _dirty check is to prevent UI flicker if there is nothing to flush
+		if (local.leagueLoaded && idb.cache._dirty) {
 			await updateStatus("Saving...");
 			await idb.cache.flush();
 			await updateStatus("Idle");

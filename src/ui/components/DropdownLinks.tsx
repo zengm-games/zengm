@@ -139,8 +139,8 @@ const MenuItem = ({
 }: {
 	godMode?: boolean;
 	hideTitle?: boolean;
-	inLeague?: boolean;
-	lid?: number;
+	inLeague: boolean | undefined;
+	lid: number | undefined;
 	menuItem: MenuItemLink | MenuItemHeader | MenuItemText;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
 	openID?: string;
@@ -210,6 +210,7 @@ const MenuItem = ({
 				<MenuItem
 					godMode={godMode}
 					lid={lid}
+					inLeague={inLeague}
 					key={i}
 					menuItem={child}
 					openID={openID}
@@ -243,7 +244,7 @@ type DropdownLinksProps = {
 	className?: string;
 	godMode?: boolean;
 	hideTitle?: boolean;
-	inLeague?: boolean;
+	inLeague: boolean | undefined;
 	lid: number | undefined;
 	menuItems: (MenuItemLink | MenuItemHeader)[];
 };

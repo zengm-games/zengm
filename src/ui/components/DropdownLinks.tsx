@@ -130,6 +130,7 @@ const makeAnchorProps = (menuItem: MenuItemLink) => {
 const MenuItem = ({
 	godMode,
 	hideTitle,
+	inLeague,
 	lid,
 	menuItem,
 	openID,
@@ -138,6 +139,7 @@ const MenuItem = ({
 }: {
 	godMode?: boolean;
 	hideTitle?: boolean;
+	inLeague?: boolean;
 	lid?: number;
 	menuItem: MenuItemLink | MenuItemHeader | MenuItemText;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
@@ -148,11 +150,11 @@ const MenuItem = ({
 		return <Dropdown.Header>{menuItem.text}</Dropdown.Header>;
 	}
 
-	if (!menuItem.league && lid !== undefined) {
+	if (!menuItem.league && inLeague) {
 		return null;
 	}
 
-	if (!menuItem.nonLeague && lid === undefined) {
+	if (!menuItem.nonLeague && !inLeague) {
 		return null;
 	}
 
@@ -241,12 +243,20 @@ type DropdownLinksProps = {
 	className?: string;
 	godMode?: boolean;
 	hideTitle?: boolean;
+	inLeague?: boolean;
 	lid: number | undefined;
 	menuItems: (MenuItemLink | MenuItemHeader)[];
 };
 
 const DropdownLinks = memo(
-	({ className, godMode, hideTitle, lid, menuItems }: DropdownLinksProps) => {
+	({
+		className,
+		godMode,
+		hideTitle,
+		inLeague,
+		lid,
+		menuItems,
+	}: DropdownLinksProps) => {
 		const [openID, setOpenID] = useState<string | undefined>();
 		const handleTopMenuToggle = useCallback(
 			(id: string, event: MouseEvent<HTMLAnchorElement>) => {
@@ -268,6 +278,7 @@ const DropdownLinks = memo(
 						godMode={godMode}
 						lid={lid}
 						hideTitle={hideTitle}
+						inLeague={inLeague}
 						key={i}
 						menuItem={menuItem}
 						openID={openID}

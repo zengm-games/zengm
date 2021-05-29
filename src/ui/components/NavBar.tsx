@@ -28,6 +28,7 @@ const NavBar = ({ updating }: Props) => {
 		popup,
 		statusText,
 		username,
+		viewInfo,
 	} = useLocalShallow(state => ({
 		lid: state.lid,
 		liveGameInProgress: state.liveGameInProgress,
@@ -40,7 +41,12 @@ const NavBar = ({ updating }: Props) => {
 		popup: state.popup,
 		statusText: state.statusText,
 		username: state.username,
+		viewInfo: state.viewInfo,
 	}));
+
+	// Checking lid too helps with some flicker
+	const inLeague = viewInfo?.inLeague && lid !== undefined;
+	// console.log(inLeague, lid, {...viewInfo})
 
 	if (popup) {
 		return <div />;
@@ -91,8 +97,8 @@ const NavBar = ({ updating }: Props) => {
 			>
 				<span className="navbar-toggler-icon" />
 			</button>
-			<LogoAndText gold={gold} lid={lid} updating={updating} />
-			{lid !== undefined ? (
+			<LogoAndText gold={gold} inLeague={inLeague} updating={updating} />
+			{inLeague ? (
 				<Nav navbar>
 					<OverlayTrigger
 						placement="bottom"
@@ -126,10 +132,15 @@ const NavBar = ({ updating }: Props) => {
 					</OverlayTrigger>
 				</Nav>
 			) : null}
-			{lid !== undefined ? phaseStatusBlock : null}
+			{inLeague ? phaseStatusBlock : null}
 			<div className="flex-grow-1" />
 			<div className="d-none d-sm-flex">
-				<DropdownLinks godMode={godMode} lid={lid} menuItems={menuItems} />
+				<DropdownLinks
+					godMode={godMode}
+					inLeague={inLeague}
+					lid={lid}
+					menuItems={menuItems}
+				/>
 			</div>
 			<Nav id="top-user-block" navbar>
 				<Nav.Item>{userBlock}</Nav.Item>

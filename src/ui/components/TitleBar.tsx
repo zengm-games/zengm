@@ -193,6 +193,7 @@ const TitleBar = () => {
 			<DropdownLinks
 				className="ml-auto"
 				hideTitle
+				inLeague
 				lid={lid}
 				menuItems={menuItems}
 			/>

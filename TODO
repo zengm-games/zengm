@@ -1322,8 +1322,6 @@ RatingsOverview - could put in deion, with config to specify categories and name
 
 on import, error if any player/draftPick references an invalid tid
 
-on league import, override numTeams if teams are supplied in league file
-
 during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
 
 if a trade is highly unfavorable to the user, pop up a warning confirmation dialog
@@ -1338,8 +1336,6 @@ more accurage game sim
 ---
 
 in table, sort position by constants.POSITIONS order (like roster page in football)
-
-revise re-signing - too many good young players become FAs
 
 everywhere contract is displayed, make it in italics if not guaranteed
 - currently only on roster i think. make a component!
@@ -1362,8 +1358,7 @@ better salary AI
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?
 
-open dashboard, open league in new tab, now shell on dashboard is as if in league
-- happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"
+open dashboard, open league in new tab, open another league in current tab -> navbar at top flashes between "not in league, in 1st league, not in league, in 2nd league"
 
 login -> account -> doesn't say logged in, sometimes? but account shows in navbar
 - happens if you log in in one tab while having another open, then in the 2nd tab go to achievements

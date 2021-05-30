@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TIME_BETWEEN_GAMES } from "../../../common";
+import { timeBetweenGames } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import { HelpPopover } from "../../components";
 import { toWorker } from "../../util";
@@ -51,8 +51,7 @@ const Slider = ({
 					"Only play fully healthy players"
 				) : (
 					<>
-						{value} {TIME_BETWEEN_GAMES}
-						{value !== 1 ? "s" : null} (
+						{value} {timeBetweenGames(value)} (
 						{Math.round(100 * playThroughInjuriesFactor(value))}% performance)
 					</>
 				)}

@@ -4,7 +4,7 @@ import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
-import { bySport } from "../../common";
+import { timeBetweenGames } from "../../common";
 
 const PlayerNameLabels = (props: {
 	children: ReactNode;
@@ -35,18 +35,16 @@ const PlayerNameLabels = (props: {
 
 	if (injury !== undefined) {
 		if (injury.gamesRemaining === -1) {
-			// This is used in box scores, where it would be confusing to display "out X more games" in old box scores
+			// This is used in box scores, where it would be confusing to display "out X more days" in old box scores
 			injuryIcon = (
 				<span className="badge badge-danger badge-injury" title={injury.type}>
 					+
 				</span>
 			);
 		} else if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
-			// type check is for 1 game injuries, they're stored as 0 in the box score because number of games is determined after the game is played
-			const gameOrWeek = bySport({ default: "game", football: "week" });
-			const title = `${injury.type} (out ${injury.gamesRemaining} more ${
-				injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
-			})`;
+			const title = `${injury.type} (out ${
+				injury.gamesRemaining
+			} more ${timeBetweenGames(injury.gamesRemaining)})`;
 			injuryIcon = (
 				<span className="badge badge-danger badge-injury" title={title}>
 					{injury.gamesRemaining}

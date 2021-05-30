@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { PHASE, timeBetweenGames } from "../../../common";
 import { g } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 
@@ -25,7 +25,9 @@ const isUntradable = (
 			// Can't trade players who recently were signed or traded
 			return {
 				untradable: true,
-				untradableMsg: `Cannot trade recently-acquired player for ${p.gamesUntilTradable} more games`,
+				untradableMsg: `Cannot trade recently-acquired player for ${
+					p.gamesUntilTradable
+				} more ${timeBetweenGames(p.gamesUntilTradable)}`,
 			};
 		}
 	}

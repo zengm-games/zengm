@@ -1,21 +1,26 @@
+create new league -> play menu doesn't work until reload
+
 play through injuries
 - 2 sliders, for regular season and playoffs, how early to come back? units are both percentage of ability and number of days
   - responsive
   - on depth chart for hockey/football?
 - increased odds of injury
   - including reaggrivating current injury
+    - don't set p.newInjury
+    - p.injury.newThisGame check in liveGame.ts is not enough, need to save previous injury to show in live game at beginning somehow
+      - also in live game injury icon and play by play, distinguish between normal injury and reinjury
 - slower healing
 - get rid of nerfed playoff injuries?
 - how to apply penalty?
-- https://discord.com/channels/290013534023057409/331882115119448065/848276881756127313
-  - "Have it at 90% for like.. 20 days, maybe 50% for 10 days?"
-  - different for football and basketball
 - UI in box score showing player is injured but playing through it
+  - currently sorts them to bottom of roster, get rid of that
 - playThroughInjuriesFactor for football
 - league upgrade, import?
 - help text
 - changes, changelog
 - blog
+
+reload live box score -> blank page
 
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 

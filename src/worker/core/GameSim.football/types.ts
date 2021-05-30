@@ -67,6 +67,7 @@ export type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
 	ptModifier: number;
 	ovrs: Record<Position, number>;
 };

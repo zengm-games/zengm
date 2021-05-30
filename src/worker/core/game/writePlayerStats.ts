@@ -446,7 +446,8 @@ const writePlayerStats = async (
 					}
 				}
 
-				const injuredThisGame = p.injured && p.injury.type === "Healthy"; // Injury crap - assign injury type if player does not already have an injury in the database
+				// Injury crap - assign injury type if player does not already have an injury in the database
+				const injuredThisGame = p.newInjury;
 
 				let ratingsLoss = false;
 

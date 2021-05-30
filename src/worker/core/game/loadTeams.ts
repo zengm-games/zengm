@@ -100,7 +100,12 @@ const processTeam = (
 			stat: {},
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
-			injury: p.injury,
+			injury: {
+				...p.injury,
+				playingThrough:
+					p.injury.gamesRemaining > 0 &&
+					p.injury.gamesRemaining <= playThroughInjuries,
+			},
 			injured: p.injury.gamesRemaining > playThroughInjuries,
 			jerseyNumber:
 				p.stats.length > 0

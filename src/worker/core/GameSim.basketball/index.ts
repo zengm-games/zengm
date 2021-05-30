@@ -92,6 +92,7 @@ type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
 	ptModifier: number;
 };
 type TeamGameSim = {
@@ -1152,6 +1153,7 @@ class GameSim {
 
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;
+						this.team[t].player[p].newInjury = true;
 						newInjury = true;
 						this.recordPlay("injury", t, [this.team[t].player[p].name], {
 							injuredPID: this.team[t].player[p].id,

@@ -10,7 +10,9 @@ const PlayerNameLabels = (props: {
 	children: ReactNode;
 	disableWatchToggle?: boolean;
 	jerseyNumber?: string;
-	injury?: PlayerInjury;
+	injury?: PlayerInjury & {
+		playingThrough?: boolean;
+	};
 	pos?: string;
 	pid?: number;
 	skills?: string[];
@@ -34,19 +36,30 @@ const PlayerNameLabels = (props: {
 	let injuryIcon: ReactNode = null;
 
 	if (injury !== undefined) {
+		const colorClass = injury.playingThrough ? "warning" : "danger";
+
 		if (injury.gamesRemaining === -1) {
 			// This is used in box scores, where it would be confusing to display "out X more days" in old box scores
 			injuryIcon = (
-				<span className="badge badge-danger badge-injury" title={injury.type}>
+				<span
+					className={`badge badge-${colorClass} badge-injury`}
+					title={injury.type}
+				>
 					+
 				</span>
 			);
 		} else if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
-			const title = `${injury.type} (out ${
+			let title = `${injury.type}, out ${
 				injury.gamesRemaining
-			} more ${timeBetweenGames(injury.gamesRemaining)})`;
+			} more ${timeBetweenGames(injury.gamesRemaining)}`;
+			if (injury.playingThrough) {
+				title += ", played through injury";
+			}
 			injuryIcon = (
-				<span className="badge badge-danger badge-injury" title={title}>
+				<span
+					className={`badge badge-${colorClass} badge-injury`}
+					title={title}
+				>
 					{injury.gamesRemaining}
 				</span>
 			);

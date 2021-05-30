@@ -1403,6 +1403,7 @@ class GameSim {
 					250 * info.hitter.compositeRating.enforcer * baseInjuryRate
 				) {
 					info.target.injured = true;
+					info.target.newInjury = true;
 					this.playByPlay.logEvent({
 						type: "injury",
 						clock: this.clock,
@@ -1418,6 +1419,7 @@ class GameSim {
 					250 * info.shooter.compositeRating.sniper * baseInjuryRate
 				) {
 					info.target.injured = true;
+					info.target.newInjury = true;
 					this.playByPlay.logEvent({
 						type: "injury",
 						clock: this.clock,

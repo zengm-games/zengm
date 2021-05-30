@@ -2331,6 +2331,7 @@ class GameSim {
 					}
 
 					p.injured = true;
+					p.newInjury = true;
 					this.playByPlay.logEvent("injury", {
 						clock: this.clock,
 						t,

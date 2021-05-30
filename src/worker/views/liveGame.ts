@@ -90,9 +90,10 @@ const updatePlayByPlay = async (
 			}
 
 			for (let j = 0; j < t.players.length; j++) {
-				const p = t.players[j]; // Fix for players who were hurt this game - don't show right away!
+				const p = t.players[j];
 
-				if (p.injury.type !== "Healthy" && p.min > 0) {
+				// Fix for players who were hurt this game - don't show right away!
+				if (p.injury.newThisGame) {
 					p.injury = {
 						type: "Healthy",
 						gamesRemaining: 0,

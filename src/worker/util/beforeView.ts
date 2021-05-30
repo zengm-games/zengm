@@ -120,7 +120,7 @@ const beforeLeague = async (
 	if (switchingDatabaseLid) {
 		// Clear old game attributes from g, just to be sure
 		helpers.resetG();
-		await toUI("resetLeague", [newLid]);
+		await toUI("resetLeague", []);
 
 		if (loadingNewLid !== newLid) {
 			return;

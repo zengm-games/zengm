@@ -9,7 +9,7 @@ import safeLocalStorage from "./safeLocalStorage";
 type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
-	resetLeague: (lid?: number) => void;
+	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
@@ -103,13 +103,15 @@ const useLocal = create<
 		},
 
 		// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
-		resetLeague(lid?: number) {
+		resetLeague() {
 			set({
 				challengeNoRatings: false,
 				games: [],
 				godMode: false,
 				hideDisabledTeams: false,
-				lid,
+
+				// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
+				lid: undefined,
 				liveGameInProgress: false,
 				phase: 0,
 				playMenuOptions: [],

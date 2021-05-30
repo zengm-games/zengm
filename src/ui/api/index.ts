@@ -156,8 +156,8 @@ async function realtimeUpdate2(
 	await realtimeUpdate(updateEvents, url, raw);
 }
 
-const resetLeague = (lid?: number) => {
-	localActions.resetLeague(lid);
+const resetLeague = () => {
+	localActions.resetLeague();
 };
 
 const setGameAttributes = (gameAttributes: Partial<GameAttributesLeague>) => {

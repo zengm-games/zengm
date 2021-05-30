@@ -10,6 +10,11 @@ play through injuries
 - https://discord.com/channels/290013534023057409/331882115119448065/848276881756127313
   - "Have it at 90% for like.. 20 days, maybe 50% for 10 days?"
   - different for football and basketball
+- UI in game sim showing player is injured but playing through it
+- click injury for details about if he will play, how he will be affected
+  - in live game too
+  - badge-injury
+- playThroughInjuriesFactor for football
 - league upgrade, import?
 - help text
 - changes, changelog

@@ -3,10 +3,12 @@ import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
 import { COMPOSITE_WEIGHTS, isSport, PHASE } from "../../../common";
+import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 
 const processTeam = (
 	teamInput: {
 		tid: number;
+		playThroughInjuries: [number, number];
 		depth?: any;
 	},
 	teamSeason: {
@@ -82,6 +84,9 @@ const processTeam = (
 		depth: teamInput.depth,
 	};
 
+	const playThroughInjuries =
+		teamInput.playThroughInjuries[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
+
 	for (const p of players) {
 		const rating = p.ratings[p.ratings.length - 1];
 		const playerCompositeRatings: any = {};
@@ -96,7 +101,7 @@ const processTeam = (
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
 			injury: p.injury,
-			injured: p.injury.type !== "Healthy",
+			injured: p.injury.gamesRemaining > playThroughInjuries,
 			jerseyNumber:
 				p.stats.length > 0
 					? p.stats[p.stats.length - 1].jerseyNumber
@@ -110,14 +115,17 @@ const processTeam = (
 			p2.ptModifier = 1;
 		}
 
+		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
+
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
-			p2.compositeRating[k] = player.compositeRating(
-				rating,
-				COMPOSITE_WEIGHTS[k].ratings,
-				COMPOSITE_WEIGHTS[k].weights,
-				false,
-			);
+			p2.compositeRating[k] =
+				player.compositeRating(
+					rating,
+					COMPOSITE_WEIGHTS[k].ratings,
+					COMPOSITE_WEIGHTS[k].weights,
+					false,
+				) * injuryFactor;
 
 			if (
 				isSport("hockey") &&
@@ -243,6 +251,7 @@ const loadTeams = async (tids: number[]) => {
 			teams[tid] = processTeam(
 				{
 					tid,
+					playThroughInjuries: [0, 0],
 				},
 				{
 					cid: -1,

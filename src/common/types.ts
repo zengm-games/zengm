@@ -1234,6 +1234,8 @@ export type Team = {
 	adjustForInflation: boolean;
 	disabled: boolean;
 	keepRosterSorted: boolean;
+
+	// [regular season, playoffs]
 	playThroughInjuries: [number, number];
 
 	// Optional because no upgrade

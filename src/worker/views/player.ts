@@ -375,7 +375,7 @@ const updatePlayer = async (
 				p.tid !== PLAYER.UNDRAFTED &&
 				p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
 				p.tid !== PLAYER.RETIRED,
-			injured: p.injury.type !== "Healthy",
+			injured: p.injury.gamesRemaining > 0,
 			godMode: g.get("godMode"),
 			showRatings: !g.get("challengeNoRatings") || retired,
 			events,

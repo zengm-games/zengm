@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { TIME_BETWEEN_GAMES } from "../../../common";
+import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import { HelpPopover } from "../../components";
 import { toWorker } from "../../util";
-
-const PERFORMANCE_FRACTION_DECREASE_PER_DAY = 0.05;
-
-const playThroughInjuriesFactor = (playThroughInjuries: number) => {
-	return Math.round(
-		100 * (1 - PERFORMANCE_FRACTION_DECREASE_PER_DAY * playThroughInjuries),
-	);
-};
 
 const Slider = ({
 	className,
@@ -59,8 +52,8 @@ const Slider = ({
 				) : (
 					<>
 						{value} {TIME_BETWEEN_GAMES}
-						{value !== 1 ? "s" : null} ({playThroughInjuriesFactor(value)}%
-						performance)
+						{value !== 1 ? "s" : null} (
+						{Math.round(100 * playThroughInjuriesFactor(value))}% performance)
 					</>
 				)}
 			</div>

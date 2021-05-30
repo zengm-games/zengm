@@ -28,8 +28,12 @@ const BoxScore = ({
 				const rowsInjured = [];
 				for (let i = 0; i < t.players.length; i++) {
 					const p = t.players[i];
+					console.log(p.injury);
 					const addToHealthy =
-						!injuredToBottom || p.injury.gamesRemaining === 0 || p.min > 0;
+						!injuredToBottom ||
+						p.injury.gamesRemaining === 0 ||
+						p.min > 0 ||
+						p.injury.playingThrough;
 
 					const row = (
 						<Row

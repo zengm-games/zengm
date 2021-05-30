@@ -39,7 +39,7 @@ const RosterComposition = ({
 	className = "",
 	players,
 }: {
-	className: string;
+	className?: string;
 	players: Players;
 }) => {
 	if (isSport("basketball")) {

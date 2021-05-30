@@ -7,6 +7,7 @@ import {
 } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
+import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
 
@@ -68,6 +69,7 @@ const TopStuff = ({
 	showTradeFor,
 	t,
 	tid,
+	userTid,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
@@ -85,6 +87,7 @@ const TopStuff = ({
 	| "showTradeFor"
 	| "t"
 	| "tid"
+	| "userTid"
 > & {
 	openRosterSpots: number;
 	profit: number;
@@ -152,29 +155,34 @@ const TopStuff = ({
 						<PlusMinus>{marginOfVictory}</PlusMinus>
 					</div>
 
-					{season === currentSeason || isSport("football") ? (
-						<div className="d-flex mt-3">
-							{season === currentSeason ? (
-								<div>
-									{openRosterSpots} open roster spots
+					{season === currentSeason ? (
+						<div className="mt-3">
+							{openRosterSpots} open roster spots
+							<br />
+							Payroll: {helpers.formatCurrency(payroll || 0, "M")}
+							<br />
+							Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+							<br />
+							{budget ? (
+								<>
+									Profit: {helpers.formatCurrency(profit, "M")}
 									<br />
-									Payroll: {helpers.formatCurrency(payroll || 0, "M")}
-									<br />
-									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-									<br />
-									{budget ? (
-										<>
-											Profit: {helpers.formatCurrency(profit, "M")}
-											<br />
-										</>
-									) : null}
-									{showTradeFor ? `Strategy: ${t.strategy}` : null}
-								</div>
+								</>
 							) : null}
-							<RosterComposition className="ml-3" players={players} />
+							{showTradeFor ? `Strategy: ${t.strategy}` : null}
 						</div>
 					) : null}
 				</div>
+				{season === currentSeason ? (
+					<div className="ml-5">
+						<RosterComposition players={players} />
+					</div>
+				) : null}
+				{season === currentSeason && tid === userTid ? (
+					<div className="ml-5">
+						<PlayThroughInjurySliders t={t} />
+					</div>
+				) : null}
 			</div>
 			<InstructionsAndSortButtons
 				keepRosterSorted={t.keepRosterSorted}

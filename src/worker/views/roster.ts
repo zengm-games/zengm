@@ -67,7 +67,14 @@ const updateRoster = async (
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
-			attrs: ["tid", "strategy", "region", "name", "keepRosterSorted"],
+			attrs: [
+				"tid",
+				"strategy",
+				"region",
+				"name",
+				"keepRosterSorted",
+				"playThroughInjuries",
+			],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
 			addDummySeason: true,

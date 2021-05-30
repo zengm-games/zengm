@@ -1234,6 +1234,7 @@ export type Team = {
 	adjustForInflation: boolean;
 	disabled: boolean;
 	keepRosterSorted: boolean;
+	playThroughInjuries: [number, number];
 
 	// Optional because no upgrade
 	autoTicketPrice?: boolean;

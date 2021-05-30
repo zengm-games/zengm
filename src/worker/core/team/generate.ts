@@ -76,6 +76,7 @@ const generate = (tm: any): Team => {
 		disabled: tm.disabled ?? false,
 		keepRosterSorted: tm.keepRosterSorted ?? true,
 		autoTicketPrice: tm.autoTicketPrice ?? true,
+		playThroughInjuries: tm.playThroughInjuries ?? [0, 5],
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

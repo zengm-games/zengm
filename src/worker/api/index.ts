@@ -2795,6 +2795,20 @@ const updateOptions = async (
 	await toUI("realtimeUpdate", [["options"]]);
 };
 
+const updatePlayThroughInjuries = async (
+	tid: number,
+	value: number,
+	playoffs?: boolean,
+) => {
+	const index = playoffs ? 1 : 0;
+
+	const t = await idb.cache.teams.get(tid);
+	if (t) {
+		t.playThroughInjuries[index] = value;
+		await idb.cache.teams.put(t);
+	}
+};
+
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
 	const cachedPlayer = await idb.cache.players.get(pid);
 
@@ -3314,6 +3328,7 @@ export default {
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,
+	updatePlayThroughInjuries,
 	updatePlayerWatch,
 	updatePlayingTime,
 	updateTeamInfo,

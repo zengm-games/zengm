@@ -159,6 +159,7 @@ const Roster = ({
 				showTradeFor={showTradeFor}
 				t={t}
 				tid={tid}
+				userTid={userTid}
 			/>
 
 			{showSpectatorWarning ? (

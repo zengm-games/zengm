@@ -635,7 +635,7 @@ const updateLeaders = async (
 					for (let k = 0; k < cat.minStats.length; k++) {
 						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 						let playerValue;
-						if (!isSport("basketball") || cat.minStats[k] === "gp") {
+						if (!isSport("basketball")) {
 							playerValue = p.stats[cat.minStats[k]];
 						} else {
 							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
@@ -643,15 +643,29 @@ const updateLeaders = async (
 
 						// Compare against value normalized for team games played
 						const gpTeam = gps[p.stats.tid];
-						if (
-							gpTeam !== undefined &&
-							playerValue >=
+
+						if (gpTeam !== undefined) {
+							// Special case GP
+							if (cat.minStats[k] === "gp") {
+								if (
+									p.stats.gp / gpTeam >=
+									cat.minValue[k] / g.get("numGames")
+								) {
+									pass = true;
+									break; // If one is true, don't need to check the others
+								}
+							}
+
+							// Other stats
+							if (
+								playerValue >=
 								Math.ceil(
 									(cat.minValue[k] * factor * gpTeam) / g.get("numGames"),
 								)
-						) {
-							pass = true;
-							break; // If one is true, don't need to check the others
+							) {
+								pass = true;
+								break; // If one is true, don't need to check the others
+							}
 						}
 					}
 				}

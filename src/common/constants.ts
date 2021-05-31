@@ -345,9 +345,9 @@ const JERSEYS = bySport({
 
 // Target: 90% in playThroughInjuriesFactor
 const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
-	basketball: [0, 5],
+	basketball: [0, 4],
 	football: [0, 2],
-	hockey: [0, 5],
+	hockey: [0, 4],
 });
 
 export {

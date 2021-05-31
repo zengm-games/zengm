@@ -19,6 +19,12 @@ const Slider = ({
 
 	const id = `play-through-injury-${playoffs ? "playoffs" : "regular-season"}`;
 
+	const percent = 100 * playThroughInjuriesFactor(value);
+
+	const rounded = Number.isInteger(percent)
+		? String(percent)
+		: percent.toFixed(1);
+
 	return (
 		<div className={className}>
 			<label className="mb-1" htmlFor={id}>
@@ -51,8 +57,7 @@ const Slider = ({
 					"Only play fully healthy players"
 				) : (
 					<>
-						{value} {timeBetweenGames(value)} (
-						{Math.round(100 * playThroughInjuriesFactor(value))}% performance)
+						{value} {timeBetweenGames(value)} ({rounded}% performance)
 					</>
 				)}
 			</div>
@@ -69,11 +74,7 @@ const PlayThroughInjuriesSliders = ({
 	};
 }) => {
 	return (
-		<div
-			style={{
-				width: 200,
-			}}
-		>
+		<div className="play-through-injuries">
 			<b>
 				Play Through Injuries{" "}
 				<HelpPopover title="Play Through Injuries">

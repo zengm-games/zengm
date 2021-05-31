@@ -89,7 +89,7 @@ const RosterComposition = ({
 			{bySport({
 				basketball: null,
 				football: (
-					<div className="row">
+					<div className="mt-2 row">
 						<div className="col-4">
 							<PositionFraction players={players} pos="QB" />
 							<br />
@@ -119,7 +119,7 @@ const RosterComposition = ({
 					</div>
 				),
 				hockey: (
-					<div className="row">
+					<div className="mt-2 row">
 						<div className="col-6">
 							<PositionFraction players={players} pos="C" />
 							<br />

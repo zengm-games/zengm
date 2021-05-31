@@ -1249,3 +1249,9 @@ a.anchor {
 		margin-top: -4px !important;
 	}
 }
+
+@include media-breakpoint-up(sm) {
+	.play-through-injuries {
+		width: 200px;
+	}
+}

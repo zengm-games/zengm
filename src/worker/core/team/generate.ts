@@ -1,6 +1,11 @@
 import { helpers, g } from "../../util";
 import type { Team } from "../../../common/types";
-import { DEFAULT_JERSEY, isSport, POSITIONS } from "../../../common";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	isSport,
+	POSITIONS,
+} from "../../../common";
 
 /**
  * Create a new team object.
@@ -76,7 +81,8 @@ const generate = (tm: any): Team => {
 		disabled: tm.disabled ?? false,
 		keepRosterSorted: tm.keepRosterSorted ?? true,
 		autoTicketPrice: tm.autoTicketPrice ?? true,
-		playThroughInjuries: tm.playThroughInjuries ?? [0, 3],
+		playThroughInjuries:
+			tm.playThroughInjuries ?? DEFAULT_PLAY_THROUGH_INJURIES,
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

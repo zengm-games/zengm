@@ -343,6 +343,13 @@ const JERSEYS = bySport({
 	},
 });
 
+// Target: 90% in playThroughInjuriesFactor
+const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
+	basketball: [0, 5],
+	football: [0, 2],
+	hockey: [0, 5],
+});
+
 export {
 	AD_DIVS,
 	AWARD_NAMES,
@@ -350,6 +357,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_JERSEY,
+	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,

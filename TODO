@@ -1,10 +1,6 @@
 play through injuries
-- 2 sliders, for regular season and playoffs, how early to come back? units are both percentage of ability and number of days
-  - responsive
-  - on depth chart for hockey/football?
+- responsive
 - get rid of nerfed playoff injuries?
-- playThroughInjuriesFactor for football (weeks)
-- help text
 - changes, changelog
 - blog
   - sliders

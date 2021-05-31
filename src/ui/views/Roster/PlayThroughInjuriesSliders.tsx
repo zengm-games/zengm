@@ -77,7 +77,21 @@ const PlayThroughInjuriesSliders = ({
 			<b>
 				Play Through Injuries{" "}
 				<HelpPopover title="Play Through Injuries">
-					<p>Something goes here</p>
+					<p>
+						This allows you to determine when players should play through minor
+						injuries. You can set the cutoff separately for the regular season
+						and playoffs.
+					</p>
+					<p>
+						The earlier a player comes back, the worse he will play. "90%
+						performance" means a 70 ovr player will perform more like a 63 ovr
+						player.
+					</p>
+					<p>
+						Additionally, the injury rate is 50% higher when playing through an
+						injury, which includes the possibility of a player either
+						reaggrivating his current injury or getting a new injury.
+					</p>
 				</HelpPopover>
 			</b>
 			<form className="mt-2">

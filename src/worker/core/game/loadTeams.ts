@@ -2,7 +2,12 @@ import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS, isSport, PHASE } from "../../../common";
+import {
+	COMPOSITE_WEIGHTS,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	isSport,
+	PHASE,
+} from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 
 const processTeam = (
@@ -84,8 +89,15 @@ const processTeam = (
 		depth: teamInput.depth,
 	};
 
+	let playThroughInjuriesBoth;
+	if (g.get("userTids").includes(teamInput.tid) && !g.get("spectator")) {
+		playThroughInjuriesBoth = teamInput.playThroughInjuries;
+	} else {
+		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
+	}
+
 	const playThroughInjuries =
-		teamInput.playThroughInjuries[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
+		playThroughInjuriesBoth[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);

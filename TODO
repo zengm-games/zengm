@@ -2,11 +2,6 @@ Not sure if this is a bug or a feature but when you make every team inactive exc
 
 league leaders weird https://discord.com/channels/290013534023057409/290015591216054273/849029385486204998
 
-play through injuries should not be editable in spectator mode
-- in spectator mode or for AI teams, use default values
-  - userTids
-  - reset every season
-
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong

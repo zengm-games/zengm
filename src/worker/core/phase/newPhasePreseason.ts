@@ -1,4 +1,10 @@
-import { PLAYER, applyRealTeamInfo, bySport, isSport } from "../../../common";
+import {
+	PLAYER,
+	applyRealTeamInfo,
+	bySport,
+	isSport,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+} from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -165,6 +171,7 @@ const newPhasePreseason = async (
 			t.adjustForInflation = true;
 			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
+			t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
 			await idb.cache.teams.put(t);
 		}
 	}

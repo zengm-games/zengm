@@ -1,12 +1,9 @@
-worker.js won't load in chrome 79, new on 2021.05.31
-- https://discord.com/channels/@me/831754887058423819
-- legacy build?
-- optional chaining?
-- worker modules?
+league leaders weird https://discord.com/channels/290013534023057409/290015591216054273/849029385486204998
 
 play through injuries should not be editable in spectator mode
-- also double check if AI teams reset after user changes
-- should be viewable for all teams in god mode or spectator mode. only editable for your team, except spectator mode
+- I'm in multi team mode, it didn't change for the team I was on but the other team I was controlling it did change for, which isn't correct behavior i'd assume https://discord.com/channels/290013534023057409/290015591216054273/849023001714622544
+- in spectator mode or for AI teams, use default values
+  - reset every season
 
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs

@@ -67,9 +67,9 @@ const TopStuff = ({
 	salaryCap,
 	season,
 	showTradeFor,
+	showTradingBlock,
 	t,
 	tid,
-	userTid,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
@@ -85,9 +85,9 @@ const TopStuff = ({
 	| "salaryCap"
 	| "season"
 	| "showTradeFor"
+	| "showTradingBlock"
 	| "t"
 	| "tid"
-	| "userTid"
 > & {
 	openRosterSpots: number;
 	profit: number;
@@ -181,7 +181,7 @@ const TopStuff = ({
 							<RosterComposition players={players} />
 						</div>
 					) : null}
-					{season === currentSeason && tid === userTid ? (
+					{showTradingBlock ? (
 						<div className="ml-sm-5 mt-3 mt-md-0">
 							<PlayThroughInjurySliders t={t} />
 						</div>

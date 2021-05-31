@@ -157,9 +157,9 @@ const Roster = ({
 				profit={profit}
 				salaryCap={salaryCap}
 				showTradeFor={showTradeFor}
+				showTradingBlock={showTradingBlock}
 				t={t}
 				tid={tid}
-				userTid={userTid}
 			/>
 
 			{showSpectatorWarning ? (

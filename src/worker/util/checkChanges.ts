@@ -9,6 +9,7 @@ const MAX_NUM_TO_SHOW = 3;
 const FETCH_LIMIT = 10;
 
 const checkChanges = async (conditions: Conditions) => {
+	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
 	const lastChangesVersion = ((await idb.meta.get(
 		"attributes",
 		"lastChangesVersion",

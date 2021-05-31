@@ -223,6 +223,14 @@ const Controller = () => {
 					type: "doneLoading",
 				});
 				idLoading.current = undefined;
+
+				// Wait a tick, otherwise there is a race condition on new page loads (such as reloading live_game box score) where initView is called and updates viewInfo while the local.subscribe subscription below is unsubscribed due to updatePage changing.
+				await new Promise<void>(resolve => {
+					setTimeout(() => {
+						resolve();
+					}, 0);
+				});
+
 				await realtimeUpdate(
 					[],
 					vars.data.redirectUrl,

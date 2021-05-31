@@ -3,8 +3,6 @@ wrong team abbrev on player history
 - any abbrev returned in stats or ratings from playersPlus is wrong
 - using team*Cache from UI is probably wrong too
 
-reload live box score -> blank page
-
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 
 Change the FA/draft prospect roster type to "plain" or "jersey" https://discord.com/channels/290013534023057409/331882115119448065/848250125221363753

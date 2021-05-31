@@ -226,6 +226,9 @@ const writeGameStats = async (
 				type: results.team[t].player[p].injury.type,
 				gamesRemaining: results.team[t].player[p].injury.gamesRemaining,
 			};
+			if (results.team[t].player[p].injury.newThisGame) {
+				gameStats.teams[t].players[p].injury.newThisGame = true;
+			}
 			if (results.team[t].player[p].injury.playingThrough) {
 				gameStats.teams[t].players[p].injury.playingThrough = true;
 			}

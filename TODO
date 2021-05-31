@@ -2,13 +2,8 @@ play through injuries
 - 2 sliders, for regular season and playoffs, how early to come back? units are both percentage of ability and number of days
   - responsive
   - on depth chart for hockey/football?
-- injury of player playing through injury
-  - reaggrivate or worse injury
-  - notification?
 - get rid of nerfed playoff injuries?
-- how to apply penalty?
-- playThroughInjuriesFactor for football
-- 0 game injuries, seem not being rewritten to "Healthy"
+- playThroughInjuriesFactor for football (weeks)
 - league upgrade, import?
 - help text
 - changes, changelog
@@ -16,6 +11,7 @@ play through injuries
   - sliders
   - yellow in box score
   - 50% higher chance of injury
+    - can either reaggrivate current injury, or get a new injury
 
 make cache synchronous
 - put playThrough on injury from playersPlus, so icon is gray everywhere?

@@ -18,6 +18,20 @@ const doInjury = async (
 ) => {
 	p2.injury = player.injury(healthRank);
 
+	// Is this a reinjury or not?
+	let reaggrivateExtraDays;
+	if (p.injury.playingThrough) {
+		if (
+			p2.injury.gamesRemaining < p.injury.gamesRemaining ||
+			Math.random() < 0.33
+		) {
+			// Reaggrivate previous injury
+			reaggrivateExtraDays = random.randInt(1, 10);
+			p2.injury.gamesRemaining = p.injury.gamesRemaining + reaggrivateExtraDays;
+			p2.injury.type = p.injury.type;
+		}
+	}
+
 	// So it gets written to box score... save the old injury (if playing through injury
 	if (p.injury.playingThrough) {
 		p.injuryAtStart = {
@@ -124,9 +138,13 @@ const doInjury = async (
 			type: "injured",
 			text: `${p.pos} <a href="${helpers.leagueUrl(["player", p2.pid])}">${
 				p2.firstName
-			} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${
-				p2.injury.gamesRemaining
-			} ${p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`})`,
+			} ${p2.lastName}</a> ${
+				reaggrivateExtraDays === undefined
+					? "was injured"
+					: "reaggrivated his injury"
+			}! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} ${
+				p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
+			})`,
 			showNotification: false,
 			pids: [p2.pid],
 			tids: [p2.tid],

@@ -17,7 +17,19 @@ const doInjury = async (
 	conditions: Conditions,
 ) => {
 	p2.injury = player.injury(healthRank);
-	p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+
+	// So it gets written to box score... save the old injury (if playing through injury
+	if (p.injury.playingThrough) {
+		p.injuryAtStart = {
+			type: p.injury.type,
+			gamesRemaining: p.injury.gamesRemaining,
+		};
+	}
+	p.injury = {
+		type: p2.injury.type,
+		gamesRemaining: p2.injury.gamesRemaining,
+		newThisGame: true,
+	};
 
 	if (p2.injury.gamesRemaining <= 1) {
 		pidsInjuredOneGameOrLess.add(p2.pid);
@@ -446,7 +458,6 @@ const writePlayerStats = async (
 					}
 				}
 
-				// Injury crap - assign injury type if player does not already have an injury in the database
 				const injuredThisGame = p.newInjury;
 
 				let ratingsLoss = false;

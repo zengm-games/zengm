@@ -223,9 +223,16 @@ const writeGameStats = async (
 				results.team[t].player[p].skills,
 			);
 			gameStats.teams[t].players[p].injury = {
-				...results.team[t].player[p].injury,
-				newThisGame: results.team[t].player[p].newInjury,
+				type: results.team[t].player[p].injury.type,
+				gamesRemaining: results.team[t].player[p].injury.gamesRemaining,
 			};
+			if (results.team[t].player[p].injury.playingThrough) {
+				gameStats.teams[t].players[p].injury.playingThrough = true;
+			}
+			if (results.team[t].player[p].injuryAtStart) {
+				gameStats.teams[t].players[p].injuryAtStart =
+					results.team[t].player[p].injuryAtStart;
+			}
 			gameStats.teams[t].players[p].jerseyNumber =
 				results.team[t].player[p].jerseyNumber;
 		}

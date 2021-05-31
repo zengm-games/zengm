@@ -28,10 +28,16 @@ const Summary = forwardRef(
 							{summary.teams[t.other].picks.map(pick => (
 								<li key={pick.dpid}>{pick.desc}</li>
 							))}
-							<li className="mt-1">
-								{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
-								total
-							</li>
+							{summary.teams[t.other].trade.length > 0 ? (
+								<li className="mt-1">
+									{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
+									total
+								</li>
+							) : null}
+							{summary.teams[t.other].trade.length === 0 &&
+							summary.teams[t.other].picks.length === 0 ? (
+								<li>Nothing</li>
+							) : null}
 						</ul>
 						<p className="mt-auto mb-0">
 							Payroll after trade:{" "}

@@ -138,51 +138,55 @@ const TopStuff = ({
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</h3>
 			) : null}
-			<div className="d-flex mb-3">
-				<div className="team-picture" style={logoStyle} />
-				<div>
+			<div className="d-sm-flex mb-3">
+				<div className="d-flex">
+					<div className="team-picture" style={logoStyle} />
 					<div>
-						<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
-						<br />
-						{!challengeNoRatings ? (
-							<>
-								Team rating:{" "}
-								<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
-								<br />
-							</>
-						) : null}
-						<span title="Average margin of victory">Average MOV</span>:{" "}
-						<PlusMinus>{marginOfVictory}</PlusMinus>
-					</div>
-
-					{season === currentSeason ? (
-						<div className="mt-3">
-							{openRosterSpots} open roster spots
+						<div>
+							<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
 							<br />
-							Payroll: {helpers.formatCurrency(payroll || 0, "M")}
-							<br />
-							Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-							<br />
-							{budget ? (
+							{!challengeNoRatings ? (
 								<>
-									Profit: {helpers.formatCurrency(profit, "M")}
+									Team rating:{" "}
+									<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
 									<br />
 								</>
 							) : null}
-							{showTradeFor ? `Strategy: ${t.strategy}` : null}
+							<span title="Average margin of victory">Average MOV</span>:{" "}
+							<PlusMinus>{marginOfVictory}</PlusMinus>
+						</div>
+
+						{season === currentSeason ? (
+							<div className="mt-3">
+								{openRosterSpots} open roster spots
+								<br />
+								Payroll: {helpers.formatCurrency(payroll || 0, "M")}
+								<br />
+								Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+								<br />
+								{budget ? (
+									<>
+										Profit: {helpers.formatCurrency(profit, "M")}
+										<br />
+									</>
+								) : null}
+								{showTradeFor ? `Strategy: ${t.strategy}` : null}
+							</div>
+						) : null}
+					</div>
+				</div>
+				<div className="d-md-flex">
+					{season === currentSeason ? (
+						<div className="ml-sm-5 mt-3 mt-sm-0">
+							<RosterComposition players={players} />
+						</div>
+					) : null}
+					{season === currentSeason && tid === userTid ? (
+						<div className="ml-sm-5 mt-3 mt-md-0">
+							<PlayThroughInjurySliders t={t} />
 						</div>
 					) : null}
 				</div>
-				{season === currentSeason ? (
-					<div className="ml-5">
-						<RosterComposition players={players} />
-					</div>
-				) : null}
-				{season === currentSeason && tid === userTid ? (
-					<div className="ml-5">
-						<PlayThroughInjurySliders t={t} />
-					</div>
-				) : null}
 			</div>
 			<InstructionsAndSortButtons
 				keepRosterSorted={t.keepRosterSorted}

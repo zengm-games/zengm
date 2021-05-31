@@ -69,6 +69,8 @@ const processTeamInfo = async (
 	if (deleteImgURLSmall) {
 		delete teamSeason.imgURLSmall;
 	}
+	teamSeason.did = div.did;
+	teamSeason.cid = div.cid;
 	await idb.cache.teamSeasons.put(teamSeason);
 
 	let updatedRegionName;

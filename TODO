@@ -16,6 +16,12 @@ play through injuries
 - help text
 - changes, changelog
 - blog
+  - sliders
+  - yellow in box score
+
+make cache synchronous
+- put playThrough on injury from playersPlus, so icon is gray everywhere?
+  - on change, emit playerMovement so roster updates
 
 reload live box score -> blank page
 

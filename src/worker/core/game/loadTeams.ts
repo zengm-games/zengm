@@ -88,6 +88,8 @@ const processTeam = (
 		teamInput.playThroughInjuries[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
 
 	for (const p of players) {
+		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
+
 		const rating = p.ratings[p.ratings.length - 1];
 		const playerCompositeRatings: any = {};
 		const p2 = {
@@ -96,7 +98,7 @@ const processTeam = (
 			name: `${p.firstName} ${p.lastName}`,
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
-			valueNoPot: p.valueNoPot,
+			valueNoPot: p.valueNoPot * injuryFactor,
 			stat: {},
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
@@ -119,8 +121,6 @@ const processTeam = (
 		if (!g.get("userTids").includes(t.id)) {
 			p2.ptModifier = 1;
 		}
-
-		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {

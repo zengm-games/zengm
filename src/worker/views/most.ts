@@ -113,6 +113,7 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	};
 };
 
+// Should actually be using getTeamInfoBySeason
 const tidAndSeasonToAbbrev = async (most: Most) => {
 	let abbrev;
 

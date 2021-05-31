@@ -26,6 +26,37 @@ import type {
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 
+const fixRatingsStatsAbbrevs = async (p: {
+	ratings?: {
+		abbrev: string;
+		season: number;
+		tid?: number;
+	}[];
+	stats?: {
+		abbrev: string;
+		season: number;
+		tid?: number;
+	}[];
+}) => {
+	const keys = ["ratings", "stats"] as const;
+
+	for (const key of keys) {
+		const rows = p[key];
+		if (rows) {
+			for (const row of rows) {
+				console.log(row);
+				if (row.tid !== undefined) {
+					const info = await getTeamInfoBySeason(row.tid, row.season);
+					console.log(info);
+					if (info) {
+						row.abbrev = info.abbrev;
+					}
+				}
+			}
+		}
+	}
+};
+
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
 	updateEvents: UpdateEvents,
@@ -194,6 +225,8 @@ const updatePlayer = async (
 			};
 			return returnValue;
 		}
+
+		await fixRatingsStatsAbbrevs(p);
 
 		// Filter out rows with no games played
 		p.stats = p.stats.filter(row => row.gp > 0);

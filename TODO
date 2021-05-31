@@ -1,10 +1,7 @@
 wrong team abbrev on player history
-- getTeamInfoBySeason
+- getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong
-  -  see tidAndSeasonToAbbrev in most.ts for how to do it right
 - using team*Cache from UI is probably wrong too
-- https://discord.com/channels/@me/662077709836484618/848768192683835403
-- https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
 
 reload live box score -> blank page
 

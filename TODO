@@ -1,11 +1,10 @@
+better changes notification
+- maybe modal instead of bubble
+- make an API containing changelog data, like changes.php?since=2021.05.27.1243&sport=basketball and use that
+- get rid of built-in changes stuff
+
 play through injuries
-- get rid of nerfed playoff injuries?
-- changes, changelog
-- blog
-  - sliders
-  - yellow in box score
-  - 50% higher chance of injury
-    - can either reaggrivate current injury, or get a new injury
+- changes
 
 wrong team abbrev on player history
 - getTeamInfoBySeason
@@ -16,11 +15,6 @@ wrong team abbrev on player history
 - https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
 
 reload live box score -> blank page
-
-better changes notification
-- maybe modal instead of bubble
-- make an API containing changelog data, like changes.php?since=2021.05.27.1243&sport=basketball and use that
-- get rid of built-in changes stuff
 
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 

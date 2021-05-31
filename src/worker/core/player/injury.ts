@@ -1,6 +1,6 @@
 import { g, helpers, injuries, random } from "../../util";
 import type { PlayerInjury } from "../../../common/types";
-import { isSport, PHASE } from "../../../common";
+import { isSport } from "../../../common";
 
 /**
  * Pick injury type and duration.
@@ -18,11 +18,6 @@ const injury = (healthRank: number): PlayerInjury => {
 			random.uniform(0.25, 1.75) *
 			injuries.gamesRemainings[i],
 	);
-
-	// Since players can't play through injury, make playoff injuries less severe
-	if (g.get("phase") === PHASE.PLAYOFFS) {
-		gamesRemaining -= 3;
-	}
 
 	// Hack for football
 	if (isSport("football")) {

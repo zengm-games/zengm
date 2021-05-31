@@ -2,12 +2,10 @@ play through injuries
 - 2 sliders, for regular season and playoffs, how early to come back? units are both percentage of ability and number of days
   - responsive
   - on depth chart for hockey/football?
-- increased odds of injury
-  - including reaggrivating current injury
-    - don't set p.newInjury
-    - p.injury.newThisGame check in liveGame.ts is not enough, need to save previous injury to show in live game at beginning somehow
-      - also in live game injury icon and play by play, distinguish between normal injury and reinjury
-- slower healing
+- injury of player playing through injury - reaggrivate or worse injury
+  - don't set p.newInjury
+  - p.injury.newThisGame check in liveGame.ts is not enough, need to save previous injury to show in live game at beginning somehow
+    - also in live game injury icon and play by play, distinguish between normal injury and reinjury
 - get rid of nerfed playoff injuries?
 - how to apply penalty?
 - UI in box score showing player is injured but playing through it
@@ -18,6 +16,7 @@ play through injuries
 - blog
   - sliders
   - yellow in box score
+  - 50% higher chance of injury
 
 make cache synchronous
 - put playThrough on injury from playersPlus, so icon is gray everywhere?

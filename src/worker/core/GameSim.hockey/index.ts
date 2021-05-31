@@ -21,6 +21,7 @@ import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -1434,9 +1435,11 @@ class GameSim {
 			for (const t of teamNums) {
 				for (const pos of helpers.keys(this.playersOnIce[t])) {
 					for (const p of this.playersOnIce[t][pos]) {
-						// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-						let injuryRate =
-							baseInjuryRate * 1.03 ** (Math.min(p.age, 50) - 25);
+						let injuryRate = getInjuryRate(
+							baseInjuryRate,
+							p.age,
+							p.injury.playingThrough,
+						);
 
 						// 10% as many injuries for G
 						if (pos === "G") {

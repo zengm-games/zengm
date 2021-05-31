@@ -19,6 +19,7 @@ import type {
 import isFirstPeriodAfterHalftime from "./isFirstPeriodAfterHalftime";
 import possessionEndsAfterThisPeriod from "./possessionEndsAfterThisPeriod";
 import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -2321,8 +2322,11 @@ class GameSim {
 
 			for (const p of onField) {
 				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-				const injuryRate =
-					g.get("injuryRate") * 1.03 ** (Math.min(p.age, 50) - 25);
+				const injuryRate = getInjuryRate(
+					g.get("injuryRate"),
+					p.age,
+					p.injury.playingThrough,
+				);
 
 				if (Math.random() < injuryRate) {
 					// 50% as many injuries for QB

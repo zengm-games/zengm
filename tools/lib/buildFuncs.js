@@ -260,15 +260,6 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 		silent: true,
 	});
 
-	if (!watch) {
-		replace({
-			regex: "/gen/worker-",
-			replacement: "/gen/worker-legacy-",
-			paths: [`build/gen/ui-legacy-${rev}.js`],
-			silent: true,
-		});
-	}
-
 	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>
 (function() {

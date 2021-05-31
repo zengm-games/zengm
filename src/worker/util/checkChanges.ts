@@ -28,7 +28,9 @@ const checkChanges = async (conditions: Conditions) => {
 		})) as unknown as {
 			version: string;
 			text: string;
-			links?: string[];
+
+			// Currently returns null, but making this field just not present would be better
+			links: string[] | null;
 		}[];
 
 		if (changes && changes.length > 0) {

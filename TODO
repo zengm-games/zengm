@@ -1,3 +1,13 @@
+worker.js won't load in chrome 79, new on 2021.05.31
+- https://discord.com/channels/@me/831754887058423819
+- legacy build?
+- optional chaining?
+- worker modules?
+
+play through injuries should not be editable in spectator mode
+- also double check if AI teams reset after user changes
+- should be viewable for all teams in god mode or spectator mode. only editable for your team, except spectator mode
+
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong

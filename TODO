@@ -1,11 +1,3 @@
-better changes notification
-- maybe modal instead of bubble
-- make an API containing changelog data, like changes.php?since=2021.05.27.1243&sport=basketball and use that
-- get rid of built-in changes stuff
-
-play through injuries
-- changes
-
 wrong team abbrev on player history
 - getTeamInfoBySeason
 - any abbrev returned in stats or ratings from playersPlus is wrong

@@ -249,9 +249,25 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	replace({
 		regex: "REV_GOES_HERE",
 		replacement: rev,
-		paths: ["build/index.html"],
+		paths: [
+			"build/index.html",
+
+			// This is currently just for lastChangesVersion, so don't worry about it not working in watch mode
+			...(watch
+				? []
+				: [`build/gen/worker-${rev}.js`, `build/gen/worker-legacy-${rev}.js`]),
+		],
 		silent: true,
 	});
+
+	if (!watch) {
+		replace({
+			regex: "/gen/worker-",
+			replacement: "/gen/worker-legacy-",
+			paths: [`build/gen/ui-legacy-${rev}.js`],
+			silent: true,
+		});
+	}
 
 	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>

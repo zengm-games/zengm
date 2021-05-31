@@ -28,7 +28,7 @@ const checkChanges = async (conditions: Conditions) => {
 		})) as unknown as {
 			version: string;
 			text: string;
-			links: string[];
+			links?: string[];
 		}[];
 
 		if (changes && changes.length > 0) {
@@ -38,7 +38,9 @@ const checkChanges = async (conditions: Conditions) => {
 				text += `<p class="mt-1 mb-0"><strong>v${changes[i].version}</strong>: ${changes[i].text}`;
 
 				const links = changes[i].links;
-				const blogLink = links.find(link => link.startsWith("/blog/"));
+				const blogLink = links
+					? links.find(link => link.startsWith("/blog/"))
+					: undefined;
 				if (blogLink) {
 					text += ` <a href="https://zengm.com${blogLink}" rel="noopener noreferrer" target="_blank">More details</a>`;
 				}

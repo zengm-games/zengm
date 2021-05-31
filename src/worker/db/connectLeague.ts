@@ -1013,7 +1013,14 @@ const migrate = ({
 		}
 	}
 
-	// New ones here!
+	if (oldVersion <= 43) {
+		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+			if (!t.playThroughInjuries) {
+				t.playThroughInjuries = [0, 3];
+				return t;
+			}
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

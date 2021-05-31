@@ -1,7 +1,5 @@
 Not sure if this is a bug or a feature but when you make every team inactive except 1 every player dies in progs https://discord.com/channels/290013534023057409/290015591216054273/848949521316184114
 
-league leaders weird https://discord.com/channels/290013534023057409/290015591216054273/849029385486204998
-
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong

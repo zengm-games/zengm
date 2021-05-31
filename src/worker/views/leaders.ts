@@ -615,11 +615,13 @@ const updateLeaders = async (
 		});
 		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
 
-		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
+		// To handle changes in number of games, playing time, etc
 		const factor =
 			(g.get("numGames") / defaultGameAttributes.numGames) *
-			helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
+			(defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt")) *
+			helpers.quarterLengthFactor();
 
+		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 		for (const cat of categories) {
 			if (cat.sortAscending) {
 				players.sort((a, b) => a.stats[cat.statProp] - b.stats[cat.statProp]);
@@ -635,7 +637,7 @@ const updateLeaders = async (
 					for (let k = 0; k < cat.minStats.length; k++) {
 						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 						let playerValue;
-						if (!isSport("basketball")) {
+						if (!isSport("basketball") || cat.minStats[k] === "gp") {
 							playerValue = p.stats[cat.minStats[k]];
 						} else {
 							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
@@ -648,7 +650,7 @@ const updateLeaders = async (
 							// Special case GP
 							if (cat.minStats[k] === "gp") {
 								if (
-									p.stats.gp / gpTeam >=
+									playerValue / gpTeam >=
 									cat.minValue[k] / g.get("numGames")
 								) {
 									pass = true;

@@ -170,6 +170,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				sonRate: 0.005,
 				brotherRate: 0.005,
 				allStarGame: null,
+				numPlayersOnCourt: 11,
 				tiebreakers: wrap([
 					"headToHeadRecord",
 					"divRecordIfSame",

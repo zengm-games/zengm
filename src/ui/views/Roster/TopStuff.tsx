@@ -183,7 +183,7 @@ const TopStuff = ({
 					) : null}
 					{showTradingBlock ? (
 						<div className="ml-sm-5 mt-3 mt-md-0">
-							<PlayThroughInjurySliders t={t} />
+							<PlayThroughInjurySliders key={tid} t={t} />
 						</div>
 					) : null}
 				</div>

@@ -1,8 +1,10 @@
+Not sure if this is a bug or a feature but when you make every team inactive except 1 every player dies in progs https://discord.com/channels/290013534023057409/290015591216054273/848949521316184114
+
 league leaders weird https://discord.com/channels/290013534023057409/290015591216054273/849029385486204998
 
 play through injuries should not be editable in spectator mode
-- I'm in multi team mode, it didn't change for the team I was on but the other team I was controlling it did change for, which isn't correct behavior i'd assume https://discord.com/channels/290013534023057409/290015591216054273/849023001714622544
 - in spectator mode or for AI teams, use default values
+  - userTids
   - reset every season
 
 wrong team abbrev on player history

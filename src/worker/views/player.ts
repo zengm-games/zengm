@@ -44,10 +44,8 @@ const fixRatingsStatsAbbrevs = async (p: {
 		const rows = p[key];
 		if (rows) {
 			for (const row of rows) {
-				console.log(row);
 				if (row.tid !== undefined) {
 					const info = await getTeamInfoBySeason(row.tid, row.season);
-					console.log(info);
 					if (info) {
 						row.abbrev = info.abbrev;
 					}

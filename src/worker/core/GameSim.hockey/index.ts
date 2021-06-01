@@ -1453,6 +1453,7 @@ class GameSim {
 							}
 
 							p.injured = true;
+							p.newInjury = true;
 							this.playByPlay.logEvent({
 								type: "injury",
 								clock: this.clock,

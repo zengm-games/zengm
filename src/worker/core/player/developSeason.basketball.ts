@@ -200,10 +200,13 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 
 	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
 	if (g.hasOwnProperty("numActiveTeams")) {
-		if (val >= 0) {
-			val *= ((coachingRank - 1) * -0.5) / (g.get("numActiveTeams") - 1) + 1.25;
-		} else {
-			val *= ((coachingRank - 1) * 0.5) / (g.get("numActiveTeams") - 1) + 0.75;
+		const numActiveTeams = g.get("numActiveTeams");
+		if (numActiveTeams > 1) {
+			if (val >= 0) {
+				val *= ((coachingRank - 1) * -0.5) / (numActiveTeams - 1) + 1.25;
+			} else {
+				val *= ((coachingRank - 1) * 0.5) / (numActiveTeams - 1) + 0.75;
+			}
 		}
 	}
 

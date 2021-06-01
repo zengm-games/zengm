@@ -1,4 +1,13 @@
-Not sure if this is a bug or a feature but when you make every team inactive except 1 every player dies in progs https://discord.com/channels/290013534023057409/290015591216054273/848949521316184114
+Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
+- team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor
+  - do injured/healthy with a flag rather than a filtered list
+  - if doing injured one, require playThroughInjuries to be passed too
+- update team.ovr calls
+  - powerRankings.ts
+  - roster.ts
+  - schedule.ts
+  - recomputeLocalUITeamOvrs
+  - loadTeams.ts
 
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs

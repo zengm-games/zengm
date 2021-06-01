@@ -9,6 +9,8 @@ Adjust team rating based on the adjusted ovr of players who are playing through 
   - recomputeLocalUITeamOvrs
   - loadTeams.ts
 
+in garbage time, rest players who are playing through injuries
+
 wrong team abbrev on player history
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong

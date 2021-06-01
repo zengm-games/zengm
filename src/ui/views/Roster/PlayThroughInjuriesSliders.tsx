@@ -84,9 +84,10 @@ const PlayThroughInjuriesSliders = ({
 						and playoffs.
 					</p>
 					<p>
-						The earlier a player comes back, the worse he will play. "90%
-						performance" means a 70 ovr player will perform more like a 63 ovr
-						player.
+						The more games remaining on a player's injury, the worse he will
+						play. So if a player comes back at 90% performance and plays every
+						day until he's healthy, he will gradually improve each game until he
+						reaches 100%.
 					</p>
 					<p>
 						Additionally, the injury rate is 50% higher when playing through an

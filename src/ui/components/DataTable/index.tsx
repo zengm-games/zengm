@@ -170,7 +170,10 @@ const DataTable = ({
 								continue;
 							}
 
-							if (filterFunctions[i](row.data[i]) === false) {
+							if (
+								filterFunctions[i] &&
+								filterFunctions[i](row.data[i]) === false
+							) {
 								return false;
 							}
 						}

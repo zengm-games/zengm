@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import type { ReactNode } from "react";
@@ -41,14 +41,14 @@ const LeagueFinances = ({
 				"Profit (YTD)",
 				"Cash",
 				"Payroll",
-				...(showCapSpace ? ["Cap Space", "Roster Spots"] : []),
+				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
 		  )
 		: getCols(
 				"Team",
 				"Pop",
 				"Avg Attendance",
 				"Payroll",
-				...(showCapSpace ? ["Cap Space", "Roster Spots"] : []),
+				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
 		  );
 
 	const rows = teams.map(t => {
@@ -85,6 +85,17 @@ const LeagueFinances = ({
 		if (showCapSpace) {
 			data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
 			data.push(t.rosterSpots);
+			data.push(
+				<button
+					className="btn btn-light-bordered btn-xs"
+					onClick={async () => {
+						console.log("click");
+						await toWorker("actions", "tradeFor", { tid: t.seasonAttrs.tid });
+					}}
+				>
+					Trade With
+				</button>,
+			);
 		}
 
 		return {

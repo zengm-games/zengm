@@ -1946,6 +1946,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	Trade: {
+		desc: "Ties",
+		noSearch: true,
+	},
 	OTL: {
 		desc: "Overtime Losses",
 		sortSequence: ["desc", "asc"],

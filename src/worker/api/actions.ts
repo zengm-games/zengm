@@ -154,6 +154,24 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 				dpidsExcluded: [],
 			},
 		];
+	} else if (arg.tid !== undefined) {
+		// Start trade with team, like from League Finances
+		teams = [
+			{
+				tid: g.get("userTid"),
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+			{
+				tid: arg.tid,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+		];
 	}
 
 	// Start a new trade based on a list of pids and dpids, like from the trading block

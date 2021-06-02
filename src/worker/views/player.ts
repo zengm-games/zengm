@@ -438,7 +438,7 @@ const updatePlayer = async (
 				"desc",
 			).map(p2 => {
 				const ratings = p2.ratings[p2.ratings.length - 1];
-				const age = g.get("season") - p.born.year;
+				const age = g.get("season") - p2.born.year;
 				return {
 					type: "link",
 					league: true,

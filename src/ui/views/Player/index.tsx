@@ -380,6 +380,7 @@ StatsSummary.propTypes = {
 };
 
 const Player2 = ({
+	customMenu,
 	events,
 	feats,
 	freeAgent,
@@ -403,7 +404,10 @@ const Player2 = ({
 	teamName,
 	willingToSign,
 }: View<"player">) => {
-	useTitleBar({ title: player.name });
+	useTitleBar({
+		title: player.name,
+		customMenu,
+	});
 
 	let draftInfo: ReactNode = null;
 	if (player.draft.round > 0) {

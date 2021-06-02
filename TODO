@@ -1,5 +1,3 @@
-dropdown on player page to switch between players on team https://old.reddit.com/r/BasketballGM/comments/n26p6r/monthly_suggestions_thread/gxy01hx/
-
 File System Access API https://web.dev/file-system-access/
 - ~/projects/file-system-access-api-indexeddb
   - if it's often emitting 1 record at a time, set a lower limit for the number it will emit each time pull is called

@@ -19,6 +19,9 @@ import {
 	random,
 } from "../util";
 import type {
+	MenuItemHeader,
+	MenuItemLink,
+	MenuItemText,
 	MinimalPlayerRatings,
 	Player,
 	UpdateEvents,
@@ -396,7 +399,66 @@ const updatePlayer = async (
 			teamJersey = (await idb.cache.teams.get(p.tid))?.jersey ?? DEFAULT_JERSEY;
 		}
 
+		// Quick links to other players...
+		let customMenu: MenuItemHeader | undefined;
+		let customMenuInfo:
+			| {
+					title: string;
+					players: Player[];
+			  }
+			| undefined;
+		if (p.tid >= 0) {
+			// ...on same team
+
+			customMenuInfo = {
+				title: "Roster",
+				players: await idb.cache.players.indexGetAll("playersByTid", p.tid),
+			};
+		} else if (p.tid === PLAYER.FREE_AGENT) {
+			// ...also free agents
+
+			customMenuInfo = {
+				title: "Free Agents",
+				players: await idb.cache.players.indexGetAll("playersByTid", p.tid),
+			};
+		} else if (p.tid === PLAYER.UNDRAFTED) {
+			// ...in same draft class
+
+			customMenuInfo = {
+				title: "Draft Class",
+				players: (
+					await idb.cache.players.indexGetAll("playersByTid", p.tid)
+				).filter(p2 => p2.draft.year === p.draft.year),
+			};
+		}
+
+		if (customMenuInfo) {
+			const children: MenuItemLink[] = orderBy(
+				customMenuInfo.players,
+				"value",
+				"desc",
+			).map(p2 => {
+				const ratings = p2.ratings[p2.ratings.length - 1];
+				const age = g.get("season") - p.born.year;
+				return {
+					type: "link",
+					league: true,
+					path: ["player", p2.pid],
+					text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${age}yo, ${ratings.ovr}/${ratings.pot})`,
+				};
+			});
+
+			customMenu = {
+				type: "header",
+				long: customMenuInfo.title,
+				short: customMenuInfo.title,
+				league: true,
+				children,
+			};
+		}
+
 		return {
+			customMenu,
 			player: p,
 			showTradeFor: p.tid !== userTid && p.tid >= 0,
 			showTradingBlock: p.tid === userTid,

@@ -1,3 +1,4 @@
+import { number } from "prop-types";
 import buildFuncs from "./buildFuncs.js";
 const { bySport } = buildFuncs;
 
@@ -661,6 +662,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							hideDisabledTeams: {
 								type: "boolean",
+							},
+							hofFactor: {
+								type: number,
 							},
 							homeCourtAdvantage: {
 								type: "number",

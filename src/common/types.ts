@@ -391,6 +391,7 @@ export type GameAttributesLeague = {
 	gracePeriodEnd: number;
 	hardCap: boolean;
 	hideDisabledTeams: boolean;
+	hofFactor: number;
 	homeCourtAdvantage: number;
 	injuryRate: number;
 	lid: number;

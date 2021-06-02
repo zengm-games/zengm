@@ -43,7 +43,7 @@ const madeHof = (
 		defaultGameAttributes.numGames;
 
 	// Final formula
-	return score > 100 * scaleFactor;
+	return score > 100 * scaleFactor * g.get("hofFactor");
 };
 
 export default madeHof;

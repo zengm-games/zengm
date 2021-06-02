@@ -119,6 +119,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			],
 		},
 	],
+	hofFactor: 1,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

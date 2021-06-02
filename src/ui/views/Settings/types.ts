@@ -75,7 +75,8 @@ export type Key =
 	| "realDraftRatings"
 	| "randomization"
 	| "realStats"
-	| "hideDisabledTeams";
+	| "hideDisabledTeams"
+	| "hofFactor";
 
 export type Category =
 	| "New League"

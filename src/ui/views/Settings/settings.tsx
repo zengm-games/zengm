@@ -700,6 +700,26 @@ export const settings: {
 			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",
 	},
 	{
+		category: "Events",
+		key: "hofFactor",
+		name: "Hall of Fame Threshold Factor",
+		type: "float",
+		descriptionLong: (
+			<>
+				<p>
+					Hall of Fame eligibility is determined by a score based on player
+					stats. If it exceeds a threshold, the player is inducted into the Hall
+					of Fame.
+				</p>
+				<p>
+					The threshold is multiplied by the Hall of Fame Threshold Factor
+					before comparing. So if you increase this number, the Hall of Fame
+					becomes harder to get into. Decrease it and it is easier to get in.
+				</p>
+			</>
+		),
+	},
+	{
 		category: "Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",

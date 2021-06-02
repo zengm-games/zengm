@@ -21,7 +21,6 @@ import {
 import type {
 	MenuItemHeader,
 	MenuItemLink,
-	MenuItemText,
 	MinimalPlayerRatings,
 	Player,
 	UpdateEvents,

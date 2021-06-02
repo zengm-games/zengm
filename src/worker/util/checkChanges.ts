@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import logEvent from "./logEvent";
 import type { Conditions } from "../../common/types";
-import { fetchWrapper } from "../../common";
+import { fetchWrapper, SUBREDDIT_NAME } from "../../common";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
 const CURRENT_VERSION = "REV_GOES_HERE";
@@ -40,11 +40,25 @@ const checkChanges = async (conditions: Conditions) => {
 				text += `<p class="mt-1 mb-0"><strong>v${changes[i].version}</strong>: ${changes[i].text}`;
 
 				const links = changes[i].links;
-				const blogLink = links
-					? links.find(link => link.startsWith("/blog/"))
-					: undefined;
-				if (blogLink) {
-					text += ` <a href="https://zengm.com${blogLink}" rel="noopener noreferrer" target="_blank">More details</a>`;
+				if (links) {
+					const link =
+						links.find(link => link.startsWith("/blog/")) ??
+						links.find(link => link.includes(SUBREDDIT_NAME)) ??
+						links[0];
+					if (link) {
+						let url;
+						if (link.startsWith("/basketball/")) {
+							url = link.replace("/basketball/", "https://basketball-gm.com/");
+						} else if (link.startsWith("/football/")) {
+							url = link.replace("/football/", "https://football-gm.com/");
+						} else if (link.startsWith("/")) {
+							url = link.replace("/", "https://zengm.com/");
+						} else {
+							url = link;
+						}
+
+						text += ` <a href="${url}" rel="noopener noreferrer" target="_blank">More details</a>`;
+					}
 				}
 				text += "</p>";
 

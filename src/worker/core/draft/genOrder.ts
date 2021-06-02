@@ -245,7 +245,6 @@ const genOrder = async (
 
 		if (dp !== undefined) {
 			dp.pick = pick;
-			pick += 1;
 			firstRoundOrderAfterLottery.push(firstRoundTeams[firstN[i]]);
 
 			if (!mock) {
@@ -253,10 +252,12 @@ const genOrder = async (
 					firstRoundTeams,
 					dp.tid,
 					firstRoundTeams[firstN[i]].tid,
-					i + 1,
+					pick,
 					conditions,
 				);
 			}
+
+			pick += 1;
 		}
 	}
 
@@ -267,7 +268,6 @@ const genOrder = async (
 
 			if (dp) {
 				dp.pick = pick;
-				pick += 1;
 				firstRoundOrderAfterLottery.push(firstRoundTeams[i]);
 
 				if (pick <= numLotteryTeams && !mock) {
@@ -279,6 +279,8 @@ const genOrder = async (
 						conditions,
 					);
 				}
+
+				pick += 1;
 			}
 		}
 	}
@@ -382,7 +384,7 @@ const genOrder = async (
 					} else if (TIEBREAKER_AFTER_FIRST_ROUND === "rotate") {
 						for (let i = 0; i < roundIndex; i++) {
 							// Move 1st team to the end of the list
-							newOrder.push(((newOrder as unknown) as any).shift());
+							newOrder.push((newOrder as unknown as any).shift());
 						}
 					}
 					roundTeams.splice(start, length, ...newOrder);

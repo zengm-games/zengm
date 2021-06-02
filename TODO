@@ -1,3 +1,13 @@
+File System Access API https://web.dev/file-system-access/
+- ~/projects/file-system-access-api-indexeddb
+- use (when available) for saving any files
+  - implement and benchmark for individual file
+- is it possible to select a directory, and auto save there every year?
+  - https://github.com/GoogleChrome/web.dev/blob/main/src/site/content/en/blog/file-system-access/index.md
+    - "Stored file or directory handles and permissions"
+
+games started as goalie stat https://discord.com/channels/290013534023057409/331882115119448065/849341948221063198
+
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor
   - do injured/healthy with a flag rather than a filtered list
@@ -361,17 +371,6 @@ UI for selecting a custom set of teams in a new league
   - will have same issue when adding a settings page
 - blog
   - Want to create a league where the Eastern Conference is made up of all the real Atlanta teams from the 80s, and the Western Conference is made up of all the real Sacramento teams from the 90s, and have it start in 1962 and proceed with real players in the draft from there? I don't know why you'd want to do that, but you can do that.
-
-File System Access API https://web.dev/file-system-access/
-- use (when available) for saving any files
-- is it possible to stream from IDB to file?
-  - write to stream returns a promise
-  - transaction auto commit still unavoidable? if so:
-    - could we just keep writing to file without awaiting?
-    - use multiple transactions, one for each "chunk"
-  - Send a Tweet to @ChromiumDev with #filesystemaccess and let us know where and how you're using it.
-- is it possible to select a directory, and auto save there every year?
-  - Since permissions currently are not persisted between sessions, you should verify whether the user has granted permission to the file using queryPermission(). If they haven't, use requestPermission() to (re-)request it.
 
 ability to switch back to prior year
 - In danger zone, button to reset to preseason of any season

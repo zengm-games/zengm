@@ -1,3 +1,14 @@
+HoF threshold multiplier https://old.reddit.com/r/BasketballGM/comments/n26p6r/monthly_suggestions_thread/gz8z6gh/
+
+games started as goalie stat https://discord.com/channels/290013534023057409/331882115119448065/849341948221063198
+
+dropdown on player page to switch between players on team https://old.reddit.com/r/BasketballGM/comments/n26p6r/monthly_suggestions_thread/gxy01hx/
+
+trade button on league finances page https://old.reddit.com/r/BasketballGM/comments/n26p6r/monthly_suggestions_thread/gxy01hx/
+
+populations should be the same in the same city https://old.reddit.com/r/BasketballGM/comments/n26p6r/monthly_suggestions_thread/h0203ym/
+- if region matches exactly a prior region and it's not blank and population matches too, move in sync
+
 File System Access API https://web.dev/file-system-access/
 - ~/projects/file-system-access-api-indexeddb
 - use (when available) for saving any files
@@ -6,7 +17,7 @@ File System Access API https://web.dev/file-system-access/
   - https://github.com/GoogleChrome/web.dev/blob/main/src/site/content/en/blog/file-system-access/index.md
     - "Stored file or directory handles and permissions"
 
-games started as goalie stat https://discord.com/channels/290013534023057409/331882115119448065/849341948221063198
+player game log
 
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor

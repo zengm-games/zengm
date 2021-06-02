@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { timeBetweenGames } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
@@ -65,6 +66,8 @@ const Slider = ({
 	);
 };
 
+const titleText = "Play Through Injuries";
+
 const PlayThroughInjuriesSliders = ({
 	t,
 }: {
@@ -73,37 +76,86 @@ const PlayThroughInjuriesSliders = ({
 		playThroughInjuries: [number, number];
 	};
 }) => {
+	const [expanded, setExpanded] = useState(!window.mobile);
+
 	return (
 		<div className="play-through-injuries">
-			<b>
-				Play Through Injuries{" "}
-				<HelpPopover title="Play Through Injuries">
-					<p>
-						This allows you to determine when players should play through minor
-						injuries. You can set the cutoff separately for the regular season
-						and playoffs.
-					</p>
-					<p>
-						The more games remaining on a player's injury, the worse he will
-						play. So if a player comes back at 90% performance and plays every
-						day until he's healthy, he will gradually improve each game until he
-						reaches 100%.
-					</p>
-					<p>
-						Additionally, the injury rate is 50% higher when playing through an
-						injury, which includes the possibility of a player either
-						reaggrivating his current injury or getting a new injury.
-					</p>
-				</HelpPopover>
-			</b>
-			<form className="mt-2">
-				<Slider
-					className="mb-3"
-					initialValue={t.playThroughInjuries[0]}
-					tid={t.tid}
-				/>
-				<Slider playoffs initialValue={t.playThroughInjuries[1]} tid={t.tid} />
-			</form>
+			<div className="d-flex align-items-center">
+				{window.mobile ? (
+					<button
+						className="btn btn-link p-0 font-weight-bold"
+						type="button"
+						onClick={() => setExpanded(prev => !prev)}
+					>
+						<AnimatePresence initial={false}>
+							<motion.span
+								animate={expanded ? "open" : "collapsed"}
+								variants={{
+									open: { rotate: 90 },
+									collapsed: { rotate: 0 },
+								}}
+								transition={{
+									duration: 0.3,
+									type: "tween",
+								}}
+								className="glyphicon glyphicon-triangle-right"
+							/>
+						</AnimatePresence>{" "}
+						{titleText}
+					</button>
+				) : (
+					<b>{titleText}</b>
+				)}
+				{expanded ? (
+					<HelpPopover className="ml-1" title="Play Through Injuries">
+						<p>
+							This allows you to determine when players should play through
+							minor injuries. You can set the cutoff separately for the regular
+							season and playoffs.
+						</p>
+						<p>
+							The more games remaining on a player's injury, the worse he will
+							play. So if a player comes back at 90% performance and plays every
+							day until he's healthy, he will gradually improve each game until
+							he reaches 100%.
+						</p>
+						<p>
+							Additionally, the injury rate is 50% higher when playing through
+							an injury, which includes the possibility of a player either
+							reaggrivating his current injury or getting a new injury.
+						</p>
+					</HelpPopover>
+				) : null}
+			</div>
+			<AnimatePresence initial={false}>
+				{expanded ? (
+					<motion.form
+						className="mt-2"
+						initial="collapsed"
+						animate="open"
+						exit="collapsed"
+						variants={{
+							open: { opacity: 1, height: "auto" },
+							collapsed: { opacity: 0, height: 0 },
+						}}
+						transition={{
+							duration: 0.3,
+							type: "tween",
+						}}
+					>
+						<Slider
+							className="mb-3"
+							initialValue={t.playThroughInjuries[0]}
+							tid={t.tid}
+						/>
+						<Slider
+							playoffs
+							initialValue={t.playThroughInjuries[1]}
+							tid={t.tid}
+						/>
+					</motion.form>
+				) : null}
+			</AnimatePresence>
 		</div>
 	);
 };

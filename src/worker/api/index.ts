@@ -2804,6 +2804,9 @@ const updatePlayThroughInjuries = async (
 	if (t) {
 		t.playThroughInjuries[index] = value;
 		await idb.cache.teams.put(t);
+
+		// So roster re-renders, which is needed to maintain state on mobile when the panel is closed
+		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
 };
 

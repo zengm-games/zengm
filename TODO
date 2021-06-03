@@ -2,6 +2,7 @@ File System Access API https://web.dev/file-system-access/
 - ~/projects/file-system-access-api-indexeddb
   - if it's often emitting 1 record at a time, set a lower limit for the number it will emit each time pull is called
 - use (when available) for saving any files
+  - teamSeasons and teamStats
   - implement and benchmark for individual file
   - test filenames
   - test user cancels file selection

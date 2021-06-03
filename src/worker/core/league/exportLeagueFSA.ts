@@ -1,4 +1,4 @@
-import type { StoreNames } from "idb";
+import type { StoreNames, StoreValue } from "idb";
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
 import type { LeagueDB } from "../../db/connectLeague";
@@ -50,8 +50,12 @@ const exportLeagueFSA = async (
 		store: Store,
 		{
 			filter,
+			forEach,
 		}: {
 			filter?: Filter;
+
+			// Can mutate because this comes from IndexedDB
+			forEach?: (row: StoreValue<LeagueDB, Store>) => void;
 		},
 	) => {
 		let prevKey: LeagueDB[Store]["key"] | undefined;
@@ -93,6 +97,10 @@ const exportLeagueFSA = async (
 							if (!seenFirstRecord) {
 								controller.enqueue(`,${newline}${tab}"${store}": [`);
 								seenFirstRecord = true;
+							}
+
+							if (forEach) {
+								forEach(cursor.value);
 							}
 
 							controller.enqueue(
@@ -181,6 +189,14 @@ const exportLeagueFSA = async (
 		} else {
 			const readable = makeStoreStream(store as any, {
 				filter: filter[store],
+				forEach:
+					store === "players"
+						? p => {
+								if (p.imgURL) {
+									delete (p as any).face;
+								}
+						  }
+						: undefined,
 			});
 			await readable.pipeTo(writable, {
 				preventClose: true,
@@ -199,19 +215,6 @@ const exportLeagueFSA = async (
 	await writable.close();
 
 	/*
-	if (stores.includes("players")) {
-		// Don't export cartoon face if imgURL is provided
-		exportedLeague.players = exportedLeague.players.map((p: any) => {
-			if (p.imgURL && p.imgURL !== "") {
-				const p2 = { ...p };
-				delete p2.face;
-				return p2;
-			}
-
-			return p;
-		});
-	}
-
 	if (stores.includes("teams")) {
 		for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
 			const tid = exportedLeague.teamSeasons[i].tid;

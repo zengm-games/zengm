@@ -1767,9 +1767,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		idb.meta = await connectMeta();
 
 		// Account and changes checks can be async
-		checkChanges(conditions);
-		checkAccount(conditions);
-		toUI("initAds", [local.goldUntil], conditions);
+		(async () => {
+			// Account check needs to complete before initAds, though
+			await checkAccount(conditions);
+			await toUI("initAds", [local.goldUntil], conditions);
+
+			// This might make another HTTP request, and is less urgent than ads
+			await checkChanges(conditions);
+		})();
 	} else {
 		// No need to run checkAccount and make another HTTP request
 		const currentTimestamp = Math.floor(Date.now() / 1000);

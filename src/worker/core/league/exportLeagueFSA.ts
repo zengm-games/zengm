@@ -22,8 +22,24 @@ const exportLeagueFSA = async (
 		};
 	} = {},
 ) => {
-	// Otherwise it often pulls just one record per transaction
-	const MIN_RECORDS_PER_PULL = 10000;
+	// Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
+	const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;
+
+	// If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction
+	const highWaterMark = ONE_MEGABYTE_IN_BYTES;
+	const minSizePerPull = ONE_MEGABYTE_IN_BYTES;
+
+	const stringSizeInBytes = (str: string) => {
+		// https://stackoverflow.com/a/23329386/786644
+		let s = str.length;
+		for (let i = str.length - 1; i >= 0; i--) {
+			const code = str.charCodeAt(i);
+			if (code > 0x7f && code <= 0x7ff) s++;
+			else if (code > 0x7ff && code <= 0xffff) s += 2;
+			if (code >= 0xdc00 && code <= 0xdfff) i--;
+		}
+		return s;
+	};
 
 	const NUM_SPACES_IN_TAB = 2;
 
@@ -67,7 +83,7 @@ const exportLeagueFSA = async (
 		return new ReadableStream(
 			{
 				async pull(controller) {
-					console.log("PULL", prevKey, controller.desiredSize);
+					// console.log("PULL", controller.desiredSize / 1024 / 1024);
 					const done = () => {
 						if (cancelCallback) {
 							cancelCallback();
@@ -81,7 +97,13 @@ const exportLeagueFSA = async (
 						return;
 					}
 
-					let count = 0;
+					// let count = 0;
+					let size = 0;
+
+					const enqueue = (string: string) => {
+						size += stringSizeInBytes(string);
+						controller.enqueue(string);
+					};
 
 					const transaction = idb.league.transaction(stores);
 
@@ -92,12 +114,12 @@ const exportLeagueFSA = async (
 					let cursor = await transaction.objectStore(store).openCursor(range);
 					while (cursor) {
 						if (!filter || filter(cursor.value)) {
-							count += 1;
+							// count += 1;
 
 							const comma = seenFirstRecord ? "," : "";
 
 							if (!seenFirstRecord) {
-								controller.enqueue(`,${newline}${tab}"${store}": [`);
+								enqueue(`,${newline}${tab}"${store}": [`);
 								seenFirstRecord = true;
 							}
 
@@ -153,7 +175,7 @@ const exportLeagueFSA = async (
 								}
 							}
 
-							controller.enqueue(
+							enqueue(
 								`${comma}${newline}${tab.repeat(2)}${jsonStringify(
 									cursor.value,
 									2,
@@ -163,25 +185,20 @@ const exportLeagueFSA = async (
 
 						prevKey = cursor.key as any;
 
-						if (store === "teams") {
-							// One team per transaction
-							break;
-						} else if (
-							((controller as any).desiredSize > 0 ||
-								count < MIN_RECORDS_PER_PULL) &&
-							!cancelCallback
-						) {
+						const desiredSize = (controller as any).desiredSize;
+						if ((desiredSize > 0 || size < minSizePerPull) && !cancelCallback) {
+							// Keep going if desiredSize or minSizePerPull want us to
 							cursor = await cursor.continue();
 						} else {
 							break;
 						}
 					}
 
-					console.log("PULLED", count);
+					// console.log("PULLED", count, size / 1024 / 1024);
 					if (!cursor) {
 						// Actually done with this store - we didn't just stop due to desiredSize
 						if (seenFirstRecord) {
-							controller.enqueue(`${newline}${tab}]`);
+							enqueue(`${newline}${tab}]`);
 						}
 						done();
 					}
@@ -193,7 +210,8 @@ const exportLeagueFSA = async (
 				},
 			},
 			{
-				highWaterMark: MIN_RECORDS_PER_PULL,
+				highWaterMark,
+				size: stringSizeInBytes,
 			},
 		);
 	};
@@ -220,7 +238,6 @@ const exportLeagueFSA = async (
 	}
 
 	for (const store of stores) {
-		console.log("before", store);
 		if (store === "gameAttributes") {
 			// gameAttributes is special because we need to convert it into an object
 
@@ -258,7 +275,6 @@ const exportLeagueFSA = async (
 				preventClose: true,
 			});
 		}
-		console.log("after", store);
 	}
 
 	if (!stores.includes("gameAttributes")) {
@@ -269,42 +285,6 @@ const exportLeagueFSA = async (
 	await writable.write(`${newline}}${newline}`);
 
 	await writable.close();
-
-	/*
-	if (stores.includes("teams")) {
-		for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
-			const tid = exportedLeague.teamSeasons[i].tid;
-
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
-						exportedLeague.teams[j].seasons = [];
-					}
-
-					exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
-					break;
-				}
-			}
-		}
-
-		for (let i = 0; i < exportedLeague.teamStats.length; i++) {
-			const tid = exportedLeague.teamStats[i].tid;
-
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
-						exportedLeague.teams[j].stats = [];
-					}
-
-					exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
-					break;
-				}
-			}
-		}
-
-		delete exportedLeague.teamSeasons;
-		delete exportedLeague.teamStats;
-	}*/
 };
 
 export default exportLeagueFSA;

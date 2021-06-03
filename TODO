@@ -1,14 +1,14 @@
 File System Access API https://web.dev/file-system-access/
-- not available in worker?
-  - https://expressflow.com/blog/posts/file-system-access-api-for-the-web-chrome says you could transfer to worker via IDB, or maybe other ways
-  - should be able to send right to worker https://bugs.chromium.org/p/chromium/issues/detail?id=955192
 - ~/projects/file-system-access-api-indexeddb
   - if it's often emitting 1 record at a time, set a lower limit for the number it will emit each time pull is called
 - use (when available) for saving any files
   - implement and benchmark for individual file
+  - test filenames
+  - test user cancels file selection
 - is it possible to select a directory, and auto save there every year?
   - https://github.com/GoogleChrome/web.dev/blob/main/src/site/content/en/blog/file-system-access/index.md
     - "Stored file or directory handles and permissions"
+- Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 
 player game log
 

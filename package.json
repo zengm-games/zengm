@@ -106,6 +106,7 @@
 		"@types/roman-numerals": "^0.3.0",
 		"@types/stripe-checkout": "^1.0.3",
 		"@types/stripe-v2": "^2.0.1",
+		"@types/wicg-file-system-access": "^2020.9.1",
 		"@typescript-eslint/eslint-plugin": "^4.26.0",
 		"@typescript-eslint/parser": "^4.26.0",
 		"cheerio": "^1.0.0-rc.9",

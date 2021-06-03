@@ -1100,63 +1100,74 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 	return csvFormatRows([columns, ...rows]);
 };
 
-const genFilename = (data: any) => {
-	const leagueName =
-		data.meta !== undefined ? data.meta.name : `League ${g.get("lid")}`;
-	let filename = `${GAME_ACRONYM}_${leagueName.replace(
-		/[^a-z0-9]/gi,
-		"_",
-	)}_${g.get("season")}_${PHASE_TEXT[g.get("phase")].replace(
-		/[^a-z0-9]/gi,
-		"_",
-	)}`;
+const getExportFilename = async (type: "league") => {
+	if (type === "league") {
+		const phase = g.get("phase");
+		const season = g.get("season");
+		const userTid = g.get("userTid");
 
-	if (
-		(g.get("phase") === PHASE.REGULAR_SEASON ||
-			g.get("phase") === PHASE.AFTER_TRADE_DEADLINE) &&
-		data.hasOwnProperty("teams")
-	) {
-		const season =
-			data.teams[g.get("userTid")].seasons[
-				data.teams[g.get("userTid")].seasons.length - 1
-			];
-		filename += `_${season.won}-${season.lost}`;
-	}
+		const l = await idb.meta.get("leagues", g.get("lid"));
+		const leagueName = l ? l.name : `League ${g.get("lid")}`;
+		let filename = `${GAME_ACRONYM}_${leagueName.replace(
+			/[^a-z0-9]/gi,
+			"_",
+		)}_${g.get("season")}_${PHASE_TEXT[phase].replace(/[^a-z0-9]/gi, "_")}`;
 
-	if (
-		g.get("phase") === PHASE.PLAYOFFS &&
-		data.hasOwnProperty("playoffSeries")
-	) {
-		// Most recent series info
-		const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
-		const rnd = playoffSeries.currentRound;
-		filename += `_Round_${playoffSeries.currentRound + 1}`;
-
-		// Find the latest playoff series with the user's team in it
-		for (const series of playoffSeries.series[rnd]) {
-			if (series.home.tid === g.get("userTid")) {
-				if (series.away) {
-					filename += `_${series.home.won}-${series.away.won}`;
-				} else {
-					filename += "_bye";
-				}
-			} else if (series.away && series.away.tid === g.get("userTid")) {
-				filename += `_${series.away.won}-${series.home.won}`;
+		if (
+			phase === PHASE.REGULAR_SEASON ||
+			phase === PHASE.AFTER_TRADE_DEADLINE
+		) {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[userTid, season],
+			);
+			if (teamSeason) {
+				filename += `_${teamSeason.won}-${teamSeason.lost}`;
 			}
 		}
+
+		if (phase === PHASE.PLAYOFFS) {
+			const playoffSeries = await idb.cache.playoffSeries.get(season);
+			if (playoffSeries) {
+				const rnd = playoffSeries.currentRound;
+				filename += `_Round_${playoffSeries.currentRound + 1}`;
+
+				// Find the latest playoff series with the user's team in it
+				for (const series of playoffSeries.series[rnd]) {
+					if (series.home.tid === userTid) {
+						if (series.away) {
+							filename += `_${series.home.won}-${series.away.won}`;
+						} else {
+							filename += "_bye";
+						}
+					} else if (series.away && series.away.tid === userTid) {
+						filename += `_${series.away.won}-${series.home.won}`;
+					}
+				}
+			}
+		}
+
+		return `${filename}.json`;
 	}
 
-	return `${filename}.json`;
+	throw new Error("Not implemented");
 };
 
 const exportLeague = async (stores: string[], compressed: boolean) => {
 	const data = await league.exportLeague(stores);
-	const filename = genFilename(data);
 	const json = JSON.stringify(data, null, compressed ? undefined : 2);
-	return {
-		filename,
-		json,
-	};
+	return json;
+};
+
+const exportLeagueFSA = async (
+	fileHandle: FileSystemFileHandle,
+	stores: string[],
+	compressed: boolean,
+) => {
+	console.log(fileHandle, stores, compressed);
+	await league.exportLeagueFSA(fileHandle, stores, {
+		compressed,
+	});
 };
 
 const exportDraftClass = async (season: number) => {
@@ -3276,7 +3287,9 @@ export default {
 	draftUser,
 	evalOnWorker,
 	exportDraftClass,
+	getExportFilename,
 	exportLeague,
+	exportLeagueFSA,
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
 	exportPlayers,

@@ -39,15 +39,13 @@ const categories = [
 		objectStores:
 			"trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars,scheduledEvents",
 		name: "Game State",
-		desc:
-			"Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
 		checked: true,
 	},
 	{
 		objectStores: "games",
 		name: "Box Scores",
-		desc:
-			"Box scores take up tons of space, but by default only three seasons are saved.",
+		desc: "Box scores take up tons of space, but by default only three seasons are saved.",
 		checked: false,
 	},
 ];
@@ -63,9 +61,9 @@ const ExportLeague = () => {
 			setStatus("Exporting...");
 
 			// @ts-ignore
-			const elements = (event.target.getElementsByTagName(
+			const elements = event.target.getElementsByTagName(
 				"input",
-			) as never) as HTMLInputElement[];
+			) as never as HTMLInputElement[];
 
 			// Get array of object stores to export
 			const objectStores = Array.from(elements)
@@ -74,28 +72,64 @@ const ExportLeague = () => {
 				.join(",")
 				.split(",");
 
-			try {
-				const { filename, json } = await toWorker(
-					"main",
-					"exportLeague",
-					objectStores,
-					compressed,
-				);
+			const filename = await toWorker("main", "getExportFilename", "league");
 
-				downloadFile(filename, json, "application/json");
-			} catch (err) {
-				console.error(err);
-				setStatus(
-					<span className="text-danger">
-						Error exporting league: "{err.message}
-						". You might have to select less things to export or{" "}
-						<a href={helpers.leagueUrl(["delete_old_data"])}>
-							delete old data
-						</a>{" "}
-						before exporting.
-					</span>,
-				);
-				return;
+			const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
+
+			if (HAS_FILE_SYSTEM_ACCESS_API) {
+				const fileHandle = await window.showSaveFilePicker({
+					suggestedName: filename,
+					types: [
+						{
+							description: "JSON Files",
+							accept: {
+								"application/json": [".json"],
+							},
+						},
+					],
+				} as any);
+
+				try {
+					await toWorker(
+						"main",
+						"exportLeagueFSA",
+						fileHandle,
+						objectStores,
+						compressed,
+					);
+				} catch (error) {
+					console.error(error);
+					setStatus(
+						<span className="text-danger">
+							Error exporting league: "{error.message}".
+						</span>,
+					);
+					return;
+				}
+			} else {
+				try {
+					const json = await toWorker(
+						"main",
+						"exportLeague",
+						objectStores,
+						compressed,
+					);
+
+					downloadFile(filename, json, "application/json");
+				} catch (error) {
+					console.error(error);
+					setStatus(
+						<span className="text-danger">
+							Error exporting league: "{error.message}
+							". You might have to select less things to export or{" "}
+							<a href={helpers.leagueUrl(["delete_old_data"])}>
+								delete old data
+							</a>{" "}
+							before exporting.
+						</span>,
+					);
+					return;
+				}
 			}
 
 			setStatus(undefined);

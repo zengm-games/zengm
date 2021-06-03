@@ -438,12 +438,15 @@ const updatePlayer = async (
 				"desc",
 			).map(p2 => {
 				const ratings = p2.ratings[p2.ratings.length - 1];
+				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+				const pot = player.fuzzRating(ratings.pot, ratings.fuzz);
+
 				const age = g.get("season") - p2.born.year;
 				return {
 					type: "link",
 					league: true,
 					path: ["player", p2.pid],
-					text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${age}yo, ${ratings.ovr}/${ratings.pot})`,
+					text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${age}yo, ${ovr}/${pot})`,
 				};
 			});
 

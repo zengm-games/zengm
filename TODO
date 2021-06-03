@@ -3,10 +3,19 @@ File System Access API https://web.dev/file-system-access/
   - if it's often emitting 1 record at a time, set a lower limit for the number it will emit each time pull is called
 - use (when available) for saving any files
   - implement and benchmark for individual file
+    - 300 seasons
+      - old: 13 seconds
+      - new: 65 seconds
+    - 10 seasons
+      - old: 0.9 seconds
+      - new: 5.6 seconds
+    - new method does indeed keep working after old one crashes
+  - streaming import
+    - if i export something larger than the old one can export, it crashes on import
   - test filenames
-  - error when exporting no stores?
   - test that exported JSONs are the same
-  - benchmark values of highWaterMark, minSizePerPull
+  - make sure other browsers still work
+  - if i can export larger files, will those now fail to import?
 - is it possible to select a directory, and auto save there every year?
   - https://github.com/GoogleChrome/web.dev/blob/main/src/site/content/en/blog/file-system-access/index.md
     - "Stored file or directory handles and permissions"

@@ -76,6 +76,7 @@ const ExportLeague = () => {
 		const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 		if (HAS_FILE_SYSTEM_ACCESS_API) {
+			console.log("new");
 			let fileHandle;
 			try {
 				fileHandle = await window.showSaveFilePicker({
@@ -99,6 +100,7 @@ const ExportLeague = () => {
 				throw error;
 			}
 
+			console.time("foo");
 			try {
 				await toWorker(
 					"main",
@@ -117,6 +119,8 @@ const ExportLeague = () => {
 				return;
 			}
 		} else {
+			console.log("old");
+			console.time("foo");
 			try {
 				const json = await toWorker(
 					"main",
@@ -141,6 +145,7 @@ const ExportLeague = () => {
 				return;
 			}
 		}
+		console.timeEnd("foo");
 
 		setStatus(undefined);
 	};

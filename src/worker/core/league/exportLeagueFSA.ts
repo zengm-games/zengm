@@ -238,6 +238,7 @@ const exportLeagueFSA = async (
 	}
 
 	for (const store of stores) {
+		console.time(store);
 		if (store === "gameAttributes") {
 			// gameAttributes is special because we need to convert it into an object
 
@@ -275,6 +276,7 @@ const exportLeagueFSA = async (
 				preventClose: true,
 			});
 		}
+		console.timeEnd(store);
 	}
 
 	if (!stores.includes("gameAttributes")) {

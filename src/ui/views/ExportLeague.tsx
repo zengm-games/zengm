@@ -1,4 +1,4 @@
-import { useCallback, useState, ReactNode, FormEvent } from "react";
+import { useState, ReactNode, FormEvent } from "react";
 import { WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -54,30 +54,31 @@ const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(true);
 
-	const handleSubmit = useCallback(
-		async (event: FormEvent) => {
-			event.preventDefault();
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 
-			setStatus("Exporting...");
+		setStatus("Exporting...");
 
-			// @ts-ignore
-			const elements = event.target.getElementsByTagName(
-				"input",
-			) as never as HTMLInputElement[];
+		// @ts-ignore
+		const elements = event.target.getElementsByTagName(
+			"input",
+		) as never as HTMLInputElement[];
 
-			// Get array of object stores to export
-			const objectStores = Array.from(elements)
-				.filter(input => input.checked && input.name !== "compressed")
-				.map(input => input.value)
-				.join(",")
-				.split(",");
+		// Get array of object stores to export
+		const objectStores = Array.from(elements)
+			.filter(input => input.checked && input.name !== "compressed")
+			.map(input => input.value)
+			.join(",")
+			.split(",");
 
-			const filename = await toWorker("main", "getExportFilename", "league");
+		const filename = await toWorker("main", "getExportFilename", "league");
 
-			const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
+		const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
-			if (HAS_FILE_SYSTEM_ACCESS_API) {
-				const fileHandle = await window.showSaveFilePicker({
+		if (HAS_FILE_SYSTEM_ACCESS_API) {
+			let fileHandle;
+			try {
+				fileHandle = await window.showSaveFilePicker({
 					suggestedName: filename,
 					types: [
 						{
@@ -88,54 +89,61 @@ const ExportLeague = () => {
 						},
 					],
 				} as any);
-
-				try {
-					await toWorker(
-						"main",
-						"exportLeagueFSA",
-						fileHandle,
-						objectStores,
-						compressed,
-					);
-				} catch (error) {
-					console.error(error);
-					setStatus(
-						<span className="text-danger">
-							Error exporting league: "{error.message}".
-						</span>,
-					);
+			} catch (error) {
+				if (error.name === "AbortError") {
+					// User cancelled file selection
+					setStatus(undefined);
 					return;
 				}
-			} else {
-				try {
-					const json = await toWorker(
-						"main",
-						"exportLeague",
-						objectStores,
-						compressed,
-					);
 
-					downloadFile(filename, json, "application/json");
-				} catch (error) {
-					console.error(error);
-					setStatus(
-						<span className="text-danger">
-							Error exporting league: "{error.message}
-							". You might have to select less things to export or{" "}
-							<a href={helpers.leagueUrl(["delete_old_data"])}>
-								delete old data
-							</a>{" "}
-							before exporting.
-						</span>,
-					);
-					return;
-				}
+				throw error;
 			}
 
-			setStatus(undefined);
-		},
-		[compressed],
-	);
+			try {
+				await toWorker(
+					"main",
+					"exportLeagueFSA",
+					fileHandle,
+					objectStores,
+					compressed,
+				);
+			} catch (error) {
+				console.error(error);
+				setStatus(
+					<span className="text-danger">
+						Error exporting league: "{error.message}".
+					</span>,
+				);
+				return;
+			}
+		} else {
+			try {
+				const json = await toWorker(
+					"main",
+					"exportLeague",
+					objectStores,
+					compressed,
+				);
+
+				downloadFile(filename, json, "application/json");
+			} catch (error) {
+				console.error(error);
+				setStatus(
+					<span className="text-danger">
+						Error exporting league: "{error.message}
+						". You might have to select less things to export or{" "}
+						<a href={helpers.leagueUrl(["delete_old_data"])}>
+							delete old data
+						</a>{" "}
+						before exporting.
+					</span>,
+				);
+				return;
+			}
+		}
+
+		setStatus(undefined);
+	};
 
 	useTitleBar({ title: "Export League" });
 

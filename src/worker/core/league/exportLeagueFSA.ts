@@ -60,9 +60,6 @@ const exportLeagueFSA = async (
 
 		return new ReadableStream(
 			{
-				start(controller) {
-					controller.enqueue(`,${newline}${tab}"${store}": [`);
-				},
 				async pull(controller) {
 					console.log("PULL", prevKey, controller.desiredSize);
 					const done = () => {
@@ -92,15 +89,18 @@ const exportLeagueFSA = async (
 							count += 1;
 
 							const comma = seenFirstRecord ? "," : "";
+
+							if (!seenFirstRecord) {
+								controller.enqueue(`,${newline}${tab}"${store}": [`);
+								seenFirstRecord = true;
+							}
+
 							controller.enqueue(
 								`${comma}${newline}${tab.repeat(2)}${jsonStringify(
 									cursor.value,
 									2,
 								)}`,
 							);
-							if (!seenFirstRecord) {
-								seenFirstRecord = true;
-							}
 						}
 
 						prevKey = cursor.key as any;
@@ -119,7 +119,9 @@ const exportLeagueFSA = async (
 					console.log("PULLED", count);
 					if (!cursor) {
 						// Actually done with this store - we didn't just stop due to desiredSize
-						controller.enqueue(`${newline}${tab}]`);
+						if (seenFirstRecord) {
+							controller.enqueue(`${newline}${tab}]`);
+						}
 						done();
 					}
 				},
@@ -192,7 +194,7 @@ const exportLeagueFSA = async (
 		await writeRootObject("startingSeason", g.get("startingSeason"));
 	}
 
-	await writable.write("\n}\n");
+	await writable.write(`${newline}}${newline}`);
 
 	await writable.close();
 
@@ -243,16 +245,6 @@ const exportLeagueFSA = async (
 
 		delete exportedLeague.teamSeasons;
 		delete exportedLeague.teamStats;
-	}
-
-	// No need emitting empty object stores
-	for (const key of Object.keys(exportedLeague)) {
-		if (
-			Array.isArray(exportedLeague[key]) &&
-			exportedLeague[key].length === 0
-		) {
-			delete exportedLeague[key];
-		}
 	}*/
 };
 

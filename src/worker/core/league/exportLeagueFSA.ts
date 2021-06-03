@@ -5,11 +5,6 @@ import type { LeagueDB } from "../../db/connectLeague";
 import { g, local } from "../../util";
 import getName from "./getName";
 
-// Otherwise it often pulls just one record per transaction
-const MIN_RECORDS_PER_PULL = 10000;
-
-const NUM_SPACES_IN_TAB = 2;
-
 type Filter = (a: any) => boolean;
 
 const exportLeagueFSA = async (
@@ -27,6 +22,11 @@ const exportLeagueFSA = async (
 		};
 	} = {},
 ) => {
+	// Otherwise it often pulls just one record per transaction
+	const MIN_RECORDS_PER_PULL = 10000;
+
+	const NUM_SPACES_IN_TAB = 2;
+
 	// Always flush before export, so export is current!
 	await idb.cache.flush();
 
@@ -61,7 +61,6 @@ const exportLeagueFSA = async (
 		return new ReadableStream(
 			{
 				start(controller) {
-					console.log("start", store);
 					controller.enqueue(`,${newline}${tab}"${store}": [`);
 				},
 				async pull(controller) {
@@ -119,10 +118,9 @@ const exportLeagueFSA = async (
 
 					console.log("PULLED", count);
 					if (!cursor) {
-						controller.enqueue(`${newline}${tab}]`);
 						// Actually done with this store - we didn't just stop due to desiredSize
+						controller.enqueue(`${newline}${tab}]`);
 						done();
-						console.log("done", store);
 					}
 				},
 				cancel() {
@@ -137,6 +135,11 @@ const exportLeagueFSA = async (
 		);
 	};
 
+	const writeRootObject = (name: string, object: any) =>
+		writable.write(
+			`,${newline}${tab}"${name}":${space}${jsonStringify(object, 1)}`,
+		);
+
 	await writable.write("{");
 	await writable.write(
 		`${newline}${tab}"version":${space}${idb.league.version}`,
@@ -147,26 +150,46 @@ const exportLeagueFSA = async (
 	// name is only used for the file name of the exported roster file.
 	if (meta) {
 		const leagueName = await getName();
-		await writable.write(
-			`,${newline}${tab}"meta":${space}${jsonStringify(
-				{
-					phaseText: local.phaseText,
-					name: leagueName,
-				},
-				1,
-			)}`,
-		);
+		await writeRootObject("meta", {
+			phaseText: local.phaseText,
+			name: leagueName,
+		});
 	}
 
 	for (const store of stores) {
 		console.log("before", store);
-		const readable = makeStoreStream(store as any, {
-			filter: filter[store],
-		});
-		await readable.pipeTo(writable, {
-			preventClose: true,
-		});
+		if (store === "gameAttributes") {
+			// gameAttributes is special because we need to convert it into an object
+
+			// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
+			const GAME_ATTRIBUTES_TO_DELETE = ["numActiveTeams", "teamInfoCache"];
+
+			const rows = (
+				await getAll(
+					idb.league.transaction(store).store,
+					undefined,
+					filter[store],
+				)
+			).filter(row => !GAME_ATTRIBUTES_TO_DELETE.includes(row.key));
+
+			await writeRootObject(
+				"gameAttributes",
+				gameAttributesArrayToObject(rows),
+			);
+		} else {
+			const readable = makeStoreStream(store as any, {
+				filter: filter[store],
+			});
+			await readable.pipeTo(writable, {
+				preventClose: true,
+			});
+		}
 		console.log("after", store);
+	}
+
+	if (!stores.includes("gameAttributes")) {
+		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
+		await writeRootObject("startingSeason", g.get("startingSeason"));
 	}
 
 	await writable.write("\n}\n");
@@ -174,16 +197,6 @@ const exportLeagueFSA = async (
 	await writable.close();
 
 	/*
-	await Promise.all(
-		stores.map(async store => {
-			exportedLeague[store] = await getAll(
-				idb.league.transaction(store as any).store,
-				undefined,
-				filter[store],
-			);
-		}),
-	);
-
 	if (stores.includes("players")) {
 		// Don't export cartoon face if imgURL is provided
 		exportedLeague.players = exportedLeague.players.map((p: any) => {
@@ -230,22 +243,6 @@ const exportLeagueFSA = async (
 
 		delete exportedLeague.teamSeasons;
 		delete exportedLeague.teamStats;
-	}
-
-	if (stores.includes("gameAttributes")) {
-		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
-		const keysToDelete = ["numActiveTeams", "teamInfoCache"];
-		const gaArray = exportedLeague.gameAttributes
-			.filter((gameAttribute: any) => !keysToDelete.includes(gameAttribute.key))
-			.filter(
-				// No point in exporting undefined
-				(gameAttribute: any) => gameAttribute.value !== undefined,
-			);
-
-		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
-	} else {
-		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-		exportedLeague.startingSeason = g.get("startingSeason");
 	}
 
 	// No need emitting empty object stores

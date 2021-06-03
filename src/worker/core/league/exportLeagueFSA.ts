@@ -61,6 +61,8 @@ const exportLeagueFSA = async (
 		let prevKey: LeagueDB[Store]["key"] | undefined;
 		let cancelCallback: (() => void) | undefined;
 		let seenFirstRecord = false;
+		const stores: StoreNames<LeagueDB>[] =
+			store === "teams" ? ["teams", "teamSeasons", "teamStats"] : [store];
 
 		return new ReadableStream(
 			{
@@ -81,13 +83,13 @@ const exportLeagueFSA = async (
 
 					let count = 0;
 
+					const transaction = idb.league.transaction(stores);
+
 					const range =
 						prevKey !== undefined
 							? IDBKeyRange.lowerBound(prevKey, true)
 							: undefined;
-					let cursor = await idb.league
-						.transaction(store)
-						.store.openCursor(range);
+					let cursor = await transaction.objectStore(store).openCursor(range);
 					while (cursor) {
 						if (!filter || filter(cursor.value)) {
 							count += 1;
@@ -103,6 +105,54 @@ const exportLeagueFSA = async (
 								forEach(cursor.value);
 							}
 
+							if (store === "teams") {
+								// This is a bit dangerous, since it will possibly read all teamStats/teamSeasons rows into memory, but that will very rarely exceed MIN_RECORDS_PER_PULL and we will just do one team per transaction, to be safe.
+
+								const tid = cursor.value.tid;
+
+								const infos: (
+									| {
+											key: string;
+											store: "teamSeasons";
+											index: "tid, season";
+											keyRange: IDBKeyRange;
+									  }
+									| {
+											key: string;
+											store: "teamStats";
+											index: "tid";
+											keyRange: IDBKeyRange;
+									  }
+								)[] = [
+									{
+										key: "seasons",
+										store: "teamSeasons",
+										index: "tid, season",
+										keyRange: IDBKeyRange.bound([tid], [tid, ""]),
+									},
+									{
+										key: "stats",
+										store: "teamStats",
+										index: "tid",
+										keyRange: IDBKeyRange.only(tid),
+									},
+								];
+
+								const t: any = cursor.value;
+
+								for (const info of infos) {
+									t[info.key] = [];
+									let cursor2 = await transaction
+										.objectStore(info.store)
+										.index(info.index as any)
+										.openCursor(info.keyRange);
+									while (cursor2) {
+										t[info.key].push(cursor2.value);
+										cursor2 = await cursor2.continue();
+									}
+								}
+							}
+
 							controller.enqueue(
 								`${comma}${newline}${tab.repeat(2)}${jsonStringify(
 									cursor.value,
@@ -113,7 +163,10 @@ const exportLeagueFSA = async (
 
 						prevKey = cursor.key as any;
 
-						if (
+						if (store === "teams") {
+							// One team per transaction
+							break;
+						} else if (
 							((controller as any).desiredSize > 0 ||
 								count < MIN_RECORDS_PER_PULL) &&
 							!cancelCallback
@@ -186,6 +239,9 @@ const exportLeagueFSA = async (
 				"gameAttributes",
 				gameAttributesArrayToObject(rows),
 			);
+		} else if (store === "teamSeasons" || store === "teamStats") {
+			// Handled in "teams"
+			continue;
 		} else {
 			const readable = makeStoreStream(store as any, {
 				filter: filter[store],

@@ -1164,7 +1164,6 @@ const exportLeagueFSA = async (
 	stores: string[],
 	compressed: boolean,
 ) => {
-	console.log(fileHandle, stores, compressed);
 	await league.exportLeagueFSA(fileHandle, stores, {
 		compressed,
 	});

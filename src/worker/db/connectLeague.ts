@@ -447,8 +447,6 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	teamStatsStore.createIndex("season, tid", ["season", "tid"], {
 		unique: false,
 	});
-
-	// Not unique because of playoffs
 	teamStatsStore.createIndex("tid", "tid", {
 		unique: false,
 	});

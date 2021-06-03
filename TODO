@@ -1,4 +1,7 @@
 File System Access API https://web.dev/file-system-access/
+- not available in worker?
+  - https://expressflow.com/blog/posts/file-system-access-api-for-the-web-chrome says you could transfer to worker via IDB, or maybe other ways
+  - should be able to send right to worker https://bugs.chromium.org/p/chromium/issues/detail?id=955192
 - ~/projects/file-system-access-api-indexeddb
   - if it's often emitting 1 record at a time, set a lower limit for the number it will emit each time pull is called
 - use (when available) for saving any files

@@ -1,5 +1,6 @@
-const { parentPort, workerData } = require("worker_threads");
 const esbuild = require("esbuild");
+const fs = require("fs");
+const { parentPort, workerData } = require("worker_threads");
 const esbuildConfig = require("./esbuildConfig");
 
 const pluginStartEnd = {
@@ -37,6 +38,10 @@ const pluginStartEnd = {
 						type: "error",
 						error,
 					});
+
+					// Save to file so it appears when reloading page
+					const js = `throw new Error(\`${error.message}\`)`;
+					fs.writeFileSync(config.outfile, js);
 				}
 			},
 		},

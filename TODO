@@ -1,8 +1,3 @@
-in watch mode, write build error to script file
-
-easy way to export without events, since they are huge
-- event IDs referenced anywhere? trade summary?
-
 File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
 

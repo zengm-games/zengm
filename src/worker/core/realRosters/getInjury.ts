@@ -69,6 +69,7 @@ const getInjury = ({
 	numGames,
 	numGamesPlayoffSeries,
 	draftProspect,
+	draftYear,
 }: {
 	injuries: Basketball["injuries"];
 	slug: string;
@@ -77,17 +78,28 @@ const getInjury = ({
 	numGames: number;
 	numGamesPlayoffSeries: number[];
 	draftProspect: boolean;
+	draftYear: number;
 }): PlayerInjury | undefined => {
-	if (!injuries[slug]) {
+	const playerInjuries = injuries[slug];
+
+	if (!playerInjuries) {
 		return;
 	}
 
-	// Take most recent injury, up to one season back. injuries is already sorted descending by season/phase
-	const row = injuries[slug]?.find(
-		injury =>
-			(injury.season === season && injury.phase <= phase) ||
-			(injury.season === season - 1 && injury.phase > phase),
-	);
+	let row;
+	if (draftProspect) {
+		// Currently defined in injuries.csv as starting at the beginning of the rookie season, maybe should change in the future
+		row = playerInjuries.find(
+			injury => injury.season === draftYear + 1 && injury.phase === 0,
+		);
+	} else {
+		// Take most recent injury, up to one season back. injuries is already sorted descending by season/phase
+		row = playerInjuries.find(
+			injury =>
+				(injury.season === season && injury.phase <= phase) ||
+				(injury.season === season - 1 && injury.phase > phase),
+		);
+	}
 
 	if (!row) {
 		return;

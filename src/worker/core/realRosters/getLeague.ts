@@ -208,6 +208,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						"numGamesPlayoffSeries",
 					),
 					draftProspect: p.tid === PLAYER.UNDRAFTED,
+					draftYear: p.draft.year,
 				});
 				if (injury) {
 					p.injury = injury;

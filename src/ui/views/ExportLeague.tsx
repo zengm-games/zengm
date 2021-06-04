@@ -1,102 +1,117 @@
-import React, {
-	useCallback,
-	useState,
-	ReactNode,
-	FormEvent,
-	Fragment,
-} from "react";
+import { useState, ReactNode, FormEvent, Fragment } from "react";
 import { WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";
 
-const categories = [
+export type ExportLeagueKey =
+	| "players"
+	| "teams"
+	| "headToHead"
+	| "schedule"
+	| "draftPicks"
+	| "gameStats"
+	| "newsFeedTransactions"
+	| "newsFeedOther"
+	| "games";
+
+const categories: {
+	key: ExportLeagueKey;
+	name: string;
+	desc: string;
+	default: boolean;
+}[] = [
 	{
-		objectStores: "players,releasedPlayers,awards",
+		key: "players",
 		name: "Players",
 		desc: "All player info, ratings, stats, and awards",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores: "teams,teamSeasons,teamStats",
+		key: "teams",
 		name: "Teams",
 		desc: "All team info and stats.",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores: "headToHeads",
-		name: "Head-to-Head Data",
-		desc: "History of head-to-head results between teams.",
-		checked: true,
-	},
-	{
-		objectStores: "schedule,playoffSeries",
+		key: "schedule",
 		name: "Schedule",
 		desc: "Current regular season schedule and playoff series.",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores: "draftPicks",
+		key: "draftPicks",
 		name: "Draft Picks",
 		desc: "Traded draft picks.",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores:
-			"trade,negotiations,gameAttributes,draftLotteryResults,messages,playerFeats,allStars,scheduledEvents",
+		key: "gameStats",
 		name: "Game State",
 		desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores: "events",
-		name: "News Feed",
-		desc: "All news feed entries.",
-		checked: true,
+		key: "newsFeedTransactions",
+		name: "News Feed - Transactions",
+		desc: "Trades, draft picks, and signings.",
+		default: true,
 	},
 	{
-		objectStores: "games",
+		key: "newsFeedOther",
+		name: "News Feed - All Other Entries",
+		desc: "Trades, draft picks, and signings.",
+		default: false,
+	},
+	{
+		key: "headToHead",
+		name: "Head-to-Head Data",
+		desc: "History of head-to-head results between teams.",
+		default: false,
+	},
+	{
+		key: "games",
 		name: "Box Scores",
 		desc: "Box scores take up tons of space, but by default only three seasons are saved.",
-		checked: false,
+		default: false,
 	},
 ];
 
 const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(true);
-	const [transactionsOnly, setTransactionsOnly] = useState(true);
+	const [checked, setChecked] = useState<Record<ExportLeagueKey, boolean>>(
+		() => {
+			const init = {
+				players: false,
+				teams: false,
+				headToHead: false,
+				schedule: false,
+				draftPicks: false,
+				gameStats: false,
+				newsFeedTransactions: false,
+				newsFeedOther: false,
+				games: false,
+			};
+
+			for (const category of categories) {
+				init[category.key] = category.default;
+			}
+
+			return init;
+		},
+	);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		setStatus("Exporting...");
 
-		// @ts-ignore
-		const elements = event.target.getElementsByTagName(
-			"input",
-		) as never as HTMLInputElement[];
-
-		// Get array of object stores to export
-		const objectStores = Array.from(elements)
-			.filter(
-				input =>
-					input.checked &&
-					input.name !== "compressed" &&
-					input.name !== "transactionsOnly",
-			)
-			.map(input => input.value)
-			.join(",")
-			.split(",");
-
 		try {
-			const { filename, json } = await toWorker(
-				"main",
-				"exportLeague",
-				objectStores,
+			const { filename, json } = await toWorker("main", "exportLeague", {
+				...checked,
 				compressed,
-				transactionsOnly,
-			);
+			});
 
 			downloadFile(filename, json, "application/json");
 		} catch (err) {
@@ -145,32 +160,18 @@ const ExportLeague = () => {
 										<input
 											className="form-check-input"
 											type="checkbox"
-											value={cat.objectStores}
-											defaultChecked={cat.checked}
+											checked={checked[cat.key]}
+											onChange={() => {
+												setChecked(checked2 => ({
+													...checked2,
+													[cat.key]: !checked2[cat.key],
+												}));
+											}}
 										/>
 										{cat.name}
 										<p className="text-muted">{cat.desc}</p>
 									</label>
 								</div>
-								{cat.name === "News Feed" ? (
-									<div className="form-check">
-										<label className="form-check-label">
-											<input
-												className="form-check-input"
-												type="checkbox"
-												name="transactionsOnly"
-												checked={transactionsOnly}
-												onChange={() => {
-													setTransactionsOnly(
-														transactionsOnly => !transactionsOnly,
-													);
-												}}
-											/>
-											Transactions Only
-											<p className="text-muted">AAAAAAAAAAAAA</p>
-										</label>
-									</div>
-								) : null}
 							</Fragment>
 						))}
 					</div>
@@ -181,7 +182,6 @@ const ExportLeague = () => {
 								<input
 									className="form-check-input"
 									type="checkbox"
-									name="compressed"
 									checked={compressed}
 									onChange={() => {
 										setCompressed(compressed => !compressed);

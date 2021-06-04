@@ -15,8 +15,8 @@ const exportLeague = async (
 		meta = true,
 		filter = {},
 	}: {
-		meta: boolean;
-		filter: {
+		meta?: boolean;
+		filter?: {
 			[key: string]: (a: any) => boolean;
 		};
 	},

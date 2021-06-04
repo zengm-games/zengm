@@ -99,6 +99,7 @@ import { wrap } from "../util/g";
 import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 import { types } from "../../common/transactionInfo";
+import type { ExportLeagueKey } from "../../ui/views/ExportLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1152,17 +1153,53 @@ const genFilename = (data: any) => {
 };
 
 const exportLeague = async (
-	stores: string[],
-	compressed: boolean,
-	transactionsOnly: boolean,
+	checked: Record<ExportLeagueKey, boolean> & {
+		compressed: boolean;
+	},
 ) => {
-	let filter;
-	if (transactionsOnly) {
-		filter = {
-			events: (event: EventBBGM) => {
-				const category = types[event.type]?.category;
-				return category === "transaction";
-			},
+	const storesSet = new Set<string>();
+
+	const storesByKey = {
+		players: ["players", "releasedPlayers", "awards"],
+		teams: ["teams", "teamSeasons", "teamStats"],
+		headToHead: ["headToHeads"],
+		schedule: ["schedule", "playoffSeries"],
+		draftPicks: ["draftPicks"],
+		gameStats: [
+			"trade",
+			"negotiations",
+			"gameAttributes",
+			"draftLotteryResults",
+			"messages",
+			"playerFeats",
+			"allStars",
+			"scheduledEvents",
+		],
+		newsFeedTransactions: ["events"],
+		newsFeedOther: ["events"],
+		games: ["games"],
+	};
+
+	for (const key of helpers.keys(storesByKey)) {
+		if (checked[key]) {
+			for (const store of storesByKey[key]) {
+				storesSet.add(store);
+			}
+		}
+	}
+
+	const stores = Array.from(storesSet);
+
+	const filter: any = {};
+	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category === "transaction";
+		};
+	} else if (!checked.newsFeedTransactions && checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category !== "transaction";
 		};
 	}
 
@@ -1170,7 +1207,7 @@ const exportLeague = async (
 		filter,
 	});
 	const filename = genFilename(data);
-	const json = JSON.stringify(data, null, compressed ? undefined : 2);
+	const json = JSON.stringify(data, null, checked.compressed ? undefined : 2);
 	return {
 		filename,
 		json,

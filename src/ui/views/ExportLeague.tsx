@@ -1,11 +1,13 @@
-import { useState, ReactNode, FormEvent, Fragment } from "react";
-import { WEBSITE_ROOT } from "../../common";
+import classNames from "classnames";
+import { useState, ReactNode, FormEvent } from "react";
+import { isSport, WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";
 
 export type ExportLeagueKey =
 	| "players"
+	| "gameHighs"
 	| "teams"
 	| "headToHead"
 	| "schedule"
@@ -15,18 +17,32 @@ export type ExportLeagueKey =
 	| "newsFeedOther"
 	| "games";
 
-const categories: {
+type Category = {
 	key: ExportLeagueKey;
 	name: string;
 	desc: string;
 	default: boolean;
-}[] = [
+	parent?: ExportLeagueKey;
+};
+
+const categories: Category[] = [
 	{
 		key: "players",
 		name: "Players",
-		desc: "All player info, ratings, stats, and awards",
+		desc: "All player info, ratings, stats, and awards.",
 		default: true,
 	},
+	...((!isSport("football")
+		? [
+				{
+					key: "gameHighs",
+					name: "Include game highs",
+					desc: "Game highs are fun, but they increase export size by 25%.",
+					default: false,
+					parent: "players",
+				},
+		  ]
+		: []) as Category[]),
 	{
 		key: "teams",
 		name: "Teams",
@@ -42,7 +58,7 @@ const categories: {
 	{
 		key: "draftPicks",
 		name: "Draft Picks",
-		desc: "Traded draft picks.",
+		desc: "Future draft picks.",
 		default: true,
 	},
 	{
@@ -60,7 +76,7 @@ const categories: {
 	{
 		key: "newsFeedOther",
 		name: "News Feed - All Other Entries",
-		desc: "Trades, draft picks, and signings.",
+		desc: "All entries besides trades, draft picks, and signings - usually not that important, and increases export size by 10%.",
 		default: false,
 	},
 	{
@@ -84,6 +100,7 @@ const ExportLeague = () => {
 		() => {
 			const init = {
 				players: false,
+				gameHighs: false,
 				teams: false,
 				headToHead: false,
 				schedule: false,
@@ -154,25 +171,31 @@ const ExportLeague = () => {
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<h2>Data</h2>
 						{categories.map(cat => (
-							<Fragment key={cat.name}>
-								<div className="form-check">
-									<label className="form-check-label">
-										<input
-											className="form-check-input"
-											type="checkbox"
-											checked={checked[cat.key]}
-											onChange={() => {
-												setChecked(checked2 => ({
-													...checked2,
-													[cat.key]: !checked2[cat.key],
-												}));
-											}}
-										/>
-										{cat.name}
-										<p className="text-muted">{cat.desc}</p>
-									</label>
-								</div>
-							</Fragment>
+							<div
+								key={cat.name}
+								className={classNames("form-check", {
+									"ml-4": cat.parent,
+								})}
+							>
+								<label className="form-check-label">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										checked={
+											checked[cat.key] && (!cat.parent || checked[cat.parent])
+										}
+										disabled={cat.parent && !checked[cat.parent]}
+										onChange={() => {
+											setChecked(checked2 => ({
+												...checked2,
+												[cat.key]: !checked2[cat.key],
+											}));
+										}}
+									/>
+									{cat.name}
+									<p className="text-muted">{cat.desc}</p>
+								</label>
+							</div>
 						))}
 					</div>
 					<div className="col-md-6 col-lg-5 col-xl-4">

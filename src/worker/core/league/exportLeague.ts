@@ -14,10 +14,14 @@ const exportLeague = async (
 	{
 		meta = true,
 		filter = {},
+		forEach = {},
 	}: {
 		meta?: boolean;
 		filter?: {
 			[key: string]: (a: any) => boolean;
+		};
+		forEach?: {
+			[key: string]: (a: any) => void;
 		};
 	},
 ) => {
@@ -45,6 +49,12 @@ const exportLeague = async (
 				undefined,
 				filter[store],
 			);
+
+			for (const row of exportedLeague[store]) {
+				if (forEach[store]) {
+					forEach[store](row);
+				}
+			}
 		}),
 	);
 
@@ -99,13 +109,9 @@ const exportLeague = async (
 	if (stores.includes("gameAttributes")) {
 		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
 		const keysToDelete = ["numActiveTeams", "teamInfoCache"];
-		const gaArray = exportedLeague.gameAttributes
-			.filter((gameAttribute: any) => !keysToDelete.includes(gameAttribute.key))
-			.filter(
-				// No point in exporting undefined
-				(gameAttribute: any) => gameAttribute.value !== undefined,
-			);
-
+		const gaArray = exportedLeague.gameAttributes.filter(
+			(gameAttribute: any) => !keysToDelete.includes(gameAttribute.key),
+		);
 		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
 	} else {
 		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default

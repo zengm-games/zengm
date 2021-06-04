@@ -100,6 +100,7 @@ import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 import { types } from "../../common/transactionInfo";
 import type { ExportLeagueKey } from "../../ui/views/ExportLeague";
+import stats from "../core/player/stats";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1203,8 +1204,20 @@ const exportLeague = async (
 		};
 	}
 
+	const forEach: any = {};
+	if (checked.players && !checked.gameHighs) {
+		forEach.players = (p: Player) => {
+			for (const row of p.stats) {
+				for (const stat of stats.max) {
+					delete row[stat];
+				}
+			}
+		};
+	}
+
 	const data = await league.exportLeague(stores, {
 		filter,
+		forEach,
 	});
 	const filename = genFilename(data);
 	const json = JSON.stringify(data, null, checked.compressed ? undefined : 2);

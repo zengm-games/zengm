@@ -1,4 +1,10 @@
-import { useCallback, useState, ReactNode, FormEvent } from "react";
+import React, {
+	useCallback,
+	useState,
+	ReactNode,
+	FormEvent,
+	Fragment,
+} from "react";
 import { WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -37,17 +43,21 @@ const categories = [
 	},
 	{
 		objectStores:
-			"trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars,scheduledEvents",
+			"trade,negotiations,gameAttributes,draftLotteryResults,messages,playerFeats,allStars,scheduledEvents",
 		name: "Game State",
-		desc:
-			"Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		checked: true,
+	},
+	{
+		objectStores: "events",
+		name: "News Feed",
+		desc: "All news feed entries.",
 		checked: true,
 	},
 	{
 		objectStores: "games",
 		name: "Box Scores",
-		desc:
-			"Box scores take up tons of space, but by default only three seasons are saved.",
+		desc: "Box scores take up tons of space, but by default only three seasons are saved.",
 		checked: false,
 	},
 ];
@@ -55,53 +65,57 @@ const categories = [
 const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(true);
+	const [transactionsOnly, setTransactionsOnly] = useState(true);
 
-	const handleSubmit = useCallback(
-		async (event: FormEvent) => {
-			event.preventDefault();
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 
-			setStatus("Exporting...");
+		setStatus("Exporting...");
 
-			// @ts-ignore
-			const elements = (event.target.getElementsByTagName(
-				"input",
-			) as never) as HTMLInputElement[];
+		// @ts-ignore
+		const elements = event.target.getElementsByTagName(
+			"input",
+		) as never as HTMLInputElement[];
 
-			// Get array of object stores to export
-			const objectStores = Array.from(elements)
-				.filter(input => input.checked && input.name !== "compressed")
-				.map(input => input.value)
-				.join(",")
-				.split(",");
+		// Get array of object stores to export
+		const objectStores = Array.from(elements)
+			.filter(
+				input =>
+					input.checked &&
+					input.name !== "compressed" &&
+					input.name !== "transactionsOnly",
+			)
+			.map(input => input.value)
+			.join(",")
+			.split(",");
 
-			try {
-				const { filename, json } = await toWorker(
-					"main",
-					"exportLeague",
-					objectStores,
-					compressed,
-				);
+		try {
+			const { filename, json } = await toWorker(
+				"main",
+				"exportLeague",
+				objectStores,
+				compressed,
+				transactionsOnly,
+			);
 
-				downloadFile(filename, json, "application/json");
-			} catch (err) {
-				console.error(err);
-				setStatus(
-					<span className="text-danger">
-						Error exporting league: "{err.message}
-						". You might have to select less things to export or{" "}
-						<a href={helpers.leagueUrl(["delete_old_data"])}>
-							delete old data
-						</a>{" "}
-						before exporting.
-					</span>,
-				);
-				return;
-			}
+			downloadFile(filename, json, "application/json");
+		} catch (err) {
+			console.error(err);
+			setStatus(
+				<span className="text-danger">
+					Error exporting league: "{err.message}
+					". You might have to select less things to export or{" "}
+					<a href={helpers.leagueUrl(["delete_old_data"])}>
+						delete old data
+					</a>{" "}
+					before exporting.
+				</span>,
+			);
+			return;
+		}
 
-			setStatus(undefined);
-		},
-		[compressed],
-	);
+		setStatus(undefined);
+	};
 
 	useTitleBar({ title: "Export League" });
 
@@ -125,18 +139,39 @@ const ExportLeague = () => {
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<h2>Data</h2>
 						{categories.map(cat => (
-							<div key={cat.name} className="form-check">
-								<label className="form-check-label">
-									<input
-										className="form-check-input"
-										type="checkbox"
-										value={cat.objectStores}
-										defaultChecked={cat.checked}
-									/>
-									{cat.name}
-									<p className="text-muted">{cat.desc}</p>
-								</label>
-							</div>
+							<Fragment key={cat.name}>
+								<div className="form-check">
+									<label className="form-check-label">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											value={cat.objectStores}
+											defaultChecked={cat.checked}
+										/>
+										{cat.name}
+										<p className="text-muted">{cat.desc}</p>
+									</label>
+								</div>
+								{cat.name === "News Feed" ? (
+									<div className="form-check">
+										<label className="form-check-label">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												name="transactionsOnly"
+												checked={transactionsOnly}
+												onChange={() => {
+													setTransactionsOnly(
+														transactionsOnly => !transactionsOnly,
+													);
+												}}
+											/>
+											Transactions Only
+											<p className="text-muted">AAAAAAAAAAAAA</p>
+										</label>
+									</div>
+								) : null}
+							</Fragment>
 						))}
 					</div>
 					<div className="col-md-6 col-lg-5 col-xl-4">

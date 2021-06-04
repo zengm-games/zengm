@@ -11,14 +11,14 @@ import getName from "./getName";
  */
 const exportLeague = async (
 	stores: string[],
-	options: {
+	{
+		meta = true,
+		filter = {},
+	}: {
 		meta: boolean;
 		filter: {
 			[key: string]: (a: any) => boolean;
 		};
-	} = {
-		meta: true,
-		filter: {},
 	},
 ) => {
 	// Always flush before export, so export is current!
@@ -30,7 +30,7 @@ const exportLeague = async (
 	// Row from leagueStore in meta db.
 	// phaseText is needed if a phase is set in gameAttributes.
 	// name is only used for the file name of the exported roster file.
-	if (options.meta) {
+	if (meta) {
 		const leagueName = await getName();
 		exportedLeague.meta = {
 			phaseText: local.phaseText,
@@ -43,7 +43,7 @@ const exportLeague = async (
 			exportedLeague[store] = await getAll(
 				idb.league.transaction(store as any).store,
 				undefined,
-				options.filter[store],
+				filter[store],
 			);
 		}),
 	);

@@ -4,7 +4,7 @@ import type { View } from "../../common/types";
 import { helpers } from "../util";
 import classNames from "classnames";
 import { NewsBlock } from "../components";
-import { categories, types } from "../components/NewsBlock";
+import { categories, types } from "../../common/transactionInfo";
 
 const News = ({
 	abbrev,

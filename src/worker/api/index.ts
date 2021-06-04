@@ -82,6 +82,7 @@ import type {
 	Conf,
 	Div,
 	LocalStateUI,
+	EventBBGM,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -97,6 +98,7 @@ import type { Settings } from "../views/settings";
 import { wrap } from "../util/g";
 import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
+import { types } from "../../common/transactionInfo";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1149,8 +1151,24 @@ const genFilename = (data: any) => {
 	return `${filename}.json`;
 };
 
-const exportLeague = async (stores: string[], compressed: boolean) => {
-	const data = await league.exportLeague(stores);
+const exportLeague = async (
+	stores: string[],
+	compressed: boolean,
+	transactionsOnly: boolean,
+) => {
+	let filter;
+	if (transactionsOnly) {
+		filter = {
+			events: (event: EventBBGM) => {
+				const category = types[event.type]?.category;
+				return category === "transaction";
+			},
+		};
+	}
+
+	const data = await league.exportLeague(stores, {
+		filter,
+	});
 	const filename = genFilename(data);
 	const json = JSON.stringify(data, null, compressed ? undefined : 2);
 	return {

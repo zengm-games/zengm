@@ -1,5 +1,5 @@
 import { season } from "..";
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { g, local, logEvent } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 import {
@@ -10,6 +10,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common";
+import { unwrap } from "idb";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -22,19 +23,32 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	await season.setSchedule(season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
-		const transaction = idb.league.transaction("games", "readwrite");
+		// openKeyCursor rather than iterate for performance in Firefox.
+		// unwrap for old Firefox support
+		await new Promise<void>((resolve, reject) => {
+			const transaction = unwrap(idb.league.transaction("games", "readwrite"));
+			const store = transaction.objectStore("games");
+			const index = store.index("season");
 
-		// Delete all games except past 3 seasons
-		await iterate(
-			transaction.store.index("season"),
-			IDBKeyRange.upperBound(g.get("season") - 3),
-			undefined,
-			({ gid }) => {
-				transaction.objectStore("games").delete(gid);
-			},
-		);
+			const request = index.openKeyCursor(
+				IDBKeyRange.upperBound(g.get("season") - 3),
+			);
+			request.onsuccess = () => {
+				const cursor = request.result;
+				if (cursor) {
+					store.delete(cursor.primaryKey);
+					cursor.continue();
+				} else {
+					resolve();
+				}
+			};
 
-		await transaction.done;
+			const onerror = () => {
+				reject(transaction.error ?? new Error("Transaction error"));
+			};
+			transaction.onerror = onerror;
+			transaction.onabort = onerror;
+		});
 	}
 
 	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost

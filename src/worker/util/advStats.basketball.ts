@@ -158,6 +158,82 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	};
 };
 
+// just for fun
+const calculateSOVR = (players: any[], teamsInput: Team[], league: any) => {
+	const teams = teamsInput.map(t => {
+		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
+
+		return {
+			...t,
+			stats: {
+				...t.stats,
+				paceAdj,
+			},
+		};
+	});
+
+	const sOvr: number[] = [];
+	const sPot: number[] = [];
+
+	for (let i = 0; i < players.length; i++) {
+		const t = teams.find(t => t.tid === players[i].tid);
+		if (!t) {
+			throw new Error("No team found");
+		}
+
+		const p_mp = players[i].stats.min + 1e-2;
+		const p_ft = (36 * players[i].stats.ft) / p_mp;
+		const p_fta = (36 * players[i].stats.fta) / p_mp;
+		const p_fg = (36 * players[i].stats.fg) / p_mp;
+		const p_fga = (36 * players[i].stats.fga) / p_mp;
+		const p_orb = (36 * players[i].stats.orb) / p_mp;
+		const p_drb = (36 * players[i].stats.drb) / p_mp;
+		const p_ast = (36 * players[i].stats.ast) / p_mp;
+		const p_tov = (36 * players[i].stats.tov) / p_mp;
+		const p_stl = (36 * players[i].stats.stl) / p_mp;
+		const p_blk = (36 * players[i].stats.blk) / p_mp;
+		const p_pf = (36 * players[i].stats.pf) / p_mp;
+		const p_pts = (36 * players[i].stats.pts) / p_mp;
+		const p_tp = (36 * players[i].stats.tp) / p_mp;
+		const p_tpa = (36 * players[i].stats.tpa) / p_mp;
+		const p_ba = (36 * players[i].stats.ba) / p_mp;
+		const p_pm = (36 * players[i].stats.pm) / p_mp;
+		const p_age = g.get("season") - players[i].born.year;
+		const p_const = 1;
+
+		// normalized
+		const pa_sovr =
+			27.43 * p_const +
+			1.25 * p_ft +
+			0.78 * p_fta +
+			0.08 * p_fga +
+			0.36 * p_orb +
+			0.63 * p_drb +
+			0.75 * p_ast +
+			-0.57 * p_tov +
+			4.86 * p_stl +
+			2.59 * p_blk +
+			-0.6 * p_pf +
+			0.31 * p_tp +
+			1.69 * p_tpa +
+			1.25 * p_ba +
+			0.15 * p_pm; // normal
+		//const pa_sovr = 27.99 * p_const + 2.67 * p_ft + 0.81 * p_fta + 1.33 * p_fg + 0.18 * p_fga + 0.3 * p_orb + 0.79 * p_drb + 0.74 * p_ast + -0.46 * p_tov + 4.23 * p_stl + 2.52 * p_blk + -1.11 * p_pf + -0.76 * p_pts + 1.99 * p_tp + 1.28 * p_tpa + 0.9 * p_ba + 0.13 * p_pm;
+
+		// og
+		//const pa_sovr = 37.4 - 1.65 * p_fg - 0.04 * p_fga - 1.82 *p_orb + 0.96 *p_drb + 0.36 * p_ast - 0.44 * p_tov + 5.44 * p_stl + 1.9 * p_blk  + 1.25 * p_pf + 1.14 * p_pts;
+		const pa_spot = Math.max(pa_sovr, 56.86 + 0.85 * pa_sovr - 1.7581 * p_age);
+		sOvr[i] = Math.round(pa_sovr);
+		sPot[i] = Math.round(pa_spot);
+		//console.log(p_age,sOvr[i],sPot[i],players[i].ratings.ovr,players[i].ratings.pot,p_pm);
+	}
+
+	return {
+		sovr: sOvr,
+		spot: sPot,
+	};
+};
+
 // https://www.basketball-reference.com/about/bpm2.html
 /**
  * Comments from nicidob:
@@ -343,60 +419,20 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	const coeffsBPM1 = [
-		0.86,
-		-0.56,
-		-0.246,
-		0.389,
-		0.58,
-		-0.964,
-		0.613,
-		0.116,
-		0.0,
-		1.369,
-		1.327,
+		0.86, -0.56, -0.246, 0.389, 0.58, -0.964, 0.613, 0.116, 0.0, 1.369, 1.327,
 		-0.367,
 	];
 	const coeffsBPM5 = [
-		0.86,
-		-0.78,
-		-0.343,
-		0.389,
-		1.034,
-		-0.964,
-		0.181,
-		0.181,
-		0.0,
-		1.008,
-		0.703,
+		0.86, -0.78, -0.343, 0.389, 1.034, -0.964, 0.181, 0.181, 0.0, 1.008, 0.703,
 		-0.367,
 	];
 	const coeffsORBPM1 = [
-		0.605,
-		-0.33,
-		-0.145,
-		0.477,
-		0.476,
-		-0.579,
-		0.606,
-		-0.112,
-		0.0,
-		0.177,
-		0.725,
-		-0.439,
+		0.605, -0.33, -0.145, 0.477, 0.476, -0.579, 0.606, -0.112, 0.0, 0.177,
+		0.725, -0.439,
 	];
 	const coeffsORBPM5 = [
-		0.605,
-		-0.472,
-		-0.208,
-		0.477,
-		0.476,
-		-0.882,
-		0.422,
-		0.103,
-		0.0,
-		0.294,
-		0.097,
-		-0.439,
+		0.605, -0.472, -0.208, 0.477, 0.476, -0.882, 0.422, 0.103, 0.0, 0.294,
+		0.097, -0.439,
 	];
 
 	const BPM: number[] = [];
@@ -769,7 +805,7 @@ const advStats = async () => {
 		Infinity,
 	]);
 	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid", "tid"],
+		attrs: ["pid", "tid", "born"],
 		stats: [
 			"min",
 			"tp",
@@ -786,8 +822,11 @@ const advStats = async () => {
 			"pf",
 			"drb",
 			"pts",
+			"ba",
+			"tpa",
+			"pm",
 		],
-		ratings: ["pos"],
+		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
 		playoffs: PHASE.PLAYOFFS === g.get("phase"),
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
@@ -895,6 +934,7 @@ const advStats = async () => {
 		...calculatePercentages(players, teams),
 		...calculateRatings(players, teams, league),
 		...calculateBPM(players, teams, league),
+		...calculateSOVR(players, teams, league),
 	};
 	await advStatsSave(players, playersRaw, updatedStats);
 };

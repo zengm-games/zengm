@@ -336,6 +336,16 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:sovr": {
+			desc: "Statistical Overall",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:spot": {
+			desc: "Statistical Potential",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:fgAtRim": {
 			desc: "At Rim Made",
 			sortSequence: ["desc", "asc"],
@@ -2225,6 +2235,8 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ws48": "WS/48",
 		"stat:obpm": "OBPM",
 		"stat:dbpm": "DBPM",
+		"stat:sovr": "sOvr",
+		"stat:spot": "sPot",
 		"stat:bpm": "BPM",
 		"stat:vorp": "VORP",
 		"stat:fgAtRim": "M",

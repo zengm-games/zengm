@@ -49,6 +49,8 @@ const roundOverrides: Record<
 		bpm: "oneDecimalPlace",
 		obpm: "oneDecimalPlace",
 		dbpm: "oneDecimalPlace",
+		sovr: "noDecimalPlace",
+		spot: "noDecimalPlace",
 		vorp: "oneDecimalPlace",
 		fgMax: "noDecimalPlace",
 		fgaMax: "noDecimalPlace",

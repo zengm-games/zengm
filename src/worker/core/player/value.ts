@@ -74,44 +74,14 @@ const value = (
 		}
 	}
 
-	// From linear regression OVR ~ PER
-	const slope = 1.531;
-	const intercept = 31.693;
-
 	// 1. Account for stats (and current ratings if not enough stats)
 	const ps = p.stats.filter(playerStats => !playerStats.playoffs);
 	let current = pr.ovr;
-
-	// No stats at all? Just look at ratings more, then.
 	if (isSport("basketball") && ps.length > 0) {
 		const ps1 = ps[ps.length - 1]; // Most recent stats
 
-		if (ps.length === 1 || ps[0].min >= 2000) {
-			// Only one year of stats
-			current = intercept + slope * ps1.per;
-
-			if (ps1.min < 2000) {
-				current = (current * ps1.min) / 2000 + pr.ovr * (1 - ps1.min / 2000);
-			}
-		} else {
-			// Two most recent seasons
-			const ps2 = ps[ps.length - 2];
-
-			if (ps1.min + ps2.min > 0) {
-				current =
-					intercept +
-					(slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
-						(ps1.min + ps2.min);
-
-				if (ps1.min + ps2.min < 2000) {
-					current =
-						(current * (ps1.min + ps2.min)) / 2000 +
-						pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
-				}
-			}
-		}
-
-		current = 0.8 * pr.ovr + 0.2 * current; // Include some part of the ratings
+		const wt = Math.tanh((ps1.min - 200) / 100) / 2 + 0.5;
+		current = ps[ps.length - 1].sovr * wt + pr.ovr * (1 - wt);
 	}
 
 	// 2. Potential

@@ -122,7 +122,7 @@ const PlayThroughInjuriesSliders = ({
 						<p>
 							Additionally, the injury rate is 50% higher when playing through
 							an injury, which includes the possibility of a player either
-							reaggrivating his current injury or getting a new injury.
+							reaggravating his current injury or getting a new injury.
 						</p>
 					</HelpPopover>
 				) : null}

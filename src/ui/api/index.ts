@@ -102,6 +102,7 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
+				// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
 				window.googletag = window.googletag || {};
 				window.googletag.cmd = window.googletag.cmd || [];
 				window.googletag.cmd.push(() => {

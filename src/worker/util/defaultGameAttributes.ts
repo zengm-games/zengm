@@ -5,13 +5,40 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
 } from "../../common";
-import type { GameAttributesLeagueWithHistory } from "../../common/types";
+import type {
+	GameAttributeKey,
+	GameAttributesLeagueWithHistory,
+} from "../../common/types";
 
 const wrap = <T>(value: T) => [
 	{
 		start: -Infinity,
 		value,
 	},
+];
+
+// gameAttributes is mixed up between league settings, game state, teams, and cache
+export const gameAttributesKeysGameState: GameAttributeKey[] = [
+	"phase",
+	"nextPhase",
+	"gameOver",
+	"godMode",
+	"godModeInPast",
+	"otherTeamsWantToHire",
+	"easyDifficultyInPast",
+	"difficulty",
+	"gracePeriodEnd",
+	"lid",
+	"userTid",
+	"userTids",
+	"season",
+	"startingSeason",
+];
+export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
+export const gameAttributesCache: GameAttributeKey[] = [
+	"numTeams",
+	"numActiveTeams",
+	"teamInfoCache",
 ];
 
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
@@ -120,6 +147,11 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		},
 	],
 	hofFactor: 1,
+	tradeDeadline: 0.6,
+	pointsFormula: wrap(""),
+	randomDebutsForever: undefined,
+	realDraftRatings: undefined,
+	hideDisabledTeams: false,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -137,11 +169,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numTeams: 0,
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
-	tradeDeadline: 0.6,
-	pointsFormula: wrap(""),
-	randomDebutsForever: undefined,
-	realDraftRatings: undefined,
-	hideDisabledTeams: false,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

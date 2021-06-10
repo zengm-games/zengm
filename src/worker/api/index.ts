@@ -84,6 +84,7 @@ import type {
 	LocalStateUI,
 	EventBBGM,
 	Team,
+	GameAttribute,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -102,6 +103,10 @@ import { getAutoTicketPriceByTid } from "../core/game/attendance";
 import { types } from "../../common/transactionInfo";
 import type { ExportLeagueKey } from "../../ui/views/ExportLeague";
 import stats from "../core/player/stats";
+import {
+	gameAttributesKeysGameState,
+	gameAttributesKeysTeams,
+} from "../util/defaultGameAttributes";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1168,8 +1173,9 @@ const exportLeague = async (
 		headToHead: ["headToHeads"],
 		schedule: ["schedule", "playoffSeries"],
 		draftPicks: ["draftPicks"],
-		gameAttributes: ["gameAttributes"],
+		leagueSettings: ["gameAttributes"],
 		gameState: [
+			"gameAttributes",
 			"trade",
 			"negotiations",
 			"draftLotteryResults",
@@ -1203,6 +1209,31 @@ const exportLeague = async (
 		filter.events = (event: EventBBGM) => {
 			const category = types[event.type]?.category;
 			return category !== "transaction";
+		};
+	} else if (checked.leagueSettings || checked.gameState) {
+		filter.gameAttributes = (row: GameAttribute) => {
+			if (!checked.leagueSettings) {
+				if (
+					!gameAttributesKeysGameState.includes(row.key) &&
+					!gameAttributesKeysTeams.includes(row.key)
+				) {
+					return false;
+				}
+			}
+
+			if (!checked.gameState) {
+				if (gameAttributesKeysGameState.includes(row.key)) {
+					return false;
+				}
+			}
+
+			if (!checked.teams) {
+				if (gameAttributesKeysTeams.includes(row.key)) {
+					return false;
+				}
+			}
+
+			return true;
 		};
 	}
 
@@ -1246,8 +1277,8 @@ const exportLeague = async (
 		map,
 	});
 
-	// Include confs and divs if exporting just teams
-	if (teamsBasicOnly && !checked.gameAttributes) {
+	// Include confs and divs if exporting just teams, in case gameAttributes was not selected
+	if (checked.teamsBasic) {
 		data.gameAttributes = data.gameAttributes ?? {};
 		data.gameAttributes.confs = data.gameAttributes.confs ?? g.get("confs");
 		data.gameAttributes.divs = data.gameAttributes.divs ?? g.get("divs");

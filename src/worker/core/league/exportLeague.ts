@@ -1,6 +1,7 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
 import { g, local } from "../../util";
+import { gameAttributesCache } from "../../util/defaultGameAttributes";
 import getName from "./getName";
 
 /* Export existing active league.
@@ -117,11 +118,10 @@ const exportLeague = async (
 		}
 	}
 
-	if (stores.includes("gameAttributes")) {
+	if (exportedLeague.gameAttributes) {
 		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
-		const keysToDelete = ["numActiveTeams", "teamInfoCache"];
 		const gaArray = exportedLeague.gameAttributes.filter(
-			(gameAttribute: any) => !keysToDelete.includes(gameAttribute.key),
+			(gameAttribute: any) => !gameAttributesCache.includes(gameAttribute.key),
 		);
 		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
 	} else {

@@ -13,7 +13,7 @@ export type ExportLeagueKey =
 	| "headToHead"
 	| "schedule"
 	| "draftPicks"
-	| "gameAttributes"
+	| "leagueSettings"
 	| "gameState"
 	| "newsFeedTransactions"
 	| "newsFeedOther"
@@ -71,15 +71,15 @@ const categories: Category[] = [
 		default: true,
 	},
 	{
-		key: "gameAttributes",
+		key: "leagueSettings",
 		name: "League Settings",
-		desc: "All league settings and conference/division settings, including some game state (like current season/phase) that is stored in the same place.",
+		desc: "All league settings.",
 		default: true,
 	},
 	{
 		key: "gameState",
 		name: "Game State",
-		desc: "Interactions with the owner, current contract negotiations, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		desc: "Interactions with the owner, current contract negotiations, current season/phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
 		default: true,
 	},
 	{
@@ -112,11 +112,18 @@ type Checked = Record<ExportLeagueKey, boolean>;
 
 const getCurrentSelected = (
 	checked: Checked,
-): "default" | "none" | "all" | "teamsOnly" | undefined => {
+):
+	| "default"
+	| "none"
+	| "all"
+	| "teamsOnly"
+	| "leagueSettingsOnly"
+	| undefined => {
 	let validDefault = true;
 	let validNone = true;
 	let validAll = true;
 	let validTeamsOnly = true;
+	let validLeagueSettingsOnly = true;
 
 	for (const category of categories) {
 		if (category.default !== checked[category.key]) {
@@ -140,6 +147,16 @@ const getCurrentSelected = (
 				validTeamsOnly = false;
 			}
 		}
+
+		if (category.key === "leagueSettings") {
+			if (!checked[category.key]) {
+				validLeagueSettingsOnly = false;
+			}
+		} else {
+			if (checked[category.key]) {
+				validLeagueSettingsOnly = false;
+			}
+		}
 	}
 
 	if (validDefault) {
@@ -158,6 +175,10 @@ const getCurrentSelected = (
 		return "teamsOnly";
 	}
 
+	if (validLeagueSettingsOnly) {
+		return "leagueSettingsOnly";
+	}
+
 	return undefined;
 };
 
@@ -170,7 +191,7 @@ const getDefaultChecked = () => {
 		headToHead: false,
 		schedule: false,
 		draftPicks: false,
-		gameAttributes: false,
+		leagueSettings: false,
 		gameState: false,
 		newsFeedTransactions: false,
 		newsFeedOther: false,
@@ -267,7 +288,9 @@ const ExportLeague = () => {
 
 	const currentSelected = getCurrentSelected(checked);
 
-	const bulkSetChecked = (type: "default" | "none" | "all" | "teamsOnly") => {
+	const bulkSetChecked = (
+		type: "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly",
+	) => {
 		if (type === "default") {
 			setChecked(getDefaultChecked());
 		} else {
@@ -280,6 +303,8 @@ const ExportLeague = () => {
 						newChecked[key] = true;
 					} else if (type === "teamsOnly") {
 						newChecked[key] = key === "teamsBasic";
+					} else if (type === "leagueSettingsOnly") {
+						newChecked[key] = key === "leagueSettings";
 					}
 				}
 
@@ -344,6 +369,15 @@ const ExportLeague = () => {
 								}}
 							>
 								Teams Only
+							</button>
+							<button
+								className="btn btn-light-bordered"
+								disabled={currentSelected === "leagueSettingsOnly"}
+								onClick={() => {
+									bulkSetChecked("leagueSettingsOnly");
+								}}
+							>
+								Settings Only
 							</button>
 						</div>
 

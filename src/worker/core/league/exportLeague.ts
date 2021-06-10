@@ -124,9 +124,6 @@ const exportLeague = async (
 			(gameAttribute: any) => !gameAttributesCache.includes(gameAttribute.key),
 		);
 		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
-	} else {
-		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-		exportedLeague.startingSeason = g.get("startingSeason");
 	}
 
 	// No need emitting empty object stores

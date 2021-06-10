@@ -2,11 +2,6 @@ Option to start leagues with a fantasy draft https://discord.com/channels/290013
 
 trade summary overflow on mobile https://discord.com/channels/290013534023057409/290015591216054273/852047511824105502
 
-league export
-- break up league settings into teams/state/settings
-  - when do we need startingSeason added to root?
-    - draft class?
-
 jump to not on news feed https://discord.com/channels/290013534023057409/290015591216054273/851626226904334356
 
 ZGMH all contending https://discord.com/channels/290013534023057409/290015591216054273/851150025966747678
@@ -14,6 +9,8 @@ ZGMH all contending https://discord.com/channels/290013534023057409/290015591216
 ratings stats popover overflow https://discord.com/channels/290013534023057409/290015591216054273/851493125326766160
 
 add rank to team stats table https://old.reddit.com/message/messages/1287nqq
+
+"League metadata, like league name" does this do anything?
 
 store results of trading block in database
 - some way to pin offers?

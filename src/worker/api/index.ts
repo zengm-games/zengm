@@ -1284,6 +1284,20 @@ const exportLeague = async (
 		data.gameAttributes.divs = data.gameAttributes.divs ?? g.get("divs");
 	}
 
+	// Include startingSeason when necessary (historical data but no game state)
+	const hasHistoricalData =
+		checked.players ||
+		checked.teams ||
+		checked.headToHead ||
+		checked.schedule ||
+		checked.draftPicks;
+	if (
+		hasHistoricalData &&
+		(!data.gameAttributes || data.gameAttributes.startingSeason === undefined)
+	) {
+		data.startingSeason = g.get("season");
+	}
+
 	const filename = genFilename(data);
 	const json = JSON.stringify(data, null, checked.compressed ? undefined : 2);
 	return {
@@ -1369,6 +1383,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 			players: p => pids.includes(p.pid),
 		},
 	});
+
+	data.startingSeason = g.get("startingSeason");
 
 	for (const p of data.players) {
 		const info = infos.find(info => info.pid === p.pid);

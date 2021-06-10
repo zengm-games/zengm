@@ -38,7 +38,7 @@ const categories: Category[] = [
 					key: "gameHighs",
 					name: "Include game highs",
 					desc: "Game highs are fun, but they increase export size by 25%.",
-					default: false,
+					default: true,
 					parent: "players",
 				},
 		  ]
@@ -77,13 +77,13 @@ const categories: Category[] = [
 		key: "newsFeedOther",
 		name: "News Feed - All Other Entries",
 		desc: "All entries besides trades, draft picks, and signings - usually not that important, and increases export size by 10%.",
-		default: false,
+		default: true,
 	},
 	{
 		key: "headToHead",
 		name: "Head-to-Head Data",
 		desc: "History of head-to-head results between teams.",
-		default: false,
+		default: true,
 	},
 	{
 		key: "games",

@@ -83,6 +83,7 @@ import type {
 	Div,
 	LocalStateUI,
 	EventBBGM,
+	Team,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -1162,7 +1163,8 @@ const exportLeague = async (
 
 	const storesByKey = {
 		players: ["players", "releasedPlayers", "awards"],
-		teams: ["teams", "teamSeasons", "teamStats"],
+		teamsBasic: ["teams"],
+		teams: ["teamSeasons", "teamStats"],
 		headToHead: ["headToHeads"],
 		schedule: ["schedule", "playoffSeries"],
 		draftPicks: ["draftPicks"],
@@ -1215,10 +1217,42 @@ const exportLeague = async (
 		};
 	}
 
+	const map: any = {};
+	const teamsBasicOnly = checked.teamsBasic && !checked.teams;
+	if (teamsBasicOnly) {
+		map.teams = (t: Team) => {
+			return {
+				tid: t.tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				colors: t.colors,
+				jersey: t.jersey,
+				cid: t.cid,
+				did: t.did,
+				pop: t.pop,
+				stadiumCapacity: t.stadiumCapacity,
+				disabled: t.disabled,
+				srID: t.srID,
+			};
+		};
+	}
+
 	const data = await league.exportLeague(stores, {
 		filter,
 		forEach,
+		map,
 	});
+
+	// Include confs and divs if exporting just teams
+	if (teamsBasicOnly && !checked.gameAttributes) {
+		data.gameAttributes = data.gameAttributes ?? {};
+		data.gameAttributes.confs = data.gameAttributes.confs ?? g.get("confs");
+		data.gameAttributes.divs = data.gameAttributes.divs ?? g.get("divs");
+	}
+
 	const filename = genFilename(data);
 	const json = JSON.stringify(data, null, checked.compressed ? undefined : 2);
 	return {

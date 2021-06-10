@@ -15,6 +15,7 @@ const exportLeague = async (
 		meta = true,
 		filter = {},
 		forEach = {},
+		map = {},
 	}: {
 		meta?: boolean;
 		filter?: {
@@ -22,6 +23,9 @@ const exportLeague = async (
 		};
 		forEach?: {
 			[key: string]: (a: any) => void;
+		};
+		map?: {
+			[key: string]: (a: any) => any;
 		};
 	},
 ) => {
@@ -50,10 +54,14 @@ const exportLeague = async (
 				filter[store],
 			);
 
-			for (const row of exportedLeague[store]) {
-				if (forEach[store]) {
+			if (forEach[store]) {
+				for (const row of exportedLeague[store]) {
 					forEach[store](row);
 				}
+			}
+
+			if (map[store]) {
+				exportedLeague[store] = exportedLeague[store].map(map[store]);
 			}
 		}),
 	);
@@ -72,38 +80,41 @@ const exportLeague = async (
 	}
 
 	if (stores.includes("teams")) {
-		for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
-			const tid = exportedLeague.teamSeasons[i].tid;
+		if (exportedLeague.teamSeasons) {
+			for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
+				const tid = exportedLeague.teamSeasons[i].tid;
 
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
-						exportedLeague.teams[j].seasons = [];
+				for (let j = 0; j < exportedLeague.teams.length; j++) {
+					if (exportedLeague.teams[j].tid === tid) {
+						if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
+							exportedLeague.teams[j].seasons = [];
+						}
+
+						exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+						break;
 					}
-
-					exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
-					break;
 				}
 			}
+			delete exportedLeague.teamSeasons;
 		}
 
-		for (let i = 0; i < exportedLeague.teamStats.length; i++) {
-			const tid = exportedLeague.teamStats[i].tid;
+		if (exportedLeague.teamStats) {
+			for (let i = 0; i < exportedLeague.teamStats.length; i++) {
+				const tid = exportedLeague.teamStats[i].tid;
 
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
-						exportedLeague.teams[j].stats = [];
+				for (let j = 0; j < exportedLeague.teams.length; j++) {
+					if (exportedLeague.teams[j].tid === tid) {
+						if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
+							exportedLeague.teams[j].stats = [];
+						}
+
+						exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+						break;
 					}
-
-					exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
-					break;
 				}
 			}
+			delete exportedLeague.teamStats;
 		}
-
-		delete exportedLeague.teamSeasons;
-		delete exportedLeague.teamStats;
 	}
 
 	if (stores.includes("gameAttributes")) {

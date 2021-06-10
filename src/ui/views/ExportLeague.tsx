@@ -8,6 +8,7 @@ import { downloadFile, helpers, toWorker } from "../util";
 export type ExportLeagueKey =
 	| "players"
 	| "gameHighs"
+	| "teamsBasic"
 	| "teams"
 	| "headToHead"
 	| "schedule"
@@ -45,10 +46,17 @@ const categories: Category[] = [
 		  ]
 		: []) as Category[]),
 	{
+		key: "teamsBasic",
+		name: "Basic Team Data",
+		desc: "Just the stuff you see at Tools > Manage Teams, such as abbrev/region/name, division, logo, etc. Select only this if you want to create a new league with the same teams as this league, but without anything else copied over.",
+		default: true,
+	},
+	{
 		key: "teams",
-		name: "Teams",
+		name: "All Team Data",
 		desc: "All team info and stats.",
 		default: true,
+		parent: "teamsBasic",
 	},
 	{
 		key: "schedule",
@@ -108,6 +116,7 @@ const ExportLeague = () => {
 			const init = {
 				players: false,
 				gameHighs: false,
+				teamsBasic: false,
 				teams: false,
 				headToHead: false,
 				schedule: false,

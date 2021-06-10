@@ -1166,10 +1166,10 @@ const exportLeague = async (
 		headToHead: ["headToHeads"],
 		schedule: ["schedule", "playoffSeries"],
 		draftPicks: ["draftPicks"],
-		gameStats: [
+		gameAttributes: ["gameAttributes"],
+		gameState: [
 			"trade",
 			"negotiations",
-			"gameAttributes",
 			"draftLotteryResults",
 			"messages",
 			"playerFeats",

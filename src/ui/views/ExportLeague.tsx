@@ -12,7 +12,8 @@ export type ExportLeagueKey =
 	| "headToHead"
 	| "schedule"
 	| "draftPicks"
-	| "gameStats"
+	| "gameAttributes"
+	| "gameState"
 	| "newsFeedTransactions"
 	| "newsFeedOther"
 	| "games";
@@ -62,9 +63,15 @@ const categories: Category[] = [
 		default: true,
 	},
 	{
-		key: "gameStats",
+		key: "gameAttributes",
+		name: "League Settings",
+		desc: "All league settings and conference/division settings, including some game state (like current season/phase) that is stored in the same place.",
+		default: true,
+	},
+	{
+		key: "gameState",
 		name: "Game State",
-		desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		desc: "Interactions with the owner, current contract negotiations, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
 		default: true,
 	},
 	{
@@ -105,7 +112,8 @@ const ExportLeague = () => {
 				headToHead: false,
 				schedule: false,
 				draftPicks: false,
-				gameStats: false,
+				gameAttributes: false,
+				gameState: false,
 				newsFeedTransactions: false,
 				newsFeedOther: false,
 				games: false,

@@ -3,7 +3,7 @@ import { useState, ReactNode, FormEvent } from "react";
 import { isSport, WEBSITE_ROOT } from "../../common";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { downloadFile, helpers, toWorker } from "../util";
+import { downloadFile, helpers, safeLocalStorage, toWorker } from "../util";
 
 export type ExportLeagueKey =
 	| "players"
@@ -184,10 +184,52 @@ const getDefaultChecked = () => {
 	return init;
 };
 
+const saveDefaults = (checked: Checked, compressed: boolean) => {
+	safeLocalStorage.setItem("exportLeagueData", JSON.stringify(checked));
+	safeLocalStorage.setItem(
+		"exportLeagueFormat",
+		JSON.stringify({ compressed }),
+	);
+};
+
+const loadChecked = () => {
+	const checked = getDefaultChecked();
+
+	const json = safeLocalStorage.getItem("exportLeagueData");
+	if (json) {
+		try {
+			const settings = JSON.parse(json);
+			for (const key of helpers.keys(checked)) {
+				if (typeof settings[key] === "boolean") {
+					checked[key] = settings[key];
+				}
+			}
+
+			return checked;
+		} catch (error) {}
+	}
+
+	return checked;
+};
+
+const loadCompressed = (): boolean => {
+	const json = safeLocalStorage.getItem("exportLeagueFormat");
+	if (json) {
+		try {
+			const settings = JSON.parse(json);
+			if (typeof settings.compressed === "boolean") {
+				return settings.compressed;
+			}
+		} catch (error) {}
+	}
+
+	return true;
+};
+
 const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
-	const [compressed, setCompressed] = useState(true);
-	const [checked, setChecked] = useState<Checked>(getDefaultChecked());
+	const [compressed, setCompressed] = useState(loadCompressed);
+	const [checked, setChecked] = useState<Checked>(loadChecked);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -201,6 +243,8 @@ const ExportLeague = () => {
 			});
 
 			downloadFile(filename, json, "application/json");
+
+			saveDefaults(checked, compressed);
 		} catch (err) {
 			console.error(err);
 			setStatus(
@@ -353,7 +397,7 @@ const ExportLeague = () => {
 						<button
 							type="submit"
 							className="btn btn-primary"
-							disabled={status === "Exporting..."}
+							disabled={status === "Exporting..." || currentSelected === "none"}
 						>
 							{status === "Exporting..." ? (
 								<>

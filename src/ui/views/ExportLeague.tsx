@@ -109,16 +109,9 @@ const categories: Category[] = [
 ];
 
 type Checked = Record<ExportLeagueKey, boolean>;
+type BulkType = "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly";
 
-const getCurrentSelected = (
-	checked: Checked,
-):
-	| "default"
-	| "none"
-	| "all"
-	| "teamsOnly"
-	| "leagueSettingsOnly"
-	| undefined => {
+const getCurrentSelected = (checked: Checked): BulkType | undefined => {
 	let validDefault = true;
 	let validNone = true;
 	let validAll = true;
@@ -288,9 +281,7 @@ const ExportLeague = () => {
 
 	const currentSelected = getCurrentSelected(checked);
 
-	const bulkSetChecked = (
-		type: "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly",
-	) => {
+	const bulkSetChecked = (type: BulkType) => {
 		if (type === "default") {
 			setChecked(getDefaultChecked());
 		} else {
@@ -313,6 +304,47 @@ const ExportLeague = () => {
 		}
 	};
 
+	const bulkInfo: {
+		key: BulkType;
+		title: string;
+	}[] = [
+		{
+			key: "default",
+			title: "Default",
+		},
+		{
+			key: "none",
+			title: "None",
+		},
+		{
+			key: "all",
+			title: "All",
+		},
+		{
+			key: "teamsOnly",
+			title: "Teams Only",
+		},
+		{
+			key: "leagueSettingsOnly",
+			title: "Settings Only",
+		},
+	];
+
+	const bulkSelectButtons = bulkInfo.map(info => (
+		<button
+			key={info.key}
+			className={`btn btn-${
+				currentSelected === info.key ? "primary" : "light-bordered"
+			}`}
+			onClick={() => {
+				bulkSetChecked(info.key);
+			}}
+			type="button"
+		>
+			{info.title}
+		</button>
+	));
+
 	return (
 		<>
 			<MoreLinks type="importExport" page="export_league" />
@@ -323,7 +355,7 @@ const ExportLeague = () => {
 				base for a <b>custom roster file</b> to share with others. Select as
 				much or as little information as you want to export, since any missing
 				information will be filled in with default values when it is used.{" "}
-				<a href={`http://${WEBSITE_ROOT}/manual/customization/`}>
+				<a href={`https://${WEBSITE_ROOT}/manual/customization/`}>
 					Read the manual for more info.
 				</a>
 			</p>
@@ -333,53 +365,7 @@ const ExportLeague = () => {
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<h2>Data</h2>
 
-						<div className="btn-group mb-3">
-							<button
-								className="btn btn-light-bordered"
-								disabled={currentSelected === "default"}
-								onClick={() => {
-									bulkSetChecked("default");
-								}}
-							>
-								Default
-							</button>
-							<button
-								className="btn btn-light-bordered"
-								disabled={currentSelected === "none"}
-								onClick={() => {
-									bulkSetChecked("none");
-								}}
-							>
-								None
-							</button>
-							<button
-								className="btn btn-light-bordered"
-								disabled={currentSelected === "all"}
-								onClick={() => {
-									bulkSetChecked("all");
-								}}
-							>
-								All
-							</button>
-							<button
-								className="btn btn-light-bordered"
-								disabled={currentSelected === "teamsOnly"}
-								onClick={() => {
-									bulkSetChecked("teamsOnly");
-								}}
-							>
-								Teams Only
-							</button>
-							<button
-								className="btn btn-light-bordered"
-								disabled={currentSelected === "leagueSettingsOnly"}
-								onClick={() => {
-									bulkSetChecked("leagueSettingsOnly");
-								}}
-							>
-								Settings Only
-							</button>
-						</div>
+						<div className="btn-group mb-3">{bulkSelectButtons}</div>
 
 						{categories.map(cat => (
 							<div

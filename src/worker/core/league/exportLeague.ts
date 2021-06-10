@@ -1,6 +1,6 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
-import { g, local } from "../../util";
+import { local } from "../../util";
 import { gameAttributesCache } from "../../util/defaultGameAttributes";
 import getName from "./getName";
 

@@ -108,33 +108,86 @@ const categories: Category[] = [
 	},
 ];
 
+type Checked = Record<ExportLeagueKey, boolean>;
+
+const getCurrentSelected = (
+	checked: Checked,
+): "default" | "none" | "all" | "teamsOnly" | undefined => {
+	let validDefault = true;
+	let validNone = true;
+	let validAll = true;
+	let validTeamsOnly = true;
+
+	for (const category of categories) {
+		if (category.default !== checked[category.key]) {
+			validDefault = false;
+		}
+
+		if (checked[category.key]) {
+			validNone = false;
+		}
+
+		if (!checked[category.key]) {
+			validAll = false;
+		}
+
+		if (category.key === "teamsBasic") {
+			if (!checked[category.key]) {
+				validTeamsOnly = false;
+			}
+		} else {
+			if (checked[category.key]) {
+				validTeamsOnly = false;
+			}
+		}
+	}
+
+	if (validDefault) {
+		return "default";
+	}
+
+	if (validNone) {
+		return "none";
+	}
+
+	if (validAll) {
+		return "all";
+	}
+
+	if (validTeamsOnly) {
+		return "teamsOnly";
+	}
+
+	return undefined;
+};
+
+const getDefaultChecked = () => {
+	const init = {
+		players: false,
+		gameHighs: false,
+		teamsBasic: false,
+		teams: false,
+		headToHead: false,
+		schedule: false,
+		draftPicks: false,
+		gameAttributes: false,
+		gameState: false,
+		newsFeedTransactions: false,
+		newsFeedOther: false,
+		games: false,
+	};
+
+	for (const category of categories) {
+		init[category.key] = category.default;
+	}
+
+	return init;
+};
+
 const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(true);
-	const [checked, setChecked] = useState<Record<ExportLeagueKey, boolean>>(
-		() => {
-			const init = {
-				players: false,
-				gameHighs: false,
-				teamsBasic: false,
-				teams: false,
-				headToHead: false,
-				schedule: false,
-				draftPicks: false,
-				gameAttributes: false,
-				gameState: false,
-				newsFeedTransactions: false,
-				newsFeedOther: false,
-				games: false,
-			};
-
-			for (const category of categories) {
-				init[category.key] = category.default;
-			}
-
-			return init;
-		},
-	);
+	const [checked, setChecked] = useState<Checked>(getDefaultChecked());
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -168,6 +221,29 @@ const ExportLeague = () => {
 
 	useTitleBar({ title: "Export League" });
 
+	const currentSelected = getCurrentSelected(checked);
+
+	const bulkSetChecked = (type: "default" | "none" | "all" | "teamsOnly") => {
+		if (type === "default") {
+			setChecked(getDefaultChecked());
+		} else {
+			setChecked(prevChecked => {
+				const newChecked = { ...prevChecked };
+				for (const key of helpers.keys(newChecked)) {
+					if (type === "none") {
+						newChecked[key] = false;
+					} else if (type === "all") {
+						newChecked[key] = true;
+					} else if (type === "teamsOnly") {
+						newChecked[key] = key === "teamsBasic";
+					}
+				}
+
+				return newChecked;
+			});
+		}
+	};
+
 	return (
 		<>
 			<MoreLinks type="importExport" page="export_league" />
@@ -187,6 +263,46 @@ const ExportLeague = () => {
 				<div className="row">
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<h2>Data</h2>
+
+						<div className="btn-group mb-3">
+							<button
+								className="btn btn-light-bordered"
+								disabled={currentSelected === "default"}
+								onClick={() => {
+									bulkSetChecked("default");
+								}}
+							>
+								Default
+							</button>
+							<button
+								className="btn btn-light-bordered"
+								disabled={currentSelected === "none"}
+								onClick={() => {
+									bulkSetChecked("none");
+								}}
+							>
+								None
+							</button>
+							<button
+								className="btn btn-light-bordered"
+								disabled={currentSelected === "all"}
+								onClick={() => {
+									bulkSetChecked("all");
+								}}
+							>
+								All
+							</button>
+							<button
+								className="btn btn-light-bordered"
+								disabled={currentSelected === "teamsOnly"}
+								onClick={() => {
+									bulkSetChecked("teamsOnly");
+								}}
+							>
+								Teams Only
+							</button>
+						</div>
+
 						{categories.map(cat => (
 							<div
 								key={cat.name}

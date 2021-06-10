@@ -1,6 +1,5 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
-import { local } from "../../util";
 import { gameAttributesCache } from "../../util/defaultGameAttributes";
 import getName from "./getName";
 
@@ -42,7 +41,6 @@ const exportLeague = async (
 	if (meta) {
 		const leagueName = await getName();
 		exportedLeague.meta = {
-			phaseText: local.phaseText,
 			name: leagueName,
 		};
 	}

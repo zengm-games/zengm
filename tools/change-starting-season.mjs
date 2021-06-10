@@ -61,13 +61,6 @@ if (Array.isArray(league.gameAttributes)) {
 	}
 }
 
-if (league.meta && league.meta.phaseText) {
-	league.meta.phaseText = league.meta.phaseText.replace(
-		currentSeason,
-		targetSeason,
-	);
-}
-
 if (league.players) {
 	for (const p of league.players) {
 		if (p.born && typeof p.born.year === "number") {

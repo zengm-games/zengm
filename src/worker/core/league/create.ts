@@ -870,17 +870,6 @@ const create = async ({
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(tid, leagueFile, shuffleRosters);
 
-	let phaseText;
-
-	if (
-		leagueFile.hasOwnProperty("meta") &&
-		leagueFile.meta.hasOwnProperty("phaseText")
-	) {
-		phaseText = leagueFile.meta.phaseText;
-	} else {
-		phaseText = "";
-	}
-
 	const userTid =
 		leagueData.gameAttributes.userTid[
 			leagueData.gameAttributes.userTid.length - 1
@@ -888,7 +877,7 @@ const create = async ({
 	const l: League = {
 		name,
 		tid: userTid,
-		phaseText,
+		phaseText: "",
 		teamName: leagueData.teams[userTid].name,
 		teamRegion: leagueData.teams[userTid].region,
 		heartbeatID: undefined,

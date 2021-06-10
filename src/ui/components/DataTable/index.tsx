@@ -60,6 +60,7 @@ export type Props = {
 	name: string;
 	nonfluid?: boolean;
 	pagination?: boolean;
+	rankCol?: number;
 	rows: {
 		key: number | string;
 		data: (
@@ -106,6 +107,7 @@ const DataTable = ({
 	name,
 	nonfluid,
 	pagination,
+	rankCol,
 	rows,
 	small,
 	striped,
@@ -200,10 +202,12 @@ const DataTable = ({
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
 
-		return rowsOrdered.map(row => {
+		return rowsOrdered.map((row, i) => {
 			return {
 				...row,
-				data: colOrderFiltered.map(({ colIndex }) => row.data[colIndex]),
+				data: colOrderFiltered.map(({ colIndex }) =>
+					colIndex === rankCol ? i + 1 : row.data[colIndex],
+				),
 			};
 		});
 	};

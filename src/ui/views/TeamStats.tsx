@@ -31,7 +31,7 @@ const TeamStats = ({
 		},
 	});
 
-	const basicColNames = ["Team", "stat:gp", "W", "L"];
+	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {
 		basicColNames.push("OTL");
 	}
@@ -60,6 +60,8 @@ const TeamStats = ({
 			return `stat:${stat}`;
 		}),
 	);
+	cols[0].sortSequence = [];
+	cols[0].noSearch = true;
 
 	if (teamOpponent.endsWith("ShotLocations")) {
 		cols[cols.length - 7].title = "M";
@@ -89,8 +91,8 @@ const TeamStats = ({
 	);
 
 	const rows = teams.map(t => {
-		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
+			"#": null,
 			abbrev: (
 				<a
 					href={helpers.leagueUrl([
@@ -179,8 +181,9 @@ const TeamStats = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[2, "desc"]}
+				defaultSort={[3, "desc"]}
 				name={`TeamStats${teamOpponent}`}
+				rankCol={0}
 				rows={rows}
 				superCols={superCols}
 			/>

@@ -214,13 +214,15 @@ const GameLog = ({
 
 	return (
 		<>
-			<MoreLinks
-				type="team"
-				page="game_log"
-				abbrev={abbrev}
-				tid={tid}
-				season={season}
-			/>
+			{tid >= 0 ? (
+				<MoreLinks
+					type="team"
+					page="game_log"
+					abbrev={abbrev}
+					tid={tid}
+					season={season}
+				/>
+			) : null}
 
 			{noGamesAndNoBoxScore ? (
 				<NoGamesMessage />

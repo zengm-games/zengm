@@ -190,6 +190,7 @@ export const smoyScore = (p: PlayerFiltered) => {
 	const winp_scale = p.teamInfo.gp / defaultGameAttributes.numGames;
 	return (
 		p.teamInfo.winp * winp_scale +
+		p.currentStats.pts / 9.9 +
 		p.currentStats.ewa / 5.5 +
 		p.currentStats.vorp / 2.3 +
 		p.currentStats.ws / 4.9

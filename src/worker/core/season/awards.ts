@@ -73,6 +73,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"ewa",
 				"ws",
 				"dws",
+				"vorp",
+				"dbpm",
+				"frac_ws",
 				"ws48",
 				"season",
 				"abbrev",
@@ -139,11 +142,13 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	const teamInfos: Record<
 		number,
 		{
+			gp: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
+			gp: teamSeason.won + teamSeason.lost + teamSeason.otl + teamSeason.tied,
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}

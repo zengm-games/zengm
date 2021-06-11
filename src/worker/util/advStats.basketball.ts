@@ -343,60 +343,20 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	const coeffsBPM1 = [
-		0.86,
-		-0.56,
-		-0.246,
-		0.389,
-		0.58,
-		-0.964,
-		0.613,
-		0.116,
-		0.0,
-		1.369,
-		1.327,
+		0.86, -0.56, -0.246, 0.389, 0.58, -0.964, 0.613, 0.116, 0.0, 1.369, 1.327,
 		-0.367,
 	];
 	const coeffsBPM5 = [
-		0.86,
-		-0.78,
-		-0.343,
-		0.389,
-		1.034,
-		-0.964,
-		0.181,
-		0.181,
-		0.0,
-		1.008,
-		0.703,
+		0.86, -0.78, -0.343, 0.389, 1.034, -0.964, 0.181, 0.181, 0.0, 1.008, 0.703,
 		-0.367,
 	];
 	const coeffsORBPM1 = [
-		0.605,
-		-0.33,
-		-0.145,
-		0.477,
-		0.476,
-		-0.579,
-		0.606,
-		-0.112,
-		0.0,
-		0.177,
-		0.725,
-		-0.439,
+		0.605, -0.33, -0.145, 0.477, 0.476, -0.579, 0.606, -0.112, 0.0, 0.177,
+		0.725, -0.439,
 	];
 	const coeffsORBPM5 = [
-		0.605,
-		-0.472,
-		-0.208,
-		0.477,
-		0.476,
-		-0.882,
-		0.422,
-		0.103,
-		0.0,
-		0.294,
-		0.097,
-		-0.439,
+		0.605, -0.472, -0.208, 0.477, 0.476, -0.882, 0.422, 0.103, 0.0, 0.294,
+		0.097, -0.439,
 	];
 
 	const BPM: number[] = [];
@@ -604,7 +564,11 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 	const dws: number[] = [];
 	const ortg: number[] = [];
 	const ows: number[] = [];
-
+	const team_ws: number[] = [];
+	let frac_ws: number[] = [];
+	for (const t of teams) {
+		team_ws[t.tid] = 0;
+	}
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
 		const t = teams.find(t => t.tid === p.tid);
@@ -612,6 +576,8 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 		if (t === undefined) {
 			drtg[i] = 0;
 			ortg[i] = 0;
+			ows[i] = 0;
+			dws[i] = 0;
 		} else {
 			// Defensive rating
 			const dorPct = t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb);
@@ -733,6 +699,18 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 			if (Number.isNaN(ows[i]) || ows[i] === Infinity || p.stats.min < 10) {
 				ows[i] = 0;
 			}
+			team_ws[p.tid] += ows[i] + dws[i];
+		}
+	}
+
+	for (let i = 0; i < players.length; i++) {
+		const p = players[i];
+		const t = teams.find(t => t.tid === p.tid);
+
+		if (t === undefined) {
+			frac_ws[i] = 0;
+		} else {
+			frac_ws[i] = (ows[i] + dws[i]) / team_ws[p.tid];
 		}
 	}
 
@@ -741,6 +719,7 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 		dws,
 		ortg,
 		ows,
+		frac_ws,
 	};
 };
 

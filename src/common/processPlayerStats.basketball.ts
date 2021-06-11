@@ -21,6 +21,7 @@ const straightThrough = [
 	"ortg",
 	"dws",
 	"ows",
+	"frac_ws",
 	"dd",
 	"td",
 	"qd",

@@ -16,6 +16,7 @@ const stats = {
 		"ortg",
 		"dws",
 		"ows",
+		"frac_ws",
 		"obpm",
 		"dbpm",
 		"vorp",

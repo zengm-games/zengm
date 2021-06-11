@@ -177,27 +177,33 @@ const getRealFinalsMvp = async (
 };
 
 export const mvpScore = (p: PlayerFiltered) => {
-	let teamFactor = 0;
-	if (p.currentStats.gp >= 20) {
-		teamFactor =
-			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
-	}
-
-	return p.currentStats.ewa + p.currentStats.ws + teamFactor;
+	const winp_scale = p.teamInfo.gp / defaultGameAttributes.numGames;
+	return (
+		p.teamInfo.winp * winp_scale +
+		p.currentStats.ewa / 73 +
+		p.currentStats.vorp / 93 +
+		p.currentStats.frac_ws / 2.8
+	);
 };
 
-export const smoyScore = (p: PlayerFiltered) =>
-	p.currentStats.ewa + p.currentStats.ws;
+export const smoyScore = (p: PlayerFiltered) => {
+	const winp_scale = p.teamInfo.gp / defaultGameAttributes.numGames;
+	return (
+		p.teamInfo.winp * winp_scale +
+		p.currentStats.ewa / 5.5 +
+		p.currentStats.vorp / 2.3 +
+		p.currentStats.ws / 4.9
+	);
+};
 
 export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.ewa +
-	p.currentStats.ws +
-	(p.currentStats.pts * p.currentStats.gp) / defaultGameAttributes.numGames;
+	p.currentStats.ewa + 2 * p.currentStats.vorp + p.currentStats.pts;
 
-export const dpoyScore = (p: PlayerFiltered) =>
-	p.currentStats.dws +
-	((p.currentStats.blk + p.currentStats.stl) * p.currentStats.gp) /
-		defaultGameAttributes.numGames;
+export const dpoyScore = (p: PlayerFiltered) => {
+	return (
+		p.currentStats.dws + p.currentStats.blk / 406 + p.currentStats.stl / 84
+	);
+};
 
 // Handle case where GS is not available, which happens when loading historical stats
 export const getSmoyFilter = (players: PlayerFiltered[]) => {

@@ -1,18 +1,16 @@
 Option to start leagues with a fantasy draft https://discord.com/channels/290013534023057409/331882115119448065/851259687780876348
 
-trade summary overflow on mobile https://discord.com/channels/290013534023057409/290015591216054273/852047511824105502
-
-jump to not on news feed https://discord.com/channels/290013534023057409/290015591216054273/851626226904334356
-
 ZGMH all contending https://discord.com/channels/290013534023057409/290015591216054273/851150025966747678
 
-ratings stats popover overflow https://discord.com/channels/290013534023057409/290015591216054273/851493125326766160
-
 store results of trading block in database
-- some way to pin offers?
-  - needs to include what user is trading for, in case that changes
-  - indicator of if the offer is still valid or not
-    - can evaluate trade to see
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
+
+some way to pin trades?
+- UI? trading block and trade page? updating a pinned trade?
+- needs to include what user is trading for, in case that changes
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
 
 make mood a little harsher, for all teams - less likely to re-sign
 
@@ -329,6 +327,7 @@ add some more built-in teams
   - By BBGM userbase: Manila, Syndney, São Paulo
     - capybaras
     - Rio Bossa Nova, Rio Carnivals, Rio sambas https://discord.com/channels/@me/849090991151513620
+- Houston Asterisks
 
 "find players" form
 - customizable search boxes for stats/ratings

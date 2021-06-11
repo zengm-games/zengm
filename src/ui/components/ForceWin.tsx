@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { toWorker, useLocalShallow } from "../util";
 
@@ -98,14 +98,14 @@ const ForceWin = ({
 				</div>
 				<AnimatePresence>
 					{state === "saved" ? (
-						<motion.div
+						<m.div
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0, transition: { duration: 1 } }}
 							transition={{ duration: 0.1 }}
 						>
 							<span className="ml-2 glyphicon glyphicon-ok text-success" />
-						</motion.div>
+						</m.div>
 					) : null}
 				</AnimatePresence>
 				{state === "error" ? (

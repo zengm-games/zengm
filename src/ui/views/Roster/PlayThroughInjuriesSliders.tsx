@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
 import { timeBetweenGames } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
@@ -88,7 +88,7 @@ const PlayThroughInjuriesSliders = ({
 						onClick={() => setExpanded(prev => !prev)}
 					>
 						<AnimatePresence initial={false}>
-							<motion.span
+							<m.span
 								animate={expanded ? "open" : "collapsed"}
 								variants={{
 									open: { rotate: 90 },
@@ -129,7 +129,7 @@ const PlayThroughInjuriesSliders = ({
 			</div>
 			<AnimatePresence initial={false}>
 				{expanded ? (
-					<motion.form
+					<m.form
 						className="mt-2"
 						initial="collapsed"
 						animate="open"
@@ -153,7 +153,7 @@ const PlayThroughInjuriesSliders = ({
 							initialValue={t.playThroughInjuries[1]}
 							tid={t.tid}
 						/>
-					</motion.form>
+					</m.form>
 				) : null}
 			</AnimatePresence>
 		</div>

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useCallback, useState, useReducer } from "react";
@@ -527,8 +527,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [currentScreen, setCurrentScreen] =
-		useState<"default" | "teams" | "settings">("default");
+	const [currentScreen, setCurrentScreen] = useState<
+		"default" | "teams" | "settings"
+	>("default");
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -807,7 +808,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	let subPage = null;
 	if (currentScreen === "teams") {
 		subPage = (
-			<motion.div
+			<m.div
 				key="screen-teams"
 				variants={animationVariants}
 				initial="right"
@@ -840,7 +841,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					}}
 					godModeLimits={props.godModeLimits}
 				/>
-			</motion.div>
+			</m.div>
 		);
 	}
 
@@ -855,7 +856,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	if (currentScreen === "settings") {
 		subPage = (
-			<motion.div
+			<m.div
 				key="screen-settings"
 				variants={animationVariants}
 				initial="right"
@@ -880,7 +881,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					// Don't want legends for this!
 					realPlayers={state.customize === "real"}
 				/>
-			</motion.div>
+			</m.div>
 		);
 	}
 
@@ -924,7 +925,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			{subPage ? (
 				subPage
 			) : (
-				<motion.form
+				<m.form
 					key="screen-main"
 					variants={animationVariants}
 					initial="left"
@@ -1353,7 +1354,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							</div>
 						) : null}
 					</div>
-				</motion.form>
+				</m.form>
 			)}
 		</AnimatePresence>
 	);

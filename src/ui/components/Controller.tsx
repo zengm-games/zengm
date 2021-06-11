@@ -1,3 +1,4 @@
+import { LazyMotion } from "framer-motion";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useReducer, useRef } from "react";
 import useTitleBar from "../hooks/useTitleBar";
@@ -21,6 +22,9 @@ import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
 import type { Context } from "../router";
+
+const loadFramerMotionFeatures = () =>
+	import("../util/framerMotionFeatures").then(res => res.default);
 
 type LeagueContentProps = {
 	children: any;
@@ -319,7 +323,7 @@ const Controller = () => {
 	}
 
 	return (
-		<>
+		<LazyMotion strict features={loadFramerMotionFeatures}>
 			<NavBar updating={loading} />
 			<LeagueTopBar />
 			<TitleBar />
@@ -340,7 +344,7 @@ const Controller = () => {
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />
-		</>
+		</LazyMotion>
 	);
 };
 

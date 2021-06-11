@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -104,7 +104,7 @@ const LeagueTopBar = memo(() => {
 				// This makes it not animate the initial render
 				<AnimatePresence initial={false}>
 					{games2.map(game => (
-						<motion.div
+						<m.div
 							key={game.gid}
 							layout
 							initial={{ x: 105 }}
@@ -114,7 +114,7 @@ const LeagueTopBar = memo(() => {
 							transition={transition}
 						>
 							<ScoreBox className="mr-2" game={game} small />
-						</motion.div>
+						</m.div>
 					))}
 				</AnimatePresence>
 			) : null}

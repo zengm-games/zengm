@@ -79,8 +79,6 @@ teams shouldn't offer nothing on trading block
 
 bundle size
 - defer
-  - framer-motion
-    - https://www.framer.com/api/motion/guide-reduce-bundle-size/#async-loading
   - react-select
   - all views? https://reactjs.org/docs/code-splitting.html#route-based-code-splitting
     - how many is too many?

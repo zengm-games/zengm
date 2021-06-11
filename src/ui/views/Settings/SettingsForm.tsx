@@ -12,7 +12,7 @@ import {
 } from "react";
 import { HelpPopover, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { isSport } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
@@ -1278,7 +1278,7 @@ const Option = ({
 			) : null}
 			<AnimatePresence initial={false}>
 				{showDescriptionLong ? (
-					<motion.div
+					<m.div
 						initial="collapsed"
 						animate="open"
 						exit="collapsed"
@@ -1293,7 +1293,7 @@ const Option = ({
 						className="text-muted settings-description mt-1"
 					>
 						{descriptionLong}
-					</motion.div>
+					</m.div>
 				) : null}
 			</AnimatePresence>
 		</>
@@ -1415,31 +1415,31 @@ const SettingsForm = ({
 		}
 	};
 
-	const handleChange = (name: Key, type: FieldType) => (
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		let value: string;
-		if (type === "bool") {
-			value = String((event.target as any).checked);
-		} else if (type === "floatValuesOrCustom") {
-			if (event.target.value === "custom") {
-				value = JSON.stringify([true, JSON.parse(state[name])[1]]);
+	const handleChange =
+		(name: Key, type: FieldType) =>
+		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			let value: string;
+			if (type === "bool") {
+				value = String((event.target as any).checked);
+			} else if (type === "floatValuesOrCustom") {
+				if (event.target.value === "custom") {
+					value = JSON.stringify([true, JSON.parse(state[name])[1]]);
+				} else {
+					value = JSON.stringify([false, event.target.value]);
+				}
 			} else {
-				value = JSON.stringify([false, event.target.value]);
+				value = event.target.value;
 			}
-		} else {
-			value = event.target.value;
-		}
 
-		setState(prevState => ({
-			...prevState,
-			[name]: value,
-		}));
+			setState(prevState => ({
+				...prevState,
+				[name]: value,
+			}));
 
-		if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
-			setGameSimPreset("default");
-		}
-	};
+			if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
+				setGameSimPreset("default");
+			}
+		};
 
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
@@ -1458,7 +1458,7 @@ const SettingsForm = ({
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output = ({} as unknown) as Settings;
+		const output = {} as unknown as Settings;
 		for (const option of filteredSettings) {
 			const { key, name, type } = option;
 			const value = state[key];

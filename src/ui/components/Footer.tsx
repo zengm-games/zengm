@@ -33,6 +33,7 @@ const footerLinks = [
 ];
 
 const Footer = memo(() => {
+	console.log("Footer");
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
 		<footer className="footer-wrapper mt-auto" id="main-footer">

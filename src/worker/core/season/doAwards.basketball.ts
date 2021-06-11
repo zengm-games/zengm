@@ -180,9 +180,9 @@ export const mvpScore = (p: PlayerFiltered) => {
 	const winp_scale = p.teamInfo.gp / defaultGameAttributes.numGames;
 	return (
 		p.teamInfo.winp * winp_scale +
-		p.currentStats.ewa / 73 +
-		p.currentStats.vorp / 93 +
-		p.currentStats.frac_ws / 2.8
+		p.currentStats.ewa / 22 +
+		p.currentStats.vorp / 32 +
+		p.currentStats.frac_ws / 10
 	);
 };
 

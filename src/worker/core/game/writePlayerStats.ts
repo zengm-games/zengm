@@ -409,11 +409,6 @@ const writePlayerStats = async (
 						ps = p2.stats[p2.stats.length - 1];
 					}
 
-					// Since index is not on playoffs, manually check
-					if (ps.playoffs !== playoffs) {
-						throw new Error(`Missing playoff stats for player ${p.id}`);
-					}
-
 					// Update stats
 					if (p.stat.min > 0) {
 						for (const key of Object.keys(p.stat)) {

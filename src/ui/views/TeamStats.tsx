@@ -51,6 +51,11 @@ const TeamStats = ({
 		}
 	}
 
+	// Account for # column
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
+
 	const cols = getCols(
 		...basicColNames,
 		...stats.map(stat => {

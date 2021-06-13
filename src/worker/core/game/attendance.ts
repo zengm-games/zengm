@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { bySport, isSport } from "../../../common";
+import { bySport, DEFAULT_STADIUM_CAPACITY, isSport } from "../../../common";
 import getAdjustedTicketPrice, {
 	PLAYOFF_ATTENDANCE_FACTOR,
 } from "../../../common/getAdjustedTicketPrice";
@@ -152,16 +152,31 @@ export const getAutoTicketPriceByTid = async (tid: number) => {
 		],
 	);
 
+	let hype: number;
+	let pop: number;
+	let stadiumCapacity: number;
 	if (teamSeasons.length === 0) {
-		throw new Error("No team season found");
+		// This happens for expansion teams in the offseason, they have no teamSeason yet
+
+		const t = await idb.cache.teams.get(tid);
+		if (!t) {
+			throw new Error("No team found");
+		}
+
+		hype = 0.5;
+		pop = t.pop ?? 1;
+		stadiumCapacity = t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY;
+	} else {
+		const teamSeason = teamSeasons[teamSeasons.length - 1];
+		hype = teamSeason.hype;
+		pop = teamSeason.pop;
+		stadiumCapacity = teamSeason.stadiumCapacity;
 	}
 
-	const teamSeason = teamSeasons[teamSeasons.length - 1];
-
 	return getAutoTicketPrice({
-		hype: teamSeason.hype,
-		pop: teamSeason.pop,
-		stadiumCapacity: teamSeason.stadiumCapacity,
+		hype,
+		pop,
+		stadiumCapacity,
 		teamSeasons,
 	});
 };

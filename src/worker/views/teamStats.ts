@@ -7,6 +7,7 @@ import type {
 	TeamSeasonAttr,
 } from "../../common/types";
 import { TEAM_STATS_TABLES, bySport } from "../../common";
+import { team } from "../core";
 
 export const getStats = async (
 	season: number,
@@ -56,6 +57,8 @@ export const getStats = async (
 			for (const t of teams) {
 				t.seasonAttrs.won = 0;
 				t.seasonAttrs.lost = 0;
+				t.seasonAttrs.tied = 0;
+				t.seasonAttrs.otl = 0;
 			}
 
 			for (const round of playoffSeries.series) {
@@ -77,6 +80,17 @@ export const getStats = async (
 						}
 					}
 				}
+			}
+		}
+
+		for (const t of teams) {
+			if (usePts) {
+				t.seasonAttrs.pts = team.evaluatePointsFormula(t.seasonAttrs, {
+					season,
+				});
+				t.seasonAttrs.ptsPct = team.ptsPct(t.seasonAttrs);
+			} else {
+				t.seasonAttrs.winp = helpers.calcWinp(t.seasonAttrs);
 			}
 		}
 	}

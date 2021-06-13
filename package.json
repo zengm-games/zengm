@@ -47,7 +47,7 @@
 		"d3-selection": "^3.0.0",
 		"d3-shape": "^3.0.1",
 		"dompurify": "^2.2.9",
-		"facesjs": "^3.4.0",
+		"facesjs": "^3.5.0",
 		"framer-motion": "^4.1.17",
 		"html2canvas": "^1.0.0-rc.7",
 		"idb": "dumbmatter/idb#bbgm2",

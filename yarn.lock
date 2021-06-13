@@ -3625,10 +3625,10 @@ extend@^3.0.0:
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
-facesjs@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.4.0.tgz#0179d9e63c1bc20fe8904a658820224f323b51bb"
-  integrity sha512-qJ9MVCSfwX6ro8NEHaiZH3wQgGESlCFZ6rWI6B+lgBS87RZY7WIy2m45TUP7HpEZswxztQlt0VMuoutMBc9Ysg==
+facesjs@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.5.0.tgz#ee71412be51548ddf8b90a07f7baee55dfe3ea5c"
+  integrity sha512-sl5Q1HLZKPLDpCHRzU5oEAAQN3/+lsA3JRZFh4ifO3qCXzAVKO4srzn5PJTnUcyvM0bgI8qLwtC8nbjrZ8SEcA==
 
 fake-indexeddb@^3.1.2:
   version "3.1.2"

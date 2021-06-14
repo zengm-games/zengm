@@ -430,13 +430,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					/>
 				</>
 			) : null}
-
-			{isSport("hockey") ? (
-				<p className="mb-0">
-					If you're looking for your old leagues in the old version of ZenGM
-					Hockey, <a href="http://hockey.zengm.com/">click here</a>.
-				</p>
-			) : null}
 		</>
 	);
 };

@@ -615,10 +615,18 @@ const updateLeaders = async (
 		});
 		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
 
+		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
+		const numPlayersOnCourtFactor = bySport({
+			basketball:
+				defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
+			football: 1,
+			hockey: 1,
+		});
+
 		// To handle changes in number of games, playing time, etc
 		const factor =
 			(g.get("numGames") / defaultGameAttributes.numGames) *
-			(defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt")) *
+			numPlayersOnCourtFactor *
 			helpers.quarterLengthFactor();
 
 		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders

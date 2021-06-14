@@ -17,7 +17,7 @@ export const formatStatGameHigh = (
 		}
 
 		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
-		const row = (ps[stat] as unknown) as
+		const row = ps[stat] as unknown as
 			| [number, number]
 			| [number, number, string, number, number];
 
@@ -183,9 +183,6 @@ const PlayerStats = ({
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
 				.
-				{isSport("basketball")
-					? " Only players averaging more than 5 minutes per game are shown."
-					: null}
 			</p>
 
 			<DataTable

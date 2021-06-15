@@ -30,11 +30,11 @@ const updatePlayerGameLog = async (
 			return returnValue;
 		}
 
-		const seasons = Array.from(
+		const seasonsWithStats = Array.from(
 			new Set(
 				topStuff.player.stats.filter(row => row.gp > 0).map(row => row.season),
 			),
-		);
+		).reverse();
 
 		const superCols = [
 			{
@@ -152,6 +152,7 @@ const updatePlayerGameLog = async (
 			...topStuff,
 			gameLog,
 			season,
+			seasonsWithStats,
 			stats,
 			superCols: superCols.length > 2 ? superCols : undefined,
 		};

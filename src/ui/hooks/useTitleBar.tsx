@@ -10,9 +10,10 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	hideNewWindow,
 	jumpTo,
 	jumpToSeason,
+	dropdownCustomOptions,
 	dropdownCustomURL,
 	dropdownView,
-	dropdownFields = {} as DropdownFields,
+	dropdownFields,
 	moreInfoAbbrev,
 	moreInfoSeason,
 	moreInfoTid,
@@ -22,6 +23,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all";
+	dropdownCustomOptions?: Record<string, (number | string)[]>;
 	dropdownCustomURL?: (fields: DropdownFields) => string;
 	dropdownView?: string;
 	dropdownFields?: DropdownFields;
@@ -45,16 +47,18 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 
 		const sortedTeams = getSortedTeams(state);
 
-		for (const key of Object.values(dropdownFields)) {
-			if (key === "all") {
-				// Not much use showing "All X" in the title, and also this saves us from having to dedupe all the "all|||" keys in getDropdownValue
-				continue;
-			}
+		if (dropdownFields) {
+			for (const key of Object.values(dropdownFields)) {
+				if (key === "all") {
+					// Not much use showing "All X" in the title, and also this saves us from having to dedupe all the "all|||" keys in getDropdownValue
+					continue;
+				}
 
-			const value = getDropdownValue(key, sortedTeams);
+				const value = getDropdownValue(key, sortedTeams);
 
-			if (value !== undefined) {
-				parts.push(value);
+				if (value !== undefined) {
+					parts.push(value);
+				}
 			}
 		}
 
@@ -69,7 +73,8 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 			hideNewWindow,
 			jumpTo,
 			jumpToSeason,
-			dropdownCustomURL,
+			dropdownCustomOptions,
+			dropdownCustomURL: dropdownCustomURL as any,
 			dropdownView,
 			dropdownFields,
 			moreInfoAbbrev,
@@ -82,6 +87,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
+		dropdownCustomOptions,
 		dropdownCustomURL,
 		dropdownView,
 		dropdownFields,

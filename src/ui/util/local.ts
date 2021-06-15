@@ -62,6 +62,7 @@ const useLocal = create<
 	hideNewWindow: false,
 	jumpTo: false,
 	jumpToSeason: undefined,
+	dropdownCustomOptions: undefined,
 	dropdownCustomURL: undefined,
 	dropdownView: undefined,
 	dropdownFields: {},

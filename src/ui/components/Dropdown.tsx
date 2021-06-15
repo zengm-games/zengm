@@ -6,15 +6,17 @@ import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
 
 const Select = ({
+	customOptions,
 	field,
 	handleChange,
 	value,
 }: {
+	customOptions?: (number | string)[];
 	field: string;
 	handleChange: (value: number | string) => void;
 	value: number | string;
 }) => {
-	const options = useDropdownOptions(field);
+	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
 
 	useEffect(() => {
@@ -106,12 +108,13 @@ Select.propTypes = {
 };
 
 type Props = {
+	customOptions?: Record<string, (number | string)[]>;
 	customURL?: (fields: Record<string, number | string>) => string;
 	fields: Record<string, number | string>;
 	view: string;
 };
 
-const Dropdown = ({ customURL, fields, view }: Props) => {
+const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
@@ -139,6 +142,7 @@ const Dropdown = ({ customURL, fields, view }: Props) => {
 			{keys.map((key, i) => {
 				return (
 					<Select
+						customOptions={customOptions ? customOptions[key] : undefined}
 						key={key}
 						field={key}
 						value={values[i]}

@@ -19,6 +19,7 @@ const TitleBar = () => {
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
+		dropdownCustomOptions,
 		dropdownCustomURL,
 		dropdownView,
 		dropdownFields,
@@ -32,6 +33,7 @@ const TitleBar = () => {
 		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
+		dropdownCustomOptions: state.dropdownCustomOptions,
 		dropdownCustomURL: state.dropdownCustomURL,
 		dropdownView: state.dropdownView,
 		dropdownFields: state.dropdownFields,
@@ -186,6 +188,7 @@ const TitleBar = () => {
 			{dropdownView && dropdownFields ? (
 				<Dropdown
 					customURL={dropdownCustomURL}
+					customOptions={dropdownCustomOptions}
 					view={dropdownView}
 					fields={dropdownFields}
 				/>

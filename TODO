@@ -36,7 +36,6 @@ player game log
 - PlayerGameLog
   - handle DNP
   - include customMenu like player page? enough room?
-  - include season switcher only for active seasons
 - test
   - all sports
   - different player types

@@ -26,6 +26,7 @@ const PlayerGameLog = ({
 	willingToSign,
 	gameLog,
 	season,
+	seasonsWithStats,
 	stats,
 	superCols,
 }: View<"playerGameLog">) => {
@@ -35,6 +36,9 @@ const PlayerGameLog = ({
 		dropdownFields: {
 			playerProfile: "gameLog",
 			seasons: season,
+		},
+		dropdownCustomOptions: {
+			seasons: seasonsWithStats,
 		},
 		dropdownCustomURL: fields => {
 			const parts =

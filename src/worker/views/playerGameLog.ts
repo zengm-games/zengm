@@ -6,7 +6,7 @@ import {
 } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { getTeamInfoBySeason } from "../util";
+import { g, getTeamInfoBySeason } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (
@@ -16,9 +16,9 @@ const updatePlayerGameLog = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		!state.retired ||
 		state.pid !== pid ||
-		state.season !== season
+		state.season !== season ||
+		state.season === g.get("season")
 	) {
 		const topStuff = await getCommon(pid);
 

@@ -45,7 +45,7 @@ const PlayerGameLog = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
-	const rows = gameLog.map((game, i) => {
+	const makeRow = (game: typeof gameLog[number], i: number) => {
 		return {
 			key: i,
 			data: [
@@ -72,7 +72,12 @@ const PlayerGameLog = ({
 				...stats.map(stat => helpers.roundStat(game.stats[stat], stat, true)),
 			],
 		};
-	});
+	};
+
+	const rowsRegularSeason = gameLog.filter(game => !game.playoffs).map(makeRow);
+	const rowsPlayoffs = gameLog.filter(game => game.playoffs).map(makeRow);
+
+	let noGamesMessage;
 
 	return (
 		<>
@@ -97,16 +102,37 @@ const PlayerGameLog = ({
 				willingToSign={willingToSign}
 			/>
 
-			{rows.length === 0 ? (
-				<p>No games found</p>
+			{noGamesMessage ? (
+				<p>{noGamesMessage}</p>
 			) : (
-				<DataTable
-					cols={cols}
-					defaultSort={[0, "asc"]}
-					name="PlayerGameLog"
-					rows={rows}
-					superCols={superCols}
-				/>
+				<>
+					{rowsRegularSeason.length > 0 ? (
+						<>
+							<DataTable
+								cols={cols}
+								defaultSort={[0, "asc"]}
+								name="PlayerGameLog"
+								rows={rowsRegularSeason}
+								superCols={superCols}
+							/>
+						</>
+					) : null}
+					{rowsPlayoffs.length > 0 ? (
+						<>
+							<h2 className={rowsRegularSeason.length > 0 ? "mt-5" : undefined}>
+								Playoffs
+							</h2>
+							<DataTable
+								className="datatable-negative-margin-top"
+								cols={cols}
+								defaultSort={[0, "asc"]}
+								name="PlayerGameLogPlayoffs"
+								rows={rowsPlayoffs}
+								superCols={superCols}
+							/>
+						</>
+					) : null}
+				</>
 			)}
 		</>
 	);

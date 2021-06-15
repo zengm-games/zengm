@@ -39,7 +39,7 @@ player game log
     - basketball
     - hockey
   - min rounding basketball, other sports?
-  - game score
+  - show season summary and ratings in TopStuff
 - use filterPlayerStats in basketball box score
 - test
   - all sports

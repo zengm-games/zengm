@@ -106,6 +106,9 @@ const processStats = (
 		} else if (stat === "jerseyNumber") {
 			row[stat] = ps[stat];
 			scale = false;
+		} else if (stat === "gmsc") {
+			row[stat] = helpers.gameScore(ps);
+			scale = false;
 		} else if (stat.endsWith("Max")) {
 			row[stat] = ps[stat];
 			scale = false;

@@ -4,7 +4,7 @@ import bySport from "./bySport";
 const filterPlayerStats = (p: any, stats: string[], type: string) => {
 	return bySport({
 		basketball: () => {
-			throw new Error("Not implemented yet");
+			return p.min > 0;
 		},
 		football: () => {
 			for (const stat of stats) {

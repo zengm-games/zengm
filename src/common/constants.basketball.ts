@@ -122,7 +122,37 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
-const PLAYER_GAME_STATS = {};
+const PLAYER_GAME_STATS = {
+	all: {
+		name: "All",
+		stats: [
+			"gs",
+			"min",
+			"fg",
+			"fga",
+			"fgp",
+			"tp",
+			"tpa",
+			"tpp",
+			"ft",
+			"fta",
+			"ftp",
+			"orb",
+			"drb",
+			"trb",
+			"ast",
+			"tov",
+			"stl",
+			"blk",
+			"ba",
+			"pf",
+			"pts",
+			"pm",
+			"gmsc",
+		],
+		sortBy: ["min"],
+	},
+};
 
 const PLAYER_SUMMARY = {
 	summary: {

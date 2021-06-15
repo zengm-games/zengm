@@ -72,6 +72,7 @@ const updatePlayerGameLog = async (
 			if (!row) {
 				continue;
 			}
+			console.log("row", row);
 
 			const t1 = t0 === 0 ? 1 : 0;
 

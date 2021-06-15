@@ -109,9 +109,6 @@ const updatePlayerGameLog = async (
 					types.push(type);
 				}
 			}
-			if (types.length === 0) {
-				continue;
-			}
 
 			const tid = game.teams[t0].tid;
 			const oppTid = game.teams[t1].tid;

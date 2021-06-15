@@ -34,6 +34,7 @@ player game log
   - PLAYER_GAME_STATS for basketball
   - handle duplicates
 - PlayerGameLog
+  - handle DNP
   - click two rows, popup shows avg over that timespan, like basketball-reference
   - include customMenu like player page? enough room?
   - include season switcher only for active seasons

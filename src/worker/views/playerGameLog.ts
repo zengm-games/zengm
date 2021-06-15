@@ -140,6 +140,7 @@ const updatePlayerGameLog = async (
 			}
 
 			gameLog.push({
+				gid: game.gid,
 				tid,
 				abbrev,
 				oppTid,

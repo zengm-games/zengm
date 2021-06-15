@@ -33,7 +33,15 @@ File System Access API https://web.dev/file-system-access/
 player game log
 - use filterPlayerStats in basketball box score
 - home/away indicator
-- link to box score
+- show DNP rows
+  - we are looking up pid in box scores, so we have it
+- topstuff for historical seasons
+  - adjust age
+  - team at end of season
+  - experience
+  - contract
+  - jersey type
+  - jersey colors
 - test
   - all sports
   - different player types
@@ -57,6 +65,8 @@ Adjust team rating based on the adjusted ovr of players who are playing through 
   - loadTeams.ts
 
 in garbage time, rest players who are playing through injuries
+
+https://en.wikipedia.org/wiki/Three_stars_(ice_hockey)
 
 wrong team abbrev various places
 - box score https://discord.com/channels/290013534023057409/331882115119448065/852551515931017236

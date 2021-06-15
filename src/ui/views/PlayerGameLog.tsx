@@ -83,7 +83,16 @@ const PlayerGameLog = ({
 				>
 					{game.oppAbbrev}
 				</a>,
-				game.result,
+				<a
+					href={helpers.leagueUrl([
+						"game_log",
+						game.tid < 0 ? "special" : `${game.abbrev}_${game.tid}`,
+						season,
+						game.gid,
+					])}
+				>
+					{game.result}
+				</a>,
 				...stats.map(stat => helpers.roundStat(game.stats[stat], stat, true)),
 			],
 		};

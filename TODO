@@ -34,12 +34,7 @@ player game log
 - column definitions
   - PLAYER_GAME_STATS for basketball
 - PlayerGameLog
-  - handle DNP
-  - +/- highlight
-    - basketball
-    - hockey
-  - min rounding basketball, other sports?
-  - show season summary and ratings in TopStuff
+  - show this season's summary and ratings in TopStuff
 - use filterPlayerStats in basketball box score
 - test
   - all sports

@@ -43,14 +43,24 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	return { currentGidInList, prevGid, nextGid };
 };
 
-const NoGamesMessage = () => (
-	<p className="alert alert-info" style={{ maxWidth: 550 }}>
-		No games found for this season. By default, box scores from old seasons are
-		automatically deleted after 3 years.{" "}
-		<a href={helpers.leagueUrl(["settings"])}>
-			You can change this behavior on the League Settings page.
-		</a>
-	</p>
+export const NoGamesMessage = ({
+	warnAboutDelete,
+}: {
+	warnAboutDelete: boolean;
+}) => (
+	<div className="alert alert-info d-inline-block" style={{ maxWidth: 600 }}>
+		No games found for this season.
+		{warnAboutDelete ? (
+			<>
+				{" "}
+				By default, box scores from old seasons are automatically deleted after
+				3 years.{" "}
+				<a href={helpers.leagueUrl(["settings"])}>
+					You can change this behavior on the League Settings page.
+				</a>
+			</>
+		) : null}
+	</div>
 );
 
 const GamesList = ({
@@ -73,7 +83,7 @@ const GamesList = ({
 	}));
 
 	if (season < currentSeason && gamesList.games.length === 0) {
-		return <NoGamesMessage />;
+		return <NoGamesMessage warnAboutDelete />;
 	}
 
 	return (
@@ -225,7 +235,7 @@ const GameLog = ({
 			) : null}
 
 			{noGamesAndNoBoxScore ? (
-				<NoGamesMessage />
+				<NoGamesMessage warnAboutDelete />
 			) : (
 				<>
 					<p />

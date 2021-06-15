@@ -3,6 +3,7 @@ import type { View } from "../../common/types";
 import TopStuff from "./Player/TopStuff";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
+import { NoGamesMessage } from "./GameLog";
 
 const PlayerGameLog = ({
 	currentSeason,
@@ -78,6 +79,11 @@ const PlayerGameLog = ({
 	const rowsPlayoffs = gameLog.filter(game => game.playoffs).map(makeRow);
 
 	let noGamesMessage;
+	if (gameLog.length === 0) {
+		noGamesMessage = (
+			<NoGamesMessage warnAboutDelete={season < currentSeason} />
+		);
+	}
 
 	return (
 		<>

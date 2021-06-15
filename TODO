@@ -35,7 +35,6 @@ player game log
   - PLAYER_GAME_STATS for basketball
 - PlayerGameLog
   - handle DNP
-  - include customMenu like player page? enough room?
 - test
   - all sports
   - different player types

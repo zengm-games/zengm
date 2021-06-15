@@ -7,6 +7,7 @@ import { NoGamesMessage } from "./GameLog";
 
 const PlayerGameLog = ({
 	currentSeason,
+	customMenu,
 	freeAgent,
 	godMode,
 	injured,
@@ -32,6 +33,7 @@ const PlayerGameLog = ({
 }: View<"playerGameLog">) => {
 	useTitleBar({
 		title: player.name,
+		customMenu,
 		dropdownView: "player_game_log",
 		dropdownFields: {
 			playerProfile: "gameLog",

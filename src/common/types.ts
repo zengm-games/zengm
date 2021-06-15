@@ -182,8 +182,11 @@ export type TradeEventTeams = {
 	assets: TradeEventAsset[];
 }[];
 
-export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
-	T extends Record<K, V> ? T : never;
+export type DiscriminateUnion<
+	T,
+	K extends keyof T,
+	V extends T[K],
+> = T extends Record<K, V> ? T : never;
 
 export type EventBBGMWithoutKey =
 	| {
@@ -793,7 +796,8 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraParam?: number | string;
+	dropdownExtraAfter?: (number | string)[];
+	dropdownExtraBefore?: (number | string)[];
 	dropdownView?: string;
 	dropdownFields?: {
 		[key: string]: number | string;

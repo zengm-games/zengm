@@ -106,24 +106,31 @@ Select.propTypes = {
 };
 
 type Props = {
-	extraParam?: number | string;
+	extraAfter?: (number | string)[];
+	extraBefore?: (number | string)[];
 	fields: {
 		[key: string]: number | string;
 	};
 	view: string;
 };
 
-const Dropdown = ({ extraParam, fields, view }: Props) => {
+const Dropdown = ({ extraAfter, extraBefore, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
 	const handleChange = (i: number, value: string | number) => {
 		const newValues = values.slice();
 		newValues[i] = value;
-		const parts = [view, ...newValues];
+		const parts: (number | string)[] = [view];
 
-		if (extraParam !== undefined) {
-			parts.push(extraParam);
+		if (extraBefore !== undefined) {
+			parts.push(...extraBefore);
+		}
+
+		parts.push(...newValues);
+
+		if (extraAfter !== undefined) {
+			parts.push(...extraAfter);
 		}
 
 		realtimeUpdate([], helpers.leagueUrl(parts));
@@ -143,12 +150,6 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			})}
 		</form>
 	);
-};
-
-Dropdown.propTypes = {
-	extraParam: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	fields: PropTypes.object.isRequired,
-	view: PropTypes.string.isRequired,
 };
 
 export default Dropdown;

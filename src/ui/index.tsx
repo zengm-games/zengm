@@ -256,6 +256,7 @@ const setupRoutes = () => {
 				let errMsg: ReactNode = error.message;
 
 				if (errMsg === "Matching route not found") {
+					console.log(context, error);
 					errMsg = "Page not found.";
 				} else if (errMsg === "League not found.") {
 					errMsg = leagueNotFoundMessage;

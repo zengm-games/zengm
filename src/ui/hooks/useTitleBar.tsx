@@ -10,7 +10,8 @@ const useTitleBar = ({
 	hideNewWindow,
 	jumpTo,
 	jumpToSeason,
-	dropdownExtraParam,
+	dropdownExtraAfter,
+	dropdownExtraBefore,
 	dropdownView,
 	dropdownFields = {},
 	moreInfoAbbrev,
@@ -22,7 +23,8 @@ const useTitleBar = ({
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraParam?: number | string;
+	dropdownExtraAfter?: (number | string)[];
+	dropdownExtraBefore?: (number | string)[];
 	dropdownView?: string;
 	dropdownFields?: {
 		[key: string]: number | string;
@@ -71,7 +73,8 @@ const useTitleBar = ({
 			hideNewWindow,
 			jumpTo,
 			jumpToSeason,
-			dropdownExtraParam,
+			dropdownExtraAfter,
+			dropdownExtraBefore,
 			dropdownView,
 			dropdownFields,
 			moreInfoAbbrev,
@@ -84,7 +87,8 @@ const useTitleBar = ({
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
-		dropdownExtraParam,
+		dropdownExtraAfter,
+		dropdownExtraBefore,
 		dropdownView,
 		dropdownFields,
 		moreInfoAbbrev,

@@ -201,7 +201,7 @@ const GameLog = ({
 			})]: abbrev,
 			seasons: season,
 		},
-		dropdownExtraParam: boxScore.gid,
+		dropdownExtraAfter: [boxScore.gid],
 	});
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(

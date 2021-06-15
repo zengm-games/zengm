@@ -32,6 +32,8 @@ File System Access API https://web.dev/file-system-access/
 
 player game log
 - needs a dedicated link, in addition to individual seasons?
+  - turn "Game Log" text into a dropdown menu, with "Overview" as the other option
+    - dropdownCustomURL instead of dropdownExtraAfter/dropdownExtraBefore
 - column definitions
   - PLAYER_GAME_STATS for basketball
 - PlayerGameLog

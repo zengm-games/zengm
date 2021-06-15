@@ -210,6 +210,9 @@ const Player2 = ({
 	useTitleBar({
 		title: player.name,
 		customMenu,
+		dropdownFields: {
+			playerProfile: "overview",
+		},
 	});
 
 	const awardsGrouped = groupAwards(player.awards);

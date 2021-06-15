@@ -30,9 +30,10 @@ const PlayerGameLog = ({
 	superCols,
 }: View<"playerGameLog">) => {
 	useTitleBar({
-		title: `${player.name} Game Log`,
+		title: player.name,
 		dropdownView: "player_game_log",
 		dropdownFields: {
+			playerProfile: "gameLog",
 			seasons: season,
 		},
 		dropdownExtraBefore: [player.pid],

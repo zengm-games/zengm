@@ -123,6 +123,8 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	goalie: "Goalies",
 	"all|||playoffsAll": "All Games",
 	current: "Current",
+	overview: "Overview",
+	gameLog: "Game Log",
 };
 
 if (isSport("hockey")) {
@@ -352,6 +354,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["league", "conf", "div"];
 	} else if (field === "flagNote") {
 		keys = ["flag", "note", "either"];
+	} else if (field === "playerProfile") {
+		keys = ["overview", "gameLog"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

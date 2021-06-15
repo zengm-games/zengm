@@ -57,7 +57,7 @@ const fixRatingsStatsAbbrevs = async (p: {
 	}
 };
 
-export const getCommon = async (pid?: number) => {
+export const getCommon = async (pid?: number, season?: number) => {
 	if (pid === undefined) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
@@ -406,6 +406,12 @@ export const getCommon = async (pid?: number) => {
 			league: true,
 			children,
 		};
+	}
+
+	if (season !== undefined) {
+		const offset = season - g.get("season");
+		p.age = Math.max(0, p.age + offset);
+		p.experience = Math.max(0, p.experience + offset);
 	}
 
 	return {

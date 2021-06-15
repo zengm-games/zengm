@@ -20,7 +20,7 @@ const updatePlayerGameLog = async (
 		state.season !== season ||
 		state.season === g.get("season")
 	) {
-		const topStuff = await getCommon(pid);
+		const topStuff = await getCommon(pid, season);
 
 		if (topStuff.type === "error") {
 			// https://stackoverflow.com/a/59923262/786644

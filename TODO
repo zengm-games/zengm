@@ -34,6 +34,7 @@ player game log
   - statsByType/sortsByType to constants
   - do for basketball too
   - PLAYER_STATS_TABLES like PLAYER_STATS_TABLES
+  - handle duplicates
 - click two rows, popup shows avg over that timespan, like basketball-reference
 
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230

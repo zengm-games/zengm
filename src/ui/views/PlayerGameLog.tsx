@@ -123,7 +123,7 @@ const PlayerGameLog = ({
 			/>
 
 			{noGamesMessage ? (
-				<p>{noGamesMessage}</p>
+				noGamesMessage
 			) : (
 				<>
 					{rowsRegularSeason.length > 0 ? (

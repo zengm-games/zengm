@@ -146,7 +146,7 @@ const updatePlayerGameLog = async (
 			});
 		}
 
-		console.log(superCols);
+		console.log(superCols, stats, games, gameLog);
 
 		return {
 			...topStuff,

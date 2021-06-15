@@ -66,6 +66,35 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
+const PLAYER_GAME_STATS = {
+	skaters: {
+		stats: [
+			"g",
+			"a",
+			"pts",
+			"pm",
+			"pim",
+			"s",
+			"sPct",
+			"hit",
+			"blk",
+			"gv",
+			"tk",
+			"fow",
+			"fol",
+			"foPct",
+			"min",
+			"ppMin",
+			"shMin",
+		],
+		sortBy: ["min"],
+	},
+	goalies: {
+		stats: ["ga", "sa", "sv", "svPct", "pim", "min", "ppMin", "shMin"],
+		sortBy: ["min"],
+	},
+};
+
 const PLAYER_SUMMARY = {
 	summarySkater: {
 		name: "SummarySkater",
@@ -333,6 +362,7 @@ export {
 	COMPOSITE_WEIGHTS,
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
+	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,

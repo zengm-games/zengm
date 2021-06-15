@@ -122,6 +122,8 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
+const PLAYER_GAME_STATS = {};
+
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
@@ -541,6 +543,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,

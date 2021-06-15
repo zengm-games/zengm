@@ -28,18 +28,19 @@ File System Access API https://web.dev/file-system-access/
 
 player game log
 - needs a dedicated link, in addition to individual seasons?
-- for football/hockey, compute box score and use superCols to break up by section for players with multiple ones (like rushing and passing)
 - column definitions
-  - statsByType/sortsByType to constants
-  - do for basketball too
-  - PLAYER_STATS_TABLES like PLAYER_STATS_TABLES
+  - use PLAYER_GAME_STATS
+  - use superCols to break up by section for players with multiple ones (like rushing and passing)
+  - PLAYER_GAME_STATS for basketball
   - handle duplicates
 - PlayerGameLog
   - click two rows, popup shows avg over that timespan, like basketball-reference
   - include customMenu like player page? enough room?
   - include season switcher only for active seasons
   - warning about deleted box scores, share with game log
-- confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
+- test
+  - all sports
+  - confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
 - changelog
   - season links
 

@@ -1,4 +1,5 @@
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { idb } from "../db";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (
@@ -21,6 +22,14 @@ const updatePlayerGameLog = async (
 			};
 			return returnValue;
 		}
+
+		const games = await idb.getCopies.games({ season });
+
+		const seasons = Array.from(
+			new Set(topStuff.player.stats.filter(row => row.gp > 0)),
+		);
+
+		console.log(games, seasons);
 
 		return {
 			...topStuff,

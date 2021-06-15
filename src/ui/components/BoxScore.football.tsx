@@ -3,6 +3,7 @@ import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
 import { getPeriodName, helpers, processPlayerStats } from "../../common";
+import { PLAYER_GAME_STATS } from "../../common/constants.football";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -29,64 +30,6 @@ type BoxScore = {
 	numPeriods?: number;
 };
 
-const statsByType = {
-	passing: [
-		"pssCmp",
-		"pss",
-		"cmpPct",
-		"pssYds",
-		"pssTD",
-		"pssInt",
-		"pssSk",
-		"pssSkYds",
-		"qbRat",
-		"fmbLost",
-	],
-	rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
-	receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
-	kicking: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
-	punting: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
-	returns: [
-		"kr",
-		"krYds",
-		"krYdsPerAtt",
-		"krLng",
-		"krTD",
-		"pr",
-		"prYds",
-		"prYdsPerAtt",
-		"prLng",
-		"prTD",
-	],
-	defense: [
-		"defTckSolo",
-		"defTckAst",
-		"defTck",
-		"defTckLoss",
-		"defSk",
-		"defSft",
-		"defPssDef",
-		"defInt",
-		"defIntYds",
-		"defIntTD",
-		"defIntLng",
-		"defFmbFrc",
-		"defFmbRec",
-		"defFmbYds",
-		"defFmbTD",
-	],
-};
-
-const sortsByType = {
-	passing: ["pssYds"],
-	rushing: ["rusYds"],
-	receiving: ["recYds"],
-	kicking: ["kickingPts"],
-	punting: ["pnt"],
-	returns: ["krYds", "prYds"],
-	defense: ["defTck"],
-};
-
 const StatsTable = ({
 	Row,
 	boxScore,
@@ -94,11 +37,11 @@ const StatsTable = ({
 }: {
 	Row: any;
 	boxScore: BoxScore;
-	type: keyof typeof sortsByType;
+	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
-	const stats = statsByType[type];
+	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
-	const sorts = sortsByType[type];
+	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
 	return (
 		<>

@@ -2,13 +2,27 @@ import { bySport } from "../../../common";
 import RatingWithChange from "../../components/RatingWithChange";
 import type { ReactNode } from "react";
 
-const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
-	const r = ratings.length - 1;
+const RatingsOverview = ({
+	ratings,
+	season,
+}: {
+	ratings: any[];
+	season?: number;
+}) => {
+	let currentSeason: any;
 
-	let lastSeason: any = ratings[r];
+	if (season === undefined) {
+		// Use latest season
+		currentSeason = ratings[ratings.length - 1];
+	} else {
+		currentSeason =
+			ratings.find(row => row.season === season) ?? ratings[ratings.length - 1];
+	}
+
+	let lastSeason = currentSeason;
 	// Search backwards to find the last entry from last season, in the case where there are multiple rows due to injuries
-	for (let i = r; i >= 0; i--) {
-		if (ratings[i].season === ratings[r].season - 1) {
+	for (let i = ratings.length - 1; i >= 0; i--) {
+		if (ratings[i].season === currentSeason.season - 1) {
 			lastSeason = ratings[i];
 			break;
 		}
@@ -393,14 +407,14 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 			<div className="d-flex justify-content-between">
 				<h2 className="mr-3">
 					Overall:{" "}
-					<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
-						{ratings[r].ovr}
+					<RatingWithChange change={currentSeason.ovr - lastSeason.ovr}>
+						{currentSeason.ovr}
 					</RatingWithChange>
 				</h2>
 				<h2>
 					Potential:{" "}
-					<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
-						{ratings[r].pot}
+					<RatingWithChange change={currentSeason.pot - lastSeason.pot}>
+						{currentSeason.pot}
 					</RatingWithChange>
 				</h2>
 			</div>
@@ -424,11 +438,11 @@ const RatingsOverview = ({ ratings }: { ratings: any[] }) => {
 												<td className="p-0 pl-1">
 													<RatingWithChange
 														change={
-															(ratings[r] as any)[rating] -
+															(currentSeason as any)[rating] -
 															(lastSeason as any)[rating]
 														}
 													>
-														{(ratings[r] as any)[rating]}
+														{(currentSeason as any)[rating]}
 													</RatingWithChange>
 												</td>
 											</tr>

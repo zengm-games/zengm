@@ -67,6 +67,7 @@ const StatsSummary = ({
 	phase,
 	position,
 	currentSeason,
+	season,
 	stats,
 }: {
 	name: string;
@@ -75,6 +76,7 @@ const StatsSummary = ({
 	phase: Phase;
 	position: string;
 	currentSeason: number;
+	season?: number;
 	stats: string[];
 }) => {
 	if (onlyShowIf !== undefined) {
@@ -84,33 +86,43 @@ const StatsSummary = ({
 	}
 
 	let ps: typeof p["stats"][number] | undefined;
-	if (p.tid === PLAYER.RETIRED) {
-		// Find best season for retired player
-		let maxValue = -Infinity;
-		for (const row of p.stats) {
-			if (row.playoffs) {
-				continue;
-			}
-
-			const value = bySport({
-				basketball: row.ws,
-				football: row.av,
-				hockey: row.ps,
-			});
-			if (value > maxValue) {
-				ps = row;
-				maxValue = value;
-			}
-		}
-	} else {
-		// Find current season for active player
+	if (season !== undefined) {
+		// Specific season was requested
 		const playerStats = p.stats.filter(
-			ps =>
-				!ps.playoffs &&
-				(ps.season === currentSeason ||
-					(ps.season === currentSeason - 1 && phase === PHASE.PRESEASON)),
+			ps => !ps.playoffs && ps.season === season,
 		);
 		ps = playerStats[playerStats.length - 1];
+	}
+
+	if (!ps) {
+		if (p.tid === PLAYER.RETIRED) {
+			// Find best season for retired player
+			let maxValue = -Infinity;
+			for (const row of p.stats) {
+				if (row.playoffs) {
+					continue;
+				}
+
+				const value = bySport({
+					basketball: row.ws,
+					football: row.av,
+					hockey: row.ps,
+				});
+				if (value > maxValue) {
+					ps = row;
+					maxValue = value;
+				}
+			}
+		} else {
+			// Find current season for active player
+			const playerStats = p.stats.filter(
+				ps =>
+					!ps.playoffs &&
+					(ps.season === currentSeason ||
+						(ps.season === currentSeason - 1 && phase === PHASE.PRESEASON)),
+			);
+			ps = playerStats[playerStats.length - 1];
+		}
 	}
 
 	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
@@ -216,6 +228,7 @@ const TopStuff = ({
 	phase,
 	player,
 	retired,
+	season,
 	showContract,
 	showRatings,
 	showTradeFor,
@@ -246,7 +259,9 @@ const TopStuff = ({
 	| "teamJersey"
 	| "teamName"
 	| "willingToSign"
->) => {
+> & {
+	season?: number;
+}) => {
 	let draftInfo: ReactNode = null;
 	if (player.draft.round > 0) {
 		draftInfo = (
@@ -555,6 +570,7 @@ const TopStuff = ({
 									position={player.ratings[player.ratings.length - 1].pos}
 									phase={phase}
 									currentSeason={currentSeason}
+									season={season}
 									stats={stats}
 									p={player}
 								/>
@@ -565,7 +581,7 @@ const TopStuff = ({
 
 				<div className="mt-3 mt-sm-0 text-nowrap">
 					{!retired && showRatings ? (
-						<RatingsOverview ratings={player.ratings} />
+						<RatingsOverview ratings={player.ratings} season={season} />
 					) : null}
 					{jerseyNumberInfos.length > 0 ? (
 						<div

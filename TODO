@@ -31,10 +31,6 @@ File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
 
 player game log
-- column definitions
-  - PLAYER_GAME_STATS for basketball
-- PlayerGameLog
-  - show this season's summary and ratings in TopStuff
 - use filterPlayerStats in basketball box score
 - test
   - all sports

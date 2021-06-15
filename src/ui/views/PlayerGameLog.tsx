@@ -110,6 +110,7 @@ const PlayerGameLog = ({
 				phase={phase}
 				player={player}
 				retired={retired}
+				season={season}
 				showContract={showContract}
 				showRatings={showRatings}
 				showTradeFor={showTradeFor}

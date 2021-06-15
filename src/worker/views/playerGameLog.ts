@@ -52,6 +52,10 @@ const updatePlayerGameLog = async (
 
 		const abbrevsByTid: Record<number, string> = {};
 		const getAbbrev = async (tid: number) => {
+			if (tid === -1 || tid === -2) {
+				return "ASG";
+			}
+
 			let abbrev = abbrevsByTid[tid];
 			if (abbrev === undefined) {
 				const info = await getTeamInfoBySeason(tid, season);
@@ -72,7 +76,6 @@ const updatePlayerGameLog = async (
 			if (!row) {
 				continue;
 			}
-			console.log("row", row);
 
 			const t1 = t0 === 0 ? 1 : 0;
 
@@ -146,8 +149,6 @@ const updatePlayerGameLog = async (
 				stats: gameStats,
 			});
 		}
-
-		console.log(superCols, stats, games, gameLog);
 
 		return {
 			...topStuff,

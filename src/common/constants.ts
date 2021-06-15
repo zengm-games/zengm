@@ -109,6 +109,7 @@ const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
 
 const PLAYER_GAME_STATS = bySport<{
 	[key: string]: {
+		name: string;
 		stats: string[];
 		sortBy: string[];
 	};

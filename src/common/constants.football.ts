@@ -121,6 +121,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 
 const PLAYER_GAME_STATS = {
 	passing: {
+		name: "Passing",
 		stats: [
 			"pssCmp",
 			"pss",
@@ -136,22 +137,27 @@ const PLAYER_GAME_STATS = {
 		sortBy: ["pssYds"],
 	},
 	rushing: {
+		name: "Rushing",
 		stats: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
 		sortBy: ["rusYds"],
 	},
 	receiving: {
+		name: "Receiving",
 		stats: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
 		sortBy: ["recYds"],
 	},
 	kicking: {
+		name: "Kicking",
 		stats: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
 		sortBy: ["kickingPts"],
 	},
 	punting: {
+		name: "Punting",
 		stats: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
 		sortBy: ["pnt"],
 	},
 	returns: {
+		name: "Returns",
 		stats: [
 			"kr",
 			"krYds",
@@ -167,6 +173,7 @@ const PLAYER_GAME_STATS = {
 		sortBy: ["krYds", "prYds"],
 	},
 	defense: {
+		name: "Defense",
 		stats: [
 			"defTckSolo",
 			"defTckAst",

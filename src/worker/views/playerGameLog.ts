@@ -1,5 +1,9 @@
 import flatten from "lodash-es/flatten";
-import { PLAYER_GAME_STATS, processPlayerStats } from "../../common";
+import {
+	filterPlayerStats,
+	PLAYER_GAME_STATS,
+	processPlayerStats,
+} from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { getCommon } from "./player";
@@ -70,6 +74,20 @@ const updatePlayerGameLog = async (
 			}
 
 			const processed = processPlayerStats(row, allStats);
+			const p = {
+				...row,
+				processed,
+			};
+
+			const types = [];
+			for (const [type, { stats }] of Object.entries(PLAYER_GAME_STATS)) {
+				if (filterPlayerStats(p, stats, type)) {
+					types.push(type);
+				}
+			}
+			if (types.length === 0) {
+				continue;
+			}
 
 			gameLog.push({
 				tid: game.teams[t0].tid,
@@ -77,10 +95,8 @@ const updatePlayerGameLog = async (
 				result,
 				score: `${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
 				playoffs: game.playoffs,
-				p: {
-					...row,
-					processed,
-				},
+				p,
+				types,
 			});
 		}
 
@@ -88,6 +104,7 @@ const updatePlayerGameLog = async (
 
 		return {
 			...topStuff,
+			gameLog,
 			season,
 		};
 	}

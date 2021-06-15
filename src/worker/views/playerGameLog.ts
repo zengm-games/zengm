@@ -36,6 +36,14 @@ const updatePlayerGameLog = async (
 			),
 		);
 
+		const superCols = [
+			{
+				title: "",
+				colspan: 4,
+			},
+		];
+		const stats: string[] = [];
+
 		const allStats = Array.from(
 			new Set(flatten(Object.values(PLAYER_GAME_STATS).map(x => x.stats))),
 		);
@@ -107,25 +115,45 @@ const updatePlayerGameLog = async (
 			const abbrev = await getAbbrev(tid);
 			const oppAbbrev = await getAbbrev(oppTid);
 
+			const gameStats: Record<string, number> = {};
+			for (const type of types) {
+				const info = PLAYER_GAME_STATS[type];
+
+				// Filter gets rid of dupes, like how fmbLost appears for both Passing and Rushing in FBGM
+				const newStats = info.stats.filter(stat => !stats.includes(stat));
+
+				if (newStats.length > 0) {
+					stats.push(...newStats);
+					superCols.push({
+						title: info.name,
+						colspan: newStats.length,
+					});
+				}
+
+				for (const stat of info.stats) {
+					gameStats[stat] = p.processed[stat];
+				}
+			}
+
 			gameLog.push({
 				tid,
 				abbrev,
 				oppTid,
 				oppAbbrev,
-				result,
-				score: `${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
+				result: `${result} (${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes})`,
 				playoffs: game.playoffs,
-				p,
-				types,
+				stats: gameStats,
 			});
 		}
 
-		console.log(seasons, games, gameLog);
+		console.log(superCols);
 
 		return {
 			...topStuff,
 			gameLog,
 			season,
+			stats,
+			superCols: superCols.length > 2 ? superCols : undefined,
 		};
 	}
 };

@@ -1,3 +1,7 @@
+adjust PT multiplier magnitude
+- https://discord.com/channels/290013534023057409/331882115119448065/854198324844036096
+- https://discord.com/channels/290013534023057409/331882115119448065/854388847135162419
+
 player bios height filter broken https://discord.com/channels/290013534023057409/290015591216054273/854062922593861653
 
 Option to start leagues with a fantasy draft https://discord.com/channels/290013534023057409/331882115119448065/851259687780876348
@@ -29,23 +33,23 @@ File System Access API https://web.dev/file-system-access/
 player game log
 - needs a dedicated link, in addition to individual seasons?
 - column definitions
-  - use PLAYER_GAME_STATS
-  - use superCols to break up by section for players with multiple ones (like rushing and passing)
   - PLAYER_GAME_STATS for basketball
-  - handle duplicates
 - PlayerGameLog
   - handle DNP
-  - click two rows, popup shows avg over that timespan, like basketball-reference
   - include customMenu like player page? enough room?
   - include season switcher only for active seasons
   - warning about deleted box scores, share with game log
   - show playoffs in separate table
 - test
   - all sports
+  - different player types
   - all sports box scores
   - confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
 - changelog
   - season links
+- later
+  - totals at bottom
+  - click two rows, popup shows avg over that timespan, like basketball-reference
 
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor

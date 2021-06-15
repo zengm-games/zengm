@@ -1,6 +1,8 @@
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import TopStuff from "./Player/TopStuff";
+import { getCols, helpers } from "../util";
+import { DataTable } from "../components";
 
 const PlayerGameLog = ({
 	currentSeason,
@@ -11,7 +13,6 @@ const PlayerGameLog = ({
 	phase,
 	player,
 	retired,
-	season,
 	showContract,
 	showRatings,
 	showTradeFor,
@@ -22,6 +23,10 @@ const PlayerGameLog = ({
 	teamJersey,
 	teamName,
 	willingToSign,
+	gameLog,
+	season,
+	stats,
+	superCols,
 }: View<"playerGameLog">) => {
 	useTitleBar({
 		title: `${player.name} Game Log`,
@@ -29,6 +34,43 @@ const PlayerGameLog = ({
 		dropdownFields: {
 			seasons: season,
 		},
+	});
+
+	const cols = getCols(
+		"#",
+		"Team",
+		"Opp",
+		"Result",
+		...stats.map(stat => `stat:${stat}`),
+	);
+
+	const rows = gameLog.map((game, i) => {
+		return {
+			key: i,
+			data: [
+				i + 1,
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${game.abbrev}_${game.tid}`,
+						season,
+					])}
+				>
+					{game.abbrev}
+				</a>,
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${game.oppAbbrev}_${game.oppTid}`,
+						season,
+					])}
+				>
+					{game.oppAbbrev}
+				</a>,
+				game.result,
+				...stats.map(stat => helpers.roundStat(game.stats[stat], stat, true)),
+			],
+		};
 	});
 
 	return (
@@ -53,6 +95,18 @@ const PlayerGameLog = ({
 				teamName={teamName}
 				willingToSign={willingToSign}
 			/>
+
+			{rows.length === 0 ? (
+				<p>No games found</p>
+			) : (
+				<DataTable
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					name="PlayerGameLog"
+					rows={rows}
+					superCols={superCols}
+				/>
+			)}
 		</>
 	);
 };

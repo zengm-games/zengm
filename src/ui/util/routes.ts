@@ -96,9 +96,8 @@ const routes = () => {
 		"/l/:lid/player_stats/:abbrev": genPage("playerStats"),
 		"/l/:lid/player_stats/:abbrev/:season": genPage("playerStats"),
 		"/l/:lid/player_stats/:abbrev/:season/:statType": genPage("playerStats"),
-		"/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs": genPage(
-			"playerStats",
-		),
+		"/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs":
+			genPage("playerStats"),
 		"/l/:lid/team_stats": genPage("teamStats"),
 		"/l/:lid/team_stats/:season": genPage("teamStats"),
 		"/l/:lid/team_stats/:season/:teamOpponent": genPage("teamStats"),
@@ -106,10 +105,11 @@ const routes = () => {
 		"/l/:lid/league_stats": genPage("leagueStats"),
 		"/l/:lid/league_stats/:abbrev": genPage("leagueStats"),
 		"/l/:lid/league_stats/:abbrev/:teamOpponent": genPage("leagueStats"),
-		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs": genPage(
-			"leagueStats",
-		),
+		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs":
+			genPage("leagueStats"),
 		"/l/:lid/player/:pid": genPage("player"),
+		"/l/:lid/player_game_log/:pid": genPage("playerGameLog"),
+		"/l/:lid/player_game_log/:pid/:season": genPage("playerGameLog"),
 		"/l/:lid/negotiation": genPage("negotiationList"),
 		"/l/:lid/negotiation/:pid": genPage("negotiation"),
 		"/l/:lid/player_rating_dists": genPage("playerRatingDists"),

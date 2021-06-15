@@ -61,6 +61,7 @@ import News from "./News";
 import Player from "./Player";
 import PlayerBios from "./PlayerBios";
 import PlayerFeats from "./PlayerFeats";
+import PlayerGameLog from "./PlayerGameLog";
 import PlayerRatingDists from "./PlayerRatingDists";
 import PlayerRatings from "./PlayerRatings";
 import PlayerStatDists from "./PlayerStatDists";
@@ -153,6 +154,7 @@ export default {
 	Player,
 	PlayerBios,
 	PlayerFeats,
+	PlayerGameLog,
 	PlayerRatingDists,
 	PlayerRatings,
 	PlayerStatDists,

@@ -13,7 +13,7 @@ const TeamLogoInline = ({
 }) => {
 	const actualImgURL = imgURLSmall ?? imgURL;
 	if (!actualImgURL) {
-		return null;
+		return className ? <div className={className} /> : null;
 	}
 
 	return (

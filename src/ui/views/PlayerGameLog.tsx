@@ -36,7 +36,14 @@ const PlayerGameLog = ({
 			playerProfile: "gameLog",
 			seasons: season,
 		},
-		dropdownExtraBefore: [player.pid],
+		dropdownCustomURL: fields => {
+			const parts =
+				fields.playerProfile === "gameLog"
+					? ["player_game_log", player.pid, fields.seasons]
+					: ["player", player.pid];
+
+			return helpers.leagueUrl(parts);
+		},
 	});
 
 	const cols = getCols(

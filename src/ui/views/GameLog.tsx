@@ -200,18 +200,27 @@ const GameLog = ({
 	season,
 	tid,
 }: View<"gameLog">) => {
+	const dropdownTeamsKey = bySport({
+		basketball: "teamsAndSpecial",
+		football: "teams",
+		hockey: "teams",
+	});
+
 	useTitleBar({
 		title: "Game Log",
 		dropdownView: "game_log",
 		dropdownFields: {
-			[bySport({
-				basketball: "teamsAndSpecial",
-				football: "teams",
-				hockey: "teams",
-			})]: abbrev,
+			[dropdownTeamsKey]: abbrev,
 			seasons: season,
 		},
-		dropdownExtraAfter: [boxScore.gid],
+		dropdownCustomURL: fields => {
+			return helpers.leagueUrl([
+				"game_log",
+				fields[dropdownTeamsKey],
+				fields.seasons,
+				boxScore.gid,
+			]);
+		},
 	});
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(

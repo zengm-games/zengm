@@ -106,34 +106,32 @@ Select.propTypes = {
 };
 
 type Props = {
-	extraAfter?: (number | string)[];
-	extraBefore?: (number | string)[];
-	fields: {
-		[key: string]: number | string;
-	};
+	customURL?: (fields: Record<string, number | string>) => string;
+	fields: Record<string, number | string>;
 	view: string;
 };
 
-const Dropdown = ({ extraAfter, extraBefore, fields, view }: Props) => {
+const Dropdown = ({ customURL, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
 	const handleChange = (i: number, value: string | number) => {
-		const newValues = values.slice();
-		newValues[i] = value;
-		const parts: (number | string)[] = [view];
+		let url;
+		if (customURL) {
+			const newFields = {
+				...fields,
+				[keys[i]]: value,
+			};
 
-		if (extraBefore !== undefined) {
-			parts.push(...extraBefore);
+			url = customURL(newFields);
+		} else {
+			const newValues = values.slice();
+			newValues[i] = value;
+			const parts = [view, ...newValues];
+			url = helpers.leagueUrl(parts);
 		}
 
-		parts.push(...newValues);
-
-		if (extraAfter !== undefined) {
-			parts.push(...extraAfter);
-		}
-
-		realtimeUpdate([], helpers.leagueUrl(parts));
+		realtimeUpdate([], url);
 	};
 
 	return (

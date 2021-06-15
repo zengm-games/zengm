@@ -796,8 +796,7 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraAfter?: (number | string)[];
-	dropdownExtraBefore?: (number | string)[];
+	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
 	dropdownView?: string;
 	dropdownFields?: {
 		[key: string]: number | string;

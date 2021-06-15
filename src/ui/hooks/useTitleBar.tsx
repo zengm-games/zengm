@@ -4,16 +4,15 @@ import { localActions, useLocalShallow } from "../util";
 import type { MenuItemHeader } from "../../common/types";
 import { GAME_NAME } from "../../common";
 
-const useTitleBar = ({
+const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	title,
 	customMenu,
 	hideNewWindow,
 	jumpTo,
 	jumpToSeason,
-	dropdownExtraAfter,
-	dropdownExtraBefore,
+	dropdownCustomURL,
 	dropdownView,
-	dropdownFields = {},
+	dropdownFields = {} as DropdownFields,
 	moreInfoAbbrev,
 	moreInfoSeason,
 	moreInfoTid,
@@ -23,12 +22,9 @@ const useTitleBar = ({
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraAfter?: (number | string)[];
-	dropdownExtraBefore?: (number | string)[];
+	dropdownCustomURL?: (fields: DropdownFields) => string;
 	dropdownView?: string;
-	dropdownFields?: {
-		[key: string]: number | string;
-	};
+	dropdownFields?: DropdownFields;
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
@@ -73,8 +69,7 @@ const useTitleBar = ({
 			hideNewWindow,
 			jumpTo,
 			jumpToSeason,
-			dropdownExtraAfter,
-			dropdownExtraBefore,
+			dropdownCustomURL,
 			dropdownView,
 			dropdownFields,
 			moreInfoAbbrev,
@@ -87,8 +82,7 @@ const useTitleBar = ({
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
-		dropdownExtraAfter,
-		dropdownExtraBefore,
+		dropdownCustomURL,
 		dropdownView,
 		dropdownFields,
 		moreInfoAbbrev,

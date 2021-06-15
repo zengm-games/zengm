@@ -210,8 +210,26 @@ const Player2 = ({
 	useTitleBar({
 		title: player.name,
 		customMenu,
+		dropdownView: "player",
 		dropdownFields: {
 			playerProfile: "overview",
+		},
+		dropdownCustomURL: fields => {
+			let gameLogSeason;
+			if (player.stats.length > 0) {
+				gameLogSeason = player.stats[player.stats.length - 1].season;
+			} else if (player.ratings.length > 0) {
+				gameLogSeason = player.ratings[player.ratings.length - 1].season;
+			} else {
+				gameLogSeason = currentSeason;
+			}
+
+			const parts =
+				fields.playerProfile === "gameLog"
+					? ["player_game_log", player.pid, gameLogSeason]
+					: ["player", player.pid];
+
+			return helpers.leagueUrl(parts);
 		},
 	});
 

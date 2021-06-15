@@ -19,8 +19,7 @@ const TitleBar = () => {
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
-		dropdownExtraAfter,
-		dropdownExtraBefore,
+		dropdownCustomURL,
 		dropdownView,
 		dropdownFields,
 		moreInfoAbbrev,
@@ -33,8 +32,7 @@ const TitleBar = () => {
 		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
-		dropdownExtraAfter: state.dropdownExtraAfter,
-		dropdownExtraBefore: state.dropdownExtraBefore,
+		dropdownCustomURL: state.dropdownCustomURL,
 		dropdownView: state.dropdownView,
 		dropdownFields: state.dropdownFields,
 		moreInfoAbbrev: state.moreInfoAbbrev,
@@ -187,8 +185,7 @@ const TitleBar = () => {
 			</h1>
 			{dropdownView && dropdownFields ? (
 				<Dropdown
-					extraAfter={dropdownExtraAfter}
-					extraBefore={dropdownExtraBefore}
+					customURL={dropdownCustomURL}
 					view={dropdownView}
 					fields={dropdownFields}
 				/>

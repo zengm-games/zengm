@@ -32,7 +32,6 @@ File System Access API https://web.dev/file-system-access/
 
 player game log
 - use filterPlayerStats in basketball box score
-- home/away indicator
 - show DNP rows
   - we are looking up pid in box scores, so we have it
 - topstuff for historical seasons

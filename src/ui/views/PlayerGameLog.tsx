@@ -61,6 +61,8 @@ const PlayerGameLog = ({
 	);
 
 	const makeRow = (game: typeof gameLog[number], i: number) => {
+		const oppAbbrevWithAway = `${game.away ? "@" : ""}${game.oppAbbrev}`;
+
 		return {
 			key: i,
 			data: [
@@ -74,15 +76,21 @@ const PlayerGameLog = ({
 				>
 					{game.abbrev}
 				</a>,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${game.oppAbbrev}_${game.oppTid}`,
-						season,
-					])}
-				>
-					{game.oppAbbrev}
-				</a>,
+				{
+					value: (
+						<a
+							href={helpers.leagueUrl([
+								"roster",
+								`${game.oppAbbrev}_${game.oppTid}`,
+								season,
+							])}
+						>
+							{oppAbbrevWithAway}
+						</a>
+					),
+					sortValue: game.oppAbbrev,
+					searchValue: oppAbbrevWithAway,
+				},
 				<a
 					href={helpers.leagueUrl([
 						"game_log",

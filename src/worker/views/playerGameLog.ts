@@ -6,6 +6,7 @@ import {
 } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
+import { getTeamInfoBySeason } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (
@@ -40,6 +41,17 @@ const updatePlayerGameLog = async (
 		);
 
 		const games = await idb.getCopies.games({ season });
+
+		const abbrevsByTid: Record<number, string> = {};
+		const getAbbrev = async (tid: number) => {
+			let abbrev = abbrevsByTid[tid];
+			if (abbrev === undefined) {
+				const info = await getTeamInfoBySeason(tid, season);
+				abbrev = info?.abbrev ?? "???";
+				abbrevsByTid[tid] = abbrev;
+			}
+			return abbrev;
+		};
 
 		const gameLog = [];
 		for (const game of games) {
@@ -89,9 +101,17 @@ const updatePlayerGameLog = async (
 				continue;
 			}
 
+			const tid = game.teams[t0].tid;
+			const oppTid = game.teams[t1].tid;
+
+			const abbrev = await getAbbrev(tid);
+			const oppAbbrev = await getAbbrev(oppTid);
+
 			gameLog.push({
-				tid: game.teams[t0].tid,
-				oppTid: game.teams[t1].tid,
+				tid,
+				abbrev,
+				oppTid,
+				oppAbbrev,
 				result,
 				score: `${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
 				playoffs: game.playoffs,

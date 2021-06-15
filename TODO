@@ -27,8 +27,7 @@ File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
 
 player game log
-- where to put link to this?
-  - click season in stats tables
+- needs a dedicated link, in addition to individual seasons?
 - for football/hockey, compute box score and use superCols to break up by section for players with multiple ones (like rushing and passing)
 - column definitions
   - statsByType/sortsByType to constants
@@ -37,7 +36,12 @@ player game log
   - handle duplicates
 - PlayerGameLog
   - click two rows, popup shows avg over that timespan, like basketball-reference
-  - include customMenu like player page
+  - include customMenu like player page? enough room?
+  - include season switcher only for active seasons
+  - warning about deleted box scores, share with game log
+- confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
+- changelog
+  - season links
 
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor

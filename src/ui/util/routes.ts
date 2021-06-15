@@ -108,7 +108,6 @@ const routes = () => {
 		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs":
 			genPage("leagueStats"),
 		"/l/:lid/player/:pid": genPage("player"),
-		"/l/:lid/player_game_log/:pid": genPage("playerGameLog"),
 		"/l/:lid/player_game_log/:pid/:season": genPage("playerGameLog"),
 		"/l/:lid/negotiation": genPage("negotiationList"),
 		"/l/:lid/negotiation/:pid": genPage("negotiation"),

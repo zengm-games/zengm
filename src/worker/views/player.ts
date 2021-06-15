@@ -57,7 +57,16 @@ const fixRatingsStatsAbbrevs = async (p: {
 	}
 };
 
-const getCommon = async (pid: number) => {
+export const getCommon = async (pid?: number) => {
+	if (pid === undefined) {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			type: "error" as const,
+			errorMessage: "Player not found.",
+		};
+		return returnValue;
+	}
+
 	const statSummary = Object.values(PLAYER_SUMMARY);
 
 	const statTables = Object.values(PLAYER_STATS_TABLES);
@@ -340,14 +349,15 @@ const getCommon = async (pid: number) => {
 
 	return {
 		type: "normal" as const,
+		currentSeason: g.get("season"),
 		freeAgent: p.tid === PLAYER.FREE_AGENT,
 		godMode: g.get("godMode"),
 		injured: p.injury.gamesRemaining > 0,
 		jerseyNumberInfos,
 		phase: g.get("phase"),
+		pid, // Needed for state.pid check
 		player: p,
 		retired,
-		season: g.get("season"),
 		showContract:
 			p.tid !== PLAYER.UNDRAFTED &&
 			p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
@@ -375,14 +385,6 @@ const updatePlayer = async (
 		!state.retired ||
 		state.pid !== inputs.pid
 	) {
-		if (inputs.pid === undefined) {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "Player not found.",
-			};
-			return returnValue;
-		}
-
 		const topStuff = await getCommon(inputs.pid);
 
 		if (topStuff.type === "error") {
@@ -459,7 +461,7 @@ const updatePlayer = async (
 		const eventsAll = orderBy(
 			[
 				...(await idb.getCopies.events({
-					pid: inputs.pid,
+					pid: topStuff.pid,
 				})),
 				...(p.draft.dpid !== undefined
 					? await idb.getCopies.events({

@@ -10,6 +10,12 @@ import { formatStatGameHigh } from "../PlayerStats";
 import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
 
+const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
+	return (
+		<a href={helpers.leagueUrl(["player_game_log", pid, season])}>{season}</a>
+	);
+};
+
 const StatsTable = ({
 	name,
 	onlyShowIf,
@@ -138,7 +144,7 @@ const StatsTable = ({
 								sortValue: i,
 								value: (
 									<>
-										{ps.season}{" "}
+										<SeasonLink pid={p.pid} season={ps.season} />{" "}
 										<SeasonIcons
 											season={ps.season}
 											awards={p.awards}
@@ -177,6 +183,7 @@ StatsTable.propTypes = {
 };
 
 const Player2 = ({
+	currentSeason,
 	customMenu,
 	events,
 	feats,
@@ -188,7 +195,6 @@ const Player2 = ({
 	player,
 	ratings,
 	retired,
-	season,
 	showContract,
 	showRatings,
 	showTradeFor,
@@ -211,6 +217,7 @@ const Player2 = ({
 	return (
 		<>
 			<TopStuff
+				currentSeason={currentSeason}
 				freeAgent={freeAgent}
 				godMode={godMode}
 				injured={injured}
@@ -218,7 +225,6 @@ const Player2 = ({
 				phase={phase}
 				player={player}
 				retired={retired}
-				season={season}
 				showContract={showContract}
 				showRatings={showRatings}
 				showTradeFor={showTradeFor}
@@ -268,7 +274,7 @@ const Player2 = ({
 									sortValue: i,
 									value: (
 										<>
-											{r.season}{" "}
+											<SeasonLink pid={player.pid} season={r.season} />{" "}
 											<SeasonIcons season={r.season} awards={player.awards} />
 											{r.injuryIndex !== undefined &&
 											player.injuries[r.injuryIndex] ? (
@@ -349,7 +355,7 @@ const Player2 = ({
 										sortValue: i,
 										value: (
 											<>
-												{s.season}{" "}
+												<SeasonLink pid={player.pid} season={s.season} />{" "}
 												<SeasonIcons season={s.season} awards={player.awards} />
 											</>
 										),

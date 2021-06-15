@@ -66,7 +66,7 @@ const StatsSummary = ({
 	p,
 	phase,
 	position,
-	season,
+	currentSeason,
 	stats,
 }: {
 	name: string;
@@ -74,7 +74,7 @@ const StatsSummary = ({
 	p: View<"player">["player"];
 	phase: Phase;
 	position: string;
-	season: number;
+	currentSeason: number;
 	stats: string[];
 }) => {
 	if (onlyShowIf !== undefined) {
@@ -107,8 +107,8 @@ const StatsSummary = ({
 		const playerStats = p.stats.filter(
 			ps =>
 				!ps.playoffs &&
-				(ps.season === season ||
-					(ps.season === season - 1 && phase === PHASE.PRESEASON)),
+				(ps.season === currentSeason ||
+					(ps.season === currentSeason - 1 && phase === PHASE.PRESEASON)),
 		);
 		ps = playerStats[playerStats.length - 1];
 	}
@@ -208,6 +208,7 @@ StatsSummary.propTypes = {
 };
 
 const TopStuff = ({
+	currentSeason,
 	freeAgent,
 	godMode,
 	injured,
@@ -215,7 +216,6 @@ const TopStuff = ({
 	phase,
 	player,
 	retired,
-	season,
 	showContract,
 	showRatings,
 	showTradeFor,
@@ -228,6 +228,7 @@ const TopStuff = ({
 	willingToSign,
 }: Pick<
 	View<"player">,
+	| "currentSeason"
 	| "freeAgent"
 	| "godMode"
 	| "injured"
@@ -235,7 +236,6 @@ const TopStuff = ({
 	| "phase"
 	| "player"
 	| "retired"
-	| "season"
 	| "showContract"
 	| "showRatings"
 	| "showTradeFor"
@@ -554,7 +554,7 @@ const TopStuff = ({
 									onlyShowIf={onlyShowIf}
 									position={player.ratings[player.ratings.length - 1].pos}
 									phase={phase}
-									season={season}
+									currentSeason={currentSeason}
 									stats={stats}
 									p={player}
 								/>

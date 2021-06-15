@@ -7,7 +7,6 @@ import ago from "s-ago";
 import {
 	bySport,
 	DIFFICULTY,
-	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	WEBSITE_PLAY,

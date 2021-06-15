@@ -498,6 +498,13 @@ const playerFeats = (params: Params) => {
 	};
 };
 
+const playerGameLog = (params: Params) => {
+	return {
+		pid: params.pid !== undefined ? parseInt(params.pid, 10) : undefined,
+		season: validateSeason(params.season),
+	};
+};
+
 const playerRatings = (params: Params) => {
 	let abbrev;
 	let tid: number | undefined;
@@ -801,6 +808,7 @@ export default {
 	player,
 	playerBios: playerRatings,
 	playerFeats,
+	playerGameLog,
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,
 	playerStatDists,

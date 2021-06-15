@@ -2,7 +2,12 @@ import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
-import { getPeriodName, helpers, processPlayerStats } from "../../common";
+import {
+	filterPlayerStats,
+	getPeriodName,
+	helpers,
+	processPlayerStats,
+} from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.football";
 
 type Quarter = `Q${number}` | "OT";
@@ -71,19 +76,7 @@ const StatsTable = ({
 											processed: processPlayerStats(p, stats),
 										};
 									})
-									.filter(p => {
-										// Filter based on if player has any stats
-										for (const stat of stats) {
-											if (
-												p.processed[stat] !== undefined &&
-												p.processed[stat] !== 0 &&
-												stat !== "fmbLost"
-											) {
-												return true;
-											}
-										}
-										return false;
-									})
+									.filter(p => filterPlayerStats(p, stats, type))
 									.sort((a, b) => {
 										for (const sort of sorts) {
 											if (b.processed[sort] !== a.processed[sort]) {

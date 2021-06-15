@@ -2,7 +2,11 @@ import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers } from "../util";
-import { getPeriodName, processPlayerStats } from "../../common";
+import {
+	filterPlayerStats,
+	getPeriodName,
+	processPlayerStats,
+} from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
@@ -45,11 +49,7 @@ const StatsTable = ({
 				processed: processPlayerStats(p, stats),
 			};
 		})
-		.filter(
-			p =>
-				(type === "skaters" && p.gpSkater > 0) ||
-				(type === "goalies" && p.gpGoalie > 0),
-		)
+		.filter(p => filterPlayerStats(p, stats, type))
 		.sort((a, b) => {
 			for (const sort of sorts) {
 				if (b.processed[sort] !== a.processed[sort]) {

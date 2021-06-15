@@ -107,6 +107,17 @@ const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
 	hockey: constantsHockey.COMPOSITE_WEIGHTS,
 });
 
+const PLAYER_GAME_STATS = bySport<{
+	[key: string]: {
+		stats: string[];
+		sortBy: string[];
+	};
+}>({
+	basketball: constantsBasketball.PLAYER_GAME_STATS,
+	football: constantsFootball.PLAYER_GAME_STATS,
+	hockey: constantsHockey.PLAYER_GAME_STATS,
+});
+
 const PLAYER_SUMMARY = bySport<{
 	[key: string]: {
 		name: string;
@@ -379,6 +390,7 @@ export {
 	SPORT_HAS_REAL_PLAYERS,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_SUMMARY,
 	PLAYER_STATS_TABLES,
 	RATINGS,

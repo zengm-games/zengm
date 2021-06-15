@@ -39,8 +39,10 @@ player game log
   - include customMenu like player page? enough room?
   - include season switcher only for active seasons
   - warning about deleted box scores, share with game log
+  - show playoffs in separate table
 - test
   - all sports
+  - all sports box scores
   - confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
 - changelog
   - season links

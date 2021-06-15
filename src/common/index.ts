@@ -3,6 +3,7 @@ export { default as applyRealTeamInfo } from "./applyRealTeamInfo";
 export { default as bySport } from "./bySport";
 export { default as createLogger } from "./createLogger";
 export { default as fetchWrapper } from "./fetchWrapper";
+export { default as filterPlayerStats } from "./filterPlayerStats";
 export { default as gameAttributeHasHistory } from "./gameAttributeHasHistory";
 export { default as gameAttributesArrayToObject } from "./gameAttributesArrayToObject";
 export { default as getAdjustedTicketPrice } from "./getAdjustedTicketPrice";

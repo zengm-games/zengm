@@ -1,3 +1,5 @@
+import flatten from "lodash-es/flatten";
+import { PLAYER_GAME_STATS, processPlayerStats } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { getCommon } from "./player";
@@ -27,6 +29,10 @@ const updatePlayerGameLog = async (
 			new Set(
 				topStuff.player.stats.filter(row => row.gp > 0).map(row => row.season),
 			),
+		);
+
+		const allStats = Array.from(
+			new Set(flatten(Object.values(PLAYER_GAME_STATS).map(x => x.stats))),
 		);
 
 		const games = await idb.getCopies.games({ season });
@@ -63,11 +69,18 @@ const updatePlayerGameLog = async (
 				}
 			}
 
+			const processed = processPlayerStats(row, allStats);
+
 			gameLog.push({
 				tid: game.teams[t0].tid,
 				oppTid: game.teams[t1].tid,
 				result,
 				score: `${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
+				playoffs: game.playoffs,
+				p: {
+					...row,
+					processed,
+				},
 			});
 		}
 

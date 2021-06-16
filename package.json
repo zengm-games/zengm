@@ -115,7 +115,7 @@
 		"concurrently": "^6.2.0",
 		"conditional-type-checks": "^1.0.5",
 		"cross-env": "^7.0.3",
-		"esbuild": "^0.12.8",
+		"esbuild": "^0.12.9",
 		"esbuild-plugin-alias": "^0.1.2",
 		"eslint": "^7.28.0",
 		"eslint-config-airbnb-typescript": "^12.3.1",

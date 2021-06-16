@@ -39,11 +39,8 @@ File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
 
 player game log
-- changelog
-  - season links
-- later
-  - totals at bottom
-  - click two rows, popup shows avg over that timespan, like basketball-reference
+- totals at bottom
+- click two rows, popup shows avg over that timespan, like basketball-reference
 
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor

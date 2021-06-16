@@ -292,7 +292,7 @@ const TopStuff = ({
 	}
 
 	let contractInfo: ReactNode = null;
-	if (showContract) {
+	if (season !== undefined || showContract) {
 		let amount;
 		let exp;
 		if (season === undefined || season === currentSeason) {

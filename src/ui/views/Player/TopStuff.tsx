@@ -300,7 +300,7 @@ const TopStuff = ({
 	}
 
 	let statusInfo: ReactNode = null;
-	if (retired) {
+	if (retired && season === undefined) {
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				<WatchBlock className="ml-0" pid={player.pid} watch={player.watch} />
@@ -308,6 +308,15 @@ const TopStuff = ({
 		);
 	} else {
 		const gameOrWeek = bySport({ default: "game", football: "week" });
+
+		let skills;
+		if (season !== undefined) {
+			skills = player.ratings.find(row => row.season === season)?.skills;
+		}
+		if (!skills) {
+			skills = player.ratings[player.ratings.length - 1].skills;
+		}
+
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (
@@ -324,7 +333,7 @@ const TopStuff = ({
 				) : null}
 				<SkillsBlock
 					className={injured ? undefined : "skills-alone"}
-					skills={player.ratings[player.ratings.length - 1].skills}
+					skills={skills}
 				/>
 				<WatchBlock className="ml-2" pid={player.pid} watch={player.watch} />
 				{player.tid === PLAYER.FREE_AGENT ||

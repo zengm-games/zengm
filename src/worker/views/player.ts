@@ -27,6 +27,7 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
+import findLast from "lodash-es/findLast";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	ratings?: {
@@ -409,9 +410,28 @@ export const getCommon = async (pid?: number, season?: number) => {
 	}
 
 	if (season !== undefined) {
+		// Age/experience
 		const offset = season - g.get("season");
 		p.age = Math.max(0, p.age + offset);
 		p.experience = Math.max(0, p.experience + offset);
+
+		// Jersey number
+		const stats = findLast(
+			p.stats,
+			row => row.season === season && !row.playoffs,
+		);
+		if (stats) {
+			if (stats.jerseyNumber !== undefined) {
+				p.jerseyNumber = stats.jerseyNumber;
+			}
+
+			const info = await getTeamInfoBySeason(stats.tid, stats.season);
+			if (info) {
+				teamName = `${info.region} ${info.name}`;
+				teamColors = info.colors;
+				teamJersey = info.jersey;
+			}
+		}
 	}
 
 	return {

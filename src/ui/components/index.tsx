@@ -18,6 +18,7 @@ export { default as GameLinks } from "./GameLinks";
 export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
+export { default as InjuryIcon } from "./InjuryIcon";
 export { default as JerseyNumber } from "./JerseyNumber";
 export { default as PlusMinus } from "./PlusMinus";
 export { default as Mood } from "./Mood";

@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import TopStuff from "./Player/TopStuff";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, InjuryIcon } from "../components";
 import { NoGamesMessage } from "./GameLog";
 
 const PlayerGameLog = ({
@@ -58,6 +58,7 @@ const PlayerGameLog = ({
 		"Team",
 		"Opp",
 		"Result",
+		"",
 		...stats.map(stat => `stat:${stat}`),
 	);
 
@@ -107,6 +108,12 @@ const PlayerGameLog = ({
 					),
 					sortValue: game.diff,
 					searchValue: game.result,
+				},
+				{
+					value: <InjuryIcon className="ml-0" injury={game.injury} />,
+					sortValue: game.injury.gamesRemaining,
+					searchValue: game.injury.gamesRemaining,
+					classNames: "text-center",
 				},
 				...stats.map(stat =>
 					game.stats[stat] === undefined

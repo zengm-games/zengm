@@ -4,7 +4,7 @@ import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
-import { timeBetweenGames } from "../../common";
+import InjuryIcon from "./InjuryIcon";
 
 const PlayerNameLabels = (props: {
 	children: ReactNode;
@@ -33,39 +33,6 @@ const PlayerNameLabels = (props: {
 		watch,
 	} = props;
 
-	let injuryIcon: ReactNode = null;
-
-	if (injury !== undefined) {
-		const colorClass = injury.playingThrough ? "warning" : "danger";
-
-		if (injury.gamesRemaining === -1) {
-			// This is used in box scores, where it would be confusing to display "out X more days" in old box scores
-			injuryIcon = (
-				<span
-					className={`badge badge-${colorClass} badge-injury`}
-					title={injury.type}
-				>
-					+
-				</span>
-			);
-		} else if (injury.gamesRemaining > 0 || injury.type !== "Healthy") {
-			let title = `${injury.type}, out ${
-				injury.gamesRemaining
-			} more ${timeBetweenGames(injury.gamesRemaining)}`;
-			if (injury.playingThrough) {
-				title += ", played through injury";
-			}
-			injuryIcon = (
-				<span
-					className={`badge badge-${colorClass} badge-injury`}
-					title={title}
-				>
-					{injury.gamesRemaining}
-				</span>
-			);
-		}
-	}
-
 	return (
 		<span style={style}>
 			{props.hasOwnProperty("jerseyNumber") ? (
@@ -77,7 +44,7 @@ const PlayerNameLabels = (props: {
 			) : (
 				children
 			)}
-			{injuryIcon}
+			<InjuryIcon injury={injury} />
 			<SkillsBlock skills={skills} />
 			{pid !== undefined ? (
 				<RatingsStatsPopover

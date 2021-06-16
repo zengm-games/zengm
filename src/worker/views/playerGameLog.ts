@@ -147,6 +147,7 @@ const updatePlayerGameLog = async (
 				diff: game.teams[t0].pts - game.teams[t1].pts,
 				playoffs: game.playoffs,
 				stats: gameStats,
+				injury: row.injury,
 			});
 		}
 

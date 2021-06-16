@@ -91,16 +91,22 @@ const PlayerGameLog = ({
 					sortValue: game.oppAbbrev,
 					searchValue: oppAbbrevWithAway,
 				},
-				<a
-					href={helpers.leagueUrl([
-						"game_log",
-						game.tid < 0 ? "special" : `${game.abbrev}_${game.tid}`,
-						season,
-						game.gid,
-					])}
-				>
-					{game.result}
-				</a>,
+				{
+					value: (
+						<a
+							href={helpers.leagueUrl([
+								"game_log",
+								game.tid < 0 ? "special" : `${game.abbrev}_${game.tid}`,
+								season,
+								game.gid,
+							])}
+						>
+							{game.result}
+						</a>
+					),
+					sortValue: game.diff,
+					searchValue: game.result,
+				},
 				...stats.map(stat => helpers.roundStat(game.stats[stat], stat, true)),
 			],
 		};

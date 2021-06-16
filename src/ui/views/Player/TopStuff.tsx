@@ -238,6 +238,7 @@ const TopStuff = ({
 	teamColors,
 	teamJersey,
 	teamName,
+	teamURL,
 	willingToSign,
 }: Pick<
 	View<"player">,
@@ -258,6 +259,7 @@ const TopStuff = ({
 	| "teamColors"
 	| "teamJersey"
 	| "teamName"
+	| "teamURL"
 	| "willingToSign"
 > & {
 	season?: number;
@@ -376,22 +378,6 @@ const TopStuff = ({
 	// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 	// @ts-ignore
 	const weight = <Weight pounds={player.weight} />;
-
-	let teamURL;
-	if (player.tid >= 0) {
-		teamURL = helpers.leagueUrl([
-			"roster",
-			`${player.abbrev}_${player.tid}`,
-			season,
-		]);
-	} else if (player.tid === PLAYER.FREE_AGENT) {
-		teamURL = helpers.leagueUrl(["free_agents"]);
-	} else if (
-		player.tid === PLAYER.UNDRAFTED ||
-		player.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
-	) {
-		teamURL = helpers.leagueUrl(["draft_scouting"]);
-	}
 
 	const college =
 		player.college && player.college !== "" ? player.college : "None";

@@ -24,6 +24,7 @@ const PlayerGameLog = ({
 	teamColors,
 	teamJersey,
 	teamName,
+	teamURL,
 	willingToSign,
 	gameLog,
 	season,
@@ -143,6 +144,7 @@ const PlayerGameLog = ({
 				teamColors={teamColors}
 				teamJersey={teamJersey}
 				teamName={teamName}
+				teamURL={teamURL}
 				willingToSign={willingToSign}
 			/>
 

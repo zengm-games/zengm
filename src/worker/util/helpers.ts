@@ -171,7 +171,7 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]?.abbrev;
 };
 
-const leagueUrl = (components: (number | string)[]): string =>
+const leagueUrl = (components: (number | string | undefined)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
 /**

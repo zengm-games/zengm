@@ -205,6 +205,7 @@ const Player2 = ({
 	teamColors,
 	teamJersey,
 	teamName,
+	teamURL,
 	willingToSign,
 }: View<"player">) => {
 	useTitleBar({
@@ -255,6 +256,7 @@ const Player2 = ({
 				teamColors={teamColors}
 				teamJersey={teamJersey}
 				teamName={teamName}
+				teamURL={teamURL}
 				willingToSign={willingToSign}
 			/>
 

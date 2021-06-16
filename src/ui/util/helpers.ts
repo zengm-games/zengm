@@ -1,7 +1,7 @@
 import { bySport, helpers as commonHelpers } from "../../common";
 import { local } from "./local";
 
-const leagueUrl = (components: (number | string)[]): string => {
+const leagueUrl = (components: (number | string | undefined)[]): string => {
 	const lid = local.getState().lid;
 
 	if (typeof lid !== "number") {

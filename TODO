@@ -40,7 +40,9 @@ File System Access API https://web.dev/file-system-access/
 
 player game log
 - topstuff for historical seasons
-  - check for retired players, free agents, draft prospects
+  - show ratings for retired players
+  - don't show game log for draft prospects
+  - check for free agents
 - switch to +/- rather than score?
 - test
   - all sports

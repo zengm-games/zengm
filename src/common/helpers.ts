@@ -712,7 +712,7 @@ function deepCopy<T>(obj: T): T {
  */
 function leagueUrlFactory(
 	lid: number,
-	components: (number | string)[],
+	components: (number | string | undefined)[],
 ): string {
 	let url = `/l/${lid}`;
 

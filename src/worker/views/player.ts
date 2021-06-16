@@ -409,31 +409,49 @@ export const getCommon = async (pid?: number, season?: number) => {
 		};
 	}
 
+	let teamURL;
+	if (p.tid >= 0) {
+		teamURL = helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`]);
+	} else if (p.tid === PLAYER.FREE_AGENT) {
+		teamURL = helpers.leagueUrl(["free_agents"]);
+	} else if (
+		p.tid === PLAYER.UNDRAFTED ||
+		p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+	) {
+		teamURL = helpers.leagueUrl(["draft_scouting"]);
+	}
+
 	if (season !== undefined) {
 		// Age/experience
-		const offset = season - g.get("season");
-		p.age = Math.max(0, p.age + offset);
-		p.experience = Math.max(0, p.experience + offset);
+		if (p.stats.length > 0) {
+			const offset = season - g.get("season");
+			p.age = Math.max(0, p.age + offset);
+			const offset2 = season - p.stats[p.stats.length - 1].season;
+			p.experience = Math.max(0, p.experience + offset2);
 
-		// Jersey number
-		const stats = findLast(
-			p.stats,
-			row => row.season === season && !row.playoffs,
-		);
-		if (stats) {
-			if (stats.jerseyNumber !== undefined) {
-				p.jerseyNumber = stats.jerseyNumber;
+			// Jersey number
+			const stats = findLast(
+				p.stats,
+				row => row.season === season && !row.playoffs,
+			);
+			if (stats) {
+				if (stats.jerseyNumber !== undefined) {
+					p.jerseyNumber = stats.jerseyNumber;
+				}
+
+				const info = await getTeamInfoBySeason(stats.tid, stats.season);
+				if (info) {
+					teamName = `${info.region} ${info.name}`;
+					teamColors = info.colors;
+					teamJersey = info.jersey;
+				}
+
+				teamURL = helpers.leagueUrl([
+					"roster",
+					`${stats.abbrev}_${stats.tid}`,
+					season,
+				]);
 			}
-
-			const info = await getTeamInfoBySeason(stats.tid, stats.season);
-			if (info) {
-				teamName = `${info.region} ${info.name}`;
-				teamColors = info.colors;
-				teamJersey = info.jersey;
-			}
-
-			p.tid = stats.tid;
-			p.abbrev = stats.abbrev;
 		}
 	}
 
@@ -462,6 +480,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		teamColors,
 		teamJersey,
 		teamName,
+		teamURL,
 		willingToSign,
 	};
 };

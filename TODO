@@ -39,15 +39,6 @@ File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
 
 player game log
-- topstuff for historical seasons
-  - don't show game log for draft prospects
-  - check for free agents
-- switch to +/- rather than score?
-- test
-  - all sports
-  - different player types
-  - all sports box scores
-  - confirm both Player and PlayerGameLog only update when appropriate, including skipping retired players
 - changelog
   - season links
 - later

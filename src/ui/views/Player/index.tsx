@@ -9,6 +9,7 @@ import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
+import { PLAYER } from "../../../common";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
 	return (
@@ -212,9 +213,12 @@ const Player2 = ({
 		title: player.name,
 		customMenu,
 		dropdownView: "player",
-		dropdownFields: {
-			playerProfile: "overview",
-		},
+		dropdownFields:
+			player.tid !== PLAYER.UNDRAFTED
+				? {
+						playerProfile: "overview",
+				  }
+				: undefined,
 		dropdownCustomURL: fields => {
 			let gameLogSeason;
 			if (player.stats.length > 0) {

@@ -139,6 +139,8 @@ const StatsSummary = ({
 		hockey: onlyShowIf?.includes("G") ? [0, 3] : [0, 5],
 	});
 
+	const showPeakSeason = p.tid === PLAYER.RETIRED && season === undefined;
+
 	return (
 		<div className="player-stats-summary">
 			<table className="table table-sm table-condensed table-nonfluid text-center mt-3 mb-0">
@@ -166,9 +168,9 @@ const StatsSummary = ({
 						<tr>
 							<th
 								className="table-separator-right text-left"
-								title={p.tid === PLAYER.RETIRED ? String(ps.season) : undefined}
+								title={showPeakSeason ? String(ps.season) : undefined}
 							>
-								{p.tid === PLAYER.RETIRED ? "Peak" : ps.season}
+								{showPeakSeason ? "Peak" : ps.season}
 							</th>
 							{stats.map((stat, i) => {
 								return (
@@ -417,6 +419,8 @@ const TopStuff = ({
 		</>
 	);
 
+	const showRatingsOverview = (!retired || season !== undefined) && showRatings;
+
 	return (
 		<div className="mb-3">
 			<div className="d-sm-flex">
@@ -594,13 +598,13 @@ const TopStuff = ({
 				</div>
 
 				<div className="mt-3 mt-sm-0 text-nowrap">
-					{!retired && showRatings ? (
+					{showRatingsOverview ? (
 						<RatingsOverview ratings={player.ratings} season={season} />
 					) : null}
 					{jerseyNumberInfos.length > 0 ? (
 						<div
 							className={classNames("d-flex flex-wrap", {
-								"mt-2": (!retired && showRatings) || player.awards.length > 0,
+								"mt-2": showRatingsOverview || player.awards.length > 0,
 							})}
 							style={{
 								gap: "0.5em",

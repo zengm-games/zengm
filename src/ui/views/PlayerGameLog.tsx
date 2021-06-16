@@ -108,7 +108,11 @@ const PlayerGameLog = ({
 					sortValue: game.diff,
 					searchValue: game.result,
 				},
-				...stats.map(stat => helpers.roundStat(game.stats[stat], stat, true)),
+				...stats.map(stat =>
+					game.stats[stat] === undefined
+						? undefined
+						: helpers.roundStat(game.stats[stat], stat, true),
+				),
 			],
 		};
 	};

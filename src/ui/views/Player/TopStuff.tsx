@@ -289,11 +289,26 @@ const TopStuff = ({
 
 	let contractInfo: ReactNode = null;
 	if (showContract) {
+		let amount;
+		let exp;
+		if (season === undefined || season === currentSeason) {
+			amount = player.contract.amount;
+			exp = player.contract.exp;
+		} else {
+			for (let i = player.salaries.length - 1; i >= 0; i--) {
+				const row = player.salaries[i];
+				if (row.season === season) {
+					amount = row.amount;
+					break;
+				}
+			}
+		}
+
 		contractInfo = (
 			<>
 				{freeAgent ? "Asking for" : "Contract"}:{" "}
-				{helpers.formatCurrency(player.contract.amount, "M")}
-				/yr thru {player.contract.exp}
+				{amount !== undefined ? helpers.formatCurrency(amount, "M") : "???"}/yr
+				{exp !== undefined ? ` thru ${exp}` : null}
 				<br />
 			</>
 		);

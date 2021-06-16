@@ -379,7 +379,11 @@ const TopStuff = ({
 
 	let teamURL;
 	if (player.tid >= 0) {
-		teamURL = helpers.leagueUrl(["roster", `${player.abbrev}_${player.tid}`]);
+		teamURL = helpers.leagueUrl([
+			"roster",
+			`${player.abbrev}_${player.tid}`,
+			season,
+		]);
 	} else if (player.tid === PLAYER.FREE_AGENT) {
 		teamURL = helpers.leagueUrl(["free_agents"]);
 	} else if (

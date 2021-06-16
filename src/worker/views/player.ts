@@ -431,6 +431,9 @@ export const getCommon = async (pid?: number, season?: number) => {
 				teamColors = info.colors;
 				teamJersey = info.jersey;
 			}
+
+			p.tid = stats.tid;
+			p.abbrev = stats.abbrev;
 		}
 	}
 

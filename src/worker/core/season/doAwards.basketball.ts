@@ -176,28 +176,50 @@ const getRealFinalsMvp = async (
 	}
 };
 
-export const mvpScore = (p: PlayerFiltered) => {
-	let teamFactor = 0;
-	if (p.currentStats.gp >= 20) {
-		teamFactor =
-			(Math.min(p.currentStats.gp - 20, 40) / 40) * p.teamInfo.winp * 20;
-	}
+// For mvpScore, smoyScore, royScore, and dpoyScore, @nicidob did some kind of regression against NBA data to find these coefficients
 
-	return p.currentStats.ewa + p.currentStats.ws + teamFactor;
+// Not great to use defaultGameAttributes here, because it messes up for non-default settings. Would be better to use the real value, but that's not stored for previous seasons. For completed seasons, might be good to have a flag indicating that, and then just make winpScale 1.
+
+export const mvpScore = (p: PlayerFiltered) => {
+	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	return (
+		winpScale * p.teamInfo.winp +
+		p.currentStats.ewa / 22 +
+		p.currentStats.vorp / 32 +
+		p.currentStats.fracWS / 10
+	);
 };
 
-export const smoyScore = (p: PlayerFiltered) =>
-	p.currentStats.ewa + p.currentStats.ws;
+export const smoyScore = (p: PlayerFiltered) => {
+	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	const ptsScale = Math.min(
+		p.currentStats.gp / defaultGameAttributes.numGames,
+		1,
+	);
+	return (
+		winpScale * p.teamInfo.winp +
+		(ptsScale * p.currentStats.pts) / 9.9 +
+		p.currentStats.ewa / 5.5 +
+		p.currentStats.vorp / 2.3 +
+		p.currentStats.ws / 4.9
+	);
+};
 
-export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.ewa +
-	p.currentStats.ws +
-	(p.currentStats.pts * p.currentStats.gp) / defaultGameAttributes.numGames;
+export const royScore = (p: PlayerFiltered) => {
+	const ptsScale = Math.min(
+		p.currentStats.gp / defaultGameAttributes.numGames,
+		1,
+	);
+	return (
+		p.currentStats.ewa + 2 * p.currentStats.vorp + ptsScale * p.currentStats.pts
+	);
+};
 
-export const dpoyScore = (p: PlayerFiltered) =>
-	p.currentStats.dws +
-	((p.currentStats.blk + p.currentStats.stl) * p.currentStats.gp) /
-		defaultGameAttributes.numGames;
+export const dpoyScore = (p: PlayerFiltered) => {
+	return (
+		p.currentStats.dws + p.currentStats.blk / 406 + p.currentStats.stl / 84
+	);
+};
 
 // Handle case where GS is not available, which happens when loading historical stats
 export const getSmoyFilter = (players: PlayerFiltered[]) => {

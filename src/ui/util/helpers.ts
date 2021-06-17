@@ -276,7 +276,7 @@ const roundOverrides: Record<
 		oppTk: "noDecimalPlace",
 		oppGv: "noDecimalPlace",
 		oppSv: "noDecimalPlace",
-		oppSvPct: "oneDecimalPlace",
+		oppSvPct: "roundWinp",
 		oppGaa: "twoDecimalPlaces",
 		oppSo: "noDecimalPlace",
 	},

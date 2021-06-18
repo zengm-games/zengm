@@ -2,9 +2,7 @@ import PropTypes from "prop-types";
 import {
 	CountryFlag,
 	DataTable,
-	Height,
 	PlayerNameLabels,
-	Weight,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";

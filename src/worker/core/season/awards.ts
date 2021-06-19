@@ -177,14 +177,19 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	if (isSport("basketball")) {
 		const totalWS: Record<number, number> = {};
 		for (const p of players) {
-			if (totalWS[p.tid] === undefined) {
-				totalWS[p.tid] = 0;
+			if (totalWS[p.currentStats.tid] === undefined) {
+				totalWS[p.currentStats.tid] = 0;
 			}
-			totalWS[p.tid] += p.currentStats.ws;
+			totalWS[p.currentStats.tid] += p.currentStats.ws;
 		}
 
+		console.log(totalWS);
+
 		for (const p of players) {
-			p.currentStats.fracWS = p.currentStats.ws / totalWS[p.tid];
+			if (p.pid === 2229) {
+				console.log();
+			}
+			p.currentStats.fracWS = p.currentStats.ws / totalWS[p.currentStats.tid];
 		}
 	}
 

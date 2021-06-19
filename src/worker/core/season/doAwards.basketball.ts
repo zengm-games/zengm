@@ -177,6 +177,8 @@ const getRealFinalsMvp = async (
 };
 
 // For mvpScore, smoyScore, royScore, and dpoyScore, @nicidob did some kind of regression against NBA data to find these coefficients
+// https://github.com/nicidob/bbgm/blob/master/historical-gen.ipynb
+// https://discord.com/channels/290013534023057409/290015468939640832/855914179693379614
 
 // Not great to use defaultGameAttributes here, because it messes up for non-default settings. Would be better to use the real value, but that's not stored for previous seasons. For completed seasons, might be good to have a flag indicating that, and then just make winpScale 1.
 
@@ -192,13 +194,13 @@ export const mvpScore = (p: PlayerFiltered) => {
 
 export const smoyScore = (p: PlayerFiltered) => {
 	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
-	const ptsScale = Math.min(
+	const perGameScale = Math.min(
 		p.currentStats.gp / defaultGameAttributes.numGames,
 		1,
 	);
 	return (
 		winpScale * p.teamInfo.winp +
-		(ptsScale * p.currentStats.pts) / 9.9 +
+		(perGameScale * p.currentStats.pts) / 9.9 +
 		p.currentStats.ewa / 5.5 +
 		p.currentStats.vorp / 2.3 +
 		p.currentStats.ws / 4.9
@@ -206,18 +208,28 @@ export const smoyScore = (p: PlayerFiltered) => {
 };
 
 export const royScore = (p: PlayerFiltered) => {
-	const ptsScale = Math.min(
+	const perGameScale = Math.min(
 		p.currentStats.gp / defaultGameAttributes.numGames,
 		1,
 	);
 	return (
-		p.currentStats.ewa + 2 * p.currentStats.vorp + ptsScale * p.currentStats.pts
+		p.currentStats.ewa / 2.1 +
+		p.currentStats.vorp +
+		(perGameScale * p.currentStats.pts) / 2
 	);
 };
 
 export const dpoyScore = (p: PlayerFiltered) => {
+	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	const perGameScale = Math.min(
+		p.currentStats.gp / defaultGameAttributes.numGames,
+		1,
+	);
 	return (
-		p.currentStats.dws + p.currentStats.blk / 406 + p.currentStats.stl / 84
+		winpScale * p.teamInfo.winp +
+		p.currentStats.dws / 9.6 +
+		(perGameScale * p.currentStats.blk) / 12.3 +
+		(perGameScale * p.currentStats.stl) / 5.1
 	);
 };
 

@@ -760,21 +760,25 @@ class GameSim {
 
 		let assister1: PlayerGameSim | undefined;
 		let assister2: PlayerGameSim | undefined;
-		const r2 = Math.random();
-		if (deflector) {
-			assister1 = shooter;
-		} else if (r2 < 0.99) {
-			// 20 power is to ensure top players get a lot
-			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-				actualShooter,
-			]);
-		}
-		if (r2 < 0.8) {
-			// 0.5 power is to ensure that everybody (including defensemen) at least get some
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
-				actualShooter,
-				assister1 as PlayerGameSim,
-			]);
+
+		// 25% chance of no assist on shorthanded goal
+		if (strengthType !== "sh" || Math.random() > 0.25) {
+			const r2 = Math.random();
+			if (deflector) {
+				assister1 = shooter;
+			} else if (r2 < 0.99) {
+				// 20 power is to ensure top players get a lot
+				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+					actualShooter,
+				]);
+			}
+			if (r2 < 0.8) {
+				// 0.5 power is to ensure that everybody (including defensemen) at least get some
+				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
+					actualShooter,
+					assister1 as PlayerGameSim,
+				]);
+			}
 		}
 
 		const goalie = this.playersOnIce[this.d].G[0];

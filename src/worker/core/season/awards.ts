@@ -73,6 +73,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"ewa",
 				"ws",
 				"dws",
+				"vorp",
 				"ws48",
 				"season",
 				"abbrev",
@@ -139,11 +140,17 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	const teamInfos: Record<
 		number,
 		{
+			gp: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
+			gp:
+				teamSeason.won +
+				teamSeason.lost +
+				(teamSeason.tied ?? 0) +
+				(teamSeason.otl ?? 0),
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}
@@ -164,6 +171,21 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		p.age = season - p.born.year;
 
 		p.teamInfo = teamInfos[p.currentStats.tid];
+	}
+
+	// Add fracWS for basketball current season
+	if (isSport("basketball")) {
+		const totalWS: Record<number, number> = {};
+		for (const p of players) {
+			if (totalWS[p.tid] === undefined) {
+				totalWS[p.tid] = 0;
+			}
+			totalWS[p.tid] += p.currentStats.ws;
+		}
+
+		for (const p of players) {
+			p.currentStats.fracWS = p.currentStats.ws / totalWS[p.tid];
+		}
 	}
 
 	return players;

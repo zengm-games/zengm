@@ -1126,11 +1126,11 @@ const genFilename = (data: any) => {
 			g.get("phase") === PHASE.AFTER_TRADE_DEADLINE) &&
 		data.hasOwnProperty("teams")
 	) {
-		const season =
-			data.teams[g.get("userTid")].seasons[
-				data.teams[g.get("userTid")].seasons.length - 1
-			];
-		filename += `_${season.won}-${season.lost}`;
+		const seasons = data.teams[g.get("userTid")].seasons;
+		if (seasons) {
+			const season = seasons[seasons.length - 1];
+			filename += `_${season.won}-${season.lost}`;
+		}
 	}
 
 	if (

@@ -12,6 +12,7 @@ const PlayerGameLog = ({
 	godMode,
 	injured,
 	jerseyNumberInfos,
+	numGamesPlayoffSeires,
 	phase,
 	player,
 	retired,
@@ -125,7 +126,34 @@ const PlayerGameLog = ({
 	};
 
 	const rowsRegularSeason = gameLog.filter(game => !game.playoffs).map(makeRow);
-	const rowsPlayoffs = gameLog.filter(game => game.playoffs).map(makeRow);
+
+	const playoffGames = gameLog.filter(game => game.playoffs);
+	const rowsPlayoffs = playoffGames.map(makeRow);
+
+	// Add separators to playoff series when there is one more than a single game
+	if (numGamesPlayoffSeires.some(numGames => numGames > 1)) {
+		let prevOppTid;
+		let oppTidCounter = -1;
+		const classes = [
+			"table-primary",
+			"table-secondary",
+			"table-success",
+			"table-danger",
+			"table-warning",
+			"table-info",
+			"table-light",
+			"table-active",
+		];
+		for (let i = 0; i < playoffGames.length; i++) {
+			const game = playoffGames[i];
+			if (game.oppTid !== prevOppTid) {
+				prevOppTid = game.oppTid;
+				oppTidCounter += 1;
+			}
+
+			rowsPlayoffs[i].classNames = classes[oppTidCounter % classes.length];
+		}
+	}
 
 	let noGamesMessage;
 	if (gameLog.length === 0) {

@@ -154,6 +154,7 @@ const updatePlayerGameLog = async (
 		return {
 			...topStuff,
 			gameLog,
+			numGamesPlayoffSeires: g.get("numGamesPlayoffSeries", season),
 			season,
 			seasonsWithStats,
 			stats,

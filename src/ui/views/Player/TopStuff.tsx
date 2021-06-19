@@ -477,15 +477,14 @@ const TopStuff = ({
 								<CountryFlag className="ml-1" country={player.born.loc} />
 							</a>
 							<br />
-							{typeof player.diedYear !== "number" ? (
+							{player.ageAtDeath === null ? (
 								<>
 									Age: {player.age}
 									<br />
 								</>
 							) : (
 								<>
-									Died: {player.diedYear} ({player.diedYear - player.born.year}{" "}
-									years old)
+									Died: {player.diedYear} ({player.ageAtDeath} years old)
 									<br />
 								</>
 							)}

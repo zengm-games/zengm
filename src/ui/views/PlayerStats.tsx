@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -149,7 +150,10 @@ const PlayerStats = ({
 					searchValue: p.name,
 				},
 				pos,
-				p.age,
+
+				// Only show age at death for career totals, otherwise just use current age
+				season === undefined ? wrappedAgeAtDeath(p.age, p.ageAtDeath) : p.age,
+
 				<a
 					href={helpers.leagueUrl([
 						"roster",

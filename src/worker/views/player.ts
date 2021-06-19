@@ -141,6 +141,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 				| "awards"
 		  > & {
 				age: number;
+				ageAtDeath: number | null;
 				draft: Player["draft"] & {
 					age: number;
 					abbrev: string;
@@ -172,6 +173,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"tid",
 			"abbrev",
 			"age",
+			"ageAtDeath",
 			"hgt",
 			"weight",
 			"born",

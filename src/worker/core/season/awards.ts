@@ -189,7 +189,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			if (p.pid === 2229) {
 				console.log();
 			}
-			p.currentStats.fracWS = p.currentStats.ws / totalWS[p.currentStats.tid];
+			p.currentStats.fracWS =
+				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid], 1);
 		}
 	}
 

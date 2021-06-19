@@ -4,6 +4,7 @@ import TopStuff from "./Player/TopStuff";
 import { getCols, helpers } from "../util";
 import { DataTable, InjuryIcon } from "../components";
 import { NoGamesMessage } from "./GameLog";
+import type { DataTableRow } from "../components/DataTable";
 
 const PlayerGameLog = ({
 	currentSeason,
@@ -63,7 +64,7 @@ const PlayerGameLog = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
-	const makeRow = (game: typeof gameLog[number], i: number) => {
+	const makeRow = (game: typeof gameLog[number], i: number): DataTableRow => {
 		const oppAbbrevWithAway = `${game.away ? "@" : ""}${game.oppAbbrev}`;
 
 		return {
@@ -131,18 +132,22 @@ const PlayerGameLog = ({
 	const rowsPlayoffs = playoffGames.map(makeRow);
 
 	// Add separators to playoff series when there is one more than a single game
+	let striped;
 	if (numGamesPlayoffSeires.some(numGames => numGames > 1)) {
+		striped = false;
+
 		let prevOppTid;
 		let oppTidCounter = -1;
 		const classes = [
-			"table-primary",
+			"",
 			"table-secondary",
-			"table-success",
-			"table-danger",
 			"table-warning",
 			"table-info",
 			"table-light",
 			"table-active",
+			"table-primary",
+			"table-success",
+			"table-danger",
 		];
 		for (let i = 0; i < playoffGames.length; i++) {
 			const game = playoffGames[i];
@@ -153,6 +158,8 @@ const PlayerGameLog = ({
 
 			rowsPlayoffs[i].classNames = classes[oppTidCounter % classes.length];
 		}
+	} else {
+		striped = true;
 	}
 
 	let noGamesMessage;
@@ -213,6 +220,7 @@ const PlayerGameLog = ({
 								defaultSort={[0, "asc"]}
 								name="PlayerGameLogPlayoffs"
 								rows={rowsPlayoffs}
+								striped={striped}
 								superCols={superCols}
 							/>
 						</>

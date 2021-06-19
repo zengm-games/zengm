@@ -49,6 +49,20 @@ export type SuperCol = {
 	title: string | ReactNode;
 };
 
+export type DataTableRow = {
+	key: number | string;
+	data: (
+		| ReactNode
+		| {
+				classNames?: Argument;
+				value: ReactNode;
+				searchValue?: string;
+				sortValue?: string | number;
+		  }
+	)[];
+	classNames?: Argument;
+};
+
 export type Props = {
 	bordered?: boolean;
 	className?: string;
@@ -61,19 +75,7 @@ export type Props = {
 	nonfluid?: boolean;
 	pagination?: boolean;
 	rankCol?: number;
-	rows: {
-		key: number | string;
-		data: (
-			| ReactNode
-			| {
-					classNames?: Argument;
-					value: ReactNode;
-					searchValue?: string;
-					sortValue?: string | number;
-			  }
-		)[];
-		classNames?: Argument;
-	}[];
+	rows: DataTableRow[];
 	small?: boolean;
 	striped?: boolean;
 	superCols?: SuperCol[];

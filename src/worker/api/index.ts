@@ -3102,9 +3102,7 @@ const updateTeamInfo = async (
 				teamSeason.name = t.name;
 				teamSeason.abbrev = t.abbrev;
 				teamSeason.imgURL = t.imgURL;
-				if (t.imgURLSmall) {
-					teamSeason.imgURLSmall = t.imgURLSmall;
-				}
+				teamSeason.imgURLSmall = t.imgURLSmall;
 				teamSeason.colors = t.colors;
 				teamSeason.jersey = t.jersey;
 				teamSeason.pop = t.pop;

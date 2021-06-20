@@ -42,7 +42,6 @@ const DraftSummary = ({
 	draftType,
 	players,
 	season,
-	startingSeason,
 	stats,
 	userTid,
 }: View<"draftSummary">) => {
@@ -189,7 +188,7 @@ const DraftSummary = ({
 				.
 			</p>
 
-			{season >= startingSeason ? <ExportButton season={season} /> : null}
+			<ExportButton season={season} />
 
 			<DataTable
 				cols={cols}

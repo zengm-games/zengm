@@ -88,7 +88,6 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 		draftType: g.get("draftType"),
 		players,
 		season: inputs.season,
-		startingSeason: g.get("startingSeason"),
 		stats,
 		userTid: g.get("userTid"),
 	};

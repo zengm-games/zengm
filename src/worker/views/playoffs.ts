@@ -11,6 +11,7 @@ type SeriesTeam = {
 	abbrev: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	region: string;
 	regularSeason: {

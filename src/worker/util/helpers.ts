@@ -37,6 +37,7 @@ const augmentSeries = async (
 				obj.abbrev = teamSeason.abbrev;
 				obj.region = teamSeason.region;
 				obj.imgURL = teamSeason.imgURL;
+				obj.imgURLSmall = teamSeason.imgURLSmall;
 			}
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;

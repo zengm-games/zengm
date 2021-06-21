@@ -5,6 +5,9 @@ option to exclude notable games box scores from deletion
 - playoffs
 - finals
 - games involving your team
+- firefox auto delete performance
+  - do what we do now if no need to check actual box score
+  - otherwise, maybe move to newPhasePreseason and run async in background
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
@@ -20,6 +23,7 @@ beter handling of customizable columns in tables where the defaults change based
 - "Customized columns on League Stats break a bit when you filter for a different team. So swap STL/BLK and change from All to w/e squad, and you'll see BLK just wholly disappear." https://discord.com/channels/290013534023057409/290015591216054273/855827200577765387
 
 Option to start leagues with a fantasy draft https://discord.com/channels/290013534023057409/331882115119448065/851259687780876348
+- if you do a fantasy draft in the preseason, delete the empty stats row from the previous team so the roster page that season looks good next year https://discord.com/channels/@me/778760871911751700/833566900281409616
 
 ZGMH all contending https://discord.com/channels/290013534023057409/290015591216054273/851150025966747678
 
@@ -149,8 +153,6 @@ add league average to team stats and league stats tables https://discord.com/cha
 
 AI teams too likely to re-sign stars?
 
-why is file size so different between old and new JSONs in analysis/team-ovr-football?
-
 show team record and ovr on trading block, for picks (including traded picks) https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtprmml/
 
 in god mode, add button to switch to controlling a team directly on the roster page https://discord.com/channels/290013534023057409/331882115119448065/837416287948111942
@@ -230,8 +232,6 @@ hockey
   - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
 - game sim performance
 - ovr PR
-
-if you do a fantasy draft in the preseason, delete the empty stats row from the previous team so the roster page that season looks good next year https://discord.com/channels/@me/778760871911751700/833566900281409616
 
 goat frivolity, similar to hof but including active players
 - https://twitter.com/Dontreach_/status/1364770043347746816
@@ -456,9 +456,6 @@ trade summary charts future
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5
 
-show ovr when live editing a player's ratings
-- use worker, don't include code in both
-
 more variation in pace plz @nicidob
 - https://discord.com/channels/290013534023057409/290015468939640832/780515737139150890
 
@@ -474,8 +471,6 @@ redesign draft screen
 - compute skills somehow.. lower cutoff? project future like pot?
 - https://cdn.discordapp.com/attachments/331882115119448065/775567088584491018/unknown.png
 - should not require scrolling on mobile
-
-Click on the phase by play button to quickly take you to relevant page. So clicking on playoffs takes you to playoffs, draft to draft, FA to FA. So on. Reg and preseason to dashboard @dooby moogey#2784
 
 real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
 - add marker for rookie contracts
@@ -942,10 +937,6 @@ relocation fun stuff
 ovr formula should change depending on game simulation settings, especially 3 point shooting
 
 what would it really cost to store all game sim results?
-
-better changelog
-- everything from CHANGELOG.made
-- show in modal
 
 way to bookmark trades
 

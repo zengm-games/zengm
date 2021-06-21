@@ -36,7 +36,6 @@ const exportLeague = async (
 	};
 
 	// Row from leagueStore in meta db.
-	// phaseText is needed if a phase is set in gameAttributes.
 	// name is only used for the file name of the exported roster file.
 	if (meta) {
 		const leagueName = await getName();

@@ -205,7 +205,6 @@ DraftSummary.propTypes = {
 	draftType: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
-	startingSeason: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };

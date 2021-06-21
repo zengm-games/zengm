@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
 import { GAME_NAME, PHASE } from "../../common";
-import type { Phase } from "../../common/types";
 import {
 	helpers,
 	localActions,

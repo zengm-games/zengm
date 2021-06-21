@@ -455,6 +455,10 @@ const doAwards = async (conditions: Conditions) => {
 		// For symmetry with players array
 		for (const p of champPlayers) {
 			p.currentStats = p.stats;
+			p.teamInfo = {
+				gp: 0,
+				winp: 0,
+			};
 		}
 
 		finalsMvp = await getRealFinalsMvp(players, champTid);

@@ -184,8 +184,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		}
 
 		for (const p of players) {
-			p.currentStats.fracWS = Math.max(
-				p.currentStats.ws / totalWS[p.currentStats.tid],
+			p.currentStats.fracWS = Math.min(
+				// Inner max is to handle negative totalWS
+				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid], 1),
 
 				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
 				0.8,

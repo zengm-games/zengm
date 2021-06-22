@@ -71,7 +71,6 @@ https://en.wikipedia.org/wiki/Three_stars_(ice_hockey)
 
 wrong team abbrev various places
 - box score https://discord.com/channels/290013534023057409/331882115119448065/852551515931017236
-- playoffs https://discord.com/channels/290013534023057409/290015591216054273/852550913951531018
 - getTeamInfoBySeason or fixRatingsStatsAbbrevs
 - any abbrev returned in stats or ratings from playersPlus is wrong
 - using team*Cache from UI is probably wrong too

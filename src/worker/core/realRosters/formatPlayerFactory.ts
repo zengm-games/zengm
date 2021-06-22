@@ -157,7 +157,7 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		if (!jerseyNumber && tid !== PLAYER.RETIRED) {
+		if (jerseyNumber === undefined && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
 			const statsRow2 = basketball.stats.find(row => row.slug === slug);
 			if (statsRow2) {

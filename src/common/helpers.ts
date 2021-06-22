@@ -1041,12 +1041,13 @@ const getJerseyNumber = (
 	type: "mostCommon" | "current" = "current",
 ): string | undefined => {
 	if (type === "current") {
-		if (p.stats.length > 0) {
-			return p.stats[p.stats.length - 1].jerseyNumber;
+		if (p.jerseyNumber !== undefined || p.stats.length === 0) {
+			// Player switches back to his "preferred" jersey number, if it exists (from uploaded league files and real players leagues). This is particularly helpful in real players leagues where a player changes his jersey number for the selected season, but the last stats entry from before had a different jersey number, like Marcus Morris in 2021.
+			// Alternatively, this could be done in augmentPartialPlayer and getJerseyNumber could switch back to continuing to use last year's, but maybe it's better here?
+			return p.jerseyNumber;
 		}
 
-		// For uploaded league files
-		return p.jerseyNumber;
+		return p.stats[p.stats.length - 1].jerseyNumber;
 	}
 
 	// Find most common from career

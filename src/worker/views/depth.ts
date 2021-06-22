@@ -73,7 +73,7 @@ const stats = bySport<Record<string, string[]>>({
 });
 
 const updateDepth = async (
-	{ abbrev, pos, tid }: ViewInput<"depth">,
+	{ abbrev, playoffs, pos, tid }: ViewInput<"depth">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -89,6 +89,7 @@ const updateDepth = async (
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("team") ||
 		pos !== state.pos ||
+		playoffs !== state.playoffs ||
 		abbrev !== state.abbrev
 	) {
 		const editable = tid === g.get("userTid") && !g.get("spectator");
@@ -98,6 +99,8 @@ const updateDepth = async (
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "age", "injury", "watch"],
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
+			playoffs: playoffs === "playoffs",
+			regularSeason: playoffs !== "playoffs",
 			// @ts-ignore
 			stats: [...stats[pos], "jerseyNumber"],
 			season: g.get("season"),
@@ -180,6 +183,7 @@ const updateDepth = async (
 			multiplePositionsWarning,
 			pos,
 			players: players2,
+			playoffs,
 			ratings,
 			season: g.get("season"),
 			stats: stats2,

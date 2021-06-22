@@ -141,7 +141,10 @@ const depth = (params: Params) => {
 	// @ts-ignore
 	const pos: string = POSITIONS.includes(params.pos) ? params.pos : DEFAULT_POS;
 
-	return { abbrev, pos, tid };
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	return { abbrev, playoffs, pos, tid };
 };
 
 const draft = () => {

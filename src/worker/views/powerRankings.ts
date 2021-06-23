@@ -3,7 +3,6 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { POSITIONS, RATINGS, isSport } from "../../common";
-import { avgAgeFromPlayers } from "../core/team/avgAge";
 
 const otherToRanks = (
 	teams: {
@@ -140,7 +139,7 @@ const updatePowerRankings = async (
 					ovrCurrent,
 					other,
 					otherCurrent,
-					avgAge: avgAgeFromPlayers(teamPlayers),
+					avgAge: team.avgAge(teamPlayers),
 
 					// Placeholder
 					rank: -1,

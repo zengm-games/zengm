@@ -50,6 +50,10 @@ const TeamStats = ({
 			superCols[0].colspan += 1;
 		}
 	}
+	basicColNames.push("AvgAge");
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
 
 	// Account for # column
 	if (superCols) {
@@ -74,7 +78,7 @@ const TeamStats = ({
 		cols[cols.length - 5].title = "%";
 	}
 
-	const otherStatColumns = ["won", "lost"];
+	const otherStatColumns = ["won", "lost", "age"];
 	if (otl) {
 		otherStatColumns.push("otl");
 	}
@@ -126,6 +130,8 @@ const TeamStats = ({
 		} else {
 			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
 		}
+
+		data.avgAge = t.seasonAttrs.avgAge.toFixed(1);
 
 		for (const stat of stats) {
 			const value = t.stats.hasOwnProperty(stat)

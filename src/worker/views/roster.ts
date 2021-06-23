@@ -7,7 +7,6 @@ import type {
 	ViewInput,
 	TeamSeasonAttr,
 } from "../../common/types";
-import { avgAgeFromPlayers } from "../core/team/avgAge";
 
 const footballScore = (p: {
 	ratings: {
@@ -218,7 +217,7 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
-		t2.seasonAttrs.avgAge = avgAgeFromPlayers(players);
+		t2.seasonAttrs.avgAge = team.avgAge(players);
 
 		return {
 			abbrev: inputs.abbrev,

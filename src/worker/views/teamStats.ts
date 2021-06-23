@@ -25,6 +25,7 @@ export const getStats = async (
 		"lost",
 		"tied",
 		"otl",
+		"avgAge",
 	];
 	if (usePts) {
 		seasonAttrs.push("pts", "ptsPct");
@@ -93,6 +94,28 @@ export const getStats = async (
 				t.seasonAttrs.winp = helpers.calcWinp(t.seasonAttrs);
 			}
 		}
+	}
+
+	for (const t of teams) {
+		let playersRaw;
+		if (g.get("season") === season) {
+			playersRaw = await idb.cache.players.indexGetAll("playersByTid", t.tid);
+		} else {
+			playersRaw = await idb.getCopies.players({
+				statsTid: t.tid,
+			});
+		}
+
+		const players = await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["age"],
+			stats: ["gp", "min"],
+			season,
+			showNoStats: g.get("season") === season,
+			showRookies: g.get("season") === season,
+			tid: t.tid,
+		});
+
+		t.seasonAttrs.avgAge = team.avgAge(players);
 	}
 
 	return {

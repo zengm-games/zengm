@@ -1,5 +1,6 @@
 import addNewTeamToExistingLeague from "./addNewTeamToExistingLeague";
 import autoBudgetSettings from "./autoBudgetSettings";
+import avgAge from "./avgAge";
 import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
@@ -25,6 +26,7 @@ import valueChange from "./valueChange";
 export default {
 	addNewTeamToExistingLeague,
 	autoBudgetSettings,
+	avgAge,
 	checkRosterSizes,
 	deleteUnreadMessages,
 	disable,

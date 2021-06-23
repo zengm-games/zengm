@@ -1,6 +1,6 @@
 import { isSport } from "../../../common";
 
-export const avgAgeFromPlayers = (
+const avgAge = (
 	players: {
 		age: number;
 		stats: {
@@ -27,3 +27,5 @@ export const avgAgeFromPlayers = (
 
 	return numerator / denominator;
 };
+
+export default avgAge;

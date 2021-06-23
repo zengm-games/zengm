@@ -5,7 +5,6 @@ somewhere, show average age of team
 - minute-weighted average
 - compute dynamically
 - show on..
-  - team stats
   - league stats
 - make sure to handle min being per game in basketball only
 - changes: roster, power rankings, team stats, league stats

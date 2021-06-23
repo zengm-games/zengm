@@ -3,6 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { POSITIONS, RATINGS, isSport } from "../../common";
+import { avgAgeFromPlayers } from "../core/team/avgAge";
 
 const otherToRanks = (
 	teams: {
@@ -74,9 +75,9 @@ const updatePowerRankings = async (
 				}
 
 				teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
-					attrs: ["tid", "injury", "value"],
+					attrs: ["tid", "injury", "value", "age"],
 					ratings,
-					stats: ["season", "tid"],
+					stats: ["season", "tid", "gp", "min"],
 					season,
 					showNoStats: g.get("season") === season,
 					showRookies: g.get("season") === season,
@@ -139,6 +140,7 @@ const updatePowerRankings = async (
 					ovrCurrent,
 					other,
 					otherCurrent,
+					avgAge: avgAgeFromPlayers(teamPlayers),
 
 					// Placeholder
 					rank: -1,

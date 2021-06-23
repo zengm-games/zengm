@@ -1617,6 +1617,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	AvgAge: {
+		desc: "Average age, weighted by minutes played",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Born: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -2485,6 +2490,7 @@ const sportSpecificTitleOverrides = bySport({
 });
 
 const titleOverrides = {
+	AvgAge: "Age",
 	Talent: "T",
 	"rating:endu": "End",
 	"rating:hgt": "Hgt",

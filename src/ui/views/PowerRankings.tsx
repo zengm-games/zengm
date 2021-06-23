@@ -70,7 +70,7 @@ const PowerRankings = ({
 		},
 		{
 			title: "",
-			colspan: 4 + (ties ? 1 : 0) + (otl ? 1 : 0),
+			colspan: 5 + (ties ? 1 : 0) + (otl ? 1 : 0),
 		},
 		{
 			title: (
@@ -107,6 +107,7 @@ const PowerRankings = ({
 		...(ties ? ["T"] : []),
 		"L10",
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
+		"AvgAge",
 		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
 	];
 
@@ -175,6 +176,7 @@ const PowerRankings = ({
 						: t.stats,
 					isSport("basketball") ? "mov" : "diff",
 				),
+				t.avgAge.toFixed(1),
 				...otherKeys.map(key => ({
 					value: (
 						<Other

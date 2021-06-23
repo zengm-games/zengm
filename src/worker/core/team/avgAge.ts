@@ -25,7 +25,5 @@ export const avgAgeFromPlayers = (
 		denominator = players.length;
 	}
 
-	console.log(players, numerator, denominator);
-
 	return numerator / denominator;
 };

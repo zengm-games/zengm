@@ -45,6 +45,10 @@ const LeagueStats = ({
 	} else {
 		basicColNames.push("%");
 	}
+	basicColNames.push("AvgAge");
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
 
 	if (superCols) {
 		superCols[0].colspan += 1;
@@ -136,6 +140,8 @@ const LeagueStats = ({
 		} else {
 			data.winp = helpers.roundWinp(s.stats.winp);
 		}
+
+		data.avgAge = s.stats.avgAge.toFixed(1);
 
 		for (const stat of stats) {
 			data[stat] = helpers.roundStat(s.stats[stat], stat);

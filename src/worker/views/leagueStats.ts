@@ -90,7 +90,7 @@ const updateLeagueStats = async (
 			let foundSomething = false;
 
 			// Average together stats
-			for (const stat of [...stats, "gp"]) {
+			for (const stat of [...stats, "gp", "avgAge"]) {
 				if (ignoreStats.includes(stat)) {
 					continue;
 				}
@@ -99,8 +99,13 @@ const updateLeagueStats = async (
 					if (inputs.tid >= 0 && t.tid !== inputs.tid) {
 						continue;
 					}
-					// @ts-ignore
-					sum += t.stats[stat];
+
+					if (stat === "avgAge") {
+						sum += t.seasonAttrs.avgAge;
+					} else {
+						// @ts-ignore
+						sum += t.stats[stat];
+					}
 					foundSomething = true;
 				}
 

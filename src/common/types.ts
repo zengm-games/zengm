@@ -1271,6 +1271,7 @@ type TeamSeasonPlus = TeamSeason & {
 	ptsDefault: number;
 	ptsMax: number;
 	ptsPct: number;
+	avgAge: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 

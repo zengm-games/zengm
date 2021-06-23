@@ -64,6 +64,7 @@ const updateRoster = async (
 			"imgURL",
 			"region",
 			"name",
+			"avgAge",
 		];
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
@@ -216,11 +217,8 @@ const updateRoster = async (
 			...t,
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
-			seasonAttrs: {
-				...t.seasonAttrs,
-				avgAge: avgAgeFromPlayers(players),
-			},
 		};
+		t2.seasonAttrs.avgAge = avgAgeFromPlayers(players);
 
 		return {
 			abbrev: inputs.abbrev,

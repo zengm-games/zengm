@@ -18,7 +18,7 @@ const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -48,7 +48,7 @@ const processSeasonAttrs = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -182,6 +182,9 @@ const processSeasonAttrs = async <
 						formula: DEFAULT_POINTS_FORMULA,
 						season: ts.season,
 					});
+				} else if (attr === "avgAge") {
+					// Fill in with team.avgAge manually. This is just a placeholder.
+					row.avgAge = 0;
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];
@@ -231,7 +234,7 @@ const processStats = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]>,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -315,7 +318,7 @@ const processTeam = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	t: Team,
 	{
@@ -376,10 +379,10 @@ const processTeam = async <
 
 	await Promise.all(promises);
 
-	if (seasonAttrs && ((output as never) as any).seasonAttrs === undefined) {
+	if (seasonAttrs && (output as never as any).seasonAttrs === undefined) {
 		return;
 	}
-	if (stats && ((output as never) as any).stats === undefined) {
+	if (stats && (output as never as any).stats === undefined) {
 		return;
 	}
 
@@ -411,7 +414,7 @@ async function getCopies<
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined = undefined
+	Season extends number | undefined = undefined,
 >({
 	tid,
 	season,

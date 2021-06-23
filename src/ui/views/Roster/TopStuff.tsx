@@ -154,6 +154,11 @@ const TopStuff = ({
 							) : null}
 							<span title="Average margin of victory">Average MOV</span>:{" "}
 							<PlusMinus>{marginOfVictory}</PlusMinus>
+							<br />
+							<span title="Average age, weighted by minutes played">
+								Average age
+							</span>
+							: {t.seasonAttrs.avgAge.toFixed(1)}
 						</div>
 
 						{season === currentSeason ? (

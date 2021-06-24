@@ -1,3 +1,5 @@
+at end of fantasy draft, it lists upcoming draft prospects in left table
+
 add "my team" option along with "all teams" in dropdowns https://old.reddit.com/r/BasketballGM/comments/o4oifj/little_ui_improvement_if_you_click_the_text_at/h2ig17b/?context=3
 
 option to exclude notable games box scores from deletion
@@ -631,6 +633,8 @@ frivolities
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs)
+  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
+    - would require loading all players...
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - draft

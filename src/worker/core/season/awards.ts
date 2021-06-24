@@ -170,7 +170,11 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		p.teamInfo = teamInfos[p.currentStats.tid];
+		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
+		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
+			gp: 0,
+			winp: 0,
+		};
 	}
 
 	// Add fracWS for basketball current season

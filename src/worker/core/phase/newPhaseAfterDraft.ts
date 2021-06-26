@@ -1,6 +1,6 @@
 import { draft } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
@@ -18,6 +18,7 @@ const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
 
 	return {
 		updateEvents: ["playerMovement"],
+		url: helpers.leagueUrl(["draft_history"]),
 	};
 };
 

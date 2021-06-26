@@ -1,11 +1,11 @@
 import { memo, useEffect } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 import { AD_DIVS } from "../../common";
 
-const widthCutoff = 1200 + 190;
+// const widthCutoff = 1200 + 190;
 
-let displayed = false;
+// let displayed = false;
 export const updateSkyscraperDisplay = () => {
-	const div = document.getElementById(AD_DIVS.rail);
+	/*const div = document.getElementById(AD_DIVS.rail);
 
 	if (div) {
 		const gold = !!div.dataset.gold;
@@ -38,7 +38,7 @@ export const updateSkyscraperDisplay = () => {
 				});
 			}
 		}
-	}
+	}*/
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize

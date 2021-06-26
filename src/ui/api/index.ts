@@ -15,8 +15,7 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { AD_DIVS, GRACE_PERIOD } from "../../common";
-import { updateSkyscraperDisplay } from "../components/Skyscraper";
+import { GRACE_PERIOD } from "../../common";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -58,7 +57,7 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 
 	if (!hideAds) {
-		window.freestar.queue.push(() => {
+		/*window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
 			const divsDesktop = [
@@ -123,7 +122,7 @@ const initAds = (goldUntil: number | undefined) => {
 					logo.style.display = "flex";
 				}
 			}
-		});
+		});*/
 	}
 };
 

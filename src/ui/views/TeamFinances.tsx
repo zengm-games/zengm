@@ -527,7 +527,7 @@ const TeamFinances = ({
 		gameSimInProgress: state.gameSimInProgress,
 	}));
 
-	const cols = getCols("Name").concat(
+	const cols = getCols("Pos", "Name").concat(
 		salariesSeasons.map(season => {
 			return {
 				title: String(season),
@@ -539,11 +539,11 @@ const TeamFinances = ({
 
 	const rows = contracts.map((p, i) => {
 		const data: ReactNode[] = [
+			p.pos,
 			<PlayerNameLabels
 				injury={p.injury}
 				jerseyNumber={p.jerseyNumber}
 				pid={p.pid}
-				pos={p.pos}
 				skills={p.skills}
 				style={{ fontStyle: p.released ? "italic" : "normal" }}
 				watch={p.watch}
@@ -574,11 +574,11 @@ const TeamFinances = ({
 	});
 
 	const footer = [
-		["Totals"].concat(
+		["", "Totals"].concat(
 			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
-		["Free Cap Space"].concat(
+		["", "Free Cap Space"].concat(
 			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
@@ -777,7 +777,7 @@ const TeamFinances = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[1, "desc"]}
+				defaultSort={[2, "desc"]}
 				name="TeamFinances"
 				nonfluid
 				footer={footer}

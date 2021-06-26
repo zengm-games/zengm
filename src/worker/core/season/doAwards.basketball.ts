@@ -183,7 +183,6 @@ const getRealFinalsMvp = async (
 // Not great to use defaultGameAttributes here, because it messes up for non-default settings. Would be better to use the real value, but that's not stored for previous seasons. For completed seasons, might be good to have a flag indicating that, and then just make winpScale 1.
 
 export const mvpScore = (p: PlayerFiltered) => {
-	console.log(p);
 	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
 	return (
 		winpScale * p.teamInfo.winp +

@@ -14,6 +14,37 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const expansionDraft = g.get("expansionDraft");
 		let expansionDraftFilteredTeamsMessage: string | undefined;
 
+		let draftPicks = await draft.getOrder();
+
+		// DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
+		if (
+			!fantasyDraft &&
+			g.get("phase") !== PHASE.EXPANSION_DRAFT &&
+			draftPicks.length > 2 * g.get("numActiveTeams")
+		) {
+			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
+
+			if (draftPicks2.length === 2 * g.get("numActiveTeams")) {
+				const toDelete = draftPicks.filter(dp => dp.pick === 0);
+
+				for (const dp of toDelete) {
+					await idb.cache.draftPicks.delete(dp.dpid);
+				}
+
+				draftPicks = draftPicks2;
+			}
+		}
+
+		// DIRTY QUICK FIX FOR https://github.com/zengm-games/zengm/issues/246
+		// Not sure why this is needed! Maybe related to lottery running before the phase change?
+		if (
+			draftPicks.some(dp => dp.pick === 0) &&
+			g.get("draftType") !== "freeAgents"
+		) {
+			await draft.genOrder();
+			draftPicks = await draft.getOrder();
+		}
+
 		let drafted: any[];
 
 		if (
@@ -65,9 +96,14 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				football: ["gp", "keyStats", "av"],
 				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 			});
+
+			// After fantasy draft, tids are reset, so actually the remaining undrafted players are free agents
+			const undraftedTID =
+				draftPicks.length > 0 ? PLAYER.UNDRAFTED : PLAYER.FREE_AGENT;
+
 			undrafted = await idb.cache.players.indexGetAll(
 				"playersByTid",
-				PLAYER.UNDRAFTED,
+				undraftedTID,
 			);
 		} else if (
 			g.get("phase") === PHASE.EXPANSION_DRAFT &&
@@ -158,37 +194,6 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			...p,
 			rank: i + 1,
 		}));
-
-		let draftPicks = await draft.getOrder();
-
-		// DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
-		if (
-			!fantasyDraft &&
-			g.get("phase") !== PHASE.EXPANSION_DRAFT &&
-			draftPicks.length > 2 * g.get("numActiveTeams")
-		) {
-			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
-
-			if (draftPicks2.length === 2 * g.get("numActiveTeams")) {
-				const toDelete = draftPicks.filter(dp => dp.pick === 0);
-
-				for (const dp of toDelete) {
-					await idb.cache.draftPicks.delete(dp.dpid);
-				}
-
-				draftPicks = draftPicks2;
-			}
-		}
-
-		// DIRTY QUICK FIX FOR https://github.com/zengm-games/zengm/issues/246
-		// Not sure why this is needed! Maybe related to lottery running before the phase change?
-		if (
-			draftPicks.some(dp => dp.pick === 0) &&
-			g.get("draftType") !== "freeAgents"
-		) {
-			await draft.genOrder();
-			draftPicks = await draft.getOrder();
-		}
 
 		for (const dp of draftPicks) {
 			drafted.push({

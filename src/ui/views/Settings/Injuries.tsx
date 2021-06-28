@@ -219,10 +219,12 @@ const Injuries = ({
 	defaultValue,
 	disabled,
 	godModeRequired,
+	onChange,
 }: {
 	defaultValue: InjuriesSetting;
 	disabled: boolean;
 	godModeRequired?: "always" | "existingLeagueOnly";
+	onChange: (injuries: InjuriesSetting) => void;
 }) => {
 	const [show, setShow] = useState(false);
 	const [injuries, setInjuriesRaw] = useState(() =>
@@ -279,13 +281,13 @@ const Injuries = ({
 			return;
 		}
 
-		console.log(parsed);
-
 		// Save for next time
 		lastSavedInjuries.current = injuries;
 		setDirty(false);
 
 		setShow(false);
+
+		onChange(parsed);
 	};
 
 	const handleChange =

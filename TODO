@@ -1,9 +1,7 @@
 customize injuries
 - like PlayerBioInfo
 - GUI
-  - actually save
-    - send up to SettingsForm state
-    - if values same as default, save as undefined
+  - if values same as default, save as undefined
   - live validation
 
 injuries

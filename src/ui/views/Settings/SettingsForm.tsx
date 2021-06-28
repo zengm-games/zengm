@@ -1690,6 +1690,12 @@ const SettingsForm = ({
 														defaultValue={state.injuries}
 														disabled={!enabled || submitting}
 														godModeRequired={godModeRequired}
+														onChange={injuries => {
+															setState(prevState => ({
+																...prevState,
+																injuries,
+															}));
+														}}
 													/>
 												);
 											}

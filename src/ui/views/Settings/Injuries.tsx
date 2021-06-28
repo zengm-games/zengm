@@ -4,6 +4,7 @@ import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import { downloadFile, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
+import { resetFileInput } from "../../components/LeagueFileUpload";
 
 const formatInjuries = (injuries: InjuriesSetting) =>
 	injuries.map(row => ({
@@ -14,13 +15,74 @@ const formatInjuries = (injuries: InjuriesSetting) =>
 
 type InjuriesText = ReturnType<typeof formatInjuries>;
 
+// https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
+	setErrorMessage,
 	setInjuries,
 }: {
+	setErrorMessage: (errorMessage?: string) => void;
 	setInjuries: (injuries: InjuriesText) => void;
 }) => (
-	<button className="btn btn-light-bordered" onClick={() => {}}>
+	<button
+		className="btn btn-light-bordered"
+		style={{ position: "relative", overflow: "hidden" }}
+		onClick={() => {}}
+	>
 		Import
+		<input
+			className="cursor-pointer"
+			type="file"
+			style={{
+				position: "absolute",
+				top: 0,
+				right: 0,
+				minWidth: "100%",
+				minHeight: "100%",
+				fontSize: 100,
+				display: "block",
+				filter: "alpha(opacity=0)",
+				opacity: 0,
+				outline: "none",
+			}}
+			onClick={resetFileInput}
+			onChange={event => {
+				if (!event.target.files) {
+					return;
+				}
+				const file = event.target.files[0];
+				if (!file) {
+					return;
+				}
+
+				setErrorMessage();
+
+				const reader = new window.FileReader();
+				reader.readAsText(file);
+
+				reader.onload = event2 => {
+					try {
+						// @ts-ignore
+						const rows = csvParse(event2.currentTarget.result);
+
+						if (
+							!rows.columns.includes("name") ||
+							!rows.columns.includes("frequency") ||
+							!rows.columns.includes("games")
+						) {
+							setErrorMessage(
+								"File should be a CSV file with columns: name, frequency, games",
+							);
+							return;
+						}
+
+						setInjuries(formatInjuries(rows as any));
+					} catch (error) {
+						setErrorMessage(error.message);
+						return;
+					}
+				};
+			}}
+		/>
 	</button>
 );
 
@@ -48,6 +110,9 @@ const Injuries = ({
 }) => {
 	const [show, setShow] = useState(false);
 	const [injuries, setInjuries] = useState(() => formatInjuries(defaultValue));
+	const [importErrorMessage, setImportErrorMessage] = useState<
+		string | undefined
+	>();
 
 	const handleCancel = () => setShow(false);
 	const handleShow = () => setShow(true);
@@ -135,10 +200,17 @@ const Injuries = ({
 							</Dropdown.Menu>
 						</Dropdown>
 						<div className="btn-group">
-							<ImportButton setInjuries={setInjuries} />
+							<ImportButton
+								setErrorMessage={setImportErrorMessage}
+								setInjuries={setInjuries}
+							/>
 							<ExportButton injuries={injuries} />
 						</div>
 					</div>
+
+					{importErrorMessage ? (
+						<p className="text-danger">{importErrorMessage}</p>
+					) : null}
 
 					<form onSubmit={handleSave}>
 						<div className="form-row" style={{ marginRight: 22 }}>

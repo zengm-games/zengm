@@ -1,5 +1,5 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, Fragment, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import { confirm, downloadFile, toWorker } from "../../util";
@@ -233,12 +233,22 @@ const Injuries = ({
 
 		setShow(false);
 	};
-	const handleSave = () => {
+	const handleSave = (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => {
+		event.preventDefault();
+
+		// Don't submit parent form
+		event.stopPropagation();
+
 		if (injuries.length === 0) {
 			return;
 		}
 
+		// Save for next time
 		lastSavedInjuries.current = injuries;
+		setDirty(false);
 
 		setShow(false);
 	};
@@ -298,6 +308,7 @@ const Injuries = ({
 
 					{injuries.length > 0 ? (
 						<form onSubmit={handleSave} className="my-3">
+							<input type="submit" className="d-none" />
 							<div className="form-row" style={{ marginRight: 22 }}>
 								<div className="col-xs-6 col-md-8">Name</div>
 								<div className="col-xs-3 col-md-2">Frequency</div>

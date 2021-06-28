@@ -205,6 +205,7 @@ const Injuries = ({
 		formatInjuries(defaultValue),
 	);
 	const [dirty, setDirty] = useState(false);
+	const lastSavedInjuries = useRef<InjuriesText | undefined>();
 
 	const setInjuries = (injuries: Parameters<typeof setInjuriesRaw>[0]) => {
 		setInjuriesRaw(injuries);
@@ -224,6 +225,10 @@ const Injuries = ({
 			if (!result) {
 				return;
 			}
+
+			// Reset for next time
+			setInjuriesRaw(lastSavedInjuries.current ?? formatInjuries(defaultValue));
+			setDirty(false);
 		}
 
 		setShow(false);
@@ -232,6 +237,8 @@ const Injuries = ({
 		if (injuries.length === 0) {
 			return;
 		}
+
+		lastSavedInjuries.current = injuries;
 
 		setShow(false);
 	};

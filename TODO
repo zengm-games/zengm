@@ -2,12 +2,10 @@ customize injuries
 - like PlayerBioInfo
 - GUI
   - responsive form
-  - store state inside Injuries, only send up on save
-  - quick buttons
-    - reset to current?
-  - if values same as default, save as undefined
+  - actually save
+    - send up to SettingsForm state
+    - if values same as default, save as undefined
   - animate add/delete rows
-  - when closing without saving, changes should not be visible next time it's opened
   - press enter should submit form
   - validate
     - frequency and games are non-negative numbers

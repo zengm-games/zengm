@@ -3,7 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
-import { confirm, downloadFile, toWorker } from "../../util";
+import { confirm, downloadFile, logEvent, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import { resetFileInput } from "../../components/LeagueFileUpload";
 
@@ -185,6 +185,34 @@ const Controls = ({
 	);
 };
 
+const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
+	const injuries = injuriesText.map(row => ({
+		name: row.name,
+		frequency: parseFloat(row.frequency),
+		games: parseFloat(row.games),
+	}));
+
+	for (const row of injuries) {
+		if (Number.isNaN(row.frequency) || row.frequency <= 0) {
+			throw new Error(
+				`Injury "${row.name}" has an invalid frequency - must be a positive number.`,
+			);
+		}
+
+		if (Number.isNaN(row.games) || row.games <= 0) {
+			throw new Error(
+				`Injury "${row.name}" has an invalid number of games - must be a positive number.`,
+			);
+		}
+	}
+
+	if (injuries.length === 0) {
+		throw new Error("You must define at least one type of injury.");
+	}
+
+	return injuries;
+};
+
 const Injuries = ({
 	defaultValue,
 	disabled,
@@ -236,9 +264,20 @@ const Injuries = ({
 		// Don't submit parent form
 		event.stopPropagation();
 
-		if (injuries.length === 0) {
+		let parsed;
+		try {
+			parsed = parseAndValidate(injuries);
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
 			return;
 		}
+
+		console.log(parsed);
 
 		// Save for next time
 		lastSavedInjuries.current = injuries;

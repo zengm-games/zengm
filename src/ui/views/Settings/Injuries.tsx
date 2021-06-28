@@ -1,4 +1,4 @@
-import { csvFormat } from "d3-dsv";
+import { csvFormat, csvParse } from "d3-dsv";
 import { ChangeEvent, Fragment, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
@@ -11,6 +11,31 @@ const formatInjuries = (injuries: InjuriesSetting) =>
 		frequency: String(row.frequency),
 		games: String(row.games),
 	}));
+
+type InjuriesText = ReturnType<typeof formatInjuries>;
+
+const ImportButton = ({
+	setInjuries,
+}: {
+	setInjuries: (injuries: InjuriesText) => void;
+}) => (
+	<button className="btn btn-light-bordered" onClick={() => {}}>
+		Import
+	</button>
+);
+
+const ExportButton = ({ injuries }: { injuries: InjuriesText }) => (
+	<button
+		className="btn btn-light-bordered"
+		onClick={() => {
+			const output = csvFormat(injuries, ["name", "frequency", "games"]);
+
+			downloadFile("injuries.csv", output, "text/csv");
+		}}
+	>
+		Export
+	</button>
+);
 
 const Injuries = ({
 	defaultValue,
@@ -110,21 +135,8 @@ const Injuries = ({
 							</Dropdown.Menu>
 						</Dropdown>
 						<div className="btn-group">
-							<button className="btn btn-light-bordered">Import</button>
-							<button
-								className="btn btn-light-bordered"
-								onClick={() => {
-									const output = csvFormat(injuries, [
-										"name",
-										"frequency",
-										"games",
-									]);
-
-									downloadFile("injuries.csv", output, "text/csv");
-								}}
-							>
-								Export
-							</button>
+							<ImportButton setInjuries={setInjuries} />
+							<ExportButton injuries={injuries} />
 						</div>
 					</div>
 

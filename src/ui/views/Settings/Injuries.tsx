@@ -310,15 +310,15 @@ const Injuries = ({
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
 							<div className="form-row" style={{ marginRight: 22 }}>
-								<div className="col-xs-6 col-md-8">Name</div>
-								<div className="col-xs-3 col-md-2">Frequency</div>
-								<div className="col-xs-3 col-md-2">Games</div>
+								<div className="col-6 col-md-8">Name</div>
+								<div className="col-3 col-md-2">Frequency</div>
+								<div className="col-3 col-md-2">Games</div>
 							</div>
 							{injuries.map((injury, i) => (
 								<Fragment key={i}>
 									<div className="d-flex">
 										<div className="form-row mt-1 flex-grow-1" key={i}>
-											<div className="col-xs-6 col-md-8">
+											<div className="col-6 col-md-8">
 												<input
 													type="text"
 													className="form-control"
@@ -326,7 +326,7 @@ const Injuries = ({
 													onChange={handleChange("name", i)}
 												/>
 											</div>
-											<div className="col-xs-3 col-md-2">
+											<div className="col-3 col-md-2">
 												<input
 													type="text"
 													className="form-control"
@@ -334,7 +334,7 @@ const Injuries = ({
 													onChange={handleChange("frequency", i)}
 												/>
 											</div>
-											<div className="col-xs-3 col-md-2">
+											<div className="col-3 col-md-2">
 												<input
 													type="text"
 													className="form-control"

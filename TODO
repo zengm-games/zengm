@@ -1,6 +1,10 @@
 customize injuries
 - like PlayerBioInfo
 - GUI
+  - handle disabling Customize button when god mode is disabled
+  - quick buttons - default, clear
+  - hide editor behind a button, by default
+  - if values same as default, save as undefined
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf

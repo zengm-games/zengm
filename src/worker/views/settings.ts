@@ -1,4 +1,4 @@
-import { g } from "../util";
+import { defaultInjuries, g } from "../util";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
@@ -84,6 +84,7 @@ const keys = [
 	"realDraftRatings",
 	"hideDisabledTeams",
 	"hofFactor",
+	"injuries",
 ] as const;
 
 export type Settings = Pick<
@@ -184,6 +185,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			hideDisabledTeams: g.get("hideDisabledTeams"),
 			noStartingInjuries: false,
 			hofFactor: g.get("hofFactor"),
+			injuries: g.get("injuries") ?? defaultInjuries,
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

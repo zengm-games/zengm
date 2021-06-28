@@ -17,6 +17,7 @@ import { isSport } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
+import Injuries from "./Injuries";
 
 const settingNeedsGodMode = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -971,6 +972,9 @@ const categories: {
 		name: "Events",
 	},
 	{
+		name: "Injuries",
+	},
+	{
 		name: "Game Simulation",
 	},
 	{
@@ -1680,6 +1684,8 @@ const SettingsForm = ({
 														</div>
 													</div>
 												);
+											} else if (key === "injuries") {
+												customFormNode = <Injuries />;
 											}
 										}
 

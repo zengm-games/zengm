@@ -612,7 +612,7 @@ export const settings: {
 			"Normally, teams controlled by the AI (including your team, if you're using Auto Play or Spectator Mode) will retire jersey numbers of their former players as they deem appropriate. You can disable that behavior here, and then the AI will not retire or unretire any jersey numbers.",
 	},
 	{
-		category: "Events",
+		category: "Injuries",
 		key: "injuryRate",
 		name: "Injury Rate",
 		godModeRequired: "always",
@@ -1219,12 +1219,20 @@ settings.push(
 		],
 	},
 	{
-		category: "General",
+		category: "Injuries",
 		key: "stopOnInjuryGames",
 		name: "Stop On Injury",
 		type: "int",
 		description:
 			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
+		customForm: true,
+	},
+	{
+		category: "Injuries",
+		key: "injuries",
+		name: "Injury Types",
+		type: "custom",
+		godModeRequired: "always",
 		customForm: true,
 	},
 	{

@@ -76,7 +76,8 @@ export type Key =
 	| "randomization"
 	| "realStats"
 	| "hideDisabledTeams"
-	| "hofFactor";
+	| "hofFactor"
+	| "injuries";
 
 export type Category =
 	| "New League"
@@ -88,6 +89,7 @@ export type Category =
 	| "Finances"
 	| "Contracts"
 	| "Events"
+	| "Injuries"
 	| "Game Simulation"
 	| "Elam Ending"
 	| "Challenge Modes"
@@ -104,7 +106,8 @@ export type FieldType =
 	| "jsonString"
 	| "string"
 	| "rangePercent"
-	| "floatValuesOrCustom";
+	| "floatValuesOrCustom"
+	| "custom";
 
 export type Decoration = "currency" | "percent";
 

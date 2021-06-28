@@ -668,6 +668,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 							homeCourtAdvantage: {
 								type: "number",
 							},
+							injuries: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										name: {
+											type: "string",
+										},
+										frequency: {
+											type: "number",
+										},
+										games: {
+											type: "number",
+										},
+									},
+									required: ["name", "frequency", "games"],
+								},
+							},
 							injuryRate: {
 								type: "number",
 								minimum: 0,

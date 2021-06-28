@@ -74,6 +74,15 @@ const Injuries = ({
 						"Games" is the average number of games that will be missed. There is
 						some variability based on luck and health spending.
 					</p>
+
+					<div className="d-flex justify-content-between mb-3">
+						<div>Reset dropdown</div>
+						<div className="btn-group">
+							<button className="btn btn-light-bordered">Import</button>
+							<button className="btn btn-light-bordered">Export</button>
+						</div>
+					</div>
+
 					<form onSubmit={handleSave}>
 						<div className="form-row" style={{ marginRight: 22 }}>
 							<div className="col-xs-6 col-md-8">Name</div>

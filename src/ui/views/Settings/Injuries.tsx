@@ -40,6 +40,17 @@ const Injuries = ({
 					<Modal.Title>Injury Types</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					<p>
+						Injury rate is determined by the injury rate setting, which is
+						viewable on the main League Settings page. The "Frequency" field
+						here is a relative frequency or weight. It doesn't change how often
+						injuries in general occur, but it does determine the probability
+						that an injury will be a specific type.
+					</p>
+					<p>
+						"Games" is the average number of games that will be missed. There is
+						some variability based on luck and health spending.
+					</p>
 					<form onSubmit={handleSave}>
 						<div className="form-row" style={{ marginRight: 22 }}>
 							<div className="col-xs-6 col-md-8">Name</div>

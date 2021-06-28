@@ -7,7 +7,6 @@ customize injuries
   - hide editor behind a button, by default
   - if values same as default, save as undefined
   - animate add/delete rows
-  - explain frequency, explain games
   - backdrop="static" only if edited
     - or, modal confirm if edited
   - validate

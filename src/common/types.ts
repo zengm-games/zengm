@@ -396,6 +396,11 @@ export type GameAttributesLeague = {
 	hideDisabledTeams: boolean;
 	hofFactor: number;
 	homeCourtAdvantage: number;
+	injuries?: {
+		name: string;
+		frequency: number;
+		games: number;
+	}[];
 	injuryRate: number;
 	lid: number;
 	luxuryPayroll: number;

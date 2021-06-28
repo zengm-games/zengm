@@ -1,6 +1,16 @@
-import { g, helpers, injuries, random } from "../../util";
+import { defaultInjuries, g, helpers, random } from "../../util";
 import type { PlayerInjury } from "../../../common/types";
 import { isSport } from "../../../common";
+
+let prevInjuries:
+	| {
+			name: string;
+			frequency: number;
+			games: number;
+	  }[]
+	| undefined;
+
+let cumSums: number[] = [];
 
 /**
  * Pick injury type and duration.
@@ -11,12 +21,28 @@ import { isSport } from "../../../common";
  * @return {Object} Injury object (type and gamesRemaining)
  */
 const injury = (healthRank: number): PlayerInjury => {
-	const rand = random.uniform(0, 10882);
-	const i = injuries.cumSum.findIndex(cs => cs >= rand);
+	const injuries = g.get("injuries") ?? defaultInjuries;
+
+	if (injuries !== prevInjuries) {
+		console.log("recompute");
+		cumSums = [];
+
+		for (let i = 0; i < injuries.length; i++) {
+			cumSums[i] = injuries[i].frequency;
+			if (i > 0) {
+				cumSums[i] += cumSums[i - 1];
+			}
+		}
+
+		prevInjuries = injuries;
+	}
+
+	const rand = random.uniform(0, cumSums[cumSums.length - 1]);
+	const i = cumSums.findIndex(cs => cs >= rand);
 	let gamesRemaining = Math.round(
 		((0.7 * (healthRank - 1)) / (g.get("numActiveTeams") - 1) + 0.65) *
 			random.uniform(0.25, 1.75) *
-			injuries.gamesRemainings[i],
+			injuries[i].games,
 	);
 
 	// Hack for football
@@ -25,7 +51,7 @@ const injury = (healthRank: number): PlayerInjury => {
 	}
 
 	return {
-		type: injuries.types[i],
+		type: injuries[i].name,
 		gamesRemaining: helpers.bound(gamesRemaining, 0, Infinity),
 	};
 };

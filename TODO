@@ -1,3 +1,12 @@
+customize injuries
+- like PlayerBioInfo
+- GUI
+
+injuries
+- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
+  - handle days vs weeks
+- hockey
+
 torn achilles https://discord.com/channels/290013534023057409/331882115119448065/857297030485246032
 
 FBGM lower salaries https://discord.com/channels/290013534023057409/331882115119448065/856734085191041024
@@ -833,7 +842,7 @@ way to save/load leagues on server
 god mode stuff
 - more stuff on player editor
 - pick all stars, and captains
-- edit list of injuries, deaths
+- edit list of  deaths
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues
@@ -1072,14 +1081,7 @@ player page UI improvements https://old.reddit.com/r/BasketballGM/comments/fbja8
 - deltas for ratings at the top
 - highlight ratings based on comparison to position average (maybe like popover)
 
-more dynamic contracts, based on available cap space
-- things this would enable
-  - sliders to control talent levels
-  - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
-
-error if cid/did mismatch on imported team
-- tell nicidob when i do this
-- better - set cid on import, and log warning to console
+@nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
 add player who tackled to play by play
 - Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
@@ -1094,8 +1096,6 @@ Game list redesign
   - show player with highest game score under completed game
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
-
-Jofish - when you make a move that causes an error in your roster (i.e. not enough/too many players) and try to simulate the all-star game, it freezes. I understand that the game still has to check if the rosters are proper, however, there is no warning given. Even though it doesn't make sense that the user's roster has to comply within the league even though it's the all-star game, a simple warning given would be nice
 
 probGoForIt should account for being down by a FG or less late in the game
 
@@ -1142,11 +1142,6 @@ FBGM rookie contract length
 value should be more ovr-based
 - https://old.reddit.com/r/BasketballGM/comments/ecr0mw/20192020_nba_roster_v_11_traded_draft_picks_up_to/fbk80xj/?context=3
 
-box score order
-- userTid always at top!
-
-in football, sometimes pot is less than ovr, why?
-
 kicker trade value
 
 god mode options for tendencies
@@ -1187,7 +1182,6 @@ zipped files @Jofish#5051
 - https://twitter.com/addyosmani/status/1228989899686260736 in Chrome 80
 
 dashboard ui
-- make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
 - team logos
 
 https://react-hook-form.com/ for forms
@@ -1201,17 +1195,11 @@ football roster balance issues https://imgur.com/HmK00EF @Eddy
 
 football OL with 49 height listed as 5'7"
 
-football too many players retire
-
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
-
-Could you add a page which shows all the game results on any given day? Just the scores would be cool, maybe the top performer (best gamescore player, but show their pts/reb/ast) too, but mainly just a way to see what happened in every game that day without jumping around game logs.
 
 "if you edit a player (change nothing) and hit save changes any new relationships added  or edited will appear"
 
 option to control retirement rate
-
-Force players to play through injury
 
 load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automatic_nba_rosters_by_understanding/es28wcf/?context=3
 - explanation text?
@@ -1281,8 +1269,6 @@ Add "All Seasons" option to various stat/ratings pages
   - Also add "Career Totals" there
 
 injury later
-- slowly ramp endurance up after injury
-  - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
 - injury history leads to chance of reinjury
 - height influences injury probability (see same paper as age)
 - career ending injuries
@@ -1312,13 +1298,8 @@ game sim
   - missed fg/xp return
 
 AV advanced stat
-- use in value?
 - OL and defense
-  - need all pro modifier - but this is circular reasoning, since that comes from AV!
   - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
-
-injuries
-- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
 
 how to get types working, options:
 - make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around

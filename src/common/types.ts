@@ -355,6 +355,12 @@ export type NamesLegacy = {
 export type Conf = { cid: number; name: string };
 export type Div = { cid: number; did: number; name: string };
 
+export type InjuriesSetting = {
+	name: string;
+	frequency: number;
+	games: number;
+}[];
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -396,11 +402,7 @@ export type GameAttributesLeague = {
 	hideDisabledTeams: boolean;
 	hofFactor: number;
 	homeCourtAdvantage: number;
-	injuries?: {
-		name: string;
-		frequency: number;
-		games: number;
-	}[];
+	injuries?: InjuriesSetting;
 	injuryRate: number;
 	lid: number;
 	luxuryPayroll: number;

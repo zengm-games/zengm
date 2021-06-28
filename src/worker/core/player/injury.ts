@@ -1,14 +1,8 @@
 import { defaultInjuries, g, helpers, random } from "../../util";
-import type { PlayerInjury } from "../../../common/types";
+import type { InjuriesSetting, PlayerInjury } from "../../../common/types";
 import { isSport } from "../../../common";
 
-let prevInjuries:
-	| {
-			name: string;
-			frequency: number;
-			games: number;
-	  }[]
-	| undefined;
+let prevInjuries: InjuriesSetting | undefined;
 
 let cumSums: number[] = [];
 

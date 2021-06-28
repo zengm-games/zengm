@@ -1687,6 +1687,7 @@ const SettingsForm = ({
 											} else if (key === "injuries") {
 												customFormNode = (
 													<Injuries
+														defaultValue={state.injuries}
 														disabled={!enabled || submitting}
 														godModeRequired={godModeRequired}
 													/>

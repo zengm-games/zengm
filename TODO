@@ -1,10 +1,15 @@
 customize injuries
 - like PlayerBioInfo
 - GUI
+  - responsive form
   - store state inside Injuries, only send up on save
   - quick buttons - default, clear, import/export CSV
   - hide editor behind a button, by default
   - if values same as default, save as undefined
+  - animate add/delete rows
+  - explain frequency, explain games
+  - backdrop="static" only if edited
+    - or, modal confirm if edited
   - validate
     - frequency and games are non-negative
     - at least one row

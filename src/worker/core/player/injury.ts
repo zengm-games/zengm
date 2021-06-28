@@ -1,6 +1,5 @@
 import { defaultInjuries, g, helpers, random } from "../../util";
 import type { InjuriesSetting, PlayerInjury } from "../../../common/types";
-import { isSport } from "../../../common";
 
 let prevInjuries: InjuriesSetting | undefined;
 
@@ -33,16 +32,11 @@ const injury = (healthRank: number): PlayerInjury => {
 
 	const rand = random.uniform(0, cumSums[cumSums.length - 1]);
 	const i = cumSums.findIndex(cs => cs >= rand);
-	let gamesRemaining = Math.round(
+	const gamesRemaining = Math.round(
 		((0.7 * (healthRank - 1)) / (g.get("numActiveTeams") - 1) + 0.65) *
 			random.uniform(0.25, 1.75) *
 			injuries[i].games,
 	);
-
-	// Hack for football
-	if (isSport("football")) {
-		gamesRemaining = Math.ceil(gamesRemaining / 3);
-	}
 
 	return {
 		type: injuries[i].name,

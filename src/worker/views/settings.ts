@@ -2,6 +2,7 @@ import { defaultInjuries, g } from "../util";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
+	InjuriesSetting,
 	UpdateEvents,
 } from "../../common/types";
 
@@ -89,7 +90,7 @@ const keys = [
 
 export type Settings = Pick<
 	GameAttributesLeague,
-	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings">
+	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings" | "injuries">
 > & {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -99,6 +100,7 @@ export type Settings = Pick<
 	>;
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	realStats: GetLeagueOptionsReal["realStats"];
+	injuries: InjuriesSetting;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {

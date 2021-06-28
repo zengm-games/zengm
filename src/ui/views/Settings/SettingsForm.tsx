@@ -18,6 +18,7 @@ import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import Injuries from "./Injuries";
+import type { InjuriesSetting } from "../../../common/types";
 
 const settingNeedsGodMode = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -1212,11 +1213,34 @@ const Option = ({
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
-	value: string;
+	value: unknown;
 	values?: Values;
 	customForm?: ReactNode;
 }) => {
 	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
+
+	let formElement;
+	if (customForm) {
+		formElement = customForm;
+	} else {
+		if (typeof value !== "string") {
+			throw new Error("Value must be string");
+		}
+		formElement = (
+			<Input
+				type={type}
+				disabled={disabled}
+				godModeRequired={godModeRequired}
+				id={id}
+				maxWidth={maxWidth}
+				name={name}
+				onChange={onChange}
+				value={value}
+				values={values}
+				decoration={decoration}
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -1257,22 +1281,7 @@ const Option = ({
 					) : null}
 				</div>
 				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
-					{customForm ? (
-						customForm
-					) : (
-						<Input
-							type={type}
-							disabled={disabled}
-							godModeRequired={godModeRequired}
-							id={id}
-							maxWidth={maxWidth}
-							name={name}
-							onChange={onChange}
-							value={value}
-							values={values}
-							decoration={decoration}
-						/>
-					)}
+					{formElement}
 				</div>
 			</div>
 			{description ? (
@@ -1333,8 +1342,15 @@ const GodModeSettingsButton = ({
 	);
 };
 
+const SPECIAL_STATE_OTHERS = ["injuries"] as const;
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
+const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
+type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
+
+type State = Record<Exclude<Key, SpecialStateAll>, string> &
+	Record<SpecialStateBoolean, boolean> &
+	Record<"injuries", InjuriesSetting>;
 
 const SettingsForm = ({
 	onCancel,
@@ -1368,13 +1384,14 @@ const SettingsForm = ({
 
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
-	const [state, setState] = useState<
-		Record<Key, string> & Record<SpecialStateBoolean, boolean>
-	>(() => {
+	const [state, setState] = useState<State>(() => {
 		// @ts-ignore
-		const initialState: Record<Key, string> &
-			Record<SpecialStateBoolean, boolean> = {};
+		const initialState: State = {};
 		for (const { key, type, values } of settings) {
+			if (SPECIAL_STATE_ALL.includes(key as any)) {
+				continue;
+			}
+
 			const value = props[key];
 
 			// https://github.com/microsoft/TypeScript/issues/21732
@@ -1387,6 +1404,7 @@ const SettingsForm = ({
 		for (const key of SPECIAL_STATE_BOOLEANS) {
 			initialState[key] = props[key];
 		}
+		initialState.injuries = props.injuries;
 
 		return initialState;
 	});
@@ -1427,7 +1445,12 @@ const SettingsForm = ({
 				value = String((event.target as any).checked);
 			} else if (type === "floatValuesOrCustom") {
 				if (event.target.value === "custom") {
-					value = JSON.stringify([true, JSON.parse(state[name])[1]]);
+					const raw = state[name];
+					if (typeof raw !== "string") {
+						throw new Error("Invalid value");
+					}
+
+					value = JSON.stringify([true, JSON.parse(raw)[1]]);
 				} else {
 					value = JSON.stringify([false, event.target.value]);
 				}

@@ -1,5 +1,7 @@
 // See data/injuries.ods for basketball data
 
+import { isSport } from "../../common";
+
 const defaultInjuries = [
 	{
 		name: "Sprained Ankle",
@@ -247,5 +249,12 @@ const defaultInjuries = [
 		games: 100,
 	},
 ];
+
+// Hack for football
+if (isSport("football")) {
+	for (const row of defaultInjuries) {
+		row.games = parseFloat((row.games / 3).toFixed(2));
+	}
+}
 
 export default defaultInjuries;

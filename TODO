@@ -1,9 +1,13 @@
 customize injuries
 - like PlayerBioInfo
 - GUI
+  - store state inside Injuries, only send up on save
   - quick buttons - default, clear, import/export CSV
   - hide editor behind a button, by default
   - if values same as default, save as undefined
+  - validate
+    - frequency and games are non-negative
+    - at least one row
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf

@@ -99,6 +99,98 @@ const ExportButton = ({ injuries }: { injuries: InjuriesText }) => (
 	</button>
 );
 
+const Controls = ({
+	injuries,
+	position,
+	setInjuries,
+}: {
+	injuries: InjuriesText;
+	position: "top" | "bottom";
+	setInjuries: (
+		injuries: InjuriesText | ((injuries: InjuriesText) => InjuriesText),
+	) => void;
+}) => {
+	const [importErrorMessage, setImportErrorMessage] = useState<
+		string | undefined
+	>();
+
+	return (
+		<>
+			<div className="d-flex justify-content-between">
+				<div className="btn-group">
+					<button
+						className="btn btn-light-bordered"
+						onClick={() => {
+							if (position === "top") {
+								setInjuries(rows => [
+									{
+										name: "Injury",
+										frequency: "1",
+										games: "1",
+									},
+									...rows,
+								]);
+							} else {
+								setInjuries(rows => [
+									...rows,
+									{
+										name: "Injury",
+										frequency: "1",
+										games: "1",
+									},
+								]);
+							}
+						}}
+					>
+						Add
+					</button>
+					<Dropdown>
+						<Dropdown.Toggle
+							className="btn-light-bordered btn-light-bordered-group-right"
+							variant="foo"
+							id="dropdown-injuries-reset"
+						>
+							Reset
+						</Dropdown.Toggle>
+
+						<Dropdown.Menu>
+							<Dropdown.Item
+								onClick={async () => {
+									setInjuries(
+										formatInjuries(
+											await toWorker("main", "getDefaultInjuries"),
+										),
+									);
+								}}
+							>
+								Default
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									setInjuries([]);
+								}}
+							>
+								Clear
+							</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+				</div>
+				<div className="btn-group">
+					<ImportButton
+						setErrorMessage={setImportErrorMessage}
+						setInjuries={setInjuries}
+					/>
+					<ExportButton injuries={injuries} />
+				</div>
+			</div>
+
+			{importErrorMessage ? (
+				<div className="text-danger mt-3">{importErrorMessage}</div>
+			) : null}
+		</>
+	);
+};
+
 const Injuries = ({
 	defaultValue,
 	disabled,
@@ -110,14 +202,15 @@ const Injuries = ({
 }) => {
 	const [show, setShow] = useState(false);
 	const [injuries, setInjuries] = useState(() => formatInjuries(defaultValue));
-	const [importErrorMessage, setImportErrorMessage] = useState<
-		string | undefined
-	>();
 
 	const handleCancel = () => setShow(false);
 	const handleShow = () => setShow(true);
 
 	const handleSave = () => {
+		if (injuries.length === 0) {
+			return;
+		}
+
 		setShow(false);
 	};
 
@@ -168,106 +261,86 @@ const Injuries = ({
 						some variability based on luck and health spending.
 					</p>
 
-					<div className="d-flex justify-content-between mb-3">
-						<Dropdown>
-							<Dropdown.Toggle
-								className="btn-light-bordered"
-								variant="foo"
-								id="dropdown-injuries-reset"
-							>
-								Reset
-							</Dropdown.Toggle>
+					<Controls
+						position="top"
+						injuries={injuries}
+						setInjuries={setInjuries}
+					/>
 
-							<Dropdown.Menu>
-								<Dropdown.Item
-									onClick={async () => {
-										setInjuries(
-											formatInjuries(
-												await toWorker("main", "getDefaultInjuries"),
-											),
-										);
-									}}
-								>
-									Default
-								</Dropdown.Item>
-								<Dropdown.Item
-									onClick={() => {
-										setInjuries([]);
-									}}
-								>
-									Clear
-								</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown>
-						<div className="btn-group">
-							<ImportButton
-								setErrorMessage={setImportErrorMessage}
-								setInjuries={setInjuries}
-							/>
-							<ExportButton injuries={injuries} />
-						</div>
-					</div>
-
-					{importErrorMessage ? (
-						<p className="text-danger">{importErrorMessage}</p>
-					) : null}
-
-					<form onSubmit={handleSave}>
-						<div className="form-row" style={{ marginRight: 22 }}>
-							<div className="col-xs-6 col-md-8">Name</div>
-							<div className="col-xs-3 col-md-2">Frequency</div>
-							<div className="col-xs-3 col-md-2">Games</div>
-						</div>
-						{injuries.map((injury, i) => (
-							<Fragment key={i}>
-								<div className="d-flex">
-									<div className="form-row mt-1 flex-grow-1" key={i}>
-										<div className="col-xs-6 col-md-8">
-											<input
-												type="text"
-												className="form-control"
-												value={injury.name}
-												onChange={handleChange("name", i)}
-											/>
+					{injuries.length > 0 ? (
+						<form onSubmit={handleSave} className="my-3">
+							<div className="form-row" style={{ marginRight: 22 }}>
+								<div className="col-xs-6 col-md-8">Name</div>
+								<div className="col-xs-3 col-md-2">Frequency</div>
+								<div className="col-xs-3 col-md-2">Games</div>
+							</div>
+							{injuries.map((injury, i) => (
+								<Fragment key={i}>
+									<div className="d-flex">
+										<div className="form-row mt-1 flex-grow-1" key={i}>
+											<div className="col-xs-6 col-md-8">
+												<input
+													type="text"
+													className="form-control"
+													value={injury.name}
+													onChange={handleChange("name", i)}
+												/>
+											</div>
+											<div className="col-xs-3 col-md-2">
+												<input
+													type="text"
+													className="form-control"
+													value={injury.frequency}
+													onChange={handleChange("frequency", i)}
+												/>
+											</div>
+											<div className="col-xs-3 col-md-2">
+												<input
+													type="text"
+													className="form-control"
+													value={injury.games}
+													onChange={handleChange("games", i)}
+												/>
+											</div>
 										</div>
-										<div className="col-xs-3 col-md-2">
-											<input
-												type="text"
-												className="form-control"
-												value={injury.frequency}
-												onChange={handleChange("frequency", i)}
-											/>
-										</div>
-										<div className="col-xs-3 col-md-2">
-											<input
-												type="text"
-												className="form-control"
-												value={injury.games}
-												onChange={handleChange("games", i)}
-											/>
-										</div>
+										<button
+											className="text-danger btn btn-link pl-2 pr-0 border-0"
+											onClick={() => {
+												setInjuries(rows => rows.filter(row => row !== injury));
+											}}
+											style={{ fontSize: 20 }}
+											title="Delete"
+											type="button"
+										>
+											<span className="glyphicon glyphicon-remove" />
+										</button>
 									</div>
-									<button
-										className="text-danger btn btn-link pl-2 pr-0 border-0"
-										onClick={() => {
-											setInjuries(rows => rows.filter(row => row !== injury));
-										}}
-										style={{ fontSize: 20 }}
-										title="Delete"
-										type="button"
-									>
-										<span className="glyphicon glyphicon-remove" />
-									</button>
-								</div>
-							</Fragment>
-						))}
-					</form>
+								</Fragment>
+							))}
+						</form>
+					) : (
+						<div className="mt-3 text-danger">
+							You must define at least one injury type.
+						</div>
+					)}
+
+					{injuries.length > 0 ? (
+						<Controls
+							position="bottom"
+							injuries={injuries}
+							setInjuries={setInjuries}
+						/>
+					) : null}
 				</Modal.Body>
 				<Modal.Footer>
 					<button className="btn btn-secondary" onClick={handleCancel}>
 						Cancel
 					</button>
-					<button className="btn btn-primary" onClick={handleSave}>
+					<button
+						className="btn btn-primary"
+						onClick={handleSave}
+						disabled={injuries.length === 0}
+					>
 						Save
 					</button>
 				</Modal.Footer>

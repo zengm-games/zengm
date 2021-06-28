@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { ChangeEvent, Fragment, useState } from "react";
 import { Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import { godModeRequiredMessage } from "./SettingsForm";
@@ -13,7 +13,13 @@ const Injuries = ({
 	godModeRequired?: "always" | "existingLeagueOnly";
 }) => {
 	const [show, setShow] = useState(false);
-	const [injuries, setInjuries] = useState(defaultValue);
+	const [injuries, setInjuries] = useState(
+		defaultValue.map(row => ({
+			name: row.name,
+			frequency: String(row.frequency),
+			games: String(row.games),
+		})),
+	);
 
 	const handleCancel = () => setShow(false);
 	const handleShow = () => setShow(true);
@@ -21,6 +27,23 @@ const Injuries = ({
 	const handleSave = () => {
 		setShow(false);
 	};
+
+	const handleChange =
+		(key: "name" | "frequency" | "games", i: number) =>
+		(event: ChangeEvent<HTMLInputElement>) => {
+			setInjuries(rows =>
+				rows.map((row, j) => {
+					if (i !== j) {
+						return row;
+					}
+
+					return {
+						...row,
+						[key]: event.target.value,
+					};
+				}),
+			);
+		};
 
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 	return (
@@ -66,6 +89,7 @@ const Injuries = ({
 												type="text"
 												className="form-control"
 												value={injury.name}
+												onChange={handleChange("name", i)}
 											/>
 										</div>
 										<div className="col-xs-3 col-md-2">
@@ -73,6 +97,7 @@ const Injuries = ({
 												type="text"
 												className="form-control"
 												value={injury.frequency}
+												onChange={handleChange("frequency", i)}
 											/>
 										</div>
 										<div className="col-xs-3 col-md-2">
@@ -80,6 +105,7 @@ const Injuries = ({
 												type="text"
 												className="form-control"
 												value={injury.games}
+												onChange={handleChange("games", i)}
 											/>
 										</div>
 									</div>

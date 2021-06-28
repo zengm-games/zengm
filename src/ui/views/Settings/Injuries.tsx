@@ -1,5 +1,6 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { ChangeEvent, FormEvent, Fragment, useRef, useState } from "react";
+import { m, AnimatePresence } from "framer-motion";
+import { ChangeEvent, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import { confirm, downloadFile, toWorker } from "../../util";
@@ -8,6 +9,7 @@ import { resetFileInput } from "../../components/LeagueFileUpload";
 
 const formatInjuries = (injuries: InjuriesSetting) =>
 	injuries.map(row => ({
+		id: Math.random(),
 		name: row.name,
 		frequency: String(row.frequency),
 		games: String(row.games),
@@ -121,24 +123,16 @@ const Controls = ({
 					<button
 						className="btn btn-light-bordered"
 						onClick={() => {
+							const newInjury = {
+								id: Math.random(),
+								name: "Injury",
+								frequency: "1",
+								games: "1",
+							};
 							if (position === "top") {
-								setInjuries(rows => [
-									{
-										name: "Injury",
-										frequency: "1",
-										games: "1",
-									},
-									...rows,
-								]);
+								setInjuries(rows => [newInjury, ...rows]);
 							} else {
-								setInjuries(rows => [
-									...rows,
-									{
-										name: "Injury",
-										frequency: "1",
-										games: "1",
-									},
-								]);
+								setInjuries(rows => [...rows, newInjury]);
 							}
 						}}
 					>
@@ -314,49 +308,60 @@ const Injuries = ({
 								<div className="col-3 col-md-2">Frequency</div>
 								<div className="col-3 col-md-2">Games</div>
 							</div>
-							{injuries.map((injury, i) => (
-								<Fragment key={i}>
-									<div className="d-flex">
-										<div className="form-row mt-1 flex-grow-1" key={i}>
-											<div className="col-6 col-md-8">
-												<input
-													type="text"
-													className="form-control"
-													value={injury.name}
-													onChange={handleChange("name", i)}
-												/>
+							<AnimatePresence initial={false}>
+								{injuries.map((injury, i) => (
+									<m.div
+										key={injury.id}
+										initial={{ opacity: 0, y: -38 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{}}
+										layout
+										transition={{ duration: 0.2, type: "tween" }}
+									>
+										<div className="d-flex">
+											<div className="form-row mt-1 flex-grow-1" key={i}>
+												<div className="col-6 col-md-8">
+													<input
+														type="text"
+														className="form-control"
+														value={injury.name}
+														onChange={handleChange("name", i)}
+													/>
+												</div>
+												<div className="col-3 col-md-2">
+													<input
+														type="text"
+														className="form-control"
+														value={injury.frequency}
+														onChange={handleChange("frequency", i)}
+													/>
+												</div>
+												<div className="col-3 col-md-2">
+													<input
+														type="text"
+														className="form-control"
+														value={injury.games}
+														onChange={handleChange("games", i)}
+													/>
+												</div>
 											</div>
-											<div className="col-3 col-md-2">
-												<input
-													type="text"
-													className="form-control"
-													value={injury.frequency}
-													onChange={handleChange("frequency", i)}
-												/>
-											</div>
-											<div className="col-3 col-md-2">
-												<input
-													type="text"
-													className="form-control"
-													value={injury.games}
-													onChange={handleChange("games", i)}
-												/>
-											</div>
+											<button
+												className="text-danger btn btn-link pl-2 pr-0 border-0"
+												onClick={() => {
+													setInjuries(rows =>
+														rows.filter(row => row !== injury),
+													);
+												}}
+												style={{ fontSize: 20 }}
+												title="Delete"
+												type="button"
+											>
+												<span className="glyphicon glyphicon-remove" />
+											</button>
 										</div>
-										<button
-											className="text-danger btn btn-link pl-2 pr-0 border-0"
-											onClick={() => {
-												setInjuries(rows => rows.filter(row => row !== injury));
-											}}
-											style={{ fontSize: 20 }}
-											title="Delete"
-											type="button"
-										>
-											<span className="glyphicon glyphicon-remove" />
-										</button>
-									</div>
-								</Fragment>
-							))}
+									</m.div>
+								))}
+							</AnimatePresence>
 						</form>
 					) : (
 						<div className="mt-3 text-danger">

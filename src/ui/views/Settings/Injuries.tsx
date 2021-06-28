@@ -1,8 +1,8 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { ChangeEvent, Fragment, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
-import { downloadFile, toWorker } from "../../util";
+import { confirm, downloadFile, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import { resetFileInput } from "../../components/LeagueFileUpload";
 
@@ -201,11 +201,33 @@ const Injuries = ({
 	godModeRequired?: "always" | "existingLeagueOnly";
 }) => {
 	const [show, setShow] = useState(false);
-	const [injuries, setInjuries] = useState(() => formatInjuries(defaultValue));
+	const [injuries, setInjuriesRaw] = useState(() =>
+		formatInjuries(defaultValue),
+	);
+	const [dirty, setDirty] = useState(false);
 
-	const handleCancel = () => setShow(false);
+	const setInjuries = (injuries: Parameters<typeof setInjuriesRaw>[0]) => {
+		setInjuriesRaw(injuries);
+		setDirty(true);
+	};
+
 	const handleShow = () => setShow(true);
+	const handleCancel = async () => {
+		if (dirty) {
+			const result = await confirm(
+				"Are you sure you want to discard your changes?",
+				{
+					okText: "Discard",
+					cancelText: "Cancel",
+				},
+			);
+			if (!result) {
+				return;
+			}
+		}
 
+		setShow(false);
+	};
 	const handleSave = () => {
 		if (injuries.length === 0) {
 			return;
@@ -244,7 +266,7 @@ const Injuries = ({
 				Customize
 			</button>
 
-			<Modal show={show} onHide={handleCancel} backdrop="static">
+			<Modal show={show} onHide={handleCancel}>
 				<Modal.Header closeButton>
 					<Modal.Title>Injury Types</Modal.Title>
 				</Modal.Header>

@@ -1,12 +1,9 @@
 customize injuries
-- like PlayerBioInfo
-- GUI
-  - if values same as default, save as undefined
-  - live validation
+- if values same as default, save as undefined
+- handle days vs weeks for FBGM
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
-  - handle days vs weeks
 - hockey
 
 FBGM

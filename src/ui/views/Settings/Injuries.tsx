@@ -6,6 +6,7 @@ import type { InjuriesSetting } from "../../../common/types";
 import { confirm, downloadFile, logEvent, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import { resetFileInput } from "../../components/LeagueFileUpload";
+import classNames from "classnames";
 
 const formatInjuries = (injuries: InjuriesSetting) =>
 	injuries.map(row => ({
@@ -347,9 +348,9 @@ const Injuries = ({
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
 							<div className="form-row" style={{ marginRight: 22 }}>
-								<div className="col-6 col-md-8">Name</div>
-								<div className="col-3 col-md-2">Frequency</div>
-								<div className="col-3 col-md-2">Games</div>
+								<div className="col-6">Name</div>
+								<div className="col-3">Frequency</div>
+								<div className="col-3">Games</div>
 							</div>
 							<AnimatePresence initial={false}>
 								{injuries.map((injury, i) => (
@@ -363,7 +364,7 @@ const Injuries = ({
 									>
 										<div className="d-flex">
 											<div className="form-row mt-1 flex-grow-1" key={i}>
-												<div className="col-6 col-md-8">
+												<div className="col-6">
 													<input
 														type="text"
 														className="form-control"
@@ -371,18 +372,26 @@ const Injuries = ({
 														onChange={handleChange("name", i)}
 													/>
 												</div>
-												<div className="col-3 col-md-2">
+												<div className="col-3">
 													<input
 														type="text"
-														className="form-control"
+														className={classNames("form-control", {
+															"is-invalid": isInvalidNumber(
+																parseFloat(injury.frequency),
+															),
+														})}
 														value={injury.frequency}
 														onChange={handleChange("frequency", i)}
 													/>
 												</div>
-												<div className="col-3 col-md-2">
+												<div className="col-3">
 													<input
 														type="text"
-														className="form-control"
+														className={classNames("form-control", {
+															"is-invalid": isInvalidNumber(
+																parseFloat(injury.games),
+															),
+														})}
 														value={injury.games}
 														onChange={handleChange("games", i)}
 													/>

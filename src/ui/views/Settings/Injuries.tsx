@@ -1,5 +1,5 @@
 import { ChangeEvent, Fragment, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import { godModeRequiredMessage } from "./SettingsForm";
 
@@ -64,7 +64,7 @@ const Injuries = ({
 				</Modal.Header>
 				<Modal.Body>
 					<p>
-						Injury rate is determined by the injury rate setting, which is
+						Injury rate is determined by the "Injury Rate" setting, which is
 						viewable on the main League Settings page. The "Frequency" field
 						here is a relative frequency or weight. It doesn't change how often
 						injuries in general occur, but it does determine the probability
@@ -76,7 +76,26 @@ const Injuries = ({
 					</p>
 
 					<div className="d-flex justify-content-between mb-3">
-						<div>Reset dropdown</div>
+						<Dropdown>
+							<Dropdown.Toggle
+								className="btn-light-bordered"
+								variant="foo"
+								id="dropdown-injuries-reset"
+							>
+								Reset
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu>
+								<Dropdown.Item href="#/action-1">Default</Dropdown.Item>
+								<Dropdown.Item
+									onClick={() => {
+										setInjuries([]);
+									}}
+								>
+									Clear
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
 						<div className="btn-group">
 							<button className="btn btn-light-bordered">Import</button>
 							<button className="btn btn-light-bordered">Export</button>

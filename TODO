@@ -3,12 +3,16 @@ customize injuries
 - GUI
   - responsive form
   - store state inside Injuries, only send up on save
-  - quick buttons - default, clear, import/export CSV
+  - quick buttons
+    - default
+    - import
+    - export
   - hide editor behind a button, by default
   - if values same as default, save as undefined
   - animate add/delete rows
   - backdrop="static" only if edited
     - or, modal confirm if edited
+  - when closing without saving, changes should not be visible next time it's opened
   - press enter should submit form
   - validate
     - frequency and games are non-negative numbers

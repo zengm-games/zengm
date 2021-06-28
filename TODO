@@ -4,6 +4,7 @@ customize injuries
   - actually save
     - send up to SettingsForm state
     - if values same as default, save as undefined
+  - live validation
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf

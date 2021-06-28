@@ -185,6 +185,8 @@ const Controls = ({
 	);
 };
 
+const isInvalidNumber = (number: number) => Number.isNaN(number) || number <= 0;
+
 const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
 	const injuries = injuriesText.map(row => ({
 		name: row.name,
@@ -193,13 +195,13 @@ const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
 	}));
 
 	for (const row of injuries) {
-		if (Number.isNaN(row.frequency) || row.frequency <= 0) {
+		if (isInvalidNumber(row.frequency)) {
 			throw new Error(
 				`Injury "${row.name}" has an invalid frequency - must be a positive number.`,
 			);
 		}
 
-		if (Number.isNaN(row.games) || row.games <= 0) {
+		if (isInvalidNumber(row.games)) {
 			throw new Error(
 				`Injury "${row.name}" has an invalid number of games - must be a positive number.`,
 			);

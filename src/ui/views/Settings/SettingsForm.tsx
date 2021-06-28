@@ -26,7 +26,7 @@ const settingNeedsGodMode = (
 	return !!godModeRequired && (!newLeague || godModeRequired === "always");
 };
 
-const godModeRequiredMessage = (
+export const godModeRequiredMessage = (
 	godModeRequired?: "always" | "existingLeagueOnly",
 ) => {
 	if (godModeRequired === "existingLeagueOnly") {
@@ -1685,7 +1685,12 @@ const SettingsForm = ({
 													</div>
 												);
 											} else if (key === "injuries") {
-												customFormNode = <Injuries />;
+												customFormNode = (
+													<Injuries
+														disabled={!enabled || submitting}
+														godModeRequired={godModeRequired}
+													/>
+												);
 											}
 										}
 

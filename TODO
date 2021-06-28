@@ -9,7 +9,6 @@ customize injuries
   - animate add/delete rows
   - when closing without saving, changes should not be visible next time it's opened
   - press enter should submit form
-  - modal on top of modal fade
   - validate
     - frequency and games are non-negative numbers
     - at least one row

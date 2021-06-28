@@ -1265,3 +1265,11 @@ a.anchor {
 		width: 200px;
 	}
 }
+
+// https://www.codeply.com/go/NiFzSCukVl/bootstrap-4-open-modal-from-another-modal
+.highest-modal {
+	z-index: 1052 !important;
+}
+.highest-modal-backdrop.show {
+	z-index: 1051 !important;
+}

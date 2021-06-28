@@ -232,14 +232,14 @@ const defaultInjuries = [
 		games: 8.28,
 	},
 	{
-		name: "Fractured Ankle",
-		frequency: 24,
-		games: 22.0,
-	},
-	{
 		name: "Torn ACL",
 		frequency: 40,
 		games: 100,
+	},
+	{
+		name: "Fractured Ankle",
+		frequency: 24,
+		games: 22,
 	},
 	{
 		name: "Torn Achilles Tendon",

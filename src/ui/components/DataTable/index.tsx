@@ -25,7 +25,6 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-// eslint-disable-next-line import/no-unresolved
 import type { Argument } from "classnames";
 import arrayMove from "array-move";
 import type SettingsCache from "./SettingsCache";

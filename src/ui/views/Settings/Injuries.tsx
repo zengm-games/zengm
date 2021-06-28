@@ -1,7 +1,8 @@
+import { csvFormat } from "d3-dsv";
 import { ChangeEvent, Fragment, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
-import { toWorker } from "../../util";
+import { downloadFile, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 
 const formatInjuries = (injuries: InjuriesSetting) =>
@@ -110,7 +111,20 @@ const Injuries = ({
 						</Dropdown>
 						<div className="btn-group">
 							<button className="btn btn-light-bordered">Import</button>
-							<button className="btn btn-light-bordered">Export</button>
+							<button
+								className="btn btn-light-bordered"
+								onClick={() => {
+									const output = csvFormat(injuries, [
+										"name",
+										"frequency",
+										"games",
+									]);
+
+									downloadFile("injuries.csv", output, "text/csv");
+								}}
+							>
+								Export
+							</button>
 						</div>
 					</div>
 

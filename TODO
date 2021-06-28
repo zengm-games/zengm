@@ -4,7 +4,6 @@ customize injuries
   - responsive form
   - store state inside Injuries, only send up on save
   - quick buttons
-    - default
     - import
     - export
   - hide editor behind a button, by default

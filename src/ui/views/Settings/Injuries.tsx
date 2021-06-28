@@ -1,7 +1,15 @@
 import { ChangeEvent, Fragment, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
+import { toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
+
+const formatInjuries = (injuries: InjuriesSetting) =>
+	injuries.map(row => ({
+		name: row.name,
+		frequency: String(row.frequency),
+		games: String(row.games),
+	}));
 
 const Injuries = ({
 	defaultValue,
@@ -13,13 +21,7 @@ const Injuries = ({
 	godModeRequired?: "always" | "existingLeagueOnly";
 }) => {
 	const [show, setShow] = useState(false);
-	const [injuries, setInjuries] = useState(
-		defaultValue.map(row => ({
-			name: row.name,
-			frequency: String(row.frequency),
-			games: String(row.games),
-		})),
-	);
+	const [injuries, setInjuries] = useState(() => formatInjuries(defaultValue));
 
 	const handleCancel = () => setShow(false);
 	const handleShow = () => setShow(true);
@@ -86,7 +88,17 @@ const Injuries = ({
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu>
-								<Dropdown.Item href="#/action-1">Default</Dropdown.Item>
+								<Dropdown.Item
+									onClick={async () => {
+										setInjuries(
+											formatInjuries(
+												await toWorker("main", "getDefaultInjuries"),
+											),
+										);
+									}}
+								>
+									Default
+								</Dropdown.Item>
 								<Dropdown.Item
 									onClick={() => {
 										setInjuries([]);

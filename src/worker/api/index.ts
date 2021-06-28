@@ -54,6 +54,7 @@ import {
 	initUILocalGames,
 	newLeagueGodModeLimits,
 	loadNames,
+	defaultInjuries,
 } from "../util";
 import views from "../views";
 import type {
@@ -1424,6 +1425,10 @@ const generateFace = async (country: string) => {
 
 const getAutoPos = (ratings: any) => {
 	return player.pos(ratings);
+};
+
+const getDefaultInjuries = () => {
+	return defaultInjuries;
 };
 
 const getLeagueInfo = async (
@@ -3429,6 +3434,7 @@ export default {
 	exportPlayers,
 	generateFace,
 	getAutoPos,
+	getDefaultInjuries,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,

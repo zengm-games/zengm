@@ -332,10 +332,10 @@ const Injuries = ({
 				<Modal.Body>
 					<p>
 						Injury rate is determined by the "Injury Rate" setting, which is
-						viewable on the main League Settings page. The "Frequency" field
-						here is a relative frequency or weight. It doesn't change how often
-						injuries in general occur, but it does determine the probability
-						that an injury will be a specific type.
+						viewable on the main League Settings page. When an injury occurs,
+						the type of injury is randomly selected from this list. The
+						probability of a type being selected is its "frequency" value
+						divided by the sum of all frequencies.
 					</p>
 					<p>
 						"Games" is the average number of games that will be missed. There is

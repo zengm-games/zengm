@@ -58,6 +58,7 @@ const PlayerGameLog = ({
 	const cols = getCols(
 		"#",
 		"Team",
+		"@",
 		"Opp",
 		"Result",
 		"Record",
@@ -66,8 +67,6 @@ const PlayerGameLog = ({
 	);
 
 	const makeRow = (game: typeof gameLog[number], i: number): DataTableRow => {
-		const oppAbbrevWithAway = `${game.away ? "@" : ""}${game.oppAbbrev}`;
-
 		return {
 			key: i,
 			data: [
@@ -84,6 +83,7 @@ const PlayerGameLog = ({
 						{game.abbrev}
 					</a>
 				</>,
+				game.away ? "@" : "",
 				{
 					value: (
 						<>
@@ -95,12 +95,12 @@ const PlayerGameLog = ({
 									season,
 								])}
 							>
-								{oppAbbrevWithAway}
+								{game.oppAbbrev}
 							</a>
 						</>
 					),
 					sortValue: game.oppAbbrev,
-					searchValue: oppAbbrevWithAway,
+					searchValue: game.oppAbbrev,
 				},
 				{
 					value: (

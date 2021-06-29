@@ -1544,6 +1544,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 	},
 	"#": {},
+	"@": {
+		desc: "Home or Away",
+	},
 	"#AS": {
 		desc: "Number of All-Star Selections",
 		sortSequence: ["desc", "asc"],

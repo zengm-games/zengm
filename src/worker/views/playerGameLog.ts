@@ -136,21 +136,24 @@ const updatePlayerGameLog = async (
 				}
 			}
 
-			console.log(game.teams[t0]);
 			const record = {
 				won: 0,
 				lost: 0,
 				tied: 0,
 				otl: 0,
+				seed: undefined as number | undefined,
+				oppSeed: undefined as number | undefined,
 			};
 			if (game.playoffs) {
 				const playoffsInfo = game.teams[t0].playoffs;
 				if (playoffsInfo) {
 					record.won = playoffsInfo.won;
 					record.lost = playoffsInfo.lost;
+					record.seed = playoffsInfo.seed;
+					record.oppSeed = game.teams[t1].playoffs?.seed;
 				}
 			} else {
-				for (const key of helpers.keys(record)) {
+				for (const key of ["won", "lost", "tied", "otl"] as const) {
 					const value = game.teams[t0][key];
 					if (value !== undefined) {
 						record[key] = value;

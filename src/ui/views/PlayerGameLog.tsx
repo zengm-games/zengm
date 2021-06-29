@@ -72,26 +72,32 @@ const PlayerGameLog = ({
 			key: i,
 			data: [
 				i + 1,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${game.abbrev}_${game.tid}`,
-						season,
-					])}
-				>
-					{game.abbrev}
-				</a>,
+				<>
+					{game.seed !== undefined ? `${game.seed}. ` : null}
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${game.abbrev}_${game.tid}`,
+							season,
+						])}
+					>
+						{game.abbrev}
+					</a>
+				</>,
 				{
 					value: (
-						<a
-							href={helpers.leagueUrl([
-								"roster",
-								`${game.oppAbbrev}_${game.oppTid}`,
-								season,
-							])}
-						>
-							{oppAbbrevWithAway}
-						</a>
+						<>
+							{game.oppSeed !== undefined ? `${game.oppSeed}. ` : null}
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${game.oppAbbrev}_${game.oppTid}`,
+									season,
+								])}
+							>
+								{oppAbbrevWithAway}
+							</a>
+						</>
 					),
 					sortValue: game.oppAbbrev,
 					searchValue: oppAbbrevWithAway,

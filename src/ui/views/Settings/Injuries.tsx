@@ -309,6 +309,10 @@ const Injuries = ({
 		};
 
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
+
+	// If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though.
+	const animation = false;
+
 	return (
 		<>
 			<button
@@ -321,7 +325,7 @@ const Injuries = ({
 				Customize
 			</button>
 
-			<Modal show={show} onHide={handleCancel}>
+			<Modal show={show} onHide={handleCancel} animation={animation}>
 				<Modal.Header closeButton>
 					<Modal.Title>Injury Types</Modal.Title>
 				</Modal.Header>

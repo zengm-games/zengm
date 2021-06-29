@@ -6,7 +6,7 @@ import {
 } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g, getTeamInfoBySeason } from "../util";
+import { g, getTeamInfoBySeason, helpers } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (
@@ -136,6 +136,28 @@ const updatePlayerGameLog = async (
 				}
 			}
 
+			console.log(game.teams[t0]);
+			const record = {
+				won: 0,
+				lost: 0,
+				tied: 0,
+				otl: 0,
+			};
+			if (game.playoffs) {
+				const playoffsInfo = game.teams[t0].playoffs;
+				if (playoffsInfo) {
+					record.won = playoffsInfo.won;
+					record.lost = playoffsInfo.lost;
+				}
+			} else {
+				for (const key of helpers.keys(record)) {
+					const value = game.teams[t0][key];
+					if (value !== undefined) {
+						record[key] = value;
+					}
+				}
+			}
+
 			gameLog.push({
 				gid: game.gid,
 				away: t0 === 1,
@@ -148,6 +170,7 @@ const updatePlayerGameLog = async (
 				playoffs: game.playoffs,
 				stats: gameStats,
 				injury: row.injury,
+				...record,
 			});
 		}
 

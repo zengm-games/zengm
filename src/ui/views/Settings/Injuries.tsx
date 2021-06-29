@@ -325,7 +325,7 @@ const Injuries = ({
 				Customize
 			</button>
 
-			<Modal show={show} onHide={handleCancel} animation={animation}>
+			<Modal show={show} onHide={handleCancel} animation={animation} scrollable>
 				<Modal.Header closeButton>
 					<Modal.Title>Injury Types</Modal.Title>
 				</Modal.Header>

@@ -10,6 +10,8 @@ import {
 } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 
+const MAX_NUM_PLAYERS_PACE = 7;
+
 const processTeam = (
 	teamInput: {
 		tid: number;
@@ -186,19 +188,19 @@ const processTeam = (
 		delete p.pid;
 	}
 
-	// Number of players to factor into pace and defense rating calculation
-	let numPlayers = t.player.length;
-
-	if (numPlayers > 7) {
-		numPlayers = 7;
-	}
-
 	if (isSport("basketball")) {
-		// Would be better if these were scaled by average min played and endurancence
 		t.pace = 0;
 
-		for (let i = 0; i < numPlayers; i++) {
-			t.pace += t.player[i].compositeRating.pace;
+		let numPlayers = 0;
+		for (const p of t.player) {
+			if (p.injury.gamesRemaining === 0 || p.injury.playingThrough) {
+				numPlayers += 1;
+				t.pace += p.compositeRating.pace;
+
+				if (numPlayers >= MAX_NUM_PLAYERS_PACE) {
+					break;
+				}
+			}
 		}
 
 		t.pace /= numPlayers;

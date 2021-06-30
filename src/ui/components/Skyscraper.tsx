@@ -1,11 +1,11 @@
 import { memo, useEffect } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 import { AD_DIVS } from "../../common";
 
-// const widthCutoff = 1200 + 190;
+const widthCutoff = 1200 + 190;
 
-// let displayed = false;
+let displayed = false;
 export const updateSkyscraperDisplay = () => {
-	/*const div = document.getElementById(AD_DIVS.rail);
+	const div = document.getElementById(AD_DIVS.rail);
 
 	if (div) {
 		const gold = !!div.dataset.gold;
@@ -18,27 +18,16 @@ export const updateSkyscraperDisplay = () => {
 			!gold
 		) {
 			if (!displayed) {
-				window.freestar.queue.push(() => {
-					div.style.display = "block";
-					window.freestar.newAdSlots([
-						{
-							placementName: AD_DIVS.rail,
-							slotId: AD_DIVS.rail,
-						},
-					]);
-					displayed = true;
-				});
+				div.style.display = "block";
+				displayed = true;
 			}
 		} else {
 			if (displayed || gold) {
-				window.freestar.queue.push(() => {
-					div.style.display = "none";
-					window.freestar.deleteAdSlots(AD_DIVS.rail);
-					displayed = false;
-				});
+				div.style.display = "none";
+				displayed = false;
 			}
 		}
-	}*/
+	}
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize

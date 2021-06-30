@@ -15,7 +15,8 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { GRACE_PERIOD } from "../../common";
+import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -57,6 +58,13 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 
 	if (!hideAds) {
+		// Special case for rail, to tell it there is no BBGM gold
+		const rail = document.getElementById(AD_DIVS.rail);
+		if (rail) {
+			delete rail.dataset.gold;
+			updateSkyscraperDisplay();
+		}
+
 		/*window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
@@ -75,12 +83,6 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			// Special case for rail, to tell it there is no BBGM gold
-			const rail = document.getElementById(AD_DIVS.rail);
-			if (rail) {
-				delete rail.dataset.gold;
-				updateSkyscraperDisplay();
-			}
 
 			for (const id of divs) {
 				window.freestar.config.enabled_slots.push({

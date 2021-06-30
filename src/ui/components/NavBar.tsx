@@ -35,9 +35,9 @@ const PhaseStatusBlock = () => {
 	const urls = {
 		[PHASE.EXPANSION_DRAFT]: ["draft"],
 		[PHASE.FANTASY_DRAFT]: ["draft"],
-		[PHASE.PRESEASON]: [],
-		[PHASE.REGULAR_SEASON]: [],
-		[PHASE.AFTER_TRADE_DEADLINE]: [],
+		[PHASE.PRESEASON]: ["roster"],
+		[PHASE.REGULAR_SEASON]: ["roster"],
+		[PHASE.AFTER_TRADE_DEADLINE]: ["roster"],
 		[PHASE.PLAYOFFS]: ["playoffs"],
 		// Hack because we don't know repeatSeason and draftType, see updatePhase
 		[PHASE.DRAFT_LOTTERY]: phaseText.includes("after playoffs")

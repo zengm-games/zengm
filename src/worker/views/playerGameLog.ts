@@ -6,7 +6,7 @@ import {
 } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
+import { g, getTeamInfoBySeason } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (

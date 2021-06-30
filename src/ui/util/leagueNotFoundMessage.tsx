@@ -66,7 +66,7 @@ const leagueNotFoundMessage = (
 							game-breaking power-ups.
 						</p>
 						<p>
-							Our only goal is making the best possible {process.env.SPORT}
+							Our only goal is making the best possible {process.env.SPORT}{" "}
 							management game!
 						</p>
 					</div>

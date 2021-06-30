@@ -198,10 +198,8 @@ const newPhaseBeforeDraft = async (
 			Infinity,
 		]);
 
-		const retiredPlayersByTeam: Record<
-			number,
-			Player<MinimalPlayerRatings>[]
-		> = {};
+		const retiredPlayersByTeam: Record<number, Player<MinimalPlayerRatings>[]> =
+			{};
 
 		for (const p of players) {
 			let update = false;
@@ -233,7 +231,7 @@ const newPhaseBeforeDraft = async (
 			}
 
 			// Heal injures
-			if (p.injury.type !== "Healthy") {
+			if (p.injury.gamesRemaining > 0 || p.injury.type !== "Healthy") {
 				// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
 				if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
 					p.injury = {

@@ -97,19 +97,28 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		e.preventDefault();
 		dispatch({ type: "startSaving" });
 
-		await toWorker("main", "updateTeamInfo", state.teams);
+		try {
+			await toWorker("main", "updateTeamInfo", state.teams);
 
-		let text = "Saved team info.";
+			let text = "Saved team info.";
 
-		if (props.phase >= PHASE.PLAYOFFS) {
-			text += `<br /><br />${nextSeasonWarning}`;
+			if (props.phase >= PHASE.PLAYOFFS) {
+				text += `<br /><br />${nextSeasonWarning}`;
+			}
+
+			logEvent({
+				type: "success",
+				text,
+				saveToDb: false,
+			});
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
 		}
-
-		logEvent({
-			type: "success",
-			text,
-			saveToDb: false,
-		});
 
 		dispatch({ type: "doneSaving" });
 	};

@@ -220,12 +220,13 @@ class GameSim {
 						starter.numConsecutiveGamesG !== undefined &&
 						starter.numConsecutiveGamesG > 1
 					) {
-						// Swap starter and backup, if appropriate based on composite rating
+						// Swap starter and backup, if appropriate based on composite rating OR if starter has played 10+ consecutive games and the backup is actually a goalie
 						const backup = players.find(p => !p.injured && p !== starter);
 						if (
 							backup &&
-							backup.compositeRating.goalkeeping >
-								starter.compositeRating.goalkeeping
+							(backup.compositeRating.goalkeeping >
+								starter.compositeRating.goalkeeping ||
+								(starter.numConsecutiveGamesG >= 10 && backup.pos === "G"))
 						) {
 							players[0] = backup;
 							players[1] = starter;
@@ -448,6 +449,7 @@ class GameSim {
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
 				delete this.team[t].player[p].stat.energy;
+				delete this.team[t].player[p].numConsecutiveGamesG;
 			}
 		}
 

@@ -106,6 +106,7 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			godMode: g.get("godMode"),
 			minContract: g.get("minContract"),
 			originalTid,

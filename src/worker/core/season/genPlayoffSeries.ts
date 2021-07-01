@@ -38,7 +38,6 @@ const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
 	return {
 		tid: t.tid,
 		cid: t.seasonAttrs.cid,
-		winp: t.seasonAttrs.winp,
 		seed,
 		won: 0,
 	};

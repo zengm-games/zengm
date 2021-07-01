@@ -1130,7 +1130,6 @@ export type PlayoffSeriesTeam = {
 	};
 	seed: number;
 	tid: number;
-	winp: number;
 	won: number;
 };
 

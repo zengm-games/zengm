@@ -151,10 +151,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			tidsWon.push(away2.tid);
 		}
 
-		// Set home/away in the next round
-		let firstTeamHome =
-			team1.seed < team2.seed ||
-			(team1.seed === team2.seed && team1.winp >= team2.winp);
+		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
+		let firstTeamHome = team1.seed < team2.seed;
 
 		// Special case for the finals, do it by winp not seed
 		const playoffsByConference = g.get("confs", "current").length === 2;

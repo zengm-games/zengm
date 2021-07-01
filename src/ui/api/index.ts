@@ -57,6 +57,8 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
+	const mobile = window.screen.width < 768;
+
 	if (!hideAds) {
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
@@ -66,7 +68,7 @@ const initAds = (goldUntil: number | undefined) => {
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
 			];
-			const divs = window.mobile ? divsMobile : divsDesktop;
+			const divs = mobile ? divsMobile : divsDesktop;
 
 			for (const id of divs) {
 				const div = document.getElementById(id);
@@ -115,7 +117,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (!window.mobile) {
+			if (!mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 

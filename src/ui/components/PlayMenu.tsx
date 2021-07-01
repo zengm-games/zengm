@@ -70,7 +70,12 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 	}
 
 	return (
-		<Dropdown className="play-button-wrapper" as={Nav.Item}>
+		<Dropdown
+			className={`play-button-wrapper${
+				window.mobile ? " play-button-wrapper-mobile" : ""
+			}`}
+			as={Nav.Item}
+		>
 			<Dropdown.Toggle
 				className={classNames(
 					"play-button text-white",

@@ -120,8 +120,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const lastRatings = allRatings[allRatings.length - 1];
 				return lastRatings.season === options.season;
 			});
-		} else if (options.realStats === "allActiveHOF") {
-			// Only keep players who are active this season or in the HoF
+		} else if (
+			options.realStats === "allActiveHOF" ||
+			options.realStats === "all"
+		) {
+			// Populate hofSlugs for use later
 			for (const [slug, awards] of Object.entries(basketball.awards)) {
 				if (awards) {
 					for (const award of awards) {
@@ -133,13 +136,16 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}
 			}
 
-			groupedRatings = groupedRatings.filter(allRatings => {
-				const lastRatings = allRatings[allRatings.length - 1];
-				return (
-					lastRatings.season === options.season ||
-					hofSlugs.has(lastRatings.slug)
-				);
-			});
+			if (options.realStats === "allActiveHOF") {
+				// Only keep players who are active this season or in the HoF
+				groupedRatings = groupedRatings.filter(allRatings => {
+					const lastRatings = allRatings[allRatings.length - 1];
+					return (
+						lastRatings.season === options.season ||
+						hofSlugs.has(lastRatings.slug)
+					);
+				});
+			}
 		}
 
 		const players = groupedRatings.map(ratings =>
@@ -244,12 +250,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					}
 
 					p.tid = tid;
-					console.log(
-						"active",
-						p.draft.year < options.season,
-						p.draft.year === options.season && options.phase > PHASE.DRAFT,
-						p.tid,
-					);
 
 					const targetRatingsSeason = options.season - diff;
 

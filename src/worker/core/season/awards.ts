@@ -374,6 +374,7 @@ const saveAwardsByPlayer = async (
 	conditions: Conditions,
 	season: number = g.get("season"),
 	logEvents: boolean = true,
+	allStarGID?: number,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -397,6 +398,14 @@ const saveAwardsByPlayer = async (
 			score = 10;
 		} else if (p.type === "All-Star") {
 			text += `made the All-Star team.`;
+			score = 10;
+		} else if (p.type === "All-Star MVP") {
+			text += `won the <a href="${helpers.leagueUrl([
+				"game_log",
+				"special",
+				season,
+				allStarGID,
+			])}">All-Star MVP</a> award.`;
 			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;

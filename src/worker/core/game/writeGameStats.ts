@@ -75,6 +75,9 @@ const allStarMVP = async (
 			},
 		],
 		conditions,
+		g.get("season"),
+		true,
+		game.gid,
 	);
 };
 

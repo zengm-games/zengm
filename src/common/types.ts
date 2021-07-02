@@ -395,6 +395,7 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
+	goatFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;

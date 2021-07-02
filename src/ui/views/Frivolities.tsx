@@ -132,6 +132,12 @@ const frivolities = {
 			description: "Players who made the most money.",
 		},
 		{
+			urlParts: ["most", "goat"],
+			name: "GOAT Lab",
+			description:
+				"Define your own formula to rank the greatest players of all time.",
+		},
+		{
 			urlParts: ["most", "hall_of_good"],
 			name: "Hall of Good",
 			description: "The best retired players who didn't make the Hall of Fame.",

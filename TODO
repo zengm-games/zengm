@@ -1,3 +1,9 @@
+goat frivolity, similar to hof but including active players
+- https://twitter.com/Dontreach_/status/1364770043347746816
+- https://github.com/zengm-games/zengm/pull/370
+- customizable formula?
+  - use default if undefined, check on submit if different than default
+
 make mood a little harsher, for all teams - less likely to re-sign
 - https://discord.com/channels/290013534023057409/331882115119448065/852945735389544488
 
@@ -240,10 +246,6 @@ hockey
   - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
 - game sim performance
 - ovr PR
-
-goat frivolity, similar to hof but including active players
-- https://twitter.com/Dontreach_/status/1364770043347746816
-- customizable formula?
 
 player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
 
@@ -1357,21 +1359,6 @@ option to have no draft, players just become FAs
 "Accept Trade" button on trading block
 
 AI teams should adjust finances
-- and reset after user is fired
-
-better salary AI
-  old players undervalued
-  dynamically set based on cap space
-  https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
-  FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
-
-if an ad blocker is used, no need to save that space on the right
-- already done for Gold/localhost in initAds, but how to do it for ad blocker too?
-
-login -> account -> doesn't say logged in, sometimes? but account shows in navbar
-- happens if you log in in one tab while having another open, then in the 2nd tab go to achievements
-  - only in firefox?
-  - no, user says chrome too
 
 https://developers.google.com/web/fundamentals/app-install-banners/
 

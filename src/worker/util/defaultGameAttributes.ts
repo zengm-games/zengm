@@ -153,6 +153,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	randomDebutsForever: undefined,
 	realDraftRatings: undefined,
 	hideDisabledTeams: false,
+	goatFormula: undefined,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

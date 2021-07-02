@@ -181,6 +181,11 @@ const updatePlayers = async (
 				}
 				return { value: sum };
 			};
+		} else if (type === "goat") {
+			title = "GOAT Lab";
+			description =
+				"Define your own formula to rank the greatest players of all time.";
+			getValue = playerValue;
 		} else if (type === "teams") {
 			title = "Most Teams";
 			description = "These are the players who played for the most teams";

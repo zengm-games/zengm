@@ -46,7 +46,7 @@ const moodInfo = async (
 	}
 
 	// Add some based on how long free agency has lasted and how good/bad the player is
-	let sumAndStuff = sumComponents;
+	let sumAndStuff = sumComponents - 0.5;
 	if (p.tid === PLAYER.FREE_AGENT) {
 		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	}

@@ -1,4 +1,4 @@
-import { AWARD_NAMES, bySport } from "../../common";
+import { AWARD_NAMES, bySport, isSport } from "../../common";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
@@ -17,13 +17,21 @@ const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 	stat => !BANNED_STAT_VARIABLES.has(stat),
 );
 
-const AWARD_VARIABLES: string[] = [];
-for (const key of Object.keys(AWARD_NAMES)) {
-	if (key === "allDefensive" || key === "allLeague") {
-		AWARD_VARIABLES.push(`${key}1`, `${key}2`, `${key}3`);
+const AWARD_VARIABLES: Record<string, string> = {
+	champ: "Won Championship",
+};
+for (const [short, long] of Object.entries(AWARD_NAMES)) {
+	if (short === "allDefensive" || short === "allLeague") {
+		AWARD_VARIABLES[`${short}1`] = `First Team ${long}`;
+		AWARD_VARIABLES[`${short}2`] = `Second Team ${long}`;
+		AWARD_VARIABLES[`${short}3`] = `Third Team ${long}`;
 	} else {
-		AWARD_VARIABLES.push(key);
+		AWARD_VARIABLES[short] = long;
 	}
+}
+if (isSport("basketball")) {
+	AWARD_VARIABLES.allStar = "All-Star";
+	AWARD_VARIABLES.allStarMvp = "All-Star MVP";
 }
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
@@ -85,27 +93,11 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 		}
 	}
 
-	for (const award of AWARD_VARIABLES) {
-		let text;
-		const match = award.match(/\d$/);
-		if (match) {
-			const num = match[0];
-			if (num === "1") {
-				text = "First Team ";
-			} else if (num === "2") {
-				text = "Second Team ";
-			} else if (num === "3") {
-				text = "Third Team ";
-			}
-			text += AWARD_NAMES[award.slice(0, -1)];
-		} else {
-			text = AWARD_NAMES[award];
-		}
-
-		object[award] = 0;
+	for (const [short, long] of Object.entries(AWARD_VARIABLES)) {
+		object[short] = 0;
 		for (const { type } of p.awards) {
-			if (type === text) {
-				object[award] += 1;
+			if (type === long) {
+				object[short] += 1;
 			}
 		}
 	}

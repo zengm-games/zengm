@@ -6,9 +6,10 @@ import FormulaEvaluator from "./FormulaEvaluator";
 import g from "./g";
 
 const DEFAULT_FORMULA = bySport({
-	basketball: "pts/gp + 2 * ast/gp + dwsPeak",
-	football: "defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
-	hockey: "ops + dps + gps",
+	basketball: "20 * mvp + pts/gp + 2 * ast/gp + dwsPeak",
+	football:
+		"20 * mvp + defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
+	hockey: "20 * mvp + ops + dps + gps",
 });
 
 const BANNED_STAT_VARIABLES = new Set(["minAvailable", "gpSkater", "gpGoalie"]);
@@ -126,6 +127,7 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 };
 
 export default {
+	AWARD_VARIABLES,
 	DEFAULT_FORMULA,
 	STAT_VARIABLES,
 	evaluate,

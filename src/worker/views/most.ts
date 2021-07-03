@@ -197,6 +197,7 @@ const updatePlayers = async (
 			});
 			extraProps = {
 				goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+				awards: goatFormula.AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
 

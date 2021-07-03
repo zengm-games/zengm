@@ -3,9 +3,11 @@ import { bySport } from "../../../common";
 import { getCols, toWorker } from "../../util";
 
 const GOATFormula = ({
+	awards,
 	formula,
 	stats,
 }: {
+	awards: Record<string, string>;
 	formula: string;
 	stats: string[];
 }) => {
@@ -57,26 +59,41 @@ const GOATFormula = ({
 			</form>
 			<div className="col-md-6">
 				<p>
-					There are many variables available for the GOAT formula. First, all of
-					these are available, containing career total values:
+					There are many variables available for the GOAT formula, for award
+					counts and stats.
 				</p>
 				<details className="mb-3">
-					<summary>Full list of variables</summary>
+					<summary>Full list of award variables</summary>
 					<ul
 						className="list-unstyled mb-0"
 						style={{
-							columnCount: 2,
+							columnWidth: 100,
+						}}
+					>
+						{Object.entries(awards).map(([short, long]) => (
+							<li key={short}>
+								<abbr title={long}>{short}</abbr>
+							</li>
+						))}
+					</ul>
+				</details>
+				<details className="mb-3">
+					<summary>Full list of career total stat variables</summary>
+					<ul
+						className="list-unstyled mb-0"
+						style={{
+							columnWidth: 100,
 						}}
 					>
 						{stats.map((stat, i) => (
 							<li key={stat}>
-								<code>{stat}</code>: {cols[i].desc}
+								<abbr title={cols[i].desc}>{stat}</abbr>
 							</li>
 						))}
 					</ul>
 				</details>
 				<p>
-					Additionally, you can stick <code>Peak</code> at the end of any
+					Additionally, you can stick <code>Peak</code> at the end of any stat
 					variable to get the single season peak total value, and{" "}
 					<code>PeakPerGame</code> to get the single season peak per-game value.
 					For example, <code>{exampleStat}Peak</code> or{" "}

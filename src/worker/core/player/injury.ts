@@ -17,7 +17,6 @@ const injury = (healthRank: number): PlayerInjury => {
 	const injuries = g.get("injuries") ?? defaultInjuries;
 
 	if (injuries !== prevInjuries) {
-		console.log("recompute");
 		cumSums = [];
 
 		for (let i = 0; i < injuries.length; i++) {

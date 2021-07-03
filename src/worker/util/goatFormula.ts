@@ -25,7 +25,11 @@ for (const [short, long] of Object.entries(AWARD_NAMES)) {
 	if (short === "allDefensive" || short === "allLeague") {
 		AWARD_VARIABLES[`${short}1`] = `First Team ${long}`;
 		AWARD_VARIABLES[`${short}2`] = `Second Team ${long}`;
-		AWARD_VARIABLES[`${short}3`] = `Third Team ${long}`;
+
+		// 3rd team is only in historical real data
+		if (isSport("basketball")) {
+			AWARD_VARIABLES[`${short}3`] = `Third Team ${long}`;
+		}
 	} else {
 		AWARD_VARIABLES[short] = long;
 	}

@@ -9,7 +9,9 @@ const GOATFormula = ({ formula }: { formula: string }) => {
 		<div className="row mb-3">
 			<form
 				className="col-6"
-				onSubmit={async () => {
+				onSubmit={async event => {
+					event.preventDefault();
+
 					setErrorMessage(undefined);
 
 					try {
@@ -34,7 +36,9 @@ const GOATFormula = ({ formula }: { formula: string }) => {
 				<button type="submit" className="btn btn-primary">
 					Save
 				</button>
-				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
+				{errorMessage ? (
+					<p className="text-danger mt-3">{errorMessage}</p>
+				) : null}
 			</form>
 		</div>
 	);

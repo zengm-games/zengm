@@ -15,6 +15,7 @@ const CAREER_STAT_VARIABLES = bySport({
 		"pts",
 		"trb",
 		"ast",
+		"tov",
 		"blk",
 		"stl",
 		"per",
@@ -28,8 +29,8 @@ const CAREER_STAT_VARIABLES = bySport({
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
-const evaluate = (p: Player<MinimalPlayerRatings>) => {
-	const goatFormula = g.get("goatFormula") ?? DEFAULT_FORMULA;
+const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
+	const goatFormula = formula ?? g.get("goatFormula") ?? DEFAULT_FORMULA;
 
 	const object: Record<string, number> = {};
 

@@ -108,6 +108,7 @@ import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,
 } from "../util/defaultGameAttributes";
+import goatFormula from "../util/goatFormula";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -2444,6 +2445,24 @@ const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
+const setGOATFormula = async (formula: string) => {
+	// Arbitrary player for testing
+	const players = await idb.cache.players.getAll();
+	const p = players[0];
+	if (!p) {
+		throw new Error("No players found");
+	}
+
+	// Confirm it actually works
+	goatFormula.evaluate(p, formula);
+
+	await league.setGameAttributes({
+		goatFormula: formula,
+	});
+
+	await toUI("realtimeUpdate", [["g.goatFormula"]]);
+};
+
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	if (key === "autoSave" && value === false) {
 		await idb.cache.flush();
@@ -3464,6 +3483,7 @@ export default {
 	runBefore,
 	setForceWin,
 	setForceWinAll,
+	setGOATFormula,
 	setLocal,
 	setPlayerNote,
 	sign,

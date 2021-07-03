@@ -1461,6 +1461,7 @@ export type Trade = {
 export type UpdateEvents = (
 	| "account"
 	| "firstRun"
+	| "g.goatFormula"
 	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"

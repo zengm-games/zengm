@@ -157,7 +157,11 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (updateEvents.includes("firstRun") || type !== state.type) {
+	if (
+		updateEvents.includes("firstRun") ||
+		type !== state.type ||
+		(type === "goat" && updateEvents.includes("g.goatFormula"))
+	) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
@@ -190,7 +194,6 @@ const updatePlayers = async (
 			description =
 				"Define your own formula to rank the greatest players of all time.";
 			getValue = (p: Player<MinimalPlayerRatings>) => {
-				console.log("get", p);
 				return {
 					value: goatFormula.evaluate(p),
 				};

@@ -163,6 +163,10 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
+
+		if (this.tokens.length === 0) {
+			throw new Error("Formula cannot be empty");
+		}
 	}
 
 	private partiallyEvaluate(tokens: string[]) {

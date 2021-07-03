@@ -54,7 +54,7 @@ const GOATFormula = ({
 					Save
 				</button>
 				{errorMessage ? (
-					<p className="text-danger mt-3">{errorMessage}</p>
+					<p className="text-danger mt-2 mb-0">{errorMessage}</p>
 				) : null}
 			</form>
 			<div className="col-md-6">

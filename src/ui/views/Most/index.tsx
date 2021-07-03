@@ -21,7 +21,7 @@ const Most = ({
 	challengeNoRatings,
 	description,
 	extraCols,
-	goatFormula,
+	extraProps,
 	players,
 	stats,
 	title,
@@ -139,7 +139,12 @@ const Most = ({
 				<SafeHtml dirty={description} />
 			</p>
 
-			{type === "goat" ? <GOATFormula formula={goatFormula} /> : null}
+			{type === "goat" ? (
+				<GOATFormula
+					formula={extraProps.goatFormula}
+					stats={extraProps.stats}
+				/>
+			) : null}
 
 			<p>
 				Players who have played for your team are{" "}

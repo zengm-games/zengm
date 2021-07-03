@@ -5,13 +5,11 @@ import FormulaEvaluator from "./FormulaEvaluator";
 import g from "./g";
 
 const DEFAULT_FORMULA = bySport({
-	basketball: "ast + 5 * blk",
+	basketball: "pts/gp + 2 * ast/gp + dwsPeak",
 });
 
-const CAREER_STAT_VARIABLES = bySport({
+const STAT_VARIABLES = bySport({
 	basketball: [
-		"gp",
-		"min",
 		"pts",
 		"orb",
 		"drb",
@@ -19,11 +17,14 @@ const CAREER_STAT_VARIABLES = bySport({
 		"tov",
 		"blk",
 		"stl",
+		"gp",
+		"min",
 		"per",
 		"ewa",
-		"ws48",
-		"ws",
-		"bpm",
+		"ows",
+		"dws",
+		"obpm",
+		"dbpm",
 		"vorp",
 	],
 });
@@ -35,22 +36,23 @@ const MIN_GP = bySport({
 	football: 5,
 	hockey: 10,
 });
+const TOTAL_GP_FACTOR = 5;
 
 const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	const goatFormula = formula ?? g.get("goatFormula") ?? DEFAULT_FORMULA;
 
 	const object: Record<string, number> = {};
 
-	for (const key of CAREER_STAT_VARIABLES) {
-		const peak = `${key}Peak`;
-		const peakPerGame = `${key}PeakPerGame`;
-		const tot = key;
+	for (const stat of STAT_VARIABLES) {
+		const peak = `${stat}Peak`;
+		const peakPerGame = `${stat}PeakPerGame`;
+		const tot = stat;
 
 		object[peak] = -Infinity;
 		object[peakPerGame] = -Infinity;
 		object[tot] = 0;
 
-		const weightKeyByMinutes = weightByMinutes.includes(key);
+		const weightStatByMinutes = weightByMinutes.includes(stat);
 		let minSum = 0;
 
 		for (const row of p.stats) {
@@ -59,26 +61,33 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 			}
 
 			if (row.gp >= MIN_GP) {
-				if (row[key] > object[peak]) {
-					object[peak] = row[key];
+				if (row[stat] > object[peak]) {
+					object[peak] = row[stat];
 				}
 
-				const perGame = row[key] / row.gp;
+				const perGame = row[stat] / row.gp;
 				if (perGame > object[peakPerGame]) {
 					object[peakPerGame] = perGame;
 				}
 			}
 
-			if (weightKeyByMinutes) {
-				object[tot] += row[key] * row.min;
+			if (weightStatByMinutes) {
+				object[tot] += row[stat] * row.min;
 				minSum += row.min;
 			} else {
-				object[tot] += row[key];
+				object[tot] += row[stat];
 			}
 		}
 
-		if (weightKeyByMinutes) {
+		if (weightStatByMinutes) {
 			object[tot] /= minSum;
+		}
+	}
+
+	// Ignore career totals from low games guys
+	if (object.gp < MIN_GP * TOTAL_GP_FACTOR) {
+		for (const stat of STAT_VARIABLES) {
+			object[stat] = 0;
 		}
 	}
 
@@ -100,6 +109,6 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 
 export default {
 	DEFAULT_FORMULA,
-	CAREER_STAT_VARIABLES,
+	STAT_VARIABLES,
 	evaluate,
 };

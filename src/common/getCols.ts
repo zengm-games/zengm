@@ -117,7 +117,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:ast": {
-			desc: "Assists Per Game",
+			desc: "Assists",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -2031,7 +2031,7 @@ const cols: {
 		sortType: "number",
 	},
 	"stat:min": {
-		desc: isSport("hockey") ? "Time On Ice" : "Minutes Per Game",
+		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

@@ -171,9 +171,7 @@ const updatePlayers = async (
 			key: string | [string, string] | [string, string, string];
 			colName: string;
 		}[] = [];
-
-		const actualGOATFormula =
-			g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA;
+		let extraProps: any;
 
 		if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
@@ -197,6 +195,10 @@ const updatePlayers = async (
 				key: ["most", "value"],
 				colName: "GOAT",
 			});
+			extraProps = {
+				goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+				stats: goatFormula.STAT_VARIABLES,
+			};
 
 			getValue = (p: Player<MinimalPlayerRatings>) => {
 				let value = 0;
@@ -635,9 +637,9 @@ const updatePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
-			goatFormula: actualGOATFormula,
 			description,
 			extraCols,
+			extraProps,
 			players,
 			stats,
 			title,

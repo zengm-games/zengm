@@ -84,7 +84,13 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 		);
 	}
 
-	return formulaCache[goatFormula].evaluate(object);
+	const value = formulaCache[goatFormula].evaluate(object);
+
+	if (Number.isNaN(value)) {
+		return -Infinity;
+	}
+
+	return value;
 };
 
 export default {

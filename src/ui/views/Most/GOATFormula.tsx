@@ -16,6 +16,7 @@ const GOATFormula = ({
 
 	const exampleStat = bySport({
 		basketball: "pts",
+		football: "pssYds",
 	});
 
 	return (
@@ -72,7 +73,7 @@ const GOATFormula = ({
 				</ul>
 				<p>
 					Additionally, you can stick <code>Peak</code> at the end of any
-					variable to get the single season peak value, and{" "}
+					variable to get the single season peak total value, and{" "}
 					<code>PeakPerGame</code> to get the single season peak per-game value.
 					For example, <code>{exampleStat}Peak</code> or{" "}
 					<code>{exampleStat}PeakPerGame</code>.

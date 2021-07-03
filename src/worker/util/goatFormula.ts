@@ -1,42 +1,34 @@
 import { bySport } from "../../common";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
+import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
 import FormulaEvaluator from "./FormulaEvaluator";
 import g from "./g";
 
 const DEFAULT_FORMULA = bySport({
 	basketball: "pts/gp + 2 * ast/gp + dwsPeak",
+	football: "av",
 });
 
-const STAT_VARIABLES = bySport({
-	basketball: [
-		"pts",
-		"orb",
-		"drb",
-		"ast",
-		"tov",
-		"blk",
-		"stl",
-		"gp",
-		"min",
-		"per",
-		"ewa",
-		"ows",
-		"dws",
-		"obpm",
-		"dbpm",
-		"vorp",
-	],
-});
+const BANNED_STAT_VARIABLES = new Set(["minAvailable"]);
+
+const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
+	stat => !BANNED_STAT_VARIABLES.has(stat),
+);
+console.log("STAT_VARIABLES", STAT_VARIABLES);
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
-const MIN_GP = bySport({
+const MIN_GP_SEASON = bySport({
 	basketball: 10,
 	football: 5,
 	hockey: 10,
 });
-const TOTAL_GP_FACTOR = 5;
+const MIN_GP_TOTAL = bySport({
+	basketball: 50,
+	football: 10,
+	hockey: 50,
+});
 
 const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	const goatFormula = formula ?? g.get("goatFormula") ?? DEFAULT_FORMULA;
@@ -60,7 +52,7 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 				continue;
 			}
 
-			if (row.gp >= MIN_GP) {
+			if (row.gp >= MIN_GP_SEASON) {
 				if (row[stat] > object[peak]) {
 					object[peak] = row[stat];
 				}
@@ -85,7 +77,7 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	}
 
 	// Ignore career totals from low games guys
-	if (object.gp < MIN_GP * TOTAL_GP_FACTOR) {
+	if (object.gp < MIN_GP_TOTAL) {
 		for (const stat of STAT_VARIABLES) {
 			object[stat] = 0;
 		}

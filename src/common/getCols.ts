@@ -1741,6 +1741,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	GOAT: {
+		desc: "GOAT Score",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Healthy: {
 		desc: "Team Rating (When Healthy)",
 		sortSequence: ["desc", "asc"],

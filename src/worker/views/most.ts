@@ -193,9 +193,19 @@ const updatePlayers = async (
 			title = "GOAT Lab";
 			description =
 				"Define your own formula to rank the greatest players of all time.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "GOAT",
+			});
+
 			getValue = (p: Player<MinimalPlayerRatings>) => {
+				let value = 0;
+				try {
+					value = goatFormula.evaluate(p);
+				} catch (error) {}
+
 				return {
-					value: goatFormula.evaluate(p),
+					value,
 				};
 			};
 		} else if (type === "teams") {

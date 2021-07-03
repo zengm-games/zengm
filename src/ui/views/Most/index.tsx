@@ -83,6 +83,12 @@ const Most = ({
 					if (x.colName === "Prog") {
 						return helpers.plusMinus(value, 0);
 					}
+					if (x.colName === "GOAT") {
+						if (Number.isInteger(value) && value < 1000000) {
+							return helpers.numberWithCommas(value);
+						}
+						return value.toPrecision(3);
+					}
 					if (x.colName.startsWith("stat:")) {
 						const stat = x.colName.replace("stat:", "");
 						return helpers.roundStat(value, stat);

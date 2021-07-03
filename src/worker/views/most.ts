@@ -15,6 +15,7 @@ import { groupBy } from "../../common/groupBy";
 import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
+import goatFormula from "../util/goatFormula";
 
 type Most = {
 	value: number;
@@ -167,6 +168,9 @@ const updatePlayers = async (
 			colName: string;
 		}[] = [];
 
+		const actualGOATFormula =
+			g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA;
+
 		if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =
@@ -185,7 +189,12 @@ const updatePlayers = async (
 			title = "GOAT Lab";
 			description =
 				"Define your own formula to rank the greatest players of all time.";
-			getValue = playerValue;
+			getValue = (p: Player<MinimalPlayerRatings>) => {
+				console.log("get", p);
+				return {
+					value: goatFormula.evaluate(p),
+				};
+			};
 		} else if (type === "teams") {
 			title = "Most Teams";
 			description = "These are the players who played for the most teams";
@@ -613,6 +622,7 @@ const updatePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			goatFormula: actualGOATFormula,
 			description,
 			extraCols,
 			players,

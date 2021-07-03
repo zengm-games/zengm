@@ -12,6 +12,7 @@ import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
 import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
+import goatFormula from "../../util/goatFormula";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -44,6 +45,11 @@ const setGameAttributes = async (
 		) {
 			gameAttributes.injuries = undefined;
 		}
+	}
+
+	// Test if it's the same as default
+	if (gameAttributes.goatFormula === goatFormula.DEFAULT_FORMULA) {
+		gameAttributes.goatFormula = undefined;
 	}
 
 	for (const key of helpers.keys(gameAttributes)) {

@@ -76,9 +76,8 @@ const processAttrs = (
 
 			// Inject abbrevs
 			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
-			output.draft.originalAbbrev = g.get("teamInfoCache")[
-				output.draft.originalTid
-			]?.abbrev;
+			output.draft.originalAbbrev =
+				g.get("teamInfoCache")[output.draft.originalTid]?.abbrev;
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);
@@ -388,9 +387,10 @@ const processRatings = (
 	}
 };
 
-const weightByMinutes = bySport({
+export const weightByMinutes = bySport({
 	basketball: [
 		"per",
+		"ws48",
 		"astp",
 		"blkp",
 		"drbp",
@@ -670,14 +670,8 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
-	const {
-		attrs,
-		ratings,
-		season,
-		showNoStats,
-		showRetired,
-		showRookies,
-	} = options;
+	const { attrs, ratings, season, showNoStats, showRetired, showRookies } =
+		options;
 
 	const output: any = {};
 

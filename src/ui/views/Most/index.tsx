@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
-import type { View } from "../../common/types";
-import { frivolitiesMenu } from "./Frivolities";
+import useTitleBar from "../../hooks/useTitleBar";
+import { getCols, helpers } from "../../util";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
+import type { View } from "../../../common/types";
+import { frivolitiesMenu } from "../Frivolities";
+import GOATFormula from "./GOATFormula";
 
 export const getValue = (
 	obj: any,
@@ -20,6 +21,7 @@ const Most = ({
 	challengeNoRatings,
 	description,
 	extraCols,
+	goatFormula,
 	players,
 	stats,
 	title,
@@ -130,6 +132,8 @@ const Most = ({
 			<p>
 				<SafeHtml dirty={description} />
 			</p>
+
+			{type === "goat" ? <GOATFormula formula={goatFormula} /> : null}
 
 			<p>
 				Players who have played for your team are{" "}

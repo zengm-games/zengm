@@ -653,6 +653,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							godModeInPast: {
 								type: "boolean",
 							},
+							goatFormula: {
+								type: "string",
+							},
 							gracePeriodEnd: {
 								type: "integer",
 							},

@@ -36,7 +36,7 @@ const GOATFormula = ({
 					}
 				}}
 			>
-				<div className="form-group mb-2">
+				<div className="form-group mb-2 overflow-auto">
 					<label htmlFor="goat-formula">GOAT Formula</label>
 					<textarea
 						className="form-control"
@@ -60,18 +60,21 @@ const GOATFormula = ({
 					There are many variables available for the GOAT formula. First, all of
 					these are available, containing career total values:
 				</p>
-				<ul
-					className="list-unstyled"
-					style={{
-						columnCount: 2,
-					}}
-				>
-					{stats.map((stat, i) => (
-						<li key={stat}>
-							<code>{stat}</code>: {cols[i].desc}
-						</li>
-					))}
-				</ul>
+				<details className="mb-3">
+					<summary>Full list of variables</summary>
+					<ul
+						className="list-unstyled mb-0"
+						style={{
+							columnCount: 2,
+						}}
+					>
+						{stats.map((stat, i) => (
+							<li key={stat}>
+								<code>{stat}</code>: {cols[i].desc}
+							</li>
+						))}
+					</ul>
+				</details>
 				<p>
 					Additionally, you can stick <code>Peak</code> at the end of any
 					variable to get the single season peak total value, and{" "}

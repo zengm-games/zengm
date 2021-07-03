@@ -16,7 +16,6 @@ const BANNED_STAT_VARIABLES = new Set(["minAvailable", "gpSkater", "gpGoalie"]);
 const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 	stat => !BANNED_STAT_VARIABLES.has(stat),
 );
-console.log("STAT_VARIABLES", STAT_VARIABLES);
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 

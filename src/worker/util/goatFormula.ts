@@ -7,10 +7,11 @@ import g from "./g";
 
 const DEFAULT_FORMULA = bySport({
 	basketball: "pts/gp + 2 * ast/gp + dwsPeak",
-	football: "av",
+	football: "defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
+	hockey: "ops + dps + gps",
 });
 
-const BANNED_STAT_VARIABLES = new Set(["minAvailable"]);
+const BANNED_STAT_VARIABLES = new Set(["minAvailable", "gpSkater", "gpGoalie"]);
 
 const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 	stat => !BANNED_STAT_VARIABLES.has(stat),

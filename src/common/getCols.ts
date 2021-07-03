@@ -1551,7 +1551,27 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:gRec": {
-			desc: "Team record as primary G",
+			desc: "Record as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gW": {
+			desc: "Wins as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gL": {
+			desc: "Losses as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gT": {
+			desc: "Ties as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gOTL": {
+			desc: "Overtime losses as primary G",
 			sortSequence: ["desc", "asc"],
 			sortType: "record",
 		},
@@ -2518,6 +2538,10 @@ const sportSpecificTitleOverrides = bySport({
 		"PS/g": "GF",
 		"PA/g": "GA",
 		"stat:gRec": "Rec",
+		"stat:gW": "GW",
+		"stat:gL": "GL",
+		"stat:gT": "GT",
+		"stat:gOTL": "GOTL",
 	},
 });
 

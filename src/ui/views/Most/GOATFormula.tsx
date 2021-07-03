@@ -17,6 +17,7 @@ const GOATFormula = ({
 	const exampleStat = bySport({
 		basketball: "pts",
 		football: "pssYds",
+		hockey: "sv",
 	});
 
 	return (

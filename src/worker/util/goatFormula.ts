@@ -30,6 +30,12 @@ const CAREER_STAT_VARIABLES = bySport({
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
+const MIN_GP = bySport({
+	basketball: 10,
+	football: 5,
+	hockey: 10,
+});
+
 const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	const goatFormula = formula ?? g.get("goatFormula") ?? DEFAULT_FORMULA;
 
@@ -52,13 +58,15 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 				continue;
 			}
 
-			if (row[key] > object[peak]) {
-				object[peak] = row[key];
-			}
+			if (row.gp >= MIN_GP) {
+				if (row[key] > object[peak]) {
+					object[peak] = row[key];
+				}
 
-			const perGame = row[key] / row.gp;
-			if (perGame > object[peakPerGame]) {
-				object[peakPerGame] = perGame;
+				const perGame = row[key] / row.gp;
+				if (perGame > object[peakPerGame]) {
+					object[peakPerGame] = perGame;
+				}
 			}
 
 			if (weightKeyByMinutes) {

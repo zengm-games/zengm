@@ -5,8 +5,8 @@ goat frivolity, similar to hof but including active players
   - use default if undefined, check on submit if different than default
   - minimum playing time requirement
   - show variables in UI
+    - why PeakPerGame but not PerGame
   - hockey/football
-  - "pts / gp" formula weird result
 
 deflection without assist https://discord.com/channels/@me/778760871911751700/860383610258718771
 

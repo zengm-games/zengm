@@ -89,7 +89,7 @@ const GOATFormula = ({
 				<p>
 					Seasons with very few games played are ignored for the{" "}
 					<code>Peak</code> and <code>PeakPerGame</code> variables, and careers
-					iwth very few games played are ignored for the career total variables.
+					with very few games played are ignored for the career total variables.
 				</p>
 			</div>
 		</div>

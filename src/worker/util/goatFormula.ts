@@ -34,6 +34,7 @@ if (isSport("basketball")) {
 	AWARD_VARIABLES.allStar = "All-Star";
 	AWARD_VARIABLES.allStarMvp = "All-Star MVP";
 }
+AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
@@ -126,10 +127,20 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	}
 
 	for (const [short, long] of Object.entries(AWARD_VARIABLES)) {
-		object[short] = 0;
-		for (const { type } of p.awards) {
-			if (type === long) {
-				object[short] += 1;
+		if (short === "numSeasons") {
+			const seasons = new Set();
+			for (const row of p.stats) {
+				if (row.min > 0) {
+					seasons.add(row.season);
+				}
+			}
+			object[short] = seasons.size;
+		} else {
+			object[short] = 0;
+			for (const { type } of p.awards) {
+				if (type === long) {
+					object[short] += 1;
+				}
 			}
 		}
 	}

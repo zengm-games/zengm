@@ -36,25 +36,13 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	const object: Record<string, number> = {};
 
 	for (const key of CAREER_STAT_VARIABLES) {
-		const key2 = `${key}Peak`;
+		const peak = `${key}Peak`;
+		const peakPerGame = `${key}PeakPerGame`;
+		const tot = key;
 
-		object[key2] = -Infinity;
-
-		for (const row of p.stats) {
-			if (row.gp === 0 || row.min === 0 || row.playoffs) {
-				continue;
-			}
-
-			if (row[key] > object[key2]) {
-				object[key2] = row[key];
-			}
-		}
-	}
-
-	for (const key of CAREER_STAT_VARIABLES) {
-		const key2 = key;
-
-		object[key2] = 0;
+		object[peak] = -Infinity;
+		object[peakPerGame] = -Infinity;
+		object[tot] = 0;
 
 		const weightKeyByMinutes = weightByMinutes.includes(key);
 		let minSum = 0;
@@ -64,16 +52,25 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 				continue;
 			}
 
+			if (row[key] > object[peak]) {
+				object[peak] = row[key];
+			}
+
+			const perGame = row[key] / row.gp;
+			if (perGame > object[peakPerGame]) {
+				object[peakPerGame] = perGame;
+			}
+
 			if (weightKeyByMinutes) {
-				object[key2] += row[key] * row.min;
+				object[tot] += row[key] * row.min;
 				minSum += row.min;
 			} else {
-				object[key2] += row[key];
+				object[tot] += row[key];
 			}
 		}
 
 		if (weightKeyByMinutes) {
-			object[key2] /= minSum;
+			object[tot] /= minSum;
 		}
 	}
 

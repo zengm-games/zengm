@@ -57,40 +57,71 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 		const peak = `${stat}Peak`;
 		const peakPerGame = `${stat}PeakPerGame`;
 		const tot = stat;
+		const playoffs = `${stat}Playoffs`;
 
 		object[peak] = -Infinity;
 		object[peakPerGame] = -Infinity;
 		object[tot] = 0;
+		object[playoffs] = 0;
 
 		const weightStatByMinutes = weightByMinutes.includes(stat);
 		let minSum = 0;
+		let minSumPlayoffs = 0;
 
 		for (const row of p.stats) {
-			if (row.gp === 0 || row.min === 0 || row.playoffs) {
+			if (row.gp === 0 || row.min === 0) {
 				continue;
 			}
 
-			if (row.gp >= MIN_GP_SEASON) {
-				if (row[stat] > object[peak]) {
-					object[peak] = row[stat];
+			if (row.playoffs) {
+				if (weightStatByMinutes) {
+					object[playoffs] += row[stat] * row.min;
+					minSumPlayoffs += row.min;
+				} else {
+					object[playoffs] += row[stat];
 				}
-
-				const perGame = row[stat] / row.gp;
-				if (perGame > object[peakPerGame]) {
-					object[peakPerGame] = perGame;
-				}
-			}
-
-			if (weightStatByMinutes) {
-				object[tot] += row[stat] * row.min;
-				minSum += row.min;
 			} else {
-				object[tot] += row[stat];
+				if (row.gp >= MIN_GP_SEASON) {
+					if (row[stat] > object[peak]) {
+						object[peak] = row[stat];
+					}
+
+					const perGame = row[stat] / row.gp;
+					if (perGame > object[peakPerGame]) {
+						object[peakPerGame] = perGame;
+					}
+				}
+
+				if (weightStatByMinutes) {
+					object[tot] += row[stat] * row.min;
+					minSum += row.min;
+				} else {
+					object[tot] += row[stat];
+				}
 			}
 		}
 
 		if (weightStatByMinutes) {
 			object[tot] /= minSum;
+			object[playoffs] /= minSumPlayoffs;
+		}
+	}
+
+	for (const stat of STAT_VARIABLES) {
+		const perGame = `${stat}PerGame`;
+		const playoffsPerGame = `${stat}PlayoffsPerGame`;
+		const tot = stat;
+		const playoffs = `${stat}Playoffs`;
+
+		object[perGame] = 0;
+		object[playoffsPerGame] = 0;
+
+		if (object.gp > 0) {
+			object[perGame] = object[tot] / object.gp;
+		}
+
+		if (object.gpPlayoffs > 0) {
+			object[playoffsPerGame] = object[playoffs] / object.gpPlayoffs;
 		}
 	}
 
@@ -107,6 +138,13 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 	if (object.gp < MIN_GP_TOTAL) {
 		for (const stat of STAT_VARIABLES) {
 			object[stat] = 0;
+			object[`${stat}PerGame`] = 0;
+		}
+	}
+	if (object.gpPlayoffs < MIN_GP_TOTAL / 2) {
+		for (const stat of STAT_VARIABLES) {
+			object[`${stat}Playoffs`] = 0;
+			object[`${stat}PlayoffsPerGame`] = 0;
 		}
 	}
 

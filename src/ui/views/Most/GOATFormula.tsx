@@ -72,42 +72,59 @@ const GOATFormula = ({
 					>
 						{Object.entries(awards).map(([short, long]) => (
 							<li key={short}>
-								<abbr title={long}>{short}</abbr>
+								<abbr className="text-monospace" title={long}>
+									{short}
+								</abbr>
 							</li>
 						))}
 					</ul>
 				</details>
 				<details className="mb-3">
-					<summary>Full list of career total stat variables</summary>
+					<summary>Full list of stat variables</summary>
 					<ul
-						className="list-unstyled mb-0"
+						className="list-unstyled"
 						style={{
 							columnWidth: 100,
 						}}
 					>
 						{stats.map((stat, i) => (
 							<li key={stat}>
-								<abbr title={cols[i].desc}>{stat}</abbr>
+								<abbr className="text-monospace" title={cols[i].desc}>
+									{stat}
+								</abbr>
 							</li>
 						))}
 					</ul>
+					<p>
+						The above variables all are career totals. If you want something
+						besides career totals, you can put any of these suffixes at the end
+						of a stat, such as <code>{exampleStat}PerGame</code>.
+					</p>
+					<ul className="list-unstyled">
+						<li>
+							<code>PerGame</code> - per game stat
+						</li>
+						<li>
+							<code>Playoffs</code> - career total playoff stat
+						</li>
+						<li>
+							<code>PlayoffsPerGame</code> - career per game playoff stat
+						</li>
+						<li>
+							<code>Peak</code> - total value of stat's single season peak
+						</li>
+						<li>
+							<code>PeakPerGame</code> - per-game value of stat's single season
+							peak
+						</li>
+					</ul>
+					<p>
+						Seasons with very few games played are ignored for the{" "}
+						<code>Peak</code> and <code>PeakPerGame</code> variables, and
+						careers with very few games played are ignored for the career total
+						variables.
+					</p>
 				</details>
-				<p>
-					Additionally, you can stick <code>Peak</code> at the end of any stat
-					variable to get the single season peak total value, and{" "}
-					<code>PeakPerGame</code> to get the single season peak per-game value.
-					For example, <code>{exampleStat}Peak</code> or{" "}
-					<code>{exampleStat}PeakPerGame</code>.
-				</p>
-				<p>
-					What if you want the career per game average? There is not a special
-					variable for that, just do <code>{exampleStat}/gp</code>.
-				</p>
-				<p>
-					Seasons with very few games played are ignored for the{" "}
-					<code>Peak</code> and <code>PeakPerGame</code> variables, and careers
-					with very few games played are ignored for the career total variables.
-				</p>
 			</div>
 		</div>
 	);

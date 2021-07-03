@@ -1,4 +1,4 @@
-import { bySport } from "../../common";
+import { AWARD_NAMES, bySport } from "../../common";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
@@ -16,6 +16,15 @@ const BANNED_STAT_VARIABLES = new Set(["minAvailable", "gpSkater", "gpGoalie"]);
 const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 	stat => !BANNED_STAT_VARIABLES.has(stat),
 );
+
+const AWARD_VARIABLES: string[] = [];
+for (const key of Object.keys(AWARD_NAMES)) {
+	if (key === "allDefensive" || key === "allLeague") {
+		AWARD_VARIABLES.push(`${key}1`, `${key}2`, `${key}3`);
+	} else {
+		AWARD_VARIABLES.push(key);
+	}
+}
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
@@ -73,6 +82,31 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 
 		if (weightStatByMinutes) {
 			object[tot] /= minSum;
+		}
+	}
+
+	for (const award of AWARD_VARIABLES) {
+		let text;
+		const match = award.match(/\d$/);
+		if (match) {
+			const num = match[0];
+			if (num === "1") {
+				text = "First Team ";
+			} else if (num === "2") {
+				text = "Second Team ";
+			} else if (num === "3") {
+				text = "Third Team ";
+			}
+			text += AWARD_NAMES[award.slice(0, -1)];
+		} else {
+			text = AWARD_NAMES[award];
+		}
+
+		object[award] = 0;
+		for (const { type } of p.awards) {
+			if (type === text) {
+				object[award] += 1;
+			}
 		}
 	}
 

@@ -94,7 +94,8 @@ const parseUnaryMinus = (string: string) => {
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			"\\d+(?:[\\.]\\d+)?(?:[eE]\\d+)?|[()]" + `|${operatorsString}|[a-zA-Z]+`,
+			"\\d+(?:[\\.]\\d+)?(?:[eE]\\d+)?|[()]" +
+				`|${operatorsString}|[a-zA-Z\\d]+`,
 			"g",
 		),
 	);

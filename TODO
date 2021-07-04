@@ -1,3 +1,10 @@
+ability to specify default settings
+- on global settings page
+- ability to select individual settings from a dropdown to add
+- ability to delete individual setting (go back to default)
+- includes goat formula
+- explain that it doens't override when a custom league file or historical league includes a value for a setting
+
 deflection without assist https://discord.com/channels/@me/778760871911751700/860383610258718771
 
 injuries

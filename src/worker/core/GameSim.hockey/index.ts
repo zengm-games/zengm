@@ -764,7 +764,7 @@ class GameSim {
 		let assister2: PlayerGameSim | undefined;
 
 		// 25% chance of no assist on shorthanded goal
-		if (strengthType !== "sh" || Math.random() > 0.25) {
+		if (strengthType !== "sh" || Math.random() > 0.25 || deflector) {
 			const r2 = Math.random();
 			if (deflector) {
 				assister1 = shooter;

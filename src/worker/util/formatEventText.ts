@@ -1,5 +1,10 @@
 import { PHASE } from "../../common";
-import type { EventBBGM, Player, TradeEventTeams } from "../../common/types";
+import type {
+	DraftPickSeason,
+	EventBBGM,
+	Player,
+	TradeEventTeams,
+} from "../../common/types";
 import { idb, iterate } from "../db";
 import g from "./g";
 import getTeamInfoBySeason from "./getTeamInfoBySeason";
@@ -11,7 +16,7 @@ type PlayerAsset = {
 };
 type PickAsset = {
 	dpid: number;
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 	round: number;
 	originalTid: number;
 };

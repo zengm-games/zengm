@@ -138,6 +138,8 @@ export type DraftLotteryResult = {
 	result: DraftLotteryResultArray;
 };
 
+export type DraftPickSeason = number | "fantasy" | "expansion";
+
 export type DraftPickWithoutKey = {
 	dpid?: number;
 	tid: number;
@@ -145,7 +147,7 @@ export type DraftPickWithoutKey = {
 	round: number;
 	pick: number;
 	// 0 if not set
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 };
 
 export type DraftPick = {
@@ -177,7 +179,7 @@ type TradeEventAsset =
 	  }
 	| {
 			dpid: number;
-			season: number | "fantasy" | "expansion";
+			season: DraftPickSeason;
 			round: number;
 			originalTid: number;
 	  };

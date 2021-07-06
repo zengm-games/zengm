@@ -1,11 +1,3 @@
-salary cap growth setting
-- https://discord.com/channels/290013534023057409/290015468939640832/838829528822054923
-- if min and max are equal, short circuit randomness
-- if can't find one, do uniform random between min and max
-- real player leagues
-  - disable this if there is a future scheduled event containing finance info
-  - warning in settings UI
-
 ability to specify default settings
 - on global settings page
 - ability to select individual settings from a dropdown to add

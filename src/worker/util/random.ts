@@ -95,7 +95,13 @@ const truncGauss = (
 ) => {
 	let x;
 
+	let i = -1;
 	do {
+		i += 1;
+		if (i > 1000000) {
+			throw new Error("Could not find valid random number");
+		}
+
 		x = realGauss(mu, sigma);
 	} while (x < lowerBound || x > upperBound);
 

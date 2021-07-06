@@ -971,8 +971,9 @@ const categories: {
 		helpText: (
 			<>
 				<p>
-					This lets you randomly change your league's salary cap and other
-					financial settings every year. It works by picking a{" "}
+					This lets you randomly change your league's financial settings (salary
+					cap, min payroll, luxury tax payroll, min contract, max contract)
+					every year before the draft. It works by picking a{" "}
 					<a
 						href="https://en.wikipedia.org/wiki/Truncated_normal_distribution"
 						rel="noopener noreferrer"
@@ -983,6 +984,15 @@ const categories: {
 					based on the parameters set below (min, max, average, and standard
 					deviation).
 				</p>
+				{isSport("basketball") ? (
+					<p>
+						If you have any scheduled events containing specific finance changes
+						then these settings will be ignored until all those scheduled events
+						have been processed. Basically this means that for historical real
+						players leagues, these inflation settings will only take effect once
+						your league moves into the future.
+					</p>
+				) : null}
 			</>
 		),
 	},

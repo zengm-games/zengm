@@ -18,7 +18,97 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 	LogEventType,
+	GameAttributesLeague,
 } from "../../../common/types";
+
+const INFLATION_GAME_ATTRIBUTES = [
+	"salaryCap",
+	"minContract",
+	"maxContract",
+	"minPayroll",
+	"luxuryPayroll",
+] as const;
+
+const upcomingScheduledEventBlocksInflation = async () => {
+	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	return scheduledEvents.some(event => {
+		if (event.type === "gameAttributes") {
+			for (const key of INFLATION_GAME_ATTRIBUTES) {
+				if (event.info.hasOwnProperty(key)) {
+					return true;
+				}
+			}
+		}
+	});
+};
+
+const doInflation = async (conditions: Conditions) => {
+	if (await upcomingScheduledEventBlocksInflation()) {
+		return;
+	}
+
+	const inflationMin = g.get("inflationMin");
+	const inflationMax = g.get("inflationMax");
+	const inflationAvg = g.get("inflationAvg");
+	const inflationStd = g.get("inflationStd");
+
+	let inflation;
+
+	if (inflationMin === inflationMax) {
+		inflation = inflationMin;
+	} else if (inflationStd === 0) {
+		inflation = helpers.bound(inflationAvg, inflationMin, inflationMax);
+	} else {
+		try {
+			inflation = random.truncGauss(
+				inflationAvg,
+				inflationStd,
+				inflationMin,
+				inflationMax,
+			);
+		} catch (error) {
+			inflation = random.randInt(inflationMin, inflationMax);
+		}
+	}
+
+	// Round to 0.1%
+	inflation = Math.round(inflation * 10) / 10;
+
+	if (inflation === 0) {
+		return;
+	}
+
+	const updatedGameAttributes: Partial<GameAttributesLeague> = {};
+
+	for (const key of INFLATION_GAME_ATTRIBUTES) {
+		const oldValue = g.get(key);
+		const newValue = helpers.roundContract(oldValue * (1 + inflation / 100));
+		if (oldValue !== newValue) {
+			updatedGameAttributes[key] = helpers.roundContract(
+				g.get(key) * (1 + inflation / 100),
+			);
+		}
+	}
+
+	if (Object.keys(updatedGameAttributes).length > 0) {
+		await league.setGameAttributes(updatedGameAttributes);
+
+		logEvent(
+			{
+				type: "gameAttribute",
+				text: `An inflation rate of ${inflation}% increased the salary cap to ${helpers.formatCurrency(
+					g.get("salaryCap") / 1000,
+					"M",
+				)}.`,
+				tids: [],
+				persistent: true,
+				extraClass: "",
+				score: 20,
+			},
+			conditions,
+		);
+	}
+};
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
@@ -302,6 +392,8 @@ const newPhaseBeforeDraft = async (
 	if (g.get("gameOver")) {
 		achievement.check("afterFired", conditions);
 	}
+
+	await doInflation(conditions);
 
 	// Don't redirect if we're viewing a live game now
 	let url;

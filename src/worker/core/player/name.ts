@@ -122,16 +122,42 @@ const usaStateFrequencies = isSport("hockey")
 			Wyoming: 563626,
 	  };
 
+// 2016 census populations
+const canadaProvinceFrequencies = {
+	Alberta: 4067175,
+	"British Columbia": 4648055,
+	Manitoba: 1278365,
+	"New Brunswick": 747101,
+	"Newfoundland and Labrador": 519716,
+	"Northwest Territories": 41786,
+	"Nova Scotia": 923598,
+	Nunavut: 35944,
+	Ontario: 13448494,
+	"Prince Edward Island": 142907,
+	Quebec: 8164361,
+	Saskatchewan: 1098352,
+	Yukon: 35874,
+};
+
 const withState = (country: string) => {
-	if (country !== "USA") {
-		return country;
+	let state;
+	if (country === "USA") {
+		state = random.choice(
+			Object.keys(usaStateFrequencies),
+			Object.values(usaStateFrequencies),
+		);
+	} else if (country === "Canada") {
+		state = random.choice(
+			Object.keys(canadaProvinceFrequencies),
+			Object.values(canadaProvinceFrequencies),
+		);
 	}
 
-	const state = random.choice(
-		Object.keys(usaStateFrequencies),
-		Object.values(usaStateFrequencies),
-	);
-	return `${state}, USA`;
+	if (state) {
+		return `${state}, ${country}`;
+	}
+
+	return country;
 };
 
 const name = async (

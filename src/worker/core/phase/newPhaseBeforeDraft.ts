@@ -104,6 +104,7 @@ const doInflation = async (conditions: Conditions) => {
 				)}.`,
 				tids: [],
 				persistent: true,
+				hideInLiveGame: true,
 				extraClass: "",
 				score: 20,
 			},

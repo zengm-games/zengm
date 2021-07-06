@@ -655,6 +655,7 @@ export type LogEventSaveOptions = DistributiveOmit<
 
 export type LogEventShowOptions = {
 	extraClass?: string;
+	hideInLiveGame?: boolean;
 	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent: boolean;

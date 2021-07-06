@@ -5,7 +5,7 @@ import getAdjustedTicketPrice, {
 } from "../../../common/getAdjustedTicketPrice";
 import type { TeamSeason } from "../../../common/types";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 
 export { getAdjustedTicketPrice };
 
@@ -35,7 +35,8 @@ export const getBaseAttendance = ({
 
 // Ticket price adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps. The exponential factor was hand-tuned to make this work in 1965.
 const salaryCapFactor = () => {
-	const ratio = defaultGameAttributes.salaryCap / g.get("salaryCap");
+	// Uses 90000 rather than defaultGameAttributes for unclear reasons, other sports should be tuned better
+	const ratio = 90000 / g.get("salaryCap");
 	if (ratio > 1) {
 		return ratio ** 0.75;
 	}

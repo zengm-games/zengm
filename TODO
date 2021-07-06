@@ -1,3 +1,5 @@
+Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
+
 finances not scaling right. e.g. set league to 10x all, it's not the same
 
 ability to specify default settings

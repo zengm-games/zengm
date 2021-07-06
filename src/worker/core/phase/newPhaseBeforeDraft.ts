@@ -96,7 +96,9 @@ const doInflation = async (conditions: Conditions) => {
 		logEvent(
 			{
 				type: "gameAttribute",
-				text: `An inflation rate of ${inflation}% increased the salary cap to ${helpers.formatCurrency(
+				text: `An inflation rate of ${inflation}% ${
+					inflation > 0 ? "increased" : "decreased"
+				} the salary cap to ${helpers.formatCurrency(
 					g.get("salaryCap") / 1000,
 					"M",
 				)}.`,

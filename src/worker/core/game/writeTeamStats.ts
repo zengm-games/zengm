@@ -105,23 +105,9 @@ const writeTeamStats = async (results: GameResults) => {
 
 			if (isSport("basketball") || isSport("hockey")) {
 				merchRevenue = (salaryCapFactor * 4.5 * baseAttendance) / 1000;
-
-				if (merchRevenue > 250) {
-					merchRevenue = 250;
-				}
-
 				sponsorRevenue = (salaryCapFactor * 15 * baseAttendance) / 1000;
-
-				if (sponsorRevenue > 600) {
-					sponsorRevenue = 600;
-				}
-
 				nationalTvRevenue = salaryCapFactor * 375;
 				localTvRevenue = (salaryCapFactor * 15 * baseAttendance) / 1000;
-
-				if (localTvRevenue > 1200) {
-					localTvRevenue = 1200;
-				}
 			} else {
 				// Football targets:
 				// expenses: $350M

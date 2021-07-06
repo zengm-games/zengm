@@ -208,7 +208,6 @@ const PowerRankings = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="PowerRankings"
-				nonfluid
 				rows={rows}
 				superCols={superCols}
 			/>

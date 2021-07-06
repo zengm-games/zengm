@@ -671,6 +671,18 @@ const generateJSONSchema = (sport /*: string*/) => {
 							homeCourtAdvantage: {
 								type: "number",
 							},
+							inflationAvg: {
+								type: "number",
+							},
+							inflationMax: {
+								type: "number",
+							},
+							inflationMin: {
+								type: "number",
+							},
+							inflationStd: {
+								type: "number",
+							},
 							injuries: {
 								type: "array",
 								items: {

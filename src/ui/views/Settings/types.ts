@@ -77,7 +77,11 @@ export type Key =
 	| "realStats"
 	| "hideDisabledTeams"
 	| "hofFactor"
-	| "injuries";
+	| "injuries"
+	| "inflationAvg"
+	| "inflationMax"
+	| "inflationMin"
+	| "inflationStd";
 
 export type Category =
 	| "New League"
@@ -87,6 +91,7 @@ export type Category =
 	| "Team"
 	| "Draft"
 	| "Finances"
+	| "Inflation"
 	| "Contracts"
 	| "Events"
 	| "Injuries"

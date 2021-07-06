@@ -1,3 +1,11 @@
+salary cap growth setting
+- https://discord.com/channels/290013534023057409/290015468939640832/838829528822054923
+- if min and max are equal, short circuit randomness
+- if can't find one, do uniform random between min and max
+- real player leagues
+  - disable this if there is a future scheduled event containing finance info
+  - warning in settings UI
+
 ability to specify default settings
 - on global settings page
 - ability to select individual settings from a dropdown to add
@@ -154,10 +162,6 @@ trade finder, with salary cap rules enforced
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
 
-salary cap growth setting
-- random number between min and max?
-- https://discord.com/channels/290013534023057409/290015468939640832/838829528822054923
-
 add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 
 AI teams too likely to re-sign stars?
@@ -255,8 +259,6 @@ add standings options
   - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
 - support re-seeding playoffs, and make it default for FBGM
 
-average team age on roster page
-
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558
 
 asian names https://old.reddit.com/message/messages/xje301
@@ -311,7 +313,6 @@ scheduled events documentation
 - https://old.reddit.com/r/BasketballGM/comments/k7g2yu/tutorial_how_to_schedule_an_expansion_draft_in_a/
 
 better asian names
-- split up parsing of basketball/football built in names to generate an intermediate CSV, to see what should be done with those asian names more easily
 - https://old.reddit.com/message/messages/xjbi7a
 
 https://discord.com/channels/290013534023057409/331882115119448065/792603966063902741
@@ -679,9 +680,6 @@ team Offensive Rating and Defensive Rating on Roster screen? (not just MOV?)
 
 cap evolving over time
 
-option to include historical players/stats when creating a real players league
-- should it include 1 season of stats by default, for MIP?
-
 rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comments/hytv2e/whats_the_best_way_to_trade_for_good_draft_picks/fzf4iap/?context=3
 
 option to lock ratings for all players, including future players
@@ -754,9 +752,10 @@ customizable columns in datatable
     - but for MVP, no customization of supercols tables
   - always return all stats and ratings?
 
-add average team age to power rankings @TheRealGWood#4891 
-- save to teamSeason at end of season, along with ovr and any other things on power rankings page
-- for current season, compute dynamically
+save some stuff to teamSeason at end of season, and use in various places
+- team ovr
+- avg team age
+- anything else from power rankings?
 
 from survey
 - people really like looking back at history
@@ -848,7 +847,6 @@ add option to disable salary cap @hrmantovani#2284
 FBGM
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
-- kneeling at end of games
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
   - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
@@ -914,10 +912,6 @@ manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles
 - dropdown to force lottery winners
   - would need to deal with coin flips for ties not making the top N reliable
-
-option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
-- check if upcoming scheduled event and noop if there is one
-- https://old.reddit.com/r/BasketballGM/comments/k49xi4/monthly_suggestions_thread/gg8kdhi/
 
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
@@ -1101,8 +1095,6 @@ FBGM football sim bugs
   - https://i.redd.it/r06r5jxc6ei51.png
 - penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
   - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
-
-add kneeling to run out the clock
 
 typescript
 - to do

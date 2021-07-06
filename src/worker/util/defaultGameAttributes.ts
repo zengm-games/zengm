@@ -154,6 +154,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	realDraftRatings: undefined,
 	hideDisabledTeams: false,
 	goatFormula: undefined,
+	inflationAvg: 0,
+	inflationMax: 0,
+	inflationMin: 0,
+	inflationStd: 0,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

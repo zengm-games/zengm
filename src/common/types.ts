@@ -409,6 +409,10 @@ export type GameAttributesLeague = {
 	hideDisabledTeams: boolean;
 	hofFactor: number;
 	homeCourtAdvantage: number;
+	inflationAvg: number;
+	inflationMax: number;
+	inflationMin: number;
+	inflationStd: number;
 	injuries?: InjuriesSetting;
 	injuryRate: number;
 	lid: number;

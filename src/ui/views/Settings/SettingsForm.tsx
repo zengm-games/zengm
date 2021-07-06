@@ -967,6 +967,26 @@ const categories: {
 		name: "Finances",
 	},
 	{
+		name: "Inflation",
+		helpText: (
+			<>
+				<p>
+					This lets you randomly change your league's salary cap and other
+					financial settings every year. It works by picking a{" "}
+					<a
+						href="https://en.wikipedia.org/wiki/Truncated_normal_distribution"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						truncated Gaussian random number
+					</a>{" "}
+					based on the parameters set below (min, max, average, and standard
+					deviation).
+				</p>
+			</>
+		),
+	},
+	{
 		name: "Contracts",
 	},
 	{

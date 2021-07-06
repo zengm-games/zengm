@@ -472,6 +472,48 @@ export const settings: {
 			"Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
 	},
 	{
+		category: "Inflation",
+		key: "inflationMin",
+		name: "Minimum",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+		validator: (value, output) => {
+			if (value > output.inflationMax) {
+				throw new Error("Value must be less than the maximum value.");
+			}
+		},
+	},
+	{
+		category: "Inflation",
+		key: "inflationMax",
+		name: "Maximum",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+		validator: (value, output) => {
+			if (value < output.inflationMin) {
+				throw new Error("Value must be greater than the minimum value.");
+			}
+		},
+	},
+	{
+		category: "Inflation",
+		key: "inflationAvg",
+		name: "Average",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+	},
+	{
+		category: "Inflation",
+		key: "inflationStd",
+		name: "Standard Deviation",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+	},
+	{
 		category: "Contracts",
 		key: "minContract",
 		name: "Min Contract",

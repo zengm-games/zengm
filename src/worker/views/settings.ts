@@ -86,6 +86,10 @@ const keys = [
 	"hideDisabledTeams",
 	"hofFactor",
 	"injuries",
+	"inflationAvg",
+	"inflationMax",
+	"inflationMin",
+	"inflationStd",
 ] as const;
 
 export type Settings = Pick<
@@ -188,6 +192,10 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			noStartingInjuries: false,
 			hofFactor: g.get("hofFactor"),
 			injuries: g.get("injuries") ?? defaultInjuries,
+			inflationAvg: g.get("inflationAvg"),
+			inflationMax: g.get("inflationMax"),
+			inflationMin: g.get("inflationMin"),
+			inflationStd: g.get("inflationStd"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

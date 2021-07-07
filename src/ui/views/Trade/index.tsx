@@ -189,25 +189,13 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickClear =
-		(type: "all" | "other" | "user" | "keepUntradeable" | "undoAI") =>
-		async () => {
-			if (type === "undoAI") {
-				if (state.prevTeams) {
-					await toWorker("main", "updateTrade", state.prevTeams);
-					setState(prevState => ({
-						...prevState,
-						message: null,
-						prevTeams: undefined,
-					}));
-				}
-			} else {
-				setState(prevState => ({
-					...prevState,
-					message: null,
-					prevTeams: undefined,
-				}));
-				await toWorker("main", "clearTrade", type);
-			}
+		(type: "all" | "other" | "user" | "keepUntradeable") => async () => {
+			setState(prevState => ({
+				...prevState,
+				message: null,
+				prevTeams: undefined,
+			}));
+			await toWorker("main", "clearTrade", type);
 		};
 
 	const handleClickForceTrade = () => {
@@ -426,6 +414,29 @@ const Trade = (props: View<"trade">) => {
 									)}
 								>
 									{state.message}
+									{state.prevTeams ? (
+										<div className="mt-1 text-right">
+											<button
+												className="btn btn-secondary btn-sm"
+												onClick={async () => {
+													if (state.prevTeams) {
+														await toWorker(
+															"main",
+															"updateTrade",
+															state.prevTeams,
+														);
+														setState(prevState => ({
+															...prevState,
+															message: null,
+															prevTeams: undefined,
+														}));
+													}
+												}}
+											>
+												Undo
+											</button>
+										</div>
+									) : null}
 								</div>
 							) : null}
 
@@ -447,7 +458,6 @@ const Trade = (props: View<"trade">) => {
 											handleClickForceTrade={handleClickForceTrade}
 											handleClickPropose={handleClickPropose}
 											numAssets={numAssets}
-											showUndoAI={!!state.prevTeams}
 											teamNames={teamNames}
 										/>
 									</div>

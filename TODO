@@ -1,7 +1,3 @@
-in firefox, "advance to player protection" and "start expansion draft" buttons don't work in firefox https://discord.com/channels/290013534023057409/290015591216054273/862162283189895238
-- caused by race condition in Controller.tsx setTimeout
-- after fix, revert commit d42d59ec85a19e8a4b30716954a37f78afcb771c
-
 save some stuff to teamSeason at end of season, and use in various places
 - team ovr
 - avg team age

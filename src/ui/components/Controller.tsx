@@ -56,9 +56,7 @@ type State = {
 	Component: any;
 	loading: boolean;
 	inLeague: boolean;
-	data: {
-		[key: string]: any;
-	};
+	data: Record<string, any>;
 };
 
 type Action =
@@ -104,6 +102,7 @@ const Controller = () => {
 		data: {},
 	});
 
+	const prevData2 = useRef<Record<string, any>>({});
 	const idLoaded = useRef<string | undefined>(undefined);
 	const idLoading = useRef<string | undefined>(undefined);
 
@@ -153,7 +152,9 @@ const Controller = () => {
 				// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
 				return;
 			} else {
-				prevData = state.data;
+				prevData = {
+					...prevData2.current,
+				};
 			}
 
 			dispatch({
@@ -263,6 +264,7 @@ const Controller = () => {
 				});
 				idLoaded.current = id;
 				idLoading.current = undefined;
+				prevData2.current = vars.data;
 
 				// Scroll to top if this load came from user clicking a link
 				if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
@@ -270,7 +272,7 @@ const Controller = () => {
 				}
 			}
 		},
-		[lid, state],
+		[lid],
 	);
 
 	useEffect(() => {

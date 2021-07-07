@@ -315,17 +315,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 					tid: {
 						type: "integer",
 					},
-					winp: {
-						type: "number",
-						minimum: 0,
-						maximum: 1,
-					},
 					won: {
 						type: "integer",
 						minimum: 0,
 					},
 				},
-				required: ["cid", "seed", "tid", "winp", "won"],
+				required: ["cid", "seed", "tid", "won"],
 			},
 			playerSkill: {
 				type: "string",

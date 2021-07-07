@@ -61,7 +61,19 @@ type State = {
 	};
 };
 
-const reducer = (state: State, action: any) => {
+type Action =
+	| {
+			type: "startLoading";
+	  }
+	| {
+			type: "doneLoading";
+	  }
+	| {
+			type: "reset";
+			vars: State;
+	  };
+
+const reducer = (state: State, action: Action) => {
 	switch (action.type) {
 		case "startLoading":
 			return { ...state, loading: true };
@@ -71,9 +83,6 @@ const reducer = (state: State, action: any) => {
 
 		case "reset":
 			return action.vars;
-
-		default:
-			throw new Error(`Unknown action type "${action.type}"`);
 	}
 };
 

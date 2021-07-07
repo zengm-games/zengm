@@ -157,6 +157,7 @@ const updatePlayers = async (
 		return {
 			abbrev: inputs.abbrev,
 			feats: featsProcessed,
+			quarterLengthFactor: helpers.quarterLengthFactor(),
 			season: inputs.season,
 			stats,
 			userTid: g.get("userTid"),

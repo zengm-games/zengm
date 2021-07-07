@@ -9,8 +9,6 @@ ai propose trades to user
 
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
 
-stat feat cutoffs in UI should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/861830825271754803
-
 ability to specify default settings
 - on global settings page
 - ability to select individual settings from a dropdown to add

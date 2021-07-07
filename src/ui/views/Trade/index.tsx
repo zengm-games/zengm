@@ -6,7 +6,7 @@ import { helpers, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
-import type { View } from "../../../common/types";
+import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
 
 const Trade = (props: View<"trade">) => {
@@ -14,8 +14,10 @@ const Trade = (props: View<"trade">) => {
 		accepted: false,
 		asking: false,
 		forceTrade: false,
-		message: null,
+		message: null as string | null,
+		prevTeams: undefined as TradeTeams | undefined,
 	});
+	console.log("prevTeams", state.prevTeams);
 
 	const handleChangeAsset = async (
 		userOrOther: "other" | "user",
@@ -23,7 +25,11 @@ const Trade = (props: View<"trade">) => {
 		includeOrExclude: "include" | "exclude",
 		id: number,
 	) => {
-		setState(prevState => ({ ...prevState, message: null }));
+		setState(prevState => ({
+			...prevState,
+			message: null,
+			prevTeams: undefined,
+		}));
 		const ids = {
 			"user-pids": props.userPids,
 			"user-pids-excluded": props.userPidsExcluded,
@@ -59,7 +65,7 @@ const Trade = (props: View<"trade">) => {
 				dpids: ids["other-dpids"],
 				dpidsExcluded: ids["other-dpids-excluded"],
 			},
-		];
+		] as TradeTeams;
 		await toWorker("main", "updateTrade", teams);
 	};
 
@@ -117,7 +123,11 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleChangeTeam = async (tid: number) => {
-		setState(prevState => ({ ...prevState, message: null }));
+		setState(prevState => ({
+			...prevState,
+			message: null,
+			prevTeams: undefined,
+		}));
 
 		const teams = [
 			{
@@ -140,15 +150,64 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickAsk = async () => {
-		setState(prevState => ({ ...prevState, asking: true, message: null }));
-		const message = await toWorker("main", "tradeCounterOffer");
-		setState(prevState => ({ ...prevState, asking: false, message }));
+		let newPrevTeams = [
+			{
+				tid: props.userTid,
+				pids: props.userPids,
+				pidsExcluded: props.userPidsExcluded,
+				dpids: props.userDpids,
+				dpidsExcluded: props.userDpidsExcluded,
+			},
+			{
+				tid: props.otherTid,
+				pids: props.otherPids,
+				pidsExcluded: props.otherPidsExcluded,
+				dpids: props.otherDpids,
+				dpidsExcluded: props.otherDpidsExcluded,
+			},
+		] as TradeTeams | undefined;
+
+		setState(prevState => ({
+			...prevState,
+			asking: true,
+			message: null,
+			prevTeams: undefined,
+		}));
+
+		const { changed, message } = await toWorker("main", "tradeCounterOffer");
+
+		if (!changed) {
+			newPrevTeams = undefined;
+		}
+
+		setState(prevState => ({
+			...prevState,
+			asking: false,
+			message,
+			prevTeams: newPrevTeams,
+		}));
 	};
 
 	const handleClickClear =
-		(type: "all" | "other" | "user" | "keepUntradeable") => async () => {
-			setState(prevState => ({ ...prevState, message: null }));
-			await toWorker("main", "clearTrade", type);
+		(type: "all" | "other" | "user" | "keepUntradeable" | "undoAI") =>
+		async () => {
+			if (type === "undoAI") {
+				if (state.prevTeams) {
+					await toWorker("main", "updateTrade", state.prevTeams);
+					setState(prevState => ({
+						...prevState,
+						message: null,
+						prevTeams: undefined,
+					}));
+				}
+			} else {
+				setState(prevState => ({
+					...prevState,
+					message: null,
+					prevTeams: undefined,
+				}));
+				await toWorker("main", "clearTrade", type);
+			}
 		};
 
 	const handleClickForceTrade = () => {
@@ -164,7 +223,12 @@ const Trade = (props: View<"trade">) => {
 			"proposeTrade",
 			state.forceTrade,
 		);
-		setState(prevState => ({ ...prevState, accepted, message }));
+		setState(prevState => ({
+			...prevState,
+			accepted,
+			message,
+			prevTeams: undefined,
+		}));
 	};
 
 	const {
@@ -383,6 +447,7 @@ const Trade = (props: View<"trade">) => {
 											handleClickForceTrade={handleClickForceTrade}
 											handleClickPropose={handleClickPropose}
 											numAssets={numAssets}
+											showUndoAI={!!state.prevTeams}
 											teamNames={teamNames}
 										/>
 									</div>

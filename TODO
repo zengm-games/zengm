@@ -1,6 +1,26 @@
+An undo button after asking "What would make this work?" so I can get rid of the abomination the CPU offers me
+- https://discord.com/channels/290013534023057409/331882115119448065/861724838006882334
+
+counter proposals too jumpy, get rid of that extra iteration at the end maybe?
+- https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
+- https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798
+- add penalty for too many players in trade?
+- try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
+
+save some stuff to teamSeason at end of season, and use in various places
+- team ovr
+- avg team age
+- anything else from power rankings?
+- https://discord.com/channels/290013534023057409/290015591216054273/862039671579607060
+
+ai propose trades to user
+- list candidates on a new Trade Offers page?
+
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
 
-finances not scaling right. e.g. set league to 10x all, it's not the same
+add amount over cap to error message https://discord.com/channels/290013534023057409/331882115119448065/861664978594955355
+
+stat feat cutoffs in UI should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/861830825271754803
 
 ability to specify default settings
 - on global settings page
@@ -31,12 +51,6 @@ option to exclude notable games box scores from deletion
 - firefox auto delete performance
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
-
-counter proposals too jumpy, get rid of that extra iteration at the end maybe?
-- https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
-- https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798
-- add penalty for too many players in trade?
-- try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
 
 adjust PT multiplier magnitude
 - https://discord.com/channels/290013534023057409/331882115119448065/854198324844036096
@@ -745,11 +759,6 @@ customizable columns in datatable
     - or, change cols input to include flag for which supercol a col belongs to
     - but for MVP, no customization of supercols tables
   - always return all stats and ratings?
-
-save some stuff to teamSeason at end of season, and use in various places
-- team ovr
-- avg team age
-- anything else from power rankings?
 
 from survey
 - people really like looking back at history

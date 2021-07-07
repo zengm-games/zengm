@@ -3404,10 +3404,10 @@ const toggleTradeDeadline = async () => {
 	}
 };
 
-const tradeCounterOffer = async (): Promise<string> => {
-	const message = await trade.makeItWorkTrade();
+const tradeCounterOffer = async () => {
+	const response = await trade.makeItWorkTrade();
 	await toUI("realtimeUpdate", []);
-	return message;
+	return response;
 };
 
 const updateTrade = async (teams: TradeTeams) => {

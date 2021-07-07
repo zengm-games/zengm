@@ -10,6 +10,7 @@ const Buttons = ({
 	handleClickForceTrade,
 	handleClickPropose,
 	numAssets,
+	showUndoAI,
 	teamNames,
 }: {
 	asking: boolean;
@@ -18,11 +19,12 @@ const Buttons = ({
 	godMode: boolean;
 	handleClickAsk: () => void;
 	handleClickClear: (
-		type: "all" | "other" | "user" | "keepUntradeable",
+		type: "all" | "other" | "user" | "keepUntradeable" | "undoAI",
 	) => () => void;
 	handleClickForceTrade: () => void;
 	handleClickPropose: () => void;
 	numAssets: number;
+	showUndoAI: boolean;
 	teamNames: [string, string];
 }) => {
 	return (
@@ -64,7 +66,7 @@ const Buttons = ({
 						className="btn btn-secondary"
 						onClick={handleClickClear("all")}
 					>
-						Clear
+						Reset
 					</button>
 
 					<Dropdown.Toggle split variant="secondary" id="clear-trade-more" />
@@ -82,6 +84,11 @@ const Buttons = ({
 						<Dropdown.Item onClick={handleClickClear("keepUntradeable")}>
 							Keep untradeable
 						</Dropdown.Item>
+						{showUndoAI ? (
+							<Dropdown.Item onClick={handleClickClear("undoAI")}>
+								Undo AI counter-offer
+							</Dropdown.Item>
+						) : null}
 					</Dropdown.Menu>
 				</Dropdown>
 			</div>

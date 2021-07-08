@@ -131,7 +131,10 @@ const TeamStats = ({
 			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
 		}
 
-		data.avgAge = t.seasonAttrs.avgAge.toFixed(1);
+		data.avgAge =
+			t.seasonAttrs.avgAge !== undefined
+				? t.seasonAttrs.avgAge.toFixed(1)
+				: null;
 
 		for (const stat of stats) {
 			const value = t.stats.hasOwnProperty(stat)

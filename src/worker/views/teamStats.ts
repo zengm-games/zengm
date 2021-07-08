@@ -9,15 +9,23 @@ import type {
 import { TEAM_STATS_TABLES, bySport } from "../../common";
 import { team } from "../core";
 
-export const getStats = async (
-	season: number,
-	playoffs: boolean,
+export const getStats = async ({
+	season,
+	playoffs,
+	statsTable,
+	usePts,
+	tid,
+	noDynamicAvgAge,
+}: {
+	season: number;
+	playoffs: boolean;
 	statsTable: {
 		stats: string[];
-	},
-	usePts: boolean,
-	tid?: number,
-) => {
+	};
+	usePts: boolean;
+	tid?: number;
+	noDynamicAvgAge?: boolean;
+}) => {
 	const stats = statsTable.stats;
 	const seasonAttrs: TeamSeasonAttr[] = [
 		"abbrev",
@@ -97,25 +105,30 @@ export const getStats = async (
 	}
 
 	for (const t of teams) {
-		let playersRaw;
-		if (g.get("season") === season) {
-			playersRaw = await idb.cache.players.indexGetAll("playersByTid", t.tid);
-		} else {
-			playersRaw = await idb.getCopies.players({
-				statsTid: t.tid,
+		if (t.seasonAttrs.avgAge === undefined) {
+			let playersRaw;
+			if (g.get("season") === season) {
+				playersRaw = await idb.cache.players.indexGetAll("playersByTid", t.tid);
+			} else {
+				if (noDynamicAvgAge) {
+					continue;
+				}
+				playersRaw = await idb.getCopies.players({
+					statsTid: t.tid,
+				});
+			}
+
+			const players = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: ["age"],
+				stats: ["gp", "min"],
+				season,
+				showNoStats: g.get("season") === season,
+				showRookies: g.get("season") === season,
+				tid: t.tid,
 			});
+
+			t.seasonAttrs.avgAge = team.avgAge(players);
 		}
-
-		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["age"],
-			stats: ["gp", "min"],
-			season,
-			showNoStats: g.get("season") === season,
-			showRookies: g.get("season") === season,
-			tid: t.tid,
-		});
-
-		t.seasonAttrs.avgAge = team.avgAge(players);
 	}
 
 	return {
@@ -148,12 +161,12 @@ const updateTeams = async (
 		const pointsFormula = g.get("pointsFormula", inputs.season);
 		const usePts = pointsFormula !== "";
 
-		const { seasonAttrs, stats, teams } = await getStats(
-			inputs.season,
-			inputs.playoffs === "playoffs",
+		const { seasonAttrs, stats, teams } = await getStats({
+			season: inputs.season,
+			playoffs: inputs.playoffs === "playoffs",
 			statsTable,
 			usePts,
-		);
+		});
 
 		let ties = false;
 		let otl = false;

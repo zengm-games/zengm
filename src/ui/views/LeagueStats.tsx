@@ -141,7 +141,9 @@ const LeagueStats = ({
 			data.winp = helpers.roundWinp(s.stats.winp);
 		}
 
-		data.avgAge = s.stats.avgAge.toFixed(1);
+		data.avgAge = Number.isNaN(s.stats.avgAge)
+			? null
+			: s.stats.avgAge.toFixed(1);
 
 		for (const stat of stats) {
 			data[stat] = helpers.roundStat(s.stats[stat], stat);

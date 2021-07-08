@@ -183,8 +183,8 @@ const processSeasonAttrs = async <
 						season: ts.season,
 					});
 				} else if (attr === "avgAge") {
-					// Fill in with team.avgAge manually. This is just a placeholder.
-					row.avgAge = 0;
+					// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
+					row.avgAge = ts[attr];
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];

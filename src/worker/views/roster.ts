@@ -217,7 +217,7 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
-		t2.seasonAttrs.avgAge = team.avgAge(players);
+		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
 		return {
 			abbrev: inputs.abbrev,

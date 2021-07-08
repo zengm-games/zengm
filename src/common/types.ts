@@ -1289,7 +1289,7 @@ type TeamSeasonPlus = TeamSeason & {
 	ptsDefault: number;
 	ptsMax: number;
 	ptsPct: number;
-	avgAge: number;
+	avgAge: number | undefined;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
@@ -1405,6 +1405,9 @@ export type TeamSeasonWithoutKey = {
 	// z - clinched home court advantage
 	// o - eliminated
 	clinchedPlayoffs?: "x" | "y" | "z" | "o";
+
+	// Value only written here after the end of the season
+	avgAge?: number;
 
 	// Copied over from Team
 	cid: number;

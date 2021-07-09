@@ -190,7 +190,7 @@ const updatePlayers = async (
 		}[] = [];
 		let extraProps: any;
 
-		if (type === "best_at_every_pick") {
+		if (type === "at_every_pick") {
 			title = "Best Player at Every Pick";
 			description =
 				"Click on a pick to see a list of all the best players taken at that position in the draft.";
@@ -209,7 +209,7 @@ const updatePlayers = async (
 					return true;
 				});
 			};
-		} else if (type === "best_at_pick") {
+		} else if (type === "at_pick") {
 			if (arg === undefined) {
 				throw new Error("Pick must be specified in the URL");
 			}
@@ -222,7 +222,7 @@ const updatePlayers = async (
 			description = `<a href="${helpers.leagueUrl([
 				"frivolities",
 				"most",
-				"best_at_every_pick",
+				"at_every_pick",
 			])}">Other picks</a>`;
 
 			let round: number;
@@ -245,6 +245,22 @@ const updatePlayers = async (
 				p.draft.round === round &&
 				p.draft.pick === pick;
 			getValue = playerValue;
+		} else if (type === "games_injured") {
+			title = "Most Games Injured";
+			description = "Players with the most total games missed due to injury.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "Games",
+			});
+
+			filter = p => p.injuries.length > 0;
+			getValue = p => {
+				let sum = 0;
+				for (const ps of p.injuries) {
+					sum += ps.games;
+				}
+				return { value: sum };
+			};
 		} else if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =

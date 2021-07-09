@@ -1,7 +1,6 @@
 frivolities
 - add WS/player for colleges/countries
 - players age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
-  - most games missed to injury in career
   - made playoffs every season @shep#9376 
   - would need history of salaryCap
     - most overpaid, most underpaid (career total)
@@ -14,8 +13,9 @@ frivolities
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - DONE
-  - best_at_every_pick and best_at_pick
+  - at_every_pick and at_pick
   - oldest_peaks
+  - games_injured
   - mvp/championship icons shown by player names on most frivolities
 
 3 point tendency

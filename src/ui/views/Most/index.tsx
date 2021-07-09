@@ -47,13 +47,13 @@ const Most = ({
 	];
 
 	const cols = getCols(
-		type === "best_at_every_pick" ? "Pick" : "#",
+		type === "at_every_pick" ? "Pick" : "#",
 		"Name",
 		...extraCols.map(x => x.colName),
 		"Pos",
 		"Drafted",
 		"Retired",
-		...(type === "best_at_every_pick" ? [] : ["Pick"]),
+		...(type === "at_every_pick" ? [] : ["Pick"]),
 		"Peak Ovr",
 		"Year",
 		"Team",
@@ -61,7 +61,7 @@ const Most = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
-	if (type === "best_at_every_pick") {
+	if (type === "at_every_pick") {
 		superCols[0].colspan -= 1;
 	}
 
@@ -74,12 +74,12 @@ const Most = ({
 		return {
 			key: p.pid,
 			data: [
-				type === "best_at_every_pick" ? (
+				type === "at_every_pick" ? (
 					<a
 						href={helpers.leagueUrl([
 							"frivolities",
 							"most",
-							"best_at_pick",
+							"at_pick",
 							draftPick === "" ? "undrafted" : draftPick,
 						])}
 					>
@@ -143,7 +143,7 @@ const Most = ({
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
-				...(type === "best_at_every_pick" ? [] : [draftPick]),
+				...(type === "at_every_pick" ? [] : [draftPick]),
 				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
 				<a

@@ -13,7 +13,7 @@ const style = { maxWidth: 1000 };
 const frivolities = {
 	Draft: [
 		{
-			urlParts: ["most", "best_at_every_pick"],
+			urlParts: ["most", "at_every_pick"],
 			name: "Best Player at Every Pick",
 			description:
 				"The best player ever drafted at each position in the draft.",
@@ -158,6 +158,11 @@ const frivolities = {
 					},
 			  ]
 			: []),
+		{
+			urlParts: ["most", "games_injured"],
+			name: "Most Games Injured",
+			description: "Players with the most total games missed due to injury.",
+		},
 		{
 			urlParts: ["most", "games_no_playoffs"],
 			name: "Most Games, No Playoffs",

@@ -73,7 +73,20 @@ const Most = ({
 		return {
 			key: p.pid,
 			data: [
-				type === "best_at_every_pick" ? draftPick : p.rank,
+				type === "best_at_every_pick" ? (
+					<a
+						href={helpers.leagueUrl([
+							"frivolities",
+							"most",
+							"best_at_pick",
+							draftPick === "" ? "undrafted" : draftPick,
+						])}
+					>
+						{draftPick === "" ? "none" : draftPick}
+					</a>
+				) : (
+					p.rank
+				),
 				<PlayerNameLabels
 					disableWatchToggle
 					jerseyNumber={p.jerseyNumber}

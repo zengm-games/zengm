@@ -191,6 +191,8 @@ const updatePlayers = async (
 
 		if (type === "best_at_every_pick") {
 			title = "Best Player at Every Pick";
+			description =
+				"Click on a pick to see a list of all the best players taken at that position in the draft.";
 
 			filter = p => p.stats.length > 0;
 			getValue = playerValue;
@@ -206,6 +208,42 @@ const updatePlayers = async (
 					return true;
 				});
 			};
+		} else if (type === "best_at_pick") {
+			if (arg === undefined) {
+				throw new Error("Pick must be specified in the URL");
+			}
+
+			if (arg === "undrafted") {
+				title = "Best Undrafted Players";
+			} else {
+				title = `Best Players Drafted at Pick ${arg}`;
+			}
+			description = `<a href="${helpers.leagueUrl([
+				"frivolities",
+				"most",
+				"best_at_every_pick",
+			])}">Other picks</a>`;
+
+			let round: number;
+			let pick: number;
+			if (arg === "undrafted") {
+				round = 0;
+				pick = 0;
+			} else {
+				const parts = arg.split("-");
+				round = parseInt(parts[0]);
+				pick = parseInt(parts[1]);
+
+				if (Number.isNaN(round) || Number.isNaN(pick)) {
+					throw new Error("Invalid pick");
+				}
+			}
+
+			filter = p =>
+				p.tid !== PLAYER.UNDRAFTED &&
+				p.draft.round === round &&
+				p.draft.pick === pick;
+			getValue = playerValue;
 		} else if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =

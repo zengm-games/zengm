@@ -23,21 +23,25 @@ type Most = {
 	extra?: Record<string, unknown>;
 };
 
+type PlayersAll = (Player<MinimalPlayerRatings> & {
+	most: Most;
+})[];
+
 export const getMostXPlayers = async ({
 	filter,
 	getValue,
+	applyDuringIterate,
 	after,
 	sortParams,
 }: {
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | undefined;
+	applyDuringIterate?: (players: PlayersAll) => PlayersAll;
 	after?: (most: Most) => Promise<Most> | Most;
 	sortParams?: any;
 }) => {
 	const LIMIT = 100;
-	const playersAll: (Player<MinimalPlayerRatings> & {
-		most: Most;
-	})[] = [];
+	let playersAll: PlayersAll = [];
 
 	await iterate(
 		idb.league.transaction("players").store,
@@ -61,6 +65,10 @@ export const getMostXPlayers = async ({
 
 			if (playersAll.length > LIMIT) {
 				playersAll.pop();
+			}
+
+			if (applyDuringIterate) {
+				playersAll = applyDuringIterate(playersAll);
 			}
 		},
 	);
@@ -168,17 +176,37 @@ const updatePlayers = async (
 	) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
+		let applyDuringIterate: Parameters<
+			typeof getMostXPlayers
+		>[0]["applyDuringIterate"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
 		let sortParams: any;
 		let title: string;
-		let description: string;
+		let description: string | undefined;
 		const extraCols: {
 			key: string | [string, string] | [string, string, string];
 			colName: string;
 		}[] = [];
 		let extraProps: any;
 
-		if (type === "games_no_playoffs") {
+		if (type === "best_at_every_pick") {
+			title = "Best Player at Every Pick";
+
+			filter = p => p.stats.length > 0;
+			getValue = playerValue;
+			applyDuringIterate = players => {
+				const seenPicks = new Set<string>();
+				return players.filter(p => {
+					const pick = `${p.draft.round}-${p.draft.pick}`;
+					if (seenPicks.has(pick)) {
+						return false;
+					}
+
+					seenPicks.add(pick);
+					return true;
+				});
+			};
+		} else if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =
 				"These are the players who played the most career games while never making the playoffs.";
@@ -718,6 +746,7 @@ const updatePlayers = async (
 		const { players, stats } = await getMostXPlayers({
 			filter,
 			getValue,
+			applyDuringIterate,
 			after,
 			sortParams,
 		});

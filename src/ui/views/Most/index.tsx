@@ -46,13 +46,13 @@ const Most = ({
 	];
 
 	const cols = getCols(
-		"#",
+		type === "best_at_every_pick" ? "Pick" : "#",
 		"Name",
 		...extraCols.map(x => x.colName),
 		"Pos",
 		"Drafted",
 		"Retired",
-		"Pick",
+		...(type === "best_at_every_pick" ? [] : ["Pick"]),
 		"Peak Ovr",
 		"Year",
 		"Team",
@@ -60,13 +60,20 @@ const Most = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
+	if (type === "best_at_every_pick") {
+		superCols[0].colspan -= 1;
+	}
+
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
+		const draftPick =
+			p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "";
 
 		return {
 			key: p.pid,
 			data: [
-				p.rank,
+				type === "best_at_every_pick" ? draftPick : p.rank,
 				<PlayerNameLabels
 					disableWatchToggle
 					jerseyNumber={p.jerseyNumber}
@@ -110,7 +117,7 @@ const Most = ({
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
-				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
+				...(type === "best_at_every_pick" ? [] : [draftPick]),
 				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
 				<a
@@ -135,9 +142,11 @@ const Most = ({
 
 	return (
 		<>
-			<p>
-				<SafeHtml dirty={description} />
-			</p>
+			{description ? (
+				<p>
+					<SafeHtml dirty={description} />
+				</p>
+			) : null}
 
 			{type === "goat" ? (
 				<GOATFormula

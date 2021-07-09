@@ -1,11 +1,12 @@
 frivolities
 - add WS/player for colleges/countries
 - players age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
-  - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
-  - worst contract
   - most games missed to injury in career
   - made playoffs every season @shep#9376 
-  - most overpaid, most underpaid (career total)
+  - would need history of salaryCap
+    - most overpaid, most underpaid (career total)
+    - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
+    - worst contract
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs)
@@ -13,9 +14,10 @@ frivolities
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - draft
-  - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
+  - Best Players at Pick - link from best_at_every_pick
 - DONE
-  - oldest peaks
+  - best_at_every_pick
+  - oldest_peaks
 
 3 point tendency
 

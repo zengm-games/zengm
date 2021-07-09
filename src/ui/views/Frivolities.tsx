@@ -13,6 +13,22 @@ const style = { maxWidth: 1000 };
 const frivolities = {
 	Draft: [
 		{
+			urlParts: ["most", "best_at_every_pick"],
+			name: "Best Player at Every Pick",
+			description:
+				"The best player ever drafted at each position in the draft.",
+		},
+		{
+			urlParts: ["most", "busts"],
+			name: "Biggest Busts",
+			description: "Top 5 picks with the worst careers.",
+		},
+		{
+			urlParts: ["most", "steals"],
+			name: "Biggest Steals",
+			description: "Late picks or undrafted players with the best careers.",
+		},
+		{
 			urlParts: ["draft_classes"],
 			name: "Draft Class Rankings",
 			description: "All draft classes, ranked from best to worst.",
@@ -115,16 +131,6 @@ const frivolities = {
 			urlParts: ["most", "progs"],
 			name: "Best Progs",
 			description: "Largest single season ovr increases.",
-		},
-		{
-			urlParts: ["most", "busts"],
-			name: "Biggest Busts",
-			description: "Top 5 picks with the worst careers.",
-		},
-		{
-			urlParts: ["most", "steals"],
-			name: "Biggest Steals",
-			description: "Late picks or undrafted players with the best careers.",
 		},
 		{
 			urlParts: ["most", "earnings"],

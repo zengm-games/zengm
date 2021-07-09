@@ -5,6 +5,7 @@ import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
 import type { View } from "../../../common/types";
 import { frivolitiesMenu } from "../Frivolities";
 import GOATFormula from "./GOATFormula";
+import SeasonIcons from "../Player/SeasonIcons";
 
 export const getValue = (
 	obj: any,
@@ -87,14 +88,26 @@ const Most = ({
 				) : (
 					p.rank
 				),
-				<PlayerNameLabels
-					disableWatchToggle
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<div className="d-flex">
+							<PlayerNameLabels
+								disableWatchToggle
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								watch={p.watch}
+							>
+								{p.name}
+							</PlayerNameLabels>
+							<div className="ml-auto">
+								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ml-1" awards={p.awards} />
+							</div>
+						</div>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				...extraCols.map(x => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {

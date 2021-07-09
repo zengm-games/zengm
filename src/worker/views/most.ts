@@ -92,6 +92,7 @@ export const getMostXPlayers = async ({
 			"most",
 			"watch",
 			"jerseyNumber",
+			"awards",
 		],
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],

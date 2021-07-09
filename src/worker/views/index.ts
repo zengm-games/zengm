@@ -13,7 +13,7 @@ import depth from "./depth";
 import draft from "./draft";
 import draftLottery from "./draftLottery";
 import draftScouting from "./draftScouting";
-import draftSummary from "./draftSummary";
+import draftHistory from "./draftHistory";
 import draftTeamHistory from "./draftTeamHistory";
 import editAwards from "./editAwards";
 import expansionDraft from "./expansionDraft";
@@ -101,7 +101,7 @@ export default {
 	draft,
 	draftLottery,
 	draftScouting,
-	draftSummary,
+	draftHistory,
 	draftTeamHistory,
 	editAwards,
 	expansionDraft,

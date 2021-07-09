@@ -179,7 +179,7 @@ const draftLottery = (params: Params) => {
 	};
 };
 
-const draftSummary = (params: Params) => {
+const draftHistory = (params: Params) => {
 	let season: number;
 
 	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
@@ -785,7 +785,7 @@ export default {
 	depth,
 	draft,
 	draftLottery,
-	draftSummary,
+	draftHistory,
 	draftTeamHistory,
 	editAwards: validateSeasonOnly,
 	exportPlayers: validateSeasonOnly,

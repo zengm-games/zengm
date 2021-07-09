@@ -4,7 +4,7 @@ import { g } from "../util";
 import type { ViewInput } from "../../common/types";
 import maxBy from "lodash-es/maxBy";
 
-const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
+const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)
 
 	const stats = bySport({
@@ -93,4 +93,4 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 	};
 };
 
-export default updateDraftSummary;
+export default updateDraftHistory;

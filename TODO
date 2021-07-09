@@ -1600,7 +1600,7 @@ Too many 8 seeds winning over 1 seeds
 playoff and regular season playing time and injury differences http://www.reddit.com/r/BasketballGM/comments/38f7dj/playoff_variance_seems_a_little_high/crxh643
 
 when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
-  draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
+  draftHistory, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
 
 compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
   add subtype or something to feats

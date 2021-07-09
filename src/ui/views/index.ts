@@ -14,7 +14,7 @@ import Depth from "./Depth";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
-import DraftSummary from "./DraftSummary";
+import DraftHistory from "./DraftHistory";
 import DraftTeamHistory from "./DraftTeamHistory";
 import EditAwards from "./EditAwards";
 import ExpansionDraft from "./ExpansionDraft";
@@ -107,7 +107,7 @@ export default {
 	Draft,
 	DraftLottery,
 	DraftScouting,
-	DraftSummary,
+	DraftHistory,
 	DraftTeamHistory,
 	EditAwards,
 	ExpansionDraft,

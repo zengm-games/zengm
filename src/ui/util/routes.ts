@@ -74,8 +74,8 @@ const routes = () => {
 		"/l/:lid/edit_awards": genPage("editAwards"),
 		"/l/:lid/edit_awards/:season": genPage("editAwards"),
 		"/l/:lid/draft": genPage("draft"),
-		"/l/:lid/draft_history": genPage("draftSummary"),
-		"/l/:lid/draft_history/:season": genPage("draftSummary"),
+		"/l/:lid/draft_history": genPage("draftHistory"),
+		"/l/:lid/draft_history/:season": genPage("draftHistory"),
 		"/l/:lid/draft_team_history": genPage("draftTeamHistory"),
 		"/l/:lid/draft_team_history/:abbrev": genPage("draftTeamHistory"),
 		"/l/:lid/game_log": genPage("gameLog"),
@@ -206,8 +206,8 @@ const routes = () => {
 		"/l/:lid/injuries/:abbrev/:season": genPage("injuries"),
 
 		// Backwards compatibility
-		"/l/:lid/draft_summary": genPage("draftSummary"),
-		"/l/:lid/draft_summary/:season": genPage("draftSummary"),
+		"/l/:lid/draft_summary": genPage("draftHistory"),
+		"/l/:lid/draft_summary/:season": genPage("draftHistory"),
 	};
 };
 

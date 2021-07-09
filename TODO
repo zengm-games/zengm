@@ -1,14 +1,12 @@
 frivolities
-- add WS/player for colleges/countries
-- players age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
-  - made playoffs every season @shep#9376 
+- players
   - would need history of salaryCap
     - most overpaid, most underpaid (career total)
     - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
     - worst contract
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
-  - best playoffs (record in individual playoffs)
+  - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
   - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
@@ -17,6 +15,7 @@ frivolities
   - oldest_peaks
   - games_injured
   - mvp/championship icons shown by player names on most frivolities
+  - ws/player and gp/player on colleges and countries frivolities
 
 3 point tendency
 

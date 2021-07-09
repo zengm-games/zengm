@@ -29,7 +29,7 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 		const superCols = [
 			{
 				title: "",
-				colspan: 6,
+				colspan: 8,
 			},
 			{
 				title: "Best Player",
@@ -47,7 +47,9 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 			"Active",
 			"HoF",
 			"stat:gp",
+			"stat:gpPerPlayer",
 			`stat:${valueStat}`,
+			`stat:${valueStat}PerPlayer`,
 			"Name",
 			"Pos",
 			"Drafted",
@@ -86,7 +88,9 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 					c.numActivePlayers,
 					c.numHof,
 					helpers.roundStat(c.gp, "gp"),
+					(c.gp / c.numPlayers).toFixed(1),
 					helpers.roundStat(c.valueStat, valueStat),
+					(c.valueStat / c.numPlayers).toFixed(1),
 					{
 						value: (
 							<PlayerNameLabels

@@ -311,6 +311,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:wsPerPlayer": {
+			desc: "Win Shares Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:ws48": {
 			desc: "Win Shares Per 48 Minutes",
 			sortSequence: ["desc", "asc"],
@@ -1242,6 +1247,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:avPerPlayer": {
+			desc: "Approximate Value Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 	},
 	hockey: {
 		"pos:C": {
@@ -1502,6 +1512,11 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:ps": {
 			desc: "Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:psPerPlayer": {
+			desc: "Point Shares Per Player",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -2060,6 +2075,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"stat:gpPerPlayer": {
+		desc: "Games Played Per Player",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"stat:gs": {
 		desc: "Games Started",
 		sortSequence: ["desc", "asc"],
@@ -2275,6 +2295,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:tov": "TOV",
 		"stat:usgp": "USG%",
 		"stat:ws": "WS",
+		"stat:wsPerPlayer": "WS/Player",
 		"stat:ws48": "WS/48",
 		"stat:obpm": "OBPM",
 		"stat:dbpm": "DBPM",
@@ -2465,6 +2486,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:rusRecTD": "RRTD",
 		"stat:allPurposeYds": "APY",
 		"stat:av": "AV",
+		"stat:avPerPlayer": "AV/Player",
 	},
 	hockey: {
 		"pos:C": "C",
@@ -2524,6 +2546,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:gaa": "GAA",
 		"stat:keyStats": "Stats",
 		"stat:ps": "PS",
+		"stat:psPerPlayer": "PS/Player",
 		"stat:ops": "OPS",
 		"stat:dps": "DPS",
 		"stat:gps": "GPS",
@@ -2545,6 +2568,8 @@ const sportSpecificTitleOverrides = bySport({
 	},
 });
 
+const gp = isSport("hockey") ? "GP" : "G";
+
 const titleOverrides = {
 	AvgAge: "Age",
 	Talent: "T",
@@ -2552,7 +2577,8 @@ const titleOverrides = {
 	"rating:hgt": "Hgt",
 	"rating:spd": "Spd",
 	"rating:stre": "Str",
-	"stat:gp": isSport("hockey") ? "GP" : "G",
+	"stat:gp": gp,
+	"stat:gpPerPlayer": `${gp}/Player`,
 	"stat:gs": "GS",
 	"stat:jerseyNumber": "#",
 	"stat:min": isSport("hockey") ? "TOI" : "MP",

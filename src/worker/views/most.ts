@@ -540,6 +540,81 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
+		} else if (type === "oldest_peaks") {
+			title = "Oldest Peak";
+			description =
+				"These are the players who peaked in ovr at the oldest age (min 5 seasons in career).";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "Age",
+			});
+			extraCols.push({
+				key: ["most", "extra", "season"],
+				colName: "Season",
+			});
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
+			extraCols.push({
+				key: ["most", "extra", "ovr"],
+				colName: "Ovr",
+			});
+
+			getValue = p => {
+				if (p.ratings.length < 5) {
+					return;
+				}
+
+				// Skip players who were older than 25 when league started
+				const ratings = p.ratings[0];
+				if (!ratings) {
+					return;
+				}
+				const age = ratings.season - p.born.year;
+				if (age > 25 && ratings.season === g.get("startingSeason")) {
+					return;
+				}
+
+				let maxAge = -Infinity;
+				let maxOvr = -Infinity;
+				let season: number | undefined;
+				for (const ratings of p.ratings) {
+					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+					if (ovr >= maxOvr) {
+						maxAge = ratings.season - p.born.year;
+						maxOvr = ovr;
+						season = ratings.season;
+					}
+				}
+
+				if (season === undefined) {
+					return;
+				}
+
+				let tid: number | undefined;
+				for (const ps of p.stats) {
+					if (season === ps.season) {
+						tid = ps.tid;
+					} else if (season > ps.season) {
+						break;
+					}
+				}
+
+				if (tid === undefined) {
+					return;
+				}
+
+				return {
+					value: maxAge,
+					extra: {
+						season,
+						ovr: maxOvr,
+						tid,
+					},
+				};
+			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "worst_injuries") {
 			title = "Worst Injuries";
 			description =

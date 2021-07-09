@@ -1,8 +1,35 @@
+frivolities
+- add WS/player for colleges/countries
+- players
+  - oldest peak age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
+    - 2nd sort ovr
+  - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
+  - worst contract
+  - most games missed to injury in career
+  - made playoffs every season @shep#9376 
+  - most overpaid, most underpaid (career total)
+- team seasons
+  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
+  - best playoffs (record in individual playoffs)
+  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
+- playoffs
+  - playoff seeding, like number of times an 8 seed won @Tuxie93
+- draft
+  - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
+
+3 point tendency
+
 show best performer(s) by score on schedule page https://discord.com/channels/290013534023057409/331882115119448065/862565411262169098
+- make sure it agrees with all star MVP, finals MVP
+- how to pick stats to display? give each stat a point value, add up score, pick highest total score for player, and then pick stats as highest individual stat scores for player
+- player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
+
+ratings distributions by position https://discord.com/channels/290013534023057409/331882115119448065/862853531231977513
 
 save some stuff to teamSeason at end of season, and use in various places
-- team ovr - include injuries or no?
+- team ovr - include injuries or no? no, do same as avgAge
 - anything else from power rankings?
+- on team history, graph of team ovr and winp over time, star for championship
 - https://discord.com/channels/290013534023057409/290015591216054273/862039671579607060
 
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
@@ -63,7 +90,7 @@ some way to pin trades?
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 
-cancel expansion draft can leave you in control of inactive team https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXdCQjTRbGcgzmdrZTMFLHQbZ?compose=CllgCJZWxfcZNhSnLQVzFcvXmslgqLjvPFlnfdwFHMWDRwhHscdLqzzPNSZcrFWwHpWxDntMSPLeAAAA
+cancel expansion draft can leave you in control of inactive team https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXdCQjTRbGcgzmdrZTMFLHQbZ
 
 File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
@@ -251,8 +278,6 @@ hockey
   - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
 - game sim performance
 - ovr PR
-
-player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
 
 change point value of 2/3 pointers https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/gjtthn2/
 
@@ -631,25 +656,6 @@ Add game log to player page
 option to disable unimportant notifications
 - https://old.reddit.com/r/BasketballGM/comments/ier26k/pop_ups_disable/
 - sirlamegame
-
-frivolities
-- add WS/player for colleges/countries
-- players
-  - oldest peak age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
-  - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
-  - worst contract
-  - most games missed to injury in career
-  - made playoffs every season @shep#9376 
-  - most overpaid, most underpaid (career total)
-- team seasons
-  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
-  - best playoffs (record in individual playoffs)
-  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
-    - would require loading all players...
-- playoffs
-  - playoff seeding, like number of times an 8 seed won @Tuxie93
-- draft
-  - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
 
 nicidob PRs
 - player overall ratings
@@ -1403,12 +1409,6 @@ persist fantasy draft results
 
 ---
 
-more flexible auto play - shorter period of time, individual phases, etc. would require non-alert dialog
-
-1. If there was a "select all" for not including draft picks in trades. So instead of going down 1 by 1 to check don't include you could just say NO to trading any of your 4,000 picks. 
-
-2. If searching player rating also included contracts. Usually you'll want to find a high potential guy on a cheap contract.
-
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 
 open multiple leagues from dashboard at the same time - Invalid cache status "filling"
@@ -1514,8 +1514,6 @@ situational awareness
 - rotations
   - ? play stars more at the end of close games
   - ? sub in good FT shooters in late game situations
-
-https://github.com/pinojs/pino
 
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
 
@@ -1637,9 +1635,6 @@ team and league records (highest scoring game, etc)
     player page
     team history page
     season summary page
-
-best stats for every player (e.g. most points in a game)
-  could cache previous value from player objects when read in, and only write on new best
 
 transaction log
   anything else to add or anywhere else to use this feature? ask

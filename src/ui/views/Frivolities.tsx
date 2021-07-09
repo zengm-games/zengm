@@ -186,6 +186,11 @@ const frivolities = {
 			description: "The oldest players who actually played.",
 		},
 		{
+			urlParts: ["most", "oldest_peaks"],
+			name: "Oldest Peaks",
+			description: "The players who were the oldest when they peaked in ovr.",
+		},
+		{
 			urlParts: ["most", "worst_injuries"],
 			name: "Worst Injuries",
 			description:

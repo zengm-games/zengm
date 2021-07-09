@@ -1,8 +1,6 @@
 frivolities
 - add WS/player for colleges/countries
-- players
-  - oldest peak age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
-    - 2nd sort ovr
+- players age for a player, eg player peaked in ovr at age 33 @doobie mugi#2784
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career
@@ -16,6 +14,8 @@ frivolities
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - draft
   - Best Players at a Specific Draft Spot and/or all players at a specific spot. That way, we can view the best/all players at #1, 2, 5, 19, etc in one list, this could also allow for undrafted players to be listed in that style too https://discord.com/channels/290013534023057409/331882115119448065/797737046843326474
+- DONE
+  - oldest peaks
 
 3 point tendency
 

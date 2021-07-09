@@ -16,6 +16,7 @@ import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
 import goatFormula from "../util/goatFormula";
+import orderBy from "lodash-es/orderBy";
 
 type Most = {
 	value: number;
@@ -26,10 +27,12 @@ export const getMostXPlayers = async ({
 	filter,
 	getValue,
 	after,
+	sortParams,
 }: {
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
+	sortParams?: any;
 }) => {
 	const LIMIT = 100;
 	const playersAll: (Player<MinimalPlayerRatings> & {
@@ -87,18 +90,19 @@ export const getMostXPlayers = async ({
 		fuzz: true,
 	});
 
+	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
 	for (let i = 0; i < 100; i++) {
-		if (players[i]) {
-			players[i].rank = i + 1;
+		if (ordered[i]) {
+			ordered[i].rank = i + 1;
 
 			if (after) {
-				players[i].most = await after(players[i].most);
+				ordered[i].most = await after(ordered[i].most);
 			}
 		}
 	}
 
 	return {
-		players: processPlayersHallOfFame(players),
+		players: processPlayersHallOfFame(ordered),
 		stats,
 	};
 };
@@ -165,6 +169,7 @@ const updatePlayers = async (
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
+		let sortParams: any;
 		let title: string;
 		let description: string;
 		const extraCols: {
@@ -541,7 +546,7 @@ const updatePlayers = async (
 			};
 			after = tidAndSeasonToAbbrev;
 		} else if (type === "oldest_peaks") {
-			title = "Oldest Peak";
+			title = "Oldest Peaks";
 			description =
 				"These are the players who peaked in ovr at the oldest age (min 5 seasons in career).";
 			extraCols.push({
@@ -560,6 +565,11 @@ const updatePlayers = async (
 				key: ["most", "extra", "ovr"],
 				colName: "Ovr",
 			});
+
+			sortParams = [
+				["most.value", "most.extra.ovr"],
+				["desc", "desc"],
+			];
 
 			getValue = p => {
 				if (p.ratings.length < 5) {
@@ -709,6 +719,7 @@ const updatePlayers = async (
 			filter,
 			getValue,
 			after,
+			sortParams,
 		});
 
 		return {

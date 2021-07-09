@@ -3,9 +3,14 @@ import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
-import { confirm, downloadFile, logEvent, toWorker } from "../../util";
+import {
+	confirm,
+	downloadFile,
+	logEvent,
+	resetFileInput,
+	toWorker,
+} from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
-import { resetFileInput } from "../../components/LeagueFileUpload";
 import classNames from "classnames";
 
 const formatInjuries = (injuries: InjuriesSetting) =>

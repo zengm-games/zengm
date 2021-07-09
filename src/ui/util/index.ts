@@ -53,6 +53,7 @@ export { default as notify } from "./notify";
 export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as processLiveGameEvents } from "./processLiveGameEvents";
 export { default as realtimeUpdate } from "./realtimeUpdate";
+export { default as resetFileInput } from "./resetFileInput";
 export { default as routes } from "./routes";
 export { default as safeLocalStorage } from "./safeLocalStorage";
 export { default as takeScreenshot } from "./takeScreenshot";

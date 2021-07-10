@@ -4,7 +4,9 @@ import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
-export const genView = (type: "college" | "country" | "jerseyNumbers") => {
+export const genView = (
+	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
+) => {
 	return ({
 		challengeNoRatings,
 		infos,
@@ -18,6 +20,8 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 					? "Colleges"
 					: type === "country"
 					? "Countries"
+					: type === "draftPosition"
+					? "Best Player at Every Pick"
 					: "Jersey Numbers",
 			customMenu: frivolitiesMenu,
 		});
@@ -42,6 +46,8 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 				? "College"
 				: type === "country"
 				? "Country"
+				: type === "draftPosition"
+				? "Pick"
 				: "stat:jerseyNumber",
 			"# Players",
 			"Active",
@@ -78,11 +84,15 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 								? "college"
 								: type === "country"
 								? "country"
+								: type === "draftPosition"
+								? "at_pick"
 								: "jersey_number",
 							window.encodeURIComponent(c.name),
 						])}
 					>
-						{c.name}
+						{type === "draftPosition" && c.name === "undrafted"
+							? "none"
+							: c.name}
 					</a>,
 					c.numPlayers,
 					c.numActivePlayers,

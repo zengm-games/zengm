@@ -166,6 +166,7 @@ const routes = () => {
 		"/l/:lid/frivolities/colleges": genPage("colleges"),
 		"/l/:lid/frivolities/countries": genPage("countries"),
 		"/l/:lid/frivolities/draft_classes": genPage("frivolitiesDraftClasses"),
+		"/l/:lid/frivolities/draft_position": genPage("frivolitiesDraftPosition"),
 		"/l/:lid/frivolities/jersey_numbers": genPage("frivolitiesJerseyNumbers"),
 		"/l/:lid/frivolities/teams/:type": genPage("frivolitiesTeamSeasons"),
 		"/l/:lid/frivolities/trades/:type": genPage("frivolitiesTrades"),

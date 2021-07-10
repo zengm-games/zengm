@@ -22,7 +22,7 @@ const valueStatNames = bySport({
 });
 
 const reducer = (
-	type: "college" | "country" | "jerseyNumbers",
+	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
 	infos: { [key: string]: InfoTemp | undefined },
 	p: Player,
 ) => {
@@ -34,6 +34,8 @@ const reducer = (
 		if (name === undefined) {
 			return;
 		}
+	} else if (type === "draftPosition") {
+		name = p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "undrafted";
 	} else {
 		name = helpers.getCountry(p.born.loc);
 	}
@@ -83,7 +85,9 @@ const reducer = (
 	}
 };
 
-export const genView = (type: "college" | "country" | "jerseyNumbers") => {
+export const genView = (
+	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
+) => {
 	return async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {

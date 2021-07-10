@@ -13,7 +13,7 @@ const style = { maxWidth: 1000 };
 const frivolities = {
 	Draft: [
 		{
-			urlParts: ["most", "at_every_pick"],
+			urlParts: ["draft_position"],
 			name: "Best Player at Every Pick",
 			description:
 				"The best player ever drafted at each position in the draft.",

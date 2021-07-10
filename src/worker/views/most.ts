@@ -30,18 +30,16 @@ type PlayersAll = (Player<MinimalPlayerRatings> & {
 export const getMostXPlayers = async ({
 	filter,
 	getValue,
-	applyDuringIterate,
 	after,
 	sortParams,
 }: {
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | undefined;
-	applyDuringIterate?: (players: PlayersAll) => PlayersAll;
 	after?: (most: Most) => Promise<Most> | Most;
 	sortParams?: any;
 }) => {
 	const LIMIT = 100;
-	let playersAll: PlayersAll = [];
+	const playersAll: PlayersAll = [];
 
 	await iterate(
 		idb.league.transaction("players").store,
@@ -65,10 +63,6 @@ export const getMostXPlayers = async ({
 
 			if (playersAll.length > LIMIT) {
 				playersAll.pop();
-			}
-
-			if (applyDuringIterate) {
-				playersAll = applyDuringIterate(playersAll);
 			}
 		},
 	);
@@ -177,9 +171,6 @@ const updatePlayers = async (
 	) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
-		let applyDuringIterate: Parameters<
-			typeof getMostXPlayers
-		>[0]["applyDuringIterate"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
 		let sortParams: any;
 		let title: string;
@@ -190,26 +181,7 @@ const updatePlayers = async (
 		}[] = [];
 		let extraProps: any;
 
-		if (type === "at_every_pick") {
-			title = "Best Player at Every Pick";
-			description =
-				"Click on a pick to see a list of all the best players taken at that position in the draft.";
-
-			filter = p => p.stats.length > 0;
-			getValue = playerValue;
-			applyDuringIterate = players => {
-				const seenPicks = new Set<string>();
-				return players.filter(p => {
-					const pick = `${p.draft.round}-${p.draft.pick}`;
-					if (seenPicks.has(pick)) {
-						return false;
-					}
-
-					seenPicks.add(pick);
-					return true;
-				});
-			};
-		} else if (type === "at_pick") {
+		if (type === "at_pick") {
 			if (arg === undefined) {
 				throw new Error("Pick must be specified in the URL");
 			}
@@ -221,8 +193,7 @@ const updatePlayers = async (
 			}
 			description = `<a href="${helpers.leagueUrl([
 				"frivolities",
-				"most",
-				"at_every_pick",
+				"draft_position",
 			])}">Other picks</a>`;
 
 			let round: number;
@@ -801,7 +772,6 @@ const updatePlayers = async (
 		const { players, stats } = await getMostXPlayers({
 			filter,
 			getValue,
-			applyDuringIterate,
 			after,
 			sortParams,
 		});

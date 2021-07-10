@@ -2175,6 +2175,12 @@ const removeLastTeam = async (): Promise<void> => {
 	await idb.cache.flush();
 };
 
+const cloneLeague = async (lid: number) => {
+	const name = await league.clone(lid);
+	await toUI("realtimeUpdate", [["leagues"]]);
+	return name;
+};
+
 const removeLeague = async (lid: number) => {
 	await league.remove(lid);
 	await toUI("realtimeUpdate", [["leagues"]]);
@@ -3473,6 +3479,7 @@ export default {
 	realtimeUpdate,
 	regenerateDraftClass,
 	releasePlayer,
+	cloneLeague,
 	removeLeague,
 	removePlayers,
 	reorderDepthDrag,

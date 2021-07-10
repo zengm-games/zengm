@@ -1,3 +1,14 @@
+some way to shuffle teams in new random players league https://discord.com/channels/290013534023057409/331882115119448065/863428948549566464
+- option for it to be population-weighted or not
+- store latitude and longitude, cluster to find conferences
+- how to pick conference names?
+  - maybe store list of names associated with latitude/longitude, and find nearest one to each cluster
+
+refactor getCols
+- array arg
+- some way to do common modifications, like width 1%
+- titleOverrides inline
+
 chrome 49 failure
 - coming from object spread in ajv
   - adding to transpile list fails. why?

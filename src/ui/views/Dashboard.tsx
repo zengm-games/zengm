@@ -13,7 +13,7 @@ import {
 } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, toWorker } from "../util";
+import { confirm, getCols, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
@@ -202,6 +202,7 @@ const dropdownStyle: CSSProperties = {
 const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [loadingLID, setLoadingLID] = useState<number | undefined>();
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
+	const [cloningLID, setCloningLID] = useState<number | undefined>();
 	useTitleBar();
 	const cols = getCols(
 		"",
@@ -217,7 +218,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	cols[0].width = "1%";
 	cols[7].width = "1%";
 	const rows = leagues.map(league => {
-		const disabled = deletingLID !== undefined || loadingLID !== undefined;
+		const disabled =
+			deletingLID !== undefined ||
+			loadingLID !== undefined ||
+			cloningLID !== undefined;
 		const throbbing = loadingLID === league.lid;
 		return {
 			key: league.lid,
@@ -301,6 +305,41 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 								}}
 							>
 								Rename
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={async () => {
+									try {
+										logEvent({
+											type: "info",
+											text: `Cloning league "${league.name}". This may take a little while if it's a large league.`,
+											saveToDb: false,
+											showNotification: true,
+										});
+
+										setCloningLID(league.lid);
+										const name = await toWorker(
+											"main",
+											"cloneLeague",
+											league.lid,
+										);
+										setCloningLID(undefined);
+
+										logEvent({
+											type: "info",
+											text: `Clone complete! Your new league is named "${name}".`,
+											saveToDb: false,
+											showNotification: true,
+										});
+									} catch (error) {
+										logEvent({
+											type: "error",
+											text: error.message,
+											saveToDb: false,
+										});
+									}
+								}}
+							>
+								Clone
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={async () => {

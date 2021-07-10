@@ -669,13 +669,11 @@ const updatePlayers = async (
 					return;
 				}
 
-				let maxAge = -Infinity;
 				let maxOvr = -Infinity;
 				let season: number | undefined;
 				for (const ratings of p.ratings) {
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 					if (ovr >= maxOvr) {
-						maxAge = ratings.season - p.born.year;
 						maxOvr = ovr;
 						season = ratings.season;
 					}
@@ -685,11 +683,13 @@ const updatePlayers = async (
 					return;
 				}
 
+				const maxAge = season - p.born.year;
+
 				let tid: number | undefined;
 				for (const ps of p.stats) {
 					if (season === ps.season) {
 						tid = ps.tid;
-					} else if (season > ps.season) {
+					} else if (season < ps.season) {
 						break;
 					}
 				}

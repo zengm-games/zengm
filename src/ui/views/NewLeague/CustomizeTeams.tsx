@@ -747,6 +747,8 @@ const CustomizeTeams = ({
 		type: "none",
 	});
 
+	const [randomizing, setRandomizing] = useState(false);
+
 	const editTeam = (tid: number) => {
 		setEditingInfo({
 			type: "edit",
@@ -853,6 +855,7 @@ const CustomizeTeams = ({
 				<div className="btn-group">
 					<button
 						className="btn btn-danger"
+						disabled={randomizing}
 						onClick={() => {
 							const info = getDefaultConfsDivsTeams();
 							dispatch({
@@ -865,22 +868,31 @@ const CustomizeTeams = ({
 					</button>
 					<button
 						className="btn btn-secondary"
+						disabled={randomizing}
 						onClick={async () => {
-							const numTeamsPerDiv = divs.map(() => 0);
-							for (const t of teams) {
-								numTeamsPerDiv[t.did] += 1;
-							}
+							setRandomizing(true);
 
-							const newTeams = await toWorker(
-								"main",
-								"getRandomTeams",
-								divs,
-								numTeamsPerDiv,
-							);
-							dispatch({
-								type: "setTeams",
-								teams: newTeams,
-							});
+							try {
+								const numTeamsPerDiv = divs.map(() => 0);
+								for (const t of teams) {
+									numTeamsPerDiv[t.did] += 1;
+								}
+
+								const newTeams = await toWorker(
+									"main",
+									"getRandomTeams",
+									divs,
+									numTeamsPerDiv,
+								);
+								dispatch({
+									type: "setTeams",
+									teams: newTeams,
+								});
+								setRandomizing(false);
+							} catch (error) {
+								setRandomizing(false);
+								throw error;
+							}
 						}}
 					>
 						Randomize
@@ -918,10 +930,15 @@ const CustomizeTeams = ({
 						className="btn btn-secondary"
 						type="button"
 						onClick={onCancel}
+						disabled={randomizing}
 					>
 						Cancel
 					</button>
-					<button className="btn btn-primary mr-2" type="submit">
+					<button
+						className="btn btn-primary mr-2"
+						type="submit"
+						disabled={randomizing}
+					>
 						Save Teams
 					</button>
 				</form>

@@ -1,3 +1,4 @@
+import orderBy from "lodash-es/orderBy";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
@@ -131,6 +132,8 @@ const kmeansFixedSize = (
 	}
 	// console.log(bestScore, bestClusters);
 
+	// Sort each cluster north to south
+	// return bestClusters.map(cluster => orderBy(cluster, pointIndex => points[pointIndex][0], "desc"));
 	return bestClusters;
 };
 
@@ -160,7 +163,12 @@ const getRandomTeams = (divs: Div[], numTeamsPerDiv: number[]) => {
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
-		for (const tid of clusters[i]) {
+		const clusterSorted = orderBy(clusters[i], abbrevIndex => {
+			const teamInfo = teamInfos[abbrevs[abbrevIndex]];
+			return `${teamInfo.region} ${teamInfo.name}`;
+		});
+
+		for (const tid of clusterSorted) {
 			teamInfosInput.push({
 				tid,
 				cid: div.cid,

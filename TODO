@@ -3,9 +3,13 @@ some way to shuffle teams in new random players league https://discord.com/chann
 - better loading button for randomize
   - abstract loading button
 - how to pick conference names?
-  - maybe store list of names associated with latitude/longitude, and find nearest one to each cluster
+  - only do it if the number of conferences/divisions and the names of each divsion match default, for each sport
+  - compute the average lat/long for each conf/div in the real sport. find assignment that minimizes total distance
 - map of teams/cities
-- sort within division north to south
+- blog
+  - clustering, fixed size clusters
+  - conferences
+  - nicidob's idea
 
 refactor getCols
 - array arg

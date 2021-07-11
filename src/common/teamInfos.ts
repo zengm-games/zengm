@@ -476,8 +476,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
-		latitude: 47.7510741,
-		longitude: -120.7401385,
+		latitude: 38.9072,
+		longitude: -77.0369,
 	},
 
 	// 2021-05-16 - new teams

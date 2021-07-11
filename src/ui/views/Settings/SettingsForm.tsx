@@ -10,7 +10,11 @@ import {
 	FormEvent,
 	useEffect,
 } from "react";
-import { HelpPopover, StickyBottomButtons } from "../../components";
+import {
+	ActionButton,
+	HelpPopover,
+	StickyBottomButtons,
+} from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
 import { AnimatePresence, m } from "framer-motion";
 import { isSport } from "../../../common";
@@ -1828,24 +1832,13 @@ const SettingsForm = ({
 								Cancel
 							</button>
 						) : null}
-						<button
-							className="btn btn-primary"
-							disabled={submitting}
+						<ActionButton
 							type="submit"
+							disabled={submitting}
+							processing={!!newLeague && submitting}
 						>
-							{newLeague && submitting ? (
-								<>
-									<span
-										className="spinner-border spinner-border-sm"
-										role="status"
-										aria-hidden="true"
-									></span>{" "}
-									Processing
-								</>
-							) : (
-								saveText
-							)}
-						</button>
+							{saveText}
+						</ActionButton>
 					</div>
 				</StickyBottomButtons>
 			</form>

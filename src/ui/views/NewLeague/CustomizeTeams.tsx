@@ -7,7 +7,7 @@ import arrayMove from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
-import { StickyBottomButtons } from "../../components";
+import { ActionButton, StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -866,9 +866,7 @@ const CustomizeTeams = ({
 					>
 						Reset All
 					</button>
-					<button
-						className="btn btn-secondary"
-						disabled={randomizing}
+					<ActionButton
 						onClick={async () => {
 							setRandomizing(true);
 
@@ -893,9 +891,11 @@ const CustomizeTeams = ({
 								throw error;
 							}
 						}}
+						processing={randomizing}
+						variant="secondary"
 					>
 						Randomize
-					</button>
+					</ActionButton>
 				</div>
 				<form
 					className="btn-group ml-auto"

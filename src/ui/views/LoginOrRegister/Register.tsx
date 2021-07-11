@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
-import { GameLinks } from "../../components";
+import { ActionButton, GameLinks } from "../../components";
 
 type State = {
 	submitting: boolean;
@@ -187,24 +187,9 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Join the mailing list (one email per quarter)
 					</label>
 				</div>
-				<button
-					type="submit"
-					disabled={state.submitting}
-					className="btn btn-primary"
-				>
-					{state.submitting ? (
-						<>
-							<span
-								className="spinner-border spinner-border-sm"
-								role="status"
-								aria-hidden="true"
-							></span>{" "}
-							Processing
-						</>
-					) : (
-						"Create New Account"
-					)}
-				</button>
+				<ActionButton type="submit" processing={state.submitting}>
+					Create New Account
+				</ActionButton>
 				<p className="text-danger mt-3">{state.errorMessageOverall}</p>
 			</form>
 		</>

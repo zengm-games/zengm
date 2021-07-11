@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ActionButton } from "../../components";
 import { helpers, toWorker } from "../../util";
 
 const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
@@ -55,20 +56,13 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 				/>
 
 				<div className="d-flex align-items-center">
-					<button className="btn btn-primary" disabled={disabled} type="submit">
-						{status.type === "running" ? (
-							<>
-								<span
-									className="spinner-border spinner-border-sm"
-									role="status"
-									aria-hidden="true"
-								></span>{" "}
-								Processing
-							</>
-						) : (
-							"Run code"
-						)}
-					</button>
+					<ActionButton
+						type="submit"
+						disabled={disabled}
+						processing={status.type === "running"}
+					>
+						Run code
+					</ActionButton>
 					{status.type === "error" ? (
 						<div className="text-danger ml-3 font-weight-bold">Error!</div>
 					) : null}

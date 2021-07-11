@@ -15,7 +15,12 @@ import {
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
 } from "../../../common";
-import { LeagueFileUpload, NextPrevButtons, PopText } from "../../components";
+import {
+	ActionButton,
+	LeagueFileUpload,
+	NextPrevButtons,
+	PopText,
+} from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
@@ -1169,28 +1174,19 @@ const NewLeague = (props: View<"newLeague">) => {
 							</div>
 
 							<div className="text-center mt-3">
-								<button
+								<ActionButton
+									className="mr-2"
+									size="lg"
 									type="submit"
-									className="btn btn-lg btn-primary mr-2"
 									disabled={
 										state.creating ||
 										disableWhileLoadingLeagueFile ||
 										!!invalidSeasonPhaseMessage
 									}
+									processing={state.creating}
 								>
-									{state.creating ? (
-										<>
-											<span
-												className="spinner-border spinner-border-sm"
-												role="status"
-												aria-hidden="true"
-											></span>{" "}
-											Processing
-										</>
-									) : (
-										createLeagueText
-									)}
-								</button>
+									{createLeagueText}
+								</ActionButton>
 
 								<button
 									className="btn btn-lg btn-secondary"

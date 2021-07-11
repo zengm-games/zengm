@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useState, ReactNode, FormEvent } from "react";
 import { isSport, WEBSITE_ROOT } from "../../common";
-import { MoreLinks } from "../components";
+import { ActionButton, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, safeLocalStorage, toWorker } from "../util";
 
@@ -414,24 +414,9 @@ const ExportLeague = () => {
 				</div>
 				<div className="row">
 					<div className="col-lg-10 col-xl-8 text-center">
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={status === "Exporting..." || currentSelected === "none"}
-						>
-							{status === "Exporting..." ? (
-								<>
-									<span
-										className="spinner-border spinner-border-sm"
-										role="status"
-										aria-hidden="true"
-									></span>{" "}
-									Processing
-								</>
-							) : (
-								"Export League"
-							)}
-						</button>
+						<ActionButton type="submit" processing={status === "Exporting..."}>
+							Export League
+						</ActionButton>
 					</div>
 				</div>
 			</form>

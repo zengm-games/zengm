@@ -821,18 +821,37 @@ const CustomizeTeams = ({
 		["region", "name"],
 	);
 
+	const resetDefault = () => {
+		const info = getDefaultConfsDivsTeams();
+		dispatch({
+			type: "setState",
+			...info,
+		});
+	};
+
 	const randomize = (weightByPopulation: boolean) => async () => {
 		setRandomizing(true);
 
 		try {
-			const numTeamsPerDiv = divs.map(
-				div => teams.filter(t => t.did === div.did).length,
+			// If there are no teams, auto reset to default first
+			let myDivs = divs;
+			let myTeams = teams;
+			let myConfs = confs;
+			if (myTeams.length === 0) {
+				const info = getDefaultConfsDivsTeams();
+				myDivs = info.divs;
+				myTeams = info.teams;
+				myConfs = info.confs;
+			}
+
+			const numTeamsPerDiv = myDivs.map(
+				div => myTeams.filter(t => t.did === div.did).length,
 			);
 
 			const response = await toWorker(
 				"main",
 				"getRandomTeams",
-				divs,
+				myDivs,
 				numTeamsPerDiv,
 				weightByPopulation,
 			);
@@ -845,8 +864,10 @@ const CustomizeTeams = ({
 				});
 			} else {
 				dispatch({
-					type: "setTeams",
+					type: "setState",
 					teams: response,
+					divs: myDivs,
+					confs: myConfs,
 				});
 			}
 			setRandomizing(false);
@@ -898,17 +919,7 @@ const CustomizeTeams = ({
 						{randomizing ? processingSpinner : "Reset"}
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
-						<Dropdown.Item
-							onClick={() => {
-								const info = getDefaultConfsDivsTeams();
-								dispatch({
-									type: "setState",
-									...info,
-								});
-							}}
-						>
-							Default
-						</Dropdown.Item>
+						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
 						<Dropdown.Item onClick={randomize(false)}>
 							Random built-in teams
 						</Dropdown.Item>

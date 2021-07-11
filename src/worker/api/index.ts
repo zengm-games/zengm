@@ -109,6 +109,7 @@ import {
 	gameAttributesKeysTeams,
 } from "../util/defaultGameAttributes";
 import goatFormula from "../util/goatFormula";
+import getRandomTeams from "./getRandomTeams";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -3467,6 +3468,7 @@ export default {
 	getRandomCountry,
 	getRandomName,
 	getRandomRatings,
+	getRandomTeams,
 	getTradingBlockOffers,
 	ping,
 	handleUploadedDraftClass,

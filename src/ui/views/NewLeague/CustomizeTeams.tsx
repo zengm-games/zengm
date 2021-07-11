@@ -8,7 +8,7 @@ import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
 import { StickyBottomButtons } from "../../components";
-import { logEvent } from "../../util";
+import { logEvent, toWorker } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
@@ -32,6 +32,10 @@ type Action =
 	| ({
 			type: "setState";
 	  } & ConfsDivsTeams)
+	| {
+			type: "setTeams";
+			teams: NewLeagueTeam[];
+	  }
 	| {
 			type: "addConf";
 	  }
@@ -89,6 +93,12 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				confs: action.confs,
 				divs: action.divs,
+				teams: action.teams,
+			};
+
+		case "setTeams":
+			return {
+				...state,
 				teams: action.teams,
 			};
 
@@ -840,18 +850,42 @@ const CustomizeTeams = ({
 			</div>
 
 			<StickyBottomButtons>
-				<button
-					className="btn btn-danger"
-					onClick={() => {
-						const info = getDefaultConfsDivsTeams();
-						dispatch({
-							type: "setState",
-							...info,
-						});
-					}}
-				>
-					Reset All
-				</button>
+				<div className="btn-group">
+					<button
+						className="btn btn-danger"
+						onClick={() => {
+							const info = getDefaultConfsDivsTeams();
+							dispatch({
+								type: "setState",
+								...info,
+							});
+						}}
+					>
+						Reset All
+					</button>
+					<button
+						className="btn btn-secondary"
+						onClick={async () => {
+							const numTeamsPerDiv = divs.map(() => 0);
+							for (const t of teams) {
+								numTeamsPerDiv[t.did] += 1;
+							}
+
+							const newTeams = await toWorker(
+								"main",
+								"getRandomTeams",
+								divs,
+								numTeamsPerDiv,
+							);
+							dispatch({
+								type: "setTeams",
+								teams: newTeams,
+							});
+						}}
+					>
+						Randomize
+					</button>
+				</div>
 				<form
 					className="btn-group ml-auto"
 					onSubmit={event => {

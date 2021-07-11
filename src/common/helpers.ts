@@ -62,7 +62,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 };
 
 function getTeamsDefault(): TeamBasic[] {
-	let teams: Omit<TeamBasic, "popRank">[];
+	let teams: TeamBasic[];
 	if (isSport("basketball")) {
 		teams = getTeamInfos([
 			{

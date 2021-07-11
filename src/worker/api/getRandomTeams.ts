@@ -214,7 +214,7 @@ const sortByDivs = (clusters: Clusters, divs: Div[]) => {
 				throw new Error("undefind bestCluster");
 			}
 
-			newClusters.push(bestCluster);
+			newClusters[divIndex] = bestCluster;
 			remainingClusters = remainingClusters.filter(
 				cluster => cluster !== bestCluster,
 			);

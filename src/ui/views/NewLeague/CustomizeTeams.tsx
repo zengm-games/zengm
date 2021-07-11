@@ -7,7 +7,7 @@ import arrayMove from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
-import { StickyBottomButtons } from "../../components";
+import { HelpPopover, StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -928,6 +928,26 @@ const CustomizeTeams = ({
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
+				<div className="ml-2 pt-2">
+					<HelpPopover title="Reset">
+						<p>
+							<b>Default</b>: Resets conferences, divisions, and teams to their
+							default values.
+						</p>
+						<p>
+							<b>Random built-in teams</b>: This replaces any teams you
+							currently have with random built-in teams. Those teams are grouped
+							into divisions based on their geographic location, and then if
+							your division names are the same as the default division names, it
+							tries to put each group into a division that makes sense.
+						</p>
+						<p>
+							<b>Random built-in teams (population weighted)</b>: Same as above,
+							except larger cities are more likely to be selected, so the set of
+							teams may feel a bit more realistic.
+						</p>
+					</HelpPopover>
+				</div>
 				<form
 					className="btn-group ml-auto"
 					onSubmit={event => {

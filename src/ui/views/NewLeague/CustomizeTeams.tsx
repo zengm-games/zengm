@@ -873,10 +873,9 @@ const CustomizeTeams = ({
 							setRandomizing(true);
 
 							try {
-								const numTeamsPerDiv = divs.map(() => 0);
-								for (const t of teams) {
-									numTeamsPerDiv[t.did] += 1;
-								}
+								const numTeamsPerDiv = divs.map(
+									div => teams.filter(t => t.did === div.did).length,
+								);
 
 								const newTeams = await toWorker(
 									"main",

@@ -5,6 +5,7 @@ some way to shuffle teams in new random players league https://discord.com/chann
 - how to pick conference names?
   - maybe store list of names associated with latitude/longitude, and find nearest one to each cluster
 - map of teams/cities
+- sort within division north to south
 
 refactor getCols
 - array arg

@@ -1,5 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import { bySport } from "../../common";
+import { bySport, isSport } from "../../common";
 import { DEFAULT_DIVS } from "../../common/constants";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
@@ -145,39 +145,41 @@ const kmeansFixedSize = (
 
 // When using default divs, try to match clusters geographically with the default divs
 const sortByDivs = (clusters: Clusters, divs: Div[]) => {
-	// Check for default divs
-	if (divs.length !== DEFAULT_DIVS.length) {
-		return clusters;
-	}
-	const names = divs.map(div => div.name).sort();
-	const namesDefault = DEFAULT_DIVS.map(div => div.name).sort();
-	if (JSON.stringify(names) !== JSON.stringify(namesDefault)) {
-		return clusters;
+	// Rough estimates, see "conference coordinates.ods"
+	const DEFAULT_COORDS: Record<string, [number, number]> = {
+		// basketball
+		Atlantic: [42.5, -74.5],
+		Central: [43.3, -87.2],
+		Southeast: [32.4, -82],
+		Southwest: [31.9, -97.2],
+		Northwest: [44.9, -112.4],
+		Pacific: [35.5, -121.4],
+
+		// football
+		East: [38.3, -75.7],
+		North: [42.1, -85.7],
+		South: [31.5, -87.9],
+		West: [38.7, -119.7],
+
+		// hockey
+		Metropolitan: [39.5, -75.2],
+
+		// extra
+		Northeast: [43.7, -74.1],
+	};
+	if (isSport("hockey")) {
+		// Override basketball ones with same names
+		DEFAULT_COORDS.Atlantic = [41.4, -81.2];
+		DEFAULT_COORDS.Central = [42.5, -100.8];
+		DEFAULT_COORDS.Pacific = [40.68, -123.38];
 	}
 
-	// Rough estimates, see "conference coordinates.ods"
-	const DEFAULT_COORDS = bySport<Record<string, [number, number]>>({
-		basketball: {
-			Atlantic: [42.5, -74.5],
-			Central: [43.3, -87.2],
-			Southeast: [32.4, -82],
-			Southwest: [31.9, -97.2],
-			Northwest: [44.9, -112.4],
-			Pacific: [35.5, -121.4],
-		},
-		football: {
-			East: [38.3, -75.7],
-			North: [42.1, -85.7],
-			South: [31.5, -87.9],
-			West: [38.7, -119.7],
-		},
-		hockey: {
-			Atlantic: [41.4, -81.2],
-			Metropolitan: [39.5, -75.2],
-			Central: [42.5, -100.8],
-			Pacific: [40.68, -123.38],
-		},
-	});
+	// Bail out if any div has a non-default name
+	for (const div of divs) {
+		if (!DEFAULT_COORDS[div.name]) {
+			return clusters;
+		}
+	}
 
 	// Shuffle divs, then go one at a time finding best cluster, find lowest distance
 

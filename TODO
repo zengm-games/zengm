@@ -2,11 +2,16 @@ some way to shuffle teams in new random players league https://discord.com/chann
 - how to pick conference names?
   - test other names
   - test other sports
+- help icon
 - map of teams/cities
 - blog
   - clustering, fixed size clusters
   - conferences
   - nicidob's idea
+
+don't use normal row highlight color for playoff series highlighting https://discord.com/channels/290013534023057409/331882115119448065/863663445022867457
+
+subscribing to gold should immediately hide ads, not just after reload
 
 refactor getCols
 - array arg

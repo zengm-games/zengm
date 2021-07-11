@@ -937,9 +937,10 @@ const CustomizeTeams = ({
 						<p>
 							<b>Random built-in teams</b>: This replaces any teams you
 							currently have with random built-in teams. Those teams are grouped
-							into divisions based on their geographic location, and then if
-							your division names are the same as the default division names, it
-							tries to put each group into a division that makes sense.
+							into divisions based on their geographic location. Then, if your
+							division names are the same as the default division names and each
+							division has the same number of teams, it tries to assign each
+							group to a division name that makes sense.
 						</p>
 						<p>
 							<b>Random built-in teams (population weighted)</b>: Same as above,

@@ -1,6 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import { bySport, isSport } from "../../common";
-import { DEFAULT_DIVS } from "../../common/constants";
+import { isSport } from "../../common";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
@@ -144,7 +143,19 @@ const kmeansFixedSize = (
 };
 
 // When using default divs, try to match clusters geographically with the default divs
-const sortByDivs = (clusters: Clusters, divs: Div[]) => {
+const sortByDivs = (
+	clusters: Clusters,
+	divs: Div[],
+	numTeamsPerDiv: number[],
+) => {
+	// Need all divs to be same size, otherwise it may behave strangely
+	const numTeams = numTeamsPerDiv[0];
+	for (const numTeams2 of numTeamsPerDiv) {
+		if (numTeams !== numTeams2) {
+			return clusters;
+		}
+	}
+
 	// Rough estimates, see "conference coordinates.ods"
 	const DEFAULT_COORDS: Record<string, [number, number]> = {
 		// basketball
@@ -272,6 +283,7 @@ const getRandomTeams = (
 	const clusters = sortByDivs(
 		kmeansFixedSize(teamInfoCluster, numTeamsPerDiv),
 		divs,
+		numTeamsPerDiv,
 	);
 
 	const teamInfosInput = [];

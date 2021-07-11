@@ -7,11 +7,13 @@ import arrayMove from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
-import { ActionButton, StickyBottomButtons } from "../../components";
+import { StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
+import { Dropdown } from "react-bootstrap";
+import { processingSpinner } from "../../components/ActionButton";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -852,51 +854,56 @@ const CustomizeTeams = ({
 			</div>
 
 			<StickyBottomButtons>
-				<div className="btn-group">
-					<button
-						className="btn btn-danger"
+				<Dropdown>
+					<Dropdown.Toggle
+						variant="danger"
+						id="customize-teams-reset"
 						disabled={randomizing}
-						onClick={() => {
-							const info = getDefaultConfsDivsTeams();
-							dispatch({
-								type: "setState",
-								...info,
-							});
-						}}
 					>
-						Reset All
-					</button>
-					<ActionButton
-						onClick={async () => {
-							setRandomizing(true);
-
-							try {
-								const numTeamsPerDiv = divs.map(
-									div => teams.filter(t => t.did === div.did).length,
-								);
-
-								const newTeams = await toWorker(
-									"main",
-									"getRandomTeams",
-									divs,
-									numTeamsPerDiv,
-								);
+						{randomizing ? processingSpinner : "Reset"}
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								const info = getDefaultConfsDivsTeams();
 								dispatch({
-									type: "setTeams",
-									teams: newTeams,
+									type: "setState",
+									...info,
 								});
-								setRandomizing(false);
-							} catch (error) {
-								setRandomizing(false);
-								throw error;
-							}
-						}}
-						processing={randomizing}
-						variant="secondary"
-					>
-						Randomize
-					</ActionButton>
-				</div>
+							}}
+						>
+							Default
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={async () => {
+								setRandomizing(true);
+
+								try {
+									const numTeamsPerDiv = divs.map(
+										div => teams.filter(t => t.did === div.did).length,
+									);
+
+									const newTeams = await toWorker(
+										"main",
+										"getRandomTeams",
+										divs,
+										numTeamsPerDiv,
+									);
+									dispatch({
+										type: "setTeams",
+										teams: newTeams,
+									});
+									setRandomizing(false);
+								} catch (error) {
+									setRandomizing(false);
+									throw error;
+								}
+							}}
+						>
+							Random
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 				<form
 					className="btn-group ml-auto"
 					onSubmit={event => {

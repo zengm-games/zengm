@@ -1,6 +1,17 @@
 import classNames from "classnames";
 import type { ButtonHTMLAttributes, MouseEvent } from "react";
 
+export const processingSpinner = (
+	<>
+		<span
+			className="spinner-border spinner-border-sm"
+			role="status"
+			aria-hidden="true"
+		></span>{" "}
+		Processing
+	</>
+);
+
 const ActionButton = ({
 	children,
 	className,
@@ -31,18 +42,7 @@ const ActionButton = ({
 			disabled={disabled || processing}
 			onClick={onClick}
 		>
-			{processing ? (
-				<>
-					<span
-						className="spinner-border spinner-border-sm"
-						role="status"
-						aria-hidden="true"
-					></span>{" "}
-					Processing
-				</>
-			) : (
-				children
-			)}
+			{processing ? processingSpinner : children}
 		</button>
 	);
 };

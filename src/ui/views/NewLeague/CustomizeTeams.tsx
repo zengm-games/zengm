@@ -829,17 +829,26 @@ const CustomizeTeams = ({
 				div => teams.filter(t => t.did === div.did).length,
 			);
 
-			const newTeams = await toWorker(
+			const response = await toWorker(
 				"main",
 				"getRandomTeams",
 				divs,
 				numTeamsPerDiv,
 				weightByPopulation,
 			);
-			dispatch({
-				type: "setTeams",
-				teams: newTeams,
-			});
+
+			if (typeof response === "string") {
+				logEvent({
+					type: "error",
+					text: response,
+					saveToDb: false,
+				});
+			} else {
+				dispatch({
+					type: "setTeams",
+					teams: response,
+				});
+			}
 			setRandomizing(false);
 		} catch (error) {
 			setRandomizing(false);

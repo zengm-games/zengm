@@ -4,7 +4,6 @@ some way to shuffle teams in new random players league https://discord.com/chann
   - compute the average lat/long for each conf/div in the real sport. find assignment that minimizes total distance
 - map of teams/cities
 - 0 teams - reset to default before running
-- >50 teams - show error message
 - blog
   - clustering, fixed size clusters
   - conferences

@@ -154,9 +154,7 @@ const getRandomTeams = (
 
 	const abbrevsRemaining = new Set(Object.keys(teamInfos));
 	if (abbrevsRemaining.size < numTeamsTotal) {
-		throw new Error(
-			`There are only ${abbrevsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`,
-		);
+		return `There are only ${abbrevsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`;
 	}
 	const abbrevs: string[] = [];
 	for (let i = 0; i < numTeamsTotal; i++) {

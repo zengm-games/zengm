@@ -1,10 +1,9 @@
 some way to shuffle teams in new random players league https://discord.com/channels/290013534023057409/331882115119448065/863428948549566464
 - how to pick conference names?
+  - does it work?
   - test other names
   - test other sports
 - map of teams/cities
-- did i break clustering? did scores used to be better?
-  - 4000-6000 (dep on hawaii)
 - blog
   - clustering, fixed size clusters
   - conferences

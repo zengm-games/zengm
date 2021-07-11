@@ -9,6 +9,7 @@ import { random } from "../util";
 type Clusters = {
 	center: [number, number];
 	pointIndexes: number[];
+	distance: number;
 }[];
 
 const stringifyClusters = (clusters: Clusters) => {
@@ -33,14 +34,34 @@ const kmeansFixedSize = (
 
 	const pointIndexes = points.map((point, i) => i);
 
-	const resetClusters = () =>
-		clusterSizes.map(() => ({
-			center: [
-				random.uniform(minima[0], maxima[0]),
-				random.uniform(minima[1], maxima[1]),
-			] as [number, number],
-			pointIndexes: [] as number[],
-		}));
+	const resetClusters = (prevClusters?: Clusters) =>
+		clusterSizes.map((clusterSize, i) => {
+			let center: [number, number];
+			if (prevClusters) {
+				// Update centers, see if we do better next time
+				center = [0, 0];
+				const { pointIndexes } = prevClusters[i];
+				for (const pointIndex of pointIndexes) {
+					const point = points[pointIndex];
+					center[0] += point[0];
+					center[1] += point[1];
+				}
+				center[0] /= pointIndexes.length;
+				center[1] /= pointIndexes.length;
+			} else {
+				// Initialize with random center
+				center = [
+					random.uniform(minima[0], maxima[0]),
+					random.uniform(minima[1], maxima[1]),
+				];
+			}
+
+			return {
+				center,
+				pointIndexes: [] as number[],
+				distance: 0,
+			};
+		});
 
 	let bestClusters: Clusters | undefined;
 	let minScore = Infinity;
@@ -79,6 +100,7 @@ const kmeansFixedSize = (
 				}
 
 				clusters[clusterIndex].pointIndexes.push(pointIndex);
+				clusters[clusterIndex].distance += minDistance;
 			}
 
 			const clustersString = stringifyClusters(clusters);
@@ -93,30 +115,14 @@ const kmeansFixedSize = (
 				break;
 			}
 
-			// Update centers, see if we do better next time
-			for (const { center, pointIndexes } of clusters) {
-				center[0] = 0;
-				center[1] = 0;
-				for (const pointIndex of pointIndexes) {
-					const point = points[pointIndex];
-					center[0] += point[0];
-					center[1] += point[1];
-				}
-				center[0] /= pointIndexes.length;
-				center[1] /= pointIndexes.length;
-			}
-
-			clusters = resetClusters();
+			clusters = resetClusters(clusters);
 			prevClusters = clustersString;
 		}
 
 		// Calculate score, see if it is better than previous
 		let score = 0;
-		for (const { center, pointIndexes } of clusters) {
-			for (const pointIndex of pointIndexes) {
-				const point = points[pointIndex];
-				score += calcDistance(point, center);
-			}
+		for (const { distance } of clusters) {
+			score += distance;
 		}
 
 		if (score < minScore) {

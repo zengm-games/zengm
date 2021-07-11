@@ -1,4 +1,6 @@
 import orderBy from "lodash-es/orderBy";
+import { bySport } from "../../common";
+import { DEFAULT_DIVS } from "../../common/constants";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
@@ -15,14 +17,17 @@ const stringifyClusters = (clusters: Clusters) => {
 	return JSON.stringify(clusters2);
 };
 
-const NUM_TRIES = 100;
-const ITERATION_LIMIT = 1000;
+const calcDistance = (a: [number, number], b: [number, number]) =>
+	(a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
 
 // This is normal k-means clustering, just with some very crudely imposed static cluster sizes. Still seems to work pretty well, assuing `points` is fairly small and `NUM_TRIES` is fairly large.
 const kmeansFixedSize = (
 	points: [number, number][],
 	clusterSizes: number[],
 ) => {
+	const NUM_TRIES = 100;
+	const ITERATION_LIMIT = 1000;
+
 	const minima = [0, 1].map(i => Math.min(...points.map(row => row[i])));
 	const maxima = [0, 1].map(i => Math.max(...points.map(row => row[i])));
 
@@ -38,7 +43,7 @@ const kmeansFixedSize = (
 		}));
 
 	let bestClusters: Clusters | undefined;
-	let bestScore = Infinity;
+	let minScore = Infinity;
 
 	for (let tryNum = 0; tryNum < NUM_TRIES; tryNum++) {
 		let clusters = resetClusters();
@@ -61,8 +66,7 @@ const kmeansFixedSize = (
 					}
 
 					const center = clusters[i].center;
-					const distance =
-						(point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2;
+					const distance = calcDistance(point, center);
 
 					if (distance < minDistance) {
 						minDistance = distance;
@@ -111,13 +115,13 @@ const kmeansFixedSize = (
 		for (const { center, pointIndexes } of clusters) {
 			for (const pointIndex of pointIndexes) {
 				const point = points[pointIndex];
-				score += (point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2;
+				score += calcDistance(point, center);
 			}
 		}
 
-		if (score < bestScore) {
+		if (score < minScore) {
 			bestClusters = clusters;
-			bestScore = score;
+			minScore = score;
 		}
 
 		// console.log(tryNum, score, clusters);
@@ -126,10 +130,100 @@ const kmeansFixedSize = (
 	if (!bestClusters) {
 		throw new Error("undefind bestClusters");
 	}
-	// console.log(bestScore, bestClusters);
+	// console.log(minScore, bestClusters);
 
 	// Sort each cluster north to south
 	// return bestClusters.map(cluster => orderBy(cluster, pointIndex => points[pointIndex][0], "desc"));
+	return bestClusters;
+};
+
+// When using default divs, try to match clusters geographically with the default divs
+const sortByDivs = (clusters: Clusters, divs: Div[]) => {
+	// Check for default divs
+	if (divs.length !== DEFAULT_DIVS.length) {
+		return clusters;
+	}
+	const names = divs.map(div => div.name).sort();
+	const namesDefault = DEFAULT_DIVS.map(div => div.name).sort();
+	if (JSON.stringify(names) !== JSON.stringify(namesDefault)) {
+		return clusters;
+	}
+
+	// Rough estimates, see "conference coordinates.ods"
+	const DEFAULT_COORDS = bySport<Record<string, [number, number]>>({
+		basketball: {
+			Atlantic: [42.5, -74.5],
+			Central: [43.3, -87.2],
+			Southeast: [32.4, -82],
+			Southwest: [31.9, -97.2],
+			Northwest: [44.9, -112.4],
+			Pacific: [35.5, -121.4],
+		},
+		football: {
+			East: [38.3, -75.7],
+			North: [42.1, -85.7],
+			South: [31.5, -87.9],
+			West: [38.7, -119.7],
+		},
+		hockey: {
+			Atlantic: [41.4, -81.2],
+			Metropolitan: [39.5, -75.2],
+			Central: [42.5, -100.8],
+			Pacific: [40.68, -123.38],
+		},
+	});
+
+	// Shuffle divs, then go one at a time finding best cluster, find lowest distance
+
+	let bestClusters: Clusters | undefined;
+	let minScore = Infinity;
+
+	const NUM_TRIES = 20; // Seems to converge pretty quick
+	const divIndexes = divs.map((div, i) => i);
+
+	for (let tryNum = 0; tryNum < NUM_TRIES; tryNum++) {
+		random.shuffle(divIndexes);
+
+		const newClusters: Clusters = [];
+		let remainingClusters = [...clusters];
+		random.shuffle(remainingClusters);
+
+		let score = 0;
+
+		for (const divIndex of divIndexes) {
+			const div = divs[divIndex];
+			const divCoords = DEFAULT_COORDS[div.name];
+
+			let bestCluster: Clusters[number] | undefined;
+			let minDistance = Infinity;
+			for (const cluster of remainingClusters) {
+				const distance = calcDistance(cluster.center, divCoords);
+				if (distance < minDistance) {
+					bestCluster = cluster;
+					minDistance = distance;
+				}
+			}
+
+			if (!bestCluster) {
+				throw new Error("undefind bestCluster");
+			}
+
+			newClusters.push(bestCluster);
+			remainingClusters = remainingClusters.filter(
+				cluster => cluster !== bestCluster,
+			);
+			score += minDistance;
+		}
+
+		if (score < minScore) {
+			bestClusters = newClusters;
+			minScore = score;
+		}
+	}
+
+	if (!bestClusters) {
+		throw new Error("undefind bestClusters");
+	}
 	return bestClusters;
 };
 
@@ -167,19 +261,22 @@ const getRandomTeams = (
 			],
 	);
 
-	const clusters = kmeansFixedSize(teamInfoCluster, numTeamsPerDiv);
+	const clusters = sortByDivs(
+		kmeansFixedSize(teamInfoCluster, numTeamsPerDiv),
+		divs,
+	);
 
 	const teamInfosInput = [];
 
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
-		const clusterSorted = orderBy(clusters[i].pointIndexes, abbrevIndex => {
+		const tidsSorted = orderBy(clusters[i].pointIndexes, abbrevIndex => {
 			const teamInfo = teamInfos[abbrevs[abbrevIndex]];
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});
 
-		for (const tid of clusterSorted) {
+		for (const tid of tidsSorted) {
 			teamInfosInput.push({
 				tid,
 				cid: div.cid,

@@ -1,8 +1,10 @@
 some way to shuffle teams in new random players league https://discord.com/channels/290013534023057409/331882115119448065/863428948549566464
 - how to pick conference names?
-  - only do it if the number of conferences/divisions and the names of each divsion match default, for each sport
-  - compute the average lat/long for each conf/div in the real sport. find assignment that minimizes total distance
+  - test other names
+  - test other sports
 - map of teams/cities
+- did i break clustering? did scores used to be better?
+  - 4000-6000 (dep on hawaii)
 - blog
   - clustering, fixed size clusters
   - conferences

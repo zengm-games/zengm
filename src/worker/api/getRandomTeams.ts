@@ -4,10 +4,13 @@ import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
 import { random } from "../util";
 
-type Clusters = number[][];
+type Clusters = {
+	center: [number, number];
+	pointIndexes: number[];
+}[];
 
 const stringifyClusters = (clusters: Clusters) => {
-	const clusters2 = clusters.map(cluster => [...cluster].sort());
+	const clusters2 = clusters.map(cluster => [...cluster.pointIndexes].sort());
 
 	return JSON.stringify(clusters2);
 };
@@ -25,22 +28,19 @@ const kmeansFixedSize = (
 
 	const pointIndexes = points.map((point, i) => i);
 
-	const getInitialCenters = () =>
-		clusterSizes.map(
-			() =>
-				[
-					random.uniform(minima[0], maxima[0]),
-					random.uniform(minima[1], maxima[1]),
-				] as [number, number],
-		);
-
-	const resetClusters = () => clusterSizes.map(() => [] as number[]);
+	const resetClusters = () =>
+		clusterSizes.map(() => ({
+			center: [
+				random.uniform(minima[0], maxima[0]),
+				random.uniform(minima[1], maxima[1]),
+			] as [number, number],
+			pointIndexes: [] as number[],
+		}));
 
 	let bestClusters: Clusters | undefined;
 	let bestScore = Infinity;
 
 	for (let tryNum = 0; tryNum < NUM_TRIES; tryNum++) {
-		let centers = getInitialCenters();
 		let clusters = resetClusters();
 		let prevClusters = "";
 
@@ -55,15 +55,14 @@ const kmeansFixedSize = (
 
 				let minDistance = Infinity;
 				let clusterIndex: number | undefined;
-				for (let i = 0; i < centers.length; i++) {
-					if (clusters[i].length >= clusterSizes[i]) {
+				for (let i = 0; i < clusters.length; i++) {
+					if (clusters[i].pointIndexes.length >= clusterSizes[i]) {
 						continue;
 					}
 
-					const center = centers[i];
-					const distance = Math.sqrt(
-						(point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2,
-					);
+					const center = clusters[i].center;
+					const distance =
+						(point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2;
 
 					if (distance < minDistance) {
 						minDistance = distance;
@@ -75,7 +74,7 @@ const kmeansFixedSize = (
 					throw new Error("undefined clusterIndex");
 				}
 
-				clusters[clusterIndex].push(pointIndex);
+				clusters[clusterIndex].pointIndexes.push(pointIndex);
 			}
 
 			const clustersString = stringifyClusters(clusters);
@@ -91,16 +90,16 @@ const kmeansFixedSize = (
 			}
 
 			// Update centers, see if we do better next time
-			centers = centers.map(() => [0, 0]);
-			for (let i = 0; i < centers.length; i++) {
-				const cluster = clusters[i];
-				for (const pointIndex of cluster) {
+			for (const { center, pointIndexes } of clusters) {
+				center[0] = 0;
+				center[1] = 0;
+				for (const pointIndex of pointIndexes) {
 					const point = points[pointIndex];
-					centers[i][0] += point[0];
-					centers[i][1] += point[1];
+					center[0] += point[0];
+					center[1] += point[1];
 				}
-				centers[i][0] /= cluster.length;
-				centers[i][1] /= cluster.length;
+				center[0] /= pointIndexes.length;
+				center[1] /= pointIndexes.length;
 			}
 
 			clusters = resetClusters();
@@ -109,11 +108,8 @@ const kmeansFixedSize = (
 
 		// Calculate score, see if it is better than previous
 		let score = 0;
-		for (let i = 0; i < centers.length; i++) {
-			const center = centers[i];
-			const cluster = clusters[i];
-
-			for (const pointIndex of cluster) {
+		for (const { center, pointIndexes } of clusters) {
+			for (const pointIndex of pointIndexes) {
 				const point = points[pointIndex];
 				score += (point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2;
 			}
@@ -178,7 +174,7 @@ const getRandomTeams = (
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
-		const clusterSorted = orderBy(clusters[i], abbrevIndex => {
+		const clusterSorted = orderBy(clusters[i].pointIndexes, abbrevIndex => {
 			const teamInfo = teamInfos[abbrevs[abbrevIndex]];
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});

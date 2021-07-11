@@ -137,16 +137,33 @@ const kmeansFixedSize = (
 	return bestClusters;
 };
 
-const getRandomTeams = (divs: Div[], numTeamsPerDiv: number[]) => {
+const getRandomTeams = (
+	divs: Div[],
+	numTeamsPerDiv: number[],
+	weightByPopulation: boolean,
+) => {
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
 		numTeamsTotal += num;
 	}
 
-	const abbrevsAll = Object.keys(teamInfos);
-	random.shuffle(abbrevsAll);
+	let weightFunction: ((abbrev: string) => number) | undefined;
+	if (weightByPopulation) {
+		weightFunction = abbrev => teamInfos[abbrev].pop;
+	}
 
-	const abbrevs = abbrevsAll.slice(0, numTeamsTotal);
+	const abbrevsRemaining = new Set(Object.keys(teamInfos));
+	if (abbrevsRemaining.size < numTeamsTotal) {
+		throw new Error(
+			`There are only ${abbrevsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`,
+		);
+	}
+	const abbrevs: string[] = [];
+	for (let i = 0; i < numTeamsTotal; i++) {
+		const abbrev = random.choice(Array.from(abbrevsRemaining), weightFunction);
+		abbrevs.push(abbrev);
+		abbrevsRemaining.delete(abbrev);
+	}
 
 	const teamInfoCluster = abbrevs.map(
 		abbrev =>

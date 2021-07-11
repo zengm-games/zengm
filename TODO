@@ -1,5 +1,4 @@
 some way to shuffle teams in new random players league https://discord.com/channels/290013534023057409/331882115119448065/863428948549566464
-- option for it to be population-weighted or not
 - how to pick conference names?
   - only do it if the number of conferences/divisions and the names of each divsion match default, for each sport
   - compute the average lat/long for each conf/div in the real sport. find assignment that minimizes total distance

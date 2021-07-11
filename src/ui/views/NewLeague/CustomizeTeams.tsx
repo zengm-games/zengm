@@ -821,6 +821,32 @@ const CustomizeTeams = ({
 		["region", "name"],
 	);
 
+	const randomize = (weightByPopulation: boolean) => async () => {
+		setRandomizing(true);
+
+		try {
+			const numTeamsPerDiv = divs.map(
+				div => teams.filter(t => t.did === div.did).length,
+			);
+
+			const newTeams = await toWorker(
+				"main",
+				"getRandomTeams",
+				divs,
+				numTeamsPerDiv,
+				weightByPopulation,
+			);
+			dispatch({
+				type: "setTeams",
+				teams: newTeams,
+			});
+			setRandomizing(false);
+		} catch (error) {
+			setRandomizing(false);
+			throw error;
+		}
+	};
+
 	return (
 		<>
 			{confs.map((conf, i) => (
@@ -874,33 +900,11 @@ const CustomizeTeams = ({
 						>
 							Default
 						</Dropdown.Item>
-						<Dropdown.Item
-							onClick={async () => {
-								setRandomizing(true);
-
-								try {
-									const numTeamsPerDiv = divs.map(
-										div => teams.filter(t => t.did === div.did).length,
-									);
-
-									const newTeams = await toWorker(
-										"main",
-										"getRandomTeams",
-										divs,
-										numTeamsPerDiv,
-									);
-									dispatch({
-										type: "setTeams",
-										teams: newTeams,
-									});
-									setRandomizing(false);
-								} catch (error) {
-									setRandomizing(false);
-									throw error;
-								}
-							}}
-						>
-							Random
+						<Dropdown.Item onClick={randomize(false)}>
+							Random built-in teams
+						</Dropdown.Item>
+						<Dropdown.Item onClick={randomize(true)}>
+							Random built-in teams (population weighted)
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>

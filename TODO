@@ -1,3 +1,7 @@
+randomize teams sometimes results in wrong team. saw it happen in firefox. https://old.reddit.com/r/BasketballGM/comments/oi7iqw/new_option_to_intelligently_randomize_teams_when/
+- https://play.basketball-gm.com/l/33/manage_teams what is the problem exactly? see roster page
+  - team info cache and team root seem okay... what about team season?
+
 don't use normal row highlight color for playoff series highlighting https://discord.com/channels/290013534023057409/331882115119448065/863663445022867457
 
 subscribing to gold should immediately hide ads, not just after reload

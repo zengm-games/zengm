@@ -35,10 +35,6 @@ type Action =
 			type: "setState";
 	  } & ConfsDivsTeams)
 	| {
-			type: "setTeams";
-			teams: NewLeagueTeam[];
-	  }
-	| {
 			type: "addConf";
 	  }
 	| {
@@ -95,13 +91,7 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				confs: action.confs,
 				divs: action.divs,
-				teams: action.teams,
-			};
-
-		case "setTeams":
-			return {
-				...state,
-				teams: action.teams,
+				teams: makeTIDsSequential(action.teams),
 			};
 
 		case "addConf": {

@@ -149,13 +149,13 @@ const PlayerGameLog = ({
 		const classes = [
 			"",
 			"table-secondary",
-			"table-warning",
 			"table-info",
-			"table-light",
-			"table-active",
 			"table-primary",
 			"table-success",
 			"table-danger",
+			"table-warning",
+			"table-active",
+			"table-light",
 		];
 		for (let i = 0; i < playoffGames.length; i++) {
 			const game = playoffGames[i];

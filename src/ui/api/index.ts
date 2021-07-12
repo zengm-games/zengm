@@ -129,6 +129,50 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 };
 
+// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
+const initGold = () => {
+	window.freestar.queue.push(() => {
+		const divsAll = [
+			AD_DIVS.mobile,
+			AD_DIVS.leaderboard,
+			AD_DIVS.rectangle1,
+			AD_DIVS.rectangle2,
+		];
+
+		for (const id of divsAll) {
+			const div = document.getElementById(id);
+
+			if (div) {
+				div.style.display = "none";
+			}
+
+			window.freestar.deleteAdSlots(id);
+		}
+
+		// Special case for rail, to tell it there is no BBGM gold
+		const rail = document.getElementById(AD_DIVS.rail);
+		if (rail) {
+			rail.dataset.gold = "true";
+			updateSkyscraperDisplay();
+		}
+
+		localActions.update({
+			stickyFooterAd: false,
+		});
+
+		// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+		const footer = document.getElementById("main-footer");
+		if (footer) {
+			footer.style.marginBottom = "";
+		}
+
+		const logo = document.getElementById("bbgm-ads-logo");
+		if (logo) {
+			logo.style.display = "none";
+		}
+	});
+};
+
 const deleteGames = (gids: number[]) => {
 	localActions.deleteGames(gids);
 };
@@ -239,6 +283,7 @@ export default {
 	confirmDeleteAllLeagues,
 	deleteGames,
 	initAds,
+	initGold,
 	mergeGames,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,

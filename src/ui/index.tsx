@@ -10,7 +10,7 @@ import * as util from "./util";
 import type { Env } from "../common/types";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 import Bugsnag from "@bugsnag/browser";
-window.bbgm = { ...util };
+window.bbgm = { api, ...util };
 const {
 	compareVersions,
 	confirm,

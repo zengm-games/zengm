@@ -29,10 +29,15 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 
 			if (data.success) {
 				const currentTimestamp = Math.floor(Date.now() / 1000);
+				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
-					gold: currentTimestamp <= data.gold_until,
+					gold,
 					username: data.username,
 				});
+
+				if (gold) {
+					await toWorker("main", "initGold");
+				}
 
 				// Check for participation achievement, if this is the first time logging in to this sport
 				await toWorker("main", "checkParticipationAchievement", false);

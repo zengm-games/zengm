@@ -1,5 +1,3 @@
-subscribing to gold should immediately hide ads, not just after reload
-
 refactor getCols
 - array arg
 - some way to do common modifications, like width 1%

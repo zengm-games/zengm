@@ -10,7 +10,13 @@ import {
 	GAME_NAME,
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getScript, localActions, realtimeUpdate } from "../util";
+import {
+	confirm,
+	getScript,
+	localActions,
+	realtimeUpdate,
+	toWorker,
+} from "../util";
 import type { View } from "../../common/types";
 import { GameLinks } from "../components";
 import { ajaxErrorMsg } from "./LoginOrRegister";
@@ -42,6 +48,9 @@ const StripeButton = ({ email }: { email: string }) => {
 							realtimeUpdate(["account"], "/account", {
 								goldResult: data,
 							});
+							if (data.success) {
+								toWorker("main", "initGold");
+							}
 						} catch (error) {
 							console.error(error);
 							realtimeUpdate(["account"], "/account", {

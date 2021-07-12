@@ -1955,6 +1955,10 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	await toUI("updateLocal", [{ units: options.units }], conditions);
 };
 
+const initGold = async () => {
+	await toUI("initGold", []);
+};
+
 const lockSet = async (name: LockName, value: boolean) => {
 	await lock.set(name, value);
 };
@@ -3474,6 +3478,7 @@ export default {
 	handleUploadedDraftClass,
 	importPlayers,
 	init,
+	initGold,
 	lockSet,
 	ovr,
 	proposeTrade,

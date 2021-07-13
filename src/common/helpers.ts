@@ -868,7 +868,11 @@ const validateRoundsByes = (
 	}
 
 	if (numRounds === 1 && numPlayoffByes > 0) {
-		throw new Error("You cannoy have any byes in a one round playoff.");
+		throw new Error("You cannot have any byes in a one round playoff.");
+	}
+
+	if (numRounds === 0 && numPlayoffByes > 0) {
+		throw new Error("You cannot have any byes if the playoffs are disabled.");
 	}
 
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;

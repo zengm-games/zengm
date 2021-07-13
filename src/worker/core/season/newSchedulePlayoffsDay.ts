@@ -41,6 +41,11 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		throw new Error("No playoff series");
 	}
 	const series = playoffSeries.series;
+
+	if (series.length === 0) {
+		return true;
+	}
+
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
 	const numGamesToWin = helpers.numGamesToWinSeries(

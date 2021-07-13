@@ -666,11 +666,14 @@ const leagueStats = (params: Params) => {
 };
 
 const standings = (params: Params) => {
-	let type: "conf" | "div" | "league" = bySport({
-		basketball: "conf",
-		football: "div",
-		hockey: "div",
-	});
+	let type: "conf" | "div" | "league" =
+		g.get("numGamesPlayoffSeries").length === 0
+			? "league"
+			: bySport({
+					basketball: "conf",
+					football: "div",
+					hockey: "div",
+			  });
 	if (
 		params.type === "conf" ||
 		params.type === "div" ||

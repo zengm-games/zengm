@@ -11,6 +11,10 @@ const getClinchedPlayoffs = async (
 	teamStats: Map<number, TeamStats>,
 	finalStandings: boolean,
 ) => {
+	if (g.get("numGamesPlayoffSeries").length === 0) {
+		return teamSeasons.map(() => undefined);
+	}
+
 	const usePts = g.get("pointsFormula", "current") !== "";
 
 	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow.

@@ -95,32 +95,36 @@ const writeTeamStats = async (results: GameResults) => {
 			healthPaid = t.budget.health.amount / g.get("numGames");
 			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
 
-			let salaryCapFactor;
+			const salaryCapFactor =
+				g.get("salaryCap") / defaultGameAttributes.salaryCap;
+
+			// Only different for hockey
+			let salaryCapFactor2;
 			if (isSport("hockey")) {
 				// Legacy, should probably adjust other params
-				salaryCapFactor = g.get("salaryCap") / 90000;
+				salaryCapFactor2 = g.get("salaryCap") / 90000;
 			} else {
-				salaryCapFactor = g.get("salaryCap") / defaultGameAttributes.salaryCap;
+				salaryCapFactor2 = salaryCapFactor;
 			}
 
 			if (isSport("basketball") || isSport("hockey")) {
-				merchRevenue = (salaryCapFactor * 4.5 * baseAttendance) / 1000;
+				merchRevenue = (salaryCapFactor2 * 4.5 * baseAttendance) / 1000;
 
-				if (merchRevenue > 250) {
-					merchRevenue = 250;
+				if (merchRevenue > salaryCapFactor * 250) {
+					merchRevenue = salaryCapFactor * 250;
 				}
 
-				sponsorRevenue = (salaryCapFactor * 15 * baseAttendance) / 1000;
+				sponsorRevenue = (salaryCapFactor2 * 15 * baseAttendance) / 1000;
 
-				if (sponsorRevenue > 600) {
-					sponsorRevenue = 600;
+				if (sponsorRevenue > salaryCapFactor * 600) {
+					sponsorRevenue = salaryCapFactor * 600;
 				}
 
-				nationalTvRevenue = salaryCapFactor * 375;
-				localTvRevenue = (salaryCapFactor * 15 * baseAttendance) / 1000;
+				nationalTvRevenue = salaryCapFactor2 * 375;
+				localTvRevenue = (salaryCapFactor2 * 15 * baseAttendance) / 1000;
 
-				if (localTvRevenue > 1200) {
-					localTvRevenue = 1200;
+				if (localTvRevenue > salaryCapFactor * 1200) {
+					localTvRevenue = salaryCapFactor * 1200;
 				}
 			} else {
 				// Football targets:
@@ -130,15 +134,15 @@ const writeTeamStats = async (results: GameResults) => {
 				// ticket: $75M
 				// sponsorship: $25M
 				// merchandise: $25M
-				nationalTvRevenue = (salaryCapFactor * 175000) / g.get("numGames");
+				nationalTvRevenue = (salaryCapFactor2 * 175000) / g.get("numGames");
 				localTvRevenue =
-					(salaryCapFactor * ((5000 / g.get("numGames")) * baseAttendance)) /
+					(salaryCapFactor2 * ((5000 / g.get("numGames")) * baseAttendance)) /
 					g.get("defaultStadiumCapacity");
 				sponsorRevenue =
-					(salaryCapFactor * ((2500 / g.get("numGames")) * baseAttendance)) /
+					(salaryCapFactor2 * ((2500 / g.get("numGames")) * baseAttendance)) /
 					g.get("defaultStadiumCapacity");
 				merchRevenue =
-					(salaryCapFactor * ((2500 / g.get("numGames")) * baseAttendance)) /
+					(salaryCapFactor2 * ((2500 / g.get("numGames")) * baseAttendance)) /
 					g.get("defaultStadiumCapacity");
 			}
 		}

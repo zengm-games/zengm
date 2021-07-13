@@ -1,3 +1,6 @@
+support league with no playoffs https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZQGSZvbpZhVglHDscFsBtBSM
+- numGamesPlayoffSeries empty array, then just take the top team as the champ, auto sim through playoffs phase
+
 refactor getCols
 - array arg
 - some way to do common modifications, like width 1%

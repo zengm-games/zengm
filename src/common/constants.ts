@@ -225,11 +225,7 @@ const COURT = bySport({
 	hockey: "ice",
 });
 
-const EMAIL_ADDRESS = bySport({
-	basketball: "commissioner@basketball-gm.com",
-	football: "commissioner@football-gm.com",
-	hockey: "commissioner@zengm.com",
-});
+const EMAIL_ADDRESS = "jeremy@zengm.com";
 
 const GAME_ACRONYM = bySport({
 	basketball: "BBGM",

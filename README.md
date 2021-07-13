@@ -44,8 +44,8 @@ as corporations):
 * [Entity CLA](CLA-entity.md)
 
 Make a copy of the form, fill in your information at the bottom, and send an
-email to commissioner@basketball-gm.com with the subject line, "Contributor
-License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
+email to jeremy@zengm.com with the subject line, "Contributor License Agreement
+from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 

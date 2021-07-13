@@ -11,6 +11,7 @@ import {
 	toUI,
 	logEvent,
 	random,
+	orderTeams,
 } from "../../util";
 import type {
 	Conditions,
@@ -113,10 +114,77 @@ const doInflation = async (conditions: Conditions) => {
 	}
 };
 
+const setChampNoPlayoffs = async (conditions: Conditions) => {
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
+
+	const ordered = await orderTeams(teams, teams);
+
+	const { tid } = ordered[0];
+
+	const teamSeason = await idb.cache.teamSeasons.indexGet(
+		"teamSeasonsByTidSeason",
+		[tid, g.get("season")],
+	);
+	if (!teamSeason) {
+		return;
+	}
+
+	teamSeason.playoffRoundsWon = 0;
+	teamSeason.hype += 0.2;
+
+	logEvent(
+		{
+			type: "playoffs",
+			text: `The <a href="${helpers.leagueUrl([
+				"roster",
+				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
+				g.get("season"),
+			])}">${
+				g.get("teamInfoCache")[tid]?.name
+			}</a> finished in 1st place and are league champions!`,
+			showNotification: true,
+			tids: [tid],
+			score: 20,
+			saveToDb: true,
+		},
+		conditions,
+	);
+
+	await idb.cache.teamSeasons.put(teamSeason);
+};
+
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
+	if (g.get("numGamesPlayoffSeries").length === 0) {
+		// Set champ of the league!
+		await setChampNoPlayoffs(conditions);
+	}
+
 	achievement.check("afterPlayoffs", conditions);
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus({

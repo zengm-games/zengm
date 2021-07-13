@@ -442,13 +442,15 @@ const doAwards = async (conditions: Conditions) => {
 			champTid,
 		);
 
+		const noPlayoffs = g.get("numGamesPlayoffSeries").length === 0;
+
 		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
 			stats: ["pts", "trb", "ast", "ws", "ewa"],
 			season: g.get("season"),
-			playoffs: true,
-			regularSeason: false,
+			playoffs: !noPlayoffs,
+			regularSeason: noPlayoffs,
 			tid: champTid,
 		});
 

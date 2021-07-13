@@ -126,7 +126,7 @@ const checkFoFoFo = async () => {
 
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 
-	if (playoffSeries === undefined) {
+	if (!playoffSeries || playoffSeries.series.length === 0) {
 		// Should only happen if playoffs are skipped
 		return false;
 	}
@@ -169,7 +169,7 @@ const getUserSeed = async () => {
 		season: g.get("season"),
 	});
 
-	if (playoffSeries === undefined) {
+	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return;
 	}
 
@@ -190,7 +190,7 @@ const checkSevenGameFinals = async () => {
 		season: g.get("season"),
 	});
 
-	if (playoffSeries === undefined) {
+	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return false;
 	}
 

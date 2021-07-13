@@ -360,7 +360,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		let showPlayoffSeries = false;
 		let numGamesToWinSeries = 4;
 
-		if (playoffSeries !== undefined) {
+		if (playoffSeries !== undefined && playoffSeries.series.length > 0) {
 			const series = playoffSeries.series;
 			await helpers.augmentSeries(series); // Find the latest playoff series with the user's team in it
 

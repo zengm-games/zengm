@@ -1,7 +1,3 @@
-support league with no playoffs https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZQGSZvbpZhVglHDscFsBtBSM
-- auto sim through playoffs phase
-- confirm importing league works
-
 refactor getCols
 - array arg
 - some way to do common modifications, like width 1%

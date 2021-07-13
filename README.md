@@ -49,11 +49,12 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
-First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher, older
+Make sure you're using a recent version of [Node.js](https://nodejs.org/), older
 versions probably won't work. Then, all of the tooling used in development can
-be set up by simply installing [Yarn 1](https://classic.yarnpkg.com/) and running
+be set up by simply installing [Yarn 1](https://classic.yarnpkg.com/) and
+running:
 
-    yarn
+    yarn install
 
 from within this folder.
 

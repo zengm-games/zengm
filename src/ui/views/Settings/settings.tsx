@@ -207,10 +207,16 @@ export const settings: {
 		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (
 			<>
-				Specify the number of games in each round. You must enter a valid JSON
-				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
-				first round series, a 7 game second round series, and a single
-				winner-takes-all final game.
+				<p>
+					Specify the number of games in each round. You must enter a valid JSON
+					array of integers. For example, enter <code>[5,7,1]</code> for a 5
+					game first round series, a 7 game second round series, and a single
+					winner-takes-all final game.
+				</p>
+				<p>
+					To disable the playoffs and have the top team in the regular season
+					crowned champion, set this to <code>[]</code>
+				</p>
 			</>
 		),
 		type: "jsonString",

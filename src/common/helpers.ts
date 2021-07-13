@@ -863,10 +863,6 @@ const validateRoundsByes = (
 	numPlayoffByes: number,
 	numActiveTeams: number,
 ) => {
-	if (numRounds < 1) {
-		throw new Error("Must have at least one round of playoffs");
-	}
-
 	if (numPlayoffByes < 0) {
 		throw new Error("Cannot have a negative number of byes");
 	}

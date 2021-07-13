@@ -95,6 +95,14 @@ export const genPlayoffSeriesFromTeams = async (
 		Infinity,
 	);
 	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+	if (numRounds === 0) {
+		return {
+			series: [],
+			tidPlayoffs: [],
+		};
+	}
+
 	helpers.validateRoundsByes(
 		numRounds,
 		numPlayoffByes,

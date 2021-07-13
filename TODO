@@ -1,5 +1,8 @@
 support league with no playoffs https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZQGSZvbpZhVglHDscFsBtBSM
 - numGamesPlayoffSeries empty array, then just take the top team as the champ, auto sim through playoffs phase
+- description in league settings
+- 1st place team decided with league tiebreakers
+- confirm importing league works
 
 refactor getCols
 - array arg

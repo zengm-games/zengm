@@ -10,7 +10,9 @@ module.exports = {
 	setupFilesAfterEnv: ["./src/test/jest.ts", "./src/worker/index.ts"],
 
 	// https://stackoverflow.com/a/43197503/786644
-	transformIgnorePatterns: ["<rootDir>/node_modules/(?!lodash-es|d3-)"],
+	transformIgnorePatterns: [
+		"<rootDir>/node_modules/(?!lodash-es|d3-|fake-indexeddb)",
+	],
 
 	// This is not needed for most tests, but getting rid of it somehow slows down src/worker/core/league/create.test.ts so might as well keep it
 	testEnvironment: "jsdom",

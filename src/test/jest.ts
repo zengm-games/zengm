@@ -1,5 +1,4 @@
-// @ts-ignore
-import IDBKeyRange from "fake-indexeddb/build/FDBKeyRange";
+import { IDBKeyRange } from "fake-indexeddb";
 import fs from "fs";
 
 // When mockIDBLeague is used, sometimes IDBKeyRange still gets called even though there is no actual database

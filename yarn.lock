@@ -3694,10 +3694,10 @@ facesjs@^3.5.0:
   resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.5.0.tgz#ee71412be51548ddf8b90a07f7baee55dfe3ea5c"
   integrity sha512-sl5Q1HLZKPLDpCHRzU5oEAAQN3/+lsA3JRZFh4ifO3qCXzAVKO4srzn5PJTnUcyvM0bgI8qLwtC8nbjrZ8SEcA==
 
-fake-indexeddb@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-3.1.3.tgz#76d59146a6b994b9bb50ac9949cbd96ad6cca760"
-  integrity sha512-kpWYPIUGmxW8Q7xG7ampGL63fU/kYNukrIyy9KFj3+KVlFbE/SmvWebzWXBiCMeR0cPK6ufDoGC7MFkPhPLH9w==
+fake-indexeddb@4.0.0-beta.1:
+  version "4.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-4.0.0-beta.1.tgz#14197aecabdbe903ffe9d94e6855a5534d819ab1"
+  integrity sha512-0XnW9jGezV9eU1N2w1gybkeYjYpDA+Jc0KD7mtscumXFvE60BK2zlQ4EmrdVT85g8XYBB7hItr3nBBMa47Vi9A==
   dependencies:
     realistic-structured-clone "^2.0.1"
     setimmediate "^1.0.5"

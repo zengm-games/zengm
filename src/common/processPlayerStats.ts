@@ -18,10 +18,6 @@ const processPlayerStats = (
 		return processPlayerStatsHockey(ps, stats, statType, bornYear);
 	}
 
-	if (statType === undefined || bornYear === undefined) {
-		throw new Error("statType and bornYear are required");
-	}
-
 	return processPlayerStatsBasketball(ps, stats, statType, bornYear);
 };
 

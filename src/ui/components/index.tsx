@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import type { LeagueFileUploadProps } from "./LeagueFileUpload";
 
+export { default as ActionButton } from "./ActionButton";
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
 export { default as BoxScore } from "./BoxScore";
@@ -18,6 +19,7 @@ export { default as GameLinks } from "./GameLinks";
 export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
+export { default as InjuryIcon } from "./InjuryIcon";
 export { default as JerseyNumber } from "./JerseyNumber";
 export { default as PlusMinus } from "./PlusMinus";
 export { default as Mood } from "./Mood";

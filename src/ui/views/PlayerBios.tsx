@@ -1,16 +1,12 @@
 import PropTypes from "prop-types";
-import {
-	CountryFlag,
-	DataTable,
-	Height,
-	PlayerNameLabels,
-	Weight,
-} from "../components";
+import { CountryFlag, DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { dataTableWrappedMood } from "../components/Mood";
+import { wrappedHeight } from "../components/Height";
+import { wrappedWeight } from "../components/Weight";
 
 const PlayerBios = ({
 	abbrev,
@@ -86,18 +82,8 @@ const PlayerBios = ({
 					{p.stats.abbrev}
 				</a>,
 				p.age,
-				{
-					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-					// @ts-ignore
-					value: <Height inches={p.hgt} />,
-					sortValue: p.hgt,
-				},
-				{
-					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-					// @ts-ignore
-					value: <Weight pounds={p.weight} />,
-					sortValue: p.weight,
-				},
+				wrappedHeight(p.hgt),
+				wrappedWeight(p.weight),
 				dataTableWrappedMood({
 					defaultType:
 						p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.UNDRAFTED

@@ -37,10 +37,12 @@ const rows = bySport<
 });
 
 const RatingsForm = ({
+	challengeNoRatings,
 	godMode,
 	handleChange,
 	ratingsRow,
 }: {
+	challengeNoRatings: boolean;
 	godMode: boolean;
 	handleChange: (
 		type: string,
@@ -77,11 +79,17 @@ const RatingsForm = ({
 		};
 	}, [ratingsRow]);
 
+	const hideRatings = !godMode && challengeNoRatings;
+
 	const fuzzRating = (
 		ratingsRow: any,
 		rating: string,
 		ratingOverride?: number,
 	) => {
+		if (hideRatings) {
+			return "";
+		}
+
 		const raw = ratingOverride ?? ratingsRow[rating];
 
 		return godMode || rating === "hgt"

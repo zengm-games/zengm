@@ -394,7 +394,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	const { godMode, originalTid, playerMoodTraits, teams } = props;
+	const { challengeNoRatings, godMode, originalTid, playerMoodTraits, teams } =
+		props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
@@ -998,6 +999,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Ratings</h2>
 
 						<RatingsForm
+							challengeNoRatings={challengeNoRatings}
 							godMode={godMode}
 							handleChange={handleChange}
 							ratingsRow={p.ratings[r]}

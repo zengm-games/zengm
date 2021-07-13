@@ -62,6 +62,7 @@ const updatePlayers = async (
 				"pid",
 				"name",
 				"age",
+				"ageAtDeath",
 				"injury",
 				"tid",
 				"abbrev",

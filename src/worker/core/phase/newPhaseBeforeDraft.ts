@@ -11,6 +11,7 @@ import {
 	toUI,
 	logEvent,
 	random,
+	orderTeams,
 } from "../../util";
 import type {
 	Conditions,
@@ -18,12 +19,172 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 	LogEventType,
+	GameAttributesLeague,
 } from "../../../common/types";
+
+const INFLATION_GAME_ATTRIBUTES = [
+	"salaryCap",
+	"minContract",
+	"maxContract",
+	"minPayroll",
+	"luxuryPayroll",
+] as const;
+
+const upcomingScheduledEventBlocksInflation = async () => {
+	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	return scheduledEvents.some(event => {
+		if (event.type === "gameAttributes") {
+			for (const key of INFLATION_GAME_ATTRIBUTES) {
+				if (event.info.hasOwnProperty(key)) {
+					return true;
+				}
+			}
+		}
+	});
+};
+
+const doInflation = async (conditions: Conditions) => {
+	if (await upcomingScheduledEventBlocksInflation()) {
+		return;
+	}
+
+	const inflationMin = g.get("inflationMin");
+	const inflationMax = g.get("inflationMax");
+	const inflationAvg = g.get("inflationAvg");
+	const inflationStd = g.get("inflationStd");
+
+	let inflation;
+
+	if (inflationMin === inflationMax) {
+		inflation = inflationMin;
+	} else if (inflationStd === 0) {
+		inflation = helpers.bound(inflationAvg, inflationMin, inflationMax);
+	} else {
+		try {
+			inflation = random.truncGauss(
+				inflationAvg,
+				inflationStd,
+				inflationMin,
+				inflationMax,
+			);
+		} catch (error) {
+			inflation = random.randInt(inflationMin, inflationMax);
+		}
+	}
+
+	// Round to 0.1%
+	inflation = Math.round(inflation * 10) / 10;
+
+	if (inflation === 0) {
+		return;
+	}
+
+	const updatedGameAttributes: Partial<GameAttributesLeague> = {};
+
+	for (const key of INFLATION_GAME_ATTRIBUTES) {
+		const oldValue = g.get(key);
+		const newValue = helpers.roundContract(oldValue * (1 + inflation / 100));
+		if (oldValue !== newValue) {
+			updatedGameAttributes[key] = helpers.roundContract(
+				g.get(key) * (1 + inflation / 100),
+			);
+		}
+	}
+
+	if (Object.keys(updatedGameAttributes).length > 0) {
+		await league.setGameAttributes(updatedGameAttributes);
+
+		logEvent(
+			{
+				type: "gameAttribute",
+				text: `An inflation rate of ${inflation}% ${
+					inflation > 0 ? "increased" : "decreased"
+				} the salary cap to ${helpers.formatCurrency(
+					g.get("salaryCap") / 1000,
+					"M",
+				)}.`,
+				tids: [],
+				persistent: true,
+				hideInLiveGame: true,
+				extraClass: "",
+				score: 20,
+			},
+			conditions,
+		);
+	}
+};
+
+const setChampNoPlayoffs = async (conditions: Conditions) => {
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
+
+	const ordered = await orderTeams(teams, teams);
+
+	const { tid } = ordered[0];
+
+	const teamSeason = await idb.cache.teamSeasons.indexGet(
+		"teamSeasonsByTidSeason",
+		[tid, g.get("season")],
+	);
+	if (!teamSeason) {
+		return;
+	}
+
+	teamSeason.playoffRoundsWon = 0;
+	teamSeason.hype += 0.2;
+
+	logEvent(
+		{
+			type: "playoffs",
+			text: `The <a href="${helpers.leagueUrl([
+				"roster",
+				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
+				g.get("season"),
+			])}">${
+				g.get("teamInfoCache")[tid]?.name
+			}</a> finished in 1st place and are league champions!`,
+			showNotification: true,
+			tids: [tid],
+			score: 20,
+			saveToDb: true,
+		},
+		conditions,
+	);
+
+	await idb.cache.teamSeasons.put(teamSeason);
+};
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
+	if (g.get("numGamesPlayoffSeries").length === 0) {
+		// Set champ of the league!
+		await setChampNoPlayoffs(conditions);
+	}
+
 	achievement.check("afterPlayoffs", conditions);
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus({
@@ -198,10 +359,8 @@ const newPhaseBeforeDraft = async (
 			Infinity,
 		]);
 
-		const retiredPlayersByTeam: Record<
-			number,
-			Player<MinimalPlayerRatings>[]
-		> = {};
+		const retiredPlayersByTeam: Record<number, Player<MinimalPlayerRatings>[]> =
+			{};
 
 		for (const p of players) {
 			let update = false;
@@ -233,7 +392,7 @@ const newPhaseBeforeDraft = async (
 			}
 
 			// Heal injures
-			if (p.injury.type !== "Healthy") {
+			if (p.injury.gamesRemaining > 0 || p.injury.type !== "Healthy") {
 				// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
 				if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
 					p.injury = {
@@ -304,6 +463,8 @@ const newPhaseBeforeDraft = async (
 	if (g.get("gameOver")) {
 		achievement.check("afterFired", conditions);
 	}
+
+	await doInflation(conditions);
 
 	// Don't redirect if we're viewing a live game now
 	let url;

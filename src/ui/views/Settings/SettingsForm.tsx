@@ -10,13 +10,19 @@ import {
 	FormEvent,
 	useEffect,
 } from "react";
-import { HelpPopover, StickyBottomButtons } from "../../components";
+import {
+	ActionButton,
+	HelpPopover,
+	StickyBottomButtons,
+} from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { isSport } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
+import Injuries from "./Injuries";
+import type { InjuriesSetting } from "../../../common/types";
 
 const settingNeedsGodMode = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -25,7 +31,7 @@ const settingNeedsGodMode = (
 	return !!godModeRequired && (!newLeague || godModeRequired === "always");
 };
 
-const godModeRequiredMessage = (
+export const godModeRequiredMessage = (
 	godModeRequired?: "always" | "existingLeagueOnly",
 ) => {
 	if (godModeRequired === "existingLeagueOnly") {
@@ -965,10 +971,43 @@ const categories: {
 		name: "Finances",
 	},
 	{
+		name: "Inflation",
+		helpText: (
+			<>
+				<p>
+					This lets you randomly change your league's financial settings (salary
+					cap, min payroll, luxury tax payroll, min contract, max contract)
+					every year before the draft. It works by picking a{" "}
+					<a
+						href="https://en.wikipedia.org/wiki/Truncated_normal_distribution"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						truncated Gaussian random number
+					</a>{" "}
+					based on the parameters set below (min, max, average, and standard
+					deviation).
+				</p>
+				{isSport("basketball") ? (
+					<p>
+						If you have any scheduled events containing specific finance changes
+						then these settings will be ignored until all those scheduled events
+						have been processed. Basically this means that for historical real
+						players leagues, these inflation settings will only take effect once
+						your league moves into the future.
+					</p>
+				) : null}
+			</>
+		),
+	},
+	{
 		name: "Contracts",
 	},
 	{
 		name: "Events",
+	},
+	{
+		name: "Injuries",
 	},
 	{
 		name: "Game Simulation",
@@ -1208,11 +1247,34 @@ const Option = ({
 	maxWidth?: true;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
-	value: string;
+	value: unknown;
 	values?: Values;
 	customForm?: ReactNode;
 }) => {
 	const [showDescriptionLong, setShowDescriptionLong] = useState(false);
+
+	let formElement;
+	if (customForm) {
+		formElement = customForm;
+	} else {
+		if (typeof value !== "string") {
+			throw new Error("Value must be string");
+		}
+		formElement = (
+			<Input
+				type={type}
+				disabled={disabled}
+				godModeRequired={godModeRequired}
+				id={id}
+				maxWidth={maxWidth}
+				name={name}
+				onChange={onChange}
+				value={value}
+				values={values}
+				decoration={decoration}
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -1253,22 +1315,7 @@ const Option = ({
 					) : null}
 				</div>
 				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
-					{customForm ? (
-						customForm
-					) : (
-						<Input
-							type={type}
-							disabled={disabled}
-							godModeRequired={godModeRequired}
-							id={id}
-							maxWidth={maxWidth}
-							name={name}
-							onChange={onChange}
-							value={value}
-							values={values}
-							decoration={decoration}
-						/>
-					)}
+					{formElement}
 				</div>
 			</div>
 			{description ? (
@@ -1278,7 +1325,7 @@ const Option = ({
 			) : null}
 			<AnimatePresence initial={false}>
 				{showDescriptionLong ? (
-					<motion.div
+					<m.div
 						initial="collapsed"
 						animate="open"
 						exit="collapsed"
@@ -1293,7 +1340,7 @@ const Option = ({
 						className="text-muted settings-description mt-1"
 					>
 						{descriptionLong}
-					</motion.div>
+					</m.div>
 				) : null}
 			</AnimatePresence>
 		</>
@@ -1329,8 +1376,15 @@ const GodModeSettingsButton = ({
 	);
 };
 
+const SPECIAL_STATE_OTHERS = ["injuries"] as const;
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
+const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
+type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
+
+type State = Record<Exclude<Key, SpecialStateAll>, string> &
+	Record<SpecialStateBoolean, boolean> &
+	Record<"injuries", InjuriesSetting>;
 
 const SettingsForm = ({
 	onCancel,
@@ -1364,13 +1418,14 @@ const SettingsForm = ({
 
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
-	const [state, setState] = useState<
-		Record<Key, string> & Record<SpecialStateBoolean, boolean>
-	>(() => {
+	const [state, setState] = useState<State>(() => {
 		// @ts-ignore
-		const initialState: Record<Key, string> &
-			Record<SpecialStateBoolean, boolean> = {};
+		const initialState: State = {};
 		for (const { key, type, values } of settings) {
+			if (SPECIAL_STATE_ALL.includes(key as any)) {
+				continue;
+			}
+
 			const value = props[key];
 
 			// https://github.com/microsoft/TypeScript/issues/21732
@@ -1383,6 +1438,7 @@ const SettingsForm = ({
 		for (const key of SPECIAL_STATE_BOOLEANS) {
 			initialState[key] = props[key];
 		}
+		initialState.injuries = props.injuries;
 
 		return initialState;
 	});
@@ -1415,31 +1471,36 @@ const SettingsForm = ({
 		}
 	};
 
-	const handleChange = (name: Key, type: FieldType) => (
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		let value: string;
-		if (type === "bool") {
-			value = String((event.target as any).checked);
-		} else if (type === "floatValuesOrCustom") {
-			if (event.target.value === "custom") {
-				value = JSON.stringify([true, JSON.parse(state[name])[1]]);
+	const handleChange =
+		(name: Key, type: FieldType) =>
+		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			let value: string;
+			if (type === "bool") {
+				value = String((event.target as any).checked);
+			} else if (type === "floatValuesOrCustom") {
+				if (event.target.value === "custom") {
+					const raw = state[name];
+					if (typeof raw !== "string") {
+						throw new Error("Invalid value");
+					}
+
+					value = JSON.stringify([true, JSON.parse(raw)[1]]);
+				} else {
+					value = JSON.stringify([false, event.target.value]);
+				}
 			} else {
-				value = JSON.stringify([false, event.target.value]);
+				value = event.target.value;
 			}
-		} else {
-			value = event.target.value;
-		}
 
-		setState(prevState => ({
-			...prevState,
-			[name]: value,
-		}));
+			setState(prevState => ({
+				...prevState,
+				[name]: value,
+			}));
 
-		if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
-			setGameSimPreset("default");
-		}
-	};
+			if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
+				setGameSimPreset("default");
+			}
+		};
 
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
@@ -1458,7 +1519,7 @@ const SettingsForm = ({
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output = ({} as unknown) as Settings;
+		const output = {} as unknown as Settings;
 		for (const option of filteredSettings) {
 			const { key, name, type } = option;
 			const value = state[key];
@@ -1680,6 +1741,20 @@ const SettingsForm = ({
 														</div>
 													</div>
 												);
+											} else if (key === "injuries") {
+												customFormNode = (
+													<Injuries
+														defaultValue={state.injuries}
+														disabled={!enabled || submitting}
+														godModeRequired={godModeRequired}
+														onChange={injuries => {
+															setState(prevState => ({
+																...prevState,
+																injuries,
+															}));
+														}}
+													/>
+												);
 											}
 										}
 
@@ -1757,24 +1832,13 @@ const SettingsForm = ({
 								Cancel
 							</button>
 						) : null}
-						<button
-							className="btn btn-primary"
-							disabled={submitting}
+						<ActionButton
 							type="submit"
+							disabled={submitting}
+							processing={!!newLeague && submitting}
 						>
-							{newLeague && submitting ? (
-								<>
-									<span
-										className="spinner-border spinner-border-sm"
-										role="status"
-										aria-hidden="true"
-									></span>{" "}
-									Processing
-								</>
-							) : (
-								saveText
-							)}
-						</button>
+							{saveText}
+						</ActionButton>
 					</div>
 				</StickyBottomButtons>
 			</form>

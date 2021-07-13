@@ -1,6 +1,6 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
-import { g, local } from "../../util";
+import { gameAttributesCache } from "../../util/defaultGameAttributes";
 import getName from "./getName";
 
 /* Export existing active league.
@@ -11,14 +11,22 @@ import getName from "./getName";
  */
 const exportLeague = async (
 	stores: string[],
-	options: {
-		meta: boolean;
-		filter: {
+	{
+		meta = true,
+		filter = {},
+		forEach = {},
+		map = {},
+	}: {
+		meta?: boolean;
+		filter?: {
 			[key: string]: (a: any) => boolean;
 		};
-	} = {
-		meta: true,
-		filter: {},
+		forEach?: {
+			[key: string]: (a: any) => void;
+		};
+		map?: {
+			[key: string]: (a: any) => any;
+		};
 	},
 ) => {
 	// Always flush before export, so export is current!
@@ -28,12 +36,10 @@ const exportLeague = async (
 	};
 
 	// Row from leagueStore in meta db.
-	// phaseText is needed if a phase is set in gameAttributes.
 	// name is only used for the file name of the exported roster file.
-	if (options.meta) {
+	if (meta) {
 		const leagueName = await getName();
 		exportedLeague.meta = {
-			phaseText: local.phaseText,
 			name: leagueName,
 		};
 	}
@@ -43,8 +49,18 @@ const exportLeague = async (
 			exportedLeague[store] = await getAll(
 				idb.league.transaction(store as any).store,
 				undefined,
-				options.filter[store],
+				filter[store],
 			);
+
+			if (forEach[store]) {
+				for (const row of exportedLeague[store]) {
+					forEach[store](row);
+				}
+			}
+
+			if (map[store]) {
+				exportedLeague[store] = exportedLeague[store].map(map[store]);
+			}
 		}),
 	);
 
@@ -62,54 +78,49 @@ const exportLeague = async (
 	}
 
 	if (stores.includes("teams")) {
-		for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
-			const tid = exportedLeague.teamSeasons[i].tid;
+		if (exportedLeague.teamSeasons) {
+			for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
+				const tid = exportedLeague.teamSeasons[i].tid;
 
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
-						exportedLeague.teams[j].seasons = [];
+				for (let j = 0; j < exportedLeague.teams.length; j++) {
+					if (exportedLeague.teams[j].tid === tid) {
+						if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
+							exportedLeague.teams[j].seasons = [];
+						}
+
+						exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+						break;
 					}
-
-					exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
-					break;
 				}
 			}
+			delete exportedLeague.teamSeasons;
 		}
 
-		for (let i = 0; i < exportedLeague.teamStats.length; i++) {
-			const tid = exportedLeague.teamStats[i].tid;
+		if (exportedLeague.teamStats) {
+			for (let i = 0; i < exportedLeague.teamStats.length; i++) {
+				const tid = exportedLeague.teamStats[i].tid;
 
-			for (let j = 0; j < exportedLeague.teams.length; j++) {
-				if (exportedLeague.teams[j].tid === tid) {
-					if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
-						exportedLeague.teams[j].stats = [];
+				for (let j = 0; j < exportedLeague.teams.length; j++) {
+					if (exportedLeague.teams[j].tid === tid) {
+						if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
+							exportedLeague.teams[j].stats = [];
+						}
+
+						exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+						break;
 					}
-
-					exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
-					break;
 				}
 			}
+			delete exportedLeague.teamStats;
 		}
-
-		delete exportedLeague.teamSeasons;
-		delete exportedLeague.teamStats;
 	}
 
-	if (stores.includes("gameAttributes")) {
+	if (exportedLeague.gameAttributes) {
 		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
-		const keysToDelete = ["numActiveTeams", "teamInfoCache"];
-		const gaArray = exportedLeague.gameAttributes
-			.filter((gameAttribute: any) => !keysToDelete.includes(gameAttribute.key))
-			.filter(
-				// No point in exporting undefined
-				(gameAttribute: any) => gameAttribute.value !== undefined,
-			);
-
+		const gaArray = exportedLeague.gameAttributes.filter(
+			(gameAttribute: any) => !gameAttributesCache.includes(gameAttribute.key),
+		);
 		exportedLeague.gameAttributes = gameAttributesArrayToObject(gaArray);
-	} else {
-		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-		exportedLeague.startingSeason = g.get("startingSeason");
 	}
 
 	// No need emitting empty object stores

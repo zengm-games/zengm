@@ -63,11 +63,19 @@ const updateRoster = async (
 			"imgURL",
 			"region",
 			"name",
+			"avgAge",
 		];
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
-			attrs: ["tid", "strategy", "region", "name", "keepRosterSorted"],
+			attrs: [
+				"tid",
+				"strategy",
+				"region",
+				"name",
+				"keepRosterSorted",
+				"playThroughInjuries",
+			],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
 			addDummySeason: true,
@@ -101,7 +109,7 @@ const updateRoster = async (
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
-		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber"];
+		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber", "min", "gp"];
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -209,6 +217,7 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
+		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
 		return {
 			abbrev: inputs.abbrev,

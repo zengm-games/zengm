@@ -14,7 +14,7 @@ import Depth from "./Depth";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
-import DraftSummary from "./DraftSummary";
+import DraftHistory from "./DraftHistory";
 import DraftTeamHistory from "./DraftTeamHistory";
 import EditAwards from "./EditAwards";
 import ExpansionDraft from "./ExpansionDraft";
@@ -25,6 +25,7 @@ import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
 import Frivolities from "./Frivolities";
 import FrivolitiesDraftClasses from "./FrivolitiesDraftClasses";
+import FrivolitiesDraftPosition from "./FrivolitiesDraftPosition";
 import FrivolitiesJerseyNumbers from "./FrivolitiesJerseyNumbers";
 import FrivolitiesTeamSeasons from "./FrivolitiesTeamSeasons";
 import FrivolitiesTrades from "./FrivolitiesTrades";
@@ -61,6 +62,7 @@ import News from "./News";
 import Player from "./Player";
 import PlayerBios from "./PlayerBios";
 import PlayerFeats from "./PlayerFeats";
+import PlayerGameLog from "./PlayerGameLog";
 import PlayerRatingDists from "./PlayerRatingDists";
 import PlayerRatings from "./PlayerRatings";
 import PlayerStatDists from "./PlayerStatDists";
@@ -106,7 +108,7 @@ export default {
 	Draft,
 	DraftLottery,
 	DraftScouting,
-	DraftSummary,
+	DraftHistory,
 	DraftTeamHistory,
 	EditAwards,
 	ExpansionDraft,
@@ -117,6 +119,7 @@ export default {
 	FreeAgents,
 	Frivolities,
 	FrivolitiesDraftClasses,
+	FrivolitiesDraftPosition,
 	FrivolitiesJerseyNumbers,
 	FrivolitiesTeamSeasons,
 	FrivolitiesTrades,
@@ -153,6 +156,7 @@ export default {
 	Player,
 	PlayerBios,
 	PlayerFeats,
+	PlayerGameLog,
 	PlayerRatingDists,
 	PlayerRatings,
 	PlayerStatDists,

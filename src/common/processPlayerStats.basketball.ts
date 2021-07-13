@@ -30,8 +30,8 @@ const straightThrough = [
 const processStats = (
 	ps: PlayerStats,
 	stats: string[],
-	statType: PlayerStatType,
-	bornYear: number,
+	statType: PlayerStatType = "totals",
+	bornYear?: number,
 ) => {
 	const row: any = {};
 
@@ -80,6 +80,12 @@ const processStats = (
 			row.season = ps.season;
 			scale = false;
 		} else if (stat === "age") {
+			if (bornYear === undefined) {
+				throw new Error(
+					"You must supply bornYear to processStats if you want age",
+				);
+			}
+
 			row.age = ps.season - bornYear;
 			scale = false;
 		} else if (stat === "ws") {
@@ -99,6 +105,9 @@ const processStats = (
 			row[stat] = ps.fga - ps.tpa;
 		} else if (stat === "jerseyNumber") {
 			row[stat] = ps[stat];
+			scale = false;
+		} else if (stat === "gmsc") {
+			row[stat] = helpers.gameScore(ps);
 			scale = false;
 		} else if (stat.endsWith("Max")) {
 			row[stat] = ps[stat];

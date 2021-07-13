@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { NewsBlock } from "../../components";
 import { helpers, useLocal } from "../../util";
 import type { View } from "../../../common/types";
@@ -66,7 +66,7 @@ const Headlines = ({
 				<AnimatePresence initial={false}>
 					{events.map(event => {
 						return (
-							<motion.div
+							<m.div
 								key={event.eid}
 								className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
 								layout
@@ -81,7 +81,7 @@ const Headlines = ({
 									teams={teamInfoCache}
 									userTid={userTid}
 								/>
-							</motion.div>
+							</m.div>
 						);
 					})}
 				</AnimatePresence>

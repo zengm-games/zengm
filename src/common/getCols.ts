@@ -117,7 +117,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:ast": {
-			desc: "Assists Per Game",
+			desc: "Assists",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -308,6 +308,11 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:ws": {
 			desc: "Win Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:wsPerPlayer": {
+			desc: "Win Shares Per Player",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1108,7 +1113,27 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:qbRec": {
-			desc: "Team record as primary QB",
+			desc: "Record as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbW": {
+			desc: "Wins as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbL": {
+			desc: "Losses as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbT": {
+			desc: "Ties as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbOTL": {
+			desc: "Overtime losses as primary QB",
 			sortSequence: ["desc", "asc"],
 			sortType: "record",
 		},
@@ -1219,6 +1244,11 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:av": {
 			desc: "Approximate Value",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:avPerPlayer": {
+			desc: "Approximate Value Per Player",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1485,6 +1515,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:psPerPlayer": {
+			desc: "Point Shares Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:ops": {
 			desc: "Offensive Point Shares",
 			sortSequence: ["desc", "asc"],
@@ -1531,7 +1566,27 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:gRec": {
-			desc: "Team record as primary G",
+			desc: "Record as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gW": {
+			desc: "Wins as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gL": {
+			desc: "Losses as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gT": {
+			desc: "Ties as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gOTL": {
+			desc: "Overtime losses as primary G",
 			sortSequence: ["desc", "asc"],
 			sortType: "record",
 		},
@@ -1544,6 +1599,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 	},
 	"#": {},
+	"@": {
+		desc: "Home or Away",
+	},
 	"#AS": {
 		desc: "Number of All-Star Selections",
 		sortSequence: ["desc", "asc"],
@@ -1614,6 +1672,11 @@ const cols: {
 		sortType: "currency",
 	},
 	"Avg Attendance": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	AvgAge: {
+		desc: "Average age, weighted by minutes played",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1730,6 +1793,11 @@ const cols: {
 	},
 	Games: {
 		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	GOAT: {
+		desc: "GOAT Score",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1946,6 +2014,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	Trade: {
+		desc: "Ties",
+		noSearch: true,
+	},
 	OTL: {
 		desc: "Overtime Losses",
 		sortSequence: ["desc", "asc"],
@@ -2003,6 +2075,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"stat:gpPerPlayer": {
+		desc: "Games Played Per Player",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"stat:gs": {
 		desc: "Games Started",
 		sortSequence: ["desc", "asc"],
@@ -2014,7 +2091,7 @@ const cols: {
 		sortType: "number",
 	},
 	"stat:min": {
-		desc: isSport("hockey") ? "Time On Ice" : "Minutes Per Game",
+		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -2218,6 +2295,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:tov": "TOV",
 		"stat:usgp": "USG%",
 		"stat:ws": "WS",
+		"stat:wsPerPlayer": "WS/Player",
 		"stat:ws48": "WS/48",
 		"stat:obpm": "OBPM",
 		"stat:dbpm": "DBPM",
@@ -2383,6 +2461,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ydsPerDrive": "Y/D",
 		"stat:ptsPerDrive": "Pts/D",
 		"stat:qbRec": "QBRec",
+		"stat:qbW": "QBW",
+		"stat:qbL": "QBL",
+		"stat:qbT": "QBT",
+		"stat:qbOTL": "QBOTL",
 		"stat:pssTDPct": "TD%",
 		"stat:pssIntPct": "Int%",
 		"stat:pssYdsPerAtt": "Y/A",
@@ -2404,6 +2486,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:rusRecTD": "RRTD",
 		"stat:allPurposeYds": "APY",
 		"stat:av": "AV",
+		"stat:avPerPlayer": "AV/Player",
 	},
 	hockey: {
 		"pos:C": "C",
@@ -2463,6 +2546,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:gaa": "GAA",
 		"stat:keyStats": "Stats",
 		"stat:ps": "PS",
+		"stat:psPerPlayer": "PS/Player",
 		"stat:ops": "OPS",
 		"stat:dps": "DPS",
 		"stat:gps": "GPS",
@@ -2477,16 +2561,24 @@ const sportSpecificTitleOverrides = bySport({
 		"PS/g": "GF",
 		"PA/g": "GA",
 		"stat:gRec": "Rec",
+		"stat:gW": "GW",
+		"stat:gL": "GL",
+		"stat:gT": "GT",
+		"stat:gOTL": "GOTL",
 	},
 });
 
+const gp = isSport("hockey") ? "GP" : "G";
+
 const titleOverrides = {
+	AvgAge: "Age",
 	Talent: "T",
 	"rating:endu": "End",
 	"rating:hgt": "Hgt",
 	"rating:spd": "Spd",
 	"rating:stre": "Str",
-	"stat:gp": isSport("hockey") ? "GP" : "G",
+	"stat:gp": gp,
+	"stat:gpPerPlayer": `${gp}/Player`,
 	"stat:gs": "GS",
 	"stat:jerseyNumber": "#",
 	"stat:min": isSport("hockey") ? "TOI" : "MP",

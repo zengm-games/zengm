@@ -62,7 +62,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 };
 
 function getTeamsDefault(): TeamBasic[] {
-	let teams: Omit<TeamBasic, "popRank">[];
+	let teams: TeamBasic[];
 	if (isSport("basketball")) {
 		teams = getTeamInfos([
 			{
@@ -712,7 +712,7 @@ function deepCopy<T>(obj: T): T {
  */
 function leagueUrlFactory(
 	lid: number,
-	components: (number | string)[],
+	components: (number | string | undefined)[],
 ): string {
 	let url = `/l/${lid}`;
 
@@ -863,10 +863,6 @@ const validateRoundsByes = (
 	numPlayoffByes: number,
 	numActiveTeams: number,
 ) => {
-	if (numRounds < 1) {
-		throw new Error("Must have at least one round of playoffs");
-	}
-
 	if (numPlayoffByes < 0) {
 		throw new Error("Cannot have a negative number of byes");
 	}
@@ -1045,7 +1041,7 @@ const getJerseyNumber = (
 			return p.stats[p.stats.length - 1].jerseyNumber;
 		}
 
-		// For uploaded league files
+		// For uploaded league files, or real players leagues with no old stats (with new old stats, relies on augmentPartialPlayer to set jerseyNumber from root in latest stats row)
 		return p.jerseyNumber;
 	}
 

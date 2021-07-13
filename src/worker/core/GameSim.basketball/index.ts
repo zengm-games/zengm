@@ -2,6 +2,8 @@ import { g, helpers, random } from "../../util";
 import { getPeriodName, PHASE } from "../../../common";
 import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
+import getInjuryRate from "./getInjuryRate";
+import type { PlayerInjury } from "../../../common/types";
 
 type PlayType =
 	| "ast"
@@ -92,6 +94,10 @@ type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
+	injury: PlayerInjury & {
+		playingThrough: boolean;
+	};
 	ptModifier: number;
 };
 type TeamGameSim = {
@@ -1195,12 +1201,15 @@ class GameSim {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
-					// Modulate injuryRate by age - assume default is 26 yo, and increase/decrease by 3%
-					const injuryRate =
-						baseRate * 1.03 ** (Math.min(50, this.team[t].player[p].age) - 26);
+					const injuryRate = getInjuryRate(
+						baseRate,
+						this.team[t].player[p].age,
+						this.team[t].player[p].injury.playingThrough,
+					);
 
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;
+						this.team[t].player[p].newInjury = true;
 						newInjury = true;
 						this.recordPlay("injury", t, [this.team[t].player[p].name], {
 							injuredPID: this.team[t].player[p].id,

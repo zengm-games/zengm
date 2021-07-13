@@ -561,6 +561,11 @@ export const createWithoutSaving = async (
 					let years;
 					if (isSport("hockey")) {
 						years = 3;
+					} else if (!g.get("hardCap")) {
+						const rookieContractLengths = g.get("rookieContractLengths");
+						years =
+							rookieContractLengths[round - 1] ??
+							rookieContractLengths[rookieContractLengths.length - 1];
 					} else {
 						// 2 years for 2nd round, 3 years for 1st round;
 						years = Math.min(4 - round, 2);
@@ -870,17 +875,6 @@ const create = async ({
 }): Promise<number> => {
 	const leagueData = await createWithoutSaving(tid, leagueFile, shuffleRosters);
 
-	let phaseText;
-
-	if (
-		leagueFile.hasOwnProperty("meta") &&
-		leagueFile.meta.hasOwnProperty("phaseText")
-	) {
-		phaseText = leagueFile.meta.phaseText;
-	} else {
-		phaseText = "";
-	}
-
 	const userTid =
 		leagueData.gameAttributes.userTid[
 			leagueData.gameAttributes.userTid.length - 1
@@ -888,7 +882,7 @@ const create = async ({
 	const l: League = {
 		name,
 		tid: userTid,
-		phaseText,
+		phaseText: "",
 		teamName: leagueData.teams[userTid].name,
 		teamRegion: leagueData.teams[userTid].region,
 		heartbeatID: undefined,

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
@@ -190,7 +190,7 @@ const Notifications = () => {
 			>
 				<AnimatePresence initial={false}>
 					{notifications.map(notification => (
-						<motion.li
+						<m.li
 							key={notification.id}
 							layout
 							initial={{ opacity: 0, y: 100 }}
@@ -215,7 +215,7 @@ const Notifications = () => {
 									);
 								}}
 							/>
-						</motion.li>
+						</m.li>
 					))}
 				</AnimatePresence>
 			</ul>

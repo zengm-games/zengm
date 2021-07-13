@@ -57,6 +57,8 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
+	const mobile = window.screen.width < 768;
+
 	if (!hideAds) {
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
@@ -66,7 +68,7 @@ const initAds = (goldUntil: number | undefined) => {
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
 			];
-			const divs = window.mobile ? divsMobile : divsDesktop;
+			const divs = mobile ? divsMobile : divsDesktop;
 
 			for (const id of divs) {
 				const div = document.getElementById(id);
@@ -102,6 +104,7 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
+				// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
 				window.googletag = window.googletag || {};
 				window.googletag.cmd = window.googletag.cmd || [];
 				window.googletag.cmd.push(() => {
@@ -114,7 +117,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (!window.mobile) {
+			if (!mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 
@@ -124,6 +127,50 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 		});
 	}
+};
+
+// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
+const initGold = () => {
+	window.freestar.queue.push(() => {
+		const divsAll = [
+			AD_DIVS.mobile,
+			AD_DIVS.leaderboard,
+			AD_DIVS.rectangle1,
+			AD_DIVS.rectangle2,
+		];
+
+		for (const id of divsAll) {
+			const div = document.getElementById(id);
+
+			if (div) {
+				div.style.display = "none";
+			}
+
+			window.freestar.deleteAdSlots(id);
+		}
+
+		// Special case for rail, to tell it there is no BBGM gold
+		const rail = document.getElementById(AD_DIVS.rail);
+		if (rail) {
+			rail.dataset.gold = "true";
+			updateSkyscraperDisplay();
+		}
+
+		localActions.update({
+			stickyFooterAd: false,
+		});
+
+		// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+		const footer = document.getElementById("main-footer");
+		if (footer) {
+			footer.style.marginBottom = "";
+		}
+
+		const logo = document.getElementById("bbgm-ads-logo");
+		if (logo) {
+			logo.style.display = "none";
+		}
+	});
 };
 
 const deleteGames = (gids: number[]) => {
@@ -236,6 +283,7 @@ export default {
 	confirmDeleteAllLeagues,
 	deleteGames,
 	initAds,
+	initGold,
 	mergeGames,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,

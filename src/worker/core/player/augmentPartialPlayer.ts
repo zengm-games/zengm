@@ -12,6 +12,20 @@ import stats from "./stats";
 import { g, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
+const addStatsRowWrapped = async (
+	p: any,
+	ignoreJerseyNumberConflicts?: boolean,
+) => {
+	await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+		ignoreJerseyNumberConflicts,
+	});
+
+	// For real players leagues starting in the preseason, there could be a previous season with stats and a different jersey number, but the root jerseyNumber will be the one for the upcoming season
+	if (p.jerseyNumber !== undefined) {
+		p.stats[p.stats.length - 1].jerseyNumber = p.jerseyNumber;
+	}
+};
+
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
  *
@@ -374,9 +388,7 @@ const augmentPartialPlayer = async (
 
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-				ignoreJerseyNumberConflicts,
-			});
+			await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 		}
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
@@ -412,14 +424,12 @@ const augmentPartialPlayer = async (
 			}
 		}
 
-		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
+		// Add stats row if this is the preseason and all stats are historical, both for people making rosters by hand and for historical rosters
 		if (g.get("phase") === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
 			if (p.tid >= 0 && lastSeason < currentSeason) {
-				await addStatsRow(p, false, {
-					ignoreJerseyNumberConflicts,
-				});
+				await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 			}
 		}
 	}

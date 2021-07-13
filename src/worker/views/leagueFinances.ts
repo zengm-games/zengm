@@ -5,11 +5,13 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 const updateLeagueFinances = async (
 	inputs: ViewInput<"leagueFinances">,
 	updateEvents: UpdateEvents,
+	state: any,
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.includes("newPhase") ||
+		state.season !== inputs.season
 	) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			0,

@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { bySport, isSport } from "../../../common";
+import { bySport, DEFAULT_STADIUM_CAPACITY, isSport } from "../../../common";
 import getAdjustedTicketPrice, {
 	PLAYOFF_ATTENDANCE_FACTOR,
 } from "../../../common/getAdjustedTicketPrice";
@@ -34,7 +34,14 @@ export const getBaseAttendance = ({
 };
 
 // Ticket price adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps. The exponential factor was hand-tuned to make this work in 1965.
-const salaryCapFactor = () => (90000 / g.get("salaryCap")) ** 0.75;
+const salaryCapFactor = () => {
+	// Uses 90000 rather than defaultGameAttributes for unclear reasons, other sports should be tuned better
+	const ratio = 90000 / g.get("salaryCap");
+	if (ratio > 1) {
+		return ratio ** 0.75;
+	}
+	return ratio;
+};
 
 // Adjustment added after auto ticket prices, to keep overall finances about the same as before auto ticket prices existed
 const SPORT_FACTOR = bySport({
@@ -152,16 +159,31 @@ export const getAutoTicketPriceByTid = async (tid: number) => {
 		],
 	);
 
+	let hype: number;
+	let pop: number;
+	let stadiumCapacity: number;
 	if (teamSeasons.length === 0) {
-		throw new Error("No team season found");
+		// This happens for expansion teams in the offseason, they have no teamSeason yet
+
+		const t = await idb.cache.teams.get(tid);
+		if (!t) {
+			throw new Error("No team found");
+		}
+
+		hype = 0.5;
+		pop = t.pop ?? 1;
+		stadiumCapacity = t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY;
+	} else {
+		const teamSeason = teamSeasons[teamSeasons.length - 1];
+		hype = teamSeason.hype;
+		pop = teamSeason.pop;
+		stadiumCapacity = teamSeason.stadiumCapacity;
 	}
 
-	const teamSeason = teamSeasons[teamSeasons.length - 1];
-
 	return getAutoTicketPrice({
-		hype: teamSeason.hype,
-		pop: teamSeason.pop,
-		stadiumCapacity: teamSeason.stadiumCapacity,
+		hype,
+		pop,
+		stadiumCapacity,
 		teamSeasons,
 	});
 };

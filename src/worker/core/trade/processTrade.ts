@@ -98,7 +98,6 @@ const processTrade = async (
 
 			teams[k].assets.push({
 				pid,
-				tid: tids[j],
 				name: `${p.firstName} ${p.lastName}`,
 				contract: p.contract,
 				ratingsIndex: p.ratings.length - 1,
@@ -128,7 +127,10 @@ const processTrade = async (
 			await idb.cache.draftPicks.put(dp);
 
 			teams[k].assets.push({
-				...dp,
+				dpid: dp.dpid,
+				season: dp.season,
+				round: dp.round,
+				originalTid: dp.originalTid,
 			});
 		}
 	}

@@ -52,13 +52,14 @@ const updateLeagueStats = async (
 		for (const season of range(g.get("startingSeason"), maxSeason + 1)) {
 			// Get all team stats for this season
 			// Would be nice to do all seasons in one call....
-			const output = await getStats(
+			const output = await getStats({
 				season,
-				inputs.playoffs === "playoffs",
+				playoffs: inputs.playoffs === "playoffs",
 				statsTable,
 				usePts,
-				inputs.tid >= 0 ? inputs.tid : undefined,
-			);
+				tid: inputs.tid >= 0 ? inputs.tid : undefined,
+				noDynamicAvgAge: true,
+			});
 			stats = output.stats;
 			const seasonAttrs = output.seasonAttrs;
 			const teams = output.teams;
@@ -90,7 +91,7 @@ const updateLeagueStats = async (
 			let foundSomething = false;
 
 			// Average together stats
-			for (const stat of [...stats, "gp"]) {
+			for (const stat of [...stats, "gp", "avgAge"]) {
 				if (ignoreStats.includes(stat)) {
 					continue;
 				}
@@ -99,8 +100,13 @@ const updateLeagueStats = async (
 					if (inputs.tid >= 0 && t.tid !== inputs.tid) {
 						continue;
 					}
-					// @ts-ignore
-					sum += t.stats[stat];
+
+					if (stat === "avgAge") {
+						sum += t.seasonAttrs.avgAge ?? 0;
+					} else {
+						// @ts-ignore
+						sum += t.stats[stat];
+					}
 					foundSomething = true;
 				}
 

@@ -17,7 +17,33 @@ const doInjury = async (
 	conditions: Conditions,
 ) => {
 	p2.injury = player.injury(healthRank);
-	p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+
+	// Is this a reinjury or not?
+	let reaggravateExtraDays;
+	if (p.injury.playingThrough) {
+		if (
+			p2.injury.gamesRemaining < p.injury.gamesRemaining ||
+			Math.random() < 0.33
+		) {
+			// Reaggravate previous injury
+			reaggravateExtraDays = random.randInt(1, 10);
+			p2.injury.gamesRemaining = p.injury.gamesRemaining + reaggravateExtraDays;
+			p2.injury.type = p.injury.type;
+		}
+	}
+
+	// So it gets written to box score... save the old injury (if playing through injury
+	if (p.injury.playingThrough) {
+		p.injuryAtStart = {
+			type: p.injury.type,
+			gamesRemaining: p.injury.gamesRemaining,
+		};
+	}
+	p.injury = {
+		type: p2.injury.type,
+		gamesRemaining: p2.injury.gamesRemaining,
+		newThisGame: true,
+	};
 
 	if (p2.injury.gamesRemaining <= 1) {
 		pidsInjuredOneGameOrLess.add(p2.pid);
@@ -112,9 +138,13 @@ const doInjury = async (
 			type: "injured",
 			text: `${p.pos} <a href="${helpers.leagueUrl(["player", p2.pid])}">${
 				p2.firstName
-			} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${
-				p2.injury.gamesRemaining
-			} ${p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`})`,
+			} ${p2.lastName}</a> ${
+				reaggravateExtraDays === undefined
+					? "was injured"
+					: "reaggravated his injury"
+			}! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} ${
+				p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
+			})`,
 			showNotification: false,
 			pids: [p2.pid],
 			tids: [p2.tid],
@@ -368,15 +398,15 @@ const writePlayerStats = async (
 				if (!allStarGame) {
 					let ps = p2.stats[p2.stats.length - 1];
 
-					// This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
-					if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
+					// This should never happen, but sometimes does
+					if (
+						!ps ||
+						ps.tid !== t.id ||
+						ps.playoffs !== playoffs ||
+						ps.season !== g.get("season")
+					) {
 						await player.addStatsRow(p2, playoffs);
 						ps = p2.stats[p2.stats.length - 1];
-					}
-
-					// Since index is not on playoffs, manually check
-					if (ps.playoffs !== playoffs) {
-						throw new Error(`Missing playoff stats for player ${p.id}`);
 					}
 
 					// Update stats
@@ -446,7 +476,7 @@ const writePlayerStats = async (
 					}
 				}
 
-				const injuredThisGame = p.injured && p.injury.type === "Healthy"; // Injury crap - assign injury type if player does not already have an injury in the database
+				const injuredThisGame = p.newInjury;
 
 				let ratingsLoss = false;
 

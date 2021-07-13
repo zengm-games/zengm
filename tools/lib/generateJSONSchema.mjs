@@ -315,17 +315,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 					tid: {
 						type: "integer",
 					},
-					winp: {
-						type: "number",
-						minimum: 0,
-						maximum: 1,
-					},
 					won: {
 						type: "integer",
 						minimum: 0,
 					},
 				},
-				required: ["cid", "seed", "tid", "winp", "won"],
+				required: ["cid", "seed", "tid", "won"],
 			},
 			playerSkill: {
 				type: "string",
@@ -653,6 +648,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							godModeInPast: {
 								type: "boolean",
 							},
+							goatFormula: {
+								type: "string",
+							},
 							gracePeriodEnd: {
 								type: "integer",
 							},
@@ -662,8 +660,41 @@ const generateJSONSchema = (sport /*: string*/) => {
 							hideDisabledTeams: {
 								type: "boolean",
 							},
+							hofFactor: {
+								type: "number",
+							},
 							homeCourtAdvantage: {
 								type: "number",
+							},
+							inflationAvg: {
+								type: "number",
+							},
+							inflationMax: {
+								type: "number",
+							},
+							inflationMin: {
+								type: "number",
+							},
+							inflationStd: {
+								type: "number",
+							},
+							injuries: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										name: {
+											type: "string",
+										},
+										frequency: {
+											type: "number",
+										},
+										games: {
+											type: "number",
+										},
+									},
+									required: ["name", "frequency", "games"],
+								},
 							},
 							injuryRate: {
 								type: "number",

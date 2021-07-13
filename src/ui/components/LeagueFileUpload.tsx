@@ -6,7 +6,6 @@ import {
 	useReducer,
 	useRef,
 	useState,
-	MouseEvent,
 	ChangeEvent,
 } from "react";
 import {
@@ -18,6 +17,7 @@ import {
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
+import { resetFileInput } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {
@@ -66,13 +66,6 @@ type State = {
 	error: Error | null;
 	jsonSchemaErrors: any[];
 	status: "initial" | "loading" | "parsing" | "error" | "done";
-};
-
-const resetFileInput = (event: MouseEvent<HTMLInputElement>) => {
-	// Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
-	// That is very annoying when repeatedly editing/checking a file.
-	// @ts-ignore
-	event.target.value = "";
 };
 
 const initialState: State = {

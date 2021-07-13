@@ -74,9 +74,9 @@ const updatePowerRankings = async (
 				}
 
 				teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
-					attrs: ["tid", "injury", "value"],
+					attrs: ["tid", "injury", "value", "age"],
 					ratings,
-					stats: ["season", "tid"],
+					stats: ["season", "tid", "gp", "min"],
 					season,
 					showNoStats: g.get("season") === season,
 					showRookies: g.get("season") === season,
@@ -139,6 +139,7 @@ const updatePowerRankings = async (
 					ovrCurrent,
 					other,
 					otherCurrent,
+					avgAge: team.avgAge(teamPlayers),
 
 					// Placeholder
 					rank: -1,

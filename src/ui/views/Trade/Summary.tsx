@@ -17,7 +17,7 @@ const Summary = forwardRef(
 							"mb-md-3": i === 0,
 						})}
 					>
-						<h4 className="font-weight-bold mb-1">{t.name} recieve:</h4>
+						<h4 className="font-weight-bold mb-1">{t.name} receive:</h4>
 						<ul className="list-unstyled mb-1">
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>
@@ -28,10 +28,16 @@ const Summary = forwardRef(
 							{summary.teams[t.other].picks.map(pick => (
 								<li key={pick.dpid}>{pick.desc}</li>
 							))}
-							<li className="mt-1">
-								{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
-								total
-							</li>
+							{summary.teams[t.other].trade.length > 0 ? (
+								<li className="mt-1">
+									{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
+									total
+								</li>
+							) : null}
+							{summary.teams[t.other].trade.length === 0 &&
+							summary.teams[t.other].picks.length === 0 ? (
+								<li>Nothing</li>
+							) : null}
 						</ul>
 						<p className="mt-auto mb-0">
 							Payroll after trade:{" "}

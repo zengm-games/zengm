@@ -1,3 +1,4 @@
+import { LazyMotion } from "framer-motion";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useReducer, useRef } from "react";
 import useTitleBar from "../hooks/useTitleBar";
@@ -21,6 +22,9 @@ import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
 import type { Context } from "../router";
+
+const loadFramerMotionFeatures = () =>
+	import("../util/framerMotionFeatures").then(res => res.default);
 
 type LeagueContentProps = {
 	children: any;
@@ -52,12 +56,22 @@ type State = {
 	Component: any;
 	loading: boolean;
 	inLeague: boolean;
-	data: {
-		[key: string]: any;
-	};
+	data: Record<string, any>;
 };
 
-const reducer = (state: State, action: any) => {
+type Action =
+	| {
+			type: "startLoading";
+	  }
+	| {
+			type: "doneLoading";
+	  }
+	| {
+			type: "reset";
+			vars: State;
+	  };
+
+const reducer = (state: State, action: Action) => {
 	switch (action.type) {
 		case "startLoading":
 			return { ...state, loading: true };
@@ -67,9 +81,6 @@ const reducer = (state: State, action: any) => {
 
 		case "reset":
 			return action.vars;
-
-		default:
-			throw new Error(`Unknown action type "${action.type}"`);
 	}
 };
 
@@ -91,6 +102,7 @@ const Controller = () => {
 		data: {},
 	});
 
+	const prevData2 = useRef<Record<string, any>>({});
 	const idLoaded = useRef<string | undefined>(undefined);
 	const idLoading = useRef<string | undefined>(undefined);
 
@@ -140,7 +152,9 @@ const Controller = () => {
 				// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
 				return;
 			} else {
-				prevData = state.data;
+				prevData = {
+					...prevData2.current,
+				};
 			}
 
 			dispatch({
@@ -223,6 +237,14 @@ const Controller = () => {
 					type: "doneLoading",
 				});
 				idLoading.current = undefined;
+
+				// Wait a tick, otherwise there is a race condition on new page loads (such as reloading live_game box score) where initView is called and updates viewInfo while the local.subscribe subscription below is unsubscribed due to updatePage changing.
+				await new Promise<void>(resolve => {
+					setTimeout(() => {
+						resolve();
+					}, 0);
+				});
+
 				await realtimeUpdate(
 					[],
 					vars.data.redirectUrl,
@@ -242,6 +264,7 @@ const Controller = () => {
 				});
 				idLoaded.current = id;
 				idLoading.current = undefined;
+				prevData2.current = vars.data;
 
 				// Scroll to top if this load came from user clicking a link
 				if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
@@ -249,7 +272,7 @@ const Controller = () => {
 				}
 			}
 		},
-		[lid, state],
+		[lid],
 	);
 
 	useEffect(() => {
@@ -311,7 +334,7 @@ const Controller = () => {
 	}
 
 	return (
-		<>
+		<LazyMotion strict features={loadFramerMotionFeatures}>
 			<NavBar updating={loading} />
 			<LeagueTopBar />
 			<TitleBar />
@@ -332,7 +355,7 @@ const Controller = () => {
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />
-		</>
+		</LazyMotion>
 	);
 };
 

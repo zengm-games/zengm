@@ -207,10 +207,16 @@ export const settings: {
 		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (
 			<>
-				Specify the number of games in each round. You must enter a valid JSON
-				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
-				first round series, a 7 game second round series, and a single
-				winner-takes-all final game.
+				<p>
+					Specify the number of games in each round. You must enter a valid JSON
+					array of integers. For example, enter <code>[5,7,1]</code> for a 5
+					game first round series, a 7 game second round series, and a single
+					winner-takes-all final game.
+				</p>
+				<p>
+					To disable the playoffs and have the top team in the regular season
+					crowned champion, set this to <code>[]</code>
+				</p>
 			</>
 		),
 		type: "jsonString",
@@ -472,6 +478,48 @@ export const settings: {
 			"Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
 	},
 	{
+		category: "Inflation",
+		key: "inflationMin",
+		name: "Minimum",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+		validator: (value, output) => {
+			if (value > output.inflationMax) {
+				throw new Error("Value must be less than the maximum value.");
+			}
+		},
+	},
+	{
+		category: "Inflation",
+		key: "inflationMax",
+		name: "Maximum",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+		validator: (value, output) => {
+			if (value < output.inflationMin) {
+				throw new Error("Value must be greater than the minimum value.");
+			}
+		},
+	},
+	{
+		category: "Inflation",
+		key: "inflationAvg",
+		name: "Average",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+	},
+	{
+		category: "Inflation",
+		key: "inflationStd",
+		name: "Standard Deviation",
+		godModeRequired: "always",
+		type: "float",
+		decoration: "percent",
+	},
+	{
 		category: "Contracts",
 		key: "minContract",
 		name: "Min Contract",
@@ -612,7 +660,7 @@ export const settings: {
 			"Normally, teams controlled by the AI (including your team, if you're using Auto Play or Spectator Mode) will retire jersey numbers of their former players as they deem appropriate. You can disable that behavior here, and then the AI will not retire or unretire any jersey numbers.",
 	},
 	{
-		category: "Events",
+		category: "Injuries",
 		key: "injuryRate",
 		name: "Injury Rate",
 		godModeRequired: "always",
@@ -698,6 +746,26 @@ export const settings: {
 		type: "int",
 		description:
 			"Players at or above this age will retire at the end of the season. A number lower than the maximum draft age will disable this setting.",
+	},
+	{
+		category: "Events",
+		key: "hofFactor",
+		name: "Hall of Fame Threshold Factor",
+		type: "float",
+		descriptionLong: (
+			<>
+				<p>
+					Hall of Fame eligibility is determined by a score based on player
+					stats. If it exceeds a threshold, the player is inducted into the Hall
+					of Fame.
+				</p>
+				<p>
+					The threshold is multiplied by the Hall of Fame Threshold Factor
+					before comparing. So if you increase this number, the Hall of Fame
+					becomes harder to get into. Decrease it and it is easier to get in.
+				</p>
+			</>
+		),
 	},
 	{
 		category: "Contracts",
@@ -1199,12 +1267,20 @@ settings.push(
 		],
 	},
 	{
-		category: "General",
+		category: "Injuries",
 		key: "stopOnInjuryGames",
 		name: "Stop On Injury",
 		type: "int",
 		description:
 			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
+		customForm: true,
+	},
+	{
+		category: "Injuries",
+		key: "injuries",
+		name: "Injury Types",
+		type: "custom",
+		godModeRequired: "always",
 		customForm: true,
 	},
 	{

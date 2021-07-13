@@ -2,11 +2,20 @@ import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS, isSport, PHASE } from "../../../common";
+import {
+	COMPOSITE_WEIGHTS,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	isSport,
+	PHASE,
+} from "../../../common";
+import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
+
+const MAX_NUM_PLAYERS_PACE = 7;
 
 const processTeam = (
 	teamInput: {
 		tid: number;
+		playThroughInjuries: [number, number];
 		depth?: any;
 	},
 	teamSeason: {
@@ -82,7 +91,19 @@ const processTeam = (
 		depth: teamInput.depth,
 	};
 
+	let playThroughInjuriesBoth;
+	if (g.get("userTids").includes(teamInput.tid) && !g.get("spectator")) {
+		playThroughInjuriesBoth = teamInput.playThroughInjuries;
+	} else {
+		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
+	}
+
+	const playThroughInjuries =
+		playThroughInjuriesBoth[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
+
 	for (const p of players) {
+		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
+
 		const rating = p.ratings[p.ratings.length - 1];
 		const playerCompositeRatings: any = {};
 		const p2 = {
@@ -91,12 +112,17 @@ const processTeam = (
 			name: `${p.firstName} ${p.lastName}`,
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
-			valueNoPot: p.valueNoPot,
+			valueNoPot: p.valueNoPot * injuryFactor,
 			stat: {},
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
-			injury: p.injury,
-			injured: p.injury.type !== "Healthy",
+			injury: {
+				...p.injury,
+				playingThrough:
+					p.injury.gamesRemaining > 0 &&
+					p.injury.gamesRemaining <= playThroughInjuries,
+			},
+			injured: p.injury.gamesRemaining > playThroughInjuries,
 			jerseyNumber:
 				p.stats.length > 0
 					? p.stats[p.stats.length - 1].jerseyNumber
@@ -112,12 +138,13 @@ const processTeam = (
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
-			p2.compositeRating[k] = player.compositeRating(
-				rating,
-				COMPOSITE_WEIGHTS[k].ratings,
-				COMPOSITE_WEIGHTS[k].weights,
-				false,
-			);
+			p2.compositeRating[k] =
+				player.compositeRating(
+					rating,
+					COMPOSITE_WEIGHTS[k].ratings,
+					COMPOSITE_WEIGHTS[k].weights,
+					false,
+				) * injuryFactor;
 
 			if (
 				isSport("hockey") &&
@@ -161,19 +188,19 @@ const processTeam = (
 		delete p.pid;
 	}
 
-	// Number of players to factor into pace and defense rating calculation
-	let numPlayers = t.player.length;
-
-	if (numPlayers > 7) {
-		numPlayers = 7;
-	}
-
 	if (isSport("basketball")) {
-		// Would be better if these were scaled by average min played and endurancence
 		t.pace = 0;
 
-		for (let i = 0; i < numPlayers; i++) {
-			t.pace += t.player[i].compositeRating.pace;
+		let numPlayers = 0;
+		for (const p of t.player) {
+			if (p.injury.gamesRemaining === 0 || p.injury.playingThrough) {
+				numPlayers += 1;
+				t.pace += p.compositeRating.pace;
+
+				if (numPlayers >= MAX_NUM_PLAYERS_PACE) {
+					break;
+				}
+			}
 		}
 
 		t.pace /= numPlayers;
@@ -246,6 +273,7 @@ const loadTeams = async (tids: number[]) => {
 			teams[tid] = processTeam(
 				{
 					tid,
+					playThroughInjuries: [0, 0],
 				},
 				{
 					cid: -1,

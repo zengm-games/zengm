@@ -123,6 +123,8 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	goalie: "Goalies",
 	"all|||playoffsAll": "All Games",
 	current: "Current",
+	overview: "Overview",
+	gameLog: "Game Log",
 };
 
 if (isSport("hockey")) {
@@ -161,7 +163,10 @@ export const getDropdownValue = (
 	}
 };
 
-const useDropdownOptions = (field: string) => {
+const useDropdownOptions = (
+	field: string,
+	customOptions?: (string | number)[],
+) => {
 	const state = useLocalShallow(state2 => ({
 		hideDisabledTeams: state2.hideDisabledTeams,
 		phase: state2.phase,
@@ -174,7 +179,9 @@ const useDropdownOptions = (field: string) => {
 
 	let keys: (number | string)[];
 
-	if (field === "teams") {
+	if (customOptions) {
+		keys = customOptions;
+	} else if (field === "teams") {
 		keys = Object.keys(sortedTeams);
 	} else if (field === "teamsAndSpecial") {
 		keys = ["special", ...Object.keys(sortedTeams)];
@@ -352,6 +359,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["league", "conf", "div"];
 	} else if (field === "flagNote") {
 		keys = ["flag", "note", "either"];
+	} else if (field === "playerProfile") {
+		keys = ["overview", "gameLog"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -17,7 +18,7 @@ export const formatStatGameHigh = (
 		}
 
 		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
-		const row = (ps[stat] as unknown) as
+		const row = ps[stat] as unknown as
 			| [number, number]
 			| [number, number, string, number, number];
 
@@ -149,7 +150,10 @@ const PlayerStats = ({
 					searchValue: p.name,
 				},
 				pos,
-				p.age,
+
+				// Only show age at death for career totals, otherwise just use current age
+				season === undefined ? wrappedAgeAtDeath(p.age, p.ageAtDeath) : p.age,
+
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -183,9 +187,6 @@ const PlayerStats = ({
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
 				.
-				{isSport("basketball")
-					? " Only players averaging more than 5 minutes per game are shown."
-					: null}
 			</p>
 
 			<DataTable

@@ -412,8 +412,7 @@ table {
 
 .jersey-number-popover {
 	font-size: 10px;
-	line-height: 18px;
-	vertical-align: 4%;
+	line-height: 16px;
 }
 
 .watch,
@@ -697,6 +696,11 @@ tr.table-warning:hover > td {
 	border: 1px solid $blue !important;
 	color: $gray-700 !important;
 }
+.btn-light-bordered-group-right {
+	border-left-width: 0 !important;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
 
 .navbar-border {
 	border-bottom: 1px solid $gray-200;
@@ -707,6 +711,15 @@ tr.table-warning:hover > td {
 .play-button-wrapper {
 	margin: -8px 0;
 	height: 51px;
+}
+.play-button-wrapper-mobile {
+	.dropdown-item {
+		padding-top: 0.75rem !important;
+		padding-bottom: 0.75rem !important;
+	}
+	.kbd {
+		display: none;
+	}
 }
 .dropdown-links .dropdown.show.nav-item {
 	background-color: $gray-200;
@@ -1248,4 +1261,18 @@ a.anchor {
 		margin-right: 8px !important;
 		margin-top: -4px !important;
 	}
+}
+
+@include media-breakpoint-up(sm) {
+	.play-through-injuries {
+		width: 200px;
+	}
+}
+
+// https://www.codeply.com/go/NiFzSCukVl/bootstrap-4-open-modal-from-another-modal
+.highest-modal {
+	z-index: 1052 !important;
+}
+.highest-modal-backdrop.show {
+	z-index: 1051 !important;
 }

@@ -59,8 +59,7 @@ const updateNegotiationList = async () => {
 	sumContracts /= 1000;
 
 	const payroll = await team.getPayroll(userTid);
-	const capSpace =
-		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
+	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],

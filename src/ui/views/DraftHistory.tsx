@@ -37,15 +37,14 @@ const ExportButton = ({ season }: { season: number }) => {
 	);
 };
 
-const DraftSummary = ({
+const DraftHistory = ({
 	challengeNoRatings,
 	draftType,
 	players,
 	season,
-	startingSeason,
 	stats,
 	userTid,
-}: View<"draftSummary">) => {
+}: View<"draftHistory">) => {
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({
@@ -189,12 +188,12 @@ const DraftSummary = ({
 				.
 			</p>
 
-			{season >= startingSeason ? <ExportButton season={season} /> : null}
+			<ExportButton season={season} />
 
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				name="DraftSummary"
+				name="DraftHistory"
 				rows={rows}
 				superCols={superCols}
 			/>
@@ -202,13 +201,12 @@ const DraftSummary = ({
 	);
 };
 
-DraftSummary.propTypes = {
+DraftHistory.propTypes = {
 	draftType: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
-	startingSeason: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 
-export default DraftSummary;
+export default DraftHistory;

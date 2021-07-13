@@ -54,6 +54,7 @@ import {
 	initUILocalGames,
 	newLeagueGodModeLimits,
 	loadNames,
+	defaultInjuries,
 } from "../util";
 import views from "../views";
 import type {
@@ -82,6 +83,9 @@ import type {
 	Conf,
 	Div,
 	LocalStateUI,
+	EventBBGM,
+	Team,
+	GameAttribute,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -97,6 +101,15 @@ import type { Settings } from "../views/settings";
 import { wrap } from "../util/g";
 import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
+import { types } from "../../common/transactionInfo";
+import type { ExportLeagueKey } from "../../ui/views/ExportLeague";
+import stats from "../core/player/stats";
+import {
+	gameAttributesKeysGameState,
+	gameAttributesKeysTeams,
+} from "../util/defaultGameAttributes";
+import goatFormula from "../util/goatFormula";
+import getRandomTeams from "./getRandomTeams";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1116,11 +1129,11 @@ const genFilename = (data: any) => {
 			g.get("phase") === PHASE.AFTER_TRADE_DEADLINE) &&
 		data.hasOwnProperty("teams")
 	) {
-		const season =
-			data.teams[g.get("userTid")].seasons[
-				data.teams[g.get("userTid")].seasons.length - 1
-			];
-		filename += `_${season.won}-${season.lost}`;
+		const seasons = data.teams[g.get("userTid")].seasons;
+		if (seasons) {
+			const season = seasons[seasons.length - 1];
+			filename += `_${season.won}-${season.lost}`;
+		}
 	}
 
 	if (
@@ -1149,10 +1162,147 @@ const genFilename = (data: any) => {
 	return `${filename}.json`;
 };
 
-const exportLeague = async (stores: string[], compressed: boolean) => {
-	const data = await league.exportLeague(stores);
+const exportLeague = async (
+	checked: Record<ExportLeagueKey, boolean> & {
+		compressed: boolean;
+	},
+) => {
+	const storesSet = new Set<string>();
+
+	const storesByKey = {
+		players: ["players", "releasedPlayers", "awards"],
+		teamsBasic: ["teams"],
+		teams: ["teamSeasons", "teamStats"],
+		headToHead: ["headToHeads"],
+		schedule: ["schedule", "playoffSeries"],
+		draftPicks: ["draftPicks"],
+		leagueSettings: ["gameAttributes"],
+		gameState: [
+			"gameAttributes",
+			"trade",
+			"negotiations",
+			"draftLotteryResults",
+			"messages",
+			"playerFeats",
+			"allStars",
+			"scheduledEvents",
+		],
+		newsFeedTransactions: ["events"],
+		newsFeedOther: ["events"],
+		games: ["games"],
+	};
+
+	for (const key of helpers.keys(storesByKey)) {
+		if (checked[key]) {
+			for (const store of storesByKey[key]) {
+				storesSet.add(store);
+			}
+		}
+	}
+
+	const stores = Array.from(storesSet);
+
+	const filter: any = {};
+	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category === "transaction";
+		};
+	} else if (!checked.newsFeedTransactions && checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category !== "transaction";
+		};
+	} else if (checked.leagueSettings || checked.gameState) {
+		filter.gameAttributes = (row: GameAttribute) => {
+			if (!checked.leagueSettings) {
+				if (
+					!gameAttributesKeysGameState.includes(row.key) &&
+					!gameAttributesKeysTeams.includes(row.key)
+				) {
+					return false;
+				}
+			}
+
+			if (!checked.gameState) {
+				if (gameAttributesKeysGameState.includes(row.key)) {
+					return false;
+				}
+			}
+
+			if (!checked.teams) {
+				if (gameAttributesKeysTeams.includes(row.key)) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+	}
+
+	const forEach: any = {};
+	if (checked.players && !checked.gameHighs) {
+		forEach.players = (p: Player) => {
+			for (const row of p.stats) {
+				for (const stat of stats.max) {
+					delete row[stat];
+				}
+			}
+		};
+	}
+
+	const map: any = {};
+	const teamsBasicOnly = checked.teamsBasic && !checked.teams;
+	if (teamsBasicOnly) {
+		map.teams = (t: Team) => {
+			return {
+				tid: t.tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				colors: t.colors,
+				jersey: t.jersey,
+				cid: t.cid,
+				did: t.did,
+				pop: t.pop,
+				stadiumCapacity: t.stadiumCapacity,
+				disabled: t.disabled,
+				srID: t.srID,
+			};
+		};
+	}
+
+	const data = await league.exportLeague(stores, {
+		filter,
+		forEach,
+		map,
+	});
+
+	// Include confs and divs if exporting just teams, in case gameAttributes was not selected
+	if (checked.teamsBasic) {
+		data.gameAttributes = data.gameAttributes ?? {};
+		data.gameAttributes.confs = data.gameAttributes.confs ?? g.get("confs");
+		data.gameAttributes.divs = data.gameAttributes.divs ?? g.get("divs");
+	}
+
+	// Include startingSeason when necessary (historical data but no game state)
+	const hasHistoricalData =
+		checked.players ||
+		checked.teams ||
+		checked.headToHead ||
+		checked.schedule ||
+		checked.draftPicks;
+	if (
+		hasHistoricalData &&
+		(!data.gameAttributes || data.gameAttributes.startingSeason === undefined)
+	) {
+		data.startingSeason = g.get("season");
+	}
+
 	const filename = genFilename(data);
-	const json = JSON.stringify(data, null, compressed ? undefined : 2);
+	const json = JSON.stringify(data, null, checked.compressed ? undefined : 2);
 	return {
 		filename,
 		json,
@@ -1237,6 +1387,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		},
 	});
 
+	data.startingSeason = g.get("startingSeason");
+
 	for (const p of data.players) {
 		const info = infos.find(info => info.pid === p.pid);
 		if (info) {
@@ -1275,6 +1427,10 @@ const generateFace = async (country: string) => {
 
 const getAutoPos = (ratings: any) => {
 	return player.pos(ratings);
+};
+
+const getDefaultInjuries = () => {
+	return defaultInjuries;
 };
 
 const getLeagueInfo = async (
@@ -1768,9 +1924,12 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
 		// Account and changes checks can be async
 		(async () => {
-			await checkChanges(conditions);
+			// Account check needs to complete before initAds, though
 			await checkAccount(conditions);
 			await toUI("initAds", [local.goldUntil], conditions);
+
+			// This might make another HTTP request, and is less urgent than ads
+			await checkChanges(conditions);
 		})();
 	} else {
 		// No need to run checkAccount and make another HTTP request
@@ -1794,6 +1953,10 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	const options = ((await idb.meta.get("attributes", "options")) ||
 		{}) as unknown as Options;
 	await toUI("updateLocal", [{ units: options.units }], conditions);
+};
+
+const initGold = async () => {
+	await toUI("initGold", []);
 };
 
 const lockSet = async (name: LockName, value: boolean) => {
@@ -2015,6 +2178,12 @@ const removeLastTeam = async (): Promise<void> => {
 	}
 
 	await idb.cache.flush();
+};
+
+const cloneLeague = async (lid: number) => {
+	const name = await league.clone(lid);
+	await toUI("realtimeUpdate", [["leagues"]]);
+	return name;
 };
 
 const removeLeague = async (lid: number) => {
@@ -2285,6 +2454,24 @@ const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
 	}
 
 	await toUI("realtimeUpdate", [["gameSim"]]);
+};
+
+const setGOATFormula = async (formula: string) => {
+	// Arbitrary player for testing
+	const players = await idb.cache.players.getAll();
+	const p = players[0];
+	if (!p) {
+		throw new Error("No players found");
+	}
+
+	// Confirm it actually works
+	goatFormula.evaluate(p, formula);
+
+	await league.setGameAttributes({
+		goatFormula: formula,
+	});
+
+	await toUI("realtimeUpdate", [["g.goatFormula"]]);
 };
 
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
@@ -2795,6 +2982,23 @@ const updateOptions = async (
 	await toUI("realtimeUpdate", [["options"]]);
 };
 
+const updatePlayThroughInjuries = async (
+	tid: number,
+	value: number,
+	playoffs?: boolean,
+) => {
+	const index = playoffs ? 1 : 0;
+
+	const t = await idb.cache.teams.get(tid);
+	if (t) {
+		t.playThroughInjuries[index] = value;
+		await idb.cache.teams.put(t);
+
+		// So roster re-renders, which is needed to maintain state on mobile when the panel is closed
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
+};
+
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
 	const cachedPlayer = await idb.cache.players.get(pid);
 
@@ -2933,9 +3137,7 @@ const updateTeamInfo = async (
 				teamSeason.name = t.name;
 				teamSeason.abbrev = t.abbrev;
 				teamSeason.imgURL = t.imgURL;
-				if (t.imgURLSmall) {
-					teamSeason.imgURLSmall = t.imgURLSmall;
-				}
+				teamSeason.imgURLSmall = t.imgURLSmall;
 				teamSeason.colors = t.colors;
 				teamSeason.jersey = t.jersey;
 				teamSeason.pop = t.pop;
@@ -3213,10 +3415,10 @@ const toggleTradeDeadline = async () => {
 	}
 };
 
-const tradeCounterOffer = async (): Promise<string> => {
-	const message = await trade.makeItWorkTrade();
+const tradeCounterOffer = async () => {
+	const response = await trade.makeItWorkTrade();
 	await toUI("realtimeUpdate", []);
-	return message;
+	return response;
 };
 
 const updateTrade = async (teams: TradeTeams) => {
@@ -3262,6 +3464,7 @@ export default {
 	exportPlayers,
 	generateFace,
 	getAutoPos,
+	getDefaultInjuries,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,
@@ -3269,11 +3472,13 @@ export default {
 	getRandomCountry,
 	getRandomName,
 	getRandomRatings,
+	getRandomTeams,
 	getTradingBlockOffers,
 	ping,
 	handleUploadedDraftClass,
 	importPlayers,
 	init,
+	initGold,
 	lockSet,
 	ovr,
 	proposeTrade,
@@ -3281,6 +3486,7 @@ export default {
 	realtimeUpdate,
 	regenerateDraftClass,
 	releasePlayer,
+	cloneLeague,
 	removeLeague,
 	removePlayers,
 	reorderDepthDrag,
@@ -3291,6 +3497,7 @@ export default {
 	runBefore,
 	setForceWin,
 	setForceWinAll,
+	setGOATFormula,
 	setLocal,
 	setPlayerNote,
 	sign,
@@ -3314,6 +3521,7 @@ export default {
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,
+	updatePlayThroughInjuries,
 	updatePlayerWatch,
 	updatePlayingTime,
 	updateTeamInfo,

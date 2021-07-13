@@ -13,7 +13,6 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	events: "News feed",
 	negotiations: "In-progress contract negotiations",
 	trade: "In-progress trade negotiations",
-	meta: "League metadata, like league name",
 	messages: "Messages from the owner",
 	playerFeats: "Statistical feats",
 	playoffSeries: "Upcoming and historical playoff series",

@@ -75,6 +75,9 @@ const allStarMVP = async (
 			},
 		],
 		conditions,
+		g.get("season"),
+		true,
+		game.gid,
 	);
 };
 
@@ -222,9 +225,20 @@ const writeGameStats = async (
 			gameStats.teams[t].players[p].skills = helpers.deepCopy(
 				results.team[t].player[p].skills,
 			);
-			gameStats.teams[t].players[p].injury = helpers.deepCopy(
-				results.team[t].player[p].injury,
-			);
+			gameStats.teams[t].players[p].injury = {
+				type: results.team[t].player[p].injury.type,
+				gamesRemaining: results.team[t].player[p].injury.gamesRemaining,
+			};
+			if (results.team[t].player[p].injury.newThisGame) {
+				gameStats.teams[t].players[p].injury.newThisGame = true;
+			}
+			if (results.team[t].player[p].injury.playingThrough) {
+				gameStats.teams[t].players[p].injury.playingThrough = true;
+			}
+			if (results.team[t].player[p].injuryAtStart) {
+				gameStats.teams[t].players[p].injuryAtStart =
+					results.team[t].player[p].injuryAtStart;
+			}
 			gameStats.teams[t].players[p].jerseyNumber =
 				results.team[t].player[p].jerseyNumber;
 		}
@@ -258,11 +272,8 @@ const writeGameStats = async (
 		}
 	}
 
-	const {
-		currentRound,
-		numGamesToWinSeries,
-		playoffInfos,
-	} = await getPlayoffInfos(gameStats);
+	const { currentRound, numGamesToWinSeries, playoffInfos } =
+		await getPlayoffInfos(gameStats);
 	if (playoffInfos) {
 		gameStats.teams[0].playoffs = playoffInfos[0];
 		gameStats.teams[1].playoffs = playoffInfos[1];
@@ -493,9 +504,8 @@ const writeGameStats = async (
 				];
 
 				if (numGamesThisRound > 1) {
-					const numGamesToWinSeries = helpers.numGamesToWinSeries(
-						numGamesThisRound,
-					);
+					const numGamesToWinSeries =
+						helpers.numGamesToWinSeries(numGamesThisRound);
 					if (playoffInfos[indTeam].won === numGamesToWinSeries) {
 						endPart += `, winning the ${round} ${playoffInfos[indTeam].won}-${playoffInfos[indTeam].lost}`;
 					} else if (playoffInfos[indTeam].lost === numGamesToWinSeries) {

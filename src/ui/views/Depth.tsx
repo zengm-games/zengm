@@ -65,6 +65,7 @@ const Depth = ({
 	keepRosterSorted,
 	multiplePositionsWarning,
 	players,
+	playoffs,
 	pos,
 	ratings,
 	season,
@@ -82,7 +83,7 @@ const Depth = ({
 	useTitleBar({
 		title: isSport("hockey") ? "Lines" : "Depth Chart",
 		dropdownView: "depth",
-		dropdownFields: { teams: abbrev, depth: pos },
+		dropdownFields: { teams: abbrev, depth: pos, playoffs },
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,

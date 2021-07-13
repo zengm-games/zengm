@@ -18,9 +18,12 @@ const makeItWorkTrade = async () => {
 	const teams = await makeItWork(helpers.deepCopy(teams0), false);
 
 	if (!teams) {
-		return `${
-			g.get("teamInfoCache")[teams0[1].tid]?.region
-		} GM: "I can't afford to give up so much."`;
+		return {
+			changed: false,
+			message: `${
+				g.get("teamInfoCache")[teams0[1].tid]?.region
+			} GM: "I can't afford to give up so much."`,
+		};
 	}
 
 	const s = await summary(teams); // Store AI's proposed trade in database, if it's different
@@ -51,14 +54,20 @@ const makeItWorkTrade = async () => {
 	}
 
 	if (s.warning) {
-		return `${
-			g.get("teamInfoCache")[teams[1].tid]?.region
-		} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
+		return {
+			changed: updated,
+			message: `${
+				g.get("teamInfoCache")[teams[1].tid]?.region
+			} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`,
+		};
 	}
 
-	return `${
-		g.get("teamInfoCache")[teams[1].tid]?.region
-	} GM: "How does this sound?"`;
+	return {
+		changed: updated,
+		message: `${
+			g.get("teamInfoCache")[teams[1].tid]?.region
+		} GM: "How does this sound?"`,
+	};
 };
 
 export default makeItWorkTrade;

@@ -37,6 +37,7 @@ const augmentSeries = async (
 				obj.abbrev = teamSeason.abbrev;
 				obj.region = teamSeason.region;
 				obj.imgURL = teamSeason.imgURL;
+				obj.imgURLSmall = teamSeason.imgURLSmall;
 			}
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
@@ -171,7 +172,7 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]?.abbrev;
 };
 
-const leagueUrl = (components: (number | string)[]): string =>
+const leagueUrl = (components: (number | string | undefined)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
 /**

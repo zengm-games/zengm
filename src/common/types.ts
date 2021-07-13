@@ -138,6 +138,8 @@ export type DraftLotteryResult = {
 	result: DraftLotteryResultArray;
 };
 
+export type DraftPickSeason = number | "fantasy" | "expansion";
+
 export type DraftPickWithoutKey = {
 	dpid?: number;
 	tid: number;
@@ -145,7 +147,7 @@ export type DraftPickWithoutKey = {
 	round: number;
 	pick: number;
 	// 0 if not set
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 };
 
 export type DraftPick = {
@@ -165,25 +167,32 @@ export type DraftType =
 	| "freeAgents"
 	| "nhl2017";
 
-// Key is team ID receiving this asset. from is team ID that traded this asset away
-// Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
+// Key is team ID receiving this asset
+// Why store name and extra draft pick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
 type TradeEventAsset =
 	| {
 			pid: number;
-			tid: number; // tid the player was originally on
 			name: string;
 			contract: PlayerContract;
 			ratingsIndex: number;
 			statsIndex: number;
 	  }
-	| DraftPick;
+	| {
+			dpid: number;
+			season: DraftPickSeason;
+			round: number;
+			originalTid: number;
+	  };
 
 export type TradeEventTeams = {
 	assets: TradeEventAsset[];
 }[];
 
-export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
-	T extends Record<K, V> ? T : never;
+export type DiscriminateUnion<
+	T,
+	K extends keyof T,
+	V extends T[K],
+> = T extends Record<K, V> ? T : never;
 
 export type EventBBGMWithoutKey =
 	| {
@@ -352,6 +361,12 @@ export type NamesLegacy = {
 export type Conf = { cid: number; name: string };
 export type Div = { cid: number; did: number; name: string };
 
+export type InjuriesSetting = {
+	name: string;
+	frequency: number;
+	games: number;
+}[];
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -386,12 +401,19 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
+	goatFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
 	hardCap: boolean;
 	hideDisabledTeams: boolean;
+	hofFactor: number;
 	homeCourtAdvantage: number;
+	inflationAvg: number;
+	inflationMax: number;
+	inflationMin: number;
+	inflationStd: number;
+	injuries?: InjuriesSetting;
 	injuryRate: number;
 	lid: number;
 	luxuryPayroll: number;
@@ -633,6 +655,7 @@ export type LogEventSaveOptions = DistributiveOmit<
 
 export type LogEventShowOptions = {
 	extraClass?: string;
+	hideInLiveGame?: boolean;
 	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent: boolean;
@@ -792,7 +815,8 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraParam?: number | string;
+	dropdownCustomOptions?: Record<string, (number | string)[]>;
+	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
 	dropdownView?: string;
 	dropdownFields?: {
 		[key: string]: number | string;
@@ -1118,7 +1142,6 @@ export type PlayoffSeriesTeam = {
 	};
 	seed: number;
 	tid: number;
-	winp: number;
 	won: number;
 };
 
@@ -1235,6 +1258,9 @@ export type Team = {
 	disabled: boolean;
 	keepRosterSorted: boolean;
 
+	// [regular season, playoffs]
+	playThroughInjuries: [number, number];
+
 	// Optional because no upgrade
 	autoTicketPrice?: boolean;
 
@@ -1263,6 +1289,7 @@ type TeamSeasonPlus = TeamSeason & {
 	ptsDefault: number;
 	ptsMax: number;
 	ptsPct: number;
+	avgAge: number | undefined;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
@@ -1379,6 +1406,9 @@ export type TeamSeasonWithoutKey = {
 	// o - eliminated
 	clinchedPlayoffs?: "x" | "y" | "z" | "o";
 
+	// Value only written here after the end of the season
+	avgAge?: number;
+
 	// Copied over from Team
 	cid: number;
 	did: number;
@@ -1445,6 +1475,7 @@ export type Trade = {
 export type UpdateEvents = (
 	| "account"
 	| "firstRun"
+	| "g.goatFormula"
 	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"

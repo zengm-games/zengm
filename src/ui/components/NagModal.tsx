@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
 import { GAME_NAME, WEBSITE_ROOT } from "../../common";
+import { animation } from "../views/Settings/Injuries";
 import GameLinks from "./GameLinks";
 
 type Props = {
@@ -14,7 +15,7 @@ const NagModal = ({ close, show }: Props) => {
 		!window.googletag ||
 		!window.googletag.pubads;
 	return (
-		<Modal show={show} onHide={close}>
+		<Modal show={show} onHide={close} animation={animation}>
 			<Modal.Header closeButton>
 				{adBlock
 					? "Are you using an ad blocker?"

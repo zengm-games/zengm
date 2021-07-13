@@ -7,6 +7,8 @@ const teamInfos: {
 		pop: number;
 		colors: [string, string, string];
 		jersey: string;
+		latitude: number;
+		longitude: number;
 	};
 } = {
 	ATL: {
@@ -19,6 +21,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey3",
 		}),
+		latitude: 33.7489954,
+		longitude: -84.3879824,
 	},
 	BAL: {
 		region: "Baltimore",
@@ -30,6 +34,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey",
 		}),
+		latitude: 39.2903848,
+		longitude: -76.6121893,
 	},
 	BOS: {
 		region: "Boston",
@@ -41,6 +47,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 42.3600825,
+		longitude: -71.0588801,
 	},
 	BKN: {
 		region: "Brooklyn",
@@ -52,6 +60,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 40.6781784,
+		longitude: -73.9441579,
 	},
 	CHA: {
 		region: "Charlotte",
@@ -63,6 +73,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 35.2270869,
+		longitude: -80.8431267,
 	},
 	CIN: {
 		region: "Cincinnati",
@@ -74,6 +86,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey4",
 		}),
+		latitude: 39.1031182,
+		longitude: -84.5120196,
 	},
 	CLE: {
 		region: "Cleveland",
@@ -85,6 +99,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 41.49932,
+		longitude: -81.6943605,
 	},
 	DAL: {
 		region: "Dallas",
@@ -96,6 +112,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 32.7766642,
+		longitude: -96.7969879,
 	},
 	DEN: {
 		region: "Denver",
@@ -107,6 +125,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey",
 		}),
+		latitude: 39.7392358,
+		longitude: -104.990251,
 	},
 	DET: {
 		region: "Detroit",
@@ -118,6 +138,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 42.331427,
+		longitude: -83.0457538,
 	},
 	HOU: {
 		region: "Houston",
@@ -129,6 +151,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey3",
 		}),
+		latitude: 29.7604267,
+		longitude: -95.3698028,
 	},
 	IND: {
 		region: "Indianapolis",
@@ -140,6 +164,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey3",
 		}),
+		latitude: 39.768403,
+		longitude: -86.158068,
 	},
 	KC: {
 		region: "Kansas City",
@@ -151,6 +177,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey4",
 		}),
+		latitude: 39.0997265,
+		longitude: -94.5785667,
 	},
 	LA: {
 		region: "Los Angeles",
@@ -162,6 +190,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 34.0522342,
+		longitude: -118.2436849,
 	},
 	LAE: {
 		region: "Los Angeles",
@@ -173,6 +203,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 34.0522342,
+		longitude: -118.2436849,
 	},
 	LV: {
 		region: "Las Vegas",
@@ -184,6 +216,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey3",
 		}),
+		latitude: 36.1699412,
+		longitude: -115.1398296,
 	},
 	MEM: {
 		region: "Memphis",
@@ -195,6 +229,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey4",
 		}),
+		latitude: 35.1495343,
+		longitude: -90.0489801,
 	},
 	MIA: {
 		region: "Miami",
@@ -206,6 +242,8 @@ const teamInfos: {
 			football: "football4",
 			hockey: "hockey4",
 		}),
+		latitude: 25.7616798,
+		longitude: -80.1917902,
 	},
 	MIL: {
 		region: "Milwaukee",
@@ -217,6 +255,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey4",
 		}),
+		latitude: 43.0389025,
+		longitude: -87.9064736,
 	},
 	MIN: {
 		region: "Minneapolis",
@@ -228,6 +268,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 44.977753,
+		longitude: -93.2650108,
 	},
 	MXC: {
 		region: "Mexico City",
@@ -239,6 +281,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey3",
 		}),
+		latitude: 19.4326077,
+		longitude: -99.133208,
 	},
 	NOL: {
 		region: "New Orleans",
@@ -250,6 +294,8 @@ const teamInfos: {
 			football: "football4",
 			hockey: "hockey4",
 		}),
+		latitude: 29.9510658,
+		longitude: -90.0715323,
 	},
 	NYC: {
 		region: "New York",
@@ -261,6 +307,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 40.7127753,
+		longitude: -74.0059728,
 	},
 	OKC: {
 		region: "Oklahoma City",
@@ -272,6 +320,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey",
 		}),
+		latitude: 35.4675602,
+		longitude: -97.5164276,
 	},
 	ORL: {
 		region: "Orlando",
@@ -283,6 +333,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey4",
 		}),
+		latitude: 28.5383355,
+		longitude: -81.3792365,
 	},
 	PHI: {
 		region: "Philadelphia",
@@ -294,6 +346,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey3",
 		}),
+		latitude: 39.9525839,
+		longitude: -75.1652215,
 	},
 	PHO: {
 		region: "Phoenix",
@@ -305,6 +359,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 33.4483771,
+		longitude: -112.0740373,
 	},
 	PIT: {
 		region: "Pittsburgh",
@@ -316,6 +372,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 40.4406248,
+		longitude: -79.9958864,
 	},
 	POR: {
 		region: "Portland",
@@ -327,6 +385,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 45.5051064,
+		longitude: -122.6750261,
 	},
 	SA: {
 		region: "San Antonio",
@@ -338,6 +398,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 29.4241219,
+		longitude: -98.4936282,
 	},
 	SAC: {
 		region: "Sacramento",
@@ -349,6 +411,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 38.5815719,
+		longitude: -121.4943996,
 	},
 	SD: {
 		region: "San Diego",
@@ -360,6 +424,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 32.715738,
+		longitude: -117.1610838,
 	},
 	TPA: {
 		region: "Tampa",
@@ -371,6 +437,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 27.950575,
+		longitude: -82.4571776,
 	},
 	UTA: {
 		region: "Utah",
@@ -382,6 +450,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey3",
 		}),
+		latitude: 39.3209801,
+		longitude: -111.0937311,
 	},
 	VAN: {
 		region: "Vancouver",
@@ -393,6 +463,8 @@ const teamInfos: {
 			football: "football4",
 			hockey: "hockey4",
 		}),
+		latitude: 49.2827291,
+		longitude: -123.1207375,
 	},
 	WAS: {
 		region: "Washington",
@@ -404,6 +476,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 38.9072,
+		longitude: -77.0369,
 	},
 
 	// 2021-05-16 - new teams
@@ -418,6 +492,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 30.267153,
+		longitude: -97.7430608,
 	},
 	BUF: {
 		region: "Buffalo",
@@ -429,6 +505,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey",
 		}),
+		latitude: 42.8864468,
+		longitude: -78.8783689,
 	},
 	HAW: {
 		region: "Hawaii",
@@ -440,6 +518,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey3",
 		}),
+		latitude: 19.8967662,
+		longitude: -155.5827818,
 	},
 	JAX: {
 		region: "Jacksonville",
@@ -451,6 +531,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey3",
 		}),
+		latitude: 30.3321838,
+		longitude: -81.655651,
 	},
 	OTT: {
 		region: "Ottawa",
@@ -462,6 +544,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 45.4215296,
+		longitude: -75.6971931,
 	},
 	SF: {
 		region: "San Francisco",
@@ -473,6 +557,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey3",
 		}),
+		latitude: 37.7749295,
+		longitude: -122.4194155,
 	},
 	TOR: {
 		region: "Toronto",
@@ -484,6 +570,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey4",
 		}),
+		latitude: 43.653226,
+		longitude: -79.3831843,
 	},
 	VB: {
 		region: "Virginia Beach",
@@ -495,6 +583,8 @@ const teamInfos: {
 			football: "football4",
 			hockey: "hockey",
 		}),
+		latitude: 36.8529263,
+		longitude: -75.977985,
 	},
 
 	// 2021-05-16 - relocated
@@ -509,6 +599,8 @@ const teamInfos: {
 			football: "football4",
 			hockey: "hockey4",
 		}),
+		latitude: 51.0447331,
+		longitude: -114.0718831,
 	},
 	MON: {
 		region: "Montreal",
@@ -520,6 +612,8 @@ const teamInfos: {
 			football: "football",
 			hockey: "hockey",
 		}),
+		latitude: 45.5016889,
+		longitude: -73.567256,
 	},
 	SJ: {
 		region: "San Jose",
@@ -531,6 +625,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 37.3382082,
+		longitude: -121.8863286,
 	},
 
 	// 2021-05-16 - rebranded
@@ -545,6 +641,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey4",
 		}),
+		latitude: 41.8781136,
+		longitude: -87.6297982,
 	},
 	SEA: {
 		region: "Seattle",
@@ -556,6 +654,8 @@ const teamInfos: {
 			football: "football3",
 			hockey: "hockey3",
 		}),
+		latitude: 47.6062095,
+		longitude: -122.3320708,
 	},
 	STL: {
 		region: "St. Louis",
@@ -567,6 +667,8 @@ const teamInfos: {
 			football: "football2",
 			hockey: "hockey",
 		}),
+		latitude: 38.6270025,
+		longitude: -90.1994042,
 	},
 };
 

@@ -1,3 +1,5 @@
+# https://github.com/typicode/husky/issues/850#issuecomment-774231951
+
 command_exists () {
   command -v "$1" >/dev/null 2>&1
 }

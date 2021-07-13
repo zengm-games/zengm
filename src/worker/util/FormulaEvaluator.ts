@@ -94,7 +94,8 @@ const parseUnaryMinus = (string: string) => {
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			"\\d+(?:[\\.]\\d+)?(?:[eE]\\d+)?|[()]" + `|${operatorsString}|[a-zA-Z]+`,
+			"\\d+(?:[\\.]\\d+)?(?:[eE]\\d+)?|[()]" +
+				`|${operatorsString}|[a-zA-Z\\d]+`,
 			"g",
 		),
 	);
@@ -162,6 +163,10 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
+
+		if (this.tokens.length === 0) {
+			throw new Error("Formula cannot be empty");
+		}
 	}
 
 	private partiallyEvaluate(tokens: string[]) {

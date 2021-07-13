@@ -1,5 +1,6 @@
 import Bugsnag from "@bugsnag/browser";
 import { useEffect, useRef } from "react";
+import { NextPrevButtons } from "../../components";
 import { logEvent } from "../../util";
 import type { LeagueInfo } from "./types";
 
@@ -60,9 +61,18 @@ const LeagueMenu = <Value extends string>({
 	return (
 		<>
 			<div className="d-flex">
-				<label htmlFor="new-league-season" className="flex-grow-1">
-					Season
-				</label>
+				<div className="flex-grow-1">
+					<label htmlFor="new-league-season" className="mr-2">
+						Season
+					</label>
+					<NextPrevButtons
+						currentItem={value}
+						items={values.map(value => value.key).reverse()}
+						onChange={async newValue => {
+							await handleNewValue(newValue, value2);
+						}}
+					/>
+				</div>
 				{quickValues
 					? quickValues.map(key => (
 							<button
@@ -86,7 +96,7 @@ const LeagueMenu = <Value extends string>({
 					value={value}
 					onChange={async event => {
 						await handleNewValue(
-							(event.target.value as unknown) as Value,
+							event.target.value as unknown as Value,
 							value2,
 						);
 					}}

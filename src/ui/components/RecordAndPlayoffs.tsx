@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import type { CSSProperties } from "react";
-import { helpers } from "../util";
+import { formatRecord, helpers } from "../util";
 
 const RecordAndPlayoffs = ({
 	abbrev,
@@ -39,13 +39,12 @@ const RecordAndPlayoffs = ({
 			</span>
 		) : null;
 
-	let record = `${won}-${lost}`;
-	if (typeof otl === "number" && !Number.isNaN(otl) && otl > 0) {
-		record += `-${otl}`;
-	}
-	if (typeof tied === "number" && !Number.isNaN(tied) && tied > 0) {
-		record += `-${tied}`;
-	}
+	const record = formatRecord({
+		won,
+		lost,
+		otl,
+		tied,
+	});
 
 	const recordText = (
 		<a href={helpers.leagueUrl(["standings", season])}>{record}</a>

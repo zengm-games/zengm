@@ -25,7 +25,6 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-// eslint-disable-next-line import/no-unresolved
 import type { Argument } from "classnames";
 import arrayMove from "array-move";
 import type SettingsCache from "./SettingsCache";
@@ -49,6 +48,20 @@ export type SuperCol = {
 	title: string | ReactNode;
 };
 
+export type DataTableRow = {
+	key: number | string;
+	data: (
+		| ReactNode
+		| {
+				classNames?: Argument;
+				value: ReactNode;
+				searchValue?: string;
+				sortValue?: string | number;
+		  }
+	)[];
+	classNames?: Argument;
+};
+
 export type Props = {
 	bordered?: boolean;
 	className?: string;
@@ -60,19 +73,8 @@ export type Props = {
 	name: string;
 	nonfluid?: boolean;
 	pagination?: boolean;
-	rows: {
-		key: number | string;
-		data: (
-			| ReactNode
-			| {
-					classNames?: Argument;
-					value: ReactNode;
-					searchValue?: string;
-					sortValue?: string | number;
-			  }
-		)[];
-		classNames?: Argument;
-	}[];
+	rankCol?: number;
+	rows: DataTableRow[];
 	small?: boolean;
 	striped?: boolean;
 	superCols?: SuperCol[];
@@ -106,6 +108,7 @@ const DataTable = ({
 	name,
 	nonfluid,
 	pagination,
+	rankCol,
 	rows,
 	small,
 	striped,
@@ -170,7 +173,10 @@ const DataTable = ({
 								continue;
 							}
 
-							if (filterFunctions[i](row.data[i]) === false) {
+							if (
+								filterFunctions[i] &&
+								filterFunctions[i](row.data[i]) === false
+							) {
 								return false;
 							}
 						}
@@ -197,10 +203,12 @@ const DataTable = ({
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
 
-		return rowsOrdered.map(row => {
+		return rowsOrdered.map((row, i) => {
 			return {
 				...row,
-				data: colOrderFiltered.map(({ colIndex }) => row.data[colIndex]),
+				data: colOrderFiltered.map(({ colIndex }) =>
+					colIndex === rankCol ? i + 1 : row.data[colIndex],
+				),
 			};
 		});
 	};

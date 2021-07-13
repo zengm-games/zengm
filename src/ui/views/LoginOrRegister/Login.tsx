@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
+import { ActionButton } from "../../components";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
@@ -28,10 +29,15 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 
 			if (data.success) {
 				const currentTimestamp = Math.floor(Date.now() / 1000);
+				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
-					gold: currentTimestamp <= data.gold_until,
+					gold,
 					username: data.username,
 				});
+
+				if (gold) {
+					await toWorker("main", "initGold");
+				}
 
 				// Check for participation achievement, if this is the first time logging in to this sport
 				await toWorker("main", "checkParticipationAchievement", false);
@@ -72,20 +78,9 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						required
 					/>
 				</div>
-				<button type="submit" disabled={submitting} className="btn btn-primary">
-					{submitting ? (
-						<>
-							<span
-								className="spinner-border spinner-border-sm"
-								role="status"
-								aria-hidden="true"
-							></span>{" "}
-							Processing
-						</>
-					) : (
-						"Login"
-					)}
-				</button>
+				<ActionButton type="submit" processing={submitting}>
+					Login
+				</ActionButton>
 				<p className="text-danger mt-3">{errorMessage}</p>
 			</form>
 			<a href="/account/lost_password">Lost password?</a>

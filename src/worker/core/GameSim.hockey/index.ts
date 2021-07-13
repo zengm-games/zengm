@@ -21,6 +21,7 @@ import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -219,12 +220,13 @@ class GameSim {
 						starter.numConsecutiveGamesG !== undefined &&
 						starter.numConsecutiveGamesG > 1
 					) {
-						// Swap starter and backup, if appropriate based on composite rating
+						// Swap starter and backup, if appropriate based on composite rating OR if starter has played 10+ consecutive games and the backup is actually a goalie
 						const backup = players.find(p => !p.injured && p !== starter);
 						if (
 							backup &&
-							backup.compositeRating.goalkeeping >
-								starter.compositeRating.goalkeeping
+							(backup.compositeRating.goalkeeping >
+								starter.compositeRating.goalkeeping ||
+								(starter.numConsecutiveGamesG >= 10 && backup.pos === "G"))
 						) {
 							players[0] = backup;
 							players[1] = starter;
@@ -447,6 +449,7 @@ class GameSim {
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
 				delete this.team[t].player[p].stat.energy;
+				delete this.team[t].player[p].numConsecutiveGamesG;
 			}
 		}
 
@@ -759,21 +762,25 @@ class GameSim {
 
 		let assister1: PlayerGameSim | undefined;
 		let assister2: PlayerGameSim | undefined;
-		const r2 = Math.random();
-		if (deflector) {
-			assister1 = shooter;
-		} else if (r2 < 0.99) {
-			// 20 power is to ensure top players get a lot
-			assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
-				actualShooter,
-			]);
-		}
-		if (r2 < 0.8) {
-			// 0.5 power is to ensure that everybody (including defensemen) at least get some
-			assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
-				actualShooter,
-				assister1 as PlayerGameSim,
-			]);
+
+		// 25% chance of no assist on shorthanded goal
+		if (strengthType !== "sh" || Math.random() > 0.25 || deflector) {
+			const r2 = Math.random();
+			if (deflector) {
+				assister1 = shooter;
+			} else if (r2 < 0.99) {
+				// 20 power is to ensure top players get a lot
+				assister1 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 20, [
+					actualShooter,
+				]);
+			}
+			if (r2 < 0.8) {
+				// 0.5 power is to ensure that everybody (including defensemen) at least get some
+				assister2 = this.pickPlayer(this.o, "playmaker", ["C", "W", "D"], 0.5, [
+					actualShooter,
+					assister1 as PlayerGameSim,
+				]);
+			}
 		}
 
 		const goalie = this.playersOnIce[this.d].G[0];
@@ -1403,6 +1410,7 @@ class GameSim {
 					250 * info.hitter.compositeRating.enforcer * baseInjuryRate
 				) {
 					info.target.injured = true;
+					info.target.newInjury = true;
 					this.playByPlay.logEvent({
 						type: "injury",
 						clock: this.clock,
@@ -1418,6 +1426,7 @@ class GameSim {
 					250 * info.shooter.compositeRating.sniper * baseInjuryRate
 				) {
 					info.target.injured = true;
+					info.target.newInjury = true;
 					this.playByPlay.logEvent({
 						type: "injury",
 						clock: this.clock,
@@ -1432,9 +1441,11 @@ class GameSim {
 			for (const t of teamNums) {
 				for (const pos of helpers.keys(this.playersOnIce[t])) {
 					for (const p of this.playersOnIce[t][pos]) {
-						// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-						let injuryRate =
-							baseInjuryRate * 1.03 ** (Math.min(p.age, 50) - 25);
+						let injuryRate = getInjuryRate(
+							baseInjuryRate,
+							p.age,
+							p.injury.playingThrough,
+						);
 
 						// 10% as many injuries for G
 						if (pos === "G") {
@@ -1448,6 +1459,7 @@ class GameSim {
 							}
 
 							p.injured = true;
+							p.newInjury = true;
 							this.playByPlay.logEvent({
 								type: "injury",
 								clock: this.clock,

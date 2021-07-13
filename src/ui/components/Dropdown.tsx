@@ -6,15 +6,17 @@ import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
 
 const Select = ({
+	customOptions,
 	field,
 	handleChange,
 	value,
 }: {
+	customOptions?: (number | string)[];
 	field: string;
 	handleChange: (value: number | string) => void;
 	value: number | string;
 }) => {
-	const options = useDropdownOptions(field);
+	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
 
 	useEffect(() => {
@@ -106,27 +108,33 @@ Select.propTypes = {
 };
 
 type Props = {
-	extraParam?: number | string;
-	fields: {
-		[key: string]: number | string;
-	};
+	customOptions?: Record<string, (number | string)[]>;
+	customURL?: (fields: Record<string, number | string>) => string;
+	fields: Record<string, number | string>;
 	view: string;
 };
 
-const Dropdown = ({ extraParam, fields, view }: Props) => {
+const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
 	const handleChange = (i: number, value: string | number) => {
-		const newValues = values.slice();
-		newValues[i] = value;
-		const parts = [view, ...newValues];
+		let url;
+		if (customURL) {
+			const newFields = {
+				...fields,
+				[keys[i]]: value,
+			};
 
-		if (extraParam !== undefined) {
-			parts.push(extraParam);
+			url = customURL(newFields);
+		} else {
+			const newValues = values.slice();
+			newValues[i] = value;
+			const parts = [view, ...newValues];
+			url = helpers.leagueUrl(parts);
 		}
 
-		realtimeUpdate([], helpers.leagueUrl(parts));
+		realtimeUpdate([], url);
 	};
 
 	return (
@@ -134,6 +142,7 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			{keys.map((key, i) => {
 				return (
 					<Select
+						customOptions={customOptions ? customOptions[key] : undefined}
 						key={key}
 						field={key}
 						value={values[i]}
@@ -143,12 +152,6 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			})}
 		</form>
 	);
-};
-
-Dropdown.propTypes = {
-	extraParam: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	fields: PropTypes.object.isRequired,
-	view: PropTypes.string.isRequired,
 };
 
 export default Dropdown;

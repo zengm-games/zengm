@@ -27,7 +27,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 43;
+const MAX_SUPPORTED_LEAGUE_VERSION = 44;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -105,6 +105,18 @@ const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
 	basketball: constantsBasketball.COMPOSITE_WEIGHTS,
 	football: constantsFootball.COMPOSITE_WEIGHTS,
 	hockey: constantsHockey.COMPOSITE_WEIGHTS,
+});
+
+const PLAYER_GAME_STATS = bySport<{
+	[key: string]: {
+		name: string;
+		stats: string[];
+		sortBy: string[];
+	};
+}>({
+	basketball: constantsBasketball.PLAYER_GAME_STATS,
+	football: constantsFootball.PLAYER_GAME_STATS,
+	hockey: constantsHockey.PLAYER_GAME_STATS,
 });
 
 const PLAYER_SUMMARY = bySport<{
@@ -343,6 +355,13 @@ const JERSEYS = bySport({
 	},
 });
 
+// Target: 90% in playThroughInjuriesFactor
+const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
+	basketball: [0, 4],
+	football: [0, 2],
+	hockey: [0, 4],
+});
+
 export {
 	AD_DIVS,
 	AWARD_NAMES,
@@ -350,6 +369,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_JERSEY,
+	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 	ACCOUNT_API_URL,
@@ -371,6 +391,7 @@ export {
 	SPORT_HAS_REAL_PLAYERS,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_SUMMARY,
 	PLAYER_STATS_TABLES,
 	RATINGS,

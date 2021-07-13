@@ -1,56 +1,98 @@
 import { idb } from "../db";
-import changes from "./changes";
 import logEvent from "./logEvent";
 import type { Conditions } from "../../common/types";
+import { fetchWrapper, SUBREDDIT_NAME } from "../../common";
+
+const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
+const CURRENT_VERSION = "REV_GOES_HERE";
+const MAX_NUM_TO_SHOW = 3;
+const FETCH_LIMIT = 10;
 
 const checkChanges = async (conditions: Conditions) => {
-	const changesRead = ((await idb.meta.get(
+	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
+	const lastChangesVersion = ((await idb.meta.get(
 		"attributes",
-		"changesRead",
-	)) as unknown) as number;
+		"lastChangesVersion",
+	)) ?? (LAST_VERSION_BEFORE_THIS_EXISTED as unknown)) as string;
 
-	// Don't show anything on first visit
-	if (changesRead === undefined || changesRead < 0) {
-		await idb.meta.put("attributes", changes.length, "changesRead");
-		return;
-	}
-
-	if (changesRead < changes.length) {
-		const unread = changes.slice(changesRead);
-		let text = "";
-		let linked = false;
-
-		for (let i = 0; i < unread.length; i++) {
-			if (i > 0) {
-				text += "<br>";
-			}
-
-			text += `<strong>${unread[i].date}</strong>: ${unread[i].msg}`;
-
-			if (i >= 2 && unread.length - i - 1 > 0) {
-				linked = true;
-				text +=
-					'<br><a href="https://zengm.com/changelog/" rel="noopener noreferrer" target="_blank">...and more changes.</a>';
-				break;
-			}
-		}
-
-		if (!linked) {
-			text +=
-				'<br><a href="https://zengm.com/changelog/" rel="noopener noreferrer" target="_blank">View all changes</a>';
-		}
-
-		logEvent(
-			{
-				extraClass: "",
-				persistent: true,
-				type: "changes",
-				text,
-				saveToDb: false,
+	if (CURRENT_VERSION > lastChangesVersion) {
+		const changes = (await fetchWrapper({
+			url: "https://zengm.com/changelog.php",
+			method: "GET",
+			data: {
+				since: lastChangesVersion,
+				current: CURRENT_VERSION,
+				sport: process.env.SPORT,
+				limit: FETCH_LIMIT,
 			},
-			conditions,
-		);
-		await idb.meta.put("attributes", changes.length, "changesRead");
+		})) as unknown as {
+			version: string;
+			text: string;
+
+			// Currently returns null, but making this field just not present would be better
+			links: string[] | null;
+		}[];
+
+		if (changes && changes.length > 0) {
+			let text = "";
+
+			for (let i = 0; i < changes.length; i++) {
+				text += `<p class="mt-1 mb-0"><strong>v${changes[i].version}</strong>: ${changes[i].text}`;
+
+				const links = changes[i].links;
+				if (links) {
+					const link =
+						links.find(link => link.startsWith("/blog/")) ??
+						links.find(link => link.includes(SUBREDDIT_NAME)) ??
+						links[0];
+					if (link) {
+						let url;
+						if (link.startsWith("/basketball/")) {
+							url = link.replace("/basketball/", "https://basketball-gm.com/");
+						} else if (link.startsWith("/football/")) {
+							url = link.replace("/football/", "https://football-gm.com/");
+						} else if (link.startsWith("/")) {
+							url = link.replace("/", "https://zengm.com/");
+						} else {
+							url = link;
+						}
+
+						text += ` <a href="${url}" rel="noopener noreferrer" target="_blank">More details</a>`;
+					}
+				}
+				text += "</p>";
+
+				if (i >= MAX_NUM_TO_SHOW - 1) {
+					break;
+				}
+			}
+
+			let moreText;
+			const numMore = changes.length - MAX_NUM_TO_SHOW;
+			if (numMore === 1) {
+				moreText = "...and 1 more change";
+			} else if (numMore === FETCH_LIMIT - MAX_NUM_TO_SHOW) {
+				moreText = "...and many more changes";
+			} else if (numMore > 1) {
+				moreText = `...and more ${numMore} changes`;
+			} else {
+				moreText = "View all changes";
+			}
+			text += `<p class="mt-1 mb-0"><a href="https://zengm.com/changelog/" rel="noopener noreferrer" target="_blank">${moreText}</a></p>`;
+
+			logEvent(
+				{
+					extraClass: "",
+					persistent: true,
+					type: "changes",
+					text,
+					saveToDb: false,
+				},
+				conditions,
+			);
+		}
+
+		await idb.meta.put("attributes", CURRENT_VERSION, "lastChangesVersion");
 	}
 };
 

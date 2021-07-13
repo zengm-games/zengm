@@ -2,9 +2,14 @@ import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers } from "../util";
-import { getPeriodName, processPlayerStats } from "../../common";
+import {
+	filterPlayerStats,
+	getPeriodName,
+	processPlayerStats,
+} from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
+import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
 
 type Team = {
 	abbrev: string;
@@ -20,34 +25,6 @@ type BoxScore = {
 	numPeriods?: number;
 };
 
-const statsByType = {
-	skaters: [
-		"g",
-		"a",
-		"pts",
-		"pm",
-		"pim",
-		"s",
-		"sPct",
-		"hit",
-		"blk",
-		"gv",
-		"tk",
-		"fow",
-		"fol",
-		"foPct",
-		"min",
-		"ppMin",
-		"shMin",
-	],
-	goalies: ["ga", "sa", "sv", "svPct", "pim", "min", "ppMin", "shMin"],
-};
-
-const sortsByType = {
-	skaters: ["min"],
-	goalies: ["min"],
-};
-
 const StatsTable = ({
 	Row,
 	forceRowUpdate,
@@ -58,12 +35,12 @@ const StatsTable = ({
 	Row: any;
 	forceRowUpdate: boolean;
 	title: string;
-	type: keyof typeof sortsByType;
+	type: keyof typeof PLAYER_GAME_STATS;
 	t: Team;
 }) => {
-	const stats = statsByType[type];
+	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
-	const sorts = sortsByType[type];
+	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
 	const players = t.players
 		.map(p => {
@@ -72,11 +49,7 @@ const StatsTable = ({
 				processed: processPlayerStats(p, stats),
 			};
 		})
-		.filter(
-			p =>
-				(type === "skaters" && p.gpSkater > 0) ||
-				(type === "goalies" && p.gpGoalie > 0),
-		)
+		.filter(p => filterPlayerStats(p, stats, type))
 		.sort((a, b) => {
 			for (const sort of sorts) {
 				if (b.processed[sort] !== a.processed[sort]) {

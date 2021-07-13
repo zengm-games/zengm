@@ -1,6 +1,7 @@
 import { StoreNames, unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
+	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	PHASE,
@@ -1013,7 +1014,14 @@ const migrate = ({
 		}
 	}
 
-	// New ones here!
+	if (oldVersion <= 43) {
+		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+			if (!t.playThroughInjuries) {
+				t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
+				return t;
+			}
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

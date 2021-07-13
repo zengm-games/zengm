@@ -97,19 +97,28 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		e.preventDefault();
 		dispatch({ type: "startSaving" });
 
-		await toWorker("main", "updateTeamInfo", state.teams);
+		try {
+			await toWorker("main", "updateTeamInfo", state.teams);
 
-		let text = "Saved team info.";
+			let text = "Saved team info.";
 
-		if (props.phase >= PHASE.PLAYOFFS) {
-			text += `<br /><br />${nextSeasonWarning}`;
+			if (props.phase >= PHASE.PLAYOFFS) {
+				text += `<br /><br />${nextSeasonWarning}`;
+			}
+
+			logEvent({
+				type: "success",
+				text,
+				saveToDb: false,
+			});
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
 		}
-
-		logEvent({
-			type: "success",
-			text,
-			saveToDb: false,
-		});
 
 		dispatch({ type: "doneSaving" });
 	};
@@ -151,7 +160,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				</p>
 			) : null}
 
-			<div className="row d-none d-lg-flex font-weight-bold mb-2">
+			<div className="form-row d-none d-lg-flex font-weight-bold mb-2">
 				<div className="col-lg-2">
 					<br />
 					Region
@@ -197,7 +206,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			</div>
 
 			<form onSubmit={handleSubmit}>
-				<div className="row">
+				<div className="form-row">
 					{teams.map(t => (
 						<Fragment key={t.tid}>
 							<TeamForm

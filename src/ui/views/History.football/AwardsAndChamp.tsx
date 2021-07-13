@@ -64,7 +64,7 @@ const AwardsAndChamp = ({
 	return (
 		<div className="row">
 			<div className="col-sm-12 col-6">
-				<h2>League Champions</h2>
+				<h2>League Champs</h2>
 				{champ ? (
 					<div>
 						<p>

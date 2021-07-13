@@ -4,7 +4,7 @@ Single-player sports simulation games. Make trades, set rosters, draft players,
 and try to build the next dynasty, all from within your web browser. The games
 are implemented entirely in client-side JavaScript, backed by IndexedDB.
 
-Copyright (C) Jeremy Scheff. All rights reserved.
+Copyright (C) ZenGM, LLC. All rights reserved.
 
 Email: jeremy@zengm.com
 

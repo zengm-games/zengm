@@ -94,29 +94,36 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	if (name) {
 		// Explicit boolean check is for Firefox 57 and older
 		nameBlock = (
-			<>
+			<div className="d-flex">
 				{jerseyNumber ? (
-					<span className="text-muted jersey-number-popover mr-1">
+					<div className="text-muted jersey-number-popover align-self-end mr-1">
 						{jerseyNumber}
-					</span>
+					</div>
 				) : null}
-				<a href={helpers.leagueUrl(["player", pid])}>
-					<b>{name}</b>
+				<a
+					href={helpers.leagueUrl(["player", pid])}
+					className="font-weight-bold text-truncate"
+				>
+					{name}
 				</a>
-				{ratings !== undefined ? `, ${ratings.pos}` : null}
-				{abbrev !== undefined && tid !== undefined && tid !== PLAYER.RETIRED ? (
-					<>
-						,{" "}
-						<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
-							{abbrev}
-						</a>
-					</>
+				{ratings !== undefined ? (
+					<div className="ml-1">{ratings.pos}</div>
 				) : null}
-				{age !== undefined && tid !== PLAYER.RETIRED ? `, ${age} yo` : null}
+				{abbrev !== undefined && tid !== undefined && tid !== PLAYER.RETIRED ? (
+					<a
+						href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}
+						className="ml-1"
+					>
+						{abbrev}
+					</a>
+				) : null}
+				{age !== undefined && tid !== PLAYER.RETIRED ? (
+					<div className="ml-1 flex-shrink-0">{age} yo</div>
+				) : null}
 				{!disableWatchToggle && typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
-			</>
+			</div>
 		);
 	}
 
@@ -132,7 +139,7 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 				minWidth: 250,
 			}}
 		>
-			<p className="mb-2">{nameBlock}</p>
+			<div className="mb-2">{nameBlock}</div>
 			<RatingsStats ratings={ratings} stats={stats} />
 		</div>
 	);

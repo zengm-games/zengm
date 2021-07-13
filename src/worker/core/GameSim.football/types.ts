@@ -1,3 +1,4 @@
+import type { PlayerInjury } from "../../../common/types";
 import type { Position } from "../../../common/types.football";
 
 export type PlayType =
@@ -67,6 +68,10 @@ export type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
+	injury: PlayerInjury & {
+		playingThrough: boolean;
+	};
 	ptModifier: number;
 	ovrs: Record<Position, number>;
 };

@@ -1,7 +1,7 @@
 import { bySport, helpers as commonHelpers } from "../../common";
 import { local } from "./local";
 
-const leagueUrl = (components: (number | string)[]): string => {
+const leagueUrl = (components: (number | string | undefined)[]): string => {
 	const lid = local.getState().lid;
 
 	if (typeof lid !== "number") {
@@ -34,6 +34,7 @@ const roundOverrides: Record<
 	basketball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
+		min: "oneDecimalPlace",
 		yearsWithTeam: "noDecimalPlace",
 		gmsc: "oneDecimalPlace",
 		fgp: "oneDecimalPlace",
@@ -275,7 +276,7 @@ const roundOverrides: Record<
 		oppTk: "noDecimalPlace",
 		oppGv: "noDecimalPlace",
 		oppSv: "noDecimalPlace",
-		oppSvPct: "oneDecimalPlace",
+		oppSvPct: "roundWinp",
 		oppGaa: "twoDecimalPlaces",
 		oppSo: "noDecimalPlace",
 	},

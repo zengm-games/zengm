@@ -73,6 +73,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"ewa",
 				"ws",
 				"dws",
+				"vorp",
 				"ws48",
 				"season",
 				"abbrev",
@@ -139,11 +140,17 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	const teamInfos: Record<
 		number,
 		{
+			gp: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
+			gp:
+				teamSeason.won +
+				teamSeason.lost +
+				(teamSeason.tied ?? 0) +
+				(teamSeason.otl ?? 0),
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}
@@ -163,7 +170,32 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		p.teamInfo = teamInfos[p.currentStats.tid];
+		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
+		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
+			gp: 0,
+			winp: 0,
+		};
+	}
+
+	// Add fracWS for basketball current season
+	if (isSport("basketball")) {
+		const totalWS: Record<number, number> = {};
+		for (const p of players) {
+			if (totalWS[p.currentStats.tid] === undefined) {
+				totalWS[p.currentStats.tid] = 0;
+			}
+			totalWS[p.currentStats.tid] += p.currentStats.ws;
+		}
+
+		for (const p of players) {
+			p.currentStats.fracWS = Math.min(
+				// Inner max is to handle negative totalWS
+				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid], 1),
+
+				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
+				0.8,
+			);
+		}
 	}
 
 	return players;
@@ -342,6 +374,7 @@ const saveAwardsByPlayer = async (
 	conditions: Conditions,
 	season: number = g.get("season"),
 	logEvents: boolean = true,
+	allStarGID?: number,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -365,6 +398,14 @@ const saveAwardsByPlayer = async (
 			score = 10;
 		} else if (p.type === "All-Star") {
 			text += `made the All-Star team.`;
+			score = 10;
+		} else if (p.type === "All-Star MVP") {
+			text += `won the <a href="${helpers.leagueUrl([
+				"game_log",
+				"special",
+				season,
+				allStarGID,
+			])}">All-Star MVP</a> award.`;
 			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;

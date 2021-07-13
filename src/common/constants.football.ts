@@ -119,6 +119,82 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
+const PLAYER_GAME_STATS = {
+	passing: {
+		name: "Passing",
+		stats: [
+			"pssCmp",
+			"pss",
+			"cmpPct",
+			"pssYds",
+			"pssTD",
+			"pssInt",
+			"pssSk",
+			"pssSkYds",
+			"qbRat",
+			"fmbLost",
+		],
+		sortBy: ["pssYds"],
+	},
+	rushing: {
+		name: "Rushing",
+		stats: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
+		sortBy: ["rusYds"],
+	},
+	receiving: {
+		name: "Receiving",
+		stats: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
+		sortBy: ["recYds"],
+	},
+	kicking: {
+		name: "Kicking",
+		stats: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
+		sortBy: ["kickingPts"],
+	},
+	punting: {
+		name: "Punting",
+		stats: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		sortBy: ["pnt"],
+	},
+	returns: {
+		name: "Returns",
+		stats: [
+			"kr",
+			"krYds",
+			"krYdsPerAtt",
+			"krLng",
+			"krTD",
+			"pr",
+			"prYds",
+			"prYdsPerAtt",
+			"prLng",
+			"prTD",
+		],
+		sortBy: ["krYds", "prYds"],
+	},
+	defense: {
+		name: "Defense",
+		stats: [
+			"defTckSolo",
+			"defTckAst",
+			"defTck",
+			"defTckLoss",
+			"defSk",
+			"defSft",
+			"defPssDef",
+			"defInt",
+			"defIntYds",
+			"defIntTD",
+			"defIntLng",
+			"defFmbFrc",
+			"defFmbRec",
+			"defFmbYds",
+			"defFmbTD",
+		],
+		sortBy: ["defTck"],
+	},
+};
+
 const PLAYER_SUMMARY = {
 	summaryPss: {
 		name: "SummaryQB",
@@ -495,6 +571,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,

@@ -1,3 +1,4 @@
+import type { PlayerInjury } from "../../../common/types";
 import type { Position } from "../../../common/types.hockey";
 
 export type TeamNum = 0 | 1;
@@ -26,6 +27,10 @@ export type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
+	injury: PlayerInjury & {
+		playingThrough: boolean;
+	};
 	ptModifier: number;
 	ovrs: Record<Position, number>;
 	numConsecutiveGamesG?: number;

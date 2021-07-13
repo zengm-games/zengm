@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
@@ -35,6 +35,19 @@ const newPhaseFantasyDraft = async (
 
 	for (const p of players) {
 		p.tid = PLAYER.UNDRAFTED;
+
+		// Delete empty stats row in preseason
+		if (g.get("phase") === PHASE.PRESEASON) {
+			const lastStats = p.stats[p.stats.length - 1];
+			if (
+				lastStats &&
+				lastStats.season === g.get("season") &&
+				lastStats.gp === 0
+			) {
+				p.stats.pop();
+			}
+		}
+
 		await idb.cache.players.put(p);
 	}
 

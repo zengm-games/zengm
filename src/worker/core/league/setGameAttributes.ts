@@ -1,11 +1,18 @@
 import { idb } from "../../db";
-import { g, helpers, initUILocalGames, local } from "../../util";
+import {
+	defaultInjuries,
+	g,
+	helpers,
+	initUILocalGames,
+	local,
+} from "../../util";
 import { wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
 import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
+import goatFormula from "../../util/goatFormula";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -28,6 +35,21 @@ const setGameAttributes = async (
 		gameAttributes.difficulty <= DIFFICULTY.Easy
 	) {
 		gameAttributes.easyDifficultyInPast = true;
+	}
+
+	if (gameAttributes.injuries) {
+		// Test if it's the same as default
+		if (
+			JSON.stringify(gameAttributes.injuries) ===
+			JSON.stringify(defaultInjuries)
+		) {
+			gameAttributes.injuries = undefined;
+		}
+	}
+
+	// Test if it's the same as default
+	if (gameAttributes.goatFormula === goatFormula.DEFAULT_FORMULA) {
+		gameAttributes.goatFormula = undefined;
 	}
 
 	for (const key of helpers.keys(gameAttributes)) {

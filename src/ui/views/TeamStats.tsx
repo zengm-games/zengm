@@ -31,7 +31,7 @@ const TeamStats = ({
 		},
 	});
 
-	const basicColNames = ["Team", "stat:gp", "W", "L"];
+	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {
 		basicColNames.push("OTL");
 	}
@@ -50,6 +50,15 @@ const TeamStats = ({
 			superCols[0].colspan += 1;
 		}
 	}
+	basicColNames.push("AvgAge");
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
+
+	// Account for # column
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
 
 	const cols = getCols(
 		...basicColNames,
@@ -60,6 +69,8 @@ const TeamStats = ({
 			return `stat:${stat}`;
 		}),
 	);
+	cols[0].sortSequence = [];
+	cols[0].noSearch = true;
 
 	if (teamOpponent.endsWith("ShotLocations")) {
 		cols[cols.length - 7].title = "M";
@@ -67,7 +78,7 @@ const TeamStats = ({
 		cols[cols.length - 5].title = "%";
 	}
 
-	const otherStatColumns = ["won", "lost"];
+	const otherStatColumns = ["won", "lost", "age"];
 	if (otl) {
 		otherStatColumns.push("otl");
 	}
@@ -89,8 +100,8 @@ const TeamStats = ({
 	);
 
 	const rows = teams.map(t => {
-		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
+			"#": null,
 			abbrev: (
 				<a
 					href={helpers.leagueUrl([
@@ -119,6 +130,11 @@ const TeamStats = ({
 		} else {
 			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
 		}
+
+		data.avgAge =
+			t.seasonAttrs.avgAge !== undefined
+				? t.seasonAttrs.avgAge.toFixed(1)
+				: null;
 
 		for (const stat of stats) {
 			const value = t.stats.hasOwnProperty(stat)
@@ -179,8 +195,9 @@ const TeamStats = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[2, "desc"]}
+				defaultSort={[3, "desc"]}
 				name={`TeamStats${teamOpponent}`}
+				rankCol={0}
 				rows={rows}
 				superCols={superCols}
 			/>

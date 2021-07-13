@@ -2,6 +2,7 @@ import { idb } from "../db";
 import type { ViewInput, RealTeamInfo } from "../../common/types";
 import {
 	defaultGameAttributes,
+	defaultInjuries,
 	env,
 	getNewLeagueLid,
 	newLeagueGodModeLimits,
@@ -203,6 +204,12 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		noStartingInjuries: false,
 		randomization: "none",
 		realStats: getDefaultRealStats(),
+		hofFactor: unwrapGameAttribute(defaultGameAttributes, "hofFactor"),
+		injuries: defaultInjuries,
+		inflationAvg: unwrapGameAttribute(defaultGameAttributes, "inflationAvg"),
+		inflationMax: unwrapGameAttribute(defaultGameAttributes, "inflationMax"),
+		inflationMin: unwrapGameAttribute(defaultGameAttributes, "inflationMin"),
+		inflationStd: unwrapGameAttribute(defaultGameAttributes, "inflationStd"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

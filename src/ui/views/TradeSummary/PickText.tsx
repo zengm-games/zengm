@@ -1,3 +1,4 @@
+import type { DraftPickSeason } from "../../../common/types";
 import { helpers } from "../../util";
 
 const PickText = ({
@@ -8,7 +9,7 @@ const PickText = ({
 		abbrev?: string;
 		pick?: number;
 		round: number;
-		season: number | "fantasy" | "expansion";
+		season: DraftPickSeason;
 		tid: number;
 		type: "realizedPick" | "unrealizedPick";
 	};

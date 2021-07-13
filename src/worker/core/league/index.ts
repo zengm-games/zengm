@@ -1,4 +1,5 @@
 import autoPlay from "./autoPlay";
+import clone from "./clone";
 import close from "./close";
 import create from "./create";
 import exportLeague from "./exportLeague";
@@ -13,6 +14,7 @@ import updateMetaNameRegion from "./updateMetaNameRegion";
 
 export default {
 	autoPlay,
+	clone,
 	close,
 	create,
 	exportLeague,

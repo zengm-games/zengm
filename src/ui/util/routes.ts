@@ -74,8 +74,8 @@ const routes = () => {
 		"/l/:lid/edit_awards": genPage("editAwards"),
 		"/l/:lid/edit_awards/:season": genPage("editAwards"),
 		"/l/:lid/draft": genPage("draft"),
-		"/l/:lid/draft_history": genPage("draftSummary"),
-		"/l/:lid/draft_history/:season": genPage("draftSummary"),
+		"/l/:lid/draft_history": genPage("draftHistory"),
+		"/l/:lid/draft_history/:season": genPage("draftHistory"),
 		"/l/:lid/draft_team_history": genPage("draftTeamHistory"),
 		"/l/:lid/draft_team_history/:abbrev": genPage("draftTeamHistory"),
 		"/l/:lid/game_log": genPage("gameLog"),
@@ -96,9 +96,8 @@ const routes = () => {
 		"/l/:lid/player_stats/:abbrev": genPage("playerStats"),
 		"/l/:lid/player_stats/:abbrev/:season": genPage("playerStats"),
 		"/l/:lid/player_stats/:abbrev/:season/:statType": genPage("playerStats"),
-		"/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs": genPage(
-			"playerStats",
-		),
+		"/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs":
+			genPage("playerStats"),
 		"/l/:lid/team_stats": genPage("teamStats"),
 		"/l/:lid/team_stats/:season": genPage("teamStats"),
 		"/l/:lid/team_stats/:season/:teamOpponent": genPage("teamStats"),
@@ -106,10 +105,10 @@ const routes = () => {
 		"/l/:lid/league_stats": genPage("leagueStats"),
 		"/l/:lid/league_stats/:abbrev": genPage("leagueStats"),
 		"/l/:lid/league_stats/:abbrev/:teamOpponent": genPage("leagueStats"),
-		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs": genPage(
-			"leagueStats",
-		),
+		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs":
+			genPage("leagueStats"),
 		"/l/:lid/player/:pid": genPage("player"),
+		"/l/:lid/player_game_log/:pid/:season": genPage("playerGameLog"),
 		"/l/:lid/negotiation": genPage("negotiationList"),
 		"/l/:lid/negotiation/:pid": genPage("negotiation"),
 		"/l/:lid/player_rating_dists": genPage("playerRatingDists"),
@@ -162,10 +161,12 @@ const routes = () => {
 		"/l/:lid/depth": genPage("depth"),
 		"/l/:lid/depth/:abbrev": genPage("depth"),
 		"/l/:lid/depth/:abbrev/:pos": genPage("depth"),
+		"/l/:lid/depth/:abbrev/:pos/:playoffs": genPage("depth"),
 		"/l/:lid/frivolities": genPage("frivolities"),
 		"/l/:lid/frivolities/colleges": genPage("colleges"),
 		"/l/:lid/frivolities/countries": genPage("countries"),
 		"/l/:lid/frivolities/draft_classes": genPage("frivolitiesDraftClasses"),
+		"/l/:lid/frivolities/draft_position": genPage("frivolitiesDraftPosition"),
 		"/l/:lid/frivolities/jersey_numbers": genPage("frivolitiesJerseyNumbers"),
 		"/l/:lid/frivolities/teams/:type": genPage("frivolitiesTeamSeasons"),
 		"/l/:lid/frivolities/trades/:type": genPage("frivolitiesTrades"),
@@ -206,8 +207,8 @@ const routes = () => {
 		"/l/:lid/injuries/:abbrev/:season": genPage("injuries"),
 
 		// Backwards compatibility
-		"/l/:lid/draft_summary": genPage("draftSummary"),
-		"/l/:lid/draft_summary/:season": genPage("draftSummary"),
+		"/l/:lid/draft_summary": genPage("draftHistory"),
+		"/l/:lid/draft_summary/:season": genPage("draftHistory"),
 	};
 };
 

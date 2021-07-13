@@ -8,6 +8,7 @@ import { bySport, isSport } from "../../common";
 const PlayerFeats = ({
 	abbrev,
 	feats,
+	quarterLengthFactor,
 	season,
 	stats,
 	userTid,
@@ -102,37 +103,62 @@ const PlayerFeats = ({
 		  ]
 		: undefined;
 
+	const scaleMinimum = (amount: number) => {
+		return Math.ceil(amount * quarterLengthFactor);
+	};
+
+	const scaleSpecial = (name: string, description: string, amount: number) => {
+		const scaledAmount = scaleMinimum(amount);
+		if (scaledAmount === amount) {
+			return name;
+		}
+
+		return `scaled ${name} (${scaledAmount}+ ${description})`;
+	};
+
 	return (
 		<>
 			{bySport({
 				basketball: (
 					<p>
-						All games where a player got a triple double, a 5x5, 50 points, 25
-						rebounds, 20 assists, 10 steals, 10 blocks, or 10 threes are listed
-						here. If you changed quarter length to a non-default value in God
-						Mode, the cuttoffs are scaled. Statistical feats from your players
-						are <span className="text-info">highlighted in blue</span>.
+						This lists all games where a player got a{" "}
+						{scaleSpecial("triple double", "in 3 stats", 10)}, a{" "}
+						{scaleSpecial("5x5", "pts/reb/ast/stl/blk", 5)}, {scaleMinimum(50)}{" "}
+						points, {scaleMinimum(25)} rebounds, {scaleMinimum(20)} assists,{" "}
+						{scaleMinimum(10)} steals, {scaleMinimum(10)} blocks, or{" "}
+						{scaleMinimum(10)} threes
+						{quarterLengthFactor !== 1
+							? " (cutoffs are scaled due to a non-default period length)"
+							: null}
+						. Statistical feats from your players are{" "}
+						<span className="text-info">highlighted in blue</span>.
 					</p>
 				),
 				football: (
 					<p>
-						All games where a player got 400 passing yards, 6 passing TDs, 150
-						rushing yards, 3 rushing TDs, 150 receiving yards, 3 receiving TDs,
-						3 sacks, 2 interceptions, 2 fumble recoveries, 2 forced fumbles, 2
-						defensive TDs, 2 return TDs, 4 rushing/receiving TDs, 200
-						rushing/receiving yards, or 5 total TDs (where passing ones count
-						half) are listed here. If you changed quarter length to a
-						non-default value in God Mode, the cuttoffs are scaled. Statistical
-						feats from your players are{" "}
+						All games where a player got {scaleMinimum(400)} passing yards,{" "}
+						{scaleMinimum(6)} passing TDs, {scaleMinimum(150)}
+						rushing yards, {scaleMinimum(3)} rushing TDs, {scaleMinimum(150)}{" "}
+						receiving yards, {scaleMinimum(3)} receiving TDs,
+						{scaleMinimum(3)} sacks, {scaleMinimum(2)} interceptions,{" "}
+						{scaleMinimum(2)} fumble recoveries, {scaleMinimum(2)} forced
+						fumbles, {scaleMinimum(2)}
+						defensive TDs, {scaleMinimum(2)} return TDs, {scaleMinimum(4)}{" "}
+						rushing/receiving TDs, {scaleMinimum(200)}
+						rushing/receiving yards, or {scaleMinimum(5)} total TDs (where
+						passing ones count half) are listed here. If you changed quarter
+						length to a non-default value in God Mode, the cuttoffs are scaled.
+						Statistical feats from your players are{" "}
 						<span className="text-info">highlighted in blue</span>.
 					</p>
 				),
 				hockey: (
 					<p>
-						All games where a player got a hat trick, 4+ points, or a shutout
-						are listed here. If you changed quarter length to a non-default
-						value in God Mode, the cuttoffs are scaled. Statistical feats from
-						your players are{" "}
+						All games where a player got a{" "}
+						{scaleSpecial("hat trick", "goals", 3)}, {scaleMinimum(4)}+ points,
+						or a shutout are listed here. If you changed quarter length to a
+						non-default value in God Mode, the cuttoffs are scaled. Statistical
+						feats from your players are{" "}
 						<span className="text-info">highlighted in blue</span>.
 					</p>
 				),

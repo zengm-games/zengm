@@ -5,7 +5,10 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
 } from "../../common";
-import type { GameAttributesLeagueWithHistory } from "../../common/types";
+import type {
+	GameAttributeKey,
+	GameAttributesLeagueWithHistory,
+} from "../../common/types";
 
 const wrap = <T>(value: T) => [
 	{
@@ -14,10 +17,35 @@ const wrap = <T>(value: T) => [
 	},
 ];
 
+// gameAttributes is mixed up between league settings, game state, teams, and cache
+export const gameAttributesKeysGameState: GameAttributeKey[] = [
+	"phase",
+	"nextPhase",
+	"gameOver",
+	"godMode",
+	"godModeInPast",
+	"otherTeamsWantToHire",
+	"easyDifficultyInPast",
+	"difficulty",
+	"gracePeriodEnd",
+	"lid",
+	"userTid",
+	"userTids",
+	"season",
+	"startingSeason",
+];
+export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
+export const gameAttributesCache: GameAttributeKey[] = [
+	"numTeams",
+	"numActiveTeams",
+	"teamInfoCache",
+];
+
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
 	playerBioInfo: undefined,
+	injuries: undefined,
 	daysLeft: 0, // Used only for free agency
 	gameOver: false,
 	godMode: false,
@@ -119,6 +147,17 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			],
 		},
 	],
+	hofFactor: 1,
+	tradeDeadline: 0.6,
+	pointsFormula: wrap(""),
+	randomDebutsForever: undefined,
+	realDraftRatings: undefined,
+	hideDisabledTeams: false,
+	goatFormula: undefined,
+	inflationAvg: 0,
+	inflationMax: 0,
+	inflationMin: 0,
+	inflationStd: 0,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -136,11 +175,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numTeams: 0,
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
-	tradeDeadline: 0.6,
-	pointsFormula: wrap(""),
-	randomDebutsForever: undefined,
-	realDraftRatings: undefined,
-	hideDisabledTeams: false,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -170,6 +204,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				sonRate: 0.005,
 				brotherRate: 0.005,
 				allStarGame: null,
+				numPlayersOnCourt: 11,
 				tiebreakers: wrap([
 					"headToHeadRecord",
 					"divRecordIfSame",

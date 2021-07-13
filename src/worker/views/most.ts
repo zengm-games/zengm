@@ -15,25 +15,31 @@ import { groupBy } from "../../common/groupBy";
 import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
+import goatFormula from "../util/goatFormula";
+import orderBy from "lodash-es/orderBy";
 
 type Most = {
 	value: number;
 	extra?: Record<string, unknown>;
 };
 
+type PlayersAll = (Player<MinimalPlayerRatings> & {
+	most: Most;
+})[];
+
 export const getMostXPlayers = async ({
 	filter,
 	getValue,
 	after,
+	sortParams,
 }: {
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
+	sortParams?: any;
 }) => {
 	const LIMIT = 100;
-	const playersAll: (Player<MinimalPlayerRatings> & {
-		most: Most;
-	})[] = [];
+	const playersAll: PlayersAll = [];
 
 	await iterate(
 		idb.league.transaction("players").store,
@@ -80,24 +86,26 @@ export const getMostXPlayers = async ({
 			"most",
 			"watch",
 			"jerseyNumber",
+			"awards",
 		],
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],
 		fuzz: true,
 	});
 
+	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
 	for (let i = 0; i < 100; i++) {
-		if (players[i]) {
-			players[i].rank = i + 1;
+		if (ordered[i]) {
+			ordered[i].rank = i + 1;
 
 			if (after) {
-				players[i].most = await after(players[i].most);
+				ordered[i].most = await after(ordered[i].most);
 			}
 		}
 	}
 
 	return {
-		players: processPlayersHallOfFame(players),
+		players: processPlayersHallOfFame(ordered),
 		stats,
 	};
 };
@@ -113,6 +121,7 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	};
 };
 
+// Should actually be using getTeamInfoBySeason
 const tidAndSeasonToAbbrev = async (most: Most) => {
 	let abbrev;
 
@@ -155,18 +164,75 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (updateEvents.includes("firstRun") || type !== state.type) {
+	if (
+		updateEvents.includes("firstRun") ||
+		type !== state.type ||
+		(type === "goat" && updateEvents.includes("g.goatFormula"))
+	) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
+		let sortParams: any;
 		let title: string;
-		let description: string;
+		let description: string | undefined;
 		const extraCols: {
 			key: string | [string, string] | [string, string, string];
 			colName: string;
 		}[] = [];
+		let extraProps: any;
 
-		if (type === "games_no_playoffs") {
+		if (type === "at_pick") {
+			if (arg === undefined) {
+				throw new Error("Pick must be specified in the URL");
+			}
+
+			if (arg === "undrafted") {
+				title = "Best Undrafted Players";
+			} else {
+				title = `Best Players Drafted at Pick ${arg}`;
+			}
+			description = `<a href="${helpers.leagueUrl([
+				"frivolities",
+				"draft_position",
+			])}">Other picks</a>`;
+
+			let round: number;
+			let pick: number;
+			if (arg === "undrafted") {
+				round = 0;
+				pick = 0;
+			} else {
+				const parts = arg.split("-");
+				round = parseInt(parts[0]);
+				pick = parseInt(parts[1]);
+
+				if (Number.isNaN(round) || Number.isNaN(pick)) {
+					throw new Error("Invalid pick");
+				}
+			}
+
+			filter = p =>
+				p.tid !== PLAYER.UNDRAFTED &&
+				p.draft.round === round &&
+				p.draft.pick === pick;
+			getValue = playerValue;
+		} else if (type === "games_injured") {
+			title = "Most Games Injured";
+			description = "Players with the most total games missed due to injury.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "Games",
+			});
+
+			filter = p => p.injuries.length > 0;
+			getValue = p => {
+				let sum = 0;
+				for (const ps of p.injuries) {
+					sum += ps.games;
+				}
+				return { value: sum };
+			};
+		} else if (type === "games_no_playoffs") {
 			title = "Most Games, No Playoffs";
 			description =
 				"These are the players who played the most career games while never making the playoffs.";
@@ -179,6 +245,30 @@ const updatePlayers = async (
 					sum += ps.gp;
 				}
 				return { value: sum };
+			};
+		} else if (type === "goat") {
+			title = "GOAT Lab";
+			description =
+				"Define your own formula to rank the greatest players of all time.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "GOAT",
+			});
+			extraProps = {
+				goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+				awards: goatFormula.AWARD_VARIABLES,
+				stats: goatFormula.STAT_VARIABLES,
+			};
+
+			getValue = (p: Player<MinimalPlayerRatings>) => {
+				let value = 0;
+				try {
+					value = goatFormula.evaluate(p);
+				} catch (error) {}
+
+				return {
+					value,
+				};
 			};
 		} else if (type === "teams") {
 			title = "Most Teams";
@@ -509,6 +599,86 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
+		} else if (type === "oldest_peaks") {
+			title = "Oldest Peaks";
+			description =
+				"These are the players who peaked in ovr at the oldest age (min 5 seasons in career).";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "Age",
+			});
+			extraCols.push({
+				key: ["most", "extra", "season"],
+				colName: "Season",
+			});
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
+			extraCols.push({
+				key: ["most", "extra", "ovr"],
+				colName: "Ovr",
+			});
+
+			sortParams = [
+				["most.value", "most.extra.ovr"],
+				["desc", "desc"],
+			];
+
+			getValue = p => {
+				if (p.ratings.length < 5) {
+					return;
+				}
+
+				// Skip players who were older than 25 when league started
+				const ratings = p.ratings[0];
+				if (!ratings) {
+					return;
+				}
+				const age = ratings.season - p.born.year;
+				if (age > 25 && ratings.season === g.get("startingSeason")) {
+					return;
+				}
+
+				let maxOvr = -Infinity;
+				let season: number | undefined;
+				for (const ratings of p.ratings) {
+					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+					if (ovr >= maxOvr) {
+						maxOvr = ovr;
+						season = ratings.season;
+					}
+				}
+
+				if (season === undefined) {
+					return;
+				}
+
+				const maxAge = season - p.born.year;
+
+				let tid: number | undefined;
+				for (const ps of p.stats) {
+					if (season === ps.season) {
+						tid = ps.tid;
+					} else if (season < ps.season) {
+						break;
+					}
+				}
+
+				if (tid === undefined) {
+					return;
+				}
+
+				return {
+					value: maxAge,
+					extra: {
+						season,
+						ovr: maxOvr,
+						tid,
+					},
+				};
+			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "worst_injuries") {
 			title = "Worst Injuries";
 			description =
@@ -603,12 +773,14 @@ const updatePlayers = async (
 			filter,
 			getValue,
 			after,
+			sortParams,
 		});
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			extraCols,
+			extraProps,
 			players,
 			stats,
 			title,

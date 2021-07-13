@@ -1,7 +1,8 @@
-import { g } from "../util";
+import { defaultInjuries, g } from "../util";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
+	InjuriesSetting,
 	UpdateEvents,
 } from "../../common/types";
 
@@ -83,11 +84,17 @@ const keys = [
 	"equalizeRegions",
 	"realDraftRatings",
 	"hideDisabledTeams",
+	"hofFactor",
+	"injuries",
+	"inflationAvg",
+	"inflationMax",
+	"inflationMin",
+	"inflationStd",
 ] as const;
 
 export type Settings = Pick<
 	GameAttributesLeague,
-	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings">
+	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings" | "injuries">
 > & {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -97,6 +104,7 @@ export type Settings = Pick<
 	>;
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	realStats: GetLeagueOptionsReal["realStats"];
+	injuries: InjuriesSetting;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -182,6 +190,12 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			equalizeRegions: g.get("equalizeRegions"),
 			hideDisabledTeams: g.get("hideDisabledTeams"),
 			noStartingInjuries: false,
+			hofFactor: g.get("hofFactor"),
+			injuries: g.get("injuries") ?? defaultInjuries,
+			inflationAvg: g.get("inflationAvg"),
+			inflationMax: g.get("inflationMax"),
+			inflationMin: g.get("inflationMin"),
+			inflationStd: g.get("inflationStd"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

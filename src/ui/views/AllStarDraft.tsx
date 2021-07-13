@@ -241,12 +241,17 @@ const AllStars = ({
 				teams[1].length + revealed1.length &&
 				userTids.includes(teams[0][0].tid)));
 
+	const numPlayers =
+		teams[0].length +
+		teams[1].length +
+		remaining.filter(p => p.injury.gamesRemaining <= 0).length;
+
 	return (
 		<>
 			<p>
-				The top 24 players in the league play in the All-Star Game. If any of
-				them are injured, they are still All-Stars, but an additional All-Star
-				will be selected as a replacement to play in the game.
+				The top {numPlayers} players in the league play in the All-Star Game. If
+				any of them are injured, they are still All-Stars, but an additional
+				All-Star will be selected as a replacement to play in the game.
 			</p>
 			<p>
 				The players are split into two teams, captained by the top two players.

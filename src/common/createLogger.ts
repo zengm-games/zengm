@@ -9,6 +9,7 @@ import type {
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {
 	extraClass?: string;
+	hideInLiveGame?: boolean;
 	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent?: boolean;
@@ -23,6 +24,7 @@ function createLogger(
 	const logEvent = async (
 		{
 			extraClass,
+			hideInLiveGame,
 			htmlIsSafe,
 			onClose,
 			persistent = false,
@@ -45,6 +47,7 @@ function createLogger(
 			showEvent(
 				{
 					extraClass,
+					hideInLiveGame,
 					htmlIsSafe,
 					onClose,
 					persistent,

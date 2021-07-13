@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
-import type { View } from "../../common/types";
-import { frivolitiesMenu } from "./Frivolities";
+import useTitleBar from "../../hooks/useTitleBar";
+import { getCols, helpers } from "../../util";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
+import type { View } from "../../../common/types";
+import { frivolitiesMenu } from "../Frivolities";
+import GOATFormula from "./GOATFormula";
+import SeasonIcons from "../Player/SeasonIcons";
 
 export const getValue = (
 	obj: any,
@@ -20,6 +22,7 @@ const Most = ({
 	challengeNoRatings,
 	description,
 	extraCols,
+	extraProps,
 	players,
 	stats,
 	title,
@@ -61,18 +64,33 @@ const Most = ({
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
+		const draftPick =
+			p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "";
+
 		return {
 			key: p.pid,
 			data: [
 				p.rank,
-				<PlayerNameLabels
-					disableWatchToggle
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<div className="d-flex">
+							<PlayerNameLabels
+								disableWatchToggle
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								watch={p.watch}
+							>
+								{p.name}
+							</PlayerNameLabels>
+							<div className="ml-auto">
+								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ml-1" awards={p.awards} />
+							</div>
+						</div>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				...extraCols.map(x => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {
@@ -80,6 +98,12 @@ const Most = ({
 					}
 					if (x.colName === "Prog") {
 						return helpers.plusMinus(value, 0);
+					}
+					if (x.colName === "GOAT") {
+						if (Number.isInteger(value) && value < 1000000) {
+							return helpers.numberWithCommas(value);
+						}
+						return value.toPrecision(3);
 					}
 					if (x.colName.startsWith("stat:")) {
 						const stat = x.colName.replace("stat:", "");
@@ -102,7 +126,7 @@ const Most = ({
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
-				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
+				draftPick,
 				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
 				<a
@@ -127,9 +151,19 @@ const Most = ({
 
 	return (
 		<>
-			<p>
-				<SafeHtml dirty={description} />
-			</p>
+			{description ? (
+				<p>
+					<SafeHtml dirty={description} />
+				</p>
+			) : null}
+
+			{type === "goat" ? (
+				<GOATFormula
+					awards={extraProps.awards}
+					formula={extraProps.goatFormula}
+					stats={extraProps.stats}
+				/>
+			) : null}
 
 			<p>
 				Players who have played for your team are{" "}

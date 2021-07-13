@@ -75,7 +75,13 @@ export type Key =
 	| "realDraftRatings"
 	| "randomization"
 	| "realStats"
-	| "hideDisabledTeams";
+	| "hideDisabledTeams"
+	| "hofFactor"
+	| "injuries"
+	| "inflationAvg"
+	| "inflationMax"
+	| "inflationMin"
+	| "inflationStd";
 
 export type Category =
 	| "New League"
@@ -85,8 +91,10 @@ export type Category =
 	| "Team"
 	| "Draft"
 	| "Finances"
+	| "Inflation"
 	| "Contracts"
 	| "Events"
+	| "Injuries"
 	| "Game Simulation"
 	| "Elam Ending"
 	| "Challenge Modes"
@@ -103,7 +111,8 @@ export type FieldType =
 	| "jsonString"
 	| "string"
 	| "rangePercent"
-	| "floatValuesOrCustom";
+	| "floatValuesOrCustom"
+	| "custom";
 
 export type Decoration = "currency" | "percent";
 

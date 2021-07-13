@@ -1,4 +1,10 @@
-import { PLAYER, applyRealTeamInfo, bySport, isSport } from "../../../common";
+import {
+	PLAYER,
+	applyRealTeamInfo,
+	bySport,
+	isSport,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+} from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -34,6 +40,18 @@ const newPhasePreseason = async (
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
 		| RealTeamInfo
 		| undefined;
+
+	const popInfo: Record<
+		string,
+		{
+			oldPop: number;
+			newPop: number;
+		}
+	> = {};
+	const sameRegionOverrides: Record<string, string | undefined> = {
+		"San Jose": "San Francisco",
+		Brooklyn: "New York",
+	};
 
 	let updatedTeams = false;
 	let scoutingRank: number | undefined;
@@ -139,7 +157,22 @@ const newPhasePreseason = async (
 
 		// Mean population should stay constant, otherwise the economics change too much
 		if (!g.get("equalizeRegions")) {
-			t.pop *= random.uniform(0.98, 1.02);
+			// Check if this is the same region as another team, in which case keep the populations in sync
+			const actualRegion = sameRegionOverrides[t.region] ?? t.region;
+			if (
+				actualRegion !== "" &&
+				popInfo[actualRegion] &&
+				popInfo[actualRegion].oldPop === t.pop
+			) {
+				t.pop = popInfo[actualRegion].newPop;
+			} else {
+				const newPop = t.pop * random.uniform(0.98, 1.02);
+				popInfo[actualRegion] = {
+					oldPop: t.pop,
+					newPop,
+				};
+				t.pop = newPop;
+			}
 		}
 		newSeason.pop = t.pop;
 
@@ -165,6 +198,7 @@ const newPhasePreseason = async (
 			t.adjustForInflation = true;
 			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
+			t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
 			await idb.cache.teams.put(t);
 		}
 	}

@@ -1,6 +1,6 @@
 import { PHASE } from "../../common";
 import type {
-	DraftPick,
+	DraftPickSeason,
 	EventBBGM,
 	Player,
 	TradeEventTeams,
@@ -12,17 +12,23 @@ import helpers from "./helpers";
 
 type PlayerAsset = {
 	pid: number;
-	tid: number;
 	name: string;
 };
+type PickAsset = {
+	dpid: number;
+	season: DraftPickSeason;
+	round: number;
+	originalTid: number;
+};
+
 export const assetIsPlayer = (
-	asset: PlayerAsset | DraftPick,
+	asset: PlayerAsset | PickAsset,
 ): asset is PlayerAsset => {
 	// https://github.com/microsoft/TypeScript/issues/21732
 	return (asset as any).pid !== undefined;
 };
 
-export const getPlayerFromPick = async (dp: DraftPick) => {
+export const getPlayerFromPick = async (dp: PickAsset) => {
 	let p: Player | undefined;
 
 	if (
@@ -47,7 +53,7 @@ export const getPlayerFromPick = async (dp: DraftPick) => {
 };
 
 const formatPick = async (
-	dp: DraftPick,
+	dp: PickAsset,
 	tidTradedAway: number,
 	tradeSeason: number,
 ) => {

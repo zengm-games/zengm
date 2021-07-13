@@ -43,14 +43,24 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	return { currentGidInList, prevGid, nextGid };
 };
 
-const NoGamesMessage = () => (
-	<p className="alert alert-info" style={{ maxWidth: 550 }}>
-		No games found for this season. By default, box scores from old seasons are
-		automatically deleted after 3 years.{" "}
-		<a href={helpers.leagueUrl(["settings"])}>
-			You can change this behavior on the League Settings page.
-		</a>
-	</p>
+export const NoGamesMessage = ({
+	warnAboutDelete,
+}: {
+	warnAboutDelete: boolean;
+}) => (
+	<div className="alert alert-info d-inline-block" style={{ maxWidth: 600 }}>
+		No games found for this season.
+		{warnAboutDelete ? (
+			<>
+				{" "}
+				By default, box scores from old seasons are automatically deleted after
+				3 years.{" "}
+				<a href={helpers.leagueUrl(["settings"])}>
+					You can change this behavior on the League Settings page.
+				</a>
+			</>
+		) : null}
+	</div>
 );
 
 const GamesList = ({
@@ -73,7 +83,7 @@ const GamesList = ({
 	}));
 
 	if (season < currentSeason && gamesList.games.length === 0) {
-		return <NoGamesMessage />;
+		return <NoGamesMessage warnAboutDelete />;
 	}
 
 	return (
@@ -190,18 +200,27 @@ const GameLog = ({
 	season,
 	tid,
 }: View<"gameLog">) => {
+	const dropdownTeamsKey = bySport({
+		basketball: "teamsAndSpecial",
+		football: "teams",
+		hockey: "teams",
+	});
+
 	useTitleBar({
 		title: "Game Log",
 		dropdownView: "game_log",
 		dropdownFields: {
-			[bySport({
-				basketball: "teamsAndSpecial",
-				football: "teams",
-				hockey: "teams",
-			})]: abbrev,
+			[dropdownTeamsKey]: abbrev,
 			seasons: season,
 		},
-		dropdownExtraParam: boxScore.gid,
+		dropdownCustomURL: fields => {
+			return helpers.leagueUrl([
+				"game_log",
+				fields[dropdownTeamsKey],
+				fields.seasons,
+				boxScore.gid,
+			]);
+		},
 	});
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
@@ -214,16 +233,18 @@ const GameLog = ({
 
 	return (
 		<>
-			<MoreLinks
-				type="team"
-				page="game_log"
-				abbrev={abbrev}
-				tid={tid}
-				season={season}
-			/>
+			{tid >= 0 ? (
+				<MoreLinks
+					type="team"
+					page="game_log"
+					abbrev={abbrev}
+					tid={tid}
+					season={season}
+				/>
+			) : null}
 
 			{noGamesAndNoBoxScore ? (
-				<NoGamesMessage />
+				<NoGamesMessage warnAboutDelete />
 			) : (
 				<>
 					<p />

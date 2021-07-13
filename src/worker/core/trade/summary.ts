@@ -117,7 +117,19 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		s.warning = `The ${s.teams[j].name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[j]}%.`;
 	} else if (hardCapCondition) {
 		const j = overCapAndIncreasing(0) ? 0 : 1;
-		s.warning = `This trade is not allowed because it increases the payroll of the ${s.teams[j].name} and puts them over the salary cap.`;
+		const amountIncrease =
+			s.teams[j].payrollAfterTrade - s.teams[j].payrollBeforeTrade;
+		const amountOverCap =
+			s.teams[j].payrollAfterTrade - g.get("salaryCap") / 1000;
+		s.warning = `This trade is not allowed because it increases the payroll of the ${
+			s.teams[j].name
+		} by ${helpers.formatCurrency(
+			amountIncrease,
+			"M",
+		)} and puts them over the salary cap by ${helpers.formatCurrency(
+			amountOverCap,
+			"M",
+		)}.`;
 	}
 
 	return s;

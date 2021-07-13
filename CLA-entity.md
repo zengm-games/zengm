@@ -1,7 +1,7 @@
 # Contributor Agreement
 ## Entity Contributor exclusive License Agreement including the Traditional Patent License OPTION
 
-Thank you for your interest in contributing to Basketball GM and Football GM ("We" or "Us").
+Thank you for your interest in contributing to ZenGM ("We" or "Us").
 
 The purpose of this contributor agreement ("Agreement") is to clarify and document the rights granted by contributors to Us. To make this document effective, please follow the instructions at <https://github.com/zengm-games/zengm/blob/master/README.md#license-and-contributor-license-agreement>.
 
@@ -13,7 +13,7 @@ The purpose of this contributor agreement ("Agreement") is to clarify and docume
 
 **"Affiliate"** means any other Legal Entity that controls, is controlled by, or under common control with that Legal Entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such Legal Entity, whether by contract or otherwise, (ii) ownership of fifty percent (50%) or more of the outstanding shares or securities that vote to elect the management or other persons who direct such Legal Entity or (iii) beneficial ownership of such entity.
 
-**"Contribution"** means any original work of authorship (software and/or documentation) including any modifications or additions to an existing work, Submitted by You to Us, in which You own the Copyright. If You do not own the Copyright in the entire work of authorship, please contact Us at **commissioner@basketball-gm.com**.
+**"Contribution"** means any original work of authorship (software and/or documentation) including any modifications or additions to an existing work, Submitted by You to Us, in which You own the Copyright. If You do not own the Copyright in the entire work of authorship, please contact Us at **jeremy@zengm.com**.
 
 **"Copyright"** means all rights protecting works of authorship owned or controlled by You, including copyright, moral and neighboring rights, as appropriate, for the full term of their existence including any extensions by You.
 

@@ -38,7 +38,6 @@ const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
 	return {
 		tid: t.tid,
 		cid: t.seasonAttrs.cid,
-		winp: t.seasonAttrs.winp,
 		seed,
 		won: 0,
 	};
@@ -96,6 +95,14 @@ export const genPlayoffSeriesFromTeams = async (
 		Infinity,
 	);
 	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+	if (numRounds === 0) {
+		return {
+			series: [],
+			tidPlayoffs: [],
+		};
+	}
+
 	helpers.validateRoundsByes(
 		numRounds,
 		numPlayoffByes,

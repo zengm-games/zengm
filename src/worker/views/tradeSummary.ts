@@ -1,6 +1,7 @@
 import { bySport, PHASE } from "../../common";
 import type {
 	DiscriminateUnion,
+	DraftPickSeason,
 	EventBBGM,
 	MinimalPlayerRatings,
 	Phase,
@@ -237,7 +238,7 @@ type CommonPick = {
 	abbrev?: string; // from originalTid
 	tid: number; // from originalTid
 	round: number;
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 };
 
 type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;

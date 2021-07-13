@@ -3,6 +3,7 @@ support league with no playoffs https://mail.google.com/mail/u/0/#inbox/FMfcgzGk
 - description in league settings
 - 1st place team decided with league tiebreakers
 - confirm importing league works
+- playoffRoundsWon 0 and show on season history table and page
 
 refactor getCols
 - array arg

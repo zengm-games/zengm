@@ -92,56 +92,77 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			// Only check for finals result for seasons that are over
 			const series = playoffSeries.find(ps => ps.season === season);
 
-			if (series) {
-				const finals = series.series[series.series.length - 1][0];
+			type MyTeam = typeof teams[number];
+			const formatTeam = (t: MyTeam, seed: number) => {
+				const tid = t.tid;
 
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				if (!finals || !finals.away) {
-					continue;
-				}
+				const teamSeason = t.seasonAttrs.find(ts => ts.season === season);
 
-				let champ: PlayoffSeriesTeam;
-				let runnerUp: PlayoffSeriesTeam;
-				if (finals.home.won > finals.away.won) {
-					champ = finals.home;
-					runnerUp = finals.away;
-				} else {
-					champ = finals.away;
-					runnerUp = finals.home;
-				}
-
-				const formatTeam = ({ seed, tid }: PlayoffSeriesTeam) => {
-					const t = teams.find(t => t.tid === tid);
-					if (!t) {
-						throw new Error(`Team not found for tid ${tid}`);
-					}
-					const teamSeason = t.seasonAttrs.find(ts => ts.season === season);
-
-					return {
-						tid: tid,
-						seed: seed,
-						abbrev: teamSeason
-							? teamSeason.abbrev
-							: g.get("teamInfoCache")[tid]?.abbrev,
-						region: teamSeason
-							? teamSeason.region
-							: g.get("teamInfoCache")[tid]?.region,
-						name: teamSeason
-							? teamSeason.name
-							: g.get("teamInfoCache")[tid]?.name,
-						won: teamSeason ? teamSeason.won : 0,
-						lost: teamSeason ? teamSeason.lost : 0,
-						tied: teamSeason ? teamSeason.tied : 0,
-						otl: teamSeason ? teamSeason.otl : 0,
-						imgURL: teamSeason?.imgURL ?? t.imgURL,
-						imgURLSmall:
-							teamSeason?.imgURLSmall ?? teamSeason?.imgURL ?? t.imgURLSmall,
-						count: 0,
-					};
+				return {
+					tid: tid,
+					seed: seed,
+					abbrev: teamSeason
+						? teamSeason.abbrev
+						: g.get("teamInfoCache")[tid]?.abbrev,
+					region: teamSeason
+						? teamSeason.region
+						: g.get("teamInfoCache")[tid]?.region,
+					name: teamSeason
+						? teamSeason.name
+						: g.get("teamInfoCache")[tid]?.name,
+					won: teamSeason ? teamSeason.won : 0,
+					lost: teamSeason ? teamSeason.lost : 0,
+					tied: teamSeason ? teamSeason.tied : 0,
+					otl: teamSeason ? teamSeason.otl : 0,
+					imgURL: teamSeason?.imgURL ?? t.imgURL,
+					imgURLSmall:
+						teamSeason?.imgURLSmall ?? teamSeason?.imgURL ?? t.imgURLSmall,
+					count: 0,
 				};
+			};
 
-				seasons[i].champ = formatTeam(champ);
-				seasons[i].runnerUp = formatTeam(runnerUp);
+			if (series) {
+				if (series.series.length === 0) {
+					// 0 length numGamesPlayoffSeries, no playoffs
+					const t = teams.find(t =>
+						t.seasonAttrs.find(
+							ts => ts.season === season && ts.playoffRoundsWon === 0,
+						),
+					);
+
+					if (t) {
+						seasons[i].champ = formatTeam(t, 1);
+					}
+				} else {
+					const finals = series.series[series.series.length - 1][0];
+
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+					if (!finals || !finals.away) {
+						continue;
+					}
+
+					let champ: PlayoffSeriesTeam;
+					let runnerUp: PlayoffSeriesTeam;
+					if (finals.home.won > finals.away.won) {
+						champ = finals.home;
+						runnerUp = finals.away;
+					} else {
+						champ = finals.away;
+						runnerUp = finals.home;
+					}
+
+					const formatTeamWrapper = ({ seed, tid }: PlayoffSeriesTeam) => {
+						const t = teams.find(t => t.tid === tid);
+						if (!t) {
+							throw new Error(`Team not found for tid ${tid}`);
+						}
+
+						return formatTeam(t, seed);
+					};
+
+					seasons[i].champ = formatTeamWrapper(champ);
+					seasons[i].runnerUp = formatTeamWrapper(runnerUp);
+				}
 			}
 		}
 

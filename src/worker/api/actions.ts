@@ -192,15 +192,19 @@ const addToTradingBlock = async (pid: number, conditions: Conditions) => {
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
 
-	for (const series of playoffSeries.series[playoffSeries.currentRound]) {
-		const num = series.away
-			? g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound] -
-			  series.home.won -
-			  series.away.won
-			: 0;
+	if (playoffSeries.series.length > 0) {
+		for (const series of playoffSeries.series[playoffSeries.currentRound]) {
+			const num = series.away
+				? g.get("numGamesPlayoffSeries", "current")[
+						playoffSeries.currentRound
+				  ] -
+				  series.home.won -
+				  series.away.won
+				: 0;
 
-		if (num > numDaysThisRound) {
-			numDaysThisRound = num;
+			if (num > numDaysThisRound) {
+				numDaysThisRound = num;
+			}
 		}
 	}
 

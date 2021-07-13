@@ -1,5 +1,5 @@
 import { season } from "..";
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { g, local, logEvent } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 import {
@@ -10,6 +10,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common";
+import { unwrap } from "idb";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -22,20 +23,40 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	await season.setSchedule(season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
-		const transaction = idb.league.transaction("games", "readwrite");
+		// openKeyCursor rather than iterate for performance in Firefox.
+		// unwrap for old Firefox support
+		await new Promise<void>((resolve, reject) => {
+			const transaction = unwrap(idb.league.transaction("games", "readwrite"));
+			const store = transaction.objectStore("games");
+			const index = store.index("season");
 
-		// Delete all games except past 3 seasons
-		await iterate(
-			transaction.store.index("season"),
-			IDBKeyRange.upperBound(g.get("season") - 3),
-			undefined,
-			({ gid }) => {
-				transaction.objectStore("games").delete(gid);
-			},
-		);
+			const request = index.openKeyCursor(
+				IDBKeyRange.upperBound(g.get("season") - 3),
+			);
+			request.onsuccess = () => {
+				const cursor = request.result;
+				if (cursor) {
+					store.delete(cursor.primaryKey);
+					cursor.continue();
+				} else {
+					resolve();
+				}
+			};
 
-		await transaction.done;
+			const onerror = () => {
+				reject(transaction.error ?? new Error("Transaction error"));
+			};
+			transaction.onerror = onerror;
+			transaction.onabort = onerror;
+		});
 	}
+
+	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost
+	await idb.cache.headToHeads.put({
+		season: g.get("season"),
+		regularSeason: {},
+		playoffs: {},
+	});
 
 	if (!local.autoPlayUntil) {
 		let naggedMailingList = await idb.meta.get(
@@ -103,8 +124,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 						read: false,
 						from: "The Commissioner",
 						year: g.get("season"),
-						text:
-							'<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">you can find a user-made list of them here</a>.</p>',
+						text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">you can find a user-made list of them here</a>.</p>',
 					});
 				}
 			}
@@ -142,7 +162,8 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 				extraClass: "",
 				persistent: true,
 				saveToDb: false,
-				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></center></div>`,
+				htmlIsSafe: true,
+				text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="navigator.storage.persist().then((result) => { this.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></div>`,
 				type: "info",
 			});
 		}

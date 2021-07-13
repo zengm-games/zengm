@@ -6,11 +6,13 @@ type SeriesTeam = {
 	abbrev: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	regularSeason: {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	region: string;
 	seed: number;
@@ -21,6 +23,10 @@ type SeriesTeam = {
 
 const faded = {
 	opacity: 0.3,
+	padding: 2,
+};
+const notFaded = {
+	padding: 2,
 };
 
 const Team = ({
@@ -76,12 +82,12 @@ const Team = ({
 				"text-muted": lost,
 			})}
 		>
-			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center">
-				{team.imgURL ? (
+			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
+				{team.imgURL || team.imgURLSmall ? (
 					<img
 						className="mw-100 mh-100"
-						style={lost ? faded : undefined}
-						src={team.imgURL}
+						style={lost ? faded : notFaded}
+						src={team.imgURLSmall ?? team.imgURL}
 						alt=""
 					/>
 				) : null}
@@ -90,7 +96,7 @@ const Team = ({
 				{team.seed}.<br />
 				&nbsp;
 			</div>
-			<div className="mr-1">
+			<div className="mr-1 overflow-hidden">
 				<a
 					className={classNames({
 						"text-muted": lost,
@@ -113,6 +119,10 @@ const Team = ({
 				<br />
 				<span className="text-muted">
 					{team.regularSeason.won}-{team.regularSeason.lost}
+					{team.regularSeason.otl !== undefined &&
+					team.regularSeason.otl > 0 ? (
+						<>-{team.regularSeason.otl}</>
+					) : null}
 					{team.regularSeason.tied !== undefined &&
 					team.regularSeason.tied > 0 ? (
 						<>-{team.regularSeason.tied}</>

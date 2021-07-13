@@ -46,9 +46,13 @@ const TeamLogo = ({
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 }) => {
 	let record = `${t.won}-${t.lost}`;
+	if (typeof t.otl === "number" && !Number.isNaN(t.otl) && t.otl > 0) {
+		record += `-${t.otl}`;
+	}
 	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
 		record += `-${t.tied}`;
 	}
@@ -75,7 +79,7 @@ const HeadlineScore = ({ boxScore }: any) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
-	const liveGameSim = !boxScore.won || !boxScore.won.name;
+	const liveGameSim = !boxScore.won || boxScore.won.name === undefined;
 	const t0 =
 		boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
 	const t1 =
@@ -139,12 +143,12 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 					const efg = (100 * (t.fg + t.tp / 2)) / t.fga;
 					const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
 					const orbp = (100 * t.orb) / (t.orb + t2.drb);
-					const ftpfga = t.ft / t.fga;
+					const ftpFga = t.ft / t.fga;
 
 					const efg2 = (100 * (t2.fg + t2.tp / 2)) / t2.fga;
 					const tovp2 = (100 * t2.tov) / (t2.fga + 0.44 * t2.fta + t2.tov);
 					const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
-					const ftpfga2 = t2.ft / t2.fga;
+					const ftpFga2 = t2.ft / t2.fga;
 
 					return (
 						<tr key={t.abbrev}>
@@ -157,8 +161,8 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 							<td className={orbp > orbp2 ? "table-success" : undefined}>
 								{helpers.roundStat(orbp, "orbp")}
 							</td>
-							<td className={ftpfga > ftpfga2 ? "table-success" : undefined}>
-								{helpers.roundStat(ftpfga, "ftpfga")}
+							<td className={ftpFga > ftpFga2 ? "table-success" : undefined}>
+								{helpers.roundStat(ftpFga, "ftpFga")}
 							</td>
 						</tr>
 					);

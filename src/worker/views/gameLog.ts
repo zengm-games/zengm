@@ -140,6 +140,7 @@ const boxScore = async (gid: number) => {
 			won: game.teams[wonInd].won,
 			lost: game.teams[wonInd].lost,
 			tied: game.teams[wonInd].tied,
+			otl: game.teams[wonInd].otl,
 			playoffs: game.teams[wonInd].playoffs,
 		},
 		lost: {
@@ -151,6 +152,7 @@ const boxScore = async (gid: number) => {
 			won: game.teams[lostInd].won,
 			lost: game.teams[lostInd].lost,
 			tied: game.teams[lostInd].tied,
+			otl: game.teams[lostInd].otl,
 			playoffs: game.teams[lostInd].playoffs,
 		},
 	};

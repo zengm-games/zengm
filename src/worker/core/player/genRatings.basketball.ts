@@ -1,9 +1,7 @@
-import { PHASE } from "../../../common";
 import genFuzz from "./genFuzz";
 import heightToRating from "./heightToRating";
 import limitRating from "./limitRating";
-import posBasketball from "./pos.basketball";
-import { g, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import type {
 	PlayerRatings,
 	RatingKey,
@@ -151,14 +149,6 @@ const genRatings = (
 		);
 	}
 
-	// Small chance of freakish ability in 2 categories
-	/*for (let i = 0; i < 2; i++) {
-         if (Math.random() < 0.2) {
-             const key = random.choice(Object.keys(rawRatings));
-             rawRatings[key] = limitRating(rawRatings[key] + random.realGauss(20, 5));
-         }
-     }*/
-
 	const ratings = {
 		stre: rawRatings.stre,
 		spd: rawRatings.spd,
@@ -183,35 +173,6 @@ const genRatings = (
 		skills: [],
 	};
 
-	// Ugly hack: Tall people can't dribble/pass very well
-	/*if (ratings.hgt > 40) {
-         ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
-         ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
-     } else {
-         ratings.drb = limitRating(ratings.drb + 10);
-         ratings.pss = limitRating(ratings.pss + 10);
-     }*/
-	// Higher fuzz for draft prospects
-
-	let factor = 1;
-
-	if (g.get("phase") >= PHASE.RESIGN_PLAYERS) {
-		if (season === g.get("season") + 2) {
-			factor = Math.sqrt(2);
-		} else if (season >= g.get("season") + 3) {
-			factor = 2;
-		}
-	} else {
-		if (season === g.get("season") + 1) {
-			factor = Math.sqrt(2);
-		} else if (season >= g.get("season") + 2) {
-			factor = 2;
-		}
-	}
-
-	ratings.fuzz *= factor;
-
-	ratings.pos = posBasketball(ratings);
 	return {
 		heightInInches,
 		ratings,

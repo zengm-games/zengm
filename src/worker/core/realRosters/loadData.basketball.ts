@@ -1,4 +1,4 @@
-import type { ScheduledEventWithoutKey } from "../../../common/types";
+import type { Phase, ScheduledEventWithoutKey } from "../../../common/types";
 
 export type Ratings = {
 	slug: string;
@@ -41,6 +41,7 @@ export type Basketball = {
 		| {
 				name: string;
 				bornYear: number;
+				diedYear: number;
 				country: string;
 				weight: number;
 				pos: string;
@@ -65,12 +66,16 @@ export type Basketball = {
 		exp: number;
 		amount: number;
 	}[];
-	injuries: {
-		slug: string;
-		season: number;
-		type: string;
-		gamesRemaining: number;
-	}[];
+	injuries: Record<
+		string,
+		| {
+				season: number;
+				phase: Phase;
+				type: string;
+				gamesRemaining: number;
+		  }[]
+		| undefined
+	>;
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
 	draftPicks: Record<
@@ -117,6 +122,15 @@ export type Basketball = {
 			abbrevs: [string, string];
 			seeds: [number, number];
 			wons: [number, number];
+		}[]
+	>;
+	expansionDrafts: Record<number, Record<string, string[]>>;
+	retiredJerseyNumbers: Record<
+		string,
+		{
+			number: string;
+			season: number;
+			slug: string;
 		}[]
 	>;
 };

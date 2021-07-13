@@ -58,10 +58,10 @@ const FrivolitiesTrades = ({
 		"Season",
 		"Team",
 		"Received",
-		`stat:${bySport({ basketball: "ws", football: "av" })}`,
+		`stat:${bySport({ basketball: "ws", football: "av", hockey: "ps" })}`,
 		"Team",
 		"Received",
-		`stat:${bySport({ basketball: "ws", football: "av" })}`,
+		`stat:${bySport({ basketball: "ws", football: "av", hockey: "ps" })}`,
 		"Links",
 	);
 	for (const i of [4, 7]) {
@@ -91,6 +91,29 @@ const FrivolitiesTrades = ({
 
 	const rows = trades.map(trade => {
 		const teamCols = trade.teams.map(t => {
+			const searchValue = t.assets
+				.map(asset => {
+					if (asset.type === "player") {
+						return `${asset.pos} ${asset.name}`;
+					}
+					if (asset.type === "deletedPlayer") {
+						return asset.name;
+					}
+
+					if (asset.type === "realizedPick") {
+						return `${asset.pos} ${asset.name} ${helpers.ordinal(
+							asset.round,
+						)} round pick}`;
+					}
+
+					if (asset.type === "unrealizedPick") {
+						return `${helpers.ordinal(asset.round)} round pick}`;
+					}
+				})
+				.join(" ");
+
+			const sortValue = t.assets.length;
+
 			return [
 				<a
 					href={helpers.leagueUrl([
@@ -151,6 +174,8 @@ const FrivolitiesTrades = ({
 							})}
 						</ul>
 					),
+					searchValue,
+					sortValue,
 				},
 				helpers.roundStat(t.statSum, "ws"),
 			];

@@ -3,6 +3,7 @@ import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getAutoTicketPriceByTid } from "../core/game/attendance";
 
 const updateTeamFinances = async (
 	inputs: ViewInput<"teamFinances">,
@@ -165,12 +166,20 @@ const updateTeamFinances = async (
 
 		// Get stuff for the finances form
 		const t = await idb.getCopy.teamsPlus({
-			attrs: ["budget", "adjustForInflation"],
+			attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,
 			addDummySeason: true,
 		});
+
+		if (!t) {
+			throw new Error("Team not found");
+		}
+
+		// undefined is true (for upgrades), and AI teams are always true
+		t.autoTicketPrice =
+			t.autoTicketPrice !== false || !g.get("userTids").includes(inputs.tid);
 
 		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
 			if (teamSeason.stadiumCapacity > max) {
@@ -180,8 +189,11 @@ const updateTeamFinances = async (
 			return max;
 		}, 0);
 
+		const autoTicketPrice = await getAutoTicketPriceByTid(inputs.tid);
+
 		return {
 			abbrev: inputs.abbrev,
+			autoTicketPrice,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			hardCap: g.get("hardCap"),
 			numGames: g.get("numGames"),

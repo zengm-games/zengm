@@ -1,8 +1,7 @@
-import { motion, AnimatePresence } from "framer-motion";
-import orderBy from "lodash/orderBy";
+import { m, AnimatePresence } from "framer-motion";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useCallback, useState, useReducer } from "react";
-import type { ReactNode } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -10,12 +9,18 @@ import {
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
-	gameAttributeHasHistory,
-	isSport,
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
+	gameAttributesArrayToObject,
+	WEBSITE_ROOT,
+	unwrapGameAttribute,
 } from "../../../common";
-import { LeagueFileUpload, PopText } from "../../components";
+import {
+	ActionButton,
+	LeagueFileUpload,
+	NextPrevButtons,
+	PopText,
+} from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
@@ -33,11 +38,42 @@ import type {
 	Conf,
 } from "../../../common/types";
 import classNames from "classnames";
-import { descriptions } from "../Settings";
+import { descriptions } from "../Settings/settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";
+import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams from "./CustomizeTeams";
+import type { Settings } from "../../../worker/views/settings";
+
+const animationVariants = {
+	visible: {
+		x: 0,
+		transition: { duration: 0.25, ease: "easeInOut" },
+	},
+	left: {
+		x: "-75vw",
+		transition: { duration: 0.25, ease: "easeInOut" },
+	},
+	right: {
+		x: "75vw",
+		transition: { duration: 0.25, ease: "easeInOut" },
+	},
+};
+
+const onAnimationCompleteHack = (definition: string) => {
+	// HACK HACK HACK
+	// CustomizeSettings has a sticky div inside it, and mobile Chrome (and maybe others) get confused by the `transform: translateX(0vw) translateZ(0px);` CSS that framer-motion leaves hanging around
+	if (definition === "visible") {
+		const parent = document.getElementById("actual-actual-content");
+		if (parent) {
+			const animatedDiv = parent.children[0] as HTMLDivElement | undefined;
+			if (animatedDiv) {
+				animatedDiv.style.transform = "";
+			}
+		}
+	}
+};
 
 const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
@@ -184,11 +220,13 @@ type State = {
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
 	phase: number;
+
+	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
+
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
-	randomization: "none" | "debuts" | "shuffle";
 	teams: NewLeagueTeam[];
 	confs: Conf[];
 	divs: Div[];
@@ -197,18 +235,7 @@ type State = {
 	allKeys: string[];
 	keptKeys: string[];
 	expandOptions: boolean;
-	challengeNoDraftPicks: boolean;
-	challengeNoFreeAgents: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	challengeLoseBestPlayer: boolean;
-	challengeFiredLuxuryTax: boolean;
-	challengeFiredMissPlayoffs: boolean;
-	equalizeRegions: boolean;
-	repeatSeason: boolean;
-	noStartingInjuries: boolean;
-	realPlayerDeterminism: number;
-	realDraftRatings: "rookie" | "draft";
+	settings: Omit<Settings, "numActiveTeams">;
 };
 
 type Action =
@@ -242,10 +269,6 @@ type Action =
 			legend: string;
 	  }
 	| {
-			type: "setRandomization";
-			randomization: State["randomization"];
-	  }
-	| {
 			type: "setSeason";
 			season: number;
 	  }
@@ -266,52 +289,17 @@ type Action =
 			type: "newLeagueFile";
 			leagueFile: any;
 			teams: NewLeagueTeam[];
+			defaultSettings: State["settings"];
 	  }
 	| {
 			type: "newLeagueInfo";
 			allKeys: string[];
 			teams: NewLeagueTeam[];
-			confs: Conf[];
-			divs: Div[];
+			gameAttributes: Record<string, unknown>;
+			defaultSettings: State["settings"];
 	  }
 	| {
 			type: "toggleExpandOptions";
-	  }
-	| {
-			type: "toggleChallengeNoDraftPicks";
-	  }
-	| {
-			type: "toggleChallengeNoFreeAgents";
-	  }
-	| {
-			type: "toggleChallengeNoRatings";
-	  }
-	| {
-			type: "toggleChallengeNoTrades";
-	  }
-	| {
-			type: "toggleChallengeLoseBestPlayer";
-	  }
-	| {
-			type: "toggleChallengeFiredLuxuryTax";
-	  }
-	| {
-			type: "toggleChallengeFiredMissPlayoffs";
-	  }
-	| {
-			type: "toggleEqualizeRegions";
-	  }
-	| {
-			type: "toggleRepeatSeason";
-	  }
-	| { type: "toggleNoStartingInjuries" }
-	| {
-			type: "setRealPlayerDeterminism";
-			realPlayerDeterminism: number;
-	  }
-	| {
-			type: "setRealDraftRatings";
-			realDraftRatings: "rookie" | "draft";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -328,6 +316,36 @@ const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
 		t => prevTeamRegionName <= `${t.region} ${t.name}`,
 	);
 	return closestNewTeam ? closestNewTeam.tid : newTeams.length - 1;
+};
+
+const getSettingsFromGameAttributes = (
+	gameAttributes: Record<string, unknown> | undefined,
+	defaultSettings: State["settings"],
+) => {
+	const newSettings = helpers.deepCopy(defaultSettings);
+
+	if (gameAttributes) {
+		for (const key of helpers.keys(newSettings)) {
+			if (
+				key === "noStartingInjuries" ||
+				key === "randomization" ||
+				key === "realStats"
+			) {
+				continue;
+			}
+
+			const value = unwrapGameAttribute(gameAttributes, key);
+			if (value !== undefined) {
+				if (key === "repeatSeason") {
+					newSettings[key] = !!value;
+				} else {
+					(newSettings[key] as any) = value;
+				}
+			}
+		}
+	}
+
+	return newSettings;
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -387,12 +405,6 @@ const reducer = (state: State, action: Action): State => {
 				legend: action.legend,
 			};
 
-		case "setRandomization":
-			return {
-				...state,
-				randomization: action.randomization,
-			};
-
 		case "setSeason":
 			return {
 				...state,
@@ -435,50 +447,20 @@ const reducer = (state: State, action: Action): State => {
 			let confs = DEFAULT_CONFS;
 			let divs = DEFAULT_DIVS;
 
-			const gameAttributeOverrides: {
-				challengeNoDraftPicks: boolean;
-				challengeNoFreeAgents: boolean;
-				challengeNoRatings: boolean;
-				challengeNoTrades: boolean;
-				challengeLoseBestPlayer: boolean;
-				challengeFiredLuxuryTax: boolean;
-				challengeFiredMissPlayoffs: boolean;
-				equalizeRegions: boolean;
-				expandOptions: boolean;
-				repeatSeason: boolean;
-			} = {
-				challengeNoDraftPicks: state.challengeNoDraftPicks,
-				challengeNoFreeAgents: state.challengeNoFreeAgents,
-				challengeNoRatings: state.challengeNoRatings,
-				challengeNoTrades: state.challengeNoTrades,
-				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
-				challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
-				challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
-				equalizeRegions: state.equalizeRegions,
-				expandOptions: state.expandOptions,
-				repeatSeason: state.repeatSeason,
-			};
-			if (action.leagueFile && action.leagueFile.gameAttributes) {
-				for (const { key, value } of action.leagueFile.gameAttributes) {
-					// For most settings this passes through the boolean value. For repeatSeason it converts that to a boolean, and it'll be filled later with the actual correct value.
-					const booleanValue = !!value;
-					if (
-						(gameAttributeOverrides as any)[key] !== undefined &&
-						(gameAttributeOverrides as any)[key] !== booleanValue
-					) {
-						(gameAttributeOverrides as any)[key] = booleanValue;
-						gameAttributeOverrides.expandOptions = true;
-					}
+			const newSettings = getSettingsFromGameAttributes(
+				action.leagueFile.gameAttributes,
+				action.defaultSettings,
+			);
 
-					if (key === "confs") {
-						confs = gameAttributeHasHistory(value)
-							? value[value.length - 1].value
-							: value;
-					} else if (key === "divs") {
-						divs = gameAttributeHasHistory(value)
-							? value[value.length - 1].value
-							: value;
-					}
+			if (action.leagueFile.gameAttributes) {
+				if (action.leagueFile.gameAttributes.confs) {
+					confs = unwrapGameAttribute(
+						action.leagueFile.gameAttributes,
+						"confs",
+					);
+				}
+				if (action.leagueFile.gameAttributes.divs) {
+					divs = unwrapGameAttribute(action.leagueFile.gameAttributes, "divs");
 				}
 			}
 
@@ -492,7 +474,7 @@ const reducer = (state: State, action: Action): State => {
 				divs,
 				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
-				...gameAttributeOverrides,
+				settings: newSettings,
 			};
 		}
 
@@ -511,17 +493,26 @@ const reducer = (state: State, action: Action): State => {
 				oldAllKeys: state.allKeys,
 			});
 
+			const newSettings = getSettingsFromGameAttributes(
+				action.gameAttributes,
+				action.defaultSettings,
+			);
+
+			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
+			const divs = unwrapGameAttribute(action.gameAttributes, "divs");
+
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: null,
 				allKeys,
 				keptKeys,
-				confs: action.confs,
-				divs: action.divs,
+				confs,
+				divs,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				pendingInitialLeagueInfo: false,
+				settings: newSettings,
 			};
 		}
 
@@ -529,77 +520,6 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				expandOptions: !state.expandOptions,
-			};
-
-		case "toggleChallengeNoDraftPicks":
-			return {
-				...state,
-				challengeNoDraftPicks: !state.challengeNoDraftPicks,
-			};
-
-		case "toggleChallengeNoFreeAgents":
-			return {
-				...state,
-				challengeNoFreeAgents: !state.challengeNoFreeAgents,
-			};
-
-		case "toggleChallengeNoRatings":
-			return {
-				...state,
-				challengeNoRatings: !state.challengeNoRatings,
-			};
-
-		case "toggleChallengeNoTrades":
-			return {
-				...state,
-				challengeNoTrades: !state.challengeNoTrades,
-			};
-
-		case "toggleChallengeLoseBestPlayer":
-			return {
-				...state,
-				challengeLoseBestPlayer: !state.challengeLoseBestPlayer,
-			};
-
-		case "toggleChallengeFiredLuxuryTax":
-			return {
-				...state,
-				challengeFiredLuxuryTax: !state.challengeFiredLuxuryTax,
-			};
-
-		case "toggleChallengeFiredMissPlayoffs":
-			return {
-				...state,
-				challengeFiredMissPlayoffs: !state.challengeFiredMissPlayoffs,
-			};
-		case "toggleEqualizeRegions":
-			return {
-				...state,
-				equalizeRegions: !state.equalizeRegions,
-			};
-
-		case "toggleRepeatSeason":
-			return {
-				...state,
-				repeatSeason: !state.repeatSeason,
-			};
-
-		case "toggleNoStartingInjuries":
-			return {
-				...state,
-				noStartingInjuries: !state.noStartingInjuries,
-			};
-
-		case "setRealPlayerDeterminism":
-			return {
-				...state,
-				realPlayerDeterminism: action.realPlayerDeterminism,
-			};
-
-		case "setRealDraftRatings":
-			return {
-				...state,
-				realDraftRatings: action.realDraftRatings,
 			};
 
 		default:
@@ -612,7 +532,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [customizeTeamsUI, setCustomizeTeamsUI] = useState(false);
+	const [currentScreen, setCurrentScreen] = useState<
+		"default" | "teams" | "settings"
+	>("default");
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -660,7 +582,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				phase,
 				leagueFile,
 				loadingLeagueFile: false,
-				randomization: "none",
 				teams: teamsDefault,
 				confs: DEFAULT_CONFS,
 				divs: DEFAULT_DIVS,
@@ -669,18 +590,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				allKeys,
 				keptKeys,
 				expandOptions: false,
-				challengeNoDraftPicks: false,
-				challengeNoFreeAgents: false,
-				challengeNoRatings: false,
-				challengeNoTrades: false,
-				challengeLoseBestPlayer: false,
-				challengeFiredLuxuryTax: false,
-				challengeFiredMissPlayoffs: false,
-				repeatSeason: false,
-				noStartingInjuries: false,
-				equalizeRegions: false,
-				realPlayerDeterminism: 0,
-				realDraftRatings: "rookie",
+				settings: props.defaultSettings,
 			};
 		},
 	);
@@ -698,152 +608,108 @@ const NewLeague = (props: View<"newLeague">) => {
 		title = "New Real Players League";
 	}
 
-	const handleSubmit = useCallback(
-		async event => {
-			event.preventDefault();
+	const createLeague = async (settingsOverride?: State["settings"]) => {
+		if (props.lid !== undefined) {
+			const result = await confirm(
+				`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
+				{
+					okText: title,
+				},
+			);
+			if (!result) {
+				return;
+			}
+		}
 
-			if (props.lid !== undefined) {
-				const result = await confirm(
-					`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
-					{
-						okText: title,
-					},
-				);
-				if (!result) {
-					return;
-				}
+		dispatch({
+			type: "submit",
+		});
+
+		const settings = settingsOverride ?? state.settings;
+
+		// If no settingsOverride, then use difficulty from state, since user may have selected a new value
+		if (!settingsOverride) {
+			settings.difficulty = state.difficulty;
+		}
+
+		const actualShuffleRosters = state.keptKeys.includes("players")
+			? settings.randomization === "shuffle"
+			: false;
+
+		const actualStartingSeason =
+			state.customize === "default" ? startingSeason : undefined;
+
+		try {
+			let getLeagueOptions: GetLeagueOptions | undefined;
+			if (state.customize === "real") {
+				getLeagueOptions = {
+					type: "real",
+					season: state.season,
+					phase: state.phase,
+					randomDebuts:
+						settings.randomization === "debuts" ||
+						settings.randomization === "debutsForever",
+					realDraftRatings: settings.realDraftRatings,
+					realStats: settings.realStats,
+				};
+			} else if (state.customize === "legends") {
+				getLeagueOptions = {
+					type: "legends",
+					decade: state.legend as any,
+				};
 			}
 
-			dispatch({
-				type: "submit",
+			const teamRegionName = getTeamRegionName(state.teams, state.tid);
+			safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
+			if (state.customize === "real") {
+				safeLocalStorage.setItem("prevSeason", String(state.season));
+				safeLocalStorage.setItem("prevPhase", String(state.phase));
+			}
+
+			const lid = await toWorker("main", "createLeague", {
+				name,
+				tid: state.tid,
+				leagueFileInput: state.leagueFile,
+				keptKeys: state.keptKeys,
+				shuffleRosters: actualShuffleRosters,
+				importLid: props.lid,
+				getLeagueOptions,
+				actualStartingSeason,
+				confs: state.confs,
+				divs: state.divs,
+				teams: state.teams,
+				settings,
 			});
 
-			const actualShuffleRosters = state.keptKeys.includes("players")
-				? state.randomization === "shuffle"
-				: false;
-
-			const actualDifficulty = state.difficulty;
-
-			const actualStartingSeason =
-				state.customize === "default" ? startingSeason : undefined;
-
-			const actualRealPlayerDeterminism =
-				(state.customize === "real" || state.customize === "legends") &&
-				state.keptKeys.includes("players")
-					? state.realPlayerDeterminism
-					: undefined;
-
-			try {
-				let getLeagueOptions: GetLeagueOptions | undefined;
-				if (state.customize === "real") {
-					getLeagueOptions = {
-						type: "real",
-						season: state.season,
-						phase: state.phase,
-						randomDebuts: state.randomization === "debuts",
-						realDraftRatings: state.realDraftRatings,
-					};
-				} else if (state.customize === "legends") {
-					getLeagueOptions = {
-						type: "legends",
-						decade: state.legend as any,
-					};
-				}
-
-				const teamRegionName = getTeamRegionName(state.teams, state.tid);
-				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
-				if (state.customize === "real") {
-					safeLocalStorage.setItem("prevSeason", String(state.season));
-					safeLocalStorage.setItem("prevPhase", String(state.phase));
-				}
-
-				const lid = await toWorker("main", "createLeague", {
-					name,
-					tid: state.tid,
-					leagueFileInput: state.leagueFile,
-					keptKeys: state.keptKeys,
-					shuffleRosters: actualShuffleRosters,
-					difficulty: actualDifficulty,
-					importLid: props.lid,
-					getLeagueOptions,
-					actualStartingSeason,
-					challengeNoDraftPicks: state.challengeNoDraftPicks,
-					challengeNoFreeAgents: state.challengeNoFreeAgents,
-					challengeNoRatings: state.challengeNoRatings,
-					challengeNoTrades: state.challengeNoTrades,
-					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
-					challengeFiredLuxuryTax: state.challengeFiredLuxuryTax,
-					challengeFiredMissPlayoffs: state.challengeFiredMissPlayoffs,
-					repeatSeason: state.repeatSeason,
-					noStartingInjuries: state.noStartingInjuries,
-					equalizeRegions: state.equalizeRegions,
-					realPlayerDeterminism: actualRealPlayerDeterminism,
-					confs: state.confs,
-					divs: state.divs,
-					teams: state.teams,
-				});
-
-				let type: string = state.customize;
-				if (type === "real") {
-					type = String(state.season);
-				}
-				if (type === "legends") {
-					type = String(state.legend);
-				}
-				if (window.enableLogging && window.gtag) {
-					window.gtag("event", "new_league", {
-						event_category: type,
-						event_label: teamRegionName,
-						value: lid,
-					});
-				}
-
-				realtimeUpdate([], `/l/${lid}`);
-			} catch (err) {
-				dispatch({
-					type: "error",
-				});
-				console.log(err);
-				logEvent({
-					type: "error",
-					text: err.message,
-					persistent: true,
-					saveToDb: false,
+			let type: string = state.customize;
+			if (type === "real") {
+				type = String(state.season);
+			}
+			if (type === "legends") {
+				type = String(state.legend);
+			}
+			if (window.enableLogging && window.gtag) {
+				window.gtag("event", "new_league", {
+					event_category: type,
+					event_label: teamRegionName,
+					value: lid,
 				});
 			}
-		},
-		[
-			state.challengeNoDraftPicks,
-			state.challengeNoFreeAgents,
-			state.challengeNoRatings,
-			state.challengeNoTrades,
-			state.challengeLoseBestPlayer,
-			state.challengeFiredLuxuryTax,
-			state.challengeFiredMissPlayoffs,
-			state.confs,
-			state.customize,
-			state.difficulty,
-			state.divs,
-			state.equalizeRegions,
-			state.keptKeys,
-			state.leagueFile,
-			state.legend,
-			name,
-			props.lid,
-			props.name,
-			state.noStartingInjuries,
-			state.phase,
-			state.randomization,
-			state.realDraftRatings,
-			state.realPlayerDeterminism,
-			state.repeatSeason,
-			state.season,
-			startingSeason,
-			state.teams,
-			state.tid,
-			title,
-		],
-	);
+
+			realtimeUpdate([], `/l/${lid}`);
+		} catch (err) {
+			dispatch({
+				type: "error",
+			});
+			console.log(err);
+			logEvent({
+				type: "error",
+				text: err.message,
+				persistent: true,
+				saveToDb: false,
+			});
+		}
+	};
 
 	const handleNewLeagueFile = useCallback(
 		(err, newLeagueFile) => {
@@ -876,6 +742,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				newTeams = teamsDefault;
 			}
 
+			if (newLeagueFile.gameAttributes) {
+				if (Array.isArray(newLeagueFile.gameAttributes)) {
+					newLeagueFile.gameAttributes = gameAttributesArrayToObject(
+						newLeagueFile.gameAttributes,
+					);
+				}
+			}
+
 			dispatch({
 				type: "newLeagueFile",
 				leagueFile: newLeagueFile,
@@ -884,30 +758,28 @@ const NewLeague = (props: View<"newLeague">) => {
 					props.realTeamInfo,
 					newLeagueFile.startingSeason,
 				),
+				defaultSettings: props.defaultSettings,
 			});
 
 			// Need to update team and difficulty dropdowns?
-			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
-				for (const ga of newLeagueFile.gameAttributes) {
-					if (ga.key === "userTid") {
-						let tid = ga.value;
-						if (Array.isArray(tid) && tid.length > 0) {
-							tid = tid[tid.length - 1].value;
-						}
-						if (typeof tid === "number" && !Number.isNaN(tid)) {
-							dispatch({ type: "setTid", tid });
-						}
-					} else if (
-						ga.key === "difficulty" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						dispatch({ type: "setDifficulty", difficulty: ga.value });
+			if (newLeagueFile.gameAttributes) {
+				if (newLeagueFile.gameAttributes.userTid !== undefined) {
+					let tid = newLeagueFile.gameAttributes.userTid;
+					if (Array.isArray(tid) && tid.length > 0) {
+						tid = tid[tid.length - 1].value;
 					}
+					if (typeof tid === "number" && !Number.isNaN(tid)) {
+						dispatch({ type: "setTid", tid });
+					}
+				}
+
+				const difficulty = newLeagueFile.gameAttributes.difficulty;
+				if (typeof difficulty === "number" && !Number.isNaN(difficulty)) {
+					dispatch({ type: "setDifficulty", difficulty: String(difficulty) });
 				}
 			}
 		},
-		[props.realTeamInfo],
+		[props.defaultSettings, props.realTeamInfo],
 	);
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
@@ -921,43 +793,60 @@ const NewLeague = (props: View<"newLeague">) => {
 				props.realTeamInfo,
 				leagueInfo.startingSeason,
 			),
-			confs: leagueInfo.confs,
-			divs: leagueInfo.divs,
+			gameAttributes: leagueInfo.gameAttributes,
+			defaultSettings: props.defaultSettings,
 		});
 	};
 
+	let pageTitle = title;
+	if (currentScreen === "teams") {
+		pageTitle = "Customize Teams";
+	} else if (currentScreen === "settings") {
+		pageTitle = "Customize Settings";
+	}
+
 	useTitleBar({
-		title: customizeTeamsUI ? `${title} » Customize Teams` : title,
+		title: pageTitle,
 		hideNewWindow: true,
 	});
 
-	if (customizeTeamsUI) {
-		return (
-			<CustomizeTeams
-				onCancel={() => {
-					setCustomizeTeamsUI(false);
-				}}
-				onSave={({ confs, divs, teams }) => {
-					dispatch({
-						type: "setTeams",
-						confs,
-						divs,
-						teams: helpers.addPopRank(teams),
-					});
-					setCustomizeTeamsUI(false);
-				}}
-				initialConfs={state.confs}
-				initialDivs={state.divs}
-				initialTeams={state.teams}
-				getDefaultConfsDivsTeams={() => {
-					return {
-						confs: DEFAULT_CONFS,
-						divs: DEFAULT_DIVS,
-						teams: teamsDefault,
-					};
-				}}
-				godModeLimits={props.godModeLimits}
-			/>
+	let subPage = null;
+	if (currentScreen === "teams") {
+		subPage = (
+			<m.div
+				key="screen-teams"
+				variants={animationVariants}
+				initial="right"
+				animate="visible"
+				exit="right"
+				onAnimationComplete={onAnimationCompleteHack}
+			>
+				<CustomizeTeams
+					onCancel={() => {
+						setCurrentScreen("default");
+					}}
+					onSave={({ confs, divs, teams }) => {
+						dispatch({
+							type: "setTeams",
+							confs,
+							divs,
+							teams: helpers.addPopRank(teams),
+						});
+						setCurrentScreen("default");
+					}}
+					initialConfs={state.confs}
+					initialDivs={state.divs}
+					initialTeams={state.teams}
+					getDefaultConfsDivsTeams={() => {
+						return {
+							confs: DEFAULT_CONFS,
+							divs: DEFAULT_DIVS,
+							teams: teamsDefault,
+						};
+					}}
+					godModeLimits={props.godModeLimits}
+				/>
+			</m.div>
 		);
 	}
 
@@ -966,6 +855,40 @@ const NewLeague = (props: View<"newLeague">) => {
 		!keptKeysIsAvailable || state.keptKeys.includes("teams")
 			? state.teams
 			: teamsDefault;
+
+	const createLeagueText =
+		props.lid !== undefined ? "Import League" : "Create League";
+
+	if (currentScreen === "settings") {
+		subPage = (
+			<m.div
+				key="screen-settings"
+				variants={animationVariants}
+				initial="right"
+				animate="visible"
+				exit="right"
+				onAnimationComplete={onAnimationCompleteHack}
+			>
+				<CustomizeSettings
+					onCancel={() => {
+						setCurrentScreen("default");
+					}}
+					onSave={async settings => {
+						await createLeague(settings);
+					}}
+					initial={{
+						...state.settings,
+						numActiveTeams: displayedTeams.length,
+						difficulty: state.difficulty,
+					}}
+					saveText={createLeagueText}
+					hasPlayers={state.keptKeys.includes("players")}
+					// Don't want legends for this!
+					realPlayers={state.customize === "real"}
+				/>
+			</m.div>
+		);
+	}
 
 	const disableWhileLoadingLeagueFile =
 		((state.customize === "custom-rosters" ||
@@ -979,748 +902,457 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: ReactNode[] = [
-		<div key="challenge" className="mb-3">
-			<label>Challenge modes</label>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoDraftPicks"
-					checked={state.challengeNoDraftPicks}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoDraftPicks" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoDraftPicks"
-				>
-					No draft picks
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeNoDraftPicks}
-					</span>
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoFreeAgents"
-					checked={state.challengeNoFreeAgents}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoFreeAgents" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoFreeAgents"
-				>
-					No free agents
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeNoFreeAgents}
-					</span>
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoTrades"
-					checked={state.challengeNoTrades}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoTrades" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoTrades"
-				>
-					No trades
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeNoRatings"
-					checked={state.challengeNoRatings}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeNoRatings" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeNoRatings"
-				>
-					No visible player ratings
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeLoseBestPlayer"
-					checked={state.challengeLoseBestPlayer}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeLoseBestPlayer" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeLoseBestPlayer"
-				>
-					Lose best player every season
-					<br />
-					<span className="text-muted">
-						{descriptions.challengeLoseBestPlayer}
-					</span>
-				</label>
-			</div>
-			{!isSport("football") || state.challengeFiredLuxuryTax ? (
-				<div className="form-check mb-2">
-					<input
-						className="form-check-input"
-						type="checkbox"
-						id="new-league-challengeFiredLuxuryTax"
-						checked={state.challengeFiredLuxuryTax}
-						onChange={() => {
-							dispatch({ type: "toggleChallengeFiredLuxuryTax" });
-						}}
-					/>
-					<label
-						className="form-check-label"
-						htmlFor="new-league-challengeFiredLuxuryTax"
-					>
-						You're fired if you pay the luxury tax
-					</label>
-				</div>
-			) : null}
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-challengeFiredMissPlayoffs"
-					checked={state.challengeFiredMissPlayoffs}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeFiredMissPlayoffs" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeFiredMissPlayoffs"
-				>
-					You're fired if you miss the playoffs
-				</label>
-			</div>
-		</div>,
-		<div key="other" className="mb-3">
-			<label>Other</label>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-equalizeRegions"
-					checked={state.equalizeRegions}
-					onChange={() => {
-						dispatch({ type: "toggleEqualizeRegions" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-equalizeRegions"
-				>
-					Equalize region populations
-				</label>
-			</div>
-			{state.keptKeys.includes("players") ? (
-				<div className="form-check mb-2">
-					<input
-						className="form-check-input"
-						type="checkbox"
-						id="new-league-noStartingInjuries"
-						checked={state.noStartingInjuries}
-						onChange={() => {
-							dispatch({ type: "toggleNoStartingInjuries" });
-						}}
-					/>
-					<label
-						className="form-check-label"
-						htmlFor="new-league-noStartingInjuries"
-					>
-						No starting injuries
-					</label>
-				</div>
-			) : null}
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="new-league-repeatSeason"
-					checked={state.repeatSeason}
-					onChange={() => {
-						dispatch({ type: "toggleRepeatSeason" });
-					}}
-				/>
-				<label className="form-check-label" htmlFor="new-league-repeatSeason">
-					Groundhog Day
-					<br />
-					<span className="text-muted">{descriptions.repeatSeason}</span>
-				</label>
-			</div>
-		</div>,
-	];
+	const bannedExpansionSeasons = [
+		// Because of other mergers
+		1947, 1948, 1949,
 
-	if (
-		(state.customize === "real" || state.customize === "legends") &&
-		state.keptKeys.includes("players")
-	) {
-		moreOptions.unshift(
-			<div key="realDraftRatings" className="form-group">
-				<label htmlFor="new-league-realDraftRatings">
-					Real draft prospect ratings
-				</label>
-				<select
-					id="new-league-realDraftRatings"
-					className="form-control"
-					onChange={event => {
-						dispatch({
-							type: "setRealDraftRatings",
-							realDraftRatings: event.target.value as any,
-						});
-					}}
-					value={state.realDraftRatings}
-				>
-					<option value="rookie">Based on rookie season stats</option>
-					<option value="draft">Based on draft position</option>
-				</select>
-				{state.realDraftRatings === "rookie" ? (
-					<div className="text-muted mt-1">
-						Player ratings for draft prospects are based on their rookie season
-						stats. Players who overperformed or underperformed their real draft
-						positions as rookies will be ranked differently than they were in
-						reality.
-					</div>
-				) : null}
-				{state.realDraftRatings === "draft" ? (
-					<div className="text-muted mt-1">
-						Player ratings for draft prospects are based on the position they
-						were drafted. Every #1 pick will have a high rating, even if in
-						reality he was a bust. Every late pick will have a low rating, even
-						if in reality he became a star.
-					</div>
-				) : null}
-			</div>,
-		);
-
-		moreOptions.unshift(
-			<div key="realPlayerDeterminism" className="form-group">
-				<label htmlFor="new-league-realPlayerDeterminism">
-					Real player development determinism
-				</label>
-				<div className="d-flex">
-					<input
-						id="new-league-realPlayerDeterminism"
-						type="range"
-						className="form-control-range"
-						min="0"
-						max="1"
-						step="0.05"
-						value={state.realPlayerDeterminism}
-						onChange={event => {
-							dispatch({
-								type: "setRealPlayerDeterminism",
-								realPlayerDeterminism: parseFloat(event.target.value as any),
-							});
-						}}
-					/>
-					<div className="text-right" style={{ minWidth: 40 }}>
-						{Math.round(state.realPlayerDeterminism * 100)}%
-					</div>
-				</div>
-				<div className="text-muted mt-1">
-					{descriptions.realPlayerDeterminism}
-				</div>
-			</div>,
-		);
-	}
-
-	if (state.keptKeys.includes("players") || state.customize === "real") {
-		moreOptions.unshift(
-			<div key="randomization" className="form-group">
-				<label htmlFor="new-league-randomization">Randomization</label>
-				<select
-					id="new-league-randomization"
-					className="form-control"
-					onChange={event => {
-						dispatch({
-							type: "setRandomization",
-							randomization: event.target.value as any,
-						});
-					}}
-					value={state.randomization}
-				>
-					<option value="none">None</option>
-					{state.customize === "real" ? (
-						<option value="debuts">Random debuts</option>
-					) : null}
-					<option value="shuffle">Shuffle rosters</option>
-				</select>
-				{state.randomization === "debuts" ? (
-					<div className="text-muted mt-1">
-						Every player's draft year is randomized. Starting teams and future
-						draft classes are all random combinations of past, current, and
-						future real players.
-					</div>
-				) : null}
-				{state.randomization === "shuffle" ? (
-					<div className="text-muted mt-1">
-						All active players are placed on random teams.
-					</div>
-				) : null}
-			</div>,
-		);
-	}
-
-	const expansionSeasons = [
-		1947,
-		1948,
-		1949,
-		1961,
-		1966,
-		1967,
-		1968,
-		1970,
-		1974,
+		// Because of ABA merger
 		1976,
-		1980,
-		1988,
-		1989,
-		1995,
-		2004,
 	];
 	let invalidSeasonPhaseMessage: string | undefined;
-	if (state.phase > PHASE.PLAYOFFS && expansionSeasons.includes(state.season)) {
+	if (
+		state.phase > PHASE.PLAYOFFS &&
+		bannedExpansionSeasons.includes(state.season)
+	) {
 		invalidSeasonPhaseMessage =
-			"Starting after the playoffs is not yet supported for seasons with expansion drafts.";
+			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	if (state.season === 2021 && state.phase > PHASE.PRESEASON) {
+	if (state.season === 2021 && state.phase > PHASE.PLAYOFFS) {
 		invalidSeasonPhaseMessage =
-			"Sorry, I'm not allowed to share the results of the 2021 season yet.";
+			"Sorry, I'm not allowed to share the results of the 2021 playoffs yet.";
 	}
 
+	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
+
+	// exitBeforeEnter sucks (makes transition slower) but otherwise it jumps at the end because it stacks the divs vertically, and I couldn't figure out how to work around that
 	return (
-		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
-			{props.lid !== undefined ? (
-				<>
-					<p>
-						Here you can create a new league that overwrites one of your
-						existing leagues. This is no different than deleting the existing
-						league and creating a new one, it's just a little more convenient
-						for people who do that a lot.
-					</p>
-					<p>
-						If you just want to create a new league,{" "}
-						<a href="/new_league">click here</a>.
-					</p>
-				</>
-			) : null}
-			<div className="row">
-				<div className="col-sm-6">
-					<div className="form-group">
-						<label htmlFor="new-league-name">League name</label>
-						<input
-							id="new-league-name"
-							className="form-control"
-							type="text"
-							value={name}
-							onChange={event => {
-								setName(event.target.value);
-							}}
-						/>
-					</div>
-
-					{state.customize === "default" ? (
-						<div className="form-group">
-							<label htmlFor="new-league-starting-season">Season</label>
-							<input
-								id="new-league-starting-season"
-								className="form-control"
-								type="text"
-								value={startingSeason}
-								onChange={event => {
-									setStartingSeason(event.target.value);
-								}}
-							/>
-						</div>
-					) : null}
-
-					{state.customize === "real" ? (
+		<AnimatePresence exitBeforeEnter initial={false}>
+			{subPage ? (
+				subPage
+			) : (
+				<m.form
+					key="screen-main"
+					variants={animationVariants}
+					initial="left"
+					animate="visible"
+					exit="left"
+					onSubmit={async event => {
+						event.preventDefault();
+						await createLeague();
+					}}
+					style={{ maxWidth: 800 }}
+				>
+					{props.lid !== undefined ? (
 						<>
-							<div className="form-group">
-								<LeagueMenu
-									value={String(state.season)}
-									values={seasons}
-									getLeagueInfo={value =>
-										toWorker("main", "getLeagueInfo", {
-											type: "real",
-											season: parseInt(value),
-										})
-									}
-									onLoading={value => {
-										const season = parseInt(value);
-										dispatch({ type: "setSeason", season });
-
-										if (season === 2021) {
-											dispatch({ type: "setPhase", phase: PHASE.PRESEASON });
-										}
-									}}
-									onDone={handleNewLeagueInfo}
-									quickValues={["1956", "1968", "1984", "1996", "2003", "2021"]}
-									value2={state.phase}
-									values2={phases}
-									onNewValue2={phase => {
-										dispatch({
-											type: "setPhase",
-											phase,
-										});
-									}}
-								/>
-								{invalidSeasonPhaseMessage ? (
-									<div className="text-danger mt-1">
-										{invalidSeasonPhaseMessage}
-									</div>
-								) : (
-									<div className="text-muted mt-1">
-										{state.season} in BBGM is the {state.season - 1}-
-										{String(state.season).slice(2)} season.
-									</div>
-								)}
-							</div>
+							<p>
+								Here you can create a new league that overwrites one of your
+								existing leagues. This is no different than deleting the
+								existing league and creating a new one, it's just a little more
+								convenient for people who do that a lot.
+							</p>
+							<p>
+								If you just want to create a new league,{" "}
+								<a href="/new_league">click here</a>.
+							</p>
 						</>
 					) : null}
+					<div className="row">
+						<div className="col-sm-6">
+							<div className="form-group">
+								<label htmlFor="new-league-name">League name</label>
+								<input
+									id="new-league-name"
+									className="form-control"
+									type="text"
+									value={name}
+									onChange={event => {
+										setName(event.target.value);
+									}}
+								/>
+							</div>
 
-					{state.customize === "legends" ? (
-						<div className="form-group">
-							<LeagueMenu
-								value={state.legend}
-								values={legends}
-								getLeagueInfo={value =>
-									toWorker("main", "getLeagueInfo", {
-										type: "legends",
-										decade: value,
-									})
-								}
-								onLoading={legend => {
-									dispatch({ type: "setLegend", legend });
-								}}
-								onDone={handleNewLeagueInfo}
-							/>
-						</div>
-					) : null}
-
-					<div className="form-group">
-						<label htmlFor="new-league-team">Pick your team</label>
-						<div className="input-group mb-1">
-							<select
-								id="new-league-team"
-								className="form-control"
-								disabled={disableWhileLoadingLeagueFile}
-								value={state.tid}
-								onChange={event => {
-									dispatch({
-										type: "setTid",
-										tid: parseInt(event.target.value),
-									});
-								}}
-							>
-								{orderBy(displayedTeams, ["region", "name"]).map(t => {
-									return (
-										<option key={t.tid} value={t.tid}>
-											{showLoadingIndicator
-												? "Loading..."
-												: `${t.region} ${t.name}`}
-										</option>
-									);
-								})}
-							</select>
 							{state.customize === "default" ? (
-								<div className="input-group-append new-league-customize-teams-wrapper">
-									<button
-										className="btn btn-secondary"
-										disabled={disableWhileLoadingLeagueFile}
-										type="button"
-										onClick={() => {
-											setCustomizeTeamsUI(true);
+								<div className="form-group">
+									<label htmlFor="new-league-starting-season">Season</label>
+									<input
+										id="new-league-starting-season"
+										className="form-control"
+										type="text"
+										value={startingSeason}
+										onChange={event => {
+											setStartingSeason(event.target.value);
 										}}
-									>
-										Customize
-									</button>
+									/>
 								</div>
 							) : null}
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
+
+							{state.customize === "real" ? (
+								<>
+									<div className="form-group">
+										<LeagueMenu
+											value={String(state.season)}
+											values={seasons}
+											getLeagueInfo={(value, value2) =>
+												toWorker("main", "getLeagueInfo", {
+													type: "real",
+													season: parseInt(value),
+													phase: value2,
+													randomDebuts:
+														state.settings.randomization === "debuts" ||
+														state.settings.randomization === "debutsForever",
+													realDraftRatings: state.settings.realDraftRatings,
+													realStats: state.settings.realStats,
+												})
+											}
+											onLoading={value => {
+												const season = parseInt(value);
+												dispatch({ type: "setSeason", season });
+											}}
+											onDone={handleNewLeagueInfo}
+											quickValues={[
+												"1956",
+												"1968",
+												"1984",
+												"1996",
+												"2003",
+												"2021",
+											]}
+											value2={state.phase}
+											values2={phases}
+											onNewValue2={phase => {
+												dispatch({
+													type: "setPhase",
+													phase,
+												});
+											}}
+										/>
+										{invalidSeasonPhaseMessage ? (
+											<div className="text-danger mt-1">
+												{invalidSeasonPhaseMessage}
+											</div>
+										) : (
+											<div className="text-muted mt-1">
+												{state.season} in BBGM is the {state.season - 1}-
+												{String(state.season).slice(2)} season.
+											</div>
+										)}
+									</div>
+								</>
+							) : null}
+
+							{state.customize === "legends" ? (
+								<div className="form-group">
+									<LeagueMenu
+										value={state.legend}
+										values={legends}
+										getLeagueInfo={value =>
+											toWorker("main", "getLeagueInfo", {
+												type: "legends",
+												decade: value,
+											})
+										}
+										onLoading={legend => {
+											dispatch({ type: "setLegend", legend });
+										}}
+										onDone={handleNewLeagueInfo}
+									/>
+								</div>
+							) : null}
+
+							<div className="form-group">
+								<label htmlFor="new-league-team" className="mr-2">
+									Pick your team
+								</label>
+								<NextPrevButtons
+									currentItem={sortedDisplayedTeams.find(
+										t => t.tid === state.tid,
+									)}
+									items={sortedDisplayedTeams}
+									onChange={newTeam => {
+										dispatch({
+											type: "setTid",
+											tid: newTeam.tid,
+										});
+									}}
 									disabled={disableWhileLoadingLeagueFile}
+								/>
+								<div className="input-group mb-1">
+									<select
+										id="new-league-team"
+										className="form-control"
+										disabled={disableWhileLoadingLeagueFile}
+										value={state.tid}
+										onChange={event => {
+											dispatch({
+												type: "setTid",
+												tid: parseInt(event.target.value),
+											});
+										}}
+									>
+										{sortedDisplayedTeams.map(t => {
+											return (
+												<option key={t.tid} value={t.tid}>
+													{showLoadingIndicator
+														? "Loading..."
+														: `${t.region} ${t.name}`}
+												</option>
+											);
+										})}
+									</select>
+									{state.customize === "default" ? (
+										<div className="input-group-append new-league-customize-teams-wrapper">
+											<button
+												className="btn btn-secondary"
+												disabled={disableWhileLoadingLeagueFile}
+												type="button"
+												onClick={() => {
+													setCurrentScreen("teams");
+												}}
+											>
+												Customize
+											</button>
+										</div>
+									) : null}
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											disabled={disableWhileLoadingLeagueFile}
+											type="button"
+											onClick={() => {
+												const t =
+													displayedTeams[
+														Math.floor(Math.random() * displayedTeams.length)
+													];
+												dispatch({ type: "setTid", tid: t.tid });
+											}}
+										>
+											Random
+										</button>
+									</div>
+								</div>
+								{!state.settings.equalizeRegions ? (
+									<PopText
+										className="text-muted"
+										tid={state.tid}
+										teams={displayedTeams}
+										numActiveTeams={displayedTeams.length}
+									/>
+								) : (
+									<span className="text-muted">
+										Region population: equal
+										<br />
+										Size: normal
+									</span>
+								)}
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="new-league-difficulty">Difficulty</label>
+								<select
+									id="new-league-difficulty"
+									className="form-control mb-1"
+									onChange={event => {
+										dispatch({
+											type: "setDifficulty",
+											difficulty: event.target.value,
+										});
+									}}
+									value={state.difficulty}
+								>
+									{Object.entries(DIFFICULTY).map(([text, numeric]) => (
+										<option key={numeric} value={numeric}>
+											{text}
+										</option>
+									))}
+									{!Object.values(DIFFICULTY).includes(state.difficulty) ? (
+										<option value={state.difficulty}>
+											Custom (from league file)
+										</option>
+									) : null}
+								</select>
+								<span className="text-muted">{descriptions.difficulty}</span>
+							</div>
+
+							<div className="text-center mt-3">
+								<ActionButton
+									className="mr-2"
+									size="lg"
+									type="submit"
+									disabled={
+										state.creating ||
+										disableWhileLoadingLeagueFile ||
+										!!invalidSeasonPhaseMessage
+									}
+									processing={state.creating}
+								>
+									{createLeagueText}
+								</ActionButton>
+
+								<button
+									className="btn btn-lg btn-secondary"
 									type="button"
 									onClick={() => {
-										const t =
-											displayedTeams[
-												Math.floor(Math.random() * displayedTeams.length)
-											];
-										dispatch({ type: "setTid", tid: t.tid });
+										setCurrentScreen("settings");
 									}}
 								>
-									Random
+									Customize Settings
 								</button>
 							</div>
 						</div>
-						{!state.equalizeRegions ? (
-							<PopText
-								className="text-muted"
-								tid={state.tid}
-								teams={displayedTeams}
-								numActiveTeams={displayedTeams.length}
-							/>
-						) : (
-							<span className="text-muted">
-								Region population: equal
-								<br />
-								Size: normal
-							</span>
-						)}
-					</div>
 
-					<div className="form-group">
-						<label htmlFor="new-league-difficulty">Difficulty</label>
-						<select
-							id="new-league-difficulty"
-							className="form-control mb-1"
-							onChange={event => {
-								dispatch({
-									type: "setDifficulty",
-									difficulty: event.target.value,
-								});
-							}}
-							value={state.difficulty}
-						>
-							{Object.entries(DIFFICULTY).map(([text, numeric]) => (
-								<option key={numeric} value={numeric}>
-									{text}
-								</option>
-							))}
-							{!Object.values(DIFFICULTY).includes(state.difficulty) ? (
-								<option value={state.difficulty}>
-									Custom (from league file)
-								</option>
-							) : null}
-						</select>
-						<span className="text-muted">{descriptions.difficulty}</span>
-					</div>
-
-					{moreOptions.length > 0 ? (
-						<>
-							<button
-								className="btn btn-link p-0 mb-3"
-								type="button"
-								onClick={() => dispatch({ type: "toggleExpandOptions" })}
+						{props.type === "custom" ||
+						props.type === "real" ||
+						props.type === "legends" ? (
+							<div
+								className={classNames(
+									"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
+									{
+										"d-none d-sm-block": props.type === "real",
+									},
+								)}
 							>
-								<AnimatePresence initial={false}>
-									<motion.span
-										animate={state.expandOptions ? "open" : "collapsed"}
-										variants={{
-											open: { rotate: 90 },
-											collapsed: { rotate: 0 },
-										}}
-										transition={{
-											duration: 0.3,
-											type: "tween",
-										}}
-										className="glyphicon glyphicon-triangle-right"
-									/>
-								</AnimatePresence>{" "}
-								More options
-							</button>
-							<AnimatePresence initial={false}>
-								{state.expandOptions ? (
-									<motion.div
-										initial="collapsed"
-										animate="open"
-										exit="collapsed"
-										variants={{
-											open: { opacity: 1, height: "auto" },
-											collapsed: { opacity: 0, height: 0 },
-										}}
-										transition={{
-											duration: 0.3,
-											type: "tween",
-										}}
-									>
-										{moreOptions}
-									</motion.div>
-								) : null}
-							</AnimatePresence>
-						</>
-					) : null}
-
-					<div className="text-center">
-						<button
-							type="submit"
-							className="btn btn-lg btn-primary mt-3"
-							disabled={
-								state.creating ||
-								disableWhileLoadingLeagueFile ||
-								!!invalidSeasonPhaseMessage
-							}
-						>
-							{props.lid !== undefined ? "Import League" : "Create League"}
-						</button>
-					</div>
-				</div>
-
-				{props.type === "custom" ||
-				props.type === "real" ||
-				props.type === "legends" ? (
-					<div
-						className={classNames(
-							"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
-							{
-								"d-none d-sm-block": props.type === "real",
-							},
-						)}
-					>
-						<div className="card bg-light mt-1">
-							{props.type === "real" ? (
-								<>
-									<ul className="list-group list-group-flush">
-										<li className="list-group-item bg-light">
-											<h3>Start in any season back to {MIN_SEASON}</h3>
-											<p className="mb-0">
-												Players, teams, rosters, and contracts are generated
-												from real data. Draft classes are included up to today.
-											</p>
-										</li>
-										<li className="list-group-item bg-light">
-											<h3>Watch your league evolve over time</h3>
-											<p className="mb-0">
-												There were only 11 teams in {MIN_SEASON}, playing a very
-												different brand of basketball than today. Live through
-												expansion drafts, league rule changes, team relocations,
-												economic growth, and changes in style of play.
-											</p>
-										</li>
-										<li className="list-group-item bg-light">
-											<h3>Every league is different</h3>
-											<p className="mb-0">
-												Draft prospects always start the same, but they have
-												different career arcs in every league. See busts meet
-												their potentials, see injury-shortened careers play out
-												in full, and see new combinations of players lead to
-												dynasties.
-											</p>
-										</li>
-									</ul>
-								</>
-							) : null}
-							{props.type === "legends" ? (
-								<>
-									<ul className="list-group list-group-flush">
-										<li className="list-group-item bg-light">
-											<h3>Legends mode</h3>
-											<p>
-												Each team is filled with the best players from that
-												franchise's history. Create a league with players from
-												only one decade, or the greatest players of all time.
-											</p>
-											<p className="mb-0">
-												<a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">
-													More details
-												</a>
-											</p>
-										</li>
-									</ul>
-								</>
-							) : null}
-							{props.type === "custom" ? (
-								<div className="card-body" style={{ marginBottom: "-1rem" }}>
-									<h2 className="card-title">Customize</h2>
-									<div className="form-group">
-										<select
-											className="form-control"
-											onChange={event => {
-												const newCustomize = event.target.value as any;
-												dispatch({
-													type: "setCustomize",
-													customize: newCustomize,
-												});
-												if (
-													newCustomize !== "real" &&
-													newCustomize !== "legends"
-												) {
-													dispatch({ type: "clearLeagueFile" });
-												}
-											}}
-											value={state.customize}
+								<div className="card bg-light mt-1">
+									{props.type === "real" ? (
+										<>
+											<ul className="list-group list-group-flush">
+												<li className="list-group-item bg-light">
+													<h3>Start in any season back to {MIN_SEASON}</h3>
+													<p className="mb-0">
+														Players, teams, rosters, and contracts are generated
+														from real data. Draft classes are included up to
+														today.
+													</p>
+												</li>
+												<li className="list-group-item bg-light">
+													<h3>Watch your league evolve over time</h3>
+													<p className="mb-0">
+														There were only 11 teams in {MIN_SEASON}, playing a
+														very different brand of basketball than today. Live
+														through expansion drafts, league rule changes, team
+														relocations, economic growth, and changes in style
+														of play.
+													</p>
+												</li>
+												<li className="list-group-item bg-light">
+													<h3>Every league is different</h3>
+													<p className="mb-0">
+														Draft prospects always start the same, but they have
+														different career arcs in every league. See busts
+														meet their potentials, see injury-shortened careers
+														play out in full, and see new combinations of
+														players lead to dynasties.
+													</p>
+												</li>
+											</ul>
+										</>
+									) : null}
+									{props.type === "legends" ? (
+										<>
+											<ul className="list-group list-group-flush">
+												<li className="list-group-item bg-light">
+													<h3>Legends mode</h3>
+													<p>
+														Each team is filled with the best players from that
+														franchise's history. Create a league with players
+														from only one decade, or the greatest players of all
+														time.
+													</p>
+													<p className="mb-0">
+														<a href="https://zengm.com/blog/2020/05/legends-leagues/">
+															More details
+														</a>
+													</p>
+												</li>
+											</ul>
+										</>
+									) : null}
+									{props.type === "custom" ? (
+										<div
+											className="card-body"
+											style={{ marginBottom: "-1rem" }}
 										>
-											<option value="default">
-												{SPORT_HAS_REAL_PLAYERS
-													? "Random players and teams"
-													: "Default"}
-											</option>
-											{SPORT_HAS_REAL_PLAYERS ? (
-												<option value="real">Real players and teams</option>
-											) : null}
-											{SPORT_HAS_LEGENDS ? (
-												<option value="legends">Legends</option>
-											) : null}
-											<option value="custom-rosters">Upload league file</option>
-											<option value="custom-url">Enter league file URL</option>
-										</select>
-										{state.customize === "custom-rosters" ||
-										state.customize === "custom-url" ? (
-											<p className="mt-3">
-												League files can contain teams, players, settings, and
-												other data. You can create a league file by going to
-												Tools &gt; Export within a league, or by{" "}
-												<a
-													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+											<h2 className="card-title">Customize</h2>
+											<div className="form-group">
+												<select
+													className="form-control"
+													onChange={event => {
+														const newCustomize = event.target.value as any;
+														dispatch({
+															type: "setCustomize",
+															customize: newCustomize,
+														});
+														if (
+															newCustomize !== "real" &&
+															newCustomize !== "legends"
+														) {
+															dispatch({ type: "clearLeagueFile" });
+														}
+													}}
+													value={state.customize}
 												>
-													creating a custom league file
-												</a>
-												.
-											</p>
-										) : null}
-									</div>
-									{state.customize === "custom-rosters" ||
-									state.customize === "custom-url" ? (
-										<div className="my-3">
-											<LeagueFileUpload
-												onLoading={() => {
-													dispatch({ type: "loadingLeagueFile" });
+													<option value="default">
+														{SPORT_HAS_REAL_PLAYERS
+															? "Random players and teams"
+															: "Default"}
+													</option>
+													{SPORT_HAS_REAL_PLAYERS ? (
+														<option value="real">Real players and teams</option>
+													) : null}
+													{SPORT_HAS_LEGENDS ? (
+														<option value="legends">Legends</option>
+													) : null}
+													<option value="custom-rosters">
+														Upload league file
+													</option>
+													<option value="custom-url">
+														Enter league file URL
+													</option>
+												</select>
+												{state.customize === "custom-rosters" ||
+												state.customize === "custom-url" ? (
+													<p className="mt-3">
+														League files can contain teams, players, settings,
+														and other data. You can create a league file by
+														going to Tools &gt; Export within a league, or by{" "}
+														<a
+															href={`https://${WEBSITE_ROOT}/manual/customization/`}
+														>
+															creating a custom league file
+														</a>
+														.
+													</p>
+												) : null}
+											</div>
+											{state.customize === "custom-rosters" ||
+											state.customize === "custom-url" ? (
+												<div className="my-3">
+													<LeagueFileUpload
+														onLoading={() => {
+															dispatch({ type: "loadingLeagueFile" });
+														}}
+														onDone={handleNewLeagueFile}
+														enterURL={state.customize === "custom-url"}
+														hideLoadedMessage
+													/>
+												</div>
+											) : null}
+
+											<LeaguePartPicker
+												allKeys={state.allKeys}
+												keptKeys={state.keptKeys}
+												setKeptKeys={keptKeys => {
+													dispatch({ type: "setKeptKeys", keptKeys });
 												}}
-												onDone={handleNewLeagueFile}
-												enterURL={state.customize === "custom-url"}
-												hideLoadedMessage
 											/>
 										</div>
 									) : null}
-
-									<LeaguePartPicker
-										allKeys={state.allKeys}
-										keptKeys={state.keptKeys}
-										setKeptKeys={keptKeys => {
-											dispatch({ type: "setKeptKeys", keptKeys });
-										}}
-									/>
 								</div>
-							) : null}
-						</div>
+							</div>
+						) : null}
 					</div>
-				) : null}
-			</div>
-		</form>
+				</m.form>
+			)}
+		</AnimatePresence>
 	);
 };
 

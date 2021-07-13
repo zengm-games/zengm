@@ -1,11 +1,12 @@
 import processStatsBasketball from "./processStats.basketball";
 import processStatsFootball from "./processStats.football";
+import processStatsHockey from "./processStats.hockey";
 import type {
 	TeamStatAttr,
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types";
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 const processStats = (
 	ts: TeamStats,
@@ -13,11 +14,11 @@ const processStats = (
 	playoffs: boolean,
 	statType: TeamStatType,
 ) => {
-	if (isSport("football")) {
-		return processStatsFootball(ts, stats, playoffs);
-	}
-
-	return processStatsBasketball(ts, stats, playoffs, statType);
+	return bySport({
+		basketball: processStatsBasketball(ts, stats, playoffs, statType),
+		football: processStatsFootball(ts, stats, playoffs),
+		hockey: processStatsHockey(ts, stats, playoffs),
+	});
 };
 
 export default processStats;

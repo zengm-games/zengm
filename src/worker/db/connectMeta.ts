@@ -1,4 +1,5 @@
 import type { DBSchema, IDBPDatabase } from "idb";
+import { isSport } from "../../common";
 import type {
 	League,
 	Options,
@@ -15,9 +16,9 @@ export interface MetaDB extends DBSchema {
 		};
 	};
 	attributes: {
-		value: number | Options | RealPlayerPhotos | RealTeamInfo;
+		value: number | string | Options | RealPlayerPhotos | RealTeamInfo;
 		key:
-			| "changesRead"
+			| "lastChangesVersion"
 			| "nagged"
 			| "naggedMailingList"
 			| "options"
@@ -41,8 +42,8 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		keyPath: "lid",
 		autoIncrement: true,
 	});
-	attributeStore.put(-1, "changesRead");
 	attributeStore.put(0, "nagged");
+	attributeStore.put("REV_GOES_HERE", "lastChangesVersion");
 };
 
 const migrate = ({
@@ -56,18 +57,21 @@ const migrate = ({
 		`Upgrading meta database from version ${oldVersion} to version ${db.version}`,
 	);
 
-	if (oldVersion <= 6) {
-		db.createObjectStore("achievements", {
-			keyPath: "aid",
-			autoIncrement: true,
-		});
+	if (isSport("basketball") || isSport("football")) {
+		if (oldVersion <= 6) {
+			db.createObjectStore("achievements", {
+				keyPath: "aid",
+				autoIncrement: true,
+			});
+		}
+
+		if (oldVersion <= 7) {
+			const attributeStore = db.createObjectStore("attributes");
+			attributeStore.put(0, "nagged");
+		}
 	}
 
-	if (oldVersion <= 7) {
-		const attributeStore = db.createObjectStore("attributes");
-		attributeStore.put(-1, "changesRead");
-		attributeStore.put(0, "nagged");
-	}
+	// New ones here!
 
 	// In next version, can do:
 	// attributeStore.delete("lastSelectedTid");

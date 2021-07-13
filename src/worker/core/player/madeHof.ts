@@ -1,20 +1,21 @@
 import madeHofBasketball from "./madeHof.basketball";
 import madeHofFootball from "./madeHof.football";
+import madeHofHockey from "./madeHof.hockey";
 import type {
 	Player,
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 } from "../../../common/types";
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 const madeHof = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
-	if (isSport("football")) {
-		return madeHofFootball(p as any);
-	}
-
-	return madeHofBasketball(p);
+	return bySport({
+		basketball: madeHofBasketball(p),
+		football: madeHofFootball(p as any),
+		hockey: madeHofHockey(p),
+	});
 };
 
 export default madeHof;

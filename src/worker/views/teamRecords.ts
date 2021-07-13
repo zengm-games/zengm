@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -49,6 +49,8 @@ const tallyAwards = (
 	const teamAwards = {
 		mvp: 0,
 		dpoy: 0,
+		dfoy: 0,
+		goy: 0,
 		smoy: 0,
 		mip: 0,
 		roy: 0,
@@ -78,6 +80,14 @@ const tallyAwards = (
 
 		if (a.dpoy && a.dpoy.tid === tid) {
 			teamAwards.dpoy++;
+		}
+
+		if (a.dfoy && a.dfoy.tid === tid) {
+			teamAwards.dfoy++;
+		}
+
+		if (a.goy && a.goy.tid === tid) {
+			teamAwards.goy++;
 		}
 
 		if (a.smoy && a.smoy.tid === tid) {
@@ -140,7 +150,7 @@ const tallyAwards = (
 
 		for (let i = 0; i < a.allLeague.length; i++) {
 			for (const p of a.allLeague[i].players) {
-				if (p.tid === tid) {
+				if (p && p.tid === tid) {
 					teamAwards.allLeague++;
 				}
 			}
@@ -149,7 +159,7 @@ const tallyAwards = (
 		if (a.allDefensive) {
 			for (let i = 0; i < a.allDefensive.length; i++) {
 				for (const p of a.allDefensive[i].players) {
-					if (p.tid === tid) {
+					if (p && p.tid === tid) {
 						teamAwards.allDefense++;
 					}
 				}
@@ -187,6 +197,9 @@ const getRowInfo = (
 		won: number;
 		lost: number;
 		tied: number;
+		otl: number;
+		pts: number;
+		ptsMax: number;
 		playoffRoundsWon: number;
 	}[],
 	awards: any[],
@@ -229,6 +242,10 @@ const getRowInfo = (
 		won: sumBy(seasonAttrs, "won"),
 		lost: sumBy(seasonAttrs, "lost"),
 		tied: sumBy(seasonAttrs, "tied"),
+		otl: sumBy(seasonAttrs, "otl"),
+		pts: sumBy(seasonAttrs, "pts"),
+		ptsMax: sumBy(seasonAttrs, "ptsMax"),
+		ptsPct: 0,
 		winp: 0,
 		playoffs,
 		finals,
@@ -244,6 +261,7 @@ const getRowInfo = (
 		),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
+	rowInfo.ptsPct = rowInfo.ptsMax !== 0 ? rowInfo.pts / rowInfo.ptsMax : 0;
 	return rowInfo;
 };
 
@@ -261,6 +279,10 @@ type Team = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
+	pts: number;
+	ptsMax: number;
+	ptsPct: number;
 	winp: number;
 	playoffs: number;
 	finals: number;
@@ -276,11 +298,16 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"won",
 		"lost",
 		"tied",
+		"otl",
+		"pts",
+		"ptsMax",
 		"playoffs",
 		"finals",
 		"titles",
 		"mvp",
 		"dpoy",
+		"dfoy",
+		"goy",
 		"smoy",
 		"mip",
 		"roy",
@@ -315,6 +342,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 			: 0;
 	output.sortValue = 0;
 	output.winp = helpers.calcWinp(output);
+	output.ptsPct = output.pts / output.ptsMax;
 
 	return output;
 };
@@ -343,6 +371,9 @@ const updateTeamRecords = async (
 					"won",
 					"lost",
 					"tied",
+					"otl",
+					"pts",
+					"ptsMax",
 					"playoffRoundsWon",
 				],
 			}),
@@ -460,18 +491,29 @@ const updateTeamRecords = async (
 		}
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.tied > 0) {
 				ties = true;
+			}
+			if (t.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
+
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
 
 		return {
 			byType,
 			filter,
 			teams,
 			ties: g.get("ties") || ties,
+			otl: g.get("otl") || otl,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

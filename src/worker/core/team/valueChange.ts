@@ -8,7 +8,7 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types";
-import groupBy from "lodash/groupBy";
+import { groupBy } from "../../../common/groupBy";
 
 type Asset = {
 	value: number;
@@ -28,8 +28,8 @@ let cache: {
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
 
-const MIN_VALUE = bySport({ basketball: -0.5, football: -1 });
-const MAX_VALUE = bySport({ basketball: 2, football: 3 });
+const MIN_VALUE = bySport({ basketball: -0.5, football: -1, hockey: -0.5 });
+const MAX_VALUE = bySport({ basketball: 2, football: 3, hockey: 2 });
 const getContractValue = (
 	contract: PlayerContract,
 	normalizedValue: number,
@@ -309,7 +309,11 @@ const getPicks = async ({
 	}
 };
 
-const EXPONENT = 7;
+const EXPONENT = bySport({
+	basketball: 7,
+	football: 3,
+	hockey: 3.5,
+});
 
 const sumValues = (
 	players: Asset[],
@@ -399,9 +403,10 @@ const refreshCache = async () => {
 		const tid = parseInt(tidString);
 		const ovr = team.ovr(
 			players.map(p => ({
-				pid: p.pid,
+				value: p.value,
 				ratings: {
 					ovr: p.ratings[p.ratings.length - 1].ovr,
+					ovrs: p.ratings[p.ratings.length - 1].ovrs,
 					pos: p.ratings[p.ratings.length - 1].pos,
 				},
 			})),

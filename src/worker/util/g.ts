@@ -63,6 +63,10 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	gameAttributes: any,
 	key: T,
 	value: GameAttributesLeague[T],
+	override?: {
+		season: number;
+		phase: number;
+	},
 ) => {
 	// @ts-ignore
 	const gameAttribute = gameAttributes[key];
@@ -75,16 +79,24 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 
 	const latestRow = cloned[cloned.length - 1];
 
-	let currentSeason =
-		gameAttributes.season !== undefined
-			? gameAttributes.season
-			: g.get("season");
+	let currentSeason;
+	let actualPhase;
 
-	let actualPhase = gameAttributes.phase ?? g.get("phase");
-	if (actualPhase < 0) {
-		const nextPhase = g.get("nextPhase");
-		if (nextPhase !== undefined) {
-			actualPhase = nextPhase;
+	if (override) {
+		currentSeason = override.season;
+		actualPhase = override.phase;
+	} else {
+		currentSeason =
+			gameAttributes.season !== undefined
+				? gameAttributes.season
+				: g.get("season");
+
+		actualPhase = gameAttributes.phase ?? g.get("phase");
+		if (actualPhase < 0) {
+			const nextPhase = g.get("nextPhase");
+			if (nextPhase !== undefined) {
+				actualPhase = nextPhase;
+			}
 		}
 	}
 
@@ -94,7 +106,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 			currentSeason += 1;
 		}
 	} else {
-		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
+		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For otl/ties/tiebreakers it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
 		if (actualPhase >= PHASE.PLAYOFFS) {
 			currentSeason += 1;
 		}
@@ -111,18 +123,6 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	}
 
 	return cloned;
-};
-
-// Get latest value
-export const unwrap = <T extends keyof GameAttributesLeague>(
-	gameAttributes: any,
-	key: T,
-): GameAttributesLeague[T] => {
-	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key][gameAttributes[key].length - 1].value;
-	}
-
-	return gameAttributes[key];
 };
 
 export default g;

@@ -1,7 +1,9 @@
 import { g, helpers, random } from "../../util";
 import { getPeriodName, PHASE } from "../../../common";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
+import getInjuryRate from "./getInjuryRate";
+import type { PlayerInjury } from "../../../common/types";
 
 type PlayType =
 	| "ast"
@@ -92,6 +94,10 @@ type PlayerGameSim = {
 	compositeRating: any;
 	skills: string[];
 	injured: boolean;
+	newInjury: boolean;
+	injury: PlayerInjury & {
+		playingThrough: boolean;
+	};
 	ptModifier: number;
 };
 type TeamGameSim = {
@@ -140,6 +146,28 @@ const pickPlayer = (
 	}
 
 	return 0;
+};
+
+// Return the indexes of the elements in ovrs, sorted from smallest to largest.
+// So [50, 70, 10, 20, 60] => [2, 3, 0, 4, 1]
+// The set is to handle ties.
+// The descending sort and reverse is so ties are handled with the later entry in ovrs getting the lower index, like:
+// [0, 0, 0, 0, 0] => [4, 3, 2, 1, 0]
+const getSortedIndexes = (ovrs: number[]) => {
+	const ovrsSortedDesc = [...ovrs].sort((a, b) => b - a);
+	const usedIndexes = new Set();
+	const sortedIndexes = ovrsSortedDesc
+		.map(ovr => {
+			let index = ovrs.indexOf(ovr);
+			while (usedIndexes.has(index)) {
+				index += 1;
+			}
+			usedIndexes.add(index);
+			return index;
+		})
+		.reverse();
+
+	return sortedIndexes;
 };
 
 class GameSim {
@@ -206,12 +234,17 @@ class GameSim {
 	 *
 	 * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
 	 */
-	constructor(
-		gid: number,
-		teams: [TeamGameSim, TeamGameSim],
-		doPlayByPlay: boolean,
-		homeCourtFactor: number = 1,
-	) {
+	constructor({
+		gid,
+		teams,
+		doPlayByPlay = false,
+		homeCourtFactor = 1,
+	}: {
+		gid: number;
+		teams: [TeamGameSim, TeamGameSim];
+		doPlayByPlay?: boolean;
+		homeCourtFactor?: number;
+	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
 		}
@@ -257,7 +290,7 @@ class GameSim {
 		this.elamDone = false;
 		this.elamTarget = 0;
 
-		this.fatigueFactor = 0.051;
+		this.fatigueFactor = 0.055;
 
 		if (g.get("phase") === PHASE.PLAYOFFS) {
 			this.fatigueFactor /= 1.85;
@@ -484,7 +517,7 @@ class GameSim {
 		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
 
 		if (this.t === 0) {
-			this.t = 10;
+			this.t = 5;
 		}
 
 		this.lastScoringPlay = [];
@@ -522,8 +555,8 @@ class GameSim {
 		const catchUp =
 			!this.elamActive &&
 			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential <= 10) ||
-				(this.t <= 2 && pointDifferential <= 5) ||
+			((this.t <= 3 && pointDifferential <= -10) ||
+				(this.t <= 2 && pointDifferential <= -5) ||
 				(this.t <= 1 && pointDifferential < 0));
 		const maintainLead =
 			!this.elamActive &&
@@ -758,8 +791,10 @@ class GameSim {
 				ovrs = getOvrs(true);
 			}
 
-			// Loop through players on court (in inverse order of current roster position)
-			for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
+			const ovrsOnCourt = this.playersOnCourt[t].map(p => ovrs[p]);
+
+			// Sub off the lowest ovr guy first
+			for (const pp of getSortedIndexes(ovrsOnCourt)) {
 				const p = this.playersOnCourt[t][pp];
 				const onCourtIsIneligible = ovrs[p] === -Infinity;
 				this.playersOnCourt[t][pp] = p; // Don't sub out guy shooting FTs!
@@ -1117,12 +1152,15 @@ class GameSim {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
-					// Modulate injuryRate by age - assume default is 26 yo, and increase/decrease by 3%
-					const injuryRate =
-						baseRate * 1.03 ** (Math.min(50, this.team[t].player[p].age) - 26);
+					const injuryRate = getInjuryRate(
+						baseRate,
+						this.team[t].player[p].age,
+						this.team[t].player[p].injury.playingThrough,
+					);
 
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;
+						this.team[t].player[p].newInjury = true;
 						newInjury = true;
 						this.recordPlay("injury", t, [this.team[t].player[p].name], {
 							injuredPID: this.team[t].player[p].id,
@@ -1189,11 +1227,14 @@ class GameSim {
 
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
-			// In the bonus? Checking >=1 for foulsLastTwoMinutes because incrementing this counter is done in this.doPf below
+			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
+			const foulsUntilBonus = g.get("foulsUntilBonus");
 			const inBonus =
-				(this.t <= 2 && this.foulsLastTwoMinutes[this.d] >= 1) ||
-				(this.overtimes >= 1 && this.foulsThisQuarter[this.d] >= 4) ||
-				this.foulsThisQuarter[this.d] >= 5;
+				(this.t <= 2 &&
+					this.foulsLastTwoMinutes[this.d] >= foulsUntilBonus[2] - 1) ||
+				(this.overtimes >= 1 &&
+					this.foulsThisQuarter[this.d] >= foulsUntilBonus[1] - 1) ||
+				this.foulsThisQuarter[this.d] >= foulsUntilBonus[0] - 1;
 
 			if (inBonus) {
 				this.doPf(this.d, "pfBonus", shooter);
@@ -1219,7 +1260,8 @@ class GameSim {
 	 */
 	probTov() {
 		return (
-			(0.14 * this.team[this.d].compositeRating.defense) /
+			(g.get("turnoverFactor") *
+				(0.14 * this.team[this.d].compositeRating.defense)) /
 			(0.5 *
 				(this.team[this.o].compositeRating.dribbling +
 					this.team[this.o].compositeRating.passing))
@@ -1251,10 +1293,11 @@ class GameSim {
 	 */
 	probStl() {
 		return (
-			(0.55 * this.team[this.d].compositeRating.defensePerimeter) /
-			(0.5 *
-				(this.team[this.o].compositeRating.dribbling +
-					this.team[this.o].compositeRating.passing))
+			g.get("stealFactor") *
+			((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
+				(0.5 *
+					(this.team[this.o].compositeRating.dribbling +
+						this.team[this.o].compositeRating.passing)))
 		);
 	}
 
@@ -1264,7 +1307,7 @@ class GameSim {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
-		const ratios = this.ratingArray("stealing", this.d, 5);
+		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
 		this.recordPlay("stl", this.d, [
@@ -1294,8 +1337,8 @@ class GameSim {
 		}
 
 		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
-		let shootingThreePointerScaled = this.team[this.o].player[p].compositeRating
-			.shootingThreePointer;
+		let shootingThreePointerScaled =
+			this.team[this.o].player[p].compositeRating.shootingThreePointer;
 
 		if (shootingThreePointerScaled > 0.55) {
 			shootingThreePointerScaled =
@@ -1445,9 +1488,11 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
-			this.doPf(this.d, type === "threePointer" ? "pfTP" : "pfFG", shooter);
+			const threePointer = type === "threePointer" && g.get("threePointers");
 
-			if (type === "threePointer" && g.get("threePointers")) {
+			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
+
+			if (threePointer) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
 
@@ -1488,7 +1533,11 @@ class GameSim {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probBlk() {
-		return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
+		return (
+			g.get("blockFactor") *
+			0.2 *
+			this.team[this.d].compositeRating.blocking ** 2
+		);
 	}
 
 	/**
@@ -1560,8 +1609,9 @@ class GameSim {
 		}
 
 		const names = [this.team[this.o].player[p].name];
-		if (fouler) {
-			names.push(this.team[this.d].player[fouler].name);
+		if (fouler !== undefined) {
+			const p2 = this.playersOnCourt[this.d][fouler];
+			names.push(this.team[this.d].player[p2].name);
 		}
 
 		if (type === "atRim") {
@@ -1893,7 +1943,7 @@ class GameSim {
 		shooter?: PlayerNumOnCourt,
 		fouler?: PlayerNumOnCourt,
 	) {
-		if (!fouler) {
+		if (fouler === undefined) {
 			fouler = pickPlayer(this.ratingArray("fouling", t));
 		}
 		const p = this.playersOnCourt[t][fouler];
@@ -1943,7 +1993,8 @@ class GameSim {
 
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(2 + this.team[this.o].compositeRating.rebounding) >
+				(g.get("orbFactor") *
+					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
 			ratios = this.ratingArray("rebounding", this.d, 3);
@@ -2150,10 +2201,11 @@ class GameSim {
 					)}`,
 				];
 			} else if (type === "overtime") {
+				const count = this.team[0].stat.ptsQtrs.length - this.numPeriods;
 				texts = [
-					`Start of ${helpers.ordinal(
-						this.team[0].stat.ptsQtrs.length - this.numPeriods,
-					)} overtime period`,
+					`Start of ${
+						count === 1 ? "" : `${helpers.ordinal(count)} `
+					} overtime`,
 				];
 			} else if (type === "gameOver") {
 				texts = ["End of game"];

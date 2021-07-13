@@ -47,7 +47,7 @@ const SeasonIcons = ({
 				type = award.type;
 				countAllStar += 1;
 			}
-			if (isSport("football") && award.type.includes("All-League")) {
+			if (!isSport("basketball") && award.type.includes("All-League")) {
 				type = award.type;
 				countAllLeague += 1;
 			}

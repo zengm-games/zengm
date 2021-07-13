@@ -1,19 +1,11 @@
 import classNames from "classnames";
-import { Component, FormEvent } from "react";
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	isSport,
-	GAME_NAME,
-} from "../../../common";
+import { FormEvent, useRef, useState } from "react";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
+import { ActionButton, GameLinks } from "../../components";
 
-const otherSport = isSport("basketball") ? "Football" : "Basketball";
-
-type Props = {
-	ajaxErrorMsg: string;
-};
 type State = {
+	submitting: boolean;
 	errorMessageEmail: string | undefined;
 	errorMessageOverall: string | undefined;
 	errorMessagePassword: string | undefined;
@@ -21,22 +13,21 @@ type State = {
 	errorMessageUsername: string | undefined;
 };
 
-class Register extends Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			errorMessageEmail: undefined,
-			errorMessageOverall: undefined,
-			errorMessagePassword: undefined,
-			errorMessagePassword2: undefined,
-			errorMessageUsername: undefined,
-		};
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
+const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
+	const [state, setState] = useState<State>({
+		submitting: false,
+		errorMessageEmail: undefined,
+		errorMessageOverall: undefined,
+		errorMessagePassword: undefined,
+		errorMessagePassword2: undefined,
+		errorMessageUsername: undefined,
+	});
+	const formRef = useRef<HTMLFormElement>(null);
 
-	async handleSubmit(e: FormEvent) {
-		e.preventDefault();
-		this.setState({
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
+		setState({
+			submitting: true,
 			errorMessageEmail: undefined,
 			errorMessageOverall: undefined,
 			errorMessagePassword: undefined,
@@ -44,15 +35,10 @@ class Register extends Component<Props, State> {
 			errorMessageUsername: undefined,
 		});
 
-		const element = document.getElementById("register");
-		if (!(element instanceof HTMLFormElement)) {
-			this.setState({
-				errorMessageOverall: "register element not found",
-			});
-			throw new Error("register element not found");
+		if (!formRef.current) {
+			throw new Error("login element not found");
 		}
-
-		const formData = new FormData(element);
+		const formData = new FormData(formRef.current);
 
 		try {
 			const data = await fetchWrapper({
@@ -90,131 +76,124 @@ class Register extends Component<Props, State> {
 					}
 				}
 
-				// @ts-ignore
-				this.setState(updatedState);
+				setState(state2 => ({
+					...state2,
+					...updatedState,
+					submitting: false,
+				}));
 			}
-		} catch (err) {
-			console.log(err);
-			this.setState({
-				errorMessageOverall: this.props.ajaxErrorMsg,
-			});
+		} catch (error) {
+			console.error(error);
+			setState(state2 => ({
+				...state2,
+				submitting: false,
+				errorMessageOverall: ajaxErrorMsg,
+			}));
 		}
-	}
+	};
 
-	render() {
-		return (
-			<>
-				<h2>Register</h2>
-				<p className="alert alert-primary">
-					Accounts are shared between {GAME_NAME} and{" "}
-					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-						{otherSport} GM
-					</a>
-					, so if you already have a{" "}
-					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-						{otherSport} GM
-					</a>{" "}
-					account, you don't need to create a new one.
-				</p>
-				<form onSubmit={this.handleSubmit} id="register">
-					<input type="hidden" name="sport" value={process.env.SPORT} />
-					<div
-						className={classNames("form-group", {
-							"text-danger": this.state.errorMessageUsername !== undefined,
+	return (
+		<>
+			<h2>Register</h2>
+			<p className="alert alert-primary">
+				Accounts are shared between <GameLinks />.
+			</p>
+			<form onSubmit={handleSubmit} ref={formRef}>
+				<input type="hidden" name="sport" value={process.env.SPORT} />
+				<div
+					className={classNames("form-group", {
+						"text-danger": state.errorMessageUsername !== undefined,
+					})}
+				>
+					<label htmlFor="register-username">Username</label>
+					<input
+						type="text"
+						className={classNames("form-control", {
+							"is-invalid": state.errorMessageUsername !== undefined,
 						})}
-					>
-						<label htmlFor="register-username">Username</label>
-						<input
-							type="text"
-							className={classNames("form-control", {
-								"is-invalid": this.state.errorMessageUsername !== undefined,
-							})}
-							id="register-username"
-							name="username"
-							required
-							maxLength={15}
-							pattern="[A-Za-z-0-9-_]+"
-							title="Letters, numbers, dashes (-), and underscores (_) only"
-						/>
-						<span className="form-text text-muted">
-							Letters, numbers, dashes (-), and underscores (_) only. Max 15
-							characters.
-						</span>
-						<span className="form-text">{this.state.errorMessageUsername}</span>
-					</div>
-					<div
-						className={classNames("form-group", {
-							"text-danger": this.state.errorMessageEmail !== undefined,
+						id="register-username"
+						name="username"
+						required
+						maxLength={15}
+						pattern="[A-Za-z-0-9-_]+"
+						title="Letters, numbers, dashes (-), and underscores (_) only"
+					/>
+					<span className="form-text text-muted">
+						Letters, numbers, dashes (-), and underscores (_) only. Max 15
+						characters.
+					</span>
+					<span className="form-text">{state.errorMessageUsername}</span>
+				</div>
+				<div
+					className={classNames("form-group", {
+						"text-danger": state.errorMessageEmail !== undefined,
+					})}
+				>
+					<label htmlFor="register-email">Email Address</label>
+					<input
+						type="email"
+						className={classNames("form-control", {
+							"is-invalid": state.errorMessageEmail !== undefined,
 						})}
-					>
-						<label htmlFor="register-email">Email Address</label>
-						<input
-							type="email"
-							className={classNames("form-control", {
-								"is-invalid": this.state.errorMessageEmail !== undefined,
-							})}
-							id="register-email"
-							name="email"
-							required
-						/>
-						<span className="form-text">{this.state.errorMessageEmail}</span>
-					</div>
-					<div
-						className={classNames("form-group", {
-							"text-danger": this.state.errorMessagePassword !== undefined,
+						id="register-email"
+						name="email"
+						required
+					/>
+					<span className="form-text">{state.errorMessageEmail}</span>
+				</div>
+				<div
+					className={classNames("form-group", {
+						"text-danger": state.errorMessagePassword !== undefined,
+					})}
+				>
+					<label htmlFor="register-password">Password</label>
+					<input
+						type="password"
+						className={classNames("form-control", {
+							"is-invalid": state.errorMessagePassword !== undefined,
 						})}
-					>
-						<label htmlFor="register-password">Password</label>
-						<input
-							type="password"
-							className={classNames("form-control", {
-								"is-invalid": this.state.errorMessagePassword !== undefined,
-							})}
-							id="register-password"
-							name="password"
-							required
-						/>
-						<span className="form-text">{this.state.errorMessagePassword}</span>
-					</div>
-					<div
-						className={classNames("form-group", {
-							"text-danger": this.state.errorMessagePassword2 !== undefined,
+						id="register-password"
+						name="password"
+						required
+					/>
+					<span className="form-text">{state.errorMessagePassword}</span>
+				</div>
+				<div
+					className={classNames("form-group", {
+						"text-danger": state.errorMessagePassword2 !== undefined,
+					})}
+				>
+					<label htmlFor="register-password2">Verify Password</label>
+					<input
+						type="password"
+						className={classNames("form-control", {
+							"is-invalid": state.errorMessagePassword2 !== undefined,
 						})}
-					>
-						<label htmlFor="register-password2">Verify Password</label>
-						<input
-							type="password"
-							className={classNames("form-control", {
-								"is-invalid": this.state.errorMessagePassword2 !== undefined,
-							})}
-							id="register-password2"
-							name="password2"
-							required
-						/>
-						<span className="form-text">
-							{this.state.errorMessagePassword2}
-						</span>
-					</div>
-					<div className="form-group form-check">
-						<input
-							type="checkbox"
-							defaultChecked
-							className="form-check-input"
-							id="register-mailinglist"
-							name="mailinglist"
-						/>
-						<label className="form-check-label" htmlFor="register-mailinglist">
-							Join the mailing list (one email per quarter)
-						</label>
-					</div>
-					<button type="submit" className="btn btn-primary">
-						Create New Account
-					</button>
-					<p className="text-danger mt-3">{this.state.errorMessageOverall}</p>
-				</form>
-			</>
-		);
-	}
-}
+						id="register-password2"
+						name="password2"
+						required
+					/>
+					<span className="form-text">{state.errorMessagePassword2}</span>
+				</div>
+				<div className="form-group form-check">
+					<input
+						type="checkbox"
+						defaultChecked
+						className="form-check-input"
+						id="register-mailinglist"
+						name="mailinglist"
+					/>
+					<label className="form-check-label" htmlFor="register-mailinglist">
+						Join the mailing list (one email per quarter)
+					</label>
+				</div>
+				<ActionButton type="submit" processing={state.submitting}>
+					Create New Account
+				</ActionButton>
+				<p className="text-danger mt-3">{state.errorMessageOverall}</p>
+			</form>
+		</>
+	);
+};
 
 export default Register;

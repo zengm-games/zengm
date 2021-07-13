@@ -19,6 +19,10 @@ const teamAndOpp = [
 	"blk",
 	"pf",
 	"pts",
+	"dd",
+	"td",
+	"qd",
+	"fxf",
 
 	// KEEP THIS IN SYCN WITH ABOVE! TypeScript needs them to be listed explicitly. Used to be:
 	// ...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
@@ -42,6 +46,10 @@ const teamAndOpp = [
 	"oppBlk",
 	"oppPf",
 	"oppPts",
+	"oppDd",
+	"oppTd",
+	"oppQd",
+	"oppFxf",
 ] as const;
 
 // raw: recorded directly in game sim

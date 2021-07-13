@@ -85,7 +85,6 @@ const SuperCols = ({
 			}
 		}
 	}
-	console.log(colOrder, superCols, colspanAdjustments);
 
 	return (
 		<tr>

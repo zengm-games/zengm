@@ -7,6 +7,7 @@ import { bySport } from "../../common";
 const stats = bySport({
 	basketball: ["pts", "trb", "ast"],
 	football: ["keyStats"],
+	hockey: ["keyStats"],
 });
 
 const getPlayerInfo = async (pid: number) => {

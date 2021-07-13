@@ -89,7 +89,9 @@ const updatePlayers = async (
 			attrs: [
 				"pid",
 				"nameAbbrev",
+				"name",
 				"age",
+				"ageAtDeath",
 				"injury",
 				"tid",
 				"abbrev",
@@ -106,28 +108,9 @@ const updatePlayers = async (
 			mergeStats: true,
 		});
 
-		// Only keep players with more than 5 mpg in regular season, of any PT in playoffs
+		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && isSport("basketball")) {
-			// Find max gp to use for filtering
-			let gp = 0;
-
-			for (const p of players) {
-				if (p.stats.gp > gp) {
-					gp = p.stats.gp;
-				}
-			}
-
-			// Special case for career totals - use g.get("numGames") games, unless this is the first season
-			if (inputs.season === undefined) {
-				if (g.get("season") > g.get("startingSeason")) {
-					gp = g.get("numGames");
-				}
-			}
-
 			players = players.filter(p => {
-				// Minutes played
-				let min;
-
 				if (inputs.statType === "gameHighs") {
 					if (inputs.season !== undefined) {
 						return p.stats.gp > 0;
@@ -137,33 +120,12 @@ const updatePlayers = async (
 					return p.careerStatsPlayoffs.gp > 0;
 				}
 
-				if (inputs.statType === "totals") {
-					if (inputs.season !== undefined) {
-						min = p.stats.min;
-					} else if (inputs.playoffs !== "playoffs") {
-						min = p.careerStats.min;
-					}
-				} else if (inputs.season !== undefined) {
-					min = p.stats.gp * p.stats.min;
+				if (inputs.season !== undefined) {
+					return p.stats.gp > 0;
+				} else if (inputs.playoffs === "playoffs") {
+					return p.careerStatsPlayoffs.gp > 0;
 				} else if (inputs.playoffs !== "playoffs") {
-					min = p.careerStats.gp * p.careerStats.min;
-				}
-
-				if (inputs.playoffs !== "playoffs") {
-					if (min !== undefined && min > gp * 5) {
-						return true;
-					}
-				}
-
-				// Or, keep players who played in playoffs
-				if (inputs.playoffs === "playoffs") {
-					if (inputs.season !== undefined) {
-						if (p.stats.gp > 0) {
-							return true;
-						}
-					} else if (p.careerStatsPlayoffs.gp > 0) {
-						return true;
-					}
+					return p.careerStats.gp > 0;
 				}
 
 				return false;
@@ -171,7 +133,7 @@ const updatePlayers = async (
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
-			isSport("football")
+			(isSport("football") || isSport("hockey"))
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;

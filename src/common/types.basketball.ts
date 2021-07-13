@@ -27,6 +27,10 @@ export type TeamStatAttr =
 	| "tpar"
 	| "ftr"
 	| "tsp"
+	| "efg"
+	| "tovp"
+	| "orbp"
+	| "ftpFga"
 	| "trb"
 	| "oppTrb"
 	| "2p"
@@ -44,13 +48,13 @@ type AwardTeam = {
 	won: number;
 	lost: number;
 	tied: number | undefined;
+	otl: number | undefined;
 };
 
 export type AwardPlayer = {
 	pid: number;
 	name: string;
 	tid: number;
-	abbrev: string;
 	pts: number;
 	trb: number;
 	ast: number;
@@ -60,13 +64,15 @@ export type AwardPlayerDefense = {
 	pid: number;
 	name: string;
 	tid: number;
-	abbrev: string;
 	trb: number;
 	blk: number;
 	stl: number;
 };
 
-export type Awards = {
+export type Awards<
+	PlayerOverride = AwardPlayer,
+	PlayerDefenseOverride = AwardPlayerDefense
+> = {
 	season: number;
 	bestRecord: AwardTeam;
 	bestRecordConfs: (AwardTeam | undefined)[];
@@ -75,41 +81,41 @@ export type Awards = {
 	bre?: AwardTeam;
 	brw?: AwardTeam;
 
-	roy: AwardPlayer | undefined;
-	allRookie: AwardPlayer[];
-	mip: AwardPlayer | undefined;
-	mvp: AwardPlayer | undefined;
-	smoy: AwardPlayer | undefined;
+	roy: PlayerOverride | undefined;
+	allRookie: PlayerOverride[];
+	mip: PlayerOverride | undefined;
+	mvp: PlayerOverride | undefined;
+	smoy: PlayerOverride | undefined;
 	allLeague: [
 		{
 			title: "First Team";
-			players: AwardPlayer[];
+			players: PlayerOverride[];
 		},
 		{
 			title: "Second Team";
-			players: AwardPlayer[];
+			players: PlayerOverride[];
 		},
 		{
 			title: "Third Team";
-			players: AwardPlayer[];
+			players: PlayerOverride[];
 		},
 	];
-	dpoy: AwardPlayerDefense;
+	dpoy: PlayerDefenseOverride | undefined;
 	allDefensive: [
 		{
 			title: "First Team";
-			players: AwardPlayerDefense[];
+			players: PlayerDefenseOverride[];
 		},
 		{
 			title: "Second Team";
-			players: AwardPlayerDefense[];
+			players: PlayerDefenseOverride[];
 		},
 		{
 			title: "Third Team";
-			players: AwardPlayerDefense[];
+			players: PlayerDefenseOverride[];
 		},
 	];
-	finalsMvp: AwardPlayer | undefined;
+	finalsMvp: PlayerOverride | undefined;
 };
 
 export type PlayerRatings = {

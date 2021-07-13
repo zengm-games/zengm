@@ -1,4 +1,4 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES, isSport } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES, isSport, bySport } from "../../common";
 import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
@@ -199,18 +199,24 @@ const updatePlayMenu = async () => {
 		}
 
 		// Regular season - pre trading deadline
-		if (isSport("basketball")) {
-			keys = ["day", "dayLive", "week", "month", ...untilMore, "untilPlayoffs"];
-		} else {
-			keys = ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"];
-		}
+		keys = bySport({
+			football: ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"],
+			default: [
+				"day",
+				"dayLive",
+				"week",
+				"month",
+				...untilMore,
+				"untilPlayoffs",
+			],
+		});
 
 		if (allStarIndex === 0) {
 			keys.unshift("viewAllStarSelections");
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
-		if (isSport("basketball")) {
+		if (isSport("basketball") || isSport("hockey")) {
 			keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
 		} else {
 			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];

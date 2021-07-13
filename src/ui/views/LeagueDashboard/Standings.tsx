@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { helpers } from "../../util";
+import { ColPtsOrGB, TeamColumn } from "../Standings";
 import type { View } from "../../../common/types";
 
 const width100 = {
@@ -11,17 +12,28 @@ const Standings = ({
 	confTeams,
 	numPlayoffTeams,
 	playoffsByConference,
+	pointsFormula,
+	usePts,
 	userTid,
 }: Pick<
 	View<"leagueDashboard">,
-	"confTeams" | "numPlayoffTeams" | "playoffsByConference" | "userTid"
+	| "confTeams"
+	| "numPlayoffTeams"
+	| "playoffsByConference"
+	| "pointsFormula"
+	| "usePts"
+	| "userTid"
 >) => (
 	<>
 		<table className="table table-striped table-bordered table-sm mb-1">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>
-					<th>GB</th>
+					<ColPtsOrGB
+						alignRight
+						pointsFormula={pointsFormula}
+						usePts={usePts}
+					/>
 				</tr>
 			</thead>
 			<tbody>
@@ -34,21 +46,10 @@ const Standings = ({
 								"table-info": t.tid === userTid,
 							})}
 						>
-							<td>
-								{t.rank}.{" "}
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${t.seasonAttrs.abbrev}_${t.tid}`,
-									])}
-								>
-									{t.seasonAttrs.region}
-								</a>
-								{t.seasonAttrs.clinchedPlayoffs
-									? ` ${t.seasonAttrs.clinchedPlayoffs}`
-									: null}
+							<TeamColumn rank={t.rank} rankWidth={15} t={t} />
+							<td className="text-right">
+								{usePts ? Math.round(t.seasonAttrs.pts) : t.gb}
 							</td>
-							<td className="text-right">{t.gb}</td>
 						</tr>
 					);
 				})}

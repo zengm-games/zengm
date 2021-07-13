@@ -95,7 +95,13 @@ const truncGauss = (
 ) => {
 	let x;
 
+	let i = -1;
 	do {
+		i += 1;
+		if (i > 1000000) {
+			throw new Error("Could not find valid random number");
+		}
+
 		x = realGauss(mu, sigma);
 	} while (x < lowerBound || x > upperBound);
 
@@ -126,7 +132,10 @@ const uniformSeed = (seed: number): number => {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-const choice = <T>(x: T[], weightInput?: ((a: T) => number) | number[]): T => {
+const choice = <T>(
+	x: T[],
+	weightInput?: ((a: T, index: number) => number) | number[],
+): T => {
 	if (weightInput === undefined) {
 		return x[Math.floor(Math.random() * x.length)];
 	}
@@ -137,6 +146,9 @@ const choice = <T>(x: T[], weightInput?: ((a: T) => number) | number[]): T => {
 	} else {
 		weights = x.map(weightInput);
 	}
+	weights = weights.map(weight =>
+		weight < 0 || Number.isNaN(weight) ? Number.MIN_VALUE : weight,
+	);
 
 	const cumsums = weights.reduce<number[]>((array, weight, i) => {
 		if (i === 0) {

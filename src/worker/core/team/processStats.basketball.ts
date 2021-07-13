@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type {
 	TeamStatAttr,
 	TeamStatType,
@@ -24,14 +24,6 @@ const poss = (ts: TeamStats) => {
 	return 0;
 };
 
-const percentage = (numerator: number, denominator: number) => {
-	if (denominator > 0) {
-		return (100 * numerator) / denominator;
-	}
-
-	return 0;
-};
-
 const processStats = (
 	ts: TeamStats,
 	stats: Readonly<TeamStatAttr[]>,
@@ -47,46 +39,49 @@ const processStats = (
 				row.gp = ts.gp;
 				scale = false;
 			} else if (stat === "fgp") {
-				row[stat] = percentage(ts.fg, ts.fga);
+				row[stat] = helpers.percentage(ts.fg, ts.fga);
 				scale = false;
 			} else if (stat === "oppFgp") {
-				row[stat] = percentage(ts.oppFg, ts.oppFga);
+				row[stat] = helpers.percentage(ts.oppFg, ts.oppFga);
 				scale = false;
 			} else if (stat === "fgpAtRim") {
-				row[stat] = percentage(ts.fgAtRim, ts.fgaAtRim);
+				row[stat] = helpers.percentage(ts.fgAtRim, ts.fgaAtRim);
 				scale = false;
 			} else if (stat === "oppFgpAtRim") {
-				row[stat] = percentage(ts.oppFgAtRim, ts.oppFgaAtRim);
+				row[stat] = helpers.percentage(ts.oppFgAtRim, ts.oppFgaAtRim);
 				scale = false;
 			} else if (stat === "fgpLowPost") {
-				row[stat] = percentage(ts.fgLowPost, ts.fgaLowPost);
+				row[stat] = helpers.percentage(ts.fgLowPost, ts.fgaLowPost);
 				scale = false;
 			} else if (stat === "oppFgpLowPost") {
-				row[stat] = percentage(ts.oppFgLowPost, ts.oppFgaLowPost);
+				row[stat] = helpers.percentage(ts.oppFgLowPost, ts.oppFgaLowPost);
 				scale = false;
 			} else if (stat === "fgpMidRange") {
-				row[stat] = percentage(ts.fgMidRange, ts.fgaMidRange);
+				row[stat] = helpers.percentage(ts.fgMidRange, ts.fgaMidRange);
 				scale = false;
 			} else if (stat === "oppFgpMidRange") {
-				row[stat] = percentage(ts.oppFgMidRange, ts.oppFgaMidRange);
+				row[stat] = helpers.percentage(ts.oppFgMidRange, ts.oppFgaMidRange);
 				scale = false;
 			} else if (stat === "2pp") {
-				row[stat] = percentage(ts.fg - ts.tp, ts.fga - ts.tpa);
+				row[stat] = helpers.percentage(ts.fg - ts.tp, ts.fga - ts.tpa);
 				scale = false;
 			} else if (stat === "opp2pp") {
-				row[stat] = percentage(ts.oppFg - ts.oppTp, ts.oppFga - ts.oppTpa);
+				row[stat] = helpers.percentage(
+					ts.oppFg - ts.oppTp,
+					ts.oppFga - ts.oppTpa,
+				);
 				scale = false;
 			} else if (stat === "tpp") {
-				row[stat] = percentage(ts.tp, ts.tpa);
+				row[stat] = helpers.percentage(ts.tp, ts.tpa);
 				scale = false;
 			} else if (stat === "oppTpp") {
-				row[stat] = percentage(ts.oppTp, ts.oppTpa);
+				row[stat] = helpers.percentage(ts.oppTp, ts.oppTpa);
 				scale = false;
 			} else if (stat === "ftp") {
-				row[stat] = percentage(ts.ft, ts.fta);
+				row[stat] = helpers.percentage(ts.ft, ts.fta);
 				scale = false;
 			} else if (stat === "oppFtp") {
-				row[stat] = percentage(ts.oppFt, ts.oppFta);
+				row[stat] = helpers.percentage(ts.oppFt, ts.oppFta);
 				scale = false;
 			} else if (stat === "mov") {
 				if (statType === "totals") {
@@ -123,15 +118,15 @@ const processStats = (
 				scale = false;
 			} else if (stat === "ortg") {
 				const possessions = poss(ts);
-				row[stat] = percentage(ts.pts, possessions);
+				row[stat] = helpers.percentage(ts.pts, possessions);
 				scale = false;
 			} else if (stat === "drtg") {
 				const possessions = poss(ts);
-				row[stat] = percentage(ts.oppPts, possessions);
+				row[stat] = helpers.percentage(ts.oppPts, possessions);
 				scale = false;
 			} else if (stat === "nrtg") {
 				const possessions = poss(ts);
-				row[stat] = percentage(ts.pts - ts.oppPts, possessions);
+				row[stat] = helpers.percentage(ts.pts - ts.oppPts, possessions);
 				scale = false;
 			} else if (stat === "pace") {
 				if (ts.min > 0) {
@@ -146,15 +141,38 @@ const processStats = (
 				row.poss = poss(ts);
 				scale = false;
 			} else if (stat === "tpar") {
-				row[stat] = percentage(ts.tpa, ts.fga);
+				row[stat] = helpers.percentage(ts.tpa, ts.fga);
 				scale = false;
 			} else if (stat === "ftr") {
-				row[stat] = percentage(ts.fta, ts.fga);
+				row[stat] = helpers.percentage(ts.fta, ts.fga);
 				scale = false;
 			} else if (stat === "tsp") {
-				row[stat] = percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
+				row[stat] = helpers.percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
 				scale = false;
-			} else if (stat === "season" || stat === "playoffs") {
+			} else if (stat === "efg") {
+				row[stat] = helpers.percentage(ts.fg + 0.5 * ts.tp, ts.fga);
+				scale = false;
+			} else if (stat === "tovp") {
+				row[stat] = helpers.percentage(ts.tov, ts.fga + 0.44 * ts.fta + ts.tov);
+				scale = false;
+			} else if (stat === "orbp") {
+				row[stat] = helpers.percentage(ts.orb, ts.orb + ts.oppDrb);
+				scale = false;
+			} else if (stat === "ftpFga") {
+				row[stat] = ts.ft / ts.fga;
+				scale = false;
+			} else if (
+				stat === "season" ||
+				stat === "playoffs" ||
+				stat === "dd" ||
+				stat === "td" ||
+				stat === "qd" ||
+				stat === "fxf" ||
+				stat === "oppDd" ||
+				stat === "oppTd" ||
+				stat === "oppQd" ||
+				stat === "oppFxf"
+			) {
 				row[stat] = ts[stat];
 				scale = false;
 			} else if (stat === "trb") {

@@ -1,5 +1,7 @@
+const SPORTS = ["basketball", "football", "hockey"];
+
 const getSport = () => {
-	if (process.env.SPORT === "football" || process.env.SPORT === "basketball") {
+	if (SPORTS.includes(process.env.SPORT)) {
 		return process.env.SPORT;
 	}
 	if (process.env.SPORT === undefined) {

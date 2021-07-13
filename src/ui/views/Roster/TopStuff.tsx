@@ -1,8 +1,13 @@
 import PropTypes from "prop-types";
 import { useState, CSSProperties } from "react";
-import { RecordAndPlayoffs, RosterComposition } from "../../components";
+import {
+	RecordAndPlayoffs,
+	RosterComposition,
+	PlusMinus,
+} from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
+import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
 
@@ -62,6 +67,7 @@ const TopStuff = ({
 	salaryCap,
 	season,
 	showTradeFor,
+	showTradingBlock,
 	t,
 	tid,
 }: Pick<
@@ -79,6 +85,7 @@ const TopStuff = ({
 	| "salaryCap"
 	| "season"
 	| "showTradeFor"
+	| "showTradingBlock"
 	| "t"
 	| "tid"
 > & {
@@ -102,6 +109,7 @@ const TopStuff = ({
 					season={season}
 					won={t.seasonAttrs.won}
 					lost={t.seasonAttrs.lost}
+					otl={t.seasonAttrs.otl}
 					tied={t.seasonAttrs.tied}
 					playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
 					option="noSeason"
@@ -114,17 +122,13 @@ const TopStuff = ({
 			"Season not found"
 		);
 
-	let marginOfVictory: string;
-	if (isSport("football")) {
+	let marginOfVictory = 0;
+	if (isSport("football") || isSport("hockey")) {
 		if (t.stats.gp !== 0) {
-			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
-				1,
-			);
-		} else {
-			marginOfVictory = "0.0";
+			marginOfVictory = (t.stats.pts - t.stats.oppPts) / t.stats.gp;
 		}
 	} else {
-		marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
+		marginOfVictory = t.stats.pts - t.stats.oppPts;
 	}
 
 	return (
@@ -134,45 +138,57 @@ const TopStuff = ({
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</h3>
 			) : null}
-			<div className="d-flex mb-3">
-				<div className="team-picture" style={logoStyle} />
-				<div>
+			<div className="d-sm-flex mb-3">
+				<div className="d-flex">
+					<div className="team-picture" style={logoStyle} />
 					<div>
-						<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
-						<br />
-						{!challengeNoRatings ? (
-							<>
-								Team rating:{" "}
-								<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
-								<br />
-							</>
-						) : null}
-						<span title="Average margin of victory">Average MOV</span>:{" "}
-						{marginOfVictory}
-					</div>
+						<div>
+							<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
+							<br />
+							{!challengeNoRatings ? (
+								<>
+									Team rating:{" "}
+									<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
+									<br />
+								</>
+							) : null}
+							<span title="Average margin of victory">Average MOV</span>:{" "}
+							<PlusMinus>{marginOfVictory}</PlusMinus>
+							<br />
+							<span title="Average age, weighted by minutes played">
+								Average age
+							</span>
+							: {t.seasonAttrs.avgAge!.toFixed(1)}
+						</div>
 
-					{season === currentSeason || isSport("football") ? (
-						<div className="d-flex mt-3">
-							{season === currentSeason ? (
-								<div>
-									{openRosterSpots} open roster spots
-									<br />
-									Payroll: {helpers.formatCurrency(payroll || 0, "M")}
-									<br />
-									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-									<br />
-									{budget ? (
-										<>
-											Profit: {helpers.formatCurrency(profit, "M")}
-											<br />
-										</>
-									) : null}
-									{showTradeFor ? `Strategy: ${t.strategy}` : null}
-								</div>
-							) : null}
-							{isSport("football") ? (
-								<RosterComposition className="ml-3" players={players} />
-							) : null}
+						{season === currentSeason ? (
+							<div className="mt-3">
+								{openRosterSpots} open roster spots
+								<br />
+								Payroll: {helpers.formatCurrency(payroll || 0, "M")}
+								<br />
+								Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+								<br />
+								{budget ? (
+									<>
+										Profit: {helpers.formatCurrency(profit, "M")}
+										<br />
+									</>
+								) : null}
+								{showTradeFor ? `Strategy: ${t.strategy}` : null}
+							</div>
+						) : null}
+					</div>
+				</div>
+				<div className="d-md-flex">
+					{season === currentSeason ? (
+						<div className="ml-sm-5 mt-3 mt-sm-0">
+							<RosterComposition players={players} />
+						</div>
+					) : null}
+					{showTradingBlock ? (
+						<div className="ml-sm-5 mt-3 mt-md-0">
+							<PlayThroughInjurySliders key={tid} t={t} />
 						</div>
 					) : null}
 				</div>
@@ -186,7 +202,9 @@ const TopStuff = ({
 			/>
 			{season !== currentSeason ? (
 				<p>
-					Players in the Hall of Fame are{" "}
+					Players still on this team are{" "}
+					<span className="text-info">highlighted in blue</span>. Players in the
+					Hall of Fame are{" "}
 					<span className="text-danger">highlighted in red</span>.
 				</p>
 			) : null}

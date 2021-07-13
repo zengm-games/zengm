@@ -6,6 +6,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
 import type { View } from "../../common/types";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
 const WatchList = ({
 	challengeNoRatings,
@@ -72,7 +73,7 @@ const WatchList = ({
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,
-				p.age,
+				wrappedAgeAtDeath(p.age, p.ageAtDeath),
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}
 				</a>,

@@ -1,18 +1,18 @@
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 import limitRating from "./limitRating";
 
 const heightToRating = (heightInInches: number) => {
-	let minHgt;
-	let maxHgt;
+	const minHgt = bySport({
+		basketball: 66, // 5'6"
+		football: 64, // 5'4"
+		hockey: 62, // 5'2"
+	});
 
-	if (isSport("football")) {
-		minHgt = 64; // 5'4"
-		maxHgt = 82; // 6'10"
-	} else {
-		// Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
-		minHgt = 66; // 5'6"
-		maxHgt = 93; // 7'9"
-	}
+	const maxHgt = bySport({
+		basketball: 93, // 7'9"
+		football: 82, // 6'10"
+		hockey: 82, // 6'10"
+	});
 
 	return limitRating((100 * (heightInInches - minHgt)) / (maxHgt - minHgt));
 };

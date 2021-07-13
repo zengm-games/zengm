@@ -4,6 +4,7 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 } from "../../../common/types";
+import { DEFAULT_JERSEY } from "../../../common";
 
 const genSeasonRow = (
 	t: Team | TeamBasic,
@@ -22,6 +23,7 @@ const genSeasonRow = (
 		abbrev: t.abbrev,
 		imgURL: t.imgURL,
 		colors: t.colors,
+		jersey: t.jersey ?? DEFAULT_JERSEY,
 		season,
 		gp: 0,
 		gpHome: 0,
@@ -30,18 +32,23 @@ const genSeasonRow = (
 		won: 0,
 		lost: 0,
 		tied: 0,
+		otl: 0,
 		wonHome: 0,
 		lostHome: 0,
 		tiedHome: 0,
+		otlHome: 0,
 		wonAway: 0,
 		lostAway: 0,
 		tiedAway: 0,
+		otlAway: 0,
 		wonDiv: 0,
 		lostDiv: 0,
 		tiedDiv: 0,
+		otlDiv: 0,
 		wonConf: 0,
 		lostConf: 0,
 		tiedConf: 0,
+		otlConf: 0,
 		lastTen: [],
 		streak: 0,
 		playoffRoundsWon: -1, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
@@ -115,6 +122,11 @@ const genSeasonRow = (
 
 	if (typeof t.pop === "number") {
 		newSeason.pop = t.pop;
+	}
+
+	if (typeof t.imgURLSmall === "string") {
+		// @ts-ignore
+		newSeason.imgURLSmall = t.imgURLSmall;
 	}
 
 	// @ts-ignore

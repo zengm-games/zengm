@@ -1,5 +1,5 @@
 import { isSport } from "../../../common";
-import type { Position } from "../../../common/types.football";
+import type { Team } from "../../../common/types";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <
@@ -7,23 +7,24 @@ const getDepthPlayers = <
 		pid: number;
 	}
 >(
-	depth: Record<Position, number[]>,
+	depth: Team["depth"],
 	players: T[],
-): Record<Position, T[]> => {
-	if (!isSport("football")) {
+): Record<string, T[]> => {
+	if (!isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
 
 	// @ts-ignore
-	return Object.keys(depth).reduce((obj, pos: Position) => {
+	return Object.keys(depth).reduce((obj, pos: string) => {
 		// p.id is for call from play.ts
 
 		// @ts-ignore
-		obj[pos] = depth[pos]
+		obj[pos] = (depth[pos] as number[])
 			.map(pid => players.find(p => p.pid === pid || (p as any).id === pid))
 			.concat(
 				players.map(p =>
-					depth[pos].includes(p.pid) || depth[pos].includes((p as any).id)
+					(depth as any)[pos].includes(p.pid) ||
+					(depth as any)[pos].includes((p as any).id)
 						? undefined
 						: p,
 				),

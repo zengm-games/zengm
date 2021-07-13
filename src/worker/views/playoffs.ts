@@ -11,12 +11,14 @@ type SeriesTeam = {
 	abbrev: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	region: string;
 	regularSeason: {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	seed: number;
 	tid: number;
@@ -24,17 +26,8 @@ type SeriesTeam = {
 	won?: number;
 };
 
-const getProjectedSeries = async (inputSeason: number) => {
-	const teams = helpers.orderByWinp(
-		await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["winp", "won", "cid", "did", "abbrev", "name"],
-			season: inputSeason,
-		}),
-		inputSeason,
-	);
-
-	const result = season.genPlayoffSeries(teams);
+const getProjectedSeries = async () => {
+	const result = await season.genPlayoffSeries();
 	return result.series;
 };
 
@@ -74,7 +67,7 @@ const updatePlayoffs = async (
 			series = playoffSeries.series;
 			finalMatchups = true;
 		} else {
-			series = await getProjectedSeries(inputs.season);
+			series = await getProjectedSeries();
 		}
 
 		await helpers.augmentSeries(series, inputs.season);

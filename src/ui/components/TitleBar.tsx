@@ -19,7 +19,8 @@ const TitleBar = () => {
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
-		dropdownExtraParam,
+		dropdownCustomOptions,
+		dropdownCustomURL,
 		dropdownView,
 		dropdownFields,
 		moreInfoAbbrev,
@@ -32,7 +33,8 @@ const TitleBar = () => {
 		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
-		dropdownExtraParam: state.dropdownExtraParam,
+		dropdownCustomOptions: state.dropdownCustomOptions,
+		dropdownCustomURL: state.dropdownCustomURL,
 		dropdownView: state.dropdownView,
 		dropdownFields: state.dropdownFields,
 		moreInfoAbbrev: state.moreInfoAbbrev,
@@ -185,7 +187,8 @@ const TitleBar = () => {
 			</h1>
 			{dropdownView && dropdownFields ? (
 				<Dropdown
-					extraParam={dropdownExtraParam}
+					customURL={dropdownCustomURL}
+					customOptions={dropdownCustomOptions}
 					view={dropdownView}
 					fields={dropdownFields}
 				/>
@@ -193,6 +196,7 @@ const TitleBar = () => {
 			<DropdownLinks
 				className="ml-auto"
 				hideTitle
+				inLeague
 				lid={lid}
 				menuItems={menuItems}
 			/>

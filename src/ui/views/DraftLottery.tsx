@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import PropTypes from "prop-types";
 import { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
@@ -10,11 +10,13 @@ import type {
 	View,
 	DraftType,
 } from "../../common/types";
+import useClickable from "../hooks/useClickable";
 
 const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
-	nba2019: "Weighted lottery for the top 4 picks, like the NBA from 2019+",
+	nba2019: "Weighted lottery for the top 4 picks, like the NBA since 2019",
 	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
 	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
+	nhl2017: "Weighted lottery for the top 3 picks, like the NHL since 2017",
 	randomLotteryFirst3:
 		"Random lottery for the top 3 picks, like the NBA from 1987-1989",
 	randomLottery:
@@ -264,6 +266,87 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
+const Row = ({
+	NUM_PICKS,
+	i,
+	season,
+	t,
+	userTid,
+	indRevealed,
+	toReveal,
+	probs,
+}: {
+	NUM_PICKS: number;
+	i: number;
+	season: number;
+	t: DraftLotteryResultArray[number];
+	userTid: number;
+	indRevealed: State["indRevealed"];
+	toReveal: State["toReveal"];
+	probs: ReturnType<typeof getProbs>;
+}) => {
+	const { clicked, toggleClicked } = useClickable();
+
+	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts } = t;
+
+	const pickCols = range(NUM_PICKS).map(j => {
+		const prob = probs[i][j];
+		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
+		let highlighted = false;
+
+		if (pick !== undefined) {
+			highlighted = pick === j + 1;
+		} else if (NUM_PICKS - 1 - j <= indRevealed) {
+			// Has this round been revealed?
+			// Is this pick revealed?
+			const ind = toReveal.findIndex(ind2 => ind2 === i);
+
+			if (ind === NUM_PICKS - 1 - j) {
+				highlighted = true;
+			}
+		}
+
+		return (
+			<td
+				className={classNames({
+					"table-success": highlighted,
+				})}
+				key={j}
+			>
+				{pct}
+			</td>
+		);
+	});
+	const row = (
+		<tr
+			className={classNames({
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+		>
+			<td
+				className={classNames({
+					"table-info": tid === userTid,
+				})}
+			>
+				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+			</td>
+			<td>
+				<a href={helpers.leagueUrl(["standings", season])}>
+					{pts ? `${pts} pts (` : null}
+					{won}-{lost}
+					{otl > 0 ? <>-{otl}</> : null}
+					{tied > 0 ? <>-{tied}</> : null}
+					{pts ? `)` : null}
+				</a>
+			</td>
+			<td>{chances}</td>
+			{pickCols}
+		</tr>
+	);
+	return row;
+};
+
 const DraftLotteryTable = (props: Props) => {
 	const isMounted = useRef(true);
 	useEffect(() => {
@@ -312,21 +395,25 @@ const DraftLotteryTable = (props: Props) => {
 
 	const startLottery = async () => {
 		dispatch({ type: "startClicked" });
-		const { draftType, result } = await toWorker("main", "draftLottery");
-		const toReveal: number[] = [];
+		const draftLotteryResult = await toWorker("main", "draftLottery");
+		if (draftLotteryResult) {
+			const { draftType, result } = draftLotteryResult;
 
-		for (let i = 0; i < result.length; i++) {
-			const pick = result[i].pick;
-			toReveal[pick - 1] = i;
-			result[i].pick = undefined;
+			const toReveal: number[] = [];
+
+			for (let i = 0; i < result.length; i++) {
+				const pick = result[i].pick;
+				toReveal[pick - 1] = i;
+				result[i].pick = undefined;
+			}
+			toReveal.reverse();
+
+			revealState.current = "running";
+			numLeftToReveal.current = toReveal.length;
+			dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
+
+			revealPickAuto();
 		}
-		toReveal.reverse();
-
-		revealState.current = "running";
-		numLeftToReveal.current = toReveal.length;
-		dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
-
-		revealPickAuto();
 	};
 
 	const handleResume = () => {
@@ -406,65 +493,19 @@ const DraftLotteryTable = (props: Props) => {
 							</tr>
 						</thead>
 						<tbody>
-							{result.map(
-								({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
-									const pickCols = range(NUM_PICKS).map(j => {
-										const prob = probs[i][j];
-										const pct =
-											prob !== undefined
-												? `${(prob * 100).toFixed(1)}%`
-												: undefined;
-										let highlighted = false;
-
-										if (pick !== undefined) {
-											highlighted = pick === j + 1;
-										} else if (NUM_PICKS - 1 - j <= state.indRevealed) {
-											// Has this round been revealed?
-											// Is this pick revealed?
-											const ind = state.toReveal.findIndex(ind2 => ind2 === i);
-
-											if (ind === NUM_PICKS - 1 - j) {
-												highlighted = true;
-											}
-										}
-
-										return (
-											<td
-												className={classNames({
-													"table-success": highlighted,
-												})}
-												key={j}
-											>
-												{pct}
-											</td>
-										);
-									});
-									const row = (
-										<tr key={originalTid}>
-											<td
-												className={classNames({
-													"table-info": tid === userTid,
-												})}
-											>
-												<DraftAbbrev
-													tid={tid}
-													originalTid={originalTid}
-													season={season}
-												/>
-											</td>
-											<td>
-												<a href={helpers.leagueUrl(["standings", season])}>
-													{won}-{lost}
-													{tied > 0 ? <>-{tied}</> : null}
-												</a>
-											</td>
-											<td>{chances}</td>
-											{pickCols}
-										</tr>
-									);
-									return row;
-								},
-							)}
+							{result.map((t, i) => (
+								<Row
+									key={i}
+									NUM_PICKS={NUM_PICKS}
+									i={i}
+									season={season}
+									t={t}
+									userTid={userTid}
+									indRevealed={state.indRevealed}
+									toReveal={state.toReveal}
+									probs={probs}
+								/>
+							))}
 						</tbody>
 					</table>
 				</ResponsiveTableWrapper>

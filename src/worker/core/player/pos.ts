@@ -1,14 +1,15 @@
 import posBasketball from "./pos.basketball";
 import posFootball from "./pos.football";
+import posHockey from "./pos.hockey";
 import type { MinimalPlayerRatings } from "../../../common/types";
-import { isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 const pos = (ratings: MinimalPlayerRatings) => {
-	if (isSport("football")) {
-		return posFootball(ratings as any);
-	}
-
-	return posBasketball(ratings as any);
+	return bySport({
+		basketball: posBasketball(ratings as any),
+		football: posFootball(ratings as any),
+		hockey: posHockey(ratings as any),
+	});
 };
 
 export default pos;

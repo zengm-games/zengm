@@ -57,5 +57,18 @@ describe("worker/util/random", () => {
 				}
 			}
 		});
+
+		test("works with weight function that returns negative value", () => {
+			const values = {
+				a: -10,
+				b: -20,
+				c: 1,
+			};
+
+			for (let i = 0; i < 10; i++) {
+				const choice = random.choice(helpers.keys(values), key => values[key]);
+				assert(helpers.keys(values).includes(choice));
+			}
+		});
 	});
 });

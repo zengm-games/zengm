@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { GAME_ACRONYM, isSport } from "../../common";
+import { ActionButton } from "../components";
 
 const genFilename = (
 	leagueName: string,
@@ -92,16 +93,14 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 						})}
 					</select>
 				</div>{" "}
-				<button
-					type="submit"
-					className="btn btn-primary"
-					disabled={status === "Exporting..."}
-				>
+				<ActionButton type="submit" processing={status === "Exporting..."}>
 					Export Stats
-				</button>
+				</ActionButton>
 			</form>
 
-			{status ? <p className="mt-3">{status}</p> : null}
+			{status && status !== "Exporting..." ? (
+				<p className="mt-3">{status}</p>
+			) : null}
 		</>
 	);
 };

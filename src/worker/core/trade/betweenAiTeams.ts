@@ -15,7 +15,10 @@ const getAITids = async () => {
 				return false;
 			}
 
-			if (local.autoPlayUntil || g.get("spectator")) {
+			if (
+				(local.autoPlayUntil || g.get("spectator")) &&
+				!g.get("challengeNoTrades")
+			) {
 				return true;
 			}
 			return !g.get("userTids").includes(t.tid);
@@ -83,7 +86,7 @@ const attempt = async (valueChangeKey: number) => {
 		},
 	];
 
-	const teams = await makeItWork(teams0, false, valueChangeKey);
+	const teams = await makeItWork(teams0, false, 5, valueChangeKey);
 
 	if (!teams) {
 		return false;

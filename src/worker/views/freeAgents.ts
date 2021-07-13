@@ -15,11 +15,11 @@ const updateFreeAgents = async () => {
 		"playersByTid",
 		PLAYER.FREE_AGENT,
 	);
-	const capSpace =
-		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
+	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 	const stats = bySport({
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	for (const p of playersAll) {

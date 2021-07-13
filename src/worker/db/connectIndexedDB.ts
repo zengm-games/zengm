@@ -1,4 +1,4 @@
-import { openDB, IDBPDatabase, IDBPTransaction } from "idb";
+import { openDB, IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
 import { logEvent } from "../util";
 
 // If duplicate message is sent multiple times in a row (like IndexedDB transaction abort with many open requests), only show one
@@ -30,7 +30,11 @@ const connectIndexedDB = async <DBTypes>({
 		db: IDBPDatabase<DBTypes>;
 		lid: number;
 		oldVersion: number;
-		transaction: IDBPTransaction<DBTypes>;
+		transaction: IDBPTransaction<
+			DBTypes,
+			StoreNames<DBTypes>[],
+			"versionchange"
+		>;
 	}) => void;
 }) => {
 	// Would like to await on create/migrate and inside those functions, but Firefox
@@ -55,7 +59,7 @@ const connectIndexedDB = async <DBTypes>({
 		terminated() {
 			logEvent({
 				type: "error",
-				text: "Something bad happened. Please try reloading the game.",
+				text: "Something bad happened. Please try restarting your browser.",
 				saveToDb: false,
 				persistent: true,
 			});

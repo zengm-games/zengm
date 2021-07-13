@@ -1,10 +1,18 @@
 import { idb } from "../../db";
-import { g, helpers, initUILocalGames, local } from "../../util";
-import { unwrap, wrap } from "../../util/g";
+import {
+	defaultInjuries,
+	g,
+	helpers,
+	initUILocalGames,
+	local,
+} from "../../util";
+import { wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
-import { DIFFICULTY } from "../../../common";
+import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
+import { getAutoTicketPriceByTid } from "../game/attendance";
+import goatFormula from "../../util/goatFormula";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -29,8 +37,23 @@ const setGameAttributes = async (
 		gameAttributes.easyDifficultyInPast = true;
 	}
 
+	if (gameAttributes.injuries) {
+		// Test if it's the same as default
+		if (
+			JSON.stringify(gameAttributes.injuries) ===
+			JSON.stringify(defaultInjuries)
+		) {
+			gameAttributes.injuries = undefined;
+		}
+	}
+
+	// Test if it's the same as default
+	if (gameAttributes.goatFormula === goatFormula.DEFAULT_FORMULA) {
+		gameAttributes.goatFormula = undefined;
+	}
+
 	for (const key of helpers.keys(gameAttributes)) {
-		const currentValue = unwrap(g, key);
+		const currentValue = unwrapGameAttribute(g, key);
 
 		if (
 			// @ts-ignore
@@ -105,18 +128,24 @@ const setGameAttributes = async (
 									Math.round((t.budget[key].amount * factor) / 10) * 10;
 							}
 
-							const factor =
-								helpers.defaultTicketPrice(t.budget.ticketPrice.rank, value) /
-								helpers.defaultTicketPrice(t.budget.ticketPrice.rank);
+							if (t.autoTicketPrice !== false) {
+								t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(
+									t.tid,
+								);
+							} else {
+								const factor =
+									helpers.defaultTicketPrice(t.budget.ticketPrice.rank, value) /
+									helpers.defaultTicketPrice(t.budget.ticketPrice.rank);
 
-							t.budget.ticketPrice.amount = parseFloat(
-								(t.budget.ticketPrice.amount * factor).toFixed(2),
-							);
+								t.budget.ticketPrice.amount = parseFloat(
+									(t.budget.ticketPrice.amount * factor).toFixed(2),
+								);
+							}
 
 							updated = true;
 						}
 					} else {
-						team.autoBudgetSettings(t, popRank, value);
+						await team.autoBudgetSettings(t, popRank, value);
 					}
 
 					if (updated) {
@@ -146,6 +175,7 @@ const setGameAttributes = async (
 	} else if (
 		toUpdate.includes("numSeasonsFutureDraftPicks") ||
 		toUpdate.includes("challengeNoDraftPicks") ||
+		toUpdate.includes("numDraftRounds") ||
 		(toUpdate.includes("userTids") && g.get("challengeNoDraftPicks"))
 	) {
 		await draft.genPicks();

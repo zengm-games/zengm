@@ -6,7 +6,7 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../common/types";
-import maxBy from "lodash/maxBy";
+import maxBy from "lodash-es/maxBy";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -22,6 +22,7 @@ const updateDraftTeamHistory = async (
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 	const playersAll2 = await idb.getCopies.players({
 		filter,

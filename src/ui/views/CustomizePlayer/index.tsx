@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
 import {
@@ -8,6 +8,7 @@ import {
 	POSITIONS,
 	MOOD_TRAITS,
 	isSport,
+	WEBSITE_ROOT,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -341,11 +342,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;
 			} else if (type === "rating") {
-				if (field === "locked") {
-					p.ratings[p.ratings.length - 1][field] = checked;
-				} else {
-					p.ratings[p.ratings.length - 1][field] = val;
-				}
+				p.ratings[p.ratings.length - 1] = {
+					...p.ratings[p.ratings.length - 1],
+					[field]: field === "locked" ? checked : val,
+				};
 			} else if (type === "face") {
 				if (["eye", "hair", "mouth", "nose"].includes(field)) {
 					p[type][field].id = val;
@@ -394,7 +394,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	const { godMode, originalTid, playerMoodTraits, teams } = props;
+	const { challengeNoRatings, godMode, originalTid, playerMoodTraits, teams } =
+		props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
@@ -481,7 +482,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const pos = p.ratings[r].pos;
 
 			const keys = posRatings(pos);
-			if (isSport("football")) {
+			if (isSport("football") || isSport("hockey")) {
 				keys.push("stre", "spd", "endu");
 			}
 
@@ -533,7 +534,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					: "edit a player to have"}{" "}
 				whatever attributes and ratings you want. If you want to make a whole
 				league of custom players, you should probably create a{" "}
-				<a href={`https://${process.env.SPORT}-gm.com/manual/customization/`}>
+				<a href={`https://${WEBSITE_ROOT}/manual/customization/`}>
 					custom League File
 				</a>
 				.
@@ -541,7 +542,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			<form onSubmit={handleSubmit}>
 				<div className="row">
-					<div className="col-md-7">
+					<div className="col-md-7 mb-3">
 						<h2>Attributes</h2>
 
 						<div className="row">
@@ -654,25 +655,64 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Position</label>
-								<select
-									className="form-control"
-									onChange={handleChange.bind(null, "rating", "pos")}
-									value={p.ratings[r].pos}
-									disabled={!godMode && p.tid !== PLAYER.RETIRED}
-								>
-									{POSITIONS.filter(pos => {
-										if (isSport("football") && bannedPositions.includes(pos)) {
-											return false;
-										}
-										return true;
-									}).map(pos => {
-										return (
-											<option key={pos} value={pos}>
-												{pos}
-											</option>
-										);
-									})}
-								</select>
+								<div className="input-group">
+									<select
+										className="form-control"
+										onChange={handleChange.bind(null, "rating", "pos")}
+										value={p.ratings[r].pos}
+										disabled={!godMode && p.tid !== PLAYER.RETIRED}
+									>
+										{POSITIONS.filter(pos => {
+											if (
+												isSport("football") &&
+												bannedPositions.includes(pos)
+											) {
+												return false;
+											}
+											return true;
+										}).map(pos => {
+											return (
+												<option key={pos} value={pos}>
+													{pos}
+												</option>
+											);
+										})}
+									</select>
+									<div className="input-group-append">
+										<button
+											className="btn btn-secondary"
+											type="button"
+											disabled={!godMode}
+											onClick={async event => {
+												event.preventDefault();
+
+												const pos = await toWorker(
+													"main",
+													"getAutoPos",
+													p.ratings[r],
+												);
+
+												setState(prevState => {
+													const p = {
+														...prevState.p,
+													};
+													p.ratings = [...p.ratings];
+													p.ratings[r] = {
+														...p.ratings[r],
+														pos,
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+										>
+											Auto
+										</button>
+									</div>
+								</div>
 							</div>
 							<div className="col-sm-3 form-group">
 								<label>Jersey Number</label>
@@ -894,13 +934,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						{pictureDiv}
 					</div>
 
-					<div className="col-md-5">
+					<div className="col-md-5 mb-3">
 						<div className="float-right d-flex flex-column">
 							<button
 								type="button"
 								className="btn btn-secondary btn-sm mb-1"
 								title={`Ratings will be taken from a randomly generated player with the same age${
-									process.env.SPORT === "football" ? " and position" : ""
+									isSport("football") || isSport("hockey")
+										? " and position"
+										: ""
 								} as this player`}
 								onClick={async event => {
 									event.preventDefault();
@@ -908,7 +950,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										"main",
 										"getRandomRatings",
 										(p as any).age,
-										isSport("football") ? p.ratings[r].pos : undefined,
+										isSport("football") || isSport("hockey")
+											? p.ratings[r].pos
+											: undefined,
 									);
 
 									setState(prevState => {
@@ -954,9 +998,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<h2>Ratings</h2>
 
-						<p>All ratings are on a scale of 0 to 100.</p>
-
 						<RatingsForm
+							challengeNoRatings={challengeNoRatings}
 							godMode={godMode}
 							handleChange={handleChange}
 							ratingsRow={p.ratings[r]}
@@ -972,7 +1015,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					</div>
 				</div>
 
-				<br />
 				<div className="text-center">
 					<button
 						type="submit"

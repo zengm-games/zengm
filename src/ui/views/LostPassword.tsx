@@ -1,9 +1,7 @@
 import { useState, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-
-const ajaxErrorMsg =
-	"Error connecting to server. Check your Internet connection or try again later.";
+import { ajaxErrorMsg } from "./LoginOrRegister";
 
 type State = {
 	errorMessage?: string;

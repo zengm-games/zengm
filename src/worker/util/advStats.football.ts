@@ -3,7 +3,11 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import { getPlayers, getTopPlayers } from "../core/season/awards";
-import { avScore, makeTeams } from "../core/season/doAwards.football";
+import {
+	dpoyScore,
+	makeTeams,
+	mvpScore,
+} from "../core/season/doAwards.football";
 import advStatsSave from "./advStatsSave";
 
 type Team = TeamFiltered<
@@ -391,18 +395,25 @@ const advStats = async () => {
 	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
 	if (PHASE.PLAYOFFS !== g.get("phase")) {
 		const players2 = await getPlayers(g.get("season"));
-		const avPlayers = getTopPlayers(
+		const mvpPlayers = getTopPlayers(
 			{
 				amount: Infinity,
-				score: avScore,
+				score: mvpScore,
 			},
 			players2,
 		);
-		const allLeague = makeTeams(avPlayers);
+		const dpoyPlayers = getTopPlayers(
+			{
+				amount: Infinity,
+				score: dpoyScore,
+			},
+			players2,
+		);
+		const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
-				if (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos)) {
+				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos))) {
 					const p = players.find(p3 => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;

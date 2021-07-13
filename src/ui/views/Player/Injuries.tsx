@@ -18,8 +18,29 @@ const Injuries = ({
 	}[];
 	showRatings: boolean;
 }) => {
-	if (injuries.length === 0) {
+	if (injuries === undefined || injuries.length === 0) {
 		return <p>None</p>;
+	}
+
+	const totals = {
+		games: 0,
+		ovrDrop: undefined as number | undefined,
+		potDrop: undefined as number | undefined,
+	};
+	for (const injury of injuries) {
+		totals.games += injury.games;
+		if (injury.ovrDrop !== undefined) {
+			if (totals.ovrDrop === undefined) {
+				totals.ovrDrop = 0;
+			}
+			totals.ovrDrop += injury.ovrDrop;
+		}
+		if (injury.potDrop !== undefined) {
+			if (totals.potDrop === undefined) {
+				totals.potDrop = 0;
+			}
+			totals.potDrop += injury.potDrop;
+		}
 	}
 
 	return (
@@ -44,6 +65,13 @@ const Injuries = ({
 					],
 				};
 			})}
+			footer={[
+				"Total",
+				null,
+				totals.games,
+				showRatings ? totals.ovrDrop : null,
+				showRatings ? totals.potDrop : null,
+			]}
 		/>
 	);
 };

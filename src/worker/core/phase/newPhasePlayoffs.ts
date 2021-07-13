@@ -13,16 +13,7 @@ const newPhasePlayoffs = async (
 	local.playingUntilEndOfRound = false;
 
 	// Set playoff matchups
-	const teams = helpers.orderByWinp(
-		await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["winp", "won", "cid", "did"],
-			season: g.get("season"),
-			active: true,
-		}),
-	);
-
-	const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
+	const { series, tidPlayoffs } = await season.genPlayoffSeries();
 
 	for (const tid of tidPlayoffs) {
 		logEvent(
@@ -77,6 +68,19 @@ const newPhasePlayoffs = async (
 				teamSeason.hype = 0;
 			}
 		}
+
+		// Average age, cache now that season is over
+		const playersRaw = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			teamSeason.tid,
+		);
+		const players = await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["age"],
+			stats: ["gp", "min"],
+			season: g.get("season"),
+			tid: teamSeason.tid,
+		});
+		teamSeason.avgAge = team.avgAge(players);
 
 		await idb.cache.teamSeasons.put(teamSeason);
 	}

@@ -130,6 +130,76 @@ const optionsTmp = bySport({
 			val: "All-League",
 			key: "all_league",
 		},
+		{
+			val: "League Passing Leader",
+			key: "pss_leader",
+		},
+		{
+			val: "League Rushing Leader",
+			key: "rush_leader",
+		},
+		{
+			val: "League Receiving Leader",
+			key: "rcv_leader",
+		},
+		{
+			val: "League Scrimmage Yards Leader",
+			key: "scr_leader",
+		},
+	],
+	hockey: [
+		{
+			val: "Won Championship",
+			key: "champion",
+		},
+		{
+			val: "Most Valuable Player",
+			key: "mvp",
+		},
+		{
+			val: "Playoffs MVP",
+			key: "finals_mvp",
+		},
+		{
+			val: "Defensive Player of the Year",
+			key: "dpoy",
+		},
+		{
+			val: "Defensive Forward of the Year",
+			key: "dfoy",
+		},
+		{
+			val: "Goalie of the Year",
+			key: "goy",
+		},
+		{
+			val: "Rookie of the Year",
+			key: "roy",
+		},
+		{
+			val: "First Team All-League",
+			key: "first_team",
+		},
+		{
+			val: "Second Team All-League",
+			key: "second_team",
+		},
+		{
+			val: "All-League",
+			key: "all_league",
+		},
+		{
+			val: "League Points Leader",
+			key: "pts_leader",
+		},
+		{
+			val: "League Goals Leader",
+			key: "g_leader",
+		},
+		{
+			val: "League Assists Leader",
+			key: "ast_leader",
+		},
 	],
 });
 
@@ -158,8 +228,8 @@ type LocalPlayer = {
 
 function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	const aType = awardOptions[awardType];
-	let filter;
 
+	let filter;
 	if (awardType === "all_league") {
 		filter = (a: LocalPlayerAward) => {
 			const o = awardOptions;

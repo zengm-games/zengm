@@ -37,12 +37,17 @@ const updatePowerRankings = async (
 				"won",
 				"lost",
 				"tied",
+				"otl",
 				"lastTen",
 				"abbrev",
 				"region",
 				"name",
+				"cid",
+				"did",
+				"imgURL",
+				"imgURLSmall",
 			],
-			stats: ["gp", "mov"],
+			stats: ["gp", "mov", "pts", "oppPts"],
 			season,
 			showNoStats: true,
 		});
@@ -63,15 +68,15 @@ const updatePowerRankings = async (
 					});
 				}
 
-				const ratings = ["ovr", "pos"];
+				const ratings = ["ovr", "pos", "ovrs"];
 				if (isSport("basketball")) {
 					ratings.push(...RATINGS);
 				}
 
 				teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
-					attrs: ["tid", "injury"],
+					attrs: ["tid", "injury", "value", "age"],
 					ratings,
-					stats: ["season", "tid"],
+					stats: ["season", "tid", "gp", "min"],
 					season,
 					showNoStats: g.get("season") === season,
 					showRookies: g.get("season") === season,
@@ -134,6 +139,7 @@ const updatePowerRankings = async (
 					ovrCurrent,
 					other,
 					otherCurrent,
+					avgAge: team.avgAge(teamPlayers),
 
 					// Placeholder
 					rank: -1,
@@ -150,9 +156,15 @@ const updatePowerRankings = async (
 		}
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {
 				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -160,9 +172,12 @@ const updatePowerRankings = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
+			confs: g.get("confs", season),
+			divs: g.get("divs", season),
 			season,
 			teams: teamsWithRankings,
 			ties: g.get("ties", season) || ties,
+			otl: g.get("otl", season) || otl,
 			userTid: g.get("userTid"),
 		};
 	}

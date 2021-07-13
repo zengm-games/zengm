@@ -8,16 +8,7 @@ const countSkills = async () => {
 		.transaction("players")
 		.store.index("tid")
 		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
-	const counts = {
-		"3": 0,
-		A: 0,
-		B: 0,
-		Di: 0,
-		Dp: 0,
-		Po: 0,
-		Ps: 0,
-		R: 0,
-	};
+	const counts: Record<string, number> = {};
 
 	for (const p of players) {
 		const r = p.ratings[p.ratings.length - 1]; // Dynamically recompute, to make dev easier when changing skills formula
@@ -25,11 +16,10 @@ const countSkills = async () => {
 		const skills = player.skills(r);
 
 		for (const skill of skills) {
-			if (counts.hasOwnProperty(skill)) {
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				counts[skill] += 1;
+			if (!counts.hasOwnProperty(skill)) {
+				counts[skill] = 0;
 			}
+			counts[skill] += 1;
 		}
 	}
 

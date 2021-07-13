@@ -63,6 +63,13 @@ $text-muted: $gray-400;
 	}
 }
 
+// btn-danger dropdown text color while cliking an item
+.btn-danger:not(:disabled):not(.disabled):active,
+.btn-danger:not(:disabled):not(.disabled).active,
+.show > .btn-danger.dropdown-toggle {
+	color: $black !important;
+}
+
 .btn-primary {
 	border-color: darken($orange, 25);
 	background-color: darken($orange, 25);
@@ -278,4 +285,9 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 .badge-danger,
 .badge-light {
 	color: $black;
+}
+
+:root {
+	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
 }

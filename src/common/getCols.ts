@@ -1,7 +1,8 @@
-import { helpers } from ".";
+import helpers from "./helpers";
 import type { SortOrder, SortType } from "./types";
 import type { Col } from "../ui/components/DataTable";
 import bySport from "./bySport";
+import isSport from "./isSport";
 
 type ColTemp = {
 	desc?: string;
@@ -111,13 +112,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:astp": {
-			desc:
-				"Percentage of teammate field goals a player assisted while on the floor",
+			desc: "Percentage of teammate field goals a player assisted while on the floor",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
 		"stat:ast": {
-			desc: "Assists Per Game",
+			desc: "Assists",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -196,6 +196,11 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
+		"stat:ftpFga": {
+			desc: "Free Throws per Field Goal Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
 		"stat:ftr": {
 			desc: "Free Throw Attempt Rate (FTA / FGA)",
 			sortSequence: ["desc", "asc"],
@@ -247,8 +252,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pl": {
-			desc:
-				"Pythagorean Losses (expected losses based on points scored and allowed)",
+			desc: "Pythagorean Losses (expected losses based on points scored and allowed)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -258,8 +262,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pw": {
-			desc:
-				"Pythagorean Wins (expected wins based on points scored and allowed)",
+			desc: "Pythagorean Wins (expected wins based on points scored and allowed)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -305,6 +308,11 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:ws": {
 			desc: "Win Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:wsPerPlayer": {
+			desc: "Win Shares Per Player",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -375,6 +383,26 @@ const sportSpecificCols = bySport<{
 		},
 		"stat:fgpMidRange": {
 			desc: "Mid Range Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:dd": {
+			desc: "Double Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:td": {
+			desc: "Triple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:qd": {
+			desc: "Quadruple Doubles",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fxf": {
+			desc: "Five by Fives",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1017,7 +1045,7 @@ const sportSpecificCols = bySport<{
 		"stat:keyStats": {
 			desc: "Key Stats",
 			sortSequence: ["desc", "asc"],
-			sortType: "number",
+			sortType: "string",
 		},
 		"stat:pts": {
 			desc: "",
@@ -1085,7 +1113,27 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:qbRec": {
-			desc: "Team record as primary QB",
+			desc: "Record as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbW": {
+			desc: "Wins as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbL": {
+			desc: "Losses as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbT": {
+			desc: "Ties as primary QB",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:qbOTL": {
+			desc: "Overtime losses as primary QB",
 			sortSequence: ["desc", "asc"],
 			sortType: "record",
 		},
@@ -1105,8 +1153,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pssAdjYdsPerAtt": {
-			desc:
-				"Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
+			desc: "Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1126,8 +1173,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:pssAdjNetYdsPerAtt": {
-			desc:
-				"Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
+			desc: "Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1192,8 +1238,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:allPurposeYds": {
-			desc:
-				"All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
+			desc: "All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 		},
@@ -1201,6 +1246,349 @@ const sportSpecificCols = bySport<{
 			desc: "Approximate Value",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
+		},
+		"stat:avPerPlayer": {
+			desc: "Approximate Value Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+	},
+	hockey: {
+		"pos:C": {
+			desc: "Center",
+			sortType: "number",
+		},
+		"pos:W": {
+			desc: "Wing",
+			sortType: "number",
+		},
+		"pos:D": {
+			desc: "Defenseman",
+			sortType: "number",
+		},
+		"pos:G": {
+			desc: "Goalie",
+			sortType: "number",
+		},
+		"rating:pss": {
+			desc: "Passing",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:wst": {
+			desc: "Wristshot",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:sst": {
+			desc: "Slapshot",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:stk": {
+			desc: "Stickhandling",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:oiq": {
+			desc: "Offensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:chk": {
+			desc: "Checking",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:blk": {
+			desc: "Shot Blocking",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:fcf": {
+			desc: "Faceoffs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:diq": {
+			desc: "Defensive IQ",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:glk": {
+			desc: "Goalkeeping",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrC": {
+			desc: "Overall Rating (Center)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrW": {
+			desc: "Overall Rating (Winger)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrD": {
+			desc: "Overall Rating (Defenseman)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:ovrG": {
+			desc: "Overall Rating (Goalie)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potC": {
+			desc: "Potential Rating (Center)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potW": {
+			desc: "Potential Rating (Winger)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potD": {
+			desc: "Potential Rating (Defenseman)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"rating:potG": {
+			desc: "Potential Rating (Goalie)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pm": {
+			desc: "Plus/Minus",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pim": {
+			desc: "Penalty Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:evG": {
+			desc: "Even Strength Goals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppG": {
+			desc: "Power Play Goals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:shG": {
+			desc: "Short-Handed Goals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gwG": {
+			desc: "Game Winning Goals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:evA": {
+			desc: "Even Strength Assists",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppA": {
+			desc: "Power Play Assists",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:shA": {
+			desc: "Short-Handed Assists",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gwA": {
+			desc: "Game Winning Assists",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:s": {
+			desc: "Shots on Goal",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tsa": {
+			desc: "Total Shots Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fow": {
+			desc: "Faceoff Wins",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:fol": {
+			desc: "Faceoff Losses",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:foPct": {
+			desc: "Faceoff Win Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:blk": {
+			desc: "Blocks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:hit": {
+			desc: "Hits",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:tk": {
+			desc: "Takeaways",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gv": {
+			desc: "Giveaways",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ga": {
+			desc: "Goals Against",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:sv": {
+			desc: "Saves",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:so": {
+			desc: "Shutouts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:g": {
+			desc: "Goals",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:a": {
+			desc: "Assists",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:pts": {
+			desc: "Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:sPct": {
+			desc: "Shooting Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:svPct": {
+			desc: "Save Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:sa": {
+			desc: "Shots Against",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gaa": {
+			desc: "Goals Against Average",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:keyStats": {
+			desc: "Key Stats",
+			sortSequence: ["desc", "asc"],
+			sortType: "string",
+		},
+		"stat:ps": {
+			desc: "Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:psPerPlayer": {
+			desc: "Point Shares Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ops": {
+			desc: "Offensive Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:dps": {
+			desc: "Defensive Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gps": {
+			desc: "Goalie Point Shares",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gc": {
+			desc: "Goals Created",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:amin": {
+			desc: "Average Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppMin": {
+			desc: "Power Play Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:shMin": {
+			desc: "Short Handed Time On Ice",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppo": {
+			desc: "Power Play Opportunities",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:ppPct": {
+			desc: "Power Play Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+		},
+		"stat:gRec": {
+			desc: "Record as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gW": {
+			desc: "Wins as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gL": {
+			desc: "Losses as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gT": {
+			desc: "Ties as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
+		},
+		"stat:gOTL": {
+			desc: "Overtime losses as primary G",
+			sortSequence: ["desc", "asc"],
+			sortType: "record",
 		},
 	},
 });
@@ -1211,6 +1599,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 	},
 	"#": {},
+	"@": {
+		desc: "Home or Away",
+	},
 	"#AS": {
 		desc: "Number of All-Star Selections",
 		sortSequence: ["desc", "asc"],
@@ -1284,6 +1675,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	AvgAge: {
+		desc: "Average age, weighted by minutes played",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Born: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -1339,6 +1735,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Diff: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Difficulty: {
 		sortSequence: ["desc", "asc"],
 	},
@@ -1375,9 +1775,29 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"Finals Won": {
+		desc: "Finals Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Lost": {
+		desc: "Finals Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	From: {},
+	GB: {
+		desc: "Games Back",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Games: {
 		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	GOAT: {
+		desc: "GOAT Score",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1461,6 +1881,26 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	PA: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	PS: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PA/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PS/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -1510,6 +1950,16 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	PTS: {
+		desc: "Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"PTS%": {
+		desc: "Points Divided By Maximum Points",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Received: {
 		desc: "Assets Received in Trade",
 	},
@@ -1530,6 +1980,11 @@ const cols: {
 	"Roster Spots": {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],
+	},
+	"Rounds Lost": {
+		desc: "Playoff Rounds Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"Rounds Won": {
 		desc: "Playoff Rounds Won",
@@ -1552,6 +2007,19 @@ const cols: {
 	},
 	T: {
 		desc: "Ties",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Ticket Price": {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	Trade: {
+		desc: "Ties",
+		noSearch: true,
+	},
+	OTL: {
+		desc: "Overtime Losses",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1607,6 +2075,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"stat:gpPerPlayer": {
+		desc: "Games Played Per Player",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"stat:gs": {
 		desc: "Games Started",
 		sortSequence: ["desc", "asc"],
@@ -1618,12 +2091,17 @@ const cols: {
 		sortType: "number",
 	},
 	"stat:min": {
-		desc: "Minutes Per Game",
+		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"stat:mov": {
 		desc: "Average Margin of Victory",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"stat:diff": {
+		desc: "Point Differential",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1672,6 +2150,16 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"count:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"count:goy": {
+		desc: "Goalie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"count:mip": {
 		desc: "Most Improved Player",
 		sortSequence: ["desc", "asc"],
@@ -1706,8 +2194,16 @@ const cols: {
 		desc: "Defensive Player of the Year",
 		sortType: "name",
 	},
+	"award:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortType: "name",
+	},
+	"award:goy": {
+		desc: "Goalie of the Year",
+		sortType: "name",
+	},
 	"award:finalsMvp": {
-		desc: "Finals Most Valuable Player",
+		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
 		sortType: "name",
 	},
 	"award:mip": {
@@ -1777,6 +2273,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ft": "FT",
 		"stat:fta": "FTA",
 		"stat:ftr": "FTr",
+		"stat:ftpFga": "FT/FGA",
 		"stat:gmsc": "GmSc",
 		"stat:nrtg": "NRtg",
 		"stat:orb": "ORB",
@@ -1798,6 +2295,7 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:tov": "TOV",
 		"stat:usgp": "USG%",
 		"stat:ws": "WS",
+		"stat:wsPerPlayer": "WS/Player",
 		"stat:ws48": "WS/48",
 		"stat:obpm": "OBPM",
 		"stat:dbpm": "DBPM",
@@ -1812,6 +2310,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:fgMidRange": "M",
 		"stat:fgaMidRange": "A",
 		"stat:fgpMidRange": "%",
+		"stat:dd": "DD",
+		"stat:td": "TD",
+		"stat:qd": "QD",
+		"stat:fxf": "5x5",
 	},
 	football: {
 		"pos:QB": "QB",
@@ -1959,6 +2461,10 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:ydsPerDrive": "Y/D",
 		"stat:ptsPerDrive": "Pts/D",
 		"stat:qbRec": "QBRec",
+		"stat:qbW": "QBW",
+		"stat:qbL": "QBL",
+		"stat:qbT": "QBT",
+		"stat:qbOTL": "QBOTL",
 		"stat:pssTDPct": "TD%",
 		"stat:pssIntPct": "Int%",
 		"stat:pssYdsPerAtt": "Y/A",
@@ -1980,20 +2486,104 @@ const sportSpecificTitleOverrides = bySport({
 		"stat:rusRecTD": "RRTD",
 		"stat:allPurposeYds": "APY",
 		"stat:av": "AV",
+		"stat:avPerPlayer": "AV/Player",
+	},
+	hockey: {
+		"pos:C": "C",
+		"pos:W": "W",
+		"pos:D": "D",
+		"pos:G": "G",
+		"rating:pss": "Pss",
+		"rating:wst": "Wst",
+		"rating:sst": "Sst",
+		"rating:stk": "Stk",
+		"rating:oiq": "oIQ",
+		"rating:chk": "Chk",
+		"rating:blk": "Blk",
+		"rating:fcf": "Fcf",
+		"rating:diq": "dIQ",
+		"rating:glk": "Glk",
+		"rating:ovrC": "OvrC",
+		"rating:ovrW": "OvrW",
+		"rating:ovrD": "OvrD",
+		"rating:ovrG": "OvrG",
+		"rating:potC": "PotC",
+		"rating:potW": "PotW",
+		"rating:potD": "PotD",
+		"rating:potG": "PotG",
+		"stat:w": "W",
+		"stat:l": "L",
+		"stat:t": "T",
+		"stat:otl": "OTL",
+		"stat:pm": "+/-",
+		"stat:pim": "PIM",
+		"stat:evG": "evG",
+		"stat:ppG": "ppG",
+		"stat:shG": "shG",
+		"stat:gwG": "gwG",
+		"stat:evA": "evA",
+		"stat:ppA": "ppA",
+		"stat:shA": "shA",
+		"stat:gwA": "gwA",
+		"stat:s": "S",
+		"stat:tsa": "TSA",
+		"stat:fow": "FOW",
+		"stat:fol": "FOL",
+		"stat:foPct": "FO%",
+		"stat:blk": "BLK",
+		"stat:hit": "HIT",
+		"stat:tk": "TK",
+		"stat:gv": "GV",
+		"stat:ga": "GA",
+		"stat:sv": "SV",
+		"stat:so": "SO",
+		"stat:g": "G",
+		"stat:a": "A",
+		"stat:pts": "PTS",
+		"stat:sPct": "S%",
+		"stat:svPct": "SV%",
+		"stat:sa": "SA",
+		"stat:gaa": "GAA",
+		"stat:keyStats": "Stats",
+		"stat:ps": "PS",
+		"stat:psPerPlayer": "PS/Player",
+		"stat:ops": "OPS",
+		"stat:dps": "DPS",
+		"stat:gps": "GPS",
+		"stat:gc": "GC",
+		"stat:amin": "ATOI",
+		"stat:ppMin": "ppTOI",
+		"stat:shMin": "shTOI",
+		"stat:ppo": "PPO",
+		"stat:ppPct": "PP%",
+		PS: "GF",
+		PA: "GA",
+		"PS/g": "GF",
+		"PA/g": "GA",
+		"stat:gRec": "Rec",
+		"stat:gW": "GW",
+		"stat:gL": "GL",
+		"stat:gT": "GT",
+		"stat:gOTL": "GOTL",
 	},
 });
 
+const gp = isSport("hockey") ? "GP" : "G";
+
 const titleOverrides = {
+	AvgAge: "Age",
 	Talent: "T",
 	"rating:endu": "End",
 	"rating:hgt": "Hgt",
 	"rating:spd": "Spd",
 	"rating:stre": "Str",
-	"stat:gp": "G",
+	"stat:gp": gp,
+	"stat:gpPerPlayer": `${gp}/Player`,
 	"stat:gs": "GS",
 	"stat:jerseyNumber": "#",
-	"stat:min": "MP",
+	"stat:min": isSport("hockey") ? "TOI" : "MP",
 	"stat:mov": "MOV",
+	"stat:diff": "Diff",
 	"stat:yearsWithTeam": "YWT",
 	"count:allDefense": "ADT",
 	"count:allLeague": "ALT",
@@ -2003,6 +2593,8 @@ const titleOverrides = {
 	"count:bestRecord": "BR",
 	"count:bestRecordConf": "BRC",
 	"count:dpoy": "DPOY",
+	"count:dfoy": "DFOY",
+	"count:goy": "GOY",
 	"count:mip": "MIP",
 	"count:mvp": "MVP",
 	"count:roy": "ROY",
@@ -2010,7 +2602,9 @@ const titleOverrides = {
 	"count:oroy": "OROY",
 	"count:droy": "DROY",
 	"award:dpoy": "DPOY",
-	"award:finalsMvp": "Finals MVP",
+	"award:dfoy": "DFOY",
+	"award:goy": "GOY",
+	"award:finalsMvp": `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
 	"award:mip": "MIP",
 	"award:mvp": "MVP",
 	"award:roy": "ROY",

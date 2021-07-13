@@ -1,12 +1,19 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
-import type { ScheduledEventWithoutKey } from "../../../common/types";
-import { PHASE } from "../../../common";
+import type {
+	ScheduledEventWithoutKey,
+	Team,
+	TeamSeasonWithoutKey,
+} from "../../../common/types";
+import { gameAttributeHasHistory, PHASE } from "../../../common";
+import { ALWAYS_WRAP } from "../league/loadGameAttributes";
+import { wrap } from "../../util/g";
 
 const processGameAttributes = (
 	events: any[],
 	season: number,
 	phase: number,
+	gameAttributesHistory?: boolean,
 ) => {
 	let gameAttributeEvents = [];
 
@@ -18,7 +25,7 @@ const processGameAttributes = (
 
 	let initialGameAttributes;
 
-	// Remove gameAttributes individual property dupes, and find what the gameAttributes state was at the beginning of the given season
+	// Fine what the gameAttributes state was at the beginning of the given season/phase
 	const prevState: any = {};
 	for (const event of gameAttributeEvents) {
 		if (
@@ -27,12 +34,30 @@ const processGameAttributes = (
 			initialGameAttributes === undefined
 		) {
 			initialGameAttributes = helpers.deepCopy(prevState);
+			break;
 		}
+
 		for (const [key, value] of Object.entries(event.info)) {
-			if (value === prevState[key]) {
-				delete event.info[key];
-			} else {
+			if (
+				!gameAttributesHistory ||
+				!prevState.hasOwnProperty(key) ||
+				!ALWAYS_WRAP.includes(key)
+			) {
 				prevState[key] = value;
+			} else {
+				if (!gameAttributeHasHistory(prevState[key])) {
+					prevState[key] = [
+						{
+							start: -Infinity,
+							value: prevState[key],
+						},
+					];
+				}
+
+				prevState[key] = wrap(prevState, key as any, value, {
+					season: event.season,
+					phase: event.phase,
+				});
 			}
 		}
 	}
@@ -54,10 +79,34 @@ const processGameAttributes = (
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
+const fixTeam = (
+	mergedTeam: {
+		disabled?: boolean;
+		imgURL?: string;
+		imgURLSmall?: string;
+	},
+	newTeam: {
+		imgURL?: string;
+		imgURLSmall?: string;
+	},
+) => {
+	if (mergedTeam.disabled) {
+		delete mergedTeam.disabled;
+	}
+
+	// If imgURL is defined in scheduled event but imgURLSmall is not, delete old imgURLSmall. Otherwise LAC wind up having a the Wings logo in imgURLSmall!
+	const deleteImgURLSmall =
+		newTeam.imgURL && !newTeam.imgURLSmall && mergedTeam.imgURLSmall;
+	if (deleteImgURLSmall) {
+		delete mergedTeam.imgURLSmall;
+	}
+};
+
 const processTeams = (
 	events: ScheduledEventWithoutKey[],
 	season: number,
 	phase: number,
+	keepAllTeams: boolean,
 ) => {
 	let teamEvents = [];
 
@@ -78,11 +127,15 @@ const processTeams = (
 		colors: [string, string, string];
 		abbrev: string;
 		imgURL: string;
+		imgURLSmall?: string;
 		srID: string;
 		tid: number;
 		cid: number;
 		did: number;
 		disabled?: boolean;
+		firstSeasonAfterExpansion?: number;
+		seasons?: TeamSeasonWithoutKey[];
+		retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
 	}[];
 
 	// Keep track of initial teams
@@ -98,22 +151,37 @@ const processTeams = (
 		}
 
 		if (event.type === "expansionDraft") {
-			prevState.push(...event.info.teams);
+			for (const t of event.info.teams) {
+				const ind = prevState.findIndex(t0 => t0.tid === t.tid);
+				const t0 = prevState[ind];
+				if (t0) {
+					// Re-expanding a contracted team, probably with keepAllTeams
+					prevState[ind] = {
+						...t0,
+						...t,
+					};
+					fixTeam(prevState[ind], t);
+				} else {
+					prevState.push({
+						...t,
+					});
+				}
+			}
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
 			const ind = prevState.findIndex(t0 => t0.tid === t.tid);
 			const t0 = prevState[ind];
 			if (!t0) {
-				console.log(event);
 				throw new Error(`teamInfo before expansionDraft for tid ${t.tid}`);
 			}
 			prevState[ind] = {
 				...t0,
 				...t,
 			};
+			fixTeam(prevState[ind], t);
 		} else if (event.type === "contraction") {
-			if (event.season === season && event.phase <= phase) {
-				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs.
+			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
+				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".
 				const t = prevState.find(t => t.tid === event.info.tid);
 				t.disabled = true;
 			} else {
@@ -173,13 +241,20 @@ const processTeams = (
 				maxSeenTid = newTid;
 			}
 
-			return {
+			const event2 = {
 				...event,
 				info: {
 					...event.info,
 					tid: newTid,
 				},
 			};
+
+			// Delete cid from these events, because I was too lazy to refactor team creation to not need cid in initialTeams, so cid is still in the real team data
+			if (event2.type === "teamInfo") {
+				delete (event2.info as any).cid;
+			}
+
+			return event2;
 		} else if (event.type === "expansionDraft") {
 			return {
 				...event,
@@ -217,8 +292,19 @@ const processTeams = (
 
 const formatScheduledEvents = (
 	events: any[],
-	season: number,
-	phase: number = PHASE.PRESEASON,
+	{
+		gameAttributesHistory,
+		keepAllTeams,
+		onlyTeams,
+		season,
+		phase = PHASE.PRESEASON,
+	}: {
+		gameAttributesHistory?: boolean;
+		keepAllTeams: boolean;
+		onlyTeams?: boolean;
+		season: number;
+		phase?: number;
+	},
 ) => {
 	for (const event of events) {
 		if (
@@ -233,16 +319,26 @@ const formatScheduledEvents = (
 
 	const eventsSorted = orderBy(events, ["season", "phase", "type"]);
 
-	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
-		eventsSorted,
-		season,
-		phase,
-	);
-
 	const { teamEvents, initialTeams } = processTeams(
 		eventsSorted,
 		season,
 		phase,
+		keepAllTeams,
+	);
+
+	if (onlyTeams) {
+		return {
+			scheduledEvents: [],
+			initialGameAttributes: {},
+			initialTeams,
+		};
+	}
+
+	const { gameAttributeEvents, initialGameAttributes } = processGameAttributes(
+		eventsSorted,
+		season,
+		phase,
+		gameAttributesHistory,
 	);
 
 	return {

@@ -1,18 +1,28 @@
 import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS, isSport } from "../../../common";
+import {
+	COMPOSITE_WEIGHTS,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	isSport,
+	PHASE,
+} from "../../../common";
+import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
+
+const MAX_NUM_PLAYERS_PACE = 7;
 
 const processTeam = (
 	teamInput: {
 		tid: number;
+		playThroughInjuries: [number, number];
 		depth?: any;
 	},
 	teamSeason: {
 		won: number;
 		lost: number;
 		tied: number;
+		otl: number;
 		cid: number;
 		did: number;
 		expenses: {
@@ -34,18 +44,24 @@ const processTeam = (
 	// Initialize team composite rating object
 	const compositeRating: any = {};
 
-	for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
-		compositeRating[rating] = 0;
+	if (isSport("basketball")) {
+		for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
+			compositeRating[rating] = 0;
+		}
 	}
 
 	// Injury-adjusted ovr
 	const playersCurrent = players
 		.filter((p: any) => p.injury.gamesRemaining === 0)
 		.map(p => ({
-			pid: p.pid,
+			value: p.value,
 			ratings: {
 				ovr: player.fuzzRating(
 					p.ratings[p.ratings.length - 1].ovr,
+					p.ratings[p.ratings.length - 1].fuzz,
+				),
+				ovrs: player.fuzzOvrs(
+					p.ratings[p.ratings.length - 1].ovrs,
 					p.ratings[p.ratings.length - 1].fuzz,
 				),
 				pos: p.ratings[p.ratings.length - 1].pos,
@@ -59,6 +75,7 @@ const processTeam = (
 		won: teamSeason.won,
 		lost: teamSeason.lost,
 		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
+		otl: g.get("otl", "current") ? teamSeason.otl : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,
 		ovr,
@@ -74,7 +91,19 @@ const processTeam = (
 		depth: teamInput.depth,
 	};
 
+	let playThroughInjuriesBoth;
+	if (g.get("userTids").includes(teamInput.tid) && !g.get("spectator")) {
+		playThroughInjuriesBoth = teamInput.playThroughInjuries;
+	} else {
+		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
+	}
+
+	const playThroughInjuries =
+		playThroughInjuriesBoth[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
+
 	for (const p of players) {
+		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
+
 		const rating = p.ratings[p.ratings.length - 1];
 		const playerCompositeRatings: any = {};
 		const p2 = {
@@ -83,12 +112,17 @@ const processTeam = (
 			name: `${p.firstName} ${p.lastName}`,
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
-			valueNoPot: p.valueNoPot,
+			valueNoPot: p.valueNoPot * injuryFactor,
 			stat: {},
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
-			injury: p.injury,
-			injured: p.injury.type !== "Healthy",
+			injury: {
+				...p.injury,
+				playingThrough:
+					p.injury.gamesRemaining > 0 &&
+					p.injury.gamesRemaining <= playThroughInjuries,
+			},
+			injured: p.injury.gamesRemaining > playThroughInjuries,
 			jerseyNumber:
 				p.stats.length > 0
 					? p.stats[p.stats.length - 1].jerseyNumber
@@ -104,12 +138,33 @@ const processTeam = (
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
-			p2.compositeRating[k] = player.compositeRating(
-				rating,
-				COMPOSITE_WEIGHTS[k].ratings,
-				COMPOSITE_WEIGHTS[k].weights,
-				false,
-			);
+			p2.compositeRating[k] =
+				player.compositeRating(
+					rating,
+					COMPOSITE_WEIGHTS[k].ratings,
+					COMPOSITE_WEIGHTS[k].weights,
+					false,
+				) * injuryFactor;
+
+			if (
+				isSport("hockey") &&
+				k === "goalkeeping" &&
+				g.get("phase") !== PHASE.PLAYOFFS
+			) {
+				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
+				if (p.numConsecutiveGamesG !== undefined) {
+					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
+				}
+
+				if (numConsecutiveGamesG > 0) {
+					// Decrease rating by up to 40%
+					p2.compositeRating[k] *= helpers.bound(
+						1 - numConsecutiveGamesG * random.uniform(0.0, 0.09),
+						0.6,
+						1,
+					);
+				}
+			}
 		}
 
 		if (isSport("basketball")) {
@@ -133,25 +188,27 @@ const processTeam = (
 		delete p.pid;
 	}
 
-	// Number of players to factor into pace and defense rating calculation
-	let numPlayers = t.player.length;
+	if (isSport("basketball")) {
+		t.pace = 0;
 
-	if (numPlayers > 7) {
-		numPlayers = 7;
-	}
+		let numPlayers = 0;
+		for (const p of t.player) {
+			if (p.injury.gamesRemaining === 0 || p.injury.playingThrough) {
+				numPlayers += 1;
+				t.pace += p.compositeRating.pace;
 
-	// Would be better if these were scaled by average min played and endurancence
-	t.pace = 0;
+				if (numPlayers >= MAX_NUM_PLAYERS_PACE) {
+					break;
+				}
+			}
+		}
 
-	for (let i = 0; i < numPlayers; i++) {
-		t.pace += t.player[i].compositeRating.pace;
-	}
+		t.pace /= numPlayers;
+		t.pace = t.pace * 15 + 100; // Scale between 100 and 115
 
-	t.pace /= numPlayers;
-	t.pace = t.pace * 15 + 100; // Scale between 100 and 115
-
-	if (allStarGame) {
-		t.pace *= 1.15;
+		if (allStarGame) {
+			t.pace *= 1.15;
+		}
 	}
 
 	t.stat = { ...teamStats, pts: 0, ptsQtrs: [0] };
@@ -213,6 +270,7 @@ const loadTeams = async (tids: number[]) => {
 			teams[tid] = processTeam(
 				{
 					tid,
+					playThroughInjuries: [0, 0],
 				},
 				{
 					cid: -1,
@@ -220,6 +278,7 @@ const loadTeams = async (tids: number[]) => {
 					won: 0,
 					lost: 0,
 					tied: 0,
+					otl: 0,
 					expenses: {
 						health: {
 							rank: 1,

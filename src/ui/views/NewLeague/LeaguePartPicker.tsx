@@ -10,10 +10,9 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	games: "Box scores",
 	releasedPlayers: "Contracts owed to released players",
 	draftLotteryResults: "Draft lottery history",
-	events: "Event log",
+	events: "News feed",
 	negotiations: "In-progress contract negotiations",
 	trade: "In-progress trade negotiations",
-	meta: "League metadata, like league name",
 	messages: "Messages from the owner",
 	playerFeats: "Statistical feats",
 	playoffSeries: "Upcoming and historical playoff series",
@@ -21,6 +20,7 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	draftPicks: "Traded future draft picks",
 	scheduledEvents:
 		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
+	headToHeads: "Team head-to-head results",
 };
 
 const LeaguePartPicker = ({

@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { processEvents } from "./news";
 
@@ -42,6 +42,7 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
+			otl: latestSeason !== undefined ? latestSeason.otl : 0,
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
 			salaryCap: g.get("salaryCap") / 1000,
@@ -81,19 +82,40 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pssYdsPerGame",
 				"rusYdsPerGame",
 			] as const,
+			hockey: ["g", "oppG"] as const,
 		});
 		const statNames = bySport({
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
+			hockey: ["Goals", "Allowed"],
 		});
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
-				stats,
-				season: g.get("season"),
-			}),
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"otl",
+				"tied",
+				"winp",
+				"pts",
+				"att",
+				"revenue",
+				"profit",
+				"cid",
+				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp", ...stats],
+			season: g.get("season"),
+			showNoStats: true,
+		});
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
@@ -107,7 +129,12 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			value: number;
 		}[] = [];
 
-		for (const t2 of teams) {
+		const teamsConf = await orderTeams(
+			teams.filter(t => t.seasonAttrs.cid === cid),
+			teams,
+		);
+
+		for (const t2 of teamsConf) {
 			if (t2.seasonAttrs.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
 					// @ts-ignore
@@ -170,11 +197,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const startersStats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats"],
+			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 		const leaderStats = bySport({
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
+			hockey: ["g", "a", "pts"],
 		});
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
@@ -182,7 +211,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		]);
 
 		// League leaders
-
 		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "abbrev", "tid"],
 			stats: leaderStats,
@@ -276,16 +304,36 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Roster
-		// Find starting 5 or top 5
+		// Find starters or top 5 players
+		let starters;
+		const numPlayersOnCourt = g.get("numPlayersOnCourt");
 		if (isSport("basketball")) {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
-		} else {
-			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+			starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
+		} else if (isSport("hockey")) {
+			const t = await idb.cache.teams.get(g.get("userTid"));
+			if (t) {
+				const depth = t.depth as any;
+				const pids = [
+					depth.F[0],
+					depth.F[1],
+					depth.F[2],
+					depth.D[0],
+					depth.D[1],
+					depth.G[0],
+				];
+				starters = pids
+					.map(pid => userPlayers.find(p => p.pid === pid))
+					.filter(pid => pid !== undefined);
+			}
 		}
 
-		const numPlayersOnCourt = g.get("numPlayersOnCourt");
+		if (!starters) {
+			// Football - too many starters, just show top 5. Also fallback for hockey depth chart missing
+			userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+			starters = userPlayers.slice(0, 5);
+		}
 
-		const starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders,
@@ -312,7 +360,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		let showPlayoffSeries = false;
 		let numGamesToWinSeries = 4;
 
-		if (playoffSeries !== undefined) {
+		if (playoffSeries !== undefined && playoffSeries.series.length > 0) {
 			const series = playoffSeries.series;
 			await helpers.augmentSeries(series); // Find the latest playoff series with the user's team in it
 
@@ -372,27 +420,38 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"winp",
-					"cid",
-					"did",
-					"abbrev",
-					"region",
-					"clinchedPlayoffs",
-				],
-				season: g.get("season"),
-			}),
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"cid",
+				"did",
+				"abbrev",
+				"region",
+				"clinchedPlayoffs",
+				"imgURL",
+				"imgURLSmall",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		});
 
 		// Find user's conference
-		let cid;
-
+		let cid: number | undefined;
 		for (const t of teams) {
 			if (t.tid === g.get("userTid")) {
 				cid = t.seasonAttrs.cid;
@@ -403,19 +462,30 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const confTeams: (typeof teams[number] & {
 			rank: number;
 			gb: number;
-		})[] = [];
+		})[] = (
+			await orderTeams(
+				teams.filter(t => t.seasonAttrs.cid === cid),
+				teams,
+			)
+		).map(t => ({
+			...t,
+			rank: 0,
+			gb: 0,
+		}));
+
+		const pointsFormula = g.get("pointsFormula", "current");
+		const usePts = pointsFormula !== "";
 
 		let rank = 1;
-		for (let k = 0; k < teams.length; k++) {
-			if (cid === teams[k].seasonAttrs.cid) {
-				confTeams.push({
-					...helpers.deepCopy(teams[k]),
-					rank,
-					gb:
+		for (const t of confTeams) {
+			if (cid === t.seasonAttrs.cid) {
+				t.rank = rank;
+				if (!usePts) {
+					t.gb =
 						rank === 1
 							? 0
-							: helpers.gb(confTeams[0].seasonAttrs, teams[k].seasonAttrs),
-				});
+							: helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+				}
 
 				rank += 1;
 			}
@@ -426,10 +496,13 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				g.get("numPlayoffByes", "current")) /
 			2;
 		const playoffsByConference = g.get("confs", "current").length === 2;
+
 		return {
 			confTeams,
 			numPlayoffTeams,
 			playoffsByConference,
+			pointsFormula,
+			usePts,
 		};
 	}
 };

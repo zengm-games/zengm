@@ -16,15 +16,6 @@ const hasSkill = (
  *
  * "Skills" are discrete categories, like someone is a 3 point shooter or they aren't. These are displayed next to the player's name generally, and are also used in game simulation. The possible skills are:
  *
- * * Three Point Shooter (3)
- * * Athlete (A)
- * * Ball Handler (B)
- * * Interior Defender (Di)
- * * Perimeter Defender (Dp)
- * * Post Scorer (Po)
- * * Passer (Ps)
- * * Rebounder (R)
- *
  * There should be about 30 (number of teams) players with each skill, except 3 point shooting which should have 60.
  *
  * Keep cutoffs in sync with GameSim.js!

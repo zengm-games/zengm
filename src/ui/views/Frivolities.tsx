@@ -13,6 +13,22 @@ const style = { maxWidth: 1000 };
 const frivolities = {
 	Draft: [
 		{
+			urlParts: ["draft_position"],
+			name: "Best Player at Every Pick",
+			description:
+				"The best player ever drafted at each position in the draft.",
+		},
+		{
+			urlParts: ["most", "busts"],
+			name: "Biggest Busts",
+			description: "Top 5 picks with the worst careers.",
+		},
+		{
+			urlParts: ["most", "steals"],
+			name: "Biggest Steals",
+			description: "Late picks or undrafted players with the best careers.",
+		},
+		{
 			urlParts: ["draft_classes"],
 			name: "Draft Class Rankings",
 			description: "All draft classes, ranked from best to worst.",
@@ -117,19 +133,15 @@ const frivolities = {
 			description: "Largest single season ovr increases.",
 		},
 		{
-			urlParts: ["most", "busts"],
-			name: "Biggest Busts",
-			description: "Top 5 picks with the worst careers.",
-		},
-		{
-			urlParts: ["most", "steals"],
-			name: "Biggest Steals",
-			description: "Late picks or undrafted players with the best careers.",
-		},
-		{
 			urlParts: ["most", "earnings"],
 			name: "Career Earnings",
 			description: "Players who made the most money.",
+		},
+		{
+			urlParts: ["most", "goat"],
+			name: "GOAT Lab",
+			description:
+				"Define your own formula to rank the greatest players of all time.",
 		},
 		{
 			urlParts: ["most", "hall_of_good"],
@@ -146,6 +158,11 @@ const frivolities = {
 					},
 			  ]
 			: []),
+		{
+			urlParts: ["most", "games_injured"],
+			name: "Most Games Injured",
+			description: "Players with the most total games missed due to injury.",
+		},
 		{
 			urlParts: ["most", "games_no_playoffs"],
 			name: "Most Games, No Playoffs",
@@ -178,6 +195,11 @@ const frivolities = {
 			urlParts: ["most", "oldest"],
 			name: "Oldest to Play in a Game",
 			description: "The oldest players who actually played.",
+		},
+		{
+			urlParts: ["most", "oldest_peaks"],
+			name: "Oldest Peaks",
+			description: "The players who were the oldest when they peaked in ovr.",
 		},
 		{
 			urlParts: ["most", "worst_injuries"],

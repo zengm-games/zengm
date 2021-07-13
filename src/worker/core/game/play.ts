@@ -1,4 +1,4 @@
-import { PHASE, TIME_BETWEEN_GAMES } from "../../../common";
+import { isSport, PHASE, timeBetweenGames } from "../../../common";
 import {
 	GameSim,
 	allStar,
@@ -97,11 +97,8 @@ const play = async (
 		}
 
 		// Before writeGameStats, so injury is set correctly
-		const {
-			injuryTexts,
-			pidsInjuredOneGameOrLess,
-			stopPlay,
-		} = await writePlayerStats(results, conditions);
+		const { injuryTexts, pidsInjuredOneGameOrLess, stopPlay } =
+			await writePlayerStats(results, conditions);
 
 		const gidsFinished = await Promise.all(
 			results.map(async result => {
@@ -111,18 +108,21 @@ const play = async (
 			}),
 		);
 
-		if (g.get("phase") === PHASE.PLAYOFFS) {
-			// Update playoff series W/L
-			await updatePlayoffSeries(results, conditions);
-		} else {
-			// Update clinchedPlayoffs
-			await team.updateClinchedPlayoffs(false, conditions);
-		}
-
 		// Delete finished games from schedule
 		for (const gid of gidsFinished) {
 			if (typeof gid === "number") {
 				await idb.cache.schedule.delete(gid);
+			}
+		}
+
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			// Update playoff series W/L
+			await updatePlayoffSeries(results, conditions);
+		} else {
+			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccruate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
+			const schedule = await season.getSchedule();
+			if (schedule.length > 0) {
+				await team.updateClinchedPlayoffs(false, conditions);
 			}
 		}
 
@@ -154,7 +154,8 @@ const play = async (
 				await trade.betweenAiTeams();
 			}
 
-			await finances.updateRanks(["expenses", "revenues"]);
+			// Budget is just for ticket prices
+			await finances.updateRanks(["budget", "expenses", "revenues"]);
 
 			local.minFractionDiffs = undefined;
 
@@ -288,12 +289,19 @@ const play = async (
 		}
 	};
 
-	const getResult = (
-		gid: number,
-		teams: [any, any],
-		doPlayByPlay: boolean,
-		homeCourtFactor?: number,
-	) => {
+	const getResult = ({
+		gid,
+		teams,
+		doPlayByPlay = false,
+		homeCourtFactor = 1,
+		disableHomeCourtAdvantage = false,
+	}: {
+		gid: number;
+		teams: [any, any];
+		doPlayByPlay?: boolean;
+		homeCourtFactor?: number;
+		disableHomeCourtAdvantage?: boolean;
+	}) => {
 		// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
 		for (const t of teams) {
 			if (t.depth !== undefined) {
@@ -301,7 +309,13 @@ const play = async (
 			}
 		}
 
-		return new GameSim(gid, teams, doPlayByPlay, homeCourtFactor).run();
+		return new GameSim({
+			gid,
+			teams,
+			doPlayByPlay,
+			homeCourtFactor,
+			disableHomeCourtAdvantage,
+		}).run();
 	};
 
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
@@ -338,12 +352,12 @@ const play = async (
 						}
 					}
 
-					const result = getResult(
-						game.gid,
-						helpers.deepCopy(teamsInput), // So stats start at 0 each time
+					const result = getResult({
+						gid: game.gid,
+						teams: helpers.deepCopy(teamsInput), // So stats start at 0 each time
 						doPlayByPlay,
 						homeCourtFactor,
-					);
+					});
 
 					let wonTid: number | undefined;
 					if (result.team[0].stat.pts > result.team[1].stat.pts) {
@@ -383,7 +397,35 @@ const play = async (
 					await lock.set("stopGameSim", true);
 				}
 			} else {
-				const result = getResult(game.gid, teamsInput, doPlayByPlay);
+				let disableHomeCourtAdvantage = false;
+				if (isSport("football") && g.get("phase") === PHASE.PLAYOFFS) {
+					const numGamesPlayoffSeries = g.get(
+						"numGamesPlayoffSeries",
+						"current",
+					);
+					const numFinalsGames =
+						numGamesPlayoffSeries[numGamesPlayoffSeries.length - 1];
+
+					// If finals is 1 game, then no home court advantage
+					if (numFinalsGames === 1) {
+						const playoffSeries = await idb.cache.playoffSeries.get(
+							g.get("season"),
+						);
+						if (
+							playoffSeries &&
+							playoffSeries.currentRound === numGamesPlayoffSeries.length - 1
+						) {
+							disableHomeCourtAdvantage = true;
+						}
+					}
+				}
+
+				const result = getResult({
+					gid: game.gid,
+					teams: teamsInput,
+					doPlayByPlay,
+					disableHomeCourtAdvantage,
+				});
 				results.push(result);
 			}
 		}
@@ -394,11 +436,9 @@ const play = async (
 	// Simulates a day of games. If there are no games left, it calls cbNoGames.
 	// Promise is resolved after games are run
 	const cbPlayGames = async () => {
-		if (numDays === 1) {
-			await updateStatus(`Playing (1 ${TIME_BETWEEN_GAMES} left)`);
-		} else {
-			await updateStatus(`Playing (${numDays} ${TIME_BETWEEN_GAMES}s left)`);
-		}
+		await updateStatus(
+			`Playing (${numDays} ${timeBetweenGames(numDays)} left)`,
+		);
 
 		let schedule = await season.getSchedule(true);
 

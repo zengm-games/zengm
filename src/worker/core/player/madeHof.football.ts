@@ -97,7 +97,7 @@ const madeHof = (
 	const threshold = getThreshold(pos);
 
 	// Final formula
-	return total + df > threshold;
+	return total + df > threshold * g.get("hofFactor");
 };
 
 export default madeHof;

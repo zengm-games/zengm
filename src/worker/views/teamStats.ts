@@ -1,18 +1,45 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput, TeamStatAttr } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	TeamStatAttr,
+	TeamSeasonAttr,
+} from "../../common/types";
 import { TEAM_STATS_TABLES, bySport } from "../../common";
+import { team } from "../core";
 
-export const getStats = async (
-	season: number,
-	playoffs: boolean,
+export const getStats = async ({
+	season,
+	playoffs,
+	statsTable,
+	usePts,
+	tid,
+	noDynamicAvgAge,
+}: {
+	season: number;
+	playoffs: boolean;
 	statsTable: {
 		stats: string[];
-	},
-	tid?: number,
-) => {
+	};
+	usePts: boolean;
+	tid?: number;
+	noDynamicAvgAge?: boolean;
+}) => {
 	const stats = statsTable.stats;
-	const seasonAttrs = ["abbrev", "won", "lost", "tied"] as const;
+	const seasonAttrs: TeamSeasonAttr[] = [
+		"abbrev",
+		"won",
+		"lost",
+		"tied",
+		"otl",
+		"avgAge",
+	];
+	if (usePts) {
+		seasonAttrs.push("pts", "ptsPct");
+	} else {
+		seasonAttrs.push("winp");
+	}
 	const teams = (
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
@@ -39,6 +66,8 @@ export const getStats = async (
 			for (const t of teams) {
 				t.seasonAttrs.won = 0;
 				t.seasonAttrs.lost = 0;
+				t.seasonAttrs.tied = 0;
+				t.seasonAttrs.otl = 0;
 			}
 
 			for (const round of playoffSeries.series) {
@@ -61,6 +90,44 @@ export const getStats = async (
 					}
 				}
 			}
+		}
+
+		for (const t of teams) {
+			if (usePts) {
+				t.seasonAttrs.pts = team.evaluatePointsFormula(t.seasonAttrs, {
+					season,
+				});
+				t.seasonAttrs.ptsPct = team.ptsPct(t.seasonAttrs);
+			} else {
+				t.seasonAttrs.winp = helpers.calcWinp(t.seasonAttrs);
+			}
+		}
+	}
+
+	for (const t of teams) {
+		if (t.seasonAttrs.avgAge === undefined) {
+			let playersRaw;
+			if (g.get("season") === season) {
+				playersRaw = await idb.cache.players.indexGetAll("playersByTid", t.tid);
+			} else {
+				if (noDynamicAvgAge) {
+					continue;
+				}
+				playersRaw = await idb.getCopies.players({
+					statsTid: t.tid,
+				});
+			}
+
+			const players = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: ["age"],
+				stats: ["gp", "min"],
+				season,
+				showNoStats: g.get("season") === season,
+				showRookies: g.get("season") === season,
+				tid: t.tid,
+			});
+
+			t.seasonAttrs.avgAge = team.avgAge(players);
 		}
 	}
 
@@ -91,16 +158,26 @@ const updateTeams = async (
 			throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
 		}
 
-		const { seasonAttrs, stats, teams } = await getStats(
-			inputs.season,
-			inputs.playoffs === "playoffs",
+		const pointsFormula = g.get("pointsFormula", inputs.season);
+		const usePts = pointsFormula !== "";
+
+		const { seasonAttrs, stats, teams } = await getStats({
+			season: inputs.season,
+			playoffs: inputs.playoffs === "playoffs",
 			statsTable,
-		);
+			usePts,
+		});
 
 		let ties = false;
+		let otl = false;
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {
 				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
 				break;
 			}
 		}
@@ -117,6 +194,7 @@ const updateTeams = async (
 		const lowerIsBetter = bySport({
 			basketball: [
 				"lost",
+				"otl",
 				"tov",
 				"pf",
 				"oppFg",
@@ -141,6 +219,7 @@ const updateTeams = async (
 				"oppMov",
 				"pl",
 				"drtg",
+				"tovp",
 				"oppFgAtRim",
 				"oppFgaAtRim",
 				"oppFgpAtRim",
@@ -153,6 +232,7 @@ const updateTeams = async (
 			],
 			football: [
 				"lost",
+				"otl",
 				"tov",
 				"fmbLost",
 				"pssInt",
@@ -179,6 +259,36 @@ const updateTeams = async (
 				"oppPlaysPerDrive",
 				"oppYdsPerDrive",
 				"oppPtsPerDrive",
+			],
+			hockey: [
+				"lost",
+				"otl",
+				"pim",
+				"fol",
+				"gv",
+				"gaa",
+				"oppG",
+				"oppA",
+				"oppEvG",
+				"oppPpG",
+				"oppShG",
+				"oppEvA",
+				"oppPpA",
+				"oppShA",
+				"oppS",
+				"oppSPct",
+				"oppTsa",
+				"oppPpo",
+				"oppPpPct",
+				"oppFow",
+				"oppFoPct",
+				"oppBlk",
+				"oppHit",
+				"oppTk",
+				"oppSv",
+				"oppSvPct",
+				"oppSo",
+				"oppMov",
 			],
 		});
 
@@ -239,6 +349,8 @@ const updateTeams = async (
 			teamOpponent: inputs.teamOpponent,
 			teams,
 			ties: g.get("ties", inputs.season) || ties,
+			otl: g.get("otl", inputs.season) || otl,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

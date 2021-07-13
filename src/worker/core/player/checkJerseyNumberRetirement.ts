@@ -1,34 +1,39 @@
-import orderBy from "lodash/orderBy";
-import { isSport } from "../../../common";
+import orderBy from "lodash-es/orderBy";
+import { bySport, isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
 
-const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 12;
+// Higher in basketball, because real player leagues have a lot
+const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = isSport("basketball") ? 30 : 12;
 
-const getValueStatsRow = (ps: any) => {
-	let value = 0;
+export const getValueStatsRow = (ps: any) => {
+	return bySport({
+		basketball: (() => {
+			let value = 0;
+			if (typeof ps.dws === "number") {
+				value += ps.dws;
+			}
 
-	if (isSport("basketball")) {
-		if (typeof ps.dws === "number") {
-			value += ps.dws;
-		}
+			if (typeof ps.ows === "number") {
+				value += ps.ows;
+			}
 
-		if (typeof ps.ows === "number") {
-			value += ps.ows;
-		}
+			if (typeof ps.ewa === "number") {
+				value += ps.ewa;
+			}
 
-		if (typeof ps.ewa === "number") {
-			value += ps.ewa;
-		}
-
-		value /= 2;
-	} else if (isSport("football")) {
-		value += ps.av;
-	}
-
-	return value;
+			value /= 2;
+			return value;
+		})(),
+		football: ps.av,
+		hockey: (() => {
+			const g = ps.evG + ps.ppG + ps.shG;
+			const a = ps.evA + ps.ppA + ps.shA;
+			return (g + a) / 25 + ps.ops + ps.dps + 0.6 * ps.gps;
+		})(),
+	});
 };
 
 export const getMostCommonPosition = (p: Player, tid: number) => {
@@ -65,9 +70,7 @@ export const getScore = (p: Player, tid: number) => {
 	}
 
 	let threshold;
-	if (isSport("basketball")) {
-		threshold = 80;
-	} else {
+	if (isSport("football")) {
 		const mostCommonPosition = getMostCommonPosition(p, tid);
 
 		threshold = getThreshold(mostCommonPosition);
@@ -81,6 +84,8 @@ export const getScore = (p: Player, tid: number) => {
 		} else if (mostCommonPosition === "CB") {
 			threshold += 4;
 		}
+	} else {
+		threshold = 80;
 	}
 
 	const score = value / threshold;

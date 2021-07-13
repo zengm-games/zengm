@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
@@ -11,6 +11,7 @@ const NOTIFICATION_TIMEOUT = 8000;
 
 const Notification = ({
 	extraClass,
+	htmlIsSafe,
 	message,
 	persistent,
 	title,
@@ -61,7 +62,7 @@ const Notification = ({
 					<br />
 				</>
 			) : null}
-			<SafeHtml dirty={message} />
+			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
 			<button
 				className="notification-close"
 				onClick={remove}
@@ -75,6 +76,12 @@ const Notification = ({
 
 const transition = { duration: 0.2, type: "tween" };
 
+// Listen for notifications sent before Notifications component is mounted
+const initialNotifications: Message[] = [];
+const unbind = emitter.on("notification", notification => {
+	initialNotifications.push(notification);
+});
+
 const Notifications = () => {
 	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalShallow(
 		state => ({
@@ -86,49 +93,58 @@ const Notifications = () => {
 
 	const [notifications, setNotifications] = useState<Message[]>([]);
 
-	useEffect(
-		() =>
-			emitter.on("notification", notification => {
-				// Non-persistent notifications, only show if page is visible, for performance
-				if (!notification.persistent && document.hidden) {
-					return;
+	useEffect(() => {
+		unbind();
+
+		const unbind2 = emitter.on("notification", notification => {
+			// Non-persistent notifications, only show if page is visible, for performance
+			if (!notification.persistent && document.hidden) {
+				return;
+			}
+
+			setNotifications(currentNotifications => {
+				let newNotifications = [...currentNotifications, notification];
+
+				// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
+				let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
+				let numPersistentKept = 0;
+				if (numToDelete > -1) {
+					// -1 so numPersistentKept can still identify when there are 4 persistent notifications
+					newNotifications = newNotifications.filter(notification => {
+						if (notification.persistent) {
+							numPersistentKept += 1;
+							return true;
+						}
+
+						if (numToDelete > 0) {
+							numToDelete -= 1;
+							if (notification.onClose) {
+								notification.onClose();
+							}
+							return false;
+						}
+
+						return true;
+					});
 				}
 
-				setNotifications(currentNotifications => {
-					let newNotifications = [...currentNotifications, notification];
+				// Want at most MAX_NUM_NOTIFICATIONS-1, so there is room for another
+				if (numPersistentKept > MAX_NUM_NOTIFICATIONS - 1) {
+					newNotifications = newNotifications.slice(
+						numPersistentKept - (MAX_NUM_NOTIFICATIONS - 1),
+					);
+				}
 
-					// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
-					let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
-					let numPersistentKept = 0;
-					if (numToDelete > -1) {
-						// -1 so numPersistentKept can still identify when there are 4 persistent notifications
-						newNotifications = newNotifications.filter(notification => {
-							if (notification.persistent) {
-								numPersistentKept += 1;
-								return true;
-							}
+				return newNotifications;
+			});
+		});
 
-							if (numToDelete > 0) {
-								numToDelete -= 1;
-								return false;
-							}
+		for (const notification of initialNotifications) {
+			emitter.emit("notification", notification);
+		}
 
-							return true;
-						});
-					}
-
-					// Want at most MAX_NUM_NOTIFICATIONS-1, so there is room for another
-					if (numPersistentKept > MAX_NUM_NOTIFICATIONS - 1) {
-						newNotifications = newNotifications.slice(
-							numPersistentKept - (MAX_NUM_NOTIFICATIONS - 1),
-						);
-					}
-
-					return newNotifications;
-				});
-			}),
-		[],
-	);
+		return unbind2;
+	}, []);
 
 	let ulBottom = 0;
 	let buttonBottom = 6;
@@ -153,6 +169,11 @@ const Notifications = () => {
 					className="notification-close-all"
 					title="Dismiss all notifications"
 					onClick={() => {
+						for (const notification of notifications) {
+							if (notification.onClose) {
+								notification.onClose();
+							}
+						}
 						setNotifications([]);
 					}}
 					style={{
@@ -169,7 +190,7 @@ const Notifications = () => {
 			>
 				<AnimatePresence initial={false}>
 					{notifications.map(notification => (
-						<motion.li
+						<m.li
 							key={notification.id}
 							layout
 							initial={{ opacity: 0, y: 100 }}
@@ -181,11 +202,20 @@ const Notifications = () => {
 								{...notification}
 								remove={() => {
 									setNotifications(currentNotifications =>
-										currentNotifications.filter(n => n !== notification),
+										currentNotifications.filter(n => {
+											if (n === notification) {
+												if (notification.onClose) {
+													notification.onClose();
+												}
+												return false;
+											}
+
+											return true;
+										}),
 									);
 								}}
 							/>
-						</motion.li>
+						</m.li>
 					))}
 				</AnimatePresence>
 			</ul>

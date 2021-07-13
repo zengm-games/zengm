@@ -1,6 +1,7 @@
-import { isSport } from "../../common";
+import { bySport } from "../../common";
 import BoxScoreBasketball from "./BoxScore.basketball";
 import BoxScoreFootball from "./BoxScore.football";
+import BoxScoreHockey from "./BoxScore.hockey";
 
 const BoxScore = (props: {
 	boxScore: any;
@@ -8,11 +9,11 @@ const BoxScore = (props: {
 	Row: any;
 	forceRowUpdate: boolean;
 }) => {
-	if (isSport("football")) {
-		return BoxScoreFootball(props as any);
-	}
-
-	return BoxScoreBasketball(props);
+	return bySport({
+		basketball: BoxScoreBasketball(props),
+		football: BoxScoreFootball(props as any),
+		hockey: BoxScoreHockey(props as any),
+	});
 };
 
 export default BoxScore;

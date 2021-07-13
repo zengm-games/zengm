@@ -131,7 +131,10 @@ async function getAll(): Promise<
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
 	try {
-		const tooEz = g.get("easyDifficultyInPast") || g.get("godModeInPast");
+		const tooEz =
+			g.get("easyDifficultyInPast") ||
+			g.get("godModeInPast") ||
+			g.get("spectator");
 
 		const awarded: string[] = [];
 
@@ -147,6 +150,8 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 							message = "God Mode is enabled.";
 						} else if (g.get("godModeInPast")) {
 							message = "God Mode was enabled in the past.";
+						} else if (g.get("spectator")) {
+							message = "Spectator Mode is enabled.";
 						} else if (g.get("difficulty") <= DIFFICULTY.Easy) {
 							message = "the difficulty level is Easy.";
 						} else {

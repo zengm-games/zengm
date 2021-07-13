@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy";
+import { groupBy } from "../../common/groupBy";
 import PropTypes from "prop-types";
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";

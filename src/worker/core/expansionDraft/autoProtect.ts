@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { g } from "../../util";
 import { PHASE } from "../../../common";
 

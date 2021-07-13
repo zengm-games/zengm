@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import { PLAYER, PHASE } from "../../common";
+import { PLAYER, PHASE, gameAttributesArrayToObject } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
 import {
@@ -9,7 +9,7 @@ import {
 	MoreLinks,
 } from "../components";
 import type { View } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const ImportPlayers = ({
 	challengeNoRatings,
@@ -332,19 +332,19 @@ const ImportPlayers = ({
 
 					let startingSeason = leagueFile.startingSeason;
 					if (typeof startingSeason !== "number" && leagueFile.gameAttributes) {
-						const row = leagueFile.gameAttributes.find(
-							(row: any) => row.key === "startingSeason",
-						);
-						if (row) {
-							startingSeason = row.value;
+						if (Array.isArray(leagueFile.gameAttributes)) {
+							leagueFile.gameAttributes = gameAttributesArrayToObject(
+								leagueFile.gameAttributes,
+							);
 						}
+						startingSeason = leagueFile.gameAttributes.startingSeason;
 					}
 					if (typeof startingSeason !== "number") {
 						throw new Error("League file must include startingSeason");
 					}
 
 					setLeagueFile({
-						startingSeason: leagueFile.startingSeason,
+						startingSeason,
 						version: leagueFile.version,
 					});
 

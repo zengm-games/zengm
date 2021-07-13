@@ -23,6 +23,7 @@ type PlayersPlusOptionsRequired = {
 	regularSeason: boolean;
 	showNoStats: boolean;
 	showRookies: boolean;
+	showDraftProspectRookieRatings: boolean;
 	showRetired: boolean;
 	fuzz: boolean;
 	oldStats: boolean;
@@ -75,9 +76,8 @@ const processAttrs = (
 
 			// Inject abbrevs
 			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
-			output.draft.originalAbbrev = g.get("teamInfoCache")[
-				output.draft.originalTid
-			]?.abbrev;
+			output.draft.originalAbbrev =
+				g.get("teamInfoCache")[output.draft.originalTid]?.abbrev;
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);
@@ -238,6 +238,7 @@ const processRatings = (
 	{
 		fuzz,
 		ratings,
+		showDraftProspectRookieRatings,
 		showRetired,
 		stats,
 		season,
@@ -245,6 +246,14 @@ const processRatings = (
 	}: PlayersPlusOptionsRequired,
 ) => {
 	let playerRatings = p.ratings;
+
+	if (
+		showDraftProspectRookieRatings &&
+		p.tid === PLAYER.UNDRAFTED &&
+		season !== undefined
+	) {
+		season = p.draft.year;
+	}
 
 	// If we're returning all seasons for a specific team, filter ratings to match stats
 	if (season === undefined && tid !== undefined) {
@@ -335,13 +344,7 @@ const processRatings = (
 					row.tid = tidTemp;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
-				row[attr] = { ...pr[attr] };
-
-				if (fuzz) {
-					for (const key of Object.keys(row[attr])) {
-						row[attr][key] = player.fuzzRating(row[attr][key], pr.fuzz);
-					}
-				}
+				row[attr] = player.fuzzOvrs(pr[attr], pr.fuzz);
 			} else if (
 				fuzz &&
 				attr !== "fuzz" &&
@@ -384,9 +387,10 @@ const processRatings = (
 	}
 };
 
-const weightByMinutes = bySport({
+export const weightByMinutes = bySport({
 	basketball: [
 		"per",
+		"ws48",
 		"astp",
 		"blkp",
 		"drbp",
@@ -401,6 +405,7 @@ const weightByMinutes = bySport({
 		"bpm",
 	],
 	football: [],
+	hockey: [],
 });
 
 const reduceCareerStats = (
@@ -665,14 +670,8 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
-	const {
-		attrs,
-		ratings,
-		season,
-		showNoStats,
-		showRetired,
-		showRookies,
-	} = options;
+	const { attrs, ratings, season, showNoStats, showRetired, showRookies } =
+		options;
 
 	const output: any = {};
 
@@ -763,6 +762,7 @@ const getCopies = async (
 		showNoStats = false,
 		showRookies = false,
 		showRetired = false,
+		showDraftProspectRookieRatings = false,
 		fuzz = false,
 		oldStats = false,
 		numGamesRemaining = 0,
@@ -780,6 +780,7 @@ const getCopies = async (
 		regularSeason,
 		showNoStats,
 		showRookies,
+		showDraftProspectRookieRatings,
 		showRetired,
 		fuzz,
 		oldStats,

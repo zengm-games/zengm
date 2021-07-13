@@ -1,18 +1,13 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, bySport, isSport } from "../../../common";
-import { team, player } from "..";
+import { PLAYER, PHASE, isSport, bySport } from "../../../common";
+import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
-
-// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
-const ROUNDS = bySport({
-	football: 0,
-	basketball: 60,
-});
+const DEFAULT_ROUNDS = 60;
 
 const getExpiration = (
 	p: Player,
@@ -21,23 +16,15 @@ const getExpiration = (
 ) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
 
-	let years;
-
-	// Players with high potentials want short contracts
-	const potentialDifference = pot - ovr;
-	if (potentialDifference >= 10) {
-		years = 2;
-	} else {
-		// Bad players can only ask for short deals, good players ask for longer deals
-		years = (p.value - 25) / 5;
-
-		// Sometimes players want shorter contracts, for flexibility
-		if (Math.random() < 0.5) {
-			years /= 2;
-		}
-
-		years = helpers.bound(Math.round(years), 1, Infinity);
-	}
+	// pot is predictable via age+ovr with R^2=0.94, so skip it b/c wasn't in data
+	const age = g.get("season") - p.born.year;
+	let years =
+		1 +
+		0.001629 * (age * age) -
+		0.003661 * (age * ovr) +
+		0.002178 * (ovr * ovr) +
+		0 * pot;
+	years = Math.round(years);
 
 	// Randomize expiration for contracts generated at beginning of new game
 	if (randomizeExp) {
@@ -99,17 +86,23 @@ const normalizeContractDemands = async ({
 	nextSeason?: boolean;
 }) => {
 	// Higher means more unequal salaries
-	let PARAM;
-	if (isSport("basketball")) {
-		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
-	} else {
-		PARAM = 1;
-	}
+	const PARAM = bySport({
+		basketball: 0.5 * (type === "newLeague" ? 5 : 15),
+		football: 1,
+		hockey: 2.5,
+	});
 
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");
 	const salaryCap = g.get("salaryCap");
 	const season = g.get("season");
+
+	let numRounds = DEFAULT_ROUNDS;
+
+	// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula. Same if minContract and maxContract are the same, no point in doing auction.
+	if (isSport("football") || minContract === maxContract) {
+		numRounds = 0;
+	}
 
 	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly) because we don't know that all these players are actually going to be available
 	const NUM_BIDS_BEFORE_REMOVED = 2;
@@ -151,9 +144,9 @@ const normalizeContractDemands = async ({
 	});
 
 	let playerInfosCurrent: typeof playerInfos;
-	if (isSport("football") && type === "newLeague") {
-		// For performance, especially for FBGM, just assume the bottom 60% of the league will be min contracts
-		const cutoff = Math.round(0.4 * playerInfos.length);
+	if (type === "newLeague") {
+		// For performance, especially for FBGM, just assume the bottom X% of the league will be min contracts
+		const cutoff = Math.round(0.75 * playerInfos.length);
 		const ordered = orderBy(playerInfos, "value", "desc");
 		playerInfosCurrent = ordered.slice(0, cutoff);
 	} else {
@@ -184,8 +177,8 @@ const normalizeContractDemands = async ({
 	//console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
-	for (let i = 0; i < ROUNDS; i++) {
-		const OFFSET = LEARNING_RATE * (1 / (1 + i / ROUNDS) ** 4);
+	for (let i = 0; i < numRounds; i++) {
+		const OFFSET = LEARNING_RATE * (1 / (1 + i / numRounds) ** 4);
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;
 
@@ -259,40 +252,62 @@ const normalizeContractDemands = async ({
 	}
 	//console.timeEnd("foo");
 
+	const hockeyRookieOverrides =
+		isSport("hockey") && type === "includeExpiringContracts";
+	let rookieSalaries;
+	if (isSport("hockey") && hockeyRookieOverrides) {
+		rookieSalaries = draft.getRookieSalaries();
+	}
+
 	for (const info of playerInfos) {
 		if (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
-				isSport("football") ||
+				numRounds === 0 ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {
 			const p = info.p;
 
-			const exp = getExpiration(p, type === "newLeague", nextSeason);
+			const exp =
+				isSport("hockey") && hockeyRookieOverrides && p.draft.year === season
+					? season + 3
+					: getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
-
-			if (isSport("basketball")) {
-				// During regular season, should only look for short contracts that teams will actually sign
-				if (type === "dummyExpiringContracts") {
-					if (info.contractAmount >= maxContract / 4) {
-						p.contract.exp = season;
-						info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
-					}
-				}
-
-				if (type === "newLeague") {
-					info.contractAmount *= random.uniform(0.4, 1.1);
-				}
-
-				amount = helpers.bound(
-					helpers.roundContract(info.contractAmount),
-					minContract,
-					maxContract,
-				);
-			} else {
+			if (numRounds === 0) {
 				amount = player.genContract(p, type === "newLeague").amount;
+			} else {
+				if (
+					isSport("hockey") &&
+					rookieSalaries &&
+					hockeyRookieOverrides &&
+					p.draft.year === season
+				) {
+					const pickIndex =
+						(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
+					amount =
+						rookieSalaries[pickIndex] ??
+						rookieSalaries[rookieSalaries.length - 1];
+				} else {
+					if (type === "newLeague") {
+						info.contractAmount *= random.uniform(0.4, 1.1);
+					}
+
+					amount = helpers.bound(
+						helpers.roundContract(info.contractAmount),
+						minContract,
+						maxContract,
+					);
+				}
+			}
+
+			// During regular season, should only look for short contracts that teams will actually sign
+			if (type === "dummyExpiringContracts") {
+				if (info.contractAmount >= maxContract / 4) {
+					p.contract.exp = season;
+					info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
+				}
 			}
 
 			// Make sure to remove "temp" flag!

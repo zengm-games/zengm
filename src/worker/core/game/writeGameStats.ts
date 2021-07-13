@@ -8,6 +8,7 @@ import type {
 	GameResults,
 	LogEventType,
 } from "../../../common/types";
+import { headToHead } from "..";
 
 const allStarMVP = async (
 	game: Game,
@@ -74,6 +75,9 @@ const allStarMVP = async (
 			},
 		],
 		conditions,
+		g.get("season"),
+		true,
+		game.gid,
 	);
 };
 
@@ -177,6 +181,7 @@ const writeGameStats = async (
 				won: results.team[0].won,
 				lost: results.team[0].lost,
 				tied: results.team[0].tied,
+				otl: results.team[0].otl,
 				players: [],
 			},
 			{
@@ -185,6 +190,7 @@ const writeGameStats = async (
 				won: results.team[1].won,
 				lost: results.team[1].lost,
 				tied: results.team[1].tied,
+				otl: results.team[1].otl,
 				players: [],
 			},
 		],
@@ -219,15 +225,27 @@ const writeGameStats = async (
 			gameStats.teams[t].players[p].skills = helpers.deepCopy(
 				results.team[t].player[p].skills,
 			);
-			gameStats.teams[t].players[p].injury = helpers.deepCopy(
-				results.team[t].player[p].injury,
-			);
+			gameStats.teams[t].players[p].injury = {
+				type: results.team[t].player[p].injury.type,
+				gamesRemaining: results.team[t].player[p].injury.gamesRemaining,
+			};
+			if (results.team[t].player[p].injury.newThisGame) {
+				gameStats.teams[t].players[p].injury.newThisGame = true;
+			}
+			if (results.team[t].player[p].injury.playingThrough) {
+				gameStats.teams[t].players[p].injury.playingThrough = true;
+			}
+			if (results.team[t].player[p].injuryAtStart) {
+				gameStats.teams[t].players[p].injuryAtStart =
+					results.team[t].player[p].injuryAtStart;
+			}
 			gameStats.teams[t].players[p].jerseyNumber =
 				results.team[t].player[p].jerseyNumber;
 		}
 	}
 
 	// Store some extra junk to make box scores easy
+	const otl = gameStats.overtimes > 0 && g.get("otl", "current");
 	const [tw, tl] =
 		results.team[0].stat.pts > results.team[1].stat.pts ? [0, 1] : [1, 0];
 	gameStats.won.tid = results.team[tw].id;
@@ -246,15 +264,16 @@ const writeGameStats = async (
 			gameStats.teams[1].tied += 1;
 		} else {
 			(gameStats.teams[tw] as any).won += 1;
-			(gameStats.teams[tl] as any).lost += 1;
+			if (otl) {
+				(gameStats.teams[tl] as any).otl += 1;
+			} else {
+				(gameStats.teams[tl] as any).lost += 1;
+			}
 		}
 	}
 
-	const {
-		currentRound,
-		numGamesToWinSeries,
-		playoffInfos,
-	} = await getPlayoffInfos(gameStats);
+	const { currentRound, numGamesToWinSeries, playoffInfos } =
+		await getPlayoffInfos(gameStats);
 	if (playoffInfos) {
 		gameStats.teams[0].playoffs = playoffInfos[0];
 		gameStats.teams[1].playoffs = playoffInfos[1];
@@ -430,6 +449,7 @@ const writeGameStats = async (
 				{
 					forceWin: results.forceWin,
 					gid: results.gid,
+					overtimes: results.overtimes,
 					teams: [
 						{
 							ovr: results.team[0].ovr,
@@ -484,9 +504,8 @@ const writeGameStats = async (
 				];
 
 				if (numGamesThisRound > 1) {
-					const numGamesToWinSeries = helpers.numGamesToWinSeries(
-						numGamesThisRound,
-					);
+					const numGamesToWinSeries =
+						helpers.numGamesToWinSeries(numGamesThisRound);
 					if (playoffInfos[indTeam].won === numGamesToWinSeries) {
 						endPart += `, winning the ${round} ${playoffInfos[indTeam].won}-${playoffInfos[indTeam].lost}`;
 					} else if (playoffInfos[indTeam].lost === numGamesToWinSeries) {
@@ -547,6 +566,18 @@ const writeGameStats = async (
 			await idb.cache.allStars.put(allStars);
 		}
 	}
+
+	let seriesWinner: number | undefined;
+	if (playoffInfos && playoffInfos[tw].won === numGamesToWinSeries) {
+		seriesWinner = gameStats.won.tid;
+	}
+	await headToHead.addGame({
+		tids: [gameStats.won.tid, gameStats.lost.tid],
+		pts: [gameStats.won.pts, gameStats.lost.pts],
+		overtime: gameStats.overtimes > 0,
+		playoffRound: currentRound,
+		seriesWinner,
+	});
 
 	await idb.cache.games.add(gameStats);
 };

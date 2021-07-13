@@ -1,9 +1,9 @@
-import range from "lodash/range";
+import { groupBy } from "../../../common/groupBy";
+import range from "lodash-es/range";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { TradePickValues } from "../../../common/types";
-import { groupBy } from "lodash";
 
 const PLACEHOLDER_VALUE_ALREADY_PICKED = -1;
 

@@ -3,11 +3,11 @@ import type { MouseEvent, ReactNode } from "react";
 import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
-import type { Bugsnag } from "@bugsnag/browser";
 
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
+	mobile: boolean;
 	useSharedWorker: boolean;
 };
 
@@ -16,16 +16,15 @@ declare global {
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
-		bbgmVersionUI: string;
-		bbgmVersionWorker: string;
-		bugsnagClient?: Bugsnag.Client;
+		bugsnagKey: string;
 		enableLogging: boolean;
 		freestar: any;
 		getTheme: () => string;
 		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
-		leagueFileHashes: Record<string, string>;
+		mobile: boolean;
+		releaseStage: string;
 		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
@@ -124,6 +123,8 @@ export type DraftLotteryResultArray = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
+	pts?: number;
 }[];
 
 export type DraftLotteryResult = {
@@ -137,6 +138,8 @@ export type DraftLotteryResult = {
 	result: DraftLotteryResultArray;
 };
 
+export type DraftPickSeason = number | "fantasy" | "expansion";
+
 export type DraftPickWithoutKey = {
 	dpid?: number;
 	tid: number;
@@ -144,7 +147,7 @@ export type DraftPickWithoutKey = {
 	round: number;
 	pick: number;
 	// 0 if not set
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 };
 
 export type DraftPick = {
@@ -161,20 +164,25 @@ export type DraftType =
 	| "randomLottery"
 	| "randomLotteryFirst3"
 	| "nba1990"
-	| "freeAgents";
+	| "freeAgents"
+	| "nhl2017";
 
-// Key is team ID receiving this asset. from is team ID that traded this asset away
-// Why store name and full DraftPick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
+// Key is team ID receiving this asset
+// Why store name and extra draft pick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
 type TradeEventAsset =
 	| {
 			pid: number;
-			tid: number; // tid the player was originally on
 			name: string;
 			contract: PlayerContract;
 			ratingsIndex: number;
 			statsIndex: number;
 	  }
-	| DraftPick;
+	| {
+			dpid: number;
+			season: DraftPickSeason;
+			round: number;
+			originalTid: number;
+	  };
 
 export type TradeEventTeams = {
 	assets: TradeEventAsset[];
@@ -183,7 +191,7 @@ export type TradeEventTeams = {
 export type DiscriminateUnion<
 	T,
 	K extends keyof T,
-	V extends T[K]
+	V extends T[K],
 > = T extends Record<K, V> ? T : never;
 
 export type EventBBGMWithoutKey =
@@ -226,6 +234,7 @@ type GameTeam = {
 	won?: number; // Undefined for legacy objects
 	lost?: number; // Undefined for legacy objects
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
+	otl?: number; // Undefined for legacy objects or if there are no otls in this sport
 
 	playoffs?: {
 		seed: number;
@@ -283,10 +292,10 @@ export type ScheduledEventTeamInfo = {
 		srID?: string;
 		name?: string;
 		pop?: number;
-		cid?: number;
 		did?: number;
 		abbrev?: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		colors?: [string, string, string];
 	};
 };
@@ -328,7 +337,9 @@ export type ExpansionDraftSetupTeam = {
 	region: string;
 	name: string;
 	imgURL: string | undefined;
+	imgURLSmall?: string;
 	colors: [string, string, string];
+	jersey?: string;
 	pop: string;
 	stadiumCapacity: string;
 	did: string;
@@ -350,6 +361,12 @@ export type NamesLegacy = {
 export type Conf = { cid: number; name: string };
 export type Div = { cid: number; did: number; name: string };
 
+export type InjuriesSetting = {
+	name: string;
+	frequency: number;
+	games: number;
+}[];
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -364,28 +381,40 @@ export type GameAttributesLeague = {
 	challengeLoseBestPlayer: boolean;
 	challengeFiredLuxuryTax: boolean;
 	challengeFiredMissPlayoffs: boolean;
+	challengeThanosMode: boolean;
+	thanosCooldownEnd: number | undefined;
 	confs: Conf[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;
 	difficulty: number;
 	divs: Div[];
 	draftType: DraftType;
+	draftAges: [number, number];
 	easyDifficultyInPast: boolean;
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;
 	elamPoints: number;
 	equalizeRegions: boolean;
+	forceRetireAge: number;
 	foulsNeededToFoulOut: number;
+	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
+	goatFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
 	hardCap: boolean;
+	hideDisabledTeams: boolean;
+	hofFactor: number;
 	homeCourtAdvantage: number;
+	inflationAvg: number;
+	inflationMax: number;
+	inflationMin: number;
+	inflationStd: number;
+	injuries?: InjuriesSetting;
 	injuryRate: number;
-	leagueName: string;
 	lid: number;
 	luxuryPayroll: number;
 	luxuryTax: number;
@@ -408,12 +437,16 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	playerMoodTraits: boolean;
+	pointsFormula: string;
 	spectator: boolean;
+	otl: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	randomDebutsForever?: number;
+	realDraftRatings?: "draft" | "rookie";
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined
@@ -436,11 +469,13 @@ export type GameAttributesLeague = {
 	startingSeason: number;
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
+	tiebreakers: (keyof typeof TIEBREAKERS)[];
 	teamInfoCache: {
 		abbrev: string;
 		region: string;
 		name: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		disabled?: boolean;
 	}[];
 	ties: boolean;
@@ -453,6 +488,10 @@ export type GameAttributesLeague = {
 	threePointTendencyFactor: number;
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
+	blockFactor: number;
+	stealFactor: number;
+	turnoverFactor: number;
+	orbFactor: number;
 	pace: number;
 	expansionDraft:
 		| {
@@ -484,6 +523,9 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "divs"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
+	| "otl"
+	| "pointsFormula"
+	| "tiebreakers"
 	| "ties"
 	| "userTid"
 > & {
@@ -495,6 +537,11 @@ export type GameAttributesLeagueWithHistory = Omit<
 	numPlayoffByes: GameAttributeWithHistory<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
+	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
+	pointsFormula: GameAttributeWithHistory<
+		GameAttributesLeague["pointsFormula"]
+	>;
+	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
@@ -608,6 +655,9 @@ export type LogEventSaveOptions = DistributiveOmit<
 
 export type LogEventShowOptions = {
 	extraClass?: string;
+	hideInLiveGame?: boolean;
+	htmlIsSafe?: boolean;
+	onClose?: () => void;
 	persistent: boolean;
 	text: string;
 	type: string;
@@ -701,6 +751,7 @@ export type LocalStateUI = {
 	games: {
 		forceWin?: number;
 		gid: number;
+		overtimes?: number;
 		teams: [
 			{
 				ovr?: number;
@@ -727,8 +778,8 @@ export type LocalStateUI = {
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;
+	hideDisabledTeams: boolean;
 	homeCourtAdvantage: number;
-	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
 	spectator: boolean;
@@ -746,6 +797,7 @@ export type LocalStateUI = {
 		region: string;
 		name: string;
 		imgURL?: string;
+		imgURLSmall?: string;
 		disabled?: boolean;
 	}[];
 	units: "metric" | "us";
@@ -763,7 +815,8 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all";
-	dropdownExtraParam?: number | string;
+	dropdownCustomOptions?: Record<string, (number | string)[]>;
+	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
 	dropdownView?: string;
 	dropdownFields?: {
 		[key: string]: number | string;
@@ -956,6 +1009,9 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	watch: boolean;
 	weight: number;
 	yearsFreeAgent: number;
+
+	// Only for hockey goalies
+	numConsecutiveGamesG?: number;
 };
 
 export type Player<PlayerRatings = any> = {
@@ -974,6 +1030,7 @@ export type PlayersPlusOptions = {
 	regularSeason?: boolean;
 	showNoStats?: boolean;
 	showRookies?: boolean;
+	showDraftProspectRookieRatings?: boolean;
 	showRetired?: boolean;
 	fuzz?: boolean;
 	oldStats?: boolean;
@@ -1073,6 +1130,7 @@ export type PlayoffSeriesTeam = {
 	abbrev?: string;
 	cid: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	pts?: number;
 	// undefined means game hasn't happened yet
 	region?: string;
@@ -1080,10 +1138,10 @@ export type PlayoffSeriesTeam = {
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 	};
 	seed: number;
 	tid: number;
-	winp: number;
 	won: number;
 };
 
@@ -1160,27 +1218,35 @@ export type Team = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
+	jersey?: string;
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
 		BudgetItem
 	>;
 	strategy: "contending" | "rebuilding";
-	depth?: {
-		QB: number[];
-		RB: number[];
-		WR: number[];
-		TE: number[];
-		OL: number[];
-		DL: number[];
-		LB: number[];
-		CB: number[];
-		S: number[];
-		K: number[];
-		P: number[];
-		KR: number[];
-		PR: number[];
-	};
+	depth?:
+		| {
+				QB: number[];
+				RB: number[];
+				WR: number[];
+				TE: number[];
+				OL: number[];
+				DL: number[];
+				LB: number[];
+				CB: number[];
+				S: number[];
+				K: number[];
+				P: number[];
+				KR: number[];
+				PR: number[];
+		  }
+		| {
+				F: number[];
+				D: number[];
+				G: number[];
+		  };
 	firstSeasonAfterExpansion?: number;
 	srID?: string;
 
@@ -1191,6 +1257,12 @@ export type Team = {
 	adjustForInflation: boolean;
 	disabled: boolean;
 	keepRosterSorted: boolean;
+
+	// [regular season, playoffs]
+	playThroughInjuries: [number, number];
+
+	// Optional because no upgrade
+	autoTicketPrice?: boolean;
 
 	// Optional because no upgrade. Otherwise, would make this empty array by default
 	retiredJerseyNumbers?: {
@@ -1213,13 +1285,21 @@ type TeamSeasonPlus = TeamSeason & {
 	payroll: number;
 	lastTen: string;
 	streak: string;
+	pts: number;
+	ptsDefault: number;
+	ptsMax: number;
+	ptsPct: number;
+	avgAge: number | undefined;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
+import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
+import type { TIEBREAKERS } from "./constants";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
-	Record<TeamStatAttrFootball, number> & {
+	Record<TeamStatAttrFootball, number> &
+	Record<TeamStatAttrHockey, number> & {
 		season: number;
 		playoffs: boolean;
 	};
@@ -1229,7 +1309,7 @@ export type TeamFiltered<
 	Attrs extends Readonly<TeamAttr[]> | undefined = undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined = undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined = undefined,
-	Season extends number | undefined = undefined
+	Season extends number | undefined = undefined,
 > = (Attrs extends Readonly<TeamAttr[]>
 	? Pick<Team, Attrs[number]>
 	: Record<string, unknown>) &
@@ -1257,7 +1337,9 @@ export type TeamBasic = {
 	abbrev: string;
 	pop: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
+	jersey?: string;
 };
 
 export type TeamStatType = "perGame" | "totals";
@@ -1273,19 +1355,24 @@ export type TeamSeasonWithoutKey = {
 	won: number;
 	lost: number;
 	tied: number;
+	otl: number;
 	wonHome: number;
 	lostHome: number;
 	tiedHome: number;
+	otlHome: number;
 	wonAway: number;
 	lostAway: number;
 	tiedAway: number;
+	otlAway: number;
 	wonDiv: number;
 	lostDiv: number;
 	tiedDiv: number;
+	otlDiv: number;
 	wonConf: number;
 	lostConf: number;
 	tiedConf: number;
-	lastTen: (-1 | 0 | 1)[];
+	otlConf: number;
+	lastTen: (-1 | 0 | 1 | "OTL")[];
 	streak: number;
 	playoffRoundsWon: number;
 	// -1: didn't make playoffs. 0: lost in first round. ... N: won championship
@@ -1319,6 +1406,9 @@ export type TeamSeasonWithoutKey = {
 	// o - eliminated
 	clinchedPlayoffs?: "x" | "y" | "z" | "o";
 
+	// Value only written here after the end of the season
+	avgAge?: number;
+
 	// Copied over from Team
 	cid: number;
 	did: number;
@@ -1326,7 +1416,12 @@ export type TeamSeasonWithoutKey = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors: [string, string, string];
+	jersey?: string;
+
+	// Only used in historical leagues when realStats="all"
+	srID?: string;
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {
@@ -1380,6 +1475,7 @@ export type Trade = {
 export type UpdateEvents = (
 	| "account"
 	| "firstRun"
+	| "g.goatFormula"
 	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"
@@ -1396,13 +1492,15 @@ export type UpdateEvents = (
 
 export type RealPlayerPhotos = Record<string, string>;
 
-type IndividualRealTeamInfo = {
+export type IndividualRealTeamInfo = {
 	abbrev?: string;
 	region?: string;
 	name?: string;
 	pop?: number;
 	colors?: [string, string, string];
 	imgURL?: string;
+	imgURLSmall?: string;
+	jersey?: string;
 };
 export type RealTeamInfo = Record<
 	string,
@@ -1411,14 +1509,18 @@ export type RealTeamInfo = Record<
 	}
 >;
 
+export type GetLeagueOptionsReal = {
+	type: "real";
+	season: number;
+	phase: number;
+	randomDebuts: boolean;
+	realDraftRatings: "draft" | "rookie";
+	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
+	leagueInfoKeepAllTeams?: boolean;
+};
+
 export type GetLeagueOptions =
-	| {
-			type: "real";
-			season: number;
-			phase: number;
-			randomDebuts: boolean;
-			realDraftRatings: "draft" | "rookie";
-	  }
+	| GetLeagueOptionsReal
 	| {
 			type: "legends";
 			decade:
@@ -1431,3 +1533,43 @@ export type GetLeagueOptions =
 				| "2010s"
 				| "all";
 	  };
+
+// Would probably be better to have this all at the root, and store one object per (season, t0, t1) but it's awkward to separate t0 and t1 and IndexedDB does not let you make a compound index that includes a multiEntry index, so maybe this is better?
+export type HeadToHead = {
+	season: number;
+
+	// The keys are team IDs. First should be the lowest of the pair
+	regularSeason: Record<
+		number,
+		Record<
+			number,
+			{
+				won: number;
+				lost: number;
+				tied: number;
+				otl: number;
+				pts: number;
+				oppPts: number;
+
+				// Needed because we're only storing one record per (tid, tid) pair, and we swap the results when returning the other
+				otw: number;
+			}
+		>
+	>;
+
+	playoffs: Record<
+		number,
+		Record<
+			number,
+			// This assumes you can only play one playoff series against a given team in a season
+			{
+				round: number;
+				result: "won" | "lost" | undefined;
+				won: number;
+				lost: number;
+				pts: number;
+				oppPts: number;
+			}
+		>
+	>;
+};

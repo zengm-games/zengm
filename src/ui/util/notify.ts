@@ -5,12 +5,15 @@ export type Message = {
 	message: string;
 	title?: string;
 	extraClass?: string;
+	htmlIsSafe?: boolean;
+	onClose?: () => void;
 	persistent: boolean;
 };
 
-export const emitter = createNanoEvents<{
-	notification: (message: Message) => void;
-}>();
+export const emitter =
+	createNanoEvents<{
+		notification: (message: Message) => void;
+	}>();
 
 let id = 0;
 
@@ -19,9 +22,13 @@ const notify = (
 	title?: string,
 	{
 		extraClass,
+		htmlIsSafe,
+		onClose,
 		persistent = false,
 	}: {
 		extraClass?: string;
+		htmlIsSafe?: boolean;
+		onClose?: () => void;
 		persistent?: boolean;
 	} = {},
 ) => {
@@ -30,6 +37,8 @@ const notify = (
 		message,
 		title,
 		extraClass,
+		htmlIsSafe,
+		onClose,
 		persistent,
 	});
 

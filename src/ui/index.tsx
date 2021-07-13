@@ -1,4 +1,5 @@
 /* eslint-disable import/first */
+import "./util/initBugsnag";
 import "bbgm-polyfills"; // eslint-disable-line
 import type { ReactNode } from "react";
 import ReactDOM from "react-dom";
@@ -7,8 +8,9 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { EMAIL_ADDRESS, GAME_NAME } from "../common";
-window.bbgm = { ...util };
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
+import Bugsnag from "@bugsnag/browser";
+window.bbgm = { api, ...util };
 const {
 	compareVersions,
 	confirm,
@@ -47,17 +49,11 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	// Put in DOM element and global variable because the former is used before React takes over and the latter is used after
-	const bbgmVersionUI = "REV_GOES_HERE";
-	window.bbgmVersionUI = bbgmVersionUI;
-
 	if (window.withGoodUI) {
 		window.withGoodUI();
 	}
 
-	toWorker("main", "getVersionWorker").then(bbgmVersionWorker => {
-		window.bbgmVersionWorker = bbgmVersionWorker;
-
+	toWorker("main", "ping").then(() => {
 		if (window.withGoodWorker) {
 			window.withGoodWorker();
 		}
@@ -97,7 +93,8 @@ const handleVersion = async () => {
 				let registrations: readonly ServiceWorkerRegistration[] = [];
 
 				if (window.navigator.serviceWorker) {
-					registrations = await window.navigator.serviceWorker.getRegistrations();
+					registrations =
+						await window.navigator.serviceWorker.getRegistrations();
 				}
 
 				const getSWVersion = () => {
@@ -121,41 +118,39 @@ const handleVersion = async () => {
 				const swVersion = await getSWVersion();
 				console.log("swVersion", swVersion);
 
-				if (window.bugsnagClient) {
-					window.bugsnagClient.notify(new Error("Game version mismatch"), {
-						metaData: {
-							bbgmVersion: window.bbgmVersion,
-							bbgmVersionStored,
-							hasNavigatorServiceWorker:
-								window.navigator.serviceWorker !== undefined,
-							registrationsLength: registrations.length,
-							registrations: registrations.map(r => {
-								return {
-									scope: r.scope,
-									active: r.active
-										? {
-												scriptURL: r.active.scriptURL,
-												state: r.active.state,
-										  }
-										: null,
-									installing: r.installing
-										? {
-												scriptURL: r.installing.scriptURL,
-												state: r.installing.state,
-										  }
-										: null,
-									waiting: r.waiting
-										? {
-												scriptURL: r.waiting.scriptURL,
-												state: r.waiting.state,
-										  }
-										: null,
-								};
-							}),
-							swVersion,
-						},
+				Bugsnag.notify(new Error("Game version mismatch"), event => {
+					event.addMetadata("custom", {
+						bbgmVersion: window.bbgmVersion,
+						bbgmVersionStored,
+						hasNavigatorServiceWorker:
+							window.navigator.serviceWorker !== undefined,
+						registrationsLength: registrations.length,
+						registrations: registrations.map(r => {
+							return {
+								scope: r.scope,
+								active: r.active
+									? {
+											scriptURL: r.active.scriptURL,
+											state: r.active.state,
+									  }
+									: null,
+								installing: r.installing
+									? {
+											scriptURL: r.installing.scriptURL,
+											state: r.installing.state,
+									  }
+									: null,
+								waiting: r.waiting
+									? {
+											scriptURL: r.waiting.scriptURL,
+											state: r.waiting.state,
+									  }
+									: null,
+							};
+						}),
+						swVersion,
 					});
-				}
+				});
 
 				unregisterServiceWorkers();
 			})();
@@ -181,6 +176,7 @@ const setupEnv = async () => {
 	const env: Env = {
 		enableLogging: window.enableLogging,
 		heartbeatID,
+		mobile: window.mobile,
 		useSharedWorker: window.useSharedWorker,
 	};
 	await toWorker("main", "init", env);
@@ -245,21 +241,10 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (window.freestar.freestarReloadAdSlot) {
-						const adDivs =
-							window.screen && window.screen.width < 768
-								? [`${process.env.SPORT}-gm_mobile_leaderboard`]
-								: [
-										`${process.env.SPORT}-gm_leaderboard_atf`,
-										`${process.env.SPORT}-gm_mrec_btf_1`,
-										`${process.env.SPORT}-gm_mrec_btf_2`,
-										`${process.env.SPORT}-gm_right_rail`,
-								  ];
-
-						for (const adDiv of adDivs) {
-							console.log("reload", adDiv);
-							window.freestar.freestarReloadAdSlot(adDiv);
-						}
+					if (window.freestar.refreshAllSlots) {
+						window.freestar.queue.push(() => {
+							window.freestar.refreshAllSlots();
+						});
 					}
 				} else {
 					initialLoad = false;
@@ -278,9 +263,7 @@ const setupRoutes = () => {
 					typeof errMsg !== "string" ||
 					!errMsg.includes("A league can only be open in one tab at a time")
 				) {
-					if (window.bugsnagClient) {
-						window.bugsnagClient.notify(error);
-					}
+					Bugsnag.notify(error);
 
 					console.error("Error from view:");
 					console.error(error);
@@ -300,7 +283,7 @@ const setupRoutes = () => {
 								<p>
 									Please{" "}
 									<a
-										href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+										href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>
@@ -344,4 +327,5 @@ const setupRoutes = () => {
 	await setupEnv();
 	render();
 	await setupRoutes();
+	await import("./util/initServiceWorker");
 })();

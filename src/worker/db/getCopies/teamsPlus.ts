@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "..";
@@ -12,12 +12,13 @@ import type {
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types";
+import { DEFAULT_POINTS_FORMULA } from "../../../common";
 
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -47,7 +48,7 @@ const processSeasonAttrs = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -149,10 +150,14 @@ const processSeasonAttrs = async <
 				} else if (attr === "lastTen") {
 					const lastTenWon = ts.lastTen.filter(x => x === 1).length;
 					const lastTenLost = ts.lastTen.filter(x => x === 0).length;
+					const lastTenOTL = ts.lastTen.filter(x => x === "OTL").length;
+					const lastTenTied = ts.lastTen.filter(x => x === -1).length;
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
-					if (g.get("ties", season)) {
-						const lastTenTied = ts.lastTen.filter(x => x === -1).length;
+					if (lastTenOTL > 0) {
+						row.lastTen += `-${lastTenOTL}`;
+					}
+					if (lastTenTied > 0) {
 						row.lastTen += `-${lastTenTied}`;
 					}
 				} else if (attr === "streak") {
@@ -164,6 +169,22 @@ const processSeasonAttrs = async <
 					} else if (ts.streak < 0) {
 						row.streak = `Lost ${Math.abs(ts.streak)}`;
 					}
+				} else if (attr === "pts") {
+					row.pts = team.evaluatePointsFormula(ts, {
+						season: ts.season,
+					});
+				} else if (attr === "ptsMax") {
+					row.ptsMax = team.ptsMax(ts);
+				} else if (attr === "ptsPct") {
+					row.ptsPct = team.ptsPct(ts);
+				} else if (attr === "ptsDefault") {
+					row.ptsDefault = team.evaluatePointsFormula(ts, {
+						formula: DEFAULT_POINTS_FORMULA,
+						season: ts.season,
+					});
+				} else if (attr === "avgAge") {
+					// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
+					row.avgAge = ts[attr];
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];
@@ -213,7 +234,7 @@ const processStats = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]>,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
@@ -297,7 +318,7 @@ const processTeam = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined,
 >(
 	t: Team,
 	{
@@ -358,10 +379,10 @@ const processTeam = async <
 
 	await Promise.all(promises);
 
-	if (seasonAttrs && ((output as never) as any).seasonAttrs === undefined) {
+	if (seasonAttrs && (output as never as any).seasonAttrs === undefined) {
 		return;
 	}
-	if (stats && ((output as never) as any).stats === undefined) {
+	if (stats && (output as never as any).stats === undefined) {
 		return;
 	}
 
@@ -393,7 +414,7 @@ async function getCopies<
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined = undefined
+	Season extends number | undefined = undefined,
 >({
 	tid,
 	season,

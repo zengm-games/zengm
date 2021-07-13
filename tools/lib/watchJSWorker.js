@@ -1,42 +1,49 @@
+const esbuild = require("esbuild");
 const fs = require("fs");
-const rollup = require("rollup");
 const { parentPort, workerData } = require("worker_threads");
-const rollupConfig = require("./rollupConfig");
+const esbuildConfig = require("./esbuildConfig");
 
-const { name } = workerData;
-
-const file = `build/gen/${name}.js`;
-
-const watcher = rollup.watch({
-	...rollupConfig("development"),
-	input: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
-	output: {
-		name,
-		file,
-		format: "iife",
-		indent: false,
-		sourcemap: true,
+const pluginStartEnd = {
+	name: "start-end",
+	setup(build) {
+		build.onStart(() => {
+			parentPort.postMessage({
+				type: "start",
+			});
+		});
+		build.onEnd(() => {
+			parentPort.postMessage({
+				type: "end",
+			});
+		});
 	},
-	treeshake: false,
-});
+};
 
-watcher.on("event", event => {
-	if (event.code === "START") {
-		parentPort.postMessage({
-			type: "start",
-		});
+(async () => {
+	const { name } = workerData;
 
-		fs.writeFileSync(file, 'console.log("Bundling...")');
-	} else if (event.code === "BUNDLE_END") {
-		parentPort.postMessage({
-			type: "end",
-		});
-	} else if (event.code === "ERROR" || event.code === "FATAL") {
-		delete event.error.watchFiles;
-		parentPort.postMessage({
-			type: "error",
-			error: event.error,
-		});
-		fs.writeFileSync(file, `console.error(${JSON.stringify(event.error)})`);
-	}
-});
+	const config = esbuildConfig({
+		name,
+		nodeEnv: "development",
+	});
+
+	config.plugins.push(pluginStartEnd);
+
+	await esbuild.build({
+		...config,
+		watch: {
+			onRebuild(error) {
+				if (error) {
+					parentPort.postMessage({
+						type: "error",
+						error,
+					});
+
+					// Save to file so it appears when reloading page
+					const js = `throw new Error(\`${error.message}\`)`;
+					fs.writeFileSync(config.outfile, js);
+				}
+			},
+		},
+	});
+})();

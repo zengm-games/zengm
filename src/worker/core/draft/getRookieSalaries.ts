@@ -1,3 +1,4 @@
+import { isSport } from "../../../common";
 import { g, helpers } from "../../util";
 
 /**
@@ -9,6 +10,33 @@ import { g, helpers } from "../../util";
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 const getRookieSalaries = (): number[] => {
+	const numActiveTeams = g.get("numActiveTeams");
+	const numDraftRounds = g.get("numDraftRounds");
+
+	if (numActiveTeams === 0 || numDraftRounds === 0) {
+		return [];
+	}
+
+	const minContract = g.get("minContract");
+	const maxContract = g.get("maxContract");
+
+	if (isSport("hockey")) {
+		const earlySalary = Math.min(2 * minContract, maxContract);
+		const lateSalary = minContract;
+
+		const salaries = [];
+
+		for (let i = 0; i < numActiveTeams * numDraftRounds; i++) {
+			if (i < (numActiveTeams * numDraftRounds) / 2) {
+				salaries.push(earlySalary);
+			} else {
+				salaries.push(lateSalary);
+			}
+		}
+
+		return salaries;
+	}
+
 	// Default for first round
 	const firstRoundRookieSalaries = [
 		5000,
@@ -77,18 +105,18 @@ const getRookieSalaries = (): number[] => {
 		500,
 	];
 
-	while (g.get("numActiveTeams") > firstRoundRookieSalaries.length) {
+	while (numActiveTeams > firstRoundRookieSalaries.length) {
 		//add first round contracts on to end of first round
 		firstRoundRookieSalaries.push(1000);
 	}
 
-	while (g.get("numActiveTeams") < firstRoundRookieSalaries.length) {
+	while (numActiveTeams < firstRoundRookieSalaries.length) {
 		//remove smallest first round salaries
 		firstRoundRookieSalaries.pop();
 	}
 
 	while (
-		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) >
+		numActiveTeams * (numDraftRounds - 1) >
 		otherRoundRookieSalaries.length
 	) {
 		// Add min contracts on to end
@@ -96,7 +124,7 @@ const getRookieSalaries = (): number[] => {
 	}
 
 	while (
-		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) <
+		numActiveTeams * (numDraftRounds - 1) <
 		otherRoundRookieSalaries.length
 	) {
 		// Remove smallest salaries
@@ -107,16 +135,23 @@ const getRookieSalaries = (): number[] => {
 		otherRoundRookieSalaries,
 	);
 
-	if (g.get("minContract") !== 500 || g.get("maxContract") !== 20000) {
+	if (minContract !== 500 || maxContract !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {
 			// Subtract min
-			rookieSalaries[i] -= 500; // Scale so max will be 1/4 the max contract
+			rookieSalaries[i] -= 500;
 
-			rookieSalaries[i] *=
-				(0.25 * g.get("maxContract") - g.get("minContract")) / 4500; // Add min back
+			// Scale so max will be 1/4 the max contract
+			rookieSalaries[i] *= (0.25 * maxContract - minContract) / 4500;
 
-			rookieSalaries[i] += g.get("minContract");
+			// Add min back
+			rookieSalaries[i] += minContract;
 			rookieSalaries[i] = helpers.roundContract(rookieSalaries[i]);
+
+			rookieSalaries[i] = helpers.bound(
+				rookieSalaries[i],
+				minContract,
+				maxContract,
+			);
 		}
 	}
 

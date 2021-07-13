@@ -46,18 +46,19 @@ const moodInfo = async (
 	}
 
 	// Add some based on how long free agency has lasted and how good/bad the player is
-	let sumAndStuff = sumComponents;
+	let sumAndStuff = sumComponents - 0.5;
 	if (p.tid === PLAYER.FREE_AGENT) {
 		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	}
-	const valueDiff = (p.value - bySport({ football: 85, basketball: 65 })) / 2;
+	const valueDiff =
+		(p.value - bySport({ football: 85, basketball: 65, hockey: 75 })) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	const thisIsAUserTeam = g.get("userTids").includes(tid);
 
 	// More AI players testing free agency
 	if (!thisIsAUserTeam) {
-		sumAndStuff -= 2;
+		sumAndStuff -= 3;
 	}
 
 	let contractAmount =

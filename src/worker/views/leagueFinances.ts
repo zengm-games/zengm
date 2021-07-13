@@ -9,8 +9,9 @@ const updateLeagueFinances = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		inputs.season !== state.season ||
-		inputs.season === g.get("season")
+		updateEvents.includes("gameSim") ||
+		updateEvents.includes("newPhase") ||
+		state.season !== inputs.season
 	) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			0,
@@ -19,7 +20,7 @@ const updateLeagueFinances = async (
 
 		const teams = (
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
+				attrs: ["tid", "budget"],
 				seasonAttrs: [
 					"att",
 					"revenue",

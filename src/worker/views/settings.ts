@@ -1,12 +1,118 @@
-import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import { defaultInjuries, g } from "../util";
+import type {
+	GameAttributesLeague,
+	GetLeagueOptionsReal,
+	InjuriesSetting,
+	UpdateEvents,
+} from "../../common/types";
+
+const keys = [
+	"godMode",
+	"godModeInPast",
+	"numGames",
+	"numActiveTeams",
+	"quarterLength",
+	"maxRosterSize",
+	"minRosterSize",
+	"salaryCap",
+	"minPayroll",
+	"luxuryPayroll",
+	"luxuryTax",
+	"minContract",
+	"maxContract",
+	"minContractLength",
+	"maxContractLength",
+	"aiTradesFactor",
+	"injuryRate",
+	"homeCourtAdvantage",
+	"rookieContractLengths",
+	"rookiesCanRefuse",
+	"tragicDeathRate",
+	"brotherRate",
+	"sonRate",
+	"forceRetireAge",
+	"hardCap",
+	"numGamesPlayoffSeries",
+	"numPlayoffByes",
+	"draftType",
+	"draftAges",
+	"playersRefuseToNegotiate",
+	"allStarGame",
+	"budget",
+	"numSeasonsFutureDraftPicks",
+	"foulRateFactor",
+	"foulsNeededToFoulOut",
+	"foulsUntilBonus",
+	"threePointers",
+	"pace",
+	"threePointTendencyFactor",
+	"threePointAccuracyFactor",
+	"twoPointAccuracyFactor",
+	"blockFactor",
+	"stealFactor",
+	"turnoverFactor",
+	"orbFactor",
+	"challengeNoDraftPicks",
+	"challengeNoFreeAgents",
+	"challengeNoTrades",
+	"challengeLoseBestPlayer",
+	"challengeNoRatings",
+	"challengeFiredLuxuryTax",
+	"challengeFiredMissPlayoffs",
+	"challengeThanosMode",
+	"realPlayerDeterminism",
+	"repeatSeason",
+	"ties",
+	"otl",
+	"spectator",
+	"elam",
+	"elamASG",
+	"elamMinutes",
+	"elamPoints",
+	"playerMoodTraits",
+	"numPlayersOnCourt",
+	"numDraftRounds",
+	"tradeDeadline",
+	"autoDeleteOldBoxScores",
+	"difficulty",
+	"stopOnInjury",
+	"stopOnInjuryGames",
+	"aiJerseyRetirement",
+	"numPeriods",
+	"tiebreakers",
+	"pointsFormula",
+	"equalizeRegions",
+	"realDraftRatings",
+	"hideDisabledTeams",
+	"hofFactor",
+	"injuries",
+	"inflationAvg",
+	"inflationMax",
+	"inflationMin",
+	"inflationStd",
+] as const;
+
+export type Settings = Pick<
+	GameAttributesLeague,
+	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings" | "injuries">
+> & {
+	repeatSeason: boolean;
+	noStartingInjuries: boolean;
+	realDraftRatings: Exclude<
+		GameAttributesLeague["realDraftRatings"],
+		undefined
+	>;
+	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
+	realStats: GetLeagueOptionsReal["realStats"];
+	injuries: InjuriesSetting;
+};
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
 	) {
-		return {
+		const settings: Settings = {
 			godMode: g.get("godMode"),
 			godModeInPast: g.get("godModeInPast"),
 			numGames: g.get("numGames"),
@@ -30,21 +136,28 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tragicDeathRate: g.get("tragicDeathRate"),
 			brotherRate: g.get("brotherRate"),
 			sonRate: g.get("sonRate"),
+			forceRetireAge: g.get("forceRetireAge"),
 			hardCap: g.get("hardCap"),
-			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"), // Always get latest value
-			numPlayoffByes: g.get("numPlayoffByes"), // Always get latest value
+			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"),
+			numPlayoffByes: g.get("numPlayoffByes"),
 			draftType: g.get("draftType"),
+			draftAges: g.get("draftAges"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			allStarGame: g.get("allStarGame"),
 			budget: g.get("budget"),
 			numSeasonsFutureDraftPicks: g.get("numSeasonsFutureDraftPicks"),
 			foulRateFactor: g.get("foulRateFactor"),
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
+			foulsUntilBonus: g.get("foulsUntilBonus"),
 			threePointers: g.get("threePointers"),
 			pace: g.get("pace"),
 			threePointTendencyFactor: g.get("threePointTendencyFactor"),
 			threePointAccuracyFactor: g.get("threePointAccuracyFactor"),
 			twoPointAccuracyFactor: g.get("twoPointAccuracyFactor"),
+			blockFactor: g.get("blockFactor"),
+			stealFactor: g.get("stealFactor"),
+			turnoverFactor: g.get("turnoverFactor"),
+			orbFactor: g.get("orbFactor"),
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 			challengeNoTrades: g.get("challengeNoTrades"),
@@ -52,9 +165,11 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeFiredLuxuryTax: g.get("challengeFiredLuxuryTax"),
 			challengeFiredMissPlayoffs: g.get("challengeFiredMissPlayoffs"),
+			challengeThanosMode: g.get("challengeThanosMode"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),
+			otl: g.get("otl"),
 			spectator: g.get("spectator"),
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
@@ -70,7 +185,25 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),
 			aiJerseyRetirement: g.get("aiJerseyRetirement"),
 			numPeriods: g.get("numPeriods"),
+			tiebreakers: g.get("tiebreakers"),
+			pointsFormula: g.get("pointsFormula"),
+			equalizeRegions: g.get("equalizeRegions"),
+			hideDisabledTeams: g.get("hideDisabledTeams"),
+			noStartingInjuries: false,
+			hofFactor: g.get("hofFactor"),
+			injuries: g.get("injuries") ?? defaultInjuries,
+			inflationAvg: g.get("inflationAvg"),
+			inflationMax: g.get("inflationMax"),
+			inflationMin: g.get("inflationMin"),
+			inflationStd: g.get("inflationStd"),
+
+			// Might as well be undefined, because it will never be saved from this form, only the new league form
+			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+			randomization: "none",
+			realStats: "none",
 		};
+
+		return settings;
 	}
 };
 

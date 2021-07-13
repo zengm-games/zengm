@@ -2,7 +2,13 @@ import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols } from "../util";
-import { getPeriodName, helpers, processPlayerStats } from "../../common";
+import {
+	filterPlayerStats,
+	getPeriodName,
+	helpers,
+	processPlayerStats,
+} from "../../common";
+import { PLAYER_GAME_STATS } from "../../common/constants.football";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -29,64 +35,6 @@ type BoxScore = {
 	numPeriods?: number;
 };
 
-const statsByType = {
-	passing: [
-		"pssCmp",
-		"pss",
-		"cmpPct",
-		"pssYds",
-		"pssTD",
-		"pssInt",
-		"pssSk",
-		"pssSkYds",
-		"qbRat",
-		"fmbLost",
-	],
-	rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
-	receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
-	kicking: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
-	punting: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
-	returns: [
-		"kr",
-		"krYds",
-		"krYdsPerAtt",
-		"krLng",
-		"krTD",
-		"pr",
-		"prYds",
-		"prYdsPerAtt",
-		"prLng",
-		"prTD",
-	],
-	defense: [
-		"defTckSolo",
-		"defTckAst",
-		"defTck",
-		"defTckLoss",
-		"defSk",
-		"defSft",
-		"defPssDef",
-		"defInt",
-		"defIntYds",
-		"defIntTD",
-		"defIntLng",
-		"defFmbFrc",
-		"defFmbRec",
-		"defFmbYds",
-		"defFmbTD",
-	],
-};
-
-const sortsByType = {
-	passing: ["pssYds"],
-	rushing: ["rusYds"],
-	receiving: ["recYds"],
-	kicking: ["kickingPts"],
-	punting: ["pnt"],
-	returns: ["krYds", "prYds"],
-	defense: ["defTck"],
-};
-
 const StatsTable = ({
 	Row,
 	boxScore,
@@ -94,11 +42,11 @@ const StatsTable = ({
 }: {
 	Row: any;
 	boxScore: BoxScore;
-	type: keyof typeof sortsByType;
+	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
-	const stats = statsByType[type];
+	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
-	const sorts = sortsByType[type];
+	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
 	return (
 		<>
@@ -128,19 +76,7 @@ const StatsTable = ({
 											processed: processPlayerStats(p, stats),
 										};
 									})
-									.filter(p => {
-										// Filter based on if player has any stats
-										for (const stat of stats) {
-											if (
-												p.processed[stat] !== undefined &&
-												p.processed[stat] !== 0 &&
-												stat !== "fmbLost"
-											) {
-												return true;
-											}
-										}
-										return false;
-									})
+									.filter(p => filterPlayerStats(p, stats, type))
 									.sort((a, b) => {
 										for (const sort of sorts) {
 											if (b.processed[sort] !== a.processed[sort]) {
@@ -268,8 +204,13 @@ const ScoringSummary = memo(
 				<tbody>
 					{processedEvents.map((event, i) => {
 						let quarterText = "???";
-						if (event.quarter === "OT") {
-							quarterText = "Overtime";
+						if (event.quarter.startsWith("OT")) {
+							const overtimes = parseInt(event.quarter.replace("OT", ""));
+							if (overtimes > 1) {
+								quarterText = `${helpers.ordinal(overtimes)} overtime`;
+							} else {
+								quarterText = "Overtime";
+							}
 						} else {
 							const quarter = parseInt(event.quarter.replace("Q", ""));
 							if (!Number.isNaN(quarter)) {

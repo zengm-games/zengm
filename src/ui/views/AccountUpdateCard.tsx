@@ -8,9 +8,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getScript, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
-
-const ajaxErrorMsg =
-	"Error connecting to server. Check your Internet connection or try again later.";
+import { ajaxErrorMsg } from "./LoginOrRegister";
 
 const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({
@@ -38,15 +36,14 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 		})();
 	}, []);
 
-	const handleChange = (name: string) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const value = event.target.value;
-		setState(prevState => ({
-			...prevState,
-			[name]: value,
-		}));
-	};
+	const handleChange =
+		(name: string) => (event: ChangeEvent<HTMLInputElement>) => {
+			const value = event.target.value;
+			setState(prevState => ({
+				...prevState,
+				[name]: value,
+			}));
+		};
 
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();

@@ -1,18 +1,21 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 
 async function updateSeasons(
 	inputs: unknown,
 	updateEvents: UpdateEvents,
-): Promise<{
-	abbrevs: string[];
-	season: number;
-	seasons: (number | undefined)[][];
-	userTid: number;
-} | void> {
+): Promise<
+	| {
+			abbrevs: string[];
+			season: number;
+			seasons: (number | undefined)[][];
+			userAbbrev: string;
+	  }
+	| undefined
+> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -139,7 +142,7 @@ async function updateSeasons(
 			abbrevs: abbrevsSorted,
 			season: g.get("season"),
 			seasons: seasonsSorted,
-			userTid: g.get("userTid"),
+			userAbbrev: g.get("teamInfoCache")[g.get("userTid")].abbrev,
 		};
 	}
 }

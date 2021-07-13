@@ -1,4 +1,10 @@
-import { PLAYER, applyRealTeamInfo, bySport } from "../../../common";
+import {
+	PLAYER,
+	applyRealTeamInfo,
+	bySport,
+	isSport,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+} from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -7,7 +13,7 @@ import type {
 	PhaseReturn,
 	RealTeamInfo,
 } from "../../../common/types";
-import groupBy from "lodash/groupBy";
+import { groupBy } from "../../../common/groupBy";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -34,6 +40,18 @@ const newPhasePreseason = async (
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
 		| RealTeamInfo
 		| undefined;
+
+	const popInfo: Record<
+		string,
+		{
+			oldPop: number;
+			newPop: number;
+		}
+	> = {};
+	const sameRegionOverrides: Record<string, string | undefined> = {
+		"San Jose": "San Francisco",
+		Brooklyn: "New York",
+	};
 
 	let updatedTeams = false;
 	let scoutingRank: number | undefined;
@@ -139,7 +157,22 @@ const newPhasePreseason = async (
 
 		// Mean population should stay constant, otherwise the economics change too much
 		if (!g.get("equalizeRegions")) {
-			t.pop *= random.uniform(0.98, 1.02);
+			// Check if this is the same region as another team, in which case keep the populations in sync
+			const actualRegion = sameRegionOverrides[t.region] ?? t.region;
+			if (
+				actualRegion !== "" &&
+				popInfo[actualRegion] &&
+				popInfo[actualRegion].oldPop === t.pop
+			) {
+				t.pop = popInfo[actualRegion].newPop;
+			} else {
+				const newPop = t.pop * random.uniform(0.98, 1.02);
+				popInfo[actualRegion] = {
+					oldPop: t.pop,
+					newPop,
+				};
+				t.pop = newPop;
+			}
 		}
 		newSeason.pop = t.pop;
 
@@ -161,12 +194,15 @@ const newPhasePreseason = async (
 			local.autoPlayUntil ||
 			g.get("spectator")
 		) {
-			team.autoBudgetSettings(t, popRanks[i]);
+			await team.autoBudgetSettings(t, popRanks[i]);
 			t.adjustForInflation = true;
+			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
+			t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
 			await idb.cache.teams.put(t);
 		}
 	}
+	await finances.updateRanks(["budget"]);
 
 	if (updatedTeams) {
 		await league.setGameAttributes({
@@ -174,6 +210,7 @@ const newPhasePreseason = async (
 				abbrev: t.abbrev,
 				disabled: t.disabled,
 				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
 				name: t.name,
 				region: t.region,
 			})),
@@ -215,6 +252,7 @@ const newPhasePreseason = async (
 				`Internet sleuths on /r/${bySport({
 					basketball: "nba",
 					football: "nfl",
+					hockey: "hockey",
 				})} uncovered evidence that ${name}`,
 				`Internet sleuths on Twitter uncovered evidence that ${name}`,
 				`In an emotional interview on 60 Minutes, ${name} admitted that he`,
@@ -241,6 +279,10 @@ const newPhasePreseason = async (
 
 	// Loop through all non-retired players
 	for (const p of players) {
+		if (isSport("hockey") && p.numConsecutiveGamesG !== undefined) {
+			p.numConsecutiveGamesG = 0;
+		}
+
 		if (!repeatSeason) {
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);
@@ -333,9 +375,8 @@ const newPhasePreseason = async (
 
 				for (const p of conflicts) {
 					if (p !== playerWhoKeepsIt) {
-						p.stats[
-							p.stats.length - 1
-						].jerseyNumber = await player.genJerseyNumber(p);
+						p.stats[p.stats.length - 1].jerseyNumber =
+							await player.genJerseyNumber(p);
 					}
 				}
 			}

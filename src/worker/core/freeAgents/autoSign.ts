@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { isSport, PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";
@@ -24,7 +24,7 @@ const autoSign = async () => {
 	}
 
 	// List of free agents, sorted by value
-	const playersSorted = orderBy(players, "value", "desc");
+	let playersSorted = orderBy(players, "value", "desc");
 
 	// Randomly order teams
 	const teams = await idb.cache.teams.getAll();
@@ -64,8 +64,10 @@ const autoSign = async () => {
 		// Ignore roster size, will drop bad player if necessary in checkRosterSizes, and getBest won't sign min contract player unless under the roster limit
 		const payroll = await team.getPayroll(t.tid);
 		const p = getBest(playersOnRoster, playersSorted, payroll);
-
 		if (p) {
+			// Remove from list of free agents
+			playersSorted = playersSorted.filter(p2 => p2 !== p);
+
 			await player.sign(p, t.tid, p.contract, g.get("phase"));
 			await idb.cache.players.put(p);
 			await team.rosterAutoSort(t.tid);

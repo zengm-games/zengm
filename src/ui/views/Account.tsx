@@ -1,109 +1,93 @@
 import classNames from "classnames";
-import groupBy from "lodash/groupBy";
+import { groupBy } from "../../common/groupBy";
 import PropTypes from "prop-types";
-import { Component, Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 	GAME_NAME,
-	isSport,
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getScript, localActions, realtimeUpdate } from "../util";
+import {
+	confirm,
+	getScript,
+	localActions,
+	realtimeUpdate,
+	toWorker,
+} from "../util";
 import type { View } from "../../common/types";
+import { GameLinks } from "../components";
+import { ajaxErrorMsg } from "./LoginOrRegister";
 
-const ajaxErrorMsg =
-	"Error connecting to server. Check your Internet connection or try again later.";
+const StripeButton = ({ email }: { email: string }) => {
+	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
 
-type StripeButtonProps = {
-	email: string;
-};
-
-type StripeButtonState = {
-	handler: StripeCheckoutHandler | undefined | null;
-};
-
-class StripeButton extends Component<StripeButtonProps, StripeButtonState> {
-	constructor(props: StripeButtonProps) {
-		super(props);
-		this.state = {
-			handler: null,
-		};
-		this.handleClick = this.handleClick.bind(this);
-	}
-
-	componentDidMount() {
+	useEffect(() => {
 		(async () => {
 			if (!window.StripeCheckout) {
 				await getScript("https://checkout.stripe.com/checkout.js");
 			}
 
-			if (!this.state.handler) {
-				this.setState({
-					handler: window.StripeCheckout.configure({
-						key: STRIPE_PUBLISHABLE_KEY,
-						image: "/ico/icon128.png",
-						token: async token => {
-							try {
-								const data = await fetchWrapper({
-									url: `${ACCOUNT_API_URL}/gold_start.php`,
-									method: "POST",
-									data: {
-										sport: process.env.SPORT,
-										token: token.id,
-									},
-									credentials: "include",
-								});
-								realtimeUpdate(["account"], "/account", {
-									goldResult: data,
-								});
-							} catch (err) {
-								console.log(err);
-								realtimeUpdate(["account"], "/account", {
-									goldResult: {
-										success: false,
-										message: ajaxErrorMsg,
-									},
-								});
+			setHandler(
+				window.StripeCheckout.configure({
+					key: STRIPE_PUBLISHABLE_KEY,
+					image: "/ico/icon128.png",
+					token: async token => {
+						try {
+							const data = await fetchWrapper({
+								url: `${ACCOUNT_API_URL}/gold_start.php`,
+								method: "POST",
+								data: {
+									sport: process.env.SPORT,
+									token: token.id,
+								},
+								credentials: "include",
+							});
+							realtimeUpdate(["account"], "/account", {
+								goldResult: data,
+							});
+							if (data.success) {
+								toWorker("main", "initGold");
 							}
-						},
-					}),
-				});
-			}
+						} catch (error) {
+							console.error(error);
+							realtimeUpdate(["account"], "/account", {
+								goldResult: {
+									success: false,
+									message: ajaxErrorMsg,
+								},
+							});
+						}
+					},
+				}),
+			);
 		})();
-	}
+	}, []);
 
-	handleClick() {
-		if (this.state.handler) {
-			this.state.handler.open({
+	const handleClick = () => {
+		if (handler) {
+			handler.open({
 				name: "GM Gold",
 				description: "",
 				amount: 500,
-				email: this.props.email,
+				email,
 				allowRememberMe: false,
 				panelLabel: "Subscribe for $5/month",
 			});
 		}
-	}
+	};
 
-	render() {
-		return (
-			<button
-				className="btn btn-lg btn-primary"
-				disabled={!this.state.handler}
-				onClick={this.handleClick}
-			>
-				Sign Up for GM Gold
-			</button>
-		);
-	}
-}
-
-// @ts-ignore
-StripeButton.propTypes = {
-	email: PropTypes.string.isRequired,
+	return (
+		<button
+			className="btn btn-lg btn-primary"
+			disabled={!handler}
+			onClick={handleClick}
+		>
+			Sign Up for GM Gold
+		</button>
+	);
 };
 
 const handleCancel = async (e: MouseEvent) => {
@@ -141,31 +125,24 @@ const handleCancel = async (e: MouseEvent) => {
 	}
 };
 
-type UserInfoProps = {
+const UserInfo = ({
+	goldUntilDateString,
+	loggedIn,
+	showGoldActive,
+	showGoldCancelled,
+	username,
+}: {
 	goldUntilDateString: string;
 	loggedIn: boolean;
 	showGoldActive: boolean;
 	showGoldCancelled: boolean;
 	username?: string;
-};
-type UserInfoState = {
-	logoutError: string | undefined | null;
-};
+}) => {
+	const [logoutError, setLogoutError] = useState<string | undefined>();
 
-class UserInfo extends Component<UserInfoProps, UserInfoState> {
-	constructor(props: UserInfoProps) {
-		super(props);
-		this.state = {
-			logoutError: null,
-		};
-		this.handleLogout = this.handleLogout.bind(this);
-	}
-
-	async handleLogout(e: MouseEvent) {
-		e.preventDefault();
-		this.setState({
-			logoutError: null,
-		});
+	const handleLogout = async (event: MouseEvent) => {
+		event.preventDefault();
+		setLogoutError(undefined);
 
 		try {
 			await fetchWrapper({
@@ -180,62 +157,51 @@ class UserInfo extends Component<UserInfoProps, UserInfoState> {
 				username: "",
 			});
 			realtimeUpdate(["account"], "/");
-		} catch (err) {
-			this.setState({
-				logoutError: ajaxErrorMsg,
-			});
+		} catch (error) {
+			console.error(error);
+			setLogoutError(ajaxErrorMsg);
 		}
-	}
+	};
 
-	render() {
-		const {
-			goldUntilDateString,
-			loggedIn,
-			showGoldActive,
-			showGoldCancelled,
-			username,
-		} = this.props;
-		return (
-			<>
-				{!loggedIn ? (
-					<p>
-						You are not logged in!{" "}
-						<a href="/account/login_or_register">
-							Click here to log in or create an account.
-						</a>{" "}
-						If you have an account, your achievements will be stored in the
-						cloud, combining achievements from leagues in different browsers and
-						different computers.
-					</p>
-				) : (
-					<p>
-						Logged in as: <b>{username}</b> (
-						<a href="" id="logout" onClick={this.handleLogout}>
-							Logout
-						</a>
-						)
-					</p>
-				)}
-				<p className="text-danger">{this.state.logoutError}</p>
-				{showGoldActive ? (
-					<p>
-						GM Gold: Active, renews for $5 on {goldUntilDateString} (
-						<a href="/account/update_card">Update card</a> or{" "}
-						<a href="" id="gold-cancel" onClick={handleCancel}>
-							cancel
-						</a>
-						)
-					</p>
-				) : null}
-				{showGoldCancelled ? (
-					<p>GM Gold: Cancelled, expires {goldUntilDateString}</p>
-				) : null}
-			</>
-		);
-	}
-}
+	return (
+		<>
+			{!loggedIn ? (
+				<p>
+					You are not logged in!{" "}
+					<a href="/account/login_or_register">
+						Click here to log in or create an account.
+					</a>{" "}
+					If you have an account, your achievements will be stored in the cloud,
+					combining achievements from leagues in different browsers and
+					different computers.
+				</p>
+			) : (
+				<p>
+					Logged in as: <b>{username}</b> (
+					<a href="" onClick={handleLogout}>
+						Logout
+					</a>
+					)
+				</p>
+			)}
+			{logoutError ? <p className="text-danger">{logoutError}</p> : null}
+			{showGoldActive ? (
+				<p>
+					GM Gold: Active, renews for $5 on {goldUntilDateString} (
+					<a href="/account/update_card">Update card</a> or{" "}
+					<a href="" id="gold-cancel" onClick={handleCancel}>
+						cancel
+					</a>
+					)
+				</p>
+			) : null}
+			{showGoldCancelled ? (
+				<p>GM Gold: Cancelled, expires {goldUntilDateString}</p>
+			) : null}
+		</>
+	);
+};
 
-// @ts-ignore
 UserInfo.propTypes = {
 	goldUntilDateString: PropTypes.string.isRequired,
 	loggedIn: PropTypes.bool.isRequired,
@@ -263,7 +229,6 @@ const Account = ({
 	let goldPitchDiv: ReactNode = null;
 
 	if (showGoldPitch) {
-		const otherSport = isSport("basketball") ? "Football" : "Basketball";
 		goldPitchDiv = (
 			<>
 				<h2>GM Gold</h2>
@@ -297,16 +262,13 @@ const Account = ({
 							If you want to support {GAME_NAME} continuing to be a non-sucky
 							game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
 							get? More like, what don't you get? You get no new features, no
-							new improvements, no new anything. Just <b>no more ads</b>, both
-							here and on{" "}
-							<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>
-								{otherSport} GM
-							</a>
-							. That's it. Why? For basically the same reason I won't make{" "}
-							{GAME_NAME} freemium. I don't want the free version to become a
-							crippled advertisement for the pay version. If you agree that the
-							world is a better place when anyone anywhere can play {GAME_NAME}{" "}
-							and {otherSport} GM, sign up for GM Gold today!
+							new improvements, no new anything. Just <b>no more ads</b> on{" "}
+							<GameLinks thisGameText="this game" />. That's it. Why? For
+							basically the same reason I won't make {GAME_NAME} freemium. I
+							don't want the free version to become a crippled advertisement for
+							the pay version. If you agree that the world is a better place
+							when anyone anywhere can play <GameLinks noLinks />, sign up for
+							GM Gold today!
 						</p>
 
 						{!loggedIn || !email ? (

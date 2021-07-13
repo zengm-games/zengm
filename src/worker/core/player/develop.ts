@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { isSport, PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
@@ -17,23 +17,38 @@ export const bootstrapPot = async ({
 	age,
 	srID,
 	pos,
+	usePotEstimator,
 }: {
 	ratings: MinimalPlayerRatings;
 	age: number;
 	srID?: string;
 	pos?: string;
+	usePotEstimator?: boolean;
 }): Promise<number> => {
 	if (age >= 29) {
 		return pos ? ratings.ovrs[pos] : ratings.ovr;
 	}
 
-	if (isSport("football")) {
-		if (pos === undefined) {
-			throw new Error("pos is required for potEstimator");
+	if (
+		isSport("football") ||
+		isSport("hockey") ||
+		(isSport("basketball") && usePotEstimator)
+	) {
+		let ovr;
+		let pot;
+
+		if (isSport("football") || isSport("hockey")) {
+			if (pos === undefined) {
+				throw new Error("pos is required for potEstimator");
+			}
+
+			ovr = ratings.ovrs[pos];
+			pot = potEstimator(ovr, age, pos);
+		} else {
+			ovr = ratings.ovr;
+			pot = potEstimator(ovr, age);
 		}
 
-		const ovr = ratings.ovrs[pos];
-		let pot = potEstimator(ovr, age, pos);
 		pot += random.randInt(-2, 2);
 
 		if (ovr > pot) {

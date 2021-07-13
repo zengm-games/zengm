@@ -13,6 +13,7 @@ const TradeSummary = ({
 	seasonsToPlot,
 	stat,
 	teams,
+	usePts,
 }: View<"tradeSummary">) => {
 	useTitleBar({
 		title: "Trade Summary",
@@ -143,6 +144,7 @@ const TradeSummary = ({
 						seasonsToPlot={seasonsToPlot}
 						stat={stat}
 						teams={teams}
+						usePts={usePts}
 					/>
 				</div>
 			</div>

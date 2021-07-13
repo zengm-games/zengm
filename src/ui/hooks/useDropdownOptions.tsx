@@ -1,29 +1,36 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	isSport,
 	bySport,
+	isSport,
 } from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
 export const getSortedTeams = ({
 	teamInfoCache,
+	hideDisabledTeams,
 }: {
 	teamInfoCache: LocalStateUI["teamInfoCache"];
+	hideDisabledTeams: boolean;
 }) => {
 	const array = [
 		...orderBy(
 			teamInfoCache.filter(t => !t.disabled),
 			["region", "name", "tid"],
 		),
-		...orderBy(
-			teamInfoCache.filter(t => t.disabled),
-			["region", "name", "tid"],
-		),
 	];
+
+	if (!hideDisabledTeams) {
+		array.push(
+			...orderBy(
+				teamInfoCache.filter(t => t.disabled),
+				["region", "name", "tid"],
+			),
+		);
+	}
 
 	const object: { [key: string]: string | undefined } = {};
 	for (const t of array) {
@@ -48,7 +55,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	perGame: "Per Game",
 	per36: "Per 36 Minutes",
 	totals: "Totals",
-	shotLocations: "Shot Locations",
+	shotLocations: "Shot Locations and Feats",
 	advanced: "Advanced",
 	gameHighs: "Game Highs",
 	passing: "Passing",
@@ -58,8 +65,10 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	returns: "Returns",
 	champion: "Won Championship",
 	mvp: "Most Valuable Player",
-	finals_mvp: "Finals MVP",
+	finals_mvp: isSport("hockey") ? "Playoffs MVP" : "Finals MVP",
 	dpoy: "Defensive Player of the Year",
+	dfoy: "Defensive Forward of the Year",
+	goy: "Goalie of the Year",
 	smoy: "Sixth Man of the Year",
 	mip: "Most Improved Player",
 	roy: "Rookie of the Year",
@@ -78,6 +87,13 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	apg_leader: "League Assists Leader",
 	spg_leader: "League Steals Leader",
 	bpg_leader: "League Blocks Leader",
+	pss_leader: "League Passing Leader",
+	rush_leader: "League Rushing Leader",
+	rcv_leader: "League Receiving Leader",
+	scr_leader: "League Scrimmage Yards Leader",
+	pts_leader: "League Points Leader",
+	g_leader: "League Goals Leader",
+	ast_leader: "League Assists Leader",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",
 	"all|||types": "All Types",
@@ -103,7 +119,21 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	flag: "Flagged Players",
 	note: "Players With Notes",
 	either: "Either",
+	skater: "Skaters",
+	goalie: "Goalies",
+	"all|||playoffsAll": "All Games",
+	current: "Current",
+	overview: "Overview",
+	gameLog: "Game Log",
 };
+
+if (isSport("hockey")) {
+	Object.assign(dropdownValues, {
+		F: "Forwards",
+		D: "Defensemen",
+		G: "Goalies",
+	});
+}
 
 export const getDropdownValue = (
 	key: number | string,
@@ -133,8 +163,12 @@ export const getDropdownValue = (
 	}
 };
 
-const useDropdownOptions = (field: string) => {
+const useDropdownOptions = (
+	field: string,
+	customOptions?: (string | number)[],
+) => {
 	const state = useLocalShallow(state2 => ({
+		hideDisabledTeams: state2.hideDisabledTeams,
 		phase: state2.phase,
 		season: state2.season,
 		startingSeason: state2.startingSeason,
@@ -145,7 +179,9 @@ const useDropdownOptions = (field: string) => {
 
 	let keys: (number | string)[];
 
-	if (field === "teams") {
+	if (customOptions) {
+		keys = customOptions;
+	} else if (field === "teams") {
 		keys = Object.keys(sortedTeams);
 	} else if (field === "teamsAndSpecial") {
 		keys = ["special", ...Object.keys(sortedTeams)];
@@ -159,6 +195,7 @@ const useDropdownOptions = (field: string) => {
 		field === "seasons" ||
 		field === "seasonsAndCareer" ||
 		field === "seasonsAndAll" ||
+		field === "seasonsAndCurrent" ||
 		field === "seasonsAndOldDrafts" ||
 		field === "seasonsHistory"
 	) {
@@ -174,6 +211,10 @@ const useDropdownOptions = (field: string) => {
 
 		if (field === "seasonsAndAll") {
 			keys.unshift("all|||seasons");
+		}
+
+		if (field === "seasonsAndCurrent") {
+			keys.unshift("current");
 		}
 
 		if (field === "seasonsAndOldDrafts") {
@@ -209,20 +250,27 @@ const useDropdownOptions = (field: string) => {
 		}
 	} else if (field === "playoffs") {
 		keys = ["regularSeason", "playoffs"];
+	} else if (field === "playoffsAll") {
+		keys = ["all|||playoffsAll", "regularSeason", "playoffs"];
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
-		if (isSport("basketball")) {
-			keys = ["perGame", "per36", "totals"];
-
-			if (field === "statTypesAdv") {
-				keys.push("shotLocations");
-				keys.push("advanced");
-				keys.push("gameHighs");
-			}
-		} else {
-			keys = ["passing", "rushing", "defense", "kicking", "returns"];
-		}
+		keys = bySport({
+			basketball: [
+				"perGame",
+				"per36",
+				"totals",
+				...(field === "statTypesAdv"
+					? ["shotLocations", "advanced", "gameHighs"]
+					: []),
+			],
+			football: ["passing", "rushing", "defense", "kicking", "returns"],
+			hockey: [
+				"skater",
+				"goalie",
+				...(field === "statTypesAdv" ? ["advanced"] : []),
+			],
+		});
 	} else if (field === "awardType") {
 		keys = bySport({
 			basketball: [
@@ -259,6 +307,25 @@ const useDropdownOptions = (field: string) => {
 				"first_team",
 				"second_team",
 				"all_league",
+				"pss_leader",
+				"rush_leader",
+				"rcv_leader",
+				"scr_leader",
+			],
+			hockey: [
+				"champion",
+				"mvp",
+				"finals_mvp",
+				"dpoy",
+				"dfoy",
+				"roy",
+				"goy",
+				"first_team",
+				"second_team",
+				"all_league",
+				"pts_leader",
+				"g_leader",
+				"ast_leader",
 			],
 		});
 	} else if (field === "eventType") {
@@ -282,8 +349,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["by_team", "by_conf", "by_div"];
 	} else if (field === "teamRecordsFilter") {
 		keys = ["all|||teams", "your_teams"];
-	} else if (field === "positions") {
-		keys = POSITIONS;
+	} else if (field === "depth") {
+		keys = isSport("hockey") ? ["F", "D", "G"] : POSITIONS;
 	} else if (field === "newsLevels") {
 		keys = ["big", "normal", "all|||news"];
 	} else if (field === "newestOldestFirst") {
@@ -292,6 +359,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["league", "conf", "div"];
 	} else if (field === "flagNote") {
 		keys = ["flag", "note", "either"];
+	} else if (field === "playerProfile") {
+		keys = ["overview", "gameLog"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

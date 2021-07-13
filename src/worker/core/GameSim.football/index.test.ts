@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import assert from "assert";
 import GameSim from ".";
 import { player, team } from "..";
@@ -21,14 +21,17 @@ const genTwoTeams = async () => {
 	});
 };
 
-const simGame = async () => {
+const initGameSim = async () => {
 	const teams = await loadTeams([0, 1]);
 	for (const t of [teams[0], teams[1]]) {
 		if (t.depth !== undefined) {
 			t.depth = team.getDepthPlayers(t.depth, t.player);
 		}
 	}
-	return new GameSim(0, [teams[0], teams[1]], false);
+	return new GameSim({
+		gid: 0,
+		teams: [teams[0], teams[1]],
+	});
 };
 
 describe("worker/core/GameSim.football", () => {
@@ -37,7 +40,7 @@ describe("worker/core/GameSim.football", () => {
 	});
 
 	test("kick a field goal when down 2 at the end of the game and there is little time left", async () => {
-		const game = await simGame();
+		const game = await initGameSim();
 
 		// Down by 2, 4th quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
@@ -53,7 +56,7 @@ describe("worker/core/GameSim.football", () => {
 	});
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
-		const game = await simGame();
+		const game = await initGameSim();
 
 		// Arbitrary score, 2nd quarter, ball on the opp 20 yard line, 6 seconds left
 		game.awaitingKickoff = undefined;
@@ -70,7 +73,7 @@ describe("worker/core/GameSim.football", () => {
 
 	test("don't punt when down late, and usually pass", async () => {
 		// Down by 7, 4th quarter, ball on own 20 yard line, 4th down, 1:30 left
-		const game = await simGame();
+		const game = await initGameSim();
 		game.awaitingKickoff = undefined;
 		game.o = 0;
 		game.d = 1;
@@ -93,5 +96,104 @@ describe("worker/core/GameSim.football", () => {
 
 		// Should really be 2% chance
 		assert(numRun <= 10);
+	});
+
+	test("sack on 4th down gets recorded on correct team", async () => {
+		const game = await initGameSim();
+
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.scrimmage = 20;
+		game.down = 4;
+
+		// Sacks always happen, no penalties
+		game.probSack = () => 1;
+		game.probFumble = () => 0;
+		game.checkPenalties = () => undefined;
+
+		game.doPass();
+
+		assert.strictEqual(game.team[0].stat.defSk, 0);
+		assert.strictEqual(game.team[1].stat.defSk, 1);
+
+		// Possession changed
+		assert.strictEqual(game.o, 1);
+		assert.strictEqual(game.d, 0);
+	});
+
+	test("OT ends after failed 4th down conversion if 1st team kicked a FG", async () => {
+		// Down by 3, overtime, ball on own 20 yard line, 4th down, 1:30 left
+		const game = await initGameSim();
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = 0;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 3;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, 0, game.team[1].stat.pts];
+		game.down = 4;
+		game.scrimmage = 20;
+		game.clock = 1.5;
+		game.overtimeState = "secondPossession";
+
+		// Sacks always happen, no penalties
+		game.getPlayType = () => "pass";
+		game.probSack = () => 1;
+		game.checkPenalties = () => undefined;
+
+		game.simPlay();
+
+		assert.strictEqual(game.overtimeState, "over");
+
+		// Possession changed
+		assert.strictEqual(game.o, 1);
+		assert.strictEqual(game.d, 0);
+	});
+
+	// This test is a bit flaky because a run of 10 yards followed by a fumble recovery of -1 yards results in a 1st down :(
+	// That's why this checks for scrimmage under 25 rather than 30, to give it some cushion.
+	test("fumble recovered by offense should only cost one down", async () => {
+		const game = await initGameSim();
+
+		// No penalties, run the ball
+		game.checkPenalties = () => undefined;
+		game.getPlayType = () => "run";
+
+		// Keep doing it until offense recovers
+		while (true) {
+			game.awaitingKickoff = undefined;
+			game.awaitingAfterTouchdown = false;
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 20;
+			game.clock = 20;
+
+			// Just one fumble, not double fumble
+			let fumbled = false;
+			game.probFumble = () => {
+				if (fumbled) {
+					return 0;
+				}
+
+				fumbled = true;
+				return 1;
+			};
+
+			game.simPlay();
+
+			// Looking for the offense to recover, and not for a first down
+			if (game.o === 0 && game.scrimmage < 25 && !game.awaitingAfterTouchdown) {
+				break;
+			}
+		}
+
+		assert.strictEqual(game.down, 2);
+
+		// No possession change
+		assert.strictEqual(game.o, 0);
+		assert.strictEqual(game.d, 1);
 	});
 });

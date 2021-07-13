@@ -4,13 +4,16 @@ import type { NewLeagueTeam } from "./types";
 import type { Conf, Div, View } from "../../../common/types";
 import classNames from "classnames";
 import arrayMove from "array-move";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
-import countBy from "lodash/countBy";
-import { logEvent } from "../../util";
+import countBy from "lodash-es/countBy";
+import { HelpPopover, StickyBottomButtons } from "../../components";
+import { logEvent, toWorker } from "../../util";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
+import { Dropdown } from "react-bootstrap";
+import { processingSpinner } from "../../components/ActionButton";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -88,7 +91,7 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				confs: action.confs,
 				divs: action.divs,
-				teams: action.teams,
+				teams: makeTIDsSequential(action.teams),
 			};
 
 		case "addConf": {
@@ -683,9 +686,9 @@ const Conference = ({
 				))}
 			</div>
 
-			<div className="card-body p-0 m-3">
+			<div className="card-body p-0 m-3 d-flex">
 				<button
-					className="btn btn-secondary"
+					className="btn btn-secondary ml-auto"
 					onClick={() => {
 						dispatch({ type: "addDiv", cid: conf.cid });
 					}}
@@ -735,6 +738,8 @@ const CustomizeTeams = ({
 	>({
 		type: "none",
 	});
+
+	const [randomizing, setRandomizing] = useState(false);
 
 	const editTeam = (tid: number) => {
 		setEditingInfo({
@@ -798,27 +803,72 @@ const CustomizeTeams = ({
 		did: -1,
 		abbrev,
 	}));
-	const availableBuiltInTeams: NewLeagueTeam[] = getTeamInfos(param).map(t => ({
-		...t,
-		popRank: -1,
-	}));
+	const availableBuiltInTeams: NewLeagueTeam[] = orderBy(
+		getTeamInfos(param).map(t => ({
+			...t,
+			popRank: -1,
+		})),
+		["region", "name"],
+	);
+
+	const resetDefault = () => {
+		const info = getDefaultConfsDivsTeams();
+		dispatch({
+			type: "setState",
+			...info,
+		});
+	};
+
+	const randomize = (weightByPopulation: boolean) => async () => {
+		setRandomizing(true);
+
+		try {
+			// If there are no teams, auto reset to default first
+			let myDivs = divs;
+			let myTeams = teams;
+			let myConfs = confs;
+			if (myTeams.length === 0) {
+				const info = getDefaultConfsDivsTeams();
+				myDivs = info.divs;
+				myTeams = info.teams;
+				myConfs = info.confs;
+			}
+
+			const numTeamsPerDiv = myDivs.map(
+				div => myTeams.filter(t => t.did === div.did).length,
+			);
+
+			const response = await toWorker(
+				"main",
+				"getRandomTeams",
+				myDivs,
+				numTeamsPerDiv,
+				weightByPopulation,
+			);
+
+			if (typeof response === "string") {
+				logEvent({
+					type: "error",
+					text: response,
+					saveToDb: false,
+				});
+			} else {
+				dispatch({
+					type: "setState",
+					teams: response,
+					divs: myDivs,
+					confs: myConfs,
+				});
+			}
+			setRandomizing(false);
+		} catch (error) {
+			setRandomizing(false);
+			throw error;
+		}
+	};
 
 	return (
 		<>
-			<div className="mb-3">
-				<button
-					className="btn btn-danger"
-					onClick={() => {
-						const info = getDefaultConfsDivsTeams();
-						dispatch({
-							type: "setState",
-							...info,
-						});
-					}}
-				>
-					Reset All
-				</button>
-			</div>
 			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
@@ -835,50 +885,105 @@ const CustomizeTeams = ({
 					availableBuiltInTeams={availableBuiltInTeams}
 				/>
 			))}
-			<button
-				className="btn btn-secondary"
-				onClick={() => {
-					dispatch({ type: "addConf" });
-				}}
-			>
-				Add Conference
-			</button>
-
-			<form
-				className="mt-3"
-				onSubmit={event => {
-					event.preventDefault();
-
-					if (abbrevsUsedMultipleTimes.length > 0) {
-						logEvent({
-							type: "error",
-							text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
-								", ",
-							)}`,
-							saveToDb: false,
-						});
-						return;
-					}
-
-					if (teams.length < 2) {
-						logEvent({
-							type: "error",
-							text: "Your league must have at least 2 teams in it.",
-							saveToDb: false,
-						});
-						return;
-					}
-
-					onSave({ confs, divs, teams });
-				}}
-			>
-				<button className="btn btn-primary mr-2" type="submit">
-					Save Teams
+			<div className="mb-3 d-flex">
+				<button
+					className="btn btn-secondary ml-auto"
+					onClick={() => {
+						dispatch({ type: "addConf" });
+					}}
+					style={{
+						marginRight: 15,
+					}}
+				>
+					Add Conference
 				</button>
-				<button className="btn btn-secondary" type="button" onClick={onCancel}>
-					Cancel
-				</button>
-			</form>
+			</div>
+
+			<StickyBottomButtons>
+				<Dropdown>
+					<Dropdown.Toggle
+						variant="danger"
+						id="customize-teams-reset"
+						disabled={randomizing}
+					>
+						{randomizing ? processingSpinner : "Reset"}
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
+						<Dropdown.Item onClick={randomize(false)}>
+							Random built-in teams
+						</Dropdown.Item>
+						<Dropdown.Item onClick={randomize(true)}>
+							Random built-in teams (population weighted)
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+				<div className="ml-2 pt-2">
+					<HelpPopover title="Reset">
+						<p>
+							<b>Default</b>: Resets conferences, divisions, and teams to their
+							default values.
+						</p>
+						<p>
+							<b>Random built-in teams</b>: This replaces any teams you
+							currently have with random built-in teams. Those teams are grouped
+							into divisions based on their geographic location. Then, if your
+							division names are the same as the default division names and each
+							division has the same number of teams, it tries to assign each
+							group to a division name that makes sense.
+						</p>
+						<p>
+							<b>Random built-in teams (population weighted)</b>: Same as above,
+							except larger cities are more likely to be selected, so the set of
+							teams may feel a bit more realistic.
+						</p>
+					</HelpPopover>
+				</div>
+				<form
+					className="btn-group ml-auto"
+					onSubmit={event => {
+						event.preventDefault();
+
+						if (abbrevsUsedMultipleTimes.length > 0) {
+							logEvent({
+								type: "error",
+								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
+									", ",
+								)}`,
+								saveToDb: false,
+							});
+							return;
+						}
+
+						if (teams.length < 2) {
+							logEvent({
+								type: "error",
+								text: "Your league must have at least 2 teams in it.",
+								saveToDb: false,
+							});
+							return;
+						}
+
+						onSave({ confs, divs, teams });
+					}}
+				>
+					<button
+						className="btn btn-secondary"
+						type="button"
+						onClick={onCancel}
+						disabled={randomizing}
+					>
+						Cancel
+					</button>
+					<button
+						className="btn btn-primary mr-2"
+						type="submit"
+						disabled={randomizing}
+					>
+						Save Teams
+					</button>
+				</form>
+			</StickyBottomButtons>
 
 			<UpsertTeamModal
 				key={editingInfo.type === "edit" ? editingInfo.tid : editingInfo.type}

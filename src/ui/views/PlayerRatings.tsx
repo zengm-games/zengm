@@ -23,7 +23,7 @@ const PlayerRatings = ({
 	});
 
 	const ovrsPotsColNames: string[] = [];
-	if (isSport("football")) {
+	if (isSport("football") || isSport("hockey")) {
 		for (const pos of POSITIONS) {
 			for (const type of ["ovr", "pot"]) {
 				ovrsPotsColNames.push(`rating:${type}${pos}`);
@@ -48,7 +48,7 @@ const PlayerRatings = ({
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		const ovrsPotsRatings: string[] = [];
-		if (isSport("football")) {
+		if (isSport("football") || isSport("hockey")) {
 			for (const pos of POSITIONS) {
 				for (const type of ["ovrs", "pots"]) {
 					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);

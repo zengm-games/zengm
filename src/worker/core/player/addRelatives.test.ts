@@ -1,5 +1,5 @@
 import assert from "assert";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";

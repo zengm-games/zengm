@@ -3,6 +3,7 @@ import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
+import name from "./name";
 import ovr from "./ovr";
 import pos from "./pos";
 import setContract from "./setContract";
@@ -10,6 +11,20 @@ import skills from "./skills";
 import stats from "./stats";
 import { g, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
+
+const addStatsRowWrapped = async (
+	p: any,
+	ignoreJerseyNumberConflicts?: boolean,
+) => {
+	await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+		ignoreJerseyNumberConflicts,
+	});
+
+	// For real players leagues starting in the preseason, there could be a previous season with stats and a different jersey number, but the root jerseyNumber will be the one for the upcoming season
+	if (p.jerseyNumber !== undefined) {
+		p.stats[p.stats.length - 1].jerseyNumber = p.jerseyNumber;
+	}
+};
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
@@ -32,6 +47,8 @@ const augmentPartialPlayer = async (
 		age = g.get("startingSeason") - p.born.year;
 	}
 
+	const currentSeason = g.get("season");
+
 	if (
 		p.name !== undefined &&
 		(p.firstName === undefined || p.lastName === undefined)
@@ -49,6 +66,7 @@ const augmentPartialPlayer = async (
 		g.get("startingSeason") - (age - 18),
 		true,
 		scoutingRank,
+		await name(),
 	);
 
 	// Optional things
@@ -106,7 +124,7 @@ const augmentPartialPlayer = async (
 
 	if (typeof p.draft.year !== "number") {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			p.draft.year = g.get("season");
+			p.draft.year = currentSeason;
 		} else {
 			p.draft.year = pg.draft.year;
 		}
@@ -128,20 +146,14 @@ const augmentPartialPlayer = async (
 		p.draft.pick = 0;
 	}
 
-	if (typeof p.draft.pot !== "number") {
-		p.draft.pot = 0;
-	}
-
-	if (typeof p.draft.ovr !== "number") {
-		p.draft.ovr = 0;
-	}
+	// ovr and pot set later, to make overriding from ratings easier
 
 	// Fix always-missing info
 	const offset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
 	if (p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (version === undefined || version <= 32) {
-			p.ratings[0].season = g.get("season") + offset;
+			p.ratings[0].season = currentSeason + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			p.ratings[0].season = p.draft.year;
@@ -149,7 +161,7 @@ const augmentPartialPlayer = async (
 	} else if (p.tid === PLAYER.UNDRAFTED_2) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.get("season") + 1 + offset;
+			p.ratings[0].season = currentSeason + 1 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -159,7 +171,7 @@ const augmentPartialPlayer = async (
 	} else if (p.tid === PLAYER.UNDRAFTED_3) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.get("season") + 2 + offset;
+			p.ratings[0].season = currentSeason + 2 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -170,21 +182,21 @@ const augmentPartialPlayer = async (
 		for (const r of p.ratings) {
 			if (r.season === undefined) {
 				r.season =
-					typeof p.retiredYear === "number" ? p.retiredYear : g.get("season");
+					typeof p.retiredYear === "number" ? p.retiredYear : currentSeason;
 			}
 		}
 	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (p.ratings[0].season === undefined) {
-			p.ratings[0].season = g.get("season");
+			p.ratings[0].season = currentSeason;
 		}
 
 		// Fix improperly-set season in ratings
 		if (
 			p.ratings.length === 1 &&
-			p.ratings[0].season < g.get("season") &&
+			p.ratings[0].season < currentSeason &&
 			p.tid !== PLAYER.RETIRED
 		) {
-			p.ratings[0].season = g.get("season");
+			p.ratings[0].season = currentSeason;
 		}
 	}
 
@@ -201,7 +213,10 @@ const augmentPartialPlayer = async (
 
 	const r2 = p.ratings[p.ratings.length - 1];
 
-	if (isSport("football") && (!r2.ovrs || !r2.pots || !r2.pos)) {
+	if (
+		(isSport("football") || isSport("hockey")) &&
+		(!r2.ovrs || !r2.pots || !r2.pos)
+	) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
 		await develop(p, 0);
 	}
@@ -290,11 +305,11 @@ const augmentPartialPlayer = async (
 		}
 
 		if (r.skills === undefined) {
-			r.skills = skills(p.ratings[0]);
+			r.skills = skills(r);
 		}
 
 		if (r.ovr === undefined) {
-			r.ovr = ovr(p.ratings[0]);
+			r.ovr = ovr(r);
 		}
 
 		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {
@@ -303,6 +318,9 @@ const augmentPartialPlayer = async (
 				ratings: r,
 				age: r.season - p.born.year,
 				srID: p.srID,
+
+				// Just do a rough estimate for old pot, doesn't matter much
+				usePotEstimator: r.season < currentSeason,
 			});
 		}
 
@@ -314,6 +332,23 @@ const augmentPartialPlayer = async (
 				r.pos = pos(r);
 			}
 		}
+
+		if (r.season === p.draft.year) {
+			if (typeof p.draft.pot !== "number") {
+				p.draft.pot = r.pot;
+			}
+			if (typeof p.draft.ovr !== "number") {
+				p.draft.ovr = r.ovr;
+			}
+		}
+	}
+
+	// Not in initial object, and not in ratings
+	if (typeof p.draft.pot !== "number") {
+		p.draft.pot = 0;
+	}
+	if (typeof p.draft.ovr !== "number") {
+		p.draft.ovr = 0;
 	}
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
@@ -327,7 +362,7 @@ const augmentPartialPlayer = async (
 			p,
 			{
 				amount: g.get("minContract"),
-				exp: g.get("season"),
+				exp: currentSeason,
 			},
 			p.tid >= 0,
 		);
@@ -353,17 +388,23 @@ const augmentPartialPlayer = async (
 
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-				ignoreJerseyNumberConflicts,
-			});
+			await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 		}
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
 
+		let yearsWithTeam = 1;
+		let prevTid;
 		for (const ps of p.stats) {
-			// Could be calculated correctly if I wasn't lazy
 			if (ps.yearsWithTeam === undefined) {
-				ps.yearsWithTeam = 1;
+				if (ps.tid !== prevTid) {
+					prevTid = ps.tid;
+					yearsWithTeam = 1;
+				} else if (!ps.playoffs) {
+					yearsWithTeam += 1;
+				}
+
+				ps.yearsWithTeam = yearsWithTeam;
 			}
 
 			// If needed, set missing +/-, blocks against to 0
@@ -383,14 +424,12 @@ const augmentPartialPlayer = async (
 			}
 		}
 
-		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
+		// Add stats row if this is the preseason and all stats are historical, both for people making rosters by hand and for historical rosters
 		if (g.get("phase") === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
-			if (p.tid >= 0 && lastSeason < g.get("season")) {
-				await addStatsRow(p, false, {
-					ignoreJerseyNumberConflicts,
-				});
+			if (p.tid >= 0 && lastSeason < currentSeason) {
+				await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 			}
 		}
 	}

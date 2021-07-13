@@ -11,7 +11,7 @@ const draftAll = async (): Promise<number[]> => {
 	const pids: number[] = [];
 
 	while (!allStars.finalized) {
-		const { pid } = await draftOne();
+		const { pid } = await draftOne(true);
 
 		if (pid === undefined) {
 			break;

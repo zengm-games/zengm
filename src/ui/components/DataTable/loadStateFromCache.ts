@@ -1,12 +1,17 @@
 import { safeLocalStorage } from "../../util";
-import type { Props, SortBy } from ".";
+import type { Props, State, SortBy } from ".";
 import SettingsCache from "./SettingsCache";
 
-const loadStateFromCache = (props: Props) => {
-	const settingsCache = new SettingsCache(
-		props.name,
-		!!props.disableSettingsCache,
-	);
+const loadStateFromCache = ({
+	cols,
+	disableSettingsCache,
+	defaultSort,
+	name,
+}: Pick<
+	Props,
+	"cols" | "disableSettingsCache" | "defaultSort" | "name"
+>): State => {
+	const settingsCache = new SettingsCache(name, !!disableSettingsCache);
 
 	// @ts-ignore
 	let perPage = parseInt(safeLocalStorage.getItem("perPage"), 10);
@@ -19,19 +24,19 @@ const loadStateFromCache = (props: Props) => {
 	let sortBys: SortBy[];
 
 	if (sortBysFromStorage === undefined) {
-		sortBys = [props.defaultSort];
+		sortBys = [defaultSort];
 	} else {
 		sortBys = sortBysFromStorage;
 	}
 
 	// Don't let sortBy reference invalid col
-	sortBys = sortBys.filter(sortBy => sortBy[0] < props.cols.length);
+	sortBys = sortBys.filter(sortBy => sortBy[0] < cols.length);
 
 	if (sortBys.length === 0) {
-		sortBys = [props.defaultSort];
+		sortBys = [defaultSort];
 	}
 
-	const defaultFilters: string[] = props.cols.map(() => "");
+	const defaultFilters: string[] = cols.map(() => "");
 	const filtersFromStorage = settingsCache.get("DataTableFilters");
 	let filters;
 
@@ -42,7 +47,7 @@ const loadStateFromCache = (props: Props) => {
 			filters = filtersFromStorage;
 
 			// Confirm valid filters
-			if (!Array.isArray(filters) || filters.length !== props.cols.length) {
+			if (!Array.isArray(filters) || filters.length !== cols.length) {
 				filters = defaultFilters;
 			} else {
 				for (const filter of filters) {
@@ -59,13 +64,13 @@ const loadStateFromCache = (props: Props) => {
 
 	let colOrder = settingsCache.get("DataTableColOrder");
 	if (!colOrder) {
-		colOrder = props.cols.map((col, i) => ({
+		colOrder = cols.map((col, i) => ({
 			colIndex: i,
 		}));
 	}
-	if (colOrder.length < props.cols.length) {
+	if (colOrder.length < cols.length) {
 		// Add cols
-		for (let i = 0; i < props.cols.length; i++) {
+		for (let i = 0; i < cols.length; i++) {
 			if (!colOrder.some((x: any) => x && x.colIndex === i)) {
 				colOrder.push({
 					colIndex: i,
@@ -81,9 +86,11 @@ const loadStateFromCache = (props: Props) => {
 		enableFilters: filters !== defaultFilters,
 		filters,
 		perPage,
-		prevName: props.name,
+		prevName: name,
 		searchText: "",
+		showSelectColumnsModal: false,
 		sortBys,
+		settingsCache,
 	};
 };
 

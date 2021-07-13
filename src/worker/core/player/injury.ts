@@ -1,6 +1,9 @@
-import { g, helpers, injuries, random } from "../../util";
-import type { PlayerInjury } from "../../../common/types";
-import { isSport, PHASE } from "../../../common";
+import { defaultInjuries, g, helpers, random } from "../../util";
+import type { InjuriesSetting, PlayerInjury } from "../../../common/types";
+
+let prevInjuries: InjuriesSetting | undefined;
+
+let cumSums: number[] = [];
 
 /**
  * Pick injury type and duration.
@@ -11,26 +14,31 @@ import { isSport, PHASE } from "../../../common";
  * @return {Object} Injury object (type and gamesRemaining)
  */
 const injury = (healthRank: number): PlayerInjury => {
-	const rand = random.uniform(0, 10882);
-	const i = injuries.cumSum.findIndex(cs => cs >= rand);
-	let gamesRemaining = Math.round(
+	const injuries = g.get("injuries") ?? defaultInjuries;
+
+	if (injuries !== prevInjuries) {
+		cumSums = [];
+
+		for (let i = 0; i < injuries.length; i++) {
+			cumSums[i] = injuries[i].frequency;
+			if (i > 0) {
+				cumSums[i] += cumSums[i - 1];
+			}
+		}
+
+		prevInjuries = injuries;
+	}
+
+	const rand = random.uniform(0, cumSums[cumSums.length - 1]);
+	const i = cumSums.findIndex(cs => cs >= rand);
+	const gamesRemaining = Math.round(
 		((0.7 * (healthRank - 1)) / (g.get("numActiveTeams") - 1) + 0.65) *
 			random.uniform(0.25, 1.75) *
-			injuries.gamesRemainings[i],
+			injuries[i].games,
 	);
 
-	// Since players can't play through injury, make playoff injuries less severe
-	if (g.get("phase") === PHASE.PLAYOFFS) {
-		gamesRemaining -= 3;
-	}
-
-	// Hack for football
-	if (isSport("football")) {
-		gamesRemaining = Math.ceil(gamesRemaining / 3);
-	}
-
 	return {
-		type: injuries.types[i],
+		type: injuries[i].name,
 		gamesRemaining: helpers.bound(gamesRemaining, 0, Infinity),
 	};
 };

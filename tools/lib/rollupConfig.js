@@ -6,14 +6,14 @@ const json = require("@rollup/plugin-json");
 const resolve = require("@rollup/plugin-node-resolve").default;
 const replace = require("@rollup/plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
-const visualizer = require("rollup-plugin-visualizer");
+const visualizer = require("rollup-plugin-visualizer").visualizer;
 const getSport = require("./getSport");
-
-const sport = getSport();
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
 module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
+	const sport = getSport();
+
 	// This gets used in babel.config.js, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
 	if (nodeEnv !== "test") {
 		process.env.NODE_ENV = nodeEnv;
@@ -24,22 +24,24 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			resolve: [".json"],
 			entries: {
 				// This is assumed to be generated prior to rollup being started
-				"league-schema": `./../../../build/files/league-schema.json`,
-
-				// This is so Karma doesn't crash when using the big names file.
-				"player-names":
-					nodeEnv === "test"
-						? "./../data/names-test.json"
-						: `./../data/names.json`,
+				"league-schema": "./../../../build/files/league-schema.json",
 
 				"bbgm-polyfills": process.env.LEGACY
 					? "./../common/polyfills.ts"
 					: "./../common/polyfills-noop.ts",
+
+				"bbgm-debug":
+					nodeEnv === "production"
+						? "./../../common/polyfills-noop.ts"
+						: "./../../worker/core/debug/index.ts",
 			},
 		}),
 		replace({
-			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
-			"process.env.SPORT": JSON.stringify(sport),
+			preventAssignment: true,
+			values: {
+				"process.env.NODE_ENV": JSON.stringify(nodeEnv),
+				"process.env.SPORT": JSON.stringify(sport),
+			},
 		}),
 		babel({
 			babelHelpers: "bundled",
@@ -76,6 +78,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		plugins.push(
 			visualizer({
 				filename: statsFilename,
+				gzipSize: true,
 				sourcemap: true,
 				template: "sunburst",
 			}),

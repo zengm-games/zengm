@@ -8,6 +8,9 @@ const saveEvent = () => {
 
 const showEvent = ({
 	extraClass,
+	hideInLiveGame,
+	htmlIsSafe,
+	onClose,
 	persistent,
 	text,
 	type,
@@ -37,7 +40,10 @@ const showEvent = ({
 	let showNotification = true;
 
 	// Don't show non-critical notification if we're viewing a live game now. The additional liveGameInProgress check handles the case when an error occurs before the live game starts (such as roster size) and that should still be displayed
-	if (!persistent && window.location.pathname.includes("/live_game")) {
+	if (
+		(hideInLiveGame || !persistent) &&
+		window.location.pathname.includes("/live_game")
+	) {
 		const liveGameInProgress = local.getState().liveGameInProgress;
 		if (liveGameInProgress) {
 			showNotification = false;
@@ -47,6 +53,8 @@ const showEvent = ({
 	if (showNotification) {
 		notify(text, title, {
 			extraClass,
+			htmlIsSafe,
+			onClose,
 			persistent,
 		});
 

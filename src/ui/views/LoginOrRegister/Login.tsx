@@ -1,37 +1,23 @@
-import { Component, FormEvent } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
+import { ActionButton } from "../../components";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
-type Props = {
-	ajaxErrorMsg: string;
-};
-type State = {
-	errorMessage: string | undefined;
-};
 
-class Login extends Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			errorMessage: undefined,
-		};
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
+const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
+	const [submitting, setSubmitting] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const formRef = useRef<HTMLFormElement>(null);
 
-	async handleSubmit(e: FormEvent) {
-		e.preventDefault();
-		this.setState({
-			errorMessage: undefined,
-		});
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 
-		const element = document.getElementById("login");
-		if (!(element instanceof HTMLFormElement)) {
-			this.setState({
-				errorMessage: "login element not found",
-			});
+		setSubmitting(true);
+		setErrorMessage(undefined);
+
+		if (!formRef.current) {
 			throw new Error("login element not found");
 		}
-
-		const formData = new FormData(element);
+		const formData = new FormData(formRef.current);
 
 		try {
 			const data = await fetchWrapper({
@@ -43,61 +29,63 @@ class Login extends Component<Props, State> {
 
 			if (data.success) {
 				const currentTimestamp = Math.floor(Date.now() / 1000);
+				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
-					gold: currentTimestamp <= data.gold_until,
+					gold,
 					username: data.username,
 				});
+
+				if (gold) {
+					await toWorker("main", "initGold");
+				}
 
 				// Check for participation achievement, if this is the first time logging in to this sport
 				await toWorker("main", "checkParticipationAchievement", false);
 				realtimeUpdate(["account"], "/account");
 			} else {
-				this.setState({
-					errorMessage: "Invalid username or password.",
-				});
+				setSubmitting(false);
+				setErrorMessage("Invalid username or password.");
 			}
-		} catch (err) {
-			this.setState({
-				errorMessage: this.props.ajaxErrorMsg,
-			});
+		} catch (error) {
+			console.error(error);
+			setSubmitting(false);
+			setErrorMessage(ajaxErrorMsg);
 		}
-	}
+	};
 
-	render() {
-		return (
-			<>
-				<h2>Login</h2>
-				<form onSubmit={this.handleSubmit} id="login">
-					<input type="hidden" name="sport" value={process.env.SPORT} />
-					<div className="form-group">
-						<label htmlFor="login-username">Username</label>
-						<input
-							type="text"
-							className="form-control"
-							id="login-username"
-							name="username"
-							required
-						/>
-					</div>
-					<div className="form-group">
-						<label htmlFor="login-password">Password</label>
-						<input
-							type="password"
-							className="form-control"
-							id="login-password"
-							name="password"
-							required
-						/>
-					</div>
-					<button type="submit" className="btn btn-primary">
-						Login
-					</button>
-					<p className="text-danger mt-3">{this.state.errorMessage}</p>
-				</form>
-				<a href="/account/lost_password">Lost password?</a>
-			</>
-		);
-	}
-}
+	return (
+		<>
+			<h2>Login</h2>
+			<form onSubmit={handleSubmit} ref={formRef}>
+				<input type="hidden" name="sport" value={process.env.SPORT} />
+				<div className="form-group">
+					<label htmlFor="login-username">Username</label>
+					<input
+						type="text"
+						className="form-control"
+						id="login-username"
+						name="username"
+						required
+					/>
+				</div>
+				<div className="form-group">
+					<label htmlFor="login-password">Password</label>
+					<input
+						type="password"
+						className="form-control"
+						id="login-password"
+						name="password"
+						required
+					/>
+				</div>
+				<ActionButton type="submit" processing={submitting}>
+					Login
+				</ActionButton>
+				<p className="text-danger mt-3">{errorMessage}</p>
+			</form>
+			<a href="/account/lost_password">Lost password?</a>
+		</>
+	);
+};
 
 export default Login;

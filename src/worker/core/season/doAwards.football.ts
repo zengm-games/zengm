@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import {
 	getPlayers,
 	getTopPlayers,
@@ -20,7 +20,6 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 		name: p.name,
 		pos: p.pos,
 		tid: p.tid,
-		abbrev: p.abbrev,
 		keyStats: p.currentStats.keyStats,
 	};
 };
@@ -48,41 +47,109 @@ const getTopByPos = (
 };
 
 export const makeTeams = (
-	players: PlayerFiltered[],
+	playersOffense: PlayerFiltered[],
+	playersDefense: PlayerFiltered[],
 	rookie: boolean = false,
 ): any => {
 	const usedPids = new Set<number>();
-	const teamPositions = [
-		["QB"],
-		["RB"],
-		["RB", "WR"],
-		["WR"],
-		["WR"],
-		["TE"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["OL"],
-		["DL"],
-		["DL"],
-		["DL"],
-		["DL"],
-		["LB"],
-		["LB"],
-		["LB"],
-		["S"],
-		["S"],
-		["CB"],
-		["CB"],
+	const slots = [
+		{
+			positions: ["QB"],
+			players: playersOffense,
+		},
+		{
+			positions: ["RB"],
+			players: playersOffense,
+		},
+		{
+			positions: ["RB", "WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["WR"],
+			players: playersOffense,
+		},
+		{
+			positions: ["TE"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["OL"],
+			players: playersOffense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["DL"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["LB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["S"],
+			players: playersDefense,
+		},
+		{
+			positions: ["S"],
+			players: playersDefense,
+		},
+		{
+			positions: ["CB"],
+			players: playersDefense,
+		},
+		{
+			positions: ["CB"],
+			players: playersDefense,
+		},
 	];
+
 	const kickers = getTopPlayers(
 		{
 			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.fg,
 		},
-		players,
+		playersOffense,
 	);
 	const punters = getTopPlayers(
 		{
@@ -90,7 +157,7 @@ export const makeTeams = (
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.pntYds,
 		},
-		players,
+		playersOffense,
 	);
 	const kickReturners = getTopPlayers(
 		{
@@ -99,7 +166,7 @@ export const makeTeams = (
 			score: (p: PlayerFiltered) =>
 				p.currentStats.krYds + 500 * p.currentStats.krTD,
 		},
-		players,
+		playersOffense,
 	);
 	const puntReturners = getTopPlayers(
 		{
@@ -108,14 +175,12 @@ export const makeTeams = (
 			score: (p: PlayerFiltered) =>
 				p.currentStats.prYds + 500 * p.currentStats.prTD,
 		},
-		players,
+		playersOffense,
 	);
 
 	if (rookie) {
 		return [
-			...teamPositions.map(positions =>
-				getTopByPos(players, positions, usedPids),
-			),
+			...slots.map(slot => getTopByPos(slot.players, slot.positions, usedPids)),
 			kickers[0],
 			punters[0],
 			kickReturners[0],
@@ -127,8 +192,8 @@ export const makeTeams = (
 		{
 			title: "First Team",
 			players: [
-				...teamPositions.map(positions =>
-					getTopByPos(players, positions, usedPids),
+				...slots.map(slot =>
+					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[0],
 				punters[0],
@@ -139,8 +204,8 @@ export const makeTeams = (
 		{
 			title: "Second Team",
 			players: [
-				...teamPositions.map(positions =>
-					getTopByPos(players, positions, usedPids),
+				...slots.map(slot =>
+					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[1],
 				punters[1],
@@ -218,14 +283,11 @@ const getRealFinalsMvp = async (
 			pid: p.pid,
 			name: p.name,
 			tid: p.tid,
-			abbrev: p.abbrev,
 			pos: p.pos,
 			keyStats: "",
 		};
 	}
 };
-
-export const avScore = (p: PlayerFiltered) => p.currentStats.av;
 
 const SKILL_POSITIONS = ["QB", "RB", "WR", "TE"];
 export const mvpScore = (p: PlayerFiltered) => {
@@ -233,13 +295,24 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return posMultiplier * p.currentStats.av;
 };
 export const dpoyScore = (p: PlayerFiltered) => {
-	let posBonus = 0;
-	if (p.pos === "S" || p.pos === "CB") {
-		posBonus = 3.9;
-	} else if (p.pos === "LB") {
-		posBonus = 1.9;
-	}
-	return posBonus + p.currentStats.av;
+	const posBonus = p.pos === "LB" ? 2 : 0;
+	return (
+		posBonus +
+		p.currentStats.av +
+		1.5 * p.currentStats.defSk +
+		p.currentStats.defTck / 12 +
+		p.currentStats.defInt * 4 +
+		p.currentStats.defPssDef +
+		5 *
+			(p.currentStats.defFmbTD +
+				p.currentStats.defIntTD +
+				p.currentStats.defSft)
+	);
+};
+
+const rookieFilter = (p: PlayerFiltered) => {
+	// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+	return p.draft.year === p.currentStats.season - 1;
 };
 
 const doAwards = async (conditions: Conditions) => {
@@ -251,7 +324,17 @@ const doAwards = async (conditions: Conditions) => {
 			"won",
 			"lost",
 			"tied",
+			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
 			"winp",
+			"pts",
 			"playoffRoundsWon",
 			"abbrev",
 			"region",
@@ -259,20 +342,36 @@ const doAwards = async (conditions: Conditions) => {
 			"cid",
 			"did",
 		],
+		stats: ["pts", "oppPts", "gp"],
 		season: g.get("season"),
-		active: true,
+		showNoStats: true,
 	});
 	const players = await getPlayers(g.get("season"));
-	const { bestRecord, bestRecordConfs } = teamAwards(teams);
-	leagueLeaders(players, [], awardsByPlayer);
-
-	const avPlayers = getTopPlayers(
+	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
+	const categories = [
 		{
-			amount: Infinity,
-			score: avScore,
+			name: "League Passing Leader",
+			stat: "pssYds",
+			minValue: 0,
 		},
-		players,
-	);
+		{
+			name: "League Rushing Leader",
+			stat: "rusYds",
+			minValue: 0,
+		},
+		{
+			name: "League Receiving Leader",
+			stat: "recYds",
+			minValue: 0,
+		},
+		{
+			name: "League Scrimmage Yards Leader",
+			stat: "ydsFromScrimmage",
+			minValue: 0,
+		},
+	];
+	leagueLeaders(players, categories, awardsByPlayer);
+
 	const mvpPlayers = getTopPlayers(
 		{
 			amount: Infinity,
@@ -289,22 +388,31 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	const mvp = getTopByPos(mvpPlayers);
 	const dpoy = getTopByPos(dpoyPlayers, ["DL", "LB", "S", "CB"]);
-	const allLeague = makeTeams(avPlayers);
-	const royPlayers = getTopPlayers(
+	const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
+
+	const oroyPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: Infinity,
-			filter: p => {
-				// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-				return p.draft.year === p.currentStats.season - 1;
-			},
-			score: avScore,
+			filter: rookieFilter,
+			score: mvpScore,
 		},
 		players,
 	);
-	const oroy = getTopByPos(royPlayers, ["QB", "RB", "WR", "TE", "OL"]);
-	const droy = getTopByPos(royPlayers, ["DL", "LB", "S", "CB"]);
-	const allRookie = makeTeams(royPlayers, true);
+	const oroy = getTopByPos(oroyPlayers, ["QB", "RB", "WR", "TE", "OL"]);
+
+	const droyPlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: Infinity,
+			filter: rookieFilter,
+			score: dpoyScore,
+		},
+		players,
+	);
+	const droy = getTopByPos(droyPlayers, ["DL", "LB", "S", "CB"]);
+
+	const allRookie = makeTeams(oroyPlayers, droyPlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
 		t =>
@@ -314,27 +422,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		const champPlayersAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			champTid,
-		);
-
-		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
-		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
-			// Only the champions, only playoff stats
-			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: ["pts", "trb", "ast", "ws", "ewa"],
-			season: g.get("season"),
-			playoffs: true,
-			regularSeason: false,
-			tid: champTid,
-		});
-
-		// For symmetry with players array
-		for (const p of champPlayers) {
-			p.currentStats = p.stats;
-		}
-
 		finalsMvp = await getRealFinalsMvp(players, champTid);
 	}
 

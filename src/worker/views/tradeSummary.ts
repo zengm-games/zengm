@@ -1,6 +1,7 @@
 import { bySport, PHASE } from "../../common";
 import type {
 	DiscriminateUnion,
+	DraftPickSeason,
 	EventBBGM,
 	MinimalPlayerRatings,
 	Phase,
@@ -10,7 +11,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import { player } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
@@ -73,7 +74,11 @@ const findStatSum = (
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
-		const stat = bySport({ basketball: row.ows + row.dws, football: row.av });
+		const stat = bySport({
+			basketball: row.ows + row.dws,
+			football: row.av,
+			hockey: row.ops + row.dps + row.gps,
+		});
 
 		// Only after trade
 		if (
@@ -162,9 +167,11 @@ const getSeasonsToPlot = async (
 	for (let i = start; i <= end; i++) {
 		type Team = {
 			winp?: number;
+			ptsPct?: number;
 			won?: number;
 			lost?: number;
 			tied?: number;
+			otl?: number;
 			stat?: number;
 		};
 		const teams: [Team, Team] = [{}, {}];
@@ -183,12 +190,17 @@ const getSeasonsToPlot = async (
 
 			if (
 				teamSeason &&
-				(teamSeason.won > 0 || teamSeason.lost > 0 || teamSeason.tied > 0)
+				(teamSeason.won > 0 ||
+					teamSeason.lost > 0 ||
+					teamSeason.tied > 0 ||
+					teamSeason.otl > 0)
 			) {
 				teams[j].won = teamSeason.won;
 				teams[j].lost = teamSeason.lost;
 				teams[j].tied = teamSeason.tied;
+				teams[j].otl = teamSeason.otl;
 				teams[j].winp = helpers.calcWinp(teamSeason);
+				teams[j].ptsPct = team.ptsPct(teamSeason);
 			}
 
 			teams[j].stat = statSumsBySeason[j][i];
@@ -226,7 +238,7 @@ type CommonPick = {
 	abbrev?: string; // from originalTid
 	tid: number; // from originalTid
 	round: number;
-	season: number | "fantasy" | "expansion";
+	season: DraftPickSeason;
 };
 
 type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
@@ -409,14 +421,18 @@ const updateTradeSummary = async (
 			statSumsBySeason,
 		);
 
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
+
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			eid,
 			teams,
 			season: event.season,
 			phase: event.phase,
-			stat: bySport({ basketball: "WS", football: "AV" }),
+			stat: bySport({ basketball: "WS", football: "AV", hockey: "PS" }),
 			seasonsToPlot,
+			usePts,
 		};
 	}
 };

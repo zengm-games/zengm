@@ -1,7 +1,8 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
-import type { Conf, Div } from "../../../common/types";
 import { isSport } from "../../../common";
+import getGameAttributes from "./getGameAttributes";
+import type { GetLeagueOptions } from "../../../common/types";
 
 export const legendsInfo = {
 	"1950s": {
@@ -38,25 +39,7 @@ export const legendsInfo = {
 	},
 };
 
-const getLeagueInfo = async (
-	options:
-		| {
-				type: "real";
-				season: number;
-		  }
-		| {
-				type: "legends";
-				decade:
-					| "1950s"
-					| "1960s"
-					| "1970s"
-					| "1980s"
-					| "1990s"
-					| "2000s"
-					| "2010s"
-					| "all";
-		  },
-) => {
+const getLeagueInfo = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
@@ -71,7 +54,11 @@ const getLeagueInfo = async (
 	if (options.type === "real") {
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
-			options.season,
+			{
+				keepAllTeams: options.realStats === "all",
+				season: options.season,
+				phase: options.phase,
+			},
 		);
 
 		const stores =
@@ -84,13 +71,13 @@ const getLeagueInfo = async (
 						"startingSeason",
 						"scheduledEvents",
 				  ];
-
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: options.season,
 			stores,
-			teams: initialTeams,
+			teams: options.leagueInfoKeepAllTeams
+				? initialTeams
+				: initialTeams.filter(t => !t.disabled),
 		};
 	}
 
@@ -100,14 +87,16 @@ const getLeagueInfo = async (
 
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
-			lastSeason,
+			{
+				keepAllTeams: false,
+				season: lastSeason,
+			},
 		);
 
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
 
 		return {
-			confs: initialGameAttributes.confs as Conf[],
-			divs: initialGameAttributes.divs as Div[],
+			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: legendsInfo[options.decade].end,
 			stores,
 			teams: initialTeams,

@@ -2,7 +2,9 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import type { AllStarPlayer } from "../../../common/types";
 
-const draftOne = async (): Promise<{
+const draftOne = async (
+	allowNone?: boolean,
+): Promise<{
 	finalized: boolean;
 	pid?: number;
 }> => {
@@ -32,12 +34,14 @@ const draftOne = async (): Promise<{
 		pick = remaining[3];
 	}
 
-	if (!pick) {
+	if (!pick && !allowNone) {
 		throw new Error("No player found");
 	}
 
-	allStars.teams[teamInd].push(pick);
-	allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
+	if (pick) {
+		allStars.teams[teamInd].push(pick);
+		allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
+	}
 
 	if (allStars.remaining.every(({ injured }) => injured)) {
 		allStars.finalized = true;
@@ -46,7 +50,7 @@ const draftOne = async (): Promise<{
 	await idb.cache.allStars.put(allStars);
 	return {
 		finalized: allStars.finalized,
-		pid: pick.pid,
+		pid: pick?.pid,
 	};
 };
 

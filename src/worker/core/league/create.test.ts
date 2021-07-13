@@ -7,13 +7,7 @@ import type { ThenArg } from "../../../common/types";
 describe("worker/core/league/create", () => {
 	let leagueData: ThenArg<ReturnType<typeof createWithoutSaving>>;
 	beforeAll(async () => {
-		leagueData = await createWithoutSaving(
-			"Test",
-			0,
-			{ startingSeason: 2015 },
-			false,
-			0,
-		);
+		leagueData = await createWithoutSaving(0, { startingSeason: 2015 }, false);
 	});
 
 	test("create all necessary object stores", () => {
@@ -25,6 +19,7 @@ describe("worker/core/league/create", () => {
 			"events",
 			"gameAttributes",
 			"games",
+			"headToHeads",
 			"messages",
 			"negotiations",
 			"playerFeats",
@@ -41,7 +36,6 @@ describe("worker/core/league/create", () => {
 	});
 
 	test("initialize gameAttributes object store", async () => {
-		assert.strictEqual(leagueData.gameAttributes.leagueName, "Test");
 		assert.strictEqual(leagueData.gameAttributes.phase, 0);
 		assert.strictEqual(
 			leagueData.gameAttributes.season,
@@ -95,5 +89,21 @@ describe("worker/core/league/create", () => {
 
 	test("initialize players object store", async () => {
 		assert.strictEqual(leagueData.players.length, 30 * 13 + 150 + 70 * 3);
+	});
+
+	test("no error with restricted draftAges and forceRetireAge settings", async () => {
+		const leagueData = await createWithoutSaving(
+			0,
+			{
+				startingSeason: 2021,
+				gameAttributes: {
+					draftAges: [19, 19],
+					forceRetireAge: 20,
+				},
+			},
+			false,
+		);
+
+		assert(leagueData);
 	});
 });

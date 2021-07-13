@@ -5,7 +5,6 @@ import { PHASE } from "../../../common";
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = helpers.quarterLengthFactor();
 
-	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	const TEN = minFactor * 10;
 	const FIVE = minFactor * 5;
 	const TWENTY = minFactor * 20;

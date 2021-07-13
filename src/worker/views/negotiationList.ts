@@ -7,6 +7,7 @@ const updateNegotiationList = async () => {
 	const stats = bySport({
 		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
 		football: ["yearsWithTeam", "gp", "keyStats", "av"],
+		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	const userTid = g.get("userTid");
@@ -58,8 +59,7 @@ const updateNegotiationList = async () => {
 	sumContracts /= 1000;
 
 	const payroll = await team.getPayroll(userTid);
-	const capSpace =
-		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
+	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],

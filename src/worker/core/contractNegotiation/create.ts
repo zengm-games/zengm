@@ -33,15 +33,6 @@ const create = async (
 		return "You're not allowed to sign free agents now.";
 	}
 
-	const playersOnRoster = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		g.get("userTid"),
-	);
-
-	if (playersOnRoster.length >= g.get("maxRosterSize") && !resigning) {
-		return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
-	}
-
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		throw new Error("Invalid pid");

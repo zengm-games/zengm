@@ -38,8 +38,8 @@ const useLocal = create<
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
+	hideDisabledTeams: false,
 	homeCourtAdvantage: 1,
-	leagueName: "",
 	lid: undefined,
 	liveGameInProgress: false,
 	spectator: false,
@@ -62,7 +62,8 @@ const useLocal = create<
 	hideNewWindow: false,
 	jumpTo: false,
 	jumpToSeason: undefined,
-	dropdownExtraParam: undefined,
+	dropdownCustomOptions: undefined,
+	dropdownCustomURL: undefined,
 	dropdownView: undefined,
 	dropdownFields: {},
 	moreInfoAbbrev: undefined,
@@ -102,21 +103,21 @@ const useLocal = create<
 			});
 		},
 
-		// Reset any values specific to a league
+		// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
 		resetLeague() {
 			set({
 				challengeNoRatings: false,
 				games: [],
 				godMode: false,
-				leagueName: "",
+				hideDisabledTeams: false,
+
+				// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
 				lid: undefined,
 				liveGameInProgress: false,
 				phase: 0,
-				phaseText: "",
 				playMenuOptions: [],
 				season: 0,
 				startingSeason: 0,
-				statusText: "Idle",
 				teamInfoCache: [],
 				userTid: 0,
 				userTids: [],
@@ -141,7 +142,7 @@ const useLocal = create<
 				}
 			}
 
-			set(obj);
+			set(obj as any);
 		},
 
 		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
@@ -149,9 +150,9 @@ const useLocal = create<
 			const keys = [
 				"challengeNoRatings",
 				"godMode",
+				"hideDisabledTeams",
 				"homeCourtAdvantage",
 				"lid",
-				"leagueName",
 				"spectator",
 				"phase",
 				"season",

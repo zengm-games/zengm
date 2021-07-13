@@ -24,9 +24,11 @@ const LeagueDashboard = ({
 	numPlayersOnCourt,
 	numPlayoffRounds,
 	numPlayoffTeams,
+	otl,
 	payroll,
 	playoffRoundsWon,
 	playoffsByConference,
+	pointsFormula,
 	profit,
 	rank,
 	region,
@@ -41,6 +43,7 @@ const LeagueDashboard = ({
 	teamLeaders,
 	teamStats,
 	tied,
+	usePts,
 	userTid,
 	won,
 }: View<"leagueDashboard">) => {
@@ -75,6 +78,8 @@ const LeagueDashboard = ({
 									confTeams={confTeams}
 									numPlayoffTeams={numPlayoffTeams}
 									playoffsByConference={playoffsByConference}
+									pointsFormula={pointsFormula}
+									usePts={usePts}
 									userTid={userTid}
 								/>
 							</div>
@@ -83,6 +88,7 @@ const LeagueDashboard = ({
 							<div className="text-center mb-3">
 								<span style={{ fontSize: "3rem" }}>
 									{won}-{lost}
+									{otl > 0 ? <>-{otl}</> : null}
 									{tied > 0 ? <>-{tied}</> : null}
 								</span>
 								<br />

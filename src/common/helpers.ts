@@ -1,7 +1,7 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 import type { TeamBasic, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
 
 const getPopRanks = (
@@ -62,7 +62,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 };
 
 function getTeamsDefault(): TeamBasic[] {
-	let teams: Omit<TeamBasic, "popRank">[];
+	let teams: TeamBasic[];
 	if (isSport("basketball")) {
 		teams = getTeamInfos([
 			{
@@ -276,231 +276,401 @@ function getTeamsDefault(): TeamBasic[] {
 				abbrev: "WAS",
 			},
 		]);
-	} else {
+	} else if (isSport("hockey")) {
 		teams = getTeamInfos([
 			{
 				tid: 0,
-				cid: 1,
-				did: 6,
-
-				abbrev: "ATL",
+				cid: 0,
+				did: 0,
+				abbrev: "BOS",
 			},
 			{
 				tid: 1,
 				cid: 0,
-				did: 0,
-
-				abbrev: "BAL",
+				did: 1,
+				abbrev: "BKN",
 			},
 			{
 				tid: 2,
 				cid: 0,
 				did: 0,
-
-				abbrev: "BOS",
+				abbrev: "BUF",
 			},
 			{
 				tid: 3,
 				cid: 1,
-				did: 5,
-
-				abbrev: "CHI",
+				did: 3,
+				abbrev: "CGY",
 			},
 			{
 				tid: 4,
 				cid: 0,
 				did: 1,
-
-				abbrev: "CIN",
+				abbrev: "CHA",
 			},
 			{
 				tid: 5,
-				cid: 0,
-				did: 1,
-
-				abbrev: "CLE",
+				cid: 1,
+				did: 2,
+				abbrev: "CHI",
 			},
 			{
 				tid: 6,
-				cid: 1,
-				did: 4,
-
-				abbrev: "DAL",
+				cid: 0,
+				did: 1,
+				abbrev: "CIN",
 			},
 			{
 				tid: 7,
-				cid: 0,
-				did: 3,
-
-				abbrev: "DEN",
+				cid: 1,
+				did: 2,
+				abbrev: "DAL",
 			},
 			{
 				tid: 8,
 				cid: 1,
-				did: 5,
-
-				abbrev: "DET",
+				did: 2,
+				abbrev: "DEN",
 			},
 			{
 				tid: 9,
 				cid: 0,
-				did: 2,
-
-				abbrev: "HOU",
+				did: 0,
+				abbrev: "DET",
 			},
 			{
 				tid: 10,
-				cid: 0,
-				did: 2,
-
-				abbrev: "KC",
+				cid: 1,
+				did: 3,
+				abbrev: "LA",
 			},
 			{
 				tid: 11,
-				cid: 0,
-				did: 2,
-
+				cid: 1,
+				did: 3,
 				abbrev: "LV",
 			},
 			{
 				tid: 12,
 				cid: 1,
-				did: 7,
-
-				abbrev: "LA",
+				did: 2,
+				abbrev: "MEM",
 			},
 			{
 				tid: 13,
-				cid: 1,
-				did: 6,
-
-				abbrev: "MXC",
+				cid: 0,
+				did: 0,
+				abbrev: "MIA",
 			},
 			{
 				tid: 14,
-				cid: 0,
-				did: 0,
-
-				abbrev: "MIA",
+				cid: 1,
+				did: 2,
+				abbrev: "MIL",
 			},
 			{
 				tid: 15,
 				cid: 1,
-				did: 5,
-
+				did: 2,
 				abbrev: "MIN",
 			},
 			{
 				tid: 16,
 				cid: 0,
-				did: 1,
-
+				did: 0,
 				abbrev: "MON",
+			},
+			{
+				tid: 17,
+				cid: 0,
+				did: 1,
+				abbrev: "NYC",
+			},
+			{
+				tid: 18,
+				cid: 0,
+				did: 0,
+				abbrev: "OTT",
+			},
+			{
+				tid: 19,
+				cid: 0,
+				did: 1,
+				abbrev: "PHI",
+			},
+			{
+				tid: 20,
+				cid: 1,
+				did: 2,
+				abbrev: "PHO",
+			},
+			{
+				tid: 21,
+				cid: 0,
+				did: 1,
+				abbrev: "PIT",
+			},
+			{
+				tid: 22,
+				cid: 1,
+				did: 3,
+				abbrev: "POR",
+			},
+			{
+				tid: 23,
+				cid: 1,
+				did: 3,
+				abbrev: "SD",
+			},
+			{
+				tid: 24,
+				cid: 1,
+				did: 3,
+				abbrev: "SJ",
+			},
+			{
+				tid: 25,
+				cid: 1,
+				did: 3,
+				abbrev: "SEA",
+			},
+			{
+				tid: 26,
+				cid: 1,
+				did: 2,
+				abbrev: "STL",
+			},
+			{
+				tid: 27,
+				cid: 0,
+				did: 0,
+				abbrev: "TPA",
+			},
+			{
+				tid: 28,
+				cid: 0,
+				did: 0,
+				abbrev: "TOR",
+			},
+			{
+				tid: 29,
+				cid: 1,
+				did: 3,
+				abbrev: "VAN",
+			},
+			{
+				tid: 30,
+				cid: 0,
+				did: 1,
+				abbrev: "VB",
+			},
+			{
+				tid: 31,
+				cid: 0,
+				did: 1,
+				abbrev: "WAS",
+			},
+		]);
+	} else {
+		teams = getTeamInfos([
+			{
+				tid: 0,
+				cid: 0,
+				did: 0,
+				abbrev: "BOS",
+			},
+			{
+				tid: 1,
+				cid: 0,
+				did: 0,
+				abbrev: "BKN",
+			},
+			{
+				tid: 2,
+				cid: 0,
+				did: 0,
+				abbrev: "BUF",
+			},
+			{
+				tid: 3,
+				cid: 0,
+				did: 0,
+				abbrev: "MIA",
+			},
+
+			{
+				tid: 4,
+				cid: 0,
+				did: 1,
+				abbrev: "BAL",
+			},
+			{
+				tid: 5,
+				cid: 0,
+				did: 1,
+				abbrev: "CIN",
+			},
+			{
+				tid: 6,
+				cid: 0,
+				did: 1,
+				abbrev: "CLE",
+			},
+			{
+				tid: 7,
+				cid: 0,
+				did: 1,
+				abbrev: "PIT",
+			},
+
+			{
+				tid: 8,
+				cid: 0,
+				did: 2,
+				abbrev: "HOU",
+			},
+			{
+				tid: 9,
+				cid: 0,
+				did: 2,
+				abbrev: "IND",
+			},
+			{
+				tid: 10,
+				cid: 0,
+				did: 2,
+				abbrev: "JAX",
+			},
+			{
+				tid: 11,
+				cid: 0,
+				did: 2,
+				abbrev: "MEM",
+			},
+
+			{
+				tid: 12,
+				cid: 0,
+				did: 3,
+				abbrev: "DEN",
+			},
+			{
+				tid: 13,
+				cid: 0,
+				did: 3,
+				abbrev: "KC",
+			},
+			{
+				tid: 14,
+				cid: 0,
+				did: 3,
+				abbrev: "LAE",
+			},
+			{
+				tid: 15,
+				cid: 0,
+				did: 3,
+				abbrev: "LV",
+			},
+
+			{
+				tid: 16,
+				cid: 1,
+				did: 4,
+				abbrev: "DAL",
 			},
 			{
 				tid: 17,
 				cid: 1,
 				did: 4,
-
 				abbrev: "NYC",
 			},
 			{
 				tid: 18,
 				cid: 1,
 				did: 4,
-
 				abbrev: "PHI",
 			},
 			{
 				tid: 19,
-				cid: 0,
-				did: 2,
-
-				abbrev: "PHO",
+				cid: 1,
+				did: 4,
+				abbrev: "WAS",
 			},
+
 			{
 				tid: 20,
-				cid: 0,
-				did: 0,
-
-				abbrev: "PIT",
+				cid: 1,
+				did: 5,
+				abbrev: "CHI",
 			},
 			{
 				tid: 21,
-				cid: 0,
-				did: 3,
-
-				abbrev: "POR",
+				cid: 1,
+				did: 5,
+				abbrev: "DET",
 			},
 			{
 				tid: 22,
 				cid: 1,
-				did: 7,
-
-				abbrev: "SAC",
+				did: 5,
+				abbrev: "MIL",
 			},
 			{
 				tid: 23,
 				cid: 1,
-				did: 6,
-
-				abbrev: "SA",
+				did: 5,
+				abbrev: "MIN",
 			},
+
 			{
 				tid: 24,
-				cid: 0,
-				did: 3,
-
-				abbrev: "SD",
+				cid: 1,
+				did: 6,
+				abbrev: "ATL",
 			},
 			{
 				tid: 25,
 				cid: 1,
-				did: 7,
-
-				abbrev: "SF",
+				did: 6,
+				abbrev: "CHA",
 			},
 			{
 				tid: 26,
 				cid: 1,
-				did: 7,
-
-				abbrev: "SEA",
+				did: 6,
+				abbrev: "NOL",
 			},
 			{
 				tid: 27,
 				cid: 1,
-				did: 5,
-
-				abbrev: "STL",
+				did: 6,
+				abbrev: "TPA",
 			},
+
 			{
 				tid: 28,
 				cid: 1,
-				did: 6,
-
-				abbrev: "TPA",
+				did: 7,
+				abbrev: "LA",
 			},
 			{
 				tid: 29,
-				cid: 0,
-				did: 1,
-
-				abbrev: "TOR",
+				cid: 1,
+				did: 7,
+				abbrev: "PHO",
 			},
 			{
 				tid: 30,
-				cid: 0,
-				did: 3,
-
-				abbrev: "VAN",
+				cid: 1,
+				did: 7,
+				abbrev: "SEA",
 			},
 			{
 				tid: 31,
 				cid: 1,
-				did: 4,
-
-				abbrev: "WAS",
+				did: 7,
+				abbrev: "SF",
 			},
 		]);
 	}
@@ -542,7 +712,7 @@ function deepCopy<T>(obj: T): T {
  */
 function leagueUrlFactory(
 	lid: number,
-	components: (number | string)[],
+	components: (number | string | undefined)[],
 ): string {
 	let url = `/l/${lid}`;
 
@@ -579,6 +749,16 @@ function formatCurrency(
 	if (append === "M" && abs > 1000) {
 		abs /= 1000;
 		append = "B";
+
+		if (abs > 1000) {
+			abs /= 1000;
+			append = "T";
+
+			if (abs > 1000) {
+				abs /= 1000;
+				append = "Q";
+			}
+		}
 	}
 
 	if (append === "M" && abs < 1 && abs !== 0) {
@@ -590,13 +770,15 @@ function formatCurrency(
 	let numberString = abs.toFixed(precision);
 
 	// Remove last digits if 0
-	for (let i = 0; i < precision; i++) {
-		if (numberString[numberString.length - 1] === "0") {
+	if (append !== "") {
+		for (let i = 0; i < precision; i++) {
+			if (numberString[numberString.length - 1] === "0") {
+				numberString = numberString.slice(0, -1);
+			}
+		}
+		if (numberString[numberString.length - 1] === ".") {
 			numberString = numberString.slice(0, -1);
 		}
-	}
-	if (numberString[numberString.length - 1] === ".") {
-		numberString = numberString.slice(0, -1);
 	}
 
 	return `${sign}$${numberString}${append}`;
@@ -681,10 +863,6 @@ const validateRoundsByes = (
 	numPlayoffByes: number,
 	numActiveTeams: number,
 ) => {
-	if (numRounds < 1) {
-		throw new Error("Must have at least one round of playoffs");
-	}
-
 	if (numPlayoffByes < 0) {
 		throw new Error("Cannot have a negative number of byes");
 	}
@@ -828,6 +1006,11 @@ const isAmerican = (loc: string) => {
 
 	const parts = loc.split(", ");
 	const state = parts[parts.length - 1];
+
+	if (state === "Georgia") {
+		return false;
+	}
+
 	return states.includes(state);
 };
 
@@ -837,9 +1020,12 @@ const getCountry = (bornLoc?: string) => {
 	if (isAmerican(name)) {
 		name = "USA";
 	} else {
-		const parts = name.split(", ");
-		if (parts.length > 1) {
-			name = parts[parts.length - 1];
+		// Find part after last comma/colon
+		for (const delimiter of [", ", ": "]) {
+			const parts = name.split(delimiter);
+			if (parts.length > 1) {
+				name = parts[parts.length - 1];
+			}
 		}
 	}
 
@@ -855,7 +1041,7 @@ const getJerseyNumber = (
 			return p.stats[p.stats.length - 1].jerseyNumber;
 		}
 
-		// For uploaded league files
+		// For uploaded league files, or real players leagues with no old stats (with new old stats, relies on augmentPartialPlayer to set jerseyNumber from root in latest stats row)
 		return p.jerseyNumber;
 	}
 
@@ -933,6 +1119,18 @@ const getExpansionDraftMinimumPlayersPerActiveTeam = (
 	);
 };
 
+const ratio = (numerator: number, denominator: number) => {
+	if (denominator > 0) {
+		return numerator / denominator;
+	}
+
+	return 0;
+};
+
+const percentage = (numerator: number, denominator: number) => {
+	return 100 * ratio(numerator, denominator);
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -953,4 +1151,6 @@ export default {
 	keys,
 	validateRoundsByes,
 	roundsWonText,
+	ratio,
+	percentage,
 };

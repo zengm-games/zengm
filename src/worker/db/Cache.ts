@@ -10,6 +10,7 @@ import type {
 	EventBBGM,
 	Game,
 	GameAttribute,
+	HeadToHead,
 	Message,
 	MessageWithoutKey,
 	MinimalPlayerRatings,
@@ -48,6 +49,7 @@ export type Store =
 	| "events"
 	| "gameAttributes"
 	| "games"
+	| "headToHeads"
 	| "messages"
 	| "negotiations"
 	| "playerFeats"
@@ -80,6 +82,7 @@ export const STORES: Store[] = [
 	"events",
 	"gameAttributes",
 	"games",
+	"headToHeads",
 	"messages",
 	"negotiations",
 	"playerFeats",
@@ -199,6 +202,7 @@ class Cache {
 		number,
 		{
 			resolve: () => void;
+			timeoutID: number;
 			validStatuses: Status[];
 		}
 	>;
@@ -238,6 +242,8 @@ class Cache {
 	gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
 
 	games: StoreAPI<Game, Game, number>;
+
+	headToHeads: StoreAPI<HeadToHead, HeadToHead, number>;
 
 	messages: StoreAPI<MessageWithoutKey, Message, number>;
 
@@ -340,6 +346,14 @@ class Cache {
 				// Current season
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
 					getAll(tx.objectStore("games").index("season"), this._season),
+			},
+			headToHeads: {
+				pk: "season",
+				pkType: "number",
+				autoIncrement: false,
+				// Current season
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("headToHeads").getAll(this._season),
 			},
 			messages: {
 				pk: "mid",
@@ -510,6 +524,7 @@ class Cache {
 		this.events = new StoreAPI(this, "events");
 		this.gameAttributes = new StoreAPI(this, "gameAttributes");
 		this.games = new StoreAPI(this, "games");
+		this.headToHeads = new StoreAPI(this, "headToHeads");
 		this.messages = new StoreAPI(this, "messages");
 		this.negotiations = new StoreAPI(this, "negotiations");
 		this.playerFeats = new StoreAPI(this, "playerFeats");
@@ -536,12 +551,7 @@ class Cache {
 				this._requestInd += 1;
 				const ind = this._requestInd;
 
-				this._requestQueue.set(ind, {
-					resolve,
-					validStatuses,
-				});
-
-				setTimeout(() => {
+				const timeoutID = setTimeout(() => {
 					reject(
 						new Error(
 							`Timeout while waiting for valid status (${validStatuses.join(
@@ -551,7 +561,13 @@ class Cache {
 					);
 
 					this._requestQueue.delete(ind);
-				}, 30000);
+				}, 30000) as unknown as number;
+
+				this._requestQueue.set(ind, {
+					resolve,
+					timeoutID,
+					validStatuses,
+				});
 			});
 		}
 	}
@@ -561,6 +577,7 @@ class Cache {
 
 		for (const [ind, entry] of this._requestQueue.entries()) {
 			if (entry.validStatuses.includes(status)) {
+				self.clearTimeout(entry.timeoutID);
 				entry.resolve();
 
 				this._requestQueue.delete(ind);

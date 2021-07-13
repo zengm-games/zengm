@@ -11,6 +11,7 @@ const tooltips = bySport({
 		Po: "Post Scorer",
 		Ps: "Passer",
 		R: "Rebounder",
+		V: "Volume Scorer",
 	},
 	football: {
 		Pa: "Accurate Passer",
@@ -24,6 +25,13 @@ const tooltips = bySport({
 		PR: "Pass Rusher",
 		RS: "Run Stopper",
 		L: "Lockdown Coverage",
+	},
+	hockey: {
+		Pm: "Playmaker",
+		Pw: "Power",
+		G: "Grinder",
+		E: "Enforcer",
+		S: "Sniper",
 	},
 });
 

@@ -1,102 +1,349 @@
-import { useCallback, useState, ReactNode, FormEvent } from "react";
-import { MoreLinks } from "../components";
+import classNames from "classnames";
+import { useState, ReactNode, FormEvent } from "react";
+import { isSport, WEBSITE_ROOT } from "../../common";
+import { ActionButton, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { downloadFile, helpers, toWorker } from "../util";
+import { downloadFile, helpers, safeLocalStorage, toWorker } from "../util";
 
-const categories = [
+export type ExportLeagueKey =
+	| "players"
+	| "gameHighs"
+	| "teamsBasic"
+	| "teams"
+	| "headToHead"
+	| "schedule"
+	| "draftPicks"
+	| "leagueSettings"
+	| "gameState"
+	| "newsFeedTransactions"
+	| "newsFeedOther"
+	| "games";
+
+type Category = {
+	key: ExportLeagueKey;
+	name: string;
+	desc: string;
+	default: boolean;
+	parent?: ExportLeagueKey;
+};
+
+const categories: Category[] = [
 	{
-		objectStores: "players,releasedPlayers,awards",
+		key: "players",
 		name: "Players",
-		desc: "All player info, ratings, stats, and awards",
-		checked: true,
+		desc: "All player info, ratings, stats, and awards.",
+		default: true,
+	},
+	...((!isSport("football")
+		? [
+				{
+					key: "gameHighs",
+					name: "Include game highs",
+					desc: "Game highs are fun, but they increase export size by 25%.",
+					default: true,
+					parent: "players",
+				},
+		  ]
+		: []) as Category[]),
+	{
+		key: "teamsBasic",
+		name: "Basic team data",
+		desc: "Just the stuff you see at Tools > Manage Teams, such as abbrev/region/name, division, logo, etc. Select only this if you want to create a new league with the same teams as this league, but without anything else copied over.",
+		default: true,
 	},
 	{
-		objectStores: "teams,teamSeasons,teamStats",
-		name: "Teams",
+		key: "teams",
+		name: "All team data",
 		desc: "All team info and stats.",
-		checked: true,
+		default: true,
+		parent: "teamsBasic",
 	},
 	{
-		objectStores: "schedule,playoffSeries",
+		key: "schedule",
 		name: "Schedule",
 		desc: "Current regular season schedule and playoff series.",
-		checked: true,
+		default: true,
 	},
 	{
-		objectStores: "draftPicks",
-		name: "Draft Picks",
-		desc: "Traded draft picks.",
-		checked: true,
+		key: "draftPicks",
+		name: "Draft picks",
+		desc: "Future draft picks.",
+		default: true,
 	},
 	{
-		objectStores:
-			"trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars,scheduledEvents",
-		name: "Game State",
-		desc:
-			"Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
-		checked: true,
+		key: "leagueSettings",
+		name: "League settings",
+		desc: "All league settings.",
+		default: true,
 	},
 	{
-		objectStores: "games",
-		name: "Box Scores",
-		desc:
-			"Box scores take up tons of space, but by default only three seasons are saved.",
-		checked: false,
+		key: "gameState",
+		name: "Game state",
+		desc: "Interactions with the owner, current contract negotiations, current season/phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+		default: true,
+	},
+	{
+		key: "newsFeedTransactions",
+		name: "News feed - transactions",
+		desc: "Trades, draft picks, and signings.",
+		default: true,
+	},
+	{
+		key: "newsFeedOther",
+		name: "News feed - all other entries",
+		desc: "All entries besides trades, draft picks, and signings - usually not that important, and increases export size by 10%.",
+		default: true,
+	},
+	{
+		key: "headToHead",
+		name: "Head-to-head data",
+		desc: "History of head-to-head results between teams.",
+		default: true,
+	},
+	{
+		key: "games",
+		name: "Box scores",
+		desc: "Box scores take up tons of space, but by default only three seasons are saved.",
+		default: false,
 	},
 ];
 
-const ExportLeague = () => {
-	const [status, setStatus] = useState<ReactNode | undefined>();
-	const [compressed, setCompressed] = useState(true);
+type Checked = Record<ExportLeagueKey, boolean>;
+type BulkType = "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly";
 
-	const handleSubmit = useCallback(
-		async (event: FormEvent) => {
-			event.preventDefault();
+const getCurrentSelected = (checked: Checked): BulkType | undefined => {
+	let validDefault = true;
+	let validNone = true;
+	let validAll = true;
+	let validTeamsOnly = true;
+	let validLeagueSettingsOnly = true;
 
-			setStatus("Exporting...");
+	for (const category of categories) {
+		if (category.default !== checked[category.key]) {
+			validDefault = false;
+		}
 
-			// @ts-ignore
-			const elements = (event.target.getElementsByTagName(
-				"input",
-			) as never) as HTMLInputElement[];
+		if (checked[category.key]) {
+			validNone = false;
+		}
 
-			// Get array of object stores to export
-			const objectStores = Array.from(elements)
-				.filter(input => input.checked && input.name !== "compressed")
-				.map(input => input.value)
-				.join(",")
-				.split(",");
+		if (!checked[category.key]) {
+			validAll = false;
+		}
 
-			try {
-				const { filename, json } = await toWorker(
-					"main",
-					"exportLeague",
-					objectStores,
-					compressed,
-				);
+		if (category.key === "teamsBasic") {
+			if (!checked[category.key]) {
+				validTeamsOnly = false;
+			}
+		} else {
+			if (checked[category.key]) {
+				validTeamsOnly = false;
+			}
+		}
 
-				downloadFile(filename, json, "application/json");
-			} catch (err) {
-				console.error(err);
-				setStatus(
-					<span className="text-danger">
-						Error exporting league: "{err.message}
-						". You might have to select less things to export or{" "}
-						<a href={helpers.leagueUrl(["delete_old_data"])}>
-							delete old data
-						</a>{" "}
-						before exporting.
-					</span>,
-				);
-				return;
+		if (category.key === "leagueSettings") {
+			if (!checked[category.key]) {
+				validLeagueSettingsOnly = false;
+			}
+		} else {
+			if (checked[category.key]) {
+				validLeagueSettingsOnly = false;
+			}
+		}
+	}
+
+	if (validDefault) {
+		return "default";
+	}
+
+	if (validNone) {
+		return "none";
+	}
+
+	if (validAll) {
+		return "all";
+	}
+
+	if (validTeamsOnly) {
+		return "teamsOnly";
+	}
+
+	if (validLeagueSettingsOnly) {
+		return "leagueSettingsOnly";
+	}
+
+	return undefined;
+};
+
+const getDefaultChecked = () => {
+	const init = {
+		players: false,
+		gameHighs: false,
+		teamsBasic: false,
+		teams: false,
+		headToHead: false,
+		schedule: false,
+		draftPicks: false,
+		leagueSettings: false,
+		gameState: false,
+		newsFeedTransactions: false,
+		newsFeedOther: false,
+		games: false,
+	};
+
+	for (const category of categories) {
+		init[category.key] = category.default;
+	}
+
+	return init;
+};
+
+const saveDefaults = (checked: Checked, compressed: boolean) => {
+	safeLocalStorage.setItem("exportLeagueData", JSON.stringify(checked));
+	safeLocalStorage.setItem(
+		"exportLeagueFormat",
+		JSON.stringify({ compressed }),
+	);
+};
+
+const loadChecked = () => {
+	const checked = getDefaultChecked();
+
+	const json = safeLocalStorage.getItem("exportLeagueData");
+	if (json) {
+		try {
+			const settings = JSON.parse(json);
+			for (const key of helpers.keys(checked)) {
+				if (typeof settings[key] === "boolean") {
+					checked[key] = settings[key];
+				}
 			}
 
-			setStatus(undefined);
-		},
-		[compressed],
-	);
+			return checked;
+		} catch (error) {}
+	}
+
+	return checked;
+};
+
+const loadCompressed = (): boolean => {
+	const json = safeLocalStorage.getItem("exportLeagueFormat");
+	if (json) {
+		try {
+			const settings = JSON.parse(json);
+			if (typeof settings.compressed === "boolean") {
+				return settings.compressed;
+			}
+		} catch (error) {}
+	}
+
+	return true;
+};
+
+const ExportLeague = () => {
+	const [status, setStatus] = useState<ReactNode | undefined>();
+	const [compressed, setCompressed] = useState(loadCompressed);
+	const [checked, setChecked] = useState<Checked>(loadChecked);
+
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
+
+		setStatus("Exporting...");
+
+		try {
+			const { filename, json } = await toWorker("main", "exportLeague", {
+				...checked,
+				compressed,
+			});
+
+			downloadFile(filename, json, "application/json");
+
+			saveDefaults(checked, compressed);
+		} catch (err) {
+			console.error(err);
+			setStatus(
+				<span className="text-danger">
+					Error exporting league: "{err.message}
+					". You might have to select less things to export or{" "}
+					<a href={helpers.leagueUrl(["delete_old_data"])}>
+						delete old data
+					</a>{" "}
+					before exporting.
+				</span>,
+			);
+			return;
+		}
+
+		setStatus(undefined);
+	};
 
 	useTitleBar({ title: "Export League" });
+
+	const currentSelected = getCurrentSelected(checked);
+
+	const bulkSetChecked = (type: BulkType) => {
+		if (type === "default") {
+			setChecked(getDefaultChecked());
+		} else {
+			setChecked(prevChecked => {
+				const newChecked = { ...prevChecked };
+				for (const key of helpers.keys(newChecked)) {
+					if (type === "none") {
+						newChecked[key] = false;
+					} else if (type === "all") {
+						newChecked[key] = true;
+					} else if (type === "teamsOnly") {
+						newChecked[key] = key === "teamsBasic";
+					} else if (type === "leagueSettingsOnly") {
+						newChecked[key] = key === "leagueSettings";
+					}
+				}
+
+				return newChecked;
+			});
+		}
+	};
+
+	const bulkInfo: {
+		key: BulkType;
+		title: string;
+	}[] = [
+		{
+			key: "default",
+			title: "Default",
+		},
+		{
+			key: "none",
+			title: "None",
+		},
+		{
+			key: "all",
+			title: "All",
+		},
+		{
+			key: "teamsOnly",
+			title: "Teams Only",
+		},
+		{
+			key: "leagueSettingsOnly",
+			title: "Settings Only",
+		},
+	];
+
+	const bulkSelectButtons = bulkInfo.map(info => (
+		<button
+			key={info.key}
+			className={`btn btn-${
+				currentSelected === info.key ? "primary" : "light-bordered"
+			}`}
+			onClick={() => {
+				bulkSetChecked(info.key);
+			}}
+			type="button"
+		>
+			{info.title}
+		</button>
+	));
 
 	return (
 		<>
@@ -108,7 +355,7 @@ const ExportLeague = () => {
 				base for a <b>custom roster file</b> to share with others. Select as
 				much or as little information as you want to export, since any missing
 				information will be filled in with default values when it is used.{" "}
-				<a href={`http://${process.env.SPORT}-gm.com/manual/customization/`}>
+				<a href={`https://${WEBSITE_ROOT}/manual/customization/`}>
 					Read the manual for more info.
 				</a>
 			</p>
@@ -117,14 +364,30 @@ const ExportLeague = () => {
 				<div className="row">
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<h2>Data</h2>
+
+						<div className="btn-group mb-3">{bulkSelectButtons}</div>
+
 						{categories.map(cat => (
-							<div key={cat.name} className="form-check">
+							<div
+								key={cat.name}
+								className={classNames("form-check", {
+									"ml-4": cat.parent,
+								})}
+							>
 								<label className="form-check-label">
 									<input
 										className="form-check-input"
 										type="checkbox"
-										value={cat.objectStores}
-										defaultChecked={cat.checked}
+										checked={
+											checked[cat.key] && (!cat.parent || checked[cat.parent])
+										}
+										disabled={cat.parent && !checked[cat.parent]}
+										onChange={() => {
+											setChecked(checked2 => ({
+												...checked2,
+												[cat.key]: !checked2[cat.key],
+											}));
+										}}
 									/>
 									{cat.name}
 									<p className="text-muted">{cat.desc}</p>
@@ -139,7 +402,6 @@ const ExportLeague = () => {
 								<input
 									className="form-check-input"
 									type="checkbox"
-									name="compressed"
 									checked={compressed}
 									onChange={() => {
 										setCompressed(compressed => !compressed);
@@ -152,13 +414,9 @@ const ExportLeague = () => {
 				</div>
 				<div className="row">
 					<div className="col-lg-10 col-xl-8 text-center">
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={status === "Exporting..."}
-						>
-							{status === "Exporting..." ? "Exporting..." : "Export League"}
-						</button>
+						<ActionButton type="submit" processing={status === "Exporting..."}>
+							Export League
+						</ActionButton>
 					</div>
 				</div>
 			</form>

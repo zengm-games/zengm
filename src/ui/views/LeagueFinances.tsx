@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import type { ReactNode } from "react";
@@ -28,30 +28,28 @@ const LeagueFinances = ({
 	// Since we don't store historical salary cap data, only show cap space for current season
 	const showCapSpace = season === currentSeason;
 
+	// Same for ticket price
+	const showTicketPrice = season === currentSeason && budget;
+
 	const cols = budget
 		? getCols(
 				"Team",
 				"Pop",
 				"Avg Attendance",
+				...(showTicketPrice ? ["Ticket Price"] : []),
 				"Revenue (YTD)",
 				"Profit (YTD)",
 				"Cash",
 				"Payroll",
-				"Cap Space",
-				"Roster Spots",
+				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
 		  )
 		: getCols(
 				"Team",
 				"Pop",
 				"Avg Attendance",
 				"Payroll",
-				"Cap Space",
-				"Roster Spots",
+				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
 		  );
-	if (!showCapSpace) {
-		cols.pop();
-		cols.pop();
-	}
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -71,6 +69,9 @@ const LeagueFinances = ({
 			</a>,
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
+			...(showTicketPrice
+				? [helpers.formatCurrency(t.budget.ticketPrice.amount, "", 2)]
+				: []),
 			...(budget
 				? [
 						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
@@ -84,6 +85,17 @@ const LeagueFinances = ({
 		if (showCapSpace) {
 			data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
 			data.push(t.rosterSpots);
+			data.push(
+				<button
+					className="btn btn-light-bordered btn-xs"
+					onClick={async () => {
+						console.log("click");
+						await toWorker("actions", "tradeFor", { tid: t.seasonAttrs.tid });
+					}}
+				>
+					Trade With
+				</button>,
+			);
 		}
 
 		return {

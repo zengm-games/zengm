@@ -17,6 +17,7 @@ const doSeason = async (
 		g.get("season") === season && g.get("phase") === PHASE.DRAFT;
 
 	const userTids = g.get("userTids");
+	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
 
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (const t of teams) {
@@ -31,22 +32,25 @@ const doSeason = async (
 				);
 			});
 
+			const skipChallengeMode =
+				challengeNoDraftPicks && userTids.includes(t.tid);
+
 			if (existingPick) {
 				const deletePickChallengeMode =
-					g.get("challengeNoDraftPicks") &&
-					userTids.includes(t.tid) &&
-					userTids.includes(existingPick.tid);
+					skipChallengeMode && userTids.includes(existingPick.tid);
 				if (!deletePickChallengeMode) {
 					existingPick.keep = true;
 				}
 			} else if (!ongoingDraft) {
-				await idb.cache.draftPicks.add({
-					tid: t.tid,
-					originalTid: t.tid,
-					round,
-					pick: 0,
-					season,
-				});
+				if (!skipChallengeMode) {
+					await idb.cache.draftPicks.add({
+						tid: t.tid,
+						originalTid: t.tid,
+						round,
+						pick: 0,
+						season,
+					});
+				}
 			}
 		}
 	}

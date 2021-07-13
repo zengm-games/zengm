@@ -38,17 +38,47 @@ const updateHistory = async (
 			season,
 		});
 
-		// Hack placeholder for old seasons before Finals MVP existed
-		if (!awards.hasOwnProperty("finalsMvp")) {
-			awards.finalsMvp = {
-				pid: 0,
-				name: "N/A",
-				tid: -1,
-				abbrev: "",
-				pts: 0,
-				trb: 0,
-				ast: 0,
-			};
+		const addAbbrev = (obj: any) => {
+			// Not sure why this would ever be null, but somebody said it was
+			if (obj == undefined) {
+				return;
+			}
+
+			const t = teams.find(t => t.tid === obj.tid);
+			if (t) {
+				obj.abbrev = t.seasonAttrs.abbrev;
+			} else {
+				obj.abbrev = "???";
+			}
+		};
+
+		const possibleSimpleAwards = [
+			"finalsMvp",
+			"mvp",
+			"dpoy",
+			"dfoy",
+			"goy",
+			"smoy",
+			"mip",
+			"roy",
+			"oroy",
+			"droy",
+		];
+		for (const key of possibleSimpleAwards) {
+			addAbbrev(awards[key]);
+		}
+		const possibleTeamAwards = ["allLeague", "allDefensive"];
+		for (const key of possibleTeamAwards) {
+			if (awards[key]) {
+				for (const team of awards[key]) {
+					for (const p of team.players) {
+						addAbbrev(p);
+					}
+				}
+			}
+		}
+		for (const p of awards.allRookie) {
+			addAbbrev(p);
 		}
 
 		// Hack placeholder for old seasons before Finals MVP existed

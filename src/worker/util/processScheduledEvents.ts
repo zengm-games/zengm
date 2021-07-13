@@ -33,8 +33,26 @@ const processTeamInfo = async (
 		region: t.region,
 		name: t.name,
 		imgURL: t.imgURL,
+		imgURLSmall: t.imgURLSmall,
 	};
 	Object.assign(t, info);
+
+	// If imgURL is defined in scheduled event but imgURLSmall is not, delete old imgURLSmall. Otherwise LAC wind up having a the Wings logo in imgURLSmall!
+	const deleteImgURLSmall = info.imgURL && !info.imgURLSmall && t.imgURLSmall;
+
+	if (deleteImgURLSmall) {
+		delete t.imgURLSmall;
+	}
+
+	// Make sure this didn't fuck up the cid somehow, such as if the user moved a team to a new conference, but then the scheduled event only has the div because it assumes conference didn't change. THIS WOULD BE LESS LIKELY TO HAPPEN IF NEW DIVS/CONFS WERE NOT CREATED BEFORE TEAM DID/CID VALUES WERE UPDATED! https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkRDqKPHCkJdLXcZvNCxhbGzn
+	const divs = g.get("divs");
+	const div = divs.find(div => div.did === t.did) ?? divs[0];
+	if (div) {
+		t.did = div.did;
+		t.cid = div.cid;
+	} else {
+		throw new Error("No divisions");
+	}
 
 	await idb.cache.teams.put(t);
 
@@ -48,6 +66,11 @@ const processTeamInfo = async (
 		);
 	}
 	Object.assign(teamSeason, info);
+	if (deleteImgURLSmall) {
+		delete teamSeason.imgURLSmall;
+	}
+	teamSeason.did = div.did;
+	teamSeason.cid = div.cid;
 	await idb.cache.teamSeasons.put(teamSeason);
 
 	let updatedRegionName;
@@ -112,6 +135,7 @@ const processTeamInfo = async (
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),
@@ -197,6 +221,30 @@ const processGameAttributes = async (
 				"draft_lottery",
 			])}">draft lottery</a> format.`,
 		);
+	}
+
+	const prevFoulsUntilBonus = g.get("foulsUntilBonus");
+	if (
+		info.foulsUntilBonus !== undefined &&
+		JSON.stringify(info.foulsUntilBonus) !== JSON.stringify(prevFoulsUntilBonus)
+	) {
+		let text = "New number of team fouls until the bonus: ";
+
+		if (info.foulsUntilBonus[0] === info.foulsUntilBonus[1]) {
+			text += `${info.foulsUntilBonus[0]} in any regulation or overtime period`;
+		} else {
+			text += `${info.foulsUntilBonus[0]} in regulation periods, ${info.foulsUntilBonus[1]} in overtime periods`;
+		}
+
+		if (
+			info.foulsUntilBonus[2] < info.foulsUntilBonus[0] ||
+			info.foulsUntilBonus[2] < info.foulsUntilBonus[1]
+		) {
+			// If this condition is not true, then last 2 minutes rule basically does not exist
+			text += `, ${info.foulsUntilBonus[2]} in the last 2 minutes of any period`;
+		}
+
+		texts.push(text);
 	}
 
 	for (const text of texts) {

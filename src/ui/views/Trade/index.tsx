@@ -6,7 +6,7 @@ import { helpers, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
-import type { View } from "../../../common/types";
+import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
 
 const Trade = (props: View<"trade">) => {
@@ -14,8 +14,10 @@ const Trade = (props: View<"trade">) => {
 		accepted: false,
 		asking: false,
 		forceTrade: false,
-		message: null,
+		message: null as string | null,
+		prevTeams: undefined as TradeTeams | undefined,
 	});
+	console.log("prevTeams", state.prevTeams);
 
 	const handleChangeAsset = async (
 		userOrOther: "other" | "user",
@@ -23,7 +25,11 @@ const Trade = (props: View<"trade">) => {
 		includeOrExclude: "include" | "exclude",
 		id: number,
 	) => {
-		setState(prevState => ({ ...prevState, message: null }));
+		setState(prevState => ({
+			...prevState,
+			message: null,
+			prevTeams: undefined,
+		}));
 		const ids = {
 			"user-pids": props.userPids,
 			"user-pids-excluded": props.userPidsExcluded,
@@ -59,7 +65,7 @@ const Trade = (props: View<"trade">) => {
 				dpids: ids["other-dpids"],
 				dpidsExcluded: ids["other-dpids-excluded"],
 			},
-		];
+		] as TradeTeams;
 		await toWorker("main", "updateTrade", teams);
 	};
 
@@ -117,7 +123,11 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleChangeTeam = async (tid: number) => {
-		setState(prevState => ({ ...prevState, message: null }));
+		setState(prevState => ({
+			...prevState,
+			message: null,
+			prevTeams: undefined,
+		}));
 
 		const teams = [
 			{
@@ -140,15 +150,53 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickAsk = async () => {
-		setState(prevState => ({ ...prevState, asking: true, message: null }));
-		const message = await toWorker("main", "tradeCounterOffer");
-		setState(prevState => ({ ...prevState, asking: false, message }));
+		let newPrevTeams = [
+			{
+				tid: props.userTid,
+				pids: props.userPids,
+				pidsExcluded: props.userPidsExcluded,
+				dpids: props.userDpids,
+				dpidsExcluded: props.userDpidsExcluded,
+			},
+			{
+				tid: props.otherTid,
+				pids: props.otherPids,
+				pidsExcluded: props.otherPidsExcluded,
+				dpids: props.otherDpids,
+				dpidsExcluded: props.otherDpidsExcluded,
+			},
+		] as TradeTeams | undefined;
+
+		setState(prevState => ({
+			...prevState,
+			asking: true,
+			message: null,
+			prevTeams: undefined,
+		}));
+
+		const { changed, message } = await toWorker("main", "tradeCounterOffer");
+
+		if (!changed) {
+			newPrevTeams = undefined;
+		}
+
+		setState(prevState => ({
+			...prevState,
+			asking: false,
+			message,
+			prevTeams: newPrevTeams,
+		}));
 	};
 
-	const handleClickClear = async () => {
-		setState(prevState => ({ ...prevState, message: null }));
-		await toWorker("main", "clearTrade");
-	};
+	const handleClickClear =
+		(type: "all" | "other" | "user" | "keepUntradeable") => async () => {
+			setState(prevState => ({
+				...prevState,
+				message: null,
+				prevTeams: undefined,
+			}));
+			await toWorker("main", "clearTrade", type);
+		};
 
 	const handleClickForceTrade = () => {
 		setState(prevState => ({
@@ -163,7 +211,12 @@ const Trade = (props: View<"trade">) => {
 			"proposeTrade",
 			state.forceTrade,
 		);
-		setState(prevState => ({ ...prevState, accepted, message }));
+		setState(prevState => ({
+			...prevState,
+			accepted,
+			message,
+			prevTeams: undefined,
+		}));
 	};
 
 	const {
@@ -179,6 +232,7 @@ const Trade = (props: View<"trade">) => {
 		otherPicks,
 		otherRoster,
 		otherTid,
+		otl,
 		phase,
 		salaryCap,
 		summary,
@@ -204,8 +258,9 @@ const Trade = (props: View<"trade">) => {
 		if (summaryControls.current && summaryText.current) {
 			// Keep in sync with .trade-affix
 			if (window.matchMedia("(min-width:768px)").matches) {
+				// 60 for top navbar, 24 for spacing between asset list and trade controls
 				const newHeight =
-					window.innerHeight - 60 - summaryControls.current.clientHeight;
+					window.innerHeight - 60 - 24 - summaryControls.current.clientHeight;
 				summaryText.current.style.maxHeight = `${newHeight}px`;
 			} else if (summaryText.current.style.maxHeight !== "") {
 				summaryText.current.style.removeProperty("height");
@@ -241,6 +296,12 @@ const Trade = (props: View<"trade">) => {
 		summary.teams[1].trade.length;
 
 	const otherTeamIndex = teams.findIndex(t => t.tid === otherTid);
+
+	const otherTeam = teams[otherTeamIndex];
+	const otherTeamName = otherTeam
+		? `${otherTeam.region} ${otherTeam.name}`
+		: "Other team";
+	const teamNames = [otherTeamName, userTeamName] as [string, string];
 
 	return (
 		<>
@@ -301,6 +362,7 @@ const Trade = (props: View<"trade">) => {
 							}}
 						>
 							{won}-{lost}
+							{otl > 0 ? <>-{otl}</> : null}
 							{tied > 0 ? <>-{tied}</> : null}, {strategy}
 						</div>
 					</div>
@@ -335,7 +397,7 @@ const Trade = (props: View<"trade">) => {
 							summary={summary}
 						/>
 
-						<div className="py-1" ref={summaryControls}>
+						<div ref={summaryControls}>
 							{summary.warning ? (
 								<div className="alert alert-danger mb-0">
 									<strong>Warning!</strong> {summary.warning}
@@ -352,12 +414,36 @@ const Trade = (props: View<"trade">) => {
 									)}
 								>
 									{state.message}
+									{state.prevTeams ? (
+										<div className="mt-1 text-right">
+											<button
+												className="btn btn-secondary btn-sm"
+												onClick={async () => {
+													if (state.prevTeams) {
+														await toWorker(
+															"main",
+															"updateTrade",
+															state.prevTeams,
+														);
+														setState(prevState => ({
+															...prevState,
+															message: null,
+															prevTeams: undefined,
+														}));
+													}
+												}}
+											>
+												Undo
+											</button>
+										</div>
+									) : null}
 								</div>
 							) : null}
 
 							<div
 								className={classNames({
 									"trade-extra-margin-bottom": multiTeamMode,
+									"mt-3": summary.warning || state.message,
 								})}
 							>
 								{!noTradingAllowed ? (
@@ -372,6 +458,7 @@ const Trade = (props: View<"trade">) => {
 											handleClickForceTrade={handleClickForceTrade}
 											handleClickPropose={handleClickPropose}
 											numAssets={numAssets}
+											teamNames={teamNames}
 										/>
 									</div>
 								) : challengeNoTrades ? (

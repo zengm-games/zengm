@@ -26,6 +26,8 @@ const updatePlayByPlay = async (
 			await idb.cache.games.get(inputs.gidPlayByPlay),
 		);
 
+		const otl = g.get("otl", "current");
+
 		// Stats to set to 0
 		const resetStatsPlayer = player.stats.raw;
 		const resetStatsTeam = team.stats.raw;
@@ -70,7 +72,11 @@ const updatePlayByPlay = async (
 				} else if (boxScore.won.tid === t.tid) {
 					t.won -= 1;
 				} else if (boxScore.lost.tid === t.tid) {
-					t.lost -= 1;
+					if (boxScore.overtimes > 0 && otl) {
+						t.otl -= 1;
+					} else {
+						t.lost -= 1;
+					}
 				}
 			}
 
@@ -84,13 +90,19 @@ const updatePlayByPlay = async (
 			}
 
 			for (let j = 0; j < t.players.length; j++) {
-				const p = t.players[j]; // Fix for players who were hurt this game - don't show right away!
+				const p = t.players[j];
 
-				if (p.injury.type !== "Healthy" && p.min > 0) {
-					p.injury = {
-						type: "Healthy",
-						gamesRemaining: 0,
-					};
+				// Fix for players who were hurt this game - don't show right away! And handle players playing through an injury who were injured again.
+				if (p.injury.newThisGame) {
+					p.injury = p.injuryAtStart
+						? {
+								...p.injuryAtStart,
+								playingThrough: true,
+						  }
+						: {
+								type: "Healthy",
+								gamesRemaining: 0,
+						  };
 				}
 
 				for (const stat of resetStatsPlayer) {
@@ -139,6 +151,8 @@ const updatePlayByPlay = async (
 			events: inputs.playByPlay,
 			finals,
 			initialBoxScore: boxScore,
+			otl,
+			quarterLength: g.get("quarterLength"),
 		};
 	}
 };

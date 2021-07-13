@@ -7,6 +7,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2],
 		skill: {
 			label: "Pa",
+			cutoff: 0.71,
 		},
 	},
 	passingDeep: {
@@ -14,6 +15,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.1, 0.2],
 		skill: {
 			label: "Pd",
+			cutoff: 0.71,
 		},
 	},
 	passingVision: {
@@ -42,6 +44,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.2, 1],
 		skill: {
 			label: "H",
+			cutoff: 0.73,
 		},
 	},
 	gettingOpen: {
@@ -53,6 +56,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 0.2, 1],
 		skill: {
 			label: "Bp",
+			cutoff: 0.63,
 		},
 	},
 	runBlocking: {
@@ -64,28 +68,30 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	passRushing: {
 		ratings: ["hgt", "stre", "spd", "prs", "tck"],
-		weights: [1, 1, 0.5, 1, 0.25],
+		weights: [1, 1, 0.5, 1, 0.1],
 		skill: {
 			label: "PR",
+			cutoff: 0.63,
 		},
 	},
 	runStopping: {
 		ratings: ["hgt", "stre", "spd", "rns", "tck"],
-		weights: [0.5, 1, 0.5, 1, 1],
+		weights: [0.5, 1, 0.5, 1, 0.25],
 		skill: {
 			label: "RS",
 		},
 	},
 	passCoverage: {
-		ratings: ["hgt", "spd", "pcv", "tck"],
-		weights: [0.1, 1, 1, 0.25],
+		ratings: ["hgt", "spd", "pcv"],
+		weights: [0.1, 1, 1],
 		skill: {
 			label: "L",
+			cutoff: 0.72,
 		},
 	},
 	tackling: {
 		ratings: ["spd", "stre", "tck"],
-		weights: [1, 1, 1],
+		weights: [1, 1, 2.5],
 	},
 	avoidingSacks: {
 		ratings: ["thv", "elu", "stre"],
@@ -94,9 +100,6 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	ballSecurity: {
 		ratings: ["bsc", "stre"],
 		weights: [1, 0.2],
-	},
-	pace: {
-		ratings: ["spd", "endu"],
 	},
 	endurance: {
 		ratings: [50, "endu"],
@@ -113,6 +116,82 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	punting: {
 		ratings: ["ppw", "pac"],
 		weights: [1, 1],
+	},
+};
+
+const PLAYER_GAME_STATS = {
+	passing: {
+		name: "Passing",
+		stats: [
+			"pssCmp",
+			"pss",
+			"cmpPct",
+			"pssYds",
+			"pssTD",
+			"pssInt",
+			"pssSk",
+			"pssSkYds",
+			"qbRat",
+			"fmbLost",
+		],
+		sortBy: ["pssYds"],
+	},
+	rushing: {
+		name: "Rushing",
+		stats: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
+		sortBy: ["rusYds"],
+	},
+	receiving: {
+		name: "Receiving",
+		stats: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
+		sortBy: ["recYds"],
+	},
+	kicking: {
+		name: "Kicking",
+		stats: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
+		sortBy: ["kickingPts"],
+	},
+	punting: {
+		name: "Punting",
+		stats: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		sortBy: ["pnt"],
+	},
+	returns: {
+		name: "Returns",
+		stats: [
+			"kr",
+			"krYds",
+			"krYdsPerAtt",
+			"krLng",
+			"krTD",
+			"pr",
+			"prYds",
+			"prYdsPerAtt",
+			"prLng",
+			"prTD",
+		],
+		sortBy: ["krYds", "prYds"],
+	},
+	defense: {
+		name: "Defense",
+		stats: [
+			"defTckSolo",
+			"defTckAst",
+			"defTck",
+			"defTckLoss",
+			"defSk",
+			"defSft",
+			"defPssDef",
+			"defInt",
+			"defIntYds",
+			"defIntTD",
+			"defIntLng",
+			"defFmbFrc",
+			"defFmbRec",
+			"defFmbYds",
+			"defFmbTD",
+		],
+		sortBy: ["defTck"],
 	},
 };
 
@@ -418,8 +497,9 @@ const RATINGS: RatingKey[] = [
 	"ppw",
 	"pac",
 ];
-const TIME_BETWEEN_GAMES = "week";
-const SIMPLE_AWARDS = ["mvp", "dpoy", "droy", "oroy", "finalsMvp"] as const;
+
+const SIMPLE_AWARDS = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
+
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	dpoy: "Defensive Player of the Year",
@@ -491,6 +571,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,
@@ -498,6 +579,5 @@ export {
 	RATINGS,
 	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
-	TIME_BETWEEN_GAMES,
 	DEFAULT_STADIUM_CAPACITY,
 };

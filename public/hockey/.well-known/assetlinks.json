@@ -1,0 +1,12 @@
+[
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "com.zengm.hockey.twa",
+			"sha256_cert_fingerprints": [
+				"9F:CD:F4:2F:7D:0D:25:73:2A:A7:1E:76:E4:BB:4A:C9:9B:96:C0:EC:CD:6D:F7:E7:7A:AF:BD:B5:AB:79:77:91"
+			]
+		}
+	}
+]

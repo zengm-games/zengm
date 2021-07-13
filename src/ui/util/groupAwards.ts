@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy";
+import { groupBy } from "../../common/groupBy";
 import type { Player } from "../../common/types";
 import helpers from "./helpers";
 
@@ -8,6 +8,7 @@ const awardsOrder = [
 	"Won Championship",
 	"Finals MVP",
 	"Defensive Player of the Year",
+	"Goalie of the Year",
 	"Sixth Man of the Year",
 	"Most Improved Player",
 	"Rookie of the Year",
@@ -27,6 +28,12 @@ const awardsOrder = [
 	"League Assists Leader",
 	"League Steals Leader",
 	"League Blocks Leader",
+	"League Passing Leader",
+	"League Rushing Leader",
+	"League Receiving Leader",
+	"League Scrimmage Yards Leader",
+	"League Points Leader",
+	"League Goals Leader",
 ];
 
 const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
@@ -45,8 +52,14 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "Champion";
 		} else if (type === "Finals MVP") {
 			type = "FMVP";
+		} else if (type === "Playoffs MVP") {
+			type = "PMVP";
 		} else if (type === "Defensive Player of the Year") {
 			type = "DPOY";
+		} else if (type === "Defensive Forward of the Year") {
+			type = "DFOY";
+		} else if (type === "Goalie of the Year") {
+			type = "GOY";
 		} else if (type === "Sixth Man of the Year") {
 			type = "SMOY";
 		} else if (type === "Most Improved Player") {

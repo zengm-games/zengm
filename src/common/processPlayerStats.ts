@@ -1,6 +1,7 @@
 import isSport from "./isSport";
 import processPlayerStatsBasketball from "./processPlayerStats.basketball";
 import processPlayerStatsFootball from "./processPlayerStats.football";
+import processPlayerStatsHockey from "./processPlayerStats.hockey";
 import type { PlayerStats, PlayerStatType } from "./types";
 
 const processPlayerStats = (
@@ -13,8 +14,8 @@ const processPlayerStats = (
 		return processPlayerStatsFootball(ps, stats, statType, bornYear);
 	}
 
-	if (statType === undefined || bornYear === undefined) {
-		throw new Error("statType and bornYear are required");
+	if (isSport("hockey")) {
+		return processPlayerStatsHockey(ps, stats, statType, bornYear);
 	}
 
 	return processPlayerStatsBasketball(ps, stats, statType, bornYear);

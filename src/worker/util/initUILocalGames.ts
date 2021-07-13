@@ -18,6 +18,7 @@ const initUILocalGames = async () => {
 	).map(game => ({
 		forceWin: game.forceWin,
 		gid: game.gid,
+		overtimes: game.overtimes,
 		teams: [
 			{
 				ovr: game.teams[0].ovr,

@@ -15,7 +15,8 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { GRACE_PERIOD } from "../../common";
+import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 /**
  * Ping a counter at basketball-gm.com.
@@ -56,29 +57,20 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
+	const mobile = window.screen.width < 768;
+
 	if (!hideAds) {
 		window.freestar.queue.push(() => {
-			// Add margin for skyscraper on right
-			const container = document.getElementsByClassName("bbgm-container")[0];
-			if (container instanceof HTMLElement) {
-				container.classList.add("padding-for-skyscraper");
-			}
-
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
-			const divsMobile = [`${process.env.SPORT}-gm_mobile_leaderboard`];
-			// const divsMobile: string[] = [];
-			const showDivsDesktop = [
-				`${process.env.SPORT}-gm_leaderboard_atf`,
-				`${process.env.SPORT}-gm_mrec_btf_1`,
-				`${process.env.SPORT}-gm_mrec_btf_2`,
-				"skyscraper-wrapper",
+			const divsMobile = [AD_DIVS.mobile];
+			const divsDesktop = [
+				AD_DIVS.leaderboard,
+				AD_DIVS.rectangle1,
+				AD_DIVS.rectangle2,
 			];
-			const showDivs =
-				window.screen && window.screen.width < 768
-					? divsMobile
-					: showDivsDesktop;
+			const divs = mobile ? divsMobile : divsDesktop;
 
-			for (const id of showDivs) {
+			for (const id of divs) {
 				const div = document.getElementById(id);
 
 				if (div) {
@@ -86,23 +78,21 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			const adDivsDesktop = [
-				`${process.env.SPORT}-gm_leaderboard_atf`,
-				`${process.env.SPORT}-gm_mrec_btf_1`,
-				`${process.env.SPORT}-gm_mrec_btf_2`,
-			];
-			const adDivs =
-				window.screen && window.screen.width < 768 ? divsMobile : adDivsDesktop;
-
-			for (const adDiv of adDivs) {
-				window.freestar.config.enabled_slots.push({
-					placementName: adDiv,
-					slotId: adDiv,
-				});
-				console.log("enabled_slots", adDiv);
+			// Special case for rail, to tell it there is no BBGM gold
+			const rail = document.getElementById(AD_DIVS.rail);
+			if (rail) {
+				delete rail.dataset.gold;
+				updateSkyscraperDisplay();
 			}
 
-			if (adDivs.includes(`${process.env.SPORT}-gm_mobile_leaderboard`)) {
+			for (const id of divs) {
+				window.freestar.config.enabled_slots.push({
+					placementName: id,
+					slotId: id,
+				});
+			}
+
+			if (divs.includes(AD_DIVS.mobile)) {
 				localActions.update({
 					stickyFooterAd: true,
 				});
@@ -114,6 +104,7 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
+				// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
 				window.googletag = window.googletag || {};
 				window.googletag.cmd = window.googletag.cmd || [];
 				window.googletag.cmd.push(() => {
@@ -126,7 +117,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (window.screen && window.screen.width >= 768) {
+			if (!mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 
@@ -136,6 +127,50 @@ const initAds = (goldUntil: number | undefined) => {
 			}
 		});
 	}
+};
+
+// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
+const initGold = () => {
+	window.freestar.queue.push(() => {
+		const divsAll = [
+			AD_DIVS.mobile,
+			AD_DIVS.leaderboard,
+			AD_DIVS.rectangle1,
+			AD_DIVS.rectangle2,
+		];
+
+		for (const id of divsAll) {
+			const div = document.getElementById(id);
+
+			if (div) {
+				div.style.display = "none";
+			}
+
+			window.freestar.deleteAdSlots(id);
+		}
+
+		// Special case for rail, to tell it there is no BBGM gold
+		const rail = document.getElementById(AD_DIVS.rail);
+		if (rail) {
+			rail.dataset.gold = "true";
+			updateSkyscraperDisplay();
+		}
+
+		localActions.update({
+			stickyFooterAd: false,
+		});
+
+		// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+		const footer = document.getElementById("main-footer");
+		if (footer) {
+			footer.style.marginBottom = "";
+		}
+
+		const logo = document.getElementById("bbgm-ads-logo");
+		if (logo) {
+			logo.style.display = "none";
+		}
+	});
 };
 
 const deleteGames = (gids: number[]) => {
@@ -200,7 +235,10 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	const adBlock = !window.freestar.freestarReloadAdSlot;
+	const adBlock =
+		!window.freestar.refreshAllSlots ||
+		!window.googletag ||
+		!window.googletag.pubads;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;
@@ -245,6 +283,7 @@ export default {
 	confirmDeleteAllLeagues,
 	deleteGames,
 	initAds,
+	initGold,
 	mergeGames,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,

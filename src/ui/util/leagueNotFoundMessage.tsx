@@ -1,6 +1,6 @@
 import { bySport, GAME_NAME } from "../../common";
 
-const pro = bySport({ basketball: "NBA", football: "NFL" });
+const pro = bySport({ basketball: "NBA", football: "NFL", hockey: "NHL" });
 const leagueNotFoundMessage = (
 	<>
 		<h2>League not found</h2>
@@ -66,7 +66,7 @@ const leagueNotFoundMessage = (
 							game-breaking power-ups.
 						</p>
 						<p>
-							Our only goal is making the best possible {process.env.SPORT}
+							Our only goal is making the best possible {process.env.SPORT}{" "}
 							management game!
 						</p>
 					</div>

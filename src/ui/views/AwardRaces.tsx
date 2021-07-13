@@ -76,6 +76,9 @@ const AwardRaces = ({
 						let record = null;
 						if (t) {
 							record = `${t.seasonAttrs.won}-${t.seasonAttrs.lost}`;
+							if (t.seasonAttrs.otl) {
+								record += `-${t.seasonAttrs.otl}`;
+							}
 							if (t.seasonAttrs.tied) {
 								record += `-${t.seasonAttrs.tied}`;
 							}

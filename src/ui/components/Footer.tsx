@@ -1,5 +1,36 @@
-import { memo } from "react";
-import { GAME_ACRONYM } from "../../common";
+import { Fragment, memo } from "react";
+import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+
+const footerLinks = [
+	{
+		url: "https://zengm.com/",
+		title: "About",
+	},
+	{
+		url: "https://zengm.com/blog/",
+		title: "Blog",
+	},
+	{
+		url: "https://zengm.com/contact/",
+		title: "Contact",
+	},
+	{
+		url: "https://zengm.com/privacy/",
+		title: "Privacy",
+	},
+	{
+		url: "https://github.com/zengm-games/zengm",
+		title: "GitHub",
+	},
+	{
+		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,
+		title: "Reddit",
+	},
+	{
+		url: "https://discord.gg/caPFuM9",
+		title: "Discord",
+	},
+];
 
 const Footer = memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
@@ -14,7 +45,7 @@ const Footer = memo(() => {
 				}}
 			>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_1`}
+					id={AD_DIVS.rectangle1}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -30,14 +61,14 @@ const Footer = memo(() => {
 					style={{
 						display: "none",
 						height: "250px",
-						margin: "5px 310px 0 310px",
+						margin: "5px 320px 0 320px",
 						alignItems: "center",
 						justifyContent: "center",
 					}}
 				>
 					<img
 						alt=""
-						src={`https://${process.env.SPORT}-gm.com/files/logo.png`}
+						src={`https://zengm.com/files/logo-${process.env.SPORT}.png`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",
@@ -45,7 +76,7 @@ const Footer = memo(() => {
 					/>
 				</div>
 				<div
-					id={`${process.env.SPORT}-gm_mrec_btf_2`}
+					id={AD_DIVS.rectangle2}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -62,55 +93,16 @@ const Footer = memo(() => {
 			<hr />
 
 			<p className="float-sm-left">
-				<a
-					href={`https://${process.env.SPORT}-gm.com/about/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					About
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/blog/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Blog
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/contact/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Contact
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://${process.env.SPORT}-gm.com/privacy-policy/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Privacy
-				</a>{" "}
-				·{" "}
-				<a
-					href={`https://www.reddit.com/r/${
-						process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM"
-					}/`}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Reddit
-				</a>{" "}
-				·{" "}
-				<a
-					href="https://discord.gg/caPFuM9"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Discord
-				</a>
+				{footerLinks.map(({ url, title }, i) => {
+					return (
+						<Fragment key={url}>
+							{i > 0 ? " · " : null}
+							<a href={url} rel="noopener noreferrer" target="_blank">
+								{title}
+							</a>
+						</Fragment>
+					);
+				})}
 				<br />
 			</p>
 			<p className="float-sm-right text-muted">

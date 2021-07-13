@@ -2,9 +2,10 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MarginOfVictory } from "../components";
+import { DataTable, TeamLogoInline } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
+import { wrappedMovOrDiff } from "../components/MovOrDiff";
 
 const Other = ({
 	actualShowHealthy,
@@ -30,10 +31,13 @@ const Other = ({
 
 const PowerRankings = ({
 	challengeNoRatings,
+	confs,
 	currentSeason,
+	divs,
 	season,
 	teams,
 	ties,
+	otl,
 	userTid,
 }: View<"powerRankings">) => {
 	useTitleBar({
@@ -52,12 +56,13 @@ const PowerRankings = ({
 			"Position Ranks",
 			"pos",
 		],
+		hockey: [POSITIONS, "Position Ranks", "pos"],
 	});
 
 	const superCols = [
 		{
 			title: "",
-			colspan: 2,
+			colspan: 4,
 		},
 		{
 			title: "Team Rating",
@@ -65,7 +70,7 @@ const PowerRankings = ({
 		},
 		{
 			title: "",
-			colspan: ties ? 5 : 4,
+			colspan: 5 + (ties ? 1 : 0) + (otl ? 1 : 0),
 		},
 		{
 			title: (
@@ -92,13 +97,17 @@ const PowerRankings = ({
 	const colNames = [
 		"#",
 		"Team",
+		"Conference",
+		"Division",
 		"Current",
 		"Healthy",
 		"W",
 		"L",
+		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"L10",
-		"stat:mov",
+		`stat:${isSport("basketball") ? "mov" : "diff"}`,
+		"AvgAge",
 		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
 	];
 
@@ -113,19 +122,37 @@ const PowerRankings = ({
 	}
 
 	const rows = teams.map(t => {
+		const conf = confs.find(conf => conf.cid === t.seasonAttrs.cid);
+		const div = divs.find(div => div.did === t.seasonAttrs.did);
+
 		return {
 			key: t.tid,
 			data: [
 				t.rank,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${t.seasonAttrs.abbrev}_${t.tid}`,
-						season,
-					])}
-				>
-					{t.seasonAttrs.region} {t.seasonAttrs.name}
-				</a>,
+				{
+					value: (
+						<div className="d-flex align-items-center">
+							<TeamLogoInline
+								imgURL={t.seasonAttrs.imgURL}
+								imgURLSmall={t.seasonAttrs.imgURLSmall}
+							/>
+							<div className="ml-1">
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${t.seasonAttrs.abbrev}_${t.tid}`,
+										season,
+									])}
+								>
+									{t.seasonAttrs.region} {t.seasonAttrs.name}
+								</a>
+							</div>
+						</div>
+					),
+					sortValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name}`,
+				},
+				conf ? conf.name.replace(" Conference", "") : null,
+				div ? div.name : null,
 				!challengeNoRatings ? (
 					t.ovr !== t.ovrCurrent ? (
 						<span className="text-danger">{t.ovrCurrent}</span>
@@ -136,9 +163,20 @@ const PowerRankings = ({
 				!challengeNoRatings ? t.ovr : null,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
+				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
-				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,
+				wrappedMovOrDiff(
+					isSport("basketball")
+						? {
+								pts: t.stats.pts * t.stats.gp,
+								oppPts: t.stats.oppPts * t.stats.gp,
+								gp: t.stats.gp,
+						  }
+						: t.stats,
+					isSport("basketball") ? "mov" : "diff",
+				),
+				t.avgAge.toFixed(1),
 				...otherKeys.map(key => ({
 					value: (
 						<Other
@@ -166,10 +204,10 @@ const PowerRankings = ({
 			</p>
 
 			<DataTable
+				className="align-middle-all"
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="PowerRankings"
-				nonfluid
 				rows={rows}
 				superCols={superCols}
 			/>

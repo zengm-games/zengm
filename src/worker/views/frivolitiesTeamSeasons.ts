@@ -1,8 +1,8 @@
 import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
-import { PHASE } from "../../common";
-import orderBy from "lodash/orderBy";
+import { isSport, PHASE } from "../../common";
+import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
 
 type Most = {
@@ -65,11 +65,19 @@ export const getMostXTeamSeasons = async ({
 				won: ts.won,
 				lost: ts.lost,
 				tied: ts.tied,
+				otl: ts.otl,
 				winp: ts.winp,
+				standingsPts: team.evaluatePointsFormula(ts, {
+					season: ts.season,
+				}),
+				ptsPct: team.ptsPct(ts),
 				playoffRoundsWon: ts.playoffRoundsWon,
 				seed: null as null | number,
 				rank: 0,
 				mov: 0,
+				gp: 0,
+				pts: 0,
+				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
 			};
 		}),
@@ -85,6 +93,15 @@ export const getMostXTeamSeasons = async ({
 		const row = teamStats.find(row => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
+			ts.gp = row.gp;
+			ts.pts = row.pts;
+			ts.oppPts = row.oppPts;
+
+			// MovOrDiff is expecting this to be per game
+			if (isSport("basketball")) {
+				ts.pts /= row.gp;
+				ts.oppPts /= row.gp;
+			}
 		}
 
 		if (ts.playoffRoundsWon >= 0) {
@@ -142,6 +159,9 @@ const updateFrivolitiesTeamSeasons = async (
 
 		const phase = g.get("phase");
 		const season = g.get("season");
+
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
 
 		if (type === "best_non_playoff") {
 			title = "Best Non-Playoff Teams";
@@ -311,8 +331,10 @@ const updateFrivolitiesTeamSeasons = async (
 			extraCols,
 			teamSeasons,
 			ties: g.get("ties"),
+			otl: g.get("otl"),
 			title,
 			type,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

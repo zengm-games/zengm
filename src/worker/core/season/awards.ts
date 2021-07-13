@@ -4,9 +4,16 @@ import {
 	SIMPLE_AWARDS,
 	AWARD_NAMES,
 	bySport,
+	isSport,
 } from "../../../common";
 import { idb } from "../../db";
-import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
+import {
+	g,
+	defaultGameAttributes,
+	helpers,
+	logEvent,
+	orderTeams,
+} from "../../util";
 import type {
 	Conditions,
 	PlayerFiltered,
@@ -66,6 +73,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"ewa",
 				"ws",
 				"dws",
+				"vorp",
 				"ws48",
 				"season",
 				"abbrev",
@@ -81,6 +89,35 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"krYds",
 				"prTD",
 				"prYds",
+				"pssYds",
+				"rusYds",
+				"recYds",
+				"ydsFromScrimmage",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+				"defIntTD",
+				"defFmbTD",
+				"defSft",
+				"defSk",
+				"defTck",
+				"defInt",
+				"defPssDef",
+			],
+			hockey: [
+				"keyStats",
+				"g",
+				"a",
+				"pts",
+				"hit",
+				"tk",
+				"gaa",
+				"svPct",
+				"ops",
+				"dps",
+				"gps",
+				"ps",
 				"season",
 				"abbrev",
 				"tid",
@@ -103,11 +140,17 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	const teamInfos: Record<
 		number,
 		{
+			gp: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
+			gp:
+				teamSeason.won +
+				teamSeason.lost +
+				(teamSeason.tied ?? 0) +
+				(teamSeason.otl ?? 0),
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}
@@ -127,21 +170,66 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		p.teamInfo = teamInfos[p.currentStats.tid];
+		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
+		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
+			gp: 0,
+			winp: 0,
+		};
+	}
+
+	// Add fracWS for basketball current season
+	if (isSport("basketball")) {
+		const totalWS: Record<number, number> = {};
+		for (const p of players) {
+			if (totalWS[p.currentStats.tid] === undefined) {
+				totalWS[p.currentStats.tid] = 0;
+			}
+			totalWS[p.currentStats.tid] += p.currentStats.ws;
+		}
+
+		for (const p of players) {
+			p.currentStats.fracWS = Math.min(
+				// Inner max is to handle negative totalWS
+				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid], 1),
+
+				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
+				0.8,
+			);
+		}
 	}
 
 	return players;
 };
 
-const teamAwards = (
+const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
 		["tid"],
-		["winp", "won", "lost", "tied", "cid", "did", "abbrev", "region", "name"],
-		any,
+		[
+			"winp",
+			"pts",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+			"cid",
+			"did",
+			"abbrev",
+			"region",
+			"name",
+		],
+		["pts", "oppPts", "gp"],
 		number
 	>[],
 ) => {
-	const teams = helpers.orderByWinp(teamsUnsorted);
+	const teams = await orderTeams(teamsUnsorted, teamsUnsorted);
 
 	if (teams.length === 0) {
 		throw new Error("No teams found");
@@ -155,24 +243,33 @@ const teamAwards = (
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
 		tied: g.get("ties", "current") ? teams[0].seasonAttrs.tied : undefined,
+		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
 	};
-	const bestRecordConfs = g.get("confs", "current").map(c => {
-		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
+	const bestRecordConfs = await Promise.all(
+		g.get("confs", "current").map(async c => {
+			const teamsConf = await orderTeams(
+				teams.filter(t2 => t2.seasonAttrs.cid === c.cid),
+				teams,
+			);
+			const t = teamsConf[0];
 
-		if (!t) {
-			return;
-		}
+			if (!t) {
+				return;
+			}
 
-		return {
-			tid: t.tid,
-			abbrev: t.seasonAttrs.abbrev,
-			region: t.seasonAttrs.region,
-			name: t.seasonAttrs.name,
-			won: t.seasonAttrs.won,
-			lost: t.seasonAttrs.lost,
-			tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
-		};
-	});
+			return {
+				tid: t.tid,
+				abbrev: t.seasonAttrs.abbrev,
+				region: t.seasonAttrs.region,
+				name: t.seasonAttrs.name,
+				won: t.seasonAttrs.won,
+				lost: t.seasonAttrs.lost,
+				tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
+				otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
+			};
+		}),
+	);
+
 	return {
 		bestRecord,
 		bestRecordConfs,
@@ -188,16 +285,23 @@ const leagueLeaders = (
 	}[],
 	awardsByPlayer: AwardsByPlayer,
 ) => {
+	const numGames = g.get("numGames");
 	const factor =
-		(g.get("numGames") / defaultGameAttributes.numGames) *
-		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
+		(numGames / defaultGameAttributes.numGames) * helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
 		const p = players
 			.filter(p2 => {
+				// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
+				let playerValue;
+				if (!isSport("basketball")) {
+					playerValue = p2.currentStats[cat.stat];
+				} else {
+					playerValue = p2.currentStats[cat.stat] * p2.currentStats.gp;
+				}
 				return (
-					p2.currentStats[cat.stat] * p2.currentStats.gp >=
-						cat.minValue * factor || p2.currentStats.gp >= 70 * factor
+					playerValue >= cat.minValue * factor ||
+					p2.currentStats.gp >= 0.85 * numGames
 				);
 			})
 			.reduce((maxPlayer, currentPlayer) => {
@@ -270,6 +374,7 @@ const saveAwardsByPlayer = async (
 	conditions: Conditions,
 	season: number = g.get("season"),
 	logEvents: boolean = true,
+	allStarGID?: number,
 ) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
@@ -293,6 +398,14 @@ const saveAwardsByPlayer = async (
 			score = 10;
 		} else if (p.type === "All-Star") {
 			text += `made the All-Star team.`;
+			score = 10;
+		} else if (p.type === "All-Star MVP") {
+			text += `won the <a href="${helpers.leagueUrl([
+				"game_log",
+				"special",
+				season,
+				allStarGID,
+			])}">All-Star MVP</a> award.`;
 			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;
@@ -337,24 +450,26 @@ const saveAwardsByPlayer = async (
 		}
 	}
 };
+
 const deleteAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	season: number,
 ) => {
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
-	for (const pid of pids) {
-		const p = await idb.cache.players.get(pid);
-		if (p) {
-			const typesToDelete = awardsByPlayer
-				.filter(award => award.pid === p.pid)
-				.map(award => award.type);
-			p.awards = p.awards.filter(
-				award => award.season != season || !typesToDelete.includes(award.type),
-			);
-			await idb.cache.players.put(p);
-		}
+	const players = await idb.getCopies.players({
+		pids,
+	});
+	for (const p of players) {
+		const typesToDelete = awardsByPlayer
+			.filter(award => award.pid === p.pid)
+			.map(award => award.type);
+		p.awards = p.awards.filter(
+			award => award.season != season || !typesToDelete.includes(award.type),
+		);
+		await idb.cache.players.put(p);
 	}
 };
+
 const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	awards: any,
 	awardsByPlayer: AwardsByPlayer,
@@ -379,6 +494,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	const awardsTeams = bySport({
 		basketball: ["allRookie", "allLeague", "allDefensive"] as const,
 		football: ["allRookie", "allLeague"] as const,
+		hockey: ["allRookie", "allLeague"] as const,
 	});
 	for (const key of awardsTeams) {
 		const type = AWARD_NAMES[key] as string;

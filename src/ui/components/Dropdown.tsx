@@ -1,19 +1,22 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import type { CSSProperties, SyntheticEvent } from "react";
+import type { CSSProperties } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
+import NextPrevButtons from "./NextPrevButtons";
 
 const Select = ({
+	customOptions,
 	field,
 	handleChange,
 	value,
 }: {
+	customOptions?: (number | string)[];
 	field: string;
 	handleChange: (value: number | string) => void;
 	value: number | string;
 }) => {
-	const options = useDropdownOptions(field);
+	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
 
 	useEffect(() => {
@@ -51,54 +54,22 @@ const Select = ({
 		return null;
 	}
 
-	const optionIndex = options.findIndex(option => option.key === value);
-
 	const showButtons = field.startsWith("teams") || field.startsWith("seasons");
 
 	let buttons = null;
 	if (showButtons) {
-		const buttonInfo = [
-			{
-				disabled: optionIndex <= 0,
-				onClick: (event: SyntheticEvent) => {
-					event.preventDefault();
-					handleChange(options[optionIndex - 1].key);
-				},
-			},
-			{
-				disabled: optionIndex >= options.length - 1,
-				onClick: (event: SyntheticEvent) => {
-					event.preventDefault();
-					handleChange(options[optionIndex + 1].key);
-				},
-			},
-		];
-
-		// Seasons are displayed in reverse order in the dropdown, and "prev" should be "back in time"
-		const reverseOrder = field.startsWith("seasons");
-		if (reverseOrder) {
-			buttonInfo.reverse();
-		}
+		const currentItem = options.find(option => option.key === value);
 
 		buttons = (
-			<div className="btn-group" style={{ marginLeft: 2 }}>
-				<button
-					className="btn btn-light-bordered btn-xs"
-					disabled={buttonInfo[0].disabled}
-					onClick={buttonInfo[0].onClick}
-					title="Previous"
-				>
-					<span className="glyphicon glyphicon-menu-left" />
-				</button>
-				<button
-					className="btn btn-light-bordered btn-xs"
-					disabled={buttonInfo[1].disabled}
-					onClick={buttonInfo[1].onClick}
-					title="Next"
-				>
-					<span className="glyphicon glyphicon-menu-right" />
-				</button>
-			</div>
+			<NextPrevButtons
+				currentItem={currentItem}
+				items={options}
+				onChange={newItem => {
+					handleChange(newItem.key);
+				}}
+				reverse={field.startsWith("seasons")}
+				style={{ marginLeft: 2 }}
+			/>
 		);
 	}
 
@@ -137,27 +108,33 @@ Select.propTypes = {
 };
 
 type Props = {
-	extraParam?: number | string;
-	fields: {
-		[key: string]: number | string;
-	};
+	customOptions?: Record<string, (number | string)[]>;
+	customURL?: (fields: Record<string, number | string>) => string;
+	fields: Record<string, number | string>;
 	view: string;
 };
 
-const Dropdown = ({ extraParam, fields, view }: Props) => {
+const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	const keys = Object.keys(fields);
 	const values = Object.values(fields);
 
 	const handleChange = (i: number, value: string | number) => {
-		const newValues = values.slice();
-		newValues[i] = value;
-		const parts = [view, ...newValues];
+		let url;
+		if (customURL) {
+			const newFields = {
+				...fields,
+				[keys[i]]: value,
+			};
 
-		if (extraParam !== undefined) {
-			parts.push(extraParam);
+			url = customURL(newFields);
+		} else {
+			const newValues = values.slice();
+			newValues[i] = value;
+			const parts = [view, ...newValues];
+			url = helpers.leagueUrl(parts);
 		}
 
-		realtimeUpdate([], helpers.leagueUrl(parts));
+		realtimeUpdate([], url);
 	};
 
 	return (
@@ -165,6 +142,7 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			{keys.map((key, i) => {
 				return (
 					<Select
+						customOptions={customOptions ? customOptions[key] : undefined}
 						key={key}
 						field={key}
 						value={values[i]}
@@ -174,12 +152,6 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			})}
 		</form>
 	);
-};
-
-Dropdown.propTypes = {
-	extraParam: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	fields: PropTypes.object.isRequired,
-	view: PropTypes.string.isRequired,
 };
 
 export default Dropdown;

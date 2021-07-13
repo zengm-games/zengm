@@ -120,11 +120,11 @@ const resetG = () => {
 		userTids: [0],
 		season,
 		startingSeason: season,
-		leagueName: "",
 		teamInfoCache: teams.map(t => ({
 			abbrev: t.abbrev,
 			disabled: false,
 			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
 			name: t.name,
 			region: t.region,
 		})),

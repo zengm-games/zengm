@@ -2,6 +2,7 @@ import { team } from "..";
 import { idb } from "../../db";
 import type { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
+import { helpers } from "../../util";
 
 type AssetPlayer = {
 	type: "player";
@@ -22,8 +23,6 @@ const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
 	valueChangeKey: number,
-	added: number,
-	initialSign: -1 | 1,
 ): Promise<TradeTeams | void> => {
 	const assets: Asset[] = [];
 
@@ -113,8 +112,8 @@ const tryAddAsset = async (
 		}
 	}
 
-	// If we've already added 5 assets or there are no more to try, stop
-	if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
+	// If there are no more to try, stop
+	if (assets.length === 0) {
 		return;
 	}
 
@@ -163,62 +162,21 @@ const tryAddAsset = async (
 
 	const asset = assets[j];
 
+	const newTeams = helpers.deepCopy(teams);
 	if (asset.type === "player") {
-		if (asset.tid === teams[0].tid) {
-			teams[0].pids.push(asset.pid);
+		if (asset.tid === newTeams[0].tid) {
+			newTeams[0].pids.push(asset.pid);
 		} else {
-			teams[1].pids.push(asset.pid);
+			newTeams[1].pids.push(asset.pid);
 		}
-	} else if (asset.tid === teams[0].tid) {
-		teams[0].dpids.push(asset.dpid);
+	} else if (asset.tid === newTeams[0].tid) {
+		newTeams[0].dpids.push(asset.dpid);
 	} else {
-		teams[1].dpids.push(asset.dpid);
+		newTeams[1].dpids.push(asset.dpid);
 	}
 
-	added += 1;
-
-	// eslint-disable-next-line @typescript-eslint/no-use-before-define
-	return testTrade(teams, holdUserConstant, valueChangeKey, added, initialSign);
+	return newTeams;
 };
-
-// See if the AI team likes the current trade. If not, try adding something to it.
-async function testTrade(
-	teams: TradeTeams,
-	holdUserConstant: boolean,
-	valueChangeKey: number,
-	added: number,
-	initialSign: -1 | 1,
-) {
-	const dv = await team.valueChange(
-		teams[1].tid,
-		teams[0].pids,
-		teams[1].pids,
-		teams[0].dpids,
-		teams[1].dpids,
-		valueChangeKey,
-		teams[0].tid,
-	);
-
-	if (dv > 0 && initialSign === -1) {
-		return teams;
-	}
-
-	if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
-		if (dv > 0) {
-			return teams;
-		}
-
-		return;
-	}
-
-	return tryAddAsset(
-		teams,
-		holdUserConstant,
-		valueChangeKey,
-		added,
-		initialSign,
-	);
-}
 
 /**
  * Make a trade work
@@ -234,12 +192,13 @@ async function testTrade(
 const makeItWork = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
+	maxAssetsToAdd = Infinity,
 	valueChangeKey: number = Math.random(),
-) => {
+): Promise<TradeTeams | undefined> => {
 	let initialSign: -1 | 1;
-	const added = 0;
+	let added = 0;
 
-	const dv = await team.valueChange(
+	let prevDv = await team.valueChange(
 		teams[1].tid,
 		teams[0].pids,
 		teams[1].pids,
@@ -249,7 +208,7 @@ const makeItWork = async (
 		teams[0].tid,
 	);
 
-	if (dv > 0) {
+	if (prevDv > 0) {
 		// Try to make trade better for user's team
 		initialSign = 1;
 	} else {
@@ -257,7 +216,92 @@ const makeItWork = async (
 		initialSign = -1;
 	}
 
-	return testTrade(teams, holdUserConstant, valueChangeKey, added, initialSign);
+	let prevTeams: TradeTeams = teams;
+	while (true) {
+		// Add assets until this trade is just barely good enough for the AI
+		const newTeams = await tryAddAsset(
+			prevTeams,
+			holdUserConstant,
+			valueChangeKey,
+		);
+
+		if (!newTeams) {
+			// No improvement to offer found
+
+			const dv = await team.valueChange(
+				prevTeams[1].tid,
+				prevTeams[0].pids,
+				prevTeams[1].pids,
+				prevTeams[0].dpids,
+				prevTeams[1].dpids,
+				valueChangeKey,
+				prevTeams[0].tid,
+			);
+
+			if (dv > 0) {
+				return prevTeams;
+			}
+
+			return;
+		}
+
+		added += 1;
+
+		const dv = await team.valueChange(
+			newTeams[1].tid,
+			newTeams[0].pids,
+			newTeams[1].pids,
+			newTeams[0].dpids,
+			newTeams[1].dpids,
+			valueChangeKey,
+			newTeams[0].tid,
+		);
+
+		// If adding assets moves the trade in the wrong direction, stop
+		const dvDiffSign = Math.sign(prevDv - dv);
+
+		if (dvDiffSign !== initialSign) {
+			if (prevDv > 0) {
+				return prevTeams;
+			}
+
+			return;
+		}
+
+		if (initialSign === -1) {
+			// Looking for a trade that the AI will accept
+			if (dv > 0) {
+				// Run another round of makeItWork in the opposite direction, which will make the end result of this stable (clicking the "What would make this deal work?" button won't do anything)
+
+				const newMaxAssetsToAdd = maxAssetsToAdd - added;
+				if (newMaxAssetsToAdd > 0) {
+					return makeItWork(
+						newTeams,
+						holdUserConstant,
+						newMaxAssetsToAdd,
+						valueChangeKey,
+					);
+				}
+				return newTeams;
+			}
+		} else {
+			// Looking for the closest to dv=0 that the AI will accept
+			if (dv < 0 && prevDv > 0) {
+				return prevTeams;
+			}
+		}
+
+		if (added >= maxAssetsToAdd) {
+			if (dv > 0) {
+				return newTeams;
+			}
+
+			return;
+		}
+
+		prevTeams = newTeams;
+		prevDv = dv;
+	}
 };
 
 export default makeItWork;

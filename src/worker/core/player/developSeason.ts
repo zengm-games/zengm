@@ -1,8 +1,9 @@
 import developSeasonBasketball from "./developSeason.basketball";
 import developSeasonFootball from "./developSeason.football";
+import developSeasonHockey from "./developSeason.hockey";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import { g, helpers } from "../../util";
-import { isSport, RATINGS } from "../../../common";
+import { bySport, isSport, RATINGS } from "../../../common";
 import loadDataBasketball from "../realRosters/loadData.basketball";
 import type { Ratings } from "../realRosters/loadData.basketball";
 import limitRating from "./limitRating";
@@ -16,17 +17,18 @@ const developSeason = async (
 	srID: string | undefined,
 	coachingRank?: number,
 ) => {
-	if (isSport("football")) {
-		return developSeasonFootball(ratings as any, age, coachingRank);
+	bySport({
+		basketball: developSeasonBasketball(ratings as any, age, coachingRank),
+		football: developSeasonFootball(ratings as any, age, coachingRank),
+		hockey: developSeasonHockey(ratings as any, age, coachingRank),
+	});
+
+	if (!isSport("basketball")) {
+		return;
 	}
 
-	developSeasonBasketball(ratings as any, age, coachingRank);
-
-	const realPlayerDeterminism = helpers.bound(
-		g.get("realPlayerDeterminism"),
-		0,
-		1,
-	);
+	const realPlayerDeterminism =
+		helpers.bound(g.get("realPlayerDeterminism"), 0, 1) ** 2;
 	if (realPlayerDeterminism === 0 || srID === undefined) {
 		return;
 	}

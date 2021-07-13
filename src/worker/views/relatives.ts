@@ -23,6 +23,7 @@ const updatePlayers = async (
 				"ws48",
 			],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 
 		let playersAll: Player[] = [];
@@ -57,6 +58,8 @@ const updatePlayers = async (
 				"numBrothers",
 				"numFathers",
 				"numSons",
+				"college",
+				"jerseyNumber",
 			],
 			ratings: ["ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],

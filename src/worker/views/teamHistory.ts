@@ -9,11 +9,7 @@ import type {
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 
-export const getHistory = async (
-	teamSeasons: TeamSeason[],
-	playersAll: Player[],
-	gmHistory?: boolean,
-) => {
+export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 	let bestRecord;
 	let worstRecord;
 	let bestWinp = -Infinity;
@@ -26,6 +22,7 @@ export const getHistory = async (
 		won: number;
 		lost: number;
 		tied?: number;
+		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
 		numConfs: number;
@@ -37,6 +34,7 @@ export const getHistory = async (
 	let totalWon = 0;
 	let totalLost = 0;
 	let totalTied = 0;
+	let totalOtl = 0;
 	let playoffAppearances = 0;
 	let finalsAppearances = 0;
 	let championships = 0;
@@ -50,6 +48,7 @@ export const getHistory = async (
 			won: teamSeason.won,
 			lost: teamSeason.lost,
 			tied: teamSeason.tied,
+			otl: teamSeason.otl,
 			playoffRoundsWon: teamSeason.playoffRoundsWon,
 			numPlayoffRounds,
 			numConfs: g.get("confs", teamSeason.season).length,
@@ -64,6 +63,7 @@ export const getHistory = async (
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;
 		totalTied += teamSeason.tied;
+		totalOtl += teamSeason.otl;
 
 		if (teamSeason.playoffRoundsWon >= 0) {
 			playoffAppearances += 1;
@@ -100,9 +100,39 @@ export const getHistory = async (
 
 	history.reverse(); // Show most recent season first
 
+	const totalWinp = helpers.calcWinp({
+		won: totalWon,
+		lost: totalLost,
+		tied: totalTied,
+		otl: totalOtl,
+	});
+
+	return {
+		history,
+		totalWon,
+		totalLost,
+		totalTied,
+		totalOtl,
+		totalWinp,
+		playoffAppearances,
+		finalsAppearances,
+		championships,
+		bestRecord,
+		worstRecord,
+	};
+};
+
+export const getHistory = async (
+	teamSeasons: TeamSeason[],
+	playersAll: Player[],
+	gmHistory?: boolean,
+) => {
+	const teamHistory = await getHistoryTeam(teamSeasons);
+
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
 		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
@@ -138,25 +168,10 @@ export const getHistory = async (
 		delete p.stats;
 	}
 
-	const totalWinp = helpers.calcWinp({
-		won: totalWon,
-		lost: totalLost,
-		tied: totalTied,
-	});
-
 	return {
-		history,
+		...teamHistory,
 		players,
 		stats,
-		totalWon,
-		totalLost,
-		totalTied,
-		totalWinp,
-		playoffAppearances,
-		finalsAppearances,
-		championships,
-		bestRecord,
-		worstRecord,
 		userTid: g.get("userTid"),
 	};
 };
@@ -193,11 +208,17 @@ const updateTeamHistory = async (
 
 				let name;
 				let pos;
+				let champSeasons: number[] = [];
 				if (row.pid !== undefined) {
 					const p = await idb.getCopy.players({ pid: row.pid });
 					if (p) {
 						name = `${p.firstName} ${p.lastName}`;
 						pos = getMostCommonPosition(p, inputs.tid);
+
+						champSeasons = p.awards
+							.filter(award => award.type === "Won Championship")
+							.map(award => award.season)
+							.sort();
 					}
 				}
 
@@ -206,6 +227,7 @@ const updateTeamHistory = async (
 					teamInfo,
 					name,
 					pos,
+					champSeasons,
 				};
 			}),
 		);
@@ -245,13 +267,38 @@ const updateTeamHistory = async (
 
 		const history = await getHistory(teamSeasons, players);
 
+		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
+			let numRings = 0;
+			for (const historyRow of history.history) {
+				if (
+					historyRow.playoffRoundsWon >= historyRow.numPlayoffRounds &&
+					row.champSeasons.includes(historyRow.season)
+				) {
+					numRings += 1;
+				}
+			}
+
+			return {
+				name: row.name,
+				number: row.number,
+				pid: row.pid,
+				pos: row.pos,
+				score: row.score,
+				seasonRetired: row.seasonRetired,
+				seasonTeamInfo: row.seasonTeamInfo,
+				teamInfo: row.teamInfo,
+				text: row.text,
+				numRings,
+			};
+		});
+
 		return {
 			...history,
 			abbrev: inputs.abbrev,
 			tid: inputs.tid,
 			godMode: g.get("godMode"),
 			season: g.get("season"),
-			retiredJerseyNumbers,
+			retiredJerseyNumbers: retiredJerseyNumbers2,
 		};
 	}
 };

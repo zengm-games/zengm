@@ -1,8 +1,6 @@
-import orderBy from "lodash/orderBy";
-import { PLAYER, helpers as commonHelpers, isSport } from "../../common";
+import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
-import random from "./random";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 import defaultGameAttributes from "./defaultGameAttributes";
 
@@ -25,7 +23,13 @@ const augmentSeries = async (
 			won: 0,
 			lost: 0,
 			tied: g.get("ties", season) ? 0 : undefined,
+			otl: g.get("otl", season) ? 0 : undefined,
 		};
+
+		const imgURLSmall = g.get("teamInfoCache")[obj.tid]?.imgURLSmall;
+		if (imgURLSmall) {
+			obj.imgURLSmall = imgURLSmall;
+		}
 
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
 		if (teamSeason) {
@@ -33,12 +37,16 @@ const augmentSeries = async (
 				obj.abbrev = teamSeason.abbrev;
 				obj.region = teamSeason.region;
 				obj.imgURL = teamSeason.imgURL;
+				obj.imgURLSmall = teamSeason.imgURLSmall;
 			}
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 
 			if (g.get("ties", season)) {
 				obj.regularSeason.tied = teamSeason.tied;
+			}
+			if (g.get("otl", season)) {
+				obj.regularSeason.otl = teamSeason.otl;
 			}
 		}
 	};
@@ -56,24 +64,29 @@ const augmentSeries = async (
 
 const calcWinp = ({
 	lost,
+	otl,
 	tied,
 	won,
 }: {
 	lost: number;
+	otl?: any;
 	tied?: any;
 	won: number;
 }) => {
+	const actualOtl = typeof otl !== "number" || Number.isNaN(otl) ? 0 : otl;
+	const actualLost = lost + actualOtl;
+
 	// Some old leagues had NaN for tied...
 	if (typeof tied !== "number" || Number.isNaN(tied)) {
-		if (won + lost > 0) {
-			return won / (won + lost);
+		if (won + actualLost > 0) {
+			return won / (won + actualLost);
 		}
 
 		return 0;
 	}
 
-	if (won + lost + tied > 0) {
-		return (won + 0.5 * tied) / (won + lost + tied);
+	if (won + actualLost + tied > 0) {
+		return (won + 0.5 * tied) / (won + actualLost + tied);
 	}
 
 	return 0;
@@ -143,6 +156,10 @@ const getAbbrev = (tid: number | string): string => {
 		return "DP";
 	}
 
+	if (tid === PLAYER.DOES_NOT_EXIST) {
+		return "DNE";
+	}
+
 	if (tid < 0 || Number.isNaN(tid)) {
 		// Weird or retired
 		return "";
@@ -155,7 +172,7 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]?.abbrev;
 };
 
-const leagueUrl = (components: (number | string)[]): string =>
+const leagueUrl = (components: (number | string | undefined)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
 /**
@@ -189,55 +206,6 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	return Math.ceil(numGamesPlayoffSeries / 2);
 };
 
-const orderByWinp = <
-	T extends {
-		seasonAttrs: {
-			winp: number;
-			won: number;
-			did: number;
-		};
-		tid: number;
-	}
->(
-	teams: T[],
-	season: number = g.get("season"),
-): T[] => {
-	const defaultFuncs = [
-		(t: T) => t.seasonAttrs.winp,
-		(t: T) => t.seasonAttrs.won,
-
-		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
-		(t: T) =>
-			random.uniformSeed(
-				t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
-			),
-	];
-	const defaultOrders: Array<"asc" | "desc"> = ["desc", "desc", "asc"];
-	const sortedTeams = orderBy(teams, defaultFuncs, defaultOrders);
-
-	if (isSport("basketball")) {
-		return sortedTeams;
-	}
-
-	// For football, sort by division leaders first
-	const divisionLeaders = new Map<number, number>();
-
-	for (const t of sortedTeams) {
-		if (!divisionLeaders.has(t.seasonAttrs.did)) {
-			divisionLeaders.set(t.seasonAttrs.did, t.tid);
-		}
-	}
-
-	return orderBy(
-		sortedTeams,
-		[
-			t => (divisionLeaders.get(t.seasonAttrs.did) === t.tid ? 1 : 0),
-			...defaultFuncs,
-		],
-		["desc", ...defaultOrders],
-	);
-};
-
 const overtimeCounter = (n: number): string => {
 	switch (n) {
 		case 1:
@@ -269,14 +237,14 @@ const overtimeCounter = (n: number): string => {
 	}
 };
 
-const pickDesc = (dp: DraftPick): string => {
+const pickDesc = (dp: DraftPick, short?: "short"): string => {
 	const season =
 		dp.season === "fantasy"
 			? "Fantasy draft"
 			: dp.season === "expansion"
 			? "Expansion draft"
 			: dp.season;
-	let desc = `${season} ${commonHelpers.ordinal(dp.round)} round pick`;
+
 	const extras: string[] = [];
 
 	if (dp.pick > 0) {
@@ -289,6 +257,10 @@ const pickDesc = (dp: DraftPick): string => {
 		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid]?.abbrev}`);
 	}
 
+	let desc = `${season} ${commonHelpers.ordinal(dp.round)}`;
+	if (extras.length === 0 || !short) {
+		desc += " round pick";
+	}
 	if (extras.length > 0) {
 		desc += ` (${extras.join(", ")})`;
 	}
@@ -324,6 +296,7 @@ const quarterLengthFactor = () => {
 		return 1;
 	}
 
+	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	return Math.sqrt(
 		(g.get("numPeriods") * g.get("quarterLength")) /
 			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength),
@@ -342,7 +315,6 @@ const helpers = {
 	leagueUrl,
 	zeroPad,
 	numGamesToWinSeries,
-	orderByWinp,
 	overtimeCounter,
 	pickDesc,
 	quarterLengthFactor,

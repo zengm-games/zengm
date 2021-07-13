@@ -15,9 +15,10 @@ const Charts = ({
 	seasonsToPlot,
 	stat,
 	teams,
+	usePts,
 }: Pick<
 	View<"tradeSummary">,
-	"phase" | "season" | "seasonsToPlot" | "stat" | "teams"
+	"phase" | "season" | "seasonsToPlot" | "stat" | "teams" | "usePts"
 >) => {
 	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
@@ -32,6 +33,8 @@ const Charts = ({
 			setNode2(node2);
 		}
 	}, []);
+
+	const valueKey = usePts ? "ptsPct" : "winp";
 
 	useEffect(() => {
 		if (node && node2) {
@@ -119,11 +122,11 @@ const Charts = ({
 			for (let i = 0; i < 2; i++) {
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
-					.y(d => yScale(d.teams[i].winp ?? 0))
+					.y(d => yScale(d.teams[i][valueKey] ?? 0))
 					.curve(curveMonotoneX);
 
 				const filtered = seasonsToPlot.filter(
-					row => row.teams[i].winp !== undefined,
+					row => row.teams[i][valueKey] !== undefined,
 				);
 
 				svg
@@ -143,7 +146,7 @@ const Charts = ({
 					.attr("stroke", colors[i])
 					.style("stroke-width", strokeWidth)
 					.attr("cx", d => xScale(d.season) as number)
-					.attr("cy", d => yScale(d.teams[i].winp ?? 0))
+					.attr("cy", d => yScale(d.teams[i][valueKey] ?? 0))
 					.attr("r", 5 * Math.sqrt(strokeWidth));
 
 				svg
@@ -250,7 +253,7 @@ const Charts = ({
 				}
 			}
 		};
-	}, [node, node2, phase, season, seasonsToPlot, teams]);
+	}, [node, node2, phase, season, seasonsToPlot, teams, valueKey]);
 
 	return (
 		<>
@@ -261,7 +264,8 @@ const Charts = ({
 				}}
 			>
 				<div className="text-center">
-					Team winning percentages before and after the trade
+					Team {usePts ? "point" : "winning"} percentages before and after the
+					trade
 				</div>
 				<div ref={getNode} />
 				<div

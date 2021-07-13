@@ -1,3 +1,5 @@
 **/data*
+**/old*.json
+low-ovr-good-team-*/**/*.json
 player-value-vs-contract-amount/*.json
 venv

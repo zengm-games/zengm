@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
 import type { ReactNode } from "react";
+import TeamLogoInline from "./TeamLogoInline";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -15,6 +16,7 @@ type Team = {
 	won?: number;
 	lost?: number;
 	tied?: number;
+	otl?: number;
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -30,10 +32,15 @@ const getRecord = (t: Team) => {
 	if (t.won === undefined || t.lost === undefined) {
 		return "";
 	}
-	if (t.tied === undefined || t.tied === 0) {
-		return ` ${t.won}-${t.lost}`;
+
+	let record = `${t.won}-${t.lost}`;
+	if (t.tied !== undefined && t.tied > 0) {
+		record += `-${t.tied}`;
 	}
-	return ` ${t.won}-${t.lost}-${t.tied}`;
+	if (t.otl !== undefined && t.otl > 0) {
+		record += `-${t.otl}`;
+	}
+	return ` ${record}`;
 };
 
 const smallStyle = {
@@ -121,8 +128,12 @@ const ScoreBox = ({
 				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3.3504 * homeCourtAdvantage,
 			);
+		} else if (isSport("hockey")) {
+			spread = roundHalf(
+				(1.8 / 100) * (game.teams[0].ovr - game.teams[1].ovr) +
+					0.25 * homeCourtAdvantage,
+			);
 		} else {
-			// Just assume similar would work for football
 			spread = roundHalf(
 				(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3 * homeCourtAdvantage,
@@ -166,6 +177,7 @@ const ScoreBox = ({
 			className={classNames(
 				"flex-grow-1 score-box",
 				limitWidthToParent ? "position-relative" : undefined,
+				small ? "d-flex" : undefined,
 			)}
 			style={small ? smallStyle : undefined}
 		>
@@ -255,7 +267,9 @@ const ScoreBox = ({
 								: `All-Star Team ${i === 0 ? 2 : 1}`;
 							rosterURL = helpers.leagueUrl(["all_star_history"]);
 						} else {
-							imgURL = teamInfoCache[t.tid]?.imgURL;
+							imgURL =
+								teamInfoCache[t.tid]?.imgURLSmall ??
+								teamInfoCache[t.tid]?.imgURL;
 							teamName = small
 								? teamInfoCache[t.tid]?.abbrev
 								: `${teamInfoCache[t.tid]?.region} ${
@@ -281,11 +295,7 @@ const ScoreBox = ({
 								)}
 							>
 								{imgURL || allStarGame ? (
-									<div className="score-box-logo d-flex align-items-center justify-content-center">
-										{imgURL ? (
-											<img className="mw-100 mh-100" src={imgURL} alt="" />
-										) : null}
-									</div>
+									<TeamLogoInline imgURL={imgURL} style={{ marginLeft: 1 }} />
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
 									{t.playoffs ? (
@@ -332,10 +342,16 @@ const ScoreBox = ({
 					})
 				)}
 			</div>
-			{!small && overtimes ? (
-				<div className="d-flex justify-content-end text-muted">
-					<div className="text-right text-muted p-1">{overtimes}</div>
+			{small && overtimes ? (
+				<div
+					className="text-right text-muted px-1 d-flex align-items-center"
+					style={{ height: 28 }}
+				>
+					{overtimes}
 				</div>
+			) : null}
+			{!small && overtimes ? (
+				<div className="text-right text-muted p-1">{overtimes}</div>
 			) : null}
 		</div>
 	);

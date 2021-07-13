@@ -6,13 +6,18 @@ import {
 	useReducer,
 	useRef,
 	useState,
-	MouseEvent,
 	ChangeEvent,
 } from "react";
-import { MAX_SUPPORTED_LEAGUE_VERSION, GAME_NAME } from "../../common";
+import {
+	MAX_SUPPORTED_LEAGUE_VERSION,
+	GAME_NAME,
+	WEBSITE_ROOT,
+} from "../../common";
 
 // This is dynamically resolved with rollup-plugin-alias
+// @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
+import { resetFileInput } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {
@@ -27,7 +32,7 @@ const ErrorMessage = ({ error }: { error: Error | null }) => {
 		<>
 			{error.message} Please{" "}
 			<a
-				href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+				href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
 				rel="noopener noreferrer"
 				target="_blank"
 			>
@@ -48,7 +53,7 @@ const styleStatus = {
 	maxWidth: 400,
 };
 
-type Props = {
+export type LeagueFileUploadProps = {
 	// onDone is called in errback style when parsing is done or when an error occurs
 	onDone: (b: Error | null, a?: any) => void;
 	disabled?: boolean;
@@ -61,13 +66,6 @@ type State = {
 	error: Error | null;
 	jsonSchemaErrors: any[];
 	status: "initial" | "loading" | "parsing" | "error" | "done";
-};
-
-const resetFileInput = (event: MouseEvent<HTMLInputElement>) => {
-	// Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
-	// That is very annoying when repeatedly editing/checking a file.
-	// @ts-ignore
-	event.target.value = "";
 };
 
 const initialState: State = {
@@ -123,7 +121,7 @@ const LeagueFileUpload = ({
 	hideLoadedMessage,
 	onDone,
 	onLoading,
-}: Props) => {
+}: LeagueFileUploadProps) => {
 	const [url, setURL] = useState("");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
@@ -349,7 +347,7 @@ const LeagueFileUpload = ({
 						errors. More detail is available in the JavaScript console. Also,
 						see{" "}
 						<a
-							href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
+							href={`https://${WEBSITE_ROOT}/manual/customization/json-schema/`}
 						>
 							the manual
 						</a>{" "}

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Component, ChangeEvent, FormEvent, ReactNode } from "react";
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -10,9 +10,30 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
-import { PHASE } from "../../common";
+import { getAdjustedTicketPrice, PHASE } from "../../common";
 
-type FinancesFormProps = {
+const paddingLeft100 = { paddingLeft: 100 };
+
+const formatTicketPrice = (ticketPrice: number) => {
+	// Never show just one decimal place, because it's cents
+	if (!Number.isInteger(ticketPrice) && Number.isInteger(ticketPrice * 10)) {
+		return ticketPrice.toFixed(2);
+	}
+	return String(ticketPrice);
+};
+
+const FinancesForm = ({
+	autoTicketPrice,
+	challengeNoRatings,
+	gameSimInProgress,
+	noSeasonData,
+	phase,
+	spectator,
+	t,
+	tid,
+	userTid,
+}: {
+	autoTicketPrice: number;
 	challengeNoRatings: boolean;
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
@@ -21,119 +42,87 @@ type FinancesFormProps = {
 	t: any;
 	tid: number;
 	userTid: number;
-};
+}) => {
+	const [state, setState] = useState({
+		dirty: false,
+		saving: false,
+		coaching: String(t.budget.coaching.amount),
+		facilities: String(t.budget.facilities.amount),
+		health: String(t.budget.health.amount),
+		scouting: String(t.budget.scouting.amount),
+		ticketPrice: formatTicketPrice(t.budget.ticketPrice.amount),
+		adjustForInflation: t.adjustForInflation,
+		autoTicketPrice: t.autoTicketPrice,
+	});
 
-type FinancesFormState = {
-	dirty: boolean;
-	coaching: string;
-	facilities: string;
-	health: string;
-	saving: boolean;
-	scouting: string;
-	ticketPrice: string;
-	adjustForInflation: boolean;
-};
-
-type HandleChanges = {
-	coaching: (event: ChangeEvent<HTMLInputElement>) => void;
-	facilities: (event: ChangeEvent<HTMLInputElement>) => void;
-	health: (event: ChangeEvent<HTMLInputElement>) => void;
-	scouting: (event: ChangeEvent<HTMLInputElement>) => void;
-	ticketPrice: (event: ChangeEvent<HTMLInputElement>) => void;
-	adjustForInflation: (event: ChangeEvent<HTMLInputElement>) => void;
-};
-
-class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
-	handleChanges: HandleChanges;
-
-	constructor(props: FinancesFormProps) {
-		super(props);
-		this.state = {
-			dirty: false,
-			coaching: String(props.t.budget.coaching.amount),
-			facilities: String(props.t.budget.facilities.amount),
-			health: String(props.t.budget.health.amount),
-			saving: false,
-			scouting: String(props.t.budget.scouting.amount),
-			ticketPrice: String(props.t.budget.ticketPrice.amount),
-			adjustForInflation: props.t.adjustForInflation,
-		};
-		this.handleChanges = {
-			coaching: this.handleChange.bind(this, "coaching"),
-			facilities: this.handleChange.bind(this, "facilities"),
-			health: this.handleChange.bind(this, "health"),
-			scouting: this.handleChange.bind(this, "scouting"),
-			ticketPrice: this.handleChange.bind(this, "ticketPrice"),
-			adjustForInflation: this.handleChange.bind(this, "adjustForInflation"),
-		};
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
-
-	static getDerivedStateFromProps(
-		nextProps: FinancesFormProps,
-		prevState: FinancesFormState,
-	) {
-		if (!prevState.dirty) {
-			return {
-				coaching: nextProps.t.budget.coaching.amount,
-				facilities: nextProps.t.budget.facilities.amount,
-				health: nextProps.t.budget.health.amount,
-				scouting: nextProps.t.budget.scouting.amount,
-				ticketPrice: nextProps.t.budget.ticketPrice.amount,
-				adjustForInflation: nextProps.t.adjustForInflation,
-			};
+	useEffect(() => {
+		if (!state.dirty) {
+			setState(state2 => ({
+				...state2,
+				coaching: String(t.budget.coaching.amount),
+				facilities: String(t.budget.facilities.amount),
+				health: String(t.budget.health.amount),
+				scouting: String(t.budget.scouting.amount),
+				ticketPrice: formatTicketPrice(t.budget.ticketPrice.amount),
+				adjustForInflation: t.adjustForInflation,
+				autoTicketPrice: t.autoTicketPrice,
+			}));
 		}
+	}, [state.dirty, t]);
 
-		return null;
-	}
+	const handleChange =
+		(name: Exclude<keyof typeof state, "dirty" | "saving">) =>
+		(event: ChangeEvent<HTMLInputElement>) => {
+			if (name === "adjustForInflation" || name === "autoTicketPrice") {
+				setState(
+					state2 =>
+						({
+							...state2,
+							dirty: true,
+							[name]: event.target.checked,
+						} as any),
+				);
+				return;
+			} else {
+				setState(state2 => ({
+					...state2,
+					dirty: true,
+					[name]: event.target.value,
+				}));
+			}
+		};
 
-	handleChange(name: keyof HandleChanges, e: ChangeEvent<HTMLInputElement>) {
-		if (name === "adjustForInflation") {
-			this.setState({
-				dirty: true,
-				adjustForInflation: e.target.checked,
-			});
-			return;
-		}
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 
-		// @ts-ignore
-		this.setState({
-			dirty: true,
-			[name]: e.target.value,
-		});
-	}
-
-	async handleSubmit(e: FormEvent) {
-		e.preventDefault();
-
-		this.setState({ saving: true });
+		setState(state2 => ({ ...state2, saving: true }));
 
 		const budgetAmounts = {
 			// Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
 			coaching: helpers.bound(
-				Math.round(parseFloat(this.state.coaching) * 100) * 10,
+				Math.round(parseFloat(state.coaching) * 100) * 10,
 				0,
 				Infinity,
 			),
 			facilities: helpers.bound(
-				Math.round(parseFloat(this.state.facilities) * 100) * 10,
+				Math.round(parseFloat(state.facilities) * 100) * 10,
 				0,
 				Infinity,
 			),
 			health: helpers.bound(
-				Math.round(parseFloat(this.state.health) * 100) * 10,
+				Math.round(parseFloat(state.health) * 100) * 10,
 				0,
 				Infinity,
 			),
 			scouting: helpers.bound(
-				Math.round(parseFloat(this.state.scouting) * 100) * 10,
+				Math.round(parseFloat(state.scouting) * 100) * 10,
 				0,
 				Infinity,
 			),
 
 			// Already in [dollars]
 			ticketPrice: helpers.bound(
-				parseFloat(parseFloat(this.state.ticketPrice).toFixed(2)),
+				parseFloat(parseFloat(state.ticketPrice).toFixed(2)),
 				0,
 				Infinity,
 			),
@@ -143,7 +132,8 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			"main",
 			"updateBudget",
 			budgetAmounts,
-			this.state.adjustForInflation,
+			state.adjustForInflation,
+			state.autoTicketPrice,
 		);
 
 		logEvent({
@@ -152,224 +142,257 @@ class FinancesForm extends Component<FinancesFormProps, FinancesFormState> {
 			saveToDb: false,
 		});
 
-		this.setState({
+		setState(state2 => ({
+			...state2,
 			dirty: false,
 			saving: false,
-		});
-	}
+		}));
+	};
 
-	render() {
-		const {
-			challengeNoRatings,
-			gameSimInProgress,
-			noSeasonData,
-			spectator,
-			t,
-			tid,
-			userTid,
-		} = this.props;
+	const warningMessage =
+		gameSimInProgress && tid === userTid && !spectator ? (
+			<p className="text-danger">Stop game simulation to edit.</p>
+		) : null;
 
-		const warningMessage =
-			gameSimInProgress && tid === userTid && !spectator ? (
-				<p className="text-danger">Stop game simulation to edit.</p>
-			) : null;
+	const formDisabled = gameSimInProgress || tid !== userTid || spectator;
 
-		const formDisabled = gameSimInProgress || tid !== userTid || spectator;
-
-		return (
-			<form onSubmit={this.handleSubmit} className="mb-3">
-				<h3>
-					Revenue Settings{" "}
-					<HelpPopover title="Revenue Settings">
-						Set your ticket price too high, and attendance will decrease and
-						some fans will resent you for it. Set it too low, and you're not
-						maximizing your profit.
-					</HelpPopover>
-				</h3>
-				{warningMessage}
-				<div className="row">
-					<div className="float-left finances-settings-label">Ticket Price</div>
-					<div className="input-group input-group-sm float-left finances-settings-field">
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
+	return (
+		<form onSubmit={handleSubmit} className="mb-3">
+			<h3>
+				Revenue Settings{" "}
+				<HelpPopover title="Revenue Settings">
+					Set your ticket price too high, and attendance will decrease and some
+					fans will resent you for it. Set it too low, and you're not maximizing
+					your profit.
+				</HelpPopover>
+			</h3>
+			{warningMessage}
+			<div className="row">
+				<div className="float-left finances-settings-label">Ticket Price</div>
+				<div className="input-group input-group-sm float-left finances-settings-field">
+					<div className="input-group-prepend">
+						<div className="input-group-text">$</div>
+					</div>
+					{state.autoTicketPrice ? (
 						<input
 							type="text"
 							className="form-control"
-							disabled={formDisabled}
-							onChange={this.handleChanges.ticketPrice}
-							value={this.state.ticketPrice}
+							disabled
+							value={formatTicketPrice(autoTicketPrice)}
 						/>
-					</div>
-					<div className="float-left finances-settings-text">
-						Leaguewide rank: #{t.budget.ticketPrice.rank}
-					</div>
+					) : (
+						<input
+							type="text"
+							className="form-control"
+							disabled={formDisabled || state.autoTicketPrice}
+							onChange={handleChange("ticketPrice")}
+							value={state.ticketPrice}
+						/>
+					)}
 				</div>
-				<p />
-				<h3>
-					Expense Settings{" "}
-					<HelpPopover title="Expense Settings">
-						<p>Scouting: Controls the accuracy of displayed player ratings.</p>
-						<p>Coaching: Better coaches mean better player development.</p>
-						<p>Health: A good team of doctors speeds recovery from injuries.</p>
+				<div className="float-left finances-settings-text">
+					Leaguewide rank: #{t.budget.ticketPrice.rank}
+				</div>
+			</div>
+			{phase === PHASE.PLAYOFFS ? (
+				<div className="row mb-1 text-warning" style={paddingLeft100}>
+					Playoffs price:{" "}
+					{helpers.formatCurrency(
+						getAdjustedTicketPrice(
+							state.autoTicketPrice
+								? autoTicketPrice
+								: parseFloat(state.ticketPrice),
+							true,
+						),
+					)}
+				</div>
+			) : null}
+			<div className="row mt-1 mb-3" style={paddingLeft100}>
+				<div className="form-check">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={handleChange("autoTicketPrice")}
+							type="checkbox"
+							checked={state.autoTicketPrice}
+							disabled={formDisabled}
+						/>
+						Auto ticket price
+					</label>
+					<HelpPopover title="Auto ticket price" className="ml-1">
 						<p>
-							Facilities: Better training facilities make your players happier
-							and other players envious; stadium renovations increase
-							attendance.
+							When enabled, your ticket price will be set to the maximum value
+							possible while still selling out most games.
+						</p>
+						<p>
+							In the playoffs, ticket prices automatically adjust to account for
+							increased demand. That happens regardless of the "auto ticket
+							price" setting.
 						</p>
 					</HelpPopover>
-				</h3>
-				<p>
-					Click the ? above to see what exactly each category does. Effects are
-					based on your spending rank over the past three seasons.
-				</p>
-				{warningMessage}
-				<div className="row">
-					<div className="float-left finances-settings-label">Scouting</div>
-					<div className="input-group input-group-sm float-left finances-settings-field">
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
-						<input
-							type="text"
-							className="form-control"
-							disabled={formDisabled || challengeNoRatings}
-							onChange={this.handleChanges.scouting}
-							value={this.state.scouting}
-						/>
-						<div className="input-group-append">
-							<div className="input-group-text">M</div>
-						</div>
+				</div>
+			</div>
+			<h3>
+				Expense Settings{" "}
+				<HelpPopover title="Expense Settings">
+					<p>Scouting: Controls the accuracy of displayed player ratings.</p>
+					<p>Coaching: Better coaches mean better player development.</p>
+					<p>Health: A good team of doctors speeds recovery from injuries.</p>
+					<p>
+						Facilities: Better training facilities make your players happier and
+						other players envious; stadium renovations increase attendance.
+					</p>
+				</HelpPopover>
+			</h3>
+			<p>
+				Click the ? above to see what exactly each category does. Effects are
+				based on your spending rank over the past three seasons.
+			</p>
+			{warningMessage}
+			<div className="row">
+				<div className="float-left finances-settings-label">Scouting</div>
+				<div className="input-group input-group-sm float-left finances-settings-field">
+					<div className="input-group-prepend">
+						<div className="input-group-text">$</div>
 					</div>
-					<div className="float-left finances-settings-text-small">
-						Current spending rate: #{t.budget.scouting.rank}
-						<br />
-						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
-							<br />
-						) : (
-							`Spent this season: #${t.seasonAttrs.expenses.scouting.rank}`
-						)}
+					<input
+						type="text"
+						className="form-control"
+						disabled={formDisabled || challengeNoRatings}
+						onChange={handleChange("scouting")}
+						value={state.scouting}
+					/>
+					<div className="input-group-append">
+						<div className="input-group-text">M</div>
 					</div>
 				</div>
-				<div className="row">
-					<div className="float-left finances-settings-label">Coaching</div>
-					<div className="input-group input-group-sm float-left finances-settings-field">
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
+				<div className="float-left finances-settings-text-small">
+					Current spending rate: #{t.budget.scouting.rank}
+					<br />
+					{noSeasonData || phase === PHASE.PRESEASON ? (
+						<br />
+					) : (
+						`Spent this season: #${t.seasonAttrs.expenses.scouting.rank}`
+					)}
+				</div>
+			</div>
+			<div className="row">
+				<div className="float-left finances-settings-label">Coaching</div>
+				<div className="input-group input-group-sm float-left finances-settings-field">
+					<div className="input-group-prepend">
+						<div className="input-group-text">$</div>
+					</div>
+					<input
+						type="text"
+						className="form-control"
+						disabled={formDisabled}
+						onChange={handleChange("coaching")}
+						value={state.coaching}
+					/>
+					<div className="input-group-append">
+						<div className="input-group-text">M</div>
+					</div>
+				</div>
+				<div className="float-left finances-settings-text-small">
+					Current spending rate: #{t.budget.coaching.rank}
+					<br />
+					{noSeasonData || phase === PHASE.PRESEASON ? (
+						<br />
+					) : (
+						`Spent this season: #${t.seasonAttrs.expenses.coaching.rank}`
+					)}
+				</div>
+			</div>
+			<div className="row">
+				<div className="float-left finances-settings-label">Health</div>
+				<div className="input-group input-group-sm float-left finances-settings-field">
+					<div className="input-group-prepend">
+						<div className="input-group-text">$</div>
+					</div>
+					<input
+						type="text"
+						className="form-control"
+						disabled={formDisabled}
+						onChange={handleChange("health")}
+						value={state.health}
+					/>
+					<div className="input-group-append">
+						<div className="input-group-text">M</div>
+					</div>
+				</div>
+				<div className="float-left finances-settings-text-small">
+					Current spending rate: #{t.budget.health.rank}
+					<br />
+					{noSeasonData || phase === PHASE.PRESEASON ? (
+						<br />
+					) : (
+						`Spent this season: #${t.seasonAttrs.expenses.health.rank}`
+					)}
+				</div>
+			</div>
+			<div className="row">
+				<div className="float-left finances-settings-label">Facilities</div>
+				<div className="input-group input-group-sm float-left finances-settings-field">
+					<div className="input-group-prepend">
+						<div className="input-group-text">$</div>
+					</div>
+					<input
+						type="text"
+						className="form-control"
+						disabled={formDisabled}
+						onChange={handleChange("facilities")}
+						value={state.facilities}
+					/>
+					<div className="input-group-append">
+						<div className="input-group-text">M</div>
+					</div>
+				</div>
+				<div className="float-left finances-settings-text-small">
+					Current spending rate: #{t.budget.facilities.rank}
+					<br />
+					{noSeasonData || phase === PHASE.PRESEASON ? (
+						<br />
+					) : (
+						`Spent this season: #${t.seasonAttrs.expenses.facilities.rank}`
+					)}
+				</div>
+			</div>
+			<div className="row mt-1" style={paddingLeft100}>
+				<div className="form-check">
+					<label className="form-check-label">
 						<input
-							type="text"
-							className="form-control"
+							className="form-check-input"
+							onChange={handleChange("adjustForInflation")}
+							type="checkbox"
+							checked={state.adjustForInflation}
 							disabled={formDisabled}
-							onChange={this.handleChanges.coaching}
-							value={this.state.coaching}
 						/>
-						<div className="input-group-append">
-							<div className="input-group-text">M</div>
-						</div>
-					</div>
-					<div className="float-left finances-settings-text-small">
-						Current spending rate: #{t.budget.coaching.rank}
+						Auto adjust for inflation
+					</label>
+					<HelpPopover title="Inflation adjustment" className="ml-1">
+						When enabled, all your revenue and expense settings will
+						automatically change whenever the salary cap changes. This will
+						generally maintain your ranks, although expansion teams and changes
+						made by AI teams can still result in your ranks changing.
+					</HelpPopover>
+				</div>
+			</div>
+			{tid === userTid && !spectator ? (
+				<div className="row mt-5" style={paddingLeft100}>
+					<button
+						className="btn btn-large btn-primary"
+						disabled={formDisabled || state.saving}
+					>
+						Save Revenue and
 						<br />
-						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
-							<br />
-						) : (
-							`Spent this season: #${t.seasonAttrs.expenses.coaching.rank}`
-						)}
-					</div>
+						Expense Settings
+					</button>
 				</div>
-				<div className="row">
-					<div className="float-left finances-settings-label">Health</div>
-					<div className="input-group input-group-sm float-left finances-settings-field">
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
-						<input
-							type="text"
-							className="form-control"
-							disabled={formDisabled}
-							onChange={this.handleChanges.health}
-							value={this.state.health}
-						/>
-						<div className="input-group-append">
-							<div className="input-group-text">M</div>
-						</div>
-					</div>
-					<div className="float-left finances-settings-text-small">
-						Current spending rate: #{t.budget.health.rank}
-						<br />
-						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
-							<br />
-						) : (
-							`Spent this season: #${t.seasonAttrs.expenses.health.rank}`
-						)}
-					</div>
-				</div>
-				<div className="row">
-					<div className="float-left finances-settings-label">Facilities</div>
-					<div className="input-group input-group-sm float-left finances-settings-field">
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
-						<input
-							type="text"
-							className="form-control"
-							disabled={formDisabled}
-							onChange={this.handleChanges.facilities}
-							value={this.state.facilities}
-						/>
-						<div className="input-group-append">
-							<div className="input-group-text">M</div>
-						</div>
-					</div>
-					<div className="float-left finances-settings-text-small">
-						Current spending rate: #{t.budget.facilities.rank}
-						<br />
-						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
-							<br />
-						) : (
-							`Spent this season: #${t.seasonAttrs.expenses.facilities.rank}`
-						)}
-					</div>
-				</div>
-				<div className="row mt-3" style={{ paddingLeft: 100 }}>
-					<div className="form-check">
-						<label className="form-check-label">
-							<input
-								className="form-check-input"
-								onChange={this.handleChanges.adjustForInflation}
-								type="checkbox"
-								checked={this.state.adjustForInflation}
-								disabled={formDisabled}
-							/>
-							Auto adjust for inflation
-						</label>
-						<HelpPopover title="Inflation adjustment" className="ml-1">
-							When enabled, all your revenue and expense settings will
-							automatically change whenever the salary cap changes. This will
-							generally maintain your ranks, although expansion teams and
-							changes made by AI teams can still result in your ranks changing.
-						</HelpPopover>
-					</div>
-				</div>
-				{tid === userTid && !spectator ? (
-					<div className="row mt-3" style={{ paddingLeft: 100 }}>
-						<button
-							className="btn btn-large btn-primary"
-							disabled={formDisabled || this.state.saving}
-						>
-							Save Revenue and
-							<br />
-							Expense Settings
-						</button>
-					</div>
-				) : null}
-			</form>
-		);
-	}
-}
+			) : null}
+		</form>
+	);
+};
 
-// @ts-ignore
 FinancesForm.propTypes = {
 	gameSimInProgress: PropTypes.bool.isRequired,
 	t: PropTypes.object.isRequired,
@@ -470,6 +493,7 @@ const highlightZeroNegative = (amount: number) => {
 
 const TeamFinances = ({
 	abbrev,
+	autoTicketPrice,
 	barData,
 	barSeasons,
 	budget,
@@ -503,7 +527,7 @@ const TeamFinances = ({
 		gameSimInProgress: state.gameSimInProgress,
 	}));
 
-	const cols = getCols("Name").concat(
+	const cols = getCols("Pos", "Name").concat(
 		salariesSeasons.map(season => {
 			return {
 				title: String(season),
@@ -515,11 +539,11 @@ const TeamFinances = ({
 
 	const rows = contracts.map((p, i) => {
 		const data: ReactNode[] = [
+			p.pos,
 			<PlayerNameLabels
 				injury={p.injury}
 				jerseyNumber={p.jerseyNumber}
 				pid={p.pid}
-				pos={p.pos}
 				skills={p.skills}
 				style={{ fontStyle: p.released ? "italic" : "normal" }}
 				watch={p.watch}
@@ -529,7 +553,7 @@ const TeamFinances = ({
 		];
 
 		// Loop through the salaries for the next five years for this player.
-		for (let j = 0; j < p.amounts.length; j++) {
+		for (let j = 0; j < salariesSeasons.length; j++) {
 			if (p.amounts[j]) {
 				const formattedAmount = helpers.formatCurrency(p.amounts[j], "M");
 
@@ -550,11 +574,11 @@ const TeamFinances = ({
 	});
 
 	const footer = [
-		["Totals"].concat(
+		["", "Totals"].concat(
 			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
-		["Free Cap Space"].concat(
+		["", "Free Cap Space"].concat(
 			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
@@ -729,6 +753,7 @@ const TeamFinances = ({
 				{budget ? (
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
+							autoTicketPrice={autoTicketPrice}
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
@@ -752,7 +777,7 @@ const TeamFinances = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[1, "desc"]}
+				defaultSort={[2, "desc"]}
 				name="TeamFinances"
 				nonfluid
 				footer={footer}

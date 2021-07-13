@@ -1,7 +1,7 @@
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getStats } from "./teamStats";
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { PHASE, TEAM_STATS_TABLES } from "../../common";
 
 const updateLeagueStats = async (
@@ -25,6 +25,7 @@ const updateLeagueStats = async (
 		const ignoreStats = ["mov", "pw", "pl"];
 
 		let ties = false;
+		let otl = false;
 
 		let stats: string[] = [];
 
@@ -44,24 +45,34 @@ const updateLeagueStats = async (
 			maxSeason -= 1;
 		}
 
+		const pointsFormula = g.get("pointsFormula");
+		const usePts = pointsFormula !== "";
+
 		const seasons = [];
 		for (const season of range(g.get("startingSeason"), maxSeason + 1)) {
 			// Get all team stats for this season
 			// Would be nice to do all seasons in one call....
-			const output = await getStats(
+			const output = await getStats({
 				season,
-				inputs.playoffs === "playoffs",
+				playoffs: inputs.playoffs === "playoffs",
 				statsTable,
-				inputs.tid >= 0 ? inputs.tid : undefined,
-			);
+				usePts,
+				tid: inputs.tid >= 0 ? inputs.tid : undefined,
+				noDynamicAvgAge: true,
+			});
 			stats = output.stats;
 			const seasonAttrs = output.seasonAttrs;
 			const teams = output.teams;
 
-			if (!ties) {
+			if (!ties || !otl) {
 				for (const t of teams) {
 					if (t.seasonAttrs.tied > 0) {
 						ties = true;
+					}
+					if (t.seasonAttrs.otl > 0) {
+						otl = true;
+					}
+					if (ties && otl) {
 						break;
 					}
 				}
@@ -80,7 +91,7 @@ const updateLeagueStats = async (
 			let foundSomething = false;
 
 			// Average together stats
-			for (const stat of [...stats, "gp"]) {
+			for (const stat of [...stats, "gp", "avgAge"]) {
 				if (ignoreStats.includes(stat)) {
 					continue;
 				}
@@ -89,8 +100,13 @@ const updateLeagueStats = async (
 					if (inputs.tid >= 0 && t.tid !== inputs.tid) {
 						continue;
 					}
-					// @ts-ignore
-					sum += t.stats[stat];
+
+					if (stat === "avgAge") {
+						sum += t.seasonAttrs.avgAge ?? 0;
+					} else {
+						// @ts-ignore
+						sum += t.stats[stat];
+					}
 					foundSomething = true;
 				}
 
@@ -106,11 +122,14 @@ const updateLeagueStats = async (
 					if (inputs.tid >= 0 && t.tid !== inputs.tid) {
 						continue;
 					}
+					// @ts-ignore
 					sum += t.seasonAttrs[attr];
 					foundSomething = true;
 				}
 
-				row.stats[attr] =
+				// Don't overwrite pts
+				const statsKey = attr === "pts" ? "ptsPts" : attr;
+				row.stats[statsKey] =
 					inputs.tid < 0 && teams.length !== 0 ? sum / teams.length : sum;
 			}
 
@@ -130,6 +149,8 @@ const updateLeagueStats = async (
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
 			ties: g.get("ties") || ties,
+			otl: g.get("otl") || otl,
+			usePts,
 		};
 	}
 };

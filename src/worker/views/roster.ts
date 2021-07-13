@@ -31,6 +31,7 @@ const updateRoster = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("newPhase"))) ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
@@ -38,6 +39,7 @@ const updateRoster = async (
 		const stats = bySport({
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
 		});
 
 		const editable =
@@ -56,15 +58,24 @@ const updateRoster = async (
 			"won",
 			"lost",
 			"tied",
+			"otl",
 			"playoffRoundsWon",
 			"imgURL",
 			"region",
 			"name",
+			"avgAge",
 		];
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
-			attrs: ["tid", "strategy", "region", "name", "keepRosterSorted"],
+			attrs: [
+				"tid",
+				"strategy",
+				"region",
+				"name",
+				"keepRosterSorted",
+				"playThroughInjuries",
+			],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
 			addDummySeason: true,
@@ -83,6 +94,7 @@ const updateRoster = async (
 			"draft",
 			"name",
 			"age",
+			"born",
 			"contract",
 			"cashOwed",
 			"rosterOrder",
@@ -93,10 +105,11 @@ const updateRoster = async (
 			"hof",
 			"latestTransaction",
 			"mood",
+			"value",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
-		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber"];
+		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
+		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber", "min", "gp"];
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -148,14 +161,14 @@ const updateRoster = async (
 			}
 
 			for (const p of players) {
-				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+				// Can alway release player, even if below the minimum roster limit, cause why not .Except in the playoffs.
 				if (
 					inputs.tid === g.get("userTid") &&
 					(g.get("phase") !== PHASE.PLAYOFFS ||
-						players.length > g.get("maxRosterSize")) &&
+						(g.get("phase") === PHASE.PLAYOFFS &&
+							players.length > g.get("minRosterSize"))) &&
 					!g.get("gameOver") &&
 					!g.get("otherTeamsWantToHire") &&
-					players.length > g.get("numPlayersOnCourt") &&
 					g.get("phase") !== PHASE.FANTASY_DRAFT &&
 					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {
@@ -169,7 +182,6 @@ const updateRoster = async (
 			}
 		} else {
 			// Show all players with stats for the given team and year
-			// Needs all seasons because of YWT!
 			const playersAll = await idb.getCopies.players({
 				statsTid: inputs.tid,
 			});
@@ -205,6 +217,7 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
+		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
 		return {
 			abbrev: inputs.abbrev,

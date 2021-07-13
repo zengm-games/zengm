@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -17,7 +18,7 @@ export const formatStatGameHigh = (
 		}
 
 		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
-		const row = (ps[stat] as unknown) as
+		const row = ps[stat] as unknown as
 			| [number, number]
 			| [number, number, string, number, number];
 
@@ -81,9 +82,9 @@ const PlayerStats = ({
 	);
 
 	if (statType === "shotLocations") {
-		cols[cols.length - 3].title = "M";
-		cols[cols.length - 2].title = "A";
-		cols[cols.length - 1].title = "%";
+		cols[cols.length - 7].title = "M";
+		cols[cols.length - 6].title = "A";
+		cols[cols.length - 5].title = "%";
 	}
 
 	let sortCol = cols.length - 1;
@@ -133,17 +134,26 @@ const PlayerStats = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.stats.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.nameAbbrev}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<PlayerNameLabels
+							injury={p.injury}
+							jerseyNumber={p.stats.jerseyNumber}
+							pid={p.pid}
+							skills={p.ratings.skills}
+							watch={p.watch}
+						>
+							{p.nameAbbrev}
+						</PlayerNameLabels>
+					),
+					sortValue: p.name,
+					searchValue: p.name,
+				},
 				pos,
-				p.age,
+
+				// Only show age at death for career totals, otherwise just use current age
+				season === undefined ? wrappedAgeAtDeath(p.age, p.ageAtDeath) : p.age,
+
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -176,7 +186,7 @@ const PlayerStats = ({
 				Players on your team are{" "}
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
-				. Only players averaging more than 5 minutes per game are shown.
+				.
 			</p>
 
 			<DataTable
@@ -196,19 +206,7 @@ PlayerStats.propTypes = {
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
 	season: PropTypes.number, // Undefined for career totals
-	statType: PropTypes.oneOf([
-		"advanced",
-		"gameHighs",
-		"per36",
-		"perGame",
-		"shotLocations",
-		"totals",
-		"passing",
-		"rushing",
-		"defense",
-		"kicking",
-		"returns",
-	]).isRequired,
+	statType: PropTypes.string.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,
 	userTid: PropTypes.number,

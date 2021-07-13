@@ -48,18 +48,24 @@ const Teams = ({
 	let content;
 
 	if (nested) {
-		content = team.map(t => (
-			<div className="mb-3" key={t.title}>
-				<h3>{t.title}</h3>
-				{t.players.map((p: any) =>
-					p ? (
-						<Player key={p.pid} p={p} season={season} userTid={userTid} />
-					) : (
-						""
-					),
-				)}
-			</div>
-		));
+		content = team.map(t => {
+			if (t.players.length === 0) {
+				return null;
+			}
+
+			return (
+				<div className="mb-3" key={t.title}>
+					<h3>{t.title}</h3>
+					{t.players.map((p: any) =>
+						p ? (
+							<Player key={p.pid} p={p} season={season} userTid={userTid} />
+						) : (
+							""
+						),
+					)}
+				</div>
+			);
+		});
 	} else if (team.length === 0) {
 		content = <p>None</p>;
 	} else {

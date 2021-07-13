@@ -1,4 +1,4 @@
-import { isSport, PLAYER } from "../../../common";
+import { bySport, isSport, PLAYER } from "../../../common";
 import { g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
@@ -43,7 +43,11 @@ const shouldRetire = (
 			}
 		}
 	} else {
-		const maxAge = pos === "QB" || pos === "P" || pos === "K" ? 33 : 29;
+		const maxAge = bySport({
+			basketball: 0,
+			football: pos === "QB" || pos === "P" || pos === "K" ? 35 : 32,
+			hockey: 36,
+		});
 		const minPot = 50;
 
 		// Only players older than maxAge or without a contract will retire
@@ -60,6 +64,11 @@ const shouldRetire = (
 				return true;
 			}
 		}
+	}
+
+	const forceRetireAge = g.get("forceRetireAge");
+	if (forceRetireAge >= g.get("draftAges")[1] && age >= forceRetireAge) {
+		return true;
 	}
 
 	return false;

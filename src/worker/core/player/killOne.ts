@@ -15,8 +15,9 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"ankle braces",
 		"knee braces",
 		...bySport({
-			football: ["cleats", "helmets", "shoulder pads"],
 			basketball: ["sneakers", "headbands"],
+			football: ["cleats", "helmets", "shoulder pads"],
+			hockey: ["skates", "helmets", "shoulder pads", "gloves"],
 		}),
 	];
 	const gift1 = random.choice(gifts);

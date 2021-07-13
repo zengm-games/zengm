@@ -29,7 +29,7 @@ async function play(
 		await lock.set("gameSim", false);
 		await updatePlayMenu(); // Check to see if free agency is over
 
-		if (g.get("daysLeft") === 0) {
+		if (g.get("daysLeft") <= 0) {
 			await updateStatus("Idle");
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}

@@ -1,10 +1,45 @@
-import { isSport, PLAYER } from "../../../common";
+import { bySport, isSport, PLAYER } from "../../../common";
 import { player } from "..";
 import { defaultGameAttributes, g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 } from "../../../common/types";
+
+// To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
+const defaultFractionPerYear = bySport({
+	basketball: 0.5,
+	football: 0.5,
+	hockey: 0.75,
+});
+
+// For default values of numYearsBeforeLastYear, output is: basketball/football = 0.5, hockey = 0.75
+const getFractionPerYear = (ageGap: number) => {
+	if (ageGap === 0) {
+		return 1;
+	}
+
+	// For small number of years, just do default - this handles the defaults for all sports currently
+	if (ageGap <= 3) {
+		return defaultFractionPerYear;
+	}
+
+	// Find fractionPerYear such that the amount remaining in the last year is below 1/ageGap. This will result in a larger number of players in the last year than the year before (or possibly many years before), but that's okay I guess.
+	for (let fractionPerYear = 0; fractionPerYear < 1; fractionPerYear += 0.01) {
+		let result = 1;
+		let enteringDraftThisYear = 0;
+		for (let i = 0; i < ageGap; i++) {
+			enteringDraftThisYear = result * fractionPerYear;
+			result -= enteringDraftThisYear;
+		}
+		if (result < 1 / ageGap) {
+			return fractionPerYear;
+		}
+	}
+
+	// Should never happen
+	return 1 / ageGap;
+};
 
 const genPlayersWithoutSaving = async (
 	draftYear: number,
@@ -17,12 +52,32 @@ const genPlayersWithoutSaving = async (
 	const normalNumPlayers = Math.round(
 		(defaultGameAttributes.numDraftRounds * g.get("numActiveTeams") * 7) / 6,
 	);
-	const baseNumPlayers = Math.max(
+	let baseNumPlayers = Math.max(
 		Math.round((g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6),
 		normalNumPlayers,
 	);
 
+	// Based on draftAges and forceRetireAge settings, check how many players we need per draft class to fill the league. KEEP IN SYNC WITH LEAGUE CREATION seasonsSimmed
+	const draftAges = g.get("draftAges");
+	const forceRetireAge = g.get("forceRetireAge");
+	const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2); // Ideally this would be more intelligently determined, based on getFractionPerYear
+	const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
+	if (forceRetireAgeDiff > 0) {
+		const numActivePlayers =
+			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
+
+		const numSeasonsPerPlayer = forceRetireAgeDiff;
+		const numPlayersNeededPerYear = Math.ceil(
+			numActivePlayers / numSeasonsPerPlayer,
+		);
+
+		if (numPlayersNeededPerYear > baseNumPlayers) {
+			baseNumPlayers = numPlayersNeededPerYear;
+		}
+	}
+
 	const numPlayers = baseNumPlayers - existingPlayers.length;
+
 	if (numPlayers <= 0) {
 		return [];
 	}
@@ -33,15 +88,23 @@ const genPlayersWithoutSaving = async (
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 
-	const baseAge = 19 - (draftYear - g.get("season"));
+	let baseAge = draftAges[0] - (draftYear - g.get("season"));
+	if (isSport("football")) {
+		// See below comment about FBGM
+		baseAge -= 2;
+	}
+	const minMaxAgeDiff = draftAges[1] - draftAges[0];
+
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
-		const p: any = player.generate(
+		const name = await player.name();
+		const p: any = await player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
 			draftYear,
 			false,
 			scoutingRank,
+			name,
 		);
 
 		// Just for ovr/pot
@@ -57,13 +120,25 @@ const genPlayersWithoutSaving = async (
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
 
-	for (let i = 0; i < 4; i++) {
-		let cutoff = 0; // For football, only juniors and seniors
+	const fractionPerYear = getFractionPerYear(minMaxAgeDiff);
 
-		if (isSport("basketball") || i >= 2) {
-			// Top 50% of players remaining enter draft, except in last year when all do
-			cutoff = i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
+	// FBGM was originally written to assume players were generated at 19 and developed for two seasons before declaring.
+	// If `draftAges` existed when FBGM was written, it would not make sense to do that. Doing something about that now
+	// is difficult, so we want to keep developing prospects for 2 seasons currently.
+	if (isSport("football")) {
+		for (let i = 0; i < 2; i++) {
+			for (const p of remaining) {
+				await player.develop(p, 1, true);
+			}
 		}
+	}
+
+	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
+		// The % of players declaring each year is determined by fractionPerYear, except in last year when all players declare.
+		const cutoff =
+			i === minMaxAgeDiff
+				? remaining.length
+				: Math.round(fractionPerYear * remaining.length);
 
 		remaining.sort(
 			(a, b) =>
@@ -124,6 +199,14 @@ const genPlayersWithoutSaving = async (
 
 	for (const p of enteringDraft) {
 		delete p.fudgeFactor; // Update player values after ratings changes
+	}
+
+	// No college for players 18 or younger
+	for (const p of enteringDraft) {
+		const ageAtDraft = p.draft.year - p.born.year;
+		if (ageAtDraft <= 18) {
+			p.college = "";
+		}
 	}
 
 	return enteringDraft;

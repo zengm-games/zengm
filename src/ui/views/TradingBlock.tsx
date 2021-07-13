@@ -29,6 +29,7 @@ const Offer = (props: OfferProps) => {
 		i,
 		lost,
 		name,
+		otl,
 		payroll,
 		picks,
 		pids,
@@ -124,21 +125,22 @@ const Offer = (props: OfferProps) => {
 			</h2>
 			<p>
 				{won}-{lost}
+				{otl > 0 ? <>-{otl}</> : null}
 				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
 				{helpers.formatCurrency(payroll / 1000, "M")} payroll
 			</p>
-			<p className="text-danger">{warning}</p>
-			<div className="row" style={{ clear: "both" }}>
+			<div className="row">
 				{offerPlayers}
 				{offerPicks}
 				{picks.length === 0 && players.length === 0 ? (
 					<div className="col-12">Nothing.</div>
 				) : null}
 			</div>
+			{warning ? <p className="text-danger">{warning}</p> : null}
 
 			<button
 				type="submit"
-				className="btn btn-light-bordered"
+				className="btn btn-light-bordered mb-4"
 				onClick={() => handleClickNegotiate(tid, pids, dpids)}
 			>
 				Negotiate
@@ -308,6 +310,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		...stats.map(stat => `stat:${stat}`),
 	);
 	cols[0].sortSequence = [];
+	cols[0].noSearch = true;
 
 	const rows = userRoster.map(p => {
 		return {

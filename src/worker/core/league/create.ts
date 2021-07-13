@@ -1,6 +1,7 @@
-import orderBy from "lodash/orderBy";
+import { groupBy } from "../../../common/groupBy";
+import orderBy from "lodash-es/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
@@ -25,6 +26,7 @@ import type {
 	DraftPickWithoutKey,
 } from "../../../common/types";
 import createGameAttributes from "./createGameAttributes";
+import { getAutoTicketPriceByTid } from "../game/attendance";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
 	const values = new Set();
@@ -58,7 +60,7 @@ export type LeagueFile = {
 	draftPicks?: any[];
 	draftOrder?: any[];
 	games?: any[];
-	gameAttributes?: any[];
+	gameAttributes?: Record<string, any>;
 	players?: any[];
 	schedule?: any[];
 	teams?: any[];
@@ -72,6 +74,7 @@ export type LeagueFile = {
 	events?: any[];
 	playerFeats?: any[];
 	scheduledEvents?: any[];
+	headToHeads?: any[];
 };
 
 export type TeamInfo = TeamBasic & {
@@ -83,11 +86,9 @@ export type TeamInfo = TeamBasic & {
 
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = async (
-	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
 	shuffleRosters: boolean,
-	difficulty: number,
 ) => {
 	const teamsDefault = helpers.getTeamsDefault();
 
@@ -130,7 +131,7 @@ export const createWithoutSaving = async (
 				const t2 = teamsDefault[i];
 
 				for (const prop of helpers.keys(t2)) {
-					if (!t.hasOwnProperty(prop)) {
+					if (!t.hasOwnProperty(prop) && prop !== "imgURLSmall") {
 						t[prop] = t2[prop];
 					}
 				}
@@ -155,11 +156,10 @@ export const createWithoutSaving = async (
 
 	// Also mutates teamInfos
 	const gameAttributes = createGameAttributes({
-		difficulty,
 		leagueFile,
-		leagueName,
 		teamInfos,
 		userTid,
+		version: leagueFile.version,
 	});
 
 	// Validation of some identifiers
@@ -243,6 +243,7 @@ export const createWithoutSaving = async (
 					"abbrev",
 					"imgURL",
 					"colors",
+					"jersey",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
 					if (
@@ -323,8 +324,8 @@ export const createWithoutSaving = async (
 
 	if (
 		leagueFile.hasOwnProperty("trade") &&
-		Array.isArray(trade) &&
-		trade.length === 1
+		Array.isArray(leagueFile.trade) &&
+		leagueFile.trade.length === 1
 	) {
 		trade = leagueFile.trade;
 	} else {
@@ -402,6 +403,8 @@ export const createWithoutSaving = async (
 		"games",
 		"events",
 		"playerFeats",
+		"scheduledEvents",
+		"headToHeads",
 	] as const;
 	const leagueData: any = {};
 
@@ -418,12 +421,17 @@ export const createWithoutSaving = async (
 		if (shuffleRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
 			// Check tid to prevent draft prospects from being swapped with established players
-			const playerTids = leagueFile.players
-				.filter(p => p.tid > PLAYER.FREE_AGENT)
-				.map(p => p.tid);
+			const numPlayersToShuffle = leagueFile.players.filter(
+				p => p.tid > PLAYER.FREE_AGENT,
+			).length;
 
-			// Shuffle the teams that players are assigned to.
-			random.shuffle(playerTids);
+			const playerTids = [];
+			while (playerTids.length < numPlayersToShuffle) {
+				// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
+				const shuffled = [...activeTids];
+				random.shuffle(shuffled);
+				playerTids.push(...shuffled);
+			}
 
 			for (const p of leagueFile.players) {
 				p.transactions = [];
@@ -465,14 +473,29 @@ export const createWithoutSaving = async (
 	} else {
 		players = [];
 
-		// Generate past 20 years of draft classes
+		// Generate past 20 years of draft classes, unless forceRetireAge/draftAges make that infeasible
+		let seasonsSimmed = 20;
+		const forceRetireAge = g.get("forceRetireAge");
+		const draftAges = g.get("draftAges");
+		const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2);
+		const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
+		if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
+			seasonsSimmed = forceRetireAgeDiff;
+		} else {
+			// Maybe add some extra seasons, for leagues when players start young
+			const estimatedRetireAge = forceRetireAgeDiff > 0 ? forceRetireAge : 35;
+			const estimatedRetireAgeDiff = estimatedRetireAge - averageDraftAge;
+			if (estimatedRetireAgeDiff > seasonsSimmed) {
+				seasonsSimmed = estimatedRetireAgeDiff;
+			}
+		}
 
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
-		const NUM_PAST_SEASONS = 20 + seasonOffset;
+		const NUM_PAST_SEASONS = seasonsSimmed + seasonOffset;
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();
-		const keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
+		let keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 		for (
 			let numYearsAgo = NUM_PAST_SEASONS;
@@ -485,19 +508,16 @@ export const createWithoutSaving = async (
 				[],
 			);
 
-			// Very rough simulation of a draft
+			// value is needed for ordering the historical draft class. This is value AT THE TIME OF THE DRAFT! Will be regenerated below for subsequent use.
 			for (const p of draftClass) {
-				// Temp, just for draft ordering
 				p.value = player.value(p, {
 					ovrMean: 47,
 					ovrStd: 10,
 				});
 			}
+
+			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, "value", "desc");
-			for (const p of draftClass) {
-				// Reset
-				p.value = 0;
-			}
 			const tids = [...activeTids];
 			random.shuffle(tids);
 
@@ -538,9 +558,19 @@ export const createWithoutSaving = async (
 					// Guarantee contracts for undrafted players are overwritten below
 					p.contract.exp = -Infinity;
 				} else {
-					const years = 4 - round;
+					let years;
+					if (isSport("hockey")) {
+						years = 3;
+					} else if (!g.get("hardCap")) {
+						const rookieContractLengths = g.get("rookieContractLengths");
+						years =
+							rookieContractLengths[round - 1] ??
+							rookieContractLengths[rookieContractLengths.length - 1];
+					} else {
+						// 2 years for 2nd round, 3 years for 1st round;
+						years = Math.min(4 - round, 2);
+					}
 
-					// 2 years for 2nd round, 3 years for 1st round;
 					player.setContract(
 						p,
 						{
@@ -564,20 +594,19 @@ export const createWithoutSaving = async (
 		const numPlayerPerTeam = Math.max(
 			g.get("maxRosterSize") - 2,
 			g.get("minRosterSize"),
-		);
-
-		// 13 for basketball
+		); // 13 for basketball
 		const maxNumFreeAgents = Math.round(
 			(activeTids.length / 3) * g.get("maxRosterSize"),
-		);
+		); // 150 for basketball
 
-		// 150 for basketball
-		// Would use value, but it doesn't exist yet
-		keptPlayers.sort(
-			(a, b) =>
-				b.ratings[b.ratings.length - 1].pot -
-				a.ratings[a.ratings.length - 1].pot,
-		);
+		// Needed for sorting the keptPlayers array and inside getBest (only if DRAFT_BY_TEAM_OVR)
+		for (const p of keptPlayers) {
+			p.value = player.value(p, {
+				ovrMean: 47,
+				ovrStd: 10,
+			});
+		}
+		keptPlayers.sort((a, b) => b.value - a.value);
 
 		// Keep track of number of players on each team
 		const numPlayersByTid: Record<number, number> = {};
@@ -612,7 +641,7 @@ export const createWithoutSaving = async (
 			}
 
 			// Keep rookie contract, or no?
-			if (p.contract.exp >= g.get("season")) {
+			if (p.contract.exp >= g.get("season") && !g.get("hardCap")) {
 				delete p.contract.temp;
 			}
 
@@ -652,6 +681,7 @@ export const createWithoutSaving = async (
 		};
 
 		// Drafted players kept with own team, with some probability
+		const playersStayedOnOwnTeam = new Set();
 		for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
 			const p = keptPlayers[i];
 
@@ -661,9 +691,10 @@ export const createWithoutSaving = async (
 				numPlayersByTid[p.draft.tid] < numPlayerPerTeam
 			) {
 				await addPlayerToTeam(p, p.draft.tid);
-				keptPlayers.splice(i, 1);
+				playersStayedOnOwnTeam.add(p);
 			}
 		}
+		keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
 
 		// Then add other players, up to the limit
 		while (true) {
@@ -684,6 +715,7 @@ export const createWithoutSaving = async (
 				);
 
 				if (p) {
+					keptPlayers = keptPlayers.filter(p2 => p2 !== p);
 					await addPlayerToTeam(p, currentTid);
 				} else {
 					console.log(currentTid, "can't find player");
@@ -696,10 +728,9 @@ export const createWithoutSaving = async (
 			}
 		}
 
-		// Finally, free agents
-		for (let i = 0; i < maxNumFreeAgents; i++) {
-			const p = keptPlayers[i];
-
+		const addToFreeAgents = (
+			p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
+		) => {
 			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (p) {
 				// So half will be eligible to retire after the first season
@@ -716,6 +747,31 @@ export const createWithoutSaving = async (
 				p.contract.temp = true;
 				player.addToFreeAgents(p);
 				players.push(p);
+			}
+		};
+
+		// Finally, free agents
+		if (Object.keys(POSITION_COUNTS).length === 0) {
+			for (let i = 0; i < maxNumFreeAgents; i++) {
+				addToFreeAgents(keptPlayers[i]);
+			}
+		} else {
+			// POSITION_COUNTS exists, so use it to keep a balanced list of free agents
+			let positionCountsSum = 0;
+			for (const positionCount of Object.values(POSITION_COUNTS)) {
+				positionCountsSum += positionCount;
+			}
+
+			const groupedPlayers = groupBy(keptPlayers, p => p.ratings[0].pos);
+
+			for (const pos of Object.keys(groupedPlayers)) {
+				const limit = Math.round(
+					(maxNumFreeAgents * POSITION_COUNTS[pos]) / positionCountsSum,
+				);
+
+				for (let i = 0; i < limit; i++) {
+					addToFreeAgents(groupedPlayers[pos][i]);
+				}
 			}
 		}
 	}
@@ -774,22 +830,20 @@ export const createWithoutSaving = async (
 		if (teamInfos[i].strategy === undefined) {
 			const teamPlayers = players
 				.filter(p => p.tid === i)
-				.map(p => ({ ratings: p.ratings[p.ratings.length - 1] }));
+				.map(p => ({
+					value: p.value,
+					ratings: p.ratings[p.ratings.length - 1],
+				}));
 			const ovr = team.ovr(teamPlayers);
 			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
-
-	const scheduledEvents = leagueFile.scheduledEvents
-		? leagueFile.scheduledEvents
-		: [];
 
 	return Object.assign(leagueData, {
 		draftLotteryResults,
 		draftPicks,
 		gameAttributes,
 		players,
-		scheduledEvents,
 		teamSeasons,
 		teamStats,
 		teams,
@@ -809,7 +863,6 @@ const create = async ({
 	tid,
 	leagueFile,
 	shuffleRosters = false,
-	difficulty = 0,
 	importLid,
 	realPlayers,
 }: {
@@ -817,28 +870,10 @@ const create = async ({
 	tid: number;
 	leagueFile: LeagueFile;
 	shuffleRosters?: boolean;
-	difficulty?: number;
 	importLid?: number | undefined | null;
 	realPlayers?: boolean;
 }): Promise<number> => {
-	const leagueData = await createWithoutSaving(
-		name,
-		tid,
-		leagueFile,
-		shuffleRosters,
-		difficulty,
-	);
-
-	let phaseText;
-
-	if (
-		leagueFile.hasOwnProperty("meta") &&
-		leagueFile.meta.hasOwnProperty("phaseText")
-	) {
-		phaseText = leagueFile.meta.phaseText;
-	} else {
-		phaseText = "";
-	}
+	const leagueData = await createWithoutSaving(tid, leagueFile, shuffleRosters);
 
 	const userTid =
 		leagueData.gameAttributes.userTid[
@@ -847,12 +882,12 @@ const create = async ({
 	const l: League = {
 		name,
 		tid: userTid,
-		phaseText,
+		phaseText: "",
 		teamName: leagueData.teams[userTid].name,
 		teamRegion: leagueData.teams[userTid].region,
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
-		difficulty,
+		difficulty: leagueData.gameAttributes.difficulty,
 		created: new Date(),
 		lastPlayed: new Date(),
 		startingSeason: g.get("startingSeason"),
@@ -989,9 +1024,7 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	const skipNewPhase = leagueFile.gameAttributes
-		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
-		: false;
+	const skipNewPhase = leagueFile.gameAttributes?.phase !== undefined;
 
 	if (!skipNewPhase || realPlayers) {
 		await updatePhase();
@@ -1033,6 +1066,14 @@ const create = async ({
 			score: 20,
 		});
 	}
+
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		if (!t.disabled && t.autoTicketPrice !== false) {
+			t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
+		}
+	}
+	await finances.updateRanks(["budget"]);
 
 	await idb.cache.flush();
 	await idb.cache.fill(); // Otherwise it keeps everything in memory!

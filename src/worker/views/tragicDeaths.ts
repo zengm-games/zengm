@@ -31,6 +31,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"ws48",
 			],
 			football: ["keyStats", "av"],
+			hockey: ["keyStats", "ops", "dps", "ps"],
 		});
 		const playersAll = (
 			await Promise.all(

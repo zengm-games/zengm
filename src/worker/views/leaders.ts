@@ -13,6 +13,8 @@ const getCategoriesAndStats = () => {
 			data: any[];
 			minStats: string[];
 			minValue: number[];
+			sortAscending?: true;
+			filter?: (p: any) => boolean;
 		}[]
 	>({
 		basketball: [
@@ -370,6 +372,173 @@ const getCategoriesAndStats = () => {
 				minValue: [],
 			},
 		],
+		hockey: [
+			{
+				name: "Goals",
+				stat: "G",
+				statProp: "g",
+				title: "Goals",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Assists",
+				stat: "A",
+				statProp: "a",
+				title: "Assists",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Points",
+				stat: "PTS",
+				statProp: "pts",
+				title: "Points",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Plus/Minus",
+				stat: "+/-",
+				statProp: "pm",
+				title: "Plus/Minus",
+				data: [],
+				minStats: [],
+				minValue: [],
+				filter: p => p.ratings.pos !== "G",
+			},
+			{
+				name: "Penalty Minutes",
+				stat: "PIM",
+				statProp: "pim",
+				title: "Penalty Minutes",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Time On Ice",
+				stat: "TOI",
+				statProp: "min",
+				title: "Time On Ice",
+				data: [],
+				minStats: [],
+				minValue: [],
+				filter: p => p.ratings.pos !== "G",
+			},
+			{
+				name: "Blocks",
+				stat: "BLK",
+				statProp: "blk",
+				title: "Blocks",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Hits",
+				stat: "HIT",
+				statProp: "hit",
+				title: "Hits",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Takeaways",
+				stat: "TK",
+				statProp: "tk",
+				title: "Takeaways",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Giveaways",
+				stat: "GV",
+				statProp: "gv",
+				title: "Giveaways",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Save Percentage",
+				stat: "SV%",
+				statProp: "svPct",
+				title: "Save Percentage",
+				data: [],
+				minStats: ["sv"],
+				minValue: [800],
+			},
+			{
+				name: "Goals Against Average",
+				stat: "GAA",
+				statProp: "gaa",
+				title: "Goals Against Average",
+				data: [],
+				minStats: ["sv"],
+				minValue: [800],
+				sortAscending: true,
+			},
+			{
+				name: "Shutouts",
+				stat: "SO",
+				statProp: "so",
+				title: "Shutouts",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Goals Created",
+				stat: "GC",
+				statProp: "gc",
+				title: "Goals Created",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Offensive Point Shares",
+				stat: "OPS",
+				statProp: "ops",
+				title: "Offensive Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Defensive Point Shares",
+				stat: "DPS",
+				statProp: "dps",
+				title: "Defensive Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Goalie Point Shares",
+				stat: "GPS",
+				statProp: "gps",
+				title: "Goalie Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Point Shares",
+				stat: "PS",
+				statProp: "ps",
+				title: "Point Shares",
+				data: [],
+				minStats: [],
+				minValue: [],
+			},
+		],
 	});
 
 	const statsSet = new Set<string>();
@@ -437,7 +606,7 @@ const updateLeaders = async (
 
 		players = await idb.getCopies.playersPlus(players, {
 			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
-			ratings: ["skills"],
+			ratings: ["skills", "pos"],
 			stats: ["abbrev", "tid", ...stats],
 			season: inputs.season,
 			playoffs: inputs.playoffs === "playoffs",
@@ -446,37 +615,68 @@ const updateLeaders = async (
 		});
 		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
 
-		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
+		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
+		const numPlayersOnCourtFactor = bySport({
+			basketball:
+				defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
+			football: 1,
+			hockey: 1,
+		});
+
+		// To handle changes in number of games, playing time, etc
 		const factor =
 			(g.get("numGames") / defaultGameAttributes.numGames) *
-			helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
+			numPlayersOnCourtFactor *
+			helpers.quarterLengthFactor();
 
+		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 		for (const cat of categories) {
-			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+			if (cat.sortAscending) {
+				players.sort((a, b) => a.stats[cat.statProp] - b.stats[cat.statProp]);
+			} else {
+				players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+			}
 
 			for (const p of players) {
 				// Test if the player meets the minimum statistical requirements for this category
-				let pass = cat.minStats.length === 0;
+				let pass = cat.minStats.length === 0 && (!cat.filter || cat.filter(p));
 
-				for (let k = 0; k < cat.minStats.length; k++) {
-					// In basketball, everything except gp is a per-game average, so we need to scale them by games played
-					let playerValue;
+				if (!pass) {
+					for (let k = 0; k < cat.minStats.length; k++) {
+						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
+						let playerValue;
+						if (!isSport("basketball") || cat.minStats[k] === "gp") {
+							playerValue = p.stats[cat.minStats[k]];
+						} else {
+							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
+						}
 
-					if (isSport("football") || cat.minStats[k] === "gp") {
-						playerValue = p.stats[cat.minStats[k]];
-					} else {
-						playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
-					}
+						// Compare against value normalized for team games played
+						const gpTeam = gps[p.stats.tid];
 
-					// Compare against value normalized for team games played
-					const gpTeam = gps[p.stats.tid];
-					if (
-						gpTeam !== undefined &&
-						playerValue >=
-							Math.ceil((cat.minValue[k] * factor * gpTeam) / g.get("numGames"))
-					) {
-						pass = true;
-						break; // If one is true, don't need to check the others
+						if (gpTeam !== undefined) {
+							// Special case GP
+							if (cat.minStats[k] === "gp") {
+								if (
+									playerValue / gpTeam >=
+									cat.minValue[k] / g.get("numGames")
+								) {
+									pass = true;
+									break; // If one is true, don't need to check the others
+								}
+							}
+
+							// Other stats
+							if (
+								playerValue >=
+								Math.ceil(
+									(cat.minValue[k] * factor * gpTeam) / g.get("numGames"),
+								)
+							) {
+								pass = true;
+								break; // If one is true, don't need to check the others
+							}
+						}
 					}
 				}
 
@@ -502,6 +702,8 @@ const updateLeaders = async (
 
 			// @ts-ignore
 			delete cat.minValue;
+
+			delete cat.filter;
 		}
 
 		return {

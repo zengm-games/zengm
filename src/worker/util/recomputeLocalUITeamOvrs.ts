@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import range from "lodash-es/range";
 import { player, team } from "../core";
 import { idb } from "../db";
 import g from "./g";
@@ -11,12 +11,16 @@ const recomputeLocalUITeamOvrs = async () => {
 			Infinity,
 		])
 	).map(p => ({
-		pid: p.pid,
 		tid: p.tid,
 		injury: p.injury,
+		value: p.value,
 		ratings: {
 			ovr: player.fuzzRating(
 				p.ratings[p.ratings.length - 1].ovr,
+				p.ratings[p.ratings.length - 1].fuzz,
+			),
+			ovrs: player.fuzzOvrs(
+				p.ratings[p.ratings.length - 1].ovrs,
 				p.ratings[p.ratings.length - 1].fuzz,
 			),
 			pos: p.ratings[p.ratings.length - 1].pos,

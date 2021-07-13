@@ -3,6 +3,7 @@ import { groupAwards } from "../../util";
 
 const style = {
 	fontSize: "120%",
+	maxWidth: 520,
 };
 
 const AwardsSummary = ({ awards }: { awards: Player["awards"] }) => {

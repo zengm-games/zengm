@@ -25,20 +25,21 @@ const processPlayersHallOfFame = <
 		let bestEWA = -Infinity;
 		let bestStats;
 		const teamSums: Record<number, number> = {};
-		for (let j = 0; j < p.stats.length; j++) {
-			const tid = p.stats[j].tid;
-			const EWA = bySport({
-				basketball: p.stats[j].ewa,
-				football: p.stats[j].av,
+		for (const ps of p.stats) {
+			const tid = ps.tid;
+			const ewa = bySport({
+				basketball: ps.ewa,
+				football: ps.av,
+				hockey: ps.ps,
 			});
-			if (EWA > bestEWA) {
-				bestStats = p.stats[j];
-				bestEWA = EWA;
+			if (ewa > bestEWA) {
+				bestStats = ps;
+				bestEWA = ewa;
 			}
 			if (teamSums.hasOwnProperty(tid)) {
-				teamSums[tid] += EWA;
+				teamSums[tid] += ewa;
 			} else {
-				teamSums[tid] = EWA;
+				teamSums[tid] = ewa;
 			}
 		}
 		if (bestStats === undefined) {

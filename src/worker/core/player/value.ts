@@ -119,11 +119,11 @@ const value = (
 
 	if (isSport("football")) {
 		if (pr.pos === "QB") {
-			current *= 1.25;
-			potential *= 1.25;
+			current *= 1.1;
+			potential *= 1.1;
 		} else if (pr.pos === "K" || pr.pos === "P") {
-			current *= 0.25;
-			potential *= 0.25;
+			current *= 0.5;
+			potential *= 0.5;
 		}
 	}
 
@@ -147,7 +147,9 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
-	return valueCombineOvrPot(current, potential, age);
+	const combined = valueCombineOvrPot(current, potential, age);
+
+	return combined < 0 ? Number.MIN_VALUE : combined;
 };
 
 export default value;

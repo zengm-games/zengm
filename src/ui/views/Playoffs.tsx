@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
+import { helpers } from "../util";
 
 const width100 = {
 	width: "100%",
@@ -40,6 +41,20 @@ const Playoffs = ({
 				numGamesPlayoffSeriesReflected.length - 1 - i
 			] = undefined;
 		}
+	}
+
+	if (numRounds === 0) {
+		return finalMatchups ? (
+			<p>There were no playoffs this season.</p>
+		) : (
+			<p>
+				Your league is configured to not have any playoff series. The league
+				champion will be the 1st place team in the regular season. If you would
+				like to change this, go to{" "}
+				<a href={helpers.leagueUrl(["settings"])}>league settings</a> and change
+				the "# Playoff Games" setting.
+			</p>
+		);
 	}
 
 	return (

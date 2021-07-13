@@ -5,16 +5,16 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types";
-import { bySport, isSport } from "../../common";
+import { DEFAULT_JERSEY, isSport } from "../../common";
 
 const generate = (race?: Race) => {
 	const overrides: any = {
 		jersey: {
-			id: bySport({ basketball: "jersey3", football: "football" }),
+			id: DEFAULT_JERSEY,
 		},
 	};
 
-	if (isSport("football")) {
+	if (!isSport("basketball")) {
 		overrides.glasses = {
 			id: "none",
 		};

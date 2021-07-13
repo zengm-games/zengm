@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
-import type { ClassValue } from "classnames/types";
+import type { Argument } from "classnames";
 
 const Row = ({
 	row,
 }: {
 	row: {
-		classNames?: ClassValue;
+		classNames?: Argument;
 		data: any[];
 	};
 }) => {
@@ -30,6 +30,14 @@ const Row = ({
 
 				if (value && value.classNames) {
 					props.className = classNames(value.classNames);
+				}
+
+				if (value && value.title) {
+					props.title = value.title;
+				}
+
+				if (value && value.style) {
+					props.style = value.style;
 				}
 
 				const singleCheckbox =
@@ -73,7 +81,6 @@ const Row = ({
 
 Row.propTypes = {
 	row: PropTypes.shape({
-		classNames: PropTypes.object,
 		data: PropTypes.array.isRequired,
 	}).isRequired,
 };

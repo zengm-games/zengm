@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
-import { PHASE } from "../../common";
+import { DEFAULT_JERSEY, PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 
 const ExpansionDraft = ({
@@ -24,6 +24,7 @@ const ExpansionDraft = ({
 		name: "",
 		imgURL: "",
 		colors: ["#000000", "#cccccc", "#ffffff"],
+		jersey: DEFAULT_JERSEY,
 		pop: "1",
 		stadiumCapacity: "25000",
 		did: String(divs[divs.length - 1].did),
@@ -58,7 +59,11 @@ const ExpansionDraft = ({
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
 		const newNumProtectedPlayers = String(
-			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
+			helpers.bound(
+				parseInt(initialNumProtectedPlayers) - newTeams.length,
+				0,
+				Infinity,
+			),
 		);
 		const newNumPerTeam = String(
 			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
@@ -92,29 +97,31 @@ const ExpansionDraft = ({
 		);
 	}
 
-	const handleInputChange = (i: number) => async (
-		field: string,
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		const value = event.target.value;
+	const handleInputChange =
+		(i: number) =>
+		async (
+			field: string,
+			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		) => {
+			const value = event.target.value;
 
-		const t: any = {
-			...teams[i],
-		};
+			const t: any = {
+				...teams[i],
+			};
 
-		if (field.startsWith("colors")) {
-			const ind = parseInt(field.replace("colors", ""));
-			if (ind >= 0 && ind <= 2) {
-				t.colors[ind] = value;
+			if (field.startsWith("colors")) {
+				const ind = parseInt(field.replace("colors", ""));
+				if (ind >= 0 && ind <= 2) {
+					t.colors[ind] = value;
+				}
+			} else {
+				t[field] = value;
 			}
-		} else {
-			t[field] = value;
-		}
 
-		const newTeams = [...teams];
-		newTeams[i] = t;
-		await setTeams(newTeams);
-	};
+			const newTeams = [...teams];
+			newTeams[i] = t;
+			await setTeams(newTeams);
+		};
 
 	const deleteTeam = (i: number) => async (event: MouseEvent) => {
 		event.preventDefault();
@@ -153,34 +160,33 @@ const ExpansionDraft = ({
 		}
 	};
 
-	const handleTakeControl = (i: number) => async (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newTeams = [...teams];
-		if (!event.target.checked) {
-			newTeams[i] = {
-				...newTeams[i],
-				takeControl: false,
-			};
-		} else {
-			if (multiTeamMode) {
+	const handleTakeControl =
+		(i: number) => async (event: ChangeEvent<HTMLInputElement>) => {
+			const newTeams = [...teams];
+			if (!event.target.checked) {
 				newTeams[i] = {
 					...newTeams[i],
-					takeControl: true,
+					takeControl: false,
 				};
 			} else {
-				for (let j = 0; j < newTeams.length; j++) {
-					// Only allow one to be checked
-					newTeams[j] = {
-						...newTeams[j],
-						takeControl: i === j,
+				if (multiTeamMode) {
+					newTeams[i] = {
+						...newTeams[i],
+						takeControl: true,
 					};
+				} else {
+					for (let j = 0; j < newTeams.length; j++) {
+						// Only allow one to be checked
+						newTeams[j] = {
+							...newTeams[j],
+							takeControl: i === j,
+						};
+					}
 				}
 			}
-		}
 
-		await setTeams(newTeams);
-	};
+			await setTeams(newTeams);
+		};
 
 	const currentAbbrevs = teams.map(t => t.abbrev);
 
@@ -211,53 +217,58 @@ const ExpansionDraft = ({
 						return (
 							<div key={i} className="col-xl-4 col-lg-6 mb-3">
 								<div className="card">
-									<div className="card-body row">
-										<TeamForm
-											classNamesCol={[
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-												"col-6",
-											]}
-											confs={confs}
-											disableStadiumCapacity={!godMode}
-											divs={divs}
-											handleInputChange={handleInputChange(i)}
-											hideStatus
-											t={t}
-										/>
-										<div className="col-6">
-											<div className="form-check mt-2">
-												<input
-													className="form-check-input"
-													type="checkbox"
-													id={`expansion-control-team-${i}`}
-													checked={t.takeControl}
-													onChange={handleTakeControl(i)}
-												/>
-												<label
-													className="form-check-label"
-													htmlFor={`expansion-control-team-${i}`}
-												>
-													{multiTeamMode
-														? "Add team to multi team mode"
-														: "Switch to controlling this team"}
-												</label>
-											</div>
+									<div className="card-body">
+										<div className="row">
+											<TeamForm
+												classNamesCol={[
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+													"col-6",
+												]}
+												confs={confs}
+												disableStadiumCapacity={!godMode}
+												divs={divs}
+												handleInputChange={handleInputChange(i)}
+												hideStatus
+												t={t}
+											/>
 										</div>
-										<div className="col-6 text-right">
-											<button
-												type="button"
-												className="btn btn-danger"
-												onClick={deleteTeam(i)}
-											>
-												Remove Team
-											</button>
+										<div className="row">
+											<div className="col-6">
+												<div className="form-check mt-2">
+													<input
+														className="form-check-input"
+														type="checkbox"
+														id={`expansion-control-team-${i}`}
+														checked={t.takeControl}
+														onChange={handleTakeControl(i)}
+													/>
+													<label
+														className="form-check-label"
+														htmlFor={`expansion-control-team-${i}`}
+													>
+														{multiTeamMode
+															? "Add team to multi team mode"
+															: "Switch to controlling this team"}
+													</label>
+												</div>
+											</div>
+											<div className="col-6 text-right">
+												<button
+													type="button"
+													className="btn btn-danger"
+													onClick={deleteTeam(i)}
+												>
+													Remove Team
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>

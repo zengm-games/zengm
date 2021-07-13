@@ -19,7 +19,10 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 			"ft",
 			"hgt",
 		],
-		weights: [1.1, 0.6, 0.5, 0.5, 0.2, 0.2, 0.2, 0.2, 0.1, 0.1, 0.1],
+		skill: {
+			label: "V",
+			cutoff: 0.61,
+		},
 	},
 	dribbling: {
 		ratings: ["drb", "spd"],
@@ -140,15 +143,49 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.25],
 	},
 };
+
+const PLAYER_GAME_STATS = {
+	all: {
+		name: "All",
+		stats: [
+			"gs",
+			"min",
+			"fg",
+			"fga",
+			"fgp",
+			"tp",
+			"tpa",
+			"tpp",
+			"ft",
+			"fta",
+			"ftp",
+			"orb",
+			"drb",
+			"trb",
+			"ast",
+			"tov",
+			"stl",
+			"blk",
+			"ba",
+			"pf",
+			"pts",
+			"pm",
+			"gmsc",
+		],
+		sortBy: ["min"],
+	},
+};
+
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
 		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
 	},
 };
+
 const PLAYER_STATS_TABLES = {
 	regular: {
-		name: "Stats",
+		name: "Per Game",
 		stats: [
 			"gp",
 			"gs",
@@ -179,7 +216,7 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 	shotLocations: {
-		name: "Shot Locations",
+		name: "Shot Locations and Feats",
 		stats: [
 			"gp",
 			"gs",
@@ -196,6 +233,10 @@ const PLAYER_STATS_TABLES = {
 			"tp",
 			"tpa",
 			"tpp",
+			"dd",
+			"td",
+			"qd",
+			"fxf",
 		],
 		superCols: [
 			{
@@ -218,6 +259,11 @@ const PLAYER_STATS_TABLES = {
 				title: "3PT",
 				desc: "Three-Pointers",
 				colspan: 3,
+			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
 			},
 		],
 	},
@@ -281,6 +327,7 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 };
+
 const TEAM_STATS_TABLES = {
 	team: {
 		name: "Team",
@@ -337,7 +384,7 @@ const TEAM_STATS_TABLES = {
 		],
 	},
 	teamShotLocations: {
-		name: "Team Shot Locations",
+		name: "Shot Locations and Feats",
 		stats: [
 			"fgAtRim",
 			"fgaAtRim",
@@ -351,6 +398,10 @@ const TEAM_STATS_TABLES = {
 			"tp",
 			"tpa",
 			"tpp",
+			"dd",
+			"td",
+			"qd",
+			"fxf",
 		],
 		superCols: [
 			{
@@ -374,10 +425,15 @@ const TEAM_STATS_TABLES = {
 				desc: "Three-Pointers",
 				colspan: 3,
 			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
+			},
 		],
 	},
 	opponentShotLocations: {
-		name: "Opponent Shot Locations",
+		name: "Opponent Shot Locations and Feats",
 		stats: [
 			"oppFgAtRim",
 			"oppFgaAtRim",
@@ -391,6 +447,10 @@ const TEAM_STATS_TABLES = {
 			"oppTp",
 			"oppTpa",
 			"oppTpp",
+			"oppDd",
+			"oppTd",
+			"oppQd",
+			"oppFxf",
 		],
 		superCols: [
 			{
@@ -414,15 +474,37 @@ const TEAM_STATS_TABLES = {
 				desc: "Three-Pointers",
 				colspan: 3,
 			},
+			{
+				title: "Feats",
+				desc: "Statistical Feats",
+				colspan: 4,
+			},
 		],
 	},
 	advanced: {
 		name: "Advanced",
-		stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr", "tsp"],
+		stats: [
+			"pw",
+			"pl",
+			"ortg",
+			"drtg",
+			"nrtg",
+			"pace",
+			"tpar",
+			"ftr",
+			"tsp",
+			"efg",
+			"tovp",
+			"orbp",
+			"ftpFga",
+		],
 	},
 };
+
 const POSITIONS = ["PG", "G", "SG", "GF", "SF", "F", "PF", "FC", "C"];
+
 const POSITION_COUNTS = {};
+
 const RATINGS: RatingKey[] = [
 	"hgt",
 	"stre",
@@ -440,7 +522,7 @@ const RATINGS: RatingKey[] = [
 	"pss",
 	"reb",
 ];
-const TIME_BETWEEN_GAMES = "day";
+
 const SIMPLE_AWARDS = [
 	"mvp",
 	"roy",
@@ -449,6 +531,7 @@ const SIMPLE_AWARDS = [
 	"mip",
 	"finalsMvp",
 ] as const;
+
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
@@ -512,6 +595,7 @@ export {
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	COMPOSITE_WEIGHTS,
+	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
 	POSITION_COUNTS,
@@ -519,6 +603,5 @@ export {
 	RATINGS,
 	SIMPLE_AWARDS,
 	TEAM_STATS_TABLES,
-	TIME_BETWEEN_GAMES,
 	DEFAULT_STADIUM_CAPACITY,
 };

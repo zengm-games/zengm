@@ -1,0 +1,72 @@
+<FilesMatch "\.(ttf|otf|eot|woff)$">
+  <IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Cache-Control "max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(chunk|ui|worker)-.*\.js$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public,max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(dark|light)-.*\.css$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(names|real-player)-.*\.json$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public,max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(index.html|sw.js)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+  </IfModule>
+</FilesMatch>
+
+Options +FollowSymLinks
+RewriteEngine On
+RewriteBase /
+
+RewriteRule ^\.well-known/.+ - [END]
+
+# Rather than redirecting to http, redirect to the old game
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
+RewriteRule ^fonts/(.*)$ old/fonts/$1 [END]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
+RewriteRule ^gen/(.*)$ old/gen/$1 [END]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
+RewriteRule ^ico/(.*)$ old/ico/$1 [END]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
+RewriteRule ^img/(.*)$ old/img/$1 [END]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} =hockey.zengm.com [NC]
+RewriteRule ^.*$ old/index.html [END]
+
+RewriteCond %{REQUEST_URI} !^/css
+RewriteCond %{REQUEST_URI} !^/files
+RewriteCond %{REQUEST_URI} !^/fonts
+RewriteCond %{REQUEST_URI} !^/gen
+RewriteCond %{REQUEST_URI} !^/ico
+RewriteCond %{REQUEST_URI} !^/img
+RewriteCond %{REQUEST_URI} !^/leagues
+RewriteCond %{REQUEST_URI} !^/manifest
+RewriteCond %{REQUEST_URI} !^/robots.txt
+RewriteCond %{REQUEST_URI} !^/sw.js
+RewriteCond %{REQUEST_URI} !^/upgrade-39
+RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
+RewriteRule ^.*$ index.html

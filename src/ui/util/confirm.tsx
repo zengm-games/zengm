@@ -31,7 +31,12 @@ const Confirm = confirmable(
 		}, []);
 
 		return (
-			<Modal show={show} onHide={cancel}>
+			<Modal
+				show={show}
+				onHide={cancel}
+				className="highest-modal"
+				backdropClassName="highest-modal-backdrop"
+			>
 				<Modal.Body>
 					{confirmation}
 					{defaultValue !== undefined ? (

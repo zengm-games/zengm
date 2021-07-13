@@ -4,8 +4,9 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
+import maxBy from "lodash-es/maxBy";
 
-const gameOrWeek = bySport({ basketball: "game", football: "week" });
+const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
 	p: any,
@@ -16,7 +17,33 @@ const doInjury = async (
 	conditions: Conditions,
 ) => {
 	p2.injury = player.injury(healthRank);
-	p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+
+	// Is this a reinjury or not?
+	let reaggravateExtraDays;
+	if (p.injury.playingThrough) {
+		if (
+			p2.injury.gamesRemaining < p.injury.gamesRemaining ||
+			Math.random() < 0.33
+		) {
+			// Reaggravate previous injury
+			reaggravateExtraDays = random.randInt(1, 10);
+			p2.injury.gamesRemaining = p.injury.gamesRemaining + reaggravateExtraDays;
+			p2.injury.type = p.injury.type;
+		}
+	}
+
+	// So it gets written to box score... save the old injury (if playing through injury
+	if (p.injury.playingThrough) {
+		p.injuryAtStart = {
+			type: p.injury.type,
+			gamesRemaining: p.injury.gamesRemaining,
+		};
+	}
+	p.injury = {
+		type: p2.injury.type,
+		gamesRemaining: p2.injury.gamesRemaining,
+		newThisGame: true,
+	};
 
 	if (p2.injury.gamesRemaining <= 1) {
 		pidsInjuredOneGameOrLess.add(p2.pid);
@@ -53,10 +80,10 @@ const doInjury = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	let injuryLength = "short";
-	if (p2.injury.gamesRemaining >= bySport({ basketball: 10, football: 4 })) {
+	if (p2.injury.gamesRemaining >= bySport({ default: 10, football: 4 })) {
 		injuryLength = "medium";
 	} else if (
-		p2.injury.gamesRemaining >= bySport({ basketball: 20, football: 8 })
+		p2.injury.gamesRemaining >= bySport({ default: 20, football: 8 })
 	) {
 		injuryLength = "long";
 	}
@@ -111,9 +138,13 @@ const doInjury = async (
 			type: "injured",
 			text: `${p.pos} <a href="${helpers.leagueUrl(["player", p2.pid])}">${
 				p2.firstName
-			} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${
-				p2.injury.gamesRemaining
-			} ${p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`})`,
+			} ${p2.lastName}</a> ${
+				reaggravateExtraDays === undefined
+					? "was injured"
+					: "reaggravated his injury"
+			}! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} ${
+				p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
+			})`,
 			showNotification: false,
 			pids: [p2.pid],
 			tids: [p2.tid],
@@ -128,8 +159,8 @@ const doInjury = async (
 
 	let ratingsLoss = false;
 	const gamesRemainingNormalized = bySport({
-		basketball: p2.injury.gamesRemaining,
 		football: p2.injury.gamesRemaining * 3,
+		default: p2.injury.gamesRemaining,
 	});
 
 	if (
@@ -159,12 +190,18 @@ const doInjury = async (
 			1,
 			100,
 		);
-		const rating = bySport({ basketball: "jmp", football: "thp" });
-		p2.ratings[r][rating] = helpers.bound(
-			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
-			1,
-			100,
-		);
+		const rating = bySport({
+			basketball: "jmp",
+			football: "thp",
+			hockey: undefined,
+		});
+		if (rating) {
+			p2.ratings[r][rating] = helpers.bound(
+				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
+				1,
+				100,
+			);
+		}
 
 		// Update ovr and pot
 		await player.develop(p2, 0);
@@ -207,43 +244,137 @@ const writePlayerStats = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	for (const result of results) {
-		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
+		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
 
-		const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
+		const winningTeam =
+			result.team[0].stat.pts > result.team[1].stat.pts
+				? 0
+				: result.team[0].stat.pts < result.team[1].stat.pts
+				? 1
+				: undefined;
 
-		if (isSport("football")) {
+		const qbgResults = new Map<number, "W" | "L" | "OTL" | "T">();
+		if (isSport("football") || isSport("hockey")) {
+			const otl = result.overtimes > 0 && g.get("otl", "current");
+
 			for (let i = 0; i < result.team.length; i++) {
-				let maxPss = 0;
+				let maxStat = 0;
 				let id;
 
+				const stat = isSport("football") ? "pss" : "sv";
+
 				for (const p of result.team[i].player) {
-					if (p.stat.pss > maxPss) {
+					if (p.stat[stat] > maxStat) {
 						id = p.id;
-						maxPss = p.stat.pss;
+						maxStat = p.stat[stat];
 					}
 				}
 
 				if (id !== undefined) {
-					let qbResult: "qbW" | "qbL" | "qbT";
-					const j = i === 0 ? 1 : 0;
-					if (result.team[i].stat.pts > result.team[j].stat.pts) {
-						qbResult = "qbW";
-					} else if (result.team[i].stat.pts < result.team[j].stat.pts) {
-						qbResult = "qbL";
+					let qbgResult: "W" | "L" | "OTL" | "T";
+					if (winningTeam === undefined) {
+						qbgResult = "T";
+					} else if (winningTeam === i) {
+						qbgResult = "W";
+					} else if (otl) {
+						qbgResult = "OTL";
 					} else {
-						qbResult = "qbT";
+						qbgResult = "L";
 					}
 
-					qbResults.set(id, qbResult);
+					qbgResults.set(id, qbgResult);
 				}
 			}
 		}
 
-		for (const t of result.team) {
+		for (let i = 0; i < result.team.length; i++) {
+			const t = result.team[i];
+			let goaliePID: number | undefined;
+
+			// This needs to be before checkStatisticalFeat
+			if (isSport("hockey")) {
+				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
+
+				// As in NHL, shutout only is credited if a single goalie plays the whole game
+				if (goalies.length === 1 && goalies[0].stat.ga === 0) {
+					goalies[0].stat.so = 1;
+				}
+
+				// Goalie who played the most minutes counts towards numConsecutiveGamesG, the rest get reset. Would be nice to have this use the same criteria as qbgResults, but 99.99% of the time they'll be the same.
+				const goalie = maxBy(goalies, (p: any) => p.stat.min);
+				if (goalie) {
+					goaliePID = goalie.id;
+				}
+
+				// Check for gwG/gwA - can only be done by looking at complete scoring log for the game, since we're looking for the goal that is one more than what the losing team had in the game
+				if (winningTeam === i) {
+					const j = i === 0 ? 1 : 0;
+					const winningGoalScore = result.team[j].stat.pts + 1;
+					let currentScore = 0;
+					for (const event of result.scoringSummary) {
+						if (event.type === "goal" && event.t === i) {
+							currentScore += 1;
+							if (currentScore === winningGoalScore) {
+								const scorer = t.player.find(
+									(p: any) => p.id === event.pids[0],
+								);
+								scorer.stat.gwG += 1;
+
+								const assisterPIDs = event.pids.slice(1);
+								const assisters = t.player.filter((p: any) =>
+									assisterPIDs.includes(p.id),
+								);
+								for (const assister of assisters) {
+									assister.stat.gwA += 1;
+								}
+							}
+						}
+					}
+				}
+			}
+
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
-				if (!isSport("basketball") && p.stat.min === 0) {
+				const updatePlayer =
+					(isSport("hockey") && p.pos === "G") ||
+					isSport("basketball") ||
+					p.stat.min > 0;
+				if (!updatePlayer) {
 					continue;
+				}
+
+				// In theory this could be used by checkStatisticalFeat, but wouldn't really make sense because that scales the cutoff by game length
+				if (isSport("basketball")) {
+					let numDoubles = 0;
+					let numFives = 0;
+					const doubleStats = ["pts", "ast", "stl", "blk", "trb"];
+					for (const stat of doubleStats) {
+						const value =
+							stat === "trb" ? p.stat.orb + p.stat.drb : p.stat[stat];
+						if (value >= 5) {
+							numFives += 1;
+							if (value >= 10) {
+								numDoubles += 1;
+							}
+						}
+					}
+
+					if (numDoubles >= 2) {
+						p.stat.dd = 1;
+						t.stat.dd += 1;
+						if (numDoubles >= 3) {
+							p.stat.td = 1;
+							t.stat.td += 1;
+							if (numDoubles >= 4) {
+								p.stat.qd = 1;
+								t.stat.qd += 1;
+							}
+						}
+					}
+					if (numFives >= 5) {
+						p.stat.fxf = 1;
+						t.stat.fxf += 1;
+					}
 				}
 
 				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
@@ -253,24 +384,36 @@ const writePlayerStats = async (
 					throw new Error("Invalid pid");
 				}
 
-				if (!allStarGame) {
-					let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+				if (isSport("hockey")) {
+					if (p2.pid === goaliePID) {
+						if (p2.numConsecutiveGamesG === undefined) {
+							p2.numConsecutiveGamesG = 0;
+						}
+						p2.numConsecutiveGamesG += 1;
+					} else if (p2.numConsecutiveGamesG !== undefined) {
+						p2.numConsecutiveGamesG = 0;
+					}
+				}
 
-					if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
+				if (!allStarGame) {
+					let ps = p2.stats[p2.stats.length - 1];
+
+					// This should never happen, but sometimes does
+					if (
+						!ps ||
+						ps.tid !== t.id ||
+						ps.playoffs !== playoffs ||
+						ps.season !== g.get("season")
+					) {
 						await player.addStatsRow(p2, playoffs);
 						ps = p2.stats[p2.stats.length - 1];
-					}
-
-					// Since index is not on playoffs, manually check
-					if (ps.playoffs !== playoffs) {
-						throw new Error(`Missing playoff stats for player ${p.id}`);
 					}
 
 					// Update stats
 					if (p.stat.min > 0) {
 						for (const key of Object.keys(p.stat)) {
-							if (!ps.hasOwnProperty(key)) {
-								throw new Error(`Missing key "${key}" on ps`);
+							if (ps[key] === undefined) {
+								ps[key] = 0;
 							}
 
 							if (isSport("football") && key.endsWith("Lng")) {
@@ -284,10 +427,14 @@ const writePlayerStats = async (
 
 						ps.gp += 1;
 
-						if (isSport("football")) {
-							const stat = qbResults.get(p.id);
-							if (stat) {
-								ps[stat] += 1;
+						if (isSport("football") || isSport("hockey")) {
+							const result = qbgResults.get(p.id);
+							if (result) {
+								const key = isSport("football") ? `qb${result}` : `g${result}`;
+								if (ps[key] === undefined) {
+									ps[key] = 0;
+								}
+								ps[key] += 1;
 							}
 						}
 
@@ -295,14 +442,18 @@ const writePlayerStats = async (
 							const stat = key.replace("Max", "");
 
 							let value;
-							if (stat === "2p") {
+							if (isSport("basketball") && stat === "2p") {
 								value = p.stat.fg - p.stat.tp;
-							} else if (stat === "2pa") {
+							} else if (isSport("basketball") && stat === "2pa") {
 								value = p.stat.fga - p.stat.tpa;
-							} else if (stat === "trb") {
+							} else if (isSport("basketball") && stat === "trb") {
 								value = p.stat.drb + p.stat.orb;
-							} else if (stat === "gmsc") {
+							} else if (isSport("basketball") && stat === "gmsc") {
 								value = helpers.gameScore(p.stat);
+							} else if (isSport("hockey") && stat === "g") {
+								value = p.stat.evG + p.stat.ppG + p.stat.shG;
+							} else if (isSport("hockey") && stat === "a") {
+								value = p.stat.evA + p.stat.ppA + p.stat.shA;
 							} else {
 								value = p.stat[stat];
 							}
@@ -325,7 +476,7 @@ const writePlayerStats = async (
 					}
 				}
 
-				const injuredThisGame = p.injured && p.injury.type === "Healthy"; // Injury crap - assign injury type if player does not already have an injury in the database
+				const injuredThisGame = p.newInjury;
 
 				let ratingsLoss = false;
 

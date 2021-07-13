@@ -1,5 +1,6 @@
 import type { Team } from "../../../common/types";
 import { g, helpers } from "../../util";
+import { getAutoTicketPriceByTid } from "../game/attendance";
 
 const BUDGET_KEYS: (keyof Team["budget"])[] = [
 	"scouting",
@@ -8,15 +9,21 @@ const BUDGET_KEYS: (keyof Team["budget"])[] = [
 	"facilities",
 ];
 
-const autoBudgetSettings = (
+const autoBudgetSettings = async (
 	t: Team,
 	popRank: number,
 	salaryCap: number = g.get("salaryCap"),
 ) => {
 	let updated = false;
 
-	const defaultTicketPrice = helpers.defaultTicketPrice(popRank, salaryCap);
 	const defaultBudgetAmount = helpers.defaultBudgetAmount(popRank, salaryCap);
+
+	let defaultTicketPrice;
+	if (t.autoTicketPrice !== false) {
+		defaultTicketPrice = await getAutoTicketPriceByTid(t.tid);
+	} else {
+		defaultTicketPrice = helpers.defaultTicketPrice(popRank, salaryCap);
+	}
 
 	if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
 		t.budget.ticketPrice.amount = defaultTicketPrice;

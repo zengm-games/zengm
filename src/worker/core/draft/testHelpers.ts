@@ -7,7 +7,7 @@ import { g, helpers } from "../../util";
 import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 
 const getDraftTids = async () => {
-	await draft.genOrderNBA();
+	await draft.genOrder();
 	const draftPicks = await draft.getOrder();
 	assert.strictEqual(draftPicks.length, 60);
 	return draftPicks.map(d => d.originalTid);
@@ -30,6 +30,7 @@ const loadTeamSeasons = async () => {
 			disabled: false,
 			keepRosterSorted: true,
 			colors: ["#000000", "#000000", "#000000"],
+			playThroughInjuries: [0, 0],
 		} as Team;
 
 		const teamSeasons = seasons.map(teamSeason => ({
@@ -40,6 +41,11 @@ const loadTeamSeasons = async () => {
 			tiedAway: 0,
 			tiedConf: 0,
 			tiedDiv: 0,
+			otl: 0,
+			otlHome: 0,
+			otlAway: 0,
+			otlConf: 0,
+			otlDiv: 0,
 			stadiumCapacity: 50000,
 			abbrev: t.abbrev,
 			name: t.name,

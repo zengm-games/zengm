@@ -46,6 +46,7 @@ const updateCustomizePlayer = async (
 				"expenses",
 				"scouting",
 			);
+			const name = await player.name();
 			p = player.generate(
 				PLAYER.FREE_AGENT,
 				20,
@@ -54,6 +55,7 @@ const updateCustomizePlayer = async (
 					: g.get("season"),
 				false,
 				scoutingRank,
+				name,
 			);
 			appearanceOption = "Cartoon Face";
 			p.imgURL = "http://";
@@ -104,6 +106,7 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			godMode: g.get("godMode"),
 			minContract: g.get("minContract"),
 			originalTid,

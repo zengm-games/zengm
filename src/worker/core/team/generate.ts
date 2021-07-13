@@ -1,6 +1,11 @@
 import { helpers, g } from "../../util";
 import type { Team } from "../../../common/types";
-import { isSport, POSITIONS } from "../../../common";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	isSport,
+	POSITIONS,
+} from "../../../common";
 
 /**
  * Create a new team object.
@@ -20,7 +25,11 @@ const generate = (tm: any): Team => {
 		region: tm.region,
 		name: tm.name,
 		abbrev: tm.abbrev,
+
+		// imgURL is always a string, imgURLSmall is undefined if not present
 		imgURL: tm.imgURL ?? "",
+		imgURLSmall: tm.imgURLSmall === "" ? undefined : tm.imgURLSmall,
+
 		budget: {
 			ticketPrice: {
 				amount: tm.hasOwnProperty("budget")
@@ -64,12 +73,16 @@ const generate = (tm: any): Team => {
 		strategy,
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
+		jersey: tm.jersey ?? DEFAULT_JERSEY,
 		pop: tm.pop ?? 0,
 		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),
 		retiredJerseyNumbers: tm.retiredJerseyNumbers ?? [],
 		adjustForInflation: tm.adjustForInflation ?? true,
 		disabled: tm.disabled ?? false,
 		keepRosterSorted: tm.keepRosterSorted ?? true,
+		autoTicketPrice: tm.autoTicketPrice ?? true,
+		playThroughInjuries:
+			tm.playThroughInjuries ?? DEFAULT_PLAY_THROUGH_INJURIES,
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {
@@ -85,6 +98,12 @@ const generate = (tm: any): Team => {
 			depth[pos] = [];
 			return depth;
 		}, {});
+	} else if (isSport("hockey") && tm.depth === undefined) {
+		t.depth = {
+			F: [],
+			D: [],
+			G: [],
+		};
 	}
 
 	return t;

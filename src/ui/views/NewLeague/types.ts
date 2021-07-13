@@ -9,9 +9,11 @@ export type NewLeagueTeam = {
 	popRank: number;
 	stadiumCapacity?: number;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors?: [string, string, string];
 	srID?: string;
 	disabled?: boolean;
+	jersey?: string;
 	cid: number;
 	did: number;
 };
@@ -19,7 +21,9 @@ export type NewLeagueTeam = {
 export type LeagueInfo = {
 	startingSeason: number;
 	stores: string[];
-	confs: Conf[];
-	divs: Div[];
+	gameAttributes: Record<string, unknown> & {
+		confs: Conf[];
+		divs: Div[];
+	};
 	teams: NewLeagueTeam[];
 };

@@ -9,11 +9,11 @@ import countries from "./countries";
 import customizePlayer from "./customizePlayer";
 import dangerZone from "./dangerZone";
 import dashboard from "./dashboard";
-import depthFootball from "./depth.football";
+import depth from "./depth";
 import draft from "./draft";
 import draftLottery from "./draftLottery";
 import draftScouting from "./draftScouting";
-import draftSummary from "./draftSummary";
+import draftHistory from "./draftHistory";
 import draftTeamHistory from "./draftTeamHistory";
 import editAwards from "./editAwards";
 import expansionDraft from "./expansionDraft";
@@ -22,6 +22,7 @@ import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
 import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
+import frivolitiesDraftPosition from "./frivolitiesDraftPosition";
 import frivolitiesJerseyNumbers from "./frivolitiesJerseyNumbers";
 import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
 import frivolitiesTrades from "./frivolitiesTrades";
@@ -30,10 +31,13 @@ import globalSettings from "./globalSettings";
 import gmHistory from "./gmHistory";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
+import headToHead from "./headToHead";
+import headToHeadAll from "./headToHeadAll";
 import history from "./history";
 import historyAll from "./historyAll";
 import importPlayers from "./importPlayers";
 import inbox from "./inbox";
+import injuries from "./injuries";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
@@ -53,6 +57,7 @@ import news from "./news";
 import player from "./player";
 import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
+import playerGameLog from "./playerGameLog";
 import playerRatingDists from "./playerRatingDists";
 import playerRatings from "./playerRatings";
 import playerStatDists from "./playerStatDists";
@@ -93,11 +98,11 @@ export default {
 	customizePlayer,
 	dangerZone,
 	dashboard,
-	depthFootball,
+	depth,
 	draft,
 	draftLottery,
 	draftScouting,
-	draftSummary,
+	draftHistory,
 	draftTeamHistory,
 	editAwards,
 	expansionDraft,
@@ -106,6 +111,7 @@ export default {
 	fantasyDraft,
 	freeAgents,
 	frivolitiesDraftClasses,
+	frivolitiesDraftPosition,
 	frivolitiesJerseyNumbers,
 	frivolitiesTeamSeasons,
 	frivolitiesTrades,
@@ -114,9 +120,12 @@ export default {
 	gmHistory,
 	godMode,
 	hallOfFame,
+	headToHead,
+	headToHeadAll,
 	history,
 	historyAll,
 	importPlayers,
+	injuries,
 	inbox,
 	leaders,
 	leagueDashboard,
@@ -137,6 +146,7 @@ export default {
 	player,
 	playerBios,
 	playerFeats,
+	playerGameLog,
 	playerRatingDists,
 	playerRatings,
 	playerStatDists,

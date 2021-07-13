@@ -5,7 +5,7 @@ import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import classNames from "classnames";
-import { bySport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 const Row = ({
 	cat,
@@ -47,6 +47,7 @@ const Row = ({
 				>
 					{p.abbrev}
 				</a>
+				{isSport("football") || isSport("hockey") ? ` ${p.ratings.pos}` : null}
 			</td>
 			<td>
 				{cat.stat === "WS/48"
@@ -78,6 +79,8 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
 					football:
 						"a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage",
+					hockey:
+						"a backup goalie who only played one game is not eligible for the league lead in SV%",
 				})}
 				).
 			</p>

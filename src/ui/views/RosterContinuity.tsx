@@ -1,17 +1,23 @@
 import PropTypes from "prop-types";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols } from "../util";
+import { getCols, gradientStyleFactory } from "../util";
 import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
 
+const gradientStyle = bySport({
+	basketball: gradientStyleFactory(0.5, 0.775, 0.85, 1),
+	football: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),
+	hockey: gradientStyleFactory(0.55, 0.7, 0.775, 0.925),
+});
+
 const RosterContinuity = ({
 	abbrevs,
 	season,
 	seasons,
-	userTid,
+	userAbbrev,
 }: View<"rosterContinuity">) => {
 	useTitleBar({
 		title: "Roster Continuity",
@@ -20,9 +26,9 @@ const RosterContinuity = ({
 	const cols = [
 		...getCols("Season"),
 		...abbrevs.map(
-			(abbrev, i): Col => {
+			(abbrev): Col => {
 				return {
-					classNames: userTid === i ? "table-info" : undefined,
+					classNames: userAbbrev === abbrev ? "table-info" : undefined,
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 					title: abbrev,
@@ -41,18 +47,7 @@ const RosterContinuity = ({
 					}
 
 					return {
-						classNames: bySport({
-							basketball: {
-								"table-danger": pct < 0.7,
-								"table-warning": pct >= 0.7 && pct < 0.85,
-								"table-success": pct >= 0.85,
-							},
-							football: {
-								"table-danger": pct < 0.725,
-								"table-warning": pct >= 0.725 && pct < 0.825,
-								"table-success": pct >= 0.825,
-							},
-						}),
+						style: gradientStyle(pct),
 						value: pct.toFixed(2),
 					};
 				}),
@@ -81,7 +76,6 @@ RosterContinuity.propTypes = {
 	abbrevs: PropTypes.arrayOf(PropTypes.string).isRequired,
 	season: PropTypes.number.isRequired,
 	seasons: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default RosterContinuity;

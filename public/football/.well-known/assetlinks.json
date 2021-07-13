@@ -1,0 +1,12 @@
+[
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "com.football_gm.play.twa",
+			"sha256_cert_fingerprints": [
+				"AF:E3:C9:03:57:0F:3C:8F:FA:20:FF:5C:16:F8:6B:E5:74:4D:EC:0C:47:6B:DE:D3:07:A8:65:58:07:80:C1:76"
+			]
+		}
+	}
+]

@@ -106,6 +106,10 @@
 .notification-danger {
 	color: #fff;
 	background-color: darkred;
+
+	&:hover {
+		background-color: darken(darkred, 5%);
+	}
 }
 
 .notification-primary {

@@ -437,36 +437,36 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		const champPlayersAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			champTid,
-		);
-
-		const noPlayoffs = g.get("numGamesPlayoffSeries").length === 0;
-
-		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
-			// Only the champions, only playoff stats
-			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: ["pts", "trb", "ast", "ws", "ewa"],
-			season: g.get("season"),
-			playoffs: !noPlayoffs,
-			regularSeason: noPlayoffs,
-			tid: champTid,
-		});
-
-		// For symmetry with players array
-		for (const p of champPlayers) {
-			p.currentStats = p.stats;
-			p.teamInfo = {
-				gp: 0,
-				winp: 0,
-			};
-		}
-
 		finalsMvp = await getRealFinalsMvp(players, champTid);
 
 		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
 		if (finalsMvp === undefined) {
+			const champPlayersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				champTid,
+			);
+
+			const noPlayoffs = g.get("numGamesPlayoffSeries", "current").length === 0;
+
+			const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
+				// Only the champions, only playoff stats
+				attrs: ["pid", "name", "tid", "abbrev"],
+				stats: ["pts", "trb", "ast", "ws", "ewa"],
+				season: g.get("season"),
+				playoffs: !noPlayoffs,
+				regularSeason: noPlayoffs,
+				tid: champTid,
+			});
+
+			// For symmetry with players array
+			for (const p of champPlayers) {
+				p.currentStats = p.stats;
+				p.teamInfo = {
+					gp: 0,
+					winp: 0,
+				};
+			}
+
 			[finalsMvp] = getTopPlayersOffense(
 				{
 					score: mvpScore,

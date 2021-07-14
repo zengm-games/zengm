@@ -1,7 +1,9 @@
 import { localActions } from "./local";
 
 const showGcs = () => {
-	window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
+	try {
+		window._402_Show();
+	} catch (error) {}
 };
 
 const showModal = () => {

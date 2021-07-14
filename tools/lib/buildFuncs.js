@@ -470,6 +470,17 @@ if (window.enableLogging) {
 	});
 
 	replace({
+		regex: "GOOGLE_SURVEYS_ID",
+		replacement: bySport({
+			basketball: "_tsdujc7xhqo6f5tufmq4h5m3yy",
+			football: "_ez6qiutxtbl66x5e22u5mzuyqq",
+			hockey: "_zrz3msjci2slargulizluenoni",
+		}),
+		paths: ["build/index.html"],
+		silent: true,
+	});
+
+	replace({
 		regex: "BUGSNAG_API_KEY",
 		replacement: bySport({
 			basketball: "c10b95290070cb8888a7a79cc5408555",

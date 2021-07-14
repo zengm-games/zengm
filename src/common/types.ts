@@ -13,7 +13,7 @@ export type Env = {
 
 declare global {
 	interface Window {
-		TriggerPrompt: (a: string, b: string | number | undefined) => void;
+		_402_Show: () => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
 		bugsnagKey: string;

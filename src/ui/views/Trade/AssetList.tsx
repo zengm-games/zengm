@@ -115,7 +115,7 @@ const genPickRows = (
 	});
 };
 
-const pickCols = getCols("", "X", "Draft Picks");
+const pickCols = getCols(["", "X", "Draft Picks"]);
 pickCols[0].sortSequence = [];
 pickCols[2].width = "100%";
 
@@ -138,7 +138,7 @@ const AssetList = ({
 	stats: Stats;
 	userOrOther: UserOrOther;
 }) => {
-	const playerCols = getCols(
+	const playerCols = getCols([
 		"",
 		"X",
 		"Name",
@@ -149,7 +149,7 @@ const AssetList = ({
 		"Contract",
 		"Exp",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 	playerCols[0].sortSequence = [];
 	playerCols[0].noSearch = true;
 	playerCols[2].width = "100%";

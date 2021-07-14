@@ -30,7 +30,7 @@ const WatchList = ({
 		dropdownFields: { statTypes: statType, playoffs, flagNote },
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"",
 		"Name",
 		"Pos",
@@ -42,7 +42,7 @@ const WatchList = ({
 		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 		"Note",
-	);
+	]);
 	cols[cols.length - 1].width = "100%";
 
 	const rows = players.map(p => {

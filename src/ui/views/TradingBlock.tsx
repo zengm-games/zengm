@@ -45,7 +45,7 @@ const Offer = (props: OfferProps) => {
 
 	let offerPlayers: ReactNode = null;
 	if (players.length > 0) {
-		const cols = getCols(
+		const cols = getCols([
 			"Name",
 			"Pos",
 			"Age",
@@ -54,7 +54,7 @@ const Offer = (props: OfferProps) => {
 			"Contract",
 			"Exp",
 			...stats.map(stat => `stat:${stat}`),
-		);
+		]);
 
 		const rows = players.map(p => {
 			return {
@@ -169,7 +169,7 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
-const pickCols = getCols("", "Draft Picks");
+const pickCols = getCols(["", "Draft Picks"]);
 pickCols[0].sortSequence = [];
 pickCols[1].width = "100%";
 
@@ -298,7 +298,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		);
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"",
 		"Name",
 		"Pos",
@@ -308,7 +308,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		"Contract",
 		"Exp",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 	cols[0].sortSequence = [];
 	cols[0].noSearch = true;
 

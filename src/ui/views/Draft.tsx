@@ -146,7 +146,7 @@ const Draft = ({
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
-	const colsUndrafted = getCols(
+	const colsUndrafted = getCols([
 		"#",
 		"Name",
 		"Pos",
@@ -154,19 +154,19 @@ const Draft = ({
 		"Ovr",
 		"Pot",
 		"Draft",
-	);
+	]);
 	colsUndrafted[1].width = "100%";
 
 	if (fantasyDraft || expansionDraft) {
 		colsUndrafted.splice(
 			6,
 			0,
-			...getCols("Contract", "Exp", ...stats.map(stat => `stat:${stat}`)),
+			...getCols(["Contract", "Exp", ...stats.map(stat => `stat:${stat}`)]),
 		);
 	}
 
 	if (expansionDraft) {
-		colsUndrafted.splice(3, 0, ...getCols("Team"));
+		colsUndrafted.splice(3, 0, ...getCols(["Team"]));
 	}
 
 	const rowsUndrafted = undrafted.map(p => {
@@ -241,13 +241,13 @@ const Draft = ({
 		};
 	});
 
-	const colsDrafted = getCols("Pick", "Team").concat(
+	const colsDrafted = getCols(["Pick", "Team"]).concat(
 		colsUndrafted.slice(1, -1),
 	);
 
 	if (expansionDraft) {
 		colsDrafted.splice(4, 1);
-		colsDrafted.splice(2, 0, getCols("From")[0]);
+		colsDrafted.splice(2, 0, getCols(["From"])[0]);
 	}
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);

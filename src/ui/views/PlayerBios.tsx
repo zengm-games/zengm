@@ -25,7 +25,7 @@ const PlayerBios = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"stat:jerseyNumber",
@@ -44,7 +44,7 @@ const PlayerBios = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

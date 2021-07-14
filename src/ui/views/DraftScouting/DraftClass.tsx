@@ -24,7 +24,7 @@ const DraftClass = ({
 	const [showImportForm, setShowImportForm] = useState(false);
 	const [status, setStatus] = useState<"exporting" | "loading" | undefined>();
 
-	const cols = getCols("#", "Name", "Pos", "Age", "Ovr", "Pot");
+	const cols = getCols(["#", "Name", "Pos", "Age", "Ovr", "Pot"]);
 
 	const rows = players.map(p => {
 		return {

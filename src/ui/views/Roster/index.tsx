@@ -127,7 +127,7 @@ const Roster = ({
 
 	const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
 
-	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
+	const statCols = getCols(stats.map(stat => `stat:${stat}`));
 
 	const showMood = season === currentSeason;
 

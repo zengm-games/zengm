@@ -39,7 +39,7 @@ const StatsTable = ({
 	t: Team;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
-	const cols = getCols(...stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map(stat => `stat:${stat}`));
 	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
 	const players = t.players

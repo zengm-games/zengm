@@ -2593,7 +2593,7 @@ const cols: {
 	...sportSpecificCols,
 };
 
-export default (...titles: string[]): Col[] => {
+export default (titles: string[]): Col[] => {
 	return titles.map(title => {
 		if (!cols.hasOwnProperty(title)) {
 			throw new Error(`Unknown column: "${title}"`);

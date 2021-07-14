@@ -273,7 +273,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		);
 	}
 
-	const cols = getCols("Season", "Type", "");
+	const cols = getCols(["Season", "Type", ""]);
 	cols[2].width = "100%";
 
 	const rows = scheduledEvents.map(scheduledEvent => {

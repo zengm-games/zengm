@@ -24,7 +24,7 @@ const FrivolitiesDraftClasses = ({
 		},
 	];
 
-	const cols = getCols(
+	const cols = getCols([
 		"#",
 		"Season",
 		bySport({ basketball: "stat:ws", football: "stat:av", hockey: "stat:ps" }),
@@ -41,7 +41,7 @@ const FrivolitiesDraftClasses = ({
 		"Pick",
 		"Peak Ovr",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const rows = draftClasses.map((draftClass, i) => {
 		const p = draftClass.bestPlayer;

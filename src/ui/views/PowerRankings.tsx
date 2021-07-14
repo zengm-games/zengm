@@ -111,7 +111,7 @@ const PowerRankings = ({
 		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
 	];
 
-	const cols = getCols(...colNames);
+	const cols = getCols(colNames);
 
 	if (isSport("basketball")) {
 		for (let i = 0; i < colNames.length; i++) {

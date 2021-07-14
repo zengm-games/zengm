@@ -125,7 +125,7 @@ const StatsSummary = ({
 		}
 	}
 
-	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
+	const cols = getCols(["Summary", ...stats.map(stat => `stat:${stat}`)]);
 
 	if (name === "Shot Locations") {
 		cols[cols.length - 3].title = "M";

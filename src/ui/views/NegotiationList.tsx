@@ -32,7 +32,7 @@ const NegotiationList = ({
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Age",
@@ -44,7 +44,7 @@ const NegotiationList = ({
 		"Asking For",
 		"Exp",
 		"Negotiate",
-	);
+	]);
 
 	const rows = players.map(p => {
 		return {

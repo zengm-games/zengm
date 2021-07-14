@@ -17,7 +17,7 @@ const StartingLineup = ({
 	View<"leagueDashboard">,
 	"challengeNoRatings" | "numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
-	const statCols = getCols(...startersStats.map(stat => `stat:${stat}`));
+	const statCols = getCols(startersStats.map(stat => `stat:${stat}`));
 
 	return (
 		<>

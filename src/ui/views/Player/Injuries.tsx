@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { DataTable } from "../../components";
 import { getCols } from "../../util";
 
-const cols = getCols("Year", "Type", "Games", "Ovr Drop", "Pot Drop");
+const cols = getCols(["Year", "Type", "Games", "Ovr Drop", "Pot Drop"]);
 cols[1].width = "100%";
 
 const Injuries = ({

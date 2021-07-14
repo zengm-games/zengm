@@ -25,7 +25,7 @@ const HeadToHead = ({
 		},
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"Team",
 		"W",
 		"L",
@@ -41,7 +41,7 @@ const HeadToHead = ({
 		...(type === "regularSeason"
 			? []
 			: ["Rounds Won", "Rounds Lost", "Finals Won", "Finals Lost"]),
-	);
+	]);
 
 	const makeRow = (t: typeof totals) => {
 		const gp = t.won + t.lost + t.otl + t.tied;

@@ -20,7 +20,7 @@ const FrivolitiesTeamSeasons = ({
 }: View<"frivolitiesTeamSeasons">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 
-	const cols = getCols(
+	const cols = getCols([
 		"#",
 		"Team",
 		"Season",
@@ -32,7 +32,7 @@ const FrivolitiesTeamSeasons = ({
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		...extraCols.map(x => x.colName),
 		"Links",
-	);
+	]);
 
 	const rows = teamSeasons.map(ts => {
 		return {

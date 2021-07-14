@@ -174,7 +174,7 @@ export const ColPtsOrGB = ({
 	pointsFormula: string;
 	usePts: boolean;
 }) => {
-	const col = getCols(usePts ? "PTS" : "GB")[0];
+	const col = getCols([usePts ? "PTS" : "GB"])[0];
 	if (usePts) {
 		col.desc = `Points (${pointsFormula})`;
 	}

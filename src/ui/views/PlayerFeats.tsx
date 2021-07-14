@@ -19,7 +19,7 @@ const PlayerFeats = ({
 		dropdownFields: { teamsAndAll: abbrev, seasonsAndAll: season },
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Team",
@@ -28,7 +28,7 @@ const PlayerFeats = ({
 		"Result",
 		"Season",
 		"Type",
-	);
+	]);
 
 	const rows = feats.map(p => {
 		return {

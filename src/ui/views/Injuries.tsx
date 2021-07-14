@@ -18,7 +18,7 @@ const Injuries = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndCurrent: season },
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Team",
@@ -30,7 +30,7 @@ const Injuries = ({
 		"Games",
 		"Ovr Drop",
 		"Pot Drop",
-	);
+	]);
 
 	const rows = injuries.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

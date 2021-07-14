@@ -204,7 +204,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	const [cloningLID, setCloningLID] = useState<number | undefined>();
 	useTitleBar();
-	const cols = getCols(
+	const cols = getCols([
 		"",
 		"League",
 		"Team",
@@ -214,7 +214,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		"Created",
 		"Last Played",
 		"",
-	);
+	]);
 	cols[0].width = "1%";
 	cols[7].width = "1%";
 	const rows = leagues.map(league => {

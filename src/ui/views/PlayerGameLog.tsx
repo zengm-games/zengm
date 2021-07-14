@@ -55,7 +55,7 @@ const PlayerGameLog = ({
 		},
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"#",
 		"Team",
 		"@",
@@ -64,7 +64,7 @@ const PlayerGameLog = ({
 		"Record",
 		"",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const makeRow = (game: typeof gameLog[number], i: number): DataTableRow => {
 		return {

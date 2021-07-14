@@ -45,7 +45,7 @@ const StatsTable = ({
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
-	const cols = getCols(...stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map(stat => `stat:${stat}`));
 	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
 	return (

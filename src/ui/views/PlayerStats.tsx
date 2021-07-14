@@ -71,7 +71,7 @@ const PlayerStats = ({
 		},
 	});
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Age",
@@ -79,7 +79,7 @@ const PlayerStats = ({
 		...stats.map(
 			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
-	);
+	]);
 
 	if (statType === "shotLocations") {
 		cols[cols.length - 7].title = "M";

@@ -28,7 +28,7 @@ const AwardRaces = ({
 		},
 	});
 
-	const globalCols = getCols(
+	const globalCols = getCols([
 		"#",
 		"Name",
 		"Pos",
@@ -36,7 +36,7 @@ const AwardRaces = ({
 		"Team",
 		"Record",
 		"Ovr",
-	);
+	]);
 
 	return (
 		<>
@@ -48,7 +48,7 @@ const AwardRaces = ({
 
 					const cols = [
 						...globalCols,
-						...getCols(...stats.map(stat => `stat:${stat}`)),
+						...getCols(stats.map(stat => `stat:${stat}`)),
 					];
 
 					const rows = players.map((p, j) => {

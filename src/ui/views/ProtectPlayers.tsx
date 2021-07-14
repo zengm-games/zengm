@@ -31,7 +31,7 @@ const PlayerList = ({
 	tid: number;
 	upcomingFreeAgentsText: ReactNode;
 }) => {
-	const cols = getCols(
+	const cols = getCols([
 		"",
 		"Name",
 		"Pos",
@@ -42,7 +42,7 @@ const PlayerList = ({
 		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 		"Acquired",
-	);
+	]);
 
 	const rows = players.map(p => {
 		return {

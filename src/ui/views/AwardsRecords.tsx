@@ -43,7 +43,7 @@ const AwardsRecords = ({
 			awardType,
 		},
 	});
-	const cols = getCols("Name", "Count", "Year", "Last", "Retired", "HOF");
+	const cols = getCols(["Name", "Count", "Year", "Last", "Retired", "HOF"]);
 
 	const rows = awardsRecords.map(a => {
 		return {

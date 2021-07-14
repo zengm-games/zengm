@@ -22,7 +22,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		},
 	];
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Drafted",
@@ -33,7 +33,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		"Team",
 		...stats.map(stat => `stat:${stat}`),
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const rows = players.map(p => {
 		return {

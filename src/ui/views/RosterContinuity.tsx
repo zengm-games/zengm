@@ -24,17 +24,15 @@ const RosterContinuity = ({
 		customMenu: frivolitiesMenu,
 	});
 	const cols = [
-		...getCols("Season"),
-		...abbrevs.map(
-			(abbrev): Col => {
-				return {
-					classNames: userAbbrev === abbrev ? "table-info" : undefined,
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-					title: abbrev,
-				};
-			},
-		),
+		...getCols(["Season"]),
+		...abbrevs.map((abbrev): Col => {
+			return {
+				classNames: userAbbrev === abbrev ? "table-info" : undefined,
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+				title: abbrev,
+			};
+		}),
 	];
 	const rows = seasons.map((seasonRow, i) => {
 		return {

@@ -111,8 +111,8 @@ const Depth = ({
 		playersSorted = players;
 	}
 
-	const ratingCols = getCols(...ratings.map(rating => `rating:${rating}`));
-	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
+	const ratingCols = getCols(ratings.map(rating => `rating:${rating}`));
+	const statCols = getCols(stats.map(stat => `stat:${stat}`));
 
 	let numStarters = 0;
 	let positions: string[];

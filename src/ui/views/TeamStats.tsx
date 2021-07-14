@@ -60,7 +60,7 @@ const TeamStats = ({
 		superCols[0].colspan += 1;
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		...basicColNames,
 		...stats.map(stat => {
 			if (stat.startsWith("opp")) {
@@ -68,7 +68,7 @@ const TeamStats = ({
 			}
 			return `stat:${stat}`;
 		}),
-	);
+	]);
 	cols[0].sortSequence = [];
 	cols[0].noSearch = true;
 

@@ -51,7 +51,7 @@ const DraftTeamHistory = ({
 		},
 	];
 
-	const cols = getCols(
+	const cols = getCols([
 		"Season",
 		"Pick",
 		"Name",
@@ -71,7 +71,7 @@ const DraftTeamHistory = ({
 		"Pot",
 		"Skills",
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 

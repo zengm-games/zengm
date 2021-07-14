@@ -132,7 +132,7 @@ ResultText.propTypes = {
 const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 	useTitleBar({ title: "All-Star History" });
 
-	const cols = getCols(
+	const cols = getCols([
 		"Season",
 		"Result",
 		"Captain 1",
@@ -141,7 +141,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Team",
 		"MVP",
 		"Team",
-	);
+	]);
 
 	const rows = allAllStars.map(row => {
 		const classNamesCaptain1 =

@@ -14,7 +14,7 @@ const GOATFormula = ({
 	const [goatFormula, setGoatFormula] = useState(formula);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
-	const cols = getCols(...stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map(stat => `stat:${stat}`));
 
 	const exampleStat = bySport({
 		basketball: "pts",

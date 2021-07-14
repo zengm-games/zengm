@@ -46,7 +46,7 @@ const PlayersTable = ({
 	if (showDraftCol) {
 		colNames.unshift("Draft");
 	}
-	const cols = getCols(...colNames);
+	const cols = getCols(colNames);
 
 	const playersAugmented =
 		!pidsAdd || pidsAdd.length === 0 || !remaining

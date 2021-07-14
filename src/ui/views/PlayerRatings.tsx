@@ -31,7 +31,7 @@ const PlayerRatings = ({
 		}
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Team",
@@ -42,7 +42,7 @@ const PlayerRatings = ({
 		"Pot",
 		...ratings.map(rating => `rating:${rating}`),
 		...ovrsPotsColNames,
-	);
+	]);
 
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

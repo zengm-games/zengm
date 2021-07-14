@@ -46,7 +46,7 @@ const Most = ({
 		},
 	];
 
-	const cols = getCols(
+	const cols = getCols([
 		"#",
 		"Name",
 		...extraCols.map(x => x.colName),
@@ -59,7 +59,7 @@ const Most = ({
 		"Team",
 		...stats.map(stat => `stat:${stat}`),
 		...stats.map(stat => `stat:${stat}`),
-	);
+	]);
 
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;

@@ -68,7 +68,7 @@ const LeagueStats = ({
 		}
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		...basicColNames,
 		...stats.map(stat => {
 			if (stat.startsWith("opp")) {
@@ -76,7 +76,7 @@ const LeagueStats = ({
 			}
 			return `stat:${stat}`;
 		}),
-	);
+	]);
 
 	if (teamOpponent.endsWith("ShotLocations")) {
 		cols[cols.length - 7].title = "M";

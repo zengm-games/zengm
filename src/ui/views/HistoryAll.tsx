@@ -120,12 +120,12 @@ const formatTeam = (
 const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
-	const cols = getCols(
+	const cols = getCols([
 		"Season",
 		"League Champion",
 		"Runner Up",
 		...awards.map(award => `award:${award}`),
-	);
+	]);
 
 	const rows = seasons.map(s => {
 		let seasonLink;

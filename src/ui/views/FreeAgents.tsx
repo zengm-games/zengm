@@ -73,7 +73,7 @@ const FreeAgents = ({
 		);
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Age",
@@ -84,7 +84,7 @@ const FreeAgents = ({
 		"Asking For",
 		"Exp",
 		"Negotiate",
-	);
+	]);
 
 	const rows = players.map(p => {
 		return {

@@ -41,7 +41,7 @@ export const genView = (
 			},
 		];
 
-		const cols = getCols(
+		const cols = getCols([
 			type === "college"
 				? "College"
 				: type === "country"
@@ -64,7 +64,7 @@ export const genView = (
 			"Peak Ovr",
 			"Team",
 			...stats.map(stat => `stat:${stat}`),
-		);
+		]);
 
 		const rows = infos.map(c => {
 			const p = c.p;

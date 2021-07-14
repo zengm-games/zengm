@@ -32,21 +32,19 @@ const HeadToHeadAll = ({
 		!hasInactiveTeams || showInactive ? teams : teams.filter(t => !t.disabled);
 
 	const cols = [
-		...getCols("Team"),
-		...teamsFiltered.map(
-			(t): Col => {
-				return {
-					classNames: classNames(
-						"text-center",
-						userTid === t.tid ? "table-info" : undefined,
-					),
-					desc: `${t.region} ${t.name}`,
-					sortSequence: ["desc", "asc"],
-					sortType: "number",
-					title: t.abbrev,
-				};
-			},
-		),
+		...getCols(["Team"]),
+		...teamsFiltered.map((t): Col => {
+			return {
+				classNames: classNames(
+					"text-center",
+					userTid === t.tid ? "table-info" : undefined,
+				),
+				desc: `${t.region} ${t.name}`,
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+				title: t.abbrev,
+			};
+		}),
 	];
 
 	const rows = teamsFiltered.map(t => {

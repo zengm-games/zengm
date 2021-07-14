@@ -65,14 +65,14 @@ const StatsTable = ({
 		}
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"Year",
 		"Team",
 		"Age",
 		...stats.map(
 			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
-	);
+	]);
 
 	if (superCols) {
 		superCols = helpers.deepCopy(superCols);
@@ -279,7 +279,7 @@ const Player2 = ({
 				<h2>Ratings</h2>
 				<DataTable
 					className="mb-3"
-					cols={getCols(
+					cols={getCols([
 						"Year",
 						"Team",
 						"Age",
@@ -288,7 +288,7 @@ const Player2 = ({
 						"Pot",
 						...ratings.map(rating => `rating:${rating}`),
 						"Skills",
-					)}
+					])}
 					defaultSort={[0, "asc"]}
 					hideAllControls
 					name="Player:Ratings"
@@ -365,7 +365,7 @@ const Player2 = ({
 					<h2>Salaries</h2>
 					<DataTable
 						className="mb-3"
-						cols={getCols("Year", "Amount")}
+						cols={getCols(["Year", "Amount"])}
 						defaultSort={[0, "asc"]}
 						footer={[
 							"Total",

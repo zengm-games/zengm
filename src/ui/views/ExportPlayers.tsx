@@ -26,10 +26,10 @@ const ExportPlayers = ({
 		dropdownFields: { seasons: season },
 	});
 
-	const cols = getCols("Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
+	const cols = getCols(["Name", "Pos", "Age", "Team", "Ovr", "Pot", ""]);
 	cols[0].width = "100%";
 
-	const cols2 = getCols("#", "Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
+	const cols2 = getCols(["#", "Name", "Pos", "Age", "Team", "Ovr", "Pot", ""]);
 	cols2[1].width = "100%";
 
 	const commonRows = (p: typeof players[number]) => {

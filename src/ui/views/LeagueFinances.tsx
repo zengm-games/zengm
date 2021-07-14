@@ -32,7 +32,7 @@ const LeagueFinances = ({
 	const showTicketPrice = season === currentSeason && budget;
 
 	const cols = budget
-		? getCols(
+		? getCols([
 				"Team",
 				"Pop",
 				"Avg Attendance",
@@ -42,14 +42,14 @@ const LeagueFinances = ({
 				"Cash",
 				"Payroll",
 				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
-		  )
-		: getCols(
+		  ])
+		: getCols([
 				"Team",
 				"Pop",
 				"Avg Attendance",
 				"Payroll",
 				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
-		  );
+		  ]);
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons

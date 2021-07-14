@@ -48,13 +48,13 @@ const Players = ({
 		});
 	};
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		...stats.map(stat => `stat:${stat}`),
 		"Last Season",
 		"Actions",
-	);
+	]);
 	if (!includeRetireJerseyButton) {
 		cols.pop();
 	}

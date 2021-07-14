@@ -958,7 +958,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				// @ts-ignore
 				colNames.push(overrides[col]);
 			} else {
-				const array = getCols(col);
+				const array = getCols([col]);
 				colNames.push(array[0].title);
 			}
 		}
@@ -979,9 +979,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		...shotLocationsGetCols(stats.map(stat => `stat:${stat}`)),
 		"Ovr",
 		"Pot",
-		...getCols(...ratings.map(rating => `rating:${rating}`)).map(
-			col => col.title,
-		),
+		...getCols(ratings.map(rating => `rating:${rating}`)).map(col => col.title),
 	];
 	const rows: any[] = [];
 

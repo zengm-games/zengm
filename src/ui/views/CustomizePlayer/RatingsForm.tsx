@@ -122,7 +122,7 @@ const RatingsForm = ({
 														return (
 															<div key={rating} className="form-group">
 																<label>
-																	{getCols(`rating:${rating}`)[0].desc}
+																	{getCols([`rating:${rating}`])[0].desc}
 																</label>
 																<input
 																	type="text"

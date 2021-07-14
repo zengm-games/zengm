@@ -31,7 +31,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		},
 	];
 
-	const cols = getCols(
+	const cols = getCols([
 		"Name",
 		"Pos",
 		"Drafted",
@@ -44,7 +44,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		...stats.map(stat => `stat:${stat}`),
 		...stats.map(stat => `stat:${stat}`),
 		"Details",
-	);
+	]);
 
 	const rows = players.map((p, i) => {
 		const lastRatings = p.ratings[p.ratings.length - 1];

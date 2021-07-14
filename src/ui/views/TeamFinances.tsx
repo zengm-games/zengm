@@ -527,7 +527,7 @@ const TeamFinances = ({
 		gameSimInProgress: state.gameSimInProgress,
 	}));
 
-	const cols = getCols("Pos", "Name").concat(
+	const cols = getCols(["Pos", "Name"]).concat(
 		salariesSeasons.map(season => {
 			return {
 				title: String(season),

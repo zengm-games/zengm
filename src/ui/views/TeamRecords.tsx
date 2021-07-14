@@ -87,7 +87,7 @@ const TeamRecords = ({
 		displayName = "Team";
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		...(displayName === "Division" ? ["Conference"] : []),
 		displayName,
 		"Start",
@@ -105,7 +105,7 @@ const TeamRecords = ({
 		"Titles",
 		"Last",
 		...categories.map(category => `count:${category}`),
-	);
+	]);
 
 	const lasts = cols.filter(col => col.title === "Last");
 	lasts[0].desc = "Last Playoffs Appearance";

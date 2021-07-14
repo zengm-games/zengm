@@ -82,7 +82,7 @@ const ImportPlayers = ({
 		);
 	}
 
-	const cols = getCols(
+	const cols = getCols([
 		"",
 		"#",
 		"Name",
@@ -93,38 +93,40 @@ const ImportPlayers = ({
 		"Team",
 		"Contract",
 		"Exp",
-	);
+	]);
 	cols[2].width = "100%";
 
-	const handleChange = (
-		name:
-			| "age"
-			| "checked"
-			| "contractAmount"
-			| "contractExp"
-			| "draftYear"
-			| "tid",
-		index: number,
-	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const player = {
-			...players[index],
+	const handleChange =
+		(
+			name:
+				| "age"
+				| "checked"
+				| "contractAmount"
+				| "contractExp"
+				| "draftYear"
+				| "tid",
+			index: number,
+		) =>
+		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			const player = {
+				...players[index],
+			};
+
+			if (name === "checked") {
+				player.checked = !player.checked;
+			} else if (name === "age") {
+				player.season = parseInt(event.target.value);
+			} else if (name === "tid") {
+				player.tid = parseInt(event.target.value);
+			} else {
+				player[name] = event.target.value;
+			}
+
+			const newPlayers = [...players];
+			newPlayers[index] = player;
+
+			setPlayers(newPlayers);
 		};
-
-		if (name === "checked") {
-			player.checked = !player.checked;
-		} else if (name === "age") {
-			player.season = parseInt(event.target.value);
-		} else if (name === "tid") {
-			player.tid = parseInt(event.target.value);
-		} else {
-			player[name] = event.target.value;
-		}
-
-		const newPlayers = [...players];
-		newPlayers[index] = player;
-
-		setPlayers(newPlayers);
-	};
 
 	const disableButtons = status !== undefined && status !== "success";
 

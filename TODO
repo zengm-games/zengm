@@ -1,3 +1,5 @@
+more space on ... dashboard menu on mobile https://discord.com/channels/290013534023057409/331882115119448065/864845542022184990
+
 refactor getCols
 - array arg
 - some way to do common modifications, like width 1%
@@ -26,6 +28,7 @@ frivolities
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
   - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
+  - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 

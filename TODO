@@ -1,5 +1,3 @@
-reset trade menu behind ad https://discord.com/channels/290013534023057409/290013534023057409/864615709022748683
-
 refactor getCols
 - array arg
 - some way to do common modifications, like width 1%

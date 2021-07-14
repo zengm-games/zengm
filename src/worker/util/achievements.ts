@@ -633,7 +633,7 @@ const achievements: Achievement[] = [
 			const awards = await idb.cache.awards.get(g.get("season"));
 			const count =
 				awards && awards.allRookie
-					? awards.allRookie.filter((p: any) => p.tid === g.get("userTid"))
+					? awards.allRookie.filter((p: any) => p && p.tid === g.get("userTid"))
 							.length
 					: 0;
 			return count >= trustTheProcessCutoff;

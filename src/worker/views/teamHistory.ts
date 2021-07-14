@@ -40,8 +40,10 @@ export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 	let championships = 0;
 
 	for (const teamSeason of teamSeasons) {
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", teamSeason.season)
-			.length;
+		const numPlayoffRounds = g.get(
+			"numGamesPlayoffSeries",
+			teamSeason.season,
+		).length;
 
 		history.push({
 			season: teamSeason.season,
@@ -69,7 +71,10 @@ export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 			playoffAppearances += 1;
 		}
 
-		if (teamSeason.playoffRoundsWon >= numPlayoffRounds - 1) {
+		if (
+			teamSeason.playoffRoundsWon >= numPlayoffRounds - 1 &&
+			teamSeason.playoffRoundsWon >= 0
+		) {
 			finalsAppearances += 1;
 		}
 

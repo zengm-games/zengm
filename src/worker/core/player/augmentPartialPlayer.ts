@@ -9,7 +9,7 @@ import pos from "./pos";
 import setContract from "./setContract";
 import skills from "./skills";
 import stats from "./stats";
-import { g, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
 const addStatsRowWrapped = async (
@@ -367,7 +367,7 @@ const augmentPartialPlayer = async (
 			p.tid >= 0,
 		);
 	} else {
-		p.contract.amount = 10 * Math.round(p.contract.amount / 10);
+		p.contract.amount = helpers.roundContract(p.contract.amount);
 
 		if (p.contract.exp < g.get("startingSeason")) {
 			p.contract.exp = g.get("startingSeason");

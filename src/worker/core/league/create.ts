@@ -563,10 +563,7 @@ export const createWithoutSaving = async (
 					if (isSport("hockey")) {
 						years = 3;
 					} else if (!g.get("hardCap")) {
-						const rookieContractLengths = g.get("rookieContractLengths");
-						years =
-							rookieContractLengths[round - 1] ??
-							rookieContractLengths[rookieContractLengths.length - 1];
+						years = draft.getRookieContractLength(round);
 					} else {
 						// 2 years for 2nd round, 3 years for 1st round;
 						years = Math.min(4 - round, 2);

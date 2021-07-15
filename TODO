@@ -3,6 +3,7 @@ add marker for rookie contracts
 - real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
   - what about players with no contract data, needs to be done in augmentPartialPlayer?
     - but don't want to run on all imported leagues forever, would be false positives
+    - run rookie contract detector on all players if nobody in league file has a "rookie" property. otherwise, run only on players with no contract specified
 - changelog
   - rookie property should be added in custom rosters
 

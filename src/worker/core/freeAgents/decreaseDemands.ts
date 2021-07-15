@@ -27,7 +27,7 @@ const decreaseDemands = async () => {
 			baseAmount,
 			Infinity,
 		);
-		p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
+		p.contract.amount = helpers.roundContract(p.contract.amount);
 
 		if (p.contract.amount < g.get("minContract")) {
 			p.contract.amount = g.get("minContract");

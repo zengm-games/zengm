@@ -4,6 +4,7 @@ import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
 import type { DraftPick } from "../../../common/types";
+import getRookieContractLength from "./getRookieContractLength";
 
 /**
  * Select a player for the current drafting team.
@@ -83,15 +84,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			const rookieSalaries = getRookieSalaries();
 			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
 
-			let years = g.get("rookieContractLengths")[dp.round - 1];
-			if (years === undefined) {
-				years = g.get("rookieContractLengths")[
-					g.get("rookieContractLengths").length - 1
-				];
-			}
-			if (years === undefined) {
-				years = 2;
-			}
+			const years = getRookieContractLength(dp.round);
 
 			player.setContract(
 				p,

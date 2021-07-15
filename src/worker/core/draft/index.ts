@@ -6,6 +6,7 @@ import genPicks from "./genPicks";
 import genPlayers from "./genPlayers";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import getOrder from "./getOrder";
+import getRookieContractLength from "./getRookieContractLength";
 import getRookieSalaries from "./getRookieSalaries";
 import runPicks from "./runPicks";
 import selectPlayer from "./selectPlayer";
@@ -19,6 +20,7 @@ export default {
 	genPlayers,
 	genPlayersWithoutSaving,
 	getOrder,
+	getRookieContractLength,
 	getRookieSalaries,
 	runPicks,
 	selectPlayer,

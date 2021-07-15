@@ -600,6 +600,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					p.contract = {
 						amount: salaryRow.amount / 1000,
 						exp: salaryRow.exp,
+						rookie: true,
 					};
 
 					let minYears =

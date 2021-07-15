@@ -1,6 +1,10 @@
 import loadStatsBasketball, { BasketballStats } from "./loadStats.basketball";
 import { helpers, PHASE, PLAYER } from "../../../common";
-import type { GetLeagueOptions, PlayerInjury } from "../../../common/types";
+import type {
+	GetLeagueOptions,
+	PlayerContract,
+	PlayerInjury,
+} from "../../../common/types";
 import { LATEST_SEASON, LATEST_SEASON_WITH_DRAFT_POSITIONS } from "./getLeague";
 import getOnlyRatings from "./getOnlyRatings";
 import type { Basketball, Ratings } from "./loadData.basketball";
@@ -178,7 +182,7 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		let contract;
+		let contract: PlayerContract | undefined;
 		let awards;
 		let salaries;
 		if (legends) {
@@ -227,6 +231,10 @@ const formatPlayerFactory = async (
 					if (contract.exp > season + 4) {
 						// Bound at 5 year contract
 						contract.exp = season + 4;
+					}
+
+					if (salaryRow.start === draft.year + 1) {
+						contract.rookie = true;
 					}
 				}
 

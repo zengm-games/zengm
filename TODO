@@ -1,10 +1,10 @@
 add marker for rookie contracts
 - https://mail.google.com/mail/u/0/#inbox/FMfcgxwLtkPldhCvRPgDHPDfdSSjdFtC
-- distinct in news feed https://discord.com/channels/290013534023057409/331882115119448065/851843134904205312
 - real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
-  - getLeague rookieContractLengths
-  - how to identify rookie contract?
+  - what about players with no contract data, needs to be done in augmentPartialPlayer?
+    - but don't want to run on all imported leagues forever, would be false positives
 - changelog
+  - rookie property should be added in custom rosters
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
@@ -16,7 +16,9 @@ minors
 - should minors lead to improvement? make it configurable, but default no
 - need anything special with contracts?
 
-more space on ... dashboard menu on mobile https://discord.com/channels/290013534023057409/331882115119448065/864845542022184990
+more space on ... dashboard menu on mobile https://discord.com/channels/290013534023057409/331882115119448065/865020811727339530
+
+retirement in groundhog day https://discord.com/channels/290013534023057409/290013534023057409/865246716236529666
 
 chrome 49 failure
 - coming from object spread in ajv

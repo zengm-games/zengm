@@ -105,6 +105,7 @@ const copyValidValues = (
 		}
 	}
 
+	// This preserves contract.rookie
 	const oldContract = {
 		...target.contract,
 	};

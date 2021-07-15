@@ -453,7 +453,14 @@ export const createWithoutSaving = async (
 			}
 		}
 
+		const noRookieContractsInFile = leagueFile.players.every(
+			p => !p.contract || !p.contract.rookie,
+		);
+
+		const currentSeason = g.get("season");
+
 		players = [];
+
 		for (const p0 of leagueFile.players) {
 			const p: PlayerWithoutKey = await player.augmentPartialPlayer(
 				{ ...p0 },
@@ -463,6 +470,18 @@ export const createWithoutSaving = async (
 			);
 			if (!p0.contract) {
 				p.contract.temp = true;
+			}
+
+			// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
+			if (p.tid >= 0 && (!p0.contract || noRookieContractsInFile)) {
+				const rookieContractLength = draft.getRookieContractLength(
+					p.draft.round,
+				);
+				const rookieContractExp = p.draft.year + rookieContractLength;
+
+				if (rookieContractExp >= currentSeason) {
+					(p as any).rookieContract = true;
+				}
 			}
 
 			if (p.tid >= 0 && !activeTids.includes(p.tid)) {
@@ -1017,6 +1036,11 @@ const create = async ({
 	for (const p of players) {
 		if (p.tid >= 0 && p.salaries.length === 0) {
 			player.setContract(p, p.contract, true);
+		}
+
+		if ((p as any).rookieContract) {
+			p.contract.rookie = true;
+			delete (p as any).rookieContract;
 		}
 
 		// Maybe not needed, but let's be sure

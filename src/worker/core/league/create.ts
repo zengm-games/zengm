@@ -458,6 +458,7 @@ export const createWithoutSaving = async (
 		);
 
 		const currentSeason = g.get("season");
+		const hardCap = g.get("season");
 
 		players = [];
 
@@ -473,7 +474,7 @@ export const createWithoutSaving = async (
 			}
 
 			// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
-			if (p.tid >= 0 && (!p0.contract || noRookieContractsInFile)) {
+			if (p.tid >= 0 && !hardCap && (!p0.contract || noRookieContractsInFile)) {
 				const rookieContractLength = draft.getRookieContractLength(
 					p.draft.round,
 				);

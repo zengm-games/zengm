@@ -82,19 +82,14 @@ const ImportPlayers = ({
 		);
 	}
 
-	const cols = getCols([
-		"",
-		"#",
-		"Name",
-		"Pos",
-		"Ovr",
-		"Pot",
-		"Age",
-		"Team",
-		"Contract",
-		"Exp",
-	]);
-	cols[2].width = "100%";
+	const cols = getCols(
+		["", "#", "Name", "Pos", "Ovr", "Pot", "Age", "Team", "Contract", "Exp"],
+		{
+			Name: {
+				width: "100%",
+			},
+		},
+	);
 
 	const handleChange =
 		(

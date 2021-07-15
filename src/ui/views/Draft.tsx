@@ -146,16 +146,14 @@ const Draft = ({
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
-	const colsUndrafted = getCols([
-		"#",
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		"Draft",
-	]);
-	colsUndrafted[1].width = "100%";
+	const colsUndrafted = getCols(
+		["#", "Name", "Pos", "Age", "Ovr", "Pot", "Draft"],
+		{
+			Name: {
+				width: "100%",
+			},
+		},
+	);
 
 	if (fantasyDraft || expansionDraft) {
 		colsUndrafted.splice(

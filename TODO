@@ -1,10 +1,5 @@
 more space on ... dashboard menu on mobile https://discord.com/channels/290013534023057409/331882115119448065/864845542022184990
 
-refactor getCols
-- array arg
-- some way to do common modifications, like width 1%
-- titleOverrides inline
-
 chrome 49 failure
 - coming from object spread in ajv
   - adding to transpile list fails. why?

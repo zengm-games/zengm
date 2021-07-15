@@ -30,20 +30,26 @@ const WatchList = ({
 		dropdownFields: { statTypes: statType, playoffs, flagNote },
 	});
 
-	const cols = getCols([
-		"",
-		"Name",
-		"Pos",
-		"Age",
-		"Team",
-		"Ovr",
-		"Pot",
-		"Contract",
-		"Exp",
-		...stats.map(stat => `stat:${stat}`),
-		"Note",
-	]);
-	cols[cols.length - 1].width = "100%";
+	const cols = getCols(
+		[
+			"",
+			"Name",
+			"Pos",
+			"Age",
+			"Team",
+			"Ovr",
+			"Pot",
+			"Contract",
+			"Exp",
+			...stats.map(stat => `stat:${stat}`),
+			"Note",
+		],
+		{
+			Note: {
+				width: "100%",
+			},
+		},
+	);
 
 	const rows = players.map(p => {
 		let contract;

@@ -2593,7 +2593,10 @@ const cols: {
 	...sportSpecificCols,
 };
 
-export default (titles: string[]): Col[] => {
+export default (
+	titles: string[],
+	overrides: Record<string, Partial<Col>> = {},
+): Col[] => {
 	return titles.map(title => {
 		if (!cols.hasOwnProperty(title)) {
 			throw new Error(`Unknown column: "${title}"`);
@@ -2602,6 +2605,7 @@ export default (titles: string[]): Col[] => {
 		return {
 			...cols[title],
 			title: cols[title].title ?? title,
+			...overrides[title],
 		};
 	});
 };

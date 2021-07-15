@@ -60,17 +60,23 @@ const TeamStats = ({
 		superCols[0].colspan += 1;
 	}
 
-	const cols = getCols([
-		...basicColNames,
-		...stats.map(stat => {
-			if (stat.startsWith("opp")) {
-				return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
-			}
-			return `stat:${stat}`;
-		}),
-	]);
-	cols[0].sortSequence = [];
-	cols[0].noSearch = true;
+	const cols = getCols(
+		[
+			...basicColNames,
+			...stats.map(stat => {
+				if (stat.startsWith("opp")) {
+					return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
+				}
+				return `stat:${stat}`;
+			}),
+		],
+		{
+			"#": {
+				sortSequence: [],
+				noSearch: true,
+			},
+		},
+	);
 
 	if (teamOpponent.endsWith("ShotLocations")) {
 		cols[cols.length - 7].title = "M";

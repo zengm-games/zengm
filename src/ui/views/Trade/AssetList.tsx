@@ -115,9 +115,14 @@ const genPickRows = (
 	});
 };
 
-const pickCols = getCols(["", "X", "Draft Picks"]);
-pickCols[0].sortSequence = [];
-pickCols[2].width = "100%";
+const pickCols = getCols(["", "X", "Draft Picks"], {
+	"": {
+		sortSequence: [],
+	},
+	"Draft Picks": {
+		width: "100%",
+	},
+});
 
 const AssetList = ({
 	challengeNoRatings,
@@ -138,21 +143,29 @@ const AssetList = ({
 	stats: Stats;
 	userOrOther: UserOrOther;
 }) => {
-	const playerCols = getCols([
-		"",
-		"X",
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		"Contract",
-		"Exp",
-		...stats.map(stat => `stat:${stat}`),
-	]);
-	playerCols[0].sortSequence = [];
-	playerCols[0].noSearch = true;
-	playerCols[2].width = "100%";
+	const playerCols = getCols(
+		[
+			"",
+			"X",
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			"Contract",
+			"Exp",
+			...stats.map(stat => `stat:${stat}`),
+		],
+		{
+			"": {
+				sortSequence: [],
+				noSearch: true,
+			},
+			Name: {
+				width: "100%",
+			},
+		},
+	);
 
 	const playerRows = genPlayerRows(
 		roster,

@@ -169,9 +169,14 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
-const pickCols = getCols(["", "Draft Picks"]);
-pickCols[0].sortSequence = [];
-pickCols[1].width = "100%";
+const pickCols = getCols(["", "Draft Picks"], {
+	"": {
+		sortSequence: [],
+	},
+	"Draft Picks": {
+		width: "100%",
+	},
+});
 
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
@@ -298,19 +303,25 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		);
 	}
 
-	const cols = getCols([
-		"",
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		"Contract",
-		"Exp",
-		...stats.map(stat => `stat:${stat}`),
-	]);
-	cols[0].sortSequence = [];
-	cols[0].noSearch = true;
+	const cols = getCols(
+		[
+			"",
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			"Contract",
+			"Exp",
+			...stats.map(stat => `stat:${stat}`),
+		],
+		{
+			"": {
+				sortSequence: [],
+				noSearch: true,
+			},
+		},
+	);
 
 	const rows = userRoster.map(p => {
 		return {

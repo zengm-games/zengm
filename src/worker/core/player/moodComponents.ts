@@ -290,6 +290,8 @@ const moodComponents = async (
 			const rookieContractLength = g.get("rookieContractLengths")[
 				p.draft.round - 1
 			];
+
+			// LEGACY
 			const onRookieContract =
 				rookieContractLength !== undefined &&
 				(p.tid === tid ||
@@ -299,7 +301,7 @@ const moodComponents = async (
 					(p.draft.year + rookieContractLength === season &&
 						phase <= PHASE.RESIGN_PLAYERS));
 
-			if (onRookieContract || p.tid === PLAYER.UNDRAFTED) {
+			if (onRookieContract || p.contract.rookie || p.tid === PLAYER.UNDRAFTED) {
 				components.rookieContract = 8;
 			}
 		}

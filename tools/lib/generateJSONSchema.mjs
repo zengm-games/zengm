@@ -286,6 +286,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 					exp: {
 						type: "number",
 					},
+					rookie: {
+						const: true
+					}
 				},
 				required: ["amount", "exp"],
 			},

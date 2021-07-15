@@ -846,6 +846,7 @@ export type PhaseReturn = {
 export type PlayerContract = {
 	amount: number;
 	exp: number;
+	rookie?: true;
 };
 
 export type PlayerFeatWithoutKey = {

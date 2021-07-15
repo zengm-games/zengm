@@ -32,6 +32,8 @@ const justDrafted = (
 				phase < PHASE.REGULAR_SEASON &&
 				phase >= 0))
 	);
+
+	// return p.contract.rookie && ...
 };
 
 const handleRelease = async (

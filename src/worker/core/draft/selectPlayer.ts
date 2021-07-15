@@ -98,6 +98,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				{
 					amount: rookieSalaries[i],
 					exp: g.get("season") + years,
+					rookie: true,
 				},
 				true,
 			);

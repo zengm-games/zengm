@@ -24,6 +24,7 @@ import type {
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
 	DraftPickWithoutKey,
+	PlayerContract,
 } from "../../../common/types";
 import createGameAttributes from "./createGameAttributes";
 import { getAutoTicketPriceByTid } from "../game/attendance";
@@ -571,14 +572,15 @@ export const createWithoutSaving = async (
 						years = Math.min(4 - round, 2);
 					}
 
-					player.setContract(
-						p,
-						{
-							amount: rookieSalaries[i],
-							exp: g.get("season") - numYearsAgo + years,
-						},
-						false,
-					);
+					const contract: PlayerContract = {
+						amount: rookieSalaries[i],
+						exp: g.get("season") - numYearsAgo + years,
+					};
+					if (!g.get("hardCap")) {
+						contract.rookie = true;
+					}
+
+					player.setContract(p, contract, false);
 				}
 				p.contract.temp = true;
 

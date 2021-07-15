@@ -65,6 +65,11 @@ const initAds = (goldUntil: number | undefined) => {
 			updateSkyscraperDisplay();
 		}
 
+		const metaGold = document.querySelector("meta[name='zengm-gold']");
+		if (metaGold) {
+			metaGold.remove();
+		}
+
 		/*window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];

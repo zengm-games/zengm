@@ -4,7 +4,7 @@ import range from "lodash-es/range";
 import { random, helpers } from "../../util";
 import { bySport, isSport } from "../../../common";
 
-// Football gets 1-99
+// Football/hockey gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(i => String(i));
 
 // Basketball also gets 0 and 00
@@ -231,8 +231,12 @@ const weightFunction = bySport({
 
 		const frequency = frequencies[jerseyNumber];
 
-		// +1 is to make the 0s possible
-		return frequency ?? 0.25;
+		if (frequency === undefined || frequency === 0) {
+			// Never have 0 probability
+			return 0.25;
+		}
+
+		return frequency;
 	},
 });
 

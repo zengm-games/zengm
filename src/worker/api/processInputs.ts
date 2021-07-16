@@ -185,7 +185,10 @@ const draftHistory = (params: Params) => {
 	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
 	const currentSeason = g.get("season");
 
-	if (params.season === undefined && !draftAlreadyHappened) {
+	if (
+		(params.season === undefined || params.season === String(currentSeason)) &&
+		!draftAlreadyHappened
+	) {
 		// View last season by default
 		season = currentSeason - 1;
 	} else {

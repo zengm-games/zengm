@@ -1,3 +1,14 @@
+fix order in award summary
+- https://discord.com/channels/290013534023057409/290015591216054273/865485007030976532
+
+https://github.com/zengm-games/zengm/blob/master/src/worker/api/index.ts#L849-L858 Some sim settings should be included here. Like block rate and few others
+- https://discord.com/channels/290013534023057409/290015591216054273/865479015514898483
+
+draft lottery history
+- https://basketball.realgm.com/nba/draft/lottery_results/by_team
+- metric for overall luck
+- separate page, or on draft history page?
+
 add archetypes to players?
 - https://twitter.com/messages/1928999030-3723150857
 
@@ -25,8 +36,6 @@ minors
 - need anything special with contracts?
 
 more space on ... dashboard menu on mobile https://discord.com/channels/290013534023057409/331882115119448065/865020811727339530
-
-retirement in groundhog day https://discord.com/channels/290013534023057409/290013534023057409/865246716236529666
 
 chrome 49 failure
 - coming from object spread in ajv

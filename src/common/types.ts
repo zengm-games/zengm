@@ -297,6 +297,7 @@ export type ScheduledEventTeamInfo = {
 		imgURL?: string;
 		imgURLSmall?: string;
 		colors?: [string, string, string];
+		jersey?: string;
 	};
 };
 

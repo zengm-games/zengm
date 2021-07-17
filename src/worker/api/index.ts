@@ -807,6 +807,7 @@ const deleteScheduledEvents = async (type: string) => {
 						"imgURL",
 						"imgURLSmall",
 						"colors",
+						"jersey",
 					],
 					event,
 				);
@@ -842,6 +843,7 @@ const deleteScheduledEvents = async (type: string) => {
 						"numGames",
 						"draftType",
 						"threePointers",
+						"foulsUntilBonus",
 					],
 					event,
 				);
@@ -854,6 +856,10 @@ const deleteScheduledEvents = async (type: string) => {
 						"threePointTendencyFactor",
 						"threePointAccuracyFactor",
 						"twoPointAccuracyFactor",
+						"blockFactor",
+						"stealFactor",
+						"turnoverFactor",
+						"orbFactor",
 					],
 					event,
 				);

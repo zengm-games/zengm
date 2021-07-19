@@ -1044,6 +1044,8 @@ const create = async ({
 			delete (p as any).rookieContract;
 		}
 
+		delete p.contract.temp;
+
 		// Maybe not needed, but let's be sure
 		await idb.cache.players.put(p);
 	}

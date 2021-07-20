@@ -12,7 +12,7 @@ export const genView = (
 		infos,
 		stats,
 		userTid,
-		valueStat,
+		displayStat,
 	}: View<"colleges">) => {
 		useTitleBar({
 			title:
@@ -54,8 +54,8 @@ export const genView = (
 			"HoF",
 			"stat:gp",
 			"stat:gpPerPlayer",
-			`stat:${valueStat}`,
-			`stat:${valueStat}PerPlayer`,
+			`stat:${displayStat}`,
+			`stat:${displayStat}PerPlayer`,
 			"Name",
 			"Pos",
 			"Drafted",
@@ -99,8 +99,8 @@ export const genView = (
 					c.numHof,
 					helpers.roundStat(c.gp, "gp"),
 					(c.gp / c.numPlayers).toFixed(1),
-					helpers.roundStat(c.valueStat, valueStat),
-					(c.valueStat / c.numPlayers).toFixed(1),
+					helpers.roundStat(c.displayStat, displayStat),
+					(c.displayStat / c.numPlayers).toFixed(1),
 					{
 						value: (
 							<PlayerNameLabels

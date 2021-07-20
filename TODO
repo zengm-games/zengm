@@ -1,7 +1,7 @@
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857
-- for young players, do "current" and "potential" ones
-- for basketball, do "real life" and "your league" ones
+- draft/currentRatings/currentStats/potential/careerRatings/careerStats
+- "real life"/"your league" (only basketball)
 
 fix order in award summary
 - https://discord.com/channels/290013534023057409/290015591216054273/865485007030976532
@@ -12,19 +12,11 @@ https://github.com/zengm-games/zengm/blob/master/src/worker/api/index.ts#L849-L8
 draft lottery history
 - https://basketball.realgm.com/nba/draft/lottery_results/by_team
 - metric for overall luck
+  - the "pick change" thing from real GM seems sane. Either from pre-lottery standings (which people understand) or the expected value of each pick (which would be zero mean). A straight up P(better than expected) would make sense too I guess. so the 1st pick... that's going to average a negative number in the "pre-lottery standings change". But it should average as 0 compared to pick num3.66 ( 1*.14 + 2 *.134 + 3 *.127+4 *.12 + 5 *.479) https://discord.com/channels/290013534023057409/290015468939640832/865942178840969217
 - separate page, or on draft history page?
 
 add archetypes to players?
 - https://twitter.com/messages/1928999030-3723150857
-
-add marker for rookie contracts
-- https://mail.google.com/mail/u/0/#inbox/FMfcgxwLtkPldhCvRPgDHPDfdSSjdFtC
-- real player rosters doesn't exactly have the +8 mood boost for rookies working because of NBA length deals.
-  - what about players with no contract data, needs to be done in augmentPartialPlayer?
-    - but don't want to run on all imported leagues forever, would be false positives
-    - run rookie contract detector on all players if nobody in league file has a "rookie" property. otherwise, run only on players with no contract specified
-- changelog
-  - rookie property should be added in custom rosters
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)

@@ -51,9 +51,13 @@ const GodMode = (props: View<"godMode">) => {
 					<div className="card-body">
 						<h3 className="card-title">Advanced Settings</h3>
 						<p className="card-text">
-							Customize tons of options at{" "}
+							Customize tons of settings at{" "}
 							<a href={helpers.leagueUrl(["settings"])}>
 								Tools &gt; League Settings
+							</a>
+							, and control your league even more at{" "}
+							<a href={helpers.leagueUrl(["danger_zone"])}>
+								Tools &gt; Danger Zone
 							</a>
 							.
 						</p>

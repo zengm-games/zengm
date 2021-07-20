@@ -5,7 +5,12 @@ import { helpers, logEvent, toWorker } from "../../util";
 import AutoSave from "./AutoSave";
 import WorkerConsole from "./WorkerConsole";
 
-const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
+const DangerZone = ({
+	autoSave,
+	canRegenerateSchedule,
+	godMode,
+	phase,
+}: View<"dangerZone">) => {
 	useTitleBar({
 		title: "Danger Zone",
 	});
@@ -134,7 +139,7 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 
 						<button
 							type="button"
-							className="btn btn-god-mode border-0 mb-5"
+							className="btn btn-god-mode border-0"
 							disabled={
 								(phase !== PHASE.REGULAR_SEASON &&
 									phase !== PHASE.AFTER_TRADE_DEADLINE) ||
@@ -154,6 +159,39 @@ const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 						</button>
 					</div>
 				) : null}
+
+				<div className="mt-5">
+					<h2>Regenerate schedule</h2>
+
+					{!godMode ? (
+						<p className="text-warning">
+							This feature is only available in{" "}
+							<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+						</p>
+					) : (
+						<p className={canRegenerateSchedule ? undefined : "text-warning"}>
+							This can only be done at the start of the regular season, when no
+							games have been played.
+						</p>
+					)}
+
+					<button
+						type="button"
+						className="btn btn-god-mode border-0 mb-5"
+						disabled={!canRegenerateSchedule || !godMode}
+						onClick={async () => {
+							await toWorker("main", "regenerateSchedule");
+
+							logEvent({
+								saveToDb: false,
+								text: "Schedule regenerated successfully.",
+								type: "info",
+							});
+						}}
+					>
+						Regenerate schedule
+					</button>
+				</div>
 			</div>
 
 			<div className="col-md-6">

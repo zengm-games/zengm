@@ -2065,6 +2065,23 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 	}
 };
 
+const regenerateSchedule = async () => {
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did"],
+		season: g.get("season"),
+		active: true,
+	});
+
+	await toUI("updateLocal", [
+		{
+			games: [],
+		},
+	]);
+
+	await season.setSchedule(season.newSchedule(teams));
+};
+
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
@@ -3489,6 +3506,7 @@ export default {
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,
 	regenerateDraftClass,
+	regenerateSchedule,
 	releasePlayer,
 	cloneLeague,
 	removeLeague,

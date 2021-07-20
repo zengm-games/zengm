@@ -2,6 +2,7 @@ schedule customization
 - settings
   - # games vs division opponents
   - # games vs non-division conference opponents
+  - Leave blank to not treat div/conf special
 - remaining games, fill in with non-conference opponents, keep balanced as much as possible (like play each team once before repeating)
 - if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
 - implementation
@@ -12,11 +13,20 @@ schedule customization
     - handle constraints first (like 7 games vs 4 division opponents, there will be 3 games left to pick)
   - random step 2
     - set home/away games so each team winds up with the same number (or +/- 1 if total number of games is odd)
+      - also balance home/away within each div/conf
 - what to do when expansion/contraction results in invalid schedule settings?
   - hard error, or crappy schedule?
     - if crappy schedule, then how can i even show error in settings UI? would trigger error when league is working normally
     - if hard error, what does that do to existing leagues with invalid settings?
-  - does it ever become invalid in historical leagues?
+  - does it ever become invalid in historical leagues? if so, change defaults
+- upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
+- eventually
+  - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
+
+foul trouble
+- players should play different when they're in foul trouble
+- sub out players in foul trouble https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b484v/
+- (maybe if still necessary) make fouling more uniform https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b22ia/
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

@@ -6,7 +6,7 @@ const processPlayersHallOfFame = <
 		careerStats: any;
 		ratings: any[];
 		stats: any[];
-	}
+	},
 >(
 	players: T[],
 ): (T & {
@@ -22,6 +22,8 @@ const processPlayersHallOfFame = <
 			}
 		}
 
+		const hasSeasonWithGamesPlayed = p.stats.some(ps => ps.gp > 0);
+
 		let bestEWA = -Infinity;
 		let bestStats;
 		const teamSums: Record<number, number> = {};
@@ -33,8 +35,10 @@ const processPlayersHallOfFame = <
 				hockey: ps.ps,
 			});
 			if (ewa > bestEWA) {
-				bestStats = ps;
-				bestEWA = ewa;
+				if (!hasSeasonWithGamesPlayed || ps.gp > 0) {
+					bestStats = ps;
+					bestEWA = ewa;
+				}
 			}
 			if (teamSums.hasOwnProperty(tid)) {
 				teamSums[tid] += ewa;

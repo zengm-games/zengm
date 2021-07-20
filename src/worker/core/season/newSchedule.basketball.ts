@@ -259,13 +259,6 @@ const newSchedule = (
 	// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
 	tids = flatten(days);
 
-	// Add an All-Star Game
-	const allStarGame = g.get("allStarGame");
-	if (allStarGame !== null) {
-		const ind = Math.round(allStarGame * tids.length);
-		tids.splice(ind, 0, [-1, -2]);
-	}
-
 	return tids;
 };
 

@@ -266,6 +266,7 @@ const TopStuff = ({
 > & {
 	season?: number;
 }) => {
+	console.log(player.draft);
 	let draftInfo: ReactNode = null;
 	if (player.draft.round > 0) {
 		draftInfo = (
@@ -275,7 +276,14 @@ const TopStuff = ({
 					{player.draft.year}
 				</a>{" "}
 				- Round {player.draft.round} (Pick {player.draft.pick}) by{" "}
-				{player.draft.abbrev}
+				<a
+					href={helpers.leagueUrl([
+						"draft_team_history",
+						`${player.draft.abbrev}_${player.draft.tid}`,
+					])}
+				>
+					{player.draft.abbrev}
+				</a>
 				<br />
 			</>
 		);

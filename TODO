@@ -1,3 +1,23 @@
+ratings shown in no ratings mode https://discord.com/channels/290013534023057409/290015591216054273/866926406205702174
+
+on player profile, link draft team to draft history or roster? https://discord.com/channels/290013534023057409/331882115119448065/866413651166232587
+
+schedule customization
+- settings
+  - # games vs division opponents
+  - # games vs non-division conference opponents
+- remaining games, fill in with non-conference opponents, keep balanced as much as possible (like play each team once before repeating)
+- if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
+- implementation
+  - figure out how many games minimum vs each other Team, based on constraints
+  - log those matchups, balancing home/away when it's even (like 6 games between 2 teams, 3 games home each) and leaving undecided when it's odd (like 7 games, same as before plus one game with undecided home team)
+  - save these results, because they require no randomness
+  - random step 1 - pick more teams to fill out schedule
+    - handle constraints first (like 7 games vs 4 division opponents, there will be 3 games left to pick)
+  - random step 2
+    - set home/away games so each team winds up with the same number (or +/- 1 if total number of games is odd)
+- what to do when expansion/contraction results in invalid schedule settings?
+
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857
 - draft/currentRatings/currentStats/potential/careerRatings/careerStats

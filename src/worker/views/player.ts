@@ -390,15 +390,23 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"desc",
 		).map(p2 => {
 			const ratings = p2.ratings[p2.ratings.length - 1];
-			const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
-			const pot = player.fuzzRating(ratings.pot, ratings.fuzz);
 
 			const age = g.get("season") - p2.born.year;
+
+			let description = `${age}yo`;
+
+			if (!g.get("challengeNoRatings")) {
+				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+				const pot = player.fuzzRating(ratings.pot, ratings.fuzz);
+
+				description += `, ${ovr}/${pot}`;
+			}
+
 			return {
 				type: "link",
 				league: true,
 				path: ["player", p2.pid],
-				text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${age}yo, ${ovr}/${pot})`,
+				text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${description})`,
 			};
 		});
 

@@ -1,5 +1,3 @@
-ratings shown in no ratings mode https://discord.com/channels/290013534023057409/290015591216054273/866926406205702174
-
 on player profile, link draft team to draft history or roster? https://discord.com/channels/290013534023057409/331882115119448065/866413651166232587
 
 schedule customization
@@ -17,6 +15,10 @@ schedule customization
   - random step 2
     - set home/away games so each team winds up with the same number (or +/- 1 if total number of games is odd)
 - what to do when expansion/contraction results in invalid schedule settings?
+  - hard error, or crappy schedule?
+    - if crappy schedule, then how can i even show error in settings UI? would trigger error when league is working normally
+    - if hard error, what does that do to existing leagues with invalid settings?
+  - does it ever become invalid in historical leagues?
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

@@ -100,7 +100,7 @@ const getNumGamesTargetsByDid = (
 
 	for (const div of divs) {
 		const divSize = teamsGroupedByDid[div.did].div.length;
-		if (divSize === 0) {
+		if (divSize === 0 && numGamesInfo.numGamesDiv !== null) {
 			continue;
 		}
 

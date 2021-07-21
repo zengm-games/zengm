@@ -32,6 +32,7 @@ const newSchedule = (
 	}
 
 	if (warning) {
+		// console.log(g.get("season"), warning);
 		logEvent(
 			{
 				type: "error",

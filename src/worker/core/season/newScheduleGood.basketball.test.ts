@@ -30,11 +30,14 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule 1230 games (82 each for 30 teams)", () => {
-			assert.strictEqual(newSchedule(defaultTeams).length, 1230);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
+			assert.strictEqual(tids.length, 1230);
 		});
 
 		test("schedule 41 home games and 41 away games for each team", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			const home: Record<number, number> = {}; // Number of home games for each team
 			const away: Record<number, number> = {}; // Number of away games for each team
@@ -57,7 +60,8 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team one home game against every team in the other conference", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the other conference will be populated)
 			const home: Record<number, Record<number, number>> = {};
@@ -92,7 +96,8 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team two home games against every team in the same division", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
 			const home: Record<number, Record<number, number>> = {};
@@ -127,7 +132,8 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test.skip("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same conference but different division will be populated)
 			const home: Record<number, Record<number, number>> = {};

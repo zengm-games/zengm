@@ -29,11 +29,14 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule 256 games (16 each for 32 teams)", () => {
-			assert.strictEqual(newSchedule(defaultTeams).length, 256);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
+			assert.strictEqual(tids.length, 256);
 		});
 
 		test("schedule 8 home games and 8 away games for each team", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			const home: Record<number, number> = {}; // Number of home games for each team
 			const away: Record<number, number> = {}; // Number of away games for each team
@@ -56,7 +59,8 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team two home games against every team in the same division", () => {
-			const tids = newSchedule(defaultTeams);
+			const { tids, warning } = newSchedule(defaultTeams);
+			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
 			const home: Record<number, Record<number, number>> = {};

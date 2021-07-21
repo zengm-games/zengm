@@ -3,19 +3,11 @@ schedule customization
   - # games vs division opponents
   - # games vs non-division conference opponents
   - Leave blank to not treat div/conf special
-- remaining games, fill in with non-conference opponents, keep balanced as much as possible (like play each team once before repeating)
 - if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
-- implementation
-  - figure out how many games minimum vs each other Team, based on constraints
-  - log those matchups, balancing home/away when it's even (like 6 games between 2 teams, 3 games home each) and leaving undecided when it's odd (like 7 games, same as before plus one game with undecided home team)
-  - save these results, because they require no randomness
-  - random step 1 - pick more teams to fill out schedule
-    - handle constraints first (like 7 games vs 4 division opponents, there will be 3 games left to pick)
-  - random step 2
-    - set home/away games so each team winds up with the same number (or +/- 1 if total number of games is odd)
-      - also balance home/away within each div/conf
-- handle odd number of games per team, where home/away can't be balanced correctly
-- handle odd number of games*teams, where some team needs to play 1 game fewer than others
+- odd stuff
+  - handle odd number of games per team, where home/away can't be balanced correctly
+  - handle odd number of games*teams, where some team needs to play 1 game fewer than others
+  - this happens at all levels, both for finding games and setting home/away. like if 5 teams per division and you want 3 games per team, that doesn't work
 - what to do when expansion/contraction results in invalid schedule settings?
   - hard error, or crappy schedule?
     - if crappy schedule, then how can i even show error in settings UI? would trigger error when league is working normally
@@ -25,8 +17,7 @@ schedule customization
   - settings page during new league?
   - settings page in league?
   - danger zone regenerate?
-- tracking "either" inside scheduleCounts - does it matter?
-- home/away not balanced leaguewide :(
+- tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
 
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?

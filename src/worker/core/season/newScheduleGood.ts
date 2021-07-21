@@ -15,6 +15,9 @@ type MyTeam = {
 
 const LEVELS = ["div", "conf", "other"] as const;
 
+const numGamesDiv = 16;
+const numGamesConf = 36;
+
 const groupTeamsByDid = (teams: MyTeam[]) => {
 	const divs = g.get("divs");
 
@@ -44,8 +47,6 @@ const getNumGamesTargetsByDid = (
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
 ) => {
 	const numGames = g.get("numGames");
-	const numGamesDiv = 16;
-	const numGamesConf = 36;
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
 		throw new Error(
@@ -147,11 +148,21 @@ const finalize = ({
 	const MAX_ITERATIONS = 1000;
 	let iteration1 = 0;
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
+	// If it's an odd number of games, round up to allow extra home/away game
+	const maxHomeOrAway = {
+		div: Math.ceil(numGamesDiv / 2),
+		conf: Math.ceil(numGamesConf / 2),
+		other: Math.ceil((g.get("numGames") - numGamesDiv - numGamesConf) / 2),
+	};
+
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS) {
 		iteration1 += 1;
 
 		// Copy some variables
 		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
+		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
@@ -181,6 +192,7 @@ const finalize = ({
 					if (numGames === 0) {
 						continue;
 					}
+					// console.log(t.tid, `did${t.seasonAttrs.did}`, level, `needs ${numGames} games`);
 
 					const group = teamsGrouped[level];
 
@@ -195,6 +207,7 @@ const finalize = ({
 						i => excessGamesRemainingByTid[group[i].tid][level],
 						"desc",
 					);
+					// console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level]))
 
 					for (const groupIndex of groupIndexes) {
 						const t2 = group[groupIndex];
@@ -209,11 +222,10 @@ const finalize = ({
 						}
 
 						// Record as an "either" game
+						// console.log('found matchup', t.tid, t2.tid);
 						tidsEither.push([t.tid, t2.tid]);
-
-						// This is not needed, since it's never checked against anything
-						// scheduleCounts[t.tid][level].either += 1;
-						// scheduleCounts[t2.tid][level].either += 1;
+						scheduleCounts[t.tid][level].either += 1;
+						scheduleCounts[t2.tid][level].either += 1;
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -232,18 +244,16 @@ const finalize = ({
 		}
 
 		// Assign all the "either" games to home/away, while balancing home/away within div/conf/other
-		let iteration2 = 1;
+		let iteration2 = 0;
 		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS) {
-			iteration2 += 1;
+			const scheduleCounts2 = helpers.deepCopy(scheduleCounts);
 
-			const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
+			iteration2 += 1;
 
 			// Assign tidsEither to home/away games
 			const tidsDone: [number, number][] = []; // tid_home, tid_away
 
 			random.shuffle(tidsEither);
-
-			const teamsByTid = groupByUnique(teams, "tid");
 
 			for (const [tid0, tid1] of tidsEither) {
 				const t0 = teamsByTid[tid0];
@@ -258,26 +268,40 @@ const finalize = ({
 					level = "other";
 				}
 
-				if (
-					scheduleCounts[tid0][level].home > 0 &&
-					scheduleCounts[tid1][level].away > 0
-				) {
-					// Try making tid0 home
-					tidsDone.push([tid0, tid1]);
-					scheduleCounts[tid0][level].home -= 1;
-					scheduleCounts[tid1][level].away -= 1;
-				} else if (
-					scheduleCounts[tid1][level].home > 0 &&
-					scheduleCounts[tid0][level].away > 0
-				) {
-					// Try making tid1 home
-					tidsDone.push([tid1, tid0]);
-					scheduleCounts[tid1][level].home -= 1;
-					scheduleCounts[tid0][level].away -= 1;
-				} else {
+				scheduleCounts2[tid0][level].either -= 1;
+				scheduleCounts2[tid1][level].either -= 1;
+
+				const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
+					maxHomeOrAway[level] - scheduleCounts2[tid][level][homeAway];
+				const cutoffDiffs = [tid0, tid1].map(tid => ({
+					home: cutoffDiff(tid, "home"),
+					away: cutoffDiff(tid, "away"),
+				}));
+
+				// Should we first try making tid0 or tid1 home? Whichever has someone closest to the cutoff
+				const tid0HomeMinCutoffDiff = Math.min(
+					cutoffDiffs[0].home,
+					cutoffDiffs[1].away,
+				);
+				const tid1HomeMinCutoffDiff = Math.min(
+					cutoffDiffs[1].home,
+					cutoffDiffs[0].away,
+				);
+
+				if (tid0HomeMinCutoffDiff === 0 && tid1HomeMinCutoffDiff === 0) {
 					// Failed to make matchups, try again
 					// console.log(iteration1, iteration2, `${tidsDone.length} / ${tidsEither.length}`);
 					continue MAIN_LOOP_2;
+				} else if (tid0HomeMinCutoffDiff > tid1HomeMinCutoffDiff) {
+					// tid0 home
+					tidsDone.push([tid0, tid1]);
+					scheduleCounts2[tid0][level].home += 1;
+					scheduleCounts2[tid1][level].away += 1;
+				} else {
+					// tid1 home
+					tidsDone.push([tid1, tid0]);
+					scheduleCounts2[tid1][level].home += 1;
+					scheduleCounts2[tid0][level].away += 1;
 				}
 			}
 

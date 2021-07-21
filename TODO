@@ -1,7 +1,4 @@
 schedule customization
-- settings error handling for numGames stuff
-  - negative numbers
-  - div+conf can't exceed numGames
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
   - handle odd number of games*teams, where some team needs to play 1 game fewer than others

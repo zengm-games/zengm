@@ -179,6 +179,19 @@ export const settings: {
 		name: "# Games Per Season",
 		godModeRequired: "always",
 		type: "int",
+		validator: (value, output) => {
+			if (value <= 0) {
+				throw new Error("Must be positive");
+			}
+
+			const numGamesDiv = output.numGamesDiv ?? 0;
+			const numGamesConf = output.numGamesConf ?? 0;
+			if (value < numGamesDiv + numGamesConf) {
+				throw new Error(
+					"Can't have more division and conference games than total games",
+				);
+			}
+		},
 	},
 	{
 		category: "Schedule",
@@ -188,6 +201,11 @@ export const settings: {
 		type: "intOrNull",
 		description:
 			"Number of games versus other teams in the same division. Leave blank to give no special scheduling treatment to division opponents.",
+		validator: value => {
+			if (typeof value === "number" && value < 0) {
+				throw new Error("Cannot be negative");
+			}
+		},
 	},
 	{
 		category: "Schedule",
@@ -197,6 +215,11 @@ export const settings: {
 		type: "intOrNull",
 		description:
 			"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference opponents.",
+		validator: value => {
+			if (typeof value === "number" && value < 0) {
+				throw new Error("Cannot be negative");
+			}
+		},
 	},
 	{
 		category: "Team",

@@ -355,11 +355,11 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
 		}
 	}
 
-	console.log("teamsGroupedByDid", teamsGroupedByDid);
+	/*console.log("teamsGroupedByDid", teamsGroupedByDid);
 	console.log("numGamesTargetsByDid", numGamesTargetsByDid);
 	console.log("scheduleCounts", scheduleCounts);
 	console.log("tidsDone", tidsDone);
-	console.log("tidsEither", tidsEither);
+	console.log("tidsEither", tidsEither);*/
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({
@@ -373,11 +373,11 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
 	if (tidsDone2) {
 		const tids = [...tidsDone, ...tidsDone2];
 
-		console.log("tids", tids);
+		//console.log("tids", tids);
 		return tids;
 	}
 
-	console.log("failed");
+	//console.log("failed");
 };
 
 /**

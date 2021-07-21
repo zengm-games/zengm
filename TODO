@@ -18,6 +18,10 @@ schedule customization
   - settings page in league?
   - danger zone regenerate?
 - tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
+- "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
+  - enforce home/away balance btwn teams for games from "either"
+- port tests over
+- delete old schedule files
 
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?

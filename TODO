@@ -26,6 +26,8 @@ schedule customization
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?
 - ui for settings
+- loading button while regenerating schedule
+- why are football tests so slow?
 - eventually
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 

@@ -148,7 +148,8 @@ const finalize = ({
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
 	tidsEither: [number, number][];
 }) => {
-	const MAX_ITERATIONS = 1000;
+	const MAX_ITERATIONS_1 = 100;
+	const MAX_ITERATIONS_2 = 10000;
 	let iteration1 = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
@@ -166,7 +167,7 @@ const finalize = ({
 		other: Math.ceil((g.get("numGames") - numGamesDiv - numGamesConf) / 2),
 	};
 
-	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS) {
+	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
 
 		// Copy some variables
@@ -254,7 +255,7 @@ const finalize = ({
 
 		// Assign all the "either" games to home/away, while balancing home/away within div/conf/other
 		let iteration2 = 0;
-		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS) {
+		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS_2) {
 			const scheduleCounts2 = helpers.deepCopy(scheduleCounts);
 
 			iteration2 += 1;
@@ -314,6 +315,7 @@ const finalize = ({
 				}
 			}
 
+			// console.log(iteration1, iteration2)
 			return tidsDone;
 		}
 	}
@@ -382,11 +384,11 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
 	if (tidsDone2) {
 		const tids = [...tidsDone, ...tidsDone2];
 
-		//console.log("tids", tids);
+		// console.log("tids", tids);
 		return tids;
 	}
 
-	//console.log("failed");
+	// console.log("failed");
 };
 
 /**

@@ -184,6 +184,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
 				numGames: 16,
+				numGamesDiv: 6,
+				numGamesConf: 6,
 				quarterLength: 15,
 				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
 				numPlayoffByes: wrap(2),

@@ -1,9 +1,9 @@
 import assert from "assert";
 import testHelpers from "../../../test/helpers";
-import newSchedule from "./newSchedule.football";
+import newSchedule from "./newScheduleGood";
 import { helpers } from "../../util";
 
-describe("worker/core/season/newSchedule.football", () => {
+describe("worker/core/season/newScheduleGood", () => {
 	let defaultTeams: {
 		seasonAttrs: {
 			cid: number;
@@ -23,7 +23,7 @@ describe("worker/core/season/newSchedule.football", () => {
 		}));
 	});
 
-	describe("newScheduleDefault", () => {
+	describe("football", () => {
 		beforeAll(() => {
 			testHelpers.resetG();
 		});

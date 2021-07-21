@@ -2,6 +2,8 @@ import range from "lodash-es/range";
 import flatten from "lodash-es/flatten";
 import { g, helpers, random } from "../../../worker/util";
 import newScheduleCrappy from "./newScheduleCrappy";
+import { groupByUnique } from "../../../common/groupBy";
+import orderBy from "lodash-es/orderBy";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -140,18 +142,15 @@ const finalize = ({
 	teams: MyTeam[];
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>;
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
-	tidsDone: [number, number][];
 	tidsEither: [number, number][];
 }) => {
-	const MAX_ITERATIONS = 100000;
-	let iteration = 0;
+	const MAX_ITERATIONS = 1000;
+	let iteration1 = 0;
 
-	MAIN_LOOP: while (iteration < MAX_ITERATIONS) {
-		iteration += 1;
+	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS) {
+		iteration1 += 1;
 
 		// Copy some variables
-		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
-		const tidsDone = helpers.deepCopy(toCopy.tidsDone);
 		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
@@ -167,7 +166,13 @@ const finalize = ({
 				};
 			}
 
-			for (const t of teams) {
+			// Shuffle teams, cause particularly with confs you have the same teams available in multiple different groups, since in-division teams are already subtracted, so we don't want to fall into a rut based on team order
+			const teamIndexes = range(teams.length);
+			random.shuffle(teamIndexes);
+
+			for (const teamIndex of teamIndexes) {
+				const t = teams[teamIndex];
+
 				const teamsGrouped = teamsGroupedByDid[t.seasonAttrs.did];
 				const excessGamesRemaining = excessGamesRemainingByTid[t.tid];
 
@@ -181,8 +186,15 @@ const finalize = ({
 
 					// Randomly find numGames games in group. Max one game per team, because if it was more than one game per team it wouldn't be an "excess" matchup
 
-					const groupIndexes = range(group.length);
+					let groupIndexes = range(group.length);
 					random.shuffle(groupIndexes);
+
+					// Order by team with most games remaining
+					groupIndexes = orderBy(
+						groupIndexes,
+						i => excessGamesRemainingByTid[group[i].tid][level],
+						"desc",
+					);
 
 					for (const groupIndex of groupIndexes) {
 						const t2 = group[groupIndex];
@@ -198,8 +210,10 @@ const finalize = ({
 
 						// Record as an "either" game
 						tidsEither.push([t.tid, t2.tid]);
-						scheduleCounts[t.tid][level].either += 1;
-						scheduleCounts[t2.tid][level].either += 1;
+
+						// This is not needed, since it's never checked against anything
+						// scheduleCounts[t.tid][level].either += 1;
+						// scheduleCounts[t2.tid][level].either += 1;
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -211,18 +225,67 @@ const finalize = ({
 
 					if (excessGamesRemaining[level] > 0) {
 						// Failed to make matchups, try again
-						continue MAIN_LOOP;
+						continue MAIN_LOOP_1;
 					}
 				}
 			}
-
-			return [...tidsDone, ...tidsEither];
 		}
 
 		// Assign all the "either" games to home/away, while balancing home/away within div/conf/other
+		let iteration2 = 1;
+		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS) {
+			iteration2 += 1;
+
+			const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
+
+			// Assign tidsEither to home/away games
+			const tidsDone: [number, number][] = []; // tid_home, tid_away
+
+			random.shuffle(tidsEither);
+
+			const teamsByTid = groupByUnique(teams, "tid");
+
+			for (const [tid0, tid1] of tidsEither) {
+				const t0 = teamsByTid[tid0];
+				const t1 = teamsByTid[tid1];
+
+				let level: typeof LEVELS[number];
+				if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
+					level = "div";
+				} else if (t0.seasonAttrs.cid === t1.seasonAttrs.cid) {
+					level = "conf";
+				} else {
+					level = "other";
+				}
+
+				if (
+					scheduleCounts[tid0][level].home > 0 &&
+					scheduleCounts[tid1][level].away > 0
+				) {
+					// Try making tid0 home
+					tidsDone.push([tid0, tid1]);
+					scheduleCounts[tid0][level].home -= 1;
+					scheduleCounts[tid1][level].away -= 1;
+				} else if (
+					scheduleCounts[tid1][level].home > 0 &&
+					scheduleCounts[tid0][level].away > 0
+				) {
+					// Try making tid1 home
+					tidsDone.push([tid1, tid0]);
+					scheduleCounts[tid1][level].home -= 1;
+					scheduleCounts[tid0][level].away -= 1;
+				} else {
+					// Failed to make matchups, try again
+					// console.log(iteration1, iteration2, `${tidsDone.length} / ${tidsEither.length}`);
+					continue MAIN_LOOP_2;
+				}
+			}
+
+			return tidsDone;
+		}
 	}
 
-	// No schedule found
+	// No valid schedule found
 	return undefined;
 };
 
@@ -275,17 +338,22 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
 	console.log("tidsEither", tidsEither);
 
 	// Everything above is deterministic, but below is where randomness is introduced
-	const tids = finalize({
+	const tidsDone2 = finalize({
 		numGamesTargetsByDid,
 		teams,
 		teamsGroupedByDid,
 		scheduleCounts,
-		tidsDone,
 		tidsEither,
 	});
 
-	console.log("tids", tids);
-	return tids;
+	if (tidsDone2) {
+		const tids = [...tidsDone, ...tidsDone2];
+
+		console.log("tids", tids);
+		return tids;
+	}
+
+	console.log("failed");
 };
 
 /**

@@ -3,7 +3,6 @@ schedule customization
   - # games vs division opponents
   - # games vs non-division conference opponents
   - Leave blank to not treat div/conf special
-    - "numGamesDiv === null"
 - if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
@@ -18,6 +17,8 @@ schedule customization
   - settings page during new league?
   - settings page in league?
   - danger zone regenerate?
+- what to do if it works, but is slow, or only intermittently works?
+  - warning in UI
 - tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
 - "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
   - enforce home/away balance btwn teams for games from "either"
@@ -26,7 +27,7 @@ schedule customization
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?
 - ui for settings
-- why are football tests so slow?
+- newScheduleCrappy still needed?
 - eventually
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 

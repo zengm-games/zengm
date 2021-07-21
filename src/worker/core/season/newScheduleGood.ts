@@ -4,6 +4,7 @@ import { g, helpers, random } from "../../../worker/util";
 import newScheduleCrappy from "./newScheduleCrappy";
 import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
+import type { Div } from "../../../common/types";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -15,8 +16,15 @@ type MyTeam = {
 
 const LEVELS = ["div", "conf", "other"] as const;
 
+const isDiv = (t: MyTeam, div: Div) => t.seasonAttrs.did === div.did;
+const isConf = (t: MyTeam, div: Div) =>
+	t.seasonAttrs.did !== div.did && t.seasonAttrs.cid === div.cid;
+const isOther = (t: MyTeam, div: Div) => t.seasonAttrs.cid !== div.cid;
+
 const groupTeamsByDid = (teams: MyTeam[]) => {
 	const divs = g.get("divs");
+	const numGamesDiv = g.get("numGamesDiv");
+	const numGamesConf = g.get("numGamesConf");
 
 	const teamsGroupedByDid: Record<
 		number,
@@ -29,11 +37,14 @@ const groupTeamsByDid = (teams: MyTeam[]) => {
 
 	for (const div of divs) {
 		teamsGroupedByDid[div.did] = {
-			div: teams.filter(t => t.seasonAttrs.did === div.did),
-			conf: teams.filter(
-				t => t.seasonAttrs.did !== div.did && t.seasonAttrs.cid === div.cid,
+			div: teams.filter(t => numGamesDiv !== null && isDiv(t, div)),
+			conf: teams.filter(t => numGamesConf !== null && isConf(t, div)),
+			other: teams.filter(
+				t =>
+					isOther(t, div) ||
+					(numGamesDiv === null && isDiv(t, div)) ||
+					(numGamesConf === null && isConf(t, div)),
 			),
-			other: teams.filter(t => t.seasonAttrs.cid !== div.cid),
 		};
 	}
 
@@ -44,11 +55,10 @@ const getNumGamesTargetsByDid = (
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
 ) => {
 	const numGames = g.get("numGames");
-	const numGamesDiv = g.get("numGamesDiv");
-	const numGamesConf = g.get("numGamesConf");
-	if (numGamesDiv === null || numGamesConf === null) {
-		throw new Error("Not implemented");
-	}
+
+	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
+	const numGamesDiv = g.get("numGamesDiv") ?? 0;
+	const numGamesConf = g.get("numGamesConf") ?? 0;
 
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
@@ -96,14 +106,21 @@ const getNumGamesTargetsByDid = (
 
 		numGamesTargetsByDid[div.did] = {
 			perTeam: {
-				div: Math.floor(numGamesDiv / denominators.div),
-				conf: Math.floor(numGamesConf / denominators.conf),
-				other: Math.floor(numGamesOther / denominators.other),
+				div:
+					denominators.div > 0 ? Math.floor(numGamesDiv / denominators.div) : 0,
+				conf:
+					denominators.conf > 0
+						? Math.floor(numGamesConf / denominators.conf)
+						: 0,
+				other:
+					denominators.other > 0
+						? Math.floor(numGamesOther / denominators.other)
+						: 0,
 			},
 			excess: {
-				div: numGamesDiv % denominators.div,
-				conf: numGamesConf % denominators.conf,
-				other: numGamesOther % denominators.other,
+				div: denominators.div > 0 ? numGamesDiv % denominators.div : 0,
+				conf: denominators.conf > 0 ? numGamesConf % denominators.conf : 0,
+				other: denominators.other > 0 ? numGamesOther % denominators.other : 0,
 			},
 		};
 	}
@@ -148,23 +165,23 @@ const finalize = ({
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
 	tidsEither: [number, number][];
 }) => {
-	const MAX_ITERATIONS_1 = 100;
-	const MAX_ITERATIONS_2 = 10000;
+	const MAX_ITERATIONS_1 = 1000;
+	const MAX_ITERATIONS_2 = 1000;
 	let iteration1 = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
-
 	const numGamesDiv = g.get("numGamesDiv");
 	const numGamesConf = g.get("numGamesConf");
-	if (numGamesDiv === null || numGamesConf === null) {
-		throw new Error("Not implemented");
-	}
+
+	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
+	const numGamesDiv2 = numGamesDiv ?? 0;
+	const numGamesConf2 = numGamesConf ?? 0;
 
 	// If it's an odd number of games, round up to allow extra home/away game
 	const maxHomeOrAway = {
-		div: Math.ceil(numGamesDiv / 2),
-		conf: Math.ceil(numGamesConf / 2),
-		other: Math.ceil((g.get("numGames") - numGamesDiv - numGamesConf) / 2),
+		div: Math.ceil(numGamesDiv2 / 2),
+		conf: Math.ceil(numGamesConf2 / 2),
+		other: Math.ceil((g.get("numGames") - numGamesDiv2 - numGamesConf2) / 2),
 	};
 
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
@@ -270,9 +287,12 @@ const finalize = ({
 				const t1 = teamsByTid[tid1];
 
 				let level: typeof LEVELS[number];
-				if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
+				if (numGamesDiv !== null && t0.seasonAttrs.did === t1.seasonAttrs.did) {
 					level = "div";
-				} else if (t0.seasonAttrs.cid === t1.seasonAttrs.cid) {
+				} else if (
+					numGamesConf !== null &&
+					t0.seasonAttrs.cid === t1.seasonAttrs.cid
+				) {
 					level = "conf";
 				} else {
 					level = "other";

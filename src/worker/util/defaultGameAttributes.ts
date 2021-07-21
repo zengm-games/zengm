@@ -61,6 +61,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	minRosterSize: 10,
 	maxRosterSize: 15,
 	numGames: 82, // per season
+	numGamesDiv: 16,
+	numGamesConf: 36,
 	otherTeamsWantToHire: false,
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]

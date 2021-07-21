@@ -808,6 +808,28 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "integer",
 								minimum: 0,
 							},
+							numGamesDiv: {
+								anyOf: [
+									{
+										type: "integer",
+										minimum: 0,
+									},
+									{
+										type: "null",
+									}
+								],
+							},
+							numGamesConf: {
+								anyOf: [
+									{
+										type: "integer",
+										minimum: 0,
+									},
+									{
+										type: "null",
+									}
+								],
+							},
 							numGamesPlayoffSeries: {
 								type: "array",
 								minItems: 1,

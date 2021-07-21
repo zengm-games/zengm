@@ -3,6 +3,7 @@ schedule customization
   - # games vs division opponents
   - # games vs non-division conference opponents
   - Leave blank to not treat div/conf special
+    - "numGamesDiv === null"
 - if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
@@ -22,9 +23,9 @@ schedule customization
   - enforce home/away balance btwn teams for games from "either"
 - port tests over
 - delete old schedule files
-
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?
+- ui for settings
 - eventually
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 

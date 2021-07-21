@@ -15,9 +15,6 @@ type MyTeam = {
 
 const LEVELS = ["div", "conf", "other"] as const;
 
-const numGamesDiv = 16;
-const numGamesConf = 36;
-
 const groupTeamsByDid = (teams: MyTeam[]) => {
 	const divs = g.get("divs");
 
@@ -47,6 +44,12 @@ const getNumGamesTargetsByDid = (
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
 ) => {
 	const numGames = g.get("numGames");
+	const numGamesDiv = g.get("numGamesDiv");
+	const numGamesConf = g.get("numGamesConf");
+	if (numGamesDiv === null || numGamesConf === null) {
+		throw new Error("Not implemented");
+	}
+
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
 		throw new Error(
@@ -149,6 +152,12 @@ const finalize = ({
 	let iteration1 = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
+
+	const numGamesDiv = g.get("numGamesDiv");
+	const numGamesConf = g.get("numGamesConf");
+	if (numGamesDiv === null || numGamesConf === null) {
+		throw new Error("Not implemented");
+	}
 
 	// If it's an odd number of games, round up to allow extra home/away game
 	const maxHomeOrAway = {

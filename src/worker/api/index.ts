@@ -2073,13 +2073,15 @@ const regenerateSchedule = async () => {
 		active: true,
 	});
 
+	const newSchedule = season.newSchedule(teams);
+
 	await toUI("updateLocal", [
 		{
 			games: [],
 		},
 	]);
 
-	await season.setSchedule(season.newSchedule(teams));
+	await season.setSchedule(newSchedule);
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {

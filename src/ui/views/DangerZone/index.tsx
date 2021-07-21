@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { isSport, PHASE, WEBSITE_ROOT } from "../../../common";
 import type { View } from "../../../common/types";
+import { ActionButton } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AutoSave from "./AutoSave";
@@ -14,6 +16,9 @@ const DangerZone = ({
 	useTitleBar({
 		title: "Danger Zone",
 	});
+
+	const [regeneratingSchedule, setRegeneratingSchedule] = useState(false);
+
 	return (
 		<div className="row">
 			<div className="col-md-6">
@@ -175,11 +180,17 @@ const DangerZone = ({
 						</p>
 					)}
 
-					<button
-						type="button"
-						className="btn btn-god-mode border-0 mb-5"
-						disabled={!canRegenerateSchedule || !godMode}
+					<ActionButton
+						className="border-0 mb-5"
+						type="submit"
+						variant="god-mode"
+						disabled={
+							!canRegenerateSchedule || !godMode || regeneratingSchedule
+						}
+						processing={regeneratingSchedule}
 						onClick={async () => {
+							setRegeneratingSchedule(true);
+
 							await toWorker("main", "regenerateSchedule");
 
 							logEvent({
@@ -187,10 +198,12 @@ const DangerZone = ({
 								text: "Schedule regenerated successfully.",
 								type: "info",
 							});
+
+							setRegeneratingSchedule(false);
 						}}
 					>
 						Regenerate schedule
-					</button>
+					</ActionButton>
 				</div>
 			</div>
 

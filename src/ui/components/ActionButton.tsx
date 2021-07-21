@@ -29,7 +29,7 @@ const ActionButton = ({
 	processing: boolean;
 	size?: "lg";
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
-	variant?: "primary" | "secondary";
+	variant?: "primary" | "secondary" | "god-mode";
 }) => {
 	return (
 		<button

@@ -1,5 +1,6 @@
-import { bySport, isSport } from "../../../common";
-import { g, helpers } from "../../util";
+import { isSport } from "../../../common";
+import type { Conditions } from "../../../common/types";
+import { g, helpers, logEvent } from "../../util";
 import newScheduleGood from "./newScheduleGood";
 
 const newSchedule = (
@@ -10,12 +11,9 @@ const newSchedule = (
 		};
 		tid: number;
 	}[],
+	conditions?: Conditions,
 ) => {
-	const tids = bySport({
-		basketball: newScheduleGood(teams),
-		football: newScheduleGood(teams),
-		hockey: newScheduleGood(teams),
-	});
+	const { tids, warning } = newScheduleGood(teams);
 
 	// Add trade deadline
 	const tradeDeadline = g.get("tradeDeadline");
@@ -31,6 +29,17 @@ const newSchedule = (
 			const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
 			tids.splice(ind, 0, [-1, -2]);
 		}
+	}
+
+	if (warning) {
+		logEvent(
+			{
+				type: "error",
+				text: warning,
+				saveToDb: false,
+			},
+			conditions,
+		);
 	}
 
 	return tids;

@@ -1,5 +1,7 @@
 schedule customization
-- if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
+- settings error handling for numGames stuff
+  - negative numbers
+  - div+conf can't exceed numGames
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
   - handle odd number of games*teams, where some team needs to play 1 game fewer than others
@@ -9,10 +11,10 @@ schedule customization
     - if crappy schedule, then how can i even show error in settings UI? would trigger error when league is working normally
     - if hard error, what does that do to existing leagues with invalid settings?
   - does it ever become invalid in historical leagues? if so, change defaults
-  - new league creation?
-  - settings page during new league?
-  - settings page in league?
-  - danger zone regenerate?
+- error handling
+  - if fails to generate, try again with numGamesDiv and numGamesConf constraints removed
+  - if still fails, newGameCrappy (is this actually needed?)
+  - notification in UI about failure when it happens
 - what to do if it works, but is slow, or only intermittently works?
   - warning in UI
 - tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
@@ -23,7 +25,6 @@ schedule customization
 - upgrade old leagues - make settings same as old defaults, so filled in when appropriate and blank otherwise
 - what should default be in new leagues, or how should it be validated if teams/divs change?
 - ui for settings
-- newScheduleCrappy still needed?
 - eventually
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 

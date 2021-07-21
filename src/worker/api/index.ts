@@ -2065,7 +2065,7 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 	}
 };
 
-const regenerateSchedule = async () => {
+const regenerateSchedule = async (conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		seasonAttrs: ["cid", "did"],
@@ -2073,7 +2073,7 @@ const regenerateSchedule = async () => {
 		active: true,
 	});
 
-	const newSchedule = season.newSchedule(teams);
+	const newSchedule = season.newSchedule(teams, conditions);
 
 	await toUI("updateLocal", [
 		{

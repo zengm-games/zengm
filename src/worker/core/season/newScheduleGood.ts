@@ -16,15 +16,22 @@ type MyTeam = {
 
 const LEVELS = ["div", "conf", "other"] as const;
 
+const getNumGames = (ignoreNumGamesDivConf: boolean) => {
+	return {
+		numGames: g.get("numGames"),
+		numGamesDiv: ignoreNumGamesDivConf ? 0 : g.get("numGamesDiv"),
+		numGamesConf: ignoreNumGamesDivConf ? 0 : g.get("numGamesConf"),
+	};
+};
+
 const isDiv = (t: MyTeam, div: Div) => t.seasonAttrs.did === div.did;
 const isConf = (t: MyTeam, div: Div) =>
 	t.seasonAttrs.did !== div.did && t.seasonAttrs.cid === div.cid;
 const isOther = (t: MyTeam, div: Div) => t.seasonAttrs.cid !== div.cid;
 
-const groupTeamsByDid = (teams: MyTeam[]) => {
+const groupTeamsByDid = (teams: MyTeam[], ignoreNumGamesDivConf: boolean) => {
 	const divs = g.get("divs");
-	const numGamesDiv = g.get("numGamesDiv");
-	const numGamesConf = g.get("numGamesConf");
+	const { numGamesDiv, numGamesConf } = getNumGames(ignoreNumGamesDivConf);
 
 	const teamsGroupedByDid: Record<
 		number,
@@ -53,12 +60,14 @@ const groupTeamsByDid = (teams: MyTeam[]) => {
 
 const getNumGamesTargetsByDid = (
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
+	ignoreNumGamesDivConf: boolean,
 ) => {
-	const numGames = g.get("numGames");
+	const numGamesInfo = getNumGames(ignoreNumGamesDivConf);
+	const numGames = numGamesInfo.numGames;
 
 	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
-	const numGamesDiv = g.get("numGamesDiv") ?? 0;
-	const numGamesConf = g.get("numGamesConf") ?? 0;
+	const numGamesDiv = numGamesInfo.numGamesDiv ?? 0;
+	const numGamesConf = numGamesInfo.numGamesConf ?? 0;
 
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
@@ -154,11 +163,13 @@ const initScheduleCounts = (teams: MyTeam[]) => {
 };
 
 const finalize = ({
+	ignoreNumGamesDivConf,
 	numGamesTargetsByDid,
 	teams,
 	teamsGroupedByDid,
 	...toCopy
 }: {
+	ignoreNumGamesDivConf: boolean;
 	numGamesTargetsByDid: ReturnType<typeof getNumGamesTargetsByDid>;
 	teams: MyTeam[];
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>;
@@ -170,8 +181,9 @@ const finalize = ({
 	let iteration1 = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
-	const numGamesDiv = g.get("numGamesDiv");
-	const numGamesConf = g.get("numGamesConf");
+	const { numGames, numGamesDiv, numGamesConf } = getNumGames(
+		ignoreNumGamesDivConf,
+	);
 
 	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
 	const numGamesDiv2 = numGamesDiv ?? 0;
@@ -181,7 +193,7 @@ const finalize = ({
 	const maxHomeOrAway = {
 		div: Math.ceil(numGamesDiv2 / 2),
 		conf: Math.ceil(numGamesConf2 / 2),
-		other: Math.ceil((g.get("numGames") - numGamesDiv2 - numGamesConf2) / 2),
+		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
 	};
 
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
@@ -344,9 +356,15 @@ const finalize = ({
 	return undefined;
 };
 
-const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
-	const teamsGroupedByDid = groupTeamsByDid(teams);
-	const numGamesTargetsByDid = getNumGamesTargetsByDid(teamsGroupedByDid);
+const newScheduleGood = (
+	teams: MyTeam[],
+	ignoreNumGamesDivConf: boolean = false,
+): [number, number][] | undefined => {
+	const teamsGroupedByDid = groupTeamsByDid(teams, ignoreNumGamesDivConf);
+	const numGamesTargetsByDid = getNumGamesTargetsByDid(
+		teamsGroupedByDid,
+		ignoreNumGamesDivConf,
+	);
 	const scheduleCounts = initScheduleCounts(teams);
 
 	const tidsDone: [number, number][] = []; // tid_home, tid_away
@@ -394,6 +412,7 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({
+		ignoreNumGamesDivConf,
 		numGamesTargetsByDid,
 		teams,
 		teamsGroupedByDid,
@@ -421,8 +440,16 @@ const newScheduleGood = (teams: MyTeam[]): [number, number][] | undefined => {
  */
 const newSchedule = (teams: MyTeam[]) => {
 	let tids = newScheduleGood(teams);
+	let warning: string | undefined;
 
 	if (!tids) {
+		warning =
+			'Failed to generate a schedule with the current "# Division Games" and "# Conference Games" settings, so the schedule was generated with those settings ignored.';
+		tids = newScheduleGood(teams, true);
+	}
+
+	if (!tids) {
+		warning = "newScheduleCrappy.";
 		tids = newScheduleCrappy(teams);
 	}
 
@@ -460,7 +487,10 @@ const newSchedule = (teams: MyTeam[]) => {
 	// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
 	tids = flatten(days);
 
-	return tids;
+	return {
+		tids,
+		warning,
+	};
 };
 
 export default newSchedule;

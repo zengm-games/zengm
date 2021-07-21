@@ -1,8 +1,4 @@
 schedule customization
-- settings
-  - # games vs division opponents
-  - # games vs non-division conference opponents
-  - Leave blank to not treat div/conf special
 - if a setting winds up on an even number for the games between 2 teams (including non-conference), balance home/away within that block. otherwise, let it vary only by 1
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly

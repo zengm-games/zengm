@@ -903,7 +903,21 @@ const encodeDecodeFunctions = {
 	int: {
 		stringify: (value: number) => String(value),
 		parse: (value: string) => {
-			const parsed = parseInt(value, 10);
+			const parsed = parseInt(value);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid integer`);
+			}
+			return parsed;
+		},
+	},
+	intOrNull: {
+		stringify: (value: number | null) => (value === null ? "" : String(value)),
+		parse: (value: string) => {
+			if (value === "") {
+				return null;
+			}
+
+			const parsed = parseInt(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid integer`);
 			}
@@ -956,7 +970,22 @@ const categories: {
 		name: "General",
 	},
 	{
-		name: "Season",
+		name: "Schedule",
+		helpText: (
+			<>
+				<p>
+					Changing these settings will only apply to the current season if the
+					regular season or playoffs have not started yet. Otherwise, changes
+					will be applied for next year.
+				</p>
+				<p>
+					The schedule is set by first accounting for "# Division Games" and "#
+					Conference Games" for each team. Then, remaining games are filled with
+					any remaining teams (non-conference teams, plus maybe division and
+					conference teams if one of those settings is left blank).
+				</p>
+			</>
+		),
 	},
 	{
 		name: "Standings",

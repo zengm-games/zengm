@@ -21,6 +21,8 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
 		numGames: unwrapGameAttribute(defaultGameAttributes, "numGames"),
+		numGamesDiv: unwrapGameAttribute(defaultGameAttributes, "numGamesDiv"),
+		numGamesConf: unwrapGameAttribute(defaultGameAttributes, "numGamesConf"),
 		quarterLength: unwrapGameAttribute(defaultGameAttributes, "quarterLength"),
 		maxRosterSize: unwrapGameAttribute(defaultGameAttributes, "maxRosterSize"),
 		minRosterSize: unwrapGameAttribute(defaultGameAttributes, "minRosterSize"),

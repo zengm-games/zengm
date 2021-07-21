@@ -174,12 +174,29 @@ export const settings: {
 		type: "bool",
 	},
 	{
-		category: "Season",
+		category: "Schedule",
 		key: "numGames",
 		name: "# Games Per Season",
 		godModeRequired: "always",
 		type: "int",
-		description: "This will only apply to seasons that have not started yet.",
+	},
+	{
+		category: "Schedule",
+		key: "numGamesDiv",
+		name: "# Division Games",
+		godModeRequired: "always",
+		type: "intOrNull",
+		description:
+			"Number of games versus other teams in the same division. Leave blank to give no special scheduling treatment to division opponents.",
+	},
+	{
+		category: "Schedule",
+		key: "numGamesConf",
+		name: "# Conference Games",
+		godModeRequired: "always",
+		type: "intOrNull",
+		description:
+			"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference opponents.",
 	},
 	{
 		category: "Team",
@@ -201,7 +218,7 @@ export const settings: {
 		type: "int",
 	},
 	{
-		category: "Season",
+		category: "Schedule",
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
@@ -300,7 +317,7 @@ export const settings: {
 		type: "string",
 	},
 	{
-		category: "Season",
+		category: "Schedule",
 		key: "numPlayoffByes",
 		name: "# First Round Byes",
 		godModeRequired: "existingLeagueOnly",
@@ -919,7 +936,7 @@ export const settings: {
 			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
 	},
 	{
-		category: "Season",
+		category: "Schedule",
 		key: "tradeDeadline",
 		name: "Trade Deadline",
 		godModeRequired: "existingLeagueOnly",
@@ -955,7 +972,7 @@ export const settings: {
 if (isSport("basketball")) {
 	settings.push(
 		{
-			category: "Season",
+			category: "Schedule",
 			key: "allStarGame",
 			name: "All-Star Game",
 			type: "floatOrNull",

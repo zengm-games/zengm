@@ -1,5 +1,7 @@
 export type Key =
 	| "numGames"
+	| "numGamesDiv"
+	| "numGamesConf"
 	| "numPeriods"
 	| "quarterLength"
 	| "minRosterSize"
@@ -86,7 +88,7 @@ export type Key =
 export type Category =
 	| "New League"
 	| "General"
-	| "Season"
+	| "Schedule"
 	| "Standings"
 	| "Team"
 	| "Draft"
@@ -108,6 +110,7 @@ export type FieldType =
 	| "float1000"
 	| "floatOrNull"
 	| "int"
+	| "intOrNull"
 	| "jsonString"
 	| "string"
 	| "rangePercent"

@@ -93,6 +93,12 @@ export type Basketball = {
 
 			// Only for the hardcoded current season picks
 			season?: number;
+
+			// Records when picks have been traded
+			range?:
+				| [[number, number], [number, number]]
+				| [[number, number], null]
+				| [null, [number, number]];
 		}[]
 	>;
 	freeAgents: any[];

@@ -225,11 +225,13 @@ export const dpoyScore = (p: PlayerFiltered) => {
 		p.currentStats.gp / defaultGameAttributes.numGames,
 		1,
 	);
+
+	// nicidob kind of arbitrarily made up this formula
 	return (
 		winpScale * p.teamInfo.winp +
-		p.currentStats.dws / 9.6 +
-		(perGameScale * p.currentStats.blk) / 12.3 +
-		(perGameScale * p.currentStats.stl) / 5.1
+		p.currentStats.dws / 3.1 +
+		(perGameScale * p.currentStats.blk) / 4.1 +
+		(perGameScale * p.currentStats.stl) / 1.8
 	);
 };
 

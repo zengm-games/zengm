@@ -30,11 +30,14 @@ export type Basketball = {
 		  }[]
 		| undefined
 	>;
-	stats: {
+	teams: {
 		slug: string;
 		season: number;
 		abbrev: string;
 		jerseyNumber?: string;
+
+		// Currently, phase is only set for players in the alexnoob rosters who move between phases in the same year. So currently I have those for PRESEASON and DRAFT_LOTTERY, meaning it can't identify players who joined a team during the season but before the playoffs. Well, handles the 2021 Horford trade at least.
+		phase?: number;
 	}[];
 	bios: Record<
 		string,

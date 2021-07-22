@@ -120,16 +120,20 @@ const formatPlayerFactory = async (
 			let statsRow;
 			if (options.type === "real" && options.phase >= PHASE.PLAYOFFS) {
 				// Search backwards - last team a player was on that season
-				for (let i = basketball.stats.length - 1; i >= 0; i--) {
-					const row = basketball.stats[i];
-					if (row.slug === slug && row.season === ratings.season) {
+				for (let i = basketball.teams.length - 1; i >= 0; i--) {
+					const row = basketball.teams[i];
+					if (
+						row.slug === slug &&
+						row.season === ratings.season &&
+						(row.phase === undefined || row.phase >= options.phase)
+					) {
 						statsRow = row;
 						break;
 					}
 				}
 			} else {
 				// Search forwards - first team a player was on that season
-				statsRow = basketball.stats.find(
+				statsRow = basketball.teams.find(
 					row => row.slug === slug && row.season === ratings.season,
 				);
 			}
@@ -163,7 +167,7 @@ const formatPlayerFactory = async (
 
 		if (jerseyNumber === undefined && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
-			const statsRow2 = basketball.stats.find(row => row.slug === slug);
+			const statsRow2 = basketball.teams.find(row => row.slug === slug);
 			if (statsRow2) {
 				jerseyNumber = statsRow2.jerseyNumber;
 			}

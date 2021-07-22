@@ -19,8 +19,8 @@ const LEVELS = ["div", "conf", "other"] as const;
 const getNumGames = (ignoreNumGamesDivConf: boolean) => {
 	return {
 		numGames: g.get("numGames"),
-		numGamesDiv: ignoreNumGamesDivConf ? 0 : g.get("numGamesDiv"),
-		numGamesConf: ignoreNumGamesDivConf ? 0 : g.get("numGamesConf"),
+		numGamesDiv: ignoreNumGamesDivConf ? null : g.get("numGamesDiv"),
+		numGamesConf: ignoreNumGamesDivConf ? null : g.get("numGamesConf"),
 	};
 };
 
@@ -104,9 +104,8 @@ const getNumGamesTargetsByDid = (
 
 		const confSize = teamsGroupedByDid[div.did].conf.length;
 
-		// -1 for div size because that's the only one that includes the given team
 		const denominators = {
-			div: divSize - 1,
+			div: divSize,
 			conf: confSize,
 			other: numActiveTeams - confSize - divSize,
 		};
@@ -115,6 +114,14 @@ const getNumGamesTargetsByDid = (
 			conf: numGamesConf,
 			other: numGamesOther,
 		};
+
+		// -1 for the group containing the current team
+		if (numGamesInfo.numGamesDiv === null) {
+			denominators.other -= 1;
+		} else {
+			denominators.div -= 1;
+		}
+
 		for (const level of LEVELS) {
 			if (denominators[level] === 0 && numerators[level] > 0) {
 				return `Team needs ${numerators[level]} games in "${level}" but no teams exist in that group`;
@@ -463,11 +470,13 @@ const newSchedule = (teams: MyTeam[]) => {
 	let warning: string | undefined;
 
 	if (typeof tids === "string") {
+		// console.log("FAILED FIRST TRY", tids)
 		warning = `Failed to generate a schedule with the current "# Division Games" and "# Conference Games" settings, so the schedule was generated with those settings ignored. Error from schedule generator: ${tids}`;
 		tids = newScheduleGood(teams, true);
 	}
 
 	if (typeof tids === "string") {
+		// console.log("CRAPPY", tids)
 		tids = newScheduleCrappy(teams);
 	}
 

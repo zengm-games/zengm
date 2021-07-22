@@ -35,36 +35,6 @@ describe("worker/core/season/newScheduleGood", () => {
 			assert.strictEqual(tids.length, 1230);
 		});
 
-		test("warning if cannot make a full schedule due to there not being enough non-conference games", () => {
-			g.setWithoutSavingToDB("numGamesDiv", 2);
-			g.setWithoutSavingToDB("numGamesConf", 2);
-			g.setWithoutSavingToDB(
-				"divs",
-				g.get("divs").map(div => ({
-					...div,
-					cid: 0,
-				})),
-			);
-			g.setWithoutSavingToDB(
-				"confs",
-				g.get("confs").filter(conf => conf.cid === 0),
-			);
-			const { tids, warning } = newSchedule(
-				defaultTeams.map(t => ({
-					...t,
-					seasonAttrs: {
-						cid: 0,
-						did: t.seasonAttrs.did,
-					},
-				})),
-			);
-
-			testHelpers.resetG();
-
-			assert.strictEqual(tids.length, 1230);
-			assert.strictEqual(typeof warning, "string");
-		});
-
 		test("schedule 41 home games and 41 away games for each team", () => {
 			const { tids, warning } = newSchedule(defaultTeams);
 			assert.strictEqual(warning, undefined);
@@ -203,6 +173,36 @@ describe("worker/core/season/newScheduleGood", () => {
 					8,
 				);
 			}
+		});
+
+		test("warning if cannot make a full schedule due to there not being enough non-conference games", () => {
+			g.setWithoutSavingToDB("numGamesDiv", 2);
+			g.setWithoutSavingToDB("numGamesConf", 2);
+			g.setWithoutSavingToDB(
+				"divs",
+				g.get("divs").map(div => ({
+					...div,
+					cid: 0,
+				})),
+			);
+			g.setWithoutSavingToDB(
+				"confs",
+				g.get("confs").filter(conf => conf.cid === 0),
+			);
+			const { tids, warning } = newSchedule(
+				defaultTeams.map(t => ({
+					...t,
+					seasonAttrs: {
+						cid: 0,
+						did: t.seasonAttrs.did,
+					},
+				})),
+			);
+
+			testHelpers.resetG();
+
+			assert.strictEqual(tids.length, 1230);
+			assert.strictEqual(typeof warning, "string");
 		});
 	});
 });

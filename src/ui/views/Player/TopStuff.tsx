@@ -266,7 +266,6 @@ const TopStuff = ({
 > & {
 	season?: number;
 }) => {
-	console.log(player.draft);
 	let draftInfo: ReactNode = null;
 	if (player.draft.round > 0) {
 		draftInfo = (

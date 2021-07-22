@@ -345,6 +345,44 @@ const getLeague = async (options: GetLeagueOptions) => {
 						return false;
 					}
 
+					// Handle draft picks with trade history
+					if (dp.range) {
+						// Return true for null because we only test the first/last range component with the before/after function
+						const isBeforeRequestedSeasonPhase = (
+							rangeComponent: [number, number] | null,
+						) => {
+							if (rangeComponent === null) {
+								return true;
+							}
+							return (
+								rangeComponent[0] < options.season ||
+								(rangeComponent[0] === options.season &&
+									rangeComponent[1] <= options.phase)
+							);
+						};
+						const isAfterRequestedSeasonPhase = (
+							rangeComponent: [number, number] | null,
+						) => {
+							if (rangeComponent === null) {
+								return true;
+							}
+							return (
+								rangeComponent[0] > options.season ||
+								(rangeComponent[0] === options.season &&
+									rangeComponent[1] >= options.phase)
+							);
+						};
+
+						if (
+							isBeforeRequestedSeasonPhase(dp.range[0]) &&
+							isAfterRequestedSeasonPhase(dp.range[1])
+						) {
+							return true;
+						}
+
+						return false;
+					}
+
 					return true;
 				})
 				.map(dp => {

@@ -71,9 +71,7 @@ const getNumGamesTargetsByDid = (
 
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
-		throw new Error(
-			"Can't have more division and conference games than total games",
-		);
+		return "Can't have more division and conference games than total games";
 	}
 
 	const numGamesTargetsByDid: Record<
@@ -112,24 +110,37 @@ const getNumGamesTargetsByDid = (
 			conf: confSize,
 			other: numActiveTeams - confSize - divSize,
 		};
+		const numerators = {
+			div: numGamesDiv,
+			conf: numGamesConf,
+			other: numGamesOther,
+		};
+		for (const level of LEVELS) {
+			if (denominators[level] === 0 && numerators[level] > 0) {
+				return `Team needs ${numerators[level]} games in "${level}" but no teams exist in that group`;
+			}
+		}
 
 		numGamesTargetsByDid[div.did] = {
 			perTeam: {
 				div:
-					denominators.div > 0 ? Math.floor(numGamesDiv / denominators.div) : 0,
+					denominators.div > 0
+						? Math.floor(numerators.div / denominators.div)
+						: 0,
 				conf:
 					denominators.conf > 0
-						? Math.floor(numGamesConf / denominators.conf)
+						? Math.floor(numerators.conf / denominators.conf)
 						: 0,
 				other:
 					denominators.other > 0
-						? Math.floor(numGamesOther / denominators.other)
+						? Math.floor(numerators.other / denominators.other)
 						: 0,
 			},
 			excess: {
-				div: denominators.div > 0 ? numGamesDiv % denominators.div : 0,
-				conf: denominators.conf > 0 ? numGamesConf % denominators.conf : 0,
-				other: denominators.other > 0 ? numGamesOther % denominators.other : 0,
+				div: denominators.div > 0 ? numerators.div % denominators.div : 0,
+				conf: denominators.conf > 0 ? numerators.conf % denominators.conf : 0,
+				other:
+					denominators.other > 0 ? numerators.other % denominators.other : 0,
 			},
 		};
 	}
@@ -170,7 +181,10 @@ const finalize = ({
 	...toCopy
 }: {
 	ignoreNumGamesDivConf: boolean;
-	numGamesTargetsByDid: ReturnType<typeof getNumGamesTargetsByDid>;
+	numGamesTargetsByDid: Exclude<
+		ReturnType<typeof getNumGamesTargetsByDid>,
+		string
+	>;
 	teams: MyTeam[];
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>;
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
@@ -359,12 +373,17 @@ const finalize = ({
 const newScheduleGood = (
 	teams: MyTeam[],
 	ignoreNumGamesDivConf: boolean = false,
-): [number, number][] | undefined => {
+): [number, number][] | string => {
 	const teamsGroupedByDid = groupTeamsByDid(teams, ignoreNumGamesDivConf);
+
 	const numGamesTargetsByDid = getNumGamesTargetsByDid(
 		teamsGroupedByDid,
 		ignoreNumGamesDivConf,
 	);
+	if (typeof numGamesTargetsByDid === "string") {
+		return numGamesTargetsByDid;
+	}
+
 	const scheduleCounts = initScheduleCounts(teams);
 
 	const tidsDone: [number, number][] = []; // tid_home, tid_away
@@ -428,6 +447,7 @@ const newScheduleGood = (
 	}
 
 	// console.log("failed");
+	return "Failed to find valid schedule";
 };
 
 /**
@@ -442,14 +462,12 @@ const newSchedule = (teams: MyTeam[]) => {
 	let tids = newScheduleGood(teams);
 	let warning: string | undefined;
 
-	if (!tids) {
-		warning =
-			'Failed to generate a schedule with the current "# Division Games" and "# Conference Games" settings, so the schedule was generated with those settings ignored.';
+	if (typeof tids === "string") {
+		warning = `Failed to generate a schedule with the current "# Division Games" and "# Conference Games" settings, so the schedule was generated with those settings ignored. Error from schedule generator: ${tids}`;
 		tids = newScheduleGood(teams, true);
 	}
 
-	if (!tids) {
-		warning = "newScheduleCrappy.";
+	if (typeof tids === "string") {
 		tids = newScheduleCrappy(teams);
 	}
 

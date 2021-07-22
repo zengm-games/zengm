@@ -1,7 +1,5 @@
 schedule customization
 - mention danger zone in warning message from newScheduleGood
-- handle one conference league
-  - error when it can't find enough games
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
   - handle odd number of games*teams, where some team needs to play 1 game fewer than others

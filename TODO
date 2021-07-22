@@ -1,5 +1,5 @@
 schedule customization
-- mention danger zone in the settings help and in warning message from newScheduleGood
+- mention danger zone in warning message from newScheduleGood
 - handle one conference league
   - error when it can't find enough games
 - odd stuff

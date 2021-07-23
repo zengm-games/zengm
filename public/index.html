@@ -63,13 +63,13 @@ if (window.enableLogging) {
   (function() {
     var ARTICLE_URL = window.location.href;
     var CONTENT_ID = 'everything';
-    var s = document.createElement("script");
-    s.async = true;
-    s.src = 'https://survey.g.doubleclick.net/survey?site=GOOGLE_SURVEYS_ID&url='+encodeURIComponent(ARTICLE_URL)+
-      (CONTENT_ID ? '&cid='+encodeURIComponent(CONTENT_ID) : '')+
-      '&random='+(new Date).getTime();
-    s.type = "text/javascript";
-    document.head.appendChild(s);
+    document.write(
+      '<scr'+'ipt '+
+      'src="//survey.g.doubleclick.net/survey?site=GOOGLE_SURVEYS_ID'+
+      '&amp;url='+encodeURIComponent(ARTICLE_URL)+
+      (CONTENT_ID ? '&amp;cid='+encodeURIComponent(CONTENT_ID) : '')+
+      '&amp;random='+(new Date).getTime()+
+      '" type="text/javascript">'+'\x3C/scr'+'ipt>');
   })();
 }
 

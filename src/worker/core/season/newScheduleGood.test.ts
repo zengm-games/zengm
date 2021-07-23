@@ -202,7 +202,7 @@ describe("worker/core/season/newScheduleGood", () => {
 
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups, warning } = newSchedule(teams);
+					const { tids: matchups } = newSchedule(teams);
 
 					// Total number of games
 					assert.strictEqual(
@@ -231,7 +231,7 @@ describe("worker/core/season/newScheduleGood", () => {
 
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups, warning } = newSchedule(teams); // Total number of games
+					const { tids: matchups } = newSchedule(teams); // Total number of games
 
 					assert.strictEqual(
 						matchups.length,
@@ -273,7 +273,7 @@ describe("worker/core/season/newScheduleGood", () => {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups, warning } = newSchedule(teams); // Total number of games
+					const { tids: matchups } = newSchedule(teams); // Total number of games
 
 					assert.strictEqual(
 						matchups.length * 2,

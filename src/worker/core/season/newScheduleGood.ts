@@ -1,7 +1,7 @@
 import range from "lodash-es/range";
 import flatten from "lodash-es/flatten";
 import { g, helpers, random } from "../../../worker/util";
-import newScheduleCrappy from "./newScheduleCrappy";
+// import newScheduleCrappy from "./newScheduleCrappy";
 import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
@@ -226,7 +226,7 @@ const finalize = ({
 	const MAX_ITERATIONS_1 = 1000;
 	const MAX_ITERATIONS_2 = 1000;
 	let iteration1 = 0;
-	let iteration2all = 0;
+	// let iteration2all = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
 	const { numGames, numGamesDiv, numGamesConf } = getNumGames(
@@ -354,7 +354,7 @@ const finalize = ({
 			const scheduleCounts2 = helpers.deepCopy(toCopy.scheduleCounts);
 
 			iteration2 += 1;
-			iteration2all += 1;
+			// iteration2all += 1;
 
 			// Assign tidsEither to home/away games
 			const tidsDone: [number, number][] = []; // tid_home, tid_away

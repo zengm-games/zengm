@@ -200,6 +200,7 @@ const finalize = ({
 	const MAX_ITERATIONS_1 = 1000;
 	const MAX_ITERATIONS_2 = 1000;
 	let iteration1 = 0;
+	let iteration2all = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
 	const { numGames, numGamesDiv, numGamesConf } = getNumGames(
@@ -309,11 +310,21 @@ const finalize = ({
 			const scheduleCounts2 = helpers.deepCopy(scheduleCounts);
 
 			iteration2 += 1;
+			iteration2all += 1;
 
 			// Assign tidsEither to home/away games
 			const tidsDone: [number, number][] = []; // tid_home, tid_away
 
 			random.shuffle(tidsEither);
+
+			const tidsDoneIndexesByLevel: Record<
+				typeof LEVELS[number],
+				Record<number, number[]>
+			> = {
+				div: {},
+				conf: {},
+				other: {},
+			};
 
 			for (const [tid0, tid1] of tidsEither) {
 				const t0 = teamsByTid[tid0];
@@ -334,28 +345,66 @@ const finalize = ({
 				scheduleCounts2[tid0][level].either -= 1;
 				scheduleCounts2[tid1][level].either -= 1;
 
-				const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
-					maxHomeOrAway[level] - scheduleCounts2[tid][level][homeAway];
-				const cutoffDiffs = [tid0, tid1].map(tid => ({
-					home: cutoffDiff(tid, "home"),
-					away: cutoffDiff(tid, "away"),
-				}));
+				const getHomeMinCutoffDiffs = () => {
+					const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
+						maxHomeOrAway[level] - scheduleCounts2[tid][level][homeAway];
+					const cutoffDiffs = [tid0, tid1].map(tid => ({
+						home: cutoffDiff(tid, "home"),
+						away: cutoffDiff(tid, "away"),
+					}));
 
-				// Should we first try making tid0 or tid1 home? Whichever has someone closest to the cutoff
-				const tid0HomeMinCutoffDiff = Math.min(
-					cutoffDiffs[0].home,
-					cutoffDiffs[1].away,
-				);
-				const tid1HomeMinCutoffDiff = Math.min(
-					cutoffDiffs[1].home,
-					cutoffDiffs[0].away,
-				);
+					// Should we first try making tid0 or tid1 home? Whichever has someone closest to the cutoff
+					return [
+						Math.min(cutoffDiffs[0].home, cutoffDiffs[1].away),
+						Math.min(cutoffDiffs[1].home, cutoffDiffs[0].away),
+					];
+				};
 
-				if (tid0HomeMinCutoffDiff === 0 && tid1HomeMinCutoffDiff === 0) {
-					// Failed to make matchups, try again
-					// console.log(iteration1, iteration2, `${tidsDone.length} / ${tidsEither.length}`);
-					continue MAIN_LOOP_2;
-				} else if (tid0HomeMinCutoffDiff > tid1HomeMinCutoffDiff) {
+				let homeMinCutoffDiffs = getHomeMinCutoffDiffs();
+
+				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
+					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs);
+
+					// Try swapping a past matchup, if that is valid
+					let swapped = false;
+					for (const tid of [tid0, tid1]) {
+						if (tidsDoneIndexesByLevel[level][tid] && !swapped) {
+							for (const tidsDoneIndex of tidsDoneIndexesByLevel[level][tid]) {
+								const matchup = tidsDone[tidsDoneIndex];
+
+								// Will both teams still be valid if we swap?
+								if (
+									maxHomeOrAway[level] -
+										scheduleCounts2[matchup[0]][level].away >
+										0 &&
+									maxHomeOrAway[level] -
+										scheduleCounts2[matchup[1]][level].home >
+										0
+								) {
+									scheduleCounts2[matchup[0]][level].home -= 1;
+									scheduleCounts2[matchup[0]][level].away += 1;
+									scheduleCounts2[matchup[1]][level].home += 1;
+									scheduleCounts2[matchup[1]][level].away -= 1;
+									matchup.reverse();
+
+									homeMinCutoffDiffs = getHomeMinCutoffDiffs();
+
+									swapped = true;
+									break;
+								}
+							}
+						}
+					}
+
+					if (!swapped) {
+						// Failed to make matchups, try again
+						continue MAIN_LOOP_2;
+					}
+				}
+
+				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
+					throw new Error("Should never happen");
+				} else if (homeMinCutoffDiffs[0] > homeMinCutoffDiffs[1]) {
 					// tid0 home
 					tidsDone.push([tid0, tid1]);
 					scheduleCounts2[tid0][level].home += 1;
@@ -366,9 +415,17 @@ const finalize = ({
 					scheduleCounts2[tid1][level].home += 1;
 					scheduleCounts2[tid0][level].away += 1;
 				}
+
+				// Track in tidsDoneIndexesByLevel
+				for (const tid of [tid0, tid1]) {
+					if (!tidsDoneIndexesByLevel[level][tid]) {
+						tidsDoneIndexesByLevel[level][tid] = [];
+					}
+					tidsDoneIndexesByLevel[level][tid].push(tidsDone.length - 1);
+				}
 			}
 
-			// console.log(iteration1, iteration2)
+			// console.log('iteration counts', iteration1, iteration2, iteration2all);
 			return tidsDone;
 		}
 	}
@@ -480,6 +537,7 @@ const newSchedule = (teams: MyTeam[]) => {
 		// console.log("CRAPPY", tids)
 		// warning = "CRAPPY";
 		// tids = newScheduleCrappy(teams);
+		tids = [];
 	}
 
 	// Order the schedule so that it takes fewer days to play

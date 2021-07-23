@@ -54,7 +54,6 @@ describe("worker/core/season/newScheduleGood", () => {
 			}
 
 			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
-
 			for (const numGames of [...Object.values(home), ...Object.values(away)]) {
 				assert.strictEqual(numGames, 41);
 			}
@@ -194,9 +193,15 @@ describe("worker/core/season/newScheduleGood", () => {
 			g.setWithoutSavingToDB("allStarGame", null);
 		});
 
+		test.skip("performance with 50 teams", () => {
+			g.setWithoutSavingToDB("numGames", 10);
+			const teams = makeTeams(50);
+			const { tids: matchups, warning } = newSchedule(teams);
+		});
+
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
-			for (let numGames = 28; numGames < 50; numGames += 1) {
-				for (let numTeams = 2; numTeams < 3; numTeams += 1) {
+			for (let numGames = 2; numGames < 50; numGames += 1) {
+				for (let numTeams = 2; numTeams < 50; numTeams += 1) {
 					if ((numTeams * numGames) % 2 === 1) {
 						continue;
 					}
@@ -237,7 +242,7 @@ describe("worker/core/season/newScheduleGood", () => {
 					assert.strictEqual(
 						matchups.length * 2 + 1,
 						numGames * numTeams,
-						"Total number of games is wrong",
+						`Total number of games is wrong for ${numTeams} teams and ${numGames} games`,
 					);
 
 					// Number of games for each teams
@@ -258,7 +263,10 @@ describe("worker/core/season/newScheduleGood", () => {
 						}
 					}
 
-					assert(oneShort, "Did not find team with one game short");
+					assert(
+						oneShort,
+						`Did not find team with one game short for ${numTeams} teams and ${numGames} games`,
+					);
 				}
 			}
 		});

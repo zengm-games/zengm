@@ -1,5 +1,4 @@
 schedule customization
-- is it still too slow to have conf constraints in football?
 - mention danger zone in warning message from newScheduleGood
 - odd stuff
   - handle odd number of games per team, where home/away can't be balanced correctly
@@ -21,8 +20,11 @@ schedule customization
 - what should default be in new leagues, or how should it be validated if teams/divs change?
 - ui for settings
 - 1949, 1950 generated schedule is weird, not enough games
+- hockey defaults?
 - eventually
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
+- blog
+  - conference constraint for FBGM
 
 foul trouble
 - players should play different when they're in foul trouble

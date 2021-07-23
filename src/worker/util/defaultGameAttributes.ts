@@ -185,7 +185,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 		? {
 				numGames: 16,
 				numGamesDiv: 6,
-				numGamesConf: null,
+				numGamesConf: 6,
 				quarterLength: 15,
 				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
 				numPlayoffByes: wrap(2),

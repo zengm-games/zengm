@@ -250,7 +250,6 @@ const finalize = ({
 
 		// Copy some variables
 		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
-		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
@@ -320,8 +319,10 @@ const finalize = ({
 						// Record as an "either" game
 						// console.log('found matchup', t.tid, t2.tid);
 						tidsEither.push([t.tid, t2.tid]);
-						scheduleCounts[t.tid][level].either += 1;
-						scheduleCounts[t2.tid][level].either += 1;
+
+						// No point copying this again and tracking it, since it's not used
+						// scheduleCounts[t.tid][level].either += 1;
+						// scheduleCounts[t2.tid][level].either += 1;
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -350,7 +351,7 @@ const finalize = ({
 		// Assign all the "either" games to home/away, while balancing home/away within div/conf/other
 		let iteration2 = 0;
 		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS_2) {
-			const scheduleCounts2 = helpers.deepCopy(scheduleCounts);
+			const scheduleCounts2 = helpers.deepCopy(toCopy.scheduleCounts);
 
 			iteration2 += 1;
 			iteration2all += 1;

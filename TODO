@@ -1,7 +1,6 @@
 schedule customization
 - "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
   - enforce home/away balance btwn teams for games from "either"
-- tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
 - delete old schedule files
 - delete newScheduleCrappy?
   - log times its called in bugsnag?

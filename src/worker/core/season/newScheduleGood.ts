@@ -72,7 +72,7 @@ const getNumGamesTargetsByDid = (
 
 	const numGamesOther = numGames - numGamesDiv - numGamesConf;
 	if (numGamesOther < 0) {
-		return "Can't have more division and conference games than total games";
+		return "Can't have more division and conference games than total games.";
 	}
 
 	const numGamesTargetsByDid: Record<
@@ -124,7 +124,13 @@ const getNumGamesTargetsByDid = (
 
 		for (const level of LEVELS) {
 			if (denominators[level] === 0 && numerators[level] > 0) {
-				return `Team needs ${numerators[level]} games in "${level}" but no teams exist in that group`;
+				if (level === "div") {
+					return `Team needs ${numerators[level]} division games but there are no other teams in the ${div.name} division.`;
+				} else if (level === "conf") {
+					return `Team needs ${numerators[level]} conference games outside its division, but the ${div.name} division is the only division in its conference.`;
+				} else {
+					return `Team needs ${numerators[level]} non-conference games, but there is only one conference.`;
+				}
 			}
 		}
 
@@ -448,7 +454,7 @@ const finalize = ({
 	}
 
 	// No valid schedule found
-	return "Failed to find valid schedule";
+	return "Failed to find valid schedule.";
 };
 
 const newScheduleGood = (
@@ -544,7 +550,7 @@ const newSchedule = (teams: MyTeam[]) => {
 
 	if (typeof tids === "string") {
 		// console.log("FAILED FIRST TRY", tids)
-		warning = `Failed to generate a schedule with the current "# Division Games" and "# Conference Games" settings, so the schedule was generated with those settings ignored. Error from schedule generator: ${tids}`;
+		warning = tids;
 		tids = newScheduleGood(teams, true);
 	}
 

@@ -36,7 +36,11 @@ const newSchedule = (
 		logEvent(
 			{
 				type: "error",
-				text: warning,
+				text: `${warning} If you want to <a href="${helpers.leagueUrl([
+					"settings",
+				])}">try changing some settings</a> (# Games, # Division Games, and # Conference Games), you can then regenerate the schedule in the <a href="${helpers.leagueUrl(
+					["danger_zone"],
+				)}">danger zone</a>.`,
 				saveToDb: false,
 			},
 			conditions,

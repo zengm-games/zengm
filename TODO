@@ -1,12 +1,8 @@
 schedule customization
-- mention danger zone in warning message from newScheduleGood
 - do default BBGM settings work in historical leagues, or does that need to change over time?
 - error handling
   - if fails to generate, try again with numGamesDiv and numGamesConf constraints removed
   - if still fails, newGameCrappy (is this actually needed?)
-  - notification in UI about failure when it happens
-- what to do if it works, but is slow, or only intermittently works?
-  - warning in UI
 - tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?
 - "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
   - enforce home/away balance btwn teams for games from "either"

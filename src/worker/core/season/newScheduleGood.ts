@@ -14,7 +14,7 @@ type MyTeam = {
 	tid: number;
 };
 
-type NewScheduleGoodSettings = {
+export type NewScheduleGoodSettings = {
 	divs: GameAttributesLeague["divs"];
 	numGames: GameAttributesLeague["numGames"];
 	numGamesConf: GameAttributesLeague["numGamesConf"];

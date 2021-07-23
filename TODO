@@ -1,6 +1,4 @@
 schedule customization
-- what should default be in new leagues, or how should it be validated if teams/divs change?
-  - try during league creation, same playce as numGamesPlayoffSeries check. if it fails, decrease both by 2 and try again. if it hits 0, set to null
 - upgrade old leagues
   - make settings same as old defaults, so filled in when appropriate and blank otherwise
   - OR MAYBE BETTER - run the same thing as new leagues
@@ -75,6 +73,7 @@ frivolities
     - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
     - worst contract
   - GOAT Lab for seasons
+  - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons

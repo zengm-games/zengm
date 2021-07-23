@@ -10,6 +10,7 @@ import type {
 } from "../../../common/types";
 import { defaultGameAttributes, helpers } from "../../util";
 import { wrap } from "../../util/g";
+import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings";
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
@@ -231,6 +232,18 @@ const createGameAttributes = ({
 				}
 			}
 		}
+	}
+
+	{
+		const info = getInitialNumGamesConfDivSettings(teamInfos, {
+			divs: unwrapGameAttribute(gameAttributes, "divs"),
+			numGames: gameAttributes.numGames,
+			numGamesConf: gameAttributes.numGamesConf,
+			numGamesDiv: gameAttributes.numGamesDiv,
+		});
+
+		gameAttributes.numGamesDiv = info.numGamesDiv;
+		gameAttributes.numGamesConf = info.numGamesConf;
 	}
 
 	return gameAttributes;

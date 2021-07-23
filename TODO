@@ -1,9 +1,4 @@
 schedule customization
-- upgrade old leagues
-  - make settings same as old defaults, so filled in when appropriate and blank otherwise
-  - OR MAYBE BETTER - run the same thing as new leagues
-    - need g.whatever when running newScheduleGood? can use setWithoutSavingToDB?
-  - same for league files, based on version
 - "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
   - enforce home/away balance btwn teams for games from "either"
 - tracking "either" inside scheduleCounts - does it matter? can get rid of 1st scheduleCounts copy, and then rename scheduleCounts2 -> scheduleCounts?

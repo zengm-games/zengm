@@ -2,10 +2,12 @@ import { StoreNames, unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	gameAttributesArrayToObject,
 	isSport,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	PHASE,
 	PLAYER,
+	unwrapGameAttribute,
 } from "../../common";
 import { player, season } from "../core";
 import { idb } from ".";
@@ -35,6 +37,7 @@ import type {
 	ScheduledEventWithoutKey,
 	HeadToHead,
 } from "../../common/types";
+import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -332,6 +335,43 @@ const upgrade38 = (transaction: VersionChangeTransaction) => {
 			for (const game of updated) {
 				scheduleStore.put(game);
 			}
+		};
+	};
+};
+
+const upgrade45 = (transaction: VersionChangeTransaction) => {
+	const tx = unwrap(transaction);
+
+	const gameAttributesStore = tx.objectStore("gameAttributes");
+
+	gameAttributesStore.getAll().onsuccess = (event: any) => {
+		const gameAttributes = gameAttributesArrayToObject(event.target.result);
+
+		const settings = {
+			divs: unwrapGameAttribute(gameAttributes, "divs"),
+			numGames: gameAttributes.numGames,
+			numGamesConf: defaultGameAttributes.numGamesConf,
+			numGamesDiv: defaultGameAttributes.numGamesDiv,
+		};
+
+		tx.objectStore("teams").getAll().onsuccess = (event2: any) => {
+			const teams = event2.target.result;
+			console.log(teams);
+
+			const { numGamesDiv, numGamesConf } = getInitialNumGamesConfDivSettings(
+				teams,
+				settings,
+			);
+
+			gameAttributesStore.put({
+				key: "numGamesDiv",
+				value: numGamesDiv,
+			});
+
+			gameAttributesStore.put({
+				key: "numGamesConf",
+				value: numGamesConf,
+			});
 		};
 	};
 };
@@ -1021,6 +1061,10 @@ const migrate = ({
 				return t;
 			}
 		});
+	}
+
+	if (oldVersion <= 44) {
+		upgrade45(transaction);
 	}
 };
 

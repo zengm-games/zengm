@@ -550,10 +550,12 @@ const newSchedule = (teams: MyTeam[]) => {
 
 	if (typeof tids === "string") {
 		// console.log("FAILED SECOND TRY", tids)
-		// warning = "CRAPPY";
+		warning = "You broke the schedule generator! Pls tell me how.";
 		// tids = newScheduleCrappy(teams);
 		tids = [];
 	}
+
+	console.log(g.get("season"), warning);
 
 	// Order the schedule so that it takes fewer days to play
 	random.shuffle(tids);

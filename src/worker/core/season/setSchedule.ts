@@ -75,7 +75,6 @@ const setSchedule = async (tids: [number, number][]) => {
 		});
 	}
 
-	console.log("call mergeGames", games);
 	await toUI("mergeGames", [games]);
 };
 

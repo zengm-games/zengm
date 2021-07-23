@@ -59,6 +59,7 @@ const groupTeamsByDid = (teams: MyTeam[], ignoreNumGamesDivConf: boolean) => {
 };
 
 const getNumGamesTargetsByDid = (
+	numActiveTeams: number,
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
 	ignoreNumGamesDivConf: boolean,
 ) => {
@@ -94,7 +95,6 @@ const getNumGamesTargetsByDid = (
 	> = {};
 
 	const divs = g.get("divs");
-	const numActiveTeams = g.get("numActiveTeams");
 
 	for (const div of divs) {
 		const divSize = teamsGroupedByDid[div.did].div.length;
@@ -384,6 +384,7 @@ const newScheduleGood = (
 	const teamsGroupedByDid = groupTeamsByDid(teams, ignoreNumGamesDivConf);
 
 	const numGamesTargetsByDid = getNumGamesTargetsByDid(
+		teams.length,
 		teamsGroupedByDid,
 		ignoreNumGamesDivConf,
 	);
@@ -477,7 +478,8 @@ const newSchedule = (teams: MyTeam[]) => {
 
 	if (typeof tids === "string") {
 		// console.log("CRAPPY", tids)
-		tids = newScheduleCrappy(teams);
+		// warning = "CRAPPY";
+		// tids = newScheduleCrappy(teams);
 	}
 
 	// Order the schedule so that it takes fewer days to play

@@ -195,8 +195,8 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
-			for (let numGames = 2; numGames < 50; numGames += 1) {
-				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
+			for (let numGames = 28; numGames < 50; numGames += 1) {
+				for (let numTeams = 2; numTeams < 3; numTeams += 1) {
 					if ((numTeams * numGames) % 2 === 1) {
 						continue;
 					}
@@ -205,18 +205,11 @@ describe("worker/core/season/newScheduleGood", () => {
 					const teams = makeTeams(numTeams);
 					const { tids: matchups, warning } = newSchedule(teams);
 
-					console.log(
-						numGames,
-						numTeams,
-						matchups.length * 2,
-						numGames * numTeams,
-					);
-
 					// Total number of games
 					assert.strictEqual(
 						matchups.length * 2,
 						numGames * numTeams,
-						"Total number of games is wrong",
+						`Total number of games is wrong for ${numTeams} teams and ${numGames} games`,
 					);
 
 					// Number of games for each teams

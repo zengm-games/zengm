@@ -1,9 +1,5 @@
 schedule customization
 - mention danger zone in warning message from newScheduleGood
-- odd stuff
-  - handle odd number of games per team, where home/away can't be balanced correctly
-  - handle odd number of games*teams, where some team needs to play 1 game fewer than others
-  - this happens at all levels, both for finding games and setting home/away. like if 5 teams per division and you want 3 games per team, that doesn't work
 - do default BBGM settings work in historical leagues, or does that need to change over time?
 - error handling
   - if fails to generate, try again with numGamesDiv and numGamesConf constraints removed

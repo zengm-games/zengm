@@ -241,6 +241,14 @@ const finalize = ({
 			// Shuffle teams, cause particularly with confs you have the same teams available in multiple different groups, since in-division teams are already subtracted, so we don't want to fall into a rut based on team order
 			const teamIndexes = range(teams.length);
 			random.shuffle(teamIndexes);
+			// console.log('excessGamesRemainingByTid',excessGamesRemainingByTid);
+
+			// Used when numGames * numTeams is odd
+			const seenOneTeamWithOneGameRemaining = {
+				div: false,
+				conf: false,
+				other: false,
+			};
 
 			for (const teamIndex of teamIndexes) {
 				const t = teams[teamIndex];
@@ -294,6 +302,14 @@ const finalize = ({
 						if (excessGamesRemaining[level] === 0) {
 							break;
 						}
+					}
+
+					if (
+						excessGamesRemaining[level] === 1 &&
+						!seenOneTeamWithOneGameRemaining[level]
+					) {
+						excessGamesRemaining[level] -= 1;
+						seenOneTeamWithOneGameRemaining[level] = true;
 					}
 
 					if (excessGamesRemaining[level] > 0) {
@@ -385,6 +401,7 @@ const finalize = ({
 									scheduleCounts2[matchup[0]][level].away += 1;
 									scheduleCounts2[matchup[1]][level].home += 1;
 									scheduleCounts2[matchup[1]][level].away -= 1;
+
 									matchup.reverse();
 
 									homeMinCutoffDiffs = getHomeMinCutoffDiffs();
@@ -431,7 +448,7 @@ const finalize = ({
 	}
 
 	// No valid schedule found
-	return undefined;
+	return "Failed to find valid schedule";
 };
 
 const newScheduleGood = (
@@ -504,15 +521,13 @@ const newScheduleGood = (
 		tidsEither,
 	});
 
-	if (tidsDone2) {
-		const tids = [...tidsDone, ...tidsDone2];
-
-		// console.log("tids", tids);
-		return tids;
+	if (typeof tidsDone2 === "string") {
+		return tidsDone2;
 	}
 
-	// console.log("failed");
-	return "Failed to find valid schedule";
+	const tids = [...tidsDone, ...tidsDone2];
+	// console.log("tids", tids);
+	return tids;
 };
 
 /**
@@ -534,7 +549,7 @@ const newSchedule = (teams: MyTeam[]) => {
 	}
 
 	if (typeof tids === "string") {
-		// console.log("CRAPPY", tids)
+		// console.log("FAILED SECOND TRY", tids)
 		// warning = "CRAPPY";
 		// tids = newScheduleCrappy(teams);
 		tids = [];

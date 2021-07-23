@@ -4,7 +4,7 @@ import { g, helpers, random } from "../../../worker/util";
 import newScheduleCrappy from "./newScheduleCrappy";
 import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
-import type { Div } from "../../../common/types";
+import type { Div, GameAttributesLeague } from "../../../common/types";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -14,13 +14,23 @@ type MyTeam = {
 	tid: number;
 };
 
+type NewScheduleGoodSettings = {
+	divs: GameAttributesLeague["divs"];
+	numGames: GameAttributesLeague["numGames"];
+	numGamesConf: GameAttributesLeague["numGamesConf"];
+	numGamesDiv: GameAttributesLeague["numGamesDiv"];
+};
+
 const LEVELS = ["div", "conf", "other"] as const;
 
-const getNumGames = (ignoreNumGamesDivConf: boolean) => {
+const getNumGames = (
+	settings: NewScheduleGoodSettings,
+	ignoreNumGamesDivConf: boolean,
+) => {
 	return {
-		numGames: g.get("numGames"),
-		numGamesDiv: ignoreNumGamesDivConf ? null : g.get("numGamesDiv"),
-		numGamesConf: ignoreNumGamesDivConf ? null : g.get("numGamesConf"),
+		numGames: settings.numGames,
+		numGamesDiv: ignoreNumGamesDivConf ? null : settings.numGamesDiv,
+		numGamesConf: ignoreNumGamesDivConf ? null : settings.numGamesConf,
 	};
 };
 
@@ -29,9 +39,16 @@ const isConf = (t: MyTeam, div: Div) =>
 	t.seasonAttrs.did !== div.did && t.seasonAttrs.cid === div.cid;
 const isOther = (t: MyTeam, div: Div) => t.seasonAttrs.cid !== div.cid;
 
-const groupTeamsByDid = (teams: MyTeam[], ignoreNumGamesDivConf: boolean) => {
-	const divs = g.get("divs");
-	const { numGamesDiv, numGamesConf } = getNumGames(ignoreNumGamesDivConf);
+const groupTeamsByDid = (
+	teams: MyTeam[],
+	settings: NewScheduleGoodSettings,
+	ignoreNumGamesDivConf: boolean,
+) => {
+	const divs = settings.divs;
+	const { numGamesDiv, numGamesConf } = getNumGames(
+		settings,
+		ignoreNumGamesDivConf,
+	);
 
 	const teamsGroupedByDid: Record<
 		number,
@@ -61,9 +78,10 @@ const groupTeamsByDid = (teams: MyTeam[], ignoreNumGamesDivConf: boolean) => {
 const getNumGamesTargetsByDid = (
 	numActiveTeams: number,
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>,
+	settings: NewScheduleGoodSettings,
 	ignoreNumGamesDivConf: boolean,
 ) => {
-	const numGamesInfo = getNumGames(ignoreNumGamesDivConf);
+	const numGamesInfo = getNumGames(settings, ignoreNumGamesDivConf);
 	const numGames = numGamesInfo.numGames;
 
 	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
@@ -94,7 +112,7 @@ const getNumGamesTargetsByDid = (
 		}
 	> = {};
 
-	const divs = g.get("divs");
+	const divs = settings.divs;
 
 	for (const div of divs) {
 		const divSize = teamsGroupedByDid[div.did].div.length;
@@ -189,6 +207,7 @@ const initScheduleCounts = (teams: MyTeam[]) => {
 const finalize = ({
 	ignoreNumGamesDivConf,
 	numGamesTargetsByDid,
+	settings,
 	teams,
 	teamsGroupedByDid,
 	...toCopy
@@ -198,6 +217,7 @@ const finalize = ({
 		ReturnType<typeof getNumGamesTargetsByDid>,
 		string
 	>;
+	settings: NewScheduleGoodSettings;
 	teams: MyTeam[];
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>;
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
@@ -210,6 +230,7 @@ const finalize = ({
 
 	const teamsByTid = groupByUnique(teams, "tid");
 	const { numGames, numGamesDiv, numGamesConf } = getNumGames(
+		settings,
 		ignoreNumGamesDivConf,
 	);
 
@@ -459,13 +480,19 @@ const finalize = ({
 
 const newScheduleGood = (
 	teams: MyTeam[],
+	settings: NewScheduleGoodSettings,
 	ignoreNumGamesDivConf: boolean = false,
 ): [number, number][] | string => {
-	const teamsGroupedByDid = groupTeamsByDid(teams, ignoreNumGamesDivConf);
+	const teamsGroupedByDid = groupTeamsByDid(
+		teams,
+		settings,
+		ignoreNumGamesDivConf,
+	);
 
 	const numGamesTargetsByDid = getNumGamesTargetsByDid(
 		teams.length,
 		teamsGroupedByDid,
+		settings,
 		ignoreNumGamesDivConf,
 	);
 	if (typeof numGamesTargetsByDid === "string") {
@@ -521,6 +548,7 @@ const newScheduleGood = (
 	const tidsDone2 = finalize({
 		ignoreNumGamesDivConf,
 		numGamesTargetsByDid,
+		settings,
 		teams,
 		teamsGroupedByDid,
 		scheduleCounts,
@@ -536,22 +564,24 @@ const newScheduleGood = (
 	return tids;
 };
 
-/**
- * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
- *
- * For leagues with NBA-like structure, use newScheduleDefault. Otherwise, newScheduleCrappy.
- *
- * @memberOf core.season
- * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
- */
-const newSchedule = (teams: MyTeam[]) => {
-	let tids = newScheduleGood(teams);
+const newSchedule = (
+	teams: MyTeam[],
+	settingsInput?: NewScheduleGoodSettings,
+) => {
+	const settings = settingsInput ?? {
+		divs: g.get("divs"),
+		numGames: g.get("numGames"),
+		numGamesConf: g.get("numGamesConf"),
+		numGamesDiv: g.get("numGamesDiv"),
+	};
+
+	let tids = newScheduleGood(teams, settings);
 	let warning: string | undefined;
 
 	if (typeof tids === "string") {
 		// console.log("FAILED FIRST TRY", tids)
 		warning = tids;
-		tids = newScheduleGood(teams, true);
+		tids = newScheduleGood(teams, settings, true);
 	}
 
 	if (typeof tids === "string") {
@@ -560,8 +590,6 @@ const newSchedule = (teams: MyTeam[]) => {
 		// tids = newScheduleCrappy(teams);
 		tids = [];
 	}
-
-	console.log(g.get("season"), warning);
 
 	// Order the schedule so that it takes fewer days to play
 	random.shuffle(tids);

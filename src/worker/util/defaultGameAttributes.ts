@@ -225,6 +225,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("hockey")
 		? {
+				numGamesDiv: 26,
+				numGamesConf: 24,
 				quarterLength: 20,
 				numPeriods: 3,
 				hardCap: true,

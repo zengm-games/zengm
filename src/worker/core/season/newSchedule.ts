@@ -1,4 +1,4 @@
-import { isSport } from "../../../common";
+import { isSport, WEBSITE_ROOT } from "../../../common";
 import type { Conditions } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import newScheduleGood from "./newScheduleGood";
@@ -38,12 +38,10 @@ const newSchedule = (
 		// console.log(g.get("season"), warning);
 		logEvent(
 			{
-				type: "error",
-				text: `${warning} If you want to <a href="${helpers.leagueUrl([
+				type: "info",
+				text: `Your <a href="${helpers.leagueUrl([
 					"settings",
-				])}">try changing some settings</a> (# Games, # Division Games, and # Conference Games), you can then regenerate the schedule in the <a href="${helpers.leagueUrl(
-					["danger_zone"],
-				)}">danger zone</a>.`,
+				])}">schedule settings (# Games, # Division Games, and # Conference Games)</a> combined with your teams/divs/confs cannot be handled by the schedule generator, so instead it will generate round robin matchups between all your teams. Message from the schedule generator: "${warning}" <a href="https://${WEBSITE_ROOT}/manual/customization/schedule-settings/" rel="noopener noreferrer" target="_blank">More details.</a>`,
 				saveToDb: false,
 			},
 			settings.conditions,

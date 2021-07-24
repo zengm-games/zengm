@@ -2820,6 +2820,7 @@ const updateGameAttributesGodMode = async (
 	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
 		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
 	},
+	conditions: Conditions,
 ) => {
 	const repeatSeason = gameAttributes.repeatSeason;
 	let initRepeatSeason = false;
@@ -2842,6 +2843,22 @@ const updateGameAttributesGodMode = async (
 			delete gameAttributes.repeatSeason;
 		}
 	}
+
+	// Check schedule
+	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+	season.newSchedule(
+		teams.map(t => ({
+			tid: t.tid,
+			seasonAttrs: {
+				cid: t.cid,
+				did: t.did,
+			},
+		})),
+		{
+			notify: true,
+			conditions,
+		},
+	);
 
 	await league.setGameAttributes(gameAttributes);
 	if (initRepeatSeason) {

@@ -1524,6 +1524,8 @@ const SettingsForm = ({
 						and conference teams if one of those settings is left blank).{" "}
 						<a
 							href={`https://${WEBSITE_ROOT}/manual/customization/schedule-settings/`}
+							rel="noopener noreferrer"
+							target="_blank"
 						>
 							More details.
 						</a>

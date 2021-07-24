@@ -199,7 +199,7 @@ export const settings: {
 		name: "# Division Games",
 		type: "intOrNull",
 		description:
-			"Number of games versus other teams in the same division. Leave blank to give no special scheduling treatment to division opponents.",
+			"Number of games versus other teams in the same division. Leave blank to treat division games like conference games.",
 		validator: value => {
 			if (typeof value === "number" && value < 0) {
 				throw new Error("Cannot be negative");
@@ -212,7 +212,7 @@ export const settings: {
 		name: "# Conference Games",
 		type: "intOrNull",
 		description:
-			"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference opponents.",
+			"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference games.",
 		validator: value => {
 			if (typeof value === "number" && value < 0) {
 				throw new Error("Cannot be negative");

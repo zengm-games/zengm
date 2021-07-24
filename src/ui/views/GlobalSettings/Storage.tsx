@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useCallback, useEffect, useState } from "react";
-import { GAME_NAME } from "../../../common";
+import { GAME_NAME, WEBSITE_ROOT } from "../../../common";
 
 const Storage = () => {
 	const [status, setStatus] = useState<
@@ -50,7 +50,7 @@ const Storage = () => {
 		<>
 			<p>
 				Since {GAME_NAME} stores game data in your browser profile,{" "}
-				<a href="https://basketball-gm.com/manual/faq/#missing-leagues">
+				<a href={`https://${WEBSITE_ROOT}/manual/faq/#missing-leagues`}>
 					sometimes it can be inadvertently deleted
 				</a>
 				. Enabling persistent storage helps protect against this.

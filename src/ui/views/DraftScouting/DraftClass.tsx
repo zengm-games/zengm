@@ -7,6 +7,7 @@ import {
 } from "../../components";
 import { confirm, downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
+import { WEBSITE_ROOT } from "../../../common";
 
 const DraftClass = ({
 	challengeNoRatings,
@@ -127,7 +128,7 @@ const DraftClass = ({
 					<p>
 						To replace this draft class with players from a{" "}
 						<a
-							href="https://basketball-gm.com/manual/customization/draft-class/"
+							href={`https://${WEBSITE_ROOT}/manual/customization/draft-class/`}
 							rel="noopener noreferrer"
 							target="_blank"
 						>

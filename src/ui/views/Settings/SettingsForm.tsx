@@ -17,7 +17,7 @@ import {
 } from "../../components";
 import { confirm, helpers, localActions, logEvent } from "../../util";
 import { AnimatePresence, m } from "framer-motion";
-import { isSport } from "../../../common";
+import { isSport, WEBSITE_ROOT } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
@@ -1521,7 +1521,12 @@ const SettingsForm = ({
 						The schedule is set by first accounting for "# Division Games" and
 						"# Conference Games" for each team. Then, remaining games are filled
 						with any remaining teams (non-conference teams, plus maybe division
-						and conference teams if one of those settings is left blank).
+						and conference teams if one of those settings is left blank).{" "}
+						<a
+							href={`https://${WEBSITE_ROOT}/manual/customization/schedule-settings/`}
+						>
+							More details.
+						</a>
 					</p>
 				</>
 			),

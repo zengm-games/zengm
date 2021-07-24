@@ -9,6 +9,7 @@ import {
 	isSport,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
+	WEBSITE_ROOT,
 } from "../../../common";
 import { unwrap } from "idb";
 
@@ -165,7 +166,7 @@ const newPhaseRegularSeason = async (
 				persistent: true,
 				saveToDb: false,
 				htmlIsSafe: true,
-				text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="navigator.storage.persist().then((result) => { this.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></div>`,
+				text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data in your browser profile, so <a href="https://${WEBSITE_ROOT}/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="navigator.storage.persist().then((result) => { this.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></div>`,
 				type: "info",
 			});
 		}

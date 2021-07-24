@@ -1,4 +1,5 @@
 import { openDB, IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
+import { WEBSITE_ROOT } from "../../common";
 import { logEvent } from "../util";
 
 // If duplicate message is sent multiple times in a row (like IndexedDB transaction abort with many open requests), only show one
@@ -66,8 +67,7 @@ const connectIndexedDB = async <DBTypes>({
 		},
 	});
 
-	const quotaErrorMessage =
-		'browser isn\'t letting the game store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Delete Old Data within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>';
+	const quotaErrorMessage = `browser isn\'t letting the game store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Delete Old Data within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://${WEBSITE_ROOT}/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>`;
 
 	db.addEventListener("abort", (event: any) => {
 		console.log(`${name} database abort event`, event.target.error);

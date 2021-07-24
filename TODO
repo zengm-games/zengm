@@ -6,7 +6,7 @@ schedule customization
         - seenOneTeamWithOneGameRemaining needs to be per level too?
       - then at the end, add some extra games between the teams missing a game each
   - 82 games, 65 div, 17 conf
-  - 10 games, null div, 2 conf (Should never happen)
+  - N games, N div, 1 conf
 - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
 - new league settings - can the auto settings get weird, like 2/2? better default? heuristic?
   - higher cutoff than 2/2 before switching to null?

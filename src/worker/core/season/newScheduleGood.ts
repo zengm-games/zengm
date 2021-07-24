@@ -402,7 +402,8 @@ const finalize = ({
 					level = "div";
 				} else if (
 					numGamesConf !== null &&
-					t0.seasonAttrs.cid === t1.seasonAttrs.cid
+					t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
+					t0.seasonAttrs.did !== t1.seasonAttrs.did
 				) {
 					level = "conf";
 				} else {
@@ -479,7 +480,7 @@ const finalize = ({
 				}
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
-					// This should only happen if one of the teams is at home=0 and away=0, which should not happen
+					// This should only happen if one of the teams is already at the limit for both home and away games, which should not happen
 					throw new Error("Should never happen");
 				} else if (homeMinCutoffDiffs[0] > homeMinCutoffDiffs[1]) {
 					// tid0 home
@@ -615,6 +616,7 @@ const newSchedule = (
 		// console.log("FAILED FIRST TRY", tids)
 		warning = tids;
 		tids = newScheduleGood(teams, settings, true);
+		// tids = [];
 	}
 
 	if (typeof tids === "string") {

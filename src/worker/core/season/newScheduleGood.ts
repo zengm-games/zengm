@@ -597,7 +597,11 @@ const finalize = ({
 
 	// No valid schedule found
 	// console.log('iteration counts', iteration1, iteration2all);
-	return "Failed to find valid schedule.";
+	if (iteration2all === 0) {
+		return "Failed to find valid matchups between teams.";
+	}
+
+	return "Failed to find valid home/away games between teams";
 };
 
 const newScheduleGood = (

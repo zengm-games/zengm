@@ -1,6 +1,5 @@
 schedule customization
 - errors, with default basketball settings
-  - 82 games, 65 div, 17 conf
   - add one expansion team
 - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
 - "failed to find a valid schedule" distinguish between phase 1 and phase 2

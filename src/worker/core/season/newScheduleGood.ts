@@ -296,7 +296,7 @@ const finalize = ({
 			allowOneTeamWithOneGameRemainingBase,
 		);
 
-		let skippedGameTids: number[] = [];
+		const skippedGameTids: number[] = [];
 
 		const allowOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
 			if (level === "div") {
@@ -413,17 +413,34 @@ const finalize = ({
 		}
 
 		// If two team skipped games (must be due to div/conf constraints, since other constraint can only skip one), make them play each other. Better than uneven game count.
-		if (skippedGameTids.length > 1) {
-			while (skippedGameTids.length >= 2) {
-				const tid0 = skippedGameTids.pop();
+		if (skippedGameTids.length >= 2) {
+			// Put teams skipped multiple times in the front, so we don't get stuck with them at the end and have to skip a game
+			const counts = new Map<number, number>();
+			for (const tid of skippedGameTids) {
+				counts.set(tid, (counts.get(tid) ?? 0) + 1);
+			}
+			const countsInfo = orderBy(
+				Array.from(counts.entries()).map(([tid, count]) => ({ tid, count })),
+				"count",
+				"desc",
+			);
+			let skippedGameTidsOrdered: number[] = [];
+			for (const { tid, count } of countsInfo) {
+				for (let i = 0; i < count; i++) {
+					skippedGameTidsOrdered.push(tid);
+				}
+			}
+
+			while (skippedGameTidsOrdered.length >= 2) {
+				const tid0 = skippedGameTidsOrdered.pop();
 
 				// Are any teams skipped multiple times? If so, need to be careful they don't play themselves
-				const tid1: number | undefined = skippedGameTids.filter(
+				const tid1: number | undefined = skippedGameTidsOrdered.filter(
 					tid => tid !== tid0,
 				)[0];
 
 				let found = false;
-				skippedGameTids = skippedGameTids.filter(tid => {
+				skippedGameTidsOrdered = skippedGameTidsOrdered.filter(tid => {
 					if (found) {
 						return true;
 					}

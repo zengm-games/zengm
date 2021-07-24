@@ -245,39 +245,12 @@ const finalize = ({
 		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
 	};
 
-	// Used when numGames * numTeams is odd
-	const allowOneTeamWithOneGameRemaining: Record<
-		number,
-		{
-			div: boolean;
-			conf: boolean;
-			other: boolean;
-		}
-	> = {};
-	for (const didString of Object.keys(teamsGroupedByDid)) {
-		const did = parseInt(didString);
-		if (!allowOneTeamWithOneGameRemaining[did]) {
-			allowOneTeamWithOneGameRemaining[did] = {
-				div: false,
-				conf: false,
-				other: false,
-			};
-		}
-		for (const level of LEVELS) {
-			const numTeams = teamsGroupedByDid[did][level].length;
-			const numGames = numGamesTargetsByDid[did].excess[level];
-			if ((numTeams * numGames) % 2 === 1) {
-				// Odd number of teams*games, therefore someone will be left out
-				allowOneTeamWithOneGameRemaining[did][level] = true;
-			}
-		}
-	}
-
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
 
 		// Copy some variables
 		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
+		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
@@ -298,11 +271,32 @@ const finalize = ({
 			// console.log('excessGamesRemainingByTid',excessGamesRemainingByTid);
 
 			// Used when numGames * numTeams is odd
-			const seenOneTeamWithOneGameRemaining = {
-				div: false,
-				conf: false,
-				other: false,
-			};
+			const allowOneTeamWithOneGameRemaining: Record<
+				number,
+				{
+					div: boolean;
+					conf: boolean;
+					other: boolean;
+				}
+			> = {};
+			for (const didString of Object.keys(teamsGroupedByDid)) {
+				const did = parseInt(didString);
+				if (!allowOneTeamWithOneGameRemaining[did]) {
+					allowOneTeamWithOneGameRemaining[did] = {
+						div: false,
+						conf: false,
+						other: false,
+					};
+				}
+				for (const level of LEVELS) {
+					const numTeams = teamsGroupedByDid[did][level].length;
+					const numGames = numGamesTargetsByDid[did].excess[level];
+					if ((numTeams * numGames) % 2 === 1) {
+						// Odd number of teams*games, therefore someone will be left out
+						allowOneTeamWithOneGameRemaining[did][level] = true;
+					}
+				}
+			}
 
 			for (const teamIndex of teamIndexes) {
 				const t = teams[teamIndex];
@@ -349,8 +343,8 @@ const finalize = ({
 						tidsEither.push([t.tid, t2.tid]);
 
 						// No point copying this again and tracking it, since it's not used
-						// scheduleCounts[t.tid][level].either += 1;
-						// scheduleCounts[t2.tid][level].either += 1;
+						scheduleCounts[t.tid][level].either += 1;
+						scheduleCounts[t2.tid][level].either += 1;
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -362,19 +356,14 @@ const finalize = ({
 
 					if (
 						allowOneTeamWithOneGameRemaining[t.seasonAttrs.did][level] &&
-						excessGamesRemaining[level] === 1 &&
-						!seenOneTeamWithOneGameRemaining[level]
+						excessGamesRemaining[level] === 1
 					) {
 						excessGamesRemaining[level] -= 1;
-						seenOneTeamWithOneGameRemaining[level] = true;
-					} else if (excessGamesRemaining[level] === 1 && level !== "other") {
-						// Push the game to the next level
-						excessGamesRemaining[level] -= 1;
-						const nextLevel = level === "div" ? "conf" : "other";
-						excessGamesRemaining[nextLevel] += 1;
+						allowOneTeamWithOneGameRemaining[t.seasonAttrs.did][level] = false;
 					}
 
 					if (excessGamesRemaining[level] > 0) {
+						// console.log("FAILED", level, t.tid, excessGamesRemainingByTid)
 						// Failed to make matchups, try again
 						continue MAIN_LOOP_1;
 					}
@@ -385,7 +374,7 @@ const finalize = ({
 		// Assign all the "either" games to home/away, while balancing home/away within div/conf/other
 		let iteration2 = 0;
 		MAIN_LOOP_2: while (iteration2 < MAX_ITERATIONS_2) {
-			const scheduleCounts2 = helpers.deepCopy(toCopy.scheduleCounts);
+			const scheduleCounts2 = helpers.deepCopy(scheduleCounts);
 
 			iteration2 += 1;
 			iteration2all += 1;
@@ -490,6 +479,7 @@ const finalize = ({
 				}
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
+					// This should only happen if one of the teams is at home=0 and away=0, which should not happen
 					throw new Error("Should never happen");
 				} else if (homeMinCutoffDiffs[0] > homeMinCutoffDiffs[1]) {
 					// tid0 home

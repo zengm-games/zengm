@@ -197,7 +197,6 @@ export const settings: {
 		category: "Schedule",
 		key: "numGamesDiv",
 		name: "# Division Games",
-		godModeRequired: "always",
 		type: "intOrNull",
 		description:
 			"Number of games versus other teams in the same division. Leave blank to give no special scheduling treatment to division opponents.",
@@ -211,7 +210,6 @@ export const settings: {
 		category: "Schedule",
 		key: "numGamesConf",
 		name: "# Conference Games",
-		godModeRequired: "always",
 		type: "intOrNull",
 		description:
 			"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference opponents.",

@@ -1,4 +1,11 @@
 schedule customization
+- error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
+- new league settings - can the auto settings get weird, like 2/2? better default? heuristic?
+  - higher cutoff than 2/2 before switching to null?
+  - possible to set new league default to something based on num teams, if not specified in league flie?
+  - should it be changing these at all in a new leaague if it's specified?
+  - should it know the "conf" setting can't be used if there is a conf with one div?
+    - same if there is 1 conf total, then conf should be treated as other
 - "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
   - enforce home/away balance btwn teams for games from "either"
 - delete old schedule files

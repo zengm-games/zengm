@@ -441,5 +441,18 @@ describe("worker/core/season/newScheduleGood", () => {
 				seen.add(key);
 			}
 		});
+
+		test("tons of games", () => {
+			const numGames = 820;
+			const { tids, warning } = newScheduleGood(defaultTeams, {
+				divs: g.get("divs"),
+				numGames,
+				numGamesDiv: 160,
+				numGamesConf: 360,
+			});
+
+			assert.strictEqual(tids.length, (numGames * defaultTeams.length) / 2);
+			assert.strictEqual(warning, undefined);
+		});
 	});
 });

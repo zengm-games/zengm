@@ -272,6 +272,20 @@ const finalize = ({
 			(numTeams * numGamesConf2) % 2 === 1;
 	}
 
+	const getLevel = (t0: MyTeam, t1: MyTeam): typeof LEVELS[number] => {
+		if (numGamesDiv !== null && t0.seasonAttrs.did === t1.seasonAttrs.did) {
+			return "div";
+		} else if (
+			numGamesConf !== null &&
+			t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
+			t0.seasonAttrs.did !== t1.seasonAttrs.did
+		) {
+			return "conf";
+		} else {
+			return "other";
+		}
+	};
+
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
 
@@ -281,6 +295,8 @@ const finalize = ({
 		const allowOneTeamWithOneGameRemaining = helpers.deepCopy(
 			allowOneTeamWithOneGameRemainingBase,
 		);
+
+		const skippedGameTids: number[] = [];
 
 		const allowOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
 			if (level === "div") {
@@ -380,8 +396,11 @@ const finalize = ({
 						allowOneGameRemaining(t, level) &&
 						excessGamesRemaining[level] === 1
 					) {
-						excessGamesRemaining[level] -= 1;
 						applyOneGameRemaining(t, level);
+						excessGamesRemaining[level] -= 1;
+						skippedGameTids.push(t.tid);
+
+						// Move am
 					}
 
 					if (excessGamesRemaining[level] > 0) {
@@ -390,6 +409,27 @@ const finalize = ({
 						continue MAIN_LOOP_1;
 					}
 				}
+			}
+		}
+
+		// If two team skipped games (must be due to div/conf constraints, since other constraint can only skip one), make them play each other. Better than uneven game count.
+		if (skippedGameTids.length > 1) {
+			while (skippedGameTids.length >= 2) {
+				const tid0 = skippedGameTids.pop();
+				const tid1 = skippedGameTids.pop();
+				if (tid0 === undefined || tid1 === undefined) {
+					break;
+				}
+
+				tidsEither.push([tid0, tid1]);
+
+				const t0 = teamsByTid[tid0];
+				const t1 = teamsByTid[tid1];
+				const level = getLevel(t0, t1);
+
+				// No point copying this again and tracking it, since it's not used
+				scheduleCounts[tid0][level].either += 1;
+				scheduleCounts[tid1][level].either += 1;
 			}
 		}
 
@@ -419,18 +459,7 @@ const finalize = ({
 				const t0 = teamsByTid[tid0];
 				const t1 = teamsByTid[tid1];
 
-				let level: typeof LEVELS[number];
-				if (numGamesDiv !== null && t0.seasonAttrs.did === t1.seasonAttrs.did) {
-					level = "div";
-				} else if (
-					numGamesConf !== null &&
-					t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
-					t0.seasonAttrs.did !== t1.seasonAttrs.did
-				) {
-					level = "conf";
-				} else {
-					level = "other";
-				}
+				const level = getLevel(t0, t1);
 
 				scheduleCounts2[tid0][level].either -= 1;
 				scheduleCounts2[tid1][level].either -= 1;

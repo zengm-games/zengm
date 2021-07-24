@@ -342,13 +342,49 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("4 games, null div, 2 conf", () => {
+			// Test many times to make sure it doesn't intermittently skip a game due to faulty numGames*numTeams odd detection
+			for (let i = 0; i < 100; i++) {
+				const { tids, warning } = newSchedule(defaultTeams, {
+					divs: g.get("divs"),
+					numGames: 4,
+					numGamesDiv: null,
+					numGamesConf: 2,
+				});
+
+				if (tids.length < 60) {
+					const counts: Record<number, number> = {};
+					for (const matchup of tids) {
+						for (const tid of matchup) {
+							if (counts[tid] === undefined) {
+								counts[tid] = 0;
+							}
+							counts[tid] += 1;
+						}
+					}
+					for (const [tid, count] of Object.entries(counts)) {
+						if (count < 4) {
+							console.log("tid", tid, "count", count);
+							console.log(defaultTeams.find(t => t.tid === parseInt(tid)));
+						}
+					}
+					console.log("tids.length", tids.length);
+				}
+
+				assert.strictEqual(tids.length, 60);
+				assert.strictEqual(warning, undefined);
+			}
+		});
+
+		// There are 15 teams in the conference, so they can't all get exactly one conference game. Needs to handle the 2 teams that have a missed conference game.
+		test("4 games, null div, 1 conf", () => {
 			const { tids, warning } = newSchedule(defaultTeams, {
 				divs: g.get("divs"),
 				numGames: 4,
 				numGamesDiv: null,
-				numGamesConf: 2,
+				numGamesConf: 1,
 			});
 
+			console.log("warning", warning);
 			assert.strictEqual(tids.length, 60);
 			assert.strictEqual(warning, undefined);
 		});

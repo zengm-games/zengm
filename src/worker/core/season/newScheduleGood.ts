@@ -245,32 +245,31 @@ const finalize = ({
 		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
 	};
 
-	// Used when numGames * numTeams is odd
-	const allowOneTeamWithOneGameRemainingBase: Record<
-		number,
-		{
-			div: boolean;
-			conf: boolean;
-			other: boolean;
-		}
-	> = {};
+	// Used when numGames * numTeams is odd. conf one is tricky, because we need to consider the whole conf not just the conf teams for a given div (think 3 divisions and 15 teams in a conf with 1 game, that's 7.5 needed games).
+	const allowOneTeamWithOneGameRemainingBase: {
+		div: Record<number, boolean>;
+		conf: Record<number, boolean>;
+		other: boolean;
+	} = {
+		div: {},
+		conf: {},
+		other: (teams.length * numGames) % 2 === 1,
+	};
+
 	for (const didString of Object.keys(teamsGroupedByDid)) {
 		const did = parseInt(didString);
-		if (!allowOneTeamWithOneGameRemainingBase[did]) {
-			allowOneTeamWithOneGameRemainingBase[did] = {
-				div: false,
-				conf: false,
-				other: false,
-			};
-		}
-		for (const level of LEVELS) {
-			const numTeams = teamsGroupedByDid[did][level].length;
-			const numGames = numGamesTargetsByDid[did].excess[level];
-			if ((numTeams * numGames) % 2 === 1) {
-				// Odd number of teams*games, therefore someone will be left out
-				allowOneTeamWithOneGameRemainingBase[did][level] = true;
-			}
-		}
+
+		const numTeams = teamsGroupedByDid[did].div.length;
+		const numGames = numGamesTargetsByDid[did].excess.div;
+		allowOneTeamWithOneGameRemainingBase.div[did] =
+			(numTeams * numGames) % 2 === 1;
+	}
+
+	const cids = new Set(settings.divs.map(div => div.cid));
+	for (const cid of cids) {
+		const numTeams = teams.filter(t => t.seasonAttrs.cid === cid).length;
+		allowOneTeamWithOneGameRemainingBase.conf[cid] =
+			(numTeams * numGamesConf2) % 2 === 1;
 	}
 
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
@@ -282,6 +281,26 @@ const finalize = ({
 		const allowOneTeamWithOneGameRemaining = helpers.deepCopy(
 			allowOneTeamWithOneGameRemainingBase,
 		);
+
+		const allowOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
+			if (level === "div") {
+				return allowOneTeamWithOneGameRemaining.div[t.seasonAttrs.did];
+			}
+			if (level === "conf") {
+				return allowOneTeamWithOneGameRemaining.conf[t.seasonAttrs.cid];
+			}
+			return allowOneTeamWithOneGameRemaining.other;
+		};
+
+		const applyOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
+			if (level === "div") {
+				allowOneTeamWithOneGameRemaining.div[t.seasonAttrs.did] = false;
+			} else if (level === "conf") {
+				allowOneTeamWithOneGameRemaining.conf[t.seasonAttrs.cid] = false;
+			} else {
+				allowOneTeamWithOneGameRemaining.other = false;
+			}
+		};
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
@@ -312,7 +331,7 @@ const finalize = ({
 					if (numGames === 0) {
 						continue;
 					}
-					// if (level === "conf") { console.log(t.tid, `did${t.seasonAttrs.did}`, level, `needs ${numGames} games`); }
+					// console.log(t.tid, `did${t.seasonAttrs.did}`, level, `needs ${numGames} games`);
 
 					const group = teamsGrouped[level];
 
@@ -327,7 +346,7 @@ const finalize = ({
 						i => excessGamesRemainingByTid[group[i].tid][level],
 						"desc",
 					);
-					// if (level === "conf") { console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level])) }
+					// console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level]));
 
 					for (const groupIndex of groupIndexes) {
 						const t2 = group[groupIndex];
@@ -358,11 +377,11 @@ const finalize = ({
 					}
 
 					if (
-						allowOneTeamWithOneGameRemaining[t.seasonAttrs.did][level] &&
+						allowOneGameRemaining(t, level) &&
 						excessGamesRemaining[level] === 1
 					) {
 						excessGamesRemaining[level] -= 1;
-						allowOneTeamWithOneGameRemaining[t.seasonAttrs.did][level] = false;
+						applyOneGameRemaining(t, level);
 					}
 
 					if (excessGamesRemaining[level] > 0) {

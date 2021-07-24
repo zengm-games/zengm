@@ -335,4 +335,22 @@ describe("worker/core/season/newScheduleGood", () => {
 			assert.strictEqual(typeof warning, "string");
 		});
 	});
+
+	describe("random test cases", () => {
+		beforeEach(() => {
+			testHelpers.resetG();
+		});
+
+		test.only("10 games, null div, 1 conf", () => {
+			const { warning } = newSchedule(defaultTeams, {
+				divs: g.get("divs"),
+				numGames: 5,
+				numGamesDiv: null,
+				numGamesConf: 1,
+			});
+
+			console.log(warning);
+			assert.strictEqual(warning, undefined);
+		});
+	});
 });

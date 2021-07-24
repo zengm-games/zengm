@@ -1,8 +1,9 @@
 schedule customization
 - errors, with default basketball settings
-  - 20 games, null div, 1 conf
+  - 10 games, null div, 1 conf
+    - 1 conf game with 15 teams in the conference results in 1 team missing a game in each conference, not 1 team missing a game in the league. need to allow excessGamesRemaining[level] of 1 for N teams, where N is the number of conferences (or divs, or leagues (1)) where this happens. but also need it to be the *right* ones
   - 82 games, 65 div, 17 conf
-  - 20 games, null div, 2 conf (Should never happen)
+  - 10 games, null div, 2 conf (Should never happen)
 - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
 - new league settings - can the auto settings get weird, like 2/2? better default? heuristic?
   - higher cutoff than 2/2 before switching to null?

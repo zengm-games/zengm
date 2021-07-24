@@ -245,12 +245,43 @@ const finalize = ({
 		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
 	};
 
+	// Used when numGames * numTeams is odd
+	const allowOneTeamWithOneGameRemainingBase: Record<
+		number,
+		{
+			div: boolean;
+			conf: boolean;
+			other: boolean;
+		}
+	> = {};
+	for (const didString of Object.keys(teamsGroupedByDid)) {
+		const did = parseInt(didString);
+		if (!allowOneTeamWithOneGameRemainingBase[did]) {
+			allowOneTeamWithOneGameRemainingBase[did] = {
+				div: false,
+				conf: false,
+				other: false,
+			};
+		}
+		for (const level of LEVELS) {
+			const numTeams = teamsGroupedByDid[did][level].length;
+			const numGames = numGamesTargetsByDid[did].excess[level];
+			if ((numTeams * numGames) % 2 === 1) {
+				// Odd number of teams*games, therefore someone will be left out
+				allowOneTeamWithOneGameRemainingBase[did][level] = true;
+			}
+		}
+	}
+
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
 
 		// Copy some variables
 		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
 		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
+		const allowOneTeamWithOneGameRemaining = helpers.deepCopy(
+			allowOneTeamWithOneGameRemainingBase,
+		);
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
@@ -269,34 +300,6 @@ const finalize = ({
 			const teamIndexes = range(teams.length);
 			random.shuffle(teamIndexes);
 			// console.log('excessGamesRemainingByTid',excessGamesRemainingByTid);
-
-			// Used when numGames * numTeams is odd
-			const allowOneTeamWithOneGameRemaining: Record<
-				number,
-				{
-					div: boolean;
-					conf: boolean;
-					other: boolean;
-				}
-			> = {};
-			for (const didString of Object.keys(teamsGroupedByDid)) {
-				const did = parseInt(didString);
-				if (!allowOneTeamWithOneGameRemaining[did]) {
-					allowOneTeamWithOneGameRemaining[did] = {
-						div: false,
-						conf: false,
-						other: false,
-					};
-				}
-				for (const level of LEVELS) {
-					const numTeams = teamsGroupedByDid[did][level].length;
-					const numGames = numGamesTargetsByDid[did].excess[level];
-					if ((numTeams * numGames) % 2 === 1) {
-						// Odd number of teams*games, therefore someone will be left out
-						allowOneTeamWithOneGameRemaining[did][level] = true;
-					}
-				}
-			}
 
 			for (const teamIndex of teamIndexes) {
 				const t = teams[teamIndex];
@@ -509,6 +512,7 @@ const finalize = ({
 	}
 
 	// No valid schedule found
+	// console.log('iteration counts', iteration1, iteration2all);
 	return "Failed to find valid schedule.";
 };
 

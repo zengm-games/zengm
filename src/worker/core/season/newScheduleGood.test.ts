@@ -418,7 +418,7 @@ describe("worker/core/season/newScheduleGood", () => {
 			assert.strictEqual(warning, undefined);
 		});
 
-		test.only("numGamesDiv null should roll up to conf not other", () => {
+		test("numGamesDiv null should roll up to conf not other", () => {
 			const numGames = 29; // 1 for each other team
 			const { tids, warning } = newScheduleGood(defaultTeams, {
 				divs: g.get("divs"),

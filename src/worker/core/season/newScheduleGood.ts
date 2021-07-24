@@ -62,11 +62,15 @@ const groupTeamsByDid = (
 	for (const div of divs) {
 		teamsGroupedByDid[div.did] = {
 			div: teams.filter(t => numGamesDiv !== null && isDiv(t, div)),
-			conf: teams.filter(t => numGamesConf !== null && isConf(t, div)),
+			conf: teams.filter(
+				t =>
+					numGamesConf !== null &&
+					(isConf(t, div) || (numGamesDiv === null && isDiv(t, div))),
+			),
 			other: teams.filter(
 				t =>
 					isOther(t, div) ||
-					(numGamesDiv === null && isDiv(t, div)) ||
+					(numGamesDiv === null && numGamesConf === null && isDiv(t, div)) ||
 					(numGamesConf === null && isConf(t, div)),
 			),
 		};
@@ -135,7 +139,11 @@ const getNumGamesTargetsByDid = (
 
 		// -1 for the group containing the current team
 		if (numGamesInfo.numGamesDiv === null) {
-			denominators.other -= 1;
+			if (numGamesInfo.numGamesConf === null) {
+				denominators.other -= 1;
+			} else {
+				denominators.conf -= 1;
+			}
 		} else {
 			denominators.div -= 1;
 		}
@@ -278,7 +286,7 @@ const finalize = ({
 		} else if (
 			numGamesConf !== null &&
 			t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
-			t0.seasonAttrs.did !== t1.seasonAttrs.did
+			(numGamesDiv === null || t0.seasonAttrs.did !== t1.seasonAttrs.did)
 		) {
 			return "conf";
 		} else {

@@ -1,5 +1,4 @@
 schedule customization
-- div null should mean they get treated like conf
 - error handling
   - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
   - show error messages when applying new settings or creating a new league only?

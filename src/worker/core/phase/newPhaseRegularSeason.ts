@@ -1,7 +1,7 @@
 import { season } from "..";
 import { idb } from "../../db";
 import { g, local, logEvent } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import type { PhaseReturn } from "../../../common/types";
 import {
 	EMAIL_ADDRESS,
 	FACEBOOK_USERNAME,
@@ -13,9 +13,7 @@ import {
 } from "../../../common";
 import { unwrap } from "idb";
 
-const newPhaseRegularSeason = async (
-	conditions: Conditions,
-): Promise<PhaseReturn> => {
+const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		seasonAttrs: ["cid", "did"],
@@ -23,7 +21,7 @@ const newPhaseRegularSeason = async (
 		active: true,
 	});
 
-	await season.setSchedule(season.newSchedule(teams, conditions));
+	await season.setSchedule(season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
 		// openKeyCursor rather than iterate for performance in Firefox.

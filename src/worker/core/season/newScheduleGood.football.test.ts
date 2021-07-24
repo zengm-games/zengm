@@ -1,6 +1,6 @@
 import assert from "assert";
 import testHelpers from "../../../test/helpers";
-import newSchedule from "./newScheduleGood";
+import newScheduleGood from "./newScheduleGood";
 import { helpers } from "../../util";
 
 describe("worker/core/season/newScheduleGood", () => {
@@ -29,13 +29,13 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule 256 games (16 each for 32 teams)", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 			assert.strictEqual(tids.length, 256);
 		});
 
 		test("schedule 8 home games and 8 away games for each team", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			const home: Record<number, number> = {}; // Number of home games for each team
@@ -59,7 +59,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team two home games against every team in the same division", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)

@@ -2080,7 +2080,10 @@ const regenerateSchedule = async (conditions: Conditions) => {
 		active: true,
 	});
 
-	const newSchedule = season.newSchedule(teams, conditions);
+	const newSchedule = season.newSchedule(teams, {
+		notify: true,
+		conditions,
+	});
 
 	await toUI("updateLocal", [
 		{

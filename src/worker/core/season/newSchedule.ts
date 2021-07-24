@@ -11,7 +11,10 @@ const newSchedule = (
 		};
 		tid: number;
 	}[],
-	conditions?: Conditions,
+	settings?: {
+		notify: boolean;
+		conditions: Conditions;
+	},
 ) => {
 	const { tids, warning } = newScheduleGood(teams);
 
@@ -31,7 +34,7 @@ const newSchedule = (
 		}
 	}
 
-	if (warning) {
+	if (settings?.notify && warning) {
 		// console.log(g.get("season"), warning);
 		logEvent(
 			{
@@ -43,7 +46,7 @@ const newSchedule = (
 				)}">danger zone</a>.`,
 				saveToDb: false,
 			},
-			conditions,
+			settings.conditions,
 		);
 	}
 

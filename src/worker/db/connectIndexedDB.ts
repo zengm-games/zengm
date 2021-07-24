@@ -67,7 +67,7 @@ const connectIndexedDB = async <DBTypes>({
 		},
 	});
 
-	const quotaErrorMessage = `browser isn\'t letting the game store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Delete Old Data within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://${WEBSITE_ROOT}/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>`;
+	const quotaErrorMessage = `browser isn't letting the game store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Delete Old Data within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://${WEBSITE_ROOT}/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>`;
 
 	db.addEventListener("abort", (event: any) => {
 		console.log(`${name} database abort event`, event.target.error);

@@ -601,7 +601,7 @@ const finalize = ({
 		return "Failed to find valid matchups between teams.";
 	}
 
-	return "Failed to find valid home/away games between teams";
+	return "Failed to find valid home/away assignments.";
 };
 
 const newScheduleGood = (
@@ -712,10 +712,7 @@ const newSchedule = (
 	}
 
 	if (typeof tids === "string") {
-		// console.log("FAILED SECOND TRY", tids)
-		warning = "You broke the schedule generator! Pls tell me how.";
-		// tids = newScheduleCrappy(teams);
-		tids = [];
+		throw new Error("newScheduleGood double fail");
 	}
 
 	// Order the schedule so that it takes fewer days to play

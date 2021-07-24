@@ -1,6 +1,6 @@
 import assert from "assert";
 import testHelpers from "../../../test/helpers";
-import newSchedule from "./newScheduleGood";
+import newScheduleGood from "./newScheduleGood";
 import { g, helpers } from "../../util";
 import range from "lodash-es/range";
 
@@ -31,13 +31,13 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule 1230 games (82 each for 30 teams)", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 			assert.strictEqual(tids.length, 1230);
 		});
 
 		test("schedule 41 home games and 41 away games for each team", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			const home: Record<number, number> = {}; // Number of home games for each team
@@ -60,7 +60,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team one home game against every team in the other conference", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the other conference will be populated)
@@ -96,7 +96,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("schedule each team two home games against every team in the same division", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
@@ -132,7 +132,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test.skip("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
-			const { tids, warning } = newSchedule(defaultTeams);
+			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
 			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same conference but different division will be populated)
@@ -202,7 +202,7 @@ describe("worker/core/season/newScheduleGood", () => {
 
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups } = newSchedule(teams);
+					const { tids: matchups } = newScheduleGood(teams);
 
 					// Total number of games
 					assert.strictEqual(
@@ -231,7 +231,7 @@ describe("worker/core/season/newScheduleGood", () => {
 
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups } = newSchedule(teams); // Total number of games
+					const { tids: matchups } = newScheduleGood(teams); // Total number of games
 
 					assert.strictEqual(
 						matchups.length,
@@ -273,7 +273,7 @@ describe("worker/core/season/newScheduleGood", () => {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
 					g.setWithoutSavingToDB("numGames", numGames);
 					const teams = makeTeams(numTeams);
-					const { tids: matchups } = newSchedule(teams); // Total number of games
+					const { tids: matchups } = newScheduleGood(teams); // Total number of games
 
 					assert.strictEqual(
 						matchups.length * 2,
@@ -321,7 +321,7 @@ describe("worker/core/season/newScheduleGood", () => {
 				"confs",
 				g.get("confs").filter(conf => conf.cid === 0),
 			);
-			const { tids, warning } = newSchedule(
+			const { tids, warning } = newScheduleGood(
 				defaultTeams.map(t => ({
 					...t,
 					seasonAttrs: {
@@ -344,7 +344,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		test("4 games, null div, 2 conf", () => {
 			// Test many times to make sure it doesn't intermittently skip a game due to faulty numGames*numTeams odd detection
 			for (let i = 0; i < 100; i++) {
-				const { tids, warning } = newSchedule(defaultTeams, {
+				const { tids, warning } = newScheduleGood(defaultTeams, {
 					divs: g.get("divs"),
 					numGames: 4,
 					numGamesDiv: null,
@@ -377,7 +377,7 @@ describe("worker/core/season/newScheduleGood", () => {
 
 		// There are 15 teams in the conference, so they can't all get exactly one conference game. Needs to handle the 2 teams that have a missed conference game.
 		test("4 games, null div, 1 conf", () => {
-			const { tids, warning } = newSchedule(defaultTeams, {
+			const { tids, warning } = newScheduleGood(defaultTeams, {
 				divs: g.get("divs"),
 				numGames: 4,
 				numGamesDiv: null,
@@ -389,7 +389,7 @@ describe("worker/core/season/newScheduleGood", () => {
 		});
 
 		test("82 games, 65 div, 17 conf", () => {
-			const { tids, warning } = newSchedule(defaultTeams, {
+			const { tids, warning } = newScheduleGood(defaultTeams, {
 				divs: g.get("divs"),
 				numGames: 82,
 				numGamesDiv: 65,
@@ -398,6 +398,48 @@ describe("worker/core/season/newScheduleGood", () => {
 
 			assert.strictEqual(tids.length, 1230);
 			assert.strictEqual(warning, undefined);
+		});
+
+		// the conf with the new team thinks "i can get all my non-conf games with even home/away matchups, 0 excess games!". the conf without the new team thinks "i can play each team once, and then need 14 excess matchups (16+14)". but there are no games available for excess matchups, since the other conf has no excess
+		test.skip("one expansion team", () => {
+			const { tids, warning } = newScheduleGood([
+				...defaultTeams,
+				{
+					tid: defaultTeams[defaultTeams.length - 1].tid + 1,
+					seasonAttrs: {
+						cid: 0,
+						did: 0,
+					},
+				},
+			]);
+			console.log("warning", warning, tids.length);
+
+			assert.strictEqual(tids.length, 1230);
+			assert.strictEqual(warning, undefined);
+		});
+
+		test.only("numGamesDiv null should roll up to conf not other", () => {
+			const numGames = 29; // 1 for each other team
+			const { tids, warning } = newScheduleGood(defaultTeams, {
+				divs: g.get("divs"),
+				numGames,
+				numGamesDiv: null,
+				numGamesConf: 14, // 1 for each other team
+			});
+			console.log("warning", warning, tids.length);
+
+			assert.strictEqual(tids.length, (numGames * defaultTeams.length) / 2);
+			assert.strictEqual(warning, undefined);
+
+			// Should be one game for each matchup, no dupes
+			const seen = new Set();
+			for (const matchup of tids) {
+				const key = JSON.stringify([...matchup].sort());
+				if (seen.has(key)) {
+					throw new Error(`Dupe matchup: ${key}`);
+				}
+				seen.add(key);
+			}
 		});
 	});
 });

@@ -1,28 +1,28 @@
 schedule customization
-- errors, with default basketball settings
-  - add one expansion team
-- error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
-- "failed to find a valid schedule" distinguish between phase 1 and phase 2
-- write up manual explaining things that can go wrong
-  - numGames*numTeams odd
+- div null should mean they get treated like conf
+- error handling
+  - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
+  - show error messages when applying new settings or creating a new league only?
+  - link to manual
 - new league settings - can the auto settings get weird, like 2/2? better default? heuristic?
   - higher cutoff than 2/2 before switching to null?
   - possible to set new league default to something based on num teams, if not specified in league flie?
   - should it be changing these at all in a new leaague if it's specified?
   - should it know the "conf" setting can't be used if there is a conf with one div?
     - same if there is 1 conf total, then conf should be treated as other
-- https://discord.com/channels/290013534023057409/290015591216054273/868206569278537809
-- https://discord.com/channels/290013534023057409/290015591216054273/868236153806008371
-- "schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)" skipped test
-  - enforce home/away balance btwn teams for games from "either"
 - delete old schedule files
-- delete newScheduleCrappy?
-  - log times its called in bugsnag?
+- delete newScheduleCrappy
 - eventually
+  - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
+    - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 - blog
   - conference constraint for FBGM
   - hockey constraints
+
+ZGMH playoffs goalies
+- data on sv% https://discord.com/channels/@me/805810985596092426/867992159696068678
+- globally adjust in playoffs (bc no fatigue) if it differs too much
 
 foul trouble
 - players should play different when they're in foul trouble

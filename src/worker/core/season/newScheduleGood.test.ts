@@ -384,8 +384,19 @@ describe("worker/core/season/newScheduleGood", () => {
 				numGamesConf: 1,
 			});
 
-			console.log("warning", warning);
 			assert.strictEqual(tids.length, 60);
+			assert.strictEqual(warning, undefined);
+		});
+
+		test("82 games, 65 div, 17 conf", () => {
+			const { tids, warning } = newSchedule(defaultTeams, {
+				divs: g.get("divs"),
+				numGames: 82,
+				numGamesDiv: 65,
+				numGamesConf: 17,
+			});
+
+			assert.strictEqual(tids.length, 1230);
 			assert.strictEqual(warning, undefined);
 		});
 	});

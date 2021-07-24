@@ -1,14 +1,11 @@
 schedule customization
 - errors, with default basketball settings
-  - 10 games, null div, 1 conf
-    - 1 conf game with 15 teams in the conference results in 1 team missing a game in each conference, not 1 team missing a game in the league. need to allow excessGamesRemaining[level] of 1 for N teams, where N is the number of conferences (or divs, or leagues (1)) where this happens. but also need it to be the *right* ones
-      - for each group in each level, identify if there is an odd number of games needed, and mark it down if so. use that to accept generated schedule with 1 team missing in that group
-        - seenOneTeamWithOneGameRemaining needs to be per level too?
-      - then at the end, add some extra games between the teams missing a game each
   - 82 games, 65 div, 17 conf
-  - N games, N div, 1 conf
   - add one expansion team
 - error message like "failed to find a valid schedule" should mention that it falls back to some default without constraints
+- "failed to find a valid schedule" distinguish between phase 1 and phase 2
+- write up manual explaining things that can go wrong
+  - numGames*numTeams odd
 - new league settings - can the auto settings get weird, like 2/2? better default? heuristic?
   - higher cutoff than 2/2 before switching to null?
   - possible to set new league default to something based on num teams, if not specified in league flie?

@@ -296,7 +296,7 @@ const finalize = ({
 			allowOneTeamWithOneGameRemainingBase,
 		);
 
-		const skippedGameTids: number[] = [];
+		let skippedGameTids: number[] = [];
 
 		const allowOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
 			if (level === "div") {
@@ -416,8 +416,27 @@ const finalize = ({
 		if (skippedGameTids.length > 1) {
 			while (skippedGameTids.length >= 2) {
 				const tid0 = skippedGameTids.pop();
-				const tid1 = skippedGameTids.pop();
-				if (tid0 === undefined || tid1 === undefined) {
+
+				// Are any teams skipped multiple times? If so, need to be careful they don't play themselves
+				const tid1: number | undefined = skippedGameTids.filter(
+					tid => tid !== tid0,
+				)[0];
+
+				let found = false;
+				skippedGameTids = skippedGameTids.filter(tid => {
+					if (found) {
+						return true;
+					}
+
+					if (tid !== tid1) {
+						return true;
+					}
+
+					found = true;
+					return false;
+				});
+
+				if (tid0 === undefined || tid1 === undefined || tid0 === tid1) {
 					break;
 				}
 

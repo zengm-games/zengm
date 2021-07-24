@@ -1918,23 +1918,30 @@ const importPlayers = async (
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+let initialized = false;
 const init = async (inputEnv: Env, conditions: Conditions) => {
 	Object.assign(env, inputEnv);
 
 	// Kind of hacky, only run this for the first host tab
 	if (idb.meta === undefined) {
-		checkNaNs();
 		idb.meta = await connectMeta();
 
-		// Account and changes checks can be async
-		(async () => {
-			// Account check needs to complete before initAds, though
-			await checkAccount(conditions);
-			await toUI("initAds", [local.goldUntil], conditions);
+		// Extra check to run this only once because of https://discord.com/channels/290013534023057409/290015591216054273/868210394848702524 (somehow must be triggered twice on mobile and the second time does weird stuff, maybe, resulting in ads for gold users?)
+		if (!initialized) {
+			initialized = true;
 
-			// This might make another HTTP request, and is less urgent than ads
-			await checkChanges(conditions);
-		})();
+			checkNaNs();
+
+			// Account and changes checks can be async
+			(async () => {
+				// Account check needs to complete before initAds, though
+				await checkAccount(conditions);
+				await toUI("initAds", [local.goldUntil], conditions);
+
+				// This might make another HTTP request, and is less urgent than ads
+				await checkChanges(conditions);
+			})();
+		}
 	} else {
 		// No need to run checkAccount and make another HTTP request
 		const currentTimestamp = Math.floor(Date.now() / 1000);

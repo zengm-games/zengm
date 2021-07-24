@@ -96,14 +96,14 @@ const getNumGamesTargetsByDid = (
 	const numGamesTargetsByDid: Record<
 		number,
 		{
-			// Number of games played against every single team in (Div: same division; Conf: same conference but not same division; Other: not in same conference)
+			// Number of games played against every single team in (div: same division; conf: same conference but not same division; other: not in same conference)
 			perTeam: {
 				div: number;
 				conf: number;
 				other: number;
 			};
 
-			// Number of total games that need to be played in the division/conference/other, but can't be spread evenly across all teams
+			// Number of total games that need to be played in the div/conf/other, but can't be spread evenly across all teams
 			excess: {
 				div: number;
 				conf: number;
@@ -226,7 +226,7 @@ const finalize = ({
 	const MAX_ITERATIONS_1 = 1000;
 	const MAX_ITERATIONS_2 = 1000;
 	let iteration1 = 0;
-	// let iteration2all = 0;
+	let iteration2all = 0;
 
 	const teamsByTid = groupByUnique(teams, "tid");
 	const { numGames, numGamesDiv, numGamesConf } = getNumGames(
@@ -244,6 +244,34 @@ const finalize = ({
 		conf: Math.ceil(numGamesConf2 / 2),
 		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
 	};
+
+	// Used when numGames * numTeams is odd
+	const allowOneTeamWithOneGameRemaining: Record<
+		number,
+		{
+			div: boolean;
+			conf: boolean;
+			other: boolean;
+		}
+	> = {};
+	for (const didString of Object.keys(teamsGroupedByDid)) {
+		const did = parseInt(didString);
+		if (!allowOneTeamWithOneGameRemaining[did]) {
+			allowOneTeamWithOneGameRemaining[did] = {
+				div: false,
+				conf: false,
+				other: false,
+			};
+		}
+		for (const level of LEVELS) {
+			const numTeams = teamsGroupedByDid[did][level].length;
+			const numGames = numGamesTargetsByDid[did].excess[level];
+			if ((numTeams * numGames) % 2 === 1) {
+				// Odd number of teams*games, therefore someone will be left out
+				allowOneTeamWithOneGameRemaining[did][level] = true;
+			}
+		}
+	}
 
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
@@ -287,7 +315,7 @@ const finalize = ({
 					if (numGames === 0) {
 						continue;
 					}
-					// console.log(t.tid, `did${t.seasonAttrs.did}`, level, `needs ${numGames} games`);
+					// if (level === "conf") { console.log(t.tid, `did${t.seasonAttrs.did}`, level, `needs ${numGames} games`); }
 
 					const group = teamsGrouped[level];
 
@@ -302,7 +330,7 @@ const finalize = ({
 						i => excessGamesRemainingByTid[group[i].tid][level],
 						"desc",
 					);
-					// console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level]))
+					// if (level === "conf") { console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level])) }
 
 					for (const groupIndex of groupIndexes) {
 						const t2 = group[groupIndex];
@@ -333,11 +361,17 @@ const finalize = ({
 					}
 
 					if (
+						allowOneTeamWithOneGameRemaining[t.seasonAttrs.did][level] &&
 						excessGamesRemaining[level] === 1 &&
 						!seenOneTeamWithOneGameRemaining[level]
 					) {
 						excessGamesRemaining[level] -= 1;
 						seenOneTeamWithOneGameRemaining[level] = true;
+					} else if (excessGamesRemaining[level] === 1 && level !== "other") {
+						// Push the game to the next level
+						excessGamesRemaining[level] -= 1;
+						const nextLevel = level === "div" ? "conf" : "other";
+						excessGamesRemaining[nextLevel] += 1;
 					}
 
 					if (excessGamesRemaining[level] > 0) {
@@ -354,7 +388,7 @@ const finalize = ({
 			const scheduleCounts2 = helpers.deepCopy(toCopy.scheduleCounts);
 
 			iteration2 += 1;
-			// iteration2all += 1;
+			iteration2all += 1;
 
 			// Assign tidsEither to home/away games
 			const tidsDone: [number, number][] = []; // tid_home, tid_away
@@ -407,7 +441,7 @@ const finalize = ({
 				let homeMinCutoffDiffs = getHomeMinCutoffDiffs();
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
-					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs);
+					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs, scheduleCounts2);
 
 					// Try swapping a past matchup, if that is valid
 					let swapped = false;
@@ -416,23 +450,31 @@ const finalize = ({
 							for (const tidsDoneIndex of tidsDoneIndexesByLevel[level][tid]) {
 								const matchup = tidsDone[tidsDoneIndex];
 
+								// Skip if it's the same two teams, cause reversing that won't help
+								if (
+									(matchup[0] === tid0 && matchup[1] === tid1) ||
+									(matchup[1] === tid0 && matchup[0] === tid1)
+								) {
+									continue;
+								}
+
 								// Will both teams still be valid if we swap?
 								if (
-									maxHomeOrAway[level] -
-										scheduleCounts2[matchup[0]][level].away >
-										0 &&
-									maxHomeOrAway[level] -
-										scheduleCounts2[matchup[1]][level].home >
-										0
+									maxHomeOrAway[level] >
+										scheduleCounts2[matchup[0]][level].away &&
+									maxHomeOrAway[level] > scheduleCounts2[matchup[1]][level].home
 								) {
+									// console.log('before', scheduleCounts2[matchup[0]][level].home, scheduleCounts2[matchup[0]][level].away, scheduleCounts2[matchup[1]][level].home, scheduleCounts2[matchup[1]][level].away)
 									scheduleCounts2[matchup[0]][level].home -= 1;
 									scheduleCounts2[matchup[0]][level].away += 1;
 									scheduleCounts2[matchup[1]][level].home += 1;
 									scheduleCounts2[matchup[1]][level].away -= 1;
+									// console.log('after', scheduleCounts2[matchup[0]][level].home, scheduleCounts2[matchup[0]][level].away, scheduleCounts2[matchup[1]][level].home, scheduleCounts2[matchup[1]][level].away)
 
 									matchup.reverse();
 
 									homeMinCutoffDiffs = getHomeMinCutoffDiffs();
+									// console.log('after', homeMinCutoffDiffs)
 
 									swapped = true;
 									break;

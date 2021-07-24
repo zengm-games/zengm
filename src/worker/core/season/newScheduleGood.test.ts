@@ -341,8 +341,8 @@ describe("worker/core/season/newScheduleGood", () => {
 			testHelpers.resetG();
 		});
 
-		test.only("10 games, null div, 1 conf", () => {
-			const { warning } = newSchedule(defaultTeams, {
+		test.skip("10 games, null div, 1 conf", () => {
+			const { tids, warning } = newSchedule(defaultTeams, {
 				divs: g.get("divs"),
 				numGames: 5,
 				numGamesDiv: null,
@@ -350,6 +350,7 @@ describe("worker/core/season/newScheduleGood", () => {
 			});
 
 			console.log(warning);
+			assert.strictEqual(tids.length, 300);
 			assert.strictEqual(warning, undefined);
 		});
 	});

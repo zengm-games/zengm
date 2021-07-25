@@ -45,7 +45,7 @@ const Footer = memo(() => {
 				}}
 			>
 				<div
-					id={AD_DIVS.rectangle1}
+					id={`${AD_DIVS.rectangle1}_disabled`}
 					style={{
 						display: "none",
 						textAlign: "center",
@@ -76,7 +76,7 @@ const Footer = memo(() => {
 					/>
 				</div>
 				<div
-					id={AD_DIVS.rectangle2}
+					id={`${AD_DIVS.rectangle2}_disabled`}
 					style={{
 						display: "none",
 						textAlign: "center",

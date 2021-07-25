@@ -72,7 +72,7 @@ const Skyscraper = memo(() => {
 		<>
 			<div
 				className="banner-ad ml-3 flex-shrink-0"
-				id={AD_DIVS.rail}
+				id={`${AD_DIVS.rail}_disabled`}
 				data-gold="true"
 				style={{
 					display: "none",

@@ -48,13 +48,7 @@ const bbgmPing = (
 };
 
 // Read from goldUntil rather than local because this is called before local is updated
-let initAdsCalled = false;
 const initAds = (goldUntil: number | undefined) => {
-	if (initAdsCalled) {
-		return;
-	}
-	initAdsCalled = true;
-
 	let hideAds = false; // No ads for Gold members
 
 	const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
@@ -66,6 +60,21 @@ const initAds = (goldUntil: number | undefined) => {
 	const mobile = window.screen.width < 768;
 
 	if (!hideAds) {
+		// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
+		const divsAll = [
+			AD_DIVS.mobile,
+			AD_DIVS.leaderboard,
+			AD_DIVS.rectangle1,
+			AD_DIVS.rectangle2,
+			AD_DIVS.rail,
+		];
+		for (const id of divsAll) {
+			const div = document.getElementById(`${id}_disabled`);
+			if (div) {
+				div.id = id;
+			}
+		}
+
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const divsMobile = [AD_DIVS.mobile];
@@ -176,6 +185,21 @@ const initGold = () => {
 		if (logo) {
 			logo.style.display = "none";
 		}
+
+		// Rename to hide from Blockthrough
+		for (const id of [...divsAll, AD_DIVS.rail]) {
+			const div = document.getElementById(id);
+
+			if (div) {
+				div.id = `${id}_disabled`;
+			}
+		}
+		console.log(
+			"initGold end",
+			"display",
+			document.getElementById("basketball-gm_mobile_leaderboard")?.style
+				.display,
+		);
 	});
 };
 

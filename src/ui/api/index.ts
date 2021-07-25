@@ -48,7 +48,13 @@ const bbgmPing = (
 };
 
 // Read from goldUntil rather than local because this is called before local is updated
+let initAdsCalled = false;
 const initAds = (goldUntil: number | undefined) => {
+	if (initAdsCalled) {
+		return;
+	}
+	initAdsCalled = true;
+
 	let hideAds = false; // No ads for Gold members
 
 	const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;

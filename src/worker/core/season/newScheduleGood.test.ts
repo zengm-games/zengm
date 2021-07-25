@@ -426,7 +426,6 @@ describe("worker/core/season/newScheduleGood", () => {
 				numGamesDiv: null,
 				numGamesConf: 14, // 1 for each other team
 			});
-			console.log("warning", warning, tids.length);
 
 			assert.strictEqual(tids.length, (numGames * defaultTeams.length) / 2);
 			assert.strictEqual(warning, undefined);

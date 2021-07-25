@@ -21,19 +21,14 @@ const getInitialNumGamesConfDivSettings = (
 		},
 	}));
 
-	while (settings.numGamesDiv !== null && settings.numGamesConf !== null) {
+	if (settings.numGamesDiv !== null && settings.numGamesConf !== null) {
 		const { warning } = newScheduleGood(scheduleTeams, settings);
-		if (warning === undefined) {
-			break;
-		}
-
-		for (const key of ["numGamesDiv", "numGamesConf"] as const) {
-			if (settings[key] !== null) {
-				(settings[key] as number) -= 2;
-				if ((settings[key] as number) <= 0) {
-					settings[key] = null;
-				}
-			}
+		if (warning !== undefined) {
+			return {
+				altered: true,
+				numGamesDiv: null,
+				numGamesConf: null,
+			};
 		}
 	}
 

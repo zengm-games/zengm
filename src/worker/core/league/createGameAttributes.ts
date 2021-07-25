@@ -3,28 +3,33 @@ import {
 	gameAttributeHasHistory,
 	PHASE,
 	unwrapGameAttribute,
+	WEBSITE_ROOT,
 } from "../../../common";
 import type {
+	Conditions,
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../../common/types";
-import { defaultGameAttributes, helpers } from "../../util";
+import { defaultGameAttributes, helpers, logEvent } from "../../util";
 import { wrap } from "../../util/g";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings";
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
-const createGameAttributes = ({
-	leagueFile,
-	teamInfos,
-	userTid,
-	version,
-}: {
-	leagueFile: LeagueFile;
-	teamInfos: TeamInfo[];
-	userTid: number;
-	version?: number;
-}) => {
+const createGameAttributes = (
+	{
+		leagueFile,
+		teamInfos,
+		userTid,
+		version,
+	}: {
+		leagueFile: LeagueFile;
+		teamInfos: TeamInfo[];
+		userTid: number;
+		version?: number;
+	},
+	conditions?: Conditions,
+) => {
 	const startingSeason = leagueFile.startingSeason;
 
 	const gameAttributes: GameAttributesLeagueWithHistory = {
@@ -244,6 +249,24 @@ const createGameAttributes = ({
 
 		gameAttributes.numGamesDiv = info.numGamesDiv;
 		gameAttributes.numGamesConf = info.numGamesConf;
+
+		// Only show warning about changed numGamesDiv and numGamesConf if the initial settings were not default
+		if (
+			info.altered &&
+			(leagueFile.gameAttributes?.numGamesConf !==
+				defaultGameAttributes.numGamesConf ||
+				leagueFile.gameAttributes?.numGamesDiv !==
+					defaultGameAttributes.numGamesDiv)
+		) {
+			logEvent(
+				{
+					type: "info",
+					text: `"# Division Games" and "# Conference Games" settings were reset because the supplied values did not work. <a href="https://${WEBSITE_ROOT}/manual/customization/schedule-settings/" rel="noopener noreferrer" target="_blank">More details.</a>`,
+					saveToDb: false,
+				},
+				conditions,
+			);
+		}
 	}
 
 	return gameAttributes;

@@ -319,33 +319,36 @@ const countNegotiations = async () => {
 	return negotiations.length;
 };
 
-const createLeague = async ({
-	name,
-	tid,
-	leagueFileInput,
-	shuffleRosters,
-	importLid,
-	getLeagueOptions,
-	keptKeys,
-	actualStartingSeason,
-	confs,
-	divs,
-	teams,
-	settings,
-}: {
-	name: string;
-	tid: number;
-	leagueFileInput: any;
-	shuffleRosters: boolean;
-	importLid: number | undefined | null;
-	getLeagueOptions: GetLeagueOptions | undefined;
-	keptKeys: string[];
-	actualStartingSeason: string | undefined;
-	confs: Conf[];
-	divs: Div[];
-	teams: NewLeagueTeam[];
-	settings: Omit<Settings, "numActiveTeams">;
-}): Promise<number> => {
+const createLeague = async (
+	{
+		name,
+		tid,
+		leagueFileInput,
+		shuffleRosters,
+		importLid,
+		getLeagueOptions,
+		keptKeys,
+		actualStartingSeason,
+		confs,
+		divs,
+		teams,
+		settings,
+	}: {
+		name: string;
+		tid: number;
+		leagueFileInput: any;
+		shuffleRosters: boolean;
+		importLid: number | undefined | null;
+		getLeagueOptions: GetLeagueOptions | undefined;
+		keptKeys: string[];
+		actualStartingSeason: string | undefined;
+		confs: Conf[];
+		divs: Div[];
+		teams: NewLeagueTeam[];
+		settings: Omit<Settings, "numActiveTeams">;
+	},
+	conditions: Conditions,
+): Promise<number> => {
 	const keys = new Set([...keptKeys, "version"]);
 
 	let actualTid = tid;
@@ -564,14 +567,17 @@ const createLeague = async ({
 		];
 	}
 
-	const lid = await league.create({
-		name,
-		tid: actualTid,
-		leagueFile,
-		shuffleRosters,
-		importLid,
-		realPlayers: !!getLeagueOptions,
-	});
+	const lid = await league.create(
+		{
+			name,
+			tid: actualTid,
+			leagueFile,
+			shuffleRosters,
+			importLid,
+			realPlayers: !!getLeagueOptions,
+		},
+		conditions,
+	);
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {

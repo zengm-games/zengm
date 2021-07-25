@@ -25,6 +25,7 @@ import type {
 	TeamStatsWithoutKey,
 	DraftPickWithoutKey,
 	PlayerContract,
+	Conditions,
 } from "../../../common/types";
 import createGameAttributes from "./createGameAttributes";
 import { getAutoTicketPriceByTid } from "../game/attendance";
@@ -90,6 +91,7 @@ export const createWithoutSaving = async (
 	tid: number,
 	leagueFile: LeagueFile,
 	shuffleRosters: boolean,
+	conditions?: Conditions,
 ) => {
 	const teamsDefault = helpers.getTeamsDefault();
 
@@ -156,12 +158,15 @@ export const createWithoutSaving = async (
 	}
 
 	// Also mutates teamInfos
-	const gameAttributes = createGameAttributes({
-		leagueFile,
-		teamInfos,
-		userTid,
-		version: leagueFile.version,
-	});
+	const gameAttributes = createGameAttributes(
+		{
+			leagueFile,
+			teamInfos,
+			userTid,
+			version: leagueFile.version,
+		},
+		conditions,
+	);
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
@@ -877,22 +882,30 @@ export const createWithoutSaving = async (
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-const create = async ({
-	name,
-	tid,
-	leagueFile,
-	shuffleRosters = false,
-	importLid,
-	realPlayers,
-}: {
-	name: string;
-	tid: number;
-	leagueFile: LeagueFile;
-	shuffleRosters?: boolean;
-	importLid?: number | undefined | null;
-	realPlayers?: boolean;
-}): Promise<number> => {
-	const leagueData = await createWithoutSaving(tid, leagueFile, shuffleRosters);
+const create = async (
+	{
+		name,
+		tid,
+		leagueFile,
+		shuffleRosters = false,
+		importLid,
+		realPlayers,
+	}: {
+		name: string;
+		tid: number;
+		leagueFile: LeagueFile;
+		shuffleRosters?: boolean;
+		importLid?: number | undefined | null;
+		realPlayers?: boolean;
+	},
+	conditions?: Conditions,
+): Promise<number> => {
+	const leagueData = await createWithoutSaving(
+		tid,
+		leagueFile,
+		shuffleRosters,
+		conditions,
+	);
 
 	const userTid =
 		leagueData.gameAttributes.userTid[

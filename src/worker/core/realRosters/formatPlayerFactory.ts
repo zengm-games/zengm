@@ -125,7 +125,7 @@ const formatPlayerFactory = async (
 					if (
 						row.slug === slug &&
 						row.season === ratings.season &&
-						(row.phase === undefined || row.phase >= options.phase)
+						(row.phase === undefined || options.phase >= row.phase)
 					) {
 						statsRow = row;
 						break;

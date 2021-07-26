@@ -356,12 +356,17 @@ const upgrade45 = (transaction: VersionChangeTransaction) => {
 
 		tx.objectStore("teams").getAll().onsuccess = (event2: any) => {
 			const teams = event2.target.result;
-			console.log(teams);
 
-			const { numGamesDiv, numGamesConf } = getInitialNumGamesConfDivSettings(
-				teams,
-				settings,
-			);
+			let numGamesDiv = null;
+			let numGamesConf = null;
+
+			try {
+				const response = getInitialNumGamesConfDivSettings(teams, settings);
+				numGamesDiv = response.numGamesDiv;
+				numGamesConf = response.numGamesConf;
+			} catch (error) {
+				console.error(error);
+			}
 
 			gameAttributesStore.put({
 				key: "numGamesDiv",

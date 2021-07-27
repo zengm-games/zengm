@@ -1,13 +1,8 @@
 schedule customization
-- delete old schedule files
-- delete newScheduleCrappy
 - eventually
   - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
-- blog
-  - conference constraint for FBGM
-  - hockey constraints
 
 Leagues with historic data enabled have no grace period https://discord.com/channels/290013534023057409/290015591216054273/868805617630982224
 

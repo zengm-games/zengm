@@ -599,12 +599,15 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
-		} else if (type === "oldest_peaks") {
-			title = "Oldest Peaks";
-			description =
-				"These are the players who peaked in ovr at the oldest age (min 5 seasons in career).";
+		} else if (type === "oldest_peaks" || type === "youngest_peaks") {
+			const oldest = type === "oldest_peaks";
+
+			title = `${oldest ? "Oldest" : "Youngest"} Peaks`;
+			description = `These are the players who peaked in ovr at the ${
+				oldest ? "oldest" : "youngest"
+			} age (min 5 seasons in career${oldest ? "" : " and 30+ years old"}).`;
 			extraCols.push({
-				key: ["most", "value"],
+				key: ["most", "extra", "age"],
 				colName: "Age",
 			});
 			extraCols.push({
@@ -630,6 +633,18 @@ const updatePlayers = async (
 					return;
 				}
 
+				if (!oldest) {
+					// Skip players who are not yet 30 years old
+					const ratings = p.ratings[p.ratings.length - 1];
+					if (!ratings) {
+						return;
+					}
+					const age = ratings.season - p.born.year;
+					if (age < 30) {
+						return;
+					}
+				}
+
 				// Skip players who were older than 25 when league started
 				const ratings = p.ratings[0];
 				if (!ratings) {
@@ -644,7 +659,8 @@ const updatePlayers = async (
 				let season: number | undefined;
 				for (const ratings of p.ratings) {
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
-					if (ovr >= maxOvr) {
+					// gt vs gte makes sense if you think about oldest vs youngest, we're searching in order here
+					if ((oldest && ovr >= maxOvr) || (!oldest && ovr > maxOvr)) {
 						maxOvr = ovr;
 						season = ratings.season;
 					}
@@ -670,8 +686,9 @@ const updatePlayers = async (
 				}
 
 				return {
-					value: maxAge,
+					value: oldest ? maxAge : -maxAge,
 					extra: {
+						age: maxAge,
 						season,
 						ovr: maxOvr,
 						tid,

@@ -202,6 +202,11 @@ const frivolities = {
 			description: "The players who were the oldest when they peaked in ovr.",
 		},
 		{
+			urlParts: ["most", "youngest_peaks"],
+			name: "Youngest Peaks",
+			description: "The players who were the youngest when they peaked in ovr.",
+		},
+		{
 			urlParts: ["most", "worst_injuries"],
 			name: "Worst Injuries",
 			description:

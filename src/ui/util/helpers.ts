@@ -361,10 +361,13 @@ const roundStat = (
 	}
 };
 
-const yearRanges = (arr: number[]): string[] => {
-	if (arr.length <= 1) {
-		return arr.map(String);
+const yearRanges = (arrInput: number[]): string[] => {
+	if (arrInput.length <= 1) {
+		return arrInput.map(String);
 	}
+
+	const arr = [...arrInput];
+	arr.sort((a, b) => a - b);
 
 	const runArr: string[] = [];
 	const tempArr = [[arr[0]]];

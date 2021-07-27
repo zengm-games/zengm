@@ -18,9 +18,6 @@ add comparison to real player, for random player or draft prospect?
 - draftRatings/currentRatings/currentStats/currentPotential/careerRatings/careerStats
 - "real life"/"your league" (only basketball)
 
-fix order in award summary
-- https://discord.com/channels/290013534023057409/290015591216054273/865485007030976532
-
 https://github.com/zengm-games/zengm/blob/master/src/worker/api/index.ts#L849-L858 Some sim settings should be included here. Like block rate and few others
 - https://discord.com/channels/290013534023057409/290015591216054273/865479015514898483
 

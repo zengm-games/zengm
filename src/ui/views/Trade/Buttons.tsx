@@ -1,4 +1,7 @@
 import { ButtonGroup, Dropdown } from "react-bootstrap";
+import { useLocalStorageState } from "use-local-storage-state";
+
+export type TradeClearType = "all" | "other" | "user" | "keepUntradeable";
 
 const Buttons = ({
 	asking,
@@ -19,12 +22,22 @@ const Buttons = ({
 	handleClickAsk: () => void;
 	handleClickClear: (
 		type: "all" | "other" | "user" | "keepUntradeable",
-	) => () => void;
+	) => Promise<void>;
 	handleClickForceTrade: () => void;
 	handleClickPropose: () => void;
 	numAssets: number;
 	teamNames: [string, string];
 }) => {
+	const [defaultType, setDefaultType] = useLocalStorageState<TradeClearType>(
+		"trade-clear-type",
+		"all",
+	);
+
+	const onClick = (type: TradeClearType) => async () => {
+		setDefaultType(type);
+		await handleClickClear(type);
+	};
+
 	return (
 		<>
 			{godMode ? (
@@ -62,7 +75,7 @@ const Buttons = ({
 					<button
 						type="submit"
 						className="btn btn-secondary"
-						onClick={handleClickClear("all")}
+						onClick={onClick(defaultType)}
 					>
 						Clear
 					</button>
@@ -70,17 +83,18 @@ const Buttons = ({
 					<Dropdown.Toggle split variant="secondary" id="clear-trade-more" />
 
 					<Dropdown.Menu>
-						<Dropdown.Item onClick={handleClickClear("all")}>
-							All (default)
+						<Dropdown.Item onClick={onClick("all")}>
+							All{defaultType === "all" ? " (default)" : null}
 						</Dropdown.Item>
-						<Dropdown.Item onClick={handleClickClear("other")}>
-							{teamNames[0]} only
+						<Dropdown.Item onClick={onClick("other")}>
+							{teamNames[0]} only{defaultType === "other" ? " (default)" : null}
 						</Dropdown.Item>
-						<Dropdown.Item onClick={handleClickClear("user")}>
-							{teamNames[1]} only
+						<Dropdown.Item onClick={onClick("user")}>
+							{teamNames[1]} only{defaultType === "user" ? " (default)" : null}
 						</Dropdown.Item>
-						<Dropdown.Item onClick={handleClickClear("keepUntradeable")}>
+						<Dropdown.Item onClick={onClick("keepUntradeable")}>
 							Keep untradeable
+							{defaultType === "keepUntradeable" ? " (default)" : null}
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>

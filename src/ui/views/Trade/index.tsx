@@ -5,6 +5,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
+import type { TradeClearType } from "./Buttons";
 import Summary from "./Summary";
 import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
@@ -17,7 +18,6 @@ const Trade = (props: View<"trade">) => {
 		message: null as string | null,
 		prevTeams: undefined as TradeTeams | undefined,
 	});
-	console.log("prevTeams", state.prevTeams);
 
 	const handleChangeAsset = async (
 		userOrOther: "other" | "user",
@@ -188,15 +188,14 @@ const Trade = (props: View<"trade">) => {
 		}));
 	};
 
-	const handleClickClear =
-		(type: "all" | "other" | "user" | "keepUntradeable") => async () => {
-			setState(prevState => ({
-				...prevState,
-				message: null,
-				prevTeams: undefined,
-			}));
-			await toWorker("main", "clearTrade", type);
-		};
+	const handleClickClear = async (type: TradeClearType) => {
+		setState(prevState => ({
+			...prevState,
+			message: null,
+			prevTeams: undefined,
+		}));
+		await toWorker("main", "clearTrade", type);
+	};
 
 	const handleClickForceTrade = () => {
 		setState(prevState => ({

@@ -2,13 +2,15 @@ summary of day's games
 - https://mail.google.com/mail/u/0/#search/day/FMfcgxwLttFTMwkcnSlVDVlmTZBkKljr
 - if no games went from scheduled -> completed, then update only dropdowns on re-render
 - ui
-  - League > Schedule
   - replace live sim screen with this
+  - highlight userTid in completed games
   - "sim to day" button for future days
   - links between team schedule and league schedule
   - button to foce win/lose for whole day, like team schedule page
   - days list should indicate playoffs
   - arrows to switch between days
+  - for past season with no games, share error message with game log and player game log
+  - viewing URL with day in it. click main menu (no day). should go to today
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 
 schedule customization

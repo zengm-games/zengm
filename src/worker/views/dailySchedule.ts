@@ -81,6 +81,7 @@ const updateDailySchedule = async (
 			isToday,
 			season: inputs.season,
 			upcoming,
+			userTid: g.get("userTid"),
 		};
 	}
 };

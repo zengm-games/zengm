@@ -13,6 +13,7 @@ const DailySchedule = ({
 	isToday,
 	season,
 	upcoming,
+	userTid,
 }: View<"dailySchedule">) => {
 	useTitleBar({
 		title: "Daily Schedule",
@@ -91,6 +92,8 @@ const DailySchedule = ({
 		);
 	}
 
+	const upcomingAndCompleted = upcoming.length > 0 && completed.length > 0;
+
 	return (
 		<>
 			<p>MORE LINKS</p>
@@ -101,31 +104,55 @@ const DailySchedule = ({
 				</div>
 			) : null}
 			<div className="row">
-				<div className="col-sm-6">
-					<h2>Upcoming Games</h2>
-					<ul className="list-group">
-						{upcoming.map((game, i) => {
-							return (
-								<Fragment key={game.gid}>
-									<ScoreBox game={game} header={i === 0} />
-									<ForceWin key={forceWinKey} className="mb-3" game={game} />
-								</Fragment>
-							);
-						})}
-					</ul>
-				</div>
-				<div className="col-sm-6">
-					<h2>Completed Games</h2>
-					{completed.map((game, i) => (
-						<ScoreBox
-							className="mb-3"
-							key={game.gid}
-							game={game}
-							header={i === 0}
-						/>
-					))}
+				<div className="col-xl-4 col-md-6 col-12">
+					{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
+					<div className="d-flex" style={{ maxWidth: 400, marginRight: 62 }}>
+						{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
+						<div className="p-1 ml-auto text-muted" title="Team Overall Rating">
+							Ovr
+						</div>
+						<div
+							className={classNames(
+								"text-right p-1 text-muted",
+								"score-box-spread",
+							)}
+							title="Predicted Point Spread"
+						>
+							Spread
+						</div>
+					</div>
 				</div>
 			</div>
+
+			<div className="row">
+				{upcoming.map(game => {
+					return (
+						<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+							<ScoreBox
+								game={game}
+								actionDisabled={gameSimInProgress || !isToday}
+								actionHighlight={
+									game.teams[0].tid === userTid || game.teams[1].tid === userTid
+								}
+								actionText={
+									<>
+										Watch
+										<br />
+										Game
+									</>
+								}
+								actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
+								limitWidthToParent
+							/>
+							<ForceWin className="mb-3" key={forceWinKey} game={game} />
+						</div>
+					);
+				})}
+			</div>
+			{upcomingAndCompleted ? <h2>Completed Games</h2> : null}
+			{completed.map(game => (
+				<ScoreBox className="mb-3" key={game.gid} game={game} />
+			))}
 		</>
 	);
 };

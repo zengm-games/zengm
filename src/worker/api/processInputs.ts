@@ -362,7 +362,7 @@ const leaders = (params: Params) => {
 const dailySchedule = (params: Params) => {
 	const season = validateSeason(params.season);
 
-	let day = parseInt(params.day as any);
+	let day = params.day === undefined ? undefined : parseInt(params.day as any);
 	if (Number.isNaN(day)) {
 		day = 1;
 	}

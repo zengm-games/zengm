@@ -41,6 +41,7 @@ import injuries from "./injuries";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
+import dailySchedule from "./dailySchedule";
 import leagueStats from "./leagueStats";
 import live from "./live";
 import liveGame from "./liveGame";
@@ -130,6 +131,7 @@ export default {
 	leaders,
 	leagueDashboard,
 	leagueFinances,
+	dailySchedule,
 	leagueStats,
 	live,
 	liveGame,

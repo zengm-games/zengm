@@ -359,6 +359,20 @@ const leaders = (params: Params) => {
 	};
 };
 
+const dailySchedule = (params: Params) => {
+	const season = validateSeason(params.season);
+
+	let day = parseInt(params.day as any);
+	if (Number.isNaN(day)) {
+		day = 1;
+	}
+
+	return {
+		day,
+		season,
+	};
+};
+
 const liveGame = (params: Params, ctxBBGM: any) => {
 	const obj: {
 		fromAction: boolean;
@@ -788,6 +802,7 @@ export default {
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,
+	dailySchedule,
 	depth,
 	draft,
 	draftLottery,

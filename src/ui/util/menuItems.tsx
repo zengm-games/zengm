@@ -70,6 +70,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "daily_schedule",
+				league: true,
+				path: ["daily_schedule"],
+				text: "Daily Schedule",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "leagueFinances",
 				league: true,
 				path: ["league_finances"],

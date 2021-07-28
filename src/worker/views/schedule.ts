@@ -4,15 +4,21 @@ import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 
 export const getUpcoming = async ({
-	tid,
+	day,
 	limit = Infinity,
 	oneDay,
+	tid,
 }: {
-	tid?: number;
+	day?: number;
 	limit?: number;
 	oneDay?: boolean;
+	tid?: number;
 }) => {
-	const schedule = await season.getSchedule(oneDay);
+	let schedule = await season.getSchedule(oneDay);
+	if (day !== undefined) {
+		schedule = schedule.filter(game => game.day === day);
+	}
+
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],

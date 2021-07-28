@@ -205,6 +205,9 @@ const routes = () => {
 		"/l/:lid/injuries": genPage("injuries"),
 		"/l/:lid/injuries/:abbrev": genPage("injuries"),
 		"/l/:lid/injuries/:abbrev/:season": genPage("injuries"),
+		"/l/:lid/daily_schedule": genPage("dailySchedule"),
+		"/l/:lid/daily_schedule/:season": genPage("dailySchedule"),
+		"/l/:lid/daily_schedule/:season/:day": genPage("dailySchedule"),
 
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftHistory"),

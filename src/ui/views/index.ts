@@ -7,6 +7,7 @@ import AwardsRecords from "./AwardsRecords";
 import Colleges from "./Colleges";
 import Countries from "./Countries";
 import CustomizePlayer from "./CustomizePlayer";
+import DailySchedule from "./DailySchedule";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
 import DeleteOldData from "./DeleteOldData";
@@ -101,6 +102,7 @@ export default {
 	Colleges,
 	Countries,
 	CustomizePlayer,
+	DailySchedule,
 	DangerZone,
 	Dashboard,
 	DeleteOldData,

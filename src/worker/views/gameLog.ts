@@ -242,7 +242,11 @@ const updateGamesList = async (
 			games = state.gamesList ? state.gamesList.games : [];
 		}
 
-		const newGames = await getProcessedGames(abbrev, season, games);
+		const newGames = await getProcessedGames({
+			abbrev,
+			season,
+			loadedGames: games,
+		});
 
 		if (games.length === 0) {
 			games = newGames;

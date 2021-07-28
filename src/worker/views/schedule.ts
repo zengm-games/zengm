@@ -162,12 +162,11 @@ const updateCompleted = async (
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		// Load all games in list
-		const completed = await getProcessedGames(
-			inputs.abbrev,
-			g.get("season"),
-			undefined,
-			true,
-		);
+		const completed = await getProcessedGames({
+			abbrev: inputs.abbrev,
+			season: g.get("season"),
+			includeAllStarGame: true,
+		});
 
 		return {
 			completed,
@@ -178,12 +177,12 @@ const updateCompleted = async (
 		// Partial update of only new games
 		const completed = Array.isArray(state.completed) ? state.completed : [];
 
-		const games = await getProcessedGames(
-			inputs.abbrev,
-			g.get("season"),
-			state.completed,
-			true,
-		);
+		const games = await getProcessedGames({
+			abbrev: inputs.abbrev,
+			season: g.get("season"),
+			loadedGames: state.completed,
+			includeAllStarGame: true,
+		});
 
 		for (let i = games.length - 1; i >= 0; i--) {
 			completed.unshift(games[i]);

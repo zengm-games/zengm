@@ -12,12 +12,17 @@ import type { Game } from "../../common/types";
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-const getProcessedGames = async (
-	abbrev: string,
-	season: number,
-	loadedGames: Game[] = [],
-	includeAllStarGame?: boolean,
-) => {
+const getProcessedGames = async ({
+	abbrev,
+	season,
+	loadedGames = [],
+	includeAllStarGame = false,
+}: {
+	abbrev: string;
+	season: number;
+	loadedGames?: Game[];
+	includeAllStarGame?: boolean;
+}) => {
 	let tid;
 
 	if (abbrev === "special") {

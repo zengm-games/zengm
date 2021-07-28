@@ -32,17 +32,10 @@ const updateDailySchedule = async (
 			}
 		}
 
-		let upcoming: ThenArg<ReturnType<typeof getUpcoming>> = [];
 		let isToday = false;
 
-		if (inputs.season === g.get("season")) {
-			// If it's the current season, get any upcoming games
-			upcoming = await getUpcoming({
-				day: inputs.day,
-			});
-		}
-
-		let day = inputs.day ?? -1;
+		// The state.day check means it keeps the current day highlighted on refresh even if there is no day specified in the URL
+		let day = inputs.day ?? state.day ?? -1;
 		if (inputs.season === g.get("season")) {
 			const schedule = await season.getSchedule();
 
@@ -55,7 +48,7 @@ const updateDailySchedule = async (
 				day = 1;
 			}
 
-			const scheduleDay = schedule.filter(game => game.day === inputs.day);
+			const scheduleDay = schedule.filter(game => game.day === day);
 			isToday =
 				scheduleDay.length > 0 && schedule[0].gid === scheduleDay[0].gid;
 			for (const game of schedule) {
@@ -69,7 +62,15 @@ const updateDailySchedule = async (
 			}
 		}
 
-		const completed = games.filter(game => game.day === inputs.day);
+		const completed = games.filter(game => game.day === day);
+
+		let upcoming: ThenArg<ReturnType<typeof getUpcoming>> = [];
+		if (inputs.season === g.get("season")) {
+			// If it's the current season, get any upcoming games
+			upcoming = await getUpcoming({
+				day,
+			});
+		}
 
 		const days = Array.from(daysSet).sort((a, b) => a - b);
 

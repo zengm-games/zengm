@@ -25,26 +25,16 @@ const DailySchedule = ({
 	});
 	console.log(days, day);
 
-	const { gameSimInProgress, godMode } = useLocalShallow(state => ({
+	const { gameSimInProgress } = useLocalShallow(state => ({
 		gameSimInProgress: state.gameSimInProgress,
 		godMode: state.godMode,
 	}));
-
-	const [forcingAll, setForcingAll] = useState(false);
-	const [forceWinKey, setForceWinKey] = useState(0);
-
-	const handleForceAll = (type: "win" | "lose" | "none") => async () => {
-		setForcingAll(true);
-		await toWorker("main", "setForceWinAll", tid, type);
-		setForceWinKey(key => key + 1);
-		setForcingAll(false);
-	};
 
 	let simToDay = null;
 	if (upcoming.length > 0 && !isToday) {
 		const minGid = Math.min(...upcoming.map(game => game.gid));
 		simToDay = (
-			<div>
+			<div className="mb-3">
 				<button
 					className="btn btn-secondary"
 					disabled={gameSimInProgress}
@@ -58,51 +48,12 @@ const DailySchedule = ({
 		);
 	}
 
-	let forceWinButtons = null;
-	if (godMode && upcoming.length > 0) {
-		forceWinButtons = (
-			<div
-				className={classNames(
-					"btn-group",
-					simToDay ? "mt-3 mt-sm-0 ml-sm-3" : undefined,
-				)}
-			>
-				<button
-					className="btn btn-god-mode"
-					onClick={handleForceAll("win")}
-					disabled={forcingAll}
-				>
-					Force win all
-				</button>
-				<button
-					className="btn btn-god-mode"
-					onClick={handleForceAll("lose")}
-					disabled={forcingAll}
-				>
-					Force lose all
-				</button>
-				<button
-					className="btn btn-god-mode"
-					onClick={handleForceAll("none")}
-					disabled={forcingAll}
-				>
-					Reset all
-				</button>
-			</div>
-		);
-	}
-
 	const upcomingAndCompleted = upcoming.length > 0 && completed.length > 0;
 
 	return (
 		<>
 			<p>MORE LINKS</p>
-			{simToDay || forceWinButtons ? (
-				<div className="mb-4 d-sm-flex">
-					{simToDay}
-					{forceWinButtons}
-				</div>
-			) : null}
+			{simToDay}
 
 			{upcoming.length > 0 ? (
 				<>
@@ -157,7 +108,7 @@ const DailySchedule = ({
 							return (
 								<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
 									<ScoreBox game={game} {...actionStuff} />
-									<ForceWin className="mb-3" key={forceWinKey} game={game} />
+									<ForceWin className="mb-3" game={game} />
 								</div>
 							);
 						})}

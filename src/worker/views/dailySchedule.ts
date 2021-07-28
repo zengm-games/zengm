@@ -9,6 +9,7 @@ import type {
 } from "../../common/types";
 import { getUpcoming } from "./schedule";
 
+let prevInputsDay: number | undefined;
 const updateDailySchedule = async (
 	inputs: ViewInput<"dailySchedule">,
 	updateEvents: UpdateEvents,
@@ -34,8 +35,23 @@ const updateDailySchedule = async (
 
 		let isToday = false;
 
-		// The state.day check means it keeps the current day highlighted on refresh even if there is no day specified in the URL
-		let day = inputs.day ?? state.day ?? -1;
+		// What day is it? Get it from URL by default, but that could be undefined
+		let day = inputs.day ?? -1;
+		if (day === -1) {
+			if (updateEvents.includes("firstRun")) {
+				// If this is a new load of the view, initialize to the current day (current season) or day 1 (past season)
+				day = -1;
+			} else if (prevInputsDay !== undefined) {
+				// If this is a refresh and we're moving from day in URL to no day in URL, go to current day (current season) or day 1 (past season)
+				day = -1;
+			} else if (state.day !== undefined) {
+				// If this is a refresh and we already had a day loaded even with no day in the URL, keep that day the same
+				day = state.day;
+			}
+		}
+
+		prevInputsDay = inputs.day;
+
 		if (inputs.season === g.get("season")) {
 			const schedule = await season.getSchedule();
 

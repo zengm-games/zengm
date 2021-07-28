@@ -9,7 +9,6 @@ summary of day's games
   - days list should indicate playoffs
   - arrows to switch between days
   - for past season with no games, share error message with game log and player game log
-  - viewing URL with day in it. click main menu (no day). should go to today
   - trade deadline day shouldn't just disappear when you sim it
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 

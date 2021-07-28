@@ -1,4 +1,4 @@
-Copyright (C) Jeremy Scheff. All rights reserved.
+Copyright (C) ZenGM, LLC. All rights reserved.
 
 **This project is not open source!** But it's not completely closed either.
 It's somewhere in between. My goal here is to make my code as publicly available

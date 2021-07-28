@@ -101,7 +101,7 @@ Address: **YourAddressHere**
 
 ## Us 
 
-Name: Jeremy Scheff  
+Name: Jeremy Scheff, owner of ZenGM, LLC 
 GitHub Username: dumbmatter  
 Email: jeremy@zengm.com
 

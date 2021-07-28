@@ -3,6 +3,7 @@ summary of day's games
 - if no games went from scheduled -> completed, then update only dropdowns on re-render
 - ui
   - replace live sim screen with this
+    - links and redirects
   - highlight userTid in completed games
   - "sim to day" button for future days
   - links between team schedule and league schedule

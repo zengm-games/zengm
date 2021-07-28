@@ -98,61 +98,120 @@ const DailySchedule = ({
 		<>
 			<p>MORE LINKS</p>
 			{simToDay || forceWinButtons ? (
-				<div className="mb-3 d-sm-flex">
+				<div className="mb-4 d-sm-flex">
 					{simToDay}
 					{forceWinButtons}
 				</div>
 			) : null}
-			<div className="row">
-				<div className="col-xl-4 col-md-6 col-12">
-					{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
-					<div className="d-flex" style={{ maxWidth: 400, marginRight: 62 }}>
-						{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
-						<div className="p-1 ml-auto text-muted" title="Team Overall Rating">
-							Ovr
-						</div>
-						<div
-							className={classNames(
-								"text-right p-1 text-muted",
-								"score-box-spread",
-							)}
-							title="Predicted Point Spread"
-						>
-							Spread
+
+			{upcoming.length > 0 ? (
+				<>
+					<div className="row">
+						<div className="col-xl-4 col-md-6 col-12">
+							{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
+							<div
+								className="d-flex"
+								style={{ maxWidth: 400, marginRight: isToday ? 62 : 0 }}
+							>
+								{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
+								<div
+									className="p-1 ml-auto text-muted"
+									title="Team Overall Rating"
+								>
+									Ovr
+								</div>
+								<div
+									className={classNames(
+										"text-right p-1 text-muted",
+										"score-box-spread",
+									)}
+									title="Predicted Point Spread"
+								>
+									Spread
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
 
-			<div className="row">
-				{upcoming.map(game => {
-					return (
-						<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
-							<ScoreBox
-								game={game}
-								actionDisabled={gameSimInProgress || !isToday}
-								actionHighlight={
-									game.teams[0].tid === userTid || game.teams[1].tid === userTid
-								}
-								actionText={
-									<>
-										Watch
-										<br />
-										Game
-									</>
-								}
-								actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
-								limitWidthToParent
-							/>
-							<ForceWin className="mb-3" key={forceWinKey} game={game} />
+					<div className="row">
+						{upcoming.map(game => {
+							const actionStuff = isToday
+								? {
+										actionDisabled: gameSimInProgress,
+										actionHighlight:
+											game.teams[0].tid === userTid ||
+											game.teams[1].tid === userTid,
+										actionText: (
+											<>
+												Watch
+												<br />
+												Game
+											</>
+										),
+										actionOnClick: () =>
+											toWorker("actions", "liveGame", game.gid),
+										limitWidthToParent: true,
+								  }
+								: {};
+
+							return (
+								<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+									<ScoreBox game={game} {...actionStuff} />
+									<ForceWin className="mb-3" key={forceWinKey} game={game} />
+								</div>
+							);
+						})}
+					</div>
+				</>
+			) : null}
+
+			{completed.length > 0 ? (
+				<>
+					<div
+						className={classNames("row", {
+							"mt-3": upcomingAndCompleted,
+						})}
+					>
+						<div className="col-xl-4 col-md-6 col-12">
+							{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
+							<div className="d-flex" style={{ maxWidth: 400 }}>
+								{upcomingAndCompleted ? <h2>Completed Games</h2> : null}
+								<div
+									className="p-1 ml-auto text-muted"
+									title="Team Overall Rating"
+								>
+									Ovr
+								</div>
+								<div
+									className={classNames(
+										"text-right p-1 text-muted",
+										"score-box-spread",
+									)}
+									title="Predicted Point Spread"
+								>
+									Spread
+								</div>
+								<div
+									className="score-box-score text-right text-muted p-1"
+									title="Final Score"
+								>
+									Score
+								</div>
+							</div>
 						</div>
-					);
-				})}
-			</div>
-			{upcomingAndCompleted ? <h2>Completed Games</h2> : null}
-			{completed.map(game => (
-				<ScoreBox className="mb-3" key={game.gid} game={game} />
-			))}
+					</div>
+
+					<div className="row">
+						{completed.map(game => {
+							return (
+								<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+									<ScoreBox game={game} className="mb-3" />
+								</div>
+							);
+						})}
+					</div>
+				</>
+			) : null}
 		</>
 	);
 };

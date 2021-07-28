@@ -21,12 +21,18 @@ const updateDailySchedule = async (
 		inputs.season !== state.season ||
 		inputs.day !== state.day
 	) {
-		const completed = [];
-		const days: number[] = [
-			...completed
-				.filter(game => typeof game.day === "number")
-				.map(game => game.day),
-		];
+		const games = await idb.getCopies.games({
+			season: inputs.season,
+		});
+
+		const daysSet = new Set<number>();
+		for (const game of games) {
+			if (game.day !== undefined) {
+				daysSet.add(game.day);
+			}
+		}
+
+		const completed = games.filter(game => game.day === inputs.day);
 
 		let upcoming: ThenArg<ReturnType<typeof getUpcoming>> = [];
 		let isToday = false;
@@ -37,8 +43,8 @@ const updateDailySchedule = async (
 			isToday =
 				scheduleDay.length > 0 && schedule[0].gid === scheduleDay[0].gid;
 			for (const game of schedule) {
-				if (game.day !== undefined && !days.includes(game.day)) {
-					days.push(game.day);
+				if (game.day !== undefined) {
+					daysSet.add(game.day);
 				}
 			}
 
@@ -47,6 +53,8 @@ const updateDailySchedule = async (
 				day: inputs.day,
 			});
 		}
+
+		const days = Array.from(daysSet).sort((a, b) => a - b);
 
 		return {
 			completed,

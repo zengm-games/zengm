@@ -173,6 +173,8 @@ const getSortedIndexes = (ovrs: number[]) => {
 class GameSim {
 	id: number;
 
+	day: number | undefined;
+
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnCourt: [number[], number[]];
@@ -236,11 +238,13 @@ class GameSim {
 	 */
 	constructor({
 		gid,
+		day,
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 	}: {
 		gid: number;
+		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
@@ -250,6 +254,7 @@ class GameSim {
 		}
 
 		this.id = gid;
+		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
@@ -412,6 +417,7 @@ class GameSim {
 
 		const out = {
 			gid: this.id,
+			day: this.day,
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: this.clutchPlays,

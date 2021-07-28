@@ -40,6 +40,7 @@ const setSchedule = async (tids: [number, number][]) => {
 			homeTid,
 			awayTid,
 		})),
+		await idb.cache.games.getAll(),
 	);
 	for (const game of schedule) {
 		if (playoffs) {

@@ -249,8 +249,9 @@ type GameTeam = {
 export type Game = {
 	att: number;
 	clutchPlays?: string[];
-	gid: number;
+	day?: number; // Only optional for legacy
 	forceWin?: number; // If defined, it's the number of iterations that were used to force the win
+	gid: number;
 	lost: {
 		tid: number;
 		pts: number;

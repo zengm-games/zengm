@@ -158,6 +158,7 @@ const writeGameStats = async (
 
 	const gameStats: Game = {
 		gid: results.gid,
+		day: results.day,
 		att,
 		clutchPlays: [],
 		numPlayersOnCourt: results.numPlayersOnCourt,

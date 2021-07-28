@@ -42,6 +42,8 @@ const fatigue = (energy: number): number => {
 class GameSim {
 	id: number;
 
+	day: number | undefined;
+
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnField: [PlayersOnField, PlayersOnField];
@@ -98,12 +100,14 @@ class GameSim {
 
 	constructor({
 		gid,
+		day,
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 		disableHomeCourtAdvantage = false,
 	}: {
 		gid: number;
+		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
@@ -111,6 +115,7 @@ class GameSim {
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
+		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];
@@ -209,6 +214,7 @@ class GameSim {
 
 		const out = {
 			gid: this.id,
+			day: this.day,
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: [],

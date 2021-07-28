@@ -1,9 +1,10 @@
 summary of day's games
-- store day in box score
-- is the current schedule "day" good enough? what if there are gaps? playoffs?
 - https://mail.google.com/mail/u/0/#search/day/FMfcgxwLttFTMwkcnSlVDVlmTZBkKljr
 - League > Schedule
-- addDaysToSchedule needs to better handle playoffs, maybe look at games cache for previous day?
+- replace live sim screen with this
+- "sim to day" button for future days
+- links between team schedule and league schedule
+- upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 
 schedule customization
 - eventually

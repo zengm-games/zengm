@@ -393,7 +393,10 @@ export const createWithoutSaving = async (
 		}
 
 		if (missingDay) {
-			leagueFile.schedule = season.addDaysToSchedule(leagueFile.schedule);
+			leagueFile.schedule = season.addDaysToSchedule(
+				leagueFile.schedule,
+				leagueFile.games,
+			);
 		}
 	}
 

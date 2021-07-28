@@ -291,12 +291,14 @@ const play = async (
 
 	const getResult = ({
 		gid,
+		day,
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 		disableHomeCourtAdvantage = false,
 	}: {
 		gid: number;
+		day: number | undefined;
 		teams: [any, any];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
@@ -311,6 +313,7 @@ const play = async (
 
 		return new GameSim({
 			gid,
+			day,
 			teams,
 			doPlayByPlay,
 			homeCourtFactor,
@@ -354,6 +357,7 @@ const play = async (
 
 					const result = getResult({
 						gid: game.gid,
+						day: game.day,
 						teams: helpers.deepCopy(teamsInput), // So stats start at 0 each time
 						doPlayByPlay,
 						homeCourtFactor,
@@ -422,6 +426,7 @@ const play = async (
 
 				const result = getResult({
 					gid: game.gid,
+					day: game.day,
 					teams: teamsInput,
 					doPlayByPlay,
 					disableHomeCourtAdvantage,

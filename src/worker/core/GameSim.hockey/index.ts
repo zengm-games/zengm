@@ -55,6 +55,8 @@ type TeamCurrentLine = {
 class GameSim {
 	id: number;
 
+	day: number | undefined;
+
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnIce: [PlayersOnIce, PlayersOnIce];
@@ -97,17 +99,20 @@ class GameSim {
 
 	constructor({
 		gid,
+		day,
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 	}: {
 		gid: number;
+		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
+		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.synergyFactor = 1;
@@ -455,6 +460,7 @@ class GameSim {
 
 		const out = {
 			gid: this.id,
+			day: this.day,
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: [],

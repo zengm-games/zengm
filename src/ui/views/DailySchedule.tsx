@@ -4,6 +4,7 @@ import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
+import classNames from "classnames";
 
 const DailySchedule = ({
 	completed,
@@ -42,45 +43,61 @@ const DailySchedule = ({
 	if (upcoming.length > 0 && !isToday) {
 		const minGid = Math.min(...upcoming.map(game => game.gid));
 		simToDay = (
-			<button
-				className="btn btn-secondary mb-3"
-				disabled={gameSimInProgress}
-				onClick={() => {
-					toWorker("actions", "simToGame", minGid);
-				}}
+			<div>
+				<button
+					className="btn btn-secondary"
+					disabled={gameSimInProgress}
+					onClick={() => {
+						toWorker("actions", "simToGame", minGid);
+					}}
+				>
+					Sim to day
+				</button>
+			</div>
+		);
+	}
+
+	let forceWinButtons = null;
+	if (godMode && upcoming.length > 0) {
+		forceWinButtons = (
+			<div
+				className={classNames(
+					"btn-group",
+					simToDay ? "mt-3 mt-sm-0 ml-sm-3" : undefined,
+				)}
 			>
-				Sim to day
-			</button>
+				<button
+					className="btn btn-god-mode"
+					onClick={handleForceAll("win")}
+					disabled={forcingAll}
+				>
+					Force win all
+				</button>
+				<button
+					className="btn btn-god-mode"
+					onClick={handleForceAll("lose")}
+					disabled={forcingAll}
+				>
+					Force lose all
+				</button>
+				<button
+					className="btn btn-god-mode"
+					onClick={handleForceAll("none")}
+					disabled={forcingAll}
+				>
+					Reset all
+				</button>
+			</div>
 		);
 	}
 
 	return (
 		<>
 			<p>MORE LINKS</p>
-			{simToDay}
-			{godMode && upcoming.length > 0 ? (
-				<div className="btn-group mb-3">
-					<button
-						className="btn btn-god-mode"
-						onClick={handleForceAll("win")}
-						disabled={forcingAll}
-					>
-						Force win all
-					</button>
-					<button
-						className="btn btn-god-mode"
-						onClick={handleForceAll("lose")}
-						disabled={forcingAll}
-					>
-						Force lose all
-					</button>
-					<button
-						className="btn btn-god-mode"
-						onClick={handleForceAll("none")}
-						disabled={forcingAll}
-					>
-						Reset all
-					</button>
+			{simToDay || forceWinButtons ? (
+				<div className="mb-3 d-sm-flex">
+					{simToDay}
+					{forceWinButtons}
 				</div>
 			) : null}
 			<div className="row">

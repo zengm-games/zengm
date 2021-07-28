@@ -1,6 +1,6 @@
 import { season, team } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames } from "../util";
+import { g } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,

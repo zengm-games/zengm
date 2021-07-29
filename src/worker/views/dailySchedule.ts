@@ -125,6 +125,7 @@ const updateDailySchedule = async (
 
 		return {
 			completed,
+			currentSeason: g.get("season"),
 			day,
 			days,
 			isToday,

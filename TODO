@@ -3,9 +3,9 @@ summary of day's games
 - if all games are completed, then only update on new season (for dropdowns)
 - ui
   - links between team schedule and league schedule
-  - for past season with no games, share error message with game log and player game log
   - trade deadline day shouldn't just disappear when you sim it
   - completed games score box should grow wider?
+  - should it auto-refresh to the next page after simming a day? make it an option?
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 
 schedule customization

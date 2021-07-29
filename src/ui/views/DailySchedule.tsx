@@ -49,10 +49,27 @@ const DailySchedule = ({
 
 	const upcomingAndCompleted = upcoming.length > 0 && completed.length > 0;
 
+	const tradeDeadline =
+		upcoming.length === 1 &&
+		upcoming[0].teams[0].tid === -3 &&
+		upcoming[0].teams[1].tid === -3;
+
 	return (
 		<>
 			<p>MORE LINKS</p>
 			{simToDay}
+
+			{tradeDeadline ? (
+				<p>
+					Sim one day to move past the trade deadline, and then the next day's
+					games will be available here.
+				</p>
+			) : isToday ? (
+				<p>
+					To view a live play-by-play summary of a game, select one of today's
+					games below.
+				</p>
+			) : null}
 
 			{upcoming.length > 0 ? (
 				<>
@@ -85,24 +102,25 @@ const DailySchedule = ({
 
 					<div className="row">
 						{upcoming.map(game => {
-							const actionStuff = isToday
-								? {
-										actionDisabled: gameSimInProgress,
-										actionHighlight:
-											game.teams[0].tid === userTid ||
-											game.teams[1].tid === userTid,
-										actionText: (
-											<>
-												Watch
-												<br />
-												Game
-											</>
-										),
-										actionOnClick: () =>
-											toWorker("actions", "liveGame", game.gid),
-										limitWidthToParent: true,
-								  }
-								: {};
+							const actionStuff =
+								isToday && !tradeDeadline
+									? {
+											actionDisabled: gameSimInProgress,
+											actionHighlight:
+												game.teams[0].tid === userTid ||
+												game.teams[1].tid === userTid,
+											actionText: (
+												<>
+													Watch
+													<br />
+													Game
+												</>
+											),
+											actionOnClick: () =>
+												toWorker("actions", "liveGame", game.gid),
+											limitWidthToParent: true,
+									  }
+									: {};
 
 							return (
 								<div className="col-xl-4 col-md-6 col-12" key={game.gid}>

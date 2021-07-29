@@ -43,7 +43,6 @@ import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
 import dailySchedule from "./dailySchedule";
 import leagueStats from "./leagueStats";
-import live from "./live";
 import liveGame from "./liveGame";
 import manageConfs from "./manageConfs";
 import manageTeams from "./manageTeams";
@@ -133,7 +132,6 @@ export default {
 	leagueFinances,
 	dailySchedule,
 	leagueStats,
-	live,
 	liveGame,
 	manageConfs,
 	manageTeams,

@@ -1,5 +1,5 @@
 import { takeScreenshot, toWorker } from ".";
-import { isSport, WEBSITE_ROOT } from "../../common";
+import { isSport, TIME_BETWEEN_GAMES, WEBSITE_ROOT } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
@@ -73,7 +73,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				active: pageID => pageID === "daily_schedule",
 				league: true,
 				path: ["daily_schedule"],
-				text: "Daily Schedule",
+				text: `${TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"}`,
 			},
 			{
 				type: "link",

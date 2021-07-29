@@ -6,7 +6,6 @@ summary of day's games
     - links and redirects
   - highlight userTid in completed games
   - links between team schedule and league schedule
-  - days list should indicate playoffs
   - arrows to switch between days
   - for past season with no games, share error message with game log and player game log
   - trade deadline day shouldn't just disappear when you sim it

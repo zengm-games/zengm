@@ -1,4 +1,3 @@
-import { Fragment, useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";

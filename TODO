@@ -4,7 +4,6 @@ summary of day's games
 - ui
   - trade deadline day shouldn't just disappear when you sim it
   - completed games score box should grow wider?
-  - should it auto-refresh to the next page after simming a day? make it an option?
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 
 schedule customization

@@ -360,6 +360,14 @@ const leaders = (params: Params) => {
 };
 
 const dailySchedule = (params: Params) => {
+	if (params.season === "today") {
+		return {
+			day: undefined,
+			season: g.get("season"),
+			today: true,
+		};
+	}
+
 	const season = validateSeason(params.season);
 
 	let day = params.day === undefined ? undefined : parseInt(params.day as any);

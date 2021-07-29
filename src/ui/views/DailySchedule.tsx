@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment, useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -23,7 +22,6 @@ const DailySchedule = ({
 			days,
 		},
 	});
-	console.log(days, day);
 
 	const { gameSimInProgress } = useLocalShallow(state => ({
 		gameSimInProgress: state.gameSimInProgress,
@@ -165,12 +163,6 @@ const DailySchedule = ({
 			) : null}
 		</>
 	);
-};
-
-DailySchedule.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	completed: PropTypes.arrayOf(PropTypes.object).isRequired,
-	upcoming: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default DailySchedule;

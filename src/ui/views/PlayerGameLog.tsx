@@ -43,7 +43,10 @@ const PlayerGameLog = ({
 			seasons: season,
 		},
 		dropdownCustomOptions: {
-			seasons: seasonsWithStats,
+			seasons: seasonsWithStats.map(season => ({
+				key: season,
+				value: String(season),
+			})),
 		},
 		dropdownCustomURL: fields => {
 			const parts =

@@ -8,6 +8,7 @@ import type {
 	ThenArg,
 } from "../../common/types";
 import { getUpcoming } from "./schedule";
+import { PHASE } from "../../common";
 
 let prevInputsDay: number | undefined;
 const updateDailySchedule = async (
@@ -26,10 +27,10 @@ const updateDailySchedule = async (
 			season: inputs.season,
 		});
 
-		const daysSet = new Set<number>();
+		const daysAndPlayoffs = new Map<number, boolean>();
 		for (const game of games) {
 			if (game.day !== undefined) {
-				daysSet.add(game.day);
+				daysAndPlayoffs.set(game.day, game.playoffs);
 			}
 		}
 
@@ -67,9 +68,12 @@ const updateDailySchedule = async (
 			const scheduleDay = schedule.filter(game => game.day === day);
 			isToday =
 				scheduleDay.length > 0 && schedule[0].gid === scheduleDay[0].gid;
+
+			const isPlayoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 			for (const game of schedule) {
 				if (game.day !== undefined) {
-					daysSet.add(game.day);
+					daysAndPlayoffs.set(game.day, isPlayoffs);
 				}
 			}
 		} else {
@@ -88,7 +92,13 @@ const updateDailySchedule = async (
 			});
 		}
 
-		const days = Array.from(daysSet).sort((a, b) => a - b);
+		const days = Array.from(daysAndPlayoffs.entries())
+			.map(([day, playoffs]) => ({ day, playoffs }))
+			.sort((a, b) => a.day - b.day)
+			.map(({ day, playoffs }) => ({
+				key: day,
+				value: playoffs ? `${day} (playoffs)` : `${day}`,
+			}));
 
 		return {
 			completed,

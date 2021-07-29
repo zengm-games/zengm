@@ -165,7 +165,7 @@ export const getDropdownValue = (
 
 const useDropdownOptions = (
 	field: string,
-	customOptions?: (string | number)[],
+	customOptions?: NonNullable<LocalStateUI["dropdownCustomOptions"]>[string],
 ) => {
 	const state = useLocalShallow(state2 => ({
 		hideDisabledTeams: state2.hideDisabledTeams,
@@ -180,7 +180,14 @@ const useDropdownOptions = (
 	let keys: (number | string)[];
 
 	if (customOptions) {
-		keys = customOptions;
+		if (customOptions.length === 0) {
+			return [];
+		} else {
+			return customOptions.map(({ key, value }) => ({
+				key,
+				val: value,
+			}));
+		}
 	} else if (field === "teams") {
 		keys = Object.keys(sortedTeams);
 	} else if (field === "teamsAndSpecial") {

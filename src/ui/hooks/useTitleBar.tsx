@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
-import type { MenuItemHeader } from "../../common/types";
+import type { LocalStateUI, MenuItemHeader } from "../../common/types";
 import { GAME_NAME } from "../../common";
 
 const useTitleBar = <DropdownFields extends Record<string, number | string>>({
@@ -23,7 +23,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all";
-	dropdownCustomOptions?: Record<string, (number | string)[]>;
+	dropdownCustomOptions?: LocalStateUI["dropdownCustomOptions"];
 	dropdownCustomURL?: (fields: DropdownFields) => string;
 	dropdownView?: string;
 	dropdownFields?: DropdownFields;

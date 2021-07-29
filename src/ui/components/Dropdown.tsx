@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
+import type { LocalStateUI } from "../../common/types";
 
 const Select = ({
 	customOptions,
@@ -11,7 +12,7 @@ const Select = ({
 	handleChange,
 	value,
 }: {
-	customOptions?: (number | string)[];
+	customOptions?: NonNullable<LocalStateUI["dropdownCustomOptions"]>[string];
 	field: string;
 	handleChange: (value: number | string) => void;
 	value: number | string;
@@ -108,7 +109,7 @@ Select.propTypes = {
 };
 
 type Props = {
-	customOptions?: Record<string, (number | string)[]>;
+	customOptions?: LocalStateUI["dropdownCustomOptions"];
 	customURL?: (fields: Record<string, number | string>) => string;
 	fields: Record<string, number | string>;
 	view: string;

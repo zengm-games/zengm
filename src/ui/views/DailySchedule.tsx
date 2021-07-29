@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
 import classNames from "classnames";
-import { TIME_BETWEEN_GAMES } from "../../common";
+import { DAILY_SCHEDULE } from "../../common";
 
 const DailySchedule = ({
 	completed,
@@ -16,7 +16,7 @@ const DailySchedule = ({
 	userTid,
 }: View<"dailySchedule">) => {
 	useTitleBar({
-		title: `${TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"} Schedule`,
+		title: DAILY_SCHEDULE,
 		dropdownView: "daily_schedule",
 		dropdownFields: { seasons: season, days: day },
 		dropdownCustomOptions: {

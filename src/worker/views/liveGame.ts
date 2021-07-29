@@ -10,7 +10,7 @@ const updatePlayByPlay = async (
 	updateEvents: UpdateEvents,
 ) => {
 	const redirectToMenu = {
-		redirectUrl: helpers.leagueUrl(["live"]),
+		redirectUrl: helpers.leagueUrl(["daily_schedule"]),
 	};
 
 	if (updateEvents.includes("firstRun") && !inputs.fromAction) {

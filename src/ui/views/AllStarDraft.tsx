@@ -261,7 +261,7 @@ const AllStars = ({
 			{actuallyFinalized ? (
 				<p className="alert alert-primary d-inline-block">
 					The All-Star draft is over! To watch the All-Star Game,{" "}
-					<a href={helpers.leagueUrl(["live"])}>click here</a>.
+					<a href={helpers.leagueUrl(["daily_schedule"])}>click here</a>.
 				</p>
 			) : null}
 			{!actuallyFinalized && !started ? (

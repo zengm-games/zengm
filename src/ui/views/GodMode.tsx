@@ -2,6 +2,7 @@ import classNames from "classnames";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, localActions, toWorker } from "../util";
 import type { View } from "../../common/types";
+import { DAILY_SCHEDULE } from "../../common";
 
 const GodMode = (props: View<"godMode">) => {
 	const { godMode } = props;
@@ -129,7 +130,9 @@ const GodMode = (props: View<"godMode">) => {
 							before it happens, from either{" "}
 							<a href={helpers.leagueUrl(["schedule"])}>Team &gt; Schedule</a>{" "}
 							or the{" "}
-							<a href={helpers.leagueUrl(["live"])}>Live Game Simulation</a>{" "}
+							<a href={helpers.leagueUrl(["daily_schedule"])}>
+								{DAILY_SCHEDULE}
+							</a>{" "}
 							page.
 						</p>
 					</div>

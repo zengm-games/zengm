@@ -358,10 +358,15 @@ const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
 	hockey: [0, 4],
 });
 
+const DAILY_SCHEDULE = `${
+	TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"
+} Schedule`;
+
 export {
 	AD_DIVS,
 	AWARD_NAMES,
 	COURT,
+	DAILY_SCHEDULE,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	DEFAULT_JERSEY,

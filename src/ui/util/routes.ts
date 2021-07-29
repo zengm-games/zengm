@@ -120,7 +120,6 @@ const routes = () => {
 		"/l/:lid/team_stat_dists/:season": genPage("teamStatDists"),
 		"/l/:lid/export_league": genPage("exportLeague"),
 		"/l/:lid/fantasy_draft": genPage("fantasyDraft"),
-		"/l/:lid/live": genPage("live"),
 		"/l/:lid/live_game": genPage("liveGame"),
 		"/l/:lid/event_log": genPage("eventLog"),
 		"/l/:lid/event_log/:abbrev": genPage("eventLog"),

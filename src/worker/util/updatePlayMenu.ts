@@ -65,12 +65,12 @@ const updatePlayMenu = async () => {
 			key: "y",
 		},
 		dayLive: {
-			url: helpers.leagueUrl(["live"]),
+			url: helpers.leagueUrl(["daily_schedule"]),
 			label: "One day (live)",
 			key: "l",
 		},
 		weekLive: {
-			url: helpers.leagueUrl(["live"]),
+			url: helpers.leagueUrl(["daily_schedule"]),
 			label: "One week (live)",
 			key: "l",
 		},

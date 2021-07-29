@@ -1,12 +1,7 @@
-import { season, team } from "../core";
+import { season } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type {
-	UpdateEvents,
-	ViewInput,
-	Game,
-	ThenArg,
-} from "../../common/types";
+import type { UpdateEvents, ViewInput, ThenArg } from "../../common/types";
 import { getUpcoming } from "./schedule";
 import { PHASE } from "../../common";
 
@@ -16,9 +11,11 @@ const updateDailySchedule = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	const currentSeason = g.get("season");
+
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
+		(inputs.season === currentSeason && updateEvents.includes("gameSim")) ||
 		updateEvents.includes("newPhase") ||
 		inputs.season !== state.season ||
 		inputs.day !== state.day
@@ -59,7 +56,7 @@ const updateDailySchedule = async (
 
 			prevInputsDay = inputs.day;
 
-			if (inputs.season === g.get("season")) {
+			if (inputs.season === currentSeason) {
 				const schedule = await season.getSchedule();
 
 				if (day === -1) {
@@ -91,7 +88,7 @@ const updateDailySchedule = async (
 			const completed = games.filter(game => game.day === day);
 
 			let upcoming: ThenArg<ReturnType<typeof getUpcoming>> = [];
-			if (inputs.season === g.get("season")) {
+			if (inputs.season === currentSeason) {
 				// If it's the current season, get any upcoming games
 				upcoming = await getUpcoming({
 					day,
@@ -130,7 +127,7 @@ const updateDailySchedule = async (
 
 		return {
 			completed,
-			currentSeason: g.get("season"),
+			currentSeason,
 			day,
 			days,
 			isToday,

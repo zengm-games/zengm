@@ -4,11 +4,10 @@ summary of day's games
 - ui
   - replace live sim screen with this
     - links and redirects
-  - highlight userTid in completed games
   - links between team schedule and league schedule
-  - arrows to switch between days
   - for past season with no games, share error message with game log and player game log
   - trade deadline day shouldn't just disappear when you sim it
+  - when changing year, if day does not exist, find one that does if possible
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
 
 schedule customization

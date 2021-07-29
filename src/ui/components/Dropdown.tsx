@@ -55,7 +55,10 @@ const Select = ({
 		return null;
 	}
 
-	const showButtons = field.startsWith("teams") || field.startsWith("seasons");
+	const showButtons =
+		field.startsWith("teams") ||
+		field.startsWith("seasons") ||
+		field === "days";
 
 	let buttons = null;
 	if (showButtons) {

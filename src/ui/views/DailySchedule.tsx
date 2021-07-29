@@ -65,7 +65,7 @@ const DailySchedule = ({
 
 	return (
 		<>
-			<p>MORE LINKS</p>
+			<MoreLinks type="schedule" page="daily_schedule" />
 
 			{noGamesMessage ? (
 				noGamesMessage

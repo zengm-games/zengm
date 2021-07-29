@@ -42,6 +42,9 @@ const MoreLinks = (
 				type: "awards";
 				season?: number;
 		  }
+		| {
+				type: "schedule";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -255,6 +258,8 @@ const MoreLinks = (
 			{ url: ["export_players"], name: "Export Players" },
 			{ url: ["export_league"], name: "Export League" },
 		];
+	} else if (props.type === "schedule") {
+		links = [{ url: ["schedule"], name: "Team Schedule" }];
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}

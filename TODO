@@ -1,8 +1,7 @@
 summary of day's games
 - https://mail.google.com/mail/u/0/#search/day/FMfcgxwLttFTMwkcnSlVDVlmTZBkKljr
-- ui
-  - trade deadline day shouldn't just disappear when you sim it
 - upgrade leagues - assign days to box scores, using addDaysToSchedule algorithm
+  - same for importing old league files
 
 schedule customization
 - eventually

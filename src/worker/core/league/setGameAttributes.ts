@@ -13,16 +13,12 @@ import gameAttributesToUI from "./gameAttributesToUI";
 import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 import goatFormula from "../../util/goatFormula";
+import updateMeta from "./updateMeta";
 
 const updateMetaDifficulty = async (difficulty: number) => {
-	if (local.autoSave) {
-		const l = await idb.meta.get("leagues", g.get("lid"));
-
-		if (l) {
-			l.difficulty = difficulty;
-			await idb.meta.put("leagues", l);
-		}
-	}
+	await updateMeta({
+		difficulty,
+	});
 };
 
 const setGameAttributes = async (

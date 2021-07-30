@@ -10,7 +10,7 @@ import initRepeatSeason from "./initRepeatSeason";
 import loadGameAttributes from "./loadGameAttributes";
 import remove from "./remove";
 import setGameAttributes from "./setGameAttributes";
-import updateMetaNameRegion from "./updateMetaNameRegion";
+import updateMeta from "./updateMeta";
 
 export default {
 	autoPlay,
@@ -25,5 +25,5 @@ export default {
 	loadGameAttributes,
 	remove,
 	setGameAttributes,
-	updateMetaNameRegion,
+	updateMeta,
 };

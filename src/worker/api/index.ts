@@ -86,6 +86,7 @@ import type {
 	EventBBGM,
 	Team,
 	GameAttribute,
+	League,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -2519,22 +2520,20 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 		await idb.cache.flush();
 		await idb.cache.fill();
 
+		const updates: Partial<Exclude<League, "lid">> = {
+			phaseText: `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`,
+			difficulty: g.get("difficulty"),
+		};
+
 		if (g.get("userTids").length === 1) {
-			await league.updateMetaNameRegion(
-				g.get("teamInfoCache")[g.get("userTids")[0]]?.name,
-				g.get("teamInfoCache")[g.get("userTids")[0]]?.region,
-			);
+			updates.teamName = g.get("teamInfoCache")[g.get("userTids")[0]]?.name;
+			updates.teamRegion = g.get("teamInfoCache")[g.get("userTids")[0]]?.region;
 		} else {
-			await league.updateMetaNameRegion("Multi Team Mode", "");
+			updates.teamName = "Multi Team Mode";
+			updates.teamRegion = "";
 		}
 
-		const l = await idb.meta.get("leagues", g.get("lid"));
-		if (!l) {
-			throw new Error(`No league with lid ${g.get("lid")} found`);
-		}
-		l.phaseText = `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`;
-		l.difficulty = g.get("difficulty");
-		await idb.meta.put("leagues", l);
+		await league.updateMeta(updates);
 	}
 };
 
@@ -2882,12 +2881,7 @@ const updateKeepRosterSorted = async (
 };
 
 const updateLeague = async (lid: number, obj: any) => {
-	const l = await idb.meta.get("leagues", lid);
-	if (!l) {
-		throw new Error(`No league with lid ${lid} found`);
-	}
-	Object.assign(l, obj);
-	await idb.meta.put("leagues", l);
+	await league.updateMeta(obj);
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
@@ -2898,12 +2892,15 @@ const updateMultiTeamMode = async (gameAttributes: {
 	await league.setGameAttributes(gameAttributes);
 
 	if (gameAttributes.userTids.length === 1) {
-		league.updateMetaNameRegion(
-			g.get("teamInfoCache")[gameAttributes.userTids[0]]?.name,
-			g.get("teamInfoCache")[gameAttributes.userTids[0]]?.region,
-		);
+		await league.updateMeta({
+			teamName: g.get("teamInfoCache")[gameAttributes.userTids[0]]?.name,
+			teamRegion: g.get("teamInfoCache")[gameAttributes.userTids[0]]?.region,
+		});
 	} else {
-		league.updateMetaNameRegion("Multi Team Mode", "");
+		await league.updateMeta({
+			teamName: "Multi Team Mode",
+			teamRegion: "",
+		});
 	}
 
 	await toUI("realtimeUpdate", [["g.userTids"]]);
@@ -3207,7 +3204,10 @@ const updateTeamInfo = async (
 	}
 
 	if (userName !== undefined && userRegion !== undefined) {
-		await league.updateMetaNameRegion(userName, userRegion);
+		await league.updateMeta({
+			teamName: userName,
+			teamRegion: userRegion,
+		});
 	}
 	await league.setGameAttributes({
 		teamInfoCache: orderBy(newTeams, "tid").map(t => ({

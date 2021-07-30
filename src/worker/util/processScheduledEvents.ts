@@ -127,7 +127,10 @@ const processTeamInfo = async (
 	}
 
 	if (info.tid === g.get("userTid") && updatedRegionName) {
-		await league.updateMetaNameRegion(t.name, t.region);
+		await league.updateMeta({
+			teamName: t.name,
+			teamRegion: t.region,
+		});
 	}
 
 	await league.setGameAttributes({

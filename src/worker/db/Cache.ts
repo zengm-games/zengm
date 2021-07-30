@@ -37,6 +37,7 @@ import type {
 import type { IDBPTransaction } from "idb";
 import type { LeagueDB } from "./connectLeague";
 import getAll from "./getAll";
+import { league } from "../core";
 
 type Status = "empty" | "error" | "filling" | "full";
 
@@ -773,11 +774,9 @@ class Cache {
 			this._dirty = false;
 
 			// Update lastPlayed
-			const l = await idb.meta.get("leagues", g.get("lid"));
-			if (l) {
-				l.lastPlayed = new Date();
-				await idb.meta.put("leagues", l);
-			}
+			await league.updateMeta({
+				lastPlayed: new Date(),
+			});
 		}
 		//performance.measure('flushTime', 'flushStart');
 		//const entries = performance.getEntriesByName('flushTime');

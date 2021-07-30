@@ -11,7 +11,7 @@ import {
 	SPORT_HAS_REAL_PLAYERS,
 	WEBSITE_PLAY,
 } from "../../common";
-import { DataTable } from "../components";
+import { DataTable, TeamLogoInline } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
@@ -247,7 +247,22 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				>
 					{league.name}
 				</LeagueName>,
-				`${league.teamRegion} ${league.teamName}`,
+				{
+					value: (
+						<div className="d-flex align-items-center">
+							<TeamLogoInline
+								imgURL={league.imgURL}
+								size={48}
+								className="mr-2"
+							/>
+							<div>
+								{league.teamRegion} {league.teamName}
+							</div>
+						</div>
+					),
+					sortValue: `${league.teamRegion} ${league.teamName}`,
+					classNames: "py-0",
+				},
 				league.phaseText,
 				league.startingSeason !== undefined && league.season !== undefined
 					? 1 + league.season - league.startingSeason

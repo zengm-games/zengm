@@ -21,6 +21,12 @@ const updateMeta = async (updates: Partial<Exclude<League, "lid">>) => {
 			l.startingSeason = g.get("startingSeason");
 		}
 
+		// Just do this here, rather than figuring out when it should be updated exactly
+		const teamInfo = g.get("teamInfoCache")[g.get("userTid")];
+		if (teamInfo) {
+			l.imgURL = teamInfo.imgURLSmall ?? teamInfo.imgURL;
+		}
+
 		await transation.store.put(l);
 		await transation.done;
 	}

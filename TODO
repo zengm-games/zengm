@@ -1,8 +1,3 @@
-dashboard ui
-- team logos
-- team name always being set right, including ones that change over time?
-- upgrade?
-
 daily schedule
 - option to stay on "today" or "yesterday" as days are simmed https://discord.com/channels/290013534023057409/331882115119448065/870351405746126918
 
@@ -1374,10 +1369,6 @@ in table, sort position by constants.POSITIONS order (like roster page in footba
 everywhere contract is displayed, make it in italics if not guaranteed
 - currently only on roster i think. make a component!
 
-Add playoff seed # to the history page
-
-option to have no draft, players just become FAs
-
 "Accept Trade" button on trading block
 
 AI teams should adjust finances
@@ -1449,8 +1440,6 @@ open multiple leagues from dashboard at the same time - Invalid cache status "fi
 reevaluate FA system - too easy to rebuild
 - too many young stars available
 - first pick at most players
-
-move react up, before worker is initialized, so compareVersions error can be displayed there
 
 somehow display synergy, maybe on roster page
 
@@ -1542,7 +1531,6 @@ situational awareness
   - ? sometimes foul when up 3 and not much time left
   - ? hack a shaq
 - rotations
-  - ? play stars more at the end of close games
   - ? sub in good FT shooters in late game situations
 
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/

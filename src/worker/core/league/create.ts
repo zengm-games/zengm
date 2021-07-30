@@ -927,6 +927,8 @@ const create = async (
 		lastPlayed: new Date(),
 		startingSeason: g.get("startingSeason"),
 		season: g.get("season"),
+		imgURL:
+			leagueData.teams[userTid].imgURLSmall ?? leagueData.teams[userTid].imgURL,
 	};
 
 	if (importLid !== undefined && importLid !== null) {

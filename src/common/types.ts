@@ -596,6 +596,7 @@ export type League = {
 	lastPlayed?: Date;
 	startingSeason?: number;
 	season?: number;
+	imgURL?: string; // Should contain imgURLSmall if it exists
 };
 
 export type Locks = {

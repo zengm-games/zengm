@@ -175,7 +175,11 @@ const formatPlayerFactory = async (
 
 		if (tid >= PLAYER.FREE_AGENT && !draftProspect) {
 			// Ensure draft year is before the current season, because for some players like Irv Rothenberg this is not true
-			if (draft.year >= season) {
+			if (
+				draft.year > season ||
+				(draft.year === season &&
+					(options.type === "legends" || options.phase <= PHASE.DRAFT))
+			) {
 				draft = {
 					tid: -1,
 					originalTid: -1,

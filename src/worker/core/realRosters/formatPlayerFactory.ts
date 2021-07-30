@@ -294,7 +294,8 @@ const formatPlayerFactory = async (
 			options.type === "real" &&
 			(options.realStats === "all" ||
 				options.realStats === "allActive" ||
-				options.realStats === "allActiveHOF");
+				options.realStats === "allActiveHOF") &&
+			processedRatings[0].season !== draft.year;
 		if (addDummyRookieRatings) {
 			processedRatings.unshift({
 				...processedRatings[0],

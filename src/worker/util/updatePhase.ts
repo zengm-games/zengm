@@ -1,5 +1,4 @@
 import { NO_LOTTERY_DRAFT_TYPES, PHASE_TEXT, PHASE } from "../../common";
-import { idb } from "../db";
 import g from "./g";
 import local from "./local";
 import toUI from "./toUI";

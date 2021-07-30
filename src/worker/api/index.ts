@@ -110,6 +110,7 @@ import {
 } from "../util/defaultGameAttributes";
 import goatFormula from "../util/goatFormula";
 import getRandomTeams from "./getRandomTeams";
+import { withState } from "../core/player/name";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1467,7 +1468,7 @@ const getRandomCountry = async () => {
 	const playerBioInfo = local.playerBioInfo ?? (await loadNames());
 
 	// Equal odds of every country, otherwise it's too commonly USA - no fun!
-	return random.choice(playerBioInfo.frequencies)[0];
+	return withState(random.choice(playerBioInfo.frequencies)[0]);
 };
 
 const getRandomName = async (country: string) => {

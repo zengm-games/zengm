@@ -139,7 +139,7 @@ const canadaProvinceFrequencies = {
 	Yukon: 35874,
 };
 
-const withState = (country: string) => {
+export const withState = (country: string) => {
 	let state;
 	if (country === "USA") {
 		state = random.choice(

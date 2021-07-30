@@ -1,3 +1,8 @@
+daily schedule
+- option to stay on "today" or "yesterday" as days are simmed https://discord.com/channels/290013534023057409/331882115119448065/870351405746126918
+
+dashboard overflow https://discord.com/channels/290013534023057409/290015591216054273/870207944975872050
+
 schedule customization
 - eventually
   - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
@@ -499,8 +504,6 @@ ability to switch back to prior year
 - maybe not...
   - in other games, this would be achieved by saving at different times. when that is easier (stream) that will be better
   - storing g is messy, since g already has a history mechanism
-
-When drafting expansion team, the new draft picks are crazy “unhappy with the teams performance”. Like, that’s a -29 to the score. I know that by next re-signings it only factors the current season, but it’s annoying to have it there regardless. How can he be upset at performance if there is none :sob: https://discord.com/channels/290013534023057409/290015591216054273/784773126138757122
 
 typescript 4.1 stuff
 

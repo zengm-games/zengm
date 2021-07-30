@@ -30,6 +30,8 @@ export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
+const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS_FOR_MULTIPLE_PHASES = 2021;
+
 const getLeague = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
@@ -605,7 +607,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		// Assign drafted players to their teams
-		if (options.phase > PHASE.DRAFT && !options.randomDebuts) {
+		if (
+			options.phase > PHASE.DRAFT &&
+			!options.randomDebuts &&
+			options.season < FIRST_SEASON_WITH_ALEXNOOB_ROSTERS_FOR_MULTIPLE_PHASES
+		) {
 			for (const dp of basketball.draftPicks[options.season]) {
 				if (!dp.slug) {
 					continue;

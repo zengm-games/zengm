@@ -421,8 +421,18 @@ const createLeague = async (
 		)) as RealPlayerPhotos | undefined;
 		if (realPlayerPhotos) {
 			for (const p of leagueFile.players) {
-				if (p.srID && realPlayerPhotos[p.srID]) {
-					p.imgURL = realPlayerPhotos[p.srID];
+				if (p.srID) {
+					if (realPlayerPhotos[p.srID]) {
+						p.imgURL = realPlayerPhotos[p.srID];
+					} else {
+						const name = p.name ?? `${p.firstName} ${p.lastName}`;
+
+						// Keep in sync with bbgm-rosters
+						const key = `dp_${p.draft.year}_${name
+							.replace(/ /g, "_")
+							.toLowerCase()}`;
+						p.imgURL = realPlayerPhotos[key];
+					}
 				}
 			}
 		}

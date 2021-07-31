@@ -267,10 +267,13 @@ const finalize = ({
 	for (const didString of Object.keys(teamsGroupedByDid)) {
 		const did = parseInt(didString);
 
-		const numTeams = teamsGroupedByDid[did].div.length;
-		const numGames = numGamesTargetsByDid[did].excess.div;
-		allowOneTeamWithOneGameRemainingBase.div[did] =
-			(numTeams * numGames) % 2 === 1;
+		// If there are no teams in a div, this check is needed
+		if (numGamesTargetsByDid[did]) {
+			const numTeams = teamsGroupedByDid[did].div.length;
+			const numGames = numGamesTargetsByDid[did].excess.div;
+			allowOneTeamWithOneGameRemainingBase.div[did] =
+				(numTeams * numGames) % 2 === 1;
+		}
 	}
 
 	const cids = new Set(settings.divs.map(div => div.cid));

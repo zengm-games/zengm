@@ -86,7 +86,6 @@ import type {
 	EventBBGM,
 	Team,
 	GameAttribute,
-	League,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -2530,20 +2529,10 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 		await idb.cache.flush();
 		await idb.cache.fill();
 
-		const updates: Partial<Exclude<League, "lid">> = {
+		await league.updateMeta({
 			phaseText: `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`,
 			difficulty: g.get("difficulty"),
-		};
-
-		if (g.get("userTids").length === 1) {
-			updates.teamName = g.get("teamInfoCache")[g.get("userTids")[0]]?.name;
-			updates.teamRegion = g.get("teamInfoCache")[g.get("userTids")[0]]?.region;
-		} else {
-			updates.teamName = "Multi Team Mode";
-			updates.teamRegion = "";
-		}
-
-		await league.updateMeta(updates);
+		});
 	}
 };
 
@@ -2891,7 +2880,7 @@ const updateKeepRosterSorted = async (
 };
 
 const updateLeague = async (lid: number, obj: any) => {
-	await league.updateMeta(obj);
+	await league.updateMeta(obj, lid);
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
@@ -2901,17 +2890,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 }) => {
 	await league.setGameAttributes(gameAttributes);
 
-	if (gameAttributes.userTids.length === 1) {
-		await league.updateMeta({
-			teamName: g.get("teamInfoCache")[gameAttributes.userTids[0]]?.name,
-			teamRegion: g.get("teamInfoCache")[gameAttributes.userTids[0]]?.region,
-		});
-	} else {
-		await league.updateMeta({
-			teamName: "Multi Team Mode",
-			teamRegion: "",
-		});
-	}
+	await league.updateMeta();
 
 	await toUI("realtimeUpdate", [["g.userTids"]]);
 };
@@ -3100,8 +3079,6 @@ const updateTeamInfo = async (
 		disabled?: boolean;
 	}[],
 ) => {
-	let userName;
-	let userRegion;
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
@@ -3149,11 +3126,6 @@ const updateTeamInfo = async (
 		}
 
 		await idb.cache.teams.put(t);
-
-		if (t.tid === g.get("userTid")) {
-			userName = t.name;
-			userRegion = t.region;
-		}
 
 		if (enableTeam) {
 			await draft.genPicks();
@@ -3213,12 +3185,6 @@ const updateTeamInfo = async (
 		}
 	}
 
-	if (userName !== undefined && userRegion !== undefined) {
-		await league.updateMeta({
-			teamName: userName,
-			teamRegion: userRegion,
-		});
-	}
 	await league.setGameAttributes({
 		teamInfoCache: orderBy(newTeams, "tid").map(t => ({
 			abbrev: t.abbrev,
@@ -3229,6 +3195,8 @@ const updateTeamInfo = async (
 			region: t.region,
 		})),
 	});
+
+	await league.updateMeta();
 };
 
 const updateAwards = async (

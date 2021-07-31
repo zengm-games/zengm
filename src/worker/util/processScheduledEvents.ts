@@ -126,13 +126,6 @@ const processTeamInfo = async (
 		});
 	}
 
-	if (info.tid === g.get("userTid") && updatedRegionName) {
-		await league.updateMeta({
-			teamName: t.name,
-			teamRegion: t.region,
-		});
-	}
-
 	await league.setGameAttributes({
 		teamInfoCache: teams.map(t => ({
 			abbrev: t.abbrev,
@@ -143,6 +136,10 @@ const processTeamInfo = async (
 			region: t.region,
 		})),
 	});
+
+	if (info.tid === g.get("userTid") && updatedRegionName) {
+		await league.updateMeta();
+	}
 
 	return eventLogTexts;
 };

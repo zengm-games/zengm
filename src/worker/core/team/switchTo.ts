@@ -12,10 +12,7 @@ const switchTo = async (tid: number, tids?: number[]) => {
 		otherTeamsWantToHire: false,
 	});
 
-	league.updateMeta({
-		teamName: g.get("teamInfoCache")[g.get("userTid")]?.name,
-		teamRegion: g.get("teamInfoCache")[g.get("userTid")]?.region,
-	});
+	league.updateMeta();
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",

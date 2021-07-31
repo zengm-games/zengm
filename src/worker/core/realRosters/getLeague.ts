@@ -26,7 +26,7 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury";
 
 export const LATEST_SEASON = 2021;
-export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2020;
+export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2021;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
@@ -114,7 +114,23 @@ const getLeague = async (options: GetLeagueOptions) => {
 			return row.season === options.season;
 		});
 
-		let groupedRatings = Object.values(groupBy(ratingsRows, "slug"));
+		let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
+			allRatings => {
+				// Ignore players in upcoming draft
+				const bio = basketball.bios[allRatings[0].slug];
+				if (
+					bio &&
+					(bio.draftYear > options.season ||
+						(bio.draftYear === options.season &&
+							options.phase < PHASE.AFTER_DRAFT))
+				) {
+					return false;
+				}
+
+				return true;
+			},
+		);
+
 		const hofSlugs = new Set();
 		if (options.realStats === "allActive") {
 			// Only keep players who are active this season

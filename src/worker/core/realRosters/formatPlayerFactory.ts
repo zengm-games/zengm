@@ -79,6 +79,9 @@ const formatPlayerFactory = async (
 			throw new Error(`No bio found for "${slug}"`);
 		}
 
+		// For alexnoob draft prospects who already have their draft ratings set for the correct season, as opposed to other rookies who need them set based on their rookie ratings
+		const draftRatingsAlreadySet = bio.draftYear === ratings.season;
+
 		let draft;
 		if (draftProspect || legends) {
 			draft = {
@@ -86,7 +89,11 @@ const formatPlayerFactory = async (
 				originalTid: -1,
 				round: 0,
 				pick: 0,
-				year: legends ? season - 1 : ratings.season - 1,
+				year: legends
+					? season - 1
+					: draftRatingsAlreadySet
+					? ratings.season
+					: ratings.season - 1,
 			};
 		} else {
 			let draftTid;
@@ -306,7 +313,9 @@ const formatPlayerFactory = async (
 		if (draftProspect || addDummyRookieRatings) {
 			const currentRatings = processedRatings[0];
 
-			nerfDraftProspect(currentRatings);
+			if (!draftRatingsAlreadySet) {
+				nerfDraftProspect(currentRatings);
+			}
 
 			if (
 				options.type === "real" &&

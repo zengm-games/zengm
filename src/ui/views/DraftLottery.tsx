@@ -373,7 +373,18 @@ const Rigged = ({
 						className="form-control form-control-sm px-0 god-mode"
 						onChange={async event => {
 							const value = parseInt(event.target.value);
+
+							// Unset any other selection of this team
+							if (value !== -1) {
+								for (let j = 0; j < actualRigged.length; j++) {
+									if (actualRigged[j] === value) {
+										actualRigged[j] = null;
+									}
+								}
+							}
+
 							actualRigged[i] = value === -1 ? null : value;
+
 							await toWorker("main", "updateGameAttributes", {
 								riggedLottery: actualRigged,
 							});

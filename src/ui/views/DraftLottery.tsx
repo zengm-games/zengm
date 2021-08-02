@@ -435,7 +435,7 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 	};
 
-	const { season, type, userTid } = props;
+	const { godMode, rigged, season, type, userTid } = props;
 	const { draftType, result } = state;
 	const probs =
 		result !== undefined &&
@@ -515,6 +515,14 @@ const DraftLotteryTable = (props: Props) => {
 		table = <p>No draft lottery results for {season}.</p>;
 	}
 
+	const showStartButton =
+		type === "readyToRun" &&
+		state.revealState === "init" &&
+		result &&
+		result.length > 0;
+
+	const showRigButton = showStartButton && godMode && rigged === undefined;
+
 	return (
 		<>
 			<p>
@@ -524,16 +532,16 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
-			{type === "readyToRun" &&
-			state.revealState === "init" &&
-			result &&
-			result.length > 0 ? (
+			{showStartButton ? (
 				<button
 					className="btn btn-large btn-success"
 					onClick={() => startLottery()}
 				>
-					Start Draft Lottery
+					Start Lottery
 				</button>
+			) : null}
+			{showRigButton ? (
+				<button className="btn btn-large btn-god-mode ml-2">Rig Lottery</button>
 			) : null}
 			{type === "readyToRun" &&
 			(state.revealState === "running" || state.revealState === "paused") ? (

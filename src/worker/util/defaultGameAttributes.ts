@@ -160,6 +160,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	inflationMax: 0,
 	inflationMin: 0,
 	inflationStd: 0,
+	riggedLottery: undefined,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

@@ -161,6 +161,16 @@ a.god-mode.active {
 }
 
 .btn-god-mode {
+	@include button-variant(darken($purple, 20), darken($purple, 20));
+	&,
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		color: $black !important;
+	}
+}
+
+.btn-outline-god-mode {
 	@include button-variant(darken($purple, 20), $gray-400);
 	&,
 	&:active,

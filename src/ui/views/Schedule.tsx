@@ -33,21 +33,21 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 			{godMode ? (
 				<div className="btn-group mb-3">
 					<button
-						className="btn btn-god-mode"
+						className="btn btn-outline-god-mode"
 						onClick={handleForceAll("win")}
 						disabled={forcingAll}
 					>
 						Force win all
 					</button>
 					<button
-						className="btn btn-god-mode"
+						className="btn btn-outline-god-mode"
 						onClick={handleForceAll("lose")}
 						disabled={forcingAll}
 					>
 						Force lose all
 					</button>
 					<button
-						className="btn btn-god-mode"
+						className="btn btn-outline-god-mode"
 						onClick={handleForceAll("none")}
 						disabled={forcingAll}
 					>

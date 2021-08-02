@@ -4,9 +4,11 @@ improve player popover for retired players https://old.reddit.com/r/BasketballGM
 improve player popover for past seasons https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h5bwwr2/
 
 rig lottery
-- button on lottery page, opens a modal that lets you pick top N picks (or random) from lottery teams
+- button on lottery page to init, then dropdowns under columns
 - store state in g.riggedLottery
+  - reset before and after lottery
   - also store in draftLottery?
+- when updating g.riggedLottery, always check length against lottery setting, since it may have changed
 - https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h3n41fs/
 
 daily schedule

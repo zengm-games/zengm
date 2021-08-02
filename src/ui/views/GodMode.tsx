@@ -39,7 +39,7 @@ const GodMode = (props: View<"godMode">) => {
 
 			<button
 				className={classNames(
-					"btn btn-lg border-0",
+					"btn btn-lg",
 					godMode ? "btn-success" : "btn-god-mode",
 				)}
 				onClick={handleGodModeToggle}

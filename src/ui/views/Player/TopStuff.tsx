@@ -530,14 +530,14 @@ const TopStuff = ({
 							href={helpers.leagueUrl(["customize_player", player.pid])}
 							className={classNames(
 								"btn",
-								godMode ? "btn-god-mode" : "btn-light-bordered",
+								godMode ? "btn-outline-god-mode" : "btn-light-bordered",
 							)}
 						>
 							Edit
 						</a>
 						{godMode ? (
 							<button
-								className="btn btn-god-mode"
+								className="btn btn-outline-god-mode"
 								onClick={async () => {
 									const proceed = await confirm(
 										`Are you sure you want to delete ${player.name}?`,
@@ -562,14 +562,14 @@ const TopStuff = ({
 									player.pid,
 									"clone",
 								])}
-								className="btn btn-god-mode"
+								className="btn btn-outline-god-mode"
 							>
 								Clone
 							</a>
 						) : null}
 						{godMode && injured ? (
 							<button
-								className="btn btn-god-mode"
+								className="btn btn-outline-god-mode"
 								onClick={async () => {
 									await toWorker("main", "clearInjury", player.pid);
 

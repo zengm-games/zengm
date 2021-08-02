@@ -887,6 +887,19 @@ const generateJSONSchema = (sport /*: string*/) => {
 							repeatSeason: {
 								type: "object",
 							},
+							riggedLootery: {
+								type: "array",
+								items: {
+									anyOf: [
+										{
+											type: "integer",
+										},
+										{
+											type: "null",
+										}
+									],
+								},
+							},
 							rookieContractLengths: {
 								type: "array",
 								items: {

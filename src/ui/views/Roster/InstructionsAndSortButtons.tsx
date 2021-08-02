@@ -54,7 +54,7 @@ const InstructionsAndSortButtons = ({
 						) : null}
 						{godMode ? (
 							<button
-								className="btn btn-god-mode"
+								className="btn btn-outline-god-mode"
 								onClick={async () => {
 									const proceed = await confirm(
 										`Are you sure you want to delete all ${players.length} players on this team?`,

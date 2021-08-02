@@ -8,6 +8,7 @@ import type {
 	ViewInput,
 	DraftType,
 	DraftLotteryResult,
+	GameAttributesLeague,
 } from "../../common/types";
 
 const updateDraftLottery = async (
@@ -18,7 +19,9 @@ const updateDraftLottery = async (
 	challengeWarning?: boolean;
 	notEnoughTeams?: boolean;
 	draftType?: DraftType | "dummy";
+	godMode?: boolean;
 	result: DraftLotteryResultArray | undefined;
+	rigged: GameAttributesLeague["riggedLottery"];
 	season: number;
 	showExpansionTeamMessage: boolean;
 	type: "completed" | "projected" | "readyToRun";
@@ -60,14 +63,17 @@ const updateDraftLottery = async (
 					: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
 
 				let draftType: DraftLotteryResult["draftType"] | undefined;
+				let rigged: GameAttributesLeague["riggedLottery"];
 
 				if (draftLotteryResult) {
 					draftType = draftLotteryResult.draftType || "nba1994";
+					rigged = draftLotteryResult.rigged;
 				}
 
 				return {
 					draftType,
 					result,
+					rigged,
 					season,
 					showExpansionTeamMessage,
 					type: "completed",
@@ -80,6 +86,7 @@ const updateDraftLottery = async (
 				return {
 					draftType: "noLottery",
 					result: undefined,
+					rigged: undefined,
 					season,
 					showExpansionTeamMessage,
 					type: "completed",
@@ -92,6 +99,7 @@ const updateDraftLottery = async (
 			return {
 				draftType: g.get("draftType"),
 				result: undefined,
+				rigged: undefined,
 				season,
 				showExpansionTeamMessage,
 				type: "projected",
@@ -130,7 +138,9 @@ const updateDraftLottery = async (
 			draftType: draftLotteryResult
 				? draftLotteryResult.draftType
 				: "noLottery",
+			godMode: g.get("godMode"),
 			result: draftLotteryResult ? draftLotteryResult.result : undefined,
+			rigged: g.get("riggedLottery"),
 			season: draftLotteryResult ? draftLotteryResult.season : season,
 			showExpansionTeamMessage,
 			type,

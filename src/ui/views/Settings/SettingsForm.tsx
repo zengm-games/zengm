@@ -1840,7 +1840,7 @@ const SettingsForm = ({
 					<div className="btn-group">
 						<button
 							className={classNames(
-								"btn border-0",
+								"btn",
 								godMode ? "btn-secondary" : "btn-god-mode",
 							)}
 							onClick={handleGodModeToggle}

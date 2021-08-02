@@ -135,6 +135,7 @@ export type DraftLotteryResult = {
 				"random" | "noLottery" | "freeAgents" | "noLotteryReverse"
 		  >
 		| "dummy";
+	rigged?: GameAttributesLeague["riggedLottery"];
 	result: DraftLotteryResultArray;
 };
 
@@ -465,6 +466,7 @@ export type GameAttributesLeague = {
 					}
 				>;
 		  };
+	riggedLottery?: (number | null)[];
 	rookieContractLengths: number[];
 	rookiesCanRefuse: boolean;
 	salaryCap: number;

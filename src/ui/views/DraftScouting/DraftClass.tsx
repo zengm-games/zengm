@@ -80,7 +80,7 @@ const DraftClass = ({
 				</button>
 				{godMode ? (
 					<button
-						className="btn btn-god-mode btn-xs"
+						className="btn btn-outline-god-mode btn-xs"
 						disabled={status === "exporting" || status === "loading"}
 						onClick={async () => {
 							setStatus("loading");
@@ -95,7 +95,7 @@ const DraftClass = ({
 				) : null}
 				{godMode ? (
 					<button
-						className="btn btn-god-mode btn-xs"
+						className="btn btn-outline-god-mode btn-xs"
 						disabled={status === "exporting" || status === "loading"}
 						onClick={async () => {
 							setStatus("loading");

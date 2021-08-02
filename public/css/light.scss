@@ -170,6 +170,10 @@ a.god-mode.active {
 }
 
 .btn-god-mode {
+	@include button-variant($purple, $purple);
+}
+
+.btn-outline-god-mode {
 	@include button-variant($purple, $gray-400);
 }
 

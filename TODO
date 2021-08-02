@@ -3,13 +3,6 @@ improve player popover for retired players https://old.reddit.com/r/BasketballGM
 
 improve player popover for past seasons https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h5bwwr2/
 
-rig lottery
-- g.riggedLottery after lottery
-- store g.riggedLottery in DraftLotteryResult
-- for past seasons where it was rigged, show in UI but don't allow editing
-  - how do we know the draft pick ID numbers? maybe use something else to index? or store in draft lottery now?
-- https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h3n41fs/
-
 daily schedule
 - option to stay on "today" or "yesterday" as days are simmed https://discord.com/channels/290013534023057409/331882115119448065/870351405746126918
 

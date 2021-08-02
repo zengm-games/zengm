@@ -13,6 +13,7 @@ import type {
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
 import { bySport } from "../../../common";
+import { league } from "..";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<
@@ -147,6 +148,7 @@ const genOrder = async (
 	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	const draftType = g.get("draftType");
+	const riggedLottery = g.get("godMode") ? g.get("riggedLottery") : undefined;
 
 	// Draft lottery
 	const firstN: number[] = [];
@@ -195,7 +197,6 @@ const genOrder = async (
 		const chancePct = chances.map(c => (c / chanceTotal) * 100); // cumsum
 
 		const chancesCumsum = chances.slice();
-
 		for (let i = 1; i < chancesCumsum.length; i++) {
 			chancesCumsum[i] += chancesCumsum[i - 1];
 		}
@@ -204,6 +205,24 @@ const genOrder = async (
 
 		let iterations = 0;
 		while (firstN.length < numToPick) {
+			if (riggedLottery) {
+				const dpidTarget = riggedLottery[firstN.length];
+				if (typeof dpidTarget === "number") {
+					const originalTid = draftPicks.find(dp => {
+						return dp.dpid === dpidTarget;
+					})?.originalTid;
+					if (originalTid !== undefined) {
+						const index = firstRoundTeams.findIndex(
+							({ tid }) => tid === originalTid,
+						);
+						if (index >= 0) {
+							firstN.push(index);
+						}
+						continue;
+					}
+				}
+			}
+
 			const draw = random.randInt(0, totalChances - 1);
 			const i = chancesCumsum.findIndex(chance => chance > draw);
 
@@ -296,6 +315,7 @@ const genOrder = async (
 		draftLotteryResult = {
 			season: g.get("season"),
 			draftType,
+			rigged: riggedLottery,
 			result: firstRoundTeams // Start with teams in lottery order
 				.map(({ tid }) => {
 					return draftPicks.find(dp => {
@@ -352,6 +372,9 @@ const genOrder = async (
 
 		if (!mock) {
 			await idb.cache.draftLotteryResults.put(draftLotteryResult);
+			await league.setGameAttributes({
+				riggedLottery: undefined,
+			});
 		}
 	}
 

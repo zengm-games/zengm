@@ -688,8 +688,6 @@ const DraftLottery = (props: Props) => {
 		},
 	});
 
-	console.log(props);
-
 	return (
 		<>
 			<MoreLinks

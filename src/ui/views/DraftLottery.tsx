@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
+import { helpers, toWorker, useLocal } from "../util";
 import type {
 	DraftLotteryResultArray,
 	View,
@@ -347,6 +347,61 @@ const Row = ({
 	return row;
 };
 
+const Rigged = ({
+	numToPick,
+	result,
+	rigged,
+	type,
+}: Pick<Props, "numToPick" | "result" | "rigged" | "type">) => {
+	const teamInfoCache = useLocal(state => state.teamInfoCache);
+
+	if (!rigged || !result || type === "projected") {
+		return null;
+	}
+
+	const actualRigged = rigged.slice(0, numToPick);
+	while (actualRigged.length < numToPick) {
+		actualRigged.push(null);
+	}
+
+	return (
+		<tr>
+			<td colSpan={3} />
+			{actualRigged.map((selected, i) => (
+				<td key={i}>
+					<select
+						className="form-control form-control-sm px-0 god-mode"
+						onChange={async event => {
+							const value = parseInt(event.target.value);
+							actualRigged[i] = value === -1 ? null : value;
+							await toWorker("main", "updateGameAttributes", {
+								riggedLottery: actualRigged,
+							});
+						}}
+						style={{ minWidth: 50 }}
+						value={selected === null ? "-1" : String(selected)}
+						disabled={type === "completed"}
+					>
+						<option value="-1">???</option>
+						{result.map(({ dpid, tid, originalTid }) => {
+							const abbrev = teamInfoCache[tid]?.abbrev;
+							const originalAbbrev = teamInfoCache[originalTid]?.abbrev;
+							return (
+								<option key={dpid} value={dpid}>
+									{abbrev === originalAbbrev
+										? abbrev
+										: `${abbrev} (from ${originalAbbrev})`}
+								</option>
+							);
+						})}
+					</select>
+				</td>
+			))}
+			<td colSpan={result.length - actualRigged.length} />
+		</tr>
+	);
+};
+
 const DraftLotteryTable = (props: Props) => {
 	const isMounted = useRef(true);
 	useEffect(() => {
@@ -435,7 +490,7 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 	};
 
-	const { godMode, rigged, season, type, userTid } = props;
+	const { godMode, numToPick, rigged, season, type, userTid } = props;
 	const { draftType, result } = state;
 	const probs =
 		result !== undefined &&
@@ -447,7 +502,15 @@ const DraftLotteryTable = (props: Props) => {
 		draftType !== "dummy"
 			? getProbs(result, draftType)
 			: undefined;
-	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
+	const NUM_PICKS = result !== undefined ? result.length : 14;
+
+	const showStartButton =
+		type === "readyToRun" &&
+		state.revealState === "init" &&
+		result &&
+		result.length > 0;
+
+	const showRigButton = showStartButton && godMode && rigged === undefined;
 
 	let table;
 
@@ -491,6 +554,12 @@ const DraftLotteryTable = (props: Props) => {
 									<th key={i}>{helpers.ordinal(i + 1)}</th>
 								))}
 							</tr>
+							<Rigged
+								numToPick={numToPick}
+								rigged={rigged}
+								result={props.result}
+								type={props.type}
+							/>
 						</thead>
 						<tbody>
 							{result.map((t, i) => (
@@ -515,14 +584,6 @@ const DraftLotteryTable = (props: Props) => {
 		table = <p>No draft lottery results for {season}.</p>;
 	}
 
-	const showStartButton =
-		type === "readyToRun" &&
-		state.revealState === "init" &&
-		result &&
-		result.length > 0;
-
-	const showRigButton = showStartButton && godMode && rigged === undefined;
-
 	return (
 		<>
 			<p>
@@ -541,7 +602,16 @@ const DraftLotteryTable = (props: Props) => {
 				</button>
 			) : null}
 			{showRigButton ? (
-				<button className="btn btn-large btn-god-mode ml-2">Rig Lottery</button>
+				<button
+					className="btn btn-large btn-god-mode ml-2"
+					onClick={async () => {
+						await toWorker("main", "updateGameAttributes", {
+							riggedLottery: [],
+						});
+					}}
+				>
+					Rig Lottery
+				</button>
 			) : null}
 			{type === "readyToRun" &&
 			(state.revealState === "running" || state.revealState === "paused") ? (
@@ -606,6 +676,8 @@ const DraftLottery = (props: Props) => {
 			seasons: props.season,
 		},
 	});
+
+	console.log(props);
 
 	return (
 		<>

@@ -10,6 +10,18 @@ import type {
 	DraftLotteryResult,
 	GameAttributesLeague,
 } from "../../common/types";
+import { draftHasLottey, getLotteryInfo } from "../core/draft/genOrder";
+
+const getNumToPick = (
+	draftType: DraftType | "dummy" | undefined,
+	numLotteryTeams: number,
+) => {
+	if (draftHasLottey(draftType)) {
+		return getLotteryInfo(draftType, numLotteryTeams).numToPick;
+	}
+
+	return 0;
+};
 
 const updateDraftLottery = async (
 	{ season }: ViewInput<"draftLottery">,
@@ -20,6 +32,7 @@ const updateDraftLottery = async (
 	notEnoughTeams?: boolean;
 	draftType?: DraftType | "dummy";
 	godMode?: boolean;
+	numToPick: number;
 	result: DraftLotteryResultArray | undefined;
 	rigged: GameAttributesLeague["riggedLottery"];
 	season: number;
@@ -31,7 +44,9 @@ const updateDraftLottery = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||
 		season !== state.season ||
-		(season === g.get("season") && updateEvents.includes("gameSim"))
+		(season === g.get("season") &&
+			(updateEvents.includes("gameSim") ||
+				updateEvents.includes("gameAttributes")))
 	) {
 		let showExpansionTeamMessage = false;
 		if (season === g.get("season")) {
@@ -72,6 +87,7 @@ const updateDraftLottery = async (
 
 				return {
 					draftType,
+					numToPick: getNumToPick(draftType, result ? result.length : 14),
 					result,
 					rigged,
 					season,
@@ -85,6 +101,7 @@ const updateDraftLottery = async (
 				// Maybe there was no draft lottery done, or it was deleted from the database
 				return {
 					draftType: "noLottery",
+					numToPick: 0,
 					result: undefined,
 					rigged: undefined,
 					season,
@@ -98,6 +115,7 @@ const updateDraftLottery = async (
 		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
 			return {
 				draftType: g.get("draftType"),
+				numToPick: 0,
 				result: undefined,
 				rigged: undefined,
 				season,
@@ -129,16 +147,22 @@ const updateDraftLottery = async (
 				? "readyToRun"
 				: "projected";
 
+		const draftType = draftLotteryResult
+			? draftLotteryResult.draftType
+			: "noLottery";
+
 		return {
 			challengeWarning:
 				!draftLotteryResult &&
 				g.get("challengeNoDraftPicks") &&
 				g.get("userTids").length > 0,
 			notEnoughTeams: !draftLotteryResult,
-			draftType: draftLotteryResult
-				? draftLotteryResult.draftType
-				: "noLottery",
+			draftType,
 			godMode: g.get("godMode"),
+			numToPick: getNumToPick(
+				draftType,
+				draftLotteryResult ? draftLotteryResult.result.length : 14,
+			),
 			result: draftLotteryResult ? draftLotteryResult.result : undefined,
 			rigged: g.get("riggedLottery"),
 			season: draftLotteryResult ? draftLotteryResult.season : season,

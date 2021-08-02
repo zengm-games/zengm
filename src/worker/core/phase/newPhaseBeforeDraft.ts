@@ -21,6 +21,7 @@ import type {
 	LogEventType,
 	GameAttributesLeague,
 } from "../../../common/types";
+import setGameAttributes from "../league/setGameAttributes";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -473,6 +474,10 @@ const newPhaseBeforeDraft = async (
 	} else {
 		local.unviewedSeasonSummary = true;
 	}
+
+	await setGameAttributes({
+		riggedLottery: undefined,
+	});
 
 	toUI("bbgmPing", ["season", g.get("season")], conditions);
 	return {

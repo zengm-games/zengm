@@ -22,7 +22,10 @@ type ReturnVal = DraftLotteryResult & {
 };
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
-const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
+export const getLotteryInfo = (
+	draftType: DraftType,
+	numLotteryTeams: number,
+) => {
 	if (draftType === "coinFlip") {
 		return {
 			minNumTeams: 2,
@@ -97,7 +100,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"nhl2017",
 ] as const;
 
-const draftHasLottey = (
+export const draftHasLottey = (
 	draftType: any,
 ): draftType is typeof LOTTERY_DRAFT_TYPES[number] => {
 	return LOTTERY_DRAFT_TYPES.includes(draftType);
@@ -342,6 +345,7 @@ const genOrder = async (
 						otl,
 						tied,
 						pts,
+						dpid: dp.dpid,
 					};
 				}),
 		};

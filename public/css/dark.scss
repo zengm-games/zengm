@@ -139,7 +139,8 @@ a.play-button {
 }
 
 .god-mode,
-.sidebar a.god-mode {
+.sidebar a.god-mode,
+select.god-mode:focus {
 	background-color: darken($purple, 20);
 	color: $black;
 }

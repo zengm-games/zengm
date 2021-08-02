@@ -144,7 +144,8 @@ h5 {
 }
 
 .god-mode,
-.sidebar a.god-mode {
+.sidebar a.god-mode,
+select.god-mode:focus {
 	background-color: $purple;
 	color: $white;
 }

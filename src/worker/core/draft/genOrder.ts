@@ -194,32 +194,51 @@ const genOrder = async (
 		}
 
 		const chanceTotal = chances.reduce((a, b) => a + b, 0);
-		const chancePct = chances.map(c => (c / chanceTotal) * 100); // cumsum
+		const chancePct = chances.map(c => (c / chanceTotal) * 100);
+
+		// Idenfity chances indexes protected by riggedLottery, and set to 0 in chancesCumsum
+		const riggedLotteryIndexes = riggedLottery
+			? riggedLottery.map(dpid => {
+					if (typeof dpid === "number") {
+						const originalTid = draftPicks.find(dp => {
+							return dp.dpid === dpid;
+						})?.originalTid;
+						if (originalTid !== undefined) {
+							const index = firstRoundTeams.findIndex(
+								({ tid }) => tid === originalTid,
+							);
+							if (index >= 0) {
+								return index;
+							}
+						}
+					}
+
+					return null;
+			  })
+			: undefined;
 
 		const chancesCumsum = chances.slice();
+		if (riggedLotteryIndexes?.includes(0)) {
+			chancesCumsum[0] = 0;
+		}
 		for (let i = 1; i < chancesCumsum.length; i++) {
-			chancesCumsum[i] += chancesCumsum[i - 1];
+			if (riggedLotteryIndexes?.includes(i)) {
+				chancesCumsum[i] = chancesCumsum[i - 1];
+			} else {
+				chancesCumsum[i] += chancesCumsum[i - 1];
+			}
 		}
 
-		const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
+		const totalChances = chancesCumsum[chancesCumsum.length - 1];
 
+		// Pick first 3 or 4 picks based on chancesCumsum
 		let iterations = 0;
 		while (firstN.length < numToPick) {
-			if (riggedLottery) {
-				const dpidTarget = riggedLottery[firstN.length];
-				if (typeof dpidTarget === "number") {
-					const originalTid = draftPicks.find(dp => {
-						return dp.dpid === dpidTarget;
-					})?.originalTid;
-					if (originalTid !== undefined) {
-						const index = firstRoundTeams.findIndex(
-							({ tid }) => tid === originalTid,
-						);
-						if (index >= 0) {
-							firstN.push(index);
-						}
-						continue;
-					}
+			if (riggedLotteryIndexes) {
+				const index = riggedLotteryIndexes[firstN.length];
+				if (typeof index === "number") {
+					firstN.push(index);
+					continue;
 				}
 			}
 

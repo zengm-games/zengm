@@ -1,4 +1,4 @@
-import { isSport } from "../../common";
+import { isSport, WEBSITE_PLAY } from "../../common";
 import { localActions } from "./local";
 
 const showGcs = () => {
@@ -7,9 +7,7 @@ const showGcs = () => {
 		return;
 	}
 
-	try {
-		window._402_Show();
-	} catch (error) {}
+	window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
 };
 
 const showModal = () => {

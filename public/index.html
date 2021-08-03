@@ -60,17 +60,20 @@ if (window.enableLogging) {
   });
 
   // Google Consumer Surveys
-  (function() {
-    var ARTICLE_URL = window.location.href;
-    var CONTENT_ID = 'everything';
-    document.write(
-      '<scr'+'ipt '+
-      'src="//survey.g.doubleclick.net/survey?site=GOOGLE_SURVEYS_ID'+
-      '&amp;url='+encodeURIComponent(ARTICLE_URL)+
-      (CONTENT_ID ? '&amp;cid='+encodeURIComponent(CONTENT_ID) : '')+
-      '&amp;random='+(new Date).getTime()+
-      '" type="text/javascript">'+'\x3C/scr'+'ipt>');
-  })();
+  var TriggerPrompt = function(articleUrl, contentId) {
+    var ARTICLE_URL = articleUrl;
+    var CONTENT_ID = contentId || '';
+    var el = document.createElement('script');
+    var url = 'https://survey.g.doubleclick.net/survey?site=GOOGLE_SURVEYS_ID' +
+              '&url=' + encodeURIComponent(ARTICLE_URL) +
+              (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
+              '&random=' + (new Date).getTime() +
+              '&after=1';
+    el.setAttribute('src', url);
+    var head = document.getElementsByTagName('head')[0] ||
+        document.getElementsByTagName('body')[0];
+    head.appendChild(el);
+  };
 }
 
 window.releaseStage = "unknown";

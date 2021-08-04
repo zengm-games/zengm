@@ -2880,7 +2880,7 @@ const updateKeepRosterSorted = async (
 };
 
 const updateLeague = async (lid: number, obj: any) => {
-	await league.updateMeta(obj, lid);
+	await league.updateMeta(obj, lid, true);
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 

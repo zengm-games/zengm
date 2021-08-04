@@ -1,12 +1,15 @@
 import { idb } from "../../db";
 import { g } from "../../util";
+import league from "../league";
 
 const genOrderFantasy = async (
 	tids: number[],
 	season: "fantasy" | "expansion" = "fantasy",
 ) => {
+	const numRounds = g.get("minRosterSize");
+
 	// Set total draft order, snaking picks each round
-	for (let round = 1; round <= g.get("minRosterSize"); round++) {
+	for (let round = 1; round <= numRounds; round++) {
 		for (let i = 0; i < tids.length; i++) {
 			await idb.cache.draftPicks.add({
 				tid: tids[i],
@@ -19,6 +22,10 @@ const genOrderFantasy = async (
 
 		tids.reverse(); // Snake
 	}
+
+	await league.setGameAttributes({
+		numDraftPicksCurrent: numRounds * tids.length,
+	});
 };
 
 export default genOrderFantasy;

@@ -7,6 +7,15 @@ import type { TradePickValues } from "../../../common/types";
 
 const PLACEHOLDER_VALUE_ALREADY_PICKED = -1;
 
+export const getNumPicksPerRound = () => {
+	let numPicksPerRound = g.get("numActiveTeams");
+	if (g.get("challengeNoDraftPicks")) {
+		numPicksPerRound -= 1;
+	}
+
+	return numPicksPerRound;
+};
+
 /**
  * Estimate draft pick values, based on the generated draft prospects in the database.
  *
@@ -29,29 +38,33 @@ const getPickValues = async (): Promise<TradePickValues> => {
 		pickValues[season] = players.map(p => p.value);
 	}
 
-	const numPicks = g.get("numDraftRounds") * g.get("numActiveTeams");
+	const currentSeason = g.get("season");
+
+	const numPicksDefault = g.get("numDraftRounds") * getNumPicksPerRound();
 
 	// Handle case where draft is in progress
 	if (g.get("phase") === PHASE.DRAFT) {
+		const numPicks = g.get("numDraftPicksCurrent") ?? numPicksDefault;
+
 		// See what the lowest remaining pick is
 		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
-			dp => dp.season === g.get("season"),
+			dp => dp.season === currentSeason,
 		);
 		const diff = numPicks - draftPicks.length;
 
 		if (diff > 0) {
 			// Value of PLACEHOLDER_VALUE_ALREADY_PICKED is arbitrary since these entries should never appear in a trade since the picks don't exist anymore
 			const fakeValues = Array(diff).fill(PLACEHOLDER_VALUE_ALREADY_PICKED);
-			pickValues[g.get("season")] = fakeValues.concat(
-				pickValues[g.get("season")] ?? [],
+			pickValues[currentSeason] = fakeValues.concat(
+				pickValues[currentSeason] ?? [],
 			);
 		}
 	}
 
 	// Defaults are the average of future drafts
 	const seasons = Object.keys(playersByDraftYear);
-	const currentSeasonString = String(g.get("season"));
-	pickValues.default = range(numPicks).map(i => {
+	const currentSeasonString = String(currentSeason);
+	pickValues.default = range(numPicksDefault).map(i => {
 		const vals = seasons
 			.filter(season => {
 				const seasonPickValues = pickValues[season];

@@ -432,6 +432,7 @@ export type GameAttributesLeague = {
 	names?: NamesLegacy;
 	nextPhase?: Phase;
 	numActiveTeams: number;
+	numDraftPicksCurrent?: number;
 	numDraftRounds: number;
 	numGames: number;
 	numGamesDiv: number | null;

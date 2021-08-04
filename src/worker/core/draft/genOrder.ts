@@ -453,6 +453,10 @@ const genOrder = async (
 		for (const dp of draftPicks) {
 			await idb.cache.draftPicks.put(dp);
 		}
+
+		await league.setGameAttributes({
+			numDraftPicksCurrent: draftPicks.length,
+		});
 	}
 
 	return draftLotteryResult;

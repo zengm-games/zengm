@@ -1,4 +1,4 @@
-import { draft } from "..";
+import { draft, league } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
@@ -15,6 +15,11 @@ const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
 			await idb.cache.draftPicks.delete(dp.dpid);
 		}
 	}
+
+	// Already set in afterPicks, but do again just to be sure
+	await league.setGameAttributes({
+		numDraftPicksCurrent: undefined,
+	});
 
 	return {
 		updateEvents: ["playerMovement"],

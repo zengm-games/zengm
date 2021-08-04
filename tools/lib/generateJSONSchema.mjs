@@ -800,6 +800,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 									}
 								],
 							},
+							numDraftPicksCurrent: {
+								type: "integer",
+								minimum: 0,
+							},
 							numDraftRounds: {
 								type: "integer",
 								minimum: 0,

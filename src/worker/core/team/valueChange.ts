@@ -9,6 +9,7 @@ import type {
 	DraftPick,
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
+import { getNumPicksPerRound } from "../trade/getPickValues";
 
 type Asset = {
 	value: number;
@@ -138,12 +139,14 @@ const getPickNumber = (
 	season: number,
 	tradingPartnerTid?: number,
 ) => {
+	const numPicksPerRound = getNumPicksPerRound();
+
 	let estPick: number;
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
 		const temp = cache.estPicks[dp.originalTid];
-		estPick = temp !== undefined ? temp : g.get("numActiveTeams") / 2;
+		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
 		const usersPick = dp.tid === g.get("userTid");
@@ -152,8 +155,7 @@ const getPickNumber = (
 		const tradeWithUser = tradingPartnerTid === g.get("userTid");
 
 		// For future draft picks, add some uncertainty.
-		const regressionTarget =
-			(usersPick ? 0.75 : 0.25) * g.get("numActiveTeams");
+		const regressionTarget = (usersPick ? 0.75 : 0.25) * numPicksPerRound;
 
 		// Never let this improve the future projection of user's picks
 		let seasons = helpers.bound(season - g.get("season"), 0, 5);
@@ -177,24 +179,22 @@ const getPickNumber = (
 				// Penalty for user draft picks
 				const difficultyFactor = 1 + 1.5 * g.get("difficulty");
 				estPick = helpers.bound(
-					Math.round(
-						(estPick + g.get("numActiveTeams") / 3.5) * difficultyFactor,
-					),
+					Math.round((estPick + numPicksPerRound / 3.5) * difficultyFactor),
 					1,
-					g.get("numActiveTeams"),
+					numPicksPerRound,
 				);
 			} else {
 				// Bonus for AI draft picks
 				estPick = helpers.bound(
-					Math.round(estPick - g.get("numActiveTeams") / 3.5),
+					Math.round(estPick - numPicksPerRound / 3.5),
 					1,
-					g.get("numActiveTeams"),
+					numPicksPerRound,
 				);
 			}
 		}
 	}
 
-	estPick += g.get("numActiveTeams") * (dp.round - 1);
+	estPick += numPicksPerRound * (dp.round - 1);
 
 	return estPick;
 };

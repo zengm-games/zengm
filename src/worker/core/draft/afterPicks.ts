@@ -14,6 +14,10 @@ import expansionDraft from "../expansionDraft";
 
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
+		await league.setGameAttributes({
+			numDraftPicksCurrent: undefined,
+		});
+
 		// Fantasy draft special case!
 		if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 			// Undrafted players become free agents

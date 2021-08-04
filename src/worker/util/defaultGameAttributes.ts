@@ -33,6 +33,7 @@ export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"userTids",
 	"season",
 	"startingSeason",
+	"numDraftPicksCurrent",
 ];
 export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
 export const gameAttributesCache: GameAttributeKey[] = [
@@ -161,6 +162,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	inflationMin: 0,
 	inflationStd: 0,
 	riggedLottery: undefined,
+	numDraftPicksCurrent: undefined,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

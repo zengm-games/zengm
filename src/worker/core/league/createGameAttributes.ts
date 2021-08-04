@@ -269,6 +269,21 @@ const createGameAttributes = (
 		}
 	}
 
+	if (gameAttributes.phase === PHASE.DRAFT && leagueFile.draftPicks) {
+		const currentDraftPicks = leagueFile.draftPicks.filter(
+			dp => dp.season === gameAttributes.season,
+		);
+		const draftNotStarted =
+			currentDraftPicks.every(dp => dp.round === 0) ||
+			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
+		if (draftNotStarted) {
+			const numDraftPicksCurrent = currentDraftPicks.length;
+			if (numDraftPicksCurrent > 0) {
+				gameAttributes.numDraftPicksCurrent = numDraftPicksCurrent;
+			}
+		}
+	}
+
 	return gameAttributes;
 };
 

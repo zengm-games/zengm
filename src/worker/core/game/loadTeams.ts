@@ -203,7 +203,9 @@ const processTeam = (
 			}
 		}
 
-		t.pace /= numPlayers;
+		if (numPlayers > 0) {
+			t.pace /= numPlayers;
+		}
 		t.pace = t.pace * 15 + 100; // Scale between 100 and 115
 
 		if (allStarGame) {

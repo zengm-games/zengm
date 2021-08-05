@@ -1,19 +1,22 @@
 import { isSport, WEBSITE_PLAY } from "../../common";
 import { localActions } from "./local";
 
+const showModal = () => {
+	localActions.update({
+		showNagModal: true,
+	});
+};
+
 const showGcs = () => {
 	// No FBGM account currently https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZQKtMrLvgRtFMPvzdBRjqrxB
 	if (isSport("football")) {
 		return;
 	}
 
-	window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
-};
+	// https://mail.google.com/mail/u/0/#search/callbackGCS/FMfcgxckZpsFPhHWMwTGHhSctGSchZMR
+	(window as any).callbackGCS = showModal;
 
-const showModal = () => {
-	localActions.update({
-		showNagModal: true,
-	});
+	window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
 };
 
 export default {

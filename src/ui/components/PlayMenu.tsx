@@ -72,7 +72,7 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 	return (
 		<Dropdown
 			className={`play-button-wrapper${
-				window.mobile ? " play-button-wrapper-mobile" : ""
+				window.mobile ? " dropdown-mobile" : ""
 			}`}
 			as={Nav.Item}
 		>

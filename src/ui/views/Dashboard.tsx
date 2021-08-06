@@ -288,7 +288,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							: 0,
 					value: <Ago date={league.lastPlayed} />,
 				},
-				<Dropdown style={dropdownStyle}>
+				<Dropdown
+					style={dropdownStyle}
+					className={window.mobile ? "dropdown-mobile" : undefined}
+				>
 					<Dropdown.Toggle
 						as="span"
 						bsPrefix="no-caret"

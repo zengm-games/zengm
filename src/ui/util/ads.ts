@@ -14,7 +14,9 @@ const showGcs = () => {
 	}
 
 	// https://mail.google.com/mail/u/0/#search/callbackGCS/FMfcgxckZpsFPhHWMwTGHhSctGSchZMR
-	(window as any).callbackGCS = showModal;
+	(window as any).callbackGCS = () => {
+		console.log("callbackGCS");
+	};
 
 	window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
 };

@@ -275,7 +275,7 @@ const useDropdownOptions = (
 			hockey: [
 				"skater",
 				"goalie",
-				...(field === "statTypesAdv" ? ["advanced"] : []),
+				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
 			],
 		});
 	} else if (field === "awardType") {

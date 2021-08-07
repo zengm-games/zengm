@@ -41,7 +41,7 @@ const Injuries = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					skills={p.ratings.skills}
-					season={season}
+					season={typeof season === "number" ? season : undefined}
 					watch={p.watch}
 				>
 					{p.name}

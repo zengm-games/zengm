@@ -34,7 +34,10 @@ const PlayerFeats = ({
 		return {
 			key: p.fid,
 			data: [
-				<PlayerNameLabels pid={p.pid} season={season}>
+				<PlayerNameLabels
+					pid={p.pid}
+					season={typeof season === "number" ? season : undefined}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				p.pos,

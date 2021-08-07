@@ -30,10 +30,16 @@ type Props = {
 	// For cases when we want to display the watch status, but not make it toggleable because the data will not reload, like for live box scores
 	disableWatchToggle?: boolean;
 	pid: number;
+	season?: number;
 	watch?: boolean;
 };
 
-const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
+const RatingsStatsPopover = ({
+	disableWatchToggle,
+	season,
+	pid,
+	watch,
+}: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		abbrev?: string;
@@ -54,6 +60,7 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 			[key: string]: number;
 		};
 		pid: number;
+		type?: "career" | "current" | number;
 	}>({
 		pid,
 	});
@@ -67,7 +74,8 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	}
 
 	const loadData = useCallback(async () => {
-		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid);
+		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid, season);
+		console.log("p", pid, season, p);
 		setPlayer({
 			abbrev: p.abbrev,
 			tid: p.tid,
@@ -77,9 +85,10 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 			ratings: p.ratings,
 			stats: p.stats,
 			pid,
+			type: p.type,
 		});
 		setLoadingData(false);
-	}, [pid]);
+	}, [pid, season]);
 
 	const toggle = useCallback(() => {
 		if (!loadingData) {
@@ -88,7 +97,7 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 		}
 	}, [loadData, loadingData]);
 
-	const { abbrev, tid, age, jerseyNumber, name, ratings, stats } = player;
+	const { abbrev, tid, age, jerseyNumber, name, ratings, stats, type } = player;
 
 	let nameBlock = null;
 	if (name) {
@@ -130,7 +139,9 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	const id = `ratings-stats-popover-${player.pid}`;
 
 	const modalHeader = nameBlock;
-	const modalBody = <RatingsStats ratings={ratings} stats={stats} />;
+	const modalBody = (
+		<RatingsStats ratings={ratings} stats={stats} type={type} />
+	);
 
 	const popoverContent = (
 		<div
@@ -140,7 +151,7 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 			}}
 		>
 			<div className="mb-2">{nameBlock}</div>
-			<RatingsStats ratings={ratings} stats={stats} />
+			<RatingsStats ratings={ratings} stats={stats} type={type} />
 		</div>
 	);
 

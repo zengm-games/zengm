@@ -1988,7 +1988,7 @@ const ovr = async (ratings: MinimalPlayerRatings, pos: string) => {
 	return player.ovr(ratings, pos);
 };
 
-const ratingsStatsPopoverInfo = async (pid: number) => {
+const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 	const blankObj = {
 		name: undefined,
 		ratings: undefined,
@@ -2007,9 +2007,16 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		return blankObj;
 	}
 
-	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
-	const season =
-		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
+	const currentSeason = g.get("season");
+
+	let actualSeason: number;
+	if (season !== undefined) {
+		// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
+		actualSeason = p.draft.year > season ? p.draft.year : season;
+	} else {
+		actualSeason = p.draft.year > currentSeason ? p.draft.year : currentSeason;
+	}
+
 	const stats = bySport({
 		basketball: [
 			"pts",
@@ -2032,16 +2039,28 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		hockey: ["keyStats"],
 	});
 
-	return idb.getCopy.playersPlus(p, {
+	const p2 = await idb.getCopy.playersPlus(p, {
 		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],
 		ratings: ["pos", "ovr", "pot", ...RATINGS],
 		stats,
-		season,
+		season: actualSeason,
 		showNoStats: true,
 		showRetired: true,
 		oldStats: true,
 		fuzz: true,
 	});
+
+	let type: "career" | "current" | number;
+	if (actualSeason >= currentSeason) {
+		type = "current";
+	} else {
+		type = actualSeason;
+	}
+
+	return {
+		...p2,
+		type,
+	};
 };
 
 // Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!

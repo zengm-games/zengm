@@ -11,10 +11,13 @@ type Props = {
 		pot: number;
 	} & Record<RatingKey, number>;
 	stats: any;
+	type?: "career" | "current" | number;
 	challengeNoRatings: boolean;
 };
 
-const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
+const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
+	const seasonPrefix = typeof type === "number" ? `${type} ` : "";
+
 	let ratingsBlock;
 
 	if (challengeNoRatings) {
@@ -23,7 +26,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 		ratingsBlock = (
 			<div className="row mb-2">
 				<div className="col-4">
-					<b>Ratings</b>
+					<b>{seasonPrefix}Ratings</b>
 					<br />
 					<span style={gradientStyle(ratings.hgt)}>Hgt: {ratings.hgt}</span>
 					<br />
@@ -67,7 +70,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 		ratingsBlock = (
 			<div className="row mb-2">
 				<div className="col-12">
-					<b>Ratings</b>
+					<b>{seasonPrefix}Ratings</b>
 					<br />
 					<br />
 					<br />
@@ -88,7 +91,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					whiteSpace: "normal",
 				}}
 			>
-				<div className="font-weight-bold mb-1">Stats</div>
+				<div className="font-weight-bold mb-1">{seasonPrefix}Stats</div>
 				{stats.keyStats}
 			</div>
 		);

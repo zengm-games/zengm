@@ -15,6 +15,7 @@ const PlayerNameLabels = (props: {
 	};
 	pos?: string;
 	pid?: number;
+	season?: number;
 	skills?: string[];
 	style?: {
 		[key: string]: string;
@@ -28,6 +29,7 @@ const PlayerNameLabels = (props: {
 		jerseyNumber,
 		pid,
 		pos,
+		season,
 		skills,
 		style,
 		watch,
@@ -50,6 +52,7 @@ const PlayerNameLabels = (props: {
 				<RatingsStatsPopover
 					disableWatchToggle={disableWatchToggle}
 					pid={pid}
+					season={season}
 					watch={watch}
 				/>
 			) : null}

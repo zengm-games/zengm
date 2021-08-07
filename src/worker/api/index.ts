@@ -1441,8 +1441,10 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 	};
 };
 
-const generateFace = async (country: string) => {
-	const { race } = await player.name(helpers.getCountry(country));
+const generateFace = async (country: string | undefined) => {
+	const { race } = await player.name(
+		country ? helpers.getCountry(country) : undefined,
+	);
 	return face.generate(race);
 };
 

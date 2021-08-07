@@ -140,11 +140,13 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	return (
 		<>
 			{!props.godMode ? (
-				<p className="alert alert-warning d-inline-block">
-					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
-					access additional features, such as creating new teams and
-					activating/inactivating existing teams.
-				</p>
+				<div>
+					<span className="alert alert-warning d-inline-block">
+						Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
+						access additional features, such as creating new teams and
+						activating/inactivating existing teams.
+					</span>
+				</div>
 			) : null}
 
 			{props.godMode ? (
@@ -155,9 +157,11 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			) : null}
 
 			{props.phase >= PHASE.PLAYOFFS ? (
-				<p className="alert alert-warning d-inline-block">
-					{nextSeasonWarning}
-				</p>
+				<div>
+					<span className="alert alert-warning d-inline-block">
+						{nextSeasonWarning}
+					</span>
+				</div>
 			) : null}
 
 			<div className="form-row d-none d-lg-flex font-weight-bold mb-2">

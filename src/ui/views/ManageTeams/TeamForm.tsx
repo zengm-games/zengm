@@ -1,6 +1,8 @@
-import type { ChangeEvent } from "react";
-import { helpers, JERSEYS } from "../../../common";
+import { display, Face } from "facesjs";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { DEFAULT_JERSEY, helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
+import { toWorker } from "../../util";
 
 const TeamForm = ({
 	classNamesCol,
@@ -44,6 +46,11 @@ const TeamForm = ({
 				disabled?: boolean;
 		  });
 }) => {
+	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
+	const face = useRef<Face | undefined>();
+	const [showFace, setShowFace] = useState(false);
+	const [showFaceHover, setShowFaceHover] = useState(false);
+
 	const divisions = divs.map(div => {
 		const conf = confs.find(c => c.cid === div.cid);
 		return {
@@ -51,6 +58,33 @@ const TeamForm = ({
 			name: conf ? `${div.name} (${conf.name})` : div.name,
 		};
 	});
+
+	useEffect(() => {
+		const renderFace = async () => {
+			if (!showFace && !showFaceHover) {
+				if (faceWrapper) {
+					faceWrapper.innerHTML = "";
+				}
+				return;
+			}
+
+			if (!face.current) {
+				face.current = await toWorker("main", "generateFace", undefined);
+			}
+
+			if (faceWrapper && face.current) {
+				const overrides = {
+					teamColors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+					jersey: {
+						id: t.jersey ?? DEFAULT_JERSEY,
+					},
+				};
+				display(faceWrapper, face.current, overrides);
+			}
+		};
+
+		renderFace();
+	}, [faceWrapper, showFace, showFaceHover, t.colors, t.jersey]);
 
 	return (
 		<>
@@ -149,7 +183,11 @@ const TeamForm = ({
 					/>
 				</div>
 			</div>
-			<div className={classNamesCol[8]}>
+			<div
+				className={classNamesCol[8]}
+				onMouseEnter={() => setShowFaceHover(true)}
+				onMouseLeave={() => setShowFaceHover(false)}
+			>
 				<div className="form-group">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="d-flex">
@@ -158,13 +196,19 @@ const TeamForm = ({
 								key={j}
 								type="color"
 								className="form-control"
-								onChange={e => handleInputChange(`colors${j}`, e)}
+								onChange={e => {
+									handleInputChange(`colors${j}`, e);
+									setShowFace(true);
+								}}
 								value={t.colors[j]}
 							/>
 						))}
 						<select
 							className="form-control"
-							onChange={e => handleInputChange("jersey", e)}
+							onChange={e => {
+								handleInputChange("jersey", e);
+								setShowFace(true);
+							}}
 							value={t.jersey}
 						>
 							{helpers.keys(JERSEYS).map(jersey => (
@@ -174,6 +218,17 @@ const TeamForm = ({
 							))}
 						</select>
 					</div>
+				</div>
+				<div
+					onClick={() => {
+						setShowFace(show => !show);
+					}}
+				>
+					<div
+						ref={setFaceWrapper}
+						style={{ maxWidth: 120, marginTop: "-20%", zIndex: -1 }}
+						className="position-relative mb-3"
+					/>
 				</div>
 			</div>
 			{!hideStatus ? (

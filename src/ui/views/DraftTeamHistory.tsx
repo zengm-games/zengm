@@ -91,6 +91,7 @@ const DraftTeamHistory = ({
 							<PlayerNameLabels
 								jerseyNumber={p.jerseyNumber}
 								pid={p.pid}
+								season={p.draft.year}
 								skills={p.currentSkills}
 								watch={p.watch}
 							>

@@ -140,6 +140,7 @@ const PlayerStats = ({
 							injury={p.injury}
 							jerseyNumber={p.stats.jerseyNumber}
 							pid={p.pid}
+							season={season}
 							skills={p.ratings.skills}
 							watch={p.watch}
 						>

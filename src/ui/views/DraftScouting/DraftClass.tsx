@@ -34,7 +34,12 @@ const DraftClass = ({
 				p.rank,
 				{
 					value: (
-						<PlayerNameLabels pid={p.pid} skills={p.skills} watch={p.watch}>
+						<PlayerNameLabels
+							pid={p.pid}
+							season={season}
+							skills={p.skills}
+							watch={p.watch}
+						>
 							{p.nameAbbrev}
 						</PlayerNameLabels>
 					),

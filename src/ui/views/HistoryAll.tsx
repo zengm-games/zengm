@@ -31,7 +31,7 @@ const awardName = (
 	const ret = (
 		<div className="d-flex">
 			<div className="mr-auto">
-				<PlayerNameLabels pid={award.pid} pos={award.pos}>
+				<PlayerNameLabels pid={award.pid} pos={award.pos} season={season}>
 					{award.name}
 				</PlayerNameLabels>{" "}
 				(

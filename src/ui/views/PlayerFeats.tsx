@@ -34,7 +34,9 @@ const PlayerFeats = ({
 		return {
 			key: p.fid,
 			data: [
-				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+				<PlayerNameLabels pid={p.pid} season={season}>
+					{p.name}
+				</PlayerNameLabels>,
 				p.pos,
 				<a
 					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, p.season])}

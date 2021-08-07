@@ -56,6 +56,7 @@ const PlayerBios = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					season={season}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>

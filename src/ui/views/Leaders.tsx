@@ -34,6 +34,7 @@ const Row = ({
 					pid={p.pid}
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
+					season={season}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>

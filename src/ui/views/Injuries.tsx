@@ -38,7 +38,12 @@ const Injuries = ({
 		return {
 			key: season === "current" ? p.pid : i,
 			data: [
-				<PlayerNameLabels pid={p.pid} skills={p.ratings.skills} watch={p.watch}>
+				<PlayerNameLabels
+					pid={p.pid}
+					skills={p.ratings.skills}
+					season={season}
+					watch={p.watch}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,

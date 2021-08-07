@@ -62,6 +62,7 @@ const PlayerRatings = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					season={season}
 					skills={p.ratings.skills}
 					jerseyNumber={p.stats.jerseyNumber}
 					watch={p.watch}

@@ -15,7 +15,10 @@ const PlayerNameLabels = (props: {
 	};
 	pos?: string;
 	pid?: number;
+
+	// season is passed to RatingsStatsPopover only, where it's used to determine whether to show a historical season's data
 	season?: number;
+
 	skills?: string[];
 	style?: {
 		[key: string]: string;

@@ -11,14 +11,15 @@ type Props = {
 		pot: number;
 	} & Record<RatingKey, number>;
 	stats: any;
-	type?: "career" | "current" | number;
+	type?: "career" | "current" | "draft" | number;
 	challengeNoRatings: boolean;
 };
 
 const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 	const seasonPrefix =
 		typeof type === "number" ? `${type} ` : type === "career" ? "Peak " : "";
-	const seasonPrefix2 = seasonPrefix === "Peak " ? "Career " : seasonPrefix;
+	const seasonPrefix2 =
+		type === "career" || type === "draft" ? "Career " : seasonPrefix;
 
 	let ratingsBlock;
 

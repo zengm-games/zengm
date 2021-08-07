@@ -2019,9 +2019,15 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 
 	// If player has no stats that season and is not a draft prospect, show career stats
 	if (
-		p.draft.year <= actualSeason &&
+		p.draft.year < actualSeason &&
 		!p.stats.some(row => !row.playoffs && row.season === actualSeason)
 	) {
+		actualSeason = undefined;
+	}
+
+	let draftProspect = false;
+	if (p.draft.year === actualSeason) {
+		draftProspect = true;
 		actualSeason = undefined;
 	}
 
@@ -2057,17 +2063,20 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 		oldStats: true,
 		fuzz: true,
 	});
-	console.log("hi", actualSeason, p, p2);
 
 	if (actualSeason === undefined) {
-		let peakRatings;
-		for (const row of p2.ratings) {
-			if (!peakRatings || row.ovr > peakRatings.ovr) {
-				peakRatings = row;
+		if (draftProspect) {
+			p2.ratings = p2.ratings[0];
+		} else {
+			let peakRatings;
+			for (const row of p2.ratings) {
+				if (!peakRatings || row.ovr > peakRatings.ovr) {
+					peakRatings = row;
+				}
 			}
+			p2.ratings = peakRatings;
 		}
-		p2.ratings = peakRatings;
-		p2.age = peakRatings.season - p.born.year;
+		p2.age = p2.ratings.season - p.born.year;
 
 		p2.stats = p2.careerStats;
 
@@ -2083,8 +2092,10 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 	delete p2.stats.season;
 	delete p2.stats.tid;
 
-	let type: "career" | "current" | number;
-	if (actualSeason === undefined) {
+	let type: "career" | "current" | "draft" | number;
+	if (draftProspect) {
+		type = "draft";
+	} else if (actualSeason === undefined) {
 		type = "career";
 	} else if (actualSeason >= currentSeason) {
 		type = "current";

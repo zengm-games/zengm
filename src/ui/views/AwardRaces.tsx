@@ -90,6 +90,7 @@ const AwardRaces = ({
 								injury={p.injury}
 								jerseyNumber={ps ? ps.jerseyNumber : undefined}
 								pid={p.pid}
+								season={season}
 								skills={pr ? pr.skills : []}
 								watch={p.watch}
 							>

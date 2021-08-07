@@ -7,7 +7,7 @@ import { bySport } from "../../../common";
 const RatingsStats = (props: {
 	ratings: any;
 	stats: any;
-	type?: "career" | "current" | number;
+	type?: "career" | "current" | "draft" | number;
 }) => {
 	const challengeNoRatings = useLocal(state => state.challengeNoRatings);
 

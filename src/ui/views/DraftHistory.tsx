@@ -111,7 +111,7 @@ const DraftHistory = ({
 				{
 					value: (
 						<div className="d-flex">
-							<PlayerNameLabels pid={p.pid} watch={p.watch}>
+							<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
 								{p.name}
 							</PlayerNameLabels>
 							<div className="ml-auto">

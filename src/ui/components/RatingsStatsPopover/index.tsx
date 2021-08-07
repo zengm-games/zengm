@@ -61,7 +61,7 @@ const RatingsStatsPopover = ({
 			[key: string]: number;
 		};
 		pid: number;
-		type?: "career" | "current" | number;
+		type?: "career" | "current" | "draft" | number;
 	}>({
 		pid,
 	});

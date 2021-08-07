@@ -2,6 +2,7 @@ import { display, Face } from "facesjs";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { DEFAULT_JERSEY, helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
+import { JerseyNumber } from "../../components";
 import { toWorker } from "../../util";
 
 const TeamForm = ({
@@ -223,12 +224,25 @@ const TeamForm = ({
 					onClick={() => {
 						setShowFace(show => !show);
 					}}
+					className="d-flex"
 				>
 					<div
 						ref={setFaceWrapper}
-						style={{ maxWidth: 120, marginTop: "-20%", zIndex: -1 }}
+						style={{ maxWidth: 120, marginTop: -35, zIndex: -1 }}
 						className="position-relative mb-3"
 					/>
+					{showFace || showFaceHover ? (
+						<JerseyNumber
+							number={"35"}
+							start={2002}
+							end={2004}
+							t={{
+								colors: t.colors,
+								name: t.name,
+								region: t.region,
+							}}
+						/>
+					) : null}
 				</div>
 			</div>
 			{!hideStatus ? (

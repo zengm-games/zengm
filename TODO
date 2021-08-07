@@ -1,3 +1,13 @@
+3 point tendency
+
+https://github.com/zengm-games/zengm/pull/346/files
+
+add standings options
+- playoffsByConference
+- divisionLeadersFirstPlayoffs
+  - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
+- support re-seeding playoffs, and make it default for FBGM
+
 sort by score sorts by point differential on game logs. do same on stat feats https://discord.com/channels/290013534023057409/331882115119448065/871276311518261278
 
 report of AI not signing its draft picks in ZGMH https://discord.com/channels/290013534023057409/290015591216054273/872562739510378547
@@ -69,8 +79,6 @@ frivolities
   - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
-
-3 point tendency
 
 show best performer(s) by score on schedule page https://discord.com/channels/290013534023057409/331882115119448065/862565411262169098
 - make sure it agrees with all star MVP, finals MVP
@@ -329,12 +337,6 @@ change point value of 2/3 pointers https://old.reddit.com/r/BasketballGM/comment
 
 store w/l/t/otl for all players, similar to qbgRecord
 - some kind of playing time cutoff for when a game counts for a player?
-
-add standings options
-- playoffsByConference
-- divisionLeadersFirstPlayoffs
-  - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
-- support re-seeding playoffs, and make it default for FBGM
 
 Add SOS and SOV stats on team stats since they have to be used for tiebreakers anyway https://discord.com/channels/290013534023057409/331882115119448065/810504463407382558
 

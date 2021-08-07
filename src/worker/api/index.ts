@@ -2022,7 +2022,7 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 	// If player has no stats that season and is not a draft prospect, show career stats
 	if (
 		p.draft.year < actualSeason &&
-		!p.stats.some(row => !row.playoffs && row.season === actualSeason)
+		!p.ratings.some(row => row.season === actualSeason)
 	) {
 		actualSeason = undefined;
 	}

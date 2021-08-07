@@ -2009,12 +2009,20 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 
 	const currentSeason = g.get("season");
 
-	let actualSeason: number;
+	let actualSeason: number | undefined;
 	if (season !== undefined) {
 		// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
 		actualSeason = p.draft.year > season ? p.draft.year : season;
 	} else {
 		actualSeason = p.draft.year > currentSeason ? p.draft.year : currentSeason;
+	}
+
+	// If player has no stats that season and is not a draft prospect, show career stats
+	if (
+		p.draft.year <= actualSeason &&
+		!p.stats.some(row => !row.playoffs && row.season === actualSeason)
+	) {
+		actualSeason = undefined;
 	}
 
 	const stats = bySport({
@@ -2041,17 +2049,44 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 
 	const p2 = await idb.getCopy.playersPlus(p, {
 		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],
-		ratings: ["pos", "ovr", "pot", ...RATINGS],
-		stats,
+		ratings: ["pos", "ovr", "pot", "season", "abbrev", "tid", ...RATINGS],
+		stats: ["tid", "season", "playoffs", ...stats],
 		season: actualSeason,
 		showNoStats: true,
 		showRetired: true,
 		oldStats: true,
 		fuzz: true,
 	});
+	console.log("hi", actualSeason, p, p2);
+
+	if (actualSeason === undefined) {
+		let peakRatings;
+		for (const row of p2.ratings) {
+			if (!peakRatings || row.ovr > peakRatings.ovr) {
+				peakRatings = row;
+			}
+		}
+		p2.ratings = peakRatings;
+		p2.age = peakRatings.season - p.born.year;
+
+		p2.stats = p2.careerStats;
+
+		delete p2.careerStats;
+	}
+	if (actualSeason === undefined || actualSeason < currentSeason) {
+		p2.abbrev = p2.ratings.abbrev;
+		p2.tid = p2.ratings.tid;
+	}
+	delete p2.ratings.abbrev;
+	delete p2.ratings.tid;
+	delete p2.stats.playoffs;
+	delete p2.stats.season;
+	delete p2.stats.tid;
 
 	let type: "career" | "current" | number;
-	if (actualSeason >= currentSeason) {
+	if (actualSeason === undefined) {
+		type = "career";
+	} else if (actualSeason >= currentSeason) {
 		type = "current";
 	} else {
 		type = actualSeason;

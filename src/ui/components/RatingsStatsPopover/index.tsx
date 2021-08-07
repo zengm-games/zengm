@@ -55,6 +55,7 @@ const RatingsStatsPopover = ({
 			stre: number;
 			spd: number;
 			endu: number;
+			season: number;
 		};
 		stats?: {
 			[key: string]: number;
@@ -75,7 +76,6 @@ const RatingsStatsPopover = ({
 
 	const loadData = useCallback(async () => {
 		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid, season);
-		console.log("p", pid, season, p);
 		setPlayer({
 			abbrev: p.abbrev,
 			tid: p.tid,
@@ -120,13 +120,17 @@ const RatingsStatsPopover = ({
 				) : null}
 				{abbrev !== undefined && tid !== undefined && tid !== PLAYER.RETIRED ? (
 					<a
-						href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}
+						href={helpers.leagueUrl([
+							"roster",
+							`${abbrev}_${tid}`,
+							ratings ? ratings.season : undefined,
+						])}
 						className="ml-1"
 					>
 						{abbrev}
 					</a>
 				) : null}
-				{age !== undefined && tid !== PLAYER.RETIRED ? (
+				{age !== undefined ? (
 					<div className="ml-1 flex-shrink-0">{age} yo</div>
 				) : null}
 				{!disableWatchToggle && typeof watch === "boolean" ? (

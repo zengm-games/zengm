@@ -320,15 +320,22 @@ const processRatings = (
 				row.age = pr.season - p.born.year;
 			} else if (attr === "abbrev" || attr === "tid") {
 				// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
-				if (!stats.includes("tid")) {
+				if (
+					!stats.includes("tid") ||
+					!stats.includes("season") ||
+					!stats.includes("playoffs")
+				) {
 					throw new Error(
-						'Crazy I know, but if you request "abbrev" or "tid" from ratings, you must also request "tid" from stats',
+						'Crazy I know, but if you request "abbrev" or "tid" from ratings, you must also request "tid", "season", and "playoffs" from stats',
 					);
 				}
 
 				let tidTemp;
 
-				for (const ps of output.stats) {
+				for (const ps of Array.isArray(output.stats)
+					? output.stats
+					: [output.stats]) {
+					console.log(ps);
 					if (ps.season === pr.season && ps.playoffs === false) {
 						tidTemp = ps.tid;
 					}

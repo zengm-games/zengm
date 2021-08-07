@@ -7,10 +7,10 @@ ZGMH playoffs goalies
 improve player popover
 - https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h5bwwr2/
 - https://old.reddit.com/r/BasketballGM/comments/ob9t2x/monthly_suggestions_thread/h48c642/
-- if season is specified, return value at that season, or value at draft for future draft prospects
-- if no season specified, then return same as above, except if that results in nothing (no stats row that year) then show career stats and peak ratings
-- show season/career before "Stats", and season/peak before "Ratings"
 - pass season to PlayerNameLabels everywhere
+- blog
+  - show ratings/stats from whatever season is most relevant. so when viewing last year's roster, it will show last year's ratings/stats
+  - show peak ratings and career stats on some non season specific pages, like frivolities
 
 jersey preview when editing https://discord.com/channels/290013534023057409/331882115119448065/870876557965672488
 

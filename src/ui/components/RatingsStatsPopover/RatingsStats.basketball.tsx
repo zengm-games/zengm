@@ -16,7 +16,9 @@ type Props = {
 };
 
 const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
-	const seasonPrefix = typeof type === "number" ? `${type} ` : "";
+	const seasonPrefix =
+		typeof type === "number" ? `${type} ` : type === "career" ? "Peak " : "";
+	const seasonPrefix2 = seasonPrefix === "Peak " ? "Career " : seasonPrefix;
 
 	let ratingsBlock;
 
@@ -91,7 +93,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 		statsBlock = (
 			<div className="row">
 				<div className="col-4">
-					<b>{seasonPrefix}Stats</b>
+					<b>{seasonPrefix2}Stats</b>
 					<br />
 					PTS: {helpers.roundStat(stats.pts, "pts")}
 					<br />
@@ -133,7 +135,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 		statsBlock = (
 			<div className="row mt-2">
 				<div className="col-12">
-					<b>{seasonPrefix}Stats</b>
+					<b>{seasonPrefix2}Stats</b>
 					<br />
 					<br />
 					<br />

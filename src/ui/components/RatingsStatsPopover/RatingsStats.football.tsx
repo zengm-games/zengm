@@ -18,7 +18,9 @@ type Props = {
 };
 
 const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
-	const seasonPrefix = typeof type === "number" ? `${type} ` : "";
+	const seasonPrefix =
+		typeof type === "number" ? `${type} ` : type === "career" ? "Peak " : "";
+	const seasonPrefix2 = seasonPrefix === "Peak " ? "Career " : seasonPrefix;
 
 	let ratingsBlock;
 
@@ -93,7 +95,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 					whiteSpace: "normal",
 				}}
 			>
-				<div className="font-weight-bold mb-1">{seasonPrefix}Stats</div>
+				<div className="font-weight-bold mb-1">{seasonPrefix2}Stats</div>
 				{stats.keyStats}
 			</div>
 		);

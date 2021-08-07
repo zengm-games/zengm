@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
@@ -39,7 +39,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		return {
 			key: p.pid,
 			data: [
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear,

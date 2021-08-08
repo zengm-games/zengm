@@ -168,7 +168,7 @@ const updatePlayerGameLog = async (
 				abbrev,
 				oppTid,
 				oppAbbrev,
-				result: `${result} (${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes})`,
+				result: `${result} ${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
 				diff: game.teams[t0].pts - game.teams[t1].pts,
 				playoffs: game.playoffs,
 				stats: gameStats,

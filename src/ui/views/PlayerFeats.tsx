@@ -31,6 +31,8 @@ const PlayerFeats = ({
 	]);
 
 	const rows = feats.map(p => {
+		const result = `${p.diff === 0 ? "T" : p.won ? "W" : "L"} ${p.score}`;
+
 		return {
 			key: p.fid,
 			data: [
@@ -56,16 +58,22 @@ const PlayerFeats = ({
 				>
 					{p.oppAbbrev}
 				</a>,
-				<a
-					href={helpers.leagueUrl([
-						"game_log",
-						p.abbrev === undefined ? "special" : `${p.abbrev}_${p.tid}`,
-						p.season,
-						p.gid,
-					])}
-				>
-					{p.won ? "W" : "L"} {p.score}
-				</a>,
+				{
+					value: (
+						<a
+							href={helpers.leagueUrl([
+								"game_log",
+								p.abbrev === undefined ? "special" : `${p.abbrev}_${p.tid}`,
+								p.season,
+								p.gid,
+							])}
+						>
+							{result}
+						</a>
+					),
+					sortValue: p.diff,
+					searchValue: result,
+				},
 				p.season,
 				p.type,
 			],

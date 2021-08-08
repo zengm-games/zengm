@@ -8,8 +8,6 @@ add standings options
   - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
 - support re-seeding playoffs, and make it default for FBGM
 
-sort by score sorts by point differential on game logs. do same on stat feats https://discord.com/channels/290013534023057409/331882115119448065/871276311518261278
-
 report of AI not signing its draft picks in ZGMH https://discord.com/channels/290013534023057409/290015591216054273/872562739510378547
 
 daily schedule
@@ -773,8 +771,6 @@ allow user to cancel relocation if it's their team?
 contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_readability_issue_inconsistent_decimals_on/
 - always show 2 decimal places?
 - right align, and use tabular-nums so numbers are aligned?
-
-ties in PlayerFeats show up as W/L
 
 The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values. right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
 

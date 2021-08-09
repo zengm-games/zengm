@@ -35,7 +35,7 @@ const updateInjuries = async (
 		for (const p of players) {
 			if (inputs.season === "current") {
 				if (p.injury.gamesRemaining > 0) {
-					const injury = p.injuries[p.injuries.length - 1];
+					const injury = p.injuries.at(-1);
 					injuries.push({
 						...p,
 						type: p.injury.type,

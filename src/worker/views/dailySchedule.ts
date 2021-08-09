@@ -121,9 +121,7 @@ const updateDailySchedule = async (
 		) {
 			const dayAbove = info.days.find(({ key }) => key > info.day);
 
-			const newDay = dayAbove
-				? dayAbove.key
-				: info.days[info.days.length - 1].key;
+			const newDay = dayAbove ? dayAbove.key : info.days.at(-1).key;
 
 			// No games at requested day, so just use the last day we actually have games for
 			info = await process(newDay);

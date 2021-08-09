@@ -19,7 +19,7 @@ const addRatingsRow = (
 	injuryIndex?: number,
 ) => {
 	const newRatings: MinimalPlayerRatings = {
-		...p.ratings[p.ratings.length - 1],
+		...p.ratings.at(-1),
 		season: g.get("season"),
 		injuryIndex: undefined,
 	};

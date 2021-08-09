@@ -99,7 +99,7 @@ const namesBasketball = () => {
 
 			if (parts.length > 2) {
 				console.log(`Dropping middle name from ${name}`);
-				parts = [parts[0], parts[parts.length - 1]];
+				parts = [parts[0], parts.at(-1)];
 			}
 
 			if (parts.length !== 2) {
@@ -112,7 +112,7 @@ const namesBasketball = () => {
 
 		// Trim trailing _ which appears sometimes
 		for (let i = 0; i < parts.length; i++) {
-			if (parts[i][parts[i].length - 1] === "_") {
+			if (parts[i].at(-1) === "_") {
 				parts[i] = parts[i].slice(0, parts[i].length - 1);
 			}
 		}

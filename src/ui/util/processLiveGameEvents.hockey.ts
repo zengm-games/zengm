@@ -290,7 +290,7 @@ const processLiveGameEvents = ({
 			if (!quarters.includes(event.quarter)) {
 				// Future quarters
 				event.hide = true;
-			} else if (event.quarter !== quarters[quarters.length - 1]) {
+			} else if (event.quarter !== quarters.at(-1)) {
 				// Past quarters
 				event.hide = false;
 			} else {

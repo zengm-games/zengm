@@ -73,7 +73,7 @@ const namesFootball = () => {
 			const hometown =
 				matches && matches.length === 2 ? matches[1] : p.rawCountry;
 			const parts2 = hometown.split(", ");
-			const countryOrState = parts2[parts2.length - 1];
+			const countryOrState = parts2.at(-1);
 			if (states.includes(countryOrState)) {
 				country = "USA";
 			} else if (provinces.includes(countryOrState)) {

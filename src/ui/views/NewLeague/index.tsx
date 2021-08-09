@@ -723,7 +723,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				for (const t of newTeams) {
 					// Is pop hidden in season, like in manageTeams import?
 					if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
-						t.pop = t.seasons[t.seasons.length - 1].pop;
+						t.pop = t.seasons.at(-1).pop;
 					}
 
 					// God, I hate being permissive...
@@ -766,7 +766,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (newLeagueFile.gameAttributes.userTid !== undefined) {
 					let tid = newLeagueFile.gameAttributes.userTid;
 					if (Array.isArray(tid) && tid.length > 0) {
-						tid = tid[tid.length - 1].value;
+						tid = tid.at(-1).value;
 					}
 					if (typeof tid === "number" && !Number.isNaN(tid)) {
 						dispatch({ type: "setTid", tid });

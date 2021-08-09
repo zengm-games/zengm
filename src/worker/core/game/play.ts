@@ -184,7 +184,7 @@ const play = async (
 					};
 					changed = true;
 					const healedText = `${
-						p.ratings[p.ratings.length - 1].pos
+						p.ratings.at(-1).pos
 					} <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 						p.lastName
 					}</a>`;
@@ -407,8 +407,7 @@ const play = async (
 						"numGamesPlayoffSeries",
 						"current",
 					);
-					const numFinalsGames =
-						numGamesPlayoffSeries[numGamesPlayoffSeries.length - 1];
+					const numFinalsGames = numGamesPlayoffSeries.at(-1);
 
 					// If finals is 1 game, then no home court advantage
 					if (numFinalsGames === 1) {

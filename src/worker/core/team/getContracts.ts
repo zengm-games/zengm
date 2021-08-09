@@ -18,13 +18,11 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			pid: p.pid,
 			firstName: p.firstName,
 			lastName: p.lastName,
-			skills: p.ratings[p.ratings.length - 1].skills,
-			pos: p.ratings[p.ratings.length - 1].pos,
+			skills: p.ratings.at(-1).skills,
+			pos: p.ratings.at(-1).pos,
 			injury: p.injury,
 			jerseyNumber:
-				p.stats.length > 0
-					? p.stats[p.stats.length - 1].jerseyNumber
-					: undefined,
+				p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : undefined,
 			watch: p.watch,
 			amount: p.contract.amount,
 			exp: p.contract.exp,
@@ -49,8 +47,8 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 				pid: releasedPlayer.pid,
 				firstName: p.firstName,
 				lastName: p.lastName,
-				skills: p.ratings[p.ratings.length - 1].skills,
-				pos: p.ratings[p.ratings.length - 1].pos,
+				skills: p.ratings.at(-1).skills,
+				pos: p.ratings.at(-1).pos,
 				injury: p.injury,
 				jerseyNumber: undefined,
 				watch: p.watch ?? false,

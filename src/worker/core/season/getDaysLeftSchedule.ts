@@ -40,7 +40,7 @@ const getDaysLeftSchedule = async (
 		return 0;
 	}
 
-	return schedule[schedule.length - 1].day - schedule[0].day + 1;
+	return schedule.at(-1).day - schedule[0].day + 1;
 };
 
 export default getDaysLeftSchedule;

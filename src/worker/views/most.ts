@@ -635,7 +635,7 @@ const updatePlayers = async (
 
 				if (!oldest) {
 					// Skip players who are not yet 30 years old
-					const ratings = p.ratings[p.ratings.length - 1];
+					const ratings = p.ratings.at(-1);
 					if (!ratings) {
 						return;
 					}

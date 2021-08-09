@@ -733,7 +733,7 @@ class Cache {
 		this._setStatus("full");
 		//performance.measure('fillTime', 'fillStart');
 		//const entries = performance.getEntriesByName('fillTime');
-		//console.log(`${g.get("phase")} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
+		//console.log(`${g.get("phase")} fill duration: ${entries.at(-1).duration / 1000} seconds`);
 	}
 
 	// Take current contents in database and write to disk
@@ -780,7 +780,7 @@ class Cache {
 		}
 		//performance.measure('flushTime', 'flushStart');
 		//const entries = performance.getEntriesByName('flushTime');
-		//console.log(`${g.get("phase")} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
+		//console.log(`${g.get("phase")} flush duration: ${entries.at(-1).duration / 1000} seconds`);
 	}
 
 	async _autoFlush() {

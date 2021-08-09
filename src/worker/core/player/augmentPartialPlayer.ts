@@ -22,7 +22,7 @@ const addStatsRowWrapped = async (
 
 	// For real players leagues starting in the preseason, there could be a previous season with stats and a different jersey number, but the root jerseyNumber will be the one for the upcoming season
 	if (p.jerseyNumber !== undefined) {
-		p.stats[p.stats.length - 1].jerseyNumber = p.jerseyNumber;
+		p.stats.at(-1).jerseyNumber = p.jerseyNumber;
 	}
 };
 
@@ -211,7 +211,7 @@ const augmentPartialPlayer = async (
 		}
 	}
 
-	const r2 = p.ratings[p.ratings.length - 1];
+	const r2 = p.ratings.at(-1);
 
 	if (
 		(isSport("football") || isSport("hockey")) &&
@@ -426,7 +426,7 @@ const augmentPartialPlayer = async (
 
 		// Add stats row if this is the preseason and all stats are historical, both for people making rosters by hand and for historical rosters
 		if (g.get("phase") === PHASE.PRESEASON) {
-			const lastSeason = p.stats[p.stats.length - 1].season;
+			const lastSeason = p.stats.at(-1).season;
 
 			if (p.tid >= 0 && lastSeason < currentSeason) {
 				await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);

@@ -147,7 +147,7 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 			score[otherT] += 2;
 		}
 
-		const prevEvent: any = processedEvents[processedEvents.length - 1];
+		const prevEvent: any = processedEvents.at(-1);
 
 		if (prevEvent && scoreType === "XP") {
 			prevEvent.score = score.slice();

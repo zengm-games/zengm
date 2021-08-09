@@ -174,7 +174,7 @@ export const getAutoTicketPriceByTid = async (tid: number) => {
 		pop = t.pop ?? 1;
 		stadiumCapacity = t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY;
 	} else {
-		const teamSeason = teamSeasons[teamSeasons.length - 1];
+		const teamSeason = teamSeasons.at(-1);
 		hype = teamSeason.hype;
 		pop = teamSeason.pop;
 		stadiumCapacity = teamSeason.stadiumCapacity;

@@ -60,7 +60,7 @@ const Charts = ({
 			const width = node.clientWidth - margin.left - margin.right;
 			const height = 200;
 			const xScale = scaleLinear()
-				.domain([seasons[0], seasons[seasons.length - 1]])
+				.domain([seasons[0], seasons.at(-1)])
 				.range([0, width]);
 			const yScale = scaleLinear().domain([0, 1]).range([height, 0]);
 			const svg = select(node)

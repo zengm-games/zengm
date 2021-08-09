@@ -147,7 +147,7 @@ const processAttrs = (
 			let transaction;
 			if (p.transactions && p.transactions.length > 0) {
 				if (season === undefined || season >= g.get("season")) {
-					transaction = p.transactions[p.transactions.length - 1];
+					transaction = p.transactions.at(-1);
 				} else {
 					// Iterate over transactions backwards, find most recent one that was before the supplied season
 					for (let i = p.transactions.length - 1; i >= 0; i--) {
@@ -202,8 +202,7 @@ const processAttrs = (
 			}
 		} else if (attr === "latestTransactionSeason") {
 			if (p.transactions && p.transactions.length > 0) {
-				output.latestTransactionSeason =
-					p.transactions[p.transactions.length - 1].season;
+				output.latestTransactionSeason = p.transactions.at(-1).season;
 			} else {
 				output.latestTransactionSeason = undefined;
 			}
@@ -214,7 +213,7 @@ const processAttrs = (
 				output.jerseyNumber = helpers.getJerseyNumber(p, "mostCommon");
 			} else {
 				// Latest
-				output.jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+				output.jerseyNumber = p.stats.at(-1).jerseyNumber;
 			}
 		} else if (attr === "experience") {
 			const seasons = new Set();
@@ -286,7 +285,7 @@ const processRatings = (
 	) {
 		playerRatings = [
 			{
-				...p.ratings[p.ratings.length - 1],
+				...p.ratings.at(-1),
 			},
 		];
 	}
@@ -365,7 +364,7 @@ const processRatings = (
 	});
 
 	if (season !== undefined) {
-		output.ratings = output.ratings[output.ratings.length - 1];
+		output.ratings = output.ratings.at(-1);
 
 		if (output.ratings === undefined && showRetired) {
 			const row: any = {};
@@ -376,7 +375,7 @@ const processRatings = (
 				} else if (attr === "age") {
 					row.age = season - p.born.year;
 				} else if (attr === "pos") {
-					row.pos = p.ratings[p.ratings.length - 1].pos;
+					row.pos = p.ratings.at(-1).pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
 				} else {
@@ -493,8 +492,7 @@ const getPlayerStats = (
 					"jerseyNumber",
 				];
 				const statSums: any = {};
-				const attrs =
-					rowsTemp.length > 0 ? Object.keys(rowsTemp[rowsTemp.length - 1]) : [];
+				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp.at(-1)) : [];
 
 				for (const attr of attrs) {
 					if (!ignoredKeys.includes(attr)) {
@@ -515,7 +513,7 @@ const getPlayerStats = (
 
 				// Defaults from latest entry
 				for (const attr of ignoredKeys) {
-					statSums[attr] = rowsTemp[rowsTemp.length - 1][attr];
+					statSums[attr] = rowsTemp.at(-1)[attr];
 				}
 
 				return statSums;
@@ -619,16 +617,13 @@ const processStats = (
 		((playoffs && !regularSeason) || (!playoffs && regularSeason))
 	) {
 		// Take last value, in case player was traded/signed to team twice in a season
-		output.stats = output.stats[output.stats.length - 1];
+		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
 		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
-		const attrs =
-			careerStats.length > 0
-				? Object.keys(careerStats[careerStats.length - 1])
-				: [];
+		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {

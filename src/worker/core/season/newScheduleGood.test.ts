@@ -405,7 +405,7 @@ describe("worker/core/season/newScheduleGood", () => {
 			const { tids, warning } = newScheduleGood([
 				...defaultTeams,
 				{
-					tid: defaultTeams[defaultTeams.length - 1].tid + 1,
+					tid: defaultTeams.at(-1).tid + 1,
 					seasonAttrs: {
 						cid: 0,
 						did: 0,

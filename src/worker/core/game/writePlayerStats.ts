@@ -166,7 +166,7 @@ const doInjury = async (
 	if (
 		gamesRemainingNormalized > 25 &&
 		Math.random() < gamesRemainingNormalized / 82 &&
-		!p2.ratings[p2.ratings.length - 1].locked
+		!p2.ratings.at(-1).locked
 	) {
 		ratingsLoss = true;
 		let biggestRatingsLoss = 20;
@@ -221,10 +221,8 @@ const doInjury = async (
 			}
 		}
 
-		p2.injuries[p2.injuries.length - 1].ovrDrop =
-			p2.ratings[r2].ovr - p2.ratings[r].ovr;
-		p2.injuries[p2.injuries.length - 1].potDrop =
-			p2.ratings[r2].pot - p2.ratings[r].pot;
+		p2.injuries.at(-1).ovrDrop = p2.ratings[r2].ovr - p2.ratings[r].ovr;
+		p2.injuries.at(-1).potDrop = p2.ratings[r2].pot - p2.ratings[r].pot;
 	}
 
 	return {
@@ -396,7 +394,7 @@ const writePlayerStats = async (
 				}
 
 				if (!allStarGame) {
-					let ps = p2.stats[p2.stats.length - 1];
+					let ps = p2.stats.at(-1);
 
 					// This should never happen, but sometimes does
 					if (
@@ -406,7 +404,7 @@ const writePlayerStats = async (
 						ps.season !== g.get("season")
 					) {
 						await player.addStatsRow(p2, playoffs);
-						ps = p2.stats[p2.stats.length - 1];
+						ps = p2.stats.at(-1);
 					}
 
 					// Update stats

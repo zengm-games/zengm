@@ -699,11 +699,11 @@ const deleteOldData = async (options: {
 				let updated = false;
 				if (p.ratings.length > 0) {
 					updated = true;
-					p.ratings = [p.ratings[p.ratings.length - 1]];
+					p.ratings = [p.ratings.at(-1)];
 				}
 				if (p.stats.length > 0) {
 					updated = true;
-					p.stats = [p.stats[p.stats.length - 1]];
+					p.stats = [p.stats.at(-1)];
 				}
 
 				if (updated) {
@@ -720,12 +720,12 @@ const deleteOldData = async (options: {
 				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
 					let updated = false;
 					if (p.ratings.length > 0) {
-						p.ratings = [p.ratings[p.ratings.length - 1]];
+						p.ratings = [p.ratings.at(-1)];
 						updated = true;
 					}
 
 					if (p.stats.length > 0) {
-						p.stats = [p.stats[p.stats.length - 1]];
+						p.stats = [p.stats.at(-1)];
 						updated = true;
 					}
 
@@ -1152,7 +1152,7 @@ const genFilename = (data: any) => {
 	) {
 		const seasons = data.teams[g.get("userTid")].seasons;
 		if (seasons) {
-			const season = seasons[seasons.length - 1];
+			const season = seasons.at(-1);
 			filename += `_${season.won}-${season.lost}`;
 		}
 	}
@@ -1162,7 +1162,7 @@ const genFilename = (data: any) => {
 		data.hasOwnProperty("playoffSeries")
 	) {
 		// Most recent series info
-		const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
+		const playoffSeries = data.playoffSeries.at(-1);
 		const rnd = playoffSeries.currentRound;
 		filename += `_Round_${playoffSeries.currentRound + 1}`;
 
@@ -1770,7 +1770,7 @@ const handleUploadedDraftClass = async (
 			uploadedFile.version,
 		);
 		p2.draft.year = draftYear;
-		p2.ratings[p2.ratings.length - 1].season = draftYear;
+		p2.ratings.at(-1).season = draftYear;
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
@@ -1856,7 +1856,7 @@ const importPlayers = async (
 		const season2 =
 			(exportedSeason !== undefined
 				? p.exportedSeason
-				: p.ratings[p.ratings.length - 1].season) + seasonOffset;
+				: p.ratings.at(-1).season) + seasonOffset;
 		if (season === season2) {
 			(p2 as any).injury = p.injury;
 		}
@@ -2477,9 +2477,7 @@ const retiredJerseyNumberUpsert = async (
 
 		const jerseyNumber = helpers.getJerseyNumber(p);
 		if (jerseyNumber === info.number) {
-			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
-				p,
-			);
+			p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
 		}
 	}
 
@@ -2834,13 +2832,13 @@ const updateConfsDivs = async (
 			// Put in last division of conference, if possible
 			const potentialDivs = divs.filter(d => d.cid === conf.cid);
 			if (potentialDivs.length > 0) {
-				newDid = potentialDivs[potentialDivs.length - 1].did;
+				newDid = potentialDivs.at(-1).did;
 			}
 		}
 
 		// If this hasn't resulted in a newCid or newDid, we need to pick a new one
 		if (newDid === undefined && newCid === undefined) {
-			const newDiv = divs[divs.length - 1];
+			const newDiv = divs.at(-1);
 			newDid = newDiv.did;
 			newCid = newDiv.cid;
 		}
@@ -3431,8 +3429,7 @@ const upsertCustomizedPlayer = async (
 				const newJerseyNumber = await player.genJerseyNumber(teammate);
 
 				if (teammate.stats.length > 0) {
-					teammate.stats[teammate.stats.length - 1].jerseyNumber =
-						newJerseyNumber;
+					teammate.stats.at(-1).jerseyNumber = newJerseyNumber;
 				} else {
 					teammate.jerseyNumber = newJerseyNumber;
 				}

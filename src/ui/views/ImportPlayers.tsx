@@ -141,7 +141,7 @@ const ImportPlayers = ({
 
 		// const abbrev = helpers.getAbbrev(tid, teamInfoCache);
 
-		let ratings = p.ratings[p.ratings.length - 1];
+		let ratings = p.ratings.at(-1);
 
 		for (let i = p.ratings.length - 1; i--; i >= 0) {
 			if (p.ratings[i].season + seasonOffset === season) {
@@ -356,7 +356,7 @@ const ImportPlayers = ({
 						const season =
 							exportedSeason !== undefined
 								? p.exportedSeason
-								: p.ratings[p.ratings.length - 1].season;
+								: p.ratings.at(-1).season;
 
 						let tid;
 						if (
@@ -389,10 +389,7 @@ const ImportPlayers = ({
 
 						let contractAmount = 1;
 						let contractExp = season + 1;
-						if (
-							p.contract &&
-							season === p.ratings[p.ratings.length - 1].season
-						) {
+						if (p.contract && season === p.ratings.at(-1).season) {
 							// Exported the latest season for this player
 							contractAmount = p.contract.amount / 1000;
 							contractExp = p.contract.exp;

@@ -122,7 +122,7 @@ export const createWithoutSaving = async (
 				// If specified on season, copy to root
 				if (t.seasons && t.seasons.length > 0) {
 					const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
-					const ts = t.seasons[t.seasons.length - 1];
+					const ts = t.seasons.at(-1);
 					for (const prop of maybeOnSeason) {
 						if (ts[prop] !== undefined) {
 							t[prop] = ts[prop];
@@ -227,7 +227,7 @@ export const createWithoutSaving = async (
 
 		if (teamInfo.seasons) {
 			teamSeasonsLocal = teamInfo.seasons;
-			const last = teamSeasonsLocal[teamSeasonsLocal.length - 1];
+			const last = teamSeasonsLocal.at(-1);
 
 			if (last.season !== g.get("season") && !t.disabled) {
 				last.season = g.get("season");
@@ -449,7 +449,7 @@ export const createWithoutSaving = async (
 					p.tid = playerTids.pop();
 
 					if (p.stats && p.stats.length > 0) {
-						p.stats[p.stats.length - 1].tid = p.tid;
+						p.stats.at(-1).tid = p.tid;
 
 						if (p.statsTids) {
 							p.statsTids.push(p.tid);
@@ -662,7 +662,7 @@ export const createWithoutSaving = async (
 				team: teamJerseyNumbers[tid2],
 			});
 
-			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+			const jerseyNumber = p.stats.at(-1).jerseyNumber;
 			if (jerseyNumber) {
 				teamJerseyNumbers[tid2].push(jerseyNumber);
 			}
@@ -859,7 +859,7 @@ export const createWithoutSaving = async (
 				.filter(p => p.tid === i)
 				.map(p => ({
 					value: p.value,
-					ratings: p.ratings[p.ratings.length - 1],
+					ratings: p.ratings.at(-1),
 				}));
 			const ovr = team.ovr(teamPlayers);
 			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
@@ -998,14 +998,8 @@ const create = async (
 	for (const p of players1) {
 		if (leagueFile.players) {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
-			if (
-				p.tid >= 0 &&
-				p.stats.length > 0 &&
-				!p.stats[p.stats.length - 1].jerseyNumber
-			) {
-				p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
-					p,
-				);
+			if (p.tid >= 0 && p.stats.length > 0 && !p.stats.at(-1).jerseyNumber) {
+				p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
 			}
 		}
 

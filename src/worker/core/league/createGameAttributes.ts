@@ -75,7 +75,7 @@ const createGameAttributes = (
 
 			// Handle league file with userTid history, but user selected a new team maybe
 			if (gameAttributeHasHistory(value)) {
-				const last = value[value.length - 1];
+				const last = value.at(-1);
 				if (last.value === userTid) {
 					// Bring over history
 					gameAttributes.userTid = value;

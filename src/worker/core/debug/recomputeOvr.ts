@@ -13,7 +13,7 @@ const recomputeOvr = async () => {
 	const transaction = idb.league.transaction("players", "readwrite");
 
 	await iterate(transaction.store, undefined, "prev", p => {
-		const ratings = p.ratings[p.ratings.length - 1];
+		const ratings = p.ratings.at(-1);
 		const ovr = player.ovr(ratings);
 		ovrs.push({
 			pid: p.pid,

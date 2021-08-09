@@ -11,7 +11,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"league-schema": ["build/files/league-schema.json"],
-			"bbgm-polyfills": ["src/common/polyfills-noop.ts"],
+			"bbgm-polyfills": ["src/common/polyfills-modern.ts"],
 			"bbgm-debug": ["src/worker/core/debug/index.ts"]
 		},
 		"esModuleInterop": true,

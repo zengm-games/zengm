@@ -377,7 +377,7 @@ const yearRanges = (arrInput: number[]): string[] => {
 			tempArr.push([]);
 		}
 
-		tempArr[tempArr.length - 1].push(arr[i]);
+		tempArr.at(-1).push(arr[i]);
 	}
 
 	for (let i = 0; i < tempArr.length; i++) {
@@ -390,7 +390,7 @@ const yearRanges = (arrInput: number[]): string[] => {
 			}
 		} else {
 			// runs of 3 or more are displayed as a range
-			runArr.push(`${tempArr[i][0]}-${tempArr[i][tempArr[i].length - 1]}`);
+			runArr.push(`${tempArr[i][0]}-${tempArr[i].at(-1)}`);
 		}
 	}
 

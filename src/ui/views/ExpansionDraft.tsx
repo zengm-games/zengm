@@ -29,7 +29,7 @@ const ExpansionDraft = ({
 		jersey: DEFAULT_JERSEY,
 		pop: "1",
 		stadiumCapacity: "25000",
-		did: String(divs[divs.length - 1].did),
+		did: String(divs.at(-1).did),
 		takeControl: false,
 	};
 

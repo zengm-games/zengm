@@ -222,7 +222,7 @@ const newPhaseBeforeDraft = async (
 			let bestOvr = 0;
 			let bestPlayer: Player | undefined;
 			for (const p of players) {
-				const ovr = p.ratings[p.ratings.length - 1].ovr;
+				const ovr = p.ratings.at(-1).ovr;
 				if (ovr > bestOvr) {
 					bestOvr = ovr;
 					bestPlayer = p;

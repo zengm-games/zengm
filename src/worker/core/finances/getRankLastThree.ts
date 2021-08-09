@@ -14,7 +14,7 @@ import type { TeamSeason } from "../../../common/types";
  */
 const getRankLastThree = <
 	Category extends "expenses" | "revenues",
-	Item extends keyof TeamSeason[Category]
+	Item extends keyof TeamSeason[Category],
 >(
 	teamSeasons: Record<
 		Category,
@@ -31,7 +31,7 @@ const getRankLastThree = <
 	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
 
 	if (g.get("budget")) {
-		const s0 = teamSeasons[teamSeasons.length - 1];
+		const s0 = teamSeasons.at(-1);
 		const s1 = teamSeasons[teamSeasons.length - 2];
 		const s2 = teamSeasons[teamSeasons.length - 3];
 

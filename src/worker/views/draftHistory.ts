@@ -54,7 +54,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 			return p.draft.round >= 1 || p.careerStats.gp > 0;
 		})
 		.map(p => {
-			const currentPr = p.ratings[p.ratings.length - 1];
+			const currentPr = p.ratings.at(-1);
 			const peakPr: any = maxBy(p.ratings, "ovr");
 			return {
 				// Attributes

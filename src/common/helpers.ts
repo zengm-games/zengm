@@ -772,11 +772,11 @@ function formatCurrency(
 	// Remove last digits if 0
 	if (append !== "") {
 		for (let i = 0; i < precision; i++) {
-			if (numberString[numberString.length - 1] === "0") {
+			if (numberString.at(-1) === "0") {
 				numberString = numberString.slice(0, -1);
 			}
 		}
-		if (numberString[numberString.length - 1] === ".") {
+		if (numberString.at(-1) === ".") {
 			numberString = numberString.slice(0, -1);
 		}
 	}
@@ -1009,7 +1009,7 @@ const isAmerican = (loc: string) => {
 	}
 
 	const parts = loc.split(", ");
-	const state = parts[parts.length - 1];
+	const state = parts.at(-1);
 
 	if (state === "Georgia") {
 		return false;
@@ -1028,7 +1028,7 @@ const getCountry = (bornLoc?: string) => {
 		for (const delimiter of [", ", ": "]) {
 			const parts = name.split(delimiter);
 			if (parts.length > 1) {
-				name = parts[parts.length - 1];
+				name = parts.at(-1);
 			}
 		}
 	}
@@ -1042,7 +1042,7 @@ const getJerseyNumber = (
 ): string | undefined => {
 	if (type === "current") {
 		if (p.stats.length > 0) {
-			return p.stats[p.stats.length - 1].jerseyNumber;
+			return p.stats.at(-1).jerseyNumber;
 		}
 
 		// For uploaded league files, or real players leagues with no old stats (with new old stats, relies on augmentPartialPlayer to set jerseyNumber from root in latest stats row)

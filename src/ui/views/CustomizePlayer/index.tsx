@@ -70,11 +70,10 @@ const copyValidValues = (
 		}
 	}
 	if (target.stats.length > 0 && source.stats.length > 0) {
-		target.stats[target.stats.length - 1].jerseyNumber =
-			source.stats[source.stats.length - 1].jerseyNumber;
-		if (target.stats[target.stats.length - 1].jerseyNumber === "") {
+		target.stats.at(-1).jerseyNumber = source.stats.at(-1).jerseyNumber;
+		if (target.stats.at(-1).jerseyNumber === "") {
 			target.jerseyNumber = undefined;
-			target.stats[target.stats.length - 1].jerseyNumber = undefined;
+			target.stats.at(-1).jerseyNumber = undefined;
 		}
 	}
 
@@ -324,7 +323,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					p[field] = val === "true";
 				} else if (field === "jerseyNumber") {
 					if (p.stats.length > 0) {
-						p.stats[p.stats.length - 1].jerseyNumber = val;
+						p.stats.at(-1).jerseyNumber = val;
 					} else {
 						p.jerseyNumber = val;
 					}
@@ -344,7 +343,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				p[type][field] = val;
 			} else if (type === "rating") {
 				p.ratings[p.ratings.length - 1] = {
-					...p.ratings[p.ratings.length - 1],
+					...p.ratings.at(-1),
 					[field]: field === "locked" ? checked : val,
 				};
 			} else if (type === "face") {

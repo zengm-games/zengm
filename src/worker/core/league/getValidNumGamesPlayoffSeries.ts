@@ -50,9 +50,7 @@ const getValidNumGamesPlayoffSeries = (
 
 	while (numGamesPlayoffSeries.length < numPlayoffRounds) {
 		const numGames =
-			numGamesPlayoffSeries.length > 0
-				? numGamesPlayoffSeries[numGamesPlayoffSeries.length - 1]
-				: 7;
+			numGamesPlayoffSeries.length > 0 ? numGamesPlayoffSeries.at(-1) : 7;
 		numGamesPlayoffSeries.push(numGames);
 	}
 

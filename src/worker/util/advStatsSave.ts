@@ -12,7 +12,7 @@ const advStatsSave = async (
 			const p = playersRaw.find(p2 => p2.pid === pid);
 
 			if (p) {
-				const ps = p.stats[p.stats.length - 1];
+				const ps = p.stats.at(-1);
 
 				if (ps) {
 					for (const key of keys) {

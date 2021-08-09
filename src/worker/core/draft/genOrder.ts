@@ -185,7 +185,7 @@ const genOrder = async (
 			chances = chances.slice(0, numLotteryTeams);
 		} else {
 			while (numLotteryTeams > chances.length) {
-				chances.push(chances[chances.length - 1]);
+				chances.push(chances.at(-1));
 			}
 		}
 
@@ -229,7 +229,7 @@ const genOrder = async (
 			}
 		}
 
-		const totalChances = chancesCumsum[chancesCumsum.length - 1];
+		const totalChances = chancesCumsum.at(-1);
 
 		// Pick first 3 or 4 picks based on chancesCumsum
 		let iterations = 0;

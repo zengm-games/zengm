@@ -20,7 +20,7 @@ const genContract = (
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {
-	const ratings = p.ratings[p.ratings.length - 1];
+	const ratings = p.ratings.at(-1);
 	let factor = g.get("hardCap") ? 1.6 : 3.4;
 	let factor2 = 1;
 

@@ -221,7 +221,7 @@ const getPickInfo = (
 		value = estValues.default[estPick - 1];
 	}
 	if (value === undefined) {
-		value = estValues.default[estValues.default.length - 1];
+		value = estValues.default.at(-1);
 	}
 	if (value === undefined) {
 		value = 20;
@@ -405,9 +405,9 @@ const refreshCache = async () => {
 			players.map(p => ({
 				value: p.value,
 				ratings: {
-					ovr: p.ratings[p.ratings.length - 1].ovr,
-					ovrs: p.ratings[p.ratings.length - 1].ovrs,
-					pos: p.ratings[p.ratings.length - 1].pos,
+					ovr: p.ratings.at(-1).ovr,
+					ovrs: p.ratings.at(-1).ovrs,
+					pos: p.ratings.at(-1).pos,
 				},
 			})),
 		);

@@ -47,8 +47,8 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	]);
 
 	const rows = players.map((p, i) => {
-		const lastRatings = p.ratings[p.ratings.length - 1];
-		const lastStats = p.stats[p.stats.length - 1];
+		const lastRatings = p.ratings.at(-1);
+		const lastStats = p.stats.at(-1);
 
 		return {
 			key: i,
@@ -81,7 +81,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 				"table-info": p.statsTids
 					.slice(0, p.statsTids.length - 1)
 					.includes(userTid),
-				"table-success": p.statsTids[p.statsTids.length - 1] === userTid,
+				"table-success": p.statsTids.at(-1) === userTid,
 			},
 		};
 	});

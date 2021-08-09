@@ -91,7 +91,7 @@ const StatsSummary = ({
 		const playerStats = p.stats.filter(
 			ps => !ps.playoffs && ps.season === season,
 		);
-		ps = playerStats[playerStats.length - 1];
+		ps = playerStats.at(-1);
 	}
 
 	if (!ps) {
@@ -121,7 +121,7 @@ const StatsSummary = ({
 					(ps.season === currentSeason ||
 						(ps.season === currentSeason - 1 && phase === PHASE.PRESEASON)),
 			);
-			ps = playerStats[playerStats.length - 1];
+			ps = playerStats.at(-1);
 		}
 	}
 
@@ -130,7 +130,7 @@ const StatsSummary = ({
 	if (name === "Shot Locations") {
 		cols[cols.length - 3].title = "M";
 		cols[cols.length - 2].title = "A";
-		cols[cols.length - 1].title = "%";
+		cols.at(-1).title = "%";
 	}
 
 	const separatorAfter = bySport({
@@ -340,7 +340,7 @@ const TopStuff = ({
 			skills = player.ratings.find(row => row.season === season)?.skills;
 		}
 		if (!skills) {
-			skills = player.ratings[player.ratings.length - 1].skills;
+			skills = player.ratings.at(-1).skills;
 		}
 
 		statusInfo = (
@@ -448,7 +448,7 @@ const TopStuff = ({
 						</div>
 						<div>
 							<strong>
-								{player.ratings[player.ratings.length - 1].pos},{" "}
+								{player.ratings.at(-1).pos},{" "}
 								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
 								{player.jerseyNumber ? (
 									<>
@@ -591,7 +591,7 @@ const TopStuff = ({
 									key={name}
 									name={name}
 									onlyShowIf={onlyShowIf}
-									position={player.ratings[player.ratings.length - 1].pos}
+									position={player.ratings.at(-1).pos}
 									phase={phase}
 									currentSeason={currentSeason}
 									season={season}

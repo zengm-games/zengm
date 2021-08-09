@@ -14,7 +14,7 @@ const getExpiration = (
 	randomizeExp: boolean,
 	nextSeason?: boolean,
 ) => {
-	const { ovr, pot } = p.ratings[p.ratings.length - 1];
+	const { ovr, pot } = p.ratings.at(-1);
 
 	// pot is predictable via age+ovr with R^2=0.94, so skip it b/c wasn't in data
 	const age = g.get("season") - p.born.year;
@@ -286,9 +286,7 @@ const normalizeContractDemands = async ({
 				) {
 					const pickIndex =
 						(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
-					amount =
-						rookieSalaries[pickIndex] ??
-						rookieSalaries[rookieSalaries.length - 1];
+					amount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
 				} else {
 					if (type === "newLeague") {
 						info.contractAmount *= random.uniform(0.4, 1.1);

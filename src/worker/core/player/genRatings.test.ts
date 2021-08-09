@@ -29,7 +29,7 @@ const printQuartiles = async (age?: number) => {
 	);
 	const ovrs = (leagueData.players as any[])
 		.filter(p => p.tid >= PLAYER.FREE_AGENT)
-		.map(p => p.ratings[p.ratings.length - 1].ovr)
+		.map(p => p.ratings.at(-1).ovr)
 		.sort((a, b) => a - b) as number[];
 	const quartiles = [0.25, 0.5, 0.75].map(
 		fraction => ovrs[Math.round(fraction * ovrs.length)],

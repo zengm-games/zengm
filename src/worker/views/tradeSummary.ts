@@ -35,7 +35,7 @@ const findRatingsRow = (
 			return ratings;
 		}
 
-		return allRatings[allRatings.length - 1];
+		return allRatings.at(-1);
 	} else {
 		for (let i = allRatings.length - 1; i >= 0; i--) {
 			const ratings = allRatings[i];

@@ -114,7 +114,7 @@ const develop = async (
 	coachingRank: number = (g.get("numActiveTeams") + 1) / 2,
 	skipPot: boolean = false, // Only for making testing or core/debug faster
 ) => {
-	const ratings = p.ratings[p.ratings.length - 1];
+	const ratings = p.ratings.at(-1);
 	let age = ratings.season - p.born.year;
 
 	for (let i = 0; i < years; i++) {

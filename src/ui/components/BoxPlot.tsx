@@ -19,7 +19,7 @@ const calculateValues = (data: number[]) => {
 		q1: quartile(data, 1),
 		median: quartile(data, 2),
 		q3: quartile(data, 3),
-		max: data[data.length - 1],
+		max: data.at(-1),
 	};
 };
 

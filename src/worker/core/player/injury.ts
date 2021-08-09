@@ -29,7 +29,7 @@ const injury = (healthRank: number): PlayerInjury => {
 		prevInjuries = injuries;
 	}
 
-	const rand = random.uniform(0, cumSums[cumSums.length - 1]);
+	const rand = random.uniform(0, cumSums.at(-1));
 	const i = cumSums.findIndex(cs => cs >= rand);
 	const gamesRemaining = Math.round(
 		((0.7 * (healthRank - 1)) / (g.get("numActiveTeams") - 1) + 0.65) *

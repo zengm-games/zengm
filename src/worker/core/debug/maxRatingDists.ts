@@ -66,7 +66,7 @@ const maxRatingDists = async (numPlayers: number = 100) => {
 			ratings[key][q1],
 			ratings[key][q2],
 			ratings[key][q3],
-			ratings[key][ratings[key].length - 1],
+			ratings[key].at(-1),
 		];
 		const ageRanges = [
 			ages[key][0],

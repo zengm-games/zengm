@@ -31,7 +31,7 @@ const writeTeamStats = async (results: GameResults) => {
 				[results.team[t1].id, g.get("season")],
 			]),
 		]);
-		const teamSeason = teamSeasons[teamSeasons.length - 1];
+		const teamSeason = teamSeasons.at(-1);
 		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
 

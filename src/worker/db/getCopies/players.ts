@@ -50,10 +50,7 @@ const getCopies = async ({
 
 				// Because backboard doesn't support passing an argument to cursor.continue
 				const objectStore = unwrap(transaction.objectStore("players"));
-				const range = IDBKeyRange.bound(
-					sortedPids[0],
-					sortedPids[sortedPids.length - 1],
-				);
+				const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
 				let i = 0;
 				const request = objectStore.openCursor(range);
 

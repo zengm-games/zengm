@@ -131,8 +131,7 @@ const updatePlayByPlay = async (
 		if (boxScore.playoffs && g.get("phase") >= PHASE.PLAYOFFS) {
 			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 			if (playoffSeries) {
-				const finalRound =
-					playoffSeries.series[playoffSeries.series.length - 1];
+				const finalRound = playoffSeries.series.at(-1);
 				if (finalRound.length === 1) {
 					const finalMatchup = finalRound[0];
 					if (

@@ -82,7 +82,7 @@ const Relatives = ({
 				<PlayerNameLabels pid={p.pid} jerseyNumber={p.jerseyNumber}>
 					{p.name}
 				</PlayerNameLabels>,
-				p.ratings[p.ratings.length - 1].pos,
+				p.ratings.at(-1).pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				<a

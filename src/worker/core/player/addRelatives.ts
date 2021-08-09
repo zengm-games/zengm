@@ -10,7 +10,7 @@ const parseLastName = (lastName: string): [string, number | undefined] => {
 		return [lastName, undefined];
 	}
 
-	const suffix = parts[parts.length - 1];
+	const suffix = parts.at(-1);
 	const parsedName = parts.slice(0, -1).join(" ");
 
 	if (suffix === "Sr.") {
@@ -87,8 +87,7 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 	}
 
 	if (existingRelative.stats.length > 0 && Math.random() < 0.5) {
-		newRelative.jerseyNumber =
-			existingRelative.stats[existingRelative.stats.length - 1].jerseyNumber;
+		newRelative.jerseyNumber = existingRelative.stats.at(-1).jerseyNumber;
 	}
 };
 

@@ -88,7 +88,7 @@ export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 			winp > bestWinp &&
 			(teamSeason.season < g.get("season") || teamSeason.won >= mostWon)
 		) {
-			bestRecord = history[history.length - 1];
+			bestRecord = history.at(-1);
 			bestWinp = winp;
 			mostWon = teamSeason.won;
 		}
@@ -97,7 +97,7 @@ export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
 			winp < worstWinp &&
 			(teamSeason.season < g.get("season") || teamSeason.won >= mostLost)
 		) {
-			worstRecord = history[history.length - 1];
+			worstRecord = history.at(-1);
 			worstWinp = winp;
 			mostLost = teamSeason.lost;
 		}
@@ -161,14 +161,14 @@ export const getHistory = async (
 	for (const p of players) {
 		p.lastYr = "";
 		if (p.stats.length > 0) {
-			p.lastYr = p.stats[p.stats.length - 1].season.toString();
+			p.lastYr = p.stats.at(-1).season.toString();
 			if (gmHistory) {
-				p.lastYr += ` ${p.stats[p.stats.length - 1].abbrev}`;
+				p.lastYr += ` ${p.stats.at(-1).abbrev}`;
 			}
 		}
 
 		// Handle case where ratings don't exist
-		p.pos = p.ratings.length > 0 ? p.ratings[p.ratings.length - 1].pos : "";
+		p.pos = p.ratings.length > 0 ? p.ratings.at(-1).pos : "";
 		delete p.ratings;
 		delete p.stats;
 	}

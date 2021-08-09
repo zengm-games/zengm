@@ -77,7 +77,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 
 	const cloned = helpers.deepCopy(gameAttribute);
 
-	const latestRow = cloned[cloned.length - 1];
+	const latestRow = cloned.at(-1);
 
 	let currentSeason;
 	let actualPhase;

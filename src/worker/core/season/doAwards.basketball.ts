@@ -96,7 +96,7 @@ const getRealFinalsMvp = async (
 	}
 
 	// Last game of the season will have the two finals teams
-	const finalsTids = games[games.length - 1].teams.map(t => t.tid);
+	const finalsTids = games.at(-1).teams.map(t => t.tid);
 
 	// Get all playoff games between those two teams - that will be all finals games
 	const finalsGames = games.filter(
@@ -271,7 +271,7 @@ export const mipScore = (p: PlayerFiltered) => {
 			(ps: { gp: number; min: number }) => ps.min * ps.gp >= minCutoff / 2,
 		)
 		.map((ps: any) => seasonScore(ps));
-	const prevSeasonScore = oldSeasonScores[oldSeasonScores.length - 1];
+	const prevSeasonScore = oldSeasonScores.at(-1);
 
 	// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
 	const prevMax = Math.max(...oldSeasonScores, prevSeasonScore);
@@ -295,7 +295,7 @@ export const mipFilter = (p: PlayerFiltered) => {
 	}
 
 	// Sanity check for minutes played
-	const oldStats = oldStatsAll[oldStatsAll.length - 1];
+	const oldStats = oldStatsAll.at(-1);
 	const mipFactor = getMipFactor();
 	if (
 		p.currentStats.min * p.currentStats.gp < 20 * mipFactor ||

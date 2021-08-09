@@ -38,7 +38,7 @@ const newPhaseFantasyDraft = async (
 
 		// Delete empty stats row in preseason
 		if (g.get("phase") === PHASE.PRESEASON) {
-			const lastStats = p.stats[p.stats.length - 1];
+			const lastStats = p.stats.at(-1);
 			if (
 				lastStats &&
 				lastStats.season === g.get("season") &&

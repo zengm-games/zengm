@@ -48,7 +48,7 @@ const updateDraftTeamHistory = async (
 		fuzz: true,
 	});
 	const players = playersAll.map(p => {
-		const currentPr = p.ratings[p.ratings.length - 1];
+		const currentPr = p.ratings.at(-1);
 		const peakPr: any = maxBy(p.ratings, "ovr");
 		return {
 			// Attributes

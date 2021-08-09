@@ -84,7 +84,7 @@ const value = (
 
 	// No stats at all? Just look at ratings more, then.
 	if (isSport("basketball") && ps.length > 0) {
-		const ps1 = ps[ps.length - 1]; // Most recent stats
+		const ps1 = ps.at(-1); // Most recent stats
 
 		if (ps.length === 1 || ps[0].min >= 2000) {
 			// Only one year of stats

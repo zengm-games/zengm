@@ -178,9 +178,7 @@ const PlayoffMatchup = ({
 	const showWon = !!series.away && numGamesToWinSeries > 1;
 
 	const gid =
-		series.gids && series.gids.length > 0
-			? series.gids[series.gids.length - 1]
-			: undefined;
+		series.gids && series.gids.length > 0 ? series.gids.at(-1) : undefined;
 
 	return (
 		<ul className="playoff-matchup border-bottom">

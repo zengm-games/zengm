@@ -194,7 +194,7 @@ const checkSevenGameFinals = async () => {
 		return false;
 	}
 
-	const matchup = playoffSeries.series[playoffSeries.series.length - 1][0];
+	const matchup = playoffSeries.series.at(-1)[0];
 
 	if (
 		matchup === undefined ||
@@ -812,7 +812,7 @@ const achievements: Achievement[] = [
 		async check() {
 			if (isSport("football")) {
 				const games = await idb.cache.games.getAll();
-				const game = games[games.length - 1]; // Last game of finals
+				const game = games.at(-1); // Last game of finals
 
 				return game.overtimes >= 1 && game.won.tid === g.get("userTid");
 			}
@@ -828,7 +828,7 @@ const achievements: Achievement[] = [
 				return false;
 			}
 
-			const game = games[games.length - 1]; // Last game of finals
+			const game = games.at(-1); // Last game of finals
 
 			return game.overtimes >= 1 && game.won.tid === g.get("userTid");
 		},
@@ -848,7 +848,7 @@ const achievements: Achievement[] = [
 		async check() {
 			if (isSport("football")) {
 				const games = await idb.cache.games.getAll();
-				const game = games[games.length - 1]; // Last game of finals
+				const game = games.at(-1); // Last game of finals
 
 				return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
 			}
@@ -860,7 +860,7 @@ const achievements: Achievement[] = [
 			}
 
 			const games = await idb.cache.games.getAll();
-			const game = games[games.length - 1]; // Last game of finals
+			const game = games.at(-1); // Last game of finals
 
 			return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
 		},

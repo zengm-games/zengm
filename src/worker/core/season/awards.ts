@@ -157,9 +157,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 	// For convenience later
 	for (const p of players) {
-		p.pos = p.ratings[p.ratings.length - 1].pos;
+		p.pos = p.ratings.at(-1).pos;
 
-		p.currentStats = p.stats[p.stats.length - 1];
+		p.currentStats = p.stats.at(-1);
 		for (let i = p.stats.length - 1; i >= 0; i--) {
 			if (p.stats[i].season === season) {
 				p.currentStats = p.stats[i];

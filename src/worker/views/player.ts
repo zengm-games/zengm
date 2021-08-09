@@ -303,7 +303,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		]);
 
 		if (key === prevKey) {
-			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
+			const prev = jerseyNumberInfos.at(-1);
 			prev.end = ps.season;
 		} else {
 			let retired = false;
@@ -389,7 +389,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"value",
 			"desc",
 		).map(p2 => {
-			const ratings = p2.ratings[p2.ratings.length - 1];
+			const ratings = p2.ratings.at(-1);
 
 			const age = g.get("season") - p2.born.year;
 
@@ -436,7 +436,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		if (p.stats.length > 0) {
 			const offset = season - g.get("season");
 			p.age = Math.max(0, p.age + offset);
-			const offset2 = season - p.stats[p.stats.length - 1].season;
+			const offset2 = season - p.stats.at(-1).season;
 			p.experience = Math.max(0, p.experience + offset2);
 
 			// Jersey number

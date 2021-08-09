@@ -105,7 +105,7 @@ class PlayByPlayLogger {
 		// Two point conversions are tricky because you can have multiple events occuring within them that could lead to scores, like if there is an interception and then a fumble. So in the most general case, it can't be assumed to be "failed" until we get another event after the two point conversion attempt.
 		if (twoPointConversionTeam === undefined) {
 			if (this.twoPointConversionState === "attempting") {
-				const previousEvent = this.playByPlay[this.playByPlay.length - 1];
+				const previousEvent = this.playByPlay.at(-1);
 
 				if (previousEvent) {
 					const event = {

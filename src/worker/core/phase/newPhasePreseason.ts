@@ -134,7 +134,7 @@ const newPhasePreseason = async (
 			tid,
 			seasons: [g.get("season") - 3, g.get("season") - 1],
 		});
-		const prevSeason = teamSeasons2[teamSeasons2.length - 1];
+		const prevSeason = teamSeasons2.at(-1);
 
 		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
@@ -354,12 +354,12 @@ const newPhasePreseason = async (
 	for (const [tidString, roster] of Object.entries(playersByTeam)) {
 		const tid = parseInt(tidString);
 		for (const p of roster) {
-			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+			const jerseyNumber = p.stats.at(-1).jerseyNumber;
 			if (!jerseyNumber) {
 				continue;
 			}
 			const conflicts = roster.filter(
-				p2 => p2.stats[p2.stats.length - 1].jerseyNumber === jerseyNumber,
+				p2 => p2.stats.at(-1).jerseyNumber === jerseyNumber,
 			);
 			if (conflicts.length > 1) {
 				// Conflict! Who gets to keep the number?
@@ -375,8 +375,7 @@ const newPhasePreseason = async (
 
 				for (const p of conflicts) {
 					if (p !== playerWhoKeepsIt) {
-						p.stats[p.stats.length - 1].jerseyNumber =
-							await player.genJerseyNumber(p);
+						p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
 					}
 				}
 			}
@@ -384,9 +383,7 @@ const newPhasePreseason = async (
 
 		// One more pass, for players without jersey numbers at all (draft picks)
 		for (const p of roster) {
-			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
-				p,
-			);
+			p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
 		}
 	}
 

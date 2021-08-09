@@ -159,7 +159,7 @@ const choice = <T>(
 
 		return array;
 	}, []);
-	const max = cumsums[cumsums.length - 1];
+	const max = cumsums.at(-1);
 	const rand = Math.random() * max;
 	const ind = cumsums.findIndex(cumsum => cumsum >= rand);
 	return x[ind];

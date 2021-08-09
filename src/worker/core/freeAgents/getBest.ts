@@ -21,7 +21,7 @@ const getBest = <T extends PlayerWithoutKey>(
 		// playersAvailable is sorted by value. So if we hit a player at a minimum contract at a position, no player with lower value needs to be considered
 		const seenMinContractAtPos = new Set();
 		const playersAvailableFiltered = playersAvailable.filter(p => {
-			const pos = p.ratings[p.ratings.length - 1].pos;
+			const pos = p.ratings.at(-1).pos;
 			if (seenMinContractAtPos.has(pos)) {
 				return false;
 			}

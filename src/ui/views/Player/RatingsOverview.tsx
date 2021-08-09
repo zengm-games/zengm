@@ -13,10 +13,10 @@ const RatingsOverview = ({
 
 	if (season === undefined) {
 		// Use latest season
-		currentSeason = ratings[ratings.length - 1];
+		currentSeason = ratings.at(-1);
 	} else {
 		currentSeason =
-			ratings.find(row => row.season === season) ?? ratings[ratings.length - 1];
+			ratings.find(row => row.season === season) ?? ratings.at(-1);
 	}
 
 	let lastSeason = currentSeason;

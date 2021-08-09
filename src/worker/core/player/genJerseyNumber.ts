@@ -286,8 +286,7 @@ const genJerseyNumber = async (
 		).filter(p2 => p2.pid !== p.pid);
 		for (const teammate of teammates) {
 			if (teammate.stats.length > 0) {
-				const teamJerseyNumber =
-					teammate.stats[teammate.stats.length - 1].jerseyNumber;
+				const teamJerseyNumber = teammate.stats.at(-1).jerseyNumber;
 				if (teamJerseyNumber) {
 					teamJerseyNumbers.push(teamJerseyNumber);
 				}
@@ -323,7 +322,7 @@ const genJerseyNumber = async (
 	}
 
 	if (weightFunctionsByPosition) {
-		const pos = p.ratings[p.ratings.length - 1].pos;
+		const pos = p.ratings.at(-1).pos;
 		if ((weightFunctionsByPosition as any)[pos]) {
 			return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
 		}

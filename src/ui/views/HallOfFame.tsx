@@ -40,7 +40,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 			key: p.pid,
 			data: [
 				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
-				p.ratings[p.ratings.length - 1].pos,
+				p.ratings.at(-1).pos,
 				p.draft.year,
 				p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
@@ -64,8 +64,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 					p.statsTids.slice(0, p.statsTids.length - 1).includes(userTid) &&
 					p.legacyTid !== userTid,
 				"table-success":
-					p.statsTids[p.statsTids.length - 1] === userTid &&
-					p.legacyTid !== userTid,
+					p.statsTids.at(-1) === userTid && p.legacyTid !== userTid,
 			},
 		};
 	});

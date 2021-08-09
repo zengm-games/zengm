@@ -13,12 +13,8 @@ const advanceToPlayerProtection = async (
 	fromScheduledEvent: boolean,
 	conditions: Conditions,
 ) => {
-	const {
-		errors,
-		expansionTeams,
-		numPerTeam,
-		numProtectedPlayers,
-	} = await validateExpansionDraftSetup();
+	const { errors, expansionTeams, numPerTeam, numProtectedPlayers } =
+		await validateExpansionDraftSetup();
 
 	if (errors) {
 		return errors;
@@ -72,7 +68,7 @@ const advanceToPlayerProtection = async (
 			tid = g.get("userTid");
 			tids = [...userTids, ...takeControlTeams.map(t => t.tid)];
 		} else {
-			const t = takeControlTeams[takeControlTeams.length - 1];
+			const t = takeControlTeams.at(-1);
 			tid = t.tid;
 			logEvent(
 				{

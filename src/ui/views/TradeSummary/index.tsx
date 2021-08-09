@@ -54,6 +54,7 @@ const TradeSummary = ({
 												<PlayerNameLabels
 													pid={asset.pid}
 													pos={asset.pos}
+													season={season}
 													skills={asset.skills}
 													watch={asset.watch}
 												>

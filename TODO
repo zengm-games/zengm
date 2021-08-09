@@ -1,3 +1,6 @@
+use newLeagueGodModeLimits for expansion draft teams
+- https://old.reddit.com/r/BasketballGM/comments/p0pgc8/fix_this/
+
 3 point tendency
 
 https://github.com/zengm-games/zengm/pull/346/files
@@ -437,8 +440,6 @@ award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
 - support adding custom awards
 - support editing seasons older than the start of the league
-
-use newLeagueGodModeLimits for expansion draft teams
 
 UI for selecting a custom set of teams in a new league
 - DOES THIS MAKE SENSE?

@@ -1,4 +1,4 @@
-import { g, helpers } from "../util";
+import { g, helpers, newLeagueGodModeLimits } from "../util";
 import getTeamInfos from "../../common/getTeamInfos";
 import type { ExpansionDraftSetupTeam } from "../../common/types";
 import { idb } from "../db";
@@ -85,11 +85,14 @@ const updateExpansionDraft = async () => {
 			),
 		);
 
+	const godModeLimits = newLeagueGodModeLimits();
+
 	return {
 		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
 		confs: g.get("confs"),
 		divs: g.get("divs"),
 		godMode: g.get("godMode"),
+		godModeLimits,
 		initialTeams,
 		initialNumPerTeam,
 		initialNumProtectedPlayers:

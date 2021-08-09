@@ -4,12 +4,14 @@ import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
 import { DEFAULT_JERSEY, PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
+import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
 
 const ExpansionDraft = ({
 	builtInTeams,
 	confs,
 	divs,
 	godMode,
+	godModeLimits,
 	initialNumPerTeam,
 	initialNumProtectedPlayers,
 	initialTeams,
@@ -201,6 +203,8 @@ const ExpansionDraft = ({
 		setNumProtectedPlayers(defaultNumProtectedPlayers);
 	}
 
+	let godModeWarning = false;
+
 	return (
 		<>
 			<p>
@@ -214,6 +218,14 @@ const ExpansionDraft = ({
 				<h2>Expansion Teams</h2>
 				<div className="row">
 					{teams.map((t, i) => {
+						const godModeWarnings = godMode
+							? []
+							: getGodModeWarnings({ t, godModeLimits });
+						if (godModeWarnings.length > 0) {
+							godModeWarning = true;
+						}
+						console.log("godModeWarnings", godModeWarnings);
+
 						return (
 							<div key={i} className="col-xl-4 col-lg-6 mb-3">
 								<div className="card">
@@ -270,6 +282,13 @@ const ExpansionDraft = ({
 												</button>
 											</div>
 										</div>
+										{godModeWarnings.length > 0 ? (
+											<div className="alert alert-danger mb-0 mt-3">
+												You cannot set {godModeWarnings.join(" or ")} unless you
+												enable{" "}
+												<a href={helpers.leagueUrl(["godMode"])}>God Mode</a>.
+											</div>
+										) : null}
 									</div>
 								</div>
 							</div>
@@ -354,7 +373,7 @@ const ExpansionDraft = ({
 				<button
 					type="submit"
 					className="btn btn-primary mt-3"
-					disabled={saving || teams.length === 0}
+					disabled={saving || teams.length === 0 || godModeWarning}
 				>
 					Advance To Player Protection
 				</button>

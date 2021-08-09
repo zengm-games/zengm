@@ -6,20 +6,18 @@ import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { NewLeagueTeam } from "./types";
 
-const GodModeWarning = ({
-	controlledTeam,
+export const getGodModeWarnings = ({
+	t,
 	godModeLimits,
 }: {
-	controlledTeam?: {
+	t?: {
 		pop: string;
 		stadiumCapacity: string;
 	};
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
-	const pop = controlledTeam ? parseFloat(controlledTeam.pop) : NaN;
-	const stadiumCapacity = controlledTeam
-		? parseInt(controlledTeam.stadiumCapacity)
-		: NaN;
+	const pop = t ? parseFloat(t.pop) : NaN;
+	const stadiumCapacity = t ? parseInt(t.stadiumCapacity) : NaN;
 
 	const errors = [];
 	if (!Number.isNaN(pop) && pop > godModeLimits.pop) {
@@ -35,6 +33,21 @@ const GodModeWarning = ({
 			)}`,
 		);
 	}
+
+	return errors;
+};
+
+const GodModeWarning = ({
+	controlledTeam,
+	godModeLimits,
+}: {
+	controlledTeam?: {
+		pop: string;
+		stadiumCapacity: string;
+	};
+	godModeLimits: View<"newLeague">["godModeLimits"];
+}) => {
+	const errors = getGodModeWarnings({ t: controlledTeam, godModeLimits });
 	if (errors.length >= 1) {
 		return (
 			<div className="alert alert-danger mb-0">

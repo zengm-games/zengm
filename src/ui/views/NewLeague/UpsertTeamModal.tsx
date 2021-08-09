@@ -7,9 +7,11 @@ import TeamForm from "../ManageTeams/TeamForm";
 import type { NewLeagueTeam } from "./types";
 
 export const getGodModeWarnings = ({
+	is,
 	t,
 	godModeLimits,
 }: {
+	is?: boolean;
 	t?: {
 		pop: string;
 		stadiumCapacity: string;
@@ -21,16 +23,20 @@ export const getGodModeWarnings = ({
 
 	const errors = [];
 	if (!Number.isNaN(pop) && pop > godModeLimits.pop) {
-		errors.push(`a region's population is over ${godModeLimits.pop} million`);
+		errors.push(
+			`a region's population ${is ? "is " : ""}over ${
+				godModeLimits.pop
+			} million`,
+		);
 	}
 	if (
 		!Number.isNaN(stadiumCapacity) &&
 		stadiumCapacity > godModeLimits.stadiumCapacity
 	) {
 		errors.push(
-			`a team's stadium capacity is over ${helpers.numberWithCommas(
-				godModeLimits.stadiumCapacity,
-			)}`,
+			`a team's stadium capacity ${
+				is ? "is " : ""
+			}over ${helpers.numberWithCommas(godModeLimits.stadiumCapacity)}`,
 		);
 	}
 

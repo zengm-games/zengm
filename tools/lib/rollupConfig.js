@@ -28,11 +28,11 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 
 				"bbgm-polyfills": process.env.LEGACY
 					? "./../common/polyfills.ts"
-					: "./../common/polyfills-noop.ts",
+					: "./../common/polyfills-modern.ts",
 
 				"bbgm-debug":
 					nodeEnv === "production"
-						? "./../../common/polyfills-noop.ts"
+						? "./../../common/polyfills-modern.ts"
 						: "./../../worker/core/debug/index.ts",
 			},
 		}),

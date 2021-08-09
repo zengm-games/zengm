@@ -31,3 +31,5 @@ if (!Object.values) {
 		return resArray;
 	};
 }
+
+import "./polyfills-modern";

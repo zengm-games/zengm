@@ -1,6 +1,6 @@
 module.exports = {
 	moduleNameMapper: {
-		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-noop.ts",
+		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-modern.ts",
 		"^bbgm-debug$": "<rootDir>/src/worker/core/debug/index.ts",
 
 		// This is assumed to be generated prior to rollup being started

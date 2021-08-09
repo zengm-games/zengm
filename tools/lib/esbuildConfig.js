@@ -83,7 +83,7 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 				),
 				"bbgm-polyfills": path.join(
 					__dirname,
-					"../../src/common/polyfills-noop.ts",
+					"../../src/common/polyfills-modern.ts",
 				),
 				"bbgm-debug": path.join(
 					__dirname,

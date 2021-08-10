@@ -1,4 +1,5 @@
-import { display, Face } from "facesjs";
+import { display } from "facesjs";
+import type { Face } from "facesjs";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { DEFAULT_JERSEY } from "../../common";

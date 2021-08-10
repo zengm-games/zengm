@@ -1,5 +1,6 @@
 import { ReactNode, useRef } from "react";
-import { OverlayTrigger, OverlayTriggerProps, Popover } from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import type { OverlayTriggerProps } from "react-bootstrap";
 
 // Hacky fix for https://github.com/react-bootstrap/react-bootstrap/issues/5270
 // There are some edge cases when scrolling/resizing makes it switch positions, but overall it works better than nothing.

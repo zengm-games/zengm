@@ -1,10 +1,10 @@
-import {
+import { unwrap } from "idb";
+import type {
 	IDBPObjectStore,
 	IDBPIndex,
 	StoreNames,
 	StoreValue,
 	IndexNames,
-	unwrap,
 	StoreKey,
 } from "idb";
 import type { LeagueDB } from "./connectLeague";

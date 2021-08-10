@@ -1,4 +1,5 @@
-import { display, Face } from "facesjs";
+import { display } from "facesjs";
+import type { Face } from "facesjs";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { DEFAULT_JERSEY, helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";

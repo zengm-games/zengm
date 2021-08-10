@@ -1,4 +1,4 @@
-import { StoreNames, unwrap } from "idb";
+import { unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
@@ -14,7 +14,7 @@ import { idb } from ".";
 import iterate from "./iterate";
 import { defaultGameAttributes, helpers, logEvent } from "../util";
 import connectIndexedDB from "./connectIndexedDB";
-import type { DBSchema, IDBPDatabase, IDBPTransaction } from "idb";
+import type { DBSchema, IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
 import type {
 	DraftLotteryResult,
 	DraftPickWithoutKey,

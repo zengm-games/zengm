@@ -5,6 +5,7 @@ import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStarts
 import getInjuryRate from "./getInjuryRate";
 import type { PlayerInjury } from "../../../common/types";
 
+console.log("hey");
 type PlayType =
 	| "ast"
 	| "blkAtRim"
@@ -1342,13 +1343,23 @@ class GameSim {
 			passer = pickPlayer(ratios, shooter);
 		}
 
-		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
 		let shootingThreePointerScaled =
 			this.team[this.o].player[p].compositeRating.shootingThreePointer;
 
+		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
 		if (shootingThreePointerScaled > 0.55) {
 			shootingThreePointerScaled =
 				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
+		}
+
+		// Too many players shooting 3s at the low end - scale 0.35-0.45 to 0.1-0.45, and 0-0.35 to 0-0.1
+		let shootingThreePointerScaled2 = shootingThreePointerScaled;
+		if (shootingThreePointerScaled2 < 0.35) {
+			shootingThreePointerScaled2 =
+				0 + shootingThreePointerScaled2 * (0.1 / 0.35);
+		} else if (shootingThreePointerScaled2 < 0.45) {
+			shootingThreePointerScaled2 =
+				0.1 + (shootingThreePointerScaled2 - 0.35) * (0.35 / 0.1);
 		}
 
 		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
@@ -1373,10 +1384,8 @@ class GameSim {
 
 		if (
 			forceThreePointer ||
-			(this.team[this.o].player[p].compositeRating.shootingThreePointer >
-				0.35 &&
-				Math.random() <
-					0.67 * shootingThreePointerScaled * g.get("threePointTendencyFactor"))
+			Math.random() <
+				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
 		) {
 			// Three pointer
 			type = "threePointer";

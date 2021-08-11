@@ -17,3 +17,6 @@ for (const C of [Array, String]) {
 		configurable: true,
 	});
 }
+
+// Needed for some reason
+export default 1;

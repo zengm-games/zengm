@@ -5,7 +5,6 @@ import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStarts
 import getInjuryRate from "./getInjuryRate";
 import type { PlayerInjury } from "../../../common/types";
 
-console.log("hey");
 type PlayType =
 	| "ast"
 	| "blkAtRim"

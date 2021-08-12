@@ -121,8 +121,12 @@ const weightFunction = bySport({
 
 		const frequency = frequencies[jerseyNumber];
 
-		// +1 is to make the 0s possible
-		return frequency ?? 0.25;
+		if (frequency === undefined || frequency === 0) {
+			// Never have 0 probability
+			return 0.25;
+		}
+
+		return frequency;
 	},
 	football: () => 1,
 	hockey: (jerseyNumber: string) => {

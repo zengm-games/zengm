@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../../common";
+import { bySport, isSport, PHASE, unwrapGameAttribute } from "../../../common";
 import { team } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g, helpers } from "../../util";
@@ -199,11 +199,32 @@ const writeTeamStats = async (results: GameResults) => {
 		const fudgeFactor = g.get("userTids").includes(results.team[t1].id)
 			? helpers.bound(1 - 0.2 * g.get("difficulty"), 0, Infinity)
 			: 1;
-		merchRevenue *= fudgeFactor;
-		sponsorRevenue *= fudgeFactor;
-		nationalTvRevenue *= fudgeFactor;
-		localTvRevenue *= fudgeFactor;
-		ticketRevenue *= fudgeFactor;
+
+		// Globally adjust revenue based on the number of games in the season and playoffs
+
+		let seasonLengthFactor;
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			let numGamesCurrent = 0;
+			for (const numGames of g.get("numGamesPlayoffSeries")) {
+				numGamesCurrent += Math.ceil((numGames * 3) / 4);
+			}
+			let numGamesDefault = 0;
+			for (const numGames of unwrapGameAttribute(
+				defaultGameAttributes,
+				"numGamesPlayoffSeries",
+			)) {
+				numGamesDefault += Math.ceil((numGames * 3) / 4);
+			}
+			seasonLengthFactor = numGamesDefault / numGamesCurrent;
+		} else {
+			seasonLengthFactor = defaultGameAttributes.numGames / g.get("numGames");
+		}
+
+		merchRevenue *= fudgeFactor * seasonLengthFactor;
+		sponsorRevenue *= fudgeFactor * seasonLengthFactor;
+		nationalTvRevenue *= fudgeFactor * seasonLengthFactor;
+		localTvRevenue *= fudgeFactor * seasonLengthFactor;
+		ticketRevenue *= fudgeFactor * seasonLengthFactor;
 		const revenue =
 			merchRevenue +
 			sponsorRevenue +

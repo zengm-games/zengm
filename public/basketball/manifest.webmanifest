@@ -20,7 +20,7 @@
 		}
 	],
 	"start_url": "/?utm_source=a2hs",
-	"background_color": "#FFFFFF",
+	"background_color": "#808080",
 	"display": "standalone",
 	"scope": "/",
 	"theme_color": "#FF7F2A",

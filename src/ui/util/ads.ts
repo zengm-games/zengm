@@ -18,7 +18,9 @@ const showGcs = () => {
 		console.log("callbackGCS");
 	};
 
-	window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
+	try {
+		window.TriggerPrompt(`https://${WEBSITE_PLAY}/`, new Date().getTime());
+	} catch (error) {}
 };
 
 export default {

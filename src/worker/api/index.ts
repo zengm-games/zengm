@@ -2626,7 +2626,6 @@ const sign = async (
 
 	if (!negotiation) {
 		const errorMsg = await contractNegotiation.create(pid, false);
-
 		if (errorMsg !== undefined && errorMsg) {
 			return errorMsg;
 		}
@@ -2636,6 +2635,29 @@ const sign = async (
 
 	if (errorMsg !== undefined && errorMsg) {
 		return errorMsg;
+	}
+};
+
+const reSignAll = async (players: any[]) => {
+	const userTid = g.get("userTid");
+	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
+	negotiations = negotiations.filter(
+		negotiation => negotiation.tid === userTid,
+	);
+	for (const { pid } of negotiations) {
+		const p = players.find(p => p.pid === pid);
+
+		if (p) {
+			const errorMsg = await contractNegotiation.accept(
+				pid,
+				p.mood.user.contractAmount,
+				p.contract.exp,
+			);
+
+			if (errorMsg !== undefined && errorMsg) {
+				return errorMsg;
+			}
+		}
 	}
 };
 
@@ -3575,6 +3597,7 @@ export default {
 	ovr,
 	proposeTrade,
 	ratingsStatsPopoverInfo,
+	reSignAll,
 	realtimeUpdate,
 	regenerateDraftClass,
 	regenerateSchedule,

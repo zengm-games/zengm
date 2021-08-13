@@ -7,7 +7,7 @@ import {
 	SafeHtml,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 
@@ -128,6 +128,25 @@ const NegotiationList = ({
 					Your unsigned players are asking for a total of{" "}
 					<b>{helpers.formatCurrency(sumContracts, "M")}</b>.
 				</p>
+			) : null}
+
+			{!hardCap && players.length > 0 ? (
+				<button
+					className="btn btn-secondary mb-3"
+					onClick={async () => {
+						const errorMsg = await toWorker("main", "reSignAll", players);
+
+						if (errorMsg) {
+							logEvent({
+								type: "error",
+								text: errorMsg,
+								saveToDb: false,
+							});
+						}
+					}}
+				>
+					Re-sign all
+				</button>
 			) : null}
 
 			<DataTable

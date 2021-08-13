@@ -55,7 +55,7 @@ const NegotiateButtons = ({
 						p.contract.exp,
 					);
 
-					if (errorMsg !== undefined && errorMsg) {
+					if (errorMsg) {
 						logEvent({
 							type: "error",
 							text: errorMsg,

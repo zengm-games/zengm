@@ -48,13 +48,15 @@ const decreaseDemands = async () => {
 		p.numDaysFreeAgent += 1;
 
 		// Also, heal.
-		if (p.injury.gamesRemaining > 0) {
-			p.injury.gamesRemaining -= 1;
-		} else {
-			p.injury = {
-				type: "Healthy",
-				gamesRemaining: 0,
-			};
+		if (g.get("phase") <= PHASE.PLAYOFFS) {
+			if (p.injury.gamesRemaining > 0) {
+				p.injury.gamesRemaining -= 1;
+			} else {
+				p.injury = {
+					type: "Healthy",
+					gamesRemaining: 0,
+				};
+			}
 		}
 
 		await idb.cache.players.put(p);

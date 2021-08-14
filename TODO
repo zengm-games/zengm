@@ -1,3 +1,7 @@
+adjust PT multiplier magnitude
+- https://discord.com/channels/290013534023057409/331882115119448065/854198324844036096
+- https://discord.com/channels/290013534023057409/331882115119448065/854388847135162419
+
 player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
@@ -107,6 +111,7 @@ ability to specify default settings
 - ability to delete individual setting (go back to default)
 - includes goat formula
 - explain that it doens't override when a custom league file or historical league includes a value for a setting
+- import/export default settings
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
@@ -130,10 +135,6 @@ option to exclude notable games box scores from deletion
 - firefox auto delete performance
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
-
-adjust PT multiplier magnitude
-- https://discord.com/channels/290013534023057409/331882115119448065/854198324844036096
-- https://discord.com/channels/290013534023057409/331882115119448065/854388847135162419
 
 beter handling of customizable columns in tables where the defaults change based on some URL parameter
 - "Customized columns on League Stats break a bit when you filter for a different team. So swap STL/BLK and change from All to w/e squad, and you'll see BLK just wholly disappear." https://discord.com/channels/290013534023057409/290015591216054273/855827200577765387
@@ -774,8 +775,6 @@ contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_
 - right align, and use tabular-nums so numbers are aligned?
 
 The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values. right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
-
-in fbgm players recover from injury during the FA period if they are in FA, but not if they are on a team
 
 import/export players
 - maybe

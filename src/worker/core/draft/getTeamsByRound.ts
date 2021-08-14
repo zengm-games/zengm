@@ -1,7 +1,7 @@
 import { bySport, PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, orderTeams } from "../../util";
-import { getDivisionLeaders } from "../../util/orderTeams";
+import { getDivisionRanks } from "../../util/orderTeams";
 import type { DraftPickWithoutKey } from "../../../common/types";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 
@@ -215,15 +215,17 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 			}
 		} else {
 			// playoffsHockey
-			const divisionLeaders = new Set(
-				(
-					await getDivisionLeaders(
-						// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
-						allTeams,
-						allTeams,
-					)
-				).values(),
+			const divisionRanks = await getDivisionRanks(
+				// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
+				allTeams,
+				allTeams,
 			);
+			const divisionWinners = new Set<number>();
+			for (const [tid, rank] of divisionRanks) {
+				if (rank === 1) {
+					divisionWinners.add(tid);
+				}
+			}
 
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
@@ -248,7 +250,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 					groups[3].push(t);
 				} else if (playoffRoundsWon === numPlayoffRounds - 2) {
 					groups[2].push(t);
-				} else if (divisionLeaders.has(t)) {
+				} else if (divisionWinners.has(t.tid)) {
 					groups[1].push(t);
 				} else {
 					groups[0].push(t);

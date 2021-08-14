@@ -226,6 +226,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					"coinFlip",
 				]),
 				playoffsReseed: true,
+				playoffsNumTeamsDiv: wrap(1),
 		  }
 		: {};
 

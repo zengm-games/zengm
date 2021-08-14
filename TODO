@@ -11,11 +11,11 @@ add standings options
 - roundsWonText needs to use playoffsByConf
   - DRY - leagueDashboard.ts has some too, maybe elsewhere also?
   - allow customizing names of rounds? https://mail.google.com/mail/u/0/#sent/FMfcgzGkZkZXnjWXKHgNrlblwJQRDXNt
-- playoffsNumTeamsDiv
 - schema
 - blog
   - reseeding, default for FBGM
   - playoffsByConf - only does something if there are 2 conferences, currently
+  - playoffsNumTeamsDiv
 
 report of AI not signing its draft picks in ZGMH https://discord.com/channels/290013534023057409/290015591216054273/872562739510378547
 

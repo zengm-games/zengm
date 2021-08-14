@@ -1011,7 +1011,7 @@ export const settings: {
 		name: "Guaranteed Per Division",
 		godModeRequired: "existingLeagueOnly",
 		description:
-			"The number of teams per division that automatically make the playoffs.",
+			"The number of teams per division that automatically make the playoffs as the top seeds.",
 		type: "int",
 	},
 	{

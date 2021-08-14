@@ -1,7 +1,7 @@
 import { groupBy } from "../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import { helpers } from ".";
-import { isSport, TIEBREAKERS } from "../../common";
+import type { TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";
 import { team } from "../core";
 import { idb } from "../db";
@@ -69,9 +69,6 @@ type BaseAllTeams = {
 	};
 	tid: number;
 };
-
-// In football and hockey, top conference playoff seeds go to the division winners
-const DIVISION_LEADERS_ALWAYS_GO_FIRST = !isSport("basketball");
 
 const arraysEqual = (x: number[], y: number[]) => {
 	for (let i = 0; i < x.length; i++) {
@@ -228,12 +225,10 @@ export const breakTies = <T extends BaseTeam>(
 		}
 	};
 
-	const strengthOfScheduleInfo = strengthOfScheduleOrVictory(
-		"strengthOfSchedule",
-	);
-	const strengthOfVictoryInfo = strengthOfScheduleOrVictory(
-		"strengthOfVictory",
-	);
+	const strengthOfScheduleInfo =
+		strengthOfScheduleOrVictory("strengthOfSchedule");
+	const strengthOfVictoryInfo =
+		strengthOfScheduleOrVictory("strengthOfVictory");
 
 	let commonOpponentsInfo:
 		| Record<
@@ -547,7 +542,7 @@ export const breakTies = <T extends BaseTeam>(
 	return formatOutput(teams[0], "coinFlip");
 };
 
-export const getDivisionLeaders = async <T extends BaseTeam>(
+export const getDivisionRanks = async <T extends BaseTeam>(
 	teams: T[],
 	allTeams: T[],
 	{
@@ -561,11 +556,11 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 	} = {},
 ) => {
 	// Figure out who the division leaders are, if necessary by applying tiebreakers
-	const divisionLeaders = new Map<number, T>();
+	const divisionRanks = new Map<number, number>();
 
 	// This is useful for a finals matchup, where we want home court determined based on team records without regard for division leaders, like the NHL
 	if (skipDivisionLeaders) {
-		return divisionLeaders;
+		return divisionRanks;
 	}
 
 	// Only look at divisions repeseted in teams
@@ -576,7 +571,7 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 
 	// If there are only teams from one division here, then this is useless, division leaders don't matter in tiebreaker
 	if (dids.size <= 1) {
-		return divisionLeaders;
+		return divisionRanks;
 	}
 
 	const groupedByDivision = groupBy(allTeams, (t: T) => t.seasonAttrs.did);
@@ -588,14 +583,15 @@ export const getDivisionLeaders = async <T extends BaseTeam>(
 				skipTiebreakers,
 			});
 
-			const t = teamsDivSorted[0];
-			if (t) {
-				divisionLeaders.set(t.seasonAttrs.did, t);
+			for (let i = 0; i < teamsDivSorted.length; i++) {
+				const t = teamsDivSorted[i];
+				const rank = i + 1;
+				divisionRanks.set(t.tid, rank);
 			}
 		}
 	}
 
-	return divisionLeaders;
+	return divisionRanks;
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
@@ -626,7 +622,7 @@ const orderTeams = async <T extends BaseTeam>(
 
 	const usePts = g.get("pointsFormula", season) !== "";
 
-	const divisionLeaders = await getDivisionLeaders(teams, allTeams, {
+	const divisionRanks = await getDivisionRanks(teams, allTeams, {
 		skipDivisionLeaders,
 		skipTiebreakers,
 		season,
@@ -638,12 +634,18 @@ const orderTeams = async <T extends BaseTeam>(
 		(t: T) => wonMinusLost(t.seasonAttrs),
 	];
 	const orders: ("asc" | "desc")[] = ["desc", "desc"];
-	if (DIVISION_LEADERS_ALWAYS_GO_FIRST && divisionLeaders.size > 0) {
+	const numTeamsDiv = g.get("playoffsNumTeamsDiv", season);
+	if (numTeamsDiv > 0 && divisionRanks.size > 0) {
 		// ...and apply division leader boost, if necessary
-		iterees.unshift(t =>
-			divisionLeaders.get(t.seasonAttrs.did) === t ? 1 : 0,
-		);
-		orders.unshift("desc");
+		iterees.unshift(t => {
+			const rank = divisionRanks.get(t.tid);
+			if (rank === undefined || rank > numTeamsDiv) {
+				return Infinity;
+			}
+
+			return rank;
+		});
+		orders.unshift("asc");
 	}
 
 	const teamsSorted = orderBy(teams, iterees, orders);
@@ -690,11 +692,16 @@ const orderTeams = async <T extends BaseTeam>(
 
 	const tiebreakers = tiebreakersOverride ?? getTiebreakers(season);
 
+	const divisionWinners = new Set<number>();
+	for (const [tid, rank] of divisionRanks) {
+		if (rank === 1) {
+			divisionWinners.add(tid);
+		}
+	}
+
 	const breakTiesOptions: BreakTiesOptions = {
 		addTiebreakersField,
-		divisionWinners: new Set(
-			Array.from(divisionLeaders.values()).map(t => t.tid),
-		),
+		divisionWinners,
 		season,
 		tiebreakers,
 		usePts,

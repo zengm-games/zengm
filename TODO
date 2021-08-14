@@ -8,15 +8,14 @@ player ratings stats popover, allow switching season
 https://github.com/zengm-games/zengm/pull/346/files
 
 add standings options
-- playoffSeries.byConf
 - roundsWonText needs to use playoffsByConf
   - DRY - leagueDashboard.ts has some too, maybe elsewhere also?
-  - allow customizing names of rounds?
-- divisionLeadersFirstPlayoffs
-  - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
+  - allow customizing names of rounds? https://mail.google.com/mail/u/0/#sent/FMfcgzGkZkZXnjWXKHgNrlblwJQRDXNt
+- playoffsNumTeamsDivision
 - schema
 - blog
   - reseeding, default for FBGM
+  - playoffsByConf - only does something if there are 2 conferences, currently
 
 report of AI not signing its draft picks in ZGMH https://discord.com/channels/290013534023057409/290015591216054273/872562739510378547
 

@@ -235,7 +235,7 @@ const Roster = ({
 										<br />
 										<span style={ptStyles["1.25"]}>+ More Playing Time</span>
 										<br />
-										<span style={ptStyles["1.75"]}>
+										<span style={ptStyles["1.5"]}>
 											++ Even More Playing Time
 										</span>
 									</p>

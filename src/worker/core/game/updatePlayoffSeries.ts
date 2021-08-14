@@ -109,9 +109,7 @@ const updatePlayoffSeries = async (
 
 			let currentRoundText = "";
 
-			const playoffsByConference = await season.getPlayoffsByConf(
-				g.get("season"),
-			);
+			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 			let saveToDb = true;
 			if (playoffSeries.currentRound === 0) {
@@ -120,16 +118,14 @@ const updatePlayoffSeries = async (
 				playoffSeries.currentRound ===
 				g.get("numGamesPlayoffSeries", "current").length - 3
 			) {
-				currentRoundText = playoffsByConference
+				currentRoundText = playoffsByConf
 					? "conference semifinals"
 					: "quarterfinals";
 			} else if (
 				playoffSeries.currentRound ===
 				g.get("numGamesPlayoffSeries", "current").length - 2
 			) {
-				currentRoundText = playoffsByConference
-					? "conference finals"
-					: "semifinals";
+				currentRoundText = playoffsByConf ? "conference finals" : "semifinals";
 
 				// Not needed, because individual game event in writeGameStats will cover this round
 				saveToDb = false;

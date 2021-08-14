@@ -1081,14 +1081,14 @@ const roundsWonText = (
 	numPlayoffRounds: number,
 	numConfs: number,
 ): string => {
-	const playoffsByConference = numConfs === 2;
+	const playoffsByConf = numConfs === 2;
 
 	if (playoffRoundsWon === numPlayoffRounds) {
 		return "League champs";
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 1) {
-		return playoffsByConference ? "Conference champs" : "Made finals";
+		return playoffsByConf ? "Conference champs" : "Made finals";
 	}
 
 	if (playoffRoundsWon === 0) {
@@ -1096,13 +1096,11 @@ const roundsWonText = (
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 2) {
-		return playoffsByConference ? "Made conference finals" : "Made semifinals";
+		return playoffsByConf ? "Made conference finals" : "Made semifinals";
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 3) {
-		return playoffsByConference
-			? "Made conference semifinals"
-			: "Made quarterfinals";
+		return playoffsByConf ? "Made conference semifinals" : "Made quarterfinals";
 	}
 
 	if (playoffRoundsWon >= 1) {

@@ -85,11 +85,11 @@ export const genPlayoffSeriesFromTeams = async (
 	},
 ) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	let playoffsByConference = await getPlayoffsByConf(g.get("season"));
+	let playoffsByConf = await getPlayoffsByConf(g.get("season"));
 
-	// Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
+	// Don't let there be an odd number of byes if playoffsByConf, otherwise it would get confusing
 	const numPlayoffByes = helpers.bound(
-		playoffsByConference && g.get("numPlayoffByes", "current") % 2 === 1
+		playoffsByConf && g.get("numPlayoffByes", "current") % 2 === 1
 			? g.get("numPlayoffByes", "current") - 1
 			: g.get("numPlayoffByes", "current"),
 		0,
@@ -99,7 +99,7 @@ export const genPlayoffSeriesFromTeams = async (
 
 	if (numRounds === 0) {
 		return {
-			byConference: playoffsByConference,
+			byConf: playoffsByConf,
 			series: [],
 			tidPlayoffs: [],
 		};
@@ -118,7 +118,7 @@ export const genPlayoffSeriesFromTeams = async (
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
-	if (playoffsByConference) {
+	if (playoffsByConf) {
 		if (numRounds > 1) {
 			// Default: top 50% of teams in each of the two conferences
 			for (const conf of g.get("confs", "current")) {
@@ -136,7 +136,7 @@ export const genPlayoffSeriesFromTeams = async (
 					series[0].push(...round);
 				} else {
 					// Not enough teams in conference for playoff bracket
-					playoffsByConference = false;
+					playoffsByConf = false;
 				}
 			}
 		} else {
@@ -164,13 +164,13 @@ export const genPlayoffSeriesFromTeams = async (
 				series[0].push(...round);
 			} else {
 				// Not enough teams in conference for playoff bracket
-				playoffsByConference = false;
+				playoffsByConf = false;
 			}
 		}
 	}
 
-	// Not an "else" because if the (playoffsByConference) branch fails it sets it to false and runs this as backup
-	if (!playoffsByConference) {
+	// Not an "else" because if the (playoffsByConf) branch fails it sets it to false and runs this as backup
+	if (!playoffsByConf) {
 		// Reset, in case it was partially set in prior branch
 		series = range(numRounds).map(() => []);
 
@@ -183,7 +183,7 @@ export const genPlayoffSeriesFromTeams = async (
 	}
 
 	return {
-		byConference: playoffsByConference,
+		byConf: playoffsByConf,
 		series,
 		tidPlayoffs: getTidPlayoffs(series),
 	};

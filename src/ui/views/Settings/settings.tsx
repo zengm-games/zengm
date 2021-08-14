@@ -990,7 +990,7 @@ export const settings: {
 	},
 	{
 		category: "Playoffs",
-		key: "playoffsByConference",
+		key: "playoffsByConf",
 		name: "Split By Conference",
 		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (

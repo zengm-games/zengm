@@ -282,7 +282,7 @@ const GroupStandings = ({
 const SmallStandingsRow = ({
 	i,
 	maxPlayoffSeed,
-	playoffsByConference,
+	playoffsByConf,
 	season,
 	t,
 	usePts,
@@ -290,7 +290,7 @@ const SmallStandingsRow = ({
 }: {
 	i: number;
 	maxPlayoffSeed: number;
-	playoffsByConference: boolean;
+	playoffsByConf: boolean;
 	season: number;
 	t: StandingsTeam;
 	usePts: boolean;
@@ -309,7 +309,7 @@ const SmallStandingsRow = ({
 			onClick={toggleClicked}
 		>
 			<TeamColumn
-				rank={playoffsByConference ? t.rank.conf : t.rank.league}
+				rank={playoffsByConf ? t.rank.conf : t.rank.league}
 				rankWidth={15}
 				season={season}
 				t={t}
@@ -317,7 +317,7 @@ const SmallStandingsRow = ({
 			<td className="text-right">
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
-					: playoffsByConference
+					: playoffsByConf
 					? t.gb.conf
 					: t.gb.league}
 			</td>
@@ -327,7 +327,7 @@ const SmallStandingsRow = ({
 
 const SmallStandings = ({
 	maxPlayoffSeed,
-	playoffsByConference,
+	playoffsByConf,
 	pointsFormula,
 	season,
 	teams,
@@ -336,7 +336,7 @@ const SmallStandings = ({
 }: Pick<
 	View<"standings">,
 	| "maxPlayoffSeed"
-	| "playoffsByConference"
+	| "playoffsByConf"
 	| "pointsFormula"
 	| "season"
 	| "usePts"
@@ -362,7 +362,7 @@ const SmallStandings = ({
 						key={t.tid}
 						i={i}
 						maxPlayoffSeed={maxPlayoffSeed}
-						playoffsByConference={playoffsByConference}
+						playoffsByConf={playoffsByConf}
 						season={season}
 						t={t}
 						usePts={usePts}
@@ -379,7 +379,7 @@ const Standings = ({
 	divs,
 	maxPlayoffSeed,
 	numPlayoffByes,
-	playoffsByConference,
+	playoffsByConf,
 	pointsFormula,
 	rankingGroups,
 	season,
@@ -408,8 +408,8 @@ const Standings = ({
 	);
 	const showSmallPlayoffStandings =
 		type === "div" &&
-		((playoffsByConference && confHasMultipleDivs) ||
-			(!playoffsByConference && divs.length > 1));
+		((playoffsByConf && confHasMultipleDivs) ||
+			(!playoffsByConf && divs.length > 1));
 
 	let groups: {
 		name?: string;
@@ -421,7 +421,7 @@ const Standings = ({
 	}[];
 	if (type === "league") {
 		let separatorIndex: number | undefined;
-		if (!playoffsByConference) {
+		if (!playoffsByConf) {
 			separatorIndex = maxPlayoffSeed - 1;
 		}
 		groups = [
@@ -436,7 +436,7 @@ const Standings = ({
 		];
 	} else if (type === "conf") {
 		let separatorIndex: number | undefined;
-		if (playoffsByConference || confs.length === 1) {
+		if (playoffsByConf || confs.length === 1) {
 			separatorIndex = maxPlayoffSeed - 1;
 		}
 		groups = confs.map((conf, i) => ({
@@ -450,7 +450,7 @@ const Standings = ({
 		}));
 	} else {
 		let separatorIndex: number | undefined;
-		if ((playoffsByConference && !confHasMultipleDivs) || divs.length === 1) {
+		if ((playoffsByConf && !confHasMultipleDivs) || divs.length === 1) {
 			separatorIndex = maxPlayoffSeed - 1;
 		}
 		groups = confs.map(conf => ({
@@ -471,7 +471,7 @@ const Standings = ({
 	const footer = (
 		<>
 			<div className="float-md-left">
-				z - clinched {playoffsByConference ? "a" : "the"} #1 seed
+				z - clinched {playoffsByConf ? "a" : "the"} #1 seed
 				<br />
 				{numPlayoffByes > 0 ? (
 					<>
@@ -529,7 +529,7 @@ const Standings = ({
 				<div style={{ minWidth: 0 }}>{groupStandings}</div>
 			</div>
 		);
-	} else if (playoffsByConference) {
+	} else if (playoffsByConf) {
 		// Show small standings alongside each conference
 		allStandings = (
 			<Fragment>
@@ -541,7 +541,7 @@ const Standings = ({
 								<h2>&nbsp;</h2>
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
-									playoffsByConference={playoffsByConference}
+									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									season={season}
 									teams={rankingGroups.conf[i]}
@@ -563,7 +563,7 @@ const Standings = ({
 					<h2>&nbsp;</h2>
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}
-						playoffsByConference={playoffsByConference}
+						playoffsByConf={playoffsByConf}
 						pointsFormula={pointsFormula}
 						season={season}
 						teams={rankingGroups.league[0]}

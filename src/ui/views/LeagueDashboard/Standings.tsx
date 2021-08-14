@@ -11,7 +11,7 @@ const width100 = {
 const Standings = ({
 	confTeams,
 	numPlayoffTeams,
-	playoffsByConference,
+	playoffsByConf,
 	pointsFormula,
 	usePts,
 	userTid,
@@ -19,7 +19,7 @@ const Standings = ({
 	View<"leagueDashboard">,
 	| "confTeams"
 	| "numPlayoffTeams"
-	| "playoffsByConference"
+	| "playoffsByConf"
 	| "pointsFormula"
 	| "usePts"
 	| "userTid"
@@ -42,7 +42,7 @@ const Standings = ({
 						<tr
 							key={t.tid}
 							className={classNames({
-								separator: i === numPlayoffTeams - 1 && playoffsByConference,
+								separator: i === numPlayoffTeams - 1 && playoffsByConf,
 								"table-info": t.tid === userTid,
 							})}
 						>
@@ -62,7 +62,7 @@ const Standings = ({
 Standings.propTypes = {
 	confTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	numPlayoffTeams: PropTypes.number.isRequired,
-	playoffsByConference: PropTypes.bool.isRequired,
+	playoffsByConf: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 

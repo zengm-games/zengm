@@ -212,9 +212,9 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		inflationMax: unwrapGameAttribute(defaultGameAttributes, "inflationMax"),
 		inflationMin: unwrapGameAttribute(defaultGameAttributes, "inflationMin"),
 		inflationStd: unwrapGameAttribute(defaultGameAttributes, "inflationStd"),
-		playoffsByConference: unwrapGameAttribute(
+		playoffsByConf: unwrapGameAttribute(
 			defaultGameAttributes,
-			"playoffsByConference",
+			"playoffsByConf",
 		),
 		playoffsNumTeamsDivision: unwrapGameAttribute(
 			defaultGameAttributes,

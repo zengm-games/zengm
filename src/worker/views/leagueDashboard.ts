@@ -366,9 +366,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			let found = false;
 
-			const playoffsByConference = await season.getPlayoffsByConf(
-				g.get("season"),
-			);
+			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
@@ -385,11 +383,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						if (rnd >= numPlayoffRounds - 1) {
 							seriesTitle = "League finals";
 						} else if (rnd === numPlayoffRounds - 2) {
-							seriesTitle = playoffsByConference
-								? "Conference finals"
-								: "Semifinals";
+							seriesTitle = playoffsByConf ? "Conference finals" : "Semifinals";
 						} else if (rnd === numPlayoffRounds - 3) {
-							seriesTitle = playoffsByConference
+							seriesTitle = playoffsByConf
 								? "Conference semifinals"
 								: "Quarterfinals";
 						} else {
@@ -497,12 +493,12 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			(2 ** g.get("numGamesPlayoffSeries", "current").length -
 				g.get("numPlayoffByes", "current")) /
 			2;
-		const playoffsByConference = g.get("confs", "current").length === 2;
+		const playoffsByConf = g.get("confs", "current").length === 2;
 
 		return {
 			confTeams,
 			numPlayoffTeams,
-			playoffsByConference,
+			playoffsByConf,
 			pointsFormula,
 			usePts,
 		};

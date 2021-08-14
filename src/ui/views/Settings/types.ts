@@ -84,7 +84,7 @@ export type Key =
 	| "inflationMax"
 	| "inflationMin"
 	| "inflationStd"
-	| "playoffsByConference"
+	| "playoffsByConf"
 	| "playoffsNumTeamsDivision"
 	| "playoffsReseed";
 

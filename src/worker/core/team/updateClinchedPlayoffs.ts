@@ -210,7 +210,7 @@ const updateClinchedPlayoffs = async (
 		finalStandings,
 	);
 
-	let playoffsByConference: boolean | undefined;
+	let playoffsByConf: boolean | undefined;
 	for (let i = 0; i < teamSeasons.length; i++) {
 		const ts = teamSeasons[i];
 		if (clinchedPlayoffs[i] !== ts.clinchedPlayoffs) {
@@ -222,12 +222,10 @@ const updateClinchedPlayoffs = async (
 			} else if (clinchedPlayoffs[i] === "y") {
 				action = "clinched a first round bye";
 			} else if (clinchedPlayoffs[i] === "z") {
-				if (playoffsByConference === undefined) {
-					playoffsByConference = await season.getPlayoffsByConf(
-						g.get("season"),
-					);
+				if (playoffsByConf === undefined) {
+					playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 				}
-				action = `clinched ${playoffsByConference ? "a" : "the"} #1 seed`;
+				action = `clinched ${playoffsByConf ? "a" : "the"} #1 seed`;
 			} else if (clinchedPlayoffs[i] === "o") {
 				action = "have been eliminated from playoff contention";
 			}

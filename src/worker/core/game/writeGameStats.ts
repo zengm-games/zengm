@@ -370,7 +370,7 @@ const writeGameStats = async (
 
 	// Save finals and semifinals, for news feed
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-	const playoffsByConference = await season.getPlayoffsByConf(g.get("season"));
+	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 	if (
 		numGamesToWinSeries !== undefined &&
 		currentRound !== undefined &&
@@ -380,7 +380,7 @@ const writeGameStats = async (
 		const round =
 			currentRound >= numPlayoffRounds - 1
 				? "finals"
-				: playoffsByConference
+				: playoffsByConf
 				? "conference finals"
 				: "semifinals";
 		let score = round === "finals" ? 20 : 10;
@@ -494,7 +494,7 @@ const writeGameStats = async (
 					currentRound >= numPlayoffRounds - 1
 						? "finals"
 						: currentRound >= numPlayoffRounds - 2
-						? playoffsByConference
+						? playoffsByConf
 							? "conference finals"
 							: "semifinals"
 						: `${helpers.ordinal(currentRound + 1)} round of the playoffs`;

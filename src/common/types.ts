@@ -459,7 +459,7 @@ export type GameAttributesLeague = {
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
-	playoffsByConference: boolean;
+	playoffsByConf: boolean;
 	playoffsNumTeamsDivision: number;
 	playoffsReseed: boolean;
 	quarterLength: number;
@@ -1177,7 +1177,7 @@ export type PlayoffSeriesTeam = {
 };
 
 export type PlayoffSeries = {
-	byConference?: boolean; // undefined is for upgraded leagues
+	byConf?: boolean; // undefined is for upgraded leagues
 	currentRound: number;
 	season: number;
 	series: {

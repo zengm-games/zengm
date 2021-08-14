@@ -27,7 +27,7 @@ const LeagueDashboard = ({
 	otl,
 	payroll,
 	playoffRoundsWon,
-	playoffsByConference,
+	playoffsByConf,
 	pointsFormula,
 	profit,
 	rank,
@@ -77,7 +77,7 @@ const LeagueDashboard = ({
 								<Standings
 									confTeams={confTeams}
 									numPlayoffTeams={numPlayoffTeams}
-									playoffsByConference={playoffsByConference}
+									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									usePts={usePts}
 									userTid={userTid}
@@ -207,7 +207,7 @@ LeagueDashboard.propTypes = {
 	numPlayoffTeams: PropTypes.number.isRequired,
 	payroll: PropTypes.number.isRequired,
 	playoffRoundsWon: PropTypes.number.isRequired,
-	playoffsByConference: PropTypes.bool.isRequired,
+	playoffsByConf: PropTypes.bool.isRequired,
 	profit: PropTypes.number.isRequired,
 	rank: PropTypes.number.isRequired,
 	region: PropTypes.string.isRequired,

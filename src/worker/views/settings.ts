@@ -92,7 +92,7 @@ const keys = [
 	"inflationMax",
 	"inflationMin",
 	"inflationStd",
-	"playoffsByConference",
+	"playoffsByConf",
 	"playoffsNumTeamsDivision",
 	"playoffsReseed",
 ] as const;
@@ -203,7 +203,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			inflationMax: g.get("inflationMax"),
 			inflationMin: g.get("inflationMin"),
 			inflationStd: g.get("inflationStd"),
-			playoffsByConference: g.get("playoffsByConference"),
+			playoffsByConf: g.get("playoffsByConf"),
 			playoffsNumTeamsDivision: g.get("playoffsNumTeamsDivision"),
 			playoffsReseed: g.get("playoffsReseed"),
 

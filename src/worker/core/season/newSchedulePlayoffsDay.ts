@@ -147,7 +147,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	// Need to reorder for reseeding?
 	if (g.get("playoffsReseed")) {
 		let groups: PlayoffSeriesTeam[][];
-		if (playoffSeries.byConference) {
+		if (playoffSeries.byConf) {
 			const half = Math.ceil(teamsWon.length / 2);
 			groups = [teamsWon.slice(0, half), teamsWon.slice(-half)];
 		} else {
@@ -173,7 +173,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon = flatten(groups);
 	}
 
-	const playoffsByConference = await season.getPlayoffsByConf(g.get("season"));
+	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 	for (let i = 0; i < teamsWon.length; i += 2) {
 		const team1 = teamsWon[i];
@@ -183,7 +183,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		let firstTeamHome = team1.seed < team2.seed;
 
 		// Special case for the finals, do it by winp not seed
-		if (playoffsByConference) {
+		if (playoffsByConf) {
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet

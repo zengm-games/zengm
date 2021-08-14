@@ -21,8 +21,8 @@ const updateStandings = async (
 		const numPlayoffTeams =
 			2 ** g.get("numGamesPlayoffSeries", inputs.season).length -
 			numPlayoffByes;
-		const playoffsByConference = await season.getPlayoffsByConf(inputs.season);
-		const maxPlayoffSeed = playoffsByConference
+		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+		const maxPlayoffSeed = playoffsByConf
 			? numPlayoffTeams / 2
 			: numPlayoffTeams;
 
@@ -127,7 +127,7 @@ const updateStandings = async (
 		}
 
 		for (const t of teams) {
-			t.rank.playoffs = playoffsByConference ? t.rank.conf : t.rank.league;
+			t.rank.playoffs = playoffsByConf ? t.rank.conf : t.rank.league;
 			if (t.rank.playoffs > maxPlayoffSeed) {
 				t.rank.playoffs = -1;
 			}
@@ -166,7 +166,7 @@ const updateStandings = async (
 			divs,
 			maxPlayoffSeed,
 			numPlayoffByes,
-			playoffsByConference,
+			playoffsByConf,
 			pointsFormula,
 			rankingGroups,
 			season: inputs.season,

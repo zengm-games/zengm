@@ -98,6 +98,7 @@ export const genPlayoffSeriesFromTeams = async (
 
 	if (numRounds === 0) {
 		return {
+			byConference: playoffsByConference,
 			series: [],
 			tidPlayoffs: [],
 		};
@@ -181,6 +182,7 @@ export const genPlayoffSeriesFromTeams = async (
 	}
 
 	return {
+		byConference: playoffsByConference,
 		series,
 		tidPlayoffs: getTidPlayoffs(series),
 	};

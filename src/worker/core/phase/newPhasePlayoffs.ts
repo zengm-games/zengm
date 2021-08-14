@@ -13,7 +13,7 @@ const newPhasePlayoffs = async (
 	local.playingUntilEndOfRound = false;
 
 	// Set playoff matchups
-	const { series, tidPlayoffs } = await season.genPlayoffSeries();
+	const { byConference, series, tidPlayoffs } = await season.genPlayoffSeries();
 
 	for (const tid of tidPlayoffs) {
 		logEvent(
@@ -38,6 +38,7 @@ const newPhasePlayoffs = async (
 	}
 
 	await idb.cache.playoffSeries.put({
+		byConference,
 		season: g.get("season"),
 		currentRound: 0,
 		series,

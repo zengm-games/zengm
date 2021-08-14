@@ -543,7 +543,6 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
-	| "playoffsByConference"
 	| "playoffsNumTeamsDivision"
 	| "pointsFormula"
 	| "tiebreakers"
@@ -559,9 +558,6 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
-	playoffsByConference: GameAttributeWithHistory<
-		GameAttributesLeague["playoffsByConference"]
-	>;
 	playoffsNumTeamsDivision: GameAttributeWithHistory<
 		GameAttributesLeague["playoffsNumTeamsDivision"]
 	>;
@@ -1181,8 +1177,9 @@ export type PlayoffSeriesTeam = {
 };
 
 export type PlayoffSeries = {
-	season: number;
+	byConference?: boolean; // undefined is for upgraded leagues
 	currentRound: number;
+	season: number;
 	series: {
 		home: PlayoffSeriesTeam;
 		away?: PlayoffSeriesTeam;

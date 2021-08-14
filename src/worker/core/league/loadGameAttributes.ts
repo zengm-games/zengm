@@ -14,7 +14,6 @@ export const ALWAYS_WRAP = [
 	"numGamesPlayoffSeries",
 	"numPlayoffByes",
 	"otl",
-	"playoffsByConference",
 	"playoffsNumTeamsDivision",
 	"pointsFormula",
 	"tiebreakers",

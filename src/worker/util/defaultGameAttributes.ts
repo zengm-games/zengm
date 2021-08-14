@@ -163,7 +163,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	inflationStd: 0,
 	riggedLottery: undefined,
 	numDraftPicksCurrent: undefined,
-	playoffsByConference: wrap(true),
+	playoffsByConference: true,
 	playoffsNumTeamsDivision: wrap(0),
 	playoffsReseed: false,
 

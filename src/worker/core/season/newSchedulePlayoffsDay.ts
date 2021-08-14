@@ -2,6 +2,7 @@ import setSchedule from "./setSchedule";
 import { idb } from "../../db";
 import { g, helpers, local, lock, orderTeams } from "../../util";
 import type { PlayoffSeriesTeam } from "../../../common/types";
+import flatten from "lodash-es/flatten";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -131,30 +132,49 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	// Set matchups for next round
-	const tidsWon: number[] = [];
 
-	for (let i = 0; i < series[rnd].length; i += 2) {
-		const { away: away1, home: home1 } = series[rnd][i];
-		const { away: away2, home: home2 } = series[rnd][i + 1]; // Find the two winning teams
-
-		let team1: PlayoffSeriesTeam;
-		let team2: PlayoffSeriesTeam;
-
-		if (home1.won >= numGamesToWin || !away1) {
-			team1 = helpers.deepCopy(home1);
-			tidsWon.push(home1.tid);
+	// Which teams won?
+	let teamsWon: PlayoffSeriesTeam[] = [];
+	for (const { home, away } of series[rnd]) {
+		if (home.won >= numGamesToWin || !away) {
+			teamsWon.push(helpers.deepCopy(home));
 		} else {
-			team1 = helpers.deepCopy(away1);
-			tidsWon.push(away1.tid);
+			teamsWon.push(helpers.deepCopy(away));
+		}
+	}
+
+	// Need to reorder for reseeding?
+	if (g.get("playoffsReseed")) {
+		let groups: PlayoffSeriesTeam[][];
+		if (playoffSeries.byConference) {
+			const half = Math.ceil(teamsWon.length / 2);
+			groups = [teamsWon.slice(0, half), teamsWon.slice(-half)];
+		} else {
+			groups = [[...teamsWon]];
 		}
 
-		if (home2.won >= numGamesToWin || !away2) {
-			team2 = helpers.deepCopy(home2);
-			tidsWon.push(home2.tid);
-		} else {
-			team2 = helpers.deepCopy(away2);
-			tidsWon.push(away2.tid);
+		// Sort the groups so that each 2 teams are a matchup (best team, worst team, 2nd best team, 2nd worst team, etc)
+		for (let i = 0; i < groups.length; i++) {
+			const group = groups[i];
+			group.sort((a, b) => a.seed - b.seed);
+
+			const interleaved: PlayoffSeriesTeam[] = [];
+			while (group.length > 0) {
+				if (interleaved.length % 2 === 0) {
+					interleaved.push(group.shift() as PlayoffSeriesTeam);
+				} else {
+					interleaved.push(group.pop() as PlayoffSeriesTeam);
+				}
+			}
+			groups[i] = interleaved;
 		}
+
+		teamsWon = flatten(groups);
+	}
+
+	for (let i = 0; i < teamsWon.length; i += 2) {
+		const team1 = teamsWon[i];
+		const team2 = teamsWon[i + 1];
 
 		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
 		let firstTeamHome = team1.seed < team2.seed;
@@ -223,7 +243,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	// Update hype for winning a series
 	await Promise.all(
-		tidsWon.map(async tid => {
+		teamsWon.map(async ({ tid }) => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsBySeasonTid",
 				[g.get("season"), tid],

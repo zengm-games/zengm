@@ -865,6 +865,16 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minimum: -2,
 								maximum: 8,
 							},
+							playoffsByConf: {
+								type: "boolean",
+							},
+							playoffsNumTeamsDiv: {
+								type: "array",
+								minItems: 1,
+							},
+							playoffsReseed: {
+								type: "boolean",
+							},
 							playersRefuseToNegotiate: {
 								type: "boolean",
 							},

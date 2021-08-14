@@ -993,22 +993,14 @@ export const settings: {
 		key: "playoffsByConf",
 		name: "Split By Conference",
 		godModeRequired: "existingLeagueOnly",
-		descriptionLong: (
-			<>
-				<p>
-					If your league has two conferences and there are enough teams in each
-					conference to fill up half of the playoff bracket, then enabling this
-					setting will put the top N teams of each conference into separate
-					sides of the playoff bracket.
-				</p>
-			</>
-		),
+		descriptionLong:
+			"If your league has two conferences and there are enough teams in each conference to fill up half of the playoff bracket, then enabling this setting will put the top N teams of each conference into separate sides of the bracket.",
 		type: "bool",
 	},
 	{
 		category: "Playoffs",
 		key: "playoffsNumTeamsDiv",
-		name: "Guaranteed Per Division",
+		name: "# Guaranteed Per Division",
 		godModeRequired: "existingLeagueOnly",
 		description:
 			"The number of teams per division that automatically make the playoffs as the top seeds.",

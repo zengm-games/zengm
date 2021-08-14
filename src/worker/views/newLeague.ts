@@ -212,6 +212,18 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		inflationMax: unwrapGameAttribute(defaultGameAttributes, "inflationMax"),
 		inflationMin: unwrapGameAttribute(defaultGameAttributes, "inflationMin"),
 		inflationStd: unwrapGameAttribute(defaultGameAttributes, "inflationStd"),
+		playoffsByConference: unwrapGameAttribute(
+			defaultGameAttributes,
+			"playoffsByConference",
+		),
+		playoffsNumTeamsDivision: unwrapGameAttribute(
+			defaultGameAttributes,
+			"playoffsNumTeamsDivision",
+		),
+		playoffsReseed: unwrapGameAttribute(
+			defaultGameAttributes,
+			"playoffsReseed",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

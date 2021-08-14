@@ -1537,6 +1537,9 @@ const SettingsForm = ({
 			name: "Standings",
 		},
 		{
+			name: "Playoffs",
+		},
+		{
 			name: "Team",
 		},
 		{

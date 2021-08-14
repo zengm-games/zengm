@@ -92,6 +92,9 @@ const keys = [
 	"inflationMax",
 	"inflationMin",
 	"inflationStd",
+	"playoffsByConference",
+	"playoffsNumTeamsDivision",
+	"playoffsReseed",
 ] as const;
 
 export type Settings = Pick<
@@ -200,6 +203,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			inflationMax: g.get("inflationMax"),
 			inflationMin: g.get("inflationMin"),
 			inflationStd: g.get("inflationStd"),
+			playoffsByConference: g.get("playoffsByConference"),
+			playoffsNumTeamsDivision: g.get("playoffsNumTeamsDivision"),
+			playoffsReseed: g.get("playoffsReseed"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

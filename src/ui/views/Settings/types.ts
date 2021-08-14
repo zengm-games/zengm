@@ -83,13 +83,17 @@ export type Key =
 	| "inflationAvg"
 	| "inflationMax"
 	| "inflationMin"
-	| "inflationStd";
+	| "inflationStd"
+	| "playoffsByConference"
+	| "playoffsNumTeamsDivision"
+	| "playoffsReseed";
 
 export type Category =
 	| "New League"
 	| "General"
 	| "Schedule"
 	| "Standings"
+	| "Playoffs"
 	| "Team"
 	| "Draft"
 	| "Finances"

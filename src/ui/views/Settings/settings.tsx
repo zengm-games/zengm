@@ -239,7 +239,7 @@ export const settings: {
 		type: "int",
 	},
 	{
-		category: "Schedule",
+		category: "Playoffs",
 		key: "numGamesPlayoffSeries",
 		name: "# Playoff Games",
 		godModeRequired: "existingLeagueOnly",
@@ -338,7 +338,7 @@ export const settings: {
 		type: "string",
 	},
 	{
-		category: "Schedule",
+		category: "Playoffs",
 		key: "numPlayoffByes",
 		name: "# First Round Byes",
 		godModeRequired: "existingLeagueOnly",
@@ -987,6 +987,41 @@ export const settings: {
 				throw new Error("Value cannot be less than 0");
 			}
 		},
+	},
+	{
+		category: "Playoffs",
+		key: "playoffsByConference",
+		name: "Split By Conference",
+		godModeRequired: "existingLeagueOnly",
+		descriptionLong: (
+			<>
+				<p>
+					If your league has two conferences and there are enough teams in each
+					conference to fill up half of the playoff bracket, then enabling this
+					setting will put the top N teams of each conference into separate
+					sides of the playoff bracket.
+				</p>
+			</>
+		),
+		type: "bool",
+	},
+	{
+		category: "Playoffs",
+		key: "playoffsNumTeamsDivision",
+		name: "Guaranteed Per Division",
+		godModeRequired: "existingLeagueOnly",
+		description:
+			"The number of teams per division that automatically make the playoffs.",
+		type: "int",
+	},
+	{
+		category: "Playoffs",
+		key: "playoffsReseed",
+		name: "Reseed Rounds",
+		godModeRequired: "existingLeagueOnly",
+		description:
+			"When enabled, the matchups in each round of the playoffs will be reset so the best team always plays the worst team.",
+		type: "bool",
 	},
 ];
 

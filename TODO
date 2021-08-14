@@ -7,9 +7,11 @@ https://github.com/zengm-games/zengm/pull/346/files
 
 add standings options
 - playoffsByConference
+  - only functions if 2 conferences and enough teams in them
 - divisionLeadersFirstPlayoffs
   - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
 - support re-seeding playoffs, and make it default for FBGM
+- schema
 
 report of AI not signing its draft picks in ZGMH https://discord.com/channels/290013534023057409/290015591216054273/872562739510378547
 

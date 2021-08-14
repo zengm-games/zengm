@@ -8,7 +8,7 @@ import type {
 	GameResults,
 	LogEventType,
 } from "../../../common/types";
-import { headToHead } from "..";
+import { headToHead, season } from "..";
 
 const allStarMVP = async (
 	game: Game,
@@ -370,7 +370,7 @@ const writeGameStats = async (
 
 	// Save finals and semifinals, for news feed
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-	const playoffsByConference = g.get("confs", "current").length === 2;
+	const playoffsByConference = await season.getPlayoffsByConf(g.get("season"));
 	if (
 		numGamesToWinSeries !== undefined &&
 		currentRound !== undefined &&

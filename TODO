@@ -1,3 +1,5 @@
+way to tell getCop we are not going to mutate, so don't need deepcopy
+
 player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
@@ -8,7 +10,9 @@ https://github.com/zengm-games/zengm/pull/346/files
 add standings options
 - playoffSeries.byConference
 - playoffsByConference
-  - only functions if 2 conferences and enough teams in them
+  - roundsWonText
+    - DRY - leagueDashboard.ts has some too, maybe elsewhere also?
+    - allow customizing names of rounds?
 - divisionLeadersFirstPlayoffs
   - this wouldn't be sufficient to do NHL playoffs, which lets in top 3 in each division and predefines their matchups https://discord.com/channels/@me/778760871911751700
 - schema

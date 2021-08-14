@@ -2,6 +2,7 @@ import { idb } from "../db";
 import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getTiebreakers } from "../util/orderTeams";
+import { season } from "../core";
 
 const updateStandings = async (
 	inputs: ViewInput<"standings">,
@@ -20,7 +21,7 @@ const updateStandings = async (
 		const numPlayoffTeams =
 			2 ** g.get("numGamesPlayoffSeries", inputs.season).length -
 			numPlayoffByes;
-		const playoffsByConference = confs.length === 2;
+		const playoffsByConference = await season.getPlayoffsByConf(inputs.season);
 		const maxPlayoffSeed = playoffsByConference
 			? numPlayoffTeams / 2
 			: numPlayoffTeams;

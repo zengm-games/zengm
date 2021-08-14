@@ -3,6 +3,7 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, orderTeams } from "../../util";
 import type { PlayoffSeriesTeam } from "../../../common/types";
 import flatten from "lodash-es/flatten";
+import { season } from "..";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -172,6 +173,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon = flatten(groups);
 	}
 
+	const playoffsByConference = await season.getPlayoffsByConf(g.get("season"));
+
 	for (let i = 0; i < teamsWon.length; i += 2) {
 		const team1 = teamsWon[i];
 		const team2 = teamsWon[i + 1];
@@ -180,7 +183,6 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		let firstTeamHome = team1.seed < team2.seed;
 
 		// Special case for the finals, do it by winp not seed
-		const playoffsByConference = g.get("confs", "current").length === 2;
 		if (playoffsByConference) {
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 

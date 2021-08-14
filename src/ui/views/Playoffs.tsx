@@ -14,6 +14,7 @@ const Playoffs = ({
 	matchups,
 	numGamesPlayoffSeries,
 	numGamesToWinSeries,
+	playoffsByConference,
 	season,
 	series,
 	userTid,
@@ -66,7 +67,7 @@ const Playoffs = ({
 				</p>
 			) : null}
 
-			{confNames.length === 2 && numRounds > 1 ? (
+			{playoffsByConference && numRounds > 1 ? (
 				<h2 className="d-none d-sm-block px-2">
 					{confNames[1]} <span className="float-right">{confNames[0]}</span>
 				</h2>

@@ -1,5 +1,5 @@
 import { bySport, isSport, PHASE, PLAYER } from "../../common";
-import { team } from "../core";
+import { season, team } from "../core";
 import { idb } from "../db";
 import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents } from "../../common/types";
@@ -366,7 +366,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			let found = false;
 
-			const playoffsByConference = g.get("confs", "current").length === 2;
+			const playoffsByConference = await season.getPlayoffsByConf(
+				g.get("season"),
+			);
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {

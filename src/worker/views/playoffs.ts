@@ -44,6 +44,7 @@ const updatePlayoffs = async (
 	}[][];
 	numGamesPlayoffSeries: number[];
 	numGamesToWinSeries: number[];
+	playoffsByConference: boolean;
 	season: number;
 	series: {
 		home: SeriesTeam;
@@ -117,14 +118,17 @@ const updatePlayoffs = async (
 
 		const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", inputs.season);
 
+		const playoffsByConference = await season.getPlayoffsByConf(inputs.season);
+
 		return {
+			confNames,
 			finalMatchups,
 			matchups,
 			numGamesPlayoffSeries,
 			numGamesToWinSeries: numGamesPlayoffSeries.map(
 				helpers.numGamesToWinSeries,
 			),
-			confNames,
+			playoffsByConference,
 			season: inputs.season,
 			series: series2,
 			userTid: g.get("userTid"),

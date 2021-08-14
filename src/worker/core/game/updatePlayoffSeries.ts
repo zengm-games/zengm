@@ -5,6 +5,7 @@ import type {
 	GameResults,
 	PlayoffSeries,
 } from "../../../common/types";
+import season from "../season";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -108,7 +109,9 @@ const updatePlayoffSeries = async (
 
 			let currentRoundText = "";
 
-			const playoffsByConference = g.get("confs", "current").length === 2;
+			const playoffsByConference = await season.getPlayoffsByConf(
+				g.get("season"),
+			);
 
 			let saveToDb = true;
 			if (playoffSeries.currentRound === 0) {

@@ -7,6 +7,7 @@ import type {
 } from "../../../common/types";
 import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
+import getPlayoffsByConf from "./getPlayoffsByConf";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -84,7 +85,7 @@ export const genPlayoffSeriesFromTeams = async (
 	},
 ) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	let playoffsByConference = g.get("confs", "current").length === 2;
+	let playoffsByConference = await getPlayoffsByConf(g.get("season"));
 
 	// Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
 	const numPlayoffByes = helpers.bound(

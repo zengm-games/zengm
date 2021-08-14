@@ -3,6 +3,7 @@ import type { TeamSeason, Conditions, TeamStats } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 import evaluatePointsFormula from "./evaluatePointsFormula";
+import { season } from "..";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -209,6 +210,7 @@ const updateClinchedPlayoffs = async (
 		finalStandings,
 	);
 
+	let playoffsByConference: boolean | undefined;
 	for (let i = 0; i < teamSeasons.length; i++) {
 		const ts = teamSeasons[i];
 		if (clinchedPlayoffs[i] !== ts.clinchedPlayoffs) {
@@ -220,7 +222,11 @@ const updateClinchedPlayoffs = async (
 			} else if (clinchedPlayoffs[i] === "y") {
 				action = "clinched a first round bye";
 			} else if (clinchedPlayoffs[i] === "z") {
-				const playoffsByConference = g.get("confs", "current").length === 2;
+				if (playoffsByConference === undefined) {
+					playoffsByConference = await season.getPlayoffsByConf(
+						g.get("season"),
+					);
+				}
 				action = `clinched ${playoffsByConference ? "a" : "the"} #1 seed`;
 			} else if (clinchedPlayoffs[i] === "o") {
 				action = "have been eliminated from playoff contention";

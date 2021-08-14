@@ -85,7 +85,7 @@ export type Key =
 	| "inflationMin"
 	| "inflationStd"
 	| "playoffsByConf"
-	| "playoffsNumTeamsDivision"
+	| "playoffsNumTeamsDiv"
 	| "playoffsReseed";
 
 export type Category =

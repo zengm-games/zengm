@@ -216,9 +216,9 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			defaultGameAttributes,
 			"playoffsByConf",
 		),
-		playoffsNumTeamsDivision: unwrapGameAttribute(
+		playoffsNumTeamsDiv: unwrapGameAttribute(
 			defaultGameAttributes,
-			"playoffsNumTeamsDivision",
+			"playoffsNumTeamsDiv",
 		),
 		playoffsReseed: unwrapGameAttribute(
 			defaultGameAttributes,

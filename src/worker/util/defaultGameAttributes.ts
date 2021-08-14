@@ -164,7 +164,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	riggedLottery: undefined,
 	numDraftPicksCurrent: undefined,
 	playoffsByConf: true,
-	playoffsNumTeamsDivision: wrap(0),
+	playoffsNumTeamsDiv: wrap(0),
 	playoffsReseed: false,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
@@ -252,7 +252,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPlayersOnCourt: 6,
 				otl: wrap(true),
 				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
-				playoffsNumTeamsDivision: wrap(3),
+				playoffsNumTeamsDiv: wrap(3),
 		  }
 		: {};
 

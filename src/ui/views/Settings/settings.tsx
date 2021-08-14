@@ -1007,7 +1007,7 @@ export const settings: {
 	},
 	{
 		category: "Playoffs",
-		key: "playoffsNumTeamsDivision",
+		key: "playoffsNumTeamsDiv",
 		name: "Guaranteed Per Division",
 		godModeRequired: "existingLeagueOnly",
 		description:

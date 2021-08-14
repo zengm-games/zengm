@@ -93,7 +93,7 @@ const keys = [
 	"inflationMin",
 	"inflationStd",
 	"playoffsByConf",
-	"playoffsNumTeamsDivision",
+	"playoffsNumTeamsDiv",
 	"playoffsReseed",
 ] as const;
 
@@ -204,7 +204,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			inflationMin: g.get("inflationMin"),
 			inflationStd: g.get("inflationStd"),
 			playoffsByConf: g.get("playoffsByConf"),
-			playoffsNumTeamsDivision: g.get("playoffsNumTeamsDivision"),
+			playoffsNumTeamsDiv: g.get("playoffsNumTeamsDiv"),
 			playoffsReseed: g.get("playoffsReseed"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form

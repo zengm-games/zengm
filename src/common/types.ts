@@ -460,7 +460,7 @@ export type GameAttributesLeague = {
 	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	playoffsByConf: boolean;
-	playoffsNumTeamsDivision: number;
+	playoffsNumTeamsDiv: number;
 	playoffsReseed: boolean;
 	quarterLength: number;
 	randomDebutsForever?: number;
@@ -543,7 +543,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
-	| "playoffsNumTeamsDivision"
+	| "playoffsNumTeamsDiv"
 	| "pointsFormula"
 	| "tiebreakers"
 	| "ties"
@@ -558,8 +558,8 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
-	playoffsNumTeamsDivision: GameAttributeWithHistory<
-		GameAttributesLeague["playoffsNumTeamsDivision"]
+	playoffsNumTeamsDiv: GameAttributeWithHistory<
+		GameAttributesLeague["playoffsNumTeamsDiv"]
 	>;
 	pointsFormula: GameAttributeWithHistory<
 		GameAttributesLeague["pointsFormula"]

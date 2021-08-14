@@ -22,7 +22,7 @@ export const ptStyles = {
 		backgroundColor: "#17a2b8",
 		color: "#fff",
 	},
-	1.75: {
+	1.5: {
 		backgroundColor: "#007bff",
 		color: "#fff",
 	},
@@ -54,15 +54,26 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		{ text: "-", ptModifier: "0.75" },
 		{ text: " ", ptModifier: "1" },
 		{ text: "+", ptModifier: "1.25" },
-		{ text: "++", ptModifier: "1.75" },
+		{ text: "++", ptModifier: "1.5" },
 	];
+
+	const values = ptModifiers.map(x => parseFloat(x.ptModifier));
+	const index = values.findIndex(ptModifier => ptModifier > p.ptModifier);
+	let value;
+	if (index === 0) {
+		value = values[0];
+	} else if (index > 0) {
+		value = values[index - 1];
+	} else {
+		value = values.at(-1);
+	}
 
 	return (
 		<select
 			className="form-control pt-modifier-select"
-			value={p.ptModifier}
+			value={value}
 			onChange={event => handlePtChange(p, userTid, event)}
-			style={(ptStyles as any)[String(p.ptModifier)]}
+			style={(ptStyles as any)[String(value)]}
 		>
 			{ptModifiers.map(({ text, ptModifier }) => {
 				return (

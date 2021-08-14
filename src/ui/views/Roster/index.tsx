@@ -26,14 +26,12 @@ const justDrafted = (
 	season: number,
 ) => {
 	return (
-		p.draft.round > 0 &&
+		p.contract.rookie &&
 		((p.draft.year === season && phase >= PHASE.DRAFT) ||
 			(p.draft.year === season - 1 &&
 				phase < PHASE.REGULAR_SEASON &&
 				phase >= 0))
 	);
-
-	// return p.contract.rookie && ...
 };
 
 const handleRelease = async (

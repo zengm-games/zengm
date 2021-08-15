@@ -6,11 +6,15 @@ import isSport from "./isSport";
 
 const getPopRanks = (
 	teamSeasons: {
+		// If these are teamSeason objects, disabled teams won't even have one. If these are some other kind of team object, disabled teams might be there.
+		disabled?: boolean;
 		pop?: number;
 		tid: number;
 	}[],
 ): number[] => {
-	const teamsSorted = orderBy(teamSeasons, "pop", "desc");
+	const teamsFiltered = teamSeasons.filter(t => !t.disabled);
+
+	const teamsSorted = orderBy(teamsFiltered, "pop", "desc");
 
 	return teamSeasons.map(t => {
 		// Find the starting and ending ranks of all teams tied with the current team (if no tie, then startRank and endRank will be the same)
@@ -27,16 +31,17 @@ const getPopRanks = (
 		}
 
 		if (startRank === undefined || endRank === undefined) {
-			throw new Error("No rank found");
+			// For disabled teams
+			return teamsFiltered.length + 1;
 		}
 
 		return (startRank + endRank) / 2;
 	});
 };
 
-function addPopRank<T extends { pop?: number; tid: number }>(
-	teams: T[],
-): (T & { popRank: number })[] {
+function addPopRank<
+	T extends { disabled?: boolean; pop?: number; tid: number },
+>(teams: T[]): (T & { popRank: number })[] {
 	const popRanks = getPopRanks(teams);
 
 	return teams.map((t, i) => ({

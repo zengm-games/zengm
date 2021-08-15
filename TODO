@@ -1,4 +1,6 @@
-way to tell getCop we are not going to mutate, so don't need deepcopy
+god mode customize all star selections
+
+way to tell getCopy we are not going to mutate, so don't need deepcopy
 
 player ratings stats popover, allow switching season
 - include peak and career as options

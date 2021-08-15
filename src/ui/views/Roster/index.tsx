@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	CountryFlag,
@@ -189,7 +189,7 @@ const Roster = ({
 						return;
 					}
 					const pids = players.map(p => p.pid);
-					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
+					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderRosterDrag", newSortedPids);
 				}}

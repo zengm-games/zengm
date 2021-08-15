@@ -26,7 +26,7 @@ import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import type { Argument } from "classnames";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 
 export type SortBy = [number, SortOrder];
@@ -454,7 +454,11 @@ const DataTable = ({
 					state.settingsCache.set("DataTableColOrder", newOrder);
 				}}
 				onSortEnd={({ oldIndex, newIndex }) => {
-					const newOrder = arrayMove(state.colOrder, oldIndex, newIndex);
+					const newOrder = arrayMoveImmutable(
+						state.colOrder,
+						oldIndex,
+						newIndex,
+					);
 					setStatePartial({
 						colOrder: newOrder,
 					});

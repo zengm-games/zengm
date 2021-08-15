@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { Fragment, useState } from "react";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
@@ -240,7 +240,7 @@ const Depth = ({
 				}
 				onChange={async ({ oldIndex, newIndex }) => {
 					const pids = players.map(p => p.pid);
-					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
+					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
 				}}

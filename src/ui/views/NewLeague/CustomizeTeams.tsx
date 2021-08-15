@@ -3,7 +3,7 @@ import type { Dispatch } from "react";
 import type { NewLeagueTeam } from "./types";
 import type { Conf, Div, View } from "../../../common/types";
 import classNames from "classnames";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
@@ -188,7 +188,7 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			const newConfs = arrayMove(state.confs, oldIndex, newIndex);
+			const newConfs = arrayMoveImmutable(state.confs, oldIndex, newIndex);
 
 			return {
 				...state,
@@ -248,7 +248,7 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			const newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
+			const newDivs2 = arrayMoveImmutable(newDivs, oldIndex, newIndex);
 
 			return {
 				...state,

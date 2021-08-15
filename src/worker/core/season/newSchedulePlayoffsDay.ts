@@ -146,8 +146,11 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	// Need to reorder for reseeding?
 	if (g.get("playoffsReseed")) {
+		// Can't just look in playoffSeries.byConf because of upgraded leagues and real players leagues started in the playoffs
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
 		let groups: PlayoffSeriesTeam[][];
-		if (playoffSeries.byConf) {
+		if (playoffsByConf) {
 			const half = Math.ceil(teamsWon.length / 2);
 			groups = [teamsWon.slice(0, half), teamsWon.slice(-half)];
 		} else {

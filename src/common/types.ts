@@ -1177,7 +1177,7 @@ export type PlayoffSeriesTeam = {
 };
 
 export type PlayoffSeries = {
-	byConf?: boolean; // undefined is for upgraded leagues
+	byConf?: boolean; // undefined is for upgraded leagues and real players leagues
 	currentRound: number;
 	season: number;
 	series: {

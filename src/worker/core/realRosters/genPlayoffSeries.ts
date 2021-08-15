@@ -194,8 +194,8 @@ const genPlayoffSeries = (
 	}
 
 	return {
-		season,
 		currentRound: completeBracket ? numRounds - 1 : 0,
+		season,
 		series,
 	};
 };

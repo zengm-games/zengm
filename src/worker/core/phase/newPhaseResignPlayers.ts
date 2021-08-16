@@ -105,6 +105,12 @@ const newPhaseResignPlayers = async (
 		["asc", "desc", "desc"],
 	).map(p => p.pid);
 
+	const rookiePids = new Set(
+		players
+			.filter(p => p.contract.exp <= g.get("season") && p.contract.rookie)
+			.map(p => p.pid),
+	);
+
 	await freeAgents.normalizeContractDemands({
 		type: "includeExpiringContracts",
 	});
@@ -150,6 +156,10 @@ const newPhaseResignPlayers = async (
 					},
 					conditions,
 				);
+			} else {
+				if (rookiePids.has(p.pid)) {
+					p.contract.rookieResign = true;
+				}
 			}
 		} else {
 			let reSignPlayer = true;

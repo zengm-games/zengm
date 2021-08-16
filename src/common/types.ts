@@ -877,6 +877,7 @@ export type PlayerContract = {
 	amount: number;
 	exp: number;
 	rookie?: true;
+	rookieResign?: true; // Should only be present during re-signing phase for guys re-signing after rookie contracts, otherwise can't identify if previous contract was a rookie contract cause it's overwritten!
 };
 
 export type PlayerFeatWithoutKey = {

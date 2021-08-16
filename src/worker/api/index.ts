@@ -2647,7 +2647,7 @@ const reSignAll = async (players: any[]) => {
 	for (const { pid } of negotiations) {
 		const p = players.find(p => p.pid === pid);
 
-		if (p) {
+		if (p && p.mood.user.willing) {
 			const errorMsg = await contractNegotiation.accept(
 				pid,
 				p.mood.user.contractAmount,

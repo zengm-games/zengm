@@ -1227,12 +1227,12 @@ const exportLeague = async (
 	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
 		filter.events = (event: EventBBGM) => {
 			const category = types[event.type]?.category;
-			return category === "transaction";
+			return category === "transaction" || category === "draft";
 		};
 	} else if (!checked.newsFeedTransactions && checked.newsFeedOther) {
 		filter.events = (event: EventBBGM) => {
 			const category = types[event.type]?.category;
-			return category !== "transaction";
+			return category !== "transaction" && category !== "draft";
 		};
 	} else if (checked.leagueSettings || checked.gameState) {
 		filter.gameAttributes = (row: GameAttribute) => {

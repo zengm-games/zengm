@@ -75,6 +75,7 @@ const Roster = ({
 	currentSeason,
 	editable,
 	godMode,
+	hardCap,
 	maxRosterSize,
 	numConfs,
 	numPlayersOnCourt,
@@ -272,11 +273,13 @@ const Roster = ({
 										</a>
 										).
 									</p>
-									<p>
-										However, if you just drafted a player and the regular season
-										has not started yet, his contract is not guaranteed and you
-										can release him for free.
-									</p>
+									{!hardCap ? (
+										<p>
+											However, if you just drafted a player and the regular
+											season has not started yet, his contract is not guaranteed
+											and you can release him for free.
+										</p>
+									) : null}
 								</HelpPopover>
 							</th>
 						) : null}

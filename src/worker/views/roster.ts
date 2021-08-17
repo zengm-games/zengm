@@ -226,6 +226,7 @@ const updateRoster = async (
 			currentSeason: g.get("season"),
 			editable,
 			godMode: g.get("godMode"),
+			hardCap: g.get("hardCap"),
 			maxRosterSize: g.get("maxRosterSize"),
 			numConfs: g.get("confs", "current").length,
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),

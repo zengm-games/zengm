@@ -137,19 +137,14 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
-	tiebreakers: [
-		{
-			start: -Infinity,
-			value: [
-				"headToHeadRecord",
-				"divWinner",
-				"divRecordIfSame",
-				"confRecordIfSame",
-				"marginOfVictory",
-				"coinFlip",
-			],
-		},
-	],
+	tiebreakers: wrap([
+		"headToHeadRecord",
+		"divWinner",
+		"divRecordIfSame",
+		"confRecordIfSame",
+		"marginOfVictory",
+		"coinFlip",
+	]),
 	hofFactor: 1,
 	tradeDeadline: 0.6,
 	pointsFormula: wrap(""),

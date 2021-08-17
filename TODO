@@ -3,6 +3,8 @@ More specific achievements, that are really more like challenges
 
 achievements stored separately based on difficulty
 
+free throws with no time left https://github.com/zengm-games/zengm/issues/392
+
 god mode customize all star selections
 
 way to tell getCopy we are not going to mutate, so don't need deepcopy

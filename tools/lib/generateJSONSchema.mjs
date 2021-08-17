@@ -111,6 +111,33 @@ const genRatings = (sport /*: string*/) => {
 	};
 };
 
+const wrap = (child) => ({
+	anyOf: [
+		{
+			type: "array",
+			minItems: 1,
+			items: {
+				type: "object",
+				properties: {
+					start: {
+						anyOf: [
+							{
+								type: "null",
+							},
+							{
+								type: "integer",
+							},
+						],
+					},
+					value: child,
+				},
+				required: ["start", "value"],
+			},
+		},
+		child,
+	],
+});
+
 const generateJSONSchema = (sport /*: string*/) => {
 	if (sport === "test") {
 		return {
@@ -781,17 +808,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							playerMoodTraits: {
 								type: "boolean",
 							},
-							pointsFormula: {
-								oneOf: [
-									{
-										type: "array",
-										minItems: 1,
-									},
-									{
-										type: "string",
-									},
-								],
-							},
+							pointsFormula: wrap({
+								type: "string",
+							}),
 							nextPhase: {
 								// Shouldn't actually be null, but legacy
 								anyOf: [
@@ -845,16 +864,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "integer",
 								minimum: 1,
 							},
-							numPlayoffByes: {
-								anyOf: [
-									{
-										type: "integer",
-									},
-									{
-										type: "array",
-									},
-								],
-							},
+							numPlayoffByes: wrap({
+								type: "integer",
+							}),
 							numSeasonsFutureDraftPicks: {
 								type: "integer",
 								minimum: 0,
@@ -871,10 +883,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							playoffsByConf: {
 								type: "boolean",
 							},
-							playoffsNumTeamsDiv: {
-								type: "array",
-								minItems: 1,
-							},
+							playoffsNumTeamsDiv: wrap({
+								type: "integer",
+								minimum: 0,
+							}),
 							playoffsReseed: {
 								type: "boolean",
 							},
@@ -954,26 +966,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "array",
 								minItems: 1,
 							},
-							ties: {
-								anyOf: [
-									{
-										type: "boolean",
-									},
-									{
-										type: "array",
-									}
-								],
-							},
-							otl: {
-								anyOf: [
-									{
-										type: "boolean",
-									},
-									{
-										type: "array",
-									}
-								],
-							},
+							ties: wrap({
+								type: "boolean",
+							}),
+							otl: wrap({
+								type: "boolean",
+							}),
 							thanosCooldownEnd: {
 								type: "number",
 							},

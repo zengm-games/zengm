@@ -589,10 +589,13 @@ const generateJSONSchema = (sport /*: string*/) => {
 							challengeThanosMode: {
 								type: "boolean",
 							},
-							confs: {
+							confs: wrap({
 								type: "array",
 								minItems: 1,
-							},
+								items: {
+									$ref: "#/definitions/conf",
+								},
+							}),
 							daysLeft: {
 								type: "integer",
 								minimum: 0,
@@ -604,10 +607,13 @@ const generateJSONSchema = (sport /*: string*/) => {
 							difficulty: {
 								type: "number",
 							},
-							divs: {
+							divs: wrap({
 								type: "array",
 								minItems: 1,
-							},
+								items: {
+									$ref: "#/definitions/div",
+								},
+							}),
 							draftAges: {
 								type: "array",
 								items: {
@@ -856,10 +862,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 									}
 								],
 							},
-							numGamesPlayoffSeries: {
+							numGamesPlayoffSeries: wrap({
 								type: "array",
 								minItems: 1,
-							},
+								items: {
+									type: "integer",
+									minimum: 1
+								},
+							}),
 							numPlayersOnCourt: {
 								type: "integer",
 								minimum: 1,

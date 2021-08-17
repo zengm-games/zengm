@@ -125,6 +125,7 @@ const roundOverrides: Record<
 		defFmbRec: "noDecimalPlace",
 		defFmbYds: "noDecimalPlace",
 		defFmbTD: "noDecimalPlace",
+		defFmbLng: "noDecimalPlace",
 		defSk: "noDecimalPlace",
 		defTck: "noDecimalPlace",
 		defTckSolo: "noDecimalPlace",

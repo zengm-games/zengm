@@ -1009,13 +1009,13 @@ const sportSpecificCols = bySport<{
 			desc: "Fumbles returned for touchdowns",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "Lng",
+			title: "TD",
 		},
 		"stat:defFmbLng": {
 			desc: "Longest Fumble Return",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "TD",
+			title: "Lng",
 		},
 		"stat:defSk": {
 			desc: "Sacks",

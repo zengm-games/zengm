@@ -502,6 +502,7 @@ const updatePlayer = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
+		updateEvents.includes("playerMovement") ||
 		!state.retired ||
 		state.pid !== inputs.pid
 	) {

@@ -340,6 +340,7 @@ const JERSEYS = bySport({
 	football: {
 		football: "Default",
 		football2: "Shoulder flair",
+		football5: "Shoulder flair 2",
 		football3: "Shoulder stripes",
 		football4: "Low flair",
 	},

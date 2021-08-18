@@ -327,5 +327,9 @@ const setupRoutes = () => {
 	await setupEnv();
 	render();
 	await setupRoutes();
-	await import("./util/initServiceWorker");
+
+	await Promise.all([
+		import("./util/initServiceWorker"),
+		import("./util/initPersistentStorage"),
+	]);
 })();

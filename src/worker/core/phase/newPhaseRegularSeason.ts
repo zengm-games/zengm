@@ -9,7 +9,6 @@ import {
 	isSport,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-	WEBSITE_ROOT,
 } from "../../../common";
 import { unwrap } from "idb";
 
@@ -129,44 +128,6 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 					});
 				}
 			}
-		}
-	}
-
-	if (
-		navigator.storage &&
-		navigator.storage.persist &&
-		navigator.storage.persisted
-	) {
-		let persisted = await navigator.storage.persisted();
-
-		// If possible to get persistent storage without prompting the user, do it!
-		if (!persisted) {
-			try {
-				if (navigator.permissions && navigator.permissions.query) {
-					const permission = await navigator.permissions.query({
-						name: "persistent-storage",
-					});
-
-					if (permission.state === "granted") {
-						persisted = await navigator.storage.persist();
-					}
-				}
-			} catch (error) {
-				// Old browsers might error if they don't recognize the "persistent-storage" permission, but who cares
-				console.error(error);
-			}
-		}
-
-		// If still not persisted, notify user with some probabilitiy
-		if (!persisted && Math.random() < 0.1) {
-			logEvent({
-				extraClass: "",
-				persistent: true,
-				saveToDb: false,
-				htmlIsSafe: true,
-				text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data in your browser profile, so <a href="https://${WEBSITE_ROOT}/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="navigator.storage.persist().then((result) => { this.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Global Settings.'; })">Enable Persistent Storage</button></div>`,
-				type: "info",
-			});
 		}
 	}
 

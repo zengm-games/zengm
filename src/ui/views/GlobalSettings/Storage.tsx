@@ -50,7 +50,11 @@ const Storage = () => {
 		<>
 			<p>
 				Since {GAME_NAME} stores game data in your browser profile,{" "}
-				<a href={`https://${WEBSITE_ROOT}/manual/faq/#missing-leagues`}>
+				<a
+					href={`https://${WEBSITE_ROOT}/manual/faq/#missing-leagues`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
 					sometimes it can be inadvertently deleted
 				</a>
 				. Enabling persistent storage helps protect against this.

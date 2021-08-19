@@ -1,3 +1,26 @@
+UI to edit names/countries/races/colleges
+- frequencies editor
+  - list of countries currently specified, along with frequency
+    - check for explicit frequencies. if missing, check for explicit countries and derive like frequenciesObject. if missing, use default
+- names editor
+  - next to each country on frequencies list, note whether it uses default or custom names, with ability to switch between them
+  - for custom countries, no option to use default names
+  - if using custom names, require there to be at least one entry in first/last
+- races
+  - like names, next to each country, note whether it uses default or custom names, with ability to switch between them
+  - unlike names, can have default races for custom country too
+    - for non built in, default like in loadNames - fall back to specified default or usage
+  - some way to specify default names
+    - think about how it can support default colleges and fractionSkipCollege in the future
+- colleges
+  - leave for later, not needed in v1
+- import/export of various CSVs, or use JSON format playerBioInfo?
+  - JSON of a valid league file with only playerBioInfo in it
+- when saving how to know when to store whole or part as undefined (default)
+- buttons to set default on all screenshot
+  - toWorker to get default values
+- input defaultValue playerBioInfo should be with loadNames/etc applied
+
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
 
@@ -405,7 +428,6 @@ better asian names
 https://discord.com/channels/290013534023057409/331882115119448065/792603966063902741
 
 name/colleges
-- UI to edit, from league settings
 - special entries in frequencies
   - _random - uniform random of all built-in countries
   - _default - built-in countries at their default probability
@@ -1087,8 +1109,6 @@ teams play better/worse when down/up
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
 - https://github.com/zengm-games/zengm/pull/276
-
-GUI to add countries, colleges, and names
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1

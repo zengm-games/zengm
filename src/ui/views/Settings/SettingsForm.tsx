@@ -22,7 +22,8 @@ import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import Injuries from "./Injuries";
-import type { InjuriesSetting } from "../../../common/types";
+import type { InjuriesSetting, PlayerBioInfo } from "../../../common/types";
+import PlayerBioInfo2 from "./PlayerBioInfo";
 
 const settingNeedsGodMode = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -1275,7 +1276,7 @@ const GodModeSettingsButton = ({
 	);
 };
 
-const SPECIAL_STATE_OTHERS = ["injuries"] as const;
+const SPECIAL_STATE_OTHERS = ["injuries", "playerBioInfo"] as const;
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
@@ -1283,7 +1284,8 @@ type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
 
 type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<SpecialStateBoolean, boolean> &
-	Record<"injuries", InjuriesSetting>;
+	Record<"injuries", InjuriesSetting> &
+	Record<"playerBioInfo", PlayerBioInfo | undefined>;
 
 const SettingsForm = ({
 	onCancel,
@@ -1540,6 +1542,9 @@ const SettingsForm = ({
 			name: "Playoffs",
 		},
 		{
+			name: "Player",
+		},
+		{
 			name: "Team",
 		},
 		{
@@ -1628,9 +1633,6 @@ const SettingsForm = ({
 		},
 		{
 			name: "Game Modes",
-		},
-		{
-			name: "Player Development",
 		},
 		{
 			name: "UI",
@@ -1793,6 +1795,20 @@ const SettingsForm = ({
 															setState(prevState => ({
 																...prevState,
 																injuries,
+															}));
+														}}
+													/>
+												);
+											} else if (key === "playerBioInfo") {
+												customFormNode = (
+													<PlayerBioInfo2
+														defaultValue={state.playerBioInfo}
+														disabled={!enabled || submitting}
+														godModeRequired={godModeRequired}
+														onChange={playerBioInfo => {
+															setState(prevState => ({
+																...prevState,
+																playerBioInfo,
 															}));
 														}}
 													/>

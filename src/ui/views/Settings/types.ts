@@ -86,7 +86,8 @@ export type Key =
 	| "inflationStd"
 	| "playoffsByConf"
 	| "playoffsNumTeamsDiv"
-	| "playoffsReseed";
+	| "playoffsReseed"
+	| "playerBioInfo";
 
 export type Category =
 	| "New League"
@@ -105,7 +106,7 @@ export type Category =
 	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"
-	| "Player Development"
+	| "Player"
 	| "UI";
 
 export type FieldType =

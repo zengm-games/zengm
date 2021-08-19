@@ -111,6 +111,7 @@ import {
 import goatFormula from "../util/goatFormula";
 import getRandomTeams from "./getRandomTeams";
 import { withState } from "../core/player/name";
+import { initDefaults } from "../util/loadNames";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1469,6 +1470,8 @@ const getLeagueName = () => {
 const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
+
+const getPlayerBioInfoDefaults = initDefaults;
 
 const getRandomCollege = async () => {
 	// Don't use real country, since most have no colleges by default
@@ -3582,6 +3585,7 @@ export default {
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,
+	getPlayerBioInfoDefaults,
 	getRandomCollege,
 	getRandomCountry,
 	getRandomName,

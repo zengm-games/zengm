@@ -1,13 +1,13 @@
-import type {
-	PlayerBioInfoProcessed,
-	PlayerBioInfo,
-	NamesLegacy,
-} from "../../common/types";
+import {
+	DefaultNames,
+	getFrequencies,
+	mergeCountries,
+} from "../../common/names";
+import type { PlayerBioInfoProcessed, NamesLegacy } from "../../common/types";
 import defaultColleges from "../data/defaultColleges";
 import { defaultCountries, groups } from "../data/defaultCountries";
 import defaultRaces from "../data/defaultRaces";
 import g from "./g";
-import helpers from "./helpers";
 
 const toCumSumArray = <T extends string>(
 	obj: Record<T, number>,
@@ -29,23 +29,11 @@ const legacyConvert = (array: [string, number][]) => {
 	return obj;
 };
 
-let defaultNamesCountries: Record<
-	string,
-	{
-		first: Record<string, number>;
-		last: Record<string, number>;
-	}
->;
+let defaultNamesCountries: DefaultNames;
 
-let defaultNamesGroups: Record<
-	string,
-	{
-		first: Record<string, number>;
-		last: Record<string, number>;
-	}
->;
+let defaultNamesGroups: DefaultNames;
 
-const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
+export const initDefaults = async () => {
 	if (!defaultNamesCountries || !defaultNamesGroups) {
 		if (process.env.NODE_ENV === "test") {
 			const dummyNames = {
@@ -95,6 +83,19 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		console.log(JSONstringifyOrder(defaultCountries, 4));*/
 	}
 
+	return {
+		colleges: defaultColleges,
+		countries: defaultCountries,
+		groups,
+		races: defaultRaces,
+		namesCountries: defaultNamesCountries,
+		namesGroups: defaultNamesGroups,
+	};
+};
+
+const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
+	await initDefaults();
+
 	let gPlayerBioInfo = g.get("playerBioInfo");
 	const gNames: NamesLegacy | undefined = (g as any).names;
 	if (!gPlayerBioInfo && gNames) {
@@ -128,46 +129,12 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		};
 	}
 
-	// If a country is specified in g.playerBioInfo.names, it overrides the built-in ones. But built-in ones still exists and could be used, depending on the value of "frequencies"
-
-	const mergedCountries: PlayerBioInfo["countries"] = {
-		...defaultNamesCountries,
-	};
-
-	for (const [group, info] of Object.entries(defaultNamesGroups)) {
-		for (const country of (groups as any)[group]) {
-			if (!mergedCountries[country]) {
-				mergedCountries[country] = info;
-			} else {
-				mergedCountries[country] = helpers.deepCopy(mergedCountries[country]);
-				for (const firstOrLast of ["first", "last"] as const) {
-					if (!mergedCountries[country][firstOrLast]) {
-						mergedCountries[country][firstOrLast] = {};
-					}
-					for (const [name, count] of Object.entries(info[firstOrLast])) {
-						if (mergedCountries[country][firstOrLast]![name] === undefined) {
-							mergedCountries[country][firstOrLast]![name] = count;
-						} else {
-							mergedCountries[country][firstOrLast]![name] += count;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	if (gPlayerBioInfo && gPlayerBioInfo.countries) {
-		for (const [country, info] of Object.entries(gPlayerBioInfo.countries)) {
-			if (!mergedCountries[country]) {
-				mergedCountries[country] = info;
-			} else {
-				mergedCountries[country] = {
-					...mergedCountries[country],
-					...info,
-				};
-			}
-		}
-	}
+	const mergedCountries = mergeCountries(
+		gPlayerBioInfo,
+		defaultNamesCountries,
+		defaultNamesGroups,
+		groups,
+	);
 
 	const countries: PlayerBioInfoProcessed["countries"] = {};
 	for (const [
@@ -216,28 +183,7 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		races = toCumSumArray(defaultRaces.USA);
 	}
 
-	let frequenciesObject: Record<string, number> | undefined;
-	if (gPlayerBioInfo?.frequencies) {
-		// Manually specified frequencies
-		frequenciesObject = gPlayerBioInfo.frequencies;
-	} else if (gPlayerBioInfo?.countries) {
-		// Frequencies inferred from manually specified countries
-		frequenciesObject = {};
-		for (const [country, { first }] of Object.entries(
-			gPlayerBioInfo.countries,
-		)) {
-			if (first) {
-				frequenciesObject[country] = 0;
-				for (const count of Object.values(first)) {
-					frequenciesObject[country] += count;
-				}
-			}
-		}
-	}
-	if (!frequenciesObject || Object.keys(frequenciesObject).length === 0) {
-		// Default frequencies
-		frequenciesObject = defaultCountries;
-	}
+	const frequenciesObject = getFrequencies(gPlayerBioInfo, defaultCountries);
 
 	// For documentation, getting the default list of country frequencies
 	// console.log(JSON.stringify(frequenciesObject, Object.keys(frequenciesObject).sort(), "\t"));

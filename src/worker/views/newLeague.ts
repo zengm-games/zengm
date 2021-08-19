@@ -224,6 +224,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			defaultGameAttributes,
 			"playoffsReseed",
 		),
+		playerBioInfo: unwrapGameAttribute(defaultGameAttributes, "playerBioInfo"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

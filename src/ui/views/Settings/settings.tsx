@@ -1185,7 +1185,17 @@ if (isSport("basketball")) {
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
-			category: "Player Development",
+			category: "Player",
+			key: "playerBioInfo",
+			name: "Biographical Info",
+			godModeRequired: "always",
+			type: "custom",
+			description:
+				"Customize the home countries and names of generated players.",
+			customForm: true,
+		},
+		{
+			category: "Player",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
 			godModeRequired: "existingLeagueOnly",

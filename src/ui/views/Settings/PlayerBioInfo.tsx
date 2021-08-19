@@ -1,8 +1,8 @@
 import { csvFormat, csvParse } from "d3-dsv";
 import { m, AnimatePresence } from "framer-motion";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import type { InjuriesSetting } from "../../../common/types";
+import type { PlayerBioInfo, Race, ThenArg } from "../../../common/types";
 import {
 	confirm,
 	downloadFile,
@@ -12,24 +12,137 @@ import {
 } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import classNames from "classnames";
+import { animation } from "./Injuries";
+import type { initDefaults } from "../../../worker/util/loadNames";
+import { getFrequencies, mergeCountries } from "../../../common/names";
+import isEqual from "lodash-es/isEqual";
+import orderBy from "lodash-es/orderBy";
 
-const formatInjuries = (injuries: InjuriesSetting) =>
-	injuries.map(row => ({
-		id: Math.random(),
-		name: row.name,
-		frequency: String(row.frequency),
-		games: String(row.games),
-	}));
+type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
 
-type InjuriesText = ReturnType<typeof formatInjuries>;
+const racesToText = (races: Record<Race, number>) =>
+	orderBy(
+		Object.entries(races).map(([race, frequency]) => ({
+			race,
+			frequency: String(frequency),
+		})),
+		"race",
+	);
+
+const formatInfoState = (
+	playerBioInfo: PlayerBioInfo | undefined,
+	defaults: Defaults | undefined,
+) => {
+	if (defaults === undefined) {
+		return [];
+	}
+
+	const mergedCountries = mergeCountries(
+		playerBioInfo,
+		defaults.namesCountries,
+		defaults.namesGroups,
+		defaults.groups,
+	);
+
+	// also get back frequencies, in case not defined in playerBioInfo
+	const frequencies = getFrequencies(playerBioInfo, defaults.countries);
+
+	const countries = [];
+
+	for (const [country, frequency] of Object.entries(frequencies)) {
+		const mergedCountry = mergedCountries[country];
+		if (!mergedCountry) {
+			continue;
+		}
+
+		const defaultRaces2 =
+			defaults.races[country] ??
+			playerBioInfo?.default?.races ??
+			defaults.races.USA;
+		const races = mergedCountry.races ?? defaultRaces2;
+		const defaultRaces = isEqual(races, defaultRaces2);
+
+		const names = {
+			first: mergedCountry.first ?? {},
+			last: mergedCountry.last ?? {},
+		};
+		const defaultNamesAllowed = !!defaults.countries[country];
+		let defaultNames = false;
+		if (defaultNamesAllowed) {
+			let fromGroup;
+			for (const [group, countries] of Object.entries(defaults.groups)) {
+				if (countries.includes(country)) {
+					fromGroup = group;
+					break;
+				}
+			}
+
+			let namesCountry;
+			if (fromGroup) {
+				namesCountry = defaults.namesGroups[fromGroup];
+			} else if (defaults.namesCountries[country]) {
+				namesCountry = defaults.namesCountries[country];
+			}
+
+			if (namesCountry) {
+				defaultNames =
+					defaultNamesAllowed &&
+					isEqual(names.first, namesCountry.first) &&
+					isEqual(names.last, namesCountry.last);
+			}
+		}
+
+		const racesText = racesToText(races);
+
+		const namesText: Record<
+			"first" | "last",
+			{
+				name: string;
+				frequency: string;
+			}[]
+		> = {
+			first: [],
+			last: [],
+		};
+		for (const key of ["first", "last"] as const) {
+			namesText[key] = orderBy(
+				Object.entries(names[key]).map(([name, frequency]) => ({
+					name,
+					frequency: String(frequency),
+				})),
+				"frequency",
+				"desc",
+			);
+		}
+
+		countries.push({
+			id: Math.random(),
+			country,
+			frequency: String(frequency),
+
+			defaultRaces,
+			races: racesText,
+
+			defaultNames,
+			defaultNamesAllowed,
+			names: namesText,
+		});
+	}
+
+	return countries;
+};
+
+type PlayerBioInfoState = ReturnType<typeof formatInfoState>;
 
 // https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
+	defaults,
 	setErrorMessage,
-	setInjuries,
+	setInfoState,
 }: {
+	defaults: Defaults | undefined;
 	setErrorMessage: (errorMessage?: string) => void;
-	setInjuries: (injuries: InjuriesText) => void;
+	setInfoState: (injuries: PlayerBioInfoState) => void;
 }) => (
 	<button
 		className="btn btn-light-bordered"
@@ -67,7 +180,7 @@ const ImportButton = ({
 				const reader = new window.FileReader();
 				reader.readAsText(file);
 
-				reader.onload = event2 => {
+				reader.onload = async event2 => {
 					try {
 						// @ts-ignore
 						const rows = csvParse(event2.currentTarget.result);
@@ -83,7 +196,7 @@ const ImportButton = ({
 							return;
 						}
 
-						setInjuries(formatInjuries(rows as any));
+						setInfoState(formatInfoState(rows as any), defaults);
 					} catch (error) {
 						setErrorMessage(error.message);
 						return;
@@ -94,11 +207,11 @@ const ImportButton = ({
 	</button>
 );
 
-const ExportButton = ({ injuries }: { injuries: InjuriesText }) => (
+const ExportButton = ({ infoState }: { infoState: PlayerBioInfoState }) => (
 	<button
 		className="btn btn-light-bordered"
 		onClick={() => {
-			const output = csvFormat(injuries, ["name", "frequency", "games"]);
+			const output = csvFormat(infoState, ["name", "frequency", "games"]);
 
 			downloadFile("injuries.csv", output, "text/csv");
 		}}
@@ -108,14 +221,18 @@ const ExportButton = ({ injuries }: { injuries: InjuriesText }) => (
 );
 
 const Controls = ({
-	injuries,
+	defaults,
+	infoState,
 	position,
-	setInjuries,
+	setInfoState,
 }: {
-	injuries: InjuriesText;
+	defaults: Defaults;
+	infoState: PlayerBioInfoState;
 	position: "top" | "bottom";
-	setInjuries: (
-		injuries: InjuriesText | ((injuries: InjuriesText) => InjuriesText),
+	setInfoState: (
+		infoState:
+			| PlayerBioInfoState
+			| ((infoState: PlayerBioInfoState) => PlayerBioInfoState),
 	) => void;
 }) => {
 	const [importErrorMessage, setImportErrorMessage] = useState<
@@ -129,16 +246,25 @@ const Controls = ({
 					<button
 						className="btn btn-light-bordered"
 						onClick={() => {
-							const newInjury = {
+							const newCountry: PlayerBioInfoState[number] = {
 								id: Math.random(),
-								name: "Injury",
+								country: "Country",
 								frequency: "1",
-								games: "1",
+
+								defaultRaces: false,
+								races: racesToText(defaults.races.USA),
+
+								defaultNames: false,
+								defaultNamesAllowed: false,
+								names: {
+									first: [],
+									last: [],
+								},
 							};
 							if (position === "top") {
-								setInjuries(rows => [newInjury, ...rows]);
+								setInfoState(rows => [newCountry, ...rows]);
 							} else {
-								setInjuries(rows => [...rows, newInjury]);
+								setInfoState(rows => [...rows, newCountry]);
 							}
 						}}
 					>
@@ -156,9 +282,10 @@ const Controls = ({
 						<Dropdown.Menu>
 							<Dropdown.Item
 								onClick={async () => {
-									setInjuries(
-										formatInjuries(
+									setInfoState(
+										formatInfoState(
 											await toWorker("main", "getDefaultInjuries"),
+											defaults,
 										),
 									);
 								}}
@@ -167,7 +294,7 @@ const Controls = ({
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
-									setInjuries([]);
+									setInfoState([]);
 								}}
 							>
 								Clear
@@ -177,10 +304,11 @@ const Controls = ({
 				</div>
 				<div className="btn-group">
 					<ImportButton
+						defaults={defaults}
 						setErrorMessage={setImportErrorMessage}
-						setInjuries={setInjuries}
+						setInfoState={setInfoState}
 					/>
-					<ExportButton injuries={injuries} />
+					<ExportButton infoState={infoState} />
 				</div>
 			</div>
 
@@ -193,8 +321,10 @@ const Controls = ({
 
 const isInvalidNumber = (number: number) => Number.isNaN(number) || number <= 0;
 
-const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
-	const injuries = injuriesText.map(row => ({
+const parseAndValidate = (
+	PlayerBioInfoState: PlayerBioInfoState,
+): PlayerBioInfo | undefined => {
+	const injuries = PlayerBioInfoState.map(row => ({
 		name: row.name,
 		frequency: parseFloat(row.frequency),
 		games: parseFloat(row.games),
@@ -221,33 +351,45 @@ const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
 	return injuries;
 };
 
-// If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though. Also https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZGhkhtPsGFPFxcKxhvZFkHpl
-export const animation = false;
-
-const Injuries = ({
+const PlayerBioInfo2 = ({
 	defaultValue,
 	disabled,
 	godModeRequired,
 	onChange,
 }: {
-	defaultValue: InjuriesSetting;
+	defaultValue: PlayerBioInfo | undefined;
 	disabled: boolean;
 	godModeRequired?: "always" | "existingLeagueOnly";
-	onChange: (injuries: InjuriesSetting) => void;
+	onChange: (injuries: PlayerBioInfo | undefined) => void;
 }) => {
 	const [show, setShow] = useState(false);
-	const [injuries, setInjuriesRaw] = useState(() =>
-		formatInjuries(defaultValue),
-	);
+	const [infoState, setInfoStateRaw] = useState<
+		PlayerBioInfoState | undefined
+	>();
 	const [dirty, setDirty] = useState(false);
-	const lastSavedInjuries = useRef<InjuriesText | undefined>();
+	const lastSavedState = useRef<PlayerBioInfoState | undefined>();
+	const [defaults, setDefaults] = useState<Defaults | undefined>();
 
-	const setInjuries = (injuries: Parameters<typeof setInjuriesRaw>[0]) => {
-		setInjuriesRaw(injuries);
+	const setInfoState = (
+		infoState: PlayerBioInfoState | ((infoState: PlayerBioInfoState) => void),
+	) => {
+		setInfoStateRaw(infoState as any);
 		setDirty(true);
 	};
 
-	const handleShow = () => setShow(true);
+	const loadDefaults = async () => {
+		const defaults = await toWorker("main", "getPlayerBioInfoDefaults");
+		setDefaults(defaults);
+		setInfoStateRaw(formatInfoState(defaultValue, defaults));
+	};
+
+	const handleShow = async () => {
+		if (!defaults) {
+			await loadDefaults();
+		}
+
+		setShow(true);
+	};
 
 	const handleCancel = async () => {
 		if (dirty) {
@@ -263,7 +405,9 @@ const Injuries = ({
 			}
 
 			// Reset for next time
-			setInjuriesRaw(lastSavedInjuries.current ?? formatInjuries(defaultValue));
+			setInfoStateRaw(
+				lastSavedState.current ?? formatInfoState(defaultValue, defaults),
+			);
 			setDirty(false);
 		}
 
@@ -281,7 +425,7 @@ const Injuries = ({
 
 		let parsed;
 		try {
-			parsed = parseAndValidate(injuries);
+			parsed = parseAndValidate(infoState);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -293,7 +437,7 @@ const Injuries = ({
 		}
 
 		// Save for next time
-		lastSavedInjuries.current = injuries;
+		lastSavedState.current = infoState;
 		setDirty(false);
 
 		setShow(false);
@@ -304,7 +448,7 @@ const Injuries = ({
 	const handleChange =
 		(key: "name" | "frequency" | "games", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setInjuries(rows =>
+			setInfoState(rows =>
 				rows.map((row, j) => {
 					if (i !== j) {
 						return row;
@@ -320,42 +464,34 @@ const Injuries = ({
 
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 
-	return (
-		<>
-			<button
-				className="btn btn-secondary"
-				type="button"
-				disabled={disabled}
-				title={title}
-				onClick={handleShow}
+	let modal = null;
+	if (infoState && defaults) {
+		modal = (
+			<Modal
+				size="lg"
+				show={show}
+				onHide={handleCancel}
+				animation={animation}
+				scrollable
 			>
-				Customize
-			</button>
-
-			<Modal show={show} onHide={handleCancel} animation={animation} scrollable>
 				<Modal.Header closeButton>
-					<Modal.Title>Injury Types</Modal.Title>
+					<Modal.Title>Player Biographical Info</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<p>
-						Injury rate is determined by the "Injury Rate" setting, which is
-						viewable on the main League Settings page. When an injury occurs,
-						the type of injury is randomly selected from this list. The
-						probability of a type being selected is its "frequency" value
-						divided by the sum of all frequencies.
-					</p>
-					<p>
-						"Games" is the average number of games that will be missed. There is
-						some variability based on luck and health spending.
+						The probability of a new player being from a certain country being
+						selected is its "frequency" value divided by the sum of all
+						frequencies.
 					</p>
 
 					<Controls
+						defaults={defaults}
 						position="top"
-						injuries={injuries}
-						setInjuries={setInjuries}
+						infoState={infoState}
+						setInfoState={setInfoState}
 					/>
 
-					{injuries.length > 0 ? (
+					{infoState.length > 0 ? (
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
 							<div className="form-row" style={{ marginRight: 22 }}>
@@ -364,9 +500,9 @@ const Injuries = ({
 								<div className="col-3">Games</div>
 							</div>
 							<AnimatePresence initial={false}>
-								{injuries.map((injury, i) => (
+								{infoState.map((country, i) => (
 									<m.div
-										key={injury.id}
+										key={country.id}
 										initial={{ opacity: 0, y: -38 }}
 										animate={{ opacity: 1, y: 0 }}
 										exit={{}}
@@ -379,7 +515,7 @@ const Injuries = ({
 													<input
 														type="text"
 														className="form-control"
-														value={injury.name}
+														value={country.country}
 														onChange={handleChange("name", i)}
 													/>
 												</div>
@@ -388,31 +524,20 @@ const Injuries = ({
 														type="text"
 														className={classNames("form-control", {
 															"is-invalid": isInvalidNumber(
-																parseFloat(injury.frequency),
+																parseFloat(country.frequency),
 															),
 														})}
-														value={injury.frequency}
+														value={country.frequency}
 														onChange={handleChange("frequency", i)}
 													/>
 												</div>
-												<div className="col-3">
-													<input
-														type="text"
-														className={classNames("form-control", {
-															"is-invalid": isInvalidNumber(
-																parseFloat(injury.games),
-															),
-														})}
-														value={injury.games}
-														onChange={handleChange("games", i)}
-													/>
-												</div>
+												<div className="col-3">AAA</div>
 											</div>
 											<button
 												className="text-danger btn btn-link pl-2 pr-0 border-0"
 												onClick={() => {
-													setInjuries(rows =>
-														rows.filter(row => row !== injury),
+													setInfoState(rows =>
+														rows.filter(row => row !== country),
 													);
 												}}
 												style={{ fontSize: 20 }}
@@ -428,15 +553,16 @@ const Injuries = ({
 						</form>
 					) : (
 						<div className="mt-3 text-danger">
-							You must define at least one injury type.
+							You must define at least one country.
 						</div>
 					)}
 
-					{injuries.length > 0 ? (
+					{infoState.length > 0 ? (
 						<Controls
+							defaults={defaults}
 							position="bottom"
-							injuries={injuries}
-							setInjuries={setInjuries}
+							infoState={infoState}
+							setInfoState={setInfoState}
 						/>
 					) : null}
 				</Modal.Body>
@@ -447,14 +573,30 @@ const Injuries = ({
 					<button
 						className="btn btn-primary"
 						onClick={handleSave}
-						disabled={injuries.length === 0}
+						disabled={infoState.length === 0}
 					>
 						Save
 					</button>
 				</Modal.Footer>
 			</Modal>
+		);
+	}
+
+	return (
+		<>
+			<button
+				className="btn btn-secondary"
+				type="button"
+				disabled={disabled}
+				title={title}
+				onClick={handleShow}
+			>
+				Customize
+			</button>
+
+			{modal}
 		</>
 	);
 };
 
-export default Injuries;
+export default PlayerBioInfo2;

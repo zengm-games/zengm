@@ -17,6 +17,7 @@ import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
 import isEqual from "lodash-es/isEqual";
 import orderBy from "lodash-es/orderBy";
+import { RacesEditor } from "./PlayerBioInfoEditors";
 
 type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
 
@@ -139,7 +140,7 @@ const formatInfoState = (
 		});
 	}
 
-	return countries;
+	return orderBy(countries, "country");
 };
 
 type PlayerBioInfoState = ReturnType<typeof formatInfoState>;
@@ -545,7 +546,19 @@ const PlayerBioInfo2 = ({
 												</div>
 												<div className="col-2">AAA</div>
 												<div className="col-2">AAA</div>
-												<div className="col-2">AAA</div>
+												<div className="col-2">
+													<RacesEditor
+														id={country.id}
+														defaultSelected={country.defaultRaces}
+														races={country.races}
+														onSetDefault={() => {
+															console.log("setDefault");
+														}}
+														onSave={races => {
+															console.log(races);
+														}}
+													/>
+												</div>
 											</div>
 											<button
 												className="text-danger btn btn-link pl-2 pr-0 border-0"

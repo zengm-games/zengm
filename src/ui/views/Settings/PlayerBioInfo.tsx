@@ -20,13 +20,22 @@ import orderBy from "lodash-es/orderBy";
 
 type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
 
-const racesToText = (races: Record<Race, number>) =>
+const objectToArray = <T extends string>(
+	object: Record<string, number>,
+	key: T,
+	sortKey: string,
+	order?: "asc" | "desc",
+): Record<T | "frequency", string>[] =>
 	orderBy(
-		Object.entries(races).map(([race, frequency]) => ({
-			race,
-			frequency: String(frequency),
-		})),
-		"race",
+		Object.entries(object).map(
+			([name, frequency]) =>
+				({
+					[key]: name,
+					frequency: String(frequency),
+				} as Record<T | "frequency", string>),
+		),
+		sortKey,
+		order,
 	);
 
 const formatInfoState = (
@@ -54,13 +63,6 @@ const formatInfoState = (
 		if (!mergedCountry) {
 			continue;
 		}
-
-		const defaultRaces2 =
-			defaults.races[country] ??
-			playerBioInfo?.default?.races ??
-			defaults.races.USA;
-		const races = mergedCountry.races ?? defaultRaces2;
-		const defaultRaces = isEqual(races, defaultRaces2);
 
 		const names = {
 			first: mergedCountry.first ?? {},
@@ -92,8 +94,6 @@ const formatInfoState = (
 			}
 		}
 
-		const racesText = racesToText(races);
-
 		const namesText: Record<
 			"first" | "last",
 			{
@@ -105,27 +105,37 @@ const formatInfoState = (
 			last: [],
 		};
 		for (const key of ["first", "last"] as const) {
-			namesText[key] = orderBy(
-				Object.entries(names[key]).map(([name, frequency]) => ({
-					name,
-					frequency: String(frequency),
-				})),
-				"frequency",
-				"desc",
-			);
+			namesText[key] = objectToArray(names[key], "name", "frequency", "desc");
 		}
+
+		const defaultColleges2 =
+			playerBioInfo?.default?.colleges ?? defaults.colleges;
+		const colleges = mergedCountry.colleges ?? defaultColleges2;
+		const defaultColleges = isEqual(colleges, defaultColleges2);
+		const collegesText = objectToArray(colleges, "name", "name");
+
+		const defaultRaces2 =
+			defaults.races[country] ??
+			playerBioInfo?.default?.races ??
+			defaults.races.USA;
+		const races = mergedCountry.races ?? defaultRaces2;
+		const defaultRaces = isEqual(races, defaultRaces2);
+		const racesText = objectToArray(races, "race", "race");
 
 		countries.push({
 			id: Math.random(),
 			country,
 			frequency: String(frequency),
 
-			defaultRaces,
-			races: racesText,
-
 			defaultNames,
 			defaultNamesAllowed,
 			names: namesText,
+
+			defaultColleges,
+			colleges: collegesText,
+
+			defaultRaces,
+			races: racesText,
 		});
 	}
 
@@ -252,7 +262,7 @@ const Controls = ({
 								frequency: "1",
 
 								defaultRaces: false,
-								races: racesToText(defaults.races.USA),
+								races: objectToArray(defaults.races.USA, "race", "race"),
 
 								defaultNames: false,
 								defaultNamesAllowed: false,
@@ -481,7 +491,7 @@ const PlayerBioInfo2 = ({
 					<p>
 						The probability of a new player being from a certain country being
 						selected is its "frequency" value divided by the sum of all
-						frequencies.
+						frequencies. Names, colleges, and races work the same way.
 					</p>
 
 					<Controls
@@ -495,9 +505,11 @@ const PlayerBioInfo2 = ({
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
 							<div className="form-row" style={{ marginRight: 22 }}>
-								<div className="col-6">Name</div>
-								<div className="col-3">Frequency</div>
-								<div className="col-3">Games</div>
+								<div className="col-4">Name</div>
+								<div className="col-2">Frequency</div>
+								<div className="col-2">Names</div>
+								<div className="col-2">Colleges</div>
+								<div className="col-2">Races</div>
 							</div>
 							<AnimatePresence initial={false}>
 								{infoState.map((country, i) => (
@@ -511,7 +523,7 @@ const PlayerBioInfo2 = ({
 									>
 										<div className="d-flex">
 											<div className="form-row mt-1 flex-grow-1" key={i}>
-												<div className="col-6">
+												<div className="col-4">
 													<input
 														type="text"
 														className="form-control"
@@ -519,7 +531,7 @@ const PlayerBioInfo2 = ({
 														onChange={handleChange("name", i)}
 													/>
 												</div>
-												<div className="col-3">
+												<div className="col-2">
 													<input
 														type="text"
 														className={classNames("form-control", {
@@ -531,7 +543,9 @@ const PlayerBioInfo2 = ({
 														onChange={handleChange("frequency", i)}
 													/>
 												</div>
-												<div className="col-3">AAA</div>
+												<div className="col-2">AAA</div>
+												<div className="col-2">AAA</div>
+												<div className="col-2">AAA</div>
 											</div>
 											<button
 												className="text-danger btn btn-link pl-2 pr-0 border-0"

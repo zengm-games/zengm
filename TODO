@@ -14,6 +14,10 @@ UI to edit names/countries/races/colleges
     - think about how it can support default colleges and fractionSkipCollege in the future
 - colleges
   - leave for later, not needed in v1
+    - really?
+  - where to set fractionSkipCollege (both default and country specific)?
+    - default - at top, include explanation about overrides by default for USA (and canada?)
+    - country-specific - at top of colleges editor
 - import/export of various CSVs, or use JSON format playerBioInfo?
   - JSON of a valid league file with only playerBioInfo in it
 - when saving how to know when to store whole or part as undefined (default)

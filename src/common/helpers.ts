@@ -853,8 +853,8 @@ function roundWinp(winp: number): string {
 	return output;
 }
 
-const upperCaseFirstLetter = (string: string): string => {
-	return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+const upperCaseFirstLetter = <T extends string>(string: T) => {
+	return `${string.charAt(0).toUpperCase()}${string.slice(1)}` as Capitalize<T>;
 };
 
 // https://medium.com/@_achou/dont-give-up-and-use-suppressimplicitanyindexerrors-ca6b208b9365

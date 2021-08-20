@@ -1,13 +1,12 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
-import { animation } from "./Injuries";
-import { confirm, helpers, logEvent } from "../../util";
+import { Modal } from "react-bootstrap";
+import { helpers, logEvent } from "../../util";
 import classNames from "classnames";
 import { isInvalidNumber, PlayerBioInfoState } from "./PlayerBioInfo";
 
-type RaceRow = Record<"race" | "frequency", string>;
+type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 
-const parseAndValidate = (races: RaceRow[]) => {
+const parseAndValidateRaces = (races: RaceRow[]) => {
 	const VALID_RACES = ["asian", "black", "brown", "white"];
 
 	for (const row of races) {
@@ -26,21 +25,21 @@ const parseAndValidate = (races: RaceRow[]) => {
 
 export const RacesEditor = ({
 	defaults,
-	races,
+	rows,
 	onCancel,
 	onSave,
 }: {
 	defaults: boolean;
-	races: PlayerBioInfoState["countries"][number]["races"];
+	rows: RaceRow[];
 	onCancel: () => void;
 	onSave: (races: RaceRow[]) => void;
 }) => {
-	const [racesEdited, setRacesEdited] = useState([...races]);
+	const [rowsEdited, setRowsEdited] = useState([...rows]);
 	const lastSavedState = useRef<RaceRow[] | undefined>();
 
 	const handleCancel = async () => {
 		// Reset for next time
-		setRacesEdited(lastSavedState.current ?? [...races]);
+		setRowsEdited(lastSavedState.current ?? [...rows]);
 
 		onCancel();
 	};
@@ -55,7 +54,7 @@ export const RacesEditor = ({
 		event.stopPropagation();
 
 		try {
-			parseAndValidate(racesEdited);
+			parseAndValidateRaces(rowsEdited);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -67,14 +66,15 @@ export const RacesEditor = ({
 		}
 
 		// Save for next time
-		lastSavedState.current = racesEdited;
+		lastSavedState.current = rowsEdited;
 
-		onSave(racesEdited);
+		onSave(rowsEdited);
 	};
 
 	const handleChange =
-		(i: number) => (event: ChangeEvent<HTMLInputElement>) => {
-			setRacesEdited(rows =>
+		(field: "frequency", i: number) =>
+		(event: ChangeEvent<HTMLInputElement>) => {
+			setRowsEdited(rows =>
 				rows.map((row, j) => {
 					if (i !== j) {
 						return row;
@@ -82,7 +82,7 @@ export const RacesEditor = ({
 
 					return {
 						...row,
-						frequency: event.target.value,
+						[field]: event.target.value,
 					};
 				}),
 			);
@@ -110,19 +110,19 @@ export const RacesEditor = ({
 						<div className="col-6">Race</div>
 						<div className="col-6">Frequency</div>
 					</div>
-					{racesEdited.map((race, i) => (
-						<div key={race.race} className="form-row mt-2 align-items-center">
+					{rowsEdited.map((rows, i) => (
+						<div key={rows.race} className="form-row mt-2 align-items-center">
 							<div className="col-6">
-								{helpers.upperCaseFirstLetter(race.race)}
+								{helpers.upperCaseFirstLetter(rows.race)}
 							</div>
 							<div className="col-6">
 								<input
 									type="text"
 									className={classNames("form-control", {
-										"is-invalid": isInvalidNumber(parseFloat(race.frequency)),
+										"is-invalid": isInvalidNumber(parseFloat(rows.frequency)),
 									})}
-									value={race.frequency}
-									onChange={handleChange(i)}
+									value={rows.frequency}
+									onChange={handleChange("frequency", i)}
 								/>
 							</div>
 						</div>
@@ -135,6 +135,142 @@ export const RacesEditor = ({
 				</button>
 				<button className="btn btn-primary" onClick={handleSave}>
 					Save Races
+				</button>
+			</Modal.Footer>
+		</>
+	);
+};
+
+type CollegeRow = PlayerBioInfoState["countries"][number]["colleges"][number];
+
+const parseAndValidateColleges = (colleges: CollegeRow[]) => {
+	for (const row of colleges) {
+		const number = parseFloat(row.frequency);
+		if (Number.isNaN(number)) {
+			throw new Error(
+				`Invalid frequency "${row.frequency}" for college "${row.name}"`,
+			);
+		}
+	}
+};
+
+export const CollegesEditor = ({
+	defaults,
+	rows,
+	onCancel,
+	onSave,
+}: {
+	defaults: boolean;
+	rows: CollegeRow[];
+	onCancel: () => void;
+	onSave: (colleges: CollegeRow[]) => void;
+}) => {
+	const [rowsEdited, setRowsEdited] = useState([...rows]);
+	const lastSavedState = useRef<CollegeRow[] | undefined>();
+
+	const handleCancel = async () => {
+		// Reset for next time
+		setRowsEdited(lastSavedState.current ?? [...rows]);
+
+		onCancel();
+	};
+
+	const handleSave = (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => {
+		event.preventDefault();
+
+		// Don't submit parent form
+		event.stopPropagation();
+
+		try {
+			parseAndValidateColleges(rowsEdited);
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+			return;
+		}
+
+		// Save for next time
+		lastSavedState.current = rowsEdited;
+
+		onSave(rowsEdited);
+	};
+
+	const handleChange =
+		(field: "name" | "frequency", i: number) =>
+		(event: ChangeEvent<HTMLInputElement>) => {
+			setRowsEdited(rows =>
+				rows.map((row, j) => {
+					if (i !== j) {
+						return row;
+					}
+
+					return {
+						...row,
+						[field]: event.target.value,
+					};
+				}),
+			);
+		};
+
+	return (
+		<>
+			<Modal.Body>
+				{defaults ? (
+					<p className="alert alert-warning">
+						Default races apply only to custom countries you create, not any of
+						the built-in countries in the game. Built-in countries all have
+						their own predefined default races.
+					</p>
+				) : null}
+
+				<form
+					onSubmit={handleSave}
+					style={{
+						maxWidth: 350,
+					}}
+				>
+					<input type="submit" className="d-none" />
+					<div className="form-row font-weight-bold">
+						<div className="col-9">College</div>
+						<div className="col-3">Frequency</div>
+					</div>
+					{rowsEdited.map((row, i) => (
+						<div key={i} className="form-row mt-2 align-items-center">
+							<div className="col-9">
+								<input
+									type="text"
+									className="form-control"
+									value={row.name}
+									onChange={handleChange("name", i)}
+								/>
+							</div>
+							<div className="col-3">
+								<input
+									type="text"
+									className={classNames("form-control", {
+										"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
+									})}
+									value={row.frequency}
+									onChange={handleChange("frequency", i)}
+								/>
+							</div>
+						</div>
+					))}
+				</form>
+			</Modal.Body>
+			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={handleCancel}>
+					Cancel
+				</button>
+				<button className="btn btn-primary" onClick={handleSave}>
+					Save Colleges
 				</button>
 			</Modal.Footer>
 		</>

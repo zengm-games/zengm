@@ -1,22 +1,14 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
-import type { PlayerBioInfo, Race, ThenArg } from "../../../common/types";
-import {
-	confirm,
-	downloadFile,
-	helpers,
-	logEvent,
-	resetFileInput,
-	toWorker,
-} from "../../util";
+import { ChangeEvent, useRef, useState } from "react";
+import { Modal } from "react-bootstrap";
+import type { PlayerBioInfo, ThenArg } from "../../../common/types";
+import { confirm, helpers, logEvent, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
-import classNames from "classnames";
 import { animation } from "./Injuries";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
 import isEqual from "lodash-es/isEqual";
 import orderBy from "lodash-es/orderBy";
-import { RacesEditor } from "./PlayerBioInfoEditors";
+import { CollegesEditor, RacesEditor } from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
 
 export type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
@@ -200,6 +192,10 @@ export type PageInfo =
 			name: "countries";
 	  }
 	| {
+			name: "colleges";
+			index: number | "default";
+	  }
+	| {
 			name: "races";
 			index: number | "default";
 	  };
@@ -323,7 +319,9 @@ const PlayerBioInfo2 = ({
 	const handleChange2 =
 		(key: "colleges" | "names" | "races", i: number | "default") =>
 		(rows: any[]) => {
-			const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
+			const defaultProp = `default${helpers.upperCaseFirstLetter(
+				key,
+			)}` as const;
 
 			if (i === "default") {
 				setInfoState(data => ({
@@ -336,7 +334,7 @@ const PlayerBioInfo2 = ({
 						}
 
 						// Apply the new default
-						if ((row as any)[defaultProp]) {
+						if (row[defaultProp]) {
 							return {
 								...row,
 								[key]: [...rows],
@@ -451,7 +449,7 @@ const PlayerBioInfo2 = ({
 				) : pageInfo.name === "races" ? (
 					<RacesEditor
 						defaults={pageInfo.index === "default"}
-						races={
+						rows={
 							pageInfo.index === "default"
 								? infoState.defaultRaces
 								: infoState.countries[pageInfo.index].races
@@ -462,6 +460,21 @@ const PlayerBioInfo2 = ({
 							});
 						}}
 						onSave={handleChange2("races", pageInfo.index)}
+					/>
+				) : pageInfo.name === "colleges" ? (
+					<CollegesEditor
+						defaults={pageInfo.index === "default"}
+						rows={
+							pageInfo.index === "default"
+								? infoState.defaultColleges
+								: infoState.countries[pageInfo.index].colleges
+						}
+						onCancel={() => {
+							setPageInfo({
+								name: "countries",
+							});
+						}}
+						onSave={handleChange2("colleges", pageInfo.index)}
 					/>
 				) : null}
 			</Modal>

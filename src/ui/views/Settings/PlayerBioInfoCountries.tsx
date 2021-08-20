@@ -5,6 +5,7 @@ import type { PlayerBioInfo, Race, ThenArg } from "../../../common/types";
 import {
 	confirm,
 	downloadFile,
+	helpers,
 	logEvent,
 	resetFileInput,
 	toWorker,
@@ -307,37 +308,44 @@ export const CountriesEditor = ({
 										/>
 									</div>
 									<div className="col-2">AAA</div>
-									<div className="col-2">AAA</div>
-									<div className="col-2">
-										<Dropdown>
-											<Dropdown.Toggle
-												variant="secondary"
-												id={`dropdown-race-${country.id}`}
-											>
-												{country.defaultRaces ? "Default" : "Custom"}
-											</Dropdown.Toggle>
+									{(["colleges", "races"] as const).map(key => (
+										<div className="col-2" key={key}>
+											<Dropdown>
+												<Dropdown.Toggle
+													variant="secondary"
+													id={`dropdown-${key}-${country.id}`}
+												>
+													{country[
+														`default${helpers.upperCaseFirstLetter(
+															key,
+														)}` as const
+													]
+														? "Default"
+														: "Custom"}
+												</Dropdown.Toggle>
 
-											<Dropdown.Menu>
-												<Dropdown.Item
-													onClick={() => {
-														onSetDefault("races", i);
-													}}
-												>
-													Default
-												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														setPageInfo({
-															name: "races",
-															index: i,
-														});
-													}}
-												>
-													Custom
-												</Dropdown.Item>
-											</Dropdown.Menu>
-										</Dropdown>
-									</div>
+												<Dropdown.Menu>
+													<Dropdown.Item
+														onClick={() => {
+															onSetDefault(key, i);
+														}}
+													>
+														Default
+													</Dropdown.Item>
+													<Dropdown.Item
+														onClick={() => {
+															setPageInfo({
+																name: key,
+																index: i,
+															});
+														}}
+													>
+														Custom
+													</Dropdown.Item>
+												</Dropdown.Menu>
+											</Dropdown>
+										</div>
+									))}
 								</div>
 								<button
 									className="text-danger btn btn-link pl-2 pr-0 border-0"

@@ -13,11 +13,10 @@ UI to edit names/countries/races/colleges
   - some way to specify default names
     - think about how it can support default colleges and fractionSkipCollege in the future
 - colleges
-  - leave for later, not needed in v1
-    - really?
   - where to set fractionSkipCollege (both default and country specific)?
     - default - at top, include explanation about overrides by default for USA (and canada?)
     - country-specific - at top of colleges editor
+  - add/reset/default buttons
 - import/export of various CSVs, or use JSON format playerBioInfo?
   - JSON of a valid league file with only playerBioInfo in it
 - when saving how to know when to store whole or part as undefined (default)
@@ -36,6 +35,7 @@ UI to edit names/countries/races/colleges
   - colleges applies everywhere, by default. edit specific country to change that. exception for the rate for US/Canada
 - fractionSkipCollege
 - after saving names/colleges/races, scroll to where was before
+- does grid make sense? fixed columns better? 100% width buttons
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
@@ -43,6 +43,8 @@ More preset league structures
 add news feed entries for luxury tax etc payments https://discord.com/channels/290013534023057409/331882115119448065/877190934993977344
 
 some default logo rather than team logo in multi team mode on dashboard https://discord.com/channels/290013534023057409/331882115119448065/877544102844051476
+
+no floor for team rating? https://discord.com/channels/290013534023057409/331882115119448065/878162851741712404
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX

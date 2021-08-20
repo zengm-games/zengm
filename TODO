@@ -29,6 +29,9 @@ UI to edit names/countries/races/colleges
 - names/races need to be updated when country name is changed? to handle defaults
 - add country  button should be a dropdown. 1st is "Custom", after is all built-in countries not already defined
 - button to clone country
+- for all editors, make sure it handles save/cancel/dirty correctly
+- when 2 modals are open (editor) faded bg over first one
+- when 2nd modal is saved, dropdowns (like under races) start acting weird
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX

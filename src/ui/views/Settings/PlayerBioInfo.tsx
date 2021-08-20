@@ -330,12 +330,13 @@ const Controls = ({
 	);
 };
 
-const isInvalidNumber = (number: number) => Number.isNaN(number) || number <= 0;
+export const isInvalidNumber = (number: number) =>
+	Number.isNaN(number) || number <= 0;
 
 const parseAndValidate = (
-	PlayerBioInfoState: PlayerBioInfoState,
+	playerBioInfoState: PlayerBioInfoState,
 ): PlayerBioInfo | undefined => {
-	const injuries = PlayerBioInfoState.map(row => ({
+	const injuries = playerBioInfoState.map(row => ({
 		name: row.name,
 		frequency: parseFloat(row.frequency),
 		games: parseFloat(row.games),
@@ -473,6 +474,24 @@ const PlayerBioInfo2 = ({
 			);
 		};
 
+	const handleChange2 =
+		(key: "colleges" | "names" | "races", i: number) => (object: any) => {
+			setInfoState(rows =>
+				rows.map((row, j) => {
+					if (i !== j) {
+						return row;
+					}
+
+					console.log("CHECK IF DEFAULT PROPS CHANGED");
+
+					return {
+						...row,
+						[key]: object,
+					};
+				}),
+			);
+		};
+
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 
 	let modal = null;
@@ -505,7 +524,10 @@ const PlayerBioInfo2 = ({
 					{infoState.length > 0 ? (
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
-							<div className="form-row" style={{ marginRight: 22 }}>
+							<div
+								className="form-row font-weight-bold"
+								style={{ marginRight: 22 }}
+							>
 								<div className="col-4">Name</div>
 								<div className="col-2">Frequency</div>
 								<div className="col-2">Names</div>
@@ -523,7 +545,7 @@ const PlayerBioInfo2 = ({
 										transition={{ duration: 0.2, type: "tween" }}
 									>
 										<div className="d-flex">
-											<div className="form-row mt-1 flex-grow-1" key={i}>
+											<div className="form-row mt-2 flex-grow-1" key={i}>
 												<div className="col-4">
 													<input
 														type="text"
@@ -549,14 +571,13 @@ const PlayerBioInfo2 = ({
 												<div className="col-2">
 													<RacesEditor
 														id={country.id}
+														country={country.country}
 														defaultSelected={country.defaultRaces}
 														races={country.races}
 														onSetDefault={() => {
 															console.log("setDefault");
 														}}
-														onSave={races => {
-															console.log(races);
-														}}
+														onSave={handleChange2("races", i)}
 													/>
 												</div>
 											</div>

@@ -39,12 +39,16 @@ export const objectToArray = <T extends string>(
 		order,
 	);
 
-export const formatInfoState = (
+export const formatPlayerBioInfoState = (
 	playerBioInfo: PlayerBioInfo | undefined,
 	defaults: Defaults | undefined,
 ) => {
 	if (defaults === undefined) {
-		return [];
+		return {
+			defaultRaces: [],
+			defaultColleges: [],
+			countries: [],
+		};
 	}
 
 	const mergedCountries = mergeCountries(
@@ -58,6 +62,9 @@ export const formatInfoState = (
 	const frequencies = getFrequencies(playerBioInfo, defaults.countries);
 
 	const countries = [];
+
+	const defaultColleges2 =
+		playerBioInfo?.default?.colleges ?? defaults.colleges;
 
 	for (const [country, frequency] of Object.entries(frequencies)) {
 		const mergedCountry = mergedCountries[country];
@@ -109,8 +116,6 @@ export const formatInfoState = (
 			namesText[key] = objectToArray(names[key], "name", "frequency", "desc");
 		}
 
-		const defaultColleges2 =
-			playerBioInfo?.default?.colleges ?? defaults.colleges;
 		const colleges = mergedCountry.colleges ?? defaultColleges2;
 		const defaultColleges = isEqual(colleges, defaultColleges2);
 		const collegesText = objectToArray(colleges, "name", "name");
@@ -141,10 +146,21 @@ export const formatInfoState = (
 		});
 	}
 
-	return orderBy(countries, "country");
+	const defaultCollegesText = objectToArray(defaultColleges2, "name", "name");
+	const defaultRacesText = objectToArray(
+		playerBioInfo?.default?.races ?? defaults.races.USA,
+		"race",
+		"race",
+	);
+
+	return {
+		defaultColleges: defaultCollegesText,
+		defaultRaces: defaultRacesText,
+		countries: orderBy(countries, "country"),
+	};
 };
 
-export type PlayerBioInfoState = ReturnType<typeof formatInfoState>;
+export type PlayerBioInfoState = ReturnType<typeof formatPlayerBioInfoState>;
 
 export const isInvalidNumber = (number: number) =>
 	Number.isNaN(number) || number <= 0;
@@ -220,7 +236,7 @@ const PlayerBioInfo2 = ({
 	const loadDefaults = async () => {
 		const defaults = await toWorker("main", "getPlayerBioInfoDefaults");
 		setDefaults(defaults);
-		setInfoStateRaw(formatInfoState(defaultValue, defaults));
+		setInfoStateRaw(formatPlayerBioInfoState(defaultValue, defaults));
 	};
 
 	const handleShow = async () => {
@@ -246,7 +262,8 @@ const PlayerBioInfo2 = ({
 
 			// Reset for next time
 			setInfoStateRaw(
-				lastSavedState.current ?? formatInfoState(defaultValue, defaults),
+				lastSavedState.current ??
+					formatPlayerBioInfoState(defaultValue, defaults),
 			);
 			setDirty(false);
 		}
@@ -288,8 +305,9 @@ const PlayerBioInfo2 = ({
 	const handleChange =
 		(key: "name" | "frequency" | "games", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setInfoState(rows =>
-				rows.map((row, j) => {
+			setInfoState(data => ({
+				...data,
+				countries: data.countries.map((row, j) => {
 					if (i !== j) {
 						return row;
 					}
@@ -299,13 +317,14 @@ const PlayerBioInfo2 = ({
 						[key]: event.target.value,
 					};
 				}),
-			);
+			}));
 		};
 
 	const handleChange2 =
 		(key: "colleges" | "names" | "races", i: number) => (object: any) => {
-			setInfoState(rows =>
-				rows.map((row, j) => {
+			setInfoState(data => ({
+				...data,
+				countries: data.countries.map((row, j) => {
 					if (i !== j) {
 						return row;
 					}
@@ -319,7 +338,7 @@ const PlayerBioInfo2 = ({
 						[defaultProp]: false,
 					};
 				}),
-			);
+			}));
 
 			setPageInfo({
 				name: "countries",
@@ -332,7 +351,7 @@ const PlayerBioInfo2 = ({
 	if (infoState && defaults) {
 		let title = "Player Bio Info";
 		if (pageInfo.name !== "countries") {
-			const selectedCountry = infoState[pageInfo.index];
+			const selectedCountry = infoState.countries[pageInfo.index];
 			title += ` - ${selectedCountry.country} - ${helpers.upperCaseFirstLetter(
 				pageInfo.name,
 			)}`;
@@ -357,7 +376,7 @@ const PlayerBioInfo2 = ({
 						handleSave={handleSave}
 						onSetDefault={(type, i) => {
 							console.log(
-								`Somehow get default ${type} for ${infoState[i].country}`,
+								`Somehow get default ${type} for ${infoState.countries[i].country}`,
 							);
 
 							/*setInfoState(rows =>
@@ -383,7 +402,7 @@ const PlayerBioInfo2 = ({
 					/>
 				) : pageInfo.name === "races" ? (
 					<RacesEditor
-						country={infoState[pageInfo.index]}
+						races={infoState.countries[pageInfo.index].races}
 						onCancel={() => {
 							setPageInfo({
 								name: "countries",

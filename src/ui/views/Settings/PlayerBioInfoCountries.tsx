@@ -14,7 +14,7 @@ import { godModeRequiredMessage } from "./SettingsForm";
 import classNames from "classnames";
 import {
 	Defaults,
-	formatInfoState,
+	formatPlayerBioInfoState,
 	isInvalidNumber,
 	objectToArray,
 	PageInfo,
@@ -83,7 +83,7 @@ const ImportButton = ({
 							return;
 						}
 
-						setInfoState(formatInfoState(rows as any, defaults));
+						setInfoState(formatPlayerBioInfoState(rows as any, defaults));
 					} catch (error) {
 						setErrorMessage(error.message);
 						return;
@@ -135,28 +135,35 @@ const Controls = ({
 					<button
 						className="btn btn-light-bordered"
 						onClick={() => {
-							const newCountry: PlayerBioInfoState[number] = {
+							const newCountry: PlayerBioInfoState["countries"][number] = {
 								id: Math.random(),
 								country: "Country",
 								frequency: "1",
 
-								defaultRaces: false,
-								races: objectToArray(defaults.races.USA, "race", "race"),
+								builtIn: false,
 
-								defaultColleges: false,
-								colleges: [],
+								defaultRaces: true,
+								races: [...infoState.defaultRaces],
+
+								defaultColleges: true,
+								colleges: [...infoState.defaultColleges],
 
 								defaultNames: false,
-								defaultNamesAllowed: false,
 								names: {
 									first: [],
 									last: [],
 								},
 							};
 							if (position === "top") {
-								setInfoState(rows => [newCountry, ...rows]);
+								setInfoState(data => ({
+									...data,
+									countries: [newCountry, ...data.countries],
+								}));
 							} else {
-								setInfoState(rows => [...rows, newCountry]);
+								setInfoState(data => ({
+									...data,
+									countries: [...data.countries, newCountry],
+								}));
 							}
 						}}
 					>
@@ -175,7 +182,7 @@ const Controls = ({
 							<Dropdown.Item
 								onClick={async () => {
 									setInfoState(
-										formatInfoState(
+										formatPlayerBioInfoState(
 											await toWorker("main", "getDefaultInjuries"),
 											defaults,
 										),
@@ -186,7 +193,10 @@ const Controls = ({
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
-									setInfoState([]);
+									setInfoState(data => ({
+										...data,
+										countries: [],
+									}));
 								}}
 							>
 								Clear
@@ -246,7 +256,7 @@ export const CountriesEditor = ({
 					setInfoState={setInfoState}
 				/>
 
-				{infoState.length > 0 ? (
+				{infoState.countries.length > 0 ? (
 					<form onSubmit={handleSave} className="my-3">
 						<input type="submit" className="d-none" />
 						<div
@@ -260,7 +270,7 @@ export const CountriesEditor = ({
 							<div className="col-2">Races</div>
 						</div>
 						<AnimatePresence initial={false}>
-							{infoState.map((country, i) => (
+							{infoState.countries.map((country, i) => (
 								<m.div
 									key={country.id}
 									initial={{ opacity: 0, y: -38 }}
@@ -327,9 +337,12 @@ export const CountriesEditor = ({
 										<button
 											className="text-danger btn btn-link pl-2 pr-0 border-0"
 											onClick={() => {
-												setInfoState(rows =>
-													rows.filter(row => row !== country),
-												);
+												setInfoState(data => ({
+													...data,
+													countries: data.countries.filter(
+														row => row !== country,
+													),
+												}));
 											}}
 											style={{ fontSize: 20 }}
 											title="Delete"
@@ -348,7 +361,7 @@ export const CountriesEditor = ({
 					</div>
 				)}
 
-				{infoState.length > 0 ? (
+				{infoState.countries.length > 0 ? (
 					<Controls
 						defaults={defaults}
 						position="bottom"
@@ -364,7 +377,7 @@ export const CountriesEditor = ({
 				<button
 					className="btn btn-primary"
 					onClick={handleSave}
-					disabled={infoState.length === 0}
+					disabled={infoState.countries.length === 0}
 				>
 					Save
 				</button>

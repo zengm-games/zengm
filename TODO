@@ -21,7 +21,7 @@ UI to edit names/countries/races/colleges
 - import/export of various CSVs, or use JSON format playerBioInfo?
   - JSON of a valid league file with only playerBioInfo in it
 - when saving how to know when to store whole or part as undefined (default)
-  - DRY with formatInfoState
+  - DRY with formatPlayerBioInfoState
 - buttons to set default on all screenshot
   - toWorker to get default values
 - input defaultValue playerBioInfo should be raw. apply defaults in component, when switching to some format we can use for rendering (array)
@@ -38,7 +38,8 @@ UI to edit names/countries/races/colleges
   - races only applies to non-built in countries
   - colleges applies everywhere, by default. edit specific country to change that. exception for the rate for US/Canada
   - when edited, if defaultColleges/defaultRaces is set for any country, apply the new default (except for races where builtIn is true)
-  - formatInfoState should output defaults in text form too
+  - formatPlayerBioInfoState should output defaults in text form too
+- fractionSkipCollege
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX

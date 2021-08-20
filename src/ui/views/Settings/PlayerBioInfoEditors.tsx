@@ -25,24 +25,20 @@ const parseAndValidate = (races: RaceRow[]) => {
 };
 
 export const RacesEditor = ({
-	country,
+	races,
 	onCancel,
 	onSave,
-	onSetDefault,
 }: {
-	country: PlayerBioInfoState[number];
+	races: PlayerBioInfoState["countries"][number]["races"];
 	onCancel: () => void;
 	onSave: (races: RaceRow[]) => void;
-	onSetDefault: () => void;
 }) => {
-	const [show, setShow] = useState(false);
-	const [dirty, setDirty] = useState(false);
-	const [racesEdited, setRacesEdited] = useState([...country.races]);
+	const [racesEdited, setRacesEdited] = useState([...races]);
 	const lastSavedState = useRef<RaceRow[] | undefined>();
 
 	const handleCancel = async () => {
 		// Reset for next time
-		setRacesEdited(lastSavedState.current ?? [...country.races]);
+		setRacesEdited(lastSavedState.current ?? [...races]);
 
 		onCancel();
 	};

@@ -701,6 +701,10 @@ tr.table-warning:hover > td {
 	border: 1px solid $blue !important;
 	color: $gray-700 !important;
 }
+.btn-light-bordered-group-left {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
 .btn-light-bordered-group-right {
 	border-left-width: 0 !important;
 	border-top-left-radius: 0;

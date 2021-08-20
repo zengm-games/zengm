@@ -10,7 +10,6 @@ import {
 	resetFileInput,
 	toWorker,
 } from "../../util";
-import { godModeRequiredMessage } from "./SettingsForm";
 import classNames from "classnames";
 import {
 	Defaults,
@@ -113,6 +112,8 @@ type SetInfoState = (
 		| ((infoState: PlayerBioInfoState) => PlayerBioInfoState),
 ) => void;
 
+type CountryRow = PlayerBioInfoState["countries"][number];
+
 const Controls = ({
 	defaults,
 	infoState,
@@ -128,52 +129,70 @@ const Controls = ({
 		string | undefined
 	>();
 
+	const addCountry = (newCountry: CountryRow) => {
+		if (position === "top") {
+			setInfoState(data => ({
+				...data,
+				countries: [newCountry, ...data.countries],
+			}));
+		} else {
+			setInfoState(data => ({
+				...data,
+				countries: [...data.countries, newCountry],
+			}));
+		}
+	};
+
 	return (
 		<>
 			<div className="d-flex justify-content-between">
 				<div className="btn-group">
-					<button
-						className="btn btn-light-bordered"
-						onClick={() => {
-							const newCountry: PlayerBioInfoState["countries"][number] = {
-								id: Math.random(),
-								country: "Country",
-								frequency: "1",
+					<Dropdown>
+						<Dropdown.Toggle
+							className="btn-light-bordered btn-light-bordered-group-left"
+							variant="foo"
+							id="dropdown-countries-add"
+						>
+							Add
+						</Dropdown.Toggle>
 
-								builtIn: false,
+						<Dropdown.Menu>
+							<Dropdown.Item
+								onClick={async () => {
+									const newCountry: CountryRow = {
+										id: Math.random(),
+										country: "Country",
+										frequency: "1",
 
-								defaultRaces: true,
-								races: [...infoState.defaultRaces],
+										builtIn: false,
 
-								defaultColleges: true,
-								colleges: [...infoState.defaultColleges],
+										defaultRaces: true,
+										races: [...infoState.defaultRaces],
 
-								defaultNames: false,
-								names: {
-									first: [],
-									last: [],
-								},
-							};
-							if (position === "top") {
-								setInfoState(data => ({
-									...data,
-									countries: [newCountry, ...data.countries],
-								}));
-							} else {
-								setInfoState(data => ({
-									...data,
-									countries: [...data.countries, newCountry],
-								}));
-							}
-						}}
-					>
-						Add
-					</button>
+										defaultColleges: true,
+										colleges: [...infoState.defaultColleges],
+										fractionSkipCollege: "0.98",
+
+										defaultNames: false,
+										names: {
+											first: [],
+											last: [],
+										},
+									};
+
+									addCountry(newCountry);
+								}}
+							>
+								Custom
+							</Dropdown.Item>
+							<Dropdown.Item onClick={() => {}}>Foo</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
 					<Dropdown>
 						<Dropdown.Toggle
 							className="btn-light-bordered btn-light-bordered-group-right"
 							variant="foo"
-							id="dropdown-injuries-reset"
+							id="dropdown-countries-reset"
 						>
 							Reset
 						</Dropdown.Toggle>
@@ -243,6 +262,12 @@ export const CountriesEditor = ({
 	return (
 		<>
 			<Modal.Body>
+				<p>
+					By default, leagues can have players from any of the built-in
+					countries. Each built-in country comes with built-in names and races,
+					and they all share the same default colleges list. Here you can edit
+					any of that, or add custom countries.
+				</p>
 				<p>
 					The probability of a new player being from a certain country being
 					selected is its "frequency" value divided by the sum of all
@@ -317,45 +342,61 @@ export const CountriesEditor = ({
 											onChange={handleChange("frequency", i)}
 										/>
 									</div>
-									<div className="col-2">AAA</div>
-									{(["colleges", "races"] as const).map(key => (
-										<div className="col-2" key={key}>
-											<Dropdown>
-												<Dropdown.Toggle
-													variant="secondary"
-													id={`dropdown-${key}-${country.id}`}
-												>
-													{country[
-														`default${helpers.upperCaseFirstLetter(
-															key,
-														)}` as const
-													]
-														? "Default"
-														: "Custom"}
-												</Dropdown.Toggle>
+									{(["names", "colleges", "races"] as const).map(key => {
+										const onClickCustom = () => {
+											setPageInfo({
+												name: key,
+												index: i,
+											});
+										};
 
-												<Dropdown.Menu>
-													<Dropdown.Item
-														onClick={() => {
-															onSetDefault(key, i);
-														}}
-													>
-														Default
-													</Dropdown.Item>
-													<Dropdown.Item
-														onClick={() => {
-															setPageInfo({
-																name: key,
-																index: i,
-															});
-														}}
+										if (key === "names" && !country.builtIn) {
+											// Non-built in countries have no default names
+
+											return (
+												<div className="col-2" key={key}>
+													<button
+														className="btn btn-secondary"
+														onClick={onClickCustom}
 													>
 														Custom
-													</Dropdown.Item>
-												</Dropdown.Menu>
-											</Dropdown>
-										</div>
-									))}
+													</button>
+												</div>
+											);
+										}
+
+										return (
+											<div className="col-2" key={key}>
+												<Dropdown>
+													<Dropdown.Toggle
+														variant="secondary"
+														id={`dropdown-${key}-${country.id}`}
+													>
+														{country[
+															`default${helpers.upperCaseFirstLetter(
+																key,
+															)}` as const
+														]
+															? "Default"
+															: "Custom"}
+													</Dropdown.Toggle>
+
+													<Dropdown.Menu>
+														<Dropdown.Item
+															onClick={() => {
+																onSetDefault(key, i);
+															}}
+														>
+															Default
+														</Dropdown.Item>
+														<Dropdown.Item onClick={onClickCustom}>
+															Custom
+														</Dropdown.Item>
+													</Dropdown.Menu>
+												</Dropdown>
+											</div>
+										);
+									})}
 								</div>
 								<button
 									className="text-danger btn btn-link pl-2 pr-0 border-0"

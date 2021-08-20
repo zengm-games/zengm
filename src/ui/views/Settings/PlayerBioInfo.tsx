@@ -366,6 +366,12 @@ const PlayerBioInfo2 = ({
 			});
 		};
 
+	const onCancel = () => {
+		setPageInfo({
+			name: "countries",
+		});
+	};
+
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 
 	let modal = null;
@@ -451,26 +457,19 @@ const PlayerBioInfo2 = ({
 								? infoState.defaultRaces
 								: infoState.countries[pageInfo.index].races
 						}
-						onCancel={() => {
-							setPageInfo({
-								name: "countries",
-							});
-						}}
+						onCancel={onCancel}
 						onSave={handleChange2("races", pageInfo.index)}
 					/>
 				) : pageInfo.name === "colleges" ? (
 					<CollegesEditor
+						defaultRows={infoState.defaultColleges}
 						defaults={pageInfo.index === "default"}
 						rows={
 							pageInfo.index === "default"
 								? infoState.defaultColleges
 								: infoState.countries[pageInfo.index].colleges
 						}
-						onCancel={() => {
-							setPageInfo({
-								name: "countries",
-							});
-						}}
+						onCancel={onCancel}
 						onSave={handleChange2("colleges", pageInfo.index)}
 					/>
 				) : null}

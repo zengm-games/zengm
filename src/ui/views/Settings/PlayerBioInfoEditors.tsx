@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
 import { helpers, logEvent } from "../../util";
 import classNames from "classnames";
 import { isInvalidNumber, PlayerBioInfoState } from "./PlayerBioInfo";
@@ -154,16 +154,79 @@ const parseAndValidateColleges = (colleges: CollegeRow[]) => {
 	}
 };
 
+const CollegesControls = ({
+	defaultRows,
+	rows,
+	position,
+	onSave,
+}: {
+	defaultRows: CollegeRow[];
+	rows: CollegeRow[];
+	position: "top" | "bottom";
+	onSave: (rows: CollegeRow[]) => void;
+}) => {
+	return (
+		<>
+			<div className="btn-group">
+				<button
+					className="btn btn-light-bordered"
+					onClick={() => {
+						const newCollege = {
+							name: "College",
+							frequency: "1",
+						};
+						if (position === "top") {
+							onSave([newCollege, ...rows]);
+						} else {
+							onSave([...rows, newCollege]);
+						}
+					}}
+				>
+					Add
+				</button>
+				<Dropdown>
+					<Dropdown.Toggle
+						className="btn-light-bordered btn-light-bordered-group-right"
+						variant="foo"
+						id="dropdown-injuries-reset"
+					>
+						Reset
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								onSave(defaultRows);
+							}}
+						>
+							Default
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								onSave([]);
+							}}
+						>
+							Clear
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+			</div>
+		</>
+	);
+};
+
 export const CollegesEditor = ({
+	defaultRows,
 	defaults,
 	rows,
 	onCancel,
 	onSave,
 }: {
+	defaultRows: CollegeRow[];
 	defaults: boolean;
 	rows: CollegeRow[];
 	onCancel: () => void;
-	onSave: (colleges: CollegeRow[]) => void;
+	onSave: (rows: CollegeRow[]) => void;
 }) => {
 	const [rowsEdited, setRowsEdited] = useState([...rows]);
 	const lastSavedState = useRef<CollegeRow[] | undefined>();
@@ -222,19 +285,19 @@ export const CollegesEditor = ({
 	return (
 		<>
 			<Modal.Body>
-				{defaults ? (
-					<p className="alert alert-warning">
-						Default races apply only to custom countries you create, not any of
-						the built-in countries in the game. Built-in countries all have
-						their own predefined default races.
-					</p>
-				) : null}
+				<CollegesControls
+					defaultRows={defaultRows}
+					position="top"
+					rows={rowsEdited}
+					onSave={setRowsEdited}
+				/>
 
 				<form
 					onSubmit={handleSave}
 					style={{
 						maxWidth: 350,
 					}}
+					className="my-3"
 				>
 					<input type="submit" className="d-none" />
 					<div className="form-row font-weight-bold">
@@ -264,6 +327,13 @@ export const CollegesEditor = ({
 						</div>
 					))}
 				</form>
+
+				<CollegesControls
+					defaultRows={defaultRows}
+					position="bottom"
+					rows={rowsEdited}
+					onSave={setRowsEdited}
+				/>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-secondary" onClick={handleCancel}>

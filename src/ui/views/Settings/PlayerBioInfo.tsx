@@ -201,7 +201,7 @@ export type PageInfo =
 	  }
 	| {
 			name: "races";
-			index: number;
+			index: number | "default";
 	  };
 
 const PlayerBioInfo2 = ({
@@ -321,24 +321,47 @@ const PlayerBioInfo2 = ({
 		};
 
 	const handleChange2 =
-		(key: "colleges" | "names" | "races", i: number) => (object: any) => {
-			setInfoState(data => ({
-				...data,
-				countries: data.countries.map((row, j) => {
-					if (i !== j) {
+		(key: "colleges" | "names" | "races", i: number | "default") =>
+		(rows: any[]) => {
+			const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
+
+			if (i === "default") {
+				setInfoState(data => ({
+					...data,
+					[defaultProp]: rows,
+					countries: data.countries.map(row => {
+						// Skip for races in built-in countries
+						if (row.builtIn && key === "races") {
+							return row;
+						}
+
+						// Apply the new default
+						if ((row as any)[defaultProp]) {
+							return {
+								...row,
+								[key]: [...rows],
+							};
+						}
+
 						return row;
-					}
+					}),
+				}));
+			} else {
+				setInfoState(data => ({
+					...data,
+					countries: data.countries.map((row, j) => {
+						if (i !== j) {
+							return row;
+						}
 
-					// Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.
-					const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
-
-					return {
-						...row,
-						[key]: object,
-						[defaultProp]: false,
-					};
-				}),
-			}));
+						return {
+							...row,
+							[key]: rows,
+							[defaultProp]: false,
+						};
+					}),
+				}));
+			}
 
 			setPageInfo({
 				name: "countries",
@@ -351,8 +374,11 @@ const PlayerBioInfo2 = ({
 	if (infoState && defaults) {
 		let title = "Player Bio Info";
 		if (pageInfo.name !== "countries") {
-			const selectedCountry = infoState.countries[pageInfo.index];
-			title += ` - ${selectedCountry.country} - ${helpers.upperCaseFirstLetter(
+			const countryName =
+				pageInfo.index === "default"
+					? "Default"
+					: infoState.countries[pageInfo.index].country;
+			title += ` - ${countryName} - ${helpers.upperCaseFirstLetter(
 				pageInfo.name,
 			)}`;
 		}
@@ -424,7 +450,12 @@ const PlayerBioInfo2 = ({
 					/>
 				) : pageInfo.name === "races" ? (
 					<RacesEditor
-						races={infoState.countries[pageInfo.index].races}
+						defaults={pageInfo.index === "default"}
+						races={
+							pageInfo.index === "default"
+								? infoState.defaultRaces
+								: infoState.countries[pageInfo.index].races
+						}
 						onCancel={() => {
 							setPageInfo({
 								name: "countries",

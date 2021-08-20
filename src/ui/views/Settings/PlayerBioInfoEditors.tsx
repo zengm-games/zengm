@@ -25,10 +25,12 @@ const parseAndValidate = (races: RaceRow[]) => {
 };
 
 export const RacesEditor = ({
+	defaults,
 	races,
 	onCancel,
 	onSave,
 }: {
+	defaults: boolean;
 	races: PlayerBioInfoState["countries"][number]["races"];
 	onCancel: () => void;
 	onSave: (races: RaceRow[]) => void;
@@ -89,6 +91,14 @@ export const RacesEditor = ({
 	return (
 		<>
 			<Modal.Body>
+				{defaults ? (
+					<p className="alert alert-warning">
+						Default races apply only to custom countries you create, not any of
+						the built-in countries in the game. Built-in countries all have
+						their own predefined default races.
+					</p>
+				) : null}
+
 				<form
 					onSubmit={handleSave}
 					style={{

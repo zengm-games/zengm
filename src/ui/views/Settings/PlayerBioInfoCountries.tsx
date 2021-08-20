@@ -248,6 +248,21 @@ export const CountriesEditor = ({
 					frequencies. Names, colleges, and races work the same way.
 				</p>
 
+				<div className="mb-3">
+					<button
+						className="btn btn-secondary mr-2"
+						onClick={() => {
+							setPageInfo({
+								name: "races",
+								index: "default",
+							});
+						}}
+					>
+						Edit default races
+					</button>
+					<button className="btn btn-secondary">Edit default colleges</button>
+				</div>
+
 				<Controls
 					defaults={defaults}
 					position="top"

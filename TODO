@@ -30,17 +30,19 @@ UI to edit names/countries/races/colleges
 - add country  button should be a dropdown. 1st is "Custom", after is all built-in countries not already defined
 - button to clone country
 - for all editors, make sure it handles save/cancel/dirty correctly
-- when user updates defaults, need to re-process whole current state, but using these new defaults rather than the defaults in playerBioInfo. ugh
-  - also needed in handleSetDefault
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?
 - vertical alignment of X at end of row, compare to injuries, mt-2
 - defaults editor
-  - races only applies to non-built in countries
   - colleges applies everywhere, by default. edit specific country to change that. exception for the rate for US/Canada
-  - when edited, if defaultColleges/defaultRaces is set for any country, apply the new default (except for races where builtIn is true)
-  - formatPlayerBioInfoState should output defaults in text form too
 - fractionSkipCollege
 - after saving names/colleges/races, scroll to where was before
+
+More preset league structures
+- https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
+
+add news feed entries for luxury tax etc payments https://discord.com/channels/290013534023057409/331882115119448065/877190934993977344
+
+some default logo rather than team logo in multi team mode on dashboard https://discord.com/channels/290013534023057409/331882115119448065/877544102844051476
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX

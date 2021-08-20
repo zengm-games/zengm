@@ -1,5 +1,4 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { PlayerBioInfo, Race, ThenArg } from "../../../common/types";
@@ -269,91 +268,78 @@ export const CountriesEditor = ({
 							<div className="col-2">Colleges</div>
 							<div className="col-2">Races</div>
 						</div>
-						<AnimatePresence initial={false}>
-							{infoState.countries.map((country, i) => (
-								<m.div
-									key={country.id}
-									initial={{ opacity: 0, y: -38 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{}}
-									layout
-									transition={{ duration: 0.2, type: "tween" }}
-								>
-									<div className="d-flex">
-										<div className="form-row mt-2 flex-grow-1" key={i}>
-											<div className="col-4">
-												<input
-													type="text"
-													className="form-control"
-													value={country.country}
-													onChange={handleChange("name", i)}
-												/>
-											</div>
-											<div className="col-2">
-												<input
-													type="text"
-													className={classNames("form-control", {
-														"is-invalid": isInvalidNumber(
-															parseFloat(country.frequency),
-														),
-													})}
-													value={country.frequency}
-													onChange={handleChange("frequency", i)}
-												/>
-											</div>
-											<div className="col-2">AAA</div>
-											<div className="col-2">AAA</div>
-											<div className="col-2">
-												<Dropdown>
-													<Dropdown.Toggle
-														variant="secondary"
-														id={`dropdown-race-${country.id}`}
-													>
-														{country.defaultRaces ? "Default" : "Custom"}
-													</Dropdown.Toggle>
-
-													<Dropdown.Menu>
-														<Dropdown.Item
-															onClick={() => {
-																onSetDefault("races", i);
-															}}
-														>
-															Default
-														</Dropdown.Item>
-														<Dropdown.Item
-															onClick={() => {
-																setPageInfo({
-																	name: "races",
-																	index: i,
-																});
-															}}
-														>
-															Custom
-														</Dropdown.Item>
-													</Dropdown.Menu>
-												</Dropdown>
-											</div>
-										</div>
-										<button
-											className="text-danger btn btn-link pl-2 pr-0 border-0"
-											onClick={() => {
-												setInfoState(data => ({
-													...data,
-													countries: data.countries.filter(
-														row => row !== country,
-													),
-												}));
-											}}
-											style={{ fontSize: 20 }}
-											title="Delete"
-											type="button"
-										>
-											<span className="glyphicon glyphicon-remove" />
-										</button>
+						{infoState.countries.map((country, i) => (
+							<div key={country.id} className="d-flex">
+								<div className="form-row mt-2 flex-grow-1" key={i}>
+									<div className="col-4">
+										<input
+											type="text"
+											className="form-control"
+											value={country.country}
+											onChange={handleChange("name", i)}
+										/>
 									</div>
-								</m.div>
-							))}
-						</AnimatePresence>
+									<div className="col-2">
+										<input
+											type="text"
+											className={classNames("form-control", {
+												"is-invalid": isInvalidNumber(
+													parseFloat(country.frequency),
+												),
+											})}
+											value={country.frequency}
+											onChange={handleChange("frequency", i)}
+										/>
+									</div>
+									<div className="col-2">AAA</div>
+									<div className="col-2">AAA</div>
+									<div className="col-2">
+										<Dropdown>
+											<Dropdown.Toggle
+												variant="secondary"
+												id={`dropdown-race-${country.id}`}
+											>
+												{country.defaultRaces ? "Default" : "Custom"}
+											</Dropdown.Toggle>
+
+											<Dropdown.Menu>
+												<Dropdown.Item
+													onClick={() => {
+														onSetDefault("races", i);
+													}}
+												>
+													Default
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={() => {
+														setPageInfo({
+															name: "races",
+															index: i,
+														});
+													}}
+												>
+													Custom
+												</Dropdown.Item>
+											</Dropdown.Menu>
+										</Dropdown>
+									</div>
+								</div>
+								<button
+									className="text-danger btn btn-link pl-2 pr-0 border-0"
+									onClick={() => {
+										setInfoState(data => ({
+											...data,
+											countries: data.countries.filter(row => row !== country),
+										}));
+									}}
+									style={{ fontSize: 20 }}
+									title="Delete"
+									type="button"
+								>
+									<span className="glyphicon glyphicon-remove" />
+								</button>
+							</div>
+						))}
 					</form>
 				) : (
 					<div className="mt-3 text-danger">

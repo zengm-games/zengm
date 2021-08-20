@@ -40,8 +40,7 @@ UI to edit names/countries/races/colleges
   - when edited, if defaultColleges/defaultRaces is set for any country, apply the new default (except for races where builtIn is true)
   - formatPlayerBioInfoState should output defaults in text form too
 - fractionSkipCollege
-- "Custom/Default" dropdown hides behind button
-  - click button -> custom -> edit it -> save -> click it again -> click Default -> PROBLEM
+- after saving names/colleges/races, scroll to where was before
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX

@@ -89,18 +89,23 @@ export const RacesEditor = ({
 	return (
 		<>
 			<Modal.Body>
-				<form onSubmit={handleSave}>
+				<form
+					onSubmit={handleSave}
+					style={{
+						maxWidth: 150,
+					}}
+				>
 					<input type="submit" className="d-none" />
 					<div className="form-row font-weight-bold">
-						<div className="col-8">Race</div>
-						<div className="col-4">Frequency</div>
+						<div className="col-6">Race</div>
+						<div className="col-6">Frequency</div>
 					</div>
 					{racesEdited.map((race, i) => (
 						<div key={race.race} className="form-row mt-2 align-items-center">
-							<div className="col-8">
+							<div className="col-6">
 								{helpers.upperCaseFirstLetter(race.race)}
 							</div>
-							<div className="col-4">
+							<div className="col-6">
 								<input
 									type="text"
 									className={classNames("form-control", {

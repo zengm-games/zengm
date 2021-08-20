@@ -221,19 +221,40 @@ export const CollegesEditor = ({
 	rows,
 	onCancel,
 	onSave,
+
+	defaultFractionSkipCollege,
+	fractionSkipCollege,
+	onSaveFractionSkipCollege,
 }: {
 	defaultRows: CollegeRow[];
 	defaults: boolean;
 	rows: CollegeRow[];
 	onCancel: () => void;
 	onSave: (rows: CollegeRow[]) => void;
+
+	defaultFractionSkipCollege: string;
+	fractionSkipCollege: string;
+	onSaveFractionSkipCollege: (value: string) => void;
 }) => {
 	const [rowsEdited, setRowsEdited] = useState([...rows]);
-	const lastSavedState = useRef<CollegeRow[] | undefined>();
+	const lastSavedState = useRef<
+		| undefined
+		| {
+				rowsEdited: CollegeRow[];
+				fractionSkipCollegeEdited: string;
+		  }
+	>();
+
+	const [fractionSkipCollegeEdited, setFractionSkipCollegeEdited] =
+		useState(fractionSkipCollege);
 
 	const handleCancel = async () => {
 		// Reset for next time
-		setRowsEdited(lastSavedState.current ?? [...rows]);
+		setRowsEdited(lastSavedState.current?.rowsEdited ?? [...rows]);
+		setFractionSkipCollegeEdited(
+			lastSavedState.current?.fractionSkipCollegeEdited ??
+				fractionSkipCollegeEdited,
+		);
 
 		onCancel();
 	};
@@ -260,8 +281,12 @@ export const CollegesEditor = ({
 		}
 
 		// Save for next time
-		lastSavedState.current = rowsEdited;
+		lastSavedState.current = {
+			rowsEdited,
+			fractionSkipCollegeEdited,
+		};
 
+		onSaveFractionSkipCollege(fractionSkipCollegeEdited);
 		onSave(rowsEdited);
 	};
 
@@ -285,13 +310,16 @@ export const CollegesEditor = ({
 	return (
 		<>
 			<Modal.Body>
+				fractionSkipCollegeEdited if default, explain that by default USA/Canada
+				have non-default value specified if not default, show what the default
+				is and explain it can be blank validate it in parseAndValidateColleges -
+				default must be float, but non-default can be float or blank
 				<CollegesControls
 					defaultRows={defaultRows}
 					position="top"
 					rows={rowsEdited}
 					onSave={setRowsEdited}
 				/>
-
 				<form
 					onSubmit={handleSave}
 					style={{
@@ -327,7 +355,6 @@ export const CollegesEditor = ({
 						</div>
 					))}
 				</form>
-
 				<CollegesControls
 					defaultRows={defaultRows}
 					position="bottom"

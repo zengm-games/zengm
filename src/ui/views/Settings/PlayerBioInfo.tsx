@@ -8,7 +8,11 @@ import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
 import isEqual from "lodash-es/isEqual";
 import orderBy from "lodash-es/orderBy";
-import { CollegesEditor, RacesEditor } from "./PlayerBioInfoEditors";
+import {
+	CollegesEditor,
+	FractionSkipCollegeEditor,
+	RacesEditor,
+} from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
 
 export type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
@@ -39,6 +43,7 @@ export const formatPlayerBioInfoState = (
 		return {
 			defaultRaces: [],
 			defaultColleges: [],
+			defaultFractionSkipCollege: "0.98",
 			countries: [],
 		};
 	}
@@ -57,6 +62,9 @@ export const formatPlayerBioInfoState = (
 
 	const defaultColleges2 =
 		playerBioInfo?.default?.colleges ?? defaults.colleges;
+
+	const defaultFractionSkipCollege2 =
+		playerBioInfo?.default?.fractionSkipCollege ?? 0.98;
 
 	for (const [country, frequency] of Object.entries(frequencies)) {
 		const mergedCountry = mergedCountries[country];
@@ -120,6 +128,16 @@ export const formatPlayerBioInfoState = (
 		const defaultRaces = isEqual(races, defaultRaces2);
 		const racesText = objectToArray(races, "race", "race");
 
+		const fractionSkipCollege =
+			mergedCountry.fractionSkipCollege ??
+			(country === "USA" || country === "Canada"
+				? 0.02
+				: defaultFractionSkipCollege2);
+		const fractionSkipCollegeText =
+			fractionSkipCollege === defaultFractionSkipCollege2
+				? ""
+				: String(fractionSkipCollege);
+
 		countries.push({
 			id: Math.random(),
 			country,
@@ -133,6 +151,9 @@ export const formatPlayerBioInfoState = (
 			defaultColleges,
 			colleges: collegesText,
 
+			// Empty string means use default, which is different than the array ones where it copies the default in and makes it editable. This is because the default status is not conveniently shown on the main page
+			fractionSkipCollege: fractionSkipCollegeText,
+
 			defaultRaces,
 			races: racesText,
 		});
@@ -144,10 +165,12 @@ export const formatPlayerBioInfoState = (
 		"race",
 		"race",
 	);
+	const defaultFractionSkipCollegeText = String(defaultFractionSkipCollege2);
 
 	return {
 		defaultColleges: defaultCollegesText,
 		defaultRaces: defaultRacesText,
+		defaultFractionSkipCollege: defaultFractionSkipCollegeText,
 		countries: orderBy(countries, "country"),
 	};
 };
@@ -317,33 +340,47 @@ const PlayerBioInfo2 = ({
 		};
 
 	const handleChange2 =
-		(key: "colleges" | "names" | "races", i: number | "default") =>
-		(rows: any[]) => {
+		(
+			key: "colleges" | "fractionSkipCollege" | "names" | "races",
+			i: number | "default",
+		) =>
+		(rows: any) => {
 			const defaultProp = `default${helpers.upperCaseFirstLetter(
 				key,
 			)}` as const;
 
 			if (i === "default") {
-				setInfoState(data => ({
-					...data,
-					[defaultProp]: rows,
-					countries: data.countries.map(row => {
-						// Skip for races in built-in countries
-						if (row.builtIn && key === "races") {
+				if (key === "fractionSkipCollege") {
+					// No need to update countries, cause default is stored as blank there
+					setInfoState(data => ({
+						...data,
+						fractionSkipCollege: rows,
+					}));
+				} else {
+					setInfoState(data => ({
+						...data,
+						[defaultProp]: rows,
+						countries: data.countries.map(row => {
+							// Skip for races in built-in countries
+							if (row.builtIn && key === "races") {
+								return row;
+							}
+
+							// Apply the new default
+							if (
+								defaultProp !== "defaultFractionSkipCollege" &&
+								row[defaultProp]
+							) {
+								return {
+									...row,
+									[key]: [...rows],
+								};
+							}
+
 							return row;
-						}
-
-						// Apply the new default
-						if (row[defaultProp]) {
-							return {
-								...row,
-								[key]: [...rows],
-							};
-						}
-
-						return row;
-					}),
-				}));
+						}),
+					}));
+				}
 			} else {
 				setInfoState(data => ({
 					...data,
@@ -352,18 +389,27 @@ const PlayerBioInfo2 = ({
 							return row;
 						}
 
-						return {
-							...row,
-							[key]: rows,
-							[defaultProp]: false,
-						};
+						if (key === "fractionSkipCollege") {
+							return {
+								...row,
+								[key]: rows,
+							};
+						} else {
+							return {
+								...row,
+								[key]: rows,
+								[defaultProp]: false,
+							};
+						}
 					}),
 				}));
 			}
 
-			setPageInfo({
-				name: "countries",
-			});
+			if (key !== "fractionSkipCollege") {
+				setPageInfo({
+					name: "countries",
+				});
+			}
 		};
 
 	const onCancel = () => {
@@ -461,17 +507,29 @@ const PlayerBioInfo2 = ({
 						onSave={handleChange2("races", pageInfo.index)}
 					/>
 				) : pageInfo.name === "colleges" ? (
-					<CollegesEditor
-						defaultRows={infoState.defaultColleges}
-						defaults={pageInfo.index === "default"}
-						rows={
-							pageInfo.index === "default"
-								? infoState.defaultColleges
-								: infoState.countries[pageInfo.index].colleges
-						}
-						onCancel={onCancel}
-						onSave={handleChange2("colleges", pageInfo.index)}
-					/>
+					<>
+						<CollegesEditor
+							defaultRows={infoState.defaultColleges}
+							defaults={pageInfo.index === "default"}
+							rows={
+								pageInfo.index === "default"
+									? infoState.defaultColleges
+									: infoState.countries[pageInfo.index].colleges
+							}
+							onCancel={onCancel}
+							onSave={handleChange2("colleges", pageInfo.index)}
+							defaultFractionSkipCollege={infoState.defaultFractionSkipCollege}
+							fractionSkipCollege={
+								pageInfo.index === "default"
+									? infoState.defaultFractionSkipCollege
+									: infoState.countries[pageInfo.index].fractionSkipCollege
+							}
+							onSaveFractionSkipCollege={handleChange2(
+								"fractionSkipCollege",
+								pageInfo.index,
+							)}
+						/>
+					</>
 				) : null}
 			</Modal>
 		);

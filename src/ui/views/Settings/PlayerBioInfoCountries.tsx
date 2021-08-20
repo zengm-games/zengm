@@ -263,7 +263,7 @@ export const CountriesEditor = ({
 							className="form-row font-weight-bold"
 							style={{ marginRight: 22 }}
 						>
-							<div className="col-4">Name</div>
+							<div className="col-4">Country</div>
 							<div className="col-2">Frequency</div>
 							<div className="col-2">Names</div>
 							<div className="col-2">Colleges</div>

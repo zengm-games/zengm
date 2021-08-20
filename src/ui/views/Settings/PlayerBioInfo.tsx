@@ -375,26 +375,48 @@ const PlayerBioInfo2 = ({
 						handleChange={handleChange}
 						handleSave={handleSave}
 						onSetDefault={(type, i) => {
-							console.log(
-								`Somehow get default ${type} for ${infoState.countries[i].country}`,
-							);
+							const country = infoState.countries[i].country;
 
-							/*setInfoState(rows =>
-                                rows.map((row, j) => {
-                                    if (i !== j) {
-                                        return row;
-                                    }
-                
-                                    // Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.
-                                    const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
-                
-                                    return {
-                                        ...row,
-                                        [key]: object,
-                                        [defaultProp]: false,
-                                    };
-                                }),
-                            );*/
+							let array: any[];
+
+							if (type === "colleges") {
+								console.log(
+									`Somehow get default ${type} for ${infoState.countries[i].country}`,
+								);
+								array = [];
+							} else if (type === "races") {
+								if (defaults.races[country]) {
+									array = objectToArray(
+										defaults.races[country],
+										"race",
+										"race",
+									);
+								} else {
+									array = [...infoState.defaultRaces];
+								}
+							} else {
+								throw new Error("Invalid type");
+							}
+
+							setInfoState(data => ({
+								...data,
+								countries: data.countries.map((row, j) => {
+									if (i !== j) {
+										return row;
+									}
+
+									// Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.
+									const defaultProp = `default${helpers.upperCaseFirstLetter(
+										type,
+									)}`;
+
+									return {
+										...row,
+										[type]: array,
+										[defaultProp]: true,
+									};
+								}),
+							}));
 						}}
 						infoState={infoState}
 						setInfoState={setInfoState}

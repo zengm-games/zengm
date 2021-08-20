@@ -143,7 +143,23 @@ export const RacesEditor = ({
 
 type CollegeRow = PlayerBioInfoState["countries"][number]["colleges"][number];
 
-const parseAndValidateColleges = (colleges: CollegeRow[]) => {
+const isInvalidFractionSkipCollege = (
+	fractionSkipCollege: string,
+	defaults: boolean,
+) => {
+	if (!defaults && fractionSkipCollege === "") {
+		// Can be empty string if not default
+		return false;
+	}
+	const number = parseFloat(fractionSkipCollege);
+	return Number.isNaN(number) || number < 0 || number > 1;
+};
+
+const parseAndValidateColleges = (
+	colleges: CollegeRow[],
+	fractionSkipCollege: string,
+	defaults: boolean,
+) => {
 	for (const row of colleges) {
 		const number = parseFloat(row.frequency);
 		if (Number.isNaN(number)) {
@@ -151,6 +167,12 @@ const parseAndValidateColleges = (colleges: CollegeRow[]) => {
 				`Invalid frequency "${row.frequency}" for college "${row.name}"`,
 			);
 		}
+	}
+
+	if (isInvalidFractionSkipCollege(fractionSkipCollege, defaults)) {
+		throw new Error(
+			`Invalid fraction skip college value "${fractionSkipCollege}"`,
+		);
 	}
 };
 
@@ -269,7 +291,7 @@ export const CollegesEditor = ({
 		event.stopPropagation();
 
 		try {
-			parseAndValidateColleges(rowsEdited);
+			parseAndValidateColleges(rowsEdited, fractionSkipCollegeEdited, defaults);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -307,19 +329,52 @@ export const CollegesEditor = ({
 			);
 		};
 
+	const isInvalidFraction = isInvalidFractionSkipCollege(
+		fractionSkipCollegeEdited,
+		defaults,
+	);
+
 	return (
 		<>
 			<Modal.Body>
-				fractionSkipCollegeEdited if default, explain that by default USA/Canada
-				have non-default value specified if not default, show what the default
-				is and explain it can be blank validate it in parseAndValidateColleges -
-				default must be float, but non-default can be float or blank
+				<div className="form-group">
+					<label htmlFor="fractionSkipCollege">
+						Fraction of players who skip college
+					</label>
+					<input
+						type="text"
+						className={classNames("form-control", {
+							"is-invalid": isInvalidFraction,
+						})}
+						style={{ maxWidth: 100 }}
+						id="fractionSkipCollege"
+						value={fractionSkipCollegeEdited}
+						onChange={event => {
+							setFractionSkipCollegeEdited(event.target.value);
+						}}
+					/>
+					{isInvalidFraction ? (
+						<span className="form-text text-danger">
+							{defaults
+								? "Value must be between 0 and 1."
+								: "Value must be blank (default) or between 0 and 1."}
+						</span>
+					) : (
+						<span className="form-text text-muted">
+							{defaults
+								? "By default, USA and Canada have their own default fraction that override this value."
+								: `Leave blank to use the current default value (${defaultFractionSkipCollege}).`}
+						</span>
+					)}
+				</div>
+
 				<CollegesControls
 					defaultRows={defaultRows}
 					position="top"
 					rows={rowsEdited}
 					onSave={setRowsEdited}
 				/>
+
 				<form
 					onSubmit={handleSave}
 					style={{
@@ -355,6 +410,7 @@ export const CollegesEditor = ({
 						</div>
 					))}
 				</form>
+
 				<CollegesControls
 					defaultRows={defaultRows}
 					position="bottom"

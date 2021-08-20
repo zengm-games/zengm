@@ -33,9 +33,8 @@ UI to edit names/countries/races/colleges
 - vertical alignment of X at end of row, compare to injuries, mt-2
 - defaults editor
   - colleges applies everywhere, by default. edit specific country to change that. exception for the rate for US/Canada
-- fractionSkipCollege
 - after saving names/colleges/races, scroll to where was before
-- does grid make sense? fixed columns better? 100% width buttons
+- does grid make sense? fixed columns better? 100% width buttons? table?
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938

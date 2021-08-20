@@ -261,7 +261,17 @@ export const CountriesEditor = ({
 					>
 						Edit default races
 					</button>
-					<button className="btn btn-secondary">Edit default colleges</button>
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							setPageInfo({
+								name: "colleges",
+								index: "default",
+							});
+						}}
+					>
+						Edit default colleges
+					</button>
 				</div>
 
 				<Controls

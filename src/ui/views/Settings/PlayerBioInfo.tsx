@@ -404,10 +404,7 @@ const PlayerBioInfo2 = ({
 							let array: any[];
 
 							if (type === "colleges") {
-								console.log(
-									`Somehow get default ${type} for ${infoState.countries[i].country}`,
-								);
-								array = [];
+								array = [...infoState.defaultColleges];
 							} else if (type === "races") {
 								if (defaults.races[country]) {
 									array = objectToArray(

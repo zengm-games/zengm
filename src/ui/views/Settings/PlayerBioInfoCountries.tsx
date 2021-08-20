@@ -216,6 +216,7 @@ export const CountriesEditor = ({
 	handleCancel,
 	handleChange,
 	handleSave,
+	onSetDefault,
 	infoState,
 	setInfoState,
 	setPageInfo,
@@ -224,12 +225,11 @@ export const CountriesEditor = ({
 	handleCancel: any;
 	handleChange: any;
 	handleSave: any;
+	onSetDefault: (type: "colleges" | "names" | "races", i: number) => void;
 	infoState: PlayerBioInfoState;
 	setInfoState: SetInfoState;
 	setPageInfo: (pageInfo: PageInfo) => void;
 }) => {
-	const onSetDefault = () => {};
-
 	return (
 		<>
 			<Modal.Body>
@@ -303,7 +303,11 @@ export const CountriesEditor = ({
 													</Dropdown.Toggle>
 
 													<Dropdown.Menu>
-														<Dropdown.Item onClick={onSetDefault}>
+														<Dropdown.Item
+															onClick={() => {
+																onSetDefault("races", i);
+															}}
+														>
 															Default
 														</Dropdown.Item>
 														<Dropdown.Item

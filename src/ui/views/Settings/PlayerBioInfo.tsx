@@ -69,9 +69,9 @@ export const formatInfoState = (
 			first: mergedCountry.first ?? {},
 			last: mergedCountry.last ?? {},
 		};
-		const defaultNamesAllowed = !!defaults.countries[country];
+		const builtIn = !!defaults.countries[country];
 		let defaultNames = false;
-		if (defaultNamesAllowed) {
+		if (builtIn) {
 			let fromGroup;
 			for (const [group, countries] of Object.entries(defaults.groups)) {
 				if (countries.includes(country)) {
@@ -89,7 +89,7 @@ export const formatInfoState = (
 
 			if (namesCountry) {
 				defaultNames =
-					defaultNamesAllowed &&
+					builtIn &&
 					isEqual(names.first, namesCountry.first) &&
 					isEqual(names.last, namesCountry.last);
 			}
@@ -128,8 +128,9 @@ export const formatInfoState = (
 			country,
 			frequency: String(frequency),
 
+			builtIn,
+
 			defaultNames,
-			defaultNamesAllowed,
 			names: namesText,
 
 			defaultColleges,
@@ -233,7 +234,7 @@ const PlayerBioInfo2 = ({
 	const handleCancel = async () => {
 		if (dirty) {
 			const result = await confirm(
-				"Are you sure you want to discard your changes?",
+				"Are you sure you want to discard all your changes?",
 				{
 					okText: "Discard",
 					cancelText: "Cancel",
@@ -309,11 +310,13 @@ const PlayerBioInfo2 = ({
 						return row;
 					}
 
-					console.log("CHECK IF DEFAULT PROPS CHANGED");
+					// Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.
+					const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
 
 					return {
 						...row,
 						[key]: object,
+						[defaultProp]: false,
 					};
 				}),
 			);
@@ -352,6 +355,28 @@ const PlayerBioInfo2 = ({
 						handleCancel={handleCancel}
 						handleChange={handleChange}
 						handleSave={handleSave}
+						onSetDefault={(type, i) => {
+							console.log(
+								`Somehow get default ${type} for ${infoState[i].country}`,
+							);
+
+							/*setInfoState(rows =>
+                                rows.map((row, j) => {
+                                    if (i !== j) {
+                                        return row;
+                                    }
+                
+                                    // Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.
+                                    const defaultProp = `default${helpers.upperCaseFirstLetter(key)}`;
+                
+                                    return {
+                                        ...row,
+                                        [key]: object,
+                                        [defaultProp]: false,
+                                    };
+                                }),
+                            );*/
+						}}
 						infoState={infoState}
 						setInfoState={setInfoState}
 						setPageInfo={setPageInfo}

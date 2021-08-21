@@ -35,6 +35,18 @@ export const objectToArray = <T extends string>(
 		order,
 	);
 
+export const arrayToObject = <T extends string>(
+	array: Record<T | "frequency", string>[],
+	key: T,
+): Record<string, number> => {
+	const output: Record<string, number> = {};
+	for (const row of array) {
+		output[row[key]] = parseFloat(row.frequency);
+	}
+
+	return output;
+};
+
 export const formatPlayerBioInfoState = (
 	playerBioInfo: PlayerBioInfo | undefined,
 	defaults: Defaults | undefined,
@@ -184,34 +196,133 @@ export type PlayerBioInfoState = ReturnType<typeof formatPlayerBioInfoState>;
 export const isInvalidNumber = (number: number) =>
 	Number.isNaN(number) || number <= 0;
 
-const parseAndValidate = (
-	playerBioInfoState: PlayerBioInfoState,
+// Assume it's all already validated by sub-pages, except the list of countries
+const parseAndValidate = (state: PlayerBioInfoState) => {
+	const output: Required<PlayerBioInfo> = {
+		default: {
+			colleges: arrayToObject(state.defaultColleges, "name"),
+			fractionSkipCollege: parseFloat(state.defaultFractionSkipCollege),
+			races: arrayToObject(state.defaultRaces, "race"),
+		},
+		countries: {},
+		frequencies: {},
+	};
+
+	for (const row of state.countries) {
+		if (output.frequencies.hasOwnProperty(row.country)) {
+			throw new Error(
+				`Country names must be unique, but you have multiple countries named "${row.country}"`,
+			);
+		}
+
+		const frequency = parseFloat(row.frequency);
+		if (Number.isNaN(frequency)) {
+			throw new Error(
+				`Invalid frequency "${row.frequency}" for country "${row.country}"`,
+			);
+		}
+		output.frequencies[row.country] = frequency;
+
+		const country: typeof output["countries"][string] = {};
+		for (const type of ["first", "last"] as const) {
+			country[type] = arrayToObject(row.names[type], "name");
+		}
+		country.colleges = arrayToObject(row.colleges, "name");
+		if (row.fractionSkipCollege !== "") {
+			country.fractionSkipCollege = parseFloat(row.fractionSkipCollege);
+		}
+		country.races = arrayToObject(row.races, "race");
+
+		output.countries[row.country] = country;
+	}
+
+	return output;
+};
+
+const prune = (
+	info: Required<PlayerBioInfo>,
+	defaults: Defaults,
 ): PlayerBioInfo | undefined => {
-	const injuries = playerBioInfoState.map(row => ({
-		name: row.name,
-		frequency: parseFloat(row.frequency),
-		games: parseFloat(row.games),
-	}));
+	// This is what would happen with the current defaults applied to the built-ins
+	const defaultMergedCountries = mergeCountries(
+		{
+			default: info.default,
+		},
+		defaults.namesCountries,
+		defaults.namesGroups,
+		defaults.groups,
+	);
 
-	for (const row of injuries) {
-		if (isInvalidNumber(row.frequency)) {
-			throw new Error(
-				`Injury "${row.name}" has an invalid frequency - must be a positive number.`,
-			);
+	// Check countries
+	for (const [name, country] of Object.entries(info.countries)) {
+		const mergedCountry = defaultMergedCountries[name];
+		if (!mergedCountry) {
+			continue;
 		}
 
-		if (isInvalidNumber(row.games)) {
-			throw new Error(
-				`Injury "${row.name}" has an invalid number of games - must be a positive number.`,
-			);
+		for (const key of ["first", "last"] as const) {
+			if (isEqual(country[key], mergedCountry[key])) {
+				delete country[key];
+			}
+		}
+
+		if (
+			((name === "USA" || name === "Canada") &&
+				country.fractionSkipCollege === 0.02) ||
+			country.fractionSkipCollege === 0.98
+		) {
+			delete country.fractionSkipCollege;
+		}
+
+		if (isEqual(country.colleges, defaults.colleges)) {
+			delete country.colleges;
+		}
+
+		if (isEqual(country.races, defaults.races[name] ?? defaults.races.USA)) {
+			delete country.races;
+		}
+
+		if (Object.keys(country).length === 0) {
+			delete info.countries[name];
 		}
 	}
 
-	if (injuries.length === 0) {
-		throw new Error("You must define at least one type of injury.");
+	// Check defaults
+	if (isEqual(info.default.colleges, defaults.colleges)) {
+		delete info.default.colleges;
+	}
+	if (info.default.fractionSkipCollege === 0.98) {
+		delete info.default.fractionSkipCollege;
+	}
+	if (isEqual(info.default.races, defaults.races.USA)) {
+		delete info.default.races;
 	}
 
-	return injuries;
+	// Check frequencies
+	const defaultFrequencies = getFrequencies(
+		{
+			countries: info.countries,
+		},
+		defaults.countries,
+	);
+	if (isEqual(defaultFrequencies, info.frequencies)) {
+		info.frequencies = {};
+	}
+
+	const output: PlayerBioInfo = {};
+
+	// Remove keys from root of object if there are no values
+	for (const key of helpers.keys(info)) {
+		if (Object.keys(info[key]).length > 0) {
+			(output as any)[key] = info[key];
+		}
+	}
+
+	if (Object.keys(output).length === 0) {
+		return undefined;
+	}
+
+	return output;
 };
 
 export type PageInfo =
@@ -319,9 +430,16 @@ const PlayerBioInfo2 = ({
 		// Don't submit parent form
 		event.stopPropagation();
 
+		if (!infoState || !defaults) {
+			return;
+		}
+
 		let parsed;
 		try {
 			parsed = parseAndValidate(infoState);
+			console.log("before", helpers.deepCopy(parsed));
+			parsed = prune(parsed, defaults);
+			console.log("after", helpers.deepCopy(parsed));
 		} catch (error) {
 			logEvent({
 				type: "error",

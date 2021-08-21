@@ -562,6 +562,12 @@ const PlayerBioInfo2 = ({
 				) : pageInfo.name === "names" ? (
 					<>
 						<NamesEditor
+							defaultRows={
+								defaultsState.countries.find(
+									row =>
+										row.country === infoState.countries[pageInfo.index].country,
+								)?.names
+							}
 							rows={infoState.countries[pageInfo.index].names}
 							onCancel={onCancel}
 							onSave={handleChange2("names", pageInfo.index)}

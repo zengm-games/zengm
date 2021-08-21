@@ -1,10 +1,9 @@
 UI to edit names/countries/races/colleges
-- NamesControls
-  - add reset to default, if built-in
-  - easy way to clone names of an existing country or built-in country
+- parseAndValidate - call all individual functions
 - import/export JSON of a valid league file with only playerBioInfo in it
 - when saving how to know when to store whole or part as undefined (default)
-  - DRY with formatPlayerBioInfoState
+  - DRY with formatPlayerBioInfoState?
+  - use only defaultXxx, or actually read values?
 - names/races need to be updated when country name is changed? to handle defaults - either apply default over current default, or switch defaultXxx from true to false
 - button to clone country
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?

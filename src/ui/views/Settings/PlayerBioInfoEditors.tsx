@@ -453,10 +453,12 @@ const parseAndValidateNames = (names: NameRows) => {
 };
 
 const NamesControls = ({
+	defaultRows,
 	rows,
 	position,
 	onSave,
 }: {
+	defaultRows: NameRow[] | undefined;
 	rows: NameRow[];
 	position: "top" | "bottom";
 	onSave: (rows: NameRow[]) => void;
@@ -490,6 +492,15 @@ const NamesControls = ({
 					</Dropdown.Toggle>
 
 					<Dropdown.Menu>
+						{defaultRows ? (
+							<Dropdown.Item
+								onClick={() => {
+									onSave(defaultRows);
+								}}
+							>
+								Default
+							</Dropdown.Item>
+						) : null}
 						<Dropdown.Item
 							onClick={() => {
 								onSave([]);
@@ -505,10 +516,12 @@ const NamesControls = ({
 };
 
 export const NamesEditor = ({
+	defaultRows,
 	rows,
 	onCancel,
 	onSave,
 }: {
+	defaultRows: NameRows | undefined;
 	rows: NameRows;
 	onCancel: () => void;
 	onSave: (rows: NameRows) => void;
@@ -581,6 +594,7 @@ export const NamesEditor = ({
 		<>
 			<Modal.Body>
 				<NamesControls
+					defaultRows={defaultRows?.[firstOrLast]}
 					position="top"
 					rows={rowsEdited[firstOrLast]}
 					onSave={setRowsEditedWrapper(firstOrLast)}
@@ -647,6 +661,7 @@ export const NamesEditor = ({
 
 				{rowsEdited[firstOrLast].length > 0 ? (
 					<NamesControls
+						defaultRows={defaultRows?.[firstOrLast]}
 						position="bottom"
 						rows={rowsEdited[firstOrLast]}
 						onSave={setRowsEditedWrapper(firstOrLast)}

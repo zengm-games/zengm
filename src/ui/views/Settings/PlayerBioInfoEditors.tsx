@@ -565,10 +565,10 @@ export const NamesEditor = ({
 			}));
 		};
 
-	const setRowsEditedWrapper = (type: "first" | "last") => () => {
+	const setRowsEditedWrapper = (type: "first" | "last") => rowsNew => {
 		setRowsEdited(rows => ({
 			...rows,
-			[type]: rows,
+			[type]: rowsNew,
 		}));
 	};
 
@@ -583,7 +583,7 @@ export const NamesEditor = ({
 
 				<ul className="nav nav-tabs mt-3">
 					{(["first", "last"] as const).map(type => (
-						<li className="nav-item">
+						<li key={type} className="nav-item">
 							<a
 								className={classNames("nav-link", {
 									active: type === firstOrLast,

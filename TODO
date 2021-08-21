@@ -3,7 +3,6 @@ UI to edit names/countries/races/colleges
   - for custom countries, no option to use default names
   - if using custom names, require there to be at least one entry in first/last
   - NamesControls
-    - fix clear
     - add reset to default, if built-in
     - easy way to clone names of an existing country or built-in country
 - defaultNames not being set correctly for groups

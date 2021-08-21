@@ -1,10 +1,7 @@
 UI to edit names/countries/races/colleges
-- names editor
-  - for custom countries, no option to use default names
-  - if using custom names, require there to be at least one entry in first/last
-  - NamesControls
-    - add reset to default, if built-in
-    - easy way to clone names of an existing country or built-in country
+- NamesControls
+  - add reset to default, if built-in
+  - easy way to clone names of an existing country or built-in country
 - defaultNames not being set correctly for groups
 - import/export JSON of a valid league file with only playerBioInfo in it
 - when saving how to know when to store whole or part as undefined (default)

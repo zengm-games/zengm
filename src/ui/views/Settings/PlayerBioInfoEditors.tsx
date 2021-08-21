@@ -437,6 +437,10 @@ type NameRows = PlayerBioInfoState["countries"][number]["names"];
 
 const parseAndValidateNames = (names: NameRows) => {
 	for (const key of ["first", "last"] as const) {
+		if (names[key].length === 0) {
+			throw new Error(`You must define at least one ${key} name.`);
+		}
+
 		for (const row of names[key]) {
 			const number = parseFloat(row.frequency);
 			if (Number.isNaN(number)) {
@@ -565,12 +569,13 @@ export const NamesEditor = ({
 			}));
 		};
 
-	const setRowsEditedWrapper = (type: "first" | "last") => rowsNew => {
-		setRowsEdited(rows => ({
-			...rows,
-			[type]: rowsNew,
-		}));
-	};
+	const setRowsEditedWrapper =
+		(type: "first" | "last") => (rowsNew: NameRow[]) => {
+			setRowsEdited(rows => ({
+				...rows,
+				[type]: rowsNew,
+			}));
+		};
 
 	return (
 		<>
@@ -598,53 +603,65 @@ export const NamesEditor = ({
 					))}
 				</ul>
 
-				<form
-					onSubmit={handleSave}
-					style={{
-						maxWidth: 350,
-					}}
-					className="my-3"
-				>
-					<input type="submit" className="d-none" />
-					<div className="form-row font-weight-bold">
-						<div className="col-9">Name</div>
-						<div className="col-3">Frequency</div>
-					</div>
-					{rowsEdited[firstOrLast].map((row, i) => (
-						<div key={i} className="form-row mt-2 align-items-center">
-							<div className="col-9">
-								<input
-									type="text"
-									className="form-control"
-									value={row.name}
-									onChange={handleChange("name", i)}
-								/>
-							</div>
-							<div className="col-3">
-								<input
-									type="text"
-									className={classNames("form-control", {
-										"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
-									})}
-									value={row.frequency}
-									onChange={handleChange("frequency", i)}
-								/>
-							</div>
+				{rowsEdited[firstOrLast].length > 0 ? (
+					<form
+						onSubmit={handleSave}
+						style={{
+							maxWidth: 350,
+						}}
+						className="my-3"
+					>
+						<input type="submit" className="d-none" />
+						<div className="form-row font-weight-bold">
+							<div className="col-9">Name</div>
+							<div className="col-3">Frequency</div>
 						</div>
-					))}
-				</form>
+						{rowsEdited[firstOrLast].map((row, i) => (
+							<div key={i} className="form-row mt-2 align-items-center">
+								<div className="col-9">
+									<input
+										type="text"
+										className="form-control"
+										value={row.name}
+										onChange={handleChange("name", i)}
+									/>
+								</div>
+								<div className="col-3">
+									<input
+										type="text"
+										className={classNames("form-control", {
+											"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
+										})}
+										value={row.frequency}
+										onChange={handleChange("frequency", i)}
+									/>
+								</div>
+							</div>
+						))}
+					</form>
+				) : (
+					<div className="mt-3 text-danger">
+						You must define at least one {firstOrLast} name.
+					</div>
+				)}
 
-				<NamesControls
-					position="bottom"
-					rows={rowsEdited[firstOrLast]}
-					onSave={setRowsEditedWrapper(firstOrLast)}
-				/>
+				{rowsEdited[firstOrLast].length > 0 ? (
+					<NamesControls
+						position="bottom"
+						rows={rowsEdited[firstOrLast]}
+						onSave={setRowsEditedWrapper(firstOrLast)}
+					/>
+				) : null}
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-secondary" onClick={handleCancel}>
 					Cancel
 				</button>
-				<button className="btn btn-primary" onClick={handleSave}>
+				<button
+					className="btn btn-primary"
+					onClick={handleSave}
+					disabled={rowsEdited[firstOrLast].length === 0}
+				>
 					Save Names
 				</button>
 			</Modal.Footer>

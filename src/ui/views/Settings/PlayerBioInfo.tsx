@@ -197,7 +197,7 @@ export const isInvalidNumber = (number: number) =>
 	Number.isNaN(number) || number <= 0;
 
 // Assume it's all already validated by sub-pages, except the list of countries
-const parseAndValidate = (state: PlayerBioInfoState) => {
+export const parseAndValidate = (state: PlayerBioInfoState) => {
 	const output: Required<PlayerBioInfo> = {
 		default: {
 			colleges: arrayToObject(state.defaultColleges, "name"),
@@ -239,7 +239,7 @@ const parseAndValidate = (state: PlayerBioInfoState) => {
 	return output;
 };
 
-const prune = (
+export const prune = (
 	info: Required<PlayerBioInfo>,
 	defaults: Defaults,
 ): PlayerBioInfo | undefined => {
@@ -437,9 +437,7 @@ const PlayerBioInfo2 = ({
 		let parsed;
 		try {
 			parsed = parseAndValidate(infoState);
-			console.log("before", helpers.deepCopy(parsed));
 			parsed = prune(parsed, defaults);
-			console.log("after", helpers.deepCopy(parsed));
 		} catch (error) {
 			logEvent({
 				type: "error",

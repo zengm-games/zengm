@@ -17,7 +17,9 @@ import {
 	isInvalidNumber,
 	objectToArray,
 	PageInfo,
+	parseAndValidate,
 	PlayerBioInfoState,
+	prune,
 } from "./PlayerBioInfo";
 
 // https://stackoverflow.com/a/35200633/786644
@@ -93,13 +95,24 @@ const ImportButton = ({
 	</button>
 );
 
-const ExportButton = ({ infoState }: { infoState: PlayerBioInfoState }) => (
+const ExportButton = ({
+	defaults,
+	infoState,
+}: {
+	defaults: Defaults;
+	infoState: PlayerBioInfoState;
+}) => (
 	<button
 		className="btn btn-light-bordered"
 		onClick={() => {
-			const output = csvFormat(infoState, ["name", "frequency", "games"]);
+			const parsed = parseAndValidate(infoState);
+			const pruned = prune(parsed, defaults);
 
-			downloadFile("injuries.csv", output, "text/csv");
+			downloadFile(
+				"playerBioInfo.json",
+				JSON.stringify(pruned),
+				"application/json",
+			);
 		}}
 	>
 		Export
@@ -247,7 +260,7 @@ const Controls = ({
 						setErrorMessage={setImportErrorMessage}
 						setInfoState={setInfoState}
 					/>
-					<ExportButton infoState={infoState} />
+					<ExportButton defaults={defaults} infoState={infoState} />
 				</div>
 			</div>
 

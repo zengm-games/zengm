@@ -1340,6 +1340,7 @@ const SettingsForm = ({
 			initialState[key] = props[key];
 		}
 		initialState.injuries = props.injuries;
+		initialState.playerBioInfo = props.playerBioInfo;
 
 		return initialState;
 	});

@@ -55,7 +55,20 @@ export const formatPlayerBioInfoState = (
 		defaults.groups,
 	);
 
-	// also get back frequencies, in case not defined in playerBioInfo
+	const defaultCountries =
+		playerBioInfo === undefined
+			? mergedCountries
+			: mergeCountries(
+					undefined,
+					defaults.namesCountries,
+					defaults.namesGroups,
+					defaults.groups,
+			  );
+
+	// Happens when playerBioInfo is undefined
+	const allDefaults = mergedCountries === defaultCountries;
+
+	// Also get frequencies, in case not defined in playerBioInfo
 	const frequencies = getFrequencies(playerBioInfo, defaults.countries);
 
 	const countries = [];
@@ -79,26 +92,17 @@ export const formatPlayerBioInfoState = (
 		const builtIn = !!defaults.countries[country];
 		let defaultNames = false;
 		if (builtIn) {
-			let fromGroup;
-			for (const [group, countries] of Object.entries(defaults.groups)) {
-				if (countries.includes(country)) {
-					fromGroup = group;
-					break;
+			if (allDefaults) {
+				defaultNames = true;
+			} else {
+				const namesCountry = defaultCountries[country];
+
+				if (namesCountry) {
+					defaultNames =
+						builtIn &&
+						isEqual(names.first, namesCountry.first) &&
+						isEqual(names.last, namesCountry.last);
 				}
-			}
-
-			let namesCountry;
-			if (fromGroup) {
-				namesCountry = defaults.namesGroups[fromGroup];
-			} else if (defaults.namesCountries[country]) {
-				namesCountry = defaults.namesCountries[country];
-			}
-
-			if (namesCountry) {
-				defaultNames =
-					builtIn &&
-					isEqual(names.first, namesCountry.first) &&
-					isEqual(names.last, namesCountry.last);
 			}
 		}
 
@@ -117,7 +121,7 @@ export const formatPlayerBioInfoState = (
 		}
 
 		const colleges = mergedCountry.colleges ?? defaultColleges2;
-		const defaultColleges = isEqual(colleges, defaultColleges2);
+		const defaultColleges = allDefaults || isEqual(colleges, defaultColleges2);
 		const collegesText = objectToArray(colleges, "name", "name");
 
 		const defaultRaces2 =
@@ -125,7 +129,7 @@ export const formatPlayerBioInfoState = (
 			playerBioInfo?.default?.races ??
 			defaults.races.USA;
 		const races = mergedCountry.races ?? defaultRaces2;
-		const defaultRaces = isEqual(races, defaultRaces2);
+		const defaultRaces = allDefaults || isEqual(races, defaultRaces2);
 		const racesText = objectToArray(races, "race", "race");
 
 		const fractionSkipCollege =

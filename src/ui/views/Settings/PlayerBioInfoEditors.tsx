@@ -210,7 +210,7 @@ const CollegesControls = ({
 					<Dropdown.Toggle
 						className="btn-light-bordered btn-light-bordered-group-right"
 						variant="foo"
-						id="dropdown-injuries-reset"
+						id="dropdown-colleges-reset"
 					>
 						Reset
 					</Dropdown.Toggle>
@@ -424,6 +424,228 @@ export const CollegesEditor = ({
 				</button>
 				<button className="btn btn-primary" onClick={handleSave}>
 					Save Colleges
+				</button>
+			</Modal.Footer>
+		</>
+	);
+};
+
+type NameRow =
+	PlayerBioInfoState["countries"][number]["names"]["first"][number];
+
+type NameRows = PlayerBioInfoState["countries"][number]["names"];
+
+const parseAndValidateNames = (names: NameRows) => {
+	for (const key of ["first", "last"] as const) {
+		for (const row of names[key]) {
+			const number = parseFloat(row.frequency);
+			if (Number.isNaN(number)) {
+				throw new Error(
+					`Invalid frequency "${row.frequency}" for ${key} name "${row.name}"`,
+				);
+			}
+		}
+	}
+};
+
+const NamesControls = ({
+	rows,
+	position,
+	onSave,
+}: {
+	rows: NameRow[];
+	position: "top" | "bottom";
+	onSave: (rows: NameRow[]) => void;
+}) => {
+	return (
+		<>
+			<div className="btn-group">
+				<button
+					className="btn btn-light-bordered"
+					onClick={() => {
+						const newName = {
+							name: "Name",
+							frequency: "1",
+						};
+						if (position === "top") {
+							onSave([newName, ...rows]);
+						} else {
+							onSave([...rows, newName]);
+						}
+					}}
+				>
+					Add
+				</button>
+				<Dropdown>
+					<Dropdown.Toggle
+						className="btn-light-bordered btn-light-bordered-group-right"
+						variant="foo"
+						id="dropdown-names-reset"
+					>
+						Reset
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								onSave([]);
+							}}
+						>
+							Clear
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+			</div>
+		</>
+	);
+};
+
+export const NamesEditor = ({
+	rows,
+	onCancel,
+	onSave,
+}: {
+	rows: NameRows;
+	onCancel: () => void;
+	onSave: (rows: NameRows) => void;
+}) => {
+	const [rowsEdited, setRowsEdited] = useState({ ...rows });
+	const lastSavedState = useRef<undefined | NameRows>();
+	const [firstOrLast, setFirstOrLast] = useState<"first" | "last">("first");
+
+	const handleCancel = async () => {
+		// Reset for next time
+		setRowsEdited(lastSavedState.current ?? { ...rows });
+
+		onCancel();
+	};
+
+	const handleSave = (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => {
+		event.preventDefault();
+
+		// Don't submit parent form
+		event.stopPropagation();
+
+		try {
+			parseAndValidateNames(rowsEdited);
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+			return;
+		}
+
+		// Save for next time
+		lastSavedState.current = rowsEdited;
+
+		onSave(rowsEdited);
+	};
+
+	const handleChange =
+		(field: "name" | "frequency", i: number) =>
+		(event: ChangeEvent<HTMLInputElement>) => {
+			setRowsEdited(rows => ({
+				...rows,
+				[firstOrLast]: rows[firstOrLast].map((row, j) => {
+					if (i !== j) {
+						return row;
+					}
+
+					return {
+						...row,
+						[field]: event.target.value,
+					};
+				}),
+			}));
+		};
+
+	const setRowsEditedWrapper = (type: "first" | "last") => () => {
+		setRowsEdited(rows => ({
+			...rows,
+			[type]: rows,
+		}));
+	};
+
+	return (
+		<>
+			<Modal.Body>
+				<NamesControls
+					position="top"
+					rows={rowsEdited[firstOrLast]}
+					onSave={setRowsEditedWrapper(firstOrLast)}
+				/>
+
+				<ul className="nav nav-tabs mt-3">
+					{(["first", "last"] as const).map(type => (
+						<li className="nav-item">
+							<a
+								className={classNames("nav-link", {
+									active: type === firstOrLast,
+								})}
+								onClick={() => {
+									setFirstOrLast(type);
+								}}
+							>
+								{helpers.upperCaseFirstLetter(type)}
+							</a>
+						</li>
+					))}
+				</ul>
+
+				<form
+					onSubmit={handleSave}
+					style={{
+						maxWidth: 350,
+					}}
+					className="my-3"
+				>
+					<input type="submit" className="d-none" />
+					<div className="form-row font-weight-bold">
+						<div className="col-9">Name</div>
+						<div className="col-3">Frequency</div>
+					</div>
+					{rowsEdited[firstOrLast].map((row, i) => (
+						<div key={i} className="form-row mt-2 align-items-center">
+							<div className="col-9">
+								<input
+									type="text"
+									className="form-control"
+									value={row.name}
+									onChange={handleChange("name", i)}
+								/>
+							</div>
+							<div className="col-3">
+								<input
+									type="text"
+									className={classNames("form-control", {
+										"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
+									})}
+									value={row.frequency}
+									onChange={handleChange("frequency", i)}
+								/>
+							</div>
+						</div>
+					))}
+				</form>
+
+				<NamesControls
+					position="bottom"
+					rows={rowsEdited[firstOrLast]}
+					onSave={setRowsEditedWrapper(firstOrLast)}
+				/>
+			</Modal.Body>
+			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={handleCancel}>
+					Cancel
+				</button>
+				<button className="btn btn-primary" onClick={handleSave}>
+					Save Names
 				</button>
 			</Modal.Footer>
 		</>

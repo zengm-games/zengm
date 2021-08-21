@@ -10,7 +10,7 @@ import isEqual from "lodash-es/isEqual";
 import orderBy from "lodash-es/orderBy";
 import {
 	CollegesEditor,
-	FractionSkipCollegeEditor,
+	NamesEditor,
 	RacesEditor,
 } from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
@@ -217,6 +217,10 @@ export type PageInfo =
 	| {
 			name: "colleges";
 			index: number | "default";
+	  }
+	| {
+			name: "names";
+			index: number;
 	  }
 	| {
 			name: "races";
@@ -528,6 +532,14 @@ const PlayerBioInfo2 = ({
 								"fractionSkipCollege",
 								pageInfo.index,
 							)}
+						/>
+					</>
+				) : pageInfo.name === "names" ? (
+					<>
+						<NamesEditor
+							rows={infoState.countries[pageInfo.index].names}
+							onCancel={onCancel}
+							onSave={handleChange2("names", pageInfo.index)}
 						/>
 					</>
 				) : null}

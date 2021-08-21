@@ -1,6 +1,6 @@
 import { csvFormat, csvParse } from "d3-dsv";
 import { m, AnimatePresence } from "framer-motion";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, CSSProperties, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import type { InjuriesSetting } from "../../../common/types";
 import {
@@ -23,6 +23,19 @@ const formatInjuries = (injuries: InjuriesSetting) =>
 
 type InjuriesText = ReturnType<typeof formatInjuries>;
 
+export const IMPORT_FILE_STYLE: CSSProperties = {
+	position: "absolute",
+	top: 0,
+	right: 0,
+	minWidth: "100%",
+	minHeight: "100%",
+	fontSize: 100,
+	display: "block",
+	filter: "alpha(opacity=0)",
+	opacity: 0,
+	outline: "none",
+};
+
 // https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
 	setErrorMessage,
@@ -40,18 +53,7 @@ const ImportButton = ({
 		<input
 			className="cursor-pointer"
 			type="file"
-			style={{
-				position: "absolute",
-				top: 0,
-				right: 0,
-				minWidth: "100%",
-				minHeight: "100%",
-				fontSize: 100,
-				display: "block",
-				filter: "alpha(opacity=0)",
-				opacity: 0,
-				outline: "none",
-			}}
+			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
 			onChange={event => {
 				if (!event.target.files) {

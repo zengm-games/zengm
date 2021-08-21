@@ -1,7 +1,5 @@
-import { csvFormat, csvParse } from "d3-dsv";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import type { PlayerBioInfo, Race, ThenArg } from "../../../common/types";
 import {
 	confirm,
 	downloadFile,
@@ -15,12 +13,12 @@ import {
 	Defaults,
 	formatPlayerBioInfoState,
 	isInvalidNumber,
-	objectToArray,
 	PageInfo,
 	parseAndValidate,
 	PlayerBioInfoState,
 	prune,
 } from "./PlayerBioInfo";
+import { IMPORT_FILE_STYLE } from "./Injuries";
 
 // https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
@@ -41,18 +39,7 @@ const ImportButton = ({
 		<input
 			className="cursor-pointer"
 			type="file"
-			style={{
-				position: "absolute",
-				top: 0,
-				right: 0,
-				minWidth: "100%",
-				minHeight: "100%",
-				fontSize: 100,
-				display: "block",
-				filter: "alpha(opacity=0)",
-				opacity: 0,
-				outline: "none",
-			}}
+			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
 			onChange={event => {
 				if (!event.target.files) {
@@ -71,20 +58,13 @@ const ImportButton = ({
 				reader.onload = async event2 => {
 					try {
 						// @ts-ignore
-						const rows = csvParse(event2.currentTarget.result);
-
-						if (
-							!rows.columns.includes("name") ||
-							!rows.columns.includes("frequency") ||
-							!rows.columns.includes("games")
-						) {
-							setErrorMessage(
-								"File should be a CSV file with columns: name, frequency, games",
-							);
-							return;
-						}
-
-						setInfoState(formatPlayerBioInfoState(rows as any, defaults));
+						const info = JSON.parse(event2.currentTarget.result);
+						setInfoState(
+							formatPlayerBioInfoState(
+								info.gameAttributes.playerBioInfo,
+								defaults,
+							),
+						);
 					} catch (error) {
 						setErrorMessage(error.message);
 						return;
@@ -110,7 +90,7 @@ const ExportButton = ({
 
 			downloadFile(
 				"playerBioInfo.json",
-				JSON.stringify(pruned),
+				JSON.stringify({ gameAttributes: { playerBioInfo: pruned } }),
 				"application/json",
 			);
 		}}

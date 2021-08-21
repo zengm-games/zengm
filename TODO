@@ -1,5 +1,4 @@
 UI to edit names/countries/races/colleges
-- import/export JSON of a valid league file with only playerBioInfo in it
 - names/races need to be updated when country name is changed? to handle defaults - either apply default over current default, or switch defaultXxx from true to false
 - button to clone country
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?
@@ -7,7 +6,6 @@ UI to edit names/countries/races/colleges
 - after saving names/colleges/races, scroll to where was before
 - does grid make sense? fixed columns better? 100% width buttons? table?
 - does it work with no colleges defined? if not, need an error message like there is for countries
-- test on uploaded league file before actually creating league
 - error if two countries have the same name
 
 More preset league structures

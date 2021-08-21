@@ -1,4 +1,5 @@
 UI to edit names/countries/races/colleges
+- click set default names for a country seems to not be working
 - NamesControls
   - add reset to default, if built-in
   - easy way to clone names of an existing country or built-in country
@@ -6,7 +7,6 @@ UI to edit names/countries/races/colleges
 - when saving how to know when to store whole or part as undefined (default)
   - DRY with formatPlayerBioInfoState
 - names/races need to be updated when country name is changed? to handle defaults - either apply default over current default, or switch defaultXxx from true to false
-- add country  button should be a dropdown. 1st is "Custom", after is all built-in countries not already defined
 - button to clone country
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?
 - vertical alignment of X at end of row, compare to injuries, mt-2

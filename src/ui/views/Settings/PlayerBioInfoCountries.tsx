@@ -116,11 +116,13 @@ type CountryRow = PlayerBioInfoState["countries"][number];
 
 const Controls = ({
 	defaults,
+	defaultsState,
 	infoState,
 	position,
 	setInfoState,
 }: {
 	defaults: Defaults;
+	defaultsState: PlayerBioInfoState;
 	infoState: PlayerBioInfoState;
 	position: "top" | "bottom";
 	setInfoState: SetInfoState;
@@ -142,6 +144,13 @@ const Controls = ({
 			}));
 		}
 	};
+
+	const currentCountryNames = new Set(
+		infoState.countries.map(row => row.country),
+	);
+	const defaultCountriesAvailable = defaultsState.countries.filter(
+		row => !currentCountryNames.has(row.country),
+	);
 
 	return (
 		<>
@@ -185,7 +194,16 @@ const Controls = ({
 							>
 								Custom
 							</Dropdown.Item>
-							<Dropdown.Item onClick={() => {}}>Foo</Dropdown.Item>
+							{defaultCountriesAvailable.map(row => (
+								<Dropdown.Item
+									key={row.id}
+									onClick={() => {
+										addCountry({ ...row });
+									}}
+								>
+									{row.country}
+								</Dropdown.Item>
+							))}
 						</Dropdown.Menu>
 					</Dropdown>
 					<Dropdown>
@@ -242,6 +260,7 @@ const Controls = ({
 
 export const CountriesEditor = ({
 	defaults,
+	defaultsState,
 	handleCancel,
 	handleChange,
 	handleSave,
@@ -251,6 +270,7 @@ export const CountriesEditor = ({
 	setPageInfo,
 }: {
 	defaults: Defaults;
+	defaultsState: PlayerBioInfoState;
 	handleCancel: any;
 	handleChange: any;
 	handleSave: any;
@@ -301,6 +321,7 @@ export const CountriesEditor = ({
 
 				<Controls
 					defaults={defaults}
+					defaultsState={defaultsState}
 					position="top"
 					infoState={infoState}
 					setInfoState={setInfoState}
@@ -424,6 +445,7 @@ export const CountriesEditor = ({
 				{infoState.countries.length > 0 ? (
 					<Controls
 						defaults={defaults}
+						defaultsState={defaultsState}
 						position="bottom"
 						infoState={infoState}
 						setInfoState={setInfoState}

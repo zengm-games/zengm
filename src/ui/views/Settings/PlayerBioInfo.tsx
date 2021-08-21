@@ -246,6 +246,9 @@ const PlayerBioInfo2 = ({
 	const [infoState, setInfoStateRaw] = useState<
 		PlayerBioInfoState | undefined
 	>();
+	const [defaultsState, setDefaultsState] = useState<
+		PlayerBioInfoState | undefined
+	>();
 	const [dirty, setDirty] = useState(false);
 	const lastSavedState = useRef<PlayerBioInfoState | undefined>();
 	const [defaults, setDefaults] = useState<Defaults | undefined>();
@@ -263,7 +266,16 @@ const PlayerBioInfo2 = ({
 	const loadDefaults = async () => {
 		const defaults = await toWorker("main", "getPlayerBioInfoDefaults");
 		setDefaults(defaults);
-		setInfoStateRaw(formatPlayerBioInfoState(defaultValue, defaults));
+
+		const infoState = formatPlayerBioInfoState(defaultValue, defaults);
+		setInfoStateRaw(infoState);
+
+		// Assume no player bio info... then processed (stringified) defaults are the output of this
+		const defaultsState =
+			defaultValue === undefined
+				? infoState
+				: formatPlayerBioInfoState(undefined, defaults);
+		setDefaultsState(defaultsState);
 	};
 
 	const handleShow = async () => {
@@ -429,7 +441,7 @@ const PlayerBioInfo2 = ({
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
 
 	let modal = null;
-	if (infoState && defaults) {
+	if (infoState && defaults && defaultsState) {
 		let title = "Player Bio Info";
 		if (pageInfo.name !== "countries") {
 			const countryName =
@@ -455,6 +467,7 @@ const PlayerBioInfo2 = ({
 				{pageInfo.name === "countries" ? (
 					<CountriesEditor
 						defaults={defaults}
+						defaultsState={defaultsState}
 						handleCancel={handleCancel}
 						handleChange={handleChange}
 						handleSave={handleSave}

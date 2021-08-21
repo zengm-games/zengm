@@ -55,7 +55,7 @@ export const formatPlayerBioInfoState = (
 		defaults.groups,
 	);
 
-	const defaultCountries =
+	const defaultMergedCountries =
 		playerBioInfo === undefined
 			? mergedCountries
 			: mergeCountries(
@@ -66,7 +66,7 @@ export const formatPlayerBioInfoState = (
 			  );
 
 	// Happens when playerBioInfo is undefined
-	const allDefaults = mergedCountries === defaultCountries;
+	const allDefaults = mergedCountries === defaultMergedCountries;
 
 	// Also get frequencies, in case not defined in playerBioInfo
 	const frequencies = getFrequencies(playerBioInfo, defaults.countries);
@@ -95,7 +95,7 @@ export const formatPlayerBioInfoState = (
 			if (allDefaults) {
 				defaultNames = true;
 			} else {
-				const namesCountry = defaultCountries[country];
+				const namesCountry = defaultMergedCountries[country];
 
 				if (namesCountry) {
 					defaultNames =

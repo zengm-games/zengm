@@ -474,7 +474,7 @@ const PlayerBioInfo2 = ({
 						onSetDefault={(type, i) => {
 							const country = infoState.countries[i].country;
 
-							let array: any[];
+							let array: any;
 
 							if (type === "colleges") {
 								array = [...infoState.defaultColleges];
@@ -488,6 +488,14 @@ const PlayerBioInfo2 = ({
 								} else {
 									array = [...infoState.defaultRaces];
 								}
+							} else if (type === "names") {
+								const row = defaultsState.countries.find(
+									row => row.country === country,
+								);
+								if (!row) {
+									throw new Error("Country not found");
+								}
+								array = row.names;
 							} else {
 								throw new Error("Invalid type");
 							}

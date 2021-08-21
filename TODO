@@ -1,5 +1,4 @@
 UI to edit names/countries/races/colleges
-- click set default names for a country seems to not be working
 - NamesControls
   - add reset to default, if built-in
   - easy way to clone names of an existing country or built-in country

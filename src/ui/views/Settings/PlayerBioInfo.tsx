@@ -458,7 +458,7 @@ const PlayerBioInfo2 = ({
 	};
 
 	const handleChange =
-		(key: "name" | "frequency" | "games", i: number) =>
+		(key: "country" | "frequency" | "games", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
 			setInfoState(data => ({
 				...data,
@@ -467,14 +467,26 @@ const PlayerBioInfo2 = ({
 						return row;
 					}
 
+					const extraProps: Partial<typeof data["countries"][number]> = {};
+					if (key === "country") {
+						// Just sets the default to false. Might be better to compare values, like it does in prune.
+						extraProps.defaultNames = false;
+						extraProps.defaultRaces = false;
+						extraProps.builtIn = !!defaults?.countries.hasOwnProperty(
+							event.target.value,
+						);
+					}
+
 					return {
 						...row,
+						...extraProps,
 						[key]: event.target.value,
 					};
 				}),
 			}));
 		};
 
+	// Just sets the default to false. Might be better to compare values, like it does in prune.
 	const handleChange2 =
 		(
 			key: "colleges" | "fractionSkipCollege" | "names" | "races",

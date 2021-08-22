@@ -364,7 +364,7 @@ export const CountriesEditor = ({
 											type="text"
 											className="form-control"
 											value={country.country}
-											onChange={handleChange("name", i)}
+											onChange={handleChange("country", i)}
 										/>
 									</div>
 									<div

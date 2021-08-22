@@ -229,7 +229,7 @@ const TeamForm = ({
 				>
 					<div
 						ref={setFaceWrapper}
-						style={{ maxWidth: 120, marginTop: -35 }}
+						style={{ maxWidth: 120, marginTop: -35, zIndex: -1 }}
 						className="position-relative mb-3"
 					/>
 					{showFace || showFaceHover ? (

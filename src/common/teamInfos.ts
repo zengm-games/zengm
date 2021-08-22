@@ -57,7 +57,7 @@ const teamInfos: {
 		colors: ["#034757", "#67c7e9", "#b78254"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 40.6781784,
@@ -70,7 +70,7 @@ const teamInfos: {
 		colors: ["#009e87", "#541f3e", "#ffffff"],
 		jersey: bySport({
 			basketball: "jersey3",
-			football: "football2",
+			football: "football3",
 			hockey: "hockey4",
 		}),
 		latitude: 35.2270869,
@@ -83,7 +83,7 @@ const teamInfos: {
 		colors: ["#000000", "#c11616", "#2966ef"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 39.1031182,
@@ -96,7 +96,7 @@ const teamInfos: {
 		colors: ["#211e1e", "#f8e3cc", "#3f1c59"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football2",
+			football: "football3",
 			hockey: "hockey4",
 		}),
 		latitude: 41.49932,
@@ -161,7 +161,7 @@ const teamInfos: {
 		colors: ["#e79f02", "#00246d", "#ffffff"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football2",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 39.768403,
@@ -174,7 +174,7 @@ const teamInfos: {
 		colors: ["#8f2100", "#ffb500", "#d4731c"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 39.0997265,
@@ -200,7 +200,7 @@ const teamInfos: {
 		colors: ["#aeaeae", "#ea4b0f", "#dedddd"],
 		jersey: bySport({
 			basketball: "jersey3",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 34.0522342,
@@ -213,7 +213,7 @@ const teamInfos: {
 		colors: ["#1c73bb", "#ffd600", "#0c5983"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 36.1699412,
@@ -226,7 +226,7 @@ const teamInfos: {
 		colors: ["#000000", "#ff6c49", "#00aedc"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey4",
 		}),
 		latitude: 35.1495343,
@@ -239,7 +239,7 @@ const teamInfos: {
 		colors: ["#4ac1c0", "#d8519d", "#f15949"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football4",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 25.7616798,
@@ -252,7 +252,7 @@ const teamInfos: {
 		colors: ["#003600", "#fdc05f", "#007800"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey4",
 		}),
 		latitude: 43.0389025,
@@ -265,7 +265,7 @@ const teamInfos: {
 		colors: ["#8accdc", "#3d2971", "#ed9a22"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football2",
+			football: "football4",
 			hockey: "hockey",
 		}),
 		latitude: 44.977753,
@@ -317,7 +317,7 @@ const teamInfos: {
 		colors: ["#610000", "#bbb29e", "#e4dfcf"],
 		jersey: bySport({
 			basketball: "jersey3",
-			football: "football3",
+			football: "football4",
 			hockey: "hockey",
 		}),
 		latitude: 35.4675602,
@@ -330,7 +330,7 @@ const teamInfos: {
 		colors: ["#dc5000", "#ffffff", "#0b7648"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football",
+			football: "football3",
 			hockey: "hockey4",
 		}),
 		latitude: 28.5383355,
@@ -343,7 +343,7 @@ const teamInfos: {
 		colors: ["#46bae6", "#ffdb33", "#d9771f"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 39.9525839,
@@ -382,7 +382,7 @@ const teamInfos: {
 		colors: ["#e41d34", "#1e1e1e", "#e7a9cc"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey3",
 		}),
 		latitude: 45.5051064,
@@ -408,7 +408,7 @@ const teamInfos: {
 		colors: ["#735823", "#e4c649", "#f8e19f"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football2",
+			football: "football5",
 			hockey: "hockey",
 		}),
 		latitude: 38.5815719,
@@ -421,7 +421,7 @@ const teamInfos: {
 		colors: ["#231f20", "#ffffff", "#b2b3b3"],
 		jersey: bySport({
 			basketball: "jersey5",
-			football: "football2",
+			football: "football4",
 			hockey: "hockey4",
 		}),
 		latitude: 32.715738,
@@ -447,7 +447,7 @@ const teamInfos: {
 		colors: ["#7c7c7c", "#000000", "#aea57a"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football",
+			football: "football3",
 			hockey: "hockey3",
 		}),
 		latitude: 39.3209801,
@@ -460,7 +460,7 @@ const teamInfos: {
 		colors: ["#213063", "#1ea194", "#117568"],
 		jersey: bySport({
 			basketball: "jersey5",
-			football: "football4",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 49.2827291,
@@ -502,7 +502,7 @@ const teamInfos: {
 		colors: ["#07295c", "#f16229", "#d13522"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football5",
 			hockey: "hockey",
 		}),
 		latitude: 42.8864468,
@@ -512,9 +512,9 @@ const teamInfos: {
 		region: "Hawaii",
 		name: "Honu",
 		pop: 1,
-		colors: ["#21655a", "#279c89", "#e5e1af"],
+		colors: ["#21655a", "#e5e1af", "#279c89"],
 		jersey: bySport({
-			basketball: "jersey3",
+			basketball: "jersey2",
 			football: "football",
 			hockey: "hockey3",
 		}),
@@ -541,7 +541,7 @@ const teamInfos: {
 		colors: ["#000000", "#ffffff", "#d10600"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football2",
+			football: "football3",
 			hockey: "hockey",
 		}),
 		latitude: 45.4215296,
@@ -580,7 +580,7 @@ const teamInfos: {
 		colors: ["#88bccd", "#c7741b", "#99442e"],
 		jersey: bySport({
 			basketball: "jersey3",
-			football: "football4",
+			football: "football2",
 			hockey: "hockey",
 		}),
 		latitude: 36.8529263,
@@ -596,7 +596,7 @@ const teamInfos: {
 		colors: ["#ed1d3d", "#eac494", "#f2b316"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football4",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 51.0447331,
@@ -606,10 +606,10 @@ const teamInfos: {
 		region: "Montreal",
 		name: "Beavers",
 		pop: 4,
-		colors: ["#5b352a", "#9d6f62", "#967fc0"],
+		colors: ["#5b352a", "#ffffff", "#967fc0"],
 		jersey: bySport({
 			basketball: "jersey2",
-			football: "football",
+			football: "football3",
 			hockey: "hockey",
 		}),
 		latitude: 45.5016889,
@@ -638,7 +638,7 @@ const teamInfos: {
 		colors: ["#272b2a", "#84d5f4", "#84d5f4"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football2",
 			hockey: "hockey4",
 		}),
 		latitude: 41.8781136,
@@ -651,7 +651,7 @@ const teamInfos: {
 		colors: ["#47ff47", "#112e5b", "#8f8f8f"],
 		jersey: bySport({
 			basketball: "jersey4",
-			football: "football3",
+			football: "football2",
 			hockey: "hockey3",
 		}),
 		latitude: 47.6062095,

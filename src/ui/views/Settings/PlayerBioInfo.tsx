@@ -675,7 +675,11 @@ const PlayerBioInfo2 = ({
 				) : pageInfo.name === "colleges" ? (
 					<>
 						<CollegesEditor
-							defaultRows={infoState.defaultColleges}
+							defaultRows={
+								pageInfo.index === "default"
+									? defaultsState.defaultColleges
+									: infoState.defaultColleges
+							}
 							defaults={pageInfo.index === "default"}
 							rows={
 								pageInfo.index === "default"

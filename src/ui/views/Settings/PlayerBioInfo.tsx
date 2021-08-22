@@ -366,6 +366,7 @@ const PlayerBioInfo2 = ({
 	const [pageInfo, setPageInfo] = useState<PageInfo>({
 		name: "countries",
 	});
+	const [countriesScroll, setCountriesScroll] = useState(0);
 
 	const setInfoState = (
 		infoState: PlayerBioInfoState | ((infoState: PlayerBioInfoState) => void),
@@ -651,6 +652,8 @@ const PlayerBioInfo2 = ({
 						infoState={infoState}
 						setInfoState={setInfoState}
 						setPageInfo={setPageInfo}
+						countriesScroll={countriesScroll}
+						setCountriesScroll={setCountriesScroll}
 					/>
 				) : pageInfo.name === "races" ? (
 					<RacesEditor

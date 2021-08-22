@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
 import classNames from "classnames";
@@ -256,6 +256,8 @@ export const CountriesEditor = ({
 	infoState,
 	setInfoState,
 	setPageInfo,
+	countriesScroll,
+	setCountriesScroll,
 }: {
 	defaults: Defaults;
 	defaultsState: PlayerBioInfoState;
@@ -266,10 +268,26 @@ export const CountriesEditor = ({
 	infoState: PlayerBioInfoState;
 	setInfoState: SetInfoState;
 	setPageInfo: (pageInfo: PageInfo) => void;
+	countriesScroll: number;
+	setCountriesScroll: (scrollTop: number) => void;
 }) => {
+	const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+	const setPageInfoWrapper = (pageInfo: PageInfo) => {
+		setPageInfo(pageInfo);
+		setCountriesScroll(wrapperRef.current?.scrollTop ?? 0);
+	};
+
+	useEffect(() => {
+		if (wrapperRef.current && countriesScroll !== 0) {
+			wrapperRef.current.scrollTop = countriesScroll;
+			setCountriesScroll(0);
+		}
+	}, [countriesScroll, setCountriesScroll, wrapperRef]);
+
 	return (
 		<>
-			<Modal.Body>
+			<Modal.Body ref={wrapperRef}>
 				<p>
 					By default, leagues can have players from any of the built-in
 					countries. Each built-in country comes with built-in names and races,
@@ -286,7 +304,7 @@ export const CountriesEditor = ({
 					<button
 						className="btn btn-secondary mr-2"
 						onClick={() => {
-							setPageInfo({
+							setPageInfoWrapper({
 								name: "races",
 								index: "default",
 							});
@@ -297,7 +315,7 @@ export const CountriesEditor = ({
 					<button
 						className="btn btn-secondary"
 						onClick={() => {
-							setPageInfo({
+							setPageInfoWrapper({
 								name: "colleges",
 								index: "default",
 							});
@@ -386,7 +404,7 @@ export const CountriesEditor = ({
 									</div>
 									{(["names", "colleges", "races"] as const).map(key => {
 										const onClickCustom = () => {
-											setPageInfo({
+											setPageInfoWrapper({
 												name: key,
 												index: i,
 											});

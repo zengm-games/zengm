@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import classNames, { Argument } from "classnames";
+import classNames from "classnames";
 import { groupBy } from "../../../common/groupBy";
 import PropTypes from "prop-types";
 import {

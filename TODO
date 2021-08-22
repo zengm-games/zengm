@@ -1,5 +1,4 @@
 bugs
-- add buttons to delete name/college
 - editing default fraction college does not persist
 - when editing default colleges, "reset to default" needs to be something different
 

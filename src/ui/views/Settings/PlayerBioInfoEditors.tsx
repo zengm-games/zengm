@@ -642,30 +642,47 @@ export const NamesEditor = ({
 						className="my-3"
 					>
 						<input type="submit" className="d-none" />
-						<div className="form-row font-weight-bold">
-							<div className="col-9">Name</div>
-							<div className="col-3">Frequency</div>
+						<div
+							className="d-flex font-weight-bold"
+							style={{ marginRight: 26 }}
+						>
+							<div className="flex-grow-1">Name</div>
+							<div style={smallColStyle}>Frequency</div>
 						</div>
 						{rowsEdited[firstOrLast].map((row, i) => (
-							<div key={i} className="form-row mt-2 align-items-center">
-								<div className="col-9">
-									<input
-										type="text"
-										className="form-control"
-										value={row.name}
-										onChange={handleChange("name", i)}
-									/>
+							<div key={i} className="d-flex">
+								<div className="d-flex mt-2 flex-grow-1">
+									<div className="flex-grow-1">
+										<input
+											type="text"
+											className="form-control"
+											value={row.name}
+											onChange={handleChange("name", i)}
+										/>
+									</div>
+									<div style={smallColStyle}>
+										<input
+											type="text"
+											className={classNames("form-control", {
+												"is-invalid": isInvalidNumber(
+													parseFloat(row.frequency),
+												),
+											})}
+											value={row.frequency}
+											onChange={handleChange("frequency", i)}
+										/>
+									</div>
 								</div>
-								<div className="col-3">
-									<input
-										type="text"
-										className={classNames("form-control", {
-											"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
-										})}
-										value={row.frequency}
-										onChange={handleChange("frequency", i)}
-									/>
-								</div>
+								<PlayerBioInfoRowButton
+									className="text-danger"
+									onClick={() => {
+										setRowsEditedWrapper(firstOrLast)(
+											rowsEdited[firstOrLast].filter(row2 => row !== row2),
+										);
+									}}
+									title="Delete"
+									icon="glyphicon-remove"
+								/>
 							</div>
 						))}
 					</form>

@@ -1015,6 +1015,15 @@ export const settings: {
 			"When enabled, the matchups in each round of the playoffs will be reset so the best team always plays the worst team.",
 		type: "bool",
 	},
+	{
+		category: "Players",
+		key: "playerBioInfo",
+		name: "Biographical Info",
+		godModeRequired: "always",
+		type: "custom",
+		description: "Customize the home countries and names of generated players.",
+		customForm: true,
+	},
 ];
 
 if (isSport("basketball")) {
@@ -1183,16 +1192,6 @@ if (isSport("basketball")) {
 			type: "float",
 			description:
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
-		},
-		{
-			category: "Players",
-			key: "playerBioInfo",
-			name: "Biographical Info",
-			godModeRequired: "always",
-			type: "custom",
-			description:
-				"Customize the home countries and names of generated players.",
-			customForm: true,
 		},
 		{
 			category: "Players",

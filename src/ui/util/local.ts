@@ -33,6 +33,7 @@ const useLocal = create<
 >(set => ({
 	challengeNoRatings: false,
 	customMenu: undefined,
+	dirtySettings: false,
 	gameSimInProgress: false,
 	games: [],
 	gold: undefined,

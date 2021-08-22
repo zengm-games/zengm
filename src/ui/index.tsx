@@ -201,22 +201,46 @@ const setupRoutes = () => {
 	let initialLoad = true;
 	router.start({
 		routeMatched: async ({ context }) => {
-			if (
-				!context.state.backendRedirect &&
-				window.location.pathname.includes("/live_game") &&
-				!context.path.includes("/live_game")
-			) {
-				const liveGameInProgress = local.getState().liveGameInProgress;
-				if (liveGameInProgress) {
-					const proceed = await confirm(
-						"If you navigate away from this page, you won't be able to see these play-by-play results again.",
-						{
-							okText: "Navigate Away",
-							cancelText: "Stay Here",
-						},
-					);
-					if (!proceed) {
-						return false;
+			if (!context.state.backendRedirect) {
+				if (
+					window.location.pathname.includes("/live_game") &&
+					!context.path.includes("/live_game")
+				) {
+					const liveGameInProgress = local.getState().liveGameInProgress;
+					if (liveGameInProgress) {
+						const proceed = await confirm(
+							"If you navigate away from this page, you won't be able to see these play-by-play results again.",
+							{
+								okText: "Navigate Away",
+								cancelText: "Stay Here",
+							},
+						);
+						if (!proceed) {
+							return false;
+						}
+					}
+				}
+
+				if (
+					window.location.pathname.includes("/settings") &&
+					!context.path.includes("/settings")
+				) {
+					const dirtySettings = local.getState().dirtySettings;
+					if (dirtySettings) {
+						const proceed = await confirm(
+							"Are you sure you want to discard your unsaved settings changes?",
+							{
+								okText: "Discard",
+								cancelText: "Stay Here",
+							},
+						);
+						if (!proceed) {
+							return false;
+						}
+
+						local.getState().actions.update({
+							dirtySettings: false,
+						});
 					}
 				}
 			}

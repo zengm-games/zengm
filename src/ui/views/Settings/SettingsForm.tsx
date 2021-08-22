@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import classNames from "classnames";
+import classNames, { Argument } from "classnames";
 import { groupBy } from "../../../common/groupBy";
 import PropTypes from "prop-types";
 import {
@@ -1290,6 +1290,7 @@ type State = Record<Exclude<Key, SpecialStateAll>, string> &
 const SettingsForm = ({
 	onCancel,
 	onSave,
+	onUpdateExtra,
 	hasPlayers,
 	newLeague,
 	realPlayers,
@@ -1298,6 +1299,7 @@ const SettingsForm = ({
 }: Settings & {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
+	onUpdateExtra?: () => void;
 	hasPlayers?: boolean;
 	newLeague?: boolean;
 	realPlayers?: boolean;
@@ -1319,7 +1321,7 @@ const SettingsForm = ({
 
 	const [submitting, setSubmitting] = useState(false);
 	const [gameSimPreset, setGameSimPreset] = useState("default");
-	const [state, setState] = useState<State>(() => {
+	const [state, setStateRaw] = useState<State>(() => {
 		// @ts-ignore
 		const initialState: State = {};
 		for (const { key, type, values } of settings) {
@@ -1345,6 +1347,13 @@ const SettingsForm = ({
 		return initialState;
 	});
 	const godMode = !!state.godMode;
+
+	const setState = (arg: Parameters<typeof setStateRaw>[0]) => {
+		setStateRaw(arg);
+		if (onUpdateExtra) {
+			onUpdateExtra();
+		}
+	};
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;

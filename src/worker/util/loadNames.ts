@@ -33,8 +33,8 @@ let defaultNamesCountries: DefaultNames;
 
 let defaultNamesGroups: DefaultNames;
 
-export const initDefaults = async () => {
-	if (!defaultNamesCountries || !defaultNamesGroups) {
+export const initDefaults = async (force?: boolean) => {
+	if (!defaultNamesCountries || !defaultNamesGroups || force) {
 		if (process.env.NODE_ENV === "test") {
 			const dummyNames = {
 				first: { FirstName: 1 },

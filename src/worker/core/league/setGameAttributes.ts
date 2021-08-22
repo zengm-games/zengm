@@ -14,6 +14,7 @@ import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 import goatFormula from "../../util/goatFormula";
 import updateMeta from "./updateMeta";
+import { initDefaults } from "../../util/loadNames";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -175,6 +176,12 @@ const setGameAttributes = async (
 		(toUpdate.includes("userTids") && g.get("challengeNoDraftPicks"))
 	) {
 		await draft.genPicks();
+	}
+
+	// Reset playerBioInfo caches
+	if (toUpdate.includes("playerBioInfo")) {
+		local.playerBioInfo = undefined;
+		await initDefaults(true);
 	}
 };
 

@@ -1,6 +1,6 @@
 UI to edit names/countries/races/colleges
 - after saving names/colleges/races, scroll to where was before
-- after editing playerBioInfo, need to reset loadNames stuff
+- warning if navigate away from league settings with unsaved changes
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
@@ -137,8 +137,6 @@ injuries
   - https://discord.com/channels/290013534023057409/290015468939640832/859264726247800832
 - hockey
   - https://discord.com/channels/290013534023057409/290015468939640832/859262222873526272
-
-warning if navigate away from league settings with unsaved changes
 
 FBGM
 - lower salaries https://discord.com/channels/290013534023057409/331882115119448065/856734085191041024

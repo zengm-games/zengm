@@ -1,3 +1,8 @@
+bugs
+- add buttons to delete name/college
+- editing default fraction college does not persist
+- when editing default colleges, "reset to default" needs to be something different
+
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
 

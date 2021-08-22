@@ -13,7 +13,34 @@ import {
 } from "./PlayerBioInfo";
 import { IMPORT_FILE_STYLE } from "./Injuries";
 
-const buttonWidth = 81;
+export const smallColStyle = {
+	marginLeft: 10,
+	width: 81,
+};
+
+export const PlayerBioInfoRowButton = ({
+	className,
+	onClick,
+	title,
+	icon,
+}: {
+	className: string;
+	onClick: () => void;
+	title: string;
+	icon: string;
+}) => {
+	return (
+		<button
+			className={`${className} btn btn-link pl-2 pr-0 py-0 border-0 mt-2`}
+			onClick={onClick}
+			style={{ fontSize: 20 }}
+			title={title}
+			type="button"
+		>
+			<span className={`glyphicon ${icon}`} />
+		</button>
+	);
+};
 
 // https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
@@ -341,38 +368,10 @@ export const CountriesEditor = ({
 							style={{ marginRight: 55 }}
 						>
 							<div className="flex-grow-1">Country</div>
-							<div
-								style={{
-									marginLeft: 10,
-									width: buttonWidth,
-								}}
-							>
-								Frequency
-							</div>
-							<div
-								style={{
-									marginLeft: 10,
-									width: buttonWidth,
-								}}
-							>
-								Names
-							</div>
-							<div
-								style={{
-									marginLeft: 10,
-									width: buttonWidth,
-								}}
-							>
-								Colleges
-							</div>
-							<div
-								style={{
-									marginLeft: 10,
-									width: buttonWidth,
-								}}
-							>
-								Races
-							</div>
+							<div style={smallColStyle}>Frequency</div>
+							<div style={smallColStyle}>Names</div>
+							<div style={smallColStyle}>Colleges</div>
+							<div style={smallColStyle}>Races</div>
 						</div>
 						{infoState.countries.map((country, i) => (
 							<div key={country.id} className="d-flex">
@@ -385,12 +384,7 @@ export const CountriesEditor = ({
 											onChange={handleChange("country", i)}
 										/>
 									</div>
-									<div
-										style={{
-											marginLeft: 10,
-											width: buttonWidth,
-										}}
-									>
+									<div style={smallColStyle}>
 										<input
 											type="text"
 											className={classNames("form-control", {
@@ -414,13 +408,7 @@ export const CountriesEditor = ({
 											// Non-built in countries have no default names
 
 											return (
-												<div
-													style={{
-														marginLeft: 10,
-														width: buttonWidth,
-													}}
-													key={key}
-												>
+												<div style={smallColStyle} key={key}>
 													<button
 														className="btn btn-secondary w-100"
 														onClick={onClickCustom}
@@ -432,13 +420,7 @@ export const CountriesEditor = ({
 										}
 
 										return (
-											<div
-												style={{
-													marginLeft: 10,
-													width: buttonWidth,
-												}}
-												key={key}
-											>
+											<div style={smallColStyle} key={key}>
 												<Dropdown>
 													<Dropdown.Toggle
 														variant="secondary"
@@ -471,8 +453,8 @@ export const CountriesEditor = ({
 										);
 									})}
 								</div>
-								<button
-									className="text-reset btn btn-link pl-2 pr-0 py-0 border-0 mt-2"
+								<PlayerBioInfoRowButton
+									className="text-reset"
 									onClick={() => {
 										setInfoState(data => {
 											const countries = [...data.countries];
@@ -490,26 +472,20 @@ export const CountriesEditor = ({
 											};
 										});
 									}}
-									style={{ fontSize: 20 }}
 									title="Clone"
-									type="button"
-								>
-									<span className="glyphicon glyphicon-plus" />
-								</button>
-								<button
-									className="text-danger btn btn-link pl-2 pr-0 py-0 border-0 mt-2"
+									icon="glyphicon-plus"
+								/>
+								<PlayerBioInfoRowButton
+									className="text-danger"
 									onClick={() => {
 										setInfoState(data => ({
 											...data,
 											countries: data.countries.filter(row => row !== country),
 										}));
 									}}
-									style={{ fontSize: 20 }}
 									title="Delete"
-									type="button"
-								>
-									<span className="glyphicon glyphicon-remove" />
-								</button>
+									icon="glyphicon-remove"
+								/>
 							</div>
 						))}
 					</form>

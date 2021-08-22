@@ -1,13 +1,6 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import {
-	confirm,
-	downloadFile,
-	helpers,
-	logEvent,
-	resetFileInput,
-	toWorker,
-} from "../../util";
+import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
 import classNames from "classnames";
 import {
 	Defaults,

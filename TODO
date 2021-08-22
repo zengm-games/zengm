@@ -2,7 +2,6 @@ UI to edit names/countries/races/colleges
 - names/races need to be updated when country name is changed? to handle defaults - either apply default over current default, or switch defaultXxx from true to false
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?
 - after saving names/colleges/races, scroll to where was before
-- error if two countries have the same name
 - after editing playerBioInfo, need to reset loadNames stuff
 
 More preset league structures

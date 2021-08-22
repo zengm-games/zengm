@@ -509,7 +509,7 @@ const PlayerBioInfo2 = ({
 					// No need to update countries, cause default is stored as blank there
 					setInfoState(data => ({
 						...data,
-						fractionSkipCollege: rows,
+						defaultFractionSkipCollege: rows,
 					}));
 				} else {
 					setInfoState(data => ({

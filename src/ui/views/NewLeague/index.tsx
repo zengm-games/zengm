@@ -147,7 +147,7 @@ const initKeptKeys = ({
 };
 
 const MIN_SEASON = 1947;
-const MAX_SEASON = 2021;
+const MAX_SEASON = 2022;
 
 const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
@@ -562,7 +562,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			let season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
 			if (Number.isNaN(season)) {
-				season = 2021;
+				season = 2022;
 			}
 			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
 			if (Number.isNaN(phase)) {
@@ -917,10 +917,10 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	/*if (state.season === 2021 && state.phase > PHASE.DRAFT) {
+	if (state.season === 2022 && state.phase > PHASE.PRESEASON) {
 		invalidSeasonPhaseMessage =
-			"Sorry, I'm not allowed to share the results of the 2021 draft yet.";
-	}*/
+			"Sorry, I'm not allowed to share the results of the 2022 season yet.";
+	}
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
@@ -1015,7 +1015,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												"1984",
 												"1996",
 												"2003",
-												"2021",
+												"2022",
 											]}
 											value2={state.phase}
 											values2={phases}

@@ -31,9 +31,9 @@ export const PlayerBioInfoRowButton = ({
 }) => {
 	return (
 		<button
-			className={`${className} btn btn-link pl-2 pr-0 py-0 border-0 mt-2`}
+			className={`${className} btn btn-link pl-2 pr-0 py-0 border-0`}
 			onClick={onClick}
-			style={{ fontSize: 20 }}
+			style={{ fontSize: 20, marginTop: 10 }}
 			title={title}
 			type="button"
 		>
@@ -375,7 +375,7 @@ export const CountriesEditor = ({
 						</div>
 						{infoState.countries.map((country, i) => (
 							<div key={country.id} className="d-flex">
-								<div className="d-flex mt-2 flex-grow-1" key={i}>
+								<div className="d-flex mt-2 flex-grow-1">
 									<div className="flex-grow-1">
 										<input
 											type="text"

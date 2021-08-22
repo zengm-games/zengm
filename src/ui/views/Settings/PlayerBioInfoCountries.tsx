@@ -20,6 +20,8 @@ import {
 } from "./PlayerBioInfo";
 import { IMPORT_FILE_STYLE } from "./Injuries";
 
+const buttonWidth = 81;
+
 // https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
 	defaults,
@@ -324,19 +326,47 @@ export const CountriesEditor = ({
 					<form onSubmit={handleSave} className="my-3">
 						<input type="submit" className="d-none" />
 						<div
-							className="form-row font-weight-bold"
-							style={{ marginRight: 22 }}
+							className="d-flex font-weight-bold"
+							style={{ marginRight: 55 }}
 						>
-							<div className="col-4">Country</div>
-							<div className="col-2">Frequency</div>
-							<div className="col-2">Names</div>
-							<div className="col-2">Colleges</div>
-							<div className="col-2">Races</div>
+							<div className="flex-grow-1">Country</div>
+							<div
+								style={{
+									marginLeft: 10,
+									width: buttonWidth,
+								}}
+							>
+								Frequency
+							</div>
+							<div
+								style={{
+									marginLeft: 10,
+									width: buttonWidth,
+								}}
+							>
+								Names
+							</div>
+							<div
+								style={{
+									marginLeft: 10,
+									width: buttonWidth,
+								}}
+							>
+								Colleges
+							</div>
+							<div
+								style={{
+									marginLeft: 10,
+									width: buttonWidth,
+								}}
+							>
+								Races
+							</div>
 						</div>
 						{infoState.countries.map((country, i) => (
 							<div key={country.id} className="d-flex">
-								<div className="form-row mt-2 flex-grow-1" key={i}>
-									<div className="col-4">
+								<div className="d-flex mt-2 flex-grow-1" key={i}>
+									<div className="flex-grow-1">
 										<input
 											type="text"
 											className="form-control"
@@ -344,7 +374,12 @@ export const CountriesEditor = ({
 											onChange={handleChange("name", i)}
 										/>
 									</div>
-									<div className="col-2">
+									<div
+										style={{
+											marginLeft: 10,
+											width: buttonWidth,
+										}}
+									>
 										<input
 											type="text"
 											className={classNames("form-control", {
@@ -368,9 +403,15 @@ export const CountriesEditor = ({
 											// Non-built in countries have no default names
 
 											return (
-												<div className="col-2" key={key}>
+												<div
+													style={{
+														marginLeft: 10,
+														width: buttonWidth,
+													}}
+													key={key}
+												>
 													<button
-														className="btn btn-secondary"
+														className="btn btn-secondary w-100"
 														onClick={onClickCustom}
 													>
 														Custom
@@ -380,11 +421,18 @@ export const CountriesEditor = ({
 										}
 
 										return (
-											<div className="col-2" key={key}>
+											<div
+												style={{
+													marginLeft: 10,
+													width: buttonWidth,
+												}}
+												key={key}
+											>
 												<Dropdown>
 													<Dropdown.Toggle
 														variant="secondary"
 														id={`dropdown-${key}-${country.id}`}
+														className="w-100"
 													>
 														{country[
 															`default${helpers.upperCaseFirstLetter(
@@ -413,7 +461,7 @@ export const CountriesEditor = ({
 									})}
 								</div>
 								<button
-									className="text-reset btn btn-link pl-2 pr-0 border-0"
+									className="text-reset btn btn-link pl-2 pr-0 py-0 border-0 mt-2"
 									onClick={() => {
 										setInfoState(data => {
 											const countries = [...data.countries];
@@ -438,7 +486,7 @@ export const CountriesEditor = ({
 									<span className="glyphicon glyphicon-plus" />
 								</button>
 								<button
-									className="text-danger btn btn-link pl-2 pr-0 border-0"
+									className="text-danger btn btn-link pl-2 pr-0 py-0 border-0 mt-2"
 									onClick={() => {
 										setInfoState(data => ({
 											...data,

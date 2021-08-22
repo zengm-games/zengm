@@ -1,6 +1,5 @@
 UI to edit names/countries/races/colleges
 - names/races need to be updated when country name is changed? to handle defaults - either apply default over current default, or switch defaultXxx from true to false
-- button to clone country
 - in handleChange2, actually check if the contents of the object match default or not, rather than always setting it to non-default? would that even be better?
 - vertical alignment of X at end of row, compare to injuries, mt-2
 - after saving names/colleges/races, scroll to where was before

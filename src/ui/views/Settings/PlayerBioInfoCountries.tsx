@@ -413,6 +413,31 @@ export const CountriesEditor = ({
 									})}
 								</div>
 								<button
+									className="text-reset btn btn-link pl-2 pr-0 border-0"
+									onClick={() => {
+										setInfoState(data => {
+											const countries = [...data.countries];
+
+											const newCountry = {
+												...country,
+												id: Math.random(),
+											};
+
+											countries.splice(i + 1, 0, newCountry);
+
+											return {
+												...data,
+												countries,
+											};
+										});
+									}}
+									style={{ fontSize: 20 }}
+									title="Clone"
+									type="button"
+								>
+									<span className="glyphicon glyphicon-plus" />
+								</button>
+								<button
 									className="text-danger btn btn-link pl-2 pr-0 border-0"
 									onClick={() => {
 										setInfoState(data => ({

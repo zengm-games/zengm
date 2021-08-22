@@ -225,6 +225,12 @@ export const parseAndValidate = (state: PlayerBioInfoState) => {
 
 		const country: typeof output["countries"][string] = {};
 		for (const type of ["first", "last"] as const) {
+			if (row.names[type].length === 0) {
+				throw new Error(
+					`You must define at least one ${type} name for the country "${row.country}".`,
+				);
+			}
+
 			country[type] = arrayToObject(row.names[type], "name");
 		}
 		country.colleges = arrayToObject(row.colleges, "name");

@@ -1552,10 +1552,10 @@ const SettingsForm = ({
 			name: "Playoffs",
 		},
 		{
-			name: "Player",
+			name: "Players",
 		},
 		{
-			name: "Team",
+			name: "Teams",
 		},
 		{
 			name: "Draft",

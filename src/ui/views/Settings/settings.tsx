@@ -220,7 +220,7 @@ export const settings: {
 		},
 	},
 	{
-		category: "Team",
+		category: "Teams",
 		key: "minRosterSize",
 		name: "Min Roster Size",
 		godModeRequired: "always",
@@ -232,7 +232,7 @@ export const settings: {
 		},
 	},
 	{
-		category: "Team",
+		category: "Teams",
 		key: "maxRosterSize",
 		name: "Max Roster Size",
 		godModeRequired: "always",
@@ -1185,7 +1185,7 @@ if (isSport("basketball")) {
 				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
-			category: "Player",
+			category: "Players",
 			key: "playerBioInfo",
 			name: "Biographical Info",
 			godModeRequired: "always",
@@ -1195,7 +1195,7 @@ if (isSport("basketball")) {
 			customForm: true,
 		},
 		{
-			category: "Player",
+			category: "Players",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
 			godModeRequired: "existingLeagueOnly",

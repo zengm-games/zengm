@@ -95,7 +95,7 @@ export type Category =
 	| "Schedule"
 	| "Standings"
 	| "Playoffs"
-	| "Team"
+	| "Teams"
 	| "Draft"
 	| "Finances"
 	| "Inflation"
@@ -106,7 +106,7 @@ export type Category =
 	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"
-	| "Player"
+	| "Players"
 	| "UI";
 
 export type FieldType =

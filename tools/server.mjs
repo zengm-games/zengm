@@ -2,7 +2,7 @@ import fs from "fs";
 import http from "http";
 import path from "path";
 
-const port = 3000;
+const port = 3006;
 
 const mimeTypes = {
 	".bmp": "image/bmp",

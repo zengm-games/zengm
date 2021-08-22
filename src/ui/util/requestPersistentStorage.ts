@@ -1,7 +1,7 @@
 import { WEBSITE_ROOT } from "../../common";
 import logEvent from "./logEvent";
 
-(async () => {
+const requestPersistentStorage = async () => {
 	if (
 		navigator.storage &&
 		navigator.storage.persist &&
@@ -40,7 +40,7 @@ import logEvent from "./logEvent";
 							extraClass: "",
 							type: "info",
 							htmlIsSafe: true,
-							text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data is stored in your browser profile, so <a href="https://${WEBSITE_ROOT}/manual/faq/#missing-leagues" rel="noopener noreferrer" target="_blank">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="window._ps_apply(this)">Enable persistent storage</button></div>`,
+							text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data is stored in your browser profile, so <a href="https://${WEBSITE_ROOT}/manual/faq/#missing-leagues" rel="noopener noreferrer" target="_blank">your browser may delete it if disk space is low</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="window._ps_apply(this)">Enable persistent storage</button></div>`,
 							saveToDb: false,
 							persistent: true,
 						});
@@ -52,4 +52,6 @@ import logEvent from "./logEvent";
 			}
 		}
 	}
-})();
+};
+
+export default requestPersistentStorage;

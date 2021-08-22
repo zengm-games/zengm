@@ -6,6 +6,7 @@ import {
 	local,
 	localActions,
 	realtimeUpdate,
+	requestPersistentStorage,
 	safeLocalStorage,
 } from "../util";
 import { showEvent } from "../util/logEvent";
@@ -317,6 +318,7 @@ export default {
 	mergeGames,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,
+	requestPersistentStorage,
 	resetLeague,
 	setGameAttributes,
 	showEvent: showEvent2,

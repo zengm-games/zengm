@@ -133,8 +133,9 @@ export const makeSon = async (p: Player) => {
 	const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
 	const sonSuffixNumber =
 		typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
-	const sonSuffix = getSuffix(sonSuffixNumber); // Only rename to be a Jr if the father has no son yet (first is always Jr)
+	const sonSuffix = getSuffix(sonSuffixNumber);
 
+	// Only rename to be a Jr if the father has no son yet (first is always Jr)
 	if (!hasRelative(father, "son")) {
 		p.firstName = father.firstName;
 		p.lastName = `${fatherLastName} ${sonSuffix}`;

@@ -332,23 +332,23 @@ export const CountriesEditor = ({
 						className="btn btn-secondary mr-2"
 						onClick={() => {
 							setPageInfoWrapper({
-								name: "races",
-								index: "default",
-							});
-						}}
-					>
-						Edit default races
-					</button>
-					<button
-						className="btn btn-secondary"
-						onClick={() => {
-							setPageInfoWrapper({
 								name: "colleges",
 								index: "default",
 							});
 						}}
 					>
 						Edit default colleges
+					</button>
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							setPageInfoWrapper({
+								name: "races",
+								index: "default",
+							});
+						}}
+					>
+						Edit default races
 					</button>
 				</div>
 

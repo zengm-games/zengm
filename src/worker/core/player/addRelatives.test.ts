@@ -122,10 +122,12 @@ describe("worker/core/player/addRelatives", () => {
 				true,
 				15.5,
 			);
+			initialPlayer.firstName = "Foo";
+			initialPlayer.lastName = "HasFather Jr.";
 			initialPlayer.relatives.push({
 				type: "father",
 				pid: 1,
-				name: "Foo Bar",
+				name: "Foo HasFather",
 			});
 			await testHelpers.resetCache({
 				players: [
@@ -134,6 +136,14 @@ describe("worker/core/player/addRelatives", () => {
 					...genBrothers(),
 				],
 			});
+
+			const father = await idb.cache.players.get(1);
+			if (!father) {
+				throw new Error("Missing father");
+			}
+			father.firstName = "Foo";
+			father.lastName = "HasFather";
+
 			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
@@ -153,6 +163,8 @@ describe("worker/core/player/addRelatives", () => {
 			assert.strictEqual(brother.relatives[0].pid, 1);
 			assert.strictEqual(brother.relatives[1].type, "brother");
 			assert.strictEqual(brother.relatives[1].pid, p.pid);
+			assert.strictEqual(p.lastName, "HasFather Jr.");
+			assert.strictEqual(brother.lastName, "HasFather");
 		});
 
 		test("handle case where both have fathers", async () => {
@@ -180,10 +192,6 @@ describe("worker/core/player/addRelatives", () => {
 		});
 
 		test("handle case where target has a brother", async () => {
-			// This is weirdly incestuous, but make initialP the son of extraBrother so that extraBrother is never
-			// picked as the brother for initialP, it is always one of initialBrothers. But then extraBrother will be
-			// added to initialP's relatives as a brother, via already being a brother of one of initialBrothers. Ugh,
-			// this is too confusing.
 			const initialP = player.generate(
 				PLAYER.UNDRAFTED,
 				20,
@@ -191,11 +199,6 @@ describe("worker/core/player/addRelatives", () => {
 				true,
 				15.5,
 			);
-			initialP.relatives.push({
-				type: "father",
-				pid: 1,
-				name: "Foo Bar",
-			});
 			const initialBrothers = genBrothers();
 
 			for (const p of initialBrothers) {
@@ -222,17 +225,16 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No brother found");
 			}
 
-			// The 0th entry of both p.relatives and brother.relatives is the father, extraBrother. See comment above.
-			assert.strictEqual(p.relatives.length, 3);
+			assert.strictEqual(p.relatives.length, 2);
+			assert.strictEqual(p.relatives[0].type, "brother");
+			assert.strictEqual(p.relatives[0].pid, 1);
 			assert.strictEqual(p.relatives[1].type, "brother");
-			assert.strictEqual(p.relatives[1].pid, 1);
-			assert.strictEqual(p.relatives[2].type, "brother");
-			assert.strictEqual(p.relatives[2].pid, brother.pid);
-			assert.strictEqual(brother.relatives.length, 3);
+			assert.strictEqual(p.relatives[1].pid, brother.pid);
+			assert.strictEqual(brother.relatives.length, 2);
+			assert.strictEqual(brother.relatives[0].type, "brother");
+			assert.strictEqual(brother.relatives[0].pid, 1);
 			assert.strictEqual(brother.relatives[1].type, "brother");
-			assert.strictEqual(brother.relatives[1].pid, 1);
-			assert.strictEqual(brother.relatives[2].type, "brother");
-			assert.strictEqual(brother.relatives[2].pid, p.pid);
+			assert.strictEqual(brother.relatives[1].pid, p.pid);
 		});
 
 		test("handle case where source has a brother", async () => {

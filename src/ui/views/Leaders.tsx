@@ -29,7 +29,9 @@ const Row = ({
 			onClick={toggleClicked}
 		>
 			<td>
-				{rank}.{" "}
+				<div style={{ width: 18 }} className="mr-1 float-left">
+					{rank}.
+				</div>
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
@@ -42,13 +44,11 @@ const Row = ({
 				</PlayerNameLabels>
 				<a
 					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}
-					style={{
-						marginLeft: "6px",
-					}}
+					className="mx-2"
 				>
 					{p.abbrev}
 				</a>
-				{isSport("football") || isSport("hockey") ? ` ${p.ratings.pos}` : null}
+				{isSport("football") || isSport("hockey") ? `${p.ratings.pos}` : null}
 			</td>
 			<td>
 				{cat.stat === "WS/48"

@@ -94,7 +94,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 						style={{ marginTop: 14 }}
 					>
 						<ResponsiveTableWrapper>
-							<table className="table table-striped table-bordered table-sm leaders">
+							<table className="table table-striped table-sm leaders">
 								<thead>
 									<tr title={cat.title}>
 										<th>{cat.name}</th>

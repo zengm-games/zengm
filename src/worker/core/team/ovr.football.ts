@@ -1,5 +1,4 @@
 import type { PrimaryPosition } from "../../../common/types.football";
-import { helpers } from "../../../worker/util";
 import ovrByPosFactory from "./ovrByPosFactory";
 
 // See analysis/team-ovr-football
@@ -24,7 +23,7 @@ const weights: Record<PrimaryPosition, number[]> = {
 const scale = (predictedMOV: number) => {
 	// Translate from -10/10 to 0/100 scale
 	const rawOVR = (predictedMOV * 100) / 20 + 50;
-	return helpers.bound(Math.round(rawOVR), 0, Infinity);
+	return Math.round(rawOVR);
 };
 
 const ovr = ovrByPosFactory(weights, intercept, scale);

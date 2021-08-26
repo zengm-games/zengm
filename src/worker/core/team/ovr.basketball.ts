@@ -1,5 +1,3 @@
-import { helpers } from "../../../worker/util";
-
 const ovr = (
 	players: {
 		ratings: {
@@ -63,7 +61,7 @@ const ovr = (
 
 	// Translate from -20/20 to 0/100 scale
 	const rawOVR = (predictedMOV * 50) / 20 + 50;
-	return helpers.bound(Math.round(rawOVR), 0, Infinity);
+	return Math.round(rawOVR);
 };
 
 export default ovr;

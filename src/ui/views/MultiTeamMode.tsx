@@ -151,7 +151,7 @@ const MultiTeamMode = ({
 							});
 						}}
 					>
-						Disable multi-team mode
+						Disable multi team mode
 					</button>
 				) : null}
 			</div>

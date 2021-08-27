@@ -34,14 +34,14 @@ const updateMeta = async (
 					// Just do this here, rather than figuring out when it should be updated exactly
 					const teamInfo = g.get("teamInfoCache")[g.get("userTid")];
 					if (teamInfo) {
-						l.imgURL = teamInfo.imgURLSmall ?? teamInfo.imgURL;
-
 						if (g.get("userTids").length > 1) {
 							l.teamName = "Multi Team Mode";
 							l.teamRegion = "";
+							l.imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.png`;
 						} else {
 							l.teamName = teamInfo.name;
 							l.teamRegion = teamInfo.region;
+							l.imgURL = teamInfo.imgURLSmall ?? teamInfo.imgURL;
 						}
 					}
 				}

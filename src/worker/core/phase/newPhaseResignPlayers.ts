@@ -122,6 +122,10 @@ const newPhaseResignPlayers = async (
 			continue;
 		}
 
+		if (rookiePids.has(p.pid)) {
+			p.contract.rookieResign = true;
+		}
+
 		const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
 
 		if (
@@ -156,10 +160,6 @@ const newPhaseResignPlayers = async (
 					},
 					conditions,
 				);
-			} else {
-				if (rookiePids.has(p.pid)) {
-					p.contract.rookieResign = true;
-				}
 			}
 		} else {
 			let reSignPlayer = true;
@@ -256,6 +256,15 @@ const newPhaseResignPlayers = async (
 				player.addToFreeAgents(p);
 			}
 
+			await idb.cache.players.put(p);
+		}
+	}
+
+	// Delete rookiePids
+	for (const pid of rookiePids) {
+		const p = await idb.cache.players.get(pid);
+		if (p?.contract.rookieResign) {
+			delete p.contract.rookieResign;
 			await idb.cache.players.put(p);
 		}
 	}

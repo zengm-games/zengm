@@ -25,7 +25,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	);
 };
 
-const logoStyle = { height: 36 };
+const logoStyle = { height: 36, width: 36 };
 
 const NewsBlock = ({
 	event,
@@ -59,7 +59,7 @@ const NewsBlock = ({
 					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
 						<a
 							href={rosterURL}
-							className="align-self-center p-1"
+							className="p-1 d-flex align-items-center"
 							style={logoStyle}
 						>
 							<img
@@ -69,7 +69,7 @@ const NewsBlock = ({
 							/>
 						</a>
 					) : null}
-					<a href={rosterURL} className="align-self-center pl-1">
+					<a href={rosterURL} className="pl-1">
 						{teamInfo.region}
 					</a>
 				</>
@@ -90,12 +90,7 @@ const NewsBlock = ({
 			]);
 
 			return (
-				<a
-					key={tid}
-					href={rosterURL}
-					className="align-self-center p-1"
-					style={logoStyle}
-				>
+				<a key={tid} href={rosterURL} className="p-1" style={logoStyle}>
 					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
 						<img
 							className="mw-100 mh-100"
@@ -114,7 +109,7 @@ const NewsBlock = ({
 		<div className="card">
 			<div
 				className={classNames(
-					"d-flex",
+					"d-flex align-items-center",
 					event.tids && event.tids.includes(userTid)
 						? "table-info"
 						: "card-header p-0",

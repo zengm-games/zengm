@@ -666,7 +666,10 @@ export type LogEventType =
 	| "teamRename"
 	| "trade"
 	| "tragedy"
-	| "upgrade";
+	| "upgrade"
+	| "luxuryTax"
+	| "luxuryTaxDist"
+	| "minPayroll";
 
 // https://stackoverflow.com/a/57103940/786644
 export type DistributiveOmit<T, K extends keyof T> = T extends any

@@ -144,4 +144,16 @@ export const types: Partial<
 		text: "New League",
 		category: "league",
 	},
+	luxuryTax: {
+		text: "Luxury Tax",
+		category: "team",
+	},
+	luxuryTaxDist: {
+		text: "Luxury Tax Dist",
+		category: "team",
+	},
+	minPayroll: {
+		text: "Minimum Payroll",
+		category: "team",
+	},
 };

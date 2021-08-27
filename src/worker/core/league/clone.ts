@@ -1,5 +1,7 @@
 import type { IDBPDatabase } from "idb";
 import { connectLeague, idb } from "../../db";
+import { getNewLeagueLid } from "../../util";
+import remove from "./remove";
 
 const BATCH_SIZE = 1000;
 
@@ -87,7 +89,11 @@ const clone = async (lidOld: number) => {
 		);
 		name = getCloneName(leagueOld.name, namesOld);
 
+		const lid = await getNewLeagueLid();
+		await remove(lid);
+
 		const leagueNew = {
+			lid,
 			name,
 			tid: leagueOld.tid,
 			phaseText: leagueOld.phaseText,
@@ -96,10 +102,11 @@ const clone = async (lidOld: number) => {
 			difficulty: leagueOld.difficulty,
 			startingSeason: leagueOld.startingSeason,
 			season: leagueOld.season,
+			imgURL: leagueOld.imgURL,
 			created: new Date(),
 			lastPlayed: new Date(),
 		};
-		const lidNew = await idb.meta.put("leagues", leagueNew);
+		const lidNew = await idb.meta.add("leagues", leagueNew);
 		dbNew = await connectLeague(lidNew);
 
 		for (const store of dbOld.objectStoreNames) {

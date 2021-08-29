@@ -52,7 +52,7 @@ const assessPayrollMinLuxury = async () => {
 				)}.`,
 				tids: [tid],
 				showNotification: tid === g.get("userTid"),
-				score: 20,
+				score: 10,
 			});
 		} else if (payroll > g.get("luxuryPayroll") && !g.get("hardCap")) {
 			// Only apply luxury tax if hard cap is disabled!
@@ -74,7 +74,7 @@ const assessPayrollMinLuxury = async () => {
 				)}.`,
 				tids: [tid],
 				showNotification: tid === g.get("userTid"),
-				score: 20,
+				score: 10,
 			});
 		}
 	}
@@ -114,7 +114,7 @@ const assessPayrollMinLuxury = async () => {
 					)}.`,
 					tids: [tid],
 					showNotification: tid === g.get("userTid"),
-					score: 20,
+					score: 10,
 				});
 			} else {
 				teamSeason.revenues.luxuryTaxShare = {

@@ -1,3 +1,13 @@
+play-in tournament
+- maybe think about supporting "conference tournaments" too?
+- implement playoff seeding logic similar to playoffsNumTeamsDiv
+
+playoffsByConf should support numConfs!=2
+- if power of 2, divides evenly
+- otherwise, would need byes after the conferences are done.
+  - how to pick which team gets bye?
+  - 1950 nba playoffs
+
 player being let out of the penalty box at start of overtime? https://discord.com/channels/@me/778760871911751700/879161429335367760
 
 More preset league structures

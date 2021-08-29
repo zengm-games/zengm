@@ -16,6 +16,7 @@
 		},
 		"esModuleInterop": true,
 		"strict": true,
+		"useUnknownInCatchVariables": false,
 		"importsNotUsedAsValues": "error",
 		"module": "es2020"
 	}

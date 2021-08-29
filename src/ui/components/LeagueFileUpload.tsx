@@ -137,6 +137,7 @@ const LeagueFileUpload = ({
 			type: "init",
 		});
 	}, [enterURL]);
+
 	const beforeFile = useCallback(() => {
 		dispatch({
 			type: "loading",
@@ -146,8 +147,9 @@ const LeagueFileUpload = ({
 			onLoading();
 		}
 	}, [onLoading]);
+
 	const withLeagueFile = useCallback(
-		async leagueFile => {
+		async (leagueFile: any) => {
 			const valid = validate(leagueFile);
 
 			if (!valid && Array.isArray(validate.errors)) {
@@ -159,11 +161,13 @@ const LeagueFileUpload = ({
 
 			if (
 				leagueFile &&
-				typeof leagueFile.version === "number" &&
-				leagueFile.version > MAX_SUPPORTED_LEAGUE_VERSION
+				typeof (leagueFile as any).version === "number" &&
+				(leagueFile as any).version > MAX_SUPPORTED_LEAGUE_VERSION
 			) {
 				const error = new Error(
-					`This league file is a newer format (version ${leagueFile.version}) than is supported by your version of ${GAME_NAME} (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
+					`This league file is a newer format (version ${
+						(leagueFile as any).version
+					}) than is supported by your version of ${GAME_NAME} (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
 				);
 				(error as any).version = true;
 				console.log(isMounted, error);
@@ -199,6 +203,7 @@ const LeagueFileUpload = ({
 		},
 		[onDone],
 	);
+
 	const handleFileURL = useCallback(
 		async event => {
 			event.preventDefault();
@@ -246,6 +251,7 @@ const LeagueFileUpload = ({
 		},
 		[beforeFile, onDone, url, withLeagueFile],
 	);
+
 	const handleFileUpload = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
 			beforeFile();

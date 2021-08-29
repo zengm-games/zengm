@@ -16,6 +16,7 @@ global.postMessage = (...args) => {
 	) {
 		// Skip hostID message
 	} else {
+		// @ts-ignore
 		originalPostMessage(...args);
 	}
 };

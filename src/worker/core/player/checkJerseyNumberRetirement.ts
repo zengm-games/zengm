@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import { bySport, isSport } from "../../../common";
-import type { Player } from "../../../common/types";
+import type { Player, Team } from "../../../common/types";
 import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
@@ -183,7 +183,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		t.retiredJerseyNumbers.length >
 		MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM - 1
 	) {
-		const sorted: NonNullable<typeof t.retiredJerseyNumbers> = orderBy(
+		const sorted: NonNullable<Team["retiredJerseyNumbers"]> = orderBy(
 			t.retiredJerseyNumbers,
 			"score",
 			"asc",

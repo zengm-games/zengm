@@ -352,6 +352,14 @@ export const settings: {
 		},
 	},
 	{
+		category: "Playoffs",
+		key: "playIn",
+		name: "Play-In Tournament",
+		godModeRequired: "existingLeagueOnly",
+		type: "bool",
+		description: "NBA-like tournament to determine the bottom 4 playoff teams.",
+	},
+	{
 		category: "Draft",
 		key: "draftType",
 		name: "Draft Type",

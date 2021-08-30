@@ -87,7 +87,8 @@ export type Key =
 	| "playoffsByConf"
 	| "playoffsNumTeamsDiv"
 	| "playoffsReseed"
-	| "playerBioInfo";
+	| "playerBioInfo"
+	| "playIn";
 
 export type Category =
 	| "New League"

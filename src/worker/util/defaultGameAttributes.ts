@@ -161,6 +161,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playoffsByConf: true,
 	playoffsNumTeamsDiv: wrap(0),
 	playoffsReseed: false,
+	playIn: true,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -222,6 +223,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				]),
 				playoffsReseed: true,
 				playoffsNumTeamsDiv: wrap(1),
+				playIn: false,
 		  }
 		: {};
 
@@ -249,6 +251,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				otl: wrap(true),
 				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
 				playoffsNumTeamsDiv: wrap(3),
+				playIn: false,
 		  }
 		: {};
 

@@ -811,6 +811,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 								},
 							},
+							playIn: {
+								type: "boolean",
+							},
 							playerMoodTraits: {
 								type: "boolean",
 							},

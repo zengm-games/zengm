@@ -1,11 +1,11 @@
 play-in tournament
 - dailySchedule processing of teams in game object (adding "playoffs" object) needs to handle play-in games, otherwise they appear without seeds/records
   - PlayoffSeries.currentRound to -1 for play in?
-    - actions.ts
     - play.ts
     - updatePlayoffSeries.ts
     - use in newSchedulePlayoffsDay too?
     - playoffRound in headToHead - can it be negative? cause it gets set that in writeGameStats
+    - make sure increments after play-in
 - add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily
 - check every numPlayoffTeams variable, does it need to be adjusted?
 - play-in teams should not have playoffRoundsWon until they actually win the play-in

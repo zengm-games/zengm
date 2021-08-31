@@ -122,7 +122,6 @@ const getPlayoffInfos = async (game: Game) => {
 
 	if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
 		// Play-in tournament
-
 		for (const playIn of playoffSeries.playIns) {
 			series = playIn.find(findSeries);
 			if (series) {
@@ -130,8 +129,8 @@ const getPlayoffInfos = async (game: Game) => {
 			}
 		}
 	} else {
+		// Regular playoffs
 		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
-
 		series = roundSeries.find(findSeries);
 	}
 

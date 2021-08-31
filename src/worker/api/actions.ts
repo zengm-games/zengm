@@ -192,6 +192,10 @@ const addToTradingBlock = async (pid: number, conditions: Conditions) => {
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
 
+	if (playoffSeries.currentRound === -1) {
+		return 1;
+	}
+
 	if (playoffSeries.series.length > 0) {
 		for (const series of playoffSeries.series[playoffSeries.currentRound]) {
 			const num = series.away

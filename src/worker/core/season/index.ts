@@ -5,6 +5,7 @@ import genPlayoffSeries from "./genPlayoffSeries";
 import getAwardCandidates from "./getAwardCandidates";
 import getDaysLeftSchedule from "./getDaysLeftSchedule";
 import getInitialNumGamesConfDivSettings from "./getInitialNumGamesConfDivSettings";
+import getNumPlayoffTeams from "./getNumPlayoffTeams";
 import getPlayoffsByConf from "./getPlayoffsByConf";
 import getSchedule from "./getSchedule";
 import newSchedule from "./newSchedule";
@@ -21,6 +22,7 @@ export default {
 	getAwardCandidates,
 	getDaysLeftSchedule,
 	getInitialNumGamesConfDivSettings,
+	getNumPlayoffTeams,
 	getPlayoffsByConf,
 	getSchedule,
 	newSchedule,

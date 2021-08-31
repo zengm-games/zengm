@@ -490,10 +490,8 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const numPlayoffTeams =
-			(2 ** g.get("numGamesPlayoffSeries", "current").length -
-				g.get("numPlayoffByes", "current")) /
-			2;
-		const playoffsByConf = g.get("confs", "current").length === 2;
+			(await season.getNumPlayoffTeams(g.get("season"))) / 2;
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 		return {
 			confTeams,

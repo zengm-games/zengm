@@ -1,3 +1,5 @@
+import { getNumPlayoffTeamsRaw } from "./getNumPlayoffTeams";
+
 const validatePlayoffSettings = ({
 	numRounds,
 	numPlayoffByes,
@@ -29,14 +31,12 @@ const validatePlayoffSettings = ({
 		);
 	}
 
-	let numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
-	if (playIn) {
-		if (byConf) {
-			numPlayoffTeams += 4;
-		} else {
-			numPlayoffTeams += 2;
-		}
-	}
+	const numPlayoffTeams = getNumPlayoffTeamsRaw({
+		numRounds,
+		numPlayoffByes,
+		playIn,
+		byConf,
+	});
 
 	if (numPlayoffTeams > numActiveTeams) {
 		throw new Error(

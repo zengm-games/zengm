@@ -18,9 +18,8 @@ const updateStandings = async (
 		const divs = g.get("divs", inputs.season);
 		const numPlayoffByes = g.get("numPlayoffByes", inputs.season);
 
-		const numPlayoffTeams =
-			2 ** g.get("numGamesPlayoffSeries", inputs.season).length -
-			numPlayoffByes;
+		const numPlayoffTeams = await season.getNumPlayoffTeams(inputs.season);
+
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 		const maxPlayoffSeed = playoffsByConf
 			? numPlayoffTeams / 2

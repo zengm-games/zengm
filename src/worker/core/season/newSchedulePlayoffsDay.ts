@@ -83,6 +83,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			await idb.cache.playoffSeries.put(playoffSeries);
 			await setSchedule(tids);
 			return false;
+		} else {
+			// playIn is over, so proceed to next round
+			playoffSeries.currentRound += 1;
 		}
 	}
 

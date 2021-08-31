@@ -527,9 +527,10 @@ const writeGameStats = async (
 						: `${helpers.ordinal(currentRound + 1)} round of the playoffs`;
 
 				const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
-				const numGamesThisRound = g.get("numGamesPlayoffSeries", "current")[
-					currentRound
-				];
+				const numGamesThisRound =
+					currentRound === -1
+						? 1
+						: g.get("numGamesPlayoffSeries", "current")[currentRound];
 
 				if (numGamesThisRound > 1) {
 					const numGamesToWinSeries =

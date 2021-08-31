@@ -6,6 +6,7 @@ import type {
 	PlayoffSeries,
 } from "../../../common/types";
 import season from "../season";
+import flatten from "lodash-es/flatten";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -15,10 +16,17 @@ const updatePlayoffSeries = async (
 	if (!playoffSeries) {
 		throw new Error("playoffSeries not found");
 	}
-	const playoffRound = playoffSeries.series[playoffSeries.currentRound];
-	const numGamesToWinSeries = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
-	);
+
+	const isPlayIn = playoffSeries.currentRound === -1 && playoffSeries.playIns;
+	const playoffRound = isPlayIn
+		? flatten(playoffSeries.playIns)
+		: playoffSeries.series[playoffSeries.currentRound];
+	const numGamesToWinSeries =
+		playoffSeries.currentRound === -1
+			? 1
+			: helpers.numGamesToWinSeries(
+					g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
+			  );
 
 	for (const result of results) {
 		// Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
@@ -112,7 +120,9 @@ const updatePlayoffSeries = async (
 			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 			let saveToDb = true;
-			if (playoffSeries.currentRound === 0) {
+			if (playoffSeries.currentRound === -1) {
+				currentRoundText = "play-in tournament";
+			} else if (playoffSeries.currentRound === 0) {
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
 				playoffSeries.currentRound ===

@@ -49,7 +49,6 @@ export const getUpcoming = async ({
 			? flatten(playoffSeries.playIns)
 			: playoffSeries.series[playoffSeries.currentRound]
 		: undefined;
-	console.log("roundSeries", roundSeries);
 
 	const getTeam = (tid: number) => {
 		let ovr = ovrsCache.get(tid);

@@ -44,7 +44,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	const playIns = playoffSeries.playIns;
-	if (playIns && playIns.length > 0) {
+	if (playoffSeries.currentRound === -1 && playIns && playIns.length > 0) {
 		const tids: [number, number][] = [];
 
 		// Is play-in tournament still going on?

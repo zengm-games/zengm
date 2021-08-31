@@ -2,6 +2,7 @@ import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
+import flatten from "lodash-es/flatten";
 
 export const getUpcoming = async ({
 	day,
@@ -44,8 +45,11 @@ export const getUpcoming = async ({
 
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const roundSeries = playoffSeries
-		? playoffSeries.series[playoffSeries.currentRound]
+		? playoffSeries.currentRound === -1 && playoffSeries.playIns
+			? flatten(playoffSeries.playIns)
+			: playoffSeries.series[playoffSeries.currentRound]
 		: undefined;
+	console.log("roundSeries", roundSeries);
 
 	const getTeam = (tid: number) => {
 		let ovr = ovrsCache.get(tid);

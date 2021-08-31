@@ -102,9 +102,9 @@ const Team = ({
 						<>
 							<span
 								className="d-xxl-none"
-								title="Play-in team, to be announced"
+								title="Play-in team, to be determined"
 							>
-								TBA
+								TBD
 							</span>
 							<span className="d-none d-xxl-inline">Play-In Team</span>
 						</>

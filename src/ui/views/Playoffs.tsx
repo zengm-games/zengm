@@ -60,7 +60,12 @@ const Playoffs = ({
 		);
 	}
 
-	const tdStyle = { width: `${100 / (numRounds * 2 - 1)}%` };
+	// HACK!! if you have a play-in tournament and one playoff round
+	const numRoundsWithPlayIn = playIns && numRounds === 1 ? 1.5 : numRounds;
+
+	const maxWidth = 210 * (2 * numRoundsWithPlayIn - 1);
+
+	const tdStyle = { width: `${100 / (numRoundsWithPlayIn * 2 - 1)}%` };
 
 	let maxNumCols = 0;
 
@@ -68,7 +73,7 @@ const Playoffs = ({
 	const playInPluralAlt = playIns && playIns.length > 1 ? "" : "s";
 
 	return (
-		<div style={{ maxWidth: 210 * (2 * numRounds - 1) }}>
+		<div style={{ maxWidth }}>
 			{!finalMatchups ? (
 				<p>
 					This is what the playoff matchups would be if the season ended right
@@ -114,7 +119,12 @@ const Playoffs = ({
 									text = `Best of ${numGames}`;
 								}
 
-								return <td key={i}>{text}</td>;
+								// Div wrapper is needed if you have a play-in tournament and one playoff round
+								return (
+									<td key={i}>
+										<div style={tdStyle}>{text}</div>
+									</td>
+								);
 							})}
 						</tr>
 					</tfoot>

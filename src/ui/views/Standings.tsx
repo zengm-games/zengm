@@ -379,6 +379,7 @@ const Standings = ({
 	divs,
 	maxPlayoffSeed,
 	numPlayoffByes,
+	playIn,
 	playoffsByConf,
 	pointsFormula,
 	rankingGroups,
@@ -480,7 +481,14 @@ const Standings = ({
 					</>
 				) : null}
 				x - clinched playoffs
-				<br />o - eliminated from playoff contention
+				<br />
+				{playIn ? (
+					<>
+						w - clinched play-in tournament
+						<br />
+					</>
+				) : null}
+				o - eliminated from playoff contention
 			</div>
 			<div className="float-md-right mt-3 mt-md-0" style={{ maxWidth: 400 }}>
 				<p>Tiebreakers for the {season} season:</p>

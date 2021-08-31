@@ -13,28 +13,33 @@ const newPhasePlayoffs = async (
 	local.playingUntilEndOfRound = false;
 
 	// Set playoff matchups
-	const { byConf, series, tidPlayoffs } = await season.genPlayoffSeries();
+	const { byConf, series, tidPlayIn, tidPlayoffs } =
+		await season.genPlayoffSeries();
 
-	for (const tid of tidPlayoffs) {
-		logEvent(
-			{
-				type: "madePlayoffs",
-				text: `The <a href="${helpers.leagueUrl([
-					"roster",
-					`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
-					g.get("season"),
-				])}">${
-					g.get("teamInfoCache")[tid]?.name
-				}</a> made the <a href="${helpers.leagueUrl([
-					"playoffs",
-					g.get("season"),
-				])}">playoffs</a>.`,
-				showNotification: tid === g.get("userTid"),
-				tids: [tid],
-				score: 0,
-			},
-			conditions,
-		);
+	for (const type of ["playoffs", "play-in tournament"] as const) {
+		const tids = type === "playoffs" ? tidPlayoffs : tidPlayIn;
+
+		for (const tid of tids) {
+			logEvent(
+				{
+					type: "madePlayoffs",
+					text: `The <a href="${helpers.leagueUrl([
+						"roster",
+						`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
+						g.get("season"),
+					])}">${
+						g.get("teamInfoCache")[tid]?.name
+					}</a> made the <a href="${helpers.leagueUrl([
+						"playoffs",
+						g.get("season"),
+					])}">${type}</a>.`,
+					showNotification: tid === g.get("userTid"),
+					tids: [tid],
+					score: 0,
+				},
+				conditions,
+			);
+		}
 	}
 
 	await idb.cache.playoffSeries.put({
@@ -50,10 +55,16 @@ const newPhasePlayoffs = async (
 		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
+	const tidAll = new Set([...tidPlayoffs, ...tidPlayIn]);
+
 	for (const teamSeason of teamSeasons) {
-		if (tidPlayoffs.includes(teamSeason.tid)) {
+		if (tidAll.has(teamSeason.tid)) {
 			await idb.cache.teamStats.add(team.genStatsRow(teamSeason.tid, true));
-			teamSeason.playoffRoundsWon = 0;
+
+			// Play-in teams have not made the playoffs yet, technically
+			if (tidPlayoffs.includes(teamSeason.tid)) {
+				teamSeason.playoffRoundsWon = 0;
+			}
 
 			// More hype for making the playoffs
 			teamSeason.hype += 0.05;
@@ -87,16 +98,14 @@ const newPhasePlayoffs = async (
 	}
 
 	// Add row to player stats
-	await Promise.all(
-		tidPlayoffs.map(async tid => {
-			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	for (const tid of tidAll) {
+		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
-			for (const p of players) {
-				await player.addStatsRow(p, true);
-				await idb.cache.players.put(p);
-			}
-		}),
-	);
+		for (const p of players) {
+			await player.addStatsRow(p, true);
+			await idb.cache.players.put(p);
+		}
+	}
 
 	await finances.assessPayrollMinLuxury();
 	await season.newSchedulePlayoffsDay();

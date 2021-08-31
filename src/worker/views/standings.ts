@@ -161,11 +161,19 @@ const updateStandings = async (
 			}
 		}
 
+		const playIn =
+			inputs.season === g.get("season")
+				? g.get("playIn")
+				: rankingGroups.league[0].some(
+						t => t.seasonAttrs.clinchedPlayoffs === "w",
+				  );
+
 		return {
 			confs,
 			divs,
 			maxPlayoffSeed,
 			numPlayoffByes,
+			playIn,
 			playoffsByConf,
 			pointsFormula,
 			rankingGroups,

@@ -1451,11 +1451,12 @@ export type TeamSeasonWithoutKey = {
 	ownerMood?: OwnerMood;
 	numPlayersTradedAway: number;
 
+	// w - clinched play-in tournament
 	// x - clinched playoffs
 	// y - if byes exist - clinched bye
 	// z - clinched home court advantage
 	// o - eliminated
-	clinchedPlayoffs?: "x" | "y" | "z" | "o";
+	clinchedPlayoffs?: "w" | "x" | "y" | "z" | "o";
 
 	// Value only written here after the end of the season
 	avgAge?: number;

@@ -86,6 +86,7 @@ const getClinchedPlayoffs = async (
 			return worstCase;
 		});
 
+		// w - clinched play-in tournament
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
 		// z - clinched home court advantage
@@ -95,18 +96,24 @@ const getClinchedPlayoffs = async (
 		const result = await genPlayoffSeriesFromTeams(worstCases, {
 			skipTiebreakers,
 		});
-		const matchups = result.series[0];
-		for (const matchup of matchups) {
-			if (matchup.home.tid === t.tid && matchup.home.seed === 1) {
-				clinchedPlayoffs = "z";
-			} else if (!matchup.away && matchup.home.tid === t.tid) {
-				clinchedPlayoffs = "y";
-			}
-		}
 
-		if (!clinchedPlayoffs) {
-			if (result.tidPlayoffs.includes(t.tid)) {
-				clinchedPlayoffs = "x";
+		if (result.tidPlayIn.includes(t.tid)) {
+			// Play-in dominates any other classification
+			clinchedPlayoffs = "w";
+		} else {
+			const matchups = result.series[0];
+			for (const matchup of matchups) {
+				if (matchup.home.tid === t.tid && matchup.home.seed === 1) {
+					clinchedPlayoffs = "z";
+				} else if (!matchup.away && matchup.home.tid === t.tid) {
+					clinchedPlayoffs = "y";
+				}
+			}
+
+			if (!clinchedPlayoffs) {
+				if (result.tidPlayoffs.includes(t.tid)) {
+					clinchedPlayoffs = "x";
+				}
 			}
 		}
 
@@ -176,7 +183,10 @@ const getClinchedPlayoffs = async (
 			const result = await genPlayoffSeriesFromTeams(bestCases, {
 				skipTiebreakers,
 			});
-			if (!result.tidPlayoffs.includes(t.tid)) {
+			if (
+				!result.tidPlayoffs.includes(t.tid) &&
+				!result.tidPlayIn.includes(t.tid)
+			) {
 				clinchedPlayoffs = "o";
 			}
 		}
@@ -217,7 +227,9 @@ const updateClinchedPlayoffs = async (
 			ts.clinchedPlayoffs = clinchedPlayoffs[i];
 
 			let action = "";
-			if (clinchedPlayoffs[i] === "x") {
+			if (clinchedPlayoffs[i] === "w") {
+				action = "clinched a play-in tournament spot";
+			} else if (clinchedPlayoffs[i] === "x") {
 				action = "clinched a playoffs spot";
 			} else if (clinchedPlayoffs[i] === "y") {
 				action = "clinched a first round bye";

@@ -93,16 +93,30 @@ export const makeMatchups = (
 	};
 };
 
-const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
-	const tidPlayoffs = [];
-	for (const matchup of series[0]) {
-		tidPlayoffs.push(matchup.home.tid);
-		if (matchup.away !== undefined) {
-			tidPlayoffs.push(matchup.away.tid);
+const getTidPlayIns = (playIns: PlayInTournament[]) => {
+	const tids = [];
+	for (const playIn of playIns) {
+		for (const matchup of playIn) {
+			tids.push(matchup.home.tid);
+			if (matchup.away !== undefined) {
+				tids.push(matchup.away.tid);
+			}
 		}
 	}
 
-	return tidPlayoffs;
+	return tids;
+};
+
+const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
+	const tids = [];
+	for (const matchup of series[0]) {
+		tids.push(matchup.home.tid);
+		if (matchup.away !== undefined) {
+			tids.push(matchup.away.tid);
+		}
+	}
+
+	return tids;
 };
 
 export const genPlayoffSeriesFromTeams = async (
@@ -128,6 +142,7 @@ export const genPlayoffSeriesFromTeams = async (
 		return {
 			byConf: playoffsByConf,
 			series: [],
+			tidPlayIn: [],
 			tidPlayoffs: [],
 		};
 	}
@@ -218,13 +233,17 @@ export const genPlayoffSeriesFromTeams = async (
 		}
 	}
 
-	const tidPlayoffs = getTidPlayoffs(series);
+	const tidPlayIn = getTidPlayIns(playIns);
+	const tidPlayoffs = getTidPlayoffs(series).filter(
+		tid => !tidPlayIn.includes(tid),
+	);
 
 	if (playIns.length > 0) {
 		return {
 			byConf: playoffsByConf,
 			playIns,
 			series,
+			tidPlayIn,
 			tidPlayoffs,
 		};
 	}
@@ -232,6 +251,7 @@ export const genPlayoffSeriesFromTeams = async (
 	return {
 		byConf: playoffsByConf,
 		series,
+		tidPlayIn,
 		tidPlayoffs,
 	};
 };

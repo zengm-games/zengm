@@ -93,16 +93,23 @@ const Team = ({
 					/>
 				) : null}
 			</div>
-			<div className="mx-1">
-				{team.seed}.<br />
-				&nbsp;
-			</div>
+			<div className="mx-1 align-self-start">{team.seed}.</div>
 			{team.pendingPlayIn ? (
-				<>
-					Play-In
-					<br />
-					&nbsp;
-				</>
+				<div className="align-self-start">
+					{expandTeamName ? (
+						"Play-In Team"
+					) : (
+						<>
+							<span
+								className="d-xxl-none"
+								title="Play-in team, to be announced"
+							>
+								TBA
+							</span>
+							<span className="d-none d-xxl-inline">Play-In Team</span>
+						</>
+					)}
+				</div>
 			) : (
 				<div className="mr-1 overflow-hidden">
 					<a

@@ -148,10 +148,13 @@ export const genPlayoffSeriesFromTeams = async (
 		};
 	}
 
+	const byConf = await getPlayoffsByConf(g.get("season"));
 	validatePlayoffSettings({
 		numRounds,
 		numPlayoffByes,
 		numActiveTeams: g.get("numActiveTeams"),
+		playIn: g.get("playIn"),
+		byConf,
 	});
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 

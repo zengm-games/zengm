@@ -273,6 +273,7 @@ export const settings: {
 				numRounds,
 				numPlayoffByes: output.numPlayoffByes,
 				numActiveTeams: props.numActiveTeams,
+				playIn: output.playIn,
 			});
 		},
 	},

@@ -3553,10 +3553,18 @@ const validatePointsFormula = async (pointsFormula: string) => {
 	}
 };
 
-const validatePlayoffSettings = async (
-	...options: Parameters<typeof season.validatePlayoffSettings>
-) => {
-	season.validatePlayoffSettings(...options);
+const validatePlayoffSettings = async (options: {
+	numRounds: number;
+	numPlayoffByes: number;
+	numActiveTeams: number;
+	playIn: boolean;
+}) => {
+	const byConf = await season.getPlayoffsByConf(g.get("season"));
+
+	season.validatePlayoffSettings({
+		...options,
+		byConf,
+	});
 };
 
 export default {

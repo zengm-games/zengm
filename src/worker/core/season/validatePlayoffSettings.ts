@@ -2,10 +2,14 @@ const validatePlayoffSettings = ({
 	numRounds,
 	numPlayoffByes,
 	numActiveTeams,
+	playIn,
+	byConf,
 }: {
 	numRounds: number;
 	numPlayoffByes: number;
 	numActiveTeams: number;
+	playIn: boolean;
+	byConf: boolean;
 }) => {
 	if (numPlayoffByes < 0) {
 		throw new Error("Cannot have a negative number of byes");
@@ -19,17 +23,26 @@ const validatePlayoffSettings = ({
 		throw new Error("You cannot have any byes if the playoffs are disabled.");
 	}
 
-	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+	let numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+	if (playIn) {
+		if (byConf) {
+			numPlayoffTeams += 4;
+		} else {
+			numPlayoffTeams += 2;
+		}
+	}
 
 	if (numPlayoffTeams > numActiveTeams) {
 		throw new Error(
-			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${numActiveTeams} teams in the league`,
+			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes${
+				playIn ? " and a play-in tournament" : ""
+			} means ${numPlayoffTeams} teams make the playoffs, but there are only ${numActiveTeams} teams in the league`,
 		);
 	}
 
 	let numTeamsSecondRound;
 	if (numRounds === 1) {
-		// Becuase there is no second round!
+		// Because there is no second round!
 		numTeamsSecondRound = 0;
 	} else {
 		numTeamsSecondRound = 2 ** (numRounds - 1);

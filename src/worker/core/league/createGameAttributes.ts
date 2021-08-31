@@ -138,6 +138,8 @@ const createGameAttributes = (
 			numRounds: oldNumGames.length,
 			numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
 			numActiveTeams: gameAttributes.numActiveTeams,
+			playIn: gameAttributes.playIn,
+			byConf: gameAttributes.playoffsByConf,
 		});
 	} catch (error) {
 		legacyPlayoffs = true;

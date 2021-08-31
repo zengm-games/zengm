@@ -1,16 +1,16 @@
 play-in tournament
+- check every numPlayoffTeams variable, does it need to be adjusted?
+  - replace with "validatePlayoffSettings", but extend that to correctly account for byConf and playIn
 - PlayoffSeries.currentRound to -1 for play in?
   - playoffRound in headToHead - can it be negative? cause it gets set that in writeGameStats
 - add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily
   - set towards end of updatePlayoffSeries
-- check every numPlayoffTeams variable, does it need to be adjusted?
 - on standings page (and dashboard) display 1-10 seeds if play-in still going on, and 1-8 (re-seeded) otherwise
 - interaction with playoffsByConf?
   - 1 play-in for each "bracket"
 - settings validation
   - must have enough playoff teams (as if 4 byes)
   - must have enough teams (as if 0 byes + 2 extra)
-  - validateRoundsByes would need to know byConf, ugh
 - implement sort teams logic similar to playoffsNumTeamsDiv
   - apply to standings and draft
 - upgraded/imported leagues - needs to be set to false if not valid
@@ -21,6 +21,12 @@ play-in tournament
 - leagueDashboard -> updatePlayoffs
   - currentRound===-1 handle that case
 - test other sports
+- how does player game log look with play-in game?
+- blog
+  - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
+  - separate notification/symbol for clinching play-in
+  - can be enabled for any sport, but is only on by default for basketball
+  - play-in stats count as playoff stats
 
 playoffsByConf should support numConfs!=2
 - if power of 2, divides evenly

@@ -9,6 +9,7 @@ import type {
 import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
 import getPlayoffsByConf from "./getPlayoffsByConf";
+import validatePlayoffSettings from "./validatePlayoffSettings";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -147,11 +148,11 @@ export const genPlayoffSeriesFromTeams = async (
 		};
 	}
 
-	helpers.validateRoundsByes(
+	validatePlayoffSettings({
 		numRounds,
 		numPlayoffByes,
-		g.get("numActiveTeams"),
-	);
+		numActiveTeams: g.get("numActiveTeams"),
+	});
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
 	if (teams.length < numPlayoffTeams) {

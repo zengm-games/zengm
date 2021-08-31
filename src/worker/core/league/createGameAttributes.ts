@@ -1,3 +1,4 @@
+import { season } from "..";
 import {
 	DIFFICULTY,
 	gameAttributeHasHistory,
@@ -10,7 +11,7 @@ import type {
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../../common/types";
-import { defaultGameAttributes, helpers, logEvent } from "../../util";
+import { defaultGameAttributes, logEvent } from "../../util";
 import { wrap } from "../../util/g";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings";
 import type { LeagueFile, TeamInfo } from "./create";
@@ -133,11 +134,11 @@ const createGameAttributes = (
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
-		helpers.validateRoundsByes(
-			oldNumGames.length,
-			unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
-			gameAttributes.numActiveTeams,
-		);
+		season.validatePlayoffSettings({
+			numRounds: oldNumGames.length,
+			numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
+			numActiveTeams: gameAttributes.numActiveTeams,
+		});
 	} catch (error) {
 		legacyPlayoffs = true;
 	}

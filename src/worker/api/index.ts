@@ -3553,6 +3553,12 @@ const validatePointsFormula = async (pointsFormula: string) => {
 	}
 };
 
+const validatePlayoffSettings = async (
+	...options: Parameters<typeof season.validatePlayoffSettings>
+) => {
+	season.validatePlayoffSettings(...options);
+};
+
 export default {
 	actions,
 	acceptContractNegotiation,
@@ -3652,4 +3658,5 @@ export default {
 	updateTrade,
 	upsertCustomizedPlayer,
 	validatePointsFormula,
+	validatePlayoffSettings,
 };

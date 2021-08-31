@@ -258,7 +258,7 @@ export const settings: {
 			</>
 		),
 		type: "jsonString",
-		validator: (value, output, props) => {
+		validator: async (value, output, props) => {
 			if (!Array.isArray(value)) {
 				throw new Error("Must be an array");
 			}
@@ -269,11 +269,11 @@ export const settings: {
 			}
 
 			const numRounds = value.length;
-			helpers.validateRoundsByes(
+			await toWorker("main", "validatePlayoffSettings", {
 				numRounds,
-				output.numPlayoffByes,
-				props.numActiveTeams,
-			);
+				numPlayoffByes: output.numPlayoffByes,
+				numActiveTeams: props.numActiveTeams,
+			});
 		},
 	},
 	{

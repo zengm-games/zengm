@@ -11,6 +11,7 @@ import newSchedule from "./newSchedule";
 import newSchedulePlayoffsDay from "./newSchedulePlayoffsDay";
 import setSchedule from "./setSchedule";
 import updateOwnerMood from "./updateOwnerMood";
+import validatePlayoffSettings from "./validatePlayoffSettings";
 
 export default {
 	addDaysToSchedule,
@@ -26,4 +27,5 @@ export default {
 	newSchedulePlayoffsDay,
 	setSchedule,
 	updateOwnerMood,
+	validatePlayoffSettings,
 };

@@ -1,5 +1,6 @@
 import {
 	COURT,
+	DEFAULT_CONFS,
 	DIFFICULTY,
 	GAME_NAME,
 	isSport,
@@ -275,7 +276,9 @@ export const settings: {
 				numActiveTeams: props.numActiveTeams,
 				playIn: output.playIn,
 				playoffsByConf: output.playoffsByConf,
-				confs: props.confs,
+
+				// Fallback is for when creating a new league and editing settings, confs are not available here
+				confs: props.confs ?? DEFAULT_CONFS,
 			});
 		},
 	},

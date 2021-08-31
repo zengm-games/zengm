@@ -8,7 +8,7 @@ const makeMatchupsWrapper = (
 	numPlayoffSeries: number,
 	numPlayoffByes: number,
 ) => {
-	const series = makeMatchups(
+	const { round: series } = makeMatchups(
 		teams.map(t => {
 			return {
 				tid: t.tid,
@@ -42,6 +42,7 @@ const makeMatchupsWrapper = (
 describe("worker/core/season/genPlayoffSeries", () => {
 	beforeAll(() => {
 		testHelpers.resetG();
+		g.setWithoutSavingToDB("playIn", false);
 	});
 	afterAll(() => {
 		testHelpers.resetG();

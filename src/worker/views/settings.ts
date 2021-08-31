@@ -1,5 +1,6 @@
 import { defaultInjuries, g } from "../util";
 import type {
+	Conf,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	InjuriesSetting,
@@ -97,7 +98,6 @@ const keys = [
 	"playoffsReseed",
 	"playerBioInfo",
 	"playIn",
-	"confs",
 ] as const;
 
 export type Settings = Pick<
@@ -113,6 +113,7 @@ export type Settings = Pick<
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	realStats: GetLeagueOptionsReal["realStats"];
 	injuries: InjuriesSetting;
+	confs?: Conf[];
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {

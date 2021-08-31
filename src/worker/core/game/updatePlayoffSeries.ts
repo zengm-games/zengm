@@ -1,12 +1,8 @@
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import type {
-	Conditions,
-	GameResults,
-	PlayoffSeries,
-} from "../../../common/types";
+import type { Conditions, GameResults } from "../../../common/types";
 import season from "../season";
-import flatten from "lodash-es/flatten";
+import { findSeries } from "./writeGameStats";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -17,10 +13,6 @@ const updatePlayoffSeries = async (
 		throw new Error("playoffSeries not found");
 	}
 
-	const isPlayIn = playoffSeries.currentRound === -1 && playoffSeries.playIns;
-	const playoffRound = isPlayIn
-		? flatten(playoffSeries.playIns)
-		: playoffSeries.series[playoffSeries.currentRound];
 	const numGamesToWinSeries =
 		playoffSeries.currentRound === -1
 			? 1
@@ -31,15 +23,13 @@ const updatePlayoffSeries = async (
 	for (const result of results) {
 		// Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
 		const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
-		let series: PlayoffSeries["series"][0][0] | undefined;
-
-		for (let i = 0; i < playoffRound.length; i++) {
-			series = playoffRound[i];
+		const series = findSeries(
+			playoffSeries,
+			result.team[0].id,
+			result.team[1].id,
+		);
+		if (series && series.away) {
 			const { away, home } = series;
-
-			if (!away) {
-				continue;
-			}
 
 			if (home.pts === undefined) {
 				home.pts = 0;
@@ -48,8 +38,6 @@ const updatePlayoffSeries = async (
 			if (away.pts === undefined) {
 				away.pts = 0;
 			}
-
-			let found = false;
 
 			if (home.tid === result.team[0].id) {
 				home.pts += result.team[0].stat.pts;
@@ -60,8 +48,6 @@ const updatePlayoffSeries = async (
 				} else {
 					away.won += 1;
 				}
-
-				found = true;
 			} else if (away.tid === result.team[0].id) {
 				away.pts += result.team[0].stat.pts;
 				home.pts += result.team[1].stat.pts;
@@ -71,22 +57,13 @@ const updatePlayoffSeries = async (
 				} else {
 					home.won += 1;
 				}
-
-				found = true;
 			}
 
-			if (found) {
-				if (series.gids === undefined) {
-					series.gids = [];
-				}
-				series.gids.push(result.gid);
-
-				break;
+			if (series.gids === undefined) {
+				series.gids = [];
 			}
-		}
-
-		// For TypeScript, not really necessary
-		if (series === undefined || series.away === undefined) {
+			series.gids.push(result.gid);
+		} else {
 			continue;
 		}
 

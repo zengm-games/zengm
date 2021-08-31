@@ -1,5 +1,4 @@
 play-in tournament
-- updatePlayoffSeries needs to place winner of play-in in actual bracket
 - PlayoffSeries.currentRound to -1 for play in?
   - playoffRound in headToHead - can it be negative? cause it gets set that in writeGameStats
 - add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily

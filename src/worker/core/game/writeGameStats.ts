@@ -7,6 +7,7 @@ import type {
 	Game,
 	GameResults,
 	LogEventType,
+	PlayoffSeries,
 } from "../../../common/types";
 import { headToHead, season } from "..";
 
@@ -81,6 +82,38 @@ const allStarMVP = async (
 	);
 };
 
+export const findSeries = (
+	playoffSeries: PlayoffSeries,
+	tid0: number,
+	tid1: number,
+) => {
+	const isValidSeries = (s: typeof playoffSeries.series[number][number]) => {
+		// Here and below, can't assume series and game have same home/away, because for series "home" means home court advantage in series, but for game it means this individual game.
+		if (s.home.tid === tid0 && s.away?.tid === tid1) {
+			return true;
+		}
+		if (s.home.tid === tid1 && s.away?.tid === tid0) {
+			return true;
+		}
+
+		return false;
+	};
+
+	if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
+		// Play-in tournament
+		for (const playIn of playoffSeries.playIns) {
+			const series = playIn.find(isValidSeries);
+			if (series) {
+				return series;
+			}
+		}
+	} else {
+		// Regular playoffs
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		return roundSeries.find(isValidSeries);
+	}
+};
+
 const getPlayoffInfos = async (game: Game) => {
 	if (g.get("phase") !== PHASE.PLAYOFFS) {
 		return {};
@@ -91,48 +124,11 @@ const getPlayoffInfos = async (game: Game) => {
 		return {};
 	}
 
-	let series:
-		| {
-				away?: {
-					tid: number;
-					seed: number;
-					won: number;
-					pts?: number;
-				};
-				home: {
-					tid: number;
-					seed: number;
-					won: number;
-					pts?: number;
-				};
-		  }
-		| undefined;
-
-	const findSeries = (s: NonNullable<typeof series>) => {
-		// Here and below, can't assume series and game have same home/away, because for series "home" means home court advantage in series, but for game it means this individual game.
-		if (s.home.tid === game.teams[0].tid && s.away?.tid === game.teams[1].tid) {
-			return true;
-		}
-		if (s.home.tid === game.teams[1].tid && s.away?.tid === game.teams[0].tid) {
-			return true;
-		}
-
-		return false;
-	};
-
-	if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
-		// Play-in tournament
-		for (const playIn of playoffSeries.playIns) {
-			series = playIn.find(findSeries);
-			if (series) {
-				break;
-			}
-		}
-	} else {
-		// Regular playoffs
-		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
-		series = roundSeries.find(findSeries);
-	}
+	const series = findSeries(
+		playoffSeries,
+		game.teams[0].tid,
+		game.teams[1].tid,
+	);
 
 	if (!series || !series.away) {
 		return {};

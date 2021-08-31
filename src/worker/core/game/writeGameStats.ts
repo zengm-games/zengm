@@ -87,29 +87,53 @@ const getPlayoffInfos = async (game: Game) => {
 	}
 
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
-	const roundSeries = playoffSeries
-		? playoffSeries.series[playoffSeries.currentRound]
-		: undefined;
-
-	if (!roundSeries) {
+	if (!playoffSeries) {
 		return {};
 	}
 
-	const series = roundSeries.find(s => {
-		if (!s.away) {
-			return false;
-		}
+	let series:
+		| {
+				away?: {
+					tid: number;
+					seed: number;
+					won: number;
+					pts?: number;
+				};
+				home: {
+					tid: number;
+					seed: number;
+					won: number;
+					pts?: number;
+				};
+		  }
+		| undefined;
 
+	const findSeries = (s: NonNullable<typeof series>) => {
 		// Here and below, can't assume series and game have same home/away, because for series "home" means home court advantage in series, but for game it means this individual game.
-		if (s.home.tid === game.teams[0].tid && s.away.tid === game.teams[1].tid) {
+		if (s.home.tid === game.teams[0].tid && s.away?.tid === game.teams[1].tid) {
 			return true;
 		}
-		if (s.home.tid === game.teams[1].tid && s.away.tid === game.teams[0].tid) {
+		if (s.home.tid === game.teams[1].tid && s.away?.tid === game.teams[0].tid) {
 			return true;
 		}
 
 		return false;
-	});
+	};
+
+	if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
+		// Play-in tournament
+
+		for (const playIn of playoffSeries.playIns) {
+			series = playIn.find(findSeries);
+			if (series) {
+				break;
+			}
+		}
+	} else {
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+
+		series = roundSeries.find(findSeries);
+	}
 
 	if (!series || !series.away) {
 		return {};
@@ -136,14 +160,15 @@ const getPlayoffInfos = async (game: Game) => {
 		},
 	] as const;
 
-	const numGamesToWinSeries = playoffSeries
-		? helpers.numGamesToWinSeries(
-				g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
-		  )
-		: undefined;
+	const numGamesToWinSeries =
+		playoffSeries.currentRound === -1
+			? 1
+			: helpers.numGamesToWinSeries(
+					g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
+			  );
 
 	return {
-		currentRound: playoffSeries ? playoffSeries.currentRound : undefined,
+		currentRound: playoffSeries.currentRound,
 		numGamesToWinSeries,
 		playoffInfos,
 	};
@@ -375,6 +400,7 @@ const writeGameStats = async (
 		numGamesToWinSeries !== undefined &&
 		currentRound !== undefined &&
 		currentRound >= numPlayoffRounds - 2 &&
+		currentRound >= 0 &&
 		playoffInfos
 	) {
 		const round =
@@ -491,7 +517,9 @@ const writeGameStats = async (
 
 			if (currentRound !== undefined && playoffInfos) {
 				const round =
-					currentRound >= numPlayoffRounds - 1
+					currentRound === -1
+						? "play-in tournament game"
+						: currentRound >= numPlayoffRounds - 1
 						? "finals"
 						: currentRound >= numPlayoffRounds - 2
 						? playoffsByConf
@@ -508,9 +536,17 @@ const writeGameStats = async (
 					const numGamesToWinSeries =
 						helpers.numGamesToWinSeries(numGamesThisRound);
 					if (playoffInfos[indTeam].won === numGamesToWinSeries) {
-						endPart += `, winning the ${round} ${playoffInfos[indTeam].won}-${playoffInfos[indTeam].lost}`;
+						endPart += `, winning the ${round}${
+							numGamesToWinSeries > 1
+								? ` ${playoffInfos[indTeam].won}-${playoffInfos[indTeam].lost}`
+								: ""
+						}`;
 					} else if (playoffInfos[indTeam].lost === numGamesToWinSeries) {
-						endPart += `, losing the ${round} ${playoffInfos[indTeam].lost}-${playoffInfos[indTeam].won}`;
+						endPart += `, losing the ${round}${
+							numGamesToWinSeries > 1
+								? ` ${playoffInfos[indTeam].lost}-${playoffInfos[indTeam].won}`
+								: ""
+						}`;
 					} else {
 						endPart += ` during game ${gameNum} of the ${round}`;
 					}

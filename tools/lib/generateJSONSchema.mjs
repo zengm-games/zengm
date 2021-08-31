@@ -1483,7 +1483,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 						currentRound: {
 							type: "integer",
-							minimum: 0,
+							minimum: -1,
 						},
 						series: {
 							type: "array",

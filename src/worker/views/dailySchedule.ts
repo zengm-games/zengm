@@ -128,6 +128,7 @@ const updateDailySchedule = async (
 		}
 
 		const { completed, day, days, isToday, upcoming } = info;
+		console.log("upcoming", upcoming);
 
 		return {
 			completed,

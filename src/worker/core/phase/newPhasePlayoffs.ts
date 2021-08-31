@@ -53,6 +53,7 @@ const newPhasePlayoffs = async (
 		series,
 	};
 	if (playIns) {
+		playoffSeries.currentRound = -1;
 		playoffSeries.playIns = playIns;
 	}
 	await idb.cache.playoffSeries.put(playoffSeries);

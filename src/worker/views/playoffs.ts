@@ -75,6 +75,7 @@ const updatePlayoffs = async (
 
 		if (playoffSeries) {
 			series = playoffSeries.series;
+			playIns = playoffSeries.playIns;
 			finalMatchups = true;
 		} else {
 			const result = await season.genPlayoffSeries();

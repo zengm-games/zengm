@@ -42,6 +42,50 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	if (!playoffSeries) {
 		throw new Error("No playoff series");
 	}
+
+	const playIns = playoffSeries.playIns;
+	if (playIns && playIns.length > 0) {
+		const tids: [number, number][] = [];
+
+		// Is play-in tournament still going on?
+		for (const playIn of playIns) {
+			// If length is 3, that means the final game in the play-in was already scheduled, so no need to do any more
+			if (playIn.length === 2) {
+				const needsSecondRound =
+					playIn[0].home.won + playIn[0].away.won === 1 &&
+					playIn[1].home.won + playIn[1].away.won === 1;
+				if (needsSecondRound) {
+					const getWinner = (i: number) => ({
+						...helpers.deepCopy(
+							playIn[i].home.won > 0 ? playIn[i].home : playIn[i].away,
+						),
+						pts: undefined,
+						won: 0,
+					});
+					const matchup = {
+						home: getWinner(0),
+						away: getWinner(1),
+					};
+					playIns.push(matchup as any);
+
+					tids.push([matchup.home.tid, matchup.away.tid]);
+				} else {
+					for (const matchup of playIn) {
+						if (matchup.home.won === 0 && matchup.away.won === 0) {
+							tids.push([matchup.home.tid, matchup.away.tid]);
+						}
+					}
+				}
+			}
+		}
+
+		if (tids.length > 0) {
+			await idb.cache.playoffSeries.put(playoffSeries);
+			await setSchedule(tids);
+			return false;
+		}
+	}
+
 	const series = playoffSeries.series;
 
 	if (series.length === 0) {

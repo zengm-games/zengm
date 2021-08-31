@@ -1,5 +1,7 @@
 play-in tournament
-- PlayoffSeries.currentRound to -1 for play in?
+- dailySchedule processing of teams in game object (adding "playoffs" object) needs to handle play-in games, otherwise they appear without seeds/records
+  - PlayoffSeries.currentRound to -1 for play in?
+    - use in newSchedulePlayoffsDay too?
 - add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily
 - check every numPlayoffTeams variable, does it need to be adjusted?
 - play-in teams should not have playoffRoundsWon until they actually win the play-in
@@ -17,6 +19,7 @@ play-in tournament
 - upgraded/imported leagues - needs to be set to false if not valid
   - or make it false by default, except in real players leagues
 - what about 2 conferences and only 1 round (genPlayoffSeries gets too complicated), does it work?
+- make sure gid gets logged correctly and score is clickable in UI
 - check all uses of tidPlayoffs
   - getTeamsByRound
 

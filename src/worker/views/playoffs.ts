@@ -26,10 +26,17 @@ type SeriesTeam = {
 	won?: number;
 };
 
-const getProjectedSeries = async () => {
-	const result = await season.genPlayoffSeries();
-	return result.series;
+type PlayInMatchup = {
+	home: SeriesTeam;
+	away: SeriesTeam;
 };
+
+type PlayIns =
+	| (
+			| [PlayInMatchup, PlayInMatchup]
+			| [PlayInMatchup, PlayInMatchup, PlayInMatchup]
+	  )[]
+	| undefined;
 
 const updatePlayoffs = async (
 	inputs: ViewInput<"playoffs">,
@@ -44,6 +51,7 @@ const updatePlayoffs = async (
 	}[][];
 	numGamesPlayoffSeries: number[];
 	numGamesToWinSeries: number[];
+	playIns: PlayIns;
 	playoffsByConf: boolean;
 	season: number;
 	series: {
@@ -59,6 +67,7 @@ const updatePlayoffs = async (
 	) {
 		let finalMatchups = false;
 		let series: PlayoffSeries["series"];
+		let playIns: PlayoffSeries["playIns"];
 
 		const playoffSeries = await idb.getCopy.playoffSeries({
 			season: inputs.season,
@@ -68,16 +77,23 @@ const updatePlayoffs = async (
 			series = playoffSeries.series;
 			finalMatchups = true;
 		} else {
-			series = await getProjectedSeries();
+			const result = await season.genPlayoffSeries();
+			series = result.series;
+			playIns = result.playIns;
 		}
 
 		await helpers.augmentSeries(series, inputs.season);
+
+		if (playIns) {
+			await helpers.augmentSeries(playIns, inputs.season);
+		}
 
 		// Because augmentSeries mutates series, this is for TypeScript
 		const series2 = series as {
 			home: SeriesTeam;
 			away?: SeriesTeam;
 		}[][];
+		const playIns2 = playIns as PlayIns;
 
 		// Formatting for the table in playoffs.html
 		const matchups: {
@@ -128,6 +144,7 @@ const updatePlayoffs = async (
 			numGamesToWinSeries: numGamesPlayoffSeries.map(
 				helpers.numGamesToWinSeries,
 			),
+			playIns: playIns2,
 			playoffsByConf,
 			season: inputs.season,
 			series: series2,

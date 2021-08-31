@@ -3,6 +3,7 @@ import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
+import range from "lodash-es/range";
 
 const width100 = {
 	width: "100%",
@@ -14,6 +15,7 @@ const Playoffs = ({
 	matchups,
 	numGamesPlayoffSeries,
 	numGamesToWinSeries,
+	playIns,
 	playoffsByConf,
 	season,
 	series,
@@ -58,6 +60,13 @@ const Playoffs = ({
 		);
 	}
 
+	const tdStyle = { width: `${100 / (numRounds * 2 - 1)}%` };
+
+	let maxNumCols = 0;
+
+	const playInPlural = playIns && playIns.length > 1 ? "s" : "";
+	const playInPluralAlt = playIns && playIns.length > 1 ? "" : "s";
+
 	return (
 		<div style={{ maxWidth: 210 * (2 * numRounds - 1) }}>
 			{!finalMatchups ? (
@@ -68,7 +77,7 @@ const Playoffs = ({
 			) : null}
 
 			{playoffsByConf && numRounds > 1 ? (
-				<h2 className="d-none d-sm-block px-2">
+				<h2 className="d-none d-sm-block">
 					{confNames[1]} <span className="float-right">{confNames[0]}</span>
 				</h2>
 			) : null}
@@ -79,12 +88,12 @@ const Playoffs = ({
 						{matchups.map((row, i) => (
 							<tr key={i}>
 								{row.map((m, j) => {
+									if (j + 1 > maxNumCols) {
+										maxNumCols = j + 1;
+									}
+
 									return (
-										<td
-											key={j}
-											rowSpan={m.rowspan}
-											style={{ width: `${100 / (numRounds * 2 - 1)}%` }}
-										>
+										<td key={j} rowSpan={m.rowspan} style={tdStyle}>
 											<PlayoffMatchup
 												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}
 												season={season}
@@ -111,6 +120,63 @@ const Playoffs = ({
 					</tfoot>
 				</table>
 			</ResponsiveTableWrapper>
+
+			{playIns ? (
+				<>
+					<h2>Play-In Tournament</h2>
+					<p className="mb-2">
+						The winner{playInPlural} of the {playIns[0][0].home.seed}/
+						{playIns[0][0].away.seed} game{playInPlural} make{playInPluralAlt}{" "}
+						the playoffs. Then the loser{playInPlural} play{playInPluralAlt} the
+						winner{playInPlural} of the {playIns[0][1].home.seed}/
+						{playIns[0][1].away.seed} game{playInPlural} for the final playoffs
+						spot{playInPlural}.
+					</p>
+					{[...playIns].reverse().map((playIn, i) => {
+						return (
+							<ResponsiveTableWrapper key={i}>
+								<table className="table-sm" style={width100}>
+									<tbody>
+										<tr>
+											<td style={tdStyle}>
+												<PlayoffMatchup
+													numGamesToWinSeries={1}
+													season={season}
+													series={playIn[0]}
+													userTid={userTid}
+												/>
+											</td>
+											<td style={tdStyle} rowSpan={2}>
+												{playIn[2] ? (
+													<PlayoffMatchup
+														numGamesToWinSeries={1}
+														season={season}
+														series={playIn[2]}
+														userTid={userTid}
+													/>
+												) : null}
+											</td>
+											{range(maxNumCols - 2).map(j => (
+												<td key={j} style={tdStyle} />
+											))}
+										</tr>
+										<tr>
+											<td style={tdStyle}>
+												<PlayoffMatchup
+													numGamesToWinSeries={1}
+													season={season}
+													series={playIn[1]}
+													userTid={userTid}
+												/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</ResponsiveTableWrapper>
+						);
+					})}
+				</>
+			) : null}
 		</div>
 	);
 };

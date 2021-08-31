@@ -1168,8 +1168,7 @@ export type PlayoffSeriesTeam = {
 	cid: number;
 	imgURL?: string;
 	imgURLSmall?: string;
-	pts?: number;
-	// undefined means game hasn't happened yet
+	pts?: number; // undefined means game hasn't happened yet
 	region?: string;
 	regularSeason?: {
 		won: number;
@@ -1182,6 +1181,17 @@ export type PlayoffSeriesTeam = {
 	won: number;
 };
 
+type PlayInMatchup = {
+	home: PlayoffSeriesTeam;
+	away: PlayoffSeriesTeam;
+	gids?: number[];
+};
+
+// Each entry is the 2 first round games (7/8 and 9/10) and the 1 game between the loser of the 7/8 game and the winner of the 9/10 game
+export type PlayInTournament =
+	| [PlayInMatchup, PlayInMatchup]
+	| [PlayInMatchup, PlayInMatchup, PlayInMatchup];
+
 export type PlayoffSeries = {
 	byConf?: boolean; // undefined is for upgraded leagues and real players leagues
 	currentRound: number;
@@ -1191,6 +1201,9 @@ export type PlayoffSeries = {
 		away?: PlayoffSeriesTeam;
 		gids?: number[];
 	}[][];
+
+	// undefined means no play-in tournament
+	playIns?: PlayInTournament[];
 };
 
 export type ContractInfo = {

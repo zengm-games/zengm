@@ -4,6 +4,7 @@ import type {
 	TeamFiltered,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
+	PlayInTournament,
 } from "../../../common/types";
 import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
@@ -52,7 +53,7 @@ export const makeMatchups = (
 ) => {
 	const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
 
-	return seeds.map(matchup => {
+	const round = seeds.map(matchup => {
 		const home = genTeam(teams[matchup[0]], matchup[0] + 1);
 		const away =
 			matchup[1] !== undefined
@@ -64,6 +65,32 @@ export const makeMatchups = (
 			away,
 		};
 	});
+
+	let playIn: PlayInTournament | undefined;
+	if (g.get("playIn")) {
+		// Find the 2 last teams in the playoffs, and the 2 first teams out
+		const playInTeams = teams.slice(numPlayoffTeams - 2, numPlayoffTeams + 2);
+
+		if (playInTeams.length < 4) {
+			throw new Error("Not enough teams found for play-in tournament");
+		}
+
+		playIn = [
+			{
+				home: genTeam(playInTeams[0], numPlayoffTeams - 1),
+				away: genTeam(playInTeams[1], numPlayoffTeams),
+			},
+			{
+				home: genTeam(playInTeams[2], numPlayoffTeams + 1),
+				away: genTeam(playInTeams[3], numPlayoffTeams + 2),
+			},
+		];
+	}
+
+	return {
+		round,
+		playIn,
+	};
 };
 
 const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
@@ -118,6 +145,8 @@ export const genPlayoffSeriesFromTeams = async (
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
+	let playIns: PlayoffSeries["playIns"] = [];
+
 	if (playoffsByConf) {
 		if (numRounds > 1) {
 			// Default: top 50% of teams in each of the two conferences
@@ -128,15 +157,19 @@ export const genPlayoffSeriesFromTeams = async (
 				);
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
-					const round = await makeMatchups(
+					const { round, playIn } = await makeMatchups(
 						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
 					);
 					series[0].push(...round);
+					if (playIn) {
+						playIns.push(playIn);
+					}
 				} else {
 					// Not enough teams in conference for playoff bracket
 					playoffsByConf = false;
+					playIns = [];
 				}
 			}
 		} else {
@@ -156,7 +189,7 @@ export const genPlayoffSeriesFromTeams = async (
 			}
 
 			if (teamsFinals.length === 2) {
-				const round = await makeMatchups(
+				const { round } = await makeMatchups(
 					await orderTeams(teamsFinals, teams, orderTeamsOptions),
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
@@ -174,18 +207,32 @@ export const genPlayoffSeriesFromTeams = async (
 		// Reset, in case it was partially set in prior branch
 		series = range(numRounds).map(() => []);
 
-		const round = await makeMatchups(
+		const { round, playIn } = await makeMatchups(
 			await orderTeams(teams, teams, orderTeamsOptions),
 			numPlayoffTeams,
 			numPlayoffByes,
 		);
 		series[0].push(...round);
+		if (playIn) {
+			playIns.push(playIn);
+		}
+	}
+
+	const tidPlayoffs = getTidPlayoffs(series);
+
+	if (playIns.length > 0) {
+		return {
+			byConf: playoffsByConf,
+			playIns,
+			series,
+			tidPlayoffs,
+		};
 	}
 
 	return {
 		byConf: playoffsByConf,
 		series,
-		tidPlayoffs: getTidPlayoffs(series),
+		tidPlayoffs,
 	};
 };
 

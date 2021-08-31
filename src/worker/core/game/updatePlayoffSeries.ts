@@ -165,6 +165,67 @@ const updatePlayoffSeries = async (
 				},
 				conditions,
 			);
+
+			if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
+				let playInsIndex;
+				let playInIndex;
+				for (let i = 0; i < playoffSeries.playIns.length; i++) {
+					const playIn = playoffSeries.playIns[i];
+					for (let j = 0; j < playIn.length; j++) {
+						const matchup = playIn[j];
+						if (matchup === series) {
+							playInsIndex = i;
+							playInIndex = j;
+							break;
+						}
+					}
+				}
+
+				if (playInIndex === undefined || playInsIndex === undefined) {
+					throw new Error("Play-in matchup not found");
+				}
+
+				// If this is the first game (top 2 teams) or last game (2nd round) of a play-in tournament, move the winner to the appropriate spot in the playoffs
+				let target; // Team to replace in initial playoff matchups
+				if (playInIndex === 0) {
+					target = playoffSeries.playIns[playInsIndex][0].home;
+				} else if (playInIndex === 2) {
+					target = playoffSeries.playIns[playInsIndex][0].away;
+				}
+				if (target) {
+					const winner =
+						series.away.tid === winnerTid ? series.away : series.home;
+
+					// Find target team in playoffSeries and replace with winner of this game
+					for (const matchup of playoffSeries.series[0]) {
+						for (const type of ["home", "away"] as const) {
+							const matchupTeam = matchup[type];
+							if (
+								matchupTeam &&
+								matchupTeam.tid === target.tid &&
+								matchupTeam.seed === target.seed
+							) {
+								matchup[type] = {
+									...winner,
+									seed: matchupTeam.seed,
+									won: 0,
+									pts: undefined,
+								};
+							}
+						}
+					}
+
+					// Update playoffRoundsWon, since now team has actually made the playoffs
+					const teamSeason = await idb.cache.teamSeasons.indexGet(
+						"teamSeasonsBySeasonTid",
+						[g.get("season"), winnerTid],
+					);
+					if (teamSeason) {
+						teamSeason.playoffRoundsWon = 0;
+						await idb.cache.teamSeasons.put(teamSeason);
+					}
+				}
+			}
 		}
 	}
 

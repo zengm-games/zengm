@@ -55,16 +55,21 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 				playIn[0].home.won + playIn[0].away.won === 1 &&
 				playIn[1].home.won + playIn[1].away.won === 1;
 			if (needsSecondRound) {
-				const getWinner = (i: number) => ({
-					...helpers.deepCopy(
-						playIn[i].home.won > 0 ? playIn[i].home : playIn[i].away,
-					),
-					pts: undefined,
-					won: 0,
-				});
+				const getTeam = (i: number, type: "won" | "lost") => {
+					const oldTeam =
+						playIn[i].home.won > 0 && type === "won"
+							? playIn[i].home
+							: playIn[i].away;
+
+					return {
+						...helpers.deepCopy(oldTeam),
+						pts: undefined,
+						won: 0,
+					};
+				};
 				const matchup = {
-					home: getWinner(0),
-					away: getWinner(1),
+					home: getTeam(0, "lost"),
+					away: getTeam(1, "won"),
 				};
 				playIn.push(matchup);
 

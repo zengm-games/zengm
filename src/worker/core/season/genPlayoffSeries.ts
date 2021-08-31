@@ -238,6 +238,15 @@ export const genPlayoffSeriesFromTeams = async (
 		tid => !tidPlayIn.includes(tid),
 	);
 
+	for (const matchup of series[0]) {
+		for (const type of ["home", "away"] as const) {
+			const t = matchup[type];
+			if (t && tidPlayIn.includes(t.tid)) {
+				t.pendingPlayIn = true;
+			}
+		}
+	}
+
 	if (playIns.length > 0) {
 		return {
 			byConf: playoffsByConf,

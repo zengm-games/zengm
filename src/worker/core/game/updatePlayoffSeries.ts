@@ -186,13 +186,13 @@ const updatePlayoffSeries = async (
 				}
 
 				// If this is the first game (top 2 teams) or last game (2nd round) of a play-in tournament, move the winner to the appropriate spot in the playoffs
-				let target; // Team to replace in initial playoff matchups
+				let targetTid; // Team to replace in initial playoff matchups
 				if (playInIndex === 0) {
-					target = playoffSeries.playIns[playInsIndex][0].home;
+					targetTid = playoffSeries.playIns[playInsIndex][0].home.tid;
 				} else if (playInIndex === 2) {
-					target = playoffSeries.playIns[playInsIndex][0].away;
+					targetTid = playoffSeries.playIns[playInsIndex][0].away.tid;
 				}
-				if (target) {
+				if (targetTid !== undefined) {
 					const winner =
 						series.away.tid === winnerTid ? series.away : series.home;
 
@@ -202,14 +202,15 @@ const updatePlayoffSeries = async (
 							const matchupTeam = matchup[type];
 							if (
 								matchupTeam &&
-								matchupTeam.tid === target.tid &&
-								matchupTeam.seed === target.seed
+								matchupTeam.pendingPlayIn &&
+								matchupTeam.tid === targetTid
 							) {
 								matchup[type] = {
 									...winner,
 									seed: matchupTeam.seed,
 									won: 0,
 									pts: undefined,
+									pendingPlayIn: undefined,
 								};
 							}
 						}

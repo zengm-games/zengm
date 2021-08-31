@@ -7,6 +7,7 @@ type SeriesTeam = {
 	cid: number;
 	imgURL?: string;
 	imgURLSmall?: string;
+	pendingPlayIn?: true;
 	pts?: number;
 	regularSeason: {
 		won: number;
@@ -78,12 +79,12 @@ const Team = ({
 		<li
 			className={classNames("border border-bottom-0", {
 				"font-weight-bold": won,
-				"table-info": team.tid === userTid,
+				"table-info": team.tid === userTid && !team.pendingPlayIn,
 				"text-muted": lost,
 			})}
 		>
 			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
-				{team.imgURL || team.imgURLSmall ? (
+				{!team.pendingPlayIn && (team.imgURL || team.imgURLSmall) ? (
 					<img
 						className="mw-100 mh-100"
 						style={lost ? faded : notFaded}
@@ -96,39 +97,47 @@ const Team = ({
 				{team.seed}.<br />
 				&nbsp;
 			</div>
-			<div className="mr-1 overflow-hidden">
-				<a
-					className={classNames({
-						"text-muted": lost,
-					})}
-					href={helpers.leagueUrl([
-						"roster",
-						`${team.abbrev}_${team.tid}`,
-						season,
-					])}
-				>
-					{expandTeamName ? (
-						team.region
-					) : (
-						<>
-							<span className="d-xxl-none">{team.abbrev}</span>
-							<span className="d-none d-xxl-inline">{team.region}</span>
-						</>
-					)}
-				</a>
-				<br />
-				<span className="text-muted">
-					{team.regularSeason.won}-{team.regularSeason.lost}
-					{team.regularSeason.otl !== undefined &&
-					team.regularSeason.otl > 0 ? (
-						<>-{team.regularSeason.otl}</>
-					) : null}
-					{team.regularSeason.tied !== undefined &&
-					team.regularSeason.tied > 0 ? (
-						<>-{team.regularSeason.tied}</>
-					) : null}
-				</span>
-			</div>
+			{team.pendingPlayIn ? (
+				<>
+					Play-In
+					<br />
+					&nbsp;
+				</>
+			) : (
+				<div className="mr-1 overflow-hidden">
+					<a
+						className={classNames({
+							"text-muted": lost,
+						})}
+						href={helpers.leagueUrl([
+							"roster",
+							`${team.abbrev}_${team.tid}`,
+							season,
+						])}
+					>
+						{expandTeamName ? (
+							team.region
+						) : (
+							<>
+								<span className="d-xxl-none">{team.abbrev}</span>
+								<span className="d-none d-xxl-inline">{team.region}</span>
+							</>
+						)}
+					</a>
+					<br />
+					<span className="text-muted">
+						{team.regularSeason.won}-{team.regularSeason.lost}
+						{team.regularSeason.otl !== undefined &&
+						team.regularSeason.otl > 0 ? (
+							<>-{team.regularSeason.otl}</>
+						) : null}
+						{team.regularSeason.tied !== undefined &&
+						team.regularSeason.tied > 0 ? (
+							<>-{team.regularSeason.tied}</>
+						) : null}
+					</span>
+				</div>
+			)}
 			{showWon && typeof team.won === "number" ? wonPtsLink(team.won) : null}
 			{!showWon && showPts && typeof team.pts === "number"
 				? wonPtsLink(team.pts)

@@ -1168,6 +1168,7 @@ export type PlayoffSeriesTeam = {
 	cid: number;
 	imgURL?: string;
 	imgURLSmall?: string;
+	pendingPlayIn?: true;
 	pts?: number; // undefined means game hasn't happened yet
 	region?: string;
 	regularSeason?: {

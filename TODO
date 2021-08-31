@@ -7,8 +7,6 @@ play-in tournament
 - on standings page (and dashboard) display 1-10 seeds if play-in still going on, and 1-8 (re-seeded) otherwise
 - interaction with playoffsByConf?
   - 1 play-in for each "bracket"
-- UI
-  - while play-in is in progress, hide team that's in the play-in tournament until it's over. dot this purely in UI
 - settings validation
   - must have enough playoff teams (as if 4 byes)
   - must have enough teams (as if 0 byes + 2 extra)
@@ -22,6 +20,7 @@ play-in tournament
   - getTeamsByRound
 - leagueDashboard -> updatePlayoffs
   - currentRound===-1 handle that case
+- test other sports
 
 playoffsByConf should support numConfs!=2
 - if power of 2, divides evenly

@@ -1,7 +1,11 @@
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
 import { achievement, g, helpers, local, logEvent } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import type {
+	Conditions,
+	PhaseReturn,
+	PlayoffSeries,
+} from "../../../common/types";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,
@@ -13,7 +17,7 @@ const newPhasePlayoffs = async (
 	local.playingUntilEndOfRound = false;
 
 	// Set playoff matchups
-	const { byConf, series, tidPlayIn, tidPlayoffs } =
+	const { byConf, playIns, series, tidPlayIn, tidPlayoffs } =
 		await season.genPlayoffSeries();
 
 	for (const type of ["playoffs", "play-in tournament"] as const) {
@@ -42,12 +46,16 @@ const newPhasePlayoffs = async (
 		}
 	}
 
-	await idb.cache.playoffSeries.put({
+	const playoffSeries: PlayoffSeries = {
 		byConf,
 		season: g.get("season"),
 		currentRound: 0,
 		series,
-	});
+	};
+	if (playIns) {
+		playoffSeries.playIns = playIns;
+	}
+	await idb.cache.playoffSeries.put(playoffSeries);
 
 	// Add row to team stats and team season attributes
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

@@ -1165,18 +1165,22 @@ const genFilename = (data: any) => {
 		// Most recent series info
 		const playoffSeries = data.playoffSeries.at(-1);
 		const rnd = playoffSeries.currentRound;
-		filename += `_Round_${playoffSeries.currentRound + 1}`;
+		if (rnd === -1) {
+			filename += "_Play-In";
+		} else {
+			filename += `_Round_${rnd + 1}`;
 
-		// Find the latest playoff series with the user's team in it
-		for (const series of playoffSeries.series[rnd]) {
-			if (series.home.tid === g.get("userTid")) {
-				if (series.away) {
-					filename += `_${series.home.won}-${series.away.won}`;
-				} else {
-					filename += "_bye";
+			// Find the latest playoff series with the user's team in it
+			for (const series of playoffSeries.series[rnd]) {
+				if (series.home.tid === g.get("userTid")) {
+					if (series.away) {
+						filename += `_${series.home.won}-${series.away.won}`;
+					} else {
+						filename += "_bye";
+					}
+				} else if (series.away && series.away.tid === g.get("userTid")) {
+					filename += `_${series.away.won}-${series.home.won}`;
 				}
-			} else if (series.away && series.away.tid === g.get("userTid")) {
-				filename += `_${series.away.won}-${series.home.won}`;
 			}
 		}
 	}

@@ -97,6 +97,7 @@ const keys = [
 	"playoffsReseed",
 	"playerBioInfo",
 	"playIn",
+	"confs",
 ] as const;
 
 export type Settings = Pick<
@@ -210,6 +211,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			playoffsReseed: g.get("playoffsReseed"),
 			playerBioInfo: g.get("playerBioInfo"),
 			playIn: g.get("playIn"),
+			confs: g.get("confs"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

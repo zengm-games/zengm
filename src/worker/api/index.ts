@@ -490,9 +490,9 @@ const createLeague = async (
 	const gameAttributeOverrides: Partial<
 		Record<keyof GameAttributesLeague, any>
 	> = {
+		...otherSettings,
 		confs,
 		divs,
-		...otherSettings,
 	};
 
 	// This setting is allowed to be undefined, so make it that way when appropriate
@@ -3553,16 +3553,32 @@ const validatePointsFormula = async (pointsFormula: string) => {
 	}
 };
 
-const validatePlayoffSettings = async (options: {
+const validatePlayoffSettings = async ({
+	numRounds,
+	numPlayoffByes,
+	numActiveTeams,
+	playIn,
+	playoffsByConf,
+	confs,
+}: {
 	numRounds: number;
 	numPlayoffByes: number;
 	numActiveTeams: number;
 	playIn: boolean;
+	playoffsByConf: boolean;
+	confs: GameAttributesLeague["confs"];
 }) => {
-	const byConf = await season.getPlayoffsByConf(g.get("season"));
+	const byConf = await season.getPlayoffsByConf(g.get("season"), {
+		skipPlayoffSeries: true,
+		playoffsByConf,
+		confs,
+	});
 
 	season.validatePlayoffSettings({
-		...options,
+		numRounds,
+		numPlayoffByes,
+		numActiveTeams,
+		playIn,
 		byConf,
 	});
 };

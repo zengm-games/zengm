@@ -57,7 +57,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			if (needsSecondRound) {
 				const getTeam = (i: number, type: "won" | "lost") => {
 					const oldTeam =
-						playIn[i].home.won > 0 && type === "won"
+						(playIn[i].home.won > 0 && type === "won") ||
+						(playIn[i].away.won > 0 && type === "lost")
 							? playIn[i].home
 							: playIn[i].away;
 

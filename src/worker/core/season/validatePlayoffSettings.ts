@@ -23,6 +23,12 @@ const validatePlayoffSettings = ({
 		throw new Error("You cannot have any byes if the playoffs are disabled.");
 	}
 
+	if (numRounds === 1 && playIn && byConf) {
+		throw new Error(
+			"You cannot have a play-in tournament if there is only one playoff round and the playoffs are split by conference.",
+		);
+	}
+
 	let numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 	if (playIn) {
 		if (byConf) {

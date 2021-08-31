@@ -274,6 +274,8 @@ export const settings: {
 				numPlayoffByes: output.numPlayoffByes,
 				numActiveTeams: props.numActiveTeams,
 				playIn: output.playIn,
+				playoffsByConf: output.playoffsByConf,
+				confs: props.confs,
 			});
 		},
 	},

@@ -363,7 +363,8 @@ export const settings: {
 		name: "Play-In Tournament",
 		godModeRequired: "existingLeagueOnly",
 		type: "bool",
-		description: "NBA-like tournament to determine the bottom 4 playoff teams.",
+		description:
+			"NBA-like tournament to determine the lowest seeded playoff teams.",
 	},
 	{
 		category: "Draft",

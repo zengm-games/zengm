@@ -9,7 +9,13 @@ import type {
 	GameAttributesLeague,
 } from "../../../common/types";
 import { defaultGameAttributes, helpers, random } from "../../util";
-import { isSport, PHASE, PLAYER, unwrapGameAttribute } from "../../../common";
+import {
+	isSport,
+	MAX_SUPPORTED_LEAGUE_VERSION,
+	PHASE,
+	PLAYER,
+	unwrapGameAttribute,
+} from "../../../common";
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import getDraftProspects from "./getDraftProspects";
@@ -709,7 +715,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		});
 
 		return {
-			version: 37,
+			version: MAX_SUPPORTED_LEAGUE_VERSION,
 			startingSeason: options.realStats === "all" ? 1947 : options.season,
 			players,
 			teams: initialTeams,

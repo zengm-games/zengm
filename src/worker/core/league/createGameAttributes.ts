@@ -126,6 +126,11 @@ const createGameAttributes = async (
 		gameAttributes.easyDifficultyInPast = true;
 	}
 
+	// Default playIn false in old leagues, do before other playoff stuff so playIn doesn't mess with them
+	if (version !== undefined && version < 46) {
+		gameAttributes.playIn = false;
+	}
+
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
 	const oldNumGames = unwrapGameAttribute(
 		gameAttributes,
@@ -213,31 +218,23 @@ const createGameAttributes = async (
 
 	// If cannot handle the play-in tournament, disable
 	if (gameAttributes.playIn) {
-		if (version !== undefined && version < 46) {
-			gameAttributes.playIn = false;
-		} else {
-			const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
-				skipPlayoffSeries: true,
-				playoffsByConf: gameAttributes.playoffsByConf,
-				confs: unwrapGameAttribute(gameAttributes, "confs"),
+		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
+			skipPlayoffSeries: true,
+			playoffsByConf: gameAttributes.playoffsByConf,
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+		});
+
+		try {
+			season.validatePlayoffSettings({
+				numRounds: unwrapGameAttribute(gameAttributes, "numGamesPlayoffSeries")
+					.length,
+				numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
+				numActiveTeams: gameAttributes.numActiveTeams,
+				playIn: gameAttributes.playIn,
+				byConf,
 			});
-
-			try {
-				season.validatePlayoffSettings({
-					numRounds: unwrapGameAttribute(
-						gameAttributes,
-						"numGamesPlayoffSeries",
-					).length,
-					numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
-					numActiveTeams: gameAttributes.numActiveTeams,
-					playIn: gameAttributes.playIn,
-					byConf,
-				});
-			} catch (error) {
-				console.log("ERROR", error);
-
-				gameAttributes.playIn = false;
-			}
+		} catch (error) {
+			gameAttributes.playIn = false;
 		}
 	}
 

@@ -214,6 +214,15 @@ const processGameAttributes = async (
 		);
 	}
 
+	const prevPlayIn = g.get("playIn");
+	if (info.playIn !== undefined && info.playIn !== prevPlayIn) {
+		if (info.playIn) {
+			texts.push(`Play-in tournament added before the playoffs.`);
+		} else {
+			texts.push(`Play-in tournament removed.`);
+		}
+	}
+
 	const prevDraftType = g.get("draftType");
 	if (info.draftType !== undefined && info.draftType !== prevDraftType) {
 		texts.push(

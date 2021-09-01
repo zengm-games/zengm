@@ -208,7 +208,7 @@ const ViewEvent = ({
 										  ))
 										: Array.isArray(value)
 										? JSON.stringify(value)
-										: value}
+										: String(value)}
 								</td>
 							</tr>
 						);

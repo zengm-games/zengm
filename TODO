@@ -4,13 +4,10 @@ play-in tournament
   - set towards end of updatePlayoffSeries
 - upgraded/imported leagues - needs to be set to false if not valid
   - or make it false by default, except in real players leagues
-- test other sports
-- how does player game log look with play-in game?
-- add to real players rosters at appropriate time
 - blog
   - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
   - separate notification/symbol for clinching play-in
-  - can be enabled for any sport, but is only on by default for basketball
+  - can be enabled for any sport, but is only on by default for basketball (random players, and 2020+ real players)
   - play-in stats count as playoff stats
 
 playoffsByConf should support numConfs!=2

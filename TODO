@@ -1,9 +1,4 @@
 play-in tournament
-- add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily
-  - could also use playoffRoundsWon=-0.5 lol
-  - set towards end of updatePlayoffSeries
-- imported leagues
-  - if not defined, set to false
 - blog
   - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
   - separate notification/symbol for clinching play-in

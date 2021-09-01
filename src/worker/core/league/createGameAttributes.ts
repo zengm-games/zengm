@@ -213,25 +213,31 @@ const createGameAttributes = async (
 
 	// If cannot handle the play-in tournament, disable
 	if (gameAttributes.playIn) {
-		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
-			skipPlayoffSeries: true,
-			playoffsByConf: gameAttributes.playoffsByConf,
-			confs: unwrapGameAttribute(gameAttributes, "confs"),
-		});
-
-		try {
-			season.validatePlayoffSettings({
-				numRounds: unwrapGameAttribute(gameAttributes, "numGamesPlayoffSeries")
-					.length,
-				numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
-				numActiveTeams: gameAttributes.numActiveTeams,
-				playIn: gameAttributes.playIn,
-				byConf,
-			});
-		} catch (error) {
-			console.log("ERROR", error);
-
+		if (version !== undefined && version < 46) {
 			gameAttributes.playIn = false;
+		} else {
+			const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
+				skipPlayoffSeries: true,
+				playoffsByConf: gameAttributes.playoffsByConf,
+				confs: unwrapGameAttribute(gameAttributes, "confs"),
+			});
+
+			try {
+				season.validatePlayoffSettings({
+					numRounds: unwrapGameAttribute(
+						gameAttributes,
+						"numGamesPlayoffSeries",
+					).length,
+					numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
+					numActiveTeams: gameAttributes.numActiveTeams,
+					playIn: gameAttributes.playIn,
+					byConf,
+				});
+			} catch (error) {
+				console.log("ERROR", error);
+
+				gameAttributes.playIn = false;
+			}
 		}
 	}
 

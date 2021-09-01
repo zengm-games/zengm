@@ -122,7 +122,11 @@ const Playoffs = ({
 								// Div wrapper is needed if you have a play-in tournament and one playoff round
 								return (
 									<td key={i}>
-										<div style={tdStyle}>{text}</div>
+										<div
+											style={numRoundsWithPlayIn === 1.5 ? tdStyle : undefined}
+										>
+											{text}
+										</div>
 									</td>
 								);
 							})}

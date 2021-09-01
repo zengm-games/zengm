@@ -1071,6 +1071,13 @@ const migrate = ({
 	if (oldVersion <= 44) {
 		upgrade45(transaction);
 	}
+
+	if (oldVersion <= 45) {
+		transaction.objectStore("gameAttributes").put({
+			key: "playIn",
+			value: false,
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

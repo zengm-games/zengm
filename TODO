@@ -2,12 +2,15 @@ play-in tournament
 - add playIn to TeamSeason, undefined | 0 | 1 | 2 - maybe make "2" the winner of the 7/8 game, so it can be used in sorting easily
   - could also use playoffRoundsWon=-0.5 lol
   - set towards end of updatePlayoffSeries
-- upgraded/imported leagues - needs to be set to false if not valid
-  - or make it false by default, except in real players leagues
+- imported leagues
+  - if not defined, set to false
+- new leagues
+  - if not defined, set to true if possible
 - blog
   - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
   - separate notification/symbol for clinching play-in
   - can be enabled for any sport, but is only on by default for basketball (random players, and 2020+ real players)
+    - upgraded leagues - defaults to disabled
   - play-in stats count as playoff stats
 
 playoffsByConf should support numConfs!=2

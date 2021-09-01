@@ -17,7 +17,7 @@ import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfD
 import type { LeagueFile, TeamInfo } from "./create";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
-const createGameAttributes = (
+const createGameAttributes = async (
 	{
 		leagueFile,
 		teamInfos,
@@ -209,6 +209,30 @@ const createGameAttributes = (
 			"numGamesPlayoffSeries",
 			newNumGames,
 		);
+	}
+
+	// If cannot handle the play-in tournament, disable
+	if (gameAttributes.playIn) {
+		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
+			skipPlayoffSeries: true,
+			playoffsByConf: gameAttributes.playoffsByConf,
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+		});
+
+		try {
+			season.validatePlayoffSettings({
+				numRounds: unwrapGameAttribute(gameAttributes, "numGamesPlayoffSeries")
+					.length,
+				numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
+				numActiveTeams: gameAttributes.numActiveTeams,
+				playIn: gameAttributes.playIn,
+				byConf,
+			});
+		} catch (error) {
+			console.log("ERROR", error);
+
+			gameAttributes.playIn = false;
+		}
 	}
 
 	if (gameAttributes.numDraftRounds < 0) {

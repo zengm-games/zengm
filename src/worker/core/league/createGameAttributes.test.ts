@@ -4,8 +4,8 @@ import createGameAttributes from "./createGameAttributes";
 import { PHASE } from "../../../common";
 
 describe("worker/core/league/createGameAttributes", () => {
-	test("save integer in wrapped format", () => {
-		const gameAttributes = createGameAttributes({
+	test("save integer in wrapped format", async () => {
+		const gameAttributes = await createGameAttributes({
 			leagueFile: { startingSeason: 2015 },
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -16,8 +16,8 @@ describe("worker/core/league/createGameAttributes", () => {
 		]);
 	});
 
-	test("maintain history", () => {
-		const gameAttributes = createGameAttributes({
+	test("maintain history", async () => {
+		const gameAttributes = await createGameAttributes({
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -38,8 +38,8 @@ describe("worker/core/league/createGameAttributes", () => {
 		]);
 	});
 
-	test("maintain history while selecting a new team", () => {
-		const gameAttributes = createGameAttributes({
+	test("maintain history while selecting a new team", async () => {
+		const gameAttributes = await createGameAttributes({
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -61,8 +61,8 @@ describe("worker/core/league/createGameAttributes", () => {
 		]);
 	});
 
-	test("maintain history while selecting a new team, overwriting current season", () => {
-		const gameAttributes = createGameAttributes({
+	test("maintain history while selecting a new team, overwriting current season", async () => {
+		const gameAttributes = await createGameAttributes({
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -83,8 +83,8 @@ describe("worker/core/league/createGameAttributes", () => {
 		]);
 	});
 
-	test("new team after playoffs", () => {
-		const gameAttributes = createGameAttributes({
+	test("new team after playoffs", async () => {
+		const gameAttributes = await createGameAttributes({
 			leagueFile: {
 				startingSeason: 2015,
 				gameAttributes: {
@@ -113,8 +113,8 @@ describe("worker/core/league/createGameAttributes", () => {
 			userTid: 5,
 		};
 
-		test("apply new default to an empty league file", () => {
-			const gameAttributes = createGameAttributes({
+		test("apply new default to an empty league file", async () => {
+			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
 				leagueFile: {
 					startingSeason: 2021,
@@ -127,8 +127,8 @@ describe("worker/core/league/createGameAttributes", () => {
 			);
 		});
 
-		test("apply new default to an old version league file with no gameAttributes", () => {
-			const gameAttributes = createGameAttributes({
+		test("apply new default to an old version league file with no gameAttributes", async () => {
+			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
 				version: 40,
 				leagueFile: {
@@ -143,8 +143,8 @@ describe("worker/core/league/createGameAttributes", () => {
 		});
 
 		describe("apply new default to an old version league file, only for upcoming season", () => {
-			test("during regular season", () => {
-				const gameAttributes = createGameAttributes({
+			test("during regular season", async () => {
+				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
 					leagueFile: {
@@ -167,8 +167,8 @@ describe("worker/core/league/createGameAttributes", () => {
 				);
 			});
 
-			test("after regular season", () => {
-				const gameAttributes = createGameAttributes({
+			test("after regular season", async () => {
+				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
 					leagueFile: {
@@ -191,8 +191,8 @@ describe("worker/core/league/createGameAttributes", () => {
 				);
 			});
 
-			test("during expansion draft after season", () => {
-				const gameAttributes = createGameAttributes({
+			test("during expansion draft after season", async () => {
+				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
 					leagueFile: {
@@ -217,8 +217,8 @@ describe("worker/core/league/createGameAttributes", () => {
 			});
 		});
 
-		test("do nothing to new version league file", () => {
-			const gameAttributes = createGameAttributes({
+		test("do nothing to new version league file", async () => {
+			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
 				version: 43,
 				leagueFile: {

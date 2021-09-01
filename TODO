@@ -4,8 +4,6 @@ play-in tournament
   - set towards end of updatePlayoffSeries
 - imported leagues
   - if not defined, set to false
-- new leagues
-  - if not defined, set to true if possible
 - blog
   - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
   - separate notification/symbol for clinching play-in

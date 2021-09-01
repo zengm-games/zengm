@@ -158,7 +158,7 @@ export const createWithoutSaving = async (
 	}
 
 	// Also mutates teamInfos
-	const gameAttributes = createGameAttributes(
+	const gameAttributes = await createGameAttributes(
 		{
 			leagueFile,
 			teamInfos,

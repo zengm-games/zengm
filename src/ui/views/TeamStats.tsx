@@ -34,9 +34,15 @@ const TeamStats = ({
 	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {
 		basicColNames.push("OTL");
+		if (superCols) {
+			superCols[0].colspan += 1;
+		}
 	}
 	if (ties) {
 		basicColNames.push("T");
+		if (superCols) {
+			superCols[0].colspan += 1;
+		}
 	}
 	if (usePts) {
 		basicColNames.push("PTS");

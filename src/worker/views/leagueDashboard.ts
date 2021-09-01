@@ -362,19 +362,25 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		if (playoffSeries !== undefined && playoffSeries.series.length > 0) {
 			const series = playoffSeries.series;
-			await helpers.augmentSeries(series); // Find the latest playoff series with the user's team in it
+			await helpers.augmentSeries(series);
+
+			// Find the latest playoff series with the user's team in it
 
 			let found = false;
 
 			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
-			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
+			// This is needed since currentRound is -1 for a play-in
+			const lastRound =
+				playoffSeries.currentRound >= 0 ? playoffSeries.currentRound : 0;
+
+			for (let rnd = lastRound; rnd >= 0; rnd--) {
 				for (let i = 0; i < series[rnd].length; i++) {
 					const { away, home } = series[rnd][i];
 					if (
 						home.tid === g.get("userTid") ||
-						(away && away.tid === g.get("userTid"))
+						(away && away.tid === g.get("userTid") && !away.pendingPlayIn)
 					) {
 						foundSeries = series[rnd][i];
 						found = true;
@@ -401,6 +407,33 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				if (found) {
 					break;
+				}
+			}
+
+			const playIns = playoffSeries.playIns;
+			if (!found && playIns) {
+				await helpers.augmentSeries(playIns);
+				for (const playIn of playIns) {
+					for (let i = playIn.length - 1; i >= 0; i--) {
+						const { away, home } = playIn[i];
+						if (
+							home.tid === g.get("userTid") ||
+							away.tid === g.get("userTid")
+						) {
+							foundSeries = playIn[i];
+							found = true;
+							showPlayoffSeries = true;
+
+							seriesTitle = "Play-in tournament";
+
+							numGamesToWinSeries = 1;
+							break;
+						}
+					}
+
+					if (found) {
+						break;
+					}
 				}
 			}
 		}

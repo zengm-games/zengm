@@ -4,8 +4,6 @@ play-in tournament
   - set towards end of updatePlayoffSeries
 - upgraded/imported leagues - needs to be set to false if not valid
   - or make it false by default, except in real players leagues
-- leagueDashboard -> updatePlayoffs
-  - currentRound===-1 handle that case
 - test other sports
 - how does player game log look with play-in game?
 - add to real players rosters at appropriate time

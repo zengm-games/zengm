@@ -3568,7 +3568,8 @@ const validatePlayoffSettings = async ({
 	playoffsByConf: boolean;
 	confs: GameAttributesLeague["confs"];
 }) => {
-	const byConf = await season.getPlayoffsByConf(g.get("season"), {
+	// Season doesn't matter, since we provide overrides and skipPlayoffSeries
+	const byConf = await season.getPlayoffsByConf(Infinity, {
 		skipPlayoffSeries: true,
 		playoffsByConf,
 		confs,

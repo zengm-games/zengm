@@ -104,7 +104,7 @@ export const settings: {
 				output.realStats !== "none"
 			) {
 				throw new Error(
-					'Random debuts mode currently only works with "Historical Stat" set to "None"',
+					'Random debuts mode currently only works with "Historical Stats" set to "None"',
 				);
 			}
 		},

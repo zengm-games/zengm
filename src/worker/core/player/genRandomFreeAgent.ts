@@ -2,13 +2,35 @@ import type { Player } from "../../../common/types";
 import { random, g } from "../../util";
 import develop from "./develop";
 import generate from "./generate";
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import name from "./name";
 
 const genRandomFreeAgent = async (): Promise<Player> => {
+	let minAge = 25;
+	let maxAge = 31;
+
+	// Adjust for age limits
+	const forceRetireAge = g.get("forceRetireAge");
+	const draftAges = g.get("draftAges");
+
+	const offset = g.get("phase") > PHASE.PLAYOFFS ? 1 : 0;
+
+	if (forceRetireAge > minAge || forceRetireAge > maxAge) {
+		minAge = draftAges[1] + offset;
+		maxAge = forceRetireAge - 1 + offset;
+	} else if (draftAges[0] < minAge) {
+		minAge = draftAges[0] + offset;
+		if (maxAge > forceRetireAge) {
+			maxAge = forceRetireAge - 1 + offset;
+		}
+		if (minAge > maxAge) {
+			maxAge = draftAges[1] + offset;
+		}
+	}
+
 	for (let i = 0; i < 1000; i++) {
-		const age = random.randInt(25, 31);
+		const age = random.randInt(minAge, maxAge);
 		const draftYear = g.get("season") - (age - 22);
 		const p = generate(
 			PLAYER.FREE_AGENT,

@@ -551,9 +551,9 @@ src="https://www.facebook.com/tr?id=1285618145138713&ev=PageView&noscript=1"
 	return rev;
 };
 
-const minifyIndexHTML = () => {
+const minifyIndexHTML = async () => {
 	const content = fs.readFileSync("build/index.html", "utf8");
-	const minified = htmlmin.minify(content, {
+	const minified = await htmlmin.minify(content, {
 		collapseBooleanAttributes: true,
 		collapseWhitespace: true,
 		minifyCSS: true,

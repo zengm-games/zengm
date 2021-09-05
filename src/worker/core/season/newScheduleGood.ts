@@ -243,15 +243,7 @@ const finalize = ({
 	);
 
 	// 0 if null, because those teams will get lumped into "other" in groupTeamsByDid
-	const numGamesDiv2 = numGamesDiv ?? 0;
 	const numGamesConf2 = numGamesConf ?? 0;
-
-	// If it's an odd number of games, round up to allow extra home/away game
-	const maxHomeOrAway = {
-		div: Math.ceil(numGamesDiv2 / 2),
-		conf: Math.ceil(numGamesConf2 / 2),
-		other: Math.ceil((numGames - numGamesDiv2 - numGamesConf2) / 2),
-	};
 
 	// Used when numGames * numTeams is odd. conf one is tricky, because we need to consider the whole conf not just the conf teams for a given div (think 3 divisions and 15 teams in a conf with 1 game, that's 7.5 needed games).
 	const allowOneTeamWithOneGameRemainingBase: {
@@ -331,6 +323,7 @@ const finalize = ({
 
 		// Make all the excess matchups (for odd number of games between teams, someone randomly gets an extra home game)
 		{
+			// console.log('numGamesTargetsByDid', helpers.deepCopy(numGamesTargetsByDid));
 			// Track number of games left for each team in each category
 			const excessGamesRemainingByTid: Record<
 				number,
@@ -341,11 +334,11 @@ const finalize = ({
 					...numGamesTargetsByDid[t.seasonAttrs.did].excess,
 				};
 			}
+			// console.log('excessGamesRemainingByTid', helpers.deepCopy(excessGamesRemainingByTid));
 
 			// Shuffle teams, cause particularly with confs you have the same teams available in multiple different groups, since in-division teams are already subtracted, so we don't want to fall into a rut based on team order
 			const teamIndexes = range(teams.length);
 			random.shuffle(teamIndexes);
-			// console.log('excessGamesRemainingByTid',excessGamesRemainingByTid);
 
 			for (const teamIndex of teamIndexes) {
 				const t = teams[teamIndex];
@@ -391,7 +384,6 @@ const finalize = ({
 						// console.log('found matchup', t.tid, t2.tid);
 						tidsEither.push([t.tid, t2.tid]);
 
-						// No point copying this again and tracking it, since it's not used
 						scheduleCounts[t.tid][level].either += 1;
 						scheduleCounts[t2.tid][level].either += 1;
 
@@ -474,7 +466,6 @@ const finalize = ({
 				const t1 = teamsByTid[tid1];
 				const level = getLevel(t0, t1);
 
-				// No point copying this again and tracking it, since it's not used
 				scheduleCounts[tid0][level].either += 1;
 				scheduleCounts[tid1][level].either += 1;
 			}
@@ -502,6 +493,18 @@ const finalize = ({
 				other: {},
 			};
 
+			// This can differ even for teams in the same division, because if numGamesLevel*numTeams is odd, somebody gets an extra game at some other level
+			const maxHomeOrAway = (tid: number, level: typeof LEVELS[number]) => {
+				// Use scheduleCounts rather than scheduleCounts2 because scheduleCounts2 gets mutated in the tidsEither for loop and is inconsistent when this is called (game removed from either before placed in home/away)
+				const numGamesAtLevel =
+					scheduleCounts[tid][level].away +
+					scheduleCounts[tid][level].home +
+					scheduleCounts[tid][level].either;
+
+				// If it's an odd number of games, round up to allow extra home/away game
+				return Math.ceil(numGamesAtLevel / 2);
+			};
+
 			for (const [tid0, tid1] of tidsEither) {
 				const t0 = teamsByTid[tid0];
 				const t1 = teamsByTid[tid1];
@@ -513,11 +516,18 @@ const finalize = ({
 
 				const getHomeMinCutoffDiffs = () => {
 					const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
-						maxHomeOrAway[level] - scheduleCounts2[tid][level][homeAway];
+						maxHomeOrAway(tid, level) - scheduleCounts2[tid][level][homeAway];
 					const cutoffDiffs = [tid0, tid1].map(tid => ({
 						home: cutoffDiff(tid, "home"),
 						away: cutoffDiff(tid, "away"),
 					}));
+					// console.log('cutoffDiffs', cutoffDiffs, [tid0, tid1], scheduleCounts2[tid0][level].home, scheduleCounts2[tid0][level].away, scheduleCounts2[tid1][level].home, scheduleCounts2[tid1][level].away)
+					/*[0, 1].map(i => {
+						if (cutoffDiffs[i].home === 0 && cutoffDiffs[i].away === 0) {
+							const tid = i === 0 ? tid0 : tid1;
+							console.log([tid0, tid1], "No games left for team", tid, scheduleCounts2[tid])
+						}
+					});*/
 
 					// Should we first try making tid0 or tid1 home? Whichever has someone closest to the cutoff
 					return [
@@ -529,7 +539,7 @@ const finalize = ({
 				let homeMinCutoffDiffs = getHomeMinCutoffDiffs();
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
-					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs, scheduleCounts2);
+					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs);
 
 					// Try swapping a past matchup, if that is valid
 					let swapped = false;
@@ -548,9 +558,10 @@ const finalize = ({
 
 								// Will both teams still be valid if we swap?
 								if (
-									maxHomeOrAway[level] >
+									maxHomeOrAway(matchup[0], level) >
 										scheduleCounts2[matchup[0]][level].away &&
-									maxHomeOrAway[level] > scheduleCounts2[matchup[1]][level].home
+									maxHomeOrAway(matchup[1], level) >
+										scheduleCounts2[matchup[1]][level].home
 								) {
 									// console.log('before', scheduleCounts2[matchup[0]][level].home, scheduleCounts2[matchup[0]][level].away, scheduleCounts2[matchup[1]][level].home, scheduleCounts2[matchup[1]][level].away)
 									scheduleCounts2[matchup[0]][level].home -= 1;
@@ -562,7 +573,6 @@ const finalize = ({
 									matchup.reverse();
 
 									homeMinCutoffDiffs = getHomeMinCutoffDiffs();
-									// console.log('after', homeMinCutoffDiffs)
 
 									swapped = true;
 									break;
@@ -578,6 +588,7 @@ const finalize = ({
 				}
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
+					// console.log('iteration2', iteration2);
 					// This should only happen if one of the teams is already at the limit for both home and away games, which should not happen
 					throw new Error("Should never happen");
 				} else if (homeMinCutoffDiffs[0] > homeMinCutoffDiffs[1]) {

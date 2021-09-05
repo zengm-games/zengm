@@ -414,7 +414,7 @@ describe("worker/core/season/newScheduleGood", () => {
 			]);
 			console.log("warning", warning, tids.length);
 
-			assert.strictEqual(tids.length, 1230);
+			assert.strictEqual(tids.length, 1271);
 			assert.strictEqual(warning, undefined);
 		});
 
@@ -451,6 +451,40 @@ describe("worker/core/season/newScheduleGood", () => {
 			});
 
 			assert.strictEqual(tids.length, (numGames * defaultTeams.length) / 2);
+			assert.strictEqual(warning, undefined);
+		});
+
+		test("odd numGamesConf*numTeamsConf, so some team needs to play an extra non-conf game", () => {
+			const teams = defaultTeams.slice(0, 10).map((t, i) => ({
+				...t,
+				seasonAttrs: {
+					...t.seasonAttrs,
+					cid: i < 5 ? 0 : 1,
+					did: i < 5 ? 0 : 1,
+				},
+			}));
+
+			const divs = [
+				{
+					did: 0,
+					cid: 0,
+					name: "Div1",
+				},
+				{
+					did: 1,
+					cid: 1,
+					name: "Div2",
+				},
+			];
+
+			const { tids, warning } = newScheduleGood(teams, {
+				divs,
+				numGames: 13,
+				numGamesDiv: null,
+				numGamesConf: 9,
+			});
+
+			assert.strictEqual(tids.length, 65);
 			assert.strictEqual(warning, undefined);
 		});
 	});

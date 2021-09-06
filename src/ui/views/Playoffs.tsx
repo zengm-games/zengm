@@ -158,6 +158,7 @@ const Playoffs = ({
 													season={season}
 													series={playIn[0]}
 													userTid={userTid}
+													extraHighlight
 												/>
 											</td>
 											<td style={tdStyle} rowSpan={2}>
@@ -167,6 +168,7 @@ const Playoffs = ({
 														season={season}
 														series={playIn[2]}
 														userTid={userTid}
+														extraHighlight
 													/>
 												) : null}
 											</td>

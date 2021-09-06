@@ -32,6 +32,7 @@ const notFaded = {
 
 const Team = ({
 	expandTeamName,
+	extraHighlight,
 	team,
 	season,
 	showPts,
@@ -42,6 +43,7 @@ const Team = ({
 	gid,
 }: {
 	expandTeamName: boolean;
+	extraHighlight?: boolean;
 	team?: SeriesTeam;
 	season: number;
 	showPts: boolean;
@@ -75,11 +77,14 @@ const Team = ({
 		);
 	};
 
+	const highlightUser = team.tid === userTid && !team.pendingPlayIn;
+
 	return (
 		<li
 			className={classNames("border border-bottom-0", {
 				"font-weight-bold": won,
-				"table-info": team.tid === userTid && !team.pendingPlayIn,
+				"table-info": highlightUser,
+				"table-warning": won && extraHighlight && !highlightUser,
 				"text-muted": lost,
 			})}
 		>
@@ -155,12 +160,14 @@ const Team = ({
 
 const PlayoffMatchup = ({
 	expandTeamNames = false,
+	extraHighlight,
 	numGamesToWinSeries = 7,
 	season,
 	series,
 	userTid,
 }: {
 	expandTeamNames?: boolean;
+	extraHighlight?: boolean;
 	numGamesToWinSeries?: number;
 	season: number;
 	series?: {
@@ -200,6 +207,7 @@ const PlayoffMatchup = ({
 		<ul className="playoff-matchup border-bottom">
 			<Team
 				expandTeamName={expandTeamNames}
+				extraHighlight={extraHighlight}
 				team={series.home}
 				season={season}
 				showPts={showPts}
@@ -211,6 +219,7 @@ const PlayoffMatchup = ({
 			/>
 			<Team
 				expandTeamName={expandTeamNames}
+				extraHighlight={extraHighlight}
 				team={series.away}
 				season={season}
 				showPts={showPts}

@@ -216,6 +216,7 @@ const countryCodes: Record<string, string> = {
 	Spain: "es",
 	"Sri Lanka": "lk",
 	"State of Palestine": "ps",
+	Palestine: "ps",
 	Sudan: "sd",
 	Suriname: "sr",
 	"Svalbard and Jan Mayen": "sj",

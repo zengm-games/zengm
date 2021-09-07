@@ -479,6 +479,9 @@ export const createWithoutSaving = async (
 			);
 			if (!p0.contract) {
 				p.contract.temp = true;
+				if (!p0.salaries) {
+					p.salaries = [];
+				}
 			}
 
 			// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts

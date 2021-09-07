@@ -6,6 +6,7 @@ import local from "./local";
 import lock from "./lock";
 import toUI from "./toUI";
 import type { Option } from "../../common/types";
+import { idb } from "../db";
 
 const updatePlayMenu = async () => {
 	if (typeof it === "function") {
@@ -59,6 +60,10 @@ const updatePlayMenu = async () => {
 		untilEndOfRound: {
 			label: "Until end of round",
 			key: "w",
+		},
+		untilEndOfPlayIn: {
+			label: "Until end of play-in tournament",
+			key: "m",
 		},
 		throughPlayoffs: {
 			label: "Through playoffs",
@@ -217,15 +222,36 @@ const updatePlayMenu = async () => {
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
 		if (isSport("basketball") || isSport("hockey")) {
-			keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
+			keys = [
+				"day",
+				"dayLive",
+				"untilEndOfRound",
+				"untilEndOfPlayIn",
+				"throughPlayoffs",
+			];
 		} else {
-			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];
+			keys = [
+				"week",
+				"weekLive",
+				"untilEndOfRound",
+				"untilEndOfPlayIn",
+				"throughPlayoffs",
+			];
 		}
 
 		// If playoff contains no rounds with more than one game, then untilEndOfRound is not needed
 		const maxGames = Math.max(...g.get("numGamesPlayoffSeries", "current"));
 		if (maxGames <= 1) {
 			keys = keys.filter(key => key !== "untilEndOfRound");
+		}
+
+		if (g.get("playIn")) {
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+			if (!playoffSeries || playoffSeries.currentRound > -1) {
+				keys = keys.filter(key => key !== "untilEndOfPlayIn");
+			}
+		} else {
+			keys = keys.filter(key => key !== "untilEndOfPlayIn");
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {

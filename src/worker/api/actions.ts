@@ -357,6 +357,32 @@ const playMenu = {
 			game.play(getNumDaysThisRound(playoffSeries), conditions);
 		}
 	},
+	untilEndOfPlayIn: async (conditions: Conditions) => {
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			await updateStatus("Playing...");
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+			if (!playoffSeries) {
+				throw new Error("playoffSeries not found");
+			}
+
+			if (playoffSeries.currentRound > -1 || !playoffSeries.playIns) {
+				return;
+			}
+
+			let numDays = 0;
+			if (playoffSeries.playIns[0][0].home.pts === undefined) {
+				numDays = 2;
+			} else if (
+				playoffSeries.playIns[0].length > 2 &&
+				playoffSeries.playIns[0][2]?.home.pts === undefined
+			) {
+				numDays = 1;
+			}
+
+			// local.playingUntilEndOfPlayIn is not needed because we always know how many games to play
+			game.play(numDays, conditions);
+		}
+	},
 	throughPlayoffs: async (conditions: Conditions) => {
 		if (g.get("phase") === PHASE.PLAYOFFS) {
 			await updateStatus("Playing..."); // For quick UI updating, before await

@@ -10,7 +10,10 @@ import type {
 	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types";
-import { bySport } from "../../../common";
+import { bySport, isSport } from "../../../common";
+import { idb } from "../../db";
+import orderBy from "lodash-es/orderBy";
+import type { PlayerRatings } from "../../../common/types.basketball";
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
@@ -90,6 +93,40 @@ const create = async (conditions: Conditions) => {
 
 	if (allStars.teamNames[0] === allStars.teamNames[1]) {
 		allStars.teamNames[1] += " 2";
+	}
+
+	if (isSport("basketball")) {
+		const lastYear = await idb.getCopy.allStars({
+			season: g.get("season") - 1,
+		});
+		const prevWinnerPid = lastYear?.dunk?.winner;
+
+		const dunkers = orderBy(
+			(
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+			).filter(p => p.injury.gamesRemaining === 0),
+			[
+				p => (p.pid === prevWinnerPid ? 1 : 0),
+				p => {
+					const ratings = p.ratings.at(-1) as PlayerRatings;
+					return ratings.dnk + ratings.jmp;
+				},
+			],
+			["desc", "desc"],
+		)
+			.map(p => ({
+				pid: p.pid,
+				tid: p.tid,
+				name: `${p.firstName} ${p.lastName}`,
+			}))
+			.slice(0, 4);
+
+		if (dunkers.length >= 4) {
+			allStars.dunk = {
+				players: [dunkers[0], dunkers[1], dunkers[2], dunkers[3]],
+				rounds: [],
+			};
+		}
 	}
 
 	return allStars;

@@ -73,7 +73,7 @@ const play = async (
 				if (allStarNext && gidPlayByPlay === undefined) {
 					toUI(
 						"realtimeUpdate",
-						[[], helpers.leagueUrl(["all_star_draft"])],
+						[[], helpers.leagueUrl(["all_star", "draft"])],
 						conditions,
 					);
 				}

@@ -222,7 +222,7 @@ const ScoreBox = ({
 						<div className="d-flex align-items-center" key={i}>
 							<div className="score-box-logo" />
 							<div className={classNames("p-1", { "pr-5": small })}>
-								<a href={helpers.leagueUrl(["all_star_draft"])}>
+								<a href={helpers.leagueUrl(["all_star", "draft"])}>
 									{small ? `AS${i}` : `All-Star Team ${i}`}
 								</a>
 							</div>
@@ -265,7 +265,7 @@ const ScoreBox = ({
 							teamName = small
 								? `AS${i === 0 ? 2 : 1}`
 								: `All-Star Team ${i === 0 ? 2 : 1}`;
-							rosterURL = helpers.leagueUrl(["all_star_history"]);
+							rosterURL = helpers.leagueUrl(["all_star", "history"]);
 						} else {
 							imgURL =
 								teamInfoCache[t.tid]?.imgURLSmall ??

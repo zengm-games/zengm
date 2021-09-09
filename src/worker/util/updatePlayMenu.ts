@@ -49,9 +49,13 @@ const updatePlayMenu = async () => {
 			label: "Until trade deadline",
 			key: "r",
 		},
-		viewAllStarSelections: {
-			url: helpers.leagueUrl(["all_star_draft"]),
-			label: "View All-Star draft",
+		viewAllStar: {
+			url: helpers.leagueUrl(["all_star"]),
+			label: "All-Star events",
+		},
+		viewSlam: {
+			url: helpers.leagueUrl(["slam"]),
+			label: "Slam dunk contest",
 		},
 		untilPlayoffs: {
 			label: "Until playoffs",
@@ -217,7 +221,7 @@ const updatePlayMenu = async () => {
 		});
 
 		if (allStarIndex === 0) {
-			keys.unshift("viewAllStarSelections");
+			keys.unshift("viewAllStar");
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs

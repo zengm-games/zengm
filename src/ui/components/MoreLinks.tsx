@@ -248,7 +248,7 @@ const MoreLinks = (
 		];
 		if (isSport("basketball")) {
 			links.push({
-				url: ["all_star_history"],
+				url: ["all_star", "history"],
 				name: "All-Star History",
 			});
 		}

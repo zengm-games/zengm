@@ -89,12 +89,29 @@ export type AllStarPlayer = {
 	name: string;
 };
 
+type Dunk = {
+	toss: string;
+	distance: string;
+	move1: string;
+	move2: string;
+};
+
+type DunkResult = {
+	attempts: Dunk[];
+	score: number;
+};
+
+type DunkResultRound = {
+	pid: number;
+	dunks: DunkResult[];
+};
+
 export type AllStars = {
 	season: number;
 	teamNames: [string, string];
 	teams: [AllStarPlayer[], AllStarPlayer[]];
 	remaining: AllStarPlayer[];
-	finalized: boolean;
+	finalized: boolean; // Refers to if draft is complete or not
 
 	// After game is complete
 	gid?: number;
@@ -104,6 +121,17 @@ export type AllStars = {
 		pid: number;
 		tid: number;
 		name: string;
+	};
+
+	dunk?: {
+		players: [AllStarPlayer, AllStarPlayer, AllStarPlayer, AllStarPlayer];
+		rounds: DunkResultRound[][];
+
+		// Undefined if none. Otherwise, the tiebreakers for round N are at the same index here as in "rounds" above.
+		tiebreakers?: DunkResultRound[][];
+
+		// Index of players array above. Undefined if still in progress
+		winner?: number;
 	};
 };
 

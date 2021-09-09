@@ -1,5 +1,6 @@
 import account from "./account";
 import accountUpdateCard from "./accountUpdateCard";
+import allStar from "./allStar";
 import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
 import awardRaces from "./awardRaces";
@@ -89,6 +90,7 @@ import watchList from "./watchList";
 export default {
 	account,
 	accountUpdateCard,
+	allStar,
 	allStarDraft,
 	allStarHistory,
 	awardRaces,

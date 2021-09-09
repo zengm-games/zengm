@@ -62,7 +62,7 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		if (!nextGameIsAllStar) {
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
-				redirectUrl: helpers.leagueUrl(["all_star_history"]),
+				redirectUrl: helpers.leagueUrl(["all_star", "history"]),
 			};
 			return returnValue;
 		}

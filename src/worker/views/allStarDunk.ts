@@ -11,7 +11,8 @@ const updateAllStarDunk = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("allStarDunk")
+		updateEvents.includes("allStarDunk") ||
+		updateEvents.includes("watchList")
 	) {
 		const allStars = await allStar.getOrCreate();
 		const dunk = allStars.dunk;

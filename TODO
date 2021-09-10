@@ -31,6 +31,9 @@ all-star weekend
 - for player name, use from AllStars object rather than idb
 - notification for winner of dunk contest
 - test weird tie situations
+- mobile UI, maybe hide pictures and make player summary shorter?
+- getOrCreate means viewing page triggers all star selection
+- not responding to watch flag click
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 

@@ -2645,6 +2645,11 @@ const sign = async (
 	}
 };
 
+const simNextDunkAttempt = async () => {
+	await allStar.dunkContest.simNextDunkAttempt();
+	await toUI("realtimeUpdate", [["allStarDunk"]]);
+};
+
 const reSignAll = async (players: any[]) => {
 	const userTid = g.get("userTid");
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
@@ -3656,6 +3661,7 @@ export default {
 	setLocal,
 	setPlayerNote,
 	sign,
+	simNextDunkAttempt,
 	updateExpansionDraftSetup,
 	advanceToPlayerProtection,
 	autoProtect,

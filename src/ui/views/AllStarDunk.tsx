@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, useLocal } from "../util";
+import { helpers, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import {
 	Height,
@@ -156,12 +156,16 @@ const AllStarDunk = ({
 						{players.map((p, i) => {
 							return (
 								<tr key={i}>
-									<td>{p.name}</td>
+									<td>
+										<PlayerNameLabels pid={p.pid} watch={p.watch}>
+											{p.name}
+										</PlayerNameLabels>
+									</td>
 									{dunk.rounds.map((round, j) => {
 										const roundResult = resultsByRound[j].find(
 											p => p.index === i,
 										);
-										return <td>{roundResult?.score}</td>;
+										return <td key={j}>{roundResult?.score}</td>;
 									})}
 									{dunk.winner !== undefined ? (
 										dunk.winner === i ? (
@@ -179,17 +183,21 @@ const AllStarDunk = ({
 				</table>
 			</ResponsiveTableWrapper>
 
-			<PlayPauseNext
-				onPlay={() => {
-					setPaused(false);
-				}}
-				onPause={() => {
-					setPaused(true);
-				}}
-				onNext={() => {}}
-				paused={paused}
-				titleNext="Show Next Dunk Attempt"
-			/>
+			{dunk.winner === undefined ? (
+				<PlayPauseNext
+					onPlay={() => {
+						setPaused(false);
+					}}
+					onPause={() => {
+						setPaused(true);
+					}}
+					onNext={async () => {
+						await toWorker("main", "simNextDunkAttempt");
+					}}
+					paused={paused}
+					titleNext="Show Next Dunk Attempt"
+				/>
+			) : null}
 		</>
 	);
 };

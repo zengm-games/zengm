@@ -34,15 +34,15 @@ export const getRoundResults = (round: Dunk["rounds"][number]) => {
 		}
 	> = {};
 
-	for (const dunk of round.dunks) {
-		if (!resultsByIndex[dunk.index]) {
-			resultsByIndex[dunk.index] = {
-				index: dunk.index,
-				numDunks: 0,
-				score: 0,
-			};
-		}
+	for (const index of round.dunkers) {
+		resultsByIndex[index] = {
+			index,
+			numDunks: 0,
+			score: 0,
+		};
+	}
 
+	for (const dunk of round.dunks) {
 		if (dunk.score !== undefined) {
 			resultsByIndex[dunk.index].numDunks += 1;
 			resultsByIndex[dunk.index].score += dunk.score;

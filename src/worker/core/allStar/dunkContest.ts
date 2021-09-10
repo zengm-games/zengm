@@ -24,13 +24,13 @@ const genDunk = () => {
 };
 
 export const getRoundResults = (round: Dunk["rounds"][number]) => {
-	console.log("round", round);
 	const resultsByIndex: Record<
 		number,
 		{
 			index: number;
 			numDunks: number;
 			score: number;
+			scores: number[];
 		}
 	> = {};
 
@@ -39,6 +39,7 @@ export const getRoundResults = (round: Dunk["rounds"][number]) => {
 			index,
 			numDunks: 0,
 			score: 0,
+			scores: [],
 		};
 	}
 
@@ -46,6 +47,7 @@ export const getRoundResults = (round: Dunk["rounds"][number]) => {
 		if (dunk.score !== undefined) {
 			resultsByIndex[dunk.index].numDunks += 1;
 			resultsByIndex[dunk.index].score += dunk.score;
+			resultsByIndex[dunk.index].scores.push(dunk.score);
 		}
 	}
 

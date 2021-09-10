@@ -52,7 +52,6 @@ const updateAllStarDunk = async (
 		const resultsByRound = dunk.rounds.map(round =>
 			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
 		);
-		console.log("resultsByRound", resultsByRound);
 
 		return {
 			dunk,

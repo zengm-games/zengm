@@ -131,11 +131,7 @@ const AllStarDunk = ({
 							<th></th>
 							{dunk.rounds.map((round, i) => {
 								if (i === 0) {
-									return (
-										<th key={i} title="Round 1">
-											R1
-										</th>
-									);
+									return <th key={i}>Round 1</th>;
 								} else if (round.tiebreaker) {
 									return (
 										<th key={i} title="Tiebreaker">
@@ -143,11 +139,7 @@ const AllStarDunk = ({
 										</th>
 									);
 								} else {
-									return (
-										<th key={i} title="Round 2">
-											R2
-										</th>
-									);
+									return <th key={i}>Round 2</th>;
 								}
 							})}
 							{dunk.winner !== undefined ? <th></th> : null}
@@ -166,7 +158,22 @@ const AllStarDunk = ({
 										const roundResult = resultsByRound[j].find(
 											p => p.index === i,
 										);
-										return <td key={j}>{roundResult?.score}</td>;
+										if (!roundResult) {
+											return <td key={j} />;
+										}
+										return (
+											<td key={j}>
+												{roundResult.score}
+												{roundResult.scores.length > 1 ? (
+													<>
+														{" "}
+														<span className="text-muted">
+															({roundResult.scores.join("+")})
+														</span>
+													</>
+												) : null}
+											</td>
+										);
 									})}
 									{dunk.winner !== undefined ? (
 										dunk.winner === i ? (

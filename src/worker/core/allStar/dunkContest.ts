@@ -23,7 +23,8 @@ const genDunk = () => {
 	return dunk;
 };
 
-const getRoundResults = (round: Dunk["rounds"][number]) => {
+export const getRoundResults = (round: Dunk["rounds"][number]) => {
+	console.log("round", round);
 	const resultsByIndex: Record<
 		number,
 		{
@@ -48,7 +49,7 @@ const getRoundResults = (round: Dunk["rounds"][number]) => {
 		}
 	}
 
-	return orderBy(Object.values(resultsByIndex), "score", "desc");
+	return Object.values(resultsByIndex);
 };
 
 // Return undefined means contest is over or another round needs to be added
@@ -65,15 +66,15 @@ const getNextDunkerIndex = (dunk: Dunk) => {
 		? NUM_DUNKS_PER_TIEBREAKER
 		: NUM_DUNKS_PER_ROUND;
 
+	const numDunkersThisRound = currentRound.dunkers.length;
+
 	// Round is over
-	if (currentRound.dunks.length >= NUM_DUNKERS_IN_CONTEST * numDunksPerPlayer) {
+	if (currentRound.dunks.length >= numDunkersThisRound * numDunksPerPlayer) {
 		return undefined;
 	}
 
 	// Next dunker up
-	return currentRound.dunkers[
-		currentRound.dunks.length % currentRound.dunkers.length
-	];
+	return currentRound.dunkers[currentRound.dunks.length % numDunkersThisRound];
 };
 
 const getDunkOutcome = async (
@@ -155,7 +156,9 @@ export const simNextDunkAttempt = async () => {
 				(round, i) => i >= currentRoundIndex,
 			);
 
-			const resultsByRound = currentRoundAndTiebreakers.map(getRoundResults);
+			const resultsByRound = currentRoundAndTiebreakers.map(round =>
+				orderBy(getRoundResults(round), "score", "desc"),
+			);
 
 			let numWinnersLeftToFind = currentRoundNum === 1 ? 2 : 1;
 			const indexesForNextRound: number[] = [];

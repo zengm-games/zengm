@@ -2,6 +2,7 @@ import { allStar } from "../core";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g } from "../util";
+import orderBy from "lodash-es/orderBy";
 
 const updateAllStarDunk = async (
 	{ season }: ViewInput<"allStarDunk">,
@@ -45,10 +46,16 @@ const updateAllStarDunk = async (
 			showNoStats: true,
 		});
 
+		const resultsByRound = dunk.rounds.map(round =>
+			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
+		);
+		console.log("resultsByRound", resultsByRound);
+
 		return {
 			dunk,
 			godMode: g.get("godMode"),
 			players,
+			resultsByRound,
 			season,
 			userTid: g.get("userTid"),
 		};

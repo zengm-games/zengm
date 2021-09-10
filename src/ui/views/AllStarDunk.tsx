@@ -6,6 +6,7 @@ import {
 	PlayerNameLabels,
 	PlayerPicture,
 	PlayPauseNext,
+	ResponsiveTableWrapper,
 	Weight,
 } from "../components";
 import { useState } from "react";
@@ -14,6 +15,7 @@ const AllStarDunk = ({
 	dunk,
 	godMode,
 	players,
+	resultsByRound,
 	season,
 	userTid,
 }: View<"allStarDunk">) => {
@@ -120,6 +122,62 @@ const AllStarDunk = ({
 					);
 				})}
 			</div>
+
+			<ResponsiveTableWrapper>
+				<table className="table table-striped table-hover table-nonfluid">
+					<thead>
+						<tr>
+							<th></th>
+							{dunk.rounds.map((round, i) => {
+								if (i === 0) {
+									return (
+										<th key={i} title="Round 1">
+											R1
+										</th>
+									);
+								} else if (round.tiebreaker) {
+									return (
+										<th key={i} title="Tiebreaker">
+											T
+										</th>
+									);
+								} else {
+									return (
+										<th key={i} title="Round 2">
+											R2
+										</th>
+									);
+								}
+							})}
+							{dunk.winner !== undefined ? <th></th> : null}
+						</tr>
+					</thead>
+					<tbody>
+						{players.map((p, i) => {
+							return (
+								<tr key={i}>
+									<td>{p.name}</td>
+									{dunk.rounds.map((round, j) => {
+										const roundResult = resultsByRound[j].find(
+											p => p.index === i,
+										);
+										return <td>{roundResult?.score}</td>;
+									})}
+									{dunk.winner !== undefined ? (
+										dunk.winner === i ? (
+											<th>
+												<span className="glyphicon glyphicon-star text-yellow" />
+											</th>
+										) : (
+											<th />
+										)
+									) : null}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</ResponsiveTableWrapper>
 
 			<PlayPauseNext
 				onPlay={() => {

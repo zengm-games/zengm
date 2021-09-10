@@ -917,6 +917,21 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	}
 };
 
+const dunkSetControlling = async (controlling: number[]) => {
+	const allStars = await idb.cache.allStars.get(g.get("season"));
+	const dunk = allStars?.dunk;
+	if (dunk) {
+		dunk.controlling = controlling;
+		await idb.cache.allStars.put(allStars);
+		await toUI("realtimeUpdate", [["allStarDunk"]]);
+	}
+};
+
+const dunkSimNextAttempt = async () => {
+	await allStar.dunkContest.simNextDunkAttempt();
+	await toUI("realtimeUpdate", [["allStarDunk"]]);
+};
+
 const evalOnWorker = async (code: string) => {
 	// https://stackoverflow.com/a/63972569/786644
 	await Object.getPrototypeOf(async function () {}).constructor(code)();
@@ -2645,11 +2660,6 @@ const sign = async (
 	}
 };
 
-const simNextDunkAttempt = async () => {
-	await allStar.dunkContest.simNextDunkAttempt();
-	await toUI("realtimeUpdate", [["allStarDunk"]]);
-};
-
 const reSignAll = async (players: any[]) => {
 	const userTid = g.get("userTid");
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
@@ -3613,6 +3623,8 @@ export default {
 	discardUnsavedProgress,
 	draftLottery,
 	draftUser,
+	dunkSetControlling,
+	dunkSimNextAttempt,
 	evalOnWorker,
 	exportDraftClass,
 	exportLeague,
@@ -3661,7 +3673,6 @@ export default {
 	setLocal,
 	setPlayerNote,
 	sign,
-	simNextDunkAttempt,
 	updateExpansionDraftSetup,
 	advanceToPlayerProtection,
 	autoProtect,

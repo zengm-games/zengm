@@ -135,6 +135,7 @@ const create = async (conditions: Conditions) => {
 						dunks: [],
 					},
 				],
+				controlling: [],
 			};
 		}
 	}

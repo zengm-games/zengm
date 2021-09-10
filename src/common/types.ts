@@ -136,6 +136,8 @@ export type AllStars = {
 			dunks: DunkResult[];
 		}[];
 
+		controlling: number[]; // Indexes of dunk.players
+
 		// Index of players array above. Undefined if still in progress
 		winner?: number;
 	};

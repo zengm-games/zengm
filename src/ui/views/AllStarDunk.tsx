@@ -19,10 +19,6 @@ const AllStarDunk = ({
 	season,
 	userTid,
 }: View<"allStarDunk">) => {
-	const [pidsControlling, setPidsControlling] = useState(
-		new Set(dunk.players.filter(p => p.tid === userTid).map(p => p.pid)),
-	);
-
 	const [paused, setPaused] = useState(true);
 
 	useTitleBar({
@@ -44,7 +40,7 @@ const AllStarDunk = ({
 					const t = teamInfoCache[tid] ?? {};
 
 					const allowControl =
-						tid === userTid || (pidsControlling.has(tid) && !godMode);
+						tid === userTid || (dunk.controlling.includes(i) && !godMode);
 					const allowControlGodMode = !allowControl && godMode;
 
 					const checkboxID = `control-player-${i}`;
@@ -96,7 +92,7 @@ const AllStarDunk = ({
 							</div>
 
 							{(allowControl || allowControlGodMode) &&
-							(dunk.winner === undefined || pidsControlling.has(tid)) ? (
+							(dunk.winner === undefined || dunk.controlling.includes(i)) ? (
 								<div
 									className={`form-check mt-2 d-inline-block${
 										allowControlGodMode ? " god-mode pr-1" : ""
@@ -105,16 +101,17 @@ const AllStarDunk = ({
 									<input
 										className="form-check-input"
 										type="checkbox"
-										onChange={() => {
-											const pids = new Set(pidsControlling);
-											if (pids.has(p.pid)) {
-												pids.delete(p.pid);
+										disabled={dunk.winner !== undefined}
+										onChange={async () => {
+											let controlling = [...dunk.controlling];
+											if (controlling.includes(i)) {
+												controlling = controlling.filter(j => j !== i);
 											} else {
-												pids.add(p.pid);
+												controlling.push(i);
 											}
-											setPidsControlling(pids);
+											await toWorker("main", "dunkSetControlling", controlling);
 										}}
-										checked={pidsControlling.has(p.pid)}
+										checked={dunk.controlling.includes(i)}
 										id={checkboxID}
 									/>
 									<label className="form-check-label" htmlFor={checkboxID}>
@@ -196,7 +193,7 @@ const AllStarDunk = ({
 						setPaused(true);
 					}}
 					onNext={async () => {
-						await toWorker("main", "simNextDunkAttempt");
+						await toWorker("main", "dunkSimNextAttempt");
 					}}
 					paused={paused}
 					titleNext="Show Next Dunk Attempt"

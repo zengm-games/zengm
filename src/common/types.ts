@@ -1555,6 +1555,7 @@ export type Trade = {
 
 export type UpdateEvents = (
 	| "account"
+	| "allStarDunk"
 	| "firstRun"
 	| "g.goatFormula"
 	| "g.userTids"

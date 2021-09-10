@@ -1,6 +1,7 @@
 import Account from "./Account";
 import AllStar from "./AllStar";
 import AllStarDraft from "./AllStarDraft";
+import AllStarDunk from "./AllStarDunk";
 import AllStarHistory from "./AllStarHistory";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardRaces from "./AwardRaces";
@@ -97,6 +98,7 @@ export default {
 	AccountUpdateCard,
 	AllStar,
 	AllStarDraft,
+	AllStarDunk,
 	AllStarHistory,
 	AwardRaces,
 	AwardsRecords,

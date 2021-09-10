@@ -19,6 +19,11 @@ all-star weekend
 - only basketball
 - UI to view past all star selections, and link to box score
   - improve all-star history page
+- allow viewing past slam dunk contest
+- link to all star history from main all star events page too, in another box
+- under name of player at top of slam dunk page, show how many times they won the contest before
+- save pidsControlling to indexeddb
+- allow editing contestents before it starts in god mode
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 

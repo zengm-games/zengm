@@ -109,7 +109,7 @@ const create = async (conditions: Conditions) => {
 				p => (p.pid === prevWinnerPid ? 1 : 0),
 				p => {
 					const ratings = p.ratings.at(-1) as PlayerRatings;
-					return ratings.dnk + ratings.jmp;
+					return ratings.dnk + 2 * ratings.jmp;
 				},
 			],
 			["desc", "desc"],

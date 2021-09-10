@@ -807,6 +807,7 @@ const validateSeasonOnly = (params: Params) => {
 
 export default {
 	account,
+	allStarDunk: validateSeasonOnly,
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,

@@ -85,11 +85,21 @@ const getCopies = async ({
 			},
 		);
 
-		return mergeByPk(
+		const merged = mergeByPk(
 			fromDB,
 			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
 			"players",
 		);
+
+		const sorted = [];
+		for (const pid of pids) {
+			const p = merged.find(p2 => p2.pid === pid);
+			if (p) {
+				sorted.push(p);
+			}
+		}
+
+		return sorted;
 	}
 
 	if (retired === true) {

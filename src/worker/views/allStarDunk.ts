@@ -7,15 +7,17 @@ import orderBy from "lodash-es/orderBy";
 const updateAllStarDunk = async (
 	{ season }: ViewInput<"allStarDunk">,
 	updateEvents: UpdateEvents,
+	state: any,
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("allStarDunk") ||
-		updateEvents.includes("watchList")
+		updateEvents.includes("watchList") ||
+		season !== state.season
 	) {
-		const allStars = await allStar.getOrCreate();
-		const dunk = allStars.dunk;
+		const allStars = await idb.getCopy.allStars({ season });
+		const dunk = allStars?.dunk;
 		if (dunk === undefined) {
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {

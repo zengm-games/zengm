@@ -29,6 +29,9 @@ const AllStarDunk = ({
 		title: "Slam Dunk Contest",
 		dropdownView: "all_star_dunk",
 		dropdownFields: { seasons: season },
+		dropdownCustomURL: fields => {
+			return helpers.leagueUrl(["all_star", "dunk", fields.seasons]);
+		},
 	});
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);

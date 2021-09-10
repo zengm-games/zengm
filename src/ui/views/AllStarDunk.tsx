@@ -38,7 +38,7 @@ const AllStarDunk = ({
 
 	return (
 		<>
-			<div className="d-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
+			<div className="d-none d-sm-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
 				{players.map((p, i) => {
 					const tid = dunk.players[i].tid;
 					const t = teamInfoCache[tid] ?? {};
@@ -95,7 +95,8 @@ const AllStarDunk = ({
 								{helpers.roundStat(p.stats.ast, "ast")} ast
 							</div>
 
-							{allowControl || allowControlGodMode ? (
+							{(allowControl || allowControlGodMode) &&
+							(dunk.winner === undefined || pidsControlling.has(tid)) ? (
 								<div
 									className={`form-check mt-2 d-inline-block${
 										allowControlGodMode ? " god-mode pr-1" : ""

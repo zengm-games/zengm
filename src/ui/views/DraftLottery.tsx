@@ -2,7 +2,12 @@ import classNames from "classnames";
 import range from "lodash-es/range";
 import PropTypes from "prop-types";
 import { useEffect, useReducer, useRef } from "react";
-import { DraftAbbrev, MoreLinks, ResponsiveTableWrapper } from "../components";
+import {
+	DraftAbbrev,
+	MoreLinks,
+	PlayPauseNext,
+	ResponsiveTableWrapper,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, useLocal } from "../util";
 import type {
@@ -626,33 +631,15 @@ const DraftLotteryTable = (props: Props) => {
 			) : null}
 			{type === "readyToRun" &&
 			(state.revealState === "running" || state.revealState === "paused") ? (
-				<div className="btn-group">
-					{state.revealState === "paused" ? (
-						<button
-							className="btn btn-light-bordered"
-							onClick={handleResume}
-							title="Resume Lottery"
-						>
-							<span className="glyphicon glyphicon-play" />
-						</button>
-					) : (
-						<button
-							className="btn btn-light-bordered"
-							onClick={handlePause}
-							title="Pause Lottery"
-						>
-							<span className="glyphicon glyphicon-pause" />
-						</button>
-					)}
-					<button
-						className="btn btn-light-bordered"
-						disabled={state.revealState === "running"}
-						onClick={handleShowOne}
-						title="Show Next Pick"
-					>
-						<span className="glyphicon glyphicon-step-forward" />
-					</button>
-				</div>
+				<PlayPauseNext
+					onPlay={handleResume}
+					onPause={handlePause}
+					onNext={handleShowOne}
+					paused={state.revealState === "paused"}
+					titlePlay="Resume Lottery"
+					titlePause="Pause Lottery"
+					titleNext="Show Next Pick"
+				/>
 			) : null}
 
 			{table}

@@ -1,7 +1,13 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { Height, PlayerNameLabels, PlayerPicture, Weight } from "../components";
+import {
+	Height,
+	PlayerNameLabels,
+	PlayerPicture,
+	PlayPauseNext,
+	Weight,
+} from "../components";
 import { useState } from "react";
 
 const AllStarDunk = ({
@@ -15,6 +21,8 @@ const AllStarDunk = ({
 		new Set(dunk.players.filter(p => p.tid === userTid).map(p => p.pid)),
 	);
 
+	const [paused, setPaused] = useState(true);
+
 	useTitleBar({
 		title: "Slam Dunk Contest",
 		dropdownView: "all_star_dunk",
@@ -25,7 +33,7 @@ const AllStarDunk = ({
 
 	return (
 		<>
-			<div className="d-flex flex-wrap" style={{ gap: "3rem" }}>
+			<div className="d-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
 				{players.map((p, i) => {
 					const tid = dunk.players[i].tid;
 					const t = teamInfoCache[tid] ?? {};
@@ -112,6 +120,18 @@ const AllStarDunk = ({
 					);
 				})}
 			</div>
+
+			<PlayPauseNext
+				onPlay={() => {
+					setPaused(false);
+				}}
+				onPause={() => {
+					setPaused(true);
+				}}
+				onNext={() => {}}
+				paused={paused}
+				titleNext="Show Next Dunk Attempt"
+			/>
 		</>
 	);
 };

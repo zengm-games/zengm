@@ -3,7 +3,7 @@ import {
 	getTopPlayers,
 	saveAwardsByPlayer,
 } from "../season/awards";
-import { g } from "../../util";
+import { g, random } from "../../util";
 import type {
 	AllStars,
 	Conditions,
@@ -14,6 +14,8 @@ import { bySport, isSport } from "../../../common";
 import { idb } from "../../db";
 import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
+import range from "lodash-es/range";
+import { NUM_DUNKERS_IN_CONTEST } from "./dunkContest";
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
@@ -121,10 +123,18 @@ const create = async (conditions: Conditions) => {
 			}))
 			.slice(0, 4);
 
-		if (dunkers.length >= 4) {
+		if (dunkers.length === 4) {
+			random.shuffle(dunkers);
+
 			allStars.dunk = {
-				players: [dunkers[0], dunkers[1], dunkers[2], dunkers[3]],
-				rounds: [],
+				players: dunkers as any,
+				rounds: [
+					// First round
+					{
+						dunkers: range(NUM_DUNKERS_IN_CONTEST),
+						dunks: [],
+					},
+				],
 			};
 		}
 	}

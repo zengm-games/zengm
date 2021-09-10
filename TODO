@@ -25,7 +25,12 @@ all-star weekend
 - link to all star history from main all star events page too, in another box
 - under name of player at top of slam dunk page, show how many times they won the contest before
 - save pidsControlling to indexeddb
+  - maybe use index rather than pid
+- sim contests even if not viewed directly
 - allow editing contestents before it starts in god mode
+- for player name, use from AllStars object rather than idb
+- notification for winner of dunk contest
+- test weird tie situations
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 

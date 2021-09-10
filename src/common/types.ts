@@ -89,7 +89,7 @@ export type AllStarPlayer = {
 	name: string;
 };
 
-type Dunk = {
+export type DunkAttempt = {
 	toss: string;
 	distance: string;
 	move1: string;
@@ -97,13 +97,14 @@ type Dunk = {
 };
 
 type DunkResult = {
-	attempts: Dunk[];
-	score: number;
-};
+	// Index of dunk.players
+	index: number;
 
-type DunkResultRound = {
-	pid: number;
-	dunks: DunkResult[];
+	// Last attempt is the first successful one
+	attempts: DunkAttempt[];
+
+	// Undefind until a successful dunk
+	score?: number;
 };
 
 export type AllStars = {
@@ -125,10 +126,15 @@ export type AllStars = {
 
 	dunk?: {
 		players: [AllStarPlayer, AllStarPlayer, AllStarPlayer, AllStarPlayer];
-		rounds: DunkResultRound[][];
 
-		// Undefined if none. Otherwise, the tiebreakers for round N are at the same index here as in "rounds" above.
-		tiebreakers?: DunkResultRound[][];
+		// 2 rounds, plus tiebreaker rounds
+		rounds: {
+			tiebreaker?: true;
+			dunkers: number[]; // Index of dunk.players
+
+			// Default is 2 dunks per player per round, but tiebreaker rounds are 1 dunk per round
+			dunks: DunkResult[];
+		}[];
 
 		// Index of players array above. Undefined if still in progress
 		winner?: number;

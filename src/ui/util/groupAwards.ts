@@ -23,6 +23,7 @@ const awardsOrder = [
 	"All-Rookie Team",
 	"All-Star MVP",
 	"All-Star",
+	"Slam Dunk Contest Winner",
 	"League Scoring Leader",
 	"League Rebounding Leader",
 	"League Assists Leader",
@@ -70,6 +71,8 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "OROY";
 		} else if (type === "Defensive Rookie of the Year") {
 			type = "DROY";
+		} else if (type === "Slam Dunk Contest Winner") {
+			type = "Slam Dunk";
 		} else if (type.includes("All-League")) {
 			type = "All-League";
 		} else if (type.includes("All-Defensive")) {

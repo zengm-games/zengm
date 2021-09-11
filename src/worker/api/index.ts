@@ -927,8 +927,8 @@ const dunkSetControlling = async (controlling: number[]) => {
 	}
 };
 
-const dunkSimNext = async () => {
-	await allStar.dunkContest.simNextDunkEvent();
+const dunkSimNext = async (conditions: Conditions) => {
+	await allStar.dunkContest.simNextDunkEvent(conditions);
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 

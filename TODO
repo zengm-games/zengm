@@ -5,11 +5,8 @@ mood stuff is sometimes added to player objects right from cache - see player.mo
 all-star weekend
 - picking dunks
   - know what score is required to win round, and use to influence dunk selection
-- slam dunk winner awards
-  - add to shorten/sort thing
-  - notification for winner
-  - make sure it shows up on award records
-  - add for real player rosters
+- add award winners to real players rosters
+  - show at same phase as all-star and other season awards
 - UI to view past all star selections, and link to box score
   - improve all-star history page
 - link to all star history from main all star events page too, in another box
@@ -23,6 +20,7 @@ all-star weekend
 - blog
   - can control players on your team, or any player in god mode
   - reigning winner must compete
+  - shows up as award on player pages, awards history. including for historical leagues
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 

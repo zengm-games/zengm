@@ -1,8 +1,9 @@
 import { orderBy } from "lodash";
-import type { AllStars, DunkAttempt } from "../../../common/types";
+import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos } from "../../../common";
 import { idb } from "../../db";
-import { g, random } from "../../util";
+import { g, helpers, random } from "../../util";
+import { saveAwardsByPlayer } from "../season/awards";
 
 const LOWEST_POSSIBLE_SCORE = 30;
 const NUM_ATTEMPTS_PER_DUNK = 3;
@@ -91,7 +92,7 @@ const getDunkScore = (dunkAttempt: DunkAttempt) => {
 	return random.randInt(30, 50);
 };
 
-export const simNextDunkEvent = async () => {
+export const simNextDunkEvent = async (conditions: Conditions) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const dunk = allStars?.dunk;
 	if (!dunk) {
@@ -227,6 +228,22 @@ export const simNextDunkEvent = async () => {
 				});
 			} else {
 				dunk.winner = indexesForNextRound[0];
+
+				const p = dunk.players[dunk.winner];
+
+				await saveAwardsByPlayer(
+					[
+						{
+							pid: p.pid,
+							tid: p.tid,
+							name: p.name,
+							type: "Slam Dunk Contest Winner",
+						},
+					],
+					conditions,
+					g.get("season"),
+					true,
+				);
 			}
 		}
 	}

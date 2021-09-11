@@ -397,7 +397,7 @@ const saveAwardsByPlayer = async (
 				.toLowerCase()}.`;
 			score = 10;
 		} else if (p.type === "All-Star") {
-			text += `made the All-Star team.`;
+			text += "made the All-Star team.";
 			score = 10;
 		} else if (p.type === "All-Star MVP") {
 			text += `won the <a href="${helpers.leagueUrl([
@@ -406,6 +406,9 @@ const saveAwardsByPlayer = async (
 				season,
 				allStarGID,
 			])}">All-Star MVP</a> award.`;
+			score = 10;
+		} else if (p.type === "Slam Dunk Contest Winner") {
+			text += "won the slam dunk contest.";
 			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;

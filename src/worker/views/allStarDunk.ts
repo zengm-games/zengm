@@ -1,7 +1,7 @@
 import { allStar } from "../core";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, getTeamInfoBySeason } from "../util";
 import orderBy from "lodash-es/orderBy";
 
 const updateAllStarDunk = async (
@@ -48,6 +48,16 @@ const updateAllStarDunk = async (
 			mergeStats: true,
 			showNoStats: true,
 		});
+
+		for (const p of dunk.players) {
+			const p2 = players.find(p2 => p2.pid === p.pid);
+			const ts = await getTeamInfoBySeason(p.tid, season);
+			if (ts) {
+				p2.colors = ts.colors;
+				p2.jersey = ts.jersey;
+				p2.abbrev = ts.abbrev;
+			}
+		}
 
 		const resultsByRound = dunk.rounds.map(round =>
 			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),

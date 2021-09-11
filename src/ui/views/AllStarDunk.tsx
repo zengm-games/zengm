@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, useLocal } from "../util";
+import { helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import {
 	Height,
@@ -30,14 +30,11 @@ const AllStarDunk = ({
 		},
 	});
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
-
 	return (
 		<>
 			<div className="d-none d-sm-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
 				{players.map((p, i) => {
 					const tid = dunk.players[i].tid;
-					const t = teamInfoCache[tid] ?? {};
 
 					const allowControl =
 						tid === userTid || (dunk.controlling.includes(i) && !godMode);
@@ -55,7 +52,12 @@ const AllStarDunk = ({
 								}}
 								className="flex-shrink-0"
 							>
-								<PlayerPicture face={p.face} imgURL={p.imgURL} />
+								<PlayerPicture
+									face={p.face}
+									imgURL={p.imgURL}
+									colors={p.colors}
+									jersey={p.jersey}
+								/>
 							</div>
 							<div className="mt-2">
 								<PlayerNameLabels
@@ -72,11 +74,11 @@ const AllStarDunk = ({
 									className="ml-2"
 									href={helpers.leagueUrl([
 										"roster",
-										`${t.abbrev}_${p.tid}`,
+										`${p.abbrev}_${p.tid}`,
 										season,
 									])}
 								>
-									{t.abbrev}
+									{p.abbrev}
 								</a>
 							</div>
 							<div className="mt-1">

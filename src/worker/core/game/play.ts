@@ -488,7 +488,7 @@ const play = async (
 				tids.add(matchup.awayTid);
 			}
 
-			const teams = await loadTeams(Array.from(tids)); // Play games
+			const teams = await loadTeams(Array.from(tids), conditions); // Play games
 
 			await cbSimGames(schedule, teams, dayOver);
 		}

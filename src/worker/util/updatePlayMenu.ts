@@ -42,7 +42,7 @@ const updatePlayMenu = async () => {
 			key: "m",
 		},
 		untilAllStarGame: {
-			label: "Until All-Star Game",
+			label: "Until All-Star events",
 			key: "a",
 		},
 		untilTradeDeadline: {

@@ -22,7 +22,7 @@ const genTwoTeams = async () => {
 };
 
 const initGameSim = async () => {
-	const teams = await loadTeams([0, 1]);
+	const teams = await loadTeams([0, 1], {});
 	for (const t of [teams[0], teams[1]]) {
 		if (t.depth !== undefined) {
 			t.depth = team.getDepthPlayers(t.depth, t.player);

@@ -1,7 +1,11 @@
 import { allStar, finances, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import type { Player, MinimalPlayerRatings } from "../../../common/types";
+import type {
+	Player,
+	MinimalPlayerRatings,
+	Conditions,
+} from "../../../common/types";
 import {
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
@@ -218,7 +222,7 @@ const processTeam = (
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
-const loadTeams = async (tids: number[]) => {
+const loadTeams = async (tids: number[], conditions: Conditions) => {
 	const playerStats = player.stats.raw.reduce<Record<string, number>>(
 		(stats, stat) => {
 			if (stat === "gp" || stat === "minAvailable") {
@@ -245,6 +249,14 @@ const loadTeams = async (tids: number[]) => {
 		const allStars = await allStar.getOrCreate();
 		if (!allStars.finalized) {
 			await allStar.draftAll();
+		}
+		if (allStars.dunk && allStars.dunk.winner === undefined) {
+			while (true) {
+				const type = await allStar.dunkContest.simNextDunkEvent(conditions);
+				if (type === "all") {
+					break;
+				}
+			}
 		}
 
 		for (const tid of tids) {

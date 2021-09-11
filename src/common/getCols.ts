@@ -2072,6 +2072,9 @@ const cols: {
 	Drafted: {
 		sortType: "number",
 	},
+	"Dunk Contest Winner": {
+		sortType: "name",
+	},
 	End: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",

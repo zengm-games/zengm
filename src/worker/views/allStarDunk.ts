@@ -21,7 +21,7 @@ const updateAllStarDunk = async (
 		updateEvents.includes("watchList") ||
 		season !== state.season
 	) {
-		const allStars = await idb.getCopy.allStars({ season });
+		const allStars = await allStar.getOrCreate(season);
 		const dunk = allStars?.dunk;
 		if (dunk === undefined) {
 			if (

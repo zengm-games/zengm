@@ -149,7 +149,10 @@ const wait = (ms: number) => {
 const AllStars = ({
 	challengeNoRatings,
 	finalized,
+	gid,
+	nextGameIsAllStar,
 	remaining,
+	season,
 	spectator,
 	stats,
 	teams,
@@ -217,7 +220,14 @@ const AllStars = ({
 		[reveal, userDraftingBothTeams],
 	);
 
-	useTitleBar({ title: "All-Star Draft" });
+	useTitleBar({
+		title: "All-Star Draft",
+		dropdownView: "all_star_draft",
+		dropdownFields: { seasons: season },
+		dropdownCustomURL: fields => {
+			return helpers.leagueUrl(["all_star", "draft", fields.seasons]);
+		},
+	});
 
 	// Split up revealed into the two teams
 	const revealed0: number[] = [];
@@ -258,10 +268,18 @@ const AllStars = ({
 				The teams are filled by a draft. Just for fun, if a captain is on your
 				team, you get to draft for him! Otherwise, the captains get to choose.
 			</p>
-			{actuallyFinalized ? (
+			{actuallyFinalized && nextGameIsAllStar ? (
 				<p className="alert alert-primary d-inline-block">
 					The All-Star draft is over! To watch the All-Star Game,{" "}
 					<a href={helpers.leagueUrl(["daily_schedule"])}>click here</a>.
+				</p>
+			) : null}
+			{actuallyFinalized && !nextGameIsAllStar && gid !== undefined ? (
+				<p className="alert alert-primary d-inline-block">
+					The All-Star Game is over!{" "}
+					<a href={helpers.leagueUrl(["game_log", "special", season, gid])}>
+						View box score.
+					</a>
 				</p>
 			) : null}
 			{!actuallyFinalized && !started ? (

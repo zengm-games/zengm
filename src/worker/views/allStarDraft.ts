@@ -1,8 +1,8 @@
 import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, AllStars } from "../../common/types";
-import { bySport } from "../../common";
+import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
+import { bySport, PHASE } from "../../common";
 
 const stats = bySport({
 	basketball: ["pts", "trb", "ast"],
@@ -10,8 +10,8 @@ const stats = bySport({
 	hockey: ["keyStats"],
 });
 
-const getPlayerInfo = async (pid: number) => {
-	const p = await idb.cache.players.get(pid);
+const getPlayerInfo = async (pid: number, season: number) => {
+	const p = await idb.getCopy.players({ pid });
 	if (!p) {
 		throw new Error("Invalid pid");
 	}
@@ -28,52 +28,76 @@ const getPlayerInfo = async (pid: number) => {
 			"numAllStar",
 		],
 		ratings: ["ovr", "skills", "pos"],
-		season: g.get("season"),
+		season,
 		stats: [...stats, "jerseyNumber"],
 		fuzz: true,
+		showNoStats: true,
 	});
 };
 
 const augment = async (allStars: AllStars) => {
 	const remaining = await Promise.all(
-		allStars.remaining.map(({ pid }) => getPlayerInfo(pid)),
+		allStars.remaining.map(({ pid }) => getPlayerInfo(pid, allStars.season)),
 	);
 	const teams = await Promise.all(
 		allStars.teams.map(players =>
-			Promise.all(players.map(({ pid }) => getPlayerInfo(pid))),
+			Promise.all(
+				players.map(({ pid }) => getPlayerInfo(pid, allStars.season)),
+			),
 		),
 	);
 	return {
 		finalized: allStars.finalized,
+		gid: allStars.gid,
 		remaining,
 		teams,
 		teamNames: allStars.teamNames,
 	};
 };
 
-const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateAllStarDraft = async (
+	{ season }: ViewInput<"allStarDraft">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement")
+		updateEvents.includes("playerMovement") ||
+		season !== state.season
 	) {
-		const nextGameIsAllStar = await allStar.nextGameIsAllStar();
+		const allStars = await allStar.getOrCreate(season);
+		if (allStars === undefined) {
+			if (
+				season === g.get("season") &&
+				g.get("phase") <= PHASE.REGULAR_SEASON
+			) {
+				return {
+					redirectUrl: helpers.leagueUrl(["all_star", "draft", season - 1]),
+				};
+			}
 
-		if (!nextGameIsAllStar) {
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
-				redirectUrl: helpers.leagueUrl(["all_star", "history"]),
+				errorMessage: "All-Star draft not found",
 			};
 			return returnValue;
 		}
 
-		const allStars = await allStar.getOrCreate();
-		const { finalized, teams, teamNames, remaining } = await augment(allStars);
+		const { finalized, gid, teams, teamNames, remaining } = await augment(
+			allStars,
+		);
+
+		const nextGameIsAllStar =
+			season === g.get("season") && (await allStar.nextGameIsAllStar());
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			finalized,
+			gid,
+			nextGameIsAllStar,
 			remaining,
+			season,
 			spectator: g.get("spectator"),
 			stats,
 			teams,
@@ -83,4 +107,4 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default updateAllStars;
+export default updateAllStarDraft;

@@ -141,6 +141,9 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Team",
 		"MVP",
 		"Team",
+		"Dunk Contest Winner",
+		"Team",
+		"Links",
 	]);
 
 	const rows = allAllStars.map(row => {
@@ -150,6 +153,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			row.captain2 && row.captain2.tid === userTid ? "table-info" : "";
 		const classNamesMVP =
 			row.mvp && row.mvp.tid === userTid ? "table-info" : "";
+		const classNamesDunk =
+			row.dunk && row.dunk.tid === userTid ? "table-info" : "";
 
 		const rowResultText = resultText(row);
 
@@ -226,6 +231,33 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 						</PlayerTeam>
 					),
 				},
+				{
+					classNames: classNamesDunk,
+					value: (
+						// @ts-ignore
+						<PlayerName p={row.dunk}>
+							{row.dunk ? row.dunk.name : "???"}
+						</PlayerName>
+					),
+				},
+				{
+					classNames: classNamesDunk,
+					value: (
+						// @ts-ignore
+						<PlayerTeam p={row.dunk} season={row.season}>
+							{row.dunk ? row.dunk.abbrev : "???"}
+						</PlayerTeam>
+					),
+				},
+				<>
+					<a href={helpers.leagueUrl(["all_star", "draft", row.season])}>
+						Draft Results
+					</a>{" "}
+					|{" "}
+					<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
+						Dunk Contest
+					</a>
+				</>,
 			],
 		};
 	});

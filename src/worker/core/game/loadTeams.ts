@@ -246,7 +246,10 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 	const teams: Record<number, undefined | ReturnType<typeof processTeam>> = {};
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
-		const allStars = await allStar.getOrCreate();
+		const allStars = await allStar.getOrCreate(g.get("season"));
+		if (!allStars) {
+			throw new Error("Should never happen");
+		}
 		if (!allStars.finalized) {
 			await allStar.draftAll();
 		}

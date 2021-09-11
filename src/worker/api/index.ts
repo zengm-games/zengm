@@ -86,6 +86,7 @@ import type {
 	EventBBGM,
 	Team,
 	GameAttribute,
+	AllStars,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -922,6 +923,18 @@ const dunkSetControlling = async (controlling: number[]) => {
 	const dunk = allStars?.dunk;
 	if (dunk) {
 		dunk.controlling = controlling;
+		await idb.cache.allStars.put(allStars);
+		await toUI("realtimeUpdate", [["allStarDunk"]]);
+	}
+};
+
+const dunkSetPlayers = async (
+	players: NonNullable<AllStars["dunk"]>["players"],
+) => {
+	const allStars = await idb.cache.allStars.get(g.get("season"));
+	const dunk = allStars?.dunk;
+	if (dunk) {
+		dunk.players = players;
 		await idb.cache.allStars.put(allStars);
 		await toUI("realtimeUpdate", [["allStarDunk"]]);
 	}
@@ -3624,6 +3637,7 @@ export default {
 	draftLottery,
 	draftUser,
 	dunkSetControlling,
+	dunkSetPlayers,
 	dunkSimNext,
 	evalOnWorker,
 	exportDraftClass,

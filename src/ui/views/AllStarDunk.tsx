@@ -11,6 +11,82 @@ import {
 } from "../components";
 import { useState } from "react";
 import { dunkInfos, isSport } from "../../common";
+import SelectMultiple from "../components/SelectMultiple";
+
+const EditContestants = ({
+	allPossibleContestants,
+	initialPlayers,
+}: {
+	allPossibleContestants: View<"allStarDunk">["allPossibleContestants"];
+	initialPlayers: View<"allStarDunk">["dunk"]["players"];
+}) => {
+	const [showForm, setShowForm] = useState(false);
+	const [players, setPlayers] = useState([...initialPlayers]);
+
+	if (!showForm) {
+		return (
+			<button
+				className="btn btn-god-mode mb-4"
+				onClick={() => setShowForm(true)}
+			>
+				Edit contestants
+			</button>
+		);
+	}
+
+	const selectedPIDs = players.map(p => p.pid);
+
+	return (
+		<form
+			className="mb-4"
+			style={{
+				maxWidth: 300,
+			}}
+			onSubmit={async event => {
+				event.preventDefault();
+
+				// Get rid of any other properties, like abbrev
+				const minimalPlayers = players.map(p => ({
+					pid: p.pid,
+					tid: p.tid,
+					name: p.name,
+				}));
+
+				await toWorker("main", "dunkSetPlayers", minimalPlayers);
+
+				setShowForm(false);
+			}}
+		>
+			{players.map((p, i) => {
+				return (
+					<div className="mb-2" key={i}>
+						<SelectMultiple
+							key={i}
+							options={allPossibleContestants.filter(p => {
+								// Keep this player and any other non-selected players
+								const selectedIndex = selectedPIDs.indexOf(p.pid);
+								return selectedIndex === i || selectedIndex < 0;
+							})}
+							defaultValue={allPossibleContestants.find(p2 => p.pid === p2.pid)}
+							getOptionLabel={(p: any) => `${p.name}, ${p.abbrev}`}
+							changing={({ p }) => {
+								const newPlayers = [...players];
+								newPlayers[i] = p;
+								setPlayers(newPlayers);
+								return false;
+							}}
+							isClearable={false}
+						/>
+					</div>
+				);
+			})}
+
+			<button className="btn btn-god-mode" type="submit">
+				Update contestants
+			</button>
+		</form>
+	);
+};
 
 const Log = ({
 	dunk,
@@ -126,12 +202,14 @@ const Log = ({
 };
 
 const AllStarDunk = ({
+	allPossibleContestants,
 	dunk,
 	log,
 	godMode,
 	players,
 	resultsByRound,
 	season,
+	started,
 	userTid,
 }: View<"allStarDunk">) => {
 	if (!isSport("basketball")) {
@@ -153,6 +231,12 @@ const AllStarDunk = ({
 
 	return (
 		<>
+			{godMode && !started ? (
+				<EditContestants
+					initialPlayers={dunk.players}
+					allPossibleContestants={allPossibleContestants}
+				/>
+			) : null}
 			<div className="d-none d-sm-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
 				{players.map((p, i) => {
 					const tid = dunk.players[i].tid;

@@ -2,7 +2,7 @@ import { orderBy } from "lodash";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos } from "../../../common";
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
 
 const LOWEST_POSSIBLE_SCORE = 30;
@@ -11,7 +11,7 @@ export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
 
-type Dunk = Exclude<AllStars["dunk"], undefined>;
+type Dunk = NonNullable<AllStars["dunk"]>;
 
 const genDunk = () => {
 	const dunk = {

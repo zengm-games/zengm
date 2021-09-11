@@ -10,7 +10,6 @@ all-star weekend
   - improve all-star history page
 - link to all star history from main all star events page too, in another box
 - sim contests even if not viewed directly
-- allow editing contestents before it starts in god mode
 - test weird tie situations
 - need randomness in player selection? too many same?
 - play/pause
@@ -18,8 +17,11 @@ all-star weekend
   - can control players on your team, or any player in god mode
   - reigning winner must compete
   - shows up as award on player pages, awards history. including for historical leagues
+  - can edit contestants before it starts in god mode
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
+
+refactor SelectMultiple
 
 custom draft odds https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7fmam6/
 

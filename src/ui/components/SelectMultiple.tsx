@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Select from "react-select";
 
-const SelectReact = ({
+const SelectMultiple = ({
 	defaultValue,
 	options,
 	changing,
+	isClearable = true,
 	teamNumber,
 	playerNumber,
 	getOptionLabel,
@@ -12,6 +13,7 @@ const SelectReact = ({
 	defaultValue: any;
 	options: any[];
 	changing: (arg: any) => boolean;
+	isClearable?: boolean;
 	teamNumber?: number;
 	playerNumber?: number;
 	getOptionLabel: any;
@@ -33,7 +35,7 @@ const SelectReact = ({
 		<Select
 			classNamePrefix="dark-select"
 			value={value}
-			isClearable
+			isClearable={isClearable}
 			onChange={handleChange}
 			options={options}
 			getOptionValue={p => p.pid}
@@ -42,4 +44,4 @@ const SelectReact = ({
 	);
 };
 
-export default SelectReact;
+export default SelectMultiple;

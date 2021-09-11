@@ -149,15 +149,37 @@ const updateAllStarDunk = async (
 			}
 		}
 
-		console.log(log);
+		const godMode = g.get("godMode");
+
+		const started = log.length > 1;
+
+		let allPossibleContestants: {
+			pid: number;
+			tid: number;
+			name: string;
+			abbrev: string;
+		}[] = [];
+		if (godMode && !started) {
+			allPossibleContestants = orderBy(
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+				["lastName", "firstName"],
+			).map(p => ({
+				pid: p.pid,
+				tid: p.tid,
+				name: `${p.firstName} ${p.lastName}`,
+				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
+			}));
+		}
 
 		return {
+			allPossibleContestants,
 			dunk,
-			godMode: g.get("godMode"),
+			godMode,
 			log,
 			players,
 			resultsByRound,
 			season,
+			started,
 			userTid: g.get("userTid"),
 		};
 	}

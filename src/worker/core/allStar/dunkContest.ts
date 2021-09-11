@@ -1,8 +1,8 @@
 import { orderBy } from "lodash";
 import type { AllStars, DunkAttempt } from "../../../common/types";
+import { dunkInfos } from "../../../common";
 import { idb } from "../../db";
 import { g, random } from "../../util";
-import dunkInfos from "./dunkInfos";
 
 const LOWEST_POSSIBLE_SCORE = 30;
 const NUM_ATTEMPTS_PER_DUNK = 3;
@@ -121,6 +121,7 @@ export const simNextDunkAttempt = async () => {
 		lastDunk = {
 			index: nextDunkerIndex,
 			attempts: [],
+			made: false,
 		};
 		currentRound.dunks.push(lastDunk);
 	}
@@ -133,6 +134,7 @@ export const simNextDunkAttempt = async () => {
 	lastDunk.attempts.push(dunkToAttempt);
 	if (success) {
 		lastDunk.score = getDunkScore(dunkToAttempt);
+		lastDunk.made = true;
 		stillSamePlayersTurn = false;
 	} else if (lastDunk.attempts.length >= NUM_ATTEMPTS_PER_DUNK) {
 		lastDunk.score = LOWEST_POSSIBLE_SCORE;

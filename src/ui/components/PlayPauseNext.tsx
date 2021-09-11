@@ -1,4 +1,7 @@
+import classNames from "classnames";
+
 const PlayPauseNext = ({
+	className,
 	onPlay,
 	onPause,
 	onNext,
@@ -7,6 +10,7 @@ const PlayPauseNext = ({
 	titlePause = "Pause",
 	titleNext = "Next",
 }: {
+	className?: string;
 	onPlay: () => void;
 	onPause: () => void;
 	onNext: () => void;
@@ -16,7 +20,7 @@ const PlayPauseNext = ({
 	titleNext?: string;
 }) => {
 	return (
-		<div className="btn-group">
+		<div className={classNames("btn-group", className)}>
 			{paused ? (
 				<button
 					className="btn btn-light-bordered"

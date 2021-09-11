@@ -1,4 +1,13 @@
-const dunkInfos = {
+const dunkInfos: Record<
+	"toss" | "distance" | "move",
+	Record<
+		string,
+		{
+			name: string;
+			difficulty: number;
+		}
+	>
+> = {
 	toss: {
 		none: {
 			name: "none",
@@ -65,35 +74,35 @@ const dunkInfos = {
 			difficulty: 1,
 		},
 		"honey-dip": {
-			name: "honey dip (arm in rim up to elbow)",
+			name: "honey dip",
 			difficulty: 3,
 		},
 		"spin-180": {
-			name: "180° (half spin)",
+			name: "180°",
 			difficulty: 1,
 		},
 		"spin-360": {
-			name: "360° (full spin)",
+			name: "360°",
 			difficulty: 2,
 		},
 		"spin-540": {
-			name: "540° (full spin)",
+			name: "540°",
 			difficulty: 4,
 		},
 		"spin-720": {
-			name: "720° (full spin)",
+			name: "720°",
 			difficulty: 8,
 		},
 		"over-sitting": {
-			name: "over sitting person",
+			name: "jump over sitting person",
 			difficulty: 1,
 		},
 		"over-short": {
-			name: "over a short person",
+			name: "jump over a short person",
 			difficulty: 2,
 		},
 		"over-tall": {
-			name: "over a tall person",
+			name: "jump over a tall person",
 			difficulty: 4,
 		},
 	},

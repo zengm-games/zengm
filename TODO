@@ -7,14 +7,13 @@ all-star weekend
   - mini game where you control players on your team? pick a dunk type based on avg expected score and % chance of success?
     - god mode should let you pick who to control at start
     - sim by message from UI to backend for each attempt. contains user options if allowed
-  - top 4 dunkers, 2 rounds, 2 dunks per round, 3 attempts per dunk (each attempt decreases score)
   - know what score is required to win round, and use to influence dunk selection
-  - ties
   - who gets picked from real players rosters?
-- 3 point contest
-- 3 point and slam dunk winner awards
+- slam dunk winner awards
   - add to shorten/sort thing
   - notification for winner
+  - make sure it shows up on award records
+  - add for real player rosters
 - only basketball
 - UI to view past all star selections, and link to box score
   - improve all-star history page
@@ -26,6 +25,8 @@ all-star weekend
 - more graceful error message for viewing dunk contest before it exists
 - "controlling" initial value should be set in worker
 - need randomness in player selection? too many same?
+- simNextDunkAttempt should require a separate call to get a score, so we never have to worry about hiding a score for drama in the UI, it is natural
+- when retrying a dunk, pick the same one twice and then (maybe) an easier one
 - blog
   - can control players on your team, or any player in god mode
   - reigning winner must compete

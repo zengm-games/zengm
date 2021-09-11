@@ -10,9 +10,120 @@ import {
 	Weight,
 } from "../components";
 import { useState } from "react";
+import { dunkInfos } from "../../common";
+
+const Log = ({
+	dunk,
+	log,
+	season,
+}: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
+	const logReverse = [...log].reverse();
+
+	const className = "border-top pt-3";
+
+	return (
+		<ul className="list-unstyled mb-0" style={{ maxWidth: 600 }}>
+			{dunk.winner !== undefined ? (
+				<li className={className}>
+					<p className="alert alert-success d-inline-block">
+						{dunk.players[dunk.winner].name} is your {season} slam dunk contest
+						champion!
+					</p>
+				</li>
+			) : null}
+			{logReverse.map((event, i) => {
+				const key = log.length - i;
+
+				if (event.type === "round") {
+					return (
+						<li key={key} className={className}>
+							<p className="alert alert-info d-inline-block">
+								<b>Start of round {event.num}.</b> Each player gets 2 dunks.
+								{event.num === 1
+									? " The maximum score for a dunk is 50."
+									: null}{" "}
+								Players get 3 attempts per dunk to complete a successful dunk.{" "}
+								{event.num === 1
+									? "The 2 players with the highest total scores move on to the next round."
+									: "The player with the highest score this round wins the contest."}
+							</p>
+						</li>
+					);
+				}
+
+				if (event.type === "tiebreaker") {
+					return (
+						<li key={key} className={className}>
+							<p className="alert alert-info d-inline-block">
+								<b>Tiebreaker.</b> Each player gets 3 attempts to make 1 dunk.
+							</p>
+						</li>
+					);
+				}
+
+				const p = dunk.players[event.player];
+
+				if (event.type === "attempt") {
+					const actualMoves = [event.dunk.move1, event.dunk.move2].filter(
+						move => move !== "none",
+					);
+
+					return (
+						<li key={key} className={className}>
+							<b>
+								{p.name} attempts his
+								{event.num === 1
+									? " first"
+									: event.num === 2
+									? " second"
+									: null}{" "}
+								dunk
+							</b>{" "}
+							({event.try === 3 ? "final" : helpers.ordinal(event.try)} try)
+							<br />
+							Toss: {dunkInfos.toss[event.dunk.toss].name}
+							<br />
+							Distance: {dunkInfos.distance[event.dunk.distance].name}
+							<br />
+							{actualMoves.length === 1 ? (
+								<>Move: {dunkInfos.move[actualMoves[0]].name}</>
+							) : (
+								<>
+									Move 1: {dunkInfos.move[event.dunk.move1].name}
+									<br />
+									Move 2: {dunkInfos.move[event.dunk.move2].name}
+								</>
+							)}
+							{event.made ? <p>He made it!</p> : <p>He missed it!</p>}
+						</li>
+					);
+				}
+
+				if (event.type === "score") {
+					return (
+						<li key={key} className={className}>
+							{event.made ? (
+								<p>
+									The judges give him a {event.score}
+									{event.score === 50 ? "!" : "."}
+								</p>
+							) : (
+								<p>
+									{p.name} failed to make a dunk, so the judges give him a{" "}
+									{event.score}, the lowest score possible.
+								</p>
+							)}
+						</li>
+					);
+				}
+			})}
+		</ul>
+	);
+};
 
 const AllStarDunk = ({
 	dunk,
+	log,
 	godMode,
 	players,
 	resultsByRound,
@@ -195,6 +306,7 @@ const AllStarDunk = ({
 
 			{dunk.winner === undefined ? (
 				<PlayPauseNext
+					className="mb-3"
 					onPlay={() => {
 						setPaused(false);
 					}}
@@ -208,6 +320,8 @@ const AllStarDunk = ({
 					titleNext="Show Next Dunk Attempt"
 				/>
 			) : null}
+
+			<Log dunk={dunk} log={log} season={season} />
 		</>
 	);
 };

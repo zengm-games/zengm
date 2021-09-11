@@ -1,5 +1,5 @@
 import { allStar } from "../core";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { DunkAttempt, UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason } from "../util";
 import orderBy from "lodash-es/orderBy";
@@ -63,9 +63,83 @@ const updateAllStarDunk = async (
 			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
 		);
 
+		const log: (
+			| {
+					type: "round";
+					num: number;
+			  }
+			| {
+					type: "tiebreaker";
+			  }
+			| {
+					type: "attempt";
+					player: number;
+					num?: number; // Not needed in tiebreaker
+					try: number;
+					dunk: DunkAttempt;
+					made: boolean;
+			  }
+			| {
+					type: "score";
+					player: number;
+					made: boolean;
+					score: number;
+			  }
+		)[] = [];
+		for (const round of dunk.rounds) {
+			if (round === dunk.rounds[0]) {
+				log.push({
+					type: "round",
+					num: 1,
+				});
+			} else if (round.tiebreaker) {
+				log.push({
+					type: "tiebreaker",
+				});
+			} else {
+				log.push({
+					type: "round",
+					num: 2,
+				});
+			}
+
+			const seenDunkers = new Set<number>();
+			for (const { attempts, index, made, score } of round.dunks) {
+				let num: number | undefined;
+				if (!round.tiebreaker) {
+					num = seenDunkers.has(index) ? 2 : 1;
+					seenDunkers.add(index);
+				}
+
+				for (let i = 0; i < attempts.length; i++) {
+					const attempt = attempts[i];
+					log.push({
+						type: "attempt",
+						player: index,
+						num,
+						try: i + 1,
+						dunk: attempt,
+						made: attempt === attempts.at(-1) && made,
+					});
+				}
+
+				if (score !== undefined) {
+					log.push({
+						type: "score",
+						player: index,
+						made,
+						score,
+					});
+				}
+			}
+		}
+
+		console.log(log);
+
 		return {
 			dunk,
 			godMode: g.get("godMode"),
+			log,
 			players,
 			resultsByRound,
 			season,

@@ -103,8 +103,9 @@ type DunkResult = {
 	// Last attempt is the first successful one
 	attempts: DunkAttempt[];
 
-	// Undefind until a successful dunk
+	// Undefind until a successful dunk or LOWEST_POSSIBLE_SCORE
 	score?: number;
+	made: boolean;
 };
 
 export type AllStars = {

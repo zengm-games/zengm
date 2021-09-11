@@ -10,9 +10,13 @@ all-star weekend
   - improve all-star history page
 - link to all star history from main all star events page too, in another box
 - sim contests even if not viewed directly
+  - sim one day with contest open - fast forward to end
 - test weird tie situations
 - need randomness in player selection? too many same?
 - play/pause
+- fast forward to end of dunk/round?
+  - unify code with live sim
+  - move keyboard shortcuts inside
 - blog
   - can control players on your team, or any player in god mode
   - reigning winner must compete

@@ -1,7 +1,10 @@
 import classNames from "classnames";
+import { Dropdown } from "react-bootstrap";
 
 const PlayPauseNext = ({
 	className,
+	disabled,
+	fastForwards,
 	onPlay,
 	onPause,
 	onNext,
@@ -11,6 +14,12 @@ const PlayPauseNext = ({
 	titleNext = "Next",
 }: {
 	className?: string;
+	disabled?: boolean;
+	fastForwards?: {
+		key?: string;
+		onClick: () => void;
+		label: string;
+	}[];
 	onPlay: () => void;
 	onPause: () => void;
 	onNext: () => void;
@@ -24,6 +33,7 @@ const PlayPauseNext = ({
 			{paused ? (
 				<button
 					className="btn btn-light-bordered"
+					disabled={disabled}
 					onClick={onPlay}
 					title={titlePlay}
 				>
@@ -32,6 +42,7 @@ const PlayPauseNext = ({
 			) : (
 				<button
 					className="btn btn-light-bordered"
+					disabled={disabled}
 					onClick={onPause}
 					title={titlePause}
 				>
@@ -40,12 +51,39 @@ const PlayPauseNext = ({
 			)}
 			<button
 				className="btn btn-light-bordered"
-				disabled={!paused}
+				disabled={disabled || !paused}
 				onClick={onNext}
 				title={titleNext}
 			>
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>
+			{fastForwards ? (
+				<Dropdown alignRight>
+					<Dropdown.Toggle
+						id="fast-forward"
+						className="btn-light-bordered fast-forward"
+						disabled={disabled || !paused}
+						variant={"no-class" as any}
+						title="Fast Forward"
+					>
+						<span className="glyphicon glyphicon-fast-forward" />
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						{fastForwards.map((item, i) => (
+							<Dropdown.Item
+								key={i}
+								onClick={item.onClick}
+								className="kbd-parent"
+							>
+								{item.label}
+								{item.key ? (
+									<span className="text-muted kbd">Alt+{item.key}</span>
+								) : null}
+							</Dropdown.Item>
+						))}
+					</Dropdown.Menu>
+				</Dropdown>
+			) : null}
 		</div>
 	);
 };

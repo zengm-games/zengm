@@ -9,11 +9,15 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { BoxScoreRow, BoxScoreWrapper, Confetti } from "../components";
+import {
+	BoxScoreRow,
+	BoxScoreWrapper,
+	Confetti,
+	PlayPauseNext,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { Dropdown } from "react-bootstrap";
 import { bySport, getPeriodName, isSport } from "../../common";
 
 type PlayerRowProps = {
@@ -518,58 +522,18 @@ const LiveGame = (props: View<"liveGame">) => {
 					<div className="live-game-affix">
 						{boxScore.current.gid >= 0 ? (
 							<div className="d-flex align-items-center mb-3">
-								<div className="btn-group mr-2">
-									{paused ? (
-										<button
-											className="btn btn-light-bordered"
-											disabled={boxScore.current.gameOver}
-											onClick={handlePlay}
-											title="Resume Simulation (Alt+B)"
-										>
-											<span className="glyphicon glyphicon-play" />
-										</button>
-									) : (
-										<button
-											className="btn btn-light-bordered"
-											disabled={boxScore.current.gameOver}
-											onClick={handlePause}
-											title="Pause Simulation (Alt+B)"
-										>
-											<span className="glyphicon glyphicon-pause" />
-										</button>
-									)}
-									<button
-										className="btn btn-light-bordered"
-										disabled={!paused || boxScore.current.gameOver}
-										onClick={handleNextPlay}
-										title="Show Next Play (Alt+N)"
-									>
-										<span className="glyphicon glyphicon-step-forward" />
-									</button>
-									<Dropdown alignRight>
-										<Dropdown.Toggle
-											id="live-game-sim-more"
-											className="btn-light-bordered live-game-sim-more"
-											disabled={!paused || boxScore.current.gameOver}
-											variant={"no-class" as any}
-											title="Fast Forward"
-										>
-											<span className="glyphicon glyphicon-fast-forward" />
-										</Dropdown.Toggle>
-										<Dropdown.Menu>
-											{fastForwardMenuItems.map(item => (
-												<Dropdown.Item
-													key={item.key}
-													onClick={item.onClick}
-													className="kbd-parent"
-												>
-													{item.label}
-													<span className="text-muted kbd">Alt+{item.key}</span>
-												</Dropdown.Item>
-											))}
-										</Dropdown.Menu>
-									</Dropdown>
-								</div>
+								<PlayPauseNext
+									className="mr-2"
+									disabled={boxScore.current.gameOver}
+									onPlay={handlePlay}
+									onPause={handlePause}
+									onNext={handleNextPlay}
+									paused={paused}
+									titlePlay="Resume Simulation (Alt+B)"
+									titlePause="Pause Simulation (Alt+B)"
+									titleNext="Show Next Play (Alt+N)"
+									fastForwards={fastForwardMenuItems}
+								/>
 								<div className="form-group flex-grow-1 mb-0">
 									<input
 										type="range"

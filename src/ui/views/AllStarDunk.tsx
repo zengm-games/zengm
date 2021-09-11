@@ -88,6 +88,10 @@ const EditContestants = ({
 	);
 };
 
+const alertStyle = {
+	maxWidth: 600,
+};
+
 const Log = ({
 	dunk,
 	log,
@@ -101,7 +105,7 @@ const Log = ({
 		<ul className="list-unstyled mb-0">
 			{dunk.winner !== undefined ? (
 				<li className={className}>
-					<p className="alert alert-success d-inline-block">
+					<p className="alert alert-success d-inline-block" style={alertStyle}>
 						{dunk.players[dunk.winner].name} is your {season} slam dunk contest
 						champion!
 					</p>
@@ -117,6 +121,7 @@ const Log = ({
 								className={`alert alert-info d-inline-block${
 									event.num === 1 ? " mb-0" : ""
 								}`}
+								style={alertStyle}
 							>
 								<b>Start of round {event.num}.</b> Each player gets 2 dunks.
 								{event.num === 1
@@ -134,7 +139,7 @@ const Log = ({
 				if (event.type === "tiebreaker") {
 					return (
 						<li key={key} className={className}>
-							<p className="alert alert-info d-inline-block">
+							<p className="alert alert-info d-inline-block" style={alertStyle}>
 								<b>Tiebreaker.</b> Each player gets 3 attempts to make 1 dunk.
 							</p>
 						</li>

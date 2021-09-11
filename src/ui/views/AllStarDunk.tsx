@@ -37,7 +37,11 @@ const Log = ({
 				if (event.type === "round") {
 					return (
 						<li key={key} className={className}>
-							<p className="alert alert-info d-inline-block">
+							<p
+								className={`alert alert-info d-inline-block${
+									event.num === 1 ? " mb-0" : ""
+								}`}
+							>
 								<b>Start of round {event.num}.</b> Each player gets 2 dunks.
 								{event.num === 1
 									? " The maximum score for a dunk is 50."

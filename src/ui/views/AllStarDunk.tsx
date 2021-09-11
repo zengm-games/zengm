@@ -68,7 +68,7 @@ const AllStarDunk = ({
 									pos={p.ratings.pos}
 									watch={p.watch}
 								>
-									{p.name}
+									{dunk.players[i].name}
 								</PlayerNameLabels>
 								<a
 									className="ml-2"
@@ -153,7 +153,7 @@ const AllStarDunk = ({
 								<tr key={i}>
 									<td>
 										<PlayerNameLabels pid={p.pid} watch={p.watch}>
-											{p.name}
+											{dunk.players[i].name}
 										</PlayerNameLabels>
 									</td>
 									{dunk.rounds.map((round, j) => {

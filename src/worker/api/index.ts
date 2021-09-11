@@ -927,8 +927,8 @@ const dunkSetControlling = async (controlling: number[]) => {
 	}
 };
 
-const dunkSimNextAttempt = async () => {
-	await allStar.dunkContest.simNextDunkAttempt();
+const dunkSimNext = async () => {
+	await allStar.dunkContest.simNextDunkEvent();
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 
@@ -3624,7 +3624,7 @@ export default {
 	draftLottery,
 	draftUser,
 	dunkSetControlling,
-	dunkSimNextAttempt,
+	dunkSimNext,
 	evalOnWorker,
 	exportDraftClass,
 	exportLeague,

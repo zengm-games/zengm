@@ -91,7 +91,7 @@ const getDunkScore = (dunkAttempt: DunkAttempt) => {
 	return random.randInt(30, 50);
 };
 
-export const simNextDunkAttempt = async () => {
+export const simNextDunkEvent = async () => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const dunk = allStars?.dunk;
 	if (!dunk) {
@@ -110,35 +110,47 @@ export const simNextDunkAttempt = async () => {
 		// ...because it's called again at the end of this function, and undefineds are handled there
 	}
 
-	const dunkToAttempt = genDunk();
-
 	let stillSamePlayersTurn = true;
 
 	const currentRound = dunk.rounds.at(-1);
 	let lastDunk = currentRound.dunks.at(-1);
-	if (lastDunk?.index !== nextDunkerIndex) {
-		// New dunker!
-		lastDunk = {
-			index: nextDunkerIndex,
-			attempts: [],
-			made: false,
-		};
-		currentRound.dunks.push(lastDunk);
-	}
 
-	const success = await getDunkOutcome(
-		dunk.players[nextDunkerIndex].pid,
-		dunkToAttempt,
-		lastDunk.attempts.length,
-	);
-	lastDunk.attempts.push(dunkToAttempt);
-	if (success) {
-		lastDunk.score = getDunkScore(dunkToAttempt);
-		lastDunk.made = true;
+	if (
+		lastDunk &&
+		lastDunk.index === nextDunkerIndex &&
+		(lastDunk.made || lastDunk.attempts.length >= NUM_ATTEMPTS_PER_DUNK)
+	) {
+		// Score previous dunk
+		if (lastDunk.made) {
+			lastDunk.score = getDunkScore(lastDunk.attempts.at(-1));
+		} else {
+			lastDunk.score = LOWEST_POSSIBLE_SCORE;
+		}
+
 		stillSamePlayersTurn = false;
-	} else if (lastDunk.attempts.length >= NUM_ATTEMPTS_PER_DUNK) {
-		lastDunk.score = LOWEST_POSSIBLE_SCORE;
-		stillSamePlayersTurn = false;
+	} else {
+		// New dunk attempt
+		const dunkToAttempt = genDunk();
+
+		if (lastDunk?.index !== nextDunkerIndex) {
+			// New dunker!
+			lastDunk = {
+				index: nextDunkerIndex,
+				attempts: [],
+				made: false,
+			};
+			currentRound.dunks.push(lastDunk);
+		}
+
+		const success = await getDunkOutcome(
+			dunk.players[nextDunkerIndex].pid,
+			dunkToAttempt,
+			lastDunk.attempts.length,
+		);
+		lastDunk.attempts.push(dunkToAttempt);
+		lastDunk.made = success;
+
+		// No score yet, will be done next time this function is called
 	}
 
 	// Contest over? Need to add another round?

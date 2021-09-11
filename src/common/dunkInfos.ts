@@ -40,7 +40,7 @@ const dunkInfos: Record<
 			difficulty: 0,
 		},
 		"free-throw": {
-			name: "15 feet (free throw line distance)",
+			name: "15 feet (free throw line)",
 			difficulty: 3,
 		},
 		"twelve-feet": {
@@ -48,7 +48,7 @@ const dunkInfos: Record<
 			difficulty: 2,
 		},
 		"dotted-line": {
-			name: "9 feet (dotted line distance)",
+			name: "9 feet (dotted line)",
 			difficulty: 1,
 		},
 	},

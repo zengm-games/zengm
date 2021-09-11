@@ -141,6 +141,8 @@ const AllStarDunk = ({
 		},
 	});
 
+	let seenRound2 = false;
+
 	return (
 		<>
 			<div className="d-none d-sm-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
@@ -252,9 +254,11 @@ const AllStarDunk = ({
 										</th>
 									);
 								} else {
+									seenRound2 = true;
 									return <th key={i}>Round 2</th>;
 								}
 							})}
+							{!seenRound2 ? <th>Round 2</th> : null}
 							{dunk.winner !== undefined ? <th></th> : null}
 						</tr>
 					</thead>
@@ -288,13 +292,14 @@ const AllStarDunk = ({
 											</td>
 										);
 									})}
+									{!seenRound2 ? <td /> : null}
 									{dunk.winner !== undefined ? (
 										dunk.winner === i ? (
-											<th>
+											<td>
 												<span className="glyphicon glyphicon-star text-yellow" />
-											</th>
+											</td>
 										) : (
-											<th />
+											<td />
 										)
 									) : null}
 								</tr>
@@ -314,10 +319,9 @@ const AllStarDunk = ({
 						setPaused(true);
 					}}
 					onNext={async () => {
-						await toWorker("main", "dunkSimNextAttempt");
+						await toWorker("main", "dunkSimNext");
 					}}
 					paused={paused}
-					titleNext="Show Next Dunk Attempt"
 				/>
 			) : null}
 

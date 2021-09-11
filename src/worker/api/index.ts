@@ -940,8 +940,24 @@ const dunkSetPlayers = async (
 	}
 };
 
-const dunkSimNext = async (conditions: Conditions) => {
-	await allStar.dunkContest.simNextDunkEvent(conditions);
+const dunkSimNext = async (
+	type: "event" | "dunk" | "round" | "all",
+	conditions: Conditions,
+) => {
+	const types: typeof type[] = ["event", "dunk", "round", "all"];
+
+	// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
+
+	const targetIndex = types.indexOf(type);
+
+	while (true) {
+		const newType = await allStar.dunkContest.simNextDunkEvent(conditions);
+		const newIndex = types.indexOf(newType);
+		if (newIndex >= targetIndex) {
+			break;
+		}
+	}
+
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 

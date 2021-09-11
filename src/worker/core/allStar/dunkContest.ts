@@ -92,7 +92,11 @@ const getDunkScore = (dunkAttempt: DunkAttempt) => {
 	return random.randInt(30, 50);
 };
 
-export const simNextDunkEvent = async (conditions: Conditions) => {
+export const simNextDunkEvent = async (
+	conditions: Conditions,
+): Promise<"event" | "dunk" | "round" | "all"> => {
+	let type: "event" | "dunk" | "round" | "all" = "event";
+
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const dunk = allStars?.dunk;
 	if (!dunk) {
@@ -101,7 +105,8 @@ export const simNextDunkEvent = async (conditions: Conditions) => {
 
 	if (dunk.winner !== undefined) {
 		// Already over
-		return;
+		type = "all";
+		return type;
 	}
 
 	// Figure out current dunker
@@ -129,6 +134,7 @@ export const simNextDunkEvent = async (conditions: Conditions) => {
 		}
 
 		stillSamePlayersTurn = false;
+		type = "dunk";
 	} else {
 		// New dunk attempt
 		const dunkToAttempt = genDunk();
@@ -216,17 +222,23 @@ export const simNextDunkEvent = async (conditions: Conditions) => {
 			}
 
 			if (outcome === "normalRound") {
+				type = "round";
+
 				dunk.rounds.push({
 					dunkers: indexesForNextRound,
 					dunks: [],
 				});
 			} else if (outcome === "tiebreakerRound") {
+				type = "round";
+
 				dunk.rounds.push({
 					dunkers: indexesForNextTiebreaker,
 					dunks: [],
 					tiebreaker: true,
 				});
 			} else {
+				type = "all";
+
 				dunk.winner = indexesForNextRound[0];
 
 				const p = dunk.players[dunk.winner];
@@ -249,4 +261,6 @@ export const simNextDunkEvent = async (conditions: Conditions) => {
 	}
 
 	await idb.cache.allStars.put(allStars);
+
+	return type;
 };

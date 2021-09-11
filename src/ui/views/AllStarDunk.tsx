@@ -427,15 +427,21 @@ const AllStarDunk = ({
 					fastForwards={[
 						{
 							label: "Complete one dunk",
-							onClick: () => {},
+							onClick: async () => {
+								await toWorker("main", "dunkSimNext", "dunk");
+							},
 						},
 						{
 							label: "End of round",
-							onClick: () => {},
+							onClick: async () => {
+								await toWorker("main", "dunkSimNext", "round");
+							},
 						},
 						{
 							label: "End of contest",
-							onClick: () => {},
+							onClick: async () => {
+								await toWorker("main", "dunkSimNext", "all");
+							},
 						},
 					]}
 					onPlay={() => {
@@ -445,7 +451,7 @@ const AllStarDunk = ({
 						setPaused(true);
 					}}
 					onNext={async () => {
-						await toWorker("main", "dunkSimNext");
+						await toWorker("main", "dunkSimNext", "event");
 					}}
 					paused={paused}
 				/>

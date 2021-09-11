@@ -424,6 +424,20 @@ const AllStarDunk = ({
 			{dunk.winner === undefined ? (
 				<PlayPauseNext
 					className="mb-3"
+					fastForwards={[
+						{
+							label: "Complete one dunk",
+							onClick: () => {},
+						},
+						{
+							label: "End of round",
+							onClick: () => {},
+						},
+						{
+							label: "End of contest",
+							onClick: () => {},
+						},
+					]}
 					onPlay={() => {
 						setPaused(false);
 					}}

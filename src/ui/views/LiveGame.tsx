@@ -457,43 +457,6 @@ const LiveGame = (props: View<"liveGame">) => {
 		processToNextPause,
 	]);
 
-	useEffect(() => {
-		const handleKeydown = (event: KeyboardEvent) => {
-			// alt + letter
-			if (
-				!boxScore.current.gameOver &&
-				event.altKey &&
-				!event.ctrlKey &&
-				!event.shiftKey &&
-				!event.isComposing &&
-				!event.metaKey
-			) {
-				if (pausedRef.current) {
-					const option = fastForwardMenuItems.find(
-						option2 => `Key${option2.key}` === event.code,
-					);
-
-					if (option) {
-						option.onClick();
-					} else if (event.code === "KeyB") {
-						handlePlay();
-					} else if (event.code === "KeyN") {
-						handleNextPlay();
-					}
-				} else {
-					if (event.code === "KeyB") {
-						handlePause();
-					}
-				}
-			}
-		};
-
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, [fastForwardMenuItems, handlePause, handleNextPlay, handlePlay]);
-
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -525,14 +488,15 @@ const LiveGame = (props: View<"liveGame">) => {
 								<PlayPauseNext
 									className="mr-2"
 									disabled={boxScore.current.gameOver}
+									fastForwardAlignRight
+									fastForwards={fastForwardMenuItems}
 									onPlay={handlePlay}
 									onPause={handlePause}
 									onNext={handleNextPlay}
 									paused={paused}
-									titlePlay="Resume Simulation (Alt+B)"
-									titlePause="Pause Simulation (Alt+B)"
-									titleNext="Show Next Play (Alt+N)"
-									fastForwards={fastForwardMenuItems}
+									titlePlay="Resume Simulation"
+									titlePause="Pause Simulation"
+									titleNext="Show Next Play"
 								/>
 								<div className="form-group flex-grow-1 mb-0">
 									<input

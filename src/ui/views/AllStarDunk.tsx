@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
-import type { View } from "../../common/types";
+import type { Player, View } from "../../common/types";
 import {
 	Height,
 	PlayerNameLabels,
@@ -159,6 +159,11 @@ const AllStarDunk = ({
 
 					const checkboxID = `control-player-${i}`;
 
+					const yearsWon = (p.awards as Player["awards"])
+						.filter(award => award.type === "Slam Dunk Contest Winner")
+						.map(award => award.season)
+						.filter(year => year < season);
+
 					return (
 						<div key={p.pid}>
 							<div
@@ -209,6 +214,16 @@ const AllStarDunk = ({
 								{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
 								{helpers.roundStat(p.stats.ast, "ast")} ast
 							</div>
+							{yearsWon.length === 1 ? (
+								<div className="mt-1">{yearsWon[0]} contest winner</div>
+							) : yearsWon.length > 1 ? (
+								<div
+									className="mt-1"
+									title={helpers.yearRanges(yearsWon).join(", ")}
+								>
+									{yearsWon.length}x contest winner
+								</div>
+							) : null}
 
 							{(allowControl || allowControlGodMode) &&
 							(dunk.winner === undefined || dunk.controlling.includes(i)) ? (

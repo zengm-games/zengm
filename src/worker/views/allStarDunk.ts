@@ -55,6 +55,7 @@ const updateAllStarDunk = async (
 				"imgURL",
 				"hgt",
 				"weight",
+				"awards",
 			],
 			ratings: ["ovr", "pot", "dnk", "jmp", "pos"],
 			stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],

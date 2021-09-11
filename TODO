@@ -5,15 +5,14 @@ mood stuff is sometimes added to player objects right from cache - see player.mo
 all-star weekend
 - picking dunks
   - know what score is required to win round, and use to influence dunk selection
+  - when retrying a dunk, pick the same one twice and then (maybe) an easier one
 - UI to view past all star selections, and link to box score
   - improve all-star history page
 - link to all star history from main all star events page too, in another box
-- under name of player at top of slam dunk page, show how many times they won the contest before
 - sim contests even if not viewed directly
 - allow editing contestents before it starts in god mode
 - test weird tie situations
 - need randomness in player selection? too many same?
-- when retrying a dunk, pick the same one twice and then (maybe) an easier one
 - play/pause
 - blog
   - can control players on your team, or any player in god mode

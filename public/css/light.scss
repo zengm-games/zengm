@@ -1285,3 +1285,7 @@ a.anchor {
 .highest-modal-backdrop.show {
 	z-index: 1051 !important;
 }
+
+.border-top-light {
+	border-top: 1px solid $hr-border-color !important;
+}

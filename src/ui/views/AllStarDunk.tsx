@@ -19,10 +19,10 @@ const Log = ({
 }: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
 	const logReverse = [...log].reverse();
 
-	const className = "border-top pt-3";
+	const className = "border-top-light pt-3";
 
 	return (
-		<ul className="list-unstyled mb-0" style={{ maxWidth: 600 }}>
+		<ul className="list-unstyled mb-0">
 			{dunk.winner !== undefined ? (
 				<li className={className}>
 					<p className="alert alert-success d-inline-block">

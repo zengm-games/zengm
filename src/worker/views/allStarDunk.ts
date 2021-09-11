@@ -1,9 +1,9 @@
 import { allStar } from "../core";
 import type { DunkAttempt, UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g, getTeamInfoBySeason } from "../util";
+import { g, getTeamInfoBySeason, helpers } from "../util";
 import orderBy from "lodash-es/orderBy";
-import { isSport } from "../../common";
+import { isSport, PHASE } from "../../common";
 
 const updateAllStarDunk = async (
 	{ season }: ViewInput<"allStarDunk">,
@@ -24,6 +24,15 @@ const updateAllStarDunk = async (
 		const allStars = await idb.getCopy.allStars({ season });
 		const dunk = allStars?.dunk;
 		if (dunk === undefined) {
+			if (
+				season === g.get("season") &&
+				g.get("phase") <= PHASE.REGULAR_SEASON
+			) {
+				return {
+					redirectUrl: helpers.leagueUrl(["all_star", "dunk", season - 1]),
+				};
+			}
+
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
 				errorMessage: "Dunk contest not found",

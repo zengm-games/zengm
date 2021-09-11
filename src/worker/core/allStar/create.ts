@@ -101,7 +101,10 @@ const create = async (conditions: Conditions) => {
 		const lastYear = await idb.getCopy.allStars({
 			season: g.get("season") - 1,
 		});
-		const prevWinnerPid = lastYear?.dunk?.winner;
+		let prevWinnerPid: number | undefined;
+		if (lastYear?.dunk?.winner !== undefined) {
+			prevWinnerPid = lastYear.dunk.players[lastYear.dunk.winner].pid;
+		}
 
 		const dunkers = orderBy(
 			(
@@ -126,6 +129,13 @@ const create = async (conditions: Conditions) => {
 		if (dunkers.length === 4) {
 			random.shuffle(dunkers);
 
+			const controlling = [];
+			for (let i = 0; i < dunkers.length; i++) {
+				if (dunkers[i].tid === g.get("userTid")) {
+					controlling.push(i);
+				}
+			}
+
 			allStars.dunk = {
 				players: dunkers as any,
 				rounds: [
@@ -135,7 +145,7 @@ const create = async (conditions: Conditions) => {
 						dunks: [],
 					},
 				],
-				controlling: [],
+				controlling,
 			};
 		}
 	}

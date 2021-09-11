@@ -15,10 +15,6 @@ all-star weekend
 - 3 point and slam dunk winner awards
   - add to shorten/sort thing
   - notification for winner
-- contestents
-  - reigning winner + top N by some formula
-  - check injury
-  - skip contest if not enough players in league
 - only basketball
 - UI to view past all star selections, and link to box score
   - improve all-star history page
@@ -31,6 +27,9 @@ all-star weekend
 - more graceful error message for viewing dunk contest before it exists
 - "controlling" initial value should be set in worker
 - need randomness in player selection? too many same?
+- blog
+  - can control players on your team, or any player in god mode
+  - reigning winner must compete
 
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 

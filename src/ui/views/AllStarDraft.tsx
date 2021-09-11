@@ -55,12 +55,9 @@ const PlayersTable = ({
 					...players,
 					...pidsAdd.map(pid => {
 						const p = remaining.find(p2 => p2.pid === pid);
-						if (!p) {
-							throw new Error(`Player not found, pid ${pid}`);
-						}
 						return p;
 					}),
-			  ];
+			  ].filter(p => p !== undefined);
 
 	const rows = playersAugmented
 		.filter(p => {

@@ -1,8 +1,13 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
 
 const AllStar = ({ showDunk }: View<"allStar">) => {
+	if (!isSport("basketball")) {
+		throw new Error("Not implemented");
+	}
+
 	useTitleBar({ title: "All-Star Events" });
 
 	return (

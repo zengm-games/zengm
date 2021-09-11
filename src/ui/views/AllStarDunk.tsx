@@ -10,7 +10,7 @@ import {
 	Weight,
 } from "../components";
 import { useState } from "react";
-import { dunkInfos } from "../../common";
+import { dunkInfos, isSport } from "../../common";
 
 const Log = ({
 	dunk,
@@ -130,6 +130,10 @@ const AllStarDunk = ({
 	season,
 	userTid,
 }: View<"allStarDunk">) => {
+	if (!isSport("basketball")) {
+		throw new Error("Not implemented");
+	}
+
 	const [paused, setPaused] = useState(true);
 
 	useTitleBar({

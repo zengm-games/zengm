@@ -3,12 +3,17 @@ import type { DunkAttempt, UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason } from "../util";
 import orderBy from "lodash-es/orderBy";
+import { isSport } from "../../common";
 
 const updateAllStarDunk = async (
 	{ season }: ViewInput<"allStarDunk">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	if (!isSport("basketball")) {
+		throw new Error("Not implemented");
+	}
+
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||

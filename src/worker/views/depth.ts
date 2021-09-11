@@ -77,7 +77,6 @@ const updateDepth = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	console.log();
 	if (!isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}

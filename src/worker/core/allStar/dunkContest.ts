@@ -2,7 +2,7 @@ import { orderBy } from "lodash";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos } from "../../../common";
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, helpers, loadNames, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
 import type { PlayerRatings } from "../../../common/types.basketball";
 
@@ -68,10 +68,12 @@ const getDunkScoreRaw = (dunkAttempt: DunkAttempt) => {
 };
 
 const getDunkScore = (dunkAttempt: DunkAttempt) => {
-	return helpers.bound(
-		getDunkScoreRaw(dunkAttempt) + random.randInt(-5, 5),
-		LOWEST_POSSIBLE_SCORE,
-		HIGHEST_POSSIBLE_SCORE,
+	return Math.round(
+		helpers.bound(
+			getDunkScoreRaw(dunkAttempt) + random.randInt(-5, 5),
+			LOWEST_POSSIBLE_SCORE,
+			HIGHEST_POSSIBLE_SCORE,
+		),
 	);
 };
 
@@ -196,8 +198,8 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 			};
 		}
 	} else {
-		let targetDifficulty: number =
-			"some difficulty based on 50% chance of success";
+		const dunkerRating = getDunkerRating(preDunkInfo);
+		let targetDifficulty = probabilityToDifficulty(0.5, dunkerRating); // 50% chance of success difficulty
 		if (targetDifficulty > MAX_SCORE_DIFFICULTY) {
 			targetDifficulty = MAX_SCORE_DIFFICULTY;
 		} else if (
@@ -324,7 +326,7 @@ const getNextDunkerIndex = (dunk: Dunk) => {
 const getDunkerRating = ({ jmp, dnk }: { jmp: number; dnk: number }) =>
 	(2 * jmp + dnk) / 3;
 
-const difficultyToProbability = (difficulty: number, dunkerRating: number) => {
+const logisticParams = (dunkerRating: number) => {
 	// 1 for 10 rating, 0.5 for 90 rating
 	const k = ((dunkerRating - 10) * (0.5 - 1)) / (90 - 10) + 1;
 
@@ -332,13 +334,29 @@ const difficultyToProbability = (difficulty: number, dunkerRating: number) => {
 	// 10 rating -> 50% chance at doing a 1
 	const midpoint = ((dunkerRating - 10) * (8 - 1)) / (90 - 10) + 1;
 
-	return 1 / (1 + Math.exp(-k * (difficulty - midpoint)));
+	return {
+		k,
+		midpoint,
+	};
 };
 
-const probabilityToDifficulty = (
-	probability: number,
-	dunkerRating: number,
-) => {};
+const difficultyToProbability = (difficulty: number, dunkerRating: number) => {
+	const { k, midpoint } = logisticParams(dunkerRating);
+
+	return 1 - 1 / (1 + Math.exp(-k * (difficulty - midpoint)));
+};
+
+const probabilityToDifficulty = (probability: number, dunkerRating: number) => {
+	const { k, midpoint } = logisticParams(dunkerRating);
+
+	const p = 1 - probability;
+
+	const x = Math.log(p / (1 - p));
+	const difficulty = x / k + midpoint;
+
+	// Round to nearest 0.5
+	return Math.round(difficulty * 2) / 2;
+};
 
 const getDunkOutcome = async (
 	dunkAttempt: DunkAttempt,

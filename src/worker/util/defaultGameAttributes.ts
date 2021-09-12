@@ -185,7 +185,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
-				numGames: 16,
+				numGames: 17,
 				numGamesDiv: 6,
 				numGamesConf: 6,
 				quarterLength: 15,

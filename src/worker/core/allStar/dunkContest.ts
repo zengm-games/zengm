@@ -211,11 +211,6 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 			const minDifficultyNeeded =
 				scoreToDifficulty(preDunkInfo.minScoreNeeded) + 2;
 			if (minDifficultyNeeded < targetDifficulty) {
-				console.log(
-					"LAST DUNKER IN ROUND",
-					getMinScoreNeeded,
-					minDifficultyNeeded,
-				);
 				targetDifficulty = minDifficultyNeeded;
 			}
 		}
@@ -330,9 +325,9 @@ const logisticParams = (dunkerRating: number) => {
 	// 1 for 10 rating, 0.5 for 90 rating
 	const k = ((dunkerRating - 10) * (0.5 - 1)) / (90 - 10) + 1;
 
-	// 90 rating -> 50% chance at doing an 8
+	// 90 rating -> 50% chance at doing an 5
 	// 10 rating -> 50% chance at doing a 1
-	const midpoint = ((dunkerRating - 10) * (8 - 1)) / (90 - 10) + 1;
+	const midpoint = ((dunkerRating - 10) * (5 - 1)) / (90 - 10) + 1;
 
 	return {
 		k,
@@ -358,16 +353,16 @@ const probabilityToDifficulty = (probability: number, dunkerRating: number) => {
 	return Math.round(difficulty * 2) / 2;
 };
 
-const getDunkOutcome = async (
-	dunkAttempt: DunkAttempt,
-	preDunkInfo: PreDunkInfo,
-) => {
+const getDunkOutcome = (dunkAttempt: DunkAttempt, preDunkInfo: PreDunkInfo) => {
 	const difficulty = getDifficulty(dunkAttempt);
-
-	return (
-		Math.random() <
-		difficultyToProbability(difficulty, getDunkerRating(preDunkInfo))
+	const probability = difficultyToProbability(
+		difficulty,
+		getDunkerRating(preDunkInfo),
 	);
+	console.log("difficulty", difficulty);
+	console.log("probability", probability);
+
+	return Math.random() < probability;
 };
 
 // If some dunks have already happened in this round, what's the minimum score this dunk needs to stay alive for the next round?
@@ -424,11 +419,13 @@ const getMinScoreNeeded = (
 		return undefined;
 	}
 
-	const minScoreNeeded = helpers.bound(
-		target - currentScore,
-		LOWEST_POSSIBLE_SCORE,
-		HIGHEST_POSSIBLE_SCORE,
-	);
+	const minScoreNeeded = target - currentScore;
+
+	if (minScoreNeeded > HIGHEST_POSSIBLE_SCORE) {
+		// Impossible, don't bother
+		console.log("guaranteed loss");
+		return undefined;
+	}
 
 	return minScoreNeeded;
 };
@@ -504,7 +501,7 @@ export const simNextDunkEvent = async (
 
 		const dunkToAttempt = genDunk(preDunkInfo);
 
-		const success = await getDunkOutcome(dunkToAttempt, preDunkInfo);
+		const success = getDunkOutcome(dunkToAttempt, preDunkInfo);
 		lastDunk.attempts.push(dunkToAttempt);
 		lastDunk.made = success;
 

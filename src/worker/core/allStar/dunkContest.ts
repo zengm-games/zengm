@@ -2,8 +2,9 @@ import { orderBy } from "lodash";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos } from "../../../common";
 import { idb } from "../../db";
-import { g, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
+import type { PlayerRatings } from "../../../common/types.basketball";
 
 const LOWEST_POSSIBLE_SCORE = 30;
 const NUM_ATTEMPTS_PER_DUNK = 3;
@@ -13,7 +14,15 @@ const NUM_DUNKS_PER_TIEBREAKER = 1;
 
 type Dunk = NonNullable<AllStars["dunk"]>;
 
-const genDunk = () => {
+type PreDunkInfo = {
+	jmp: number;
+	dnk: number;
+	numPriorAttempts: number;
+	priorAttempt: DunkAttempt | undefined;
+	minScoreNeeded: number;
+};
+
+const genDunk = (preDunkInfo: PreDunkInfo) => {
 	const dunk = {
 		toss: random.choice(Object.keys(dunkInfos.toss)),
 		distance: random.choice(Object.keys(dunkInfos.distance)),
@@ -81,15 +90,80 @@ const getNextDunkerIndex = (dunk: Dunk) => {
 };
 
 const getDunkOutcome = async (
-	pid: number,
 	dunkAttempt: DunkAttempt,
-	numPriorAttempts: number,
+	preDunkInfo: PreDunkInfo,
 ) => {
 	return Math.random() < 0.5;
 };
 
 const getDunkScore = (dunkAttempt: DunkAttempt) => {
 	return random.randInt(30, 50);
+};
+
+// If some dunks have already happened in this round, what's the minimum score this dunk needs to stay alive for the next round?
+const getMinScoreNeeded = (
+	currentRound: Dunk["rounds"][number],
+	nextDunkerIndex: number,
+) => {
+	const numDunksPerPlayer = currentRound.tiebreaker ? 1 : 2;
+
+	// Doesn't quite work for all tiebreakers, but oh well
+	const numPlayersAdvance = Math.floor(currentRound.dunkers.length / 2);
+
+	const scoresByIndex: Record<
+		number,
+		{
+			index: number;
+			numDunks: number;
+			score: number;
+		}
+	> = {};
+
+	for (const { score, index } of currentRound.dunks) {
+		if (score !== undefined) {
+			if (!scoresByIndex[index]) {
+				scoresByIndex[index] = {
+					index,
+					numDunks: 1,
+					score,
+				};
+			} else {
+				scoresByIndex[index].numDunks += 1;
+				scoresByIndex[index].score += score;
+			}
+		}
+	}
+
+	const numDunks = scoresByIndex[nextDunkerIndex]?.numDunks ?? 0;
+	if (numDunksPerPlayer - numDunks > 1) {
+		// Player has 2 dunks left, don't worry about it
+		return LOWEST_POSSIBLE_SCORE;
+	}
+
+	const currentScore = scoresByIndex[nextDunkerIndex]?.score ?? 0;
+
+	const otherScores = orderBy(
+		Object.values(scoresByIndex)
+			.filter(row => row.index !== nextDunkerIndex)
+			.map(row => ({
+				...row,
+				minScore:
+					row.score +
+					(numDunksPerPlayer - row.numDunks) * LOWEST_POSSIBLE_SCORE,
+			})),
+		"minScore",
+		"desc",
+	);
+
+	const target = otherScores[numPlayersAdvance - 1]?.minScore;
+
+	if (target === undefined) {
+		return LOWEST_POSSIBLE_SCORE;
+	}
+
+	const minScoreNeeded = Math.max(LOWEST_POSSIBLE_SCORE, target - currentScore);
+
+	return minScoreNeeded;
 };
 
 export const simNextDunkEvent = async (
@@ -137,8 +211,6 @@ export const simNextDunkEvent = async (
 		type = "dunk";
 	} else {
 		// New dunk attempt
-		const dunkToAttempt = genDunk();
-
 		if (lastDunk?.index !== nextDunkerIndex) {
 			// New dunker!
 			lastDunk = {
@@ -149,11 +221,22 @@ export const simNextDunkEvent = async (
 			currentRound.dunks.push(lastDunk);
 		}
 
-		const success = await getDunkOutcome(
-			dunk.players[nextDunkerIndex].pid,
-			dunkToAttempt,
-			lastDunk.attempts.length,
-		);
+		const p = await idb.cache.players.get(dunk.players[nextDunkerIndex].pid);
+		if (!p) {
+			throw new Error("Invalid pid");
+		}
+		const ratings = p.ratings.at(-1) as PlayerRatings;
+		const preDunkInfo: PreDunkInfo = {
+			jmp: ratings.jmp,
+			dnk: ratings.dnk,
+			numPriorAttempts: lastDunk.attempts.length,
+			priorAttempt: lastDunk.attempts.at(-1),
+			minScoreNeeded: getMinScoreNeeded(currentRound, nextDunkerIndex),
+		};
+
+		const dunkToAttempt = genDunk(preDunkInfo);
+
+		const success = await getDunkOutcome(dunkToAttempt, preDunkInfo);
 		lastDunk.attempts.push(dunkToAttempt);
 		lastDunk.made = success;
 

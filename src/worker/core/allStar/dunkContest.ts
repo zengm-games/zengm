@@ -45,11 +45,25 @@ const getValidMoves = (otherMove: string) => {
 	return validMoves;
 };
 
-const getDifficulty = (dunkAttempt: DunkAttempt) =>
-	dunkInfos.toss[dunkAttempt.toss].difficulty +
-	dunkInfos.distance[dunkAttempt.distance].difficulty +
-	dunkInfos.move[dunkAttempt.move1].difficulty +
-	dunkInfos.move[dunkAttempt.move2].difficulty;
+const getDifficulty = (dunkAttempt: DunkAttempt) => {
+	const difficulties = [
+		dunkInfos.toss[dunkAttempt.toss].difficulty,
+		dunkInfos.distance[dunkAttempt.distance].difficulty,
+		dunkInfos.move[dunkAttempt.move1].difficulty,
+		dunkInfos.move[dunkAttempt.move2].difficulty,
+	];
+
+	let numMoreThan0 = 0;
+	let total = 0;
+	for (const difficulty of difficulties) {
+		total += difficulty;
+		if (difficulty > 0) {
+			numMoreThan0 += 1;
+		}
+	}
+
+	return total + 0.5 * numMoreThan0;
+};
 
 // 8 is a 55, meaning even with randomness an 8 is always a 50
 const RANGE = HIGHEST_POSSIBLE_SCORE + 5 - LOWEST_POSSIBLE_SCORE;
@@ -162,7 +176,7 @@ const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
 			const { currentPartDifficulty, infos } = getDunkInfosPart(part, newDunk);
 
 			const candidates = Object.entries(infos).filter(
-				([, info]) => currentPartDifficulty > info.difficulty,
+				([, info]) => currentPartDifficulty < info.difficulty,
 			);
 			if (candidates.length === 0) {
 				continue;
@@ -225,8 +239,6 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 			move2: "none",
 		};
 
-		let difficulty = 0;
-
 		// Since we're randomly picking parts, do 2 iterations to ensure we get closer to targetDifficulty
 		const NUM_ITERATIONS = 2;
 		for (let i = 0; i < NUM_ITERATIONS; i++) {
@@ -235,8 +247,12 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 
 				// Pick part that keeps us under difficulty target
 				const candidates = Object.entries(infos).filter(
-					([, info]) =>
-						difficulty + info.difficulty - currentPartDifficulty <=
+					([key, info]) =>
+						getDifficulty({
+							...dunk,
+							[part]: key,
+						}) -
+							currentPartDifficulty <=
 							targetDifficulty && info.difficulty > currentPartDifficulty,
 				);
 				if (candidates.length === 0) {
@@ -246,14 +262,13 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 				const candidate = random.choice(candidates);
 
 				dunk[part] = candidate[0];
-				difficulty = getDifficulty(dunk);
 			}
 		}
 
 		// If difficulty is still not enough for minScoreNeeded, make it happen
 		if (
 			preDunkInfo.minScoreNeeded !== undefined &&
-			scoreToDifficulty(preDunkInfo.minScoreNeeded) > difficulty
+			scoreToDifficulty(preDunkInfo.minScoreNeeded) > getDifficulty(dunk)
 		) {
 			dunk = makeDunkHarder(dunk, preDunkInfo.minScoreNeeded);
 		}
@@ -325,9 +340,9 @@ const logisticParams = (dunkerRating: number) => {
 	// 1 for 10 rating, 0.5 for 90 rating
 	const k = ((dunkerRating - 10) * (0.5 - 1)) / (90 - 10) + 1;
 
-	// 90 rating -> 50% chance at doing an 5
+	// 90 rating -> 50% chance at doing an 6
 	// 10 rating -> 50% chance at doing a 1
-	const midpoint = ((dunkerRating - 10) * (5 - 1)) / (90 - 10) + 1;
+	const midpoint = ((dunkerRating - 10) * (6 - 1)) / (90 - 10) + 1;
 
 	return {
 		k,
@@ -359,8 +374,6 @@ const getDunkOutcome = (dunkAttempt: DunkAttempt, preDunkInfo: PreDunkInfo) => {
 		difficulty,
 		getDunkerRating(preDunkInfo),
 	);
-	console.log("difficulty", difficulty);
-	console.log("probability", probability);
 
 	return Math.random() < probability;
 };
@@ -423,7 +436,6 @@ const getMinScoreNeeded = (
 
 	if (minScoreNeeded > HIGHEST_POSSIBLE_SCORE) {
 		// Impossible, don't bother
-		console.log("guaranteed loss");
 		return undefined;
 	}
 

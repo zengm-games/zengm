@@ -12,6 +12,7 @@ all-star weekend
 - fast forward until your next dunk (only show if user is controlling someone)
 - quick links between all star pages? draft/dunk/history
 - use numPriorAttempts
+- for both AllStarDraft and AllStarDunk, more graceful error so dropdown menu still works even if there is no content
 - blog
   - can control players on your team, or any player in god mode
   - reigning winner must compete

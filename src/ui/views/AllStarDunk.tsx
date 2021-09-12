@@ -166,19 +166,26 @@ const Log = ({
 							</b>{" "}
 							({event.try === 3 ? "final" : helpers.ordinal(event.try)} try)
 							<br />
-							Toss: {dunkInfos.toss[event.dunk.toss].name}
-							<br />
-							Distance: {dunkInfos.distance[event.dunk.distance].name}
-							<br />
-							{actualMoves.length === 1 ? (
-								<>Move: {dunkInfos.move[actualMoves[0]].name}</>
-							) : (
+							{event.dunk.toss !== "none" ? (
 								<>
+									Toss: {dunkInfos.toss[event.dunk.toss].name}
+									<br />
+								</>
+							) : null}
+							Distance: {dunkInfos.distance[event.dunk.distance].name}
+							{actualMoves.length === 1 ? (
+								<>
+									<br />
+									Move: {dunkInfos.move[actualMoves[0]].name}
+								</>
+							) : actualMoves.length === 2 ? (
+								<>
+									<br />
 									Move 1: {dunkInfos.move[event.dunk.move1].name}
 									<br />
 									Move 2: {dunkInfos.move[event.dunk.move2].name}
 								</>
-							)}
+							) : null}
 							{event.made ? <p>He made it!</p> : <p>He missed it!</p>}
 						</li>
 					);

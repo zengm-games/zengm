@@ -16,19 +16,19 @@ const dunkInfos: Record<
 		},
 		"half-court": {
 			name: "from half court, catch off the bounce",
-			difficulty: 5,
+			difficulty: 4,
 		},
 		"three-point": {
 			name: "from the three point line, catch off the bounce",
-			difficulty: 4,
+			difficulty: 3,
 		},
 		"free-throw": {
 			name: "from the free throw line, catch off the backboard",
-			difficulty: 2,
+			difficulty: 1,
 		},
 		side: {
 			name: "off the side of the backboard",
-			difficulty: 3,
+			difficulty: 2,
 		},
 	},
 	distance: {

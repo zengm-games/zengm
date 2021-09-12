@@ -11,6 +11,7 @@ all-star weekend
   - auto pause when it hits user's next controlling dunk
 - fast forward until your next dunk (only show if user is controlling someone)
 - quick links between all star pages? draft/dunk/history
+- use numPriorAttempts
 - blog
   - can control players on your team, or any player in god mode
   - reigning winner must compete

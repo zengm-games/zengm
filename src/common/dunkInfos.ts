@@ -42,7 +42,7 @@ const dunkInfos: Record<
 		},
 		"free-throw": {
 			name: "15 feet (free throw line)",
-			difficulty: 3,
+			difficulty: 4,
 		},
 		"twelve-feet": {
 			name: "12 feet",

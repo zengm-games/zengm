@@ -7,7 +7,8 @@ import { saveAwardsByPlayer } from "../season/awards";
 import type { PlayerRatings } from "../../../common/types.basketball";
 
 const HIGHEST_POSSIBLE_SCORE = 50;
-const LOWEST_POSSIBLE_SCORE = 30;
+const LOWEST_POSSIBLE_SCORE = 5;
+const MISS_SCORE = 0;
 const NUM_ATTEMPTS_PER_DUNK = 3;
 export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
@@ -22,6 +23,7 @@ type PreDunkInfo = {
 	numPriorAttempts: number;
 	priorAttempt: DunkAttempt | undefined;
 	minScoreNeeded: number | undefined;
+	lastDunkerInRound: boolean;
 };
 
 type DunkPart = "toss" | "distance" | "move1" | "move2";
@@ -50,10 +52,11 @@ const getDifficulty = (dunkAttempt: DunkAttempt) =>
 	dunkInfos.move[dunkAttempt.move2].difficulty;
 
 // 8 is a 55, meaning even with randomness an 8 is always a 50
+const RANGE = HIGHEST_POSSIBLE_SCORE + 5 - LOWEST_POSSIBLE_SCORE;
 const difficultyToScore = (difficulty: number) =>
-	30 + (difficulty * 25) / MAX_SCORE_DIFFICULTY;
+	LOWEST_POSSIBLE_SCORE + (difficulty * RANGE) / MAX_SCORE_DIFFICULTY;
 const scoreToDifficulty = (score: number) =>
-	((score - 30) * MAX_SCORE_DIFFICULTY) / 25;
+	((score - LOWEST_POSSIBLE_SCORE) * MAX_SCORE_DIFFICULTY) / RANGE;
 
 const getDunkScoreRaw = (dunkAttempt: DunkAttempt) => {
 	const difficulty = getDifficulty(dunkAttempt);
@@ -88,7 +91,9 @@ const getDunkInfosPart = (part: DunkPart, dunk: DunkAttempt) => {
 		infos = dunkInfos[dunkInfoKey];
 	}
 
-	return infos;
+	const currentPartDifficulty = dunkInfos[dunkInfoKey][dunk[part]].difficulty;
+
+	return { currentPartDifficulty, infos };
 };
 
 // Decrease difficulty a bit, but keep above minScoreNeeded
@@ -104,11 +109,7 @@ const makeDunkEasier = (
 	};
 
 	for (const part of parts) {
-		const infos = getDunkInfosPart(part, newDunk);
-
-		const dunkInfoKey = getDunkInfoKey(part);
-		const currentPartDifficulty =
-			dunkInfos[dunkInfoKey][newDunk[part]].difficulty;
+		const { currentPartDifficulty, infos } = getDunkInfosPart(part, newDunk);
 
 		// Pick part that keeps us under difficulty target
 		const candidates = Object.entries(infos).filter(([key, info]) => {
@@ -146,7 +147,37 @@ const makeDunkEasier = (
 };
 
 // Increase difficulty so it's at least minScoreNeeded
-const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {};
+const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
+	const parts: DunkPart[] = ["toss", "distance", "move1", "move2"];
+	random.shuffle(parts);
+
+	const newDunk = {
+		...dunk,
+	};
+
+	OUTER_LOOP: while (true) {
+		for (const part of parts) {
+			const { currentPartDifficulty, infos } = getDunkInfosPart(part, newDunk);
+
+			const candidates = Object.entries(infos).filter(
+				([, info]) => currentPartDifficulty > info.difficulty,
+			);
+			if (candidates.length === 0) {
+				continue;
+			}
+
+			// If there are parts with higher difficulty, move up to the next highest one
+			const candidate = orderBy(candidates, "difficulty", "asc")[0];
+			newDunk[part] = candidate[0];
+
+			if (getDunkScoreRaw(newDunk) > minScoreNeeded) {
+				break OUTER_LOOP;
+			}
+		}
+	}
+
+	return newDunk;
+};
 
 const genDunk = (preDunkInfo: PreDunkInfo) => {
 	let dunk: DunkAttempt;
@@ -169,9 +200,20 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 			"some difficulty based on 50% chance of success";
 		if (targetDifficulty > MAX_SCORE_DIFFICULTY) {
 			targetDifficulty = MAX_SCORE_DIFFICULTY;
-		} else if (preDunkInfo.minScoreNeeded !== undefined) {
-			const minDifficultyNeeded = scoreToDifficulty(preDunkInfo.minScoreNeeded);
+		} else if (
+			preDunkInfo.minScoreNeeded !== undefined &&
+			preDunkInfo.lastDunkerInRound
+		) {
+			// We know there are no more dunkers, so we know we don't need anything too hard.
+			// +2 is a fudge factor to give it a chance to exceed the minimum score needed.
+			const minDifficultyNeeded =
+				scoreToDifficulty(preDunkInfo.minScoreNeeded) + 2;
 			if (minDifficultyNeeded < targetDifficulty) {
+				console.log(
+					"LAST DUNKER IN ROUND",
+					getMinScoreNeeded,
+					minDifficultyNeeded,
+				);
 				targetDifficulty = minDifficultyNeeded;
 			}
 		}
@@ -188,30 +230,30 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 
 		let difficulty = 0;
 
-		for (const part of parts) {
-			const infos = getDunkInfosPart(part, dunk);
+		// Since we're randomly picking parts, do 2 iterations to ensure we get closer to targetDifficulty
+		const NUM_ITERATIONS = 2;
+		for (let i = 0; i < NUM_ITERATIONS; i++) {
+			for (const part of parts) {
+				const { currentPartDifficulty, infos } = getDunkInfosPart(part, dunk);
 
-			// Pick part that keeps us under difficulty target
+				// Pick part that keeps us under difficulty target
+				const candidates = Object.entries(infos).filter(
+					([, info]) =>
+						difficulty + info.difficulty - currentPartDifficulty <=
+							targetDifficulty && info.difficulty > currentPartDifficulty,
+				);
+				if (candidates.length === 0) {
+					continue;
+				}
 
-			const candidates = Object.entries(infos).filter(
-				([, info]) =>
-					difficulty + info.difficulty <= targetDifficulty &&
-					info.difficulty > 0,
-			);
-			if (candidates.length === 0) {
-				continue;
+				const candidate = random.choice(candidates);
+
+				dunk[part] = candidate[0];
+				difficulty = getDifficulty(dunk);
 			}
-
-			// More likely to pick harder ones, but not guaranteed
-			const candidate = random.choice(
-				candidates,
-				([, info]) => info.difficulty,
-			);
-
-			dunk[part] = candidate[0];
-			difficulty += candidate[1].difficulty;
 		}
 
+		// If difficulty is still not enough for minScoreNeeded, make it happen
 		if (
 			preDunkInfo.minScoreNeeded !== undefined &&
 			scoreToDifficulty(preDunkInfo.minScoreNeeded) > difficulty
@@ -279,11 +321,35 @@ const getNextDunkerIndex = (dunk: Dunk) => {
 	return currentRound.dunkers[currentRound.dunks.length % numDunkersThisRound];
 };
 
+const getDunkerRating = ({ jmp, dnk }: { jmp: number; dnk: number }) =>
+	(2 * jmp + dnk) / 3;
+
+const difficultyToProbability = (difficulty: number, dunkerRating: number) => {
+	// 1 for 10 rating, 0.5 for 90 rating
+	const k = ((dunkerRating - 10) * (0.5 - 1)) / (90 - 10) + 1;
+
+	// 90 rating -> 50% chance at doing an 8
+	// 10 rating -> 50% chance at doing a 1
+	const midpoint = ((dunkerRating - 10) * (8 - 1)) / (90 - 10) + 1;
+
+	return 1 / (1 + Math.exp(-k * (difficulty - midpoint)));
+};
+
+const probabilityToDifficulty = (
+	probability: number,
+	dunkerRating: number,
+) => {};
+
 const getDunkOutcome = async (
 	dunkAttempt: DunkAttempt,
 	preDunkInfo: PreDunkInfo,
 ) => {
-	return Math.random() < 0.5;
+	const difficulty = getDifficulty(dunkAttempt);
+
+	return (
+		Math.random() <
+		difficultyToProbability(difficulty, getDunkerRating(preDunkInfo))
+	);
 };
 
 // If some dunks have already happened in this round, what's the minimum score this dunk needs to stay alive for the next round?
@@ -329,19 +395,12 @@ const getMinScoreNeeded = (
 	const currentScore = scoresByIndex[nextDunkerIndex]?.score ?? 0;
 
 	const otherScores = orderBy(
-		Object.values(scoresByIndex)
-			.filter(row => row.index !== nextDunkerIndex)
-			.map(row => ({
-				...row,
-				minScore:
-					row.score +
-					(numDunksPerPlayer - row.numDunks) * LOWEST_POSSIBLE_SCORE,
-			})),
-		"minScore",
+		Object.values(scoresByIndex).filter(row => row.index !== nextDunkerIndex),
+		"score",
 		"desc",
 	);
 
-	const target = otherScores[numPlayersAdvance - 1]?.minScore;
+	const target = otherScores[numPlayersAdvance - 1]?.score;
 
 	if (target === undefined) {
 		return undefined;
@@ -394,7 +453,7 @@ export const simNextDunkEvent = async (
 		if (lastDunk.made) {
 			lastDunk.score = getDunkScore(lastDunk.attempts.at(-1));
 		} else {
-			lastDunk.score = LOWEST_POSSIBLE_SCORE;
+			lastDunk.score = MISS_SCORE;
 		}
 
 		stillSamePlayersTurn = false;
@@ -422,6 +481,7 @@ export const simNextDunkEvent = async (
 			numPriorAttempts: lastDunk.attempts.length,
 			priorAttempt: lastDunk.attempts.at(-1),
 			minScoreNeeded: getMinScoreNeeded(currentRound, nextDunkerIndex),
+			lastDunkerInRound: currentRound.dunkers.at(-1) === nextDunkerIndex,
 		};
 
 		const dunkToAttempt = genDunk(preDunkInfo);

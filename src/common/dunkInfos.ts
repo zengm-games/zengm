@@ -5,6 +5,7 @@ const dunkInfos: Record<
 		{
 			name: string;
 			difficulty: number;
+			group?: string;
 		}
 	>
 > = {
@@ -15,11 +16,11 @@ const dunkInfos: Record<
 		},
 		"half-court": {
 			name: "from half court, catch off the bounce",
-			difficulty: 3,
+			difficulty: 2,
 		},
 		"three-point": {
 			name: "from the three point line, catch off the bounce",
-			difficulty: 2,
+			difficulty: 1.5,
 		},
 		"free-throw": {
 			name: "from the free throw line, catch off the backboard",
@@ -27,11 +28,11 @@ const dunkInfos: Record<
 		},
 		side: {
 			name: "off the side of the backboard",
-			difficulty: 2,
+			difficulty: 1.5,
 		},
 		back: {
 			name: "off the back of the backboard",
-			difficulty: 3,
+			difficulty: 2,
 		},
 	},
 	distance: {
@@ -58,7 +59,7 @@ const dunkInfos: Record<
 			difficulty: 0,
 		},
 		windmill: {
-			name: "windmil",
+			name: "windmill",
 			difficulty: 1,
 		},
 		"between-legs": {
@@ -80,30 +81,37 @@ const dunkInfos: Record<
 		"spin-180": {
 			name: "180°",
 			difficulty: 1,
+			group: "spin",
 		},
 		"spin-360": {
 			name: "360°",
 			difficulty: 2,
+			group: "spin",
 		},
 		"spin-540": {
 			name: "540°",
 			difficulty: 4,
+			group: "spin",
 		},
 		"spin-720": {
 			name: "720°",
 			difficulty: 8,
+			group: "spin",
 		},
 		"over-sitting": {
 			name: "jump over sitting person",
 			difficulty: 1,
+			group: "over",
 		},
 		"over-short": {
 			name: "jump over a short person",
 			difficulty: 2,
+			group: "over",
 		},
 		"over-tall": {
 			name: "jump over a tall person",
-			difficulty: 4,
+			difficulty: 3,
+			group: "over",
 		},
 	},
 };

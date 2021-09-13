@@ -62,7 +62,7 @@ const getDifficulty = (dunkAttempt: DunkAttempt) => {
 		}
 	}
 
-	return total + 0.5 * numMoreThan0;
+	return total + numMoreThan0;
 };
 
 // 8 is a 55, meaning even with randomness an 8 is always a 50
@@ -81,10 +81,18 @@ const getDunkScoreRaw = (dunkAttempt: DunkAttempt) => {
 	return scoreRaw;
 };
 
-const getDunkScore = (dunkAttempt: DunkAttempt) => {
+const getDunkScore = (dunkAttempt: DunkAttempt, numAttempts: number) => {
+	// Higher scores for fewer attempts
+	let numAttemptsBonus = 0;
+	if (numAttempts === 1) {
+		numAttemptsBonus = 2;
+	} else if (numAttempts === 3) {
+		numAttemptsBonus = -2;
+	}
+
 	return Math.round(
 		helpers.bound(
-			getDunkScoreRaw(dunkAttempt) + random.randInt(-5, 5),
+			getDunkScoreRaw(dunkAttempt) + numAttemptsBonus + random.randInt(-5, 5),
 			LOWEST_POSSIBLE_SCORE,
 			HIGHEST_POSSIBLE_SCORE,
 		),
@@ -478,7 +486,10 @@ export const simNextDunkEvent = async (
 	) {
 		// Score previous dunk
 		if (lastDunk.made) {
-			lastDunk.score = getDunkScore(lastDunk.attempts.at(-1));
+			lastDunk.score = getDunkScore(
+				lastDunk.attempts.at(-1),
+				lastDunk.attempts.length,
+			);
 		} else {
 			lastDunk.score = MISS_SCORE;
 		}

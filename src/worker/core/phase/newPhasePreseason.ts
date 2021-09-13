@@ -256,7 +256,7 @@ const newPhasePreseason = async (
 				})} uncovered evidence that ${name}`,
 				`Internet sleuths on Twitter uncovered evidence that ${name}`,
 				`In an emotional interview on 60 Minutes, ${name} admitted that he`,
-				`During a preaseason locker room interview, ${name} accidentally revealed that he`,
+				`During a preseason locker room interview, ${name} accidentally revealed that he`,
 				`In a Reddit AMA, ${name} confirmed that he`,
 				`A recent Wikileaks report revealed that ${name}`,
 				`A foreign ID from the stolen luggage of ${name} revealed he`,

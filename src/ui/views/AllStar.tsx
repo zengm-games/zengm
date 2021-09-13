@@ -3,6 +3,8 @@ import { helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 
+const style = { maxWidth: "18rem" };
+
 const AllStar = ({ showDunk }: View<"allStar">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not implemented");
@@ -11,9 +13,14 @@ const AllStar = ({ showDunk }: View<"allStar">) => {
 	useTitleBar({ title: "All-Star Events" });
 
 	return (
-		<div className="d-sm-flex">
+		<div
+			className="d-flex flex-wrap"
+			style={{
+				gap: "1rem",
+			}}
+		>
 			{showDunk ? (
-				<div className="card" style={{ maxWidth: "18rem" }}>
+				<div className="card" style={style}>
 					<div className="card-body">
 						<h3 className="card-title">Slam Dunk Contest</h3>
 						<p className="card-text">
@@ -28,10 +35,7 @@ const AllStar = ({ showDunk }: View<"allStar">) => {
 					</div>
 				</div>
 			) : null}
-			<div
-				className={`card ${showDunk ? "ml-sm-3 mt-3 mt-sm-0" : ""}`}
-				style={{ maxWidth: "18rem" }}
-			>
+			<div className="card" style={style}>
 				<div className="card-body">
 					<h3 className="card-title">All-Star Draft</h3>
 					<p className="card-text">
@@ -43,6 +47,20 @@ const AllStar = ({ showDunk }: View<"allStar">) => {
 						className="btn btn-primary stretched-link"
 					>
 						Start the draft
+					</a>
+				</div>
+			</div>
+			<div className="card" style={style}>
+				<div className="card-body">
+					<h3 className="card-title">All-Star History</h3>
+					<p className="card-text">
+						Summary of All-Star Game and contest results for past seasons
+					</p>
+					<a
+						href={helpers.leagueUrl(["all_star", "history"])}
+						className="btn btn-primary stretched-link"
+					>
+						View history
 					</a>
 				</div>
 			</div>

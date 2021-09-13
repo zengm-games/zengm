@@ -188,7 +188,11 @@ const Log = ({
 									Move 2: {dunkInfos.move[event.dunk.move2].name}
 								</>
 							) : null}
-							{event.made ? <p>He made it!</p> : <p>He missed it!</p>}
+							{event.made ? (
+								<p className="text-success">He made it!</p>
+							) : (
+								<p className="text-danger">He missed it!</p>
+							)}
 						</li>
 					);
 				}
@@ -273,7 +277,7 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 		<div className={classNames("mb-3", classNameTop)}>
 			<h3>{name}</h3>
 			<div
-				className="d-sm-flex"
+				className="d-flex flex-wrap"
 				style={{
 					gap: "1rem",
 				}}
@@ -345,7 +349,7 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 						Projected score:{" "}
 						<span className="text-info">{projected.score}</span>
 					</h3>
-					<h3>
+					<h3 className="mb-0">
 						Success rate:{" "}
 						<span className="text-info">
 							{Math.round(projected.prob * 100)}%

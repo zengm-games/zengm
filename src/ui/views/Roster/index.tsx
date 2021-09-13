@@ -178,9 +178,12 @@ const Roster = ({
 				rowClassName={({ index, isDragged, value: p }) =>
 					classNames({
 						separator:
-							isSport("basketball") &&
-							index === numPlayersOnCourt - 1 &&
-							!isDragged,
+							(isSport("basketball") &&
+								index === numPlayersOnCourt - 1 &&
+								!isDragged) ||
+							(!isSport("basketball") &&
+								playersSorted[index + 1] &&
+								p.ratings.pos !== playersSorted[index + 1].ratings.pos),
 						"table-danger": p.hof,
 						"table-info": p.tid === tid && season !== currentSeason,
 					})

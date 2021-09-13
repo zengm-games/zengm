@@ -379,6 +379,33 @@ const AllStarDunk = ({
 
 	const [paused, setPaused] = useState(true);
 
+	useEffect(() => {
+		let obsolete = false;
+
+		const run = async () => {
+			if (!paused) {
+				if (awaitingUserDunkIndex !== undefined) {
+					setPaused(true);
+				} else {
+					await new Promise<void>(resolve => {
+						setTimeout(() => {
+							resolve();
+						}, 2000);
+					});
+					if (!obsolete) {
+						await toWorker("main", "dunkSimNext", "event");
+					}
+				}
+			}
+		};
+
+		run();
+
+		return () => {
+			obsolete = true;
+		};
+	}, [awaitingUserDunkIndex, log, paused]);
+
 	useTitleBar({
 		title: "Slam Dunk Contest",
 		dropdownView: "all_star_dunk",

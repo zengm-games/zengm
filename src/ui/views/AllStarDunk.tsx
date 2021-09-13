@@ -581,6 +581,16 @@ const AllStarDunk = ({
 				<PlayPauseNext
 					className="mb-3"
 					fastForwards={[
+						...(dunk.controlling.length > 0
+							? [
+									{
+										label: "Until your next dunk",
+										onClick: async () => {
+											await toWorker("main", "dunkSimNext", "your");
+										},
+									},
+							  ]
+							: []),
 						{
 							label: "Complete one dunk",
 							onClick: async () => {

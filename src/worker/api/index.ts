@@ -973,20 +973,41 @@ const dunkSetPlayers = async (
 };
 
 const dunkSimNext = async (
-	type: "event" | "dunk" | "round" | "all",
+	type: "event" | "dunk" | "round" | "all" | "your",
 	conditions: Conditions,
 ) => {
-	const types: typeof type[] = ["event", "dunk", "round", "all"];
+	if (type === "your") {
+		const allStars = await idb.cache.allStars.get(g.get("season"));
+		const dunk = allStars?.dunk;
+		if (dunk) {
+			while (true) {
+				const awaitingUserDunkIndex =
+					allStar.dunkContest.getAwaitingUserDunkIndex(dunk);
+				if (awaitingUserDunkIndex !== undefined) {
+					// Found user dunk
+					break;
+				}
 
-	// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
+				const newType = await allStar.dunkContest.simNextDunkEvent(conditions);
+				if (newType === "all") {
+					// Contest over
+					break;
+				}
+			}
+		}
+	} else {
+		const types: typeof type[] = ["event", "dunk", "round", "all"];
 
-	const targetIndex = types.indexOf(type);
+		// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
 
-	while (true) {
-		const newType = await allStar.dunkContest.simNextDunkEvent(conditions);
-		const newIndex = types.indexOf(newType);
-		if (newIndex >= targetIndex) {
-			break;
+		const targetIndex = types.indexOf(type);
+
+		while (true) {
+			const newType = await allStar.dunkContest.simNextDunkEvent(conditions);
+			const newIndex = types.indexOf(newType);
+			if (newIndex >= targetIndex) {
+				break;
+			}
 		}
 	}
 

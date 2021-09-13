@@ -106,7 +106,7 @@ export const dunkInfos: Record<
 		},
 		"over-tall": {
 			name: "jump over a tall person",
-			difficulty: 3,
+			difficulty: 4,
 			group: "over",
 		},
 	},

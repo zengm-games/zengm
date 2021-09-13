@@ -106,10 +106,13 @@ const create = async (conditions: Conditions) => {
 			prevWinnerPid = lastYear.dunk.players[lastYear.dunk.winner].pid;
 		}
 
+		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+
 		const dunkers = orderBy(
-			(
-				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
-			).filter(p => p.injury.gamesRemaining === 0),
+			activePlayers.filter(p => p.injury.gamesRemaining === 0),
 			[
 				p => (p.pid === prevWinnerPid ? 1 : 0),
 				p => {
@@ -136,6 +139,12 @@ const create = async (conditions: Conditions) => {
 				}
 			}
 
+			const orderedByHeight = orderBy(
+				activePlayers,
+				p => p.ratings.at(-1).hgt,
+				"desc",
+			);
+
 			allStars.dunk = {
 				players: dunkers as any,
 				rounds: [
@@ -146,6 +155,8 @@ const create = async (conditions: Conditions) => {
 					},
 				],
 				controlling,
+				pidsShort: [orderedByHeight.at(-1).pid, orderedByHeight.at(-2).pid],
+				pidsTall: [orderedByHeight[0].pid, orderedByHeight[1].pid],
 			};
 		}
 	}

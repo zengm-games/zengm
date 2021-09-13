@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
+import { helpers, toWorker, useLocal } from "../util";
 import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
@@ -14,6 +14,7 @@ import { isSport } from "../../common";
 import SelectMultiple from "../components/SelectMultiple";
 import { dunkInfos, getValidMoves } from "../../common/dunkContest";
 import classNames from "classnames";
+import { getHeightString } from "../components/Height";
 
 const EditContestants = ({
 	allPossibleContestants,
@@ -92,6 +93,91 @@ const EditContestants = ({
 
 const alertStyle = {
 	maxWidth: 600,
+};
+
+const getReplaceInfo = ({
+	dunk,
+	pid,
+	text,
+}: {
+	dunk: View<"allStarDunk">["dunk"];
+	pid: number;
+	text: string;
+}) => {
+	let replaceInfo;
+
+	if (text.endsWith("a short person")) {
+		const p = dunk.playersShort.find(p => p?.pid !== pid);
+		if (p) {
+			replaceInfo = {
+				...p,
+				partialText: text.replace("a short person", ""),
+			};
+		}
+	} else if (text.endsWith("a tall person")) {
+		const p = dunk.playersTall.find(p => p?.pid !== pid);
+		if (p) {
+			replaceInfo = {
+				...p,
+				partialText: text.replace("a tall person", ""),
+			};
+		}
+	}
+
+	return replaceInfo;
+};
+
+const MoveText = ({
+	dunk,
+	pid,
+	move,
+}: {
+	dunk: View<"allStarDunk">["dunk"];
+	pid: number;
+	move: string;
+}) => {
+	const text = dunkInfos.move[move].name;
+
+	const replaceInfo = getReplaceInfo({ dunk, pid, text });
+
+	if (replaceInfo) {
+		return (
+			<>
+				{replaceInfo.partialText}
+				<a href={helpers.leagueUrl(["player", replaceInfo.pid])}>
+					{replaceInfo.name}
+				</a>{" "}
+				(<Height inches={replaceInfo.hgt} />)
+			</>
+		);
+	}
+
+	return <>{text}</>;
+};
+
+const moveText = ({
+	dunk,
+	pid,
+	move,
+	units,
+}: {
+	dunk: View<"allStarDunk">["dunk"];
+	pid: number;
+	move: string;
+	units: "metric" | "us";
+}) => {
+	const text = dunkInfos.move[move].name;
+
+	const replaceInfo = getReplaceInfo({ dunk, pid, text });
+
+	if (replaceInfo) {
+		return `${replaceInfo.partialText}${replaceInfo.name} (${getHeightString(
+			replaceInfo.hgt,
+			units,
+		)})`;
+	}
+
+	return text;
 };
 
 const classNameTop = "border-top-light pt-3";
@@ -178,14 +264,17 @@ const Log = ({
 							{actualMoves.length === 1 ? (
 								<>
 									<br />
-									Move: {dunkInfos.move[actualMoves[0]].name}
+									Move:{" "}
+									<MoveText dunk={dunk} pid={p.pid} move={actualMoves[0]} />
 								</>
 							) : actualMoves.length === 2 ? (
 								<>
 									<br />
-									Move 1: {dunkInfos.move[event.dunk.move1].name}
+									Move 1:{" "}
+									<MoveText dunk={dunk} pid={p.pid} move={event.dunk.move1} />
 									<br />
-									Move 2: {dunkInfos.move[event.dunk.move2].name}
+									Move 2:{" "}
+									<MoveText dunk={dunk} pid={p.pid} move={event.dunk.move2} />
 								</>
 							) : null}
 							{event.made ? (
@@ -219,8 +308,14 @@ const Log = ({
 	);
 };
 
-const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
-	const [dunk, setDunk] = useState({
+const UserDunkForm = ({
+	dunk,
+	index,
+}: {
+	dunk: View<"allStarDunk">["dunk"];
+	index: number;
+}) => {
+	const [dunkAttempt, setDunkAttempt] = useState({
 		toss: "none",
 		distance: "at-rim",
 		move1: "none",
@@ -237,14 +332,18 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 			const newProjected = await toWorker(
 				"main",
 				"dunkGetProjected",
-				dunk,
+				dunkAttempt,
 				index,
 			);
 			setProjected(newProjected);
 		};
 
 		updateProjeted();
-	}, [dunk, index]);
+	}, [dunkAttempt, index]);
+
+	const units = useLocal(state => state.units);
+
+	const name = dunk.players[index].name;
 
 	const fields: {
 		key: keyof DunkAttempt;
@@ -264,12 +363,12 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 		{
 			key: "move1",
 			label: "Move 1",
-			options: getValidMoves(dunk.move2),
+			options: getValidMoves(dunkAttempt.move2),
 		},
 		{
 			key: "move2",
 			label: "Move 2",
-			options: getValidMoves(dunk.move1),
+			options: getValidMoves(dunkAttempt.move1),
 		},
 	];
 
@@ -288,7 +387,7 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 
 						setSubmitted(true);
 
-						await toWorker("main", "dunkUser", dunk, index);
+						await toWorker("main", "dunkUser", dunkAttempt, index);
 
 						setSubmitted(false);
 					}}
@@ -315,18 +414,25 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 							<div className="flex-grow-1">
 								<select
 									id="user-dunk-toss"
-									value={dunk[key]}
+									value={dunkAttempt[key]}
 									className="form-control"
 									onChange={event => {
-										setDunk({
-											...dunk,
+										setDunkAttempt({
+											...dunkAttempt,
 											[key]: event.currentTarget.value,
 										});
 									}}
 								>
 									{Object.entries(options).map(([name, info]) => (
 										<option key={name} value={name}>
-											{info.name}
+											{key.startsWith("move")
+												? moveText({
+														dunk,
+														pid: dunk.players[index].pid,
+														move: name,
+														units,
+												  })
+												: info.name}
 										</option>
 									))}
 								</select>
@@ -651,10 +757,7 @@ const AllStarDunk = ({
 			) : null}
 
 			{awaitingUserDunkIndex !== undefined ? (
-				<UserDunkForm
-					index={awaitingUserDunkIndex}
-					name={dunk.players[awaitingUserDunkIndex].name}
-				/>
+				<UserDunkForm dunk={dunk} index={awaitingUserDunkIndex} />
 			) : null}
 
 			<Log dunk={dunk} log={log} season={season} />

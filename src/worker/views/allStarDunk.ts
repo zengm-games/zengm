@@ -5,6 +5,25 @@ import { g, getTeamInfoBySeason, helpers } from "../util";
 import orderBy from "lodash-es/orderBy";
 import { isSport, PHASE } from "../../common";
 
+const getShortTall = async (pids: [number, number]) => {
+	if (!pids) {
+		return [];
+	}
+
+	return Promise.all(
+		pids.map(async pid => {
+			const p = await idb.getCopy.players({ pid });
+			if (p) {
+				return {
+					pid: p.pid,
+					name: `${p.firstName} ${p.lastName}`,
+					hgt: p.hgt,
+				};
+			}
+		}),
+	);
+};
+
 const updateAllStarDunk = async (
 	{ season }: ViewInput<"allStarDunk">,
 	updateEvents: UpdateEvents,
@@ -174,10 +193,16 @@ const updateAllStarDunk = async (
 		const awaitingUserDunkIndex =
 			allStar.dunkContest.getAwaitingUserDunkIndex(dunk);
 
+		const dunkAugmented = {
+			...dunk,
+			playersShort: await getShortTall(dunk.pidsShort),
+			playersTall: await getShortTall(dunk.pidsTall),
+		};
+
 		return {
 			allPossibleContestants,
 			awaitingUserDunkIndex,
-			dunk,
+			dunk: dunkAugmented,
 			godMode,
 			log,
 			players,

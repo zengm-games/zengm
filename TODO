@@ -1,16 +1,5 @@
 mood stuff is sometimes added to player objects right from cache - see player.moodInfos calls!
 
-all-star weekend
-- need randomness in player selection? too many same?
-- blog
-  - can control players on your team, or any player in god mode
-  - reigning winner must compete
-  - shows up as award on player pages, awards history. including for historical leagues
-  - can edit contestants before it starts in god mode
-  - all-star history table includes dunk contest result and link to past drafts
-  - scoring 0-50 rather than 30-50
-  - dunkers are kind of smart. like they know how hard/easy a dunk they need to do to win their round.
-
 joe fulks ws wrong in goat lab with formula -ows https://discord.com/channels/290013534023057409/739632130275016704/885507841522282566
 
 refactor SelectMultiple

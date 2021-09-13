@@ -141,6 +141,10 @@ export type AllStars = {
 
 		// Index of players array above. Undefined if still in progress
 		winner?: number;
+
+		// 2 players each because you can't jump over yourself, but the tallest/shortest player might be a contestant
+		pidsTall: [number, number];
+		pidsShort: [number, number];
 	};
 };
 

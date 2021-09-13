@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { local, useLocal } from "../util";
 
-const getHeightString = (inches: number, units: "metric" | "us") => {
+export const getHeightString = (inches: number, units: "metric" | "us") => {
 	if (units === "metric") {
 		return `${Math.round(inches * 2.54)} cm`;
 	}

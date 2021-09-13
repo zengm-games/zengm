@@ -26,7 +26,7 @@ const Injuries = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
-		"Type",
+		"TypeInjury",
 		"Games",
 		"Ovr Drop",
 		"Pot Drop",

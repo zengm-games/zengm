@@ -2353,7 +2353,11 @@ const cols: {
 		sortType: "number",
 	},
 	Type: {
-		desc: "Type of game",
+		desc: "Type of Game",
+	},
+	TypeInjury: {
+		desc: "Type of Injury",
+		title: "Type",
 	},
 	W: {
 		desc: "Wins",

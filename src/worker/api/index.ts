@@ -87,6 +87,7 @@ import type {
 	Team,
 	GameAttribute,
 	AllStars,
+	DunkAttempt,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -918,6 +919,36 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	}
 };
 
+const dunkGetProjected = async (dunkAttempt: DunkAttempt, index: number) => {
+	let score = 0;
+	let prob = 0;
+
+	const allStars = await idb.cache.allStars.get(g.get("season"));
+	const dunk = allStars?.dunk;
+	if (dunk) {
+		const pid = dunk.players[index].pid;
+		const p = await idb.cache.players.get(pid);
+		if (p) {
+			score = helpers.bound(
+				allStar.dunkContest.getDunkScoreRaw(dunkAttempt),
+				allStar.dunkContest.LOWEST_POSSIBLE_SCORE,
+				allStar.dunkContest.HIGHEST_POSSIBLE_SCORE,
+			);
+
+			const difficulty = allStar.dunkContest.getDifficulty(dunkAttempt);
+			prob = allStar.dunkContest.difficultyToProbability(
+				difficulty,
+				allStar.dunkContest.getDunkerRating(p.ratings.at(-1)),
+			);
+		}
+	}
+
+	return {
+		score,
+		prob,
+	};
+};
+
 const dunkSetControlling = async (controlling: number[]) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const dunk = allStars?.dunk;
@@ -958,6 +989,18 @@ const dunkSimNext = async (
 		}
 	}
 
+	await toUI("realtimeUpdate", [["allStarDunk"]]);
+};
+
+const dunkUser = async (
+	dunkAttempt: DunkAttempt,
+	index: number,
+	conditions: Conditions,
+) => {
+	await allStar.dunkContest.simNextDunkEvent(conditions, {
+		dunkAttempt,
+		index,
+	});
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 
@@ -3652,9 +3695,11 @@ export default {
 	discardUnsavedProgress,
 	draftLottery,
 	draftUser,
+	dunkGetProjected,
 	dunkSetControlling,
 	dunkSetPlayers,
 	dunkSimNext,
+	dunkUser,
 	evalOnWorker,
 	exportDraftClass,
 	exportLeague,

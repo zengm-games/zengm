@@ -171,8 +171,30 @@ const updateAllStarDunk = async (
 			}));
 		}
 
+		let awaitingUserDunk;
+		if (dunk.controlling.length > 0) {
+			const nextDunkerIndex = allStar.dunkContest.getNextDunkerIndex(dunk);
+			if (
+				nextDunkerIndex !== undefined &&
+				dunk.controlling.includes(nextDunkerIndex)
+			) {
+				// Need to tell if there is actually a dunk upcoming, or we're just waiting for a score
+				const lastDunk = dunk.rounds.at(-1).dunks.at(-1);
+				if (
+					!lastDunk ||
+					lastDunk.index !== nextDunkerIndex ||
+					(!lastDunk.made &&
+						lastDunk.attempts.length <
+							allStar.dunkContest.NUM_ATTEMPTS_PER_DUNK)
+				) {
+					awaitingUserDunk = nextDunkerIndex;
+				}
+			}
+		}
+
 		return {
 			allPossibleContestants,
+			awaitingUserDunk,
 			dunk,
 			godMode,
 			log,

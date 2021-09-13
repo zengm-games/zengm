@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
-import type { Player, View } from "../../common/types";
+import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
 	PlayerNameLabels,
@@ -9,9 +9,11 @@ import {
 	ResponsiveTableWrapper,
 	Weight,
 } from "../components";
-import { useState } from "react";
-import { dunkInfos, isSport } from "../../common";
+import { useEffect, useState } from "react";
+import { isSport } from "../../common";
 import SelectMultiple from "../components/SelectMultiple";
+import { dunkInfos, getValidMoves } from "../../common/dunkContest";
+import classNames from "classnames";
 
 const EditContestants = ({
 	allPossibleContestants,
@@ -92,6 +94,8 @@ const alertStyle = {
 	maxWidth: 600,
 };
 
+const classNameTop = "border-top-light pt-3";
+
 const Log = ({
 	dunk,
 	log,
@@ -99,12 +103,10 @@ const Log = ({
 }: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
 	const logReverse = [...log].reverse();
 
-	const className = "border-top-light pt-3";
-
 	return (
 		<ul className="list-unstyled mb-0">
 			{dunk.winner !== undefined ? (
-				<li className={className}>
+				<li className={classNameTop}>
 					<p className="alert alert-success d-inline-block" style={alertStyle}>
 						{dunk.players[dunk.winner].name} is your {season} slam dunk contest
 						champion!
@@ -116,7 +118,7 @@ const Log = ({
 
 				if (event.type === "round") {
 					return (
-						<li key={key} className={className}>
+						<li key={key} className={classNameTop}>
 							<p
 								className={`alert alert-info d-inline-block${
 									event.num === 1 ? " mb-0" : ""
@@ -138,7 +140,7 @@ const Log = ({
 
 				if (event.type === "tiebreaker") {
 					return (
-						<li key={key} className={className}>
+						<li key={key} className={classNameTop}>
 							<p className="alert alert-info d-inline-block" style={alertStyle}>
 								<b>Tiebreaker.</b> Each player gets 3 attempts to make 1 dunk.
 							</p>
@@ -154,7 +156,7 @@ const Log = ({
 					);
 
 					return (
-						<li key={key} className={className}>
+						<li key={key} className={classNameTop}>
 							<b>
 								{p.name} attempts his
 								{event.num === 1
@@ -193,7 +195,7 @@ const Log = ({
 
 				if (event.type === "score") {
 					return (
-						<li key={key} className={className}>
+						<li key={key} className={classNameTop}>
 							{event.made ? (
 								<p>
 									The judges give him a {event.score}
@@ -202,7 +204,7 @@ const Log = ({
 							) : (
 								<p>
 									{p.name} failed to make a dunk, so the judges give him a{" "}
-									{event.score}, the lowest score possible.
+									{event.score}.
 								</p>
 							)}
 						</li>
@@ -213,8 +215,151 @@ const Log = ({
 	);
 };
 
+const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
+	const [dunk, setDunk] = useState({
+		toss: "none",
+		distance: "at-rim",
+		move1: "none",
+		move2: "none",
+	});
+	const [projected, setProjected] = useState({
+		score: 0,
+		prob: 0,
+	});
+	const [submitted, setSubmitted] = useState(false);
+
+	useEffect(() => {
+		const updateProjeted = async () => {
+			const newProjected = await toWorker(
+				"main",
+				"dunkGetProjected",
+				dunk,
+				index,
+			);
+			setProjected(newProjected);
+		};
+
+		updateProjeted();
+	}, [dunk, index]);
+
+	const fields: {
+		key: keyof DunkAttempt;
+		label: string;
+		options: typeof dunkInfos["toss"];
+	}[] = [
+		{
+			key: "toss",
+			label: "Toss",
+			options: dunkInfos.toss,
+		},
+		{
+			key: "distance",
+			label: "Distance",
+			options: dunkInfos.distance,
+		},
+		{
+			key: "move1",
+			label: "Move 1",
+			options: getValidMoves(dunk.move2),
+		},
+		{
+			key: "move2",
+			label: "Move 2",
+			options: getValidMoves(dunk.move1),
+		},
+	];
+
+	return (
+		<div className={classNames("mb-3", classNameTop)}>
+			<h3>{name}</h3>
+			<div
+				className="d-sm-flex"
+				style={{
+					gap: "1rem",
+				}}
+			>
+				<form
+					onSubmit={async event => {
+						event.preventDefault();
+
+						setSubmitted(true);
+
+						await toWorker("main", "dunkUser", dunk, index);
+
+						setSubmitted(false);
+					}}
+					style={{
+						maxWidth: 390,
+					}}
+				>
+					{fields.map(({ key, label, options }, i) => (
+						<div
+							key={key}
+							className={classNames(
+								"d-flex align-items-center",
+								i > 0 ? "mt-1" : undefined,
+							)}
+						>
+							<div
+								className="flex-shrink-0"
+								style={{
+									width: 90,
+								}}
+							>
+								{label}
+							</div>
+							<div className="flex-grow-1">
+								<select
+									id="user-dunk-toss"
+									value={dunk[key]}
+									className="form-control"
+									onChange={event => {
+										setDunk({
+											...dunk,
+											[key]: event.currentTarget.value,
+										});
+									}}
+								>
+									{Object.entries(options).map(([name, info]) => (
+										<option key={name} value={name}>
+											{info.name}
+										</option>
+									))}
+								</select>
+							</div>
+						</div>
+					))}
+
+					<div className="text-right mt-2">
+						<button
+							disabled={submitted}
+							type="submit"
+							className="btn btn-primary"
+						>
+							Attempt dunk
+						</button>
+					</div>
+				</form>
+				<div>
+					<h3>
+						Projected score:{" "}
+						<span className="text-info">{projected.score}</span>
+					</h3>
+					<h3>
+						Success rate:{" "}
+						<span className="text-info">
+							{Math.round(projected.prob * 100)}%
+						</span>
+					</h3>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const AllStarDunk = ({
 	allPossibleContestants,
+	awaitingUserDunk,
 	dunk,
 	log,
 	godMode,
@@ -461,6 +606,13 @@ const AllStarDunk = ({
 						await toWorker("main", "dunkSimNext", "event");
 					}}
 					paused={paused}
+				/>
+			) : null}
+
+			{awaitingUserDunk !== undefined ? (
+				<UserDunkForm
+					index={awaitingUserDunk}
+					name={dunk.players[awaitingUserDunk].name}
 				/>
 			) : null}
 

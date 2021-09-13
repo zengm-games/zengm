@@ -1,4 +1,4 @@
-const dunkInfos: Record<
+export const dunkInfos: Record<
 	"toss" | "distance" | "move",
 	Record<
 		string,
@@ -14,14 +14,6 @@ const dunkInfos: Record<
 			name: "none",
 			difficulty: 0,
 		},
-		"half-court": {
-			name: "from half court, catch off the bounce",
-			difficulty: 4,
-		},
-		"three-point": {
-			name: "from the three point line, catch off the bounce",
-			difficulty: 3,
-		},
 		"free-throw": {
 			name: "from the free throw line, catch off the backboard",
 			difficulty: 1,
@@ -30,23 +22,31 @@ const dunkInfos: Record<
 			name: "off the side of the backboard",
 			difficulty: 2,
 		},
+		"three-point": {
+			name: "from the three point line, catch off the bounce",
+			difficulty: 3,
+		},
+		"half-court": {
+			name: "from half court, catch off the bounce",
+			difficulty: 4,
+		},
 	},
 	distance: {
 		"at-rim": {
 			name: "right at the rim",
 			difficulty: 0,
 		},
-		"free-throw": {
-			name: "15 feet (free throw line)",
-			difficulty: 4,
+		"dotted-line": {
+			name: "9 feet (dotted line)",
+			difficulty: 1,
 		},
 		"twelve-feet": {
 			name: "12 feet",
 			difficulty: 2,
 		},
-		"dotted-line": {
-			name: "9 feet (dotted line)",
-			difficulty: 1,
+		"free-throw": {
+			name: "15 feet (free throw line)",
+			difficulty: 4,
 		},
 	},
 	move: {
@@ -58,17 +58,17 @@ const dunkInfos: Record<
 			name: "windmill",
 			difficulty: 1,
 		},
-		"between-legs": {
-			name: "between the legs",
-			difficulty: 3,
+		"double-clutch": {
+			name: "double clutch",
+			difficulty: 1,
 		},
 		"behind-back": {
 			name: "behind the back",
 			difficulty: 2,
 		},
-		"double-clutch": {
-			name: "double clutch",
-			difficulty: 1,
+		"between-legs": {
+			name: "between the legs",
+			difficulty: 3,
 		},
 		"honey-dip": {
 			name: "honey dip",
@@ -112,4 +112,21 @@ const dunkInfos: Record<
 	},
 };
 
-export default dunkInfos;
+export const getValidMoves = (otherMove: string) => {
+	const move1 = dunkInfos.move[otherMove];
+
+	const validMoves = {
+		...dunkInfos.move,
+	};
+	if (otherMove !== "none") {
+		delete validMoves[otherMove];
+	}
+	if (move1.group !== undefined) {
+		for (const move of Object.keys(validMoves)) {
+			if (validMoves[move].group === move1.group) {
+				delete validMoves[move];
+			}
+		}
+	}
+	return validMoves;
+};

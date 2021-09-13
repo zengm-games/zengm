@@ -2,7 +2,6 @@ export * from "./constants";
 export { default as applyRealTeamInfo } from "./applyRealTeamInfo";
 export { default as bySport } from "./bySport";
 export { default as createLogger } from "./createLogger";
-export { default as dunkInfos } from "./dunkInfos";
 export { default as fetchWrapper } from "./fetchWrapper";
 export { default as filterPlayerStats } from "./filterPlayerStats";
 export { default as gameAttributeHasHistory } from "./gameAttributeHasHistory";

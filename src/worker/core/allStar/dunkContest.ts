@@ -1,15 +1,15 @@
 import { orderBy } from "lodash";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
-import { dunkInfos } from "../../../common";
+import { dunkInfos, getValidMoves } from "../../../common/dunkContest";
 import { idb } from "../../db";
-import { g, helpers, loadNames, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
 import type { PlayerRatings } from "../../../common/types.basketball";
 
-const HIGHEST_POSSIBLE_SCORE = 50;
-const LOWEST_POSSIBLE_SCORE = 5;
+export const HIGHEST_POSSIBLE_SCORE = 50;
+export const LOWEST_POSSIBLE_SCORE = 5;
 const MISS_SCORE = 0;
-const NUM_ATTEMPTS_PER_DUNK = 3;
+export const NUM_ATTEMPTS_PER_DUNK = 3;
 export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
@@ -28,24 +28,7 @@ type PreDunkInfo = {
 
 type DunkPart = "toss" | "distance" | "move1" | "move2";
 
-const getValidMoves = (otherMove: string) => {
-	const move1 = dunkInfos.move[otherMove];
-
-	const validMoves = {
-		...dunkInfos.move,
-	};
-	delete validMoves[otherMove];
-	if (move1.group !== undefined) {
-		for (const move of Object.keys(validMoves)) {
-			if (validMoves[move].group === move1.group) {
-				delete validMoves[move];
-			}
-		}
-	}
-	return validMoves;
-};
-
-const getDifficulty = (dunkAttempt: DunkAttempt) => {
+export const getDifficulty = (dunkAttempt: DunkAttempt) => {
 	const difficulties = [
 		dunkInfos.toss[dunkAttempt.toss].difficulty,
 		dunkInfos.distance[dunkAttempt.distance].difficulty,
@@ -72,7 +55,7 @@ const difficultyToScore = (difficulty: number) =>
 const scoreToDifficulty = (score: number) =>
 	((score - LOWEST_POSSIBLE_SCORE) * MAX_SCORE_DIFFICULTY) / RANGE;
 
-const getDunkScoreRaw = (dunkAttempt: DunkAttempt) => {
+export const getDunkScoreRaw = (dunkAttempt: DunkAttempt) => {
 	const difficulty = getDifficulty(dunkAttempt);
 
 	// 8 is a 55, meaning even with randomness an 8 is always a 50
@@ -317,12 +300,12 @@ export const getRoundResults = (round: Dunk["rounds"][number]) => {
 };
 
 // Return undefined means contest is over or another round needs to be added
-const getNextDunkerIndex = (dunk: Dunk) => {
+export const getNextDunkerIndex = (dunk: Dunk) => {
 	const currentRound = dunk.rounds.at(-1);
 
-	// Another attempt at previous dunk needed
+	// Another attempt at previous dunk needed, or a prior dunk needs to be scored
 	const lastDunk = currentRound.dunks.at(-1);
-	if (lastDunk !== undefined && lastDunk.score === undefined) {
+	if (lastDunk && lastDunk.score === undefined) {
 		return lastDunk.index;
 	}
 
@@ -341,7 +324,7 @@ const getNextDunkerIndex = (dunk: Dunk) => {
 	return currentRound.dunkers[currentRound.dunks.length % numDunkersThisRound];
 };
 
-const getDunkerRating = ({ jmp, dnk }: { jmp: number; dnk: number }) =>
+export const getDunkerRating = ({ jmp, dnk }: { jmp: number; dnk: number }) =>
 	(2 * jmp + dnk) / 3;
 
 const logisticParams = (dunkerRating: number) => {
@@ -358,7 +341,14 @@ const logisticParams = (dunkerRating: number) => {
 	};
 };
 
-const difficultyToProbability = (difficulty: number, dunkerRating: number) => {
+export const difficultyToProbability = (
+	difficulty: number,
+	dunkerRating: number,
+) => {
+	if (difficulty === 0) {
+		return 1;
+	}
+
 	const { k, midpoint } = logisticParams(dunkerRating);
 
 	return 1 - 1 / (1 + Math.exp(-k * (difficulty - midpoint)));
@@ -452,6 +442,10 @@ const getMinScoreNeeded = (
 
 export const simNextDunkEvent = async (
 	conditions: Conditions,
+	userDunk?: {
+		dunkAttempt: DunkAttempt;
+		index: number;
+	},
 ): Promise<"event" | "dunk" | "round" | "all"> => {
 	let type: "event" | "dunk" | "round" | "all" = "event";
 
@@ -522,7 +516,15 @@ export const simNextDunkEvent = async (
 			lastDunkerInRound: currentRound.dunkers.at(-1) === nextDunkerIndex,
 		};
 
-		const dunkToAttempt = genDunk(preDunkInfo);
+		let dunkToAttempt;
+		if (userDunk) {
+			if (userDunk.index !== nextDunkerIndex) {
+				throw new Error("Mismatched dunker index");
+			}
+			dunkToAttempt = userDunk.dunkAttempt;
+		} else {
+			dunkToAttempt = genDunk(preDunkInfo);
+		}
 
 		const success = getDunkOutcome(dunkToAttempt, preDunkInfo);
 		lastDunk.attempts.push(dunkToAttempt);

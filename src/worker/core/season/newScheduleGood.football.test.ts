@@ -28,10 +28,10 @@ describe("worker/core/season/newScheduleGood", () => {
 			testHelpers.resetG();
 		});
 
-		test("schedule 256 games (16 each for 32 teams)", () => {
+		test("schedule 272 games (17 each for 32 teams)", () => {
 			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
-			assert.strictEqual(tids.length, 256);
+			assert.strictEqual(tids.length, 272);
 		});
 
 		test("schedule 8 home games and 8 away games for each team", () => {
@@ -54,7 +54,9 @@ describe("worker/core/season/newScheduleGood", () => {
 			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const numGames of [...Object.values(home), ...Object.values(away)]) {
-				assert.strictEqual(numGames, 8);
+				if (numGames !== 8 && numGames !== 9) {
+					throw new Error(`Got ${numGames} home/away games`);
+				}
 			}
 		});
 

@@ -9,7 +9,7 @@ import type { PlayerRatings } from "../../../common/types.basketball";
 export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;
 const MISS_SCORE = 0;
-export const NUM_ATTEMPTS_PER_DUNK = 3;
+const NUM_ATTEMPTS_PER_DUNK = 3;
 export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
@@ -438,6 +438,29 @@ const getMinScoreNeeded = (
 	}
 
 	return minScoreNeeded;
+};
+
+export const getAwaitingUserDunkIndex = (dunk: Dunk) => {
+	let awaitingUserDunkIndex;
+	if (dunk.controlling.length > 0) {
+		const nextDunkerIndex = getNextDunkerIndex(dunk);
+		if (
+			nextDunkerIndex !== undefined &&
+			dunk.controlling.includes(nextDunkerIndex)
+		) {
+			// Need to tell if there is actually a dunk upcoming, or we're just waiting for a score
+			const lastDunk = dunk.rounds.at(-1).dunks.at(-1);
+			if (
+				!lastDunk ||
+				lastDunk.index !== nextDunkerIndex ||
+				(!lastDunk.made && lastDunk.attempts.length < NUM_ATTEMPTS_PER_DUNK)
+			) {
+				awaitingUserDunkIndex = nextDunkerIndex;
+			}
+		}
+	}
+
+	return awaitingUserDunkIndex;
 };
 
 export const simNextDunkEvent = async (

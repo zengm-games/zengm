@@ -363,7 +363,7 @@ const UserDunkForm = ({ index, name }: { index: number; name: string }) => {
 
 const AllStarDunk = ({
 	allPossibleContestants,
-	awaitingUserDunk,
+	awaitingUserDunkIndex,
 	dunk,
 	log,
 	godMode,
@@ -613,10 +613,10 @@ const AllStarDunk = ({
 				/>
 			) : null}
 
-			{awaitingUserDunk !== undefined ? (
+			{awaitingUserDunkIndex !== undefined ? (
 				<UserDunkForm
-					index={awaitingUserDunk}
-					name={dunk.players[awaitingUserDunk].name}
+					index={awaitingUserDunkIndex}
+					name={dunk.players[awaitingUserDunkIndex].name}
 				/>
 			) : null}
 

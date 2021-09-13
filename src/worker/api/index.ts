@@ -114,6 +114,7 @@ import goatFormula from "../util/goatFormula";
 import getRandomTeams from "./getRandomTeams";
 import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
+import type { PlayerRatings } from "../../common/types.basketball";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -938,7 +939,7 @@ const dunkGetProjected = async (dunkAttempt: DunkAttempt, index: number) => {
 			const difficulty = allStar.dunkContest.getDifficulty(dunkAttempt);
 			prob = allStar.dunkContest.difficultyToProbability(
 				difficulty,
-				allStar.dunkContest.getDunkerRating(p.ratings.at(-1)),
+				allStar.dunkContest.getDunkerRating(p.ratings.at(-1) as PlayerRatings),
 			);
 		}
 	}

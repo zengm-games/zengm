@@ -91,7 +91,7 @@ const getDunkInfosPart = (part: DunkPart, dunk: DunkAttempt) => {
 	let infos;
 
 	if (part === "move1") {
-		infos = getValidMoves(dunk.move1);
+		infos = getValidMoves(dunk.move2);
 	} else if (part === "move2") {
 		infos = getValidMoves(dunk.move1);
 	} else {

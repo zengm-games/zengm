@@ -316,10 +316,8 @@ table {
 	font-variant: tabular-nums;
 }
 
-.table-bordered {
-	tbody tr.separator td {
-		border-bottom: 1px solid $gray-700;
-	}
+tr.separator td {
+	border-bottom: 1px solid $gray-700;
 }
 
 .roster-handle {

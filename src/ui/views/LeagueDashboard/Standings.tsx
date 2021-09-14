@@ -25,10 +25,10 @@ const Standings = ({
 	| "userTid"
 >) => (
 	<>
-		<table className="table table-striped table-bordered table-sm mb-1">
+		<table className="table table-striped table-sm mb-1">
 			<thead>
 				<tr>
-					<th style={width100}>Team</th>
+					<th style={width100}>Conference</th>
 					<ColPtsOrGB
 						alignRight
 						pointsFormula={pointsFormula}

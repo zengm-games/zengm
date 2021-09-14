@@ -470,6 +470,7 @@ const UserDunkForm = ({
 const AllStarDunk = ({
 	allPossibleContestants,
 	awaitingUserDunkIndex,
+	challengeNoRating,
 	dunk,
 	log,
 	godMode,
@@ -589,9 +590,13 @@ const AllStarDunk = ({
 								{p.age} <span title="Years Old">yo</span>,{" "}
 								<Height inches={p.hgt} />, <Weight pounds={p.weight} />
 								<br />
-								{p.ratings.ovr} ovr, {p.ratings.pot} pot, {p.ratings.jmp} jmp,{" "}
-								{p.ratings.dnk} dnk
-								<br />
+								{!challengeNoRating ? (
+									<>
+										{p.ratings.ovr} ovr, {p.ratings.pot} pot, {p.ratings.jmp}{" "}
+										jmp, {p.ratings.dnk} dnk
+										<br />
+									</>
+								) : null}
 								{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
 								{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
 								{helpers.roundStat(p.stats.ast, "ast")} ast

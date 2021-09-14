@@ -202,6 +202,7 @@ const updateAllStarDunk = async (
 		return {
 			allPossibleContestants,
 			awaitingUserDunkIndex,
+			challengeNoRating: g.get("challengeNoRatings"),
 			dunk: dunkAugmented,
 			godMode,
 			log,

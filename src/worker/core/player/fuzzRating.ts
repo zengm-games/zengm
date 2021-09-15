@@ -6,7 +6,7 @@ const fuzzRating = (rating: number, fuzz: number): number => {
 	// would be difficult to make available due to Firefox promise/IDB/worker issues.
 	if (
 		(g.hasOwnProperty("userTids") && g.get("userTids").length > 1) ||
-		g.get("godMode")
+		(g.hasOwnProperty("godMode") && g.get("godMode"))
 	) {
 		fuzz = 0;
 	}

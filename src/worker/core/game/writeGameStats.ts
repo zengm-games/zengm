@@ -612,7 +612,7 @@ const writeGameStats = async (
 		seriesWinner,
 	});
 
-	await idb.cache.games.add(gameStats);
+	await idb.cache.games.put(gameStats);
 };
 
 export default writeGameStats;

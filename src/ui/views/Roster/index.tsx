@@ -175,12 +175,10 @@ const Roster = ({
 				disabled={!editable}
 				values={playersSorted}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
-				rowClassName={({ index, isDragged, value: p }) =>
+				rowClassName={({ index, value: p }) =>
 					classNames({
 						separator:
-							(isSport("basketball") &&
-								index === numPlayersOnCourt - 1 &&
-								!isDragged) ||
+							(isSport("basketball") && index === numPlayersOnCourt - 1) ||
 							(!isSport("basketball") &&
 								playersSorted[index + 1] &&
 								p.ratings.pos !== playersSorted[index + 1].ratings.pos),

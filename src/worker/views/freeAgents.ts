@@ -1,19 +1,30 @@
 import { bySport, PLAYER } from "../../common";
+import type { Player, ThenArg } from "../../common/types";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+
+export const addMood = async (players: Player[]) => {
+	const moods: ThenArg<ReturnType<typeof player["moodInfos"]>>[] = [];
+	for (const p of players) {
+		moods.push(await player.moodInfos(p));
+	}
+
+	return players.map((p, i) => ({
+		...p,
+		mood: moods[i],
+	}));
+};
 
 const updateFreeAgents = async () => {
 	const userTid = g.get("userTid");
 
 	const payroll = await team.getPayroll(userTid);
-	const userPlayersAll = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		userTid,
+	const userPlayersAll = await addMood(
+		await idb.cache.players.indexGetAll("playersByTid", userTid),
 	);
-	const playersAll = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		PLAYER.FREE_AGENT,
+	const playersAll = await addMood(
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 	const stats = bySport({
@@ -21,10 +32,6 @@ const updateFreeAgents = async () => {
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
-
-	for (const p of playersAll) {
-		(p as any).mood = await player.moodInfos(p);
-	}
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [

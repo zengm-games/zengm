@@ -1,5 +1,5 @@
 import { bySport, isSport, PHASE, POSITIONS } from "../../common";
-import { player, season, team } from "../core";
+import { season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -7,6 +7,7 @@ import type {
 	ViewInput,
 	TeamSeasonAttr,
 } from "../../common/types";
+import { addMood } from "./freeAgents";
 
 const footballScore = (p: {
 	ratings: {
@@ -118,15 +119,10 @@ const updateRoster = async (
 			const schedule = await season.getSchedule();
 
 			// Show players currently on the roster
-			const playersAll = await idb.cache.players.indexGetAll(
-				"playersByTid",
-				inputs.tid,
+			const playersAll = await addMood(
+				await idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			);
 			payroll = (await team.getPayroll(inputs.tid)) / 1000;
-
-			for (const p of playersAll) {
-				(p as any).mood = await player.moodInfos(p);
-			}
 
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;

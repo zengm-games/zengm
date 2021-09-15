@@ -1,7 +1,8 @@
 import { bySport, PLAYER } from "../../common";
-import { player, team } from "../core";
+import { team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+import { addMood } from "./freeAgents";
 
 const updateNegotiationList = async () => {
 	const stats = bySport({
@@ -22,13 +23,11 @@ const updateNegotiationList = async () => {
 		"playersByTid",
 		userTid,
 	);
-	const playersAll = (
-		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
-	).filter(p => negotiationPids.includes(p.pid));
-
-	for (const p of playersAll) {
-		(p as any).mood = await player.moodInfos(p);
-	}
+	const playersAll = await addMood(
+		(
+			await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
+		).filter(p => negotiationPids.includes(p.pid)),
+	);
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [

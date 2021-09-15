@@ -1078,6 +1078,18 @@ const migrate = ({
 			value: false,
 		});
 	}
+
+	if (oldVersion <= 46) {
+		slowUpgrade();
+
+		iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			if ((p as any).mood) {
+				// Delete mood property that was accidentally saved previously
+				delete (p as any).mood;
+				return p;
+			}
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

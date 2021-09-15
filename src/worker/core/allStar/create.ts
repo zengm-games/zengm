@@ -145,6 +145,17 @@ const create = async (conditions: Conditions) => {
 				"desc",
 			);
 
+			// Don't always take the tallest/shortest, add some randomness
+			const numToPickFrom = Math.min(20, orderedByHeight.length);
+			const indexes = range(numToPickFrom);
+			random.shuffle(indexes);
+
+			// -1 is because we want to turn .at(0) into .at(-1)
+			const shortIndexes = [-indexes[0] - 1, -indexes[1] - 1];
+
+			random.shuffle(indexes);
+			const longIndexes = [indexes[0], indexes[1]];
+
 			allStars.dunk = {
 				players: dunkers as any,
 				rounds: [
@@ -155,8 +166,14 @@ const create = async (conditions: Conditions) => {
 					},
 				],
 				controlling,
-				pidsShort: [orderedByHeight.at(-1).pid, orderedByHeight.at(-2).pid],
-				pidsTall: [orderedByHeight[0].pid, orderedByHeight[1].pid],
+				pidsShort: [
+					orderedByHeight.at(shortIndexes[0]).pid,
+					orderedByHeight.at(shortIndexes[1]).pid,
+				],
+				pidsTall: [
+					orderedByHeight[longIndexes[0]].pid,
+					orderedByHeight[longIndexes[1]].pid,
+				],
 			};
 		}
 	}

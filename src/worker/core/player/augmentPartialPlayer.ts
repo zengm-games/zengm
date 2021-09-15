@@ -440,6 +440,9 @@ const augmentPartialPlayer = async (
 
 	delete p.freeAgentMood;
 
+	// Delete mood property that was accidentally saved previously
+	delete p.mood;
+
 	return p;
 };
 

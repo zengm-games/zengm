@@ -1,7 +1,12 @@
 import { allStar } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
+import { g, getTeamInfoBySeason, helpers } from "../util";
+import type {
+	UpdateEvents,
+	AllStars,
+	ViewInput,
+	AllStarPlayer,
+} from "../../common/types";
 import { bySport, PHASE } from "../../common";
 
 const stats = bySport({
@@ -10,40 +15,41 @@ const stats = bySport({
 	hockey: ["keyStats"],
 });
 
-const getPlayerInfo = async (pid: number, season: number) => {
+const getPlayerInfo = async (
+	{ pid, tid, name }: AllStarPlayer,
+	season: number,
+) => {
 	const p = await idb.getCopy.players({ pid });
 	if (!p) {
 		throw new Error("Invalid pid");
 	}
 
-	return idb.getCopy.playersPlus(p, {
-		attrs: [
-			"pid",
-			"name",
-			"tid",
-			"abbrev",
-			"injury",
-			"watch",
-			"age",
-			"numAllStar",
-		],
+	const p2 = await idb.getCopy.playersPlus(p, {
+		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,
-		stats: [...stats, "jerseyNumber"],
+		stats: [...stats, "jerseyNumber", "tid", "abbrev"],
 		fuzz: true,
 		showNoStats: true,
 	});
+
+	// Use values at time of draft
+	p2.tid = tid;
+	p2.name = name;
+	p2.abbrev =
+		(await getTeamInfoBySeason(tid, season))?.abbrev ??
+		g.get("teamInfoCache")[tid].abbrev;
+
+	return p2;
 };
 
 const augment = async (allStars: AllStars) => {
 	const remaining = await Promise.all(
-		allStars.remaining.map(({ pid }) => getPlayerInfo(pid, allStars.season)),
+		allStars.remaining.map(info => getPlayerInfo(info, allStars.season)),
 	);
 	const teams = await Promise.all(
 		allStars.teams.map(players =>
-			Promise.all(
-				players.map(({ pid }) => getPlayerInfo(pid, allStars.season)),
-			),
+			Promise.all(players.map(info => getPlayerInfo(info, allStars.season))),
 		),
 	);
 	return {

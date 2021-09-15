@@ -14,6 +14,7 @@ const PlayersTable = ({
 	pidsRemove,
 	players,
 	remaining,
+	season,
 	stats,
 	userTids,
 	usersTurn,
@@ -26,6 +27,7 @@ const PlayersTable = ({
 	pidsRemove?: number[];
 	players: View<"allStarDraft">["teams"][number];
 	remaining?: View<"allStarDraft">["remaining"];
+	season: number;
 	stats: string[];
 	userTids: number[];
 	usersTurn?: boolean;
@@ -78,7 +80,7 @@ const PlayersTable = ({
 				>
 					{p.name}
 				</PlayerNameLabels>,
-				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
 				</a>,
 				p.age,
@@ -296,6 +298,7 @@ const AllStars = ({
 								pidsAdd={revealed0}
 								players={teams[0]}
 								remaining={remaining}
+								season={season}
 								stats={stats}
 								userTids={userTids}
 							/>
@@ -309,6 +312,7 @@ const AllStars = ({
 								pidsAdd={revealed1}
 								players={teams[1]}
 								remaining={remaining}
+								season={season}
 								stats={stats}
 								userTids={userTids}
 							/>
@@ -324,6 +328,7 @@ const AllStars = ({
 						onDraft={onDraft}
 						pidsRemove={revealed}
 						players={remaining}
+						season={season}
 						stats={stats}
 						userTids={userTids}
 						usersTurn={usersTurn}

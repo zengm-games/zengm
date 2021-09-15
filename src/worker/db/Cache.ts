@@ -965,65 +965,39 @@ class Cache {
 	async _delete(store: Store, id: number | string) {
 		await this._waitForStatus("full");
 
-		if (
-			[
-				"draftPicks",
-				"draftLotteryResults",
-				"messages",
-				"negotiations",
-				"players",
-				"releasedPlayers",
-				"schedule",
-				"scheduledEvents",
-				"teamSeasons",
-				"teamStats",
-				"teams",
-			].includes(store)
-		) {
-			if (this._data[store].hasOwnProperty(id)) {
-				delete this._data[store][id];
-			}
-
-			// Need to have the correct type here for IndexedDB
-			const idParsed =
-				this.storeInfos[store].pkType === "number" && typeof id === "string"
-					? parseInt(id, 10)
-					: id;
-
-			this._deletes[store].add(idParsed);
-
-			this._dirty = true;
-
-			this._markDirtyIndexes(store);
-		} else {
-			throw new Error(`delete not implemented for store "${store}"`);
+		if (this._data[store].hasOwnProperty(id)) {
+			delete this._data[store][id];
 		}
+
+		// Need to have the correct type here for IndexedDB
+		const idParsed =
+			this.storeInfos[store].pkType === "number" && typeof id === "string"
+				? parseInt(id, 10)
+				: id;
+
+		this._deletes[store].add(idParsed);
+
+		this._dirty = true;
+
+		this._markDirtyIndexes(store);
 	}
 
 	async _clear(store: Store) {
 		await this._waitForStatus("full");
 
-		if (
-			["negotiations", "releasedPlayers", "schedule", "teamSeasons"].includes(
-				store,
-			)
-		) {
-			for (const id of Object.keys(this._data[store])) {
-				delete this._data[store][id];
+		for (const id of Object.keys(this._data[store])) {
+			delete this._data[store][id];
 
-				// Need to have the correct type here for IndexedDB
-				const idParsed =
-					this.storeInfos[store].pkType === "number" ? parseInt(id, 10) : id;
+			// Need to have the correct type here for IndexedDB
+			const idParsed =
+				this.storeInfos[store].pkType === "number" ? parseInt(id, 10) : id;
 
-				this._deletes[store].add(idParsed);
-			}
-
-			this._dirty = true;
-
-			this._markDirtyIndexes(store);
-		} else {
-			throw new Error(`clear not implemented for store "${store}"`);
+			this._deletes[store].add(idParsed);
 		}
+
+		this._dirty = true;
+
+		this._markDirtyIndexes(store);
 	}
 }
 

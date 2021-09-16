@@ -74,7 +74,8 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 		let minSumPlayoffs = 0;
 
 		for (const row of p.stats) {
-			if (row.gp === 0 || row.min === 0) {
+			// Don't check row.min being 0, since that is true for some historical stats before 1952
+			if (row.gp === 0) {
 				continue;
 			}
 

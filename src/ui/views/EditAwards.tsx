@@ -84,129 +84,125 @@ const EditAwards = ({
 		setAws(() => helpers.deepCopy(awards));
 	}, [awards, season]);
 
-	const handleChange = (type: string) => ({
-		p,
-		teamNumber = 0,
-		playerNumber = 0,
-	}: {
-		p: any;
-		teamNumber: number;
-		playerNumber: number;
-	}) => {
-		let error = false;
+	const handleChange =
+		(type: string, teamNumber = 0, playerNumber = 0) =>
+		(p: any) => {
+			console.log("handleChange", type, teamNumber, playerNumber, p);
+			let error = false;
 
-		const newAwards = { ...aws };
-		if (
-			type == "finalsMvp" ||
-			type == "mvp" ||
-			type == "goy" ||
-			type == "smoy" ||
-			type == "roy" ||
-			type == "mip" ||
-			type == "oroy" ||
-			type == "droy"
-		) {
-			if (p?.pid == undefined) {
-				newAwards[type] = undefined;
-			} else {
-				newAwards[type] = makeAwardPlayer(p);
-			}
-		} else if (type == "dpoy" || type === "dfoy") {
-			if (p?.pid == undefined) {
-				newAwards[type] = undefined;
-			} else {
-				newAwards[type] = makeAwardPlayer(p, {
-					type: "defense",
-				});
-			}
-		} else if (type == "allDefensive") {
-			if (p?.pid == undefined) {
-				newAwards[type][teamNumber].players[playerNumber] = undefined;
-			} else {
-				const arrayPids: number[] = [];
-				for (const team of newAwards[type]) {
-					for (const element of team.players) {
+			const newAwards = { ...aws };
+			if (
+				type == "finalsMvp" ||
+				type == "mvp" ||
+				type == "goy" ||
+				type == "smoy" ||
+				type == "roy" ||
+				type == "mip" ||
+				type == "oroy" ||
+				type == "droy"
+			) {
+				if (p?.pid == undefined) {
+					newAwards[type] = undefined;
+				} else {
+					newAwards[type] = makeAwardPlayer(p);
+				}
+			} else if (type == "dpoy" || type === "dfoy") {
+				if (p?.pid == undefined) {
+					newAwards[type] = undefined;
+				} else {
+					newAwards[type] = makeAwardPlayer(p, {
+						type: "defense",
+					});
+				}
+			} else if (type == "allDefensive") {
+				if (p?.pid == undefined) {
+					newAwards[type][teamNumber].players[playerNumber] = undefined;
+				} else {
+					const arrayPids: number[] = [];
+					for (const team of newAwards[type]) {
+						for (const element of team.players) {
+							if (element !== undefined) {
+								arrayPids.push(element.pid);
+							}
+						}
+					}
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Cannot add player to team twice",
+							saveToDb: false,
+						});
+						error = true;
+					} else {
+						newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
+							p,
+							{
+								type: "defense",
+								pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
+							},
+						);
+					}
+				}
+			} else if (type == "allLeague") {
+				if (p?.pid == undefined) {
+					newAwards[type][teamNumber].players[playerNumber] = undefined;
+				} else {
+					const arrayPids: number[] = [];
+					for (const team of newAwards[type]) {
+						for (const element of team.players) {
+							if (element !== undefined) {
+								arrayPids.push(element.pid);
+							}
+						}
+					}
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Cannot add player to team twice",
+							saveToDb: false,
+						});
+						error = true;
+					} else {
+						newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
+							p,
+							{
+								pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
+							},
+						);
+					}
+				}
+			} else if (type == "allRookie") {
+				if (p?.pid == undefined) {
+					newAwards[type][playerNumber] = undefined;
+				} else {
+					const arrayPids: number[] = [];
+					for (const element of newAwards[type]) {
 						if (element !== undefined) {
 							arrayPids.push(element.pid);
 						}
 					}
-				}
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Cannot add player to team twice",
-						saveToDb: false,
-					});
-					error = true;
-				} else {
-					newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
-						p,
-						{
-							type: "defense",
-							pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
-						},
-					);
-				}
-			}
-		} else if (type == "allLeague") {
-			if (p?.pid == undefined) {
-				newAwards[type][teamNumber].players[playerNumber] = undefined;
-			} else {
-				const arrayPids: number[] = [];
-				for (const team of newAwards[type]) {
-					for (const element of team.players) {
-						if (element !== undefined) {
-							arrayPids.push(element.pid);
-						}
+					if (arrayPids.includes(p.pid)) {
+						logEvent({
+							type: "error",
+							text: "Cannot add player to team twice",
+							saveToDb: false,
+						});
+						error = true;
+					} else {
+						newAwards[type][playerNumber] = makeAwardPlayer(p, {
+							pos: newAwards[type][playerNumber]?.pos,
+						});
 					}
 				}
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Cannot add player to team twice",
-						saveToDb: false,
-					});
-					error = true;
-				} else {
-					newAwards[type][teamNumber].players[playerNumber] = makeAwardPlayer(
-						p,
-						{
-							pos: newAwards[type][teamNumber].players[playerNumber]?.pos,
-						},
-					);
-				}
 			}
-		} else if (type == "allRookie") {
-			if (p?.pid == undefined) {
-				newAwards[type][playerNumber] = undefined;
-			} else {
-				const arrayPids: number[] = [];
-				for (const element of newAwards[type]) {
-					if (element !== undefined) {
-						arrayPids.push(element.pid);
-					}
-				}
-				if (arrayPids.includes(p.pid)) {
-					logEvent({
-						type: "error",
-						text: "Cannot add player to team twice",
-						saveToDb: false,
-					});
-					error = true;
-				} else {
-					newAwards[type][playerNumber] = makeAwardPlayer(p, {
-						pos: newAwards[type][playerNumber]?.pos,
-					});
-				}
+
+			if (!error) {
+				console.log("newAwards", newAwards);
+				setAws({ ...newAwards });
 			}
-		}
 
-		if (!error) {
-			setAws({ ...newAwards });
-		}
-
-		return error;
-	};
+			return error;
+		};
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -253,7 +249,7 @@ const EditAwards = ({
 		return `${p.name} (${p.ratings.pos}, ${p.stats.abbrev}) ${stats}`;
 	};
 
-	if (awards) {
+	if (aws) {
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
@@ -263,15 +259,16 @@ const EditAwards = ({
 							<SelectMultiple
 								options={players}
 								key={season}
-								defaultValue={getPlayer(awards[key])}
+								value={getPlayer(aws[key])}
 								getOptionLabel={getOptionLabel(key)}
-								changing={handleChange(key)}
+								getOptionValue={p => String(p.pid)}
+								onChange={handleChange(key)}
 							/>
 						</div>
 					))}
 				</div>
 				<div className="row">
-					{awards.allLeague.map((element: any, i: number) => {
+					{aws.allLeague.map((element: any, i: number) => {
 						const teamSelect = element.players.map((player: any, j: number) => {
 							return (
 								<div className="d-flex" key={j}>
@@ -280,11 +277,10 @@ const EditAwards = ({
 										<SelectMultiple
 											key={season}
 											options={players}
-											defaultValue={getPlayer(player)}
+											value={getPlayer(player)}
 											getOptionLabel={getOptionLabel("allLeague")}
-											teamNumber={i}
-											playerNumber={j}
-											changing={handleChange("allLeague")}
+											getOptionValue={p => String(p.pid)}
+											onChange={handleChange("allLeague", i, j)}
 										/>
 									</div>
 								</div>
@@ -301,7 +297,7 @@ const EditAwards = ({
 
 					{isSport("basketball") ? (
 						<>
-							{awards.allDefensive.map((element: any, i: number) => {
+							{aws.allDefensive.map((element: any, i: number) => {
 								const teamSelect = element.players.map(
 									(player: any, j: number) => {
 										return (
@@ -309,11 +305,10 @@ const EditAwards = ({
 												<SelectMultiple
 													key={season}
 													options={players}
-													defaultValue={getPlayer(player)}
+													value={getPlayer(player)}
 													getOptionLabel={getOptionLabel("allDefensive")}
-													teamNumber={i}
-													playerNumber={j}
-													changing={handleChange("allDefensive")}
+													getOptionValue={p => String(p.pid)}
+													onChange={handleChange("allDefensive", i, j)}
 												/>
 											</div>
 										);
@@ -332,7 +327,7 @@ const EditAwards = ({
 
 					<div className="col-md-4 col-6">
 						<h3 className="mt-4">All-Rookie Team</h3>
-						{awards.allRookie.map((player: any, i: number) => {
+						{aws.allRookie.map((player: any, i: number) => {
 							return (
 								<div className="d-flex" key={i}>
 									<Position index={i} p={player} />
@@ -340,10 +335,10 @@ const EditAwards = ({
 										<SelectMultiple
 											options={players}
 											key={season}
-											defaultValue={getPlayer(player)}
+											value={getPlayer(player)}
 											getOptionLabel={getOptionLabel("allRookie")}
-											playerNumber={i}
-											changing={handleChange("allRookie")}
+											getOptionValue={p => String(p.pid)}
+											onChange={handleChange("allRookie", undefined, i)}
 										/>
 									</div>
 								</div>

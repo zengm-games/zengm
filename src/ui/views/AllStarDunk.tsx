@@ -70,13 +70,15 @@ const EditContestants = ({
 								const selectedIndex = selectedPIDs.indexOf(p.pid);
 								return selectedIndex === i || selectedIndex < 0;
 							})}
-							defaultValue={allPossibleContestants.find(p2 => p.pid === p2.pid)}
-							getOptionLabel={(p: any) => `${p.name}, ${p.abbrev}`}
-							changing={({ p }) => {
-								const newPlayers = [...players];
-								newPlayers[i] = p;
-								setPlayers(newPlayers);
-								return false;
+							value={allPossibleContestants.find(p2 => p.pid === p2.pid)}
+							getOptionLabel={p => `${p.name}, ${p.abbrev}`}
+							getOptionValue={p => String(p.pid)}
+							onChange={p => {
+								if (p) {
+									const newPlayers = [...players];
+									newPlayers[i] = p;
+									setPlayers(newPlayers);
+								}
 							}}
 							isClearable={false}
 						/>

@@ -108,6 +108,14 @@ type DunkResult = {
 	made: boolean;
 };
 
+// Done rack when there are 5 entries here
+type ThreeRack = boolean[];
+
+type ThreeResult = {
+	index: number;
+	racks: [ThreeRack, ThreeRack, ThreeRack, ThreeRack, ThreeRack];
+};
+
 export type AllStars = {
 	season: number;
 	teamNames: [string, string];
@@ -126,7 +134,7 @@ export type AllStars = {
 	};
 
 	dunk?: {
-		players: [AllStarPlayer, AllStarPlayer, AllStarPlayer, AllStarPlayer];
+		players: AllStarPlayer[];
 
 		// 2 rounds, plus tiebreaker rounds
 		rounds: {
@@ -145,6 +153,20 @@ export type AllStars = {
 		// 2 players each because you can't jump over yourself, but the tallest/shortest player might be a contestant
 		pidsTall: [number, number];
 		pidsShort: [number, number];
+	};
+
+	three?: {
+		players: AllStarPlayer[];
+
+		rounds: {
+			tiebreaker?: true;
+			indexes: number[]; // Index of three.players
+
+			results: ThreeResult[];
+		}[];
+
+		// Index of players array above. Undefined if still in progress
+		winner?: number;
 	};
 };
 
@@ -1569,6 +1591,7 @@ export type Trade = {
 export type UpdateEvents = (
 	| "account"
 	| "allStarDunk"
+	| "allStarThree"
 	| "firstRun"
 	| "g.goatFormula"
 	| "g.userTids"

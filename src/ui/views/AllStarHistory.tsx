@@ -257,6 +257,10 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
 						Dunk Contest
 					</a>
+					|{" "}
+					<a href={helpers.leagueUrl(["all_star", "three", row.season])}>
+						Three-Point Contest
+					</a>
 				</>,
 			],
 		};

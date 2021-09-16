@@ -809,6 +809,7 @@ export default {
 	account,
 	allStarDraft: validateSeasonOnly,
 	allStarDunk: validateSeasonOnly,
+	allStarThree: validateSeasonOnly,
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,

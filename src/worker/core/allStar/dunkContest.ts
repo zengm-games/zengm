@@ -1,6 +1,10 @@
 import { orderBy } from "lodash";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
-import { dunkInfos, getValidMoves } from "../../../common/dunkContest";
+import {
+	dunkInfos,
+	getNumRounds,
+	getValidMoves,
+} from "../../../common/dunkContest";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
@@ -466,7 +470,7 @@ export const getAwaitingUserDunkIndex = (dunk: Dunk) => {
 const getNextRoundType = (dunk: Dunk) => {
 	const baseRounds = dunk.rounds.filter(round => !round.tiebreaker);
 
-	const numRoundsTotal = Math.floor(Math.log2(dunk.players.length));
+	const numRoundsTotal = getNumRounds(dunk);
 
 	// 1 or 2, depending on if we're in the 1st round (or its tiebreakers) or 2nd round (or its tiebreakers)
 	const currentRoundNum = baseRounds.length;

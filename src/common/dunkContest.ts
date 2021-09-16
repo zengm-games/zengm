@@ -1,3 +1,5 @@
+import type { View } from "./types";
+
 export const dunkInfos: Record<
 	"toss" | "distance" | "move",
 	Record<
@@ -130,3 +132,13 @@ export const getValidMoves = (otherMove: string) => {
 	}
 	return validMoves;
 };
+
+export const isDunkContest = (
+	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"],
+): contest is View<"allStarDunk">["dunk"] => {
+	return !!(contest as any).controlling;
+};
+
+// This assumes half the round advances, rounding down to a power of 2 in the first round if it's not already one
+export const getNumRounds = (contest: { players: any[] }) =>
+	Math.floor(Math.log2(contest.players.length));

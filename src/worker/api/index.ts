@@ -960,15 +960,18 @@ const dunkSetControlling = async (controlling: number[]) => {
 	}
 };
 
-const dunkSetPlayers = async (
+const contestSetPlayers = async (
+	type: "dunk" | "three",
 	players: NonNullable<AllStars["dunk"]>["players"],
 ) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
-	const dunk = allStars?.dunk;
-	if (dunk) {
-		dunk.players = players;
+	const contest = allStars?.[type];
+	if (contest) {
+		contest.players = players;
 		await idb.cache.allStars.put(allStars);
-		await toUI("realtimeUpdate", [["allStarDunk"]]);
+		await toUI("realtimeUpdate", [
+			[`allStar${helpers.upperCaseFirstLetter(type)}`],
+		]);
 	}
 };
 
@@ -3719,7 +3722,7 @@ export default {
 	draftUser,
 	dunkGetProjected,
 	dunkSetControlling,
-	dunkSetPlayers,
+	contestSetPlayers,
 	dunkSimNext,
 	dunkUser,
 	evalOnWorker,

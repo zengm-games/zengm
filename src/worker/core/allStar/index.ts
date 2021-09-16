@@ -1,3 +1,4 @@
+import * as contest from "./contest";
 import create from "./create";
 import draftAll from "./draftAll";
 import draftOne from "./draftOne";
@@ -6,8 +7,10 @@ import * as dunkContest from "./dunkContest";
 import futureGameIsAllStar from "./futureGameIsAllStar";
 import getOrCreate from "./getOrCreate";
 import nextGameIsAllStar from "./nextGameIsAllStar";
+import * as threeContest from "./threeContest";
 
 export default {
+	contest,
 	create,
 	draftAll,
 	draftOne,
@@ -16,4 +19,5 @@ export default {
 	futureGameIsAllStar,
 	getOrCreate,
 	nextGameIsAllStar,
+	threeContest,
 };

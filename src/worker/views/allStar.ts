@@ -11,9 +11,11 @@ const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const allStars = await allStar.getOrCreate(g.get("season"));
 		const showDunk = allStars?.dunk !== undefined;
+		const showThree = allStars?.dunk !== undefined;
 
 		return {
 			showDunk,
+			showThree,
 		};
 	}
 };

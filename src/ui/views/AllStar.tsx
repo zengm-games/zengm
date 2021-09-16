@@ -5,7 +5,7 @@ import { isSport } from "../../common";
 
 const style = { maxWidth: "18rem" };
 
-const AllStar = ({ showDunk }: View<"allStar">) => {
+const AllStar = ({ showDunk, showThree }: View<"allStar">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not implemented");
 	}
@@ -31,6 +31,22 @@ const AllStar = ({ showDunk }: View<"allStar">) => {
 							className="btn btn-primary stretched-link"
 						>
 							Come on and slam!
+						</a>
+					</div>
+				</div>
+			) : null}
+			{showThree ? (
+				<div className="card" style={style}>
+					<div className="card-body">
+						<h3 className="card-title">Three Point Contest</h3>
+						<p className="card-text">
+							The top 8 shooters in the league compete to see who is the best.
+						</p>
+						<a
+							href={helpers.leagueUrl(["all_star", "three"])}
+							className="btn btn-primary stretched-link"
+						>
+							Start shooting
 						</a>
 					</div>
 				</div>

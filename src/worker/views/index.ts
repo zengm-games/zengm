@@ -4,6 +4,7 @@ import allStar from "./allStar";
 import allStarDunk from "./allStarDunk";
 import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
+import allStarThree from "./allStarThree";
 import awardRaces from "./awardRaces";
 import awardsRecords from "./awardsRecords";
 import colleges from "./colleges";
@@ -95,6 +96,7 @@ export default {
 	allStarDraft,
 	allStarDunk,
 	allStarHistory,
+	allStarThree,
 	awardRaces,
 	awardsRecords,
 	colleges,

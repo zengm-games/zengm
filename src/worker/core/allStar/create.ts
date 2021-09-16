@@ -16,6 +16,7 @@ import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
 import range from "lodash-es/range";
 import { NUM_DUNKERS_IN_CONTEST } from "./dunkContest";
+import { NUM_SHOOTERS_IN_CONTEST } from "./threeContest";
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
@@ -101,9 +102,13 @@ const create = async (conditions: Conditions) => {
 		const lastYear = await idb.getCopy.allStars({
 			season: g.get("season") - 1,
 		});
-		let prevWinnerPid: number | undefined;
+		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
-			prevWinnerPid = lastYear.dunk.players[lastYear.dunk.winner].pid;
+			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner].pid;
+		}
+		let prevWinnerThree: number | undefined;
+		if (lastYear?.three?.winner !== undefined) {
+			prevWinnerThree = lastYear.three.players[lastYear.three.winner].pid;
 		}
 
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
@@ -114,7 +119,7 @@ const create = async (conditions: Conditions) => {
 		const dunkers = orderBy(
 			activePlayers.filter(p => p.injury.gamesRemaining === 0),
 			[
-				p => (p.pid === prevWinnerPid ? 1 : 0),
+				p => (p.pid === prevWinnerDunk ? 1 : 0),
 				p => {
 					const ratings = p.ratings.at(-1) as PlayerRatings;
 					return ratings.dnk + 2 * ratings.jmp;
@@ -122,14 +127,14 @@ const create = async (conditions: Conditions) => {
 			],
 			["desc", "desc"],
 		)
+			.slice(0, NUM_DUNKERS_IN_CONTEST)
 			.map(p => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
-			}))
-			.slice(0, 4);
+			}));
 
-		if (dunkers.length === 4) {
+		if (dunkers.length === NUM_DUNKERS_IN_CONTEST) {
 			random.shuffle(dunkers);
 
 			const controlling = [];
@@ -157,7 +162,7 @@ const create = async (conditions: Conditions) => {
 			const longIndexes = [indexes[0], indexes[1]];
 
 			allStars.dunk = {
-				players: dunkers as any,
+				players: dunkers,
 				rounds: [
 					// First round
 					{
@@ -173,6 +178,61 @@ const create = async (conditions: Conditions) => {
 				pidsTall: [
 					orderedByHeight[longIndexes[0]].pid,
 					orderedByHeight[longIndexes[1]].pid,
+				],
+			};
+		}
+
+		// Half qualify by taking a lot of threes. Half qualify by ratings.
+		const numStats = Math.floor(NUM_SHOOTERS_IN_CONTEST / 2);
+		const numRatings = NUM_SHOOTERS_IN_CONTEST - numStats;
+
+		const shootersStats = orderBy(
+			activePlayers.filter(p => p.injury.gamesRemaining === 0),
+			[
+				p => {
+					const stats = p.stats.at(-1);
+					return stats.tp;
+				},
+				p => {
+					const ratings = p.ratings.at(-1) as PlayerRatings;
+					return ratings.tp;
+				},
+			],
+			["desc", "desc"],
+		).slice(0, numStats);
+
+		const shootersRatings = orderBy(
+			activePlayers.filter(
+				p => p.injury.gamesRemaining === 0 && !shootersStats.includes(p),
+			),
+			[
+				// Include last year's winner here too
+				p => (p.pid === prevWinnerThree ? 1 : 0),
+				p => {
+					const ratings = p.ratings.at(-1) as PlayerRatings;
+					return ratings.tp;
+				},
+			],
+			["desc", "desc"],
+		).slice(0, numRatings);
+
+		const shooters = [...shootersStats, ...shootersRatings].map(p => ({
+			pid: p.pid,
+			tid: p.tid,
+			name: `${p.firstName} ${p.lastName}`,
+		}));
+
+		if (shooters.length === NUM_SHOOTERS_IN_CONTEST) {
+			random.shuffle(shooters);
+
+			allStars.three = {
+				players: shooters,
+				rounds: [
+					// First round
+					{
+						indexes: range(NUM_SHOOTERS_IN_CONTEST),
+						results: [],
+					},
 				],
 			};
 		}

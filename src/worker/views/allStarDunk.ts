@@ -79,6 +79,7 @@ const updateAllStarDunk = async (
 			ratings: ["ovr", "pot", "dnk", "jmp", "pos"],
 			stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],
 			season,
+			fuzz: true,
 			mergeStats: true,
 			showNoStats: true,
 		});
@@ -202,7 +203,7 @@ const updateAllStarDunk = async (
 		return {
 			allPossibleContestants,
 			awaitingUserDunkIndex,
-			challengeNoRating: g.get("challengeNoRatings"),
+			challengeNoRatings: g.get("challengeNoRatings"),
 			dunk: dunkAugmented,
 			godMode,
 			log,

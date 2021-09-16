@@ -12,15 +12,23 @@ import {
 import { useEffect, useState } from "react";
 import { isSport } from "../../common";
 import SelectMultiple from "../components/SelectMultiple";
-import { dunkInfos, getValidMoves } from "../../common/dunkContest";
+import {
+	dunkInfos,
+	getNumRounds,
+	getValidMoves,
+	isDunkContest,
+} from "../../common/dunkContest";
 import classNames from "classnames";
 import { getHeightString } from "../components/Height";
+import range from "lodash-es/range";
 
-const EditContestants = ({
+export const EditContestants = ({
 	allPossibleContestants,
+	contest,
 	initialPlayers,
 }: {
 	allPossibleContestants: View<"allStarDunk">["allPossibleContestants"];
+	contest: "dunk" | "three";
 	initialPlayers: View<"allStarDunk">["dunk"]["players"];
 }) => {
 	const [showForm, setShowForm] = useState(false);
@@ -55,7 +63,7 @@ const EditContestants = ({
 					name: p.name,
 				}));
 
-				await toWorker("main", "dunkSetPlayers", minimalPlayers);
+				await toWorker("main", "contestSetPlayers", contest, minimalPlayers);
 
 				setShowForm(false);
 			}}
@@ -469,10 +477,263 @@ const UserDunkForm = ({
 	);
 };
 
+export const ContestantProfiles = ({
+	challengeNoRatings,
+	contest,
+	godMode,
+	players,
+	season,
+	userTid,
+}: {
+	challengeNoRatings: boolean;
+	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
+	godMode: boolean;
+	players: View<"allStarDunk">["players"];
+	season: number;
+	userTid: number;
+}) => {
+	const contestIsDunk = isDunkContest(contest);
+
+	// maxWidth is to get 4 in a row max
+	return (
+		<div
+			className="d-none d-sm-flex flex-wrap mb-4"
+			style={{ gap: "3rem", maxWidth: 900 }}
+		>
+			{players.map((p, i) => {
+				const tid = contest.players[i].tid;
+
+				const allowControl =
+					contestIsDunk &&
+					(tid === userTid || (contest.controlling.includes(i) && !godMode));
+				const allowControlGodMode = !allowControl && godMode;
+
+				const checkboxID = `control-player-${i}`;
+
+				const yearsWon = (p.awards as Player["awards"])
+					.filter(
+						award =>
+							award.type ===
+							(contestIsDunk
+								? "Slam Dunk Contest Winner"
+								: "Three-Point Contest Winner"),
+					)
+					.map(award => award.season)
+					.filter(year => year < season);
+
+				return (
+					<div key={p.pid}>
+						<div
+							style={{
+								maxHeight: 180,
+								width: 120,
+								marginTop: p.imgURL ? 0 : -20,
+							}}
+							className="flex-shrink-0"
+						>
+							<PlayerPicture
+								face={p.face}
+								imgURL={p.imgURL}
+								colors={p.colors}
+								jersey={p.jersey}
+							/>
+						</div>
+						<div className="mt-2">
+							<PlayerNameLabels
+								pid={p.pid}
+								injury={p.injury}
+								season={season}
+								jerseyNumber={p.stats.jerseyNumber}
+								pos={p.ratings.pos}
+								watch={p.watch}
+							>
+								{contest.players[i].name}
+							</PlayerNameLabels>
+							<a
+								className="ml-2"
+								href={helpers.leagueUrl([
+									"roster",
+									`${p.abbrev}_${p.tid}`,
+									season,
+								])}
+							>
+								{p.abbrev}
+							</a>
+						</div>
+						<div className="mt-1">
+							{p.age} <span title="Years Old">yo</span>,{" "}
+							<Height inches={p.hgt} />, <Weight pounds={p.weight} />
+							<br />
+							{!challengeNoRatings ? (
+								<>
+									{p.ratings.ovr} ovr, {p.ratings.pot} pot,{" "}
+									{contestIsDunk ? (
+										<>
+											{p.ratings.jmp} jmp, {p.ratings.dnk} dnk
+										</>
+									) : (
+										<>{p.ratings.tp} tp</>
+									)}
+									<br />
+								</>
+							) : null}
+							{contestIsDunk ? (
+								<>
+									{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
+									{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
+									{helpers.roundStat(p.stats.ast, "ast")} ast
+								</>
+							) : (
+								<>
+									{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
+									{helpers.roundStat(p.stats.tpa, "tpa")} 3pa,{" "}
+									{helpers.roundStat(p.stats.tpp, "tpp")}%
+								</>
+							)}
+						</div>
+						{yearsWon.length === 1 ? (
+							<div className="mt-1">{yearsWon[0]} contest winner</div>
+						) : yearsWon.length > 1 ? (
+							<div
+								className="mt-1"
+								title={helpers.yearRanges(yearsWon).join(", ")}
+							>
+								{yearsWon.length}x contest winner
+							</div>
+						) : null}
+
+						{contestIsDunk &&
+						(allowControl || allowControlGodMode) &&
+						(contest.winner === undefined ||
+							contest.controlling.includes(i)) ? (
+							<div
+								className={`form-check mt-2 d-inline-block${
+									allowControlGodMode ? " god-mode pr-1" : ""
+								}`}
+							>
+								<input
+									className="form-check-input"
+									type="checkbox"
+									disabled={contest.winner !== undefined}
+									onChange={async () => {
+										let controlling = [...contest.controlling];
+										if (controlling.includes(i)) {
+											controlling = controlling.filter(j => j !== i);
+										} else {
+											controlling.push(i);
+										}
+										await toWorker("main", "dunkSetControlling", controlling);
+									}}
+									checked={contest.controlling.includes(i)}
+									id={checkboxID}
+								/>
+								<label className="form-check-label" htmlFor={checkboxID}>
+									Control player
+								</label>
+							</div>
+						) : null}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
+
+export const ScoreTable = ({
+	contest,
+	players,
+	resultsByRound,
+}: {
+	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
+	players: View<"allStarDunk">["players"];
+	resultsByRound:
+		| View<"allStarDunk">["resultsByRound"]
+		| View<"allStarThree">["resultsByRound"];
+}) => {
+	const numRounds = getNumRounds(contest);
+
+	let maxRoundCurrent = 0;
+
+	return (
+		<ResponsiveTableWrapper>
+			<table className="table table-striped table-hover table-nonfluid">
+				<thead>
+					<tr>
+						<th></th>
+						{contest.rounds.map((round, i) => {
+							if (round.tiebreaker) {
+								return (
+									<th key={i} title="Tiebreaker">
+										T
+									</th>
+								);
+							}
+
+							maxRoundCurrent += 1;
+							return <th key={i}>Round {maxRoundCurrent}</th>;
+						})}
+						{range(maxRoundCurrent + 1, numRounds + 1).map(i => (
+							<th key={i}>Round {i}</th>
+						))}
+						{contest.winner !== undefined ? <th></th> : null}
+					</tr>
+				</thead>
+				<tbody>
+					{players.map((p, i) => {
+						return (
+							<tr key={i}>
+								<td>
+									<PlayerNameLabels pid={p.pid} watch={p.watch}>
+										{contest.players[i].name}
+									</PlayerNameLabels>
+								</td>
+								{contest.rounds.map((round, j) => {
+									const roundResult = resultsByRound[j].find(
+										p => p.index === i,
+									);
+									if (!roundResult) {
+										return <td key={j} />;
+									}
+									return (
+										<td key={j}>
+											{roundResult.score}
+											{(roundResult as any).scores &&
+											(roundResult as any).scores.length > 1 ? (
+												<>
+													{" "}
+													<span className="text-muted">
+														({(roundResult as any).scores.join("+")})
+													</span>
+												</>
+											) : null}
+										</td>
+									);
+								})}
+								{range(maxRoundCurrent + 1, numRounds + 1).map(i => (
+									<td key={i} />
+								))}
+								{contest.winner !== undefined ? (
+									contest.winner === i ? (
+										<td>
+											<span className="glyphicon glyphicon-star text-yellow" />
+										</td>
+									) : (
+										<td />
+									)
+								) : null}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</ResponsiveTableWrapper>
+	);
+};
+
 const AllStarDunk = ({
 	allPossibleContestants,
 	awaitingUserDunkIndex,
-	challengeNoRating,
+	challengeNoRatings,
 	dunk,
 	log,
 	godMode,
@@ -524,198 +785,30 @@ const AllStarDunk = ({
 		},
 	});
 
-	let seenRound2 = false;
-
 	return (
 		<>
 			{godMode && !started ? (
 				<EditContestants
-					initialPlayers={dunk.players}
 					allPossibleContestants={allPossibleContestants}
+					contest="dunk"
+					initialPlayers={dunk.players}
 				/>
 			) : null}
-			<div className="d-none d-sm-flex flex-wrap mb-4" style={{ gap: "3rem" }}>
-				{players.map((p, i) => {
-					const tid = dunk.players[i].tid;
 
-					const allowControl =
-						tid === userTid || (dunk.controlling.includes(i) && !godMode);
-					const allowControlGodMode = !allowControl && godMode;
+			<ContestantProfiles
+				challengeNoRatings={challengeNoRatings}
+				contest={dunk}
+				godMode={godMode}
+				players={players}
+				season={season}
+				userTid={userTid}
+			/>
 
-					const checkboxID = `control-player-${i}`;
-
-					const yearsWon = (p.awards as Player["awards"])
-						.filter(award => award.type === "Slam Dunk Contest Winner")
-						.map(award => award.season)
-						.filter(year => year < season);
-
-					return (
-						<div key={p.pid}>
-							<div
-								style={{
-									maxHeight: 180,
-									width: 120,
-									marginTop: p.imgURL ? 0 : -20,
-								}}
-								className="flex-shrink-0"
-							>
-								<PlayerPicture
-									face={p.face}
-									imgURL={p.imgURL}
-									colors={p.colors}
-									jersey={p.jersey}
-								/>
-							</div>
-							<div className="mt-2">
-								<PlayerNameLabels
-									pid={p.pid}
-									injury={p.injury}
-									season={season}
-									jerseyNumber={p.stats.jerseyNumber}
-									pos={p.ratings.pos}
-									watch={p.watch}
-								>
-									{dunk.players[i].name}
-								</PlayerNameLabels>
-								<a
-									className="ml-2"
-									href={helpers.leagueUrl([
-										"roster",
-										`${p.abbrev}_${p.tid}`,
-										season,
-									])}
-								>
-									{p.abbrev}
-								</a>
-							</div>
-							<div className="mt-1">
-								{p.age} <span title="Years Old">yo</span>,{" "}
-								<Height inches={p.hgt} />, <Weight pounds={p.weight} />
-								<br />
-								{!challengeNoRating ? (
-									<>
-										{p.ratings.ovr} ovr, {p.ratings.pot} pot, {p.ratings.jmp}{" "}
-										jmp, {p.ratings.dnk} dnk
-										<br />
-									</>
-								) : null}
-								{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
-								{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
-								{helpers.roundStat(p.stats.ast, "ast")} ast
-							</div>
-							{yearsWon.length === 1 ? (
-								<div className="mt-1">{yearsWon[0]} contest winner</div>
-							) : yearsWon.length > 1 ? (
-								<div
-									className="mt-1"
-									title={helpers.yearRanges(yearsWon).join(", ")}
-								>
-									{yearsWon.length}x contest winner
-								</div>
-							) : null}
-
-							{(allowControl || allowControlGodMode) &&
-							(dunk.winner === undefined || dunk.controlling.includes(i)) ? (
-								<div
-									className={`form-check mt-2 d-inline-block${
-										allowControlGodMode ? " god-mode pr-1" : ""
-									}`}
-								>
-									<input
-										className="form-check-input"
-										type="checkbox"
-										disabled={dunk.winner !== undefined}
-										onChange={async () => {
-											let controlling = [...dunk.controlling];
-											if (controlling.includes(i)) {
-												controlling = controlling.filter(j => j !== i);
-											} else {
-												controlling.push(i);
-											}
-											await toWorker("main", "dunkSetControlling", controlling);
-										}}
-										checked={dunk.controlling.includes(i)}
-										id={checkboxID}
-									/>
-									<label className="form-check-label" htmlFor={checkboxID}>
-										Control player
-									</label>
-								</div>
-							) : null}
-						</div>
-					);
-				})}
-			</div>
-
-			<ResponsiveTableWrapper>
-				<table className="table table-striped table-hover table-nonfluid">
-					<thead>
-						<tr>
-							<th></th>
-							{dunk.rounds.map((round, i) => {
-								if (i === 0) {
-									return <th key={i}>Round 1</th>;
-								} else if (round.tiebreaker) {
-									return (
-										<th key={i} title="Tiebreaker">
-											T
-										</th>
-									);
-								} else {
-									seenRound2 = true;
-									return <th key={i}>Round 2</th>;
-								}
-							})}
-							{!seenRound2 ? <th>Round 2</th> : null}
-							{dunk.winner !== undefined ? <th></th> : null}
-						</tr>
-					</thead>
-					<tbody>
-						{players.map((p, i) => {
-							return (
-								<tr key={i}>
-									<td>
-										<PlayerNameLabels pid={p.pid} watch={p.watch}>
-											{dunk.players[i].name}
-										</PlayerNameLabels>
-									</td>
-									{dunk.rounds.map((round, j) => {
-										const roundResult = resultsByRound[j].find(
-											p => p.index === i,
-										);
-										if (!roundResult) {
-											return <td key={j} />;
-										}
-										return (
-											<td key={j}>
-												{roundResult.score}
-												{roundResult.scores.length > 1 ? (
-													<>
-														{" "}
-														<span className="text-muted">
-															({roundResult.scores.join("+")})
-														</span>
-													</>
-												) : null}
-											</td>
-										);
-									})}
-									{!seenRound2 ? <td /> : null}
-									{dunk.winner !== undefined ? (
-										dunk.winner === i ? (
-											<td>
-												<span className="glyphicon glyphicon-star text-yellow" />
-											</td>
-										) : (
-											<td />
-										)
-									) : null}
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-			</ResponsiveTableWrapper>
+			<ScoreTable
+				contest={dunk}
+				resultsByRound={resultsByRound}
+				players={players}
+			/>
 
 			{dunk.winner === undefined ? (
 				<PlayPauseNext

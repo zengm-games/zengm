@@ -463,6 +463,70 @@ export const getAwaitingUserDunkIndex = (dunk: Dunk) => {
 	return awaitingUserDunkIndex;
 };
 
+const getNextRoundType = (dunk: Dunk) => {
+	const baseRounds = dunk.rounds.filter(round => !round.tiebreaker);
+
+	const numRoundsTotal = Math.floor(Math.log2(dunk.players.length));
+
+	// 1 or 2, depending on if we're in the 1st round (or its tiebreakers) or 2nd round (or its tiebreakers)
+	const currentRoundNum = baseRounds.length;
+
+	// Index of the current baseRound
+	const currentRoundIndex = dunk.rounds.indexOf(baseRounds.at(-1));
+
+	// Current round (1st or 2nd round) plus all its tiebreakers
+	const currentRoundAndTiebreakers = dunk.rounds.filter(
+		(round, i) => i >= currentRoundIndex,
+	);
+
+	const resultsByRound = currentRoundAndTiebreakers.map(round =>
+		orderBy(getRoundResults(round), "score", "desc"),
+	);
+
+	let numWinnersLeftToFind = 2 ** (numRoundsTotal - currentRoundNum);
+	const indexesForNextRound: number[] = [];
+	let indexesForNextTiebreaker: number[] = [];
+
+	let outcome: "normalRound" | "over" | "tiebreakerRound" | undefined;
+
+	for (const round of resultsByRound) {
+		// Do the top N separate from the rest, as we need?
+		if (
+			round[numWinnersLeftToFind - 1].score > round[numWinnersLeftToFind].score
+		) {
+			for (let i = 0; i < numWinnersLeftToFind; i++) {
+				indexesForNextRound.push(round[i].index);
+			}
+			numWinnersLeftToFind = 0;
+			outcome = currentRoundNum === numRoundsTotal ? "over" : "normalRound";
+			break;
+		} else {
+			if (round[0].score > round[1].score) {
+				// Well at least 1 does, then can use tiebreaker for the rest
+				numWinnersLeftToFind -= 1;
+				indexesForNextRound.push(round[0].index);
+			}
+
+			const tied = round.filter(p => p.score === round[1].score);
+			indexesForNextTiebreaker = tied.map(p => p.index);
+
+			outcome = "tiebreakerRound";
+		}
+
+		// Keep running if it still needs a tiebreaker, in case there already is another one
+	}
+
+	if (!outcome) {
+		throw new Error("outcome should never be undefined");
+	}
+
+	return {
+		indexesForNextRound,
+		indexesForNextTiebreaker,
+		outcome,
+	};
+};
+
 export const simNextDunkEvent = async (
 	conditions: Conditions,
 	userDunk?: {
@@ -562,60 +626,8 @@ export const simNextDunkEvent = async (
 		if (index === undefined) {
 			// Index undefined means a round just ended. Do we need another normal round? Another tiebreaker round? Or is the contest over?
 
-			const baseRounds = dunk.rounds.filter(round => !round.tiebreaker);
-
-			// 1 or 2, depending on if we're in the 1st round (or its tiebreakers) or 2nd round (or its tiebreakers)
-			const currentRoundNum = baseRounds.length;
-
-			// Index of the current baseRound
-			const currentRoundIndex = dunk.rounds.indexOf(baseRounds.at(-1));
-
-			// Current round (1st or 2nd round) plus all its tiebreakers
-			const currentRoundAndTiebreakers = dunk.rounds.filter(
-				(round, i) => i >= currentRoundIndex,
-			);
-
-			const resultsByRound = currentRoundAndTiebreakers.map(round =>
-				orderBy(getRoundResults(round), "score", "desc"),
-			);
-
-			let numWinnersLeftToFind = currentRoundNum === 1 ? 2 : 1;
-			const indexesForNextRound: number[] = [];
-			let indexesForNextTiebreaker: number[] = [];
-
-			let outcome: "normalRound" | "over" | "tiebreakerRound" | undefined;
-
-			for (const round of resultsByRound) {
-				// Do the top N separate from the rest, as we need?
-				if (
-					round[numWinnersLeftToFind - 1].score >
-					round[numWinnersLeftToFind].score
-				) {
-					for (let i = 0; i < numWinnersLeftToFind; i++) {
-						indexesForNextRound.push(round[i].index);
-					}
-					numWinnersLeftToFind = 0;
-					outcome = currentRoundNum === 1 ? "normalRound" : "over";
-					break;
-				} else {
-					if (round[0].score > round[1].score) {
-						// Well at least 1 does, then can use tiebreaker for the rest
-						numWinnersLeftToFind -= 1;
-						indexesForNextRound.push(round[0].index);
-					}
-
-					const tied = round.filter(p => p.score === round[1].score);
-					indexesForNextTiebreaker = tied.map(p => p.index);
-
-					outcome = "tiebreakerRound";
-				}
-
-				// Keep running if it still needs a tiebreaker, in case there already is another one
-			}
-
-			if (!outcome) {
-				throw new Error("outcome should never be undefined");
-			}
+			const { indexesForNextRound, indexesForNextTiebreaker, outcome } =
+				getNextRoundType(dunk);
 
 			if (outcome === "normalRound") {
 				type = "round";

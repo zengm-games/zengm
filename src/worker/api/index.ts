@@ -1017,6 +1017,27 @@ const dunkSimNext = async (
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 
+const threeSimNext = async (
+	type: "event" | "rack" | "player" | "round" | "all",
+	conditions: Conditions,
+) => {
+	const types: typeof type[] = ["event", "rack", "player", "round", "all"];
+
+	// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
+
+	const targetIndex = types.indexOf(type);
+
+	while (true) {
+		const newType = await allStar.threeContest.simNextThreeEvent(conditions);
+		const newIndex = types.indexOf(newType);
+		if (newIndex >= targetIndex) {
+			break;
+		}
+	}
+
+	await toUI("realtimeUpdate", [["allStarThree"]]);
+};
+
 const dunkUser = async (
 	dunkAttempt: DunkAttempt,
 	index: number,
@@ -3781,6 +3802,7 @@ export default {
 	startExpansionDraft,
 	startFantasyDraft,
 	switchTeam,
+	threeSimNext,
 	toggleTradeDeadline,
 	tradeCounterOffer,
 	uiUpdateLocal,

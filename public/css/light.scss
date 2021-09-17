@@ -1288,3 +1288,7 @@ a.anchor {
 .border-top-light {
 	border-top: 1px solid $hr-border-color !important;
 }
+
+.table-bg-striped {
+	background-color: $table-accent-bg;
+}

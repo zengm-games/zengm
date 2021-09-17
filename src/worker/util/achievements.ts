@@ -644,7 +644,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "triple_crown",
 		name: "Triple Crown",
-		desc: "Have a player win MVP, Championship MVP, and DPOY in the same year",
+		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year",
 		category: "Awards",
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));

@@ -5,6 +5,64 @@ import { PlayPauseNext } from "../components";
 import { useEffect, useState } from "react";
 import { isSport } from "../../common";
 import { ContestantProfiles, EditContestants, ScoreTable } from "./AllStarDunk";
+import range from "lodash-es/range";
+import classNames from "classnames";
+
+const NUM_BALLS_PER_RACK = 5;
+
+const ShotTable = ({ racks }: { racks: boolean[][] }) => {
+	const rackNames = ["Corner", "Wing", "Top Key", "Wing", "Corner"];
+
+	const highlight = (i: number) =>
+		i % 2 === 1 ? "table-bg-striped" : undefined;
+
+	return (
+		<div className="row" style={{ maxWidth: 800 }}>
+			{rackNames.map((name, i) => (
+				<div key={i} className={classNames("col-12 col-sm", highlight(i))}>
+					<div className="font-weight-bold text-center my-1">{name}</div>
+					<div className="d-flex mb-2">
+						{range(NUM_BALLS_PER_RACK).map(j => {
+							const shotResult: boolean | undefined = racks[i]?.[j];
+							const moneyball = j === NUM_BALLS_PER_RACK - 1;
+
+							return (
+								<div
+									className="flex-fill d-flex justify-content-center"
+									key={j}
+								>
+									{shotResult === undefined ? (
+										<div style={{ width: 18, height: 18 }} />
+									) : shotResult ? (
+										<img
+											alt={`Make (${moneyball ? "moneyball" : "normal"})`}
+											title={`Make (${moneyball ? "moneyball" : "normal"})`}
+											width="18"
+											height="18"
+											src={moneyball ? "/ico/logo-gold.png" : "/ico/logo.png"}
+										/>
+									) : (
+										<img
+											alt={`Miss (${moneyball ? "moneyball" : "normal"})`}
+											title={`Miss (${moneyball ? "moneyball" : "normal"})`}
+											width="18"
+											height="18"
+											src="/ico/logo.png"
+											style={{
+												filter: "grayscale(100%)",
+												opacity: 0.7,
+											}}
+										/>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			))}
+		</div>
+	);
+};
 
 const AllStarThree = ({
 	allPossibleContestants,
@@ -55,8 +113,6 @@ const AllStarThree = ({
 		},
 	});
 
-	let seenRound2 = false;
-
 	return (
 		<>
 			{godMode && !started ? (
@@ -87,9 +143,15 @@ const AllStarThree = ({
 					className="mb-3"
 					fastForwards={[
 						{
-							label: "Complete one rack",
+							label: "Complete rack",
 							onClick: async () => {
 								await toWorker("main", "threeSimNext", "rack");
+							},
+						},
+						{
+							label: "Complete player",
+							onClick: async () => {
+								await toWorker("main", "threeSimNext", "player");
 							},
 						},
 						{
@@ -117,6 +179,17 @@ const AllStarThree = ({
 					paused={paused}
 				/>
 			) : null}
+
+			{three.winner !== undefined ? (
+				<p className="alert alert-success d-inline-block">
+					{three.players[three.winner].name} is your {season} three-point
+					contest champion!
+				</p>
+			) : (
+				<>
+					<ShotTable racks={three.rounds.at(-1).results.at(-1)?.racks ?? []} />
+				</>
+			)}
 		</>
 	);
 };

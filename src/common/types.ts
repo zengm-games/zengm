@@ -111,9 +111,10 @@ type DunkResult = {
 // Done rack when there are 5 entries here
 type ThreeRack = boolean[];
 
-type ThreeResult = {
+export type ThreeResult = {
 	index: number;
-	racks: [ThreeRack, ThreeRack, ThreeRack, ThreeRack, ThreeRack];
+	racks: ThreeRack[];
+	done: boolean;
 };
 
 export type AllStars = {

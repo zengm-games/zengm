@@ -467,7 +467,7 @@ export const getAwaitingUserDunkIndex = (dunk: Dunk) => {
 	return awaitingUserDunkIndex;
 };
 
-const getNextRoundType = (dunk: Dunk) => {
+export const getNextRoundType = (dunk: Dunk) => {
 	const baseRounds = dunk.rounds.filter(round => !round.tiebreaker);
 
 	const numRoundsTotal = getNumRounds(dunk);

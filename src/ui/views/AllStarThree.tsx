@@ -27,10 +27,9 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 							const moneyball = j === NUM_BALLS_PER_RACK - 1;
 
 							const spin =
-								i === racks.length - 1 &&
+								(i === racks.length - 1 || racks[i + 1]?.length === 0) &&
 								j === racks[i].length - 1 &&
-								i !== rackNames.length - 1 &&
-								j !== NUM_BALLS_PER_RACK - 1;
+								(i !== rackNames.length - 1 || j !== NUM_BALLS_PER_RACK - 1);
 
 							return (
 								<div
@@ -76,6 +75,21 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 	);
 };
 
+const getActivityCount = (three: View<"allStarThree">["three"]) => {
+	let count = three.rounds.length;
+	for (const round of three.rounds) {
+		count += round.results.length;
+		for (const result of round.results) {
+			count += result.racks.length;
+			for (const rack of result.racks) {
+				count += rack.length;
+			}
+		}
+	}
+
+	return count;
+};
+
 const AllStarThree = ({
 	allPossibleContestants,
 	challengeNoRatings,
@@ -93,6 +107,8 @@ const AllStarThree = ({
 
 	const [paused, setPaused] = useState(true);
 
+	const activityCount = getActivityCount(three);
+
 	useEffect(() => {
 		let obsolete = false;
 
@@ -101,7 +117,7 @@ const AllStarThree = ({
 				await new Promise<void>(resolve => {
 					setTimeout(() => {
 						resolve();
-					}, 2000);
+					}, 700);
 				});
 				if (!obsolete) {
 					await toWorker("main", "threeSimNext", "event");
@@ -114,7 +130,7 @@ const AllStarThree = ({
 		return () => {
 			obsolete = true;
 		};
-	}, [paused]);
+	}, [paused, activityCount]);
 
 	useTitleBar({
 		title: "Three-Point Contest",

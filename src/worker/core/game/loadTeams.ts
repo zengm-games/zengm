@@ -261,6 +261,14 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 				}
 			}
 		}
+		if (allStars.three && allStars.three.winner === undefined) {
+			while (true) {
+				const type = await allStar.threeContest.simNextThreeEvent(conditions);
+				if (type === "all") {
+					break;
+				}
+			}
+		}
 
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;

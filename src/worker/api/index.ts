@@ -1023,7 +1023,7 @@ const threeSimNext = async (
 ) => {
 	const types: typeof type[] = ["event", "rack", "player", "round", "all"];
 
-	// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
+	// Each call to simNextThreeEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
 
 	const targetIndex = types.indexOf(type);
 

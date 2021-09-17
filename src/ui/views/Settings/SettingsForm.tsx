@@ -1639,6 +1639,9 @@ const SettingsForm = ({
 			),
 		},
 		{
+			name: "All-Star Contests",
+		},
+		{
 			name: "Challenge Modes",
 		},
 		{

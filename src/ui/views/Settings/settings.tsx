@@ -1414,4 +1414,26 @@ if (isSport("basketball")) {
 			}
 		},
 	});
+	settings.push({
+		category: "All-Star Contests",
+		key: "numPlayersDunk",
+		name: "# Players In Dunk Contest",
+		type: "int",
+		validator: value => {
+			if (value <= 1) {
+				throw new Error("Value must be greater than 2");
+			}
+		},
+	});
+	settings.push({
+		category: "All-Star Contests",
+		key: "numPlayersThree",
+		name: "# Players In 3pt Contest",
+		type: "int",
+		validator: value => {
+			if (value <= 1) {
+				throw new Error("Value must be greater than 2");
+			}
+		},
+	});
 }

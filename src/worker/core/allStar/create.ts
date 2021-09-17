@@ -15,8 +15,8 @@ import { idb } from "../../db";
 import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
 import range from "lodash-es/range";
-import { NUM_DUNKERS_IN_CONTEST } from "./dunkContest";
-import { NUM_SHOOTERS_IN_CONTEST } from "./threeContest";
+
+const MIN_PLAYERS_CONTEST = 2;
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
@@ -127,14 +127,14 @@ const create = async (conditions: Conditions) => {
 			],
 			["desc", "desc"],
 		)
-			.slice(0, NUM_DUNKERS_IN_CONTEST)
+			.slice(0, g.get("numPlayersDunk"))
 			.map(p => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
 			}));
 
-		if (dunkers.length === NUM_DUNKERS_IN_CONTEST) {
+		if (dunkers.length >= MIN_PLAYERS_CONTEST) {
 			random.shuffle(dunkers);
 
 			const controlling = [];
@@ -166,7 +166,7 @@ const create = async (conditions: Conditions) => {
 				rounds: [
 					// First round
 					{
-						dunkers: range(NUM_DUNKERS_IN_CONTEST),
+						dunkers: range(dunkers.length),
 						dunks: [],
 					},
 				],
@@ -183,8 +183,8 @@ const create = async (conditions: Conditions) => {
 		}
 
 		// Half qualify by taking a lot of threes. Half qualify by ratings.
-		const numStats = Math.floor(NUM_SHOOTERS_IN_CONTEST / 2);
-		const numRatings = NUM_SHOOTERS_IN_CONTEST - numStats;
+		const numStats = Math.floor(g.get("numPlayersThree") / 2);
+		const numRatings = g.get("numPlayersThree") - numStats;
 
 		const shootersStats = orderBy(
 			activePlayers.filter(p => p.injury.gamesRemaining === 0),
@@ -222,7 +222,7 @@ const create = async (conditions: Conditions) => {
 			name: `${p.firstName} ${p.lastName}`,
 		}));
 
-		if (shooters.length === NUM_SHOOTERS_IN_CONTEST) {
+		if (shooters.length >= MIN_PLAYERS_CONTEST) {
 			random.shuffle(shooters);
 
 			allStars.three = {
@@ -230,7 +230,7 @@ const create = async (conditions: Conditions) => {
 				rounds: [
 					// First round
 					{
-						indexes: range(NUM_SHOOTERS_IN_CONTEST),
+						indexes: range(shooters.length),
 						results: [
 							{
 								index: 0,

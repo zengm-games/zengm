@@ -88,7 +88,9 @@ export type Key =
 	| "playoffsNumTeamsDiv"
 	| "playoffsReseed"
 	| "playerBioInfo"
-	| "playIn";
+	| "playIn"
+	| "numPlayersDunk"
+	| "numPlayersThree";
 
 export type Category =
 	| "New League"
@@ -108,7 +110,8 @@ export type Category =
 	| "Challenge Modes"
 	| "Game Modes"
 	| "Players"
-	| "UI";
+	| "UI"
+	| "All-Star Contests";
 
 export type FieldType =
 	| "bool"

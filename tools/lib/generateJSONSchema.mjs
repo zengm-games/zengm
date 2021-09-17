@@ -873,9 +873,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 									minimum: 1
 								},
 							}),
+							numPlayersDunk: {
+								type: "integer",
+								minimum: 2,
+							},
 							numPlayersOnCourt: {
 								type: "integer",
 								minimum: 1,
+							},
+							numPlayersThree: {
+								type: "integer",
+								minimum: 2,
 							},
 							numPlayoffByes: wrap({
 								type: "integer",

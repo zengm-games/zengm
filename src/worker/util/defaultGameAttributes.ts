@@ -162,6 +162,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playoffsNumTeamsDiv: wrap(0),
 	playoffsReseed: false,
 	playIn: true,
+	numPlayersDunk: 4,
+	numPlayersThree: 8,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

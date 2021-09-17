@@ -69,7 +69,9 @@ export const getRoundResults = (round: Three["rounds"][number]) => {
 	return Object.values(resultsByIndex);
 };
 
-const getShotOutcome = (rating: number) => Math.random() < rating / 100;
+// Increase exponent to lower scores and make them more spread out
+const getShotOutcome = (rating: number) =>
+	Math.random() < 0.2 + 0.7 * (rating / 100) ** 1.5;
 
 export const simNextThreeEvent = async (
 	conditions: Conditions,

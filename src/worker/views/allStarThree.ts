@@ -100,7 +100,6 @@ const updateAllStarThree = async (
 				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
 			}));
 		}
-		console.log(three, resultsByRound);
 
 		return {
 			allPossibleContestants,

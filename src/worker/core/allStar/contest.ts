@@ -54,13 +54,16 @@ export const getNextRoundType = (contest: {
 			outcome = currentRoundNum === numRoundsTotal ? "over" : "normalRound";
 			break;
 		} else {
-			if (round[0].score > round[1].score) {
-				// Well at least 1 does, then can use tiebreaker for the rest
+			const tiedValue = round[numWinnersLeftToFind].score;
+
+			// Find players ranked above the tied players - they go to next round automatically
+			const playersToNextRound = round.filter(p => p.score > tiedValue);
+			for (const p of playersToNextRound) {
 				numWinnersLeftToFind -= 1;
-				indexesForNextRound.push(round[0].index);
+				indexesForNextRound.push(p.index);
 			}
 
-			const tied = round.filter(p => p.score === round[1].score);
+			const tied = round.filter(p => p.score === tiedValue);
 			indexesForNextTiebreaker = tied.map(p => p.index);
 
 			outcome = "tiebreakerRound";

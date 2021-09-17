@@ -26,6 +26,12 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 							const shotResult: boolean | undefined = racks[i]?.[j];
 							const moneyball = j === NUM_BALLS_PER_RACK - 1;
 
+							const spin =
+								i === racks.length - 1 &&
+								j === racks[i].length - 1 &&
+								i !== rackNames.length - 1 &&
+								j !== NUM_BALLS_PER_RACK - 1;
+
 							return (
 								<div
 									className="flex-fill d-flex justify-content-center"
@@ -33,24 +39,30 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 								>
 									{shotResult === undefined ? (
 										<div style={{ width: 18, height: 18 }} />
-									) : shotResult ? (
-										<img
-											alt={`Make (${moneyball ? "moneyball" : "normal"})`}
-											title={`Make (${moneyball ? "moneyball" : "normal"})`}
-											width="18"
-											height="18"
-											src={moneyball ? "/ico/logo-gold.png" : "/ico/logo.png"}
-										/>
 									) : (
 										<img
-											alt={`Miss (${moneyball ? "moneyball" : "normal"})`}
-											title={`Miss (${moneyball ? "moneyball" : "normal"})`}
+											alt={`${shotResult ? "Make" : "Miss"} (${
+												moneyball ? "moneyball" : "normal"
+											})`}
+											title={`${shotResult ? "Make" : "Miss"} (${
+												moneyball ? "moneyball" : "normal"
+											})`}
+											className="spin"
 											width="18"
 											height="18"
-											src="/ico/logo.png"
+											src={
+												moneyball && shotResult
+													? "/ico/logo-gold.png"
+													: "/ico/logo.png"
+											}
 											style={{
-												filter: "grayscale(100%)",
-												opacity: 0.7,
+												animationPlayState: spin ? "running" : "paused",
+												...(!shotResult
+													? {
+															filter: "grayscale(100%)",
+															opacity: 0.7,
+													  }
+													: undefined),
 											}}
 										/>
 									)}

@@ -410,6 +410,9 @@ const saveAwardsByPlayer = async (
 		} else if (p.type === "Slam Dunk Contest Winner") {
 			text += "won the slam dunk contest.";
 			score = 10;
+		} else if (p.type === "Three-Point Contest Winner") {
+			text += "won the three-point contest.";
+			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;
 			score = 20;

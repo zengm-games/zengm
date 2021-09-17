@@ -141,7 +141,9 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Team",
 		"MVP",
 		"Team",
-		"Dunk Contest Winner",
+		"Dunk Winner",
+		"Team",
+		"Three-Point Winner",
 		"Team",
 		"Links",
 	]);
@@ -155,6 +157,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			row.mvp && row.mvp.tid === userTid ? "table-info" : "";
 		const classNamesDunk =
 			row.dunk && row.dunk.tid === userTid ? "table-info" : "";
+		const classNamesThree =
+			row.three && row.three.tid === userTid ? "table-info" : "";
 
 		const rowResultText = resultText(row);
 
@@ -249,6 +253,24 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 						</PlayerTeam>
 					),
 				},
+				{
+					classNames: classNamesThree,
+					value: (
+						// @ts-ignore
+						<PlayerName p={row.three}>
+							{row.three ? row.three.name : "???"}
+						</PlayerName>
+					),
+				},
+				{
+					classNames: classNamesThree,
+					value: (
+						// @ts-ignore
+						<PlayerTeam p={row.three} season={row.season}>
+							{row.three ? row.three.abbrev : "???"}
+						</PlayerTeam>
+					),
+				},
 				<>
 					<a href={helpers.leagueUrl(["all_star", "draft", row.season])}>
 						Draft Results
@@ -256,7 +278,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					|{" "}
 					<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
 						Dunk Contest
-					</a>
+					</a>{" "}
 					|{" "}
 					<a href={helpers.leagueUrl(["all_star", "three", row.season])}>
 						Three-Point Contest

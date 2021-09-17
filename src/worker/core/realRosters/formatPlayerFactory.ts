@@ -280,7 +280,8 @@ const formatPlayerFactory = async (
 										options.phase === PHASE.PLAYOFFS &&
 										award.season < awardsCutoffSeason + 1 &&
 										(award.type.includes("All-Star") ||
-											award.type === "Slam Dunk Contest Winner")),
+											award.type === "Slam Dunk Contest Winner" ||
+											award.type === "Three-Point Contest Winner")),
 							),
 					  )
 					: undefined;

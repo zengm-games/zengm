@@ -2072,7 +2072,8 @@ const cols: {
 	Drafted: {
 		sortType: "number",
 	},
-	"Dunk Contest Winner": {
+	"Dunk Winner": {
+		desc: "Slam Dunk Contest Winner",
 		sortType: "name",
 	},
 	End: {
@@ -2347,6 +2348,10 @@ const cols: {
 		sortType: "number",
 	},
 	Team: {},
+	"Three-Point Winner": {
+		desc: "Three-Point Contest Winner",
+		sortType: "name",
+	},
 	Titles: {
 		desc: "Championships Won",
 		sortSequence: ["desc", "asc"],

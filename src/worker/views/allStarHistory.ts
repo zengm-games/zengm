@@ -21,6 +21,10 @@ const augment = (allAllStars: AllStars[]) => {
 				row.dunk && row.dunk.winner !== undefined
 					? addAbbrev(row.dunk.players[row.dunk.winner])
 					: undefined,
+			three:
+				row.three && row.three.winner !== undefined
+					? addAbbrev(row.three.players[row.three.winner])
+					: undefined,
 		};
 	});
 };

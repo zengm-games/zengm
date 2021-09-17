@@ -77,6 +77,10 @@ const optionsTmp = bySport({
 			key: "dunk",
 		},
 		{
+			val: "Three-Point Contest Winner",
+			key: "three",
+		},
+		{
 			val: "League Scoring Leader",
 			key: "ppg_leader",
 		},

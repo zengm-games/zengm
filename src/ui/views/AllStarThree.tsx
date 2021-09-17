@@ -234,9 +234,9 @@ const AllStarThree = ({
 				</p>
 			) : (
 				<>
-					<h1>
+					<h2>
 						{currentName} - {currentScore}/{maxScore}
-					</h1>
+					</h2>
 					<ShotTable racks={three.rounds.at(-1).results.at(-1)?.racks ?? []} />
 				</>
 			)}

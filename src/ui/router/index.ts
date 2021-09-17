@@ -216,6 +216,11 @@ class Router {
 			error = new Error("Matching route not found");
 		}
 
+		// HACK! Some ads were including a request for /ads.txt?upapi=true which somehow triggered this code and led to Controller attempting to render multiple pages at once, one of which was outside of the league, leading to beforeViewNonLeague to be called and stop game sim
+		if (error && path.includes("ads.txt")) {
+			return;
+		}
+
 		if (this.navigationEnd) {
 			this.navigationEnd({
 				context,

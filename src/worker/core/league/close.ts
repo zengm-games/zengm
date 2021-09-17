@@ -1,12 +1,14 @@
 import { idb } from "../../db";
-import { g, local, lock, updateStatus } from "../../util"; // Flush cache, disconnect from league database, and unset g.get("lid")
+import { g, local, lock, updateStatus } from "../../util";
 
+// Flush cache, disconnect from league database, and unset g.get("lid")
 const close = async (disconnect?: boolean) => {
 	const gameSim = lock.get("gameSim");
 	local.autoPlayUntil = undefined;
 	await lock.set("stopGameSim", true);
-	await lock.set("gameSim", false); // Wait in case stuff is still happening (ugh)
+	await lock.set("gameSim", false);
 
+	// Wait in case stuff is still happening (ugh)
 	if (gameSim) {
 		await new Promise<void>(resolve => {
 			setTimeout(() => {
@@ -24,8 +26,9 @@ const close = async (disconnect?: boolean) => {
 		}
 
 		if (disconnect) {
-			idb.cache.stopAutoFlush(); // Should probably "close" cache here too, but no way to do that now
+			idb.cache.stopAutoFlush();
 
+			// Should probably "close" cache here too, but no way to do that now
 			idb.league.close();
 		}
 	}

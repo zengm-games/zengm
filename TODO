@@ -1,3 +1,22 @@
+game sim pausing bug
+- free agents faster too?
+- happens with auto play and normal play (until end of season, or shorter)
+  - but only intermittently!
+- i've seen it on play.bbgm and beta.bbgm, but not on localhost, even when using yarn build version
+  - caused by ad?
+  - game.play not calling right callback somewhere somehow?
+- debugging
+  - stopGameSim is being set to true by league.close. but why is league.close being called?
+  - Controller updatePage is being called with both inLeague true and false. false -> league.close. but why is it being called with inLeague false?
+  - see ads.txt comment in router/index.ts
+- would be nice to have a better solution
+  - what was triggering navigation event? fetch? some kind of include?
+  - error while in league should not jump to outside league
+
+play until end of playoffs days with play in https://discord.com/channels/290013534023057409/290015591216054273/888543282693566474
+
+update text for num participants https://discord.com/channels/290013534023057409/290015591216054273/888452590931701790
+
 ads.txt redirect on subdomains to main domain
 
 expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564

@@ -492,6 +492,11 @@ export const ContestantProfiles = ({
 	season: number;
 	userTid: number;
 }) => {
+	if (players.length > 8) {
+		// Too many to show!
+		return null;
+	}
+
 	const contestIsDunk = isDunkContest(contest);
 
 	// maxWidth is to get 4 in a row max
@@ -538,7 +543,12 @@ export const ContestantProfiles = ({
 								jersey={p.jersey}
 							/>
 						</div>
-						<div className="mt-2">
+						<div
+							className={classNames(
+								"mt-2",
+								tid === userTid ? "table-info" : undefined,
+							)}
+						>
 							<PlayerNameLabels
 								pid={p.pid}
 								injury={p.injury}
@@ -553,7 +563,7 @@ export const ContestantProfiles = ({
 								className="ml-2"
 								href={helpers.leagueUrl([
 									"roster",
-									`${p.abbrev}_${p.tid}`,
+									`${p.abbrev}_${tid}`,
 									season,
 								])}
 							>
@@ -644,6 +654,7 @@ export const ScoreTable = ({
 	players,
 	resultsByRound,
 	season,
+	userTid,
 }: {
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
 	players: View<"allStarDunk">["players"];
@@ -651,6 +662,7 @@ export const ScoreTable = ({
 		| View<"allStarDunk">["resultsByRound"]
 		| View<"allStarThree">["resultsByRound"];
 	season: number;
+	userTid: number;
 }) => {
 	const numRounds = getNumRounds(contest);
 
@@ -682,8 +694,13 @@ export const ScoreTable = ({
 				</thead>
 				<tbody>
 					{players.map((p, i) => {
+						const tid = contest.players[i].tid;
+
 						return (
-							<tr key={i}>
+							<tr
+								key={i}
+								className={tid === userTid ? "table-info" : undefined}
+							>
 								<td>
 									<PlayerNameLabels pid={p.pid} watch={p.watch} season={season}>
 										{contest.players[i].name}
@@ -811,6 +828,7 @@ const AllStarDunk = ({
 				resultsByRound={resultsByRound}
 				players={players}
 				season={season}
+				userTid={userTid}
 			/>
 
 			{dunk.winner === undefined ? (

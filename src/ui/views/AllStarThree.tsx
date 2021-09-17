@@ -184,6 +184,7 @@ const AllStarThree = ({
 				resultsByRound={resultsByRound}
 				players={players}
 				season={season}
+				userTid={userTid}
 			/>
 
 			{three.winner === undefined ? (

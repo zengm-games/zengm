@@ -498,7 +498,7 @@ export const ContestantProfiles = ({
 	return (
 		<div
 			className="d-none d-sm-flex flex-wrap mb-4"
-			style={{ gap: "3rem", maxWidth: 900 }}
+			style={{ gap: "1.5rem 3rem", maxWidth: 900 }}
 		>
 			{players.map((p, i) => {
 				const tid = contest.players[i].tid;

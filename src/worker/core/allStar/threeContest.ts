@@ -3,9 +3,9 @@ import type { PlayerRatings } from "../../../common/types.basketball";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
-import { getNextRoundType } from "./dunkContest";
+import { getNextRoundType } from "./contest";
 
-type Three = NonNullable<AllStars["three"]>;
+export type Three = NonNullable<AllStars["three"]>;
 
 export const NUM_SHOOTERS_IN_CONTEST = 8;
 const NUM_RACKS = 5;
@@ -90,109 +90,96 @@ export const simNextThreeEvent = async (
 
 	// Figure out current dunker
 	const nextShooterIndex = getNextShooterIndex(three);
-	if (nextShooterIndex === undefined) {
-		throw new Error("nextShooterIndex should not be undefined");
-		// ...because it's called again at the end of this function, and undefineds are handled there
-	}
+	if (nextShooterIndex !== undefined) {
+		const currentRound = three.rounds.at(-1);
+		const lastResult = currentRound.results.at(-1);
 
-	let stillSamePlayersTurn = true;
+		// Each call should take a shot or label a result as done
+		if (lastResult && doneRoundShots(lastResult.racks)) {
+			// Player over, prep next player
+			if (currentRound.results.length < currentRound.indexes.length) {
+				currentRound.results.push({
+					index: nextShooterIndex,
+					racks: [[]],
+				});
+			}
+		} else {
+			// New shot attempt
+			const p = await idb.cache.players.get(
+				three.players[nextShooterIndex].pid,
+			);
+			if (!p) {
+				throw new Error("Invalid pid");
+			}
 
-	const currentRound = three.rounds.at(-1);
-	let lastResult = currentRound.results.at(-1);
+			const ratings = p.ratings.at(-1) as PlayerRatings;
+			const rating = ratings.tp;
 
-	// Each call should take a shot or label a result as done
-	if (lastResult && doneRoundShots(lastResult.racks)) {
-		// Round over, prep next round
-		stillSamePlayersTurn = false;
+			const success = getShotOutcome(rating);
+			lastResult.racks.at(-1).push(success);
 
-		if (nextShooterIndex !== undefined) {
-			// New shooter!
-			lastResult = {
-				index: nextShooterIndex,
-				racks: [[]],
-			};
-			currentRound.results.push(lastResult);
+			if (lastResult.racks.at(-1).length === NUM_BALLS_PER_RACK) {
+				if (lastResult.racks.length < NUM_RACKS) {
+					lastResult.racks.push([]);
+					type = "rack";
+				} else {
+					type = "player";
+				}
+			}
+
+			// Don't set done even if all shots are done, do it on next call
 		}
 	} else {
-		// New shot attempt
-		const p = await idb.cache.players.get(three.players[nextShooterIndex].pid);
-		if (!p) {
-			throw new Error("Invalid pid");
-		}
+		// Index undefined means a round just ended. Do we need another normal round? Another tiebreaker round? Or is the contest over?
 
-		const ratings = p.ratings.at(-1) as PlayerRatings;
-		const rating = ratings.tp;
+		const { indexesForNextRound, indexesForNextTiebreaker, outcome } =
+			getNextRoundType(three);
 
-		const success = getShotOutcome(rating);
-		lastResult.racks.at(-1).push(success);
+		if (outcome === "normalRound") {
+			type = "round";
 
-		if (lastResult.racks.at(-1).length === NUM_BALLS_PER_RACK) {
-			if (lastResult.racks.length < NUM_RACKS) {
-				lastResult.racks.push([]);
-				type = "rack";
-			} else {
-				type = "player";
-			}
-		}
+			three.rounds.push({
+				indexes: indexesForNextRound,
+				results: [
+					{
+						index: indexesForNextRound[0],
+						racks: [[]],
+					},
+				],
+			});
+		} else if (outcome === "tiebreakerRound") {
+			type = "round";
 
-		// Don't set done even if all shots are done, do it on next call
-	}
+			three.rounds.push({
+				indexes: indexesForNextTiebreaker,
+				results: [
+					{
+						index: indexesForNextTiebreaker[0],
+						racks: [[]],
+					},
+				],
+				tiebreaker: true,
+			});
+		} else {
+			type = "all";
 
-	// Contest over? Need to add another round?
-	if (!stillSamePlayersTurn) {
-		const index = getNextShooterIndex(three);
-		if (index === undefined) {
-			// Index undefined means a round just ended. Do we need another normal round? Another tiebreaker round? Or is the contest over?
+			three.winner = indexesForNextRound[0];
 
-			const { indexesForNextRound, indexesForNextTiebreaker, outcome } =
-				getNextRoundType(three);
+			const p = three.players[three.winner];
 
-			if (outcome === "normalRound") {
-				type = "round";
-
-				three.rounds.push({
-					indexes: indexesForNextRound,
-					results: [
-						{
-							index: indexesForNextRound[0],
-							racks: [[]],
-						},
-					],
-				});
-			} else if (outcome === "tiebreakerRound") {
-				type = "round";
-
-				three.rounds.push({
-					indexes: indexesForNextTiebreaker,
-					results: [
-						{
-							index: indexesForNextTiebreaker[0],
-							racks: [[]],
-						},
-					],
-					tiebreaker: true,
-				});
-			} else {
-				type = "all";
-
-				three.winner = indexesForNextRound[0];
-
-				const p = three.players[three.winner];
-
-				await saveAwardsByPlayer(
-					[
-						{
-							pid: p.pid,
-							tid: p.tid,
-							name: p.name,
-							type: "Three-Point Contest Winner",
-						},
-					],
-					conditions,
-					g.get("season"),
-					true,
-				);
-			}
+			await saveAwardsByPlayer(
+				[
+					{
+						pid: p.pid,
+						tid: p.tid,
+						name: p.name,
+						type: "Three-Point Contest Winner",
+					},
+				],
+				conditions,
+				g.get("season"),
+				true,
+			);
 		}
 	}
 

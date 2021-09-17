@@ -200,7 +200,7 @@ const AllStarThree = ({
 			) : null}
 
 			{three.winner !== undefined ? (
-				<p className="alert alert-success d-inline-block">
+				<p className="alert alert-success d-inline-block mb-0">
 					{three.players[three.winner].name} is your {season} three-point
 					contest champion!
 				</p>

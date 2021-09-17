@@ -1,4 +1,3 @@
-import * as contest from "./contest";
 import create from "./create";
 import draftAll from "./draftAll";
 import draftOne from "./draftOne";
@@ -10,7 +9,6 @@ import nextGameIsAllStar from "./nextGameIsAllStar";
 import * as threeContest from "./threeContest";
 
 export default {
-	contest,
 	create,
 	draftAll,
 	draftOne,

@@ -308,7 +308,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 				properties: {
 					amount: {
 						type: "number",
-						exclusiveMinimum: 0,
+						minimum: 0,
 					},
 					exp: {
 						type: "number",

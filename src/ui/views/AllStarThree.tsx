@@ -113,6 +113,25 @@ const AllStarThree = ({
 		},
 	});
 
+	let currentName = "???";
+	let currentScore = 0;
+	let maxScore = 30;
+	const currentResult = three.rounds.at(-1).results.at(-1);
+	if (currentResult) {
+		currentName = three.players[currentResult.index].name;
+
+		for (const rack of currentResult.racks) {
+			for (let i = 0; i < rack.length; i++) {
+				const value = i === NUM_BALLS_PER_RACK - 1 ? 2 : 1;
+				if (rack[i]) {
+					currentScore += value;
+				} else {
+					maxScore -= value;
+				}
+			}
+		}
+	}
+
 	return (
 		<>
 			{godMode && !started ? (
@@ -187,6 +206,9 @@ const AllStarThree = ({
 				</p>
 			) : (
 				<>
+					<h1>
+						{currentName} - {currentScore}/{maxScore}
+					</h1>
 					<ShotTable racks={three.rounds.at(-1).results.at(-1)?.racks ?? []} />
 				</>
 			)}

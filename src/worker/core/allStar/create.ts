@@ -231,7 +231,12 @@ const create = async (conditions: Conditions) => {
 					// First round
 					{
 						indexes: range(NUM_SHOOTERS_IN_CONTEST),
-						results: [],
+						results: [
+							{
+								index: 0,
+								racks: [[]],
+							},
+						],
 					},
 				],
 			};

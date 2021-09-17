@@ -114,7 +114,6 @@ type ThreeRack = boolean[];
 export type ThreeResult = {
 	index: number;
 	racks: ThreeRack[];
-	done: boolean;
 };
 
 export type AllStars = {

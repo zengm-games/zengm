@@ -11,13 +11,20 @@ export const NUM_SHOOTERS_IN_CONTEST = 8;
 const NUM_RACKS = 5;
 const NUM_BALLS_PER_RACK = 5;
 
+const doneRoundShots = (racks: ThreeResult["racks"]) => {
+	return (
+		racks.length === NUM_RACKS &&
+		racks.every(rack => rack.length === NUM_BALLS_PER_RACK)
+	);
+};
+
 // Return undefined means contest is over or another round needs to be added
 const getNextShooterIndex = (three: Three) => {
 	const currentRound = three.rounds.at(-1);
 
 	// Another shot/score in the current round needed?
 	const lastResult = currentRound.results.at(-1);
-	if (lastResult && !lastResult.done) {
+	if (lastResult && !doneRoundShots(lastResult.racks)) {
 		return lastResult.index;
 	}
 
@@ -49,23 +56,17 @@ export const getRoundResults = (round: Three["rounds"][number]) => {
 	}
 
 	for (const result of round.results) {
-		for (const racks of result.racks) {
-			for (const shot of racks) {
-				if (shot) {
-					resultsByIndex[result.index].score += 1;
+		for (const rack of result.racks) {
+			for (let i = 0; i < rack.length; i++) {
+				const value = i === NUM_BALLS_PER_RACK - 1 ? 2 : 1;
+				if (rack[i]) {
+					resultsByIndex[result.index].score += value;
 				}
 			}
 		}
 	}
 
 	return Object.values(resultsByIndex);
-};
-
-const doneRoundShots = (result: ThreeResult) => {
-	return (
-		result.racks.length === NUM_RACKS &&
-		result.racks.every(rack => rack.length === NUM_BALLS_PER_RACK)
-	);
 };
 
 const getShotOutcome = (rating: number) => Math.random() < rating / 100;
@@ -100,27 +101,20 @@ export const simNextThreeEvent = async (
 	let lastResult = currentRound.results.at(-1);
 
 	// Each call should take a shot or label a result as done
-	if (
-		lastResult &&
-		lastResult.index === nextShooterIndex &&
-		doneRoundShots(lastResult)
-	) {
-		// Finalize round
-		lastResult.done = true;
+	if (lastResult && doneRoundShots(lastResult.racks)) {
+		// Round over, prep next round
 		stillSamePlayersTurn = false;
-		type = "player";
-	} else {
-		// New shot attempt
-		if (lastResult?.index !== nextShooterIndex) {
+
+		if (nextShooterIndex !== undefined) {
 			// New shooter!
 			lastResult = {
 				index: nextShooterIndex,
 				racks: [[]],
-				done: false,
 			};
 			currentRound.results.push(lastResult);
 		}
-
+	} else {
+		// New shot attempt
 		const p = await idb.cache.players.get(three.players[nextShooterIndex].pid);
 		if (!p) {
 			throw new Error("Invalid pid");
@@ -135,8 +129,10 @@ export const simNextThreeEvent = async (
 		if (lastResult.racks.at(-1).length === NUM_BALLS_PER_RACK) {
 			if (lastResult.racks.length < NUM_RACKS) {
 				lastResult.racks.push([]);
+				type = "rack";
+			} else {
+				type = "player";
 			}
-			type = "rack";
 		}
 
 		// Don't set done even if all shots are done, do it on next call
@@ -156,14 +152,24 @@ export const simNextThreeEvent = async (
 
 				three.rounds.push({
 					indexes: indexesForNextRound,
-					results: [],
+					results: [
+						{
+							index: indexesForNextRound[0],
+							racks: [[]],
+						},
+					],
 				});
 			} else if (outcome === "tiebreakerRound") {
 				type = "round";
 
 				three.rounds.push({
 					indexes: indexesForNextTiebreaker,
-					results: [],
+					results: [
+						{
+							index: indexesForNextTiebreaker[0],
+							racks: [[]],
+						},
+					],
 					tiebreaker: true,
 				});
 			} else {

@@ -183,6 +183,7 @@ const AllStarThree = ({
 				contest={three}
 				resultsByRound={resultsByRound}
 				players={players}
+				season={season}
 			/>
 
 			{three.winner === undefined ? (

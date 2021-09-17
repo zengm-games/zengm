@@ -643,12 +643,14 @@ export const ScoreTable = ({
 	contest,
 	players,
 	resultsByRound,
+	season,
 }: {
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
 	players: View<"allStarDunk">["players"];
 	resultsByRound:
 		| View<"allStarDunk">["resultsByRound"]
 		| View<"allStarThree">["resultsByRound"];
+	season: number;
 }) => {
 	const numRounds = getNumRounds(contest);
 
@@ -683,7 +685,7 @@ export const ScoreTable = ({
 						return (
 							<tr key={i}>
 								<td>
-									<PlayerNameLabels pid={p.pid} watch={p.watch}>
+									<PlayerNameLabels pid={p.pid} watch={p.watch} season={season}>
 										{contest.players[i].name}
 									</PlayerNameLabels>
 								</td>
@@ -808,6 +810,7 @@ const AllStarDunk = ({
 				contest={dunk}
 				resultsByRound={resultsByRound}
 				players={players}
+				season={season}
 			/>
 
 			{dunk.winner === undefined ? (

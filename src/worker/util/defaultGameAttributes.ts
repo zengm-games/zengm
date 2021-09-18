@@ -25,7 +25,7 @@ export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"godMode",
 	"godModeInPast",
 	"otherTeamsWantToHire",
-	"easyDifficultyInPast",
+	"lowestDifficulty",
 	"difficulty",
 	"gracePeriodEnd",
 	"lid",
@@ -85,7 +85,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	brotherRate: 0.02,
 	forceRetireAge: 0,
 
-	easyDifficultyInPast: false,
 	hardCap: false,
 
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
@@ -181,6 +180,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numTeams: 0,
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
+	lowestDifficulty: 0,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

@@ -2,6 +2,7 @@ import { unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	DIFFICULTY,
 	gameAttributesArrayToObject,
 	isSport,
 	MAX_SUPPORTED_LEAGUE_VERSION,
@@ -1089,6 +1090,48 @@ const migrate = ({
 				return p;
 			}
 		});
+	}
+
+	if (oldVersion <= 47) {
+		// Gets need to use raw IDB API because Firefox < 60
+		const tx = unwrap(transaction);
+
+		tx.objectStore("gameAttributes").get("difficulty").onsuccess = (
+			event: any,
+		) => {
+			let difficulty =
+				event.target.result !== undefined
+					? event.target.result.value
+					: undefined;
+
+			tx.objectStore("gameAttributes").get("easyDifficultyInPast").onsuccess = (
+				event: any,
+			) => {
+				let easyDifficultyInPast =
+					event.target.result !== undefined
+						? event.target.result.value
+						: undefined;
+
+				if (typeof difficulty !== "number") {
+					difficulty = 0;
+				}
+				if (typeof easyDifficultyInPast !== "boolean") {
+					easyDifficultyInPast = false;
+				}
+
+				let lowestDifficulty = difficulty;
+				if (easyDifficultyInPast && lowestDifficulty > DIFFICULTY.Easy) {
+					lowestDifficulty = DIFFICULTY.Easy;
+				}
+
+				console.log(difficulty, easyDifficultyInPast, lowestDifficulty);
+
+				tx.objectStore("gameAttributes").put({
+					key: "lowestDifficulty",
+					value: lowestDifficulty,
+				});
+			};
+		};
 	}
 };
 

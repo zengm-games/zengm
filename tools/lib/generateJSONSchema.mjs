@@ -640,9 +640,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 									"nhl2017",
 								],
 							},
-							easyDifficultyInPast: {
-								type: "boolean",
-							},
 							elam: {
 								type: "boolean",
 							},
@@ -741,6 +738,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							lid: {
 								type: "integer",
+							},
+							lowestDifficulty: {
+								type: "number",
 							},
 							luxuryPayroll: {
 								type: "integer",

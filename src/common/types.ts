@@ -465,7 +465,6 @@ export type GameAttributesLeague = {
 	divs: Div[];
 	draftType: DraftType;
 	draftAges: [number, number];
-	easyDifficultyInPast: boolean;
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;
@@ -491,6 +490,7 @@ export type GameAttributesLeague = {
 	injuries?: InjuriesSetting;
 	injuryRate: number;
 	lid: number;
+	lowestDifficulty: number;
 	luxuryPayroll: number;
 	luxuryTax: number;
 	maxContract: number;

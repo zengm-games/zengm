@@ -29,9 +29,10 @@ const setGameAttributes = async (
 
 	if (
 		gameAttributes.difficulty !== undefined &&
-		gameAttributes.difficulty < DIFFICULTY.Normal
+		g.hasOwnProperty("lowestDifficulty") &&
+		gameAttributes.difficulty < g.get("lowestDifficulty")
 	) {
-		gameAttributes.easyDifficultyInPast = true;
+		gameAttributes.lowestDifficulty = gameAttributes.difficulty;
 	}
 
 	if (gameAttributes.injuries) {

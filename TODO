@@ -1,7 +1,5 @@
 achievements stored separately based on difficulty
-- easyDifficultyInPast -> lowestDifficulty
-  - test upgrade
-  - test import
+- show lowestDifficulty/godModeInPast status on achievmenets page
 - migrate prod db
 - confirm new account email works still
 
@@ -22,6 +20,8 @@ game sim pausing bug
 - would be nice to have a better solution
   - what was triggering navigation event? fetch? some kind of include?
   - error while in league should not jump to outside league
+
+press enter while in name text field on create league - why randomize?
 
 better adjustment for real draft prospects
 

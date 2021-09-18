@@ -7,7 +7,7 @@ import type { AchievementWhen, Conditions } from "../../common/types";
 
 type Difficulty = "insane" | "hard" | "normal" | "easy";
 const getDifficulty = (): Difficulty => {
-	const difficulty = g.get("difficulty");
+	const difficulty = g.get("lowestDifficulty");
 	if (difficulty >= DIFFICULTY.Insane) {
 		return "insane";
 	}
@@ -163,7 +163,7 @@ async function getAll(): Promise<
 const check = async (when: AchievementWhen, conditions: Conditions) => {
 	try {
 		const tooEz =
-			g.get("easyDifficultyInPast") ||
+			g.get("lowestDifficulty") < DIFFICULTY.Normal ||
 			g.get("godModeInPast") ||
 			g.get("spectator");
 
@@ -184,9 +184,9 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 						} else if (g.get("spectator")) {
 							message = "Spectator Mode is enabled.";
 						} else if (g.get("difficulty") < DIFFICULTY.Normal) {
-							message = "the difficulty level is Easy.";
+							message = 'the difficulty level is below "Normal".';
 						} else {
-							message = "the difficulty level was previously Easy.";
+							message = 'the difficulty level was previously below "Normal".';
 						}
 
 						logEvent(

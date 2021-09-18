@@ -120,10 +120,19 @@ const createGameAttributes = async (
 		}
 	}
 
-	// Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
+	// Extra check for lowestDifficulty, so that it won't be overwritten by a league file if the user selects Easy
 	// when creating a new league.
-	if (gameAttributes.difficulty < DIFFICULTY.Normal) {
-		gameAttributes.easyDifficultyInPast = true;
+	if (leagueFile.gameAttributes?.lowestDifficulty === undefined) {
+		gameAttributes.lowestDifficulty = gameAttributes.difficulty;
+	}
+	if (gameAttributes.difficulty < gameAttributes.lowestDifficulty) {
+		gameAttributes.lowestDifficulty = gameAttributes.difficulty;
+	}
+	if (
+		(gameAttributes as any).easyDifficultyInPast &&
+		gameAttributes.lowestDifficulty > DIFFICULTY.Easy
+	) {
+		gameAttributes.lowestDifficulty = DIFFICULTY.Easy;
 	}
 
 	// Default playIn false in old leagues, do before other playoff stuff so playIn doesn't mess with them

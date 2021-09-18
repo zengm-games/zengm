@@ -262,7 +262,7 @@ const checkParticipationAchievement = async (
 	conditions: Conditions,
 ) => {
 	if (force) {
-		await achievement.add(["participation"], conditions);
+		await achievement.add(["participation"], conditions, "normal");
 	} else {
 		const achievements = await achievement.getAll();
 		const participationAchievement = achievements.find(

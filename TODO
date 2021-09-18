@@ -13,8 +13,6 @@ game sim pausing bug
   - what was triggering navigation event? fetch? some kind of include?
   - error while in league should not jump to outside league
 
-play until end of playoffs days with play in https://discord.com/channels/290013534023057409/290015591216054273/888543282693566474
-
 update text for num participants https://discord.com/channels/290013534023057409/290015591216054273/888452590931701790
 
 ads.txt redirect on subdomains to main domain

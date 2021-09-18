@@ -51,7 +51,7 @@ const NagModal = ({ close, show }: Props) => {
 						<li>
 							<b>
 								<a href="/account" onClick={close}>
-									Subscribe to GM Gold.
+									Subscribe to ZenGM Gold.
 								</a>
 							</b>{" "}
 							For $5/month, you can play <GameLinks /> without any ads.
@@ -94,18 +94,19 @@ const NagModal = ({ close, show }: Props) => {
 					</p>
 					<p>
 						If you want to support {GAME_NAME} continuing to be a non-sucky
-						game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
+						game, sign up for ZenGM Gold! It's only <b>$5/month</b>. What do you
 						get? More like, what don't you get? You get no new features, no new
 						improvements, no new anything. Just <b>no more ads</b> on{" "}
 						<GameLinks thisGameText="this game" />. That's it. Why? For
 						basically the same reason I won't make {GAME_NAME} freemium. I don't
 						want the free version to become a crippled advertisement for the pay
 						version. If you agree that the world is a better place when anyone
-						anywhere can play <GameLinks noLinks />, sign up for GM Gold today!
+						anywhere can play <GameLinks noLinks />, sign up for ZenGM Gold
+						today!
 					</p>
 					<div className="text-center">
 						<a href="/account" className="btn btn-primary" onClick={close}>
-							Sign up for GM Gold from your account page
+							Sign up for ZenGM Gold from your account page
 						</a>
 					</div>
 				</Modal.Body>

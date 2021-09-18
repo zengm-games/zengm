@@ -19,13 +19,13 @@ const LoginOrRegister = () => {
 						<li>
 							Your achievements will be stored in the cloud. If you don't make
 							an account, you can still{" "}
-							<a href="/account">
+							<a href="/achievements">
 								view your achievements from leagues in this browser
 							</a>
 							.
 						</li>
 						<li>
-							You can sign up for GM Gold, which removes all ads from{" "}
+							You can sign up for ZenGM Gold, which removes all ads from{" "}
 							<GameLinks thisGameText="this game" />.
 						</li>
 					</ol>

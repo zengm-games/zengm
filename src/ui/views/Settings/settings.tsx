@@ -1343,8 +1343,8 @@ settings.push(
 				<p>{descriptions.difficulty}</p>
 				<p>
 					If you set the difficulty to Easy, you will not get credit for any{" "}
-					<a href="/account">Achievements</a>. This persists even if you later
-					switch to a harder difficulty.
+					<a href="/achievements">Achievements</a>. This persists even if you
+					later switch to a harder difficulty.
 				</p>
 			</>
 		),

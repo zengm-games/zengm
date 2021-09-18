@@ -94,7 +94,7 @@ const initAds = (goldUntil: number | undefined) => {
 				}
 			}
 
-			// Special case for rail, to tell it there is no BBGM gold
+			// Special case for rail, to tell it there is no gold
 			const rail = document.getElementById(AD_DIVS.rail);
 			if (rail) {
 				delete rail.dataset.gold;

@@ -108,7 +108,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	}
 	if (goldCancelled) {
 		errorMessage =
-			"Cannot update card because your GM Gold account is cancelled.";
+			"Cannot update card because your ZenGM Gold account is cancelled.";
 	}
 	if (errorMessage) {
 		return (

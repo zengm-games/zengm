@@ -1,7 +1,5 @@
-import classNames from "classnames";
-import { groupBy } from "../../common/groupBy";
 import PropTypes from "prop-types";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import {
 	ACCOUNT_API_URL,
@@ -13,7 +11,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import {
 	confirm,
 	getScript,
-	helpers,
 	localActions,
 	realtimeUpdate,
 	toWorker,
@@ -70,7 +67,7 @@ const StripeButton = ({ email }: { email: string }) => {
 	const handleClick = () => {
 		if (handler) {
 			handler.open({
-				name: "GM Gold",
+				name: "ZenGM Gold",
 				description: "",
 				amount: 500,
 				email,
@@ -86,7 +83,7 @@ const StripeButton = ({ email }: { email: string }) => {
 			disabled={!handler}
 			onClick={handleClick}
 		>
-			Sign Up for GM Gold
+			Sign Up for ZenGM Gold
 		</button>
 	);
 };
@@ -94,7 +91,7 @@ const StripeButton = ({ email }: { email: string }) => {
 const handleCancel = async (e: MouseEvent) => {
 	e.preventDefault();
 	const result = await confirm(
-		"Are you sure you want to cancel your GM Gold subscription?",
+		"Are you sure you want to cancel your ZenGM Gold subscription?",
 		{
 			okText: "Yes",
 			cancelText: "No",
@@ -188,7 +185,7 @@ const UserInfo = ({
 			{logoutError ? <p className="text-danger">{logoutError}</p> : null}
 			{showGoldActive ? (
 				<p>
-					GM Gold: Active, renews for $5 on {goldUntilDateString} (
+					ZenGM Gold: Active, renews for $5 on {goldUntilDateString} (
 					<a href="/account/update_card">Update card</a> or{" "}
 					<a href="" id="gold-cancel" onClick={handleCancel}>
 						cancel
@@ -197,7 +194,7 @@ const UserInfo = ({
 				</p>
 			) : null}
 			{showGoldCancelled ? (
-				<p>GM Gold: Cancelled, expires {goldUntilDateString}</p>
+				<p>ZenGM Gold: Cancelled, expires {goldUntilDateString}</p>
 			) : null}
 		</>
 	);
@@ -212,7 +209,6 @@ UserInfo.propTypes = {
 };
 
 const Account = ({
-	achievements,
 	email,
 	goldMessage,
 	goldSuccess,
@@ -232,7 +228,7 @@ const Account = ({
 	if (showGoldPitch) {
 		goldPitchDiv = (
 			<>
-				<h2>GM Gold</h2>
+				<h2>ZenGM Gold</h2>
 
 				<div className="row">
 					<div className="col-lg-8 col-md-10">
@@ -261,15 +257,15 @@ const Account = ({
 
 						<p>
 							If you want to support {GAME_NAME} continuing to be a non-sucky
-							game, sign up for GM Gold! It's only <b>$5/month</b>. What do you
-							get? More like, what don't you get? You get no new features, no
-							new improvements, no new anything. Just <b>no more ads</b> on{" "}
+							game, sign up for ZenGM Gold! It's only <b>$5/month</b>. What do
+							you get? More like, what don't you get? You get no new features,
+							no new improvements, no new anything. Just <b>no more ads</b> on{" "}
 							<GameLinks thisGameText="this game" />. That's it. Why? For
 							basically the same reason I won't make {GAME_NAME} freemium. I
 							don't want the free version to become a crippled advertisement for
 							the pay version. If you agree that the world is a better place
 							when anyone anywhere can play <GameLinks noLinks />, sign up for
-							GM Gold today!
+							ZenGM Gold today!
 						</p>
 
 						{!loggedIn || !email ? (
@@ -277,7 +273,7 @@ const Account = ({
 								<a href="/account/login_or_register">
 									Log in or create an account
 								</a>{" "}
-								to sign up for GM Gold.
+								to sign up for ZenGM Gold.
 							</p>
 						) : (
 							<p>
@@ -286,12 +282,15 @@ const Account = ({
 						)}
 					</div>
 				</div>
+
+				<h2>Achievements</h2>
+
+				<p>
+					<a href="/achievements">Click here to view your achievements.</a>
+				</p>
 			</>
 		);
 	}
-
-	const difficulties = ["normal", "hard", "insane"] as const;
-	const difficultiesReverse = [...difficulties].reverse();
 
 	return (
 		<>
@@ -315,92 +314,6 @@ const Account = ({
 			) : null}
 
 			{goldPitchDiv}
-
-			<h2>Achievements</h2>
-
-			<p>
-				You will only be awarded achievements in leagues where you have never
-				used God Mode or set the difficulty to Easy.
-			</p>
-
-			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchivements]) => {
-					const catDifficulties =
-						category === "Meta"
-							? (["normal"] as unknown as typeof difficultiesReverse)
-							: difficultiesReverse;
-
-					return (
-						<Fragment key={category}>
-							<h3 className="mt-4">{category}</h3>
-							<div
-								className="row"
-								style={{
-									marginBottom: "-0.5rem",
-								}}
-							>
-								{catAchivements.map(achievement => {
-									const total = catDifficulties.reduce(
-										(sum, difficulty) => sum + achievement[difficulty],
-										0,
-									);
-
-									return (
-										<div
-											key={achievement.slug}
-											className="col-sm-6 col-md-4 col-xl-3"
-										>
-											<div
-												className={classNames("card mb-2", {
-													"list-group-item-light": total === 0,
-													"list-group-item-secondary":
-														achievement.normal > 0 &&
-														achievement.hard === 0 &&
-														achievement.insane === 0,
-													"list-group-item-warning":
-														achievement.hard > 0 && achievement.insane === 0,
-													"list-group-item-success": achievement.insane > 0,
-												})}
-												key={achievement.slug}
-												style={{
-													minHeight: 109,
-												}}
-											>
-												<div className="card-body">
-													<h4 className="card-title">
-														{achievement.name}
-														{total > 0
-															? catDifficulties.map(difficulty => {
-																	const count = achievement[difficulty];
-																	return (
-																		<span
-																			key={difficulty}
-																			className={`badge badge-pill ${
-																				count > 0
-																					? "badge-dark"
-																					: "badge-secondary"
-																			} float-right ml-1`}
-																			title={`${helpers.upperCaseFirstLetter(
-																				difficulty,
-																			)} difficulty`}
-																		>
-																			{count}
-																		</span>
-																	);
-															  })
-															: null}
-													</h4>
-													<p className="card-text">{achievement.desc}</p>
-												</div>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						</Fragment>
-					);
-				},
-			)}
 		</>
 	);
 };

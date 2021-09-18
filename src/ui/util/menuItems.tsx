@@ -297,7 +297,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				active: pageID => pageID === "account",
 				league: true,
 				nonLeague: true,
-				path: "/account",
+				path: "/achievements",
 				text: "Achievements",
 			},
 			{

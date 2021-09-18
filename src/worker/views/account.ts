@@ -1,4 +1,4 @@
-import { achievement, checkAccount } from "../util";
+import { checkAccount } from "../util";
 import type { Conditions, UpdateEvents, ViewInput } from "../../common/types";
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
@@ -29,10 +29,7 @@ const updateAccount = async (
 			currentTimestamp < partialTopMenu.goldUntil;
 		const showGoldPitch = !loggedIn || !showGoldActive;
 
-		const achievements = await achievement.getAll();
-
 		return {
-			achievements,
 			email: partialTopMenu.email,
 			goldMessage: inputs.goldMessage,
 			goldSuccess: inputs.goldSuccess,

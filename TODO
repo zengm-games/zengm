@@ -3,10 +3,7 @@ achievements stored separately based on difficulty
   - test upgrade
   - test import
 - migrate prod db
-
-split up account and achievement pages
-- add explanation of normal/hard/insane (except Meta)
-- add explanation of lowestDifficulty
+- confirm new account email works still
 
 More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
@@ -1337,10 +1334,6 @@ too many players playing both offense and defense
 - too many fat guys with elite speed, small guys with elite strength?
 
 weight formula is not very good
-
-confirm subscription works from football-gm.com
-- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
-- cross promote in welcome emails
 
 redo pot formulas?
 

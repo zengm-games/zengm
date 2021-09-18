@@ -53,7 +53,7 @@ async function add(
 		logEvent(
 			{
 				type: "achievement",
-				text: `"${achievement.name}" achievement awarded! <a href="/account">View all achievements.</a>`,
+				text: `"${achievement.name}" achievement awarded! <a href="/achievements">View all achievements.</a>`,
 				saveToDb: false,
 			},
 			conditions,
@@ -192,7 +192,7 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 						logEvent(
 							{
 								type: "achievement",
-								text: `"${achievement.name}" achievement not awarded because ${message} <a href="/account">View all achievements.</a>`,
+								text: `"${achievement.name}" achievement not awarded because ${message} <a href="/achievements">View all achievements.</a>`,
 								saveToDb: false,
 							},
 							conditions,

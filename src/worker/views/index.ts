@@ -1,5 +1,6 @@
 import account from "./account";
 import accountUpdateCard from "./accountUpdateCard";
+import achievements from "./achievements";
 import allStar from "./allStar";
 import allStarDunk from "./allStarDunk";
 import allStarDraft from "./allStarDraft";
@@ -92,6 +93,7 @@ import watchList from "./watchList";
 export default {
 	account,
 	accountUpdateCard,
+	achievements,
 	allStar,
 	allStarDraft,
 	allStarDunk,

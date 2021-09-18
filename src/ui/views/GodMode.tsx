@@ -32,9 +32,9 @@ const GodMode = (props: View<"godMode">) => {
 
 			<p className="text-danger">
 				If you enable God Mode within a league, you will not get credit for any{" "}
-				<a href="/account">Achievements</a>. This persists even if you disable
-				God Mode. You can only get Achievements in a league where God Mode has
-				never been enabled.
+				<a href="/achievements">Achievements</a>. This persists even if you
+				disable God Mode. You can only get Achievements in a league where God
+				Mode has never been enabled.
 			</p>
 
 			<button

@@ -1,10 +1,11 @@
 import Account from "./Account";
+import AccountUpdateCard from "./AccountUpdateCard";
+import Achievements from "./Achievements";
 import AllStar from "./AllStar";
 import AllStarDraft from "./AllStarDraft";
 import AllStarDunk from "./AllStarDunk";
 import AllStarHistory from "./AllStarHistory";
 import AllStarThree from "./AllStarThree";
-import AccountUpdateCard from "./AccountUpdateCard";
 import AwardRaces from "./AwardRaces";
 import AwardsRecords from "./AwardsRecords";
 import Colleges from "./Colleges";
@@ -97,6 +98,7 @@ import WatchList from "./WatchList";
 export default {
 	Account,
 	AccountUpdateCard,
+	Achievements,
 	AllStar,
 	AllStarDraft,
 	AllStarDunk,

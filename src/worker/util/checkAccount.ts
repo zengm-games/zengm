@@ -4,6 +4,10 @@ import achievement from "./achievement";
 import local from "./local";
 import toUI from "./toUI";
 import type { Conditions, PartialTopMenu } from "../../common/types";
+import { groupBy } from "../../common/groupBy";
+
+// If it tries to add achievements from IDB to API twice at the same time, weird stuff could happen
+let adding = false;
 
 const checkAccount = async (
 	conditions: Conditions,
@@ -31,17 +35,33 @@ const checkAccount = async (
 		]);
 
 		// If user is logged in, upload any locally saved achievements
-		if (data.username !== "") {
+		if (data.username !== "" && !adding) {
 			// Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
 			// risk is very small.
-			const achievements = await idb.meta.getAll("achievements");
-			const slugs = achievements.map(({ slug }) => slug); // If any exist, delete and upload
 
-			if (slugs.length > 0) {
-				await idb.meta.clear("achievements"); // If this fails to save remotely, will be added to IDB again
+			adding = true;
 
-				await achievement.add(slugs, conditions, true);
+			const achievements = (await idb.meta.getAll("achievements")).map(row => ({
+				// Default difficulty, for upgraded cases
+				difficulty: "normal",
+				...row,
+			}));
+			if (achievements.length > 0) {
+				await idb.meta.clear("achievements");
 			}
+
+			const rowsByDifficulty = groupBy(achievements, "difficulty");
+			for (const [difficulty, rows] of Object.entries(rowsByDifficulty)) {
+				const slugs = rows.map(({ slug }) => slug);
+
+				// If any exist, upload
+				if (slugs.length > 0) {
+					// If this fails to save remotely, will be added to IDB again
+					await achievement.add(slugs, conditions, difficulty as any, true);
+				}
+			}
+
+			adding = false;
 		}
 
 		return {

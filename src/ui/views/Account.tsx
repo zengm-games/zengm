@@ -13,6 +13,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import {
 	confirm,
 	getScript,
+	helpers,
 	localActions,
 	realtimeUpdate,
 	toWorker,
@@ -289,6 +290,9 @@ const Account = ({
 		);
 	}
 
+	const difficulties = ["normal", "hard", "insane"] as const;
+	const difficultiesReverse = [...difficulties].reverse();
+
 	return (
 		<>
 			<div className="row">
@@ -320,7 +324,12 @@ const Account = ({
 			</p>
 
 			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchivements]: [any, any[]]) => {
+				([category, catAchivements]) => {
+					const catDifficulties =
+						category === "Meta"
+							? (["normal"] as unknown as typeof difficultiesReverse)
+							: difficultiesReverse;
+
 					return (
 						<Fragment key={category}>
 							<h3 className="mt-4">{category}</h3>
@@ -331,12 +340,26 @@ const Account = ({
 								}}
 							>
 								{catAchivements.map(achievement => {
+									const total = catDifficulties.reduce(
+										(sum, difficulty) => sum + achievement[difficulty],
+										0,
+									);
+
 									return (
-										<div key={achievement.slug} className="col-sm-4">
+										<div
+											key={achievement.slug}
+											className="col-sm-6 col-md-4 col-xl-3"
+										>
 											<div
 												className={classNames("card mb-2", {
-													"list-group-item-success": achievement.count > 0,
-													"text-muted": achievement.count === 0,
+													"list-group-item-light": total === 0,
+													"list-group-item-secondary":
+														achievement.normal > 0 &&
+														achievement.hard === 0 &&
+														achievement.insane === 0,
+													"list-group-item-warning":
+														achievement.hard > 0 && achievement.insane === 0,
+													"list-group-item-success": achievement.insane > 0,
 												})}
 												key={achievement.slug}
 												style={{
@@ -346,11 +369,26 @@ const Account = ({
 												<div className="card-body">
 													<h4 className="card-title">
 														{achievement.name}
-														{achievement.count > 1 ? (
-															<span className="badge badge-pill badge-secondary float-right">
-																{achievement.count}
-															</span>
-														) : null}
+														{total > 0
+															? catDifficulties.map(difficulty => {
+																	const count = achievement[difficulty];
+																	return (
+																		<span
+																			key={difficulty}
+																			className={`badge badge-pill ${
+																				count > 0
+																					? "badge-dark"
+																					: "badge-secondary"
+																			} float-right ml-1`}
+																			title={`${helpers.upperCaseFirstLetter(
+																				difficulty,
+																			)} difficulty`}
+																		>
+																			{count}
+																		</span>
+																	);
+															  })
+															: null}
 													</h4>
 													<p className="card-text">{achievement.desc}</p>
 												</div>
@@ -365,27 +403,6 @@ const Account = ({
 			)}
 		</>
 	);
-};
-
-Account.propTypes = {
-	achievements: PropTypes.arrayOf(
-		PropTypes.shape({
-			category: PropTypes.string.isRequired,
-			count: PropTypes.number.isRequired,
-			desc: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			slug: PropTypes.string.isRequired,
-		}),
-	).isRequired,
-	email: PropTypes.string,
-	goldMessage: PropTypes.string,
-	goldSuccess: PropTypes.bool,
-	goldUntilDateString: PropTypes.string.isRequired,
-	loggedIn: PropTypes.bool.isRequired,
-	showGoldActive: PropTypes.bool.isRequired,
-	showGoldCancelled: PropTypes.bool.isRequired,
-	showGoldPitch: PropTypes.bool.isRequired,
-	username: PropTypes.string,
 };
 
 export default Account;

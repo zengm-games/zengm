@@ -269,8 +269,8 @@ const checkParticipationAchievement = async (
 			({ slug }) => slug === "participation",
 		);
 
-		if (participationAchievement && participationAchievement.count === 0) {
-			await achievement.add(["participation"], conditions);
+		if (participationAchievement && participationAchievement.normal === 0) {
+			await achievement.add(["participation"], conditions, "normal");
 		}
 	}
 };

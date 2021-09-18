@@ -13,6 +13,7 @@ export interface MetaDB extends DBSchema {
 		key: number;
 		value: {
 			slug: string;
+			difficulty?: "normal" | "hard" | "insane";
 		};
 	};
 	attributes: {

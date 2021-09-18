@@ -28,7 +28,11 @@ const updateAccount = async (
 			partialTopMenu.goldCancelled &&
 			currentTimestamp < partialTopMenu.goldUntil;
 		const showGoldPitch = !loggedIn || !showGoldActive;
+
+		const achievements = await achievement.getAll();
+
 		return {
+			achievements,
 			email: partialTopMenu.email,
 			goldMessage: inputs.goldMessage,
 			goldSuccess: inputs.goldSuccess,
@@ -42,27 +46,4 @@ const updateAccount = async (
 	}
 };
 
-const updateAchievements = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
-	if (updateEvents.includes("firstRun")) {
-		const achievements = await achievement.getAll();
-		return {
-			achievements,
-		};
-	}
-};
-
-export default async (
-	inputs: ViewInput<"account">,
-	updateEvents: UpdateEvents,
-	state: any,
-	conditions: Conditions,
-) => {
-	return Object.assign(
-		{},
-		await updateAccount(inputs, updateEvents, state, conditions),
-		await updateAchievements(inputs, updateEvents),
-	);
-};
+export default updateAccount;

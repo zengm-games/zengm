@@ -5,6 +5,22 @@ import g from "./g";
 import logEvent from "./logEvent";
 import type { AchievementWhen, Conditions } from "../../common/types";
 
+type Difficulty = "insane" | "hard" | "normal" | "easy";
+const getDifficulty = (): Difficulty => {
+	const difficulty = g.get("difficulty");
+	if (difficulty >= DIFFICULTY.Insane) {
+		return "insane";
+	}
+	if (difficulty >= DIFFICULTY.Hard) {
+		return "hard";
+	}
+	if (difficulty >= DIFFICULTY.Normal) {
+		return "normal";
+	}
+
+	return "easy";
+};
+
 /**
  * Records one or more achievements.
  *
@@ -18,8 +34,13 @@ import type { AchievementWhen, Conditions } from "../../common/types";
 async function add(
 	slugs: string[],
 	conditions: Conditions,
+	difficulty: Difficulty = getDifficulty(),
 	silent: boolean = false,
 ) {
+	if (difficulty === "easy") {
+		return;
+	}
+
 	const notify = (slug: string) => {
 		const achievement = achievements.find(
 			achievement2 => slug === achievement2.slug,
@@ -44,6 +65,7 @@ async function add(
 		for (const slug of slugs2) {
 			tx.store.add({
 				slug,
+				difficulty,
 			});
 		}
 		await tx.done;
@@ -62,6 +84,7 @@ async function add(
 			data: {
 				achievements: slugs,
 				sport: process.env.SPORT,
+				difficulty,
 			},
 			credentials: "include",
 		});
@@ -69,7 +92,7 @@ async function add(
 		if (!data.success) {
 			await addToIndexedDB(slugs);
 		}
-	} catch (err) {
+	} catch (error) {
 		await addToIndexedDB(slugs);
 	}
 }
@@ -77,19 +100,23 @@ async function add(
 async function getAll(): Promise<
 	{
 		category: string;
-		count: number;
 		desc: string;
 		name: string;
 		slug: string;
+		normal: number;
+		hard: number;
+		insane: number;
 	}[]
 > {
 	const achievements2 = achievements.map(({ category, desc, name, slug }) => {
 		return {
 			category,
-			count: 0,
 			desc,
 			name,
 			slug,
+			normal: 0,
+			hard: 0,
+			insane: 0,
 		};
 	});
 
@@ -97,9 +124,10 @@ async function getAll(): Promise<
 	const achievementsLocal = await idb.meta.getAll("achievements");
 
 	for (const achievementLocal of achievementsLocal) {
+		const difficulty = achievementLocal.difficulty ?? "normal";
 		for (const achievement of achievements2) {
 			if (achievement.slug === achievementLocal.slug) {
-				achievement.count += 1;
+				achievement[difficulty] += 1;
 			}
 		}
 	}
@@ -118,7 +146,10 @@ async function getAll(): Promise<
 		// Merge local and remote achievements
 		for (const achievement of achievements2) {
 			if (achievementsRemote[achievement.slug] !== undefined) {
-				achievement.count += achievementsRemote[achievement.slug];
+				for (const difficulty of ["normal", "hard", "insane"] as const) {
+					achievement[difficulty] +=
+						achievementsRemote[achievement.slug][difficulty];
+				}
 			}
 		}
 
@@ -152,7 +183,7 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 							message = "God Mode was enabled in the past.";
 						} else if (g.get("spectator")) {
 							message = "Spectator Mode is enabled.";
-						} else if (g.get("difficulty") <= DIFFICULTY.Easy) {
+						} else if (g.get("difficulty") < DIFFICULTY.Normal) {
 							message = "the difficulty level is Easy.";
 						} else {
 							message = "the difficulty level was previously Easy.";
@@ -174,7 +205,7 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 		}
 
 		if (awarded.length > 0) {
-			add(awarded, conditions);
+			await add(awarded, conditions);
 		}
 	} catch (error) {
 		console.error("Achievements error");

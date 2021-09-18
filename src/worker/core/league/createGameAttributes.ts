@@ -122,7 +122,7 @@ const createGameAttributes = async (
 
 	// Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
 	// when creating a new league.
-	if (gameAttributes.difficulty <= DIFFICULTY.Easy) {
+	if (gameAttributes.difficulty < DIFFICULTY.Normal) {
 		gameAttributes.easyDifficultyInPast = true;
 	}
 

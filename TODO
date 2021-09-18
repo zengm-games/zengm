@@ -1,3 +1,16 @@
+achievements stored separately based on difficulty
+- easyDifficultyInPast -> lowestDifficulty
+  - test upgrade
+  - test import
+- migrate prod db
+
+split up account and achievement pages
+- add explanation of normal/hard/insane (except Meta)
+- add explanation of lowestDifficulty
+
+More specific achievements, that are really more like challenges
+- https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
+
 game sim pausing bug
 - free agents faster too?
 - happens with auto play and normal play (until end of season, or shorter)
@@ -13,7 +26,7 @@ game sim pausing bug
   - what was triggering navigation event? fetch? some kind of include?
   - error while in league should not jump to outside league
 
-ads.txt redirect on subdomains to main domain
+better adjustment for real draft prospects
 
 expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564
 
@@ -55,11 +68,6 @@ More preset league structures
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
 
 show tenths of seconds in live sim play by play
-
-More specific achievements, that are really more like challenges
-- https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
-
-achievements stored separately based on difficulty
 
 free throws with no time left https://github.com/zengm-games/zengm/issues/392
 

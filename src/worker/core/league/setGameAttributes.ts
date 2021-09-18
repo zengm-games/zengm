@@ -29,7 +29,7 @@ const setGameAttributes = async (
 
 	if (
 		gameAttributes.difficulty !== undefined &&
-		gameAttributes.difficulty <= DIFFICULTY.Easy
+		gameAttributes.difficulty < DIFFICULTY.Normal
 	) {
 		gameAttributes.easyDifficultyInPast = true;
 	}

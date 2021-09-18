@@ -6,15 +6,56 @@ import { helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { GAME_ACRONYM, GAME_NAME } from "../../common";
 
+const difficulties = ["normal", "hard", "insane"] as const;
+const difficultiesReverse = [...difficulties].reverse();
+
+const CompletionTable = ({ achievements }: View<"achievements">) => {
+	const filtered = achievements.filter(
+		achievement => achievement.name !== "Hacker",
+	);
+
+	let prevCount = 0;
+	const levels = difficultiesReverse
+		.map((difficulty, i) => {
+			const count =
+				prevCount +
+				filtered.filter(achievement => achievement[difficulty]).length;
+			prevCount = count;
+			return {
+				difficulty: helpers.upperCaseFirstLetter(difficulty),
+				count,
+				percent: count / filtered.length,
+			};
+		})
+		.reverse();
+
+	return (
+		<>
+			<h2 className="mt-4">Completion Status</h2>
+			<p className="text-muted text-small">(Ignoring the Hacker achievement)</p>
+			<table className="table table-nonfluid">
+				<tbody>
+					{levels.map(level => (
+						<tr key={level.difficulty}>
+							<th>{level.difficulty}</th>
+							<td>
+								{level.count}/{filtered.length}
+							</td>
+							<td>{Math.round(level.percent * 100)}%</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</>
+	);
+};
+
 const Achievements = ({ achievements }: View<"achievements">) => {
 	useTitleBar({
 		title: "Achievements",
 	});
 	const username = useLocal(state => state.username);
 	const loggedIn = !!username;
-
-	const difficulties = ["normal", "hard", "insane"] as const;
-	const difficultiesReverse = [...difficulties].reverse();
 
 	return (
 		<>
@@ -62,8 +103,10 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 				the lowest level used in that league.
 			</p>
 
+			<CompletionTable achievements={achievements} />
+
 			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchivements]) => {
+				([category, catAchivements], i) => {
 					const catDifficulties =
 						category === "Meta"
 							? (["normal"] as unknown as typeof difficultiesReverse)
@@ -71,9 +114,9 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 
 					return (
 						<Fragment key={category}>
-							<h3 className="mt-4">{category}</h3>
+							<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
 							<div
-								className="row"
+								className="form-row"
 								style={{
 									marginBottom: "-0.5rem",
 								}}

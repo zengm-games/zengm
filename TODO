@@ -1,5 +1,4 @@
 achievements stored separately based on difficulty
-- show lowestDifficulty/godModeInPast status on achievmenets page
 - migrate prod db
 - confirm new account email works still
 

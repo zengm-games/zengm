@@ -14,6 +14,9 @@ const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const showThree = allStars?.dunk !== undefined;
 
 		return {
+			numPlayersDunk: allStars?.dunk?.players.length ?? g.get("numPlayersDunk"),
+			numPlayersThree:
+				allStars?.three?.players.length ?? g.get("numPlayersThree"),
 			showDunk,
 			showThree,
 		};

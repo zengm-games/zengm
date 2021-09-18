@@ -5,7 +5,12 @@ import { isSport } from "../../common";
 
 const style = { maxWidth: "18rem" };
 
-const AllStar = ({ showDunk, showThree }: View<"allStar">) => {
+const AllStar = ({
+	numPlayersDunk,
+	numPlayersThree,
+	showDunk,
+	showThree,
+}: View<"allStar">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not implemented");
 	}
@@ -24,7 +29,8 @@ const AllStar = ({ showDunk, showThree }: View<"allStar">) => {
 					<div className="card-body">
 						<h3 className="card-title">Slam Dunk Contest</h3>
 						<p className="card-text">
-							The top 4 dunkers in the league compete to see who is the best.
+							The top {helpers.numberWithCommas(numPlayersDunk)} dunkers in the
+							league compete to see who is the best.
 						</p>
 						<a
 							href={helpers.leagueUrl(["all_star", "dunk"])}
@@ -40,7 +46,8 @@ const AllStar = ({ showDunk, showThree }: View<"allStar">) => {
 					<div className="card-body">
 						<h3 className="card-title">Three Point Contest</h3>
 						<p className="card-text">
-							The top 8 shooters in the league compete to see who is the best.
+							The top {helpers.numberWithCommas(numPlayersThree)} shooters in
+							the league compete to see who is the best.
 						</p>
 						<a
 							href={helpers.leagueUrl(["all_star", "three"])}

@@ -16,7 +16,7 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 
 	let prevCount = 0;
 	const levels = difficultiesReverse
-		.map((difficulty, i) => {
+		.map(difficulty => {
 			const count =
 				prevCount +
 				filtered.filter(achievement => achievement[difficulty]).length;

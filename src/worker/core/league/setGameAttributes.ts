@@ -10,7 +10,7 @@ import { wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
-import { DIFFICULTY, unwrapGameAttribute } from "../../../common";
+import { unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 import goatFormula from "../../util/goatFormula";
 import updateMeta from "./updateMeta";

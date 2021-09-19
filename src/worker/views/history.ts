@@ -92,8 +92,7 @@ const updateHistory = async (
 		}
 
 		const retiredPlayersAll = await idb.getCopies.players({
-			retired: true,
-			filter: p => p.retiredYear === season,
+			retiredYear: season,
 		});
 		const retiredPlayers = await idb.getCopies.playersPlus(retiredPlayersAll, {
 			attrs: ["pid", "name", "age", "hof"],

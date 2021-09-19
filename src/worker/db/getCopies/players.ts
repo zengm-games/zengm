@@ -8,7 +8,7 @@ import { unwrap } from "idb";
 const getCopies = async ({
 	pid,
 	pids,
-	retired,
+	retiredYear,
 	activeAndRetired,
 	activeSeason,
 	draftYear,
@@ -18,7 +18,7 @@ const getCopies = async ({
 }: {
 	pid?: number;
 	pids?: number[];
-	retired?: boolean;
+	retiredYear?: number;
 	activeAndRetired?: boolean;
 	activeSeason?: number;
 	draftYear?: number;
@@ -102,17 +102,16 @@ const getCopies = async ({
 		return sorted;
 	}
 
-	if (retired === true) {
+	if (retiredYear !== undefined) {
 		// Get all from cache, and filter later, in case cache differs from database
 		return mergeByPk(
 			await getAll(
-				idb.league.transaction("players").store.index("tid"),
-				PLAYER.RETIRED,
-				filter,
+				idb.league.transaction("players").store.index("retiredYear"),
+				retiredYear,
 			),
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 			"players",
-		).filter(filter);
+		).filter(p => p.retiredYear === retiredYear);
 	}
 
 	if (tid !== undefined) {
@@ -174,7 +173,7 @@ const getCopies = async ({
 
 				// + 1 in upper range is because you don't accumulate stats until the year after the draft
 				const range = IDBKeyRange.bound(
-					[0, activeSeason],
+					[-Infinity, activeSeason],
 					[activeSeason + 1, Infinity],
 				);
 				const request = index.openCursor(range);
@@ -226,7 +225,9 @@ const getCopies = async ({
 			await idb.league
 				.transaction("players")
 				.store.index("draft.year, retiredYear")
-				.getAll(IDBKeyRange.bound([draftYear, 0], [draftYear, Infinity])),
+				.getAll(
+					IDBKeyRange.bound([draftYear, -Infinity], [draftYear, Infinity]),
+				),
 			(
 				await idb.cache.players.indexGetAll("playersByTid", [
 					PLAYER.RETIRED,

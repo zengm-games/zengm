@@ -102,6 +102,7 @@ export interface LeagueDB extends DBSchema {
 		value: PlayerWithoutKey<MinimalPlayerRatings>;
 		autoIncrementKeyPath: "pid";
 		indexes: {
+			retiredYear: number;
 			"draft.year, retiredYear": [number, number];
 			statsTids: number;
 			tid: number;
@@ -477,6 +478,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 			unique: false,
 		},
 	);
+	playerStore.createIndex("retiredYear", "retiredYear", {
+		unique: false,
+	});
 	playerStore.createIndex("statsTids", "statsTids", {
 		unique: false,
 		multiEntry: true,
@@ -1132,6 +1136,16 @@ const migrate = ({
 				});
 			};
 		};
+	}
+
+	if (oldVersion <= 48) {
+		slowUpgrade();
+
+		transaction
+			.objectStore("players")
+			.createIndex("retiredYear", "retiredYear", {
+				unique: false,
+			});
 	}
 };
 

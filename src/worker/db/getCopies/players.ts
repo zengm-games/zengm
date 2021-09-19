@@ -103,12 +103,49 @@ const getCopies = async ({
 	}
 
 	if (retiredYear !== undefined) {
+		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
+			(resolve, reject) => {
+				const players: Player<MinimalPlayerRatings>[] = [];
+
+				const index = unwrap(
+					idb.league
+						.transaction("players")
+						.objectStore("players")
+						.index("draft.year, retiredYear"),
+				);
+
+				const request = index.openCursor();
+
+				request.onerror = (e: any) => {
+					reject(e.target.error);
+				};
+
+				request.onsuccess = (e: any) => {
+					const cursor = e.target.result;
+
+					if (!cursor) {
+						resolve(players);
+						return;
+					}
+
+					const [draftYear, currentRetiredYear] = cursor.key;
+
+					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+					if (currentRetiredYear < retiredYear) {
+						cursor.continue([draftYear, retiredYear]);
+					} else if (currentRetiredYear > retiredYear) {
+						cursor.continue([draftYear + 1, retiredYear]);
+					} else {
+						players.push(cursor.value);
+						cursor.continue();
+					}
+				};
+			},
+		);
+
 		// Get all from cache, and filter later, in case cache differs from database
 		return mergeByPk(
-			await getAll(
-				idb.league.transaction("players").store.index("retiredYear"),
-				retiredYear,
-			),
+			fromDB,
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 			"players",
 		).filter(p => p.retiredYear === retiredYear);

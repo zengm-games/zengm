@@ -15,6 +15,10 @@ const hasRelativeAndMutate = (p: Player, pids: number[]) => {
 };
 
 const remove = async (pids: number[]) => {
+	if (pids.length === 0) {
+		return;
+	}
+
 	for (const pid of pids) {
 		await idb.cache.players.delete(pid);
 	}

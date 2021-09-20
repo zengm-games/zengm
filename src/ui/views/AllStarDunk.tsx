@@ -551,7 +551,6 @@ export const ContestantProfiles = ({
 						>
 							<PlayerNameLabels
 								pid={p.pid}
-								injury={p.injury}
 								season={season}
 								jerseyNumber={p.stats.jerseyNumber}
 								pos={p.ratings.pos}

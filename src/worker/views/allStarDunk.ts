@@ -68,7 +68,6 @@ const updateAllStarDunk = async (
 				"pid",
 				"name",
 				"age",
-				"injury",
 				"watch",
 				"face",
 				"imgURL",

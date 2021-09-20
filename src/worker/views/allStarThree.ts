@@ -49,7 +49,6 @@ const updateAllStarThree = async (
 				"pid",
 				"name",
 				"age",
-				"injury",
 				"watch",
 				"face",
 				"imgURL",

@@ -14,20 +14,18 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 		achievement => achievement.name !== "Hacker",
 	);
 
-	let prevCount = 0;
-	const levels = difficultiesReverse
-		.map(difficulty => {
-			const count =
-				prevCount +
-				filtered.filter(achievement => achievement[difficulty]).length;
-			prevCount = count;
-			return {
-				difficulty: helpers.upperCaseFirstLetter(difficulty),
-				count,
-				percent: count / filtered.length,
-			};
-		})
-		.reverse();
+	const levels = difficulties.map((difficulty, i) => {
+		// "insane" and "hard" also count towards "normal". "insane" also counts towards "hard".
+		const allowed = difficulties.slice(i);
+		const count = filtered.filter(achievement =>
+			allowed.some(difficulty => achievement[difficulty] > 0),
+		).length;
+		return {
+			difficulty: helpers.upperCaseFirstLetter(difficulty),
+			count,
+			percent: count / filtered.length,
+		};
+	});
 
 	return (
 		<>

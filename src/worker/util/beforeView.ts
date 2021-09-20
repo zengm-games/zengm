@@ -128,8 +128,10 @@ const beforeLeague = async (
 
 		// Confirm league exists before proceeding
 		await getLeague(newLid);
+		idb.league = await connectLeague(newLid);
+
+		// Do this after connecting to league, in case there is an error during connection, the lid will stil be in sync between worker and ui
 		g.setWithoutSavingToDB("lid", newLid);
-		idb.league = await connectLeague(g.get("lid"));
 
 		if (loadingNewLid !== newLid) {
 			return;

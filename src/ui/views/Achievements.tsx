@@ -75,7 +75,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 
 			<p>
 				You can earn achievements while playing in any {GAME_NAME} league, with
-				two expections.
+				two exceptions.
 			</p>
 
 			<p>

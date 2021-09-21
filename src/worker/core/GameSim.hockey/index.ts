@@ -956,7 +956,7 @@ class GameSim {
 		const t1 = t0 === 0 ? 1 : 0;
 
 		const shouldPullGoalie = () => {
-			const period = this.team[0].stat.ptsQtrs.length - 1;
+			const period = this.team[0].stat.ptsQtrs.length;
 
 			if (period !== this.numPeriods) {
 				return false;
@@ -968,11 +968,11 @@ class GameSim {
 				return false;
 			}
 
-			if (this.clock >= 10) {
+			if (this.clock > 10) {
 				return false;
 			}
 
-			true;
+			return true;
 		};
 
 		const shouldPull = shouldPullGoalie();
@@ -1171,6 +1171,38 @@ class GameSim {
 		}
 	}
 
+	getPlayerFromNextLine(
+		t: TeamNum,
+		pos: "F" | "D",
+		playersRemainingOn: PlayerGameSim[],
+	) {
+		let nextLine =
+			this.lines[t][pos][(this.currentLine[t][pos] + 1) % NUM_LINES[pos]];
+		if (nextLine.length === 0 && this.currentLine[t][pos] !== 0) {
+			// This could happen if a line is empty due to a ton of injuries
+			nextLine = this.lines[t][pos][0];
+		}
+
+		if (nextLine.length === 0) {
+			// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
+			let emergencyPlayers = [];
+			for (const existingLines of Object.values(this.lines[t])) {
+				for (const existingLine of existingLines) {
+					emergencyPlayers.push(...existingLine);
+				}
+			}
+			emergencyPlayers = emergencyPlayers.filter(
+				p => !playersRemainingOn.includes(p),
+			);
+			if (emergencyPlayers.length === 0) {
+				throw new Error("Not enough players");
+			}
+			return random.choice(emergencyPlayers);
+		}
+
+		return random.choice(nextLine);
+	}
+
 	doLineChange(
 		t: TeamNum,
 		pos: "F" | "D",
@@ -1199,40 +1231,23 @@ class GameSim {
 		for (let i = 0; i < newLine.length; i++) {
 			const p = newLine[i];
 			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
-				let nextLine =
-					this.lines[t][pos][(this.currentLine[t][pos] + 1) % NUM_LINES[pos]];
-				if (nextLine.length === 0 && this.currentLine[t][pos] !== 0) {
-					// This could happen if a line is empty due to a ton of injuries
-					nextLine = this.lines[t][pos][0];
-				}
-				if (nextLine.length === 0) {
-					// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
-					let emergencyPlayers = [];
-					for (const existingLines of Object.values(this.lines[t])) {
-						for (const existingLine of existingLines) {
-							emergencyPlayers.push(...existingLine);
-						}
-					}
-					emergencyPlayers = emergencyPlayers.filter(
-						p => !playersRemainingOn.includes(p),
-					);
-					if (emergencyPlayers.length === 0) {
-						throw new Error("Not enough players");
-					}
-					newLine[i] = random.choice(emergencyPlayers);
-				} else {
-					newLine[i] = random.choice(nextLine);
-				}
+				newLine[i] = this.getPlayerFromNextLine(t, pos, playersRemainingOn);
 			}
 		}
 
 		if (pos === "F") {
 			const penaltyBoxCount = this.penaltyBox.count(t);
-			if (penaltyBoxCount === 0) {
+			if (
+				penaltyBoxCount === 0 ||
+				(this.pulledGoalie[t] && penaltyBoxCount === 1)
+			) {
 				// Normal
 				this.playersOnIce[t].C = newLine.slice(0, 1);
 				this.playersOnIce[t].W = newLine.slice(1, 3);
-			} else if (penaltyBoxCount === 1) {
+			} else if (
+				penaltyBoxCount === 1 ||
+				(this.pulledGoalie[t] && penaltyBoxCount === 2)
+			) {
 				// Leave out a forward
 				const r = Math.random();
 				if (r < 0.33) {
@@ -1242,7 +1257,7 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				} else {
-					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(1, 3);
 				}
 			} else if (penaltyBoxCount === 2) {
@@ -1252,14 +1267,25 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = [];
 				} else if (r < 0.67) {
-					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(1, 2);
 				} else {
-					this.playersOnIce[t].C = [];
+					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				}
 			} else {
 				throw new Error("Not implemented");
+			}
+
+			if (penaltyBoxCount === 0 && this.pulledGoalie[t]) {
+				// Add extra skater
+				this.playersOnIce[t].C.push(
+					this.getPlayerFromNextLine(t, pos, [
+						...this.playersOnIce[t].C,
+						...this.playersOnIce[t].W,
+						...playersRemainingOn,
+					]),
+				);
 			}
 		} else {
 			this.playersOnIce[t].D = newLine;
@@ -1307,9 +1333,13 @@ class GameSim {
 				}
 				substitutions = true;
 			} else if (options.type === "pullGoalie") {
-				const goalie = this.playersOnIce[t].G[0];
+				if (options.t !== t) {
+					continue;
+				}
 
-				const sub = undefined;
+				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
+				const sub = this.getPlayerFromNextLine(t, "F", currentlyOnIce);
+
 				this.playersOnIce[t].G = [];
 				this.playersOnIce[t].C[1] = sub;
 
@@ -1323,7 +1353,11 @@ class GameSim {
 				this.pulledGoalie[t] = true;
 				substitutions = true;
 			} else if (options.type === "noPullGoalie") {
-				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t0]));
+				if (options.t !== t) {
+					continue;
+				}
+
+				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
 				const goalie = flatten(this.lines[t].G).find(
 					p => !currentlyOnIce.includes(p),
 				);

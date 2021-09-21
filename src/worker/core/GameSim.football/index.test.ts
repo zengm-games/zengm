@@ -122,6 +122,33 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.d, 0);
 	});
 
+	test("interception on 4th down works", async () => {
+		const game = await initGameSim();
+
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.scrimmage = 20;
+		game.toGo = 1;
+		game.down = 4;
+
+		// Always interception
+		game.probSack = () => 0;
+		game.probFumble = () => 0;
+		game.probInt = () => 1;
+		game.probScramble = () => 0;
+		game.checkPenalties = () => undefined;
+
+		game.doPass();
+
+		assert.strictEqual(game.team[0].stat.defInt, 0);
+		assert.strictEqual(game.team[1].stat.defInt, 1);
+
+		// Possession changed
+		assert.strictEqual(game.o, 1);
+		assert.strictEqual(game.d, 0);
+	});
+
 	test("OT ends after failed 4th down conversion if 1st team kicked a FG", async () => {
 		// Down by 3, overtime, ball on own 20 yard line, 4th down, 1:30 left
 		const game = await initGameSim();

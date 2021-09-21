@@ -1692,6 +1692,11 @@ class GameSim {
 		return helpers.bound(p, 0, 0.95);
 	}
 
+	probScramble(qb?: PlayerGameSim) {
+		const qbOvrRB = qb?.ovrs.RB ?? 0;
+		return 0.01 + Math.max(0, (0.4 * (qbOvrRB - 30)) / 100);
+	}
+
 	doPass() {
 		const o = this.o;
 		const d = this.d;
@@ -1727,9 +1732,7 @@ class GameSim {
 			return this.doSack(qb);
 		}
 
-		const qbOvrRB = this.playersOnField[o].QB?.[0]?.ovrs.RB ?? 0;
-		const probScramble = 0.01 + Math.max(0, (0.4 * (qbOvrRB - 30)) / 100);
-		if (probScramble > Math.random()) {
+		if (this.probScramble(this.playersOnField[o].QB?.[0]) > Math.random()) {
 			return this.doRun(true);
 		}
 

@@ -97,6 +97,8 @@ class GameSim {
 
 	synergyFactor: number;
 
+	pulledGoalie: [boolean, boolean];
+
 	constructor({
 		gid,
 		day,
@@ -186,6 +188,8 @@ class GameSim {
 
 			this.updatePlayersOnIce({ type: "penaltyOver", p, t });
 		});
+
+		this.pulledGoalie = [false, false];
 	}
 
 	// Call this at beginning of game or after injuries
@@ -948,8 +952,48 @@ class GameSim {
 		return true;
 	}
 
+	checkPullGoalie(t0: TeamNum) {
+		const t1 = t0 === 0 ? 1 : 0;
+
+		const shouldPullGoalie = () => {
+			const period = this.team[0].stat.ptsQtrs.length - 1;
+
+			if (period !== this.numPeriods) {
+				return false;
+			}
+
+			const scoreDifferential = this.team[t0].stat.pts - this.team[t1].stat.pts;
+
+			if (scoreDifferential >= 0) {
+				return false;
+			}
+
+			if (this.clock >= 10) {
+				return false;
+			}
+
+			true;
+		};
+
+		const shouldPull = shouldPullGoalie();
+
+		if (!this.pulledGoalie[t0] && shouldPull) {
+			this.updatePlayersOnIce({
+				type: "pullGoalie",
+				t: t0,
+			});
+		} else if (this.pulledGoalie[t0] && !shouldPull) {
+			this.updatePlayersOnIce({
+				type: "noPullGoalie",
+				t: t0,
+			});
+		}
+	}
+
 	simPossession(special?: "rebound") {
 		if (!special) {
+			this.checkPullGoalie(this.o);
+
 			if (this.isHit()) {
 				this.doHit();
 				if (this.advanceClock()) {
@@ -1232,6 +1276,10 @@ class GameSim {
 					type: "penaltyOver";
 					p: PlayerGameSim;
 					t: TeamNum;
+			  }
+			| {
+					type: "pullGoalie" | "noPullGoalie";
+					t: TeamNum;
 			  },
 	) {
 		let substitutions = false;
@@ -1243,16 +1291,61 @@ class GameSim {
 				this.playersOnIce[t].D = this.lines[t].D[0];
 				this.playersOnIce[t].G = this.lines[t].G[0];
 			} else if (options.type === "penaltyOver") {
-				if (options.t === t) {
-					if (this.playersOnIce[t].C.length < 1) {
-						this.playersOnIce[t].C.push(options.p);
-					} else if (this.playersOnIce[t].W.length < 2) {
-						this.playersOnIce[t].W.push(options.p);
-					} else {
-						this.playersOnIce[t].D.push(options.p);
-					}
-					substitutions = true;
+				if (options.t !== t) {
+					continue;
 				}
+
+				if (
+					this.playersOnIce[t].C.length < 1 ||
+					(this.pulledGoalie[t] && this.playersOnIce[t].C.length < 2)
+				) {
+					this.playersOnIce[t].C.push(options.p);
+				} else if (this.playersOnIce[t].W.length < 2) {
+					this.playersOnIce[t].W.push(options.p);
+				} else {
+					this.playersOnIce[t].D.push(options.p);
+				}
+				substitutions = true;
+			} else if (options.type === "pullGoalie") {
+				const goalie = this.playersOnIce[t].G[0];
+
+				const sub = undefined;
+				this.playersOnIce[t].G = [];
+				this.playersOnIce[t].C[1] = sub;
+
+				this.playByPlay.logEvent({
+					type: "pullGoalie",
+					clock: this.clock,
+					t,
+					name: sub.name,
+				});
+
+				this.pulledGoalie[t] = true;
+				substitutions = true;
+			} else if (options.type === "noPullGoalie") {
+				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t0]));
+				const goalie = flatten(this.lines[t].G).find(
+					p => !currentlyOnIce.includes(p),
+				);
+
+				const sub = this.playersOnIce[t].C[1];
+
+				if (!goalie || !sub) {
+					return;
+				}
+
+				this.playersOnIce[t].G = [goalie];
+				this.playersOnIce[t].C = this.playersOnIce[t].C.slice(0, 1);
+
+				this.playByPlay.logEvent({
+					type: "noPullGoalie",
+					clock: this.clock,
+					t,
+					name: goalie.name,
+				});
+
+				this.pulledGoalie[t] = false;
+				substitutions = true;
 			} else {
 				// Line change based on playing time
 				let lineChangeEvent:

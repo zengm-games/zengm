@@ -139,6 +139,12 @@ const getText = (
 	if (event.type === "penaltyOver") {
 		text = `${event.names[0]} is released from the penalty box`;
 	}
+	if (event.type === "pullGoalie") {
+		text = `Pulled goalie! ${event.name} takes the ice`;
+	}
+	if (event.type === "noPullGoalie") {
+		text = `Goalie ${event.name} comes back into the game`;
+	}
 
 	if (text === undefined) {
 		throw new Error(`Invalid event type "${event.type}"`);
@@ -212,6 +218,16 @@ const processLiveGameEvents = ({
 			}
 		}
 
+		const findPlayer = (pid: number) => {
+			const p = boxScore.teams[actualT].players.find(
+				(p2: any) => p2.pid === pid,
+			);
+			if (p === undefined) {
+				console.log("Can't find player", e);
+			}
+			return p;
+		};
+
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
@@ -221,13 +237,8 @@ const processLiveGameEvents = ({
 			}
 
 			// Everything else
-			if (e.pid !== undefined) {
-				const p = boxScore.teams[actualT].players.find(
-					(p2: any) => p2.pid === e.pid,
-				);
-				if (p === undefined) {
-					console.log("Can't find player", e);
-				}
+			if (e.pid != undefined) {
+				const p = findPlayer(e.pid);
 				if (p && p[e.s] !== undefined) {
 					p[e.s] += e.amt;
 				}
@@ -241,31 +252,16 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = boxScore.teams[actualT].players.find(
-					(p2: any) => p2.pid === e.injuredPID,
-				);
-				if (p === undefined) {
-					console.log("Can't find player", e);
-				}
+				const p = findPlayer(e.injuredPID);
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,
 				};
 			} else if (e.type === "penalty") {
-				const p = boxScore.teams[actualT].players.find(
-					(p2: any) => p2.pid === e.penaltyPID,
-				);
-				if (p === undefined) {
-					console.log("Can't find player", e);
-				}
+				const p = findPlayer(e.penaltyPID);
 				p.inPenaltyBox = true;
 			} else if (e.type === "penaltyOver") {
-				const p = boxScore.teams[actualT].players.find(
-					(p2: any) => p2.pid === e.penaltyPID,
-				);
-				if (p === undefined) {
-					console.log("Can't find player", e);
-				}
+				const p = findPlayer(e.penaltyPID);
 				p.inPenaltyBox = false;
 			}
 

@@ -77,6 +77,18 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 			names: [string];
 			penaltyPID: number;
+	  }
+	| {
+			type: "pullGoalie";
+			clock: number;
+			t: TeamNum;
+			name: string;
+	  }
+	| {
+			type: "noPullGoalie";
+			clock: number;
+			t: TeamNum;
+			name: string;
 	  };
 
 export type PlayByPlayEvent =

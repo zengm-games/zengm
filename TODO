@@ -1,3 +1,18 @@
+hockey pull goalie
+- when to pull goalie?]
+  - check clock+score+period after each possession, see if it makes sense for the team with the puck to pull their goalie
+- how to implement substitutions?
+  - set pulledGoalie[this.o] to true
+  - find best forward on bench, put him in the game as 2nd C
+    - share code with finding the penalty replacement player in doLineChange
+  - doLineChange also needs to be aware, in case a line change happens. again, similar to penalty code that adjusts number of players selected
+  - how is goalie subbed out on injury currently? compare with how i'm putting goalie back on ice here
+  - doLineChange penaltyBoxCount needs to be aware
+- any code that assumes there is always a goalie?
+- make sure to undo pulled goalie if the score gets tied
+  - check after each goal
+- see strengthDifference code
+
 customzie all stars
 - form like contests
 - captains

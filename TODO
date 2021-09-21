@@ -1,14 +1,5 @@
 hockey pull goalie
-- when to pull goalie?]
-  - check clock+score+period after each possession, see if it makes sense for the team with the puck to pull their goalie
-- how to implement substitutions?
-  - how is goalie subbed out on injury currently? compare with how i'm putting goalie back on ice here
-  - should check to pull goalie at line change or faceoff too
-  - should check to put goalie back in after goal or end of period
 - any code that assumes there is always a goalie?
-- make sure to undo pulled goalie if the score gets tied
-  - check after each goal
-- see strengthDifference code
 
 customzie all stars
 - form like contests

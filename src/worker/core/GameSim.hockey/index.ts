@@ -487,6 +487,7 @@ class GameSim {
 				if (this.clock > 0) {
 					this.injuries();
 					this.updatePlayersOnIce({ type: "normal" });
+					this.checkPullGoalie(this.o);
 				}
 			}
 
@@ -527,6 +528,9 @@ class GameSim {
 			clock: this.clock,
 			quarter: this.team[0].stat.ptsQtrs.length,
 		});
+
+		this.checkPullGoalie(this.o);
+		this.checkPullGoalie(this.d);
 
 		this.updatePlayersOnIce({ type: "newPeriod" });
 		this.faceoff();
@@ -701,18 +705,33 @@ class GameSim {
 		const { powerPlayTeam, strengthDifference } =
 			this.penaltyBox.getPowerPlayTeam();
 		let strengthType: "ev" | "sh" | "pp" = "ev";
+		let totalStrengthDifference = 0;
 		if (powerPlayTeam === this.d) {
 			strengthType = "sh";
+			totalStrengthDifference -= strengthDifference;
 		} else if (powerPlayTeam === this.o) {
 			strengthType = "pp";
+			totalStrengthDifference += strengthDifference;
 		}
 
-		// Power play adjusts odds of a miss
+		if (this.pulledGoalie[this.o]) {
+			totalStrengthDifference += 1;
+		}
+		if (this.pulledGoalie[this.d]) {
+			totalStrengthDifference -= 1;
+		}
+
 		let r = Math.random();
-		if (strengthType === "pp") {
-			r += strengthDifference === 1 ? 0.1 : 0.2;
-		} else if (strengthType === "sh") {
-			r -= strengthDifference === 1 ? 0.025 : 0.5;
+
+		// Power play adjusts odds of a miss
+		if (totalStrengthDifference > 1) {
+			r += 0.2;
+		} else if (totalStrengthDifference === 1) {
+			r += 0.1;
+		} else if (totalStrengthDifference === -1) {
+			r -= 0.025;
+		} else if (totalStrengthDifference < -1) {
+			r -= 0.5;
 		}
 
 		if (r < 0.1 + 0.35 * this.team[this.d].compositeRating.blocking) {
@@ -963,16 +982,24 @@ class GameSim {
 			}
 
 			const scoreDifferential = this.team[t0].stat.pts - this.team[t1].stat.pts;
+			console.log(scoreDifferential, this.clock);
 
 			if (scoreDifferential >= 0) {
 				return false;
 			}
 
-			if (this.clock > 10) {
-				return false;
+			if (scoreDifferential === -1 && this.clock <= 2) {
+				return true;
 			}
 
-			return true;
+			if (
+				(scoreDifferential === -2 || scoreDifferential === -3) &&
+				this.clock <= 3
+			) {
+				return true;
+			}
+
+			return false;
 		};
 
 		const shouldPull = shouldPullGoalie();
@@ -992,8 +1019,6 @@ class GameSim {
 
 	simPossession(special?: "rebound") {
 		if (!special) {
-			this.checkPullGoalie(this.o);
-
 			if (this.isHit()) {
 				this.doHit();
 				if (this.advanceClock()) {
@@ -1063,6 +1088,9 @@ class GameSim {
 				// Sudden death overtime
 				return;
 			}
+
+			this.checkPullGoalie(this.o);
+			this.checkPullGoalie(this.d);
 
 			this.faceoff();
 			return;

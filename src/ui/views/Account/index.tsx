@@ -8,13 +8,7 @@ import {
 	GAME_NAME,
 } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
-import {
-	confirm,
-	getScript,
-	localActions,
-	realtimeUpdate,
-	toWorker,
-} from "../../util";
+import { confirm, getScript, realtimeUpdate, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { GameLinks } from "../../components";
 import { ajaxErrorMsg } from "../LoginOrRegister";
@@ -152,9 +146,6 @@ const UserInfo = ({
 				},
 				credentials: "include",
 			});
-			localActions.update({
-				username: "",
-			});
 		} catch (error) {
 			console.error(error);
 			setLogoutError(ajaxErrorMsg);
@@ -162,7 +153,8 @@ const UserInfo = ({
 		}
 
 		await toWorker("main", "checkAccount");
-		await toWorker("main", "realtimeUpdate", ["account"], "/");
+		await toWorker("main", "realtimeUpdate", ["account"]);
+		await realtimeUpdate([], "/");
 	};
 
 	return (

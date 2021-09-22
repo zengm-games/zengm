@@ -34,7 +34,6 @@ const fetchWrapper = async ({
 		body = undefined;
 	}
 
-	console.log(url, method, headers, body?.toString(), credentials);
 	const response = await fetch(url, {
 		method,
 		headers: headers ? new Headers(headers) : undefined,

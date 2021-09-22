@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import { ChangeEvent, useState } from "react";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { ActionButton } from "../../components";
-import { helpers } from "../../util";
+import { helpers, realtimeUpdate } from "../../util";
+import { ajaxErrorMsg } from "../LoginOrRegister";
 import { fields } from "../LoginOrRegister/Register";
 
 const formGroupStyle = {
@@ -62,11 +64,15 @@ const AccountInfoForm = ({
 
 			if (field === "username") {
 				newState.username = initialUsername;
+				newState.errorMessageUsername = undefined;
 			} else if (field === "email") {
 				newState.email = initialEmail;
+				newState.errorMessageEmail = undefined;
 			} else if (field === "password") {
 				newState.newPassword = "";
 				newState.newPassword2 = "";
+				newState.errorMessageNewPassword = undefined;
+				newState.errorMessageNewPassword2 = undefined;
 			}
 
 			setState(newState);
@@ -83,13 +89,26 @@ const AccountInfoForm = ({
 			onSubmit={async event => {
 				event.preventDefault();
 
+				setState(state2 => ({
+					...state2,
+					submitting: true,
+					errorMessageEmail: undefined,
+					errorMessageOverall: undefined,
+					errorMessageNewPassword: undefined,
+					errorMessageNewPassword2: undefined,
+					errorMessageOldPassword: undefined,
+					errorMessageUsername: undefined,
+				}));
+
 				const toSubmit: {
+					sport: string;
 					username?: string;
 					email?: string;
 					newPassword?: string;
 					newPassword2?: string;
 					oldPassword: string;
 				} = {
+					sport: process.env.SPORT,
 					oldPassword: state.oldPassword,
 				};
 
@@ -104,7 +123,62 @@ const AccountInfoForm = ({
 					toSubmit.newPassword2 = state.newPassword2;
 				}
 
-				console.log("toSubmit", toSubmit);
+				try {
+					const data = await fetchWrapper({
+						url: `${ACCOUNT_API_URL}/update_account.php`,
+						method: "POST",
+						data: toSubmit,
+						credentials: "include",
+					});
+
+					if (data.success) {
+						await realtimeUpdate(["account"], "/account");
+
+						setState(state2 => ({
+							...state2,
+							editUsername: false,
+							editEmail: false,
+							editPassword: false,
+							oldPassword: "",
+							submitting: false,
+						}));
+					} else {
+						const updatedState: Partial<typeof state> = {};
+
+						for (const error of Object.keys(data.errors)) {
+							if (error === "username") {
+								updatedState.errorMessageUsername = data.errors[error];
+							} else if (error === "email") {
+								updatedState.errorMessageEmail = data.errors[error];
+							} else if (error === "newPassword") {
+								updatedState.errorMessageNewPassword = data.errors[error];
+							} else if (error === "newPassword2") {
+								updatedState.errorMessageNewPassword2 = data.errors[error];
+							} else if (error === "newPasswords") {
+								updatedState.errorMessageNewPassword =
+									updatedState.errorMessageNewPassword ?? ""; // So it gets highlighted too
+								updatedState.errorMessageNewPassword2 = data.errors[error];
+							} else if (error === "oldPassword") {
+								updatedState.errorMessageOldPassword = data.errors[error];
+							} else if (error === "overall") {
+								updatedState.errorMessageOverall = data.errors[error];
+							}
+						}
+
+						setState(state2 => ({
+							...state2,
+							...updatedState,
+							submitting: false,
+						}));
+					}
+				} catch (error) {
+					console.error(error);
+					setState(state2 => ({
+						...state2,
+						submitting: false,
+						errorMessageOverall: ajaxErrorMsg,
+					}));
+				}
 			}}
 		>
 			<div
@@ -114,17 +188,12 @@ const AccountInfoForm = ({
 				}}
 			>
 				<div style={formGroupStyle}>
-					<div
-						className={classNames("form-group", {
-							"text-danger": state.errorMessageUsername,
-						})}
-						style={formGroupStyle}
-					>
+					<div className="form-group" style={formGroupStyle}>
 						<label htmlFor="account-username">Username</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
-									"is-invalid": state.errorMessageUsername,
+									"is-invalid": state.errorMessageUsername !== undefined,
 								})}
 								id="account-username"
 								{...fields.username.inputProps}
@@ -146,20 +215,21 @@ const AccountInfoForm = ({
 						<span className="form-text text-muted">
 							{fields.username.description}
 						</span>
-						<span className="form-text">{state.errorMessageUsername}</span>
+						<span
+							className={classNames("form-text", {
+								"text-danger": state.errorMessageUsername,
+							})}
+						>
+							{state.errorMessageUsername}
+						</span>
 					</div>
 
-					<div
-						className={classNames("form-group", {
-							"text-danger": state.errorMessageEmail,
-						})}
-						style={formGroupStyle}
-					>
+					<div className="form-group" style={formGroupStyle}>
 						<label htmlFor="account-email">Email</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
-									"is-invalid": state.errorMessageEmail,
+									"is-invalid": state.errorMessageEmail !== undefined,
 								})}
 								id="account-email"
 								{...fields.email.inputProps}
@@ -178,22 +248,23 @@ const AccountInfoForm = ({
 								</button>
 							</div>
 						</div>
-						<span className="form-text">{state.errorMessageEmail}</span>
+						<span
+							className={classNames("form-text", {
+								"text-danger": state.errorMessageEmail,
+							})}
+						>
+							{state.errorMessageEmail}
+						</span>
 					</div>
 				</div>
 
 				<div style={formGroupStyle}>
-					<div
-						className={classNames("form-group", {
-							"text-danger": state.errorMessageNewPassword,
-						})}
-						style={formGroupStyle}
-					>
+					<div className="form-group" style={formGroupStyle}>
 						<label htmlFor="account-new-password">New Password</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
-									"is-invalid": state.errorMessageNewPassword,
+									"is-invalid": state.errorMessageNewPassword !== undefined,
 								})}
 								id="account-new-password"
 								{...fields.password.inputProps}
@@ -213,19 +284,20 @@ const AccountInfoForm = ({
 								</button>
 							</div>
 						</div>
-						<span className="form-text">{state.errorMessageNewPassword}</span>
+						<span
+							className={classNames("form-text", {
+								"text-danger": state.errorMessageNewPassword,
+							})}
+						>
+							{state.errorMessageNewPassword}
+						</span>
 					</div>
 
-					<div
-						className={classNames("form-group", {
-							"text-danger": state.errorMessageNewPassword2,
-						})}
-						style={formGroupStyle}
-					>
+					<div className="form-group" style={formGroupStyle}>
 						<label htmlFor="account-new-password-2">Repeat New Password</label>
 						<input
 							className={classNames("form-control", {
-								"is-invalid": state.errorMessageNewPassword2,
+								"is-invalid": state.errorMessageNewPassword2 !== undefined,
 							})}
 							id="account-new-password-2"
 							{...fields.password.inputProps}
@@ -235,21 +307,22 @@ const AccountInfoForm = ({
 							required={state.editPassword}
 							autoComplete="new-password"
 						/>
-						<span className="form-text">{state.errorMessageNewPassword2}</span>
+						<span
+							className={classNames("form-text", {
+								"text-danger": state.errorMessageNewPassword2,
+							})}
+						>
+							{state.errorMessageNewPassword2}
+						</span>
 					</div>
 				</div>
 			</div>
 
-			<div
-				className={classNames("form-group", {
-					"text-danger": state.errorMessageOldPassword,
-				})}
-				style={formGroupStyle}
-			>
+			<div className="form-group" style={formGroupStyle}>
 				<label htmlFor="account-old-password">Confirm Current Password</label>
 				<input
 					className={classNames("form-control", {
-						"is-invalid": state.errorMessageOldPassword,
+						"is-invalid": state.errorMessageOldPassword !== undefined,
 					})}
 					id="account-old-password"
 					{...fields.password.inputProps}
@@ -257,7 +330,13 @@ const AccountInfoForm = ({
 					onChange={handleChange("oldPassword")}
 					autoComplete="current-password"
 				/>
-				<span className="form-text">{state.errorMessageOldPassword}</span>
+				<span
+					className={classNames("form-text", {
+						"text-danger": state.errorMessageOldPassword,
+					})}
+				>
+					{state.errorMessageOldPassword}
+				</span>
 			</div>
 
 			<ActionButton

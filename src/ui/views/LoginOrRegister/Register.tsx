@@ -95,9 +95,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						updatedState.errorMessagePassword2 = data.errors[error];
 					} else if (error === "passwords") {
 						updatedState.errorMessagePassword =
-							updatedState.errorMessagePassword === undefined
-								? ""
-								: updatedState.errorMessagePassword; // So it gets highlighted too
+							updatedState.errorMessagePassword ?? ""; // So it gets highlighted too
 
 						updatedState.errorMessagePassword2 = data.errors[error];
 					}
@@ -127,15 +125,11 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			</p>
 			<form onSubmit={handleSubmit} ref={formRef}>
 				<input type="hidden" name="sport" value={process.env.SPORT} />
-				<div
-					className={classNames("form-group", {
-						"text-danger": state.errorMessageUsername,
-					})}
-				>
+				<div className="form-group">
 					<label htmlFor="register-username">Username</label>
 					<input
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessageUsername,
+							"is-invalid": state.errorMessageUsername !== undefined,
 						})}
 						id="register-username"
 						name="username"
@@ -144,57 +138,69 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					<span className="form-text text-muted">
 						{fields.username.description}
 					</span>
-					<span className="form-text">{state.errorMessageUsername}</span>
+					<span
+						className={classNames("form-text", {
+							"text-danger": state.errorMessageUsername !== undefined,
+						})}
+					>
+						{state.errorMessageUsername}
+					</span>
 				</div>
-				<div
-					className={classNames("form-group", {
-						"text-danger": state.errorMessageEmail,
-					})}
-				>
+				<div className="form-group">
 					<label htmlFor="register-email">Email Address</label>
 					<input
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessageEmail,
+							"is-invalid": state.errorMessageEmail !== undefined,
 						})}
 						id="register-email"
 						name="email"
 						{...fields.email.inputProps}
 					/>
-					<span className="form-text">{state.errorMessageEmail}</span>
+					<span
+						className={classNames("form-text", {
+							"text-danger": state.errorMessageEmail !== undefined,
+						})}
+					>
+						{state.errorMessageEmail}
+					</span>
 				</div>
-				<div
-					className={classNames("form-group", {
-						"text-danger": state.errorMessagePassword,
-					})}
-				>
+				<div className="form-group">
 					<label htmlFor="register-password">Password</label>
 					<input
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessagePassword,
+							"is-invalid": state.errorMessagePassword !== undefined,
 						})}
 						id="register-password"
 						name="password"
 						{...fields.password.inputProps}
 						autoComplete="new-password"
 					/>
-					<span className="form-text">{state.errorMessagePassword}</span>
+					<span
+						className={classNames("form-text", {
+							"text-danger": state.errorMessagePassword !== undefined,
+						})}
+					>
+						{state.errorMessagePassword}
+					</span>
 				</div>
-				<div
-					className={classNames("form-group", {
-						"text-danger": state.errorMessagePassword2,
-					})}
-				>
+				<div className="form-group">
 					<label htmlFor="register-password2">Repeat Password</label>
 					<input
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessagePassword2,
+							"is-invalid": state.errorMessagePassword2 !== undefined,
 						})}
 						id="register-password2"
 						name="password2"
 						{...fields.password.inputProps}
 						autoComplete="new-password"
 					/>
-					<span className="form-text">{state.errorMessagePassword2}</span>
+					<span
+						className={classNames("form-text", {
+							"text-danger": state.errorMessagePassword2 !== undefined,
+						})}
+					>
+						{state.errorMessagePassword2}
+					</span>
 				</div>
 				<div className="form-group form-check">
 					<input

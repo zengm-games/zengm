@@ -65,6 +65,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						className="form-control"
 						id="login-username"
 						name="username"
+						autoComplete="username"
 						required
 					/>
 				</div>
@@ -75,15 +76,20 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						className="form-control"
 						id="login-password"
 						name="password"
+						autoComplete="current-password"
 						required
 					/>
 				</div>
 				<ActionButton type="submit" processing={submitting}>
 					Login
 				</ActionButton>
-				<p className="text-danger mt-3">{errorMessage}</p>
+				{errorMessage ? (
+					<p className="text-danger mt-3 mb-0">{errorMessage}</p>
+				) : null}
 			</form>
-			<a href="/account/lost_password">Lost password?</a>
+			<p className="mt-3 mb-0">
+				<a href="/account/lost_password">Lost password?</a>
+			</p>
 		</>
 	);
 };

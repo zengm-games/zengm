@@ -4,6 +4,33 @@ import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 import { ActionButton, GameLinks } from "../../components";
 
+export const fields = {
+	username: {
+		inputProps: {
+			type: "text",
+			required: true,
+			maxLength: 15,
+			pattern: "[A-Za-z-0-9-_]+",
+			title: "Letters, numbers, dashes (-), and underscores (_) only",
+			autoComplete: "username",
+		},
+		description:
+			"Letters, numbers, dashes (-), and underscores (_) only. Max 15 characters.",
+	},
+	email: {
+		inputProps: {
+			type: "email",
+			required: true,
+		},
+	},
+	password: {
+		inputProps: {
+			type: "password",
+			required: true,
+		},
+	},
+};
+
 type State = {
 	submitting: boolean;
 	errorMessageEmail: string | undefined;
@@ -102,76 +129,70 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				<input type="hidden" name="sport" value={process.env.SPORT} />
 				<div
 					className={classNames("form-group", {
-						"text-danger": state.errorMessageUsername !== undefined,
+						"text-danger": state.errorMessageUsername,
 					})}
 				>
 					<label htmlFor="register-username">Username</label>
 					<input
-						type="text"
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessageUsername !== undefined,
+							"is-invalid": state.errorMessageUsername,
 						})}
 						id="register-username"
 						name="username"
-						required
-						maxLength={15}
-						pattern="[A-Za-z-0-9-_]+"
-						title="Letters, numbers, dashes (-), and underscores (_) only"
+						{...fields.username.inputProps}
 					/>
 					<span className="form-text text-muted">
-						Letters, numbers, dashes (-), and underscores (_) only. Max 15
-						characters.
+						{fields.username.description}
 					</span>
 					<span className="form-text">{state.errorMessageUsername}</span>
 				</div>
 				<div
 					className={classNames("form-group", {
-						"text-danger": state.errorMessageEmail !== undefined,
+						"text-danger": state.errorMessageEmail,
 					})}
 				>
 					<label htmlFor="register-email">Email Address</label>
 					<input
-						type="email"
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessageEmail !== undefined,
+							"is-invalid": state.errorMessageEmail,
 						})}
 						id="register-email"
 						name="email"
-						required
+						{...fields.email.inputProps}
 					/>
 					<span className="form-text">{state.errorMessageEmail}</span>
 				</div>
 				<div
 					className={classNames("form-group", {
-						"text-danger": state.errorMessagePassword !== undefined,
+						"text-danger": state.errorMessagePassword,
 					})}
 				>
 					<label htmlFor="register-password">Password</label>
 					<input
-						type="password"
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessagePassword !== undefined,
+							"is-invalid": state.errorMessagePassword,
 						})}
 						id="register-password"
 						name="password"
-						required
+						{...fields.password.inputProps}
+						autoComplete="new-password"
 					/>
 					<span className="form-text">{state.errorMessagePassword}</span>
 				</div>
 				<div
 					className={classNames("form-group", {
-						"text-danger": state.errorMessagePassword2 !== undefined,
+						"text-danger": state.errorMessagePassword2,
 					})}
 				>
-					<label htmlFor="register-password2">Verify Password</label>
+					<label htmlFor="register-password2">Repeat Password</label>
 					<input
-						type="password"
 						className={classNames("form-control", {
-							"is-invalid": state.errorMessagePassword2 !== undefined,
+							"is-invalid": state.errorMessagePassword2,
 						})}
 						id="register-password2"
 						name="password2"
-						required
+						{...fields.password.inputProps}
+						autoComplete="new-password"
 					/>
 					<span className="form-text">{state.errorMessagePassword2}</span>
 				</div>
@@ -190,7 +211,9 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				<ActionButton type="submit" processing={state.submitting}>
 					Create New Account
 				</ActionButton>
-				<p className="text-danger mt-3">{state.errorMessageOverall}</p>
+				{state.errorMessageOverall ? (
+					<p className="text-danger mt-3">{state.errorMessageOverall}</p>
+				) : null}
 			</form>
 		</>
 	);

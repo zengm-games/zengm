@@ -6,18 +6,19 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 	GAME_NAME,
-} from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
+} from "../../../common";
+import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
 	getScript,
 	localActions,
 	realtimeUpdate,
 	toWorker,
-} from "../util";
-import type { View } from "../../common/types";
-import { GameLinks } from "../components";
-import { ajaxErrorMsg } from "./LoginOrRegister";
+} from "../../util";
+import type { View } from "../../../common/types";
+import { GameLinks } from "../../components";
+import { ajaxErrorMsg } from "../LoginOrRegister";
+import AccountInfoForm from "./AccountInfoForm";
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
@@ -268,26 +269,30 @@ const Account = ({
 							ZenGM Gold today!
 						</p>
 
-						{!loggedIn || !email ? (
-							<p>
+						{!loggedIn ? (
+							<p className="mb-0">
 								<a href="/account/login_or_register">
 									Log in or create an account
 								</a>{" "}
 								to sign up for ZenGM Gold.
 							</p>
 						) : (
-							<p>
-								<StripeButton email={email} />
-							</p>
+							<StripeButton email={email} />
 						)}
 					</div>
 				</div>
 
-				<h2>Achievements</h2>
+				{loggedIn ? (
+					<>
+						<h2 className="mt-5">Update Account Info</h2>
 
-				<p>
-					<a href="/achievements">Click here to view your achievements.</a>
-				</p>
+						<AccountInfoForm initialEmail={email} initialUsername={username} />
+					</>
+				) : null}
+
+				<h2 className="mt-5">Achievements</h2>
+
+				<a href="/achievements">Click here to view your achievements.</a>
 			</>
 		);
 	}

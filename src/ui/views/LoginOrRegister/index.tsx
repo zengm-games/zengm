@@ -37,7 +37,7 @@ const LoginOrRegister = () => {
 			</div>
 
 			<div className="row">
-				<div className="col-sm-6 col-md-5 col-lg-4">
+				<div className="col-sm-6 col-md-5 col-lg-4 mb-4 mb-sm-0">
 					<Login ajaxErrorMsg={ajaxErrorMsg} />
 				</div>
 				<div className="col-sm-6 col-md-5 col-lg-4">

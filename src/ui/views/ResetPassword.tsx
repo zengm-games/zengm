@@ -165,7 +165,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						})}
 					>
 						<label className="col-form-label" htmlFor="resetpw-password2">
-							Verify Password
+							Repeat Password
 						</label>
 						<input
 							type="password"

@@ -1,3 +1,8 @@
+support changing password/email/username from account page
+- refresh after submit?
+- newPassword+2 only required if edited
+- test multiple tabs
+
 customzie all stars
 - form like contests
 - captains

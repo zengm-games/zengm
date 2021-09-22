@@ -170,6 +170,9 @@ const getSortedIndexes = (ovrs: number[]) => {
 	return sortedIndexes;
 };
 
+// Use if denominator of prob might be 0
+const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
+
 class GameSim {
 	id: number;
 
@@ -1265,12 +1268,12 @@ class GameSim {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probTov() {
-		return (
+		return boundProb(
 			(g.get("turnoverFactor") *
 				(0.14 * this.team[this.d].compositeRating.defense)) /
-			(0.5 *
-				(this.team[this.o].compositeRating.dribbling +
-					this.team[this.o].compositeRating.passing))
+				(0.5 *
+					(this.team[this.o].compositeRating.dribbling +
+						this.team[this.o].compositeRating.passing)),
 		);
 	}
 
@@ -1298,12 +1301,12 @@ class GameSim {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probStl() {
-		return (
+		return boundProb(
 			g.get("stealFactor") *
-			((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
-				(0.5 *
-					(this.team[this.o].compositeRating.dribbling +
-						this.team[this.o].compositeRating.passing)))
+				((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
+					(0.5 *
+						(this.team[this.o].compositeRating.dribbling +
+							this.team[this.o].compositeRating.passing))),
 		);
 	}
 

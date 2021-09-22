@@ -982,7 +982,6 @@ class GameSim {
 			}
 
 			const scoreDifferential = this.team[t0].stat.pts - this.team[t1].stat.pts;
-			console.log(scoreDifferential, this.clock);
 
 			if (scoreDifferential >= 0) {
 				return false;

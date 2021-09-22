@@ -11,7 +11,7 @@ const difficultiesReverse = [...difficulties].reverse();
 
 const CompletionTable = ({ achievements }: View<"achievements">) => {
 	const filtered = achievements.filter(
-		achievement => achievement.name !== "Hacker",
+		achievement => achievement.category !== "Meta",
 	);
 
 	const levels = difficulties.map((difficulty, i) => {
@@ -30,7 +30,7 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 	return (
 		<>
 			<h2 className="mt-4">Completion Status</h2>
-			<p className="text-muted text-small">(Ignoring the Hacker achievement)</p>
+			<p className="text-muted text-small">(Ignoring the Meta achievements)</p>
 			<table className="table table-nonfluid">
 				<tbody>
 					{levels.map(level => (

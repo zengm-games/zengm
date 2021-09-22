@@ -883,7 +883,7 @@ class GameSim {
 			names: [actualShooter.name, ...assisterNames],
 			pids: [actualShooter.id, ...assisterPIDs],
 			shotType: deflector ? "deflection" : type,
-			goalType: strengthType,
+			goalType: this.pulledGoalie[this.d] ? "en" : strengthType,
 		});
 
 		this.penaltyBox.goal(this.o);

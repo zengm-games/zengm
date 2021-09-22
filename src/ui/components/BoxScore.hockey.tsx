@@ -160,6 +160,19 @@ const getCount = (events: PlayByPlayEventScore[]) => {
 	return count;
 };
 
+const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
+	switch (goalType) {
+		case "ev":
+			return "Even strength";
+		case "sh":
+			return "Short handed";
+		case "pp":
+			return "Power play";
+		case "en":
+			return "Empty net";
+	}
+};
+
 const ScoringSummary = memo(
 	({
 		events,
@@ -227,7 +240,9 @@ const ScoringSummary = memo(
 										)}
 									</td>
 									<td>{formatClock(event.clock)}</td>
-									<td>{event.goalType.toUpperCase()}</td>
+									<td title={goalTypeTitle(event.goalType)}>
+										{event.goalType.toUpperCase()}
+									</td>
 									<td style={{ whiteSpace: "normal" }}>
 										{event.shotType === "reboundShot"
 											? "Rebound shot"

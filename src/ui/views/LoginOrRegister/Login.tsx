@@ -41,7 +41,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 
 				// Check for participation achievement, if this is the first time logging in to this sport
 				await toWorker("main", "checkParticipationAchievement", false);
-				realtimeUpdate(["account"], "/account");
+				await toWorker("main", "realtimeUpdate", ["account"], "/account");
 			} else {
 				setSubmitting(false);
 				setErrorMessage("Invalid username or password.");

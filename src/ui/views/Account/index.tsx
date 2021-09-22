@@ -155,11 +155,14 @@ const UserInfo = ({
 			localActions.update({
 				username: "",
 			});
-			realtimeUpdate(["account"], "/");
 		} catch (error) {
 			console.error(error);
 			setLogoutError(ajaxErrorMsg);
+			return;
 		}
+
+		await toWorker("main", "checkAccount");
+		await toWorker("main", "realtimeUpdate", ["account"], "/");
 	};
 
 	return (

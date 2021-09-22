@@ -2252,8 +2252,8 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 };
 
 // Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
-const realtimeUpdate = async (updateEvents: UpdateEvents) => {
-	await toUI("realtimeUpdate", [updateEvents]);
+const realtimeUpdate = async (updateEvents: UpdateEvents, url?: string) => {
+	await toUI("realtimeUpdate", [updateEvents, url]);
 };
 
 const regenerateDraftClass = async (season: number, conditions: Conditions) => {
@@ -3729,6 +3729,7 @@ export default {
 	beforeViewLeague,
 	beforeViewNonLeague,
 	cancelContractNegotiation,
+	checkAccount,
 	checkParticipationAchievement,
 	clearTrade,
 	clearInjury,

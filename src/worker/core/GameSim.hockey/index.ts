@@ -723,15 +723,18 @@ class GameSim {
 
 		let r = Math.random();
 
+		// Tone down pulled goalie situations
+		const pulledGoalieFactor = this.pulledGoalie[this.d] ? 0.5 : 1;
+
 		// Power play adjusts odds of a miss
 		if (totalStrengthDifference > 1) {
-			r += 0.2;
+			r += 0.2 * pulledGoalieFactor;
 		} else if (totalStrengthDifference === 1) {
-			r += 0.1;
+			r += 0.1 * pulledGoalieFactor;
 		} else if (totalStrengthDifference === -1) {
-			r -= 0.025;
+			r -= 0.025 * pulledGoalieFactor;
 		} else if (totalStrengthDifference < -1) {
-			r -= 0.5;
+			r -= 0.5 * pulledGoalieFactor;
 		}
 
 		if (r < 0.1 + 0.35 * this.team[this.d].compositeRating.blocking) {
@@ -853,6 +856,17 @@ class GameSim {
 				});
 
 				return saveType;
+			}
+		} else {
+			// Extra 50% chance of miss, for empty net
+			if (Math.random() < 0.5) {
+				this.playByPlay.logEvent({
+					type: "miss",
+					clock: this.clock,
+					t: this.o,
+					names: [shooter.name],
+				});
+				return "miss";
 			}
 		}
 

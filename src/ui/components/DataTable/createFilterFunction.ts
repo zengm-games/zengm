@@ -18,6 +18,11 @@ const createFilterFunction = (
 			let direction;
 			let number;
 
+			const not = text[0] === "!";
+			if (not) {
+				text = text.slice(1);
+			}
+
 			if (
 				searchType === "number" ||
 				searchType === "currency" ||
@@ -43,6 +48,7 @@ const createFilterFunction = (
 
 			return {
 				direction,
+				not,
 				number,
 				text,
 			};
@@ -61,31 +67,59 @@ const createFilterFunction = (
 			return true;
 		}
 
-		for (const { direction, number, text } of filters) {
-			if (typeof number === "number") {
-				const numericVal = parseFloat(getSortVal(value, sortType));
+		for (const { direction, not, number, text } of filters) {
+			if (not) {
+				if (typeof number === "number") {
+					const numericVal = parseFloat(getSortVal(value, sortType));
 
-				if (Number.isNaN(numericVal)) {
-					continue;
-				}
+					if (Number.isNaN(numericVal)) {
+						continue;
+					}
 
-				if (direction === ">" && numericVal >= number) {
+					if (direction === ">" && numericVal <= number) {
+						return true;
+					}
+
+					if (direction === "<" && numericVal >= number) {
+						return true;
+					}
+
+					if (direction === "=" && numericVal !== number) {
+						return true;
+					}
+
+					if (direction === undefined && !getSearchVal(value).includes(text)) {
+						return true;
+					}
+				} else if (!getSearchVal(value).includes(text)) {
 					return true;
 				}
+			} else {
+				if (typeof number === "number") {
+					const numericVal = parseFloat(getSortVal(value, sortType));
 
-				if (direction === "<" && numericVal <= number) {
+					if (Number.isNaN(numericVal)) {
+						continue;
+					}
+
+					if (direction === ">" && numericVal >= number) {
+						return true;
+					}
+
+					if (direction === "<" && numericVal <= number) {
+						return true;
+					}
+
+					if (direction === "=" && numericVal === number) {
+						return true;
+					}
+
+					if (direction === undefined && getSearchVal(value).includes(text)) {
+						return true;
+					}
+				} else if (getSearchVal(value).includes(text)) {
 					return true;
 				}
-
-				if (direction === "=" && numericVal === number) {
-					return true;
-				}
-
-				if (direction === undefined && getSearchVal(value).includes(text)) {
-					return true;
-				}
-			} else if (getSearchVal(value).includes(text)) {
-				return true;
 			}
 		}
 

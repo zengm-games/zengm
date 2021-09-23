@@ -64,8 +64,12 @@ const Controls = ({
 								"=50" for values exactly equal to 50.
 							</p>
 							<p>
-								You can also filter on multiple values at once. For example,
-								enter {positionFilterText}.
+								You can filter on multiple values at once using a logical OR
+								operator. For example, enter {positionFilterText}.
+							</p>
+							<p>
+								You can find all rows not matching a string, like "!CHI" will
+								show all players except those on Chicago.
 							</p>
 						</HelpPopover>
 					</div>

@@ -108,7 +108,7 @@ const GOATFormula = ({
 							<code>Playoffs</code> - career total playoff stat
 						</li>
 						<li>
-							<code>PlayoffsPerGame</code> - career per game playoff stat
+							<code>PlayoffsPerGame</code> - per game playoff stat
 						</li>
 						<li>
 							<code>Peak</code> - total value of stat's single season peak

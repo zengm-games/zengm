@@ -180,15 +180,11 @@ const doInjury = async (
 		const r = p2.ratings.length - 1;
 
 		// New ratings row
-		p2.ratings[r].spd = helpers.bound(
+		p2.ratings[r].spd = player.limitRating(
 			p2.ratings[r].spd - random.randInt(1, biggestRatingsLoss),
-			1,
-			100,
 		);
-		p2.ratings[r].endu = helpers.bound(
+		p2.ratings[r].endu = player.limitRating(
 			p2.ratings[r].endu - random.randInt(1, biggestRatingsLoss),
-			1,
-			100,
 		);
 		const rating = bySport({
 			basketball: "jmp",
@@ -196,10 +192,8 @@ const doInjury = async (
 			hockey: undefined,
 		});
 		if (rating) {
-			p2.ratings[r][rating] = helpers.bound(
+			p2.ratings[r][rating] = player.limitRating(
 				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
-				1,
-				100,
 			);
 		}
 

@@ -1,4 +1,7 @@
-support ! (not) in filters https://discord.com/channels/290013534023057409/331882115119448065/890408593961140264
+improve table column filtering
+- AND operation
+  - how to handle mixing with OR?
+- parentheses to group operations
 
 empty net goal/block/miss frequency https://discord.com/channels/@me/778760871911751700/890391842670116925
 

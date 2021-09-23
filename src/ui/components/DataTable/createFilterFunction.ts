@@ -23,6 +23,12 @@ const createFilterFunction = (
 				text = text.slice(1);
 			}
 
+			let exact = false;
+			if (text.length > 2 && text[0] === '"' && text.at(-1) === '"') {
+				exact = true;
+				text = text.slice(1, -1);
+			}
+
 			if (
 				searchType === "number" ||
 				searchType === "currency" ||
@@ -48,6 +54,7 @@ const createFilterFunction = (
 
 			return {
 				direction,
+				exact,
 				not,
 				number,
 				text,
@@ -61,14 +68,30 @@ const createFilterFunction = (
 			return true;
 		});
 
+	console.log(filters);
+
 	// false - doesn't match. true - does match
 	return (value: any) => {
 		if (filters.length === 0) {
 			return true;
 		}
 
-		for (const { direction, not, number, text } of filters) {
+		for (const { direction, exact, not, number, text } of filters) {
 			if (not) {
+				const checkTextSearch = () => {
+					const searchVal = getSearchVal(value);
+
+					if (!exact && !searchVal.includes(text)) {
+						return true;
+					}
+
+					if (exact && searchVal !== text) {
+						return true;
+					}
+
+					return false;
+				};
+
 				if (typeof number === "number") {
 					const numericVal = parseFloat(getSortVal(value, sortType));
 
@@ -88,13 +111,31 @@ const createFilterFunction = (
 						return true;
 					}
 
-					if (direction === undefined && !getSearchVal(value).includes(text)) {
+					if (direction === undefined) {
+						if (checkTextSearch()) {
+							return true;
+						}
+					}
+				} else {
+					if (checkTextSearch()) {
 						return true;
 					}
-				} else if (!getSearchVal(value).includes(text)) {
-					return true;
 				}
 			} else {
+				const checkTextSearch = () => {
+					const searchVal = getSearchVal(value);
+
+					if (!exact && searchVal.includes(text)) {
+						return true;
+					}
+
+					if (exact && searchVal === text) {
+						return true;
+					}
+
+					return false;
+				};
+
 				if (typeof number === "number") {
 					const numericVal = parseFloat(getSortVal(value, sortType));
 
@@ -114,11 +155,15 @@ const createFilterFunction = (
 						return true;
 					}
 
-					if (direction === undefined && getSearchVal(value).includes(text)) {
+					if (direction === undefined) {
+						if (checkTextSearch()) {
+							return true;
+						}
+					}
+				} else {
+					if (checkTextSearch()) {
 						return true;
 					}
-				} else if (getSearchVal(value).includes(text)) {
-					return true;
 				}
 			}
 		}

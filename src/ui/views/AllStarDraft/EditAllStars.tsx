@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { View } from "../../../common/types";
+import type { AllStarPlayer, View } from "../../../common/types";
 import SelectMultiple from "../../components/SelectMultiple";
 import { toWorker } from "../../util";
 
@@ -7,7 +7,7 @@ const divStyle = {
 	width: 300,
 };
 
-type AllStarPlayer = View<"allStarDraft">["allPossiblePlayers"][number];
+type MyAllStarPlayer = View<"allStarDraft">["allPossiblePlayers"][number];
 
 const Player = ({
 	allPossiblePlayers,
@@ -16,10 +16,10 @@ const Player = ({
 	p,
 	selectedPIDs,
 }: {
-	allPossiblePlayers: AllStarPlayer[];
+	allPossiblePlayers: MyAllStarPlayer[];
 	isClearable?: boolean;
-	onChange: (p: AllStarPlayer | null) => void;
-	p: AllStarPlayer | null;
+	onChange: (p: MyAllStarPlayer | null) => void;
+	p: MyAllStarPlayer | null;
 	selectedPIDs: number[];
 }) => {
 	return (
@@ -47,8 +47,8 @@ const EditAllStars = ({
 	initialPlayers,
 	onDone,
 }: {
-	allPossiblePlayers: AllStarPlayer[];
-	initialPlayers: AllStarPlayer[];
+	allPossiblePlayers: MyAllStarPlayer[];
+	initialPlayers: MyAllStarPlayer[];
 	onDone: () => void;
 }) => {
 	console.log(allPossiblePlayers, initialPlayers);
@@ -82,21 +82,22 @@ const EditAllStars = ({
 		}
 	}
 
-	const onChange = (prevPlayer: AllStarPlayer) => (p: AllStarPlayer | null) => {
-		const index = players.indexOf(prevPlayer);
+	const onChange =
+		(prevPlayer: MyAllStarPlayer) => (p: MyAllStarPlayer | null) => {
+			const index = players.indexOf(prevPlayer);
 
-		if (index >= 0) {
-			if (p) {
-				const newPlayers = [...players];
-				newPlayers[index] = p;
-				setPlayers(newPlayers);
-			} else {
-				setPlayers(players.filter((p, i) => i !== index));
+			if (index >= 0) {
+				if (p) {
+					const newPlayers = [...players];
+					newPlayers[index] = p;
+					setPlayers(newPlayers);
+				} else {
+					setPlayers(players.filter((p, i) => i !== index));
+				}
 			}
-		}
-	};
+		};
 
-	const onAdd = (p: AllStarPlayer | null) => {
+	const onAdd = (p: MyAllStarPlayer | null) => {
 		if (p) {
 			setPlayers([...players, p]);
 		}
@@ -110,11 +111,19 @@ const EditAllStars = ({
 				// Get rid of any other properties, like abbrev
 				const minimalPlayers = players
 					.filter(p => p !== null)
-					.map(p => ({
-						pid: p.pid,
-						tid: p.tid,
-						name: p.name,
-					}));
+					.map(p => {
+						const p2: AllStarPlayer = {
+							pid: p.pid,
+							tid: p.tid,
+							name: p.name,
+						};
+
+						if (p.injury.gamesRemaining > 0) {
+							p2.injured = true;
+						}
+
+						return p2;
+					});
 
 				await toWorker("main", "allStarDraftSetPlayers", minimalPlayers);
 

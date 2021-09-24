@@ -129,6 +129,7 @@ const updateAllStarDraft = async (
 			finalized,
 			gid,
 			godMode,
+			isCurrentSeason: g.get("season") === season,
 			nextGameIsAllStar,
 			remaining,
 			season,

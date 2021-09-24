@@ -180,6 +180,39 @@ const allStarDraftUser = async (pid: number) => {
 	return finalized;
 };
 
+const allStarDraftReset = async () => {
+	const allStars = await idb.cache.allStars.get(g.get("season"));
+	if (allStars) {
+		allStars.finalized = false;
+
+		// Ideally it would put them back in the same order it started, but that's hard, so just assume draft was old order
+		const oldRemaining = allStars.remaining;
+		allStars.remaining = [];
+
+		// Interleave teams
+		const maxIndex = Math.max(
+			allStars.teams[0].length,
+			allStars.teams[1].length,
+		);
+		for (let i = 1; i < maxIndex; i++) {
+			for (const t of [0, 1]) {
+				const p = allStars.teams[t][i];
+				if (p) {
+					allStars.remaining.push(p);
+				}
+			}
+		}
+
+		allStars.remaining.push(...oldRemaining);
+
+		allStars.teams = [[allStars.teams[0][0]], [allStars.teams[1][0]]];
+
+		await idb.cache.allStars.put(allStars);
+
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
+};
+
 const allStarDraftSetPlayers = async (
 	players: AllStarPlayer[],
 	conditions: Conditions,
@@ -3767,6 +3800,7 @@ export default {
 	allStarDraftAll,
 	allStarDraftOne,
 	allStarDraftUser,
+	allStarDraftReset,
 	allStarDraftSetPlayers,
 	allStarGameNow,
 	autoSortRoster,

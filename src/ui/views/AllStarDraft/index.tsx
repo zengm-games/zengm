@@ -152,6 +152,7 @@ const AllStars = ({
 	finalized,
 	gid,
 	godMode,
+	isCurrentSeason,
 	nextGameIsAllStar,
 	remaining,
 	season,
@@ -314,6 +315,23 @@ const AllStars = ({
 					) : null}
 				</div>
 			) : null}
+			{godMode && started && nextGameIsAllStar && isCurrentSeason ? (
+				<div className="mb-3">
+					<button
+						className="btn btn-lg btn-god-mode"
+						disabled={!usersTurn && !actuallyFinalized}
+						onClick={async () => {
+							await toWorker("main", "allStarDraftReset");
+
+							setActuallyFinalized(false);
+							setStarted(false);
+							setRevealed([]);
+						}}
+					>
+						Reset draft
+					</button>
+				</div>
+			) : null}
 			<div className="row">
 				<div className="col-sm-6 col-md-8">
 					<div className="row">
@@ -348,7 +366,7 @@ const AllStars = ({
 					</div>
 				</div>
 				<div className="col-sm-6 col-md-4">
-					<h2>Remaining All Stars</h2>
+					<h2>{actuallyFinalized ? "Injured" : "Remaining"} All Stars</h2>
 					<PlayersTable
 						challengeNoRatings={challengeNoRatings}
 						draftType={draftType}

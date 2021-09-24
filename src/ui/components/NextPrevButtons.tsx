@@ -52,6 +52,7 @@ const NextPrevButtons = <T extends unknown>({
 				disabled={buttonInfo[0].disabled}
 				onClick={buttonInfo[0].onClick}
 				title="Previous"
+				type="button"
 			>
 				<span className="glyphicon glyphicon-menu-left" />
 			</button>
@@ -60,6 +61,7 @@ const NextPrevButtons = <T extends unknown>({
 				disabled={buttonInfo[1].disabled}
 				onClick={buttonInfo[1].onClick}
 				title="Next"
+				type="button"
 			>
 				<span className="glyphicon glyphicon-menu-right" />
 			</button>

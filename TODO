@@ -22,8 +22,6 @@ game sim pausing bug
   - what was triggering navigation event? fetch? some kind of include?
   - error while in league should not jump to outside league
 
-press enter while in name text field on create league - why randomize?
-
 better adjustment for real draft prospects
 
 expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564

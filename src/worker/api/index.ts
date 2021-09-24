@@ -180,12 +180,45 @@ const allStarDraftUser = async (pid: number) => {
 	return finalized;
 };
 
-const allStarDraftSetPlayers = async (players: AllStarPlayer[]) => {
+const allStarDraftSetPlayers = async (
+	players: AllStarPlayer[],
+	conditions: Conditions,
+) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	if (allStars) {
+		const prevPids = [
+			...allStars.teams[0],
+			...allStars.teams[1],
+			...allStars.remaining,
+		].map(p => p.pid);
+
+		const pidsToDelete = prevPids.filter(
+			pid => !players.some(p => p.pid === pid),
+		);
+
+		// Delete old awards
+		const awardsByPlayerToDelete = pidsToDelete.map(pid => ({
+			pid,
+			type: "All-Star",
+		}));
+		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
+
+		// Add new awards
+		const awardsByPlayer = players
+			.filter(p => !prevPids.includes(p.pid))
+			.map(p => ({
+				pid: p.pid,
+				tid: p.tid,
+				name: p.name,
+				type: "All-Star",
+			}));
+		await saveAwardsByPlayer(awardsByPlayer, conditions);
+
+		// Save new All-Stars
 		allStars.teams = [[players[0]], [players[1]]];
 		allStars.remaining = players.slice(2);
 		await idb.cache.allStars.put(allStars);
+
 		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
 };

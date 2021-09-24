@@ -76,8 +76,9 @@ const create = async (conditions: Conditions) => {
 			type: "All-Star",
 		};
 	});
-	await saveAwardsByPlayer(awardsByPlayer, conditions); // Pick two captains
+	await saveAwardsByPlayer(awardsByPlayer, conditions);
 
+	// Pick two captains
 	for (const team of allStars.teams) {
 		const ind = allStars.remaining.findIndex(({ pid }) => {
 			const p = players.find(p2 => p2.pid === pid);

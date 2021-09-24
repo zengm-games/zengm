@@ -376,6 +376,10 @@ const saveAwardsByPlayer = async (
 	logEvents: boolean = true,
 	allStarGID?: number,
 ) => {
+	if (awardsByPlayer.length === 0) {
+		return;
+	}
+
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
 		let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
@@ -458,9 +462,16 @@ const saveAwardsByPlayer = async (
 };
 
 const deleteAwardsByPlayer = async (
-	awardsByPlayer: AwardsByPlayer,
+	awardsByPlayer: {
+		pid: number;
+		type: string;
+	}[],
 	season: number,
 ) => {
+	if (awardsByPlayer.length === 0) {
+		return;
+	}
+
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 	const players = await idb.getCopies.players({
 		pids,

@@ -226,6 +226,7 @@ const MoreLinks = (
 				url: ["team_stat_dists", season],
 				name: "Stat Distributions",
 			},
+			{ url: ["league_stats"], name: "League Stats" },
 		];
 	} else if (props.type === "freeAgents") {
 		links = [

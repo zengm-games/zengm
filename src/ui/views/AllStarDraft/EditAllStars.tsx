@@ -11,30 +11,32 @@ type AllStarPlayer = View<"allStarDraft">["allPossiblePlayers"][number];
 
 const Player = ({
 	allPossiblePlayers,
-	index,
+	isClearable = false,
 	onChange,
 	p,
 	selectedPIDs,
 }: {
 	allPossiblePlayers: AllStarPlayer[];
-	index: number;
+	isClearable?: boolean;
 	onChange: (p: AllStarPlayer | null) => void;
-	p: AllStarPlayer;
+	p: AllStarPlayer | null;
 	selectedPIDs: number[];
 }) => {
 	return (
 		<div style={divStyle}>
 			<SelectMultiple
-				options={allPossiblePlayers.filter(p => {
+				options={allPossiblePlayers.filter(p2 => {
 					// Keep this player and any other non-selected players
-					const selectedIndex = selectedPIDs.indexOf(p.pid);
-					return selectedIndex === index || selectedIndex < 0;
+					const selectedIndex = selectedPIDs.indexOf(p2.pid);
+					return p2.pid === p?.pid || selectedIndex < 0;
 				})}
-				value={allPossiblePlayers.find(p2 => p.pid === p2.pid)}
+				value={
+					p === null ? null : allPossiblePlayers.find(p2 => p.pid === p2.pid)
+				}
 				getOptionLabel={p => `${p.name}, ${p.abbrev}`}
 				getOptionValue={p => String(p.pid)}
 				onChange={onChange}
-				isClearable={false}
+				isClearable={isClearable}
 			/>
 		</div>
 	);
@@ -53,18 +55,50 @@ const EditAllStars = ({
 
 	const [players, setPlayers] = useState([...initialPlayers]);
 
-	const selectedPIDs = players.map(p => p.pid);
+	const selectedPIDs = players.map(p => p?.pid);
 
 	const NUM_CAPTAINS = 2;
 
 	const captains = players.slice(0, NUM_CAPTAINS);
 	const others = players.slice(NUM_CAPTAINS);
 
-	const onChange = (index: number) => (p: AllStarPlayer | null) => {
+	const healthy = [];
+	const injured = [];
+	for (const p of others) {
+		if (p === null || p.injury.gamesRemaining > 0) {
+			injured.push(p);
+		} else {
+			healthy.push(p);
+		}
+	}
+
+	const allPossibleHealthy: typeof allPossiblePlayers = [];
+	const allPossibleInjured: typeof allPossiblePlayers = [];
+	for (const p of allPossiblePlayers) {
+		if (p.injury.gamesRemaining > 0) {
+			allPossibleInjured.push(p);
+		} else {
+			allPossibleHealthy.push(p);
+		}
+	}
+
+	const onChange = (prevPlayer: AllStarPlayer) => (p: AllStarPlayer | null) => {
+		const index = players.indexOf(prevPlayer);
+
+		if (index >= 0) {
+			if (p) {
+				const newPlayers = [...players];
+				newPlayers[index] = p;
+				setPlayers(newPlayers);
+			} else {
+				setPlayers(players.filter((p, i) => i !== index));
+			}
+		}
+	};
+
+	const onAdd = (p: AllStarPlayer | null) => {
 		if (p) {
-			const newPlayers = [...players];
-			newPlayers[index] = p;
-			setPlayers(newPlayers);
+			setPlayers([...players, p]);
 		}
 	};
 
@@ -74,14 +108,15 @@ const EditAllStars = ({
 				event.preventDefault();
 
 				// Get rid of any other properties, like abbrev
-				const minimalPlayers = players.map(p => ({
-					pid: p.pid,
-					tid: p.tid,
-					name: p.name,
-				}));
+				const minimalPlayers = players
+					.filter(p => p !== null)
+					.map(p => ({
+						pid: p.pid,
+						tid: p.tid,
+						name: p.name,
+					}));
 
-				// await toWorker("main", "contestSetPlayers", minimalPlayers);
-				console.log("CALL TOWORKER", minimalPlayers);
+				await toWorker("main", "allStarDraftSetPlayers", minimalPlayers);
 
 				onDone();
 			}}
@@ -94,13 +129,11 @@ const EditAllStars = ({
 				}}
 			>
 				{captains.map((p, i) => {
-					const index = i;
 					return (
 						<Player
 							key={i}
-							allPossiblePlayers={allPossiblePlayers}
-							index={index}
-							onChange={onChange(index)}
+							allPossiblePlayers={allPossibleHealthy}
+							onChange={onChange(p)}
 							p={p}
 							selectedPIDs={selectedPIDs}
 						/>
@@ -115,19 +148,45 @@ const EditAllStars = ({
 					gap: "1rem",
 				}}
 			>
-				{others.map((p, i) => {
-					const index = i + NUM_CAPTAINS;
+				{healthy.map((p, i) => {
 					return (
 						<Player
 							key={i}
-							allPossiblePlayers={allPossiblePlayers}
-							index={index}
-							onChange={onChange(index)}
+							allPossiblePlayers={allPossibleHealthy}
+							onChange={onChange(p)}
 							p={p}
 							selectedPIDs={selectedPIDs}
 						/>
 					);
 				})}
+			</div>
+
+			<h2 className="mt-4">Injured All-Stars</h2>
+			<div
+				className="d-flex flex-wrap"
+				style={{
+					gap: "1rem",
+				}}
+			>
+				{injured.map((p, i) => {
+					return (
+						<Player
+							key={i}
+							allPossiblePlayers={allPossibleInjured}
+							onChange={onChange(p)}
+							p={p}
+							selectedPIDs={selectedPIDs}
+							isClearable
+						/>
+					);
+				})}
+				<Player
+					allPossiblePlayers={allPossibleInjured}
+					onChange={onAdd}
+					p={null}
+					selectedPIDs={selectedPIDs}
+					isClearable
+				/>
 			</div>
 
 			<div className="mt-4">

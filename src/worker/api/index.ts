@@ -86,8 +86,8 @@ import type {
 	EventBBGM,
 	Team,
 	GameAttribute,
-	AllStars,
 	DunkAttempt,
+	AllStarPlayer,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -178,6 +178,16 @@ const allStarDraftOne = async () => {
 const allStarDraftUser = async (pid: number) => {
 	const finalized = await allStar.draftUser(pid);
 	return finalized;
+};
+
+const allStarDraftSetPlayers = async (players: AllStarPlayer[]) => {
+	const allStars = await idb.cache.allStars.get(g.get("season"));
+	if (allStars) {
+		allStars.teams = [[players[0]], [players[1]]];
+		allStars.remaining = players.slice(2);
+		await idb.cache.allStars.put(allStars);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
 };
 
 const allStarGameNow = async () => {
@@ -962,7 +972,7 @@ const dunkSetControlling = async (controlling: number[]) => {
 
 const contestSetPlayers = async (
 	type: "dunk" | "three",
-	players: NonNullable<AllStars["dunk"]>["players"],
+	players: AllStarPlayer[],
 ) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const contest = allStars?.[type];
@@ -3724,6 +3734,7 @@ export default {
 	allStarDraftAll,
 	allStarDraftOne,
 	allStarDraftUser,
+	allStarDraftSetPlayers,
 	allStarGameNow,
 	autoSortRoster,
 	beforeViewLeague,

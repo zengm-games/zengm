@@ -6,6 +6,7 @@ import type {
 	AllStars,
 	ViewInput,
 	AllStarPlayer,
+	PlayerInjury,
 } from "../../common/types";
 import { bySport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
@@ -107,6 +108,7 @@ const updateAllStarDraft = async (
 			tid: number;
 			name: string;
 			abbrev: string;
+			injury: PlayerInjury;
 		}[] = [];
 		if (godMode && !started) {
 			allPossiblePlayers = orderBy(
@@ -117,9 +119,9 @@ const updateAllStarDraft = async (
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
 				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
+				injury: p.injury,
 			}));
 		}
-		console.log("a", allPossiblePlayers, godMode, !started, teams[0]);
 
 		return {
 			allPossiblePlayers,

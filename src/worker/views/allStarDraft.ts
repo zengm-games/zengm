@@ -8,6 +8,7 @@ import type {
 	AllStarPlayer,
 } from "../../common/types";
 import { bySport, PHASE } from "../../common";
+import orderBy from "lodash-es/orderBy";
 
 const stats = bySport({
 	basketball: ["pts", "trb", "ast"],
@@ -97,10 +98,35 @@ const updateAllStarDraft = async (
 		const nextGameIsAllStar =
 			season === g.get("season") && (await allStar.nextGameIsAllStar());
 
+		const godMode = g.get("godMode");
+
+		const started = teams[0].length > 1;
+
+		let allPossiblePlayers: {
+			pid: number;
+			tid: number;
+			name: string;
+			abbrev: string;
+		}[] = [];
+		if (godMode && !started) {
+			allPossiblePlayers = orderBy(
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+				["lastName", "firstName"],
+			).map(p => ({
+				pid: p.pid,
+				tid: p.tid,
+				name: `${p.firstName} ${p.lastName}`,
+				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
+			}));
+		}
+		console.log("a", allPossiblePlayers, godMode, !started, teams[0]);
+
 		return {
+			allPossiblePlayers,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			finalized,
 			gid,
+			godMode,
 			nextGameIsAllStar,
 			remaining,
 			season,

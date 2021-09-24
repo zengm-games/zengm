@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
-import { DataTable, PlayerNameLabels } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
-import type { View } from "../../common/types";
+import { DataTable, PlayerNameLabels } from "../../components";
+import useTitleBar from "../../hooks/useTitleBar";
+import { getCols, helpers, toWorker } from "../../util";
+import type { View } from "../../../common/types";
+import EditAllStars from "./EditAllStars";
 
 const PlayersTable = ({
 	challengeNoRatings,
@@ -146,9 +147,11 @@ const wait = (ms: number) => {
 };
 
 const AllStars = ({
+	allPossiblePlayers,
 	challengeNoRatings,
 	finalized,
 	gid,
+	godMode,
 	nextGameIsAllStar,
 	remaining,
 	season,
@@ -166,6 +169,7 @@ const AllStars = ({
 	const [actuallyFinalized, setActuallyFinalized] = useState(finalized);
 	const [started, setStarted] = useState(teams[0].length > 1);
 	const [revealed, setRevealed] = useState<number[]>([]);
+	const [editing, setEditing] = useState(false);
 
 	const reveal = useCallback(pid => {
 		setRevealed(revealed2 => [...revealed2, pid]);
@@ -255,6 +259,18 @@ const AllStars = ({
 		teams[1].length +
 		remaining.filter(p => p.injury.gamesRemaining <= 0).length;
 
+	if (editing) {
+		return (
+			<EditAllStars
+				allPossiblePlayers={allPossiblePlayers}
+				initialPlayers={[...teams[0], ...teams[1], ...remaining]}
+				onDone={() => {
+					setEditing(false);
+				}}
+			/>
+		);
+	}
+
 	return (
 		<>
 			<p>
@@ -282,9 +298,21 @@ const AllStars = ({
 				</p>
 			) : null}
 			{!actuallyFinalized && !started ? (
-				<button className="btn btn-lg btn-success mb-3" onClick={startDraft}>
-					Start draft
-				</button>
+				<div className="mb-3">
+					<button className="btn btn-lg btn-success" onClick={startDraft}>
+						Start draft
+					</button>
+					{godMode ? (
+						<button
+							className="btn btn-lg btn-god-mode ml-3"
+							onClick={() => {
+								setEditing(true);
+							}}
+						>
+							Edit All-Stars
+						</button>
+					) : null}
+				</div>
 			) : null}
 			<div className="row">
 				<div className="col-sm-6 col-md-8">

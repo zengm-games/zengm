@@ -72,7 +72,6 @@ export const EditContestants = ({
 				return (
 					<div className="mb-2" key={i}>
 						<SelectMultiple
-							key={i}
 							options={allPossibleContestants.filter(p => {
 								// Keep this player and any other non-selected players
 								const selectedIndex = selectedPIDs.indexOf(p.pid);

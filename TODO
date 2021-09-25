@@ -1,3 +1,11 @@
+store results of trading block in database
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
+- indicator if trade is invalid because an asset no longer exists on that team
+- show what the user offered somewhere, not just checkboxes
+
+show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
+
 improve table column filtering
 - AND operation
   - how to handle mixing with OR?
@@ -11,8 +19,6 @@ better adjustment for real draft prospects
 
 expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564
 
-hof default sort https://discord.com/channels/290013534023057409/290013534023057409/888183396214374400
-
 don't use positions in substitution, or be less rigid about it https://discord.com/channels/@me/667557235479674880
 - ideally - look at ratings, not positions
 
@@ -22,14 +28,6 @@ show playoff seeds on team history page https://old.reddit.com/r/BasketballGM/co
 
 show total of selected contracts on trading block slg
 - more stuff too? https://discord.com/channels/290013534023057409/331882115119448065/881220276329779231
-
-play-in tournament
-- blog
-  - play-in shown at bottom of playoffs page, placeholders shown in bracket until determined
-  - separate notification/symbol for clinching play-in
-  - can be enabled for any sport, but is only on by default for basketball (random players, and 2020+ real players)
-    - upgraded leagues - defaults to disabled
-  - play-in stats count as playoff stats
 
 playoffsByConf should support numConfs!=2
 - if power of 2, divides evenly
@@ -41,8 +39,6 @@ player being let out of the penalty box at start of overtime? https://discord.co
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
-
-show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
 
 show tenths of seconds in live sim play by play
 
@@ -191,13 +187,8 @@ option to exclude notable games box scores from deletion
 beter handling of customizable columns in tables where the defaults change based on some URL parameter
 - "Customized columns on League Stats break a bit when you filter for a different team. So swap STL/BLK and change from All to w/e squad, and you'll see BLK just wholly disappear." https://discord.com/channels/290013534023057409/290015591216054273/855827200577765387
 
-Option to start leagues with a fantasy draft https://discord.com/channels/290013534023057409/331882115119448065/851259687780876348
-
 ZGMH all contending https://discord.com/channels/290013534023057409/290015591216054273/851150025966747678
-
-store results of trading block in database
-- indicator of if the offer is still valid or not
-  - can evaluate trade to see
+- happens in any league if oyu play for a while
 
 some way to pin trades?
 - UI? trading block and trade page? updating a pinned trade?

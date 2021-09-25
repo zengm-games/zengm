@@ -7,21 +7,6 @@ More specific achievements, that are really more like challenges
 - https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
 - Win a championship as a play-in team https://discord.com/channels/290013534023057409/331882115119448065/889311847977730089
 
-game sim pausing bug
-- free agents faster too?
-- happens with auto play and normal play (until end of season, or shorter)
-  - but only intermittently!
-- i've seen it on play.bbgm and beta.bbgm, but not on localhost, even when using yarn build version
-  - caused by ad?
-  - game.play not calling right callback somewhere somehow?
-- debugging
-  - stopGameSim is being set to true by league.close. but why is league.close being called?
-  - Controller updatePage is being called with both inLeague true and false. false -> league.close. but why is it being called with inLeague false?
-  - see ads.txt comment in router/index.ts
-- would be nice to have a better solution
-  - what was triggering navigation event? fetch? some kind of include?
-  - error while in league should not jump to outside league
-
 better adjustment for real draft prospects
 
 expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564

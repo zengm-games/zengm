@@ -212,7 +212,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					initialP,
-					player.generate(PLAYER.RETIRED, 25, season - 5, true, 15.5), // Extra brother
+					player.generate(PLAYER.RETIRED, 25, season - 6, true, 15.5), // Extra brother - 6 years ago means never picked by makeBrother
 					...initialBrothers,
 				],
 			});
@@ -230,6 +230,7 @@ describe("worker/core/player/addRelatives", () => {
 			assert.strictEqual(p.relatives[0].pid, 1);
 			assert.strictEqual(p.relatives[1].type, "brother");
 			assert.strictEqual(p.relatives[1].pid, brother.pid);
+
 			assert.strictEqual(brother.relatives.length, 2);
 			assert.strictEqual(brother.relatives[0].type, "brother");
 			assert.strictEqual(brother.relatives[0].pid, 1);

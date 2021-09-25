@@ -243,7 +243,7 @@ export const makeBrother = async (p: Player) => {
 		return;
 	}
 
-	// Don't want to have to rename existing relatives ()
+	// Don't want to have to rename existing relatives
 	if (hasRelative(p, "father") && hasRelative(brother, "brother")) {
 		return;
 	}

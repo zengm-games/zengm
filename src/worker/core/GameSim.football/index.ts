@@ -2086,47 +2086,12 @@ class GameSim {
 			};
 		});
 
-		// Pick penalty that gives the most yards
-		penInfos.sort((a, b) => {
-			return side === "defense" ? b.totYds - a.totYds : a.totYds - b.totYds;
-		});
+		// Pick random penalty - would be better to apply multiple penalties
+		random.shuffle(penInfos);
 		const penInfo = penInfos[0];
 
-		// Adjust penalty yards when near endzones
-		let adjustment = 0;
-
-		if (side === "defense" && this.scrimmage + penInfo.totYds > 99) {
-			// 1 yard line
-			adjustment = this.scrimmage + penInfo.totYds - 99;
-		} else if (side === "offense") {
-			// Half distance to goal?
-			const spotOfFoul =
-				penInfo.spotYds === undefined
-					? this.scrimmage
-					: this.scrimmage + penInfo.spotYds;
-
-			if (spotOfFoul >= 1) {
-				const halfYds = Math.round(spotOfFoul / 2);
-
-				if (penInfo.penYds > halfYds) {
-					adjustment = penInfo.penYds - halfYds;
-				}
-			}
-		}
-
-		if (side === "defense") {
-			penInfo.totYds -= adjustment;
-		} else {
-			penInfo.totYds += adjustment;
-		}
-		penInfo.penYds -= adjustment;
-
-		// recordedPenYds also includes spotYds for defensive pass interference
-		const recordedPenYds =
-			side === "defense" && penInfo.name === "Pass interference"
-				? penInfo.totYds
-				: penInfo.penYds;
 		let p: PlayerGameSim | undefined;
+
 		const posOdds = penInfo.posOdds;
 
 		if (posOdds !== undefined) {
@@ -2157,18 +2122,12 @@ class GameSim {
 			// Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
 		}
 
-		this.advanceYds(penInfo.totYds, {
-			automaticFirstDown: penInfo.automaticFirstDown,
-			repeatDown: true,
-		});
-
 		this.playByPlay.logEvent("flag", {
 			clock: this.clock,
 		});
 
 		this.currentPlay.addEvent({
 			...penInfo,
-			recordedPenYds,
 			type: "penalty",
 			p,
 		});
@@ -2181,8 +2140,6 @@ class GameSim {
 			spotYds: penInfo.spotYds,
 			yds: penInfo.totYds,
 			doLog: () => {
-				this.recordStat(t, p, "pen");
-				this.recordStat(t, p, "penYds", recordedPenYds);
 				this.playByPlay.logEvent("penalty", {
 					clock: this.clock,
 					t: penInfo.t,

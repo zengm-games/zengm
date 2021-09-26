@@ -82,10 +82,9 @@ type PlayEvent =
 			p: PlayerGameSim | undefined;
 			automaticFirstDown: boolean;
 			name: string;
-			recordedPenYds: number;
 			penYds: number;
 			posOdds: Partial<Record<Position, number>> | undefined;
-			spotYds: number | undefined;
+			spotYds: number | undefined; // undefined if not spot foul
 			t: TeamNum;
 	  };
 
@@ -184,23 +183,30 @@ class Play {
 		return yds;
 	}
 
-	getStatChanges(event: PlayEvent) {
+	getStatChanges(event: PlayEvent, reverse?: boolean) {
 		const statChanges: Parameters<GameSim["recordStat"]>[] = [];
 
+		if (event.type === "penalty") {
+			const actualPenYds =
+				event.name === "Pass interference" ? event.spotYds : event.penYds;
+
+			statChanges.push([event.t, event.p, "pen"]);
+			statChanges.push([event.t, event.p, "penYds", actualPenYds]);
+		}
 		if (event.type === "kr") {
-			statChanges.push([this.state.initial.d, event.p, "kr", 1]);
+			statChanges.push([this.state.initial.d, event.p, "kr"]);
 			statChanges.push([this.state.initial.d, event.p, "krYds", event.yds]);
 			statChanges.push([this.state.initial.d, event.p, "krLng", event.yds]);
 		} else if (event.type === "krTD") {
-			statChanges.push([this.state.initial.d, event.p, "krTD", 1]);
+			statChanges.push([this.state.initial.d, event.p, "krTD"]);
 		} else if (event.type === "rus") {
-			statChanges.push([this.state.initial.o, event.p, "rus", 1]);
+			statChanges.push([this.state.initial.o, event.p, "rus"]);
 			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
 			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
 		} else if (event.type === "rusTD") {
-			statChanges.push([this.state.initial.o, event.p, "rusTD", 1]);
+			statChanges.push([this.state.initial.o, event.p, "rusTD"]);
 		} else if (event.type === "kneel") {
-			statChanges.push([this.state.initial.o, event.p, "rus", 1]);
+			statChanges.push([this.state.initial.o, event.p, "rus"]);
 			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
 			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
 		} else if (event.type === "sk") {
@@ -211,15 +217,15 @@ class Play {
 				"pssSkYds",
 				Math.abs(event.yds),
 			]);
-			statChanges.push([this.state.initial.d, event.p, "defSk", 1]);
+			statChanges.push([this.state.initial.d, event.p, "defSk"]);
 		} else if (event.type === "pss") {
-			statChanges.push([this.state.initial.o, event.qb, "pss", 1]);
-			statChanges.push([this.state.initial.o, event.target, "tgt", 1]);
+			statChanges.push([this.state.initial.o, event.qb, "pss"]);
+			statChanges.push([this.state.initial.o, event.target, "tgt"]);
 		} else if (event.type === "pssCmp") {
-			statChanges.push([this.state.initial.o, event.qb, "pssCmp", 1]);
+			statChanges.push([this.state.initial.o, event.qb, "pssCmp"]);
 			statChanges.push([this.state.initial.o, event.qb, "pssYds", event.yds]);
 			statChanges.push([this.state.initial.o, event.qb, "pssLng", event.yds]);
-			statChanges.push([this.state.initial.o, event.target, "rec", 1]);
+			statChanges.push([this.state.initial.o, event.target, "rec"]);
 			statChanges.push([
 				this.state.initial.o,
 				event.target,
@@ -234,20 +240,15 @@ class Play {
 			]);
 		} else if (event.type === "pssInc") {
 			if (event.defender) {
-				statChanges.push([
-					this.state.initial.d,
-					event.defender,
-					"defPssDef",
-					1,
-				]);
+				statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
 			}
 		} else if (event.type === "pssTD") {
-			statChanges.push([this.state.initial.o, event.qb, "pssTD", 1]);
-			statChanges.push([this.state.initial.o, event.target, "recTD", 1]);
+			statChanges.push([this.state.initial.o, event.qb, "pssTD"]);
+			statChanges.push([this.state.initial.o, event.target, "recTD"]);
 		} else if (event.type === "int") {
-			statChanges.push([this.state.initial.o, event.qb, "pssInt", 1]);
-			statChanges.push([this.state.initial.d, event.defender, "defPssDef", 1]);
-			statChanges.push([this.state.initial.d, event.defender, "defInt", 1]);
+			statChanges.push([this.state.initial.o, event.qb, "pssInt"]);
+			statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
+			statChanges.push([this.state.initial.d, event.defender, "defInt"]);
 			statChanges.push([
 				this.state.initial.d,
 				event.defender,
@@ -283,9 +284,9 @@ class Play {
 				statMade = "fg50";
 			}
 
-			statChanges.push([this.state.initial.o, event.p, statAtt, 1]);
+			statChanges.push([this.state.initial.o, event.p, statAtt]);
 			if (event.made) {
-				statChanges.push([this.state.initial.o, event.p, statMade, 1]);
+				statChanges.push([this.state.initial.o, event.p, statMade]);
 
 				if (event.type !== "xp") {
 					statChanges.push([
@@ -298,11 +299,47 @@ class Play {
 			}
 		}
 
+		if (reverse) {
+			for (const statChange of statChanges) {
+				if (statChange[3] === undefined) {
+					statChange[3] = -1;
+				}
+				statChange[3] = -statChange[3];
+			}
+		}
+
 		return statChanges;
 	}
 
 	updateState(state: State, event: PlayEvent) {
-		if (event.type === "k") {
+		if (event.type === "penalty") {
+			const side = state.o === event.t ? "off" : "def";
+			const firstDownLine = state.scrimmage + state.toGo;
+
+			const penYdsSigned = side === "off" ? -event.penYds : event.penYds;
+
+			if (event.spotYds !== undefined) {
+				// Spot foul, apply penalty from here
+				state.scrimmage = event.spotYds;
+			}
+
+			// Adjust penalty yards when near endzones
+			if (side === "def" && state.scrimmage + penYdsSigned > 99) {
+				// 1 yard line
+				state.scrimmage = 99;
+			} else if (side === "off" && state.scrimmage / 2 < event.penYds) {
+				// Half distance to goal
+				state.scrimmage = Math.round(state.scrimmage / 2);
+			} else {
+				state.scrimmage += penYdsSigned;
+			}
+
+			state.toGo = firstDownLine - state.scrimmage;
+
+			if (event.automaticFirstDown) {
+				state.newFirstDown();
+			}
+		} else if (event.type === "k") {
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 100 - event.kickTo;
@@ -420,6 +457,13 @@ class Play {
 
 		if (event.type === "penalty") {
 			this.state.penalties.push(this.state.current.clone());
+
+			return {
+				safety: undefined,
+				td: undefined,
+				touchback: undefined,
+				turnoverOnDowns: false,
+			};
 		}
 
 		const statChanges = this.getStatChanges(event);
@@ -430,10 +474,63 @@ class Play {
 		return this.updateState(this.state.current, event);
 	}
 
-	adjudicatePenalties() {}
+	adjudicatePenalties() {
+		const penalties = this.events.filter(
+			event => event.type === "penalty",
+		) as Extract<PlayEvent, { type: "penalty" }>[];
+
+		if (penalties.length === 0) {
+			return;
+		}
+
+		if (penalties.length === 1) {
+			const event = penalties[0];
+			const eventIndex = this.events.indexOf(event);
+			const stateAccept = this.state.penalties[0];
+			this.updateState(stateAccept, event);
+			const stateDecline = this.state.current;
+
+			console.log(stateAccept, stateDecline);
+
+			const accept = true;
+
+			if (accept) {
+				this.g.playByPlay.logEvent("penalty", {
+					clock: this.g.clock,
+					t: event.t,
+					names: event.p ? [event.p.name] : [],
+					automaticFirstDown: event.automaticFirstDown,
+					penaltyName: event.name,
+					yds: event.penYds,
+				});
+
+				this.state.current = stateAccept;
+
+				const statChangesResults = [
+					// apply statChanges from penalties
+					this.getStatChanges(event),
+
+					// apply negative statChanges from anything after penalties
+					...this.events
+						.filter((event, i) => i > eventIndex)
+						.map(event => this.getStatChanges(event, true)),
+				];
+				for (const statChanges of statChangesResults) {
+					for (const statChange of statChanges) {
+						this.g.recordStat(...statChange);
+					}
+				}
+			}
+		}
+
+		if (penalties.length > 1) {
+			// group penalties to see which are offsetting, then similar to the length 1 case
+			// when evaluating whether to accept a penalty or not, need to work backwards. like can't assume all penalties will be accepted or declind when evaluatign the first, need to evaluate the last (assume all prior declined) and work back
+		}
+	}
 
 	commit() {
-		// Should actually figure out penalties and roll back shit when necessary
+		this.adjudicatePenalties();
 
 		const {
 			down,

@@ -1174,7 +1174,6 @@ class GameSim {
 		const penInfo = this.checkPenalties("beforeSnap");
 
 		if (penInfo) {
-			penInfo.doLog();
 			return 0;
 		}
 
@@ -1199,7 +1198,6 @@ class GameSim {
 		});
 
 		if (penInfo2) {
-			penInfo2.doLog();
 			return dt;
 		}
 
@@ -1256,7 +1254,8 @@ class GameSim {
 			});
 
 			if (penInfo3 && penInfo3.type !== "offsetting") {
-				penInfo3.doLog();
+				// FIX
+				// penInfo3.doLog();
 			}
 
 			if (td) {
@@ -1375,7 +1374,6 @@ class GameSim {
 		const penInfo = this.checkPenalties("beforeSnap");
 
 		if (penInfo) {
-			penInfo.doLog();
 			return 0;
 		}
 
@@ -1388,7 +1386,6 @@ class GameSim {
 		});
 
 		if (penInfo2) {
-			penInfo2.doLog();
 			return dt;
 		}
 
@@ -1667,7 +1664,6 @@ class GameSim {
 		const penInfo = this.checkPenalties("beforeSnap");
 
 		if (penInfo) {
-			penInfo.doLog();
 			return 0;
 		}
 
@@ -1747,7 +1743,6 @@ class GameSim {
 					penInfo2.side === "offense" ||
 					penInfo2.name === "Pass interference"
 				) {
-					penInfo2.doLog();
 					return dt;
 				}
 			}
@@ -1823,7 +1818,8 @@ class GameSim {
 			}
 
 			if (penInfo2) {
-				penInfo2.doLog();
+				// FIX
+				// penInfo2.doLog();
 			}
 		}
 
@@ -1839,7 +1835,6 @@ class GameSim {
 		const penInfo = this.checkPenalties("beforeSnap");
 
 		if (penInfo) {
-			penInfo.doLog();
 			return 0;
 		}
 
@@ -1897,7 +1892,6 @@ class GameSim {
 				penInfo2.side === "offense"
 			) {
 				// If it's an offensive penalty or a non-spot foul, it's as if the run never happened
-				penInfo2.doLog();
 				return dt;
 			}
 		} else {
@@ -1943,6 +1937,7 @@ class GameSim {
 			this.doSafety();
 		}
 
+		// FIX
 		/*if (penInfo2) {
 			penInfo2.doLog();
 		}*/
@@ -1993,25 +1988,10 @@ class GameSim {
 			made: undefined,
 			playYds: 0,
 		},
-	) {
+	): boolean {
 		// No penalties during two point conversion, because it is not handled well currently
 		if (this.twoPointConversionTeam !== undefined) {
-			return;
-		}
-
-		// Handle plays in endzone
-		let wouldHaveBeenTD = false;
-
-		if (this.scrimmage + playYds > 99) {
-			playYds = 99 - this.scrimmage;
-			wouldHaveBeenTD = true;
-		}
-
-		let wouldHaveBeenSafety = false;
-
-		if (this.scrimmage + playYds < 1) {
-			playYds = 1 - this.scrimmage;
-			wouldHaveBeenSafety = true;
+			return false;
 		}
 
 		const called = penalties.filter(pen => {
@@ -2023,7 +2003,7 @@ class GameSim {
 		});
 
 		if (called.length === 0) {
-			return;
+			return false;
 		}
 
 		this.isClockRunning = false;
@@ -2031,6 +2011,8 @@ class GameSim {
 		const defensive = called.filter(pen => pen.side === "defense");
 
 		if (offensive.length > 0 && defensive.length > 0) {
+			// FIX
+			return false;
 			return {
 				type: "offsetting",
 				doLog: () => {
@@ -2042,26 +2024,10 @@ class GameSim {
 		}
 
 		const side = offensive.length > 0 ? "offense" : "defense";
-
-		if (playType === "fieldGoal") {
-			if (side === "offense" && !made) {
-				// Offensive penalty and missed field goal - decline
-				return;
-			}
-
-			if (side === "defense" && made) {
-				// Defensive penalty and made field goal - decline
-				return;
-			}
-		}
-
-		if (wouldHaveBeenTD && side === "defense") {
-			return;
-		}
-
-		if (wouldHaveBeenSafety && side === "offense") {
-			return;
-		}
+		const t =
+			side === "offense"
+				? this.currentPlay.state.current.o
+				: this.currentPlay.state.current.d;
 
 		const penInfos = called.map(pen => {
 			let spotYds: number | undefined;
@@ -2116,6 +2082,7 @@ class GameSim {
 				posOdds: pen.posOdds ?? undefined,
 				spotYds,
 				totYds,
+				t,
 			};
 		});
 
@@ -2123,8 +2090,9 @@ class GameSim {
 		penInfos.sort((a, b) => {
 			return side === "defense" ? b.totYds - a.totYds : a.totYds - b.totYds;
 		});
-		const penInfo = penInfos[0]; // Adjust penalty yards when near endzones
+		const penInfo = penInfos[0];
 
+		// Adjust penalty yards when near endzones
 		let adjustment = 0;
 
 		if (side === "defense" && this.scrimmage + penInfo.totYds > 99) {
@@ -2158,7 +2126,6 @@ class GameSim {
 			side === "defense" && penInfo.name === "Pass interference"
 				? penInfo.totYds
 				: penInfo.penYds;
-		const t = side === "offense" ? this.o : this.d;
 		let p: PlayerGameSim | undefined;
 		const posOdds = penInfo.posOdds;
 
@@ -2195,6 +2162,18 @@ class GameSim {
 			repeatDown: true,
 		});
 
+		this.playByPlay.logEvent("flag", {
+			clock: this.clock,
+		});
+
+		this.currentPlay.addEvent({
+			...penInfo,
+			recordedPenYds,
+			type: "penalty",
+			p,
+		});
+
+		return true;
 		return {
 			type: "penalty",
 			name: penInfo.name,
@@ -2206,7 +2185,7 @@ class GameSim {
 				this.recordStat(t, p, "penYds", recordedPenYds);
 				this.playByPlay.logEvent("penalty", {
 					clock: this.clock,
-					t,
+					t: penInfo.t,
 					names: p ? [p.name] : [],
 					automaticFirstDown: penInfo.automaticFirstDown,
 					penaltyName: penInfo.name,

@@ -423,6 +423,8 @@ class PlayByPlayLogger {
 				}
 
 				text = `${names[0]} kneels`;
+			} else if (type === "flag") {
+				text = "Flag on the play";
 			} else {
 				throw new Error(`No text for "${type}"`);
 			}

@@ -43,7 +43,13 @@ rewrite football game sim to get rid of bugs
   - fumble handoff
   - flags at various times
 - shouldn't need team passed to recordStat, should know from player
-- email people
+- penalties
+  - when penalty happens, make copy of state, apply penalty to that, and save for later analysis
+  - if there are offsetting penalties, need to identify this and re-run state from beginning to see where it is now
+- blog
+  - ability to roll back stats after penalty is accepted
+  - ability to evaluate whether to accept/reject penalty based on whole play
+  - email people
 
 improve table column filtering
 - AND operation

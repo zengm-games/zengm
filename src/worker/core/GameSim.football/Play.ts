@@ -1,4 +1,5 @@
 import type GameSim from ".";
+import type { Position } from "../../../common/types.football";
 import type { PlayerGameSim, TeamNum } from "./types";
 
 type PlayEvent =
@@ -75,66 +76,94 @@ type PlayEvent =
 			p: PlayerGameSim;
 			distance: number;
 			made: boolean;
+	  }
+	| {
+			type: "penalty";
+			p: PlayerGameSim | undefined;
+			automaticFirstDown: boolean;
+			name: string;
+			recordedPenYds: number;
+			penYds: number;
+			posOdds: Partial<Record<Position, number>> | undefined;
+			spotYds: number | undefined;
+			t: TeamNum;
 	  };
 
 type PlayType = PlayEvent["type"];
 
+type PlayState = Pick<
+	GameSim,
+	| "down"
+	| "toGo"
+	| "scrimmage"
+	| "o"
+	| "d"
+	| "isClockRunning"
+	| "awaitingKickoff"
+	| "awaitingAfterSafety"
+	| "awaitingAfterTouchdown"
+>;
+
 class State {
-	initial: Pick<
-		GameSim,
-		| "down"
-		| "toGo"
-		| "scrimmage"
-		| "o"
-		| "d"
-		| "isClockRunning"
-		| "awaitingKickoff"
-		| "awaitingAfterSafety"
-		| "awaitingAfterTouchdown"
-	>;
-	current: typeof this["initial"];
+	down: PlayState["down"];
+	toGo: PlayState["toGo"];
+	scrimmage: PlayState["scrimmage"];
+	o: PlayState["o"];
+	d: PlayState["d"];
+	isClockRunning: PlayState["isClockRunning"];
+	awaitingKickoff: PlayState["awaitingKickoff"];
+	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
+	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 
-	constructor(gameSim: GameSim) {
-		this.initial = {
-			down: gameSim.down,
-			toGo: gameSim.toGo,
-			scrimmage: gameSim.scrimmage,
-			o: gameSim.o,
-			d: gameSim.d,
-			isClockRunning: gameSim.isClockRunning,
-			awaitingKickoff: gameSim.awaitingKickoff,
-			awaitingAfterSafety: gameSim.awaitingAfterSafety,
-			awaitingAfterTouchdown: gameSim.awaitingAfterTouchdown,
-		};
+	constructor(gameSim: PlayState) {
+		this.down = gameSim.down;
+		this.toGo = gameSim.toGo;
+		this.scrimmage = gameSim.scrimmage;
+		this.o = gameSim.o;
+		this.d = gameSim.d;
+		this.isClockRunning = gameSim.isClockRunning;
+		this.awaitingKickoff = gameSim.awaitingKickoff;
+		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
+		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
+	}
 
-		this.current = {
-			...this.initial,
-		};
+	clone() {
+		return new State(this);
 	}
 
 	possessionChange() {
-		this.current.scrimmage = 100 - this.current.scrimmage;
-		this.current.o = this.current.o === 1 ? 0 : 1;
-		this.current.d = this.current.o === 1 ? 0 : 1;
+		this.scrimmage = 100 - this.scrimmage;
+		this.o = this.o === 1 ? 0 : 1;
+		this.d = this.o === 1 ? 0 : 1;
 		this.newFirstDown();
-		this.current.isClockRunning = false;
+		this.isClockRunning = false;
 	}
 
 	newFirstDown() {
-		this.current.down = 1;
-		this.current.toGo = Math.min(10, 100 - this.current.scrimmage);
+		this.down = 1;
+		this.toGo = Math.min(10, 100 - this.scrimmage);
 	}
 }
 
 class Play {
 	g: GameSim;
 	events: PlayEvent[];
-	state: State;
+	state: {
+		initial: State;
+		current: State;
+		penalties: State[];
+	};
 
 	constructor(gameSim: GameSim) {
 		this.g = gameSim;
 		this.events = [];
-		this.state = new State(gameSim);
+
+		const initialState = new State(gameSim);
+		this.state = {
+			initial: initialState,
+			current: initialState.clone(),
+			penalties: [],
+		};
 	}
 
 	boundedYds(yds: number, swap?: boolean) {
@@ -272,80 +301,73 @@ class Play {
 		return statChanges;
 	}
 
-	addEvent(event: PlayEvent) {
-		const statChanges = this.getStatChanges(event);
-		for (const statChange of statChanges) {
-			this.g.recordStat(...statChange);
-		}
-
+	updateState(state: State, event: PlayEvent) {
 		if (event.type === "k") {
-			this.state.current.down = 1;
-			this.state.current.toGo = 10;
-			this.state.current.scrimmage = 100 - event.kickTo;
+			state.down = 1;
+			state.toGo = 10;
+			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
-			this.state.current.down = 1;
-			this.state.current.toGo = 10;
-			this.state.current.scrimmage = 25;
-			this.state.current.awaitingKickoff = undefined;
-			this.state.current.awaitingAfterSafety = false;
+			state.down = 1;
+			state.toGo = 10;
+			state.scrimmage = 25;
+			state.awaitingKickoff = undefined;
+			state.awaitingAfterSafety = false;
 		} else if (event.type === "kr") {
-			this.state.possessionChange();
-			this.state.current.scrimmage += event.yds;
-			this.state.current.awaitingKickoff = undefined;
-			this.state.current.awaitingAfterSafety = false;
+			state.possessionChange();
+			state.scrimmage += event.yds;
+			state.awaitingKickoff = undefined;
+			state.awaitingAfterSafety = false;
 		} else if (event.type === "rus") {
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.85;
+			state.down += 1;
+			state.scrimmage += event.yds;
+			state.toGo -= event.yds;
+			state.isClockRunning = Math.random() < 0.85;
 		} else if (event.type === "kneel") {
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
+			state.down += 1;
+			state.scrimmage += event.yds;
+			state.toGo -= event.yds;
 
 			// Set this to false, because we handle it all in dt
-			this.state.current.isClockRunning = false;
+			state.isClockRunning = false;
 		} else if (event.type === "sk") {
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.98;
+			state.down += 1;
+			state.scrimmage += event.yds;
+			state.toGo -= event.yds;
+			state.isClockRunning = Math.random() < 0.98;
 		} else if (event.type === "pssCmp") {
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.75;
+			state.down += 1;
+			state.scrimmage += event.yds;
+			state.toGo -= event.yds;
+			state.isClockRunning = Math.random() < 0.75;
 		} else if (event.type === "pssInc") {
-			this.state.current.down += 1;
-			this.state.current.isClockRunning = false;
+			state.down += 1;
+			state.isClockRunning = false;
 		} else if (event.type === "int") {
-			this.state.possessionChange();
-			this.state.current.scrimmage += event.ydsPass;
-			this.state.current.scrimmage -= event.ydsReturn;
+			state.possessionChange();
+			state.scrimmage += event.ydsPass;
+			state.scrimmage -= event.ydsReturn;
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (!event.made && event.type !== "xp") {
-				this.state.current.down += 1;
-				this.state.current.scrimmage -= 7;
+				state.down += 1;
+				state.scrimmage -= 7;
 			}
 
 			if (event.type === "xp" || event.made) {
-				this.state.current.awaitingKickoff = this.state.initial.o;
+				state.awaitingKickoff = this.state.initial.o;
 			}
 
-			this.state.current.awaitingAfterTouchdown = false;
-			this.state.current.isClockRunning = false;
+			state.awaitingAfterTouchdown = false;
+			state.isClockRunning = false;
 		}
 
 		if (event.type.endsWith("TD")) {
-			this.state.current.awaitingAfterTouchdown = true;
-			this.state.current.isClockRunning = false;
+			state.awaitingAfterTouchdown = true;
+			state.isClockRunning = false;
 		}
 
-		if (this.state.current.toGo <= 0) {
-			this.state.newFirstDown();
+		if (state.toGo <= 0) {
+			state.newFirstDown();
 		}
-
-		this.events.push(event);
 
 		let td: TeamNum | undefined;
 		let safety: TeamNum | undefined;
@@ -360,38 +382,29 @@ class Play {
 			"fmb",
 		];
 
-		if (
-			this.state.current.scrimmage >= 100 &&
-			TOUCHDOWN_IS_POSSIBLE.includes(event.type)
-		) {
-			td = this.state.current.o;
+		if (state.scrimmage >= 100 && TOUCHDOWN_IS_POSSIBLE.includes(event.type)) {
+			td = state.o;
 		}
 
 		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["kr", "pr", "int", "fmb"];
 
-		if (
-			this.state.current.scrimmage <= 0 &&
-			TOUCHBACK_IS_POSSIBLE.includes(event.type)
-		) {
-			touchback = this.state.current.o;
+		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE.includes(event.type)) {
+			touchback = state.o;
 		}
 
 		const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pss", "sk"];
 
-		if (
-			this.state.current.scrimmage <= 0 &&
-			SAFETY_IS_POSSIBLE.includes(event.type)
-		) {
-			safety = this.state.current.d;
+		if (state.scrimmage <= 0 && SAFETY_IS_POSSIBLE.includes(event.type)) {
+			safety = state.d;
 		}
 
 		const turnoverOnDowns =
 			safety === undefined &&
 			td === undefined &&
 			touchback === undefined &&
-			this.state.current.down > 4;
+			state.down > 4;
 		if (turnoverOnDowns) {
-			this.state.possessionChange();
+			state.possessionChange();
 		}
 
 		return {
@@ -400,6 +413,21 @@ class Play {
 			touchback,
 			turnoverOnDowns,
 		};
+	}
+
+	addEvent(event: PlayEvent) {
+		this.events.push(event);
+
+		if (event.type === "penalty") {
+			this.state.penalties.push(this.state.current.clone());
+		}
+
+		const statChanges = this.getStatChanges(event);
+		for (const statChange of statChanges) {
+			this.g.recordStat(...statChange);
+		}
+
+		return this.updateState(this.state.current, event);
 	}
 
 	adjudicatePenalties() {}

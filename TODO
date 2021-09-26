@@ -37,6 +37,13 @@ rewrite football game sim to get rid of bugs
   - would need to do something about PlayByPlayLogger
 - return values (td/safety/touchback) should be booleans? we know who has ball, from currentPlay.stats
 - o/d values in logging - still need to be careful, turnoverOnDowns can happen and switch them
+- more dramatic play-by-play
+  - pass attempt and description before result
+  - run after catch
+  - fumble handoff
+  - flags at various times
+- shouldn't need team passed to recordStat, should know from player
+- email people
 
 improve table column filtering
 - AND operation

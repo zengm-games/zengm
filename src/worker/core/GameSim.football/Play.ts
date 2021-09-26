@@ -1,5 +1,4 @@
 import type GameSim from ".";
-import { helpers } from "../../util";
 import type { PlayerGameSim, TeamNum } from "./types";
 
 type PlayEvent =
@@ -156,119 +155,82 @@ class Play {
 		return yds;
 	}
 
-	addEvent(event: PlayEvent) {
-		if (event.type === "k") {
-			this.state.current.down = 1;
-			this.state.current.toGo = 10;
-			this.state.current.scrimmage = 100 - event.kickTo;
-		} else if (event.type === "touchbackKick") {
-			this.state.current.down = 1;
-			this.state.current.toGo = 10;
-			this.state.current.scrimmage = 25;
-			this.state.current.awaitingKickoff = undefined;
-			this.state.current.awaitingAfterSafety = false;
-		} else if (event.type === "kr") {
-			this.g.recordStat(this.state.initial.d, event.p, "kr");
-			this.g.recordStat(this.state.initial.d, event.p, "krYds", event.yds);
+	getStatChanges(event: PlayEvent) {
+		const statChanges: Parameters<GameSim["recordStat"]>[] = [];
 
-			this.state.possessionChange();
-			this.state.current.scrimmage += event.yds;
-			this.state.current.awaitingKickoff = undefined;
-			this.state.current.awaitingAfterSafety = false;
-			this.g.recordStat(this.state.initial.d, event.p, "krLng", event.yds);
+		if (event.type === "kr") {
+			statChanges.push([this.state.initial.d, event.p, "kr", 1]);
+			statChanges.push([this.state.initial.d, event.p, "krYds", event.yds]);
+			statChanges.push([this.state.initial.d, event.p, "krLng", event.yds]);
 		} else if (event.type === "krTD") {
-			this.g.recordStat(this.state.initial.d, event.p, "krTD");
+			statChanges.push([this.state.initial.d, event.p, "krTD", 1]);
 		} else if (event.type === "rus") {
-			this.g.recordStat(this.state.initial.o, event.p, "rus");
-			this.g.recordStat(this.state.initial.o, event.p, "rusYds", event.yds);
-			this.g.recordStat(this.state.initial.o, event.p, "rusLng", event.yds);
-
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.85;
+			statChanges.push([this.state.initial.o, event.p, "rus", 1]);
+			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
+			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
 		} else if (event.type === "rusTD") {
-			this.g.recordStat(this.state.initial.o, event.p, "rusTD");
+			statChanges.push([this.state.initial.o, event.p, "rusTD", 1]);
 		} else if (event.type === "kneel") {
-			this.g.recordStat(this.state.initial.o, event.p, "rus");
-			this.g.recordStat(this.state.initial.o, event.p, "rusYds", event.yds);
-			this.g.recordStat(this.state.initial.o, event.p, "rusLng", event.yds);
-
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-
-			// Set this to false, because we handle it all in dt
-			this.state.current.isClockRunning = false;
+			statChanges.push([this.state.initial.o, event.p, "rus", 1]);
+			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
+			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
 		} else if (event.type === "sk") {
-			this.g.recordStat(this.state.initial.o, event.qb, "pssSk");
-			this.g.recordStat(
+			statChanges.push([this.state.initial.o, event.qb, "pssSk"]);
+			statChanges.push([
 				this.state.initial.o,
 				event.qb,
 				"pssSkYds",
 				Math.abs(event.yds),
-			);
-			this.g.recordStat(this.state.initial.d, event.p, "defSk");
-
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.98;
+			]);
+			statChanges.push([this.state.initial.d, event.p, "defSk", 1]);
 		} else if (event.type === "pss") {
-			this.g.recordStat(this.state.initial.o, event.qb, "pss");
-			this.g.recordStat(this.state.initial.o, event.target, "tgt");
+			statChanges.push([this.state.initial.o, event.qb, "pss", 1]);
+			statChanges.push([this.state.initial.o, event.target, "tgt", 1]);
 		} else if (event.type === "pssCmp") {
-			this.g.recordStat(this.state.initial.o, event.qb, "pssCmp");
-			this.g.recordStat(this.state.initial.o, event.qb, "pssYds", event.yds);
-			this.g.recordStat(this.state.initial.o, event.qb, "pssLng", event.yds);
-			this.g.recordStat(this.state.initial.o, event.target, "rec");
-			this.g.recordStat(
+			statChanges.push([this.state.initial.o, event.qb, "pssCmp", 1]);
+			statChanges.push([this.state.initial.o, event.qb, "pssYds", event.yds]);
+			statChanges.push([this.state.initial.o, event.qb, "pssLng", event.yds]);
+			statChanges.push([this.state.initial.o, event.target, "rec", 1]);
+			statChanges.push([
 				this.state.initial.o,
 				event.target,
 				"recYds",
 				event.yds,
-			);
-			this.g.recordStat(
+			]);
+			statChanges.push([
 				this.state.initial.o,
 				event.target,
 				"recLng",
 				event.yds,
-			);
-
-			this.state.current.down += 1;
-			this.state.current.scrimmage += event.yds;
-			this.state.current.toGo -= event.yds;
-			this.state.current.isClockRunning = Math.random() < 0.75;
+			]);
 		} else if (event.type === "pssInc") {
 			if (event.defender) {
-				this.g.recordStat(this.state.initial.d, event.defender, "defPssDef");
+				statChanges.push([
+					this.state.initial.d,
+					event.defender,
+					"defPssDef",
+					1,
+				]);
 			}
-
-			this.state.current.down += 1;
-			this.state.current.isClockRunning = false;
 		} else if (event.type === "pssTD") {
-			this.g.recordStat(this.state.initial.o, event.qb, "pssTD");
-			this.g.recordStat(this.state.initial.o, event.target, "recTD");
+			statChanges.push([this.state.initial.o, event.qb, "pssTD", 1]);
+			statChanges.push([this.state.initial.o, event.target, "recTD", 1]);
 		} else if (event.type === "int") {
-			this.g.recordStat(this.state.initial.o, event.qb, "pssInt");
-			this.g.recordStat(this.state.initial.d, event.defender, "defPssDef");
-			this.g.recordStat(this.state.initial.d, event.defender, "defInt");
-			this.g.recordStat(
+			statChanges.push([this.state.initial.o, event.qb, "pssInt", 1]);
+			statChanges.push([this.state.initial.d, event.defender, "defPssDef", 1]);
+			statChanges.push([this.state.initial.d, event.defender, "defInt", 1]);
+			statChanges.push([
 				this.state.initial.d,
 				event.defender,
 				"defIntYds",
 				event.ydsReturn,
-			);
-			this.g.recordStat(
+			]);
+			statChanges.push([
 				this.state.initial.d,
 				event.defender,
 				"defIntLng",
 				event.ydsReturn,
-			);
-
-			this.state.possessionChange();
-			this.state.current.scrimmage += event.ydsPass;
-			this.state.current.scrimmage -= event.ydsReturn;
+			]);
 		} else if (event.type === "fg" || event.type === "xp") {
 			let statAtt;
 			let statMade;
@@ -292,20 +254,75 @@ class Play {
 				statMade = "fg50";
 			}
 
-			this.g.recordStat(this.state.initial.o, event.p, statAtt);
+			statChanges.push([this.state.initial.o, event.p, statAtt, 1]);
 			if (event.made) {
-				this.g.recordStat(this.state.initial.o, event.p, statMade);
+				statChanges.push([this.state.initial.o, event.p, statMade, 1]);
 
 				if (event.type !== "xp") {
-					this.g.recordStat(
+					statChanges.push([
 						this.state.initial.o,
 						event.p,
 						"fgLng",
 						event.distance,
-					);
+					]);
 				}
 			}
+		}
 
+		return statChanges;
+	}
+
+	addEvent(event: PlayEvent) {
+		const statChanges = this.getStatChanges(event);
+		for (const statChange of statChanges) {
+			this.g.recordStat(...statChange);
+		}
+
+		if (event.type === "k") {
+			this.state.current.down = 1;
+			this.state.current.toGo = 10;
+			this.state.current.scrimmage = 100 - event.kickTo;
+		} else if (event.type === "touchbackKick") {
+			this.state.current.down = 1;
+			this.state.current.toGo = 10;
+			this.state.current.scrimmage = 25;
+			this.state.current.awaitingKickoff = undefined;
+			this.state.current.awaitingAfterSafety = false;
+		} else if (event.type === "kr") {
+			this.state.possessionChange();
+			this.state.current.scrimmage += event.yds;
+			this.state.current.awaitingKickoff = undefined;
+			this.state.current.awaitingAfterSafety = false;
+		} else if (event.type === "rus") {
+			this.state.current.down += 1;
+			this.state.current.scrimmage += event.yds;
+			this.state.current.toGo -= event.yds;
+			this.state.current.isClockRunning = Math.random() < 0.85;
+		} else if (event.type === "kneel") {
+			this.state.current.down += 1;
+			this.state.current.scrimmage += event.yds;
+			this.state.current.toGo -= event.yds;
+
+			// Set this to false, because we handle it all in dt
+			this.state.current.isClockRunning = false;
+		} else if (event.type === "sk") {
+			this.state.current.down += 1;
+			this.state.current.scrimmage += event.yds;
+			this.state.current.toGo -= event.yds;
+			this.state.current.isClockRunning = Math.random() < 0.98;
+		} else if (event.type === "pssCmp") {
+			this.state.current.down += 1;
+			this.state.current.scrimmage += event.yds;
+			this.state.current.toGo -= event.yds;
+			this.state.current.isClockRunning = Math.random() < 0.75;
+		} else if (event.type === "pssInc") {
+			this.state.current.down += 1;
+			this.state.current.isClockRunning = false;
+		} else if (event.type === "int") {
+			this.state.possessionChange();
+			this.state.current.scrimmage += event.ydsPass;
+			this.state.current.scrimmage -= event.ydsReturn;
+		} else if (event.type === "fg" || event.type === "xp") {
 			if (!event.made && event.type !== "xp") {
 				this.state.current.down += 1;
 				this.state.current.scrimmage -= 7;

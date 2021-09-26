@@ -3,6 +3,7 @@ import { player } from "..";
 import { defaultGameAttributes, g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
+	Player,
 	PlayerWithoutKey,
 } from "../../../common/types";
 
@@ -39,6 +40,10 @@ const getFractionPerYear = (ageGap: number) => {
 
 	// Should never happen
 	return 1 / ageGap;
+};
+
+const developOneSeason = async (p: Player) => {
+	await player.develop(p, 1, true);
 };
 
 const genPlayersWithoutSaving = async (
@@ -128,7 +133,7 @@ const genPlayersWithoutSaving = async (
 	if (isSport("football")) {
 		for (let i = 0; i < 2; i++) {
 			for (const p of remaining) {
-				await player.develop(p, 1, true);
+				await developOneSeason(p);
 			}
 		}
 	}
@@ -148,7 +153,7 @@ const genPlayersWithoutSaving = async (
 		remaining = remaining.slice(cutoff); // Each player staying in college, develop 1 year more
 
 		for (const p of remaining) {
-			await player.develop(p, 1, true);
+			await developOneSeason(p);
 		}
 	}
 

@@ -1152,7 +1152,6 @@ class GameSim {
 					this.currentPlay.addEvent({
 						type: "krTD",
 						p: kickReturner,
-						t: this.currentPlay.state.current.o,
 					});
 				}
 			}
@@ -1396,7 +1395,6 @@ class GameSim {
 			p: kicker,
 			made,
 			distance,
-			t: this.o,
 		});
 
 		return dt;
@@ -1435,7 +1433,6 @@ class GameSim {
 			pFumbled,
 			pForced,
 			yds: spotYds,
-			tFumbled: this.currentPlay.state.current.o,
 		});
 
 		this.playByPlay.logEvent("fumble", {
@@ -1461,8 +1458,6 @@ class GameSim {
 			pFumbled,
 			pRecovered,
 			yds,
-			tFumbled: this.currentPlay.state.current.o,
-			tRecovered,
 			lost,
 		});
 
@@ -1487,7 +1482,6 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "fmbTD",
 					p: pRecovered,
-					t: tRecovered,
 				});
 			} else if (Math.random() < this.probFumble(pRecovered)) {
 				dt += this.doFumble(pRecovered, 0);
@@ -1534,7 +1528,6 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "intTD",
 					p,
-					t: this.currentPlay.state.current.o,
 				});
 			} else if (Math.random() < this.probFumble(p)) {
 				dt += this.doFumble(p, 0);

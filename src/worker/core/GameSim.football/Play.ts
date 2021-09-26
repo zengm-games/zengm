@@ -1,3 +1,4 @@
+import flatten from "lodash-es/flatten";
 import type GameSim from ".";
 import type { Position } from "../../../common/types.football";
 import type { PlayerGameSim, TeamNum } from "./types";
@@ -18,7 +19,6 @@ type PlayEvent =
 	| {
 			type: "krTD";
 			p: PlayerGameSim;
-			t: TeamNum;
 	  }
 	| {
 			type: "rus";
@@ -28,7 +28,6 @@ type PlayEvent =
 	| {
 			type: "rusTD";
 			p: PlayerGameSim;
-			t: TeamNum;
 	  }
 	| {
 			type: "kneel";
@@ -61,7 +60,6 @@ type PlayEvent =
 			type: "pssTD";
 			qb: PlayerGameSim;
 			target: PlayerGameSim;
-			t: TeamNum;
 	  }
 	| {
 			type: "int";
@@ -73,14 +71,12 @@ type PlayEvent =
 	| {
 			type: "intTD";
 			p: PlayerGameSim;
-			t: TeamNum;
 	  }
 	| {
 			type: "xp" | "fg";
 			p: PlayerGameSim;
 			distance: number;
 			made: boolean;
-			t: TeamNum;
 	  }
 	| {
 			type: "penalty";
@@ -97,7 +93,6 @@ type PlayEvent =
 			pFumbled: PlayerGameSim;
 			pForced: PlayerGameSim;
 			yds: number;
-			tFumbled: TeamNum;
 	  }
 	| {
 			type: "fmbRec";
@@ -105,13 +100,10 @@ type PlayEvent =
 			pRecovered: PlayerGameSim;
 			lost: boolean;
 			yds: number;
-			tRecovered: TeamNum;
-			tFumbled: TeamNum;
 	  }
 	| {
 			type: "fmbTD";
 			p: PlayerGameSim;
-			t: TeamNum;
 	  }
 	| {
 			type: "twoPointConversion";
@@ -138,6 +130,8 @@ type PlayState = Pick<
 	| "overtimeState"
 	| "twoPointConversionTeam"
 >;
+
+type StatChange = Parameters<GameSim["recordStat"]>;
 
 class State {
 	down: PlayState["down"];
@@ -209,7 +203,10 @@ const getPts = (event: PlayEvent, twoPointConversion: boolean) => {
 
 class Play {
 	g: GameSim;
-	events: PlayEvent[];
+	events: {
+		event: PlayEvent;
+		statChanges: StatChange[];
+	}[];
 	state: {
 		initial: State;
 		current: State;
@@ -249,8 +246,9 @@ class Play {
 		return yds;
 	}
 
-	getStatChanges(event: PlayEvent, reverse?: boolean) {
-		const statChanges: Parameters<GameSim["recordStat"]>[] = [];
+	// state is state immedaitely before this event happens. So for instance, in "kr" the recieving team is still state.d.
+	getStatChanges(event: PlayEvent, state: State) {
+		const statChanges: StatChange[] = [];
 
 		// No tracking stats during 2 point conversion attempt
 		if (
@@ -265,75 +263,60 @@ class Play {
 				statChanges.push([event.t, event.p, "penYds", actualPenYds]);
 			}
 			if (event.type === "kr") {
-				statChanges.push([this.state.initial.d, event.p, "kr"]);
-				statChanges.push([this.state.initial.d, event.p, "krYds", event.yds]);
-				statChanges.push([this.state.initial.d, event.p, "krLng", event.yds]);
+				statChanges.push([state.d, event.p, "kr"]);
+				statChanges.push([state.d, event.p, "krYds", event.yds]);
+				statChanges.push([state.d, event.p, "krLng", event.yds]);
 			} else if (event.type === "krTD") {
-				statChanges.push([this.state.initial.d, event.p, "krTD"]);
+				statChanges.push([state.o, event.p, "krTD"]);
 			} else if (event.type === "rus") {
-				statChanges.push([this.state.initial.o, event.p, "rus"]);
-				statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
-				statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
+				statChanges.push([state.o, event.p, "rus"]);
+				statChanges.push([state.o, event.p, "rusYds", event.yds]);
+				statChanges.push([state.o, event.p, "rusLng", event.yds]);
 			} else if (event.type === "rusTD") {
-				statChanges.push([this.state.initial.o, event.p, "rusTD"]);
+				statChanges.push([state.o, event.p, "rusTD"]);
 			} else if (event.type === "kneel") {
-				statChanges.push([this.state.initial.o, event.p, "rus"]);
-				statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
-				statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
+				statChanges.push([state.o, event.p, "rus"]);
+				statChanges.push([state.o, event.p, "rusYds", event.yds]);
+				statChanges.push([state.o, event.p, "rusLng", event.yds]);
 			} else if (event.type === "sk") {
-				statChanges.push([this.state.initial.o, event.qb, "pssSk"]);
-				statChanges.push([
-					this.state.initial.o,
-					event.qb,
-					"pssSkYds",
-					Math.abs(event.yds),
-				]);
-				statChanges.push([this.state.initial.d, event.p, "defSk"]);
+				statChanges.push([state.o, event.qb, "pssSk"]);
+				statChanges.push([state.o, event.qb, "pssSkYds", Math.abs(event.yds)]);
+				statChanges.push([state.d, event.p, "defSk"]);
 			} else if (event.type === "pss") {
-				statChanges.push([this.state.initial.o, event.qb, "pss"]);
-				statChanges.push([this.state.initial.o, event.target, "tgt"]);
+				statChanges.push([state.o, event.qb, "pss"]);
+				statChanges.push([state.o, event.target, "tgt"]);
 			} else if (event.type === "pssCmp") {
-				statChanges.push([this.state.initial.o, event.qb, "pssCmp"]);
-				statChanges.push([this.state.initial.o, event.qb, "pssYds", event.yds]);
-				statChanges.push([this.state.initial.o, event.qb, "pssLng", event.yds]);
-				statChanges.push([this.state.initial.o, event.target, "rec"]);
-				statChanges.push([
-					this.state.initial.o,
-					event.target,
-					"recYds",
-					event.yds,
-				]);
-				statChanges.push([
-					this.state.initial.o,
-					event.target,
-					"recLng",
-					event.yds,
-				]);
+				statChanges.push([state.o, event.qb, "pssCmp"]);
+				statChanges.push([state.o, event.qb, "pssYds", event.yds]);
+				statChanges.push([state.o, event.qb, "pssLng", event.yds]);
+				statChanges.push([state.o, event.target, "rec"]);
+				statChanges.push([state.o, event.target, "recYds", event.yds]);
+				statChanges.push([state.o, event.target, "recLng", event.yds]);
 			} else if (event.type === "pssInc") {
 				if (event.defender) {
-					statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
+					statChanges.push([state.d, event.defender, "defPssDef"]);
 				}
 			} else if (event.type === "pssTD") {
-				statChanges.push([this.state.initial.o, event.qb, "pssTD"]);
-				statChanges.push([this.state.initial.o, event.target, "recTD"]);
+				statChanges.push([state.o, event.qb, "pssTD"]);
+				statChanges.push([state.o, event.target, "recTD"]);
 			} else if (event.type === "int") {
-				statChanges.push([this.state.initial.o, event.qb, "pssInt"]);
-				statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
-				statChanges.push([this.state.initial.d, event.defender, "defInt"]);
+				statChanges.push([state.o, event.qb, "pssInt"]);
+				statChanges.push([state.d, event.defender, "defPssDef"]);
+				statChanges.push([state.d, event.defender, "defInt"]);
 				statChanges.push([
-					this.state.initial.d,
+					state.d,
 					event.defender,
 					"defIntYds",
 					event.ydsReturn,
 				]);
 				statChanges.push([
-					this.state.initial.d,
+					state.d,
 					event.defender,
 					"defIntLng",
 					event.ydsReturn,
 				]);
 			} else if (event.type === "intTD") {
-				statChanges.push([event.t, event.p, "defIntTD"]);
+				statChanges.push([state.o, event.p, "defIntTD"]);
 			} else if (event.type === "fg" || event.type === "xp") {
 				let statAtt;
 				let statMade;
@@ -357,45 +340,39 @@ class Play {
 					statMade = "fg50";
 				}
 
-				statChanges.push([this.state.initial.o, event.p, statAtt]);
+				statChanges.push([state.o, event.p, statAtt]);
 				if (event.made) {
-					statChanges.push([this.state.initial.o, event.p, statMade]);
+					statChanges.push([state.o, event.p, statMade]);
 
 					if (event.type !== "xp") {
-						statChanges.push([
-							this.state.initial.o,
-							event.p,
-							"fgLng",
-							event.distance,
-						]);
+						statChanges.push([state.o, event.p, "fgLng", event.distance]);
 					}
 				}
 			} else if (event.type === "fmb") {
-				const t2 = event.tFumbled === 0 ? 1 : 0;
-
-				statChanges.push([event.tFumbled, event.pFumbled, "fmb"]);
-				statChanges.push([t2, event.pForced, "defFmbFrc"]);
+				statChanges.push([state.o, event.pFumbled, "fmb"]);
+				statChanges.push([state.d, event.pForced, "defFmbFrc"]);
 			} else if (event.type === "fmbRec") {
-				statChanges.push([event.tRecovered, event.pRecovered, "defFmbRec"]);
+				const tRecovered = event.lost ? state.d : state.o;
+				statChanges.push([tRecovered, event.pRecovered, "defFmbRec"]);
 
 				if (event.lost) {
-					statChanges.push([event.tFumbled, event.pFumbled, "fmbLost"]);
+					statChanges.push([state.o, event.pFumbled, "fmbLost"]);
 				}
 
 				statChanges.push([
-					event.tRecovered,
+					tRecovered,
 					event.pRecovered,
 					"defFmbYds",
 					event.yds,
 				]);
 				statChanges.push([
-					event.tRecovered,
+					tRecovered,
 					event.pRecovered,
 					"defFmbLng",
 					event.yds,
 				]);
 			} else if (event.type === "fmbTD") {
-				statChanges.push([event.t, event.p, "defFmbTD"]);
+				statChanges.push([state.o, event.p, "defFmbTD"]);
 			}
 		}
 
@@ -405,18 +382,7 @@ class Play {
 			this.state.initial.twoPointConversionTeam !== undefined,
 		);
 		if (pts !== undefined) {
-			const t = (event as any).t as TeamNum;
-
-			statChanges.push([t, undefined, "pts", pts]);
-		}
-
-		if (reverse) {
-			for (const statChange of statChanges) {
-				if (statChange[3] === undefined) {
-					statChange[3] = -1;
-				}
-				statChange[3] = -statChange[3];
-			}
+			statChanges.push([state.o, undefined, "pts", pts]);
 		}
 
 		return statChanges;
@@ -453,7 +419,7 @@ class Play {
 
 			state.toGo = firstDownLine - state.scrimmage;
 
-			if (event.automaticFirstDown) {
+			if (event.automaticFirstDown && state.down > 1) {
 				state.newFirstDown();
 			}
 		} else if (event.type === "k") {
@@ -650,10 +616,14 @@ class Play {
 	}
 
 	addEvent(event: PlayEvent) {
-		this.events.push(event);
+		const statChanges = this.getStatChanges(event, this.state.current);
 
 		if (event.type === "penalty") {
 			this.state.penalties.push(this.state.current.clone());
+			this.events.push({
+				event,
+				statChanges,
+			});
 
 			return {
 				safety: undefined,
@@ -663,18 +633,24 @@ class Play {
 			};
 		}
 
-		const statChanges = this.getStatChanges(event);
 		for (const statChange of statChanges) {
 			this.g.recordStat(...statChange);
 		}
+		this.events.push({
+			event,
+			statChanges,
+		});
 
 		return this.updateState(this.state.current, event);
 	}
 
 	adjudicatePenalties() {
 		const penalties = this.events.filter(
-			event => event.type === "penalty",
-		) as Extract<PlayEvent, { type: "penalty" }>[];
+			event => event.event.type === "penalty",
+		) as {
+			event: Extract<PlayEvent, { type: "penalty" }>;
+			statChanges: StatChange[];
+		}[];
 
 		if (penalties.length === 0) {
 			return;
@@ -684,7 +660,7 @@ class Play {
 			const event = penalties[0];
 			const eventIndex = this.events.indexOf(event);
 			const stateAccept = this.state.penalties[0];
-			this.updateState(stateAccept, event);
+			this.updateState(stateAccept, event.event);
 			const stateDecline = this.state.current;
 
 			console.log(stateAccept, stateDecline);
@@ -694,28 +670,38 @@ class Play {
 			if (accept) {
 				this.g.playByPlay.logEvent("penalty", {
 					clock: this.g.clock,
-					t: event.t,
-					names: event.p ? [event.p.name] : [],
-					automaticFirstDown: event.automaticFirstDown,
-					penaltyName: event.name,
-					yds: event.penYds,
+					t: event.event.t,
+					names: event.event.p ? [event.event.p.name] : [],
+					automaticFirstDown: event.event.automaticFirstDown,
+					penaltyName: event.event.name,
+					yds: event.event.penYds,
 				});
 
 				this.state.current = stateAccept;
 
-				const statChangesResults = [
+				const statChanges = [
 					// apply statChanges from penalties
-					this.getStatChanges(event),
-
+					...event.statChanges,
 					// apply negative statChanges from anything after penalties
-					...this.events
-						.filter((event, i) => i > eventIndex)
-						.map(event => this.getStatChanges(event, true)),
+					...flatten(
+						this.events
+							.filter((event, i) => i > eventIndex)
+							.map(event => event.statChanges)
+							.map(statChanges => {
+								return statChanges.map(statChange => {
+									const newStatChange = [...statChange] as StatChange;
+									if (newStatChange[3] === undefined) {
+										newStatChange[3] = 1;
+									}
+									newStatChange[3] = -newStatChange[3];
+									return newStatChange;
+								});
+							}),
+					),
 				];
-				for (const statChanges of statChangesResults) {
-					for (const statChange of statChanges) {
-						this.g.recordStat(...statChange);
-					}
+
+				for (const statChange of statChanges) {
+					this.g.recordStat(...statChange);
 				}
 			}
 		}

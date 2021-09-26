@@ -2,9 +2,41 @@ store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
-- show what the user offered somewhere, not just checkboxes
+- show what the user offered somewhere, not just what is checked
 
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
+
+refactor game sim
+- classes should share some common methods
+
+rewrite football game sim to get rid of bugs
+- for down/scrimmage/toGo/possession, store the actual committed values (before possession starts) only
+- for current play, store a list of events (run, pass, completion, pssTd, etc)
+- from the list of events, should have the ability to roll back to any point, like if we want to accept a penalty, or if there are offsetting penalties
+  - when roll back, emit negative stats so the box score gets rolled back too
+  - special case to handle Lng, would need to store previous value somewhere
+- from stored yard/possession and events, have function to get updated yard/possession at any point in event history
+- timePos only increment after possession is finalized
+- can all/most play-by-play and stat logging happen from Play? stat definitley, since it needs to know how to undo
+- commit
+  - two point conversion and overtime variables too
+- check for penalties in more places
+- this.boundedYds needs to be aware of if defense or offense has the ball
+  - probably should be inside Play, otherwise doesn't know current position
+- Play should keep a running total of variables so it doens't need to keep recomputing
+  - auto return safety/touchback/td status from addEvent
+- defIntYds should only apply if not a touchback
+- fix theses to check undefined
+  - if (td)
+  - if (safety
+  - if (touchback
+- // FIX
+- get rid of advanceYds
+- turnoverOnDowns
+- do td/safety/touchback events inside Play itself, not with separate call?
+  - would need to do something about PlayByPlayLogger
+- return values (td/safety/touchback) should be booleans? we know who has ball, from currentPlay.stats
+- o/d values in logging - still need to be careful, turnoverOnDowns can happen and switch them
 
 improve table column filtering
 - AND operation

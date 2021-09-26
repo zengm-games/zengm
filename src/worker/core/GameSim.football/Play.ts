@@ -91,6 +91,27 @@ type PlayEvent =
 			posOdds: Partial<Record<Position, number>> | undefined;
 			spotYds: number | undefined; // undefined if not spot foul
 			t: TeamNum;
+	  }
+	| {
+			type: "fmb";
+			pFumbled: PlayerGameSim;
+			pForced: PlayerGameSim;
+			yds: number;
+			tFumbled: TeamNum;
+	  }
+	| {
+			type: "fmbRec";
+			pFumbled: PlayerGameSim;
+			pRecovered: PlayerGameSim;
+			lost: boolean;
+			yds: number;
+			tRecovered: TeamNum;
+			tFumbled: TeamNum;
+	  }
+	| {
+			type: "fmbTD";
+			p: PlayerGameSim;
+			t: TeamNum;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -303,6 +324,8 @@ class Play {
 					"defIntLng",
 					event.ydsReturn,
 				]);
+			} else if (event.type === "intTD") {
+				statChanges.push([event.t, event.p, "defIntTD"]);
 			} else if (event.type === "fg" || event.type === "xp") {
 				let statAtt;
 				let statMade;
@@ -339,6 +362,32 @@ class Play {
 						]);
 					}
 				}
+			} else if (event.type === "fmb") {
+				const t2 = event.tFumbled === 0 ? 1 : 0;
+
+				statChanges.push([event.tFumbled, event.pFumbled, "fmb"]);
+				statChanges.push([t2, event.pForced, "defFmbFrc"]);
+			} else if (event.type === "fmbRec") {
+				statChanges.push([event.tRecovered, event.pRecovered, "defFmbRec"]);
+
+				if (event.lost) {
+					statChanges.push([event.tFumbled, event.pFumbled, "fmbLost"]);
+				}
+
+				statChanges.push([
+					event.tRecovered,
+					event.pRecovered,
+					"defFmbYds",
+					event.yds,
+				]);
+				statChanges.push([
+					event.tRecovered,
+					event.pRecovered,
+					"defFmbLng",
+					event.yds,
+				]);
+			} else if (event.type === "fmbTD") {
+				statChanges.push([event.t, event.p, "defFmbTD"]);
 			}
 		}
 
@@ -487,7 +536,7 @@ class Play {
 			td = state.o;
 		}
 
-		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["kr", "pr", "int", "fmb"];
+		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["kr", "pr", "int"];
 
 		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE.includes(event.type)) {
 			touchback = state.o;
@@ -497,6 +546,19 @@ class Play {
 
 		if (state.scrimmage <= 0 && SAFETY_IS_POSSIBLE.includes(event.type)) {
 			safety = state.d;
+		}
+
+		if (event.type === "fmbRec") {
+			if (state.scrimmage <= 0) {
+				if (event.lost) {
+					state.scrimmage = 20;
+					touchback = state.o;
+				} else {
+					safety = state.d;
+				}
+
+				state.isClockRunning = false;
+			}
 		}
 
 		const turnoverOnDowns =
@@ -521,6 +583,14 @@ class Play {
 				state.overtimeState === "firstPossession"
 			) {
 				state.overtimeState = "over";
+			}
+		} else if (event.type === "fmbRec") {
+			if (event.lost) {
+				state.possessionChange();
+				state.isClockRunning = false;
+			} else {
+				// Stops if fumbled out of bounds
+				state.isClockRunning = Math.random() > 0.05;
 			}
 		}
 

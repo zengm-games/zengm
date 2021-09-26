@@ -54,6 +54,10 @@ rewrite football game sim to get rid of bugs
 - no "Flag on the play" for before the snap penalties
 - overtimeState to Play
 - possessionChange to Play
+- unify stat/state changes?
+  - could then get rid of t variables passed to addEvent
+  - but addEvent actually persists stat, while state is not persisted until commit
+  - updateState already has randomness, is that a problem? either refactor so it's gone, or make deterministic
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play

@@ -1436,31 +1436,25 @@ class GameSim {
 		return 0.0125 * (1.5 - p.compositeRating.ballSecurity);
 	}
 
-	doFumble(pFumbled: PlayerGameSim) {
-		// FIX
-		return 0;
-		this.recordStat(this.o, pFumbled, "fmb");
-		const lost = Math.random() > 0.5;
+	doFumble(pFumbled: PlayerGameSim, spotYds: number) {
 		const pForced = this.pickPlayer(this.d, "tackling");
-		this.recordStat(this.d, pForced, "defFmbFrc");
+		this.currentPlay.addEvent({
+			type: "fmb",
+			pFumbled,
+			pForced,
+			yds: spotYds,
+			tFumbled: this.currentPlay.state.current.o,
+		});
+
 		this.playByPlay.logEvent("fumble", {
 			clock: this.clock,
 			t: this.o,
 			names: [pFumbled.name, pForced.name],
 		});
-		const recoveringTeam = lost ? this.d : this.o;
-		const pRecovered = this.pickPlayer(recoveringTeam);
-		this.recordStat(recoveringTeam, pRecovered, "defFmbRec");
 
-		if (lost) {
-			this.recordStat(this.o, pFumbled, "fmbLost");
-			this.possessionChange();
-			this.scrimmage = 100 - this.scrimmage;
-			this.isClockRunning = false;
-		} else {
-			// Stops if fumbled out of bounds
-			this.isClockRunning = Math.random() > 0.05;
-		}
+		const lost = Math.random() > 0.5;
+		const tRecovered = lost ? this.d : this.o;
+		const pRecovered = this.pickPlayer(tRecovered);
 
 		let ydsRaw = Math.round(random.truncGauss(2, 6, -5, 15));
 
@@ -1469,46 +1463,42 @@ class GameSim {
 		}
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
-		const { safetyOrTouchback, td } = this.advanceYds(yds, {
-			repeatDown: true,
+
+		const { safety, td, touchback } = this.currentPlay.addEvent({
+			type: "fmbRec",
+			pFumbled,
+			pRecovered,
+			yds,
+			tFumbled: this.currentPlay.state.current.o,
+			tRecovered,
+			lost,
 		});
+
 		let dt = Math.abs(yds) / 6;
 		this.playByPlay.logEvent("fumbleRecovery", {
 			clock: this.clock,
 			lost,
-			t: this.o,
+			t: tRecovered,
 			names: [pRecovered.name],
-			safety: safetyOrTouchback && !lost,
-			td,
-			touchback: safetyOrTouchback && lost,
+			safety: safety !== undefined,
+			td: td !== undefined,
+			touchback: touchback !== undefined,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 		});
 
-		if (safetyOrTouchback) {
-			if (lost) {
-				this.scrimmage = 20;
-			} else {
-				this.doSafety();
-			}
-
-			this.isClockRunning = false;
-		} else {
-			this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
-			this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
-
-			if (td) {
-				this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
-				this.isClockRunning = false;
+		if (safety !== undefined) {
+			this.doSafety();
+		} else if (touchback === undefined) {
+			if (td !== undefined) {
+				this.currentPlay.addEvent({
+					type: "fmbTD",
+					p: pRecovered,
+					t: tRecovered,
+				});
 			} else if (Math.random() < this.probFumble(pRecovered)) {
-				dt += this.doFumble(pRecovered);
+				dt += this.doFumble(pRecovered, 0);
 			}
-		}
-
-		// Since other things might have happened after this.possessionChange()
-		if (lost) {
-			this.down = 1;
-			this.toGo = 10;
 		}
 
 		return dt;
@@ -1553,7 +1543,7 @@ class GameSim {
 					t: this.currentPlay.state.current.o,
 				});
 			} else if (Math.random() < this.probFumble(p)) {
-				dt += this.doFumble(p);
+				dt += this.doFumble(p, 0);
 			}
 		}
 
@@ -1676,10 +1666,7 @@ class GameSim {
 
 		if (Math.random() < this.probFumble(qb)) {
 			const yds = this.currentPlay.boundedYds(random.randInt(-1, -10));
-			const { turnoverOnDowns } = this.advanceYds(yds);
-			if (!turnoverOnDowns) {
-				return dt + this.doFumble(qb);
-			}
+			return dt + this.doFumble(qb, yds);
 		}
 
 		const sack = Math.random() < this.probSack(qb);
@@ -1780,7 +1767,7 @@ class GameSim {
 
 						this.playByPlay.logEvent("passComplete", completeEvent);
 
-						return dt + this.doFumble(target);
+						return dt + this.doFumble(target, 0);
 					}
 				}
 

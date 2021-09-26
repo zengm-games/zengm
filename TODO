@@ -52,6 +52,8 @@ rewrite football game sim to get rid of bugs
   - need to pass actual penalty yardage to logEvent("penalty"
     - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
 - no "Flag on the play" for before the snap penalties
+- overtimeState to Play
+- possessionChange to Play
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play

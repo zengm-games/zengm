@@ -1155,13 +1155,10 @@ class GameSim {
 					this.currentPlay.addEvent({
 						type: "krTD",
 						p: kickReturner,
+						t: this.currentPlay.state.current.o,
 					});
 				}
 			}
-		}
-
-		if (this.overtimeState === "initialKickoff") {
-			this.overtimeState = "firstPossession";
 		}
 
 		this.recordStat(this.o, undefined, "drives");
@@ -1402,6 +1399,7 @@ class GameSim {
 			p: kicker,
 			made,
 			distance,
+			t: this.o,
 		});
 
 		return dt;
@@ -1538,7 +1536,7 @@ class GameSim {
 
 		this.playByPlay.logEvent("interception", {
 			clock: this.clock,
-			t: this.o,
+			t: this.currentPlay.state.current.o,
 			names: [p.name],
 			td: td !== undefined,
 			twoPointConversionTeam: this.twoPointConversionTeam,
@@ -1552,6 +1550,7 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "intTD",
 					p,
+					t: this.currentPlay.state.current.o,
 				});
 			} else if (Math.random() < this.probFumble(p)) {
 				dt += this.doFumble(p);
@@ -1790,6 +1789,7 @@ class GameSim {
 						type: "pssTD",
 						qb,
 						target,
+						t: o,
 					});
 				}
 
@@ -1920,6 +1920,7 @@ class GameSim {
 			this.currentPlay.addEvent({
 				type: "rusTD",
 				p,
+				t: o,
 			});
 		}
 
@@ -2270,27 +2271,6 @@ class GameSim {
 	) {
 		const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
-		// Special case for two point conversions
-		if (this.twoPointConversionTeam !== undefined) {
-			if (s.endsWith("TD") && s !== "pssTD") {
-				this.team[t].stat.pts += 2;
-				this.team[t].stat.ptsQtrs[qtr] += 2;
-				this.playByPlay.logStat(qtr, t, undefined, "pts", 2);
-
-				if (this.overtimeState === "secondPossession") {
-					const t2 = t === 0 ? 1 : 0;
-
-					if (this.team[t].stat.pts > this.team[t2].stat.pts) {
-						this.overtimeState = "over";
-					}
-				}
-
-				this.twoPointConversionTeam = undefined;
-			}
-
-			return;
-		}
-
 		if (p !== undefined) {
 			if (s === "gs") {
 				// In case player starts on offense and defense, only record once
@@ -2318,44 +2298,9 @@ class GameSim {
 				this.team[t].stat[s] += amt;
 			}
 
-			let pts;
-
-			if (s.endsWith("TD") && s !== "pssTD") {
-				pts = 6;
-
-				if (
-					this.overtimeState === "initialKickoff" ||
-					this.overtimeState === "firstPossession"
-				) {
-					this.overtimeState = "over";
-				}
-			} else if (s === "xp") {
-				pts = 1;
-			} else if (s.match(/fg\d+/)) {
-				pts = 3;
-			} else if (s === "defSft") {
-				pts = 2;
-
-				if (
-					this.overtimeState === "initialKickoff" ||
-					this.overtimeState === "firstPossession"
-				) {
-					this.overtimeState = "over";
-				}
-			}
-
-			if (pts !== undefined) {
-				this.team[t].stat.pts += pts;
-				this.team[t].stat.ptsQtrs[qtr] += pts;
-				this.playByPlay.logStat(qtr, t, undefined, "pts", pts);
-
-				if (this.overtimeState === "secondPossession") {
-					const t2 = t === 0 ? 1 : 0;
-
-					if (this.team[t].stat.pts > this.team[t2].stat.pts) {
-						this.overtimeState = "over";
-					}
-				}
+			if (s === "pts") {
+				this.team[t].stat.ptsQtrs[qtr] += amt;
+				this.playByPlay.logStat(qtr, t, undefined, "pts", amt);
 			}
 
 			if (p !== undefined && s !== "min") {

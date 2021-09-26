@@ -18,6 +18,7 @@ type PlayEvent =
 	| {
 			type: "krTD";
 			p: PlayerGameSim;
+			t: TeamNum;
 	  }
 	| {
 			type: "rus";
@@ -27,6 +28,7 @@ type PlayEvent =
 	| {
 			type: "rusTD";
 			p: PlayerGameSim;
+			t: TeamNum;
 	  }
 	| {
 			type: "kneel";
@@ -59,6 +61,7 @@ type PlayEvent =
 			type: "pssTD";
 			qb: PlayerGameSim;
 			target: PlayerGameSim;
+			t: TeamNum;
 	  }
 	| {
 			type: "int";
@@ -70,12 +73,14 @@ type PlayEvent =
 	| {
 			type: "intTD";
 			p: PlayerGameSim;
+			t: TeamNum;
 	  }
 	| {
 			type: "xp" | "fg";
 			p: PlayerGameSim;
 			distance: number;
 			made: boolean;
+			t: TeamNum;
 	  }
 	| {
 			type: "penalty";
@@ -101,6 +106,8 @@ type PlayState = Pick<
 	| "awaitingKickoff"
 	| "awaitingAfterSafety"
 	| "awaitingAfterTouchdown"
+	| "overtimeState"
+	| "twoPointConversionTeam"
 >;
 
 class State {
@@ -113,8 +120,11 @@ class State {
 	awaitingKickoff: PlayState["awaitingKickoff"];
 	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
+	overtimeState: PlayState["overtimeState"];
+	twoPointConversionTeam: PlayState["twoPointConversionTeam"];
+	pts: [number, number];
 
-	constructor(gameSim: PlayState) {
+	constructor(gameSim: PlayState, pts: [number, number]) {
 		this.down = gameSim.down;
 		this.toGo = gameSim.toGo;
 		this.scrimmage = gameSim.scrimmage;
@@ -124,13 +134,22 @@ class State {
 		this.awaitingKickoff = gameSim.awaitingKickoff;
 		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
+		this.overtimeState = gameSim.overtimeState;
+		this.twoPointConversionTeam = gameSim.twoPointConversionTeam;
+		this.pts = pts;
 	}
 
 	clone() {
-		return new State(this);
+		return new State(this, this.pts);
 	}
 
 	possessionChange() {
+		if (this.overtimeState === "firstPossession") {
+			this.overtimeState = "secondPossession";
+		} else if (this.overtimeState === "secondPossession") {
+			this.overtimeState = "bothTeamsPossessed";
+		}
+
 		this.scrimmage = 100 - this.scrimmage;
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
@@ -143,6 +162,21 @@ class State {
 		this.toGo = Math.min(10, 100 - this.scrimmage);
 	}
 }
+
+const getPts = (event: PlayEvent, twoPointConversion: boolean) => {
+	let pts;
+	if (event.type.endsWith("TD")) {
+		pts = twoPointConversion ? 2 : 6;
+	} else if (event.type === "xp") {
+		pts = 1;
+	} else if (event.type === "fg") {
+		pts = 3;
+	} else if (event.type === "defSft") {
+		pts = 2;
+	}
+
+	return pts;
+};
 
 class Play {
 	g: GameSim;
@@ -157,7 +191,10 @@ class Play {
 		this.g = gameSim;
 		this.events = [];
 
-		const initialState = new State(gameSim);
+		const initialState = new State(gameSim, [
+			gameSim.team[0].stat.pts,
+			gameSim.team[1].stat.pts,
+		]);
 		this.state = {
 			initial: initialState,
 			current: initialState.clone(),
@@ -186,117 +223,134 @@ class Play {
 	getStatChanges(event: PlayEvent, reverse?: boolean) {
 		const statChanges: Parameters<GameSim["recordStat"]>[] = [];
 
-		if (event.type === "penalty") {
-			const actualPenYds =
-				event.name === "Pass interference" ? event.spotYds : event.penYds;
+		// No tracking stats during 2 point conversion attempt
+		if (
+			this.state.initial.awaitingAfterTouchdown === undefined ||
+			event.type === "xp"
+		) {
+			if (event.type === "penalty") {
+				const actualPenYds =
+					event.name === "Pass interference" ? event.spotYds : event.penYds;
 
-			statChanges.push([event.t, event.p, "pen"]);
-			statChanges.push([event.t, event.p, "penYds", actualPenYds]);
-		}
-		if (event.type === "kr") {
-			statChanges.push([this.state.initial.d, event.p, "kr"]);
-			statChanges.push([this.state.initial.d, event.p, "krYds", event.yds]);
-			statChanges.push([this.state.initial.d, event.p, "krLng", event.yds]);
-		} else if (event.type === "krTD") {
-			statChanges.push([this.state.initial.d, event.p, "krTD"]);
-		} else if (event.type === "rus") {
-			statChanges.push([this.state.initial.o, event.p, "rus"]);
-			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
-			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
-		} else if (event.type === "rusTD") {
-			statChanges.push([this.state.initial.o, event.p, "rusTD"]);
-		} else if (event.type === "kneel") {
-			statChanges.push([this.state.initial.o, event.p, "rus"]);
-			statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
-			statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
-		} else if (event.type === "sk") {
-			statChanges.push([this.state.initial.o, event.qb, "pssSk"]);
-			statChanges.push([
-				this.state.initial.o,
-				event.qb,
-				"pssSkYds",
-				Math.abs(event.yds),
-			]);
-			statChanges.push([this.state.initial.d, event.p, "defSk"]);
-		} else if (event.type === "pss") {
-			statChanges.push([this.state.initial.o, event.qb, "pss"]);
-			statChanges.push([this.state.initial.o, event.target, "tgt"]);
-		} else if (event.type === "pssCmp") {
-			statChanges.push([this.state.initial.o, event.qb, "pssCmp"]);
-			statChanges.push([this.state.initial.o, event.qb, "pssYds", event.yds]);
-			statChanges.push([this.state.initial.o, event.qb, "pssLng", event.yds]);
-			statChanges.push([this.state.initial.o, event.target, "rec"]);
-			statChanges.push([
-				this.state.initial.o,
-				event.target,
-				"recYds",
-				event.yds,
-			]);
-			statChanges.push([
-				this.state.initial.o,
-				event.target,
-				"recLng",
-				event.yds,
-			]);
-		} else if (event.type === "pssInc") {
-			if (event.defender) {
+				statChanges.push([event.t, event.p, "pen"]);
+				statChanges.push([event.t, event.p, "penYds", actualPenYds]);
+			}
+			if (event.type === "kr") {
+				statChanges.push([this.state.initial.d, event.p, "kr"]);
+				statChanges.push([this.state.initial.d, event.p, "krYds", event.yds]);
+				statChanges.push([this.state.initial.d, event.p, "krLng", event.yds]);
+			} else if (event.type === "krTD") {
+				statChanges.push([this.state.initial.d, event.p, "krTD"]);
+			} else if (event.type === "rus") {
+				statChanges.push([this.state.initial.o, event.p, "rus"]);
+				statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
+				statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
+			} else if (event.type === "rusTD") {
+				statChanges.push([this.state.initial.o, event.p, "rusTD"]);
+			} else if (event.type === "kneel") {
+				statChanges.push([this.state.initial.o, event.p, "rus"]);
+				statChanges.push([this.state.initial.o, event.p, "rusYds", event.yds]);
+				statChanges.push([this.state.initial.o, event.p, "rusLng", event.yds]);
+			} else if (event.type === "sk") {
+				statChanges.push([this.state.initial.o, event.qb, "pssSk"]);
+				statChanges.push([
+					this.state.initial.o,
+					event.qb,
+					"pssSkYds",
+					Math.abs(event.yds),
+				]);
+				statChanges.push([this.state.initial.d, event.p, "defSk"]);
+			} else if (event.type === "pss") {
+				statChanges.push([this.state.initial.o, event.qb, "pss"]);
+				statChanges.push([this.state.initial.o, event.target, "tgt"]);
+			} else if (event.type === "pssCmp") {
+				statChanges.push([this.state.initial.o, event.qb, "pssCmp"]);
+				statChanges.push([this.state.initial.o, event.qb, "pssYds", event.yds]);
+				statChanges.push([this.state.initial.o, event.qb, "pssLng", event.yds]);
+				statChanges.push([this.state.initial.o, event.target, "rec"]);
+				statChanges.push([
+					this.state.initial.o,
+					event.target,
+					"recYds",
+					event.yds,
+				]);
+				statChanges.push([
+					this.state.initial.o,
+					event.target,
+					"recLng",
+					event.yds,
+				]);
+			} else if (event.type === "pssInc") {
+				if (event.defender) {
+					statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
+				}
+			} else if (event.type === "pssTD") {
+				statChanges.push([this.state.initial.o, event.qb, "pssTD"]);
+				statChanges.push([this.state.initial.o, event.target, "recTD"]);
+			} else if (event.type === "int") {
+				statChanges.push([this.state.initial.o, event.qb, "pssInt"]);
 				statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
-			}
-		} else if (event.type === "pssTD") {
-			statChanges.push([this.state.initial.o, event.qb, "pssTD"]);
-			statChanges.push([this.state.initial.o, event.target, "recTD"]);
-		} else if (event.type === "int") {
-			statChanges.push([this.state.initial.o, event.qb, "pssInt"]);
-			statChanges.push([this.state.initial.d, event.defender, "defPssDef"]);
-			statChanges.push([this.state.initial.d, event.defender, "defInt"]);
-			statChanges.push([
-				this.state.initial.d,
-				event.defender,
-				"defIntYds",
-				event.ydsReturn,
-			]);
-			statChanges.push([
-				this.state.initial.d,
-				event.defender,
-				"defIntLng",
-				event.ydsReturn,
-			]);
-		} else if (event.type === "fg" || event.type === "xp") {
-			let statAtt;
-			let statMade;
-			if (event.type === "xp") {
-				statAtt = "xpa";
-				statMade = "xp";
-			} else if (event.distance < 20) {
-				statAtt = "fga0";
-				statMade = "fg0";
-			} else if (event.distance < 30) {
-				statAtt = "fga20";
-				statMade = "fg20";
-			} else if (event.distance < 40) {
-				statAtt = "fga30";
-				statMade = "fg30";
-			} else if (event.distance < 50) {
-				statAtt = "fga40";
-				statMade = "fg40";
-			} else {
-				statAtt = "fga50";
-				statMade = "fg50";
-			}
+				statChanges.push([this.state.initial.d, event.defender, "defInt"]);
+				statChanges.push([
+					this.state.initial.d,
+					event.defender,
+					"defIntYds",
+					event.ydsReturn,
+				]);
+				statChanges.push([
+					this.state.initial.d,
+					event.defender,
+					"defIntLng",
+					event.ydsReturn,
+				]);
+			} else if (event.type === "fg" || event.type === "xp") {
+				let statAtt;
+				let statMade;
+				if (event.type === "xp") {
+					statAtt = "xpa";
+					statMade = "xp";
+				} else if (event.distance < 20) {
+					statAtt = "fga0";
+					statMade = "fg0";
+				} else if (event.distance < 30) {
+					statAtt = "fga20";
+					statMade = "fg20";
+				} else if (event.distance < 40) {
+					statAtt = "fga30";
+					statMade = "fg30";
+				} else if (event.distance < 50) {
+					statAtt = "fga40";
+					statMade = "fg40";
+				} else {
+					statAtt = "fga50";
+					statMade = "fg50";
+				}
 
-			statChanges.push([this.state.initial.o, event.p, statAtt]);
-			if (event.made) {
-				statChanges.push([this.state.initial.o, event.p, statMade]);
+				statChanges.push([this.state.initial.o, event.p, statAtt]);
+				if (event.made) {
+					statChanges.push([this.state.initial.o, event.p, statMade]);
 
-				if (event.type !== "xp") {
-					statChanges.push([
-						this.state.initial.o,
-						event.p,
-						"fgLng",
-						event.distance,
-					]);
+					if (event.type !== "xp") {
+						statChanges.push([
+							this.state.initial.o,
+							event.p,
+							"fgLng",
+							event.distance,
+						]);
+					}
 				}
 			}
+		}
+
+		// Scoring
+		const pts = getPts(
+			event,
+			this.state.initial.twoPointConversionTeam !== undefined,
+		);
+		if (pts !== undefined) {
+			const t = (event as any).t as TeamNum;
+
+			statChanges.push([t, undefined, "pts", pts]);
 		}
 
 		if (reverse) {
@@ -312,6 +366,12 @@ class Play {
 	}
 
 	updateState(state: State, event: PlayEvent) {
+		const afterKickoff = () => {
+			if (state.overtimeState === "initialKickoff") {
+				state.overtimeState = "firstPossession";
+			}
+		};
+
 		if (event.type === "penalty") {
 			const side = state.o === event.t ? "off" : "def";
 			const firstDownLine = state.scrimmage + state.toGo;
@@ -349,11 +409,15 @@ class Play {
 			state.scrimmage = 25;
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;
+
+			afterKickoff();
 		} else if (event.type === "kr") {
 			state.possessionChange();
 			state.scrimmage += event.yds;
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;
+
+			afterKickoff();
 		} else if (event.type === "rus") {
 			state.down += 1;
 			state.scrimmage += event.yds;
@@ -442,6 +506,48 @@ class Play {
 			state.down > 4;
 		if (turnoverOnDowns) {
 			state.possessionChange();
+		}
+
+		if (event.type.endsWith("TD")) {
+			if (
+				state.overtimeState === "initialKickoff" ||
+				state.overtimeState === "firstPossession"
+			) {
+				state.overtimeState = "over";
+			}
+		} else if (event.type === "defSft") {
+			if (
+				state.overtimeState === "initialKickoff" ||
+				state.overtimeState === "firstPossession"
+			) {
+				state.overtimeState = "over";
+			}
+		}
+
+		const pts = getPts(event, state.twoPointConversionTeam !== undefined);
+		if (pts !== undefined) {
+			const t = (event as any).t as TeamNum;
+			state.pts[t] += pts;
+
+			if (state.overtimeState === "secondPossession") {
+				const t2 = t === 0 ? 1 : 0;
+
+				if (state.pts[t] > state.pts[t2]) {
+					state.overtimeState = "over";
+				}
+			}
+
+			if (pts === 2) {
+				if (state.overtimeState === "secondPossession") {
+					const t2 = t === 0 ? 1 : 0;
+
+					if (state.pts[t] > state.pts[t2]) {
+						state.overtimeState = "over";
+					}
+				}
+
+				state.twoPointConversionTeam = undefined;
+			}
 		}
 
 		return {
@@ -542,6 +648,8 @@ class Play {
 			awaitingKickoff,
 			awaitingAfterSafety,
 			awaitingAfterTouchdown,
+			overtimeState,
+			twoPointConversionTeam,
 		} = this.state.current;
 
 		this.g.down = down;
@@ -553,6 +661,8 @@ class Play {
 		this.g.awaitingKickoff = awaitingKickoff;
 		this.g.awaitingAfterSafety = awaitingAfterSafety;
 		this.g.awaitingAfterTouchdown = awaitingAfterTouchdown;
+		this.g.overtimeState = overtimeState;
+		this.g.twoPointConversionTeam = twoPointConversionTeam;
 	}
 }
 

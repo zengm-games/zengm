@@ -112,6 +112,14 @@ type PlayEvent =
 			type: "fmbTD";
 			p: PlayerGameSim;
 			t: TeamNum;
+	  }
+	| {
+			type: "twoPointConversion";
+			t: TeamNum;
+	  }
+	| {
+			type: "twoPointConversionDone";
+			t: TeamNum;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -508,6 +516,19 @@ class Play {
 
 			state.awaitingAfterTouchdown = false;
 			state.isClockRunning = false;
+		} else if (event.type === "twoPointConversion") {
+			state.twoPointConversionTeam = event.t;
+			state.down = 1;
+			state.scrimmage = 98;
+		} else if (event.type === "twoPointConversionDone") {
+			// Reset off/def teams in case there was a turnover during the conversion attempt
+			state.o = event.t;
+			state.d = state.o === 0 ? 1 : 0;
+
+			state.twoPointConversionTeam = undefined;
+			state.awaitingKickoff = event.t;
+			state.awaitingAfterTouchdown = false;
+			state.isClockRunning = false;
 		}
 
 		if (event.type.endsWith("TD")) {
@@ -616,7 +637,7 @@ class Play {
 					}
 				}
 
-				state.twoPointConversionTeam = undefined;
+				// state.twoPointConversionTeam = undefined;
 			}
 		}
 

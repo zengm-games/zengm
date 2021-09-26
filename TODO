@@ -58,6 +58,8 @@ rewrite football game sim to get rid of bugs
   - could then get rid of t variables passed to addEvent
   - but addEvent actually persists stat, while state is not persisted until commit
   - updateState already has randomness, is that a problem? either refactor so it's gone, or make deterministic
+- this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
+  - that would fix this.state.initial.twoPointConversionTeam not being accurate
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play

@@ -436,9 +436,6 @@ class GameSim {
 		const quarter = this.team[0].stat.ptsQtrs.length;
 
 		if (this.awaitingAfterTouchdown) {
-			// FIX
-			return "extraPoint";
-
 			if (ptsDown === 2 && Math.random() < 0.7) {
 				return "twoPointConversion";
 			}
@@ -1406,14 +1403,12 @@ class GameSim {
 	}
 
 	doTwoPointConversion() {
-		// this.twoPointConversionTeam is overwritten elsewhere, so don't use it here for possession tracking
 		const twoPointConversionTeam = this.o;
 
-		this.twoPointConversionTeam = twoPointConversionTeam;
-		this.down = 1;
-		this.scrimmage = 98; // Put this before the play, in case there is a turnover during conversion!
-
-		this.awaitingKickoff = this.o;
+		this.currentPlay.addEvent({
+			type: "twoPointConversion",
+			t: twoPointConversionTeam,
+		});
 
 		if (Math.random() > 0.5) {
 			this.doPass();
@@ -1421,13 +1416,10 @@ class GameSim {
 			this.doRun();
 		}
 
-		// Reset off/def teams in case there was a turnover during the conversion attempt
-		this.o = twoPointConversionTeam;
-		this.d = this.o === 0 ? 1 : 0;
-
-		this.twoPointConversionTeam = undefined;
-		this.awaitingAfterTouchdown = false;
-		this.isClockRunning = false;
+		this.currentPlay.addEvent({
+			type: "twoPointConversionDone",
+			t: twoPointConversionTeam,
+		});
 
 		return 0;
 	}
@@ -1483,7 +1475,8 @@ class GameSim {
 			safety: safety !== undefined,
 			td: td !== undefined,
 			touchback: touchback !== undefined,
-			twoPointConversionTeam: this.twoPointConversionTeam,
+			twoPointConversionTeam:
+				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
 
@@ -1529,7 +1522,8 @@ class GameSim {
 			t: this.currentPlay.state.current.o,
 			names: [p.name],
 			td: td !== undefined,
-			twoPointConversionTeam: this.twoPointConversionTeam,
+			twoPointConversionTeam:
+				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
 
@@ -1647,7 +1641,8 @@ class GameSim {
 	doPass() {
 		const o = this.o;
 		const d = this.d;
-		const twoPointConversionTeam = this.twoPointConversionTeam;
+		const twoPointConversionTeam =
+			this.currentPlay.state.current.twoPointConversionTeam;
 
 		this.updatePlayersOnField("pass");
 		const penInfo = this.checkPenalties("beforeSnap");
@@ -1816,7 +1811,8 @@ class GameSim {
 	doRun(qbScramble: boolean = false) {
 		const o = this.o;
 		const d = this.d;
-		const twoPointConversionTeam = this.twoPointConversionTeam;
+		const twoPointConversionTeam =
+			this.currentPlay.state.current.twoPointConversionTeam;
 
 		this.updatePlayersOnField("run");
 		const penInfo = this.checkPenalties("beforeSnap");
@@ -1978,7 +1974,7 @@ class GameSim {
 		},
 	): boolean {
 		// No penalties during two point conversion, because it is not handled well currently
-		if (this.twoPointConversionTeam !== undefined) {
+		if (this.currentPlay.state.current.twoPointConversionTeam !== undefined) {
 			return false;
 		}
 

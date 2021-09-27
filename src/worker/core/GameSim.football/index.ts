@@ -1441,7 +1441,7 @@ class GameSim {
 
 		if (safety) {
 			this.doSafety();
-		} else if (touchback === undefined) {
+		} else if (!touchback) {
 			if (td) {
 				this.currentPlay.addEvent({
 					type: "fmbTD",

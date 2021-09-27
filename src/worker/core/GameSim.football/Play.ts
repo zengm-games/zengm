@@ -625,11 +625,7 @@ class Play {
 			}
 		}
 
-		const turnoverOnDowns =
-			safety === undefined &&
-			td === undefined &&
-			touchback === undefined &&
-			state.down > 4;
+		const turnoverOnDowns = !safety && !td && !touchback && state.down > 4;
 		if (turnoverOnDowns) {
 			state.possessionChange();
 		}

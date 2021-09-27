@@ -55,6 +55,7 @@ rewrite football game sim to get rid of bugs
 - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
   - could just base flag on awaitingAfterTouchdown value in constructor
 - numPossessionChanges needed?
+- uncomment test
 - benchmark
 - what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks
@@ -66,6 +67,10 @@ rewrite football game sim to get rid of bugs
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
+
+update all-star team names after editing captains https://discord.com/channels/290013534023057409/290015591216054273/891802910000836639
+
+rarely, elam ending doesn't get triggered https://discord.com/channels/290013534023057409/290015591216054273/891454150783692821
 
 improve table column filtering
 - AND operation

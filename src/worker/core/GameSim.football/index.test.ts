@@ -5,6 +5,7 @@ import { player, team } from "..";
 import loadTeams from "../game/loadTeams";
 import { g, helpers } from "../../util";
 import testHelpers from "../../../test/helpers";
+import Play from "./Play";
 
 const genTwoTeams = async () => {
 	testHelpers.resetG();
@@ -52,6 +53,8 @@ describe("worker/core/GameSim.football", () => {
 		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
 		game.scrimmage = 80;
 		game.clock = 0.01;
+		game.currentPlay = new Play(game);
+
 		assert.strictEqual(game.getPlayType(), "fieldGoal");
 	});
 
@@ -68,6 +71,8 @@ describe("worker/core/GameSim.football", () => {
 		game.team[1].stat.ptsQtrs = [0, game.team[1].stat.pts];
 		game.scrimmage = 80;
 		game.clock = 0.01;
+		game.currentPlay = new Play(game);
+
 		assert.strictEqual(game.getPlayType(), "fieldGoal");
 	});
 
@@ -84,6 +89,7 @@ describe("worker/core/GameSim.football", () => {
 		game.down = 4;
 		game.scrimmage = 20;
 		game.clock = 1.5;
+		game.currentPlay = new Play(game);
 
 		let numRun = 0;
 		for (let i = 0; i < 100; i++) {
@@ -106,13 +112,15 @@ describe("worker/core/GameSim.football", () => {
 		game.d = 1;
 		game.scrimmage = 20;
 		game.down = 4;
+		game.currentPlay = new Play(game);
 
 		// Sacks always happen, no penalties
 		game.probSack = () => 1;
 		game.probFumble = () => 0;
-		game.checkPenalties = () => undefined;
+		game.checkPenalties = () => false;
 
 		game.doPass();
+		game.currentPlay.commit();
 
 		assert.strictEqual(game.team[0].stat.defSk, 0);
 		assert.strictEqual(game.team[1].stat.defSk, 1);
@@ -131,15 +139,17 @@ describe("worker/core/GameSim.football", () => {
 		game.scrimmage = 20;
 		game.toGo = 1;
 		game.down = 4;
+		game.currentPlay = new Play(game);
 
 		// Always interception
 		game.probSack = () => 0;
 		game.probFumble = () => 0;
 		game.probInt = () => 1;
 		game.probScramble = () => 0;
-		game.checkPenalties = () => undefined;
+		game.checkPenalties = () => false;
 
 		game.doPass();
+		game.currentPlay.commit();
 
 		assert.strictEqual(game.team[0].stat.defInt, 0);
 		assert.strictEqual(game.team[1].stat.defInt, 1);
@@ -167,7 +177,7 @@ describe("worker/core/GameSim.football", () => {
 		// Sacks always happen, no penalties
 		game.getPlayType = () => "pass";
 		game.probSack = () => 1;
-		game.checkPenalties = () => undefined;
+		game.checkPenalties = () => false;
 
 		game.simPlay();
 
@@ -184,7 +194,7 @@ describe("worker/core/GameSim.football", () => {
 		const game = await initGameSim();
 
 		// No penalties, run the ball
-		game.checkPenalties = () => undefined;
+		game.checkPenalties = () => false;
 		game.getPlayType = () => "run";
 
 		// Keep doing it until offense recovers

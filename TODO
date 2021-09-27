@@ -43,7 +43,6 @@ rewrite football game sim to get rid of bugs
   - if there are offsetting penalties, need to identify this and re-run state from beginning to see where it is now
   - accept or decline based on probability of winning
   - tracking score when undoing td
-  - totYds not needed
   - need to pass actual penalty yardage to logEvent("penalty"
     - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
 - no "Flag on the play" for before the snap penalties
@@ -56,6 +55,13 @@ rewrite football game sim to get rid of bugs
   - could just base flag on awaitingAfterTouchdown value in constructor
 - numPossessionChanges needed?
 - benchmark
+- multiple penalties on same play
+  - if same team has multiple penalties, pick one
+  - if two different teams have penalties, offset only by major/minor distinction
+    - "In the NFL, a major (15-yard) penalty by one team may not offset a minor (5-yard) penalty by the other team"
+      - what about pass interference
+      - what about 10 yard penalties
+  - before snap penalties - should play continue?
 - what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks
   - roughing the passer should apply at the end of the play, if it was a positive play only. otherwise, from scrimmage

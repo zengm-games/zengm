@@ -1919,7 +1919,6 @@ class GameSim {
 
 		const penInfos = called.map(pen => {
 			let spotYds: number | undefined;
-			let totYds = 0;
 
 			if (
 				pen.spotFoul ||
@@ -1948,19 +1947,7 @@ class GameSim {
 					if (spotYds + this.scrimmage > 99) {
 						spotYds = 99 - this.scrimmage;
 					}
-
-					totYds += spotYds;
 				}
-			}
-
-			if (
-				(playType === "kickoffReturn" || playType === "puntReturn") &&
-				pen.side === "defense"
-			) {
-				// Add to end of return
-				totYds = playYds + pen.yds;
-			} else {
-				totYds += pen.side === "defense" ? pen.yds : -pen.yds;
 			}
 
 			return {
@@ -1969,7 +1956,6 @@ class GameSim {
 				penYds: pen.yds,
 				posOdds: pen.posOdds ?? undefined,
 				spotYds,
-				totYds,
 				t,
 			};
 		});

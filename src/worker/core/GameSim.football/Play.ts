@@ -21,6 +21,24 @@ type PlayEvent =
 			p: PlayerGameSim;
 	  }
 	| {
+			type: "p";
+			p: PlayerGameSim;
+			yds: number;
+	  }
+	| {
+			type: "touchbackPunt";
+			p: PlayerGameSim;
+	  }
+	| {
+			type: "pr";
+			p: PlayerGameSim;
+			yds: number;
+	  }
+	| {
+			type: "prTD";
+			p: PlayerGameSim;
+	  }
+	| {
 			type: "rus";
 			p: PlayerGameSim;
 			yds: number;
@@ -146,6 +164,7 @@ class State {
 	overtimeState: PlayState["overtimeState"];
 	twoPointConversionTeam: PlayState["twoPointConversionTeam"];
 	pts: [number, number];
+	numPossessionChanges: 0;
 
 	constructor(gameSim: PlayState, pts: [number, number]) {
 		this.down = gameSim.down;
@@ -160,6 +179,7 @@ class State {
 		this.overtimeState = gameSim.overtimeState;
 		this.twoPointConversionTeam = gameSim.twoPointConversionTeam;
 		this.pts = pts;
+		this.numPossessionChanges = 0;
 	}
 
 	clone() {
@@ -178,6 +198,8 @@ class State {
 		this.d = this.o === 1 ? 0 : 1;
 		this.newFirstDown();
 		this.isClockRunning = false;
+
+		this.numPossessionChanges += 1;
 	}
 
 	newFirstDown() {
@@ -265,6 +287,19 @@ class Play {
 				statChanges.push([state.d, event.p, "krLng", event.yds]);
 			} else if (event.type === "krTD") {
 				statChanges.push([state.o, event.p, "krTD"]);
+			} else if (event.type === "p") {
+				const kickTo = state.scrimmage + event.yds;
+				if (kickTo > 80 && kickTo < 100) {
+					statChanges.push([state.o, event.p, "pntIn20"]);
+				}
+			} else if (event.type === "touchbackPunt") {
+				statChanges.push([state.d, event.p, "pntTB"]);
+			} else if (event.type === "pr") {
+				statChanges.push([state.d, event.p, "pr"]);
+				statChanges.push([state.d, event.p, "prYds", event.yds]);
+				statChanges.push([state.d, event.p, "prLng", event.yds]);
+			} else if (event.type === "prTD") {
+				statChanges.push([state.o, event.p, "prTD"]);
 			} else if (event.type === "rus") {
 				statChanges.push([state.o, event.p, "rus"]);
 				statChanges.push([state.o, event.p, "rusYds", event.yds]);
@@ -413,7 +448,7 @@ class Play {
 
 			state.toGo = firstDownLine - state.scrimmage;
 
-			if (event.automaticFirstDown && state.down > 1) {
+			if (event.automaticFirstDown) {
 				state.newFirstDown();
 			}
 		} else if (event.type === "k") {
@@ -421,6 +456,7 @@ class Play {
 			state.toGo = 10;
 			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
+			state.possessionChange();
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 25;
@@ -435,6 +471,18 @@ class Play {
 			state.awaitingAfterSafety = false;
 
 			afterKickoff();
+		} else if (event.type === "p") {
+			state.down = 1;
+			state.toGo = 10;
+			state.scrimmage += event.yds;
+		} else if (event.type === "touchbackPunt") {
+			state.possessionChange();
+			state.down = 1;
+			state.toGo = 10;
+			state.scrimmage = 20;
+		} else if (event.type === "pr") {
+			state.possessionChange();
+			state.scrimmage += event.yds;
 		} else if (event.type === "rus") {
 			state.down += 1;
 			state.scrimmage += event.yds;
@@ -517,7 +565,7 @@ class Play {
 			td = state.o;
 		}
 
-		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["kr", "pr", "int"];
+		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["p", "int"];
 
 		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE.includes(event.type)) {
 			touchback = state.o;

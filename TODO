@@ -59,14 +59,18 @@ rewrite football game sim to get rid of bugs
   - updateState already has randomness, is that a problem? either refactor so it's gone, or make deterministic
 - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
   - could just base flag on awaitingAfterTouchdown value in constructor
-  - that would fix this.state.initial.twoPointConversionTeam not being accurate
+- numPossessionChanges needed?
 - benchmark
+- what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks
   - roughing the passer should apply at the end of the play, if it was a positive play only. otherwise, from scrimmage
 - blog
   - ability to roll back stats after penalty is accepted
-  - ability to evaluate whether to accept/reject penalty based on whole play
+  - ability to evaluate whether to accept/reject penalty based on whole play and win prob
   - email people
+
+nicidob improve value formula
+- https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
 
 improve table column filtering
 - AND operation

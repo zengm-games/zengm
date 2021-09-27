@@ -617,8 +617,7 @@ class GameSim {
 
 					// Default option - punt
 					if (!neverPunt) {
-						// FIX
-						// return "punt";
+						return "punt";
 					}
 				}
 			}
@@ -1117,22 +1116,14 @@ class GameSim {
 					ydsRaw += random.randInt(0, 109);
 				}
 
-				let returnLength = this.currentPlay.boundedYds(ydsRaw, true);
+				const returnLength = this.currentPlay.boundedYds(ydsRaw, true);
 				dt = Math.abs(returnLength) / 8;
 				const returnLengthBeforePenalty = returnLength;
-				/*const penInfo = this.checkPenalties("kickoffReturn", {
+
+				this.checkPenalties("kickoffReturn", {
 					ballCarrier: kickReturner,
 					playYds: returnLength,
 				});
-
-				if (penInfo && penInfo.type !== "offsetting") {
-					if (penInfo.side === "offense" && penInfo.spotYds !== undefined) {
-						returnLength = penInfo.spotYds;
-					}
-				} else {
-					const info = this.advanceYds(returnLength);
-					td = info.td;
-				}*/
 
 				const { td } = this.currentPlay.addEvent({
 					type: "kr",
@@ -1175,94 +1166,72 @@ class GameSim {
 		const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
 
 		const distance = Math.round(random.truncGauss(44 + adjustment, 8, 25, 90));
-		const kickTo = 100 - this.scrimmage - distance;
-		const touchback = kickTo < 0;
 		let dt = random.randInt(5, 9);
-		this.playByPlay.logEvent("punt", {
-			clock: this.clock,
-			t: this.o,
-			names: [punter.name],
-			touchback,
-			yds: distance,
-		});
-		const penInfo2 = this.checkPenalties("punt", {
+
+		this.checkPenalties("punt", {
 			ballCarrier: punter,
 			playYds: distance,
 		});
 
-		if (penInfo2) {
-			return dt;
-		}
+		const { touchback } = this.currentPlay.addEvent({
+			type: "p",
+			p: punter,
+			yds: distance,
+		});
 
-		this.recordStat(this.o, punter, "pnt");
-		this.recordStat(this.o, punter, "pntYds", distance);
-		this.recordStat(this.o, punter, "pntLng", distance);
-		this.possessionChange();
+		this.playByPlay.logEvent("punt", {
+			clock: this.clock,
+			t: this.o,
+			names: [punter.name],
+			touchback: touchback !== undefined,
+			yds: distance,
+		});
 
-		if (touchback) {
-			this.recordStat(this.d, punter, "pntTB");
-			this.scrimmage = 20;
-			this.down = 1;
-			this.toGo = 10;
+		if (touchback !== undefined) {
+			this.currentPlay.addEvent({
+				type: "touchbackPunt",
+				p: punter,
+			});
 		} else {
-			if (kickTo < 20) {
-				this.recordStat(this.d, punter, "pntIn20");
-			}
-
-			const maxReturnLength = 100 - kickTo;
+			const maxReturnLength = 100 - this.currentPlay.state.current.scrimmage;
 			let ydsRaw = Math.round(random.truncGauss(10, 10, -10, 109));
 
 			if (Math.random() < 0.03) {
 				ydsRaw += random.randInt(0, 109);
 			}
 
-			let returnLength = helpers.bound(ydsRaw, 0, maxReturnLength);
-			this.scrimmage = kickTo;
+			const returnLength = helpers.bound(ydsRaw, 0, maxReturnLength);
 			dt += Math.abs(returnLength) / 8;
-			let td = false;
-			const returnLengthBeforePenalty = returnLength;
-			const penInfo3 = this.checkPenalties("kickoffReturn", {
+			this.checkPenalties("puntReturn", {
 				ballCarrier: puntReturner,
 				playYds: returnLength,
 			});
 
-			if (penInfo3 && penInfo3.type !== "offsetting") {
-				if (penInfo3.side === "offense" && penInfo3.spotYds !== undefined) {
-					returnLength = penInfo3.spotYds;
-				}
-			} else {
-				const info = this.advanceYds(returnLength);
-				td = info.td;
-			}
+			const { safety, td } = this.currentPlay.addEvent({
+				type: "pr",
+				p: puntReturner,
+				yds: returnLength,
+			});
 
-			this.recordStat(this.o, puntReturner, "pr");
-			this.recordStat(this.o, puntReturner, "prYds", returnLength);
-			this.recordStat(this.o, puntReturner, "prLng", returnLength);
 			this.playByPlay.logEvent("puntReturn", {
 				clock: this.clock,
 				t: this.o,
 				names: [puntReturner.name],
-				td,
-				yds: returnLengthBeforePenalty,
+				td: td !== undefined,
+				yds: returnLength,
 			});
 
-			if (penInfo3 && penInfo3.type !== "offsetting") {
-				// FIX
-				// penInfo3.doLog();
-			}
-
-			if (td) {
-				this.recordStat(this.o, puntReturner, "prTD");
-				this.isClockRunning = false;
-			} else {
-				this.down = 1;
-				this.toGo = 10;
+			if (td !== undefined) {
+				this.currentPlay.addEvent({
+					type: "prTD",
+					p: puntReturner,
+				});
 			}
 		}
 
 		this.recordStat(this.o, undefined, "drives");
 		this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
-		this.isClockRunning = false;
+
 		return dt;
 	}
 
@@ -1687,7 +1656,12 @@ class GameSim {
 			ydsRaw += random.randInt(0, 109);
 		}
 
-		let yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.currentPlay.boundedYds(ydsRaw);
+
+		const penInfo2 = this.checkPenalties("pass", {
+			ballCarrier: target,
+			playYds: yds,
+		});
 
 		this.currentPlay.addEvent({
 			type: "pss",
@@ -1701,25 +1675,6 @@ class GameSim {
 			dt += this.doInterception(qb, yds);
 		} else {
 			dt += Math.abs(yds) / 20;
-			const penInfo2 = this.checkPenalties("pass", {
-				ballCarrier: target,
-				playYds: yds,
-			});
-
-			if (penInfo2) {
-				const spotYds = penInfo2.spotYds;
-				if (spotYds !== undefined) {
-					if (penInfo2.side === "offense") {
-						yds = spotYds;
-					}
-				} else if (
-					penInfo2.type === "offsetting" ||
-					penInfo2.side === "offense" ||
-					penInfo2.name === "Pass interference"
-				) {
-					return dt;
-				}
-			}
 
 			const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
 			const complete = Math.random() < this.probComplete(qb, target, defender);
@@ -1764,7 +1719,6 @@ class GameSim {
 						type: "pssTD",
 						qb,
 						target,
-						t: o,
 					});
 				}
 
@@ -1779,9 +1733,6 @@ class GameSim {
 					defender: Math.random() < 0.28 ? defender : undefined,
 					yds,
 				});
-				if (!penInfo2) {
-					this.advanceYds(0);
-				}
 
 				this.playByPlay.logEvent("passIncomplete", {
 					clock: this.clock,
@@ -1790,11 +1741,6 @@ class GameSim {
 					twoPointConversionTeam,
 					yds,
 				});
-			}
-
-			if (penInfo2) {
-				// FIX
-				// penInfo2.doLog();
 			}
 		}
 
@@ -1850,32 +1796,13 @@ class GameSim {
 			ydsRaw += random.randInt(0, 109);
 		}
 
-		let yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.currentPlay.boundedYds(ydsRaw);
 		const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
-		/*const penInfo2 = this.checkPenalties("run", {
+
+		const penInfo2 = this.checkPenalties("run", {
 			ballCarrier: p,
 			playYds: yds,
 		});
-
-		if (penInfo2) {
-			const spotYds = penInfo2.spotYds;
-			if (spotYds !== undefined) {
-				if (penInfo2.side === "offense") {
-					yds = spotYds;
-				}
-			} else if (
-				penInfo2.type === "offsetting" ||
-				penInfo2.side === "offense"
-			) {
-				// If it's an offensive penalty or a non-spot foul, it's as if the run never happened
-				return dt;
-			}
-		} else {
-			const info = this.advanceYds(yds);
-			safetyOrTouchback = info.safetyOrTouchback;
-			td = info.td;
-			turnoverOnDowns = info.turnoverOnDowns;
-		}*/
 
 		const { td, safety, turnoverOnDowns } = this.currentPlay.addEvent({
 			type: "rus",
@@ -1884,19 +1811,23 @@ class GameSim {
 		});
 
 		// Fumble after run... only if nothing else is going on, too complicated otherwise
-		/*if (!penInfo2 && td !== undefined && safety !== undefined && !turnoverOnDowns) {
+		if (
+			!penInfo2 &&
+			td !== undefined &&
+			safety !== undefined &&
+			!turnoverOnDowns
+		) {
 			if (Math.random() < this.probFumble(p)) {
 				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
 
-				return dt + this.doFumble(p);
+				return dt + this.doFumble(p, 0);
 			}
-		}*/
+		}
 
 		if (td !== undefined) {
 			this.currentPlay.addEvent({
 				type: "rusTD",
 				p,
-				t: o,
 			});
 		}
 
@@ -1913,11 +1844,6 @@ class GameSim {
 		if (safety !== undefined) {
 			this.doSafety();
 		}
-
-		// FIX
-		/*if (penInfo2) {
-			penInfo2.doLog();
-		}*/
 
 		return dt;
 	}
@@ -2110,23 +2036,6 @@ class GameSim {
 		});
 
 		return true;
-		return {
-			type: "penalty",
-			name: penInfo.name,
-			side,
-			spotYds: penInfo.spotYds,
-			yds: penInfo.totYds,
-			doLog: () => {
-				this.playByPlay.logEvent("penalty", {
-					clock: this.clock,
-					t: penInfo.t,
-					names: p ? [p.name] : [],
-					automaticFirstDown: penInfo.automaticFirstDown,
-					penaltyName: penInfo.name,
-					yds: recordedPenYds,
-				});
-			},
-		};
 	}
 
 	updatePlayingTime(possessionTime: number) {

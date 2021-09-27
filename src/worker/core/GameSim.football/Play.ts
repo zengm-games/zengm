@@ -582,9 +582,9 @@ class Play {
 			state.newFirstDown();
 		}
 
-		let td: TeamNum | undefined;
-		let safety: TeamNum | undefined;
-		let touchback: TeamNum | undefined;
+		let td = false;
+		let safety = false;
+		let touchback = false;
 
 		const TOUCHDOWN_IS_POSSIBLE: PlayType[] = [
 			"kr",
@@ -597,28 +597,28 @@ class Play {
 		];
 
 		if (state.scrimmage >= 100 && TOUCHDOWN_IS_POSSIBLE.includes(event.type)) {
-			td = state.o;
+			td = true;
 		}
 
 		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["p", "int"];
 
 		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE.includes(event.type)) {
-			touchback = state.o;
+			touchback = true;
 		}
 
 		const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pss", "sk"];
 
 		if (state.scrimmage <= 0 && SAFETY_IS_POSSIBLE.includes(event.type)) {
-			safety = state.d;
+			safety = true;
 		}
 
 		if (event.type === "fmbRec") {
 			if (state.scrimmage <= 0) {
 				if (event.lost) {
 					state.scrimmage = 20;
-					touchback = state.o;
+					touchback = true;
 				} else {
-					safety = state.d;
+					safety = true;
 				}
 
 				state.isClockRunning = false;
@@ -679,8 +679,6 @@ class Play {
 						state.overtimeState = "over";
 					}
 				}
-
-				// state.twoPointConversionTeam = undefined;
 			}
 		}
 

@@ -1072,10 +1072,10 @@ class GameSim {
 				t: this.currentPlay.state.current.o,
 				names: [p.name],
 				success,
-				td: td !== undefined,
+				td,
 			});
 
-			if (td !== undefined) {
+			if (td) {
 				this.currentPlay.addEvent({
 					type: "krTD",
 					p,
@@ -1130,11 +1130,11 @@ class GameSim {
 					clock: this.clock,
 					t: this.currentPlay.state.current.o,
 					names: [kickReturner.name],
-					td: td !== undefined,
+					td,
 					yds: returnLengthBeforePenalty,
 				});
 
-				if (td !== undefined) {
+				if (td) {
 					this.currentPlay.addEvent({
 						type: "krTD",
 						p: kickReturner,
@@ -1178,11 +1178,11 @@ class GameSim {
 			clock: this.clock,
 			t: this.o,
 			names: [punter.name],
-			touchback: touchback !== undefined,
+			touchback,
 			yds: distance,
 		});
 
-		if (touchback !== undefined) {
+		if (touchback) {
 			this.currentPlay.addEvent({
 				type: "touchbackPunt",
 				p: punter,
@@ -1212,11 +1212,11 @@ class GameSim {
 				clock: this.clock,
 				t: this.o,
 				names: [puntReturner.name],
-				td: td !== undefined,
+				td,
 				yds: returnLength,
 			});
 
-			if (td !== undefined) {
+			if (td) {
 				this.currentPlay.addEvent({
 					type: "prTD",
 					p: puntReturner,
@@ -1431,18 +1431,18 @@ class GameSim {
 			lost,
 			t: tRecovered,
 			names: [pRecovered.name],
-			safety: safety !== undefined,
-			td: td !== undefined,
-			touchback: touchback !== undefined,
+			safety,
+			td,
+			touchback,
 			twoPointConversionTeam:
 				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
 
-		if (safety !== undefined) {
+		if (safety) {
 			this.doSafety();
 		} else if (touchback === undefined) {
-			if (td !== undefined) {
+			if (td) {
 				this.currentPlay.addEvent({
 					type: "fmbTD",
 					p: pRecovered,
@@ -1479,16 +1479,16 @@ class GameSim {
 			clock: this.clock,
 			t: this.currentPlay.state.current.o,
 			names: [p.name],
-			td: td !== undefined,
+			td,
 			twoPointConversionTeam:
 				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
 
-		if (touchback !== undefined) {
+		if (touchback) {
 			this.scrimmage = 20;
 		} else {
-			if (td !== undefined) {
+			if (td) {
 				this.currentPlay.addEvent({
 					type: "intTD",
 					p,
@@ -1536,11 +1536,11 @@ class GameSim {
 			clock: this.clock,
 			t: this.currentPlay.state.initial.o,
 			names: [qb.name, p.name],
-			safety: safety !== undefined,
+			safety,
 			yds,
 		});
 
-		if (safety !== undefined) {
+		if (safety) {
 			this.doSafety(p);
 		}
 
@@ -1687,19 +1687,14 @@ class GameSim {
 					clock: this.clock,
 					t: o,
 					names: [qb.name, target.name],
-					safety: safety !== undefined,
-					td: td !== undefined,
+					safety,
+					td,
 					twoPointConversionTeam,
 					yds,
 				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
-				if (
-					!penInfo2 &&
-					td !== undefined &&
-					safety !== undefined &&
-					!turnoverOnDowns
-				) {
+				if (!penInfo2 && td && safety && !turnoverOnDowns) {
 					if (Math.random() < this.probFumble(target)) {
 						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
 
@@ -1709,7 +1704,7 @@ class GameSim {
 					}
 				}
 
-				if (td !== undefined) {
+				if (td) {
 					this.currentPlay.addEvent({
 						type: "pssTD",
 						qb,
@@ -1719,7 +1714,7 @@ class GameSim {
 
 				this.playByPlay.logEvent("passComplete", completeEvent);
 
-				if (safety !== undefined) {
+				if (safety) {
 					this.doSafety();
 				}
 			} else {
@@ -1806,12 +1801,7 @@ class GameSim {
 		});
 
 		// Fumble after run... only if nothing else is going on, too complicated otherwise
-		if (
-			!penInfo2 &&
-			td !== undefined &&
-			safety !== undefined &&
-			!turnoverOnDowns
-		) {
+		if (!penInfo2 && td && safety && !turnoverOnDowns) {
 			if (Math.random() < this.probFumble(p)) {
 				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
 
@@ -1819,7 +1809,7 @@ class GameSim {
 			}
 		}
 
-		if (td !== undefined) {
+		if (td) {
 			this.currentPlay.addEvent({
 				type: "rusTD",
 				p,
@@ -1830,13 +1820,13 @@ class GameSim {
 			clock: this.clock,
 			t: o,
 			names: [p.name],
-			safety: safety !== undefined,
+			safety,
 			twoPointConversionTeam,
-			td: td !== undefined,
+			td,
 			yds,
 		});
 
-		if (safety !== undefined) {
+		if (safety) {
 			this.doSafety();
 		}
 

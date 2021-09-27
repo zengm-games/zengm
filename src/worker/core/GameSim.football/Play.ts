@@ -251,10 +251,7 @@ class Play {
 		const statChanges: StatChange[] = [];
 
 		// No tracking stats during 2 point conversion attempt
-		if (
-			this.state.initial.awaitingAfterTouchdown === undefined ||
-			event.type === "xp"
-		) {
+		if (!state.awaitingAfterTouchdown || event.type === "xp") {
 			if (event.type === "penalty") {
 				const actualPenYds =
 					event.name === "Pass interference" ? event.spotYds : event.penYds;
@@ -377,10 +374,7 @@ class Play {
 		}
 
 		// Scoring
-		const pts = getPts(
-			event,
-			this.state.initial.twoPointConversionTeam !== undefined,
-		);
+		const pts = getPts(event, state.twoPointConversionTeam !== undefined);
 		if (pts !== undefined) {
 			statChanges.push([state.o, undefined, "pts", pts]);
 		}

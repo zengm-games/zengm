@@ -1037,54 +1037,49 @@ class GameSim {
 		const kicker = this.getTopPlayerOnField(this.o, "K");
 		let dt = 0;
 
-		// FIX
-		if (onside && false) {
+		if (onside) {
+			dt = random.randInt(2, 5);
+			const kickTo = random.randInt(40, 55);
+			this.currentPlay.addEvent({
+				type: "onsideKick",
+				kickTo,
+			});
 			this.playByPlay.logEvent("onsideKick", {
 				clock: this.clock,
 				t: this.o,
 				names: [kicker.name],
 			});
-			dt = random.randInt(2, 5);
-			const kickTo = random.randInt(40, 55);
-			this.scrimmage = kickTo;
 			const success = Math.random() < 0.1;
 
-			if (success) {
-				const recoverer = this.pickPlayer(this.o);
-				this.playByPlay.logEvent("onsideKickRecovery", {
-					clock: this.clock,
-					t: this.o,
-					names: [recoverer.name],
-					success: true,
-					td: false,
-				});
-				this.down = 1;
-				this.toGo = 10;
-			} else {
-				this.possessionChange();
-				const kickReturner = this.pickPlayer(this.o);
-				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
-				const returnLength = this.currentPlay.boundedYds(rawLength);
-				const { td } = this.advanceYds(returnLength);
-				dt += Math.abs(returnLength) / 8;
-				this.recordStat(this.o, kickReturner, "kr");
-				this.recordStat(this.o, kickReturner, "krYds", returnLength);
-				this.recordStat(this.o, kickReturner, "krLng", returnLength);
-				this.playByPlay.logEvent("onsideKickRecovery", {
-					clock: this.clock,
-					t: this.o,
-					names: [kickReturner.name],
-					success: false,
-					td,
-				});
+			const p = success ? this.pickPlayer(this.o) : this.pickPlayer(this.d);
 
-				if (td) {
-					this.recordStat(this.o, kickReturner, "krTD");
-					this.isClockRunning = false;
-				} else {
-					this.down = 1;
-					this.toGo = 10;
-				}
+			let yds = 0;
+			if (!success) {
+				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
+				yds = this.currentPlay.boundedYds(rawLength);
+				dt += Math.abs(yds) / 8;
+			}
+
+			const { td } = this.currentPlay.addEvent({
+				type: "onsideKickRecovery",
+				success,
+				p,
+				yds,
+			});
+
+			this.playByPlay.logEvent("onsideKickRecovery", {
+				clock: this.clock,
+				t: this.currentPlay.state.current.o,
+				names: [p.name],
+				success,
+				td: td !== undefined,
+			});
+
+			if (td !== undefined) {
+				this.currentPlay.addEvent({
+					type: "krTD",
+					p,
+				});
 			}
 		} else {
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");

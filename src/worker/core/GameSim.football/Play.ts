@@ -9,10 +9,20 @@ type PlayEvent =
 			kickTo: number;
 	  }
 	| {
+			type: "onsideKick";
+			kickTo: number;
+	  }
+	| {
 			type: "touchbackKick";
 	  }
 	| {
 			type: "kr";
+			p: PlayerGameSim;
+			yds: number;
+	  }
+	| {
+			type: "onsideKickRecovery";
+			success: boolean;
 			p: PlayerGameSim;
 			yds: number;
 	  }
@@ -285,6 +295,12 @@ class Play {
 				statChanges.push([state.d, event.p, "kr"]);
 				statChanges.push([state.d, event.p, "krYds", event.yds]);
 				statChanges.push([state.d, event.p, "krLng", event.yds]);
+			} else if (event.type === "onsideKickRecovery") {
+				if (!event.success) {
+					statChanges.push([state.d, event.p, "kr"]);
+					statChanges.push([state.d, event.p, "krYds", event.yds]);
+					statChanges.push([state.d, event.p, "krLng", event.yds]);
+				}
 			} else if (event.type === "krTD") {
 				statChanges.push([state.o, event.p, "krTD"]);
 			} else if (event.type === "p") {
@@ -451,7 +467,7 @@ class Play {
 			if (event.automaticFirstDown) {
 				state.newFirstDown();
 			}
-		} else if (event.type === "k") {
+		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 100 - event.kickTo;
@@ -471,6 +487,14 @@ class Play {
 			state.awaitingAfterSafety = false;
 
 			afterKickoff();
+		} else if (event.type === "onsideKickRecovery") {
+			if (!event.success) {
+				state.possessionChange();
+				afterKickoff();
+			}
+			state.scrimmage += event.yds;
+			state.awaitingKickoff = undefined;
+			state.awaitingAfterSafety = false;
 		} else if (event.type === "p") {
 			state.down = 1;
 			state.toGo = 10;
@@ -554,6 +578,7 @@ class Play {
 
 		const TOUCHDOWN_IS_POSSIBLE: PlayType[] = [
 			"kr",
+			"onsideKickRecovery",
 			"pr",
 			"rus",
 			"pssCmp",

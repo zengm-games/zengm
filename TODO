@@ -55,7 +55,6 @@ rewrite football game sim to get rid of bugs
 - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
   - could just base flag on awaitingAfterTouchdown value in constructor
 - numPossessionChanges needed?
-- uncomment test
 - benchmark
 - what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks

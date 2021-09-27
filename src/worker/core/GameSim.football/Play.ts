@@ -140,6 +140,10 @@ type PlayEvent =
 	| {
 			type: "twoPointConversionDone";
 			t: TeamNum;
+	  }
+	| {
+			type: "defSft";
+			p: PlayerGameSim;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -421,6 +425,8 @@ class Play {
 				]);
 			} else if (event.type === "fmbTD") {
 				statChanges.push([state.o, event.p, "defFmbTD"]);
+			} else if (event.type === "defSft") {
+				statChanges.push([state.o, event.p, "defSft"]);
 			}
 		}
 
@@ -560,6 +566,10 @@ class Play {
 			state.twoPointConversionTeam = undefined;
 			state.awaitingKickoff = event.t;
 			state.awaitingAfterTouchdown = false;
+			state.isClockRunning = false;
+		} else if (event.type === "defSft") {
+			state.awaitingKickoff = state.o;
+			state.awaitingAfterSafety = true;
 			state.isClockRunning = false;
 		}
 

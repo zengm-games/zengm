@@ -1509,10 +1509,10 @@ class GameSim {
 			);
 		}
 
-		this.recordStat(this.d, p, "defSft");
-		this.awaitingKickoff = this.o;
-		this.awaitingAfterSafety = true;
-		this.isClockRunning = false;
+		this.currentPlay.addEvent({
+			type: "defSft",
+			p,
+		});
 	}
 
 	doSack(qb: PlayerGameSim) {

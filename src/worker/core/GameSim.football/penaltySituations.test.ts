@@ -127,5 +127,63 @@ describe("worker/core/GameSim.football", () => {
 				"awaitingKickoff is persisted",
 			);
 		});
+
+		test("1st and 10 after penalty on kick return", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.awaitingKickoff = 0;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("kickoff");
+			const pd = game.pickPlayer(game.d);
+
+			game.currentPlay.addEvent({
+				type: "k",
+				kickTo: 40,
+			});
+			game.currentPlay.addEvent({
+				type: "possessionChange",
+				yds: 0,
+				kickoff: true,
+			});
+
+			const play = game.currentPlay;
+
+			assert.strictEqual(play.state.current.scrimmage, 40, "before return");
+
+			play.addEvent({
+				type: "penalty",
+				p: pd,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: 8,
+				t: game.d,
+			});
+			game.currentPlay.addEvent({
+				type: "kr",
+				p: pd,
+				yds: 10,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				50,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				38,
+				"after penalty application",
+			);
+
+			assert.strictEqual(game.down, 1, "down");
+
+			assert.strictEqual(game.toGo, 10, "toGo");
+		});
 	});
 });

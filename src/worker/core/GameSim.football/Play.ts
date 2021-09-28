@@ -181,9 +181,18 @@ export class State {
 	overtimeState: PlayState["overtimeState"];
 	twoPointConversionTeam: PlayState["twoPointConversionTeam"];
 	pts: [number, number];
-	numPossessionChanges: 0;
+	numPossessionChanges: number;
 
-	constructor(gameSim: PlayState, pts: [number, number]) {
+	constructor(
+		gameSim: PlayState,
+		{
+			pts,
+			numPossessionChanges,
+		}: {
+			pts: [number, number];
+			numPossessionChanges: number;
+		},
+	) {
 		this.down = gameSim.down;
 		this.toGo = gameSim.toGo;
 		this.scrimmage = gameSim.scrimmage;
@@ -196,11 +205,14 @@ export class State {
 		this.overtimeState = gameSim.overtimeState;
 		this.twoPointConversionTeam = gameSim.twoPointConversionTeam;
 		this.pts = pts;
-		this.numPossessionChanges = 0;
+		this.numPossessionChanges = numPossessionChanges;
 	}
 
 	clone() {
-		return new State(this, this.pts);
+		return new State(this, {
+			pts: this.pts,
+			numPossessionChanges: this.numPossessionChanges,
+		});
 	}
 
 	possessionChange() {
@@ -263,10 +275,10 @@ class Play {
 		this.g = gameSim;
 		this.events = [];
 
-		const initialState = new State(gameSim, [
-			gameSim.team[0].stat.pts,
-			gameSim.team[1].stat.pts,
-		]);
+		const initialState = new State(gameSim, {
+			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
+			numPossessionChanges: 0,
+		});
 		this.state = {
 			initial: initialState,
 			current: initialState.clone(),
@@ -469,7 +481,7 @@ class Play {
 
 			state.toGo = firstDownLine - state.scrimmage;
 
-			if (event.automaticFirstDown) {
+			if (event.automaticFirstDown || state.numPossessionChanges > 0) {
 				state.newFirstDown();
 			}
 		} else if (event.type === "possessionChange") {
@@ -483,12 +495,8 @@ class Play {
 				afterKickoff();
 			}
 		} else if (event.type === "k" || event.type === "onsideKick") {
-			state.down = 1;
-			state.toGo = 10;
 			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
-			state.down = 1;
-			state.toGo = 10;
 			state.scrimmage = 25;
 		} else if (event.type === "kr") {
 			state.scrimmage += event.yds;
@@ -497,12 +505,8 @@ class Play {
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;
 		} else if (event.type === "p") {
-			state.down = 1;
-			state.toGo = 10;
 			state.scrimmage += event.yds;
 		} else if (event.type === "touchbackPunt") {
-			state.down = 1;
-			state.toGo = 10;
 			state.scrimmage = 20;
 		} else if (event.type === "pr") {
 			state.scrimmage += event.yds;

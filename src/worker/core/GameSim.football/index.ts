@@ -1172,10 +1172,7 @@ class GameSim {
 		const distance = Math.round(random.truncGauss(44 + adjustment, 8, 25, 90));
 		let dt = random.randInt(5, 9);
 
-		this.checkPenalties("punt", {
-			ballCarrier: punter,
-			playYds: distance,
-		});
+		this.checkPenalties("punt");
 
 		const { touchback } = this.currentPlay.addEvent({
 			type: "p",

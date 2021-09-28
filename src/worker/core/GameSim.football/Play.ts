@@ -790,9 +790,11 @@ class Play {
 		}
 
 		if (options !== undefined && choosingTeam !== undefined) {
-			const results = options.map((decisions, i) => {
+			const results = options.map(decisions => {
 				const indexAccept = decisions.indexOf("accept");
 				const penalty = penalties[indexAccept];
+
+				console.log("decisions", decisions);
 
 				let indexEvent: number | undefined;
 				let state;
@@ -800,9 +802,16 @@ class Play {
 					state = this.state.current;
 				} else {
 					const penaltyRollback = this.penaltyRollbacks[indexAccept];
+					console.log(
+						"penaltyRollback",
+						JSON.parse(JSON.stringify(penaltyRollback)),
+					);
+					console.log("penalty.event", penalty.event);
 					state = penaltyRollback.state;
 					indexEvent = penaltyRollback.indexEvent;
+					console.log("state.scrimmage before applying", state.scrimmage);
 					this.updateState(state, penalty.event);
+					console.log("state.scrimmage after applying", state.scrimmage);
 				}
 
 				return {

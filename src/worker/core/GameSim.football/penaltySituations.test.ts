@@ -81,9 +81,10 @@ describe("worker/core/GameSim.football", () => {
 
 			play.adjudicatePenalties();
 
+			// This is 10, not 9, because it's doing half the distance to the goal
 			assert.strictEqual(
 				play.state.current.scrimmage,
-				9,
+				10,
 				"after penalty application",
 			);
 		});

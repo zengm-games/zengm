@@ -1648,9 +1648,14 @@ class GameSim {
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
+		const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
+		const complete = Math.random() < this.probComplete(qb, target, defender);
+		const interception = Math.random() < this.probInt(qb);
+
 		const penInfo2 = this.checkPenalties("pass", {
 			ballCarrier: target,
 			playYds: yds,
+			incompletePass: !complete && !interception,
 		});
 
 		this.currentPlay.addEvent({
@@ -1659,15 +1664,10 @@ class GameSim {
 			target,
 		});
 
-		const interception = Math.random() < this.probInt(qb);
-
 		if (interception) {
 			dt += this.doInterception(qb, yds);
 		} else {
 			dt += Math.abs(yds) / 20;
-
-			const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
-			const complete = Math.random() < this.probComplete(qb, target, defender);
 
 			if (complete) {
 				const { td, safety, turnoverOnDowns } = this.currentPlay.addEvent({
@@ -1860,12 +1860,15 @@ class GameSim {
 		{
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			ballCarrier,
+			incompletePass = false,
 			playYds = 0,
 		}: {
 			ballCarrier?: PlayerGameSim;
+			incompletePass?: boolean;
 			playYds?: number;
 		} = {
 			ballCarrier: undefined,
+			incompletePass: false,
 			playYds: 0,
 		},
 	): boolean {
@@ -1916,10 +1919,16 @@ class GameSim {
 					? this.currentPlay.state.current.o
 					: this.currentPlay.state.current.d;
 
+			const isReturn =
+				playType === "kickoffReturn" || playType === "puntReturn";
+
+			const applyTackOn =
+				(pen.tackOn && playYds > 0 && !incompletePass) ||
+				(isReturn && pen.side === "defense");
+
 			if (
-				pen.spotFoul ||
-				((playType === "kickoffReturn" || playType === "puntReturn") &&
-					pen.side === "offense")
+				(pen.spotFoul || (isReturn && pen.side === "offense")) &&
+				!applyTackOn
 			) {
 				if (pen.side === "offense" && playYds > 0) {
 					// Offensive spot foul - only when past the line of scrimmage
@@ -1929,11 +1938,7 @@ class GameSim {
 					if (spotYds + this.scrimmage < 1) {
 						spotYds = 1 - this.scrimmage;
 					}
-				} else if (
-					pen.side === "defense" &&
-					playType !== "kickoffReturn" &&
-					playType !== "puntReturn"
-				) {
+				} else if (pen.side === "defense" && !isReturn) {
 					// Defensive spot foul - could be in secondary too
 					spotYds = random.randInt(0, playYds);
 				}
@@ -1943,10 +1948,14 @@ class GameSim {
 					if (playType === "kickoffReturn" && spotYds + this.scrimmage <= 10) {
 						spotYds += random.randInt(10, playYds);
 					}
+				}
+			} else if (applyTackOn) {
+				spotYds = playYds;
+			}
 
-					if (spotYds + this.scrimmage > 99) {
-						spotYds = 99 - this.scrimmage;
-					}
+			if (spotYds !== undefined) {
+				if (spotYds + this.scrimmage > 99) {
+					spotYds = 99 - this.scrimmage;
 				}
 			}
 

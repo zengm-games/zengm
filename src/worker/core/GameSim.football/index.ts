@@ -1911,6 +1911,15 @@ class GameSim {
 			called = called.slice(0, 2);
 		}
 
+		// kickoffReturn and puntReturn penalties are checked before possession actually changes in currentPlay
+		const swapSides = playType === "kickoffReturn" || playType === "puntReturn";
+		if (swapSides) {
+			called = called.map(penalty => ({
+				...penalty,
+				side: penalty.side === "offense" ? "defense" : "offense",
+			}));
+		}
+
 		const penInfos = called.map(pen => {
 			let spotYds: number | undefined;
 

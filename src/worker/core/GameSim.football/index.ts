@@ -1062,6 +1062,7 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "possessionChange",
 					yds: 0,
+					kickoff: true,
 				});
 			}
 
@@ -1107,6 +1108,7 @@ class GameSim {
 			this.currentPlay.addEvent({
 				type: "possessionChange",
 				yds: 0,
+				kickoff: true,
 			});
 			if (touchback) {
 				this.currentPlay.addEvent({

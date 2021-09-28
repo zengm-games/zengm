@@ -93,25 +93,25 @@ const getBestPenaltyResult = <
 
 		// Field position
 		let fieldPosition = 0;
-		if (state.o === t && initialState.o === t) {
+		if (state.o === t) {
 			fieldPosition = state.scrimmage;
-		} else if (state.o === t2 && initialState.o === t2) {
+		} else if (state.o === t2) {
 			fieldPosition = -state.scrimmage;
 		}
 
 		// Down
 		let down = 0;
-		if (state.o === t && initialState.o === t) {
+		if (state.o === t) {
 			down = -state.down;
-		} else if (state.o === t2 && initialState.o === t2) {
+		} else if (state.o === t2) {
 			down = state.down;
 		}
 
 		// To Go
 		let toGo = 0;
-		if (state.o === t && initialState.o === t) {
+		if (state.o === t) {
 			toGo = -state.toGo;
-		} else if (state.o === t2 && initialState.o === t2) {
+		} else if (state.o === t2) {
 			toGo = state.toGo;
 		}
 

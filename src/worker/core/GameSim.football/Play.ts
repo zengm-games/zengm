@@ -146,6 +146,7 @@ type PlayEvent =
 	| {
 			type: "possessionChange";
 			yds: number;
+			kickoff?: boolean;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -474,6 +475,13 @@ class Play {
 		} else if (event.type === "possessionChange") {
 			state.scrimmage += event.yds;
 			state.possessionChange();
+
+			if (event.kickoff) {
+				state.awaitingKickoff = undefined;
+				state.awaitingAfterSafety = false;
+
+				afterKickoff();
+			}
 		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.down = 1;
 			state.toGo = 10;
@@ -482,20 +490,9 @@ class Play {
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 25;
-			state.awaitingKickoff = undefined;
-			state.awaitingAfterSafety = false;
-
-			afterKickoff();
 		} else if (event.type === "kr") {
 			state.scrimmage += event.yds;
-			state.awaitingKickoff = undefined;
-			state.awaitingAfterSafety = false;
-
-			afterKickoff();
 		} else if (event.type === "onsideKickRecovery") {
-			if (!event.success) {
-				afterKickoff();
-			}
 			state.scrimmage += event.yds;
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;

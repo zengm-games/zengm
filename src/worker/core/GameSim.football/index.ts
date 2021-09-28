@@ -1469,7 +1469,7 @@ class GameSim {
 	}
 
 	doInterception(qb: PlayerGameSim, ydsPass: number) {
-		const p = this.pickPlayer(this.o, "passCoverage");
+		const p = this.pickPlayer(this.d, "passCoverage");
 		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
 
 		if (Math.random() < 0.075) {

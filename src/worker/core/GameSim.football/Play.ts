@@ -310,9 +310,9 @@ class Play {
 				statChanges.push([state.o, event.p, "krLng", event.yds]);
 			} else if (event.type === "onsideKickRecovery") {
 				if (!event.success) {
-					statChanges.push([state.d, event.p, "kr"]);
-					statChanges.push([state.d, event.p, "krYds", event.yds]);
-					statChanges.push([state.d, event.p, "krLng", event.yds]);
+					statChanges.push([state.o, event.p, "kr"]);
+					statChanges.push([state.o, event.p, "krYds", event.yds]);
+					statChanges.push([state.o, event.p, "krLng", event.yds]);
 				}
 			} else if (event.type === "krTD") {
 				statChanges.push([state.o, event.p, "krTD"]);

@@ -133,20 +133,28 @@ const LiveGame = (props: View<"liveGame">) => {
 
 			if (text !== undefined) {
 				const p = document.createElement("p");
-				const node = document.createTextNode(text);
-				if (
-					text === "End of game" ||
-					text.startsWith("Start of") ||
-					(isSport("basketball") &&
-						text.startsWith("Elam Ending activated! First team to")) ||
-					(isSport("hockey") &&
-						(text.includes("Goal!") || text.includes("penalty")))
-				) {
-					const b = document.createElement("b");
-					b.appendChild(node);
-					p.appendChild(b);
+				if (isSport("football") && text.startsWith("Penalty")) {
+					p.innerHTML = text
+						.replace("accepted", "<b>accepted</b>")
+						.replace("declined", "<b>declined</b>")
+						.replace("ABBREV0", boxScore.current.teams[1].abbrev)
+						.replace("ABBREV1", boxScore.current.teams[0].abbrev);
 				} else {
-					p.appendChild(node);
+					const node = document.createTextNode(text);
+					if (
+						text === "End of game" ||
+						text.startsWith("Start of") ||
+						(isSport("basketball") &&
+							text.startsWith("Elam Ending activated! First team to")) ||
+						(isSport("hockey") &&
+							(text.includes("Goal!") || text.includes("penalty")))
+					) {
+						const b = document.createElement("b");
+						b.appendChild(node);
+						p.appendChild(b);
+					} else {
+						p.appendChild(node);
+					}
 				}
 
 				if (playByPlayDiv.current) {

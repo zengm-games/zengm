@@ -1202,6 +1202,7 @@ class GameSim {
 				playYds: returnLength,
 			});
 
+			// FIX
 			const { safety, td } = this.currentPlay.addEvent({
 				type: "pr",
 				p: puntReturner,
@@ -1865,15 +1866,12 @@ class GameSim {
 		{
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			ballCarrier,
-			made,
 			playYds = 0,
 		}: {
 			ballCarrier?: PlayerGameSim;
-			made?: boolean;
 			playYds?: number;
 		} = {
 			ballCarrier: undefined,
-			made: undefined,
 			playYds: 0,
 		},
 	): boolean {
@@ -1899,6 +1897,15 @@ class GameSim {
 		if (called.length === 0) {
 			return false;
 		}
+
+		// Always do multiple penalties for testing
+		/*called = penalties.filter(pen => {
+			if (!pen.playTypes.includes(playType)) {
+				return false;
+			}
+
+			return true;
+		});*/
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			random.shuffle(called);

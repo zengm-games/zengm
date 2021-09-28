@@ -1,6 +1,6 @@
 import flatten from "lodash-es/flatten";
 import type GameSim from ".";
-import type { Position } from "../../../common/types.football";
+import { random } from "../../util";
 import type { PlayerGameSim, TeamNum } from "./types";
 
 type PlayEvent =
@@ -731,41 +731,95 @@ class Play {
 		}
 
 		// Each entry in options is a set of decisions on all the penalties. So the inner arrays have the same length as penalties.length
-		let options: ("decline" | "accept")[][];
-		let choosingTeam: TeamNum;
+		let options: ("decline" | "accept")[][] | undefined;
+		let choosingTeam: TeamNum | undefined;
 		if (penalties.length === 1) {
 			options = [["decline"], ["accept"]];
 			choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
+		} else if (penalties.length === 2) {
+			if (penalties[0].event.t === penalties[1].event.t) {
+				// Same team - other team gets to pick which they want to accept, if any
+				console.log("2 penalties - same team");
+				options = [
+					["decline", "decline"],
+					["decline", "accept"],
+					["accept", "decline"],
+				];
+				choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
+			} else {
+				// Different team - maybe offsetting? Many edge cases
+				console.log("2 penalties - different teams");
+			}
+		} else {
+			throw new Error("Not supported");
+		}
 
-			const event = penalties[0];
-			const eventIndex = this.events.indexOf(event);
-			const stateAccept = this.state.penalties[0];
-			this.updateState(stateAccept, event.event);
-			const stateDecline = this.state.current;
+		if (options !== undefined && choosingTeam !== undefined) {
+			const results = options.map((decisions, i) => {
+				const indexAccept = decisions.indexOf("accept");
+				const penalty = penalties[indexAccept];
+				const indexEvent = this.events.indexOf(penalty);
 
-			console.log(stateAccept, stateDecline);
+				let state;
+				if (indexAccept < 0) {
+					state = this.state.current;
+				} else {
+					state = this.state.penalties[indexAccept];
+					this.updateState(state, penalty.event);
+				}
 
-			const accept = true;
+				return {
+					indexAccept,
+					decisions,
+					state,
+					indexEvent,
+					statChanges: penalty?.statChanges ?? [],
+				};
+			});
 
-			if (accept) {
-				this.g.playByPlay.logEvent("penalty", {
+			// REPLACE WITH LOGIC
+			const result = random.choice(results);
+
+			if (result.decisions.length > 1) {
+				this.g.playByPlay.logEvent("penaltyCount", {
 					clock: this.g.clock,
-					t: event.event.t,
-					names: event.event.p ? [event.event.p.name] : [],
-					automaticFirstDown: event.event.automaticFirstDown,
-					penaltyName: event.event.name,
-					yds: event.event.penYds,
+					count: result.decisions.length,
 				});
+			}
 
-				this.state.current = stateAccept;
+			// Announce declind penalties first, then accepted penalties
+			for (const type of ["decline", "accept"] as const) {
+				for (let i = 0; i < penalties.length; i++) {
+					const decision = result.decisions[i];
+					if (decision !== type) {
+						continue;
+					}
+					const penalty = penalties[i];
 
+					this.g.playByPlay.logEvent("penalty", {
+						clock: this.g.clock,
+						decision,
+						t: penalty.event.t,
+						names: penalty.event.p ? [penalty.event.p.name] : [],
+						automaticFirstDown: penalty.event.automaticFirstDown,
+						penaltyName: penalty.event.name,
+						yds: penalty.event.penYds,
+					});
+				}
+			}
+
+			// Actually apply result of accepted penalty - ASSUMES JUST ONE IS ACCEPTED
+			this.state.current = result.state;
+
+			if (result.indexAccept >= 0) {
 				const statChanges = [
-					// apply statChanges from penalties
-					...event.statChanges,
-					// apply negative statChanges from anything after penalties
+					// Apply statChanges from accepted penalty
+					...result.statChanges,
+
+					// Apply negative statChanges from anything after accepted penalty
 					...flatten(
 						this.events
-							.filter((event, i) => i > eventIndex)
+							.filter((event, i) => i > result.indexEvent)
 							.map(event => event.statChanges)
 							.map(statChanges => {
 								return statChanges.map(statChange => {
@@ -784,16 +838,6 @@ class Play {
 					this.g.recordStat(...statChange);
 				}
 			}
-		} else if (penalties.length === 2) {
-			if (penalties[0].event.t === penalties[1].event.t) {
-				// Same team - other team gets to pick which they want to accept, if any
-				console.log("2 penalties - same team");
-			} else {
-				// Different team - maybe offsetting? Many edge cases
-				console.log("2 penalties - different teams");
-			}
-		} else {
-			throw new Error("Not supported");
 		}
 	}
 

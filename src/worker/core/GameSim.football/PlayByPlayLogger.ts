@@ -66,6 +66,8 @@ class PlayByPlayLogger {
 		{
 			automaticFirstDown,
 			clock,
+			count,
+			decision,
 			injuredPID,
 			lost,
 			made,
@@ -84,6 +86,8 @@ class PlayByPlayLogger {
 		}: {
 			automaticFirstDown?: boolean;
 			clock: number;
+			count?: number;
+			decision?: "accept" | "decline";
 			injuredPID?: number;
 			lost?: boolean;
 			made?: boolean;
@@ -389,9 +393,17 @@ class PlayByPlayLogger {
 					text = `${names[0]} rushed for ${result}`;
 					this.updateTwoPointConversionState(td);
 				}
-			} else if (type === "offsettingPenalties") {
-				text = "Offsetting penalties on the play";
+			} else if (type === "penaltyCount") {
+				if (count === undefined) {
+					throw new Error("Missing count");
+				}
+
+				text = `There are ${count} fouls on the play`;
 			} else if (type === "penalty") {
+				if (decision === undefined) {
+					throw new Error("Missing decision");
+				}
+
 				if (automaticFirstDown === undefined) {
 					throw new Error("Missing automaticFirstDown");
 				}
@@ -408,11 +420,13 @@ class PlayByPlayLogger {
 					throw new Error("Missing yds");
 				}
 
-				text = `Penalty: ${penaltyName.toLowerCase()}${
+				const decisionText = decision === "accept" ? "accepted" : "declined";
+
+				text = `Penalty, ABBREV${t} - ${penaltyName.toLowerCase()}${
 					names.length > 0 ? ` on ${names[0]}` : ""
 				}, ${yds} yards${
 					automaticFirstDown ? " and an automatic first down" : ""
-				}`;
+				} - ${decisionText}`;
 			} else if (type === "timeout") {
 				text = `Time out, ${offense ? "offense" : "defense"}`;
 			} else if (type === "twoMinuteWarning") {

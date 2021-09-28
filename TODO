@@ -60,17 +60,22 @@ rewrite football game sim to get rid of bugs
   - if same team has multiple penalties, pick one, easy
   - if two different teams have penalties, offset with these exceptions:
     - 15 yard penalty cannot be offset by a 5 yard penalty. only the 15 yard penalty is enforced
+      - pass interference is like 15 yds https://discord.com/channels/@me/855670648977752084/892254346153172992
     - if X commits penalty and then possession changes and Y has control and Y commits a penalty and if Y retains control for the rest of the possession, assess Y's penalty and Y keeps the ball
+      - in other words... if team obtaining possession had a previous penalty, then they offset
       - exception for kick/punt - recieving team gets the option to replay the kick (penalty assessed before kick) or keep ball and assess penalty at end
     - if the penalties both occur after a change of possession, they offset and the ball is placed at the spot of the possessing team's ball
   - before snap penalties - should play continue?
 - what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks
   - roughing the passer should apply at the end of the play, if it was a positive play only. otherwise, from scrimmage
+- penalty frequency setting
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob
   - email people
+
+extra man stays on ice in overtime https://discord.com/channels/@me/778760871911751700/892224214118039624
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656

@@ -738,7 +738,28 @@ class Play {
 			statChanges,
 		});
 
-		return this.updateState(this.state.current, event);
+		const offenseBefore = this.state.current.o;
+
+		const info = this.updateState(this.state.current, event);
+
+		const offenseAfter = this.state.current.o;
+
+		if (offenseAfter !== offenseBefore) {
+			// "Clean hands" means that a change of possession occurred while the team gaining possession had no prior penalties on this play
+			const cleanHands = this.events.every(
+				event =>
+					event.event.type !== "penalty" || event.event.t !== offenseAfter,
+			);
+
+			if (cleanHands) {
+				this.afterLastCleanHandsChangeOfPossession = {
+					state: this.state.current.clone(),
+					indexEvent: this.events.length,
+				};
+			}
+		}
+
+		return info;
 	}
 
 	get numPenalties() {

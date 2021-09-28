@@ -1888,10 +1888,12 @@ class GameSim {
 			return Math.random() < pen.probPerPlay;
 		});
 
-		if (called.length === 0) {
+		// FIX
+		if (called.length === 0 && playType !== "puntReturn") {
 			return false;
 		}
 
+		// FIX
 		// Always do multiple penalties for testing
 		called = penalties.filter(pen => {
 			if (!pen.playTypes.includes(playType)) {

@@ -45,6 +45,7 @@ rewrite football game sim to get rid of bugs
   - tracking score when undoing td
   - need to pass actual penalty yardage to logEvent("penalty"
     - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
+  - isClockRunning=false after penalty
 - no "Flag on the play" for before the snap penalties
 - overtimeState to Play
 - possessionChange to Play
@@ -56,11 +57,12 @@ rewrite football game sim to get rid of bugs
 - numPossessionChanges needed?
 - benchmark
 - multiple penalties on same play
-  - if same team has multiple penalties, pick one
-  - if two different teams have penalties, offset only by major/minor distinction
-    - "In the NFL, a major (15-yard) penalty by one team may not offset a minor (5-yard) penalty by the other team"
-      - what about pass interference
-      - what about 10 yard penalties
+  - if same team has multiple penalties, pick one, easy
+  - if two different teams have penalties, offset with these exceptions:
+    - 15 yard penalty cannot be offset by a 5 yard penalty. only the 15 yard penalty is enforced
+    - if X commits penalty and then possession changes and Y has control and Y commits a penalty and if Y retains control for the rest of the possession, assess Y's penalty and Y keeps the ball
+      - exception for kick/punt - recieving team gets the option to replay the kick (penalty assessed before kick) or keep ball and assess penalty at end
+    - if the penalties both occur after a change of possession, they offset and the ball is placed at the spot of the possessing team's ball
   - before snap penalties - should play continue?
 - what is best order for addEvent/logEvent/checkPenalties calls?
 - penalty quirks

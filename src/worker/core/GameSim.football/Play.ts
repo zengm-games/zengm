@@ -112,7 +112,6 @@ type PlayEvent =
 			automaticFirstDown: boolean;
 			name: string;
 			penYds: number;
-			posOdds: Partial<Record<Position, number>> | undefined;
 			spotYds: number | undefined; // undefined if not spot foul
 			t: TeamNum;
 	  }
@@ -715,6 +714,10 @@ class Play {
 		return this.updateState(this.state.current, event);
 	}
 
+	get numPenalties() {
+		return this.state.penalties.length;
+	}
+
 	adjudicatePenalties() {
 		const penalties = this.events.filter(
 			event => event.event.type === "penalty",
@@ -727,7 +730,13 @@ class Play {
 			return;
 		}
 
+		// Each entry in options is a set of decisions on all the penalties. So the inner arrays have the same length as penalties.length
+		let options: ("decline" | "accept")[][];
+		let choosingTeam: TeamNum;
 		if (penalties.length === 1) {
+			options = [["decline"], ["accept"]];
+			choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
+
 			const event = penalties[0];
 			const eventIndex = this.events.indexOf(event);
 			const stateAccept = this.state.penalties[0];
@@ -775,11 +784,16 @@ class Play {
 					this.g.recordStat(...statChange);
 				}
 			}
-		}
-
-		if (penalties.length > 1) {
-			// group penalties to see which are offsetting, then similar to the length 1 case
-			// when evaluating whether to accept a penalty or not, need to work backwards. like can't assume all penalties will be accepted or declind when evaluatign the first, need to evaluate the last (assume all prior declined) and work back
+		} else if (penalties.length === 2) {
+			if (penalties[0].event.t === penalties[1].event.t) {
+				// Same team - other team gets to pick which they want to accept, if any
+				console.log("2 penalties - same team");
+			} else {
+				// Different team - maybe offsetting? Many edge cases
+				console.log("2 penalties - different teams");
+			}
+		} else {
+			throw new Error("Not supported");
 		}
 	}
 

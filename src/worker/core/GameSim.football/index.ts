@@ -1882,7 +1882,13 @@ class GameSim {
 			return false;
 		}
 
-		const called = penalties.filter(pen => {
+		// At most 2 penalties on a play, otherwise it can get tricky to figure out what to accept (need to consider the other coach as intelligent and anticipate what he would do, minimax)
+		const maxNumPenaltiesAllowed = 2 - this.currentPlay.numPenalties;
+		if (maxNumPenaltiesAllowed <= 0) {
+			return false;
+		}
+
+		let called = penalties.filter(pen => {
 			if (!pen.playTypes.includes(playType)) {
 				return false;
 			}
@@ -1894,31 +1900,18 @@ class GameSim {
 			return false;
 		}
 
-		this.isClockRunning = false;
-		const offensive = called.filter(pen => pen.side === "offense");
-		const defensive = called.filter(pen => pen.side === "defense");
-
-		if (offensive.length > 0 && defensive.length > 0) {
-			// FIX
-			return false;
-			return {
-				type: "offsetting",
-				doLog: () => {
-					this.playByPlay.logEvent("offsettingPenalties", {
-						clock: this.clock,
-					});
-				},
-			};
+		if (called.length > maxNumPenaltiesAllowed) {
+			random.shuffle(called);
+			called = called.slice(0, 2);
 		}
-
-		const side = offensive.length > 0 ? "offense" : "defense";
-		const t =
-			side === "offense"
-				? this.currentPlay.state.current.o
-				: this.currentPlay.state.current.d;
 
 		const penInfos = called.map(pen => {
 			let spotYds: number | undefined;
+
+			const t =
+				pen.side === "offense"
+					? this.currentPlay.state.current.o
+					: this.currentPlay.state.current.d;
 
 			if (
 				pen.spotFoul ||
@@ -1954,57 +1947,59 @@ class GameSim {
 				automaticFirstDown: !!pen.automaticFirstDown,
 				name: pen.name,
 				penYds: pen.yds,
-				posOdds: pen.posOdds ?? undefined,
+				posOdds: pen.posOdds,
 				spotYds,
 				t,
 			};
 		});
 
-		// Pick random penalty - would be better to apply multiple penalties
-		random.shuffle(penInfos);
-		const penInfo = penInfos[0];
+		for (const penInfo of penInfos) {
+			let p: PlayerGameSim | undefined;
 
-		let p: PlayerGameSim | undefined;
+			const posOdds = penInfo.posOdds;
 
-		const posOdds = penInfo.posOdds;
+			if (posOdds !== undefined) {
+				const positionsOnField = helpers.keys(this.playersOnField[penInfo.t]);
+				const positionsForPenalty = helpers.keys(posOdds);
+				const positions = positionsOnField.filter(pos =>
+					positionsForPenalty.includes(pos),
+				);
 
-		if (posOdds !== undefined) {
-			const positionsOnField = helpers.keys(this.playersOnField[t]);
-			const positionsForPenalty = helpers.keys(posOdds);
-			const positions = positionsOnField.filter(pos =>
-				positionsForPenalty.includes(pos),
-			);
+				if (positions.length > 0) {
+					// https://github.com/microsoft/TypeScript/issues/21732
+					// @ts-ignore
+					const pos = random.choice(positions, pos2 => posOdds[pos2]);
 
-			if (positions.length > 0) {
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				const pos = random.choice(positions, pos2 => posOdds[pos2]);
+					// https://github.com/microsoft/TypeScript/issues/21732
+					// @ts-ignore
+					const players = this.playersOnField[penInfo.t][pos];
 
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				const players = this.playersOnField[t][pos];
-
-				if (players !== undefined && players.length > 0) {
-					p = random.choice(players);
+					if (players !== undefined && players.length > 0) {
+						p = random.choice(players);
+					}
 				}
+
+				if (!p) {
+					p = this.pickPlayer(penInfo.t);
+				}
+
+				// Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
 			}
 
-			if (!p) {
-				p = this.pickPlayer(t);
-			}
+			this.playByPlay.logEvent("flag", {
+				clock: this.clock,
+			});
 
-			// Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
+			this.currentPlay.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: penInfo.automaticFirstDown,
+				name: penInfo.name,
+				penYds: penInfo.penYds,
+				spotYds: penInfo.spotYds,
+				t: penInfo.t,
+			});
 		}
-
-		this.playByPlay.logEvent("flag", {
-			clock: this.clock,
-		});
-
-		this.currentPlay.addEvent({
-			...penInfo,
-			type: "penalty",
-			p,
-		});
 
 		return true;
 	}

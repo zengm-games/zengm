@@ -7,7 +7,7 @@ import { g, helpers } from "../../util";
 import testHelpers from "../../../test/helpers";
 import Play from "./Play";
 
-const genTwoTeams = async () => {
+export const genTwoTeams = async () => {
 	testHelpers.resetG();
 	g.setWithoutSavingToDB("season", 2013);
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 2);
@@ -22,7 +22,7 @@ const genTwoTeams = async () => {
 	});
 };
 
-const initGameSim = async () => {
+export const initGameSim = async () => {
 	const teams = await loadTeams([0, 1], {});
 	for (const t of [teams[0], teams[1]]) {
 		if (t.depth !== undefined) {

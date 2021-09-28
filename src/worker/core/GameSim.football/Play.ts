@@ -1,6 +1,6 @@
 import flatten from "lodash-es/flatten";
 import type GameSim from ".";
-import { random } from "../../util";
+import getBestPenaltyResult from "./getBestPenaltyResult";
 import type { PlayerGameSim, TeamNum } from "./types";
 
 type PlayEvent =
@@ -164,7 +164,7 @@ type PlayState = Pick<
 
 type StatChange = Parameters<GameSim["recordStat"]>;
 
-class State {
+export class State {
 	down: PlayState["down"];
 	toGo: PlayState["toGo"];
 	scrimmage: PlayState["scrimmage"];
@@ -245,7 +245,14 @@ class Play {
 	state: {
 		initial: State;
 		current: State;
-		penalties: State[];
+	};
+	penaltyRollbacks: {
+		state: State;
+		indexEvent: number;
+	}[];
+	afterLastCleanHandsChangeOfPossession?: {
+		state: State;
+		indexEvent: number;
 	};
 
 	constructor(gameSim: GameSim) {
@@ -259,8 +266,8 @@ class Play {
 		this.state = {
 			initial: initialState,
 			current: initialState.clone(),
-			penalties: [],
 		};
+		this.penaltyRollbacks = [];
 	}
 
 	boundedYds(yds: number, swap?: boolean) {
@@ -689,7 +696,27 @@ class Play {
 		const statChanges = this.getStatChanges(event, this.state.current);
 
 		if (event.type === "penalty") {
-			this.state.penalties.push(this.state.current.clone());
+			if (event.spotYds !== undefined) {
+				// Spot foul? Assess at the spot of the foul
+				this.penaltyRollbacks.push({
+					state: this.state.current.clone(),
+					indexEvent: this.events.length,
+				});
+			} else {
+				// Either assess from initial scrimmage, or the last change of possession if the penalty is after that
+				if (this.afterLastCleanHandsChangeOfPossession) {
+					this.penaltyRollbacks.push({
+						state: this.afterLastCleanHandsChangeOfPossession.state.clone(),
+						indexEvent: this.afterLastCleanHandsChangeOfPossession.indexEvent,
+					});
+				} else {
+					this.penaltyRollbacks.push({
+						state: this.state.initial.clone(),
+						indexEvent: 0,
+					});
+				}
+			}
+
 			this.events.push({
 				event,
 				statChanges,
@@ -715,7 +742,7 @@ class Play {
 	}
 
 	get numPenalties() {
-		return this.state.penalties.length;
+		return this.penaltyRollbacks.length;
 	}
 
 	adjudicatePenalties() {
@@ -739,7 +766,7 @@ class Play {
 		} else if (penalties.length === 2) {
 			if (penalties[0].event.t === penalties[1].event.t) {
 				// Same team - other team gets to pick which they want to accept, if any
-				console.log("2 penalties - same team");
+				console.log("2 penalties - same team", penalties, this.events);
 				options = [
 					["decline", "decline"],
 					["decline", "accept"],
@@ -758,13 +785,15 @@ class Play {
 			const results = options.map((decisions, i) => {
 				const indexAccept = decisions.indexOf("accept");
 				const penalty = penalties[indexAccept];
-				const indexEvent = this.events.indexOf(penalty);
 
+				let indexEvent: number | undefined;
 				let state;
 				if (indexAccept < 0) {
 					state = this.state.current;
 				} else {
-					state = this.state.penalties[indexAccept];
+					const penaltyRollback = this.penaltyRollbacks[indexAccept];
+					state = penaltyRollback.state;
+					indexEvent = penaltyRollback.indexEvent;
 					this.updateState(state, penalty.event);
 				}
 
@@ -777,8 +806,12 @@ class Play {
 				};
 			});
 
-			// REPLACE WITH LOGIC
-			const result = random.choice(results);
+			const result = getBestPenaltyResult(
+				results,
+				this.state.initial,
+				this.state.current,
+				choosingTeam,
+			);
 
 			if (result.decisions.length > 1) {
 				this.g.playByPlay.logEvent("penaltyCount", {
@@ -819,7 +852,10 @@ class Play {
 					// Apply negative statChanges from anything after accepted penalty
 					...flatten(
 						this.events
-							.filter((event, i) => i > result.indexEvent)
+							.filter(
+								(event, i) =>
+									result.indexEvent === undefined || i > result.indexEvent,
+							)
 							.map(event => event.statChanges)
 							.map(statChanges => {
 								return statChanges.map(statChange => {

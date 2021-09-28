@@ -1339,13 +1339,7 @@ class GameSim {
 		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker, extraPoint);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
-		const penInfo2 = this.checkPenalties("fieldGoal", {
-			made,
-		});
-
-		if (penInfo2) {
-			return dt;
-		}
+		this.checkPenalties("fieldGoal");
 
 		this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
 			clock: this.clock,
@@ -1899,13 +1893,13 @@ class GameSim {
 		}
 
 		// Always do multiple penalties for testing
-		/*called = penalties.filter(pen => {
+		called = penalties.filter(pen => {
 			if (!pen.playTypes.includes(playType)) {
 				return false;
 			}
 
 			return true;
-		});*/
+		});
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			random.shuffle(called);
@@ -1933,7 +1927,11 @@ class GameSim {
 					if (spotYds + this.scrimmage < 1) {
 						spotYds = 1 - this.scrimmage;
 					}
-				} else if (pen.side === "defense") {
+				} else if (
+					pen.side === "defense" &&
+					playType !== "kickoffReturn" &&
+					playType !== "puntReturn"
+				) {
 					// Defensive spot foul - could be in secondary too
 					spotYds = random.randInt(0, playYds);
 				}

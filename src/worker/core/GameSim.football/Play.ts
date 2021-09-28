@@ -452,7 +452,7 @@ class Play {
 
 			if (event.spotYds !== undefined) {
 				// Spot foul, apply penalty from here
-				state.scrimmage = event.spotYds;
+				state.scrimmage += event.spotYds;
 			}
 
 			// Adjust penalty yards when near endzones

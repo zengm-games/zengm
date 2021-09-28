@@ -161,7 +161,7 @@ const penalties: Penalty[] = [
 	{
 		name: "Offsides",
 		side: "defense",
-		playTypes: ["fieldGoal", "punt", "puntReturn", "pass", "run"],
+		playTypes: ["fieldGoal", "punt", "pass", "run"],
 		probPerPlay: 0,
 		numPerSeason: 143,
 		yds: 5,

@@ -1058,6 +1058,11 @@ class GameSim {
 				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
 				yds = this.currentPlay.boundedYds(rawLength);
 				dt += Math.abs(yds) / 8;
+
+				this.currentPlay.addEvent({
+					type: "possessionChange",
+					yds: 0,
+				});
 			}
 
 			const { td } = this.currentPlay.addEvent({
@@ -1099,6 +1104,10 @@ class GameSim {
 				yds: kickTo,
 			});
 
+			this.currentPlay.addEvent({
+				type: "possessionChange",
+				yds: 0,
+			});
 			if (touchback) {
 				this.currentPlay.addEvent({
 					type: "touchbackKick",
@@ -1180,6 +1189,11 @@ class GameSim {
 			names: [punter.name],
 			touchback,
 			yds: distance,
+		});
+
+		this.currentPlay.addEvent({
+			type: "possessionChange",
+			yds: 0,
 		});
 
 		if (touchback) {
@@ -1412,6 +1426,13 @@ class GameSim {
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
+		if (lost) {
+			this.currentPlay.addEvent({
+				type: "possessionChange",
+				yds: 0,
+			});
+		}
+
 		const { safety, td, touchback } = this.currentPlay.addEvent({
 			type: "fmbRec",
 			pFumbled,
@@ -1451,7 +1472,6 @@ class GameSim {
 	}
 
 	doInterception(qb: PlayerGameSim, ydsPass: number) {
-		this.possessionChange();
 		const p = this.pickPlayer(this.o, "passCoverage");
 		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
 
@@ -1462,11 +1482,14 @@ class GameSim {
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 		let dt = Math.abs(yds) / 8;
 
+		this.currentPlay.addEvent({
+			type: "possessionChange",
+			yds: ydsPass,
+		});
 		const { td, touchback } = this.currentPlay.addEvent({
 			type: "int",
 			qb,
 			defender: p,
-			ydsPass,
 			ydsReturn: yds,
 		});
 

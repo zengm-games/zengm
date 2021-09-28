@@ -93,7 +93,6 @@ type PlayEvent =
 			type: "int";
 			qb: PlayerGameSim;
 			defender: PlayerGameSim;
-			ydsPass: number;
 			ydsReturn: number;
 	  }
 	| {
@@ -143,6 +142,10 @@ type PlayEvent =
 	| {
 			type: "defSft";
 			p: PlayerGameSim;
+	  }
+	| {
+			type: "possessionChange";
+			yds: number;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -288,7 +291,7 @@ class Play {
 		return yds;
 	}
 
-	// state is state immedaitely before this event happens. So for instance, in "kr" the recieving team is still state.d.
+	// state is state immedaitely before this event happens. But since possession changes happen only in discrete events, state.o is always the team with the ball, even for things like "int" and "kr"
 	getStatChanges(event: PlayEvent, state: State) {
 		const statChanges: StatChange[] = [];
 
@@ -302,9 +305,9 @@ class Play {
 				statChanges.push([event.t, event.p, "penYds", actualPenYds]);
 			}
 			if (event.type === "kr") {
-				statChanges.push([state.d, event.p, "kr"]);
-				statChanges.push([state.d, event.p, "krYds", event.yds]);
-				statChanges.push([state.d, event.p, "krLng", event.yds]);
+				statChanges.push([state.o, event.p, "kr"]);
+				statChanges.push([state.o, event.p, "krYds", event.yds]);
+				statChanges.push([state.o, event.p, "krLng", event.yds]);
 			} else if (event.type === "onsideKickRecovery") {
 				if (!event.success) {
 					statChanges.push([state.d, event.p, "kr"]);
@@ -321,9 +324,9 @@ class Play {
 			} else if (event.type === "touchbackPunt") {
 				statChanges.push([state.d, event.p, "pntTB"]);
 			} else if (event.type === "pr") {
-				statChanges.push([state.d, event.p, "pr"]);
-				statChanges.push([state.d, event.p, "prYds", event.yds]);
-				statChanges.push([state.d, event.p, "prLng", event.yds]);
+				statChanges.push([state.o, event.p, "pr"]);
+				statChanges.push([state.o, event.p, "prYds", event.yds]);
+				statChanges.push([state.o, event.p, "prLng", event.yds]);
 			} else if (event.type === "prTD") {
 				statChanges.push([state.o, event.p, "prTD"]);
 			} else if (event.type === "rus") {
@@ -358,17 +361,17 @@ class Play {
 				statChanges.push([state.o, event.qb, "pssTD"]);
 				statChanges.push([state.o, event.target, "recTD"]);
 			} else if (event.type === "int") {
-				statChanges.push([state.o, event.qb, "pssInt"]);
-				statChanges.push([state.d, event.defender, "defPssDef"]);
-				statChanges.push([state.d, event.defender, "defInt"]);
+				statChanges.push([state.d, event.qb, "pssInt"]);
+				statChanges.push([state.o, event.defender, "defPssDef"]);
+				statChanges.push([state.o, event.defender, "defInt"]);
 				statChanges.push([
-					state.d,
+					state.o,
 					event.defender,
 					"defIntYds",
 					event.ydsReturn,
 				]);
 				statChanges.push([
-					state.d,
+					state.o,
 					event.defender,
 					"defIntLng",
 					event.ydsReturn,
@@ -410,29 +413,18 @@ class Play {
 				statChanges.push([state.o, event.pFumbled, "fmb"]);
 				statChanges.push([state.d, event.pForced, "defFmbFrc"]);
 			} else if (event.type === "fmbRec") {
-				const tRecovered = event.lost ? state.d : state.o;
-				statChanges.push([tRecovered, event.pRecovered, "defFmbRec"]);
+				statChanges.push([state.o, event.pRecovered, "defFmbRec"]);
 
 				if (event.lost) {
-					statChanges.push([state.o, event.pFumbled, "fmbLost"]);
+					statChanges.push([state.d, event.pFumbled, "fmbLost"]);
 				}
 
-				statChanges.push([
-					tRecovered,
-					event.pRecovered,
-					"defFmbYds",
-					event.yds,
-				]);
-				statChanges.push([
-					tRecovered,
-					event.pRecovered,
-					"defFmbLng",
-					event.yds,
-				]);
+				statChanges.push([state.o, event.pRecovered, "defFmbYds", event.yds]);
+				statChanges.push([state.o, event.pRecovered, "defFmbLng", event.yds]);
 			} else if (event.type === "fmbTD") {
 				statChanges.push([state.o, event.p, "defFmbTD"]);
 			} else if (event.type === "defSft") {
-				statChanges.push([state.o, event.p, "defSft"]);
+				statChanges.push([state.d, event.p, "defSft"]);
 			}
 		}
 
@@ -479,12 +471,14 @@ class Play {
 			if (event.automaticFirstDown) {
 				state.newFirstDown();
 			}
+		} else if (event.type === "possessionChange") {
+			state.scrimmage += event.yds;
+			state.possessionChange();
 		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
-			state.possessionChange();
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 25;
@@ -493,7 +487,6 @@ class Play {
 
 			afterKickoff();
 		} else if (event.type === "kr") {
-			state.possessionChange();
 			state.scrimmage += event.yds;
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;
@@ -501,7 +494,6 @@ class Play {
 			afterKickoff();
 		} else if (event.type === "onsideKickRecovery") {
 			if (!event.success) {
-				state.possessionChange();
 				afterKickoff();
 			}
 			state.scrimmage += event.yds;
@@ -512,12 +504,10 @@ class Play {
 			state.toGo = 10;
 			state.scrimmage += event.yds;
 		} else if (event.type === "touchbackPunt") {
-			state.possessionChange();
 			state.down = 1;
 			state.toGo = 10;
 			state.scrimmage = 20;
 		} else if (event.type === "pr") {
-			state.possessionChange();
 			state.scrimmage += event.yds;
 		} else if (event.type === "rus") {
 			state.down += 1;
@@ -545,8 +535,6 @@ class Play {
 			state.down += 1;
 			state.isClockRunning = false;
 		} else if (event.type === "int") {
-			state.possessionChange();
-			state.scrimmage += event.ydsPass;
 			state.scrimmage -= event.ydsReturn;
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (!event.made && event.type !== "xp") {
@@ -577,6 +565,13 @@ class Play {
 			state.awaitingKickoff = state.o;
 			state.awaitingAfterSafety = true;
 			state.isClockRunning = false;
+		} else if (event.type === "fmbRec") {
+			if (event.lost) {
+				state.isClockRunning = false;
+			} else {
+				// Stops if fumbled out of bounds
+				state.isClockRunning = Math.random() > 0.05;
+			}
 		}
 
 		if (event.type.endsWith("TD")) {
@@ -649,14 +644,6 @@ class Play {
 				state.overtimeState === "firstPossession"
 			) {
 				state.overtimeState = "over";
-			}
-		} else if (event.type === "fmbRec") {
-			if (event.lost) {
-				state.possessionChange();
-				state.isClockRunning = false;
-			} else {
-				// Stops if fumbled out of bounds
-				state.isClockRunning = Math.random() > 0.05;
 			}
 		}
 

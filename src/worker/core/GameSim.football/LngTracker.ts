@@ -61,7 +61,7 @@ class LngTracker {
 			}
 		}
 
-		return x.current;
+		return x.current === -Infinity ? 0 : x.current;
 	}
 }
 

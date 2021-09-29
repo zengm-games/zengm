@@ -1622,7 +1622,7 @@ class GameSim {
 		const complete = Math.random() < this.probComplete(qb, target, defender);
 		const interception = Math.random() < this.probInt(qb);
 
-		const penInfo2 = this.checkPenalties("pass", {
+		this.checkPenalties("pass", {
 			ballCarrier: target,
 			playYds: yds,
 			incompletePass: !complete && !interception,
@@ -1659,7 +1659,7 @@ class GameSim {
 				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
-				if (!penInfo2 && td && safety && !turnoverOnDowns) {
+				if (td && safety && !turnoverOnDowns) {
 					if (Math.random() < this.probFumble(target)) {
 						this.playByPlay.logEvent("passComplete", completeEvent);
 						return dt + this.doFumble(target, 0);
@@ -1878,7 +1878,7 @@ class GameSim {
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			random.shuffle(called);
-			called = called.slice(0, 2);
+			called = called.slice(0, maxNumPenaltiesAllowed);
 		}
 
 		const penInfos = called.map(pen => {
@@ -2111,11 +2111,13 @@ class GameSim {
 
 		const signedAmount = remove ? -amt : amt;
 
+		const isLng = s.endsWith("Lng");
+
 		if (p !== undefined) {
 			if (s === "gs") {
 				// In case player starts on offense and defense, only record once
 				p.stat[s] = 1;
-			} else if (s.endsWith("Lng")) {
+			} else if (isLng) {
 				p.stat[s] = this.lngTracker.log("player", p.id, s, amt, remove);
 			} else {
 				p.stat[s] += signedAmount;
@@ -2128,7 +2130,7 @@ class GameSim {
 			s !== "benchTime" &&
 			s !== "energy"
 		) {
-			if (s.endsWith("Lng")) {
+			if (isLng) {
 				this.team[t].stat[s] = this.lngTracker.log("player", t, s, amt, remove);
 			} else {
 				this.team[t].stat[s] += signedAmount;
@@ -2140,7 +2142,8 @@ class GameSim {
 			}
 
 			if (p !== undefined && s !== "min") {
-				this.playByPlay.logStat(qtr, t, p.id, s, signedAmount);
+				const logAmount = isLng ? p.stat[s] : signedAmount;
+				this.playByPlay.logStat(qtr, t, p.id, s, logAmount);
 			}
 		}
 	}

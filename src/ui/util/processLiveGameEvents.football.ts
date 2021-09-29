@@ -122,9 +122,7 @@ const processLiveGameEvents = ({
 					}
 					if (p) {
 						if (e.s.endsWith("Lng")) {
-							if (e.amt > p[e.s]) {
-								p[e.s] = e.amt;
-							}
+							p[e.s] = e.amt;
 						} else {
 							p[e.s] += e.amt;
 						}

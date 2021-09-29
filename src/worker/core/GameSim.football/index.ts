@@ -981,15 +981,15 @@ class GameSim {
 
 			let yds = 0;
 			if (!success) {
-				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
-				yds = this.currentPlay.boundedYds(rawLength);
-				dt += Math.abs(yds) / 8;
-
 				this.currentPlay.addEvent({
 					type: "possessionChange",
 					yds: 0,
 					kickoff: true,
 				});
+
+				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
+				yds = this.currentPlay.boundedYds(rawLength);
+				dt += Math.abs(yds) / 8;
 			}
 
 			const { td } = this.currentPlay.addEvent({
@@ -1359,14 +1359,14 @@ class GameSim {
 			ydsRaw += random.randInt(0, 109);
 		}
 
-		const yds = this.currentPlay.boundedYds(ydsRaw);
-
 		if (lost) {
 			this.currentPlay.addEvent({
 				type: "possessionChange",
 				yds: 0,
 			});
 		}
+
+		const yds = this.currentPlay.boundedYds(ydsRaw);
 
 		const { td, touchback } = this.currentPlay.addEvent({
 			type: "fmbRec",
@@ -1409,6 +1409,11 @@ class GameSim {
 	}
 
 	doInterception(qb: PlayerGameSim, ydsPass: number) {
+		this.currentPlay.addEvent({
+			type: "possessionChange",
+			yds: ydsPass,
+		});
+
 		const p = this.pickPlayer(this.d, "passCoverage");
 		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
 
@@ -1419,10 +1424,6 @@ class GameSim {
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 		let dt = Math.abs(yds) / 8;
 
-		this.currentPlay.addEvent({
-			type: "possessionChange",
-			yds: ydsPass,
-		});
 		const { td, touchback } = this.currentPlay.addEvent({
 			type: "int",
 			qb,
@@ -1435,26 +1436,27 @@ class GameSim {
 			t: this.currentPlay.state.current.o,
 			names: [p.name],
 			td,
+			touchback,
 			twoPointConversionTeam:
 				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
 
 		if (touchback) {
-			this.scrimmage = 20;
+			this.currentPlay.addEvent({
+				type: "touchbackInt",
+			});
+		} else if (td) {
+			this.currentPlay.addEvent({
+				type: "intTD",
+				p,
+			});
+		} else if (Math.random() < this.probFumble(p)) {
+			dt += this.doFumble(p, 0);
 		} else {
-			if (td) {
-				this.currentPlay.addEvent({
-					type: "intTD",
-					p,
-				});
-			} else if (Math.random() < this.probFumble(p)) {
-				dt += this.doFumble(p, 0);
-			} else {
-				this.doTackle({
-					loss: false,
-				});
-			}
+			this.doTackle({
+				loss: false,
+			});
 		}
 
 		return dt;

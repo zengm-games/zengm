@@ -100,6 +100,9 @@ type PlayEvent =
 			p: PlayerGameSim;
 	  }
 	| {
+			type: "touchbackInt";
+	  }
+	| {
 			type: "xp" | "fg";
 			p: PlayerGameSim;
 			distance: number;
@@ -291,10 +294,9 @@ class Play {
 		this.penaltyRollbacks = [];
 	}
 
-	boundedYds(yds: number, swap?: boolean) {
-		const scrimmage = swap
-			? 100 - this.state.current.scrimmage
-			: this.state.current.scrimmage;
+	// If there is going to be a possession change related to this yds quantity, do possession change before calling boundedYds
+	boundedYds(yds: number) {
+		const scrimmage = this.state.current.scrimmage;
 		const ydsTD = 100 - scrimmage;
 		const ydsSafety = -scrimmage;
 
@@ -527,6 +529,8 @@ class Play {
 		} else if (event.type === "p") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "touchbackPunt") {
+			state.scrimmage = 20;
+		} else if (event.type === "touchbackInt") {
 			state.scrimmage = 20;
 		} else if (event.type === "pr") {
 			state.scrimmage += event.yds;

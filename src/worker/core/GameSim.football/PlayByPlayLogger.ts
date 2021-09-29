@@ -316,9 +316,14 @@ class PlayByPlayLogger {
 					throw new Error("Missing yds");
 				}
 
-				text = `${names[0]} intercepted the pass and returned it ${yds} yards${
-					td ? ` for ${touchdownText}!` : ""
-				}`;
+				text = `${names[0]} intercepted the pass `;
+				if (touchback) {
+					text += "in the endzone";
+				} else {
+					text += `and returned it ${yds} yards${
+						td ? ` for ${touchdownText}!` : ""
+					}`;
+				}
 				this.updateTwoPointConversionState(td);
 			} else if (type === "sack") {
 				if (names === undefined) {

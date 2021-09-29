@@ -132,7 +132,6 @@ const penalties: Penalty[] = [
 			TE: 0.15,
 			OL: 0.4,
 		},
-		tackOn: true,
 	},
 	{
 		name: "Illegal block in the back",

@@ -484,6 +484,8 @@ class Play {
 			if (event.automaticFirstDown || state.numPossessionChanges > 0) {
 				state.newFirstDown();
 			}
+
+			state.isClockRunning = false;
 		} else if (event.type === "possessionChange") {
 			state.scrimmage += event.yds;
 			state.possessionChange();

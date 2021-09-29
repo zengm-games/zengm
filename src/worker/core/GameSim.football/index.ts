@@ -1913,20 +1913,19 @@ class GameSim {
 			return Math.random() < pen.probPerPlay;
 		});
 
-		// FIX
-		if (called.length === 0 && playType !== "puntReturn") {
+		if (called.length === 0) {
+			// if (called.length === 0 && playType !== "puntReturn") {
 			return false;
 		}
 
-		// FIX
 		// Always do multiple penalties for testing
-		called = penalties.filter(pen => {
+		/*called = penalties.filter(pen => {
 			if (!pen.playTypes.includes(playType)) {
 				return false;
 			}
 
 			return true;
-		});
+		});*/
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			random.shuffle(called);

@@ -1,10 +1,4 @@
-import range from "lodash-es/range";
 import assert from "assert";
-import GameSim from ".";
-import { player, team } from "..";
-import loadTeams from "../game/loadTeams";
-import { g, helpers } from "../../util";
-import testHelpers from "../../../test/helpers";
 import Play from "./Play";
 import { genTwoTeams, initGameSim } from "./index.test";
 

@@ -771,37 +771,14 @@ class GameSim {
 		}
 	}
 
-	advanceYds(
-		yds: number,
-		{
-			automaticFirstDown,
-			repeatDown,
-			sack,
-		}: {
-			automaticFirstDown?: boolean;
-			repeatDown?: boolean;
-			sack?: boolean;
-		} = {},
-	) {
-		// Touchdown?
-		const ydsTD = 100 - this.scrimmage;
-
-		if (yds >= ydsTD) {
-			this.awaitingAfterTouchdown = true;
-			return {
-				safetyOrTouchback: false,
-				td: true,
-				turnoverOnDowns: false,
-			};
-		}
-
-		this.scrimmage += yds;
+	doTackle({ loss }: { loss: boolean }) {
+		const d = this.currentPlay.state.current.d;
 
 		// For non-sacks, record tackler(s)
-		if (!sack && Math.random() < 0.8) {
+		if (Math.random() < 0.8) {
 			let playersDefense: PlayerGameSim[] = [];
 
-			for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
+			for (const playersAtPos of Object.values(this.playersOnField[d])) {
 				if (playersAtPos) {
 					playersDefense = playersDefense.concat(playersAtPos);
 				}
@@ -809,8 +786,8 @@ class GameSim {
 
 			// Bias away from DL and CB
 			const positions: Position[] | undefined =
-				this.playersOnField[this.d].LB &&
-				this.playersOnField[this.d].LB!.length > 0 &&
+				this.playersOnField[d].LB &&
+				this.playersOnField[d].LB!.length > 0 &&
 				Math.random() < 0.25
 					? ["LB", "S"]
 					: undefined;
@@ -818,68 +795,17 @@ class GameSim {
 			const tacklers =
 				Math.random() < 0.25
 					? new Set([
-							this.pickPlayer(this.d, "tackling", positions, 0.9),
-							this.pickPlayer(this.d, "tackling", positions, 0.9),
+							this.pickPlayer(d, "tackling", positions, 0.9),
+							this.pickPlayer(d, "tackling", positions, 0.9),
 					  ])
-					: new Set([this.pickPlayer(this.d, "tackling", positions, 0.9)]);
+					: new Set([this.pickPlayer(d, "tackling", positions, 0.9)]);
 
-			for (const tackler of tacklers) {
-				this.recordStat(
-					this.d,
-					tackler,
-					tacklers.size === 1 ? "defTckSolo" : "defTckAst",
-				);
-
-				if (yds < 0) {
-					this.recordStat(this.d, tackler, "defTckLoss");
-				}
-			}
+			this.currentPlay.addEvent({
+				type: "tck",
+				tacklers,
+				loss,
+			});
 		}
-
-		// Safety or touchback?
-		if (this.scrimmage <= 0) {
-			return {
-				safetyOrTouchback: true,
-				td: false,
-				turnoverOnDowns: false,
-			};
-		}
-
-		// First down?
-		if (yds >= this.toGo || automaticFirstDown) {
-			this.down = 1;
-			const maxToGo = 100 - this.scrimmage;
-			this.toGo = maxToGo < 10 ? maxToGo : 10;
-			return {
-				safetyOrTouchback: false,
-				td: false,
-				turnoverOnDowns: false,
-			};
-		}
-
-		// Turnover on downs?
-		if (!repeatDown) {
-			if (this.down >= 4) {
-				this.possessionChange();
-				this.scrimmage = 100 - this.scrimmage;
-				const maxToGo = 100 - this.scrimmage;
-				this.toGo = maxToGo < 10 ? maxToGo : 10;
-				return {
-					safetyOrTouchback: false,
-					td: false,
-					turnoverOnDowns: true,
-				};
-			}
-
-			this.down += 1;
-		}
-
-		this.toGo -= yds;
-		return {
-			safetyOrTouchback: false,
-			td: false,
-			turnoverOnDowns: false,
-		};
 	}
 
 	updateTeamCompositeRatings() {
@@ -1086,6 +1012,10 @@ class GameSim {
 					type: "krTD",
 					p,
 				});
+			} else {
+				this.doTackle({
+					loss: false,
+				});
 			}
 		} else {
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
@@ -1149,6 +1079,10 @@ class GameSim {
 					this.currentPlay.addEvent({
 						type: "krTD",
 						p: kickReturner,
+					});
+				} else {
+					this.doTackle({
+						loss: false,
 					});
 				}
 			}
@@ -1215,8 +1149,7 @@ class GameSim {
 				playYds: returnLength,
 			});
 
-			// FIX
-			const { safety, td } = this.currentPlay.addEvent({
+			const { td } = this.currentPlay.addEvent({
 				type: "pr",
 				p: puntReturner,
 				yds: returnLength,
@@ -1234,6 +1167,10 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "prTD",
 					p: puntReturner,
+				});
+			} else {
+				this.doTackle({
+					loss: false,
 				});
 			}
 		}
@@ -1464,6 +1401,10 @@ class GameSim {
 				});
 			} else if (Math.random() < this.probFumble(pRecovered)) {
 				dt += this.doFumble(pRecovered, 0);
+			} else {
+				this.doTackle({
+					loss: false,
+				});
 			}
 		}
 
@@ -1512,6 +1453,10 @@ class GameSim {
 				});
 			} else if (Math.random() < this.probFumble(p)) {
 				dt += this.doFumble(p, 0);
+			} else {
+				this.doTackle({
+					loss: false,
+				});
 			}
 		}
 
@@ -1713,13 +1658,12 @@ class GameSim {
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!penInfo2 && td && safety && !turnoverOnDowns) {
 					if (Math.random() < this.probFumble(target)) {
-						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
-
 						this.playByPlay.logEvent("passComplete", completeEvent);
-
 						return dt + this.doFumble(target, 0);
 					}
 				}
+
+				this.playByPlay.logEvent("passComplete", completeEvent);
 
 				if (td) {
 					this.currentPlay.addEvent({
@@ -1727,12 +1671,12 @@ class GameSim {
 						qb,
 						target,
 					});
-				}
-
-				this.playByPlay.logEvent("passComplete", completeEvent);
-
-				if (safety) {
+				} else if (safety) {
 					this.doSafety();
+				} else {
+					this.doTackle({
+						loss: yds < 0,
+					});
 				}
 			} else {
 				this.currentPlay.addEvent({
@@ -1826,13 +1770,6 @@ class GameSim {
 			}
 		}
 
-		if (td) {
-			this.currentPlay.addEvent({
-				type: "rusTD",
-				p,
-			});
-		}
-
 		this.playByPlay.logEvent("run", {
 			clock: this.clock,
 			t: o,
@@ -1843,8 +1780,17 @@ class GameSim {
 			yds,
 		});
 
-		if (safety) {
+		if (td) {
+			this.currentPlay.addEvent({
+				type: "rusTD",
+				p,
+			});
+		} else if (safety) {
 			this.doSafety();
+		} else {
+			this.doTackle({
+				loss: yds < 0,
+			});
 		}
 
 		return dt;

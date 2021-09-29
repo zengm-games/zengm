@@ -147,6 +147,11 @@ type PlayEvent =
 			type: "possessionChange";
 			yds: number;
 			kickoff?: boolean;
+	  }
+	| {
+			type: "tck";
+			tacklers: Set<PlayerGameSim>;
+			loss: boolean;
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -438,6 +443,18 @@ class Play {
 				statChanges.push([state.o, event.p, "defFmbTD"]);
 			} else if (event.type === "defSft") {
 				statChanges.push([state.d, event.p, "defSft"]);
+			} else if (event.type === "tck") {
+				for (const tackler of event.tacklers) {
+					statChanges.push([
+						state.d,
+						tackler,
+						event.tacklers.size === 1 ? "defTckSolo" : "defTckAst",
+					]);
+
+					if (event.loss) {
+						statChanges.push([state.d, tackler, "defTckLoss"]);
+					}
+				}
 			}
 		}
 

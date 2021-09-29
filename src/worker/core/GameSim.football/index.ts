@@ -440,7 +440,7 @@ class GameSim {
 				return "twoPointConversion";
 			}
 
-			if (quarter >= this.numPeriods) {
+			if (quarter >= this.numPeriods - 1) {
 				if (ptsDown === 0) {
 					return "extraPoint";
 				}

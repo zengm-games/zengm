@@ -22,9 +22,6 @@ const getBestPenaltyResult = <
 	const t2 = t === 0 ? 1 : 0;
 
 	const scores = results.map(({ state }) => {
-		const pointDifferential = state.pts[t] - state.pts[t2];
-		const pointDifferentialBeforePlay =
-			initialState.pts[t] - initialState.pts[t2];
 		const ptsScoredThisPlay = ([0, 1] as const).map(
 			t => state.pts[t] - initialState.pts[t],
 		);
@@ -47,13 +44,16 @@ const getBestPenaltyResult = <
 			tdScore = -ptsScoredThisPlay[t2];
 		}
 
-		// Score to take the lead
-		let leadScore = 0;
-		if (pointDifferential > 0 && pointDifferentialBeforePlay < 0) {
+		// Score to take the lead - really only makes sense late in the game, but currently this function does not know quarter/clock
+		/*let leadScore = 0;
+		const pointDifferential = state.pts[t] - state.pts[t2];
+		const pointDifferentialBeforePlay =
+			initialState.pts[t] - initialState.pts[t2];
+		if ((pointDifferential > 0 && pointDifferentialBeforePlay <= 0) || (pointDifferential >= 0 && pointDifferentialBeforePlay < 0)) {
 			leadScore = pointDifferential - pointDifferentialBeforePlay;
-		} else if (pointDifferential < 0 && pointDifferentialBeforePlay > 0) {
+		} else if ((pointDifferential < 0 && pointDifferentialBeforePlay >= 0) || (pointDifferential <= 0 && pointDifferentialBeforePlay > 0)) {
 			leadScore = pointDifferential - pointDifferentialBeforePlay;
-		}
+		}*/
 
 		// Change of possession
 		let changeOfPossession = 0;
@@ -118,7 +118,6 @@ const getBestPenaltyResult = <
 		return [
 			overtimeScore,
 			tdScore,
-			leadScore,
 			changeOfPossession,
 			firstDown,
 			anyScore,

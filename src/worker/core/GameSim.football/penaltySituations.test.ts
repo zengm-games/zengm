@@ -179,5 +179,59 @@ describe("worker/core/GameSim.football", () => {
 
 			assert.strictEqual(game.toGo, 10, "toGo");
 		});
+
+		for (const [toGo, finalPts, better, doesNot] of [
+			[10, 3, "better", "does not"],
+			[1, 0, "worse", "does"],
+		] as any) {
+			test(`made FG is ${better} than a 5 yard penalty that ${doesNot} give a 1st down`, async () => {
+				const game = await initGameSim();
+				game.o = 0;
+				game.d = 1;
+				game.down = 4;
+				game.toGo = toGo;
+				game.scrimmage = 80;
+				game.currentPlay = new Play(game);
+
+				game.updatePlayersOnField("fieldGoal");
+				const distance = 100 - game.scrimmage + 17;
+				const p = game.pickPlayer(game.o);
+
+				const play = game.currentPlay;
+
+				assert.deepStrictEqual(play.state.current.pts, [0, 0], "before snap");
+
+				play.addEvent({
+					type: "penalty",
+					p,
+					automaticFirstDown: false,
+					name: "Too many men on the field",
+					penYds: 5,
+					spotYds: undefined,
+					t: game.d,
+				});
+
+				play.addEvent({
+					type: "fg",
+					p,
+					made: true,
+					distance,
+				});
+
+				assert.deepStrictEqual(
+					play.state.current.pts,
+					[3, 0],
+					"before penalty application",
+				);
+
+				play.adjudicatePenalties();
+
+				assert.deepStrictEqual(
+					play.state.current.pts,
+					[finalPts, 0],
+					"after penalty application",
+				);
+			});
+		}
 	});
 });

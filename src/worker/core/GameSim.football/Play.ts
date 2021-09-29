@@ -218,7 +218,7 @@ export class State {
 
 	clone() {
 		return new State(this, {
-			pts: this.pts,
+			pts: [...this.pts],
 			numPossessionChanges: this.numPossessionChanges,
 		});
 	}
@@ -683,7 +683,7 @@ class Play {
 
 		const pts = getPts(event, state.twoPointConversionTeam !== undefined);
 		if (pts !== undefined) {
-			const t = (event as any).t as TeamNum;
+			const t = event.type === "defSft" ? state.d : state.o;
 			state.pts[t] += pts;
 
 			if (state.overtimeState === "secondPossession") {

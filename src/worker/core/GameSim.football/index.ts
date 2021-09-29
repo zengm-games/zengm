@@ -21,6 +21,7 @@ import possessionEndsAfterThisPeriod from "./possessionEndsAfterThisPeriod";
 import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Play from "./Play";
+import LngTracker from "./LngTracker";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -101,6 +102,8 @@ class GameSim {
 
 	currentPlay: Play;
 
+	lngTracker: LngTracker;
+
 	constructor({
 		gid,
 		day,
@@ -147,6 +150,7 @@ class GameSim {
 		this.timeouts = [3, 3];
 		this.twoMinuteWarningHappened = false;
 		this.currentPlay = new Play(this);
+		this.lngTracker = new LngTracker();
 
 		if (!disableHomeCourtAdvantage) {
 			this.homeCourtAdvantage(homeCourtFactor);
@@ -2101,19 +2105,20 @@ class GameSim {
 		p: PlayerGameSim | undefined,
 		s: string,
 		amt: number = 1,
+		remove?: boolean,
 	) {
 		const qtr = this.team[t].stat.ptsQtrs.length - 1;
+
+		const signedAmount = remove ? -amt : amt;
 
 		if (p !== undefined) {
 			if (s === "gs") {
 				// In case player starts on offense and defense, only record once
 				p.stat[s] = 1;
 			} else if (s.endsWith("Lng")) {
-				if (amt > p.stat[s]) {
-					p.stat[s] = amt;
-				}
+				p.stat[s] = this.lngTracker.log("player", p.id, s, amt, remove);
 			} else {
-				p.stat[s] += amt;
+				p.stat[s] += signedAmount;
 			}
 		}
 
@@ -2124,20 +2129,18 @@ class GameSim {
 			s !== "energy"
 		) {
 			if (s.endsWith("Lng")) {
-				if (amt > this.team[t].stat[s]) {
-					this.team[t].stat[s] = amt;
-				}
+				this.team[t].stat[s] = this.lngTracker.log("player", t, s, amt, remove);
 			} else {
-				this.team[t].stat[s] += amt;
+				this.team[t].stat[s] += signedAmount;
 			}
 
 			if (s === "pts") {
-				this.team[t].stat.ptsQtrs[qtr] += amt;
-				this.playByPlay.logStat(qtr, t, undefined, "pts", amt);
+				this.team[t].stat.ptsQtrs[qtr] += signedAmount;
+				this.playByPlay.logStat(qtr, t, undefined, "pts", signedAmount);
 			}
 
 			if (p !== undefined && s !== "min") {
-				this.playByPlay.logStat(qtr, t, p.id, s, amt);
+				this.playByPlay.logStat(qtr, t, p.id, s, signedAmount);
 			}
 		}
 	}

@@ -908,10 +908,13 @@ class Play {
 							.map(statChanges => {
 								return statChanges.map(statChange => {
 									const newStatChange = [...statChange] as StatChange;
+
 									if (newStatChange[3] === undefined) {
 										newStatChange[3] = 1;
 									}
-									newStatChange[3] = -newStatChange[3];
+
+									newStatChange[4] = true;
+
 									return newStatChange;
 								});
 							}),

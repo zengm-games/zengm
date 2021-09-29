@@ -15,10 +15,10 @@ const getBestPenaltyResult = <
 	noPenaltyState: State,
 	t: TeamNum,
 ): T => {
-	console.log("getBestPenaltyResult", t);
-	console.log("initialState", JSON.parse(JSON.stringify(initialState)));
-	console.log("noPenaltyState", JSON.parse(JSON.stringify(noPenaltyState)));
-	console.log("results", JSON.parse(JSON.stringify(results)));
+	// console.log("getBestPenaltyResult", t);
+	// console.log("initialState", JSON.parse(JSON.stringify(initialState)));
+	// console.log("noPenaltyState", JSON.parse(JSON.stringify(noPenaltyState)));
+	// console.log("results", JSON.parse(JSON.stringify(results)));
 	const t2 = t === 0 ? 1 : 0;
 
 	const scores = results.map(({ state }) => {
@@ -132,7 +132,7 @@ const getBestPenaltyResult = <
 	const scoreIndexes = range(numScores);
 	const orders = ([...scoreIndexes] as any[]).fill("desc");
 	const orderedScores = orderBy(scores, scoreIndexes, orders);
-	console.log(scores, orderedScores);
+	// console.log(scores, orderedScores);
 
 	const bestScoreString = JSON.stringify(orderedScores[0]);
 	const bestScores = scores.filter(

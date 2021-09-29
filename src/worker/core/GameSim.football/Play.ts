@@ -461,7 +461,8 @@ class Play {
 		// Scoring
 		const pts = getPts(event, state.twoPointConversionTeam !== undefined);
 		if (pts !== undefined) {
-			statChanges.push([state.o, undefined, "pts", pts]);
+			const scoringTeam = event.type === "defSft" ? state.d : state.o;
+			statChanges.push([scoringTeam, undefined, "pts", pts]);
 		}
 
 		return statChanges;
@@ -794,7 +795,7 @@ class Play {
 		} else if (penalties.length === 2) {
 			if (penalties[0].event.t === penalties[1].event.t) {
 				// Same team - other team gets to pick which they want to accept, if any
-				console.log("2 penalties - same team", penalties, this.events);
+				// console.log("2 penalties - same team", penalties, this.events);
 				options = [
 					["decline", "decline"],
 					["decline", "accept"],
@@ -803,7 +804,7 @@ class Play {
 				choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
 			} else {
 				// Different team - maybe offsetting? Many edge cases
-				console.log("2 penalties - different teams");
+				// console.log("2 penalties - different teams");
 			}
 		} else {
 			throw new Error("Not supported");
@@ -814,7 +815,7 @@ class Play {
 				const indexAccept = decisions.indexOf("accept");
 				const penalty = penalties[indexAccept];
 
-				console.log("decisions", decisions);
+				// console.log("decisions", decisions);
 
 				let indexEvent: number | undefined;
 				let state;
@@ -822,16 +823,13 @@ class Play {
 					state = this.state.current;
 				} else {
 					const penaltyRollback = this.penaltyRollbacks[indexAccept];
-					console.log(
-						"penaltyRollback",
-						JSON.parse(JSON.stringify(penaltyRollback)),
-					);
-					console.log("penalty.event", penalty.event);
+					// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
+					// console.log("penalty.event", penalty.event);
 					state = penaltyRollback.state;
 					indexEvent = penaltyRollback.indexEvent;
-					console.log("state.scrimmage before applying", state.scrimmage);
+					// console.log("state.scrimmage before applying", state.scrimmage);
 					this.updateState(state, penalty.event);
-					console.log("state.scrimmage after applying", state.scrimmage);
+					// console.log("state.scrimmage after applying", state.scrimmage);
 				}
 
 				return {

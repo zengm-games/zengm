@@ -1052,9 +1052,8 @@ class GameSim {
 					ydsRaw += random.randInt(0, 109);
 				}
 
-				const returnLength = this.currentPlay.boundedYds(ydsRaw, true);
+				const returnLength = this.currentPlay.boundedYds(ydsRaw);
 				dt = Math.abs(returnLength) / 8;
-				const returnLengthBeforePenalty = returnLength;
 
 				this.checkPenalties("kickoffReturn", {
 					ballCarrier: kickReturner,
@@ -1072,7 +1071,7 @@ class GameSim {
 					t: this.currentPlay.state.current.o,
 					names: [kickReturner.name],
 					td,
-					yds: returnLengthBeforePenalty,
+					yds: returnLength,
 				});
 
 				if (td) {
@@ -1369,7 +1368,7 @@ class GameSim {
 			});
 		}
 
-		const { safety, td, touchback } = this.currentPlay.addEvent({
+		const { td, touchback } = this.currentPlay.addEvent({
 			type: "fmbRec",
 			pFumbled,
 			pRecovered,
@@ -1383,7 +1382,7 @@ class GameSim {
 			lost,
 			t: tRecovered,
 			names: [pRecovered.name],
-			safety,
+			safety: false,
 			td,
 			touchback,
 			twoPointConversionTeam:
@@ -1391,9 +1390,7 @@ class GameSim {
 			yds,
 		});
 
-		if (safety) {
-			this.doSafety();
-		} else if (!touchback) {
+		if (!touchback) {
 			if (td) {
 				this.currentPlay.addEvent({
 					type: "fmbTD",

@@ -73,6 +73,8 @@ rewrite football game sim to get rid of bugs
   - only apply if play is more favorable than line of scrimage
 - when removing a scoring play due to penalty, need to remove it from scoring log too
 - "Until next score" is not working very well, seems off by one
+- compare stats
+- boundedYds 2nd parameter needed?
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob

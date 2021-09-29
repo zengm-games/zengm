@@ -622,9 +622,18 @@ class Play {
 			td = true;
 		}
 
-		const TOUCHBACK_IS_POSSIBLE: PlayType[] = ["p", "int"];
+		const TOUCHBACK_IS_POSSIBLE_1: PlayType[] = ["int", "fmbRec"];
 
-		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE.includes(event.type)) {
+		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE_1.includes(event.type)) {
+			touchback = true;
+		}
+
+		const TOUCHBACK_IS_POSSIBLE_2: PlayType[] = ["p"];
+
+		if (
+			state.scrimmage >= 100 &&
+			TOUCHBACK_IS_POSSIBLE_2.includes(event.type)
+		) {
 			touchback = true;
 		}
 

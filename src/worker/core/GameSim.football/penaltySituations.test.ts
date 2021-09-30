@@ -234,7 +234,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			});
 		}
 
-		test("accept penalty to block TD", async () => {
+		test("accept penalty to prevent TD", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -553,9 +553,78 @@ describe("worker/core/GameSim.football/Play", () => {
 			);
 		});
 
-		it.todo(
-			"penalty on offense, change of possession, penalty on new offense -> apply only 2nd penalty",
-		);
+		it("penalty on offense, change of possession, penalty on new offense -> apply only 2nd penalty", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.awaitingKickoff = 0;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("kickoff");
+			const po = game.pickPlayer(game.o);
+			const pd = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p: po,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: -3,
+				t: game.o,
+			});
+
+			play.addEvent({
+				type: "k",
+				kickTo: 40,
+			});
+			play.addEvent({
+				type: "possessionChange",
+				yds: 0,
+				kickoff: true,
+			});
+
+			assert.strictEqual(play.state.current.scrimmage, 40, "before return");
+
+			play.addEvent({
+				type: "penalty",
+				p: pd,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: 0,
+				t: game.d,
+			});
+			play.addEvent({
+				type: "kr",
+				p: pd,
+				yds: 10,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				50,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				35,
+				"after penalty application",
+			);
+
+			assert.strictEqual(
+				game.awaitingKickoff,
+				undefined,
+				"awaitingKickoff is persisted",
+			);
+
+			assert.strictEqual(game.o, 1, "possession change happened");
+		});
 
 		it("no special case -> replay down", async () => {
 			const game = await initGameSim();

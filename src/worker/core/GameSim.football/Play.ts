@@ -895,8 +895,6 @@ class Play {
 						offsetStatus = "offset";
 					}
 				}
-
-				console.log(options, offsetStatus);
 			}
 		} else {
 			throw new Error("Not supported");

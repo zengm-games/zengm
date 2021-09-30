@@ -88,7 +88,7 @@ const getBestPenaltyResult = <
 		if (ptsScoredThisPlay[t] > 0) {
 			anyScore = ptsScoredThisPlay[t];
 		} else if (ptsScoredThisPlay[t2] > 0) {
-			anyScore = ptsScoredThisPlay[t2];
+			anyScore = -ptsScoredThisPlay[t2];
 		}
 
 		// Field position

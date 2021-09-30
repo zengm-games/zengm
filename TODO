@@ -16,12 +16,12 @@ rewrite football game sim to get rid of bugs
   - auto return safety/touchback/td status from addEvent
 - defIntYds should only apply if not a touchback
 - // FIX
-- turnoverOnDowns
 - more dramatic play-by-play
   - pass attempt and description before result
   - run after catch
   - fumble handoff
   - flags at various times
+    - need to be smart enough to roll back to last relevant ball position, which could be scrimmage
 - penalties
   - tracking score when undoing td
   - need to pass actual penalty yardage to logEvent("penalty"

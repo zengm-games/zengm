@@ -233,5 +233,69 @@ describe("worker/core/GameSim.football", () => {
 				);
 			});
 		}
+
+		test("accept penalty to block TD", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 29;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.d);
+			const qb = game.getTopPlayerOnField(game.o, "QB");
+			const target = game.getTopPlayerOnField(game.o, "WR");
+
+			const play = game.currentPlay;
+
+			assert.deepStrictEqual(play.state.current.pts, [0, 0], "before snap");
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: 0,
+				t: game.o,
+			});
+
+			game.currentPlay.addEvent({
+				type: "pss",
+				qb,
+				target,
+			});
+
+			const { td } = game.currentPlay.addEvent({
+				type: "pssCmp",
+				qb,
+				target,
+				yds: 100 - game.scrimmage,
+			});
+
+			assert.deepStrictEqual(td, true);
+
+			game.currentPlay.addEvent({
+				type: "pssTD",
+				qb,
+				target,
+			});
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[6, 0],
+				"before penalty application",
+			);
+
+			play.adjudicatePenalties();
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[0, 0],
+				"after penalty application",
+			);
+		});
 	});
 });

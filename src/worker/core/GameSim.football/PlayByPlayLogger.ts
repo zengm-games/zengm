@@ -40,8 +40,6 @@ class PlayByPlayLogger {
 
 	playByPlay: any[];
 
-	scoringSummary: any[];
-
 	twoPointConversionState: "attempting" | "converted" | undefined;
 
 	twoPointConversionTeam: number | undefined;
@@ -51,7 +49,6 @@ class PlayByPlayLogger {
 	constructor(active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
-		this.scoringSummary = [];
 		this.quarter = "Q1";
 	}
 
@@ -118,9 +115,9 @@ class PlayByPlayLogger {
 						t: this.twoPointConversionTeam,
 						time: previousEvent.time,
 						quarter: this.quarter,
+						scoringSummary: true,
 					};
 					this.playByPlay.push(event);
-					this.scoringSummary.push(event);
 				}
 			}
 
@@ -461,16 +458,16 @@ class PlayByPlayLogger {
 					event.injuredPID = injuredPID;
 				}
 
-				this.playByPlay.push(event);
-
 				if (
 					safety ||
 					td ||
 					type === "extraPoint" ||
 					(made && type === "fieldGoal")
 				) {
-					this.scoringSummary.push(event);
+					event.scoringSummary = true;
 				}
+
+				this.playByPlay.push(event);
 			}
 		}
 	}
@@ -538,6 +535,12 @@ class PlayByPlayLogger {
 			},
 			...this.playByPlay,
 		];
+	}
+
+	removeLastScore() {
+		this.playByPlay.push({
+			type: "removeLastScore",
+		});
 	}
 }
 

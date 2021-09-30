@@ -220,6 +220,28 @@ class GameSim {
 			}
 		}
 
+		const scoringSummaryAndRemove = this.playByPlay.playByPlay.filter(
+			event => event.scoringSummary || event.type === "removeLastScore",
+		);
+
+		const scoringSummary: any[] = [];
+
+		// Remove any scores that were negated by penalties
+		for (let i = 0; i < scoringSummaryAndRemove.length; i++) {
+			const current = scoringSummaryAndRemove[i];
+			const next = scoringSummaryAndRemove[i + 1];
+
+			if (next && next.type === "removeLastScore") {
+				continue;
+			}
+
+			if (current.scoringSummary) {
+				const y = { ...current };
+				delete y.scoringSummary;
+				scoringSummary.push(y);
+			}
+		}
+
 		const out = {
 			gid: this.id,
 			day: this.day,
@@ -227,7 +249,7 @@ class GameSim {
 			team: this.team,
 			clutchPlays: [],
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
-			scoringSummary: this.playByPlay.scoringSummary,
+			scoringSummary,
 		};
 		return out;
 	}
@@ -2139,6 +2161,10 @@ class GameSim {
 			if (s === "pts") {
 				this.team[t].stat.ptsQtrs[qtr] += signedAmount;
 				this.playByPlay.logStat(qtr, t, undefined, "pts", signedAmount);
+
+				if (remove) {
+					this.playByPlay.removeLastScore();
+				}
 			}
 
 			if (p !== undefined && s !== "min") {

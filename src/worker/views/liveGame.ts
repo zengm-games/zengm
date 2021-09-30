@@ -126,6 +126,11 @@ const updatePlayByPlay = async (
 			}
 		}
 
+		// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
+		if (isSport("football")) {
+			boxScore.scoringSummary = [];
+		}
+
 		// For confetti
 		let finals = false;
 		if (boxScore.playoffs && g.get("phase") >= PHASE.PLAYOFFS) {

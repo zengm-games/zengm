@@ -188,17 +188,18 @@ export class State {
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
 	twoPointConversionTeam: PlayState["twoPointConversionTeam"];
-	pts: [number, number];
+
 	numPossessionChanges: number;
+	pts: [number, number];
 
 	constructor(
 		gameSim: PlayState,
 		{
-			pts,
 			numPossessionChanges,
+			pts,
 		}: {
-			pts: [number, number];
 			numPossessionChanges: number;
+			pts: [number, number];
 		},
 	) {
 		this.down = gameSim.down;
@@ -212,14 +213,15 @@ export class State {
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
 		this.twoPointConversionTeam = gameSim.twoPointConversionTeam;
-		this.pts = pts;
+
 		this.numPossessionChanges = numPossessionChanges;
+		this.pts = pts;
 	}
 
 	clone() {
 		return new State(this, {
-			pts: [...this.pts],
 			numPossessionChanges: this.numPossessionChanges,
+			pts: [...this.pts],
 		});
 	}
 
@@ -249,9 +251,9 @@ const getPts = (event: PlayEvent, twoPointConversion: boolean) => {
 	let pts;
 	if (event.type.endsWith("TD")) {
 		pts = twoPointConversion ? 2 : 6;
-	} else if (event.type === "xp") {
+	} else if (event.type === "xp" && event.made) {
 		pts = 1;
-	} else if (event.type === "fg") {
+	} else if (event.type === "fg" && event.made) {
 		pts = 3;
 	} else if (event.type === "defSft") {
 		pts = 2;
@@ -284,8 +286,8 @@ class Play {
 		this.events = [];
 
 		const initialState = new State(gameSim, {
-			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 			numPossessionChanges: 0,
+			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 		});
 		this.state = {
 			initial: initialState,

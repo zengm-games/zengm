@@ -10,9 +10,7 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- from stored yard/possession and events, have function to get updated yard/possession at any point in event history
 - timePos only increment after possession is finalized
-- can all/most play-by-play and stat logging happen from Play? stat definitley, since it needs to know how to undo
 - commit
   - two point conversion and overtime variables too
 - check for penalties in more places
@@ -21,7 +19,6 @@ rewrite football game sim to get rid of bugs
 - defIntYds should only apply if not a touchback
 - // FIX
 - turnoverOnDowns
-- o/d values in logging - still need to be careful, turnoverOnDowns can happen and switch them
 - more dramatic play-by-play
   - pass attempt and description before result
   - run after catch
@@ -32,12 +29,8 @@ rewrite football game sim to get rid of bugs
   - need to pass actual penalty yardage to logEvent("penalty"
     - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
 - overtimeState to Play
-- unify stat/state changes?
-  - but addEvent actually persists stat, while state is not persisted until commit
-  - updateState already has randomness, is that a problem? either refactor so it's gone, or make deterministic
 - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
   - could just base flag on awaitingAfterTouchdown value in constructor
-- numPossessionChanges needed?
 - benchmark
 - multiple penalties on same play
   - if same team has multiple penalties, pick one, easy
@@ -59,12 +52,14 @@ rewrite football game sim to get rid of bugs
 - afterLastCleanHandsChangeOfPossession
   - add tracking of this
   - test
-- rollback issues
-  - when removing a scoring play due to penalty, need to remove it from scoring log too
 - "Until next score" is not working very well, seems off by one
+  - also check for scores removed by penalty
+- when advancing one play at a time, score at the top increases one tick after the play-by-play and scoring log
 - compare stats
 - updateTwoPointConversionState
 - noPenaltyState needed in getBestPenaltyResult?
+- prTD being assigned to wrong team
+  - check krTD too
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob

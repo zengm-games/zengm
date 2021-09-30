@@ -244,7 +244,7 @@ describe("worker/core/GameSim.football", () => {
 			game.currentPlay = new Play(game);
 
 			game.updatePlayersOnField("pass");
-			const p = game.pickPlayer(game.d);
+			const p = game.pickPlayer(game.o);
 			const qb = game.getTopPlayerOnField(game.o, "QB");
 			const target = game.getTopPlayerOnField(game.o, "WR");
 
@@ -296,6 +296,132 @@ describe("worker/core/GameSim.football", () => {
 				[0, 0],
 				"after penalty application",
 			);
+		});
+	});
+
+	describe("overtime", () => {
+		const initOvertime = async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.team[0].stat.ptsQtrs = [0, 0, 0, 0, 0];
+			game.team[0].stat.ptsQtrs = [0, 0, 0, 0, 0];
+
+			return game;
+		};
+
+		it("touchdown on first possession -> over", async () => {
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			game.currentPlay.addEvent({
+				type: "rusTD",
+				p,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "over");
+		});
+
+		it("FG on first possession -> not over", async () => {
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			game.currentPlay.addEvent({
+				type: "fg",
+				p,
+				distance: 30,
+				made: true,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "firstPossession");
+		});
+
+		it("FG on second possession -> over", async () => {
+			const game = await initOvertime();
+			game.overtimeState = "secondPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			game.currentPlay.addEvent({
+				type: "fg",
+				p,
+				distance: 30,
+				made: true,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "over");
+		});
+
+		it("safety on first possession -> over", async () => {
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			game.currentPlay.addEvent({
+				type: "defSft",
+				p,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "over");
+		});
+
+		it("touchdown on first possession negated by penalty -> not over", async () => {
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: 0,
+				t: game.o,
+			});
+
+			game.currentPlay.addEvent({
+				type: "rusTD",
+				p,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "firstPossession");
 		});
 	});
 });

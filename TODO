@@ -14,7 +14,6 @@ rewrite football game sim to get rid of bugs
   - tracking score when undoing td
   - need to pass actual penalty yardage to logEvent("penalty"
     - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
-- overtimeState to Play
 - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
   - could just base flag on awaitingAfterTouchdown value in constructor
 - benchmark
@@ -37,7 +36,7 @@ rewrite football game sim to get rid of bugs
 - afterLastCleanHandsChangeOfPossession
   - add tracking of this
   - test
-- compare stats
+- compare stats with old version
 - updateTwoPointConversionState
 - blog
   - ability to roll back stats after penalty is accepted

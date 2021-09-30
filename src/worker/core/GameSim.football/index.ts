@@ -896,7 +896,16 @@ class GameSim {
 		});
 	}
 
-	updatePlayersOnField(playType: string) {
+	updatePlayersOnField(
+		playType:
+			| "starters"
+			| "run"
+			| "pass"
+			| "extraPoint"
+			| "fieldGoal"
+			| "punt"
+			| "kickoff",
+	) {
 		let formation: Formation;
 
 		if (playType === "starters") {
@@ -955,19 +964,6 @@ class GameSim {
 		}
 
 		this.updateTeamCompositeRatings();
-	}
-
-	possessionChange() {
-		if (this.overtimeState === "firstPossession") {
-			this.overtimeState = "secondPossession";
-		} else if (this.overtimeState === "secondPossession") {
-			this.overtimeState = "bothTeamsPossessed";
-		}
-
-		this.o = this.o === 1 ? 0 : 1;
-		this.d = this.o === 1 ? 0 : 1;
-		this.down = 1;
-		this.toGo = 10;
 	}
 
 	doTimeout(t: TeamNum) {

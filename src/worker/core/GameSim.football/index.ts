@@ -1182,7 +1182,7 @@ class GameSim {
 
 			this.playByPlay.logEvent("puntReturn", {
 				clock: this.clock,
-				t: this.o,
+				t: this.currentPlay.state.current.o,
 				names: [puntReturner.name],
 				td,
 				yds: returnLength,

@@ -44,7 +44,6 @@ rewrite football game sim to get rid of bugs
   - test
 - compare stats
 - updateTwoPointConversionState
-- noPenaltyState needed in getBestPenaltyResult?
 - defFmbFrc/defFmbRec/defFmbYds/defFmbLng recorded for wrong team? can't find player
 - blog
   - ability to roll back stats after penalty is accepted

@@ -864,7 +864,6 @@ class Play {
 			const result = getBestPenaltyResult(
 				results,
 				this.state.initial,
-				this.state.current,
 				choosingTeam,
 			);
 

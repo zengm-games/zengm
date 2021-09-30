@@ -12,12 +12,10 @@ const getBestPenaltyResult = <
 >(
 	results: T[],
 	initialState: State,
-	noPenaltyState: State,
 	t: TeamNum,
 ): T => {
 	// console.log("getBestPenaltyResult", t);
 	// console.log("initialState", JSON.parse(JSON.stringify(initialState)));
-	// console.log("noPenaltyState", JSON.parse(JSON.stringify(noPenaltyState)));
 	// console.log("results", JSON.parse(JSON.stringify(results)));
 	const t2 = t === 0 ? 1 : 0;
 

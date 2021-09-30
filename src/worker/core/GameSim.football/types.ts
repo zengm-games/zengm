@@ -28,7 +28,9 @@ export type PlayType =
 	| "timeout"
 	| "twoMinuteWarning"
 	| "kneel"
-	| "flag";
+	| "flag"
+	| "twoPointConversion"
+	| "twoPointConversionFailed";
 
 export type TeamNum = 0 | 1;
 

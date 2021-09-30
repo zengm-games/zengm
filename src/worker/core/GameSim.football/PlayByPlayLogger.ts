@@ -40,8 +40,6 @@ class PlayByPlayLogger {
 
 	playByPlay: any[];
 
-	twoPointConversionState: "attempting" | "converted" | undefined;
-
 	twoPointConversionTeam: number | undefined;
 
 	quarter: string;
@@ -50,12 +48,6 @@ class PlayByPlayLogger {
 		this.active = active;
 		this.playByPlay = [];
 		this.quarter = "Q1";
-	}
-
-	updateTwoPointConversionState(td: boolean) {
-		if (td && this.twoPointConversionState === "attempting") {
-			this.twoPointConversionState = "converted";
-		}
 	}
 
 	logEvent(
@@ -78,7 +70,6 @@ class PlayByPlayLogger {
 			t,
 			td,
 			touchback,
-			twoPointConversionTeam,
 			yds,
 		}: {
 			automaticFirstDown?: boolean;
@@ -98,42 +89,15 @@ class PlayByPlayLogger {
 			t?: TeamNum;
 			td?: boolean;
 			touchback?: boolean;
-			twoPointConversionTeam?: number;
 			yds?: number;
 		},
 	) {
-		// This needs to run for scoring log, even when play-by-play logging is not active
-		// Two point conversions are tricky because you can have multiple events occuring within them that could lead to scores, like if there is an interception and then a fumble. So in the most general case, it can't be assumed to be "failed" until we get another event after the two point conversion attempt.
-		if (twoPointConversionTeam === undefined) {
-			if (this.twoPointConversionState === "attempting") {
-				const previousEvent = this.playByPlay.at(-1);
-
-				if (previousEvent) {
-					const event = {
-						type: "text",
-						text: "Two point conversion failed",
-						t: this.twoPointConversionTeam,
-						time: previousEvent.time,
-						quarter: this.quarter,
-						scoringSummary: true,
-					};
-					this.playByPlay.push(event);
-				}
-			}
-
-			this.twoPointConversionState = undefined;
-			this.twoPointConversionTeam = undefined;
-		} else if (this.twoPointConversionState === undefined) {
-			this.twoPointConversionState = "attempting";
-			this.twoPointConversionTeam = twoPointConversionTeam;
-		}
-
 		// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
 		let touchdownText = "a touchdown";
 		let showYdsOnTD = true;
 
-		if (twoPointConversionTeam !== undefined) {
-			if (twoPointConversionTeam === t) {
+		if (this.twoPointConversionTeam !== undefined) {
+			if (this.twoPointConversionTeam === t) {
 				touchdownText = "a two point conversion";
 				showYdsOnTD = false;
 			} else {
@@ -271,10 +235,6 @@ class PlayByPlayLogger {
 					throw new Error("Missing names");
 				}
 
-				if (td === undefined) {
-					throw new Error("Missing td");
-				}
-
 				if (yds === undefined) {
 					throw new Error("Missing yds");
 				}
@@ -293,20 +253,14 @@ class PlayByPlayLogger {
 									td ? ` for ${touchdownText}!` : ""
 							  }`
 					}`;
-					this.updateTwoPointConversionState(td);
 				} else {
 					text = `${names[0]} recovered the fumble for the offense${
 						td ? ` and carried it into the endzone for ${touchdownText}!` : ""
 					}`;
-					this.updateTwoPointConversionState(td);
 				}
 			} else if (type === "interception") {
 				if (names === undefined) {
 					throw new Error("Missing names");
-				}
-
-				if (td === undefined) {
-					throw new Error("Missing td");
 				}
 
 				if (yds === undefined) {
@@ -321,7 +275,6 @@ class PlayByPlayLogger {
 						td ? ` for ${touchdownText}!` : ""
 					}`;
 				}
-				this.updateTwoPointConversionState(td);
 			} else if (type === "sack") {
 				if (names === undefined) {
 					throw new Error("Missing names");
@@ -358,7 +311,6 @@ class PlayByPlayLogger {
 				} else {
 					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
 					text = `${names[0]} completed a pass to ${names[1]} for ${result}`;
-					this.updateTwoPointConversionState(td);
 				}
 			} else if (type === "passIncomplete") {
 				if (names === undefined) {
@@ -393,7 +345,6 @@ class PlayByPlayLogger {
 				} else {
 					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
 					text = `${names[0]} rushed for ${result}`;
-					this.updateTwoPointConversionState(td);
 				}
 			} else if (type === "penaltyCount") {
 				if (count === undefined) {
@@ -441,6 +392,10 @@ class PlayByPlayLogger {
 				text = `${names[0]} kneels`;
 			} else if (type === "flag") {
 				text = "Flag on the play";
+			} else if (type === "twoPointConversion") {
+				text = "Two point conversion attempt";
+			} else if (type === "twoPointConversionFailed") {
+				text = "Two point conversion failed";
 			} else {
 				throw new Error(`No text for "${type}"`);
 			}
@@ -462,6 +417,7 @@ class PlayByPlayLogger {
 					safety ||
 					td ||
 					type === "extraPoint" ||
+					type === "twoPointConversionFailed" ||
 					(made && type === "fieldGoal")
 				) {
 					event.scoringSummary = true;

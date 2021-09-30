@@ -10,12 +10,9 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- penalties
-  - tracking score when undoing td
-  - need to pass actual penalty yardage to logEvent("penalty"
-    - also, rethink text. should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
-- this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
-  - could just base flag on awaitingAfterTouchdown value in constructor
+- penalty text in play by play
+  - should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
+  - look at defensive pass interference
 - benchmark
 - multiple penalties on same play
   - if same team has multiple penalties, pick one, easy
@@ -37,7 +34,10 @@ rewrite football game sim to get rid of bugs
   - add tracking of this
   - test
 - compare stats with old version
-- updateTwoPointConversionState
+- move two point conversion tracking to Play, fully
+  - this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
+    - could just base flag on awaitingAfterTouchdown value in constructor
+  - test with fumble return for td
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob

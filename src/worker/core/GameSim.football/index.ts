@@ -1361,7 +1361,8 @@ class GameSim {
 	}
 
 	doFumble(pFumbled: PlayerGameSim, spotYds: number) {
-		const pForced = this.pickPlayer(this.d, "tackling");
+		const { o, d } = this.currentPlay.state.current;
+		const pForced = this.pickPlayer(d, "tackling");
 		this.currentPlay.addEvent({
 			type: "fmb",
 			pFumbled,
@@ -1371,12 +1372,12 @@ class GameSim {
 
 		this.playByPlay.logEvent("fumble", {
 			clock: this.clock,
-			t: this.o,
+			t: o,
 			names: [pFumbled.name, pForced.name],
 		});
 
 		const lost = Math.random() > 0.5;
-		const tRecovered = lost ? this.d : this.o;
+		const tRecovered = lost ? d : o;
 		const pRecovered = this.pickPlayer(tRecovered);
 
 		let ydsRaw = Math.round(random.truncGauss(2, 6, -5, 15));

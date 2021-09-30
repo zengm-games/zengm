@@ -10,11 +10,6 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- commit
-  - two point conversion and overtime variables too
-- Play should keep a running total of variables so it doens't need to keep recomputing
-  - auto return safety/touchback/td status from addEvent
-- // FIX
 - penalties
   - tracking score when undoing td
   - need to pass actual penalty yardage to logEvent("penalty"
@@ -44,7 +39,6 @@ rewrite football game sim to get rid of bugs
   - test
 - compare stats
 - updateTwoPointConversionState
-- defFmbFrc/defFmbRec/defFmbYds/defFmbLng recorded for wrong team? can't find player
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob

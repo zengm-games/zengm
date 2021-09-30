@@ -282,6 +282,7 @@ class Play {
 		state: State;
 		indexEvent: number;
 	};
+	firstDownLine: number;
 
 	constructor(gameSim: GameSim) {
 		this.g = gameSim;
@@ -297,6 +298,8 @@ class Play {
 			current: initialState.clone(),
 		};
 		this.penaltyRollbacks = [];
+
+		this.firstDownLine = initialState.scrimmage + initialState.toGo;
 	}
 
 	// If there is going to be a possession change related to this yds quantity, do possession change before calling boundedYds
@@ -489,7 +492,6 @@ class Play {
 
 		if (event.type === "penalty") {
 			const side = state.o === event.t ? "off" : "def";
-			const firstDownLine = state.scrimmage + state.toGo;
 
 			const penYdsSigned = side === "off" ? -event.penYds : event.penYds;
 
@@ -509,7 +511,7 @@ class Play {
 				state.scrimmage += penYdsSigned;
 			}
 
-			state.toGo = firstDownLine - state.scrimmage;
+			state.toGo = this.firstDownLine - state.scrimmage;
 
 			if (event.automaticFirstDown || state.numPossessionChanges > 0) {
 				state.newFirstDown();
@@ -547,24 +549,20 @@ class Play {
 		} else if (event.type === "rus") {
 			state.down += 1;
 			state.scrimmage += event.yds;
-			state.toGo -= event.yds;
 			state.isClockRunning = Math.random() < 0.85;
 		} else if (event.type === "kneel") {
 			state.down += 1;
 			state.scrimmage += event.yds;
-			state.toGo -= event.yds;
 
-			// Set this to false, because we handle it all in dt
+			// Set this to false, because we handle running the clock in dt in GameSim
 			state.isClockRunning = false;
 		} else if (event.type === "sk") {
 			state.down += 1;
 			state.scrimmage += event.yds;
-			state.toGo -= event.yds;
 			state.isClockRunning = Math.random() < 0.98;
 		} else if (event.type === "pssCmp") {
 			state.down += 1;
 			state.scrimmage += event.yds;
-			state.toGo -= event.yds;
 			state.isClockRunning = Math.random() < 0.75;
 		} else if (event.type === "pssInc") {
 			state.down += 1;
@@ -618,10 +616,7 @@ class Play {
 			state.isClockRunning = false;
 		}
 
-		if (state.toGo <= 0) {
-			state.newFirstDown();
-		}
-
+		// Doesn't really make sense to evaluate these things (TD, safety, touchback) because the play might not be over, could just be a player in their own endzone but maybe they don't want to take a knee for a touchback. So the _IS_POSSIBLE variables filter out when different events can actually happen, to get rid of false positives
 		let td = false;
 		let safety = false;
 		let touchback = false;
@@ -674,11 +669,6 @@ class Play {
 			}
 		}
 
-		const turnoverOnDowns = !safety && !td && !touchback && state.down > 4;
-		if (turnoverOnDowns) {
-			state.possessionChange();
-		}
-
 		if (event.type.endsWith("TD")) {
 			if (
 				state.overtimeState === "initialKickoff" ||
@@ -724,6 +714,28 @@ class Play {
 			td,
 			touchback,
 		};
+	}
+
+	checkDownAtEndOfPlay(state: State) {
+		// In endzone at end of play
+		if (
+			state.scrimmage >= 100 ||
+			state.scrimmage <= 0 ||
+			state.numPossessionChanges > 0
+		) {
+			return;
+		}
+
+		state.toGo = this.firstDownLine - state.scrimmage;
+
+		if (state.toGo <= 0) {
+			state.newFirstDown();
+		}
+
+		const turnoverOnDowns = state.down > 4;
+		if (turnoverOnDowns) {
+			state.possessionChange();
+		}
 	}
 
 	addEvent(event: PlayEvent) {
@@ -854,6 +866,7 @@ class Play {
 					indexEvent = penaltyRollback.indexEvent;
 					// console.log("state.scrimmage before applying", state.scrimmage);
 					this.updateState(state, penalty.event);
+					this.checkDownAtEndOfPlay(state);
 					// console.log("state.scrimmage after applying", state.scrimmage);
 				}
 
@@ -940,6 +953,7 @@ class Play {
 	}
 
 	commit() {
+		this.checkDownAtEndOfPlay(this.state.current);
 		this.adjudicatePenalties();
 
 		const {

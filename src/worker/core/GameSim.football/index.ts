@@ -1025,14 +1025,6 @@ class GameSim {
 				yds,
 			});
 
-			this.playByPlay.logEvent("onsideKickRecovery", {
-				clock: this.clock,
-				t: this.currentPlay.state.current.o,
-				names: [p.name],
-				success,
-				td,
-			});
-
 			if (td) {
 				this.currentPlay.addEvent({
 					type: "krTD",
@@ -1043,6 +1035,14 @@ class GameSim {
 					loss: false,
 				});
 			}
+
+			this.playByPlay.logEvent("onsideKickRecovery", {
+				clock: this.clock,
+				t: this.currentPlay.state.current.o,
+				names: [p.name],
+				success,
+				td,
+			});
 		} else {
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
 			const touchback = Math.random() > 0.5;
@@ -1092,14 +1092,6 @@ class GameSim {
 					yds: returnLength,
 				});
 
-				this.playByPlay.logEvent("kickoffReturn", {
-					clock: this.clock,
-					t: this.currentPlay.state.current.o,
-					names: [kickReturner.name],
-					td,
-					yds: returnLength,
-				});
-
 				if (td) {
 					this.currentPlay.addEvent({
 						type: "krTD",
@@ -1110,6 +1102,14 @@ class GameSim {
 						loss: false,
 					});
 				}
+
+				this.playByPlay.logEvent("kickoffReturn", {
+					clock: this.clock,
+					t: this.currentPlay.state.current.o,
+					names: [kickReturner.name],
+					td,
+					yds: returnLength,
+				});
 			}
 		}
 
@@ -1180,14 +1180,6 @@ class GameSim {
 				yds: returnLength,
 			});
 
-			this.playByPlay.logEvent("puntReturn", {
-				clock: this.clock,
-				t: this.currentPlay.state.current.o,
-				names: [puntReturner.name],
-				td,
-				yds: returnLength,
-			});
-
 			if (td) {
 				this.currentPlay.addEvent({
 					type: "prTD",
@@ -1198,6 +1190,14 @@ class GameSim {
 					loss: false,
 				});
 			}
+
+			this.playByPlay.logEvent("puntReturn", {
+				clock: this.clock,
+				t: this.currentPlay.state.current.o,
+				names: [puntReturner.name],
+				td,
+				yds: returnLength,
+			});
 		}
 
 		this.recordStat(this.o, undefined, "drives");
@@ -1316,19 +1316,19 @@ class GameSim {
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		this.checkPenalties("fieldGoal");
 
+		this.currentPlay.addEvent({
+			type: extraPoint ? "xp" : "fg",
+			p: kicker,
+			made,
+			distance,
+		});
+
 		this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
 			clock: this.clock,
 			t: this.o,
 			made,
 			names: [kicker.name],
 			yds: distance,
-		});
-
-		this.currentPlay.addEvent({
-			type: extraPoint ? "xp" : "fg",
-			p: kicker,
-			made,
-			distance,
 		});
 
 		return dt;
@@ -1403,18 +1403,6 @@ class GameSim {
 		});
 
 		let dt = Math.abs(yds) / 6;
-		this.playByPlay.logEvent("fumbleRecovery", {
-			clock: this.clock,
-			lost,
-			t: tRecovered,
-			names: [pRecovered.name],
-			safety: false,
-			td,
-			touchback,
-			twoPointConversionTeam:
-				this.currentPlay.state.current.twoPointConversionTeam,
-			yds,
-		});
 
 		if (!touchback) {
 			if (td) {
@@ -1430,6 +1418,19 @@ class GameSim {
 				});
 			}
 		}
+
+		this.playByPlay.logEvent("fumbleRecovery", {
+			clock: this.clock,
+			lost,
+			t: tRecovered,
+			names: [pRecovered.name],
+			safety: false,
+			td,
+			touchback,
+			twoPointConversionTeam:
+				this.currentPlay.state.current.twoPointConversionTeam,
+			yds,
+		});
 
 		return dt;
 	}
@@ -1457,17 +1458,6 @@ class GameSim {
 			ydsReturn: yds,
 		});
 
-		this.playByPlay.logEvent("interception", {
-			clock: this.clock,
-			t: this.currentPlay.state.current.o,
-			names: [p.name],
-			td,
-			touchback,
-			twoPointConversionTeam:
-				this.currentPlay.state.current.twoPointConversionTeam,
-			yds,
-		});
-
 		if (touchback) {
 			this.currentPlay.addEvent({
 				type: "touchbackInt",
@@ -1484,6 +1474,17 @@ class GameSim {
 				loss: false,
 			});
 		}
+
+		this.playByPlay.logEvent("interception", {
+			clock: this.clock,
+			t: this.currentPlay.state.current.o,
+			names: [p.name],
+			td,
+			touchback,
+			twoPointConversionTeam:
+				this.currentPlay.state.current.twoPointConversionTeam,
+			yds,
+		});
 
 		return dt;
 	}
@@ -1519,6 +1520,10 @@ class GameSim {
 			yds,
 		});
 
+		if (safety) {
+			this.doSafety(p);
+		}
+
 		this.playByPlay.logEvent("sack", {
 			clock: this.clock,
 			t: this.currentPlay.state.initial.o,
@@ -1526,10 +1531,6 @@ class GameSim {
 			safety,
 			yds,
 		});
-
-		if (safety) {
-			this.doSafety(p);
-		}
 
 		return random.randInt(3, 8);
 	}
@@ -1688,8 +1689,6 @@ class GameSim {
 					}
 				}
 
-				this.playByPlay.logEvent("passComplete", completeEvent);
-
 				if (td) {
 					this.currentPlay.addEvent({
 						type: "pssTD",
@@ -1703,6 +1702,8 @@ class GameSim {
 						loss: yds < 0,
 					});
 				}
+
+				this.playByPlay.logEvent("passComplete", completeEvent);
 			} else {
 				this.currentPlay.addEvent({
 					type: "pssInc",
@@ -1795,16 +1796,6 @@ class GameSim {
 			}
 		}
 
-		this.playByPlay.logEvent("run", {
-			clock: this.clock,
-			t: o,
-			names: [p.name],
-			safety,
-			twoPointConversionTeam,
-			td,
-			yds,
-		});
-
 		if (td) {
 			this.currentPlay.addEvent({
 				type: "rusTD",
@@ -1817,6 +1808,16 @@ class GameSim {
 				loss: yds < 0,
 			});
 		}
+
+		this.playByPlay.logEvent("run", {
+			clock: this.clock,
+			t: o,
+			names: [p.name],
+			safety,
+			twoPointConversionTeam,
+			td,
+			yds,
+		});
 
 		return dt;
 	}
@@ -1994,10 +1995,6 @@ class GameSim {
 				// Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
 			}
 
-			this.playByPlay.logEvent("flag", {
-				clock: this.clock,
-			});
-
 			this.currentPlay.addEvent({
 				type: "penalty",
 				p,
@@ -2006,6 +2003,10 @@ class GameSim {
 				penYds: penInfo.penYds,
 				spotYds: penInfo.spotYds,
 				t: penInfo.t,
+			});
+
+			this.playByPlay.logEvent("flag", {
+				clock: this.clock,
 			});
 		}
 

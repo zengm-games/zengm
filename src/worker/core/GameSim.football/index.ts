@@ -462,7 +462,6 @@ class GameSim {
 		const quarter = this.team[0].stat.ptsQtrs.length;
 
 		if (this.awaitingAfterTouchdown) {
-			// return "twoPointConversion";
 			if (ptsDown === 2 && Math.random() < 0.7) {
 				return "twoPointConversion";
 			}
@@ -1692,7 +1691,7 @@ class GameSim {
 			dt += Math.abs(yds) / 20;
 
 			if (complete) {
-				const { td, safety, turnoverOnDowns } = this.currentPlay.addEvent({
+				const { td, safety } = this.currentPlay.addEvent({
 					type: "pssCmp",
 					qb,
 					target,
@@ -1710,7 +1709,7 @@ class GameSim {
 				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
-				if (!td && !safety && !turnoverOnDowns) {
+				if (!td && !safety) {
 					if (Math.random() < this.probFumble(target)) {
 						this.playByPlay.logEvent("passComplete", completeEvent);
 						return dt + this.doFumble(target, 0);
@@ -1806,14 +1805,14 @@ class GameSim {
 			playYds: yds,
 		});
 
-		const { td, safety, turnoverOnDowns } = this.currentPlay.addEvent({
+		const { td, safety } = this.currentPlay.addEvent({
 			type: "rus",
 			p,
 			yds,
 		});
 
 		// Fumble after run... only if nothing else is going on, too complicated otherwise
-		if (!td && !safety && !turnoverOnDowns) {
+		if (!td && !safety) {
 			if (Math.random() < this.probFumble(p)) {
 				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
 

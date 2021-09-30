@@ -597,7 +597,11 @@ class Play {
 			state.awaitingKickoff = state.o;
 			state.awaitingAfterSafety = true;
 			state.isClockRunning = false;
+		} else if (event.type === "fmb") {
+			state.scrimmage += event.yds;
 		} else if (event.type === "fmbRec") {
+			state.scrimmage += event.yds;
+
 			if (event.lost) {
 				state.isClockRunning = false;
 			} else {
@@ -626,7 +630,7 @@ class Play {
 			"rus",
 			"pssCmp",
 			"int",
-			"fmb",
+			"fmbRec",
 		];
 
 		if (state.scrimmage >= 100 && TOUCHDOWN_IS_POSSIBLE.includes(event.type)) {
@@ -716,7 +720,6 @@ class Play {
 			safety,
 			td,
 			touchback,
-			turnoverOnDowns,
 		};
 	}
 
@@ -751,10 +754,9 @@ class Play {
 			});
 
 			return {
-				safety: undefined,
-				td: undefined,
-				touchback: undefined,
-				turnoverOnDowns: false,
+				safety: false,
+				td: false,
+				touchback: false,
 			};
 		}
 

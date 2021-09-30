@@ -1404,6 +1404,8 @@ class GameSim {
 
 		let dt = Math.abs(yds) / 6;
 
+		let fumble = false;
+
 		if (!touchback) {
 			if (td) {
 				this.currentPlay.addEvent({
@@ -1411,7 +1413,7 @@ class GameSim {
 					p: pRecovered,
 				});
 			} else if (Math.random() < this.probFumble(pRecovered)) {
-				dt += this.doFumble(pRecovered, 0);
+				fumble = true;
 			} else {
 				this.doTackle({
 					loss: false,
@@ -1431,6 +1433,10 @@ class GameSim {
 				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
+
+		if (fumble) {
+			dt += this.doFumble(pRecovered, 0);
+		}
 
 		return dt;
 	}
@@ -1458,6 +1464,8 @@ class GameSim {
 			ydsReturn: yds,
 		});
 
+		let fumble = false;
+
 		if (touchback) {
 			this.currentPlay.addEvent({
 				type: "touchbackInt",
@@ -1468,7 +1476,7 @@ class GameSim {
 				p,
 			});
 		} else if (Math.random() < this.probFumble(p)) {
-			dt += this.doFumble(p, 0);
+			fumble = true;
 		} else {
 			this.doTackle({
 				loss: false,
@@ -1485,6 +1493,10 @@ class GameSim {
 				this.currentPlay.state.current.twoPointConversionTeam,
 			yds,
 		});
+
+		if (fumble) {
+			dt += this.doFumble(p, 0);
+		}
 
 		return dt;
 	}

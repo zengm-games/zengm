@@ -386,18 +386,23 @@ class Play {
 				statChanges.push([state.d, event.qb, "pssInt"]);
 				statChanges.push([state.o, event.defender, "defPssDef"]);
 				statChanges.push([state.o, event.defender, "defInt"]);
-				statChanges.push([
-					state.o,
-					event.defender,
-					"defIntYds",
-					event.ydsReturn,
-				]);
-				statChanges.push([
-					state.o,
-					event.defender,
-					"defIntLng",
-					event.ydsReturn,
-				]);
+
+				const touchback = state.scrimmage + event.ydsReturn <= 0;
+
+				if (!touchback) {
+					statChanges.push([
+						state.o,
+						event.defender,
+						"defIntYds",
+						event.ydsReturn,
+					]);
+					statChanges.push([
+						state.o,
+						event.defender,
+						"defIntLng",
+						event.ydsReturn,
+					]);
+				}
 			} else if (event.type === "intTD") {
 				statChanges.push([state.o, event.p, "defIntTD"]);
 			} else if (event.type === "fg" || event.type === "xp") {

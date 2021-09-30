@@ -14,14 +14,7 @@ rewrite football game sim to get rid of bugs
   - two point conversion and overtime variables too
 - Play should keep a running total of variables so it doens't need to keep recomputing
   - auto return safety/touchback/td status from addEvent
-- defIntYds should only apply if not a touchback
 - // FIX
-- more dramatic play-by-play
-  - pass attempt and description before result
-  - run after catch
-  - fumble handoff
-  - flags at various times
-    - need to be smart enough to roll back to last relevant ball position, which could be scrimmage
 - penalties
   - tracking score when undoing td
   - need to pass actual penalty yardage to logEvent("penalty"
@@ -49,14 +42,22 @@ rewrite football game sim to get rid of bugs
 - afterLastCleanHandsChangeOfPossession
   - add tracking of this
   - test
-- when advancing one play at a time, score at the top increases one tick after the play-by-play and scoring log
 - compare stats
 - updateTwoPointConversionState
 - noPenaltyState needed in getBestPenaltyResult?
+- defFmbFrc/defFmbRec/defFmbYds/defFmbLng recorded for wrong team? can't find player
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob
   - email people
+
+more dramatic play-by-play
+- pass attempt and description before result
+- fg attempt before result
+- run after catch
+- fumble handoff
+- flags at various times
+  - need to be smart enough to roll back to last relevant ball position, which could be scrimmage
 
 extra man stays on ice in overtime https://discord.com/channels/@me/778760871911751700/892224214118039624
 

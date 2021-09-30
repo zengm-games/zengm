@@ -13,6 +13,8 @@ rewrite football game sim to get rid of bugs
 - penalty text in play by play
   - should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
   - look at defensive pass interference
+  - what should it say when 15 yd penalty overrules 5 yd penalty? maybe "overruled" and "enforced" rather than "declined" and "accepted"?
+    - specialSituation
 - benchmark
 - multiple penalties on same play
   - if same team has multiple penalties, pick one, easy
@@ -35,10 +37,18 @@ rewrite football game sim to get rid of bugs
   - test
 - compare stats with old version
 - confirm that every event passed to Play containing yds actually results in yds being applied to scrimmage
+- double foul after change of possession edge cases to test
+  - If this spot is normally a touchback, the ball is placed on the 20-yard line.  
+  - If normally a safety, place the ball on one-yard line. 
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob
   - email people
+
+nicidob improve value formula
+- https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
+
+dropbox integration - save league to cloud
 
 more dramatic play-by-play
 - pass attempt and description before result
@@ -49,9 +59,6 @@ more dramatic play-by-play
   - need to be smart enough to roll back to last relevant ball position, which could be scrimmage
 
 extra man stays on ice in overtime https://discord.com/channels/@me/778760871911751700/892224214118039624
-
-nicidob improve value formula
-- https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
 
 update all-star team names after editing captains https://discord.com/channels/290013534023057409/290015591216054273/891802910000836639
 

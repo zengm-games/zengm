@@ -17,6 +17,12 @@ const getBestPenaltyResult = <
 	// console.log("getBestPenaltyResult", t);
 	// console.log("initialState", JSON.parse(JSON.stringify(initialState)));
 	// console.log("results", JSON.parse(JSON.stringify(results)));
+
+	if (results.length === 1) {
+		// Happens with penalties on both teams, enforcement is automatic
+		return results[0];
+	}
+
 	const t2 = t === 0 ? 1 : 0;
 
 	const scores = results.map(({ state }) => {

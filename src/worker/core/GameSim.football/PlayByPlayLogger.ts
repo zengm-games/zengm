@@ -62,6 +62,7 @@ class PlayByPlayLogger {
 			made,
 			names,
 			offense,
+			offsetStatus,
 			penaltyName,
 			quarter,
 			overtimes,
@@ -81,6 +82,7 @@ class PlayByPlayLogger {
 			made?: boolean;
 			names?: string[];
 			offense?: boolean;
+			offsetStatus?: "offset" | "overrule";
 			penaltyName?: string;
 			quarter?: number;
 			overtimes?: number;
@@ -351,7 +353,13 @@ class PlayByPlayLogger {
 					throw new Error("Missing count");
 				}
 
-				text = `There are ${count} fouls on the play`;
+				text = `There are ${count} ${
+					offsetStatus === "offset" ? "offsetting " : ""
+				}fouls on the play${
+					offsetStatus === "offset"
+						? ", the previous down will be replayed"
+						: ""
+				}`;
 			} else if (type === "penalty") {
 				if (decision === undefined) {
 					throw new Error("Missing decision");
@@ -373,13 +381,22 @@ class PlayByPlayLogger {
 					throw new Error("Missing yds");
 				}
 
-				const decisionText = decision === "accept" ? "accepted" : "declined";
-
 				text = `Penalty, ABBREV${t} - ${penaltyName.toLowerCase()}${
 					names.length > 0 ? ` on ${names[0]}` : ""
-				}, ${yds} yards${
-					automaticFirstDown ? " and an automatic first down" : ""
-				} - ${decisionText}`;
+				}`;
+
+				if (offsetStatus !== "offset") {
+					let decisionText;
+					if (offsetStatus === "overrule") {
+						decisionText = decision === "accept" ? "- accepted" : "- declined";
+					} else {
+						decisionText = decision === "accept" ? "- enforced" : "- overruled";
+					}
+
+					text += `, ${yds} yards${
+						automaticFirstDown ? " and an automatic first down" : ""
+					} - ${decisionText}`;
+				}
 			} else if (type === "timeout") {
 				text = `Time out, ${offense ? "offense" : "defense"}`;
 			} else if (type === "twoMinuteWarning") {

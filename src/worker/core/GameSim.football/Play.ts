@@ -824,8 +824,9 @@ class Play {
 		}
 
 		// Each entry in options is a set of decisions on all the penalties. So the inner arrays have the same length as penalties.length
-		let options: ("decline" | "accept")[][] | undefined;
+		let options: ("decline" | "accept" | "offset")[][] | undefined;
 		let choosingTeam: TeamNum | undefined;
+		let offsetStatus: "offset" | "overrule" | undefined;
 		if (penalties.length === 1) {
 			options = [["decline"], ["accept"]];
 			choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
@@ -840,8 +841,62 @@ class Play {
 				];
 				choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
 			} else {
-				// Different team - maybe offsetting? Many edge cases
-				// console.log("2 penalties - different teams");
+				// Different team - maybe offsetting? Many edge cases http://static.nfl.com/static/content/public/image/rulebook/pdfs/17_Rule14_Penalty_Enforcement.pdf section 3
+
+				const penalties5 = penalties.filter(
+					penalty => penalty.event.penYds === 5,
+				);
+				const penalties15 = penalties.filter(
+					penalty =>
+						penalty.event.penYds === 15 ||
+						penalty.event.name === "Pass interference",
+				);
+
+				// choosingTeam doesn't matter, there is at most one choice
+				choosingTeam = 0;
+
+				if (penalties5.length === 1 && penalties15.length === 1) {
+					// 5 yd vs 15 yd penalty - only assess the 15 yd penalty
+					if (penalties15[0] === penalties[0]) {
+						options = [["accept", "decline"]];
+					} else {
+						options = [["decline", "accept"]];
+					}
+
+					offsetStatus = "overrule";
+				} else {
+					const numPossessionChanges = penalties.map(
+						(penalty, i) => this.penaltyRollbacks[i].state.numPossessionChanges,
+					);
+					if (
+						numPossessionChanges[0] === numPossessionChanges[1] &&
+						numPossessionChanges[0] > 0
+					) {
+						// Both penalties after change of possession - roll back to spot of the change of possession
+						options = [["offset", "offset"]];
+
+						offsetStatus = "offset";
+					} else if (
+						numPossessionChanges[0] > 0 ||
+						numPossessionChanges[1] > 0
+					) {
+						// Clean hands change of possession - apply only the penalty from the team that gained possession
+						if (numPossessionChanges[0] > numPossessionChanges[1]) {
+							options = [["accept", "decline"]];
+						} else {
+							options = [["decline", "accept"]];
+						}
+
+						offsetStatus = "overrule";
+					} else {
+						// Penalties offset - replay down
+						options = [["offset", "offset"]];
+
+						offsetStatus = "offset";
+					}
+				}
+
+				console.log(options, offsetStatus);
 			}
 		} else {
 			throw new Error("Not supported");
@@ -865,9 +920,22 @@ class Play {
 					state = penaltyRollback.state;
 					indexEvent = penaltyRollback.indexEvent;
 					// console.log("state.scrimmage before applying", state.scrimmage);
-					this.updateState(state, penalty.event);
+
+					// No state changes for offsetting penalties
+					if (offsetStatus === "offset") {
+						state.isClockRunning = false;
+					} else {
+						this.updateState(state, penalty.event);
+					}
+
 					this.checkDownAtEndOfPlay(state);
 					// console.log("state.scrimmage after applying", state.scrimmage);
+				}
+
+				let statChanges: NonNullable<typeof penalty>["statChanges"] = [];
+				if (offsetStatus !== "offset") {
+					// No stat changes for offsetting penalties
+					statChanges = penalty?.statChanges;
 				}
 
 				return {
@@ -875,7 +943,7 @@ class Play {
 					decisions,
 					state,
 					indexEvent,
-					statChanges: penalty?.statChanges ?? [],
+					statChanges,
 				};
 			});
 
@@ -889,6 +957,7 @@ class Play {
 				this.g.playByPlay.logEvent("penaltyCount", {
 					clock: this.g.clock,
 					count: result.decisions.length,
+					offsetStatus,
 				});
 			}
 
@@ -904,6 +973,7 @@ class Play {
 					this.g.playByPlay.logEvent("penalty", {
 						clock: this.g.clock,
 						decision,
+						offsetStatus,
 						t: penalty.event.t,
 						names: penalty.event.p ? [penalty.event.p.name] : [],
 						automaticFirstDown: penalty.event.automaticFirstDown,

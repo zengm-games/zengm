@@ -538,6 +538,7 @@ class PlayByPlayLogger {
 	}
 
 	removeLastScore() {
+		console.log("removeLastScore");
 		this.playByPlay.push({
 			type: "removeLastScore",
 		});

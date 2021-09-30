@@ -49,8 +49,6 @@ rewrite football game sim to get rid of bugs
 - afterLastCleanHandsChangeOfPossession
   - add tracking of this
   - test
-- "Until next score" is not working very well, seems off by one
-  - also check for scores removed by penalty
 - when advancing one play at a time, score at the top increases one tick after the play-by-play and scoring log
 - compare stats
 - updateTwoPointConversionState

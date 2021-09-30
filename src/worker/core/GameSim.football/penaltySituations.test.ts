@@ -72,17 +72,17 @@ describe("worker/core/GameSim.football/Play", () => {
 			const po = game.pickPlayer(game.o);
 			const pd = game.pickPlayer(game.d);
 
-			game.currentPlay.addEvent({
+			const play = game.currentPlay;
+
+			play.addEvent({
 				type: "k",
 				kickTo: 40,
 			});
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "possessionChange",
 				yds: 0,
 				kickoff: true,
 			});
-
-			const play = game.currentPlay;
 
 			assert.strictEqual(play.state.current.scrimmage, 40, "before return");
 
@@ -95,7 +95,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				spotYds: 4,
 				t: game.o,
 			});
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "kr",
 				p: pd,
 				yds: 10,
@@ -132,17 +132,17 @@ describe("worker/core/GameSim.football/Play", () => {
 			game.updatePlayersOnField("kickoff");
 			const pd = game.pickPlayer(game.d);
 
-			game.currentPlay.addEvent({
+			const play = game.currentPlay;
+
+			play.addEvent({
 				type: "k",
 				kickTo: 40,
 			});
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "possessionChange",
 				yds: 0,
 				kickoff: true,
 			});
-
-			const play = game.currentPlay;
 
 			assert.strictEqual(play.state.current.scrimmage, 40, "before return");
 
@@ -155,7 +155,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				spotYds: 8,
 				t: game.d,
 			});
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "kr",
 				p: pd,
 				yds: 10,
@@ -262,13 +262,13 @@ describe("worker/core/GameSim.football/Play", () => {
 				t: game.o,
 			});
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "pss",
 				qb,
 				target,
 			});
 
-			const { td } = game.currentPlay.addEvent({
+			const { td } = play.addEvent({
 				type: "pssCmp",
 				qb,
 				target,
@@ -277,7 +277,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.deepStrictEqual(td, true);
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "pssTD",
 				qb,
 				target,
@@ -320,7 +320,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "rusTD",
 				p,
 			});
@@ -340,7 +340,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "fg",
 				p,
 				distance: 30,
@@ -362,7 +362,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "fg",
 				p,
 				distance: 30,
@@ -384,7 +384,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "defSft",
 				p,
 			});
@@ -414,7 +414,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				t: game.o,
 			});
 
-			game.currentPlay.addEvent({
+			play.addEvent({
 				type: "rusTD",
 				p,
 			});
@@ -483,9 +483,75 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 24);
 		});
 
-		it.todo(
-			"two penalties after change of possession -> roll back to change of possession",
-		);
+		it("two penalties after change of possession -> roll back to change of possession", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.awaitingKickoff = 0;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("kickoff");
+			const po = game.pickPlayer(game.o);
+			const pd = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "k",
+				kickTo: 40,
+			});
+			play.addEvent({
+				type: "possessionChange",
+				yds: 0,
+				kickoff: true,
+			});
+
+			assert.strictEqual(play.state.current.scrimmage, 40, "before return");
+
+			play.addEvent({
+				type: "penalty",
+				p: po,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: -3,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "penalty",
+				p: pd,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+			});
+			play.addEvent({
+				type: "kr",
+				p: pd,
+				yds: 10,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				50,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				40,
+				"after penalty application",
+			);
+
+			assert.strictEqual(
+				game.awaitingKickoff,
+				undefined,
+				"awaitingKickoff is persisted",
+			);
+		});
 
 		it.todo(
 			"penalty on offense, change of possession, penalty on new offense -> apply only 2nd penalty",

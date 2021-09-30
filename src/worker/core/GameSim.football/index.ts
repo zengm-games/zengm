@@ -1681,7 +1681,7 @@ class GameSim {
 				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
-				if (td && safety && !turnoverOnDowns) {
+				if (!td && !safety && !turnoverOnDowns) {
 					if (Math.random() < this.probFumble(target)) {
 						this.playByPlay.logEvent("passComplete", completeEvent);
 						return dt + this.doFumble(target, 0);
@@ -1775,7 +1775,7 @@ class GameSim {
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 		const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
 
-		const penInfo2 = this.checkPenalties("run", {
+		this.checkPenalties("run", {
 			ballCarrier: p,
 			playYds: yds,
 		});
@@ -1787,7 +1787,7 @@ class GameSim {
 		});
 
 		// Fumble after run... only if nothing else is going on, too complicated otherwise
-		if (!penInfo2 && td && safety && !turnoverOnDowns) {
+		if (!td && !safety && !turnoverOnDowns) {
 			if (Math.random() < this.probFumble(p)) {
 				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
 

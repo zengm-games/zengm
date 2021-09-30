@@ -10,10 +10,8 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- timePos only increment after possession is finalized
 - commit
   - two point conversion and overtime variables too
-- check for penalties in more places
 - Play should keep a running total of variables so it doens't need to keep recomputing
   - auto return safety/touchback/td status from addEvent
 - defIntYds should only apply if not a touchback
@@ -45,7 +43,6 @@ rewrite football game sim to get rid of bugs
 - penalty quirks
   - roughing the passer should apply at the end of the play, if it was a positive play only. otherwise, from scrimmage
 - penalty frequency setting
-- are all penInfo early returns needed?
 - weird penalty stuff observed
   - spotYds for offensive holding correct? seems to add extra yards
   - on passing play, 15 yard penalties resulted in an extra 12 yards only... is it somehow allowing qb dropback to be included? needs to undo whole play, not just after penalty

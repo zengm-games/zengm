@@ -424,4 +424,73 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepEqual(game.overtimeState, "firstPossession");
 		});
 	});
+
+	describe("one penalty on each team", () => {
+		it.todo("15 yard penalty overrules 5 yard penalty");
+
+		it.todo(
+			"two penalties after change of possession -> roll back to change of possession",
+		);
+
+		it.todo(
+			"penalty on offense, turnover, penalty on new offense -> apply only 2nd penalty",
+		);
+
+		it("no special case -> replay down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 25;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: -3,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			play.addEvent({
+				type: "pssCmp",
+				qb: p,
+				target: p,
+				yds: 21,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				46,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 2);
+			assert.strictEqual(play.state.current.toGo, 7);
+			assert.strictEqual(play.state.current.scrimmage, 25);
+		});
+	});
 });

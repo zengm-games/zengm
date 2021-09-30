@@ -905,16 +905,19 @@ class Play {
 		if (options !== undefined && choosingTeam !== undefined) {
 			const results = options.map(decisions => {
 				const indexAccept = decisions.indexOf("accept");
+				const indexOffset = decisions.indexOf("offset");
 				const penalty = penalties[indexAccept];
 
 				// console.log("decisions", decisions);
 
 				let indexEvent: number | undefined;
 				let state;
-				if (indexAccept < 0) {
+				if (indexAccept < 0 && indexOffset < 0) {
 					state = this.state.current;
 				} else {
-					const penaltyRollback = this.penaltyRollbacks[indexAccept];
+					const penaltyRollback =
+						this.penaltyRollbacks[indexAccept] ??
+						this.penaltyRollbacks[indexOffset];
 					// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
 					// console.log("penalty.event", penalty.event);
 					state = penaltyRollback.state;

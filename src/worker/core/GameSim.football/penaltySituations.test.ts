@@ -2,7 +2,7 @@ import assert from "assert";
 import Play from "./Play";
 import { genTwoTeams, initGameSim } from "./index.test";
 
-describe("worker/core/GameSim.football", () => {
+describe("worker/core/GameSim.football/Play", () => {
 	beforeAll(async () => {
 		await genTwoTeams();
 	});

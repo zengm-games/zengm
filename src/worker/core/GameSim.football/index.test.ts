@@ -177,6 +177,7 @@ describe("worker/core/GameSim.football", () => {
 		// Sacks always happen, no penalties
 		game.getPlayType = () => "pass";
 		game.probSack = () => 1;
+		game.probFumble = () => 0;
 		game.checkPenalties = () => false;
 
 		game.simPlay();

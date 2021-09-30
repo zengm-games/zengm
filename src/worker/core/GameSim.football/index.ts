@@ -88,8 +88,6 @@ class GameSim {
 
 	awaitingKickoff: TeamNum | undefined;
 
-	twoPointConversionTeam: number | undefined;
-
 	scrimmage: number;
 
 	down: number;

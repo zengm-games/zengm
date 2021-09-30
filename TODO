@@ -34,8 +34,6 @@ rewrite football game sim to get rid of bugs
   - add tracking of this
   - test
 - compare stats with old version
-- this.twoPointConversionTeam never needs to be persisted back to GameSim. maybe just make it a flag in Play that gets set true and then never changes?
-  - could just base flag on awaitingAfterTouchdown value in constructor
 - confirm that every event passed to Play containing yds actually results in yds being applied to scrimmage
 - blog
   - ability to roll back stats after penalty is accepted

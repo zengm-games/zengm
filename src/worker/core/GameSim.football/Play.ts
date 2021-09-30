@@ -171,7 +171,6 @@ type PlayState = Pick<
 	| "awaitingAfterSafety"
 	| "awaitingAfterTouchdown"
 	| "overtimeState"
-	| "twoPointConversionTeam"
 >;
 
 type StatChange = Parameters<GameSim["recordStat"]>;
@@ -187,19 +186,21 @@ export class State {
 	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
-	twoPointConversionTeam: PlayState["twoPointConversionTeam"];
 
 	numPossessionChanges: number;
 	pts: [number, number];
+	twoPointConversionTeam: TeamNum | undefined;
 
 	constructor(
 		gameSim: PlayState,
 		{
 			numPossessionChanges,
 			pts,
+			twoPointConversionTeam,
 		}: {
 			numPossessionChanges: number;
 			pts: [number, number];
+			twoPointConversionTeam: TeamNum | undefined;
 		},
 	) {
 		this.down = gameSim.down;
@@ -212,16 +213,17 @@ export class State {
 		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
-		this.twoPointConversionTeam = gameSim.twoPointConversionTeam;
 
 		this.numPossessionChanges = numPossessionChanges;
 		this.pts = pts;
+		this.twoPointConversionTeam = twoPointConversionTeam;
 	}
 
 	clone() {
 		return new State(this, {
 			numPossessionChanges: this.numPossessionChanges,
 			pts: [...this.pts],
+			twoPointConversionTeam: this.twoPointConversionTeam,
 		});
 	}
 
@@ -288,6 +290,7 @@ class Play {
 		const initialState = new State(gameSim, {
 			numPossessionChanges: 0,
 			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
+			twoPointConversionTeam: undefined,
 		});
 		this.state = {
 			initial: initialState,
@@ -950,7 +953,6 @@ class Play {
 			awaitingAfterSafety,
 			awaitingAfterTouchdown,
 			overtimeState,
-			twoPointConversionTeam,
 		} = this.state.current;
 
 		this.g.down = down;
@@ -963,7 +965,6 @@ class Play {
 		this.g.awaitingAfterSafety = awaitingAfterSafety;
 		this.g.awaitingAfterTouchdown = awaitingAfterTouchdown;
 		this.g.overtimeState = overtimeState;
-		this.g.twoPointConversionTeam = twoPointConversionTeam;
 	}
 }
 

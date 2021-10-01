@@ -10,7 +10,6 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- pass interference penalty shouldn't say 0 yards
 - benchmark
 - email people
 

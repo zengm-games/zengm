@@ -970,6 +970,11 @@ class Play {
 					}
 					const penalty = penalties[i];
 
+					let yds = penalty.event.penYds;
+					if (yds === 0 && penalty.event.spotYds !== undefined) {
+						yds = penalty.event.spotYds;
+					}
+
 					this.g.playByPlay.logEvent("penalty", {
 						clock: this.g.clock,
 						decision,
@@ -978,7 +983,7 @@ class Play {
 						names: penalty.event.p ? [penalty.event.p.name] : [],
 						automaticFirstDown: penalty.event.automaticFirstDown,
 						penaltyName: penalty.event.name,
-						yds: penalty.event.penYds,
+						yds,
 					});
 				}
 			}

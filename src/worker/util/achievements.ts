@@ -1134,7 +1134,7 @@ if (isSport("football")) {
 	achievements.push({
 		slug: "clean_sweep",
 		name: "Clean Sweep",
-		desc: "Go 16-0 in regular season and win the championship.",
+		desc: "Go undefeated in the regular season and playoffs.",
 		category: "Season",
 
 		async check() {
@@ -1147,7 +1147,7 @@ if (isSport("football")) {
 					tid: g.get("userTid"),
 				});
 
-				if (t && t.seasonAttrs.won === 16 && t.seasonAttrs.lost === 0) {
+				if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
 					return true;
 				}
 			}

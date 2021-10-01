@@ -413,7 +413,6 @@ class PlayByPlayLogger {
 
 					text += ` - ${decisionText}`;
 				}
-				console.log(text);
 			} else if (type === "timeout") {
 				text = `Time out, ${offense ? "offense" : "defense"}`;
 			} else if (type === "twoMinuteWarning") {

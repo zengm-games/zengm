@@ -1009,7 +1009,6 @@ class Play {
 						spotFoul = false;
 					}
 
-					console.log(penalty.event, penalty.penaltyInfo);
 					this.g.playByPlay.logEvent("penalty", {
 						clock: this.g.clock,
 						decision,

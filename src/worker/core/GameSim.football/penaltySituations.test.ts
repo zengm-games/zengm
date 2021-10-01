@@ -297,6 +297,52 @@ describe("worker/core/GameSim.football/Play", () => {
 				"after penalty application",
 			);
 		});
+
+		test.only("automatic first down penalty -> 1st and 10", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 16;
+			game.scrimmage = 24;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: true,
+				name: "Unnecessary roughness",
+				penYds: 15,
+				spotYds: 0,
+				t: game.d,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			play.addEvent({
+				type: "pssInc",
+				defender: undefined,
+			});
+
+			play.commit();
+
+			console.log(
+				play.state.current.down,
+				play.state.current.toGo,
+				play.state.current.scrimmage,
+			);
+
+			assert.strictEqual(play.state.current.down, 1);
+			assert.strictEqual(play.state.current.toGo, 10);
+			assert.strictEqual(play.state.current.scrimmage, 39);
+		});
 	});
 
 	describe("overtime", () => {

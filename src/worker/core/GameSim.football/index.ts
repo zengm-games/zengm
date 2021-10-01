@@ -1907,12 +1907,14 @@ class GameSim {
 			return false;
 		}
 
+		const foulRateFactor = g.get("foulRateFactor");
+
 		let called = penalties.filter(pen => {
 			if (!pen.playTypes.includes(playType)) {
 				return false;
 			}
 
-			return Math.random() < pen.probPerPlay;
+			return Math.random() < pen.probPerPlay * foulRateFactor;
 		});
 
 		if (called.length === 0) {

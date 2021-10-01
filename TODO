@@ -10,12 +10,9 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- penalty frequency setting
+- pass interference penalty shouldn't say 0 yards
 - benchmark
-- blog
-  - ability to roll back stats after penalty is accepted
-  - ability to evaluate whether to accept/reject penalty based on whole play and win prob
-  - email people
+- email people
 
 football penalty later
 - penalty text in play by play
@@ -27,6 +24,8 @@ football penalty later
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
+
+"May have found a small bug (Chrome), when you update a players rating, then attempt to update him to a retired jersey number, it throws the retired jersey error. after you change the jersey number, the rating change shows, but the listed OVR doesn't change to what's reflected in the edit page" https://discord.com/channels/290013534023057409/290015591216054273/893175557410406440
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox

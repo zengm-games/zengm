@@ -1278,6 +1278,21 @@ if (isSport("basketball")) {
 			},
 		},
 	);
+} else if (isSport("football")) {
+	settings.push({
+		category: "Game Simulation",
+		key: "foulRateFactor",
+		name: "Penalty Rate Factor",
+		godModeRequired: "always",
+		type: "float",
+		description:
+			"The baseline rate for penalties is multiplied by this number. Max is 10 because beyond that there is basically a penalty every play.",
+		validator: value => {
+			if (value > 10) {
+				throw new Error("Value cannot exceed 10");
+			}
+		},
+	});
 }
 
 settings.push(

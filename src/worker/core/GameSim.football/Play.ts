@@ -158,6 +158,10 @@ type PlayEvent =
 
 type PlayType = PlayEvent["type"];
 
+type PlayEventPenalty = Extract<PlayEvent, { type: "penalty" }>;
+
+type PlayEventNonPenalty = Exclude<PlayEvent, PlayEventPenalty>;
+
 type PlayState = Pick<
 	GameSim,
 	| "down"
@@ -263,12 +267,25 @@ const getPts = (event: PlayEvent, twoPointConversion: boolean) => {
 	return pts;
 };
 
+type WrappedPenaltyEvent = {
+	event: PlayEventPenalty;
+	statChanges: StatChange[];
+	penaltyInfo: {
+		halfDistanceToGoal: boolean;
+		penYdsSigned: number;
+		placeOnOne: boolean;
+	};
+};
+
 class Play {
 	g: GameSim;
-	events: {
-		event: PlayEvent;
-		statChanges: StatChange[];
-	}[];
+	events: (
+		| {
+				event: PlayEventNonPenalty;
+				statChanges: StatChange[];
+		  }
+		| WrappedPenaltyEvent
+	)[];
 	state: {
 		initial: State;
 		current: State;
@@ -482,6 +499,23 @@ class Play {
 		return statChanges;
 	}
 
+	getPenaltyInfo(state: State, event: PlayEventPenalty) {
+		const side = state.o === event.t ? "off" : "def";
+
+		const penYdsSigned = side === "off" ? -event.penYds : event.penYds;
+
+		const halfDistanceToGoal =
+			side === "off" && state.scrimmage / 2 < event.penYds;
+
+		const placeOnOne = side === "def" && state.scrimmage + penYdsSigned > 99;
+
+		return {
+			halfDistanceToGoal,
+			penYdsSigned,
+			placeOnOne,
+		};
+	}
+
 	updateState(state: State, event: PlayEvent) {
 		const afterKickoff = () => {
 			if (state.overtimeState === "initialKickoff") {
@@ -490,27 +524,22 @@ class Play {
 		};
 
 		if (event.type === "penalty") {
-			const side = state.o === event.t ? "off" : "def";
-
-			const penYdsSigned = side === "off" ? -event.penYds : event.penYds;
-
 			if (event.spotYds !== undefined) {
 				// Spot foul, apply penalty from here
 				state.scrimmage += event.spotYds;
 			}
 
+			const { halfDistanceToGoal, penYdsSigned, placeOnOne } =
+				this.getPenaltyInfo(state, event);
+
 			// Adjust penalty yards when near endzones
-			if (side === "def" && state.scrimmage + penYdsSigned > 99) {
-				// 1 yard line
+			if (placeOnOne) {
 				state.scrimmage = 99;
-			} else if (side === "off" && state.scrimmage / 2 < event.penYds) {
-				// Half distance to goal
+			} else if (halfDistanceToGoal) {
 				state.scrimmage = Math.round(state.scrimmage / 2);
 			} else {
 				state.scrimmage += penYdsSigned;
 			}
-
-			state.toGo = this.firstDownLine - state.scrimmage;
 
 			if (event.automaticFirstDown || state.numPossessionChanges > 0) {
 				state.newFirstDown();
@@ -762,9 +791,14 @@ class Play {
 				}
 			}
 
+			const penaltyInfo = this.getPenaltyInfo(this.state.current, event);
+
+			// Purposely don't record stat changes!
+
 			this.events.push({
 				event,
 				statChanges,
+				penaltyInfo,
 			});
 
 			return {
@@ -813,10 +847,7 @@ class Play {
 	adjudicatePenalties() {
 		const penalties = this.events.filter(
 			event => event.event.type === "penalty",
-		) as {
-			event: Extract<PlayEvent, { type: "penalty" }>;
-			statChanges: StatChange[];
-		}[];
+		) as WrappedPenaltyEvent[];
 
 		if (penalties.length === 0) {
 			return;
@@ -970,11 +1001,15 @@ class Play {
 					}
 					const penalty = penalties[i];
 
+					// Special case for pass interference, so it doesn't say "0 yards from the spot of the foul"
 					let yds = penalty.event.penYds;
-					if (yds === 0 && penalty.event.spotYds !== undefined) {
-						yds = penalty.event.spotYds;
+					let spotFoul = penalty.event.spotYds !== undefined;
+					if (yds === 0 && spotFoul) {
+						yds = penalty.event.spotYds as number;
+						spotFoul = false;
 					}
 
+					console.log(penalty.event, penalty.penaltyInfo);
 					this.g.playByPlay.logEvent("penalty", {
 						clock: this.g.clock,
 						decision,
@@ -984,6 +1019,9 @@ class Play {
 						automaticFirstDown: penalty.event.automaticFirstDown,
 						penaltyName: penalty.event.name,
 						yds,
+						spotFoul,
+						halfDistanceToGoal: penalty.penaltyInfo.halfDistanceToGoal,
+						placeOnOne: penalty.penaltyInfo.placeOnOne,
 					});
 				}
 			}

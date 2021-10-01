@@ -14,9 +14,8 @@ rewrite football game sim to get rid of bugs
 - email people
 
 football penalty later
-- penalty text in play by play
-  - should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
-  - look at defensive pass interference
+- option to apply penalty on kickoff, for extra points
+- option to redo punt or not
 - double foul after change of possession edge cases to test
   - If this spot is normally a touchback, the ball is placed on the 20-yard line.  
   - If normally a safety, place the ball on one-yard line. 

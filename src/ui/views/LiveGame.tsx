@@ -137,6 +137,8 @@ const LiveGame = (props: View<"liveGame">) => {
 					p.innerHTML = text
 						.replace("accepted", "<b>accepted</b>")
 						.replace("declined", "<b>declined</b>")
+						.replace("enforced", "<b>enforced</b>")
+						.replace("overruled", "<b>overruled</b>")
 						.replace("ABBREV0", boxScore.current.teams[1].abbrev)
 						.replace("ABBREV1", boxScore.current.teams[0].abbrev);
 				} else {

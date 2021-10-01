@@ -72,6 +72,9 @@ class PlayByPlayLogger {
 			td,
 			touchback,
 			yds,
+			spotFoul,
+			halfDistanceToGoal,
+			placeOnOne,
 		}: {
 			automaticFirstDown?: boolean;
 			clock: number;
@@ -92,6 +95,9 @@ class PlayByPlayLogger {
 			td?: boolean;
 			touchback?: boolean;
 			yds?: number;
+			spotFoul?: boolean;
+			halfDistanceToGoal?: boolean;
+			placeOnOne?: boolean;
 		},
 	) {
 		// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
@@ -386,6 +392,18 @@ class PlayByPlayLogger {
 				}`;
 
 				if (offsetStatus !== "offset") {
+					const spotFoulText = spotFoul ? " from the spot of the foul" : "";
+					const automaticFirstDownText = automaticFirstDown
+						? " and an automatic first down"
+						: "";
+					if (halfDistanceToGoal) {
+						text += `, half the distance to the goal${spotFoulText}`;
+					} else if (placeOnOne) {
+						text += `, the ball will be placed at the 1 yard line${automaticFirstDownText}`;
+					} else {
+						text += `, ${yds} yards${spotFoulText}${automaticFirstDownText}`;
+					}
+
 					let decisionText;
 					if (offsetStatus === "overrule") {
 						decisionText = decision === "accept" ? "enforced" : "overruled";
@@ -393,10 +411,9 @@ class PlayByPlayLogger {
 						decisionText = decision === "accept" ? "accepted" : "declined";
 					}
 
-					text += `, ${yds} yards${
-						automaticFirstDown ? " and an automatic first down" : ""
-					} - ${decisionText}`;
+					text += ` - ${decisionText}`;
 				}
+				console.log(text);
 			} else if (type === "timeout") {
 				text = `Time out, ${offense ? "offense" : "defense"}`;
 			} else if (type === "twoMinuteWarning") {

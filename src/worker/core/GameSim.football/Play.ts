@@ -82,7 +82,6 @@ type PlayEvent =
 	| {
 			type: "pssInc";
 			defender: PlayerGameSim | undefined;
-			yds: number;
 	  }
 	| {
 			type: "pssTD";

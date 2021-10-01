@@ -1733,7 +1733,6 @@ class GameSim {
 				this.currentPlay.addEvent({
 					type: "pssInc",
 					defender: Math.random() < 0.28 ? defender : undefined,
-					yds,
 				});
 
 				this.playByPlay.logEvent("passIncomplete", {

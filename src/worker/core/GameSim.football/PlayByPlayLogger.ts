@@ -388,9 +388,9 @@ class PlayByPlayLogger {
 				if (offsetStatus !== "offset") {
 					let decisionText;
 					if (offsetStatus === "overrule") {
-						decisionText = decision === "accept" ? "- accepted" : "- declined";
+						decisionText = decision === "accept" ? "enforced" : "overruled";
 					} else {
-						decisionText = decision === "accept" ? "- enforced" : "- overruled";
+						decisionText = decision === "accept" ? "accepted" : "declined";
 					}
 
 					text += `, ${yds} yards${

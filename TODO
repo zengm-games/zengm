@@ -10,8 +10,8 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
+- penalty frequency setting
 - benchmark
-- compare stats with old version
 - blog
   - ability to roll back stats after penalty is accepted
   - ability to evaluate whether to accept/reject penalty based on whole play and win prob
@@ -21,7 +21,6 @@ football penalty later
 - penalty text in play by play
   - should say "spot of the foul", "half the distance to the goal", "placed at the 1 yard line"
   - look at defensive pass interference
-- penalty frequency setting
 - double foul after change of possession edge cases to test
   - If this spot is normally a touchback, the ball is placed on the 20-yard line.  
   - If normally a safety, place the ball on one-yard line. 

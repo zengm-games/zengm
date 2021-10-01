@@ -1065,7 +1065,6 @@ class GameSim {
 					type: "touchbackKick",
 				});
 			} else {
-				this.scrimmage = kickTo;
 				let ydsRaw = Math.round(random.truncGauss(20, 5, -10, 109));
 
 				if (Math.random() < 0.02) {
@@ -1107,8 +1106,14 @@ class GameSim {
 			}
 		}
 
-		this.recordStat(this.o, undefined, "drives");
-		this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
+		this.recordStat(this.currentPlay.state.current.o, undefined, "drives");
+		this.recordStat(
+			this.currentPlay.state.current.o,
+			undefined,
+			"totStartYds",
+			this.currentPlay.state.current.scrimmage,
+		);
+
 		return dt;
 	}
 
@@ -1194,8 +1199,13 @@ class GameSim {
 			});
 		}
 
-		this.recordStat(this.o, undefined, "drives");
-		this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
+		this.recordStat(this.currentPlay.state.current.o, undefined, "drives");
+		this.recordStat(
+			this.currentPlay.state.current.o,
+			undefined,
+			"totStartYds",
+			this.currentPlay.state.current.scrimmage,
+		);
 
 		return dt;
 	}
@@ -1924,6 +1934,8 @@ class GameSim {
 			called = called.slice(0, maxNumPenaltiesAllowed);
 		}
 
+		const scrimmage = this.currentPlay.state.current.scrimmage;
+
 		const penInfos = called.map(pen => {
 			let spotYds: number | undefined;
 
@@ -1948,8 +1960,8 @@ class GameSim {
 					spotYds = random.randInt(1, playYds);
 
 					// Don't let it be in the endzone, otherwise shit gets weird with safeties
-					if (spotYds + this.scrimmage < 1) {
-						spotYds = 1 - this.scrimmage;
+					if (spotYds + scrimmage < 1) {
+						spotYds = 1 - scrimmage;
 					}
 				} else if (pen.side === "defense" && !isReturn) {
 					// Defensive spot foul - could be in secondary too
@@ -1958,7 +1970,7 @@ class GameSim {
 
 				if (spotYds !== undefined) {
 					// On kickoff returns, penalties are very unlikely to occur extremely deep
-					if (playType === "kickoffReturn" && spotYds + this.scrimmage <= 10) {
+					if (playType === "kickoffReturn" && spotYds + scrimmage <= 10) {
 						spotYds += random.randInt(10, playYds);
 					}
 				}
@@ -1967,8 +1979,8 @@ class GameSim {
 			}
 
 			if (spotYds !== undefined) {
-				if (spotYds + this.scrimmage > 99) {
-					spotYds = 99 - this.scrimmage;
+				if (spotYds + scrimmage > 99) {
+					spotYds = 99 - scrimmage;
 				}
 			}
 

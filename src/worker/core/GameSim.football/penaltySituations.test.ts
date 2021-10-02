@@ -298,7 +298,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			);
 		});
 
-		test.only("automatic first down penalty -> 1st and 10", async () => {
+		test("automatic first down penalty -> 1st and 10", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -332,12 +332,6 @@ describe("worker/core/GameSim.football/Play", () => {
 			});
 
 			play.commit();
-
-			console.log(
-				play.state.current.down,
-				play.state.current.toGo,
-				play.state.current.scrimmage,
-			);
 
 			assert.strictEqual(play.state.current.down, 1);
 			assert.strictEqual(play.state.current.toGo, 10);

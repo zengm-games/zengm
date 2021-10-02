@@ -190,6 +190,7 @@ export class State {
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
 
+	firstDownLine: number;
 	numPossessionChanges: number;
 	pts: [number, number];
 	twoPointConversionTeam: TeamNum | undefined;
@@ -197,10 +198,12 @@ export class State {
 	constructor(
 		gameSim: PlayState,
 		{
+			firstDownLine,
 			numPossessionChanges,
 			pts,
 			twoPointConversionTeam,
 		}: {
+			firstDownLine: number | undefined;
 			numPossessionChanges: number;
 			pts: [number, number];
 			twoPointConversionTeam: TeamNum | undefined;
@@ -217,6 +220,7 @@ export class State {
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
 
+		this.firstDownLine = firstDownLine ?? this.scrimmage + this.toGo;
 		this.numPossessionChanges = numPossessionChanges;
 		this.pts = pts;
 		this.twoPointConversionTeam = twoPointConversionTeam;
@@ -224,6 +228,7 @@ export class State {
 
 	clone() {
 		return new State(this, {
+			firstDownLine: this.firstDownLine,
 			numPossessionChanges: this.numPossessionChanges,
 			pts: [...this.pts],
 			twoPointConversionTeam: this.twoPointConversionTeam,
@@ -249,6 +254,7 @@ export class State {
 	newFirstDown() {
 		this.down = 1;
 		this.toGo = Math.min(10, 100 - this.scrimmage);
+		this.firstDownLine = this.scrimmage + this.toGo;
 	}
 }
 
@@ -298,13 +304,13 @@ class Play {
 		state: State;
 		indexEvent: number;
 	};
-	firstDownLine: number;
 
 	constructor(gameSim: GameSim) {
 		this.g = gameSim;
 		this.events = [];
 
 		const initialState = new State(gameSim, {
+			firstDownLine: undefined,
 			numPossessionChanges: 0,
 			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 			twoPointConversionTeam: undefined,
@@ -314,8 +320,6 @@ class Play {
 			current: initialState.clone(),
 		};
 		this.penaltyRollbacks = [];
-
-		this.firstDownLine = initialState.scrimmage + initialState.toGo;
 	}
 
 	// If there is going to be a possession change related to this yds quantity, do possession change before calling boundedYds
@@ -754,7 +758,8 @@ class Play {
 			return;
 		}
 
-		state.toGo = this.firstDownLine - state.scrimmage;
+		// already given new first down, so this should not apply!
+		state.toGo = state.firstDownLine - state.scrimmage;
 
 		if (state.toGo <= 0) {
 			state.newFirstDown();

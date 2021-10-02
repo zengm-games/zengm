@@ -1449,6 +1449,43 @@ const generateJSONSchema = (sport /*: string*/) => {
 						tid: {
 							type: "integer",
 						},
+						transactions: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									season: {
+										type: "integer",
+									},
+									phase: {
+										type: "integer",
+									},
+									tid: {
+										type: "integer",
+									},
+									type: {
+										type: "string",
+										enum: [
+											"draft",
+											"freeAgent",
+											"trade",
+											"godMode",
+											"import",
+										],
+									},
+									pickNum: {
+										type: "integer",
+									},
+									fromTid: {
+										type: "integer",
+									},
+									eid: {
+										type: "integer",
+									},
+								},
+								required: ["season", "phase", "tid", "type"],
+							},
+						},
 						value: {
 							type: "number",
 						},

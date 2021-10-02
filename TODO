@@ -10,6 +10,12 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
+- bugs
+  - fumble does not lose down
+    - https://discord.com/channels/290013534023057409/290015591216054273/893712685068341268
+    - https://discord.com/channels/290013534023057409/290015591216054273/893715757282787328
+  - missed fg should be turnover https://discord.com/channels/290013534023057409/290015591216054273/893714002050441227
+
 - benchmark
 - email people
 

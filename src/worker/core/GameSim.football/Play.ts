@@ -194,6 +194,7 @@ export class State {
 	overtimeState: PlayState["overtimeState"];
 
 	firstDownLine: number;
+	missedXP: TeamNum | undefined;
 	numPossessionChanges: number;
 	pts: [number, number];
 	twoPointConversionTeam: TeamNum | undefined;
@@ -202,11 +203,13 @@ export class State {
 		gameSim: PlayState,
 		{
 			firstDownLine,
+			missedXP,
 			numPossessionChanges,
 			pts,
 			twoPointConversionTeam,
 		}: {
 			firstDownLine: number | undefined;
+			missedXP: TeamNum | undefined;
 			numPossessionChanges: number;
 			pts: [number, number];
 			twoPointConversionTeam: TeamNum | undefined;
@@ -224,6 +227,7 @@ export class State {
 		this.overtimeState = gameSim.overtimeState;
 
 		this.firstDownLine = firstDownLine ?? this.scrimmage + this.toGo;
+		this.missedXP = missedXP;
 		this.numPossessionChanges = numPossessionChanges;
 		this.pts = pts;
 		this.twoPointConversionTeam = twoPointConversionTeam;
@@ -232,6 +236,7 @@ export class State {
 	clone() {
 		return new State(this, {
 			firstDownLine: this.firstDownLine,
+			missedXP: this.missedXP,
 			numPossessionChanges: this.numPossessionChanges,
 			pts: [...this.pts],
 			twoPointConversionTeam: this.twoPointConversionTeam,
@@ -286,15 +291,16 @@ type WrappedPenaltyEvent = {
 	};
 };
 
+export type WrappedPlayEvent =
+	| {
+			event: PlayEventNonPenalty;
+			statChanges: StatChange[];
+	  }
+	| WrappedPenaltyEvent;
+
 class Play {
 	g: GameSim;
-	events: (
-		| {
-				event: PlayEventNonPenalty;
-				statChanges: StatChange[];
-		  }
-		| WrappedPenaltyEvent
-	)[];
+	events: WrappedPlayEvent[];
 	state: {
 		initial: State;
 		current: State;
@@ -315,6 +321,7 @@ class Play {
 		const initialState = new State(gameSim, {
 			firstDownLine: undefined,
 			numPossessionChanges: 0,
+			missedXP: undefined,
 			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 			twoPointConversionTeam: undefined,
 		});
@@ -615,6 +622,10 @@ class Play {
 
 			if (event.type === "fg" && !event.made) {
 				state.possessionChange();
+			}
+
+			if (event.type === "xp" && !event.made) {
+				state.missedXP = state.o;
 			}
 
 			state.awaitingAfterTouchdown = false;

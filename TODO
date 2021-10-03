@@ -10,9 +10,7 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- bugs
-  - On pats other teams accept penalties even if the opposing team missed the extra point https://discord.com/channels/290013534023057409/893688130568347649/893848638546116620
-
+- leadScore in getBestPenaltyResult - implement similar to missedXP
 - benchmark
 - email people
 

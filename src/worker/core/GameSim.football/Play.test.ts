@@ -337,6 +337,89 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.toGo, 10);
 			assert.strictEqual(play.state.current.scrimmage, 39);
 		});
+
+		test("penalty on offense on made xp -> accept", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 90;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Unnecessary roughness",
+				penYds: 15,
+				spotYds: 0,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "xp",
+				p,
+				distance: 33,
+				made: true,
+			});
+
+			assert.deepStrictEqual(play.state.current.pts, [1, 0]);
+
+			play.adjudicatePenalties();
+
+			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
+		});
+
+		test("penalty on offense on missed xp -> decline", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 90;
+			game.awaitingKickoff = undefined;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Unnecessary roughness",
+				penYds: 15,
+				spotYds: 0,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "xp",
+				p,
+				distance: 33,
+				made: false,
+			});
+
+			assert.deepStrictEqual(
+				play.state.current.awaitingKickoff,
+				0,
+				"before declining penalty",
+			);
+
+			play.adjudicatePenalties();
+
+			assert.deepStrictEqual(
+				play.state.current.awaitingKickoff,
+				0,
+				"after declining penalty",
+			);
+		});
 	});
 
 	describe("overtime", () => {

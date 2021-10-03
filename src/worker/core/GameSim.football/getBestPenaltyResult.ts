@@ -40,6 +40,14 @@ const getBestPenaltyResult = <
 			}
 		}
 
+		// Missed XP is great for the defense and horrible for the offense
+		let missedXP = 0;
+		if (state.missedXP === t) {
+			missedXP = -1;
+		} else if (state.missedXP === t2) {
+			missedXP = 1;
+		}
+
 		// Touchdown or 2 point conversion
 		let tdScore = 0;
 		if (ptsScoredThisPlay[t] === 6 || ptsScoredThisPlay[t] === 2) {
@@ -121,6 +129,7 @@ const getBestPenaltyResult = <
 
 		return [
 			overtimeScore,
+			missedXP,
 			tdScore,
 			changeOfPossession,
 			firstDown,
@@ -152,6 +161,7 @@ const getBestPenaltyResult = <
 	if (!bestResult) {
 		throw new Error("Should never happen");
 	}
+	// console.log("bestResult", bestResult);
 
 	return bestResult;
 };

@@ -753,5 +753,85 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.toGo, 10);
 			assert.strictEqual(play.state.current.scrimmage, 44);
 		});
+
+		it("run -> fumble recovered by offense -> lost down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 63;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const pFumbled = game.pickPlayer(game.o);
+			const pForced = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "rus",
+				p: pFumbled,
+				yds: 2,
+			});
+			play.addEvent({
+				type: "fmb",
+				pFumbled,
+				pForced,
+				yds: 1,
+			});
+			play.addEvent({
+				type: "fmbRec",
+				pFumbled,
+				pRecovered: pFumbled,
+				yds: 1,
+				lost: false,
+			});
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 3);
+			assert.strictEqual(play.state.current.toGo, 3);
+			assert.strictEqual(play.state.current.scrimmage, 67);
+		});
+
+		it("pass -> fumble recovered by offense -> lost down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 63;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const pFumbled = game.pickPlayer(game.o);
+			const pForced = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "fmb",
+				pFumbled,
+				pForced,
+				yds: 1,
+			});
+			play.addEvent({
+				type: "fmbRec",
+				pFumbled,
+				pRecovered: pFumbled,
+				yds: 1,
+				lost: false,
+			});
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 3);
+			assert.strictEqual(play.state.current.toGo, 5);
+			assert.strictEqual(play.state.current.scrimmage, 65);
+		});
 	});
 });

@@ -1633,6 +1633,9 @@ class GameSim {
 		}
 
 		const qb = this.getTopPlayerOnField(o, "QB");
+		this.currentPlay.addEvent({
+			type: "dropback",
+		});
 		this.playByPlay.logEvent("dropback", {
 			clock: this.clock,
 			t: o,

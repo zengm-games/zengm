@@ -69,6 +69,9 @@ type PlayEvent =
 			yds: number;
 	  }
 	| {
+			type: "dropback";
+	  }
+	| {
 			type: "pss";
 			qb: PlayerGameSim;
 			target: PlayerGameSim;
@@ -589,15 +592,14 @@ class Play {
 			// Set this to false, because we handle running the clock in dt in GameSim
 			state.isClockRunning = false;
 		} else if (event.type === "sk") {
-			state.down += 1;
 			state.scrimmage += event.yds;
 			state.isClockRunning = Math.random() < 0.98;
-		} else if (event.type === "pssCmp") {
+		} else if (event.type === "dropback") {
 			state.down += 1;
+		} else if (event.type === "pssCmp") {
 			state.scrimmage += event.yds;
 			state.isClockRunning = Math.random() < 0.75;
 		} else if (event.type === "pssInc") {
-			state.down += 1;
 			state.isClockRunning = false;
 		} else if (event.type === "int") {
 			state.scrimmage -= event.ydsReturn;

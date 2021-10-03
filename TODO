@@ -11,9 +11,6 @@ refactor game sim
 
 rewrite football game sim to get rid of bugs
 - bugs
-  - fumble does not lose down
-    - https://discord.com/channels/290013534023057409/290015591216054273/893712685068341268
-    - https://discord.com/channels/290013534023057409/290015591216054273/893715757282787328
   - On pats other teams accept penalties even if the opposing team missed the extra point https://discord.com/channels/290013534023057409/893688130568347649/893848638546116620
 
 - benchmark

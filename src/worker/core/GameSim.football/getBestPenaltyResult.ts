@@ -40,14 +40,6 @@ const getBestPenaltyResult = <
 			}
 		}
 
-		// Missed XP is great for the defense and horrible for the offense
-		let missedXP = 0;
-		if (state.missedXP === t) {
-			missedXP = -1;
-		} else if (state.missedXP === t2) {
-			missedXP = 1;
-		}
-
 		// Touchdown or 2 point conversion
 		let tdScore = 0;
 		if (ptsScoredThisPlay[t] === 6 || ptsScoredThisPlay[t] === 2) {
@@ -56,16 +48,21 @@ const getBestPenaltyResult = <
 			tdScore = -ptsScoredThisPlay[t2];
 		}
 
-		// Score to take the lead - really only makes sense late in the game, but currently this function does not know quarter/clock
-		/*let leadScore = 0;
-		const pointDifferential = state.pts[t] - state.pts[t2];
-		const pointDifferentialBeforePlay =
-			initialState.pts[t] - initialState.pts[t2];
-		if ((pointDifferential > 0 && pointDifferentialBeforePlay <= 0) || (pointDifferential >= 0 && pointDifferentialBeforePlay < 0)) {
-			leadScore = pointDifferential - pointDifferentialBeforePlay;
-		} else if ((pointDifferential < 0 && pointDifferentialBeforePlay >= 0) || (pointDifferential <= 0 && pointDifferentialBeforePlay > 0)) {
-			leadScore = pointDifferential - pointDifferentialBeforePlay;
-		}*/
+		// Missed XP is great for the defense and horrible for the offense
+		let missedXP = 0;
+		if (state.missedXP === t) {
+			missedXP = -1;
+		} else if (state.missedXP === t2) {
+			missedXP = 1;
+		}
+
+		// Made late game/quarter FG
+		let madeLateFG = 0;
+		if (state.madeLateFG === t) {
+			madeLateFG = 1;
+		} else if (state.madeLateFG === t2) {
+			madeLateFG = -1;
+		}
 
 		// Change of possession
 		let changeOfPossession = 0;
@@ -129,8 +126,9 @@ const getBestPenaltyResult = <
 
 		return [
 			overtimeScore,
-			missedXP,
 			tdScore,
+			missedXP,
+			madeLateFG,
 			changeOfPossession,
 			firstDown,
 			anyScore,

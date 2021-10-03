@@ -216,6 +216,7 @@ describe("worker/core/GameSim.football/Play", () => {
 					p,
 					made: true,
 					distance,
+					late: false,
 				});
 
 				assert.deepStrictEqual(
@@ -233,6 +234,56 @@ describe("worker/core/GameSim.football/Play", () => {
 				);
 			});
 		}
+
+		test("made late FG is better than a 5 yard penalty that does give a 1st down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 4;
+			game.toGo = 1;
+			game.scrimmage = 80;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const distance = 100 - game.scrimmage + 17;
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			assert.deepStrictEqual(play.state.current.pts, [0, 0], "before snap");
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Too many men on the field",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+			});
+
+			play.addEvent({
+				type: "fg",
+				p,
+				made: true,
+				distance,
+				late: true,
+			});
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[3, 0],
+				"before penalty application",
+			);
+
+			play.adjudicatePenalties();
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[3, 0],
+				"after penalty application",
+			);
+		});
 
 		test("accept penalty to prevent TD", async () => {
 			const game = await initGameSim();
@@ -468,6 +519,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 				distance: 30,
 				made: true,
+				late: false,
 			});
 
 			play.commit();
@@ -490,6 +542,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 				distance: 30,
 				made: true,
+				late: false,
 			});
 
 			play.commit();
@@ -827,6 +880,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 				made: false,
 				distance: 54,
+				late: false,
 			});
 
 			play.commit();

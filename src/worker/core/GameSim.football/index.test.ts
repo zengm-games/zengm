@@ -55,7 +55,7 @@ describe("worker/core/GameSim.football", () => {
 		game.clock = 0.01;
 		game.currentPlay = new Play(game);
 
-		assert.strictEqual(game.getPlayType(), "fieldGoal");
+		assert.strictEqual(game.getPlayType(), "fieldGoalLate");
 	});
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
@@ -73,7 +73,7 @@ describe("worker/core/GameSim.football", () => {
 		game.clock = 0.01;
 		game.currentPlay = new Play(game);
 
-		assert.strictEqual(game.getPlayType(), "fieldGoal");
+		assert.strictEqual(game.getPlayType(), "fieldGoalLate");
 	});
 
 	test("don't punt when down late, and usually pass", async () => {

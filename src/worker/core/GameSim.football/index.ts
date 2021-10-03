@@ -577,7 +577,7 @@ class GameSim {
 			!needTouchdown &&
 			this.probMadeFieldGoal() >= 0.02
 		) {
-			return "fieldGoal";
+			return "fieldGoalLate";
 		}
 
 		if (this.down === 4) {
@@ -675,12 +675,14 @@ class GameSim {
 			dt = this.doKickoff();
 		} else if (playType === "onsideKick") {
 			dt = this.doKickoff(true);
-		} else if (playType === "extraPoint") {
-			dt = this.doFieldGoal(true);
+		} else if (
+			playType === "extraPoint" ||
+			playType === "fieldGoal" ||
+			playType === "fieldGoalLate"
+		) {
+			dt = this.doFieldGoal(playType);
 		} else if (playType === "twoPointConversion") {
 			dt = this.doTwoPointConversion();
-		} else if (playType === "fieldGoal") {
-			dt = this.doFieldGoal();
 		} else if (playType === "punt") {
 			dt = this.doPunt();
 		} else if (playType === "pass") {
@@ -1306,7 +1308,9 @@ class GameSim {
 		return baseProb + boost;
 	}
 
-	doFieldGoal(extraPoint: boolean = false) {
+	doFieldGoal(playType: "extraPoint" | "fieldGoal" | "fieldGoalLate") {
+		const extraPoint = playType === "extraPoint";
+
 		this.updatePlayersOnField("fieldGoal");
 		const penInfo = this.checkPenalties("beforeSnap");
 
@@ -1320,12 +1324,22 @@ class GameSim {
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		this.checkPenalties("fieldGoal");
 
-		this.currentPlay.addEvent({
-			type: extraPoint ? "xp" : "fg",
-			p: kicker,
-			made,
-			distance,
-		});
+		if (extraPoint) {
+			this.currentPlay.addEvent({
+				type: "xp",
+				p: kicker,
+				made,
+				distance,
+			});
+		} else {
+			this.currentPlay.addEvent({
+				type: "fg",
+				p: kicker,
+				made,
+				distance,
+				late: playType === "fieldGoalLate",
+			});
+		}
 
 		this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
 			clock: this.clock,

@@ -10,7 +10,6 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
-- leadScore in getBestPenaltyResult - implement similar to missedXP
 - benchmark
 - email people
 

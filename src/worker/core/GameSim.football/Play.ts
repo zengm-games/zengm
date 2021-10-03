@@ -105,10 +105,17 @@ type PlayEvent =
 			type: "touchbackInt";
 	  }
 	| {
-			type: "xp" | "fg";
+			type: "xp";
 			p: PlayerGameSim;
 			distance: number;
 			made: boolean;
+	  }
+	| {
+			type: "fg";
+			p: PlayerGameSim;
+			distance: number;
+			made: boolean;
+			late: boolean;
 	  }
 	| {
 			type: "penalty";
@@ -194,6 +201,7 @@ export class State {
 	overtimeState: PlayState["overtimeState"];
 
 	firstDownLine: number;
+	madeLateFG: TeamNum | undefined;
 	missedXP: TeamNum | undefined;
 	numPossessionChanges: number;
 	pts: [number, number];
@@ -203,12 +211,14 @@ export class State {
 		gameSim: PlayState,
 		{
 			firstDownLine,
+			madeLateFG,
 			missedXP,
 			numPossessionChanges,
 			pts,
 			twoPointConversionTeam,
 		}: {
 			firstDownLine: number | undefined;
+			madeLateFG: TeamNum | undefined;
 			missedXP: TeamNum | undefined;
 			numPossessionChanges: number;
 			pts: [number, number];
@@ -227,6 +237,7 @@ export class State {
 		this.overtimeState = gameSim.overtimeState;
 
 		this.firstDownLine = firstDownLine ?? this.scrimmage + this.toGo;
+		this.madeLateFG = madeLateFG;
 		this.missedXP = missedXP;
 		this.numPossessionChanges = numPossessionChanges;
 		this.pts = pts;
@@ -236,6 +247,7 @@ export class State {
 	clone() {
 		return new State(this, {
 			firstDownLine: this.firstDownLine,
+			madeLateFG: this.madeLateFG,
 			missedXP: this.missedXP,
 			numPossessionChanges: this.numPossessionChanges,
 			pts: [...this.pts],
@@ -321,6 +333,7 @@ class Play {
 		const initialState = new State(gameSim, {
 			firstDownLine: undefined,
 			numPossessionChanges: 0,
+			madeLateFG: undefined,
 			missedXP: undefined,
 			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 			twoPointConversionTeam: undefined,
@@ -626,6 +639,10 @@ class Play {
 
 			if (event.type === "xp" && !event.made) {
 				state.missedXP = state.o;
+			}
+
+			if (event.type === "fg" && event.made && event.late) {
+				state.madeLateFG = state.o;
 			}
 
 			state.awaitingAfterTouchdown = false;

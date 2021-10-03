@@ -723,4 +723,35 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 25);
 		});
 	});
+
+	describe("game sim issues", () => {
+		it("missed fg -> possesion change", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 63;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "fg",
+				p,
+				made: false,
+				distance: 54,
+			});
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.o, 1);
+			assert.strictEqual(play.state.current.down, 1);
+			assert.strictEqual(play.state.current.toGo, 10);
+			assert.strictEqual(play.state.current.scrimmage, 44);
+		});
+	});
 });

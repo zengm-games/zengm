@@ -14,7 +14,7 @@ rewrite football game sim to get rid of bugs
   - fumble does not lose down
     - https://discord.com/channels/290013534023057409/290015591216054273/893712685068341268
     - https://discord.com/channels/290013534023057409/290015591216054273/893715757282787328
-  - missed fg should be turnover https://discord.com/channels/290013534023057409/290015591216054273/893714002050441227
+  - On pats other teams accept penalties even if the opposing team missed the extra point https://discord.com/channels/290013534023057409/893688130568347649/893848638546116620
 
 - benchmark
 - email people
@@ -28,6 +28,7 @@ football penalty later
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
+- https://discord.com/channels/290013534023057409/290015468939640832/893115141015625779
 
 "May have found a small bug (Chrome), when you update a players rating, then attempt to update him to a retired jersey number, it throws the retired jersey error. after you change the jersey number, the rating change shows, but the listed OVR doesn't change to what's reflected in the edit page" https://discord.com/channels/290013534023057409/290015591216054273/893175557410406440
 

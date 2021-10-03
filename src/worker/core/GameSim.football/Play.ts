@@ -611,6 +611,10 @@ class Play {
 				state.awaitingKickoff = this.state.initial.o;
 			}
 
+			if (event.type === "fg" && !event.made) {
+				state.possessionChange();
+			}
+
 			state.awaitingAfterTouchdown = false;
 			state.isClockRunning = false;
 		} else if (event.type === "twoPointConversion") {

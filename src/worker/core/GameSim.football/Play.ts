@@ -200,6 +200,7 @@ export class State {
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
 
+	downIncremented: boolean;
 	firstDownLine: number;
 	madeLateFG: TeamNum | undefined;
 	missedXP: TeamNum | undefined;
@@ -210,6 +211,7 @@ export class State {
 	constructor(
 		gameSim: PlayState,
 		{
+			downIncremented,
 			firstDownLine,
 			madeLateFG,
 			missedXP,
@@ -217,6 +219,7 @@ export class State {
 			pts,
 			twoPointConversionTeam,
 		}: {
+			downIncremented: boolean;
 			firstDownLine: number | undefined;
 			madeLateFG: TeamNum | undefined;
 			missedXP: TeamNum | undefined;
@@ -236,6 +239,7 @@ export class State {
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
 
+		this.downIncremented = downIncremented;
 		this.firstDownLine = firstDownLine ?? this.scrimmage + this.toGo;
 		this.madeLateFG = madeLateFG;
 		this.missedXP = missedXP;
@@ -246,6 +250,7 @@ export class State {
 
 	clone() {
 		return new State(this, {
+			downIncremented: this.downIncremented,
 			firstDownLine: this.firstDownLine,
 			madeLateFG: this.madeLateFG,
 			missedXP: this.missedXP,
@@ -253,6 +258,19 @@ export class State {
 			pts: [...this.pts],
 			twoPointConversionTeam: this.twoPointConversionTeam,
 		});
+	}
+
+	incrementDown() {
+		if (!this.downIncremented) {
+			this.down += 1;
+			this.downIncremented = true;
+		}
+	}
+
+	newFirstDown() {
+		this.down = 1;
+		this.toGo = Math.min(10, 100 - this.scrimmage);
+		this.firstDownLine = this.scrimmage + this.toGo;
 	}
 
 	possessionChange() {
@@ -269,12 +287,6 @@ export class State {
 		this.isClockRunning = false;
 
 		this.numPossessionChanges += 1;
-	}
-
-	newFirstDown() {
-		this.down = 1;
-		this.toGo = Math.min(10, 100 - this.scrimmage);
-		this.firstDownLine = this.scrimmage + this.toGo;
 	}
 }
 
@@ -331,6 +343,7 @@ class Play {
 		this.events = [];
 
 		const initialState = new State(gameSim, {
+			downIncremented: false,
 			firstDownLine: undefined,
 			numPossessionChanges: 0,
 			madeLateFG: undefined,
@@ -602,11 +615,11 @@ class Play {
 		} else if (event.type === "pr") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "rus") {
-			state.down += 1;
+			state.incrementDown();
 			state.scrimmage += event.yds;
 			state.isClockRunning = Math.random() < 0.85;
 		} else if (event.type === "kneel") {
-			state.down += 1;
+			state.incrementDown();
 			state.scrimmage += event.yds;
 
 			// Set this to false, because we handle running the clock in dt in GameSim
@@ -615,7 +628,7 @@ class Play {
 			state.scrimmage += event.yds;
 			state.isClockRunning = Math.random() < 0.98;
 		} else if (event.type === "dropback") {
-			state.down += 1;
+			state.incrementDown();
 		} else if (event.type === "pssCmp") {
 			state.scrimmage += event.yds;
 			state.isClockRunning = Math.random() < 0.75;
@@ -624,16 +637,12 @@ class Play {
 		} else if (event.type === "int") {
 			state.scrimmage -= event.ydsReturn;
 		} else if (event.type === "fg" || event.type === "xp") {
-			if (!event.made && event.type !== "xp") {
-				state.down += 1;
-				state.scrimmage -= 7;
-			}
-
 			if (event.type === "xp" || event.made) {
 				state.awaitingKickoff = this.state.initial.o;
 			}
 
 			if (event.type === "fg" && !event.made) {
+				state.scrimmage -= 7;
 				state.possessionChange();
 			}
 

@@ -7,6 +7,13 @@ store results of trading block in database
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
 
 refactor game sim
+- prefer 3rd+longer or 4th+shorter? https://discord.com/channels/290013534023057409/290015591216054273/894354090493116436
+- offensive holding - spot foul or not? depends on if kick return https://discord.com/channels/290013534023057409/290015591216054273/894405990416539661
+  - should not cause loss of down https://discord.com/channels/290013534023057409/290015591216054273/894355482117013525
+    - roll back to last clean hands change of possession or start of play
+- don't allow interception and pass interference on same play? https://discord.com/channels/290013534023057409/290015591216054273/894407045527244930
+- qb scramble counts as 2 downs https://discord.com/channels/290013534023057409/290015591216054273/894391050964193330
+  - instead of incrementing down in addEvent, do it in checkDownAtEndOfPlay
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs

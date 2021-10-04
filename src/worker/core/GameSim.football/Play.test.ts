@@ -970,5 +970,35 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.toGo, 5);
 			assert.strictEqual(play.state.current.scrimmage, 65);
 		});
+
+		it("QB scramble counts as one down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 63;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "rus",
+				p,
+				yds: 2,
+			});
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 3);
+			assert.strictEqual(play.state.current.toGo, 5);
+			assert.strictEqual(play.state.current.scrimmage, 65);
+		});
 	});
 });

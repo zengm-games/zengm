@@ -387,7 +387,9 @@ class Play {
 		if (!state.awaitingAfterTouchdown || event.type === "xp") {
 			if (event.type === "penalty") {
 				const actualPenYds =
-					event.name === "Pass interference" ? event.spotYds : event.penYds;
+					event.name === "Pass interference" && event.penYds === 0
+						? event.spotYds
+						: event.penYds;
 
 				statChanges.push([event.t, event.p, "pen"]);
 				statChanges.push([event.t, event.p, "penYds", actualPenYds]);

@@ -7,8 +7,6 @@ store results of trading block in database
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
 
 refactor game sim
-- prefer 3rd+longer or 4th+shorter? https://discord.com/channels/290013534023057409/290015591216054273/894354090493116436
-- if defensive pass interference and interception happen together, needs to use the total yardage for the penalty or not allow touchback https://discord.com/channels/290013534023057409/290015591216054273/894407045527244930
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
@@ -21,6 +19,12 @@ football penalty later
 - double foul after change of possession edge cases to test
   - If this spot is normally a touchback, the ball is placed on the 20-yard line.  
   - If normally a safety, place the ball on one-yard line. 
+
+football game sim later
+- should separate catch and run after catch
+  - track yards after catch stat
+  - fix location of interceptions - at catch, not later
+  - fix location of defensive pass interference penalty - should be at spot of catch, not earlier https://discord.com/channels/290013534023057409/290015591216054273/894407045527244930
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656

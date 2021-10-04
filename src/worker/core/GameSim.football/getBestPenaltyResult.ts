@@ -100,6 +100,12 @@ const getBestPenaltyResult = <
 			anyScore = -ptsScoredThisPlay[t2];
 		}
 
+		// Defense likes offense having 4th and long (or, close to the offense's endzone, any 4th down)
+		let fourthAndLong = 0;
+		if (state.down === 4 && (state.scrimmage <= 35 || state.toGo > 2)) {
+			fourthAndLong = state.o === t ? -1 : 1;
+		}
+
 		// Field position
 		let fieldPosition = 0;
 		if (state.o === t) {
@@ -132,6 +138,7 @@ const getBestPenaltyResult = <
 			changeOfPossession,
 			firstDown,
 			anyScore,
+			fourthAndLong,
 			fieldPosition,
 			down,
 			toGo,

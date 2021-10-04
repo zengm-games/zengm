@@ -532,6 +532,57 @@ describe("worker/core/GameSim.football/Play", () => {
 				"after penalty application",
 			);
 		});
+
+		test("defense usually prefers 4th down over 3rd down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 3;
+			game.toGo = 10;
+			game.scrimmage = 40;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: undefined,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			play.addEvent({
+				type: "pssInc",
+				defender: p,
+			});
+
+			assert.strictEqual(
+				play.state.current.down,
+				4,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(
+				play.state.current.down,
+				4,
+				"after penalty application",
+			);
+		});
 	});
 
 	describe("overtime", () => {

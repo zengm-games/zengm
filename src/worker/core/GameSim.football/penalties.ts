@@ -42,7 +42,6 @@ const penalties: Penalty[] = [
 			RB: 0.02,
 		},
 		notBallCarrier: true,
-		spotFoul: true,
 	},
 	{
 		name: "False start",

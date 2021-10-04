@@ -337,6 +337,10 @@ class Play {
 		state: State;
 		indexEvent: number;
 	};
+	afterLastSpotOfEnforcement?: {
+		state: State;
+		indexEvent: number;
+	};
 
 	constructor(gameSim: GameSim) {
 		this.g = gameSim;
@@ -819,11 +823,18 @@ class Play {
 
 		if (event.type === "penalty") {
 			if (event.spotYds !== undefined) {
-				// Spot foul? Assess at the spot of the foul
-				this.penaltyRollbacks.push({
-					state: this.state.current.clone(),
-					indexEvent: this.events.length,
-				});
+				// Spot foul? Assess at the last spot of enfocement
+				if (this.afterLastSpotOfEnforcement) {
+					this.penaltyRollbacks.push({
+						state: this.afterLastSpotOfEnforcement.state.clone(),
+						indexEvent: this.afterLastSpotOfEnforcement.indexEvent,
+					});
+				} else {
+					this.penaltyRollbacks.push({
+						state: this.state.initial.clone(),
+						indexEvent: 0,
+					});
+				}
 			} else {
 				// Either assess from initial scrimmage, or the last change of possession if the penalty is after that
 				if (this.afterLastCleanHandsChangeOfPossession) {
@@ -883,6 +894,35 @@ class Play {
 					indexEvent: this.events.length,
 				};
 			}
+		}
+
+		// Basically, anything that affects scrimmage
+		const UPDATE_SPOT_OF_ENFORCEMENT: PlayType[] = [
+			"possessionChange",
+			"k",
+			"onsideKick",
+			"touchbackKick",
+			"kr",
+			"onsideKickRecovery",
+			"p",
+			"touchbackPunt",
+			"touchbackInt",
+			"pr",
+			"rus",
+			"kneel",
+			"sk",
+			"pssCmp",
+			"int",
+			"fg",
+			"xp",
+			"fmb",
+			"fmbRec",
+		];
+		if (UPDATE_SPOT_OF_ENFORCEMENT.includes(event.type)) {
+			this.afterLastSpotOfEnforcement = {
+				state: this.state.current.clone(),
+				indexEvent: this.events.length,
+			};
 		}
 
 		return info;

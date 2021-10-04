@@ -8,9 +8,6 @@ show all on trading block https://discord.com/channels/290013534023057409/331882
 
 refactor game sim
 - prefer 3rd+longer or 4th+shorter? https://discord.com/channels/290013534023057409/290015591216054273/894354090493116436
-- offensive holding should not cause loss of down https://discord.com/channels/290013534023057409/290015591216054273/894355482117013525
-  - when spotYds is undefined, works correctly now. when spotYds is a number, bug happens
-    - "Spot foul? Assess at the spot of the foul" - this doesn't make sense, cause 
 - if defensive pass interference and interception happen together, needs to use the total yardage for the penalty or not allow touchback https://discord.com/channels/290013534023057409/290015591216054273/894407045527244930
 - classes should share some common methods
 

@@ -25,6 +25,9 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 19, "before snap");
 
 			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
 				type: "penalty",
 				p,
 				automaticFirstDown: false,
@@ -93,7 +96,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				name: "Horse collar tackle",
 				penYds: 15,
 				spotYds: 4,
-				t: game.o,
+				t: play.state.current.d,
 			});
 			play.addEvent({
 				type: "kr",
@@ -304,6 +307,9 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepStrictEqual(play.state.current.pts, [0, 0], "before snap");
 
 			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
 				type: "penalty",
 				p,
 				automaticFirstDown: false,
@@ -312,7 +318,6 @@ describe("worker/core/GameSim.football/Play", () => {
 				spotYds: 0,
 				t: game.o,
 			});
-
 			play.addEvent({
 				type: "pss",
 				qb,
@@ -363,6 +368,9 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
+			play.addEvent({
+				type: "dropback",
+			});
 			play.addEvent({
 				type: "penalty",
 				p,
@@ -469,6 +477,59 @@ describe("worker/core/GameSim.football/Play", () => {
 				play.state.current.awaitingKickoff,
 				0,
 				"after declining penalty",
+			);
+		});
+
+		test("offensive penalty on pass -> down does not increase", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 2;
+			game.scrimmage = 28;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: 4,
+				t: game.o,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			play.addEvent({
+				type: "pssCmp",
+				qb: p,
+				target: p,
+				yds: 6,
+			});
+
+			assert.strictEqual(
+				play.state.current.down,
+				3,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(
+				play.state.current.down,
+				2,
+				"after penalty application",
 			);
 		});
 	});
@@ -616,6 +677,9 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
+			play.addEvent({
+				type: "dropback",
+			});
 			play.addEvent({
 				type: "penalty",
 				p,
@@ -816,6 +880,9 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
+			play.addEvent({
+				type: "dropback",
+			});
 			play.addEvent({
 				type: "penalty",
 				p,

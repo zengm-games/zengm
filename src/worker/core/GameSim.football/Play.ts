@@ -613,6 +613,7 @@ class Play {
 			state.scrimmage += event.yds;
 			state.awaitingKickoff = undefined;
 			state.awaitingAfterSafety = false;
+			state.newFirstDown();
 		} else if (event.type === "p") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "touchbackPunt") {

@@ -1747,15 +1747,17 @@ class GameSim {
 						qb,
 						target,
 					});
-				} else if (safety) {
+				}
+
+				this.playByPlay.logEvent("passComplete", completeEvent);
+
+				if (safety) {
 					this.doSafety();
-				} else {
+				} else if (!td) {
 					this.doTackle({
 						loss: yds < 0,
 					});
 				}
-
-				this.playByPlay.logEvent("passComplete", completeEvent);
 			} else {
 				this.currentPlay.addEvent({
 					type: "pssInc",

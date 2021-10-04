@@ -9,11 +9,6 @@ show all on trading block https://discord.com/channels/290013534023057409/331882
 refactor game sim
 - classes should share some common methods
 
-rewrite football game sim to get rid of bugs
-- should show different text for tack on and spot fouls https://discord.com/channels/290013534023057409/290015591216054273/894709213962584146
-- benchmark
-- email people
-
 football penalty later
 - option to apply penalty on kickoff, for extra points
 - option to redo punt or not

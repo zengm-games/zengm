@@ -732,7 +732,7 @@ class Play {
 			touchback = true;
 		}
 
-		const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pss", "sk"];
+		const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pssCmp", "sk"];
 
 		if (state.scrimmage <= 0 && SAFETY_IS_POSSIBLE.includes(event.type)) {
 			safety = true;

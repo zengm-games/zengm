@@ -35,6 +35,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: undefined,
 				t: game.o,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "pss",
@@ -97,6 +98,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 4,
 				t: play.state.current.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "kr",
@@ -157,6 +159,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 8,
 				t: game.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "kr",
@@ -212,6 +215,7 @@ describe("worker/core/GameSim.football/Play", () => {
 					penYds: 5,
 					spotYds: undefined,
 					t: game.d,
+					tackOn: undefined,
 				});
 
 				play.addEvent({
@@ -263,6 +267,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
+				tackOn: undefined,
 			});
 
 			play.addEvent({
@@ -317,6 +322,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 0,
 				t: game.o,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "pss",
@@ -379,6 +385,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 0,
 				t: game.d,
+				tackOn: true,
 			});
 			play.addEvent({
 				type: "pss",
@@ -419,6 +426,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 0,
 				t: game.o,
+				tackOn: true,
 			});
 			play.addEvent({
 				type: "xp",
@@ -457,6 +465,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 0,
 				t: game.o,
+				tackOn: true,
 			});
 			play.addEvent({
 				type: "xp",
@@ -505,6 +514,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 4,
 				t: game.o,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "pss",
@@ -557,6 +567,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				name: "Holding",
 				penYds: 10,
 				spotYds: undefined,
+				tackOn: undefined,
 				t: game.o,
 			});
 			play.addEvent({
@@ -700,6 +711,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 0,
 				t: game.o,
+				tackOn: undefined,
 			});
 
 			play.addEvent({
@@ -739,6 +751,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 4,
 				t: game.o,
+				tackOn: true,
 			});
 			play.addEvent({
 				type: "penalty",
@@ -748,6 +761,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "pss",
@@ -807,6 +821,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "penalty",
@@ -816,6 +831,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "kr",
@@ -865,6 +881,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
+				tackOn: undefined,
 			});
 
 			play.addEvent({
@@ -887,6 +904,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: 0,
 				t: game.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "kr",
@@ -942,6 +960,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "penalty",
@@ -951,6 +970,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
+				tackOn: undefined,
 			});
 			play.addEvent({
 				type: "pss",

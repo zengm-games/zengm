@@ -69,6 +69,7 @@ class PlayByPlayLogger {
 			safety,
 			success,
 			t,
+			tackOn,
 			td,
 			touchback,
 			yds,
@@ -92,6 +93,7 @@ class PlayByPlayLogger {
 			safety?: boolean;
 			success?: boolean;
 			t?: TeamNum;
+			tackOn?: boolean;
 			td?: boolean;
 			touchback?: boolean;
 			yds?: number;
@@ -392,7 +394,11 @@ class PlayByPlayLogger {
 				}`;
 
 				if (offsetStatus !== "offset") {
-					const spotFoulText = spotFoul ? " from the spot of the foul" : "";
+					const spotFoulText = tackOn
+						? " from the end of the play"
+						: spotFoul
+						? " from the spot of the foul"
+						: "";
 					const automaticFirstDownText = automaticFirstDown
 						? " and an automatic first down"
 						: "";

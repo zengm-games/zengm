@@ -123,7 +123,8 @@ type PlayEvent =
 			automaticFirstDown: boolean;
 			name: string;
 			penYds: number;
-			spotYds: number | undefined; // undefined if not spot foul
+			spotYds: number | undefined; // undefined if not spot/tackOn foul
+			tackOn: true | undefined;
 			t: TeamNum;
 	  }
 	| {
@@ -1111,6 +1112,10 @@ class Play {
 						spotFoul,
 						halfDistanceToGoal: penalty.penaltyInfo.halfDistanceToGoal,
 						placeOnOne: penalty.penaltyInfo.placeOnOne,
+						tackOn:
+							penalty.event.tackOn &&
+							penalty.event.spotYds !== undefined &&
+							penalty.event.spotYds !== 0,
 					});
 				}
 			}

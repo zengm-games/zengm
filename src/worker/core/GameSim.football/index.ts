@@ -2010,6 +2010,7 @@ class GameSim {
 				posOdds: pen.posOdds,
 				spotYds,
 				t,
+				tackOn: pen.tackOn,
 			};
 		});
 
@@ -2054,6 +2055,7 @@ class GameSim {
 				penYds: penInfo.penYds,
 				spotYds: penInfo.spotYds,
 				t: penInfo.t,
+				tackOn: penInfo.tackOn,
 			});
 
 			this.playByPlay.logEvent("flag", {

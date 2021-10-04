@@ -10,6 +10,7 @@ refactor game sim
 - classes should share some common methods
 
 rewrite football game sim to get rid of bugs
+- should show different text for tack on and spot fouls https://discord.com/channels/290013534023057409/290015591216054273/894709213962584146
 - benchmark
 - email people
 
@@ -25,6 +26,7 @@ football game sim later
   - track yards after catch stat
   - fix location of interceptions - at catch, not later
   - fix location of defensive pass interference penalty - should be at spot of catch, not earlier https://discord.com/channels/290013534023057409/290015591216054273/894407045527244930
+  - tackOn fouls would need to be adjusted to go after the run too
 
 nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656

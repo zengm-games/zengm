@@ -408,6 +408,9 @@ class Play {
 			} else if (event.type === "krTD") {
 				statChanges.push([state.o, event.p, "krTD"]);
 			} else if (event.type === "p") {
+				statChanges.push([state.o, event.p, "pnt"]);
+				statChanges.push([state.o, event.p, "pntYds", event.yds]);
+				statChanges.push([state.o, event.p, "pntLng", event.yds]);
 				const kickTo = state.scrimmage + event.yds;
 				if (kickTo > 80 && kickTo < 100) {
 					statChanges.push([state.o, event.p, "pntIn20"]);

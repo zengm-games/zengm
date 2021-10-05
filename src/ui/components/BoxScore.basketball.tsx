@@ -17,7 +17,7 @@ const BoxScore = ({
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
-	const liveGameSim = !boxScore.won || !boxScore.won.name;
+	const liveGameSim = boxScore.won?.name === undefined;
 	const liveGameInProgress = liveGameSim && !boxScore.gameOver;
 
 	return (

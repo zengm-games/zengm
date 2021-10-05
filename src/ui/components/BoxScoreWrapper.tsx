@@ -79,11 +79,11 @@ const HeadlineScore = ({ boxScore }: any) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
-	const liveGameSim = !boxScore.won || boxScore.won.name === undefined;
+	const liveGameSim = boxScore.won?.name === undefined;
 	const t0 =
-		boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
+		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
 	const t1 =
-		boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
+		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
 	return (
 		<>
@@ -544,9 +544,9 @@ const BoxScoreWrapper = ({
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
 	const t0 =
-		boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
+		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
 	const t1 =
-		boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
+		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
 	let forcedWinText = null;
 	if (boxScore.forceWin !== undefined) {

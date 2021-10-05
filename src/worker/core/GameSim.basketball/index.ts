@@ -2037,7 +2037,7 @@ class GameSim {
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
-		const array: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+		const array = Array(this.numPlayersOnCourt).fill(0);
 		let total = 0;
 
 		// Scale composite ratings

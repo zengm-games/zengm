@@ -1,13 +1,5 @@
 FBGM bugs
 - return yardage of interception doesn't add up (would be out of bounds) https://discord.com/channels/290013534023057409/569726303926878219/894734005436579921
-- tackOn foul is taking away stat from the pass https://discord.com/channels/290013534023057409/290015591216054273/894958702531080272
-  - what should spotYds be?
-  - get rid of penaltyRollbacks storing stuff, compute dynamically
-    - same with afterLastSpotOfEnforcement and afterLastCleanHandsChangeOfPossession, just store index
-  -  make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
-  - need maxIndexEvent separate from indexEvent?
-  - "15 yard penalty overrules 5 yard penalty"
-    - why does the outcome change if i get rid of the 5 yd penalty?
 
 show timeouts in live sim https://discord.com/channels/@me/778760871911751700/894791547156070441
 
@@ -23,6 +15,7 @@ refactor game sim
 - classes should share some common methods
 
 football penalty later
+- make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
 - option to apply penalty on kickoff, for extra points
 - option to redo punt or not
 - double foul after change of possession edge cases to test

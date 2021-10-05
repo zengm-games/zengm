@@ -966,10 +966,9 @@ class Play {
 						penalty.event.name === "Pass interference",
 				);
 
-				// choosingTeam doesn't matter, there is at most one choice
-				choosingTeam = 0;
-
 				if (penalties5.length === 1 && penalties15.length === 1) {
+					choosingTeam = penalties15[0].event.t === 0 ? 1 : 0;
+
 					// 5 yd vs 15 yd penalty - only assess the 15 yd penalty
 					if (penalties15[0] === penalties[0]) {
 						options = [["accept", "decline"]];
@@ -979,6 +978,9 @@ class Play {
 
 					offsetStatus = "overrule";
 				} else {
+					// Is this okay? Since there can be a decision to make, I guess, maybe?
+					choosingTeam = 0;
+
 					const numPossessionChanges = penalties.map(
 						(penalty, i) =>
 							possessionChangeIndexes.filter(

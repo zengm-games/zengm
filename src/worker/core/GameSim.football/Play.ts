@@ -642,7 +642,7 @@ class Play {
 		} else if (event.type === "pssInc") {
 			state.isClockRunning = false;
 		} else if (event.type === "int") {
-			state.scrimmage -= event.ydsReturn;
+			state.scrimmage += event.ydsReturn;
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (event.type === "xp" || event.made) {
 				state.awaitingKickoff = this.state.initial.o;

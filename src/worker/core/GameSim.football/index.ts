@@ -1339,6 +1339,13 @@ class GameSim {
 				distance,
 				late: playType === "fieldGoalLate",
 			});
+
+			if (!made) {
+				this.currentPlay.addEvent({
+					type: "possessionChange",
+					yds: -7,
+				});
+			}
 		}
 
 		this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
@@ -1968,14 +1975,11 @@ class GameSim {
 			const isReturn =
 				playType === "kickoffReturn" || playType === "puntReturn";
 
-			const applyTackOn =
+			const tackOn =
 				(pen.tackOn && playYds > 0 && !incompletePass) ||
 				(isReturn && pen.side === "defense");
 
-			if (
-				(pen.spotFoul || (isReturn && pen.side === "offense")) &&
-				!applyTackOn
-			) {
+			if ((pen.spotFoul || (isReturn && pen.side === "offense")) && !tackOn) {
 				if (pen.side === "offense" && playYds > 0) {
 					// Offensive spot foul - only when past the line of scrimmage
 					spotYds = random.randInt(1, playYds);
@@ -1995,7 +1999,7 @@ class GameSim {
 						spotYds += random.randInt(10, playYds);
 					}
 				}
-			} else if (applyTackOn) {
+			} else if (tackOn) {
 				spotYds = playYds;
 			}
 
@@ -2012,7 +2016,7 @@ class GameSim {
 				posOdds: pen.posOdds,
 				spotYds,
 				t,
-				tackOn: pen.tackOn,
+				tackOn,
 			};
 		});
 

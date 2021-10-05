@@ -35,7 +35,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: undefined,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "pss",
@@ -98,7 +98,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 15,
 				spotYds: 4,
 				t: play.state.current.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "kr",
@@ -159,7 +159,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 8,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "kr",
@@ -215,7 +215,7 @@ describe("worker/core/GameSim.football/Play", () => {
 					penYds: 5,
 					spotYds: undefined,
 					t: game.d,
-					tackOn: undefined,
+					tackOn: false,
 				});
 
 				play.addEvent({
@@ -267,7 +267,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 
 			play.addEvent({
@@ -322,7 +322,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 0,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "pss",
@@ -514,7 +514,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 4,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "pss",
@@ -567,7 +567,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				name: "Holding",
 				penYds: 10,
 				spotYds: undefined,
-				tackOn: undefined,
+				tackOn: false,
 				t: game.o,
 			});
 			play.addEvent({
@@ -595,7 +595,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			);
 		});
 
-		test("roughing the passer adds to end of completed pass", async () => {
+		test("roughing the passer adds to end of completed pass and stats from pass persist", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -610,7 +610,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			const play = game.currentPlay;
 
-			assert.strictEqual(play.state.current.scrimmage, 20, "before snap");
+			assert.strictEqual(play.state.current.scrimmage, 20);
 
 			play.addEvent({
 				type: "dropback",
@@ -637,20 +637,15 @@ describe("worker/core/GameSim.football/Play", () => {
 				yds: 10,
 			});
 
-			assert.strictEqual(
-				play.state.current.scrimmage,
-				30,
-				"before penalty application",
-			);
+			assert.strictEqual(play.state.current.scrimmage, 30);
+
+			assert.strictEqual(po.stat.pssYds, 10);
 
 			play.adjudicatePenalties();
 
-			// This is 10, not 9, because it's doing half the distance to the goal
-			assert.strictEqual(
-				play.state.current.scrimmage,
-				45,
-				"after penalty application",
-			);
+			assert.strictEqual(play.state.current.scrimmage, 45);
+
+			assert.strictEqual(po.stat.pssYds, 10);
 		});
 	});
 
@@ -769,7 +764,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: 0,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 
 			play.addEvent({
@@ -784,7 +779,7 @@ describe("worker/core/GameSim.football/Play", () => {
 	});
 
 	describe("one penalty on each team", () => {
-		it("15 yard penalty overrules 5 yard penalty", async () => {
+		it.only("15 yard penalty overrules 5 yard penalty", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -819,7 +814,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "pss",
@@ -839,8 +834,18 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
+			console.log(
+				play.state.current.down,
+				play.state.current.toGo,
+				play.state.current.scrimmage,
+			);
 			play.commit();
 
+			console.log(
+				play.state.current.down,
+				play.state.current.toGo,
+				play.state.current.scrimmage,
+			);
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 18);
 			assert.strictEqual(play.state.current.scrimmage, 24);
@@ -879,7 +884,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "penalty",
@@ -889,7 +894,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "kr",
@@ -939,7 +944,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 
 			play.addEvent({
@@ -962,7 +967,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: 0,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "kr",
@@ -1018,7 +1023,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 10,
 				spotYds: -3,
 				t: game.o,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "penalty",
@@ -1028,7 +1033,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				penYds: 5,
 				spotYds: undefined,
 				t: game.d,
-				tackOn: undefined,
+				tackOn: false,
 			});
 			play.addEvent({
 				type: "pss",
@@ -1077,6 +1082,10 @@ describe("worker/core/GameSim.football/Play", () => {
 				made: false,
 				distance: 54,
 				late: false,
+			});
+			play.addEvent({
+				type: "possessionChange",
+				yds: -7,
 			});
 
 			play.commit();

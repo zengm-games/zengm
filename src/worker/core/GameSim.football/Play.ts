@@ -124,7 +124,7 @@ type PlayEvent =
 			name: string;
 			penYds: number;
 			spotYds: number | undefined; // undefined if not spot/tackOn foul
-			tackOn: true | undefined;
+			tackOn: boolean;
 			t: TeamNum;
 	  }
 	| {
@@ -331,17 +331,11 @@ class Play {
 		current: State;
 	};
 	penaltyRollbacks: {
-		state: State;
+		type: "tackOn" | "spotOfEnforcement" | "cleanHandsChangeOfPossession";
 		indexEvent: number;
 	}[];
-	afterLastCleanHandsChangeOfPossession?: {
-		state: State;
-		indexEvent: number;
-	};
-	afterLastSpotOfEnforcement?: {
-		state: State;
-		indexEvent: number;
-	};
+	cleanHandsChangeOfPossessionIndexes: number[];
+	spotOfEnforcementIndexes: number[];
 
 	constructor(gameSim: GameSim) {
 		this.g = gameSim;
@@ -361,6 +355,8 @@ class Play {
 			current: initialState.clone(),
 		};
 		this.penaltyRollbacks = [];
+		this.cleanHandsChangeOfPossessionIndexes = [];
+		this.spotOfEnforcementIndexes = [];
 	}
 
 	// If there is going to be a possession change related to this yds quantity, do possession change before calling boundedYds
@@ -574,7 +570,7 @@ class Play {
 		};
 
 		if (event.type === "penalty") {
-			if (event.spotYds !== undefined) {
+			if (event.spotYds !== undefined && !event.tackOn) {
 				// Spot foul, apply penalty from here
 				state.scrimmage += event.spotYds;
 			}
@@ -650,11 +646,6 @@ class Play {
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (event.type === "xp" || event.made) {
 				state.awaitingKickoff = this.state.initial.o;
-			}
-
-			if (event.type === "fg" && !event.made) {
-				state.scrimmage -= 7;
-				state.possessionChange();
 			}
 
 			if (event.type === "xp" && !event.made) {
@@ -829,32 +820,28 @@ class Play {
 		const statChanges = this.getStatChanges(event, this.state.current);
 
 		if (event.type === "penalty") {
-			if (event.spotYds !== undefined) {
+			if (event.tackOn) {
+				// Tack on penalty - added to end of play (except incomplete pass)
+				this.penaltyRollbacks.push({
+					type: "tackOn",
+					indexEvent: this.events.length,
+				});
+			} else if (event.spotYds !== undefined) {
 				// Spot foul? Assess at the last spot of enfocement
-				if (this.afterLastSpotOfEnforcement) {
-					this.penaltyRollbacks.push({
-						state: this.afterLastSpotOfEnforcement.state.clone(),
-						indexEvent: this.afterLastSpotOfEnforcement.indexEvent,
-					});
-				} else {
-					this.penaltyRollbacks.push({
-						state: this.state.initial.clone(),
-						indexEvent: 0,
-					});
-				}
+				this.penaltyRollbacks.push({
+					// state: this.afterLastSpotOfEnforcement.state.clone(),
+					// indexEvent: this.afterLastSpotOfEnforcement.indexEvent,
+					type: "spotOfEnforcement",
+					indexEvent: this.events.length,
+				});
 			} else {
 				// Either assess from initial scrimmage, or the last change of possession if the penalty is after that
-				if (this.afterLastCleanHandsChangeOfPossession) {
-					this.penaltyRollbacks.push({
-						state: this.afterLastCleanHandsChangeOfPossession.state.clone(),
-						indexEvent: this.afterLastCleanHandsChangeOfPossession.indexEvent,
-					});
-				} else {
-					this.penaltyRollbacks.push({
-						state: this.state.initial.clone(),
-						indexEvent: 0,
-					});
-				}
+				this.penaltyRollbacks.push({
+					// state: this.afterLastCleanHandsChangeOfPossession.state.clone(),
+					// indexEvent: this.afterLastCleanHandsChangeOfPossession.indexEvent,
+					type: "cleanHandsChangeOfPossession",
+					indexEvent: this.events.length,
+				});
 			}
 
 			const penaltyInfo = this.getPenaltyInfo(this.state.current, event);
@@ -896,10 +883,7 @@ class Play {
 			);
 
 			if (cleanHands) {
-				this.afterLastCleanHandsChangeOfPossession = {
-					state: this.state.current.clone(),
-					indexEvent: this.events.length,
-				};
+				this.cleanHandsChangeOfPossessionIndexes.push(this.events.length - 1);
 			}
 		}
 
@@ -926,10 +910,7 @@ class Play {
 			"fmbRec",
 		];
 		if (UPDATE_SPOT_OF_ENFORCEMENT.includes(event.type)) {
-			this.afterLastSpotOfEnforcement = {
-				state: this.state.current.clone(),
-				indexEvent: this.events.length,
-			};
+			this.spotOfEnforcementIndexes.push(this.events.length - 1);
 		}
 
 		return info;
@@ -946,6 +927,14 @@ class Play {
 
 		if (penalties.length === 0) {
 			return;
+		}
+
+		const possessionChangeIndexes: number[] = [];
+		for (let i = 0; i < this.events.length; i++) {
+			const event = this.events[i];
+			if (event.event.type === "possessionChange") {
+				possessionChangeIndexes.push(i);
+			}
 		}
 
 		// Each entry in options is a set of decisions on all the penalties. So the inner arrays have the same length as penalties.length
@@ -991,7 +980,10 @@ class Play {
 					offsetStatus = "overrule";
 				} else {
 					const numPossessionChanges = penalties.map(
-						(penalty, i) => this.penaltyRollbacks[i].state.numPossessionChanges,
+						(penalty, i) =>
+							possessionChangeIndexes.filter(
+								index => index <= this.penaltyRollbacks[i].indexEvent,
+							).length,
 					);
 					if (
 						numPossessionChanges[0] === numPossessionChanges[1] &&
@@ -1026,52 +1018,118 @@ class Play {
 		}
 
 		if (options !== undefined && choosingTeam !== undefined) {
-			const results = options.map(decisions => {
-				const indexAccept = decisions.indexOf("accept");
-				const indexOffset = decisions.indexOf("offset");
-				const penalty = penalties[indexAccept];
+			const results = flatten(
+				options.map(decisions => {
+					const indexAccept = decisions.indexOf("accept");
+					const indexOffset = decisions.indexOf("offset");
+					const penalty = penalties[indexAccept];
 
-				// console.log("decisions", decisions);
+					// console.log("decisions", decisions);
 
-				let indexEvent: number | undefined;
-				let state;
-				if (indexAccept < 0 && indexOffset < 0) {
-					state = this.state.current;
-				} else {
-					const penaltyRollback =
-						this.penaltyRollbacks[indexAccept] ??
-						this.penaltyRollbacks[indexOffset];
-					// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
-					// console.log("penalty.event", penalty.event);
-					state = penaltyRollback.state;
-					indexEvent = penaltyRollback.indexEvent;
-					// console.log("state.scrimmage before applying", state.scrimmage);
-
-					// No state changes for offsetting penalties
-					if (offsetStatus === "offset") {
-						state.isClockRunning = false;
+					const subResults: {
+						// indexEvent is the index of the event to roll back to. undefined means don't add any events onto state, other than the penalty
+						indexEvent: number | undefined;
+						state: State;
+						tackOn: boolean;
+					}[] = [];
+					if (indexAccept < 0 && indexOffset < 0) {
+						subResults.push({
+							indexEvent: undefined,
+							state: this.state.current,
+							tackOn: false,
+						});
 					} else {
-						this.updateState(state, penalty.event);
+						const penaltyRollback =
+							this.penaltyRollbacks[indexAccept] ??
+							this.penaltyRollbacks[indexOffset];
+						// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
+						// console.log("penalty.event", penalty.event);
+						// indexEvent = penaltyRollback.indexEvent;
+
+						// Figure out what state to replay
+						if (penaltyRollback.type === "cleanHandsChangeOfPossession") {
+							// Math.max returns 0 if array is empty, which is correct for this use!
+							const indexEvent = Math.max(
+								...this.cleanHandsChangeOfPossessionIndexes.filter(
+									index => index < penaltyRollback.indexEvent,
+								),
+							);
+
+							subResults.push({
+								indexEvent,
+								state: this.state.initial.clone(),
+								tackOn: false,
+							});
+						} else if (penaltyRollback.type === "spotOfEnforcement") {
+							// Math.max returns 0 if array is empty, which is correct for this use!
+							const indexEvent = Math.max(
+								...this.spotOfEnforcementIndexes.filter(
+									index => index < penaltyRollback.indexEvent,
+								),
+							);
+
+							subResults.push({
+								indexEvent,
+								state: this.state.initial.clone(),
+								tackOn: false,
+							});
+						} else if (penaltyRollback.type === "tackOn") {
+							subResults.push({
+								indexEvent: -1,
+								state: this.state.initial.clone(),
+								tackOn: false,
+							});
+
+							const indexEvent = this.spotOfEnforcementIndexes.at(-1);
+							if (indexEvent > 0) {
+								subResults.push({
+									indexEvent,
+									state: this.state.initial.clone(),
+									tackOn: true,
+								});
+							}
+						}
+
+						for (const { indexEvent, state } of subResults) {
+							if (indexEvent !== undefined && indexEvent >= 0) {
+								for (let i = 0; i <= indexEvent; i++) {
+									const event = this.events[i].event;
+
+									// Only one penalty can be applied, this one! And that is done below.
+									if (event.type !== "penalty") {
+										this.updateState(state, this.events[i].event);
+									}
+								}
+							}
+
+							// console.log("state.scrimmage before applying", state.scrimmage);
+
+							// No state changes for offsetting penalties
+							if (offsetStatus === "offset") {
+								state.isClockRunning = false;
+							} else {
+								this.updateState(state, penalty.event);
+							}
+
+							this.checkDownAtEndOfPlay(state);
+							// console.log("state.scrimmage after applying", state.scrimmage);
+						}
 					}
 
-					this.checkDownAtEndOfPlay(state);
-					// console.log("state.scrimmage after applying", state.scrimmage);
-				}
+					let statChanges: NonNullable<typeof penalty>["statChanges"] = [];
+					if (offsetStatus !== "offset") {
+						// No stat changes for offsetting penalties
+						statChanges = penalty?.statChanges;
+					}
 
-				let statChanges: NonNullable<typeof penalty>["statChanges"] = [];
-				if (offsetStatus !== "offset") {
-					// No stat changes for offsetting penalties
-					statChanges = penalty?.statChanges;
-				}
-
-				return {
-					indexAccept,
-					decisions,
-					state,
-					indexEvent,
-					statChanges,
-				};
-			});
+					return subResults.map(subResult => ({
+						indexAccept,
+						decisions,
+						statChanges,
+						...subResult,
+					}));
+				}),
+			);
 
 			const result = getBestPenaltyResult(
 				results,
@@ -1116,10 +1174,7 @@ class Play {
 						spotFoul,
 						halfDistanceToGoal: penalty.penaltyInfo.halfDistanceToGoal,
 						placeOnOne: penalty.penaltyInfo.placeOnOne,
-						tackOn:
-							penalty.event.tackOn &&
-							penalty.event.spotYds !== undefined &&
-							penalty.event.spotYds !== 0,
+						tackOn: result.tackOn,
 					});
 				}
 			}

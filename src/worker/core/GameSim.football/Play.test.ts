@@ -594,6 +594,64 @@ describe("worker/core/GameSim.football/Play", () => {
 				"after penalty application",
 			);
 		});
+
+		test("roughing the passer adds to end of completed pass", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 20;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const po = game.pickPlayer(game.o);
+			const pd = game.pickPlayer(game.d);
+
+			const play = game.currentPlay;
+
+			assert.strictEqual(play.state.current.scrimmage, 20, "before snap");
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p: pd,
+				automaticFirstDown: true,
+				name: "Roughing the passer",
+				penYds: 15,
+				spotYds: 10,
+				t: game.d,
+				tackOn: true,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: po,
+				target: po,
+			});
+			play.addEvent({
+				type: "pssCmp",
+				qb: po,
+				target: po,
+				yds: 10,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				30,
+				"before penalty application",
+			);
+
+			play.adjudicatePenalties();
+
+			// This is 10, not 9, because it's doing half the distance to the goal
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				45,
+				"after penalty application",
+			);
+		});
 	});
 
 	describe("overtime", () => {

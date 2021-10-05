@@ -1,6 +1,5 @@
 FBGM bugs
 - return yardage of interception doesn't add up (would be out of bounds) https://discord.com/channels/290013534023057409/569726303926878219/894734005436579921
-- roughing the passer not being applied after catch? https://discord.com/channels/290013534023057409/290015591216054273/894753307845885984
 
 show timeouts in live sim https://discord.com/channels/@me/778760871911751700/894791547156070441
 

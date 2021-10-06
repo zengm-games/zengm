@@ -715,6 +715,44 @@ class GameSim {
 		return energy;
 	}
 
+	// 1 -> no foul trouble
+	// less than 1 -> decreases
+	getFoulTroubleFactor(p: PlayerGameSim) {
+		// No foul trouble in overtime or late in 4th quarter
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		if (this.overtimes > 0 || (quarter === this.numPeriods && this.t < 8)) {
+			return 1;
+		}
+
+		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+		const quarterLength = g.get("quarterLength");
+
+		const gameCompletionFraction =
+			(quarter - this.t / quarterLength) / this.numPeriods;
+
+		// For default settings, the limit by quarter is 2/3/5/5. (Last quarter is 5 because of that Math.min)
+		let foulLimit = Math.ceil(gameCompletionFraction * foulsNeededToFoulOut);
+		if (foulLimit < 2) {
+			// Don't worry about 1 foul
+			foulLimit = 2;
+		} else if (foulLimit >= foulsNeededToFoulOut) {
+			// Worry about actually fouling out, otherwise this does nothing
+			foulLimit = foulsNeededToFoulOut - 1;
+		}
+
+		if (p.stat.pf === foulLimit) {
+			// More likely to sub off at limit
+			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
+			return 0.75;
+		} else if (p.stat.pf > foulLimit) {
+			// Very likely to sub off beyond limit
+			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
+			return 0.1;
+		}
+
+		return 1;
+	}
+
 	/**
 	 * Perform appropriate substitutions.
 	 *
@@ -726,6 +764,8 @@ class GameSim {
 		let substitutions = false;
 		let blowout = false;
 		const lateGame = this.isLateGame();
+
+		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
 
 		if (this.o !== undefined && this.d !== undefined) {
 			const diff = Math.abs(
@@ -758,8 +798,8 @@ class GameSim {
 					if (
 						this.team[t].player[p].injured ||
 						(!includeFouledOut &&
-							g.get("foulsNeededToFoulOut") > 0 &&
-							this.team[t].player[p].stat.pf >= g.get("foulsNeededToFoulOut"))
+							foulsNeededToFoulOut > 0 &&
+							this.team[t].player[p].stat.pf >= foulsNeededToFoulOut)
 					) {
 						ovrs[p] = -Infinity;
 					} else {
@@ -775,6 +815,12 @@ class GameSim {
 						// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
 						if (blowout) {
 							ovrs[p] *= (p + 1) / 10;
+						} else {
+							// If it's not a blowout, worry about foul trouble
+							const foulTroubleFactor = this.getFoulTroubleFactor(
+								this.team[t].player[p],
+							);
+							ovrs[p] *= foulTroubleFactor;
 						}
 					}
 				}
@@ -1979,6 +2025,7 @@ class GameSim {
 			g.get("foulsNeededToFoulOut") > 0 &&
 			this.team[this.d].player[p].stat.pf >= g.get("foulsNeededToFoulOut")
 		) {
+			self.foulOut = (self.foulOut ?? 0) + 1;
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 
 			// Force substitutions now

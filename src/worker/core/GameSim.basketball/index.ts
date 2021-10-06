@@ -715,16 +715,15 @@ class GameSim {
 		return energy;
 	}
 
-	// 1 -> no foul trouble
-	// less than 1 -> decreases
-	getFoulTroubleFactor(p: PlayerGameSim) {
+	getFoulTroubleLimit() {
+		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+
 		// No foul trouble in overtime or late in 4th quarter
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		if (this.overtimes > 0 || (quarter === this.numPeriods && this.t < 8)) {
-			return 1;
+			return foulsNeededToFoulOut;
 		}
 
-		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
 		const quarterLength = g.get("quarterLength");
 
 		const gameCompletionFraction =
@@ -740,6 +739,12 @@ class GameSim {
 			foulLimit = foulsNeededToFoulOut - 1;
 		}
 
+		return foulLimit;
+	}
+
+	// 1 -> no foul trouble
+	// less than 1 -> decreases
+	getFoulTroubleFactor(p: PlayerGameSim, foulLimit) {
 		if (p.stat.pf === foulLimit) {
 			// More likely to sub off at limit
 			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
@@ -788,6 +793,8 @@ class GameSim {
 			}
 		}
 
+		const foulLimit = this.getFoulTroubleLimit();
+
 		for (const t of teamNums) {
 			const getOvrs = (includeFouledOut: boolean) => {
 				// Overall values scaled by fatigue, etc
@@ -819,6 +826,7 @@ class GameSim {
 							// If it's not a blowout, worry about foul trouble
 							const foulTroubleFactor = this.getFoulTroubleFactor(
 								this.team[t].player[p],
+								foulLimit,
 							);
 							ovrs[p] *= foulTroubleFactor;
 						}
@@ -2021,9 +2029,10 @@ class GameSim {
 		this.recordPlay(type, this.d, names);
 
 		// Foul out
+		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
 		if (
-			g.get("foulsNeededToFoulOut") > 0 &&
-			this.team[this.d].player[p].stat.pf >= g.get("foulsNeededToFoulOut")
+			foulsNeededToFoulOut > 0 &&
+			this.team[this.d].player[p].stat.pf >= foulsNeededToFoulOut
 		) {
 			self.foulOut = (self.foulOut ?? 0) + 1;
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);

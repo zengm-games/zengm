@@ -1,5 +1,4 @@
 import range from "lodash-es/range";
-import flatten from "lodash-es/flatten";
 import { g, helpers, random } from "../../../worker/util";
 // import newScheduleCrappy from "./newScheduleCrappy";
 import { groupByUnique } from "../../../common/groupBy";
@@ -769,7 +768,7 @@ const newSchedule = (
 	random.shuffle(days);
 
 	// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-	tids = flatten(days);
+	tids = days.flat();
 
 	return {
 		tids,

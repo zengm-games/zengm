@@ -1,4 +1,3 @@
-import flatten from "lodash-es/flatten";
 import {
 	filterPlayerStats,
 	PLAYER_GAME_STATS,
@@ -45,7 +44,11 @@ const updatePlayerGameLog = async (
 		const stats: string[] = [];
 
 		const allStats = Array.from(
-			new Set(flatten(Object.values(PLAYER_GAME_STATS).map(x => x.stats))),
+			new Set(
+				Object.values(PLAYER_GAME_STATS)
+					.map(x => x.stats)
+					.flat(),
+			),
 		);
 
 		const games = await idb.getCopies.games({ season });

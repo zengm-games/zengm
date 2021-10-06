@@ -1,5 +1,4 @@
 import { csvFormatRows } from "d3-dsv";
-import flatten from "lodash-es/flatten";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -1156,7 +1155,12 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	if (season === "all") {
 		seasons = Array.from(
-			new Set(flatten(players.map(p => p.ratings)).map(pr => pr.season)),
+			new Set(
+				players
+					.map(p => p.ratings)
+					.flat()
+					.map(pr => pr.season),
+			),
 		);
 	} else {
 		seasons = [season];

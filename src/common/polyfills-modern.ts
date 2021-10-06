@@ -1,3 +1,8 @@
+// These are polyfills that are used everywhere, including
+
+// Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
+
+// Chrome 92, Firefox 92, Safari ??
 // https://github.com/tc39/proposal-relative-indexing-method#polyfill
 function at(this: any, n: number) {
 	// ToInteger() abstract op

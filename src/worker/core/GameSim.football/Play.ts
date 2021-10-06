@@ -1,4 +1,3 @@
-import flatten from "lodash-es/flatten";
 import type GameSim from ".";
 import getBestPenaltyResult from "./getBestPenaltyResult";
 import type { PlayerGameSim, TeamNum } from "./types";
@@ -1020,8 +1019,8 @@ class Play {
 		}
 
 		if (options !== undefined && choosingTeam !== undefined) {
-			const results = flatten(
-				options.map(decisions => {
+			const results = options
+				.map(decisions => {
 					const indexAccept = decisions.indexOf("accept");
 					const indexOffset = decisions.indexOf("offset");
 					const penalty = penalties[indexAccept];
@@ -1130,8 +1129,8 @@ class Play {
 						statChanges,
 						...subResult,
 					}));
-				}),
-			);
+				})
+				.flat();
 
 			const result = getBestPenaltyResult(
 				results,
@@ -1190,27 +1189,26 @@ class Play {
 					...result.statChanges,
 
 					// Apply negative statChanges from anything after accepted penalty
-					...flatten(
-						this.events
-							.filter(
-								(event, i) =>
-									result.indexEvent === undefined || i > result.indexEvent,
-							)
-							.map(event => event.statChanges)
-							.map(statChanges => {
-								return statChanges.map(statChange => {
-									const newStatChange = [...statChange] as StatChange;
+					...this.events
+						.filter(
+							(event, i) =>
+								result.indexEvent === undefined || i > result.indexEvent,
+						)
+						.map(event => event.statChanges)
+						.map(statChanges => {
+							return statChanges.map(statChange => {
+								const newStatChange = [...statChange] as StatChange;
 
-									if (newStatChange[3] === undefined) {
-										newStatChange[3] = 1;
-									}
+								if (newStatChange[3] === undefined) {
+									newStatChange[3] = 1;
+								}
 
-									newStatChange[4] = true;
+								newStatChange[4] = true;
 
-									return newStatChange;
-								});
-							}),
-					),
+								return newStatChange;
+							});
+						})
+						.flat(),
 				];
 
 				for (const statChange of statChanges) {

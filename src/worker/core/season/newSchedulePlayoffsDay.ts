@@ -2,7 +2,6 @@ import setSchedule from "./setSchedule";
 import { idb } from "../../db";
 import { g, helpers, local, lock, orderTeams } from "../../util";
 import type { PlayoffSeriesTeam } from "../../../common/types";
-import flatten from "lodash-es/flatten";
 import { season } from "..";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
@@ -225,7 +224,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			groups[i] = interleaved;
 		}
 
-		teamsWon = flatten(groups);
+		teamsWon = groups.flat();
 	}
 
 	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));

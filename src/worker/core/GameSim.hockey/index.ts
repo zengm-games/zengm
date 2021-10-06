@@ -16,7 +16,6 @@ import type {
 	TeamNum,
 } from "./types";
 import orderBy from "lodash-es/orderBy";
-import flatten from "lodash-es/flatten";
 import range from "lodash-es/range";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
@@ -1378,7 +1377,7 @@ class GameSim {
 					continue;
 				}
 
-				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
+				const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
 				const sub = this.getPlayerFromNextLine(t, "F", currentlyOnIce);
 
 				this.playersOnIce[t].G = [];
@@ -1398,8 +1397,8 @@ class GameSim {
 					continue;
 				}
 
-				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
-				const goalie = flatten(this.lines[t].G).find(
+				const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
+				const goalie = this.lines[t].G.flat().find(
 					p => !currentlyOnIce.includes(p),
 				);
 
@@ -1479,7 +1478,7 @@ class GameSim {
 			}
 
 			if (options.type === "starters") {
-				const currentlyOnIce = flatten(Object.values(this.playersOnIce[t]));
+				const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
 				for (const p of currentlyOnIce) {
 					this.recordStat(t, p, "gs");
 				}
@@ -1498,7 +1497,9 @@ class GameSim {
 				this.playByPlay.logEvent({
 					type: "playersOnIce",
 					t,
-					pids: flatten(Object.values(this.playersOnIce[t])).map(p => p.id),
+					pids: Object.values(this.playersOnIce[t])
+						.flat()
+						.map(p => p.id),
 				});
 			}
 		}
@@ -1742,9 +1743,9 @@ class GameSim {
 					// Power play goals don't count for +/-
 					if (s !== "ppG") {
 						for (const t2 of teamNums) {
-							const currentlyOnIce = flatten(
-								Object.values(this.playersOnIce[t2]),
-							);
+							const currentlyOnIce = Object.values(
+								this.playersOnIce[t2],
+							).flat();
 							for (const p2 of currentlyOnIce) {
 								const pm = t2 === t ? 1 : -1;
 								p2.stat.pm += pm;

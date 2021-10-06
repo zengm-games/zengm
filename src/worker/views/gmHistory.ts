@@ -1,4 +1,3 @@
-import flatten from "lodash-es/flatten";
 import { idb, iterate } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
@@ -57,7 +56,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 		teamHistories.reverse();
 
-		const allTeamSeasons = flatten(teamSeasonsByTeam);
+		const allTeamSeasons = teamSeasonsByTeam.flat();
 
 		const tids = new Set(allTeamSeasons.map(ts => ts.tid));
 

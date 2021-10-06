@@ -32,4 +32,33 @@ if (!Object.values) {
 	};
 }
 
+// Chrome 69, Firefox 62, Safari 12
+// https://github.com/behnammodi/polyfill/blob/1a5965edc0e2eaf8e6d87902cc719462e2a889fb/array.polyfill.js#L598-L622
+if (!Array.prototype.flat) {
+	Object.defineProperty(Array.prototype, "flat", {
+		configurable: true,
+		writable: true,
+		value: function () {
+			const depth =
+				// eslint-disable-next-line prefer-rest-params
+				typeof arguments[0] === "undefined" ? 1 : Number(arguments[0]) || 0;
+			const result: any[] = [];
+			const forEach = result.forEach;
+
+			const flatDeep = function (arr: any[], depth: number) {
+				forEach.call(arr, function (val) {
+					if (depth > 0 && Array.isArray(val)) {
+						flatDeep(val, depth - 1);
+					} else {
+						result.push(val);
+					}
+				});
+			};
+
+			flatDeep(this, depth);
+			return result;
+		},
+	});
+}
+
 import "./polyfills-modern";

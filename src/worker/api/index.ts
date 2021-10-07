@@ -249,6 +249,12 @@ const allStarDraftSetPlayers = async (
 		// Save new All-Stars
 		allStars.teams = [[players[0]], [players[1]]];
 		allStars.remaining = players.slice(2);
+		for (let i = 0; i < 2; i++) {
+			const p = await idb.cache.players.get(players[i].pid);
+			if (p) {
+				allStars.teamNames[i] = `Team ${p.firstName}`;
+			}
+		}
 		await idb.cache.allStars.put(allStars);
 
 		await toUI("realtimeUpdate", [["playerMovement"]]);

@@ -1787,11 +1787,13 @@ class GameSim {
 		const o = this.o;
 		const d = this.d;
 
-		this.updatePlayersOnField("run");
-		const penInfo = this.checkPenalties("beforeSnap");
+		if (!qbScramble) {
+			this.updatePlayersOnField("run");
+			const penInfo = this.checkPenalties("beforeSnap");
 
-		if (penInfo) {
-			return 0;
+			if (penInfo) {
+				return 0;
+			}
 		}
 
 		// Usually do normal run, but sometimes do special stuff

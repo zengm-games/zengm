@@ -2096,13 +2096,27 @@ class GameSim {
 		const array = Array(this.numPlayersOnCourt).fill(0);
 		let total = 0;
 
+		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;
+
 		// Scale composite ratings
 		for (let i = 0; i < this.numPlayersOnCourt; i++) {
 			const p = this.playersOnCourt[t][i];
+
+			let compositeRating = this.team[t].player[p].compositeRating[rating];
+
+			if (rating === "fouling") {
+				const pf = this.team[t].player[p].stat.pf;
+				if (pf === foulLimit) {
+					compositeRating *= 0.75;
+				} else if (pf > foulLimit) {
+					compositeRating *= 0.5;
+				}
+			}
+
 			array[i] =
-				(this.team[t].player[p].compositeRating[rating] *
-					this.fatigue(this.team[t].player[p].stat.energy)) **
+				(compositeRating * this.fatigue(this.team[t].player[p].stat.energy)) **
 				power;
+
 			total += array[i];
 		}
 

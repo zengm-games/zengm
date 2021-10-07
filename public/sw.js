@@ -60,6 +60,7 @@ const navigationRoute = new NavigationRoute(handler, {
 		new RegExp("^/ico"),
 		new RegExp("^/img"),
 		new RegExp("^/manifest"),
+		new RegExp("^/robots.txt"),
 		new RegExp("^/sw.js"),
 	],
 });

@@ -720,7 +720,11 @@ class GameSim {
 
 		// No foul trouble in overtime or late in 4th quarter
 		const quarter = this.team[0].stat.ptsQtrs.length;
-		if (this.overtimes > 0 || (quarter === this.numPeriods && this.t < 8)) {
+		if (
+			this.overtimes > 0 ||
+			this.elamActive ||
+			(quarter === this.numPeriods && this.t < 8)
+		) {
 			return foulsNeededToFoulOut;
 		}
 
@@ -744,7 +748,7 @@ class GameSim {
 
 	// 1 -> no foul trouble
 	// less than 1 -> decreases
-	getFoulTroubleFactor(p: PlayerGameSim, foulLimit) {
+	getFoulTroubleFactor(p: PlayerGameSim, foulLimit: number) {
 		if (p.stat.pf === foulLimit) {
 			// More likely to sub off at limit
 			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
@@ -1118,6 +1122,9 @@ class GameSim {
 			"blocking",
 		];
 
+		const foulLimit = this.getFoulTroubleLimit();
+
+		// Scale composite ratings
 		for (let k = 0; k < teamNums.length; k++) {
 			const t = teamNums[k];
 			const oppT = teamNums[1 - k];
@@ -1131,10 +1138,26 @@ class GameSim {
 
 				for (let i = 0; i < this.numPlayersOnCourt; i++) {
 					const p = this.playersOnCourt[t][i];
+
+					let foulLimitFactor = 1;
+					if (
+						rating === "defense" ||
+						rating === "defensePerimeter" ||
+						rating === "blocking"
+					) {
+						const pf = this.team[t].player[p].stat.pf;
+						if (pf === foulLimit) {
+							foulLimitFactor *= 0.9;
+						} else if (pf > foulLimit) {
+							foulLimitFactor *= 0.75;
+						}
+					}
+
 					this.team[t].compositeRating[rating] +=
 						this.team[t].player[p].compositeRating[rating] *
 						this.fatigue(this.team[t].player[p].stat.energy) *
-						perfFactor;
+						perfFactor *
+						foulLimitFactor;
 				}
 
 				this.team[t].compositeRating[rating] /= 5;
@@ -2034,7 +2057,6 @@ class GameSim {
 			foulsNeededToFoulOut > 0 &&
 			this.team[this.d].player[p].stat.pf >= foulsNeededToFoulOut
 		) {
-			self.foulOut = (self.foulOut ?? 0) + 1;
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 
 			// Force substitutions now

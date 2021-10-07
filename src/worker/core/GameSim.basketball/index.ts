@@ -2055,6 +2055,7 @@ class GameSim {
 			foulsNeededToFoulOut > 0 &&
 			this.team[this.d].player[p].stat.pf >= foulsNeededToFoulOut
 		) {
+			// self.foulOut = (self.foulOut ?? 0) + 1;
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 
 			// Force substitutions now
@@ -2126,7 +2127,9 @@ class GameSim {
 
 			if (rating === "fouling") {
 				const pf = this.team[t].player[p].stat.pf;
-				if (pf === foulLimit) {
+				if (pf === foulLimit - 1) {
+					compositeRating *= 0.8;
+				} else if (pf === foulLimit) {
 					compositeRating *= 0.5;
 				} else if (pf > foulLimit) {
 					compositeRating *= 0.25;

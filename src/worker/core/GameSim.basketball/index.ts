@@ -751,11 +751,9 @@ class GameSim {
 	getFoulTroubleFactor(p: PlayerGameSim, foulLimit: number) {
 		if (p.stat.pf === foulLimit) {
 			// More likely to sub off at limit
-			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
 			return 0.75;
 		} else if (p.stat.pf > foulLimit) {
 			// Very likely to sub off beyond limit
-			// console.log(`${p.name} (${p.id}) - ${quarter}q, ${this.t} remaining - ${p.stat.pf} / ${foulLimit}`);
 			return 0.1;
 		}
 
@@ -2129,9 +2127,9 @@ class GameSim {
 			if (rating === "fouling") {
 				const pf = this.team[t].player[p].stat.pf;
 				if (pf === foulLimit) {
-					compositeRating *= 0.75;
-				} else if (pf > foulLimit) {
 					compositeRating *= 0.5;
+				} else if (pf > foulLimit) {
+					compositeRating *= 0.25;
 				}
 			}
 

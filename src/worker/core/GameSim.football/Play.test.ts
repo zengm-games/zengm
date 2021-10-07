@@ -989,7 +989,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(game.o, 1, "possession change happened");
 		});
 
-		it("no special case -> replay down", async () => {
+		it("no special case -> offsetting penalties, replay down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1048,6 +1048,68 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 7);
+			assert.strictEqual(play.state.current.scrimmage, 25);
+		});
+
+		it("tackOn -> offsetting penalties, replay down", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 1;
+			game.toGo = 10;
+			game.scrimmage = 25;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: 21,
+				t: game.o,
+				tackOn: true,
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+				tackOn: false,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			play.addEvent({
+				type: "pssCmp",
+				qb: p,
+				target: p,
+				yds: 21,
+			});
+
+			assert.strictEqual(
+				play.state.current.scrimmage,
+				46,
+				"before penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 1);
+			assert.strictEqual(play.state.current.toGo, 10);
 			assert.strictEqual(play.state.current.scrimmage, 25);
 		});
 	});

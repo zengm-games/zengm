@@ -1027,6 +1027,9 @@ class Play {
 
 					// console.log("decisions", decisions);
 
+					// Currently "offset" is every entry in the array or no entry
+					const offsetting = decisions[0] === "offset";
+
 					const subResults: {
 						// indexEvent is the index of the event to roll back to. undefined means don't add any events onto state, other than the penalty
 						indexEvent: number | undefined;
@@ -1048,13 +1051,15 @@ class Play {
 						// indexEvent = penaltyRollback.indexEvent;
 
 						// Figure out what state to replay
-						if (penaltyRollback.type === "cleanHandsChangeOfPossession") {
-							// Math.max returns 0 if array is empty, which is correct for this use!
-							const indexEvent = Math.max(
-								...this.cleanHandsChangeOfPossessionIndexes.filter(
-									index => index < penaltyRollback.indexEvent,
-								),
+						if (
+							penaltyRollback.type === "cleanHandsChangeOfPossession" ||
+							offsetting
+						) {
+							const validIndexes = this.spotOfEnforcementIndexes.filter(
+								index => index < penaltyRollback.indexEvent,
 							);
+							const indexEvent =
+								validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
 
 							subResults.push({
 								indexEvent,
@@ -1062,12 +1067,11 @@ class Play {
 								tackOn: false,
 							});
 						} else if (penaltyRollback.type === "spotOfEnforcement") {
-							// Math.max returns 0 if array is empty, which is correct for this use!
-							const indexEvent = Math.max(
-								...this.spotOfEnforcementIndexes.filter(
-									index => index < penaltyRollback.indexEvent,
-								),
+							const validIndexes = this.spotOfEnforcementIndexes.filter(
+								index => index < penaltyRollback.indexEvent,
 							);
+							const indexEvent =
+								validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
 
 							subResults.push({
 								indexEvent,
@@ -1103,8 +1107,6 @@ class Play {
 								}
 							}
 
-							// console.log("state.scrimmage before applying", state.scrimmage);
-
 							// No state changes for offsetting penalties
 							if (offsetStatus === "offset") {
 								state.isClockRunning = false;
@@ -1113,7 +1115,6 @@ class Play {
 							}
 
 							this.checkDownAtEndOfPlay(state);
-							// console.log("state.scrimmage after applying", state.scrimmage);
 						}
 					}
 

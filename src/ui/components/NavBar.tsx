@@ -98,12 +98,12 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 	}
 
 	const userBlock = username ? (
-		<Nav.Link href="/account">
+		<Nav.Link href="/account" aria-label="Account">
 			<span className="glyphicon glyphicon-user" />{" "}
 			<span className="d-none d-lg-inline">{username}</span>
 		</Nav.Link>
 	) : (
-		<Nav.Link href="/account/login_or_register">
+		<Nav.Link href="/account/login_or_register" aria-label="Login/Register">
 			<span className="glyphicon glyphicon-user" />{" "}
 			<span className="d-none d-lg-inline">Login/Register</span>
 		</Nav.Link>
@@ -123,6 +123,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 					localActions.toggleSidebar();
 				}}
 				type="button"
+				aria-label="Toggle navigation"
 			>
 				<span className="navbar-toggler-icon" />
 			</button>

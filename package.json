@@ -69,10 +69,10 @@
 		"workbox-precaching": "^6.3.0",
 		"workbox-routing": "^6.3.0",
 		"workbox-window": "^6.3.0",
-		"zustand": "^3.5.12"
+		"zustand": "^3.5.13"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.15.5",
+		"@babel/core": "^7.15.8",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.14.5",
 		"@babel/plugin-proposal-object-rest-spread": "^7.15.6",
 		"@babel/plugin-proposal-optional-chaining": "^7.14.5",
@@ -115,7 +115,7 @@
 		"concurrently": "^6.3.0",
 		"conditional-type-checks": "^1.0.5",
 		"cross-env": "^7.0.3",
-		"esbuild": "^0.13.3",
+		"esbuild": "^0.13.4",
 		"esbuild-plugin-alias": "^0.2.0",
 		"eslint": "^7.32.0",
 		"eslint-config-airbnb-typescript": "^14.0.0",
@@ -130,8 +130,8 @@
 		"html-minifier-terser": "^6.0.2",
 		"husky": "^7.0.2",
 		"import-jsx": "^4.0.0",
-		"ink": "^3.0.9",
-		"ink-spinner": "^4.0.2",
+		"ink": "^3.2.0",
+		"ink-spinner": "^4.0.3",
 		"jest": "^27.2.4",
 		"karma": "^6.3.3",
 		"karma-browserstack-launcher": "^1.6.0",

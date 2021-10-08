@@ -1,4 +1,5 @@
 false start not stopping play? https://discord.com/channels/290013534023057409/290015591216054273/895782036042809384
+- i can't reproduce
 
 streaming import of league files
 - schema needs to run on each chunk, in worker

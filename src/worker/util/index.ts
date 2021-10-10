@@ -7,7 +7,6 @@ export { default as beforeView } from "./beforeView";
 export { default as checkAccount } from "./checkAccount";
 export { default as checkChanges } from "./checkChanges";
 export { default as checkNaNs } from "./checkNaNs";
-export { default as defaultGameAttributes } from "./defaultGameAttributes";
 export { default as defaultInjuries } from "./defaultInjuries";
 export { default as env } from "./env";
 export { default as face } from "./face";
@@ -34,3 +33,6 @@ export { default as toUI } from "./toUI";
 export { default as updatePhase } from "./updatePhase";
 export { default as updatePlayMenu } from "./updatePlayMenu";
 export { default as updateStatus } from "./updateStatus";
+
+// Ideally, get rid of this
+export { default as defaultGameAttributes } from "../../common/defaultGameAttributes";

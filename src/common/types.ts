@@ -876,14 +876,16 @@ export type LocalStateUI = {
 	homeCourtAdvantage: number;
 	lid?: number;
 	liveGameInProgress: boolean;
-	spectator: boolean;
+	numPeriods: number;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];
 	popup: boolean;
+	quarterLength: number;
 	season: number;
 	showNagModal: boolean;
 	sidebarOpen: boolean;
+	spectator: boolean;
 	startingSeason: number;
 	statusText: string;
 	teamInfoCache: {

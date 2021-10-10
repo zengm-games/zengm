@@ -108,7 +108,7 @@ import stats from "../core/player/stats";
 import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,
-} from "../util/defaultGameAttributes";
+} from "../../common/defaultGameAttributes";
 import goatFormula from "../util/goatFormula";
 import getRandomTeams from "./getRandomTeams";
 import { withState } from "../core/player/name";

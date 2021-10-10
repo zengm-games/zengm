@@ -1,6 +1,7 @@
 import create from "zustand";
 import shallow from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 import safeLocalStorage from "./safeLocalStorage";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
@@ -43,14 +44,16 @@ const useLocal = create<
 	homeCourtAdvantage: 1,
 	lid: undefined,
 	liveGameInProgress: false,
-	spectator: false,
+	numPeriods: defaultGameAttributes.numPeriods,
 	phase: 0,
 	phaseText: "",
 	playMenuOptions: [],
 	popup: window.location.search === "?w=popup",
+	quarterLength: defaultGameAttributes.quarterLength,
 	season: 0,
 	showNagModal: false,
 	sidebarOpen: false,
+	spectator: false,
 	startingSeason: 0,
 	statusText: "Idle",
 	teamInfoCache: [],
@@ -111,12 +114,15 @@ const useLocal = create<
 				games: [],
 				godMode: false,
 				hideDisabledTeams: false,
+				homeCourtAdvantage: 1,
 
 				// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
 				lid: undefined,
 				liveGameInProgress: false,
+				numPeriods: defaultGameAttributes.numPeriods,
 				phase: 0,
 				playMenuOptions: [],
+				quarterLength: defaultGameAttributes.quarterLength,
 				season: 0,
 				startingSeason: 0,
 				teamInfoCache: [],
@@ -154,9 +160,11 @@ const useLocal = create<
 				"hideDisabledTeams",
 				"homeCourtAdvantage",
 				"lid",
-				"spectator",
+				"numPeriods",
 				"phase",
+				"quarterLength",
 				"season",
+				"spectator",
 				"startingSeason",
 				"teamInfoCache",
 				"userTid",

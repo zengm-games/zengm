@@ -2,7 +2,7 @@ import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
-import defaultGameAttributes from "./defaultGameAttributes";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 const augmentSeries = async (
 	series: {

@@ -3,7 +3,7 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
-import defaultGameAttributes from "./defaultGameAttributes";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -343,60 +343,20 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	const coeffsBPM1 = [
-		0.86,
-		-0.56,
-		-0.246,
-		0.389,
-		0.58,
-		-0.964,
-		0.613,
-		0.116,
-		0.0,
-		1.369,
-		1.327,
+		0.86, -0.56, -0.246, 0.389, 0.58, -0.964, 0.613, 0.116, 0.0, 1.369, 1.327,
 		-0.367,
 	];
 	const coeffsBPM5 = [
-		0.86,
-		-0.78,
-		-0.343,
-		0.389,
-		1.034,
-		-0.964,
-		0.181,
-		0.181,
-		0.0,
-		1.008,
-		0.703,
+		0.86, -0.78, -0.343, 0.389, 1.034, -0.964, 0.181, 0.181, 0.0, 1.008, 0.703,
 		-0.367,
 	];
 	const coeffsORBPM1 = [
-		0.605,
-		-0.33,
-		-0.145,
-		0.477,
-		0.476,
-		-0.579,
-		0.606,
-		-0.112,
-		0.0,
-		0.177,
-		0.725,
-		-0.439,
+		0.605, -0.33, -0.145, 0.477, 0.476, -0.579, 0.606, -0.112, 0.0, 0.177,
+		0.725, -0.439,
 	];
 	const coeffsORBPM5 = [
-		0.605,
-		-0.472,
-		-0.208,
-		0.477,
-		0.476,
-		-0.882,
-		0.422,
-		0.103,
-		0.0,
-		0.294,
-		0.097,
-		-0.439,
+		0.605, -0.472, -0.208, 0.477, 0.476, -0.882, 0.422, 0.103, 0.0, 0.294,
+		0.097, -0.439,
 	];
 
 	const BPM: number[] = [];

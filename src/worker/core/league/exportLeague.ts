@@ -1,6 +1,6 @@
 import { gameAttributesArrayToObject } from "../../../common";
 import { getAll, idb } from "../../db";
-import { gameAttributesCache } from "../../util/defaultGameAttributes";
+import { gameAttributesCache } from "../../../common/defaultGameAttributes";
 import getName from "./getName";
 
 /* Export existing active league.

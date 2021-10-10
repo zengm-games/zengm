@@ -3,6 +3,7 @@ import { isSport } from "../../common";
 import { helpers, useLocalShallow } from "../util";
 import type { ReactNode } from "react";
 import TeamLogoInline from "./TeamLogoInline";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -77,12 +78,16 @@ const ScoreBox = ({
 	const {
 		challengeNoRatings,
 		homeCourtAdvantage,
+		numPeriods,
+		quarterLength,
 		season,
 		teamInfoCache,
 		userTid,
 	} = useLocalShallow(state => ({
 		challengeNoRatings: state.challengeNoRatings,
 		homeCourtAdvantage: state.homeCourtAdvantage,
+		numPeriods: state.numPeriods,
+		quarterLength: state.quarterLength,
 		season: state.season,
 		teamInfoCache: state.teamInfoCache,
 		userTid: state.userTid,
@@ -124,21 +129,26 @@ const ScoreBox = ({
 		if (isSport("basketball")) {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
-			spread = roundHalf(
+			spread =
 				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
-					3.3504 * homeCourtAdvantage,
-			);
+				3.3504 * homeCourtAdvantage;
 		} else if (isSport("hockey")) {
-			spread = roundHalf(
+			spread =
 				(1.8 / 100) * (game.teams[0].ovr - game.teams[1].ovr) +
-					0.25 * homeCourtAdvantage,
-			);
+				0.25 * homeCourtAdvantage;
 		} else {
-			spread = roundHalf(
+			spread =
 				(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
-					3 * homeCourtAdvantage,
-			);
+				3 * homeCourtAdvantage;
 		}
+
+		// Adjust for game length
+		spread *=
+			(numPeriods * quarterLength) /
+			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength);
+
+		spread = roundHalf(spread);
+
 		if (spread > 0) {
 			spreads = [
 				(-spread).toLocaleString("en-US", {

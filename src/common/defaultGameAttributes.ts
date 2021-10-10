@@ -3,12 +3,12 @@ import {
 	DEFAULT_DIVS,
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
-	isSport,
-} from "../../common";
+} from "./constants";
+import isSport from "./isSport";
 import type {
 	GameAttributeKey,
 	GameAttributesLeagueWithHistory,
-} from "../../common/types";
+} from "./types";
 
 const wrap = <T>(value: T) => [
 	{

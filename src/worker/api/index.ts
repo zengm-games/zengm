@@ -356,16 +356,30 @@ const checkParticipationAchievement = async (
 	}
 };
 
-const clearInjury = async (pid: number) => {
-	const p = await idb.cache.players.get(pid);
-	if (p) {
-		p.injury = {
-			type: "Healthy",
-			gamesRemaining: 0,
-		};
-		await idb.cache.players.put(p);
-		await toUI("realtimeUpdate", [["playerMovement"]]);
+const clearInjury = async (pid: number | "all") => {
+	if (pid === "all") {
+		const players = await idb.cache.players.getAll();
+		for (const p of players) {
+			if (p.injury.gamesRemaining > 0) {
+				p.injury = {
+					type: "Healthy",
+					gamesRemaining: 0,
+				};
+				await idb.cache.players.put(p);
+			}
+		}
+	} else {
+		const p = await idb.cache.players.get(pid);
+		if (p) {
+			p.injury = {
+				type: "Healthy",
+				gamesRemaining: 0,
+			};
+			await idb.cache.players.put(p);
+		}
 	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const clearWatchList = async () => {

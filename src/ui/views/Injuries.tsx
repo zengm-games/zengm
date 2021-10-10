@@ -1,12 +1,13 @@
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 
 const Injuries = ({
 	abbrev,
 	challengeNoRatings,
+	godMode,
 	injuries,
 	season,
 	stats,
@@ -81,13 +82,28 @@ const Injuries = ({
 				.
 			</p>
 
-			<DataTable
-				cols={cols}
-				defaultSort={[cols.length - 3, "asc"]}
-				name="Injuries"
-				pagination
-				rows={rows}
-			/>
+			{season === "current" && godMode && rows.length > 0 ? (
+				<button
+					className="btn btn-god-mode mb-3"
+					onClick={async () => {
+						await toWorker("main", "clearInjury", "all");
+					}}
+				>
+					Heal All Injuries
+				</button>
+			) : null}
+
+			{rows.length > 0 ? (
+				<DataTable
+					cols={cols}
+					defaultSort={[cols.length - 3, "asc"]}
+					name="Injuries"
+					pagination
+					rows={rows}
+				/>
+			) : (
+				<p>No injured players found.</p>
+			)}
 		</>
 	);
 };

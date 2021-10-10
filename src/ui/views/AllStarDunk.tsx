@@ -835,6 +835,7 @@ const AllStarDunk = ({
 					fastForwards={[
 						{
 							label: "Complete one dunk",
+							key: "O",
 							onClick: async () => {
 								await toWorker("main", "dunkSimNext", "dunk");
 							},
@@ -851,12 +852,14 @@ const AllStarDunk = ({
 							: []),
 						{
 							label: "End of round",
+							key: "S",
 							onClick: async () => {
 								await toWorker("main", "dunkSimNext", "round");
 							},
 						},
 						{
 							label: "End of contest",
+							key: "Q",
 							onClick: async () => {
 								await toWorker("main", "dunkSimNext", "all");
 							},

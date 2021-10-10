@@ -105,6 +105,7 @@ const LiveGame = (props: View<"liveGame">) => {
 	const overtimes = useRef(0);
 	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
 	const quarters = useRef(isSport("hockey") ? [1] : ["Q1"]);
+	const possessionChange = useRef<boolean | undefined>();
 	const componentIsMounted = useRef(false);
 	const events = useRef<any[] | undefined>();
 
@@ -130,6 +131,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			const text = output.text;
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
+			possessionChange.current = output.possessionChange;
 
 			if (text !== undefined) {
 				const p = document.createElement("p");
@@ -362,6 +364,25 @@ const LiveGame = (props: View<"liveGame">) => {
 			setPlayIndex(prev => prev + numPlays);
 		};
 
+		const playUntilChangeOfPossession = () => {
+			let numPlays = 0;
+
+			// If currently on one, play through it
+			if (possessionChange.current) {
+				while (possessionChange.current && !boxScore.current.gameOver) {
+					processToNextPause(true);
+					numPlays += 1;
+				}
+			}
+
+			// Find next one
+			while (!possessionChange.current && !boxScore.current.gameOver) {
+				processToNextPause(true);
+				numPlays += 1;
+			}
+			setPlayIndex(prev => prev + numPlays);
+		};
+
 		let skipMinutes = [
 			{
 				minutes: 1,
@@ -425,6 +446,22 @@ const LiveGame = (props: View<"liveGame">) => {
 				key: "U",
 				onClick: () => {
 					playUntilLastTwoMinutes();
+				},
+			});
+		}
+
+		if (
+			bySport({
+				basketball: false,
+				football: true,
+				hockey: false,
+			})
+		) {
+			menuItems.push({
+				label: "Until change of possession",
+				key: "C",
+				onClick: () => {
+					playUntilChangeOfPossession();
 				},
 			});
 		}

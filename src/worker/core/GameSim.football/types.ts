@@ -30,7 +30,8 @@ export type PlayType =
 	| "kneel"
 	| "flag"
 	| "twoPointConversion"
-	| "twoPointConversionFailed";
+	| "twoPointConversionFailed"
+	| "turnoverOnDowns";
 
 export type TeamNum = 0 | 1;
 

@@ -435,6 +435,8 @@ class PlayByPlayLogger {
 				text = "Two point conversion attempt";
 			} else if (type === "twoPointConversionFailed") {
 				text = "Two point conversion failed";
+			} else if (type === "turnoverOnDowns") {
+				text = "Turnover on downs";
 			} else {
 				throw new Error(`No text for "${type}"`);
 			}

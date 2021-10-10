@@ -16,6 +16,18 @@ const processLiveGameEvents = ({
 	let stop = false;
 	let text;
 	let e: any;
+	let possessionChange: boolean = false;
+
+	// Would be better to use event type, if it was available here like in hockey
+	const possessionChangeTexts = [
+		" kicked off ",
+		" punted ",
+		" recovered the fumble for the defense",
+		" recovered the fumble in the endzone, resulting in a safety!",
+		" intercepted the pass ",
+		" gets ready to attempt an onside kick",
+		"Turnover on downs",
+	];
 
 	while (!stop && events.length > 0) {
 		e = events.shift();
@@ -59,6 +71,10 @@ const processLiveGameEvents = ({
 					gamesRemaining: -1,
 				};
 			}
+
+			possessionChange = possessionChangeTexts.some(text =>
+				e.text.includes(text),
+			);
 
 			text = e.text;
 			boxScore.time = e.time;
@@ -124,6 +140,7 @@ const processLiveGameEvents = ({
 
 	return {
 		overtimes,
+		possessionChange,
 		quarters,
 		text,
 	};

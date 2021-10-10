@@ -207,6 +207,7 @@ export class State {
 	numPossessionChanges: number;
 	pts: [number, number];
 	twoPointConversionTeam: TeamNum | undefined;
+	turnoverOnDowns: boolean;
 
 	constructor(
 		gameSim: PlayState,
@@ -218,6 +219,7 @@ export class State {
 			numPossessionChanges,
 			pts,
 			twoPointConversionTeam,
+			turnoverOnDowns,
 		}: {
 			downIncremented: boolean;
 			firstDownLine: number | undefined;
@@ -226,6 +228,7 @@ export class State {
 			numPossessionChanges: number;
 			pts: [number, number];
 			twoPointConversionTeam: TeamNum | undefined;
+			turnoverOnDowns: boolean;
 		},
 	) {
 		this.down = gameSim.down;
@@ -246,6 +249,7 @@ export class State {
 		this.numPossessionChanges = numPossessionChanges;
 		this.pts = pts;
 		this.twoPointConversionTeam = twoPointConversionTeam;
+		this.turnoverOnDowns = turnoverOnDowns;
 	}
 
 	clone() {
@@ -257,6 +261,7 @@ export class State {
 			numPossessionChanges: this.numPossessionChanges,
 			pts: [...this.pts],
 			twoPointConversionTeam: this.twoPointConversionTeam,
+			turnoverOnDowns: this.turnoverOnDowns,
 		});
 	}
 
@@ -348,6 +353,7 @@ class Play {
 			missedXP: undefined,
 			pts: [gameSim.team[0].stat.pts, gameSim.team[1].stat.pts],
 			twoPointConversionTeam: undefined,
+			turnoverOnDowns: false,
 		});
 		this.state = {
 			initial: initialState,
@@ -809,8 +815,8 @@ class Play {
 			state.newFirstDown();
 		}
 
-		const turnoverOnDowns = state.down > 4;
-		if (turnoverOnDowns) {
+		state.turnoverOnDowns = state.down > 4;
+		if (state.turnoverOnDowns) {
 			state.possessionChange();
 		}
 	}
@@ -1222,6 +1228,12 @@ class Play {
 	commit() {
 		this.checkDownAtEndOfPlay(this.state.current);
 		this.adjudicatePenalties();
+
+		if (this.state.current.turnoverOnDowns) {
+			this.g.playByPlay.logEvent("turnoverOnDowns", {
+				clock: this.g.clock,
+			});
+		}
 
 		const {
 			down,

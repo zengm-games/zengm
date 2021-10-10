@@ -150,19 +150,17 @@ const PlayerFeats = ({
 				football: (
 					<p>
 						All games where a player got {scaleMinimum(400)} passing yards,{" "}
-						{scaleMinimum(6)} passing TDs, {scaleMinimum(150)}
-						rushing yards, {scaleMinimum(3)} rushing TDs, {scaleMinimum(150)}{" "}
-						receiving yards, {scaleMinimum(3)} receiving TDs,
-						{scaleMinimum(3)} sacks, {scaleMinimum(2)} interceptions,{" "}
-						{scaleMinimum(2)} fumble recoveries, {scaleMinimum(2)} forced
-						fumbles, {scaleMinimum(2)}
+						{scaleMinimum(6)} passing TDs, {scaleMinimum(150)} rushing yards,{" "}
+						{scaleMinimum(3)} rushing TDs, {scaleMinimum(150)} receiving yards,{" "}
+						{scaleMinimum(3)} receiving TDs, {scaleMinimum(3)} sacks,{" "}
+						{scaleMinimum(2)} interceptions, {scaleMinimum(2)} fumble
+						recoveries, {scaleMinimum(2)} forced fumbles, {scaleMinimum(2)}{" "}
 						defensive TDs, {scaleMinimum(2)} return TDs, {scaleMinimum(4)}{" "}
-						rushing/receiving TDs, {scaleMinimum(200)}
-						rushing/receiving yards, or {scaleMinimum(5)} total TDs (where
-						passing ones count half) are listed here. If you changed quarter
-						length to a non-default value in God Mode, the cuttoffs are scaled.
-						Statistical feats from your players are{" "}
-						<span className="text-info">highlighted in blue</span>.
+						rushing/receiving TDs, {scaleMinimum(200)} rushing/receiving yards,
+						or {scaleMinimum(5)} total TDs (where passing ones count half) are
+						listed here. If you changed quarter length to a non-default value in
+						God Mode, the cuttoffs are scaled. Statistical feats from your
+						players are <span className="text-info">highlighted in blue</span>.
 					</p>
 				),
 				hockey: (

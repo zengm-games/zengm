@@ -179,7 +179,6 @@ const processAttrs = (
 							  ])}">${transaction.season} draft</a>`;
 
 					output.latestTransaction = `${helpers.ordinal(
-						// @ts-ignore
 						transaction.pickNum,
 					)} pick in the ${draftName}`;
 				} else if (transaction.type === "freeAgent") {

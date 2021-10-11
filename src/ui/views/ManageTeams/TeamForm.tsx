@@ -203,6 +203,10 @@ const TeamForm = ({
 									setShowFace(true);
 								}}
 								value={t.colors[j]}
+								style={{
+									// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
+									zIndex: 1,
+								}}
 							/>
 						))}
 						<select
@@ -212,6 +216,10 @@ const TeamForm = ({
 								setShowFace(true);
 							}}
 							value={t.jersey}
+							style={{
+								// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
+								zIndex: 1,
+							}}
 						>
 							{helpers.keys(JERSEYS).map(jersey => (
 								<option key={jersey} value={jersey}>
@@ -229,7 +237,7 @@ const TeamForm = ({
 				>
 					<div
 						ref={setFaceWrapper}
-						style={{ maxWidth: 120, marginTop: -35, zIndex: -1 }}
+						style={{ maxWidth: 120, marginTop: -35 }}
 						className="position-relative mb-3"
 					/>
 					{showFace || showFaceHover ? (

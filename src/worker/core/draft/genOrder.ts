@@ -126,6 +126,7 @@ const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap" | "rotate" | "same">({
 const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
+	draftTypeOverride?: DraftType,
 ): Promise<ReturnVal | undefined> => {
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
@@ -147,7 +148,7 @@ const genOrder = async (
 	);
 	const firstRoundTeams = teamsByRound[0] ?? [];
 
-	const draftType = g.get("draftType");
+	const draftType = draftTypeOverride ?? g.get("draftType");
 	const riggedLottery = g.get("godMode") ? g.get("riggedLottery") : undefined;
 
 	// Draft lottery

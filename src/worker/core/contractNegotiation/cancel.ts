@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common";
 import { idb } from "../../db";
-import { g, lock, updatePlayMenu, updateStatus } from "../../util";
+import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
 /**
  * Cancel contract negotiations with a player.
@@ -11,7 +11,7 @@ const cancel = async (pid: number) => {
 
 	if (!negotiationInProgress) {
 		if (g.get("phase") === PHASE.FREE_AGENCY) {
-			await updateStatus(`${g.get("daysLeft")} days left`);
+			await updateStatus(helpers.daysLeft(true));
 		} else {
 			await updateStatus("Idle");
 		}

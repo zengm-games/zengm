@@ -1,4 +1,8 @@
-import { PLAYER, helpers as commonHelpers } from "../../common";
+import {
+	PLAYER,
+	helpers as commonHelpers,
+	timeBetweenGames,
+} from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
@@ -303,6 +307,18 @@ const quarterLengthFactor = () => {
 	);
 };
 
+const daysLeft = (freeAgents: boolean, days?: number) => {
+	const actualDays = days ?? g.get("daysLeft");
+
+	let dayWeek;
+	if (freeAgents) {
+		dayWeek = `day${actualDays === 1 ? "" : "s"}`;
+	} else {
+		dayWeek = timeBetweenGames(actualDays);
+	}
+	return `${actualDays} ${dayWeek} left`;
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -321,6 +337,7 @@ const helpers = {
 	resetG,
 	roundContract,
 	sigmoid,
+	daysLeft,
 };
 
 export default helpers;

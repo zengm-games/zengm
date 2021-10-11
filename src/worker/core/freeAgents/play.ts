@@ -9,6 +9,7 @@ import {
 	updateStatus,
 	toUI,
 	recomputeLocalUITeamOvrs,
+	helpers,
 } from "../../util";
 import type { Conditions } from "../../../common/types";
 
@@ -48,7 +49,7 @@ async function play(
 			if (g.get("daysLeft") > 0 && numDays > 0) {
 				await toUI("realtimeUpdate", [["playerMovement"]]);
 				await recomputeLocalUITeamOvrs();
-				await updateStatus(`${g.get("daysLeft")} days left`);
+				await updateStatus(helpers.daysLeft(true));
 				await trade.betweenAiTeams();
 				await play(numDays - 1, conditions, false);
 			} else {

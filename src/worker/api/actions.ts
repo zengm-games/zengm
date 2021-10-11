@@ -456,7 +456,7 @@ const playMenu = {
 
 			if (proceed) {
 				await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-				await updateStatus(`${g.get("daysLeft")} days left`);
+				await updateStatus(helpers.daysLeft(true));
 			}
 		}
 	},

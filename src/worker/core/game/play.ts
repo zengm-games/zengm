@@ -1,4 +1,4 @@
-import { isSport, PHASE, timeBetweenGames } from "../../../common";
+import { isSport, PHASE } from "../../../common";
 import {
 	GameSim,
 	allStar,
@@ -440,9 +440,7 @@ const play = async (
 	// Simulates a day of games. If there are no games left, it calls cbNoGames.
 	// Promise is resolved after games are run
 	const cbPlayGames = async () => {
-		await updateStatus(
-			`Playing (${numDays} ${timeBetweenGames(numDays)} left)`,
-		);
+		await updateStatus(`Playing (${helpers.daysLeft(false, numDays)})`);
 
 		let schedule = await season.getSchedule(true);
 

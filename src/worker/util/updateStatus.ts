@@ -4,6 +4,7 @@ import g from "./g";
 import local from "./local";
 import toUI from "./toUI";
 import type { Conditions } from "../../common/types";
+import { helpers } from ".";
 
 /*Save status to database and push to client.
 
@@ -29,7 +30,7 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 				defaultStatusText = "You're fired!";
 			}
 		} else if (g.get("phase") === PHASE.FREE_AGENCY) {
-			defaultStatusText = `${g.get("daysLeft")} days left`;
+			defaultStatusText = helpers.daysLeft(true);
 		} else if (g.get("phase") === PHASE.DRAFT) {
 			const drafted = await idb.cache.players.indexGetAll("playersByTid", [
 				0,

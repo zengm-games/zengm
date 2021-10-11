@@ -4,7 +4,7 @@ import path from "path";
 
 const port = 3006;
 
-const mimeTypes = {
+const mimeTypes: Record<string, string> = {
 	".bmp": "image/bmp",
 	".css": "text/css",
 	".gif": "image/gif",
@@ -21,7 +21,7 @@ const mimeTypes = {
 	".woff": "font/woff",
 	".woff2": "font/woff2",
 };
-const sendFile = (res, filename) => {
+const sendFile = (res: http.ServerResponse, filename: string) => {
 	const filePath = path.join("build", filename);
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
@@ -35,20 +35,22 @@ const sendFile = (res, filename) => {
 	} else {
 		console.log(`404 ${filename}`);
 		res.writeHead(404, {
-			'Content-Type': 'text/plain'
+			"Content-Type": "text/plain",
 		});
 		res.end("404 Not Found");
 	}
 };
 
-const showStatic = (req, res) => {
-	sendFile(res, req.url.substr(1));
+const showStatic = (req: http.IncomingMessage, res: http.ServerResponse) => {
+	if (req.url !== undefined) {
+		sendFile(res, req.url.substr(1));
+	}
 };
-const showIndex = (req, res) => {
+const showIndex = (req: http.IncomingMessage, res: http.ServerResponse) => {
 	sendFile(res, "index.html");
 };
 
-const startsWith = (url, prefixes) => {
+const startsWith = (url: string, prefixes: string[]) => {
 	for (const prefix of prefixes) {
 		if (url.indexOf(prefix) === 0) {
 			return true;
@@ -68,10 +70,12 @@ const server = http.createServer((req, res) => {
 		"/manifest",
 	];
 
-	if (startsWith(req.url, prefixesStatic)) {
-		showStatic(req, res);
-	} else {
-		showIndex(req, res);
+	if (req.url !== undefined) {
+		if (startsWith(req.url, prefixesStatic)) {
+			showStatic(req, res);
+		} else {
+			showIndex(req, res);
+		}
 	}
 });
 

@@ -45,7 +45,7 @@ const PickText = ({
 				<a
 					href={
 						asset.type === "realizedPick"
-							? helpers.leagueUrl(["draft_summary", asset.season])
+							? helpers.leagueUrl(["draft_history", asset.season])
 							: helpers.leagueUrl(["draft_scouting"])
 					}
 				>

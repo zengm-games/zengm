@@ -329,7 +329,7 @@ const setupRoutes = () => {
 				errorPage(context);
 			}
 		},
-		routes: routes(),
+		routes,
 	});
 };
 

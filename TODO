@@ -1,3 +1,5 @@
+https://github.com/lukeed/tsm
+
 show XP attempt imminent https://discord.com/channels/290013534023057409/290015591216054273/897229161607868416
 - same with 2pt
 
@@ -14,9 +16,6 @@ improve UI of game summary on schedule page
 refactor FBGM play by play logging
 - move text generation client side, like hockey
 - typescript for log function
-
-false start not stopping play? https://discord.com/channels/290013534023057409/290015591216054273/895782036042809384
-- i can't reproduce
 
 streaming import of league files
 - schema needs to run on each chunk, in worker

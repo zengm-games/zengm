@@ -709,7 +709,9 @@ const orderTeams = async <T extends BaseTeam>(
 	if (
 		tiedGroups.length > 0 &&
 		(tiebreakers.includes("commonOpponentsRecord") ||
-			tiebreakers.includes("headToHeadRecord"))
+			tiebreakers.includes("headToHeadRecord") ||
+			tiebreakers.includes("strengthOfSchedule") ||
+			tiebreakers.includes("strengthOfVictory"))
 	) {
 		breakTiesOptions.headToHead = await idb.getCopy.headToHeads({
 			season,

@@ -1,5 +1,5 @@
 import chokidar from "chokidar";
-import build from "./buildFuncs.js";
+import * as build from "./buildFuncs";
 
 // Would be better to only copy individual files on update, but this is fast enough
 

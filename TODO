@@ -1,5 +1,6 @@
 typescript tools
 - tsc should type check them in lint-ts
+- "Call retries were exceeded" errors from terser on build, can't figure it out
 
 show XP attempt imminent https://discord.com/channels/290013534023057409/290015591216054273/897229161607868416
 - same with 2pt

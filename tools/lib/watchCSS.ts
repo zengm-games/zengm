@@ -1,5 +1,5 @@
 import chokidar from "chokidar";
-import build from "./buildFuncs.js";
+import * as build from "./buildFuncs";
 
 const watchCSS = (
 	updateStart: (filename: string) => void,

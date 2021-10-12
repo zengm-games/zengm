@@ -1,7 +1,7 @@
 import fs from "fs";
 import fse from "fs-extra";
 import * as rollup from "rollup";
-import build from "./buildFuncs.js";
+import * as build from "./buildFuncs";
 import replace from "replace";
 import rollupConfig from "./rollupConfig.js";
 

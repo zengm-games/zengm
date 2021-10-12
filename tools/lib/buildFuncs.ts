@@ -1,14 +1,15 @@
-const CleanCSS = require("clean-css");
-const crypto = require("crypto");
-const fs = require("fs");
-const fse = require("fs-extra");
-const htmlmin = require("html-minifier-terser");
-const sass = require("sass");
-const path = require("path");
-const replace = require("replace");
-const getSport = require("./getSport");
+import CleanCSS from "clean-css";
+import crypto from "crypto";
+import fs from "fs";
+import fse from "fs-extra";
+import htmlmin from "html-minifier-terser";
+import sass from "sass";
+import path from "path";
+// @ts-ignore
+import replace from "replace";
+import getSport from "./getSport.js";
 
-const fileHash = contents => {
+const fileHash = (contents: string) => {
 	// https://github.com/sindresorhus/rev-hash
 	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
 };
@@ -74,13 +75,31 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 	}
 };
 
-const bySport = object => {
+const bySport = <T extends unknown>(
+	object:
+		| {
+				basketball: T;
+				football: T;
+				hockey: T;
+				default?: T;
+		  }
+		| {
+				basketball?: T;
+				football?: T;
+				hockey?: T;
+				default: T;
+		  },
+): T => {
 	const sport = getSport();
 	if (object.hasOwnProperty(sport)) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
 		return object[sport];
 	}
 
 	if (object.hasOwnProperty("default")) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
 		return object.default;
 	}
 
@@ -150,9 +169,10 @@ const setSport = () => {
 	});
 };
 
-const copyFiles = watch => {
+const copyFiles = (watch: boolean) => {
 	const foldersToIgnore = ["basketball", "css", "football", "hockey"];
 
+	// Replace with fs.cp when it is stable
 	fse.copySync("public", "build", {
 		filter: filename => {
 			// Loop through folders to ignore.
@@ -176,6 +196,7 @@ const copyFiles = watch => {
 		sport = "basketball";
 	}
 
+	// Replace with fs.cp when it is stable
 	fse.copySync(path.join("public", sport), "build", {
 		filter: filename => !filename.includes(".gitignore"),
 	});
@@ -222,7 +243,7 @@ const reset = () => {
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 
-const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
+const setTimestamps = (rev: string, watch: boolean = false) => {
 	if (watch) {
 		replace({
 			regex: "-REV_GOES_HERE\\.js",
@@ -564,7 +585,7 @@ const minifyIndexHTML = async () => {
 	fs.writeFileSync("build/index.html", minified);
 };
 
-module.exports = {
+export {
 	bySport,
 	buildCSS,
 	copyFiles,

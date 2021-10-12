@@ -1,5 +1,5 @@
 import fs from "fs";
-import build from "./buildFuncs.js";
+import * as build from "./buildFuncs";
 import generateJSONSchema from "./generateJSONSchema.ts";
 import getSport from "./getSport.js";
 import buildJS from "./build-js.mjs";

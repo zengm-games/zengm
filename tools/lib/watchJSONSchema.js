@@ -13,14 +13,14 @@ const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
 
 	const sport = getSport();
 
-	const watcher = chokidar.watch("tools/lib/generateJSONSchema.mjs", {});
+	const watcher = chokidar.watch("tools/lib/generateJSONSchema.ts", {});
 
 	const outFilename = "build/files/league-schema.json";
 
 	const buildJSONSchema = async () => {
 		try {
 			// Dynamically reload generateJSONSchema, cause that's what we're watching!
-			const generateJSONSchema = await importFresh("./generateJSONSchema.mjs");
+			const generateJSONSchema = await importFresh("./generateJSONSchema.ts");
 
 			const jsonSchema = generateJSONSchema(sport);
 			const output = JSON.stringify(jsonSchema, null, 2);

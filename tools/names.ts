@@ -1,11 +1,12 @@
 import { csvParse } from "d3-dsv";
 import fs from "fs";
 import path from "path";
-import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.mjs";
+import type { NamesByCountry, NamesFirstLast } from "./lib/namesHelpers";
+import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-const countryFreqs = ({ fnsByCountry }) => {
+const countryFreqs = ({ fnsByCountry }: { fnsByCountry: NamesByCountry }) => {
 	return Object.fromEntries(
 		Object.keys(fnsByCountry)
 			.sort()
@@ -20,14 +21,18 @@ const countryFreqs = ({ fnsByCountry }) => {
 	);
 };
 
-const basketball = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/basketball.json")));
-const football = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/football.json")));
+const basketball = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "names-manual/basketball.json"), "utf8"),
+);
+const football = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "names-manual/football.json"), "utf8"),
+);
 
 const countriesBasketball = countryFreqs(basketball);
 const countriesFootball = countryFreqs(football);
 
-const combineNames = namesArray => {
-	const combined = {};
+const combineNames = (namesArray: NamesByCountry[]) => {
+	const combined: NamesByCountry = {};
 	for (const names of namesArray) {
 		for (const [country, countryNames] of Object.entries(names)) {
 			if (!combined[country]) {
@@ -47,22 +52,28 @@ const combineNames = namesArray => {
 };
 
 const getOverrides = () => {
-	const names = {
+	const names: {
+		first: Record<string, Record<string, number>>;
+		last: Record<string, Record<string, number>>;
+	} = {
 		first: {},
 		last: {},
 	};
 
-	const groups = {};
+	const groups: Record<string, Partial<NamesFirstLast>> = {};
 
 	const filenames = fs.readdirSync(path.join(__dirname, "names-manual"));
 
-	const getNames = filename => {
+	const getNames = (filename: string) => {
 		const csv = fs.readFileSync(
 			path.join(__dirname, "names-manual", filename),
 			"utf8",
 		);
-		const rows = csvParse(csv);
-		const object = {};
+		const rows = csvParse(csv) as {
+			Name: string;
+			Frequency: string;
+		}[];
+		const object: Record<string, number> = {};
 		for (const row of rows) {
 			object[row.Name] = parseInt(row.Frequency);
 			if (Number.isNaN(object[row.Name])) {
@@ -78,16 +89,20 @@ const getOverrides = () => {
 			continue;
 		}
 
+		const [, countryOrGroup, firstOrLast] = filename
+			.replace(".csv", "")
+			.split("-");
+		if (firstOrLast !== "first" && firstOrLast !== "last") {
+			throw new Error(`Unexpected filename "${filename}"`);
+		}
 		if (filename.startsWith("country-")) {
-			const [, country, firstOrLast] = filename.replace(".csv", "").split("-");
-			names[firstOrLast][country] = getNames(filename);
+			names[firstOrLast][countryOrGroup] = getNames(filename);
 		} else if (filename.startsWith("group-")) {
-			const [, group, firstOrLast] = filename.replace(".csv", "").split("-");
 			const groupNames = getNames(filename);
-			if (!groups[group]) {
-				groups[group] = {};
+			if (!groups[countryOrGroup]) {
+				groups[countryOrGroup] = {};
 			}
-			groups[group][firstOrLast] = groupNames;
+			groups[countryOrGroup][firstOrLast] = groupNames;
 		} else {
 			throw new Error(`Unexpected filename "${filename}"`);
 		}
@@ -121,7 +136,10 @@ const lnsByCountry = combineNames([
 const { dropped, namesByCountry } = filterAndOutput(fnsByCountry, lnsByCountry);
 
 const filename = path.join(__dirname, "../data/names.json");
-fs.writeFileSync(filename, JSONstringifyOrder({ countries: namesByCountry, groups}, "\t"));
+fs.writeFileSync(
+	filename,
+	JSONstringifyOrder({ countries: namesByCountry, groups }, "\t"),
+);
 console.log(`Wrote data to ${filename}`);
 
 for (const freq of [countriesBasketball, countriesFootball]) {

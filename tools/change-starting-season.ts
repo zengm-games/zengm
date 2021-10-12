@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile } from "fs/promises";
 
 if (process.argv.length < 4) {
 	console.error(
@@ -16,7 +16,7 @@ if (Number.isNaN(targetSeason)) {
 	process.exit(1);
 }
 
-const league = JSON.parse(await readFile(process.argv[3]));
+const league = JSON.parse(await readFile(process.argv[3], "utf8"));
 
 let currentSeason;
 if (league.hasOwnProperty("startingSeason")) {

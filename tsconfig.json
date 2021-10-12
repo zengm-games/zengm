@@ -3,7 +3,7 @@
 		"target": "esnext",
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
-		"rootDir": "./src",
+		"rootDirs": ["./src", "./tools"],
 		"noEmit": true,
 		"noUnusedLocals": true,
 		"noFallthroughCasesInSwitch": true,
@@ -18,6 +18,6 @@
 		"strict": true,
 		"useUnknownInCatchVariables": false,
 		"importsNotUsedAsValues": "error",
-		"module": "es2020"
+		"module": "esnext"
 	}
 }

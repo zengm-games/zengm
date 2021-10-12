@@ -2,16 +2,17 @@ import _ from "lodash";
 import cheerio from "cheerio";
 import fs from "fs";
 import path from "path";
-import { juniors, provinces, states } from "./namesHelpers.mjs";
+import { juniors, NamesByCountry, provinces, states } from "./namesHelpers";
 
 const namesBasketball = () => {
 	// Run this on the output of something like:
 	// $ wget --mirror --convert-links --adjust-extension --no-parent http://www.draftexpress.com
 	const folder = "/media/external/BBGM/www.draftexpress.com/profile";
 
-	const upperCaseFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
+	const upperCaseFirst = (str: string) =>
+		str.charAt(0).toUpperCase() + str.slice(1);
 
-	const getName = (untrimmedName, file) => {
+	const getName = (untrimmedName: string, file: string) => {
 		const name = untrimmedName.trim().replace(/\s\s+/g, " "); // Condense whitespace to just single spaces
 		if (name === "") {
 			throw new Error(
@@ -20,7 +21,7 @@ const namesBasketball = () => {
 		}
 
 		// Handles rare first names with spaces manually, along with Nene having no last name and some typos
-		const nameFixes = {
+		const nameFixes: Record<string, [string, string]> = {
 			"Billy Ray Bates": ["Billy Ray", "Bates"],
 			"Hot Rod Williams": ["Hot Rod", "Williams"],
 			"J. Robert Merritt": ["J. Robert", "Merritt"],
@@ -130,16 +131,16 @@ const namesBasketball = () => {
 			}
 		}
 
-		const fnFixes = {};
+		/*const fnFixes = {};
 		if (fnFixes.hasOwnProperty(parts[0])) {
 			parts[0] = fnFixes[parts[0]];
-		}
+		}*/
 
 		return parts;
 	};
 
-	const getCountry = (misc, file) => {
-		const hometownsToCountries = {
+	const getCountry = (misc: string, file: string) => {
+		const hometownsToCountries: Record<string, string> = {
 			"Belo Horizonte": "Brazil",
 			"Benin City": "Nigeria",
 			"Berry Islands": "Bahamas",
@@ -327,7 +328,7 @@ const namesBasketball = () => {
 			Zrenjanin: "Serbia",
 		};
 
-		const countryFixes = {
+		const countryFixes: Record<string, string> = {
 			Bosnia: "Bosnia and Herzegovina",
 			Bsonia: "Bosnia and Herzegovina",
 			"Chinese Taipei": "Taiwan",
@@ -350,7 +351,7 @@ const namesBasketball = () => {
 
 		const matches = misc.match(/Hometown: (.*)/);
 		let hometown;
-		if (matches.length > 1) {
+		if (matches && matches.length > 1) {
 			hometown = matches[1].trim();
 		} else {
 			throw new Error(`Unable to find hometown in ${file}`);
@@ -372,15 +373,13 @@ const namesBasketball = () => {
 		let country = hometownComponents[1];
 		country = states.includes(country) ? "USA" : country;
 		country = provinces.includes(country) ? "Canada" : country;
-		country = countryFixes.hasOwnProperty(country)
-			? countryFixes[country]
-			: country;
+		country = countryFixes[country] ?? country;
 
 		return country;
 	};
 
-	const fnsByCountry = {};
-	const lnsByCountry = {};
+	const fnsByCountry: NamesByCountry = {};
+	const lnsByCountry: NamesByCountry = {};
 	for (const filename of fs.readdirSync(folder)) {
 		const file = path.join(folder, filename, "index.html");
 

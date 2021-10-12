@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/53593328
-const JSONstringifyOrder = (obj, space) => {
-	var allKeys = [];
+const JSONstringifyOrder = (obj: any, space: string) => {
+	const allKeys: string[] = [];
 	JSON.stringify(obj, (key, value) => {
 		allKeys.push(key);
 		return value;
@@ -9,12 +9,21 @@ const JSONstringifyOrder = (obj, space) => {
 	return JSON.stringify(obj, allKeys, space);
 };
 
-const filterAndOutput = (fnsByCountry, lnsByCountry) => {
+export type NamesByCountry = Record<string, Record<string, number>>;
+export type NamesFirstLast = {
+	first: Record<string, number>;
+	last: Record<string, number>;
+};
+
+const filterAndOutput = (
+	fnsByCountry: NamesByCountry,
+	lnsByCountry: NamesByCountry,
+) => {
 	const dropped = [];
 
 	const countryNames = Object.keys(fnsByCountry).sort();
 
-	const countries = {};
+	const countries: Record<string, NamesFirstLast> = {};
 
 	for (const country of countryNames) {
 		const fns = fnsByCountry[country];
@@ -131,10 +140,4 @@ const states = [
 	"WY",
 ];
 
-export {
-	JSONstringifyOrder,
-	filterAndOutput,
-	juniors,
-	provinces,
-	states,
-};
+export { JSONstringifyOrder, filterAndOutput, juniors, provinces, states };

@@ -1,7 +1,7 @@
 import cheerio from "cheerio";
 import fs from "fs";
 import path from "path";
-import { juniors, provinces, states } from "./namesHelpers.mjs";
+import { juniors, NamesByCountry, provinces, states } from "./namesHelpers";
 
 const namesFootball = () => {
 	// Run this on the output of something like:
@@ -9,7 +9,10 @@ const namesFootball = () => {
 	const folder =
 		"/media/external/BBGM/www.footballdb.com/college-football/players";
 
-	const players = [];
+	const players: {
+		rawName: string;
+		rawCountry: string;
+	}[] = [];
 
 	// Get player info from files
 	for (const filename of fs.readdirSync(folder)) {
@@ -29,7 +32,7 @@ const namesFootball = () => {
 		});
 	}
 
-	const countryFixes = {
+	const countryFixes: Record<string, string> = {
 		Al: "USA",
 		"Australia /": "Australia",
 		"CA ": "USA",
@@ -60,8 +63,8 @@ const namesFootball = () => {
 		Y: "USA",
 	};
 
-	const fnsByCountry = {};
-	const lnsByCountry = {};
+	const fnsByCountry: NamesByCountry = {};
+	const lnsByCountry: NamesByCountry = {};
 
 	for (const p of players) {
 		// Parse country
@@ -100,7 +103,6 @@ const namesFootball = () => {
 		if (parts.length !== 2) {
 			console.log("Weird name:", p.rawName);
 		}
-		const fn = parts[1];
 		let ln = parts[0];
 
 		for (const junior of juniors) {
@@ -109,6 +111,7 @@ const namesFootball = () => {
 			}
 		}
 
+		/*const fn = parts[1];
 		const skipFN = [];
 		if (!skipFN.includes(fn)) {
 			if (!fnsByCountry[country].hasOwnProperty(fn)) {
@@ -123,7 +126,7 @@ const namesFootball = () => {
 				lnsByCountry[country][ln] = 0;
 			}
 			lnsByCountry[country][ln] += 1;
-		}
+		}*/
 
 		/*if (Math.random() < 0.01) {
 			break;

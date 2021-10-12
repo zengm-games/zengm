@@ -1,122 +1,122 @@
-country,copy_from,asian,black,brown,white,total
-Algeria,Turkey,,,,,0
-American Samoa,Turkey,,,,,0
-Angola,Nigeria,,,,,0
-Argentina,,1,10,14,75,100
-Armenia,Lithuania,,,,,0
-Australia,Spain,,,,,0
-Austria,Spain,,,,,0
-Azerbaijan,Lithuania,,,,,0
-Bahamas,Nigeria,,,,,0
-Belarus,Lithuania,,,,,0
-Belgium,Germany,,,,,0
-Benin,Nigeria,,,,,0
-Bolivia,Mexico,,,,,0
-Bosnia and Herzegovina,Lithuania,,,,,0
-Brazil,,1,33,33,33,100
-Bulgaria,Lithuania,,,,,0
-Cameroon,Nigeria,,,,,0
-Canada,USA,,,,,0
-Cape Verde,,1,28,70,1,100
-Central African Republic,Nigeria,,,,,0
-Chad,Nigeria,,,,,0
-Chile,Argentina,,,,,0
-China,,997,1,1,1,1000
-Colombia,Mexico,,,,,0
-Congo,Nigeria,,,,,0
-Costa Rica,Mexico,,,,,100
-Croatia,Lithuania,,,,,0
-Cuba,Mexico,,,,,0
-Czech Republic,Germany,,,,,0
-Denmark,Germany,,,,,0
-Dominican Republic,Nigeria,,,,,0
-East Timor,Turkey,,,,,0
-Egypt,Turkey,,,,,0
-El Salvador,Mexico,,,,,0
-England,Germany,,,,,0
-Ecuador,Mexico,,,,,0
-Estonia,Lithuania,,,,,0
-Ethiopia,Nigeria,,,,,0
-Finland,Spain,,,,,0
-France,USA,,,,,0
-French Guiana,Mexico,,,,,0
-Gabon,Nigeria,,,,,0
-Georgia,Lithuania,,,,,0
-Germany,,1,15,15,69,100
-Ghana,Nigeria,,,,,0
-Greece,Spain,,,,,0
-Guadeloupe,South Africa,,,,,0
-Guatemala,Mexico,,,,,0
-Guinea,Nigeria,,,,,0
-Guinea-Bissau,Nigeria,,,,,0
-Haiti,Nigeria,,,,,0
-Honduras,Mexico,,,,,0
-Hungary,Lithuania,,,,,0
-Iceland,Lithuania,,,,,0
-India,Turkey,,,,,0
-Indonesia,China,,,,,0
-Iran,Lithuania,,,,,0
-Ireland,Germany,,,,,0
-Israel,Lithuania,,,,,0
-Italy,Spain,,,,,0
-Ivory Coast,Nigeria,,,,,0
-Jamaica,Nigeria,,,,,0
-Japan,China,,,,,0
-Kazakhstan,China,,,,,0
-Kenya,Nigeria,,,,,0
-Kosovo,Lithuania,,,,,0
-Kyrgyzstan,China,,,,,0
-Laos,China,,,,,0
-Latvia,Lithuania,,,,,0
-Liberia,Nigeria,,,,,0
-Lithuania,,1,1,1,997,1000
-Luxembourg,Spain,,,,,0
-Macau,China,,,,,0
-Mali,Nigeria,,,,,0
-Mexico,,1,10,79,10,100
-Moldova,Lithuania,,,,,0
-Montenegro,Lithuania,,,,,0
-Morocco,Turkey,,,,,0
-Mozambique,Nigeria,,,,,0
-Nepal,Turkey,,,,,0
-Netherlands,Spain,,,,,0
-New Zealand,Lithuania,,,,,0
-Nicaragua,Mexico,,,,,0
-Nigeria,,1,997,1,1,1000
-North Korea,China,,,,,0
-North Macedonia,Lithuania,,,,,0
-Norway,Spain,,,,,0
-Pakistan,Turkey,,,,,0
-Panama,Mexico,,,,,0
-Papua New Guinea,China,,,,,0
-Paraguay,Mexico,,,,,0
-Peru,Mexico,,,,,0
-Philippines,Turkey,,,,,0
-Poland,Lithuania,,,,,0
-Portugal,Spain,,,,,0
-Puerto Rico,USA,,,,,0
-Romania,Lithuania,,,,,0
-Russia,Lithuania,,,,,0
-Samoa,Turkey,,,,,0
-Scotland,Spain,,,,,0
-Senegal,Nigeria,,,,,0
-Serbia,Lithuania,,,,,0
-Slovakia,Spain,,,,,0
-Slovenia,Lithuania,,,,,0
-South Africa,,1,80,10,9,100
-South Korea,China,,,,,0
-South Sudan,Nigeria,,,,,0
-Spain,,1,10,10,79,100
-Sudan,Nigeria,,,,,0
-Sweden,Spain,,,,,0
-Switzerland,Germany,,,,,0
-Thailand,China,,,,,0
-Trinidad and Tobago,Cape Verde,,,,,0
-Turkey,,1,1,997,1,1000
-USA,,1,50,35,14,100
-Ukraine,Lithuania,,,,,0
-Uruguay,Argentina,,,,,0
-Uzbekistan,Lithuania,,,,,0
-Venezuela,Argentina,,,,,0
-Vietnam,China,,,,,0
-Virgin Islands,South Africa,1,80,10,9,100
+country,copy_from,asian,black,brown,white
+Algeria,Turkey,,,,
+American Samoa,Turkey,,,,
+Angola,Nigeria,,,,
+Argentina,,1,10,14,75
+Armenia,Lithuania,,,,
+Australia,Spain,,,,
+Austria,Spain,,,,
+Azerbaijan,Lithuania,,,,
+Bahamas,Nigeria,,,,
+Belarus,Lithuania,,,,
+Belgium,Germany,,,,
+Benin,Nigeria,,,,
+Bolivia,Mexico,,,,
+Bosnia and Herzegovina,Lithuania,,,,
+Brazil,,1,33,33,33
+Bulgaria,Lithuania,,,,
+Cameroon,Nigeria,,,,
+Canada,USA,,,,
+Cape Verde,,1,28,70,1
+Central African Republic,Nigeria,,,,
+Chad,Nigeria,,,,
+Chile,Argentina,,,,
+China,,997,1,1,1
+Colombia,Mexico,,,,
+Congo,Nigeria,,,,
+Costa Rica,Mexico,,,,
+Croatia,Lithuania,,,,
+Cuba,Mexico,,,,
+Czech Republic,Germany,,,,
+Denmark,Germany,,,,
+Dominican Republic,Nigeria,,,,
+East Timor,Turkey,,,,
+Egypt,Turkey,,,,
+El Salvador,Mexico,,,,
+England,Germany,,,,
+Ecuador,Mexico,,,,
+Estonia,Lithuania,,,,
+Ethiopia,Nigeria,,,,
+Finland,Spain,,,,
+France,USA,,,,
+French Guiana,Mexico,,,,
+Gabon,Nigeria,,,,
+Georgia,Lithuania,,,,
+Germany,,1,15,15,69
+Ghana,Nigeria,,,,
+Greece,Spain,,,,
+Guadeloupe,South Africa,,,,
+Guatemala,Mexico,,,,
+Guinea,Nigeria,,,,
+Guinea-Bissau,Nigeria,,,,
+Haiti,Nigeria,,,,
+Honduras,Mexico,,,,
+Hungary,Lithuania,,,,
+Iceland,Lithuania,,,,
+India,Turkey,,,,
+Indonesia,China,,,,
+Iran,Lithuania,,,,
+Ireland,Germany,,,,
+Israel,Lithuania,,,,
+Italy,Spain,,,,
+Ivory Coast,Nigeria,,,,
+Jamaica,Nigeria,,,,
+Japan,China,,,,
+Kazakhstan,China,,,,
+Kenya,Nigeria,,,,
+Kosovo,Lithuania,,,,
+Kyrgyzstan,China,,,,
+Laos,China,,,,
+Latvia,Lithuania,,,,
+Liberia,Nigeria,,,,
+Lithuania,,1,1,1,997
+Luxembourg,Spain,,,,
+Macau,China,,,,
+Mali,Nigeria,,,,
+Mexico,,1,10,79,10
+Moldova,Lithuania,,,,
+Montenegro,Lithuania,,,,
+Morocco,Turkey,,,,
+Mozambique,Nigeria,,,,
+Nepal,Turkey,,,,
+Netherlands,Spain,,,,
+New Zealand,Lithuania,,,,
+Nicaragua,Mexico,,,,
+Nigeria,,1,997,1,1
+North Korea,China,,,,
+North Macedonia,Lithuania,,,,
+Norway,Spain,,,,
+Pakistan,Turkey,,,,
+Panama,Mexico,,,,
+Papua New Guinea,China,,,,
+Paraguay,Mexico,,,,
+Peru,Mexico,,,,
+Philippines,Turkey,,,,
+Poland,Lithuania,,,,
+Portugal,Spain,,,,
+Puerto Rico,USA,,,,
+Romania,Lithuania,,,,
+Russia,Lithuania,,,,
+Samoa,Turkey,,,,
+Scotland,Spain,,,,
+Senegal,Nigeria,,,,
+Serbia,Lithuania,,,,
+Slovakia,Spain,,,,
+Slovenia,Lithuania,,,,
+South Africa,,1,80,10,9
+South Korea,China,,,,
+South Sudan,Nigeria,,,,
+Spain,,1,10,10,79
+Sudan,Nigeria,,,,
+Sweden,Spain,,,,
+Switzerland,Germany,,,,
+Thailand,China,,,,
+Trinidad and Tobago,Cape Verde,,,,
+Turkey,,1,1,997,1
+USA,,1,50,35,14
+Ukraine,Lithuania,,,,
+Uruguay,Argentina,,,,
+Uzbekistan,Lithuania,,,,
+Venezuela,Argentina,,,,
+Vietnam,China,,,,
+Virgin Islands,South Africa,1,80,10,9

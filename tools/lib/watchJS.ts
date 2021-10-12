@@ -1,12 +1,18 @@
-const path = require("path");
-const { Worker } = require("worker_threads");
-const getSport = require("./getSport");
+import path from "path";
+import { Worker } from "worker_threads";
+import getSport from "./getSport.js";
 
-const watchJS = (updateStart, updateEnd, updateError) => {
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+const watchJS = (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 
-		const worker = new Worker(path.join(__dirname, "watchJSWorker.js"), {
+		const worker = new Worker(path.join(__dirname, "watchJSWorker.ts"), {
 			workerData: {
 				name,
 				sport: getSport(),
@@ -29,4 +35,4 @@ const watchJS = (updateStart, updateEnd, updateError) => {
 
 // watchJS((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));
 
-module.exports = watchJS;
+export default watchJS;

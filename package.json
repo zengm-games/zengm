@@ -13,15 +13,15 @@
 	},
 	"scripts": {
 		"start": "tsm tools/server.ts",
-		"build": "tsm tools/build.mjs",
-		"deploy": "yarn run lint && yarn test && tsm tools/deploy.mjs",
-		"deploy-all": "yarn run lint && yarn test && tsm tools/deploy-all.mjs",
+		"build": "tsm tools/build.ts",
+		"deploy": "yarn run lint && yarn test && tsm tools/deploy.ts",
+		"deploy-all": "yarn run lint && yarn test && tsm tools/deploy-all.ts",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
 		"watch": "tsm tools/watch.ts",
 		"lint": "concurrently --raw \"yarn run lint-js\" \"yarn run lint-ts\"",
-		"lint-js": "eslint \"*.{mjs,js,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,ts,tsx}\" \"tools/**/*.{mjs,js,ts,tsx}\"",
+		"lint-js": "eslint \"*.{mjs,js,jsx,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,jsx,ts,tsx}\" \"tools/**/*.{mjs,js,jsx,ts,tsx}\"",
 		"lint-ts": "tsm tools/pre-test.ts && yarn run tsc",
-		"prettier": "prettier --write \"*.{mjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,js,json,scss,ts,tsx}\"",
+		"prettier": "prettier --write \"*.{mjs,js,jsx,json,scss,ts,tsx}\" \"public/**/*.{mjs,js,jsx,json,scss,ts,tsx}\" \"src/**/*.{mjs,js,jsx,json,scss,ts,tsx}\" \"tools/**/*.{mjs,js,jsx,json,scss,ts,tsx}\"",
 		"test": "tsm tools/pre-test.ts && cross-env SPORT=basketball jest --testPathIgnorePatterns football && cross-env SPORT=football jest --testRegex \"football.*\\.test\\.[jt]sx?\"",
 		"test-e2e": "tsm tools/pre-test.ts && karma start karma.conf.js",
 		"test-e2e-watch": "tsm tools/pre-test.ts && karma start karma.conf.js --auto-watch --no-single-run",
@@ -30,7 +30,7 @@
 		"prepare": "husky install"
 	},
 	"lint-staged": {
-		"*.{js,json,scss,ts,tsx}": "prettier --write"
+		"*.{js,jsx,json,scss,ts,tsx}": "prettier --write"
 	},
 	"dependencies": {
 		"@bugsnag/browser": "^7.11.0",

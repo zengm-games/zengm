@@ -1,5 +1,5 @@
 // All D-1 colleges, taken from https://www.ncaa.com/standings/football/fbs
-const colleges = {
+const colleges: Record<string, number | undefined> = {
 	Clemson: undefined,
 	Louisville: undefined,
 	"Wake Forest": undefined,
@@ -133,7 +133,7 @@ const colleges = {
 };
 
 // Colleges with no players
-const skip = [];
+const skip: string[] = [];
 for (const college of skip) {
 	if (!colleges.hasOwnProperty(college)) {
 		console.log("INVALID SKIP", college);
@@ -141,7 +141,7 @@ for (const college of skip) {
 	colleges[college] = 0.1;
 }
 
-const overrides = {
+const overrides: Record<string, string> = {
 	"Boston Col.": "Boston College",
 	"Central Florida": "UCF",
 	"Middle Tenn. St.": "Middle Tennessee",

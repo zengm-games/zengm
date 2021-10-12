@@ -6,7 +6,7 @@ import path from "path";
 const folder = "/media/external/BBGM/basketball-colleges/html";
 
 // All D-1 colleges, taken from https://www.ncaa.com/standings/basketball-men/d1
-const colleges = {
+const colleges: Record<string, number | undefined> = {
 	"Abilene Christian": undefined,
 	"Air Force": undefined,
 	Akron: undefined,
@@ -418,7 +418,7 @@ for (const college of skip) {
 	colleges[college] = 0.1;
 }
 
-const overrides = {
+const overrides: Record<string, string> = {
 	"United States Air Force Academy": "Air Force",
 	"Albany State University": "Albany",
 	"Little Rock": "Arkansas-Little Rock",
@@ -474,7 +474,7 @@ for (const filename of fs.readdirSync(folder)) {
 		.text()
 		.replace("NBA & ABA Players Who Attended ", "")
 		.replace(" | Basketball-Reference.com", "");
-	const count = parseInt($("#players_link").attr("data-label"), 10);
+	const count = parseInt($("#players_link").attr("data-label") as string, 10);
 
 	// Actually the same school
 	if (name === "Missouri State University") {
@@ -506,6 +506,7 @@ for (const filename of fs.readdirSync(folder)) {
 			if (colleges[name2] !== undefined) {
 				// Missouri State University and Missouri State are the same school, so add them
 				if (name2 === "Missouri State") {
+					// @ts-ignore
 					colleges[name2] += count;
 				} else {
 					console.log("DUPE", name2);

@@ -1,14 +1,18 @@
-const chokidar = require("chokidar");
-const fs = require("fs");
-const getSport = require("./getSport");
+import chokidar from "chokidar";
+import fs from "fs";
+import getSport from "./getSport.js";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
-const importFresh = async modulePath => {
+const importFresh = async (modulePath: string) => {
 	const cacheBustingModulePath = `${modulePath}?update=${Date.now()}`;
 	return (await import(cacheBustingModulePath)).default;
 };
 
-const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
+const watchJSONSchema = async (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	fs.mkdirSync("build/files", { recursive: true });
 
 	const sport = getSport();
@@ -44,4 +48,4 @@ const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
 
 // watchJSONSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));
 
-module.exports = watchJSONSchema;
+export default watchJSONSchema;

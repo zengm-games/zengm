@@ -1,18 +1,18 @@
-const esbuild = require("esbuild");
-const fs = require("fs");
-const { parentPort, workerData } = require("worker_threads");
-const esbuildConfig = require("./esbuildConfig");
+import esbuild from "esbuild";
+import fs from "fs";
+import { parentPort, workerData } from "worker_threads";
+import esbuildConfig from "./esbuildConfig.js";
 
-const pluginStartEnd = {
+const pluginStartEnd: esbuild.Plugin = {
 	name: "start-end",
 	setup(build) {
 		build.onStart(() => {
-			parentPort.postMessage({
+			parentPort!.postMessage({
 				type: "start",
 			});
 		});
 		build.onEnd(() => {
-			parentPort.postMessage({
+			parentPort!.postMessage({
 				type: "end",
 			});
 		});
@@ -34,7 +34,7 @@ const pluginStartEnd = {
 		watch: {
 			onRebuild(error) {
 				if (error) {
-					parentPort.postMessage({
+					parentPort!.postMessage({
 						type: "error",
 						error,
 					});

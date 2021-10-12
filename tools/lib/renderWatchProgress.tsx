@@ -5,8 +5,8 @@ import logSymbols from "log-symbols";
 import React from "react";
 import watchCSS from "./watchCSS";
 import watchFiles from "./watchFiles";
-import watchJS from "./watchJS.js";
-import watchJSONSchema from "./watchJSONSchema.js";
+import watchJS from "./watchJS";
+import watchJSONSchema from "./watchJSONSchema";
 
 const Spinner = (SpinnerFoo as any).default as typeof SpinnerFoo;
 

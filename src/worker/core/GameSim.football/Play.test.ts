@@ -995,6 +995,67 @@ describe("worker/core/GameSim.football/Play", () => {
 			game.d = 1;
 			game.down = 2;
 			game.toGo = 7;
+			game.scrimmage = 80;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: -3,
+				t: game.o,
+				tackOn: false,
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+				tackOn: false,
+			});
+			play.addEvent({
+				type: "rus",
+				p,
+				yds: 20,
+			});
+			play.addEvent({
+				type: "rusTD",
+				p,
+			});
+
+			assert.strictEqual(play.state.current.scrimmage, 100);
+
+			assert.deepStrictEqual(play.state.current.pts, [6, 0]);
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 2);
+			assert.strictEqual(play.state.current.toGo, 7);
+			assert.strictEqual(play.state.current.scrimmage, 80);
+			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
+		});
+
+		it("offsetting penalties -> take score off the board", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
 			game.scrimmage = 25;
 			game.currentPlay = new Play(game);
 

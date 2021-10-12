@@ -1,19 +1,47 @@
-const fs = require("fs");
-const { render, Box, Text } = require("ink");
-const Spinner = require("ink-spinner").default;
-const logSymbols = require("log-symbols");
-const React = require("react");
-const watchCSS = require("./watchCSS");
-const watchFiles = require("./watchFiles");
-const watchJS = require("./watchJS");
-const watchJSONSchema = require("./watchJSONSchema");
+import fs from "fs";
+import { render, Box, Text } from "ink";
+import SpinnerFoo from "ink-spinner";
+import logSymbols from "log-symbols";
+import React from "react";
+import watchCSS from "./watchCSS";
+import watchFiles from "./watchFiles";
+import watchJS from "./watchJS.js";
+import watchJSONSchema from "./watchJSONSchema.js";
+
+const Spinner = (SpinnerFoo as any).default as typeof SpinnerFoo;
 
 const { useEffect, useReducer } = React;
 
 const TIME_CUTOFF_GREEN = 10000; // 10 seconds
 const TIME_CUTOFF_YELLOW = 30000; // 30 seconds
 
-const reducer = (files, { type, filename, error }) => {
+type FileInfo = {
+	building: boolean;
+	dateStart: Date;
+	dateEnd: Date;
+	error: Error | undefined;
+	size: number | undefined;
+};
+
+type Files = Record<string, FileInfo>;
+
+type Action =
+	| {
+			type: "start";
+			filename: string;
+	  }
+	| {
+			type: "end";
+			filename: string;
+	  }
+	| {
+			type: "error";
+			filename: string;
+			error: Error;
+	  };
+
+const reducer = (files: Files, action: Action): Files => {
+	const { filename, type } = action;
 	switch (type) {
 		case "start":
 			if (!files[filename]) {
@@ -61,16 +89,13 @@ const reducer = (files, { type, filename, error }) => {
 					...files[filename],
 					building: false,
 					dateEnd: new Date(),
-					error,
+					error: action.error,
 				},
 			};
-		default:
-			throw new Error(`Unknown action type "${type}"`);
 	}
 };
 
-/* eslint-disable react/prop-types */
-const File = ({ filename, info }) => {
+const File = ({ filename, info }: { filename: string; info: FileInfo }) => {
 	if (info.error) {
 		return (
 			<Text>{`${logSymbols.error} ${filename}: ${info.error.stack}`}</Text>
@@ -80,9 +105,9 @@ const File = ({ filename, info }) => {
 	const time = (
 		info.building ? info.dateStart : info.dateEnd
 	).toLocaleTimeString();
-	const numMillisecondsSinceTime = new Date() - info.dateEnd;
+	const numMillisecondsSinceTime = Date.now() - info.dateEnd.getTime();
 
-	const colorParams = {};
+	const colorParams: Record<string, string> = {};
 
 	if (numMillisecondsSinceTime < TIME_CUTOFF_GREEN) {
 		if (!info.building) {
@@ -91,7 +116,6 @@ const File = ({ filename, info }) => {
 	} else if (numMillisecondsSinceTime < TIME_CUTOFF_YELLOW) {
 		colorParams.color = "yellow";
 	} else {
-		// eslint-disable-next-line no-lonely-if
 		if (info.building) {
 			colorParams.color = "red";
 		}
@@ -111,7 +135,7 @@ const File = ({ filename, info }) => {
 		);
 	}
 
-	const duration = (info.dateEnd - info.dateStart) / 1000;
+	const duration = (info.dateEnd.getTime() - info.dateStart.getTime()) / 1000;
 	const megabytes =
 		info.size !== undefined ? (info.size / 1024 / 1024).toFixed(2) : undefined;
 
@@ -125,28 +149,27 @@ const File = ({ filename, info }) => {
 		</Box>
 	);
 };
-/* eslint-enable react/prop-types */
 
 const Watch = () => {
 	const [files, dispatch] = useReducer(reducer, {});
 	const [forceUpdateCounter, forceUpdate] = useReducer(x => x + 1, 0);
 
 	useEffect(() => {
-		const updateStart = filename => {
+		const updateStart = (filename: string) => {
 			dispatch({
 				type: "start",
 				filename,
 			});
 		};
 
-		const updateEnd = filename => {
+		const updateEnd = (filename: string) => {
 			dispatch({
 				type: "end",
 				filename,
 			});
 		};
 
-		const updateError = (filename, error) => {
+		const updateError = (filename: string, error: Error) => {
 			dispatch({
 				type: "error",
 				filename,
@@ -166,9 +189,9 @@ const Watch = () => {
 	}, []);
 
 	useEffect(() => {
-		let id;
+		let id: NodeJS.Timeout | undefined;
 		for (const info of Object.values(files)) {
-			const numMillisecondsSinceTime = new Date() - info.dateEnd;
+			const numMillisecondsSinceTime = Date.now() - info.dateEnd.getTime();
 			if (numMillisecondsSinceTime < TIME_CUTOFF_YELLOW) {
 				// Make sure we check in a little if we need to update the color here, because otherwise there might not be another render to handle the color change
 				id = setTimeout(() => {
@@ -177,11 +200,11 @@ const Watch = () => {
 				break;
 			}
 		}
-		if (!id) {
-		}
 
 		return () => {
-			clearInterval(id);
+			if (id !== undefined) {
+				clearInterval(id);
+			}
 		};
 	}, [files, forceUpdateCounter]);
 
@@ -194,6 +217,6 @@ const Watch = () => {
 	);
 };
 
-module.exports = () => {
-	render(<Watch />, { experimental: true });
+export default () => {
+	render(<Watch />);
 };

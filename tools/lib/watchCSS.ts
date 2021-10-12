@@ -1,7 +1,11 @@
-const chokidar = require("chokidar");
-const build = require("./buildFuncs");
+import chokidar from "chokidar";
+import build from "./buildFuncs.js";
 
-const watchCSS = (updateStart, updateEnd, updateError) => {
+const watchCSS = (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	const watcher = chokidar.watch("public/css", {});
 
 	const filenames = ["build/gen/light.css", "build/gen/dark.css"];
@@ -25,4 +29,4 @@ const watchCSS = (updateStart, updateEnd, updateError) => {
 	});
 };
 
-module.exports = watchCSS;
+export default watchCSS;

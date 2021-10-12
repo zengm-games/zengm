@@ -10,6 +10,7 @@ export type PlayType =
 	| "kickoffReturn"
 	| "punt"
 	| "puntReturn"
+	| "extraPointAttempt"
 	| "extraPoint"
 	| "fieldGoal"
 	| "fumble"

@@ -431,6 +431,8 @@ class PlayByPlayLogger {
 				text = `${names[0]} kneels`;
 			} else if (type === "flag") {
 				text = "Flag on the play";
+			} else if (type === "extraPointAttempt") {
+				text = "Extra point attempt";
 			} else if (type === "twoPointConversion") {
 				text = "Two point conversion attempt";
 			} else if (type === "twoPointConversionFailed") {

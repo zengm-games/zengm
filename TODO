@@ -3,9 +3,6 @@ higher value for K/P https://discord.com/channels/290013534023057409/33188211511
 https://github.com/lukeed/tsm
 - see tsm branch, was getting errors in build
 
-show XP attempt imminent https://discord.com/channels/290013534023057409/290015591216054273/897229161607868416
-- same with 2pt
-
 configure assist rate https://discord.com/channels/290013534023057409/331882115119448065/897005671143313408
 
 FBGM team penalty counts https://discord.com/channels/290013534023057409/569726303926878219/896993523100954634
@@ -32,6 +29,9 @@ streaming import of league files
 - file access api
   - as alternative to FileReader, with real streaming
 - URLs from fetch
+
+fbgm contract scaling
+- https://discord.com/channels/290013534023057409/290015468939640832/895698503144194080
 
 show timeouts in live sim https://discord.com/channels/@me/778760871911751700/894791547156070441
 

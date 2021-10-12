@@ -1311,6 +1311,13 @@ class GameSim {
 	doFieldGoal(playType: "extraPoint" | "fieldGoal" | "fieldGoalLate") {
 		const extraPoint = playType === "extraPoint";
 
+		if (extraPoint) {
+			this.playByPlay.logEvent("extraPointAttempt", {
+				clock: this.clock,
+				t: this.o,
+			});
+		}
+
 		this.updatePlayersOnField("fieldGoal");
 		const penInfo = this.checkPenalties("beforeSnap");
 

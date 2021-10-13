@@ -256,15 +256,11 @@ const newPhaseResignPlayers = async (
 				player.addToFreeAgents(p);
 			}
 
-			await idb.cache.players.put(p);
-		}
-	}
+			// Delete rookieResign for AI players, since we're done re-signing them. Leave it for user players.
+			if (rookiePids.has(pid) || p.contract.rookieResign) {
+				delete p.contract.rookieResign;
+			}
 
-	// Delete rookiePids
-	for (const pid of rookiePids) {
-		const p = await idb.cache.players.get(pid);
-		if (p?.contract.rookieResign) {
-			delete p.contract.rookieResign;
 			await idb.cache.players.put(p);
 		}
 	}

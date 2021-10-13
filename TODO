@@ -1,5 +1,3 @@
-higher value for K/P https://discord.com/channels/290013534023057409/331882115119448065/897265868550053889
-
 https://github.com/lukeed/tsm
 - see tsm branch, was getting errors in build
 
@@ -18,6 +16,7 @@ refactor FBGM play by play logging
 - typescript for log function
 
 streaming import of league files
+- browser support - firefox 65
 - schema needs to run on each chunk, in worker
   - notification bubble if warnings
 - rewrite current method (FileReader) to emit a fake stream (maybe a real stream eventually with slice)

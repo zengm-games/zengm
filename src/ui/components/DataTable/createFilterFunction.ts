@@ -68,8 +68,6 @@ const createFilterFunction = (
 			return true;
 		});
 
-	console.log(filters);
-
 	// false - doesn't match. true - does match
 	return (value: any) => {
 		if (filters.length === 0) {

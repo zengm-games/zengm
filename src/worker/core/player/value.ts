@@ -122,8 +122,8 @@ const value = (
 			current *= 1.1;
 			potential *= 1.1;
 		} else if (pr.pos === "K" || pr.pos === "P") {
-			current *= 0.5;
-			potential *= 0.5;
+			current *= 0.75;
+			potential *= 0.75;
 		}
 	}
 

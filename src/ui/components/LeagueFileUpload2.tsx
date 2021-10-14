@@ -1,4 +1,3 @@
-import Ajv from "ajv";
 import PropTypes from "prop-types";
 import {
 	useEffect,
@@ -13,10 +12,6 @@ import {
 	GAME_NAME,
 	WEBSITE_ROOT,
 } from "../../common";
-
-// This is dynamically resolved with rollup-plugin-alias
-// @ts-ignore
-import schema from "league-schema"; // eslint-disable-line
 import { resetFileInput, toWorker } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
@@ -43,19 +38,18 @@ const ErrorMessage = ({ error }: { error: Error | null }) => {
 	);
 };
 
-const ajv = new Ajv({
-	allErrors: true,
-	verbose: true,
-});
-const validate = ajv.compile(schema);
-
 const styleStatus = {
 	maxWidth: 400,
 };
 
+export type LeagueFileUploadOutput = {
+	basicInfo: any;
+	file: File;
+};
+
 export type LeagueFileUploadProps = {
 	// onDone is called in errback style when parsing is done or when an error occurs
-	onDone: (b: Error | null, a?: any) => void;
+	onDone: (b: Error | null, a?: LeagueFileUploadOutput) => void;
 	disabled?: boolean;
 	enterURL?: boolean;
 	hideLoadedMessage?: boolean;
@@ -64,13 +58,13 @@ export type LeagueFileUploadProps = {
 };
 type State = {
 	error: Error | null;
-	jsonSchemaErrors: any[];
+	schemaErrors: any[];
 	status: "initial" | "loading" | "checking" | "error" | "done";
 };
 
 const initialState: State = {
 	error: null,
-	jsonSchemaErrors: [],
+	schemaErrors: [],
 	status: "initial",
 };
 
@@ -79,21 +73,21 @@ const reducer = (state: State, action: any): State => {
 		case "init":
 			return {
 				error: null,
-				jsonSchemaErrors: [],
+				schemaErrors: [],
 				status: "initial",
 			};
 
 		case "loading":
 			return {
 				error: null,
-				jsonSchemaErrors: [],
+				schemaErrors: [],
 				status: "loading",
 			};
 
-		case "jsonSchemaErrors":
+		case "schemaErrors":
 			console.log("JSON Schema validation errors:");
-			console.log(action.jsonSchemaErrors);
-			return { ...state, jsonSchemaErrors: action.jsonSchemaErrors };
+			console.log(action.schemaErrors);
+			return { ...state, schemaErrors: action.schemaErrors };
 
 		case "error": {
 			console.error(action.error);
@@ -106,7 +100,7 @@ const reducer = (state: State, action: any): State => {
 		case "checking":
 			return {
 				error: null,
-				jsonSchemaErrors: [],
+				schemaErrors: [],
 				status: "checking",
 			};
 
@@ -144,28 +138,31 @@ const LeagueFileUpload = ({
 		}
 	};
 
-	const withLeagueFile = async (leagueFile: any) => {
-		const valid = validate(leagueFile);
-
-		if (!valid && Array.isArray(validate.errors)) {
+	const afterCheck = async ({
+		basicInfo,
+		file,
+		schemaErrors,
+	}: LeagueFileUploadOutput & {
+		schemaErrors: any[];
+	}) => {
+		if (schemaErrors.length > 0) {
 			dispatch({
-				type: "jsonSchemaErrors",
-				jsonSchemaErrors: validate.errors.slice(),
+				type: "schemaErrors",
+				schemaErrors,
 			});
 		}
 
 		if (
-			leagueFile &&
-			typeof (leagueFile as any).version === "number" &&
-			(leagueFile as any).version > MAX_SUPPORTED_LEAGUE_VERSION
+			basicInfo &&
+			typeof (basicInfo as any).version === "number" &&
+			(basicInfo as any).version > MAX_SUPPORTED_LEAGUE_VERSION
 		) {
 			const error = new Error(
 				`This league file is a newer format (version ${
-					(leagueFile as any).version
+					(basicInfo as any).version
 				}) than is supported by your version of ${GAME_NAME} (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
 			);
 			(error as any).version = true;
-			console.log(isMounted, error);
 
 			if (isMounted) {
 				dispatch({
@@ -178,7 +175,10 @@ const LeagueFileUpload = ({
 		}
 
 		try {
-			await onDone(null, leagueFile);
+			await onDone(null, {
+				basicInfo,
+				file,
+			});
 		} catch (error) {
 			if (isMounted) {
 				dispatch({
@@ -245,7 +245,7 @@ const LeagueFileUpload = ({
             return;
         }
 
-        await withLeagueFile(leagueFile);*/
+        await afterCheck(leagueFile);*/
 	};
 
 	const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -263,10 +263,18 @@ const LeagueFileUpload = ({
 			type: "checking",
 		});
 
-		let leagueFile;
-
 		try {
-			leagueFile = await toWorker("leagueFileUpload", "initialCheck", file);
+			const { basicInfo, schemaErrors } = await toWorker(
+				"leagueFileUpload",
+				"initialCheck",
+				file,
+			);
+
+			await afterCheck({
+				basicInfo,
+				file,
+				schemaErrors,
+			});
 		} catch (error) {
 			if (isMounted) {
 				dispatch({
@@ -278,8 +286,6 @@ const LeagueFileUpload = ({
 
 			return;
 		}
-
-		await withLeagueFile(leagueFile);
 	};
 
 	return (
@@ -329,11 +335,10 @@ const LeagueFileUpload = ({
 						Error: <ErrorMessage error={state.error} />
 					</p>
 				) : null}
-				{state.jsonSchemaErrors.length > 0 ? (
+				{state.schemaErrors.length > 0 ? (
 					<p className="alert alert-warning mt-3">
-						Warning: {state.jsonSchemaErrors.length} JSON schema validation
-						errors. More detail is available in the JavaScript console. Also,
-						see{" "}
+						Warning: {state.schemaErrors.length} JSON schema validation errors.
+						More detail is available in the JavaScript console. Also, see{" "}
 						<a
 							href={`https://${WEBSITE_ROOT}/manual/customization/json-schema/`}
 						>

@@ -16,7 +16,9 @@ import {
 	unwrapGameAttribute,
 } from "../../../common";
 import { ActionButton, NextPrevButtons, PopText } from "../../components";
-import LeagueFileUpload from "../../components/LeagueFileUpload2";
+import LeagueFileUpload, {
+	LeagueFileUploadOutput,
+} from "../../components/LeagueFileUpload2";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,
@@ -220,7 +222,8 @@ type State = {
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
 
-	leagueFile: any;
+	basicInfo: any;
+	file: File | undefined;
 	legend: string;
 	loadingLeagueFile: boolean;
 	teams: NewLeagueTeam[];
@@ -283,7 +286,8 @@ type Action =
 	  }
 	| {
 			type: "newLeagueFile";
-			leagueFile: any;
+			basicInfo: any;
+			file: File;
 			teams: NewLeagueTeam[];
 			defaultSettings: State["settings"];
 	  }
@@ -361,7 +365,8 @@ const reducer = (state: State, action: Action): State => {
 		case "clearLeagueFile":
 			return {
 				...state,
-				leagueFile: null,
+				basicInfo: null,
+				file: undefined,
 				loadingLeagueFile: false,
 				keptKeys: [],
 				teams: teamsDefault,
@@ -435,7 +440,7 @@ const reducer = (state: State, action: Action): State => {
 			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
 
 			const { allKeys, keptKeys } = initKeptKeys({
-				leagueFile: action.leagueFile,
+				leagueFile: action.basicInfo,
 				oldKeptKeys: state.keptKeys,
 				oldAllKeys: state.allKeys,
 			});
@@ -444,26 +449,24 @@ const reducer = (state: State, action: Action): State => {
 			let divs = DEFAULT_DIVS;
 
 			const newSettings = getSettingsFromGameAttributes(
-				action.leagueFile.gameAttributes,
+				action.basicInfo.gameAttributes,
 				action.defaultSettings,
 			);
 
-			if (action.leagueFile.gameAttributes) {
-				if (action.leagueFile.gameAttributes.confs) {
-					confs = unwrapGameAttribute(
-						action.leagueFile.gameAttributes,
-						"confs",
-					);
+			if (action.basicInfo.gameAttributes) {
+				if (action.basicInfo.gameAttributes.confs) {
+					confs = unwrapGameAttribute(action.basicInfo.gameAttributes, "confs");
 				}
-				if (action.leagueFile.gameAttributes.divs) {
-					divs = unwrapGameAttribute(action.leagueFile.gameAttributes, "divs");
+				if (action.basicInfo.gameAttributes.divs) {
+					divs = unwrapGameAttribute(action.basicInfo.gameAttributes, "divs");
 				}
 			}
 
 			return {
 				...state,
 				loadingLeagueFile: false,
-				leagueFile: action.leagueFile,
+				basicInfo: action.basicInfo,
+				file: action.file,
 				allKeys,
 				keptKeys,
 				confs,
@@ -500,7 +503,8 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				loadingLeagueFile: false,
-				leagueFile: null,
+				basicInfo: null,
+				file: undefined,
 				allKeys,
 				keptKeys,
 				confs,
@@ -547,7 +551,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize = "legends";
 			}
 
-			const leagueFile = null;
+			const basicInfo = null;
 
 			const teams = teamsDefault;
 
@@ -566,7 +570,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
-				leagueFile,
+				leagueFile: basicInfo,
 			});
 
 			return {
@@ -576,7 +580,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty: props.difficulty ?? DIFFICULTY.Normal,
 				phase,
-				leagueFile,
+				basicInfo,
+				file: undefined,
 				loadingLeagueFile: false,
 				teams: teamsDefault,
 				confs: DEFAULT_CONFS,
@@ -665,7 +670,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			const lid = await toWorker("main", "createLeague", {
 				name,
 				tid: state.tid,
-				leagueFileInput: state.leagueFile,
+				leagueFileInput: state.basicInfo,
 				keptKeys: state.keptKeys,
 				shuffleRosters: actualShuffleRosters,
 				importLid: props.lid,
@@ -707,76 +712,79 @@ const NewLeague = (props: View<"newLeague">) => {
 		}
 	};
 
-	const handleNewLeagueFile = useCallback(
-		(err, newLeagueFile) => {
-			if (err) {
-				dispatch({ type: "clearLeagueFile" });
-				return;
-			}
+	const handleNewLeagueFile = (
+		err: Error | null,
+		output?: LeagueFileUploadOutput,
+	) => {
+		if (err) {
+			dispatch({ type: "clearLeagueFile" });
+			return;
+		}
 
-			let newTeams = helpers.deepCopy(newLeagueFile.teams);
-			if (newTeams) {
-				for (const t of newTeams) {
-					// Is pop hidden in season, like in manageTeams import?
-					if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
-						t.pop = t.seasons.at(-1).pop;
-					}
+		const { basicInfo, file } = output!;
 
-					// God, I hate being permissive...
-					if (typeof t.pop !== "number") {
-						t.pop = parseFloat(t.pop);
-					}
-					if (Number.isNaN(t.pop)) {
-						t.pop = 1;
-					}
-
-					t.pop = parseFloat(t.pop.toFixed(2));
+		let newTeams = helpers.deepCopy(basicInfo.teams);
+		if (newTeams) {
+			for (const t of newTeams) {
+				// Is pop hidden in season, like in manageTeams import?
+				if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+					t.pop = t.seasons.at(-1).pop;
 				}
 
-				newTeams = helpers.addPopRank(newTeams);
-			} else {
-				newTeams = teamsDefault;
+				// God, I hate being permissive...
+				if (typeof t.pop !== "number") {
+					t.pop = parseFloat(t.pop);
+				}
+				if (Number.isNaN(t.pop)) {
+					t.pop = 1;
+				}
+
+				t.pop = parseFloat(t.pop.toFixed(2));
 			}
 
-			if (newLeagueFile.gameAttributes) {
-				if (Array.isArray(newLeagueFile.gameAttributes)) {
-					newLeagueFile.gameAttributes = gameAttributesArrayToObject(
-						newLeagueFile.gameAttributes,
-					);
+			newTeams = helpers.addPopRank(newTeams);
+		} else {
+			newTeams = teamsDefault;
+		}
+
+		if (basicInfo.gameAttributes) {
+			if (Array.isArray(basicInfo.gameAttributes)) {
+				basicInfo.gameAttributes = gameAttributesArrayToObject(
+					basicInfo.gameAttributes,
+				);
+			}
+		}
+
+		dispatch({
+			type: "newLeagueFile",
+			basicInfo,
+			file,
+			teams: applyRealTeamInfos(
+				newTeams,
+				props.realTeamInfo,
+				basicInfo.startingSeason,
+			),
+			defaultSettings: props.defaultSettings,
+		});
+
+		// Need to update team and difficulty dropdowns?
+		if (basicInfo.gameAttributes) {
+			if (basicInfo.gameAttributes.userTid !== undefined) {
+				let tid = basicInfo.gameAttributes.userTid;
+				if (Array.isArray(tid) && tid.length > 0) {
+					tid = tid.at(-1).value;
+				}
+				if (typeof tid === "number" && !Number.isNaN(tid)) {
+					dispatch({ type: "setTid", tid });
 				}
 			}
 
-			dispatch({
-				type: "newLeagueFile",
-				leagueFile: newLeagueFile,
-				teams: applyRealTeamInfos(
-					newTeams,
-					props.realTeamInfo,
-					newLeagueFile.startingSeason,
-				),
-				defaultSettings: props.defaultSettings,
-			});
-
-			// Need to update team and difficulty dropdowns?
-			if (newLeagueFile.gameAttributes) {
-				if (newLeagueFile.gameAttributes.userTid !== undefined) {
-					let tid = newLeagueFile.gameAttributes.userTid;
-					if (Array.isArray(tid) && tid.length > 0) {
-						tid = tid.at(-1).value;
-					}
-					if (typeof tid === "number" && !Number.isNaN(tid)) {
-						dispatch({ type: "setTid", tid });
-					}
-				}
-
-				const difficulty = newLeagueFile.gameAttributes.difficulty;
-				if (typeof difficulty === "number" && !Number.isNaN(difficulty)) {
-					dispatch({ type: "setDifficulty", difficulty: String(difficulty) });
-				}
+			const difficulty = basicInfo.gameAttributes.difficulty;
+			if (typeof difficulty === "number" && !Number.isNaN(difficulty)) {
+				dispatch({ type: "setDifficulty", difficulty: String(difficulty) });
 			}
-		},
-		[props.defaultSettings, props.realTeamInfo],
-	);
+		}
+	};
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
 		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
@@ -889,7 +897,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	const disableWhileLoadingLeagueFile =
 		((state.customize === "custom-rosters" ||
 			state.customize === "custom-url") &&
-			(state.leagueFile === null || state.loadingLeagueFile)) ||
+			(state.file === undefined || state.loadingLeagueFile)) ||
 		((state.customize === "real" || state.customize === "legends") &&
 			state.pendingInitialLeagueInfo);
 	const showLoadingIndicator =
@@ -1187,6 +1195,11 @@ const NewLeague = (props: View<"newLeague">) => {
 								<button
 									className="btn btn-lg btn-secondary"
 									type="button"
+									disabled={
+										state.creating ||
+										disableWhileLoadingLeagueFile ||
+										!!invalidSeasonPhaseMessage
+									}
 									onClick={() => {
 										setCurrentScreen("settings");
 									}}

@@ -1,4 +1,15 @@
+import Ajv from "ajv";
 import JSONParserText from "./JSONParserText";
+
+// This is dynamically resolved with rollup-plugin-alias
+// @ts-ignore
+import schema from "league-schema"; // eslint-disable-line
+
+const ajv = new Ajv({
+	allErrors: true,
+	verbose: true,
+});
+const validate = ajv.compile(schema);
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 const CUMULATIVE_OBJECTS = new Set([
@@ -118,7 +129,14 @@ const initialCheck = async (file: File) => {
 	console.timeLog("initialCheck");
 
 	console.log("basicInfo", basicInfo);
-	return basicInfo;
+
+	validate(basicInfo);
+	const schemaErrors = validate.errors ?? [];
+
+	return {
+		basicInfo,
+		schemaErrors,
+	};
 };
 
 export default {

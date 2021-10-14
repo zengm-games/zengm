@@ -24,16 +24,17 @@ streaming import of league files
   - process object
   - write object to database, not cache
   - fill cache after writing all to database
-- file access api
-  - as alternative to FileReader, with real streaming
-  - maybe not needed in initial release?
+- real players leagues
 - URLs from fetch
-- still need clarinet and buffer?
+  - how's this gonna work? don't want to download twice...
 - schema check on all objects in getBasicInfo
 - other uses of LeagueFileUpload?
 - make sure only one version of ajv and LeagueFileUpload included in bundle
 - performance
   - benchmark
+- in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
+  - initKeptKeys does not need to accept leagueFile
+  - basicInfo probably does not need to be saved in state at all. file does need to be, though
 - browser support
   - firefox 65 for streams
   - firefox missing a lot (writable streams) so https://github.com/MattiasBuelens/web-streams-polyfill might be needed

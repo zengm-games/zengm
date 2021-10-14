@@ -42,6 +42,12 @@ const parseJSON = () => {
 					row.value = undefined;
 				}
 			};
+
+			// No need for fancy number checks
+			parser.numberReviver = (text: string) => {
+				const result = Number(text);
+				parser.onToken(0xb, result);
+			};
 		},
 
 		transform(chunk) {
@@ -106,10 +112,14 @@ const getBasicInfo = async (stream: ReadableStream) => {
 };
 
 const initialCheck = async (file: File) => {
+	console.time("initialCheck");
 	const stream = file.stream() as unknown as ReadableStream;
+	console.timeLog("initialCheck");
 
 	const stream2 = stream.pipeThrough(new TextDecoderStream());
+	console.timeLog("initialCheck");
 	const basicInfo = await getBasicInfo(stream2);
+	console.timeLog("initialCheck");
 
 	console.log("basicInfo", basicInfo);
 	return basicInfo;

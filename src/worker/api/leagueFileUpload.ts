@@ -3,6 +3,7 @@ import JSONParserText from "./JSONParserText";
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 const CUMULATIVE_OBJECTS = new Set([
 	"gameAttributes",
+	"meta",
 	"startingSeason",
 	"version",
 ]);
@@ -12,10 +13,9 @@ const parseJSON = () => {
 
 	const transformStream = new TransformStream({
 		start(controller) {
-			parser = new JSONParserText();
+			parser = new JSONParserText(value => {
+				// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
 
-			// Adapted from JSONStream
-			parser.onValue = (value: unknown) => {
 				// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
 				let objectType;
 				if (parser.stack.length > 1) {
@@ -40,7 +40,7 @@ const parseJSON = () => {
 				for (const row of parser.stack) {
 					row.value = undefined;
 				}
-			};
+			});
 		},
 
 		transform(chunk) {
@@ -79,7 +79,9 @@ const getBasicInfo = async (stream: ReadableStream) => {
 			break;
 		}
 
-		if (CUMULATIVE_OBJECTS.has(value.key)) {
+		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
+
+		if (cumulative) {
 			basicInfo[value.key] = value.value;
 		} else if (value.key === "teams") {
 			if (!basicInfo.teams) {

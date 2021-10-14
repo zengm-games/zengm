@@ -17,24 +17,9 @@ FBGM team penalty counts https://discord.com/channels/290013534023057409/5697263
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
 streaming import of league files
-- move to stream
-- initial load - do schema check and return team, settings, anything else needed for new league
-  - do this on one pass, then do another pass for actually loading. is that possible? yes, just make another FileReader
-  - how should other uses of LeagueFileUpload work?
-    - parameter controlling what objects to return
-    - returns 3 things when done: the "objects to return", json schema errors, and a stream or handle or something that can be sent to the worker
-      - how should the stream thing work? maybe not possible to send across worker. could store in worker and send ID back and forth
-  - move this all to worker, since the actual league file loading will have to happen in the worker, so any generic streaming code can just be there
 - actually stream league creation
   - emit an object straight from the JSON file (no reformatting) and the type (like "player" or "gameAttributes" or whatever)
   - https://stackoverflow.com/a/65087341/786644
-- streaming json parser
-  - so slow...
-    - profile in devtools
-    - node.js with jsonstream
-      - jsonparse2 is 3x slower
-        - happens at "Replace buffer" and "fixes" commits
-        - why is buffer/intarray even needed if we're decoding text before sending it here?
 - consume stream
   - process object
   - write object to database, not cache
@@ -43,8 +28,10 @@ streaming import of league files
   - as alternative to FileReader, with real streaming
   - maybe not needed in initial release?
 - URLs from fetch
-- make sure only one version of ajv and LeagueFileUpload included in bundle
 - still need clarinet and buffer?
+- schema check on all objects in getBasicInfo
+- other uses of LeagueFileUpload?
+- make sure only one version of ajv and LeagueFileUpload included in bundle
 - performance
   - benchmark
 - browser support
@@ -67,6 +54,7 @@ fbgm contract scaling
 - https://discord.com/channels/290013534023057409/290015468939640832/895698503144194080
 
 show timeouts in live sim https://discord.com/channels/@me/778760871911751700/894791547156070441
+- https://discord.com/channels/290013534023057409/331882115119448065/898193635005325332
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1
@@ -242,6 +230,7 @@ frivolities
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
   - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
   - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
+- oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)

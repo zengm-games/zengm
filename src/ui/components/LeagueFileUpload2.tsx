@@ -65,7 +65,7 @@ export type LeagueFileUploadProps = {
 type State = {
 	error: Error | null;
 	jsonSchemaErrors: any[];
-	status: "initial" | "loading" | "parsing" | "error" | "done";
+	status: "initial" | "loading" | "checking" | "error" | "done";
 };
 
 const initialState: State = {
@@ -103,11 +103,11 @@ const reducer = (state: State, action: any): State => {
 		case "done":
 			return { ...state, error: null, status: "done" };
 
-		case "parsing":
+		case "checking":
 			return {
 				error: null,
 				jsonSchemaErrors: [],
-				status: "parsing",
+				status: "checking",
 			};
 
 		default:
@@ -139,10 +139,6 @@ const LeagueFileUpload = ({
 	}, [enterURL]);
 
 	const beforeFile = () => {
-		dispatch({
-			type: "loading",
-		});
-
 		if (onLoading) {
 			onLoading();
 		}
@@ -204,7 +200,12 @@ const LeagueFileUpload = ({
 	const handleFileURL = async (event: MouseEvent) => {
 		event.preventDefault();
 		throw new Error("Not implemented");
-		/*beforeFile();
+		/*
+		dispatch({
+			type: "loading",
+		});
+
+		beforeFile();
         let leagueFile;
         let response;
 
@@ -227,7 +228,7 @@ const LeagueFileUpload = ({
         }
 
         dispatch({
-            type: "parsing",
+            type: "checking",
         });
 
         try {
@@ -259,7 +260,7 @@ const LeagueFileUpload = ({
 		}
 
 		dispatch({
-			type: "parsing",
+			type: "checking",
 		});
 
 		let leagueFile;
@@ -303,7 +304,7 @@ const LeagueFileUpload = ({
 							disabled={
 								disabled ||
 								state.status === "loading" ||
-								state.status === "parsing"
+								state.status === "checking"
 							}
 						>
 							Load
@@ -316,7 +317,9 @@ const LeagueFileUpload = ({
 					onClick={resetFileInput}
 					onChange={handleFileUpload}
 					disabled={
-						disabled || state.status === "loading" || state.status === "parsing"
+						disabled ||
+						state.status === "loading" ||
+						state.status === "checking"
 					}
 				/>
 			)}
@@ -343,11 +346,11 @@ const LeagueFileUpload = ({
 				{state.status === "loading" ? (
 					<p className="alert alert-info mt-3">Loading league file...</p>
 				) : null}
-				{state.status === "parsing" ? (
-					<p className="alert alert-info mt-3">Parsing league file...</p>
+				{state.status === "checking" ? (
+					<p className="alert alert-info mt-3">Checking league file...</p>
 				) : null}
 				{state.status === "done" && !hideLoadedMessage ? (
-					<p className="alert alert-success mt-3">Loaded!</p>
+					<p className="alert alert-success mt-3">Done!</p>
 				) : null}
 			</div>
 		</>

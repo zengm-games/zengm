@@ -97,6 +97,7 @@ const getBasicInfo = async (stream: ReadableStream) => {
 
 			basicInfo.teams.push(t);
 		} else {
+			// Everything else just store as an empty array, so it shows up in the "Use from selected league" list
 			if (!basicInfo[value.key]) {
 				basicInfo[value.key] = [];
 			}

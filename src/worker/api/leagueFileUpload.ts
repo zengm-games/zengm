@@ -1,7 +1,4 @@
-// @ts-ignore
-import { Buffer } from "buffer";
-self.Buffer = Buffer;
-import JSONParse from "jsonparse";
+import JSONParserText from "./JSONParserText";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 const CUMULATIVE_OBJECTS = new Set([
@@ -15,7 +12,7 @@ const parseJSON = () => {
 
 	const transformStream = new TransformStream({
 		start(controller) {
-			parser = new JSONParse();
+			parser = new JSONParserText();
 
 			// Adapted from JSONStream
 			parser.onValue = (value: unknown) => {
@@ -43,12 +40,6 @@ const parseJSON = () => {
 				for (const row of parser.stack) {
 					row.value = undefined;
 				}
-			};
-
-			// No need for fancy number checks
-			parser.numberReviver = (text: string) => {
-				const result = Number(text);
-				parser.onToken(0xb, result);
 			};
 		},
 

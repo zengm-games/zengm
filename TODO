@@ -1,3 +1,12 @@
+FBGM game log columns wrong https://discord.com/channels/290013534023057409/290015591216054273/898025979740553256
+
+FBGM timeout should not happen if clock is stopped https://discord.com/channels/290013534023057409/290015591216054273/897840251039518751
+
+add archetypes to players?
+- https://twitter.com/messages/1928999030-3723150857
+- https://discord.com/channels/290013534023057409/290015468939640832/897791010225147954 https://www.bball-index.com/lebron-database/
+- https://docs.google.com/spreadsheets/d/1JcA535OolPztKI9NT438MyZ6UJMh9sgbgUkeBnG0vjU/edit#gid=1556746814
+
 https://github.com/lukeed/tsm
 - see tsm branch, was getting errors in build
 
@@ -7,6 +16,35 @@ FBGM team penalty counts https://discord.com/channels/290013534023057409/5697263
 
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
+streaming import of league files
+- browser support - firefox 65
+- initial load - do schema check and return team, settings, anything else needed for new league
+  - do this on one pass, then do another pass for actually loading. is that possible? yes, just make another FileReader
+  - how should other uses of LeagueFileUpload work?
+    - parameter controlling what objects to return
+    - returns 3 things when done: the "objects to return", json schema errors, and a stream or handle or something that can be sent to the worker
+      - how should the stream thing work? maybe not possible to send across worker. could store in worker and send ID back and forth
+  - move this all to worker, since the actual league file loading will have to happen in the worker, so any generic streaming code can just be there
+- rewrite current method (FileReader) to emit a fake stream (maybe a real stream eventually with slice)
+  - emit an object straight from the JSON file (no reformatting) and the type (like "player" or "gameAttributes" or whatever)
+- real streaming import
+  - https://stackoverflow.com/a/65087341/786644
+- streaming json parser
+  - examples
+    - https://gist.github.com/creationix/1821394
+    - https://github.com/dscape/clarinet/
+  - just needs to handle an object at root. each key of that object can be primitive (emit whole), object (emit whole), or array of objects (emit one at a time)
+  - https://deanhume.com/experimenting-with-the-streams-api/ boilerplate for whatwg stream text parsing
+- consume stream
+  - process object
+  - write object to database, not cache
+  - fill cache after writing all to database
+- file access api
+  - as alternative to FileReader, with real streaming
+  - maybe not needed in initial release?
+- URLs from fetch
+- make sure only one version of ajv and LeagueFileUpload included in bundle
+
 improve UI of game summary on schedule page
 - https://discord.com/channels/290013534023057409/331882115119448065/893503160709169163
 - upcoming: maybe show best player on each team https://discord.com/channels/290013534023057409/331882115119448065/893597097666945054
@@ -14,20 +52,6 @@ improve UI of game summary on schedule page
 refactor FBGM play by play logging
 - move text generation client side, like hockey
 - typescript for log function
-
-streaming import of league files
-- browser support - firefox 65
-- schema needs to run on each chunk, in worker
-  - notification bubble if warnings
-- rewrite current method (FileReader) to emit a fake stream (maybe a real stream eventually with slice)
-  - emit an object straight from the JSON file (no reformatting) and the type (like "player" or "gameAttributes" or whatever)
-- consume stream
-  - process object
-  - write object to database, not cache
-  - fill cache after writing all to database
-- file access api
-  - as alternative to FileReader, with real streaming
-- URLs from fetch
 
 fbgm contract scaling
 - https://discord.com/channels/290013534023057409/290015468939640832/895698503144194080
@@ -171,9 +195,6 @@ draft lottery history
   - the "pick change" thing from real GM seems sane. Either from pre-lottery standings (which people understand) or the expected value of each pick (which would be zero mean). A straight up P(better than expected) would make sense too I guess. so the 1st pick... that's going to average a negative number in the "pre-lottery standings change". But it should average as 0 compared to pick num3.66 ( 1*.14 + 2 *.134 + 3 *.127+4 *.12 + 5 *.479) https://discord.com/channels/290013534023057409/290015468939640832/865942178840969217
 - separate page, or on draft history page?
 
-add archetypes to players?
-- https://twitter.com/messages/1928999030-3723150857
-
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
   - or, add a "minors" flag?
@@ -280,6 +301,7 @@ cancel expansion draft can leave you in control of inactive team https://mail.go
 
 File System Access API https://web.dev/file-system-access/
 - see file-system-access-api branch - slow, and more work needed to handle importing large files
+- https://github.com/jimmywarting/StreamSaver.js
 
 player game log
 - later

@@ -30,6 +30,11 @@ streaming import of league files
   - https://stackoverflow.com/a/65087341/786644
 - streaming json parser
   - so slow...
+    - profile in devtools
+    - node.js with jsonstream
+      - jsonparse2 is 3x slower
+        - happens at "Replace buffer" and "fixes" commits
+        - why is buffer/intarray even needed if we're decoding text before sending it here?
 - consume stream
   - process object
   - write object to database, not cache

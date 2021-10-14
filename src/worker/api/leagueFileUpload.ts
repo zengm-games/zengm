@@ -1,5 +1,7 @@
 // @ts-ignore
-import JSONParse from "jsonparse2";
+import { Buffer } from "buffer";
+self.Buffer = Buffer;
+import JSONParse from "jsonparse";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 const CUMULATIVE_OBJECTS = new Set([

@@ -5275,6 +5275,10 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+"jsonparse2@https://github.com/zengm-games/jsonparse":
+  version "1.0.0"
+  resolved "https://github.com/zengm-games/jsonparse#b4d73ef54b69466edeefc9a8c63d5afa2c1bf13c"
+
 jsonpointer@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.1.0.tgz#501fb89986a2389765ba09e6053299ceb4f2c2cc"

@@ -19,7 +19,6 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 streaming import of league files
 - move to stream
 - initial load - do schema check and return team, settings, anything else needed for new league
-  - basicInfo.teams should only include team info we actually need
   - do this on one pass, then do another pass for actually loading. is that possible? yes, just make another FileReader
   - how should other uses of LeagueFileUpload work?
     - parameter controlling what objects to return
@@ -30,29 +29,7 @@ streaming import of league files
   - emit an object straight from the JSON file (no reformatting) and the type (like "player" or "gameAttributes" or whatever)
   - https://stackoverflow.com/a/65087341/786644
 - streaming json parser
-  - examples
-    - https://github.com/creationix/jsonparse
-      - https://github.com/qwtel/jsonparse/
-      - why is onValue emitting whole json object at end? doesn't that defeat the purpose?
-        - https://github.com/dumbmatter/JSONStream/blob/strict/index.js#L106 is deleting it
-        - could modify this to get rid of that behavior - don't need to assemble object, just emit and go
-        - BETTER: do something like JSONStream. keep track of if current object matches some query. and if we emit, delete value from stack
-          - just port - jsonstream-web
-    - https://gist.github.com/creationix/1821394
-    - https://github.com/dumbmatter/JSONStream/tree/strict
-      - uses node streams
-    - https://github.com/dscape/clarinet/
-      - uses node streams/buffer
-    - https://github.com/uhop/stream-json
-      - doesn't support web, but maybe could reuse some of its internals
-    - https://github.com/jimhigson/oboe.js/
-      - https://github.com/jimhigson/oboe.js-website/tree/master/content
-      - https://github.com/jimhigson/oboe.js/pull/226
-      - old, uses node streams or http requests
-    - write my own
-      - find root of object. for array
-  - just needs to handle an object at root. each key of that object can be primitive (emit whole), object (emit whole), or array of objects (emit one at a time, plus a flag to indicate)
-  - https://deanhume.com/experimenting-with-the-streams-api/ boilerplate for whatwg stream text parsing
+  - so slow...
 - consume stream
   - process object
   - write object to database, not cache

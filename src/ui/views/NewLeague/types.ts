@@ -1,5 +1,6 @@
 import type { Conf, Div } from "../../../common/types";
 
+// Keep in sync with BASIC_TEAM_KEYS
 export type NewLeagueTeam = {
 	tid: number;
 	region: string;

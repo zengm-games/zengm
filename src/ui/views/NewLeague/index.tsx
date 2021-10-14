@@ -15,12 +15,8 @@ import {
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
 } from "../../../common";
-import {
-	ActionButton,
-	LeagueFileUpload,
-	NextPrevButtons,
-	PopText,
-} from "../../components";
+import { ActionButton, NextPrevButtons, PopText } from "../../components";
+import LeagueFileUpload from "../../components/LeagueFileUpload2";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,

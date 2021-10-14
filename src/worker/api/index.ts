@@ -13,6 +13,7 @@ import {
 	gameAttributesArrayToObject,
 } from "../../common";
 import actions from "./actions";
+import leagueFileUpload from "./leagueFileUpload";
 import processInputs from "./processInputs";
 import {
 	allStar,
@@ -3873,6 +3874,7 @@ export default {
 	importPlayers,
 	init,
 	initGold,
+	leagueFileUpload,
 	lockSet,
 	ovr,
 	proposeTrade,

@@ -7,24 +7,28 @@ import * as util from "./util";
 
 self.bbgm = { api, ...common, ...core, ...db, ...util };
 
+const categories = ["actions", "leagueFileUpload"] as const;
+
 (async () => {
 	util.promiseWorker.register(([type, name, ...params], hostID) => {
 		const conditions = {
 			hostID,
 		};
 
-		if (type === "actions") {
-			if (!api.actions.hasOwnProperty(name)) {
-				throw new Error(
-					`API call to nonexistant worker function "actions.${name}" with params ${JSON.stringify(
-						params,
-					)}`,
-				);
-			}
+		for (const category of categories) {
+			if (type === category) {
+				if (!api[category].hasOwnProperty(name)) {
+					throw new Error(
+						`API call to nonexistant worker function "${category}.${name}" with params ${JSON.stringify(
+							params,
+						)}`,
+					);
+				}
 
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			return api.actions[name](...params, conditions);
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
+				return api[category][name](...params, conditions);
+			}
 		}
 
 		if (type === "playMenu") {

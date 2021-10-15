@@ -24,14 +24,25 @@ streaming import of league files
   - process object
   - write object to database, not cache
   - fill cache after writing all to database
+  - to revisit
+    - userTid logic in league object
+    - quota error mid create
 - real players leagues
+  - generate whole league still, then have wrapper which emits a stream
 - URLs from fetch
   - how's this gonna work? don't want to download twice...
+    - put teams/gameAttributes/version/starting at top of JSON so it's faster to just read that part. move validation either to a separate button or to load time. do something about keptKeys.
+      - downside: still does read something twice. keptKeys issue is annoying
+    - as soon as possible (file upload selected, or user hits "load" with a URL), create a league database. ideally this should be the eventual "real" league database, for maximal performance
+      - downside: weird for the user that stuff is being written to disk before you press "Create League". then what happens if the league is never created? data just gets left there forever?
+    - just load it twice, worry about it later. seems to be cached by browser anyway
+    - punt and do it later. in the mean time, keep it like today, there is an upper limit on url leagues
 - schema check on all objects in getBasicInfo
 - other uses of LeagueFileUpload?
 - make sure only one version of ajv and LeagueFileUpload included in bundle
 - performance
   - benchmark
+  - queueing strategy highwatermark of various streams
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
   - initKeptKeys does not need to accept leagueFile
   - basicInfo probably does not need to be saved in state at all. file does need to be, though

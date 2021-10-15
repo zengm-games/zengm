@@ -670,7 +670,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			const lid = await toWorker("main", "createLeague", {
 				name,
 				tid: state.tid,
-				leagueFileInput: state.basicInfo,
+				file: state.file,
 				keptKeys: state.keptKeys,
 				shuffleRosters: actualShuffleRosters,
 				importLid: props.lid,

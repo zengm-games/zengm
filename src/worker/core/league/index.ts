@@ -2,6 +2,7 @@ import autoPlay from "./autoPlay";
 import clone from "./clone";
 import close from "./close";
 import create from "./create";
+import createStream from "./createStream";
 import exportLeague from "./exportLeague";
 import getName from "./getName";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
@@ -17,6 +18,7 @@ export default {
 	clone,
 	close,
 	create,
+	createStream,
 	exportLeague,
 	getName,
 	getValidNumGamesPlayoffSeries,

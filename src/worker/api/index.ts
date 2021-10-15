@@ -424,7 +424,7 @@ const createLeague = async (
 	{
 		name,
 		tid,
-		leagueFileInput,
+		file,
 		shuffleRosters,
 		importLid,
 		getLeagueOptions,
@@ -437,7 +437,7 @@ const createLeague = async (
 	}: {
 		name: string;
 		tid: number;
-		leagueFileInput: any;
+		file: File | undefined;
 		shuffleRosters: boolean;
 		importLid: number | undefined | null;
 		getLeagueOptions: GetLeagueOptions | undefined;
@@ -450,9 +450,10 @@ const createLeague = async (
 	},
 	conditions: Conditions,
 ): Promise<number> => {
-	const keys = new Set([...keptKeys, "version"]);
+	const keys = new Set([...keptKeys, "startingSeason", "version"]);
 
 	let actualTid = tid;
+	let stream: ReadableStream | undefined;
 	if (getLeagueOptions) {
 		const realLeague = await realRosters.getLeague(getLeagueOptions);
 
@@ -487,31 +488,32 @@ const createLeague = async (
 		}
 
 		leagueFileInput = realLeague;
+	} else if (file) {
+		stream = (file.stream() as unknown as ReadableStream).pipeThrough(
+			new TextDecoderStream(),
+		);
 	}
 
-	const leagueFile: any = {};
-	for (const key of keys) {
-		if (leagueFileInput && leagueFileInput[key]) {
-			leagueFile[key] = leagueFileInput[key];
-		}
+	if (!stream) {
+		throw new Error("No stream");
 	}
 
-	if (leagueFile.teams === undefined) {
-		leagueFile.teams = teams;
-	}
+	const lid = importLid ?? (await getNewLeagueLid());
 
-	if (leagueFile.startingSeason === undefined) {
-		if (actualStartingSeason) {
-			leagueFile.startingSeason = parseInt(actualStartingSeason);
-		}
+	await league.createStream(stream, {
+		actualStartingSeason,
+		confs,
+		divs,
+		getLeagueOptions,
+		lid,
+		keys,
+		name,
+		settings,
+		teams,
+		tid: actualTid,
+	});
 
-		if (
-			leagueFile.startingSeason === undefined ||
-			Number.isNaN(leagueFile.startingSeason)
-		) {
-			leagueFile.startingSeason = new Date().getFullYear();
-		}
-	}
+	return lid;
 
 	if (leagueFile.players) {
 		const realPlayerPhotos = (await idb.meta.get(
@@ -532,6 +534,17 @@ const createLeague = async (
 							.toLowerCase()}`;
 						p.imgURL = realPlayerPhotos[key];
 					}
+				}
+			}
+		}
+
+		if (noStartingInjuries) {
+			for (const p of leagueFile.players) {
+				if (p.injury) {
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
 				}
 			}
 		}
@@ -573,34 +586,8 @@ const createLeague = async (
 		}
 	}
 
-	// Single out all the weird settings that don't go directly into gameAttributes
-	const {
-		noStartingInjuries,
-		randomization,
-		repeatSeason,
-
-		// realStats is already in getLeagueOptions
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		realStats,
-
-		...otherSettings
-	} = settings;
-
-	const gameAttributeOverrides: Partial<
-		Record<keyof GameAttributesLeague, any>
-	> = {
-		...otherSettings,
-		confs,
-		divs,
-	};
-
-	// This setting is allowed to be undefined, so make it that way when appropriate
-	if (!getLeagueOptions || getLeagueOptions.type !== "real") {
-		delete gameAttributeOverrides.realDraftRatings;
-	}
-
 	// Check if we need to set godModeInPast because some custom teams are too powerful
-	if (!leagueFileInput) {
+	if (!file && !url) {
 		// Only for new leagues, not created from file!
 
 		let godModeInPastOverride = false;
@@ -620,64 +607,6 @@ const createLeague = async (
 		}
 	}
 
-	leagueFile.gameAttributes = leagueFile.gameAttributes ?? {};
-
-	for (const key of helpers.keys(gameAttributeOverrides)) {
-		// If we're overriding a value with history, keep the history
-		leagueFile.gameAttributes[key] = wrap(
-			leagueFile.gameAttributes,
-			key,
-			gameAttributeOverrides[key],
-			{
-				season: leagueFile.gameAttributes.season ?? leagueFile.startingSeason,
-				phase: leagueFile.gameAttributes.phase ?? PHASE.PRESEASON,
-			},
-		);
-	}
-
-	if (
-		randomization === "debutsForever" &&
-		leagueFile.gameAttributes.randomDebutsForever === undefined
-	) {
-		leagueFile.gameAttributes.randomDebutsForever = 1;
-	}
-
-	if (noStartingInjuries && leagueFile.players) {
-		for (const p of leagueFile.players) {
-			if (p.injury) {
-				p.injury = {
-					type: "Healthy",
-					gamesRemaining: 0,
-				};
-			}
-		}
-	}
-
-	if (importLid === undefined) {
-		// Figure out what lid should be rather than using auto increment primary key, because when deleting leagues the primary key does not reset which can look weird
-		importLid = await getNewLeagueLid();
-	}
-
-	if (
-		getLeagueOptions &&
-		getLeagueOptions.type === "real" &&
-		getLeagueOptions.realStats === "all"
-	) {
-		let start = leagueFile.gameAttributes.season;
-		if (getLeagueOptions.phase > PHASE.PLAYOFFS) {
-			start += 1;
-		}
-
-		// startingSeason is 1947, so use userTid history to denote when user actually started managing team
-		leagueFile.gameAttributes.userTid = [
-			{ start: -Infinity, value: PLAYER.DOES_NOT_EXIST },
-			{
-				start,
-				value: actualTid,
-			},
-		];
-	}
-
 	const lid = await league.create(
 		{
 			name,
@@ -689,11 +618,6 @@ const createLeague = async (
 		},
 		conditions,
 	);
-
-	// Handle repeatSeason after creating league, so we know what random players were created
-	if (repeatSeason && g.get("repeatSeason") === undefined) {
-		await league.initRepeatSeason();
-	}
 
 	return lid;
 };

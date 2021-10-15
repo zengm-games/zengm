@@ -12,14 +12,14 @@ const ajv = new Ajv({
 const validate = ajv.compile(schema);
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-const CUMULATIVE_OBJECTS = new Set([
+export const CUMULATIVE_OBJECTS = new Set([
 	"gameAttributes",
 	"meta",
 	"startingSeason",
 	"version",
 ]);
 
-const parseJSON = () => {
+export const parseJSON = () => {
 	let parser: any;
 
 	const transformStream = new TransformStream({

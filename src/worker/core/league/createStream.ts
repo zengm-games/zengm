@@ -54,8 +54,84 @@ const addDummyLeague = async ({
 	idb.league = await connectLeague(lid);
 };
 
-const preProcess = (key: string, value: any) => {
-	return value;
+class Buffer {
+	MAX_BUFFER_SIZE: number;
+	keptKeys: Set<string>;
+	keys: Set<string>;
+	rows: [string, any][];
+
+	constructor(keptKeys: Set<string>) {
+		this.MAX_BUFFER_SIZE = 1000;
+		this.keptKeys = keptKeys;
+
+		this.keys = new Set();
+		this.rows = [];
+	}
+
+	addRows(rows: [string, any][]) {
+		for (const row of rows) {
+			const key = row[0];
+
+			if (!this.keptKeys.has(key)) {
+				return;
+			}
+
+			this.keys.add(key);
+			this.rows.push(row);
+		}
+	}
+
+	private clear() {
+		this.keys = new Set();
+		this.rows = [];
+	}
+
+	isFull() {
+		return this.rows.length >= this.MAX_BUFFER_SIZE;
+	}
+
+	async flush() {
+		const transaction = idb.league.transaction(
+			Array.from(this.keys) as any,
+			"readwrite",
+		);
+
+		for (const row of this.rows) {
+			transaction.objectStore(row[0]).put(row[1]);
+		}
+
+		await transaction.done;
+
+		this.clear();
+	}
+}
+
+const preProcess = (key: string, x: any) => {
+	const toReturn: [string, any][] = [[key, x]];
+
+	if (key === "teams") {
+		if (!x.colors) {
+			x.colors = ["#000000", "#cccccc", "#ffffff"];
+		}
+
+		if (x.seasons?.length > 0) {
+			// If specified on season, copy to root
+			const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
+			const ts = x.seasons.at(-1);
+			for (const prop of maybeOnSeason) {
+				if (ts[prop] !== undefined) {
+					x[prop] = ts[prop];
+				}
+			}
+
+			toReturn.push(...x.season.map((row: any) => ["teamSeasons", row]));
+		}
+
+		if (x.stats?.length > 0) {
+			toReturn.push(...x.season.map((row: any) => ["teamStats", row]));
+		}
+	}
+	return toReturn;
 };
 
 const getSaveToDB = async ({
@@ -75,21 +151,7 @@ const getSaveToDB = async ({
 		tid,
 	});
 
-	let currentKey: any;
-	let buffer: any[] = [];
-	const MAX_BUFFER_SIZE = 1000;
-
-	const flushBuffer = async () => {
-		const transaction = idb.league.transaction(currentKey, "readwrite");
-
-		for (const row of buffer) {
-			transaction.store.put(row);
-		}
-
-		await transaction.done;
-
-		buffer = [];
-	};
+	const buffer = new Buffer(keys);
 
 	const extraFromStream: {
 		gameAttributes?: any;
@@ -103,14 +165,6 @@ const getSaveToDB = async ({
 	}>({
 		async write(chunk, controller) {
 			const { key, value } = chunk;
-			if (currentKey !== key) {
-				await flushBuffer();
-				currentKey = key;
-			}
-
-			if (!keys.has(key)) {
-				return;
-			}
 
 			if (
 				key === "gameAttributes" ||
@@ -123,14 +177,15 @@ const getSaveToDB = async ({
 				return;
 			}
 
-			buffer.push(preProcess(key, value));
-			if (buffer.length >= MAX_BUFFER_SIZE) {
-				await flushBuffer();
+			const rows = preProcess(key, value);
+			buffer.addRows(rows);
+			if (buffer.isFull()) {
+				await buffer.flush();
 			}
 		},
 
 		async close() {
-			await flushBuffer();
+			await buffer.flush();
 		},
 	});
 

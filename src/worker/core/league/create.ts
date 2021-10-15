@@ -99,37 +99,9 @@ export const createWithoutSaving = async (
 	let teamInfos: TeamInfo[];
 
 	if (leagueFile.teams) {
-		for (let i = 0; i < leagueFile.teams.length; i++) {
-			const t = leagueFile.teams[i];
-
-			if (!t.colors) {
-				if (
-					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-					teamsDefault[i] &&
-					teamsDefault[i].region === t.region &&
-					teamsDefault[i].name === t.name
-				) {
-					t.colors = teamsDefault[i].colors;
-				} else {
-					t.colors = ["#000000", "#cccccc", "#ffffff"];
-				}
-			}
-		}
-
 		if (leagueFile.teams.length <= teamsDefault.length) {
 			// This probably shouldn't be here, but oh well, backwards compatibility...
 			teamInfos = leagueFile.teams.map((t, i) => {
-				// If specified on season, copy to root
-				if (t.seasons && t.seasons.length > 0) {
-					const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
-					const ts = t.seasons.at(-1);
-					for (const prop of maybeOnSeason) {
-						if (ts[prop] !== undefined) {
-							t[prop] = ts[prop];
-						}
-					}
-				}
-
 				// Fill in default values as needed
 				const t2 = teamsDefault[i];
 
@@ -151,11 +123,7 @@ export const createWithoutSaving = async (
 	}
 
 	// Handle random team
-	let userTid = tid;
-
-	if (userTid < 0 || userTid >= teamInfos.length) {
-		userTid = random.randInt(0, teamInfos.length - 1);
-	}
+	const userTid = tid;
 
 	// Also mutates teamInfos
 	const gameAttributes = await createGameAttributes(

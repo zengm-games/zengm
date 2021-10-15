@@ -23,6 +23,7 @@ streaming import of league files
 - consume stream
   - process object
   - write object to database, not cache
+  - special case for team stats/seasons
   - fill cache after writing all to database
   - to revisit
     - userTid logic in league object
@@ -39,7 +40,9 @@ streaming import of league files
     - punt and do it later. in the mean time, keep it like today, there is an upper limit on url leagues
 - schema check on all objects in getBasicInfo
 - other uses of LeagueFileUpload?
-- make sure only one version of ajv and LeagueFileUpload included in bundle
+- test
+  - make sure only one version of ajv and LeagueFileUpload included in bundle
+  - league file with invalid (too high or negative) userTid specified
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams

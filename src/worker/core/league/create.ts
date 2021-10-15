@@ -23,7 +23,6 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
-	DraftPickWithoutKey,
 	PlayerContract,
 	Conditions,
 } from "../../../common/types";
@@ -146,43 +145,6 @@ export const createWithoutSaving = async (
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
 
-	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
-	let draftPicks: DraftPickWithoutKey[] = [];
-
-	if (leagueFile.draftPicks) {
-		draftPicks = leagueFile.draftPicks;
-
-		for (const dp of leagueFile.draftPicks) {
-			if (typeof dp.pick !== "number") {
-				dp.pick = 0;
-			}
-		}
-	}
-
-	// Import of legacy draftOrder data
-	if (
-		Array.isArray(leagueFile.draftOrder) &&
-		leagueFile.draftOrder.length > 0 &&
-		Array.isArray(leagueFile.draftOrder[0].draftOrder) &&
-		(g.get("phase") === PHASE.DRAFT_LOTTERY || g.get("phase") === PHASE.DRAFT)
-	) {
-		for (const dp of leagueFile.draftOrder[0].draftOrder) {
-			if (g.get("phase") === PHASE.FANTASY_DRAFT) {
-				dp.season = "fantasy";
-			} else {
-				dp.season = g.get("season");
-			}
-
-			draftPicks.push(dp);
-		}
-	}
-
-	const draftLotteryResults: any = leagueFile.hasOwnProperty(
-		"draftLotteryResults",
-	)
-		? leagueFile.draftLotteryResults
-		: [];
-
 	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
 	let scoutingRankTemp;
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
@@ -294,61 +256,6 @@ export const createWithoutSaving = async (
 		throw new Error("scoutingRank should be defined");
 	}
 
-	let trade;
-
-	if (
-		leagueFile.hasOwnProperty("trade") &&
-		Array.isArray(leagueFile.trade) &&
-		leagueFile.trade.length === 1
-	) {
-		trade = leagueFile.trade;
-	} else {
-		trade = [
-			{
-				rid: 0,
-				teams: [
-					{
-						tid: userTid,
-						pids: [],
-						pidsExcluded: [],
-						dpids: [],
-						dpidsExcluded: [],
-					},
-					{
-						tid: userTid === 0 ? 1 : 0,
-						// Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
-						pids: [],
-						pidsExcluded: [],
-						dpids: [],
-						dpidsExcluded: [],
-					},
-				],
-			},
-		];
-	}
-
-	const games = leagueFile.games ? leagueFile.games : [];
-
-	for (const gm of games) {
-		// Fix missing +/-, blocks against in boxscore
-		if (!gm.teams[0].hasOwnProperty("ba")) {
-			gm.teams[0].ba = 0;
-			gm.teams[1].ba = 0;
-		}
-
-		for (const t of gm.teams) {
-			for (const p of t.players) {
-				if (!p.hasOwnProperty("ba")) {
-					p.ba = 0;
-				}
-
-				if (!p.hasOwnProperty("pm")) {
-					p.pm = 0;
-				}
-			}
-		}
-	}
-
 	if (leagueFile.schedule) {
 		let missingDay = false;
 		for (const matchup of leagueFile.schedule) {
@@ -366,27 +273,6 @@ export const createWithoutSaving = async (
 				leagueFile.games,
 			);
 		}
-	}
-
-	// These object stores are blank by default
-	const toMaybeAdd = [
-		"allStars",
-		"releasedPlayers",
-		"awards",
-		"schedule",
-		"playoffSeries",
-		"negotiations",
-		"messages",
-		"games",
-		"events",
-		"playerFeats",
-		"scheduledEvents",
-		"headToHeads",
-	] as const;
-	const leagueData: any = {};
-
-	for (const store of toMaybeAdd) {
-		leagueData[store] = leagueFile[store] ? leagueFile[store] : [];
 	}
 
 	let players: PlayerWithoutKey[];
@@ -836,17 +722,6 @@ export const createWithoutSaving = async (
 			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
-
-	return Object.assign(leagueData, {
-		draftLotteryResults,
-		draftPicks,
-		gameAttributes,
-		players,
-		teamSeasons,
-		teamStats,
-		teams,
-		trade,
-	});
 };
 
 /**

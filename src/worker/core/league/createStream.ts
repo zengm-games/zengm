@@ -106,10 +106,45 @@ class Buffer {
 	}
 }
 
-const preProcess = (key: string, x: any) => {
+const preProcess = (
+	key: string,
+	x: any,
+	{
+		noStartingInjuries,
+	}: {
+		noStartingInjuries: boolean;
+	},
+) => {
 	const toReturn: [string, any][] = [[key, x]];
 
-	if (key === "teams") {
+	if (key === "draftPicks") {
+		if (typeof x.pick !== "number") {
+			x.pick = 0;
+		}
+	} else if (key === "games") {
+		// Fix missing +/-, blocks against in boxscore
+		if (!x.teams[0].hasOwnProperty("ba")) {
+			x.teams[0].ba = 0;
+			x.teams[1].ba = 0;
+		}
+		for (const t of x.teams) {
+			for (const p of t.players) {
+				if (!p.hasOwnProperty("ba")) {
+					p.ba = 0;
+				}
+				if (!p.hasOwnProperty("pm")) {
+					p.pm = 0;
+				}
+			}
+		}
+	} else if (key === "players") {
+		if (noStartingInjuries && x.injury) {
+			x.injury = {
+				type: "Healthy",
+				gamesRemaining: 0,
+			};
+		}
+	} else if (key === "teams") {
 		if (!x.colors) {
 			x.colors = ["#000000", "#cccccc", "#ffffff"];
 		}
@@ -131,6 +166,7 @@ const preProcess = (key: string, x: any) => {
 			toReturn.push(...x.season.map((row: any) => ["teamStats", row]));
 		}
 	}
+
 	return toReturn;
 };
 
@@ -138,13 +174,19 @@ const getSaveToDB = async ({
 	keys,
 	lid,
 	name,
+	noStartingInjuries,
 	tid,
 }: {
 	keys: Set<string>;
 	lid: number;
 	name: string;
+	noStartingInjuries: boolean;
 	tid: number;
 }) => {
+	const preProcessParams = {
+		noStartingInjuries,
+	};
+
 	await addDummyLeague({
 		lid,
 		name,
@@ -177,7 +219,7 @@ const getSaveToDB = async ({
 				return;
 			}
 
-			const rows = preProcess(key, value);
+			const rows = preProcess(key, value, preProcessParams);
 			buffer.addRows(rows);
 			if (buffer.isFull()) {
 				await buffer.flush();
@@ -271,6 +313,33 @@ const finalizeGameAttributes = ({
 	return finalized;
 };
 
+const finalizeDB = async ({ tid }: { tid: number }) => {
+	const tx = idb.league.transaction("trade", "readwrite");
+	const trade = await tx.store.get(0);
+	if (!trade) {
+		tx.store.add({
+			rid: 0,
+			teams: [
+				{
+					tid,
+					pids: [],
+					pidsExcluded: [],
+					dpids: [],
+					dpidsExcluded: [],
+				},
+				{
+					// Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
+					tid: tid === 0 ? 1 : 0,
+					pids: [],
+					pidsExcluded: [],
+					dpids: [],
+					dpidsExcluded: [],
+				},
+			],
+		});
+	}
+};
+
 const createStream = async (
 	stream: ReadableStream,
 	{
@@ -325,6 +394,7 @@ const createStream = async (
 		keys,
 		lid,
 		name,
+		noStartingInjuries,
 		tid,
 	});
 
@@ -344,7 +414,9 @@ const createStream = async (
 		tid,
 	});
 
-	await finalizeDB();
+	await finalizeDB({
+		tid,
+	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {

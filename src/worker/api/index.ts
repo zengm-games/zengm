@@ -537,17 +537,6 @@ const createLeague = async (
 				}
 			}
 		}
-
-		if (noStartingInjuries) {
-			for (const p of leagueFile.players) {
-				if (p.injury) {
-					p.injury = {
-						type: "Healthy",
-						gamesRemaining: 0,
-					};
-				}
-			}
-		}
 	}
 
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
@@ -607,7 +596,7 @@ const createLeague = async (
 		}
 	}
 
-	const lid = await league.create(
+	await league.create(
 		{
 			name,
 			tid: actualTid,
@@ -618,8 +607,6 @@ const createLeague = async (
 		},
 		conditions,
 	);
-
-	return lid;
 };
 
 const deleteOldData = async (options: {

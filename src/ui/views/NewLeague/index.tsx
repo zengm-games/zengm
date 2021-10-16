@@ -680,8 +680,12 @@ const NewLeague = (props: View<"newLeague">) => {
 				divs: state.divs,
 				teams: state.teams,
 				settings,
-				gameAttributesFromFile: state.basicInfo?.gameAttributes,
-				startingSeasonFromFile: state.basicInfo?.startingSeason,
+				fromFile: {
+					gameAttributes: state.basicInfo?.gameAttributes,
+					startingSeason: state.basicInfo?.startingSeason,
+					teams: state.basicInfo?.teams,
+					version: state.basicInfo?.version,
+				},
 			});
 
 			let type: string = state.customize;

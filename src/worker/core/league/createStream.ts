@@ -115,8 +115,6 @@ const preProcess = (
 		noStartingInjuries: boolean;
 	},
 ) => {
-	const toReturn: [string, any][] = [[key, x]];
-
 	if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
 			x.pick = 0;
@@ -144,30 +142,9 @@ const preProcess = (
 				gamesRemaining: 0,
 			};
 		}
-	} else if (key === "teams") {
-		if (!x.colors) {
-			x.colors = ["#000000", "#cccccc", "#ffffff"];
-		}
-
-		if (x.seasons?.length > 0) {
-			// If specified on season, copy to root
-			const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
-			const ts = x.seasons.at(-1);
-			for (const prop of maybeOnSeason) {
-				if (ts[prop] !== undefined) {
-					x[prop] = ts[prop];
-				}
-			}
-
-			toReturn.push(...x.season.map((row: any) => ["teamSeasons", row]));
-		}
-
-		if (x.stats?.length > 0) {
-			toReturn.push(...x.season.map((row: any) => ["teamStats", row]));
-		}
 	}
 
-	return toReturn;
+	return [key, x];
 };
 
 const getSaveToDB = async ({
@@ -208,8 +185,10 @@ const getSaveToDB = async ({
 
 			if (key === "version") {
 				extraFromStream[key] = value;
-			} else if (CUMULATIVE_OBJECTS.has(key)) {
-				// Currently skipped: meta because it doesn't get written to DB, and gameAttributes/startingSeason because we already have it from basicInfo.
+			} else if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
+				// Currently skipped:
+				// - meta because it doesn't get written to DB
+				// - gameAttributes/startingSeason/teams because we already have it from basicInfo.
 				return;
 			}
 
@@ -340,25 +319,28 @@ const createStream = async (
 		startingSeasonFromInput,
 		confs,
 		divs,
-		gameAttributesFromFile,
+		fromFile,
 		getLeagueOptions,
 		keys,
 		lid,
 		name,
 		settings,
-		startingSeasonFromFile,
-		teams,
+		teams, // use if none in file
 		tid,
 	}: {
 		confs: Conf[];
 		divs: Div[];
-		gameAttributesFromFile: Record<string, unknown> | undefined;
+		fromFile: {
+			gameAttributes: Record<string, unknown> | undefined;
+			startingSeason: number | undefined;
+			teams: any[] | undefined;
+			version: number | undefined;
+		};
 		getLeagueOptions: GetLeagueOptions | undefined;
 		keys: Set<string>;
 		lid: number;
 		name: string;
 		settings: Omit<Settings, "numActiveTeams">;
-		startingSeasonFromFile: number | undefined;
 		startingSeasonFromInput: string | undefined;
 		teams: NewLeagueTeam[];
 		tid: number;
@@ -389,19 +371,21 @@ const createStream = async (
 	}
 
 	const startingSeason = finalizeStartingSeason(
-		startingSeasonFromFile,
+		fromFile.startingSeason,
 		startingSeasonFromInput,
 	);
 
 	const gameAttributes = await finalizeGameAttributes({
 		// Use gameAttributesFromFile in addition to gameAttributeOverrides because it preserves history and any non-standard settings
-		gameAttributes: gameAttributesFromFile ?? {},
+		gameAttributes: fromFile.gameAttributes ?? {},
 		gameAttributeOverrides,
 		getLeagueOptions,
 		randomization,
 		startingSeason,
 		tid,
 	});
+
+	const teamInfos = helpers.addPopRank(fromFile.teams ?? teams);
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,

@@ -92,11 +92,6 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	conditions?: Conditions,
 ) => {
-	const teamInfos = helpers.addPopRank(leagueFile.teams);
-
-	// Handle random team
-	const userTid = tid;
-
 	// Also mutates teamInfos
 	const gameAttributes = await createGameAttributes(
 		{

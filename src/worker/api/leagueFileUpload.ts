@@ -99,14 +99,28 @@ const getBasicInfo = async (stream: ReadableStream) => {
 				basicInfo.teams = [];
 			}
 
-			const t: any = {};
-			for (const key of BASIC_TEAM_KEYS) {
-				if (value.value[key] !== undefined) {
-					t[key] = value.value[key];
+			const t = {
+				...value.value,
+			};
+
+			if (!t.colors) {
+				t.colors = ["#000000", "#cccccc", "#ffffff"];
+			}
+
+			if (t.seasons?.length > 0) {
+				// If specified on season, copy to root
+				const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
+				const ts = t.seasons.at(-1);
+				for (const prop of maybeOnSeason) {
+					if (ts[prop] !== undefined) {
+						t[prop] = ts[prop];
+					}
 				}
 			}
 
-			basicInfo.teams.push(t);
+			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
+
+			basicInfo.teams.push(value.value);
 		} else {
 			// Everything else just store as an empty array, so it shows up in the "Use from selected league" list
 			if (!basicInfo[value.key]) {

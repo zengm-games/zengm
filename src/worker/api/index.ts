@@ -431,7 +431,7 @@ const createLeague = async (
 		keptKeys,
 		confs,
 		divs,
-		teams,
+		teamsFromInput,
 		settings,
 		fromFile,
 		startingSeasonFromInput,
@@ -445,7 +445,7 @@ const createLeague = async (
 		keptKeys: string[];
 		confs: Conf[];
 		divs: Div[];
-		teams: NewLeagueTeam[];
+		teamsFromInput: NewLeagueTeam[];
 		settings: Omit<Settings, "numActiveTeams">;
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
@@ -518,7 +518,7 @@ const createLeague = async (
 		name,
 		settings,
 		startingSeasonFromInput,
-		teams,
+		teamsFromInput,
 		tid: actualTid,
 	});
 

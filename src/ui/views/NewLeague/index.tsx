@@ -678,7 +678,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				startingSeasonFromInput,
 				confs: state.confs,
 				divs: state.divs,
-				teams: state.teams,
+				teamsFromInput: state.teams,
 				settings,
 				fromFile: {
 					gameAttributes: state.basicInfo?.gameAttributes,

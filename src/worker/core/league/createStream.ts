@@ -400,7 +400,7 @@ const createStream = async (
 		name,
 		settings,
 		startingSeasonFromInput,
-		teams, // use if none in file
+		teamsFromInput, // use if none in file
 		tid,
 	}: {
 		conditions?: Conditions;
@@ -418,7 +418,7 @@ const createStream = async (
 		name: string;
 		settings: Omit<Settings, "numActiveTeams">;
 		startingSeasonFromInput: string | undefined;
-		teams: NewLeagueTeam[];
+		teamsFromInput: NewLeagueTeam[];
 		tid: number;
 	},
 ) => {
@@ -451,7 +451,7 @@ const createStream = async (
 		startingSeasonFromInput,
 	);
 
-	const teamInfos = helpers.addPopRank(fromFile.teams ?? teams);
+	const teamInfos = helpers.addPopRank(fromFile.teams ?? teamsFromInput);
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");

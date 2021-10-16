@@ -45,6 +45,7 @@ streaming import of league files
   - league file with invalid (too high or negative) userTid specified
   - fix tests
     - teams is required param now
+  - confirm regular season load does not result in schedule overwriting old box scores
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams

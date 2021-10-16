@@ -682,6 +682,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				settings,
 				fromFile: {
 					gameAttributes: state.basicInfo?.gameAttributes,
+					maxGid: state.basicInfo?.maxGid,
 					startingSeason: state.basicInfo?.startingSeason,
 					teams: state.basicInfo?.teams,
 					version: state.basicInfo?.version,

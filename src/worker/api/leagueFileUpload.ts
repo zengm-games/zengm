@@ -63,7 +63,9 @@ export const parseJSON = () => {
 };
 
 const getBasicInfo = async (stream: ReadableStream) => {
-	const basicInfo: any = {};
+	const basicInfo: any = {
+		maxGid: -1,
+	};
 
 	// Keep in sync with NewLeagueTeam
 	const BASIC_TEAM_KEYS = [
@@ -125,6 +127,11 @@ const getBasicInfo = async (stream: ReadableStream) => {
 			// Everything else just store as an empty array, so it shows up in the "Use from selected league" list
 			if (!basicInfo[value.key]) {
 				basicInfo[value.key] = [];
+			}
+
+			// Need to store max gid from games, so generated schedule does not overwrite it
+			if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
+				basicInfo.maxGid = value.value.gid;
 			}
 		}
 	}

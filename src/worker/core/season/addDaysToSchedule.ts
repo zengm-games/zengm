@@ -28,7 +28,9 @@ const addDaysToSchedule = (
 		}
 	}
 
-	return games.map(({ homeTid, awayTid }) => {
+	return games.map(game => {
+		const { awayTid, homeTid } = game;
+
 		const allStarGame = awayTid === -2 && homeTid === -1;
 		const tradeDeadline = awayTid === -3 && homeTid === -3;
 		if (
@@ -50,8 +52,7 @@ const addDaysToSchedule = (
 		prevDayTradeDeadline = tradeDeadline;
 
 		return {
-			homeTid,
-			awayTid,
+			...game,
 			day,
 		};
 	});

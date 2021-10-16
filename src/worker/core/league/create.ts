@@ -186,25 +186,6 @@ export const createWithoutSaving = async (
 		throw new Error("scoutingRank should be defined");
 	}
 
-	if (leagueFile.schedule) {
-		let missingDay = false;
-		for (const matchup of leagueFile.schedule) {
-			// Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-			delete matchup.gid;
-
-			if (typeof matchup.day !== "number") {
-				missingDay = true;
-			}
-		}
-
-		if (missingDay) {
-			leagueFile.schedule = season.addDaysToSchedule(
-				leagueFile.schedule,
-				leagueFile.games,
-			);
-		}
-	}
-
 	let players: PlayerWithoutKey[];
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);

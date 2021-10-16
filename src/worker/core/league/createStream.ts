@@ -1,3 +1,4 @@
+import { season } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
@@ -6,6 +7,7 @@ import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 	League,
+	ScheduleGameWithoutKey,
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
@@ -16,6 +18,7 @@ import { connectLeague, idb } from "../../db";
 import { helpers } from "../../util";
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
+import addDaysToSchedule from "../season/addDaysToSchedule";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
 import remove from "./remove";
@@ -172,12 +175,14 @@ const preProcess = (
 const getSaveToDB = async ({
 	keys,
 	lid,
+	maxGid,
 	name,
 	preProcessParams,
 	tid,
 }: {
 	keys: Set<string>;
 	lid: number;
+	maxGid: number | undefined;
 	name: string;
 	preProcessParams: {
 		averagePopulation: number | undefined;
@@ -193,7 +198,9 @@ const getSaveToDB = async ({
 
 	const buffer = new Buffer(keys);
 
-	const extraFromStream: {} = {};
+	const extraFromStream: Record<string, never> = {};
+
+	let currentScheduleGid = maxGid ?? -1;
 
 	const writableStream = new WritableStream<{
 		key: string;
@@ -209,7 +216,14 @@ const getSaveToDB = async ({
 				return;
 			}
 
+			// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
+			if (key === "schedule") {
+				currentScheduleGid += 1;
+				value.gid = currentScheduleGid;
+			}
+
 			const rows = preProcess(key, value, preProcessParams);
+
 			buffer.addRows(rows);
 			if (buffer.isFull()) {
 				await buffer.flush();
@@ -321,11 +335,17 @@ const finalizeGameAttributes = async ({
 	return finalized2;
 };
 
-const finalizeDB = async ({ tid }: { tid: number }) => {
-	const tx = idb.league.transaction("trade", "readwrite");
-	const trade = await tx.store.get(0);
+const finalizeDB = async () => {
+	const tx = idb.league.transaction(
+		["games", "schedule", "trade"],
+		"readwrite",
+	);
+
+	const tradeStore = tx.objectStore("trade");
+	const trade = await tradeStore.get(0);
 	if (!trade) {
-		tx.store.add({
+		const tid = g.get("userTid");
+		await tradeStore.add({
 			rid: 0,
 			teams: [
 				{
@@ -347,6 +367,7 @@ const finalizeDB = async ({ tid }: { tid: number }) => {
 		});
 	}
 
+	// Set numDraftPicksCurrent
 	if (gameAttributes.phase === PHASE.DRAFT && leagueFile.draftPicks) {
 		const currentDraftPicks = leagueFile.draftPicks.filter(
 			dp => dp.season === gameAttributes.season,
@@ -358,6 +379,31 @@ const finalizeDB = async ({ tid }: { tid: number }) => {
 			const numDraftPicksCurrent = currentDraftPicks.length;
 			if (numDraftPicksCurrent > 0) {
 				gameAttributes.numDraftPicksCurrent = numDraftPicksCurrent;
+			}
+		}
+	}
+
+	// Handle schedule with no "day" property
+	const scheduleStore = tx.objectStore("schedule");
+	const schedule = await scheduleStore.getAll();
+	if (schedule.length > 0) {
+		const missingDay = schedule.some(
+			matchup => typeof matchup.day !== "number",
+		);
+
+		if (missingDay) {
+			const gamesThisSeason = await tx
+				.objectStore("games")
+				.index("season")
+				.getAll(g.get("season"));
+
+			const updatedSchedule = season.addDaysToSchedule(
+				schedule,
+				gamesThisSeason,
+			);
+
+			for (const game of updatedSchedule) {
+				await scheduleStore.put(game as any);
 			}
 		}
 	}
@@ -408,6 +454,7 @@ const createStream = async (
 		divs: Div[];
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
+			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
 			version: number | undefined;
@@ -488,6 +535,7 @@ const createStream = async (
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
 		lid,
+		maxGid: fromFile.maxGid,
 		name,
 		preProcessParams: {
 			averagePopulation,
@@ -498,9 +546,7 @@ const createStream = async (
 
 	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
 
-	await finalizeDB({
-		tid,
-	});
+	await finalizeDB();
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {

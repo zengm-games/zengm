@@ -449,6 +449,7 @@ const createLeague = async (
 		settings: Omit<Settings, "numActiveTeams">;
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
+			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
 			version: number | undefined;

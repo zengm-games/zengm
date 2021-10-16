@@ -1,4 +1,4 @@
-import { season, team } from "..";
+import { finances, season, team } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
@@ -338,14 +338,26 @@ const finalizeGameAttributes = async ({
 };
 
 const finalizeDB = async ({
+	teamSeasons,
+	teamStats,
 	teams,
 	gameAttributes,
 }: {
+	teamSeasons: TeamSeasonWithoutKey[];
+	teamStats: TeamStatsWithoutKey[];
 	teams: Team[];
 	gameAttributes: GameAttributesLeagueWithHistory;
 }) => {
 	const tx = idb.league.transaction(
-		["games", "gameAttributes", "schedule", "teams", "trade"],
+		[
+			"games",
+			"gameAttributes",
+			"schedule",
+			"teamSeasons",
+			"teamStats",
+			"teams",
+			"trade",
+		],
 		"readwrite",
 	);
 
@@ -421,6 +433,16 @@ const finalizeDB = async ({
 		await teamsStore.put(t);
 	}
 
+	const teamSeasonsStore = tx.objectStore("teamSeasons");
+	for (const ts of teamSeasons) {
+		await teamSeasonsStore.put(ts as any);
+	}
+
+	const teamStatsStore = tx.objectStore("teamStats");
+	for (const ts of teamStats) {
+		await teamStatsStore.put(ts);
+	}
+
 	const gameAttributesStore = tx.objectStore("gameAttributes");
 	for (const [key, value] of Object.entries(gameAttributes)) {
 		await gameAttributesStore.put({ key: key as any, value });
@@ -449,6 +471,126 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 	}
 
 	return values;
+};
+
+const processTeamInfos = (teamInfos: any[], userTid: number) => {
+	const teams = teamInfos.map(t => team.generate(t));
+
+	const teamSeasons: TeamSeasonWithoutKey[] = [];
+	const teamStats: TeamStatsWithoutKey[] = [];
+
+	let scoutingRank: number | undefined;
+
+	for (let i = 0; i < teams.length; i++) {
+		const t = teams[i];
+		const teamInfo = teamInfos[i];
+		let teamSeasonsLocal: TeamSeasonWithoutKey[];
+
+		if (teamInfo.seasons) {
+			teamSeasonsLocal = teamInfo.seasons;
+			const last = teamSeasonsLocal.at(-1);
+
+			if (last.season !== g.get("season") && !t.disabled) {
+				last.season = g.get("season");
+
+				// Remove any past seasons that claim to be from this season or a future season
+				teamSeasonsLocal = [
+					...teamSeasonsLocal.filter(ts => ts.season < last.season),
+					last,
+				];
+			}
+
+			for (const teamSeason of teamSeasonsLocal) {
+				// See similar code in teamsPlus
+				const copyFromTeamIfUndefined = [
+					"cid",
+					"did",
+					"region",
+					"name",
+					"abbrev",
+					"imgURL",
+					"colors",
+					"jersey",
+				] as const;
+				for (const key of copyFromTeamIfUndefined) {
+					if (
+						teamSeason[key] === undefined ||
+						(teamSeason.season === g.get("season") &&
+							g.get("phase") < PHASE.PLAYOFFS)
+					) {
+						// @ts-ignore
+						teamSeason[key] = t[key];
+					}
+				}
+
+				if (teamSeason.numPlayersTradedAway === undefined) {
+					teamSeason.numPlayersTradedAway = 0;
+				}
+			}
+		} else if (!t.disabled) {
+			teamSeasonsLocal = [team.genSeasonRow(t)];
+			teamSeasonsLocal[0].pop = teamInfo.pop;
+			// @ts-ignore
+			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
+		} else {
+			teamSeasonsLocal = [];
+		}
+
+		for (const teamSeason of teamSeasonsLocal) {
+			teamSeason.tid = t.tid;
+
+			if (typeof teamSeason.stadiumCapacity !== "number") {
+				teamSeason.stadiumCapacity =
+					t.stadiumCapacity !== undefined
+						? t.stadiumCapacity
+						: g.get("defaultStadiumCapacity");
+			}
+
+			// If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
+			delete teamSeason.rid;
+
+			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
+			teamSeasons.push(teamSeason);
+		}
+
+		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
+
+		for (const ts of teamStatsLocal) {
+			ts.tid = t.tid;
+
+			if (ts.hasOwnProperty("ba")) {
+				ts.oppBlk = ts.ba;
+				delete ts.ba;
+			}
+
+			if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
+				ts.oppBlk = 0;
+			}
+
+			// teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
+			teamStats.push(ts);
+		}
+
+		// Save scoutingRank for later
+		if (i === userTid) {
+			scoutingRank = finances.getRankLastThree(
+				teamSeasonsLocal,
+				"expenses",
+				"scouting",
+			);
+		}
+	}
+
+	if (scoutingRank === undefined) {
+		throw new Error("scoutingRank should be defined");
+	}
+
+	return {
+		scoutingRank,
+		teams,
+		teamSeasons,
+		teamStats,
+	};
 };
 
 const createStream = async (
@@ -554,7 +696,10 @@ const createStream = async (
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
-	const teams = teamInfos.map(t => team.generate(t));
+	const { scoutingRank, teams, teamSeasons, teamStats } = processTeamInfos(
+		teamInfos,
+		tid,
+	);
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
@@ -572,6 +717,8 @@ const createStream = async (
 
 	await finalizeDB({
 		gameAttributes,
+		teamSeasons,
+		teamStats,
 		teams,
 	});
 

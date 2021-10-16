@@ -26,7 +26,6 @@ import type {
 	PlayerContract,
 	Conditions,
 } from "../../../common/types";
-import createGameAttributes from "./createGameAttributes";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 
 export type LeagueFile = {
@@ -68,117 +67,6 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	conditions?: Conditions,
 ) => {
-	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
-	let scoutingRankTemp;
-	const teamSeasons: TeamSeasonWithoutKey[] = [];
-	const teamStats: TeamStatsWithoutKey[] = [];
-
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
-		const teamInfo = teamInfos[i];
-		let teamSeasonsLocal: TeamSeasonWithoutKey[];
-
-		if (teamInfo.seasons) {
-			teamSeasonsLocal = teamInfo.seasons;
-			const last = teamSeasonsLocal.at(-1);
-
-			if (last.season !== g.get("season") && !t.disabled) {
-				last.season = g.get("season");
-
-				// Remove any past seasons that claim to be from this season or a future season
-				teamSeasonsLocal = [
-					...teamSeasonsLocal.filter(ts => ts.season < last.season),
-					last,
-				];
-			}
-
-			for (const teamSeason of teamSeasonsLocal) {
-				// See similar code in teamsPlus
-				const copyFromTeamIfUndefined = [
-					"cid",
-					"did",
-					"region",
-					"name",
-					"abbrev",
-					"imgURL",
-					"colors",
-					"jersey",
-				] as const;
-				for (const key of copyFromTeamIfUndefined) {
-					if (
-						teamSeason[key] === undefined ||
-						(teamSeason.season === g.get("season") &&
-							g.get("phase") < PHASE.PLAYOFFS)
-					) {
-						// @ts-ignore
-						teamSeason[key] = t[key];
-					}
-				}
-
-				if (teamSeason.numPlayersTradedAway === undefined) {
-					teamSeason.numPlayersTradedAway = 0;
-				}
-			}
-		} else if (!t.disabled) {
-			teamSeasonsLocal = [team.genSeasonRow(t)];
-			teamSeasonsLocal[0].pop = teamInfo.pop;
-			// @ts-ignore
-			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
-		} else {
-			teamSeasonsLocal = [];
-		}
-
-		for (const teamSeason of teamSeasonsLocal) {
-			teamSeason.tid = t.tid;
-
-			if (typeof teamSeason.stadiumCapacity !== "number") {
-				teamSeason.stadiumCapacity =
-					t.stadiumCapacity !== undefined
-						? t.stadiumCapacity
-						: g.get("defaultStadiumCapacity");
-			}
-
-			// If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
-			delete teamSeason.rid;
-
-			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
-			teamSeasons.push(teamSeason);
-		}
-
-		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
-
-		for (const ts of teamStatsLocal) {
-			ts.tid = t.tid;
-
-			if (ts.hasOwnProperty("ba")) {
-				ts.oppBlk = ts.ba;
-				delete ts.ba;
-			}
-
-			if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
-				ts.oppBlk = 0;
-			}
-
-			// teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
-			teamStats.push(ts);
-		}
-
-		// Save scoutingRank for later
-		if (i === userTid) {
-			scoutingRankTemp = finances.getRankLastThree(
-				teamSeasonsLocal,
-				"expenses",
-				"scouting",
-			);
-		}
-	}
-
-	const scoutingRank = scoutingRankTemp;
-
-	if (scoutingRank === undefined) {
-		throw new Error("scoutingRank should be defined");
-	}
-
 	let players: PlayerWithoutKey[];
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);

@@ -196,8 +196,6 @@ const getSaveToDB = async ({
 	const buffer = new Buffer(keys);
 
 	const extraFromStream: {
-		gameAttributes?: any;
-		startingSeason?: number;
 		version?: number;
 	} = {};
 
@@ -208,14 +206,10 @@ const getSaveToDB = async ({
 		async write(chunk, controller) {
 			const { key, value } = chunk;
 
-			if (
-				key === "gameAttributes" ||
-				key === "startingSeason" ||
-				key === "version"
-			) {
+			if (key === "version") {
 				extraFromStream[key] = value;
 			} else if (CUMULATIVE_OBJECTS.has(key)) {
-				// These don't get written to database (currently just meta)
+				// Currently skipped: meta because it doesn't get written to DB, and gameAttributes/startingSeason because we already have it from basicInfo.
 				return;
 			}
 
@@ -238,15 +232,15 @@ const getSaveToDB = async ({
 };
 
 const finalizeStartingSeason = (
-	startingSeason: number | undefined,
-	actualStartingSeason: string | undefined,
+	startingSeasonFromFile: number | undefined,
+	startingSeasonFromInput: string | undefined,
 ) => {
-	if (startingSeason !== undefined) {
-		return startingSeason;
+	if (startingSeasonFromFile !== undefined) {
+		return startingSeasonFromFile;
 	}
 
-	if (actualStartingSeason) {
-		const startingSeason2 = parseInt(actualStartingSeason);
+	if (startingSeasonFromInput) {
+		const startingSeason2 = parseInt(startingSeasonFromInput);
 		if (!Number.isNaN(startingSeason2)) {
 			return startingSeason2;
 		}
@@ -343,25 +337,29 @@ const finalizeDB = async ({ tid }: { tid: number }) => {
 const createStream = async (
 	stream: ReadableStream,
 	{
-		actualStartingSeason,
+		startingSeasonFromInput,
 		confs,
 		divs,
+		gameAttributesFromFile,
 		getLeagueOptions,
 		keys,
 		lid,
 		name,
 		settings,
-		teams, // use if none in file
+		startingSeasonFromFile,
+		teams,
 		tid,
 	}: {
-		actualStartingSeason: string | undefined;
 		confs: Conf[];
 		divs: Div[];
+		gameAttributesFromFile: Record<string, unknown> | undefined;
 		getLeagueOptions: GetLeagueOptions | undefined;
 		keys: Set<string>;
 		lid: number;
 		name: string;
 		settings: Omit<Settings, "numActiveTeams">;
+		startingSeasonFromFile: number | undefined;
+		startingSeasonFromInput: string | undefined;
 		teams: NewLeagueTeam[];
 		tid: number;
 	},
@@ -390,6 +388,21 @@ const createStream = async (
 		delete gameAttributeOverrides.realDraftRatings;
 	}
 
+	const startingSeason = finalizeStartingSeason(
+		startingSeasonFromFile,
+		startingSeasonFromInput,
+	);
+
+	const gameAttributes = await finalizeGameAttributes({
+		// Use gameAttributesFromFile in addition to gameAttributeOverrides because it preserves history and any non-standard settings
+		gameAttributes: gameAttributesFromFile ?? {},
+		gameAttributeOverrides,
+		getLeagueOptions,
+		randomization,
+		startingSeason,
+		tid,
+	});
+
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
 		lid,
@@ -399,20 +412,6 @@ const createStream = async (
 	});
 
 	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
-
-	const startingSeason = finalizeStartingSeason(
-		extraFromStream.startingSeason,
-		actualStartingSeason,
-	);
-
-	const gameAttributes = await finalizeGameAttributes({
-		gameAttributes: extraFromStream.gameAttributes ?? {},
-		gameAttributeOverrides,
-		getLeagueOptions,
-		randomization,
-		startingSeason,
-		tid,
-	});
 
 	await finalizeDB({
 		tid,

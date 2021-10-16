@@ -92,34 +92,7 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	conditions?: Conditions,
 ) => {
-	const teamsDefault = helpers.getTeamsDefault();
-
-	// Any custom teams?
-	let teamInfos: TeamInfo[];
-
-	if (leagueFile.teams) {
-		if (leagueFile.teams.length <= teamsDefault.length) {
-			// This probably shouldn't be here, but oh well, backwards compatibility...
-			teamInfos = leagueFile.teams.map((t, i) => {
-				// Fill in default values as needed
-				const t2 = teamsDefault[i];
-
-				for (const prop of helpers.keys(t2)) {
-					if (!t.hasOwnProperty(prop) && prop !== "imgURLSmall") {
-						t[prop] = t2[prop];
-					}
-				}
-
-				return t;
-			});
-		} else {
-			teamInfos = leagueFile.teams;
-		}
-
-		teamInfos = helpers.addPopRank(teamInfos);
-	} else {
-		teamInfos = teamsDefault;
-	}
+	const teamInfos = helpers.addPopRank(leagueFile.teams);
 
 	// Handle random team
 	const userTid = tid;

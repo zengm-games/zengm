@@ -222,7 +222,7 @@ type State = {
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
 
-	basicInfo: any;
+	basicInfo: Record<string, unknown> | undefined;
 	file: File | undefined;
 	legend: string;
 	loadingLeagueFile: boolean;
@@ -365,7 +365,7 @@ const reducer = (state: State, action: Action): State => {
 		case "clearLeagueFile":
 			return {
 				...state,
-				basicInfo: null,
+				basicInfo: undefined,
 				file: undefined,
 				loadingLeagueFile: false,
 				keptKeys: [],
@@ -503,7 +503,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				loadingLeagueFile: false,
-				basicInfo: null,
+				basicInfo: undefined,
 				file: undefined,
 				allKeys,
 				keptKeys,
@@ -551,7 +551,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize = "legends";
 			}
 
-			const basicInfo = null;
+			const basicInfo = undefined;
 
 			const teams = teamsDefault;
 
@@ -637,7 +637,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			? settings.randomization === "shuffle"
 			: false;
 
-		const actualStartingSeason =
+		const startingSeasonFromInput =
 			state.customize === "default" ? startingSeason : undefined;
 
 		try {
@@ -675,11 +675,13 @@ const NewLeague = (props: View<"newLeague">) => {
 				shuffleRosters: actualShuffleRosters,
 				importLid: props.lid,
 				getLeagueOptions,
-				actualStartingSeason,
+				startingSeasonFromInput,
 				confs: state.confs,
 				divs: state.divs,
 				teams: state.teams,
 				settings,
+				gameAttributesFromFile: state.basicInfo?.gameAttributes,
+				startingSeasonFromFile: state.basicInfo?.startingSeason,
 			});
 
 			let type: string = state.customize;

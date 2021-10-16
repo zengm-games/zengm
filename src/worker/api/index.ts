@@ -429,11 +429,13 @@ const createLeague = async (
 		importLid,
 		getLeagueOptions,
 		keptKeys,
-		actualStartingSeason,
 		confs,
 		divs,
 		teams,
 		settings,
+		gameAttributesFromFile,
+		startingSeasonFromFile,
+		startingSeasonFromInput,
 	}: {
 		name: string;
 		tid: number;
@@ -442,11 +444,13 @@ const createLeague = async (
 		importLid: number | undefined | null;
 		getLeagueOptions: GetLeagueOptions | undefined;
 		keptKeys: string[];
-		actualStartingSeason: string | undefined;
 		confs: Conf[];
 		divs: Div[];
 		teams: NewLeagueTeam[];
 		settings: Omit<Settings, "numActiveTeams">;
+		gameAttributesFromFile: Record<string, unknown> | undefined;
+		startingSeasonFromFile: number | undefined;
+		startingSeasonFromInput: string | undefined;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
@@ -501,14 +505,16 @@ const createLeague = async (
 	const lid = importLid ?? (await getNewLeagueLid());
 
 	await league.createStream(stream, {
-		actualStartingSeason,
 		confs,
 		divs,
+		gameAttributesFromFile,
 		getLeagueOptions,
 		lid,
 		keys,
 		name,
 		settings,
+		startingSeasonFromFile,
+		startingSeasonFromInput,
 		teams,
 		tid: actualTid,
 	});

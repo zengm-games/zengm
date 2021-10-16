@@ -29,30 +29,6 @@ import type {
 import createGameAttributes from "./createGameAttributes";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 
-const confirmSequential = (objs: any, key: string, objectName: string) => {
-	const values = new Set();
-
-	for (const obj of objs) {
-		const value = obj[key];
-
-		if (typeof value !== "number") {
-			throw new Error(`Missing or invalid ${key} for ${objectName}`);
-		}
-
-		values.add(value);
-	}
-
-	for (let i = 0; i < values.size; i++) {
-		if (!values.has(i)) {
-			throw new Error(
-				`${key} values must be sequential with no gaps starting from 0, but no ${objectName} has a value of ${i}`,
-			);
-		}
-	}
-
-	return values;
-};
-
 export type LeagueFile = {
 	version?: number;
 	meta?: any;
@@ -92,20 +68,6 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	conditions?: Conditions,
 ) => {
-	// Also mutates teamInfos
-	const gameAttributes = await createGameAttributes(
-		{
-			leagueFile,
-			teamInfos,
-			userTid,
-			version: leagueFile.version,
-		},
-		conditions,
-	);
-
-	// Validation of some identifiers
-	confirmSequential(teamInfos, "tid", "team");
-
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
 	helpers.resetG();
 	Object.assign(g, gameAttributes);

@@ -508,6 +508,7 @@ const createLeague = async (
 	const lid = importLid ?? (await getNewLeagueLid());
 
 	await league.createStream(stream, {
+		conditions,
 		confs,
 		divs,
 		fromFile,

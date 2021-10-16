@@ -19,20 +19,20 @@ import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 const createGameAttributes = async (
 	{
-		leagueFile,
+		gameAttributesInput,
+		startingSeason,
 		teamInfos,
 		userTid,
 		version,
 	}: {
-		leagueFile: LeagueFile;
+		gameAttributesInput: Partial<GameAttributesLeagueWithHistory>;
+		startingSeason: number;
 		teamInfos: TeamInfo[];
 		userTid: number;
 		version?: number;
 	},
 	conditions?: Conditions,
 ) => {
-	const startingSeason = leagueFile.startingSeason;
-
 	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
 		userTid: [
@@ -57,22 +57,24 @@ const createGameAttributes = async (
 		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
 	};
 
-	if (leagueFile.gameAttributes) {
-		for (const [key, value] of Object.entries(leagueFile.gameAttributes)) {
+	if (gameAttributesInput) {
+		for (const [key, value] of Object.entries(gameAttributesInput)) {
 			// userTid is handled special below
 			if (key !== "userTid") {
 				(gameAttributes as any)[key] = value;
 			}
 
 			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
+			// @ts-ignore
 			if (Array.isArray(value) && value.length > 0 && value[0].start === null) {
+				// @ts-ignore
 				value[0].start = -Infinity;
 			}
 		}
 
 		// 2nd pass, so we know phase/season from league file were applied already
-		if (leagueFile.gameAttributes.userTid !== undefined) {
-			const value = leagueFile.gameAttributes.userTid;
+		if (gameAttributesInput.userTid !== undefined) {
+			const value = gameAttributesInput.userTid;
 
 			// Handle league file with userTid history, but user selected a new team maybe
 			if (gameAttributeHasHistory(value)) {
@@ -122,7 +124,7 @@ const createGameAttributes = async (
 
 	// Extra check for lowestDifficulty, so that it won't be overwritten by a league file if the user selects Easy
 	// when creating a new league.
-	if (leagueFile.gameAttributes?.lowestDifficulty === undefined) {
+	if (gameAttributesInput?.lowestDifficulty === undefined) {
 		gameAttributes.lowestDifficulty = gameAttributes.difficulty;
 	}
 	if (gameAttributes.difficulty < gameAttributes.lowestDifficulty) {
@@ -169,10 +171,7 @@ const createGameAttributes = async (
 	}
 
 	// Don't have too many playoff teams in custom leagues... like in a 16 team league, we don't want 16 teams in the playoffs
-	if (
-		!leagueFile.gameAttributes ||
-		!leagueFile.gameAttributes.numGamesPlayoffSeries
-	) {
+	if (!gameAttributesInput || !gameAttributesInput.numGamesPlayoffSeries) {
 		while (
 			2 ** newNumGames.length > 0.75 * gameAttributes.numTeams &&
 			newNumGames.length > 1
@@ -183,18 +182,18 @@ const createGameAttributes = async (
 
 	// If tiebreakers aren't specified in league file and this is an old league file, tiebreakers should have been random up to now
 	if (
-		leagueFile.gameAttributes &&
-		!leagueFile.gameAttributes.tiebreakers &&
+		gameAttributesInput &&
+		!gameAttributesInput.tiebreakers &&
 		(version === undefined || version <= 42)
 	) {
 		if (
-			leagueFile.gameAttributes.season !== undefined &&
-			leagueFile.gameAttributes.phase !== undefined
+			gameAttributesInput.season !== undefined &&
+			gameAttributesInput.phase !== undefined
 		) {
 			const actualPhase =
-				leagueFile.gameAttributes.nextPhase ?? leagueFile.gameAttributes.phase;
+				gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
 
-			let currentSeason = leagueFile.gameAttributes.season;
+			let currentSeason = gameAttributesInput.season;
 			if (actualPhase >= PHASE.PLAYOFFS) {
 				currentSeason += 1;
 			}
@@ -251,33 +250,6 @@ const createGameAttributes = async (
 		throw new Error("numDraftRounds must be a positive number");
 	}
 
-	if (gameAttributes.equalizeRegions) {
-		let totalPopulation = 0;
-		for (const t of teamInfos) {
-			totalPopulation += t.pop;
-		}
-
-		// Round to 2 digits
-		const averagePopulation =
-			Math.round((totalPopulation / teamInfos.length) * 100) / 100;
-
-		for (const t of teamInfos) {
-			t.pop = averagePopulation;
-		}
-
-		if (leagueFile.scheduledEvents) {
-			for (const event of leagueFile.scheduledEvents) {
-				if (event.type === "expansionDraft") {
-					for (const t of event.info.teams) {
-						t.pop = averagePopulation;
-					}
-				} else if (event.type === "teamInfo" && event.info.pop !== undefined) {
-					event.info.pop = averagePopulation;
-				}
-			}
-		}
-	}
-
 	{
 		const info = getInitialNumGamesConfDivSettings(teamInfos, {
 			divs: unwrapGameAttribute(gameAttributes, "divs"),
@@ -292,10 +264,9 @@ const createGameAttributes = async (
 		// Only show warning about changed numGamesDiv and numGamesConf if the initial settings were not default
 		if (
 			info.altered &&
-			(leagueFile.gameAttributes?.numGamesConf !==
+			(gameAttributesInput?.numGamesConf !==
 				defaultGameAttributes.numGamesConf ||
-				leagueFile.gameAttributes?.numGamesDiv !==
-					defaultGameAttributes.numGamesDiv)
+				gameAttributesInput?.numGamesDiv !== defaultGameAttributes.numGamesDiv)
 		) {
 			logEvent(
 				{
@@ -305,21 +276,6 @@ const createGameAttributes = async (
 				},
 				conditions,
 			);
-		}
-	}
-
-	if (gameAttributes.phase === PHASE.DRAFT && leagueFile.draftPicks) {
-		const currentDraftPicks = leagueFile.draftPicks.filter(
-			dp => dp.season === gameAttributes.season,
-		);
-		const draftNotStarted =
-			currentDraftPicks.every(dp => dp.round === 0) ||
-			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
-		if (draftNotStarted) {
-			const numDraftPicksCurrent = currentDraftPicks.length;
-			if (numDraftPicksCurrent > 0) {
-				gameAttributes.numDraftPicksCurrent = numDraftPicksCurrent;
-			}
 		}
 	}
 

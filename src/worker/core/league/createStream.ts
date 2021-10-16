@@ -1,10 +1,14 @@
 import { PHASE, PLAYER } from "../../../common";
 import type {
+	Conditions,
 	Conf,
 	Div,
 	GameAttributesLeague,
 	GetLeagueOptions,
 	League,
+	TeamBasic,
+	TeamSeasonWithoutKey,
+	TeamStatsWithoutKey,
 } from "../../../common/types";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS, parseJSON } from "../../api/leagueFileUpload";
@@ -12,8 +16,16 @@ import { connectLeague, idb } from "../../db";
 import { helpers } from "../../util";
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
+import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
 import remove from "./remove";
+
+export type TeamInfo = TeamBasic & {
+	disabled?: boolean;
+	stadiumCapacity?: number;
+	seasons?: TeamSeasonWithoutKey[];
+	stats?: TeamStatsWithoutKey[];
+};
 
 const addDummyLeague = async ({
 	lid,
@@ -110,8 +122,10 @@ const preProcess = (
 	key: string,
 	x: any,
 	{
+		averagePopulation,
 		noStartingInjuries,
 	}: {
+		averagePopulation: number | undefined;
 		noStartingInjuries: boolean;
 	},
 ) => {
@@ -142,6 +156,14 @@ const preProcess = (
 				gamesRemaining: 0,
 			};
 		}
+	} else if (key === "scheduledEvents" && averagePopulation !== undefined) {
+		if (x.type === "expansionDraft") {
+			for (const t of x.info.teams) {
+				t.pop = averagePopulation;
+			}
+		} else if (x.type === "teamInfo" && x.info.pop !== undefined) {
+			x.info.pop = averagePopulation;
+		}
 	}
 
 	return [key, x];
@@ -151,19 +173,18 @@ const getSaveToDB = async ({
 	keys,
 	lid,
 	name,
-	noStartingInjuries,
+	preProcessParams,
 	tid,
 }: {
 	keys: Set<string>;
 	lid: number;
 	name: string;
-	noStartingInjuries: boolean;
+	preProcessParams: {
+		averagePopulation: number | undefined;
+		noStartingInjuries: boolean;
+	};
 	tid: number;
 }) => {
-	const preProcessParams = {
-		noStartingInjuries,
-	};
-
 	await addDummyLeague({
 		lid,
 		name,
@@ -172,9 +193,7 @@ const getSaveToDB = async ({
 
 	const buffer = new Buffer(keys);
 
-	const extraFromStream: {
-		version?: number;
-	} = {};
+	const extraFromStream: {} = {};
 
 	const writableStream = new WritableStream<{
 		key: string;
@@ -183,12 +202,10 @@ const getSaveToDB = async ({
 		async write(chunk, controller) {
 			const { key, value } = chunk;
 
-			if (key === "version") {
-				extraFromStream[key] = value;
-			} else if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
+			if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
 				// Currently skipped:
 				// - meta because it doesn't get written to DB
-				// - gameAttributes/startingSeason/teams because we already have it from basicInfo.
+				// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
 				return;
 			}
 
@@ -230,20 +247,26 @@ const finalizeStartingSeason = (
 
 type GameAttributeOverrides = Partial<Record<keyof GameAttributesLeague, any>>;
 
-const finalizeGameAttributes = ({
+const finalizeGameAttributes = async ({
+	conditions,
 	gameAttributes,
 	gameAttributeOverrides,
 	getLeagueOptions,
 	randomization,
 	startingSeason,
+	teamInfos,
 	tid,
+	version,
 }: {
+	conditions?: Conditions;
 	gameAttributes: any;
 	gameAttributeOverrides: GameAttributeOverrides;
 	getLeagueOptions: GetLeagueOptions | undefined;
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	startingSeason: number;
+	teamInfos: TeamInfo[];
 	tid: number;
+	version: number | undefined;
 }) => {
 	const finalized = {
 		...gameAttributes,
@@ -283,7 +306,19 @@ const finalizeGameAttributes = ({
 		];
 	}
 
-	return finalized;
+	// Also mutates teamInfos
+	const finalized2 = await createGameAttributes(
+		{
+			gameAttributesInput: finalized,
+			startingSeason,
+			teamInfos,
+			userTid: tid,
+			version,
+		},
+		conditions,
+	);
+
+	return finalized2;
 };
 
 const finalizeDB = async ({ tid }: { tid: number }) => {
@@ -311,12 +346,51 @@ const finalizeDB = async ({ tid }: { tid: number }) => {
 			],
 		});
 	}
+
+	if (gameAttributes.phase === PHASE.DRAFT && leagueFile.draftPicks) {
+		const currentDraftPicks = leagueFile.draftPicks.filter(
+			dp => dp.season === gameAttributes.season,
+		);
+		const draftNotStarted =
+			currentDraftPicks.every(dp => dp.round === 0) ||
+			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
+		if (draftNotStarted) {
+			const numDraftPicksCurrent = currentDraftPicks.length;
+			if (numDraftPicksCurrent > 0) {
+				gameAttributes.numDraftPicksCurrent = numDraftPicksCurrent;
+			}
+		}
+	}
+};
+
+const confirmSequential = (objs: any, key: string, objectName: string) => {
+	const values = new Set();
+
+	for (const obj of objs) {
+		const value = obj[key];
+
+		if (typeof value !== "number") {
+			throw new Error(`Missing or invalid ${key} for ${objectName}`);
+		}
+
+		values.add(value);
+	}
+
+	for (let i = 0; i < values.size; i++) {
+		if (!values.has(i)) {
+			throw new Error(
+				`${key} values must be sequential with no gaps starting from 0, but no ${objectName} has a value of ${i}`,
+			);
+		}
+	}
+
+	return values;
 };
 
 const createStream = async (
 	stream: ReadableStream,
 	{
-		startingSeasonFromInput,
+		conditions,
 		confs,
 		divs,
 		fromFile,
@@ -325,9 +399,11 @@ const createStream = async (
 		lid,
 		name,
 		settings,
+		startingSeasonFromInput,
 		teams, // use if none in file
 		tid,
 	}: {
+		conditions?: Conditions;
 		confs: Conf[];
 		divs: Div[];
 		fromFile: {
@@ -375,23 +451,48 @@ const createStream = async (
 		startingSeasonFromInput,
 	);
 
+	const teamInfos = helpers.addPopRank(fromFile.teams ?? teams);
+
+	// Validation of some identifiers
+	confirmSequential(teamInfos, "tid", "team");
+
 	const gameAttributes = await finalizeGameAttributes({
-		// Use gameAttributesFromFile in addition to gameAttributeOverrides because it preserves history and any non-standard settings
+		conditions,
+		// Use fromFile.gameAttributes in addition to gameAttributeOverrides because it preserves history and any non-standard settings
 		gameAttributes: fromFile.gameAttributes ?? {},
 		gameAttributeOverrides,
 		getLeagueOptions,
 		randomization,
 		startingSeason,
+		teamInfos,
 		tid,
+		version: fromFile.version,
 	});
 
-	const teamInfos = helpers.addPopRank(fromFile.teams ?? teams);
+	let averagePopulation: number | undefined;
+	if (gameAttributes.equalizeRegions) {
+		let totalPopulation = 0;
+		for (const t of teamInfos) {
+			totalPopulation += t.pop;
+		}
+
+		// Round to 2 digits
+		averagePopulation =
+			Math.round((totalPopulation / teamInfos.length) * 100) / 100;
+
+		for (const t of teamInfos) {
+			t.pop = averagePopulation;
+		}
+	}
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
 		lid,
 		name,
-		noStartingInjuries,
+		preProcessParams: {
+			averagePopulation,
+			noStartingInjuries,
+		},
 		tid,
 	});
 

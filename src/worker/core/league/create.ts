@@ -68,13 +68,6 @@ export const createWithoutSaving = async (
 	shuffleRosters: boolean,
 	conditions?: Conditions,
 ) => {
-	// Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
-	helpers.resetG();
-	Object.assign(g, gameAttributes);
-
-	// Needs to be done after g is set
-	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
-
 	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
 	let scoutingRankTemp;
 	const teamSeasons: TeamSeasonWithoutKey[] = [];

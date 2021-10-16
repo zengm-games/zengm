@@ -1,13 +1,15 @@
-import { season } from "..";
+import { season, team } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
 	Conf,
 	Div,
 	GameAttributesLeague,
+	GameAttributesLeagueWithHistory,
 	GetLeagueOptions,
 	League,
 	ScheduleGameWithoutKey,
+	Team,
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
@@ -335,9 +337,15 @@ const finalizeGameAttributes = async ({
 	return finalized2;
 };
 
-const finalizeDB = async () => {
+const finalizeDB = async ({
+	teams,
+	gameAttributes,
+}: {
+	teams: Team[];
+	gameAttributes: GameAttributesLeagueWithHistory;
+}) => {
 	const tx = idb.league.transaction(
-		["games", "schedule", "trade"],
+		["games", "gameAttributes", "schedule", "teams", "trade"],
 		"readwrite",
 	);
 
@@ -406,6 +414,16 @@ const finalizeDB = async () => {
 				await scheduleStore.put(game as any);
 			}
 		}
+	}
+
+	const teamsStore = tx.objectStore("teams");
+	for (const t of teams) {
+		await teamsStore.put(t);
+	}
+
+	const gameAttributesStore = tx.objectStore("gameAttributes");
+	for (const [key, value] of Object.entries(gameAttributes)) {
+		await gameAttributesStore.put({ key: key as any, value });
 	}
 };
 
@@ -531,6 +549,12 @@ const createStream = async (
 			t.pop = averagePopulation;
 		}
 	}
+	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
+	helpers.resetG();
+	Object.assign(g, gameAttributes);
+
+	// Needs to be done after g is set
+	const teams = teamInfos.map(t => team.generate(t));
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
@@ -546,7 +570,10 @@ const createStream = async (
 
 	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
 
-	await finalizeDB();
+	await finalizeDB({
+		gameAttributes,
+		teams,
+	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {

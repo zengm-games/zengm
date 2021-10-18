@@ -54,8 +54,7 @@ streaming import of league files
   - benchmark
   - queueing strategy highwatermark of various streams
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
-  - initKeptKeys does not need to accept leagueFile
-  - basicInfo probably does not need to be saved in state at all. file does need to be, though
+  - keys should be specified in separate prop, rather than as root of object.
 - browser support
   - firefox 65 for streams
   - firefox missing a lot (writable streams) so https://github.com/MattiasBuelens/web-streams-polyfill might be needed

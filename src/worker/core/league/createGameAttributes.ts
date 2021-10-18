@@ -14,7 +14,7 @@ import type {
 import { defaultGameAttributes, logEvent } from "../../util";
 import { wrap } from "../../util/g";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings";
-import type { LeagueFile, TeamInfo } from "./create";
+import type { TeamInfo } from "./createStream";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 const createGameAttributes = async (

@@ -122,18 +122,20 @@ class Buffer {
 	}
 
 	async flush() {
-		const transaction = idb.league.transaction(
-			Array.from(this.keys) as any,
-			"readwrite",
-		);
+		if (this.keys.size > 0) {
+			const transaction = idb.league.transaction(
+				Array.from(this.keys) as any,
+				"readwrite",
+			);
 
-		for (const row of this.rows) {
-			transaction.objectStore(row[0]).put(row[1]);
+			for (const row of this.rows) {
+				transaction.objectStore(row[0]).put(row[1]);
+			}
+
+			await transaction.done;
+
+			this.clear();
 		}
-
-		await transaction.done;
-
-		this.clear();
 	}
 }
 
@@ -244,7 +246,7 @@ const getSaveToDB = async ({
 
 	const extraFromStream: {
 		activePlayers: PlayerWithoutKey[];
-		hasEvents;
+		hasEvents: boolean;
 	} = {
 		activePlayers: [],
 		hasEvents: false,

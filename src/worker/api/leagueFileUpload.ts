@@ -12,7 +12,12 @@ const ajv = new Ajv({
 const validate = ajv.compile(schema);
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-export const CUMULATIVE_OBJECTS = new Set([
+type CumulativeObjects =
+	| "gameAttributes"
+	| "meta"
+	| "startingSeason"
+	| "version";
+export const CUMULATIVE_OBJECTS = new Set<CumulativeObjects>([
 	"gameAttributes",
 	"meta",
 	"startingSeason",
@@ -62,9 +67,21 @@ export const parseJSON = () => {
 	return transformStream;
 };
 
+export type BasicInfo = {
+	gameAttributes?: any;
+	meta?: any;
+	startingSeason?: number;
+	version?: number;
+	teams?: any[];
+	keys: Set<string>;
+	maxGid: number;
+	hasRookieContracts: boolean;
+};
+
 const getBasicInfo = async (stream: ReadableStream) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
-	const basicInfo: any = {
+	const basicInfo: BasicInfo = {
+		keys: new Set(),
 		maxGid: -1,
 		hasRookieContracts: false,
 	};
@@ -79,8 +96,10 @@ const getBasicInfo = async (stream: ReadableStream) => {
 
 		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
 
+		basicInfo.keys.add(value.key);
+
 		if (cumulative) {
-			basicInfo[value.key] = value.value;
+			(basicInfo as any)[value.key] = value.value;
 		} else if (value.key === "teams") {
 			if (!basicInfo.teams) {
 				basicInfo.teams = [];
@@ -109,11 +128,6 @@ const getBasicInfo = async (stream: ReadableStream) => {
 
 			basicInfo.teams.push(value.value);
 		} else {
-			// Everything else just store as an empty array, so it shows up in the "Use from selected league" list
-			if (!basicInfo[value.key]) {
-				basicInfo[value.key] = [];
-			}
-
 			// Need to store max gid from games, so generated schedule does not overwrite it
 			if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
 				basicInfo.maxGid = value.value.gid;

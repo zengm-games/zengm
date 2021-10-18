@@ -43,6 +43,7 @@ import type { LeagueInfo, NewLeagueTeam } from "./types";
 import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
+import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
 
 const animationVariants = {
 	visible: {
@@ -98,31 +99,15 @@ const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 );
 
 const initKeptKeys = ({
-	leagueFile,
 	newAllKeys,
 	oldKeptKeys,
 	oldAllKeys,
-}:
-	| {
-			leagueFile: any;
-			newAllKeys?: undefined;
-			oldKeptKeys?: string[];
-			oldAllKeys?: string[];
-	  }
-	| {
-			leagueFile?: undefined;
-			newAllKeys: string[];
-			oldKeptKeys?: string[];
-			oldAllKeys?: string[];
-	  }) => {
-	let allKeys;
-	if (newAllKeys) {
-		allKeys = newAllKeys;
-	} else {
-		allKeys = leagueFile
-			? Object.keys(leagueFile).filter(key => key !== "version")
-			: [];
-	}
+}: {
+	newAllKeys: string[];
+	oldKeptKeys?: string[];
+	oldAllKeys?: string[];
+}) => {
+	const allKeys = newAllKeys.filter(key => key !== "version");
 
 	let keptKeys;
 	if (!oldKeptKeys || !oldAllKeys) {
@@ -222,7 +207,7 @@ type State = {
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
 
-	basicInfo: Record<string, unknown> | undefined;
+	basicInfo: BasicInfo | undefined;
 	file: File | undefined;
 	legend: string;
 	loadingLeagueFile: boolean;
@@ -440,7 +425,7 @@ const reducer = (state: State, action: Action): State => {
 			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
 
 			const { allKeys, keptKeys } = initKeptKeys({
-				leagueFile: action.basicInfo,
+				newAllKeys: Array.from(action.basicInfo.keys),
 				oldKeptKeys: state.keptKeys,
 				oldAllKeys: state.allKeys,
 			});
@@ -570,7 +555,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
-				leagueFile: basicInfo,
+				newAllKeys: [],
 			});
 
 			return {

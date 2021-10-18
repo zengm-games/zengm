@@ -493,7 +493,7 @@ const finalizeDB = async ({
 	for (const [key, value] of Object.entries(gameAttributes)) {
 		await gameAttributesStore.put({ key: key as any, value });
 	}
-	// Use pre-generated players, filling in attributes as needed
+
 	if (shuffleRosters) {
 		const playersStore = tx.objectStore("players");
 
@@ -529,6 +529,8 @@ const finalizeDB = async ({
 			await playersStore.put(p);
 		}
 	}
+
+	createRandomPlayers(); // write to DB or in memory?
 };
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {

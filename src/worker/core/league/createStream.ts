@@ -922,9 +922,22 @@ const createStream = async (
 				teams,
 		  });
 
+	// Unless we got strategy from a league file, calculate it here
+	for (let i = 0; i < teams.length; i++) {
+		if (teamInfos[i].strategy === undefined) {
+			const teamPlayers = activePlayers
+				.filter(p => p.tid === i)
+				.map(p => ({
+					value: p.value,
+					ratings: p.ratings.at(-1),
+				}));
+			const ovr = team.ovr(teamPlayers);
+			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
+		}
+	}
+
 	// Write final versions of everything to the DB, except active players because some post-processing uses functions that read from the cache
 	await finalizeDBExceptPlayers({
-		activePlayers,
 		gameAttributes,
 		teamSeasons,
 		teamStats,

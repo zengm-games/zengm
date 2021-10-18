@@ -116,21 +116,6 @@ export const createWithoutSaving = async (
 			players = players.concat(draftClass);
 		}
 	}
-
-	// Unless we got strategy from a league file, calculate it here
-	for (let i = 0; i < teamInfos.length; i++) {
-		// @ts-ignore
-		if (teamInfos[i].strategy === undefined) {
-			const teamPlayers = players
-				.filter(p => p.tid === i)
-				.map(p => ({
-					value: p.value,
-					ratings: p.ratings.at(-1),
-				}));
-			const ovr = team.ovr(teamPlayers);
-			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
-		}
-	}
 };
 
 /**

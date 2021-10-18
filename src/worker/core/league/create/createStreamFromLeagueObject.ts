@@ -10,31 +10,41 @@ const createStreamFromLeagueObject = (
 
 	const readableStream = new ReadableStream({
 		pull(controller) {
-			const key = keys[i];
+			const emitOneRecord = () => {
+				const key = keys[i];
 
-			if (key === undefined) {
-				controller.close();
-			}
+				if (key === undefined) {
+					console.log("CLOSE");
+					controller.close();
+					return;
+				}
 
-			const object = leagueObject[key];
+				const object = leagueObject[key];
 
-			if (CUMULATIVE_OBJECTS.has(key)) {
-				controller.enqueue({
-					key,
-					value: object,
-				});
-			} else {
-				const row = (object as any)[j];
-				if (row !== undefined) {
+				if (CUMULATIVE_OBJECTS.has(key)) {
 					controller.enqueue({
 						key,
-						value: row,
+						value: object,
 					});
-				} else {
 					i += 1;
 					j = 0;
+				} else {
+					const row = (object as any)?.[j];
+					if (row !== undefined) {
+						controller.enqueue({
+							key,
+							value: row,
+						});
+						j += 1;
+					} else {
+						i += 1;
+						j = 0;
+						emitOneRecord();
+					}
 				}
-			}
+			};
+
+			emitOneRecord();
 		},
 	});
 

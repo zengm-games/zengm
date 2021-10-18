@@ -25,11 +25,11 @@ streaming import of league files
   - write object to database, not cache
   - special case for team stats/seasons
   - fill cache after writing all to database
-  - keep all active players in memory? either in basicInfo or extraFromStream?
-    - shuffle wouldn't need to hit db then, add back draft prospect exclusion
   - to revisit
     - userTid logic in league object
     - quota error mid create
+  - real players
+    - needs to include basicInfo
 - URLs from fetch
   - how's this gonna work? don't want to download twice...
     - put teams/gameAttributes/version/starting at top of JSON so it's faster to just read that part. move validation either to a separate button or to load time. do something about keptKeys.

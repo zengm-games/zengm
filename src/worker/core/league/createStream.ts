@@ -880,7 +880,7 @@ const createStream = async (
 		},
 	});
 
-	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
+	await stream.pipeTo(saveToDB);
 
 	if (shuffleRosters) {
 		// Assign the team ID of all players to the 'playerTids' array.

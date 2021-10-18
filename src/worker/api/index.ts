@@ -13,7 +13,7 @@ import {
 	gameAttributesArrayToObject,
 } from "../../common";
 import actions from "./actions";
-import leagueFileUpload from "./leagueFileUpload";
+import leagueFileUpload, { parseJSON } from "./leagueFileUpload";
 import processInputs from "./processInputs";
 import {
 	allStar,
@@ -115,6 +115,7 @@ import getRandomTeams from "./getRandomTeams";
 import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
 import type { PlayerRatings } from "../../common/types.basketball";
+import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -495,12 +496,13 @@ const createLeague = async (
 				throw new Error("Error finding tid");
 			}
 		}
-
-		leagueFileInput = realLeague;
+		stream = createStreamFromLeagueObject(realLeague);
 	} else if (file) {
-		stream = (file.stream() as unknown as ReadableStream).pipeThrough(
-			new TextDecoderStream(),
-		);
+		stream = (file.stream() as unknown as ReadableStream)
+			.pipeThrough(new TextDecoderStream())
+			.pipeThrough(parseJSON());
+	} else {
+		stream = createStreamFromLeagueObject({});
 	}
 
 	if (!stream) {

@@ -26,7 +26,7 @@ streaming import of league files
   - special case for team stats/seasons
   - fill cache after writing all to database
   - keep all active players in memory? either in basicInfo or extraFromStream?
-    - shuffle wouldn't need to hit db then
+    - shuffle wouldn't need to hit db then, add back draft prospect exclusion
   - to revisit
     - userTid logic in league object
     - quota error mid create

@@ -1,4 +1,4 @@
-import { draft, finances, player, season, team } from "..";
+import { draft, finances, freeAgents, league, player, season, team } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
@@ -9,7 +9,6 @@ import type {
 	GetLeagueOptions,
 	League,
 	PlayerWithoutKey,
-	ScheduleGameWithoutKey,
 	Team,
 	TeamBasic,
 	TeamSeasonWithoutKey,
@@ -17,11 +16,11 @@ import type {
 } from "../../../common/types";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS, parseJSON } from "../../api/leagueFileUpload";
-import { connectLeague, idb } from "../../db";
-import { helpers, random } from "../../util";
+import { Cache, connectLeague, idb } from "../../db";
+import { helpers, local, lock, random, toUI } from "../../util";
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
-import addDaysToSchedule from "../season/addDaysToSchedule";
+import createRandomPlayers from "./create/createRandomPlayers";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
 import remove from "./remove";
@@ -36,10 +35,12 @@ export type TeamInfo = TeamBasic & {
 const addDummyLeague = async ({
 	lid,
 	name,
+	teams,
 	tid,
 }: {
 	lid: number;
 	name: string;
+	teams: Team[];
 	tid: number;
 }) => {
 	// These values will be updated later. We just want to make sure there's something in the meta database first, so the league can be deleted from the normal UI if something goes wrong.
@@ -48,16 +49,16 @@ const addDummyLeague = async ({
 		name,
 		tid,
 		phaseText: "",
-		teamName: "",
-		teamRegion: "",
+		teamName: teams[tid].name,
+		teamRegion: teams[tid].region,
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
-		difficulty: 0,
+		difficulty: g.get("difficulty"),
 		created: new Date(),
 		lastPlayed: new Date(),
-		startingSeason: 0,
-		season: 0,
-		imgURL: undefined,
+		startingSeason: g.get("startingSeason"),
+		season: g.get("season"),
+		imgURL: teams[tid].imgURLSmall ?? teams[tid].imgURL,
 	};
 
 	// In case there was an old league with this lid, somehow
@@ -69,6 +70,7 @@ const addDummyLeague = async ({
 	}
 
 	await idb.meta.add("leagues", dummyLeague);
+
 	idb.league = await connectLeague(lid);
 };
 
@@ -215,33 +217,25 @@ const preProcess = async (
 		}
 	}
 
-	return [key, x];
+	return x;
 };
 
 const getSaveToDB = async ({
 	keys,
-	lid,
 	maxGid,
-	name,
 	preProcessParams,
-	tid,
 }: {
 	keys: Set<string>;
-	lid: number;
 	maxGid: number | undefined;
-	name: string;
 	preProcessParams: PreProcessParams;
-	tid: number;
 }) => {
-	await addDummyLeague({
-		lid,
-		name,
-		tid,
-	});
-
 	const buffer = new Buffer(keys);
 
-	const extraFromStream: Record<string, never> = {};
+	const extraFromStream: {
+		activePlayers: PlayerWithoutKey[];
+	} = {
+		activePlayers: [],
+	};
 
 	let currentScheduleGid = maxGid ?? -1;
 
@@ -265,11 +259,19 @@ const getSaveToDB = async ({
 				value.gid = currentScheduleGid;
 			}
 
-			const rows = await preProcess(key, value, preProcessParams);
+			const processed = await preProcess(key, value, preProcessParams);
 
-			buffer.addRows(rows);
-			if (buffer.isFull()) {
-				await buffer.flush();
+			if (
+				key === "players" &&
+				(processed.tid >= PLAYER.UNDRAFTED ||
+					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
+			) {
+				extraFromStream.activePlayers.push(processed);
+			} else {
+				buffer.addRows([key, processed]);
+				if (buffer.isFull()) {
+					await buffer.flush();
+				}
 			}
 		},
 
@@ -378,17 +380,13 @@ const finalizeGameAttributes = async ({
 	return finalized2;
 };
 
-const finalizeDB = async ({
-	activeTids,
+const finalizeDBExceptPlayers = async ({
 	gameAttributes,
-	shuffleRosters,
 	teamSeasons,
 	teamStats,
 	teams,
 }: {
-	activeTids: number[];
 	gameAttributes: GameAttributesLeagueWithHistory;
-	shuffleRosters: boolean;
 	teamSeasons: TeamSeasonWithoutKey[];
 	teamStats: TeamStatsWithoutKey[];
 	teams: Team[];
@@ -397,7 +395,6 @@ const finalizeDB = async ({
 		[
 			"games",
 			"gameAttributes",
-			"players",
 			"schedule",
 			"teamSeasons",
 			"teamStats",
@@ -493,44 +490,6 @@ const finalizeDB = async ({
 	for (const [key, value] of Object.entries(gameAttributes)) {
 		await gameAttributesStore.put({ key: key as any, value });
 	}
-
-	if (shuffleRosters) {
-		const playersStore = tx.objectStore("players");
-
-		// DO NOT INCLUDE DRAFT PROSPECTS
-		const activePlayers = await playersStore
-			.index("tid")
-			.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
-
-		const playerTids = [];
-		while (playerTids.length < activePlayers.length) {
-			// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
-			const shuffled = [...activeTids];
-			random.shuffle(shuffled);
-			playerTids.push(...shuffled);
-		}
-
-		for (let i = 0; i < activePlayers.length; i++) {
-			const p = activePlayers[i];
-			p.transactions = [];
-
-			p.tid = playerTids[i];
-
-			if (p.stats && p.stats.length > 0) {
-				p.stats.at(-1).tid = p.tid;
-
-				if (p.statsTids) {
-					p.statsTids.push(p.tid);
-				} else {
-					p.statsTids = [p.tid];
-				}
-			}
-
-			await playersStore.put(p);
-		}
-	}
-
-	createRandomPlayers(); // write to DB or in memory?
 };
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
@@ -677,6 +636,93 @@ const processTeamInfos = (teamInfos: any[], userTid: number) => {
 	};
 };
 
+const finalizeActivePlayers = async ({
+	activeTids,
+	fileHasPlayers,
+	playersInput,
+}: {
+	activeTids: number[];
+	fileHasPlayers: boolean;
+	playersInput: PlayerWithoutKey[];
+}) => {
+	// If no players were uploaded in custom league file, add some relatives!
+	if (!fileHasPlayers) {
+		const players0 = await idb.cache.players.getAll();
+		for (const p of players0) {
+			await player.addRelatives(p);
+		}
+	}
+
+	// A new loop, because addRelatives updates the database
+	const players1 = await idb.cache.players.getAll();
+	for (const p of players1) {
+		if (fileHasPlayers) {
+			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
+			if (p.tid >= 0 && p.stats.length > 0 && !p.stats.at(-1).jerseyNumber) {
+				p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+			}
+		}
+
+		await player.updateValues(p);
+		await idb.cache.players.put(p);
+	}
+
+	const pidsToNormalize = players1.filter(p => p.contract.temp).map(p => p.pid);
+	await freeAgents.normalizeContractDemands({
+		type: "newLeague",
+		pids: pidsToNormalize,
+	});
+
+	// WHY IS THIS NEEDED? Can't use players0 because the addRelatives call above might make a copy of a player object and write it to the cache, in which case the prior objects for those players in players0 will be stale.
+	const players = await idb.cache.players.getAll();
+
+	// Adjustment for hard cap - lower contracts for teams above cap
+	if (!fileHasPlayers && g.get("hardCap")) {
+		const teams = await idb.cache.teams.getAll();
+		for (const t of teams) {
+			if (t.disabled) {
+				continue;
+			}
+			const roster = players.filter(p => p.tid === t.tid);
+			let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
+
+			while (payroll > g.get("salaryCap")) {
+				let foundAny = false;
+
+				for (const p of roster) {
+					if (p.contract.amount >= g.get("minContract") + 50) {
+						p.contract.amount -= 50;
+						payroll -= 50;
+						foundAny = true;
+					}
+				}
+
+				if (!foundAny) {
+					throw new Error(
+						"Invalid combination of hardCap, salaryCap, and minContract",
+					);
+				}
+			}
+		}
+	}
+
+	for (const p of players) {
+		if (p.tid >= 0 && p.salaries.length === 0) {
+			player.setContract(p, p.contract, true);
+		}
+
+		if ((p as any).rookieContract) {
+			p.contract.rookie = true;
+			delete (p as any).rookieContract;
+		}
+
+		delete p.contract.temp;
+
+		// Maybe not needed, but let's be sure
+		await idb.cache.players.put(p);
+	}
+};
+
 const createStream = async (
 	stream: ReadableStream,
 	{
@@ -716,6 +762,10 @@ const createStream = async (
 		tid: number;
 	},
 ) => {
+	// These wouldn't be needed here, except the beforeView logic is fucked up
+	lock.reset();
+	local.reset();
+
 	// Single out all the weird settings that don't go directly into gameAttributes
 	const {
 		noStartingInjuries,
@@ -791,11 +841,16 @@ const createStream = async (
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
 
+	await addDummyLeague({
+		lid,
+		name,
+		teams,
+		tid,
+	});
+
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
-		lid,
 		maxGid: fromFile.maxGid,
-		name,
 		preProcessParams: {
 			activeTids,
 			averagePopulation,
@@ -804,24 +859,99 @@ const createStream = async (
 			scoutingRank,
 			version: fromFile.version,
 		},
-		tid,
 	});
 
 	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
 
-	await finalizeDB({
-		activeTids,
+	if (shuffleRosters) {
+		// Assign the team ID of all players to the 'playerTids' array.
+		// Check tid to prevent draft prospects from being swapped with established players
+		const numPlayersToShuffle = extraFromStream.activePlayers.filter(
+			p => p.tid > PLAYER.FREE_AGENT,
+		).length;
+
+		const playerTids = [];
+		while (playerTids.length < numPlayersToShuffle) {
+			// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
+			const shuffled = [...activeTids];
+			random.shuffle(shuffled);
+			playerTids.push(...shuffled);
+		}
+
+		for (const p of extraFromStream.activePlayers) {
+			p.transactions = [];
+
+			if (p.tid > PLAYER.FREE_AGENT) {
+				p.tid = playerTids.pop()!;
+
+				if (p.stats && p.stats.length > 0) {
+					p.stats.at(-1).tid = p.tid;
+
+					if (p.statsTids) {
+						p.statsTids.push(p.tid);
+					} else {
+						p.statsTids = [p.tid];
+					}
+				}
+			}
+		}
+	}
+
+	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
+	const activePlayers = fileHasPlayers
+		? extraFromStream.activePlayers
+		: await createRandomPlayers();
+
+	// Write final versions of everything to the DB, except active players because some post-processing uses functions that read from the cache
+	await finalizeDBExceptPlayers({
+		activePlayers,
 		gameAttributes,
-		shuffleRosters,
 		teamSeasons,
 		teamStats,
 		teams,
+	});
+
+	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
+	helpers.resetG();
+	g.setWithoutSavingToDB("lid", lid);
+	gameAttributes.lid = lid;
+	await toUI("resetLeague", []);
+
+	if (idb.cache) {
+		idb.cache.stopAutoFlush();
+	}
+
+	idb.cache = new Cache();
+	idb.cache.newLeague = true;
+	await idb.cache.fill(gameAttributes.season);
+
+	// Hack! Need to not include lid in the update here, because then it gets sent to the UI and is seen in Controller before the URL changes, which interferes with running beforeLeague when the first view in the new league is loaded. lol
+	const gameAttributesToUpdate: Partial<GameAttributesLeague> = {
+		...gameAttributes,
+	};
+	delete gameAttributesToUpdate.lid;
+
+	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
+	await league.setGameAttributes(gameAttributesToUpdate);
+
+	for (const p of activePlayers) {
+		await idb.cache.players.put(p);
+	}
+	await finalizeActivePlayers({
+		activeTids,
+		fileHasPlayers,
+		playersInput: activePlayers,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {
 		await initRepeatSeason();
 	}
+
+	await idb.cache.flush();
+	idb.cache.startAutoFlush();
+	local.leagueLoaded = true;
+	return lid;
 };
 
 export default createStream;

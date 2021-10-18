@@ -63,27 +63,11 @@ export const parseJSON = () => {
 };
 
 const getBasicInfo = async (stream: ReadableStream) => {
+	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
 	const basicInfo: any = {
 		maxGid: -1,
 		hasRookieContracts: false,
 	};
-
-	// Keep in sync with NewLeagueTeam
-	const BASIC_TEAM_KEYS = [
-		"tid",
-		"region",
-		"name",
-		"abbrev",
-		"stadiumCapacity",
-		"imgURL",
-		"imgURLSmall",
-		"colors",
-		"srID",
-		"disabled",
-		"jersey",
-		"cid",
-		"did",
-	];
 
 	const reader = await stream.pipeThrough(parseJSON()).getReader();
 

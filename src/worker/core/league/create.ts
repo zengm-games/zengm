@@ -157,57 +157,6 @@ const create = async (
 		realPlayers?: boolean;
 	},
 	conditions?: Conditions,
-): Promise<number> => {
-	const skipNewPhase = leagueFile.gameAttributes?.phase !== undefined;
-
-	if (!skipNewPhase || realPlayers) {
-		await updatePhase();
-		await updateStatus("Idle");
-
-		// Auto sort rosters
-		for (const t of leagueData.teams) {
-			let noRosterOrderSet = true;
-			if (isSport("basketball") && leagueFile.players) {
-				for (const p of leagueFile.players) {
-					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
-						noRosterOrderSet = false;
-						break;
-					}
-				}
-			}
-
-			// If league file has players, don't auto sort even if skipNewPhase is false
-			if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
-				await team.rosterAutoSort(t.tid);
-			}
-		}
-	}
-
-	if (g.get("phase") === PHASE.PLAYOFFS) {
-		await season.newSchedulePlayoffsDay();
-	}
-
-	await draft.genPicks({
-		realPlayers,
-	});
-
-	if (!leagueFile.events || leagueFile.events.length === 0) {
-		await logEvent({
-			text: "Welcome to your new league!",
-			type: "newLeague",
-			tids: [g.get("userTid")],
-			showNotification: false,
-			score: 20,
-		});
-	}
-
-	const teams = await idb.cache.teams.getAll();
-	for (const t of teams) {
-		if (!t.disabled && t.autoTicketPrice !== false) {
-			t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
-		}
-	}
-	await finances.updateRanks(["budget"]);
-};
+): Promise<number> => {};
 
 export default create;

@@ -1,5 +1,5 @@
 import { draft, finances, freeAgents, league, player, season, team } from "..";
-import { PHASE, PLAYER } from "../../../common";
+import { isSport, PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
 	Conf,
@@ -17,9 +17,19 @@ import type {
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS, parseJSON } from "../../api/leagueFileUpload";
 import { Cache, connectLeague, idb } from "../../db";
-import { helpers, local, lock, random, toUI } from "../../util";
+import {
+	helpers,
+	local,
+	lock,
+	logEvent,
+	random,
+	toUI,
+	updatePhase,
+	updateStatus,
+} from "../../util";
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
+import { getAutoTicketPriceByTid } from "../game/attendance";
 import createRandomPlayers from "./create/createRandomPlayers";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
@@ -233,8 +243,10 @@ const getSaveToDB = async ({
 
 	const extraFromStream: {
 		activePlayers: PlayerWithoutKey[];
+		hasEvents;
 	} = {
 		activePlayers: [],
+		hasEvents: false,
 	};
 
 	let currentScheduleGid = maxGid ?? -1;
@@ -257,6 +269,10 @@ const getSaveToDB = async ({
 			if (key === "schedule") {
 				currentScheduleGid += 1;
 				value.gid = currentScheduleGid;
+			}
+
+			if (key === "events") {
+				extraFromStream.hasEvents = true;
 			}
 
 			const processed = await preProcess(key, value, preProcessParams);
@@ -900,7 +916,11 @@ const createStream = async (
 	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
 	const activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
-		: await createRandomPlayers();
+		: await createRandomPlayers({
+				activeTids,
+				scoutingRank,
+				teams,
+		  });
 
 	// Write final versions of everything to the DB, except active players because some post-processing uses functions that read from the cache
 	await finalizeDBExceptPlayers({
@@ -947,6 +967,60 @@ const createStream = async (
 	if (repeatSeason && g.get("repeatSeason") === undefined) {
 		await initRepeatSeason();
 	}
+
+	const skipNewPhase = fromFile.gameAttributes?.phase !== undefined;
+	const realPlayers = !!getLeagueOptions;
+
+	if (!skipNewPhase || realPlayers) {
+		await updatePhase();
+		await updateStatus("Idle");
+
+		// Auto sort rosters
+		for (const t of teams) {
+			let noRosterOrderSet = true;
+			if (isSport("basketball") && fileHasPlayers) {
+				for (const p of activePlayers) {
+					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
+						noRosterOrderSet = false;
+						break;
+					}
+				}
+			}
+
+			// If league file has players, don't auto sort even if skipNewPhase is false
+			if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
+				await team.rosterAutoSort(t.tid);
+			}
+		}
+	}
+
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		await season.newSchedulePlayoffsDay();
+	}
+
+	await draft.genPicks({
+		realPlayers,
+	});
+
+	if (!extraFromStream.hasEvents) {
+		await logEvent({
+			text: "Welcome to your new league!",
+			type: "newLeague",
+			tids: [g.get("userTid")],
+			showNotification: false,
+			score: 20,
+		});
+	}
+
+	{
+		const teams = await idb.cache.teams.getAll();
+		for (const t of teams) {
+			if (!t.disabled && t.autoTicketPrice !== false) {
+				t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
+			}
+		}
+	}
+	await finances.updateRanks(["budget"]);
 
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();

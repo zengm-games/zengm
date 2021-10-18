@@ -15,7 +15,7 @@ import type {
 	TeamStatsWithoutKey,
 } from "../../../common/types";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
-import { CUMULATIVE_OBJECTS, parseJSON } from "../../api/leagueFileUpload";
+import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload";
 import { Cache, connectLeague, idb } from "../../db";
 import {
 	helpers,
@@ -850,6 +850,7 @@ const createStream = async (
 
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
 	helpers.resetG();
+	gameAttributes.lid = lid;
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
@@ -955,7 +956,6 @@ const createStream = async (
 	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
 	helpers.resetG();
 	g.setWithoutSavingToDB("lid", lid);
-	gameAttributes.lid = lid;
 	await toUI("resetLeague", []);
 
 	if (idb.cache) {
@@ -1046,7 +1046,6 @@ const createStream = async (
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
-	return lid;
 };
 
 export default createStream;

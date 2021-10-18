@@ -609,18 +609,6 @@ const createLeague = async (
 			gameAttributeOverrides.godModeInPast = true;
 		}
 	}
-
-	await league.create(
-		{
-			name,
-			tid: actualTid,
-			leagueFile,
-			shuffleRosters,
-			importLid,
-			realPlayers: !!getLeagueOptions,
-		},
-		conditions,
-	);
 };
 
 const deleteOldData = async (options: {

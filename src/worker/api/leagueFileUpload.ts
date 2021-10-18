@@ -65,6 +65,7 @@ export const parseJSON = () => {
 const getBasicInfo = async (stream: ReadableStream) => {
 	const basicInfo: any = {
 		maxGid: -1,
+		hasRookieContracts: false,
 	};
 
 	// Keep in sync with NewLeagueTeam
@@ -132,6 +133,10 @@ const getBasicInfo = async (stream: ReadableStream) => {
 			// Need to store max gid from games, so generated schedule does not overwrite it
 			if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
 				basicInfo.maxGid = value.value.gid;
+			}
+
+			if (value.key === "players" && value.value.contract?.rookie) {
+				basicInfo.hasRookieContracts = true;
 			}
 		}
 	}

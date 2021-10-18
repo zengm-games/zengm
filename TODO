@@ -25,6 +25,8 @@ streaming import of league files
   - write object to database, not cache
   - special case for team stats/seasons
   - fill cache after writing all to database
+  - keep all active players in memory? either in basicInfo or extraFromStream?
+    - shuffle wouldn't need to hit db then
   - to revisit
     - userTid logic in league object
     - quota error mid create
@@ -46,6 +48,8 @@ streaming import of league files
   - fix tests
     - teams is required param now
   - confirm regular season load does not result in schedule overwriting old box scores
+  - hasRookieContracts
+  - shuffle players
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams

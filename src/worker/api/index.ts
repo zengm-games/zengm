@@ -449,6 +449,7 @@ const createLeague = async (
 		settings: Omit<Settings, "numActiveTeams">;
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
+			hasRookieContracts: boolean | undefined;
 			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
@@ -518,6 +519,7 @@ const createLeague = async (
 		keys,
 		name,
 		settings,
+		shuffleRosters,
 		startingSeasonFromInput,
 		teamsFromInput,
 		tid: actualTid,

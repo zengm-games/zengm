@@ -1,4 +1,4 @@
-import { finances, season, team } from "..";
+import { draft, finances, player, season, team } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
@@ -8,6 +8,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	GetLeagueOptions,
 	League,
+	PlayerWithoutKey,
 	ScheduleGameWithoutKey,
 	Team,
 	TeamBasic,
@@ -17,7 +18,7 @@ import type {
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS, parseJSON } from "../../api/leagueFileUpload";
 import { connectLeague, idb } from "../../db";
-import { helpers } from "../../util";
+import { helpers, random } from "../../util";
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
 import addDaysToSchedule from "../season/addDaysToSchedule";
@@ -123,16 +124,26 @@ class Buffer {
 	}
 }
 
-const preProcess = (
+type PreProcessParams = {
+	activeTids: number[];
+	averagePopulation: number | undefined;
+	hasRookieContracts: boolean | undefined;
+	noStartingInjuries: boolean;
+	scoutingRank: number;
+	version: number | undefined;
+};
+
+const preProcess = async (
 	key: string,
 	x: any,
 	{
+		activeTids,
 		averagePopulation,
+		hasRookieContracts,
 		noStartingInjuries,
-	}: {
-		averagePopulation: number | undefined;
-		noStartingInjuries: boolean;
-	},
+		scoutingRank,
+		version,
+	}: PreProcessParams,
 ) => {
 	if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
@@ -155,12 +166,45 @@ const preProcess = (
 			}
 		}
 	} else if (key === "players") {
+		const p: PlayerWithoutKey = await player.augmentPartialPlayer(
+			{ ...x },
+			scoutingRank,
+			version,
+			true,
+		);
+		if (!x.contract) {
+			p.contract.temp = true;
+			if (!x.salaries) {
+				p.salaries = [];
+			}
+		}
+
+		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
+		if (
+			p.tid >= 0 &&
+			!g.get("hardCap") &&
+			(!x.contract || !hasRookieContracts)
+		) {
+			const rookieContractLength = draft.getRookieContractLength(p.draft.round);
+			const rookieContractExp = p.draft.year + rookieContractLength;
+
+			if (rookieContractExp >= g.get("season")) {
+				(p as any).rookieContract = true;
+			}
+		}
+
+		if (p.tid >= 0 && !activeTids.includes(p.tid)) {
+			p.tid = PLAYER.FREE_AGENT;
+		}
+
 		if (noStartingInjuries && x.injury) {
-			x.injury = {
+			p.injury = {
 				type: "Healthy",
 				gamesRemaining: 0,
 			};
 		}
+
+		x = p;
 	} else if (key === "scheduledEvents" && averagePopulation !== undefined) {
 		if (x.type === "expansionDraft") {
 			for (const t of x.info.teams) {
@@ -186,10 +230,7 @@ const getSaveToDB = async ({
 	lid: number;
 	maxGid: number | undefined;
 	name: string;
-	preProcessParams: {
-		averagePopulation: number | undefined;
-		noStartingInjuries: boolean;
-	};
+	preProcessParams: PreProcessParams;
 	tid: number;
 }) => {
 	await addDummyLeague({
@@ -224,7 +265,7 @@ const getSaveToDB = async ({
 				value.gid = currentScheduleGid;
 			}
 
-			const rows = preProcess(key, value, preProcessParams);
+			const rows = await preProcess(key, value, preProcessParams);
 
 			buffer.addRows(rows);
 			if (buffer.isFull()) {
@@ -338,20 +379,25 @@ const finalizeGameAttributes = async ({
 };
 
 const finalizeDB = async ({
+	activeTids,
+	gameAttributes,
+	shuffleRosters,
 	teamSeasons,
 	teamStats,
 	teams,
-	gameAttributes,
 }: {
+	activeTids: number[];
+	gameAttributes: GameAttributesLeagueWithHistory;
+	shuffleRosters: boolean;
 	teamSeasons: TeamSeasonWithoutKey[];
 	teamStats: TeamStatsWithoutKey[];
 	teams: Team[];
-	gameAttributes: GameAttributesLeagueWithHistory;
 }) => {
 	const tx = idb.league.transaction(
 		[
 			"games",
 			"gameAttributes",
+			"players",
 			"schedule",
 			"teamSeasons",
 			"teamStats",
@@ -446,6 +492,42 @@ const finalizeDB = async ({
 	const gameAttributesStore = tx.objectStore("gameAttributes");
 	for (const [key, value] of Object.entries(gameAttributes)) {
 		await gameAttributesStore.put({ key: key as any, value });
+	}
+	// Use pre-generated players, filling in attributes as needed
+	if (shuffleRosters) {
+		const playersStore = tx.objectStore("players");
+
+		// DO NOT INCLUDE DRAFT PROSPECTS
+		const activePlayers = await playersStore
+			.index("tid")
+			.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
+
+		const playerTids = [];
+		while (playerTids.length < activePlayers.length) {
+			// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
+			const shuffled = [...activeTids];
+			random.shuffle(shuffled);
+			playerTids.push(...shuffled);
+		}
+
+		for (let i = 0; i < activePlayers.length; i++) {
+			const p = activePlayers[i];
+			p.transactions = [];
+
+			p.tid = playerTids[i];
+
+			if (p.stats && p.stats.length > 0) {
+				p.stats.at(-1).tid = p.tid;
+
+				if (p.statsTids) {
+					p.statsTids.push(p.tid);
+				} else {
+					p.statsTids = [p.tid];
+				}
+			}
+
+			await playersStore.put(p);
+		}
 	}
 };
 
@@ -605,6 +687,7 @@ const createStream = async (
 		lid,
 		name,
 		settings,
+		shuffleRosters,
 		startingSeasonFromInput,
 		teamsFromInput, // use if none in file
 		tid,
@@ -614,6 +697,7 @@ const createStream = async (
 		divs: Div[];
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
+			hasRookieContracts: boolean | undefined;
 			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
@@ -624,6 +708,7 @@ const createStream = async (
 		lid: number;
 		name: string;
 		settings: Omit<Settings, "numActiveTeams">;
+		shuffleRosters: boolean;
 		startingSeasonFromInput: string | undefined;
 		teamsFromInput: NewLeagueTeam[];
 		tid: number;
@@ -691,6 +776,7 @@ const createStream = async (
 			t.pop = averagePopulation;
 		}
 	}
+
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
 	helpers.resetG();
 	Object.assign(g, gameAttributes);
@@ -701,14 +787,20 @@ const createStream = async (
 		tid,
 	);
 
+	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
+
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keys,
 		lid,
 		maxGid: fromFile.maxGid,
 		name,
 		preProcessParams: {
+			activeTids,
 			averagePopulation,
+			hasRookieContracts: fromFile.hasRookieContracts,
 			noStartingInjuries,
+			scoutingRank,
+			version: fromFile.version,
 		},
 		tid,
 	});
@@ -716,7 +808,9 @@ const createStream = async (
 	await stream.pipeThrough(parseJSON()).pipeTo(saveToDB);
 
 	await finalizeDB({
+		activeTids,
 		gameAttributes,
+		shuffleRosters,
 		teamSeasons,
 		teamStats,
 		teams,

@@ -30,6 +30,7 @@ import {
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
 import { getAutoTicketPriceByTid } from "../game/attendance";
+import addDraftProspects from "./create/addDraftProspects";
 import createRandomPlayers from "./create/createRandomPlayers";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
@@ -921,6 +922,11 @@ const createStream = async (
 				scoutingRank,
 				teams,
 		  });
+
+	await addDraftProspects({
+		players: activePlayers,
+		scoutingRank,
+	});
 
 	// Unless we got strategy from a league file, calculate it here
 	for (let i = 0; i < teams.length; i++) {

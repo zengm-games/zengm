@@ -14,6 +14,7 @@ import {
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
+	MAX_SUPPORTED_LEAGUE_VERSION,
 } from "../../../common";
 import { ActionButton, NextPrevButtons, PopText } from "../../components";
 import LeagueFileUpload, {
@@ -207,7 +208,8 @@ type State = {
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
 
-	basicInfo: BasicInfo | undefined;
+	// No "keys" in BasicInfo because we don't use it for anything, so why fake it for situations it doesn't exist, like real players leagues
+	basicInfo: Omit<BasicInfo, "keys"> | undefined;
 	file: File | undefined;
 	legend: string;
 	loadingLeagueFile: boolean;
@@ -271,7 +273,7 @@ type Action =
 	  }
 	| {
 			type: "newLeagueFile";
-			basicInfo: any;
+			basicInfo: BasicInfo;
 			file: File;
 			teams: NewLeagueTeam[];
 			defaultSettings: State["settings"];
@@ -282,6 +284,7 @@ type Action =
 			teams: NewLeagueTeam[];
 			gameAttributes: Record<string, unknown>;
 			defaultSettings: State["settings"];
+			startingSeason: number;
 	  }
 	| {
 			type: "toggleExpandOptions";
@@ -488,7 +491,14 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				loadingLeagueFile: false,
-				basicInfo: undefined,
+				basicInfo: {
+					gameAttributes: action.gameAttributes,
+					maxGid: -1,
+					hasRookieContracts: true,
+					startingSeason: action.startingSeason,
+					teams: action.teams,
+					version: MAX_SUPPORTED_LEAGUE_VERSION,
+				},
 				file: undefined,
 				allKeys,
 				keptKeys,
@@ -792,6 +802,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			),
 			gameAttributes: leagueInfo.gameAttributes,
 			defaultSettings: props.defaultSettings,
+			startingSeason: leagueInfo.startingSeason,
 		});
 	};
 

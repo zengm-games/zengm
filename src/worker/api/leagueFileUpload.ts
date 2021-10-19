@@ -1,23 +1,13 @@
-import Ajv from "ajv";
+import Ajv, { ValidateFunction } from "ajv";
 import JSONParserText from "./JSONParserText";
 
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
-
-const ajv = new Ajv({
-	allErrors: true,
-	verbose: true,
-});
-const validate = ajv.compile(schema);
+import { helpers } from "../util";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-type CumulativeObjects =
-	| "gameAttributes"
-	| "meta"
-	| "startingSeason"
-	| "version";
-export const CUMULATIVE_OBJECTS = new Set<CumulativeObjects>([
+export const CUMULATIVE_OBJECTS = new Set([
 	"gameAttributes",
 	"meta",
 	"startingSeason",
@@ -67,6 +57,49 @@ export const parseJSON = () => {
 	return transformStream;
 };
 
+// We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
+const makeValidators = () => {
+	const ajv = new Ajv({
+		allErrors: true,
+		verbose: true,
+	});
+
+	const validators: Record<string, ValidateFunction> = {};
+
+	const baseSchema = {
+		$schema: schema.$schema,
+		$id: schema.$id,
+
+		// Used in some parts
+		definitions: schema.definitions,
+
+		// These don't matter
+		title: "",
+		description: "",
+	};
+
+	const parts = helpers.keys(schema.properties);
+
+	for (const part of parts) {
+		const cumulative = CUMULATIVE_OBJECTS.has(part);
+
+		const subset = cumulative
+			? schema.properties[part]
+			: (schema.properties[part] as any).items;
+
+		const partSchema = {
+			...baseSchema,
+			$id: `${baseSchema.$id}#${part}`,
+			...subset,
+		};
+		validators[part] = ajv.compile(partSchema);
+	}
+
+	return validators;
+};
+
+let validators: ReturnType<typeof makeValidators> | undefined;
+
 export type BasicInfo = {
 	gameAttributes?: any;
 	meta?: any;
@@ -86,6 +119,12 @@ const getBasicInfo = async (stream: ReadableStream) => {
 		hasRookieContracts: false,
 	};
 
+	if (!validators) {
+		validators = makeValidators();
+	}
+
+	const schemaErrors = [];
+
 	const reader = await stream.pipeThrough(parseJSON()).getReader();
 
 	while (true) {
@@ -97,6 +136,14 @@ const getBasicInfo = async (stream: ReadableStream) => {
 		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
 
 		basicInfo.keys.add(value.key);
+
+		if (validators[value.key]) {
+			const validate = validators[value.key];
+			validate(value.value);
+			if (validate.errors) {
+				schemaErrors.push(...validate.errors);
+			}
+		}
 
 		if (cumulative) {
 			(basicInfo as any)[value.key] = value.value;
@@ -139,7 +186,7 @@ const getBasicInfo = async (stream: ReadableStream) => {
 		}
 	}
 
-	return basicInfo;
+	return { basicInfo, schemaErrors };
 };
 
 const initialCheck = async (file: File | string) => {
@@ -163,13 +210,10 @@ const initialCheck = async (file: File | string) => {
 
 	const stream2 = stream.pipeThrough(new TextDecoderStream());
 	console.timeLog("initialCheck");
-	const basicInfo = await getBasicInfo(stream2);
+	const { basicInfo, schemaErrors } = await getBasicInfo(stream2);
 	console.timeLog("initialCheck");
 
 	console.log("basicInfo", basicInfo);
-
-	validate(basicInfo);
-	const schemaErrors = validate.errors ?? [];
 
 	return {
 		basicInfo,

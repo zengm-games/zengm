@@ -19,7 +19,6 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 streaming import of league files
 - consume stream
   - refactor createStream
-- schema check on all objects in getBasicInfo
 - other uses of LeagueFileUpload?
 - test
   - make sure only one version of ajv and LeagueFileUpload included in bundle

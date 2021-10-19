@@ -100,7 +100,6 @@ import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
-import { wrap } from "../util/g";
 import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 import { types } from "../../common/transactionInfo";
@@ -450,7 +449,7 @@ const createLeague = async (
 		settings: Omit<Settings, "numActiveTeams">;
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
-			hasRookieContracts: boolean | undefined;
+			hasRookieContracts: boolean;
 			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
@@ -528,66 +527,6 @@ const createLeague = async (
 	});
 
 	return lid;
-
-	if (leagueFile.players) {
-		const realPlayerPhotos = (await idb.meta.get(
-			"attributes",
-			"realPlayerPhotos",
-		)) as RealPlayerPhotos | undefined;
-		if (realPlayerPhotos) {
-			for (const p of leagueFile.players) {
-				if (p.srID) {
-					if (realPlayerPhotos[p.srID]) {
-						p.imgURL = realPlayerPhotos[p.srID];
-					} else {
-						const name = p.name ?? `${p.firstName} ${p.lastName}`;
-
-						// Keep in sync with bbgm-rosters
-						const key = `dp_${p.draft.year}_${name
-							.replace(/ /g, "_")
-							.toLowerCase()}`;
-						p.imgURL = realPlayerPhotos[key];
-					}
-				}
-			}
-		}
-	}
-
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
-	if (realTeamInfo) {
-		const currentSeason =
-			leagueFile.gameAttributes?.season ?? leagueFile.startingSeason;
-
-		if (leagueFile.teams) {
-			for (const t of leagueFile.teams) {
-				applyRealTeamInfo(t, realTeamInfo, currentSeason);
-
-				// This is especially needed for new real players leagues started after the regular season. Arguably makes sense to always do, for consistency, since applyRealTeamInfo will override the current logos anyway, might as well do the historical ones too. But let's be careful.
-				if (getLeagueOptions && t.seasons) {
-					for (const teamSeason of t.seasons) {
-						applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
-							srIDOverride: teamSeason.srID ?? t.srID,
-						});
-					}
-				}
-			}
-		}
-
-		// This is not really needed, since applyRealTeamInfo is called again in processScheduledEvents. It's just to make it look more normal in the database, for when I eventually build a GUI editor for scheduled events.
-		if (leagueFile.scheduledEvents) {
-			for (const event of leagueFile.scheduledEvents) {
-				if (event.type === "expansionDraft") {
-					for (const t of event.info.teams) {
-						applyRealTeamInfo(t, realTeamInfo, event.season);
-					}
-				} else if (event.type === "teamInfo") {
-					applyRealTeamInfo(event.info, realTeamInfo, event.season);
-				}
-			}
-		}
-	}
 
 	// Check if we need to set godModeInPast because some custom teams are too powerful
 	if (!file && !url) {

@@ -1,5 +1,5 @@
 import { draft, finances, freeAgents, league, player, season, team } from "..";
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { applyRealTeamInfo, isSport, PHASE, PLAYER } from "../../../common";
 import type {
 	Conditions,
 	Conf,
@@ -9,6 +9,8 @@ import type {
 	GetLeagueOptions,
 	League,
 	PlayerWithoutKey,
+	RealPlayerPhotos,
+	RealTeamInfo,
 	Team,
 	TeamBasic,
 	TeamSeasonWithoutKey,
@@ -32,6 +34,7 @@ import type { Settings } from "../../views/settings";
 import { getAutoTicketPriceByTid } from "../game/attendance";
 import addDraftProspects from "./create/addDraftProspects";
 import createRandomPlayers from "./create/createRandomPlayers";
+import getRealTeamPlayerData from "./create/getRealTeamPlayerData";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
 import remove from "./remove";
@@ -144,6 +147,8 @@ type PreProcessParams = {
 	averagePopulation: number | undefined;
 	hasRookieContracts: boolean | undefined;
 	noStartingInjuries: boolean;
+	realPlayerPhotos: RealPlayerPhotos | undefined;
+	realTeamInfo: RealTeamInfo | undefined;
 	scoutingRank: number;
 	version: number | undefined;
 };
@@ -156,6 +161,8 @@ const preProcess = async (
 		averagePopulation,
 		hasRookieContracts,
 		noStartingInjuries,
+		realPlayerPhotos,
+		realTeamInfo,
 		scoutingRank,
 		version,
 	}: PreProcessParams,
@@ -181,6 +188,23 @@ const preProcess = async (
 			}
 		}
 	} else if (key === "players") {
+		if (realPlayerPhotos) {
+			// Do this before augment so it doesn't need to create a face
+			if (x.srID) {
+				if (realPlayerPhotos[x.srID]) {
+					x.imgURL = realPlayerPhotos[x.srID];
+				} else {
+					const name = x.name ?? `${x.firstName} ${x.lastName}`;
+
+					// Keep in sync with bbgm-rosters
+					const key = `dp_${x.draft.year}_${name
+						.replace(/ /g, "_")
+						.toLowerCase()}`;
+					x.imgURL = realPlayerPhotos[key];
+				}
+			}
+		}
+
 		const p: PlayerWithoutKey = await player.augmentPartialPlayer(
 			{ ...x },
 			scoutingRank,
@@ -227,6 +251,17 @@ const preProcess = async (
 			}
 		} else if (x.type === "teamInfo" && x.info.pop !== undefined) {
 			x.info.pop = averagePopulation;
+		}
+
+		// This is not really needed, since applyRealTeamInfo is called again in processScheduledEvents. It's just to make it look more normal in the database, for when I eventually build a GUI editor for scheduled events.
+		if (realTeamInfo) {
+			if (x.type === "expansionDraft") {
+				for (const t of x.info.teams) {
+					applyRealTeamInfo(t, realTeamInfo, x.season);
+				}
+			} else if (x.type === "teamInfo") {
+				applyRealTeamInfo(x.info, realTeamInfo, x.season);
+			}
 		}
 	}
 
@@ -535,7 +570,32 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 	return values;
 };
 
-const processTeamInfos = (teamInfos: any[], userTid: number) => {
+const processTeamInfos = ({
+	realTeamInfo,
+	season,
+	teamInfos,
+	userTid,
+}: {
+	realTeamInfo: RealTeamInfo | undefined;
+	season: number;
+	teamInfos: any[];
+	userTid: number;
+}) => {
+	if (realTeamInfo) {
+		for (const t of teamInfos) {
+			applyRealTeamInfo(t, realTeamInfo, season);
+
+			// This is especially needed for new real players leagues started after the regular season. Arguably makes sense to always do, for consistency, since applyRealTeamInfo will override the current logos anyway, might as well do the historical ones too. But let's be careful.
+			if (t.seasons) {
+				for (const teamSeason of t.seasons) {
+					applyRealTeamInfo(teamSeason, realTeamInfo, teamSeason.season, {
+						srIDOverride: teamSeason.srID ?? t.srID,
+					});
+				}
+			}
+		}
+	}
+
 	const teams = teamInfos.map(t => team.generate(t));
 
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
@@ -848,16 +908,23 @@ const createStream = async (
 		}
 	}
 
+	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
+		fileHasPlayers: keys.has("players"),
+		fileHasTeams: !!fromFile.teams,
+	});
+
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
 	helpers.resetG();
 	gameAttributes.lid = lid;
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
-	const { scoutingRank, teams, teamSeasons, teamStats } = processTeamInfos(
+	const { scoutingRank, teams, teamSeasons, teamStats } = processTeamInfos({
+		realTeamInfo,
+		season: gameAttributes.season,
 		teamInfos,
 		tid,
-	);
+	});
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
 
@@ -876,6 +943,8 @@ const createStream = async (
 			averagePopulation,
 			hasRookieContracts: fromFile.hasRookieContracts,
 			noStartingInjuries,
+			realPlayerPhotos,
+			realTeamInfo,
 			scoutingRank,
 			version: fromFile.version,
 		},

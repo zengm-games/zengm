@@ -18,9 +18,7 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 
 streaming import of league files
 - consume stream
-  - to revisit
-    - userTid logic in league object
-    - quota error mid create
+  - refactor createStream
 - URLs from fetch
   - how's this gonna work? don't want to download twice...
     - put teams/gameAttributes/version/starting at top of JSON so it's faster to just read that part. move validation either to a separate button or to load time. do something about keptKeys.
@@ -38,7 +36,9 @@ streaming import of league files
     - teams is required param now
   - confirm regular season load does not result in schedule overwriting old box scores
   - hasRookieContracts
-  - shuffle players
+  - quota error mid create
+  - real player overrides
+  - real team overrides
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams

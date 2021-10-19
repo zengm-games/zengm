@@ -292,7 +292,7 @@ const getSaveToDB = async ({
 		key: string;
 		value: any;
 	}>({
-		async write(chunk, controller) {
+		async write(chunk) {
 			const { key, value } = chunk;
 
 			if (CUMULATIVE_OBJECTS.has(key as any) || key === "teams") {
@@ -726,13 +726,9 @@ const processTeamInfos = ({
 };
 
 const finalizeActivePlayers = async ({
-	activeTids,
 	fileHasPlayers,
-	playersInput,
 }: {
-	activeTids: number[];
 	fileHasPlayers: boolean;
-	playersInput: PlayerWithoutKey[];
 }) => {
 	// If no players were uploaded in custom league file, add some relatives!
 	if (!fileHasPlayers) {
@@ -1070,9 +1066,7 @@ const createStream = async (
 		await idb.cache.players.put(p);
 	}
 	await finalizeActivePlayers({
-		activeTids,
 		fileHasPlayers,
-		playersInput: activePlayers,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created

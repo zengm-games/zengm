@@ -142,9 +142,23 @@ const getBasicInfo = async (stream: ReadableStream) => {
 	return basicInfo;
 };
 
-const initialCheck = async (file: File) => {
+const initialCheck = async (file: File | string) => {
 	console.time("initialCheck");
-	const stream = file.stream() as unknown as ReadableStream;
+	let stream: ReadableStream;
+	if (typeof file === "string") {
+		let response;
+		try {
+			response = await fetch(file);
+		} catch (error) {
+			throw new Error(
+				"Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
+			);
+		}
+
+		stream = response.body as unknown as ReadableStream;
+	} else {
+		stream = file.stream() as unknown as ReadableStream;
+	}
 	console.timeLog("initialCheck");
 
 	const stream2 = stream.pipeThrough(new TextDecoderStream());

@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
-import { useCallback, useState, useReducer } from "react";
+import { useState, useReducer } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -211,6 +211,7 @@ type State = {
 	// No "keys" in BasicInfo because we don't use it for anything, so why fake it for situations it doesn't exist, like real players leagues
 	basicInfo: Omit<BasicInfo, "keys"> | undefined;
 	file: File | undefined;
+	url: string | undefined;
 	legend: string;
 	loadingLeagueFile: boolean;
 	teams: NewLeagueTeam[];
@@ -274,7 +275,8 @@ type Action =
 	| {
 			type: "newLeagueFile";
 			basicInfo: BasicInfo;
-			file: File;
+			file: File | undefined;
+			url: string | undefined;
 			teams: NewLeagueTeam[];
 			defaultSettings: State["settings"];
 	  }
@@ -355,6 +357,7 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				basicInfo: undefined,
 				file: undefined,
+				url: undefined,
 				loadingLeagueFile: false,
 				keptKeys: [],
 				teams: teamsDefault,
@@ -455,6 +458,7 @@ const reducer = (state: State, action: Action): State => {
 				loadingLeagueFile: false,
 				basicInfo: action.basicInfo,
 				file: action.file,
+				url: action.url,
 				allKeys,
 				keptKeys,
 				confs,
@@ -500,6 +504,7 @@ const reducer = (state: State, action: Action): State => {
 					version: MAX_SUPPORTED_LEAGUE_VERSION,
 				},
 				file: undefined,
+				url: undefined,
 				allKeys,
 				keptKeys,
 				confs,
@@ -577,6 +582,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				phase,
 				basicInfo,
 				file: undefined,
+				url: undefined,
 				loadingLeagueFile: false,
 				teams: teamsDefault,
 				confs: DEFAULT_CONFS,
@@ -669,6 +675,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				name,
 				tid: state.tid,
 				file: state.file,
+				url: state.url,
 				keptKeys: state.keptKeys,
 				shuffleRosters: actualShuffleRosters,
 				importLid: props.lid,
@@ -727,7 +734,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			return;
 		}
 
-		const { basicInfo, file } = output!;
+		const { basicInfo, file, url } = output!;
 
 		let newTeams = helpers.deepCopy(basicInfo.teams);
 		if (newTeams) {
@@ -765,6 +772,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			type: "newLeagueFile",
 			basicInfo,
 			file,
+			url,
 			teams: applyRealTeamInfos(
 				newTeams,
 				props.realTeamInfo,
@@ -904,7 +912,8 @@ const NewLeague = (props: View<"newLeague">) => {
 	const disableWhileLoadingLeagueFile =
 		((state.customize === "custom-rosters" ||
 			state.customize === "custom-url") &&
-			(state.file === undefined || state.loadingLeagueFile)) ||
+			((state.file === undefined && state.url === undefined) ||
+				state.loadingLeagueFile)) ||
 		((state.customize === "real" || state.customize === "legends") &&
 			state.pendingInitialLeagueInfo);
 	const showLoadingIndicator =

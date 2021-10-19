@@ -102,17 +102,15 @@ class Buffer {
 		this.rows = [];
 	}
 
-	addRows(rows: [string, any][]) {
-		for (const row of rows) {
-			const key = row[0];
+	addRow(row: [string, any]) {
+		const key = row[0];
 
-			if (!this.keptKeys.has(key)) {
-				return;
-			}
-
-			this.keys.add(key);
-			this.rows.push(row);
+		if (!this.keptKeys.has(key)) {
+			return;
 		}
+
+		this.keys.add(key);
+		this.rows.push(row);
 	}
 
 	private clear() {
@@ -296,7 +294,7 @@ const getSaveToDB = async ({
 		async write(chunk, controller) {
 			const { key, value } = chunk;
 
-			if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
+			if (CUMULATIVE_OBJECTS.has(key as any) || key === "teams") {
 				// Currently skipped:
 				// - meta because it doesn't get written to DB
 				// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
@@ -322,7 +320,7 @@ const getSaveToDB = async ({
 			) {
 				extraFromStream.activePlayers.push(processed);
 			} else {
-				buffer.addRows([key, processed]);
+				buffer.addRow([key, processed]);
 				if (buffer.isFull()) {
 					await buffer.flush();
 				}
@@ -923,7 +921,7 @@ const createStream = async (
 		realTeamInfo,
 		season: gameAttributes.season,
 		teamInfos,
-		tid,
+		userTid: tid,
 	});
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);

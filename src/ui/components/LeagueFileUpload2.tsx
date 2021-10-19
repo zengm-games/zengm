@@ -44,7 +44,8 @@ const styleStatus = {
 
 export type LeagueFileUploadOutput = {
 	basicInfo: any;
-	file: File;
+	file?: File;
+	url?: string;
 };
 
 export type LeagueFileUploadProps = {
@@ -59,7 +60,7 @@ export type LeagueFileUploadProps = {
 type State = {
 	error: Error | null;
 	schemaErrors: any[];
-	status: "initial" | "loading" | "checking" | "error" | "done";
+	status: "initial" | "checking" | "error" | "done";
 };
 
 const initialState: State = {
@@ -75,13 +76,6 @@ const reducer = (state: State, action: any): State => {
 				error: null,
 				schemaErrors: [],
 				status: "initial",
-			};
-
-		case "loading":
-			return {
-				error: null,
-				schemaErrors: [],
-				status: "loading",
 			};
 
 		case "schemaErrors":
@@ -142,6 +136,7 @@ const LeagueFileUpload = ({
 		basicInfo,
 		file,
 		schemaErrors,
+		url,
 	}: LeagueFileUploadOutput & {
 		schemaErrors: any[];
 	}) => {
@@ -178,6 +173,7 @@ const LeagueFileUpload = ({
 			await onDone(null, {
 				basicInfo,
 				file,
+				url,
 			});
 		} catch (error) {
 			if (isMounted) {
@@ -199,53 +195,36 @@ const LeagueFileUpload = ({
 
 	const handleFileURL = async (event: MouseEvent) => {
 		event.preventDefault();
-		throw new Error("Not implemented");
-		/*
-		dispatch({
-			type: "loading",
-		});
 
 		beforeFile();
-        let leagueFile;
-        let response;
 
-        try {
-            response = await fetch(url);
-        } catch (_) {
-            const error = new Error(
-                "Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
-            );
+		dispatch({
+			type: "checking",
+		});
 
-            if (isMounted) {
-                dispatch({
-                    type: "error",
-                    error,
-                });
-                onDone(error);
-            }
+		try {
+			const { basicInfo, schemaErrors } = await toWorker(
+				"leagueFileUpload",
+				"initialCheck",
+				url,
+			);
 
-            return;
-        }
+			await afterCheck({
+				basicInfo,
+				schemaErrors,
+				url,
+			});
+		} catch (error) {
+			if (isMounted) {
+				dispatch({
+					type: "error",
+					error,
+				});
+				onDone(error);
+			}
 
-        dispatch({
-            type: "checking",
-        });
-
-        try {
-            leagueFile = await response.json();
-        } catch (error) {
-            if (isMounted) {
-                dispatch({
-                    type: "error",
-                    error,
-                });
-                onDone(error);
-            }
-
-            return;
-        }
-
-        await afterCheck(leagueFile);*/
+			return;
+		}
 	};
 
 	const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -307,11 +286,7 @@ const LeagueFileUpload = ({
 						<button
 							className="btn btn-secondary"
 							onClick={handleFileURL}
-							disabled={
-								disabled ||
-								state.status === "loading" ||
-								state.status === "checking"
-							}
+							disabled={disabled || state.status === "checking"}
 						>
 							Load
 						</button>
@@ -322,11 +297,7 @@ const LeagueFileUpload = ({
 					type="file"
 					onClick={resetFileInput}
 					onChange={handleFileUpload}
-					disabled={
-						disabled ||
-						state.status === "loading" ||
-						state.status === "checking"
-					}
+					disabled={disabled || state.status === "checking"}
 				/>
 			)}
 			<div style={styleStatus}>
@@ -347,9 +318,6 @@ const LeagueFileUpload = ({
 						for more information. You can still use this file, but these errors
 						may cause bugs.
 					</p>
-				) : null}
-				{state.status === "loading" ? (
-					<p className="alert alert-info mt-3">Loading league file...</p>
 				) : null}
 				{state.status === "checking" ? (
 					<p className="alert alert-info mt-3">Checking league file...</p>

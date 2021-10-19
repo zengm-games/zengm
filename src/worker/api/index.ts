@@ -425,6 +425,7 @@ const createLeague = async (
 		name,
 		tid,
 		file,
+		url,
 		shuffleRosters,
 		importLid,
 		getLeagueOptions,
@@ -439,6 +440,7 @@ const createLeague = async (
 		name: string;
 		tid: number;
 		file: File | undefined;
+		url: string | undefined;
 		shuffleRosters: boolean;
 		importLid: number | undefined | null;
 		getLeagueOptions: GetLeagueOptions | undefined;
@@ -496,8 +498,16 @@ const createLeague = async (
 			}
 		}
 		stream = createStreamFromLeagueObject(realLeague);
-	} else if (file) {
-		stream = (file.stream() as unknown as ReadableStream)
+	} else if (file || url) {
+		let baseStream: ReadableStream;
+		if (file) {
+			baseStream = file.stream() as unknown as ReadableStream;
+		} else {
+			const response = await fetch(url!);
+			baseStream = response.body as ReadableStream;
+		}
+
+		stream = baseStream
 			.pipeThrough(new TextDecoderStream())
 			.pipeThrough(parseJSON());
 	} else {

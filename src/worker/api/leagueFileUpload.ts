@@ -4,7 +4,7 @@ import JSONParserText from "./JSONParserText";
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
-import { helpers } from "../util";
+import { helpers, toPolyfillReadable, toPolyfillTransform } from "../util";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([
@@ -220,7 +220,9 @@ const initialCheck = async (
 	}
 	console.timeLog("initialCheck");
 
-	const stream2 = stream.pipeThrough(new TextDecoderStream());
+	const stream2 = toPolyfillReadable(stream).pipeThrough(
+		toPolyfillTransform(new TextDecoderStream()),
+	);
 	console.timeLog("initialCheck");
 	const { basicInfo, schemaErrors } = await getBasicInfo(
 		stream2,

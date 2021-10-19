@@ -54,6 +54,8 @@ import {
 	newLeagueGodModeLimits,
 	loadNames,
 	defaultInjuries,
+	toPolyfillReadable,
+	toPolyfillTransform,
 } from "../util";
 import views from "../views";
 import type {
@@ -504,8 +506,8 @@ const createLeague = async (
 			baseStream = response.body as ReadableStream;
 		}
 
-		stream = baseStream
-			.pipeThrough(new TextDecoderStream())
+		stream = toPolyfillReadable(baseStream)
+			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
 			.pipeThrough(parseJSON());
 	} else {
 		stream = createStreamFromLeagueObject({});

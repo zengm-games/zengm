@@ -36,12 +36,9 @@ streaming import of league files
 - release jsonparse-web as standalone package
   - mention setting value to undefined in readme
 - browser support
-  - firefox 65 for streams
-  - firefox missing a lot (writable streams) so https://github.com/MattiasBuelens/web-streams-polyfill might be needed
   - Blob.stream https://stackoverflow.com/a/65087341/786644
     - polyfill, or fallback to cumulative
-  - TextDecoderStream
-    - https://web.dev/streams/#transform-stream-code-sample
+  - test
 
 improve UI of game summary on schedule page
 - https://discord.com/channels/290013534023057409/331882115119448065/893503160709169163

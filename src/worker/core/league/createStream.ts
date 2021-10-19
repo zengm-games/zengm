@@ -510,22 +510,6 @@ const finalizeDBExceptPlayers = async ({
 		});
 	}
 
-	// Set numDraftPicksCurrent
-	if (gameAttributes.phase === PHASE.DRAFT && leagueFile.draftPicks) {
-		const currentDraftPicks = leagueFile.draftPicks.filter(
-			dp => dp.season === gameAttributes.season,
-		);
-		const draftNotStarted =
-			currentDraftPicks.every(dp => dp.round === 0) ||
-			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
-		if (draftNotStarted) {
-			const numDraftPicksCurrent = currentDraftPicks.length;
-			if (numDraftPicksCurrent > 0) {
-				gameAttributes.numDraftPicksCurrent = numDraftPicksCurrent;
-			}
-		}
-	}
-
 	// Handle schedule with no "day" property
 	const scheduleStore = tx.objectStore("schedule");
 	const schedule = await scheduleStore.getAll();
@@ -900,7 +884,7 @@ const createStream = async (
 		startingSeasonFromInput,
 	);
 
-	const fileredFromFile = {
+	const filteredFromFile = {
 		teams:
 			!!fromFile.teams && keptKeys.has("teams") ? fromFile.teams : undefined,
 		gameAttributes:
@@ -909,7 +893,9 @@ const createStream = async (
 				: undefined,
 	};
 
-	const teamInfos = helpers.addPopRank(fileredFromFile.teams ?? teamsFromInput);
+	const teamInfos = helpers.addPopRank(
+		filteredFromFile.teams ?? teamsFromInput,
+	);
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
@@ -917,7 +903,7 @@ const createStream = async (
 	const gameAttributes = await finalizeGameAttributes({
 		conditions,
 		// Use fromFile.gameAttributes in addition to gameAttributeOverrides because it preserves history and any non-standard settings
-		gameAttributes: fileredFromFile.gameAttributes ?? {},
+		gameAttributes: filteredFromFile.gameAttributes ?? {},
 		gameAttributeOverrides,
 		getLeagueOptions,
 		randomization,
@@ -946,7 +932,7 @@ const createStream = async (
 
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
 		fileHasPlayers: keptKeys.has("players"),
-		fileHasTeams: !!fileredFromFile.teams,
+		fileHasTeams: !!filteredFromFile.teams,
 	});
 
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
@@ -1147,6 +1133,22 @@ const createStream = async (
 		}
 	}
 	await finances.updateRanks(["budget"]);
+
+	// Set numDraftPicksCurrent
+	if (g.get("phase") === PHASE.DRAFT) {
+		const currentDraftPicks = await draft.getOrder();
+		const draftNotStarted =
+			currentDraftPicks.every(dp => dp.round === 0) ||
+			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
+		if (draftNotStarted) {
+			const numDraftPicksCurrent = currentDraftPicks.length;
+			if (numDraftPicksCurrent > 0) {
+				await league.setGameAttributes({
+					numDraftPicksCurrent,
+				});
+			}
+		}
+	}
 
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();

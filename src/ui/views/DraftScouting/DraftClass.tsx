@@ -143,18 +143,19 @@ const DraftClass = ({
 					</p>
 					<LeagueFileUpload
 						disabled={status === "exporting"}
+						includePlayersInBasicInfo
 						onLoading={() => {
 							setStatus("loading");
 						}}
-						onDone={async (err, leagueFile) => {
-							if (err) {
+						onDone={async (err, output) => {
+							if (err || !output) {
 								return;
 							}
 
 							await toWorker(
 								"main",
 								"handleUploadedDraftClass",
-								leagueFile,
+								output.basicInfo,
 								season,
 							);
 

@@ -1,5 +1,4 @@
 import { Suspense, lazy } from "react";
-import type { LeagueFileUploadProps } from "./LeagueFileUpload";
 
 export { default as ActionButton } from "./ActionButton";
 export { default as BarGraph } from "./BarGraph";
@@ -21,6 +20,7 @@ export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as InjuryIcon } from "./InjuryIcon";
 export { default as JerseyNumber } from "./JerseyNumber";
+export { default as LeagueFileUpload } from "./LeagueFileUpload2";
 export { default as PlusMinus } from "./PlusMinus";
 export { default as Mood } from "./Mood";
 export { default as MoreLinks } from "./MoreLinks";
@@ -56,15 +56,6 @@ export { default as Weight } from "./Weight";
 
 import ErrorBoundary from "./ErrorBoundary";
 export { ErrorBoundary };
-
-const LeagueFileUploadLazy = lazy(() => import("./LeagueFileUpload"));
-export const LeagueFileUpload = (props: LeagueFileUploadProps) => (
-	<ErrorBoundary local>
-		<Suspense fallback={<div>Loading...</div>}>
-			<LeagueFileUploadLazy {...props} />
-		</Suspense>
-	</ErrorBoundary>
-);
 
 const PlayerPictureLazy = lazy(() => import("./PlayerPicture"));
 export const PlayerPicture = (

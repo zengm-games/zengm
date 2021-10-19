@@ -317,15 +317,18 @@ const ImportPlayers = ({
 
 			<LeagueFileUpload
 				disabled={disableButtons}
+				includePlayersInBasicInfo
 				onLoading={() => {
 					setStatus("loading");
 				}}
-				onDone={async (error, leagueFile) => {
+				onDone={async (error, output) => {
 					setStatus(undefined);
 
-					if (error) {
+					if (error || !output) {
 						return;
 					}
+
+					const leagueFile = output.basicInfo;
 
 					let startingSeason = leagueFile.startingSeason;
 					if (typeof startingSeason !== "number" && leagueFile.gameAttributes) {
@@ -345,9 +348,10 @@ const ImportPlayers = ({
 						version: leagueFile.version,
 					});
 
-					leagueFile.players = leagueFile.players ? leagueFile.players : [];
+					console.log("leagueFile", leagueFile);
+					const rawPlayers: any[] = leagueFile.players ?? [];
 
-					const players = leagueFile.players.map((p: any) => {
+					const players = rawPlayers.map(p => {
 						const exportedSeason: number | undefined =
 							typeof p.exportedSeason === "number"
 								? p.exportedSeason

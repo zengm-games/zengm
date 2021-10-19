@@ -106,12 +106,16 @@ export type BasicInfo = {
 	startingSeason?: number;
 	version?: number;
 	teams?: any[];
+	players?: any[]; // Only with includePlayersInBasicInfo
 	keys: Set<string>;
 	maxGid: number;
 	hasRookieContracts: boolean;
 };
 
-const getBasicInfo = async (stream: ReadableStream) => {
+const getBasicInfo = async (
+	stream: ReadableStream,
+	includePlayersInBasicInfo: boolean | undefined,
+) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
 	const basicInfo: BasicInfo = {
 		keys: new Set(),
@@ -145,6 +149,15 @@ const getBasicInfo = async (stream: ReadableStream) => {
 			}
 		}
 
+		// Need to store max gid from games, so generated schedule does not overwrite it
+		if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
+			basicInfo.maxGid = value.value.gid;
+		}
+
+		if (value.key === "players" && value.value.contract?.rookie) {
+			basicInfo.hasRookieContracts = true;
+		}
+
 		if (cumulative) {
 			(basicInfo as any)[value.key] = value.value;
 		} else if (value.key === "teams") {
@@ -174,22 +187,21 @@ const getBasicInfo = async (stream: ReadableStream) => {
 			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
 
 			basicInfo.teams.push(value.value);
-		} else {
-			// Need to store max gid from games, so generated schedule does not overwrite it
-			if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
-				basicInfo.maxGid = value.value.gid;
+		} else if (includePlayersInBasicInfo && value.key === "players") {
+			if (!basicInfo.players) {
+				basicInfo.players = [];
 			}
-
-			if (value.key === "players" && value.value.contract?.rookie) {
-				basicInfo.hasRookieContracts = true;
-			}
+			basicInfo.players.push(value.value);
 		}
 	}
 
 	return { basicInfo, schemaErrors };
 };
 
-const initialCheck = async (file: File | string) => {
+const initialCheck = async (
+	file: File | string,
+	includePlayersInBasicInfo: boolean | undefined,
+) => {
 	console.time("initialCheck");
 	let stream: ReadableStream;
 	if (typeof file === "string") {
@@ -210,7 +222,10 @@ const initialCheck = async (file: File | string) => {
 
 	const stream2 = stream.pipeThrough(new TextDecoderStream());
 	console.timeLog("initialCheck");
-	const { basicInfo, schemaErrors } = await getBasicInfo(stream2);
+	const { basicInfo, schemaErrors } = await getBasicInfo(
+		stream2,
+		includePlayersInBasicInfo,
+	);
 	console.timeLog("initialCheck");
 
 	console.log("basicInfo", basicInfo);

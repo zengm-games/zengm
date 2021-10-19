@@ -12,6 +12,7 @@ import {
 	GAME_NAME,
 	WEBSITE_ROOT,
 } from "../../common";
+import type { BasicInfo } from "../../worker/api/leagueFileUpload";
 import { resetFileInput, toWorker } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
@@ -43,20 +44,11 @@ const styleStatus = {
 };
 
 export type LeagueFileUploadOutput = {
-	basicInfo: any;
+	basicInfo: BasicInfo;
 	file?: File;
 	url?: string;
 };
 
-export type LeagueFileUploadProps = {
-	// onDone is called in errback style when parsing is done or when an error occurs
-	onDone: (b: Error | null, a?: LeagueFileUploadOutput) => void;
-	disabled?: boolean;
-	enterURL?: boolean;
-	hideLoadedMessage?: boolean;
-	// onLoading is called when it starts reading the file into memory
-	onLoading?: () => void;
-};
 type State = {
 	error: Error | null;
 	schemaErrors: any[];
@@ -107,9 +99,19 @@ const LeagueFileUpload = ({
 	disabled,
 	enterURL,
 	hideLoadedMessage,
+	includePlayersInBasicInfo,
 	onDone,
 	onLoading,
-}: LeagueFileUploadProps) => {
+}: {
+	// onDone is called in errback style when parsing is done or when an error occurs
+	onDone: (b: Error | null, a?: LeagueFileUploadOutput) => void;
+	disabled?: boolean;
+	enterURL?: boolean;
+	hideLoadedMessage?: boolean;
+	includePlayersInBasicInfo?: boolean;
+	// onLoading is called when it starts reading the file into memory
+	onLoading?: () => void;
+}) => {
 	const [url, setURL] = useState("");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
@@ -207,6 +209,7 @@ const LeagueFileUpload = ({
 				"leagueFileUpload",
 				"initialCheck",
 				url,
+				includePlayersInBasicInfo,
 			);
 
 			await afterCheck({

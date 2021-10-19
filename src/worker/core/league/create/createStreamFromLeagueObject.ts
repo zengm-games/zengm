@@ -14,7 +14,6 @@ const createStreamFromLeagueObject = (
 				const key = keys[i];
 
 				if (key === undefined) {
-					console.log("CLOSE");
 					controller.close();
 					return;
 				}

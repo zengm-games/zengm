@@ -28,7 +28,7 @@ streaming import of league files
   - quota error mid create
   - real player overrides
   - real team overrides
-  - keptKeys filtering for "special" things not written though buffer, like teams/players/gameAttributes/etc
+  - godModeInPast
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams

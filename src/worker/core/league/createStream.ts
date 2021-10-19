@@ -267,15 +267,15 @@ const preProcess = async (
 };
 
 const getSaveToDB = async ({
-	keys,
+	keptKeys,
 	maxGid,
 	preProcessParams,
 }: {
-	keys: Set<string>;
+	keptKeys: Set<string>;
 	maxGid: number | undefined;
 	preProcessParams: PreProcessParams;
 }) => {
-	const buffer = new Buffer(keys);
+	const buffer = new Buffer(keptKeys);
 
 	const extraFromStream: {
 		activePlayers: PlayerWithoutKey[];
@@ -302,12 +302,12 @@ const getSaveToDB = async ({
 			}
 
 			// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-			if (key === "schedule") {
+			if (key === "schedule" && keptKeys.has("schedule")) {
 				currentScheduleGid += 1;
 				value.gid = currentScheduleGid;
 			}
 
-			if (key === "events") {
+			if (key === "events" && keptKeys.has("events")) {
 				extraFromStream.hasEvents = true;
 			}
 
@@ -315,6 +315,7 @@ const getSaveToDB = async ({
 
 			if (
 				key === "players" &&
+				keptKeys.has("players") &&
 				(processed.tid >= PLAYER.UNDRAFTED ||
 					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
 			) {
@@ -808,7 +809,7 @@ const createStream = async (
 		divs,
 		fromFile,
 		getLeagueOptions,
-		keys,
+		keptKeys,
 		lid,
 		name,
 		settings,
@@ -829,7 +830,7 @@ const createStream = async (
 			version: number | undefined;
 		};
 		getLeagueOptions: GetLeagueOptions | undefined;
-		keys: Set<string>;
+		keptKeys: Set<string>;
 		lid: number;
 		name: string;
 		settings: Omit<Settings, "numActiveTeams">;
@@ -872,7 +873,16 @@ const createStream = async (
 		startingSeasonFromInput,
 	);
 
-	const teamInfos = helpers.addPopRank(fromFile.teams ?? teamsFromInput);
+	const fileredFromFile = {
+		teams:
+			!!fromFile.teams && keptKeys.has("teams") ? fromFile.teams : undefined,
+		gameAttributes:
+			!!fromFile.gameAttributes && keptKeys.has("gameAttributes")
+				? fromFile.gameAttributes
+				: undefined,
+	};
+
+	const teamInfos = helpers.addPopRank(fileredFromFile.teams ?? teamsFromInput);
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
@@ -880,7 +890,7 @@ const createStream = async (
 	const gameAttributes = await finalizeGameAttributes({
 		conditions,
 		// Use fromFile.gameAttributes in addition to gameAttributeOverrides because it preserves history and any non-standard settings
-		gameAttributes: fromFile.gameAttributes ?? {},
+		gameAttributes: fileredFromFile.gameAttributes ?? {},
 		gameAttributeOverrides,
 		getLeagueOptions,
 		randomization,
@@ -907,8 +917,8 @@ const createStream = async (
 	}
 
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
-		fileHasPlayers: keys.has("players"),
-		fileHasTeams: !!fromFile.teams,
+		fileHasPlayers: keptKeys.has("players"),
+		fileHasTeams: !!fileredFromFile.teams,
 	});
 
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
@@ -934,7 +944,7 @@ const createStream = async (
 	});
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
-		keys,
+		keptKeys,
 		maxGid: fromFile.maxGid,
 		preProcessParams: {
 			activeTids,

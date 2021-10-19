@@ -524,7 +524,7 @@ const createLeague = async (
 		fromFile,
 		getLeagueOptions,
 		lid,
-		keys,
+		keptKeys: keys,
 		name,
 		settings,
 		shuffleRosters,

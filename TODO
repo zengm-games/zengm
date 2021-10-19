@@ -36,8 +36,6 @@ streaming import of league files
 - release jsonparse-web as standalone package
   - mention setting value to undefined in readme
 - browser support
-  - Blob.stream https://stackoverflow.com/a/65087341/786644
-    - polyfill, or fallback to cumulative
   - test
 
 improve UI of game summary on schedule page

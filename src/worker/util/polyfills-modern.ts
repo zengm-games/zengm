@@ -21,7 +21,7 @@ export const toPolyfillWritable = createWritableStreamWrapper(
 	PolyfillWritableStream,
 );
 export const toPolyfillTransform = createTransformStreamWrapper(
-	PolyfillTransformStream,
+	PolyfillTransformStream as any,
 );
 
 // Not supported in any Firefox yet!
@@ -30,7 +30,7 @@ import "./polyfill-TextDecoderStream";
 // Chrome 76, Firefox 69, Safari 14.1
 // Based on https://stackoverflow.com/a/65087341/786644
 if (!Blob.prototype.stream) {
-	Blob.prototype.stream = function () {
+	(Blob as any).prototype.stream = function () {
 		let offset = 0;
 		const chunkSize = 64 * 1024;
 

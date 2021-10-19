@@ -24,6 +24,7 @@ import {
 	local,
 	lock,
 	logEvent,
+	newLeagueGodModeLimits,
 	random,
 	toUI,
 	updatePhase,
@@ -366,6 +367,7 @@ const finalizeGameAttributes = async ({
 	getLeagueOptions,
 	randomization,
 	startingSeason,
+	teamsCameFromFile,
 	teamInfos,
 	tid,
 	version,
@@ -376,6 +378,7 @@ const finalizeGameAttributes = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	startingSeason: number;
+	teamsCameFromFile: boolean;
 	teamInfos: TeamInfo[];
 	tid: number;
 	version: number | undefined;
@@ -416,6 +419,30 @@ const finalizeGameAttributes = async ({
 				value: tid,
 			},
 		];
+	}
+
+	// Check if we need to set godModeInPast because some custom teams are too powerful
+	if (!teamsCameFromFile) {
+		// Only for new leagues, not created from file!
+
+		let godModeInPastOverride = false;
+		const godModeLimits = newLeagueGodModeLimits();
+		for (const t of teamInfos) {
+			if (t.pop > godModeLimits.pop) {
+				godModeInPastOverride = true;
+				break;
+			}
+			if (
+				t.stadiumCapacity !== undefined &&
+				t.stadiumCapacity > godModeLimits.stadiumCapacity
+			) {
+				godModeInPastOverride = true;
+				break;
+			}
+		}
+		if (godModeInPastOverride) {
+			finalized.godModeInPast = true;
+		}
 	}
 
 	// Also mutates teamInfos
@@ -895,6 +922,7 @@ const createStream = async (
 		getLeagueOptions,
 		randomization,
 		startingSeason,
+		teamsCameFromFile: !!filteredFromFile.teams,
 		teamInfos,
 		tid,
 		version: fromFile.version,

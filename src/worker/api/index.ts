@@ -51,7 +51,6 @@ import {
 	logEvent,
 	getNewLeagueLid,
 	initUILocalGames,
-	newLeagueGodModeLimits,
 	loadNames,
 	defaultInjuries,
 	toPolyfillReadable,
@@ -536,27 +535,6 @@ const createLeague = async (
 	});
 
 	return lid;
-
-	// Check if we need to set godModeInPast because some custom teams are too powerful
-	if (!file && !url) {
-		// Only for new leagues, not created from file!
-
-		let godModeInPastOverride = false;
-		const godModeLimits = newLeagueGodModeLimits();
-		for (const t of leagueFile.teams) {
-			if (t.pop > godModeLimits.pop) {
-				godModeInPastOverride = true;
-				break;
-			}
-			if (t.stadiumCapacity > godModeLimits.stadiumCapacity) {
-				godModeInPastOverride = true;
-				break;
-			}
-		}
-		if (godModeInPastOverride) {
-			gameAttributeOverrides.godModeInPast = true;
-		}
-	}
 };
 
 const deleteOldData = async (options: {

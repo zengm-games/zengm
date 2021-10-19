@@ -17,19 +17,10 @@ FBGM team penalty counts https://discord.com/channels/290013534023057409/5697263
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
 streaming import of league files
-- actually stream league creation
-  - emit an object straight from the JSON file (no reformatting) and the type (like "player" or "gameAttributes" or whatever)
-  - https://stackoverflow.com/a/65087341/786644
 - consume stream
-  - process object
-  - write object to database, not cache
-  - special case for team stats/seasons
-  - fill cache after writing all to database
   - to revisit
     - userTid logic in league object
     - quota error mid create
-  - real players
-    - needs to include basicInfo
 - URLs from fetch
   - how's this gonna work? don't want to download twice...
     - put teams/gameAttributes/version/starting at top of JSON so it's faster to just read that part. move validation either to a separate button or to load time. do something about keptKeys.
@@ -52,6 +43,8 @@ streaming import of league files
   - benchmark
   - queueing strategy highwatermark of various streams
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
+- release jsonparse-web as standalone package
+  - mention setting value to undefined in readme
 - browser support
   - firefox 65 for streams
   - firefox missing a lot (writable streams) so https://github.com/MattiasBuelens/web-streams-polyfill might be needed

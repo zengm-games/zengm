@@ -662,6 +662,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				safeLocalStorage.setItem("prevPhase", String(state.phase));
 			}
 
+			// If undefined, it's random players, so make this true to not trigger this logic downstream
+			const hasRookieContracts = state.basicInfo?.hasRookieContracts ?? true;
+
 			const lid = await toWorker("main", "createLeague", {
 				name,
 				tid: state.tid,
@@ -678,7 +681,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				fromFile: {
 					gameAttributes: state.basicInfo?.gameAttributes,
 					maxGid: state.basicInfo?.maxGid,
-					hasRookieContracts: state.basicInfo?.hasRookieContracts,
+					hasRookieContracts,
 					startingSeason: state.basicInfo?.startingSeason,
 					teams: state.basicInfo?.teams,
 					version: state.basicInfo?.version,

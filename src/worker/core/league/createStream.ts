@@ -764,7 +764,7 @@ const createStream = async (
 		divs: Div[];
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
-			hasRookieContracts: boolean | undefined;
+			hasRookieContracts: boolean;
 			maxGid: number | undefined;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;

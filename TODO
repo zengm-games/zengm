@@ -20,7 +20,6 @@ streaming import of league files
 - consume stream
   - refactor createStream
 - test
-  - make sure only one version of ajv and LeagueFileUpload included in bundle
   - league file with invalid (too high or negative) userTid specified
   - fix tests
     - teams is required param now

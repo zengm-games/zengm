@@ -16,10 +16,13 @@ import {
 	unwrapGameAttribute,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 } from "../../../common";
-import { ActionButton, NextPrevButtons, PopText } from "../../components";
-import LeagueFileUpload, {
-	LeagueFileUploadOutput,
-} from "../../components/LeagueFileUpload2";
+import {
+	ActionButton,
+	LeagueFileUpload,
+	NextPrevButtons,
+	PopText,
+} from "../../components";
+import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
 	confirm,

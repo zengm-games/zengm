@@ -20,7 +20,7 @@ export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as InjuryIcon } from "./InjuryIcon";
 export { default as JerseyNumber } from "./JerseyNumber";
-export { default as LeagueFileUpload } from "./LeagueFileUpload2";
+export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as PlusMinus } from "./PlusMinus";
 export { default as Mood } from "./Mood";
 export { default as MoreLinks } from "./MoreLinks";

@@ -6,7 +6,8 @@ import { PHASE } from "../../../common";
 describe("worker/core/league/createGameAttributes", () => {
 	test("save integer in wrapped format", async () => {
 		const gameAttributes = await createGameAttributes({
-			leagueFile: { startingSeason: 2015 },
+			startingSeason: 2015,
+			gameAttributesInput: {},
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
 		});
@@ -18,15 +19,13 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history", async () => {
 		const gameAttributes = await createGameAttributes({
-			leagueFile: {
-				startingSeason: 2015,
-				gameAttributes: {
-					startingSeason: 2010,
-					userTid: [
-						{ start: -Infinity, value: 3 },
-						{ start: 2013, value: 5 },
-					],
-				},
+			startingSeason: 2015,
+			gameAttributesInput: {
+				startingSeason: 2010,
+				userTid: [
+					{ start: -Infinity, value: 3 },
+					{ start: 2013, value: 5 },
+				],
 			},
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -40,15 +39,13 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history while selecting a new team", async () => {
 		const gameAttributes = await createGameAttributes({
-			leagueFile: {
-				startingSeason: 2015,
-				gameAttributes: {
-					startingSeason: 2010,
-					userTid: [
-						{ start: -Infinity, value: 3 },
-						{ start: 2013, value: 4 },
-					],
-				},
+			startingSeason: 2015,
+			gameAttributesInput: {
+				startingSeason: 2010,
+				userTid: [
+					{ start: -Infinity, value: 3 },
+					{ start: 2013, value: 4 },
+				],
 			},
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -63,15 +60,13 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("maintain history while selecting a new team, overwriting current season", async () => {
 		const gameAttributes = await createGameAttributes({
-			leagueFile: {
-				startingSeason: 2015,
-				gameAttributes: {
-					startingSeason: 2010,
-					userTid: [
-						{ start: -Infinity, value: 3 },
-						{ start: 2015, value: 5 },
-					],
-				},
+			startingSeason: 2015,
+			gameAttributesInput: {
+				startingSeason: 2010,
+				userTid: [
+					{ start: -Infinity, value: 3 },
+					{ start: 2015, value: 5 },
+				],
 			},
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -85,16 +80,14 @@ describe("worker/core/league/createGameAttributes", () => {
 
 	test("new team after playoffs", async () => {
 		const gameAttributes = await createGameAttributes({
-			leagueFile: {
-				startingSeason: 2015,
-				gameAttributes: {
-					startingSeason: 2010,
-					phase: PHASE.DRAFT,
-					userTid: [
-						{ start: -Infinity, value: 3 },
-						{ start: 2015, value: 4 },
-					],
-				},
+			startingSeason: 2015,
+			gameAttributesInput: {
+				startingSeason: 2010,
+				phase: PHASE.DRAFT,
+				userTid: [
+					{ start: -Infinity, value: 3 },
+					{ start: 2015, value: 4 },
+				],
 			},
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
@@ -111,14 +104,13 @@ describe("worker/core/league/createGameAttributes", () => {
 		const defaultArgs = {
 			teamInfos: helpers.getTeamsDefault(),
 			userTid: 5,
+			gameAttributesInput: {},
 		};
 
 		test("apply new default to an empty league file", async () => {
 			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
-				leagueFile: {
-					startingSeason: 2021,
-				},
+				startingSeason: 2021,
 			});
 
 			assert.deepStrictEqual(
@@ -131,9 +123,7 @@ describe("worker/core/league/createGameAttributes", () => {
 			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
 				version: 40,
-				leagueFile: {
-					startingSeason: 2021,
-				},
+				startingSeason: 2021,
 			});
 
 			assert.deepStrictEqual(
@@ -147,12 +137,10 @@ describe("worker/core/league/createGameAttributes", () => {
 				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
-					leagueFile: {
-						startingSeason: 2021,
-						gameAttributes: {
-							season: 2023,
-							phase: PHASE.REGULAR_SEASON,
-						},
+					startingSeason: 2021,
+					gameAttributesInput: {
+						season: 2023,
+						phase: PHASE.REGULAR_SEASON,
 					},
 				});
 
@@ -171,12 +159,10 @@ describe("worker/core/league/createGameAttributes", () => {
 				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
-					leagueFile: {
-						startingSeason: 2021,
-						gameAttributes: {
-							season: 2023,
-							phase: PHASE.DRAFT_LOTTERY,
-						},
+					startingSeason: 2021,
+					gameAttributesInput: {
+						season: 2023,
+						phase: PHASE.DRAFT_LOTTERY,
 					},
 				});
 
@@ -195,13 +181,11 @@ describe("worker/core/league/createGameAttributes", () => {
 				const gameAttributes = await createGameAttributes({
 					...defaultArgs,
 					version: 40,
-					leagueFile: {
-						startingSeason: 2021,
-						gameAttributes: {
-							season: 2023,
-							phase: PHASE.EXPANSION_DRAFT,
-							nextPhase: PHASE.DRAFT_LOTTERY,
-						},
+					startingSeason: 2021,
+					gameAttributesInput: {
+						season: 2023,
+						phase: PHASE.EXPANSION_DRAFT,
+						nextPhase: PHASE.DRAFT_LOTTERY,
 					},
 				});
 
@@ -221,11 +205,9 @@ describe("worker/core/league/createGameAttributes", () => {
 			const gameAttributes = await createGameAttributes({
 				...defaultArgs,
 				version: 43,
-				leagueFile: {
-					startingSeason: 2021,
-					gameAttributes: {
-						tiebreakers: "foo",
-					},
+				startingSeason: 2021,
+				gameAttributesInput: {
+					tiebreakers: "foo" as any,
 				},
 			});
 

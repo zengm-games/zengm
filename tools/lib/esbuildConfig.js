@@ -89,6 +89,7 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 					__dirname,
 					"../../src/worker/core/debug/index.ts",
 				),
+				"ajv-hack": path.join(__dirname, "../../src/worker/ajvHack/esbuild.js"),
 			}),
 			pluginSportFunctions(nodeEnv),
 		],

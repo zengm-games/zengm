@@ -12,3 +12,4 @@ stats-*.html
 .idea/
 foo
 .vscode
+src/worker/ajvHack/esbuild.js

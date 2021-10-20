@@ -34,6 +34,8 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 					nodeEnv === "production"
 						? "./../../common/polyfills-modern.ts"
 						: "./../../worker/core/debug/index.ts",
+
+				"ajv-hack": "./../../worker/ajvHack/esbuild.js",
 			},
 		}),
 		replace({
@@ -45,7 +47,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		}),
 		babel({
 			babelHelpers: "bundled",
-			exclude: "node_modules/!(d3|idb)**",
+			exclude: "node_modules/!(ajv|d3|idb)**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
 		json({

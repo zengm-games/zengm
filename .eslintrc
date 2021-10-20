@@ -5,6 +5,7 @@
     "project": "./tsconfig.json",
     "extraFileExtensions": [".mjs"]
   },
+  "ignorePatterns": ["src/worker/ajvHack/esbuild.js"],
   "env": {
     "browser": true,
     "es2020": true

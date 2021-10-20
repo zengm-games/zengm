@@ -202,18 +202,6 @@ minors
 - should minors lead to improvement? make it configurable, but default no
 - need anything special with contracts?
 
-chrome 49 failure
-- coming from object spread in ajv
-  - adding to transpile list fails. why?
-  - seems to work if i take out all the LEGACY babel plugins in babel.conf
-    - take out last 6: works
-    - take out last 4: fails
-    - take out only plugin-proposal-object-rest-spread: fails
-    - take out plugin-proposal-object-rest-spread and 2 after: fails
-    - take out plugin-proposal-object-rest-spread and 4 after: fails
-    - take out last 6, except for-of: fails
-    - WTF - seems if babel modifies the file, it leaves requires behind
-
 frivolities
 - players
   - Best/Worst MVP, DPOY, ROY, 6MOY, MIP https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/

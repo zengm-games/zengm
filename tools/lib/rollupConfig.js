@@ -67,7 +67,6 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 				output: {
 					comments: /^I DON'T WANT ANY COMMENTS$/,
 				},
-				safari10: true,
 			}),
 		);
 	}

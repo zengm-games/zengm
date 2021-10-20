@@ -1,9 +1,6 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Safari 11 (because in 10.1 getAll crashes in a worker)
-import "indexeddb-getall-shim";
-
-// Chrome 54, Safari 10.1
+// Chrome 54
 // Inlined from MDN, since object.entries and object.values npm packages were somehow adding 50kb to each bundle
 if (!Object.entries) {
 	Object.entries = (obj: any) => {

@@ -52,7 +52,6 @@
 		"framer-motion": "^4.1.17",
 		"html2canvas": "^1.3.2",
 		"idb": "dumbmatter/idb#bbgm2",
-		"indexeddb-getall-shim": "^1.3.6",
 		"lodash-es": "^4.17.21",
 		"nanoevents": "^6.0.1",
 		"promise-worker-bi": "^4.0.2",

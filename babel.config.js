@@ -25,8 +25,8 @@ module.exports = api => {
 			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Safari 11.1
 			"@babel/plugin-transform-for-of", // Chrome 51
 			"@babel/plugin-transform-destructuring", // Chrome 51
-			"@babel/plugin-transform-exponentiation-operator", // Chrome 52, Safari 10.1
-			"@babel/plugin-transform-async-to-generator", // Chrome 55, Safari 11
+			"@babel/plugin-transform-exponentiation-operator", // Chrome 52
+			"@babel/plugin-transform-async-to-generator", // Chrome 55
 		);
 	}
 

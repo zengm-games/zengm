@@ -19,7 +19,7 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "safari",
-		browser_version: "13.1", // Works back to 10 currently (except fetch)
+		browser_version: "13.1", // Works back to 11 currently, although league creation only works in 12. Some people are still playing existing leagues in 11 though.
 		os: "OS X",
 		os_version: "Catalina",
 	},

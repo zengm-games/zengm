@@ -38,9 +38,6 @@ streaming import of league files
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
 - release jsonparse-web as standalone package
   - mention setting value to undefined in readme
-- browser support
-  - test safari
-  - test min chrome/firefox versions again
 
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
 

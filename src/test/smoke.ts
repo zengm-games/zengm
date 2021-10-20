@@ -1,9 +1,11 @@
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
-import { g, local } from "../worker/util";
+import { defaultGameAttributes, g, local } from "../worker/util";
 
 import "smoke-test-overrides"; // eslint-disable-line
 import { deleteDB } from "idb";
+import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject";
+import { helpers, MAX_SUPPORTED_LEAGUE_VERSION } from "../common";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;
@@ -14,12 +16,28 @@ describe("Smoke Tests", () => {
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
 		idb.meta = await connectMeta();
-		await league.create({
-			name: "Test",
-			tid: 0,
-			leagueFile: {
-				startingSeason: 2016,
+		const stream = createStreamFromLeagueObject({});
+
+		await league.createStream(stream, {
+			confs: defaultGameAttributes.confs.at(-1).value,
+			divs: defaultGameAttributes.divs.at(-1).value,
+			fromFile: {
+				gameAttributes: undefined,
+				hasRookieContracts: true,
+				maxGid: undefined,
+				startingSeason: undefined,
+				teams: undefined,
+				version: MAX_SUPPORTED_LEAGUE_VERSION,
 			},
+			getLeagueOptions: undefined,
+			keptKeys: new Set(),
+			lid: 0,
+			name: "Test",
+			settings: {} as any,
+			shuffleRosters: false,
+			startingSeasonFromInput: "2016",
+			teamsFromInput: helpers.addPopRank(helpers.getTeamsDefault()),
+			tid: 0,
 		});
 		local.autoPlayUntil = {
 			season: 2017,

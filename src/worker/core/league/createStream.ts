@@ -48,7 +48,7 @@ export type TeamInfo = TeamBasic & {
 	stats?: TeamStatsWithoutKey[];
 };
 
-const addDummyLeague = async ({
+const addLeagueMeta = async ({
 	lid,
 	name,
 	teams,
@@ -59,8 +59,7 @@ const addDummyLeague = async ({
 	teams: Team[];
 	tid: number;
 }) => {
-	// These values will be updated later. We just want to make sure there's something in the meta database first, so the league can be deleted from the normal UI if something goes wrong.
-	const dummyLeague: League = {
+	const l: League = {
 		lid,
 		name,
 		tid,
@@ -81,11 +80,11 @@ const addDummyLeague = async ({
 	const oldLeague = await idb.meta.get("leagues", lid);
 	await remove(lid);
 	if (oldLeague) {
-		dummyLeague.created = oldLeague.created;
-		dummyLeague.starred = oldLeague.starred;
+		l.created = oldLeague.created;
+		l.starred = oldLeague.starred;
 	}
 
-	await idb.meta.add("leagues", dummyLeague);
+	await idb.meta.add("leagues", l);
 
 	idb.league = await connectLeague(lid);
 };
@@ -961,7 +960,7 @@ const beforeDBStream = async ({
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
 
-	await addDummyLeague({
+	await addLeagueMeta({
 		lid,
 		name,
 		teams,

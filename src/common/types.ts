@@ -1638,7 +1638,6 @@ export type GetLeagueOptionsReal = {
 	randomDebuts: boolean;
 	realDraftRatings: "draft" | "rookie";
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
-	leagueInfoKeepAllTeams?: boolean;
 };
 
 export type GetLeagueOptions =

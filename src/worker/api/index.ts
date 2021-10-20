@@ -98,7 +98,6 @@ import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
-import { getDefaultRealStats } from "../views/newLeague";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 import { types } from "../../common/transactionInfo";
 import type { ExportLeagueKey } from "../../ui/views/ExportLeague";
@@ -479,22 +478,23 @@ const createLeague = async (
 			}
 		}
 
-		// Since inactive teams are included if realStats=="all", need to translate tid too
+		// Since inactive teams are included if realStats=="all", need to translate tid and overwrite fromFile.teams
 		if (
 			getLeagueOptions.type === "real" &&
 			getLeagueOptions.realStats === "all"
 		) {
-			const leagueInfo = await realRosters.getLeagueInfo({
-				...getLeagueOptions,
-				realStats: getDefaultRealStats(),
-				leagueInfoKeepAllTeams: true,
-			});
-			const abbrev = leagueInfo.teams[tid].abbrev;
+			const abbrev = fromFile.teams![tid].abbrev;
 			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);
 			if (!abbrev || actualTid < 0) {
 				throw new Error("Error finding tid");
 			}
 		}
+
+		// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
+		fromFile.gameAttributes = realLeague.gameAttributes;
+		fromFile.startingSeason = realLeague.startingSeason;
+		fromFile.teams = realLeague.teams;
+
 		stream = createStreamFromLeagueObject(realLeague);
 	} else if (file || url) {
 		let baseStream: ReadableStream;

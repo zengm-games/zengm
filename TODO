@@ -20,6 +20,7 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 
 streaming import of league files
 - consume stream
+  - "Definitley need this for" - why is that needed? will gameAttributes history be lost on export/import too?
   - refactor createStream
 - test
   - league file with invalid (too high or negative) userTid specified

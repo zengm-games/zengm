@@ -10,7 +10,7 @@ import {
 import type { Settings } from "./settings";
 import { unwrapGameAttribute } from "../../common";
 
-export const getDefaultRealStats = () => {
+const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
 };
 

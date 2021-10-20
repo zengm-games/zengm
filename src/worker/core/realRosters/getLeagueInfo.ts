@@ -75,9 +75,7 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 			gameAttributes: getGameAttributes(initialGameAttributes, options),
 			startingSeason: options.season,
 			stores,
-			teams: options.leagueInfoKeepAllTeams
-				? initialTeams
-				: initialTeams.filter(t => !t.disabled),
+			teams: initialTeams.filter(t => !t.disabled),
 		};
 	}
 

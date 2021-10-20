@@ -1,4 +1,4 @@
-import { orderBy } from "lodash";
+import orderBy from "lodash-es/orderBy";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos, getValidMoves } from "../../../common/dunkContest";
 import { idb } from "../../db";

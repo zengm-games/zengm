@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import type { ButtonHTMLAttributes, MouseEvent } from "react";
+import { ButtonHTMLAttributes, MouseEvent, useRef } from "react";
 
 export const processingSpinner = (
 	<>
@@ -31,8 +31,12 @@ const ActionButton = ({
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 	variant?: "primary" | "secondary" | "god-mode";
 }) => {
+	const minWidth = useRef(0);
+	const button = useRef<HTMLButtonElement>(null);
+
 	return (
 		<button
+			ref={button}
 			type={type}
 			className={classNames(
 				`btn btn-${variant}`,
@@ -40,7 +44,19 @@ const ActionButton = ({
 				className,
 			)}
 			disabled={disabled || processing}
-			onClick={onClick}
+			onClick={event => {
+				// When we switch to "Processing", don't let the button shrink in width. (Ideally we'd also prevent it from growing, but oh well)
+				if (button.current) {
+					minWidth.current = button.current.offsetWidth;
+				}
+
+				if (onClick) {
+					onClick(event);
+				}
+			}}
+			style={{
+				minWidth: minWidth.current,
+			}}
 		>
 			{processing ? processingSpinner : children}
 		</button>

@@ -22,14 +22,12 @@ streaming import of league files
 - consume stream
   - refactor createStream
 - test
-  - league file with invalid (too high or negative) userTid specified
   - fix tests
     - teams is required param now
-  - confirm regular season load does not result in schedule overwriting old box scores
   - hasRookieContracts
   - quota error mid create
-  - real player overrides
   - real team overrides
+    - not applying to initial new league notification?
   - godModeInPast
   - numDraftPicksCurrent
 - performance

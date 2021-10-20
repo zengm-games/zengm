@@ -243,13 +243,15 @@ const preProcess = async (
 		}
 
 		x = p;
-	} else if (key === "scheduledEvents" && averagePopulation !== undefined) {
-		if (x.type === "expansionDraft") {
-			for (const t of x.info.teams) {
-				t.pop = averagePopulation;
+	} else if (key === "scheduledEvents") {
+		if (averagePopulation !== undefined) {
+			if (x.type === "expansionDraft") {
+				for (const t of x.info.teams) {
+					t.pop = averagePopulation;
+				}
+			} else if (x.type === "teamInfo" && x.info.pop !== undefined) {
+				x.info.pop = averagePopulation;
 			}
-		} else if (x.type === "teamInfo" && x.info.pop !== undefined) {
-			x.info.pop = averagePopulation;
 		}
 
 		// This is not really needed, since applyRealTeamInfo is called again in processScheduledEvents. It's just to make it look more normal in the database, for when I eventually build a GUI editor for scheduled events.

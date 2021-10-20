@@ -505,7 +505,7 @@ const createLeague = async (
 			baseStream = response.body as ReadableStream;
 		}
 
-		stream = (toPolyfillReadable(baseStream) as any)
+		stream = toPolyfillReadable(baseStream)
 			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
 			.pipeThrough(parseJSON());
 	} else {

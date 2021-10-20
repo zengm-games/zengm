@@ -14,10 +14,10 @@ import {
 } from "@mattiasbuelens/web-streams-adapter";
 export const toPolyfillReadable = createReadableStreamWrapper(
 	PolyfillReadableStream,
-);
+) as unknown as (stream: ReadableStream) => ReadableStream;
 export const toPolyfillTransform = createTransformStreamWrapper(
 	PolyfillTransformStream as any,
-);
+) as unknown as (stream: TransformStream) => TransformStream;
 
 // Not supported in any Firefox yet!
 import "./polyfill-TextDecoderStream";

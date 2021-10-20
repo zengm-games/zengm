@@ -10,24 +10,23 @@
 
 import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
-import { createWithoutSaving } from "../league/create";
+import testHelpers from "../../../test/helpers";
+import { g } from "../../util";
+import createRandomPlayers from "../league/create/createRandomPlayers";
 
 const printQuartiles = async (age?: number) => {
-	const gameAttributes =
-		age !== undefined
-			? {
-					draftAges: [age, age],
-			  }
-			: undefined;
-	const leagueData = await createWithoutSaving(
-		0,
-		{
-			startingSeason: 2021,
-			gameAttributes,
-		},
-		false,
-	);
-	const ovrs = (leagueData.players as any[])
+	if (age !== undefined) {
+		testHelpers.resetG();
+		g.setWithoutSavingToDB("draftAges", [age, age]);
+	}
+
+	const players = await createRandomPlayers({
+		activeTids: range(30),
+		scoutingRank: 15.5,
+		teams: range(30).map(tid => ({ tid })),
+	});
+
+	const ovrs = (players as any[])
 		.filter(p => p.tid >= PLAYER.FREE_AGENT)
 		.map(p => p.ratings.at(-1).ovr)
 		.sort((a, b) => a - b) as number[];

@@ -17,7 +17,7 @@ const createRandomPlayers = async ({
 }: {
 	activeTids: number[];
 	scoutingRank: number;
-	teams: Team[];
+	teams: Pick<Team, "tid" | "retiredJerseyNumbers">[];
 }) => {
 	const players: PlayerWithoutKey[] = [];
 

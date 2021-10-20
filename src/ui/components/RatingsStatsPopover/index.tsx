@@ -17,7 +17,7 @@ const Icon = ({
 	return (
 		<span
 			className={classNames("glyphicon glyphicon-stats watch", {
-				"watch-active": watch === true, // Explicit true check is for Firefox 57 and older
+				"watch-active": watch,
 			})}
 			data-no-row-highlight="true"
 			title="View ratings and stats"
@@ -101,7 +101,6 @@ const RatingsStatsPopover = ({
 
 	let nameBlock = null;
 	if (name) {
-		// Explicit boolean check is for Firefox 57 and older
 		nameBlock = (
 			<div className="d-flex">
 				{jerseyNumber ? (
@@ -133,7 +132,7 @@ const RatingsStatsPopover = ({
 				{age !== undefined ? (
 					<div className="ml-1 flex-shrink-0">{age} yo</div>
 				) : null}
-				{!disableWatchToggle && typeof watch === "boolean" ? (
+				{!disableWatchToggle && watch ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
 			</div>

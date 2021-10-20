@@ -38,11 +38,9 @@ const updatePlayers = async (
 		});
 
 		const playersAll = await idb.getCopies.players({
-			// In Firefox, objects have a "watch" function
 			filter: p => {
 				if (inputs.flagNote === "flag" || inputs.flagNote === "either") {
-					const watch = p.watch && typeof p.watch !== "function";
-					if (watch) {
+					if (p.watch) {
 						return true;
 					}
 				}

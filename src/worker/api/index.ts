@@ -385,7 +385,7 @@ const clearWatchList = async () => {
 	const players = await idb.cache.players.getAll();
 
 	for (const p of players) {
-		if (p.watch && typeof p.watch !== "function") {
+		if (p.watch) {
 			p.watch = false;
 			await idb.cache.players.put(p);
 		}
@@ -401,7 +401,7 @@ const clearWatchList = async () => {
 		undefined,
 		undefined,
 		p => {
-			if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
+			if (p.watch && !pids.has(p.pid)) {
 				p.watch = false;
 				promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
 			}

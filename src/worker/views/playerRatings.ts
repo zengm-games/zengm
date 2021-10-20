@@ -24,9 +24,7 @@ export const getPlayers = async (
 
 	// Show all teams
 	if (tid === undefined && abbrev === "watch") {
-		playersAll = playersAll.filter(
-			p => p.watch && typeof p.watch !== "function",
-		);
+		playersAll = playersAll.filter(p => p.watch);
 	}
 
 	let players = await idb.getCopies.playersPlus(playersAll, {

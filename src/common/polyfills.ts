@@ -32,7 +32,7 @@ if (!Object.values) {
 	};
 }
 
-// Chrome 69, Firefox 62, Safari 12
+// Chrome 69, Safari 12
 // https://github.com/behnammodi/polyfill/blob/1a5965edc0e2eaf8e6d87902cc719462e2a889fb/array.polyfill.js#L598-L622
 if (!Array.prototype.flat) {
 	Object.defineProperty(Array.prototype, "flat", {

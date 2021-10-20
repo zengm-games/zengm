@@ -15,19 +15,18 @@ module.exports = api => {
 				{
 					loose: true,
 				},
-			], // Chrome 80, Firefox 74, Safari 13.1
+			], // Chrome 80, Safari 13.1
 			[
 				"@babel/plugin-proposal-nullish-coalescing-operator",
 				{
 					loose: true,
 				},
-			], // Chrome 80, Firefox 72, Safari 13.1
-			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Firefox 55, Safari 11.1
-			"@babel/plugin-transform-for-of", // Chrome 51, Firefox 53
-			"@babel/plugin-transform-parameters", // Firefox 53
-			"@babel/plugin-transform-destructuring", // Chrome 51, Firefox 53
-			"@babel/plugin-transform-exponentiation-operator", // Chrome 52, Firefox 52, Safari 10.1
-			"@babel/plugin-transform-async-to-generator", // Chrome 55, Firefox 52, Safari 11
+			], // Chrome 80, Safari 13.1
+			"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Safari 11.1
+			"@babel/plugin-transform-for-of", // Chrome 51
+			"@babel/plugin-transform-destructuring", // Chrome 51
+			"@babel/plugin-transform-exponentiation-operator", // Chrome 52, Safari 10.1
+			"@babel/plugin-transform-async-to-generator", // Chrome 55, Safari 11
 		);
 	}
 

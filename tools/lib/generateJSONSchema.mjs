@@ -145,6 +145,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 			$id: "https://play.basketball-gm.com/files/league-schema.json",
 			title: "Test GM League File Schema",
 			description: "Test only!",
+			definitions: {},
+			type: "object",
+			properties: {},
 		};
 	}
 

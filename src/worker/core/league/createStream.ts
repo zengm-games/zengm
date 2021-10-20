@@ -15,6 +15,7 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
+	ThenArg,
 } from "../../../common/types";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload";
@@ -267,6 +268,11 @@ const preProcess = async (
 	return x;
 };
 
+type ExtraFromStream = {
+	activePlayers: PlayerWithoutKey[];
+	hasEvents: boolean;
+};
+
 const getSaveToDB = async ({
 	keptKeys,
 	maxGid,
@@ -278,10 +284,7 @@ const getSaveToDB = async ({
 }) => {
 	const buffer = new Buffer(keptKeys);
 
-	const extraFromStream: {
-		activePlayers: PlayerWithoutKey[];
-		hasEvents: boolean;
-	} = {
+	const extraFromStream: ExtraFromStream = {
 		activePlayers: [],
 		hasEvents: false,
 	};
@@ -808,45 +811,57 @@ const finalizeActivePlayers = async ({
 	}
 };
 
-const createStream = async (
-	stream: ReadableStream,
-	{
-		conditions,
-		confs,
-		divs,
-		fromFile,
-		getLeagueOptions,
-		keptKeys,
-		lid,
-		name,
-		settings,
-		shuffleRosters,
-		startingSeasonFromInput,
-		teamsFromInput, // use if none in file
-		tid,
-	}: {
-		conditions?: Conditions;
-		confs: Conf[];
-		divs: Div[];
-		fromFile: {
-			gameAttributes: Record<string, unknown> | undefined;
-			hasRookieContracts: boolean;
-			maxGid: number | undefined;
-			startingSeason: number | undefined;
-			teams: any[] | undefined;
-			version: number | undefined;
-		};
-		getLeagueOptions: GetLeagueOptions | undefined;
-		keptKeys: Set<string>;
-		lid: number;
-		name: string;
-		settings: Omit<Settings, "numActiveTeams">;
-		shuffleRosters: boolean;
-		startingSeasonFromInput: string | undefined;
-		teamsFromInput: NewLeagueTeam[];
-		tid: number;
-	},
-) => {
+type CreateStreamProps = {
+	conditions?: Conditions;
+	confs: Conf[];
+	divs: Div[];
+	fromFile: {
+		gameAttributes: Record<string, unknown> | undefined;
+		hasRookieContracts: boolean;
+		maxGid: number | undefined;
+		startingSeason: number | undefined;
+		teams: any[] | undefined;
+		version: number | undefined;
+	};
+	getLeagueOptions: GetLeagueOptions | undefined;
+	keptKeys: Set<string>;
+	lid: number;
+	name: string;
+	settings: Omit<Settings, "numActiveTeams">;
+	shuffleRosters: boolean;
+	startingSeasonFromInput: string | undefined;
+	teamsFromInput: NewLeagueTeam[];
+	tid: number;
+};
+
+const beforeDBStream = async ({
+	conditions,
+	confs,
+	divs,
+	fromFile,
+	getLeagueOptions,
+	keptKeys,
+	lid,
+	name,
+	settings,
+	startingSeasonFromInput,
+	teamsFromInput,
+	tid,
+}: Pick<
+	CreateStreamProps,
+	| "conditions"
+	| "confs"
+	| "divs"
+	| "fromFile"
+	| "getLeagueOptions"
+	| "keptKeys"
+	| "lid"
+	| "name"
+	| "settings"
+	| "startingSeasonFromInput"
+	| "teamsFromInput"
+	| "tid"
+>) => {
 	// These wouldn't be needed here, except the beforeView logic is fucked up
 	lock.reset();
 	local.reset();
@@ -953,23 +968,53 @@ const createStream = async (
 		tid,
 	});
 
-	const { extraFromStream, saveToDB } = await getSaveToDB({
-		keptKeys,
-		maxGid: fromFile.maxGid,
-		preProcessParams: {
-			activeTids,
-			averagePopulation,
-			hasRookieContracts: fromFile.hasRookieContracts,
-			noStartingInjuries,
-			realPlayerPhotos,
-			realTeamInfo,
-			scoutingRank,
-			version: fromFile.version,
-		},
-	});
+	return {
+		activeTids,
+		averagePopulation,
+		gameAttributes,
+		noStartingInjuries,
+		realPlayerPhotos,
+		realTeamInfo,
+		repeatSeason,
+		scoutingRank,
+		teamInfos,
+		teamSeasons,
+		teamStats,
+		teams,
+	};
+};
 
-	await stream.pipeTo(saveToDB);
-
+const afterDBStream = async ({
+	activeTids,
+	extraFromStream,
+	fromFile,
+	gameAttributes,
+	getLeagueOptions,
+	lid,
+	repeatSeason,
+	scoutingRank,
+	shuffleRosters,
+	teamInfos,
+	teamSeasons,
+	teamStats,
+	teams,
+}: {
+	extraFromStream: ExtraFromStream;
+} & Pick<
+	CreateStreamProps,
+	"fromFile" | "getLeagueOptions" | "lid" | "shuffleRosters"
+> &
+	Pick<
+		ThenArg<ReturnType<typeof beforeDBStream>>,
+		| "activeTids"
+		| "gameAttributes"
+		| "repeatSeason"
+		| "scoutingRank"
+		| "teamInfos"
+		| "teamSeasons"
+		| "teamStats"
+		| "teams"
+	>) => {
 	if (shuffleRosters) {
 		// Assign the team ID of all players to the 'playerTids' array.
 		// Check tid to prevent draft prospects from being swapped with established players
@@ -1148,6 +1193,86 @@ const createStream = async (
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
+};
+
+const createStream = async (
+	stream: ReadableStream,
+	{
+		conditions,
+		confs,
+		divs,
+		fromFile,
+		getLeagueOptions,
+		keptKeys,
+		lid,
+		name,
+		settings,
+		shuffleRosters,
+		startingSeasonFromInput,
+		teamsFromInput, // use if none in file
+		tid,
+	}: CreateStreamProps,
+) => {
+	const {
+		activeTids,
+		averagePopulation,
+		gameAttributes,
+		noStartingInjuries,
+		realPlayerPhotos,
+		realTeamInfo,
+		repeatSeason,
+		scoutingRank,
+		teamInfos,
+		teamSeasons,
+		teamStats,
+		teams,
+	} = await beforeDBStream({
+		conditions,
+		confs,
+		divs,
+		fromFile,
+		getLeagueOptions,
+		keptKeys,
+		lid,
+		name,
+		settings,
+		startingSeasonFromInput,
+		teamsFromInput,
+		tid,
+	});
+
+	const { extraFromStream, saveToDB } = await getSaveToDB({
+		keptKeys,
+		maxGid: fromFile.maxGid,
+		preProcessParams: {
+			activeTids,
+			averagePopulation,
+			hasRookieContracts: fromFile.hasRookieContracts,
+			noStartingInjuries,
+			realPlayerPhotos,
+			realTeamInfo,
+			scoutingRank,
+			version: fromFile.version,
+		},
+	});
+
+	await stream.pipeTo(saveToDB);
+
+	await afterDBStream({
+		activeTids,
+		extraFromStream,
+		fromFile,
+		gameAttributes,
+		getLeagueOptions,
+		lid,
+		repeatSeason,
+		scoutingRank,
+		shuffleRosters,
+		teamInfos,
+		teamSeasons,
+		teamStats,
+		teams,
+	});
 };
 
 export default createStream;

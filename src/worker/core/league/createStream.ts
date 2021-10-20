@@ -1054,13 +1054,14 @@ const createStream = async (
 	await idb.cache.fill(gameAttributes.season);
 
 	// Hack! Need to not include lid in the update here, because then it gets sent to the UI and is seen in Controller before the URL changes, which interferes with running beforeLeague when the first view in the new league is loaded. lol
-	const gameAttributesToUpdate: Partial<GameAttributesLeague> = {
+	const gameAttributesToUpdate: Partial<GameAttributesLeagueWithHistory> = {
 		...gameAttributes,
 	};
 	delete gameAttributesToUpdate.lid;
 
 	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
-	await league.setGameAttributes(gameAttributesToUpdate);
+	// BUT - league.setGameAttributes is not expecting gameAttributes with history, so this could break in subtle ways in the future!
+	await league.setGameAttributes(gameAttributesToUpdate as any);
 
 	for (const p of activePlayers) {
 		await idb.cache.players.put(p);

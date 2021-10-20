@@ -63,7 +63,6 @@ export const parseJSON = () => {
 const makeValidators = () => {
 	const ajv = new Ajv({
 		allErrors: true,
-		code: { es5: true },
 		verbose: true,
 	});
 

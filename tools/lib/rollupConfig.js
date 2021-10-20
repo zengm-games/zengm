@@ -47,7 +47,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		}),
 		babel({
 			babelHelpers: "bundled",
-			exclude: "node_modules/!(ajv|d3|idb)**",
+			exclude: "node_modules/!(d3|idb)**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
 		json({

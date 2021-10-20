@@ -40,6 +40,8 @@ streaming import of league files
   - mention setting value to undefined in readme
 - browser support
   - test
+    - chrome 49: importing league doesn't work, but also didn't work before, so whatever
+    - chrome 54: works
 
 improve UI of game summary on schedule page
 - https://discord.com/channels/290013534023057409/331882115119448065/893503160709169163

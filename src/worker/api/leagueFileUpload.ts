@@ -61,6 +61,7 @@ export const parseJSON = () => {
 const makeValidators = () => {
 	const ajv = new Ajv({
 		allErrors: true,
+		code: { es5: true },
 		verbose: true,
 	});
 
@@ -202,7 +203,6 @@ const initialCheck = async (
 	file: File | string,
 	includePlayersInBasicInfo: boolean | undefined,
 ) => {
-	console.time("initialCheck");
 	let stream: ReadableStream;
 	if (typeof file === "string") {
 		let response;
@@ -218,19 +218,14 @@ const initialCheck = async (
 	} else {
 		stream = file.stream() as unknown as ReadableStream;
 	}
-	console.timeLog("initialCheck");
 
 	const stream2 = toPolyfillReadable(stream).pipeThrough(
 		toPolyfillTransform(new TextDecoderStream()),
 	);
-	console.timeLog("initialCheck");
 	const { basicInfo, schemaErrors } = await getBasicInfo(
 		stream2,
 		includePlayersInBasicInfo,
 	);
-	console.timeLog("initialCheck");
-
-	console.log("basicInfo", basicInfo);
 
 	return {
 		basicInfo,

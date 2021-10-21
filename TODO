@@ -22,12 +22,10 @@ streaming import of league files
 - consume stream
   - refactor createStream
 - test
+  - real players 1984 -> rosters not sorted?
   - fix tests
-    - teams is required param now
   - hasRookieContracts
   - quota error mid create
-  - real team overrides
-    - not applying to initial new league notification?
   - godModeInPast
   - numDraftPicksCurrent
 - performance

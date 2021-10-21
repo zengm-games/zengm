@@ -465,26 +465,16 @@ const finalizeGameAttributes = async ({
 };
 
 const finalizeDBExceptPlayers = async ({
-	gameAttributes,
 	teamSeasons,
 	teamStats,
 	teams,
 }: {
-	gameAttributes: GameAttributesLeagueWithHistory;
 	teamSeasons: TeamSeasonWithoutKey[];
 	teamStats: TeamStatsWithoutKey[];
 	teams: Team[];
 }) => {
 	const tx = idb.league.transaction(
-		[
-			"games",
-			"gameAttributes",
-			"schedule",
-			"teamSeasons",
-			"teamStats",
-			"teams",
-			"trade",
-		],
+		["games", "schedule", "teamSeasons", "teamStats", "teams", "trade"],
 		"readwrite",
 	);
 
@@ -552,11 +542,6 @@ const finalizeDBExceptPlayers = async ({
 	const teamStatsStore = tx.objectStore("teamStats");
 	for (const ts of teamStats) {
 		await teamStatsStore.put(ts);
-	}
-
-	const gameAttributesStore = tx.objectStore("gameAttributes");
-	for (const [key, value] of Object.entries(gameAttributes)) {
-		await gameAttributesStore.put({ key: key as any, value });
 	}
 };
 
@@ -960,6 +945,18 @@ const beforeDBStream = async ({
 		userTid: tid,
 	});
 
+	// Update after applying real team info
+	if (realTeamInfo) {
+		gameAttributes.teamInfoCache = teams.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			imgURLSmall: t.imgURLSmall,
+			name: t.name,
+			region: t.region,
+		}));
+	}
+
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
 
 	await addLeagueMeta({
@@ -1080,7 +1077,6 @@ const afterDBStream = async ({
 
 	// Write final versions of everything to the DB, except active players because some post-processing uses functions that read from the cache
 	await finalizeDBExceptPlayers({
-		gameAttributes,
 		teamSeasons,
 		teamStats,
 		teams,
@@ -1099,13 +1095,18 @@ const afterDBStream = async ({
 	idb.cache.newLeague = true;
 	await idb.cache.fill(gameAttributes.season);
 
-	// Hack! Need to not include lid in the update here, because then it gets sent to the UI and is seen in Controller before the URL changes, which interferes with running beforeLeague when the first view in the new league is loaded. lol
 	const gameAttributesToUpdate: Partial<GameAttributesLeagueWithHistory> = {
 		...gameAttributes,
 	};
+
+	// Hack! Need to not include lid in the update here, because then it gets sent to the UI and is seen in Controller before the URL changes, which interferes with running beforeLeague when the first view in the new league is loaded. lol
 	delete gameAttributesToUpdate.lid;
 
-	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
+	// This gets put on in createGameAttributes, but we don't want to write it to DB
+	g.setWithoutSavingToDB("teamInfoCache", gameAttributes.teamInfoCache);
+	delete gameAttributesToUpdate.teamInfoCache;
+
+	// Write gameAttributes to DB in special way, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
 	// BUT - league.setGameAttributes is not expecting gameAttributes with history, so this could break in subtle ways in the future!
 	await league.setGameAttributes(gameAttributesToUpdate as any);
 

@@ -6,18 +6,36 @@
 import {
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
-} from "web-streams-polyfill/es6";
+	WritableStream as PolyfillWritableStream,
+} from "web-streams-polyfill/ponyfill/es6";
 
 import {
 	createReadableStreamWrapper,
 	createTransformStreamWrapper,
 } from "@mattiasbuelens/web-streams-adapter";
-export const toPolyfillReadable = createReadableStreamWrapper(
-	PolyfillReadableStream,
-) as unknown as (stream: ReadableStream) => ReadableStream;
-export const toPolyfillTransform = createTransformStreamWrapper(
-	PolyfillTransformStream as any,
-) as unknown as (stream: TransformStream) => TransformStream;
+
+export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
+export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
+
+// It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
+if (!self.WritableStream || !self.TransformStream) {
+	console.log("POLYFILL STREAMS");
+
+	self.ReadableStream = PolyfillReadableStream as any;
+	self.TransformStream = PolyfillTransformStream as any;
+	self.WritableStream = PolyfillWritableStream;
+
+	toPolyfillReadable = createReadableStreamWrapper(
+		PolyfillReadableStream,
+	) as any;
+	toPolyfillTransform = createTransformStreamWrapper(
+		PolyfillTransformStream as any,
+	) as any;
+} else {
+	console.log("NATIVE STREAMS");
+	toPolyfillReadable = x => x;
+	toPolyfillTransform = x => x;
+}
 
 // Not supported in any Firefox yet!
 import "./polyfill-TextDecoderStream";

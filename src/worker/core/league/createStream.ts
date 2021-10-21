@@ -1175,7 +1175,7 @@ const afterDBStream = async ({
 	}
 	await finances.updateRanks(["budget"]);
 
-	// Set numDraftPicksCurrent
+	// Set numDraftPicksCurrent, for upgrading leagues
 	if (g.get("phase") === PHASE.DRAFT) {
 		const currentDraftPicks = await draft.getOrder();
 		const draftNotStarted =
@@ -1214,6 +1214,7 @@ const createStream = async (
 		tid,
 	}: CreateStreamProps,
 ) => {
+	console.time("createStream");
 	const {
 		activeTids,
 		averagePopulation,
@@ -1241,6 +1242,7 @@ const createStream = async (
 		teamsFromInput,
 		tid,
 	});
+	console.timeLog("createStream");
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keptKeys,
@@ -1256,8 +1258,10 @@ const createStream = async (
 			version: fromFile.version,
 		},
 	});
+	console.timeLog("createStream");
 
 	await stream.pipeTo(saveToDB);
+	console.timeLog("createStream");
 
 	await afterDBStream({
 		activeTids,
@@ -1274,6 +1278,7 @@ const createStream = async (
 		teamStats,
 		teams,
 	});
+	console.timeEnd("createStream");
 };
 
 export default createStream;

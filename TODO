@@ -19,15 +19,18 @@ FBGM team penalty counts https://discord.com/channels/290013534023057409/5697263
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
 streaming import of league files
-- consume stream
-  - refactor createStream
+- progress in UI - say what it's doing (preprocessing, checking/processing STORE_NAME, postprocessing)
 - test
   - fix tests
-  - numDraftPicksCurrent
 - performance
   - benchmark
+    - BBGM_1v1_2040_preseason.json is very slow
+    - firefox is very slow
   - queueing strategy highwatermark of various streams
+  - test with and without polyfill
+  - could use cumulative method if file is smaller than some amount, both for initialCheck and actual load
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
+- test browsers again
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 

@@ -19,8 +19,6 @@ export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
 
 // It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
 if (!self.WritableStream || !self.TransformStream) {
-	console.log("POLYFILL STREAMS");
-
 	self.ReadableStream = PolyfillReadableStream as any;
 	self.TransformStream = PolyfillTransformStream as any;
 	self.WritableStream = PolyfillWritableStream;
@@ -32,7 +30,6 @@ if (!self.WritableStream || !self.TransformStream) {
 		PolyfillTransformStream as any,
 	) as any;
 } else {
-	console.log("NATIVE STREAMS");
 	toPolyfillReadable = x => x;
 	toPolyfillTransform = x => x;
 }

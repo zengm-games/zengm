@@ -56,6 +56,10 @@ export const parseJSON = () => {
 			transform(chunk) {
 				parser.write(chunk);
 			},
+
+			flush(controller) {
+				controller.terminate();
+			},
 		},
 		new CountQueuingStrategy({
 			highWaterMark,
@@ -229,13 +233,20 @@ const initialCheck = async (
 		stream = file.stream() as unknown as ReadableStream;
 	}
 
-	const stream2 = toPolyfillReadable(stream).pipeThrough(
+	const stream0 = toPolyfillReadable(stream);
+
+	// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
+	(self as any).stream0 = stream0;
+
+	const stream2 = stream0.pipeThrough(
 		toPolyfillTransform(new TextDecoderStream()),
 	);
 	const { basicInfo, schemaErrors } = await getBasicInfo(
 		stream2,
 		includePlayersInBasicInfo,
 	);
+
+	delete (self as any).stream0;
 
 	return {
 		basicInfo,

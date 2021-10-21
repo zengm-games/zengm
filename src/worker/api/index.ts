@@ -524,7 +524,12 @@ const createLeague = async (
 			baseStream = response.body as ReadableStream;
 		}
 
-		stream = toPolyfillReadable(baseStream)
+		const stream0 = toPolyfillReadable(baseStream);
+
+		// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
+		(self as any).stream0 = stream0;
+
+		stream = stream0
 			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
 			.pipeThrough(parseJSON());
 	} else {
@@ -553,6 +558,8 @@ const createLeague = async (
 		teamsFromInput,
 		tid: actualTid,
 	});
+
+	delete (self as any).stream0;
 
 	toUI(
 		"updateLocal",

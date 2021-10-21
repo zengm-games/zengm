@@ -6,8 +6,14 @@ import JSONParserText from "./JSONParserText";
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
-import { helpers, toPolyfillReadable, toPolyfillTransform } from "../util";
+import {
+	helpers,
+	toPolyfillReadable,
+	toPolyfillTransform,
+	toUI,
+} from "../util";
 import { highWaterMark } from "../core/league/createStream";
+import type { Conditions } from "../../common/types";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([
@@ -130,6 +136,8 @@ export type BasicInfo = {
 const getBasicInfo = async (
 	stream: ReadableStream,
 	includePlayersInBasicInfo: boolean | undefined,
+	leagueCreationID: number,
+	conditions: Conditions,
 ) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
 	const basicInfo: BasicInfo = {
@@ -154,7 +162,21 @@ const getBasicInfo = async (
 
 		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
 
-		basicInfo.keys.add(value.key);
+		if (!basicInfo.keys.has(value.key)) {
+			basicInfo.keys.add(value.key);
+			toUI(
+				"updateLocal",
+				[
+					{
+						leagueCreation: {
+							id: leagueCreationID,
+							status: value.key,
+						},
+					},
+				],
+				conditions,
+			);
+		}
 
 		if (validators[value.key]) {
 			const validate = validators[value.key];
@@ -210,12 +232,24 @@ const getBasicInfo = async (
 		}
 	}
 
+	toUI(
+		"updateLocal",
+		[
+			{
+				leagueCreation: undefined,
+			},
+		],
+		conditions,
+	);
+
 	return { basicInfo, schemaErrors };
 };
 
 const initialCheck = async (
 	file: File | string,
 	includePlayersInBasicInfo: boolean | undefined,
+	leagueCreationID: number,
+	conditions: Conditions,
 ) => {
 	let stream: ReadableStream;
 	if (typeof file === "string") {
@@ -244,6 +278,8 @@ const initialCheck = async (
 	const { basicInfo, schemaErrors } = await getBasicInfo(
 		stream2,
 		includePlayersInBasicInfo,
+		leagueCreationID,
+		conditions,
 	);
 
 	delete (self as any).stream0;

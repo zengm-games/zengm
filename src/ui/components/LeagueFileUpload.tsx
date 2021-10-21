@@ -13,7 +13,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../common";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload";
-import { resetFileInput, toWorker } from "../util";
+import { resetFileInput, toWorker, useLocal } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {
@@ -121,6 +121,9 @@ const LeagueFileUpload = ({
 		};
 	}, []);
 
+	const leagueCreationID = useRef(Math.random());
+	const leagueCreation = useLocal(state => state.leagueCreation);
+
 	// Reset status when switching between file upload
 	useEffect(() => {
 		dispatch({
@@ -210,6 +213,7 @@ const LeagueFileUpload = ({
 				"initialCheck",
 				url,
 				includePlayersInBasicInfo,
+				leagueCreationID,
 			);
 
 			await afterCheck({
@@ -323,7 +327,9 @@ const LeagueFileUpload = ({
 					</p>
 				) : null}
 				{state.status === "checking" ? (
-					<p className="alert alert-info mt-3">Validating league file...</p>
+					<p className="alert alert-info mt-3">
+						Validating {leagueCreation?.status ?? "league file"}...
+					</p>
 				) : null}
 				{state.status === "done" && !hideLoadedMessage ? (
 					<p className="alert alert-success mt-3">Done!</p>

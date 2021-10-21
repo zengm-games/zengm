@@ -112,7 +112,7 @@ const initKeptKeys = ({
 	oldKeptKeys?: string[];
 	oldAllKeys?: string[];
 }) => {
-	const allKeys = newAllKeys.filter(key => key !== "version");
+	const allKeys = newAllKeys.filter(key => key !== "version" && key !== "meta");
 
 	let keptKeys;
 	if (!oldKeptKeys || !oldAllKeys) {

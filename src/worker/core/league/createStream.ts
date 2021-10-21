@@ -272,6 +272,7 @@ const preProcess = async (
 type ExtraFromStream = {
 	activePlayers: PlayerWithoutKey[];
 	hasEvents: boolean;
+	teamHasRosterOrder: Set<number>;
 };
 
 const getSaveToDB = async ({
@@ -288,6 +289,7 @@ const getSaveToDB = async ({
 	const extraFromStream: ExtraFromStream = {
 		activePlayers: [],
 		hasEvents: false,
+		teamHasRosterOrder: new Set(),
 	};
 
 	let currentScheduleGid = maxGid ?? -1;
@@ -325,6 +327,10 @@ const getSaveToDB = async ({
 					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
 			) {
 				extraFromStream.activePlayers.push(processed);
+
+				if (!isSport("basketball") || typeof value.rosterOrder === "number") {
+					extraFromStream.teamHasRosterOrder.add(value.tid);
+				}
 			} else {
 				buffer.addRow([key, processed]);
 				if (buffer.isFull()) {
@@ -1131,18 +1137,11 @@ const afterDBStream = async ({
 
 		// Auto sort rosters
 		for (const t of teams) {
-			let noRosterOrderSet = true;
-			if (isSport("basketball") && fileHasPlayers) {
-				for (const p of activePlayers) {
-					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
-						noRosterOrderSet = false;
-						break;
-					}
-				}
-			}
-
-			// If league file has players, don't auto sort even if skipNewPhase is false
-			if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
+			// If league file has players with roster order set, don't auto sort even if skipNewPhase is false
+			if (
+				!extraFromStream.teamHasRosterOrder.has(t.tid) ||
+				!g.get("userTids").includes(t.tid)
+			) {
 				await team.rosterAutoSort(t.tid);
 			}
 		}

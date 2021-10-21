@@ -22,18 +22,14 @@ streaming import of league files
 - consume stream
   - refactor createStream
 - test
-  - real players 1984 -> rosters not sorted?
   - fix tests
-  - hasRookieContracts
-  - quota error mid create
-  - godModeInPast
   - numDraftPicksCurrent
 - performance
   - benchmark
   - queueing strategy highwatermark of various streams
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
-- release jsonparse-web as standalone package
-  - mention setting value to undefined in readme
+
+better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
 

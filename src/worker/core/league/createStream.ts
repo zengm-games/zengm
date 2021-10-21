@@ -49,6 +49,9 @@ export type TeamInfo = TeamBasic & {
 	stats?: TeamStatsWithoutKey[];
 };
 
+// Doesn't seem to make a difference no matter what this is...
+export const highWaterMark = 1000;
+
 const addLeagueMeta = async ({
 	lid,
 	name,
@@ -317,59 +320,64 @@ const getSaveToDB = async ({
 	const writableStream = new WritableStream<{
 		key: string;
 		value: any;
-	}>({
-		async write(chunk) {
-			const { key, value } = chunk;
+	}>(
+		{
+			async write(chunk) {
+				const { key, value } = chunk;
 
-			if (CUMULATIVE_OBJECTS.has(key as any) || key === "teams") {
-				// Currently skipped:
-				// - meta because it doesn't get written to DB
-				// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
-				return;
-			}
-
-			if (key !== prevKey) {
-				console.timeLog("createStream");
-				console.log("loading", key);
-				setLeagueCreationStatus(`Processing ${key}...`);
-				prevKey = key;
-			}
-
-			// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-			if (key === "schedule" && keptKeys.has("schedule")) {
-				currentScheduleGid += 1;
-				value.gid = currentScheduleGid;
-			}
-
-			if (key === "events" && keptKeys.has("events")) {
-				extraFromStream.hasEvents = true;
-			}
-
-			const processed = await preProcess(key, value, preProcessParams);
-
-			if (
-				key === "players" &&
-				keptKeys.has("players") &&
-				(processed.tid >= PLAYER.UNDRAFTED ||
-					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
-			) {
-				extraFromStream.activePlayers.push(processed);
-
-				if (!isSport("basketball") || typeof value.rosterOrder === "number") {
-					extraFromStream.teamHasRosterOrder.add(value.tid);
+				if (CUMULATIVE_OBJECTS.has(key as any) || key === "teams") {
+					// Currently skipped:
+					// - meta because it doesn't get written to DB
+					// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
+					return;
 				}
-			} else {
-				buffer.addRow([key, processed]);
-				if (buffer.isFull()) {
-					await buffer.flush();
-				}
-			}
-		},
 
-		async close() {
-			await buffer.finalize();
+				if (key !== prevKey) {
+					console.timeLog("createStream");
+					console.log("loading", key);
+					setLeagueCreationStatus(`Processing ${key}...`);
+					prevKey = key;
+				}
+
+				// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
+				if (key === "schedule" && keptKeys.has("schedule")) {
+					currentScheduleGid += 1;
+					value.gid = currentScheduleGid;
+				}
+
+				if (key === "events" && keptKeys.has("events")) {
+					extraFromStream.hasEvents = true;
+				}
+
+				const processed = await preProcess(key, value, preProcessParams);
+
+				if (
+					key === "players" &&
+					keptKeys.has("players") &&
+					(processed.tid >= PLAYER.UNDRAFTED ||
+						processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
+				) {
+					extraFromStream.activePlayers.push(processed);
+
+					if (!isSport("basketball") || typeof value.rosterOrder === "number") {
+						extraFromStream.teamHasRosterOrder.add(value.tid);
+					}
+				} else {
+					buffer.addRow([key, processed]);
+					if (buffer.isFull()) {
+						await buffer.flush();
+					}
+				}
+			},
+
+			async close() {
+				await buffer.finalize();
+			},
 		},
-	});
+		new CountQueuingStrategy({
+			highWaterMark,
+		}),
+	);
 
 	return {
 		extraFromStream,

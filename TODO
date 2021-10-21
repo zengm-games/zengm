@@ -26,8 +26,6 @@ streaming import of league files
   - benchmark
     - BBGM_1v1_2040_preseason.json is very slow
     - firefox is very slow
-  - queueing strategy highwatermark of various streams
-  - test with and without polyfill
   - could use cumulative method if file is smaller than some amount, both for initialCheck and actual load
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
 - test browsers again

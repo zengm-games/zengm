@@ -323,7 +323,7 @@ const LeagueFileUpload = ({
 					</p>
 				) : null}
 				{state.status === "checking" ? (
-					<p className="alert alert-info mt-3">Checking league file...</p>
+					<p className="alert alert-info mt-3">Validating league file...</p>
 				) : null}
 				{state.status === "done" && !hideLoadedMessage ? (
 					<p className="alert alert-success mt-3">Done!</p>

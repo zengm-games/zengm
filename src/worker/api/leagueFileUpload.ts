@@ -7,6 +7,7 @@ import JSONParserText from "./JSONParserText";
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
 import { helpers, toPolyfillReadable, toPolyfillTransform } from "../util";
+import { highWaterMark } from "../core/league/createStream";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([
@@ -19,42 +20,50 @@ export const CUMULATIVE_OBJECTS = new Set([
 export const parseJSON = () => {
 	let parser: any;
 
-	const transformStream = new TransformStream({
-		start(controller) {
-			parser = new JSONParserText(value => {
-				// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
+	const transformStream = new TransformStream(
+		{
+			start(controller) {
+				parser = new JSONParserText(value => {
+					// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
 
-				// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
-				let objectType;
-				if (parser.stack.length > 1) {
-					objectType = parser.stack[1].key;
-				} else {
-					objectType = parser.key;
-				}
+					// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
+					let objectType;
+					if (parser.stack.length > 1) {
+						objectType = parser.stack[1].key;
+					} else {
+						objectType = parser.key;
+					}
 
-				const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType) ? 1 : 2;
+					const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType) ? 1 : 2;
 
-				if (parser.stack.length !== emitAtStackLength) {
-					// We must be deeper in the tree, still building an object to emit
-					return;
-				}
+					if (parser.stack.length !== emitAtStackLength) {
+						// We must be deeper in the tree, still building an object to emit
+						return;
+					}
 
-				controller.enqueue({
-					key: objectType,
-					value,
+					controller.enqueue({
+						key: objectType,
+						value,
+					});
+
+					// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
+					for (const row of parser.stack) {
+						row.value = undefined;
+					}
 				});
+			},
 
-				// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
-				for (const row of parser.stack) {
-					row.value = undefined;
-				}
-			});
+			transform(chunk) {
+				parser.write(chunk);
+			},
 		},
-
-		transform(chunk) {
-			parser.write(chunk);
-		},
-	});
+		new CountQueuingStrategy({
+			highWaterMark,
+		}),
+		new CountQueuingStrategy({
+			highWaterMark,
+		}),
+	);
 
 	return transformStream;
 };

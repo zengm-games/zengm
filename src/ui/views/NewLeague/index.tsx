@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
-import { useState, useReducer } from "react";
+import { useState, useReducer, useRef } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -31,6 +31,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 	safeLocalStorage,
+	useLocal,
 } from "../../util";
 import type {
 	View,
@@ -539,6 +540,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		"default" | "teams" | "settings"
 	>("default");
 
+	const leagueCreationID = useRef(Math.random());
+	const leagueCreation = useLocal(state => state.leagueCreation);
+
 	const [state, dispatch] = useReducer(
 		reducer,
 		props,
@@ -696,6 +700,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					teams: state.basicInfo?.teams,
 					version: state.basicInfo?.version,
 				},
+				leagueCreationID: leagueCreationID.current,
 			});
 
 			let type: string = state.customize;
@@ -1226,6 +1231,10 @@ const NewLeague = (props: View<"newLeague">) => {
 									Customize Settings
 								</button>
 							</div>
+
+							{leagueCreation?.id === leagueCreationID.current ? (
+								<div className="text-center mt-2">{leagueCreation.status}</div>
+							) : null}
 						</div>
 
 						{props.type === "custom" ||

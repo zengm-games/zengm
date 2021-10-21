@@ -433,6 +433,7 @@ const createLeague = async (
 		settings,
 		fromFile,
 		startingSeasonFromInput,
+		leagueCreationID,
 	}: {
 		name: string;
 		tid: number;
@@ -455,10 +456,28 @@ const createLeague = async (
 			version: number | undefined;
 		};
 		startingSeasonFromInput: string | undefined;
+		leagueCreationID: number;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
 	const keys = new Set([...keptKeys, "startingSeason", "version"]);
+
+	const setLeagueCreationStatus = (status: string) => {
+		toUI(
+			"updateLocal",
+			[
+				{
+					leagueCreation: {
+						id: leagueCreationID,
+						status,
+					},
+				},
+			],
+			conditions,
+		);
+	};
+
+	setLeagueCreationStatus("Initializing...");
 
 	let actualTid = tid;
 	let stream: ReadableStream | undefined;
@@ -527,12 +546,23 @@ const createLeague = async (
 		lid,
 		keptKeys: keys,
 		name,
+		setLeagueCreationStatus,
 		settings,
 		shuffleRosters,
 		startingSeasonFromInput,
 		teamsFromInput,
 		tid: actualTid,
 	});
+
+	toUI(
+		"updateLocal",
+		[
+			{
+				leagueCreation: undefined,
+			},
+		],
+		conditions,
+	);
 
 	return lid;
 };

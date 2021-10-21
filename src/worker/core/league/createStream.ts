@@ -1,3 +1,4 @@
+import type { IDBPTransaction } from "idb";
 import { draft, finances, freeAgents, league, player, season, team } from "..";
 import { applyRealTeamInfo, isSport, PHASE, PLAYER } from "../../../common";
 import type {
@@ -94,9 +95,10 @@ class Buffer {
 	keptKeys: Set<string>;
 	keys: Set<string>;
 	rows: [string, any][];
+	previousTransaction: IDBPTransaction<any, any, any> | undefined;
 
 	constructor(keptKeys: Set<string>) {
-		this.MAX_BUFFER_SIZE = 1000;
+		this.MAX_BUFFER_SIZE = 10000;
 		this.keptKeys = keptKeys;
 
 		this.keys = new Set();
@@ -123,7 +125,16 @@ class Buffer {
 		return this.rows.length >= this.MAX_BUFFER_SIZE;
 	}
 
+	// This is so flush does not have to wait for the writes to complete before we start filling the buffer again
+	async waitForPreviousTransaction() {
+		if (this.previousTransaction) {
+			await this.previousTransaction.done;
+		}
+	}
+
 	async flush() {
+		await this.waitForPreviousTransaction();
+
 		if (this.keys.size > 0) {
 			const transaction = idb.league.transaction(
 				Array.from(this.keys) as any,
@@ -134,10 +145,15 @@ class Buffer {
 				transaction.objectStore(row[0]).put(row[1]);
 			}
 
-			await transaction.done;
+			this.previousTransaction = transaction;
 
 			this.clear();
 		}
+	}
+
+	async finalize() {
+		await this.flush();
+		await this.waitForPreviousTransaction();
 	}
 }
 
@@ -279,10 +295,12 @@ const getSaveToDB = async ({
 	keptKeys,
 	maxGid,
 	preProcessParams,
+	setLeagueCreationStatus,
 }: {
 	keptKeys: Set<string>;
 	maxGid: number | undefined;
 	preProcessParams: PreProcessParams;
+	setLeagueCreationStatus: CreateStreamProps["setLeagueCreationStatus"];
 }) => {
 	const buffer = new Buffer(keptKeys);
 
@@ -293,6 +311,8 @@ const getSaveToDB = async ({
 	};
 
 	let currentScheduleGid = maxGid ?? -1;
+
+	let prevKey: string | undefined;
 
 	const writableStream = new WritableStream<{
 		key: string;
@@ -306,6 +326,13 @@ const getSaveToDB = async ({
 				// - meta because it doesn't get written to DB
 				// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
 				return;
+			}
+
+			if (key !== prevKey) {
+				console.timeLog("createStream");
+				console.log("loading", key);
+				setLeagueCreationStatus(`Processing ${key}...`);
+				prevKey = key;
 			}
 
 			// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
@@ -340,7 +367,7 @@ const getSaveToDB = async ({
 		},
 
 		async close() {
-			await buffer.flush();
+			await buffer.finalize();
 		},
 	});
 
@@ -819,6 +846,7 @@ type CreateStreamProps = {
 	keptKeys: Set<string>;
 	lid: number;
 	name: string;
+	setLeagueCreationStatus: (status: string) => void;
 	settings: Omit<Settings, "numActiveTeams">;
 	shuffleRosters: boolean;
 	startingSeasonFromInput: string | undefined;
@@ -1207,6 +1235,7 @@ const createStream = async (
 		keptKeys,
 		lid,
 		name,
+		setLeagueCreationStatus,
 		settings,
 		shuffleRosters,
 		startingSeasonFromInput,
@@ -1257,11 +1286,14 @@ const createStream = async (
 			scoutingRank,
 			version: fromFile.version,
 		},
+		setLeagueCreationStatus,
 	});
 	console.timeLog("createStream");
 
 	await stream.pipeTo(saveToDB);
 	console.timeLog("createStream");
+
+	setLeagueCreationStatus("Finalizing...");
 
 	await afterDBStream({
 		activeTids,

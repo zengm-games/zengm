@@ -874,6 +874,10 @@ export type LocalStateUI = {
 	hasViewedALeague: boolean;
 	hideDisabledTeams: boolean;
 	homeCourtAdvantage: number;
+	leagueCreation?: {
+		id: number;
+		status: string;
+	};
 	lid?: number;
 	liveGameInProgress: boolean;
 	numPeriods: number;

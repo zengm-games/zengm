@@ -40,10 +40,16 @@ streaming export
       - getExportInfo only in UI
       - firefox
     - need to flush (and other stuff?) first
-    - can transfer idb.league over worker?
+    - stream polyfills on client too
+    - firefox sometimes needs reload before it works
+      - https://github.com/jimmywarting/StreamSaver.js/issues/153
+      - https://github.com/jimmywarting/StreamSaver.js/issues/233
+      - could show warning in UI to reload and try again if it doesn't start quickly
+    - if cancel, spinner keeps going
+      - https://github.com/jimmywarting/StreamSaver.js/issues/13 has some ideas at the bottom
+      - maybe just don't show spinner, since it starts download so quick
+    - could build a separate firefox thing maybe, external to the game?
   - https://github.com/jimmywarting/native-file-system-adapter
-  - https://github.com/GoogleChromeLabs/browser-fs-access
-    - https://github.com/GoogleChromeLabs/browser-fs-access/pull/67
 - chrome 93/94 need to use user agent detection to not use new method https://dumbmatter.com/file-system-access-worker-bug/
 - extra logic now in exportLeague API
   - still some more in api/exportLeague.ts

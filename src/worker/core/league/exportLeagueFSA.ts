@@ -316,12 +316,7 @@ const exportLeagueFSA = async (
 		);
 	};
 
-	// const writableStream = await fileHandle.createWritable();
-	const writableStream = new WritableStream({
-		async write(chunk) {
-			console.log("chunk", chunk);
-		},
-	});
+	const writableStream = await fileHandle.createWritable();
 
 	const readableStream = makeReadableStream();
 	readableStream.pipeTo(writableStream);

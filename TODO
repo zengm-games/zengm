@@ -32,9 +32,11 @@ streaming import of league files
 streaming export
 - options
   - https://github.com/jimmywarting/StreamSaver.js
+    - can't be in a web worker
   - https://github.com/jimmywarting/native-file-system-adapter
   - https://github.com/GoogleChromeLabs/browser-fs-access
     - https://github.com/GoogleChromeLabs/browser-fs-access/pull/67
+- chrome 93/94 need to use user agent detection to not use new method https://dumbmatter.com/file-system-access-worker-bug/
 - extra logic now in exportLeague API
   - still some more in api/exportLeague.ts
 - if pull ends at the exact end of an object store, make sure it at least enqueues something

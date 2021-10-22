@@ -33,6 +33,7 @@ describe("Smoke Tests", () => {
 			keptKeys: new Set(),
 			lid: 0,
 			name: "Test",
+			setLeagueCreationStatus: () => {},
 			settings: {} as any,
 			shuffleRosters: false,
 			startingSeasonFromInput: "2016",

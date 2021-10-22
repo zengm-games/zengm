@@ -333,8 +333,8 @@ const getSaveToDB = async ({
 				}
 
 				if (key !== prevKey) {
-					console.timeLog("createStream");
-					console.log("loading", key);
+					// console.timeLog("createStream");
+					// console.log("loading", key);
 					setLeagueCreationStatus(`Processing ${key}...`);
 					prevKey = key;
 				}
@@ -1251,7 +1251,7 @@ const createStream = async (
 		tid,
 	}: CreateStreamProps,
 ) => {
-	console.time("createStream");
+	// console.time("createStream");
 	const {
 		activeTids,
 		averagePopulation,
@@ -1279,7 +1279,7 @@ const createStream = async (
 		teamsFromInput,
 		tid,
 	});
-	console.timeLog("createStream");
+	// console.timeLog("createStream");
 
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keptKeys,
@@ -1296,10 +1296,10 @@ const createStream = async (
 		},
 		setLeagueCreationStatus,
 	});
-	console.timeLog("createStream");
+	// console.timeLog("createStream");
 
 	await stream.pipeTo(saveToDB);
-	console.timeLog("createStream");
+	// console.timeLog("createStream");
 
 	setLeagueCreationStatus("Finalizing...");
 
@@ -1318,7 +1318,7 @@ const createStream = async (
 		teamStats,
 		teams,
 	});
-	console.timeEnd("createStream");
+	// console.timeEnd("createStream");
 };
 
 export default createStream;

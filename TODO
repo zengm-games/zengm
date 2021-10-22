@@ -36,6 +36,8 @@ streaming export
   - https://github.com/GoogleChromeLabs/browser-fs-access
     - https://github.com/GoogleChromeLabs/browser-fs-access/pull/67
 - extra logic now in exportLeague API
+  - still some more in api/exportLeague.ts
+- if pull ends at the exact end of an object store, make sure it at least enqueues something
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 - test
   - filenames

@@ -173,9 +173,11 @@ export const exportLeagueFSA = async (
 	checked: Checked,
 ) => {
 	const { stores, filter, forEach, map } = getExportInfo(checked);
-	console.log(fileHandle, stores);
 
 	await league.exportLeagueFSA(fileHandle, stores, {
+		filter,
+		forEach,
+		map,
 		compressed: checked.compressed,
 	});
 };

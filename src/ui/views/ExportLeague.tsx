@@ -321,6 +321,8 @@ const ExportLeague = () => {
 		}
 		console.timeEnd("foo");
 
+		saveDefaults(checked, compressed);
+
 		setStatus(undefined);
 	};
 

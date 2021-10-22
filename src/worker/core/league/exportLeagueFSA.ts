@@ -1,5 +1,6 @@
-import type { StoreNames, StoreValue } from "idb";
+import type { IDBPCursorWithValue } from "idb";
 import { gameAttributesArrayToObject } from "../../../common";
+import { gameAttributesCache } from "../../../common/defaultGameAttributes";
 import { getAll, idb } from "../../db";
 import type { LeagueDB } from "../../db/connectLeague";
 import { g, local } from "../../util";
@@ -7,50 +8,56 @@ import getName from "./getName";
 
 type Filter = (a: any) => boolean;
 
+// Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
+const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;
+
+// If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction
+const highWaterMark = ONE_MEGABYTE_IN_BYTES;
+const minSizePerPull = ONE_MEGABYTE_IN_BYTES;
+
+const stringSizeInBytes = (str: string | undefined) => {
+	if (!str) {
+		return 0;
+	}
+
+	// https://stackoverflow.com/a/23329386/786644
+	let s = str.length;
+	for (let i = str.length - 1; i >= 0; i--) {
+		const code = str.charCodeAt(i);
+		if (code > 0x7f && code <= 0x7ff) s++;
+		else if (code > 0x7ff && code <= 0xffff) s += 2;
+		if (code >= 0xdc00 && code <= 0xdfff) i--;
+	}
+	return s;
+};
+
+const NUM_SPACES_IN_TAB = 2;
+
 const exportLeagueFSA = async (
 	fileHandle: FileSystemFileHandle,
-	stores: string[],
+	storesInput: string[],
 	{
 		compressed = false,
 		meta = true,
-		filter = {},
+		filter,
+		forEach,
+		map,
 	}: {
 		compressed?: boolean;
 		meta?: boolean;
-		filter?: {
+		filter: {
 			[key: string]: Filter;
 		};
-	} = {},
+		forEach: {
+			[key: string]: (a: any) => void;
+		};
+		map: {
+			[key: string]: (a: any) => any;
+		};
+	},
 ) => {
-	// Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
-	const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;
-
-	// If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction
-	const highWaterMark = ONE_MEGABYTE_IN_BYTES;
-	const minSizePerPull = ONE_MEGABYTE_IN_BYTES;
-
-	const stringSizeInBytes = (str: string | undefined) => {
-		if (!str) {
-			return 0;
-		}
-
-		// https://stackoverflow.com/a/23329386/786644
-		let s = str.length;
-		for (let i = str.length - 1; i >= 0; i--) {
-			const code = str.charCodeAt(i);
-			if (code > 0x7f && code <= 0x7ff) s++;
-			else if (code > 0x7ff && code <= 0xffff) s += 2;
-			if (code >= 0xdc00 && code <= 0xdfff) i--;
-		}
-		return s;
-	};
-
-	const NUM_SPACES_IN_TAB = 2;
-
 	// Always flush before export, so export is current!
 	await idb.cache.flush();
-
-	const writable = await fileHandle.createWritable();
 
 	const space = compressed ? "" : " ";
 	const tab = compressed ? "" : " ".repeat(NUM_SPACES_IN_TAB);
@@ -66,26 +73,45 @@ const exportLeagueFSA = async (
 		return json.replace(/\n/g, `\n${tab.repeat(indentationLevels)}`);
 	};
 
-	const makeStoreStream = <Store extends StoreNames<LeagueDB>>(
-		store: Store,
-		{
-			filter,
-			forEach,
-		}: {
-			filter?: Filter;
+	const stores = storesInput.filter(
+		store => store !== "teamSeasons" && store !== "teamStats",
+	);
+	const includeTeamSeasonsAndStats = stores.length !== storesInput.length;
 
-			// Can mutate because this comes from IndexedDB
-			forEach?: (row: StoreValue<LeagueDB, Store>) => void;
-		},
-	) => {
-		let prevKey: LeagueDB[Store]["key"] | undefined;
+	const writeRootObject = (
+		controller: ReadableStreamController<string>,
+		name: string,
+		object: any,
+	) =>
+		controller.enqueue(
+			`,${newline}${tab}"${name}":${space}${jsonStringify(object, 1)}`,
+		);
+
+	const makeReadableStream = () => {
+		let storeIndex = 0;
+		let prevKey: string | number | undefined;
 		let cancelCallback: (() => void) | undefined;
 		let seenFirstRecord = false;
-		const stores: StoreNames<LeagueDB>[] =
-			store === "teams" ? ["teams", "teamSeasons", "teamStats"] : [store];
 
 		return new ReadableStream<string>(
 			{
+				async start(controller) {
+					await controller.enqueue(
+						`{${newline}${tab}"version":${space}${idb.league.version}`,
+					);
+
+					// Row from leagueStore in meta db.
+					// phaseText is needed if a phase is set in gameAttributes.
+					// name is only used for the file name of the exported roster file.
+					if (meta) {
+						const leagueName = await getName();
+						await writeRootObject(controller, "meta", {
+							phaseText: local.phaseText,
+							name: leagueName,
+						});
+					}
+				},
+
 				async pull(controller) {
 					// console.log("PULL", controller.desiredSize / 1024 / 1024);
 					const done = () => {
@@ -109,102 +135,172 @@ const exportLeagueFSA = async (
 						controller.enqueue(string);
 					};
 
-					const transaction = idb.league.transaction(stores);
+					const store = stores[storeIndex];
 
-					const range =
-						prevKey !== undefined
-							? IDBKeyRange.lowerBound(prevKey, true)
-							: undefined;
-					let cursor = await transaction.objectStore(store).openCursor(range);
-					while (cursor) {
-						if (!filter || filter(cursor.value)) {
-							// count += 1;
+					// Define this up here so it is undefined for gameAttributes, triggering the "go to next store" logic at the bottom
+					let cursor:
+						| IDBPCursorWithValue<LeagueDB, any, any, unknown, "readonly">
+						| null
+						| undefined;
 
-							const comma = seenFirstRecord ? "," : "";
+					if (store === "gameAttributes") {
+						// gameAttributes is special because we need to convert it into an object
+						let rows = (
+							await getAll(
+								idb.league.transaction(store).store,
+								undefined,
+								filter[store],
+							)
+						).filter(row => !gameAttributesCache.includes(row.key));
 
-							if (!seenFirstRecord) {
-								enqueue(`,${newline}${tab}"${store}": [`);
-								seenFirstRecord = true;
+						if (forEach[store]) {
+							for (const row of rows) {
+								forEach[store](row);
 							}
-
-							if (forEach) {
-								forEach(cursor.value);
-							}
-
-							if (store === "teams") {
-								// This is a bit dangerous, since it will possibly read all teamStats/teamSeasons rows into memory, but that will very rarely exceed MIN_RECORDS_PER_PULL and we will just do one team per transaction, to be safe.
-
-								const tid = cursor.value.tid;
-
-								const infos: (
-									| {
-											key: string;
-											store: "teamSeasons";
-											index: "tid, season";
-											keyRange: IDBKeyRange;
-									  }
-									| {
-											key: string;
-											store: "teamStats";
-											index: "tid";
-											keyRange: IDBKeyRange;
-									  }
-								)[] = [
-									{
-										key: "seasons",
-										store: "teamSeasons",
-										index: "tid, season",
-										keyRange: IDBKeyRange.bound([tid], [tid, ""]),
-									},
-									{
-										key: "stats",
-										store: "teamStats",
-										index: "tid",
-										keyRange: IDBKeyRange.only(tid),
-									},
-								];
-
-								const t: any = cursor.value;
-
-								for (const info of infos) {
-									t[info.key] = [];
-									let cursor2 = await transaction
-										.objectStore(info.store)
-										.index(info.index as any)
-										.openCursor(info.keyRange);
-									while (cursor2) {
-										t[info.key].push(cursor2.value);
-										cursor2 = await cursor2.continue();
-									}
-								}
-							}
-
-							enqueue(
-								`${comma}${newline}${tab.repeat(2)}${jsonStringify(
-									cursor.value,
-									2,
-								)}`,
-							);
 						}
 
-						prevKey = cursor.key as any;
+						if (map[store]) {
+							rows = rows.map(map[store]);
+						}
 
-						const desiredSize = (controller as any).desiredSize;
-						if ((desiredSize > 0 || size < minSizePerPull) && !cancelCallback) {
-							// Keep going if desiredSize or minSizePerPull want us to
-							cursor = await cursor.continue();
-						} else {
-							break;
+						await writeRootObject(
+							controller,
+							"gameAttributes",
+							gameAttributesArrayToObject(rows),
+						);
+					} else {
+						const txStores =
+							store === "teams"
+								? ["teams", "teamSeasons", "teamStats"]
+								: [store];
+
+						const transaction = idb.league.transaction(txStores as any);
+
+						const range =
+							prevKey !== undefined
+								? IDBKeyRange.lowerBound(prevKey, true)
+								: undefined;
+						cursor = await transaction.objectStore(store).openCursor(range);
+						while (cursor) {
+							let value = cursor.value;
+
+							if (!filter[store] || filter[store](value)) {
+								// count += 1;
+
+								const comma = seenFirstRecord ? "," : "";
+
+								if (!seenFirstRecord) {
+									enqueue(`,${newline}${tab}"${store}": [`);
+									seenFirstRecord = true;
+								}
+
+								if (forEach[store]) {
+									forEach[store](value);
+								}
+								if (store === "players") {
+									if (value.imgURL) {
+										delete value.face;
+									}
+								}
+
+								if (map[store]) {
+									value = map[store](value);
+								}
+
+								if (store === "teams" && includeTeamSeasonsAndStats) {
+									// This is a bit dangerous, since it will possibly read all teamStats/teamSeasons rows into memory, but that will very rarely exceed MIN_RECORDS_PER_PULL and we will just do one team per transaction, to be safe.
+
+									const tid = cursor.value.tid;
+
+									const infos: (
+										| {
+												key: string;
+												store: "teamSeasons";
+												index: "tid, season";
+												keyRange: IDBKeyRange;
+										  }
+										| {
+												key: string;
+												store: "teamStats";
+												index: "tid";
+												keyRange: IDBKeyRange;
+										  }
+									)[] = [
+										{
+											key: "seasons",
+											store: "teamSeasons",
+											index: "tid, season",
+											keyRange: IDBKeyRange.bound([tid], [tid, ""]),
+										},
+										{
+											key: "stats",
+											store: "teamStats",
+											index: "tid",
+											keyRange: IDBKeyRange.only(tid),
+										},
+									];
+
+									const t: any = cursor.value;
+
+									for (const info of infos) {
+										t[info.key] = [];
+										let cursor2 = await transaction
+											.objectStore(info.store)
+											.index(info.index as any)
+											.openCursor(info.keyRange);
+										while (cursor2) {
+											t[info.key].push(cursor2.value);
+											cursor2 = await cursor2.continue();
+										}
+									}
+								}
+
+								enqueue(
+									`${comma}${newline}${tab.repeat(2)}${jsonStringify(
+										cursor.value,
+										2,
+									)}`,
+								);
+							}
+
+							prevKey = cursor.key as any;
+
+							const desiredSize = (controller as any).desiredSize;
+							if (
+								(desiredSize > 0 || size < minSizePerPull) &&
+								!cancelCallback
+							) {
+								// Keep going if desiredSize or minSizePerPull want us to
+								cursor = await cursor.continue();
+							} else {
+								break;
+							}
 						}
 					}
 
 					// console.log("PULLED", count, size / 1024 / 1024);
 					if (!cursor) {
 						// Actually done with this store - we didn't just stop due to desiredSize
+						storeIndex += 1;
 						if (seenFirstRecord) {
 							enqueue(`${newline}${tab}]`);
 						}
-						done();
+						if (storeIndex >= stores.length) {
+							// Done whole export!
+
+							if (!stores.includes("gameAttributes")) {
+								// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
+								await writeRootObject(
+									controller,
+									"startingSeason",
+									g.get("startingSeason"),
+								);
+							}
+
+							await controller.enqueue(`${newline}}${newline}`);
+
+							done();
+						}
 					}
 				},
 				cancel() {
@@ -220,77 +316,15 @@ const exportLeagueFSA = async (
 		);
 	};
 
-	const writeRootObject = (name: string, object: any) =>
-		writable.write(
-			`,${newline}${tab}"${name}":${space}${jsonStringify(object, 1)}`,
-		);
+	// const writableStream = await fileHandle.createWritable();
+	const writableStream = new WritableStream({
+		async write(chunk) {
+			console.log("chunk", chunk);
+		},
+	});
 
-	await writable.write("{");
-	await writable.write(
-		`${newline}${tab}"version":${space}${idb.league.version}`,
-	);
-
-	// Row from leagueStore in meta db.
-	// phaseText is needed if a phase is set in gameAttributes.
-	// name is only used for the file name of the exported roster file.
-	if (meta) {
-		const leagueName = await getName();
-		await writeRootObject("meta", {
-			phaseText: local.phaseText,
-			name: leagueName,
-		});
-	}
-
-	for (const store of stores) {
-		console.time(store);
-		if (store === "gameAttributes") {
-			// gameAttributes is special because we need to convert it into an object
-
-			// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
-			const GAME_ATTRIBUTES_TO_DELETE = ["numActiveTeams", "teamInfoCache"];
-
-			const rows = (
-				await getAll(
-					idb.league.transaction(store).store,
-					undefined,
-					filter[store],
-				)
-			).filter(row => !GAME_ATTRIBUTES_TO_DELETE.includes(row.key));
-
-			await writeRootObject(
-				"gameAttributes",
-				gameAttributesArrayToObject(rows),
-			);
-		} else if (store === "teamSeasons" || store === "teamStats") {
-			// Handled in "teams"
-			continue;
-		} else {
-			const readable = makeStoreStream(store as any, {
-				filter: filter[store],
-				forEach:
-					store === "players"
-						? p => {
-								if (p.imgURL) {
-									delete (p as any).face;
-								}
-						  }
-						: undefined,
-			});
-			await readable.pipeTo(writable, {
-				preventClose: true,
-			});
-		}
-		console.timeEnd(store);
-	}
-
-	if (!stores.includes("gameAttributes")) {
-		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-		await writeRootObject("startingSeason", g.get("startingSeason"));
-	}
-
-	await writable.write(`${newline}}${newline}`);
-
-	await writable.close();
+	const readableStream = makeReadableStream();
+	readableStream.pipeTo(writableStream);
 };
 
 export default exportLeagueFSA;

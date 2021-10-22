@@ -33,6 +33,9 @@ streaming export
 - options
   - https://github.com/jimmywarting/StreamSaver.js
     - can't be in a web worker
+    - well, then i can export from window. only way to support all browsers
+    - need to flush (and other stuff?) first
+    - can transfer idb.league over worker?
   - https://github.com/jimmywarting/native-file-system-adapter
   - https://github.com/GoogleChromeLabs/browser-fs-access
     - https://github.com/GoogleChromeLabs/browser-fs-access/pull/67
@@ -41,6 +44,8 @@ streaming export
   - still some more in api/exportLeague.ts
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
+- better progress UI
+- normal export should still use stream, just accumulate to buffer
 - test
   - filenames
   - exported JSONs are the same

@@ -1,9 +1,23 @@
 import classNames from "classnames";
+import { openDB } from "idb";
 import { useState, ReactNode, FormEvent } from "react";
-import { isSport, WEBSITE_ROOT } from "../../common";
+import {
+	isSport,
+	MAX_SUPPORTED_LEAGUE_VERSION,
+	WEBSITE_ROOT,
+} from "../../common";
+import makeExportStream from "../../worker/core/league/makeExportStream";
+import type { LeagueDB } from "../../worker/db/connectLeague";
 import { ActionButton, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { downloadFile, helpers, safeLocalStorage, toWorker } from "../util";
+import {
+	downloadFile,
+	helpers,
+	safeLocalStorage,
+	toWorker,
+	useLocal,
+} from "../util";
+import downloadFileStream, { getExportInfo } from "../util/downloadFileStream";
 
 export type ExportLeagueKey =
 	| "players"
@@ -244,6 +258,7 @@ const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
+	const lid = useLocal(state => state.lid);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -252,7 +267,44 @@ const ExportLeague = () => {
 
 		const filename = await toWorker("main", "getExportFilename", "league");
 
-		const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
+		const { stores, filter, forEach, map } = getExportInfo({
+			compressed,
+			...checked,
+		});
+
+		// Don't worry about upgrades or anything, because this page can't be displayed unless the league database already exists
+		const leagueDB = await openDB<LeagueDB>(
+			`league${lid}`,
+			MAX_SUPPORTED_LEAGUE_VERSION,
+			{
+				blocked() {
+					setStatus(
+						<span className="text-danger">
+							Error exporting league: database blocked.
+						</span>,
+					);
+				},
+				blocking() {
+					leagueDB.close();
+				},
+				terminated() {
+					setStatus(
+						<span className="text-danger">
+							Error exporting league: database terminated.
+						</span>,
+					);
+				},
+			},
+		);
+		const readableStream = makeExportStream(leagueDB, stores, {
+			filter,
+			forEach,
+			map,
+		});
+
+		await downloadFileStream(filename, readableStream);
+
+		/*const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 		if (HAS_FILE_SYSTEM_ACCESS_API) {
 			console.log("new");
@@ -318,7 +370,7 @@ const ExportLeague = () => {
 				);
 				return;
 			}
-		}
+		}*/
 		console.timeEnd("foo");
 
 		saveDefaults(checked, compressed);

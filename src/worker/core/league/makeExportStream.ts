@@ -1,10 +1,10 @@
-import type { IDBPCursorWithValue } from "idb";
-import { gameAttributesArrayToObject } from "../../../common";
+import type { IDBPCursorWithValue, IDBPDatabase } from "idb";
+import {
+	gameAttributesArrayToObject,
+	MAX_SUPPORTED_LEAGUE_VERSION,
+} from "../../../common";
 import { gameAttributesCache } from "../../../common/defaultGameAttributes";
-import { idb } from "../../db";
 import type { LeagueDB } from "../../db/connectLeague";
-import { g, local } from "../../util";
-import getName from "./getName";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;
@@ -34,6 +34,7 @@ const NUM_SPACES_IN_TAB = 2;
 type Filter = (a: any) => boolean;
 
 const makeExportStream = (
+	leagueDB: IDBPDatabase<LeagueDB>,
 	storesInput: string[],
 	{
 		compressed = false,
@@ -92,16 +93,17 @@ const makeExportStream = (
 		{
 			async start(controller) {
 				await controller.enqueue(
-					`{${newline}${tab}"version":${space}${idb.league.version}`,
+					`{${newline}${tab}"version":${space}${MAX_SUPPORTED_LEAGUE_VERSION}`,
 				);
 
 				// Row from leagueStore in meta db.
 				// phaseText is needed if a phase is set in gameAttributes.
 				// name is only used for the file name of the exported roster file.
 				if (meta) {
-					const leagueName = await getName();
+					const leagueName = "LEAGUE NAME"; //await getName();
 					await writeRootObject(controller, "meta", {
-						phaseText: local.phaseText,
+						// phaseText: local.phaseText,
+						phaseText: "PHASE TEXT",
 						name: leagueName,
 					});
 				}
@@ -140,7 +142,7 @@ const makeExportStream = (
 
 				if (store === "gameAttributes") {
 					// gameAttributes is special because we need to convert it into an object
-					let rows = (await idb.league.getAll(store)).filter(
+					let rows = (await leagueDB.getAll(store)).filter(
 						row => !gameAttributesCache.includes(row.key),
 					);
 
@@ -167,7 +169,7 @@ const makeExportStream = (
 					const txStores =
 						store === "teams" ? ["teams", "teamSeasons", "teamStats"] : [store];
 
-					const transaction = idb.league.transaction(txStores as any);
+					const transaction = leagueDB.transaction(txStores as any);
 
 					const range =
 						prevKey !== undefined
@@ -283,7 +285,9 @@ const makeExportStream = (
 							await writeRootObject(
 								controller,
 								"startingSeason",
-								g.get("startingSeason"),
+								(
+									await leagueDB.get("gameAttributes", "startingSeason")
+								)?.value,
 							);
 						}
 

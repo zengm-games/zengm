@@ -34,6 +34,11 @@ streaming export
   - https://github.com/jimmywarting/StreamSaver.js
     - can't be in a web worker
     - well, then i can export from window. only way to support all browsers
+      - leagueName
+      - phaseText
+      - makeExportStream to UI
+      - getExportInfo only in UI
+      - firefox
     - need to flush (and other stuff?) first
     - can transfer idb.league over worker?
   - https://github.com/jimmywarting/native-file-system-adapter

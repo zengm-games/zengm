@@ -29,6 +29,19 @@ streaming import of league files
 - in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
 - test browsers again
 
+streaming export
+- options
+  - https://github.com/jimmywarting/StreamSaver.js
+  - https://github.com/jimmywarting/native-file-system-adapter
+  - https://github.com/GoogleChromeLabs/browser-fs-access
+    - https://github.com/GoogleChromeLabs/browser-fs-access/pull/67
+- extra logic now in exportLeague API
+- Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
+- test
+  - filenames
+  - exported JSONs are the same
+  - make sure other browsers still work
+
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
@@ -278,10 +291,6 @@ some way to pin trades?
   - can evaluate trade to see
 
 cancel expansion draft can leave you in control of inactive team https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXdCQjTRbGcgzmdrZTMFLHQbZ
-
-File System Access API https://web.dev/file-system-access/
-- see file-system-access-api branch - slow, and more work needed to handle importing large files
-- https://github.com/jimmywarting/StreamSaver.js
 
 player game log
 - later

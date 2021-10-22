@@ -250,29 +250,76 @@ const ExportLeague = () => {
 
 		setStatus("Exporting...");
 
-		try {
-			const { filename, json } = await toWorker("main", "exportLeague", {
-				...checked,
-				compressed,
-			});
+		const filename = await toWorker("main", "getExportFilename", "league");
 
-			downloadFile(filename, json, "application/json");
+		const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
-			saveDefaults(checked, compressed);
-		} catch (err) {
-			console.error(err);
-			setStatus(
-				<span className="text-danger">
-					Error exporting league: "{err.message}
-					". You might have to select less things to export or{" "}
-					<a href={helpers.leagueUrl(["delete_old_data"])}>
-						delete old data
-					</a>{" "}
-					before exporting.
-				</span>,
-			);
-			return;
+		if (HAS_FILE_SYSTEM_ACCESS_API) {
+			console.log("new");
+			let fileHandle;
+			try {
+				fileHandle = await window.showSaveFilePicker({
+					suggestedName: filename,
+					types: [
+						{
+							description: "JSON Files",
+							accept: {
+								"application/json": [".json"],
+							},
+						},
+					],
+				} as any);
+			} catch (error) {
+				if (error.name === "AbortError") {
+					// User cancelled file selection
+					setStatus(undefined);
+					return;
+				}
+
+				throw error;
+			}
+
+			console.time("foo");
+			try {
+				await toWorker("main", "exportLeagueFSA", fileHandle, {
+					compressed,
+					...checked,
+				});
+			} catch (error) {
+				console.error(error);
+				setStatus(
+					<span className="text-danger">
+						Error exporting league: "{error.message}".
+					</span>,
+				);
+				return;
+			}
+		} else {
+			console.log("old");
+			console.time("foo");
+			try {
+				const json = await toWorker("main", "exportLeague", {
+					...checked,
+					compressed,
+				});
+
+				downloadFile(filename, json, "application/json");
+			} catch (error) {
+				console.error(error);
+				setStatus(
+					<span className="text-danger">
+						Error exporting league: "{error.message}
+						". You might have to select less things to export or{" "}
+						<a href={helpers.leagueUrl(["delete_old_data"])}>
+							delete old data
+						</a>{" "}
+						before exporting.
+					</span>,
+				);
+				return;
+			}
 		}
+		console.timeEnd("foo");
 
 		setStatus(undefined);
 	};

@@ -3,6 +3,7 @@ import clone from "./clone";
 import close from "./close";
 import createStream from "./createStream";
 import exportLeague from "./exportLeague";
+import exportLeagueFSA from "./exportLeagueFSA";
 import getName from "./getName";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 import initAutoPlay from "./initAutoPlay";
@@ -18,6 +19,7 @@ export default {
 	close,
 	createStream,
 	exportLeague,
+	exportLeagueFSA,
 	getName,
 	getValidNumGamesPlayoffSeries,
 	initAutoPlay,

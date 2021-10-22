@@ -1795,6 +1795,11 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
+"@types/wicg-file-system-access@^2020.9.4":
+  version "2020.9.4"
+  resolved "https://registry.yarnpkg.com/@types/wicg-file-system-access/-/wicg-file-system-access-2020.9.4.tgz#83f255d6bd20b0ae131d555693473d15a0574e92"
+  integrity sha512-o43jUljwP0ZrQ927mPjGdJaBMfS12nf3VPj6Z52fMucxILrSs8tnfLbMDSn6cP3hrrLChc3SYneeEvecknNVtA==
+
 "@types/yargs-parser@*":
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"

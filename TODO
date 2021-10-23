@@ -30,7 +30,6 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- exported file /home/jdscheff/Downloads/BBGM_League_1_2494_regular_season_0-0.json has a syntax error?
 - other league file exports
   - exportDraftClass - still use old method, since i don't want to have to worry about that getPlayers by draftYear call
 - makeExportStream to UI
@@ -48,6 +47,7 @@ streaming export
   - can load stream polyfills async in ui?
   - toPolyfill needed in UI?
 - downloadFileStream in util/index.ts
+- go back to ActionButton in ExportLeague, makes sense
 - test
   - filenames
   - exported JSONs are the same

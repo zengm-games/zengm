@@ -105,7 +105,7 @@ const makeExportStream = async (
 	let storeIndex = 0;
 	let prevKey: string | number | undefined;
 	let cancelCallback: (() => void) | undefined;
-	let seenFirstRecord = false;
+	const seenFirstRecord = new Set();
 
 	return new ReadableStream<string>(
 		{
@@ -188,11 +188,12 @@ const makeExportStream = async (
 						if (!filter[store] || filter[store](value)) {
 							// count += 1;
 
-							const comma = seenFirstRecord ? "," : "";
+							const seenFirst = seenFirstRecord.has(store);
+							const comma = seenFirst ? "," : "";
 
-							if (!seenFirstRecord) {
+							if (!seenFirst) {
 								enqueue(`,${newline}${tab}"${store}": [`);
-								seenFirstRecord = true;
+								seenFirstRecord.add(store);
 							}
 
 							if (forEach[store]) {
@@ -280,7 +281,7 @@ const makeExportStream = async (
 				if (!cursor) {
 					// Actually done with this store - we didn't just stop due to desiredSize
 					storeIndex += 1;
-					if (seenFirstRecord) {
+					if (seenFirstRecord.has(store)) {
 						enqueue(`${newline}${tab}]`);
 					}
 					if (storeIndex >= stores.length) {

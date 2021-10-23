@@ -14,11 +14,7 @@ import type {
 import stats from "../../worker/core/player/stats";
 import type { ExportLeagueKey } from "../views/ExportLeague";
 
-type Checked = Record<ExportLeagueKey, boolean> & {
-	compressed: boolean;
-};
-
-export const getExportInfo = (checked: Checked) => {
+export const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
 	const storesSet = new Set<string>();
 
 	const storesByKey = {
@@ -135,6 +131,7 @@ export const getExportInfo = (checked: Checked) => {
 };
 
 // Why is this in UI? streamsaver does not work in worker. Otherwise it would be better there.
+// If this is ever moved to the worker, becareful about file system access API crashing Chrome 93/94 https://dumbmatter.com/file-system-access-worker-bug/
 const downloadFileStream = async (
 	filename: string,
 	readableStream: ReadableStream,

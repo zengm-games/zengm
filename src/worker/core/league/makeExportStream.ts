@@ -38,13 +38,11 @@ const makeExportStream = (
 	storesInput: string[],
 	{
 		compressed = false,
-		meta = true,
 		filter,
 		forEach,
 		map,
 	}: {
-		compressed?: boolean;
-		meta?: boolean;
+		compressed: boolean;
 		filter: {
 			[key: string]: Filter;
 		};
@@ -95,18 +93,6 @@ const makeExportStream = (
 				await controller.enqueue(
 					`{${newline}${tab}"version":${space}${MAX_SUPPORTED_LEAGUE_VERSION}`,
 				);
-
-				// Row from leagueStore in meta db.
-				// phaseText is needed if a phase is set in gameAttributes.
-				// name is only used for the file name of the exported roster file.
-				if (meta) {
-					const leagueName = "LEAGUE NAME"; //await getName();
-					await writeRootObject(controller, "meta", {
-						// phaseText: local.phaseText,
-						phaseText: "PHASE TEXT",
-						name: leagueName,
-					});
-				}
 			},
 
 			async pull(controller) {

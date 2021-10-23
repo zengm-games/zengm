@@ -54,7 +54,10 @@ import {
 	loadNames,
 	defaultInjuries,
 } from "../util";
-import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
+import {
+	toPolyfillReadable,
+	toPolyfillTransform,
+} from "../../common/polyfills-modern";
 import views from "../views";
 import type {
 	Conditions,
@@ -1360,7 +1363,6 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 	const pids = infos.map(info => info.pid);
 
 	const data = await league.exportLeague(["players"], {
-		meta: false,
 		filter: {
 			players: p => pids.includes(p.pid),
 		},

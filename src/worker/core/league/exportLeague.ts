@@ -12,12 +12,10 @@ import getName from "./getName";
 const exportLeague = async (
 	stores: string[],
 	{
-		meta = true,
 		filter = {},
 		forEach = {},
 		map = {},
 	}: {
-		meta?: boolean;
 		filter?: {
 			[key: string]: (a: any) => boolean;
 		};
@@ -34,15 +32,6 @@ const exportLeague = async (
 	const exportedLeague: any = {
 		version: idb.league.version,
 	};
-
-	// Row from leagueStore in meta db.
-	// name is only used for the file name of the exported roster file.
-	if (meta) {
-		const leagueName = await getName();
-		exportedLeague.meta = {
-			name: leagueName,
-		};
-	}
 
 	await Promise.all(
 		stores.map(async store => {

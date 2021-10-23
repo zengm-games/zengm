@@ -8,15 +8,9 @@ import {
 } from "../../common";
 import makeExportStream from "../../worker/core/league/makeExportStream";
 import type { LeagueDB } from "../../worker/db/connectLeague";
-import { ActionButton, MoreLinks } from "../components";
+import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import {
-	downloadFile,
-	helpers,
-	safeLocalStorage,
-	toWorker,
-	useLocal,
-} from "../util";
+import { helpers, safeLocalStorage, toWorker, useLocal } from "../util";
 import downloadFileStream, { getExportInfo } from "../util/downloadFileStream";
 
 export type ExportLeagueKey =
@@ -267,10 +261,7 @@ const ExportLeague = () => {
 
 		const filename = await toWorker("main", "getExportFilename", "league");
 
-		const { stores, filter, forEach, map } = getExportInfo({
-			compressed,
-			...checked,
-		});
+		const { stores, filter, forEach, map } = getExportInfo(checked);
 
 		// Don't worry about upgrades or anything, because this page can't be displayed unless the league database already exists
 		const leagueDB = await openDB<LeagueDB>(
@@ -297,6 +288,7 @@ const ExportLeague = () => {
 			},
 		);
 		const readableStream = makeExportStream(leagueDB, stores, {
+			compressed,
 			filter,
 			forEach,
 			map,

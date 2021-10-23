@@ -30,8 +30,6 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- leagueName
-- phaseText
 - makeExportStream to UI?
 - getExportInfo only in UI?
 - need to flush (and other stuff?) first
@@ -46,6 +44,10 @@ streaming export
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 - better progress UI
 - normal export should still use stream, just accumulate to buffer
+- other league file exports
+- remove obosolete stuff
+  - league.exportLeague
+  - worker api exportLeague
 - test
   - filenames
   - exported JSONs are the same

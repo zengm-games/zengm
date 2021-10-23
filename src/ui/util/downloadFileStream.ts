@@ -134,11 +134,29 @@ export const getExportInfo = (checked: Checked) => {
 	};
 };
 
+// Why is this in UI? streamsaver does not work in worker. Otherwise it would be better there.
 const downloadFileStream = async (
-	fileName: string,
+	filename: string,
 	readableStream: ReadableStream,
 ) => {
-	const fileStream = streamSaver.createWriteStream(fileName);
+	let fileStream: WritableStream;
+	if (window.showSaveFilePicker) {
+		const fileHandle = await window.showSaveFilePicker({
+			suggestedName: filename,
+			types: [
+				{
+					description: "JSON Files",
+					accept: {
+						"application/json": [".json"],
+					},
+				},
+			],
+		} as any);
+
+		fileStream = await fileHandle.createWritable();
+	} else {
+		fileStream = streamSaver.createWriteStream(filename);
+	}
 
 	await readableStream.pipeThrough(new TextEncoderStream()).pipeTo(fileStream);
 };

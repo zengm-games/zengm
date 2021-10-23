@@ -370,8 +370,8 @@ const ExportLeague = () => {
 				);
 				return;
 			}
-		}*/
-		console.timeEnd("foo");
+		}
+		console.timeEnd("foo");*/
 
 		saveDefaults(checked, compressed);
 
@@ -515,9 +515,9 @@ const ExportLeague = () => {
 				</div>
 				<div className="row">
 					<div className="col-lg-10 col-xl-8 text-center">
-						<ActionButton type="submit" processing={status === "Exporting..."}>
+						<button className="btn btn-primary" type="submit">
 							Export League
-						</ActionButton>
+						</button>
 					</div>
 				</div>
 			</form>

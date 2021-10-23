@@ -49,8 +49,7 @@ streaming export
       - https://github.com/jimmywarting/StreamSaver.js/issues/13 has some ideas at the bottom
       - maybe just don't show spinner, since it starts download so quick
     - could build a separate firefox thing maybe, external to the game?
-  - https://github.com/jimmywarting/native-file-system-adapter
-- chrome 93/94 need to use user agent detection to not use new method https://dumbmatter.com/file-system-access-worker-bug/
+    - bundle size - any splitting needed?
 - extra logic now in exportLeague API
   - still some more in api/exportLeague.ts
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
@@ -63,6 +62,8 @@ streaming export
   - make sure other browsers still work
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
+
+blacklist lodash
 
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
 

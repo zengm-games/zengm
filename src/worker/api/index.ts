@@ -60,7 +60,7 @@ import {
 import {
 	toPolyfillReadable,
 	toPolyfillTransform,
-} from "../../common/polyfills-modern";
+} from "../util/polyfills-modern";
 import views from "../views";
 import type {
 	Conditions,

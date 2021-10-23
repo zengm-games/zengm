@@ -33,3 +33,30 @@ if (!Blob.prototype.stream) {
 		});
 	};
 }
+
+// Not supported in any Firefox yet!
+import {
+	ReadableStream as PolyfillReadableStream,
+	TransformStream as PolyfillTransformStream,
+} from "web-streams-polyfill/ponyfill/es6";
+
+import {
+	createReadableStreamWrapper,
+	createTransformStreamWrapper,
+} from "@mattiasbuelens/web-streams-adapter";
+
+export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
+export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
+
+// It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
+if (self.POLYFILL_STREAMS) {
+	toPolyfillReadable = createReadableStreamWrapper(
+		PolyfillReadableStream,
+	) as any;
+	toPolyfillTransform = createTransformStreamWrapper(
+		PolyfillTransformStream as any,
+	) as any;
+} else {
+	toPolyfillReadable = x => x;
+	toPolyfillTransform = x => x;
+}

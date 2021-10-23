@@ -12,7 +12,7 @@ import type { Conditions } from "../../common/types";
 import {
 	toPolyfillReadable,
 	toPolyfillTransform,
-} from "../../common/polyfills-modern";
+} from "../util/polyfills-modern";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([

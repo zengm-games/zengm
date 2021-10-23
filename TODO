@@ -39,7 +39,6 @@ streaming export
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
 - check polyfills
   - can load stream polyfills async in ui?
-  - toPolyfill needed in UI?
 - downloadFileStream in util/index.ts
 - go back to ActionButton in ExportLeague, makes sense
   - also, progress bar for export, can base it on number of records

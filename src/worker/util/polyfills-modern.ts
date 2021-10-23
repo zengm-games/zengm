@@ -2,38 +2,6 @@
 
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Not supported in any Firefox yet!
-import {
-	ReadableStream as PolyfillReadableStream,
-	TransformStream as PolyfillTransformStream,
-	WritableStream as PolyfillWritableStream,
-} from "web-streams-polyfill/ponyfill/es6";
-
-import {
-	createReadableStreamWrapper,
-	createTransformStreamWrapper,
-} from "@mattiasbuelens/web-streams-adapter";
-
-export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
-export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
-
-// It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
-if (!self.WritableStream || !self.TransformStream) {
-	self.ReadableStream = PolyfillReadableStream as any;
-	self.TransformStream = PolyfillTransformStream as any;
-	self.WritableStream = PolyfillWritableStream;
-
-	toPolyfillReadable = createReadableStreamWrapper(
-		PolyfillReadableStream,
-	) as any;
-	toPolyfillTransform = createTransformStreamWrapper(
-		PolyfillTransformStream as any,
-	) as any;
-} else {
-	toPolyfillReadable = x => x;
-	toPolyfillTransform = x => x;
-}
-
 // Chrome 76, Safari 14.1
 // Based on https://stackoverflow.com/a/65087341/786644
 if (!Blob.prototype.stream) {

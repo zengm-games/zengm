@@ -6,14 +6,10 @@ import JSONParserText from "./JSONParserText";
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "league-schema"; // eslint-disable-line
-import {
-	helpers,
-	toPolyfillReadable,
-	toPolyfillTransform,
-	toUI,
-} from "../util";
+import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";
+import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([

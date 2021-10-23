@@ -30,26 +30,16 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- options
-  - https://github.com/jimmywarting/StreamSaver.js
-    - can't be in a web worker
-    - well, then i can export from window. only way to support all browsers
-      - leagueName
-      - phaseText
-      - makeExportStream to UI
-      - getExportInfo only in UI
-      - firefox
-    - need to flush (and other stuff?) first
-    - stream polyfills on client too
-    - firefox sometimes needs reload before it works
-      - https://github.com/jimmywarting/StreamSaver.js/issues/153
-      - https://github.com/jimmywarting/StreamSaver.js/issues/233
-      - could show warning in UI to reload and try again if it doesn't start quickly
-    - if cancel, spinner keeps going
-      - https://github.com/jimmywarting/StreamSaver.js/issues/13 has some ideas at the bottom
-      - maybe just don't show spinner, since it starts download so quick
-    - could build a separate firefox thing maybe, external to the game?
-    - bundle size - any splitting needed?
+- leagueName
+- phaseText
+- makeExportStream to UI?
+- getExportInfo only in UI?
+- need to flush (and other stuff?) first
+- firefox sometimes needs reload before it works
+  - https://github.com/jimmywarting/StreamSaver.js/issues/153
+  - https://github.com/jimmywarting/StreamSaver.js/issues/233
+  - could show warning in UI to reload and try again if it doesn't start quickly
+- bundle size - any splitting needed?
 - extra logic now in exportLeague API
   - still some more in api/exportLeague.ts
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
@@ -1599,8 +1589,6 @@ new adv stats in roster page?
 per 100 possessions and totals toggle on team stats page
 
 remove polyfills
-- get rid of getAll polyfill when safari 10.x usage goes to 0
-- others too!
 
 add franchise leaders (stats) to team history page
 

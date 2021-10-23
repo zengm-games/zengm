@@ -53,9 +53,8 @@ import {
 	initUILocalGames,
 	loadNames,
 	defaultInjuries,
-	toPolyfillReadable,
-	toPolyfillTransform,
 } from "../util";
+import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
 import views from "../views";
 import type {
 	Conditions,

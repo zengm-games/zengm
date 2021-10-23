@@ -7,6 +7,7 @@ import {
 	ChangeEvent,
 	MouseEvent,
 } from "react";
+import { ProgressBarText } from ".";
 import {
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	GAME_NAME,
@@ -342,25 +343,13 @@ const LeagueFileUpload = ({
 				{state.status === "checking" ? (
 					<>
 						<div className="alert alert-info mt-3">
-							{leagueCreationPercent?.id === leagueCreationID.current ? (
-								<div className="progress mb-1">
-									<div
-										className="progress-bar progress-bar-striped progress-bar-animated"
-										role="progressbar"
-										aria-valuenow={leagueCreationPercent.percent}
-										aria-valuemin={0}
-										aria-valuemax={100}
-										style={{
-											width: `${leagueCreationPercent.percent}%`,
-										}}
-									></div>
-								</div>
+							{leagueCreationPercent?.id === leagueCreationID.current ||
+							leagueCreation?.id === leagueCreationID.current ? (
+								<ProgressBarText
+									text={`Validating ${leagueCreation?.status ?? "league file"}`}
+									percent={leagueCreationPercent?.percent ?? 0}
+								/>
 							) : null}
-							Validating{" "}
-							{leagueCreation?.id === leagueCreationID.current
-								? leagueCreation.status
-								: "league file"}
-							...
 						</div>
 					</>
 				) : null}

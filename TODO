@@ -31,19 +31,18 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- when importing, show real progress bar, since we know size of blob/url
 - firefox sometimes needs reload before it works
   - https://github.com/jimmywarting/StreamSaver.js/issues/153
   - https://github.com/jimmywarting/StreamSaver.js/issues/233
   - could show warning in UI to reload and try again, if using streamsaver
 - bundle size - any splitting needed?
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
-- better progress UI
 - check polyfills
   - can load stream polyfills async in ui?
   - toPolyfill needed in UI?
 - downloadFileStream in util/index.ts
 - go back to ActionButton in ExportLeague, makes sense
+  - also, progress bar for export, can base it on number of records
 - test
   - filenames
   - exported JSONs are the same

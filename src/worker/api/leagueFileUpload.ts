@@ -249,7 +249,7 @@ const getBasicInfo = async ({
 	return { basicInfo, schemaErrors };
 };
 
-const emitProgressStream = (
+export const emitProgressStream = (
 	leagueCreationID: number,
 	sizeInBytes: number | undefined,
 	conditions: Conditions,
@@ -328,7 +328,6 @@ const initialCheck = async (
 		stream = file.stream() as unknown as ReadableStream;
 		sizeInBytes = file.size;
 	}
-	console.log("sizeInBytes", sizeInBytes);
 
 	const stream0 = toPolyfillReadable(stream);
 

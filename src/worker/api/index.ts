@@ -12,7 +12,10 @@ import {
 	gameAttributesArrayToObject,
 } from "../../common";
 import actions from "./actions";
-import leagueFileUpload, { parseJSON } from "./leagueFileUpload";
+import leagueFileUpload, {
+	emitProgressStream,
+	parseJSON,
+} from "./leagueFileUpload";
 import processInputs from "./processInputs";
 import {
 	allStar,
@@ -509,11 +512,17 @@ const createLeague = async (
 		stream = createStreamFromLeagueObject(realLeague);
 	} else if (file || url) {
 		let baseStream: ReadableStream;
+		let sizeInBytes: number | undefined;
 		if (file) {
 			baseStream = file.stream() as unknown as ReadableStream;
+			sizeInBytes = file.size;
 		} else {
 			const response = await fetch(url!);
 			baseStream = response.body as ReadableStream;
+			const size = response.headers.get("content-length");
+			if (size) {
+				sizeInBytes = Number(size);
+			}
 		}
 
 		const stream0 = toPolyfillReadable(baseStream);
@@ -522,6 +531,9 @@ const createLeague = async (
 		(self as any).stream0 = stream0;
 
 		stream = stream0
+			.pipeThrough(
+				emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+			)
 			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
 			.pipeThrough(parseJSON());
 	} else {

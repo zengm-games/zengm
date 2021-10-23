@@ -21,6 +21,7 @@ import {
 	LeagueFileUpload,
 	NextPrevButtons,
 	PopText,
+	ProgressBarText,
 } from "../../components";
 import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -31,7 +32,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 	safeLocalStorage,
-	useLocal,
+	useLocalShallow,
 } from "../../util";
 import type {
 	View,
@@ -541,7 +542,10 @@ const NewLeague = (props: View<"newLeague">) => {
 	>("default");
 
 	const leagueCreationID = useRef(Math.random());
-	const leagueCreation = useLocal(state => state.leagueCreation);
+	const { leagueCreation, leagueCreationPercent } = useLocalShallow(state => ({
+		leagueCreation: state.leagueCreation,
+		leagueCreationPercent: state.leagueCreationPercent,
+	}));
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -1232,8 +1236,15 @@ const NewLeague = (props: View<"newLeague">) => {
 								</button>
 							</div>
 
-							{leagueCreation?.id === leagueCreationID.current ? (
-								<div className="text-center mt-2">{leagueCreation.status}</div>
+							{(state.file || state.url) &&
+							(leagueCreationPercent?.id === leagueCreationID.current ||
+								leagueCreation?.id === leagueCreationID.current) ? (
+								<div className="mt-3">
+									<ProgressBarText
+										text={leagueCreation?.status ?? ""}
+										percent={leagueCreationPercent?.percent ?? 0}
+									/>
+								</div>
 							) : null}
 						</div>
 

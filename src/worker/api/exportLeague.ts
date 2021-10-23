@@ -13,6 +13,7 @@ import { g, helpers } from "../util";
 import { types } from "../../common/transactionInfo";
 import stats from "../core/player/stats";
 import { league } from "../core";
+import { idb } from "../db";
 
 type Checked = Record<ExportLeagueKey, boolean> & {
 	compressed: boolean;
@@ -168,16 +169,6 @@ export const exportLeague = async (checked: Checked) => {
 	return json;
 };
 
-export const exportLeagueFSA = async (
-	fileHandle: FileSystemFileHandle,
-	checked: Checked,
-) => {
-	const { stores, filter, forEach, map } = getExportInfo(checked);
-
-	await league.exportLeagueFSA(fileHandle, stores, {
-		filter,
-		forEach,
-		map,
-		compressed: checked.compressed,
-	});
+export const idbCacheFlush = async () => {
+	await idb.cache.flush();
 };

@@ -30,13 +30,17 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- makeExportStream to UI?
-- getExportInfo only in UI?
-- need to flush (and other stuff?) first
+- other league file exports
+  - exportPlayers
+  - exportDraftClass
+  - make sure they export the same as before!
+- makeExportStream to UI
+- getExportInfo only in UI
+- when importing, show real progress bar, since we know size of blob/url
 - firefox sometimes needs reload before it works
   - https://github.com/jimmywarting/StreamSaver.js/issues/153
   - https://github.com/jimmywarting/StreamSaver.js/issues/233
-  - could show warning in UI to reload and try again if it doesn't start quickly
+  - could show warning in UI to reload and try again, if using streamsaver
 - bundle size - any splitting needed?
 - extra logic now in exportLeague API
   - still some more in api/exportLeague.ts
@@ -44,10 +48,12 @@ streaming export
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 - better progress UI
 - normal export should still use stream, just accumulate to buffer
-- other league file exports
 - remove obosolete stuff
   - league.exportLeague
   - worker api exportLeague
+- check polyfills
+  - can load stream polyfills async in ui?
+  - toPolyfill needed in UI?
 - test
   - filenames
   - exported JSONs are the same

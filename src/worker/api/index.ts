@@ -104,7 +104,7 @@ import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
 import type { PlayerRatings } from "../../common/types.basketball";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
-import { exportLeague, exportLeagueFSA } from "./exportLeague";
+import { exportLeague, idbCacheFlush } from "./exportLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -3575,7 +3575,6 @@ export default {
 	exportDraftClass,
 	getExportFilename,
 	exportLeague,
-	exportLeagueFSA,
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
 	exportPlayers,
@@ -3594,6 +3593,7 @@ export default {
 	getTradingBlockOffers,
 	ping,
 	handleUploadedDraftClass,
+	idbCacheFlush,
 	importPlayers,
 	init,
 	initGold,

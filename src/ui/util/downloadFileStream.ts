@@ -14,6 +14,8 @@ import type {
 import stats from "../../worker/core/player/stats";
 import type { ExportLeagueKey } from "../views/ExportLeague";
 
+const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
+
 export const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
 	const storesSet = new Set<string>();
 
@@ -137,7 +139,7 @@ const downloadFileStream = async (
 	readableStream: ReadableStream,
 ) => {
 	let fileStream: WritableStream;
-	if (window.showSaveFilePicker) {
+	if (HAS_FILE_SYSTEM_ACCESS_API) {
 		const fileHandle = await window.showSaveFilePicker({
 			suggestedName: filename,
 			types: [

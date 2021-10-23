@@ -4,6 +4,7 @@ import {
 	MAX_SUPPORTED_LEAGUE_VERSION,
 } from "../../../common";
 import { gameAttributesCache } from "../../../common/defaultGameAttributes";
+import { toWorker } from "../../../ui/util";
 import type { LeagueDB } from "../../db/connectLeague";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
@@ -33,7 +34,7 @@ const NUM_SPACES_IN_TAB = 2;
 
 type Filter = (a: any) => boolean;
 
-const makeExportStream = (
+const makeExportStream = async (
 	leagueDB: IDBPDatabase<LeagueDB>,
 	storesInput: string[],
 	{
@@ -54,6 +55,9 @@ const makeExportStream = (
 		};
 	},
 ) => {
+	// Always flush before export, so export is current!
+	await toWorker("main", "idbCacheFlush");
+
 	const space = compressed ? "" : " ";
 	const tab = compressed ? "" : " ".repeat(NUM_SPACES_IN_TAB);
 	const newline = compressed ? "" : "\n";

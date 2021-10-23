@@ -49,8 +49,8 @@ export type TeamInfo = TeamBasic & {
 	stats?: TeamStatsWithoutKey[];
 };
 
-// Doesn't seem to make a difference no matter what this is...
-export const highWaterMark = 1000;
+// Doesn't seem to make a difference no matter what this is, but keeping at 1 makes the progress bar nicer
+export const highWaterMark = 1;
 
 const addLeagueMeta = async ({
 	lid,

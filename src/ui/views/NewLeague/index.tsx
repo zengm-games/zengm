@@ -1369,7 +1369,6 @@ const NewLeague = (props: View<"newLeague">) => {
 														}}
 														onDone={handleNewLeagueFile}
 														enterURL={state.customize === "custom-url"}
-														hideLoadedMessage
 													/>
 												</div>
 											) : null}

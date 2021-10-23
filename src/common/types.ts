@@ -878,6 +878,10 @@ export type LocalStateUI = {
 		id: number;
 		status: string;
 	};
+	leagueCreationPercent?: {
+		id: number;
+		percent: number;
+	};
 	lid?: number;
 	liveGameInProgress: boolean;
 	numPeriods: number;

@@ -13,7 +13,12 @@ import {
 	WEBSITE_ROOT,
 } from "../../common";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload";
-import { resetFileInput, toWorker, useLocal } from "../util";
+import {
+	localActions,
+	resetFileInput,
+	toWorker,
+	useLocalShallow,
+} from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {
@@ -98,7 +103,6 @@ const reducer = (state: State, action: any): State => {
 const LeagueFileUpload = ({
 	disabled,
 	enterURL,
-	hideLoadedMessage,
 	includePlayersInBasicInfo,
 	onDone,
 	onLoading,
@@ -107,7 +111,6 @@ const LeagueFileUpload = ({
 	onDone: (b: Error | null, a?: LeagueFileUploadOutput) => void;
 	disabled?: boolean;
 	enterURL?: boolean;
-	hideLoadedMessage?: boolean;
 	includePlayersInBasicInfo?: boolean;
 	// onLoading is called when it starts reading the file into memory
 	onLoading?: () => void;
@@ -122,7 +125,10 @@ const LeagueFileUpload = ({
 	}, []);
 
 	const leagueCreationID = useRef(Math.random());
-	const leagueCreation = useLocal(state => state.leagueCreation);
+	const { leagueCreation, leagueCreationPercent } = useLocalShallow(state => ({
+		leagueCreation: state.leagueCreation,
+		leagueCreationPercent: state.leagueCreationPercent,
+	}));
 
 	// Reset status when switching between file upload
 	useEffect(() => {
@@ -213,13 +219,18 @@ const LeagueFileUpload = ({
 				"initialCheck",
 				url,
 				includePlayersInBasicInfo,
-				leagueCreationID,
+				leagueCreationID.current,
 			);
 
 			await afterCheck({
 				basicInfo,
 				schemaErrors,
 				url,
+			});
+
+			localActions.update({
+				leagueCreation: undefined,
+				leagueCreationPercent: undefined,
 			});
 		} catch (error) {
 			if (isMounted) {
@@ -254,6 +265,8 @@ const LeagueFileUpload = ({
 				"leagueFileUpload",
 				"initialCheck",
 				file,
+				includePlayersInBasicInfo,
+				leagueCreationID.current,
 			);
 
 			await afterCheck({
@@ -327,11 +340,31 @@ const LeagueFileUpload = ({
 					</p>
 				) : null}
 				{state.status === "checking" ? (
-					<p className="alert alert-info mt-3">
-						Validating {leagueCreation?.status ?? "league file"}...
-					</p>
+					<>
+						<div className="alert alert-info mt-3">
+							{leagueCreationPercent?.id === leagueCreationID.current ? (
+								<div className="progress mb-1">
+									<div
+										className="progress-bar progress-bar-striped progress-bar-animated"
+										role="progressbar"
+										aria-valuenow={leagueCreationPercent.percent}
+										aria-valuemin={0}
+										aria-valuemax={100}
+										style={{
+											width: `${leagueCreationPercent.percent}%`,
+										}}
+									></div>
+								</div>
+							) : null}
+							Validating{" "}
+							{leagueCreation?.id === leagueCreationID.current
+								? leagueCreation.status
+								: "league file"}
+							...
+						</div>
+					</>
 				) : null}
-				{state.status === "done" && !hideLoadedMessage ? (
+				{state.status === "done" ? (
 					<p className="alert alert-success mt-3">Done!</p>
 				) : null}
 			</div>
@@ -342,7 +375,6 @@ const LeagueFileUpload = ({
 LeagueFileUpload.propTypes = {
 	disabled: PropTypes.bool,
 	enterURL: PropTypes.bool,
-	hideLoadedMessage: PropTypes.bool,
 	onLoading: PropTypes.func,
 	onDone: PropTypes.func.isRequired,
 };

@@ -132,12 +132,17 @@ export type BasicInfo = {
 	hasRookieContracts: boolean;
 };
 
-const getBasicInfo = async (
-	stream: ReadableStream,
-	includePlayersInBasicInfo: boolean | undefined,
-	leagueCreationID: number,
-	conditions: Conditions,
-) => {
+const getBasicInfo = async ({
+	stream,
+	includePlayersInBasicInfo,
+	leagueCreationID,
+	conditions,
+}: {
+	stream: ReadableStream;
+	includePlayersInBasicInfo: boolean | undefined;
+	leagueCreationID: number;
+	conditions: Conditions;
+}) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
 	const basicInfo: BasicInfo = {
 		keys: new Set(),
@@ -244,6 +249,58 @@ const getBasicInfo = async (
 	return { basicInfo, schemaErrors };
 };
 
+const emitProgressStream = (
+	leagueCreationID: number,
+	sizeInBytes: number | undefined,
+	conditions: Conditions,
+) => {
+	const doIt = sizeInBytes !== undefined && !Number.isNaN(sizeInBytes);
+
+	let lastPercentEmitted = 0;
+	let sizeSoFar = 0;
+	return new TransformStream({
+		start() {
+			toUI(
+				"updateLocal",
+				[
+					{
+						leagueCreationPercent: doIt
+							? {
+									id: leagueCreationID,
+									percent: 0,
+							  }
+							: undefined,
+					},
+				],
+				conditions,
+			);
+		},
+		transform(chunk, controller) {
+			controller.enqueue(chunk);
+			if (doIt) {
+				sizeSoFar += chunk.length;
+				const percent = Math.round((sizeSoFar / sizeInBytes) * 100);
+
+				if (percent > lastPercentEmitted) {
+					toUI(
+						"updateLocal",
+						[
+							{
+								leagueCreationPercent: {
+									id: leagueCreationID,
+									percent,
+								},
+							},
+						],
+						conditions,
+					);
+					lastPercentEmitted = percent;
+				}
+			}
+		},
+	});
+};
+
 const initialCheck = async (
 	file: File | string,
 	includePlayersInBasicInfo: boolean | undefined,
@@ -251,6 +308,7 @@ const initialCheck = async (
 	conditions: Conditions,
 ) => {
 	let stream: ReadableStream;
+	let sizeInBytes: number | undefined;
 	if (typeof file === "string") {
 		let response;
 		try {
@@ -262,24 +320,30 @@ const initialCheck = async (
 		}
 
 		stream = response.body as unknown as ReadableStream;
+		const size = response.headers.get("content-length");
+		if (size) {
+			sizeInBytes = Number(size);
+		}
 	} else {
 		stream = file.stream() as unknown as ReadableStream;
+		sizeInBytes = file.size;
 	}
+	console.log("sizeInBytes", sizeInBytes);
 
 	const stream0 = toPolyfillReadable(stream);
 
 	// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 	(self as any).stream0 = stream0;
 
-	const stream2 = stream0.pipeThrough(
-		toPolyfillTransform(new TextDecoderStream()),
-	);
-	const { basicInfo, schemaErrors } = await getBasicInfo(
-		stream2,
+	const stream2 = stream0
+		.pipeThrough(emitProgressStream(leagueCreationID, sizeInBytes, conditions))
+		.pipeThrough(toPolyfillTransform(new TextDecoderStream()));
+	const { basicInfo, schemaErrors } = await getBasicInfo({
+		stream: stream2,
 		includePlayersInBasicInfo,
 		leagueCreationID,
 		conditions,
-	);
+	});
 
 	delete (self as any).stream0;
 

@@ -34,9 +34,6 @@ if (!self.WritableStream || !self.TransformStream) {
 	toPolyfillTransform = x => x;
 }
 
-// Not supported in any Firefox yet!
-import "./polyfill-TextDecoderStream";
-
 // Chrome 76, Safari 14.1
 // Based on https://stackoverflow.com/a/65087341/786644
 if (!Blob.prototype.stream) {

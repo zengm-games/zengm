@@ -1,3 +1,7 @@
+// @ts-nocheck
+
+// Taken from https://github.com/GoogleChromeLabs/text-encode-transform-polyfill/blob/ca78bcec819b5f354550798ec0378b66d7adcc63/text-encode-transform.js
+
 // Copyright 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -142,7 +146,7 @@
 			// character 0xFFFD). When fatal is true, this call is just used for its
 			// side-effect of throwing a TypeError exception if the input is
 			// incomplete.
-			var output = this._decoder.decode();
+			const output = this._decoder.decode();
 			if (output !== "") {
 				controller.enqueue(output);
 			}

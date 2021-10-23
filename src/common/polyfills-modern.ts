@@ -23,5 +23,8 @@ for (const C of [Array, String]) {
 	});
 }
 
+// Chrome 71, Firefox ??, Safari 14.1
+import "./polyfill-TextEncoderDecoderStream";
+
 // Needed for some reason
 export default 1;

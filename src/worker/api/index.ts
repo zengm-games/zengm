@@ -104,7 +104,6 @@ import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
 import type { PlayerRatings } from "../../common/types.basketball";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
-import { exportLeague, idbCacheFlush } from "./exportLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1708,6 +1707,10 @@ const handleUploadedDraftClass = async (
 	await draft.genPlayers(draftYear, scoutingRank);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
+const idbCacheFlush = async () => {
+	await idb.cache.flush();
 };
 
 const importPlayers = async (
@@ -3533,7 +3536,6 @@ export default {
 	evalOnWorker,
 	exportDraftClass,
 	getExportFilename,
-	exportLeague,
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
 	generateFace,

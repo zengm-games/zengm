@@ -1,17 +1,23 @@
 import classNames from "classnames";
-import { openDB } from "idb";
 import { useState, ReactNode, FormEvent } from "react";
+import { isSport, WEBSITE_ROOT } from "../../common";
 import {
-	isSport,
-	MAX_SUPPORTED_LEAGUE_VERSION,
-	WEBSITE_ROOT,
-} from "../../common";
+	gameAttributesKeysGameState,
+	gameAttributesKeysTeams,
+} from "../../common/defaultGameAttributes";
+import { types } from "../../common/transactionInfo";
+import type {
+	EventBBGM,
+	GameAttribute,
+	Player,
+	Team,
+} from "../../common/types";
 import makeExportStream from "../../worker/core/league/makeExportStream";
-import type { LeagueDB } from "../../worker/db/connectLeague";
+import stats from "../../worker/core/player/stats";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, safeLocalStorage, toWorker, useLocal } from "../util";
-import downloadFileStream, { getExportInfo } from "../util/downloadFileStream";
+import { helpers, safeLocalStorage, toWorker } from "../util";
+import downloadFileStream from "../util/downloadFileStream";
 
 export type ExportLeagueKey =
 	| "players"
@@ -246,6 +252,136 @@ const loadCompressed = (): boolean => {
 	}
 
 	return true;
+};
+
+const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
+	const storesSet = new Set<string>();
+
+	const storesByKey = {
+		players: ["players", "releasedPlayers", "awards"],
+		teamsBasic: ["teams", "gameAttributes"],
+		teams: ["teamSeasons", "teamStats"],
+		headToHead: ["headToHeads"],
+		schedule: ["schedule", "playoffSeries"],
+		draftPicks: ["draftPicks"],
+		leagueSettings: ["gameAttributes"],
+		gameState: [
+			"gameAttributes",
+			"trade",
+			"negotiations",
+			"draftLotteryResults",
+			"messages",
+			"playerFeats",
+			"allStars",
+			"scheduledEvents",
+		],
+		newsFeedTransactions: ["events"],
+		newsFeedOther: ["events"],
+		games: ["games"],
+	};
+
+	for (const key of helpers.keys(storesByKey)) {
+		if (checked[key]) {
+			for (const store of storesByKey[key]) {
+				storesSet.add(store);
+			}
+		}
+	}
+
+	const stores = Array.from(storesSet);
+
+	const filter: any = {};
+	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category === "transaction" || category === "draft";
+		};
+	} else if (!checked.newsFeedTransactions && checked.newsFeedOther) {
+		filter.events = (event: EventBBGM) => {
+			const category = types[event.type]?.category;
+			return category !== "transaction" && category !== "draft";
+		};
+	} else if (checked.leagueSettings || checked.gameState) {
+		filter.gameAttributes = (row: GameAttribute) => {
+			if (!checked.leagueSettings) {
+				if (
+					!gameAttributesKeysGameState.includes(row.key) &&
+					!gameAttributesKeysTeams.includes(row.key)
+				) {
+					return false;
+				}
+			}
+
+			if (!checked.gameState) {
+				if (gameAttributesKeysGameState.includes(row.key)) {
+					return false;
+				}
+			}
+
+			if (!checked.teamsBasic) {
+				if (gameAttributesKeysTeams.includes(row.key)) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+	}
+
+	const forEach: any = {};
+	if (checked.players && !checked.gameHighs) {
+		forEach.players = (p: Player) => {
+			for (const row of p.stats) {
+				for (const stat of stats.max) {
+					delete row[stat];
+				}
+			}
+		};
+	}
+
+	const map: any = {};
+	const teamsBasicOnly = checked.teamsBasic && !checked.teams;
+	if (teamsBasicOnly) {
+		map.teams = (t: Team) => {
+			return {
+				tid: t.tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				colors: t.colors,
+				jersey: t.jersey,
+				cid: t.cid,
+				did: t.did,
+				pop: t.pop,
+				stadiumCapacity: t.stadiumCapacity,
+				disabled: t.disabled,
+				srID: t.srID,
+			};
+		};
+	}
+
+	// Include startingSeason when necessary (historical data but no game state)
+	/*const hasHistoricalData =
+		checked.players ||
+		checked.teams ||
+		checked.headToHead ||
+		checked.schedule ||
+		checked.draftPicks;
+	if (
+		hasHistoricalData &&
+		(data.gameAttributes?.startingSeason === undefined)
+	) {
+		data.startingSeason = g.get("season");
+	}*/
+
+	return {
+		stores,
+		filter,
+		forEach,
+		map,
+	};
 };
 
 const ExportLeague = () => {

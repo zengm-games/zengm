@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, downloadFile } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import downloadFileStream from "../util/downloadFileStream";

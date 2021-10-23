@@ -7,6 +7,7 @@ FBGM timeout should not happen if clock is stopped https://discord.com/channels/
 add archetypes to players?
 - https://twitter.com/messages/1928999030-3723150857
 - https://discord.com/channels/290013534023057409/290015468939640832/897791010225147954 https://www.bball-index.com/lebron-database/
+  - https://www.bball-index.com/impact-metric-comparison/ for defense
 - https://docs.google.com/spreadsheets/d/1JcA535OolPztKI9NT438MyZ6UJMh9sgbgUkeBnG0vjU/edit#gid=1556746814
 
 https://github.com/lukeed/tsm
@@ -30,10 +31,6 @@ streaming import of league files
 - test browsers again
 
 streaming export
-- other league file exports
-  - exportDraftClass - still use old method, since i don't want to have to worry about that getPlayers by draftYear call
-- makeExportStream to UI
-- getExportInfo only in UI
 - when importing, show real progress bar, since we know size of blob/url
 - firefox sometimes needs reload before it works
   - https://github.com/jimmywarting/StreamSaver.js/issues/153
@@ -41,7 +38,6 @@ streaming export
   - could show warning in UI to reload and try again, if using streamsaver
 - bundle size - any splitting needed?
 - if pull ends at the exact end of an object store, make sure it at least enqueues something
-- Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 - better progress UI
 - check polyfills
   - can load stream polyfills async in ui?
@@ -54,6 +50,7 @@ streaming export
   - make sure other browsers still work for large files
   - Include confs and divs if exporting just teams, in case gameAttributes was not selected
   - Include startingSeason when necessary (historical data but no game state)
+- Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 

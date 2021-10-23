@@ -3,10 +3,11 @@ import type { IDBPCursorWithValue } from "idb";
 import {
 	gameAttributesArrayToObject,
 	MAX_SUPPORTED_LEAGUE_VERSION,
-} from "../../../common";
-import { gameAttributesCache } from "../../../common/defaultGameAttributes";
-import { local, toWorker } from "../../../ui/util";
-import type { LeagueDB } from "../../db/connectLeague";
+} from "../../common";
+import { gameAttributesCache } from "../../common/defaultGameAttributes";
+import { local } from "./local";
+import toWorker from "./toWorker";
+import type { LeagueDB } from "../../worker/db/connectLeague";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;

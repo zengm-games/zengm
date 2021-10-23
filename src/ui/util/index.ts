@@ -31,6 +31,7 @@ export { default as compareVersions } from "./compareVersions";
 export { default as confirm } from "./confirm";
 export { default as confirmDeleteAllLeagues } from "./confirmDeleteAllLeagues";
 export { default as downloadFile } from "./downloadFile";
+export { default as downloadFileStream } from "./downloadFileStream";
 export { default as formatRecord } from "./formatRecord";
 export { default as genStaticPage } from "./genStaticPage";
 export { default as getCols } from "../../common/getCols";
@@ -48,6 +49,7 @@ export {
 } from "./local";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as logEvent } from "./logEvent";
+export { default as makeExportStream } from "./makeExportStream";
 export { default as menuItems } from "./menuItems";
 export { default as notify } from "./notify";
 export { default as prefixStatOpp } from "./prefixStatOpp";

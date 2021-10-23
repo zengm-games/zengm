@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import {
+	downloadFileStream,
+	getCols,
+	helpers,
+	makeExportStream,
+	toWorker,
+} from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
-import downloadFileStream from "../util/downloadFileStream";
-import makeExportStream from "../../worker/core/league/makeExportStream";
 
 const ExportPlayers = ({
 	challengeNoRatings,

@@ -12,12 +12,16 @@ import type {
 	Player,
 	Team,
 } from "../../common/types";
-import makeExportStream from "../../worker/core/league/makeExportStream";
 import stats from "../../worker/core/player/stats";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, safeLocalStorage, toWorker } from "../util";
-import downloadFileStream from "../util/downloadFileStream";
+import {
+	downloadFileStream,
+	helpers,
+	makeExportStream,
+	safeLocalStorage,
+	toWorker,
+} from "../util";
 
 export type ExportLeagueKey =
 	| "players"

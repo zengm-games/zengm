@@ -1,10 +1,11 @@
-import type { IDBPCursorWithValue, IDBPDatabase } from "idb";
+import { openDB } from "idb";
+import type { IDBPCursorWithValue } from "idb";
 import {
 	gameAttributesArrayToObject,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 } from "../../../common";
 import { gameAttributesCache } from "../../../common/defaultGameAttributes";
-import { toWorker } from "../../../ui/util";
+import { local, toWorker } from "../../../ui/util";
 import type { LeagueDB } from "../../db/connectLeague";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
@@ -35,26 +36,41 @@ const NUM_SPACES_IN_TAB = 2;
 type Filter = (a: any) => boolean;
 
 const makeExportStream = async (
-	leagueDB: IDBPDatabase<LeagueDB>,
 	storesInput: string[],
 	{
 		compressed = false,
-		filter,
-		forEach,
-		map,
+		filter = {},
+		forEach = {},
+		map = {},
 	}: {
 		compressed: boolean;
-		filter: {
+		filter?: {
 			[key: string]: Filter;
 		};
-		forEach: {
+		forEach?: {
 			[key: string]: (a: any) => void;
 		};
-		map: {
+		map?: {
 			[key: string]: (a: any) => any;
 		};
 	},
 ) => {
+	const lid = local.getState().lid;
+	if (lid === undefined) {
+		throw new Error("Missing lid");
+	}
+
+	// Don't worry about upgrades or anything, because this function will only be called if the league database already exists
+	const leagueDB = await openDB<LeagueDB>(
+		`league${lid}`,
+		MAX_SUPPORTED_LEAGUE_VERSION,
+		{
+			blocking() {
+				leagueDB.close();
+			},
+		},
+	);
+
 	// Always flush before export, so export is current!
 	await toWorker("main", "idbCacheFlush");
 

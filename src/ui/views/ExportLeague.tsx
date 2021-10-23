@@ -252,7 +252,6 @@ const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
-	const lid = useLocal(state => state.lid);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -263,31 +262,7 @@ const ExportLeague = () => {
 
 		const { stores, filter, forEach, map } = getExportInfo(checked);
 
-		// Don't worry about upgrades or anything, because this page can't be displayed unless the league database already exists
-		const leagueDB = await openDB<LeagueDB>(
-			`league${lid}`,
-			MAX_SUPPORTED_LEAGUE_VERSION,
-			{
-				blocked() {
-					setStatus(
-						<span className="text-danger">
-							Error exporting league: database blocked.
-						</span>,
-					);
-				},
-				blocking() {
-					leagueDB.close();
-				},
-				terminated() {
-					setStatus(
-						<span className="text-danger">
-							Error exporting league: database terminated.
-						</span>,
-					);
-				},
-			},
-		);
-		const readableStream = await makeExportStream(leagueDB, stores, {
+		const readableStream = await makeExportStream(stores, {
 			compressed,
 			filter,
 			forEach,

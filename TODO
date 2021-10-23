@@ -31,7 +31,6 @@ streaming import of league files
 
 streaming export
 - other league file exports
-  - exportPlayers
   - exportDraftClass
   - make sure they export the same as before!
 - makeExportStream to UI

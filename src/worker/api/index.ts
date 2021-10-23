@@ -1238,18 +1238,17 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 	return csvFormatRows([columns, ...rows]);
 };
 
-const getExportFilename = async (type: "league") => {
+const getExportFilename = async (type: "league" | "players") => {
+	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+
 	if (type === "league") {
 		const phase = g.get("phase");
 		const season = g.get("season");
 		const userTid = g.get("userTid");
 
-		const l = await idb.meta.get("leagues", g.get("lid"));
-		const leagueName = l ? l.name : `League ${g.get("lid")}`;
-		let filename = `${GAME_ACRONYM}_${leagueName.replace(
-			/[^a-z0-9]/gi,
-			"_",
-		)}_${g.get("season")}_${PHASE_TEXT[phase].replace(/[^a-z0-9]/gi, "_")}`;
+		let filename = `${GAME_ACRONYM}_${leagueName}_${g.get(
+			"season",
+		)}_${PHASE_TEXT[phase].replace(/[^a-z0-9]/gi, "_")}`;
 
 		if (
 			phase === PHASE.REGULAR_SEASON ||
@@ -1286,6 +1285,8 @@ const getExportFilename = async (type: "league") => {
 		}
 
 		return `${filename}.json`;
+	} else if (type === "players") {
+		return `${GAME_ACRONYM}_players_${leagueName}_${g.get("season")}.json`;
 	}
 
 	throw new Error("Not implemented");
@@ -1352,48 +1353,6 @@ const exportDraftClass = async (season: number) => {
 
 	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
 	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
-
-	return {
-		filename,
-		json: JSON.stringify(data, null, 2),
-	};
-};
-
-const exportPlayers = async (infos: { pid: number; season: number }[]) => {
-	const pids = infos.map(info => info.pid);
-
-	const data = await league.exportLeague(["players"], {
-		filter: {
-			players: p => pids.includes(p.pid),
-		},
-	});
-
-	data.startingSeason = g.get("startingSeason");
-
-	for (const p of data.players) {
-		const info = infos.find(info => info.pid === p.pid);
-		if (info) {
-			p.exportedSeason = info.season;
-		}
-
-		delete p.gamesUntilTradable;
-		delete p.numDaysFreeAgent;
-		delete p.ptModifier;
-		delete p.rosterOrder;
-		delete p.statsTids;
-		delete p.value;
-		delete p.valueFuzz;
-		delete p.valueNoPot;
-		delete p.valueNoPotFuzz;
-		delete p.valueWithContract;
-		delete p.watch;
-		delete p.yearsFreeAgent;
-	}
-
-	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
-	const filename = `${GAME_ACRONYM}_players_${leagueName}_${g.get(
-		"season",
-	)}.json`;
 
 	return {
 		filename,
@@ -3577,7 +3536,6 @@ export default {
 	exportLeague,
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
-	exportPlayers,
 	generateFace,
 	getAutoPos,
 	getDefaultInjuries,

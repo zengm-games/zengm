@@ -4,6 +4,8 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, downloadFile } from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
+import downloadFileStream from "../util/downloadFileStream";
+import makeExportStream from "../../worker/core/league/makeExportStream";
 
 const ExportPlayers = ({
 	challengeNoRatings,
@@ -181,16 +183,45 @@ const ExportPlayers = ({
 									setErrorMessage(undefined);
 
 									try {
-										const { filename, json } = await toWorker(
+										const filename = await toWorker(
 											"main",
-											"exportPlayers",
-											selected.map(({ p, season }) => ({
-												pid: p.pid,
-												season,
-											})),
+											"getExportFilename",
+											"players",
 										);
 
-										downloadFile(filename, json, "application/json");
+										const pids = selected.map(info => info.p.pid);
+
+										const readableStream = await makeExportStream(["players"], {
+											compressed: false,
+											filter: {
+												players: p => pids.includes(p.pid),
+											},
+											forEach: {
+												players: p => {
+													const info = selected.find(
+														info => info.p.pid === p.pid,
+													);
+													if (info) {
+														p.exportedSeason = info.season;
+													}
+
+													delete p.gamesUntilTradable;
+													delete p.numDaysFreeAgent;
+													delete p.ptModifier;
+													delete p.rosterOrder;
+													delete p.statsTids;
+													delete p.value;
+													delete p.valueFuzz;
+													delete p.valueNoPot;
+													delete p.valueNoPotFuzz;
+													delete p.valueWithContract;
+													delete p.watch;
+													delete p.yearsFreeAgent;
+												},
+											},
+										});
+
+										await downloadFileStream(filename, readableStream);
 									} catch (error) {
 										console.error(error);
 										setErrorMessage(error.message);

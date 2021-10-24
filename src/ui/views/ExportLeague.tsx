@@ -13,7 +13,7 @@ import type {
 	Team,
 } from "../../common/types";
 import stats from "../../worker/core/player/stats";
-import { MoreLinks } from "../components";
+import { MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	downloadFileStream,
@@ -392,28 +392,45 @@ const ExportLeague = () => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
+	const [processingStore, setProcessingStore] = useState<string | undefined>();
+	const [percentDone, setPercentDone] = useState(-1);
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		setStatus("Exporting...");
-
-		const filename = await toWorker("main", "getExportFilename", "league");
-
-		const { stores, filter, forEach, map } = getExportInfo(checked);
-
-		const readableStream = await makeExportStream(stores, {
-			compressed,
-			filter,
-			forEach,
-			map,
-		});
-
-		await downloadFileStream(filename, readableStream);
-
+		setPercentDone(0);
 		saveDefaults(checked, compressed);
 
+		try {
+			const filename = await toWorker("main", "getExportFilename", "league");
+
+			const { stores, filter, forEach, map } = getExportInfo(checked);
+
+			const readableStream = await makeExportStream(stores, {
+				compressed,
+				filter,
+				forEach,
+				map,
+				onPercentDone: percent => {
+					setPercentDone(percent);
+				},
+				onProcessingStore: store => {
+					setProcessingStore(store);
+				},
+			});
+
+			await downloadFileStream(filename, readableStream);
+		} catch (error) {
+			setStatus(<span className="text-danger">Error: "{error.message}"</span>);
+			setPercentDone(-1);
+			setProcessingStore(undefined);
+			throw error;
+		}
+
 		setStatus(undefined);
+		setPercentDone(-1);
+		setProcessingStore(undefined);
 	};
 
 	useTitleBar({ title: "Export League" });
@@ -552,10 +569,22 @@ const ExportLeague = () => {
 					</div>
 				</div>
 				<div className="row">
-					<div className="col-lg-10 col-xl-8 text-center">
-						<button className="btn btn-primary" type="submit">
-							Export League
-						</button>
+					<div className="col-md-6 col-lg-5 col-xl-4">
+						<div className="text-center">
+							<button className="btn btn-primary" type="submit">
+								Export League
+							</button>
+						</div>
+
+						{percentDone >= 0 ? (
+							<ProgressBarText
+								className="mt-3"
+								text={`Processing${
+									processingStore ? ` ${processingStore}` : ""
+								}...`}
+								percent={percentDone ?? 0}
+							/>
+						) : null}
 					</div>
 				</div>
 			</form>

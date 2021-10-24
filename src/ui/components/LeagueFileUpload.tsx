@@ -346,7 +346,9 @@ const LeagueFileUpload = ({
 							{leagueCreationPercent?.id === leagueCreationID.current ||
 							leagueCreation?.id === leagueCreationID.current ? (
 								<ProgressBarText
-									text={`Validating ${leagueCreation?.status ?? "league file"}`}
+									text={`Validating ${
+										leagueCreation?.status ?? "league file"
+									}...`}
 									percent={leagueCreationPercent?.percent ?? 0}
 								/>
 							) : null}

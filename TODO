@@ -41,7 +41,7 @@ streaming export
   - can load stream polyfills async in ui?
 - downloadFileStream in util/index.ts
 - go back to ActionButton in ExportLeague, makes sense
-  - also, progress bar for export, can base it on number of records
+- zipped exports
 - test
   - filenames
   - exported JSONs are the same

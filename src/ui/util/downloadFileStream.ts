@@ -27,6 +27,12 @@ const downloadFileStream = async (
 		fileStream = streamSaver.createWriteStream(filename);
 	}
 
+	/*const fileStream2 = new WritableStream({
+		write(chunk) {
+			// console.log(chunk);
+		}
+	})*/
+
 	await readableStream.pipeThrough(new TextEncoderStream()).pipeTo(fileStream);
 };
 

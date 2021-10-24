@@ -109,19 +109,20 @@ const makeExportStream = async (
 
 	let storeIndex = 0;
 	let prevKey: string | number | undefined;
+	let prevStore: string | undefined;
 	let cancelCallback: (() => void) | undefined;
-	const seenFirstRecord = new Set();
+	const enqueuedFirstRecord = new Set();
 
 	let numRecordsSeen = 0;
 	let numRecordsTotal = 0;
-	let previousPercentDone = 0;
+	let prevPercentDone = 0;
 	const incrementNumRecordsSeen = (count: number = 1) => {
 		numRecordsSeen += count;
 		if (onPercentDone) {
 			const percentDone = Math.round((numRecordsSeen / numRecordsTotal) * 100);
-			if (percentDone !== previousPercentDone) {
+			if (percentDone !== prevPercentDone) {
 				onPercentDone(percentDone);
-				previousPercentDone = percentDone;
+				prevPercentDone = percentDone;
 			}
 		}
 	};
@@ -167,6 +168,9 @@ const makeExportStream = async (
 				};
 
 				const store = stores[storeIndex];
+				if (onProcessingStore && store !== prevStore) {
+					onProcessingStore(store);
+				}
 
 				// Define this up here so it is undefined for gameAttributes, triggering the "go to next store" logic at the bottom
 				let cursor:
@@ -175,8 +179,6 @@ const makeExportStream = async (
 					| undefined;
 
 				if (store === "gameAttributes") {
-					onProcessingStore?.(store);
-
 					// gameAttributes is special because we need to convert it into an object
 					let rows = (await leagueDB.getAll(store)).filter(
 						row => !gameAttributesCache.includes(row.key),
@@ -220,13 +222,12 @@ const makeExportStream = async (
 						if (!filter[store] || filter[store](value)) {
 							// count += 1;
 
-							const seenFirst = seenFirstRecord.has(store);
-							const comma = seenFirst ? "," : "";
+							const enqueuedFirst = enqueuedFirstRecord.has(store);
+							const comma = enqueuedFirst ? "," : "";
 
-							if (!seenFirst) {
+							if (!enqueuedFirst) {
 								enqueue(`,${newline}${tab}"${store}": [`);
-								seenFirstRecord.add(store);
-								onProcessingStore?.(store);
+								enqueuedFirstRecord.add(store);
 							}
 
 							if (forEach[store]) {
@@ -318,9 +319,13 @@ const makeExportStream = async (
 					// Actually done with this store - we didn't just stop due to desiredSize
 					storeIndex += 1;
 					prevKey = undefined;
-					if (seenFirstRecord.has(store)) {
+					if (enqueuedFirstRecord.has(store)) {
 						enqueue(`${newline}${tab}]`);
+					} else {
+						// Ensure we don't ever enqueue nothing, in which case the stream can get stuck
+						enqueue("");
 					}
+
 					if (storeIndex >= stores.length) {
 						// Done whole export!
 

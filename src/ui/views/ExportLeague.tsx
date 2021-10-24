@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState, ReactNode, FormEvent } from "react";
+import { useState, ReactNode, FormEvent, useRef } from "react";
 import { isSport, WEBSITE_ROOT } from "../../common";
 import {
 	gameAttributesKeysGameState,
@@ -391,12 +391,22 @@ const getExportInfo = (
 	};
 };
 
+const SUPPORTS_CANCEL = typeof AbortController !== undefined;
+
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
 	const [processingStore, setProcessingStore] = useState<string | undefined>();
 	const [percentDone, setPercentDone] = useState(-1);
+	const abortController = useRef<AbortController | undefined>();
+
+	const cleanupAfterStream = (status?: ReactNode) => {
+		abortController.current = undefined;
+		setStatus(status);
+		setPercentDone(-1);
+		setProcessingStore(undefined);
+	};
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -404,8 +414,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		setStatus("Exporting...");
 		setPercentDone(0);
 		saveDefaults(checked, compressed);
-
-		let timeoutID: number | undefined;
 
 		try {
 			const filename = await toWorker("main", "getExportFilename", "league");
@@ -429,24 +437,25 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				},
 			});
 
-			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
-			(self as any).stream0 = readableStream;
+			const fileStream = await downloadFileStream(filename);
 
-			await downloadFileStream(filename, readableStream);
+			if (SUPPORTS_CANCEL) {
+				abortController.current = new AbortController();
+			}
+
+			await readableStream
+				.pipeThrough(new TextEncoderStream())
+				.pipeTo(fileStream, {
+					signal: abortController.current?.signal,
+				});
 		} catch (error) {
-			setStatus(<span className="text-danger">Error: "{error.message}"</span>);
-			setPercentDone(-1);
-			setProcessingStore(undefined);
-			delete (self as any).stream0;
+			cleanupAfterStream(
+				<span className="text-danger">Error: "{error.message}"</span>,
+			);
 			throw error;
 		}
 
-		clearTimeout(timeoutID);
-
-		setStatus(undefined);
-		setPercentDone(-1);
-		setProcessingStore(undefined);
-		delete (self as any).stream0;
+		cleanupAfterStream();
 	};
 
 	useTitleBar({ title: "Export League" });
@@ -604,6 +613,22 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							>
 								Export League
 							</ActionButton>
+
+							{SUPPORTS_CANCEL ? (
+								<button
+									className="btn btn-secondary ml-2"
+									type="button"
+									disabled={status !== "Exporting..."}
+									onClick={() => {
+										if (abortController.current) {
+											abortController.current.abort();
+											cleanupAfterStream();
+										}
+									}}
+								>
+									Cancel
+								</button>
+							) : null}
 						</div>
 
 						{percentDone >= 0 ? (

@@ -22,6 +22,7 @@ import {
 	safeLocalStorage,
 	toWorker,
 } from "../util";
+import { HAS_FILE_SYSTEM_ACCESS_API } from "../util/downloadFileStream";
 
 export type ExportLeagueKey =
 	| "players"
@@ -402,6 +403,8 @@ const ExportLeague = () => {
 		setPercentDone(0);
 		saveDefaults(checked, compressed);
 
+		let timeoutID: number | undefined;
+
 		try {
 			const filename = await toWorker("main", "getExportFilename", "league");
 
@@ -420,17 +423,24 @@ const ExportLeague = () => {
 				},
 			});
 
+			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
+			(self as any).stream0 = readableStream;
+
 			await downloadFileStream(filename, readableStream);
 		} catch (error) {
 			setStatus(<span className="text-danger">Error: "{error.message}"</span>);
 			setPercentDone(-1);
 			setProcessingStore(undefined);
+			delete (self as any).stream0;
 			throw error;
 		}
+
+		clearTimeout(timeoutID);
 
 		setStatus(undefined);
 		setPercentDone(-1);
 		setProcessingStore(undefined);
+		delete (self as any).stream0;
 	};
 
 	useTitleBar({ title: "Export League" });
@@ -501,6 +511,9 @@ const ExportLeague = () => {
 		</button>
 	));
 
+	const showFirefoxWarning =
+		!HAS_FILE_SYSTEM_ACCESS_API && navigator.userAgent.includes("Firefox");
+
 	return (
 		<>
 			<MoreLinks type="importExport" page="export_league" />
@@ -570,6 +583,16 @@ const ExportLeague = () => {
 				</div>
 				<div className="row">
 					<div className="col-md-6 col-lg-5 col-xl-4">
+						{showFirefoxWarning ? (
+							<div className="alert alert-warning d-inline-block">
+								<b>Firefox sometimes fails at writing exported data to disk.</b>{" "}
+								When you click "Export League" it should prompt you to save a
+								file. If it doesn't, then please reload and try again, even if
+								the progress bar is moving, because that data is not going
+								anywhere if you haven't picked a file.
+							</div>
+						) : null}
+
 						<div className="text-center">
 							<ActionButton
 								type="submit"

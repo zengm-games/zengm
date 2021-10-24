@@ -38,11 +38,11 @@ streaming export
 - bundle size - any splitting needed?
 - check polyfills
   - can load stream polyfills async in ui?
-- zipped exports
 - test
-  - filenames
   - exported JSONs are the same
   - make sure other browsers still work for large files
+    - Firefox works pretty poorly, gets stuck in the middle
+    - chrome 49 gets stuck too
   - Include confs and divs if exporting just teams, in case gameAttributes was not selected
   - Include startingSeason when necessary (historical data but no game state)
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.

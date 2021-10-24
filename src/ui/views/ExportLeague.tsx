@@ -306,7 +306,11 @@ const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
 			const category = types[event.type]?.category;
 			return category !== "transaction" && category !== "draft";
 		};
-	} else if (checked.leagueSettings || checked.gameState) {
+	} else if (
+		checked.leagueSettings ||
+		checked.gameState ||
+		checked.teamsBasic
+	) {
 		filter.gameAttributes = (row: GameAttribute) => {
 			if (!checked.leagueSettings) {
 				if (

@@ -246,7 +246,7 @@ const makeExportStream = async (
 							if (store === "teams" && includeTeamSeasonsAndStats) {
 								// This is a bit dangerous, since it will possibly read all teamStats/teamSeasons rows into memory, but that will very rarely exceed MIN_RECORDS_PER_PULL and we will just do one team per transaction, to be safe.
 
-								const tid = cursor.value.tid;
+								const tid = value.tid;
 
 								const infos: (
 									| {
@@ -276,7 +276,7 @@ const makeExportStream = async (
 									},
 								];
 
-								const t: any = cursor.value;
+								const t: any = value;
 
 								for (const info of infos) {
 									t[info.key] = [];
@@ -293,10 +293,7 @@ const makeExportStream = async (
 							}
 
 							enqueue(
-								`${comma}${newline}${tab.repeat(2)}${jsonStringify(
-									cursor.value,
-									2,
-								)}`,
+								`${comma}${newline}${tab.repeat(2)}${jsonStringify(value, 2)}`,
 							);
 						}
 

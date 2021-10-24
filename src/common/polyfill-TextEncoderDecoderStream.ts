@@ -29,14 +29,6 @@
 		return;
 	}
 
-	if (typeof self.TextEncoder !== "function") {
-		throw new ReferenceError("TextEncoder implementation required");
-	}
-
-	if (typeof self.TextDecoder !== "function") {
-		throw new ReferenceError("TextDecoder implementation required");
-	}
-
 	// These symbols end up being different for every realm, so mixing objects
 	// created in one realm with methods created in another fails.
 	const codec = Symbol("codec");

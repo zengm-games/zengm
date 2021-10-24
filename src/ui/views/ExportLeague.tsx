@@ -372,24 +372,19 @@ const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
 	}
 
 	// Include startingSeason when necessary (historical data but no game state)
-	/*const hasHistoricalData =
+	const hasHistoricalData =
 		checked.players ||
 		checked.teams ||
 		checked.headToHead ||
 		checked.schedule ||
 		checked.draftPicks;
-	if (
-		hasHistoricalData &&
-		(data.gameAttributes?.startingSeason === undefined)
-	) {
-		data.startingSeason = g.get("season");
-	}*/
 
 	return {
 		stores,
 		filter,
 		forEach,
 		map,
+		hasHistoricalData,
 	};
 };
 
@@ -412,13 +407,15 @@ const ExportLeague = () => {
 		try {
 			const filename = await toWorker("main", "getExportFilename", "league");
 
-			const { stores, filter, forEach, map } = getExportInfo(checked);
+			const { stores, filter, forEach, map, hasHistoricalData } =
+				getExportInfo(checked);
 
 			const readableStream = await makeExportStream(stores, {
 				compressed,
 				filter,
 				forEach,
 				map,
+				hasHistoricalData,
 				onPercentDone: percent => {
 					setPercentDone(percent);
 				},

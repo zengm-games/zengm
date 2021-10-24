@@ -34,8 +34,6 @@ streaming export
 - bundle size - any splitting needed?
 - check polyfills
   - can load stream polyfills async in ui?
-- test
-  - Include startingSeason when necessary (historical data but no game state)
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr

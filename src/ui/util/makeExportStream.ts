@@ -43,6 +43,7 @@ const makeExportStream = async (
 		filter = {},
 		forEach = {},
 		map = {},
+		hasHistoricalData,
 		onPercentDone,
 		onProcessingStore,
 	}: {
@@ -56,6 +57,7 @@ const makeExportStream = async (
 		map?: {
 			[key: string]: (a: any) => any;
 		};
+		hasHistoricalData?: boolean;
 		onPercentDone?: (percentDone: number) => void;
 		onProcessingStore?: (processingStore: string) => void;
 	},
@@ -112,6 +114,8 @@ const makeExportStream = async (
 	let prevStore: string | undefined;
 	let cancelCallback: (() => void) | undefined;
 	const enqueuedFirstRecord = new Set();
+
+	let hasGameAttributesStartingSeason = false;
 
 	let numRecordsSeen = 0;
 	let numRecordsTotal = 0;
@@ -198,10 +202,15 @@ const makeExportStream = async (
 						rows = rows.map(map[store]);
 					}
 
+					const gameAttributesObject = gameAttributesArrayToObject(rows);
+
+					hasGameAttributesStartingSeason =
+						gameAttributesObject.startingSeason !== undefined;
+
 					await writeRootObject(
 						controller,
 						"gameAttributes",
-						gameAttributesArrayToObject(rows),
+						gameAttributesObject,
 					);
 
 					incrementNumRecordsSeen();
@@ -326,7 +335,10 @@ const makeExportStream = async (
 					if (storeIndex >= stores.length) {
 						// Done whole export!
 
-						if (!stores.includes("gameAttributes")) {
+						if (
+							!stores.includes("gameAttributes") ||
+							(hasHistoricalData && !hasGameAttributesStartingSeason)
+						) {
 							// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
 							await writeRootObject(
 								controller,

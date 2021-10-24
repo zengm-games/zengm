@@ -13,7 +13,7 @@ import type {
 	Team,
 } from "../../common/types";
 import stats from "../../worker/core/player/stats";
-import { MoreLinks, ProgressBarText } from "../components";
+import { ActionButton, MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	downloadFileStream,
@@ -571,9 +571,12 @@ const ExportLeague = () => {
 				<div className="row">
 					<div className="col-md-6 col-lg-5 col-xl-4">
 						<div className="text-center">
-							<button className="btn btn-primary" type="submit">
+							<ActionButton
+								type="submit"
+								processing={status === "Exporting..."}
+							>
 								Export League
-							</button>
+							</ActionButton>
 						</div>
 
 						{percentDone >= 0 ? (
@@ -585,13 +588,13 @@ const ExportLeague = () => {
 								percent={percentDone ?? 0}
 							/>
 						) : null}
+
+						{status && status !== "Exporting..." ? (
+							<div className="mt-3 text-center">{status}</div>
+						) : null}
 					</div>
 				</div>
 			</form>
-
-			{status && status !== "Exporting..." ? (
-				<p className="mt-3 text-center">{status}</p>
-			) : null}
 		</>
 	);
 };

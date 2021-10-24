@@ -586,10 +586,8 @@ const ExportLeague = () => {
 						{showFirefoxWarning ? (
 							<div className="alert alert-warning d-inline-block">
 								<b>Firefox sometimes fails at writing exported data to disk.</b>{" "}
-								When you click "Export League" it should prompt you to save a
-								file. If it doesn't, then please reload and try again, even if
-								the progress bar is moving, because that data is not going
-								anywhere if you haven't picked a file.
+								If the progress bar gets stuck and it never prompts you to save
+								a file, please reload and try again.
 							</div>
 						) : null}
 

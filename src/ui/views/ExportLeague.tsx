@@ -449,9 +449,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [checked, setChecked] = useState<Checked>(loadChecked);
 	const [processingStore, setProcessingStore] = useState<string | undefined>();
 	const [percentDone, setPercentDone] = useState(-1);
-	const [streamDownload, setStreamDownload] = useState(
-		HAS_FILE_SYSTEM_ACCESS_API,
-	);
+	const [streamDownload, setStreamDownload] = useState(true);
 	const abortController = useRef<AbortController | undefined>();
 
 	const cleanupAfterStream = (status?: ReactNode) => {
@@ -490,7 +488,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				},
 			});
 
-			const fileStream = await downloadFileStream(filename);
+			const fileStream = await downloadFileStream(streamDownload, filename);
 
 			if (SUPPORTS_CANCEL) {
 				abortController.current = new AbortController();
@@ -580,7 +578,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	));
 
 	const showFirefoxWarning =
-		!HAS_FILE_SYSTEM_ACCESS_API && navigator.userAgent.includes("Firefox");
+		!HAS_FILE_SYSTEM_ACCESS_API &&
+		streamDownload &&
+		navigator.userAgent.includes("Firefox");
 
 	return (
 		<>
@@ -632,12 +632,31 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								Compressed (no extra whitespace)
 							</label>
 						</div>
+						{!HAS_FILE_SYSTEM_ACCESS_API ? (
+							<div className="form-check">
+								<label className="form-check-label">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										checked={streamDownload}
+										onChange={() => {
+											setStreamDownload(streamDownload => !streamDownload);
+										}}
+									/>
+									Streaming download
+									<p className="text-muted">
+										This works better for large leagues, but is not supported
+										well in your browser so it might fail.
+									</p>
+								</label>
+							</div>
+						) : null}
 
 						{showFirefoxWarning ? (
 							<div className="alert alert-warning d-inline-block">
-								<b>Firefox sometimes fails at writing exported data to disk.</b>{" "}
-								If the progress bar gets stuck and it never prompts you to save
-								a file, please reload and try again.
+								<b>Firefox sometimes fails at streaming data to disk.</b> If the
+								progress bar gets stuck and it never prompts you to save a file,
+								please reload and try again.
 							</div>
 						) : null}
 

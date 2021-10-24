@@ -42,9 +42,9 @@ streaming export
 - reliability
   - doesn't work on mobile chrome
   - unreliable on firefox (see warning)
-  - add support for both new and old way of exporting
-  - use old way for exporting players
-  - test in old chrome before AbortController - should still work, just with no cancel button
+- streamingDownload default to HAS_FILE_SYSTEM_ACCESS_API
+- test in old chrome before AbortController - should still work, just with no cancel button
+- test exporting players
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr

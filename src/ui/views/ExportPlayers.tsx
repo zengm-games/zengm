@@ -225,7 +225,10 @@ const ExportPlayers = ({
 											},
 										});
 
-										const fileStream = await downloadFileStream(filename);
+										const fileStream = await downloadFileStream(
+											false,
+											filename,
+										);
 
 										await readableStream
 											.pipeThrough(new TextEncoderStream())

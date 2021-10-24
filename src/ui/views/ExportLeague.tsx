@@ -39,96 +39,97 @@ export type ExportLeagueKey =
 	| "games";
 
 type Category = {
-	key: ExportLeagueKey;
-	name: string;
+	name: ExportLeagueKey;
+	title: string;
 	desc: string;
 	default: boolean;
-	parent?: ExportLeagueKey;
+	children?: Category[];
 };
+
+type Checked = Record<ExportLeagueKey, boolean>;
+
+type BulkType = "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly";
 
 const categories: Category[] = [
 	{
-		key: "players",
-		name: "Players",
+		name: "players",
+		title: "Players",
 		desc: "All player info, ratings, stats, and awards.",
 		default: true,
+		children: !isSport("football")
+			? [
+					{
+						name: "gameHighs",
+						title: "Include game highs",
+						desc: "Game highs are fun, but they increase export size by 25%.",
+						default: true,
+					},
+			  ]
+			: undefined,
 	},
-	...((!isSport("football")
-		? [
-				{
-					key: "gameHighs",
-					name: "Include game highs",
-					desc: "Game highs are fun, but they increase export size by 25%.",
-					default: true,
-					parent: "players",
-				},
-		  ]
-		: []) as Category[]),
 	{
-		key: "teamsBasic",
-		name: "Basic team data",
+		name: "teamsBasic",
+		title: "Basic team data",
 		desc: "Just the stuff you see at Tools > Manage Teams, such as abbrev/region/name, division, logo, etc. Select only this if you want to create a new league with the same teams as this league, but without anything else copied over.",
 		default: true,
+		children: [
+			{
+				name: "teams",
+				title: "All team data",
+				desc: "All team info and stats.",
+				default: true,
+			},
+		],
 	},
 	{
-		key: "teams",
-		name: "All team data",
-		desc: "All team info and stats.",
-		default: true,
-		parent: "teamsBasic",
-	},
-	{
-		key: "schedule",
-		name: "Schedule",
+		name: "schedule",
+		title: "Schedule",
 		desc: "Current regular season schedule and playoff series.",
 		default: true,
 	},
 	{
-		key: "draftPicks",
-		name: "Draft picks",
+		name: "draftPicks",
+		title: "Draft picks",
 		desc: "Future draft picks.",
 		default: true,
 	},
 	{
-		key: "leagueSettings",
-		name: "League settings",
+		name: "leagueSettings",
+		title: "League settings",
 		desc: "All league settings.",
 		default: true,
 	},
 	{
-		key: "gameState",
-		name: "Game state",
+		name: "gameState",
+		title: "Game state",
 		desc: "Interactions with the owner, current contract negotiations, current season/phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
 		default: true,
 	},
 	{
-		key: "newsFeedTransactions",
-		name: "News feed - transactions",
+		name: "newsFeedTransactions",
+		title: "News feed - transactions",
 		desc: "Trades, draft picks, and signings.",
 		default: true,
 	},
 	{
-		key: "newsFeedOther",
-		name: "News feed - all other entries",
+		name: "newsFeedOther",
+		title: "News feed - all other entries",
 		desc: "All entries besides trades, draft picks, and signings - usually not that important, and increases export size by 10%.",
 		default: true,
 	},
 	{
-		key: "headToHead",
-		name: "Head-to-head data",
+		name: "headToHead",
+		title: "Head-to-head data",
 		desc: "History of head-to-head results between teams.",
 		default: true,
 	},
 	{
-		key: "games",
-		name: "Box scores",
+		name: "games",
+		title: "Box scores",
 		desc: "Box scores take up tons of space, but by default only three seasons are saved.",
 		default: false,
 	},
 ];
-
-type Checked = Record<ExportLeagueKey, boolean>;
-type BulkType = "default" | "none" | "all" | "teamsOnly" | "leagueSettingsOnly";
 
 const getCurrentSelected = (checked: Checked): BulkType | undefined => {
 	let validDefault = true;
@@ -138,34 +139,34 @@ const getCurrentSelected = (checked: Checked): BulkType | undefined => {
 	let validLeagueSettingsOnly = true;
 
 	for (const category of categories) {
-		if (category.default !== checked[category.key]) {
+		if (category.default !== checked[category.name]) {
 			validDefault = false;
 		}
 
-		if (checked[category.key]) {
+		if (checked[category.name]) {
 			validNone = false;
 		}
 
-		if (!checked[category.key]) {
+		if (!checked[category.name]) {
 			validAll = false;
 		}
 
-		if (category.key === "teamsBasic") {
-			if (!checked[category.key]) {
+		if (category.name === "teamsBasic") {
+			if (!checked[category.name]) {
 				validTeamsOnly = false;
 			}
 		} else {
-			if (checked[category.key]) {
+			if (checked[category.name]) {
 				validTeamsOnly = false;
 			}
 		}
 
-		if (category.key === "leagueSettings") {
-			if (!checked[category.key]) {
+		if (category.name === "leagueSettings") {
+			if (!checked[category.name]) {
 				validLeagueSettingsOnly = false;
 			}
 		} else {
-			if (checked[category.key]) {
+			if (checked[category.name]) {
 				validLeagueSettingsOnly = false;
 			}
 		}
@@ -211,7 +212,7 @@ const getDefaultChecked = () => {
 	};
 
 	for (const category of categories) {
-		init[category.key] = category.default;
+		init[category.name] = category.default;
 	}
 
 	return init;
@@ -391,6 +392,55 @@ const getExportInfo = (
 	};
 };
 
+const RenderOption = ({
+	checked,
+	children,
+	desc,
+	name,
+	onToggle,
+	parent,
+	title,
+}: Category & {
+	checked: Checked;
+	parent?: ExportLeagueKey;
+	onToggle: (name: ExportLeagueKey) => void;
+}) => {
+	return (
+		<>
+			<div
+				className={classNames("form-check", {
+					"ml-4": parent,
+				})}
+			>
+				<label className="form-check-label">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						checked={checked[name] && (!parent || checked[parent])}
+						disabled={parent && !checked[parent]}
+						onChange={() => {
+							onToggle(name);
+						}}
+					/>
+					{title}
+					<p className="text-muted">{desc}</p>
+				</label>
+			</div>
+			{children
+				? children.map(child => (
+						<RenderOption
+							key={child.name}
+							{...child}
+							checked={checked}
+							onToggle={onToggle}
+							parent={name}
+						/>
+				  ))
+				: null}
+		</>
+	);
+};
+
 const SUPPORTS_CANCEL = typeof AbortController !== undefined;
 
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
@@ -399,6 +449,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [checked, setChecked] = useState<Checked>(loadChecked);
 	const [processingStore, setProcessingStore] = useState<string | undefined>();
 	const [percentDone, setPercentDone] = useState(-1);
+	const [streamDownload, setStreamDownload] = useState(
+		HAS_FILE_SYSTEM_ACCESS_API,
+	);
 	const abortController = useRef<AbortController | undefined>();
 
 	const cleanupAfterStream = (status?: ReactNode) => {
@@ -448,14 +501,14 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				.pipeTo(fileStream, {
 					signal: abortController.current?.signal,
 				});
+
+			cleanupAfterStream();
 		} catch (error) {
+			console.error(error);
 			cleanupAfterStream(
 				<span className="text-danger">Error: "{error.message}"</span>,
 			);
-			throw error;
 		}
-
-		cleanupAfterStream();
 	};
 
 	useTitleBar({ title: "Export League" });
@@ -545,42 +598,27 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			</p>
 
 			<form onSubmit={handleSubmit}>
+				<div className="btn-group mb-3">{bulkSelectButtons}</div>
+
+				<div className="row">
+					{categories.map(cat => (
+						<div className="col-md-6 col-lg-5 col-xl-4" key={cat.name}>
+							<RenderOption
+								{...cat}
+								checked={checked}
+								onToggle={name => {
+									setChecked(checked2 => ({
+										...checked2,
+										[name]: !checked2[name],
+									}));
+								}}
+							/>
+						</div>
+					))}
+				</div>
 				<div className="row">
 					<div className="col-md-6 col-lg-5 col-xl-4">
-						<h2>Data</h2>
-
-						<div className="btn-group mb-3">{bulkSelectButtons}</div>
-
-						{categories.map(cat => (
-							<div
-								key={cat.name}
-								className={classNames("form-check", {
-									"ml-4": cat.parent,
-								})}
-							>
-								<label className="form-check-label">
-									<input
-										className="form-check-input"
-										type="checkbox"
-										checked={
-											checked[cat.key] && (!cat.parent || checked[cat.parent])
-										}
-										disabled={cat.parent && !checked[cat.parent]}
-										onChange={() => {
-											setChecked(checked2 => ({
-												...checked2,
-												[cat.key]: !checked2[cat.key],
-											}));
-										}}
-									/>
-									{cat.name}
-									<p className="text-muted">{cat.desc}</p>
-								</label>
-							</div>
-						))}
-					</div>
-					<div className="col-md-6 col-lg-5 col-xl-4">
-						<h2>Format</h2>
+						<h2>Export options</h2>
 						<div className="form-check mb-3">
 							<label className="form-check-label">
 								<input
@@ -594,10 +632,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								Compressed (no extra whitespace)
 							</label>
 						</div>
-					</div>
-				</div>
-				<div className="row">
-					<div className="col-md-6 col-lg-5 col-xl-4">
+
 						{showFirefoxWarning ? (
 							<div className="alert alert-warning d-inline-block">
 								<b>Firefox sometimes fails at writing exported data to disk.</b>{" "}
@@ -606,30 +641,25 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							</div>
 						) : null}
 
-						<div className="text-center">
-							<ActionButton
-								type="submit"
-								processing={status === "Exporting..."}
-							>
-								Export League
-							</ActionButton>
+						<ActionButton type="submit" processing={status === "Exporting..."}>
+							Export League
+						</ActionButton>
 
-							{SUPPORTS_CANCEL ? (
-								<button
-									className="btn btn-secondary ml-2"
-									type="button"
-									disabled={status !== "Exporting..."}
-									onClick={() => {
-										if (abortController.current) {
-											abortController.current.abort();
-											cleanupAfterStream();
-										}
-									}}
-								>
-									Cancel
-								</button>
-							) : null}
-						</div>
+						{SUPPORTS_CANCEL ? (
+							<button
+								className="btn btn-secondary ml-2"
+								type="button"
+								disabled={status !== "Exporting..."}
+								onClick={() => {
+									if (abortController.current) {
+										abortController.current.abort();
+										cleanupAfterStream();
+									}
+								}}
+							>
+								Cancel
+							</button>
+						) : null}
 
 						{percentDone >= 0 ? (
 							<ProgressBarText
@@ -642,7 +672,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						) : null}
 
 						{status && status !== "Exporting..." ? (
-							<div className="mt-3 text-center">{status}</div>
+							<div className="mt-3">{status}</div>
 						) : null}
 					</div>
 				</div>

@@ -11,8 +11,8 @@ import type {
 	GameAttribute,
 	Player,
 	Team,
+	View,
 } from "../../common/types";
-import stats from "../../worker/core/player/stats";
 import { ActionButton, MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import {
@@ -259,7 +259,10 @@ const loadCompressed = (): boolean => {
 	return true;
 };
 
-const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
+const getExportInfo = (
+	stats: View<"exportLeague">["stats"],
+	checked: Record<ExportLeagueKey, boolean>,
+) => {
 	const storesSet = new Set<string>();
 
 	const storesByKey = {
@@ -388,7 +391,7 @@ const getExportInfo = (checked: Record<ExportLeagueKey, boolean>) => {
 	};
 };
 
-const ExportLeague = () => {
+const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
@@ -407,8 +410,10 @@ const ExportLeague = () => {
 		try {
 			const filename = await toWorker("main", "getExportFilename", "league");
 
-			const { stores, filter, forEach, map, hasHistoricalData } =
-				getExportInfo(checked);
+			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
+				stats,
+				checked,
+			);
 
 			const readableStream = await makeExportStream(stores, {
 				compressed,

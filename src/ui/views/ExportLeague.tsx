@@ -15,13 +15,9 @@ import type {
 } from "../../common/types";
 import { ActionButton, MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import {
-	downloadFileStream,
-	helpers,
-	safeLocalStorage,
-	toWorker,
-} from "../util";
-import { HAS_FILE_SYSTEM_ACCESS_API } from "../util/downloadFileStream";
+import { helpers, safeLocalStorage, toWorker } from "../util";
+
+const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 export type ExportLeagueKey =
 	| "players"
@@ -475,8 +471,8 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				checked,
 			);
 
-			const { default: makeExportStream } = await import(
-				"../util/makeExportStream"
+			const { downloadFileStream, makeExportStream } = await import(
+				"../util/exportLeague"
 			);
 
 			const readableStream = await makeExportStream(stores, {

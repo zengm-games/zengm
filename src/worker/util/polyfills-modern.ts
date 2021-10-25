@@ -35,6 +35,7 @@ if (!Blob.prototype.stream) {
 }
 
 // Not supported in any Firefox yet!
+import { POLYFILL_STREAMS } from "../../common/polyfill-streams";
 import {
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
@@ -49,7 +50,7 @@ export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
 export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
 
 // It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
-if (self.POLYFILL_STREAMS) {
+if (POLYFILL_STREAMS) {
 	toPolyfillReadable = createReadableStreamWrapper(
 		PolyfillReadableStream,
 	) as any;

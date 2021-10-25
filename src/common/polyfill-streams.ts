@@ -7,12 +7,13 @@ import {
 	WritableStream as PolyfillWritableStream,
 } from "web-streams-polyfill/ponyfill/es6";
 
+export const POLYFILL_STREAMS = !self.WritableStream || !self.TransformStream;
+
 // It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
-if (!self.WritableStream || !self.TransformStream) {
+if (POLYFILL_STREAMS) {
 	self.ReadableStream = PolyfillReadableStream as any;
 	self.TransformStream = PolyfillTransformStream as any;
 	self.WritableStream = PolyfillWritableStream;
-	self.POLYFILL_STREAMS = true;
 }
 
 // Chrome 71, Firefox ??, Safari 14.1

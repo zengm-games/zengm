@@ -13,7 +13,6 @@ export type Env = {
 
 declare global {
 	interface Window {
-		POLYFILL_STREAMS: boolean | undefined;
 		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;

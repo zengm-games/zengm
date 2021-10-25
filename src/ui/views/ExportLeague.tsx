@@ -436,7 +436,7 @@ const RenderOption = ({
 	);
 };
 
-const SUPPORTS_CANCEL = typeof AbortController !== undefined;
+const SUPPORTS_CANCEL = typeof AbortController !== "undefined";
 
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [status, setStatus] = useState<ReactNode | undefined>();

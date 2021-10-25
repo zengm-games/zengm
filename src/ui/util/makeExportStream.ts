@@ -10,11 +10,11 @@ import toWorker from "./toWorker";
 import type { LeagueDB } from "../../worker/db/connectLeague";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
-const ONE_MEGABYTE_IN_BYTES = 1024 * 1024;
+const TEN_MEGABYTE_IN_BYTES = 100 * 1024 * 1024;
 
 // If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction
-const highWaterMark = ONE_MEGABYTE_IN_BYTES;
-const minSizePerPull = ONE_MEGABYTE_IN_BYTES;
+const highWaterMark = TEN_MEGABYTE_IN_BYTES;
+const minSizePerPull = TEN_MEGABYTE_IN_BYTES;
 
 const stringSizeInBytes = (str: string | undefined) => {
 	if (!str) {

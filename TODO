@@ -34,13 +34,7 @@ streaming import of league files
     - BBGM_1v1_2040_preseason.json is very slow
     - firefox is very slow
   - could use cumulative method if file is smaller than some amount, both for initialCheck and actual load
-- in NewLeague/index.tsx, unify "newLeagueFile" and "newLeagueInfo" types - should be more similar, inlcuding allKeys
 - test browsers again
-
-streaming export
-- test in old chrome before AbortController - should still work, just with no cancel button
-- test exporting players
-- Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 

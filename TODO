@@ -26,16 +26,6 @@ FBGM team penalty counts https://discord.com/channels/290013534023057409/5697263
 
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
-streaming import of league files
-- test
-  - fix tests
-- performance
-  - benchmark
-    - BBGM_1v1_2040_preseason.json is very slow
-    - firefox is very slow
-  - could use cumulative method if file is smaller than some amount, both for initialCheck and actual load
-- test browsers again
-
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 
 blacklist lodash

@@ -449,7 +449,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [checked, setChecked] = useState<Checked>(loadChecked);
 	const [processingStore, setProcessingStore] = useState<string | undefined>();
 	const [percentDone, setPercentDone] = useState(-1);
-	const [streamDownload, setStreamDownload] = useState(true);
+	const [streamDownload, setStreamDownload] = useState(
+		HAS_FILE_SYSTEM_ACCESS_API,
+	);
 	const abortController = useRef<AbortController | undefined>();
 
 	const cleanupAfterStream = (status?: ReactNode) => {

@@ -42,7 +42,6 @@ streaming export
 - reliability
   - doesn't work on mobile chrome
   - unreliable on firefox (see warning)
-- streamingDownload default to HAS_FILE_SYSTEM_ACCESS_API
 - test in old chrome before AbortController - should still work, just with no cancel button
 - test exporting players
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.
@@ -1323,9 +1322,7 @@ hype revamp
 - YWT
 
 zipped files @Jofish#5051
-- https://github.com/Stuk/jszip is a bit big
-- https://twitter.com/addyosmani/status/1228989899686260736 in Chrome 80
-- https://www.npmjs.com/package/@stardazed/streams-compression
+- https://github.com/Stuk/jszip is a bit big, but CompressionStream won't work currently (doesn't make zip files)
 
 https://react-hook-form.com/ for forms
 

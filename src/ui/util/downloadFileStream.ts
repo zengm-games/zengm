@@ -23,14 +23,12 @@ const downloadFileStream = async (stream: boolean, filename: string) => {
 
 			fileStream = await fileHandle.createWritable();
 		} else {
+			// This is needed because we asynchronously load the stream polyfill
+			streamSaver.WritableStream = window.WritableStream;
+			streamSaver.TransformStream = window.TransformStream;
+
 			fileStream = streamSaver.createWriteStream(filename);
 		}
-
-		/*const fileStream2 = new WritableStream({
-			write(chunk) {
-				// console.log(chunk);
-			}
-		})*/
 
 		return fileStream;
 	}

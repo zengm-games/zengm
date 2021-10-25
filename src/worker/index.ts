@@ -1,5 +1,6 @@
 import "bbgm-polyfills"; // eslint-disable-line
-import "./util/polyfills-modern"; // IMPORTANT THAT THIS GOES AFTER bbgm-polyfills FOR NATIVE STREAM DETECTION
+import "../common/polyfill-streams";
+import "./util/polyfills-modern"; // IMPORTANT THAT THIS GOES AFTER polyfill-streams FOR NATIVE STREAM DETECTION
 import api from "./api";
 import * as common from "../common";
 import * as core from "./core";

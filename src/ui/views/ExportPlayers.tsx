@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import {
-	downloadFileStream,
-	getCols,
-	helpers,
-	makeExportStream,
-	toWorker,
-} from "../util";
+import { downloadFileStream, getCols, helpers, toWorker } from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
@@ -194,6 +188,10 @@ const ExportPlayers = ({
 										);
 
 										const pids = selected.map(info => info.p.pid);
+
+										const { default: makeExportStream } = await import(
+											"../util/makeExportStream"
+										);
 
 										const readableStream = await makeExportStream(["players"], {
 											compressed: false,

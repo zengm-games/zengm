@@ -1,3 +1,6 @@
+// Currently, anything in the UI that uses streams is called after makeExportStream, which is loaded async
+import "../../common/polyfill-streams";
+
 import { openDB } from "idb";
 import type { IDBPCursorWithValue } from "idb";
 import {

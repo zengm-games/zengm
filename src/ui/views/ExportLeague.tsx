@@ -18,7 +18,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import {
 	downloadFileStream,
 	helpers,
-	makeExportStream,
 	safeLocalStorage,
 	toWorker,
 } from "../util";
@@ -474,6 +473,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
 				stats,
 				checked,
+			);
+
+			const { default: makeExportStream } = await import(
+				"../util/makeExportStream"
 			);
 
 			const readableStream = await makeExportStream(stores, {

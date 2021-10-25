@@ -39,9 +39,10 @@ streaming export
 - bundle size - any splitting needed?
 - check polyfills
   - can load stream polyfills async in ui?
-- reliability
-  - doesn't work on mobile chrome
-  - unreliable on firefox (see warning)
+    - ExportLeague/ExportPlayers - makeExportStream - ReadableStream
+    - ExportLeague/ExportPlayers - TextEncoderStream
+    - ExportLeague/ExportPlayers - downloadFileStream - WritableStream
+  - compare size before/after
 - test in old chrome before AbortController - should still work, just with no cancel button
 - test exporting players
 - Send a tweet to @ChromiumDev using the hashtag #FileSystemAccess and let us know where and how you're using it.

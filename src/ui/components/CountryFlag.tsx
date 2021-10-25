@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { helpers } from "../util";
 
+// https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
 const countryCodes: Record<string, string> = {
 	Afghanistan: "af",
 	"Aland Islands": "ax",
@@ -10,6 +11,7 @@ const countryCodes: Record<string, string> = {
 	Andorra: "ad",
 	Angola: "ao",
 	Anguilla: "ai",
+	Antarctica: "aq",
 	"Antigua and Barbuda": "ag",
 	Argentina: "ar",
 	Armenia: "am",
@@ -31,6 +33,7 @@ const countryCodes: Record<string, string> = {
 	"Bonaire, Sint Eustatius and Saba": "bq",
 	"Bosnia and Herzegovina": "ba",
 	Botswana: "bw",
+	"Bouvet Island": "bv",
 	Brazil: "br",
 	"British Indian Ocean Territory": "io",
 	"Brunei Darussalam": "bn",
@@ -42,6 +45,7 @@ const countryCodes: Record<string, string> = {
 	Cambodia: "kh",
 	Cameroon: "cm",
 	Canada: "ca",
+	Catalonia: "es-ct",
 	"Cayman Islands": "ky",
 	"Central African Republic": "cf",
 	Chad: "td",
@@ -83,9 +87,10 @@ const countryCodes: Record<string, string> = {
 	"French Polynesia": "pf",
 	"French Southern Territories": "tf",
 	Gabon: "ga",
+	Galicia: "es-ga",
 	Gambia: "gm",
-	Germany: "de",
 	Georgia: "ge",
+	Germany: "de",
 	Ghana: "gh",
 	Gibraltar: "gi",
 	Greece: "gr",
@@ -99,6 +104,7 @@ const countryCodes: Record<string, string> = {
 	"Guinea-Bissau": "gw",
 	Guyana: "gy",
 	Haiti: "ht",
+	"Heard Island and McDonald Islands": "hm",
 	"Holy See": "va",
 	Honduras: "hn",
 	"Hong Kong": "hk",

@@ -150,6 +150,10 @@ const getBasicInfo = async ({
 		hasRookieContracts: false,
 	};
 
+	if (includePlayersInBasicInfo) {
+		basicInfo.players = [];
+	}
+
 	if (!validators) {
 		validators = makeValidators();
 	}
@@ -229,10 +233,7 @@ const getBasicInfo = async ({
 
 			basicInfo.teams.push(value.value);
 		} else if (includePlayersInBasicInfo && value.key === "players") {
-			if (!basicInfo.players) {
-				basicInfo.players = [];
-			}
-			basicInfo.players.push(value.value);
+			basicInfo.players!.push(value.value);
 		}
 	}
 

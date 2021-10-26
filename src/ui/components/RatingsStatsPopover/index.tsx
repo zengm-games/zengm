@@ -132,7 +132,7 @@ const RatingsStatsPopover = ({
 				{age !== undefined ? (
 					<div className="ml-1 flex-shrink-0">{age} yo</div>
 				) : null}
-				{!disableWatchToggle && watch ? (
+				{!disableWatchToggle && watch !== undefined ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
 			</div>

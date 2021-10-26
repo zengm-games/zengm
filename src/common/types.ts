@@ -559,9 +559,9 @@ export type GameAttributesLeague = {
 		abbrev: string;
 		region: string;
 		name: string;
-		imgURL?: string;
-		imgURLSmall?: string;
-		disabled?: boolean;
+		imgURL: string | undefined;
+		imgURLSmall: string | undefined;
+		disabled: boolean | undefined;
 	}[];
 	ties: boolean;
 	tradeDeadline: number;

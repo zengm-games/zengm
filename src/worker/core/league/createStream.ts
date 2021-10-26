@@ -80,7 +80,7 @@ const addLeagueMeta = async ({
 		imgURL: teams[tid].imgURLSmall ?? teams[tid].imgURL,
 	};
 
-	// In case there was an old league with this lid, somehow
+	// In case we are importing over an old league
 	const oldLeague = await idb.meta.get("leagues", lid);
 	await remove(lid);
 	if (oldLeague) {

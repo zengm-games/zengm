@@ -13,6 +13,7 @@ describe("worker/util/helpers", () => {
 				abbrev: t.abbrev,
 				disabled: false,
 				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
 				name: t.name,
 				region: t.region,
 			})),
@@ -42,16 +43,10 @@ describe("worker/util/helpers", () => {
 
 		test("pad with nulls up to requested length if too short", () => {
 			assert.deepStrictEqual(helpers.zeroPad(array, 6), [1, 2, 3, 4, 5, 0]);
-			assert.deepStrictEqual(helpers.zeroPad(array, 8), [
-				1,
-				2,
-				3,
-				4,
-				5,
-				0,
-				0,
-				0,
-			]);
+			assert.deepStrictEqual(
+				helpers.zeroPad(array, 8),
+				[1, 2, 3, 4, 5, 0, 0, 0],
+			);
 		});
 	});
 });

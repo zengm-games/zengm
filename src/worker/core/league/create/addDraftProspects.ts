@@ -10,6 +10,7 @@ const addDraftProspects = async ({
 	players: PlayerWithoutKey[];
 	scoutingRank: number;
 }) => {
+	console.log("addDraftProspects", players.length);
 	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 	const existingDraftClasses: [any[], any[], any[]] = [[], [], []];
 	for (const p of players) {
@@ -23,19 +24,22 @@ const addDraftProspects = async ({
 			}
 		}
 	}
+	console.log("existingDraftClasses", existingDraftClasses);
 
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
 	if (g.get("phase") >= 0) {
+		console.log("checking");
 		if (
 			g.get("phase") <= PHASE.DRAFT_LOTTERY ||
 			g.get("phase") >= PHASE.RESIGN_PLAYERS
 		) {
+			console.log("checking 2");
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + seasonOffset,
 				scoutingRank,
 				existingDraftClasses[0],
 			);
-			players = players.concat(draftClass);
+			players.push(...draftClass);
 		}
 
 		{
@@ -44,7 +48,7 @@ const addDraftProspects = async ({
 				scoutingRank,
 				existingDraftClasses[1],
 			);
-			players = players.concat(draftClass);
+			players.push(...draftClass);
 		}
 
 		{
@@ -53,9 +57,10 @@ const addDraftProspects = async ({
 				scoutingRank,
 				existingDraftClasses[2],
 			);
-			players = players.concat(draftClass);
+			players.push(...draftClass);
 		}
 	}
+	console.log("done", players.length);
 };
 
 export default addDraftProspects;

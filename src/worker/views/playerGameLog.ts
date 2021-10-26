@@ -38,7 +38,7 @@ const updatePlayerGameLog = async (
 		const superCols = [
 			{
 				title: "",
-				colspan: 5,
+				colspan: 7,
 			},
 		];
 		const stats: string[] = [];

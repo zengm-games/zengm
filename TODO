@@ -21,8 +21,6 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 
-blacklist lodash
-
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
 
 other firefox comments

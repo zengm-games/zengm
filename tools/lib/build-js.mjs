@@ -9,8 +9,8 @@ const rev = build.genRev();
 console.log(rev);
 
 const BLACKLIST = {
-	ui: [/\/worker/],
-	worker: [/\/ui/, /^react/],
+	ui: [/^lodash[^-]/, /\/worker/],
+	worker: [/^lodash[^-]/, /\/ui/, /^react/],
 };
 
 const buildFile = async (name, legacy) => {

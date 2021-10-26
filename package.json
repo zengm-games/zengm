@@ -31,7 +31,7 @@
 		"ajv-hack": "node_modules/.bin/esbuild src/worker/ajvHack/index.ts --bundle --log-level=error --target=es2017 --format=esm --outfile=src/worker/ajvHack/esbuild.js"
 	},
 	"lint-staged": {
-		"*.{js,json,scss,ts,tsx}": "prettier --write"
+		"*.{js,cjs,mjs,jsx,json,scss,ts,tsx}": "prettier --write"
 	},
 	"dependencies": {
 		"@bugsnag/browser": "^7.13.2",

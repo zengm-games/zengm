@@ -25,7 +25,6 @@ const downloadFileStream = async (stream: boolean, filename: string) => {
 		} else {
 			// This is needed because we asynchronously load the stream polyfill
 			streamSaver.WritableStream = window.WritableStream;
-			streamSaver.TransformStream = window.TransformStream;
 
 			fileStream = streamSaver.createWriteStream(filename);
 		}

@@ -633,25 +633,39 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								Compressed (no extra whitespace)
 							</label>
 						</div>
-						{!HAS_FILE_SYSTEM_ACCESS_API ? (
-							<div className="form-check">
-								<label className="form-check-label">
-									<input
-										className="form-check-input"
-										type="checkbox"
-										checked={streamDownload}
-										onChange={() => {
-											setStreamDownload(streamDownload => !streamDownload);
-										}}
-									/>
-									Streaming download
+						<div className="form-check">
+							<label className="form-check-label">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									checked={streamDownload}
+									onChange={() => {
+										setStreamDownload(streamDownload => !streamDownload);
+									}}
+								/>
+								Streaming download
+								{HAS_FILE_SYSTEM_ACCESS_API ? (
+									<p className="text-muted">
+										Keep this enabled unless you're having trouble getting your
+										browser to download an export. If that happens to you,
+										please{" "}
+										<a
+											href="https://basketball-gm.com/manual/debugging/"
+											rel="noopener noreferrer"
+											target="_blank"
+										>
+											help me figure out why it's not working
+										</a>
+										, because ideally it should always work with this enabled.
+									</p>
+								) : (
 									<p className="text-muted">
 										This works better for large leagues, but is not supported
 										well in your browser so it might fail.
 									</p>
-								</label>
-							</div>
-						) : null}
+								)}
+							</label>
+						</div>
 
 						{showFirefoxWarning ? (
 							<div className="alert alert-warning d-inline-block">

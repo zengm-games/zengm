@@ -3884,10 +3884,10 @@ find-yarn-workspace-root@^2.0.0:
   dependencies:
     micromatch "^4.0.2"
 
-flag-icon-css@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-4.0.0.tgz#f2b5e195cc5448914e2a72fccc431ba7022785d4"
-  integrity sha512-DVUw1RoiPoAEnn1OXvT0yiWWMwdIeQwEDHw/uCMkTgf/YggUrWFkV34hWDwQa+H2c/210qu0fEveax14x6rSaA==
+flag-icon-css@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-4.1.0.tgz#60a0ccd215688c9918c938f63254309a63696625"
+  integrity sha512-NBjrcXvm6iaf05I1hs36IbDSPDmu2GoC3e/2//BrI99K7cddBT2UW++BoRKKpA4Z61B8lWGby3m7paAL6tF7Tg==
 
 flat-cache@^3.0.4:
   version "3.0.4"
@@ -5312,10 +5312,10 @@ karma-source-map-support@^1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
-karma@^6.3.5:
-  version "6.3.5"
-  resolved "https://registry.yarnpkg.com/karma/-/karma-6.3.5.tgz#78c76dc40230590f89d2c1749a8eb049a6968dcc"
-  integrity sha512-uAwOPXtfEdIHIZdK7QcnKEv0BK/bg+AZikZ7TK1ZLk3apW/wNH74rbdamJby1CVVYw3I9PXxqeEo78OaiHeErA==
+karma@^6.3.6:
+  version "6.3.6"
+  resolved "https://registry.yarnpkg.com/karma/-/karma-6.3.6.tgz#6f64cdd558c7d0c9da6fcdece156089582694611"
+  integrity sha512-xsiu3D6AjCv6Uq0YKXJgC6TvXX2WloQ5+XtHXmC1lwiLVG617DDV3W2DdM4BxCMKHlmz6l3qESZHFQGHAKvrew==
   dependencies:
     body-parser "^1.19.0"
     braces "^3.0.2"
@@ -5338,7 +5338,7 @@ karma@^6.3.5:
     socket.io "^4.2.0"
     source-map "^0.6.1"
     tmp "^0.2.1"
-    ua-parser-js "^0.7.28"
+    ua-parser-js "^0.7.30"
     yargs "^16.1.1"
 
 klaw-sync@^6.0.0:
@@ -7336,10 +7336,10 @@ typeson@^6.0.0, typeson@^6.1.0:
   resolved "https://registry.yarnpkg.com/typeson/-/typeson-6.1.0.tgz#5b2a53705a5f58ff4d6f82f965917cabd0d7448b"
   integrity sha512-6FTtyGr8ldU0pfbvW/eOZrEtEkczHRUtduBnA90Jh9kMPCiFNnXIon3vF41N0S4tV1HHQt4Hk1j4srpESziCaA==
 
-ua-parser-js@^0.7.28:
-  version "0.7.28"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.28.tgz#8ba04e653f35ce210239c64661685bf9121dec31"
-  integrity sha512-6Gurc1n//gjp9eQNXjD9O3M/sMwVtN5S8Lv9bvOYBfKfDNiIIhqiyi01vMBO45u4zkDE420w/e0se7Vs+sIg+g==
+ua-parser-js@^0.7.30:
+  version "0.7.30"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.30.tgz#4cf5170e8b55ac553fe8b38df3a82f0669671f0b"
+  integrity sha512-uXEtSresNUlXQ1QL4/3dQORcGv7+J2ookOG2ybA/ga9+HYEXueT2o+8dUJQkpedsyTyCJ6jCCirRcKtdtx1kbg==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"
@@ -7898,7 +7898,7 @@ yoga-layout-prebuilt@^1.9.6:
   dependencies:
     "@types/yoga-layout" "1.9.2"
 
-zustand@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.0.tgz#7f89b72eed66e717b1e012781273085bce90728d"
-  integrity sha512-kCzsXL0GaJrG/EluZJJEaUQrf0pAlAD4qcTp8DU96pdF03RAGcGzVGorpIvh4cyKYbxn3wJbR6Hac4j3SsAS1g==
+zustand@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.1.tgz#d309074dd632ca7b14e20353e5c55274e3d72eda"
+  integrity sha512-2ghTWZhOx3xUK7drIa/1fVbuzyG70XKfCXIATrRBFDPcRRV4V/9uptNOKgyCvPwCDYgLpla4EtFbXNbdLpfPcw==

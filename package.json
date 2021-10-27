@@ -72,7 +72,7 @@
 		"workbox-precaching": "^6.3.0",
 		"workbox-routing": "^6.3.0",
 		"workbox-window": "^6.3.0",
-		"zustand": "^3.6.0"
+		"zustand": "^3.6.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.15.8",
@@ -129,7 +129,7 @@
 		"eslint-plugin-react": "^7.26.1",
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"fake-indexeddb": "4.0.0-beta.1",
-		"flag-icon-css": "^4.0.0",
+		"flag-icon-css": "^4.1.0",
 		"fs-extra": "^10.0.0",
 		"html-minifier-terser": "^6.0.2",
 		"husky": "^7.0.4",
@@ -137,7 +137,7 @@
 		"ink": "^3.2.0",
 		"ink-spinner": "^4.0.3",
 		"jest": "^27.3.1",
-		"karma": "^6.3.5",
+		"karma": "^6.3.6",
 		"karma-browserstack-launcher": "^1.6.0",
 		"karma-chrome-launcher": "^3.1.0",
 		"karma-firefox-launcher": "^2.1.1",

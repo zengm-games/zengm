@@ -652,7 +652,7 @@ const processTeamInfos = ({
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal.at(-1);
 
-			if (last.season !== g.get("season") && !t.disabled) {
+			if (last && last.season !== g.get("season") && !t.disabled) {
 				last.season = g.get("season");
 
 				// Remove any past seasons that claim to be from this season or a future season

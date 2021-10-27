@@ -20,16 +20,8 @@ const downloadFile = (
 	a.dataset.downloadurl = [mimeType, a.download, a.href].join(":");
 	a.style.display = "none";
 
-	if (!document.body) {
-		throw new Error("Should never happen");
-	}
-
 	document.body.appendChild(a);
 	a.click();
-
-	if (!document.body) {
-		throw new Error("Should never happen");
-	}
 
 	document.body.removeChild(a);
 	setTimeout(() => {

@@ -77,11 +77,11 @@ class JSONParserText {
 		);
 	}
 
-	parseError(token: Token, value: Value) {
+	parseError(token: Token, value: Value, i: number) {
 		throw new Error(
 			`Unexpected ${token}${
 				value ? `(${JSON.stringify(value)})` : ""
-			} in state ${this.state}`,
+			} at position ${this.position + i} in state ${this.state}`,
 		);
 	}
 
@@ -90,17 +90,17 @@ class JSONParserText {
 			const n = text[i];
 			if (this.tokenizerState === "START") {
 				if (n === "{") {
-					this.onToken("LEFT_BRACE", "{");
+					this.onToken("LEFT_BRACE", "{", i);
 				} else if (n === "}") {
-					this.onToken("RIGHT_BRACE", "}");
+					this.onToken("RIGHT_BRACE", "}", i);
 				} else if (n === "[") {
-					this.onToken("LEFT_BRACKET", "[");
+					this.onToken("LEFT_BRACKET", "[", i);
 				} else if (n === "]") {
-					this.onToken("RIGHT_BRACKET", "]");
+					this.onToken("RIGHT_BRACKET", "]", i);
 				} else if (n === ":") {
-					this.onToken("COLON", ":");
+					this.onToken("COLON", ":", i);
 				} else if (n === ",") {
-					this.onToken("COMMA", ",");
+					this.onToken("COMMA", ",", i);
 				} else if (n === "t") {
 					this.tokenizerState = "TRUE1";
 				} else if (n === "f") {
@@ -127,7 +127,7 @@ class JSONParserText {
 			} else if (this.tokenizerState === "STRING1") {
 				if (n === '"') {
 					this.tokenizerState = "START";
-					this.onToken("STRING", this.string);
+					this.onToken("STRING", this.string, i);
 					this.string = undefined;
 				} else if (n === "\\") {
 					this.tokenizerState = "STRING2";
@@ -213,7 +213,7 @@ class JSONParserText {
 			} else if (this.tokenizerState === "TRUE3") {
 				if (n === "e") {
 					this.tokenizerState = "START";
-					this.onToken("TRUE", true);
+					this.onToken("TRUE", true, i);
 				} else {
 					return this.charError(n, i);
 				}
@@ -238,7 +238,7 @@ class JSONParserText {
 			} else if (this.tokenizerState === "FALSE4") {
 				if (n === "e") {
 					this.tokenizerState = "START";
-					this.onToken("FALSE", false);
+					this.onToken("FALSE", false, i);
 				} else {
 					return this.charError(n, i);
 				}
@@ -257,7 +257,7 @@ class JSONParserText {
 			} else if (this.tokenizerState === "NULL3") {
 				if (n === "l") {
 					this.tokenizerState = "START";
-					this.onToken("NULL", null);
+					this.onToken("NULL", null, i);
 				} else {
 					return this.charError(n, i);
 				}
@@ -290,7 +290,7 @@ class JSONParserText {
 		this.onValue(value);
 	}
 
-	onToken(token: Token, value: Value) {
+	onToken(token: Token, value: Value, i: number) {
 		if (this.state === "VALUE") {
 			if (
 				token === "STRING" ||
@@ -327,16 +327,16 @@ class JSONParserText {
 				if (this.mode === "OBJECT") {
 					this.pop();
 				} else {
-					return this.parseError(token, value);
+					return this.parseError(token, value, i);
 				}
 			} else if (token === "RIGHT_BRACKET") {
 				if (this.mode === "ARRAY") {
 					this.pop();
 				} else {
-					return this.parseError(token, value);
+					return this.parseError(token, value, i);
 				}
 			} else {
-				return this.parseError(token, value);
+				return this.parseError(token, value, i);
 			}
 		} else if (this.state === "KEY") {
 			if (token === "STRING") {
@@ -345,13 +345,13 @@ class JSONParserText {
 			} else if (token === "RIGHT_BRACE") {
 				this.pop();
 			} else {
-				return this.parseError(token, value);
+				return this.parseError(token, value, i);
 			}
 		} else if (this.state === "COLON") {
 			if (token === "COLON") {
 				this.state = "VALUE";
 			} else {
-				return this.parseError(token, value);
+				return this.parseError(token, value, i);
 			}
 		} else if (this.state === "COMMA") {
 			if (token === "COMMA") {
@@ -368,10 +368,10 @@ class JSONParserText {
 			) {
 				this.pop();
 			} else {
-				return this.parseError(token, value);
+				return this.parseError(token, value, i);
 			}
 		} else {
-			return this.parseError(token, value);
+			return this.parseError(token, value, i);
 		}
 	}
 
@@ -382,7 +382,7 @@ class JSONParserText {
 			return this.charError(text, i);
 		}
 
-		this.onToken("NUMBER", number);
+		this.onToken("NUMBER", number, i);
 	}
 }
 

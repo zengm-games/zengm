@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
 $dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
 $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
@@ -29,7 +31,7 @@ $flag-icon-css-path: "/img/flags";
 	background-repeat: no-repeat;
 	position: relative;
 	display: inline-block;
-	width: (4 / 3) * 1em;
+	width: math.div(4, 3) * 1em;
 	line-height: 1em;
 	&:before {
 		content: "\00a0";

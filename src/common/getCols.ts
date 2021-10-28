@@ -807,6 +807,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "FL",
 		},
+		"stat:fp": {
+			desc: "Fantasy Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "FP",
+		},
 		"stat:pssCmp": {
 			desc: "Completions",
 			sortSequence: ["desc", "asc"],

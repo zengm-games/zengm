@@ -11,7 +11,8 @@ const filterPlayerStats = (p: any, stats: string[], type: string) => {
 				if (
 					p.processed[stat] !== undefined &&
 					p.processed[stat] !== 0 &&
-					stat !== "fmbLost"
+					stat !== "fmbLost" &&
+					stat !== "fp"
 				) {
 					return true;
 				}

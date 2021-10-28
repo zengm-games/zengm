@@ -107,6 +107,19 @@ const processStats = (
 				ps.krYds +
 				ps.defIntYds +
 				ps.defFmbYds;
+		} else if (stat === "fp") {
+			row[stat] =
+				ps.pssYds / 25 +
+				4 * ps.pssTD +
+				(ps.rusYds + ps.recYds) / 10 +
+				6 * (ps.rusTD + ps.recTD + ps.prTD + ps.krTD) -
+				2 * (ps.pssInt + ps.fmb) +
+				ps.xp +
+				3 * ps.fg0 +
+				3 * ps.fg20 +
+				3 * ps.fg30 +
+				4 * ps.fg40 +
+				5 * ps.fg50;
 		} else if (stat === "keyStats") {
 			const defTck = ps.defTckSolo + ps.defTckAst;
 			const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;

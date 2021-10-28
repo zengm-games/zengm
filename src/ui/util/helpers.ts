@@ -182,6 +182,7 @@ const roundOverrides: Record<
 		tgt: "noDecimalPlace",
 		allPurposeYds: "noDecimalPlace",
 		av: "noDecimalPlace",
+		fp: "twoDecimalPlaces",
 	},
 	hockey: {
 		gp: "noDecimalPlace",

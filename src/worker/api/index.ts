@@ -1279,7 +1279,7 @@ const getExportFilename = async (type: "league" | "players") => {
 			if (playoffSeries) {
 				const rnd = playoffSeries.currentRound;
 				if (rnd < 0) {
-					filename += "_PlayIn";
+					filename += "_Play-In";
 				} else {
 					filename += `_Round_${playoffSeries.currentRound + 1}`;
 

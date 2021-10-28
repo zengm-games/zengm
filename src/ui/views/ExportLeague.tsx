@@ -503,10 +503,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 			cleanupAfterStream();
 		} catch (error) {
-			console.error(error);
 			cleanupAfterStream(
 				<span className="text-danger">Error: "{error.message}"</span>,
 			);
+			throw error;
 		}
 	};
 

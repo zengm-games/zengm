@@ -1072,7 +1072,7 @@ class GameSim {
 			const r = Math.random();
 			if (r < 0.5) {
 				this.possessionChange();
-			} else if (r < 0.6) {
+			} else if (r < 0.6 && !this.pulledGoalie[this.d]) {
 				this.simPossession("rebound");
 			}
 
@@ -1083,7 +1083,7 @@ class GameSim {
 			const r = Math.random();
 			if (r < 0.5) {
 				this.possessionChange();
-			} else if (r < 0.7) {
+			} else if (r < 0.7 && !this.pulledGoalie[this.d]) {
 				this.simPossession("rebound");
 			}
 

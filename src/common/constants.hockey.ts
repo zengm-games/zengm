@@ -68,7 +68,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 
 const PLAYER_GAME_STATS = {
 	skaters: {
-		name: "Goalie",
+		name: "Skater",
 		stats: [
 			"g",
 			"a",
@@ -91,7 +91,7 @@ const PLAYER_GAME_STATS = {
 		sortBy: ["min"],
 	},
 	goalies: {
-		name: "Skater",
+		name: "Goalie",
 		stats: ["ga", "sa", "sv", "svPct", "pim", "min", "ppMin", "shMin"],
 		sortBy: ["min"],
 	},

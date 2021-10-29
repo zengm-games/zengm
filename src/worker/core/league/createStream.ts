@@ -317,6 +317,8 @@ const getSaveToDB = async ({
 
 	let prevKey: string | undefined;
 
+	let currentPid = -1;
+
 	const writableStream = new WritableStream<{
 		key: string;
 		value: any;
@@ -351,21 +353,31 @@ const getSaveToDB = async ({
 
 				const processed = await preProcess(key, value, preProcessParams);
 
-				if (
-					key === "players" &&
-					keptKeys.has("players") &&
-					(processed.tid >= PLAYER.UNDRAFTED ||
-						processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
-				) {
-					extraFromStream.activePlayers.push(processed);
-
-					if (!isSport("basketball") || typeof value.rosterOrder === "number") {
-						extraFromStream.teamHasRosterOrder.add(value.tid);
+				if (key === "players" && keptKeys.has("players")) {
+					if (processed.pid === undefined) {
+						currentPid += 1;
+						processed.pid = currentPid;
+					} else if (processed.pid > currentPid) {
+						currentPid = processed.pid;
 					}
-				} else {
-					buffer.addRow([key, processed]);
-					if (buffer.isFull()) {
-						await buffer.flush();
+
+					if (
+						processed.tid >= PLAYER.UNDRAFTED ||
+						processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+					) {
+						extraFromStream.activePlayers.push(processed);
+
+						if (
+							!isSport("basketball") ||
+							typeof value.rosterOrder === "number"
+						) {
+							extraFromStream.teamHasRosterOrder.add(value.tid);
+						}
+					} else {
+						buffer.addRow([key, processed]);
+						if (buffer.isFull()) {
+							await buffer.flush();
+						}
 					}
 				}
 			},

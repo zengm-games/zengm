@@ -73,13 +73,28 @@ const StripeButton = ({ email }: { email: string }) => {
 	};
 
 	return (
-		<button
-			className="btn btn-lg btn-primary"
-			disabled={!handler}
-			onClick={handleClick}
-		>
-			Sign Up for ZenGM Gold
-		</button>
+		<>
+			<button
+				className="btn btn-lg btn-primary"
+				disabled={!handler}
+				onClick={handleClick}
+			>
+				Subscribe to ZenGM Gold - $5/month
+			</button>
+			<div className="alert alert-info mt-3 mb-0">
+				If you would rather pay for multiple months at once rather than
+				subscribe, send money by{" "}
+				<a href="https://www.paypal.com/" className="font-weight-bold">
+					PayPal
+				</a>{" "}
+				to{" "}
+				<a href="mailto:jeremy@zengm.com" className="font-weight-bold">
+					jeremy@zengm.com
+				</a>{" "}
+				and include your username in the message. I will then manually credit
+				your account with however many months you pay for.
+			</div>
+		</>
 	);
 };
 
@@ -226,55 +241,53 @@ const Account = ({
 			<>
 				<h2>ZenGM Gold</h2>
 
-				<div className="row">
-					<div className="col-lg-8 col-md-10">
-						<p>
-							{GAME_NAME} is completely free. There will never be any{" "}
-							<a
-								href="http://en.wikipedia.org/wiki/Freemium"
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								"freemium"
-							</a>{" "}
-							or{" "}
-							<a
-								href="http://en.wikipedia.org/wiki/Free-to-play"
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								"pay-to-win"
-							</a>{" "}
-							bullshit here. Why? Because if a game charges you money for
-							power-ups, the developer makes more money if they make their game
-							frustratingly annoying to play without power-ups. Because of this,{" "}
-							<b>freemium games always suck</b>.
-						</p>
+				<div style={{ maxWidth: 648 }}>
+					<p>
+						{GAME_NAME} is completely free. There will never be any{" "}
+						<a
+							href="http://en.wikipedia.org/wiki/Freemium"
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							"freemium"
+						</a>{" "}
+						or{" "}
+						<a
+							href="http://en.wikipedia.org/wiki/Free-to-play"
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							"pay-to-win"
+						</a>{" "}
+						bullshit here. Why? Because if a game charges you money for
+						power-ups, the developer makes more money if they make their game
+						frustratingly annoying to play without power-ups. Because of this,{" "}
+						<b>freemium games always suck</b>.
+					</p>
 
-						<p>
-							If you want to support {GAME_NAME} continuing to be a non-sucky
-							game, sign up for ZenGM Gold! It's only <b>$5/month</b>. What do
-							you get? More like, what don't you get? You get no new features,
-							no new improvements, no new anything. Just <b>no more ads</b> on{" "}
-							<GameLinks thisGameText="this game" />. That's it. Why? For
-							basically the same reason I won't make {GAME_NAME} freemium. I
-							don't want the free version to become a crippled advertisement for
-							the pay version. If you agree that the world is a better place
-							when anyone anywhere can play <GameLinks noLinks />, sign up for
-							ZenGM Gold today!
-						</p>
+					<p>
+						If you want to support {GAME_NAME} continuing to be a non-sucky
+						game, sign up for ZenGM Gold! It's only <b>$5/month</b>. What do you
+						get? More like, what don't you get? You get no new features, no new
+						improvements, no new anything. Just <b>no more ads</b> on{" "}
+						<GameLinks thisGameText="this game" />. That's it. Why? For
+						basically the same reason I won't make {GAME_NAME} freemium. I don't
+						want the free version to become a crippled advertisement for the pay
+						version. If you agree that the world is a better place when anyone
+						anywhere can play <GameLinks noLinks />, sign up for ZenGM Gold
+						today!
+					</p>
 
-						{!loggedIn ? (
-							<p className="mb-0">
-								<a href="/account/login_or_register">
-									Log in or create an account
-								</a>{" "}
-								to sign up for ZenGM Gold.
-							</p>
-						) : (
-							<StripeButton email={email} />
-						)}
-					</div>
+					{!loggedIn ? (
+						<p className="mb-0">
+							<a href="/account/login_or_register">
+								Log in or create an account
+							</a>{" "}
+							to sign up for ZenGM Gold.
+						</p>
+					) : (
+						<StripeButton email={email} />
+					)}
 				</div>
 
 				{loggedIn ? (

@@ -570,7 +570,7 @@ describe("worker/util/account/checkAchievement", () => {
 					name: "Shawn Kemp",
 					tid: g.get("userTid") + 3,
 					abbrev: "SEA",
-					trb: 16.329268292682928,
+					trb: 16.32926829268292,
 					blk: 1.2560975609756095,
 					stl: 4.2804878048780486,
 				},

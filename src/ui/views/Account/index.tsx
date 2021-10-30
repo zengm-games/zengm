@@ -234,8 +234,8 @@ const Account = ({
 		title: "Your Account",
 		hideNewWindow: true,
 	});
-	let goldPitchDiv: ReactNode = null;
 
+	let goldPitchDiv: ReactNode = null;
 	if (showGoldPitch) {
 		goldPitchDiv = (
 			<>
@@ -289,18 +289,6 @@ const Account = ({
 						<StripeButton email={email} />
 					)}
 				</div>
-
-				{loggedIn ? (
-					<>
-						<h2 className="mt-5">Update Account Info</h2>
-
-						<AccountInfoForm initialEmail={email} initialUsername={username} />
-					</>
-				) : null}
-
-				<h2 className="mt-5">Achievements</h2>
-
-				<a href="/achievements">Click here to view your achievements.</a>
 			</>
 		);
 	}
@@ -327,6 +315,18 @@ const Account = ({
 			) : null}
 
 			{goldPitchDiv}
+
+			{loggedIn ? (
+				<>
+					<h2 className="mt-5">Update Account Info</h2>
+
+					<AccountInfoForm initialEmail={email} initialUsername={username} />
+				</>
+			) : null}
+
+			<h2 className="mt-5">Achievements</h2>
+
+			<a href="/achievements">Click here to view your achievements.</a>
 		</>
 	);
 };

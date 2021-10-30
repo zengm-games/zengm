@@ -277,6 +277,7 @@ const Controller = () => {
 
 	useEffect(() => {
 		return local.subscribe(
+			state2 => state2.viewInfo,
 			async (viewInfo: LocalStateUI["viewInfo"] | null) => {
 				if (viewInfo !== undefined && viewInfo !== null) {
 					try {
@@ -294,7 +295,6 @@ const Controller = () => {
 					viewInfo.cb();
 				}
 			},
-			state2 => state2.viewInfo,
 		);
 	}, [updatePage]);
 

@@ -182,7 +182,7 @@ const UserInfo = ({
 					</a>{" "}
 					If you have an account, your achievements will be stored in the cloud,
 					combining achievements from leagues in different browsers and
-					different computers.
+					different devices.
 				</p>
 			) : (
 				<p>

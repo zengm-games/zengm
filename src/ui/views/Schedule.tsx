@@ -5,6 +5,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
 import allowForceTie from "../../common/allowForceTie";
+import { Dropdown } from "react-bootstrap";
 
 const Schedule = ({
 	abbrev,
@@ -42,46 +43,34 @@ const Schedule = ({
 		<>
 			<MoreLinks type="team" page="schedule" abbrev={abbrev} tid={tid} />
 			{godMode ? (
-				<div className="btn-group mb-3">
-					<button
-						className="btn btn-outline-god-mode"
-						onClick={handleForceAll("win")}
+				<Dropdown className="mb-3">
+					<Dropdown.Toggle
+						variant="god-mode"
+						id="dropdown-basic"
 						disabled={forcingAll}
 					>
-						Force win all
-					</button>
-					<button
-						className="btn btn-outline-god-mode"
-						onClick={handleForceAll("lose")}
-						disabled={forcingAll}
-					>
-						Force lose all
-					</button>
-					{allowForceTie({
-						// Doesn't matter what team, we're just checking in general
-						homeTid: 0,
-						awayTid: 0,
-						elam,
-						elamASG,
-						phase,
-						ties,
-					}) ? (
-						<button
-							className="btn btn-outline-god-mode"
-							onClick={handleForceAll("tie")}
-							disabled={forcingAll}
-						>
-							Force tie all
-						</button>
-					) : null}
-					<button
-						className="btn btn-outline-god-mode"
-						onClick={handleForceAll("none")}
-						disabled={forcingAll}
-					>
-						Reset all
-					</button>
-				</div>
+						Force all
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={handleForceAll("win")}>Win</Dropdown.Item>
+						<Dropdown.Item onClick={handleForceAll("lose")}>Lose</Dropdown.Item>
+						{allowForceTie({
+							// Doesn't matter what team, we're just checking in general
+							homeTid: 0,
+							awayTid: 0,
+							elam,
+							elamASG,
+							phase,
+							ties,
+						}) ? (
+							<Dropdown.Item onClick={handleForceAll("tie")}>Tie</Dropdown.Item>
+						) : null}
+						<Dropdown.Item onClick={handleForceAll("none")}>
+							Reset
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			) : null}
 			<div className="row">
 				<div className="col-sm-6">

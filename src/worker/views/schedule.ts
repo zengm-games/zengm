@@ -126,7 +126,6 @@ export const getUpcoming = async ({
 			teams: [getTeam(homeTid), getTeam(awayTid)],
 		};
 	});
-	console.log("upcoming", upcoming);
 
 	return upcoming;
 };
@@ -136,7 +135,6 @@ const updateUpcoming = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	console.log("hi", updateEvents);
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||

@@ -713,30 +713,44 @@ class GameSim {
 			});
 		}
 
-		// Timeouts - small chance at any time
-		if (Math.random() < 0.01) {
-			this.doTimeout(this.o);
-		} else if (Math.random() < 0.003) {
-			this.doTimeout(this.d);
-		}
+		const clockAtEndOfPlay = this.clock - dt;
+		if (clockAtEndOfPlay > 0) {
+			let twoMinuteWarningHappening = false;
+			if (
+				thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
+				clockAtEndOfPlay <= 2 &&
+				!this.twoMinuteWarningHappened
+			) {
+				twoMinuteWarningHappening = true;
+			}
 
-		// Timeouts - late in game when clock is running
-		if (
-			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
-			this.isClockRunning
-		) {
-			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-
-			// No point in the 4th quarter of a blowout
-			if (diff < 24 || quarter < this.numPeriods) {
-				if (diff > 0) {
-					// If offense is winning, defense uses timeouts when near the end
-					if (this.clock < 2.5) {
-						this.doTimeout(this.d);
-					}
-				} else if (this.clock < 1.5) {
-					// If offense is losing or tied, offense uses timeouts when even nearer the end
+			if (!twoMinuteWarningHappening) {
+				// Timeouts - small chance at any time
+				if (Math.random() < 0.01) {
 					this.doTimeout(this.o);
+				} else if (Math.random() < 0.003) {
+					this.doTimeout(this.d);
+				}
+
+				// Timeouts - late in game when clock is running
+				if (
+					thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
+					this.isClockRunning
+				) {
+					const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+
+					// No point in the 4th quarter of a blowout
+					if (diff < 24 || quarter < this.numPeriods) {
+						if (diff > 0) {
+							// If offense is winning, defense uses timeouts when near the end
+							if (this.clock < 2.5) {
+								this.doTimeout(this.d);
+							}
+						} else if (this.clock < 1.5) {
+							// If offense is losing or tied, offense uses timeouts when even nearer the end
+							this.doTimeout(this.o);
+						}
+					}
 				}
 			}
 		}

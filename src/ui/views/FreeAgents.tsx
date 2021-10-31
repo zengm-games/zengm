@@ -10,7 +10,7 @@ import {
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, useLocalShallow } from "../util";
+import { confirm, getCols, helpers, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 
@@ -18,6 +18,7 @@ const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
 	challengeNoRatings,
+	godMode,
 	hardCap,
 	maxContract,
 	minContract,
@@ -144,11 +145,36 @@ const FreeAgents = ({
 				numRosterSpots={numRosterSpots}
 			/>
 
-			<p>
+			<div className="d-sm-flex mb-3">
 				<button className="btn btn-secondary" onClick={showAfforablePlayers}>
 					Show players you can afford now
 				</button>
-			</p>
+
+				<div className="d-block">
+					{godMode ? (
+						<button
+							className="btn btn-god-mode ml-sm-2 mt-2 mt-sm-0"
+							onClick={async () => {
+								const proceed = await confirm(
+									`Are you sure you want to delete all ${players.length} free agents?`,
+									{
+										okText: "Delete Players",
+									},
+								);
+								if (proceed) {
+									await toWorker(
+										"main",
+										"removePlayers",
+										players.map(p => p.pid),
+									);
+								}
+							}}
+						>
+							Delete all players
+						</button>
+					) : null}
+				</div>
+			</div>
 
 			{gameSimInProgress && !spectator ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>

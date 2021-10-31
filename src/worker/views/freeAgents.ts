@@ -66,6 +66,7 @@ const updateFreeAgents = async () => {
 		capSpace,
 		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 		challengeNoRatings: g.get("challengeNoRatings"),
+		godMode: g.get("godMode"),
 		hardCap: g.get("hardCap"),
 		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),

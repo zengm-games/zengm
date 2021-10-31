@@ -355,16 +355,35 @@ const play = async (
 				let homeCourtFactor = 1;
 
 				let found = false;
+				let homeWonLastGame = false;
+				let homeWonCounter = 0;
 				for (let i = 0; i < NUM_TRIES; i++) {
 					if (i >= START_CHANGING_HOME_COURT_ADVANTAGE) {
-						// Scale from 1x to 3x linearly, after staying at 1x for some time
-						homeCourtFactor =
-							1 +
-							(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
-								(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
+						if (!forceTie) {
+							// Scale from 1x to 3x linearly, after staying at 1x for some time
+							homeCourtFactor =
+								1 +
+								(2 * (i - START_CHANGING_HOME_COURT_ADVANTAGE)) /
+									(NUM_TRIES - START_CHANGING_HOME_COURT_ADVANTAGE);
 
-						if (!forceWinHome) {
-							homeCourtFactor = 1 / homeCourtFactor;
+							if (!forceWinHome) {
+								homeCourtFactor = 1 / homeCourtFactor;
+							}
+						} else {
+							// Keep track of homeWonCounter only after START_CHANGING_HOME_COURT_ADVANTAGE
+							if (homeWonLastGame) {
+								homeWonCounter += 1;
+							} else {
+								homeWonCounter -= 1;
+							}
+
+							// Scale from 1 to 3, where 3 happens when homeWonCounter is 1000
+							homeCourtFactor =
+								1 + Math.min(2, (Math.abs(homeWonCounter) * 2) / 1000);
+
+							if (homeWonCounter > 0) {
+								homeCourtFactor = 1 / homeCourtFactor;
+							}
 						}
 					}
 
@@ -379,8 +398,10 @@ const play = async (
 					let wonTid: number | undefined;
 					if (result.team[0].stat.pts > result.team[1].stat.pts) {
 						wonTid = result.team[0].id;
+						homeWonLastGame = true;
 					} else if (result.team[0].stat.pts < result.team[1].stat.pts) {
 						wonTid = result.team[1].id;
+						homeWonLastGame = false;
 					}
 
 					if (
@@ -396,7 +417,6 @@ const play = async (
 
 				if (!found) {
 					const teamInfoCache = g.get("teamInfoCache");
-					const otherTid = forceWinHome ? game.awayTid : game.homeTid;
 
 					let suffix: string;
 					if (game.forceWin === "tie") {
@@ -406,6 +426,8 @@ const play = async (
 							teamInfoCache[game.awayTid].name
 						}`;
 					} else {
+						const otherTid = forceWinHome ? game.awayTid : game.homeTid;
+
 						suffix = `the ${teamInfoCache[game.forceWin].region} ${
 							teamInfoCache[game.forceWin].name
 						} beat the ${teamInfoCache[otherTid].region} ${

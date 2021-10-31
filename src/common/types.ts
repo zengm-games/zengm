@@ -323,7 +323,7 @@ export type Game = {
 	att: number;
 	clutchPlays?: string[];
 	day?: number; // Only optional for legacy
-	forceWin?: number; // If defined, it's the number of iterations that were used to force the win
+	forceWin?: number; // If defined, it's the number of iterations that were used to force the win/tie
 	gid: number;
 	lost: {
 		tid: number;
@@ -843,7 +843,7 @@ export type LocalStateUI = {
 	dirtySettings: boolean;
 	gameSimInProgress: boolean;
 	games: {
-		forceWin?: number;
+		forceWin?: number; // Number of iterations - defined means result was forced
 		gid: number;
 		overtimes?: number;
 		teams: [
@@ -1312,7 +1312,7 @@ export type ScheduleGameWithoutKey = {
 	gid?: number;
 	awayTid: number;
 	homeTid: number;
-	forceWin?: number; // either awayTid or homeTid, if defined
+	forceWin?: number | "tie"; // either awayTid or homeTid, if defined
 
 	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
 	day: number;

@@ -38,12 +38,14 @@ const style = {
 };
 
 const ForceWin = ({
+	allowTie,
 	className,
 	game,
 }: {
+	allowTie: boolean;
 	className?: string;
 	game: {
-		forceWin?: number;
+		forceWin?: number | "tie";
 		gid: number;
 		teams: [Team, Team];
 	};
@@ -97,6 +99,30 @@ const ForceWin = ({
 								: teamInfoCache[tid]?.abbrev}
 						</button>
 					))}
+					{allowTie ? (
+						<button
+							className={classNames(
+								"btn btn-xs",
+								"tie" === forceWin
+									? "btn-outline-god-mode"
+									: "btn-light-bordered",
+							)}
+							onClick={async () => {
+								try {
+									setState("saving");
+									setForceWin("tie");
+									await toWorker("main", "setForceWin", game.gid, "tie");
+								} catch (error) {
+									setState("error");
+									throw error;
+								}
+								setState("saved");
+							}}
+							style={style}
+						>
+							Tie
+						</button>
+					) : null}
 				</div>
 				<AnimatePresence>
 					{state === "saved" ? (

@@ -137,8 +137,16 @@ const DailySchedule = ({
 
 									return (
 										<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
-											<ScoreBox game={game} {...actionStuff} />
-											<ForceWin className="mb-3" game={game} />
+											<ScoreBox
+												game={{
+													// Leave out forceTie, since ScoreBox wants the value for finished games
+													gid: game.gid,
+													season: game.season,
+													teams: game.teams,
+												}}
+												{...actionStuff}
+											/>
+											<ForceWin allowTie className="mb-3" game={game} />
 										</div>
 									);
 								})}

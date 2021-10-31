@@ -114,7 +114,7 @@ export const getUpcoming = async ({
 		.slice(0, limit);
 
 	const upcoming: {
-		forceWin?: number;
+		forceWin?: number | "tie";
 		gid: number;
 		season: number;
 		teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
@@ -126,6 +126,7 @@ export const getUpcoming = async ({
 			teams: [getTeam(homeTid), getTeam(awayTid)],
 		};
 	});
+	console.log("upcoming", upcoming);
 
 	return upcoming;
 };
@@ -137,6 +138,7 @@ const updateUpcoming = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
+		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
 		inputs.abbrev !== state.abbrev
@@ -147,7 +149,9 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			phase: g.get("phase"),
 			tid: inputs.tid,
+			ties: g.get("ties"),
 			upcoming,
 		};
 	}

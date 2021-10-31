@@ -551,16 +551,22 @@ const BoxScoreWrapper = ({
 	let forcedWinText = null;
 	if (boxScore.forceWin !== undefined) {
 		const pure = boxScore.forceWin <= 500;
+		const tie = t0.pts === t1.pts;
+
 		forcedWinText = (
 			<>
 				<br />
-				Forced win in{" "}
+				Forced {tie ? "tie" : "win"} in{" "}
 				<span
 					className={pure ? "text-success" : "text-danger"}
 					title={
 						pure
-							? "Win was forced without giving a bonus to the winning team"
-							: "Forcing the win required giving the winning team a bonus"
+							? `${tie ? "Tie" : "Win"} was forced without giving a bonus to ${
+									tie ? "either" : "the winning"
+							  } team`
+							: `Forcing the ${tie ? "tie" : "win"} required giving ${
+									tie ? "a" : "the winning"
+							  } team a bonus`
 					}
 				>
 					{helpers.numberWithCommas(boxScore.forceWin)}

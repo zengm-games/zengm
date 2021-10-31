@@ -261,6 +261,10 @@ const ScoreBox = ({
 							} else if (winner === -1 && userInGame && t.tid === userTid) {
 								// Tie
 								scoreClass = "alert-warning";
+
+								if (game.forceWin !== undefined) {
+									scoreClassForceWin = "alert-god-mode";
+								}
 							}
 						}
 						if (!scoreClassForceWin) {

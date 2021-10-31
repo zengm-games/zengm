@@ -4,8 +4,16 @@ import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
+import { PHASE } from "../../common";
 
-const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
+const Schedule = ({
+	abbrev,
+	completed,
+	phase,
+	tid,
+	ties,
+	upcoming,
+}: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
 		dropdownView: "schedule",
@@ -20,12 +28,13 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 	const [forcingAll, setForcingAll] = useState(false);
 	const [forceWinKey, setForceWinKey] = useState(0);
 
-	const handleForceAll = (type: "win" | "lose" | "none") => async () => {
-		setForcingAll(true);
-		await toWorker("main", "setForceWinAll", tid, type);
-		setForceWinKey(key => key + 1);
-		setForcingAll(false);
-	};
+	const handleForceAll =
+		(type: "win" | "lose" | "tie" | "none") => async () => {
+			setForcingAll(true);
+			await toWorker("main", "setForceWinAll", tid, type);
+			setForceWinKey(key => key + 1);
+			setForcingAll(false);
+		};
 
 	return (
 		<>
@@ -46,6 +55,15 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 					>
 						Force lose all
 					</button>
+					{ties && phase !== PHASE.PLAYOFFS ? (
+						<button
+							className="btn btn-outline-god-mode"
+							onClick={handleForceAll("tie")}
+							disabled={forcingAll}
+						>
+							Force tie all
+						</button>
+					) : null}
 					<button
 						className="btn btn-outline-god-mode"
 						onClick={handleForceAll("none")}
@@ -78,8 +96,22 @@ const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 
 							return (
 								<Fragment key={game.gid}>
-									<ScoreBox game={game} header={i === 0} {...action} />
-									<ForceWin key={forceWinKey} className="mb-3" game={game} />
+									<ScoreBox
+										game={{
+											// Leave out forceTie, since ScoreBox wants the value for finished games
+											gid: game.gid,
+											season: game.season,
+											teams: game.teams,
+										}}
+										header={i === 0}
+										{...action}
+									/>
+									<ForceWin
+										key={forceWinKey}
+										allowTie
+										className="mb-3"
+										game={game}
+									/>
 								</Fragment>
 							);
 						})}

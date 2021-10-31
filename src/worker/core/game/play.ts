@@ -33,6 +33,7 @@ import type {
 	ScheduleGame,
 	UpdateEvents,
 } from "../../../common/types";
+import allowForceTie from "./allowForceTie";
 
 /**
  * Play one or more days of games.
@@ -334,7 +335,10 @@ const play = async (
 
 			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
 
-			if (g.get("godMode") && game.forceWin !== undefined) {
+			const forceTie = game.forceWin === "tie";
+			const invalidForceTie = forceTie && !allowForceTie(game);
+
+			if (g.get("godMode") && game.forceWin !== undefined && !invalidForceTie) {
 				const NUM_TRIES = 2000;
 				const START_CHANGING_HOME_COURT_ADVANTAGE = NUM_TRIES / 4;
 
@@ -370,7 +374,10 @@ const play = async (
 						wonTid = result.team[1].id;
 					}
 
-					if (wonTid === game.forceWin) {
+					if (
+						(forceTie && wonTid === undefined) ||
+						(!forceTie && wonTid === game.forceWin)
+					) {
 						found = true;
 						(result as any).forceWin = i + 1;
 						results.push(result);
@@ -382,16 +389,27 @@ const play = async (
 					const teamInfoCache = g.get("teamInfoCache");
 					const otherTid = forceWinHome ? game.awayTid : game.homeTid;
 
+					let suffix: string;
+					if (game.forceWin === "tie") {
+						suffix = `the ${teamInfoCache[game.homeTid].region} ${
+							teamInfoCache[game.homeTid].name
+						} tied the ${teamInfoCache[game.awayTid].region} ${
+							teamInfoCache[game.awayTid].name
+						}`;
+					} else {
+						suffix = `the ${teamInfoCache[game.forceWin].region} ${
+							teamInfoCache[game.forceWin].name
+						} beat the ${teamInfoCache[otherTid].region} ${
+							teamInfoCache[otherTid].name
+						}`;
+					}
+
 					logEvent(
 						{
 							type: "error",
 							text: `Could not find a simulation in ${helpers.numberWithCommas(
 								NUM_TRIES,
-							)} tries where the ${teamInfoCache[game.forceWin].region} ${
-								teamInfoCache[game.forceWin].name
-							} beat the ${teamInfoCache[otherTid].region} ${
-								teamInfoCache[otherTid].name
-							}.`,
+							)} tries where ${suffix}.`,
 							showNotification: true,
 							persistent: true,
 							saveToDb: false,

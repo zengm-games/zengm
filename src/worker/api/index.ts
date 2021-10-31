@@ -2473,17 +2473,20 @@ const runBefore = async (
 	return {};
 };
 
-const setForceWin = async (gid: number, tid?: number) => {
+const setForceWin = async (gid: number, tidOrTie?: number | "tie") => {
 	const game = await idb.cache.schedule.get(gid);
 	if (!game) {
 		throw new Error("Game not found");
 	}
 
-	game.forceWin = tid;
+	game.forceWin = tidOrTie;
 	await idb.cache.schedule.put(game);
 };
 
-const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
+const setForceWinAll = async (
+	tid: number,
+	type: "none" | "win" | "lose" | "tie",
+) => {
 	const games = await idb.cache.schedule.getAll();
 	for (const game of games) {
 		if (game.homeTid !== tid && game.awayTid !== tid) {
@@ -2494,6 +2497,8 @@ const setForceWinAll = async (tid: number, type: "none" | "win" | "lose") => {
 			game.forceWin = tid;
 		} else if (type === "lose") {
 			game.forceWin = game.homeTid === tid ? game.awayTid : game.homeTid;
+		} else if (type === "tie") {
+			game.forceWin = "tie";
 		} else {
 			delete game.forceWin;
 		}

@@ -4,11 +4,13 @@ import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
-import { PHASE } from "../../common";
+import allowForceTie from "../../common/allowForceTie";
 
 const Schedule = ({
 	abbrev,
 	completed,
+	elam,
+	elamASG,
 	phase,
 	tid,
 	ties,
@@ -55,7 +57,15 @@ const Schedule = ({
 					>
 						Force lose all
 					</button>
-					{ties && phase !== PHASE.PLAYOFFS ? (
+					{allowForceTie({
+						// Doesn't matter what team, we're just checking in general
+						homeTid: 0,
+						awayTid: 0,
+						elam,
+						elamASG,
+						phase,
+						ties,
+					}) ? (
 						<button
 							className="btn btn-outline-god-mode"
 							onClick={handleForceAll("tie")}
@@ -94,6 +104,15 @@ const Schedule = ({
 										},
 								  };
 
+							const allowTie = allowForceTie({
+								homeTid: game.teams[0].tid,
+								awayTid: game.teams[1].tid,
+								elam,
+								elamASG,
+								phase,
+								ties,
+							});
+
 							return (
 								<Fragment key={game.gid}>
 									<ScoreBox
@@ -108,7 +127,7 @@ const Schedule = ({
 									/>
 									<ForceWin
 										key={forceWinKey}
-										allowTie
+										allowTie={allowTie}
 										className="mb-3"
 										game={game}
 									/>

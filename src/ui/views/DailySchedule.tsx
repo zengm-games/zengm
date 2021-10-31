@@ -5,14 +5,19 @@ import { toWorker, useLocalShallow } from "../util";
 import classNames from "classnames";
 import { DAILY_SCHEDULE } from "../../common";
 import { NoGamesMessage } from "./GameLog";
+import allowForceTie from "../../common/allowForceTie";
 
 const DailySchedule = ({
 	completed,
 	currentSeason,
 	day,
 	days,
+	elam,
+	elamASG,
 	isToday,
+	phase,
 	season,
+	ties,
 	upcoming,
 	userTid,
 }: View<"dailySchedule">) => {
@@ -135,6 +140,15 @@ const DailySchedule = ({
 											  }
 											: {};
 
+									const allowTie = allowForceTie({
+										homeTid: game.teams[0].tid,
+										awayTid: game.teams[1].tid,
+										elam,
+										elamASG,
+										phase,
+										ties,
+									});
+
 									return (
 										<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
 											<ScoreBox
@@ -146,7 +160,11 @@ const DailySchedule = ({
 												}}
 												{...actionStuff}
 											/>
-											<ForceWin allowTie className="mb-3" game={game} />
+											<ForceWin
+												allowTie={allowTie}
+												className="mb-3"
+												game={game}
+											/>
 										</div>
 									);
 								})}

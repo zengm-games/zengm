@@ -33,7 +33,7 @@ import type {
 	ScheduleGame,
 	UpdateEvents,
 } from "../../../common/types";
-import allowForceTie from "./allowForceTie";
+import allowForceTie from "../../../common/allowForceTie";
 
 /**
  * Play one or more days of games.
@@ -336,7 +336,16 @@ const play = async (
 			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
 
 			const forceTie = game.forceWin === "tie";
-			const invalidForceTie = forceTie && !allowForceTie(game);
+			const invalidForceTie =
+				forceTie &&
+				!allowForceTie({
+					homeTid: game.homeTid,
+					awayTid: game.awayTid,
+					ties: g.get("ties", "current"),
+					phase: g.get("phase"),
+					elam: g.get("elam"),
+					elamASG: g.get("elamASG"),
+				});
 
 			if (g.get("godMode") && game.forceWin !== undefined && !invalidForceTie) {
 				const NUM_TRIES = 2000;

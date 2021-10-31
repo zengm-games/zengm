@@ -134,8 +134,12 @@ const updateDailySchedule = async (
 			currentSeason,
 			day,
 			days,
+			elam: g.get("elam"),
+			elamASG: g.get("elamASG"),
 			isToday,
+			phase: g.get("phase"),
 			season: inputs.season,
+			ties: g.get("ties", "current"),
 			upcoming,
 			userTid: g.get("userTid"),
 		};

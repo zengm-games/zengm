@@ -136,6 +136,7 @@ const updateUpcoming = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	console.log("hi", updateEvents);
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
@@ -149,9 +150,11 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			elam: g.get("elam"),
+			elamASG: g.get("elamASG"),
 			phase: g.get("phase"),
 			tid: inputs.tid,
-			ties: g.get("ties"),
+			ties: g.get("ties", "current"),
 			upcoming,
 		};
 	}

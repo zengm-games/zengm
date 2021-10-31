@@ -30,7 +30,7 @@ const processStats = (
 		} else if (stat === "foPct") {
 			row[stat] = helpers.percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "gaa") {
-			row[stat] = helpers.ratio(ps.ga, ps.gp);
+			row[stat] = helpers.ratio(ps.ga, ps.gpGoalie);
 		} else if (stat === "amin") {
 			row[stat] = helpers.ratio(ps.min, ps.gp);
 		} else if (stat === "gRec") {

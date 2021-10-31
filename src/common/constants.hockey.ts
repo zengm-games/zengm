@@ -101,12 +101,12 @@ const PLAYER_SUMMARY = {
 	summarySkater: {
 		name: "SummarySkater",
 		onlyShowIf: ["C", "W", "D"],
-		stats: ["gp", "g", "a", "pts", "pm", "ops", "dps", "ps"],
+		stats: ["gpSkater", "g", "a", "pts", "pm", "ops", "dps", "ps"],
 	},
 	summaryGoalie: {
 		name: "SummaryGoalie",
 		onlyShowIf: ["G"],
-		stats: ["gp", "gRec", "so", "gaa", "svPct", "gps"],
+		stats: ["gpGoalie", "gRec", "so", "gaa", "svPct", "gps"],
 	},
 };
 
@@ -114,7 +114,7 @@ const PLAYER_STATS_TABLES = {
 	goalie: {
 		name: "Goalie",
 		stats: [
-			"gp",
+			"gpGoalie",
 			"gRec",
 			"ga",
 			"sa",
@@ -132,7 +132,7 @@ const PLAYER_STATS_TABLES = {
 	skater: {
 		name: "Skater",
 		stats: [
-			"gp",
+			"gpSkater",
 			"g",
 			"a",
 			"pts",

@@ -1633,6 +1633,18 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "PotG",
 		},
+		"stat:gpGoalie": {
+			desc: "Games Played (Goalie)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: gp,
+		},
+		"stat:gpSkater": {
+			desc: "Games Played (Skater)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: gp,
+		},
 		"stat:pm": {
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],

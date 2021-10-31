@@ -186,6 +186,8 @@ const roundOverrides: Record<
 	},
 	hockey: {
 		gp: "noDecimalPlace",
+		gpGoalie: "noDecimalPlace",
+		gpSkater: "noDecimalPlace",
 		gs: "noDecimalPlace",
 		yearsWithTeam: "noDecimalPlace",
 		w: "noDecimalPlace",

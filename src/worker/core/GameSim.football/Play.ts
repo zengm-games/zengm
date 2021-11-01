@@ -1037,7 +1037,7 @@ class Play {
 					const offsetting = decisions[0] === "offset";
 
 					const subResults: {
-						// indexEvent is the index of the event to roll back to. undefined means don't add any events onto state, other than the penalty
+						// indexEvent is the index of the event to roll back to, if penalty is accepted. undefined means don't add any events onto state, other than the penalty. -1 means roll back everything except the penalty
 						indexEvent: number | undefined;
 						state: State;
 						tackOn: boolean;
@@ -1191,16 +1191,26 @@ class Play {
 			this.state.current = result.state;
 
 			if (result.indexAccept >= 0) {
+				let numPenaltiesSeen = 0;
+
 				const statChanges = [
 					// Apply statChanges from accepted penalty
 					...result.statChanges,
 
 					// Apply negative statChanges from anything after accepted penalty
 					...this.events
-						.filter(
-							(event, i) =>
-								result.indexEvent === undefined || i > result.indexEvent,
-						)
+						.filter((event, i) => {
+							// Don't remove the accepted penalty, since we only just added it here! It is not like other events which are added previously
+							if (event.event.type === "penalty") {
+								if (result.indexAccept === numPenaltiesSeen) {
+									numPenaltiesSeen += 1;
+									return false;
+								}
+								numPenaltiesSeen += 1;
+							}
+
+							return result.indexEvent === undefined || i > result.indexEvent;
+						})
 						.map(event => event.statChanges)
 						.map(statChanges => {
 							return statChanges.map(statChange => {

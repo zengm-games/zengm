@@ -4,9 +4,10 @@ improve UI of game summary on schedule page
 - players
   - upcoming - show 2 best players. ignore user team, if on schedule page
   - completed - show 2 best performers
-- box score link in action button
 - upcomign ASG - show players
 - responsive
+- limitWidthToParent - get rid of, or make defautl?
+- test watch toggle
 
 XP on wrong team, maybe penalty related https://old.reddit.com/r/Football_GM/comments/qb627b/would_love_to_hear_if_anyone_has_ever_seen_this/hh8u1q0/?context=3
 

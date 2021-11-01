@@ -60,7 +60,8 @@ const ScoreBox = ({
 	action?: {
 		disabled?: boolean;
 		highlight?: boolean;
-		onClick: () => void;
+		href?: string;
+		onClick?: () => void;
 		text: ReactNode;
 	};
 	className?: string;
@@ -92,6 +93,8 @@ const ScoreBox = ({
 		teamInfoCache: state.teamInfoCache,
 		userTid: state.userTid,
 	}));
+
+	console.log(game);
 
 	let winner: -1 | 0 | 1 | undefined;
 	if (game.teams[0].pts !== undefined && game.teams[1].pts !== undefined) {
@@ -182,10 +185,30 @@ const ScoreBox = ({
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
 	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
 
+	if (!action && final && !small) {
+		action = {
+			text: (
+				<>
+					Box
+					<br />
+					score
+				</>
+			),
+			href: helpers.leagueUrl([
+				"game_log",
+				allStarGame
+					? "special"
+					: `${teamInfoCache[game.teams[0].tid]?.abbrev}_${game.teams[0].tid}`,
+				gameSeason,
+				game.gid,
+			]),
+		};
+	}
+
 	const scoreBox = (
 		<div
 			className={classNames(
-				"score-box flex-grow-1",
+				"flex-grow-1",
 				limitWidthToParent ? "position-relative" : undefined,
 				small ? "d-flex" : undefined,
 			)}
@@ -369,35 +392,38 @@ const ScoreBox = ({
 									</>
 								) : null}
 								{spreads && small ? (
-									<div
-										className={classNames(
-											"text-right p-1 pr-2",
-											small ? "score-box-score" : "score-box-spread",
-										)}
-									>
+									<div className={"text-right p-1 pr-2 score-box-score"}>
 										{spreads[i]}
 									</div>
 								) : null}
 								{final ? (
 									<div
 										className={classNames(
-											"score-box-score p-1 text-right font-weight-bold",
+											"font-weight-bold text-body",
 											scoreClass,
 											userTeamClass,
+											{
+												"pr-1 score-box-score text-right": small,
+											},
 										)}
+										style={!small ? { fontSize: 16 } : undefined}
 									>
-										<a
-											href={helpers.leagueUrl([
-												"game_log",
-												allStarGame
-													? "special"
-													: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
-												gameSeason,
-												game.gid,
-											])}
-										>
-											{t.pts}
-										</a>
+										{small ? (
+											<a
+												href={helpers.leagueUrl([
+													"game_log",
+													allStarGame
+														? "special"
+														: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
+													gameSeason,
+													game.gid,
+												])}
+											>
+												{t.pts}
+											</a>
+										) : (
+											t.pts
+										)}
 									</div>
 								) : null}
 							</div>
@@ -420,19 +446,30 @@ const ScoreBox = ({
 	);
 
 	if (action) {
+		const classNameAction = classNames(
+			"btn score-box-action",
+			action.highlight ? "btn-success" : "btn-light-bordered",
+		);
+
 		return (
 			<div className={classNames("d-flex", className)}>
 				{scoreBox}
-				<button
-					className={classNames(
-						"btn score-box-action",
-						action.highlight ? "btn-success" : "btn-light-bordered",
-					)}
-					disabled={action.disabled}
-					onClick={action.onClick}
-				>
-					{action.text}
-				</button>
+				{action.onClick ? (
+					<button
+						className={classNameAction}
+						disabled={action.disabled}
+						onClick={action.onClick}
+					>
+						{action.text}
+					</button>
+				) : (
+					<a
+						className={`${classNameAction} d-flex align-items-center`}
+						href={action.href}
+					>
+						{action.text}
+					</a>
+				)}
 			</div>
 		);
 	}

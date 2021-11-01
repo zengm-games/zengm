@@ -30,7 +30,11 @@ type TokenizerState =
 	| "NUMBER1"
 	| "NUMBER3"
 	| "STRING1"
-	| "STRING2";
+	| "STRING2"
+	| "STRING3"
+	| "STRING4"
+	| "STRING5"
+	| "STRING6";
 
 type Mode = "OBJECT" | "ARRAY";
 
@@ -54,15 +58,13 @@ class JSONParserText {
 	value: Value;
 	position: number;
 	onValue: OnValue;
+	unicode: string | undefined;
+	highSurrogate: number | undefined;
 
 	constructor(onValue: OnValue) {
 		this.tokenizerState = "START";
 		this.state = "VALUE";
-		this.mode = undefined;
 		this.stack = [];
-		this.string = undefined;
-		this.key = undefined;
-		this.value = undefined;
 
 		this.position = 0;
 
@@ -161,8 +163,53 @@ class JSONParserText {
 				} else if (n === "t") {
 					this.string += "\t";
 					this.tokenizerState = "STRING1";
+				} else if (n === "u") {
+					this.unicode = "";
+					this.tokenizerState = "STRING3";
 				} else {
 					return this.charError(n, i);
+				}
+			} else if (
+				this.tokenizerState === "STRING3" ||
+				this.tokenizerState === "STRING4" ||
+				this.tokenizerState === "STRING5" ||
+				this.tokenizerState === "STRING6"
+			) {
+				// Unicode hex codes
+				this.unicode += n;
+				if (this.tokenizerState === "STRING3") {
+					this.tokenizerState = "STRING4";
+				} else if (this.tokenizerState === "STRING4") {
+					this.tokenizerState = "STRING5";
+				} else if (this.tokenizerState === "STRING5") {
+					this.tokenizerState = "STRING6";
+				} else if (this.tokenizerState === "STRING6") {
+					const intVal = parseInt(this.unicode!, 16);
+					this.unicode = undefined;
+					if (
+						this.highSurrogate !== undefined &&
+						intVal >= 0xdc00 &&
+						intVal < 0xdfff + 1
+					) {
+						//<56320,57343> - lowSurrogate
+						this.string += String.fromCharCode(this.highSurrogate, intVal);
+						this.highSurrogate = undefined;
+					} else if (
+						this.highSurrogate === undefined &&
+						intVal >= 0xd800 &&
+						intVal < 0xdbff + 1
+					) {
+						//<55296,56319> - highSurrogate
+						this.highSurrogate = intVal;
+					} else {
+						if (this.highSurrogate !== undefined) {
+							this.string += String.fromCharCode(this.highSurrogate);
+							this.highSurrogate = undefined;
+						}
+						this.string += String.fromCharCode(intVal);
+					}
+
+					this.tokenizerState = "STRING1";
 				}
 			} else if (
 				this.tokenizerState === "NUMBER1" ||

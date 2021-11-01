@@ -1,3 +1,10 @@
+improve UI of game summary on schedule page
+- https://discord.com/channels/290013534023057409/331882115119448065/893503160709169163
+- upcoming: maybe show best player on each team https://discord.com/channels/290013534023057409/331882115119448065/893597097666945054
+- players
+  - upcoming - show 2 best players. ignore user team, if on schedule page
+  - completed - show 2 best performers
+
 XP on wrong team, maybe penalty related https://old.reddit.com/r/Football_GM/comments/qb627b/would_love_to_hear_if_anyone_has_ever_seen_this/hh8u1q0/?context=3
 
 add archetypes to players?
@@ -18,10 +25,6 @@ better handle case where cannot play a game (like during contract negotiation) a
 get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
 
 other firefox comments
-
-improve UI of game summary on schedule page
-- https://discord.com/channels/290013534023057409/331882115119448065/893503160709169163
-- upcoming: maybe show best player on each team https://discord.com/channels/290013534023057409/331882115119448065/893597097666945054
 
 refactor FBGM play by play logging
 - move text generation client side, like hockey

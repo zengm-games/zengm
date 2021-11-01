@@ -78,17 +78,17 @@ const Schedule = ({
 					<ul className="list-group">
 						{upcoming.map((game, i) => {
 							const action = game.teams[0].playoffs
-								? {}
+								? undefined
 								: {
-										actionDisabled: gameSimInProgress || i === 0,
-										actionText: (
+										disabled: gameSimInProgress || i === 0,
+										text: (
 											<>
 												Sim to
 												<br />
 												game
 											</>
 										),
-										actionOnClick: () => {
+										onClick: () => {
 											toWorker("actions", "simToGame", game.gid);
 										},
 								  };
@@ -111,8 +111,7 @@ const Schedule = ({
 											season: game.season,
 											teams: game.teams,
 										}}
-										header={i === 0}
-										{...action}
+										action={action}
 									/>
 									<ForceWin
 										key={forceWinKey}
@@ -127,13 +126,8 @@ const Schedule = ({
 				</div>
 				<div className="col-sm-6">
 					<h2>Completed Games</h2>
-					{completed.map((game, i) => (
-						<ScoreBox
-							className="mb-3"
-							key={game.gid}
-							game={game}
-							header={i === 0}
-						/>
+					{completed.map(game => (
+						<ScoreBox className="mb-3" key={game.gid} game={game} />
 					))}
 				</div>
 			</div>

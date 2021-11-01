@@ -91,54 +91,28 @@ const DailySchedule = ({
 
 					{upcoming.length > 0 ? (
 						<>
-							<div className="row">
-								<div className="col-xl-4 col-md-6 col-12">
-									{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
-									<div
-										className="d-flex"
-										style={{ maxWidth: 400, marginRight: isToday ? 62 : 0 }}
-									>
-										{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
-										<div
-											className="p-1 ml-auto text-muted"
-											title="Team Overall Rating"
-										>
-											Ovr
-										</div>
-										<div
-											className={classNames(
-												"text-right p-1 text-muted",
-												"score-box-spread",
-											)}
-											title="Predicted Point Spread"
-										>
-											Spread
-										</div>
-									</div>
-								</div>
-							</div>
+							{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
 
 							<div className="row">
 								{upcoming.map(game => {
-									const actionStuff =
+									const action =
 										isToday && !tradeDeadline
 											? {
-													actionDisabled: gameSimInProgress,
-													actionHighlight:
+													disabled: gameSimInProgress,
+													highlight:
 														game.teams[0].tid === userTid ||
 														game.teams[1].tid === userTid,
-													actionText: (
+													text: (
 														<>
 															Watch
 															<br />
-															Game
+															game
 														</>
 													),
-													actionOnClick: () =>
+													onClick: () =>
 														toWorker("actions", "liveGame", game.gid),
-													limitWidthToParent: true,
 											  }
-											: {};
+											: undefined;
 
 									const allowTie = allowForceTie({
 										homeTid: game.teams[0].tid,
@@ -158,7 +132,8 @@ const DailySchedule = ({
 													season: game.season,
 													teams: game.teams,
 												}}
-												{...actionStuff}
+												action={action}
+												limitWidthToParent={!!action}
 											/>
 											<ForceWin
 												allowTie={allowTie}
@@ -174,39 +149,9 @@ const DailySchedule = ({
 
 					{completed.length > 0 ? (
 						<>
-							<div
-								className={classNames("row", {
-									"mt-3": upcomingAndCompleted,
-								})}
-							>
-								<div className="col-xl-4 col-md-6 col-12">
-									{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
-									<div className="d-flex" style={{ maxWidth: 400 }}>
-										{upcomingAndCompleted ? <h2>Completed Games</h2> : null}
-										<div
-											className="p-1 ml-auto text-muted"
-											title="Team Overall Rating"
-										>
-											Ovr
-										</div>
-										<div
-											className={classNames(
-												"text-right p-1 text-muted",
-												"score-box-spread",
-											)}
-											title="Predicted Point Spread"
-										>
-											Spread
-										</div>
-										<div
-											className="score-box-score text-right text-muted p-1"
-											title="Final Score"
-										>
-											Score
-										</div>
-									</div>
-								</div>
-							</div>
+							{upcomingAndCompleted ? (
+								<h2 className="mt-3">Completed Games</h2>
+							) : null}
 
 							<div className="row">
 								{completed.map(game => {

@@ -49,20 +49,18 @@ const smallStyle = {
 };
 
 const ScoreBox = ({
-	actionDisabled,
-	actionHighlight,
-	actionOnClick,
-	actionText,
+	action,
 	className,
 	game,
-	header,
 	limitWidthToParent,
 	small,
 }: {
-	actionDisabled?: boolean;
-	actionHighlight?: boolean;
-	actionOnClick?: () => void;
-	actionText?: ReactNode;
+	action?: {
+		disabled?: boolean;
+		highlight?: boolean;
+		onClick: () => void;
+		text: ReactNode;
+	};
 	className?: string;
 	game: {
 		forceWin?: number;
@@ -72,7 +70,6 @@ const ScoreBox = ({
 		teams: [Team, Team];
 	};
 	limitWidthToParent?: boolean;
-	header?: boolean;
 	small?: boolean;
 }) => {
 	const {
@@ -191,35 +188,10 @@ const ScoreBox = ({
 			)}
 			style={small ? smallStyle : undefined}
 		>
-			{header ? (
-				<div className="d-flex justify-content-end score-box-header text-muted">
-					{hasOvrs ? (
-						<div className="p-1" title="Team Overall Rating">
-							Ovr
-						</div>
-					) : null}
-					{spreads ? (
-						<div
-							className={classNames(
-								"text-right p-1",
-								small ? "score-box-score" : "score-box-spread",
-							)}
-							title="Predicted Point Spread"
-						>
-							Spread
-						</div>
-					) : null}
-					{final ? (
-						<div className="score-box-score text-right p-1" title="Final Score">
-							Score
-						</div>
-					) : null}
-				</div>
-			) : null}
 			<div
 				className={classNames(
 					"border-light",
-					actionText ? "border-right-0" : undefined,
+					action ? "border-right-0" : undefined,
 					limitWidthToParent ? "position-absolute w-100" : undefined,
 				)}
 			>
@@ -309,17 +281,43 @@ const ScoreBox = ({
 								)}
 							>
 								{imgURL || allStarGame ? (
-									<TeamLogoInline imgURL={imgURL} style={{ marginLeft: 1 }} />
+									<TeamLogoInline
+										imgURL={imgURL}
+										size={small ? 24 : 36}
+										style={{ marginLeft: 1 }}
+									/>
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
 									{t.playoffs ? (
 										<span className="text-dark">{t.playoffs.seed}. </span>
 									) : null}
 									<a href={rosterURL}>{teamName}</a>
-									{!small ? getRecord(t) : null}
+									{!small ? (
+										<>
+											<br />
+											{getRecord(t)}
+											{hasOvrs ? (
+												<>
+													, <span title="Team overall rating">{t.ovr} ovr</span>
+												</>
+											) : null}
+											{spreads?.[i] ? (
+												<>
+													,{" "}
+													<span title="Point spread or betting line">
+														<span
+															className={!final ? "text-success" : undefined}
+														>
+															{spreads[i]}
+														</span>{" "}
+														spread
+													</span>
+												</>
+											) : null}
+										</>
+									) : null}
 								</div>
-								{hasOvrs ? <div className="p-1 text-right">{t.ovr}</div> : null}
-								{spreads ? (
+								{spreads && small ? (
 									<div
 										className={classNames(
 											"text-right p-1 pr-2",
@@ -370,19 +368,19 @@ const ScoreBox = ({
 		</div>
 	);
 
-	if (actionText) {
+	if (action) {
 		return (
 			<div className={classNames("d-flex", className)}>
 				{scoreBox}
 				<button
 					className={classNames(
 						"btn score-box-action",
-						actionHighlight ? "btn-success" : "btn-secondary",
+						action.highlight ? "btn-success" : "btn-light-bordered",
 					)}
-					disabled={actionDisabled}
-					onClick={actionOnClick}
+					disabled={action.disabled}
+					onClick={action.onClick}
 				>
-					{actionText}
+					{action.text}
 				</button>
 			</div>
 		);

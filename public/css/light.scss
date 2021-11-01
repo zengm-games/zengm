@@ -694,15 +694,11 @@ tr.table-warning:hover > td {
 
 .btn-light-bordered {
 	@extend .btn-light;
-	background-color: $white;
 	border: 1px solid $gray-400 !important;
-	color: $gray-700 !important;
 }
 .btn-light-bordered-primary {
 	@extend .btn-light;
-	background-color: $white;
 	border: 1px solid $blue !important;
-	color: $gray-700 !important;
 }
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;
@@ -967,11 +963,6 @@ tr.table-warning:hover > td {
 	height: 54px;
 }
 
-.score-box-header {
-	height: 27px;
-	margin-top: -27px;
-}
-
 .score-box-spread {
 	min-width: 52px;
 }
@@ -988,7 +979,7 @@ tr.table-warning:hover > td {
 .score-box-action {
 	border-bottom-left-radius: 0px;
 	border-top-left-radius: 0px;
-	height: 56px;
+	height: 94px;
 }
 
 .border-light {

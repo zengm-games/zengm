@@ -4,6 +4,7 @@ import { helpers, useLocalShallow } from "../util";
 import type { ReactNode } from "react";
 import TeamLogoInline from "./TeamLogoInline";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
+import { PlayerNameLabels } from ".";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -53,6 +54,7 @@ const ScoreBox = ({
 	className,
 	game,
 	limitWidthToParent,
+	playersUpcoming,
 	small,
 }: {
 	action?: {
@@ -70,6 +72,7 @@ const ScoreBox = ({
 		teams: [Team, Team];
 	};
 	limitWidthToParent?: boolean;
+	playersUpcoming?: any[];
 	small?: boolean;
 }) => {
 	const {
@@ -182,7 +185,7 @@ const ScoreBox = ({
 	const scoreBox = (
 		<div
 			className={classNames(
-				"flex-grow-1 score-box",
+				"score-box flex-grow-1",
 				limitWidthToParent ? "position-relative" : undefined,
 				small ? "d-flex" : undefined,
 			)}
@@ -204,7 +207,10 @@ const ScoreBox = ({
 						<div className="d-flex align-items-center" key={i}>
 							<div className="score-box-logo" />
 							<div className={classNames("p-1", { "pr-5": small })}>
-								<a href={helpers.leagueUrl(["all_star", "draft"])}>
+								<a
+									href={helpers.leagueUrl(["all_star", "draft"])}
+									className={!small ? "font-weight-bold" : undefined}
+								>
 									{small ? `AS${i}` : `All-Star Team ${i}`}
 								</a>
 							</div>
@@ -271,6 +277,8 @@ const ScoreBox = ({
 						const userTeamClass =
 							t.tid === userTid && final ? "user-team" : undefined;
 
+						const p = playersUpcoming?.[i];
+
 						return (
 							<div
 								key={i}
@@ -281,20 +289,37 @@ const ScoreBox = ({
 								)}
 							>
 								{imgURL || allStarGame ? (
-									<TeamLogoInline
-										imgURL={imgURL}
-										size={small ? 24 : 36}
-										style={{ marginLeft: 1 }}
-									/>
+									<a href={rosterURL}>
+										<TeamLogoInline
+											imgURL={imgURL}
+											size={small ? 24 : 36}
+											style={{ marginLeft: 1 }}
+										/>
+									</a>
 								) : null}
-								<div className="flex-grow-1 p-1 text-truncate">
+								<div
+									className={classNames("p-1 text-truncate", {
+										"flex-grow-1": small,
+									})}
+									style={
+										!small
+											? {
+													minWidth: 180,
+											  }
+											: undefined
+									}
+								>
 									{t.playoffs ? (
 										<span className="text-dark">{t.playoffs.seed}. </span>
 									) : null}
-									<a href={rosterURL}>{teamName}</a>
+									<a
+										href={rosterURL}
+										className={!small ? "font-weight-bold" : undefined}
+									>
+										{teamName}
+									</a>
 									{!small ? (
-										<>
-											<br />
+										<div className="text-muted">
 											{getRecord(t)}
 											{hasOvrs ? (
 												<>
@@ -314,9 +339,35 @@ const ScoreBox = ({
 													</span>
 												</>
 											) : null}
-										</>
+										</div>
 									) : null}
 								</div>
+								{p ? (
+									<>
+										<div className="align-self-stretch border-left mr-2"></div>
+										<div className="flex-grow-1 text-muted">
+											<div>
+												<PlayerNameLabels
+													pid={p.pid}
+													injury={p.injury}
+													pos={p.ratings.pos}
+													season={season}
+													watch={p.watch}
+												>
+													{p.name}
+												</PlayerNameLabels>
+											</div>
+											<div>
+												<a href={rosterURL}>{p.abbrev}</a> - {p.ratings.ovr} ovr
+												{isSport("basketball")
+													? ` - ${p.stats.pts.toFixed(1)}/${p.stats.trb.toFixed(
+															1,
+													  )}/${p.stats.ast.toFixed(1)}`
+													: null}
+											</div>
+										</div>
+									</>
+								) : null}
 								{spreads && small ? (
 									<div
 										className={classNames(

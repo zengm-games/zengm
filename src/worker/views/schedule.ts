@@ -1,7 +1,9 @@
-import { season, team } from "../core";
+import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
+import orderBy from "lodash-es/orderBy";
+import { bySport, isSport } from "../../common";
 
 export const getUpcoming = async ({
 	day,
@@ -158,6 +160,46 @@ const updateUpcoming = async (
 	}
 };
 
+const getTopPlayers = async (skipTid: number) => {
+	const topPlayers: Record<number, any[]> = {};
+
+	const teamInfoCache = g.get("teamInfoCache");
+
+	for (let tid = 0; tid < teamInfoCache.length; tid++) {
+		const t = teamInfoCache[tid];
+		if (t.disabled || tid === skipTid) {
+			continue;
+		}
+
+		const playersRaw = orderBy(
+			await idb.cache.players.indexGetAll("playersByTid", tid),
+			t => {
+				const ratings = t.ratings.at(-1);
+				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+				return ovr;
+			},
+			"desc",
+		)
+			.slice(0, 2)
+			.reverse();
+
+		const players = await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid", "name", "injury", "abbrev", "tid", "watch"],
+			ratings: ["ovr", "pos"],
+			season: g.get("season"),
+			stats: isSport("basketball") ? ["pts", "trb", "ast"] : undefined,
+			tid,
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+
+		topPlayers[tid] = players;
+	}
+
+	return topPlayers;
+};
+
 // Based on views.gameLog.updateGamesList
 const updateCompleted = async (
 	inputs: ViewInput<"schedule">,
@@ -175,8 +217,12 @@ const updateCompleted = async (
 			includeAllStarGame: true,
 		});
 
+		const topPlayers = await getTopPlayers(inputs.tid);
+		console.log("topPlayers", topPlayers);
+
 		return {
 			completed,
+			topPlayers,
 		};
 	}
 
@@ -195,8 +241,11 @@ const updateCompleted = async (
 			completed.unshift(games[i]);
 		}
 
+		const topPlayers = await getTopPlayers(inputs.tid);
+
 		return {
 			completed,
+			topPlayers,
 		};
 	}
 };

@@ -15,6 +15,7 @@ const Schedule = ({
 	phase,
 	tid,
 	ties,
+	topPlayers,
 	upcoming,
 }: View<"schedule">) => {
 	useTitleBar({
@@ -102,6 +103,11 @@ const Schedule = ({
 								ties,
 							});
 
+							const otherTid =
+								game.teams[0].tid === tid
+									? game.teams[1].tid
+									: game.teams[0].tid;
+
 							return (
 								<Fragment key={game.gid}>
 									<ScoreBox
@@ -111,6 +117,7 @@ const Schedule = ({
 											season: game.season,
 											teams: game.teams,
 										}}
+										playersUpcoming={topPlayers[otherTid]}
 										action={action}
 									/>
 									<ForceWin

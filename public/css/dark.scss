@@ -121,17 +121,11 @@ $text-muted: $gray-400;
 
 .btn-light-bordered,
 .btn-light-bordered-2 {
-	color: $black;
-
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
 		background-color: $gray-200 !important;
 		color: $black !important;
-	}
-
-	&:disabled {
-		color: $gray-600 !important;
 	}
 }
 

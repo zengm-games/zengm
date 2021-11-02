@@ -1,3 +1,5 @@
+on schedule page, if first game is on current day, put "watch" button in action. otherwise, put "sim to game" even though it's the first one https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
+
 allow watch everywhere by using toWorker to fetch value if undefined
 
 Make fantasy points a goat variable https://discord.com/channels/290013534023057409/331882115119448065/904858022499717232

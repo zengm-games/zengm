@@ -693,18 +693,13 @@ tr.table-warning:hover > td {
 }
 
 .btn-light-bordered {
-	@extend .btn-light;
-	border: 1px solid $gray-400 !important;
-	color: $black;
+	@include button-variant($light, $gray-400);
 }
 .btn-light-bordered-primary {
-	@extend .btn-light;
-	border: 1px solid $blue !important;
+	@include button-variant($light, $blue);
 }
 .btn-light-bordered-2 {
-	@extend .btn-light;
-	border: 1px solid $gray-300 !important;
-	color: $black;
+	@include button-variant($light, $gray-300);
 }
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;
@@ -1225,10 +1220,6 @@ a.anchor {
 	.border-top-sm-0 {
 		border-top: 0 !important;
 	}
-}
-
-.new-league-customize-teams-wrapper {
-	border-right: 2px $black solid;
 }
 
 .align-middle-all td {

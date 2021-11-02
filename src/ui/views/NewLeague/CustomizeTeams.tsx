@@ -478,7 +478,7 @@ const AddTeam = ({
 				</select>
 				<div className="input-group-append">
 					<button
-						className="btn btn-secondary"
+						className="btn btn-light-bordered"
 						onClick={() => {
 							const t = availableBuiltInTeams.find(t => t.abbrev === abbrev);
 							addTeam(did, t);
@@ -688,7 +688,7 @@ const Conference = ({
 
 			<div className="card-body p-0 m-3 d-flex">
 				<button
-					className="btn btn-secondary ml-auto"
+					className="btn btn-light-bordered ml-auto"
 					onClick={() => {
 						dispatch({ type: "addDiv", cid: conf.cid });
 					}}
@@ -887,7 +887,7 @@ const CustomizeTeams = ({
 			))}
 			<div className="mb-3 d-flex">
 				<button
-					className="btn btn-secondary ml-auto"
+					className="btn btn-light-bordered ml-auto"
 					onClick={() => {
 						dispatch({ type: "addConf" });
 					}}

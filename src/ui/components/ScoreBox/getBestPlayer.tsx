@@ -62,7 +62,9 @@ const getBestPlayer = (players: any[]) => {
 				return (
 					<React.Fragment key={stat}>
 						{i > 0 ? ", " : null}
-						{best.processedStats[stat]} <span title={col.desc}>{title}</span>
+						<span title={col.desc}>
+							{best.processedStats[stat]} {title}
+						</span>
 					</React.Fragment>
 				);
 			}),
@@ -109,7 +111,17 @@ const getBestPlayer = (players: any[]) => {
 
 			return withFactors(factors);
 		},
-		hockey: () => {},
+		hockey: () => {
+			const factors: [string, number][] = [
+				["g", 1],
+				["a", 1],
+				["s", 0.01],
+				["so", 3],
+				["sv", 0.0000001],
+			];
+
+			return withFactors(factors);
+		},
 	})();
 };
 

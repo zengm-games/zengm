@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 import { helpers, useLocalShallow } from "../../util";
 import type { ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
@@ -297,21 +297,25 @@ const ScoreBox = ({
 								<>
 									{playersUpcomingAbbrev ? (
 										<>
-											<a href={rosterURL}>{p.abbrev}</a> -{" "}
+											<a href={rosterURL}>{p.abbrev}</a>,{" "}
 										</>
 									) : null}
 									{p.ratings.ovr} ovr
-									{isSport("basketball")
-										? ` - ${p.stats.pts.toFixed(1)}/${p.stats.trb.toFixed(
-												1,
-										  )}/${p.stats.ast.toFixed(1)}`
-										: null}
+									{bySport({
+										basketball: `, ${p.stats.pts.toFixed(
+											1,
+										)}/${p.stats.trb.toFixed(1)}/${p.stats.ast.toFixed(1)}`,
+										football: null,
+										hockey: `, ${p.stats.keyStats}`,
+									})}
 								</>
 							);
 						} else if (final && t.players) {
 							const best = getBestPlayer(t.players);
-							p = best.p;
-							playerStatText = best.statText;
+							if (best) {
+								p = best.p;
+								playerStatText = best.statText;
+							}
 						}
 
 						return (

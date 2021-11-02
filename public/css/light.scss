@@ -700,6 +700,10 @@ tr.table-warning:hover > td {
 	@extend .btn-light;
 	border: 1px solid $blue !important;
 }
+.btn-light-bordered-2 {
+	@extend .btn-light;
+	border: 1px solid $gray-300 !important;
+}
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
@@ -975,6 +979,15 @@ tr.table-warning:hover > td {
 	border-bottom-left-radius: 0px;
 	border-top-left-radius: 0px;
 	height: 94px;
+}
+
+.score-box-left-wrapper {
+	flex-grow: 1;
+}
+@include media-breakpoint-up(sm) {
+	.score-box-left-wrapper {
+		flex-grow: 0;
+	}
 }
 
 .border-light {

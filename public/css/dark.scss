@@ -120,8 +120,10 @@ $text-muted: $gray-400;
 }
 
 .active.btn-light-bordered,
-.btn-light-bordered:hover {
-	background-color: $gray-100 !important;
+.btn-light-bordered:hover,
+.active.btn-light-bordered-2,
+.btn-light-bordered-2:hover {
+	background-color: $gray-200 !important;
 }
 
 .badge-danger {

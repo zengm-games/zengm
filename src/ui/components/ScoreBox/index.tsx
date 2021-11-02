@@ -339,86 +339,92 @@ const ScoreBox = ({
 									</a>
 								) : null}
 								<div
-									className={classNames("p-1 text-truncate", {
-										"flex-grow-1": small,
-									})}
+									className={classNames(
+										"p-1 d-flex align-items-center score-box-left-wrapper",
+										{
+											"flex-grow-1": small,
+										},
+									)}
 									style={
 										!small
 											? {
-													minWidth: 180,
+													width: 230,
 											  }
 											: undefined
 									}
 								>
-									{t.playoffs ? (
-										<span className="text-dark">{t.playoffs.seed}. </span>
+									<div className="flex-grow-1 text-truncate">
+										{t.playoffs ? (
+											<span className="text-dark">{t.playoffs.seed}. </span>
+										) : null}
+										<a
+											href={rosterURL}
+											className={!small ? "font-weight-bold" : undefined}
+										>
+											{teamName}
+										</a>
+										{!small ? (
+											<div className="text-muted">
+												{getRecord(t)}
+												{hasOvrs ? (
+													<>
+														,{" "}
+														<span title="Team overall rating">{t.ovr} ovr</span>
+													</>
+												) : null}
+												{spreads?.[i] ? (
+													<>
+														,{" "}
+														<span title="Point spread or betting line">
+															<span
+																className={!final ? "text-success" : undefined}
+															>
+																{spreads[i]}
+															</span>{" "}
+															spread
+														</span>
+													</>
+												) : null}
+											</div>
+										) : null}
+									</div>
+									{spreads && small ? (
+										<div className="text-right score-box-score">
+											{spreads[i]}
+										</div>
 									) : null}
-									<a
-										href={rosterURL}
-										className={!small ? "font-weight-bold" : undefined}
-									>
-										{teamName}
-									</a>
-									{!small ? (
-										<div className="text-muted">
-											{getRecord(t)}
-											{hasOvrs ? (
-												<>
-													, <span title="Team overall rating">{t.ovr} ovr</span>
-												</>
-											) : null}
-											{spreads?.[i] ? (
-												<>
-													,{" "}
-													<span title="Point spread or betting line">
-														<span
-															className={!final ? "text-success" : undefined}
-														>
-															{spreads[i]}
-														</span>{" "}
-														spread
-													</span>
-												</>
-											) : null}
+									{final ? (
+										<div
+											className={classNames(
+												"text-body text-right",
+												scoreClass,
+												userTeamClass,
+												{
+													"font-weight-bold score-box-score": small,
+													"pr-1": !small,
+												},
+											)}
+											style={!small ? { fontSize: 16 } : undefined}
+										>
+											{small ? (
+												<a
+													href={helpers.leagueUrl([
+														"game_log",
+														allStarGame
+															? "special"
+															: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
+														gameSeason,
+														game.gid,
+													])}
+												>
+													{t.pts}
+												</a>
+											) : (
+												t.pts
+											)}
 										</div>
 									) : null}
 								</div>
-								{spreads && small ? (
-									<div className={"text-right p-1 pr-2 score-box-score"}>
-										{spreads[i]}
-									</div>
-								) : null}
-								{final ? (
-									<div
-										className={classNames(
-											"font-weight-bold text-body text-right",
-											scoreClass,
-											userTeamClass,
-											{
-												"pr-1 score-box-score": small,
-												"pr-2": !small,
-											},
-										)}
-										style={!small ? { fontSize: 16, width: 36 } : undefined}
-									>
-										{small ? (
-											<a
-												href={helpers.leagueUrl([
-													"game_log",
-													allStarGame
-														? "special"
-														: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
-													gameSeason,
-													game.gid,
-												])}
-											>
-												{t.pts}
-											</a>
-										) : (
-											t.pts
-										)}
-									</div>
-								) : null}
 								{p ? (
 									<div
 										className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center"
@@ -464,7 +470,7 @@ const ScoreBox = ({
 	if (action) {
 		const classNameAction = classNames(
 			"btn score-box-action",
-			action.highlight ? "btn-success" : "btn-light-bordered",
+			action.highlight ? "btn-success" : "btn-light-bordered-2",
 		);
 
 		return (

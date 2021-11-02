@@ -120,9 +120,9 @@ $text-muted: $gray-400;
 }
 
 .active.btn-light-bordered,
-.btn-light-bordered:hover,
+.btn-light-bordered:hover:not(:disabled),
 .active.btn-light-bordered-2,
-.btn-light-bordered-2:hover {
+.btn-light-bordered-2:hover:not(:disabled) {
 	background-color: $gray-200 !important;
 }
 

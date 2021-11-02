@@ -189,13 +189,7 @@ const ScoreBox = ({
 
 	if (!action && final && !small) {
 		action = {
-			text: (
-				<>
-					Box
-					<br />
-					score
-				</>
-			),
+			text: "Box score",
 			href: helpers.leagueUrl([
 				"game_log",
 				allStarGame

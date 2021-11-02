@@ -148,7 +148,7 @@ const sportSpecificCols = bySport<{
 			desc: "Blocks",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "Blk",
+			title: "BLK",
 		},
 		"stat:blkp": {
 			desc: "Percentage of opponent two-pointers blocked",

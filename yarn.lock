@@ -4262,10 +4262,10 @@ find-yarn-workspace-root@^2.0.0:
   dependencies:
     micromatch "^4.0.2"
 
-flag-icon-css@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-4.1.4.tgz#a31fd41187acb28d1333a23b10f31391e5690982"
-  integrity sha512-C1zP1/LYS5LUL5JGDGI1tOLQDS/NfwJA457lGkylHQCAUjPGzZQWp5br9q/WpcCa0Z45Tf2dadwHWENuWvaRKg==
+flag-icon-css@^4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-4.1.5.tgz#e62bb9b06cb659bb89fcf15ecec44ad65bf26180"
+  integrity sha512-n79GW+Seau2sBgT6UF4njkAIVYktGxp133+MPvs92pbqycuFxikfpb8MOCCT0u5niybkHHVXVab19a9xNqxm0g==
 
 flat-cache@^3.0.4:
   version "3.0.4"
@@ -4304,10 +4304,10 @@ form-data@^3.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-framer-motion@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-5.0.1.tgz#e63c504b175780ba658d7f944007ec36d9ef61c9"
-  integrity sha512-Bye1pAXTfp7uh9Ih2H4vyInbS7uXclPvy18G+h8y8DauQx1vtkblPyGSlaoDNGlrfmw6SCVsjSYWDF2SzI68YA==
+framer-motion@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-5.0.2.tgz#968ac1815eab9ac9b6ae4b83010f88d023376b98"
+  integrity sha512-9noBJ3CxSE8MCe0Dj0MqCXBnPFjaOMyx4q6zqV3CWqvsPZSUxsyUaF6Ds3FhFOAABQFesFYCX968Wf48Lalztw==
   dependencies:
     framesync "6.0.1"
     hey-listen "^1.0.8"
@@ -5670,10 +5670,10 @@ karma-chrome-launcher@^3.1.0:
   dependencies:
     which "^1.2.1"
 
-karma-firefox-launcher@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/karma-firefox-launcher/-/karma-firefox-launcher-2.1.1.tgz#6457226f8e4f091b664cef79bb5d39bf1e008765"
-  integrity sha512-VzDMgPseXak9DtfyE1O5bB2BwsMy1zzO1kUxVW1rP0yhC4tDNJ0p3JoFdzvrK4QqVzdqUMa9Rx9YzkdFp8hz3Q==
+karma-firefox-launcher@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/karma-firefox-launcher/-/karma-firefox-launcher-2.1.2.tgz#9a38cc783c579a50f3ed2a82b7386186385cfc2d"
+  integrity sha512-VV9xDQU1QIboTrjtGVD4NCfzIH7n01ZXqy/qpBhnOeGVOkG5JYPEm8kuSd7psHE6WouZaQ9Ool92g8LFweSNMA==
   dependencies:
     is-wsl "^2.2.0"
     which "^2.0.1"
@@ -8300,7 +8300,7 @@ yoga-layout-prebuilt@^1.9.6:
   dependencies:
     "@types/yoga-layout" "1.9.2"
 
-zustand@^3.6.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.2.tgz#76bd927c8f82c14d7aae9f592323371b583e564a"
-  integrity sha512-Jw+tM8T3koFjwLLj8ihlYcMqp3nHfpRNOrc/qqwFhmVp7nmrBD/N73bEb5cjveFKNQtAt+7n2S+gnIbhrV/4qA==
+zustand@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.6.3.tgz#3f500d187daf4dea0ae522b372caf30e72741a9b"
+  integrity sha512-TJ6QbRxRDiMfiBqEqzgrj1wvtcEiu3sQt5HKFA8IhqPJZNjW+nlJXqVELmaj2vTcMAT4VQ90x8yC+MP1TRWqig==

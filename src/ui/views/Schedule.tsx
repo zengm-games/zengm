@@ -118,6 +118,7 @@ const Schedule = ({
 											teams: game.teams,
 										}}
 										playersUpcoming={topPlayers[otherTid]}
+										playersUpcomingAbbrev
 										action={action}
 									/>
 									<ForceWin

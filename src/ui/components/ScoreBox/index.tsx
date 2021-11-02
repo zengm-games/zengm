@@ -57,6 +57,7 @@ const ScoreBox = ({
 	game,
 	limitWidthToParent,
 	playersUpcoming,
+	playersUpcomingAbbrev,
 	small,
 }: {
 	action?: {
@@ -76,6 +77,7 @@ const ScoreBox = ({
 	};
 	limitWidthToParent?: boolean;
 	playersUpcoming?: any[];
+	playersUpcomingAbbrev?: boolean;
 	small?: boolean;
 }) => {
 	const {
@@ -306,7 +308,12 @@ const ScoreBox = ({
 							p = playersUpcoming?.[i];
 							playerStatText = (
 								<>
-									<a href={rosterURL}>{p.abbrev}</a> - {p.ratings.ovr} ovr
+									{playersUpcomingAbbrev ? (
+										<>
+											<a href={rosterURL}>{p.abbrev}</a> -{" "}
+										</>
+									) : null}
+									{p.ratings.ovr} ovr
 									{isSport("basketball")
 										? ` - ${p.stats.pts.toFixed(1)}/${p.stats.trb.toFixed(
 												1,

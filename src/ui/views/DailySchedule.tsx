@@ -18,6 +18,7 @@ const DailySchedule = ({
 	phase,
 	season,
 	ties,
+	topPlayers,
 	upcoming,
 	userTid,
 }: View<"dailySchedule">) => {
@@ -92,8 +93,7 @@ const DailySchedule = ({
 					{upcoming.length > 0 ? (
 						<>
 							{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
-
-							<div className="row">
+							<div className="d-flex flex-wrap" style={{ gap: "1rem 2rem" }}>
 								{upcoming.map(game => {
 									const action =
 										isToday && !tradeDeadline
@@ -124,7 +124,11 @@ const DailySchedule = ({
 									});
 
 									return (
-										<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+										<div
+											className="flex-grow-1"
+											key={game.gid}
+											style={{ maxWidth: 510 }}
+										>
 											<ScoreBox
 												game={{
 													// Leave out forceTie, since ScoreBox wants the value for finished games
@@ -132,14 +136,13 @@ const DailySchedule = ({
 													season: game.season,
 													teams: game.teams,
 												}}
+												playersUpcoming={[
+													topPlayers[game.teams[0].tid][0],
+													topPlayers[game.teams[1].tid][0],
+												]}
 												action={action}
-												limitWidthToParent={!!action}
 											/>
-											<ForceWin
-												allowTie={allowTie}
-												className="mb-3"
-												game={game}
-											/>
+											<ForceWin allowTie={allowTie} game={game} />
 										</div>
 									);
 								})}
@@ -153,10 +156,14 @@ const DailySchedule = ({
 								<h2 className="mt-3">Completed Games</h2>
 							) : null}
 
-							<div className="row">
+							<div className="d-flex flex-wrap" style={{ gap: "2rem" }}>
 								{completed.map(game => {
 									return (
-										<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+										<div
+											className="flex-grow-1"
+											key={game.gid}
+											style={{ maxWidth: 510 }}
+										>
 											<ScoreBox game={game} className="mb-3" />
 										</div>
 									);

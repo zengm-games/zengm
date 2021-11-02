@@ -160,7 +160,10 @@ const updateUpcoming = async (
 	}
 };
 
-const getTopPlayers = async (skipTid: number) => {
+export const getTopPlayers = async (
+	skipTid: number | undefined,
+	numPerTeam: number,
+) => {
 	const topPlayers: Record<number, any[]> = {};
 
 	const teamInfoCache = g.get("teamInfoCache");
@@ -180,7 +183,7 @@ const getTopPlayers = async (skipTid: number) => {
 			},
 			"desc",
 		)
-			.slice(0, 2)
+			.slice(0, numPerTeam)
 			.reverse();
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
@@ -217,7 +220,7 @@ const updateCompleted = async (
 			includeAllStarGame: true,
 		});
 
-		const topPlayers = await getTopPlayers(inputs.tid);
+		const topPlayers = await getTopPlayers(inputs.tid, 2);
 		console.log("topPlayers", topPlayers);
 
 		return {
@@ -241,7 +244,7 @@ const updateCompleted = async (
 			completed.unshift(games[i]);
 		}
 
-		const topPlayers = await getTopPlayers(inputs.tid);
+		const topPlayers = await getTopPlayers(inputs.tid, 2);
 
 		return {
 			completed,

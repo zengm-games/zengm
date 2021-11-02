@@ -2,7 +2,7 @@ import { season } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput, ThenArg } from "../../common/types";
-import { getUpcoming } from "./schedule";
+import { getTopPlayers, getUpcoming } from "./schedule";
 import { PHASE } from "../../common";
 
 let prevInputsDay: number | undefined;
@@ -129,6 +129,8 @@ const updateDailySchedule = async (
 
 		const { completed, day, days, isToday, upcoming } = info;
 
+		const topPlayers = await getTopPlayers(undefined, 1);
+
 		return {
 			completed,
 			currentSeason,
@@ -140,6 +142,7 @@ const updateDailySchedule = async (
 			phase: g.get("phase"),
 			season: inputs.season,
 			ties: g.get("ties", "current"),
+			topPlayers,
 			upcoming,
 			userTid: g.get("userTid"),
 		};

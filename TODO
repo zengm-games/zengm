@@ -13,6 +13,7 @@ improve UI of game summary on schedule page
 - really long team name overflow
 - really long player name overflow
 - on daily schedule, show one upcoming player from each team, and no abbrev underneath
+- check UI with force win enabled, on schedule and dailySchedule
 - hockey
 - football
 

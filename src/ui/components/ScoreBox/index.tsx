@@ -55,7 +55,6 @@ const ScoreBox = ({
 	action,
 	className,
 	game,
-	limitWidthToParent,
 	playersUpcoming,
 	playersUpcomingAbbrev,
 	small,
@@ -75,7 +74,6 @@ const ScoreBox = ({
 		season?: number;
 		teams: [Team, Team];
 	};
-	limitWidthToParent?: boolean;
 	playersUpcoming?: any[];
 	playersUpcomingAbbrev?: boolean;
 	small?: boolean;
@@ -203,18 +201,13 @@ const ScoreBox = ({
 
 	const scoreBox = (
 		<div
-			className={classNames(
-				"flex-grow-1",
-				limitWidthToParent ? "position-relative" : undefined,
-				small ? "d-flex" : undefined,
-			)}
+			className={classNames("flex-grow-1", small ? "d-flex" : undefined)}
 			style={small ? smallStyle : undefined}
 		>
 			<div
 				className={classNames(
 					"border-light",
 					action ? "border-right-0" : undefined,
-					limitWidthToParent ? "position-absolute w-100" : undefined,
 				)}
 			>
 				{tradeDeadline ? (
@@ -465,9 +458,6 @@ const ScoreBox = ({
 					{overtimes}
 				</div>
 			) : null}
-			{!small && overtimes ? (
-				<div className="text-right text-muted p-1">{overtimes}</div>
-			) : null}
 		</div>
 	);
 
@@ -478,24 +468,29 @@ const ScoreBox = ({
 		);
 
 		return (
-			<div className={classNames("d-flex", className)}>
-				{scoreBox}
-				{action.onClick ? (
-					<button
-						className={classNameAction}
-						disabled={action.disabled}
-						onClick={action.onClick}
-					>
-						{action.text}
-					</button>
-				) : (
-					<a
-						className={`${classNameAction} d-flex align-items-center`}
-						href={action.href}
-					>
-						{action.text}
-					</a>
-				)}
+			<div className={className}>
+				<div className="d-flex">
+					{scoreBox}
+					{action.onClick ? (
+						<button
+							className={classNameAction}
+							disabled={action.disabled}
+							onClick={action.onClick}
+						>
+							{action.text}
+						</button>
+					) : (
+						<a
+							className={`${classNameAction} d-flex align-items-center`}
+							href={action.href}
+						>
+							{action.text}
+						</a>
+					)}
+				</div>
+				{!small && overtimes ? (
+					<div className="text-muted p-1">{overtimes}</div>
+				) : null}
 			</div>
 		);
 	}

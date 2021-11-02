@@ -136,8 +136,9 @@ const DailySchedule = ({
 													teams: game.teams,
 												}}
 												playersUpcoming={[
-													topPlayers[game.teams[0].tid][0],
-													topPlayers[game.teams[1].tid][0],
+													// ?. is for All-Star Game
+													topPlayers[game.teams[0].tid]?.[0],
+													topPlayers[game.teams[1].tid]?.[0],
 												]}
 												action={action}
 											/>

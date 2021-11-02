@@ -695,6 +695,7 @@ tr.table-warning:hover > td {
 .btn-light-bordered {
 	@extend .btn-light;
 	border: 1px solid $gray-400 !important;
+	color: $black;
 }
 .btn-light-bordered-primary {
 	@extend .btn-light;
@@ -703,6 +704,7 @@ tr.table-warning:hover > td {
 .btn-light-bordered-2 {
 	@extend .btn-light;
 	border: 1px solid $gray-300 !important;
+	color: $black;
 }
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;
@@ -961,6 +963,9 @@ tr.table-warning:hover > td {
 
 .score-box-deadline {
 	height: 92px;
+}
+.score-box-deadline-small {
+	height: 54px;
 }
 
 .score-box-all-star {

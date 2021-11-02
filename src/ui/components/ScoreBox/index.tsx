@@ -211,13 +211,19 @@ const ScoreBox = ({
 				)}
 			>
 				{tradeDeadline ? (
-					<div className="score-box-deadline p-1 d-flex align-items-center ml-1">
+					<div
+						className={`${
+							small ? "score-box-deadline-small" : "score-box-deadline"
+						} p-1 d-flex align-items-center ml-1`}
+					>
 						Trade deadline
 					</div>
 				) : allStarGame && !final ? (
 					[1, 2].map(i => (
 						<div
-							className="score-box-all-star d-flex align-items-center"
+							className={classNames("d-flex align-items-center", {
+								"score-box-all-star": !small,
+							})}
 							key={i}
 						>
 							<div className={classNames("p-1", { "pr-5": small })}>

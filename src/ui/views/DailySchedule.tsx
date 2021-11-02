@@ -2,7 +2,6 @@ import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { toWorker, useLocalShallow } from "../util";
-import classNames from "classnames";
 import { DAILY_SCHEDULE } from "../../common";
 import { NoGamesMessage } from "./GameLog";
 import allowForceTie from "../../common/allowForceTie";

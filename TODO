@@ -1,5 +1,4 @@
-improve UI of game summary on schedule page
-- test watch toggle, for completed and upcoming
+allow watch everywhere by using toWorker to fetch value if undefined
 
 Make fantasy points a goat variable https://discord.com/channels/290013534023057409/331882115119448065/904858022499717232
 

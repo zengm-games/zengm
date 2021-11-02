@@ -447,7 +447,6 @@ const ScoreBox = ({
 													injury={p.injury}
 													pos={p.ratings?.pos ?? p.pos}
 													season={season}
-													watch={p.watch}
 												>
 													{p.name}
 												</PlayerNameLabels>

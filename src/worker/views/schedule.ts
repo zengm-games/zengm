@@ -3,7 +3,7 @@ import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
-import { bySport, isSport } from "../../common";
+import { bySport } from "../../common";
 
 export const getUpcoming = async ({
 	day,
@@ -187,7 +187,7 @@ export const getTopPlayers = async (
 			.reverse();
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "name", "injury", "abbrev", "tid", "watch"],
+			attrs: ["pid", "name", "injury", "abbrev", "tid"],
 			ratings: ["ovr", "pos"],
 			season: g.get("season"),
 			stats: bySport({

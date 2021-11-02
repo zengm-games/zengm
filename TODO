@@ -8,6 +8,7 @@ improve UI of game summary on schedule page
 - responsive
 - limitWidthToParent - get rid of, or make defautl?
 - test watch toggle, for completed and upcoming
+- test force win highlight
 - really long team name overflow
 - on daily schedule, show one upcoming player from each team, and no abbrev underneath
 - hockey

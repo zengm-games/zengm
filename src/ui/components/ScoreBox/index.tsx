@@ -383,25 +383,6 @@ const ScoreBox = ({
 										</div>
 									) : null}
 								</div>
-								{p ? (
-									<>
-										<div className="align-self-stretch border-left mr-2"></div>
-										<div className="flex-grow-1 text-muted">
-											<div>
-												<PlayerNameLabels
-													pid={p.pid}
-													injury={p.injury}
-													pos={p.ratings?.pos ?? p.pos}
-													season={season}
-													watch={p.watch}
-												>
-													{p.name}
-												</PlayerNameLabels>
-											</div>
-											<div>{playerStatText}</div>
-										</div>
-									</>
-								) : null}
 								{spreads && small ? (
 									<div className={"text-right p-1 pr-2 score-box-score"}>
 										{spreads[i]}
@@ -417,7 +398,7 @@ const ScoreBox = ({
 												"pr-1 score-box-score text-right": small,
 											},
 										)}
-										style={!small ? { fontSize: 16 } : undefined}
+										style={!small ? { fontSize: 16, width: 34 } : undefined}
 									>
 										{small ? (
 											<a
@@ -436,6 +417,31 @@ const ScoreBox = ({
 											t.pts
 										)}
 									</div>
+								) : null}
+								{p ? (
+									<>
+										<div
+											className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-flex align-items-center"
+											style={{
+												backgroundColor: "var(--white)",
+											}}
+										>
+											<div>
+												<div>
+													<PlayerNameLabels
+														pid={p.pid}
+														injury={p.injury}
+														pos={p.ratings?.pos ?? p.pos}
+														season={season}
+														watch={p.watch}
+													>
+														{p.name}
+													</PlayerNameLabels>
+												</div>
+												<div>{playerStatText}</div>
+											</div>
+										</div>
+									</>
 								) : null}
 							</div>
 						);

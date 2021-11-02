@@ -1,3 +1,8 @@
+fix ai value of reversed draft picks https://discord.com/channels/290013534023057409/290013534023057409/905048206457581598
+- and random
+
+ScoreBox - use team ovr formula to pick best FBGM players, so they get position influence
+
 on schedule page, if first game is on current day, put "watch" button in action. otherwise, put "sim to game" even though it's the first one https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
 
 allow watch everywhere by using toWorker to fetch value if undefined
@@ -14,6 +19,7 @@ add archetypes to players?
 
 https://github.com/lukeed/tsm
 - see tsm branch, was getting errors in build
+- move types to jsdoc?
 
 configure assist rate https://discord.com/channels/290013534023057409/331882115119448065/897005671143313408
 

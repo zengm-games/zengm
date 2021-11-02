@@ -10,9 +10,8 @@ improve UI of game summary on schedule page
 - limitWidthToParent - get rid of, or make defautl?
 - test watch toggle, for completed and upcoming
 - test force win highlight
-- really long team name overflow
-- really long player name overflow
 - check UI with force win enabled, on schedule and dailySchedule
+- test overtime, on schedule and dailySchedule
 - hockey
 - football
 

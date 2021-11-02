@@ -355,7 +355,7 @@ const ScoreBox = ({
 									style={
 										!small
 											? {
-													width: 230,
+													width: 210,
 											  }
 											: undefined
 									}
@@ -434,9 +434,10 @@ const ScoreBox = ({
 								</div>
 								{p ? (
 									<div
-										className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center"
+										className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
 										style={{
 											backgroundColor: "var(--white)",
+											width: 200,
 										}}
 									>
 										<div>

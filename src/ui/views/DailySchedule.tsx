@@ -156,7 +156,7 @@ const DailySchedule = ({
 								<h2 className="mt-3">Completed Games</h2>
 							) : null}
 
-							<div className="d-flex flex-wrap" style={{ gap: "2rem" }}>
+							<div className="d-flex flex-wrap" style={{ gap: "1rem 2rem" }}>
 								{completed.map(game => {
 									return (
 										<div
@@ -164,7 +164,7 @@ const DailySchedule = ({
 											key={game.gid}
 											style={{ maxWidth: 510 }}
 										>
-											<ScoreBox game={game} className="mb-3" />
+											<ScoreBox game={game} />
 										</div>
 									);
 								})}

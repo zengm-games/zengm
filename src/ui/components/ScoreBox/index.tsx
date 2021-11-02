@@ -341,7 +341,7 @@ const ScoreBox = ({
 								) : null}
 								<div
 									className={classNames(
-										"p-1 d-flex align-items-center score-box-left-wrapper",
+										"d-flex align-items-center score-box-left-wrapper",
 										{
 											"flex-grow-1": small,
 										},
@@ -354,7 +354,7 @@ const ScoreBox = ({
 											: undefined
 									}
 								>
-									<div className="flex-grow-1 text-truncate">
+									<div className="flex-grow-1 text-truncate p-1">
 										{t.playoffs ? (
 											<span className="text-dark">{t.playoffs.seed}. </span>
 										) : null}
@@ -365,7 +365,7 @@ const ScoreBox = ({
 											{teamName}
 										</a>
 										{!small ? (
-											<div className="text-muted">
+											<div className="text-muted text-truncate">
 												{getRecord(t)}
 												{hasOvrs ? (
 													<>
@@ -397,12 +397,13 @@ const ScoreBox = ({
 									{final ? (
 										<div
 											className={classNames(
-												"text-body text-right",
+												"text-body text-right align-self-stretch d-flex align-items-center",
 												scoreClass,
 												userTeamClass,
 												{
 													"font-weight-bold score-box-score": small,
-													"pr-1": !small,
+													"px-2": !small,
+													"pr-1": small,
 												},
 											)}
 											style={!small ? { fontSize: 16 } : undefined}
@@ -417,6 +418,7 @@ const ScoreBox = ({
 														gameSeason,
 														game.gid,
 													])}
+													className="d-block w-100"
 												>
 													{t.pts}
 												</a>

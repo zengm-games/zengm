@@ -8,9 +8,9 @@ const getBestPlayer = (players: any[]) => {
 
 	return bySport({
 		basketball: () => {
-			// Based on https://fansided.com/2017/04/10/updating-dre-tweaks/ but with blk increased because otherwise it'd basically never get selected
+			// Based on https://fansided.com/2017/04/10/updating-dre-tweaks/ but with blk increased because otherwise it'd basically never get selected, and pts lower to account for the negative terms kind of
 			const factors: [string, number][] = [
-				["pts", 0.8],
+				["pts", 0.4],
 				["trb", 0.5],
 				["ast", 0.5],
 				["blk", 1.7],

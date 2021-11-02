@@ -391,14 +391,15 @@ const ScoreBox = ({
 								{final ? (
 									<div
 										className={classNames(
-											"font-weight-bold text-body",
+											"font-weight-bold text-body text-right",
 											scoreClass,
 											userTeamClass,
 											{
-												"pr-1 score-box-score text-right": small,
+												"pr-1 score-box-score": small,
+												"pr-2": !small,
 											},
 										)}
-										style={!small ? { fontSize: 16, width: 34 } : undefined}
+										style={!small ? { fontSize: 16, width: 36 } : undefined}
 									>
 										{small ? (
 											<a
@@ -419,29 +420,27 @@ const ScoreBox = ({
 									</div>
 								) : null}
 								{p ? (
-									<>
-										<div
-											className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-flex align-items-center"
-											style={{
-												backgroundColor: "var(--white)",
-											}}
-										>
+									<div
+										className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center"
+										style={{
+											backgroundColor: "var(--white)",
+										}}
+									>
+										<div>
 											<div>
-												<div>
-													<PlayerNameLabels
-														pid={p.pid}
-														injury={p.injury}
-														pos={p.ratings?.pos ?? p.pos}
-														season={season}
-														watch={p.watch}
-													>
-														{p.name}
-													</PlayerNameLabels>
-												</div>
-												<div>{playerStatText}</div>
+												<PlayerNameLabels
+													pid={p.pid}
+													injury={p.injury}
+													pos={p.ratings?.pos ?? p.pos}
+													season={season}
+													watch={p.watch}
+												>
+													{p.name}
+												</PlayerNameLabels>
 											</div>
+											<div>{playerStatText}</div>
 										</div>
-									</>
+									</div>
 								) : null}
 							</div>
 						);

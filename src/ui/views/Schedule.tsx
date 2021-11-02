@@ -73,8 +73,8 @@ const Schedule = ({
 					</Dropdown.Menu>
 				</Dropdown>
 			) : null}
-			<div className="row">
-				<div className="col-sm-6">
+			<div className="d-flex flex-wrap" style={{ gap: "2rem" }}>
+				<div style={{ maxWidth: 510 }} className="flex-grow-1">
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
 						{upcoming.map((game, i) => {
@@ -131,7 +131,7 @@ const Schedule = ({
 						})}
 					</ul>
 				</div>
-				<div className="col-sm-6">
+				<div style={{ maxWidth: 510 }} className="flex-grow-1">
 					<h2>Completed Games</h2>
 					{completed.map(game => (
 						<ScoreBox className="mb-3" key={game.gid} game={game} />

@@ -201,7 +201,7 @@ const ScoreBox = ({
 
 	const scoreBox = (
 		<div
-			className={classNames("flex-grow-1", small ? "d-flex" : undefined)}
+			className={classNames("flex-grow-1 w-100", small ? "d-flex" : undefined)}
 			style={small ? smallStyle : undefined}
 		>
 			<div
@@ -211,13 +211,15 @@ const ScoreBox = ({
 				)}
 			>
 				{tradeDeadline ? (
-					<div className="score-box-deadline p-1 d-flex align-items-center">
+					<div className="score-box-deadline p-1 d-flex align-items-center ml-1">
 						Trade deadline
 					</div>
 				) : allStarGame && !final ? (
 					[1, 2].map(i => (
-						<div className="d-flex align-items-center" key={i}>
-							<div className="score-box-logo" />
+						<div
+							className="score-box-all-star d-flex align-items-center"
+							key={i}
+						>
 							<div className={classNames("p-1", { "pr-5": small })}>
 								<a
 									href={helpers.leagueUrl(["all_star", "draft"])}
@@ -265,7 +267,7 @@ const ScoreBox = ({
 						let teamName;
 						let rosterURL;
 						if (allStarGame) {
-							imgURL = undefined;
+							imgURL = "https://zengm.com/files/logo-basketball.png";
 							teamName = small
 								? `AS${i === 0 ? 2 : 1}`
 								: `All-Star Team ${i === 0 ? 2 : 1}`;
@@ -304,7 +306,7 @@ const ScoreBox = ({
 									{bySport({
 										basketball: `, ${p.stats.pts.toFixed(
 											1,
-										)}/${p.stats.trb.toFixed(1)}/${p.stats.ast.toFixed(1)}`,
+										)} / ${p.stats.trb.toFixed(1)} / ${p.stats.ast.toFixed(1)}`,
 										football: null,
 										hockey: `, ${p.stats.keyStats}`,
 									})}
@@ -327,12 +329,13 @@ const ScoreBox = ({
 									userTeamClass,
 								)}
 							>
-								{imgURL || allStarGame ? (
+								{imgURL ? (
 									<a href={rosterURL}>
 										<TeamLogoInline
 											imgURL={imgURL}
+											includePlaceholderIfNoLogo
 											size={small ? 24 : 36}
-											style={{ marginLeft: 1 }}
+											className="ml-1"
 										/>
 									</a>
 								) : null}
@@ -387,7 +390,7 @@ const ScoreBox = ({
 										) : null}
 									</div>
 									{spreads && small ? (
-										<div className="text-right score-box-score">
+										<div className="text-right score-box-score mr-2">
 											{spreads[i]}
 										</div>
 									) : null}
@@ -415,7 +418,11 @@ const ScoreBox = ({
 														gameSeason,
 														game.gid,
 													])}
-													className="d-block w-100"
+													className="d-block w-100 h-100"
+													style={{
+														// Vertical center
+														paddingTop: 4,
+													}}
 												>
 													{t.pts}
 												</a>

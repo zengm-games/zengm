@@ -82,7 +82,15 @@ const Schedule = ({
 								? undefined
 								: {
 										disabled: gameSimInProgress || i === 0,
-										text: "Sim to game",
+										text: (
+											<>
+												Sim
+												<br />
+												to
+												<br />
+												game
+											</>
+										),
 										onClick: () => {
 											toWorker("actions", "simToGame", game.gid);
 										},

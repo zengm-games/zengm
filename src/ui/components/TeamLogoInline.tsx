@@ -2,17 +2,19 @@ const TeamLogoInline = ({
 	className,
 	imgURL,
 	imgURLSmall,
+	includePlaceholderIfNoLogo,
 	size = 24,
 	style,
 }: {
 	className?: string;
 	imgURL?: string;
 	imgURLSmall?: string;
+	includePlaceholderIfNoLogo?: boolean;
 	size?: number;
 	style?: React.CSSProperties;
 }) => {
 	const actualImgURL = imgURLSmall ?? imgURL;
-	if (!actualImgURL) {
+	if (!actualImgURL && !includePlaceholderIfNoLogo) {
 		return null;
 	}
 
@@ -23,7 +25,9 @@ const TeamLogoInline = ({
 			}`}
 			style={{ height: size, width: size, ...style }}
 		>
-			<img className="mw-100 mh-100" src={actualImgURL} alt="" />
+			{actualImgURL ? (
+				<img className="mw-100 mh-100" src={actualImgURL} alt="" />
+			) : null}
 		</div>
 	);
 };

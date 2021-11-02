@@ -1,16 +1,17 @@
 import classNames from "classnames";
-import { isSport } from "../../common";
-import { helpers, useLocalShallow } from "../util";
+import { isSport } from "../../../common";
+import { helpers, useLocalShallow } from "../../util";
 import type { ReactNode } from "react";
-import TeamLogoInline from "./TeamLogoInline";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
-import { PlayerNameLabels } from ".";
+import TeamLogoInline from "../TeamLogoInline";
+import defaultGameAttributes from "../../../common/defaultGameAttributes";
+import { PlayerNameLabels } from "..";
+import getBestPlayer from "./getBestPlayer";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
 };
 
-// pts is undefined for upcoming games. Others are undefined only for legacy objects
+// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
 type Team = {
 	ovr?: number;
 	pts?: number;
@@ -19,6 +20,7 @@ type Team = {
 	lost?: number;
 	tied?: number;
 	otl?: number;
+	players?: any[];
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -93,8 +95,6 @@ const ScoreBox = ({
 		teamInfoCache: state.teamInfoCache,
 		userTid: state.userTid,
 	}));
-
-	console.log(game);
 
 	let winner: -1 | 0 | 1 | undefined;
 	if (game.teams[0].pts !== undefined && game.teams[1].pts !== undefined) {
@@ -300,7 +300,25 @@ const ScoreBox = ({
 						const userTeamClass =
 							t.tid === userTid && final ? "user-team" : undefined;
 
-						const p = playersUpcoming?.[i];
+						let p;
+						let playerStatText;
+						if (playersUpcoming?.[i]) {
+							p = playersUpcoming?.[i];
+							playerStatText = (
+								<>
+									<a href={rosterURL}>{p.abbrev}</a> - {p.ratings.ovr} ovr
+									{isSport("basketball")
+										? ` - ${p.stats.pts.toFixed(1)}/${p.stats.trb.toFixed(
+												1,
+										  )}/${p.stats.ast.toFixed(1)}`
+										: null}
+								</>
+							);
+						} else if (final && t.players) {
+							const best = getBestPlayer(t.players);
+							p = best.p;
+							playerStatText = best.statText;
+						}
 
 						return (
 							<div
@@ -373,21 +391,14 @@ const ScoreBox = ({
 												<PlayerNameLabels
 													pid={p.pid}
 													injury={p.injury}
-													pos={p.ratings.pos}
+													pos={p.ratings?.pos ?? p.pos}
 													season={season}
 													watch={p.watch}
 												>
 													{p.name}
 												</PlayerNameLabels>
 											</div>
-											<div>
-												<a href={rosterURL}>{p.abbrev}</a> - {p.ratings.ovr} ovr
-												{isSport("basketball")
-													? ` - ${p.stats.pts.toFixed(1)}/${p.stats.trb.toFixed(
-															1,
-													  )}/${p.stats.ast.toFixed(1)}`
-													: null}
-											</div>
+											<div>{playerStatText}</div>
 										</div>
 									</>
 								) : null}

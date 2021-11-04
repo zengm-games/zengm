@@ -308,13 +308,17 @@ const ScoreBox = ({
 											<a href={rosterURL}>{p.abbrev}</a>,{" "}
 										</>
 									) : null}
-									{p.ratings.ovr} ovr
+									{!challengeNoRatings ? `${p.ratings.ovr} ovr` : null}
 									{bySport({
-										basketball: `, ${p.stats.pts.toFixed(
+										basketball: `${
+											!challengeNoRatings ? ", " : ""
+										}${p.stats.pts.toFixed(1)} / ${p.stats.trb.toFixed(
 											1,
-										)} / ${p.stats.trb.toFixed(1)} / ${p.stats.ast.toFixed(1)}`,
+										)} / ${p.stats.ast.toFixed(1)}`,
 										football: null,
-										hockey: `, ${p.stats.keyStats}`,
+										hockey: `${!challengeNoRatings ? ", " : ""}${
+											p.stats.keyStats
+										}`,
 									})}
 								</>
 							);

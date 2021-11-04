@@ -315,14 +315,19 @@ const genJerseyNumber = async (
 			!teamJerseyNumbers.includes(jerseyNumber) &&
 			!retiredJerseyNumbers.includes(jerseyNumber),
 	);
+
+	if (
+		prevJerseyNumber &&
+		(candidates.includes(prevJerseyNumber) ||
+			!VALID_JERSEY_NUMBERS.includes(prevJerseyNumber))
+	) {
+		// Keep old jersey number, if it is available or if prevJerseyNumber is not a valid jersey number (must have been manually edited)
+		return prevJerseyNumber;
+	}
+
 	if (candidates.length === 0) {
 		// No valid jersey number left!
 		return;
-	}
-
-	if (prevJerseyNumber && candidates.includes(prevJerseyNumber)) {
-		// Keep old jersey number, if possible
-		return prevJerseyNumber;
 	}
 
 	if (weightFunctionsByPosition) {

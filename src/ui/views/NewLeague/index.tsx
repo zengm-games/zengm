@@ -408,13 +408,17 @@ const reducer = (state: State, action: Action): State => {
 				season: action.season,
 			};
 
-		case "setTeams":
+		case "setTeams": {
+			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
+
 			return {
 				...state,
 				confs: action.confs,
 				divs: action.divs,
 				teams: action.teams,
+				tid: getNewTid(prevTeamRegionName, action.teams),
 			};
+		}
 
 		case "setTid": {
 			const t = state.teams.find(t => t.tid === action.tid);

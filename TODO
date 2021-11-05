@@ -1,13 +1,16 @@
+add comparison to real player, for random player or draft prospect?
+- https://twitter.com/messages/1928999030-3723150857
+- draftRatings/currentRatings/currentStats/currentPotential/careerRatings/careerStats
+- "real life"/"your league" (only basketball)
+
 player stats single season all seasons https://old.reddit.com/r/ZenGMHockey/comments/qgsac9/separating_regulation_wins_and_overtime_wins/hj4il7o/?context=3
 
 fix ai value of reversed draft picks https://discord.com/channels/290013534023057409/290013534023057409/905048206457581598
-- and random
+- and random https://old.reddit.com/r/BasketballGM/comments/pyw33f/monthly_suggestions_thread/hg2t67n/
 
 on schedule page, if first game is on current day, put "watch" button in action. otherwise, put "sim to game" even though it's the first one https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
 
 allow watch everywhere by using toWorker to fetch value if undefined
-
-Make fantasy points a goat variable https://discord.com/channels/290013534023057409/331882115119448065/904858022499717232
 
 XP on wrong team, maybe penalty related https://old.reddit.com/r/Football_GM/comments/qb627b/would_love_to_hear_if_anyone_has_ever_seen_this/hh8u1q0/?context=3
 
@@ -134,8 +137,6 @@ free throws with no time left https://github.com/zengm-games/zengm/issues/392
 custom flags
 - on playerBioInfo editor, add none/default/custom for flag. then somehow need to get that info for display...
 
-god mode customize all star selections
-
 way to tell getCopy we are not going to mutate, so don't need deepcopy
 
 player ratings stats popover, allow switching season
@@ -166,11 +167,6 @@ foul trouble
 - players should play different when they're in foul trouble
 - sub out players in foul trouble https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b484v/
 - (maybe if still necessary) make fouling more uniform https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b22ia/
-
-add comparison to real player, for random player or draft prospect?
-- https://twitter.com/messages/1928999030-3723150857
-- draftRatings/currentRatings/currentStats/currentPotential/careerRatings/careerStats
-- "real life"/"your league" (only basketball)
 
 draft lottery history
 - https://basketball.realgm.com/nba/draft/lottery_results/by_team
@@ -1446,10 +1442,6 @@ if a trade is highly unfavorable to the user, pop up a warning confirmation dial
 live game
 - field with drive summary, football, direction, and last play
 
-more accurage game sim
-- State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
-  - https://thisrobot.life/guides/comparison-with-xstate.html
-
 ---
 
 in table, sort position by constants.POSITIONS order (like roster page in football)
@@ -1998,9 +1990,6 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you only get the latest row. need added logic to do sum
   for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
     no pass tid and you get each team separately, but no merged stats as above
-contracts
-  maybe make them nonlinear.. role players lower, stars higher
-    compare to NBA contract distribution
 if fouling out drops team below 5 active players, play fouled out players but add a FT each foul (technical)
 show old contracts on old roster view
 core.trade refactoring

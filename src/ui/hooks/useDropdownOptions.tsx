@@ -215,7 +215,7 @@ const useDropdownOptions = (
 		}
 
 		if (field === "seasonsAndCareer") {
-			keys.unshift("career");
+			keys.unshift("career", "all|||seasons");
 		}
 
 		if (field === "seasonsAndAll") {

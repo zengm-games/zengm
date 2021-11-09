@@ -10,7 +10,6 @@ export const formatStatGameHigh = (
 	ps: any,
 	stat: string,
 	statType?: string,
-	defaultSeason?: number,
 ) => {
 	if (stat.endsWith("Max")) {
 		if (!Array.isArray(ps[stat])) {
@@ -24,12 +23,7 @@ export const formatStatGameHigh = (
 
 		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
 		const tid = row.length > 3 ? row[3] : ps.tid;
-		const season =
-			row.length > 3
-				? row[4]
-				: ps.season !== undefined
-				? ps.season
-				: defaultSeason;
+		const season = row.length > 3 ? row[4] : ps.season;
 
 		return (
 			<a
@@ -65,7 +59,7 @@ const PlayerStats = ({
 		dropdownView: "player_stats",
 		dropdownFields: {
 			teamsAndAllWatch: abbrev,
-			seasonsAndCareer: season === undefined ? "career" : season,
+			seasonsAndCareer: season,
 			statTypesAdv: statType,
 			playoffs,
 		},
@@ -76,6 +70,7 @@ const PlayerStats = ({
 		"Pos",
 		"Age",
 		"Team",
+		...(season === "all" ? ["Season"] : []),
 		...stats.map(
 			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
@@ -115,7 +110,7 @@ const PlayerStats = ({
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;
-		if (season === undefined) {
+		if (season === "career") {
 			p.stats = p.careerStats;
 			actualAbbrev = p.abbrev;
 			actualTid = p.tid;
@@ -128,11 +123,13 @@ const PlayerStats = ({
 		}
 
 		const statsRow = stats.map(stat =>
-			formatStatGameHigh(p.stats, stat, statType, season),
+			formatStatGameHigh(p.stats, stat, statType),
 		);
 
+		const key = season === "all" ? `${p.pid}-${p.stats.season}` : p.pid;
+
 		return {
-			key: p.pid,
+			key,
 			data: [
 				{
 					value: (
@@ -140,7 +137,7 @@ const PlayerStats = ({
 							injury={p.injury}
 							jerseyNumber={p.stats.jerseyNumber}
 							pid={p.pid}
-							season={season}
+							season={season === "career" ? undefined : p.stats.season}
 							skills={p.ratings.skills}
 							watch={p.watch}
 						>
@@ -153,17 +150,22 @@ const PlayerStats = ({
 				pos,
 
 				// Only show age at death for career totals, otherwise just use current age
-				season === undefined ? wrappedAgeAtDeath(p.age, p.ageAtDeath) : p.age,
+				season === "career"
+					? wrappedAgeAtDeath(p.age, p.ageAtDeath)
+					: p.stats.season - p.born.year,
 
 				<a
 					href={helpers.leagueUrl([
 						"roster",
 						`${actualAbbrev}_${actualTid}`,
-						...(season === undefined ? [] : [season]),
+						...(season === "career" ? [] : [p.stats.season]),
 					])}
 				>
 					{actualAbbrev}
 				</a>,
+
+				...(season === "all" ? [p.stats.season] : []),
+
 				...statsRow,
 			],
 			classNames: {
@@ -178,7 +180,7 @@ const PlayerStats = ({
 			<MoreLinks
 				type="playerStats"
 				page="player_stats"
-				season={season}
+				season={typeof season === "number" ? season : undefined}
 				statType={statType}
 				keepSelfLink
 			/>
@@ -206,7 +208,7 @@ PlayerStats.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	season: PropTypes.number, // Undefined for career totals
+	season: PropTypes.oneOf(["career", "all", PropTypes.number]),
 	statType: PropTypes.string.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,

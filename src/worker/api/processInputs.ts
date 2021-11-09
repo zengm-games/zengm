@@ -576,10 +576,17 @@ const playerStats = (params: Params) => {
 		football: "passing",
 		hockey: "skater",
 	});
+
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
 	return {
 		abbrev,
-		season:
-			params.season === "career" ? undefined : validateSeason(params.season),
+		season,
 		statType: params.statType ?? defaultStatType,
 		playoffs,
 	};

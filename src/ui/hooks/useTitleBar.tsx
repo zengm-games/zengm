@@ -22,7 +22,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	customMenu?: MenuItemHeader;
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
-	jumpToSeason?: number | "all";
+	jumpToSeason?: number | "all" | "career";
 	dropdownCustomOptions?: LocalStateUI["dropdownCustomOptions"];
 	dropdownCustomURL?: (fields: DropdownFields) => string;
 	dropdownView?: string;

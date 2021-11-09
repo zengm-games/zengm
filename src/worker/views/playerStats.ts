@@ -52,7 +52,8 @@ const updatePlayers = async (
 			]);
 		} else {
 			playersAll = await idb.getCopies.players({
-				activeSeason: inputs.season,
+				activeSeason:
+					typeof inputs.season === "number" ? inputs.season : undefined,
 			});
 		}
 
@@ -89,6 +90,7 @@ const updatePlayers = async (
 				"nameAbbrev",
 				"name",
 				"age",
+				"born",
 				"ageAtDeath",
 				"injury",
 				"tid",
@@ -97,8 +99,8 @@ const updatePlayers = async (
 				"watch",
 			],
 			ratings: ["skills", "pos"],
-			stats: ["abbrev", "tid", "jerseyNumber", ...stats],
-			season: inputs.season, // If null, then show career stats!
+			stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
+			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
@@ -106,11 +108,22 @@ const updatePlayers = async (
 			mergeStats: true,
 		});
 
+		if (inputs.season === "all") {
+			players = players
+				.map(p => {
+					return p.stats.map((ps: any) => ({
+						...p,
+						stats: ps,
+					}));
+				})
+				.flat();
+		}
+
 		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && isSport("basketball")) {
 			players = players.filter(p => {
 				if (inputs.statType === "gameHighs") {
-					if (inputs.season !== undefined) {
+					if (inputs.season !== "career") {
 						return p.stats.gp > 0;
 					} else if (inputs.playoffs !== "playoffs") {
 						return p.careerStats.gp > 0;
@@ -118,7 +131,7 @@ const updatePlayers = async (
 					return p.careerStatsPlayoffs.gp > 0;
 				}
 
-				if (inputs.season !== undefined) {
+				if (inputs.season !== "career") {
 					return p.stats.gp > 0;
 				} else if (inputs.playoffs === "playoffs") {
 					return p.careerStatsPlayoffs.gp > 0;
@@ -137,7 +150,7 @@ const updatePlayers = async (
 			const onlyShowIf = statsTable.onlyShowIf;
 
 			let obj: "careerStatsPlayoffs" | "careerStats" | "stats";
-			if (inputs.season === undefined) {
+			if (inputs.season === "career") {
 				if (inputs.playoffs === "playoffs") {
 					obj = "careerStatsPlayoffs";
 				} else {

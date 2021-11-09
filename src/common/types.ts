@@ -918,7 +918,7 @@ export type LocalStateUI = {
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;
-	jumpToSeason?: number | "all";
+	jumpToSeason?: number | "all" | "career";
 	dropdownCustomOptions?: Record<
 		string,
 		{

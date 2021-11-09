@@ -98,7 +98,7 @@ const updatePlayers = async (
 				"hof",
 				"watch",
 			],
-			ratings: ["skills", "pos"],
+			ratings: ["skills", "pos", "season"],
 			stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
 			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
@@ -110,12 +110,19 @@ const updatePlayers = async (
 
 		if (inputs.season === "all") {
 			players = players
-				.map(p => {
-					return p.stats.map((ps: any) => ({
-						...p,
-						stats: ps,
-					}));
-				})
+				.map(p =>
+					p.stats.map((ps: any) => {
+						const ratings =
+							p.ratings.find((pr: any) => pr.season === ps.season) ??
+							p.ratings.at(-1);
+
+						return {
+							...p,
+							ratings,
+							stats: ps,
+						};
+					}),
+				)
 				.flat();
 		}
 

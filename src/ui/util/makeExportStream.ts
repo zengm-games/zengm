@@ -156,6 +156,8 @@ const makeExportStream = async (
 					}
 
 					controller.close();
+
+					leagueDB.close();
 				};
 
 				if (cancelCallback) {

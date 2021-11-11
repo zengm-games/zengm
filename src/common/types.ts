@@ -36,7 +36,7 @@ declare global {
 	namespace NodeJS {
 		interface ProcessEnv {
 			NODE_ENV: "development" | "production" | "test";
-			SPORT: "basketball" | "football";
+			SPORT: "basketball" | "football" | "hockey";
 		}
 	}
 

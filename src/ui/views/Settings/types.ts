@@ -90,7 +90,8 @@ export type Key =
 	| "playerBioInfo"
 	| "playIn"
 	| "numPlayersDunk"
-	| "numPlayersThree";
+	| "numPlayersThree"
+	| "fantasyPoints";
 
 export type Category =
 	| "New League"

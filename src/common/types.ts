@@ -470,6 +470,7 @@ export type GameAttributesLeague = {
 	elamMinutes: number;
 	elamPoints: number;
 	equalizeRegions: boolean;
+	fantasyPoints?: "standard" | "ppr" | "halfPpr";
 	forceRetireAge: number;
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: number[];
@@ -869,6 +870,7 @@ export type LocalStateUI = {
 			},
 		];
 	}[];
+	fantasyPoints: GameAttributesLeague["fantasyPoints"];
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;

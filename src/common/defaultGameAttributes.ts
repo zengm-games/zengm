@@ -226,6 +226,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				playoffsReseed: true,
 				playoffsNumTeamsDiv: wrap(1),
 				playIn: false,
+				fantasyPoints: "standard",
 		  }
 		: {};
 

@@ -1293,6 +1293,17 @@ if (isSport("basketball")) {
 			}
 		},
 	});
+	settings.push({
+		category: "UI",
+		key: "fantasyPoints",
+		name: "Fantasy Points",
+		type: "string",
+		values: [
+			{ key: "standard", value: "Standard" },
+			{ key: "ppr", value: "PPR" },
+			{ key: "halfPPR", value: "Half PPR" },
+		],
+	});
 }
 
 settings.push(

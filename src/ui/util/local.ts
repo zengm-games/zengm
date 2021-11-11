@@ -45,6 +45,7 @@ const useLocal = create(
 		challengeNoRatings: false,
 		customMenu: undefined,
 		dirtySettings: false,
+		fantasyPoints: undefined,
 		gameSimInProgress: false,
 		games: [],
 		gold: undefined,

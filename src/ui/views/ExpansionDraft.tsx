@@ -9,6 +9,7 @@ import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
 const ExpansionDraft = ({
 	builtInTeams,
 	confs,
+	defaultNumProtectedPlayers,
 	divs,
 	godMode,
 	godModeLimits,
@@ -61,11 +62,7 @@ const ExpansionDraft = ({
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
 		const newNumProtectedPlayers = String(
-			helpers.bound(
-				parseInt(initialNumProtectedPlayers) - newTeams.length,
-				0,
-				Infinity,
-			),
+			helpers.bound(defaultNumProtectedPlayers - newTeams.length, 0, Infinity),
 		);
 		const newNumPerTeam = String(
 			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
@@ -195,12 +192,14 @@ const ExpansionDraft = ({
 	// If user is taking control of team, don't let them pick the number of protected players - too easy!
 	const disableNumProtectedPlayersChange =
 		teams.some(t => t.takeControl) && !godMode;
-	const defaultNumProtectedPlayers = String(minRosterSize - teams.length);
+	const defaultNumProtectedPlayersValue = String(
+		defaultNumProtectedPlayers - teams.length,
+	);
 	if (
 		disableNumProtectedPlayersChange &&
-		numProtectedPlayers !== defaultNumProtectedPlayers
+		numProtectedPlayers !== defaultNumProtectedPlayersValue
 	) {
-		setNumProtectedPlayers(defaultNumProtectedPlayers);
+		setNumProtectedPlayers(defaultNumProtectedPlayersValue);
 	}
 
 	let godModeWarning = false;
@@ -224,7 +223,6 @@ const ExpansionDraft = ({
 						if (godModeWarnings.length > 0) {
 							godModeWarning = true;
 						}
-						console.log("godModeWarnings", godModeWarnings);
 
 						return (
 							<div key={i} className="col-xl-4 col-lg-6 mb-3">

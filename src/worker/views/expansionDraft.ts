@@ -87,22 +87,22 @@ const updateExpansionDraft = async () => {
 
 	const godModeLimits = newLeagueGodModeLimits();
 
+	const defaultNumProtectedPlayers = bySport({
+		hockey: Math.max(g.get("minRosterSize") - 4, 0),
+		default: g.get("minRosterSize"),
+	});
+
 	return {
 		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
 		confs: g.get("confs"),
+		defaultNumProtectedPlayers,
 		divs: g.get("divs"),
 		godMode: g.get("godMode"),
 		godModeLimits,
 		initialTeams,
 		initialNumPerTeam,
 		initialNumProtectedPlayers:
-			expansionDraft.numProtectedPlayers ??
-			String(
-				bySport({
-					hockey: Math.max(g.get("minRosterSize") - 4, 0),
-					default: g.get("minRosterSize"),
-				}),
-			),
+			expansionDraft.numProtectedPlayers ?? String(defaultNumProtectedPlayers),
 		minRosterSize: g.get("minRosterSize"),
 		multiTeamMode: g.get("userTids").length > 1,
 		numActiveTeams: g.get("numActiveTeams"),

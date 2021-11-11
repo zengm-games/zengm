@@ -1,11 +1,7 @@
-import {
-	filterPlayerStats,
-	PLAYER_GAME_STATS,
-	processPlayerStats,
-} from "../../common";
+import { filterPlayerStats, PLAYER_GAME_STATS } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g, getTeamInfoBySeason } from "../util";
+import { g, getTeamInfoBySeason, processPlayerStats } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (

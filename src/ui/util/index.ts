@@ -52,6 +52,7 @@ export { default as menuItems } from "./menuItems";
 export { default as notify } from "./notify";
 export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as processLiveGameEvents } from "./processLiveGameEvents";
+export { default as processPlayerStats } from "./processPlayerStats";
 export { default as realtimeUpdate } from "./realtimeUpdate";
 export { default as requestPersistentStorage } from "./requestPersistentStorage";
 export { default as resetFileInput } from "./resetFileInput";

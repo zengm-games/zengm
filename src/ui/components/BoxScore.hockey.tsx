@@ -1,12 +1,8 @@
 import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, helpers } from "../util";
-import {
-	filterPlayerStats,
-	getPeriodName,
-	processPlayerStats,
-} from "../../common";
+import { getCols, helpers, processPlayerStats } from "../util";
+import { filterPlayerStats, getPeriodName } from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey";

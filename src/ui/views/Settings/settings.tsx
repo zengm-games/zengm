@@ -1301,7 +1301,7 @@ if (isSport("basketball")) {
 		values: [
 			{ key: "standard", value: "Standard" },
 			{ key: "ppr", value: "PPR" },
-			{ key: "halfPPR", value: "Half PPR" },
+			{ key: "halfPpr", value: "Half PPR" },
 		],
 	});
 }

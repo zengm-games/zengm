@@ -169,6 +169,7 @@ const useLocal = create(
 				// Keep in sync with gameAttributesToUI - this is just for TypeScript
 				const keys = [
 					"challengeNoRatings",
+					"fantasyPoints",
 					"godMode",
 					"hideDisabledTeams",
 					"homeCourtAdvantage",

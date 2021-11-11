@@ -1,13 +1,8 @@
 import PropTypes from "prop-types";
 import { memo, Fragment, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols } from "../util";
-import {
-	filterPlayerStats,
-	getPeriodName,
-	helpers,
-	processPlayerStats,
-} from "../../common";
+import { getCols, processPlayerStats } from "../util";
+import { filterPlayerStats, getPeriodName, helpers } from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.football";
 
 type Quarter = `Q${number}` | "OT";

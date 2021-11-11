@@ -35,6 +35,7 @@ const gameAttributesToUI = async (
 			updated = true;
 		}
 	}
+	console.log("gameAttributesToUI", updated, update);
 
 	if (updated) {
 		await toUI("setGameAttributes", [update]);

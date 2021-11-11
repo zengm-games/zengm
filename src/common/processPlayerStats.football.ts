@@ -1,9 +1,5 @@
 import helpers from "./helpers";
-import type {
-	GameAttributesLeague,
-	PlayerStats,
-	PlayerStatType,
-} from "./types";
+import type { GameAttributesLeague, PlayerStats } from "./types";
 
 const qbRat = (ps: PlayerStats) => {
 	const a = helpers.bound((ps.pssCmp / ps.pss - 0.3) * 5, 0, 2.375);
@@ -117,7 +113,7 @@ const processStats = (
 				4 * ps.pssTD +
 				(ps.rusYds + ps.recYds) / 10 +
 				6 * (ps.rusTD + ps.recTD + ps.prTD + ps.krTD) -
-				2 * (ps.pssInt + ps.fmb) +
+				2 * (ps.pssInt + ps.fmbLost) +
 				ps.xp +
 				3 * ps.fg0 +
 				3 * ps.fg20 +
@@ -126,7 +122,6 @@ const processStats = (
 				5 * ps.fg50;
 
 			const fantasyPoints = getFantasyPoints();
-			console.log("fantasyPoints", fantasyPoints);
 			if (fantasyPoints === "ppr") {
 				row[stat] += ps.rec;
 			} else if (fantasyPoints === "halfPpr") {

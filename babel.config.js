@@ -6,7 +6,15 @@ module.exports = api => {
 		JSON.stringify([process.env.LEGACY, process.env.NODE_ENV]),
 	);
 
-	const plugins = [require("./tools/babel-plugin-sport-functions")];
+	const plugins = [
+		require("./tools/babel-plugin-sport-functions"),
+		[
+			"transform-react-remove-prop-types",
+			{
+				removeImport: true,
+			},
+		],
+	];
 
 	if (process.env.LEGACY) {
 		plugins.push(

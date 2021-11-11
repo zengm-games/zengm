@@ -181,6 +181,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 	lowestDifficulty: 0,
+	fantasyPoints: undefined,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

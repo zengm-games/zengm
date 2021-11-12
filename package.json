@@ -121,7 +121,6 @@
 		"conditional-type-checks": "^1.0.5",
 		"cross-env": "^7.0.3",
 		"esbuild": "^0.13.13",
-		"esbuild-plugin-alias": "^0.2.0",
 		"eslint": "^8.2.0",
 		"eslint-config-airbnb-typescript": "^15.0.0",
 		"eslint-config-prettier": "^8.3.0",

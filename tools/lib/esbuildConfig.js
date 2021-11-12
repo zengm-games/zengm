@@ -1,5 +1,3 @@
-const alias = require("esbuild-plugin-alias");
-const path = require("path");
 const fs = require("fs/promises");
 const babel = require("@babel/core");
 const babelPluginSyntaxTypescript = require("@babel/plugin-syntax-typescript");
@@ -74,25 +72,7 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),
 		},
-		plugins: [
-			// Not sure why this is required, docs say it should pick up on tsconfig.json settings
-			alias({
-				"league-schema": path.join(
-					__dirname,
-					"../../build/files/league-schema.json",
-				),
-				"bbgm-polyfills": path.join(
-					__dirname,
-					"../../src/common/polyfills-modern.ts",
-				),
-				"bbgm-debug": path.join(
-					__dirname,
-					"../../src/worker/core/debug/index.ts",
-				),
-				"ajv-hack": path.join(__dirname, "../../src/worker/ajvHack/esbuild.js"),
-			}),
-			pluginSportFunctions(nodeEnv),
-		],
+		plugins: [pluginSportFunctions(nodeEnv)],
 	};
 };
 

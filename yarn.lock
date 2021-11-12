@@ -3782,11 +3782,6 @@ esbuild-openbsd-64@0.13.13:
   resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.13.13.tgz#c9958e5291a00a3090c1ec482d6bcdf2d5b5d107"
   integrity sha512-szwtuRA4rXKT3BbwoGpsff6G7nGxdKgUbW9LQo6nm0TVCCjDNDC/LXxT994duIW8Tyq04xZzzZSW7x7ttDiw1w==
 
-esbuild-plugin-alias@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/esbuild-plugin-alias/-/esbuild-plugin-alias-0.2.0.tgz#941b7bf60d4f861e38d2b54e2a830aeb9cb411ac"
-  integrity sha512-biAUOtI9cinWE1ZeO7xyoSEJDb3cTTljLtLZEJJ8sZAe3wLWICrvkyG0zejT7e36S2jQywC0JL067tvCi/fxVw==
-
 esbuild-sunos-64@0.13.13:
   version "0.13.13"
   resolved "https://registry.yarnpkg.com/esbuild-sunos-64/-/esbuild-sunos-64-0.13.13.tgz#ac9ead8287379cd2f6d00bd38c5997fda9c1179e"

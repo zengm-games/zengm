@@ -647,6 +647,39 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.strictEqual(po.stat.pssYds, 10);
 		});
+
+		test("penalty during extra point", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 5; // Meaning it was a 4th down when the TD was scored
+			game.toGo = 10;
+			game.scrimmage = 103;
+			game.awaitingAfterTouchdown = true;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "False start",
+				penYds: 5,
+				spotYds: undefined,
+				tackOn: false,
+				t: game.o,
+			});
+
+			play.commit();
+
+			assert.strictEqual(game.awaitingAfterTouchdown, true);
+
+			assert.strictEqual(game.o, 0);
+		});
 	});
 
 	describe("overtime", () => {

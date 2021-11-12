@@ -1,6 +1,7 @@
-XP on wrong team, maybe penalty related https://old.reddit.com/r/Football_GM/comments/qb627b/would_love_to_hear_if_anyone_has_ever_seen_this/hh8u1q0/?context=3
-- another one https://discord.com/channels/290013534023057409/290015591216054273/908228955797078036
-- https://github.com/zengm-games/zengm/issues/396
+fix applying penalties on xp/2pt
+- store scrimmage of 2pt, then xp is offset from that
+  - wouldn't work for defensive penalties
+- go for 2 after offensive penalty only if absolutley necessary (late in game)
 
 hockey player does stuff on ice while in penalty box https://discord.com/channels/@me/778760871911751700/908163406111072326
 

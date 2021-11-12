@@ -808,6 +808,11 @@ class Play {
 			return;
 		}
 
+		// No first down or turnover on downs if extra point or two point conversion - see issue #396
+		if (state.awaitingAfterTouchdown) {
+			return;
+		}
+
 		// already given new first down, so this should not apply!
 		state.toGo = state.firstDownLine - state.scrimmage;
 

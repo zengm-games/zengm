@@ -497,9 +497,9 @@ const createLeague = async (
 			getLeagueOptions.type === "real" &&
 			getLeagueOptions.realStats === "all"
 		) {
-			const abbrev = fromFile.teams![tid].abbrev;
-			actualTid = realLeague.teams.findIndex(t => t.abbrev === abbrev);
-			if (!abbrev || actualTid < 0) {
+			const srID = fromFile.teams![tid].srID;
+			actualTid = realLeague.teams.findIndex(t => t.srID === srID);
+			if (!srID || actualTid < 0) {
 				throw new Error("Error finding tid");
 			}
 		}

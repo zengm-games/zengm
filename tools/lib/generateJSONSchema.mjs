@@ -111,7 +111,7 @@ const genRatings = (sport /*: string*/) => {
 	};
 };
 
-const wrap = (child) => ({
+const wrap = child => ({
 	anyOf: [
 		{
 			type: "array",
@@ -317,11 +317,11 @@ const generateJSONSchema = (sport /*: string*/) => {
 						type: "number",
 					},
 					rookie: {
-						const: true
+						const: true,
 					},
 					rookieResign: {
-						const: true
-					}
+						const: true,
+					},
 				},
 				required: ["amount", "exp"],
 			},
@@ -473,7 +473,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								},
 								{
 									type: "string",
-								}
+								},
 							],
 						},
 					},
@@ -555,7 +555,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 									{
 										type: "null",
-									}
+									},
 								],
 							},
 							autoDeleteOldBoxScores: {
@@ -831,7 +831,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 									{
 										type: "null",
-									}
+									},
 								],
 							},
 							numDraftPicksCurrent: {
@@ -854,7 +854,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 									{
 										type: "null",
-									}
+									},
 								],
 							},
 							numGamesConf: {
@@ -865,7 +865,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 									{
 										type: "null",
-									}
+									},
 								],
 							},
 							numGamesPlayoffSeries: wrap({
@@ -873,7 +873,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minItems: 1,
 								items: {
 									type: "integer",
-									minimum: 1
+									minimum: 1,
 								},
 							}),
 							numPlayersDunk: {
@@ -949,7 +949,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 										},
 										{
 											type: "null",
-										}
+										},
 									],
 								},
 							},
@@ -1006,14 +1006,15 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
-							userTid: {
-								type: "array",
-								minItems: 1,
-							},
+							userTid: wrap({
+								type: "integer",
+								minimum: 0,
+							}),
 							userTids: {
 								type: "array",
 								items: {
 									type: "integer",
+									minimum: 0,
 								},
 								minItems: 1,
 							},
@@ -1412,7 +1413,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								},
 								{
 									type: "null",
-								}
+								},
 							],
 						},
 						rosterOrder: {
@@ -1468,13 +1469,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 									type: {
 										type: "string",
-										enum: [
-											"draft",
-											"freeAgent",
-											"trade",
-											"godMode",
-											"import",
-										],
+										enum: ["draft", "freeAgent", "trade", "godMode", "import"],
 									},
 									pickNum: {
 										type: "integer",
@@ -1511,7 +1506,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								},
 								{
 									type: "null",
-								}
+								},
 							],
 						},
 						yearsFreeAgent: {
@@ -1808,7 +1803,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 												},
 												{
 													type: "string",
-												}
+												},
 											],
 											enum: [-1, 0, 1, "OTL"],
 										},

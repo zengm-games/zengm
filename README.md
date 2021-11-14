@@ -107,7 +107,7 @@ the entire codebase, run
 
     yarn run lint
 
-Integration and unit tests are bunched together in the `js/test` folder.
+Integration and unit tests spread out through the codebase in *.test.ts files.
 Coverage is not great. They can be run from the command line with
 
     yarn test
@@ -125,15 +125,15 @@ football, stick `SPORT=football ` in front.
 This is a single-page app that runs almost entirely client-side by storing data
 in IndexedDB. The core of the game runs inside a Shared Worker (or a Web Worker
 in crappy browsers that don't support Shared Workers), and then each open tab
-runs only UI code that talks to the worker. The UI code is in the `src/js/ui`
-folder and the core game code is in the `src/js/worker` folder. They communicate
+runs only UI code that talks to the worker. The UI code is in the `src/ui`
+folder and the core game code is in the `src/worker` folder. They communicate
 through the `toUI` and `toWorker` functions.
 
 The UI is built with React and Bootstrap.
 
 In the worker, data is ultimately stored in IndexedDB, but for performance and
 cross-browser compatibility reasons, a cache (implemented in
-`src/js/worker/db/Cache.js`) sits on top of the database containing all commonly
+`src/worker/db/Cache.ts`) sits on top of the database containing all commonly
 accessed data. The idea is that IndexedDB should only be accessed for uncommon
 situations, like viewing stats from past seasons. For simulating games and
 viewing current data, only the cache should be necessary.
@@ -143,8 +143,9 @@ so you better not mess with them accidentally, and (2) when you do purposely
 mutate a value (like updating a player's stats), you need to remember to always
 write it back to the cache manually by calling `idb.cache.*.put`.
 
-Also in the worker, there is a global variable `self.bbgm` which gives you
-access to many of the internal functions of the game from within your browser.
+In both the worker and UI processes, there is a global variable `self.bbgm`
+which gives you access to many of the internal functions of the game from
+within your browser.
 
 ### Shared Worker Debugging
 
@@ -157,12 +158,6 @@ Instead, you need to go to chrome://inspect/#workers and click "Inspect" under
 In any browser, if you have two tabs open and you reload one of them, the worker
 process will not reload. So make sure you close all tabs except one before
 reloading if you want to see changes in the worker.
-
-And another note only for Chrome... if you have the worker console open and you
-reload the page, [it will automatically set a debugger breakpoint at the
-beginning of
-worker.js](https://bugs.chromium.org/p/chromium/issues/detail?id=771018). So you
-will have to click "resume" to continue loading it, every single time.
 
 ### Service Worker
 

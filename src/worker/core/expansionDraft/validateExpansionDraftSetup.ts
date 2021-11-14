@@ -11,11 +11,12 @@ const validateExpansionDraftSetup = async () => {
 	const numProtectedPlayersRaw =
 		expansionDraft.numProtectedPlayers ??
 		String(g.get("minRosterSize") - expansionTeamsRaw.length);
-	const numPerTeamMinimum = helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
-		expansionTeamsRaw.length,
-		g.get("minRosterSize"),
-		g.get("numActiveTeams"),
-	);
+	const numPerTeamMinimum =
+		helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
+			expansionTeamsRaw.length,
+			g.get("minRosterSize"),
+			g.get("numActiveTeams"),
+		);
 	const numPerTeamRaw =
 		expansionDraft.numPerTeam ??
 		expansionDraft.numPerTeam ??
@@ -104,9 +105,12 @@ const validateExpansionDraftSetup = async () => {
 		errors.push("No expansion teams");
 	}
 
-	const numProtectedPlayers = parseInt(numProtectedPlayersRaw);
-	if (Number.isNaN(numProtectedPlayers) || numProtectedPlayers < 0) {
+	let numProtectedPlayers = parseInt(numProtectedPlayersRaw);
+	if (Number.isNaN(numProtectedPlayers)) {
 		errors.push("Invalid number of protected players");
+	}
+	if (numProtectedPlayers < 0) {
+		numProtectedPlayers = 0;
 	}
 
 	const numPerTeam = parseInt(numPerTeamRaw);

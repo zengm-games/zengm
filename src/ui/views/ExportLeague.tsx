@@ -208,6 +208,11 @@ const getDefaultChecked = () => {
 
 	for (const category of categories) {
 		init[category.name] = category.default;
+		if (category.children) {
+			for (const child of category.children) {
+				init[child.name] = child.default;
+			}
+		}
 	}
 
 	return init;

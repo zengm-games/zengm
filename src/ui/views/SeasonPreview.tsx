@@ -3,6 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
 import {
+	MoreLinks,
 	PlayerNameLabels,
 	RatingWithChange,
 	RecordAndPlayoffs,
@@ -197,72 +198,75 @@ const SeasonPreview = ({
 		},
 	});
 	return (
-		<div style={{ maxWidth: 1200 }}>
-			<div className="row">
-				<div className="col-md-4">
-					<h2>Top Players</h2>
-					<PlayerList
-						challengeNoRatings={challengeNoRatings}
-						players={playersTop}
-						season={season}
-						userTid={userTid}
-					/>
+		<>
+			<MoreLinks type="league" page="season_preview" />
+			<div style={{ maxWidth: 1200 }}>
+				<div className="row">
+					<div className="col-md-4">
+						<h2>Top Players</h2>
+						<PlayerList
+							challengeNoRatings={challengeNoRatings}
+							players={playersTop}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
+					<div className="col-md-4">
+						<h2>Improving Players</h2>
+						<PlayerList
+							challengeNoRatings={challengeNoRatings}
+							players={playersImproving}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
+					<div className="col-md-4">
+						<h2>Declining Players</h2>
+						<PlayerList
+							challengeNoRatings={challengeNoRatings}
+							players={playersDeclining}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
 				</div>
-				<div className="col-md-4">
-					<h2>Improving Players</h2>
-					<PlayerList
-						challengeNoRatings={challengeNoRatings}
-						players={playersImproving}
-						season={season}
-						userTid={userTid}
-					/>
-				</div>
-				<div className="col-md-4">
-					<h2>Declining Players</h2>
-					<PlayerList
-						challengeNoRatings={challengeNoRatings}
-						players={playersDeclining}
-						season={season}
-						userTid={userTid}
-					/>
+				<div className="row">
+					<div className="col-md-4">
+						<h2>Top Teams</h2>
+						<TeamList
+							challengeNoRatings={challengeNoRatings}
+							numConfs={numConfs}
+							numPlayoffRounds={numPlayoffRounds}
+							teams={teamsTop}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
+					<div className="col-md-4">
+						<h2>Improving Teams</h2>
+						<TeamList
+							challengeNoRatings={challengeNoRatings}
+							numConfs={numConfs}
+							numPlayoffRounds={numPlayoffRounds}
+							teams={teamsImproving}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
+					<div className="col-md-4">
+						<h2>Declining Teams</h2>
+						<TeamList
+							challengeNoRatings={challengeNoRatings}
+							numConfs={numConfs}
+							numPlayoffRounds={numPlayoffRounds}
+							teams={teamsDeclining}
+							season={season}
+							userTid={userTid}
+						/>
+					</div>
 				</div>
 			</div>
-			<div className="row">
-				<div className="col-md-4">
-					<h2>Top Teams</h2>
-					<TeamList
-						challengeNoRatings={challengeNoRatings}
-						numConfs={numConfs}
-						numPlayoffRounds={numPlayoffRounds}
-						teams={teamsTop}
-						season={season}
-						userTid={userTid}
-					/>
-				</div>
-				<div className="col-md-4">
-					<h2>Improving Teams</h2>
-					<TeamList
-						challengeNoRatings={challengeNoRatings}
-						numConfs={numConfs}
-						numPlayoffRounds={numPlayoffRounds}
-						teams={teamsImproving}
-						season={season}
-						userTid={userTid}
-					/>
-				</div>
-				<div className="col-md-4">
-					<h2>Declining Teams</h2>
-					<TeamList
-						challengeNoRatings={challengeNoRatings}
-						numConfs={numConfs}
-						numPlayoffRounds={numPlayoffRounds}
-						teams={teamsDeclining}
-						season={season}
-						userTid={userTid}
-					/>
-				</div>
-			</div>
-		</div>
+		</>
 	);
 };
 

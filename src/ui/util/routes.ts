@@ -212,10 +212,8 @@ const routes = {
 	"/l/:lid/daily_schedule": genPage("dailySchedule"),
 	"/l/:lid/daily_schedule/:season": genPage("dailySchedule"),
 	"/l/:lid/daily_schedule/:season/:day": genPage("dailySchedule"),
-
-	// Backwards compatibility
-	"/l/:lid/draft_summary": genPage("draftHistory"),
-	"/l/:lid/draft_summary/:season": genPage("draftHistory"),
+	"/l/:lid/season_preview": genPage("seasonPreview"),
+	"/l/:lid/season_preview/:season": genPage("seasonPreview"),
 };
 
 export default routes;

@@ -4,8 +4,12 @@ season preview, in preseason
 - best players
 - biggest change in team ovr
   - use ovrEnd from last year and ovrStart from this year
-- if preseason and not viewed yet, put at top of Play menu, like season summary
+- make sure UI works for first season
+- showRatings mode
+- max width
 - historical views... link from where?
+- blog
+  - not strictly highest dovr/dpot because that usually picks bad players
 
 use ovrStart/ovrEnd on power rankings page?
 

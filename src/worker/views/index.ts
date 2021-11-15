@@ -76,6 +76,7 @@ import roster from "./roster";
 import rosterContinuity from "./rosterContinuity";
 import schedule from "./schedule";
 import scheduledEvents from "./scheduledEvents";
+import seasonPreview from "./seasonPreview";
 import settings from "./settings";
 import standings from "./standings";
 import teamFinances from "./teamFinances";
@@ -170,6 +171,7 @@ export default {
 	rosterContinuity,
 	schedule,
 	scheduledEvents,
+	seasonPreview,
 	settings,
 	standings,
 	teamFinances,

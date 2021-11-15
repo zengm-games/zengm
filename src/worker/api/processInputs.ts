@@ -861,6 +861,7 @@ export default {
 	resetPassword,
 	roster,
 	schedule,
+	seasonPreview: validateSeasonOnly,
 	standings,
 	teamFinances,
 	teamHistory,

@@ -1,6 +1,6 @@
 import { season } from "..";
 import { idb } from "../../db";
-import { g, local, logEvent, toUI } from "../../util";
+import { g, helpers, local, logEvent, toUI } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 import {
 	EMAIL_ADDRESS,
@@ -137,7 +137,13 @@ const newPhaseRegularSeason = async (
 		}
 	}
 
+	let url;
+	if (g.get("season") > g.get("startingSeason")) {
+		url = helpers.leagueUrl(["season_preview"]);
+	}
+
 	return {
+		url,
 		updateEvents: ["playerMovement"],
 	};
 };

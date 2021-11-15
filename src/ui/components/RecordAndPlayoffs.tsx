@@ -4,26 +4,26 @@ import { formatRecord, helpers } from "../util";
 
 const RecordAndPlayoffs = ({
 	abbrev,
+	boldChamps,
 	lost,
 	numConfs,
 	numPlayoffRounds,
 	option,
 	playoffRoundsWon,
 	season,
-	style,
 	tied,
 	otl,
 	tid,
 	won,
 }: {
 	abbrev: string;
+	boldChamps?: boolean;
 	lost: number;
 	numConfs?: number;
 	numPlayoffRounds?: number;
 	option?: "noSeason";
 	playoffRoundsWon?: number;
 	season: number;
-	style?: CSSProperties;
 	tied?: number;
 	otl?: number;
 	tid: number;
@@ -64,7 +64,13 @@ const RecordAndPlayoffs = ({
 			</span>
 		) : null;
 	return (
-		<span style={style}>
+		<span
+			className={
+				boldChamps && playoffRoundsWon === numPlayoffRounds
+					? "font-weight-bold"
+					: undefined
+			}
+		>
 			{seasonText}
 			{recordText}
 			{extraText}

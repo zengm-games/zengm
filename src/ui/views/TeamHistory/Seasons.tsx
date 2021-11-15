@@ -11,18 +11,13 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 		const recordAndPlayoffs = (
 			<RecordAndPlayoffs
 				abbrev={h.abbrev}
+				boldChamps
 				lost={h.lost}
 				numConfs={h.numConfs}
 				numPlayoffRounds={h.numPlayoffRounds}
 				otl={h.otl}
 				playoffRoundsWon={h.playoffRoundsWon}
 				season={h.season}
-				// Bold championship seasons.
-				style={
-					h.playoffRoundsWon === h.numPlayoffRounds
-						? { fontWeight: "bold" }
-						: undefined
-				}
 				tid={h.tid}
 				tied={h.tied}
 				won={h.won}

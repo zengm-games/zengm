@@ -127,6 +127,7 @@ const updateSeasonPreview = async (
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			numConfs,
 			numPlayoffRounds,
 			playersDeclining,

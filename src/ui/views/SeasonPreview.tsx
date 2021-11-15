@@ -9,10 +9,12 @@ import {
 } from "../components";
 
 const PlayerList = ({
+	challengeNoRatings,
 	players,
 	season,
 	userTid,
 }: {
+	challengeNoRatings: boolean;
 	players: any[];
 	season: number;
 	userTid: number;
@@ -59,14 +61,19 @@ const PlayerList = ({
 						</a>
 					</span>
 					<br />
-					<RatingWithChange change={p.ratings.dovr}>
-						{p.ratings.ovr}
-					</RatingWithChange>{" "}
-					ovr,{" "}
-					<RatingWithChange change={p.ratings.dpot}>
-						{p.ratings.pot}
-					</RatingWithChange>{" "}
-					pot, {p.age} yo
+					{!challengeNoRatings ? (
+						<>
+							<RatingWithChange change={p.ratings.dovr}>
+								{p.ratings.ovr}
+							</RatingWithChange>{" "}
+							ovr,{" "}
+							<RatingWithChange change={p.ratings.dpot}>
+								{p.ratings.pot}
+							</RatingWithChange>{" "}
+							pot,{" "}
+						</>
+					) : null}
+					{p.age} yo
 				</li>
 			))}
 		</ol>
@@ -74,12 +81,14 @@ const PlayerList = ({
 };
 
 const TeamList = ({
+	challengeNoRatings,
 	numConfs,
 	numPlayoffRounds,
 	teams,
 	season,
 	userTid,
 }: {
+	challengeNoRatings: boolean;
 	numConfs: number;
 	numPlayoffRounds: number;
 	teams: View<"seasonPreview">["teamsTop"];
@@ -116,7 +125,12 @@ const TeamList = ({
 						>
 							{t.region} {t.name}
 						</a>
-						, <RatingWithChange change={t.dovr}>{t.ovr}</RatingWithChange> ovr
+						{!challengeNoRatings ? (
+							<>
+								, <RatingWithChange change={t.dovr}>{t.ovr}</RatingWithChange>{" "}
+								ovr
+							</>
+						) : null}
 					</span>
 					{t.lastSeason ? (
 						<div>
@@ -148,7 +162,12 @@ const TeamList = ({
 								{p.name}
 							</PlayerNameLabels>
 							<br />
-							{p.ratings.ovr} ovr, {p.ratings.pot} pot, {p.age} yo
+							{!challengeNoRatings ? (
+								<>
+									{p.ratings.ovr} ovr, {p.ratings.pot} pot,{" "}
+								</>
+							) : null}
+							{p.age} yo
 						</div>
 					))}
 				</li>
@@ -158,6 +177,7 @@ const TeamList = ({
 };
 
 const SeasonPreview = ({
+	challengeNoRatings,
 	numConfs,
 	numPlayoffRounds,
 	playersDeclining,
@@ -181,11 +201,17 @@ const SeasonPreview = ({
 			<div className="row">
 				<div className="col-md-4">
 					<h2>Top Players</h2>
-					<PlayerList players={playersTop} season={season} userTid={userTid} />
+					<PlayerList
+						challengeNoRatings={challengeNoRatings}
+						players={playersTop}
+						season={season}
+						userTid={userTid}
+					/>
 				</div>
 				<div className="col-md-4">
 					<h2>Improving Players</h2>
 					<PlayerList
+						challengeNoRatings={challengeNoRatings}
 						players={playersImproving}
 						season={season}
 						userTid={userTid}
@@ -194,6 +220,7 @@ const SeasonPreview = ({
 				<div className="col-md-4">
 					<h2>Declining Players</h2>
 					<PlayerList
+						challengeNoRatings={challengeNoRatings}
 						players={playersDeclining}
 						season={season}
 						userTid={userTid}
@@ -204,6 +231,7 @@ const SeasonPreview = ({
 				<div className="col-md-4">
 					<h2>Top Teams</h2>
 					<TeamList
+						challengeNoRatings={challengeNoRatings}
 						numConfs={numConfs}
 						numPlayoffRounds={numPlayoffRounds}
 						teams={teamsTop}
@@ -214,6 +242,7 @@ const SeasonPreview = ({
 				<div className="col-md-4">
 					<h2>Improving Teams</h2>
 					<TeamList
+						challengeNoRatings={challengeNoRatings}
 						numConfs={numConfs}
 						numPlayoffRounds={numPlayoffRounds}
 						teams={teamsImproving}
@@ -224,6 +253,7 @@ const SeasonPreview = ({
 				<div className="col-md-4">
 					<h2>Declining Teams</h2>
 					<TeamList
+						challengeNoRatings={challengeNoRatings}
 						numConfs={numConfs}
 						numPlayoffRounds={numPlayoffRounds}
 						teams={teamsDeclining}

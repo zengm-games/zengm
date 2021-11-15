@@ -90,18 +90,21 @@ const newPhasePlayoffs = async (
 			}
 		}
 
-		// Average age, cache now that season is over
+		// Average age and team ovr, cache now that season is over
 		const playersRaw = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			teamSeason.tid,
 		);
 		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["age"],
+			attrs: ["age", "value"],
+			fuzz: true,
 			stats: ["gp", "min"],
+			ratings: ["ovr", "pos", "ovrs"],
 			season: g.get("season"),
 			tid: teamSeason.tid,
 		});
 		teamSeason.avgAge = team.avgAge(players);
+		teamSeason.ovrEnd = team.ovr(players);
 
 		await idb.cache.teamSeasons.put(teamSeason);
 	}

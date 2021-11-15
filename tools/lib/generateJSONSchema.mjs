@@ -1916,6 +1916,15 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "number",
 										minimum: 0,
 									},
+									avgAge: {
+										type: "number",
+									},
+									ovrStart: {
+										type: "number",
+									},
+									ovrEnd: {
+										type: "number",
+									},
 								},
 								required: [
 									"season",

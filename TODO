@@ -1,3 +1,16 @@
+season preview, in preseason
+- https://mail.google.com/mail/u/0/#inbox/FMfcgzGlksCTRkbgFjtrHnhPGkrVSCxH
+- best/worst player progs
+- best players
+- biggest change in team ovr
+  - use ovrEnd from last year and ovrStart from this year
+- if preseason and not viewed yet, put at top of Play menu, like season summary
+- historical views... link from where?
+
+use ovrStart/ovrEnd on power rankings page?
+
+on team history, graph of team ovr and winp over time, star for championship
+
 fix applying penalties on xp/2pt
 - store scrimmage of 2pt, then xp is offset from that
   - wouldn't work for defensive penalties
@@ -216,12 +229,6 @@ show best performer(s) by score on schedule page https://discord.com/channels/29
 - player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
 
 ratings distributions by position https://discord.com/channels/290013534023057409/331882115119448065/862853531231977513
-
-save some stuff to teamSeason at end of season, and use in various places
-- team ovr - include injuries or no? no, do same as avgAge
-- anything else from power rankings?
-- on team history, graph of team ovr and winp over time, star for championship
-- https://discord.com/channels/290013534023057409/290015591216054273/862039671579607060
 
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
 

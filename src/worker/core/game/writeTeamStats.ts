@@ -385,6 +385,21 @@ const writeTeamStats = async (results: GameResults) => {
 			teamSeason.streak = 0;
 		}
 
+		if (teamSeason.ovrStart === undefined) {
+			const playersRaw = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				teamSeason.tid,
+			);
+			const players = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: ["value"],
+				fuzz: true,
+				ratings: ["ovr", "pos", "ovrs"],
+				season: g.get("season"),
+				tid: teamSeason.tid,
+			});
+			teamSeason.ovrStart = team.ovr(players);
+		}
+
 		await idb.cache.teams.put(t);
 		await idb.cache.teamSeasons.put(teamSeason);
 		await idb.cache.teamStats.put(teamStats);

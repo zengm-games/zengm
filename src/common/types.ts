@@ -1540,6 +1540,10 @@ export type TeamSeasonWithoutKey = {
 	// Value only written here after the end of the season
 	avgAge?: number;
 
+	// Start of first game, and end of regular season
+	ovrStart?: number;
+	ovrEnd?: number;
+
 	// Copied over from Team
 	cid: number;
 	did: number;

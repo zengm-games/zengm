@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import type { CSSProperties } from "react";
 import { formatRecord, helpers } from "../util";
 
 const RecordAndPlayoffs = ({

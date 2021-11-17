@@ -11,15 +11,46 @@ import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
 import { scaleLinear, scalePoint } from "@visx/scale";
-import {
-	MarkerArrow,
-	MarkerCross,
-	MarkerX,
-	MarkerCircle,
-	MarkerLine,
-} from "@visx/marker";
+import { Text } from "@visx/text";
 import { HelpPopover } from "../../components";
 import type { OwnerMood } from "../../../common/types";
+
+const ReferenceLine = ({
+	x,
+	y,
+	color,
+	text,
+	textBelow,
+}: {
+	x: [number, number];
+	y: number;
+	color: string;
+	text?: string;
+	textBelow?: boolean;
+}) => {
+	return (
+		<>
+			<LinePath
+				className="chart-line"
+				data={x}
+				x={d => d}
+				y={y}
+				stroke={color}
+				strokeDasharray="5 5"
+			/>
+			{text ? (
+				<Text
+					x={x[1] - 4}
+					y={y + (textBelow ? 17 : -7)}
+					fill={color}
+					textAnchor="end"
+				>
+					{text}
+				</Text>
+			) : null}
+		</>
+	);
+};
 
 const OwnerMoodsChart = ({
 	ownerMoods,
@@ -106,7 +137,6 @@ const OwnerMoodsChart = ({
 
 			drawReferenceLine(3, "var(--success)", "Perfect", "above");
 			drawReferenceLine(-1, "var(--danger)", "You're fired!", "below");
-			drawReferenceLine(3, "var(--success)", "Perfect", "above");
 			drawReferenceLine(0, "var(--secondary)");
 
 			type Data = typeof data[number];
@@ -220,6 +250,24 @@ const OwnerMoodsChart = ({
 			/>
 			<h1>2</h1>
 			<svg width={MAX_WIDTH} height={HEIGHT}>
+				<ReferenceLine
+					x={xScale.range()}
+					y={yScale(3)}
+					color="var(--success)"
+					text="Perfect"
+				/>
+				<ReferenceLine
+					x={xScale.range()}
+					y={yScale(-1)}
+					color="var(--danger)"
+					text="You're fired!"
+					textBelow
+				/>
+				<ReferenceLine
+					x={xScale.range()}
+					y={yScale(0)}
+					color="var(--secondary)"
+				/>
 				{lineInfos.map(({ key, color, width = 1 }, i) => {
 					return (
 						<Group key={`line-${key}`}>

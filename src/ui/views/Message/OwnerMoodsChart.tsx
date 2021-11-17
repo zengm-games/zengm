@@ -10,6 +10,7 @@ import { select } from "d3-selection";
 import { AxisBottom } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
+import { ParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear, scalePoint } from "@visx/scale";
 import { Text } from "@visx/text";
@@ -80,7 +81,6 @@ const OwnerMoodsChart = ({
 
 	// totals span -1 to 3, others -3 to 1
 	const yDomain = [Math.min(-1.3, ...allValues), Math.max(3.3, ...allValues)];
-	const width = MAX_WIDTH - 30;
 
 	const margin = {
 		top: 0,
@@ -209,10 +209,6 @@ const OwnerMoodsChart = ({
 		},
 	];
 
-	const xScale = scalePoint({
-		domain: years,
-		range: [margin.left, margin.left + width],
-	});
 	const yScale = scaleLinear({
 		domain: yDomain,
 		range: [HEIGHT, 0],
@@ -250,55 +246,76 @@ const OwnerMoodsChart = ({
 					maxWidth: MAX_WIDTH,
 				}}
 			/>
-			<svg
-				width={width + margin.left + margin.right}
-				height={HEIGHT + margin.top + margin.bottom}
+			<ParentSize
+				parentSizeStyles={{
+					maxWidth: MAX_WIDTH,
+				}}
 			>
-				<ReferenceLine
-					x={xScale.range()}
-					y={yScale(3)}
-					color="var(--success)"
-					text="Perfect"
-				/>
-				<ReferenceLine
-					x={xScale.range()}
-					y={yScale(-1)}
-					color="var(--danger)"
-					text="You're fired!"
-					textBelow
-				/>
-				<ReferenceLine
-					x={xScale.range()}
-					y={yScale(0)}
-					color="var(--secondary)"
-				/>
-				{lineInfos.map(({ key, color, width = 1 }, i) => {
+				{parent => {
+					const width = parent.width - margin.left - margin.right;
+					const xScale = scalePoint({
+						domain: years,
+						range: [0, width],
+					});
 					return (
-						<Group key={`line-${key}`}>
-							{data.map((d, j) => (
-								<circle
-									key={j}
-									className="chart-point"
-									r={3 * Math.sqrt(width)}
-									cx={xScale(d.year)}
-									cy={yScale(d[key])}
-									stroke={color}
-									strokeWidth={width}
+						<svg
+							width={width + margin.left + margin.right}
+							height={HEIGHT + margin.top + margin.bottom}
+						>
+							<Group transform={`translate(${margin.left},${margin.top})`}>
+								<ReferenceLine
+									x={xScale.range()}
+									y={yScale(3)}
+									color="var(--success)"
+									text="Perfect"
 								/>
-							))}
-							<LinePath<typeof data[number]>
-								curve={curveMonotoneX}
-								data={data}
-								x={d => xScale(d.year) ?? 0}
-								y={d => yScale(d[key]) ?? 0}
-								stroke={color}
-								strokeWidth={width}
-							/>
-						</Group>
+								<ReferenceLine
+									x={xScale.range()}
+									y={yScale(-1)}
+									color="var(--danger)"
+									text="You're fired!"
+									textBelow
+								/>
+								<ReferenceLine
+									x={xScale.range()}
+									y={yScale(0)}
+									color="var(--secondary)"
+								/>
+								{lineInfos.map(({ key, color, width = 1 }, i) => {
+									return (
+										<Group key={`line-${key}`}>
+											{data.map((d, j) => (
+												<circle
+													key={j}
+													className="chart-point"
+													r={3 * Math.sqrt(width)}
+													cx={xScale(d.year)}
+													cy={yScale(d[key])}
+													stroke={color}
+													strokeWidth={width}
+												/>
+											))}
+											<LinePath<typeof data[number]>
+												curve={curveMonotoneX}
+												data={data}
+												x={d => xScale(d.year) ?? 0}
+												y={d => yScale(d[key]) ?? 0}
+												stroke={color}
+												strokeWidth={width}
+											/>
+										</Group>
+									);
+								})}
+								<AxisBottom
+									axisClassName="chart-axis"
+									scale={xScale}
+									top={HEIGHT}
+								/>
+							</Group>
+						</svg>
 					);
-				})}
-				<AxisBottom axisClassName="chart-axis" scale={xScale} top={HEIGHT} />
-			</svg>
+				}}
+			</ParentSize>
 
 			<div className="chart-legend">
 				<ul className="list-unstyled mb-0">

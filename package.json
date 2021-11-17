@@ -37,6 +37,7 @@
 		"@bugsnag/browser": "^7.13.3",
 		"@bugsnag/plugin-react": "^7.13.2",
 		"@mattiasbuelens/web-streams-adapter": "^0.1.0",
+		"@visx/axis": "^2.4.0",
 		"@visx/curve": "^2.1.0",
 		"@visx/group": "^2.1.0",
 		"@visx/scale": "^2.2.2",

@@ -7,6 +7,7 @@ import {
 } from "d3-scale";
 import { curveMonotoneX as curveMonotoneXD3, line } from "d3-shape";
 import { select } from "d3-selection";
+import { AxisBottom } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { LinePath } from "@visx/shape";
@@ -79,7 +80,14 @@ const OwnerMoodsChart = ({
 
 	// totals span -1 to 3, others -3 to 1
 	const yDomain = [Math.min(-1.3, ...allValues), Math.max(3.3, ...allValues)];
-	const width = MAX_WIDTH;
+	const width = MAX_WIDTH - 30;
+
+	const margin = {
+		top: 0,
+		right: 15,
+		bottom: 30,
+		left: 15,
+	};
 
 	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
@@ -89,12 +97,6 @@ const OwnerMoodsChart = ({
 	}, []);
 	useEffect(() => {
 		if (node) {
-			const margin = {
-				top: 0,
-				right: 15,
-				bottom: 30,
-				left: 15,
-			};
 			const width = node.clientWidth - margin.left - margin.right;
 			const xScaleD3 = scalePointD3().domain(years).range([0, width]);
 			const yScaleD3 = scaleLinearD3().domain(yDomain).range([HEIGHT, 0]) as (
@@ -209,7 +211,7 @@ const OwnerMoodsChart = ({
 
 	const xScale = scalePoint({
 		domain: years,
-		range: [0, width],
+		range: [margin.left, margin.left + width],
 	});
 	const yScale = scaleLinear({
 		domain: yDomain,
@@ -248,8 +250,10 @@ const OwnerMoodsChart = ({
 					maxWidth: MAX_WIDTH,
 				}}
 			/>
-			<h1>2</h1>
-			<svg width={MAX_WIDTH} height={HEIGHT}>
+			<svg
+				width={width + margin.left + margin.right}
+				height={HEIGHT + margin.top + margin.bottom}
+			>
 				<ReferenceLine
 					x={xScale.range()}
 					y={yScale(3)}
@@ -293,6 +297,7 @@ const OwnerMoodsChart = ({
 						</Group>
 					);
 				})}
+				<AxisBottom axisClassName="chart-axis" scale={xScale} top={HEIGHT} />
 			</svg>
 
 			<div className="chart-legend">

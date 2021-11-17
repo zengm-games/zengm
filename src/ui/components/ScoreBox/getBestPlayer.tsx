@@ -1,4 +1,4 @@
-import { orderBy } from "lodash";
+import orderBy from "lodash-es/orderBy";
 import React from "react";
 import { bySport, getCols, isSport } from "../../../common";
 import { helpers, processPlayerStats } from "../../util";

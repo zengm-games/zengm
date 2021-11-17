@@ -8,9 +8,17 @@ import rollupConfig from "./rollupConfig.js";
 const rev = build.genRev();
 console.log(rev);
 
+const LODASH_BLACKLIST = [
+	/^lodash$/,
+	/^lodash-es$/,
+
+	// lodash/debound and lodash/memoize are used by visx
+	/^lodash\/(?!debounce|memoize)/,
+];
+
 const BLACKLIST = {
-	ui: [/^lodash[^-]/, /\/worker/],
-	worker: [/^lodash[^-]/, /\/ui/, /^react/],
+	ui: [...LODASH_BLACKLIST, /\/worker/],
+	worker: [...LODASH_BLACKLIST, /\/ui/, /^react/],
 };
 
 const buildFile = async (name, legacy) => {
@@ -49,7 +57,10 @@ const buildJS = async () => {
 	delete process.env.LEGACY;
 
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
-	const replacePaths = fs.readdirSync("build/gen").filter(filename => filename.endsWith(".js")).map(filename => `build/gen/${filename}`);
+	const replacePaths = fs
+		.readdirSync("build/gen")
+		.filter(filename => filename.endsWith(".js"))
+		.map(filename => `build/gen/${filename}`);
 	replace({
 		regex: ";//# sourceMappingURL",
 		replacement: ";\n//# sourceMappingURL",

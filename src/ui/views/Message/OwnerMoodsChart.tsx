@@ -1,9 +1,23 @@
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
 import { axisBottom } from "d3-axis";
-import { scaleLinear, scalePoint } from "d3-scale";
-import { curveMonotoneX, line } from "d3-shape";
+import {
+	scaleLinear as scaleLinearD3,
+	scalePoint as scalePointD3,
+} from "d3-scale";
+import { curveMonotoneX as curveMonotoneXD3, line } from "d3-shape";
 import { select } from "d3-selection";
+import { curveMonotoneX } from "@visx/curve";
+import { Group } from "@visx/group";
+import { LinePath } from "@visx/shape";
+import { scaleLinear, scalePoint } from "@visx/scale";
+import {
+	MarkerArrow,
+	MarkerCross,
+	MarkerX,
+	MarkerCircle,
+	MarkerLine,
+} from "@visx/marker";
 import { HelpPopover } from "../../components";
 import type { OwnerMood } from "../../../common/types";
 
@@ -14,6 +28,28 @@ const OwnerMoodsChart = ({
 	ownerMoods: OwnerMood[];
 	year: number;
 }) => {
+	const MAX_WIDTH = 400;
+	const HEIGHT = 400;
+
+	const data = ownerMoods.map((mood, i) => {
+		return {
+			...mood,
+			total: mood.money + mood.playoffs + mood.wins,
+			year: String(year - ownerMoods.length + 1 + i),
+		};
+	});
+	const allValues: number[] = [];
+	const years: string[] = [];
+
+	for (const row of data) {
+		allValues.push(row.money, row.playoffs, row.total, row.wins);
+		years.push(row.year);
+	}
+
+	// totals span -1 to 3, others -3 to 1
+	const yDomain = [Math.min(-1.3, ...allValues), Math.max(3.3, ...allValues)];
+	const width = MAX_WIDTH;
+
 	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
@@ -22,26 +58,6 @@ const OwnerMoodsChart = ({
 	}, []);
 	useEffect(() => {
 		if (node) {
-			const data = ownerMoods.map((mood, i) => {
-				return {
-					...mood,
-					total: mood.money + mood.playoffs + mood.wins,
-					year: String(year - ownerMoods.length + 1 + i),
-				};
-			});
-			const allValues: number[] = [];
-			const years: string[] = [];
-
-			for (const row of data) {
-				allValues.push(row.money, row.playoffs, row.total, row.wins);
-				years.push(row.year);
-			}
-
-			// totals span -1 to 3, others -3 to 1
-			const yDomain = [
-				Math.min(-1.3, ...allValues),
-				Math.max(3.3, ...allValues),
-			];
 			const margin = {
 				top: 0,
 				right: 15,
@@ -49,15 +65,14 @@ const OwnerMoodsChart = ({
 				left: 15,
 			};
 			const width = node.clientWidth - margin.left - margin.right;
-			const height = 400;
-			const xScale = scalePoint().domain(years).range([0, width]);
-			const yScale = scaleLinear().domain(yDomain).range([height, 0]) as (
+			const xScaleD3 = scalePointD3().domain(years).range([0, width]);
+			const yScaleD3 = scaleLinearD3().domain(yDomain).range([HEIGHT, 0]) as (
 				y: number,
 			) => number;
 			const svg = select(node)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
+				.attr("height", HEIGHT + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -69,10 +84,10 @@ const OwnerMoodsChart = ({
 			) => {
 				const line2 = line<number>()
 					.x(d => d)
-					.y(() => yScale(y));
+					.y(() => yScaleD3(y));
 				svg
 					.append("path")
-					.datum(xScale.range())
+					.datum(xScaleD3.range())
 					.attr("class", "chart-line")
 					.style("stroke", color)
 					.style("stroke-dasharray", "5 5")
@@ -81,7 +96,7 @@ const OwnerMoodsChart = ({
 				if (text) {
 					svg
 						.append("text")
-						.attr("y", yScale(y) + (position === "above" ? -7 : 17))
+						.attr("y", yScaleD3(y) + (position === "above" ? -7 : 17))
 						.attr("x", width - 4)
 						.attr("text-anchor", "end")
 						.style("fill", color)
@@ -101,9 +116,9 @@ const OwnerMoodsChart = ({
 				strokeWidth = 1,
 			) => {
 				const line2 = line<Data>()
-					.x(d => xScale(d.year) as number)
-					.y(d => yScale(d[attr]))
-					.curve(curveMonotoneX);
+					.x(d => xScaleD3(d.year) as number)
+					.y(d => yScaleD3(d[attr]))
+					.curve(curveMonotoneXD3);
 
 				svg
 					.append("path")
@@ -121,8 +136,8 @@ const OwnerMoodsChart = ({
 					.attr("class", "chart-point")
 					.attr("stroke", color)
 					.style("stroke-width", strokeWidth)
-					.attr("cx", d => xScale(d.year) as number)
-					.attr("cy", d => yScale(d[attr]))
+					.attr("cx", d => xScaleD3(d.year) as number)
+					.attr("cy", d => yScaleD3(d[attr]))
 					.attr("r", 3 * Math.sqrt(strokeWidth));
 			};
 
@@ -133,10 +148,44 @@ const OwnerMoodsChart = ({
 			svg
 				.append("g")
 				.attr("class", "chart-axis")
-				.attr("transform", `translate(0,${height})`)
-				.call(axisBottom(xScale));
+				.attr("transform", `translate(0,${HEIGHT})`)
+				.call(axisBottom(xScaleD3));
 		}
-	}, [node, ownerMoods, year]);
+	});
+
+	const lineInfos: {
+		key: "wins" | "playoffs" | "money" | "total";
+		color: string;
+		width?: number;
+	}[] = [
+		{
+			key: "wins",
+			color: "var(--danger)",
+		},
+		{
+			key: "playoffs",
+			color: "var(--info)",
+		},
+		{
+			key: "money",
+			color: "var(--success)",
+		},
+		{
+			key: "total",
+			color: "var(--dark)",
+			width: 4,
+		},
+	];
+
+	const xScale = scalePoint({
+		domain: years,
+		range: [0, width],
+	});
+	const yScale = scaleLinear({
+		domain: yDomain,
+		range: [HEIGHT, 0],
+	});
+
 	return (
 		<div className="position-relative mt-n1">
 			<HelpPopover
@@ -166,9 +215,38 @@ const OwnerMoodsChart = ({
 			<div
 				ref={getNode}
 				style={{
-					maxWidth: 400,
+					maxWidth: MAX_WIDTH,
 				}}
 			/>
+			<h1>2</h1>
+			<svg width={MAX_WIDTH} height={HEIGHT}>
+				{lineInfos.map(({ key, color, width = 1 }, i) => {
+					return (
+						<Group key={`line-${key}`}>
+							{data.map((d, j) => (
+								<circle
+									key={j}
+									className="chart-point"
+									r={3 * Math.sqrt(width)}
+									cx={xScale(d.year)}
+									cy={yScale(d[key])}
+									stroke={color}
+									strokeWidth={width}
+								/>
+							))}
+							<LinePath<typeof data[number]>
+								curve={curveMonotoneX}
+								data={data}
+								x={d => xScale(d.year) ?? 0}
+								y={d => yScale(d[key]) ?? 0}
+								stroke={color}
+								strokeWidth={width}
+							/>
+						</Group>
+					);
+				})}
+			</svg>
+
 			<div className="chart-legend">
 				<ul className="list-unstyled mb-0">
 					<li className="text-danger">— Regular season success</li>

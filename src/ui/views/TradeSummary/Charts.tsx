@@ -3,7 +3,7 @@ import { axisBottom, axisLeft } from "d3-axis";
 import { scaleLinear as scaleLinearD3 } from "d3-scale";
 import { curveMonotoneX as curveMonotoneXD3, line } from "d3-shape";
 import { select } from "d3-selection";
-import { AxisBottom } from "@visx/axis";
+import { AxisBottom, AxisLeft } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
@@ -358,18 +358,34 @@ const Charts = ({
 							width={width + margin.left + margin.right}
 							height={HEIGHT + margin.top + margin.bottom}
 						>
-							<ReferenceLine
-								x={xScale.range() as [number, number]}
-								y={[yScale2(0), yScale2(0)]}
-								color="var(--secondary)"
-							/>
-							<ReferenceLine
-								x={[xMarker, xMarker]}
-								y={yScale2.range() as [number, number]}
-								color="var(--danger)"
-								text="Trade"
-								textPosition="right"
-							/>
+							<Group transform={`translate(${margin.left},${margin.top})`}>
+								<ReferenceLine
+									x={xScale.range() as [number, number]}
+									y={[yScale2(0), yScale2(0)]}
+									color="var(--secondary)"
+								/>
+								<ReferenceLine
+									x={[xMarker, xMarker]}
+									y={yScale2.range() as [number, number]}
+									color="var(--danger)"
+									text="Trade"
+									textPosition="right"
+								/>
+								<AxisBottom
+									axisClassName="chart-axis"
+									numTicks={8}
+									scale={xScale}
+									tickFormat={String}
+									tickLength={5}
+									top={HEIGHT}
+								/>
+								<AxisLeft
+									axisClassName="chart-axis"
+									numTicks={5}
+									scale={yScale2}
+									tickLength={5}
+								/>
+							</Group>
 						</svg>
 					);
 				}}

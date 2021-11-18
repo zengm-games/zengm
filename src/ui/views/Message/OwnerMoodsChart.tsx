@@ -219,6 +219,7 @@ const OwnerMoodsChart = ({
 								<AxisBottom
 									axisClassName="chart-axis"
 									scale={xScale}
+									tickLength={5}
 									top={HEIGHT}
 								/>
 							</Group>

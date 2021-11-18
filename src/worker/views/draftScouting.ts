@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, Player, ThenArg } from "../../common/types";
+import type { UpdateEvents, Player } from "../../common/types";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter(p => p.draft.year === season);
@@ -68,7 +68,7 @@ const updateDraftScouting = async (
 			}
 		}
 
-		const seasons: ThenArg<ReturnType<typeof getSeason>>[] = [];
+		const seasons: Awaited<ReturnType<typeof getSeason>>[] = [];
 		for (let season = firstSeason; season <= maxDraftYear; season++) {
 			seasons.push(await getSeason(players, season));
 		}

@@ -3,7 +3,6 @@ import { groupByUnique } from "../../../common/groupBy";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
-	ThenArg,
 } from "../../../common/types";
 import type {
 	AwardPlayer,
@@ -16,7 +15,7 @@ import type { Basketball } from "./loadData.basketball";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 
-type Player = ReturnType<ThenArg<ReturnType<typeof formatPlayerFactory>>>;
+type Player = ReturnType<Awaited<ReturnType<typeof formatPlayerFactory>>>;
 
 type AwardsBySeason = Record<
 	number,

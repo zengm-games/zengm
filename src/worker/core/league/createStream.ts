@@ -16,7 +16,6 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
-	ThenArg,
 } from "../../../common/types";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
 import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload";
@@ -1057,7 +1056,7 @@ const afterDBStream = async ({
 	"fromFile" | "getLeagueOptions" | "lid" | "shuffleRosters"
 > &
 	Pick<
-		ThenArg<ReturnType<typeof beforeDBStream>>,
+		Awaited<ReturnType<typeof beforeDBStream>>,
 		| "activeTids"
 		| "gameAttributes"
 		| "repeatSeason"

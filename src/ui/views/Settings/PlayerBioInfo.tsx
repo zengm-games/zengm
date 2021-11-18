@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
-import type { PlayerBioInfo, ThenArg } from "../../../common/types";
+import type { PlayerBioInfo } from "../../../common/types";
 import { confirm, helpers, logEvent, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import { animation } from "./Injuries";
@@ -15,7 +15,7 @@ import {
 } from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
 
-export type Defaults = ThenArg<ReturnType<typeof initDefaults>>;
+export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 
 export const objectToArray = <T extends string>(
 	object: Record<string, number>,

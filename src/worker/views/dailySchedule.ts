@@ -1,7 +1,7 @@
 import { season } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, ViewInput, ThenArg } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getTopPlayers, getUpcoming } from "./schedule";
 import { PHASE } from "../../common";
 
@@ -87,7 +87,7 @@ const updateDailySchedule = async (
 
 			const completed = games.filter(game => game.day === day);
 
-			let upcoming: ThenArg<ReturnType<typeof getUpcoming>> = [];
+			let upcoming: Awaited<ReturnType<typeof getUpcoming>> = [];
 			if (inputs.season === currentSeason) {
 				// If it's the current season, get any upcoming games
 				upcoming = await getUpcoming({

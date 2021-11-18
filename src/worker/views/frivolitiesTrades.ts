@@ -6,7 +6,6 @@ import type {
 	DiscriminateUnion,
 	EventBBGM,
 	Phase,
-	ThenArg,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import { processAssets } from "./tradeSummary";
@@ -27,7 +26,7 @@ type Team = {
 	abbrev: string;
 	region: string;
 	name: string;
-	assets: ThenArg<ReturnType<typeof processAssets>>;
+	assets: Awaited<ReturnType<typeof processAssets>>;
 	statSum: number;
 };
 

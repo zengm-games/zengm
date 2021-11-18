@@ -1,11 +1,11 @@
 import { bySport, PLAYER } from "../../common";
-import type { Player, ThenArg } from "../../common/types";
+import type { Player } from "../../common/types";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
 export const addMood = async (players: Player[]) => {
-	const moods: ThenArg<ReturnType<typeof player["moodInfos"]>>[] = [];
+	const moods: Awaited<ReturnType<typeof player["moodInfos"]>>[] = [];
 	for (const p of players) {
 		moods.push(await player.moodInfos(p));
 	}

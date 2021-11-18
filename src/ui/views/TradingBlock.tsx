@@ -4,10 +4,10 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
-import type { View, ThenArg } from "../../common/types";
+import type { View } from "../../common/types";
 import type api from "../../worker/api";
 
-type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
 type OfferProps = {
 	challengeNoRatings: boolean;

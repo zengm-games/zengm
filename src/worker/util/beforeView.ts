@@ -11,7 +11,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from ".";
-import type { Conditions, League, ThenArg } from "../../common/types";
+import type { Conditions, League } from "../../common/types";
 
 let heartbeatIntervalID: number;
 
@@ -34,7 +34,7 @@ const runHeartbeat = async (l: League) => {
 	await idb.meta.put("leagues", l);
 };
 
-const startHeartbeat = async (l: ThenArg<ReturnType<typeof getLeague>>) => {
+const startHeartbeat = async (l: Awaited<ReturnType<typeof getLeague>>) => {
 	// First one within this transaction
 	await runHeartbeat(l);
 

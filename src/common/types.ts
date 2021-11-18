@@ -49,12 +49,10 @@ declare global {
 	}
 }
 
-export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-
 type ViewsKeys = keyof typeof views;
 
 export type View<Name extends ViewsKeys> = Exclude<
-	ThenArg<
+	Awaited<
 		Name extends ViewsKeys
 			? ReturnType<typeof views[Name]>
 			: Record<string, unknown>

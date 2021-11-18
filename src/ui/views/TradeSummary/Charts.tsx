@@ -1,11 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { axisBottom, axisLeft } from "d3-axis";
-import { scaleLinear } from "d3-scale";
-import { curveMonotoneX, line } from "d3-shape";
+import { scaleLinear as scaleLinearD3 } from "d3-scale";
+import { curveMonotoneX as curveMonotoneXD3, line } from "d3-shape";
 import { select } from "d3-selection";
+import { AxisBottom } from "@visx/axis";
+import { curveMonotoneX } from "@visx/curve";
+import { Group } from "@visx/group";
+import { ParentSize } from "@visx/responsive";
+import { LinePath } from "@visx/shape";
+import { scaleLinear } from "@visx/scale";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PHASE } from "../../../common";
+import { ReferenceLine } from "../Message/OwnerMoodsChart";
 
 const colors = ["var(--blue)", "var(--green)"];
 
@@ -20,6 +27,9 @@ const Charts = ({
 	View<"tradeSummary">,
 	"phase" | "season" | "seasonsToPlot" | "stat" | "teams" | "usePts"
 >) => {
+	const MAX_WIDTH = 400;
+	const HEIGHT = 200;
+
 	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
@@ -36,37 +46,37 @@ const Charts = ({
 
 	const valueKey = usePts ? "ptsPct" : "winp";
 
+	const allStats: number[] = [];
+	const seasons: number[] = [];
+
+	for (const row of seasonsToPlot) {
+		for (const team of row.teams) {
+			if (team.stat !== undefined) {
+				allStats.push(team.stat);
+			}
+		}
+		seasons.push(row.season);
+	}
+
+	// totals span -1 to 3, others -3 to 1
+	const margin = {
+		top: 15,
+		right: 15,
+		bottom: 30,
+		left: 30,
+	};
+
 	useEffect(() => {
 		if (node && node2) {
-			const allStats: number[] = [];
-			const seasons: number[] = [];
-
-			for (const row of seasonsToPlot) {
-				for (const team of row.teams) {
-					if (team.stat !== undefined) {
-						allStats.push(team.stat);
-					}
-				}
-				seasons.push(row.season);
-			}
-
-			// totals span -1 to 3, others -3 to 1
-			const margin = {
-				top: 15,
-				right: 15,
-				bottom: 30,
-				left: 30,
-			};
 			const width = node.clientWidth - margin.left - margin.right;
-			const height = 200;
-			const xScale = scaleLinear()
+			const xScale = scaleLinearD3()
 				.domain([seasons[0], seasons.at(-1)])
 				.range([0, width]);
-			const yScale = scaleLinear().domain([0, 1]).range([height, 0]);
+			const yScale = scaleLinearD3().domain([0, 1]).range([HEIGHT, 0]);
 			const svg = select(node)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
+				.attr("height", HEIGHT + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -123,7 +133,7 @@ const Charts = ({
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
 					.y(d => yScale(d.teams[i][valueKey] ?? 0))
-					.curve(curveMonotoneX);
+					.curve(curveMonotoneXD3);
 
 				const filtered = seasonsToPlot.filter(
 					row => row.teams[i][valueKey] !== undefined,
@@ -152,7 +162,7 @@ const Charts = ({
 				svg
 					.append("g")
 					.attr("class", "chart-axis")
-					.attr("transform", `translate(0,${height})`)
+					.attr("transform", `translate(0,${HEIGHT})`)
 					.call(axisBottom(xScale).ticks(8).tickFormat(String));
 
 				svg
@@ -167,11 +177,11 @@ const Charts = ({
 			}
 
 			const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
-			const yScale2 = scaleLinear().domain(yDomainStat).range([height, 0]);
+			const yScale2 = scaleLinearD3().domain(yDomainStat).range([HEIGHT, 0]);
 			const svg2 = select(node2)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
+				.attr("height", HEIGHT + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -201,7 +211,7 @@ const Charts = ({
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
 					.y(d => yScale2(d.teams[i].stat ?? 0))
-					.curve(curveMonotoneX);
+					.curve(curveMonotoneXD3);
 
 				const filtered = seasonsToPlot.filter(
 					row => row.teams[i].stat !== undefined,
@@ -230,7 +240,7 @@ const Charts = ({
 				svg2
 					.append("g")
 					.attr("class", "chart-axis")
-					.attr("transform", `translate(0,${height})`)
+					.attr("transform", `translate(0,${HEIGHT})`)
 					.call(axisBottom(xScale).ticks(8).tickFormat(String));
 
 				svg2
@@ -253,14 +263,25 @@ const Charts = ({
 				}
 			}
 		};
-	}, [node, node2, phase, season, seasonsToPlot, teams, valueKey]);
+	});
+
+	const yScale = scaleLinear({
+		domain: [0, 1],
+		range: [HEIGHT, 0],
+	});
+
+	const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
+	const yScale2 = scaleLinear({
+		domain: yDomainStat,
+		range: [HEIGHT, 0],
+	});
 
 	return (
 		<>
 			<div
 				className="position-relative"
 				style={{
-					maxWidth: 400,
+					maxWidth: MAX_WIDTH,
 				}}
 			>
 				<div className="text-center">
@@ -289,7 +310,7 @@ const Charts = ({
 			<div
 				className="position-relative mt-3"
 				style={{
-					maxWidth: 400,
+					maxWidth: MAX_WIDTH,
 				}}
 			>
 				<div className="text-center">{stat} by assets received in trade</div>
@@ -311,6 +332,31 @@ const Charts = ({
 					</ul>
 				</div>
 			</div>
+			<ParentSize
+				parentSizeStyles={{
+					maxWidth: MAX_WIDTH,
+				}}
+			>
+				{parent => {
+					const width = parent.width - margin.left - margin.right;
+					const xScale = scaleLinear({
+						domain: [seasons[0], seasons.at(-1)],
+						range: [0, width],
+					});
+					return (
+						<svg
+							width={width + margin.left + margin.right}
+							height={HEIGHT + margin.top + margin.bottom}
+						>
+							<ReferenceLine
+								x={xScale.range() as [number, number]}
+								y={yScale(0)}
+								color="var(--secondary)"
+							/>
+						</svg>
+					);
+				}}
+			</ParentSize>
 		</>
 	);
 };

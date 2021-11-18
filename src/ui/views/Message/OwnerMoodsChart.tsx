@@ -10,7 +10,7 @@ import { HelpPopover } from "../../components";
 import type { OwnerMood } from "../../../common/types";
 import { Fragment } from "react";
 
-const ReferenceLine = ({
+export const ReferenceLine = ({
 	x,
 	y,
 	color,

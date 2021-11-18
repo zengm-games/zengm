@@ -1,9 +1,5 @@
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
-- try reimplementing others with visx
-  - ReferenceLine share code between OwnerMoodChart and TradeSummary/Charts
-  - trade summary
-  - get rid of d3 dependencies
 
 on team history, graph of team ovr and winp over time, star for championship
 

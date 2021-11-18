@@ -306,3 +306,14 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
 	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
 }
+
+.chart-axis {
+	line,
+	path {
+		stroke: lighten($secondary, 10%);
+	}
+
+	text {
+		fill: lighten($secondary, 10%);
+	}
+}

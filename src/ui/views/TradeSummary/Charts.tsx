@@ -66,8 +66,10 @@ const Charts = ({
 		left: 30,
 	};
 
+	const STROKE_WIDTH = 1;
+
 	useEffect(() => {
-		if (node && node2) {
+		if (node) {
 			const width = node.clientWidth - margin.left - margin.right;
 			const xScale = scaleLinearD3()
 				.domain([seasons[0], seasons.at(-1)])
@@ -127,8 +129,6 @@ const Charts = ({
 					.text("Trade");
 			}
 
-			const strokeWidth = 1;
-
 			for (let i = 0; i < 2; i++) {
 				const line2 = line<typeof seasonsToPlot[number]>()
 					.x(d => xScale(d.season) as number)
@@ -144,7 +144,7 @@ const Charts = ({
 					.datum(filtered)
 					.attr("class", "chart-line")
 					.style("stroke", colors[i])
-					.style("stroke-width", strokeWidth)
+					.style("stroke-width", STROKE_WIDTH)
 					.attr("d", line2);
 
 				svg
@@ -154,10 +154,10 @@ const Charts = ({
 					.append("circle")
 					.attr("class", "chart-point")
 					.attr("stroke", colors[i])
-					.style("stroke-width", strokeWidth)
+					.style("stroke-width", STROKE_WIDTH)
 					.attr("cx", d => xScale(d.season) as number)
 					.attr("cy", d => yScale(d.teams[i][valueKey] ?? 0))
-					.attr("r", 5 * Math.sqrt(strokeWidth));
+					.attr("r", 5 * Math.sqrt(STROKE_WIDTH));
 
 				svg
 					.append("g")
@@ -175,91 +175,12 @@ const Charts = ({
 							.tickFormat(helpers.roundWinp as any),
 					);
 			}
-
-			const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
-			const yScale2 = scaleLinearD3().domain(yDomainStat).range([HEIGHT, 0]);
-			const svg2 = select(node2)
-				.append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", HEIGHT + margin.top + margin.bottom)
-				.append("g")
-				.attr("transform", `translate(${margin.left},${margin.top})`);
-
-			drawHorizontal(svg2, yScale2, 0, "var(--secondary)");
-
-			if (xMarker !== undefined) {
-				const tradeMarker = line<number>()
-					.x(() => xMarker as number)
-					.y(d => yScale2(d));
-				svg2
-					.append("path")
-					.datum(yScale2.domain())
-					.attr("class", "chart-line")
-					.style("stroke", "var(--danger)")
-					.style("stroke-dasharray", "5 5")
-					.attr("d", tradeMarker);
-
-				svg2
-					.append("text")
-					.attr("y", margin.top)
-					.attr("x", xMarker + 5)
-					.style("fill", "var(--danger)")
-					.text("Trade");
-			}
-
-			for (let i = 0; i < 2; i++) {
-				const line2 = line<typeof seasonsToPlot[number]>()
-					.x(d => xScale(d.season) as number)
-					.y(d => yScale2(d.teams[i].stat ?? 0))
-					.curve(curveMonotoneXD3);
-
-				const filtered = seasonsToPlot.filter(
-					row => row.teams[i].stat !== undefined,
-				);
-
-				svg2
-					.append("path")
-					.datum(filtered)
-					.attr("class", "chart-line")
-					.style("stroke", colors[i])
-					.style("stroke-width", strokeWidth)
-					.attr("d", line2);
-
-				svg2
-					.selectAll()
-					.data(filtered)
-					.enter()
-					.append("circle")
-					.attr("class", "chart-point")
-					.attr("stroke", colors[i])
-					.style("stroke-width", strokeWidth)
-					.attr("cx", d => xScale(d.season) as number)
-					.attr("cy", d => yScale2(d.teams[i].stat ?? 0))
-					.attr("r", 5 * Math.sqrt(strokeWidth));
-
-				svg2
-					.append("g")
-					.attr("class", "chart-axis")
-					.attr("transform", `translate(0,${HEIGHT})`)
-					.call(axisBottom(xScale).ticks(8).tickFormat(String));
-
-				svg2
-					.append("g")
-					.attr("class", "chart-axis")
-					.attr("transform", `translate(0,0)`)
-					.call(axisLeft(yScale2).ticks(5));
-			}
 		}
 
 		return () => {
 			if (node) {
 				while (node.firstChild) {
 					node.removeChild(node.firstChild);
-				}
-			}
-			if (node2) {
-				while (node2.firstChild) {
-					node2.removeChild(node2.firstChild);
 				}
 			}
 		};
@@ -314,7 +235,94 @@ const Charts = ({
 				}}
 			>
 				<div className="text-center">{stat} by assets received in trade</div>
-				<div ref={getNode2} />
+				<ParentSize
+					parentSizeStyles={{
+						maxWidth: MAX_WIDTH,
+					}}
+				>
+					{parent => {
+						const width = parent.width - margin.left - margin.right;
+						const xScale = scaleLinear({
+							domain: [seasons[0], seasons.at(-1)],
+							range: [0, width],
+						});
+
+						let xMarker: number;
+						if (phase < PHASE.REGULAR_SEASON) {
+							xMarker = xScale(season - 0.5);
+						} else if (phase === PHASE.REGULAR_SEASON) {
+							xMarker = xScale(season);
+						} else {
+							xMarker = xScale(season + 0.5);
+						}
+
+						return (
+							<svg
+								width={width + margin.left + margin.right}
+								height={HEIGHT + margin.top + margin.bottom}
+							>
+								<Group transform={`translate(${margin.left},${margin.top})`}>
+									<ReferenceLine
+										x={xScale.range() as [number, number]}
+										y={[yScale2(0), yScale2(0)]}
+										color="var(--secondary)"
+									/>
+									<ReferenceLine
+										x={[xMarker, xMarker]}
+										y={yScale2.range() as [number, number]}
+										color="var(--danger)"
+										text="Trade"
+										textPosition="right"
+									/>
+									{[0, 1].map(i => {
+										const filtered = seasonsToPlot.filter(
+											row => row.teams[i].stat !== undefined,
+										);
+
+										return (
+											<Fragment key={i}>
+												<LinePath
+													className="chart-line"
+													curve={curveMonotoneX}
+													data={filtered}
+													x={d => xScale(d.season)}
+													y={d => yScale2(d.teams[i].stat ?? 0)}
+													stroke={colors[i]}
+													strokeWidth={STROKE_WIDTH}
+												/>
+												{filtered.map((d, j) => (
+													<circle
+														key={j}
+														className="chart-point"
+														r={5 * Math.sqrt(STROKE_WIDTH)}
+														cx={xScale(d.season)}
+														cy={yScale2(d.teams[i].stat ?? 0)}
+														stroke={colors[i]}
+														strokeWidth={STROKE_WIDTH}
+													/>
+												))}
+											</Fragment>
+										);
+									})}
+									<AxisBottom
+										axisClassName="chart-axis"
+										numTicks={8}
+										scale={xScale}
+										tickFormat={String}
+										tickLength={5}
+										top={HEIGHT}
+									/>
+									<AxisLeft
+										axisClassName="chart-axis"
+										numTicks={5}
+										scale={yScale2}
+										tickLength={5}
+									/>
+								</Group>
+							</svg>
+						);
+					}}
+				</ParentSize>
 				<div
 					className="chart-legend"
 					style={{
@@ -332,64 +340,6 @@ const Charts = ({
 					</ul>
 				</div>
 			</div>
-			<ParentSize
-				parentSizeStyles={{
-					maxWidth: MAX_WIDTH,
-				}}
-			>
-				{parent => {
-					const width = parent.width - margin.left - margin.right;
-					const xScale = scaleLinear({
-						domain: [seasons[0], seasons.at(-1)],
-						range: [0, width],
-					});
-
-					let xMarker: number;
-					if (phase < PHASE.REGULAR_SEASON) {
-						xMarker = xScale(season - 0.5);
-					} else if (phase === PHASE.REGULAR_SEASON) {
-						xMarker = xScale(season);
-					} else {
-						xMarker = xScale(season + 0.5);
-					}
-
-					return (
-						<svg
-							width={width + margin.left + margin.right}
-							height={HEIGHT + margin.top + margin.bottom}
-						>
-							<Group transform={`translate(${margin.left},${margin.top})`}>
-								<ReferenceLine
-									x={xScale.range() as [number, number]}
-									y={[yScale2(0), yScale2(0)]}
-									color="var(--secondary)"
-								/>
-								<ReferenceLine
-									x={[xMarker, xMarker]}
-									y={yScale2.range() as [number, number]}
-									color="var(--danger)"
-									text="Trade"
-									textPosition="right"
-								/>
-								<AxisBottom
-									axisClassName="chart-axis"
-									numTicks={8}
-									scale={xScale}
-									tickFormat={String}
-									tickLength={5}
-									top={HEIGHT}
-								/>
-								<AxisLeft
-									axisClassName="chart-axis"
-									numTicks={5}
-									scale={yScale2}
-									tickLength={5}
-								/>
-							</Group>
-						</svg>
-					);
-				}}
-			</ParentSize>
 		</>
 	);
 };

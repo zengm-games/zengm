@@ -193,8 +193,9 @@ const OwnerMoodsChart = ({
 								/>
 								{lineInfos.map(({ key, color, width = 1 }) => {
 									return (
-										<Fragment key={`line-${key}`}>
+										<Fragment key={key}>
 											<LinePath
+												className="chart-line"
 												curve={curveMonotoneX}
 												data={data}
 												x={d => xScale(d.year) ?? 0}

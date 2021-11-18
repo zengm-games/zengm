@@ -15,30 +15,48 @@ export const ReferenceLine = ({
 	y,
 	color,
 	text,
-	textBelow,
+	textPosition,
 }: {
 	x: [number, number];
-	y: number;
+	y: [number, number];
 	color: string;
 	text?: string;
-	textBelow?: boolean;
+	textPosition?: "above" | "below" | "right";
 }) => {
+	let textX = x[1];
+	let textY = y[1];
+
+	if (textPosition === "below") {
+		textX -= 4;
+		textY += 17;
+	} else if (textPosition === "above") {
+		textX -= 4;
+		textY -= 7;
+	} else if (textPosition === "right") {
+		textX += 5;
+		textY += 14;
+	}
+
 	return (
 		<>
 			<LinePath
 				className="chart-line"
 				data={x}
 				x={d => d}
-				y={y}
+				y={(d, i) => y[i]}
 				stroke={color}
 				strokeDasharray="5 5"
 			/>
 			{text ? (
 				<Text
-					x={x[1] - 4}
-					y={y + (textBelow ? 17 : -7)}
+					x={textX}
+					y={textY}
 					fill={color}
-					textAnchor="end"
+					textAnchor={
+						textPosition === "below" || textPosition === "above"
+							? "end"
+							: undefined
+					}
 				>
 					{text}
 				</Text>
@@ -156,20 +174,21 @@ const OwnerMoodsChart = ({
 							<Group transform={`translate(${margin.left},${margin.top})`}>
 								<ReferenceLine
 									x={xScale.range()}
-									y={yScale(3)}
+									y={[yScale(3), yScale(3)]}
 									color="var(--success)"
 									text="Perfect"
+									textPosition="above"
 								/>
 								<ReferenceLine
 									x={xScale.range()}
-									y={yScale(-1)}
+									y={[yScale(-1), yScale(-1)]}
 									color="var(--danger)"
 									text="You're fired!"
-									textBelow
+									textPosition="below"
 								/>
 								<ReferenceLine
 									x={xScale.range()}
-									y={yScale(0)}
+									y={[yScale(0), yScale(0)]}
 									color="var(--secondary)"
 								/>
 								{lineInfos.map(({ key, color, width = 1 }) => {

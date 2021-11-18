@@ -343,6 +343,16 @@ const Charts = ({
 						domain: [seasons[0], seasons.at(-1)],
 						range: [0, width],
 					});
+
+					let xMarker: number;
+					if (phase < PHASE.REGULAR_SEASON) {
+						xMarker = xScale(season - 0.5);
+					} else if (phase === PHASE.REGULAR_SEASON) {
+						xMarker = xScale(season);
+					} else {
+						xMarker = xScale(season + 0.5);
+					}
+
 					return (
 						<svg
 							width={width + margin.left + margin.right}
@@ -350,8 +360,15 @@ const Charts = ({
 						>
 							<ReferenceLine
 								x={xScale.range() as [number, number]}
-								y={yScale(0)}
+								y={[yScale2(0), yScale2(0)]}
 								color="var(--secondary)"
+							/>
+							<ReferenceLine
+								x={[xMarker, xMarker]}
+								y={yScale2.range() as [number, number]}
+								color="var(--danger)"
+								text="Trade"
+								textPosition="right"
 							/>
 						</svg>
 					);

@@ -52,20 +52,20 @@ const smallStyle = {
 };
 
 const ScoreBox = ({
-	action,
+	actions = [],
 	className,
 	game,
 	playersUpcoming,
 	playersUpcomingAbbrev,
 	small,
 }: {
-	action?: {
+	actions?: {
 		disabled?: boolean;
 		highlight?: boolean;
 		href?: string;
 		onClick?: () => void;
 		text: ReactNode;
-	};
+	}[];
 	className?: string;
 	game: {
 		forceWin?: number;
@@ -185,18 +185,22 @@ const ScoreBox = ({
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
 	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
 
-	if (!action && final && !small) {
-		action = {
-			text: "Box score",
-			href: helpers.leagueUrl([
-				"game_log",
-				allStarGame
-					? "special"
-					: `${teamInfoCache[game.teams[0].tid]?.abbrev}_${game.teams[0].tid}`,
-				gameSeason,
-				game.gid,
-			]),
-		};
+	if (actions.length === 0 && final && !small) {
+		actions = [
+			{
+				text: "Box score",
+				href: helpers.leagueUrl([
+					"game_log",
+					allStarGame
+						? "special"
+						: `${teamInfoCache[game.teams[0].tid]?.abbrev}_${
+								game.teams[0].tid
+						  }`,
+					gameSeason,
+					game.gid,
+				]),
+			},
+		];
 	}
 
 	const scoreBox = (
@@ -207,7 +211,7 @@ const ScoreBox = ({
 			<div
 				className={classNames(
 					"border-light",
-					action ? "border-right-0" : undefined,
+					actions.length > 0 ? "border-right-0" : undefined,
 				)}
 			>
 				{tradeDeadline ? (
@@ -481,32 +485,38 @@ const ScoreBox = ({
 		</div>
 	);
 
-	if (action) {
-		const classNameAction = classNames(
-			"btn score-box-action",
-			action.highlight ? "btn-success" : "btn-light-bordered-2",
-		);
-
+	if (actions.length > 0) {
 		return (
 			<div className={className}>
 				<div className="d-flex">
 					{scoreBox}
-					{action.onClick ? (
-						<button
-							className={classNameAction}
-							disabled={action.disabled}
-							onClick={action.onClick}
-						>
-							{action.text}
-						</button>
-					) : (
-						<a
-							className={`${classNameAction} d-flex align-items-center`}
-							href={action.href}
-						>
-							{action.text}
-						</a>
-					)}
+					<div className="btn-group-vertical score-box-action">
+						{actions.map((action, i) => {
+							const classNameAction = classNames(
+								"btn",
+								action.highlight ? "btn-success" : "btn-light-bordered-2",
+							);
+
+							return action.onClick ? (
+								<button
+									key={i}
+									className={classNameAction}
+									disabled={action.disabled}
+									onClick={action.onClick}
+								>
+									{action.text}
+								</button>
+							) : (
+								<a
+									key={i}
+									className={`${classNameAction} d-flex align-items-center`}
+									href={action.href}
+								>
+									{action.text}
+								</a>
+							);
+						})}
+					</div>
 				</div>
 				{!small && overtimes ? (
 					<div className="text-muted p-1">{overtimes}</div>

@@ -78,23 +78,25 @@ const Schedule = ({
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
 						{upcoming.map((game, i) => {
-							const action = game.teams[0].playoffs
+							const actions = game.teams[0].playoffs
 								? undefined
-								: {
-										disabled: gameSimInProgress || i === 0,
-										text: (
-											<>
-												Sim
-												<br />
-												to
-												<br />
-												game
-											</>
-										),
-										onClick: () => {
-											toWorker("actions", "simToGame", game.gid);
+								: [
+										{
+											disabled: gameSimInProgress || i === 0,
+											text: (
+												<>
+													Sim
+													<br />
+													to
+													<br />
+													game
+												</>
+											),
+											onClick: () => {
+												toWorker("actions", "simToGame", game.gid);
+											},
 										},
-								  };
+								  ];
 
 							const allowTie = allowForceTie({
 								homeTid: game.teams[0].tid,
@@ -121,7 +123,7 @@ const Schedule = ({
 										}}
 										playersUpcoming={topPlayers[otherTid]}
 										playersUpcomingAbbrev
-										action={action}
+										actions={actions}
 									/>
 									<ForceWin
 										key={forceWinKey}

@@ -82,11 +82,6 @@ const DailySchedule = ({
 							Sim one day to move past the trade deadline, and then the next
 							day's games will be available here.
 						</p>
-					) : isToday ? (
-						<p>
-							To view a live play-by-play summary of a game, select one of
-							today's games below.
-						</p>
 					) : null}
 
 					{upcoming.length > 0 ? (
@@ -94,23 +89,40 @@ const DailySchedule = ({
 							{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
 							<div className="d-flex flex-wrap" style={{ gap: "1rem 2rem" }}>
 								{upcoming.map(game => {
-									const action =
+									const actions =
 										isToday && !tradeDeadline
-											? {
-													disabled: gameSimInProgress,
-													highlight:
-														game.teams[0].tid === userTid ||
-														game.teams[1].tid === userTid,
-													text: (
-														<>
-															Watch
-															<br />
-															game
-														</>
-													),
-													onClick: () =>
-														toWorker("actions", "liveGame", game.gid),
-											  }
+											? [
+													{
+														disabled: gameSimInProgress,
+														highlight:
+															game.teams[0].tid === userTid ||
+															game.teams[1].tid === userTid,
+														text: (
+															<>
+																Watch
+																<br />
+																game
+															</>
+														),
+														onClick: () =>
+															toWorker("actions", "liveGame", game.gid),
+													},
+													{
+														disabled: gameSimInProgress,
+														highlight:
+															game.teams[0].tid === userTid ||
+															game.teams[1].tid === userTid,
+														text: (
+															<>
+																Sim
+																<br />
+																game
+															</>
+														),
+														onClick: () =>
+															toWorker("actions", "simGame", game.gid),
+													},
+											  ]
 											: undefined;
 
 									const allowTie = allowForceTie({
@@ -140,7 +152,7 @@ const DailySchedule = ({
 													topPlayers[game.teams[0].tid]?.[0],
 													topPlayers[game.teams[1].tid]?.[0],
 												]}
-												action={action}
+												actions={actions}
 											/>
 											<ForceWin allowTie={allowTie} game={game} />
 										</div>

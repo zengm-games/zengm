@@ -22,21 +22,6 @@ import {
 } from "../util";
 import type { Conditions, TradeTeams, PlayoffSeries } from "../../common/types";
 
-const liveGame = async (gid: number, conditions: Conditions) => {
-	await toUI(
-		"realtimeUpdate",
-		[
-			[],
-			helpers.leagueUrl(["live_game"]),
-			{
-				fromAction: true,
-			},
-		],
-		conditions,
-	);
-	game.play(1, conditions, true, gid);
-};
-
 const negotiate = async (pid: number, conditions: Conditions) => {
 	// If there is no active negotiation with this pid, create it
 	const negotiation = await idb.cache.negotiations.get(pid);
@@ -502,6 +487,25 @@ const toolsMenu = {
 	},
 };
 
+const liveGame = async (gid: number, conditions: Conditions) => {
+	await toUI(
+		"realtimeUpdate",
+		[
+			[],
+			helpers.leagueUrl(["live_game"]),
+			{
+				fromAction: true,
+			},
+		],
+		conditions,
+	);
+	game.play(1, conditions, true, gid);
+};
+
+const simGame = async (gid: number, conditions: Conditions) => {
+	await game.play(1, conditions, true, gid);
+};
+
 const simToGame = async (gid: number, conditions: Conditions) => {
 	const numDays = await season.getDaysLeftSchedule(gid);
 	await updateStatus("Playing..."); // For quick UI updating, before game.play
@@ -513,6 +517,7 @@ export default {
 	liveGame,
 	negotiate,
 	playMenu,
+	simGame,
 	simToGame,
 	toolsMenu,
 	tradeFor,

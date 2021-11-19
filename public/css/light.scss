@@ -962,8 +962,17 @@ tr.table-warning:hover > td {
 }
 
 .score-box-action {
-	border-bottom-left-radius: 0px;
-	border-top-left-radius: 0px;
+	.btn {
+		border-bottom-left-radius: 0px !important;
+		border-top-left-radius: 0px !important;
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	.btn:not(:first-child) {
+		border-top: 1px solid $gray-300;
+	}
+
 	height: 94px;
 }
 

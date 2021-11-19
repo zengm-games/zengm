@@ -32,6 +32,7 @@ const PlayerList = ({
 		>
 			{players.map((p, i) => (
 				<li
+					key={p.pid}
 					className={classNames({
 						"mt-2": i > 0,
 					})}
@@ -108,6 +109,7 @@ const TeamList = ({
 		>
 			{teams.map((t, i) => (
 				<li
+					key={t.tid}
 					className={classNames({
 						"mt-3": i > 0,
 					})}
@@ -152,7 +154,7 @@ const TeamList = ({
 						</div>
 					) : null}
 					{t.players.map(p => (
-						<div className="text-muted mt-2">
+						<div key={p.pid} className="text-muted mt-2">
 							<PlayerNameLabels
 								pid={p.pid}
 								season={season}

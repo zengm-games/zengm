@@ -15,6 +15,8 @@ import { getEWA } from "../../util/advStats.basketball";
 
 const MINUTES_PER_GAME = 48;
 
+const hasPhoto = ["seemebo01"];
+
 const formatPlayerFactory = async (
 	basketball: Basketball,
 	options: GetLeagueOptions,
@@ -414,7 +416,9 @@ const formatPlayerFactory = async (
 			weight: bio.weight,
 			hgt: bio.height,
 			tid,
-			imgURL: "/img/blank-face.png",
+			imgURL: hasPhoto.includes(ratings.slug)
+				? `/img/players/${ratings.slug}.jpg`
+				: "/img/blank-face.png",
 			real: true,
 			draft,
 			ratings: processedRatings,

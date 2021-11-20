@@ -51,7 +51,6 @@ const TeamForm = ({
 	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
 	const face = useRef<Face | undefined>();
 	const [showFace, setShowFace] = useState(false);
-	const [showFaceHover, setShowFaceHover] = useState(false);
 
 	const divisions = divs.map(div => {
 		const conf = confs.find(c => c.cid === div.cid);
@@ -63,7 +62,7 @@ const TeamForm = ({
 
 	useEffect(() => {
 		const renderFace = async () => {
-			if (!showFace && !showFaceHover) {
+			if (!showFace) {
 				if (faceWrapper) {
 					faceWrapper.innerHTML = "";
 				}
@@ -86,7 +85,7 @@ const TeamForm = ({
 		};
 
 		renderFace();
-	}, [faceWrapper, showFace, showFaceHover, t.colors, t.jersey]);
+	}, [faceWrapper, showFace, t.colors, t.jersey]);
 
 	return (
 		<>
@@ -185,11 +184,7 @@ const TeamForm = ({
 					/>
 				</div>
 			</div>
-			<div
-				className={classNamesCol[8]}
-				onMouseEnter={() => setShowFaceHover(true)}
-				onMouseLeave={() => setShowFaceHover(false)}
-			>
+			<div className={classNamesCol[8]}>
 				<div className="form-group">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="d-flex">
@@ -198,9 +193,11 @@ const TeamForm = ({
 								key={j}
 								type="color"
 								className="form-control"
+								onClick={() => {
+									setShowFace(true);
+								}}
 								onChange={e => {
 									handleInputChange(`colors${j}`, e);
-									setShowFace(true);
 								}}
 								value={t.colors[j]}
 								style={{
@@ -211,8 +208,14 @@ const TeamForm = ({
 						))}
 						<select
 							className="form-control"
+							onMouseDown={() => {
+								// Runs when select is opened
+								setShowFace(true);
+							}}
 							onChange={e => {
 								handleInputChange("jersey", e);
+
+								// Just to be sure, since onMouseDown seems strange
 								setShowFace(true);
 							}}
 							value={t.jersey}
@@ -240,7 +243,7 @@ const TeamForm = ({
 						style={{ maxWidth: 120, marginTop: -35 }}
 						className="position-relative mb-3"
 					/>
-					{showFace || showFaceHover ? (
+					{showFace ? (
 						<JerseyNumber
 							number={"35"}
 							start={2002}

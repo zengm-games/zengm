@@ -60,6 +60,12 @@ const TeamForm = ({
 		};
 	});
 
+	const [color1, color2, color3] = t.colors ?? [
+		"#000000",
+		"#cccccc",
+		"#ffffff",
+	];
+
 	useEffect(() => {
 		const renderFace = async () => {
 			if (!showFace) {
@@ -75,7 +81,7 @@ const TeamForm = ({
 
 			if (faceWrapper && face.current) {
 				const overrides = {
-					teamColors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+					teamColors: [color1, color2, color3],
 					jersey: {
 						id: t.jersey ?? DEFAULT_JERSEY,
 					},
@@ -85,7 +91,7 @@ const TeamForm = ({
 		};
 
 		renderFace();
-	}, [faceWrapper, showFace, t.colors, t.jersey]);
+	}, [faceWrapper, showFace, color1, color2, color3, t.jersey]);
 
 	return (
 		<>

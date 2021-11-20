@@ -55,7 +55,8 @@ const findStatSum = (
 	phase: Phase,
 	statSumsBySeason?: Record<number, number>,
 ) => {
-	let index = statsIndex ?? 0;
+	// >= 0 check is for rookies traded after the draft, where they have no stats entry so it is -1
+	let index = statsIndex !== undefined && statsIndex >= 0 ? statsIndex : 0;
 
 	// If no data was deleted/edited, should work with just statsIndex
 	const firstTry = allStats[index];
@@ -80,11 +81,12 @@ const findStatSum = (
 			hockey: row.ops + row.dps + row.gps,
 		});
 
-		// Only after trade
+		// Only after trade - undefined means traded draft pick, -1 means traded while stats array was empty (so all is after trade)
 		if (
 			i > index ||
 			(i === index && phase <= PHASE.PLAYOFFS) ||
-			statsIndex === undefined
+			statsIndex === undefined ||
+			statsIndex === -1
 		) {
 			statSum += stat;
 		}

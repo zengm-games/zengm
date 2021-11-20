@@ -87,13 +87,6 @@ const Chart = ({
 									}
 									color="var(--secondary)"
 								/>
-								<ReferenceLine
-									x={[xMarker, xMarker]}
-									y={yScale.range() as [number, number]}
-									color="var(--danger)"
-									text="Trade"
-									textPosition="right"
-								/>
 								{[0, 1].map(i => {
 									const filtered = seasonsToPlot.filter(
 										row => row.teams[i][valueKey] !== undefined,
@@ -124,6 +117,13 @@ const Chart = ({
 										</Fragment>
 									);
 								})}
+								<ReferenceLine
+									x={[xMarker, xMarker]}
+									y={yScale.range() as [number, number]}
+									color="var(--danger)"
+									text="Trade"
+									textPosition="right"
+								/>
 								<AxisBottom
 									axisClassName="chart-axis"
 									numTicks={8}

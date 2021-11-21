@@ -384,14 +384,14 @@ const dailySchedule = (params: Params) => {
 const liveGame = (params: Params, ctxBBGM: any) => {
 	const obj: {
 		fromAction: boolean;
-		gidPlayByPlay?: number;
+		gid?: number;
 		playByPlay?: any[];
 	} = {
 		fromAction: !!ctxBBGM.fromAction,
 	};
 
 	if (ctxBBGM.playByPlay !== undefined) {
-		obj.gidPlayByPlay = ctxBBGM.gidPlayByPlay;
+		obj.gid = ctxBBGM.gidOneGame;
 		obj.playByPlay = ctxBBGM.playByPlay;
 	}
 

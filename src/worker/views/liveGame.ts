@@ -18,12 +18,12 @@ const updatePlayByPlay = async (
 	}
 
 	if (
-		inputs.gidPlayByPlay !== undefined &&
+		inputs.gid !== undefined &&
 		inputs.playByPlay !== undefined &&
 		inputs.playByPlay.length > 0
 	) {
 		const boxScore: any = helpers.deepCopy(
-			await idb.cache.games.get(inputs.gidPlayByPlay),
+			await idb.cache.games.get(inputs.gid),
 		);
 
 		const otl = g.get("otl", "current");

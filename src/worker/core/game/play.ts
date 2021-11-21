@@ -43,13 +43,15 @@ import allowForceTie from "../../../common/allowForceTie";
  * @memberOf core.game
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
- * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
+ * @param {number?} gidOneGame Game ID number if we just want to sim one game rather than the whole day. Must be defined if playByPlay is true.
+ * @param {boolean?} playByPlay When true, an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
  */
 const play = async (
 	numDays: number,
 	conditions: Conditions,
 	start: boolean = true,
-	gidPlayByPlay?: number,
+	gidOneGame?: number,
+	playByPlay?: boolean,
 ) => {
 	// This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
 	const cbNoGames = async (playoffsOver: boolean = false) => {
@@ -66,12 +68,12 @@ const play = async (
 				await phase.newPhase(
 					PHASE.PLAYOFFS,
 					conditions,
-					gidPlayByPlay !== undefined,
+					gidOneGame !== undefined,
 				);
 			} else {
 				const allStarNext = await allStar.nextGameIsAllStar(schedule);
 
-				if (allStarNext && gidPlayByPlay === undefined) {
+				if (allStarNext && gidOneGame === undefined) {
 					toUI(
 						"realtimeUpdate",
 						[[], helpers.leagueUrl(["all_star"])],
@@ -83,7 +85,7 @@ const play = async (
 			await phase.newPhase(
 				PHASE.DRAFT_LOTTERY,
 				conditions,
-				gidPlayByPlay !== undefined,
+				gidOneGame !== undefined,
 			);
 		}
 
@@ -93,7 +95,7 @@ const play = async (
 	// Saves a vector of results objects for a day, as is output from cbSimGames
 	const cbSaveResults = async (results: any[], dayOver: boolean) => {
 		// Before writeGameStats, so LeagueTopBar can not update with game result
-		if (gidPlayByPlay !== undefined) {
+		if (gidOneGame !== undefined && playByPlay) {
 			await toUI("updateLocal", [{ liveGameInProgress: true }]);
 		}
 
@@ -265,11 +267,11 @@ const play = async (
 		let url;
 
 		// If there was a play by play done for one of these games, get it
-		if (gidPlayByPlay !== undefined) {
+		if (gidOneGame !== undefined && playByPlay) {
 			for (let i = 0; i < results.length; i++) {
 				if (results[i].playByPlay !== undefined) {
 					raw = {
-						gidPlayByPlay,
+						gidOneGame,
 						playByPlay: results[i].playByPlay,
 					};
 					url = helpers.leagueUrl(["live_game"]);
@@ -331,7 +333,7 @@ const play = async (
 		const results: any[] = [];
 
 		for (const game of schedule) {
-			const doPlayByPlay = gidPlayByPlay === game.gid;
+			const doPlayByPlay = gidOneGame === game.gid && playByPlay;
 
 			const teamsInput = [teams[game.homeTid], teams[game.awayTid]] as any;
 
@@ -495,9 +497,9 @@ const play = async (
 
 		// If live game sim, only do that one game, not the whole day
 		let dayOver = true;
-		if (gidPlayByPlay !== undefined) {
+		if (gidOneGame !== undefined) {
 			const lengthBefore = schedule.length;
-			schedule = schedule.filter(game => game.gid === gidPlayByPlay);
+			schedule = schedule.filter(game => game.gid === gidOneGame);
 			const lengthAfter = schedule.length;
 
 			if (lengthBefore - lengthAfter > 0) {

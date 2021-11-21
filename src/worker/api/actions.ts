@@ -499,7 +499,7 @@ const liveGame = async (gid: number, conditions: Conditions) => {
 		],
 		conditions,
 	);
-	game.play(1, conditions, true, gid);
+	game.play(1, conditions, true, gid, true);
 };
 
 const simGame = async (gid: number, conditions: Conditions) => {

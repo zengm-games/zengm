@@ -1,10 +1,17 @@
-stat sum
-- https://mail.google.com/mail/u/0/#inbox/FMfcgzGlksGwwZHtWqLWCmWcWPvLZJWL
-- is this happening to anyone traded after the draft?
+If you use the new sim game button on the live page, the bar at teh top of the page with recent games no longer updates. Reloading the page fixes it https://discord.com/channels/290013534023057409/290015591216054273/911661427708817428
+
+ai propose trades to user
+- list candidates on a new Trade Offers page?
+
+custom flags
+- on playerBioInfo editor, add none/default/custom for flag. then somehow need to get that info for display...
 
 more xp penalty stuff
 - https://discord.com/channels/290013534023057409/290015591216054273/911125834457288724
 - https://github.com/zengm-games/zengm/issues/397
+
+dropbox integration - save league to cloud
+- Tools > Export have button to export to dropbox
 
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
@@ -99,9 +106,6 @@ nicidob improve value formula
 
 "May have found a small bug (Chrome), when you update a players rating, then attempt to update him to a retired jersey number, it throws the retired jersey error. after you change the jersey number, the rating change shows, but the listed OVR doesn't change to what's reflected in the edit page" https://discord.com/channels/290013534023057409/290015591216054273/893175557410406440
 
-dropbox integration - save league to cloud
-- Tools > Export have button to export to dropbox
-
 more dramatic play-by-play
 - pass attempt and description before result
 - fg attempt before result
@@ -151,9 +155,6 @@ More preset league structures
 show tenths of seconds in live sim play by play
 
 free throws with no time left https://github.com/zengm-games/zengm/issues/392
-
-custom flags
-- on playerBioInfo editor, add none/default/custom for flag. then somehow need to get that info for display...
 
 way to tell getCopy we are not going to mutate, so don't need deepcopy
 
@@ -231,9 +232,6 @@ show best performer(s) by score on schedule page https://discord.com/channels/29
 ratings distributions by position https://discord.com/channels/290013534023057409/331882115119448065/862853531231977513
 
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
-
-ai propose trades to user
-- list candidates on a new Trade Offers page?
 
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
 

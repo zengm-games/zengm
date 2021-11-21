@@ -551,7 +551,9 @@ const BoxScoreWrapper = ({
 	let forcedWinText = null;
 	if (boxScore.forceWin !== undefined) {
 		const pure = boxScore.forceWin <= 500;
-		const tie = t0.pts === t1.pts;
+
+		// Live game sim still has final score in won/lost.pts
+		const tie = boxScore.won.pts === boxScore.lost.pts;
 
 		forcedWinText = (
 			<>

@@ -943,9 +943,7 @@ const beforeDBStream = async ({
 				: undefined,
 	};
 
-	const teamInfos = helpers.addPopRank(
-		filteredFromFile.teams ?? teamsFromInput,
-	);
+	let teamInfos = helpers.addPopRank(filteredFromFile.teams ?? teamsFromInput);
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
@@ -978,6 +976,7 @@ const beforeDBStream = async ({
 		for (const t of teamInfos) {
 			t.pop = averagePopulation;
 		}
+		teamInfos = helpers.addPopRank(teamInfos);
 	}
 
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({

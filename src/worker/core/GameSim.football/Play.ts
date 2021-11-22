@@ -696,6 +696,9 @@ class Play {
 		if (event.type.endsWith("TD")) {
 			state.awaitingAfterTouchdown = true;
 			state.isClockRunning = false;
+
+			// This is to prevent weird bugs related to it thinking there is a turnover on downs after a TD is scored, see https://github.com/zengm-games/zengm/issues/397
+			state.down = 1;
 		}
 
 		// Doesn't really make sense to evaluate these things (TD, safety, touchback) because the play might not be over, could just be a player in their own endzone but maybe they don't want to take a knee for a touchback. So the _IS_POSSIBLE variables filter out when different events can actually happen, to get rid of false positives

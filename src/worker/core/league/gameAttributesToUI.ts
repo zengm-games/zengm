@@ -2,6 +2,7 @@ import { toUI } from "../../util";
 import type {
 	GameAttributesLeagueWithHistory,
 	GameAttributesLeague,
+	LocalStateUI,
 } from "../../../common/types";
 import { unwrapGameAttribute } from "../../../common";
 
@@ -36,8 +37,18 @@ const gameAttributesToUI = async (
 		}
 	}
 
+	const flagOverrides: LocalStateUI["flagOverrides"] = {};
+	const countries = gameAttributes.playerBioInfo?.countries;
+	if (countries) {
+		for (const [country, { flag }] of Object.entries(countries)) {
+			if (flag !== undefined) {
+				flagOverrides[country] = flag;
+			}
+		}
+	}
+
 	if (updated) {
-		await toUI("setGameAttributes", [update]);
+		await toUI("setGameAttributes", [update, flagOverrides]);
 	}
 };
 

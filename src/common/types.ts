@@ -840,6 +840,7 @@ export type LocalStateUI = {
 	challengeNoRatings: boolean;
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;
+	flagOverrides: Record<string, string | undefined>;
 	gameSimInProgress: boolean;
 	games: {
 		forceWin?: number; // Number of iterations - defined means result was forced

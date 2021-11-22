@@ -238,8 +238,11 @@ const resetLeague = () => {
 	localActions.resetLeague();
 };
 
-const setGameAttributes = (gameAttributes: Partial<GameAttributesLeague>) => {
-	localActions.updateGameAttributes(gameAttributes);
+const setGameAttributes = (
+	gameAttributes: Partial<GameAttributesLeague>,
+	flagOverrides: LocalStateUI["flagOverrides"],
+) => {
+	localActions.updateGameAttributes(gameAttributes, flagOverrides);
 };
 
 const showEvent2 = (options: LogEventShowOptions) => {

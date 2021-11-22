@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import type { CSSProperties } from "react";
-import { helpers } from "../util";
+import { helpers, useLocal } from "../util";
 
 // https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
 const countryCodes: Record<string, string> = {
@@ -280,35 +280,33 @@ const CountryFlag = ({
 	override?: string;
 	style?: CSSProperties;
 }) => {
-	if (override === "none") {
-		return (
-			<div
-				className={classNames("flag-image", className)}
-				title={country}
-				style={style}
-			/>
-		);
-	} else if (override) {
+	const flagOverrides = useLocal(state => state.flagOverrides);
+
+	const country2 = helpers.getCountry(country);
+
+	const actualOverride =
+		override ?? flagOverrides[country] ?? flagOverrides[country2];
+
+	if (actualOverride === "none") {
+		return null;
+	} else if (actualOverride) {
 		return (
 			<img
-				src={override}
+				src={actualOverride}
 				className={classNames("flag-image", className)}
-				alt={country}
+				alt={flagOverrides[country] ? country : country2}
 				style={style}
 			/>
 		);
 	}
 
-	const country2 = countryCodes[country]
-		? country
-		: helpers.getCountry(country);
-	const code = countryCodes[country2];
+	const code = countryCodes[country] ?? countryCodes[country2];
 	if (code) {
 		return (
 			<span
 				className={classNames(`flag-icon flag-icon-${code}`, className)}
 				data-no-row-highlight="true"
-				title={country2}
+				title={countryCodes[country] ? country : country2}
 				style={style}
 			></span>
 		);

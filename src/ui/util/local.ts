@@ -17,7 +17,10 @@ type LocalActions = {
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
-	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
+	updateGameAttributes: (
+		gameAttributes: Partial<GameAttributesLeague>,
+		flagOverrides?: LocalStateUI["flagOverrides"],
+	) => void;
 };
 
 const defaultUnits: "metric" | "us" =
@@ -46,6 +49,7 @@ const useLocal = create(
 		customMenu: undefined,
 		dirtySettings: false,
 		fantasyPoints: undefined,
+		flagOverrides: {},
 		gameSimInProgress: false,
 		games: [],
 		gold: undefined,
@@ -165,7 +169,10 @@ const useLocal = create(
 				set(obj as any);
 			},
 
-			updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
+			updateGameAttributes(
+				gameAttributes: Partial<GameAttributesLeague>,
+				flagOverrides?: LocalStateUI["flagOverrides"],
+			) {
 				// Keep in sync with gameAttributesToUI - this is just for TypeScript
 				const keys = [
 					"challengeNoRatings",
@@ -187,7 +194,7 @@ const useLocal = create(
 
 				let update = false;
 
-				const updates: Partial<GameAttributesLeague> = {};
+				const updates: Partial<LocalStateUI> = {};
 
 				for (const key of keys) {
 					if (
@@ -198,6 +205,10 @@ const useLocal = create(
 						updates[key] = gameAttributes[key];
 						update = true;
 					}
+				}
+
+				if (flagOverrides) {
+					updates.flagOverrides = flagOverrides;
 				}
 
 				if (update) {

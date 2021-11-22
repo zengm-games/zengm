@@ -6,6 +6,8 @@ custom flags
 - show flag next to name
 - add to docs
 - confirm works with svg and png
+- confirm none works
+- actually load flags to settings from g.playerBioInfo
 - show default flag on FlagEditor
 
 more xp penalty stuff

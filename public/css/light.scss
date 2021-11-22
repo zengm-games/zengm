@@ -36,9 +36,6 @@ $flag-icon-css-path: "/img/flags";
 	&:before {
 		content: "\00a0";
 	}
-	&.flag-icon-squared {
-		width: 1em;
-	}
 }
 @mixin flag-icon($country) {
 	.flag-icon-#{$country} {
@@ -47,6 +44,12 @@ $flag-icon-css-path: "/img/flags";
 }
 @each $country in $include {
 	@include flag-icon($country);
+}
+.flag-image {
+	max-width: math.div(4, 3) * 1em;
+	max-height: 1em;
+	width: auto;
+	height: auto;
 }
 
 // Taken from bootstrap.scss, but with unused things deleted

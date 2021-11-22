@@ -767,8 +767,8 @@ export const FlagEditor = ({
 							}}
 						/>
 						<span className="form-text text-muted">
-							Enter the URL to an image/SVG file containing a flag. Leave blank
-							to use the default built-in flag for this country.
+							Enter the URL to an image of a flag. Leave blank to use the
+							default built-in flag for this country.
 						</span>
 					</div>
 				</form>

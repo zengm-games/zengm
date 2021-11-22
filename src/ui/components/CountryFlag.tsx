@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import type { CSSProperties } from "react";
 import { helpers } from "../util";
 
 // https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
@@ -271,10 +272,33 @@ const countryCodes: Record<string, string> = {
 const CountryFlag = ({
 	className,
 	country,
+	override,
+	style,
 }: {
 	className?: string;
 	country: string;
+	override?: string;
+	style?: CSSProperties;
 }) => {
+	if (override === "none") {
+		return (
+			<div
+				className={classNames("flag-image", className)}
+				title={country}
+				style={style}
+			/>
+		);
+	} else if (override) {
+		return (
+			<img
+				src={override}
+				className={classNames("flag-image", className)}
+				alt={country}
+				style={style}
+			/>
+		);
+	}
+
 	const country2 = countryCodes[country]
 		? country
 		: helpers.getCountry(country);
@@ -285,6 +309,7 @@ const CountryFlag = ({
 				className={classNames(`flag-icon flag-icon-${code}`, className)}
 				data-no-row-highlight="true"
 				title={country2}
+				style={style}
 			></span>
 		);
 	}

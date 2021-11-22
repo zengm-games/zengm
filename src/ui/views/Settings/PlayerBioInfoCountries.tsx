@@ -12,6 +12,7 @@ import {
 	prune,
 } from "./PlayerBioInfo";
 import { IMPORT_FILE_STYLE } from "./Injuries";
+import { CountryFlag } from "../../components";
 
 export const smallColStyle = {
 	marginLeft: 10,
@@ -486,6 +487,12 @@ export const CountriesEditor = ({
 										},
 									)}
 								</div>
+								<CountryFlag
+									className="ml-1 align-self-center"
+									country={country.country}
+									override={country.flag}
+									style={{ marginTop: 10 }}
+								/>
 								<PlayerBioInfoRowButton
 									className="text-reset"
 									onClick={() => {

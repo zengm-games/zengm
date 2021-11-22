@@ -278,8 +278,7 @@ export const CollegesEditor = ({
 		// Reset for next time
 		setRowsEdited(lastSavedState.current?.rowsEdited ?? [...rows]);
 		setFractionSkipCollegeEdited(
-			lastSavedState.current?.fractionSkipCollegeEdited ??
-				fractionSkipCollegeEdited,
+			lastSavedState.current?.fractionSkipCollegeEdited ?? fractionSkipCollege,
 		);
 
 		onCancel();
@@ -711,6 +710,75 @@ export const NamesEditor = ({
 					disabled={rowsEdited[firstOrLast].length === 0}
 				>
 					Save Names
+				</button>
+			</Modal.Footer>
+		</>
+	);
+};
+
+export const FlagEditor = ({
+	flag,
+	onCancel,
+	onSave,
+}: {
+	flag: string | undefined;
+	onCancel: () => void;
+	onSave: (flag: string | undefined) => void;
+}) => {
+	const initialFlag = flag ?? "";
+	const [flagEdited, setFlagEdited] = useState(initialFlag);
+	const lastSavedState = useRef<undefined | string>();
+
+	const handleCancel = async () => {
+		// Reset for next time
+		setFlagEdited(lastSavedState.current ?? initialFlag);
+
+		onCancel();
+	};
+
+	const handleSave = (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => {
+		event.preventDefault();
+
+		// Don't submit parent form
+		event.stopPropagation();
+
+		// Save for next time
+		lastSavedState.current = flagEdited;
+
+		onSave(flagEdited);
+	};
+
+	return (
+		<>
+			<Modal.Body>
+				<form onSubmit={handleSave}>
+					<div className="form-group">
+						<label htmlFor="playerBioInfoFlag">Flag URL</label>
+						<input
+							type="text"
+							className="form-control"
+							id="playerBioInfoFlag"
+							value={flagEdited}
+							onChange={event => {
+								setFlagEdited(event.target.value);
+							}}
+						/>
+						<span className="form-text text-muted">
+							Enter the URL to an image/SVG file containing a flag. Leave blank
+							to use the default built-in flag for this country.
+						</span>
+					</div>
+				</form>
+			</Modal.Body>
+			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={handleCancel}>
+					Cancel
+				</button>
+				<button className="btn btn-primary" onClick={handleSave}>
+					Save Flag
 				</button>
 			</Modal.Footer>
 		</>

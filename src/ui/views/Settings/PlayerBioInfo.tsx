@@ -10,6 +10,7 @@ import isEqual from "lodash-es/isEqual";
 import orderBy from "lodash-es/orderBy";
 import {
 	CollegesEditor,
+	FlagEditor,
 	NamesEditor,
 	RacesEditor,
 } from "./PlayerBioInfoEditors";
@@ -502,7 +503,7 @@ const PlayerBioInfo2 = ({
 	// Just sets the default to false. Might be better to compare values, like it does in prune.
 	const handleChange2 =
 		(
-			key: "colleges" | "fractionSkipCollege" | "names" | "races",
+			key: "colleges" | "flag" | "fractionSkipCollege" | "names" | "races",
 			i: number | "default",
 		) =>
 		(rows: any) => {
@@ -529,6 +530,7 @@ const PlayerBioInfo2 = ({
 
 							// Apply the new default
 							if (
+								defaultProp !== "defaultFlag" &&
 								defaultProp !== "defaultFractionSkipCollege" &&
 								row[defaultProp]
 							) {
@@ -550,7 +552,7 @@ const PlayerBioInfo2 = ({
 							return row;
 						}
 
-						if (key === "fractionSkipCollege") {
+						if (key === "flag" || key === "fractionSkipCollege") {
 							return {
 								...row,
 								[key]: rows,
@@ -744,6 +746,14 @@ const PlayerBioInfo2 = ({
 							rows={infoState.countries[pageInfo.index].names}
 							onCancel={onCancel}
 							onSave={handleChange2("names", pageInfo.index)}
+						/>
+					</>
+				) : pageInfo.name === "flag" ? (
+					<>
+						<FlagEditor
+							flag={infoState.countries[pageInfo.index].flag}
+							onCancel={onCancel}
+							onSave={handleChange2("flag", pageInfo.index)}
 						/>
 					</>
 				) : null}

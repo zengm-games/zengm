@@ -5,6 +5,8 @@ custom flags
 - on playerBioInfo editor, add none/default/custom for flag. then somehow need to get that info for display...
 - show flag next to name
 - add to docs
+- confirm works with svg and png
+- show default flag on FlagEditor
 
 more xp penalty stuff
 - https://discord.com/channels/290013534023057409/290015591216054273/911125834457288724

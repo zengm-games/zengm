@@ -748,7 +748,7 @@ export const FlagEditor = ({
 		// Save for next time
 		lastSavedState.current = flagEdited;
 
-		onSave(flagEdited);
+		onSave(flagEdited === "" ? undefined : flagEdited);
 	};
 
 	return (

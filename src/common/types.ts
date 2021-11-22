@@ -1165,6 +1165,7 @@ export type PlayerBioInfo = {
 			colleges?: Record<string, number>;
 			fractionSkipCollege?: number;
 			races?: Record<Race, number>;
+			flag?: string;
 		}
 	>;
 

@@ -241,6 +241,9 @@ export const parseAndValidate = (state: PlayerBioInfoState) => {
 			country.fractionSkipCollege = parseFloat(row.fractionSkipCollege);
 		}
 		country.races = arrayToObject(row.races, "race");
+		if (row.flag !== undefined) {
+			country.flag = row.flag;
+		}
 
 		output.countries[row.country] = country;
 	}
@@ -364,7 +367,7 @@ const PlayerBioInfo2 = ({
 	defaultValue: PlayerBioInfo | undefined;
 	disabled: boolean;
 	godModeRequired?: "always" | "existingLeagueOnly";
-	onChange: (injuries: PlayerBioInfo | undefined) => void;
+	onChange: (playerBioInfo: PlayerBioInfo | undefined) => void;
 }) => {
 	const [show, setShow] = useState(false);
 	const [infoState, setInfoStateRaw] = useState<

@@ -3,6 +3,8 @@ ai propose trades to user
 
 custom flags
 - on playerBioInfo editor, add none/default/custom for flag. then somehow need to get that info for display...
+- show flag next to name
+- add to docs
 
 more xp penalty stuff
 - https://discord.com/channels/290013534023057409/290015591216054273/911125834457288724

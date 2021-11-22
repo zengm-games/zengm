@@ -203,7 +203,7 @@ const Controls = ({
 											last: [],
 										},
 
-										flagURL: undefined,
+										flag: undefined,
 									};
 
 									addCountry(newCountry);
@@ -282,6 +282,7 @@ export const CountriesEditor = ({
 	handleChange,
 	handleSave,
 	onSetDefault,
+	onSetNone,
 	infoState,
 	setInfoState,
 	setPageInfo,
@@ -297,6 +298,7 @@ export const CountriesEditor = ({
 		type: "colleges" | "flag" | "names" | "races",
 		i: number,
 	) => void;
+	onSetNone: (type: "flag", i: number) => void;
 	infoState: PlayerBioInfoState;
 	setInfoState: SetInfoState;
 	setPageInfo: (pageInfo: PageInfo) => void;
@@ -417,7 +419,7 @@ export const CountriesEditor = ({
 												return (
 													<div style={smallColStyle} key={key}>
 														<button
-															className="btn btn-secondary w-100"
+															className="btn btn-light-bordered w-100"
 															onClick={onClickCustom}
 														>
 															Custom
@@ -426,27 +428,35 @@ export const CountriesEditor = ({
 												);
 											}
 
-											let isDefault = false;
+											let currentText;
 											if (key === "flag") {
-												isDefault = country.flagURL === undefined;
+												if (country.flag === undefined) {
+													currentText = "Default";
+												} else if (country.flag === "none") {
+													currentText = "None";
+												} else {
+													currentText = "Custom";
+												}
 											} else {
-												isDefault =
+												const isDefault =
 													country[
 														`default${helpers.upperCaseFirstLetter(
 															key,
 														)}` as const
 													];
+
+												currentText = isDefault ? "Default" : "Custom";
 											}
 
 											return (
 												<div style={smallColStyle} key={key}>
 													<Dropdown>
 														<Dropdown.Toggle
-															variant="secondary"
+															variant="light-bordered"
 															id={`dropdown-${key}-${country.id}`}
 															className="w-100"
 														>
-															{isDefault ? "Default" : "Custom"}
+															{currentText}
 														</Dropdown.Toggle>
 
 														<Dropdown.Menu>
@@ -460,6 +470,15 @@ export const CountriesEditor = ({
 															<Dropdown.Item onClick={onClickCustom}>
 																Custom
 															</Dropdown.Item>
+															{key === "flag" ? (
+																<Dropdown.Item
+																	onClick={() => {
+																		onSetNone(key, i);
+																	}}
+																>
+																	None
+																</Dropdown.Item>
+															) : null}
 														</Dropdown.Menu>
 													</Dropdown>
 												</div>

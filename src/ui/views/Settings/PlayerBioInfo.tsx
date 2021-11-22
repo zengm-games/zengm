@@ -173,7 +173,7 @@ export const formatPlayerBioInfoState = (
 			defaultRaces,
 			races: racesText,
 
-			flagURL: undefined as string | undefined,
+			flag: undefined as string | undefined,
 		});
 	}
 
@@ -651,7 +651,7 @@ const PlayerBioInfo2 = ({
 									if (type === "flag") {
 										return {
 											...row,
-											flagURL: undefined,
+											flag: undefined,
 										};
 									}
 
@@ -664,6 +664,25 @@ const PlayerBioInfo2 = ({
 										...row,
 										[type]: array,
 										[defaultProp]: true,
+									};
+								}),
+							}));
+						}}
+						onSetNone={(type, i) => {
+							if (type !== "flag") {
+								throw new Error("Invalid type");
+							}
+
+							setInfoState(data => ({
+								...data,
+								countries: data.countries.map((row, j) => {
+									if (i !== j) {
+										return row;
+									}
+
+									return {
+										...row,
+										flag: "none",
 									};
 								}),
 							}));

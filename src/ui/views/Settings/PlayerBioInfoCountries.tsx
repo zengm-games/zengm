@@ -202,6 +202,8 @@ const Controls = ({
 											first: [],
 											last: [],
 										},
+
+										flagURL: undefined,
 									};
 
 									addCountry(newCountry);
@@ -291,7 +293,10 @@ export const CountriesEditor = ({
 	handleCancel: any;
 	handleChange: any;
 	handleSave: any;
-	onSetDefault: (type: "colleges" | "names" | "races", i: number) => void;
+	onSetDefault: (
+		type: "colleges" | "flag" | "names" | "races",
+		i: number,
+	) => void;
 	infoState: PlayerBioInfoState;
 	setInfoState: SetInfoState;
 	setPageInfo: (pageInfo: PageInfo) => void;
@@ -372,6 +377,7 @@ export const CountriesEditor = ({
 							<div style={smallColStyle}>Names</div>
 							<div style={smallColStyle}>Colleges</div>
 							<div style={smallColStyle}>Races</div>
+							<div style={smallColStyle}>Flag</div>
 						</div>
 						{infoState.countries.map((country, i) => (
 							<div key={country.id} className="d-flex">
@@ -396,62 +402,70 @@ export const CountriesEditor = ({
 											onChange={handleChange("frequency", i)}
 										/>
 									</div>
-									{(["names", "colleges", "races"] as const).map(key => {
-										const onClickCustom = () => {
-											setPageInfoWrapper({
-												name: key,
-												index: i,
-											});
-										};
+									{(["names", "colleges", "races", "flag"] as const).map(
+										key => {
+											const onClickCustom = () => {
+												setPageInfoWrapper({
+													name: key,
+													index: i,
+												});
+											};
 
-										if (key === "names" && !country.builtIn) {
-											// Non-built in countries have no default names
+											if (key === "names" && !country.builtIn) {
+												// Non-built in countries have no default names
+
+												return (
+													<div style={smallColStyle} key={key}>
+														<button
+															className="btn btn-secondary w-100"
+															onClick={onClickCustom}
+														>
+															Custom
+														</button>
+													</div>
+												);
+											}
+
+											let isDefault = false;
+											if (key === "flag") {
+												isDefault = country.flagURL === undefined;
+											} else {
+												isDefault =
+													country[
+														`default${helpers.upperCaseFirstLetter(
+															key,
+														)}` as const
+													];
+											}
 
 											return (
 												<div style={smallColStyle} key={key}>
-													<button
-														className="btn btn-secondary w-100"
-														onClick={onClickCustom}
-													>
-														Custom
-													</button>
+													<Dropdown>
+														<Dropdown.Toggle
+															variant="secondary"
+															id={`dropdown-${key}-${country.id}`}
+															className="w-100"
+														>
+															{isDefault ? "Default" : "Custom"}
+														</Dropdown.Toggle>
+
+														<Dropdown.Menu>
+															<Dropdown.Item
+																onClick={() => {
+																	onSetDefault(key, i);
+																}}
+															>
+																Default
+															</Dropdown.Item>
+															<Dropdown.Item onClick={onClickCustom}>
+																Custom
+															</Dropdown.Item>
+														</Dropdown.Menu>
+													</Dropdown>
 												</div>
 											);
-										}
-
-										return (
-											<div style={smallColStyle} key={key}>
-												<Dropdown>
-													<Dropdown.Toggle
-														variant="secondary"
-														id={`dropdown-${key}-${country.id}`}
-														className="w-100"
-													>
-														{country[
-															`default${helpers.upperCaseFirstLetter(
-																key,
-															)}` as const
-														]
-															? "Default"
-															: "Custom"}
-													</Dropdown.Toggle>
-
-													<Dropdown.Menu>
-														<Dropdown.Item
-															onClick={() => {
-																onSetDefault(key, i);
-															}}
-														>
-															Default
-														</Dropdown.Item>
-														<Dropdown.Item onClick={onClickCustom}>
-															Custom
-														</Dropdown.Item>
-													</Dropdown.Menu>
-												</Dropdown>
-											</div>
-										);
-									})}
+										},
+									)}
 								</div>
 								<PlayerBioInfoRowButton
 									className="text-reset"

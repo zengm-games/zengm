@@ -172,6 +172,8 @@ export const formatPlayerBioInfoState = (
 
 			defaultRaces,
 			races: racesText,
+
+			flagURL: undefined as string | undefined,
 		});
 	}
 
@@ -338,6 +340,10 @@ export type PageInfo =
 	| {
 			name: "colleges";
 			index: number | "default";
+	  }
+	| {
+			name: "flag";
+			index: number;
 	  }
 	| {
 			name: "names";
@@ -631,7 +637,7 @@ const PlayerBioInfo2 = ({
 									throw new Error("Country not found");
 								}
 								array = row.names;
-							} else {
+							} else if (type !== "flag") {
 								throw new Error("Invalid type");
 							}
 
@@ -640,6 +646,13 @@ const PlayerBioInfo2 = ({
 								countries: data.countries.map((row, j) => {
 									if (i !== j) {
 										return row;
+									}
+
+									if (type === "flag") {
+										return {
+											...row,
+											flagURL: undefined,
+										};
 									}
 
 									// Would be better to check if value actually differs from default, but annoying to do since default is an object and state is array of objects. Maybe later, after conversion functions are written for saving.

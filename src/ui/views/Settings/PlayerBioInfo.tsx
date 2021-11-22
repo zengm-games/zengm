@@ -174,7 +174,7 @@ export const formatPlayerBioInfoState = (
 			defaultRaces,
 			races: racesText,
 
-			flag: undefined as string | undefined,
+			flag: mergedCountry.flag,
 		});
 	}
 

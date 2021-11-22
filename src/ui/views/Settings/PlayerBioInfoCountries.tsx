@@ -487,12 +487,14 @@ export const CountriesEditor = ({
 										},
 									)}
 								</div>
-								<CountryFlag
-									className="ml-1 align-self-center"
-									country={country.country}
-									override={country.flag}
-									style={{ marginTop: 10 }}
-								/>
+								<div className="ml-1 d-flex" style={{ width: 17 }}>
+									<CountryFlag
+										className="align-self-center"
+										country={country.country}
+										override={country.flag}
+										style={{ marginTop: 10 }}
+									/>
+								</div>
 								<PlayerBioInfoRowButton
 									className="text-reset"
 									onClick={() => {

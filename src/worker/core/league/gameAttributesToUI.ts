@@ -37,12 +37,15 @@ const gameAttributesToUI = async (
 		}
 	}
 
-	const flagOverrides: LocalStateUI["flagOverrides"] = {};
-	const countries = gameAttributes.playerBioInfo?.countries;
-	if (countries) {
-		for (const [country, { flag }] of Object.entries(countries)) {
-			if (flag !== undefined) {
-				flagOverrides[country] = flag;
+	let flagOverrides: LocalStateUI["flagOverrides"] | undefined;
+	if (gameAttributes.playerBioInfo) {
+		flagOverrides = {};
+		const countries = gameAttributes.playerBioInfo.countries;
+		if (countries) {
+			for (const [country, { flag }] of Object.entries(countries)) {
+				if (flag !== undefined) {
+					flagOverrides[country] = flag;
+				}
 			}
 		}
 	}

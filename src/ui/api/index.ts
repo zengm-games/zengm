@@ -240,7 +240,7 @@ const resetLeague = () => {
 
 const setGameAttributes = (
 	gameAttributes: Partial<GameAttributesLeague>,
-	flagOverrides: LocalStateUI["flagOverrides"],
+	flagOverrides: LocalStateUI["flagOverrides"] | undefined,
 ) => {
 	localActions.updateGameAttributes(gameAttributes, flagOverrides);
 };

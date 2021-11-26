@@ -10,9 +10,10 @@ import {
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, toWorker, useLocalShallow } from "../util";
+import { confirm, helpers, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import getCols from "../util/getCols";
 
 const FreeAgents = ({
 	capSpace,
@@ -86,20 +87,13 @@ const FreeAgents = ({
 		"Exp",
 		"Negotiate",
 	]);
+	console.log(cols[0]);
 
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				cols[0].render(p),
 				p.ratings.pos,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,

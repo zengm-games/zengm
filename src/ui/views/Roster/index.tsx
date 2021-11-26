@@ -18,6 +18,7 @@ import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { Phase, View } from "../../../common/types";
+import RosterCustomizeColumns from "./RosterCustomizeColumns";
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
 const justDrafted = (
@@ -91,12 +92,18 @@ const Roster = ({
 	showTradeFor,
 	showTradingBlock,
 	stats,
+	ratings,
+	allStats,
+	allRatings,
 	t,
 	tid,
 	userTid,
+	columns,
 }: View<"roster">) => {
+	console.log(columns, stats);
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
+	const [showColumnsModal, setShowColumnsModal] = useState(false);
 
 	useTitleBar({
 		title: "Roster",
@@ -128,6 +135,7 @@ const Roster = ({
 
 	const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
 
+	const ratingCols = getCols(ratings.map(rating => `rating:${rating}`));
 	const statCols = getCols(stats.map(stat => `stat:${stat}`));
 
 	const showMood = season === currentSeason;
@@ -161,6 +169,22 @@ const Roster = ({
 				showTradingBlock={showTradingBlock}
 				t={t}
 				tid={tid}
+			/>
+
+			<button
+				className="btn btn-primary"
+				onClick={() => setShowColumnsModal(true)}
+			>
+				Columns
+			</button>
+
+			<RosterCustomizeColumns
+				table="roster"
+				cols={[...ratings, ...stats]}
+				allStats={allStats}
+				allRatings={allRatings}
+				show={showColumnsModal}
+				onHide={() => location.reload()}
 			/>
 
 			{showSpectatorWarning ? (
@@ -205,10 +229,12 @@ const Roster = ({
 				cols={() => (
 					<>
 						<th>Name</th>
-						<th title="Position">Pos</th>
 						<th>Age</th>
-						<th title="Overall Rating">Ovr</th>
-						<th title="Potential Rating">Pot</th>
+						{ratingCols.map(({ desc, title }) => (
+							<th key={title} title={desc}>
+								{title}
+							</th>
+						))}
 						{season === currentSeason ? <th>Contract</th> : null}
 						<th title="Years With Team">YWT</th>
 						<th title="Country"></th>
@@ -304,22 +330,20 @@ const Roster = ({
 									{p.name}
 								</PlayerNameLabels>
 							</td>
-							<td>{p.ratings.pos}</td>
 							<td>{p.age}</td>
-							<td>
-								{showRatings ? (
-									<RatingWithChange change={p.ratings.dovr}>
-										{p.ratings.ovr}
-									</RatingWithChange>
-								) : null}
-							</td>
-							<td>
-								{showRatings ? (
-									<RatingWithChange change={p.ratings.dpot}>
-										{p.ratings.pot}
-									</RatingWithChange>
-								) : null}
-							</td>
+							{showRatings
+								? ratings.map(rating =>
+										p.ratings["d" + rating] ? (
+											<td key={rating}>
+												<RatingWithChange change={p.ratings["d" + rating]}>
+													{p.ratings[rating]}
+												</RatingWithChange>
+											</td>
+										) : (
+											<td key={rating}>{p.ratings[rating]}</td>
+										),
+								  )
+								: null}
 							{season === currentSeason ? (
 								<td
 									style={{

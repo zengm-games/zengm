@@ -1,4 +1,11 @@
-import { bySport, isSport, PHASE, POSITIONS } from "../../common";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	PLAYER_STATS_TABLES,
+	POSITIONS,
+	RATINGS,
+} from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -8,6 +15,7 @@ import type {
 	TeamSeasonAttr,
 } from "../../common/types";
 import { addMood } from "./freeAgents";
+import { union } from "lodash-es";
 
 const footballScore = (p: {
 	ratings: {
@@ -37,12 +45,6 @@ const updateRoster = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season
 	) {
-		const stats = bySport({
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
-		});
-
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
@@ -109,8 +111,24 @@ const updateRoster = async (
 			"value",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
-		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
-		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber", "min", "gp"];
+		const columns = await idb.meta.get("tables", "roster");
+
+		let ratings, stats;
+		if (columns) {
+			ratings = columns
+				.filter(c => !c.hidden && c.type == "ratings")
+				.map(c => c.title);
+			stats = columns
+				.filter(c => !c.hidden && c.type == "stats")
+				.map(c => c.title);
+		} else {
+			stats = bySport({
+				basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+				football: ["gp", "keyStats", "av"],
+				hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
+			});
+			ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
+		}
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -141,7 +159,7 @@ const updateRoster = async (
 				ratings,
 				playoffs: inputs.playoffs === "playoffs",
 				regularSeason: inputs.playoffs !== "playoffs",
-				stats: stats2,
+				stats: [...stats, "jerseyNumber", "yearsWithTeam"],
 				season: inputs.season,
 				tid: inputs.tid,
 				showNoStats: true,
@@ -215,6 +233,11 @@ const updateRoster = async (
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
+		const allRatings = ["ovr", "pot", "pos", ...RATINGS];
+		const allStats = union(
+			PLAYER_STATS_TABLES.regular.stats,
+			PLAYER_STATS_TABLES.advanced.stats,
+		);
 		return {
 			abbrev: inputs.abbrev,
 			budget: g.get("budget"),
@@ -247,6 +270,10 @@ const updateRoster = async (
 				inputs.tid === g.get("userTid") &&
 				!g.get("spectator"),
 			stats,
+			ratings,
+			allStats,
+			allRatings,
+			columns,
 			t: t2,
 			tid: inputs.tid,
 			userTid: g.get("userTid"),

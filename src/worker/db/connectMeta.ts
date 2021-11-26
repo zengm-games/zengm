@@ -26,6 +26,10 @@ export interface MetaDB extends DBSchema {
 			| "realPlayerPhotos"
 			| "realTeamInfo";
 	};
+	tables: {
+		key: string;
+		value: object[];
+	};
 	leagues: {
 		value: League;
 		key: number;
@@ -34,6 +38,7 @@ export interface MetaDB extends DBSchema {
 }
 
 const create = (db: IDBPDatabase<MetaDB>) => {
+	db.createObjectStore("tables");
 	db.createObjectStore("achievements", {
 		keyPath: "aid",
 		autoIncrement: true,

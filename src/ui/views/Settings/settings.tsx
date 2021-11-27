@@ -181,8 +181,8 @@ export const settings: {
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
-			if (value <= 0) {
-				throw new Error("Must be positive");
+			if (value < 0) {
+				throw new Error("Must not be negative");
 			}
 
 			const numGamesDiv = output.numGamesDiv ?? 0;

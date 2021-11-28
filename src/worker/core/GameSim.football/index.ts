@@ -815,7 +815,7 @@ class GameSim {
 		const d = this.currentPlay.state.current.d;
 
 		// For non-sacks, record tackler(s)
-		if (Math.random() < 0.8) {
+		if (Math.random() < 0.9) {
 			let playersDefense: PlayerGameSim[] = [];
 
 			for (const playersAtPos of Object.values(this.playersOnField[d])) {
@@ -835,10 +835,10 @@ class GameSim {
 			const tacklers =
 				Math.random() < 0.25
 					? new Set([
-							this.pickPlayer(d, "tackling", positions, 0.9),
-							this.pickPlayer(d, "tackling", positions, 0.9),
+							this.pickPlayer(d, "tackling", positions, 1.5),
+							this.pickPlayer(d, "tackling", positions, 1.5),
 					  ])
-					: new Set([this.pickPlayer(d, "tackling", positions, 0.9)]);
+					: new Set([this.pickPlayer(d, "tackling", positions, 1.5)]);
 
 			this.currentPlay.addEvent({
 				type: "tck",

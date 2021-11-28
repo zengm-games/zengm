@@ -1466,7 +1466,7 @@ class GameSim {
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
-		const { td, touchback } = this.currentPlay.addEvent({
+		const { safety, td, touchback } = this.currentPlay.addEvent({
 			type: "fmbRec",
 			pFumbled,
 			pRecovered,
@@ -1484,6 +1484,8 @@ class GameSim {
 					type: "fmbTD",
 					p: pRecovered,
 				});
+			} else if (safety) {
+				this.doSafety();
 			} else if (Math.random() < this.probFumble(pRecovered)) {
 				fumble = true;
 			} else {
@@ -1498,7 +1500,7 @@ class GameSim {
 			lost,
 			t: tRecovered,
 			names: [pRecovered.name],
-			safety: false,
+			safety,
 			td,
 			touchback,
 			yds,

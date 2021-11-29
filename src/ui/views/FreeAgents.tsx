@@ -4,16 +4,14 @@ import { PHASE } from "../../common";
 import {
 	DataTable,
 	MoreLinks,
-	NegotiateButtons,
-	PlayerNameLabels,
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, helpers, toWorker, useLocalShallow } from "../util";
+import { confirm, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
-import getCols from "../util/getCols";
+import getTemplate from "../util/columns/getTemplate";
+import RosterCustomizeColumns from "./Roster/RosterCustomizeColumns";
 
 const FreeAgents = ({
 	capSpace,
@@ -27,15 +25,18 @@ const FreeAgents = ({
 	spectator,
 	phase,
 	players,
-	stats,
+	config,
 	userPlayers,
 }: View<"freeAgents">) => {
 	const [addFilters, setAddFilters] = useState<
 		(string | undefined)[] | undefined
 	>();
+	const cols = config.columns;
+
+	const [showColumnsModal, setShowColumnsModal] = useState(false);
 
 	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters: (string | undefined)[] = new Array(9 + stats.length);
+		const newAddFilters: (string | undefined)[] = new Array(9);
 		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
 			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
 		} else {
@@ -50,7 +51,7 @@ const FreeAgents = ({
 		setTimeout(() => {
 			setAddFilters(undefined);
 		}, 0);
-	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
+	}, [capSpace, challengeNoFreeAgents, minContract]);
 
 	useTitleBar({ title: "Free Agents" });
 
@@ -75,53 +76,17 @@ const FreeAgents = ({
 		);
 	}
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map(stat => `stat:${stat}`),
-		"Mood",
-		"Asking For",
-		"Exp",
-		"Negotiate",
-	]);
-	console.log(cols[0]);
+	const vars = {
+		capSpace,
+		gameSimInProgress,
+		minContract,
+		spectator,
+	};
 
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
-			data: [
-				cols[0].render(p),
-				p.ratings.pos,
-				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				dataTableWrappedMood({
-					defaultType: "user",
-					maxWidth: true,
-					p,
-				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
-				p.contract.exp,
-				{
-					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
-						<NegotiateButtons
-							capSpace={capSpace}
-							disabled={gameSimInProgress}
-							minContract={minContract}
-							spectator={spectator}
-							p={p}
-							willingToNegotiate={p.mood.user.willing}
-						/>
-					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-				},
-			],
+			data: cols.map(col => getTemplate(p, col, vars)),
 		};
 	});
 
@@ -184,6 +149,19 @@ const FreeAgents = ({
 					to minimum contracts.
 				</p>
 			) : null}
+
+			<button
+				className="btn btn-primary"
+				onClick={() => setShowColumnsModal(true)}
+			>
+				Columns
+			</button>
+
+			<RosterCustomizeColumns
+				config={config}
+				show={showColumnsModal}
+				onHide={() => location.reload()}
+			/>
 
 			<DataTable
 				cols={cols}

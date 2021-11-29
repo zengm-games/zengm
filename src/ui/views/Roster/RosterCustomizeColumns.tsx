@@ -4,12 +4,14 @@ import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import classNames from "classnames";
 import { Modal } from "react-bootstrap";
 import { toWorker } from "../../util";
+import { TableConfig } from "../../util/TableConfig";
+import { ColTemp, getAllCols } from "../../util/columns/getCols";
+import type { Col } from "../../components/DataTable";
 
-export type Col = {
+export type ColConfig = {
 	title: string;
 	hidden: boolean;
 	key: number;
-	type: string;
 };
 
 const Item = SortableElement(
@@ -18,7 +20,7 @@ const Item = SortableElement(
 		hidden,
 		onToggleHidden,
 	}: {
-		col: Col;
+		col: ColConfig;
 		hidden: boolean;
 		onToggleHidden: () => void;
 	}) => {
@@ -56,36 +58,20 @@ const Container = SortableContainer(
 );
 
 const RosterCustomizeColumns = ({
-	allStats,
-	allRatings,
 	onHide,
-	cols,
+	config,
 	show,
-	table,
 }: {
-	allStats: string[];
-	allRatings: string[];
+	config: TableConfig;
 	onHide: () => void;
-	cols: string[];
 	show: boolean;
-	table: string;
 }) => {
-	let i = 1;
-	const initialColumns: Col[] = [
-		...allRatings.map(col => ({
-			title: col,
-			key: i++,
-			hidden: !cols.includes(col),
-			type: "ratings",
-		})),
-		...allStats.map(col => ({
-			title: col,
-			key: i++,
-			hidden: !cols.includes(col),
-			type: "stats",
-		})),
-	];
-	const [columns, setColumns] = useState<Col[]>(initialColumns);
+	const initialColumns: ColTemp[] = getAllCols().map(c => ({
+		title: c.title,
+		hidden: !config.columns.some(col => col.key === c.key),
+		key: c.key,
+	}));
+	const [columns, setColumns] = useState<ColTemp[]>(initialColumns);
 	const [isDragged, setIsDragged] = useState(false);
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
@@ -107,7 +93,7 @@ const RosterCustomizeColumns = ({
 	const hide = async () => {
 		await toWorker("main", "updateColumns", {
 			columns: columns,
-			key: table,
+			key: config.tableName,
 		});
 		onHide();
 	};

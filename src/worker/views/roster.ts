@@ -16,6 +16,7 @@ import type {
 } from "../../common/types";
 import { addMood } from "./freeAgents";
 import { union } from "lodash-es";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const footballScore = (p: {
 	ratings: {
@@ -111,24 +112,40 @@ const updateRoster = async (
 			"value",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
-		const columns = await idb.meta.get("tables", "roster");
+		const stats = bySport({
+			basketball: [
+				"stat:gp",
+				"stat:min",
+				"stat:pts",
+				"stat:trb",
+				"stat:ast",
+				"stat:per",
+			],
+			football: ["stat:gp", "stat:keyStats", "stat:av"],
+			hockey: [
+				"stat:gp",
+				"stat:amin",
+				"stat:keyStats",
+				"stat:ops",
+				"stat:dps",
+				"stat:ps",
+			],
+		});
 
-		let ratings, stats;
-		if (columns) {
-			ratings = columns
-				.filter(c => !c.hidden && c.type == "ratings")
-				.map(c => c.title);
-			stats = columns
-				.filter(c => !c.hidden && c.type == "stats")
-				.map(c => c.title);
-		} else {
-			stats = bySport({
-				basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
-			});
-			ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
-		}
+		const config: TableConfig = new TableConfig("roster", [
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			"Contract",
+			...stats,
+			"PT",
+			"Mood",
+			"Trade",
+			"Release",
+		]);
+		await config.load();
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -156,10 +173,10 @@ const updateRoster = async (
 
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
-				ratings,
 				playoffs: inputs.playoffs === "playoffs",
 				regularSeason: inputs.playoffs !== "playoffs",
-				stats: [...stats, "jerseyNumber", "yearsWithTeam"],
+				ratings: config.ratingsNeeded,
+				stats: config.statsNeeded,
 				season: inputs.season,
 				tid: inputs.tid,
 				showNoStats: true,
@@ -201,10 +218,10 @@ const updateRoster = async (
 			});
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
-				ratings,
+				ratings: config.ratingsNeeded,
+				stats: config.statsNeeded,
 				playoffs: inputs.playoffs === "playoffs",
 				regularSeason: inputs.playoffs !== "playoffs",
-				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,
 				fuzz: true,
@@ -233,11 +250,6 @@ const updateRoster = async (
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
-		const allRatings = ["ovr", "pot", "pos", ...RATINGS];
-		const allStats = union(
-			PLAYER_STATS_TABLES.regular.stats,
-			PLAYER_STATS_TABLES.advanced.stats,
-		);
 		return {
 			abbrev: inputs.abbrev,
 			budget: g.get("budget"),
@@ -269,11 +281,7 @@ const updateRoster = async (
 				inputs.season === g.get("season") &&
 				inputs.tid === g.get("userTid") &&
 				!g.get("spectator"),
-			stats,
-			ratings,
-			allStats,
-			allRatings,
-			columns,
+			config,
 			t: t2,
 			tid: inputs.tid,
 			userTid: g.get("userTid"),

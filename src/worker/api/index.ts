@@ -2928,6 +2928,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 };
 
 const updateColumns = async (data: { key: string; columns: object[] }) => {
+	console.log(data);
 	await idb.meta.put("tables", data.columns, data.key);
 };
 

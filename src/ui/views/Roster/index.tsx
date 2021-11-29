@@ -17,8 +17,10 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
-import type { Phase, View } from "../../../common/types";
+import type { Phase, Player, View } from "../../../common/types";
 import RosterCustomizeColumns from "./RosterCustomizeColumns";
+import { ColTemp } from "../../util/columns/getCols";
+import getTemplate from "../../util/columns/getTemplate";
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
 const justDrafted = (
@@ -91,16 +93,11 @@ const Roster = ({
 	showRelease,
 	showTradeFor,
 	showTradingBlock,
-	stats,
-	ratings,
-	allStats,
-	allRatings,
 	t,
 	tid,
 	userTid,
-	columns,
+	config,
 }: View<"roster">) => {
-	console.log(columns, stats);
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
 	const [showColumnsModal, setShowColumnsModal] = useState(false);
@@ -135,10 +132,19 @@ const Roster = ({
 
 	const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
 
-	const ratingCols = getCols(ratings.map(rating => `rating:${rating}`));
-	const statCols = getCols(stats.map(stat => `stat:${stat}`));
-
-	const showMood = season === currentSeason;
+	const cols: ColTemp[] = config.columns;
+	const vars = {
+		userTid,
+		showTradeFor,
+		handleTrade: (p: Player) => {
+			if (showTradeFor) {
+				toWorker("actions", "tradeFor", { pid: p.pid });
+			} else {
+				toWorker("actions", "addToTradingBlock", p.pid);
+			}
+		},
+		handleRelease: (p: Player) => handleRelease(p, phase, season),
+	};
 
 	return (
 		<>
@@ -179,10 +185,7 @@ const Roster = ({
 			</button>
 
 			<RosterCustomizeColumns
-				table="roster"
-				cols={[...ratings, ...stats]}
-				allStats={allStats}
-				allRatings={allRatings}
+				config={config}
 				show={showColumnsModal}
 				onHide={() => location.reload()}
 			/>
@@ -228,199 +231,16 @@ const Roster = ({
 				}}
 				cols={() => (
 					<>
-						<th>Name</th>
-						<th>Age</th>
-						{ratingCols.map(({ desc, title }) => (
+						{cols.map(({ desc, title }) => (
 							<th key={title} title={desc}>
 								{title}
 							</th>
 						))}
-						{season === currentSeason ? <th>Contract</th> : null}
-						<th title="Years With Team">YWT</th>
-						<th title="Country"></th>
-						{statCols.map(({ desc, title }) => (
-							<th key={title} title={desc}>
-								{title}
-							</th>
-						))}
-						{editable ? (
-							<th title="Playing Time Modifier">
-								PT{" "}
-								<HelpPopover title="Playing Time Modifier">
-									<p>
-										Your coach will divide up playing time based on ability and
-										stamina. If you want to influence his judgement, your
-										options are:
-									</p>
-									<p>
-										<span style={ptStyles["0"]}>0 No Playing Time</span>
-										<br />
-										<span style={ptStyles["0.75"]}>- Less Playing Time</span>
-										<br />
-										<span style={ptStyles["1"]}>
-											&nbsp;&nbsp;&nbsp; Let Coach Decide
-										</span>
-										<br />
-										<span style={ptStyles["1.25"]}>+ More Playing Time</span>
-										<br />
-										<span style={ptStyles["1.5"]}>
-											++ Even More Playing Time
-										</span>
-									</p>
-								</HelpPopover>
-							</th>
-						) : null}
-						{showMood ? (
-							<th>
-								Mood{" "}
-								<HelpPopover title="Player Mood">
-									See{" "}
-									<a
-										href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										the manual
-									</a>{" "}
-									for more info about player mood.
-								</HelpPopover>
-							</th>
-						) : null}
-						{showRelease ? (
-							<th>
-								Release{" "}
-								<HelpPopover title="Release Player">
-									<p>
-										To free up a roster spot, you can release a player from your
-										team. You will still have to pay his salary (and have it
-										count against the salary cap) until his contract expires
-										(you can view your released players' contracts in your{" "}
-										<a href={helpers.leagueUrl(["team_finances"])}>
-											Team Finances
-										</a>
-										).
-									</p>
-									{!hardCap ? (
-										<p>
-											However, if you just drafted a player and the regular
-											season has not started yet, his contract is not guaranteed
-											and you can release him for free.
-										</p>
-									) : null}
-								</HelpPopover>
-							</th>
-						) : null}
-						{showTradeFor || showTradingBlock ? <th>Trade</th> : null}
-						<th title="How Player Was Acquired">Acquired</th>
 					</>
 				)}
-				row={({ value: p }) => {
-					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-					return (
-						<>
-							<td>
-								<PlayerNameLabels
-									pid={p.pid}
-									injury={p.injury}
-									jerseyNumber={p.stats.jerseyNumber}
-									season={season}
-									skills={p.ratings.skills}
-									watch={p.watch}
-								>
-									{p.name}
-								</PlayerNameLabels>
-							</td>
-							<td>{p.age}</td>
-							{showRatings
-								? ratings.map(rating =>
-										p.ratings["d" + rating] ? (
-											<td key={rating}>
-												<RatingWithChange change={p.ratings["d" + rating]}>
-													{p.ratings[rating]}
-												</RatingWithChange>
-											</td>
-										) : (
-											<td key={rating}>{p.ratings[rating]}</td>
-										),
-								  )
-								: null}
-							{season === currentSeason ? (
-								<td
-									style={{
-										fontStyle: justDrafted(p, phase, currentSeason)
-											? "italic"
-											: "normal",
-									}}
-									title={
-										justDrafted(p, phase, currentSeason)
-											? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
-											: undefined
-									}
-								>
-									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-									{p.contract.exp}
-								</td>
-							) : null}
-							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
-							<td>
-								<a
-									href={helpers.leagueUrl([
-										"frivolities",
-										"most",
-										"country",
-										window.encodeURIComponent(helpers.getCountry(p.born.loc)),
-									])}
-								>
-									<CountryFlag country={p.born.loc} />
-								</a>
-							</td>
-							{stats.map(stat => (
-								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
-							))}
-							{editable ? (
-								<td>
-									<PlayingTime p={p} userTid={userTid} />
-								</td>
-							) : null}
-							{showMood ? (
-								<td>
-									<Mood defaultType="current" maxWidth p={p} />
-								</td>
-							) : null}
-							{showRelease ? (
-								<td>
-									<button
-										className="btn btn-light-bordered btn-xs"
-										disabled={!p.canRelease}
-										onClick={() => handleRelease(p, phase, currentSeason)}
-									>
-										Release
-									</button>
-								</td>
-							) : null}
-							{showTradeFor || showTradingBlock ? (
-								<td title={p.untradableMsg}>
-									<button
-										className="btn btn-light-bordered btn-xs"
-										disabled={p.untradable}
-										onClick={() => {
-											if (showTradeFor) {
-												toWorker("actions", "tradeFor", { pid: p.pid });
-											} else {
-												toWorker("actions", "addToTradingBlock", p.pid);
-											}
-										}}
-									>
-										{showTradeFor ? "Trade For" : "Trade Away"}
-									</button>
-								</td>
-							) : null}
-							<td>
-								<SafeHtml dirty={p.latestTransaction} />
-							</td>
-						</>
-					);
-				}}
+				row={({ value: p }) =>
+					cols.map(col => <td key={col.title}>{getTemplate(p, col, vars)}</td>)
+				}
 			/>
 		</>
 	);

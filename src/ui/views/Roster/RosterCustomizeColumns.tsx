@@ -10,6 +10,7 @@ import type { Col } from "../../components/DataTable";
 
 export type ColConfig = {
 	title: string;
+	desc?: string;
 	hidden: boolean;
 	key: number;
 };
@@ -24,8 +25,6 @@ const Item = SortableElement(
 		hidden: boolean;
 		onToggleHidden: () => void;
 	}) => {
-		const title = col.title;
-
 		return (
 			<div className="form-check">
 				<input
@@ -34,7 +33,9 @@ const Item = SortableElement(
 					checked={!hidden}
 					onChange={onToggleHidden}
 				/>
-				<label className="form-check-label cursor-grab">{title}</label>
+				<label className="form-check-label cursor-grab">
+					{col.desc ?? col.title}
+				</label>
 			</div>
 		);
 	},
@@ -68,6 +69,7 @@ const RosterCustomizeColumns = ({
 }) => {
 	const initialColumns: ColTemp[] = getAllCols().map(c => ({
 		title: c.title,
+		desc: c.desc,
 		hidden: !config.columns.some(col => col.key === c.key),
 		key: c.key,
 	}));

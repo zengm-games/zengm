@@ -1,5 +1,10 @@
+importing BBGM_League_68_2122_preseason3.json crashes
+- memory tab in worker devtools
+
 nicidob new ovr formula
 - basketball: https://github.com/zengm-games/zengm/pull/275/files
+- random debuts forever, no injuries
+- random players, no injuries
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?
@@ -1798,11 +1803,6 @@ great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_question
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
-season preview
-  overview of user's players ratings changes
-  overview of notable ratings changes in other players
-  MVP race preview
-  power rankings
 account
   more pages
     account/edit

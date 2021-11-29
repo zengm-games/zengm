@@ -208,7 +208,6 @@ PlayerStats.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	season: PropTypes.oneOf(["career", "all", PropTypes.number]),
 	statType: PropTypes.string.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,

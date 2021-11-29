@@ -720,25 +720,39 @@ class Play {
 			td = true;
 		}
 
-		const TOUCHBACK_IS_POSSIBLE_1: PlayType[] = ["int", "fmbRec"];
+		const touchbackIsPossible = () => {
+			if (state.scrimmage <= 0) {
+				if (event.type === "int") {
+					return true;
+				} else if (event.type === "fmbRec" && event.lost) {
+					// Touchback only if it's a lost fumble
+					return true;
+				}
+			} else if (state.scrimmage >= 100) {
+				if (event.type === "p") {
+					return true;
+				}
+			}
 
-		if (state.scrimmage <= 0 && TOUCHBACK_IS_POSSIBLE_1.includes(event.type)) {
-			touchback = true;
-		}
+			return false;
+		};
+		touchback = touchbackIsPossible();
 
-		const TOUCHBACK_IS_POSSIBLE_2: PlayType[] = ["p"];
+		if (state.scrimmage <= 0) {
+			const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pssCmp", "sk"];
 
-		if (
-			state.scrimmage >= 100 &&
-			TOUCHBACK_IS_POSSIBLE_2.includes(event.type)
-		) {
-			touchback = true;
-		}
+			const safetyIsPossible = () => {
+				if (SAFETY_IS_POSSIBLE.includes(event.type)) {
+					return true;
+				} else if (event.type === "fmbRec" && !event.lost) {
+					// Safety only if it's not a lost fumble
+					return true;
+				}
 
-		const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pssCmp", "sk"];
+				return false;
+			};
 
-		if (state.scrimmage <= 0 && SAFETY_IS_POSSIBLE.includes(event.type)) {
-			safety = true;
+			safety = safetyIsPossible();
 		}
 
 		if (event.type === "fmbRec") {

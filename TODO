@@ -177,11 +177,6 @@ schedule customization
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 
-foul trouble
-- players should play different when they're in foul trouble
-- sub out players in foul trouble https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b484v/
-- (maybe if still necessary) make fouling more uniform https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b22ia/
-
 draft lottery history
 - https://basketball.realgm.com/nba/draft/lottery_results/by_team
 - metric for overall luck
@@ -301,11 +296,7 @@ wrong team abbrev various places
 
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 
-Change the FA/draft prospect roster type to "plain" or "jersey" https://discord.com/channels/290013534023057409/331882115119448065/848250125221363753
-
 mood effect of trading away a player should only be applied after the current phase is over https://old.reddit.com/r/BasketballGM/comments/nmz09w/fa_signing_probabilityasking_price_doesnt_change/gzrkjhr/
-
-noImplicitOverride in tsconfig after rollup and prettier can handle it
 
 Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
 - or offseason roster limit https://discord.com/channels/290013534023057409/331882115119448065/847984927136022558

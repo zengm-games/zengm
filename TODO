@@ -3,8 +3,9 @@ importing BBGM_League_68_2122_preseason3.json crashes
 
 nicidob new ovr formula
 - basketball: https://github.com/zengm-games/zengm/pull/275/files
-- random debuts forever, no injuries
-- random players, no injuries
+- random debuts forever, 100% determinism, no injuries, no box score deletion
+- random players, no injuries, no box score deletion
+- OldOvr should be updated
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?

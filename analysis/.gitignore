@@ -2,4 +2,6 @@
 **/old*.json
 low-ovr-good-team-*/**/*.json
 player-value-vs-contract-amount/*.json
+player-ovr-basketball/*.json
+player-ovr-basketball/*.csv
 venv

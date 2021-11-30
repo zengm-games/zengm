@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { memo, SyntheticEvent, useCallback } from "react";
+import { memo, SyntheticEvent } from "react";
 import { toWorker } from "../util";
 
 type Props = {

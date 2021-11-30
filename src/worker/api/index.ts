@@ -390,22 +390,19 @@ const clearWatchList = async () => {
 		pids.add(p.pid);
 	}
 
-	// For watched players not in cache, mark as unwatched an add to cache
-	const promises: Promise<any>[] = [];
+	// For watched players not in cache
+	const tx = idb.league.transaction("players", "readwrite");
+	let cursor = await tx.store.openCursor();
+	while (cursor) {
+		const p = cursor.value;
+		if (p.watch && !pids.has(p.pid)) {
+			p.watch = false;
+			cursor.update(p);
+		}
+		cursor = await cursor.continue();
+	}
+	await tx.done;
 
-	await iterate(
-		idb.league.transaction("players").store,
-		undefined,
-		undefined,
-		p => {
-			if (p.watch && !pids.has(p.pid)) {
-				p.watch = false;
-				promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
-			}
-		},
-	);
-
-	await Promise.all(promises);
 	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
 

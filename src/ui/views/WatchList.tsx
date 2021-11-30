@@ -4,7 +4,12 @@ import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
+import {
+	ActionButton,
+	DataTable,
+	PlayerNameLabels,
+	WatchBlock,
+} from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
@@ -138,13 +143,14 @@ const WatchList = ({
 			</p>
 			<p>You can edit a player's note near the top of his profile page.</p>
 
-			<button
-				className="btn btn-danger mb-3"
-				disabled={clearing}
+			<ActionButton
+				className="mb-3"
 				onClick={clearWatchList}
+				processing={clearing}
+				variant="danger"
 			>
 				Clear Watch List
-			</button>
+			</ActionButton>
 
 			<DataTable
 				cols={cols}

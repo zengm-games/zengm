@@ -1,11 +1,3 @@
-importing BBGM_League_68_2122_preseason3.json crashes
-- memory tab in worker devtools
-
-nicidob new ovr formula
-- basketball: https://github.com/zengm-games/zengm/pull/275/files
-- random debuts forever, no injuries
-- random players, no injuries
-
 ai propose trades to user
 - list candidates on a new Trade Offers page?
 
@@ -627,6 +619,8 @@ ability to switch back to prior year
 typescript 4.1 stuff
 
 nicidob new ovr formula
+- basketball: https://github.com/zengm-games/zengm/pull/275/files
+  - see new-ovr branch
 - football: https://paste.ubuntu.com/p/H5pPmb3r6J/
   - nicodob says:
     - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb

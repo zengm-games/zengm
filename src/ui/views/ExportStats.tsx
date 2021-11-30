@@ -45,16 +45,20 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 			return;
 		}
 
-		const [data, leagueName] = await Promise.all([
-			csvPromise,
-			toWorker("main", "getLeagueName"),
-		]);
+		try {
+			const [data, leagueName] = await Promise.all([
+				csvPromise,
+				toWorker("main", "getLeagueName"),
+			]);
 
-		const filename = genFilename(leagueName, season, grouping);
+			const filename = genFilename(leagueName, season, grouping);
 
-		downloadFile(filename, data, "text/csv");
+			downloadFile(filename, data, "text/csv");
 
-		setStatus(undefined);
+			setStatus(undefined);
+		} catch (error) {
+			setStatus(`Error: ${error.message}`);
+		}
 	}, []);
 
 	const resetState = useCallback(() => {
@@ -99,7 +103,11 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 			</form>
 
 			{status && status !== "Exporting..." ? (
-				<p className="mt-3">{status}</p>
+				<p
+					className={`mt-3${status.startsWith("Error:") ? " text-danger" : ""}`}
+				>
+					{status}
+				</p>
 			) : null}
 		</>
 	);

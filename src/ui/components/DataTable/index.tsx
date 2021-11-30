@@ -213,6 +213,13 @@ const DataTable = ({
 		});
 	};
 
+	const handleReorder = (nextCols: Col[]) => {
+		console.log(nextCols);
+		setStatePartial({
+			colOrder: nextCols,
+		});
+	};
+
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const col = cols[i]; // Ignore click on unsortable column
 
@@ -520,6 +527,7 @@ const DataTable = ({
 							cols={cols}
 							enableFilters={state.enableFilters}
 							filters={state.filters}
+							handleReorder={handleReorder}
 							handleColClick={handleColClick}
 							handleFilterUpdate={handleFilterUpdate}
 							sortBys={state.sortBys}

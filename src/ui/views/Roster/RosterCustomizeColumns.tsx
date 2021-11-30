@@ -34,7 +34,7 @@ const Item = SortableElement(
 					onChange={onToggleHidden}
 				/>
 				<label className="form-check-label cursor-grab">
-					{col.desc ?? col.title}
+					{col.title} <small className="ml-1">{col.desc}</small>
 				</label>
 			</div>
 		);

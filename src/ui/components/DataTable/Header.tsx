@@ -1,7 +1,14 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import type { SyntheticEvent, MouseEvent } from "react";
+import type { MouseEvent, SyntheticEvent } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import type { Col, SortBy, SuperCol } from ".";
+import {
+	arrayMove,
+	SortableContainer,
+	SortableElement,
+	SortableHandle,
+} from "react-sortable-hoc";
 
 const FilterHeader = ({
 	colOrder,
@@ -109,6 +116,79 @@ const SuperCols = ({
 		</tr>
 	);
 };
+const SortableColumnHandle = SortableHandle(
+	(props: { isDragged: boolean; selected: boolean; children: ReactNode }) => {
+		return (
+			<span
+				className={classNames("d-inline-block border", {
+					"user-select-none": props.isDragged,
+					"table-secondary": props.selected,
+				})}
+				data-movable-handle
+				style={{
+					cursor: props.isDragged ? "grabbing" : "grab",
+					padding: "0 0.2rem",
+				}}
+			>
+				{props.children}
+			</span>
+		);
+	},
+);
+SortableColumnHandle.propTypes = {
+	isDragged: PropTypes.bool.isRequired,
+};
+
+const SortableColumn = SortableElement(
+	(props: {
+		isDragged: boolean;
+		selected: boolean;
+		col: Col;
+		sortBy: SortBy | undefined;
+	}) => {
+		return (
+			<th>
+				<div
+					className="d-flex user-select-none"
+					style={{ marginRight: "-0.3rem" }}
+				>
+					<div className="flex-grow-1">{props.col.title}</div>
+					<div
+						style={{ width: "19px" }}
+						className={classNames(props.col.classNames, {
+							sorting: !props.sortBy && !props.isDragged,
+							sorting_asc: props.sortBy && props.sortBy[1] === "asc",
+							sorting_desc: props.sortBy && props.sortBy[1] === "desc",
+						})}
+					/>
+				</div>
+			</th>
+		);
+	},
+);
+const SortableColumnHeader = SortableContainer(
+	(props: {
+		indexSelected: number | undefined;
+		isDragged: boolean;
+		cols: Col[];
+		sortBys: SortBy[];
+	}) => {
+		return (
+			<tr>
+				{props.cols.map((col, index) => (
+					<SortableColumn
+						key={`item-${col.title}`}
+						isDragged={props.isDragged}
+						selected={props.indexSelected === index}
+						index={index}
+						col={col}
+						sortBy={props.sortBys.find((sort: SortBy) => sort[0] === index)}
+					/>
+				))}
+			</tr>
+		);
+	},
+);
 
 const Header = ({
 	colOrder,
@@ -116,6 +196,7 @@ const Header = ({
 	enableFilters,
 	filters,
 	handleColClick,
+	handleReorder,
 	handleFilterUpdate,
 	sortBys,
 	superCols,
@@ -127,15 +208,47 @@ const Header = ({
 	enableFilters: boolean;
 	filters: string[];
 	handleColClick: (b: MouseEvent, a: number) => void;
+	handleReorder: (nextCols: Col[]) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	sortBys: SortBy[];
 	superCols?: SuperCol[];
 }) => {
+	const [isDragged, setIsDragged] = useState(false);
+	const [indexSelected, setIndexSelected] = useState<number | undefined>(
+		undefined,
+	);
+
+	const onSortStart = useCallback(({ index }) => {
+		setIsDragged(true);
+		setIndexSelected(index);
+	}, []);
+
+	const onSortEnd = useCallback(
+		({ oldIndex, newIndex }) => {
+			setIsDragged(false);
+			setIndexSelected(undefined);
+
+			handleReorder(arrayMove(colOrder, oldIndex, newIndex));
+		},
+		[handleReorder, cols],
+	);
+
 	return (
 		<thead>
 			{superCols ? (
 				<SuperCols colOrder={colOrder} superCols={superCols} />
 			) : null}
+			<SortableColumnHeader
+				cols={cols}
+				sortBys={sortBys}
+				isDragged={isDragged}
+				indexSelected={indexSelected}
+				axis={"x"}
+				distance={5}
+				transitionDuration={0}
+				onSortStart={onSortStart}
+				onSortEnd={onSortEnd}
+			/>
 			<tr>
 				{colOrder.map(({ colIndex }) => {
 					const {

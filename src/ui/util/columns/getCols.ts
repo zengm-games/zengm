@@ -537,7 +537,7 @@ const sportSpecificCols = bySport<{
 			title: "VORP",
 		},
 		"stat:fgAtRim": {
-			title: "fgAtRim",
+			title: "FG Rim",
 			template: "Stat",
 			stats: ["fgAtRim"],
 			desc: "At Rim Made",
@@ -545,7 +545,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgaAtRim": {
-			title: "fgaAtRim",
+			title: "FGA Rim",
 			template: "Stat",
 			stats: ["fgaAtRim"],
 			desc: "At Rim Attempted",
@@ -553,7 +553,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgpAtRim": {
-			title: "fgpAtRim",
+			title: "FG% Rim",
 			template: "Stat",
 			stats: ["fgpAtRim"],
 			desc: "At Rim Percentage",
@@ -561,7 +561,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgLowPost": {
-			title: "fgLowPost",
+			title: "FG Post",
 			template: "Stat",
 			stats: ["fgLowPost"],
 			desc: "Low Post Made",
@@ -569,7 +569,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgaLowPost": {
-			title: "fgaLowPost",
+			title: "FGA Post",
 			template: "Stat",
 			stats: ["fgaLowPost"],
 			desc: "Low Post Attempted",
@@ -577,7 +577,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgpLowPost": {
-			title: "fgpLowPost",
+			title: "FG% Post",
 			template: "Stat",
 			stats: ["fgpLowPost"],
 			desc: "Low Post Percentage",
@@ -585,7 +585,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgMidRange": {
-			title: "fgMidRange",
+			title: "FG Mid",
 			template: "Stat",
 			stats: ["fgMidRange"],
 			desc: "Mid Range Made",
@@ -593,7 +593,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgaMidRange": {
-			title: "fgaMidRange",
+			title: "FGA Mid",
 			template: "Stat",
 			stats: ["fgaMidRange"],
 			desc: "Mid Range Attempted",
@@ -601,7 +601,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 		},
 		"stat:fgpMidRange": {
-			title: "fgpMidRange",
+			title: "FG% Mid",
 			template: "Stat",
 			stats: ["fgpMidRange"],
 			desc: "Mid Range Percentage",

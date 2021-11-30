@@ -130,7 +130,6 @@ const updateFrivolitiesDraftClasses = async (
 					"statsTids",
 					"born",
 					"diedYear",
-					"watch",
 					"jerseyNumber",
 				],
 				ratings: ["ovr", "pos"],

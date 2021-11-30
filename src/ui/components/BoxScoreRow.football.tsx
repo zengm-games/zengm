@@ -27,8 +27,6 @@ const BoxScoreRow = ({
 					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.skills}
-					watch={p.watch}
-					disableWatchToggle
 				>
 					{p.name}
 				</PlayerNameLabels>

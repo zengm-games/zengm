@@ -1415,6 +1415,19 @@ const getLocal = async (name: keyof Local) => {
 
 const getPlayerBioInfoDefaults = initDefaults;
 
+const getPlayerWatch = async (pid: number) => {
+	const p = await idb.cache.players.get(pid);
+	if (p) {
+		return p.watch;
+	}
+	const p2 = await idb.getCopy.players({ pid });
+	if (p2) {
+		return p2.watch;
+	}
+
+	return false;
+};
+
 const getRandomCollege = async () => {
 	// Don't use real country, since most have no colleges by default
 	const { college } = await player.name("None");
@@ -3575,6 +3588,7 @@ export default {
 	getLeagueName,
 	getLocal,
 	getPlayerBioInfoDefaults,
+	getPlayerWatch,
 	getRandomCollege,
 	getRandomCountry,
 	getRandomName,

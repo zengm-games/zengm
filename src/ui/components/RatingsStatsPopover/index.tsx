@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
@@ -27,19 +27,12 @@ const Icon = ({
 };
 
 type Props = {
-	// For cases when we want to display the watch status, but not make it toggleable because the data will not reload, like for live box scores
-	disableWatchToggle?: boolean;
 	pid: number;
 	season?: number;
 	watch?: boolean;
 };
 
-const RatingsStatsPopover = ({
-	disableWatchToggle,
-	season,
-	pid,
-	watch,
-}: Props) => {
+const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		abbrev?: string;
@@ -65,6 +58,22 @@ const RatingsStatsPopover = ({
 	}>({
 		pid,
 	});
+
+	// If watch is undefined, fetch it from worker
+	const LOCAL_WATCH = watch === undefined;
+	const [localWatch, setLocalWatch] = useState(false);
+	useEffect(() => {
+		const run = async () => {
+			if (LOCAL_WATCH) {
+				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
+				setLocalWatch(newLocalWatch);
+			}
+		};
+
+		run();
+	}, [LOCAL_WATCH, pid]);
+
+	const actualWatch = watch ?? localWatch;
 
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
@@ -132,9 +141,17 @@ const RatingsStatsPopover = ({
 				{age !== undefined ? (
 					<div className="ml-1 flex-shrink-0">{age} yo</div>
 				) : null}
-				{!disableWatchToggle && watch !== undefined ? (
-					<WatchBlock pid={pid} watch={watch} />
-				) : null}
+				<WatchBlock
+					pid={pid}
+					watch={actualWatch}
+					onChange={
+						LOCAL_WATCH
+							? newWatch => {
+									setLocalWatch(newWatch);
+							  }
+							: undefined
+					}
+				/>
 			</div>
 		);
 	}
@@ -159,7 +176,7 @@ const RatingsStatsPopover = ({
 	);
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
-		<Icon onClick={onClick} watch={watch} />
+		<Icon onClick={onClick} watch={actualWatch} />
 	);
 
 	return (

@@ -84,7 +84,6 @@ export const getMostXPlayers = async ({
 			"born",
 			"diedYear",
 			"most",
-			"watch",
 			"jerseyNumber",
 			"awards",
 		],

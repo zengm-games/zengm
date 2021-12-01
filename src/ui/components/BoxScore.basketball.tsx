@@ -20,8 +20,8 @@ const StatsTable = ({
 	t: any;
 }) => {
 	// This feature is only used for live game sim. Otherwise, sorting is already done in the worker. That didn't work for live game sim though, some index error resulted in the wrong rows being updated.
-	const rowsHealthy = [];
-	const rowsInjured = [];
+	const playersHealthy = [];
+	const playersInjured = [];
 	for (let i = 0; i < t.players.length; i++) {
 		const p = t.players[i];
 		const addToHealthy =
@@ -30,24 +30,13 @@ const StatsTable = ({
 			p.min > 0 ||
 			p.injury.playingThrough;
 
-		const row = (
-			<Row
-				key={p.pid}
-				lastStarter={
-					addToHealthy && rowsHealthy.length + 1 === numPlayersOnCourt
-				}
-				liveGameInProgress={liveGameInProgress}
-				p={p}
-				forceUpdate={forceRowUpdate}
-			/>
-		);
-
 		if (addToHealthy) {
-			rowsHealthy.push(row);
+			playersHealthy.push(p);
 		} else {
-			rowsInjured.push(row);
+			playersInjured.push(p);
 		}
 	}
+	const players = [...playersHealthy, ...playersInjured];
 
 	const stats = [
 		"min",
@@ -98,8 +87,15 @@ const StatsTable = ({
 					</tr>
 				</thead>
 				<tbody>
-					{rowsHealthy}
-					{rowsInjured}
+					{players.map((p, i) => (
+						<Row
+							key={p.pid}
+							lastStarter={i + 1 === numPlayersOnCourt}
+							liveGameInProgress={liveGameInProgress}
+							p={p}
+							forceUpdate={forceRowUpdate}
+						/>
+					))}
 				</tbody>
 				<tfoot>
 					<tr>

@@ -1,5 +1,5 @@
 import { safeLocalStorage } from "../../util";
-import type { Props, State, SortBy } from ".";
+import type { Props, State, SortBy, Filter } from ".";
 import SettingsCache from "./SettingsCache";
 
 const loadStateFromCache = ({
@@ -30,13 +30,13 @@ const loadStateFromCache = ({
 	}
 
 	// Don't let sortBy reference invalid col
-	sortBys = sortBys.filter(sortBy => sortBy[0] < cols.length);
+	sortBys = sortBys.filter(sortBy => cols.find(col => col.key === sortBy[0]));
 
 	if (sortBys.length === 0) {
 		sortBys = [defaultSort];
 	}
 
-	const defaultFilters: string[] = cols.map(() => "");
+	const defaultFilters: Filter[] = [];
 	const filtersFromStorage = settingsCache.get("DataTableFilters");
 	let filters;
 
@@ -47,11 +47,14 @@ const loadStateFromCache = ({
 			filters = filtersFromStorage;
 
 			// Confirm valid filters
-			if (!Array.isArray(filters) || filters.length !== cols.length) {
+			if (!Array.isArray(filters)) {
 				filters = defaultFilters;
 			} else {
 				for (const filter of filters) {
-					if (typeof filter !== "string") {
+					if (
+						typeof filter.col !== "string" ||
+						typeof filter.value !== "string"
+					) {
 						filters = defaultFilters;
 						break;
 					}
@@ -81,6 +84,8 @@ const loadStateFromCache = ({
 	// If too many cols... who cares, will get filtered out
 
 	return {
+		cols,
+		rows: [],
 		colOrder,
 		currentPage: 1,
 		enableFilters: filters !== defaultFilters,

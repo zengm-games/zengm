@@ -1,14 +1,15 @@
+import type { Argument } from "classnames";
 import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import {
-	SyntheticEvent,
 	MouseEvent,
 	ReactNode,
-	useState,
-	useEffect,
+	SyntheticEvent,
 	useCallback,
+	useEffect,
+	useState,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -25,12 +26,12 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-import type { Argument } from "classnames";
 import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
+import { arrayMove } from "react-sortable-hoc";
 
-export type SortBy = [number, SortOrder];
+export type SortBy = [string, SortOrder];
 
 export type Col = {
 	classNames?: any;
@@ -40,6 +41,7 @@ export type Col = {
 	sortType?: SortType;
 	searchType?: SortType;
 	title: string;
+	key?: string;
 	width?: string;
 };
 
@@ -82,14 +84,21 @@ export type Props = {
 	addFilters?: (string | undefined)[];
 };
 
+export type Filter = {
+	col: string;
+	value: string;
+};
+
 export type State = {
 	colOrder: {
 		colIndex: number;
 		hidden?: boolean;
 	}[];
+	cols: Col[];
+	rows: DataTableRow[];
 	currentPage: number;
 	enableFilters: boolean;
-	filters: string[];
+	filters: Filter[];
 	prevName: string;
 	perPage: number;
 	searchText: string;
@@ -116,14 +125,21 @@ const DataTable = ({
 	superCols,
 	addFilters,
 }: Props) => {
-	const [state, setState] = useState<State>(() =>
-		loadStateFromCache({
+	let i: number = 1;
+	cols = cols.map(col => ({
+		...col,
+		key: col.key ?? `col${i++}`,
+	}));
+
+	const [state, setState] = useState<State>(() => ({
+		...loadStateFromCache({
 			cols,
 			defaultSort,
-			disableSettingsCache,
+			disableSettingsCache: true,
 			name,
 		}),
-	);
+		rows,
+	}));
 
 	const setStatePartial = useCallback((newState: Partial<State>) => {
 		setState(state2 => ({
@@ -134,25 +150,26 @@ const DataTable = ({
 
 	const processRows = () => {
 		const filterFunctions = state.enableFilters
-			? state.filters.map((filter, i) =>
-					createFilterFunction(
-						filter,
-						cols[i] ? cols[i].sortType : undefined,
-						cols[i] ? cols[i].searchType : undefined,
-					),
-			  )
+			? state.cols.map(col => {
+					const filter = state.filters.find(f => col.key === f.col);
+					return createFilterFunction(
+						filter?.value || "",
+						col.sortType,
+						col.searchType,
+					);
+			  })
 			: [];
 		const skipFiltering = state.searchText === "" && !state.enableFilters;
 		const searchText = state.searchText.toLowerCase();
 		const rowsFiltered = skipFiltering
-			? rows
-			: rows.filter(row => {
+			? state.rows
+			: state.rows.filter(row => {
 					// Search
 					if (state.searchText !== "") {
 						let found = false;
 
 						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+							if (state.cols[i].noSearch) {
 								continue;
 							}
 
@@ -170,7 +187,7 @@ const DataTable = ({
 					// Filter
 					if (state.enableFilters) {
 						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+							if (state.cols[i].noSearch) {
 								continue;
 							}
 
@@ -191,34 +208,31 @@ const DataTable = ({
 			state.sortBys.map(sortBy => row => {
 				let i = sortBy[0];
 
-				if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
+				if (
+					typeof i !== "number" ||
+					i >= row.data.length ||
+					i >= state.cols.length
+				) {
 					i = 0;
 				}
 
-				return getSortVal(row.data[i], cols[i].sortType);
+				return getSortVal(row.data[i], state.cols[i].sortType);
 			}),
 			state.sortBys.map(sortBy => sortBy[1]),
 		);
 
-		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && cols[colIndex],
-		);
-
-		return rowsOrdered.map((row, i) => {
-			return {
-				...row,
-				data: colOrderFiltered.map(({ colIndex }) =>
-					colIndex === rankCol ? i + 1 : row.data[colIndex],
-				),
-			};
-		});
+		return rowsOrdered;
 	};
 
-	const handleReorder = (nextCols: Col[]) => {
-		console.log(nextCols);
+	const handleReorder = (oldIndex: number, newIndex: number) => {
 		setStatePartial({
-			colOrder: nextCols,
+			cols: arrayMove(state.cols, oldIndex, newIndex),
+			rows: state.rows.map(row => {
+				row.data = arrayMove([...row.data], oldIndex, newIndex);
+				return row;
+			}),
 		});
+		processedRows = processRows();
 	};
 
 	const handleColClick = (event: MouseEvent, i: number) => {
@@ -238,10 +252,10 @@ const DataTable = ({
 
 	const handleExportCSV = () => {
 		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && cols[colIndex],
+			({ hidden, colIndex }) => !hidden && state.cols[colIndex],
 		);
 		const columns = colOrderFiltered.map(
-			({ colIndex }) => cols[colIndex].title,
+			({ colIndex }) => state.cols[colIndex].title,
 		);
 		const rows = processRows().map(row =>
 			row.data.map(val => getSearchVal(val, false)),
@@ -287,11 +301,19 @@ const DataTable = ({
 
 	const handleFilterUpdate = (
 		event: SyntheticEvent<HTMLInputElement>,
-		i: number,
+		colKey: string,
 	) => {
 		const filters = helpers.deepCopy(state.filters); // eslint-disable-line react/no-access-state-in-setstate
+		const filterIndex = filters.findIndex(f => colKey === f.col);
 
-		filters[i] = event.currentTarget.value;
+		if (filterIndex !== -1)
+			filters[filterIndex].value = event.currentTarget.value;
+		else
+			filters.push({
+				col: colKey,
+				value: event.currentTarget.value,
+			});
+
 		setStatePartial({
 			currentPage: 1,
 			filters,
@@ -328,7 +350,7 @@ const DataTable = ({
 
 	// If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats).
 	// If colOrder does not match cols, need to run reconciliation code in loadStateFromCache (example: current vs past seasons in League Finances).
-	if (name !== state.prevName || cols.length > state.colOrder.length) {
+	if (name !== state.prevName || state.cols.length > state.colOrder.length) {
 		setState(
 			loadStateFromCache({
 				cols,
@@ -389,13 +411,13 @@ const DataTable = ({
 	}
 
 	const colOrderFiltered = state.colOrder.filter(
-		({ hidden, colIndex }) => !hidden && cols[colIndex],
+		({ hidden, colIndex }) => !hidden && state.cols[colIndex],
 	);
 
 	return (
 		<>
 			<CustomizeColumns
-				cols={cols}
+				cols={state.cols}
 				colOrder={state.colOrder}
 				hasSuperCols={!!superCols}
 				show={state.showSelectColumnsModal}
@@ -405,7 +427,7 @@ const DataTable = ({
 					});
 				}}
 				onReset={() => {
-					const newOrder = cols.map((col, i) => ({
+					const newOrder = state.cols.map((col, i) => ({
 						colIndex: i,
 					}));
 					setStatePartial({
@@ -476,8 +498,7 @@ const DataTable = ({
 						})}
 					>
 						<Header
-							colOrder={colOrderFiltered}
-							cols={cols}
+							cols={state.cols}
 							enableFilters={state.enableFilters}
 							filters={state.filters}
 							handleReorder={handleReorder}
@@ -501,7 +522,7 @@ const DataTable = ({
 							<Info
 								end={end}
 								numRows={numRowsFiltered}
-								numRowsUnfiltered={rows.length}
+								numRowsUnfiltered={state.rows.length}
 								start={start}
 							/>
 						) : null}

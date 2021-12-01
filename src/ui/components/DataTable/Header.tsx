@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import type { MouseEvent, SyntheticEvent } from "react";
 import { ReactNode, useCallback, useState } from "react";
-import type { Col, SortBy, SuperCol } from ".";
+import type { Col, Filter, SortBy, SuperCol } from ".";
 import {
 	arrayMove,
 	SortableContainer,
@@ -11,33 +11,26 @@ import {
 } from "react-sortable-hoc";
 
 const FilterHeader = ({
-	colOrder,
 	cols,
 	filters,
 	handleFilterUpdate,
 }: {
-	colOrder: {
-		colIndex: number;
-		hidden?: boolean;
-	}[];
 	cols: Col[];
-	filters: string[];
-	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
+	filters: Filter[];
+	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: string) => void;
 }) => {
 	return (
 		<tr>
-			{colOrder.map(({ colIndex }) => {
-				const col = cols[colIndex];
-
-				const filter = filters[colIndex] ?? "";
+			{cols.map((col, colIndex) => {
+				const filter = filters.find(f => col.key === f.col);
 				return (
 					<th key={colIndex}>
 						{col.noSearch ? null : (
 							<input
 								className="datatable-filter-input"
-								onChange={event => handleFilterUpdate(event, colIndex)}
+								onChange={event => handleFilterUpdate(event, col.key ?? "")}
 								type="text"
-								value={filter}
+								value={filter ? filter.value : ""}
 							/>
 						)}
 					</th>
@@ -145,17 +138,26 @@ const SortableColumn = SortableElement(
 		selected: boolean;
 		col: Col;
 		sortBy: SortBy | undefined;
+		colIndex: number;
+		handleColClick: (b: MouseEvent, a: number) => void;
 	}) => {
 		return (
-			<th>
+			<th
+				className={classNames(props.col.classNames, {
+					sorted: props.sortBy,
+				})}
+			>
 				<div
 					className="d-flex user-select-none"
 					style={{ marginRight: "-0.3rem" }}
 				>
 					<div className="flex-grow-1">{props.col.title}</div>
 					<div
+						onClick={event => {
+							props.handleColClick(event, props.colIndex);
+						}}
 						style={{ width: "19px" }}
-						className={classNames(props.col.classNames, {
+						className={classNames({
 							sorting: !props.sortBy && !props.isDragged,
 							sorting_asc: props.sortBy && props.sortBy[1] === "asc",
 							sorting_desc: props.sortBy && props.sortBy[1] === "desc",
@@ -172,6 +174,7 @@ const SortableColumnHeader = SortableContainer(
 		isDragged: boolean;
 		cols: Col[];
 		sortBys: SortBy[];
+		handleColClick: (b: MouseEvent, a: number) => void;
 	}) => {
 		return (
 			<tr>
@@ -181,7 +184,9 @@ const SortableColumnHeader = SortableContainer(
 						isDragged={props.isDragged}
 						selected={props.indexSelected === index}
 						index={index}
+						colIndex={index}
 						col={col}
+						handleColClick={props.handleColClick}
 						sortBy={props.sortBys.find((sort: SortBy) => sort[0] === index)}
 					/>
 				))}
@@ -191,7 +196,6 @@ const SortableColumnHeader = SortableContainer(
 );
 
 const Header = ({
-	colOrder,
 	cols,
 	enableFilters,
 	filters,
@@ -201,15 +205,12 @@ const Header = ({
 	sortBys,
 	superCols,
 }: {
-	colOrder: {
-		colIndex: number;
-	}[];
 	cols: Col[];
 	enableFilters: boolean;
-	filters: string[];
+	filters: Filter[];
 	handleColClick: (b: MouseEvent, a: number) => void;
-	handleReorder: (nextCols: Col[]) => void;
-	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
+	handleReorder: (oldIndex: number, newIndex: number) => void;
+	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: string) => void;
 	sortBys: SortBy[];
 	superCols?: SuperCol[];
 }) => {
@@ -217,6 +218,8 @@ const Header = ({
 	const [indexSelected, setIndexSelected] = useState<number | undefined>(
 		undefined,
 	);
+
+	console.log(filters);
 
 	const onSortStart = useCallback(({ index }) => {
 		setIsDragged(true);
@@ -228,16 +231,16 @@ const Header = ({
 			setIsDragged(false);
 			setIndexSelected(undefined);
 
-			handleReorder(arrayMove(colOrder, oldIndex, newIndex));
+			handleReorder(oldIndex, newIndex);
 		},
 		[handleReorder, cols],
 	);
 
 	return (
 		<thead>
-			{superCols ? (
-				<SuperCols colOrder={colOrder} superCols={superCols} />
-			) : null}
+			{/*{superCols ? (*/}
+			{/*	<SuperCols colOrder={colOrder} superCols={superCols} />*/}
+			{/*) : null}*/}
 			<SortableColumnHeader
 				cols={cols}
 				sortBys={sortBys}
@@ -248,50 +251,50 @@ const Header = ({
 				transitionDuration={0}
 				onSortStart={onSortStart}
 				onSortEnd={onSortEnd}
+				handleColClick={handleColClick}
 			/>
-			<tr>
-				{colOrder.map(({ colIndex }) => {
-					const {
-						classNames: colClassNames,
-						desc,
-						sortSequence,
-						title,
-						width,
-					} = cols[colIndex];
+			{/*<tr>*/}
+			{/*	{colOrder.map(({ colIndex }) => {*/}
+			{/*		const {*/}
+			{/*			classNames: colClassNames,*/}
+			{/*			desc,*/}
+			{/*			sortSequence,*/}
+			{/*			title,*/}
+			{/*			width,*/}
+			{/*		} = cols[colIndex];*/}
 
-					let className;
-					if (sortSequence && sortSequence.length === 0) {
-						className = null;
-					} else {
-						className = "sorting";
+			{/*		let className;*/}
+			{/*		if (sortSequence && sortSequence.length === 0) {*/}
+			{/*			className = null;*/}
+			{/*		} else {*/}
+			{/*			className = "sorting";*/}
 
-						for (const sortBy of sortBys) {
-							if (sortBy[0] === colIndex) {
-								className =
-									sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
-								break;
-							}
-						}
-					}
+			{/*			for (const sortBy of sortBys) {*/}
+			{/*				if (sortBy[0] === colIndex) {*/}
+			{/*					className =*/}
+			{/*						sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";*/}
+			{/*					break;*/}
+			{/*				}*/}
+			{/*			}*/}
+			{/*		}*/}
 
-					return (
-						<th
-							className={classNames(colClassNames, className)}
-							key={colIndex}
-							onClick={event => {
-								handleColClick(event, colIndex);
-							}}
-							title={desc}
-							style={{ width }}
-						>
-							{title}
-						</th>
-					);
-				})}
-			</tr>
+			{/*		return (*/}
+			{/*			<th*/}
+			{/*				className={classNames(colClassNames, className)}*/}
+			{/*				key={colIndex}*/}
+			{/*				onClick={event => {*/}
+			{/*					handleColClick(event, colIndex);*/}
+			{/*				}}*/}
+			{/*				title={desc}*/}
+			{/*				style={{ width }}*/}
+			{/*			>*/}
+			{/*				{title}*/}
+			{/*			</th>*/}
+			{/*		);*/}
+			{/*	})}*/}
+			{/*</tr>*/}
 			{enableFilters ? (
 				<FilterHeader
-					colOrder={colOrder}
 					cols={cols}
 					filters={filters}
 					handleFilterUpdate={handleFilterUpdate}

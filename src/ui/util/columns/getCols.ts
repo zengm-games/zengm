@@ -2708,11 +2708,13 @@ const cols: {
 	...sportSpecificCols,
 };
 
-export function getAllCols(): ColTemp[] {
-	return Object.entries(cols).map(([name, col]) => {
-		col.title ??= name;
-		col.key = name;
-		return col;
+export function getAllCols(): Col[] {
+	return Object.entries(cols).map(([name, col]): Col => {
+		return {
+			...col,
+			title: col.title ?? name,
+			key: name,
+		};
 	});
 }
 

@@ -127,6 +127,12 @@ $text-muted: $gray-400;
 		background-color: $gray-200 !important;
 		color: $black !important;
 	}
+
+	// Both these are needed for disabled buttons, for some reason
+	color: $black !important;
+	&:disabled {
+		color: $black !important;
+	}
 }
 
 .badge-danger {

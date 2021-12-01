@@ -1,3 +1,9 @@
+make box score tables sortable, at least for hockey and football https://discord.com/channels/290013534023057409/331882115119448065/915149537407017020
+- do this independent of DataTable, because it would be annoying to use DataTable in live sim (can't take advantage of PlayerRow for performance and highlighting)
+
+dropbox integration - save league to cloud
+- Tools > Export have button to export to dropbox
+
 ai propose trades to user
 - list candidates on a new Trade Offers page?
 
@@ -6,9 +12,6 @@ fbgm negative passes https://discord.com/channels/@me/625036115497451609/9129094
 add some way to auto find team colors based on logo
 - https://lokeshdhakar.com/projects/color-thief/
 - https://github.com/Vibrant-Colors/node-vibrant
-
-dropbox integration - save league to cloud
-- Tools > Export have button to export to dropbox
 
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?

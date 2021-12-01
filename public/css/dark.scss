@@ -323,3 +323,8 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 		fill: lighten($secondary, 10%);
 	}
 }
+
+.sorting_asc,
+.sorting_desc {
+	background-color: #5f583c !important;
+}

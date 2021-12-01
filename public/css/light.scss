@@ -1298,3 +1298,8 @@ code {
 .progress-bar[aria-valuenow="0"] {
 	transition: none !important;
 }
+
+.sorting_asc,
+.sorting_desc {
+	background-color: #ffeeba !important;
+}

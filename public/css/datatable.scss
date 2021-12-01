@@ -76,9 +76,7 @@ table.table {
 	thead {
 		.sorting,
 		.sorting_asc,
-		.sorting_desc,
-		.sorting_asc_disabled,
-		.sorting_desc_disabled {
+		.sorting_desc {
 			cursor: pointer;
 			user-select: none;
 			position: relative;

@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
-import { helpers } from "../util";
+import { getCols, helpers } from "../util";
+import { StatsHeader } from "./BoxScore.football";
 
 const StatsTable = ({
 	Row,
@@ -48,6 +49,38 @@ const StatsTable = ({
 		}
 	}
 
+	const stats = [
+		"min",
+		"fg",
+		"tp",
+		"ft",
+		"orb",
+		"trb",
+		"ast",
+		"tov",
+		"stl",
+		"blk",
+		"ba",
+		"pf",
+		"pts",
+		"pm",
+		"gmsc",
+	];
+	const cols = getCols(
+		stats.map(stat => `stat:${stat}`),
+		{
+			"stat:fg": {
+				desc: "Field Goals",
+			},
+			"stat:tp": {
+				desc: "Three Pointers",
+			},
+			"stat:ft": {
+				desc: "Free Throws",
+			},
+		},
+	);
+
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-bordered table-sm table-hover">
@@ -56,21 +89,12 @@ const StatsTable = ({
 						<th>Name</th>
 						{typeof t.players[0].abbrev === "string" ? <th>Team</th> : null}
 						<th>Pos</th>
-						<th>MP</th>
-						<th>FG</th>
-						<th>3Pt</th>
-						<th>FT</th>
-						<th>ORB</th>
-						<th>TRB</th>
-						<th>AST</th>
-						<th>TO</th>
-						<th>STL</th>
-						<th>BLK</th>
-						<th>BA</th>
-						<th>PF</th>
-						<th>PTS</th>
-						<th>+/-</th>
-						<th title="Game Score">GmSc</th>
+						<StatsHeader
+							cols={cols}
+							onClick={() => {}}
+							sortBys={[]}
+							sortable={t.players.length > 1}
+						/>
 					</tr>
 				</thead>
 				<tbody>

@@ -107,6 +107,8 @@ import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
 import type { PlayerRatings } from "../../common/types.basketball";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
+import type { IDBPIndex, IDBPObjectStore } from "idb";
+import type { LeagueDB } from "../db/connectLeague";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -388,22 +390,19 @@ const clearWatchList = async () => {
 		pids.add(p.pid);
 	}
 
-	// For watched players not in cache, mark as unwatched an add to cache
-	const promises: Promise<any>[] = [];
+	// For watched players not in cache
+	const tx = idb.league.transaction("players", "readwrite");
+	let cursor = await tx.store.openCursor();
+	while (cursor) {
+		const p = cursor.value;
+		if (p.watch && !pids.has(p.pid)) {
+			p.watch = false;
+			cursor.update(p);
+		}
+		cursor = await cursor.continue();
+	}
+	await tx.done;
 
-	await iterate(
-		idb.league.transaction("players").store,
-		undefined,
-		undefined,
-		p => {
-			if (p.watch && !pids.has(p.pid)) {
-				p.watch = false;
-				promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
-			}
-		},
-	);
-
-	await Promise.all(promises);
 	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
 
@@ -1156,16 +1155,6 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 // exportPlayerGamesCsv(2015) - just 2015 games
 // exportPlayerGamesCsv("all") - all games
 const exportPlayerGamesCsv = async (season: number | "all") => {
-	let games;
-
-	if (season === "all") {
-		games = await idb.getCopies.games();
-	} else {
-		games = await idb.getCopies.games({
-			season,
-		});
-	}
-
 	const columns = [
 		"gid",
 		"pid",
@@ -1199,18 +1188,34 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		"PTS",
 		"+/-",
 	];
-	const rows: any[] = [];
-	const teams = games.map(gm => gm.teams);
-	const seasons = games.map(gm => gm.season);
 
-	for (let i = 0; i < teams.length; i++) {
-		for (let j = 0; j < 2; j++) {
-			const t = teams[i][j];
-			const t2 = teams[i][j === 0 ? 1 : 0];
+	await idb.cache.flush();
+
+	let storeOrIndex:
+		| IDBPObjectStore<LeagueDB, ["games"], "games", "readonly">
+		| IDBPIndex<LeagueDB, ["games"], "games", "season", "readonly"> =
+		idb.league.transaction("games").store;
+	let keyRange = undefined;
+
+	if (season !== "all") {
+		storeOrIndex = storeOrIndex.index("season");
+		keyRange = IDBKeyRange.only(season);
+	}
+
+	let cursor = await storeOrIndex.openCursor(keyRange);
+
+	const rows: any[] = [];
+
+	while (cursor) {
+		const { gid, playoffs, season, teams } = cursor.value;
+
+		for (let i = 0; i < 2; i++) {
+			const t = teams[i];
+			const t2 = teams[i === 0 ? 1 : 0];
 
 			for (const p of t.players) {
 				rows.push([
-					games[i].gid,
+					gid,
 					p.pid,
 					p.name,
 					p.pos,
@@ -1218,8 +1223,8 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					g.get("teamInfoCache")[t2.tid]?.abbrev,
 					`${t.pts}-${t2.pts}`,
 					t.pts > t2.pts ? "W" : "L",
-					seasons[i],
-					games[i].playoffs,
+					season,
+					playoffs,
 					p.min,
 					p.fg,
 					p.fga,
@@ -1244,6 +1249,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 				]);
 			}
 		}
+		cursor = await cursor.continue();
 	}
 
 	return csvFormatRows([columns, ...rows]);
@@ -1405,6 +1411,19 @@ const getLocal = async (name: keyof Local) => {
 };
 
 const getPlayerBioInfoDefaults = initDefaults;
+
+const getPlayerWatch = async (pid: number) => {
+	const p = await idb.cache.players.get(pid);
+	if (p) {
+		return p.watch;
+	}
+	const p2 = await idb.getCopy.players({ pid });
+	if (p2) {
+		return p2.watch;
+	}
+
+	return false;
+};
 
 const getRandomCollege = async () => {
 	// Don't use real country, since most have no colleges by default
@@ -3571,6 +3590,7 @@ export default {
 	getLeagueName,
 	getLocal,
 	getPlayerBioInfoDefaults,
+	getPlayerWatch,
 	getRandomCollege,
 	getRandomCountry,
 	getRandomName,

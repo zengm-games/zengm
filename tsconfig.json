@@ -19,6 +19,7 @@
 		"strict": true,
 		"useUnknownInCatchVariables": false,
 		"importsNotUsedAsValues": "error",
-		"module": "es2020"
+		"module": "es2020",
+		"noImplicitOverride": true
 	}
 }

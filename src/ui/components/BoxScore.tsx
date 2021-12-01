@@ -5,7 +5,6 @@ import BoxScoreHockey from "./BoxScore.hockey";
 
 const BoxScore = (props: {
 	boxScore: any;
-	injuredToBottom?: boolean;
 	Row: any;
 	forceRowUpdate: boolean;
 }) => {

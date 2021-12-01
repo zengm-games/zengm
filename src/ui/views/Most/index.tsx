@@ -74,12 +74,7 @@ const Most = ({
 				{
 					value: (
 						<div className="d-flex">
-							<PlayerNameLabels
-								disableWatchToggle
-								jerseyNumber={p.jerseyNumber}
-								pid={p.pid}
-								watch={p.watch}
-							>
+							<PlayerNameLabels jerseyNumber={p.jerseyNumber} pid={p.pid}>
 								{p.name}
 							</PlayerNameLabels>
 							<div className="ml-auto">

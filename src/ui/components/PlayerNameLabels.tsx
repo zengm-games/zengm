@@ -8,7 +8,6 @@ import InjuryIcon from "./InjuryIcon";
 
 const PlayerNameLabels = (props: {
 	children: ReactNode;
-	disableWatchToggle?: boolean;
 	jerseyNumber?: string;
 	injury?: PlayerInjury & {
 		playingThrough?: boolean;
@@ -27,7 +26,6 @@ const PlayerNameLabels = (props: {
 }) => {
 	const {
 		children,
-		disableWatchToggle,
 		injury,
 		jerseyNumber,
 		pid,
@@ -52,12 +50,7 @@ const PlayerNameLabels = (props: {
 			<InjuryIcon injury={injury} />
 			<SkillsBlock skills={skills} />
 			{pid !== undefined ? (
-				<RatingsStatsPopover
-					disableWatchToggle={disableWatchToggle}
-					pid={pid}
-					season={season}
-					watch={watch}
-				/>
+				<RatingsStatsPopover pid={pid} season={season} watch={watch} />
 			) : null}
 		</span>
 	);

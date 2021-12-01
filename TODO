@@ -1,5 +1,5 @@
-nicidob new ovr formula
-- basketball: https://github.com/zengm-games/zengm/pull/275/files
+dropbox integration - save league to cloud
+- Tools > Export have button to export to dropbox
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?
@@ -9,9 +9,6 @@ fbgm negative passes https://discord.com/channels/@me/625036115497451609/9129094
 add some way to auto find team colors based on logo
 - https://lokeshdhakar.com/projects/color-thief/
 - https://github.com/Vibrant-Colors/node-vibrant
-
-dropbox integration - save league to cloud
-- Tools > Export have button to export to dropbox
 
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
@@ -36,8 +33,6 @@ fix ai value of reversed draft picks https://discord.com/channels/29001353402305
 - and random https://old.reddit.com/r/BasketballGM/comments/pyw33f/monthly_suggestions_thread/hg2t67n/
 
 on schedule page, if first game is on current day, put "watch" button in action. otherwise, put "sim to game" even though it's the first one https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
-
-allow watch everywhere by using toWorker to fetch value if undefined
 
 add archetypes to players?
 - https://twitter.com/messages/1928999030-3723150857
@@ -182,11 +177,6 @@ schedule customization
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 
-foul trouble
-- players should play different when they're in foul trouble
-- sub out players in foul trouble https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b484v/
-- (maybe if still necessary) make fouling more uniform https://old.reddit.com/r/BasketballGM/comments/okz0nw/ridiculous_foul_rates_for_some_games/h5b22ia/
-
 draft lottery history
 - https://basketball.realgm.com/nba/draft/lottery_results/by_team
 - metric for overall luck
@@ -306,11 +296,7 @@ wrong team abbrev various places
 
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 
-Change the FA/draft prospect roster type to "plain" or "jersey" https://discord.com/channels/290013534023057409/331882115119448065/848250125221363753
-
 mood effect of trading away a player should only be applied after the current phase is over https://old.reddit.com/r/BasketballGM/comments/nmz09w/fa_signing_probabilityasking_price_doesnt_change/gzrkjhr/
-
-noImplicitOverride in tsconfig after rollup and prettier can handle it
 
 Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
 - or offseason roster limit https://discord.com/channels/290013534023057409/331882115119448065/847984927136022558
@@ -624,6 +610,8 @@ ability to switch back to prior year
 typescript 4.1 stuff
 
 nicidob new ovr formula
+- basketball: https://github.com/zengm-games/zengm/pull/275/files
+  - see new-ovr branch
 - football: https://paste.ubuntu.com/p/H5pPmb3r6J/
   - nicodob says:
     - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
@@ -1798,11 +1786,6 @@ great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_question
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
-season preview
-  overview of user's players ratings changes
-  overview of notable ratings changes in other players
-  MVP race preview
-  power rankings
 account
   more pages
     account/edit

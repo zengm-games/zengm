@@ -141,7 +141,6 @@ export const genView = (
 							"statsTids",
 							"hof",
 							"jerseyNumber",
-							"watch",
 						],
 						ratings: ["ovr", "pos"],
 						stats: ["season", "abbrev", "tid", ...stats],

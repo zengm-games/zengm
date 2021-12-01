@@ -469,7 +469,6 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
-	injuredToBottom,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -480,7 +479,6 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
-	injuredToBottom?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -493,10 +491,15 @@ const BoxScoreWrapper = ({
 		prevPlayIndex.current = playIndex;
 	});
 	// If more than one play has happend between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
-	const forceRowUpdate =
+	let forceRowUpdate =
 		playIndex !== undefined &&
 		prevPlayIndex.current !== undefined &&
 		playIndex - prevPlayIndex.current > 1;
+
+	// Always update when game ends (needed to show DNPs after live sim ends)
+	if (boxScore.gameOver) {
+		forceRowUpdate = true;
+	}
 
 	const handleKeydown = useCallback(
 		e => {
@@ -605,12 +608,7 @@ const BoxScoreWrapper = ({
 				</div>
 				<TeamLogo season={boxScore.season} t={t1} />
 			</div>
-			<BoxScore
-				boxScore={boxScore}
-				Row={Row}
-				forceRowUpdate={forceRowUpdate}
-				injuredToBottom={injuredToBottom}
-			/>
+			<BoxScore boxScore={boxScore} Row={Row} forceRowUpdate={forceRowUpdate} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
 			{forcedWinText}
 		</>

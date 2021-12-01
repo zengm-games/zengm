@@ -69,8 +69,6 @@ const FrivolitiesDraftClasses = ({
 							jerseyNumber={p.jerseyNumber}
 							pid={p.pid}
 							season={p.draft.year}
-							watch={p.watch}
-							disableWatchToggle
 						>
 							{p.name}
 						</PlayerNameLabels>

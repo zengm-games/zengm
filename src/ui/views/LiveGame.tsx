@@ -31,7 +31,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 	prevInGame: boolean | undefined;
 
 	// Can't just switch to hooks and React.memo because p is mutated, so there is no way to access the previous value of inGame in the memo callback function
-	shouldComponentUpdate(nextProps: PlayerRowProps) {
+	override shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
 			basketball: !!(
 				this.prevInGame ||
@@ -48,7 +48,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 		});
 	}
 
-	render() {
+	override render() {
 		const { p, ...props } = this.props;
 
 		// Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
@@ -520,7 +520,6 @@ const LiveGame = (props: View<"liveGame">) => {
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper
 							boxScore={boxScore.current}
-							injuredToBottom
 							Row={PlayerRow}
 							playIndex={playIndex}
 						/>

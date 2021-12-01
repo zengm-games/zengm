@@ -1,22 +1,24 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { memo, SyntheticEvent, useCallback } from "react";
+import { memo, SyntheticEvent } from "react";
 import { toWorker } from "../util";
 
 type Props = {
 	className?: string;
 	pid: number;
 	watch: boolean;
+
+	// Not needed if you pass watch down all the way from a worker view, only needed if you're handling it in the UI only
+	onChange?: (watch: boolean) => void;
 };
 
-const WatchBlock = memo(({ className, pid, watch }: Props) => {
-	const handleClick = useCallback(
-		async (e: SyntheticEvent) => {
-			e.preventDefault();
-			await toWorker("main", "updatePlayerWatch", pid, !watch);
-		},
-		[pid, watch],
-	);
+const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
+	const handleClick = async (event: SyntheticEvent) => {
+		event.preventDefault();
+		const newWatch = !watch;
+		onChange?.(newWatch);
+		await toWorker("main", "updatePlayerWatch", pid, newWatch);
+	};
 
 	if (watch) {
 		return (

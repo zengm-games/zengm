@@ -1,11 +1,14 @@
 import PropTypes from "prop-types";
-import { memo, Fragment, ReactNode } from "react";
+import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName } from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
+import { sortByStats, StatsHeader } from "./BoxScore.football";
+import updateSortBys from "./DataTable/updateSortBys";
+import type { SortBy } from "./DataTable";
 
 type Team = {
 	abbrev: string;
@@ -36,7 +39,24 @@ const StatsTable = ({
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(stats.map(stat => `stat:${stat}`));
-	const sorts = PLAYER_GAME_STATS[type].sortBy;
+
+	const [sortBys, setSortBys] = useState(() => {
+		return PLAYER_GAME_STATS[type].sortBy.map(
+			stat => [stats.indexOf(stat), "desc"] as SortBy,
+		);
+	});
+
+	const onClick = (event: MouseEvent, i: number) => {
+		setSortBys(
+			prevSortBys =>
+				updateSortBys({
+					cols,
+					event,
+					i,
+					prevSortBys,
+				}) ?? [],
+		);
+	};
 
 	const players = t.players
 		.map(p => {
@@ -46,14 +66,7 @@ const StatsTable = ({
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type))
-		.sort((a, b) => {
-			for (const sort of sorts) {
-				if (b.processed[sort] !== a.processed[sort]) {
-					return b.processed[sort] - a.processed[sort];
-				}
-			}
-			return 0;
-		});
+		.sort(sortByStats(stats, sortBys));
 
 	const showFooter = players.length > 1;
 	const sumsByStat: Record<string, number> = {};
@@ -78,19 +91,18 @@ const StatsTable = ({
 	}
 
 	return (
-		<div key={t.abbrev} className="mb-3">
+		<div className="mb-3">
 			<ResponsiveTableWrapper>
 				<table className="table table-striped table-bordered table-sm table-hover">
 					<thead>
 						<tr>
 							<th colSpan={2}>{title}</th>
-							{cols.map(({ desc, title, width }, i) => {
-								return (
-									<th key={i} title={desc} style={{ width }}>
-										{title}
-									</th>
-								);
-							})}
+							<StatsHeader
+								cols={cols}
+								onClick={onClick}
+								sortBys={sortBys}
+								sortable={players.length > 1}
+							/>
 						</tr>
 					</thead>
 					<tbody>

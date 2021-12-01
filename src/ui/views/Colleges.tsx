@@ -103,12 +103,7 @@ export const genView = (
 					(c.displayStat / c.numPlayers).toFixed(1),
 					{
 						value: (
-							<PlayerNameLabels
-								jerseyNumber={p.jerseyNumber}
-								pid={p.pid}
-								watch={p.watch}
-								disableWatchToggle
-							>
+							<PlayerNameLabels jerseyNumber={p.jerseyNumber} pid={p.pid}>
 								{p.name}
 							</PlayerNameLabels>
 						),

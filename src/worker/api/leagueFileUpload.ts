@@ -55,6 +55,11 @@ export const parseJSON = () => {
 					for (const row of parser.stack) {
 						row.value = undefined;
 					}
+
+					// Also, when processing an array/object, this.value will contain the current state of the array/object. So we should delete the value there too, but leave the array/object so it can still be used by the parser
+					if (typeof parser.value === "object" && parser.value !== null) {
+						delete parser.value[parser.key];
+					}
 				});
 			},
 

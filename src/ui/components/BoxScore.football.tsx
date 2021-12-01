@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import { memo, Fragment, MouseEvent, ReactNode } from "react";
+import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName, helpers } from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
+import updateSortBys from "./DataTable/updateSortBys";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -87,11 +88,24 @@ const StatsTable = ({
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(stats.map(stat => `stat:${stat}`));
-	const sorts = PLAYER_GAME_STATS[type].sortBy;
 
-	const sortBys = sorts.map(sort => [stats.indexOf(sort), "desc"] as SortBy);
+	const [sortBys, setSortBys] = useState(() => {
+		return PLAYER_GAME_STATS[type].sortBy.map(
+			stat => [stats.indexOf(stat), "desc"] as SortBy,
+		);
+	});
 
-	const onClick = () => {};
+	const onClick = (event: MouseEvent, i: number) => {
+		setSortBys(
+			prevSortBys =>
+				updateSortBys({
+					cols,
+					event,
+					i,
+					prevSortBys,
+				}) ?? [],
+		);
+	};
 
 	return (
 		<>
@@ -105,9 +119,14 @@ const StatsTable = ({
 					})
 					.filter(p => filterPlayerStats(p, stats, type))
 					.sort((a, b) => {
-						for (const sort of sorts) {
-							if (b.processed[sort] !== a.processed[sort]) {
-								return b.processed[sort] - a.processed[sort];
+						for (const [index, order] of sortBys) {
+							const stat = stats[index];
+							if (b.processed[stat] !== a.processed[stat]) {
+								const diff = b.processed[stat] - a.processed[stat];
+								if (order === "asc") {
+									return -diff;
+								}
+								return diff;
 							}
 						}
 						return 0;

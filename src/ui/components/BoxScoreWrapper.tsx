@@ -491,10 +491,15 @@ const BoxScoreWrapper = ({
 		prevPlayIndex.current = playIndex;
 	});
 	// If more than one play has happend between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
-	const forceRowUpdate =
+	let forceRowUpdate =
 		playIndex !== undefined &&
 		prevPlayIndex.current !== undefined &&
 		playIndex - prevPlayIndex.current > 1;
+
+	// Always update when game ends (needed to show DNPs after live sim ends)
+	if (boxScore.gameOver) {
+		forceRowUpdate = true;
+	}
 
 	const handleKeydown = useCallback(
 		e => {

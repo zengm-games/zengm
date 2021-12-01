@@ -1,8 +1,6 @@
 sortable box score for basketball too
 - clicking on header twice should reset sort to default (starters + minutes, or whatever)
 - confirm football/hockey still work
-- show DNP when live sim ends?
-  - seems to be factored into sort, but not displayed
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox

@@ -2,41 +2,37 @@ import PropTypes from "prop-types";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { getCols, helpers } from "../util";
-import { StatsHeader } from "./BoxScore.football";
+import { sortByStats, StatsHeader } from "./BoxScore.football";
+import { MouseEvent, useState } from "react";
+import type { SortBy } from "./DataTable";
+import updateSortBys from "./DataTable/updateSortBys";
 
 const StatsTable = ({
 	Row,
 	forceRowUpdate,
 	liveGameInProgress,
-	injuredToBottom,
 	numPlayersOnCourt,
 	t,
 }: {
 	Row: any;
 	forceRowUpdate: boolean;
 	liveGameInProgress: boolean;
-	injuredToBottom?: boolean;
 	numPlayersOnCourt: number;
 	t: any;
 }) => {
-	// This feature is only used for live game sim. Otherwise, sorting is already done in the worker. That didn't work for live game sim though, some index error resulted in the wrong rows being updated.
-	const playersHealthy = [];
-	const playersInjured = [];
-	for (let i = 0; i < t.players.length; i++) {
-		const p = t.players[i];
-		const addToHealthy =
-			!injuredToBottom ||
-			p.injury.gamesRemaining === 0 ||
-			p.min > 0 ||
-			p.injury.playingThrough;
+	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
-		if (addToHealthy) {
-			playersHealthy.push(p);
-		} else {
-			playersInjured.push(p);
-		}
-	}
-	const players = [...playersHealthy, ...playersInjured];
+	const onClick = (event: MouseEvent, i: number) => {
+		setSortBys(
+			prevSortBys =>
+				updateSortBys({
+					cols,
+					event,
+					i,
+					prevSortBys,
+				}) ?? [],
+		);
+	};
 
 	const stats = [
 		"min",
@@ -70,6 +66,53 @@ const StatsTable = ({
 		},
 	);
 
+	// This is used for two purposes - keeping injured/DNP at the bottom while sorting, and also sorting in general for live sim (was too hard to account for this stuff in default sort from backend)
+	const playersActiveOrPlayed = [];
+	const playersInjuredOrDNP = [];
+	for (let i = 0; i < t.players.length; i++) {
+		const p = t.players[i];
+		let addToHealthy;
+		if (liveGameInProgress) {
+			addToHealthy =
+				p.injury.gamesRemaining === 0 || p.min > 0 || p.injury.playingThrough;
+		} else {
+			addToHealthy = p.min > 0;
+		}
+
+		if (addToHealthy) {
+			playersActiveOrPlayed.push(p);
+		} else {
+			playersInjuredOrDNP.push(p);
+		}
+	}
+
+	if (sortBys.length > 0) {
+		playersActiveOrPlayed.sort(
+			sortByStats(stats, sortBys, (p, stat) => {
+				if (stat === "trb") {
+					return p.orb + p.drb;
+				}
+
+				if (stat === "gmsc") {
+					return helpers.gameScore(p);
+				}
+
+				if (stat === "fg" || stat === "ft" || stat === "tp") {
+					// Sort by FGM, FGM/FGA (+1 for divide by 0 and so 100% doesn't roll over), and # attempts (lower is better)
+					return (
+						p[stat] +
+						p[stat] / (p[`${stat}a`] + 1) +
+						(1000 - p[`${stat}a`]) / 1000
+					);
+				}
+
+				return p[stat];
+			}),
+		);
+	}
+
+	const players = [...playersActiveOrPlayed, ...playersInjuredOrDNP];
+
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-bordered table-sm table-hover">
@@ -80,8 +123,8 @@ const StatsTable = ({
 						<th>Pos</th>
 						<StatsHeader
 							cols={cols}
-							onClick={() => {}}
-							sortBys={[]}
+							onClick={onClick}
+							sortBys={sortBys}
 							sortable={t.players.length > 1}
 						/>
 					</tr>
@@ -90,7 +133,7 @@ const StatsTable = ({
 					{players.map((p, i) => (
 						<Row
 							key={p.pid}
-							lastStarter={i + 1 === numPlayersOnCourt}
+							lastStarter={sortBys.length === 0 && i + 1 === numPlayersOnCourt}
 							liveGameInProgress={liveGameInProgress}
 							p={p}
 							forceUpdate={forceRowUpdate}
@@ -154,12 +197,10 @@ const BoxScore = ({
 	boxScore,
 	Row,
 	forceRowUpdate,
-	injuredToBottom,
 }: {
 	boxScore: any;
 	Row: any;
 	forceRowUpdate: boolean;
-	injuredToBottom?: boolean;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
@@ -193,7 +234,6 @@ const BoxScore = ({
 							Row={Row}
 							forceRowUpdate={forceRowUpdate}
 							liveGameInProgress={liveGameInProgress}
-							injuredToBottom={injuredToBottom}
 							numPlayersOnCourt={boxScore.numPlayersOnCourt ?? 5}
 							t={t}
 						/>

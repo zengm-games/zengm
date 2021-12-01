@@ -1,10 +1,8 @@
 sortable box score for basketball too
 - clicking on header twice should reset sort to default (starters + minutes, or whatever)
-- hide separator if sorted by non-default
-- needs to handle DNP rows
-- needs to handle injured rows at bottom
-- sorting of shooting columns
-- sorting of trb column
+- confirm football/hockey still work
+- show DNP when live sim ends?
+  - seems to be factored into sort, but not displayed
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox

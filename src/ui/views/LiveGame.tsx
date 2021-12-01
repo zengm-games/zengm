@@ -520,7 +520,6 @@ const LiveGame = (props: View<"liveGame">) => {
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper
 							boxScore={boxScore.current}
-							injuredToBottom
 							Row={PlayerRow}
 							playIndex={playIndex}
 						/>

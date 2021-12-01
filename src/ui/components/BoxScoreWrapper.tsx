@@ -469,7 +469,6 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
-	injuredToBottom,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -480,7 +479,6 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
-	injuredToBottom?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -605,12 +603,7 @@ const BoxScoreWrapper = ({
 				</div>
 				<TeamLogo season={boxScore.season} t={t1} />
 			</div>
-			<BoxScore
-				boxScore={boxScore}
-				Row={Row}
-				forceRowUpdate={forceRowUpdate}
-				injuredToBottom={injuredToBottom}
-			/>
+			<BoxScore boxScore={boxScore} Row={Row} forceRowUpdate={forceRowUpdate} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
 			{forcedWinText}
 		</>

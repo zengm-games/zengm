@@ -77,12 +77,20 @@ export const StatsHeader = ({
 	);
 };
 
-export const sortByStats = (stats: string[], sortBys: SortBy[]) => {
+export const sortByStats = (
+	stats: string[],
+	sortBys: SortBy[],
+	getValue?: (p: any, stat: string) => number,
+) => {
 	return (a: any, b: any) => {
 		for (const [index, order] of sortBys) {
 			const stat = stats[index];
-			if (b.processed[stat] !== a.processed[stat]) {
-				const diff = b.processed[stat] - a.processed[stat];
+
+			const aValue = getValue?.(a, stat) ?? a.processed[stat];
+			const bValue = getValue?.(b, stat) ?? b.processed[stat];
+
+			if (bValue !== aValue) {
+				const diff = bValue - aValue;
 				if (order === "asc") {
 					return -diff;
 				}

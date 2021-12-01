@@ -32,7 +32,7 @@ type BoxScore = {
 	numPeriods?: number;
 };
 
-const StatsHeader = ({
+export const StatsHeader = ({
 	cols,
 	onClick,
 	sortBys,
@@ -77,6 +77,22 @@ const StatsHeader = ({
 	);
 };
 
+export const sortByStats = (stats: string[], sortBys: SortBy[]) => {
+	return (a: any, b: any) => {
+		for (const [index, order] of sortBys) {
+			const stat = stats[index];
+			if (b.processed[stat] !== a.processed[stat]) {
+				const diff = b.processed[stat] - a.processed[stat];
+				if (order === "asc") {
+					return -diff;
+				}
+				return diff;
+			}
+		}
+		return 0;
+	};
+};
+
 const StatsTableIndividual = ({
 	Row,
 	t,
@@ -115,19 +131,7 @@ const StatsTableIndividual = ({
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type))
-		.sort((a, b) => {
-			for (const [index, order] of sortBys) {
-				const stat = stats[index];
-				if (b.processed[stat] !== a.processed[stat]) {
-					const diff = b.processed[stat] - a.processed[stat];
-					if (order === "asc") {
-						return -diff;
-					}
-					return diff;
-				}
-			}
-			return 0;
-		});
+		.sort(sortByStats(stats, sortBys));
 
 	return (
 		<div className="mb-3">

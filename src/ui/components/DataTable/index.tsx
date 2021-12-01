@@ -214,8 +214,9 @@ const DataTable = ({
 	};
 
 	const handleColClick = (event: MouseEvent, i: number) => {
-		const col = cols[i]; // Ignore click on unsortable column
+		const col = cols[i];
 
+		// Ignore click on unsortable column
 		if (col.sortSequence && col.sortSequence.length === 0) {
 			return;
 		}

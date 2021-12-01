@@ -165,7 +165,9 @@ const Header = ({
 						<th
 							className={classNames(colClassNames, className)}
 							key={colIndex}
-							onClick={event => handleColClick(event, colIndex)}
+							onClick={event => {
+								handleColClick(event, colIndex);
+							}}
 							title={desc}
 							style={{ width }}
 						>

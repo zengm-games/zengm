@@ -227,10 +227,10 @@ const DataTable = ({
 	const handleReorder = (oldIndex: number, newIndex: number) => {
 		setStatePartial({
 			cols: arrayMove(state.cols, oldIndex, newIndex),
-			rows: state.rows.map(row => {
-				row.data = arrayMove([...row.data], oldIndex, newIndex);
-				return row;
-			}),
+			// rows: state.rows.map(row => {
+			// 	row.data = arrayMove([...row.data], oldIndex, newIndex);
+			// 	return row;
+			// }),
 		});
 		processedRows = processRows();
 	};
@@ -509,7 +509,7 @@ const DataTable = ({
 						/>
 						<tbody>
 							{processedRows.map(row => (
-								<Row key={row.key} row={row} />
+								<Row key={row.key} cols={state.cols} row={row} />
 							))}
 						</tbody>
 						<Footer colOrder={colOrderFiltered} footer={footer} />

@@ -1,11 +1,14 @@
 import PropTypes from "prop-types";
-import { useRef, useState, ReactNode } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
+import { Player } from "../../common/types";
 import type api from "../../worker/api";
+import getTemplate from "../util/columns/getTemplate";
+import { ColTemp } from "../util/columns/getCols";
 
 type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -194,6 +197,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
+		console.log("change", id);
 		setState(prevState => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
@@ -263,7 +267,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		gameOver,
 		spectator,
 		phase,
-		stats,
+		config,
 		userPicks,
 		userRoster,
 	} = props;
@@ -303,54 +307,33 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		);
 	}
 
-	const cols = getCols(
-		[
-			"",
-			"Name",
-			"Pos",
-			"Age",
-			"Ovr",
-			"Pot",
-			"Contract",
-			"Exp",
-			...stats.map(stat => `stat:${stat}`),
-		],
+	const cols = [
 		{
-			"": {
-				sortSequence: [],
-				noSearch: true,
-			},
-		},
-	);
-
-	const rows = userRoster.map(p => {
-		return {
-			key: p.pid,
-			data: [
+			title: "",
+			key: "X",
+			sortSequence: [],
+			noSearch: true,
+			render: (p: Player, c: ColTemp, vars: object) => (
 				<input
 					type="checkbox"
 					checked={state.pids.includes(p.pid)}
 					disabled={p.untradable}
 					onChange={() => handleChangeAsset("pids", p.pid)}
 					title={p.untradableMsg}
-				/>,
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-			],
+				/>
+			),
+		},
+		...config.columns,
+	];
+
+	console.log(state.pids);
+
+	const rows = userRoster.map(p => {
+		return {
+			key: p.pid,
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, {})]),
+			),
 		};
 	});
 
@@ -382,7 +365,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				<div className="col-md-9">
 					<DataTable
 						cols={cols}
-						defaultSort={[6, "desc"]}
+						defaultSort={["Contract", "desc"]}
 						name="TradingBlock"
 						rows={rows}
 					/>

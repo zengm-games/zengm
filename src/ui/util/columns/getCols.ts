@@ -1,13 +1,15 @@
 import type { Col } from "../../components/DataTable";
 import bySport from "../../../common/bySport";
 import isSport from "../../../common/isSport";
+import { Player } from "../../../common/types";
 
 export type ColTemp = Omit<Col, "title"> & {
 	title?: string;
+	key?: string;
 	ratings?: string[];
 	stats?: string[];
 	template?: string;
-	key?: string;
+	render?: (p: Player, c: ColTemp, vars: object) => JSX.Element;
 };
 
 const gp = isSport("hockey") ? "GP" : "G";

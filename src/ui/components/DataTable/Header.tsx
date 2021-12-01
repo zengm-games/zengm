@@ -219,8 +219,6 @@ const Header = ({
 		undefined,
 	);
 
-	console.log(filters);
-
 	const onSortStart = useCallback(({ index }) => {
 		setIsDragged(true);
 		setIndexSelected(index);
@@ -233,7 +231,7 @@ const Header = ({
 
 			handleReorder(oldIndex, newIndex);
 		},
-		[handleReorder, cols],
+		[handleReorder],
 	);
 
 	return (

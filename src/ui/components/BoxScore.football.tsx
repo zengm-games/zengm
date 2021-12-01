@@ -77,13 +77,13 @@ const StatsHeader = ({
 	);
 };
 
-const StatsTable = ({
+const StatsTableIndividual = ({
 	Row,
-	boxScore,
+	t,
 	type,
 }: {
 	Row: any;
-	boxScore: BoxScore;
+	t: BoxScore["teams"][number];
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
@@ -107,58 +107,70 @@ const StatsTable = ({
 		);
 	};
 
+	const players = t.players
+		.map(p => {
+			return {
+				...p,
+				processed: processPlayerStats(p, stats),
+			};
+		})
+		.filter(p => filterPlayerStats(p, stats, type))
+		.sort((a, b) => {
+			for (const [index, order] of sortBys) {
+				const stat = stats[index];
+				if (b.processed[stat] !== a.processed[stat]) {
+					const diff = b.processed[stat] - a.processed[stat];
+					if (order === "asc") {
+						return -diff;
+					}
+					return diff;
+				}
+			}
+			return 0;
+		});
+
+	return (
+		<div className="mb-3">
+			<ResponsiveTableWrapper>
+				<table className="table table-striped table-bordered table-sm table-hover">
+					<thead>
+						<tr>
+							<th colSpan={2}>
+								{t.region} {t.name}
+							</th>
+							<StatsHeader
+								cols={cols}
+								onClick={onClick}
+								sortBys={sortBys}
+								sortable={players.length > 1}
+							/>
+						</tr>
+					</thead>
+					<tbody>
+						{players.map((p, i) => (
+							<Row key={p.pid} i={i} p={p} stats={stats} />
+						))}
+					</tbody>
+				</table>
+			</ResponsiveTableWrapper>
+		</div>
+	);
+};
+
+const StatsTable = ({
+	Row,
+	boxScore,
+	type,
+}: {
+	Row: any;
+	boxScore: BoxScore;
+	type: keyof typeof PLAYER_GAME_STATS;
+}) => {
 	return (
 		<>
-			{boxScore.teams.map(t => {
-				const players = t.players
-					.map(p => {
-						return {
-							...p,
-							processed: processPlayerStats(p, stats),
-						};
-					})
-					.filter(p => filterPlayerStats(p, stats, type))
-					.sort((a, b) => {
-						for (const [index, order] of sortBys) {
-							const stat = stats[index];
-							if (b.processed[stat] !== a.processed[stat]) {
-								const diff = b.processed[stat] - a.processed[stat];
-								if (order === "asc") {
-									return -diff;
-								}
-								return diff;
-							}
-						}
-						return 0;
-					});
-
-				return (
-					<div key={t.abbrev} className="mb-3">
-						<ResponsiveTableWrapper>
-							<table className="table table-striped table-bordered table-sm table-hover">
-								<thead>
-									<tr>
-										<th colSpan={2}>
-											{t.region} {t.name}
-										</th>
-										<StatsHeader
-											cols={cols}
-											onClick={onClick}
-											sortBys={sortBys}
-											sortable={players.length > 1}
-										/>
-									</tr>
-								</thead>
-								<tbody>
-									{players.map((p, i) => (
-										<Row key={p.pid} i={i} p={p} stats={stats} />
-									))}
-								</tbody>
-							</table>
-						</ResponsiveTableWrapper>
-					</div>
-				);
-			})}
+			{boxScore.teams.map((t, i) => (
+				<StatsTableIndividual key={i} Row={Row} t={t} type={type} />
+			))}
 		</>
 	);
 };

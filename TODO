@@ -1,5 +1,6 @@
 make box score tables sortable, at least for hockey and football https://discord.com/channels/290013534023057409/331882115119448065/915149537407017020
 - do this independent of DataTable, because it would be annoying to use DataTable in live sim (can't take advantage of PlayerRow for performance and highlighting)
+- hockey
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox

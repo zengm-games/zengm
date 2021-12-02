@@ -325,6 +325,7 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 }
 
 .sorting_asc,
-.sorting_desc {
-	background-color: #5f583c !important;
+.sorting_desc,
+.datatable-sorted-col {
+	background-color: $gray-200 !important;
 }

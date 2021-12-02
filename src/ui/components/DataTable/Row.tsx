@@ -4,10 +4,13 @@ import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
 import type { Argument } from "classnames";
+import type { SortBy } from ".";
 
 const Row = ({
+	highlightIndexes,
 	row,
 }: {
+	highlightIndexes: number[];
 	row: {
 		classNames?: Argument;
 		data: any[];
@@ -28,8 +31,12 @@ const Row = ({
 
 				const props: any = {};
 
-				if (value && value.classNames) {
-					props.className = classNames(value.classNames);
+				const highlight = highlightIndexes.includes(i);
+				if ((value && value.classNames) || highlight) {
+					props.className = classNames(
+						value?.classNames,
+						highlight ? "datatable-sorted-col" : undefined,
+					);
 				}
 
 				if (value && value.title) {

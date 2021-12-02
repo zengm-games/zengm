@@ -22,6 +22,7 @@ export const dropboxStream = async (filename: string, accessToken: string) => {
 			const response = await dropbox.filesUpload({
 				path: `/${filename}`,
 				contents: blob,
+				autorename: true,
 			});
 			console.log(response);
 		},

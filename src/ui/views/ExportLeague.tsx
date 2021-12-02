@@ -461,59 +461,64 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		setProcessingStore(undefined);
 	};
 
-	const handleSubmit = async (event: FormEvent) => {
-		event.preventDefault();
+	const handleSubmit =
+		(type: "download" | "dropbox") => async (event: FormEvent) => {
+			event.preventDefault();
 
-		setStatus("Exporting...");
-		setPercentDone(0);
-		saveDefaults(checked, compressed);
+			setStatus("Exporting...");
+			setPercentDone(0);
+			saveDefaults(checked, compressed);
 
-		try {
-			const filename = await toWorker("main", "getExportFilename", "league");
+			try {
+				const filename = await toWorker("main", "getExportFilename", "league");
 
-			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
-				stats,
-				checked,
-			);
+				const { stores, filter, forEach, map, hasHistoricalData } =
+					getExportInfo(stats, checked);
 
-			const { downloadFileStream, makeExportStream } = await import(
-				"../util/exportLeague"
-			);
+				const { downloadFileStream, makeExportStream } = await import(
+					"../util/exportLeague"
+				);
 
-			const readableStream = await makeExportStream(stores, {
-				compressed,
-				filter,
-				forEach,
-				map,
-				hasHistoricalData,
-				onPercentDone: percent => {
-					setPercentDone(percent);
-				},
-				onProcessingStore: store => {
-					setProcessingStore(store);
-				},
-			});
-
-			const fileStream = await downloadFileStream(streamDownload, filename);
-
-			if (SUPPORTS_CANCEL) {
-				abortController.current = new AbortController();
-			}
-
-			await readableStream
-				.pipeThrough(new TextEncoderStream())
-				.pipeTo(fileStream, {
-					signal: abortController.current?.signal,
+				const readableStream = await makeExportStream(stores, {
+					compressed,
+					filter,
+					forEach,
+					map,
+					hasHistoricalData,
+					onPercentDone: percent => {
+						setPercentDone(percent);
+					},
+					onProcessingStore: store => {
+						setProcessingStore(store);
+					},
 				});
 
-			cleanupAfterStream();
-		} catch (error) {
-			cleanupAfterStream(
-				<span className="text-danger">Error: "{error.message}"</span>,
-			);
-			throw error;
-		}
-	};
+				let fileStream;
+				if (type === "download") {
+					fileStream = await downloadFileStream(streamDownload, filename);
+				} else {
+					const dropboxStream = (await import("../util/dropboxStream")).default;
+					fileStream = await dropboxStream(filename);
+				}
+
+				if (SUPPORTS_CANCEL) {
+					abortController.current = new AbortController();
+				}
+
+				await readableStream
+					.pipeThrough(new TextEncoderStream())
+					.pipeTo(fileStream, {
+						signal: abortController.current?.signal,
+					});
+
+				cleanupAfterStream();
+			} catch (error) {
+				cleanupAfterStream(
+					<span className="text-danger">Error: "{error.message}"</span>,
+				);
+				throw error;
+			}
+		};
 
 	useTitleBar({ title: "Export League" });
 
@@ -603,119 +608,127 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				</a>
 			</p>
 
-			<form onSubmit={handleSubmit}>
-				<div className="btn-group mb-3">{bulkSelectButtons}</div>
+			<div className="btn-group mb-3">{bulkSelectButtons}</div>
 
-				<div className="row">
-					{categories.map(cat => (
-						<div className="col-md-6 col-lg-5 col-xl-4" key={cat.name}>
-							<RenderOption
-								{...cat}
-								checked={checked}
-								onToggle={name => {
-									setChecked(checked2 => ({
-										...checked2,
-										[name]: !checked2[name],
-									}));
-								}}
-							/>
-						</div>
-					))}
-				</div>
-				<div className="row">
-					<div className="col-md-6 col-lg-5 col-xl-4">
-						<h2>Export options</h2>
-						<div className="form-check mb-3">
-							<label className="form-check-label">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									checked={compressed}
-									onChange={() => {
-										setCompressed(compressed => !compressed);
-									}}
-								/>
-								Compressed (no extra whitespace)
-							</label>
-						</div>
-						<div className="form-check">
-							<label className="form-check-label">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									checked={streamDownload}
-									onChange={() => {
-										setStreamDownload(streamDownload => !streamDownload);
-									}}
-								/>
-								Streaming download
-								{HAS_FILE_SYSTEM_ACCESS_API ? (
-									<p className="text-muted">
-										Keep this enabled unless you're having trouble getting your
-										browser to download an export. If that happens to you,
-										please{" "}
-										<a
-											href="https://basketball-gm.com/manual/debugging/"
-											rel="noopener noreferrer"
-											target="_blank"
-										>
-											help me figure out why it's not working
-										</a>
-										, because ideally it should always work with this enabled.
-									</p>
-								) : (
-									<p className="text-muted">
-										This works better for large leagues, but is not supported
-										well in your browser so it might fail.
-									</p>
-								)}
-							</label>
-						</div>
-
-						{showFirefoxWarning ? (
-							<div className="alert alert-warning d-inline-block">
-								<b>Firefox sometimes fails at streaming data to disk.</b> If the
-								progress bar gets stuck and it never prompts you to save a file,
-								please reload and try again.
-							</div>
-						) : null}
-
-						<ActionButton type="submit" processing={status === "Exporting..."}>
-							Export League
-						</ActionButton>
-
-						{SUPPORTS_CANCEL ? (
-							<button
-								className="btn btn-secondary ml-2"
-								type="button"
-								disabled={status !== "Exporting..."}
-								onClick={() => {
-									if (abortController.current) {
-										abortController.current.abort();
-										cleanupAfterStream();
-									}
-								}}
-							>
-								Cancel
-							</button>
-						) : null}
-
-						{percentDone >= 0 ? (
-							<ProgressBarText
-								className="mt-3"
-								text={`Processing${
-									processingStore ? ` ${processingStore}` : ""
-								}...`}
-								percent={percentDone ?? 0}
-							/>
-						) : null}
-
-						{status && status !== "Exporting..." ? (
-							<div className="mt-3">{status}</div>
-						) : null}
+			<div className="row">
+				{categories.map(cat => (
+					<div className="col-md-6 col-lg-5 col-xl-4" key={cat.name}>
+						<RenderOption
+							{...cat}
+							checked={checked}
+							onToggle={name => {
+								setChecked(checked2 => ({
+									...checked2,
+									[name]: !checked2[name],
+								}));
+							}}
+						/>
 					</div>
+				))}
+			</div>
+			<div className="row">
+				<div className="col-md-6 col-lg-5 col-xl-4">
+					<h2>Export options</h2>
+					<div className="form-check mb-3">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={compressed}
+								onChange={() => {
+									setCompressed(compressed => !compressed);
+								}}
+							/>
+							Compressed (no extra whitespace)
+						</label>
+					</div>
+					<div className="form-check">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={streamDownload}
+								onChange={() => {
+									setStreamDownload(streamDownload => !streamDownload);
+								}}
+							/>
+							Streaming download
+							{HAS_FILE_SYSTEM_ACCESS_API ? (
+								<p className="text-muted">
+									Keep this enabled unless you're having trouble getting your
+									browser to download an export. If that happens to you, please{" "}
+									<a
+										href="https://basketball-gm.com/manual/debugging/"
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										help me figure out why it's not working
+									</a>
+									, because ideally it should always work with this enabled.
+								</p>
+							) : (
+								<p className="text-muted">
+									This works better for large leagues, but is not supported well
+									in your browser so it might fail.
+								</p>
+							)}
+						</label>
+					</div>
+
+					{showFirefoxWarning ? (
+						<div className="alert alert-warning d-inline-block">
+							<b>Firefox sometimes fails at streaming data to disk.</b> If the
+							progress bar gets stuck and it never prompts you to save a file,
+							please reload and try again.
+						</div>
+					) : null}
+
+					<ActionButton
+						processing={status === "Exporting..."}
+						onClick={handleSubmit("download")}
+					>
+						Download File
+					</ActionButton>
+
+					<ActionButton
+						className="ml-2"
+						processing={status === "Exporting..."}
+						onClick={handleSubmit("dropbox")}
+					>
+						Save To Dropbox
+					</ActionButton>
+
+					{SUPPORTS_CANCEL ? (
+						<button
+							className="btn btn-secondary ml-2"
+							type="button"
+							disabled={status !== "Exporting..."}
+							onClick={() => {
+								if (abortController.current) {
+									abortController.current.abort();
+									cleanupAfterStream();
+								}
+							}}
+						>
+							Cancel
+						</button>
+					) : null}
+
+					{percentDone >= 0 ? (
+						<ProgressBarText
+							className="mt-3"
+							text={`Processing${
+								processingStore ? ` ${processingStore}` : ""
+							}...`}
+							percent={percentDone ?? 0}
+						/>
+					) : null}
+
+					{status && status !== "Exporting..." ? (
+						<div className="mt-3">{status}</div>
+					) : null}
 				</div>
-			</form>
+			</div>
 		</>
 	);
 };

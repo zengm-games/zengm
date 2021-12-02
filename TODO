@@ -10,6 +10,13 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox
+- https://stackoverflow.com/questions/56575928/how-to-upload-a-file-to-dropbox-using-js-sdk
+- login https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/auth/index.html
+- streaming upload https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/upload/index.html
+- show URL to share after uploading - www -> dl
+  - maybe not possible https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/How-to-get-complete-path-or-URL-of-a-File/td-p/329365
+  - create_shared_link https://www.dropbox.com/developers/documentation/http/documentation#sharing-create_shared_link_with_settings
+- subfolder per league? or let user select subfolder?
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?

@@ -51,6 +51,7 @@
 		"confetti-js": "^0.0.18",
 		"d3-dsv": "^3.0.1",
 		"dompurify": "^2.3.3",
+		"dropbox": "^10.22.0",
 		"facesjs": "^3.6.0",
 		"framer-motion": "^5.3.3",
 		"html2canvas": "^1.3.3",

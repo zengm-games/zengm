@@ -87,6 +87,52 @@ class Buffer {
 	}
 }
 
+/*class BufferFake {
+	MAX_BUFFER_SIZE: number;
+
+	decoder: TextDecoder;
+
+	buffer: Uint8Array[];
+	bufferSize: number;
+	uploadedSize: number;
+
+	constructor(accessToken: string) {
+		// 8Mb - Dropbox JavaScript API suggested max file / chunk size
+		this.MAX_BUFFER_SIZE = 8 * 1000 * 1000;
+
+		this.decoder = new TextDecoder("utf-8");
+
+		this.buffer = [];
+		this.bufferSize = 0;
+	}
+
+	async add(chunk: Uint8Array) {
+		// console.log('add', this.decoder.decode(chunk));
+		// console.log('add BufferFake');
+		this.bufferSize += chunk.byteLength;
+		this.buffer.push(chunk);
+
+		if (this.bufferSize >= this.MAX_BUFFER_SIZE) {
+			await this.flush();
+		}
+	}
+
+	async flush() {
+		console.log('flush BufferFake', new Date());
+
+		await new Promise((resolve) => {
+			setTimeout(resolve, 10000);
+		});
+
+		this.buffer = [];
+		this.bufferSize = 0;
+	}
+
+	async finalize() {
+		await this.flush();
+	}
+}*/
+
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
 export const dropboxStream = async (filename: string, accessToken: string) => {
 	const buffer = new Buffer(accessToken);

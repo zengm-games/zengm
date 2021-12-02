@@ -16,11 +16,14 @@ dropbox integration - save league to cloud
   - what happens if token is expired? how do we know?
   - if we need to redirect, should save checkboxes before redirect
 - streaming upload https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/upload/index.html
+  - why does progress bar go to 100% so quickly? where is the backpressure?
+  - test with large file
 - show URL to share after uploading - www -> dl
   - maybe not possible https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/How-to-get-complete-path-or-URL-of-a-File/td-p/329365
   - create_shared_link https://www.dropbox.com/developers/documentation/http/documentation#sharing-create_shared_link_with_settings
 - subfolder per league? or let user select subfolder?
 - need to apply for production https://www.dropbox.com/developers/apps/info/fvdi8cdcwscxt5j
+- check if autorename is working in streaming upload
 - other sports
   - create dropbox apps
   - CLIENT_ID

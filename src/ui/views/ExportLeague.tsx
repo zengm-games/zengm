@@ -716,6 +716,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									"../util/dropbox"
 								);
 								const url = await getAuthenticationUrl(lid);
+
+								// Remember what was checked, since local state will be lost during redirect
+								saveDefaults(checked, compressed);
+
 								window.location.href = url;
 							}}
 						>

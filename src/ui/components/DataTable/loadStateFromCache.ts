@@ -24,16 +24,16 @@ const loadStateFromCache = ({
 	let sortBys: SortBy[];
 
 	if (sortBysFromStorage === undefined) {
-		sortBys = [defaultSort];
+		sortBys = defaultSort ? [defaultSort] : [];
 	} else {
 		sortBys = sortBysFromStorage;
 	}
 
-	// Don't let sortBy reference invalid col
+	// Don't let sortBy reference invalid
 	sortBys = sortBys.filter(sortBy => cols.find(col => col.key === sortBy[0]));
 
 	if (sortBys.length === 0) {
-		sortBys = [defaultSort];
+		sortBys = defaultSort ? [defaultSort] : [];
 	}
 
 	const defaultFilters: Filter[] = [];

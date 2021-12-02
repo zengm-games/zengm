@@ -46,7 +46,7 @@ FilterHeader.propTypes = {
 			title: PropTypes.string.isRequired,
 		}),
 	).isRequired,
-	filters: PropTypes.arrayOf(PropTypes.string).isRequired,
+	filters: PropTypes.arrayOf(PropTypes.object).isRequired,
 	handleFilterUpdate: PropTypes.func.isRequired,
 };
 
@@ -139,7 +139,7 @@ const SortableColumn = SortableElement(
 		col: Col;
 		sortBy: SortBy | undefined;
 		colIndex: number;
-		handleColClick: (b: MouseEvent, a: number) => void;
+		handleColClick: (b: MouseEvent, a: string) => void;
 	}) => {
 		return (
 			<th
@@ -154,7 +154,7 @@ const SortableColumn = SortableElement(
 					<div className="flex-grow-1">{props.col.title}</div>
 					<div
 						onClick={event => {
-							props.handleColClick(event, props.colIndex);
+							props.handleColClick(event, props.col.key);
 						}}
 						style={{ width: "19px" }}
 						className={classNames({
@@ -174,7 +174,7 @@ const SortableColumnHeader = SortableContainer(
 		isDragged: boolean;
 		cols: Col[];
 		sortBys: SortBy[];
-		handleColClick: (b: MouseEvent, a: number) => void;
+		handleColClick: (b: MouseEvent, a: string) => void;
 	}) => {
 		return (
 			<tr>
@@ -187,7 +187,7 @@ const SortableColumnHeader = SortableContainer(
 						colIndex={index}
 						col={col}
 						handleColClick={props.handleColClick}
-						sortBy={props.sortBys.find((sort: SortBy) => sort[0] === index)}
+						sortBy={props.sortBys.find((sort: SortBy) => sort[0] === col.key)}
 					/>
 				))}
 			</tr>
@@ -208,7 +208,7 @@ const Header = ({
 	cols: Col[];
 	enableFilters: boolean;
 	filters: Filter[];
-	handleColClick: (b: MouseEvent, a: number) => void;
+	handleColClick: (b: MouseEvent, a: string) => void;
 	handleReorder: (oldIndex: number, newIndex: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: string) => void;
 	sortBys: SortBy[];
@@ -312,7 +312,7 @@ Header.propTypes = {
 		}),
 	).isRequired,
 	enableFilters: PropTypes.bool.isRequired,
-	filters: PropTypes.arrayOf(PropTypes.string).isRequired,
+	filters: PropTypes.arrayOf(PropTypes.object).isRequired,
 	handleColClick: PropTypes.func.isRequired,
 	handleFilterUpdate: PropTypes.func.isRequired,
 	sortBys: PropTypes.arrayOf(

@@ -1,8 +1,8 @@
-import type { Col } from "../ui/components/DataTable";
+import type { LegacyCol } from "../ui/components/DataTable";
 import bySport from "./bySport";
 import isSport from "./isSport";
 
-type ColTemp = Omit<Col, "title"> & {
+type ColTemp = Omit<LegacyCol, "title"> & {
 	title?: string;
 };
 
@@ -2083,6 +2083,7 @@ const cols: {
 	},
 	"Draft Picks": {
 		sortSequence: [],
+		sortType: "draftPick",
 	},
 	"Draft Year": {
 		sortType: "number",
@@ -2641,8 +2642,8 @@ const cols: {
 
 export default (
 	titles: string[],
-	overrides: Record<string, Partial<Col>> = {},
-): Col[] => {
+	overrides: Record<string, Partial<LegacyCol>> = {},
+): LegacyCol[] => {
 	return titles.map(title => {
 		if (!cols.hasOwnProperty(title)) {
 			throw new Error(`Unknown column: "${title}"`);

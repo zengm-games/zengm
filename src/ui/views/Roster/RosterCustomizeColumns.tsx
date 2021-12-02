@@ -7,56 +7,14 @@ import { toWorker } from "../../util";
 import { TableConfig } from "../../util/TableConfig";
 import { ColTemp, getAllCols } from "../../util/columns/getCols";
 import type { Col } from "../../components/DataTable";
+import { difference, differenceWith } from "lodash-es";
 
 export type ColConfig = {
 	title: string;
-	desc?: string;
+	desc: string;
 	hidden: boolean;
-	key: number;
+	key: string;
 };
-
-const Item = SortableElement(
-	({
-		col,
-		hidden,
-		onToggleHidden,
-	}: {
-		col: ColConfig;
-		hidden: boolean;
-		onToggleHidden: () => void;
-	}) => {
-		return (
-			<div className="form-check">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					checked={!hidden}
-					onChange={onToggleHidden}
-				/>
-				<label className="form-check-label cursor-grab">
-					{col.title} <small className="ml-1">{col.desc}</small>
-				</label>
-			</div>
-		);
-	},
-);
-
-const Container = SortableContainer(
-	({ children, isDragged }: { children: any[]; isDragged: boolean }) => {
-		return (
-			<ul
-				className={classNames(
-					"list-unstyled mb-0 cursor-grab user-select-none",
-					{
-						"cursor-grabbing": isDragged,
-					},
-				)}
-			>
-				{children}
-			</ul>
-		);
-	},
-);
 
 const RosterCustomizeColumns = ({
 	onHide,
@@ -67,19 +25,15 @@ const RosterCustomizeColumns = ({
 	onHide: () => void;
 	show: boolean;
 }) => {
-	const initialColumns: ColTemp[] = getAllCols().map(c => ({
-		title: c.title,
-		desc: c.desc,
-		hidden: !config.columns.some(col => col.key === c.key),
-		key: c.key,
-	}));
-	const [columns, setColumns] = useState<ColTemp[]>(initialColumns);
-	const [isDragged, setIsDragged] = useState(false);
-
-	const onSortEnd = ({ oldIndex, newIndex }) => {
-		const nextColumns = arrayMoveImmutable(columns, oldIndex, newIndex);
-		setColumns(nextColumns);
-	};
+	const initialColumns: ColConfig[] = getAllCols().map(
+		(c): ColConfig => ({
+			title: c.title,
+			desc: c.desc || "",
+			hidden: !config.columns.some(col => col.key === c.key),
+			key: c.key ?? c.title,
+		}),
+	);
+	const [columns, setColumns] = useState<ColConfig[]>(initialColumns);
 
 	const onToggleHidden = (i: number) => () => {
 		const nextColumns = [...columns];
@@ -93,8 +47,23 @@ const RosterCustomizeColumns = ({
 	const onReset = () => setColumns(initialColumns);
 
 	const hide = async () => {
+		const enabledColumns: string[] = columns
+				.filter(c => !c.hidden)
+				.map(c => c.key),
+			currentColumns: string[] = config.columns.map(c => c.key);
+
+		// Find columns we need to remove, and columns we need to add
+		const removeColumns: string[] = difference(currentColumns, enabledColumns),
+			addColumns: string[] = difference(enabledColumns, currentColumns);
+
+		// Apply removals and adding to currentColumns while trying to preserve the order of currentColumns
+		const nextColumns: string[] = currentColumns.filter(
+			c => !removeColumns.includes(c),
+		);
+		nextColumns.push(...addColumns);
+
 		await toWorker("main", "updateColumns", {
-			columns: columns,
+			columns: nextColumns,
 			key: config.tableName,
 		});
 		onHide();
@@ -108,29 +77,25 @@ const RosterCustomizeColumns = ({
 					Click and drag to reorder columns, or use the checkboxes to show/hide
 					columns.
 				</p>
-				<Container
-					helperClass="sort-inside-modal"
-					isDragged={isDragged}
-					onSortStart={() => {
-						setIsDragged(true);
-					}}
-					onSortEnd={args => {
-						setIsDragged(false);
-						onSortEnd(args);
-					}}
-				>
-					{columns.map((column, i) => {
-						return (
-							<Item
-								key={column.key}
-								index={i}
-								onToggleHidden={onToggleHidden(i)}
-								hidden={column.hidden}
-								col={column}
+				{columns.map((col, i) => {
+					return (
+						<div className="form-check" key={i}>
+							<input
+								id={`show-column-${i}`}
+								className="form-check-input cursor-pointer"
+								type="checkbox"
+								checked={!col.hidden}
+								onChange={onToggleHidden(i)}
 							/>
-						);
-					})}
-				</Container>
+							<label
+								className="form-check-label cursor-pointer user-select-none"
+								htmlFor={`show-column-${i}`}
+							>
+								{col.title} <small className="ml-1">{col.desc}</small>
+							</label>
+						</div>
+					);
+				})}
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-danger" onClick={onReset}>

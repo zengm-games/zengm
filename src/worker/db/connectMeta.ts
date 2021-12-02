@@ -28,7 +28,7 @@ export interface MetaDB extends DBSchema {
 	};
 	tables: {
 		key: string;
-		value: object[];
+		value: string[];
 	};
 	leagues: {
 		value: League;

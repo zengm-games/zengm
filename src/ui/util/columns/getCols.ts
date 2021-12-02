@@ -1,11 +1,11 @@
 import type { Col } from "../../components/DataTable";
 import bySport from "../../../common/bySport";
 import isSport from "../../../common/isSport";
-import { Player } from "../../../common/types";
+import type { Player } from "../../../common/types";
+import type { LegacyCol } from "../../components/DataTable";
 
-export type ColTemp = Omit<Col, "title"> & {
+export type ColTemp = Omit<LegacyCol, "title"> & {
 	title?: string;
-	key?: string;
 	ratings?: string[];
 	stats?: string[];
 	template?: string;

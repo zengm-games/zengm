@@ -12,7 +12,6 @@ import {
 	useState,
 } from "react";
 import Controls from "./Controls";
-import CustomizeColumns from "./CustomizeColumns";
 import Footer from "./Footer";
 import Header from "./Header";
 import Info from "./Info";
@@ -26,14 +25,19 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import { arrayMove } from "react-sortable-hoc";
+import RosterCustomizeColumns from "../../views/Roster/RosterCustomizeColumns";
+import type { TableConfig } from "../../util/TableConfig";
 
 export type SortBy = [string, SortOrder];
 
-export type Col = {
+export type Col = Omit<LegacyCol, "title"> & {
+	key: string;
+};
+
+export type LegacyCol = {
 	classNames?: any;
 	desc?: string;
 	noSearch?: boolean;
@@ -41,7 +45,6 @@ export type Col = {
 	sortType?: SortType;
 	searchType?: SortType;
 	title: string;
-	key?: string;
 	width?: string;
 };
 
@@ -52,6 +55,21 @@ export type SuperCol = {
 };
 
 export type DataTableRow = {
+	key: number | string;
+	data: {
+		[key: string]:
+			| ReactNode
+			| {
+					classNames?: Argument;
+					value: ReactNode;
+					searchValue?: string;
+					sortValue?: string | number;
+			  };
+	};
+	classNames?: Argument;
+};
+
+export type LegacyDataTableRow = {
 	key: number | string;
 	data: (
 		| ReactNode
@@ -69,7 +87,8 @@ export type Props = {
 	bordered?: boolean;
 	className?: string;
 	cols: Col[];
-	defaultSort: SortBy;
+	config?: TableConfig;
+	defaultSort?: SortBy;
 	disableSettingsCache?: boolean;
 	footer?: any[];
 	hideAllControls?: boolean;
@@ -84,6 +103,10 @@ export type Props = {
 	addFilters?: (string | undefined)[];
 };
 
+export type LegacyProps = Omit<Props, "cols"> & {
+	legacyCols: LegacyCol[];
+};
+
 export type Filter = {
 	col: string;
 	value: string;
@@ -95,7 +118,7 @@ export type State = {
 		hidden?: boolean;
 	}[];
 	cols: Col[];
-	rows: DataTableRow[];
+	rows: DataTableRow[] | LegacyDataTableRow[];
 	currentPage: number;
 	enableFilters: boolean;
 	filters: Filter[];
@@ -107,29 +130,46 @@ export type State = {
 	settingsCache: SettingsCache;
 };
 
-const DataTable = ({
-	bordered,
-	className,
-	cols,
-	defaultSort,
-	disableSettingsCache,
-	footer,
-	hideAllControls,
-	name,
-	nonfluid,
-	pagination,
-	rankCol,
-	rows,
-	small,
-	striped,
-	superCols,
-	addFilters,
-}: Props) => {
-	let i: number = 1;
-	cols = cols.map(col => ({
-		...col,
-		key: col.key ?? `col${i++}`,
-	}));
+const DataTable = (props: Props | LegacyProps) => {
+	const {
+		bordered,
+		className,
+		defaultSort,
+		disableSettingsCache,
+		footer,
+		hideAllControls,
+		name,
+		nonfluid,
+		config,
+		pagination,
+		rankCol,
+		small,
+		striped,
+		superCols,
+		addFilters,
+	} = props;
+
+	// Convert LegacyCols to Cols for backwards compatability
+	const cols: Col[] =
+		"cols" in props
+			? props.cols
+			: props.legacyCols.map((col, i) => ({
+					...col,
+					key: `col${i + 1}`,
+			  }));
+	// Convert LegacyDataTableRows to DataTableRows for backwards compatability
+	const rows: DataTableRow[] = Array.isArray(props.rows[0].data)
+		? props.rows.map(
+				(row): DataTableRow => ({
+					...row,
+					data: Array.isArray(row.data)
+						? Object.fromEntries(
+								row.data.map((value, i) => [`col${i + 1}`, value]),
+						  )
+						: {},
+				}),
+		  )
+		: props.rows;
 
 	const [state, setState] = useState<State>(() => ({
 		...loadStateFromCache({
@@ -149,31 +189,38 @@ const DataTable = ({
 	}, []);
 
 	const processRows = () => {
-		const filterFunctions = state.enableFilters
-			? state.cols.map(col => {
-					const filter = state.filters.find(f => col.key === f.col);
-					return createFilterFunction(
-						filter?.value || "",
-						col.sortType,
-						col.searchType,
-					);
-			  })
-			: [];
+		const filterFunctions: [string, (value: any) => boolean][] =
+			state.enableFilters
+				? state.filters.map(filter => {
+						const col = state.cols.find(f => filter.col === f.key);
+						return [
+							filter.col,
+							createFilterFunction(
+								filter.value || "",
+								col?.sortType,
+								col?.searchType,
+							),
+						];
+				  })
+				: [];
 		const skipFiltering = state.searchText === "" && !state.enableFilters;
 		const searchText = state.searchText.toLowerCase();
 		const rowsFiltered = skipFiltering
-			? state.rows
-			: state.rows.filter(row => {
+			? rows
+			: rows.filter(row => {
 					// Search
 					if (state.searchText !== "") {
 						let found = false;
 
-						for (let i = 0; i < row.data.length; i++) {
-							if (state.cols[i].noSearch) {
+						for (const col of state.cols) {
+							if (col.noSearch) {
 								continue;
 							}
 
-							if (getSearchVal(row.data[i]).includes(searchText)) {
+							if (
+								row.data[col.key ?? ""] &&
+								getSearchVal(row.data[col.key ?? ""]).includes(searchText)
+							) {
 								found = true;
 								break;
 							}
@@ -186,15 +233,13 @@ const DataTable = ({
 
 					// Filter
 					if (state.enableFilters) {
-						for (let i = 0; i < row.data.length; i++) {
-							if (state.cols[i].noSearch) {
+						for (const [key, filterFunction] of filterFunctions) {
+							const col = state.cols.find(c => c.key === key);
+							if (!col || col.noSearch) {
 								continue;
 							}
 
-							if (
-								filterFunctions[i] &&
-								filterFunctions[i](row.data[i]) === false
-							) {
+							if (!filterFunction(row.data[key])) {
 								return false;
 							}
 						}
@@ -206,17 +251,9 @@ const DataTable = ({
 		const rowsOrdered = orderBy(
 			rowsFiltered,
 			state.sortBys.map(sortBy => row => {
-				let i = sortBy[0];
-
-				if (
-					typeof i !== "number" ||
-					i >= row.data.length ||
-					i >= state.cols.length
-				) {
-					i = 0;
-				}
-
-				return getSortVal(row.data[i], state.cols[i].sortType);
+				const key = sortBy[0];
+				const col = state.cols.find(c => c.key === key);
+				return getSortVal(row.data[key], col?.sortType);
 			}),
 			state.sortBys.map(sortBy => sortBy[1]),
 		);
@@ -227,7 +264,7 @@ const DataTable = ({
 	const handleReorder = (oldIndex: number, newIndex: number) => {
 		setStatePartial({
 			cols: arrayMove(state.cols, oldIndex, newIndex),
-			// rows: state.rows.map(row => {
+			// rows: rows.map(row => {
 			// 	row.data = arrayMove([...row.data], oldIndex, newIndex);
 			// 	return row;
 			// }),
@@ -235,11 +272,11 @@ const DataTable = ({
 		processedRows = processRows();
 	};
 
-	const handleColClick = (event: MouseEvent, i: number) => {
+	const handleColClick = (event: MouseEvent, colKey: string) => {
 		const sortBys = updateSortBys({
 			cols,
 			event,
-			i,
+			colKey,
 			prevSortBys: state.sortBys, // eslint-disable-line react/no-access-state-in-setstate
 		});
 
@@ -416,54 +453,18 @@ const DataTable = ({
 
 	return (
 		<>
-			<CustomizeColumns
-				cols={state.cols}
-				colOrder={state.colOrder}
-				hasSuperCols={!!superCols}
-				show={state.showSelectColumnsModal}
-				onHide={() => {
-					setStatePartial({
-						showSelectColumnsModal: false,
-					});
-				}}
-				onReset={() => {
-					const newOrder = state.cols.map((col, i) => ({
-						colIndex: i,
-					}));
-					setStatePartial({
-						colOrder: newOrder,
-					});
-					state.settingsCache.set("DataTableColOrder", newOrder);
-				}}
-				onSortEnd={({ oldIndex, newIndex }) => {
-					const newOrder = arrayMoveImmutable(
-						state.colOrder,
-						oldIndex,
-						newIndex,
-					);
-					setStatePartial({
-						colOrder: newOrder,
-					});
-					state.settingsCache.set("DataTableColOrder", newOrder);
-				}}
-				onToggleHidden={(i: number) => () => {
-					const newOrder = [...state.colOrder];
-					if (newOrder[i]) {
-						newOrder[i] = {
-							...newOrder[i],
-						};
-						if (newOrder[i].hidden) {
-							delete newOrder[i].hidden;
-						} else {
-							newOrder[i].hidden = true;
-						}
+			{config ? (
+				<RosterCustomizeColumns
+					config={config}
+					show={state.showSelectColumnsModal}
+					onHide={() => {
 						setStatePartial({
-							colOrder: newOrder,
+							showSelectColumnsModal: false,
 						});
-						state.settingsCache.set("DataTableColOrder", newOrder);
-					}
-				}}
-			/>
+						location.reload();
+					}}
+				/>
+			) : null}
 			<div
 				className={classNames(className, {
 					"table-nonfluid-wrapper": nonfluid,
@@ -522,7 +523,7 @@ const DataTable = ({
 							<Info
 								end={end}
 								numRows={numRowsFiltered}
-								numRowsUnfiltered={state.rows.length}
+								numRowsUnfiltered={rows.length}
 								start={start}
 							/>
 						) : null}
@@ -544,7 +545,6 @@ const DataTable = ({
 DataTable.propTypes = {
 	bordered: PropTypes.bool,
 	className: PropTypes.string,
-	cols: PropTypes.array.isRequired,
 	defaultSort: PropTypes.arrayOf(
 		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	).isRequired,
@@ -554,7 +554,7 @@ DataTable.propTypes = {
 	nonfluid: PropTypes.bool,
 	hideAllControls: PropTypes.bool,
 	pagination: PropTypes.bool,
-	rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+	rows: PropTypes.array.isRequired,
 	small: PropTypes.bool,
 	superCols: PropTypes.array,
 };

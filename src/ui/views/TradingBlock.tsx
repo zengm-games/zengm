@@ -3,12 +3,13 @@ import { ReactNode, useRef, useState } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
-import { Player } from "../../common/types";
+import type { Player } from "../../common/types";
 import type api from "../../worker/api";
 import getTemplate from "../util/columns/getTemplate";
-import { ColTemp } from "../util/columns/getCols";
+import type { ColTemp } from "../util/columns/getCols";
+import type { TableConfig } from "../util/TableConfig";
 
 type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -20,7 +21,7 @@ type OfferProps = {
 		otherDpids: number[],
 	) => Promise<void>;
 	i: number;
-	stats: string[];
+	config: TableConfig;
 } & OfferType;
 
 const Offer = (props: OfferProps) => {
@@ -38,7 +39,7 @@ const Offer = (props: OfferProps) => {
 		pids,
 		players,
 		region,
-		stats,
+		config,
 		strategy,
 		tid,
 		tied,
@@ -48,38 +49,17 @@ const Offer = (props: OfferProps) => {
 
 	let offerPlayers: ReactNode = null;
 	if (players.length > 0) {
-		const cols = getCols([
-			"Name",
-			"Pos",
-			"Age",
-			"Ovr",
-			"Pot",
-			"Contract",
-			"Exp",
-			...stats.map(stat => `stat:${stat}`),
-		]);
+		const cols = config.columns;
 
 		const rows = players.map(p => {
 			return {
 				key: p.pid,
-				data: [
-					<PlayerNameLabels
-						injury={p.injury}
-						jerseyNumber={p.jerseyNumber}
-						pid={p.pid}
-						skills={p.ratings.skills}
-						watch={p.watch}
-					>
-						{p.name}
-					</PlayerNameLabels>,
-					p.ratings.pos,
-					p.age,
-					!challengeNoRatings ? p.ratings.ovr : null,
-					!challengeNoRatings ? p.ratings.pot : null,
-					helpers.formatCurrency(p.contract.amount, "M"),
-					p.contract.exp,
-					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				],
+				data: Object.fromEntries(
+					cols.map(col => [
+						col.key,
+						getTemplate(p, col, { challengeNoRatings }),
+					]),
+				),
 			};
 		});
 
@@ -87,7 +67,7 @@ const Offer = (props: OfferProps) => {
 			<div className="col-md-8">
 				<DataTable
 					cols={cols}
-					defaultSort={[5, "desc"]}
+					defaultSort={["Contract", "desc"]}
 					hideAllControls
 					name="TradingBlockOffer"
 					rows={rows}
@@ -164,7 +144,7 @@ Offer.propTypes = {
 	pids: PropTypes.arrayOf(PropTypes.number).isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	region: PropTypes.string.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	config: PropTypes.object.isRequired,
 	strategy: PropTypes.string.isRequired,
 	tid: PropTypes.number.isRequired,
 	tied: PropTypes.number,
@@ -197,7 +177,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
-		console.log("change", id);
 		setState(prevState => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
@@ -326,8 +305,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		...config.columns,
 	];
 
-	console.log(state.pids);
-
 	const rows = userRoster.map(p => {
 		return {
 			key: p.pid,
@@ -365,6 +342,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				<div className="col-md-9">
 					<DataTable
 						cols={cols}
+						config={config}
 						defaultSort={["Contract", "desc"]}
 						name="TradingBlock"
 						rows={rows}
@@ -372,8 +350,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</div>
 				<div className="col-md-3 pt-3">
 					<DataTable
-						cols={pickCols}
-						defaultSort={[1, "asc"]}
+						legacyCols={pickCols}
+						defaultSort={["0", "asc"]}
 						hideAllControls
 						name={`TradingBlock:Picks`}
 						rows={pickRows}
@@ -397,10 +375,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				return (
 					<Offer
 						key={offer.tid}
+						config={config}
 						challengeNoRatings={challengeNoRatings}
 						handleClickNegotiate={handleClickNegotiate}
 						i={i}
-						stats={stats}
 						{...offer}
 					/>
 				);
@@ -425,7 +403,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 TradingBlock.propTypes = {
 	gameOver: PropTypes.bool.isRequired,
 	phase: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userPicks: PropTypes.arrayOf(PropTypes.object).isRequired,
 	userRoster: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

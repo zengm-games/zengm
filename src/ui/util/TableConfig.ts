@@ -1,7 +1,8 @@
 import { idb } from "../../worker/db";
-import type { ColTemp } from "./columns/getCols";
+// import type { ColTemp } from "./columns/getCols";
 import getCols from "./columns/getCols";
 import { uniq } from "lodash-es";
+import type { Col } from "../components/DataTable";
 
 export class TableConfig {
 	get ratingsNeeded(): string[] | undefined {
@@ -14,24 +15,21 @@ export class TableConfig {
 	protected fallback: string[];
 	private _statsNeeded?: string[];
 	private _ratingsNeeded?: string[];
-	public columns: ColTemp[];
+	public columns: Col[];
 	public tableName: string;
 
 	constructor(tableName: string, fallback: string[]) {
 		this.tableName = tableName;
 		this.fallback = fallback;
+		this.columns = [];
 	}
 
 	public async load() {
-		const colOptions: object[] | undefined = await idb.meta.get(
+		const colOptions: string[] | undefined = await idb.meta.get(
 			"tables",
 			this.tableName,
 		);
-		this.columns = getCols(
-			colOptions
-				? colOptions.filter(c => !c.hidden).map(c => c.key)
-				: this.fallback,
-		);
+		this.columns = getCols(colOptions ?? this.fallback);
 		this._statsNeeded = uniq(
 			this.columns.reduce((needed, c) => needed.concat(c.stats ?? []), []),
 		);

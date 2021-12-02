@@ -7,7 +7,6 @@ import type { Col, DataTableRow } from "./index";
 
 const Row = ({ row, cols }: { row: DataTableRow; cols: Col[] }) => {
 	const { clicked, toggleClicked } = useClickable();
-	console.log(row);
 	return (
 		<tr
 			className={classNames(row.classNames, {
@@ -16,7 +15,8 @@ const Row = ({ row, cols }: { row: DataTableRow; cols: Col[] }) => {
 			onClick={toggleClicked}
 		>
 			{cols.map((col, i) => {
-				const value = row.data[col.key || ""] ?? null;
+				const key: string = col.key || "";
+				const value = row.data[key] ?? null;
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =
 					value !== null && value.hasOwnProperty("value") ? value.value : value;
@@ -76,7 +76,7 @@ const Row = ({ row, cols }: { row: DataTableRow; cols: Col[] }) => {
 
 Row.propTypes = {
 	row: PropTypes.shape({
-		data: PropTypes.array.isRequired,
+		data: PropTypes.object.isRequired,
 	}).isRequired,
 };
 

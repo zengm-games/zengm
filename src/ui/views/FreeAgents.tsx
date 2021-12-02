@@ -86,7 +86,9 @@ const FreeAgents = ({
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
-			data: cols.map(col => getTemplate(p, col, vars)),
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, {})]),
+			),
 		};
 	});
 
@@ -150,21 +152,9 @@ const FreeAgents = ({
 				</p>
 			) : null}
 
-			<button
-				className="btn btn-primary"
-				onClick={() => setShowColumnsModal(true)}
-			>
-				Columns
-			</button>
-
-			<RosterCustomizeColumns
-				config={config}
-				show={showColumnsModal}
-				onHide={() => location.reload()}
-			/>
-
 			<DataTable
 				cols={cols}
+				config={config}
 				defaultSort={[cols[0].key, "desc"]}
 				name="FreeAgents"
 				pagination
@@ -182,7 +172,6 @@ FreeAgents.propTypes = {
 	numRosterSpots: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userPlayers: PropTypes.arrayOf(
 		PropTypes.shape({
 			ratings: PropTypes.shape({

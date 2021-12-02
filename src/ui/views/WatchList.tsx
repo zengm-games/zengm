@@ -152,13 +152,7 @@ const WatchList = ({
 				Clear Watch List
 			</ActionButton>
 
-			<DataTable
-				cols={cols}
-				defaultSort={[5, "desc"]}
-				name="WatchList"
-				pagination
-				rows={rows}
-			/>
+			<DataTable legacyCols={cols} name="WatchList" pagination rows={rows} />
 		</>
 	);
 };

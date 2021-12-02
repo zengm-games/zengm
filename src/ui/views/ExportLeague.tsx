@@ -15,7 +15,7 @@ import type {
 } from "../../common/types";
 import { ActionButton, MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, safeLocalStorage, toWorker } from "../util";
+import { helpers, safeLocalStorage, toWorker, useLocal } from "../util";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
@@ -454,6 +454,8 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	);
 	const abortController = useRef<AbortController | undefined>();
 
+	const lid = useLocal(state => state.lid);
+
 	const cleanupAfterStream = (status?: ReactNode) => {
 		abortController.current = undefined;
 		setStatus(status);
@@ -461,64 +463,68 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		setProcessingStore(undefined);
 	};
 
-	const handleSubmit =
-		(type: "download" | "dropbox") => async (event: FormEvent) => {
-			event.preventDefault();
+	const dropboxAccessToken = localStorage.getItem("dropboxAccessToken");
 
-			setStatus("Exporting...");
-			setPercentDone(0);
-			saveDefaults(checked, compressed);
+	const handleSubmit = (type: "download" | "dropbox") => async () => {
+		setStatus("Exporting...");
+		setPercentDone(0);
+		saveDefaults(checked, compressed);
 
-			try {
-				const filename = await toWorker("main", "getExportFilename", "league");
+		try {
+			const filename = await toWorker("main", "getExportFilename", "league");
 
-				const { stores, filter, forEach, map, hasHistoricalData } =
-					getExportInfo(stats, checked);
+			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
+				stats,
+				checked,
+			);
 
-				const { downloadFileStream, makeExportStream } = await import(
-					"../util/exportLeague"
-				);
+			const { downloadFileStream, makeExportStream } = await import(
+				"../util/exportLeague"
+			);
 
-				const readableStream = await makeExportStream(stores, {
-					compressed,
-					filter,
-					forEach,
-					map,
-					hasHistoricalData,
-					onPercentDone: percent => {
-						setPercentDone(percent);
-					},
-					onProcessingStore: store => {
-						setProcessingStore(store);
-					},
+			const readableStream = await makeExportStream(stores, {
+				compressed,
+				filter,
+				forEach,
+				map,
+				hasHistoricalData,
+				onPercentDone: percent => {
+					setPercentDone(percent);
+				},
+				onProcessingStore: store => {
+					setProcessingStore(store);
+				},
+			});
+
+			let fileStream;
+			if (type === "download") {
+				fileStream = await downloadFileStream(streamDownload, filename);
+			} else {
+				if (!dropboxAccessToken) {
+					throw new Error("Missing dropboxAccessToken");
+				}
+				const { dropboxStream } = await import("../util/dropbox");
+				fileStream = await dropboxStream(filename, dropboxAccessToken);
+			}
+
+			if (SUPPORTS_CANCEL) {
+				abortController.current = new AbortController();
+			}
+
+			await readableStream
+				.pipeThrough(new TextEncoderStream())
+				.pipeTo(fileStream, {
+					signal: abortController.current?.signal,
 				});
 
-				let fileStream;
-				if (type === "download") {
-					fileStream = await downloadFileStream(streamDownload, filename);
-				} else {
-					const dropboxStream = (await import("../util/dropboxStream")).default;
-					fileStream = await dropboxStream(filename);
-				}
-
-				if (SUPPORTS_CANCEL) {
-					abortController.current = new AbortController();
-				}
-
-				await readableStream
-					.pipeThrough(new TextEncoderStream())
-					.pipeTo(fileStream, {
-						signal: abortController.current?.signal,
-					});
-
-				cleanupAfterStream();
-			} catch (error) {
-				cleanupAfterStream(
-					<span className="text-danger">Error: "{error.message}"</span>,
-				);
-				throw error;
-			}
-		};
+			cleanupAfterStream();
+		} catch (error) {
+			cleanupAfterStream(
+				<span className="text-danger">Error: "{error.message}"</span>,
+			);
+			throw error;
+		}
+	};
 
 	useTitleBar({ title: "Export League" });
 
@@ -690,13 +696,32 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						Download File
 					</ActionButton>
 
-					<ActionButton
-						className="ml-2"
-						processing={status === "Exporting..."}
-						onClick={handleSubmit("dropbox")}
-					>
-						Save To Dropbox
-					</ActionButton>
+					{dropboxAccessToken ? (
+						<ActionButton
+							className="ml-2"
+							processing={status === "Exporting..."}
+							onClick={handleSubmit("dropbox")}
+						>
+							Save To Dropbox
+						</ActionButton>
+					) : (
+						<button
+							className="btn btn-primary ml-2"
+							onClick={async () => {
+								if (lid === undefined) {
+									return;
+								}
+
+								const { getAuthenticationUrl } = await import(
+									"../util/dropbox"
+								);
+								const url = await getAuthenticationUrl(lid);
+								window.location.href = url;
+							}}
+						>
+							Connect To Dropbox
+						</button>
+					)}
 
 					{SUPPORTS_CANCEL ? (
 						<button

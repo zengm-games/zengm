@@ -12,11 +12,19 @@ dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox
 - https://stackoverflow.com/questions/56575928/how-to-upload-a-file-to-dropbox-using-js-sdk
 - login https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/auth/index.html
+  - how long does token last? 4 hours
+  - what happens if token is expired? how do we know?
+  - if we need to redirect, should save checkboxes before redirect
 - streaming upload https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/upload/index.html
+- 409 error if filename is the same as a prior one
+  - ideally would either add (2) at end, or ask if want to overwrite
 - show URL to share after uploading - www -> dl
   - maybe not possible https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/How-to-get-complete-path-or-URL-of-a-File/td-p/329365
   - create_shared_link https://www.dropbox.com/developers/documentation/http/documentation#sharing-create_shared_link_with_settings
 - subfolder per league? or let user select subfolder?
+- other sports
+  - create dropbox apps
+  - CLIENT_ID
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?

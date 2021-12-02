@@ -21,6 +21,7 @@ import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
 import DraftHistory from "./DraftHistory";
 import DraftTeamHistory from "./DraftTeamHistory";
+import Dropbox from "./Dropbox";
 import EditAwards from "./EditAwards";
 import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
@@ -120,6 +121,7 @@ export default {
 	DraftScouting,
 	DraftHistory,
 	DraftTeamHistory,
+	Dropbox,
 	EditAwards,
 	ExpansionDraft,
 	ExportLeague,

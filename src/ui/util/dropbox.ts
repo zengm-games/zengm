@@ -28,7 +28,7 @@ class Buffer {
 	}
 
 	async add(chunk: Uint8Array) {
-		this.bufferSize += chunk.length;
+		this.bufferSize += chunk.byteLength;
 		this.buffer.push(chunk);
 
 		if (this.bufferSize >= this.MAX_BUFFER_SIZE) {

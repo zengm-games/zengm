@@ -445,6 +445,7 @@ const SUPPORTS_CANCEL = typeof AbortController !== "undefined";
 
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [state, setState] = useState<"idle" | "download" | "dropbox">("idle");
+	const [aborting, setAborting] = useState(false);
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
@@ -461,6 +462,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		abortController.current = undefined;
 		setStatus(status);
 		setState("idle");
+		setAborting(false);
 		setPercentDone(-1);
 		setProcessingStore(undefined);
 	};
@@ -470,6 +472,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const handleSubmit = (type: "download" | "dropbox") => async () => {
 		setStatus(undefined);
 		setState(type);
+		setAborting(false);
 		setPercentDone(0);
 		saveDefaults(checked, compressed);
 
@@ -515,6 +518,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					accessToken: dropboxAccessToken,
 					filename,
 					lid,
+					onAbortDone: () => {
+						// This (and all "aborting/setAborting" code) is needed because there is no good way to abort an upload https://github.com/dropbox/dropbox-sdk-js/issues/159 until the next chunk, which can take a few seconds. So need this intermediate state where it is aborting, but has not aborted yet.
+						cleanupAfterStream();
+					},
 					onComplete: url => {
 						console.log("onComplete", url);
 						status = (
@@ -542,8 +549,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								)}
 							</>
 						);
-						if (url) {
-						}
 					},
 				});
 			}
@@ -779,10 +784,15 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						<button
 							className="btn btn-secondary ml-2"
 							type="button"
+							disabled={aborting}
 							onClick={() => {
 								if (abortController.current) {
 									abortController.current.abort();
-									cleanupAfterStream();
+									if (state === "dropbox") {
+										setAborting(true);
+									} else {
+										cleanupAfterStream();
+									}
 								}
 							}}
 						>

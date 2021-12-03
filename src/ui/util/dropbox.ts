@@ -176,11 +176,13 @@ export const dropboxStream = async ({
 	accessToken,
 	filename,
 	lid,
+	onAbortDone,
 	onComplete,
 }: {
 	accessToken: string;
 	filename: string;
 	lid: number;
+	onAbortDone: () => void;
 	onComplete: (url: string) => void;
 }) => {
 	const dropbox = new Dropbox({
@@ -231,6 +233,9 @@ export const dropboxStream = async ({
 					throw error;
 				}
 			}
+		},
+		abort() {
+			onAbortDone();
 		},
 	});
 

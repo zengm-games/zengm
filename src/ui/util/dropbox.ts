@@ -1,5 +1,4 @@
 import { Dropbox, DropboxAuth } from "dropbox";
-import { WEBSITE_PLAY } from "../../common";
 
 // Client ID aka app key
 const CLIENT_ID = "fvdi8cdcwscxt5j";
@@ -8,10 +7,7 @@ export const getAuthenticationUrl = async (lid: number) => {
 	const dropboxAuth = new DropboxAuth({ clientId: CLIENT_ID });
 
 	// https://dropbox.github.io/dropbox-sdk-js/global.html#getAuthenticationUrl
-	const redirectUri =
-		process.env.NODE_ENV === "development"
-			? "http://localhost/dropbox"
-			: `https://${WEBSITE_PLAY}/dropbox`;
+	const redirectUri = `${window.location.origin}/dropbox`;
 	const state = `${lid}`;
 	const authUrl = (await dropboxAuth.getAuthenticationUrl(
 		redirectUri,

@@ -9,11 +9,8 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 - start gradually porting over some views
 
 dropbox integration - save league to cloud
-- need to apply for production https://www.dropbox.com/developers/apps/info/fvdi8cdcwscxt5j
-- other sports
-  - create dropbox apps
-  - CLIENT_ID
-  - apply for production
+- add way to view leagues saved in dropbox account and select one from that list
+- add support for dropbox url in hash so that all the league creation stuff is pre-filled
 
 ai propose trades to user
 - list candidates on a new Trade Offers page?

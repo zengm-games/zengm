@@ -541,8 +541,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								) : (
 									<>
 										<p className="mb-0">
-											The file URL could not be retrieved, but it should be in
-											your DropBox account under: Apps/{GAME_NAME}/{filename}
+											The file URL could not be retrieved (maybe you still need
+											to verify the email address for your Dropbox account), but
+											it should be in your DropBox account under: Apps/
+											{GAME_NAME}/{filename}
 										</p>
 									</>
 								)}

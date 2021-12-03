@@ -1,7 +1,12 @@
 import { Dropbox, DropboxAuth } from "dropbox";
+import { bySport } from "../../common";
 
 // Client ID aka app key
-const CLIENT_ID = "fvdi8cdcwscxt5j";
+const CLIENT_ID = bySport({
+	basketball: "fvdi8cdcwscxt5j",
+	football: "lqbn33k6vre8tla",
+	hockey: "h4v41smg906nbpy",
+});
 
 export const getAuthenticationUrl = async (lid: number) => {
 	const dropboxAuth = new DropboxAuth({ clientId: CLIENT_ID });

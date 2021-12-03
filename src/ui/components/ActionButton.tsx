@@ -16,6 +16,7 @@ const ActionButton = ({
 	children,
 	className,
 	disabled,
+	maintainWidth = true,
 	onClick,
 	processing,
 	size,
@@ -25,6 +26,7 @@ const ActionButton = ({
 	children: ReactNode;
 	className?: string;
 	disabled?: boolean;
+	maintainWidth?: boolean;
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 	processing: boolean;
 	size?: "lg";
@@ -54,9 +56,13 @@ const ActionButton = ({
 					onClick(event);
 				}
 			}}
-			style={{
-				minWidth: minWidth.current,
-			}}
+			style={
+				maintainWidth
+					? {
+							minWidth: minWidth.current,
+					  }
+					: undefined
+			}
 		>
 			{processing ? processingSpinner : children}
 		</button>

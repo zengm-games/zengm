@@ -749,6 +749,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						dropboxAccessToken ? (
 							<ActionButton
 								className={state === "idle" ? "ml-2" : undefined}
+								maintainWidth={false}
 								processing={state === "dropbox"}
 								onClick={handleSubmit("dropbox")}
 							>

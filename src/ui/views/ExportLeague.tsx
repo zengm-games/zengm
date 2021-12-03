@@ -444,6 +444,7 @@ const RenderOption = ({
 const SUPPORTS_CANCEL = typeof AbortController !== "undefined";
 
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
+	const [state, setState] = useState<"idle" | "download" | "dropbox">("idle");
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
@@ -459,6 +460,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const cleanupAfterStream = (status?: ReactNode) => {
 		abortController.current = undefined;
 		setStatus(status);
+		setState("idle");
 		setPercentDone(-1);
 		setProcessingStore(undefined);
 	};
@@ -466,7 +468,8 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const dropboxAccessToken = localStorage.getItem("dropboxAccessToken");
 
 	const handleSubmit = (type: "download" | "dropbox") => async () => {
-		setStatus("Exporting...");
+		setStatus(undefined);
+		setState(type);
 		setPercentDone(0);
 		saveDefaults(checked, compressed);
 
@@ -727,49 +730,55 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						</div>
 					) : null}
 
-					<ActionButton
-						processing={status === "Exporting..."}
-						onClick={handleSubmit("download")}
-					>
-						Download File
-					</ActionButton>
-
-					{dropboxAccessToken ? (
+					{state === "idle" || state === "download" ? (
 						<ActionButton
-							className="ml-2"
-							processing={status === "Exporting..."}
-							onClick={handleSubmit("dropbox")}
+							processing={state === "download"}
+							onClick={handleSubmit("download")}
 						>
-							Save To Dropbox
+							<span className="glyphicon glyphicon-download-alt" /> Download
+							File
 						</ActionButton>
-					) : (
-						<button
-							className="btn btn-primary ml-2"
-							onClick={async () => {
-								if (lid === undefined) {
-									return;
-								}
+					) : null}
 
-								const { getAuthenticationUrl } = await import(
-									"../util/dropbox"
-								);
-								const url = await getAuthenticationUrl(lid);
+					{state === "idle" || state === "dropbox" ? (
+						dropboxAccessToken ? (
+							<ActionButton
+								className={state === "idle" ? "ml-2" : undefined}
+								processing={state === "dropbox"}
+								onClick={handleSubmit("dropbox")}
+							>
+								<span className="glyphicon glyphicon-cloud-upload" /> Save to
+								Dropbox
+							</ActionButton>
+						) : (
+							<button
+								className="btn btn-primary ml-2"
+								onClick={async () => {
+									if (lid === undefined) {
+										return;
+									}
 
-								// Remember what was checked, since local state will be lost during redirect
-								saveDefaults(checked, compressed);
+									const { getAuthenticationUrl } = await import(
+										"../util/dropbox"
+									);
+									const url = await getAuthenticationUrl(lid);
 
-								window.location.href = url;
-							}}
-						>
-							Connect To Dropbox
-						</button>
-					)}
+									// Remember what was checked, since local state will be lost during redirect
+									saveDefaults(checked, compressed);
 
-					{SUPPORTS_CANCEL ? (
+									window.location.href = url;
+								}}
+							>
+								<span className="glyphicon glyphicon-cloud-upload" /> Connect to
+								Dropbox
+							</button>
+						)
+					) : null}
+
+					{SUPPORTS_CANCEL && state !== "idle" ? (
 						<button
 							className="btn btn-secondary ml-2"
 							type="button"
-							disabled={status !== "Exporting..."}
 							onClick={() => {
 								if (abortController.current) {
 									abortController.current.abort();

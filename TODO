@@ -9,13 +9,9 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 - start gradually porting over some views
 
 dropbox integration - save league to cloud
-- Tools > Export have button to export to dropbox
 - confirm checkbox saving before redirect to dropbox works
 - test with very large file
-- subfolder per league? or let user select subfolder?
 - need to apply for production https://www.dropbox.com/developers/apps/info/fvdi8cdcwscxt5j
-- check if autorename is working in streaming upload
-- dropbox icon in button
 - test 401 code error again
   - expired token to test with: 'sl.A9ZymLCS7VSw9m0pPrZKPvJXHfC3EBX9q1G3koXaDzZ656-kW865b99h4ffjJ9qqaQuTVDsYNAFoXERa3Q1Q8vxTD3OrvNgfeeJKIqECyOcttDpMTqTHvT7mLQq6iW5FM1-VHtQ'
 - other sports

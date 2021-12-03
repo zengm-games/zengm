@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ButtonHTMLAttributes, MouseEvent, useRef } from "react";
+import { ButtonHTMLAttributes, MouseEvent, ReactNode, useRef } from "react";
 
 export const processingSpinner = (
 	<>
@@ -22,7 +22,7 @@ const ActionButton = ({
 	type,
 	variant = "primary",
 }: {
-	children: string;
+	children: ReactNode;
 	className?: string;
 	disabled?: boolean;
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;

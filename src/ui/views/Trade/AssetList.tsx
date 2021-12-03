@@ -200,7 +200,7 @@ const AssetList = ({
 					className="datatable-negative-margin-top"
 					config={config}
 					cols={playerCols}
-					defaultSort={[5, "desc"]}
+					defaultSort={["Ovr", "desc"]}
 					name={`Trade:${userOrOtherKey}`}
 					rows={playerRows}
 				/>

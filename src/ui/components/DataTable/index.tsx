@@ -23,7 +23,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers, safeLocalStorage } from "../../util";
+import { downloadFile, helpers, safeLocalStorage, toWorker } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
@@ -142,12 +142,13 @@ const DataTable = (props: Props | LegacyProps) => {
 		nonfluid,
 		config,
 		pagination,
-		rankCol,
 		small,
 		striped,
 		superCols,
 		addFilters,
 	} = props;
+
+	const enableCustomize: boolean = !!config;
 
 	// Convert LegacyCols to Cols for backwards compatability
 	const cols: Col[] =
@@ -262,14 +263,17 @@ const DataTable = (props: Props | LegacyProps) => {
 	};
 
 	const handleReorder = (oldIndex: number, newIndex: number) => {
+		const nextCols = arrayMove(state.cols, oldIndex, newIndex);
 		setStatePartial({
-			cols: arrayMove(state.cols, oldIndex, newIndex),
-			// rows: rows.map(row => {
-			// 	row.data = arrayMove([...row.data], oldIndex, newIndex);
-			// 	return row;
-			// }),
+			cols: nextCols,
 		});
 		processedRows = processRows();
+		if (config) {
+			toWorker("main", "updateColumns", {
+				columns: nextCols.map(c => c.key),
+				key: config.tableName,
+			});
+		}
 	};
 
 	const handleColClick = (event: MouseEvent, colKey: string) => {
@@ -476,6 +480,7 @@ const DataTable = (props: Props | LegacyProps) => {
 					) : null}
 					<Controls
 						enableFilters={state.enableFilters}
+						enableCustomize={enableCustomize}
 						hideAllControls={hideAllControls}
 						name={name}
 						onExportCSV={handleExportCSV}

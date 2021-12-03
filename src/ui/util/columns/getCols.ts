@@ -2560,11 +2560,23 @@ const cols: {
 		sortType: "currency",
 		template: "Contract",
 	},
+	Projected: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+		template: "Projected",
+	},
 	Mood: {
 		width: "1px",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		template: "Mood",
+	},
+	CurrentMood: {
+		title: "Current Mood",
+		width: "1px",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		template: "MoodCurrent",
 	},
 	Name: {
 		sortType: "name",
@@ -2633,7 +2645,11 @@ const cols: {
 		sortType: "number",
 	},
 	Skills: {},
-	Team: {},
+	Team: {
+		template: "Team",
+		sortType: "string",
+		stats: "abbrev",
+	},
 	Summary: {},
 	"rating:endu": {
 		template: "Rating",
@@ -2724,16 +2740,19 @@ export default (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
-	return titles.map(title => {
-		if (!cols.hasOwnProperty(title)) {
-			throw new Error(`Unknown column: "${title}"`);
-		}
+	return titles
+		.map(title => {
+			if (!cols.hasOwnProperty(title)) {
+				// throw new Error(`Unknown column: "${title}"`);
+				return null;
+			}
 
-		return {
-			...cols[title],
-			title: cols[title].title ?? title,
-			key: title,
-			...overrides[title],
-		};
-	});
+			return {
+				...cols[title],
+				title: cols[title].title ?? title,
+				key: title,
+				...overrides[title],
+			};
+		})
+		.filter(c => c !== null);
 };

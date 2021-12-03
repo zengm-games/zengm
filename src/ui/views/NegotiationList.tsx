@@ -10,6 +10,9 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import { Player } from "../../common/types";
+import { ColTemp } from "../util/columns/getCols";
+import getTemplate from "../util/columns/getTemplate";
 
 const NegotiationList = ({
 	capSpace,
@@ -20,7 +23,7 @@ const NegotiationList = ({
 	numRosterSpots,
 	spectator,
 	players,
-	stats,
+	config,
 	sumContracts,
 	userPlayers,
 }: View<"negotiationList">) => {
@@ -32,66 +35,14 @@ const NegotiationList = ({
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map(stat => `stat:${stat}`),
-		"Acquired",
-		"Mood",
-		"Asking For",
-		"Exp",
-		"Negotiate",
-	]);
+	const cols = config.columns;
 
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
-			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				{
-					value: <SafeHtml dirty={p.latestTransaction} />,
-					searchValue: p.latestTransaction,
-					sortValue: p.latestTransactionSeason,
-				},
-				dataTableWrappedMood({
-					defaultType: "user",
-					maxWidth: true,
-					p,
-				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
-				p.contract.exp,
-				{
-					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
-						<NegotiateButtons
-							canGoOverCap
-							capSpace={capSpace}
-							minContract={minContract}
-							spectator={spectator}
-							p={p}
-							willingToNegotiate={p.mood.user.willing}
-						/>
-					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-				},
-			],
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, {})]),
+			),
 		};
 	});
 
@@ -151,7 +102,8 @@ const NegotiationList = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[10, "desc"]}
+				config={config}
+				defaultSort={["Asking For", "desc"]}
 				name="NegotiationList"
 				rows={rows}
 			/>

@@ -289,7 +289,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	const cols = [
 		{
 			title: "",
-			key: "X",
+			key: "include",
 			sortSequence: [],
 			noSearch: true,
 			render: (p: Player, c: ColTemp, vars: object) => (

@@ -418,8 +418,8 @@ const Draft = ({
 					</h2>
 
 					<DataTable
-						cols={colsUndrafted}
-						defaultSort={[0, "asc"]}
+						legacyCols={colsUndrafted}
+						defaultSort={["col1", "asc"]}
 						name="Draft:Undrafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsUndrafted}
@@ -448,8 +448,8 @@ const Draft = ({
 					</h2>
 
 					<DataTable
-						cols={colsDrafted}
-						defaultSort={[0, "asc"]}
+						legacyCols={colsDrafted}
+						defaultSort={["col1", "asc"]}
 						name="Draft:Drafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsDrafted}

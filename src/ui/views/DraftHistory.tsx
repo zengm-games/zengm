@@ -191,8 +191,8 @@ const DraftHistory = ({
 			<ExportButton season={season} />
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "asc"]}
 				name="DraftHistory"
 				rows={rows}
 				superCols={superCols}

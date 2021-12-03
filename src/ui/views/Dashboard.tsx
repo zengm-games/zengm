@@ -482,10 +482,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 					<DataTable
 						bordered={false}
-						cols={cols}
+						legacyCols={cols}
 						className="dashboard-table"
 						disableSettingsCache
-						defaultSort={[7, "desc"]}
+						defaultSort={["col8", "desc"]}
 						name="Dashboard"
 						pagination={pagination}
 						small={false}

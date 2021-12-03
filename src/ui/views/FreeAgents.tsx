@@ -155,7 +155,7 @@ const FreeAgents = ({
 			<DataTable
 				cols={cols}
 				config={config}
-				defaultSort={[cols[0].key, "desc"]}
+				defaultSort={["Ovr", "desc"]}
 				name="FreeAgents"
 				pagination
 				rows={rows}

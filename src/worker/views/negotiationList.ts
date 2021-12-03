@@ -3,13 +3,37 @@ import { team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import { addMood } from "./freeAgents";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updateNegotiationList = async () => {
 	const stats = bySport({
-		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
-		football: ["yearsWithTeam", "gp", "keyStats", "av"],
-		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],
+		basketball: [
+			"stat:gp",
+			"stat:min",
+			"stat:pts",
+			"stat:trb",
+			"stat:ast",
+			"stat:per",
+		],
+		football: ["stat:gp", "stat:keyStats", "stat:av"],
+		hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 	});
+
+	const config: TableConfig = new TableConfig("negotiationList", [
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		"stat:yearsWithTeam",
+		...stats,
+		"Acquired",
+		"Mood",
+		"Asking For",
+		"Exp",
+		"Negotiate",
+	]);
+	await config.load();
 
 	const userTid = g.get("userTid");
 
@@ -43,8 +67,8 @@ const updateNegotiationList = async () => {
 			"latestTransactionSeason",
 			"mood",
 		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: g.get("season"),
 		tid: userTid,
 		showNoStats: true,
@@ -78,7 +102,7 @@ const updateNegotiationList = async () => {
 		numRosterSpots: g.get("maxRosterSize") - userPlayersAll.length,
 		spectator: g.get("spectator"),
 		players,
-		stats,
+		config,
 		sumContracts,
 		userPlayers,
 	};

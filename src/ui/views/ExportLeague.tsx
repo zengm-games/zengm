@@ -503,8 +503,11 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				if (!dropboxAccessToken) {
 					throw new Error("Missing dropboxAccessToken");
 				}
+				if (lid === undefined) {
+					throw new Error("Missing lid");
+				}
 				const { dropboxStream } = await import("../util/dropbox");
-				fileStream = await dropboxStream(filename, dropboxAccessToken);
+				fileStream = await dropboxStream(filename, dropboxAccessToken, lid);
 			}
 
 			if (SUPPORTS_CANCEL) {

@@ -10,19 +10,15 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 
 dropbox integration - save league to cloud
 - Tools > Export have button to export to dropbox
-- https://stackoverflow.com/questions/56575928/how-to-upload-a-file-to-dropbox-using-js-sdk
-- login https://github.com/dropbox/dropbox-sdk-js/blob/main/examples/javascript/auth/index.html
-  - how long does token last? 4 hours
-  - what happens if token is expired? how do we know?
-  - if we need to redirect, should save checkboxes before redirect
+- confirm checkbox saving before redirect to dropbox works
 - test with very large file
-- show URL to share after uploading - www -> dl
-  - maybe not possible https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/How-to-get-complete-path-or-URL-of-a-File/td-p/329365
-  - create_shared_link https://www.dropbox.com/developers/documentation/http/documentation#sharing-create_shared_link_with_settings
 - subfolder per league? or let user select subfolder?
 - need to apply for production https://www.dropbox.com/developers/apps/info/fvdi8cdcwscxt5j
 - check if autorename is working in streaming upload
 - dropbox icon in button
+- test 401 code error again
+  - expired token to test with: 'sl.A9ZymLCS7VSw9m0pPrZKPvJXHfC3EBX9q1G3koXaDzZ656-kW865b99h4ffjJ9qqaQuTVDsYNAFoXERa3Q1Q8vxTD3OrvNgfeeJKIqECyOcttDpMTqTHvT7mLQq6iW5FM1-VHtQ'
+- show downloadURL in UI somehow
 - other sports
   - create dropbox apps
   - CLIENT_ID

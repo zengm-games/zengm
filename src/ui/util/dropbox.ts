@@ -1,12 +1,31 @@
 import { Dropbox, DropboxAuth } from "dropbox";
+import { WEBSITE_PLAY } from "../../common";
 
 // Client ID aka app key
 const CLIENT_ID = "fvdi8cdcwscxt5j";
+
+export const getAuthenticationUrl = async (lid: number) => {
+	const dropboxAuth = new DropboxAuth({ clientId: CLIENT_ID });
+
+	// https://dropbox.github.io/dropbox-sdk-js/global.html#getAuthenticationUrl
+	const redirectUri =
+		process.env.NODE_ENV === "development"
+			? "http://localhost/dropbox"
+			: `https://${WEBSITE_PLAY}/dropbox`;
+	const state = `${lid}`;
+	const authUrl = (await dropboxAuth.getAuthenticationUrl(
+		redirectUri,
+		state,
+	)) as string;
+
+	return authUrl;
+};
 
 class Buffer {
 	MAX_BUFFER_SIZE: number;
 
 	dropbox: Dropbox;
+	lid: number;
 
 	buffer: Uint8Array[];
 	bufferSize: number;
@@ -14,13 +33,12 @@ class Buffer {
 
 	sessionID: string | undefined;
 
-	constructor(accessToken: string) {
+	constructor(dropbox: Dropbox, lid: number) {
 		// 8Mb - Dropbox JavaScript API suggested max file / chunk size
 		this.MAX_BUFFER_SIZE = 8 * 1000 * 1000;
 
-		this.dropbox = new Dropbox({
-			accessToken,
-		});
+		this.dropbox = dropbox;
+		this.lid = lid;
 
 		this.buffer = [];
 		this.bufferSize = 0;
@@ -51,16 +69,14 @@ class Buffer {
 				close: false,
 				contents: blob,
 			});
-			console.log("first", response);
 			this.sessionID = response.result.session_id;
 		} else {
 			const cursor = this.getCursor();
-			const response = await this.dropbox.filesUploadSessionAppendV2({
+			await this.dropbox.filesUploadSessionAppendV2({
 				cursor: cursor,
 				close: false,
 				contents: blob,
 			});
-			console.log("append", response);
 		}
 
 		this.buffer = [];
@@ -77,6 +93,7 @@ class Buffer {
 
 		const cursor = this.getCursor();
 		const commit = { path, autorename: true };
+
 		const response = await this.dropbox.filesUploadSessionFinish({
 			cursor: cursor,
 			commit: commit,
@@ -133,33 +150,83 @@ class Buffer {
 	}
 }*/
 
+const handleAuthError = async (
+	stream: WritableStream,
+	error: any,
+	lid: number,
+) => {
+	console.log(error.status, error.message, error.error);
+	if (error.status === 401) {
+		// "Response failed with a 401 code" - need user to log in again
+		localStorage.removeItem("dropboxAccessToken");
+		stream.abort(error.message);
+
+		const url = await getAuthenticationUrl(lid);
+
+		window.location.href = url;
+
+		return true;
+	}
+
+	return false;
+};
+
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
-export const dropboxStream = async (filename: string, accessToken: string) => {
-	const buffer = new Buffer(accessToken);
+export const dropboxStream = async (
+	filename: string,
+	accessToken: string,
+	lid: number,
+) => {
+	const dropbox = new Dropbox({
+		accessToken,
+	});
+
+	const buffer = new Buffer(dropbox, lid);
 
 	const stream = new WritableStream({
 		async write(chunk) {
-			await buffer.add(chunk);
+			try {
+				await buffer.add(chunk);
+			} catch (error) {
+				if (!handleAuthError(stream, error, lid)) {
+					throw error;
+				}
+			}
 		},
 		async close() {
-			const response = await buffer.finalize(`/${filename}`);
-			console.log(response);
+			const path = `/${filename}`;
+
+			try {
+				await buffer.finalize(path);
+
+				let fileURL;
+
+				try {
+					const response2 = await dropbox.sharingCreateSharedLinkWithSettings({
+						path,
+					});
+					fileURL = response2.result.url;
+				} catch (error) {
+					if (error.status === 409) {
+						// "Response failed with a 409 code" - shared link already exists, and the URL is in this object!
+						fileURL =
+							error?.error?.error?.shared_link_already_exists?.metadata?.url;
+					}
+
+					if (fileURL === undefined) {
+						throw error;
+					}
+				}
+
+				const downloadURL = fileURL.replace("https://www.", "https://dl.");
+				console.log("fileURL", fileURL, downloadURL);
+			} catch (error) {
+				if (!handleAuthError(stream, error, lid)) {
+					throw error;
+				}
+			}
 		},
 	});
 
 	return stream;
-};
-
-export const getAuthenticationUrl = async (lid: number) => {
-	const dropboxAuth = new DropboxAuth({ clientId: CLIENT_ID });
-
-	// https://dropbox.github.io/dropbox-sdk-js/global.html#getAuthenticationUrl
-	const redirectUri = "http://localhost/dropbox";
-	const state = `${lid}`;
-	const authUrl = (await dropboxAuth.getAuthenticationUrl(
-		redirectUri,
-		state,
-	)) as string;
-
-	return authUrl;
 };

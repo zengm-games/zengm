@@ -179,7 +179,7 @@ export const dropboxStream = async ({
 	filename: string;
 	lid: number;
 	onAbortDone: () => void;
-	onComplete: (url: string) => void;
+	onComplete: (url: string | undefined) => void;
 }) => {
 	const dropbox = new Dropbox({
 		accessToken,
@@ -203,7 +203,7 @@ export const dropboxStream = async ({
 			try {
 				await buffer.finalize(path);
 
-				let fileURL;
+				let fileURL: string | undefined;
 
 				try {
 					const response2 = await dropbox.sharingCreateSharedLinkWithSettings({
@@ -217,12 +217,10 @@ export const dropboxStream = async ({
 							error?.error?.error?.shared_link_already_exists?.metadata?.url;
 					}
 
-					if (fileURL === undefined) {
-						throw error;
-					}
+					// Other situations could lead to a 409, such as if the user has not verified their email address https://discord.com/channels/@me/913081687586537503/916208729546977310 - for now, don't worry about that, just leave fileURL blank and show a generic message about it.
 				}
 
-				const downloadURL = fileURL.replace("https://www.", "https://dl.");
+				const downloadURL = fileURL?.replace("https://www.", "https://dl.");
 				onComplete(downloadURL);
 			} catch (error) {
 				if (!handleAuthError(stream, error, lid)) {

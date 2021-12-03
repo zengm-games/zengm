@@ -523,7 +523,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						cleanupAfterStream();
 					},
 					onComplete: url => {
-						console.log("onComplete", url);
 						status = (
 							<>
 								<p className="text-success">Upload complete!</p>

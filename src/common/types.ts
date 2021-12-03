@@ -565,6 +565,7 @@ export type GameAttributesLeague = {
 	ties: boolean;
 	tradeDeadline: number;
 	tragicDeathRate: number;
+	useNamesInLeagueDashboard: boolean;
 	userTid: number;
 	userTids: number[];
 

@@ -73,6 +73,7 @@ const useLocal = create(
 		statusText: "Idle",
 		teamInfoCache: [],
 		units: defaultUnits,
+		useNamesInLeagueDashboard: false,
 		userTid: 0,
 		userTids: [],
 		username: undefined,
@@ -132,6 +133,7 @@ const useLocal = create(
 					godMode: false,
 					hideDisabledTeams: false,
 					homeCourtAdvantage: 1,
+					useNamesInLeagueDashboard: false,
 
 					// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
 					lid: undefined,
@@ -188,6 +190,7 @@ const useLocal = create(
 					"spectator",
 					"startingSeason",
 					"teamInfoCache",
+					"useNamesInLeagueDashboard",
 					"userTid",
 					"userTids",
 				] as const;

@@ -472,6 +472,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"did",
 				"abbrev",
 				"region",
+				"name",
 				"clinchedPlayoffs",
 				"imgURL",
 				"imgURLSmall",
@@ -531,6 +532,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayoffTeams,
 			playoffsByConf,
 			pointsFormula,
+			useNames: g.get("useNamesInLeagueDashboard"),
 			usePts,
 		};
 	}

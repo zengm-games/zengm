@@ -43,6 +43,7 @@ const LeagueDashboard = ({
 	teamLeaders,
 	teamStats,
 	tied,
+	useNames,
 	usePts,
 	userTid,
 	won,
@@ -79,6 +80,7 @@ const LeagueDashboard = ({
 									numPlayoffTeams={numPlayoffTeams}
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
+									useNames={useNames}
 									usePts={usePts}
 									userTid={userTid}
 								/>

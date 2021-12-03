@@ -1421,6 +1421,14 @@ settings.push(
 		descriptionLong:
 			"This will hide inactive teams from dropdown menus at the top of many pages, such as the roster page.",
 	},
+	{
+		category: "UI",
+		key: "useNamesInLeagueDashboard",
+		name: "Use Names In League Dashboard",
+		type: "bool",
+		descriptionLong:
+			"This will include team names in the league dashboard standings, in addition to region. Useful for leagues where all teams are in the same region.",
+	},
 );
 
 if (isSport("basketball")) {

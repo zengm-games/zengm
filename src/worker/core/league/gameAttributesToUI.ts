@@ -24,6 +24,7 @@ const gameAttributesToUI = async (
 		"spectator",
 		"startingSeason",
 		"teamInfoCache",
+		"useNamesInLeagueDashboard",
 		"userTid",
 		"userTids",
 	] as const;

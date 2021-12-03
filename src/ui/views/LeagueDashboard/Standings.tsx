@@ -13,6 +13,7 @@ const Standings = ({
 	numPlayoffTeams,
 	playoffsByConf,
 	pointsFormula,
+	useNames,
 	usePts,
 	userTid,
 }: Pick<
@@ -46,7 +47,12 @@ const Standings = ({
 								"table-info": t.tid === userTid,
 							})}
 						>
-							<TeamColumn rank={t.rank} rankWidth={15} t={t} />
+							<TeamColumn
+								rank={t.rank}
+								rankWidth={15}
+								t={t}
+								includeName={useNames}
+							/>
 							<td className="text-right">
 								{usePts ? Math.round(t.seasonAttrs.pts) : t.gb}
 							</td>

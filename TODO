@@ -18,7 +18,6 @@ dropbox integration - save league to cloud
 - dropbox icon in button
 - test 401 code error again
   - expired token to test with: 'sl.A9ZymLCS7VSw9m0pPrZKPvJXHfC3EBX9q1G3koXaDzZ656-kW865b99h4ffjJ9qqaQuTVDsYNAFoXERa3Q1Q8vxTD3OrvNgfeeJKIqECyOcttDpMTqTHvT7mLQq6iW5FM1-VHtQ'
-- show downloadURL in UI somehow
 - other sports
   - create dropbox apps
   - CLIENT_ID

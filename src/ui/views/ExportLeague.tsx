@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useState, ReactNode, useRef } from "react";
-import { isSport, WEBSITE_ROOT } from "../../common";
+import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common";
 import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,
@@ -497,6 +497,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			});
 
 			let fileStream;
+			let status: ReactNode;
 			if (type === "download") {
 				fileStream = await downloadFileStream(streamDownload, filename);
 			} else {
@@ -507,7 +508,41 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					throw new Error("Missing lid");
 				}
 				const { dropboxStream } = await import("../util/dropbox");
-				fileStream = await dropboxStream(filename, dropboxAccessToken, lid);
+				fileStream = await dropboxStream({
+					accessToken: dropboxAccessToken,
+					filename,
+					lid,
+					onComplete: url => {
+						console.log("onComplete", url);
+						status = (
+							<>
+								<p className="text-success">Upload complete!</p>
+								{url ? (
+									<>
+										<p>
+											URL: <a href={url}>{url}</a>
+										</p>
+										<p className="mb-0">
+											You can use this URL when{" "}
+											<a href="/new_league">making a new custom league</a>, just
+											select "Enter league file URL" under "Customize" and paste
+											in the URL.
+										</p>
+									</>
+								) : (
+									<>
+										<p className="mb-0">
+											The file URL could not be retrieved, but it should be in
+											your DropBox account under: Apps/{GAME_NAME}/{filename}
+										</p>
+									</>
+								)}
+							</>
+						);
+						if (url) {
+						}
+					},
+				});
 			}
 
 			if (SUPPORTS_CANCEL) {
@@ -520,7 +555,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					signal: abortController.current?.signal,
 				});
 
-			cleanupAfterStream();
+			cleanupAfterStream(status);
 		} catch (error) {
 			cleanupAfterStream(
 				<span className="text-danger">Error: "{error.message}"</span>,
@@ -755,12 +790,12 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							percent={percentDone ?? 0}
 						/>
 					) : null}
-
-					{status && status !== "Exporting..." ? (
-						<div className="mt-3">{status}</div>
-					) : null}
 				</div>
 			</div>
+
+			{status && status !== "Exporting..." ? (
+				<div className="mt-3">{status}</div>
+			) : null}
 		</>
 	);
 };

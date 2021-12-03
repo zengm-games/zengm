@@ -172,11 +172,17 @@ const handleAuthError = async (
 };
 
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
-export const dropboxStream = async (
-	filename: string,
-	accessToken: string,
-	lid: number,
-) => {
+export const dropboxStream = async ({
+	accessToken,
+	filename,
+	lid,
+	onComplete,
+}: {
+	accessToken: string;
+	filename: string;
+	lid: number;
+	onComplete: (url: string) => void;
+}) => {
 	const dropbox = new Dropbox({
 		accessToken,
 	});
@@ -219,7 +225,7 @@ export const dropboxStream = async (
 				}
 
 				const downloadURL = fileURL.replace("https://www.", "https://dl.");
-				console.log("fileURL", fileURL, downloadURL);
+				onComplete(downloadURL);
 			} catch (error) {
 				if (!handleAuthError(stream, error, lid)) {
 					throw error;

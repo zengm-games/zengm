@@ -23,13 +23,14 @@ const otherToRanks = (
 };
 
 const updatePowerRankings = async (
-	{ season }: ViewInput<"powerRankings">,
+	{ playoffs, season }: ViewInput<"powerRankings">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
 	if (
 		(season === g.get("season") && updateEvents.includes("gameSim")) ||
-		season !== state.season
+		season !== state.season ||
+		playoffs !== state.playoffs
 	) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "depth"],
@@ -87,8 +88,12 @@ const updatePowerRankings = async (
 					p => p.injury.gamesRemaining === 0,
 				);
 
-				const ovr = team.ovr(teamPlayers);
-				const ovrCurrent = team.ovr(teamPlayersCurrent);
+				const ovr = team.ovr(teamPlayers, {
+					playoffs: playoffs === "playoffs",
+				});
+				const ovrCurrent = team.ovr(teamPlayersCurrent, {
+					playoffs: playoffs === "playoffs",
+				});
 
 				// Calculate score
 
@@ -112,9 +117,11 @@ const updatePowerRankings = async (
 				if (isSport("basketball")) {
 					for (const rating of RATINGS) {
 						other[rating] = team.ovr(teamPlayers, {
+							playoffs: playoffs === "playoffs",
 							rating,
 						});
 						otherCurrent[rating] = team.ovr(teamPlayersCurrent, {
+							playoffs: playoffs === "playoffs",
 							rating,
 						});
 					}
@@ -124,9 +131,11 @@ const updatePowerRankings = async (
 							continue;
 						}
 						other[pos] = team.ovr(teamPlayers, {
+							playoffs: playoffs === "playoffs",
 							pos,
 						});
 						otherCurrent[pos] = team.ovr(teamPlayersCurrent, {
+							playoffs: playoffs === "playoffs",
 							pos,
 						});
 					}
@@ -174,6 +183,7 @@ const updatePowerRankings = async (
 			currentSeason: g.get("season"),
 			confs: g.get("confs", season),
 			divs: g.get("divs", season),
+			playoffs,
 			season,
 			teams: teamsWithRankings,
 			ties: g.get("ties", season) || ties,

@@ -22,7 +22,7 @@ def get_cols():
         "mov": [],
     }
 
-    with open("data.json", "r", encoding='utf-8-sig') as read_file:
+    with open("data-playoffs.json", "r", encoding='utf-8-sig') as read_file:
         data = json.load(read_file)
 
     def get_ovrs(tid, season):

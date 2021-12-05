@@ -12,8 +12,6 @@ dropbox integration - save league to cloud
 - add way to view leagues saved in dropbox account and select one from that list
 - add support for dropbox url in hash so that all the league creation stuff is pre-filled
 
-playoff-adjusted team ovr
-
 ai propose trades to user
 - list candidates on a new Trade Offers page?
 

@@ -34,16 +34,22 @@ const PowerRankings = ({
 	confs,
 	currentSeason,
 	divs,
+	playoffs,
 	season,
 	teams,
 	ties,
 	otl,
 	userTid,
 }: View<"powerRankings">) => {
+	const dropdownFields = bySport({
+		basketball: { seasons: season, playoffs },
+		default: { seasons: season },
+	}) as { seasons: number; playoffs: string } | { seasons: number };
+
 	useTitleBar({
 		title: "Power Rankings",
 		dropdownView: "power_rankings",
-		dropdownFields: { seasons: season },
+		dropdownFields,
 	});
 
 	const [showHealthy, setShowHealthy] = useState(true);
@@ -202,6 +208,12 @@ const PowerRankings = ({
 				victory, and team rating. Team rating is based only on the ratings of
 				players on each team.
 			</p>
+			{playoffs === "playoffs" ? (
+				<p>
+					In the playoffs, rotations get shorter and players play harder, so
+					some teams get higher or lower ratings.
+				</p>
+			) : null}
 
 			<DataTable
 				className="align-middle-all"

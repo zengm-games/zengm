@@ -65,7 +65,9 @@ const processTeam = (
 				pos: p.ratings.at(-1).pos,
 			},
 		}));
-	const ovr = team.ovr(playersCurrent);
+	const ovr = team.ovr(playersCurrent, {
+		playoffs: g.get("phase") === PHASE.PLAYOFFS,
+	});
 
 	const t: any = {
 		id: teamInput.tid,

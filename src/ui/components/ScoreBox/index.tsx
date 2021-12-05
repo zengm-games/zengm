@@ -133,7 +133,7 @@ const ScoreBox = ({
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
 			spread =
-				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
+				(15 / 50) * (game.teams[0].ovr - game.teams[1].ovr) +
 				3.3504 * homeCourtAdvantage;
 		} else if (isSport("hockey")) {
 			spread =

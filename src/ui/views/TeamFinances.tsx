@@ -776,8 +776,8 @@ const TeamFinances = ({
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[2, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col3", "desc"]}
 				name="TeamFinances"
 				nonfluid
 				footer={footer}

@@ -159,18 +159,19 @@ const DataTable = (props: Props | LegacyProps) => {
 					key: `col${i + 1}`,
 			  }));
 	// Convert LegacyDataTableRows to DataTableRows for backwards compatability
-	const rows: DataTableRow[] = Array.isArray(props.rows[0].data)
-		? props.rows.map(
-				(row): DataTableRow => ({
-					...row,
-					data: Array.isArray(row.data)
-						? Object.fromEntries(
-								row.data.map((value, i) => [`col${i + 1}`, value]),
-						  )
-						: {},
-				}),
-		  )
-		: props.rows;
+	const rows: DataTableRow[] =
+		props.rows.length && Array.isArray(props.rows[0].data)
+			? props.rows.map(
+					(row): DataTableRow => ({
+						...row,
+						data: Array.isArray(row.data)
+							? Object.fromEntries(
+									row.data.map((value, i) => [`col${i + 1}`, value]),
+							  )
+							: {},
+					}),
+			  )
+			: props.rows;
 
 	const [state, setState] = useState<State>(() => ({
 		...loadStateFromCache({

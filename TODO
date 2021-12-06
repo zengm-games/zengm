@@ -10,12 +10,15 @@ bootstrap 5
   - screenshot
     - navbar-right
   - form-row
+  - form-inline
   - button-variant test all with 2 args
   - multi team
   - settings
   - scheduled events
   - table-info and other colors only work on actual tables
   - enter league file URL
+  - popover
+  - auto play
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

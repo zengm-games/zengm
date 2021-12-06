@@ -140,7 +140,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	};
 
 	return (
-		<form className="form-inline">
+		<form className="d-flex">
 			{keys.map((key, i) => {
 				return (
 					<Select

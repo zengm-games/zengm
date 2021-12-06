@@ -935,7 +935,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					</div>
 
 					<div className="col-md-5 mb-3">
-						<div className="float-right d-flex flex-column">
+						<div className="float-end d-flex flex-column">
 							<button
 								type="button"
 								className="btn btn-secondary btn-sm mb-1"

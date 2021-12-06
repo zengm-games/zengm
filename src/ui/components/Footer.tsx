@@ -92,7 +92,7 @@ const Footer = memo(() => {
 			<div className="clearfix" />
 			<hr />
 
-			<p className="float-sm-left">
+			<p className="float-sm-start">
 				{footerLinks.map(({ url, title }, i) => {
 					return (
 						<Fragment key={url}>
@@ -105,7 +105,7 @@ const Footer = memo(() => {
 				})}
 				<br />
 			</p>
-			<p className="float-sm-right text-muted">
+			<p className="float-sm-end text-muted">
 				{GAME_ACRONYM} v{window.bbgmVersion}
 			</p>
 		</footer>

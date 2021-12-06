@@ -4,6 +4,11 @@
 $dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
 $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
 
+// Make it more like Bootstrap 4
+$table-cell-vertical-align: middle;
+$link-decoration: none;
+$link-hover-decoration: underline;
+
 $font-size-base: 0.8125rem;
 $black: #000 !default;
 
@@ -285,7 +290,6 @@ a.god-mode.active {
 .dashboard-controls {
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
-	vertical-align: middle !important;
 }
 
 .dashboard-play-loading {
@@ -293,7 +297,7 @@ a.god-mode.active {
 }
 
 .dashboard-table table td {
-	vertical-align: inherit;
+	vertical-align: middle;
 }
 
 @keyframes oscillate-bg {
@@ -329,6 +333,7 @@ table {
 
 .table {
 	font-variant: tabular-nums;
+	border-top: $table-border-width solid $table-border-color;
 }
 
 // .table is so this doesn't apply to a floating row while dragging
@@ -821,6 +826,8 @@ tr.table-warning:hover > td {
 	// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
 	-webkit-overflow-scrolling: auto;
 
+	width: 100%;
+
 	.table {
 		margin-bottom: 0;
 	}
@@ -1310,4 +1317,9 @@ code {
 .sorting_asc,
 .sorting_desc {
 	background-color: #ffeeba !important;
+}
+
+hr {
+	background-color: $table-border-color;
+	opacity: 1;
 }

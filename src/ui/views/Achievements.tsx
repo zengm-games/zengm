@@ -159,7 +159,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 																				count > 0
 																					? "badge-dark"
 																					: "badge-secondary"
-																			} float-right ms-1`}
+																			} float-end ms-1`}
 																			title={`${helpers.upperCaseFirstLetter(
 																				difficulty,
 																			)} difficulty`}

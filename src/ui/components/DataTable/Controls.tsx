@@ -57,7 +57,7 @@ const Controls = ({
 
 	return (
 		<div
-			className="datatable-controls d-flex"
+			className="datatable-controls mb-1 d-flex"
 			style={hideAllControls ? hideAllControlsStyle : undefined}
 		>
 			{!hideAllControls ? (
@@ -115,7 +115,7 @@ const Controls = ({
 					</label>
 				</>
 			) : null}
-			<Dropdown className="float-right">
+			<Dropdown className="float-end">
 				<Dropdown.Toggle
 					as="span"
 					bsPrefix="no-caret"

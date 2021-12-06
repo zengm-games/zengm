@@ -83,7 +83,7 @@ const Playoffs = ({
 
 			{playoffsByConf && numRounds > 1 ? (
 				<h2 className="d-none d-sm-block">
-					{confNames[1]} <span className="float-right">{confNames[0]}</span>
+					{confNames[1]} <span className="float-end">{confNames[0]}</span>
 				</h2>
 			) : null}
 

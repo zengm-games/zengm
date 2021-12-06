@@ -133,7 +133,7 @@ const FreeAgents = ({
 
 	return (
 		<>
-			<RosterComposition className="float-right mb-3" players={userPlayers} />
+			<RosterComposition className="float-end mb-3" players={userPlayers} />
 
 			<MoreLinks type="freeAgents" page="free_agents" />
 

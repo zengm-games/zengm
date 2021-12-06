@@ -97,7 +97,7 @@ const NegotiationList = ({
 
 	return (
 		<>
-			<RosterComposition className="float-right mb-3" players={userPlayers} />
+			<RosterComposition className="float-end mb-3" players={userPlayers} />
 
 			<p>
 				More:{" "}

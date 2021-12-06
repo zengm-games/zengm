@@ -116,7 +116,7 @@ const WatchList = ({
 
 	return (
 		<>
-			<Dropdown className="float-right my-1">
+			<Dropdown className="float-end my-1">
 				<Dropdown.Toggle
 					id="watch-list-other-reports"
 					className="btn-light-bordered"

@@ -168,8 +168,8 @@ const FinancesForm = ({
 			</h3>
 			{warningMessage}
 			<div className="row">
-				<div className="float-left finances-settings-label">Ticket Price</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
+				<div className="float-start finances-settings-label">Ticket Price</div>
+				<div className="input-group input-group-sm float-start finances-settings-field">
 					<div className="input-group-prepend">
 						<div className="input-group-text">$</div>
 					</div>
@@ -190,7 +190,7 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="float-left finances-settings-text">
+				<div className="float-start finances-settings-text">
 					Leaguewide rank: #{t.budget.ticketPrice.rank}
 				</div>
 			</div>
@@ -250,8 +250,8 @@ const FinancesForm = ({
 			</p>
 			{warningMessage}
 			<div className="row">
-				<div className="float-left finances-settings-label">Scouting</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
+				<div className="float-start finances-settings-label">Scouting</div>
+				<div className="input-group input-group-sm float-start finances-settings-field">
 					<div className="input-group-prepend">
 						<div className="input-group-text">$</div>
 					</div>
@@ -266,7 +266,7 @@ const FinancesForm = ({
 						<div className="input-group-text">M</div>
 					</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.scouting.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -277,8 +277,8 @@ const FinancesForm = ({
 				</div>
 			</div>
 			<div className="row">
-				<div className="float-left finances-settings-label">Coaching</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
+				<div className="float-start finances-settings-label">Coaching</div>
+				<div className="input-group input-group-sm float-start finances-settings-field">
 					<div className="input-group-prepend">
 						<div className="input-group-text">$</div>
 					</div>
@@ -293,7 +293,7 @@ const FinancesForm = ({
 						<div className="input-group-text">M</div>
 					</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.coaching.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -304,8 +304,8 @@ const FinancesForm = ({
 				</div>
 			</div>
 			<div className="row">
-				<div className="float-left finances-settings-label">Health</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
+				<div className="float-start finances-settings-label">Health</div>
+				<div className="input-group input-group-sm float-start finances-settings-field">
 					<div className="input-group-prepend">
 						<div className="input-group-text">$</div>
 					</div>
@@ -320,7 +320,7 @@ const FinancesForm = ({
 						<div className="input-group-text">M</div>
 					</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.health.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -331,8 +331,8 @@ const FinancesForm = ({
 				</div>
 			</div>
 			<div className="row">
-				<div className="float-left finances-settings-label">Facilities</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
+				<div className="float-start finances-settings-label">Facilities</div>
+				<div className="input-group input-group-sm float-start finances-settings-field">
 					<div className="input-group-prepend">
 						<div className="input-group-text">$</div>
 					</div>
@@ -347,7 +347,7 @@ const FinancesForm = ({
 						<div className="input-group-text">M</div>
 					</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.facilities.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (

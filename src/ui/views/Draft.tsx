@@ -398,7 +398,7 @@ const Draft = ({
 				<div className={undraftedColClasses}>
 					<h2>
 						Undrafted Players
-						<span className="float-right">
+						<span className="float-end">
 							<button
 								type="button"
 								className={buttonClasses}
@@ -428,7 +428,7 @@ const Draft = ({
 				<div className={draftedColClasses} id="table-draft-results">
 					<h2>
 						Draft Results
-						<span className="float-right">
+						<span className="float-end">
 							<button
 								type="button"
 								className={buttonClasses}

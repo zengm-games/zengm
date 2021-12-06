@@ -1,6 +1,5 @@
 bootstrap 5
 - https://getbootstrap.com/docs/5.0/migration/
-  - responsive breakpoints
 - test
   - code
   - custom form

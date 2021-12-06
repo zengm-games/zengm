@@ -265,7 +265,7 @@ a.god-mode.active {
 	background-position: 81px 34px;
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.dashboard-top-wrapper {
 		text-align: center;
 
@@ -361,7 +361,7 @@ table {
 	text-decoration: none;
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.mx-xs-auto {
 		margin-left: auto !important;
 		margin-right: auto !important;
@@ -1041,7 +1041,7 @@ button.fast-forward {
 	}
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	// Same as .table-responsive
 	.player-stats-summary {
 		display: block;
@@ -1117,7 +1117,7 @@ button.fast-forward {
 		margin-bottom: 30px;
 	}
 }
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.fake-list-group-item {
 		padding-right: 0;
 		padding-left: 0;
@@ -1127,7 +1127,7 @@ button.fast-forward {
 	}
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
 	// Make it so the striped-bg color goes all the way to the edge of the screen
 	.settings-col {
 		padding-left: 0;
@@ -1145,7 +1145,7 @@ button.fast-forward {
 	// To make it go over the Bootstrap custom form controls, like switch
 	z-index: 2;
 }
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
 	.settings-buttons {
 		margin: 0 -15px;
 		border-top-left-radius: 0 !important;

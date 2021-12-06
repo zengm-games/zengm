@@ -29,8 +29,8 @@ const HelpPopover = ({
 		<OverlayTriggerPopoverAuto
 			popoverContent={
 				<>
-					<Popover.Title as="h3">{title}</Popover.Title>
-					<Popover.Content>{children}</Popover.Content>
+					<Popover.Header as="h3">{title}</Popover.Header>
+					<Popover.Body>{children}</Popover.Body>
 				</>
 			}
 			popoverID={title}

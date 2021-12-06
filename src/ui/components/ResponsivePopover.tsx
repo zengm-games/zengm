@@ -47,7 +47,7 @@ const ResponsivePopover = ({
 
 	return (
 		<OverlayTriggerPopoverAuto
-			popoverContent={<Popover.Content>{popoverContent}</Popover.Content>}
+			popoverContent={<Popover.Body>{popoverContent}</Popover.Body>}
 			popoverID={id}
 			onEnter={toggle}
 		>

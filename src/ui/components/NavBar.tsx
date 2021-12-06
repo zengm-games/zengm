@@ -142,14 +142,14 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 						}}
 						overlay={
 							<Popover id="popover-welcome">
-								<Popover.Title className="text-primary fw-bold">
+								<Popover.Header className="text-primary fw-bold">
 									Welcome to {GAME_NAME}!
-								</Popover.Title>
-								<Popover.Content>
+								</Popover.Header>
+								<Popover.Body>
 									To advance through the game, use the Play button at the top.
 									The options shown will change depending on the current state
 									of the game.
-								</Popover.Content>
+								</Popover.Body>
 							</Popover>
 						}
 					>

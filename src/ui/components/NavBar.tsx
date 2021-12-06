@@ -114,8 +114,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 			bg="light"
 			expand="sm"
 			fixed="top"
-			className="navbar-border flex-nowrap"
-			role="banner"
+			className="navbar-border flex-nowrap px-3"
 		>
 			<button
 				className="navbar-toggler me-3"

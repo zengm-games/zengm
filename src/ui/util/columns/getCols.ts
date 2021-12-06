@@ -2740,19 +2740,18 @@ export default (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
-	return titles
-		.map(title => {
-			if (!cols.hasOwnProperty(title)) {
-				// throw new Error(`Unknown column: "${title}"`);
-				return null;
-			}
+	return titles.flatMap(title => {
+		if (!cols.hasOwnProperty(title)) {
+			return [];
+		}
 
-			return {
+		return [
+			{
 				...cols[title],
 				title: cols[title].title ?? title,
 				key: title,
 				...overrides[title],
-			};
-		})
-		.filter(c => c !== null);
+			},
+		];
+	});
 };

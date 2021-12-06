@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, processPlayerStats } from "../util";
+import { processPlayerStats } from "../util";
+import getCols from "../util/columns/getCols";
 import { filterPlayerStats, getPeriodName, helpers } from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
@@ -39,7 +40,7 @@ export const StatsHeader = ({
 	sortable,
 }: {
 	cols: Col[];
-	onClick: (b: MouseEvent, a: number) => void;
+	onClick: (b: MouseEvent, a: string) => void;
 	sortBys: SortBy[];
 	sortable: boolean;
 }) => {
@@ -53,7 +54,7 @@ export const StatsHeader = ({
 				if (sortable) {
 					className = "sorting";
 					for (const sortBy of sortBys) {
-						if (sortBy[0] === i) {
+						if (sortBy[0] === col.key) {
 							className = sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
 							break;
 						}
@@ -65,7 +66,7 @@ export const StatsHeader = ({
 						className={className}
 						key={i}
 						onClick={event => {
-							onClick(event, i);
+							onClick(event, col.key);
 						}}
 						title={desc}
 					>
@@ -84,7 +85,7 @@ export const sortByStats = (
 ) => {
 	return (a: any, b: any) => {
 		for (const [index, order] of sortBys) {
-			const stat = stats[index];
+			const stat = index.includes(":") ? index.split(":")[1] : index;
 
 			const aValue = getValue?.(a, stat) ?? a.processed[stat];
 			const bValue = getValue?.(b, stat) ?? b.processed[stat];
@@ -115,20 +116,32 @@ const StatsTableIndividual = ({
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			stat => [`stat:${stat}`, "desc"] as SortBy,
 		);
 	});
 
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			prevSortBys =>
+	const onClick = (event: MouseEvent, colKey: string) => {
+		setSortBys(prevSortBys => {
+			const newSortBys =
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
-				}) ?? [],
-		);
+				}) ?? [];
+
+			if (
+				newSortBys.length === 1 &&
+				prevSortBys.length === 1 &&
+				newSortBys[0][0] === prevSortBys[0][0] &&
+				newSortBys[0][1] === "desc"
+			) {
+				// User just clicked twice on the same column. Reset sort.
+				return [];
+			}
+
+			return newSortBys;
+		});
 	};
 
 	const players = t.players

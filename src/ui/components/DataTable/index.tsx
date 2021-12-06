@@ -35,6 +35,7 @@ export type SortBy = [string, SortOrder];
 
 export type Col = Omit<LegacyCol, "title"> & {
 	key: string;
+	title?: string;
 };
 
 export type LegacyCol = {

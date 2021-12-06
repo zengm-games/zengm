@@ -163,8 +163,8 @@ const TeamRecords = ({
 			) : null}
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "asc"]}
 				name="TeamRecords"
 				pagination={false}
 				rows={rows}

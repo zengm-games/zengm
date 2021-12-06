@@ -8,6 +8,7 @@ export type ColTemp = Omit<LegacyCol, "title"> & {
 	title?: string;
 	ratings?: string[];
 	stats?: string[];
+	attrs?: string[];
 	template?: string;
 	render?: (p: Player, c: ColTemp, vars: object) => JSX.Element;
 };
@@ -2548,6 +2549,7 @@ const cols: {
 	Actions: {},
 	Age: {
 		sortType: "number",
+		attrs: ["age"],
 		template: "Age",
 	},
 	"Asking For": {
@@ -2557,6 +2559,7 @@ const cols: {
 	},
 	Contract: {
 		sortSequence: ["desc", "asc"],
+		attrs: ["contract"],
 		sortType: "currency",
 		template: "Contract",
 	},
@@ -2577,6 +2580,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		template: "MoodCurrent",
+	},
+	DraftYear: {
+		sortType: "number",
+		attrs: ["draft"],
+		template: "DraftYear",
 	},
 	Name: {
 		sortType: "name",
@@ -2644,13 +2652,28 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Pick: {
+		desc: "Draft Pick",
+		template: "Pick",
+		attrs: ["draft"],
+	},
 	Skills: {},
 	Team: {
 		template: "Team",
 		sortType: "string",
-		stats: "abbrev",
+		stats: ["abbrev"],
 	},
 	Summary: {},
+	Weight: {
+		template: "Weight",
+		attrs: ["weight"],
+		desc: "Weight",
+	},
+	Height: {
+		template: "Height",
+		attrs: ["hgt"],
+		desc: "Height",
+	},
 	"rating:endu": {
 		template: "Rating",
 		ratings: ["endu"],

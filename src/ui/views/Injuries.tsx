@@ -95,7 +95,7 @@ const Injuries = ({
 
 			{rows.length > 0 ? (
 				<DataTable
-					cols={cols}
+					legacyCols={cols}
 					defaultSort={[cols.length - 3, "asc"]}
 					name="Injuries"
 					pagination

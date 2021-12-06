@@ -180,7 +180,7 @@ const SortableColumnHeader = SortableContainer(
 			<tr>
 				{props.cols.map((col, index) => (
 					<SortableColumn
-						key={`item-${col.title}`}
+						key={`item-${col.key}`}
 						isDragged={props.isDragged}
 						selected={props.indexSelected === index}
 						index={index}

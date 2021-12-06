@@ -67,6 +67,7 @@ const Offer = (props: OfferProps) => {
 			<div className="col-md-8">
 				<DataTable
 					cols={cols}
+					config={config}
 					defaultSort={["Contract", "desc"]}
 					hideAllControls
 					name="TradingBlockOffer"

@@ -32,8 +32,6 @@ const PlayerRatings = ({
 		};
 	});
 
-	console.log(players[0]);
-
 	return (
 		<div>
 			<MoreLinks type="playerRatings" page="player_ratings" season={season} />

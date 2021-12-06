@@ -123,8 +123,8 @@ const PlayerList = ({
 			</div>
 			<div>
 				<DataTable
-					cols={cols}
-					defaultSort={[5, "desc"]}
+					legacyCols={cols}
+					defaultSort={["col6", "desc"]}
 					name="ProtectPlayers"
 					rows={rows}
 					hideAllControls

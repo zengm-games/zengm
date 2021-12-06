@@ -1,4 +1,4 @@
-import { Player } from "../../../../common/types";
+import type { Player } from "../../../../common/types";
 import { helpers } from "../../index";
 import type { ColTemp } from "../getCols";
 

@@ -5,16 +5,20 @@ import { uniq } from "lodash-es";
 import type { Col } from "../components/DataTable";
 
 export class TableConfig {
-	get ratingsNeeded(): string[] | undefined {
-		return this._ratingsNeeded;
+	get ratingsNeeded(): string[] {
+		return this._ratingsNeeded ?? [];
 	}
-	get statsNeeded(): string[] | undefined {
-		return this._statsNeeded;
+	get statsNeeded(): string[] {
+		return this._statsNeeded ?? [];
+	}
+	get attrsNeeded(): string[] {
+		return this._attrsNeeded ?? [];
 	}
 
 	protected fallback: string[];
-	private _statsNeeded?: string[];
-	private _ratingsNeeded?: string[];
+	private _statsNeeded: string[] = [];
+	private _ratingsNeeded: string[] = [];
+	private _attrsNeeded: string[] = [];
 	public columns: Col[];
 	public tableName: string;
 
@@ -35,6 +39,9 @@ export class TableConfig {
 		);
 		this._ratingsNeeded = uniq(
 			this.columns.reduce((needed, c) => needed.concat(c.ratings ?? []), []),
+		);
+		this._attrsNeeded = uniq(
+			this.columns.reduce((needed, c) => needed.concat(c.attrs ?? []), []),
 		);
 	}
 }

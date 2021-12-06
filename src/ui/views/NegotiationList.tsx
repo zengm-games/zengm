@@ -9,14 +9,10 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
-import { Player } from "../../common/types";
-import { ColTemp } from "../util/columns/getCols";
 import getTemplate from "../util/columns/getTemplate";
 
 const NegotiationList = ({
 	capSpace,
-	challengeNoRatings,
 	hardCap,
 	maxContract,
 	minContract,

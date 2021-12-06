@@ -1,4 +1,4 @@
-import { Player } from "../../../../common/types";
+import type { Player } from "../../../../common/types";
 import { RatingWithChange } from "../../../components";
 import type { ColTemp } from "../getCols";
 

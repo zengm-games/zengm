@@ -161,8 +161,8 @@ const LeagueStats = ({
 		<>
 			<MoreLinks type="league" page="league_stats" />
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "desc"]}
 				name={`LeagueStats${teamOpponent}`}
 				pagination={pagination}
 				rows={rows}

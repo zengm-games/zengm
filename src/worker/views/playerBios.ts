@@ -4,6 +4,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
 import { player } from "../core";
 import { idb } from "../db";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerBios">,
@@ -24,13 +25,36 @@ const updatePlayers = async (
 			hockey: ["keyStats"],
 		});
 
+		const config: TableConfig = new TableConfig("playerRatings", [
+			"Name",
+			"Pos",
+			"stat:jerseyNumber",
+			"Team",
+			"Age",
+			"Height",
+			"Weight",
+			"Mood",
+			"Contract",
+			"Exp",
+			"Country",
+			"College",
+			"Draft Year",
+			"Pick",
+			"Experience",
+			"Ovr",
+			"Pot",
+			...stats.map(s => `stat:${s}`),
+		]);
+		await config.load();
+
 		const players = await getPlayers(
 			inputs.season,
 			inputs.abbrev,
-			["born", "college", "hgt", "weight", "draft", "experience"],
-			["ovr", "pot"],
-			[...stats, "jerseyNumber"],
+			[],
+			[],
+			[],
 			inputs.tid,
+			config,
 		);
 
 		const userTid = g.get("userTid");
@@ -50,7 +74,7 @@ const updatePlayers = async (
 			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,
-			stats,
+			config,
 			userTid,
 		};
 	}

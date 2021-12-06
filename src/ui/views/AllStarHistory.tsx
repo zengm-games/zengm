@@ -295,8 +295,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			<MoreLinks type="league" page="all_star_history" />
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "desc"]}
 				name="AllStarHistory"
 				pagination={pagination}
 				rows={rows}

@@ -456,8 +456,8 @@ const ImportPlayers = ({
 					</div>
 					<div className="clearfix">
 						<DataTable
-							cols={cols}
-							defaultSort={[1, "asc"]}
+							legacyCols={cols}
+							defaultSort={["col2", "asc"]}
 							name="ImportPlayers"
 							pagination
 							rows={rows}

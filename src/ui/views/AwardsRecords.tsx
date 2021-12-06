@@ -80,8 +80,8 @@ const AwardsRecords = ({
 			</h4>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[1, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "desc"]}
 				name="AwardsRecords"
 				rows={rows}
 				pagination

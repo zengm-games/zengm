@@ -168,8 +168,8 @@ const Most = ({
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "asc"]}
 				name={`Most_${type}`}
 				rows={rows}
 				superCols={superCols}

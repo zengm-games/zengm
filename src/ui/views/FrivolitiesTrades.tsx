@@ -205,8 +205,8 @@ const FrivolitiesTrades = ({
 			{description ? <p>{description}</p> : null}
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "asc"]}
 				name={`FrivolitiesTrades_${type}`}
 				nonfluid
 				rows={rows}

@@ -1,7 +1,5 @@
 bootstrap 5
 - https://getbootstrap.com/docs/5.0/migration/
-- http://localhost/new_league/random
-  - width - comes from grid gap
 - test
   - code
   - custom form
@@ -10,9 +8,11 @@ bootstrap 5
   - border-top-light
   - ads
   - screenshot
+    - navbar-right
   - form-row
   - button-variant test all with 2 args
   - multi team
+  - settings
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

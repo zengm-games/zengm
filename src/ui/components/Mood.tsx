@@ -213,7 +213,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 									key={key}
 									className={highlightColor(componentsRounded[key])}
 								>
-									<td className="text-right p-0">
+									<td className="text-end p-0">
 										{plusMinus(componentsRounded[key])}
 									</td>
 									<td className="p-0 ps-1">{text}</td>
@@ -260,7 +260,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				onClick={onClick}
 			>
 				<span
-					className={`text-right ${highlightColor(sum)}`}
+					className={`text-end ${highlightColor(sum)}`}
 					data-no-row-highlight="true"
 					style={plusMinusStyle}
 				>

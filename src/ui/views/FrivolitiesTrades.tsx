@@ -23,7 +23,7 @@ const PlayerInfo = ({
 }) => {
 	return (
 		<>
-			<span className="d-inline-block text-right me-1" style={{ minWidth: 19 }}>
+			<span className="d-inline-block text-end me-1" style={{ minWidth: 19 }}>
 				{asset.pos}
 			</span>
 			<a href={helpers.leagueUrl(["player", asset.pid])}>{asset.name}</a> (

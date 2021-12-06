@@ -414,7 +414,7 @@ const Trade = (props: View<"trade">) => {
 								>
 									{state.message}
 									{state.prevTeams ? (
-										<div className="mt-1 text-right">
+										<div className="mt-1 text-end">
 											<button
 												className="btn btn-secondary btn-sm"
 												onClick={async () => {

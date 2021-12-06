@@ -449,7 +449,7 @@ const UserDunkForm = ({
 						</div>
 					))}
 
-					<div className="text-right mt-2">
+					<div className="text-end mt-2">
 						<button
 							disabled={submitted}
 							type="submit"

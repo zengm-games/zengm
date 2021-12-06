@@ -1022,7 +1022,7 @@ const Input = ({
 	} else if (type === "rangePercent") {
 		inputElement = (
 			<div className="d-flex" style={inputStyle}>
-				<div className="text-right me-1" style={{ minWidth: 38 }}>
+				<div className="text-end me-1" style={{ minWidth: 38 }}>
 					{Math.round(parseFloat(value) * 100)}%
 				</div>
 				<div>

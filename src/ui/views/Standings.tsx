@@ -314,7 +314,7 @@ const SmallStandingsRow = ({
 				season={season}
 				t={t}
 			/>
-			<td className="text-right">
+			<td className="text-end">
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
 					: playoffsByConf
@@ -471,7 +471,7 @@ const Standings = ({
 
 	const footer = (
 		<>
-			<div className="float-md-left">
+			<div className="float-md-start">
 				z - clinched {playoffsByConf ? "a" : "the"} #1 seed
 				<br />
 				{numPlayoffByes > 0 ? (
@@ -490,7 +490,7 @@ const Standings = ({
 				) : null}
 				o - eliminated from playoff contention
 			</div>
-			<div className="float-md-right mt-3 mt-md-0" style={{ maxWidth: 400 }}>
+			<div className="float-md-end mt-3 mt-md-0" style={{ maxWidth: 400 }}>
 				<p>Tiebreakers for the {season} season:</p>
 				<ol>
 					{tiebreakers.map(key => (

@@ -270,7 +270,7 @@ const ExpansionDraft = ({
 													</label>
 												</div>
 											</div>
-											<div className="col-6 text-right">
+											<div className="col-6 text-end">
 												<button
 													type="button"
 													className="btn btn-danger"

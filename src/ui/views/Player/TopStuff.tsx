@@ -154,7 +154,7 @@ const StatsSummary = ({
 									className={classNames({
 										"table-separator-right": separatorAfter.includes(i),
 										"table-separator-left": separatorAfter.includes(i - 1),
-										"text-left": i === 0,
+										"text-start": i === 0,
 									})}
 								>
 									{col.title}
@@ -167,7 +167,7 @@ const StatsSummary = ({
 					<tbody>
 						<tr>
 							<th
-								className="table-separator-right text-left"
+								className="table-separator-right text-start"
 								title={showPeakSeason ? String(ps.season) : undefined}
 							>
 								{showPeakSeason ? "Peak" : ps.season}
@@ -191,7 +191,7 @@ const StatsSummary = ({
 
 				<tfoot>
 					<tr>
-						<th className="table-separator-right text-left">Career</th>
+						<th className="table-separator-right text-start">Career</th>
 						{stats.map((stat, i) => {
 							return (
 								<td

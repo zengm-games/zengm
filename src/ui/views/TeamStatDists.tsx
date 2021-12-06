@@ -172,7 +172,7 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 						.map(stat => {
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
-									<td className="pe-3 text-right">{stat}</td>
+									<td className="pe-3 text-end">{stat}</td>
 									<td style={width100}>
 										<BoxPlot
 											color="var(--blue)"

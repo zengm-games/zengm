@@ -211,7 +211,7 @@ const ScoreBox = ({
 			<div
 				className={classNames(
 					"border-light",
-					actions.length > 0 ? "border-right-0" : undefined,
+					actions.length > 0 ? "border-end-0" : undefined,
 				)}
 			>
 				{tradeDeadline ? (
@@ -404,14 +404,14 @@ const ScoreBox = ({
 										) : null}
 									</div>
 									{spreads && small ? (
-										<div className="text-right score-box-score me-2">
+										<div className="text-end score-box-score me-2">
 											{spreads[i]}
 										</div>
 									) : null}
 									{final ? (
 										<div
 											className={classNames(
-												"text-body text-right align-self-stretch d-flex align-items-center",
+												"text-body text-end align-self-stretch d-flex align-items-center",
 												scoreClass,
 												userTeamClass,
 												{
@@ -448,7 +448,7 @@ const ScoreBox = ({
 								</div>
 								{p ? (
 									<div
-										className="align-self-stretch border-left ps-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
+										className="align-self-stretch border-start ps-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
 										style={{
 											backgroundColor: "var(--white)",
 											width: 200,
@@ -476,7 +476,7 @@ const ScoreBox = ({
 			</div>
 			{small && overtimes ? (
 				<div
-					className="text-right text-muted px-1 d-flex align-items-center"
+					className="text-end text-muted px-1 d-flex align-items-center"
 					style={{ height: 28 }}
 				>
 					{overtimes}

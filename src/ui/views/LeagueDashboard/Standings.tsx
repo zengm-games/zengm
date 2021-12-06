@@ -47,7 +47,7 @@ const Standings = ({
 							})}
 						>
 							<TeamColumn rank={t.rank} rankWidth={15} t={t} />
-							<td className="text-right">
+							<td className="text-end">
 								{usePts ? Math.round(t.seasonAttrs.pts) : t.gb}
 							</td>
 						</tr>

@@ -116,7 +116,7 @@ const PlayerStatDists = ({
 									</td>
 									<td style={width100}>
 										<BoxPlot
-											color="var(--blue)"
+											color="var(--bs-blue)"
 											data={statsAll[stat]}
 											scale={(scale as any)[stat]}
 										/>
@@ -131,7 +131,7 @@ const PlayerStatDists = ({
 										<td style={width100}>
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
-													color="var(--green)"
+													color="var(--bs-green)"
 													labels={false}
 													scale={
 														isSport("basketball")

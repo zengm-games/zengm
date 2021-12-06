@@ -450,7 +450,7 @@ const ScoreBox = ({
 									<div
 										className="align-self-stretch border-start ps-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
 										style={{
-											backgroundColor: "var(--white)",
+											backgroundColor: "var(--bs-white)",
 											width: 200,
 										}}
 									>

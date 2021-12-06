@@ -43,7 +43,7 @@ const PlayerRatingDists = ({
 								<td className="pe-3 text-end">{rating}</td>
 								<td style={width100}>
 									<BoxPlot
-										color="var(--blue)"
+										color="var(--bs-blue)"
 										data={ratingsAll[rating]}
 										scale={[0, 100]}
 									/>

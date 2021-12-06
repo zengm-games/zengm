@@ -175,7 +175,7 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 									<td className="pe-3 text-end">{stat}</td>
 									<td style={width100}>
 										<BoxPlot
-											color="var(--blue)"
+											color="var(--bs-blue)"
 											data={(statsAll as any)[stat]}
 											scale={(scale as any)[stat]}
 										/>
@@ -190,7 +190,7 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 										<td style={width100}>
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
-													color="var(--green)"
+													color="var(--bs-green)"
 													data={(proStatsAll as any)[stat]}
 													labels={false}
 													scale={(scale as any)[stat]}

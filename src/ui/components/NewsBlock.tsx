@@ -14,14 +14,10 @@ const Badge = ({ type }: { type: LogEventType }) => {
 		className = categories[typeInfo.category].className;
 	} else {
 		text = type;
-		className = "badge-secondary";
+		className = "bg-secondary";
 	}
 	return (
-		<span
-			className={`badge badge-news m-2 ms-auto align-self-start ${className}`}
-		>
-			{text}
-		</span>
+		<span className={`badge badge-news mx-2 ms-auto ${className}`}>{text}</span>
 	);
 };
 

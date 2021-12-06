@@ -13,6 +13,9 @@ bootstrap 5
   - button-variant test all with 2 args
   - multi team
   - settings
+  - scheduled events
+  - table-info and other colors only work on actual tables
+  - enter league file URL
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

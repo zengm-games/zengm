@@ -291,27 +291,23 @@ const LeagueFileUpload = ({
 	return (
 		<>
 			{enterURL ? (
-				<div className="form-row">
-					<div className="col">
-						<input
-							type="text"
-							className="form-control me-2"
-							placeholder="URL"
-							value={url}
-							onChange={event => {
-								setURL(event.target.value);
-							}}
-						/>
-					</div>
-					<div className="col-auto">
-						<button
-							className="btn btn-secondary"
-							onClick={handleFileURL}
-							disabled={disabled || state.status === "checking"}
-						>
-							Load
-						</button>
-					</div>
+				<div className="d-flex">
+					<input
+						type="text"
+						className="form-control me-2"
+						placeholder="URL"
+						value={url}
+						onChange={event => {
+							setURL(event.target.value);
+						}}
+					/>
+					<button
+						className="btn btn-secondary ml-2"
+						onClick={handleFileURL}
+						disabled={disabled || state.status === "checking"}
+					>
+						Load
+					</button>
 				</div>
 			) : (
 				<input

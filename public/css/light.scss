@@ -101,6 +101,13 @@ $flag-icon-css-path: "/img/flags";
 @import "glyphicons";
 @import "sidebar";
 
+// Make it more like Bootstrap 4 - allow using these classes on non-table elements
+@each $color, $value in $table-variants {
+	.table-#{$color} {
+		background-color: $value;
+	}
+}
+
 h1 {
 	font-size: 24px;
 }

@@ -347,7 +347,7 @@ const TopStuff = ({
 			<div className="d-flex align-items-center">
 				{injured ? (
 					<span
-						className="badge badge-danger badge-injury ms-0"
+						className="badge bg-danger badge-injury ms-0"
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${

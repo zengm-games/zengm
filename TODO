@@ -3,8 +3,8 @@ bootstrap 5
 - test
   - code
   - custom form
-  - badge-X
-  - badge-yellow
+  - badge-X, badge-yellow
+    - dark.scss
   - border-top-light
   - ads
   - screenshot
@@ -19,6 +19,9 @@ bootstrap 5
   - enter league file URL
   - popover
   - auto play
+  - dark mode
+
+rankWidth in standings table should depend on if a 2 digit number is shown or not
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

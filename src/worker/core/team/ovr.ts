@@ -15,6 +15,7 @@ const ovr = (
 		};
 	}[],
 	options: {
+		playoffs?: boolean;
 		pos?: string;
 		rating?: string;
 		wholeRoster?: boolean;
@@ -22,6 +23,7 @@ const ovr = (
 ) => {
 	return bySport({
 		basketball: ovrBasketball(players, {
+			playoffs: options.playoffs,
 			rating: options.rating,
 		}),
 		football: ovrFootball(players, {

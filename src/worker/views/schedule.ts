@@ -3,7 +3,7 @@ import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
-import { bySport } from "../../common";
+import { bySport, PHASE } from "../../common";
 
 export const getUpcoming = async ({
 	day,
@@ -54,7 +54,12 @@ export const getUpcoming = async ({
 	const getTeam = (tid: number) => {
 		let ovr = ovrsCache.get(tid);
 		if (ovr === undefined) {
-			ovr = team.ovr(healthyPlayers.filter(p => p.tid === tid));
+			ovr = team.ovr(
+				healthyPlayers.filter(p => p.tid === tid),
+				{
+					playoffs: g.get("phase") === PHASE.PLAYOFFS,
+				},
+			);
 			ovrsCache.set(tid, ovr);
 		}
 

@@ -1008,7 +1008,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							userTid: wrap({
 								type: "integer",
-								minimum: 0,
 							}),
 							userTids: {
 								type: "array",

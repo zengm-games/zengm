@@ -806,6 +806,21 @@ const watchList = (params: Params) => {
 	return { playoffs, statType, flagNote };
 };
 
+const powerRankings = (params: Params) => {
+	let playoffs =
+		g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason";
+	if (params.playoffs === "playoffs") {
+		playoffs = "playoffs";
+	} else if (params.playoffs === "regularSeason") {
+		playoffs = "regularSeason";
+	}
+
+	return {
+		playoffs,
+		season: validateSeason(params.season),
+	};
+};
+
 const validateSeasonOnly = (params: Params) => {
 	return {
 		season: validateSeason(params.season),
@@ -856,7 +871,7 @@ export default {
 	playerStatDists,
 	playerStats,
 	playoffs: validateSeasonOnly,
-	powerRankings: validateSeasonOnly,
+	powerRankings,
 	relatives: player,
 	resetPassword,
 	roster,

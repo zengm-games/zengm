@@ -210,8 +210,12 @@ const updateRoster = async (
 		);
 		const t2 = {
 			...t,
-			ovr: team.ovr(players),
-			ovrCurrent: team.ovr(playersCurrent),
+			ovr: team.ovr(players, {
+				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+			}),
+			ovrCurrent: team.ovr(playersCurrent, {
+				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 

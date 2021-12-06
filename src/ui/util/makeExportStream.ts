@@ -10,11 +10,11 @@ import toWorker from "./toWorker";
 import type { LeagueDB } from "../../worker/db/connectLeague";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
-const TEN_MEGABYTE_IN_BYTES = 100 * 1024 * 1024;
+const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;
 
-// If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction
-const highWaterMark = TEN_MEGABYTE_IN_BYTES;
-const minSizePerPull = TEN_MEGABYTE_IN_BYTES;
+// If we just let the normal highWaterMark mechanism work, it might pull only one record at a time, which is not ideal given the cost of starting a transaction. Make it too high, and the progress bar becomes unrealistic (especially when uploading to Dropbox which is slower than writing to disk) because it is measured from reading the database, not the end of the stream.
+const highWaterMark = TWENTY_MEGABYTES_IN_BYTES;
+const minSizePerPull = TWENTY_MEGABYTES_IN_BYTES;
 
 const stringSizeInBytes = (str: string | undefined) => {
 	if (!str) {

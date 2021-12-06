@@ -17,7 +17,7 @@ const updateSortBys = ({
 
 	// Ignore click on unsortable column
 	if (!col || (col.sortSequence && col.sortSequence.length === 0)) {
-		return [];
+		return prevSortBys;
 	}
 
 	let found = false;

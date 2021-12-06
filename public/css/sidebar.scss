@@ -45,10 +45,10 @@
 .sidebar-heading {
 	font-size: 0.75rem;
 	text-transform: uppercase;
-	@extend .px-3;
-	@extend .mt-3;
-	@extend .mb-1;
-	@extend .text-muted;
+	// @extend .px-3;
+	// @extend .mt-3;
+	// @extend .mb-1;
+	// @extend .text-muted;
 }
 
 @include media-breakpoint-up(xl) {

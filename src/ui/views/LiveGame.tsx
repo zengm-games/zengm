@@ -547,7 +547,7 @@ const LiveGame = (props: View<"liveGame">) => {
 								<div className="mb-3 flex-grow-1 mb-0">
 									<input
 										type="range"
-										className="form-control-range"
+										className="form-range"
 										disabled={boxScore.current.gameOver}
 										min="1"
 										max="33"

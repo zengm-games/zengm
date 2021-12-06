@@ -1029,7 +1029,7 @@ const Input = ({
 					<input
 						type="range"
 						{...commonProps}
-						className="form-control-range"
+						className="form-range"
 						min="0"
 						max="1"
 						step="0.05"

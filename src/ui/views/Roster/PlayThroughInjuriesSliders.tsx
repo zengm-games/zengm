@@ -28,12 +28,12 @@ const Slider = ({
 
 	return (
 		<div className={className}>
-			<label className="mb-1" htmlFor={id}>
+			<label className="form-label mb-0" htmlFor={id}>
 				{playoffs ? "Playoffs" : "Regular Season"}
 			</label>
 			<input
 				type="range"
-				className="form-control-range"
+				className="form-range"
 				id={id}
 				value={value}
 				min="0"
@@ -53,12 +53,13 @@ const Slider = ({
 					}
 				}}
 			/>
-			<div className="mt-1">
+			<div style={{ marginTop: -5 }}>
 				{value === 0 ? (
 					"Only play fully healthy players"
 				) : (
 					<>
-						{value} {timeBetweenGames(value)} ({rounded}% performance)
+						{value} {timeBetweenGames(value)}{" "}
+						<span className="text-muted">({rounded}% performance)</span>
 					</>
 				)}
 			</div>

@@ -1,5 +1,8 @@
 bootstrap 5
 - https://getbootstrap.com/docs/5.0/migration/
+- rosters
+  - table handles should not be striped
+  - PT
 - test
   - code
   - custom form

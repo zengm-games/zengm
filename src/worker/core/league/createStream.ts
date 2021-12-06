@@ -1237,6 +1237,24 @@ const afterDBStream = async ({
 		}
 	}
 
+	// Gregg Brown from DNBA, RIP. Make one player on Denver have his name, assuming it's a random players league, Denver exists, and there are no custom names.
+	if (isSport("basketball") && !fileHasPlayers && !g.get("playerBioInfo")) {
+		const tid = teams.find(t => t.region === "Denver")?.tid;
+		if (tid !== undefined) {
+			const players = (
+				await idb.cache.players.indexGetAll("playersByTid", tid)
+			).filter(p => p.relatives.length === 0);
+			const p = random.choice(players);
+			if (p) {
+				p.firstName = "Gregg";
+				p.lastName = "Brown";
+				p.born.loc = "Australia";
+				p.real = true;
+				await idb.cache.players.put(p);
+			}
+		}
+	}
+
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;

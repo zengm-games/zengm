@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ButtonHTMLAttributes, MouseEvent, useRef } from "react";
+import { ButtonHTMLAttributes, MouseEvent, ReactNode, useRef } from "react";
 
 export const processingSpinner = (
 	<>
@@ -16,15 +16,17 @@ const ActionButton = ({
 	children,
 	className,
 	disabled,
+	maintainWidth = true,
 	onClick,
 	processing,
 	size,
 	type,
 	variant = "primary",
 }: {
-	children: string;
+	children: ReactNode;
 	className?: string;
 	disabled?: boolean;
+	maintainWidth?: boolean;
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 	processing: boolean;
 	size?: "lg";
@@ -54,9 +56,13 @@ const ActionButton = ({
 					onClick(event);
 				}
 			}}
-			style={{
-				minWidth: minWidth.current,
-			}}
+			style={
+				maintainWidth
+					? {
+							minWidth: minWidth.current,
+					  }
+					: undefined
+			}
 		>
 			{processing ? processingSpinner : children}
 		</button>

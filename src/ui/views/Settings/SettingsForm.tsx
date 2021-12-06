@@ -1048,7 +1048,7 @@ const Input = ({
 				<div className="input-group" style={inputStyle}>
 					<select
 						{...commonProps}
-						className="form-control"
+						className="form-select"
 						value={selectValue}
 						style={{ width: 60 }}
 					>
@@ -1070,7 +1070,7 @@ const Input = ({
 			);
 		} else {
 			inputElement = (
-				<select {...commonProps}>
+				<select {...commonProps} className="form-select">
 					{values.map(({ key, value }) => (
 						<option key={key} value={key}>
 							{value}
@@ -1695,7 +1695,7 @@ const SettingsForm = ({
 							(godMode || showGodModeSettings) ? (
 								<div className="form-inline mb-3">
 									<select
-										className="form-control"
+										className="form-select"
 										value={gameSimPreset}
 										disabled={!godMode}
 										onChange={event => {

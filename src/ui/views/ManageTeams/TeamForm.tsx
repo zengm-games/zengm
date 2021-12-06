@@ -132,7 +132,7 @@ const TeamForm = ({
 				<div className="mb-3">
 					<label className={classNameLabel}>Division</label>
 					<select
-						className="form-control"
+						className="form-select"
 						onChange={e => handleInputChange("did", e)}
 						value={t.did}
 					>
@@ -213,7 +213,7 @@ const TeamForm = ({
 							/>
 						))}
 						<select
-							className="form-control"
+							className="form-select"
 							onMouseDown={() => {
 								// Runs when select is opened
 								setShowFace(true);
@@ -268,7 +268,7 @@ const TeamForm = ({
 					<div className="mb-3">
 						<label className={classNameLabel}>Status</label>
 						<select
-							className="form-control"
+							className="form-select"
 							disabled={disableStatus}
 							onChange={e => handleInputChange("disabled", e)}
 							value={t.disabled ? "1" : "0"}

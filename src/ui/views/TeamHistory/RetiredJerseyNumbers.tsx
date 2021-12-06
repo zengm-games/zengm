@@ -165,7 +165,7 @@ const RetiredJerseyNumbers = ({
 								Link to player?
 							</label>
 							<select
-								className="form-control"
+								className="form-select"
 								id="rjn-link"
 								value={editing.linkToPlayer}
 								onChange={handleChange("linkToPlayer")}
@@ -188,7 +188,7 @@ const RetiredJerseyNumbers = ({
 										Select player
 									</label>
 									<select
-										className="form-control"
+										className="form-select"
 										id="rjn-player-select"
 										value={playerSelectValue}
 										onChange={event => {

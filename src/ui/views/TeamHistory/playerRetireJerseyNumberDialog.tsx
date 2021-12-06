@@ -47,7 +47,7 @@ const Confirm = confirmable(({ show, proceed, p }: any) => {
 						<div className="flex-grow-1 me-2">
 							<select
 								ref={inputRef}
-								className="form-control"
+								className="form-select"
 								onChange={event => {
 									setNumber(event.target.value);
 								}}

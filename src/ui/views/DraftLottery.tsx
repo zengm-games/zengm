@@ -375,7 +375,7 @@ const Rigged = ({
 			{actualRigged.map((selected, i) => (
 				<td key={i}>
 					<select
-						className="form-control form-control-sm px-0 god-mode"
+						className="form-select form-select-sm px-0 god-mode"
 						onChange={async event => {
 							const value = parseInt(event.target.value);
 

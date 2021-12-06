@@ -424,7 +424,7 @@ const UserDunkForm = ({
 								<select
 									id="user-dunk-toss"
 									value={dunkAttempt[key]}
-									className="form-control"
+									className="form-select"
 									onChange={event => {
 										setDunkAttempt({
 											...dunkAttempt,

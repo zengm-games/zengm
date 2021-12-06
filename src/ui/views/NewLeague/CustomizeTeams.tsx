@@ -463,7 +463,7 @@ const AddTeam = ({
 		<div className="card-body p-0 m-3">
 			<div className="input-group">
 				<select
-					className="form-control"
+					className="form-select"
 					value={abbrev}
 					onChange={event => {
 						setAbbrev(event.target.value);

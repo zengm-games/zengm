@@ -70,7 +70,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 
 	return (
 		<select
-			className="form-control pt-modifier-select"
+			className="form-select pt-modifier-select"
 			value={value}
 			onChange={event => handlePtChange(p, userTid, event)}
 			style={(ptStyles as any)[String(value)]}

@@ -79,7 +79,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 
 			<form className="form-inline" onSubmit={handleSubmit}>
 				<div className="mb-3 me-2">
-					<select className="form-control" onChange={resetState}>
+					<select className="form-select" onChange={resetState}>
 						<option value="averages">Season Averages</option>
 						{isSport("basketball") ? (
 							<option value="games">Individual Games</option>
@@ -87,7 +87,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 					</select>
 				</div>{" "}
 				<div className="mb-3 me-2">
-					<select className="form-control" onChange={resetState}>
+					<select className="form-select" onChange={resetState}>
 						{seasons.map(s => {
 							return (
 								<option key={s.key} value={s.key}>

@@ -1,12 +1,7 @@
 bootstrap 5
 - https://getbootstrap.com/docs/5.0/migration/
 - http://localhost/new_league/random
-  - difficulty dropdown arrow missing
-  - width
-  - left/right arrows hover
-  - customize/randomize buttons
-    - hover
-    - border radius
+  - width - comes from grid gap
 - test
   - code
   - custom form
@@ -16,6 +11,8 @@ bootstrap 5
   - ads
   - screenshot
   - form-row
+  - button-variant test all with 2 args
+  - multi team
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

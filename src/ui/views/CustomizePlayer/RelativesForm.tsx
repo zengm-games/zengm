@@ -55,7 +55,7 @@ const RelativesForm = ({
 						<div className="me-3">
 							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
-								className="form-control"
+								className="form-select"
 								onChange={event => {
 									handleRelativesChange(i, "type", event);
 								}}

@@ -296,7 +296,7 @@ const ExpansionDraft = ({
 						<div className="card">
 							<div className="card-body">
 								<select
-									className="form-control me-2"
+									className="form-select me-2"
 									style={{ maxWidth: 300 }}
 									value={addTeamAbbrev}
 									onChange={event => {

@@ -1122,7 +1122,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								<div className="input-group mb-1">
 									<select
 										id="new-league-team"
-										className="form-control"
+										className="form-select"
 										disabled={disableWhileLoadingLeagueFile}
 										value={state.tid}
 										onChange={event => {
@@ -1191,7 +1191,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								</label>
 								<select
 									id="new-league-difficulty"
-									className="form-control mb-1"
+									className="form-select mb-1"
 									onChange={event => {
 										dispatch({
 											type: "setDifficulty",
@@ -1331,7 +1331,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<h2 className="card-title">Customize</h2>
 											<div className="mb-3">
 												<select
-													className="form-control"
+													className="form-select"
 													onChange={event => {
 														const newCustomize = event.target.value as any;
 														dispatch({

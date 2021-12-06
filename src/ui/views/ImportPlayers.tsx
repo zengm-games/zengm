@@ -212,7 +212,7 @@ const ImportPlayers = ({
 				{
 					value: (
 						<select
-							className="form-control"
+							className="form-select"
 							onChange={handleChange("age", i)}
 							style={{ minWidth: 60 }}
 							value={season}
@@ -232,7 +232,7 @@ const ImportPlayers = ({
 					value: (
 						<div className="d-flex" style={{ minWidth: 200 }}>
 							<select
-								className="form-control"
+								className="form-select"
 								onChange={handleChange("tid", i)}
 								value={tid}
 							>

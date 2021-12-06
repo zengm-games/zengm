@@ -73,7 +73,7 @@ const Confirm = confirmable(
 							</div>
 							<div className="col">
 								<select
-									className="form-control"
+									className="form-select"
 									onChange={event => {
 										setPhase(event.target.value);
 									}}

@@ -708,13 +708,13 @@ tr.table-warning:hover > td {
 }
 
 .btn-light-bordered {
-	@include button-variant($light, $gray-400);
+	@include button-variant($light, $gray-400, $black, darken($light, 7));
 }
 .btn-light-bordered-primary {
-	@include button-variant($light, $blue);
+	@include button-variant($light, $blue, $black, darken($light, 7));
 }
 .btn-light-bordered-2 {
-	@include button-variant($light, $gray-300);
+	@include button-variant($light, $gray-300, $black, darken($light, 7));
 }
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;

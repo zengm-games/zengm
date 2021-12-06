@@ -92,7 +92,7 @@ const Options = (props: View<"globalSettings">) => {
 						</label>
 						<select
 							id="options-color-scheme"
-							className="form-control"
+							className="form-select"
 							onChange={handleChange("theme")}
 							value={state.theme}
 						>
@@ -107,7 +107,7 @@ const Options = (props: View<"globalSettings">) => {
 						</label>
 						<select
 							id="options-units"
-							className="form-control"
+							className="form-select"
 							onChange={handleChange("units")}
 							value={state.units}
 						>

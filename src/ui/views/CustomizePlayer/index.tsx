@@ -606,7 +606,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							<div className="col-sm-3 mb-3">
 								<label className="form-label">Team</label>
 								<select
-									className="form-control"
+									className="form-select"
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
 									disabled={!godMode}
@@ -657,7 +657,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<label className="form-label">Position</label>
 								<div className="input-group">
 									<select
-										className="form-control"
+										className="form-select"
 										onChange={handleChange.bind(null, "rating", "pos")}
 										value={p.ratings[r].pos}
 										disabled={!godMode && p.tid !== PLAYER.RETIRED}
@@ -829,7 +829,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							<div className="col-sm-3 mb-3">
 								<label className="form-label">Hall of Fame</label>
 								<select
-									className="form-control"
+									className="form-select"
 									onChange={handleChange.bind(null, "root", "hof")}
 									value={String(p.hof)}
 									disabled={!godMode}
@@ -917,7 +917,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								image.
 							</label>
 							<select
-								className="form-control"
+								className="form-select"
 								onChange={handleChangeAppearanceOption}
 								style={{ maxWidth: "150px" }}
 								value={appearanceOption}

@@ -147,7 +147,7 @@ const NewTeam = ({
 
 			<form className="form-inline" onSubmit={handleNewTeam}>
 				<select
-					className="form-control me-2"
+					className="form-select me-2"
 					style={{
 						width: "inherit",
 					}}

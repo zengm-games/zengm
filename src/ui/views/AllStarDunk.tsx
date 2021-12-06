@@ -558,7 +558,7 @@ export const ContestantProfiles = ({
 								{contest.players[i].name}
 							</PlayerNameLabels>
 							<a
-								className="ml-2"
+								className="ms-2"
 								href={helpers.leagueUrl([
 									"roster",
 									`${p.abbrev}_${tid}`,
@@ -616,7 +616,7 @@ export const ContestantProfiles = ({
 							contest.controlling.includes(i)) ? (
 							<div
 								className={`form-check mt-2 d-inline-block${
-									allowControlGodMode ? " god-mode pr-1" : ""
+									allowControlGodMode ? " god-mode pe-1" : ""
 								}`}
 							>
 								<input

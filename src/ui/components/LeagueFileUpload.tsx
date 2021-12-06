@@ -295,7 +295,7 @@ const LeagueFileUpload = ({
 					<div className="col">
 						<input
 							type="text"
-							className="form-control mr-2"
+							className="form-control me-2"
 							placeholder="URL"
 							value={url}
 							onChange={event => {

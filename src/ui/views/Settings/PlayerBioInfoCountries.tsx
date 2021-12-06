@@ -32,7 +32,7 @@ export const PlayerBioInfoRowButton = ({
 }) => {
 	return (
 		<button
-			className={`${className} btn btn-link pl-2 pr-0 py-0 border-0`}
+			className={`${className} btn btn-link ps-2 pe-0 py-0 border-0`}
 			onClick={onClick}
 			style={{ fontSize: 20, marginTop: 10 }}
 			title={title}
@@ -337,7 +337,7 @@ export const CountriesEditor = ({
 
 				<div className="mb-3">
 					<button
-						className="btn btn-secondary mr-2"
+						className="btn btn-secondary me-2"
 						onClick={() => {
 							setPageInfoWrapper({
 								name: "colleges",
@@ -487,7 +487,7 @@ export const CountriesEditor = ({
 										},
 									)}
 								</div>
-								<div className="ml-1 d-flex" style={{ width: 17 }}>
+								<div className="ms-1 d-flex" style={{ width: 17 }}>
 									<CountryFlag
 										className="align-self-center"
 										country={country.country}

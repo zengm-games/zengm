@@ -391,7 +391,7 @@ const Draft = ({
 					)}
 				</div>
 
-				<RosterComposition className="mb-3 ml-sm-3" players={userPlayers} />
+				<RosterComposition className="mb-3 ms-sm-3" players={userPlayers} />
 			</div>
 
 			<div className={wrapperClasses}>

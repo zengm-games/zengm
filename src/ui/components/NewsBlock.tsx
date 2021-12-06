@@ -18,7 +18,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	}
 	return (
 		<span
-			className={`badge badge-news m-2 ml-auto align-self-start ${className}`}
+			className={`badge badge-news m-2 ms-auto align-self-start ${className}`}
 		>
 			{text}
 		</span>
@@ -69,7 +69,7 @@ const NewsBlock = ({
 							/>
 						</a>
 					) : null}
-					<a href={rosterURL} className="pl-1">
+					<a href={rosterURL} className="ps-1">
 						{teamInfo.region}
 					</a>
 				</>

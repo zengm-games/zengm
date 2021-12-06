@@ -147,8 +147,8 @@ const RatingsForm = ({
 				);
 			})}
 
-			<div className="ml-1">
-				<label className="form-check-label ml-3 mb-3">
+			<div className="ms-1">
+				<label className="form-check-label ms-3 mb-3">
 					<input
 						className="form-check-input"
 						onChange={event => {

@@ -118,7 +118,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 			role="banner"
 		>
 			<button
-				className="navbar-toggler mr-3"
+				className="navbar-toggler me-3"
 				onClick={() => {
 					localActions.toggleSidebar();
 				}}

@@ -545,7 +545,7 @@ const Standings = ({
 					return (
 						<div className="d-flex" key={i}>
 							<div style={{ minWidth: 0 }}>{confStandings}</div>
-							<div className="d-none d-md-block ml-3" style={{ minWidth: 200 }}>
+							<div className="d-none d-md-block ms-3" style={{ minWidth: 200 }}>
 								<h2>&nbsp;</h2>
 								<SmallStandings
 									maxPlayoffSeed={maxPlayoffSeed}
@@ -567,7 +567,7 @@ const Standings = ({
 		allStandings = (
 			<div className="d-flex">
 				<div>{groupStandings}</div>
-				<div className="d-none d-md-block ml-3" style={{ minWidth: 200 }}>
+				<div className="d-none d-md-block ms-3" style={{ minWidth: 200 }}>
 					<h2>&nbsp;</h2>
 					<SmallStandings
 						maxPlayoffSeed={maxPlayoffSeed}

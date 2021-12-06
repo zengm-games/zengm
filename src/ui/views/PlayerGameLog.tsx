@@ -123,7 +123,7 @@ const PlayerGameLog = ({
 				},
 				formatRecord(game),
 				{
-					value: <InjuryIcon className="ml-0" injury={game.injury} />,
+					value: <InjuryIcon className="ms-0" injury={game.injury} />,
 					sortValue: game.injury.gamesRemaining,
 					searchValue: game.injury.gamesRemaining,
 					classNames: "text-center",

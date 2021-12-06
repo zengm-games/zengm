@@ -78,7 +78,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 			<h2>Player Stats</h2>
 
 			<form className="form-inline" onSubmit={handleSubmit}>
-				<div className="form-group mr-2">
+				<div className="form-group me-2">
 					<select className="form-control" onChange={resetState}>
 						<option value="averages">Season Averages</option>
 						{isSport("basketball") ? (
@@ -86,7 +86,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 						) : null}
 					</select>
 				</div>{" "}
-				<div className="form-group mr-2">
+				<div className="form-group me-2">
 					<select className="form-control" onChange={resetState}>
 						{seasons.map(s => {
 							return (

@@ -44,7 +44,7 @@ const Confirm = confirmable(({ show, proceed, p }: any) => {
 					}}
 				>
 					<div className="d-flex">
-						<div className="flex-grow-1 mr-2">
+						<div className="flex-grow-1 me-2">
 							<select
 								ref={inputRef}
 								className="form-control"

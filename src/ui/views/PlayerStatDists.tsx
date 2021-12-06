@@ -111,7 +111,7 @@ const PlayerStatDists = ({
 							const col = getCols([`stat:${stat}`])[0];
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
-									<td className="pr-3 text-right" title={col.desc}>
+									<td className="pe-3 text-right" title={col.desc}>
 										{col.title}
 									</td>
 									<td style={width100}>

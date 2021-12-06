@@ -110,7 +110,7 @@ const PlayerBios = ({
 									window.encodeURIComponent(helpers.getCountry(p.born.loc)),
 								])}
 							>
-								<CountryFlag className="mr-1" country={p.born.loc} />
+								<CountryFlag className="me-1" country={p.born.loc} />
 								{p.born.loc}
 							</a>
 						</>

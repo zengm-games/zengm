@@ -29,7 +29,7 @@ const Row = ({
 			onClick={toggleClicked}
 		>
 			<td>
-				<div style={{ width: 18 }} className="mr-1 float-left">
+				<div style={{ width: 18 }} className="me-1 float-left">
 					{rank}.
 				</div>
 				<PlayerNameLabels

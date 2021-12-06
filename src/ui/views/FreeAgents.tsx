@@ -153,7 +153,7 @@ const FreeAgents = ({
 				<div className="d-block">
 					{godMode ? (
 						<button
-							className="btn btn-god-mode ml-sm-2 mt-2 mt-sm-0"
+							className="btn btn-god-mode ms-sm-2 mt-2 mt-sm-0"
 							onClick={async () => {
 								const proceed = await confirm(
 									`Are you sure you want to delete all ${players.length} free agents?`,

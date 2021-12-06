@@ -147,7 +147,7 @@ const NewTeam = ({
 
 			<form className="form-inline" onSubmit={handleNewTeam}>
 				<select
-					className="form-control mr-2"
+					className="form-control me-2"
 					style={{
 						width: "inherit",
 					}}
@@ -175,7 +175,7 @@ const NewTeam = ({
 					{t.imgURL ? (
 						<div
 							style={{ width: 128 }}
-							className="mr-3 d-flex align-items-center justify-content-center"
+							className="me-3 d-flex align-items-center justify-content-center"
 						>
 							<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
 								<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />

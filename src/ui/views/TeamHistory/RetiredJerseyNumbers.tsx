@@ -55,14 +55,14 @@ const RetiredJerseyNumbers = ({
 			? editing.pid
 			: "other";
 
-		const handleChange = (field: string) => (
-			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-		) => {
-			setEditing({
-				...editing,
-				[field]: event.target.value,
-			});
-		};
+		const handleChange =
+			(field: string) =>
+			(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+				setEditing({
+					...editing,
+					[field]: event.target.value,
+				});
+			};
 
 		return (
 			<form
@@ -211,7 +211,7 @@ const RetiredJerseyNumbers = ({
 						) : null}
 					</div>
 				</div>
-				<button type="submit" className="btn btn-primary mr-2">
+				<button type="submit" className="btn btn-primary me-2">
 					Save
 				</button>
 				<button
@@ -315,7 +315,7 @@ const RetiredJerseyNumbers = ({
 								end={row.seasonRetired}
 								t={row.teamInfo}
 							/>
-							<div className="ml-3">
+							<div className="ms-3">
 								<div>
 									{row.pid !== undefined ? (
 										<>
@@ -329,9 +329,9 @@ const RetiredJerseyNumbers = ({
 														row.numRings === 1 ? "" : "s"
 													}`}
 												>
-													<span className="ring ml-1" />
+													<span className="ring ms-1" />
 													{row.numRings > 1 ? (
-														<span className="text-yellow ml-1">
+														<span className="text-yellow ms-1">
 															x{row.numRings}
 														</span>
 													) : null}
@@ -380,7 +380,7 @@ const RetiredJerseyNumbers = ({
 				) : null}
 
 				{pagination ? (
-					<div className="btn-group ml-auto">
+					<div className="btn-group ms-auto">
 						<button
 							className="btn btn-light-bordered"
 							disabled={!enablePrevious}

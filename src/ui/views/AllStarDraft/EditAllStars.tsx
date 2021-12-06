@@ -203,7 +203,7 @@ const EditAllStars = ({
 					Update All-Stars
 				</button>
 
-				<button className="btn btn-danger ml-2" type="button" onClick={onDone}>
+				<button className="btn btn-danger ms-2" type="button" onClick={onDone}>
 					Cancel
 				</button>
 			</div>

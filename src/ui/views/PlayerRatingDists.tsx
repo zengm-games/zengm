@@ -40,7 +40,7 @@ const PlayerRatingDists = ({
 					{Object.keys(ratingsAll).map(rating => {
 						return (
 							<tr key={rating}>
-								<td className="pr-3 text-right">{rating}</td>
+								<td className="pe-3 text-right">{rating}</td>
 								<td style={width100}>
 									<BoxPlot
 										color="var(--blue)"

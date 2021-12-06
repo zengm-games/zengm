@@ -59,12 +59,12 @@ const Team = ({
 
 	const wonPtsLink = (value: number) => {
 		if (gid === undefined) {
-			return <div className="ml-auto pr-2">{value}</div>;
+			return <div className="ms-auto pe-2">{value}</div>;
 		}
 
 		return (
 			<a
-				className="ml-auto pr-2 h-100 d-flex align-items-center"
+				className="ms-auto pe-2 h-100 d-flex align-items-center"
 				href={helpers.leagueUrl([
 					"game_log",
 					`${team.abbrev}_${team.tid}`,
@@ -116,7 +116,7 @@ const Team = ({
 					)}
 				</div>
 			) : (
-				<div className="mr-1 overflow-hidden">
+				<div className="me-1 overflow-hidden">
 					<a
 						className={classNames({
 							"text-muted": lost,

@@ -1022,7 +1022,7 @@ const Input = ({
 	} else if (type === "rangePercent") {
 		inputElement = (
 			<div className="d-flex" style={inputStyle}>
-				<div className="text-right mr-1" style={{ minWidth: 38 }}>
+				<div className="text-right me-1" style={{ minWidth: 38 }}>
 					{Math.round(parseFloat(value) * 100)}%
 				</div>
 				<div>
@@ -1179,7 +1179,7 @@ const Option = ({
 	return (
 		<>
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
-				<div className="mr-auto text-nowrap">
+				<div className="me-auto text-nowrap">
 					<label
 						className="mb-0"
 						htmlFor={id}
@@ -1192,7 +1192,7 @@ const Option = ({
 					>
 						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span
-								className="legend-square god-mode mr-1"
+								className="legend-square god-mode me-1"
 								title={godModeRequiredMessage(godModeRequired)}
 							/>
 						) : null}
@@ -1207,14 +1207,14 @@ const Option = ({
 					</label>
 					{descriptionLong ? (
 						<span
-							className="ml-1 glyphicon glyphicon-question-sign help-icon"
+							className="ms-1 glyphicon glyphicon-question-sign help-icon"
 							onClick={() => {
 								setShowDescriptionLong(show => !show);
 							}}
 						/>
 					) : null}
 				</div>
-				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
+				<div className={classNames("ms-auto", maxWidth ? "w-100" : undefined)}>
 					{formElement}
 				</div>
 			</div>
@@ -1688,7 +1688,7 @@ const SettingsForm = ({
 							<h2 className="mb-3">
 								{category.name}
 								{category.helpText ? (
-									<HelpPopover title={category.name} className="ml-1">
+									<HelpPopover title={category.name} className="ms-1">
 										{category.helpText}
 									</HelpPopover>
 								) : null}
@@ -1892,7 +1892,7 @@ const SettingsForm = ({
 							</GodModeSettingsButton>
 						) : null}
 					</div>
-					<div className="btn-group ml-auto">
+					<div className="btn-group ms-auto">
 						{onCancel ? (
 							<button
 								className="btn btn-secondary"

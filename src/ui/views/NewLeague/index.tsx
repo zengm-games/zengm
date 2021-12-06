@@ -1096,7 +1096,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							) : null}
 
 							<div className="form-group">
-								<label htmlFor="new-league-team" className="mr-2">
+								<label htmlFor="new-league-team" className="me-2">
 									Pick your team
 								</label>
 								<NextPrevButtons
@@ -1211,7 +1211,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 							<div className="text-center mt-3">
 								<ActionButton
-									className="mr-2"
+									className="me-2"
 									size="lg"
 									type="submit"
 									disabled={

@@ -274,7 +274,7 @@ const Frivolities = () => {
 					>
 						{categories.map((category, i) => (
 							<Fragment key={category}>
-								<h3 className={`ml-1${i > 0 ? " mt-3" : ""}`}>{category}</h3>
+								<h3 className={`ms-1${i > 0 ? " mt-3" : ""}`}>{category}</h3>
 								<div className="list-group">
 									{frivolities[category].map(frivolity => (
 										<a

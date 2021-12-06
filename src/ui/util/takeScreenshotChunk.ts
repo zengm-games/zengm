@@ -25,7 +25,7 @@ const takeScreenshotChunk = async () => {
 		logos.length > 0 && logos[0] instanceof HTMLImageElement
 			? `<img src="${logos[0].src}" width="18" height="18">`
 			: "";
-	watermark.innerHTML = `<nav class="navbar navbar-light bg-light"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
+	watermark.innerHTML = `<nav class="navbar navbar-light bg-light"><a class="navbar-brand me-auto" href="#">${logoHTML} ${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${process.env.SPORT}${
 		!isSport("hockey") ? "-gm" : ".zengm"

@@ -192,7 +192,7 @@ const ImportPlayers = ({
 								{name}
 							</PlayerNameLabels>
 							<button
-								className="btn btn-secondary btn-sm ml-2"
+								className="btn btn-secondary btn-sm ms-2"
 								disabled={disableButtons}
 								onClick={() => {
 									const newPlayers = [...players];

@@ -619,7 +619,7 @@ const DraftLotteryTable = (props: Props) => {
 			) : null}
 			{showRigButton ? (
 				<button
-					className="btn btn-large btn-god-mode ml-2"
+					className="btn btn-large btn-god-mode ms-2"
 					onClick={async () => {
 						await toWorker("main", "updateGameAttributes", {
 							riggedLottery: [],

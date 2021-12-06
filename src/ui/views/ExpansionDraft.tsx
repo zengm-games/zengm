@@ -296,7 +296,7 @@ const ExpansionDraft = ({
 						<div className="card">
 							<div className="card-body">
 								<select
-									className="form-control mr-2"
+									className="form-control me-2"
 									style={{ maxWidth: 300 }}
 									value={addTeamAbbrev}
 									onChange={event => {
@@ -327,7 +327,7 @@ const ExpansionDraft = ({
 
 				<h2>Settings</h2>
 				<div className="d-sm-flex">
-					<div className="form-group mb-0 mr-sm-3">
+					<div className="form-group mb-0 me-sm-3">
 						<label htmlFor="expansion-num-protected">
 							Number of players each existing team can protect
 						</label>

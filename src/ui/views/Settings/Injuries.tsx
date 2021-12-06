@@ -411,7 +411,7 @@ const Injuries = ({
 												</div>
 											</div>
 											<button
-												className="text-danger btn btn-link pl-2 pr-0 border-0"
+												className="text-danger btn btn-link ps-2 pe-0 border-0"
 												onClick={() => {
 													setInjuries(rows =>
 														rows.filter(row => row !== injury),

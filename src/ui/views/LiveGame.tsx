@@ -532,7 +532,7 @@ const LiveGame = (props: View<"liveGame">) => {
 						{boxScore.current.gid >= 0 ? (
 							<div className="d-flex align-items-center mb-3">
 								<PlayPauseNext
-									className="mr-2"
+									className="me-2"
 									disabled={boxScore.current.gameOver}
 									fastForwardAlignRight
 									fastForwards={fastForwardMenuItems}

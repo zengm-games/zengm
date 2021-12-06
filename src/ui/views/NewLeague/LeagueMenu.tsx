@@ -62,7 +62,7 @@ const LeagueMenu = <Value extends string>({
 		<>
 			<div className="d-flex">
 				<div className="flex-grow-1">
-					<label htmlFor="new-league-season" className="mr-2">
+					<label htmlFor="new-league-season" className="me-2">
 						Season
 					</label>
 					<NextPrevButtons
@@ -78,7 +78,7 @@ const LeagueMenu = <Value extends string>({
 							<button
 								key={key}
 								type="button"
-								className="btn btn-link border-0 p-0 mb-1 ml-2"
+								className="btn btn-link border-0 p-0 mb-1 ms-2"
 								style={quickValuesStyle}
 								onClick={() => {
 									handleNewValue(key, value2);

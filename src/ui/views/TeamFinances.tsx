@@ -219,7 +219,7 @@ const FinancesForm = ({
 						/>
 						Auto ticket price
 					</label>
-					<HelpPopover title="Auto ticket price" className="ml-1">
+					<HelpPopover title="Auto ticket price" className="ms-1">
 						<p>
 							When enabled, your ticket price will be set to the maximum value
 							possible while still selling out most games.
@@ -369,7 +369,7 @@ const FinancesForm = ({
 						/>
 						Auto adjust for inflation
 					</label>
-					<HelpPopover title="Inflation adjustment" className="ml-1">
+					<HelpPopover title="Inflation adjustment" className="ms-1">
 						When enabled, all your revenue and expense settings will
 						automatically change whenever the salary cap changes. This will
 						generally maintain your ranks, although expansion teams and changes

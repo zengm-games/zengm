@@ -107,7 +107,7 @@ const PlayThroughInjuriesSliders = ({
 					<b>{titleText}</b>
 				)}
 				{expanded ? (
-					<HelpPopover className="ml-1" title="Play Through Injuries">
+					<HelpPopover className="ms-1" title="Play Through Injuries">
 						<p>
 							This allows you to determine when players should play through
 							minor injuries. You can set the cutoff separately for the regular

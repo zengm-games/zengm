@@ -343,7 +343,7 @@ const reducer = (state: State, action: Action): State => {
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
 		<button
-			className="ml-2 btn btn-link p-0 border-0 text-reset"
+			className="ms-2 btn btn-link p-0 border-0 text-reset"
 			onClick={onClick}
 			title="Edit"
 			type="button"
@@ -356,7 +356,7 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 const DeleteButton = ({ onClick }: { onClick: () => void }) => {
 	return (
 		<button
-			className="ml-2 btn btn-link text-danger p-0 border-0"
+			className="ms-2 btn btn-link text-danger p-0 border-0"
 			onClick={onClick}
 			title="Delete"
 			type="button"
@@ -405,7 +405,7 @@ const CardHeader = ({
 				>
 					<input
 						type="text"
-						className="form-control mr-2"
+						className="form-control me-2"
 						value={controlledName}
 						onChange={event => {
 							setControlledName(event.target.value);
@@ -417,9 +417,9 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					<div className={alignButtonsRight ? "mr-auto" : "mr-2"}>{name}</div>
+					<div className={alignButtonsRight ? "me-auto" : "me-2"}>{name}</div>
 					<button
-						className="ml-2 btn btn-link p-0 border-0 text-reset"
+						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Up"
 						type="button"
 						onClick={onMoveUp}
@@ -428,7 +428,7 @@ const CardHeader = ({
 						<span className="glyphicon glyphicon-menu-left" />
 					</button>
 					<button
-						className="ml-2 btn btn-link p-0 border-0 text-reset"
+						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Down"
 						type="button"
 						onClick={onMoveDown}
@@ -565,7 +565,7 @@ const Division = ({
 			<ul className="list-group list-group-flush">
 				{teams.map(t => (
 					<li key={t.tid} className="list-group-item d-flex">
-						<div className="mr-auto">
+						<div className="me-auto">
 							{t.region} {t.name}{" "}
 							<span
 								className={
@@ -688,7 +688,7 @@ const Conference = ({
 
 			<div className="card-body p-0 m-3 d-flex">
 				<button
-					className="btn btn-light-bordered ml-auto"
+					className="btn btn-light-bordered ms-auto"
 					onClick={() => {
 						dispatch({ type: "addDiv", cid: conf.cid });
 					}}
@@ -887,7 +887,7 @@ const CustomizeTeams = ({
 			))}
 			<div className="mb-3 d-flex">
 				<button
-					className="btn btn-light-bordered ml-auto"
+					className="btn btn-light-bordered ms-auto"
 					onClick={() => {
 						dispatch({ type: "addConf" });
 					}}
@@ -918,7 +918,7 @@ const CustomizeTeams = ({
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
-				<div className="ml-2 pt-2">
+				<div className="ms-2 pt-2">
 					<HelpPopover title="Reset">
 						<p>
 							<b>Default</b>: Resets conferences, divisions, and teams to their
@@ -940,7 +940,7 @@ const CustomizeTeams = ({
 					</HelpPopover>
 				</div>
 				<form
-					className="btn-group ml-auto"
+					className="btn-group ms-auto"
 					onSubmit={event => {
 						event.preventDefault();
 
@@ -976,7 +976,7 @@ const CustomizeTeams = ({
 						Cancel
 					</button>
 					<button
-						className="btn btn-primary mr-2"
+						className="btn btn-primary me-2"
 						type="submit"
 						disabled={randomizing}
 					>

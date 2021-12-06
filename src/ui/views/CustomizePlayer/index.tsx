@@ -976,7 +976,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								Randomize
 							</button>
 
-							<div className="ml-1 btn-group">
+							<div className="ms-1 btn-group">
 								<button
 									type="button"
 									className="btn btn-secondary btn-sm"

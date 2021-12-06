@@ -123,9 +123,7 @@ const LeagueDashboard = ({
 													{messages.map(m => (
 														<tr
 															key={m.mid}
-															className={
-																m.read ? undefined : "font-weight-bold"
-															}
+															className={m.read ? undefined : "fw-bold"}
 														>
 															<td className="year">
 																<a href={helpers.leagueUrl(["message", m.mid])}>

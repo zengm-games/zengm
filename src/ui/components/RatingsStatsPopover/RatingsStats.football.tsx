@@ -33,7 +33,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 		ratingsBlock = (
 			<div className="row">
 				<div className="col-4">
-					<div className="font-weight-bold mb-1">{seasonPrefix}Ratings</div>
+					<div className="fw-bold mb-1">{seasonPrefix}Ratings</div>
 					<span style={gradientStyle(ratings.ovr)}>
 						<span title="Overall">Ovr</span>: {ratings.ovr}
 					</span>
@@ -96,7 +96,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 					whiteSpace: "normal",
 				}}
 			>
-				<div className="font-weight-bold mb-1">{seasonPrefix2}Stats</div>
+				<div className="fw-bold mb-1">{seasonPrefix2}Stats</div>
 				{stats.keyStats}
 			</div>
 		);

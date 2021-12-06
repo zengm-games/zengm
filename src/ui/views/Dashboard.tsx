@@ -70,7 +70,7 @@ const DifficultyText = ({
 	return (
 		<span
 			className={classNames({
-				"font-weight-bold": difficulty > DIFFICULTY.Insane,
+				"fw-bold": difficulty > DIFFICULTY.Insane,
 				"text-danger": difficulty >= DIFFICULTY.Insane,
 			})}
 		>

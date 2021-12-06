@@ -64,7 +64,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 						Run code
 					</ActionButton>
 					{status.type === "error" ? (
-						<div className="text-danger ms-3 font-weight-bold">Error!</div>
+						<div className="text-danger ms-3 fw-bold">Error!</div>
 					) : null}
 					{status.type === "done" ? (
 						<div className="text-success ms-3">Done</div>

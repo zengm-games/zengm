@@ -142,7 +142,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 						}}
 						overlay={
 							<Popover id="popover-welcome">
-								<Popover.Title className="text-primary font-weight-bold">
+								<Popover.Title className="text-primary fw-bold">
 									Welcome to {GAME_NAME}!
 								</Popover.Title>
 								<Popover.Content>

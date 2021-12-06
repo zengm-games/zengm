@@ -69,7 +69,7 @@ const TeamLogo = ({
 						/>
 					</TeamNameLink>
 				</div>
-				<div className="mt-1 mb-3 font-weight-bold">{record}</div>
+				<div className="mt-1 mb-3 fw-bold">{record}</div>
 			</div>
 		</div>
 	) : null;

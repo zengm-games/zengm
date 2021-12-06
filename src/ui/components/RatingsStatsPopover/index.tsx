@@ -119,7 +119,7 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 				) : null}
 				<a
 					href={helpers.leagueUrl(["player", pid])}
-					className="font-weight-bold text-truncate"
+					className="fw-bold text-truncate"
 				>
 					{name}
 				</a>

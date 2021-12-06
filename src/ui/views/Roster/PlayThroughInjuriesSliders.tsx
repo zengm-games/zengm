@@ -83,7 +83,7 @@ const PlayThroughInjuriesSliders = ({
 			<div className="d-flex align-items-center">
 				{window.mobile ? (
 					<button
-						className="btn btn-link p-0 font-weight-bold"
+						className="btn btn-link p-0 fw-bold"
 						type="button"
 						onClick={() => setExpanded(prev => !prev)}
 					>

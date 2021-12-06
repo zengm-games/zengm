@@ -66,7 +66,7 @@ const RecordAndPlayoffs = ({
 		<span
 			className={
 				boldChamps && playoffRoundsWon === numPlayoffRounds
-					? "font-weight-bold"
+					? "fw-bold"
 					: undefined
 			}
 		>

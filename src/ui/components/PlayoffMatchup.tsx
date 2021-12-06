@@ -82,7 +82,7 @@ const Team = ({
 	return (
 		<li
 			className={classNames("border border-bottom-0", {
-				"font-weight-bold": won,
+				"fw-bold": won,
 				"table-info": highlightUser,
 				"table-warning": won && extraHighlight && !highlightUser,
 				"text-muted": lost,

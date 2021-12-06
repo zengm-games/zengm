@@ -234,7 +234,7 @@ const OwnerMoodsChart = ({
 					<li className="text-danger">— Regular season success</li>
 					<li className="text-info">— Playoff success</li>
 					<li className="text-success">— Finances</li>
-					<li className="text-dark font-weight-bold">— Total</li>
+					<li className="text-dark fw-bold">— Total</li>
 				</ul>
 			</div>
 		</div>

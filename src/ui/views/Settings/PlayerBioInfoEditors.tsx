@@ -110,7 +110,7 @@ export const RacesEditor = ({
 					}}
 				>
 					<input type="submit" className="d-none" />
-					<div className="form-row font-weight-bold">
+					<div className="form-row fw-bold">
 						<div className="col-6">Race</div>
 						<div className="col-6">Frequency</div>
 					</div>
@@ -388,7 +388,7 @@ export const CollegesEditor = ({
 					className="my-3"
 				>
 					<input type="submit" className="d-none" />
-					<div className="d-flex font-weight-bold" style={{ marginRight: 26 }}>
+					<div className="d-flex fw-bold" style={{ marginRight: 26 }}>
 						<div className="flex-grow-1">College</div>
 						<div style={smallColStyle}>Frequency</div>
 					</div>
@@ -641,10 +641,7 @@ export const NamesEditor = ({
 						className="my-3"
 					>
 						<input type="submit" className="d-none" />
-						<div
-							className="d-flex font-weight-bold"
-							style={{ marginRight: 26 }}
-						>
+						<div className="d-flex fw-bold" style={{ marginRight: 26 }}>
 							<div className="flex-grow-1">Name</div>
 							<div style={smallColStyle}>Frequency</div>
 						</div>

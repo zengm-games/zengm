@@ -233,7 +233,7 @@ const ScoreBox = ({
 							<div className={classNames("p-1", { "pe-5": small })}>
 								<a
 									href={helpers.leagueUrl(["all_star", "draft"])}
-									className={!small ? "font-weight-bold" : undefined}
+									className={!small ? "fw-bold" : undefined}
 								>
 									{small ? `AS${i}` : `All-Star Team ${i}`}
 								</a>
@@ -374,7 +374,7 @@ const ScoreBox = ({
 										) : null}
 										<a
 											href={rosterURL}
-											className={!small ? "font-weight-bold" : undefined}
+											className={!small ? "fw-bold" : undefined}
 										>
 											{teamName}
 										</a>
@@ -415,7 +415,7 @@ const ScoreBox = ({
 												scoreClass,
 												userTeamClass,
 												{
-													"font-weight-bold score-box-score": small,
+													"fw-bold score-box-score": small,
 													"px-2": !small,
 													"pe-1": small,
 												},

@@ -371,10 +371,7 @@ export const CountriesEditor = ({
 				{infoState.countries.length > 0 ? (
 					<form onSubmit={handleSave} className="my-3">
 						<input type="submit" className="d-none" />
-						<div
-							className="d-flex font-weight-bold"
-							style={{ marginRight: 78 }}
-						>
+						<div className="d-flex fw-bold" style={{ marginRight: 78 }}>
 							<div className="flex-grow-1">Country</div>
 							<div style={smallColStyle}>Frequency</div>
 							<div style={smallColStyle}>Names</div>

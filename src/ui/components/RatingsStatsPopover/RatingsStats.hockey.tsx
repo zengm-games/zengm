@@ -94,7 +94,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 					whiteSpace: "normal",
 				}}
 			>
-				<div className="font-weight-bold mb-1">{seasonPrefix2}Stats</div>
+				<div className="fw-bold mb-1">{seasonPrefix2}Stats</div>
 				{stats.keyStats}
 			</div>
 		);

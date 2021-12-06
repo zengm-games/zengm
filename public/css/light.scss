@@ -8,6 +8,11 @@ $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
 $table-cell-vertical-align: middle;
 $link-decoration: none;
 $link-hover-decoration: underline;
+$badge-padding-y: 0.25em;
+$badge-padding-x: 0.4em;
+.form-check-inline {
+	margin-right: 0.75rem !important;
+}
 
 $font-size-base: 0.8125rem;
 $black: #000 !default;
@@ -578,7 +583,6 @@ table {
 .badge-injury {
 	cursor: default;
 	margin-left: 5px;
-	padding: 0.25em 0.4em;
 	vertical-align: 20%;
 }
 
@@ -1028,13 +1032,11 @@ tr.table-warning:hover > td {
 	font-size: inherit;
 	font-weight: inherit;
 }
-.badge-darkblue {
+.bg-darkblue {
 	background-color: #007bff;
-	color: #fff;
 }
-.badge-orange {
+.bg-orange {
 	background-color: lighten(#fd7e14, 10);
-	color: #000;
 }
 
 .sort-inside-modal {

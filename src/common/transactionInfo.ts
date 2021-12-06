@@ -3,7 +3,7 @@ import type { LogEventType } from "./types";
 export const categories = {
 	award: {
 		text: "Awards",
-		className: "bg-warning",
+		className: "bg-warning text-dark",
 	},
 	draft: {
 		text: "Draft",
@@ -23,7 +23,7 @@ export const categories = {
 	},
 	playoffs: {
 		text: "Playoffs",
-		className: "bg-orange",
+		className: "bg-orange text-dark",
 	},
 	rare: {
 		text: "Rare Events",
@@ -35,7 +35,7 @@ export const categories = {
 	},
 	team: {
 		text: "Teams",
-		className: "bg-light",
+		className: "bg-light text-dark",
 	},
 };
 

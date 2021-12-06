@@ -264,18 +264,14 @@ const ImportPlayers = ({
 								className="input-group input-group"
 								style={{ minWidth: 180 }}
 							>
-								<div className="input-group-prepend">
-									<div className="input-group-text">$</div>
-								</div>
+								<div className="input-group-text">$</div>
 								<input
 									type="text"
 									className="form-control"
 									onChange={handleChange("contractAmount", i)}
 									value={contractAmount}
 								/>
-								<div className="input-group-append">
-									<div className="input-group-text">M per year</div>
-								</div>
+								<div className="input-group-text">M per year</div>
 							</div>
 						),
 						sortValue: `$${contractAmount}M`,

@@ -170,9 +170,7 @@ const FinancesForm = ({
 			<div className="row">
 				<div className="float-start finances-settings-label">Ticket Price</div>
 				<div className="input-group input-group-sm float-start finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
 						<input
 							type="text"
@@ -252,9 +250,7 @@ const FinancesForm = ({
 			<div className="row">
 				<div className="float-start finances-settings-label">Scouting</div>
 				<div className="input-group input-group-sm float-start finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -262,9 +258,7 @@ const FinancesForm = ({
 						onChange={handleChange("scouting")}
 						value={state.scouting}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
 				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.scouting.rank}
@@ -279,9 +273,7 @@ const FinancesForm = ({
 			<div className="row">
 				<div className="float-start finances-settings-label">Coaching</div>
 				<div className="input-group input-group-sm float-start finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -289,9 +281,7 @@ const FinancesForm = ({
 						onChange={handleChange("coaching")}
 						value={state.coaching}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
 				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.coaching.rank}
@@ -306,9 +296,7 @@ const FinancesForm = ({
 			<div className="row">
 				<div className="float-start finances-settings-label">Health</div>
 				<div className="input-group input-group-sm float-start finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -316,9 +304,7 @@ const FinancesForm = ({
 						onChange={handleChange("health")}
 						value={state.health}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
 				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.health.rank}
@@ -333,9 +319,7 @@ const FinancesForm = ({
 			<div className="row">
 				<div className="float-start finances-settings-label">Facilities</div>
 				<div className="input-group input-group-sm float-start finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -343,9 +327,7 @@ const FinancesForm = ({
 						onChange={handleChange("facilities")}
 						value={state.facilities}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
 				<div className="float-start finances-settings-text-small">
 					Current spending rate: #{t.budget.facilities.rank}

@@ -843,9 +843,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							<div className="col-sm-6 mb-3">
 								<label className="form-label">Contract Amount</label>
 								<div className="input-group">
-									<div className="input-group-prepend">
-										<div className="input-group-text">$</div>
-									</div>
+									<div className="input-group-text">$</div>
 									<input
 										type="text"
 										className="form-control"
@@ -853,9 +851,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										value={p.contract.amount}
 										disabled={!godMode}
 									/>
-									<div className="input-group-append">
-										<div className="input-group-text">M per year</div>
-									</div>
+									<div className="input-group-text">M per year</div>
 								</div>
 							</div>
 							<div className="col-sm-6 mb-3">

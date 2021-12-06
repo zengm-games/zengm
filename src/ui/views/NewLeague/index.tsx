@@ -1143,35 +1143,31 @@ const NewLeague = (props: View<"newLeague">) => {
 										})}
 									</select>
 									{state.customize === "default" ? (
-										<div className="input-group-append">
-											<button
-												className="btn btn-light-bordered"
-												disabled={disableWhileLoadingLeagueFile}
-												type="button"
-												onClick={() => {
-													setCurrentScreen("teams");
-												}}
-											>
-												Customize
-											</button>
-										</div>
-									) : null}
-									<div className="input-group-append">
 										<button
 											className="btn btn-light-bordered"
 											disabled={disableWhileLoadingLeagueFile}
 											type="button"
 											onClick={() => {
-												const t =
-													displayedTeams[
-														Math.floor(Math.random() * displayedTeams.length)
-													];
-												dispatch({ type: "setTid", tid: t.tid });
+												setCurrentScreen("teams");
 											}}
 										>
-											Random
+											Customize
 										</button>
-									</div>
+									) : null}
+									<button
+										className="btn btn-light-bordered"
+										disabled={disableWhileLoadingLeagueFile}
+										type="button"
+										onClick={() => {
+											const t =
+												displayedTeams[
+													Math.floor(Math.random() * displayedTeams.length)
+												];
+											dispatch({ type: "setTid", tid: t.tid });
+										}}
+									>
+										Random
+									</button>
 								</div>
 								{!state.settings.equalizeRegions ? (
 									<PopText

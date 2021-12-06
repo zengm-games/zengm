@@ -1086,13 +1086,9 @@ const Input = ({
 	if (decoration === "currency") {
 		return (
 			<div className="input-group" style={inputStyle}>
-				<div className="input-group-prepend">
-					<div className="input-group-text">$</div>
-				</div>
+				<div className="input-group-text">$</div>
 				{inputElement}
-				<div className="input-group-append">
-					<div className="input-group-text">M</div>
-				</div>
+				<div className="input-group-text">M</div>
 			</div>
 		);
 	}

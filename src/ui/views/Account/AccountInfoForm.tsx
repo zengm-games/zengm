@@ -188,8 +188,10 @@ const AccountInfoForm = ({
 				}}
 			>
 				<div style={formGroupStyle}>
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-username">Username</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-username">
+							Username
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -224,8 +226,10 @@ const AccountInfoForm = ({
 						</span>
 					</div>
 
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-email">Email</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-email">
+							Email
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -259,8 +263,10 @@ const AccountInfoForm = ({
 				</div>
 
 				<div style={formGroupStyle}>
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-new-password">New Password</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-new-password">
+							New Password
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -293,8 +299,10 @@ const AccountInfoForm = ({
 						</span>
 					</div>
 
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-new-password-2">Repeat New Password</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-new-password-2">
+							Repeat New Password
+						</label>
 						<input
 							className={classNames("form-control", {
 								"is-invalid": state.errorMessageNewPassword2 !== undefined,
@@ -318,8 +326,10 @@ const AccountInfoForm = ({
 				</div>
 			</div>
 
-			<div className="form-group" style={formGroupStyle}>
-				<label htmlFor="account-old-password">Confirm Current Password</label>
+			<div className="mb-3" style={formGroupStyle}>
+				<label className="form-label" htmlFor="account-old-password">
+					Confirm Current Password
+				</label>
 				<input
 					className={classNames("form-control", {
 						"is-invalid": state.errorMessageOldPassword !== undefined,

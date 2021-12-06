@@ -453,8 +453,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		);
 	} else {
 		pictureDiv = (
-			<div className="form-group">
-				<label>Image URL</label>
+			<div className="mb-3">
+				<label className="form-label">Image URL</label>
 				<input
 					type="text"
 					className="form-control"
@@ -546,8 +546,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Attributes</h2>
 
 						<div className="row">
-							<div className="col-sm-6 form-group">
-								<label>Name</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Name</label>
 								<div className="input-group">
 									<input
 										type="text"
@@ -593,8 +593,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</div>
 								</div>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Age</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Age</label>
 								<input
 									type="text"
 									className="form-control"
@@ -603,8 +603,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Team</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Team</label>
 								<select
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "tid")}
@@ -623,8 +623,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									})}
 								</select>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">
 									Height (inches){" "}
 									<HelpPopover title="Height (inches)">
 										Height (inches) is just for show. The height rating is what
@@ -638,8 +638,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.hgt}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">
 									Weight (lbs){" "}
 									<HelpPopover title="Weight (lbs)">
 										Weight (lbs) is just for show. The height and strength
@@ -653,8 +653,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.weight}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Position</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Position</label>
 								<div className="input-group">
 									<select
 										className="form-control"
@@ -714,8 +714,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</div>
 								</div>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Jersey Number</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Jersey Number</label>
 								<input
 									type="text"
 									className="form-control"
@@ -723,8 +723,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={jerseyNumber}
 								/>
 							</div>
-							<div className="col-sm-6 form-group">
-								<label>Country</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Country</label>
 								<div className="input-group">
 									<input
 										type="text"
@@ -767,8 +767,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</div>
 								</div>
 							</div>
-							<div className="col-sm-6 form-group">
-								<label>College</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">College</label>
 								<div className="input-group">
 									<input
 										type="text"
@@ -806,8 +806,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</div>
 								</div>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Draft Class</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Class</label>
 								<input
 									type="text"
 									className="form-control"
@@ -816,8 +816,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Year of Death</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Year of Death</label>
 								<input
 									type="text"
 									className="form-control"
@@ -826,8 +826,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Hall of Fame</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Hall of Fame</label>
 								<select
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "hof")}
@@ -840,8 +840,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 						</div>
 						<div className="row">
-							<div className="col-sm-6 form-group">
-								<label>Contract Amount</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Contract Amount</label>
 								<div className="input-group">
 									<div className="input-group-prepend">
 										<div className="input-group-text">$</div>
@@ -858,8 +858,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</div>
 								</div>
 							</div>
-							<div className="col-sm-6 form-group">
-								<label>Contract Expiration</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Contract Expiration</label>
 								<input
 									type="text"
 									className="form-control"
@@ -868,8 +868,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-6 form-group">
-								<label>Injury</label>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Injury</label>
 								<input
 									type="text"
 									className="form-control"
@@ -878,8 +878,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Games Out</label>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Games Out</label>
 								<input
 									type="text"
 									className="form-control"
@@ -889,8 +889,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							{playerMoodTraits ? (
-								<div className="col-sm-3 form-group">
-									<label>Mood Traits</label>
+								<div className="col-sm-3 mb-3">
+									<label className="form-label">Mood Traits</label>
 									{helpers.keys(MOOD_TRAITS).map(trait => (
 										<div className="form-check" key={trait}>
 											<label className="form-check-label">
@@ -915,8 +915,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<h2>Appearance</h2>
 
-						<div className="form-group">
-							<label>
+						<div className="mb-3">
+							<label className="form-label">
 								You can either create a cartoon face or specify the URL to an
 								image.
 							</label>

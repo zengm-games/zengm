@@ -994,8 +994,10 @@ const NewLeague = (props: View<"newLeague">) => {
 					) : null}
 					<div className="row">
 						<div className="col-sm-6">
-							<div className="form-group">
-								<label htmlFor="new-league-name">League name</label>
+							<div className="mb-3">
+								<label className="form-label" htmlFor="new-league-name">
+									League name
+								</label>
 								<input
 									id="new-league-name"
 									className="form-control"
@@ -1008,8 +1010,13 @@ const NewLeague = (props: View<"newLeague">) => {
 							</div>
 
 							{state.customize === "default" ? (
-								<div className="form-group">
-									<label htmlFor="new-league-starting-season">Season</label>
+								<div className="mb-3">
+									<label
+										className="form-label"
+										htmlFor="new-league-starting-season"
+									>
+										Season
+									</label>
 									<input
 										id="new-league-starting-season"
 										className="form-control"
@@ -1024,7 +1031,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 							{state.customize === "real" ? (
 								<>
-									<div className="form-group">
+									<div className="mb-3">
 										<LeagueMenu
 											value={String(state.season)}
 											values={seasons}
@@ -1077,7 +1084,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							) : null}
 
 							{state.customize === "legends" ? (
-								<div className="form-group">
+								<div className="mb-3">
 									<LeagueMenu
 										value={state.legend}
 										values={legends}
@@ -1095,8 +1102,8 @@ const NewLeague = (props: View<"newLeague">) => {
 								</div>
 							) : null}
 
-							<div className="form-group">
-								<label htmlFor="new-league-team" className="me-2">
+							<div className="mb-3">
+								<label htmlFor="new-league-team" className="form-label me-2">
 									Pick your team
 								</label>
 								<NextPrevButtons
@@ -1182,8 +1189,10 @@ const NewLeague = (props: View<"newLeague">) => {
 								)}
 							</div>
 
-							<div className="form-group">
-								<label htmlFor="new-league-difficulty">Difficulty</label>
+							<div className="mb-3">
+								<label className="form-label" htmlFor="new-league-difficulty">
+									Difficulty
+								</label>
 								<select
 									id="new-league-difficulty"
 									className="form-control mb-1"
@@ -1324,7 +1333,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											style={{ marginBottom: "-1rem" }}
 										>
 											<h2 className="card-title">Customize</h2>
-											<div className="form-group">
+											<div className="mb-3">
 												<select
 													className="form-control"
 													onChange={event => {

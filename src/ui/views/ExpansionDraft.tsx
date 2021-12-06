@@ -327,8 +327,8 @@ const ExpansionDraft = ({
 
 				<h2>Settings</h2>
 				<div className="d-sm-flex">
-					<div className="form-group mb-0 me-sm-3">
-						<label htmlFor="expansion-num-protected">
+					<div className="me-sm-3">
+						<label className="form-label" htmlFor="expansion-num-protected">
 							Number of players each existing team can protect
 						</label>
 						<input
@@ -343,8 +343,8 @@ const ExpansionDraft = ({
 							style={{ maxWidth: 100 }}
 						/>
 					</div>
-					<div className="form-groupmb-0 ">
-						<label htmlFor="expansion-num-per-team">
+					<div>
+						<label className="form-label" htmlFor="expansion-num-per-team">
 							Max number of players that can be drafted from each existing team
 						</label>
 						<input

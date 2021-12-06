@@ -57,7 +57,7 @@ const Controls = ({
 
 	return (
 		<div
-			className="datatable-controls mb-1 d-flex"
+			className="datatable-controls d-flex"
 			style={hideAllControls ? hideAllControlsStyle : undefined}
 		>
 			{!hideAllControls ? (
@@ -104,7 +104,7 @@ const Controls = ({
 					>
 						<span className="glyphicon glyphicon-filter" />
 					</a>
-					<label>
+					<label className="form-label">
 						<input
 							className="form-control form-control-sm"
 							onChange={onSearch}

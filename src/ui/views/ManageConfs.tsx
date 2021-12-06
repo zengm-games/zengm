@@ -138,8 +138,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 								<div className="card">
 									<div className="card-body">
 										<div className="d-flex align-items-end mb-3">
-											<div className="form-group mb-0 flex-grow-1">
-												<label htmlFor={`conf-name-${conf.cid}`}>
+											<div className="flex-grow-1">
+												<label
+													className="form-label"
+													htmlFor={`conf-name-${conf.cid}`}
+												>
 													Conference Name
 												</label>
 												<input
@@ -164,8 +167,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 													key={div.did}
 													className="d-flex align-items-end mb-3 ms-4"
 												>
-													<div className="form-group mb-0 flex-grow-1">
-														<label htmlFor={`div-name-${div.did}`}>
+													<div className="flex-grow-1">
+														<label
+															className="form-label"
+															htmlFor={`div-name-${div.did}`}
+														>
 															Division Name
 														</label>
 														<input

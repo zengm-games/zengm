@@ -36,15 +36,15 @@ const Options = (props: View<"globalSettings">) => {
 		};
 	});
 
-	const handleChange = (name: string) => (
-		event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
-	) => {
-		const value = event.target.value;
-		setState(state2 => ({
-			...state2,
-			[name]: value,
-		}));
-	};
+	const handleChange =
+		(name: string) =>
+		(event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
+			const value = event.target.value;
+			setState(state2 => ({
+				...state2,
+				[name]: value,
+			}));
+		};
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -86,8 +86,10 @@ const Options = (props: View<"globalSettings">) => {
 		<>
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					<div className="col-sm-3 col-6 form-group">
-						<label htmlFor="options-color-scheme">Color Scheme</label>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label" htmlFor="options-color-scheme">
+							Color Scheme
+						</label>
 						<select
 							id="options-color-scheme"
 							className="form-control"
@@ -99,8 +101,10 @@ const Options = (props: View<"globalSettings">) => {
 							<option value="dark">Dark</option>
 						</select>
 					</div>
-					<div className="col-sm-3 col-6 form-group">
-						<label htmlFor="options-units">Units</label>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label" htmlFor="options-units">
+							Units
+						</label>
 						<select
 							id="options-units"
 							className="form-control"
@@ -112,8 +116,8 @@ const Options = (props: View<"globalSettings">) => {
 							<option value="metric">Metric</option>
 						</select>
 					</div>
-					<div className="col-sm-3 col-6 form-group">
-						<label>Persistent Storage</label>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label">Persistent Storage</label>
 						<Storage />
 					</div>
 				</div>

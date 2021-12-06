@@ -120,8 +120,8 @@ const RatingsForm = ({
 													<h3>{title}</h3>
 													{ratings.map(rating => {
 														return (
-															<div key={rating} className="form-group">
-																<label>
+															<div key={rating} className="mb-3">
+																<label className="form-label">
 																	{getCols([`rating:${rating}`])[0].desc}
 																</label>
 																<input

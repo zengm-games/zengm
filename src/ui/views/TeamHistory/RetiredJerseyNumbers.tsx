@@ -106,8 +106,10 @@ const RetiredJerseyNumbers = ({
 				</h3>
 				<div className="row">
 					<div className="col-lg-6">
-						<div className="form-group">
-							<label htmlFor="rjn-number">Jersey number</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-number">
+								Jersey number
+							</label>
 							<input
 								type="text"
 								className="form-control"
@@ -116,8 +118,8 @@ const RetiredJerseyNumbers = ({
 								onChange={handleChange("number")}
 							/>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-seasonRetired">
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-seasonRetired">
 								Season of jersey retirement
 							</label>
 							<input
@@ -128,8 +130,8 @@ const RetiredJerseyNumbers = ({
 								onChange={handleChange("seasonRetired")}
 							/>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-seasonTeamInfo">
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-seasonTeamInfo">
 								Season of displayed jersey
 							</label>
 							<input
@@ -144,8 +146,10 @@ const RetiredJerseyNumbers = ({
 								to show the retired jersey.
 							</span>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-text">Optional text description</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-text">
+								Optional text description
+							</label>
 							<input
 								type="text"
 								className="form-control"
@@ -156,8 +160,10 @@ const RetiredJerseyNumbers = ({
 						</div>
 					</div>
 					<div className="col-lg-6">
-						<div className="form-group">
-							<label htmlFor="rjn-link">Link to player?</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-link">
+								Link to player?
+							</label>
 							<select
 								className="form-control"
 								id="rjn-link"
@@ -177,8 +183,10 @@ const RetiredJerseyNumbers = ({
 									players on other teams. The player ID number is at the end of
 									the URL when you view a player's profile page.
 								</p>
-								<div className="form-group">
-									<label htmlFor="rjn-player-select">Select player</label>
+								<div className="mb-3">
+									<label className="form-label" htmlFor="rjn-player-select">
+										Select player
+									</label>
 									<select
 										className="form-control"
 										id="rjn-player-select"
@@ -197,8 +205,10 @@ const RetiredJerseyNumbers = ({
 										<option value="other">Other</option>
 									</select>
 								</div>
-								<div className="form-group">
-									<label htmlFor="rjn-pid">Player ID number</label>
+								<div className="mb-3">
+									<label className="form-label" htmlFor="rjn-pid">
+										Player ID number
+									</label>
 									<input
 										type="text"
 										className="form-control"

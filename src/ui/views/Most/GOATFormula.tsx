@@ -38,8 +38,10 @@ const GOATFormula = ({
 					}
 				}}
 			>
-				<div className="form-group mb-2 overflow-auto">
-					<label htmlFor="goat-formula">GOAT Formula</label>
+				<div className="mb-2 overflow-auto">
+					<label className="form-label" htmlFor="goat-formula">
+						GOAT Formula
+					</label>
 					<textarea
 						className="form-control"
 						id="goat-formula"

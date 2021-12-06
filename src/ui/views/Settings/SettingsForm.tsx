@@ -1181,7 +1181,7 @@ const Option = ({
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
 				<div className="me-auto text-nowrap">
 					<label
-						className="mb-0"
+						className="form-label mb-0"
 						htmlFor={id}
 						onClick={event => {
 							// Don't toggle on label click, too confusing

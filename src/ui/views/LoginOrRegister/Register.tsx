@@ -125,8 +125,10 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			</p>
 			<form onSubmit={handleSubmit} ref={formRef}>
 				<input type="hidden" name="sport" value={process.env.SPORT} />
-				<div className="form-group">
-					<label htmlFor="register-username">Username</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="register-username">
+						Username
+					</label>
 					<input
 						className={classNames("form-control", {
 							"is-invalid": state.errorMessageUsername !== undefined,
@@ -146,8 +148,10 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{state.errorMessageUsername}
 					</span>
 				</div>
-				<div className="form-group">
-					<label htmlFor="register-email">Email Address</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="register-email">
+						Email Address
+					</label>
 					<input
 						className={classNames("form-control", {
 							"is-invalid": state.errorMessageEmail !== undefined,
@@ -164,8 +168,10 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{state.errorMessageEmail}
 					</span>
 				</div>
-				<div className="form-group">
-					<label htmlFor="register-password">Password</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="register-password">
+						Password
+					</label>
 					<input
 						className={classNames("form-control", {
 							"is-invalid": state.errorMessagePassword !== undefined,
@@ -183,8 +189,10 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{state.errorMessagePassword}
 					</span>
 				</div>
-				<div className="form-group">
-					<label htmlFor="register-password2">Repeat Password</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="register-password2">
+						Repeat Password
+					</label>
 					<input
 						className={classNames("form-control", {
 							"is-invalid": state.errorMessagePassword2 !== undefined,
@@ -202,7 +210,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{state.errorMessagePassword2}
 					</span>
 				</div>
-				<div className="form-group form-check">
+				<div className="mb-3 form-check">
 					<input
 						type="checkbox"
 						defaultChecked

@@ -53,7 +53,7 @@ const RelativesForm = ({
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
 						<div className="me-3">
-							{i === 0 ? <label>Type</label> : null}
+							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
 								className="form-control"
 								onChange={event => {
@@ -69,7 +69,7 @@ const RelativesForm = ({
 						</div>
 						<div className="me-2">
 							{i === 0 ? (
-								<label>
+								<label className="form-label">
 									Player ID number{" "}
 									<HelpPopover title="Player ID number">
 										<p>Enter the player ID number of the relative here.</p>

@@ -341,8 +341,8 @@ export const CollegesEditor = ({
 		<>
 			<Modal.Body>
 				<form onSubmit={handleSave}>
-					<div className="form-group">
-						<label htmlFor="fractionSkipCollege">
+					<div className="mb-3">
+						<label className="form-label" htmlFor="fractionSkipCollege">
 							Fraction of players who skip college
 						</label>
 						<input
@@ -755,8 +755,10 @@ export const FlagEditor = ({
 		<>
 			<Modal.Body>
 				<form onSubmit={handleSave}>
-					<div className="form-group">
-						<label htmlFor="playerBioInfoFlag">Flag URL</label>
+					<div className="mb-3">
+						<label className="form-label" htmlFor="playerBioInfoFlag">
+							Flag URL
+						</label>
 						<input
 							type="text"
 							className="form-control"

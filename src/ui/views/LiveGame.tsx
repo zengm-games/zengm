@@ -544,7 +544,7 @@ const LiveGame = (props: View<"liveGame">) => {
 									titlePause="Pause Simulation"
 									titleNext="Show Next Play"
 								/>
-								<div className="form-group flex-grow-1 mb-0">
+								<div className="mb-3 flex-grow-1 mb-0">
 									<input
 										type="range"
 										className="form-control-range"

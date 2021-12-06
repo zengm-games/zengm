@@ -96,7 +96,7 @@ const TeamForm = ({
 	return (
 		<>
 			<div className={classNamesCol[0]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Region</label>
 					<input
 						type="text"
@@ -107,7 +107,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[1]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Name</label>
 					<input
 						type="text"
@@ -118,7 +118,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[2]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Abbrev</label>
 					<input
 						type="text"
@@ -129,7 +129,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[3]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Division</label>
 					<select
 						className="form-control"
@@ -145,7 +145,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[4]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Population (millions)</label>
 					<input
 						type="text"
@@ -157,7 +157,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[5]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Stadium Capacity</label>
 					<input
 						type="text"
@@ -169,7 +169,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[6]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Logo URL</label>
 					<input
 						type="text"
@@ -180,7 +180,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[7]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Small Logo</label>
 					<input
 						type="text"
@@ -191,7 +191,7 @@ const TeamForm = ({
 				</div>
 			</div>
 			<div className={classNamesCol[8]}>
-				<div className="form-group">
+				<div className="mb-3">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="d-flex">
 						{[0, 1, 2].map(j => (
@@ -265,7 +265,7 @@ const TeamForm = ({
 			</div>
 			{!hideStatus ? (
 				<div className={classNamesCol[9]}>
-					<div className="form-group">
+					<div className="mb-3">
 						<label className={classNameLabel}>Status</label>
 						<select
 							className="form-control"

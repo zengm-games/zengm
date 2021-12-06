@@ -62,7 +62,11 @@ const LeagueMenu = <Value extends string>({
 		<>
 			<div className="d-flex">
 				<div className="flex-grow-1">
-					<label htmlFor="new-league-season" className="me-2">
+					<label
+						className="form-label"
+						htmlFor="new-league-season"
+						className="me-2"
+					>
 						Season
 					</label>
 					<NextPrevButtons

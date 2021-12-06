@@ -138,8 +138,10 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 				) : null}
 
 				<div style={{ maxWidth: "300px" }}>
-					<div className="form-group">
-						<label htmlFor="card-number">Card Number</label>
+					<div className="mb-3">
+						<label className="form-label" htmlFor="card-number">
+							Card Number
+						</label>
 						<input
 							type="text"
 							onChange={handleChange("number")}
@@ -149,8 +151,10 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 						/>
 					</div>
 
-					<div className="form-group" style={{ maxWidth: "100px" }}>
-						<label htmlFor="cvc">CVC</label>
+					<div className="mb-3" style={{ maxWidth: "100px" }}>
+						<label className="form-label" htmlFor="cvc">
+							CVC
+						</label>
 						<input
 							type="text"
 							onChange={handleChange("cvc")}
@@ -160,8 +164,10 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 						/>
 					</div>
 
-					<div className="form-group">
-						<label htmlFor="exp-month">Expiration (MM/YYYY)</label>
+					<div className="mb-3">
+						<label className="form-label" htmlFor="exp-month">
+							Expiration (MM/YYYY)
+						</label>
 						<div className="row">
 							<div className="col-5">
 								<input

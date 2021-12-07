@@ -553,7 +553,7 @@ table {
 	line-height: 32px;
 	padding-right: 1em;
 	text-align: right;
-	width: 100px;
+	width: 85px;
 }
 
 .finances-settings-text {
@@ -569,12 +569,7 @@ table {
 
 .finances-settings-field {
 	width: 115px;
-
-	.input-group-text {
-		height: 27px;
-	}
 }
-
 .finances-settings button {
 	display: none;
 }
@@ -1330,4 +1325,18 @@ code {
 hr {
 	background-color: $table-border-color;
 	opacity: 1;
+}
+
+// Based on input-group-sm from _input-group.scss
+.input-group-xs > .form-control,
+.input-group-xs > .form-select,
+.input-group-xs > .input-group-text,
+.input-group-xs > .btn {
+	padding: $input-padding-y-sm $input-padding-x-sm;
+	@include font-size($input-font-size-sm);
+	@include border-radius($input-border-radius-sm);
+	height: 27px;
+}
+.input-group-xs > .form-select {
+	padding-right: $form-select-padding-x + $form-select-indicator-padding;
 }

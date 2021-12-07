@@ -2697,6 +2697,7 @@ const cols: {
 	},
 	"stat:gp": {
 		template: "Stat",
+		options: { decimals: 0 },
 		stats: ["gp"],
 		desc: "Games Played",
 		sortSequence: ["desc", "asc"],
@@ -2705,6 +2706,7 @@ const cols: {
 	},
 	"stat:gs": {
 		template: "Stat",
+		options: { decimals: 0 },
 		stats: ["gs"],
 		desc: "Games Started",
 		sortSequence: ["desc", "asc"],
@@ -2713,6 +2715,7 @@ const cols: {
 	},
 	"stat:jerseyNumber": {
 		template: "Stat",
+		options: { decimals: 0 },
 		stats: ["jerseyNumber"],
 		desc: "Jersey Number",
 		sortSequence: ["asc", "desc"],

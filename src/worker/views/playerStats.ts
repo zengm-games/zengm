@@ -84,13 +84,10 @@ const updatePlayers = async (
 			playersAll = playersAll.filter(p => p.watch);
 		}
 
-		const config: TableConfig = new TableConfig("playerStats", [
-			"Name",
-			"Pos",
-			"Team",
-			"Age",
-			...statsTable.stats.map(s => `stat:${s}`),
-		]);
+		const config: TableConfig = new TableConfig(
+			"playerStats." + inputs.statType,
+			["Name", "Pos", "Team", "Age", ...statsTable.stats.map(s => `stat:${s}`)],
+		);
 		await config.load();
 
 		let players = await idb.getCopies.playersPlus(playersAll, {

@@ -5,7 +5,6 @@ bootstrap 5
     - same with highlight
 - test
   - "More Info" dropdown alignment
-  - code
   - custom form
   - badge-X, badge-yellow
     - dark.scss
@@ -15,7 +14,6 @@ bootstrap 5
     - navbar-right
   - button-variant test all with 2 args
   - settings
-  - scheduled events
   - table-info and other colors only work on actual tables
   - enter league file URL
   - popover

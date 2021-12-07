@@ -198,7 +198,7 @@ const TeamForm = ({
 							<input
 								key={j}
 								type="color"
-								className="form-control"
+								className="form-control form-control-color"
 								onClick={() => {
 									setShowFace(true);
 								}}
@@ -209,6 +209,7 @@ const TeamForm = ({
 								style={{
 									// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
 									zIndex: 1,
+									flexBasis: "100%",
 								}}
 							/>
 						))}
@@ -228,6 +229,7 @@ const TeamForm = ({
 							style={{
 								// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
 								zIndex: 1,
+								flexBasis: "100%",
 							}}
 						>
 							{helpers.keys(JERSEYS).map(jersey => (

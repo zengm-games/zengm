@@ -10,21 +10,21 @@ bootstrap 5
   - custom form
   - badge-X, badge-yellow
     - dark.scss
+    - achievements
   - border-top-light
   - ads
   - screenshot
     - navbar-right
   - form-row
-    - manage teams
   - button-variant test all with 2 args
   - settings
   - scheduled events
   - table-info and other colors only work on actual tables
   - enter league file URL
   - popover
-  - auto play
   - dark mode
   - Auto Delete Old Box Scores
+  - any other react-bootstrap stuff
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not
 

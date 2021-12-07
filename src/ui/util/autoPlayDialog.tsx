@@ -58,7 +58,7 @@ const Confirm = confirmable(
 							ok();
 						}}
 					>
-						<div className="form-row">
+						<div className="row gx-2">
 							<div className="col">
 								<input
 									ref={inputRef}

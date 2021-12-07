@@ -10,7 +10,6 @@ bootstrap 5
   - custom form
   - badge-X, badge-yellow
     - dark.scss
-    - achievements
   - border-top-light
   - ads
   - screenshot

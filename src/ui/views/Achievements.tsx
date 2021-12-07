@@ -155,10 +155,8 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 																	return (
 																		<span
 																			key={difficulty}
-																			className={`badge badge-pill ${
-																				count > 0
-																					? "badge-dark"
-																					: "badge-secondary"
+																			className={`badge rounded-pill ${
+																				count > 0 ? "bg-dark" : "bg-secondary"
 																			} float-end ms-1`}
 																			title={`${helpers.upperCaseFirstLetter(
 																				difficulty,

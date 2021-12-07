@@ -480,7 +480,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				<DataTable
 					bordered={false}
 					cols={cols}
-					className="dashboard-table"
+					className="dashboard-table align-middle"
 					disableSettingsCache
 					defaultSort={[7, "desc"]}
 					name="Dashboard"

@@ -158,7 +158,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			<MoreLinks type="league" page="history_all" />
 
 			<DataTable
-				className="align-middle-all"
+				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="HistoryAll"

@@ -11,7 +11,7 @@ bootstrap 5
   - ads
   - screenshot
     - navbar-right
-  - ratings stats popover
+  - ratings stats popover still not quite aligned right
   - dark mode
     - delete old data checkboxes
   - any other react-bootstrap stuff

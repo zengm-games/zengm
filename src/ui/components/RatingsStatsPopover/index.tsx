@@ -1,30 +1,36 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
-const Icon = ({
-	onClick,
-	watch,
-}: {
-	onClick?: () => void;
-	watch?: boolean;
-}) => {
-	return (
-		<span
-			className={classNames("glyphicon glyphicon-stats watch", {
-				"watch-active": watch,
-			})}
-			data-no-row-highlight="true"
-			title="View ratings and stats"
-			onClick={onClick}
-		/>
-	);
-};
+const Icon = forwardRef(
+	(
+		{
+			onClick,
+			watch,
+		}: {
+			onClick?: () => void;
+			watch?: boolean;
+		},
+		ref,
+	) => {
+		return (
+			<span
+				ref={ref}
+				className={classNames("glyphicon glyphicon-stats watch", {
+					"watch-active": watch,
+				})}
+				data-no-row-highlight="true"
+				title="View ratings and stats"
+				onClick={onClick}
+			/>
+		);
+	},
+);
 
 type Props = {
 	pid: number;
@@ -175,9 +181,13 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 		</div>
 	);
 
-	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
-		<Icon onClick={onClick} watch={actualWatch} />
-	);
+	const renderTarget = ({
+		forwardedRef,
+		onClick,
+	}: {
+		forwardedRef: any;
+		onClick?: () => void;
+	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
 
 	return (
 		<ResponsivePopover

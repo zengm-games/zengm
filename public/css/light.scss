@@ -1277,24 +1277,6 @@ a.anchor {
 	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
 }
 
-// Hacky fix for https://github.com/react-bootstrap/react-bootstrap/issues/5270
-.popover-margin-fix-1 {
-	&[data-popper-placement="top"] {
-		margin-bottom: 8px !important;
-	}
-	&[data-popper-placement="right"] {
-		margin-left: 8px !important;
-		margin-top: -4px !important;
-	}
-	&[data-popper-placement="bottom"] {
-		margin-top: 8px !important;
-	}
-	&[data-popper-placement="left"] {
-		margin-right: 8px !important;
-		margin-top: -4px !important;
-	}
-}
-
 @include media-breakpoint-up(sm) {
 	.play-through-injuries {
 		width: 200px;

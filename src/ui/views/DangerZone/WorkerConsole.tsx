@@ -43,7 +43,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 				}}
 			>
 				<textarea
-					className="form-control text-monospace mb-2"
+					className="form-control font-monospace mb-2"
 					disabled={disabled}
 					rows={10}
 					onChange={event => {

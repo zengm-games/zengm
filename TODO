@@ -1,10 +1,10 @@
+QB throw a Interception but their were two offsetting penalties so the down was replayed but it still counted the INT to the Stats. So the Safety still got credit for a pick https://discord.com/channels/290013534023057409/290015591216054273/917134502336270396
+
 bootstrap 5
-- https://getbootstrap.com/docs/5.0/migration/
 - test
   - "More Info" dropdown alignment
     - same with top menu dropdowns
   - ads
-  - dark mode
   - benchmark while simming games on schedule page
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not

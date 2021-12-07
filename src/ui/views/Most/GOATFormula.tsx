@@ -74,7 +74,7 @@ const GOATFormula = ({
 					>
 						{Object.entries(awards).map(([short, long]) => (
 							<li key={short}>
-								<abbr className="text-monospace" title={long}>
+								<abbr className="font-monospace" title={long}>
 									{short}
 								</abbr>
 							</li>
@@ -91,7 +91,7 @@ const GOATFormula = ({
 					>
 						{stats.map((stat, i) => (
 							<li key={stat}>
-								<abbr className="text-monospace" title={cols[i].desc}>
+								<abbr className="font-monospace" title={cols[i].desc}>
 									{stat}
 								</abbr>
 							</li>

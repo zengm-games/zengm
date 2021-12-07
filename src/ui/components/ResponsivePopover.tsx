@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, RefObject, useRef, useState } from "react";
 import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
 
 const ResponsivePopover = ({
@@ -13,7 +13,10 @@ const ResponsivePopover = ({
 	modalHeader: ReactNode;
 	modalBody: ReactNode;
 	popoverContent: ReactNode;
-	renderTarget: (props: { onClick?: () => void }) => ReactNode;
+	renderTarget: (props: {
+		onClick?: () => void;
+		forwardedRef?: RefObject<HTMLElement>;
+	}) => ReactNode;
 	toggle?: () => void;
 }) => {
 	const [showModal, setShowModal] = useState(false);

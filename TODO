@@ -11,10 +11,9 @@ bootstrap 5
   - ads
   - screenshot
     - navbar-right
-  - ratings stats popover still not quite aligned right
   - dark mode
   - any other react-bootstrap stuff
-  - For Firefox dark.scss comment - still needed?
+  - For Firefox dark.scss comment - still needed?A
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not
 

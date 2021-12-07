@@ -9,7 +9,6 @@ bootstrap 5
     - same with top menu dropdowns
   - ads
   - dark mode
-  - season preview
   - For Firefox dark.scss comment - still needed?A
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not

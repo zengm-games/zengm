@@ -98,7 +98,7 @@ const PlayPauseNext = ({
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>
 			{fastForwards ? (
-				<Dropdown alignRight={fastForwardAlignRight}>
+				<Dropdown align={fastForwardAlignRight ? "end" : undefined}>
 					<Dropdown.Toggle
 						id="fast-forward"
 						className="btn-light-bordered fast-forward"

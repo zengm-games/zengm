@@ -3,7 +3,6 @@ bootstrap 5
 - rosters
   - table handles should not be striped
     - same with highlight
-  - PT
 - test
   - "More Info" dropdown alignment
   - code

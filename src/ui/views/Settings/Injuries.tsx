@@ -360,7 +360,7 @@ const Injuries = ({
 					{injuries.length > 0 ? (
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
-							<div className="form-row" style={{ marginRight: 22 }}>
+							<div className="row g-2" style={{ marginRight: 22 }}>
 								<div className="col-6">Name</div>
 								<div className="col-3">Frequency</div>
 								<div className="col-3">Games</div>
@@ -376,7 +376,7 @@ const Injuries = ({
 										transition={{ duration: 0.2, type: "tween" }}
 									>
 										<div className="d-flex">
-											<div className="form-row mt-1 flex-grow-1" key={i}>
+											<div className="row g-2 flex-grow-1" key={i}>
 												<div className="col-6">
 													<input
 														type="text"

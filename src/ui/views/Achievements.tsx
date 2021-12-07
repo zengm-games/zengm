@@ -114,7 +114,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 						<Fragment key={category}>
 							<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
 							<div
-								className="row gx-2 gy-2"
+								className="row g-2"
 								style={{
 									marginBottom: "-0.5rem",
 								}}

@@ -110,12 +110,12 @@ export const RacesEditor = ({
 					}}
 				>
 					<input type="submit" className="d-none" />
-					<div className="form-row fw-bold">
+					<div className="row g-2 fw-bold">
 						<div className="col-6">Race</div>
 						<div className="col-6">Frequency</div>
 					</div>
 					{rowsEdited.map((rows, i) => (
-						<div key={rows.race} className="form-row mt-2 align-items-center">
+						<div key={rows.race} className="row g-2 align-items-center">
 							<div className="col-6">
 								{helpers.upperCaseFirstLetter(rows.race)}
 							</div>

@@ -293,21 +293,6 @@ input[type="checkbox"][disabled]:not(.custom-control-input) {
 	opacity: 0.65;
 }
 
-.badge-primary,
-.badge-secondary,
-.badge-success,
-.badge-info,
-.badge-warning,
-.badge-dark,
-.badge-yellow {
-	color: $white;
-}
-
-.badge-danger,
-.badge-light {
-	color: $black;
-}
-
 :root {
 	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
 	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};

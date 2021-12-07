@@ -85,7 +85,7 @@ const CountBadge = ({ count }: { count: number }) => {
 	if (count > 1) {
 		return (
 			<div className="ms-1">
-				<span className="badge badge-secondary align-text-bottom">{count}</span>
+				<span className="badge bg-secondary align-text-bottom">{count}</span>
 			</div>
 		);
 	}

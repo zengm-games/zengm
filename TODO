@@ -3,11 +3,10 @@ bootstrap 5
 - rosters
   - table handles should not be striped
     - same with highlight
+- get rid of text-dark, hardcode colors in light.scss like dark.scss
 - test
   - "More Info" dropdown alignment
   - custom form
-  - badge-X
-    - dark.scss
   - border-top-light
   - ads
   - screenshot

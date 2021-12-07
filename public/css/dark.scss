@@ -135,9 +135,19 @@ $text-muted: $gray-400;
 	}
 }
 
-.badge-danger {
-	background-color: darken($red, 20);
-	color: $black;
+.bg-danger {
+	background-color: darken($red, 20) !important;
+}
+
+.bg-danger,
+.bg-darkblue,
+.bg-primary,
+.bg-success {
+	color: $black !important;
+}
+.bg-warning,
+.bg-orange {
+	color: $white !important;
 }
 
 a.play-button {

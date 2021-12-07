@@ -1039,6 +1039,12 @@ tr.table-warning:hover > td {
 	background-color: lighten(#fd7e14, 10);
 }
 
+.bg-warning,
+.bg-orange,
+.bg-light {
+	color: $black !important;
+}
+
 .sort-inside-modal {
 	z-index: 999999999;
 }
@@ -1084,10 +1090,6 @@ button.fast-forward {
 
 .text-yellow {
 	color: $yellow;
-}
-
-.bg-yellow {
-	background-color: $yellow;
 }
 
 .ring::after {

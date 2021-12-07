@@ -20,7 +20,7 @@ const AwardsSummary = ({ awards }: { awards: Player["awards"] }) => {
 					<span
 						key={i}
 						className={`badge rounded-pill px-2 me-1 mt-2 ${
-							a.type === "Hall of Fame" ? "bg-yellow text-dark" : "bg-secondary"
+							a.type === "Hall of Fame" ? "bg-warning" : "bg-secondary"
 						}`}
 						title={a.seasons.join(", ")}
 					>

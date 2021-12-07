@@ -77,16 +77,16 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 
 			<h2>Player Stats</h2>
 
-			<form className="form-inline" onSubmit={handleSubmit}>
-				<div className="mb-3 me-2">
+			<form className="row gx-2" onSubmit={handleSubmit}>
+				<div className="col-auto">
 					<select className="form-select" onChange={resetState}>
 						<option value="averages">Season Averages</option>
 						{isSport("basketball") ? (
 							<option value="games">Individual Games</option>
 						) : null}
 					</select>
-				</div>{" "}
-				<div className="mb-3 me-2">
+				</div>
+				<div className="col-auto">
 					<select className="form-select" onChange={resetState}>
 						{seasons.map(s => {
 							return (
@@ -96,10 +96,12 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 							);
 						})}
 					</select>
-				</div>{" "}
-				<ActionButton type="submit" processing={status === "Exporting..."}>
-					Export Stats
-				</ActionButton>
+				</div>
+				<div className="col-auto">
+					<ActionButton type="submit" processing={status === "Exporting..."}>
+						Export Stats
+					</ActionButton>
+				</div>
 			</form>
 
 			{status && status !== "Exporting..." ? (

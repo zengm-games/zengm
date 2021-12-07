@@ -15,9 +15,8 @@ bootstrap 5
   - screenshot
     - navbar-right
   - form-row
-  - form-inline
+    - manage teams
   - button-variant test all with 2 args
-  - multi team
   - settings
   - scheduled events
   - table-info and other colors only work on actual tables
@@ -25,6 +24,7 @@ bootstrap 5
   - popover
   - auto play
   - dark mode
+  - Auto Delete Old Box Scores
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not
 

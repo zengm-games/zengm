@@ -145,7 +145,7 @@ const NewTeam = ({
 		<>
 			{message}
 
-			<form className="form-inline" onSubmit={handleNewTeam}>
+			<form className="d-flex" onSubmit={handleNewTeam}>
 				<select
 					className="form-select me-2"
 					style={{

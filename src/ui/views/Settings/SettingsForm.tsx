@@ -1693,43 +1693,44 @@ const SettingsForm = ({
 							isSport("basketball") &&
 							gameSimPresets &&
 							(godMode || showGodModeSettings) ? (
-								<div className="form-inline mb-3">
-									<select
-										className="form-select"
-										value={gameSimPreset}
-										disabled={!godMode}
-										onChange={event => {
-											// @ts-ignore
-											const presets = gameSimPresets[event.target.value];
-											if (!presets) {
-												return;
-											}
+								<select
+									className="form-select mb-3"
+									style={{
+										width: "inherit",
+									}}
+									value={gameSimPreset}
+									disabled={!godMode}
+									onChange={event => {
+										// @ts-ignore
+										const presets = gameSimPresets[event.target.value];
+										if (!presets) {
+											return;
+										}
 
-											const presetsString: any = {};
-											for (const [key, value] of Object.entries(presets)) {
-												presetsString[key] = String(value);
-											}
+										const presetsString: any = {};
+										for (const [key, value] of Object.entries(presets)) {
+											presetsString[key] = String(value);
+										}
 
-											setState(prevState => ({
-												...prevState,
-												...presetsString,
-											}));
-											setGameSimPreset(event.target.value);
-										}}
-									>
-										<option value="default">
-											Select preset based on historical NBA stats
-										</option>
-										{Object.keys(gameSimPresets)
-											.sort()
-											.reverse()
-											.map(season => (
-												<option key={season} value={season}>
-													{season}
-												</option>
-											))}
-									</select>
-								</div>
+										setState(prevState => ({
+											...prevState,
+											...presetsString,
+										}));
+										setGameSimPreset(event.target.value);
+									}}
+								>
+									<option value="default">
+										Select preset based on historical NBA stats
+									</option>
+									{Object.keys(gameSimPresets)
+										.sort()
+										.reverse()
+										.map(season => (
+											<option key={season} value={season}>
+												{season}
+											</option>
+										))}
+								</select>
 							) : null}
 							<div className="row mb-5 mb-md-3">
 								{catOptions.map(

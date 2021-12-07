@@ -66,7 +66,7 @@ const ForceWin = ({
 		const id = `force-win-${game.gid}`;
 
 		form = (
-			<div className="form-inline my-1">
+			<div className="my-1 d-flex">
 				<label className="me-1" htmlFor={id}>
 					Force win?
 				</label>

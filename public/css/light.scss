@@ -803,6 +803,7 @@ tr.table-warning:hover > td {
 .table tfoot {
 	tr:first-child {
 		th {
+			border-top-color: $table-border-color;
 			border-top-width: 2px;
 		}
 	}
@@ -1112,7 +1113,7 @@ button.fast-forward {
 }
 
 .fake-list-group-item {
-	background-color: $table-accent-bg;
+	background-color: $table-striped-bg;
 	padding: 0.5rem 1rem;
 	width: 100%;
 }
@@ -1121,7 +1122,7 @@ button.fast-forward {
 }
 @include media-breakpoint-up(md) {
 	.settings-striped-bg-alt {
-		background-color: $table-accent-bg;
+		background-color: $table-striped-bg;
 	}
 	.fake-list-group-item {
 		margin-bottom: 30px;
@@ -1305,7 +1306,7 @@ a.anchor {
 }
 
 .table-bg-striped {
-	background-color: $table-accent-bg;
+	background-color: $table-striped-bg;
 }
 
 code {

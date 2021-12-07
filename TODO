@@ -3,8 +3,6 @@ bootstrap 5
 - rosters
   - table handles should not be striped
     - same with highlight
-- player page stat table at top
-  - if figure out, get rid of color in tfoot light.scss?
 - test
   - "More Info" dropdown alignment
   - custom form

@@ -347,6 +347,9 @@ table {
 
 .table {
 	font-variant: tabular-nums;
+}
+
+.table:not(.table-borderless):not(.table-bordered) {
 	border-top: $table-border-width solid $table-border-color;
 }
 

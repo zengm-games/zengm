@@ -143,7 +143,7 @@ const StatsSummary = ({
 
 	return (
 		<div className="player-stats-summary">
-			<table className="table table-sm table-condensed table-nonfluid text-center mt-3 mb-0">
+			<table className="table table-sm table-borderless table-nonfluid text-center mt-3 mb-0">
 				<thead>
 					<tr>
 						{cols.map((col, i) => {

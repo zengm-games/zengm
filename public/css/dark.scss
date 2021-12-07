@@ -28,7 +28,12 @@ $primary: $orange;
 $secondary: $gray-400;
 $text-muted: $gray-400;
 
-$table-bg-scale: 60%;
+$table-bg-scale: 70%;
+
+$alert-bg-scale: 70%;
+$alert-border-scale: 60%;
+
+$list-group-item-bg-scale: 50%;
 
 @import "light";
 

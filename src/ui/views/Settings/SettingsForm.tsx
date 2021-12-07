@@ -1007,16 +1007,16 @@ const Input = ({
 		const checked = value === "true";
 		const switchTitle = title ?? (checked ? "Enabled" : "Disabled");
 		inputElement = (
-			<div className="custom-control custom-switch" title={switchTitle}>
+			<div className="form-check form-switch" title={switchTitle}>
 				<input
+					className="form-check-input"
 					type="checkbox"
-					className="custom-control-input"
+					id={id}
 					disabled={disabled}
 					checked={checked}
 					onChange={onChange}
-					id={id}
 				/>
-				<label className="custom-control-label" htmlFor={id}></label>
+				<label className="form-check-label" htmlFor={id} />
 			</div>
 		);
 	} else if (type === "rangePercent") {
@@ -1763,12 +1763,12 @@ const SettingsForm = ({
 														className="d-flex align-items-center"
 													>
 														<div
-															className="custom-control custom-switch"
+															className="form-check form-switch"
 															title={checked ? "Enabled" : "Disabled"}
 														>
 															<input
 																type="checkbox"
-																className="custom-control-input"
+																className="form-check-input"
 																checked={checked}
 																disabled={!enabled || submitting}
 																onChange={handleChange(key2, "bool")}
@@ -1776,9 +1776,9 @@ const SettingsForm = ({
 																value={state[key2]}
 															/>
 															<label
-																className="custom-control-label"
+																className="form-check-label"
 																htmlFor={id + "2"}
-															></label>
+															/>
 														</div>
 														<div className="input-group">
 															<input

@@ -42,6 +42,17 @@ const LeagueTopBar = memo(() => {
 		}
 		return true;
 	});
+
+	useEffect(() => {
+		if (show) {
+			const leagueTopBar = document.querySelector(".league-top-bar");
+			leagueTopBar?.scrollTo({
+				left: leagueTopBar.scrollWidth,
+				behavior: "smooth",
+			});
+		}
+	});
+
 	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
 	const prevGames = useRef<typeof games>([]);
 
@@ -86,18 +97,13 @@ const LeagueTopBar = memo(() => {
 				break;
 			}
 		}
-
-		const start = games2.length - numberOfScoreBoxes;
-		if (start > 0) {
-			games2 = games2.slice(start);
-		}
 	}
 
 	const transition = { duration: 0.2, type: "tween" };
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
 			{show ? (

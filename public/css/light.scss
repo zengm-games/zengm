@@ -109,10 +109,14 @@ $flag-icon-css-path: "/img/flags";
 @import "glyphicons";
 @import "sidebar";
 
-// Make it more like Bootstrap 4 - allow using these classes on non-table elements
 @each $color, $value in $table-variants {
 	.table-#{$color} {
+		// Make it more like Bootstrap 4 - allow using these classes on non-table elements
 		background-color: $value;
+
+		// Make it more like Bootstrap 4 - no striping of table rows when highlighted
+		--bs-table-striped-bg: $value;
+		--bs-table-striped-color: color-contrast(opaque($body-bg, $value));
 	}
 }
 

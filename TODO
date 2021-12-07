@@ -1,9 +1,5 @@
 bootstrap 5
 - https://getbootstrap.com/docs/5.0/migration/
-- rosters
-  - table handles should not be striped
-    - same with highlight
-    - https://getbootstrap.com/docs/5.0/content/tables/#how-do-the-variants-and-accented-tables-work
 - test
   - "More Info" dropdown alignment
     - same with top menu dropdowns

@@ -722,6 +722,7 @@ tr.table-warning:hover > td {
 	border-radius: 0.2rem;
 }
 
+// Not sure why these need more than 2 args to button-variant, but otherwise hover seems broken
 .btn-light-bordered {
 	@include button-variant($light, $gray-400, $black, darken($light, 7));
 }

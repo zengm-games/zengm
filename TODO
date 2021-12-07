@@ -3,17 +3,17 @@ bootstrap 5
 - rosters
   - table handles should not be striped
     - same with highlight
+    - https://getbootstrap.com/docs/5.0/content/tables/#how-do-the-variants-and-accented-tables-work
 - test
   - "More Info" dropdown alignment
+    - same with top menu dropdowns
   - border-top-light
   - ads
   - screenshot
     - navbar-right
-  - button-variant test all with 2 args
-  - settings
   - ratings stats popover
   - dark mode
-  - Auto Delete Old Box Scores
+    - delete old data checkboxes
   - any other react-bootstrap stuff
 
 rankWidth in standings table should depend on if a 2 digit number is shown or not

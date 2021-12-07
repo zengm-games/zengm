@@ -17,7 +17,7 @@ $blue: lighten(#007bff, 25);
 $indigo: lighten(#6610f2, 20);
 $purple: lighten(#6f42c1, 20);
 $pink: lighten(#e83e8c, 20);
-$red: lighten(#dc3545, 0);
+$red: #dc3545;
 $orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
 $green: lighten(#28a745, 10);
@@ -34,6 +34,9 @@ $alert-bg-scale: 70%;
 $alert-border-scale: 60%;
 
 $list-group-item-bg-scale: 50%;
+
+// Otherwise, it complains about contrast for buttons
+$min-contrast-ratio: 3;
 
 @import "light";
 
@@ -190,23 +193,17 @@ a.god-mode.active {
 }
 
 .btn-god-mode {
-	@include button-variant(darken($purple, 20), darken($purple, 20));
-	&,
-	&:active,
-	&:focus,
-	&:not(:disabled):hover {
-		color: $black !important;
-	}
+	@include button-variant(
+		darken($purple, 20),
+		darken($purple, 20),
+		$black,
+		darken($purple, 27),
+		darken($purple, 27)
+	);
 }
 
 .btn-outline-god-mode {
 	@include button-variant(darken($purple, 20), $gray-400);
-	&,
-	&:active,
-	&:focus,
-	&:not(:disabled):hover {
-		color: $black !important;
-	}
 }
 
 .alert-god-mode {

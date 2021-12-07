@@ -34,6 +34,7 @@ const UpcomingFreeAgents = ({
 			),
 		};
 	});
+	console.log(players[0]);
 
 	return (
 		<>

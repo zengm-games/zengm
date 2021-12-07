@@ -84,7 +84,7 @@ const updatePlayers = async (
 			playersAll = playersAll.filter(p => p.watch);
 		}
 
-		const config: TableConfig = new TableConfig("playerRatings", [
+		const config: TableConfig = new TableConfig("playerStats", [
 			"Name",
 			"Pos",
 			"Team",

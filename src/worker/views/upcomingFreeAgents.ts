@@ -70,6 +70,7 @@ const updateUpcomingFreeAgents = async (
 			"watch",
 			"jerseyNumber",
 			"mood",
+			...config.attrsNeeded,
 		],
 		ratings: config.ratingsNeeded,
 		stats: config.statsNeeded,

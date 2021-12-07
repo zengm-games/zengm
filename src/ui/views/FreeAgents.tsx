@@ -4,6 +4,7 @@ import { PHASE } from "../../common";
 import {
 	DataTable,
 	MoreLinks,
+	NegotiateButtons,
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
@@ -11,7 +12,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import getTemplate from "../util/columns/getTemplate";
-import RosterCustomizeColumns from "./Roster/RosterCustomizeColumns";
+import { Player } from "../../common/types";
 
 const FreeAgents = ({
 	capSpace,
@@ -31,9 +32,25 @@ const FreeAgents = ({
 	const [addFilters, setAddFilters] = useState<
 		(string | undefined)[] | undefined
 	>();
-	const cols = config.columns;
-
-	const [showColumnsModal, setShowColumnsModal] = useState(false);
+	const cols = [
+		...config.columns,
+		{
+			key: "negotiate",
+			title: "Negotiate",
+			render: (p: Player) => (
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+				// @ts-ignore
+				<NegotiateButtons
+					capSpace={capSpace}
+					disabled={gameSimInProgress}
+					minContract={minContract}
+					spectator={spectator}
+					p={p}
+					willingToNegotiate={p.mood.user.willing}
+				/>
+			),
+		},
+	];
 
 	const showAfforablePlayers = useCallback(() => {
 		const newAddFilters: (string | undefined)[] = new Array(9);
@@ -75,13 +92,6 @@ const FreeAgents = ({
 			</div>
 		);
 	}
-
-	const vars = {
-		capSpace,
-		gameSimInProgress,
-		minContract,
-		spectator,
-	};
 
 	const rows = players.map(p => {
 		return {

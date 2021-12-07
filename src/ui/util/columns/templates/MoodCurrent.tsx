@@ -3,4 +3,4 @@ import { dataTableWrappedMood } from "../../../components/Mood";
 import type { ColTemp } from "../getCols";
 
 export default (p: Player, c: ColTemp) =>
-	dataTableWrappedMood({ defaultType: "current", maxWidth: true, p })?.value;
+	dataTableWrappedMood({ defaultType: "current", maxWidth: true, p });

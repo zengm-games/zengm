@@ -1,14 +1,12 @@
 import {
 	DataTable,
 	NegotiateButtons,
-	PlayerNameLabels,
 	RosterComposition,
 	RosterSalarySummary,
-	SafeHtml,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, logEvent, toWorker } from "../util";
-import type { View } from "../../common/types";
+import { helpers, logEvent, toWorker } from "../util";
+import type { Player, View } from "../../common/types";
 import getTemplate from "../util/columns/getTemplate";
 
 const NegotiationList = ({
@@ -31,7 +29,25 @@ const NegotiationList = ({
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
-	const cols = config.columns;
+	const cols = [
+		...config.columns,
+		{
+			key: "negotiate",
+			title: "Negotiate",
+			render: (p: Player) => (
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+				// @ts-ignore
+				<NegotiateButtons
+					canGoOverCap
+					capSpace={capSpace}
+					minContract={minContract}
+					spectator={spectator}
+					p={p}
+					willingToNegotiate={p.mood.user.willing}
+				/>
+			),
+		},
+	];
 
 	const rows = players.map(p => {
 		return {

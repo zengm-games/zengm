@@ -52,7 +52,6 @@ const updateFreeAgents = async () => {
 		"Mood",
 		"Asking For",
 		"Exp",
-		"Negotiate",
 	]);
 	await config.load();
 

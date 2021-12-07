@@ -10,7 +10,8 @@ export type ColTemp = Omit<LegacyCol, "title"> & {
 	stats?: string[];
 	attrs?: string[];
 	template?: string;
-	render?: (p: Player, c: ColTemp, vars: object) => JSX.Element;
+	render?: (p: Player, c: ColTemp, vars: object) => JSX.Element | string;
+	options?: { [key: string]: any };
 };
 
 const gp = isSport("hockey") ? "GP" : "G";
@@ -491,16 +492,9 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "WS",
 		},
-		"stat:wsPerPlayer": {
-			template: "Stat",
-			stats: ["wsPerPlayer"],
-			desc: "Win Shares Per Player",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-			title: "WS/Player",
-		},
 		"stat:ws48": {
 			template: "Stat",
+			options: { decimals: 3 },
 			stats: ["ws48"],
 			desc: "Win Shares Per 48 Minutes",
 			sortSequence: ["desc", "asc"],
@@ -2564,11 +2558,13 @@ const cols: {
 		template: "Contract",
 	},
 	Projected: {
+		desc: "Projected Contract Demand",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 		template: "Projected",
 	},
 	Mood: {
+		desc: "How Player Feels About Your Team",
 		width: "1px",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -2576,6 +2572,7 @@ const cols: {
 	},
 	CurrentMood: {
 		title: "Current Mood",
+		desc: "How Player Feels About Their Current Team",
 		width: "1px",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -2584,16 +2581,13 @@ const cols: {
 	DraftYear: {
 		sortType: "number",
 		attrs: ["draft"],
+		title: "Draft Year",
 		template: "DraftYear",
 	},
 	Name: {
 		sortType: "name",
 		ratings: ["skills"],
 		template: "Name",
-	},
-	Negotiate: {
-		sortSequence: [],
-		template: "Negotiate",
 	},
 	Release: {
 		sortSequence: [],
@@ -2644,11 +2638,6 @@ const cols: {
 	},
 	"Pot Drop": {
 		desc: "Decrease in Potential Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	PTS: {
-		desc: "Points",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

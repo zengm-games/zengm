@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
+import type { SortOrder, View } from "../../common/types";
 import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import getTemplate from "../util/columns/getTemplate";
@@ -68,24 +68,24 @@ const PlayerStats = ({
 
 	const cols = config.columns;
 
-	if (statType === "shotLocations") {
-		cols[cols.length - 7].title = "M";
-		cols[cols.length - 6].title = "A";
-		cols[cols.length - 5].title = "%";
-	}
-
-	let sortCol = cols[cols.length - 1].key;
+	let sortCol: string = cols[0].key;
+	let sortDir: SortOrder = "asc";
 	if (isSport("football")) {
 		if (statType === "passing") {
 			sortCol = "stat:passYds";
+			sortDir = "desc";
 		} else if (statType === "rushing") {
 			sortCol = "stat:rusRecTD";
+			sortDir = "desc";
 		} else if (statType === "defense") {
 			sortCol = "stat:defSk";
+			sortDir = "desc";
 		} else if (statType === "kicking") {
 			sortCol = "stat:fgPct";
+			sortDir = "desc";
 		} else if (statType === "returns") {
 			sortCol = "stat:krYds";
+			sortDir = "desc";
 		}
 	}
 
@@ -128,7 +128,7 @@ const PlayerStats = ({
 			<DataTable
 				cols={cols}
 				config={config}
-				defaultSort={[sortCol, "desc"]}
+				defaultSort={[sortCol, sortDir]}
 				name={`PlayerStats${statType}`}
 				rows={rows}
 				superCols={superCols}

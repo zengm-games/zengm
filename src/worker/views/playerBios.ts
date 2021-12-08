@@ -25,7 +25,7 @@ const updatePlayers = async (
 			hockey: ["keyStats"],
 		});
 
-		const config: TableConfig = new TableConfig("playerRatings", [
+		const config: TableConfig = new TableConfig("playerBios", [
 			"Name",
 			"Pos",
 			"stat:jerseyNumber",

@@ -2902,7 +2902,7 @@ const cols: {
 	Name: {
 		cat: "General",
 		ratings: ["skills"],
-		attrs: ["name", "injury", "jerseyNumber", "watch"],
+		attrs: ["pid", "name", "injury", "jerseyNumber", "watch"],
 		sortType: "name",
 		template: "Name",
 	},

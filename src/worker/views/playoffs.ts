@@ -39,11 +39,22 @@ type PlayIns =
 	  )[]
 	| undefined;
 
+type TeamToEdit = {
+	tid: number;
+	cid: number;
+	region: string;
+	name: string;
+	seed: number | undefined;
+	imgURL: string | undefined;
+	imgURLSmall: string | undefined;
+};
+
 const updatePlayoffs = async (
 	inputs: ViewInput<"playoffs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{
+	canEdit: boolean;
 	confNames: string[];
 	finalMatchups: boolean;
 	matchups: {
@@ -59,6 +70,7 @@ const updatePlayoffs = async (
 		home: SeriesTeam;
 		away?: SeriesTeam;
 	}[][];
+	teamsToEdit: TeamToEdit[];
 	userTid: number;
 } | void> => {
 	if (
@@ -138,7 +150,40 @@ const updatePlayoffs = async (
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 
+		const canEdit =
+			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
+		let teamsToEdit: TeamToEdit[] = [];
+		if (canEdit) {
+			const teams = await idb.cache.teams.getAll();
+
+			// All first round matchups
+			const matchupsToCheck = [
+				...series[0],
+				...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
+			];
+			console.log(matchupsToCheck, playIns);
+
+			const seedsByTid = new Map();
+			for (const matchup of matchupsToCheck) {
+				seedsByTid.set(matchup.home.tid, matchup.home.seed);
+				if (matchup.away) {
+					seedsByTid.set(matchup.away.tid, matchup.away.seed);
+				}
+			}
+
+			teamsToEdit = teams.map(t => ({
+				tid: t.tid,
+				cid: t.cid,
+				region: t.region,
+				name: t.name,
+				seed: seedsByTid.get(t.tid),
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+			}));
+		}
+
 		return {
+			canEdit,
 			confNames,
 			finalMatchups,
 			matchups,
@@ -150,6 +195,7 @@ const updatePlayoffs = async (
 			playoffsByConf,
 			season: inputs.season,
 			series: series2,
+			teamsToEdit,
 			userTid: g.get("userTid"),
 		};
 	}

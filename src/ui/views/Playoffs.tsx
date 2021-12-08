@@ -4,12 +4,15 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
 import range from "lodash-es/range";
+import { useState } from "react";
+import classNames from "classnames";
 
 const width100 = {
 	width: "100%",
 };
 
 const Playoffs = ({
+	canEdit,
 	confNames,
 	finalMatchups,
 	matchups,
@@ -19,6 +22,7 @@ const Playoffs = ({
 	playoffsByConf,
 	season,
 	series,
+	teamsToEdit,
 	userTid,
 }: View<"playoffs">) => {
 	useTitleBar({
@@ -30,6 +34,10 @@ const Playoffs = ({
 			seasons: season,
 		},
 	});
+
+	const [editing, setEditing] = useState(false);
+	const [teamsEdited, setTeamsEdited] = useState(teamsToEdit);
+	const actuallyEditing = canEdit && editing;
 
 	const numRounds = series.length;
 
@@ -79,6 +87,30 @@ const Playoffs = ({
 					This is what the playoff matchups would be if the season ended right
 					now.
 				</p>
+			) : canEdit ? (
+				<div className="mb-3">
+					<button
+						className={classNames(
+							"btn",
+							editing ? "btn-primary" : "btn-god-mode",
+						)}
+						onClick={() => {
+							setEditing(!editing);
+						}}
+					>
+						{editing ? "Save Changes" : "Edit Playoff Teams"}
+					</button>
+					{editing ? (
+						<button
+							className="btn btn-secondary ms-2"
+							onClick={() => {
+								setEditing(false);
+							}}
+						>
+							Cancel
+						</button>
+					) : null}
+				</div>
 			) : null}
 
 			{playoffsByConf && numRounds > 1 ? (
@@ -104,6 +136,11 @@ const Playoffs = ({
 												season={season}
 												series={series[m.matchup[0]][m.matchup[1]]}
 												userTid={userTid}
+												editing={actuallyEditing}
+												teams={teamsEdited}
+												onChange={t => {
+													console.log(t);
+												}}
 											/>
 										</td>
 									);
@@ -159,6 +196,8 @@ const Playoffs = ({
 													series={playIn[0]}
 													userTid={userTid}
 													extraHighlight
+													editing={actuallyEditing}
+													teams={teamsEdited}
 												/>
 											</td>
 											<td style={tdStyle} rowSpan={2}>
@@ -183,6 +222,8 @@ const Playoffs = ({
 													season={season}
 													series={playIn[1]}
 													userTid={userTid}
+													editing={actuallyEditing}
+													teams={teamsEdited}
 												/>
 											</td>
 										</tr>

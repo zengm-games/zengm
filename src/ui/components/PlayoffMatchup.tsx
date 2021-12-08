@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import type { View } from "../../common/types";
 import { helpers } from "../util";
 
 type SeriesTeam = {
@@ -22,12 +23,39 @@ type SeriesTeam = {
 	won?: number;
 };
 
+type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
+
 const faded = {
 	opacity: 0.3,
 	padding: 2,
 };
 const notFaded = {
 	padding: 2,
+};
+
+const TeamLogo = ({
+	lost,
+	team,
+}: {
+	lost?: boolean;
+	team: {
+		imgURL?: string;
+		imgURLSmall?: string;
+		pendingPlayIn?: boolean;
+	};
+}) => {
+	return (
+		<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
+			{!team.pendingPlayIn && (team.imgURL || team.imgURLSmall) ? (
+				<img
+					className="mw-100 mh-100"
+					style={lost ? faded : notFaded}
+					src={team.imgURLSmall ?? team.imgURL}
+					alt=""
+				/>
+			) : null}
+		</div>
+	);
 };
 
 const Team = ({
@@ -41,6 +69,9 @@ const Team = ({
 	won,
 	lost,
 	gid,
+
+	editing,
+	teams,
 }: {
 	expandTeamName: boolean;
 	extraHighlight?: boolean;
@@ -52,9 +83,51 @@ const Team = ({
 	won: boolean;
 	lost: boolean;
 	gid?: number;
+
+	editing?: boolean;
+	teams?: TeamToEdit[];
 }) => {
 	if (!team) {
 		return null;
+	}
+
+	if (editing && teams && !team.pendingPlayIn) {
+		const teamEdited = teams.find(t => team.seed === t.seed);
+		if (teamEdited) {
+			const highlightUser = teamEdited.tid === userTid;
+
+			return (
+				<li
+					className={classNames("border border-bottom-0", {
+						"table-info": highlightUser,
+					})}
+				>
+					<TeamLogo team={teamEdited} />
+					<select
+						className="form-select god-mode"
+						onChange={async event => {
+							const tid = parseInt(event.target.value);
+
+							const newTeam = teams.find(t => t.tid === tid);
+
+							if (newTeam) {
+								console.log(newTeam);
+							}
+						}}
+						value={teamEdited.tid}
+					>
+						{teams.map(t => {
+							return (
+								<option key={t.tid} value={t.tid}>
+									{t.seed !== undefined ? `${t.seed}.` : null} {t.region}{" "}
+									{t.name}
+								</option>
+							);
+						})}
+					</select>
+				</li>
+			);
+		}
 	}
 
 	const wonPtsLink = (value: number) => {
@@ -88,16 +161,7 @@ const Team = ({
 				"text-muted": lost,
 			})}
 		>
-			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
-				{!team.pendingPlayIn && (team.imgURL || team.imgURLSmall) ? (
-					<img
-						className="mw-100 mh-100"
-						style={lost ? faded : notFaded}
-						src={team.imgURLSmall ?? team.imgURL}
-						alt=""
-					/>
-				) : null}
-			</div>
+			<TeamLogo team={team} lost={lost} />
 			<div className="mx-1 align-self-start">{team.seed}.</div>
 			{team.pendingPlayIn ? (
 				<div className="align-self-start">
@@ -165,6 +229,9 @@ const PlayoffMatchup = ({
 	season,
 	series,
 	userTid,
+
+	editing,
+	teams,
 }: {
 	expandTeamNames?: boolean;
 	extraHighlight?: boolean;
@@ -176,6 +243,9 @@ const PlayoffMatchup = ({
 		gids?: number[];
 	};
 	userTid: number;
+
+	editing?: boolean;
+	teams?: TeamToEdit[];
 }) => {
 	if (
 		series === undefined ||
@@ -216,6 +286,8 @@ const PlayoffMatchup = ({
 				won={homeWon}
 				lost={awayWon}
 				gid={gid}
+				editing={editing}
+				teams={teams}
 			/>
 			<Team
 				expandTeamName={expandTeamNames}
@@ -228,6 +300,8 @@ const PlayoffMatchup = ({
 				won={awayWon}
 				lost={homeWon}
 				gid={gid}
+				editing={editing}
+				teams={teams}
 			/>
 		</ul>
 	);

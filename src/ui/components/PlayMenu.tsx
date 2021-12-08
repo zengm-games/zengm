@@ -78,8 +78,8 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 		>
 			<Dropdown.Toggle
 				className={classNames(
-					"play-button text-white",
-					spectator ? "bg-danger" : "bg-success",
+					"play-button",
+					spectator ? "play-button-danger" : "play-button-success",
 				)}
 				id="play-button"
 				as={Nav.Link}

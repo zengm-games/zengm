@@ -227,7 +227,26 @@ a.god-mode.active {
 .play-button {
 	font-size: 1.01562rem;
 	padding: 14px !important;
+	color: #fff !important; // white in light and dark
 	height: 51px;
+}
+.play-button-success {
+	background-color: $green;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($green, $btn-hover-bg-shade-amount);
+	}
+}
+.play-button-danger {
+	background-color: $red;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($red, $btn-hover-bg-shade-amount);
+	}
 }
 
 .dropdown-item {

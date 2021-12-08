@@ -20,7 +20,7 @@ $pink: lighten(#e83e8c, 20);
 $red: #dc3545;
 $orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
-$green: lighten(#28a745, 10);
+$green: darken(#28a745, 10);
 $teal: lighten(#20c997, 20);
 $cyan: lighten(#17a2b8, 20);
 
@@ -93,28 +93,6 @@ $min-contrast-ratio: 3;
 	}
 }
 
-.btn-success {
-	border-color: darken($green, 20);
-	background-color: darken($green, 20);
-
-	&:active,
-	&:focus,
-	&:hover {
-		border-color: darken($green, 25) !important;
-		background-color: darken($green, 25) !important;
-		color: $black !important;
-	}
-}
-.bg-success {
-	background-color: darken($green, 20) !important;
-
-	&:hover,
-	&:active,
-	&:focus {
-		background-color: darken($green, 25) !important;
-	}
-}
-
 .btn-secondary {
 	color: $white;
 
@@ -158,10 +136,6 @@ $min-contrast-ratio: 3;
 .bg-warning,
 .bg-orange {
 	color: $white !important;
-}
-
-a.play-button {
-	color: $black !important;
 }
 
 .notification,

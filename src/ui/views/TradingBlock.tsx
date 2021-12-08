@@ -55,10 +55,7 @@ const Offer = (props: OfferProps) => {
 			return {
 				key: p.pid,
 				data: Object.fromEntries(
-					cols.map(col => [
-						col.key,
-						getTemplate(p, col, { challengeNoRatings }),
-					]),
+					cols.map(col => [col.key, getTemplate(p, col, config)]),
 				),
 			};
 		});

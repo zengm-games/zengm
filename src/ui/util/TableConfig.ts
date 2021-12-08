@@ -2,6 +2,7 @@ import { idb } from "../../worker/db";
 import getCols from "./columns/getCols";
 import { uniq } from "lodash-es";
 import type { Col } from "../components/DataTable";
+import { g } from "../../worker/util";
 
 export class TableConfig {
 	get ratingsNeeded(): string[] {
@@ -17,6 +18,7 @@ export class TableConfig {
 	public fallback: string[];
 	public columns: Col[];
 	public tableName: string;
+	public vars: { [key: string]: any };
 
 	private _statsNeeded: string[] = [];
 	private _ratingsNeeded: string[] = [];
@@ -26,6 +28,20 @@ export class TableConfig {
 		this.tableName = tableName;
 		this.fallback = fallback;
 		this.columns = [];
+		this.vars = {
+			userTid: g.get("userTid"),
+			godMode: g.get("godMode"),
+			spectator: g.get("spectator"),
+			phase: g.get("phase"),
+			challengeNoRatings: g.get("challengeNoRatings"),
+			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
+			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
+			challengeNoTrades: g.get("challengeNoTrades"),
+			hardCap: g.get("hardCap"),
+			salaryCap: g.get("salaryCap"),
+			maxContract: g.get("maxContract"),
+			minContract: g.get("minContract"),
+		};
 	}
 
 	public async load() {

@@ -97,7 +97,7 @@ const FreeAgents = ({
 		return {
 			key: p.pid,
 			data: Object.fromEntries(
-				cols.map(col => [col.key, getTemplate(p, col, {})]),
+				cols.map(col => [col.key, getTemplate(p, col, config)]),
 			),
 		};
 	});

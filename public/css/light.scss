@@ -639,27 +639,6 @@ table {
 	margin-bottom: 0;
 }
 
-.alert-top {
-	margin-top: 20px;
-	padding-bottom: 2px;
-	padding-top: 12px;
-
-	button {
-		margin-top: -4px;
-	}
-}
-
-.alert-changes {
-	h4 {
-		margin-top: 0;
-	}
-
-	ul {
-		margin-bottom: 9px;
-		padding-left: 18px;
-	}
-}
-
 // HACK so that other table classes can be overriden in teamHistory (and possibly elsewhere).
 tr.table-warning > td {
 	@extend .table-warning;
@@ -1318,8 +1297,8 @@ code {
 }
 
 hr {
-	background-color: $table-border-color;
-	opacity: 1;
+	background-color: $black;
+	opacity: 0.1;
 }
 
 // Based on input-group-sm from _input-group.scss

@@ -20,9 +20,8 @@ const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-const ErrorBoundaryBugsnag = Bugsnag.getPlugin("react")!.createErrorBoundary(
-	React,
-);
+const ErrorBoundaryBugsnag =
+	Bugsnag.getPlugin("react")!.createErrorBoundary(React);
 
 const ErrorBoundary = ({
 	children,

@@ -2,33 +2,31 @@ import { getPlayers, getTopPlayers } from "./awards";
 import { mvpScore, dpoyScore } from "./doAwards.football";
 import type { PlayerFiltered } from "../../../common/types";
 
-const filterPosition = (season: number, positions: string[]) => (
-	p: PlayerFiltered,
-) => {
-	let pr;
-	for (let i = p.ratings.length - 1; i >= 0; i--) {
-		if (p.ratings[i].season === season) {
-			pr = p.ratings[i];
-			break;
+const filterPosition =
+	(season: number, positions: string[]) => (p: PlayerFiltered) => {
+		let pr;
+		for (let i = p.ratings.length - 1; i >= 0; i--) {
+			if (p.ratings[i].season === season) {
+				pr = p.ratings[i];
+				break;
+			}
 		}
-	}
 
-	if (!pr) {
-		return false;
-	}
+		if (!pr) {
+			return false;
+		}
 
-	return positions.includes(pr.pos);
-};
+		return positions.includes(pr.pos);
+	};
 
-const filterRoy = (season: number, positions: string[]) => (
-	p: PlayerFiltered,
-) => {
-	if (p.draft.year !== season - 1) {
-		return false;
-	}
+const filterRoy =
+	(season: number, positions: string[]) => (p: PlayerFiltered) => {
+		if (p.draft.year !== season - 1) {
+			return false;
+		}
 
-	return filterPosition(season, positions)(p);
-};
+		return filterPosition(season, positions)(p);
+	};
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);

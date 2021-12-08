@@ -131,10 +131,4 @@ const states = [
 	"WY",
 ];
 
-export {
-	JSONstringifyOrder,
-	filterAndOutput,
-	juniors,
-	provinces,
-	states,
-};
+export { JSONstringifyOrder, filterAndOutput, juniors, provinces, states };

@@ -31,13 +31,8 @@ const History = (props: View<"history">) => {
 		);
 	}
 
-	const {
-		awards,
-		champ,
-		confs,
-		retiredPlayers,
-		userTid,
-	} = props as ActualProps;
+	const { awards, champ, confs, retiredPlayers, userTid } =
+		props as ActualProps;
 
 	return (
 		<>

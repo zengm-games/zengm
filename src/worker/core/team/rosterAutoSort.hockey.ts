@@ -17,17 +17,15 @@ const score = (p: PlayerFiltered, pos: Position) => {
 	return tempScore;
 };
 
-const sortFunction = (pos: Position) => (
-	a: PlayerFiltered,
-	b: PlayerFiltered,
-) => {
-	const diff = score(b, pos) - score(a, pos);
-	if (diff === 0) {
-		// Deterministic order
-		return b.pid - a.pid;
-	}
-	return diff;
-};
+const sortFunction =
+	(pos: Position) => (a: PlayerFiltered, b: PlayerFiltered) => {
+		const diff = score(b, pos) - score(a, pos);
+		if (diff === 0) {
+			// Deterministic order
+			return b.pid - a.pid;
+		}
+		return diff;
+	};
 
 const getPlayersInLines = <
 	T extends {
@@ -35,7 +33,7 @@ const getPlayersInLines = <
 			ovrs: Record<string, number>;
 			pos: string;
 		};
-	}
+	},
 >(
 	players: T[],
 ) => {

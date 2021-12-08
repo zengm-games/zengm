@@ -10,10 +10,9 @@ export type Message = {
 	persistent: boolean;
 };
 
-export const emitter =
-	createNanoEvents<{
-		notification: (message: Message) => void;
-	}>();
+export const emitter = createNanoEvents<{
+	notification: (message: Message) => void;
+}>();
 
 let id = 0;
 

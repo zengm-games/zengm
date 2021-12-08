@@ -36,15 +36,15 @@ const Options = (props: View<"globalSettings">) => {
 		};
 	});
 
-	const handleChange = (name: string) => (
-		event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
-	) => {
-		const value = event.target.value;
-		setState(state2 => ({
-			...state2,
-			[name]: value,
-		}));
-	};
+	const handleChange =
+		(name: string) =>
+		(event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
+			const value = event.target.value;
+			setState(state2 => ({
+				...state2,
+				[name]: value,
+			}));
+		};
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();

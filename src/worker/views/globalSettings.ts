@@ -7,8 +7,8 @@ import type {
 } from "../../common/types";
 
 export const getOptions = async () => {
-	const options = (((await idb.meta.get("attributes", "options")) ||
-		{}) as unknown) as Options;
+	const options = ((await idb.meta.get("attributes", "options")) ||
+		{}) as unknown as Options;
 
 	const realPlayerPhotos = (await idb.meta.get(
 		"attributes",

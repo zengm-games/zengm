@@ -55,14 +55,14 @@ const RetiredJerseyNumbers = ({
 			? editing.pid
 			: "other";
 
-		const handleChange = (field: string) => (
-			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-		) => {
-			setEditing({
-				...editing,
-				[field]: event.target.value,
-			});
-		};
+		const handleChange =
+			(field: string) =>
+			(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+				setEditing({
+					...editing,
+					[field]: event.target.value,
+				});
+			};
 
 		return (
 			<form

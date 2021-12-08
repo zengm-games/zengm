@@ -15,14 +15,13 @@ const DeleteOldData = () => {
 	});
 	const [deleting, setDeleting] = useState(false);
 
-	const handleChange = (name: string) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		setState({
-			...state,
-			[name]: event.target.checked,
-		});
-	};
+	const handleChange =
+		(name: string) => (event: ChangeEvent<HTMLInputElement>) => {
+			setState({
+				...state,
+				[name]: event.target.checked,
+			});
+		};
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();

@@ -6,7 +6,7 @@ import { idb } from "../../db";
 const mergeByPk = <
 	MyStore extends Store,
 	PrimaryKey extends typeof idb.cache.storeInfos[MyStore]["pk"],
-	T extends Record<PrimaryKey, any>
+	T extends Record<PrimaryKey, any>,
 >(
 	fromDb: T[],
 	fromCache: T[],

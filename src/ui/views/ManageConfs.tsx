@@ -14,27 +14,25 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 
 	useTitleBar({ title: "Manage Conferences" });
 
-	const updateConfName = (cid: number) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newConfs = [...liveConfs];
-		const conf = newConfs.find(c => c.cid === cid);
-		if (conf) {
-			conf.name = event.target.value;
-			setLiveConfs(newConfs);
-		}
-	};
+	const updateConfName =
+		(cid: number) => (event: ChangeEvent<HTMLInputElement>) => {
+			const newConfs = [...liveConfs];
+			const conf = newConfs.find(c => c.cid === cid);
+			if (conf) {
+				conf.name = event.target.value;
+				setLiveConfs(newConfs);
+			}
+		};
 
-	const updateDivName = (did: number) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newDivs = [...liveDivs];
-		const div = newDivs.find(d => d.did === did);
-		if (div) {
-			div.name = event.target.value;
-			setLiveDivs(newDivs);
-		}
-	};
+	const updateDivName =
+		(did: number) => (event: ChangeEvent<HTMLInputElement>) => {
+			const newDivs = [...liveDivs];
+			const div = newDivs.find(d => d.did === did);
+			if (div) {
+				div.name = event.target.value;
+				setLiveDivs(newDivs);
+			}
+		};
 
 	const deleteConf = (cid: number) => () => {
 		setLiveConfs(liveConfs.filter(conf => conf.cid !== cid));

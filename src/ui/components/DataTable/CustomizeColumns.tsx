@@ -110,7 +110,7 @@ const CustomizeColumns = ({
 							<FlexRow>
 								{cols.map((col, i) => (
 									<FlexCol key={i} lg={4}>
-										<div className="form-check">
+										<div className="form-check d-flex">
 											<input
 												id={`show-column-${col.key}`}
 												className="form-check-input cursor-pointer"
@@ -119,7 +119,7 @@ const CustomizeColumns = ({
 												onChange={onChange(col.key)}
 											/>
 											<label
-												className="form-check-label cursor-pointer user-select-none"
+												className="form-check-label cursor-pointer user-select-none flex-grow-1"
 												htmlFor={`show-column-${col.key}`}
 												title={col.desc}
 											>

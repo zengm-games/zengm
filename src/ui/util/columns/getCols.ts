@@ -11,8 +11,9 @@ export type ColTemp = Omit<LegacyCol, "title"> & {
 	ratings?: string[];
 	stats?: string[];
 	attrs?: string[];
-	template?: string;
-	render?: (p: Player, c: ColTemp, vars: object) => JSX.Element | string;
+	template?:
+		| string
+		| ((p: Player, c: ColTemp, vars: object) => JSX.Element | string);
 	options?: { [key: string]: any };
 };
 
@@ -2851,6 +2852,7 @@ const cols: {
 		template: "Age",
 	},
 	"Asking For": {
+		attrs: ["contract", "mood"],
 		cat: "General",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -2864,6 +2866,7 @@ const cols: {
 		template: "Contract",
 	},
 	Projected: {
+		attrs: ["contractDesired"],
 		cat: "General",
 		desc: "Projected Contract Demand",
 		sortSequence: ["desc", "asc"],
@@ -2899,6 +2902,7 @@ const cols: {
 	Name: {
 		cat: "General",
 		ratings: ["skills"],
+		attrs: ["name", "injury", "jerseyNumber", "watch"],
 		sortType: "name",
 		template: "Name",
 	},
@@ -2915,6 +2919,7 @@ const cols: {
 	Exp: {
 		cat: "General",
 		desc: "Contract Expiration",
+		attrs: ["contract"],
 		sortSequence: ["asc", "desc"],
 		sortType: "number",
 		template: "Exp",
@@ -2943,6 +2948,7 @@ const cols: {
 		cat: "General",
 		desc: "Position",
 		ratings: ["pos"],
+		attrs: ["pos"],
 		template: "Pos",
 	},
 	Pot: {

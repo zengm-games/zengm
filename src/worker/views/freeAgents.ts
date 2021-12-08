@@ -66,6 +66,7 @@ const updateFreeAgents = async () => {
 			"jerseyNumber",
 			"mood",
 			"pos",
+			...config.attrsNeeded,
 		],
 		ratings: config.ratingsNeeded,
 		stats: config.statsNeeded,

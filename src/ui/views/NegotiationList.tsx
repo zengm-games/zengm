@@ -34,7 +34,7 @@ const NegotiationList = ({
 		{
 			key: "negotiate",
 			title: "Negotiate",
-			render: (p: Player) => (
+			template: (p: Player) => (
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore
 				<NegotiateButtons

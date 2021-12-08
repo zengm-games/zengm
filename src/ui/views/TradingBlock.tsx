@@ -293,7 +293,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			key: "include",
 			sortSequence: [],
 			noSearch: true,
-			render: (p: Player, c: ColTemp, vars: object) => (
+			template: (p: Player, c: ColTemp, vars: object) => (
 				<input
 					type="checkbox"
 					checked={state.pids.includes(p.pid)}

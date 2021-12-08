@@ -22,7 +22,7 @@ export class TableConfig {
 
 	private _statsNeeded: string[] = [];
 	private _ratingsNeeded: string[] = [];
-	private _attrsNeeded: string[] = [];
+	private _attrsNeeded: string[] = ["pid"];
 
 	constructor(tableName: string, fallback: string[]) {
 		this.tableName = tableName;

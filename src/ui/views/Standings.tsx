@@ -34,14 +34,14 @@ const record = (
 };
 
 export const TeamColumn = ({
+	maxRank,
 	rank,
-	rankWidth,
 	season,
 	t,
 	includeName,
 }: {
+	maxRank: number;
 	rank: number | null;
-	rankWidth?: number;
 	season?: number;
 	t: {
 		tid: number;
@@ -55,17 +55,16 @@ export const TeamColumn = ({
 	};
 	includeName?: boolean;
 }) => {
+	const rankMinWidth = 8 + 7 * (String(maxRank).length - 1);
+
 	return (
 		<td className="py-1">
 			<div className="d-flex align-items-center">
 				<div
-					style={
-						rankWidth
-							? { width: rankWidth }
-							: {
-									minWidth: 8,
-							  }
-					}
+					className="text-end"
+					style={{
+						minWidth: rankMinWidth,
+					}}
 				>
 					{rank !== null ? rank : null}
 				</div>
@@ -95,6 +94,7 @@ export const TeamColumn = ({
 };
 
 const GroupStandingsRow = ({
+	maxRank,
 	season,
 	separator,
 	showTiebreakers,
@@ -108,6 +108,7 @@ const GroupStandingsRow = ({
 	View<"standings">,
 	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "usePts" | "userTid"
 > & {
+	maxRank: number;
 	separator: boolean;
 	t: StandingsTeam;
 }) => {
@@ -124,6 +125,7 @@ const GroupStandingsRow = ({
 			onClick={toggleClicked}
 		>
 			<TeamColumn
+				maxRank={maxRank}
 				rank={t.rank.playoffs > 0 ? t.rank.playoffs : null}
 				season={season}
 				t={t}
@@ -221,6 +223,8 @@ const GroupStandings = ({
 	separatorIndex?: number;
 	teams: StandingsTeam[];
 }) => {
+	const maxRank = Math.max(...teams.map(t => t.rank.playoffs));
+
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-bordered table-sm table-hover align-middle">
@@ -262,6 +266,7 @@ const GroupStandings = ({
 					{teams.map((t, i) => (
 						<GroupStandingsRow
 							key={t.tid}
+							maxRank={maxRank}
 							t={t}
 							season={season}
 							separator={separatorIndex === i}
@@ -282,6 +287,7 @@ const GroupStandings = ({
 const SmallStandingsRow = ({
 	i,
 	maxPlayoffSeed,
+	maxRank,
 	playoffsByConf,
 	season,
 	t,
@@ -290,6 +296,7 @@ const SmallStandingsRow = ({
 }: {
 	i: number;
 	maxPlayoffSeed: number;
+	maxRank: number;
 	playoffsByConf: boolean;
 	season: number;
 	t: StandingsTeam;
@@ -309,8 +316,8 @@ const SmallStandingsRow = ({
 			onClick={toggleClicked}
 		>
 			<TeamColumn
+				maxRank={maxRank}
 				rank={playoffsByConf ? t.rank.conf : t.rank.league}
-				rankWidth={15}
 				season={season}
 				t={t}
 			/>
@@ -344,6 +351,10 @@ const SmallStandings = ({
 > & {
 	teams: StandingsTeam[];
 }) => {
+	const maxRank = Math.max(
+		...teams.map(t => (playoffsByConf ? t.rank.conf : t.rank.league)),
+	);
+
 	return (
 		<table className="table table-striped table-bordered table-sm align-middle">
 			<thead>
@@ -362,6 +373,7 @@ const SmallStandings = ({
 						key={t.tid}
 						i={i}
 						maxPlayoffSeed={maxPlayoffSeed}
+						maxRank={maxRank}
 						playoffsByConf={playoffsByConf}
 						season={season}
 						t={t}

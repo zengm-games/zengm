@@ -28,14 +28,14 @@ import type { SortOrder, SortType } from "../../../common/types";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import { arrayMove } from "react-sortable-hoc";
-import RosterCustomizeColumns from "../../views/Roster/RosterCustomizeColumns";
+import CustomizeColumns from "./CustomizeColumns";
 import type { TableConfig } from "../../util/TableConfig";
 
 export type SortBy = [string, SortOrder];
 
 export type Col = Omit<LegacyCol, "title"> & {
 	key: string;
-	title?: string;
+	title: string;
 };
 
 export type LegacyCol = {
@@ -460,13 +460,15 @@ const DataTable = (props: Props | LegacyProps) => {
 	return (
 		<>
 			{config ? (
-				<RosterCustomizeColumns
+				<CustomizeColumns
 					config={config}
 					show={state.showSelectColumnsModal}
 					onHide={() => {
 						setStatePartial({
 							showSelectColumnsModal: false,
 						});
+					}}
+					onSave={() => {
 						location.reload();
 					}}
 				/>

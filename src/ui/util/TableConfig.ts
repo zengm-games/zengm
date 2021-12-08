@@ -1,5 +1,4 @@
 import { idb } from "../../worker/db";
-// import type { ColTemp } from "./columns/getCols";
 import getCols from "./columns/getCols";
 import { uniq } from "lodash-es";
 import type { Col } from "../components/DataTable";
@@ -15,12 +14,13 @@ export class TableConfig {
 		return this._attrsNeeded ?? [];
 	}
 
-	protected fallback: string[];
+	public fallback: string[];
+	public columns: Col[];
+	public tableName: string;
+
 	private _statsNeeded: string[] = [];
 	private _ratingsNeeded: string[] = [];
 	private _attrsNeeded: string[] = [];
-	public columns: Col[];
-	public tableName: string;
 
 	constructor(tableName: string, fallback: string[]) {
 		this.tableName = tableName;

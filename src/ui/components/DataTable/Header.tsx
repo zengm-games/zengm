@@ -51,52 +51,19 @@ FilterHeader.propTypes = {
 };
 
 const SuperCols = ({
-	colOrder,
+	cols,
 	superCols,
 }: {
-	colOrder: {
-		colIndex: number;
-	}[];
+	cols: Col[];
 	superCols: SuperCol[];
 }) => {
-	const colIndexes = colOrder.map(x => x.colIndex);
-	const maxColIndex1 = Math.max(...colIndexes);
-	let maxColIndex2 = -1;
-	for (const superCol of superCols) {
-		maxColIndex2 += superCol.colspan;
-	}
-	const maxColIndex = Math.max(maxColIndex1, maxColIndex2);
-
-	// Adjust colspan based on hidden columns from colOrder
-	const colspanAdjustments = superCols.map(() => 0);
-	let superColIndex = 0;
-	let currentSuperColCount = 0;
-	for (let i = 0; i <= maxColIndex; i++) {
-		const superCol = superCols[superColIndex];
-		if (superCol) {
-			if (!colIndexes.includes(i)) {
-				colspanAdjustments[superColIndex] -= 1;
-			}
-
-			currentSuperColCount += 1;
-			if (currentSuperColCount >= superCol.colspan) {
-				superColIndex += 1;
-				currentSuperColCount = 0;
-			}
-		}
-	}
-
 	return (
 		<tr>
 			{superCols.map(({ colspan, desc, title }, i) => {
-				const adjustedColspan = colspan + colspanAdjustments[i];
-				if (adjustedColspan <= 0) {
-					return null;
-				}
 				return (
 					<th
 						key={i}
-						colSpan={adjustedColspan}
+						colSpan={colspan}
 						style={{
 							textAlign: "center",
 						}}
@@ -236,9 +203,7 @@ const Header = ({
 
 	return (
 		<thead>
-			{/*{superCols ? (*/}
-			{/*	<SuperCols colOrder={colOrder} superCols={superCols} />*/}
-			{/*) : null}*/}
+			{superCols ? <SuperCols cols={cols} superCols={superCols} /> : null}
 			<SortableColumnHeader
 				cols={cols}
 				sortBys={sortBys}
@@ -251,46 +216,6 @@ const Header = ({
 				onSortEnd={onSortEnd}
 				handleColClick={handleColClick}
 			/>
-			{/*<tr>*/}
-			{/*	{colOrder.map(({ colIndex }) => {*/}
-			{/*		const {*/}
-			{/*			classNames: colClassNames,*/}
-			{/*			desc,*/}
-			{/*			sortSequence,*/}
-			{/*			title,*/}
-			{/*			width,*/}
-			{/*		} = cols[colIndex];*/}
-
-			{/*		let className;*/}
-			{/*		if (sortSequence && sortSequence.length === 0) {*/}
-			{/*			className = null;*/}
-			{/*		} else {*/}
-			{/*			className = "sorting";*/}
-
-			{/*			for (const sortBy of sortBys) {*/}
-			{/*				if (sortBy[0] === colIndex) {*/}
-			{/*					className =*/}
-			{/*						sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";*/}
-			{/*					break;*/}
-			{/*				}*/}
-			{/*			}*/}
-			{/*		}*/}
-
-			{/*		return (*/}
-			{/*			<th*/}
-			{/*				className={classNames(colClassNames, className)}*/}
-			{/*				key={colIndex}*/}
-			{/*				onClick={event => {*/}
-			{/*					handleColClick(event, colIndex);*/}
-			{/*				}}*/}
-			{/*				title={desc}*/}
-			{/*				style={{ width }}*/}
-			{/*			>*/}
-			{/*				{title}*/}
-			{/*			</th>*/}
-			{/*		);*/}
-			{/*	})}*/}
-			{/*</tr>*/}
 			{enableFilters ? (
 				<FilterHeader
 					cols={cols}

@@ -12,7 +12,6 @@ export { default as MoodCurrent } from "./MoodCurrent";
 export { default as Name } from "./Name";
 export { default as Negotiate } from "./Negotiate";
 export { default as Ovr } from "./Ovr";
-export { default as PlayingTime } from "./PlayingTime";
 export { default as Pos } from "./Pos";
 export { default as Pot } from "./Pot";
 export { default as Projected } from "./Projected";

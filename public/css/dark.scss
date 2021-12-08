@@ -179,6 +179,19 @@ a.god-mode.active {
 	}
 }
 
+.btn-success {
+	border-color: darken($green, 20);
+	background-color: darken($green, 20);
+
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		border-color: darken($green, 25) !important;
+		background-color: darken($green, 25) !important;
+		color: $black !important;
+	}
+}
+
 .btn-god-mode {
 	@include button-variant(
 		darken($purple, 20),

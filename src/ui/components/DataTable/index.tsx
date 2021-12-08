@@ -178,7 +178,7 @@ const DataTable = (props: Props | LegacyProps) => {
 		...loadStateFromCache({
 			cols,
 			defaultSort,
-			disableSettingsCache: true,
+			disableSettingsCache: false,
 			name,
 		}),
 		rows,

@@ -20,7 +20,7 @@ $pink: lighten(#e83e8c, 20);
 $red: #dc3545;
 $orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
-$green: darken(#28a745, 10);
+$green: lighten(#28a745, 10);
 $teal: lighten(#20c997, 20);
 $cyan: lighten(#17a2b8, 20);
 
@@ -164,6 +164,19 @@ a.god-mode.active {
 .sidebar a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
+}
+
+.play-button-success {
+	background-color: darken($green, 20);
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color(
+			darken($green, 20),
+			$btn-hover-bg-shade-amount
+		);
+	}
 }
 
 .btn-god-mode {

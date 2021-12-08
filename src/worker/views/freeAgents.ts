@@ -56,18 +56,7 @@ const updateFreeAgents = async () => {
 	await config.load();
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"age",
-			"contract",
-			"injury",
-			"watch",
-			"jerseyNumber",
-			"mood",
-			"pos",
-			...config.attrsNeeded,
-		],
+		attrs: config.attrsNeeded,
 		ratings: config.ratingsNeeded,
 		stats: config.statsNeeded,
 		season: g.get("season"),

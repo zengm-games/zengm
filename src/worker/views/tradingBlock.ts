@@ -46,17 +46,7 @@ const updateUserRoster = async (
 		await config.load();
 
 		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
-			attrs: [
-				"pid",
-				"name",
-				"age",
-				"contract",
-				"injury",
-				"watch",
-				"untradable",
-				"jerseyNumber",
-				"pos",
-			],
+			attrs: [...config.attrsNeeded, "untradable"],
 			ratings: config.ratingsNeeded,
 			stats: config.statsNeeded,
 			tid: g.get("userTid"),

@@ -4,7 +4,7 @@ import type { Player } from "../../../common/types";
 import type { TableConfig } from "../TableConfig";
 
 export default function (p: Player, c: ColTemp, config: TableConfig) {
-	if (c.render) return c.render(p, c, config.vars);
+	if (typeof c.template === "function") return c.template(p, c, config.vars);
 	if (!(c.template in templates)) return "";
 	return templates[c.template](p, c, config.vars);
 }

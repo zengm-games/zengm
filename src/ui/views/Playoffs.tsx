@@ -132,6 +132,7 @@ const Playoffs = ({
 							className="btn btn-secondary ms-2"
 							onClick={() => {
 								setEditing(false);
+								setTeamsEdited(teamsToEdit);
 							}}
 						>
 							Cancel

@@ -1,11 +1,12 @@
 import { season } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, orderTeams } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayoffSeries,
 } from "../../common/types";
+import { groupBy } from "../../common/groupBy";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -170,19 +171,50 @@ const updatePlayoffs = async (
 
 		let teamsToEdit: TeamToEdit[] = [];
 		if (canEdit) {
-			const teams = await idb.getCopies.teamsPlus({
-				attrs: ["tid", "cid", "region", "name", "imgURL", "imgURLSmall"],
-				seasonAttrs: ["won", "lost", "tied", "otl"],
+			const teamsUnsorted = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+				seasonAttrs: [
+					"cid",
+					"did",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"winp",
+					"pts",
+					"wonDiv",
+					"lostDiv",
+					"tiedDiv",
+					"otlDiv",
+					"wonConf",
+					"lostConf",
+					"tiedConf",
+					"otlConf",
+				],
+				stats: ["pts", "oppPts", "gp"],
 				season: g.get("season"),
 				active: true,
+				showNoStats: true,
 			});
+
+			// Sort teams by normal playoff order
+			let teams: typeof teamsUnsorted;
+			if (playoffsByConf) {
+				teams = [];
+				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
+				console.log("teamsByConf", teamsByConf);
+				for (const teamsConf of Object.values(teamsByConf)) {
+					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
+				}
+			} else {
+				teams = await orderTeams(teamsUnsorted, teamsUnsorted);
+			}
 
 			// All first round matchups
 			const matchupsToCheck = [
 				...series[0],
 				...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
 			];
-			console.log(matchupsToCheck, playIns);
 
 			const seedsByTid = new Map();
 			for (const matchup of matchupsToCheck) {
@@ -194,7 +226,7 @@ const updatePlayoffs = async (
 
 			teamsToEdit = teams.map(t => ({
 				tid: t.tid,
-				cid: t.cid,
+				cid: t.seasonAttrs.cid,
 				region: t.region,
 				name: t.name,
 				seed: seedsByTid.get(t.tid),

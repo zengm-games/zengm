@@ -136,11 +136,14 @@ const Playoffs = ({
 												season={season}
 												series={series[m.matchup[0]][m.matchup[1]]}
 												userTid={userTid}
-												editing={actuallyEditing}
-												teams={teamsEdited}
-												onChange={t => {
-													console.log(t);
-												}}
+												editing={
+													actuallyEditing
+														? {
+																byConf: playoffsByConf,
+																teams: teamsEdited,
+														  }
+														: undefined
+												}
 											/>
 										</td>
 									);
@@ -196,8 +199,14 @@ const Playoffs = ({
 													series={playIn[0]}
 													userTid={userTid}
 													extraHighlight
-													editing={actuallyEditing}
-													teams={teamsEdited}
+													editing={
+														actuallyEditing
+															? {
+																	byConf: playoffsByConf,
+																	teams: teamsEdited,
+															  }
+															: undefined
+													}
 												/>
 											</td>
 											<td style={tdStyle} rowSpan={2}>
@@ -222,8 +231,14 @@ const Playoffs = ({
 													season={season}
 													series={playIn[1]}
 													userTid={userTid}
-													editing={actuallyEditing}
-													teams={teamsEdited}
+													editing={
+														actuallyEditing
+															? {
+																	byConf: playoffsByConf,
+																	teams: teamsEdited,
+															  }
+															: undefined
+													}
 												/>
 											</td>
 										</tr>

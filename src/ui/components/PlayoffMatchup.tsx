@@ -25,6 +25,11 @@ type SeriesTeam = {
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
+type Editing = {
+	byConf: boolean;
+	teams: TeamToEdit[];
+};
+
 const faded = {
 	opacity: 0.3,
 	padding: 2,
@@ -59,6 +64,7 @@ const TeamLogo = ({
 };
 
 const Team = ({
+	editing,
 	expandTeamName,
 	extraHighlight,
 	team,
@@ -69,10 +75,8 @@ const Team = ({
 	won,
 	lost,
 	gid,
-
-	editing,
-	teams,
 }: {
+	editing?: Editing;
 	expandTeamName: boolean;
 	extraHighlight?: boolean;
 	team?: SeriesTeam;
@@ -83,18 +87,26 @@ const Team = ({
 	won: boolean;
 	lost: boolean;
 	gid?: number;
-
-	editing?: boolean;
-	teams?: TeamToEdit[];
 }) => {
 	if (!team) {
 		return null;
 	}
 
-	if (editing && teams && !team.pendingPlayIn) {
-		const teamEdited = teams.find(t => team.seed === t.seed);
+	if (!team.pendingPlayIn && editing) {
+		const { teams, byConf } = editing;
+
+		// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
+		const teamEdited = teams.find(
+			t => team.seed === t.seed && (!byConf || team.cid === t.cid),
+		);
+
 		if (teamEdited) {
 			const highlightUser = teamEdited.tid === userTid;
+
+			let teamsFiltered = teams;
+			if (byConf) {
+				teamsFiltered = teams.filter(t => t.cid === teamEdited.cid);
+			}
 
 			return (
 				<li
@@ -116,7 +128,7 @@ const Team = ({
 						}}
 						value={teamEdited.tid}
 					>
-						{teams.map(t => {
+						{teamsFiltered.map(t => {
 							return (
 								<option key={t.tid} value={t.tid}>
 									{t.seed !== undefined ? `${t.seed}.` : null} {t.region}{" "}
@@ -223,16 +235,15 @@ const Team = ({
 };
 
 const PlayoffMatchup = ({
+	editing,
 	expandTeamNames = false,
 	extraHighlight,
 	numGamesToWinSeries = 7,
 	season,
 	series,
 	userTid,
-
-	editing,
-	teams,
 }: {
+	editing?: Editing;
 	expandTeamNames?: boolean;
 	extraHighlight?: boolean;
 	numGamesToWinSeries?: number;
@@ -243,9 +254,6 @@ const PlayoffMatchup = ({
 		gids?: number[];
 	};
 	userTid: number;
-
-	editing?: boolean;
-	teams?: TeamToEdit[];
 }) => {
 	if (
 		series === undefined ||
@@ -287,7 +295,6 @@ const PlayoffMatchup = ({
 				lost={awayWon}
 				gid={gid}
 				editing={editing}
-				teams={teams}
 			/>
 			<Team
 				expandTeamName={expandTeamNames}
@@ -301,7 +308,6 @@ const PlayoffMatchup = ({
 				lost={homeWon}
 				gid={gid}
 				editing={editing}
-				teams={teams}
 			/>
 		</ul>
 	);

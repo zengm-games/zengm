@@ -191,6 +191,9 @@ a.god-mode.active {
 		color: $black !important;
 	}
 }
+.bg-success {
+	background-color: darken($green, 20) !important;
+}
 
 .btn-god-mode {
 	@include button-variant(

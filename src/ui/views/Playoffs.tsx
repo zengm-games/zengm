@@ -7,9 +7,7 @@ import range from "lodash-es/range";
 import { useState } from "react";
 import classNames from "classnames";
 
-const width100 = {
-	width: "100%",
-};
+type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
 const Playoffs = ({
 	canEdit,
@@ -80,6 +78,35 @@ const Playoffs = ({
 	const playInPlural = playIns && playIns.length > 1 ? "s" : "";
 	const playInPluralAlt = playIns && playIns.length > 1 ? "" : "s";
 
+	const editingInfo = actuallyEditing
+		? {
+				byConf: playoffsByConf,
+				onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => {
+					// Swap seeds of these two teams
+					setTeamsEdited(teams =>
+						teams.map(t => {
+							if (t.tid === prevTeam.tid) {
+								return {
+									...t,
+									seed: newTeam.seed,
+								};
+							}
+
+							if (t.tid === newTeam.tid) {
+								return {
+									...t,
+									seed: prevTeam.seed,
+								};
+							}
+
+							return t;
+						}),
+					);
+				},
+				teams: teamsEdited,
+		  }
+		: undefined;
+
 	return (
 		<div style={{ maxWidth }}>
 			{!finalMatchups ? (
@@ -120,7 +147,7 @@ const Playoffs = ({
 			) : null}
 
 			<ResponsiveTableWrapper>
-				<table className="table-sm" style={width100}>
+				<table className="table-sm w-100">
 					<tbody>
 						{matchups.map((row, i) => (
 							<tr key={i}>
@@ -136,14 +163,7 @@ const Playoffs = ({
 												season={season}
 												series={series[m.matchup[0]][m.matchup[1]]}
 												userTid={userTid}
-												editing={
-													actuallyEditing
-														? {
-																byConf: playoffsByConf,
-																teams: teamsEdited,
-														  }
-														: undefined
-												}
+												editing={editingInfo}
 											/>
 										</td>
 									);
@@ -189,7 +209,7 @@ const Playoffs = ({
 					{[...playIns].reverse().map((playIn, i) => {
 						return (
 							<ResponsiveTableWrapper key={i}>
-								<table className="table-sm" style={width100}>
+								<table className="table-sm w-100">
 									<tbody>
 										<tr>
 											<td style={tdStyle}>
@@ -199,14 +219,7 @@ const Playoffs = ({
 													series={playIn[0]}
 													userTid={userTid}
 													extraHighlight
-													editing={
-														actuallyEditing
-															? {
-																	byConf: playoffsByConf,
-																	teams: teamsEdited,
-															  }
-															: undefined
-													}
+													editing={editingInfo}
 												/>
 											</td>
 											<td style={tdStyle} rowSpan={2}>
@@ -231,14 +244,7 @@ const Playoffs = ({
 													season={season}
 													series={playIn[1]}
 													userTid={userTid}
-													editing={
-														actuallyEditing
-															? {
-																	byConf: playoffsByConf,
-																	teams: teamsEdited,
-															  }
-															: undefined
-													}
+													editing={editingInfo}
 												/>
 											</td>
 										</tr>

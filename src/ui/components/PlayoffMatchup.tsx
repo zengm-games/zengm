@@ -27,6 +27,7 @@ type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
 type Editing = {
 	byConf: boolean;
+	onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => void;
 	teams: TeamToEdit[];
 };
 
@@ -124,6 +125,7 @@ const Team = ({
 
 							if (newTeam) {
 								console.log(newTeam);
+								editing.onChange(teamEdited, newTeam);
 							}
 						}}
 						value={teamEdited.tid}

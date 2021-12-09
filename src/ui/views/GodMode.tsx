@@ -139,13 +139,17 @@ const GodMode = (props: View<"godMode">) => {
 				</div>
 				<div className="card border-top-sm-0 border-radius-top-sm-0">
 					<div className="card-body">
-						<h3 className="card-title">Edit Awards</h3>
+						<h3 className="card-title">Edit Awards, Draft, Playoffs...</h3>
 						<p className="card-text">
 							Decide who should win any end-of-season awards at{" "}
 							<a href={helpers.leagueUrl(["edit_awards"])}>
 								Tools &gt; Edit Awards
 							</a>
-							.
+							. Rig the{" "}
+							<a href={helpers.leagueUrl(["draft_lottery"])}>draft lottery</a>.
+							Pick new{" "}
+							<a href={helpers.leagueUrl(["playoffs"])}>playoff teams</a>. And
+							so much more!
 						</p>
 					</div>
 				</div>

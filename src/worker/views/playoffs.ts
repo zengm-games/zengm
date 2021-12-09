@@ -76,6 +76,7 @@ const updatePlayoffs = async (
 } | void> => {
 	if (
 		updateEvents.includes("firstRun") ||
+		updateEvents.includes("playoffs") ||
 		inputs.season !== state.season ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
@@ -172,7 +173,7 @@ const updatePlayoffs = async (
 			const seedsByTid = new Map();
 			for (const matchup of matchupsToCheck) {
 				seedsByTid.set(matchup.home.tid, matchup.home.seed);
-				if (matchup.away) {
+				if (matchup.away && !matchup.away.pendingPlayIn) {
 					seedsByTid.set(matchup.away.tid, matchup.away.seed);
 				}
 			}

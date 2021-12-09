@@ -1620,6 +1620,7 @@ export type UpdateEvents = (
 	| "newPhase"
 	| "options"
 	| "playerMovement"
+	| "playoffs"
 	| "scheduledEvents"
 	| "retiredJerseys"
 	| "team"

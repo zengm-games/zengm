@@ -1,11 +1,10 @@
 edit playoff teams
-- handle play-in tournament
 - only available before any playoff or play-in games are played
 - confirm works without byConf
-- highlight user team while editing
 - handle dirty edits when first game is simmed
 - update playoffRoundsWon too
 - somehow sort teamsToEdit in playoffs.ts
+- regenerate schedule
 
 QB throw a Interception but their were two offsetting penalties so the down was replayed but it still counted the INT to the Stats. So the Safety still got credit for a pick https://discord.com/channels/290013534023057409/290015591216054273/917134502336270396
 

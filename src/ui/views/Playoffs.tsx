@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { helpers } from "../util";
+import { helpers, toWorker } from "../util";
 import range from "lodash-es/range";
 import { useState } from "react";
 import classNames from "classnames";
@@ -121,8 +121,13 @@ const Playoffs = ({
 							"btn",
 							editing ? "btn-primary" : "btn-god-mode",
 						)}
-						onClick={() => {
-							setEditing(!editing);
+						onClick={async () => {
+							if (!editing) {
+								setEditing(true);
+							} else {
+								await toWorker("main", "updatePlayoffTeams", teamsEdited);
+								setEditing(false);
+							}
 						}}
 					>
 						{editing ? "Save Changes" : "Edit Playoff Teams"}

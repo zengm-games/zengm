@@ -3113,6 +3113,51 @@ const updatePlayingTime = async (pid: number, ptModifier: number) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const updatePlayoffTeams = async (
+	teams: {
+		tid: number;
+		cid: number;
+		seed: number | undefined;
+	}[],
+) => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	console.log(playoffSeries);
+	if (playoffSeries) {
+		const { byConf, playIns, series } = playoffSeries;
+
+		const findTeam = (seed: number, cid: number) => {
+			// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
+			const t = teams.find(t => seed === t.seed && (!byConf || cid === t.cid));
+
+			if (!t) {
+				throw new Error("Team not found");
+			}
+
+			return t;
+		};
+
+		const matchupsToCheck = [
+			...series[0],
+			...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
+		];
+
+		for (const matchup of matchupsToCheck) {
+			const home = findTeam(matchup.home.seed, matchup.home.cid);
+			matchup.home.tid = home.tid;
+			matchup.home.cid = home.cid;
+			if (matchup.away && !matchup.away.pendingPlayIn) {
+				const away = findTeam(matchup.away.seed, matchup.away.cid);
+				matchup.away.tid = away.tid;
+				matchup.away.cid = away.cid;
+			}
+		}
+
+		await idb.cache.playoffSeries.put(playoffSeries);
+
+		await toUI("realtimeUpdate", [["playoffs"]]);
+	}
+};
+
 const updateTeamInfo = async (
 	newTeams: {
 		tid: number;
@@ -3647,6 +3692,7 @@ export default {
 	updatePlayThroughInjuries,
 	updatePlayerWatch,
 	updatePlayingTime,
+	updatePlayoffTeams,
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,

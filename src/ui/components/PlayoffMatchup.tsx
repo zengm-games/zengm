@@ -118,13 +118,10 @@ const Team = ({
 					<TeamLogo team={teamEdited} />
 					<select
 						className="form-select god-mode"
-						onChange={async event => {
+						onChange={event => {
 							const tid = parseInt(event.target.value);
-
 							const newTeam = teams.find(t => t.tid === tid);
-
 							if (newTeam) {
-								console.log(newTeam);
 								editing.onChange(teamEdited, newTeam);
 							}
 						}}

@@ -3136,25 +3136,50 @@ const updatePlayoffTeams = async (
 			return t;
 		};
 
-		const matchupsToCheck = [
-			...series[0],
-			...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
-		];
+		const tidsPlayoffs = new Set();
 
-		for (const matchup of matchupsToCheck) {
-			const home = findTeam(matchup.home.seed, matchup.home.cid);
-			matchup.home.tid = home.tid;
-			matchup.home.cid = home.cid;
-			if (matchup.away && !matchup.away.pendingPlayIn) {
-				const away = findTeam(matchup.away.seed, matchup.away.cid);
-				matchup.away.tid = away.tid;
-				matchup.away.cid = away.cid;
+		const checkMatchups = (matchups: typeof series[0], playIn?: boolean) => {
+			for (const matchup of matchups) {
+				const home = findTeam(matchup.home.seed, matchup.home.cid);
+				matchup.home.tid = home.tid;
+				matchup.home.cid = home.cid;
+				if (!playIn) {
+					tidsPlayoffs.add(home.tid);
+				}
+				if (matchup.away && !matchup.away.pendingPlayIn) {
+					const away = findTeam(matchup.away.seed, matchup.away.cid);
+					matchup.away.tid = away.tid;
+					matchup.away.cid = away.cid;
+					if (!playIn) {
+						tidsPlayoffs.add(away.tid);
+					}
+				}
 			}
+		};
+
+		checkMatchups(series[0]);
+
+		if (playIns) {
+			checkMatchups(playIns.map(playIn => playIn.slice(0, 2)).flat());
 		}
 
 		await idb.cache.playoffSeries.put(playoffSeries);
 
+		// Update schedule, since games might have changed
 		await season.newSchedulePlayoffsDay();
+
+		// Update teamSeasons, since playoffRoundsWon might need to be updated
+		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+			"teamSeasonsBySeasonTid",
+			[[g.get("season")], [g.get("season"), "Z"]],
+		);
+		for (const teamSeason of teamSeasons) {
+			const playoffRoundsWon = tidsPlayoffs.has(teamSeason.tid) ? 0 : -1;
+			if (playoffRoundsWon !== teamSeason.playoffRoundsWon) {
+				teamSeason.playoffRoundsWon = playoffRoundsWon;
+				await idb.cache.teamSeasons.put(teamSeason);
+			}
+		}
 
 		await toUI("realtimeUpdate", [["playoffs"]]);
 	}

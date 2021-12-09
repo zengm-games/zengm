@@ -3121,9 +3121,9 @@ const updatePlayoffTeams = async (
 	}[],
 ) => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
-	console.log(playoffSeries);
 	if (playoffSeries) {
-		const { byConf, playIns, series } = playoffSeries;
+		const { playIns, series } = playoffSeries;
+		const byConf = await season.getPlayoffsByConf(g.get("season"));
 
 		const findTeam = (seed: number, cid: number) => {
 			// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
@@ -3153,6 +3153,8 @@ const updatePlayoffTeams = async (
 		}
 
 		await idb.cache.playoffSeries.put(playoffSeries);
+
+		await season.newSchedulePlayoffsDay();
 
 		await toUI("realtimeUpdate", [["playoffs"]]);
 	}

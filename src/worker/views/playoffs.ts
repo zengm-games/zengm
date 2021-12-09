@@ -152,8 +152,22 @@ const updatePlayoffs = async (
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 
-		const canEdit =
+		let canEdit =
 			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
+		if (playIns) {
+			for (const playIn of playIns) {
+				if (playIn.length > 2) {
+					// Play-in tournament started
+					canEdit = false;
+				}
+			}
+		}
+		for (const matchup of series[0]) {
+			if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+				canEdit = false;
+			}
+		}
+
 		let teamsToEdit: TeamToEdit[] = [];
 		if (canEdit) {
 			const teams = await idb.getCopies.teamsPlus({

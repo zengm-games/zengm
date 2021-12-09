@@ -2215,12 +2215,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"rating:ovr": {
-		desc: "Overall Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "Ovr",
-	},
 	"Ovr Drop": {
 		desc: "Decrease in Overall Rating",
 		sortSequence: ["desc", "asc"],
@@ -2280,20 +2274,10 @@ const cols: {
 	Pos: {
 		desc: "Position",
 	},
-	"rating:pos": {
-		desc: "Position",
-		title: "Pos",
-	},
 	Pot: {
 		desc: "Potential Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-	},
-	"rating:pot": {
-		desc: "Potential Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "Pot",
 	},
 	"Pot Drop": {
 		desc: "Decrease in Potential Rating",

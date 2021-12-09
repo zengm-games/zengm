@@ -149,7 +149,7 @@ const DataTable = (props: Props | LegacyProps) => {
 		addFilters,
 	} = props;
 
-	const enableCustomize: boolean = !!config;
+	const enableCustomizeColumns: boolean = !!config;
 
 	// Convert LegacyCols to Cols for backwards compatability
 	const cols: Col[] =
@@ -484,7 +484,7 @@ const DataTable = (props: Props | LegacyProps) => {
 					) : null}
 					<Controls
 						enableFilters={state.enableFilters}
-						enableCustomize={enableCustomize}
+						enableCustomizeColumns={enableCustomizeColumns}
 						hideAllControls={hideAllControls}
 						name={name}
 						onExportCSV={handleExportCSV}

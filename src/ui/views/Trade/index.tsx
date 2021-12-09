@@ -219,7 +219,6 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		otherTeamsWantToHire,
@@ -366,7 +365,6 @@ const Trade = (props: View<"trade">) => {
 						</div>
 					</div>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}
@@ -378,7 +376,6 @@ const Trade = (props: View<"trade">) => {
 
 					<h2 className="mt-3">{userTeamName}</h2>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}

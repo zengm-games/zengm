@@ -34,16 +34,13 @@ const genPlayerRows = (
 	handleToggle: HandleToggle,
 	userOrOther: UserOrOther,
 	playerCols: Col[],
-	challengeNoRatings: boolean,
+	config: TableConfig,
 ) => {
 	return players.map(p => {
 		return {
 			key: p.pid,
 			data: Object.fromEntries(
-				playerCols.map(col => [
-					col.key,
-					getTemplate(p, col, { challengeNoRatings }),
-				]),
+				playerCols.map(col => [col.key, getTemplate(p, col, config)]),
 			),
 			classNames: {
 				"table-danger": (p.excluded || p.untradable) && !p.included,
@@ -98,7 +95,6 @@ const pickCols = getCols(["", "X", "Draft Picks"], {
 });
 
 const AssetList = ({
-	challengeNoRatings,
 	handleBulk,
 	handleToggle,
 	numDraftRounds,
@@ -107,7 +103,6 @@ const AssetList = ({
 	config,
 	userOrOther,
 }: {
-	challengeNoRatings: boolean;
 	handleBulk: HandleBulk;
 	handleToggle: HandleToggle;
 	numDraftRounds: number;
@@ -159,7 +154,7 @@ const AssetList = ({
 		handleToggle,
 		userOrOther,
 		playerCols,
-		challengeNoRatings,
+		config,
 	);
 
 	const pickRows = genPickRows(picks, handleToggle, userOrOther);

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { formatRecord, helpers } from "../util";
+import { helpers } from "../util";
 
 const RecordAndPlayoffs = ({
 	abbrev,
@@ -38,7 +38,7 @@ const RecordAndPlayoffs = ({
 			</span>
 		) : null;
 
-	const record = formatRecord({
+	const record = helpers.formatRecord({
 		won,
 		lost,
 		otl,

@@ -134,7 +134,7 @@ const Team = ({
 							return (
 								<option key={t.tid} value={t.tid}>
 									{t.seed !== undefined ? `${t.seed}.` : null} {t.region}{" "}
-									{t.name}
+									{t.name} ({t.record})
 								</option>
 							);
 						})}

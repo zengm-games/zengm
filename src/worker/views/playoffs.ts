@@ -47,6 +47,7 @@ type TeamToEdit = {
 	seed: number | undefined;
 	imgURL: string | undefined;
 	imgURLSmall: string | undefined;
+	record: string;
 };
 
 const updatePlayoffs = async (
@@ -154,7 +155,12 @@ const updatePlayoffs = async (
 			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
 		let teamsToEdit: TeamToEdit[] = [];
 		if (canEdit) {
-			const teams = await idb.cache.teams.getAll();
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "cid", "region", "name", "imgURL", "imgURLSmall"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				season: g.get("season"),
+				active: true,
+			});
 
 			// All first round matchups
 			const matchupsToCheck = [
@@ -179,6 +185,7 @@ const updatePlayoffs = async (
 				seed: seedsByTid.get(t.tid),
 				imgURL: t.imgURL,
 				imgURLSmall: t.imgURLSmall,
+				record: helpers.formatRecord(t.seasonAttrs),
 			}));
 		}
 

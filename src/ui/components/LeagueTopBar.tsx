@@ -43,15 +43,7 @@ const LeagueTopBar = memo(() => {
 		return true;
 	});
 
-	useEffect(() => {
-		if (show) {
-			const leagueTopBar = document.querySelector(".league-top-bar");
-			leagueTopBar?.scrollTo({
-				left: leagueTopBar.scrollWidth,
-				behavior: "smooth",
-			});
-		}
-	});
+	const leagueTopBarRef = useRef(null);
 
 	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
 	const prevGames = useRef<typeof games>([]);
@@ -73,6 +65,37 @@ const LeagueTopBar = memo(() => {
 		};
 	}, [updateNumberOfScoreBoxes]);
 
+	useEffect(() => {
+		const leagueTopBar = leagueTopBarRef.current;
+		if (
+			!leagueTopBar ||
+			!show ||
+			leagueTopBar.scrollWidth <= leagueTopBar.clientWidth
+		)
+			return;
+
+		console.log("added");
+		leagueTopBar.addEventListener("wheel", handleWheel, { passive: false });
+
+		return () => {
+			console.log("removed");
+			leagueTopBar.removeEventListener("wheel", handleWheel, {
+				passive: false,
+			});
+		};
+	});
+
+	const handleWheel = useCallback(e => {
+		e.preventDefault();
+		const leagueTopBarPosition = leagueTopBarRef.current.scrollLeft;
+
+		leagueTopBarRef.current.scrollTo({
+			top: 0,
+			left: leagueTopBarPosition - e.deltaY + e.deltaX,
+			behaviour: "smooth",
+		});
+	}, []);
+
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
 		games.length === 1 &&
@@ -92,7 +115,7 @@ const LeagueTopBar = memo(() => {
 	if (show) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {
-			games2.push(game);
+			games2.unshift(game);
 			if (game.teams[0].pts === undefined) {
 				break;
 			}
@@ -103,8 +126,9 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse pr-3 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
+			ref={leagueTopBarRef}
 		>
 			{show ? (
 				// This makes it not animate the initial render

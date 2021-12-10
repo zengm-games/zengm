@@ -191,7 +191,7 @@ const DataTable = (props: Props | LegacyProps) => {
 	}));
 
 	useEffect(() => {
-		if (enableCustomizeColumns) {
+		if (config) {
 			setStatePartial({ cols });
 			processedRows = processRows();
 		}

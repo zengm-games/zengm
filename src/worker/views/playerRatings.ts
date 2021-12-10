@@ -81,6 +81,7 @@ const updatePlayers = async (
 		(inputs.season === g.get("season") &&
 			updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
@@ -170,6 +171,7 @@ const updatePlayers = async (
 			...ovrsPotsColNames,
 		]);
 		await config.load();
+		console.log(config);
 
 		const players = await getPlayers(
 			inputs.season,

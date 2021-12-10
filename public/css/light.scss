@@ -7,6 +7,7 @@ $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
 // Make it more like Bootstrap 4
 $link-decoration: none;
 $link-hover-decoration: underline;
+$enable-smooth-scroll: false;
 $badge-padding-y: 0.25em;
 $badge-padding-x: 0.4em;
 .form-check-inline {

@@ -37,7 +37,6 @@ const CustomizeColumns = ({
 	const [columns, setColumns] = useState<ColConfig[]>(initialColumns);
 
 	useEffect(() => {
-		console.log(config);
 		const nextColumns = [...columns].map(c => ({
 			...c,
 			hidden: !config.columns.some(col => col.key === c.key),

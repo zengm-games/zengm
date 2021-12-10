@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Col as FlexCol,
 	ListGroup,
@@ -35,6 +35,15 @@ const CustomizeColumns = ({
 		}),
 	);
 	const [columns, setColumns] = useState<ColConfig[]>(initialColumns);
+
+	useEffect(() => {
+		console.log(config);
+		const nextColumns = [...columns].map(c => ({
+			...c,
+			hidden: !config.columns.some(col => col.key === c.key),
+		}));
+		setColumns(nextColumns);
+	}, [config]);
 
 	const onChange = (key: string) => () => {
 		const nextColumns = [...columns];

@@ -23,7 +23,13 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers, safeLocalStorage, toWorker } from "../../util";
+import {
+	downloadFile,
+	helpers,
+	realtimeUpdate,
+	safeLocalStorage,
+	toWorker,
+} from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
@@ -149,7 +155,7 @@ const DataTable = (props: Props | LegacyProps) => {
 		addFilters,
 	} = props;
 
-	const enableCustomizeColumns: boolean = !!config;
+	const enableCustomizeColumns: boolean = !!config && !superCols;
 
 	// Convert LegacyCols to Cols for backwards compatability
 	const cols: Col[] =
@@ -183,6 +189,13 @@ const DataTable = (props: Props | LegacyProps) => {
 		}),
 		rows,
 	}));
+
+	useEffect(() => {
+		if (enableCustomizeColumns) {
+			setStatePartial({ cols });
+			processedRows = processRows();
+		}
+	}, [cols]);
 
 	const setStatePartial = useCallback((newState: Partial<State>) => {
 		setState(state2 => ({
@@ -264,17 +277,17 @@ const DataTable = (props: Props | LegacyProps) => {
 		return rowsOrdered;
 	};
 
-	const handleReorder = (oldIndex: number, newIndex: number) => {
+	const handleReorder = async (oldIndex: number, newIndex: number) => {
 		const nextCols = arrayMove(state.cols, oldIndex, newIndex);
 		setStatePartial({
 			cols: nextCols,
 		});
-		processedRows = processRows();
 		if (config) {
-			toWorker("main", "updateColumns", {
+			await toWorker("main", "updateColumns", {
 				columns: nextCols.map(c => c.key),
 				key: config.tableName,
 			});
+			await realtimeUpdate(["customizeTable"]);
 		}
 	};
 
@@ -468,8 +481,8 @@ const DataTable = (props: Props | LegacyProps) => {
 							showSelectColumnsModal: false,
 						});
 					}}
-					onSave={() => {
-						location.reload();
+					onSave={async () => {
+						await realtimeUpdate(["customizeTable"]);
 					}}
 				/>
 			) : null}

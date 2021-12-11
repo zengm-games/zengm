@@ -126,7 +126,7 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse pr-3 pb-1 mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse pr-3 pl-1 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
 			ref={leagueTopBarRef}
 		>

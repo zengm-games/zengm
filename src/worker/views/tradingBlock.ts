@@ -9,6 +9,7 @@ const updateUserRoster = async (
 	updateEvents: UpdateEvents,
 ) => {
 	if (
+		updateEvents.includes("customizeTable") ||
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("gameSim") ||

@@ -122,25 +122,14 @@ const StatsTableIndividual = ({
 
 	const onClick = (event: MouseEvent, colKey: string) => {
 		setSortBys(prevSortBys => {
-			const newSortBys =
+			return (
 				updateSortBys({
 					cols,
 					event,
 					colKey,
 					prevSortBys,
-				}) ?? [];
-
-			if (
-				newSortBys.length === 1 &&
-				prevSortBys.length === 1 &&
-				newSortBys[0][0] === prevSortBys[0][0] &&
-				newSortBys[0][1] === "desc"
-			) {
-				// User just clicked twice on the same column. Reset sort.
-				return [];
-			}
-
-			return newSortBys;
+				}) ?? []
+			);
 		});
 	};
 

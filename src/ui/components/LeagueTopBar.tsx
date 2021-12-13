@@ -83,7 +83,7 @@ const LeagueTopBar = memo(() => {
 				passive: false,
 			});
 		};
-	});
+	}, [handleWheel, show]);
 
 	const handleWheel = useCallback(e => {
 		e.preventDefault();

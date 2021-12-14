@@ -30,7 +30,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 				content: ["build/gen/*.js"],
 				css: rawCSS.map(raw => ({ raw })),
 				safelist: {
-					greedy: [/^modal/, /^navbar/, /^popover/, /^flag-/],
+					greedy: [/^modal/, /^navbar/, /^popover/, /^flag-/, /^dark-select/],
 				},
 		  });
 

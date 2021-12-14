@@ -16,25 +16,19 @@ const fileHash = contents => {
 
 const buildCSS = async (watch /*: boolean*/ = false) => {
 	const filenames = ["light", "dark"];
-	let source;
-	for (const filename of filenames) {
+	const rawCSS = filenames.map(filename => {
 		const sassFilePath = `public/css/${filename}.scss`;
 		const sassResult = sass.renderSync({
 			file: sassFilePath,
 		});
-		source = sassResult.css.toString();
+		return sassResult.css.toString();
+	});
 
-		if (!watch) {
-			// Temp file, for PurgeCSS
-			fs.writeFileSync(`build/gen/${filename}.css`, source);
-		}
-	}
-
-	const results = watch
+	const purgeCSSResults = watch
 		? []
 		: await new PurgeCSS().purge({
 				content: ["build/gen/*.js"],
-				css: filenames.map(filename => `build/gen/${filename}.css`),
+				css: rawCSS.map(raw => ({ raw })),
 				safelist: {
 					greedy: [/^modal/, /^navbar/, /^popover/, /^flag-/],
 				},
@@ -45,7 +39,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 		let output;
 		if (!watch) {
-			const purgeCSSResult = results[i].css;
+			const purgeCSSResult = purgeCSSResults[i].css;
 			const result = new CleanCSS().minify(purgeCSSResult);
 			if (result.errors.length > 0) {
 				console.log("clean-css errors", result.errors);
@@ -55,16 +49,13 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 			}
 			output = result.styles;
 		} else {
-			output = source;
+			output = rawCSS[i];
 		}
 
 		let outFilename;
 		if (watch) {
 			outFilename = `build/gen/${filename}.css`;
 		} else {
-			// Remove temp file
-			fs.unlinkSync(`build/gen/${filename}.css`);
-
 			const hash = fileHash(output);
 			outFilename = `build/gen/${filename}-${hash}.css`;
 

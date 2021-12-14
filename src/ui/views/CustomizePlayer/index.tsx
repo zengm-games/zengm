@@ -561,36 +561,34 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										onChange={handleChange.bind(null, "root", "lastName")}
 										value={p.lastName}
 									/>
-									<div className="input-group-append">
-										<button
-											className="btn btn-secondary"
-											type="button"
-											onClick={async event => {
-												event.preventDefault();
+									<button
+										className="btn btn-secondary"
+										type="button"
+										onClick={async event => {
+											event.preventDefault();
 
-												const { firstName, lastName } = await toWorker(
-													"main",
-													"getRandomName",
-													p.born.loc,
-												);
+											const { firstName, lastName } = await toWorker(
+												"main",
+												"getRandomName",
+												p.born.loc,
+											);
 
-												setState(prevState => {
-													const p: any = {
-														...prevState.p,
-														firstName,
-														lastName,
-													};
+											setState(prevState => {
+												const p: any = {
+													...prevState.p,
+													firstName,
+													lastName,
+												};
 
-													return {
-														...prevState,
-														p,
-													};
-												});
-											}}
-										>
-											Random
-										</button>
-									</div>
+												return {
+													...prevState,
+													p,
+												};
+											});
+										}}
+									>
+										Random
+									</button>
 								</div>
 							</div>
 							<div className="col-sm-3 mb-3">
@@ -678,40 +676,38 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 											);
 										})}
 									</select>
-									<div className="input-group-append">
-										<button
-											className="btn btn-secondary"
-											type="button"
-											disabled={!godMode}
-											onClick={async event => {
-												event.preventDefault();
+									<button
+										className="btn btn-secondary"
+										type="button"
+										disabled={!godMode}
+										onClick={async event => {
+											event.preventDefault();
 
-												const pos = await toWorker(
-													"main",
-													"getAutoPos",
-													p.ratings[r],
-												);
+											const pos = await toWorker(
+												"main",
+												"getAutoPos",
+												p.ratings[r],
+											);
 
-												setState(prevState => {
-													const p = {
-														...prevState.p,
-													};
-													p.ratings = [...p.ratings];
-													p.ratings[r] = {
-														...p.ratings[r],
-														pos,
-													};
+											setState(prevState => {
+												const p = {
+													...prevState.p,
+												};
+												p.ratings = [...p.ratings];
+												p.ratings[r] = {
+													...p.ratings[r],
+													pos,
+												};
 
-													return {
-														...prevState,
-														p,
-													};
-												});
-											}}
-										>
-											Auto
-										</button>
-									</div>
+												return {
+													...prevState,
+													p,
+												};
+											});
+										}}
+									>
+										Auto
+									</button>
 								</div>
 							</div>
 							<div className="col-sm-3 mb-3">
@@ -733,38 +729,36 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										value={p.born.loc}
 										disabled={!godMode}
 									/>
-									<div className="input-group-append">
-										<button
-											className="btn btn-secondary"
-											type="button"
-											disabled={!godMode}
-											onClick={async event => {
-												event.preventDefault();
+									<button
+										className="btn btn-secondary"
+										type="button"
+										disabled={!godMode}
+										onClick={async event => {
+											event.preventDefault();
 
-												const country = await toWorker(
-													"main",
-													"getRandomCountry",
-												);
+											const country = await toWorker(
+												"main",
+												"getRandomCountry",
+											);
 
-												setState(prevState => {
-													const p: any = {
-														...prevState.p,
-														born: {
-															...prevState.p.born,
-															loc: country,
-														},
-													};
+											setState(prevState => {
+												const p: any = {
+													...prevState.p,
+													born: {
+														...prevState.p.born,
+														loc: country,
+													},
+												};
 
-													return {
-														...prevState,
-														p,
-													};
-												});
-											}}
-										>
-											Random
-										</button>
-									</div>
+												return {
+													...prevState,
+													p,
+												};
+											});
+										}}
+									>
+										Random
+									</button>
 								</div>
 							</div>
 							<div className="col-sm-6 mb-3">
@@ -776,34 +770,32 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										onChange={handleChange.bind(null, "root", "college")}
 										value={p.college}
 									/>
-									<div className="input-group-append">
-										<button
-											className="btn btn-secondary"
-											type="button"
-											onClick={async event => {
-												event.preventDefault();
+									<button
+										className="btn btn-secondary"
+										type="button"
+										onClick={async event => {
+											event.preventDefault();
 
-												const college = await toWorker(
-													"main",
-													"getRandomCollege",
-												);
+											const college = await toWorker(
+												"main",
+												"getRandomCollege",
+											);
 
-												setState(prevState => {
-													const p: any = {
-														...prevState.p,
-														college,
-													};
+											setState(prevState => {
+												const p: any = {
+													...prevState.p,
+													college,
+												};
 
-													return {
-														...prevState,
-														p,
-													};
-												});
-											}}
-										>
-											Random
-										</button>
-									</div>
+												return {
+													...prevState,
+													p,
+												};
+											});
+										}}
+									>
+										Random
+									</button>
 								</div>
 							</div>
 							<div className="col-sm-3 mb-3">

@@ -1097,9 +1097,7 @@ const Input = ({
 		return (
 			<div className="input-group" style={inputStyle}>
 				{inputElement}
-				<div className="input-group-append">
-					<div className="input-group-text">%</div>
-				</div>
+				<div className="input-group-text">%</div>
 			</div>
 		);
 	}
@@ -1789,9 +1787,7 @@ const SettingsForm = ({
 																onChange={handleChange(key, type)}
 																value={state[key]}
 															/>
-															<div className="input-group-append">
-																<div className="input-group-text">Games</div>
-															</div>
+															<div className="input-group-text">Games</div>
 														</div>
 													</div>
 												);

@@ -476,17 +476,15 @@ const AddTeam = ({
 						</option>
 					))}
 				</select>
-				<div className="input-group-append">
-					<button
-						className="btn btn-light-bordered"
-						onClick={() => {
-							const t = availableBuiltInTeams.find(t => t.abbrev === abbrev);
-							addTeam(did, t);
-						}}
-					>
-						Add Team
-					</button>
-				</div>
+				<button
+					className="btn btn-light-bordered"
+					onClick={() => {
+						const t = availableBuiltInTeams.find(t => t.abbrev === abbrev);
+						addTeam(did, t);
+					}}
+				>
+					Add Team
+				</button>
 			</div>
 		</div>
 	);

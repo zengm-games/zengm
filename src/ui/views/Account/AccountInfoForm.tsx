@@ -204,15 +204,13 @@ const AccountInfoForm = ({
 								disabled={!state.editUsername}
 								required={state.editUsername}
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("username")}
-								>
-									{state.editUsername ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("username")}
+							>
+								{state.editUsername ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span className="form-text text-muted">
 							{fields.username.description}
@@ -242,15 +240,13 @@ const AccountInfoForm = ({
 								disabled={!state.editEmail}
 								required={state.editEmail}
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("email")}
-								>
-									{state.editEmail ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("email")}
+							>
+								{state.editEmail ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span
 							className={classNames("form-text", {
@@ -280,15 +276,13 @@ const AccountInfoForm = ({
 								required={state.editPassword}
 								autoComplete="new-password"
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("password")}
-								>
-									{state.editPassword ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("password")}
+							>
+								{state.editPassword ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span
 							className={classNames("form-text", {

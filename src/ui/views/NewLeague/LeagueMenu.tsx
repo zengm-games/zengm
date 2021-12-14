@@ -126,26 +126,24 @@ const LeagueMenu = <Value extends string>({
 						))}
 					</select>
 				) : null}
-				<div className="input-group-append">
-					<button
-						className="btn btn-secondary"
-						type="button"
-						onClick={() => {
-							const keys = values.map(v => v.key);
-							const random = keys[Math.floor(Math.random() * keys.length)];
+				<button
+					className="btn btn-secondary"
+					type="button"
+					onClick={() => {
+						const keys = values.map(v => v.key);
+						const random = keys[Math.floor(Math.random() * keys.length)];
 
-							if (value2 !== undefined && values2 && onNewValue2) {
-								const keys2 = values2.map(v => v.key);
-								const random2 = keys2[Math.floor(Math.random() * keys2.length)];
-								onNewValue2(random2);
-							}
+						if (value2 !== undefined && values2 && onNewValue2) {
+							const keys2 = values2.map(v => v.key);
+							const random2 = keys2[Math.floor(Math.random() * keys2.length)];
+							onNewValue2(random2);
+						}
 
-							handleNewValue(random, value2);
-						}}
-					>
-						Random
-					</button>
-				</div>
+						handleNewValue(random, value2);
+					}}
+				>
+					Random
+				</button>
 			</div>
 		</>
 	);

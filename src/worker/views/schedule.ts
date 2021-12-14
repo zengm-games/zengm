@@ -153,8 +153,17 @@ const updateUpcoming = async (
 			tid: inputs.tid,
 		});
 
+		let canLiveSimFirstGame = false;
+		if (upcoming.length > 0) {
+			const scheduleToday = await season.getSchedule(true);
+			canLiveSimFirstGame = scheduleToday.some(
+				game => game.gid === upcoming[0].gid,
+			);
+		}
+
 		return {
 			abbrev: inputs.abbrev,
+			canLiveSimFirstGame,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
 			phase: g.get("phase"),
@@ -230,7 +239,6 @@ const updateCompleted = async (
 		});
 
 		const topPlayers = await getTopPlayers(inputs.tid, 2);
-		console.log("topPlayers", topPlayers);
 
 		return {
 			completed,

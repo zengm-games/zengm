@@ -9,6 +9,7 @@ import { Dropdown } from "react-bootstrap";
 
 const Schedule = ({
 	abbrev,
+	canLiveSimFirstGame,
 	completed,
 	elam,
 	elamASG,
@@ -81,21 +82,34 @@ const Schedule = ({
 							const actions = game.teams[0].playoffs
 								? undefined
 								: [
-										{
-											disabled: gameSimInProgress || i === 0,
-											text: (
-												<>
-													Sim
-													<br />
-													to
-													<br />
-													game
-												</>
-											),
-											onClick: () => {
-												toWorker("actions", "simToGame", game.gid);
-											},
-										},
+										canLiveSimFirstGame && i === 0
+											? {
+													disabled: gameSimInProgress,
+													text: (
+														<>
+															Watch
+															<br />
+															game
+														</>
+													),
+													onClick: () =>
+														toWorker("actions", "liveGame", game.gid),
+											  }
+											: {
+													disabled: gameSimInProgress,
+													text: (
+														<>
+															Sim
+															<br />
+															to
+															<br />
+															game
+														</>
+													),
+													onClick: () => {
+														toWorker("actions", "simToGame", game.gid);
+													},
+											  },
 								  ];
 
 							const allowTie = allowForceTie({

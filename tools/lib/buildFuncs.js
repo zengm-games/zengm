@@ -5,6 +5,7 @@ const fse = require("fs-extra");
 const htmlmin = require("html-minifier-terser");
 const sass = require("sass");
 const path = require("path");
+const { PurgeCSS } = require("purgecss");
 const replace = require("replace");
 const getSport = require("./getSport");
 
@@ -13,36 +14,39 @@ const fileHash = contents => {
 	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
 };
 
-const buildCSS = (watch /*: boolean*/ = false) => {
+const buildCSS = async (watch /*: boolean*/ = false) => {
 	const filenames = ["light", "dark"];
-	return filenames.map(filename => {
-		const start = process.hrtime();
-
-		// If more Sass files are needed, then create them and @import them into this main Sass file.
+	let source;
+	for (const filename of filenames) {
 		const sassFilePath = `public/css/${filename}.scss`;
 		const sassResult = sass.renderSync({
 			file: sassFilePath,
 		});
-		const source = sassResult.css.toString();
+		source = sassResult.css.toString();
 
-		let outFilename;
-		if (watch) {
-			outFilename = `build/gen/${filename}.css`;
-		} else {
-			const hash = fileHash(source);
-			outFilename = `build/gen/${filename}-${hash}.css`;
-
-			replace({
-				regex: `CSS_HASH_${filename.toUpperCase()}`,
-				replacement: hash,
-				paths: ["build/index.html"],
-				silent: true,
-			});
+		if (!watch) {
+			// Temp file, for PurgeCSS
+			fs.writeFileSync(`build/gen/${filename}.css`, source);
 		}
+	}
+
+	const results = watch
+		? []
+		: await new PurgeCSS().purge({
+				content: ["build/gen/*.js"],
+				css: filenames.map(filename => `build/gen/${filename}.css`),
+				safelist: {
+					greedy: [/^modal/, /^navbar/, /^popover/, /^flag-/],
+				},
+		  });
+
+	for (let i = 0; i < filenames.length; i++) {
+		const filename = filenames[i];
 
 		let output;
 		if (!watch) {
-			const result = new CleanCSS().minify(source);
+			const purgeCSSResult = results[i].css;
+			const result = new CleanCSS().minify(purgeCSSResult);
 			if (result.errors.length > 0) {
 				console.log("clean-css errors", result.errors);
 			}
@@ -54,26 +58,26 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 			output = source;
 		}
 
-		fs.writeFileSync(outFilename, output);
+		let outFilename;
+		if (watch) {
+			outFilename = `build/gen/${filename}.css`;
+		} else {
+			// Remove temp file
+			fs.unlinkSync(`build/gen/${filename}.css`);
 
-		if (!watch) {
-			const bytes = Buffer.byteLength(output, "utf8");
+			const hash = fileHash(output);
+			outFilename = `build/gen/${filename}-${hash}.css`;
 
-			const diff = process.hrtime(start);
-			const NS_PER_SECOND = 10 ** 9;
-			const timeInS = diff[0] + diff[1] / NS_PER_SECOND;
-
-			console.log(
-				`${(bytes / 1024 / 1024).toFixed(
-					2,
-				)} MB written to ${outFilename} (${timeInS.toFixed(
-					2,
-				)} seconds) at ${new Date().toLocaleTimeString()}`,
-			);
+			replace({
+				regex: `CSS_HASH_${filename.toUpperCase()}`,
+				replacement: hash,
+				paths: ["build/index.html"],
+				silent: true,
+			});
 		}
 
-		return outFilename;
-	});
+		fs.writeFileSync(outFilename, output);
+	}
 };
 
 const bySport = object => {

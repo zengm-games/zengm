@@ -1,12 +1,12 @@
 const chokidar = require("chokidar");
 const build = require("./buildFuncs");
 
-const watchCSS = (updateStart, updateEnd, updateError) => {
+const watchCSS = async (updateStart, updateEnd, updateError) => {
 	const watcher = chokidar.watch("public/css", {});
 
 	const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 
-	const buildCSS = () => {
+	const buildCSS = async () => {
 		filenames.map(updateStart);
 		try {
 			build.buildCSS(true);
@@ -18,11 +18,9 @@ const watchCSS = (updateStart, updateEnd, updateError) => {
 		}
 	};
 
-	buildCSS();
+	await buildCSS();
 
-	watcher.on("change", () => {
-		buildCSS();
-	});
+	watcher.on("change", buildCSS);
 };
 
 module.exports = watchCSS;

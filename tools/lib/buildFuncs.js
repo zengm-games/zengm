@@ -15,7 +15,7 @@ const fileHash = contents => {
 
 const buildCSS = (watch /*: boolean*/ = false) => {
 	const filenames = ["light", "dark"];
-	for (const filename of filenames) {
+	return filenames.map(filename => {
 		const start = process.hrtime();
 
 		// If more Sass files are needed, then create them and @import them into this main Sass file.
@@ -71,7 +71,9 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 				)} seconds) at ${new Date().toLocaleTimeString()}`,
 			);
 		}
-	}
+
+		return outFilename;
+	});
 };
 
 const bySport = object => {

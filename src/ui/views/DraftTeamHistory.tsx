@@ -95,7 +95,11 @@ const DraftTeamHistory = ({
 						{p.lotteryChange}
 					</PlusMinus>
 				) : undefined,
-				"",
+				p.lotteryProb !== undefined ? (
+					<a href={helpers.leagueUrl(["draft_lottery", p.draft.year])}>
+						{(p.lotteryProb * 100).toFixed(1)}%
+					</a>
+				) : undefined,
 				{
 					value: (
 						<div className="d-flex">

@@ -1,4 +1,4 @@
-import { bySport, PLAYER } from "../../common";
+import { bySport, getDraftLotteryProbs, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -54,6 +54,7 @@ const updateDraftTeamHistory = async (
 
 		let preLotteryRank: number | undefined;
 		let lotteryChange: number | undefined;
+		let lotteryProb: number | undefined;
 		if (p.draft.round === 1) {
 			const draftLottery = await idb.getCopy.draftLotteryResults({
 				season: p.draft.year,
@@ -66,8 +67,13 @@ const updateDraftTeamHistory = async (
 					preLotteryRank = lotteryRowIndex + 1;
 					lotteryChange = preLotteryRank - p.draft.pick;
 
-					const lotteryRow = draftLottery.result[lotteryRowIndex];
-					console.log(p.draft, draftLottery, lotteryRowIndex, lotteryRow);
+					const probs = getDraftLotteryProbs(
+						draftLottery.result,
+						draftLottery.draftType,
+					);
+					if (probs) {
+						lotteryProb = probs[lotteryRowIndex]?.[p.draft.pick - 1];
+					}
 				}
 			}
 		}
@@ -102,6 +108,7 @@ const updateDraftTeamHistory = async (
 			// Draft lottery
 			preLotteryRank,
 			lotteryChange,
+			lotteryProb,
 		});
 	}
 

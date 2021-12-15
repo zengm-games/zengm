@@ -1,3 +1,13 @@
+draft lottery history
+- https://basketball.realgm.com/nba/draft/lottery_results/by_team
+- metric for overall luck
+  - the "pick change" thing from real GM seems sane. Either from pre-lottery standings (which people understand) or the expected value of each pick (which would be zero mean). A straight up P(better than expected) would make sense too I guess. so the 1st pick... that's going to average a negative number in the "pre-lottery standings change". But it should average as 0 compared to pick num3.66 ( 1*.14 + 2 *.134 + 3 *.127+4 *.12 + 5 *.479) https://discord.com/channels/290013534023057409/290015468939640832/865942178840969217
+- put on Draft History page
+  - add columns: Pre-Lottery (for pre-lottery position), Change (highlight red/green), Odds
+  - values only for lottery picks
+
+way to tell getCopy we are not going to mutate, so don't need deepcopy
+
 half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
 
 performance on FA page https://discord.com/channels/290013534023057409/290013534023057409/919493773224972348
@@ -173,8 +183,6 @@ show tenths of seconds in live sim play by play
 
 free throws with no time left https://github.com/zengm-games/zengm/issues/392
 
-way to tell getCopy we are not going to mutate, so don't need deepcopy
-
 player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
@@ -198,12 +206,6 @@ schedule customization
   - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
-
-draft lottery history
-- https://basketball.realgm.com/nba/draft/lottery_results/by_team
-- metric for overall luck
-  - the "pick change" thing from real GM seems sane. Either from pre-lottery standings (which people understand) or the expected value of each pick (which would be zero mean). A straight up P(better than expected) would make sense too I guess. so the 1st pick... that's going to average a negative number in the "pre-lottery standings change". But it should average as 0 compared to pick num3.66 ( 1*.14 + 2 *.134 + 3 *.127+4 *.12 + 5 *.479) https://discord.com/channels/290013534023057409/290015468939640832/865942178840969217
-- separate page, or on draft history page?
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)

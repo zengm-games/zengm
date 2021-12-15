@@ -47,10 +47,32 @@ const updateDraftTeamHistory = async (
 		showRookies: true,
 		fuzz: true,
 	});
-	const players = playersAll.map(p => {
+	const players = [];
+	for (const p of playersAll) {
 		const currentPr = p.ratings.at(-1);
 		const peakPr: any = maxBy(p.ratings, "ovr");
-		return {
+
+		let preLotteryRank: number | undefined;
+		let lotteryChange: number | undefined;
+		if (p.draft.round === 1) {
+			const draftLottery = await idb.getCopy.draftLotteryResults({
+				season: p.draft.year,
+			});
+			if (draftLottery) {
+				const lotteryRowIndex = draftLottery.result.findIndex(
+					row => row.pick === p.draft.pick,
+				);
+				if (lotteryRowIndex >= 0) {
+					preLotteryRank = lotteryRowIndex + 1;
+					lotteryChange = preLotteryRank - p.draft.pick;
+
+					const lotteryRow = draftLottery.result[lotteryRowIndex];
+					console.log(p.draft, draftLottery, lotteryRowIndex, lotteryRow);
+				}
+			}
+		}
+
+		players.push({
 			// Attributes
 			pid: p.pid,
 			name: p.name,
@@ -76,8 +98,12 @@ const updateDraftTeamHistory = async (
 
 			// Stats
 			careerStats: p.careerStats,
-		};
-	});
+
+			// Draft lottery
+			preLotteryRank,
+			lotteryChange,
+		});
+	}
 
 	const abbrev = inputs.abbrev;
 	const userAbbrev = g.get("teamInfoCache")[g.get("userTid")]?.abbrev;

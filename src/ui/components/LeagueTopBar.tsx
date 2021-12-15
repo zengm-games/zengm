@@ -65,6 +65,19 @@ const LeagueTopBar = memo(() => {
 		};
 	}, [updateNumberOfScoreBoxes]);
 
+	let games2: typeof games = [];
+
+	const handleWheel = useCallback(e => {
+		e.preventDefault();
+		const leagueTopBarPosition = leagueTopBarRef.current.scrollLeft;
+
+		leagueTopBarRef.current.scrollTo({
+			top: 0,
+			left: leagueTopBarPosition - e.deltaY + e.deltaX,
+			behaviour: "smooth",
+		});
+	}, []);
+
 	useEffect(() => {
 		const leagueTopBar = leagueTopBarRef.current;
 		if (
@@ -83,18 +96,7 @@ const LeagueTopBar = memo(() => {
 				passive: false,
 			});
 		};
-	});
-
-	const handleWheel = useCallback(e => {
-		e.preventDefault();
-		const leagueTopBarPosition = leagueTopBarRef.current.scrollLeft;
-
-		leagueTopBarRef.current.scrollTo({
-			top: 0,
-			left: leagueTopBarPosition - e.deltaY + e.deltaX,
-			behaviour: "smooth",
-		});
-	}, []);
+	}, [handleWheel, show, games2]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
@@ -111,7 +113,7 @@ const LeagueTopBar = memo(() => {
 		prevGames.current = games;
 	}
 
-	let games2: typeof games = [];
+	// let games2: typeof games = [];
 	if (show) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {

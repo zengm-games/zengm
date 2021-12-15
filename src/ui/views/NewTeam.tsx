@@ -89,6 +89,13 @@ const NewTeam = ({
 					teams willing to hire you.
 				</p>
 			);
+		} else if (gameOver) {
+			message = (
+				<p>
+					You've been fired by your current team, so pick an expansion team to
+					continue.
+				</p>
+			);
 		} else {
 			message = (
 				<p>

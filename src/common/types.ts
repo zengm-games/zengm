@@ -1710,3 +1710,5 @@ export type HeadToHead = {
 		>
 	>;
 };
+
+export type GetCopyType = "noCopyCache";

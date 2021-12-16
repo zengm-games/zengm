@@ -1,12 +1,15 @@
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { DraftLotteryResult } from "../../../common/types";
+import type { DraftLotteryResult, GetCopyType } from "../../../common/types";
 
-const getCopies = async ({
-	season,
-}: {
-	season?: number;
-} = {}): Promise<DraftLotteryResult[]> => {
+const getCopies = async (
+	{
+		season,
+	}: {
+		season?: number;
+	} = {},
+	type?: GetCopyType,
+): Promise<DraftLotteryResult[]> => {
 	if (season !== undefined) {
 		const draftLotteryResults = mergeByPk(
 			await idb.league.getAll("draftLotteryResults", season),
@@ -14,6 +17,7 @@ const getCopies = async ({
 				return event.season === season;
 			}),
 			"draftLotteryResults",
+			type,
 		);
 		return draftLotteryResults;
 	}
@@ -22,6 +26,7 @@ const getCopies = async ({
 		await idb.league.getAll("draftLotteryResults"),
 		await idb.cache.draftLotteryResults.getAll(),
 		"draftLotteryResults",
+		type,
 	);
 };
 

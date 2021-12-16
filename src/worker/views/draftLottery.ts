@@ -67,9 +67,12 @@ const updateDraftLottery = async (
 			season < g.get("season") ||
 			(season === g.get("season") && g.get("phase") >= PHASE.DRAFT_LOTTERY)
 		) {
-			const draftLotteryResult = await idb.getCopy.draftLotteryResults({
-				season,
-			});
+			const draftLotteryResult = await idb.getCopy.draftLotteryResults(
+				{
+					season,
+				},
+				"noCopyCache",
+			);
 
 			// If season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
 			if (draftLotteryResult || g.get("phase") > PHASE.DRAFT_LOTTERY) {

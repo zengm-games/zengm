@@ -56,9 +56,12 @@ const updateDraftTeamHistory = async (
 		let lotteryChange: number | undefined;
 		let lotteryProb: number | undefined;
 		if (p.draft.round === 1) {
-			const draftLottery = await idb.getCopy.draftLotteryResults({
-				season: p.draft.year,
-			});
+			const draftLottery = await idb.getCopy.draftLotteryResults(
+				{
+					season: p.draft.year,
+				},
+				"noCopyCache",
+			);
 			if (draftLottery) {
 				const lotteryRowIndex = draftLottery.result.findIndex(
 					row => row.pick === p.draft.pick,

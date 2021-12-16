@@ -1211,6 +1211,9 @@ export type Local = {
 	autoPlayUntil?: {
 		season: number;
 		phase: number;
+
+		// Time in milliseconds of the start of auto play
+		start: number;
 	};
 	autoSave: boolean;
 	fantasyDraftResults: (Player<any> & {

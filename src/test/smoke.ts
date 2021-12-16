@@ -43,6 +43,7 @@ describe("Smoke Tests", () => {
 		local.autoPlayUntil = {
 			season: 2017,
 			phase: 0,
+			start: Date.now(),
 		};
 		league.autoPlay();
 		return new Promise(resolve => {

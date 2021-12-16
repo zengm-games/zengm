@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { m, AnimatePresence } from "framer-motion";
 import { memo, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -107,8 +106,6 @@ const LeagueTopBar = memo(() => {
 		}
 	}
 
-	const transition = { duration: 0.2, type: "tween" };
-
 	return (
 		<div
 			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse ps-1 pb-1 mt-2"
@@ -124,24 +121,11 @@ const LeagueTopBar = memo(() => {
 					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
 				}}
 			/>
-			{show ? (
-				// This makes it not animate the initial render
-				<AnimatePresence initial={false}>
-					{games2.map(game => (
-						<m.div
-							key={game.gid}
-							layout
-							initial={{ x: 105 }}
-							animate={{ x: 0 }}
-							// Need to specify exit, otherwise AnimatePresence makes divs stay around forever
-							exit={{}}
-							transition={transition}
-						>
-							<ScoreBox className="me-2" game={game} small />
-						</m.div>
-					))}
-				</AnimatePresence>
-			) : null}
+			{show
+				? games2.map(game => (
+						<ScoreBox key={game.gid} className="me-2" game={game} small />
+				  ))
+				: null}
 		</div>
 	);
 });

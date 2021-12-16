@@ -978,8 +978,8 @@ tr.table-warning:hover > td {
 }
 
 $league-top-bar-toggle-width: 15px;
-$league-top-bar-scrollbar-track-color: #dadada;
-$league-top-bar-scrollbar-thumb-color: rgba(71, 71, 71, 0.637);
+$league-top-bar-scrollbar-track-color: $gray-300;
+$league-top-bar-scrollbar-thumb-color: $gray-500;
 .league-top-bar {
 	padding-right: $league-top-bar-toggle-width;
 

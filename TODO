@@ -1,9 +1,4 @@
 league top bar
-- scrollbar style
-  - dark/light mode
-  - firefox
-  - safari
-  - mobile
 - behavior when game is simmed and scroll is somewhere - should stay put, somehow
 - blog
   - no more animation

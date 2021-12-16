@@ -1,4 +1,4 @@
-import { Fragment, memo } from "react";
+import { memo } from "react";
 import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [

@@ -57,7 +57,7 @@ const PlayerList = ({
 								`${p.abbrev}_${p.tid}`,
 								season,
 							])}
-							className="ml-2"
+							className="ms-2"
 						>
 							{p.abbrev}
 						</a>

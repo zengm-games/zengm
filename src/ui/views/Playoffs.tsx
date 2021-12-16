@@ -2,14 +2,15 @@ import PropTypes from "prop-types";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { helpers } from "../util";
+import { helpers, toWorker } from "../util";
 import range from "lodash-es/range";
+import { useState } from "react";
+import classNames from "classnames";
 
-const width100 = {
-	width: "100%",
-};
+type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
 const Playoffs = ({
+	canEdit,
 	confNames,
 	finalMatchups,
 	matchups,
@@ -19,6 +20,7 @@ const Playoffs = ({
 	playoffsByConf,
 	season,
 	series,
+	teamsToEdit,
 	userTid,
 }: View<"playoffs">) => {
 	useTitleBar({
@@ -30,6 +32,10 @@ const Playoffs = ({
 			seasons: season,
 		},
 	});
+
+	const [editing, setEditing] = useState(false);
+	const [teamsEdited, setTeamsEdited] = useState(teamsToEdit);
+	const actuallyEditing = canEdit && editing;
 
 	const numRounds = series.length;
 
@@ -72,6 +78,35 @@ const Playoffs = ({
 	const playInPlural = playIns && playIns.length > 1 ? "s" : "";
 	const playInPluralAlt = playIns && playIns.length > 1 ? "" : "s";
 
+	const editingInfo = actuallyEditing
+		? {
+				byConf: playoffsByConf,
+				onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => {
+					// Swap seeds of these two teams
+					setTeamsEdited(teams =>
+						teams.map(t => {
+							if (t.tid === prevTeam.tid) {
+								return {
+									...t,
+									seed: newTeam.seed,
+								};
+							}
+
+							if (t.tid === newTeam.tid) {
+								return {
+									...t,
+									seed: prevTeam.seed,
+								};
+							}
+
+							return t;
+						}),
+					);
+				},
+				teams: teamsEdited,
+		  }
+		: undefined;
+
 	return (
 		<div style={{ maxWidth }}>
 			{!finalMatchups ? (
@@ -79,16 +114,46 @@ const Playoffs = ({
 					This is what the playoff matchups would be if the season ended right
 					now.
 				</p>
+			) : canEdit ? (
+				<div className="mb-3">
+					<button
+						className={classNames(
+							"btn",
+							editing ? "btn-primary" : "btn-god-mode",
+						)}
+						onClick={async () => {
+							if (!editing) {
+								setEditing(true);
+							} else {
+								await toWorker("main", "updatePlayoffTeams", teamsEdited);
+								setEditing(false);
+							}
+						}}
+					>
+						{editing ? "Save Changes" : "Edit Playoff Teams"}
+					</button>
+					{editing ? (
+						<button
+							className="btn btn-secondary ms-2"
+							onClick={() => {
+								setEditing(false);
+								setTeamsEdited(teamsToEdit);
+							}}
+						>
+							Cancel
+						</button>
+					) : null}
+				</div>
 			) : null}
 
 			{playoffsByConf && numRounds > 1 ? (
 				<h2 className="d-none d-sm-block">
-					{confNames[1]} <span className="float-right">{confNames[0]}</span>
+					{confNames[1]} <span className="float-end">{confNames[0]}</span>
 				</h2>
 			) : null}
 
 			<ResponsiveTableWrapper>
-				<table className="table-sm" style={width100}>
+				<table className="table-sm w-100">
 					<tbody>
 						{matchups.map((row, i) => (
 							<tr key={i}>
@@ -104,6 +169,7 @@ const Playoffs = ({
 												season={season}
 												series={series[m.matchup[0]][m.matchup[1]]}
 												userTid={userTid}
+												editing={editingInfo}
 											/>
 										</td>
 									);
@@ -149,7 +215,7 @@ const Playoffs = ({
 					{[...playIns].reverse().map((playIn, i) => {
 						return (
 							<ResponsiveTableWrapper key={i}>
-								<table className="table-sm" style={width100}>
+								<table className="table-sm w-100">
 									<tbody>
 										<tr>
 											<td style={tdStyle}>
@@ -159,6 +225,7 @@ const Playoffs = ({
 													series={playIn[0]}
 													userTid={userTid}
 													extraHighlight
+													editing={editingInfo}
 												/>
 											</td>
 											<td style={tdStyle} rowSpan={2}>
@@ -183,6 +250,7 @@ const Playoffs = ({
 													season={season}
 													series={playIn[1]}
 													userTid={userTid}
+													editing={editingInfo}
 												/>
 											</td>
 										</tr>

@@ -29,7 +29,7 @@ const Inbox = ({ anyUnread, messages }: View<"inbox">) => {
 								<tr
 									key={mid}
 									className={classNames({
-										"font-weight-bold": !read,
+										"fw-bold": !read,
 									})}
 								>
 									<td className="year">

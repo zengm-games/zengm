@@ -104,7 +104,7 @@ const Controls = ({
 					>
 						<span className="glyphicon glyphicon-filter" />
 					</a>
-					<label>
+					<label className="form-label">
 						<input
 							className="form-control form-control-sm"
 							onChange={onSearch}
@@ -115,7 +115,7 @@ const Controls = ({
 					</label>
 				</>
 			) : null}
-			<Dropdown className="float-right">
+			<Dropdown className="float-end">
 				<Dropdown.Toggle
 					as="span"
 					bsPrefix="no-caret"

@@ -25,8 +25,10 @@ const RealData = ({
 			</p>
 
 			<div className="row">
-				<div className="col-sm-6 col-12 form-group">
-					<label htmlFor="options-team-info">Team Info</label>
+				<div className="col-sm-6 col-12 mb-3">
+					<label className="form-label" htmlFor="options-team-info">
+						Team Info
+					</label>
 					<textarea
 						id="options-team-info"
 						className="form-control"
@@ -39,8 +41,10 @@ const RealData = ({
 						"Real Players" and "Legends" leagues, including existing leagues.
 					</div>
 				</div>
-				<div className="col-sm-6 col-12 form-group">
-					<label htmlFor="options-player-photos">Player Photos</label>
+				<div className="col-sm-6 col-12 mb-3">
+					<label className="form-label" htmlFor="options-player-photos">
+						Player Photos
+					</label>
 					<textarea
 						id="options-player-photos"
 						className="form-control"

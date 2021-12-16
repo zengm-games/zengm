@@ -180,7 +180,7 @@ const TitleBar = () => {
 	}
 
 	return (
-		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0">
+		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0 px-3">
 			<h1 className="mb-0">
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
@@ -194,7 +194,7 @@ const TitleBar = () => {
 				/>
 			) : null}
 			<DropdownLinks
-				className="ml-auto"
+				className="ms-auto"
 				hideTitle
 				inLeague
 				lid={lid}

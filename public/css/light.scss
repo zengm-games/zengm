@@ -4,8 +4,31 @@
 $dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
 $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
 
+// Make it more like Bootstrap 4
+$link-decoration: none;
+$link-hover-decoration: underline;
+$enable-smooth-scroll: false;
+$badge-padding-y: 0.25em;
+$badge-padding-x: 0.4em;
+$popover-body-padding-y: 0.5rem;
+$popover-body-padding-x: 0.75rem;
+.form-check-inline {
+	margin-right: 0.75rem !important;
+}
+.form-switch .form-check-input {
+	width: 1.75rem !important;
+	height: 1rem !important;
+}
+
 $font-size-base: 0.8125rem;
 $black: #000 !default;
+
+// Taken from Bootstrap 4, for consistency
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+	"Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+	"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+	"Liberation Mono", "Courier New", monospace;
 
 // Country list is from CountryFlag.tsx, inlined here to skip a few of the special ones like the UN and EU flags
 $include: af, ax, al, dz, as, ad, ao, ai, aq, ag, ar, am, aw, au, at, az, bs, bh,
@@ -56,17 +79,18 @@ $flag-icon-css-path: "/img/flags";
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/utilities";
 @import "node_modules/bootstrap/scss/root";
 @import "node_modules/bootstrap/scss/reboot";
 @import "node_modules/bootstrap/scss/type";
+@import "node_modules/bootstrap/scss/containers";
 @import "node_modules/bootstrap/scss/grid";
 @import "node_modules/bootstrap/scss/tables";
 @import "node_modules/bootstrap/scss/forms";
 @import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/transitions";
 @import "node_modules/bootstrap/scss/dropdown";
 @import "node_modules/bootstrap/scss/button-group";
-@import "node_modules/bootstrap/scss/input-group";
-@import "node_modules/bootstrap/scss/custom-forms";
 @import "node_modules/bootstrap/scss/nav";
 @import "node_modules/bootstrap/scss/navbar";
 @import "node_modules/bootstrap/scss/card";
@@ -79,14 +103,25 @@ $flag-icon-css-path: "/img/flags";
 @import "node_modules/bootstrap/scss/modal";
 @import "node_modules/bootstrap/scss/tooltip";
 @import "node_modules/bootstrap/scss/popover";
-@import "node_modules/bootstrap/scss/utilities";
 @import "node_modules/bootstrap/scss/spinners";
-@import "node_modules/bootstrap/scss/code";
+@import "node_modules/bootstrap/scss/helpers";
+@import "node_modules/bootstrap/scss/utilities/api";
 
 @import "datatable";
 @import "bbgm-notifications";
 @import "glyphicons";
 @import "sidebar";
+
+@each $color, $value in $table-variants {
+	.table-#{$color} {
+		// Make it more like Bootstrap 4 - allow using these classes on non-table elements
+		background-color: $value;
+
+		// Make it more like Bootstrap 4 - no striping of table rows when highlighted
+		--bs-table-striped-bg: $value;
+		--bs-table-striped-color: color-contrast(opaque($body-bg, $value));
+	}
+}
 
 h1 {
 	font-size: 24px;
@@ -102,6 +137,9 @@ h4 {
 }
 h5 {
 	font-size: 12px;
+}
+.modal-title {
+	font-size: 20px;
 }
 
 .bbgm-container {
@@ -192,7 +230,26 @@ a.god-mode.active {
 .play-button {
 	font-size: 1.01562rem;
 	padding: 14px !important;
+	color: #fff !important; // white in light and dark
 	height: 51px;
+}
+.play-button-success {
+	background-color: $green;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($green, $btn-hover-bg-shade-amount);
+	}
+}
+.play-button-danger {
+	background-color: $red;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($red, $btn-hover-bg-shade-amount);
+	}
 }
 
 .dropdown-item {
@@ -257,7 +314,7 @@ a.god-mode.active {
 	background-position: 81px 34px;
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.dashboard-top-wrapper {
 		text-align: center;
 
@@ -277,7 +334,6 @@ a.god-mode.active {
 .dashboard-controls {
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
-	vertical-align: middle !important;
 }
 
 .dashboard-play-loading {
@@ -285,7 +341,7 @@ a.god-mode.active {
 }
 
 .dashboard-table table td {
-	vertical-align: inherit;
+	vertical-align: middle;
 }
 
 @keyframes oscillate-bg {
@@ -323,6 +379,10 @@ table {
 	font-variant: tabular-nums;
 }
 
+.table:not(.table-borderless):not(.table-bordered) {
+	border-top: $table-border-width solid $table-border-color;
+}
+
 // .table is so this doesn't apply to a floating row while dragging
 .table tr.separator td {
 	border-bottom: 1px solid $gray-700;
@@ -353,7 +413,7 @@ table {
 	text-decoration: none;
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.mx-xs-auto {
 		margin-left: auto !important;
 		margin-right: auto !important;
@@ -441,8 +501,7 @@ table {
 
 .pt-modifier-select {
 	margin: 0;
-	width: auto;
-	padding: 0;
+	padding: 0 0.25rem;
 	height: 20px;
 }
 
@@ -529,7 +588,7 @@ table {
 	line-height: 32px;
 	padding-right: 1em;
 	text-align: right;
-	width: 100px;
+	width: 85px;
 }
 
 .finances-settings-text {
@@ -545,13 +604,7 @@ table {
 
 .finances-settings-field {
 	width: 115px;
-
-	.input-group-append,
-	.input-group-prepend {
-		height: 27px;
-	}
 }
-
 .finances-settings button {
 	display: none;
 }
@@ -606,27 +659,6 @@ table {
 
 .alert p:last-child {
 	margin-bottom: 0;
-}
-
-.alert-top {
-	margin-top: 20px;
-	padding-bottom: 2px;
-	padding-top: 12px;
-
-	button {
-		margin-top: -4px;
-	}
-}
-
-.alert-changes {
-	h4 {
-		margin-top: 0;
-	}
-
-	ul {
-		margin-bottom: 9px;
-		padding-left: 18px;
-	}
 }
 
 // HACK so that other table classes can be overriden in teamHistory (and possibly elsewhere).
@@ -695,14 +727,15 @@ tr.table-warning:hover > td {
 	border-radius: 0.2rem;
 }
 
+// Not sure why these need more than 2 args to button-variant, but otherwise hover seems broken
 .btn-light-bordered {
-	@include button-variant($light, $gray-400);
+	@include button-variant($light, $gray-400, $black, darken($light, 7));
 }
 .btn-light-bordered-primary {
-	@include button-variant($light, $blue);
+	@include button-variant($light, $blue, $black, darken($light, 7));
 }
 .btn-light-bordered-2 {
-	@include button-variant($light, $gray-300);
+	@include button-variant($light, $gray-300, $black, darken($light, 7));
 }
 .btn-light-bordered-group-left {
 	border-top-right-radius: 0;
@@ -785,6 +818,7 @@ tr.table-warning:hover > td {
 .table tfoot {
 	tr:first-child {
 		th {
+			border-top-color: $table-border-color;
 			border-top-width: 2px;
 		}
 	}
@@ -812,6 +846,8 @@ tr.table-warning:hover > td {
 
 	// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
 	-webkit-overflow-scrolling: auto;
+
+	width: 100%;
 
 	.table {
 		margin-bottom: 0;
@@ -952,14 +988,14 @@ tr.table-warning:hover > td {
 }
 
 .score-box-deadline {
-	height: 92px;
+	height: 94px;
 }
 .score-box-deadline-small {
 	height: 54px;
 }
 
 .score-box-all-star {
-	height: 46px;
+	height: 47px;
 }
 
 .score-box-score {
@@ -1008,13 +1044,18 @@ tr.table-warning:hover > td {
 	font-size: inherit;
 	font-weight: inherit;
 }
-.badge-darkblue {
+.bg-darkblue {
 	background-color: #007bff;
-	color: #fff;
 }
-.badge-orange {
+.bg-orange {
 	background-color: lighten(#fd7e14, 10);
-	color: #000;
+}
+
+.bg-warning,
+.bg-orange,
+.bg-info,
+.bg-light {
+	color: $black !important;
 }
 
 .sort-inside-modal {
@@ -1035,7 +1076,7 @@ button.fast-forward {
 	}
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	// Same as .table-responsive
 	.player-stats-summary {
 		display: block;
@@ -1062,10 +1103,6 @@ button.fast-forward {
 
 .text-yellow {
 	color: $yellow;
-}
-
-.badge-yellow {
-	@include badge-variant($yellow);
 }
 
 .ring::after {
@@ -1096,7 +1133,7 @@ button.fast-forward {
 }
 
 .fake-list-group-item {
-	background-color: $table-accent-bg;
+	background-color: $table-striped-bg;
 	padding: 0.5rem 1rem;
 	width: 100%;
 }
@@ -1105,13 +1142,13 @@ button.fast-forward {
 }
 @include media-breakpoint-up(md) {
 	.settings-striped-bg-alt {
-		background-color: $table-accent-bg;
+		background-color: $table-striped-bg;
 	}
 	.fake-list-group-item {
 		margin-bottom: 30px;
 	}
 }
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	.fake-list-group-item {
 		padding-right: 0;
 		padding-left: 0;
@@ -1121,7 +1158,7 @@ button.fast-forward {
 	}
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
 	// Make it so the striped-bg color goes all the way to the edge of the screen
 	.settings-col {
 		padding-left: 0;
@@ -1139,7 +1176,7 @@ button.fast-forward {
 	// To make it go over the Bootstrap custom form controls, like switch
 	z-index: 2;
 }
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
 	.settings-buttons {
 		margin: 0 -15px;
 		border-top-left-radius: 0 !important;
@@ -1226,10 +1263,6 @@ a.anchor {
 	}
 }
 
-.align-middle-all td {
-	vertical-align: middle;
-}
-
 #confetti {
 	position: fixed;
 	top: 0;
@@ -1252,24 +1285,6 @@ a.anchor {
 	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
 }
 
-// Hacky fix for https://github.com/react-bootstrap/react-bootstrap/issues/5270
-.popover-margin-fix-1 {
-	&[data-popper-placement="top"] {
-		margin-bottom: 8px !important;
-	}
-	&[data-popper-placement="right"] {
-		margin-left: 8px !important;
-		margin-top: -4px !important;
-	}
-	&[data-popper-placement="bottom"] {
-		margin-top: 8px !important;
-	}
-	&[data-popper-placement="left"] {
-		margin-right: 8px !important;
-		margin-top: -4px !important;
-	}
-}
-
 @include media-breakpoint-up(sm) {
 	.play-through-injuries {
 		width: 200px;
@@ -1285,11 +1300,11 @@ a.anchor {
 }
 
 .border-top-light {
-	border-top: 1px solid $hr-border-color !important;
+	border-top: 1px solid $table-border-color !important;
 }
 
 .table-bg-striped {
-	background-color: $table-accent-bg;
+	background-color: $table-striped-bg;
 }
 
 code {
@@ -1304,4 +1319,23 @@ code {
 .sorting_asc,
 .sorting_desc {
 	background-color: #ffeeba !important;
+}
+
+hr {
+	background-color: $black;
+	opacity: 0.1;
+}
+
+// Based on input-group-sm from _input-group.scss
+.input-group-xs > .form-control,
+.input-group-xs > .form-select,
+.input-group-xs > .input-group-text,
+.input-group-xs > .btn {
+	padding: $input-padding-y-sm $input-padding-x-sm;
+	@include font-size($input-font-size-sm);
+	@include border-radius($input-border-radius-sm);
+	height: 27px;
+}
+.input-group-xs > .form-select {
+	padding-right: $form-select-padding-x + $form-select-indicator-padding;
 }

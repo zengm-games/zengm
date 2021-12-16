@@ -195,7 +195,7 @@ const ViewEvent = ({
 
 	if (current.type === "gameAttributes") {
 		return (
-			<table className="table table-nonfluid">
+			<table className="table table-nonfluid table-striped table-sm">
 				<tbody>
 					{Object.entries(current.info).map(([key, value]) => {
 						return (
@@ -226,7 +226,7 @@ const ViewEvent = ({
 					current={current}
 					teamInfoCache={teamInfoCache}
 				/>
-				<table className="table table-nonfluid mt-3">
+				<table className="table table-nonfluid table-striped table-sm mt-3">
 					<tbody>
 						{Object.entries(current.info)
 							.filter(([key]) => key !== "tid" && key !== "srID")

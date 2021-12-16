@@ -69,7 +69,7 @@ const updateTeamSelect = async () => {
 	}
 
 	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
-	if (expansion || otherTeamsWantToHire) {
+	if ((expansion && !g.get("gameOver")) || otherTeamsWantToHire) {
 		// User team first!
 		const userTeam = teamsAll.find(t => t.tid === g.get("userTid"));
 		if (userTeam) {

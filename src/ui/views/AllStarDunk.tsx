@@ -424,7 +424,7 @@ const UserDunkForm = ({
 								<select
 									id="user-dunk-toss"
 									value={dunkAttempt[key]}
-									className="form-control"
+									className="form-select"
 									onChange={event => {
 										setDunkAttempt({
 											...dunkAttempt,
@@ -449,7 +449,7 @@ const UserDunkForm = ({
 						</div>
 					))}
 
-					<div className="text-right mt-2">
+					<div className="text-end mt-2">
 						<button
 							disabled={submitted}
 							type="submit"
@@ -558,7 +558,7 @@ export const ContestantProfiles = ({
 								{contest.players[i].name}
 							</PlayerNameLabels>
 							<a
-								className="ml-2"
+								className="ms-2"
 								href={helpers.leagueUrl([
 									"roster",
 									`${p.abbrev}_${tid}`,
@@ -616,7 +616,7 @@ export const ContestantProfiles = ({
 							contest.controlling.includes(i)) ? (
 							<div
 								className={`form-check mt-2 d-inline-block${
-									allowControlGodMode ? " god-mode pr-1" : ""
+									allowControlGodMode ? " god-mode pe-1" : ""
 								}`}
 							>
 								<input

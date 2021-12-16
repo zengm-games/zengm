@@ -145,7 +145,7 @@ const LeagueTopBar = memo(() => {
 							exit={{}}
 							transition={transition}
 						>
-							<ScoreBox className="mr-2" game={game} small />
+							<ScoreBox className="me-2" game={game} small />
 						</m.div>
 					))}
 				</AnimatePresence>

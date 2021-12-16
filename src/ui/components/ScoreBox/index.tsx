@@ -211,14 +211,14 @@ const ScoreBox = ({
 			<div
 				className={classNames(
 					"border-light",
-					actions.length > 0 ? "border-right-0" : undefined,
+					actions.length > 0 ? "border-end-0" : undefined,
 				)}
 			>
 				{tradeDeadline ? (
 					<div
 						className={`${
 							small ? "score-box-deadline-small" : "score-box-deadline"
-						} p-1 d-flex align-items-center ml-1`}
+						} p-1 d-flex align-items-center ms-1`}
 					>
 						Trade deadline
 					</div>
@@ -230,10 +230,10 @@ const ScoreBox = ({
 							})}
 							key={i}
 						>
-							<div className={classNames("p-1", { "pr-5": small })}>
+							<div className={classNames("p-1", { "pe-5": small })}>
 								<a
 									href={helpers.leagueUrl(["all_star", "draft"])}
-									className={!small ? "font-weight-bold" : undefined}
+									className={!small ? "fw-bold" : undefined}
 								>
 									{small ? `AS${i}` : `All-Star Team ${i}`}
 								</a>
@@ -349,7 +349,7 @@ const ScoreBox = ({
 											imgURL={imgURL}
 											includePlaceholderIfNoLogo
 											size={small ? 24 : 36}
-											className="ml-1"
+											className="ms-1"
 										/>
 									</a>
 								) : null}
@@ -374,7 +374,7 @@ const ScoreBox = ({
 										) : null}
 										<a
 											href={rosterURL}
-											className={!small ? "font-weight-bold" : undefined}
+											className={!small ? "fw-bold" : undefined}
 										>
 											{teamName}
 										</a>
@@ -404,20 +404,20 @@ const ScoreBox = ({
 										) : null}
 									</div>
 									{spreads && small ? (
-										<div className="text-right score-box-score mr-2">
+										<div className="text-end score-box-score me-2">
 											{spreads[i]}
 										</div>
 									) : null}
 									{final ? (
 										<div
 											className={classNames(
-												"text-body text-right align-self-stretch d-flex align-items-center",
+												"text-body text-end align-self-stretch d-flex align-items-center",
 												scoreClass,
 												userTeamClass,
 												{
-													"font-weight-bold score-box-score": small,
+													"fw-bold score-box-score": small,
 													"px-2": !small,
-													"pr-1": small,
+													"pe-1": small,
 												},
 											)}
 											style={!small ? { fontSize: 16 } : undefined}
@@ -448,9 +448,9 @@ const ScoreBox = ({
 								</div>
 								{p ? (
 									<div
-										className="align-self-stretch border-left pl-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
+										className="align-self-stretch border-start ps-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
 										style={{
-											backgroundColor: "var(--white)",
+											backgroundColor: "var(--bs-white)",
 											width: 200,
 										}}
 									>
@@ -476,7 +476,7 @@ const ScoreBox = ({
 			</div>
 			{small && overtimes ? (
 				<div
-					className="text-right text-muted px-1 d-flex align-items-center"
+					className="text-end text-muted px-1 d-flex align-items-center"
 					style={{ height: 28 }}
 				>
 					{overtimes}

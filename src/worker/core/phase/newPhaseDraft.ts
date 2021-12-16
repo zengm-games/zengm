@@ -38,9 +38,12 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 
 	if (g.get("draftType") !== "freeAgents") {
 		// Run lottery only if it hasn't been done yet
-		const draftLotteryResult = await idb.getCopy.draftLotteryResults({
-			season: g.get("season"),
-		});
+		const draftLotteryResult = await idb.getCopy.draftLotteryResults(
+			{
+				season: g.get("season"),
+			},
+			"noCopyCache",
+		);
 
 		if (!draftLotteryResult) {
 			try {

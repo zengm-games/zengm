@@ -70,7 +70,7 @@ const DifficultyText = ({
 	return (
 		<span
 			className={classNames({
-				"font-weight-bold": difficulty > DIFFICULTY.Insane,
+				"fw-bold": difficulty > DIFFICULTY.Insane,
 				"text-danger": difficulty >= DIFFICULTY.Insane,
 			})}
 		>
@@ -172,7 +172,7 @@ const LeagueName = ({
 }) => {
 	return (
 		<div className="d-flex align-items-center">
-			<div className="mr-1">
+			<div className="me-1">
 				{!disabled ? (
 					<a href={`/l/${lid}`} onClick={onClick}>
 						{name}
@@ -253,7 +253,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<TeamLogoInline
 								imgURL={league.imgURL}
 								size={48}
-								className="mr-2"
+								className="me-2"
 							/>
 							<div>
 								{league.teamRegion} {league.teamName}
@@ -422,7 +422,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					<>
 						<a
 							href="/new_league/real"
-							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new me-3 mb-3"
 						>
 							New league
 							<br />
@@ -430,7 +430,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						</a>
 						<a
 							href="/new_league/random"
-							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new me-sm-3 mb-3"
 						>
 							New league
 							<br />
@@ -440,7 +440,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						{SPORT_HAS_LEGENDS ? (
 							<a
 								href="/new_league/legends"
-								className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+								className="btn btn-primary dashboard-top-link dashboard-top-link-new me-3 mb-3"
 							>
 								New league
 								<br />
@@ -449,7 +449,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						) : null}
 						<a
 							href="/new_league"
-							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new me-sm-3 mb-3"
 						>
 							New league
 							<br />
@@ -460,7 +460,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				) : (
 					<a
 						href="/new_league"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new me-3 mb-3"
 					>
 						Create new
 						<br />
@@ -477,21 +477,17 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			</div>
 
 			{rows.length > 0 ? (
-				<>
-					<div className="clearfix" />
-
-					<DataTable
-						bordered={false}
-						cols={cols}
-						className="dashboard-table"
-						disableSettingsCache
-						defaultSort={[7, "desc"]}
-						name="Dashboard"
-						pagination={pagination}
-						small={false}
-						rows={rows}
-					/>
-				</>
+				<DataTable
+					bordered={false}
+					cols={cols}
+					className="dashboard-table align-middle"
+					disableSettingsCache
+					defaultSort={[7, "desc"]}
+					name="Dashboard"
+					pagination={pagination}
+					small={false}
+					rows={rows}
+				/>
 			) : null}
 		</>
 	);

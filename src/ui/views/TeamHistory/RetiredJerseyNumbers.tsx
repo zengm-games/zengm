@@ -55,14 +55,14 @@ const RetiredJerseyNumbers = ({
 			? editing.pid
 			: "other";
 
-		const handleChange = (field: string) => (
-			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-		) => {
-			setEditing({
-				...editing,
-				[field]: event.target.value,
-			});
-		};
+		const handleChange =
+			(field: string) =>
+			(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+				setEditing({
+					...editing,
+					[field]: event.target.value,
+				});
+			};
 
 		return (
 			<form
@@ -106,8 +106,10 @@ const RetiredJerseyNumbers = ({
 				</h3>
 				<div className="row">
 					<div className="col-lg-6">
-						<div className="form-group">
-							<label htmlFor="rjn-number">Jersey number</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-number">
+								Jersey number
+							</label>
 							<input
 								type="text"
 								className="form-control"
@@ -116,8 +118,8 @@ const RetiredJerseyNumbers = ({
 								onChange={handleChange("number")}
 							/>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-seasonRetired">
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-seasonRetired">
 								Season of jersey retirement
 							</label>
 							<input
@@ -128,8 +130,8 @@ const RetiredJerseyNumbers = ({
 								onChange={handleChange("seasonRetired")}
 							/>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-seasonTeamInfo">
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-seasonTeamInfo">
 								Season of displayed jersey
 							</label>
 							<input
@@ -144,8 +146,10 @@ const RetiredJerseyNumbers = ({
 								to show the retired jersey.
 							</span>
 						</div>
-						<div className="form-group">
-							<label htmlFor="rjn-text">Optional text description</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-text">
+								Optional text description
+							</label>
 							<input
 								type="text"
 								className="form-control"
@@ -156,10 +160,12 @@ const RetiredJerseyNumbers = ({
 						</div>
 					</div>
 					<div className="col-lg-6">
-						<div className="form-group">
-							<label htmlFor="rjn-link">Link to player?</label>
+						<div className="mb-3">
+							<label className="form-label" htmlFor="rjn-link">
+								Link to player?
+							</label>
 							<select
-								className="form-control"
+								className="form-select"
 								id="rjn-link"
 								value={editing.linkToPlayer}
 								onChange={handleChange("linkToPlayer")}
@@ -177,10 +183,12 @@ const RetiredJerseyNumbers = ({
 									players on other teams. The player ID number is at the end of
 									the URL when you view a player's profile page.
 								</p>
-								<div className="form-group">
-									<label htmlFor="rjn-player-select">Select player</label>
+								<div className="mb-3">
+									<label className="form-label" htmlFor="rjn-player-select">
+										Select player
+									</label>
 									<select
-										className="form-control"
+										className="form-select"
 										id="rjn-player-select"
 										value={playerSelectValue}
 										onChange={event => {
@@ -197,8 +205,10 @@ const RetiredJerseyNumbers = ({
 										<option value="other">Other</option>
 									</select>
 								</div>
-								<div className="form-group">
-									<label htmlFor="rjn-pid">Player ID number</label>
+								<div className="mb-3">
+									<label className="form-label" htmlFor="rjn-pid">
+										Player ID number
+									</label>
 									<input
 										type="text"
 										className="form-control"
@@ -211,7 +221,7 @@ const RetiredJerseyNumbers = ({
 						) : null}
 					</div>
 				</div>
-				<button type="submit" className="btn btn-primary mr-2">
+				<button type="submit" className="btn btn-primary me-2">
 					Save
 				</button>
 				<button
@@ -315,7 +325,7 @@ const RetiredJerseyNumbers = ({
 								end={row.seasonRetired}
 								t={row.teamInfo}
 							/>
-							<div className="ml-3">
+							<div className="ms-3">
 								<div>
 									{row.pid !== undefined ? (
 										<>
@@ -329,9 +339,9 @@ const RetiredJerseyNumbers = ({
 														row.numRings === 1 ? "" : "s"
 													}`}
 												>
-													<span className="ring ml-1" />
+													<span className="ring ms-1" />
 													{row.numRings > 1 ? (
-														<span className="text-yellow ml-1">
+														<span className="text-yellow ms-1">
 															x{row.numRings}
 														</span>
 													) : null}
@@ -380,7 +390,7 @@ const RetiredJerseyNumbers = ({
 				) : null}
 
 				{pagination ? (
-					<div className="btn-group ml-auto">
+					<div className="btn-group ms-auto">
 						<button
 							className="btn btn-light-bordered"
 							disabled={!enablePrevious}

@@ -254,8 +254,8 @@ const EditAwards = ({
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					{SIMPLE_AWARDS.map(key => (
-						<div key={key} className="col-lg-4 col-md-6 form-group">
-							<label>{AWARD_NAMES[key]}</label>
+						<div key={key} className="col-lg-4 col-md-6 mb-3">
+							<label className="form-label">{AWARD_NAMES[key]}</label>
 							<SelectMultiple
 								options={players}
 								key={season}
@@ -273,7 +273,7 @@ const EditAwards = ({
 							return (
 								<div className="d-flex" key={j}>
 									<Position index={j} p={player} />
-									<div className="form-group flex-grow-1">
+									<div className="mb-3 flex-grow-1">
 										<SelectMultiple
 											key={season}
 											options={players}
@@ -301,7 +301,7 @@ const EditAwards = ({
 								const teamSelect = element.players.map(
 									(player: any, j: number) => {
 										return (
-											<div className="form-group" key={j}>
+											<div className="mb-3" key={j}>
 												<SelectMultiple
 													key={season}
 													options={players}
@@ -331,7 +331,7 @@ const EditAwards = ({
 							return (
 								<div className="d-flex" key={i}>
 									<Position index={i} p={player} />
-									<div className="form-group flex-grow-1">
+									<div className="mb-3 flex-grow-1">
 										<SelectMultiple
 											options={players}
 											key={season}

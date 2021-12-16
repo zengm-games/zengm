@@ -71,7 +71,7 @@ const TopMenuDropdown = ({
 				openID={openID}
 				toggle={toggle}
 			/>
-			<Dropdown.Menu alignRight>
+			<Dropdown.Menu align="end">
 				{!hideTitle ? (
 					<Dropdown.Header className="d-none d-sm-block d-md-none">
 						{long}

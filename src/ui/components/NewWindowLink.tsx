@@ -21,7 +21,7 @@ const NewWindowLink = ({ parts }: Props) => {
 			width="13"
 			height="13"
 			viewBox="0 0 272.8 272.9"
-			className="new_window ml-2"
+			className="new_window ms-2"
 			onClick={handleClick}
 		>
 			<title>Open In New Window</title>

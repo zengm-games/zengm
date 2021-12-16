@@ -84,7 +84,7 @@ const PowerRankings = ({
 					{otherKeysTitle}
 					{currentSeason === season ? (
 						<a
-							className="ml-2"
+							className="ms-2"
 							href=""
 							onClick={event => {
 								event.preventDefault();
@@ -142,7 +142,7 @@ const PowerRankings = ({
 								imgURL={t.seasonAttrs.imgURL}
 								imgURLSmall={t.seasonAttrs.imgURLSmall}
 							/>
-							<div className="ml-1">
+							<div className="ms-1">
 								<a
 									href={helpers.leagueUrl([
 										"roster",
@@ -216,7 +216,7 @@ const PowerRankings = ({
 			) : null}
 
 			<DataTable
-				className="align-middle-all"
+				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="PowerRankings"

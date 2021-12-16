@@ -405,7 +405,7 @@ const RatingsOverview = ({
 	return (
 		<div className="ratings-overview">
 			<div className="d-flex justify-content-between">
-				<h2 className="mr-3">
+				<h2 className="me-3">
 					Overall:{" "}
 					<RatingWithChange change={currentSeason.ovr - lastSeason.ovr}>
 						{currentSeason.ovr}
@@ -420,7 +420,7 @@ const RatingsOverview = ({
 			</div>
 			<div className="d-flex justify-content-between">
 				{columns.map((column, i) => (
-					<div key={i} className={i === 0 ? undefined : "ml-2 ml-sm-5"}>
+					<div key={i} className={i === 0 ? undefined : "ms-2 ms-sm-5"}>
 						{Object.entries(column).map(([name, categories], j) => (
 							<div key={name} className={j === 0 ? undefined : "mt-2"}>
 								<table>
@@ -435,7 +435,7 @@ const RatingsOverview = ({
 										{categories.map(({ label, rating }, j) => (
 											<tr key={j}>
 												<td className="p-0">{label}:</td>
-												<td className="p-0 pl-1">
+												<td className="p-0 ps-1">
 													<RatingWithChange
 														change={
 															(currentSeason as any)[rating] -

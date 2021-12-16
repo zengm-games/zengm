@@ -77,9 +77,9 @@ const Most = ({
 							<PlayerNameLabels jerseyNumber={p.jerseyNumber} pid={p.pid}>
 								{p.name}
 							</PlayerNameLabels>
-							<div className="ml-auto">
-								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ml-1" awards={p.awards} />
+							<div className="ms-auto">
+								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ms-1" awards={p.awards} />
 							</div>
 						</div>
 					),

@@ -40,9 +40,12 @@ const updateAllStarThree = async (
 			return returnValue;
 		}
 
-		const playersRaw = await idb.getCopies.players({
-			pids: three.players.map(p => p.pid),
-		});
+		const playersRaw = await idb.getCopies.players(
+			{
+				pids: three.players.map(p => p.pid),
+			},
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [

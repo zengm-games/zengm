@@ -91,9 +91,12 @@ const updateHistory = async (
 			awards.bestRecordConfs = [awards.bre, awards.brw];
 		}
 
-		const retiredPlayersAll = await idb.getCopies.players({
-			retiredYear: season,
-		});
+		const retiredPlayersAll = await idb.getCopies.players(
+			{
+				retiredYear: season,
+			},
+			"noCopyCache",
+		);
 		const retiredPlayers = await idb.getCopies.playersPlus(retiredPlayersAll, {
 			attrs: ["pid", "name", "age", "hof"],
 			season,

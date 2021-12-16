@@ -49,7 +49,7 @@ const News = ({
 						<div
 							key={category}
 							className={classNames(
-								"form-check form-check-inline mb-2 ml-2",
+								"form-check form-check-inline mb-2 ms-2",
 								{},
 							)}
 						>

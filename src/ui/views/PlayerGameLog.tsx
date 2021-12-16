@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import TopStuff from "./Player/TopStuff";
-import { formatRecord, getCols, helpers } from "../util";
+import { getCols, helpers } from "../util";
 import { DataTable, InjuryIcon } from "../components";
 import { NoGamesMessage } from "./GameLog";
 import type { DataTableRow } from "../components/DataTable";
@@ -121,9 +121,9 @@ const PlayerGameLog = ({
 					sortValue: game.diff,
 					searchValue: game.result,
 				},
-				formatRecord(game),
+				helpers.formatRecord(game),
 				{
-					value: <InjuryIcon className="ml-0" injury={game.injury} />,
+					value: <InjuryIcon className="ms-0" injury={game.injury} />,
 					sortValue: game.injury.gamesRemaining,
 					searchValue: game.injury.gamesRemaining,
 					classNames: "text-center",

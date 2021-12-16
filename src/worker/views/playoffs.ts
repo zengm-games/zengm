@@ -1,11 +1,12 @@
 import { season } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, orderTeams } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayoffSeries,
 } from "../../common/types";
+import { groupBy } from "../../common/groupBy";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -39,11 +40,23 @@ type PlayIns =
 	  )[]
 	| undefined;
 
+type TeamToEdit = {
+	tid: number;
+	cid: number;
+	region: string;
+	name: string;
+	seed: number | undefined;
+	imgURL: string | undefined;
+	imgURLSmall: string | undefined;
+	record: string;
+};
+
 const updatePlayoffs = async (
 	inputs: ViewInput<"playoffs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{
+	canEdit: boolean;
 	confNames: string[];
 	finalMatchups: boolean;
 	matchups: {
@@ -59,10 +72,12 @@ const updatePlayoffs = async (
 		home: SeriesTeam;
 		away?: SeriesTeam;
 	}[][];
+	teamsToEdit: TeamToEdit[];
 	userTid: number;
 } | void> => {
 	if (
 		updateEvents.includes("firstRun") ||
+		updateEvents.includes("playoffs") ||
 		inputs.season !== state.season ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
@@ -138,7 +153,91 @@ const updatePlayoffs = async (
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 
+		let canEdit =
+			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
+		if (playIns) {
+			for (const playIn of playIns) {
+				if (playIn.length > 2) {
+					// Play-in tournament started
+					canEdit = false;
+				}
+			}
+		}
+		for (const matchup of series[0]) {
+			if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+				canEdit = false;
+			}
+		}
+
+		let teamsToEdit: TeamToEdit[] = [];
+		if (canEdit) {
+			const teamsUnsorted = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+				seasonAttrs: [
+					"cid",
+					"did",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"winp",
+					"pts",
+					"wonDiv",
+					"lostDiv",
+					"tiedDiv",
+					"otlDiv",
+					"wonConf",
+					"lostConf",
+					"tiedConf",
+					"otlConf",
+				],
+				stats: ["pts", "oppPts", "gp"],
+				season: g.get("season"),
+				active: true,
+				showNoStats: true,
+			});
+
+			// Sort teams by normal playoff order
+			let teams: typeof teamsUnsorted;
+			if (playoffsByConf) {
+				teams = [];
+				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
+				console.log("teamsByConf", teamsByConf);
+				for (const teamsConf of Object.values(teamsByConf)) {
+					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
+				}
+			} else {
+				teams = await orderTeams(teamsUnsorted, teamsUnsorted);
+			}
+
+			// All first round matchups
+			const matchupsToCheck = [
+				...series[0],
+				...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
+			];
+
+			const seedsByTid = new Map();
+			for (const matchup of matchupsToCheck) {
+				seedsByTid.set(matchup.home.tid, matchup.home.seed);
+				if (matchup.away && !matchup.away.pendingPlayIn) {
+					seedsByTid.set(matchup.away.tid, matchup.away.seed);
+				}
+			}
+
+			teamsToEdit = teams.map(t => ({
+				tid: t.tid,
+				cid: t.seasonAttrs.cid,
+				region: t.region,
+				name: t.name,
+				seed: seedsByTid.get(t.tid),
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				record: helpers.formatRecord(t.seasonAttrs),
+			}));
+		}
+
 		return {
+			canEdit,
 			confNames,
 			finalMatchups,
 			matchups,
@@ -150,6 +249,7 @@ const updatePlayoffs = async (
 			playoffsByConf,
 			season: inputs.season,
 			series: series2,
+			teamsToEdit,
 			userTid: g.get("userTid"),
 		};
 	}

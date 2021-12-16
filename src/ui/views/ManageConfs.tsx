@@ -14,27 +14,25 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 
 	useTitleBar({ title: "Manage Conferences" });
 
-	const updateConfName = (cid: number) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newConfs = [...liveConfs];
-		const conf = newConfs.find(c => c.cid === cid);
-		if (conf) {
-			conf.name = event.target.value;
-			setLiveConfs(newConfs);
-		}
-	};
+	const updateConfName =
+		(cid: number) => (event: ChangeEvent<HTMLInputElement>) => {
+			const newConfs = [...liveConfs];
+			const conf = newConfs.find(c => c.cid === cid);
+			if (conf) {
+				conf.name = event.target.value;
+				setLiveConfs(newConfs);
+			}
+		};
 
-	const updateDivName = (did: number) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		const newDivs = [...liveDivs];
-		const div = newDivs.find(d => d.did === did);
-		if (div) {
-			div.name = event.target.value;
-			setLiveDivs(newDivs);
-		}
-	};
+	const updateDivName =
+		(did: number) => (event: ChangeEvent<HTMLInputElement>) => {
+			const newDivs = [...liveDivs];
+			const div = newDivs.find(d => d.did === did);
+			if (div) {
+				div.name = event.target.value;
+				setLiveDivs(newDivs);
+			}
+		};
 
 	const deleteConf = (cid: number) => () => {
 		setLiveConfs(liveConfs.filter(conf => conf.cid !== cid));
@@ -140,8 +138,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 								<div className="card">
 									<div className="card-body">
 										<div className="d-flex align-items-end mb-3">
-											<div className="form-group mb-0 flex-grow-1">
-												<label htmlFor={`conf-name-${conf.cid}`}>
+											<div className="flex-grow-1">
+												<label
+													className="form-label"
+													htmlFor={`conf-name-${conf.cid}`}
+												>
 													Conference Name
 												</label>
 												<input
@@ -152,7 +153,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 												/>
 											</div>
 											<button
-												className="btn btn-danger ml-3"
+												className="btn btn-danger ms-3"
 												onClick={deleteConf(conf.cid)}
 												type="button"
 											>
@@ -164,10 +165,13 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 											.map(div => (
 												<div
 													key={div.did}
-													className="d-flex align-items-end mb-3 ml-4"
+													className="d-flex align-items-end mb-3 ms-4"
 												>
-													<div className="form-group mb-0 flex-grow-1">
-														<label htmlFor={`div-name-${div.did}`}>
+													<div className="flex-grow-1">
+														<label
+															className="form-label"
+															htmlFor={`div-name-${div.did}`}
+														>
 															Division Name
 														</label>
 														<input
@@ -178,7 +182,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 														/>
 													</div>
 													<button
-														className="btn btn-danger ml-3"
+														className="btn btn-danger ms-3"
 														onClick={deleteDiv(div.did)}
 														type="button"
 													>
@@ -187,7 +191,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 												</div>
 											))}
 										<button
-											className="btn btn-secondary ml-4"
+											className="btn btn-secondary ms-4"
 											onClick={addDiv(conf.cid)}
 											type="button"
 										>

@@ -74,7 +74,7 @@ const MultiTeamMenu = () => {
 			</button>
 			<div className="flex-fill px-1">
 				<select
-					className="form-control"
+					className="form-select"
 					onChange={handleChange}
 					value={state.userTid}
 				>

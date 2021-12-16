@@ -1007,29 +1007,29 @@ const Input = ({
 		const checked = value === "true";
 		const switchTitle = title ?? (checked ? "Enabled" : "Disabled");
 		inputElement = (
-			<div className="custom-control custom-switch" title={switchTitle}>
+			<div className="form-check form-switch" title={switchTitle}>
 				<input
+					className="form-check-input"
 					type="checkbox"
-					className="custom-control-input"
+					id={id}
 					disabled={disabled}
 					checked={checked}
 					onChange={onChange}
-					id={id}
 				/>
-				<label className="custom-control-label" htmlFor={id}></label>
+				<label className="form-check-label" htmlFor={id} />
 			</div>
 		);
 	} else if (type === "rangePercent") {
 		inputElement = (
 			<div className="d-flex" style={inputStyle}>
-				<div className="text-right mr-1" style={{ minWidth: 38 }}>
+				<div className="text-end me-1" style={{ minWidth: 38 }}>
 					{Math.round(parseFloat(value) * 100)}%
 				</div>
 				<div>
 					<input
 						type="range"
 						{...commonProps}
-						className="form-control-range"
+						className="form-range"
 						min="0"
 						max="1"
 						step="0.05"
@@ -1048,7 +1048,7 @@ const Input = ({
 				<div className="input-group" style={inputStyle}>
 					<select
 						{...commonProps}
-						className="form-control"
+						className="form-select"
 						value={selectValue}
 						style={{ width: 60 }}
 					>
@@ -1070,7 +1070,7 @@ const Input = ({
 			);
 		} else {
 			inputElement = (
-				<select {...commonProps}>
+				<select {...commonProps} className="form-select">
 					{values.map(({ key, value }) => (
 						<option key={key} value={key}>
 							{value}
@@ -1086,13 +1086,9 @@ const Input = ({
 	if (decoration === "currency") {
 		return (
 			<div className="input-group" style={inputStyle}>
-				<div className="input-group-prepend">
-					<div className="input-group-text">$</div>
-				</div>
+				<div className="input-group-text">$</div>
 				{inputElement}
-				<div className="input-group-append">
-					<div className="input-group-text">M</div>
-				</div>
+				<div className="input-group-text">M</div>
 			</div>
 		);
 	}
@@ -1101,9 +1097,7 @@ const Input = ({
 		return (
 			<div className="input-group" style={inputStyle}>
 				{inputElement}
-				<div className="input-group-append">
-					<div className="input-group-text">%</div>
-				</div>
+				<div className="input-group-text">%</div>
 			</div>
 		);
 	}
@@ -1179,9 +1173,9 @@ const Option = ({
 	return (
 		<>
 			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
-				<div className="mr-auto text-nowrap">
+				<div className="me-auto text-nowrap">
 					<label
-						className="mb-0"
+						className="form-label mb-0"
 						htmlFor={id}
 						onClick={event => {
 							// Don't toggle on label click, too confusing
@@ -1192,7 +1186,7 @@ const Option = ({
 					>
 						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span
-								className="legend-square god-mode mr-1"
+								className="legend-square god-mode me-1"
 								title={godModeRequiredMessage(godModeRequired)}
 							/>
 						) : null}
@@ -1207,14 +1201,14 @@ const Option = ({
 					</label>
 					{descriptionLong ? (
 						<span
-							className="ml-1 glyphicon glyphicon-question-sign help-icon"
+							className="ms-1 glyphicon glyphicon-question-sign help-icon"
 							onClick={() => {
 								setShowDescriptionLong(show => !show);
 							}}
 						/>
 					) : null}
 				</div>
-				<div className={classNames("ml-auto", maxWidth ? "w-100" : undefined)}>
+				<div className={classNames("ms-auto", maxWidth ? "w-100" : undefined)}>
 					{formElement}
 				</div>
 			</div>
@@ -1688,7 +1682,7 @@ const SettingsForm = ({
 							<h2 className="mb-3">
 								{category.name}
 								{category.helpText ? (
-									<HelpPopover title={category.name} className="ml-1">
+									<HelpPopover title={category.name} className="ms-1">
 										{category.helpText}
 									</HelpPopover>
 								) : null}
@@ -1697,43 +1691,44 @@ const SettingsForm = ({
 							isSport("basketball") &&
 							gameSimPresets &&
 							(godMode || showGodModeSettings) ? (
-								<div className="form-inline mb-3">
-									<select
-										className="form-control"
-										value={gameSimPreset}
-										disabled={!godMode}
-										onChange={event => {
-											// @ts-ignore
-											const presets = gameSimPresets[event.target.value];
-											if (!presets) {
-												return;
-											}
+								<select
+									className="form-select mb-3"
+									style={{
+										width: "inherit",
+									}}
+									value={gameSimPreset}
+									disabled={!godMode}
+									onChange={event => {
+										// @ts-ignore
+										const presets = gameSimPresets[event.target.value];
+										if (!presets) {
+											return;
+										}
 
-											const presetsString: any = {};
-											for (const [key, value] of Object.entries(presets)) {
-												presetsString[key] = String(value);
-											}
+										const presetsString: any = {};
+										for (const [key, value] of Object.entries(presets)) {
+											presetsString[key] = String(value);
+										}
 
-											setState(prevState => ({
-												...prevState,
-												...presetsString,
-											}));
-											setGameSimPreset(event.target.value);
-										}}
-									>
-										<option value="default">
-											Select preset based on historical NBA stats
-										</option>
-										{Object.keys(gameSimPresets)
-											.sort()
-											.reverse()
-											.map(season => (
-												<option key={season} value={season}>
-													{season}
-												</option>
-											))}
-									</select>
-								</div>
+										setState(prevState => ({
+											...prevState,
+											...presetsString,
+										}));
+										setGameSimPreset(event.target.value);
+									}}
+								>
+									<option value="default">
+										Select preset based on historical NBA stats
+									</option>
+									{Object.keys(gameSimPresets)
+										.sort()
+										.reverse()
+										.map(season => (
+											<option key={season} value={season}>
+												{season}
+											</option>
+										))}
+								</select>
 							) : null}
 							<div className="row mb-5 mb-md-3">
 								{catOptions.map(
@@ -1766,12 +1761,12 @@ const SettingsForm = ({
 														className="d-flex align-items-center"
 													>
 														<div
-															className="custom-control custom-switch"
+															className="form-check form-switch"
 															title={checked ? "Enabled" : "Disabled"}
 														>
 															<input
 																type="checkbox"
-																className="custom-control-input"
+																className="form-check-input"
 																checked={checked}
 																disabled={!enabled || submitting}
 																onChange={handleChange(key2, "bool")}
@@ -1779,9 +1774,9 @@ const SettingsForm = ({
 																value={state[key2]}
 															/>
 															<label
-																className="custom-control-label"
+																className="form-check-label"
 																htmlFor={id + "2"}
-															></label>
+															/>
 														</div>
 														<div className="input-group">
 															<input
@@ -1792,9 +1787,7 @@ const SettingsForm = ({
 																onChange={handleChange(key, type)}
 																value={state[key]}
 															/>
-															<div className="input-group-append">
-																<div className="input-group-text">Games</div>
-															</div>
+															<div className="input-group-text">Games</div>
 														</div>
 													</div>
 												);
@@ -1892,7 +1885,7 @@ const SettingsForm = ({
 							</GodModeSettingsButton>
 						) : null}
 					</div>
-					<div className="btn-group ml-auto">
+					<div className="btn-group ms-auto">
 						{onCancel ? (
 							<button
 								className="btn btn-secondary"

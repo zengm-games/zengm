@@ -69,7 +69,7 @@ const TeamLogo = ({
 						/>
 					</TeamNameLink>
 				</div>
-				<div className="mt-1 mb-3 font-weight-bold">{record}</div>
+				<div className="mt-1 mb-3 fw-bold">{record}</div>
 			</div>
 		</div>
 	) : null;
@@ -239,7 +239,7 @@ const NextButton = ({
 	);
 
 	return (
-		<div className="ml-4">
+		<div className="ms-4">
 			{boxScore.season === season &&
 			currentGidInList &&
 			(nextGid === undefined || clickedGoToNext || autoGoToNext) &&
@@ -309,7 +309,7 @@ const DetailedScore = ({
 	return (
 		<div className="d-flex align-items-center justify-content-center">
 			{showNextPrev ? (
-				<div className="mr-4">
+				<div className="me-4">
 					<a
 						className={classNames("btn", "btn-light-bordered", {
 							disabled: prevGid === undefined,
@@ -326,7 +326,7 @@ const DetailedScore = ({
 				</div>
 			) : null}
 			<div>
-				<div className="mr-4 mx-xs-auto table-nonfluid text-center">
+				<div className="me-4 mx-xs-auto table-nonfluid text-center">
 					<table className="table table-bordered table-sm mb-2 mb-sm-0">
 						<thead>
 							<tr>

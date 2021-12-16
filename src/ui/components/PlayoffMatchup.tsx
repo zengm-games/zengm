@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import type { View } from "../../common/types";
 import { helpers } from "../util";
 
 type SeriesTeam = {
@@ -22,6 +23,14 @@ type SeriesTeam = {
 	won?: number;
 };
 
+type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
+
+type Editing = {
+	byConf: boolean;
+	onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => void;
+	teams: TeamToEdit[];
+};
+
 const faded = {
 	opacity: 0.3,
 	padding: 2,
@@ -30,7 +39,33 @@ const notFaded = {
 	padding: 2,
 };
 
+const TeamLogo = ({
+	lost,
+	team,
+}: {
+	lost?: boolean;
+	team: {
+		imgURL?: string;
+		imgURLSmall?: string;
+		pendingPlayIn?: boolean;
+	};
+}) => {
+	return (
+		<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
+			{!team.pendingPlayIn && (team.imgURL || team.imgURLSmall) ? (
+				<img
+					className="mw-100 mh-100"
+					style={lost ? faded : notFaded}
+					src={team.imgURLSmall ?? team.imgURL}
+					alt=""
+				/>
+			) : null}
+		</div>
+	);
+};
+
 const Team = ({
+	editing,
 	expandTeamName,
 	extraHighlight,
 	team,
@@ -42,6 +77,7 @@ const Team = ({
 	lost,
 	gid,
 }: {
+	editing?: Editing;
 	expandTeamName: boolean;
 	extraHighlight?: boolean;
 	team?: SeriesTeam;
@@ -57,14 +93,62 @@ const Team = ({
 		return null;
 	}
 
+	if (!team.pendingPlayIn && editing) {
+		const { teams, byConf } = editing;
+
+		// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
+		const teamEdited = teams.find(
+			t => team.seed === t.seed && (!byConf || team.cid === t.cid),
+		);
+
+		if (teamEdited) {
+			const highlightUser = teamEdited.tid === userTid;
+
+			let teamsFiltered = teams;
+			if (byConf) {
+				teamsFiltered = teams.filter(t => t.cid === teamEdited.cid);
+			}
+
+			return (
+				<li
+					className={classNames("border border-bottom-0", {
+						"table-info": highlightUser,
+					})}
+				>
+					<TeamLogo team={teamEdited} />
+					<select
+						className="form-select god-mode"
+						onChange={event => {
+							const tid = parseInt(event.target.value);
+							const newTeam = teams.find(t => t.tid === tid);
+							if (newTeam) {
+								editing.onChange(teamEdited, newTeam);
+							}
+						}}
+						value={teamEdited.tid}
+					>
+						{teamsFiltered.map(t => {
+							return (
+								<option key={t.tid} value={t.tid}>
+									{t.seed !== undefined ? `${t.seed}.` : null} {t.region}{" "}
+									{t.name} ({t.record})
+								</option>
+							);
+						})}
+					</select>
+				</li>
+			);
+		}
+	}
+
 	const wonPtsLink = (value: number) => {
 		if (gid === undefined) {
-			return <div className="ml-auto pr-2">{value}</div>;
+			return <div className="ms-auto pe-2">{value}</div>;
 		}
 
 		return (
 			<a
-				className="ml-auto pr-2 h-100 d-flex align-items-center"
+				className="ms-auto pe-2 h-100 d-flex align-items-center"
 				href={helpers.leagueUrl([
 					"game_log",
 					`${team.abbrev}_${team.tid}`,
@@ -82,22 +166,13 @@ const Team = ({
 	return (
 		<li
 			className={classNames("border border-bottom-0", {
-				"font-weight-bold": won,
+				"fw-bold": won,
 				"table-info": highlightUser,
 				"table-warning": won && extraHighlight && !highlightUser,
 				"text-muted": lost,
 			})}
 		>
-			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center flex-shrink-0">
-				{!team.pendingPlayIn && (team.imgURL || team.imgURLSmall) ? (
-					<img
-						className="mw-100 mh-100"
-						style={lost ? faded : notFaded}
-						src={team.imgURLSmall ?? team.imgURL}
-						alt=""
-					/>
-				) : null}
-			</div>
+			<TeamLogo team={team} lost={lost} />
 			<div className="mx-1 align-self-start">{team.seed}.</div>
 			{team.pendingPlayIn ? (
 				<div className="align-self-start">
@@ -116,7 +191,7 @@ const Team = ({
 					)}
 				</div>
 			) : (
-				<div className="mr-1 overflow-hidden">
+				<div className="me-1 overflow-hidden">
 					<a
 						className={classNames({
 							"text-muted": lost,
@@ -159,6 +234,7 @@ const Team = ({
 };
 
 const PlayoffMatchup = ({
+	editing,
 	expandTeamNames = false,
 	extraHighlight,
 	numGamesToWinSeries = 7,
@@ -166,6 +242,7 @@ const PlayoffMatchup = ({
 	series,
 	userTid,
 }: {
+	editing?: Editing;
 	expandTeamNames?: boolean;
 	extraHighlight?: boolean;
 	numGamesToWinSeries?: number;
@@ -216,6 +293,7 @@ const PlayoffMatchup = ({
 				won={homeWon}
 				lost={awayWon}
 				gid={gid}
+				editing={editing}
 			/>
 			<Team
 				expandTeamName={expandTeamNames}
@@ -228,6 +306,7 @@ const PlayoffMatchup = ({
 				won={awayWon}
 				lost={homeWon}
 				gid={gid}
+				editing={editing}
 			/>
 		</ul>
 	);

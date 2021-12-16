@@ -188,8 +188,10 @@ const AccountInfoForm = ({
 				}}
 			>
 				<div style={formGroupStyle}>
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-username">Username</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-username">
+							Username
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -202,15 +204,13 @@ const AccountInfoForm = ({
 								disabled={!state.editUsername}
 								required={state.editUsername}
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("username")}
-								>
-									{state.editUsername ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("username")}
+							>
+								{state.editUsername ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span className="form-text text-muted">
 							{fields.username.description}
@@ -224,8 +224,10 @@ const AccountInfoForm = ({
 						</span>
 					</div>
 
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-email">Email</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-email">
+							Email
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -238,15 +240,13 @@ const AccountInfoForm = ({
 								disabled={!state.editEmail}
 								required={state.editEmail}
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("email")}
-								>
-									{state.editEmail ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("email")}
+							>
+								{state.editEmail ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span
 							className={classNames("form-text", {
@@ -259,8 +259,10 @@ const AccountInfoForm = ({
 				</div>
 
 				<div style={formGroupStyle}>
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-new-password">New Password</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-new-password">
+							New Password
+						</label>
 						<div className="input-group">
 							<input
 								className={classNames("form-control", {
@@ -274,15 +276,13 @@ const AccountInfoForm = ({
 								required={state.editPassword}
 								autoComplete="new-password"
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-secondary"
-									type="button"
-									onClick={handleEditCancel("password")}
-								>
-									{state.editPassword ? "Cancel" : "Edit"}
-								</button>
-							</div>
+							<button
+								className="btn btn-secondary"
+								type="button"
+								onClick={handleEditCancel("password")}
+							>
+								{state.editPassword ? "Cancel" : "Edit"}
+							</button>
 						</div>
 						<span
 							className={classNames("form-text", {
@@ -293,8 +293,10 @@ const AccountInfoForm = ({
 						</span>
 					</div>
 
-					<div className="form-group" style={formGroupStyle}>
-						<label htmlFor="account-new-password-2">Repeat New Password</label>
+					<div className="mb-3" style={formGroupStyle}>
+						<label className="form-label" htmlFor="account-new-password-2">
+							Repeat New Password
+						</label>
 						<input
 							className={classNames("form-control", {
 								"is-invalid": state.errorMessageNewPassword2 !== undefined,
@@ -318,8 +320,10 @@ const AccountInfoForm = ({
 				</div>
 			</div>
 
-			<div className="form-group" style={formGroupStyle}>
-				<label htmlFor="account-old-password">Confirm Current Password</label>
+			<div className="mb-3" style={formGroupStyle}>
+				<label className="form-label" htmlFor="account-old-password">
+					Confirm Current Password
+				</label>
 				<input
 					className={classNames("form-control", {
 						"is-invalid": state.errorMessageOldPassword !== undefined,

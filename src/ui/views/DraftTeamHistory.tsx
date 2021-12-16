@@ -5,6 +5,7 @@ import {
 	SkillsBlock,
 	PlayerNameLabels,
 	MoreLinks,
+	PlusMinus,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
@@ -23,7 +24,7 @@ const DraftTeamHistory = ({
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({
-		title: noDraft ? "Prospects History" : "Draft History",
+		title: noDraft ? "Prospects Team History" : "Draft Team History",
 		dropdownView: "draft_team_history",
 		dropdownFields: { teamsAndYours: abbrev },
 	});
@@ -31,7 +32,7 @@ const DraftTeamHistory = ({
 	const superCols = [
 		{
 			title: "",
-			colspan: 4,
+			colspan: 7,
 		},
 		{
 			title: noDraft ? "As Prospect" : "At Draft",
@@ -54,6 +55,9 @@ const DraftTeamHistory = ({
 	const cols = getCols([
 		"Season",
 		"Pick",
+		"Pre-Lottery",
+		"Change",
+		"Odds",
 		"Name",
 		"Pos",
 		"Team",
@@ -85,6 +89,17 @@ const DraftTeamHistory = ({
 					{p.draft.year}
 				</a>,
 				`${p.draft.round}-${p.draft.pick}`,
+				p.preLotteryRank,
+				p.lotteryChange !== undefined ? (
+					<PlusMinus decimalPlaces={0} includePlus>
+						{p.lotteryChange}
+					</PlusMinus>
+				) : undefined,
+				p.lotteryProb !== undefined ? (
+					<a href={helpers.leagueUrl(["draft_lottery", p.draft.year])}>
+						{(p.lotteryProb * 100).toFixed(1)}%
+					</a>
+				) : undefined,
 				{
 					value: (
 						<div className="d-flex">
@@ -97,9 +112,9 @@ const DraftTeamHistory = ({
 							>
 								{p.name}
 							</PlayerNameLabels>
-							<div className="ml-auto">
-								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ml-1" awards={p.awards} />
+							<div className="ms-auto">
+								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ms-1" awards={p.awards} />
 							</div>
 						</div>
 					),

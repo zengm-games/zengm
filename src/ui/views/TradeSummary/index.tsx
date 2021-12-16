@@ -28,11 +28,11 @@ const TradeSummary = ({
 				</b>
 			</p>
 			<div className="d-lg-flex">
-				<div className="d-sm-flex mb-3 mb-lg-0 mr-lg-5">
+				<div className="d-sm-flex mb-3 mb-lg-0 me-lg-5">
 					{teams.map((t, i) => (
 						<div
 							key={t.tid}
-							className={i === 0 ? "mb-sm-0 mr-sm-5 mb-3" : undefined}
+							className={i === 0 ? "mb-sm-0 me-sm-5 mb-3" : undefined}
 						>
 							<h2>
 								<a

@@ -287,7 +287,7 @@ const ProtectPlayers = ({
 
 				<button
 					type="button"
-					className="btn btn-light-bordered ml-2"
+					className="btn btn-light-bordered ms-2"
 					disabled={saving}
 					onClick={handleCancel}
 				>

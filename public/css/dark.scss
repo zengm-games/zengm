@@ -17,7 +17,7 @@ $blue: lighten(#007bff, 25);
 $indigo: lighten(#6610f2, 20);
 $purple: lighten(#6f42c1, 20);
 $pink: lighten(#e83e8c, 20);
-$red: lighten(#dc3545, 0);
+$red: #dc3545;
 $orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
 $green: lighten(#28a745, 10);
@@ -27,6 +27,16 @@ $cyan: lighten(#17a2b8, 20);
 $primary: $orange;
 $secondary: $gray-400;
 $text-muted: $gray-400;
+
+$table-bg-scale: 70%;
+
+$alert-bg-scale: 70%;
+$alert-border-scale: 60%;
+
+$list-group-item-bg-scale: 50%;
+
+// Otherwise, it complains about contrast for buttons
+$min-contrast-ratio: 3;
 
 @import "light";
 
@@ -83,28 +93,6 @@ $text-muted: $gray-400;
 	}
 }
 
-.btn-success {
-	border-color: darken($green, 20);
-	background-color: darken($green, 20);
-
-	&:active,
-	&:focus,
-	&:hover {
-		border-color: darken($green, 25) !important;
-		background-color: darken($green, 25) !important;
-		color: $black !important;
-	}
-}
-.bg-success {
-	background-color: darken($green, 20) !important;
-
-	&:hover,
-	&:active,
-	&:focus {
-		background-color: darken($green, 25) !important;
-	}
-}
-
 .btn-secondary {
 	color: $white;
 
@@ -135,13 +123,20 @@ $text-muted: $gray-400;
 	}
 }
 
-.badge-danger {
-	background-color: darken($red, 20);
-	color: $black;
+.bg-danger {
+	background-color: darken($red, 20) !important;
 }
 
-a.play-button {
+.bg-danger,
+.bg-darkblue,
+.bg-primary,
+.bg-success {
 	color: $black !important;
+}
+.bg-warning,
+.bg-orange,
+.bg-info {
+	color: $white !important;
 }
 
 .notification,
@@ -172,24 +167,47 @@ a.god-mode.active {
 	color: $primary;
 }
 
-.btn-god-mode {
-	@include button-variant(darken($purple, 20), darken($purple, 20));
-	&,
+.play-button-success {
+	background-color: darken($green, 20);
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color(
+			darken($green, 20),
+			$btn-hover-bg-shade-amount
+		);
+	}
+}
+
+.btn-success {
+	border-color: darken($green, 20);
+	background-color: darken($green, 20);
+
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
+		border-color: darken($green, 25) !important;
+		background-color: darken($green, 25) !important;
 		color: $black !important;
 	}
+}
+.bg-success {
+	background-color: darken($green, 20) !important;
+}
+
+.btn-god-mode {
+	@include button-variant(
+		darken($purple, 20),
+		darken($purple, 20),
+		$black,
+		darken($purple, 27),
+		darken($purple, 27)
+	);
 }
 
 .btn-outline-god-mode {
 	@include button-variant(darken($purple, 20), $gray-400);
-	&,
-	&:active,
-	&:focus,
-	&:not(:disabled):hover {
-		color: $black !important;
-	}
 }
 
 .alert-god-mode {
@@ -285,27 +303,6 @@ table.table thead .sorting::after {
 
 .dropdown-select {
 	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22100%22%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M%200%2C0%20L%20100%2C100%20L%20200%2C0%20z%22%2F%3E%3C%2Fsvg%3E");
-}
-
-// For Firefox: https://mail.google.com/mail/u/0/#sent/FMfcgxwGDDlBLslqTJrgVGGsTVMGLjNx?compose=lqrsljbfHSlTfwlWfkfgJZGFBMJhCZGwxnNHFrchrZwsNsKzFxrVPNQnHBRBvMchPkvLxQTLsjknLTNJK
-input[type="checkbox"][disabled]:not(.custom-control-input) {
-	cursor: not-allowed;
-	opacity: 0.65;
-}
-
-.badge-primary,
-.badge-secondary,
-.badge-success,
-.badge-info,
-.badge-warning,
-.badge-dark,
-.badge-yellow {
-	color: $white;
-}
-
-.badge-danger,
-.badge-light {
-	color: $black;
 }
 
 :root {

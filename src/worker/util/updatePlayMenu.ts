@@ -289,6 +289,10 @@ const updatePlayMenu = async () => {
 	const unreadMessage = await lock.unreadMessage();
 	const negotiationInProgress = await lock.negotiationInProgress();
 
+	if (g.get("expansionDraft").phase === "protection") {
+		keys = ["expansionDraft"];
+	}
+
 	if (unreadMessage) {
 		keys = ["message"];
 	}
@@ -303,10 +307,6 @@ const updatePlayMenu = async () => {
 
 	if (negotiationInProgress && g.get("phase") !== PHASE.RESIGN_PLAYERS) {
 		keys = ["contractNegotiation"];
-	}
-
-	if (g.get("expansionDraft").phase === "protection") {
-		keys = ["expansionDraft"];
 	}
 
 	if (lock.get("newPhase")) {

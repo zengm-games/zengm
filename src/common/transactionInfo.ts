@@ -3,39 +3,39 @@ import type { LogEventType } from "./types";
 export const categories = {
 	award: {
 		text: "Awards",
-		className: "badge-warning",
+		className: "bg-warning",
 	},
 	draft: {
 		text: "Draft",
-		className: "badge-darkblue",
+		className: "bg-darkblue",
 	},
 	league: {
 		text: "League",
-		className: "badge-secondary",
+		className: "bg-secondary",
 	},
 	injury: {
 		text: "Injuries",
-		className: "badge-danger",
+		className: "bg-danger",
 	},
 	playerFeat: {
 		text: "Player Feats",
-		className: "badge-info",
+		className: "bg-info",
 	},
 	playoffs: {
 		text: "Playoffs",
-		className: "badge-orange",
+		className: "bg-orange",
 	},
 	rare: {
 		text: "Rare Events",
-		className: "badge-dark",
+		className: "bg-dark",
 	},
 	transaction: {
 		text: "Transactions",
-		className: "badge-success",
+		className: "bg-success",
 	},
 	team: {
 		text: "Teams",
-		className: "badge-light",
+		className: "bg-light",
 	},
 };
 

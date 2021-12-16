@@ -114,7 +114,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 						<Fragment key={category}>
 							<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
 							<div
-								className="form-row"
+								className="row g-2"
 								style={{
 									marginBottom: "-0.5rem",
 								}}
@@ -131,7 +131,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 											className="col-sm-6 col-md-4 col-xl-3"
 										>
 											<div
-												className={classNames("card mb-2", {
+												className={classNames("card", {
 													"list-group-item-light": total === 0,
 													"list-group-item-secondary":
 														achievement.normal > 0 &&
@@ -155,11 +155,9 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 																	return (
 																		<span
 																			key={difficulty}
-																			className={`badge badge-pill ${
-																				count > 0
-																					? "badge-dark"
-																					: "badge-secondary"
-																			} float-right ml-1`}
+																			className={`badge rounded-pill ${
+																				count > 0 ? "bg-dark" : "bg-secondary"
+																			} float-end ms-1`}
 																			title={`${helpers.upperCaseFirstLetter(
 																				difficulty,
 																			)} difficulty`}

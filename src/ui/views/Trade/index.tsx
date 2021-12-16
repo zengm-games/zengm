@@ -343,7 +343,7 @@ const Trade = (props: View<"trade">) => {
 							</button>
 						</div>
 						<select
-							className="float-left form-control select-team mx-2"
+							className="float-start form-select select-team mx-2"
 							value={otherTid}
 							onChange={event => {
 								handleChangeTeam(parseInt(event.currentTarget.value));
@@ -414,7 +414,7 @@ const Trade = (props: View<"trade">) => {
 								>
 									{state.message}
 									{state.prevTeams ? (
-										<div className="mt-1 text-right">
+										<div className="mt-1 text-end">
 											<button
 												className="btn btn-secondary btn-sm"
 												onClick={async () => {

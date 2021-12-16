@@ -37,9 +37,12 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	);
 
 	for (const releasedPlayer of releasedPlayers) {
-		const p = await idb.getCopy.players({
-			pid: releasedPlayer.pid,
-		});
+		const p = await idb.getCopy.players(
+			{
+				pid: releasedPlayer.pid,
+			},
+			"noCopyCache",
+		);
 
 		if (p) {
 			// If a player is deleted, such as if the user deletes retired players, this will be undefined

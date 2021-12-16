@@ -12,7 +12,7 @@ const getShortTall = async (pids: [number, number]) => {
 
 	return Promise.all(
 		pids.map(async pid => {
-			const p = await idb.getCopy.players({ pid });
+			const p = await idb.getCopy.players({ pid }, "noCopyCache");
 			if (p) {
 				return {
 					pid: p.pid,
@@ -59,9 +59,12 @@ const updateAllStarDunk = async (
 			return returnValue;
 		}
 
-		const playersRaw = await idb.getCopies.players({
-			pids: dunk.players.map(p => p.pid),
-		});
+		const playersRaw = await idb.getCopies.players(
+			{
+				pids: dunk.players.map(p => p.pid),
+			},
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [

@@ -192,7 +192,7 @@ const ImportPlayers = ({
 								{name}
 							</PlayerNameLabels>
 							<button
-								className="btn btn-secondary btn-sm ml-2"
+								className="btn btn-secondary btn-sm ms-2"
 								disabled={disableButtons}
 								onClick={() => {
 									const newPlayers = [...players];
@@ -212,7 +212,7 @@ const ImportPlayers = ({
 				{
 					value: (
 						<select
-							className="form-control"
+							className="form-select"
 							onChange={handleChange("age", i)}
 							style={{ minWidth: 60 }}
 							value={season}
@@ -232,7 +232,7 @@ const ImportPlayers = ({
 					value: (
 						<div className="d-flex" style={{ minWidth: 200 }}>
 							<select
-								className="form-control"
+								className="form-select"
 								onChange={handleChange("tid", i)}
 								value={tid}
 							>
@@ -264,18 +264,14 @@ const ImportPlayers = ({
 								className="input-group input-group"
 								style={{ minWidth: 180 }}
 							>
-								<div className="input-group-prepend">
-									<div className="input-group-text">$</div>
-								</div>
+								<div className="input-group-text">$</div>
 								<input
 									type="text"
 									className="form-control"
 									onChange={handleChange("contractAmount", i)}
 									value={contractAmount}
 								/>
-								<div className="input-group-append">
-									<div className="input-group-text">M per year</div>
-								</div>
+								<div className="input-group-text">M per year</div>
 							</div>
 						),
 						sortValue: `$${contractAmount}M`,

@@ -532,7 +532,7 @@ const LiveGame = (props: View<"liveGame">) => {
 						{boxScore.current.gid >= 0 ? (
 							<div className="d-flex align-items-center mb-3">
 								<PlayPauseNext
-									className="mr-2"
+									className="me-2"
 									disabled={boxScore.current.gameOver}
 									fastForwardAlignRight
 									fastForwards={fastForwardMenuItems}
@@ -544,10 +544,10 @@ const LiveGame = (props: View<"liveGame">) => {
 									titlePause="Pause Simulation"
 									titleNext="Show Next Play"
 								/>
-								<div className="form-group flex-grow-1 mb-0">
+								<div className="mb-3 flex-grow-1 mb-0">
 									<input
 										type="range"
-										className="form-control-range"
+										className="form-range"
 										disabled={boxScore.current.gameOver}
 										min="1"
 										max="33"

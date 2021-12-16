@@ -30,7 +30,7 @@ const awardName = (
 
 	const ret = (
 		<div className="d-flex">
-			<div className="mr-auto">
+			<div className="me-auto">
 				<PlayerNameLabels pid={award.pid} pos={award.pos} season={season}>
 					{award.name}
 				</PlayerNameLabels>{" "}
@@ -84,8 +84,8 @@ const teamName = (
 const CountBadge = ({ count }: { count: number }) => {
 	if (count > 1) {
 		return (
-			<div className="ml-1">
-				<span className="badge badge-secondary align-text-bottom">{count}</span>
+			<div className="ms-1">
+				<span className="badge bg-secondary align-text-bottom">{count}</span>
 			</div>
 		);
 	}
@@ -107,7 +107,7 @@ const formatTeam = (
 		value: (
 			<div className="d-flex align-items-center">
 				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
-				<div className="ml-1 mr-auto">
+				<div className="ms-1 me-auto">
 					{t.seed}. {teamName(t, season)}
 				</div>
 				<CountBadge count={t.count} />
@@ -158,7 +158,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			<MoreLinks type="league" page="history_all" />
 
 			<DataTable
-				className="align-middle-all"
+				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="HistoryAll"

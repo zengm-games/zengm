@@ -215,7 +215,7 @@ const updateTeamHistory = async (
 				let pos;
 				let champSeasons: number[] = [];
 				if (row.pid !== undefined) {
-					const p = await idb.getCopy.players({ pid: row.pid });
+					const p = await idb.getCopy.players({ pid: row.pid }, "noCopyCache");
 					if (p) {
 						name = `${p.firstName} ${p.lastName}`;
 						pos = getMostCommonPosition(p, inputs.tid);

@@ -4,7 +4,6 @@ way to tell getCopy we are not going to mutate, so don't need deepcopy
 - noCopyCache
 - in progress
   - benchmark
-  - getCopy.players
 
 half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
 

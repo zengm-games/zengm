@@ -34,12 +34,11 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			hockey: ["keyStats", "ops", "dps", "ps"],
 		});
 		const playersAll = (
-			await Promise.all(
-				pids.map(pid =>
-					idb.getCopy.players({
-						pid,
-					}),
-				),
+			await idb.getCopies.players(
+				{
+					pids,
+				},
+				"noCopyCache",
 			)
 		).filter(p => p !== undefined);
 

@@ -33,6 +33,10 @@ const getCopies = async (
 	} = {},
 	type?: GetCopyType,
 ): Promise<Player[]> => {
+	if (pids?.length === 1) {
+		pid = pids[0];
+	}
+
 	if (pid !== undefined) {
 		const p = await idb.cache.players.get(pid);
 		if (p) {

@@ -12,7 +12,7 @@ const getShortTall = async (pids: [number, number]) => {
 
 	return Promise.all(
 		pids.map(async pid => {
-			const p = await idb.getCopy.players({ pid });
+			const p = await idb.getCopy.players({ pid }, "noCopyCache");
 			if (p) {
 				return {
 					pid: p.pid,

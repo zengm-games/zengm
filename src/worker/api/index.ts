@@ -1426,7 +1426,7 @@ const getPlayerWatch = async (pid: number) => {
 	if (p) {
 		return p.watch;
 	}
-	const p2 = await idb.getCopy.players({ pid });
+	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (p2) {
 		return p2.watch;
 	}
@@ -1969,9 +1969,12 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 		return blankObj;
 	}
 
-	const p = await idb.getCopy.players({
-		pid,
-	});
+	const p = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
 
 	if (!p) {
 		return blankObj;
@@ -2380,7 +2383,7 @@ const retiredJerseyNumberUpsert = async (
 	let playerText = "";
 	let score: number | undefined;
 	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid });
+		const p = await idb.getCopy.players({ pid: info.pid }, "noCopyCache");
 		if (p) {
 			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
@@ -2575,9 +2578,12 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 };
 
 const setPlayerNote = async (pid: number, note: string) => {
-	const p = await idb.getCopy.players({
-		pid,
-	});
+	const p = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
 
 	if (p) {
 		p.note = note;
@@ -3465,9 +3471,12 @@ const upsertCustomizedPlayer = async (
 	const relatives: Relative[] = [];
 
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players({
-			pid: rel.pid,
-		});
+		const p2 = await idb.getCopy.players(
+			{
+				pid: rel.pid,
+			},
+			"noCopyCache",
+		);
 
 		if (p2) {
 			rel.name = `${p2.firstName} ${p2.lastName}`;

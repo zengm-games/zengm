@@ -29,9 +29,12 @@ const updatePlayers = async (
 		let playersAll: Player[] = [];
 
 		if (typeof pid === "number") {
-			const target = await idb.getCopy.players({
-				pid,
-			});
+			const target = await idb.getCopy.players(
+				{
+					pid,
+				},
+				"noCopyCache",
+			);
 
 			if (target) {
 				const pids = target.relatives.map(rel => rel.pid);

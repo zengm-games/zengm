@@ -97,9 +97,12 @@ export const getCommon = async (pid?: number, season?: number) => {
 		]);
 	}
 
-	const pRaw = await idb.getCopy.players({
-		pid,
-	});
+	const pRaw = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
 
 	if (!pRaw) {
 		// https://stackoverflow.com/a/59923262/786644

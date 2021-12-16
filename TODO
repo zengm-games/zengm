@@ -1,6 +1,6 @@
 league top bar
 - benchmark again at end
-- resize observer to replace "resize" event and hack?
+- test in old browser
 - blog
   - no more animation
   - no longer performance difference when bar is closed or open

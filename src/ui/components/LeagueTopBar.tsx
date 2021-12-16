@@ -105,22 +105,23 @@ const LeagueTopBar = memo(() => {
 
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
 		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
-		window.addEventListener("resize", keepScrolledToRightIfNecessary);
+
+		let resizeObserver: ResizeObserver | undefined;
+		if (typeof ResizeObserver !== "undefined") {
+			// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
+			resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);
+			resizeObserver.observe(wrapperElement);
+		}
 
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
 			wrapperElement.removeEventListener("scroll", handleScroll);
-			window.removeEventListener("resize", keepScrolledToRightIfNecessary);
+			resizeObserver?.unobserve(wrapperElement);
 		};
 	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
 
 	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
 	keepScrolledToRightIfNecessary();
-
-	// Hack - make sure scrollbar is all the way to the right on initial load, otherwise the first render happens when the window scrollbar is not present, which makes this local scrollbar look (but not act) like it's not 100% to the end
-	useEffect(() => {
-		setTimeout(keepScrolledToRightIfNecessary, 100);
-	}, [keepScrolledToRightIfNecessary]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =

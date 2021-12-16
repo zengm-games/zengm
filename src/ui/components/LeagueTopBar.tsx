@@ -76,6 +76,10 @@ const LeagueTopBar = memo(() => {
 			if (
 				!wrapperElement ||
 				wrapperElement.scrollWidth <= wrapperElement.clientWidth ||
+				event.altKey ||
+				event.ctrlKey ||
+				event.metaKey ||
+				event.shiftKey ||
 				// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
 				!wrapperElement.scrollTo
 			) {

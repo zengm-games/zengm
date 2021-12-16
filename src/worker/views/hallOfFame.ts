@@ -24,9 +24,12 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			football: ["keyStats", "av"],
 			hockey: ["keyStats", "ops", "dps", "ps"],
 		});
-		const playersAll = await idb.getCopies.players({
-			filter: p => p.hof,
-		});
+		const playersAll = await idb.getCopies.players(
+			{
+				filter: p => p.hof,
+			},
+			"noCopyCache",
+		);
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
 			ratings: ["ovr", "pos"],

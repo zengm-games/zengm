@@ -18,9 +18,12 @@ const updateSeasonPreview = async (
 		const NUM_PLAYERS_TO_SHOW = 10;
 		const NUM_TEAMS_TO_SHOW = 5;
 
-		const playersRaw = await idb.getCopies.players({
-			activeSeason: season,
-		});
+		const playersRaw = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [

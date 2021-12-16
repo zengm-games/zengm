@@ -59,9 +59,12 @@ const updateAllStarDunk = async (
 			return returnValue;
 		}
 
-		const playersRaw = await idb.getCopies.players({
-			pids: dunk.players.map(p => p.pid),
-		});
+		const playersRaw = await idb.getCopies.players(
+			{
+				pids: dunk.players.map(p => p.pid),
+			},
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [

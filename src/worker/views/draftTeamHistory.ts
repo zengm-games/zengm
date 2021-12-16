@@ -24,9 +24,12 @@ const updateDraftTeamHistory = async (
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
-	const playersAll2 = await idb.getCopies.players({
-		filter,
-	});
+	const playersAll2 = await idb.getCopies.players(
+		{
+			filter,
+		},
+		"noCopyCache",
+	);
 	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
 		attrs: [
 			"tid",

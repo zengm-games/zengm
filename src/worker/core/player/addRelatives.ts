@@ -107,9 +107,12 @@ export const makeSon = async (p: Player) => {
 	);
 	const draftYear = p.draft.year - random.randInt(21, maxYearsAgo);
 	const possibleFathers = (
-		await idb.getCopies.players({
-			draftYear,
-		})
+		await idb.getCopies.players(
+			{
+				draftYear,
+			},
+			"noCopyCache",
+		)
 	).filter(
 		father =>
 			typeof father.diedYear !== "number" || father.diedYear >= p.born.year,
@@ -216,9 +219,12 @@ export const makeBrother = async (p: Player) => {
 	const draftYear = p.draft.year - random.randInt(0, 5);
 	const existingRelativePids = p.relatives.map(rel => rel.pid);
 	const possibleBrothers = (
-		await idb.getCopies.players({
-			draftYear,
-		})
+		await idb.getCopies.players(
+			{
+				draftYear,
+			},
+			"noCopyCache",
+		)
 	).filter(p2 => {
 		if (p2.pid === p.pid) {
 			return false;

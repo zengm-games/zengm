@@ -22,9 +22,12 @@ const updatePlayers = async (
 				Infinity,
 			]);
 		} else {
-			players = await idb.getCopies.players({
-				activeSeason: inputs.season,
-			});
+			players = await idb.getCopies.players(
+				{
+					activeSeason: inputs.season,
+				},
+				"noCopyCache",
+			);
 		}
 
 		const extraRatings = bySport({

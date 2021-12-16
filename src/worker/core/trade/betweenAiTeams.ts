@@ -42,9 +42,12 @@ const attempt = async (valueChangeKey: number) => {
 
 	const otherTid = random.choice(otherTids);
 	const players = (
-		await idb.getCopies.players({
-			tid,
-		})
+		await idb.getCopies.players(
+			{
+				tid,
+			},
+			"noCopyCache",
+		)
 	).filter(p => !isUntradable(p).untradable);
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksByTid",

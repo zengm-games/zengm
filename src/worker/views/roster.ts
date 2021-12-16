@@ -178,9 +178,12 @@ const updateRoster = async (
 			}
 		} else {
 			// Show all players with stats for the given team and year
-			const playersAll = await idb.getCopies.players({
-				statsTid: inputs.tid,
-			});
+			const playersAll = await idb.getCopies.players(
+				{
+					statsTid: inputs.tid,
+				},
+				"noCopyCache",
+			);
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,

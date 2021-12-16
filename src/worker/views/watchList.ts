@@ -37,23 +37,26 @@ const updatePlayers = async (
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 
-		const playersAll = await idb.getCopies.players({
-			filter: p => {
-				if (inputs.flagNote === "flag" || inputs.flagNote === "either") {
-					if (p.watch) {
-						return true;
+		const playersAll = await idb.getCopies.players(
+			{
+				filter: p => {
+					if (inputs.flagNote === "flag" || inputs.flagNote === "either") {
+						if (p.watch) {
+							return true;
+						}
 					}
-				}
 
-				if (inputs.flagNote === "note" || inputs.flagNote === "either") {
-					if (p.note !== undefined && p.note !== "") {
-						return true;
+					if (inputs.flagNote === "note" || inputs.flagNote === "either") {
+						if (p.note !== undefined && p.note !== "") {
+							return true;
+						}
 					}
-				}
 
-				return false;
+					return false;
+				},
 			},
-		});
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [

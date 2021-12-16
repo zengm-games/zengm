@@ -22,9 +22,12 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 			Infinity,
 		]);
 	} else {
-		playersAll = await idb.getCopies.players({
-			draftYear: inputs.season,
-		});
+		playersAll = await idb.getCopies.players(
+			{
+				draftYear: inputs.season,
+			},
+			"noCopyCache",
+		);
 	}
 
 	playersAll = playersAll.filter(p => {

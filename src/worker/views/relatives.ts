@@ -35,15 +35,21 @@ const updatePlayers = async (
 
 			if (target) {
 				const pids = target.relatives.map(rel => rel.pid);
-				const otherPlayers = await idb.getCopies.players({
-					pids,
-				});
+				const otherPlayers = await idb.getCopies.players(
+					{
+						pids,
+					},
+					"noCopyCache",
+				);
 				playersAll = [target, ...otherPlayers];
 			}
 		} else {
-			playersAll = await idb.getCopies.players({
-				filter: p => p.relatives.length > 0,
-			});
+			playersAll = await idb.getCopies.players(
+				{
+					filter: p => p.relatives.length > 0,
+				},
+				"noCopyCache",
+			);
 		}
 
 		const players = await idb.getCopies.playersPlus(playersAll, {

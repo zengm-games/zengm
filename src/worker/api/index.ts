@@ -1041,13 +1041,19 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			Infinity,
 		]);
 	} else if (season === "all") {
-		players = await idb.getCopies.players({
-			activeAndRetired: true,
-		});
+		players = await idb.getCopies.players(
+			{
+				activeAndRetired: true,
+			},
+			"noCopyCache",
+		);
 	} else {
-		players = await idb.getCopies.players({
-			activeSeason: season,
-		});
+		players = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
 	}
 
 	// Array of seasons in stats, either just one or all of them
@@ -1320,9 +1326,12 @@ const exportDraftClass = async (season: number) => {
 			g.get("phase") >= 0 &&
 			g.get("phase") <= PHASE.DRAFT_LOTTERY);
 
-	let players = await idb.getCopies.players({
-		draftYear: season,
-	});
+	let players = await idb.getCopies.players(
+		{
+			draftYear: season,
+		},
+		"noCopyCache",
+	);
 
 	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
 	if (onlyUndrafted) {

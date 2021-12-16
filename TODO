@@ -1,6 +1,6 @@
 league top bar
-- https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter
 - benchmark again at end
+- resize observer to replace "resize" event and hack?
 - blog
   - no more animation
   - no longer performance difference when bar is closed or open

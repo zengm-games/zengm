@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 
@@ -52,6 +52,19 @@ const LeagueTopBar = memo(() => {
 
 	const games2: typeof games = [];
 
+	const keepScrolledToRightIfNecessary = useCallback(() => {
+		if (
+			keepScrollToRightRef.current &&
+			wrapperElement &&
+			wrapperElement.scrollLeft + wrapperElement.offsetWidth <
+				wrapperElement.scrollWidth
+		) {
+			wrapperElement.scrollTo({
+				left: wrapperElement.scrollWidth,
+			});
+		}
+	}, [wrapperElement]);
+
 	useEffect(() => {
 		if (!wrapperElement || !show) {
 			return;
@@ -88,17 +101,26 @@ const LeagueTopBar = memo(() => {
 			keepScrollToRightRef.current =
 				wrapperElement.scrollLeft + wrapperElement.offsetWidth >=
 				wrapperElement.scrollWidth;
-			console.log("handleScroll", keepScrollToRightRef.current);
 		};
 
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
 		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
+		window.addEventListener("resize", keepScrolledToRightIfNecessary);
 
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
 			wrapperElement.removeEventListener("scroll", handleScroll);
+			window.removeEventListener("resize", keepScrolledToRightIfNecessary);
 		};
-	}, [show, wrapperElement]);
+	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
+
+	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
+	keepScrolledToRightIfNecessary();
+
+	// Hack - make sure scrollbar is all the way to the right on initial load, otherwise the first render happens when the window scrollbar is not present, which makes this local scrollbar look (but not act) like it's not 100% to the end
+	useEffect(() => {
+		setTimeout(keepScrolledToRightIfNecessary, 100);
+	}, [keepScrolledToRightIfNecessary]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
@@ -123,18 +145,6 @@ const LeagueTopBar = memo(() => {
 				break;
 			}
 		}
-	}
-
-	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
-	if (
-		keepScrollToRightRef.current &&
-		wrapperElement &&
-		wrapperElement.scrollLeft + wrapperElement.offsetWidth <
-			wrapperElement.scrollWidth
-	) {
-		wrapperElement.scrollTo({
-			left: wrapperElement.scrollWidth,
-		});
 	}
 
 	return (

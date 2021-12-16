@@ -2,6 +2,7 @@
 
 // Not supported in any Firefox yet!
 import {
+	CountQueuingStrategy as PolyfillCountQueuingStrategy,
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
 	WritableStream as PolyfillWritableStream,
@@ -14,6 +15,11 @@ if (POLYFILL_STREAMS) {
 	self.ReadableStream = PolyfillReadableStream as any;
 	self.TransformStream = PolyfillTransformStream as any;
 	self.WritableStream = PolyfillWritableStream;
+}
+
+// Chrome 58
+if (self.CountQueuingStrategy === undefined) {
+	self.CountQueuingStrategy = PolyfillCountQueuingStrategy;
 }
 
 // Chrome 71, Firefox ??, Safari 14.1

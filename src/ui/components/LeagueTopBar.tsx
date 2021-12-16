@@ -57,7 +57,9 @@ const LeagueTopBar = memo(() => {
 			keepScrollToRightRef.current &&
 			wrapperElement &&
 			wrapperElement.scrollLeft + wrapperElement.offsetWidth <
-				wrapperElement.scrollWidth
+				wrapperElement.scrollWidth &&
+			// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
+			wrapperElement.scrollTo
 		) {
 			wrapperElement.scrollTo({
 				left: wrapperElement.scrollWidth,
@@ -73,7 +75,9 @@ const LeagueTopBar = memo(() => {
 		const handleWheel = (event: WheelEvent) => {
 			if (
 				!wrapperElement ||
-				wrapperElement.scrollWidth <= wrapperElement.clientWidth
+				wrapperElement.scrollWidth <= wrapperElement.clientWidth ||
+				// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
+				!wrapperElement.scrollTo
 			) {
 				return;
 			}
@@ -107,6 +111,7 @@ const LeagueTopBar = memo(() => {
 		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
 
 		let resizeObserver: ResizeObserver | undefined;
+		// Chrome 64 and Safari 13.1 support ResizeObserver
 		if (typeof ResizeObserver !== "undefined") {
 			// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
 			resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);

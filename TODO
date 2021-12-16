@@ -1,3 +1,10 @@
+league top bar
+- scrollbar style
+  - dark/light mode
+  - firefox
+  - safari
+  - mobile
+
 have "watch" as action in schedule page for playoff games too https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
 
 way to tell getCopy we are not going to mutate, so don't need deepcopy

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { m, AnimatePresence } from "framer-motion";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 
@@ -43,60 +43,43 @@ const LeagueTopBar = memo(() => {
 		return true;
 	});
 
-	const leagueTopBarRef = useRef(null);
+	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
+		null,
+	);
 
-	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
 	const prevGames = useRef<typeof games>([]);
 
-	const updateNumberOfScoreBoxes = useCallback(() => {
-		// Limit number of ScoreBoxes to render
-		const documentElement = document.documentElement;
-		if (documentElement) {
-			const width = documentElement.clientWidth;
-			setNumberOfScoreBoxes(Math.ceil(width / 115));
-		}
-	}, []);
+	const games2: typeof games = [];
 
 	useEffect(() => {
-		updateNumberOfScoreBoxes();
-		window.addEventListener("optimizedResize", updateNumberOfScoreBoxes);
-		return () => {
-			window.removeEventListener("optimizedResize", updateNumberOfScoreBoxes);
-		};
-	}, [updateNumberOfScoreBoxes]);
-
-	let games2: typeof games = [];
-
-	const handleWheel = useCallback(e => {
-		e.preventDefault();
-		const leagueTopBarPosition = leagueTopBarRef.current.scrollLeft;
-
-		leagueTopBarRef.current.scrollTo({
-			top: 0,
-			left: leagueTopBarPosition - e.deltaY + e.deltaX,
-			behaviour: "smooth",
-		});
-	}, []);
-
-	useEffect(() => {
-		const leagueTopBar = leagueTopBarRef.current;
-		if (
-			!leagueTopBar ||
-			!show ||
-			leagueTopBar.scrollWidth <= leagueTopBar.clientWidth
-		)
+		if (!wrapperElement || !show) {
 			return;
+		}
 
-		console.log("added");
-		leagueTopBar.addEventListener("wheel", handleWheel, { passive: false });
+		const handleWheel = (event: WheelEvent) => {
+			if (
+				!wrapperElement ||
+				wrapperElement.scrollWidth <= wrapperElement.clientWidth
+			) {
+				return;
+			}
 
-		return () => {
-			console.log("removed");
-			leagueTopBar.removeEventListener("wheel", handleWheel, {
-				passive: false,
+			// We're scrolling within the bar, not within the whole page
+			event.preventDefault();
+
+			const leagueTopBarPosition = wrapperElement.scrollLeft;
+
+			wrapperElement.scrollTo({
+				left: leagueTopBarPosition + 2 * event.deltaY,
 			});
 		};
-	}, [handleWheel, show, games2]);
+
+		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
+
+		return () => {
+			wrapperElement.removeEventListener("wheel", handleWheel);
+		};
+	}, [show, wrapperElement]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
@@ -130,7 +113,9 @@ const LeagueTopBar = memo(() => {
 		<div
 			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse pe-3 ps-1 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
-			ref={leagueTopBarRef}
+			ref={element => {
+				setWrapperElement(element);
+			}}
 		>
 			{show ? (
 				// This makes it not animate the initial render

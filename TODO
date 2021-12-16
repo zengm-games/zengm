@@ -6,6 +6,7 @@ league top bar
   - mobile
 - benchmark
   - Time to auto play regular season while viewing frivolities page - increases from 23 seconds to 28 seconds - 20% slower. too slow?
+    - with no animation: stays at 18.5 in both branches!
 - behavior when game is simmed and scroll is somewhere - should stay put, somehow
 
 have "watch" as action in schedule page for playoff games too https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106

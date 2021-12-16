@@ -22,7 +22,7 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 };
 
 const hiddenStyle = {
-	marginBottom: -64,
+	marginBottom: -12,
 };
 
 const LeagueTopBar = memo(() => {
@@ -111,12 +111,19 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse pe-3 ps-1 pb-1 mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse ps-1 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
 			ref={element => {
 				setWrapperElement(element);
 			}}
 		>
+			<Toggle
+				show={show}
+				toggle={() => {
+					setShow(show2 => !show2);
+					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
+				}}
+			/>
 			{show ? (
 				// This makes it not animate the initial render
 				<AnimatePresence initial={false}>
@@ -135,13 +142,6 @@ const LeagueTopBar = memo(() => {
 					))}
 				</AnimatePresence>
 			) : null}
-			<Toggle
-				show={show}
-				toggle={() => {
-					setShow(show2 => !show2);
-					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
-				}}
-			/>
 		</div>
 	);
 });

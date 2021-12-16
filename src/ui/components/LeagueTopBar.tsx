@@ -42,6 +42,8 @@ const LeagueTopBar = memo(() => {
 		return true;
 	});
 
+	const keepScrollToRightRef = useRef(true);
+
 	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
 		null,
 	);
@@ -73,10 +75,28 @@ const LeagueTopBar = memo(() => {
 			});
 		};
 
+		// This triggers for wheel scrolling and click scrolling
+		const handleScroll = () => {
+			if (
+				!wrapperElement ||
+				wrapperElement.scrollWidth <= wrapperElement.clientWidth
+			) {
+				return;
+			}
+
+			// Keep track of if we're scrolled to the right or not
+			keepScrollToRightRef.current =
+				wrapperElement.scrollLeft + wrapperElement.offsetWidth >=
+				wrapperElement.scrollWidth;
+			console.log("handleScroll", keepScrollToRightRef.current);
+		};
+
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
+		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
 
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
+			wrapperElement.removeEventListener("scroll", handleScroll);
 		};
 	}, [show, wrapperElement]);
 
@@ -95,7 +115,6 @@ const LeagueTopBar = memo(() => {
 		prevGames.current = games;
 	}
 
-	// let games2: typeof games = [];
 	if (show) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {
@@ -104,6 +123,18 @@ const LeagueTopBar = memo(() => {
 				break;
 			}
 		}
+	}
+
+	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
+	if (
+		keepScrollToRightRef.current &&
+		wrapperElement &&
+		wrapperElement.scrollLeft + wrapperElement.offsetWidth <
+			wrapperElement.scrollWidth
+	) {
+		wrapperElement.scrollTo({
+			left: wrapperElement.scrollWidth,
+		});
 	}
 
 	return (

@@ -148,7 +148,11 @@ const LeagueTopBar = memo(() => {
 			<Toggle
 				show={show}
 				toggle={() => {
-					setShow(show2 => !show2);
+					if (show === false) {
+						// When showing, always scroll to right
+						keepScrollToRightRef.current = true;
+					}
+					setShow(!show);
 					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
 				}}
 			/>

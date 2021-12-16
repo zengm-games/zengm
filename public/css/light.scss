@@ -978,20 +978,28 @@ tr.table-warning:hover > td {
 }
 
 $league-top-bar-toggle-width: 15px;
+$league-top-bar-scrollbar-track-color: #dadada;
+$league-top-bar-scrollbar-thumb-color: rgba(71, 71, 71, 0.637);
 .league-top-bar {
+	padding-right: $league-top-bar-toggle-width;
+
+	// Firefox
+	scrollbar-color: $league-top-bar-scrollbar-thumb-color
+		$league-top-bar-scrollbar-track-color;
+	scrollbar-width: thin;
+
+	// Other browsers
 	&::-webkit-scrollbar {
-		height: 3px;
+		height: 5px;
 	}
 	&::-webkit-scrollbar-track {
-		background: #dadada;
+		background: $league-top-bar-scrollbar-track-color;
 		border-radius: 50px;
 	}
 	&::-webkit-scrollbar-thumb {
-		background: rgba(71, 71, 71, 0.637);
+		background: $league-top-bar-scrollbar-thumb-color;
 		border-radius: 50px;
 	}
-
-	padding-right: $league-top-bar-toggle-width;
 }
 .league-top-bar-toggle {
 	border-top-right-radius: 0 !important;

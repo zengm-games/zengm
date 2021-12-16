@@ -92,7 +92,8 @@ const LeagueTopBar = memo(() => {
 			const leagueTopBarPosition = wrapperElement.scrollLeft;
 
 			wrapperElement.scrollTo({
-				left: leagueTopBarPosition + 2 * event.deltaY,
+				// Normal mouse wheels are just deltaY, but trackpads (such as on Mac) can include both, and I think there's no way to tell if this event came from a device supporting two dimensional scrolling or not.
+				left: leagueTopBarPosition + 2 * (event.deltaX + event.deltaY),
 			});
 		};
 

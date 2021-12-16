@@ -1,5 +1,8 @@
 league top bar
 - behavior when game is simmed and scroll is somewhere - should stay put, somehow
+- behavior when game is simmed and scroll is all the way to the right - keep all the way to the right
+  - like play by play log
+- https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter
 - blog
   - no more animation
   - no longer performance difference when bar is closed or open

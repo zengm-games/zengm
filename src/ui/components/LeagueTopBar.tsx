@@ -99,7 +99,7 @@ const LeagueTopBar = memo(() => {
 	if (show) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {
-			games2.unshift(game);
+			games2.push(game);
 			if (game.teams[0].pts === undefined) {
 				break;
 			}
@@ -108,7 +108,7 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row-reverse ps-1 pb-1 mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
 			ref={element => {
 				setWrapperElement(element);
@@ -122,8 +122,13 @@ const LeagueTopBar = memo(() => {
 				}}
 			/>
 			{show
-				? games2.map(game => (
-						<ScoreBox key={game.gid} className="me-2" game={game} small />
+				? games2.map((game, i) => (
+						<ScoreBox
+							key={game.gid}
+							className={`me-2${i === 0 ? " ms-auto" : ""}`}
+							game={game}
+							small
+						/>
 				  ))
 				: null}
 		</div>

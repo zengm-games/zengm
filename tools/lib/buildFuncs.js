@@ -30,6 +30,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 				content: ["build/gen/*.js"],
 				css: rawCSS.map(raw => ({ raw })),
 				safelist: {
+					standard: [/^qc-cmp2-persistent-link$/],
 					greedy: [
 						/^modal/,
 						/^navbar/,

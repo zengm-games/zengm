@@ -116,7 +116,7 @@ const initAds = (goldUntil: number | undefined) => {
 				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.marginBottom = "52px";
+					footer.style.paddingBottom = "52px";
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything

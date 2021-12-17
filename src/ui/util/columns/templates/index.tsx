@@ -6,6 +6,7 @@ export { default as College } from "./College";
 export { default as DraftYear } from "./DraftYear";
 export { default as Pick } from "./Pick";
 export { default as Exp } from "./Exp";
+export { default as Experience } from "./Experience";
 export { default as Height } from "./Height";
 export { default as Mood } from "./Mood";
 export { default as MoodCurrent } from "./MoodCurrent";

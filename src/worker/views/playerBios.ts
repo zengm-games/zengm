@@ -16,6 +16,7 @@ const updatePlayers = async (
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
@@ -35,10 +36,9 @@ const updatePlayers = async (
 			"Weight",
 			"Mood",
 			"Contract",
-			"Exp",
 			"Country",
 			"College",
-			"Draft Year",
+			"DraftYear",
 			"Pick",
 			"Experience",
 			"Ovr",
@@ -50,9 +50,9 @@ const updatePlayers = async (
 		const players = await getPlayers(
 			inputs.season,
 			inputs.abbrev,
-			[],
-			[],
-			[],
+			config.attrsNeeded,
+			config.ratingsNeeded,
+			config.statsNeeded,
 			inputs.tid,
 			config,
 		);

@@ -2858,12 +2858,22 @@ const cols: {
 		sortType: "currency",
 		template: "AskingFor",
 	},
+	College: {
+		attrs: ["college"],
+		cat: "General",
+		template: "College",
+	},
 	Contract: {
 		attrs: ["contract"],
 		cat: "General",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 		template: "Contract",
+	},
+	Country: {
+		attrs: ["born"],
+		cat: "General",
+		template: "Country",
 	},
 	Projected: {
 		attrs: ["contractDesired"],
@@ -2911,11 +2921,6 @@ const cols: {
 	// 	sortSequence: [],
 	// 	template: "Release",
 	// },
-	// Trade: {
-	// 	cat: "General",
-	// 	sortSequence: [],
-	// 	template: "Trade",
-	// },
 	Exp: {
 		cat: "General",
 		desc: "Contract Expiration",
@@ -2923,6 +2928,14 @@ const cols: {
 		sortSequence: ["asc", "desc"],
 		sortType: "number",
 		template: "Exp",
+	},
+	Experience: {
+		cat: "General",
+		desc: "Number of Years in the League",
+		attrs: ["experience"],
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		template: "Experience",
 	},
 	Ovr: {
 		cat: "General",
@@ -3092,6 +3105,7 @@ export default (
 ): Col[] => {
 	return titles.flatMap(title => {
 		if (!cols.hasOwnProperty(title)) {
+			console.log(`Could not find column: ${title}`);
 			return [];
 		}
 

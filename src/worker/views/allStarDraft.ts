@@ -72,6 +72,7 @@ const updateAllStarDraft = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("customizeTable") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);

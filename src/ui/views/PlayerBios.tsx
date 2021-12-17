@@ -47,8 +47,9 @@ const PlayerBios = ({
 			</p>
 
 			<DataTable
-				legacyCols={cols}
-				defaultSort={["col1", "asc"]}
+				cols={cols}
+				defaultSort={["Ovr", "desc"]}
+				config={config}
 				name="PlayerBios"
 				pagination
 				rows={rows}

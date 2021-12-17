@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-	Col as FlexCol,
-	ListGroup,
-	Modal,
-	Row as FlexRow,
-} from "react-bootstrap";
+import { ListGroup, Modal } from "react-bootstrap";
 import { toWorker } from "../../util";
 import type { TableConfig } from "../../util/TableConfig";
 import { ColType, getAllCols } from "../../util/columns/getCols";
@@ -111,13 +106,13 @@ const CustomizeColumns = ({
 				Customize Columns
 			</Modal.Header>
 			<Modal.Body>
-				<ListGroup variant="flush">
+				<ul className="list-group list-group-flush">
 					{Object.entries(colsGrouped).map(([group, cols]) => (
-						<ListGroup.Item key={group}>
+						<li key={group} className="list-group-item">
 							<strong>{group}</strong>
-							<FlexRow>
+							<div className="row">
 								{cols.map((col, i) => (
-									<FlexCol key={i} lg={4}>
+									<div key={i} className="col-lg-4">
 										<div className="form-check d-flex">
 											<input
 												id={`show-column-${col.key}`}
@@ -135,12 +130,12 @@ const CustomizeColumns = ({
 												<small className="d-lg-none ml-2">{col.desc}</small>
 											</label>
 										</div>
-									</FlexCol>
+									</div>
 								))}
-							</FlexRow>
-						</ListGroup.Item>
+							</div>
+						</li>
 					))}
-				</ListGroup>
+				</ul>
 			</Modal.Body>
 			<Modal.Footer className="d-flex justify-content-between">
 				<button className="btn btn-secondary" onClick={reset}>

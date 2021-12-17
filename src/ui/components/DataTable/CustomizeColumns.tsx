@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ListGroup, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { toWorker } from "../../util";
 import type { TableConfig } from "../../util/TableConfig";
 import { ColType, getAllCols } from "../../util/columns/getCols";

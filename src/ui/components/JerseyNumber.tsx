@@ -52,7 +52,7 @@ const JerseyNumber = ({
 	}
 
 	const border = retired
-		? "4px double var(--yellow)"
+		? "4px double var(--bs-yellow)"
 		: `2px solid ${colors[2]}`;
 
 	return (

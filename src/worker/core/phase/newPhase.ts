@@ -99,6 +99,11 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 						local.autoPlayUntil.phase === PHASE.PRESEASON &&
 						phase === PHASE.PRESEASON))
 			) {
+				console.log(
+					`Auto play done in ${
+						(Date.now() - local.autoPlayUntil.start) / 1000
+					} seconds`,
+				);
 				local.autoPlayUntil = undefined;
 			}
 

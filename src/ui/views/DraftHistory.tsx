@@ -114,9 +114,9 @@ const DraftHistory = ({
 							<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
 								{p.name}
 							</PlayerNameLabels>
-							<div className="ml-auto">
-								<SeasonIcons className="ml-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ml-1" awards={p.awards} />
+							<div className="ms-auto">
+								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
+								<SeasonIcons className="ms-1" awards={p.awards} />
 							</div>
 						</div>
 					),

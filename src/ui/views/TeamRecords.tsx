@@ -12,7 +12,7 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 				{t.region} {t.name}
 			</a>
 		) : (
-			<span className="ml-2">
+			<span className="ms-2">
 				{t.region} {t.name}
 			</span>
 		),

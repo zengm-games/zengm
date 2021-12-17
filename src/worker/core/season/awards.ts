@@ -42,9 +42,12 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			Infinity,
 		]);
 	} else {
-		playersAll = await idb.getCopies.players({
-			activeSeason: season,
-		});
+		playersAll = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
 	}
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -442,9 +445,12 @@ const saveAwardsByPlayer = async (
 	for (const pid of pids) {
 		let p = await idb.cache.players.get(pid);
 		if (!p) {
-			p = (await idb.getCopy.players({
-				pid: pid,
-			})) as any;
+			p = (await idb.getCopy.players(
+				{
+					pid: pid,
+				},
+				"noCopyCache",
+			)) as any;
 		}
 
 		if (p && pid != undefined) {
@@ -473,9 +479,12 @@ const deleteAwardsByPlayer = async (
 	}
 
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
-	const players = await idb.getCopies.players({
-		pids,
-	});
+	const players = await idb.getCopies.players(
+		{
+			pids,
+		},
+		"noCopyCache",
+	);
 	for (const p of players) {
 		const typesToDelete = awardsByPlayer
 			.filter(award => award.pid === p.pid)

@@ -20,7 +20,7 @@ const InjuryIcon = ({
 		// This is used in box scores, where it would be confusing to display "out X more days" in old box scores
 		return (
 			<span
-				className={`badge badge-${colorClass} badge-injury ${className}`}
+				className={`badge bg-${colorClass} badge-injury ${className}`}
 				title={injury.type}
 			>
 				+
@@ -38,7 +38,7 @@ const InjuryIcon = ({
 
 		return (
 			<span
-				className={`badge badge-${colorClass} badge-injury ${className}`}
+				className={`badge bg-${colorClass} badge-injury ${className}`}
 				title={title}
 			>
 				{injury.gamesRemaining}

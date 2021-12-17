@@ -1,5 +1,4 @@
-import PropTypes from "prop-types";
-import { useEffect, MouseEvent } from "react";
+import { useEffect, MouseEvent, forwardRef } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
@@ -18,7 +17,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 	}
 };
 
-const PlayMenu = ({ lid, spectator, options }: Props) => {
+const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 	useEffect(() => {
 		const handleKeydown = async (event: KeyboardEvent) => {
 			// alt + letter
@@ -75,11 +74,12 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 				window.mobile ? " dropdown-mobile" : ""
 			}`}
 			as={Nav.Item}
+			ref={ref}
 		>
 			<Dropdown.Toggle
 				className={classNames(
-					"play-button text-white",
-					spectator ? "bg-danger" : "bg-success",
+					"play-button",
+					spectator ? "play-button-danger" : "play-button-success",
 				)}
 				id="play-button"
 				as={Nav.Link}
@@ -109,18 +109,6 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 			</Dropdown.Menu>
 		</Dropdown>
 	);
-};
-
-PlayMenu.propTypes = {
-	lid: PropTypes.number,
-	options: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.string.isRequired,
-			label: PropTypes.string.isRequired,
-			url: PropTypes.string,
-			key: PropTypes.string,
-		}),
-	).isRequired,
-};
+});
 
 export default PlayMenu;

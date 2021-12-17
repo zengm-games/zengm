@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs/promises";
 import build from "./buildFuncs.js";
 import generateJSONSchema from "./generateJSONSchema.mjs";
 import getSport from "./getSport.js";
@@ -12,17 +12,19 @@ export default async () => {
 
 	build.reset();
 	build.copyFiles();
-	build.buildCSS();
 
 	const jsonSchema = generateJSONSchema(sport);
-	fs.mkdirSync("build/files", { recursive: true });
-	fs.writeFileSync(
+	await fs.mkdir("build/files", { recursive: true });
+	await fs.writeFile(
 		"build/files/league-schema.json",
 		JSON.stringify(jsonSchema, null, 2),
 	);
 
 	console.log("Bundling JavaScript files...");
 	await buildJS();
+
+	console.log("Bundling CSS files...");
+	await build.buildCSS();
 
 	console.log("Generating sw.js...");
 	await buildSW();

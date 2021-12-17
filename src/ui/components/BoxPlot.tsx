@@ -35,7 +35,7 @@ const boxPlotElementStyle = (color: string, style: CSSProperties) => {
 	const baseStyle: {
 		[key: string]: 0 | string;
 	} = {
-		background: "var(--white)",
+		background: "var(--bs-white)",
 		position: "absolute",
 		top: "22px",
 		border: `thin solid ${color}`,

@@ -182,12 +182,12 @@ const TopStuff = ({
 				</div>
 				<div className="d-md-flex">
 					{season === currentSeason ? (
-						<div className="ml-sm-5 mt-3 mt-sm-0">
+						<div className="ms-sm-5 mt-3 mt-sm-0">
 							<RosterComposition players={players} />
 						</div>
 					) : null}
 					{showTradingBlock ? (
-						<div className="ml-sm-5 mt-3 mt-md-0">
+						<div className="ms-sm-5 mt-3 mt-md-0">
 							<PlayThroughInjurySliders key={tid} t={t} />
 						</div>
 					) : null}

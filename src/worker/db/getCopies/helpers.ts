@@ -1,6 +1,7 @@
 import { helpers } from "../../util";
 import type { Store } from "../Cache";
 import { idb } from "../../db";
+import type { GetCopyType } from "../../../common/types";
 
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
 const mergeByPk = <
@@ -11,6 +12,7 @@ const mergeByPk = <
 	fromDb: T[],
 	fromCache: T[],
 	storeName: MyStore,
+	type?: GetCopyType,
 ): T[] => {
 	const cacheKeys: {
 		[key: string]: number;
@@ -26,6 +28,10 @@ const mergeByPk = <
 		cacheKeysUsed[fromCache[i][pk]] = false;
 	}
 
+	// When "noCopyCache" is passed, that means we promise not to mutate any of these records, so we don't need to deepCopy
+	const maybeDeepCopy = (row: T) =>
+		type === "noCopyCache" ? row : helpers.deepCopy(row);
+
 	const output = fromDb
 		.filter(row => {
 			// Filter out rows if they have been deleted from the cache, but not yet persisted to IndexedDB
@@ -36,7 +42,7 @@ const mergeByPk = <
 
 			if (cacheKeys.hasOwnProperty(key)) {
 				cacheKeysUsed[key] = true;
-				return helpers.deepCopy(fromCache[cacheKeys[key]]);
+				return maybeDeepCopy(fromCache[cacheKeys[key]]);
 			}
 
 			return row;
@@ -45,7 +51,7 @@ const mergeByPk = <
 	for (const key of Object.keys(cacheKeys)) {
 		if (!cacheKeysUsed[key]) {
 			const i = cacheKeys[key];
-			output.push(helpers.deepCopy(fromCache[i]));
+			output.push(maybeDeepCopy(fromCache[i]));
 		}
 	}
 

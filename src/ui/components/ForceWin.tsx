@@ -66,8 +66,8 @@ const ForceWin = ({
 		const id = `force-win-${game.gid}`;
 
 		form = (
-			<div className="form-inline my-1">
-				<label className="mr-1" htmlFor={id}>
+			<div className="my-1 d-flex">
+				<label className="me-1" htmlFor={id}>
 					Force win?
 				</label>
 				<div className="btn-group">
@@ -132,12 +132,12 @@ const ForceWin = ({
 							exit={{ opacity: 0, transition: { duration: 1 } }}
 							transition={{ duration: 0.1 }}
 						>
-							<span className="ml-2 glyphicon glyphicon-ok text-success" />
+							<span className="ms-2 glyphicon glyphicon-ok text-success" />
 						</m.div>
 					) : null}
 				</AnimatePresence>
 				{state === "error" ? (
-					<span className="ml-2 text-danger">Error</span>
+					<span className="ms-2 text-danger">Error</span>
 				) : null}
 			</div>
 		);

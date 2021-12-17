@@ -306,7 +306,7 @@ const Player2 = ({
 											{r.injuryIndex !== undefined &&
 											player.injuries[r.injuryIndex] ? (
 												<span
-													className="badge badge-danger badge-injury"
+													className="badge bg-danger badge-injury"
 													title={player.injuries[r.injuryIndex].type}
 												>
 													+

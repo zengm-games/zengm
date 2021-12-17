@@ -12,7 +12,7 @@ import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 
-const paddingLeft100 = { paddingLeft: 100 };
+const paddingLeft85 = { paddingLeft: 85 };
 
 const formatTicketPrice = (ticketPrice: number) => {
 	// Never show just one decimal place, because it's cents
@@ -167,12 +167,10 @@ const FinancesForm = ({
 				</HelpPopover>
 			</h3>
 			{warningMessage}
-			<div className="row">
-				<div className="float-left finances-settings-label">Ticket Price</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+			<div className="d-flex">
+				<div className="finances-settings-label">Ticket Price</div>
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
 						<input
 							type="text"
@@ -190,12 +188,12 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="float-left finances-settings-text">
+				<div className="finances-settings-text">
 					Leaguewide rank: #{t.budget.ticketPrice.rank}
 				</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
-				<div className="row mb-1 text-warning" style={paddingLeft100}>
+				<div className="mb-1 text-warning" style={paddingLeft85}>
 					Playoffs price:{" "}
 					{helpers.formatCurrency(
 						getAdjustedTicketPrice(
@@ -207,7 +205,7 @@ const FinancesForm = ({
 					)}
 				</div>
 			) : null}
-			<div className="row mt-1 mb-3" style={paddingLeft100}>
+			<div className="mt-1 mb-3" style={paddingLeft85}>
 				<div className="form-check">
 					<label className="form-check-label">
 						<input
@@ -219,7 +217,7 @@ const FinancesForm = ({
 						/>
 						Auto ticket price
 					</label>
-					<HelpPopover title="Auto ticket price" className="ml-1">
+					<HelpPopover title="Auto ticket price" className="ms-1">
 						<p>
 							When enabled, your ticket price will be set to the maximum value
 							possible while still selling out most games.
@@ -249,12 +247,10 @@ const FinancesForm = ({
 				based on your spending rank over the past three seasons.
 			</p>
 			{warningMessage}
-			<div className="row">
-				<div className="float-left finances-settings-label">Scouting</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+			<div className="d-flex">
+				<div className="finances-settings-label">Scouting</div>
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -262,11 +258,9 @@ const FinancesForm = ({
 						onChange={handleChange("scouting")}
 						value={state.scouting}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="finances-settings-text-small">
 					Current spending rate: #{t.budget.scouting.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -276,12 +270,10 @@ const FinancesForm = ({
 					)}
 				</div>
 			</div>
-			<div className="row">
-				<div className="float-left finances-settings-label">Coaching</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+			<div className="d-flex">
+				<div className="finances-settings-label">Coaching</div>
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -289,11 +281,9 @@ const FinancesForm = ({
 						onChange={handleChange("coaching")}
 						value={state.coaching}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="finances-settings-text-small">
 					Current spending rate: #{t.budget.coaching.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -303,12 +293,10 @@ const FinancesForm = ({
 					)}
 				</div>
 			</div>
-			<div className="row">
-				<div className="float-left finances-settings-label">Health</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+			<div className="d-flex">
+				<div className="finances-settings-label">Health</div>
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -316,11 +304,9 @@ const FinancesForm = ({
 						onChange={handleChange("health")}
 						value={state.health}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="finances-settings-text-small">
 					Current spending rate: #{t.budget.health.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -330,12 +316,10 @@ const FinancesForm = ({
 					)}
 				</div>
 			</div>
-			<div className="row">
-				<div className="float-left finances-settings-label">Facilities</div>
-				<div className="input-group input-group-sm float-left finances-settings-field">
-					<div className="input-group-prepend">
-						<div className="input-group-text">$</div>
-					</div>
+			<div className="d-flex">
+				<div className="finances-settings-label">Facilities</div>
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
 					<input
 						type="text"
 						className="form-control"
@@ -343,11 +327,9 @@ const FinancesForm = ({
 						onChange={handleChange("facilities")}
 						value={state.facilities}
 					/>
-					<div className="input-group-append">
-						<div className="input-group-text">M</div>
-					</div>
+					<div className="input-group-text">M</div>
 				</div>
-				<div className="float-left finances-settings-text-small">
+				<div className="finances-settings-text-small">
 					Current spending rate: #{t.budget.facilities.rank}
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -357,7 +339,7 @@ const FinancesForm = ({
 					)}
 				</div>
 			</div>
-			<div className="row mt-1" style={paddingLeft100}>
+			<div className="mt-1" style={paddingLeft85}>
 				<div className="form-check">
 					<label className="form-check-label">
 						<input
@@ -369,7 +351,7 @@ const FinancesForm = ({
 						/>
 						Auto adjust for inflation
 					</label>
-					<HelpPopover title="Inflation adjustment" className="ml-1">
+					<HelpPopover title="Inflation adjustment" className="ms-1">
 						When enabled, all your revenue and expense settings will
 						automatically change whenever the salary cap changes. This will
 						generally maintain your ranks, although expansion teams and changes
@@ -378,7 +360,7 @@ const FinancesForm = ({
 				</div>
 			</div>
 			{tid === userTid && !spectator ? (
-				<div className="row mt-5" style={paddingLeft100}>
+				<div className="mt-5" style={paddingLeft85}>
 					<button
 						className="btn btn-large btn-primary"
 						disabled={formDisabled || state.saving}

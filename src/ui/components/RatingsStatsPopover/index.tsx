@@ -1,21 +1,22 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, RefObject, useCallback, useEffect, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
-const Icon = ({
-	onClick,
-	watch,
-}: {
-	onClick?: () => void;
-	watch?: boolean;
-}) => {
+const Icon = forwardRef<
+	HTMLElement,
+	{
+		onClick?: () => void;
+		watch?: boolean;
+	}
+>(({ onClick, watch }, ref) => {
 	return (
 		<span
+			ref={ref}
 			className={classNames("glyphicon glyphicon-stats watch", {
 				"watch-active": watch,
 			})}
@@ -24,7 +25,7 @@ const Icon = ({
 			onClick={onClick}
 		/>
 	);
-};
+});
 
 type Props = {
 	pid: number;
@@ -113,18 +114,18 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 		nameBlock = (
 			<div className="d-flex">
 				{jerseyNumber ? (
-					<div className="text-muted jersey-number-popover align-self-end mr-1">
+					<div className="text-muted jersey-number-popover align-self-end me-1">
 						{jerseyNumber}
 					</div>
 				) : null}
 				<a
 					href={helpers.leagueUrl(["player", pid])}
-					className="font-weight-bold text-truncate"
+					className="fw-bold text-truncate"
 				>
 					{name}
 				</a>
 				{ratings !== undefined ? (
-					<div className="ml-1">{ratings.pos}</div>
+					<div className="ms-1">{ratings.pos}</div>
 				) : null}
 				{abbrev !== undefined && tid !== undefined && tid !== PLAYER.RETIRED ? (
 					<a
@@ -133,13 +134,13 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 							`${abbrev}_${tid}`,
 							ratings ? ratings.season : undefined,
 						])}
-						className="ml-1"
+						className="ms-1"
 					>
 						{abbrev}
 					</a>
 				) : null}
 				{age !== undefined ? (
-					<div className="ml-1 flex-shrink-0">{age} yo</div>
+					<div className="ms-1 flex-shrink-0">{age} yo</div>
 				) : null}
 				<WatchBlock
 					pid={pid}
@@ -175,9 +176,13 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 		</div>
 	);
 
-	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
-		<Icon onClick={onClick} watch={actualWatch} />
-	);
+	const renderTarget = ({
+		forwardedRef,
+		onClick,
+	}: {
+		forwardedRef?: RefObject<HTMLElement>;
+		onClick?: () => void;
+	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
 
 	return (
 		<ResponsivePopover

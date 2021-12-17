@@ -278,7 +278,7 @@ export const processAssets = async (
 
 	for (const asset of event.teams[i].assets) {
 		if (assetIsPlayer(asset)) {
-			const p = await idb.getCopy.players({ pid: asset.pid });
+			const p = await idb.getCopy.players({ pid: asset.pid }, "noCopyCache");
 			const common = {
 				pid: asset.pid,
 				contract: asset.contract,

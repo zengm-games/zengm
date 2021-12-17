@@ -64,9 +64,12 @@ const updatePowerRankings = async (
 						t.tid,
 					);
 				} else {
-					teamPlayers = await idb.getCopies.players({
-						statsTid: t.tid,
-					});
+					teamPlayers = await idb.getCopies.players(
+						{
+							statsTid: t.tid,
+						},
+						"noCopyCache",
+					);
 				}
 
 				const ratings = ["ovr", "pos", "ovrs"];

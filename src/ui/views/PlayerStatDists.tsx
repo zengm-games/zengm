@@ -111,12 +111,12 @@ const PlayerStatDists = ({
 							const col = getCols([`stat:${stat}`])[0];
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
-									<td className="pr-3 text-right" title={col.desc}>
+									<td className="pe-3 text-end" title={col.desc}>
 										{col.title}
 									</td>
 									<td style={width100}>
 										<BoxPlot
-											color="var(--blue)"
+											color="var(--bs-blue)"
 											data={statsAll[stat]}
 											scale={(scale as any)[stat]}
 										/>
@@ -131,7 +131,7 @@ const PlayerStatDists = ({
 										<td style={width100}>
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
-													color="var(--green)"
+													color="var(--bs-green)"
 													labels={false}
 													scale={
 														isSport("basketball")

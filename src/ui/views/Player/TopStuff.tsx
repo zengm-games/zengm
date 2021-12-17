@@ -143,7 +143,7 @@ const StatsSummary = ({
 
 	return (
 		<div className="player-stats-summary">
-			<table className="table table-sm table-condensed table-nonfluid text-center mt-3 mb-0">
+			<table className="table table-sm table-borderless table-nonfluid text-center mt-3 mb-0">
 				<thead>
 					<tr>
 						{cols.map((col, i) => {
@@ -154,7 +154,7 @@ const StatsSummary = ({
 									className={classNames({
 										"table-separator-right": separatorAfter.includes(i),
 										"table-separator-left": separatorAfter.includes(i - 1),
-										"text-left": i === 0,
+										"text-start": i === 0,
 									})}
 								>
 									{col.title}
@@ -167,7 +167,7 @@ const StatsSummary = ({
 					<tbody>
 						<tr>
 							<th
-								className="table-separator-right text-left"
+								className="table-separator-right text-start"
 								title={showPeakSeason ? String(ps.season) : undefined}
 							>
 								{showPeakSeason ? "Peak" : ps.season}
@@ -191,7 +191,7 @@ const StatsSummary = ({
 
 				<tfoot>
 					<tr>
-						<th className="table-separator-right text-left">Career</th>
+						<th className="table-separator-right text-start">Career</th>
 						{stats.map((stat, i) => {
 							return (
 								<td
@@ -329,7 +329,7 @@ const TopStuff = ({
 	if (retired && season === undefined) {
 		statusInfo = (
 			<div className="d-flex align-items-center">
-				<WatchBlock className="ml-0" pid={player.pid} watch={player.watch} />
+				<WatchBlock className="ms-0" pid={player.pid} watch={player.watch} />
 			</div>
 		);
 	} else {
@@ -347,7 +347,7 @@ const TopStuff = ({
 			<div className="d-flex align-items-center">
 				{injured ? (
 					<span
-						className="badge badge-danger badge-injury ml-0"
+						className="badge bg-danger badge-injury ms-0"
 						title={`${player.injury.type} (out ${
 							player.injury.gamesRemaining
 						} more ${
@@ -361,12 +361,12 @@ const TopStuff = ({
 					className={injured ? undefined : "skills-alone"}
 					skills={skills}
 				/>
-				<WatchBlock className="ml-2" pid={player.pid} watch={player.watch} />
+				<WatchBlock className="ms-2" pid={player.pid} watch={player.watch} />
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
 				player.tid >= PLAYER.FREE_AGENT ? (
 					<Mood
-						className="ml-2"
+						className="ms-2"
 						defaultType={
 							player.tid === PLAYER.FREE_AGENT ||
 							player.tid === PLAYER.UNDRAFTED
@@ -481,7 +481,7 @@ const TopStuff = ({
 								])}
 							>
 								{player.born.loc}
-								<CountryFlag className="ml-1" country={player.born.loc} />
+								<CountryFlag className="ms-1" country={player.born.loc} />
 							</a>
 							<br />
 							{player.ageAtDeath === null ? (

@@ -1042,13 +1042,19 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			Infinity,
 		]);
 	} else if (season === "all") {
-		players = await idb.getCopies.players({
-			activeAndRetired: true,
-		});
+		players = await idb.getCopies.players(
+			{
+				activeAndRetired: true,
+			},
+			"noCopyCache",
+		);
 	} else {
-		players = await idb.getCopies.players({
-			activeSeason: season,
-		});
+		players = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
 	}
 
 	// Array of seasons in stats, either just one or all of them
@@ -1321,9 +1327,12 @@ const exportDraftClass = async (season: number) => {
 			g.get("phase") >= 0 &&
 			g.get("phase") <= PHASE.DRAFT_LOTTERY);
 
-	let players = await idb.getCopies.players({
-		draftYear: season,
-	});
+	let players = await idb.getCopies.players(
+		{
+			draftYear: season,
+		},
+		"noCopyCache",
+	);
 
 	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
 	if (onlyUndrafted) {
@@ -1418,7 +1427,7 @@ const getPlayerWatch = async (pid: number) => {
 	if (p) {
 		return p.watch;
 	}
-	const p2 = await idb.getCopy.players({ pid });
+	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (p2) {
 		return p2.watch;
 	}
@@ -1981,9 +1990,12 @@ const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
 		return blankObj;
 	}
 
-	const p = await idb.getCopy.players({
-		pid,
-	});
+	const p = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
 
 	if (!p) {
 		return blankObj;
@@ -2392,7 +2404,7 @@ const retiredJerseyNumberUpsert = async (
 	let playerText = "";
 	let score: number | undefined;
 	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid });
+		const p = await idb.getCopy.players({ pid: info.pid }, "noCopyCache");
 		if (p) {
 			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
@@ -2587,9 +2599,12 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 };
 
 const setPlayerNote = async (pid: number, note: string) => {
-	const p = await idb.getCopy.players({
-		pid,
-	});
+	const p = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
 
 	if (p) {
 		p.note = note;
@@ -3138,6 +3153,78 @@ const updatePlayingTime = async (pid: number, ptModifier: number) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const updatePlayoffTeams = async (
+	teams: {
+		tid: number;
+		cid: number;
+		seed: number | undefined;
+	}[],
+) => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (playoffSeries) {
+		const { playIns, series } = playoffSeries;
+		const byConf = await season.getPlayoffsByConf(g.get("season"));
+
+		const findTeam = (seed: number, cid: number) => {
+			// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
+			const t = teams.find(t => seed === t.seed && (!byConf || cid === t.cid));
+
+			if (!t) {
+				throw new Error("Team not found");
+			}
+
+			return t;
+		};
+
+		const tidsPlayoffs = new Set();
+
+		const checkMatchups = (matchups: typeof series[0], playIn?: boolean) => {
+			for (const matchup of matchups) {
+				const home = findTeam(matchup.home.seed, matchup.home.cid);
+				matchup.home.tid = home.tid;
+				matchup.home.cid = home.cid;
+				if (!playIn) {
+					tidsPlayoffs.add(home.tid);
+				}
+				if (matchup.away && !matchup.away.pendingPlayIn) {
+					const away = findTeam(matchup.away.seed, matchup.away.cid);
+					matchup.away.tid = away.tid;
+					matchup.away.cid = away.cid;
+					if (!playIn) {
+						tidsPlayoffs.add(away.tid);
+					}
+				}
+			}
+		};
+
+		checkMatchups(series[0]);
+
+		if (playIns) {
+			checkMatchups(playIns.map(playIn => playIn.slice(0, 2)).flat());
+		}
+
+		await idb.cache.playoffSeries.put(playoffSeries);
+
+		// Update schedule, since games might have changed
+		await season.newSchedulePlayoffsDay();
+
+		// Update teamSeasons, since playoffRoundsWon might need to be updated
+		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+			"teamSeasonsBySeasonTid",
+			[[g.get("season")], [g.get("season"), "Z"]],
+		);
+		for (const teamSeason of teamSeasons) {
+			const playoffRoundsWon = tidsPlayoffs.has(teamSeason.tid) ? 0 : -1;
+			if (playoffRoundsWon !== teamSeason.playoffRoundsWon) {
+				teamSeason.playoffRoundsWon = playoffRoundsWon;
+				await idb.cache.teamSeasons.put(teamSeason);
+			}
+		}
+
+		await toUI("realtimeUpdate", [["playoffs"]]);
+	}
+};
+
 const updateTeamInfo = async (
 	newTeams: {
 		tid: number;
@@ -3409,9 +3496,12 @@ const upsertCustomizedPlayer = async (
 	const relatives: Relative[] = [];
 
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players({
-			pid: rel.pid,
-		});
+		const p2 = await idb.getCopy.players(
+			{
+				pid: rel.pid,
+			},
+			"noCopyCache",
+		);
 
 		if (p2) {
 			rel.name = `${p2.firstName} ${p2.lastName}`;
@@ -3673,6 +3763,7 @@ export default {
 	updatePlayThroughInjuries,
 	updatePlayerWatch,
 	updatePlayingTime,
+	updatePlayoffTeams,
 	updateTeamInfo,
 	updateTrade,
 	upsertCustomizedPlayer,

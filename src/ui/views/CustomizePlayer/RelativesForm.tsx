@@ -52,10 +52,10 @@ const RelativesForm = ({
 			{relatives.map(({ pid, type }, i) => {
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
-						<div className="mr-3">
-							{i === 0 ? <label>Type</label> : null}
+						<div className="me-3">
+							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
-								className="form-control"
+								className="form-select"
 								onChange={event => {
 									handleRelativesChange(i, "type", event);
 								}}
@@ -67,9 +67,9 @@ const RelativesForm = ({
 								<option value="son">Son</option>
 							</select>
 						</div>
-						<div className="mr-2">
+						<div className="me-2">
 							{i === 0 ? (
-								<label>
+								<label className="form-label">
 									Player ID number{" "}
 									<HelpPopover title="Player ID number">
 										<p>Enter the player ID number of the relative here.</p>
@@ -100,7 +100,7 @@ const RelativesForm = ({
 						<div className="flex-shrink-0" style={{ fontSize: 20 }}>
 							<RatingsStatsPopover pid={parseInt(pid as any, 10)} />
 							<button
-								className="ml-3 text-danger btn btn-link p-0 border-0"
+								className="ms-3 text-danger btn btn-link p-0 border-0"
 								onClick={() => {
 									handleRelativesChange(i, "delete");
 								}}

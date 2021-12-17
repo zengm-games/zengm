@@ -113,9 +113,12 @@ export const getStats = async ({
 				if (noDynamicAvgAge) {
 					continue;
 				}
-				playersRaw = await idb.getCopies.players({
-					statsTid: t.tid,
-				});
+				playersRaw = await idb.getCopies.players(
+					{
+						statsTid: t.tid,
+					},
+					"noCopyCache",
+				);
 			}
 
 			const players = await idb.getCopies.playersPlus(playersRaw, {

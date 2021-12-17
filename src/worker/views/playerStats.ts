@@ -52,10 +52,13 @@ const updatePlayers = async (
 				Infinity,
 			]);
 		} else {
-			playersAll = await idb.getCopies.players({
-				activeSeason:
-					typeof inputs.season === "number" ? inputs.season : undefined,
-			});
+			playersAll = await idb.getCopies.players(
+				{
+					activeSeason:
+						typeof inputs.season === "number" ? inputs.season : undefined,
+				},
+				"noCopyCache",
+			);
 		}
 
 		let tid: number | undefined = g

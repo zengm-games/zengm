@@ -213,10 +213,10 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 									key={key}
 									className={highlightColor(componentsRounded[key])}
 								>
-									<td className="text-right p-0">
+									<td className="text-end p-0">
 										{plusMinus(componentsRounded[key])}
 									</td>
-									<td className="p-0 pl-1">{text}</td>
+									<td className="p-0 ps-1">{text}</td>
 								</tr>
 							);
 						})}
@@ -260,17 +260,17 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				onClick={onClick}
 			>
 				<span
-					className={`text-right ${highlightColor(sum)}`}
+					className={`text-end ${highlightColor(sum)}`}
 					data-no-row-highlight="true"
 					style={plusMinusStyle}
 				>
 					{plusMinus(sum)}
 				</span>
-				<div className="ml-1 mr-auto" data-no-row-highlight="true">
+				<div className="ms-1 me-auto" data-no-row-highlight="true">
 					{initialMood.traits.join(" ")}
 				</div>
 				{showProbWilling ? (
-					<span className="text-muted ml-1" data-no-row-highlight="true">
+					<span className="text-muted ms-1" data-no-row-highlight="true">
 						{roundedProbWilling}%
 					</span>
 				) : null}

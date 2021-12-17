@@ -1,3 +1,29 @@
+family tree https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVlFGjtRhqBSxzzZsfpFXwpl
+
+on mobile, padding not being added to bottom of page when ad is shown?
+
+have "watch" as action in schedule page for playoff games too https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
+
+way to tell getCopy we are not going to mutate, so don't need deepcopy
+- noCopyCache
+- in progress
+  - benchmark
+
+half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
+
+performance on FA page https://discord.com/channels/290013534023057409/290013534023057409/919493773224972348
+
+mobile zoom issue
+- https://discord.com/channels/290013534023057409/290015591216054273/918908074251653202
+- The white space thing only shows up (atleast I'm pretty sure) on the roster page, for me whenever I click on the three bar things that shows the people's stats, zoom out, or releasing players it shows up. https://discord.com/channels/290013534023057409/569726303926878219/918742921736519710
+
+QB throw a Interception but their were two offsetting penalties so the down was replayed but it still counted the INT to the Stats. So the Safety still got credit for a pick https://discord.com/channels/290013534023057409/290015591216054273/917134502336270396
+
+bootstrap 5
+- test
+  - "More Info" dropdown alignment
+    - same with top menu dropdowns
+
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 
 scale roster composition by roster size https://discord.com/channels/290013534023057409/331882115119448065/915593141174824961
@@ -42,8 +68,6 @@ add comparison to real player, for random player or draft prospect?
 
 fix ai value of reversed draft picks https://discord.com/channels/290013534023057409/290013534023057409/905048206457581598
 - and random https://old.reddit.com/r/BasketballGM/comments/pyw33f/monthly_suggestions_thread/hg2t67n/
-
-on schedule page, if first game is on current day, put "watch" button in action. otherwise, put "sim to game" even though it's the first one https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
 
 add archetypes to players?
 - https://twitter.com/messages/1928999030-3723150857
@@ -135,8 +159,6 @@ More specific achievements, that are really more like challenges
 
 better adjustment for real draft prospects
 
-expansion draft firing timing https://discord.com/channels/290013534023057409/290015591216054273/888452073312620564
-
 don't use positions in substitution, or be less rigid about it https://discord.com/channels/@me/667557235479674880
 - ideally - look at ratings, not positions
 
@@ -162,8 +184,6 @@ show tenths of seconds in live sim play by play
 
 free throws with no time left https://github.com/zengm-games/zengm/issues/392
 
-way to tell getCopy we are not going to mutate, so don't need deepcopy
-
 player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
@@ -187,12 +207,6 @@ schedule customization
   - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
-
-draft lottery history
-- https://basketball.realgm.com/nba/draft/lottery_results/by_team
-- metric for overall luck
-  - the "pick change" thing from real GM seems sane. Either from pre-lottery standings (which people understand) or the expected value of each pick (which would be zero mean). A straight up P(better than expected) would make sense too I guess. so the 1st pick... that's going to average a negative number in the "pre-lottery standings change". But it should average as 0 compared to pick num3.66 ( 1*.14 + 2 *.134 + 3 *.127+4 *.12 + 5 *.479) https://discord.com/channels/290013534023057409/290015468939640832/865942178840969217
-- separate page, or on draft history page?
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)

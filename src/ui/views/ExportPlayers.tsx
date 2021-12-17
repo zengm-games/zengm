@@ -137,7 +137,7 @@ const ExportPlayers = ({
 							rows={rows}
 						/>
 					</div>
-					<div className="float-right btn-group my-3">
+					<div className="float-end btn-group my-3">
 						<button
 							className="btn btn-secondary"
 							onClick={() => {

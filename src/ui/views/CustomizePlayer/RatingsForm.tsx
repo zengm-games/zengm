@@ -120,8 +120,8 @@ const RatingsForm = ({
 													<h3>{title}</h3>
 													{ratings.map(rating => {
 														return (
-															<div key={rating} className="form-group">
-																<label>
+															<div key={rating} className="mb-3">
+																<label className="form-label">
 																	{getCols([`rating:${rating}`])[0].desc}
 																</label>
 																<input
@@ -147,8 +147,8 @@ const RatingsForm = ({
 				);
 			})}
 
-			<div className="ml-1">
-				<label className="form-check-label ml-3 mb-3">
+			<div className="ms-1">
+				<label className="form-check-label ms-3 mb-3">
 					<input
 						className="form-check-input"
 						onChange={event => {

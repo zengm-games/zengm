@@ -47,7 +47,9 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		}),
 		babel({
 			babelHelpers: "bundled",
-			exclude: "node_modules/!(d3|idb|streamsaver)**",
+			exclude: process.env.LEGACY
+				? "node_modules/!(d3|idb|react-bootstrap|streamsaver)**"
+				: "node_modules/**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
 		json({

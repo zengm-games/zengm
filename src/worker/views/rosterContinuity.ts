@@ -29,9 +29,12 @@ async function updateSeasons(
 			season <= g.get("season");
 			season++
 		) {
-			const players = await idb.getCopies.players({
-				activeSeason: season,
-			});
+			const players = await idb.getCopies.players(
+				{
+					activeSeason: season,
+				},
+				"noCopyCache",
+			);
 
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 			const minutesAll = range(g.get("numTeams")).map(

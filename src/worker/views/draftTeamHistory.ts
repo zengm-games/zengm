@@ -1,4 +1,4 @@
-import { bySport, PLAYER } from "../../common";
+import { bySport, getDraftLotteryProbs, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -24,9 +24,12 @@ const updateDraftTeamHistory = async (
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
-	const playersAll2 = await idb.getCopies.players({
-		filter,
-	});
+	const playersAll2 = await idb.getCopies.players(
+		{
+			filter,
+		},
+		"noCopyCache",
+	);
 	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
 		attrs: [
 			"tid",
@@ -47,10 +50,41 @@ const updateDraftTeamHistory = async (
 		showRookies: true,
 		fuzz: true,
 	});
-	const players = playersAll.map(p => {
+	const players = [];
+	for (const p of playersAll) {
 		const currentPr = p.ratings.at(-1);
 		const peakPr: any = maxBy(p.ratings, "ovr");
-		return {
+
+		let preLotteryRank: number | undefined;
+		let lotteryChange: number | undefined;
+		let lotteryProb: number | undefined;
+		if (p.draft.round === 1) {
+			const draftLottery = await idb.getCopy.draftLotteryResults(
+				{
+					season: p.draft.year,
+				},
+				"noCopyCache",
+			);
+			if (draftLottery) {
+				const lotteryRowIndex = draftLottery.result.findIndex(
+					row => row.pick === p.draft.pick,
+				);
+				if (lotteryRowIndex >= 0) {
+					preLotteryRank = lotteryRowIndex + 1;
+					lotteryChange = preLotteryRank - p.draft.pick;
+
+					const probs = getDraftLotteryProbs(
+						draftLottery.result,
+						draftLottery.draftType,
+					);
+					if (probs) {
+						lotteryProb = probs[lotteryRowIndex]?.[p.draft.pick - 1];
+					}
+				}
+			}
+		}
+
+		players.push({
 			// Attributes
 			pid: p.pid,
 			name: p.name,
@@ -76,8 +110,13 @@ const updateDraftTeamHistory = async (
 
 			// Stats
 			careerStats: p.careerStats,
-		};
-	});
+
+			// Draft lottery
+			preLotteryRank,
+			lotteryChange,
+			lotteryProb,
+		});
+	}
 
 	const abbrev = inputs.abbrev;
 	const userAbbrev = g.get("teamInfoCache")[g.get("userTid")]?.abbrev;

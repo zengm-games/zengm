@@ -107,19 +107,19 @@ const OwnerMoodsChart = ({
 	}[] = [
 		{
 			key: "wins",
-			color: "var(--danger)",
+			color: "var(--bs-danger)",
 		},
 		{
 			key: "playoffs",
-			color: "var(--info)",
+			color: "var(--bs-info)",
 		},
 		{
 			key: "money",
-			color: "var(--success)",
+			color: "var(--bs-success)",
 		},
 		{
 			key: "total",
-			color: "var(--dark)",
+			color: "var(--bs-dark)",
 			width: 4,
 		},
 	];
@@ -175,21 +175,21 @@ const OwnerMoodsChart = ({
 								<ReferenceLine
 									x={xScale.range()}
 									y={[yScale(3), yScale(3)]}
-									color="var(--success)"
+									color="var(--bs-success)"
 									text="Perfect"
 									textPosition="above"
 								/>
 								<ReferenceLine
 									x={xScale.range()}
 									y={[yScale(-1), yScale(-1)]}
-									color="var(--danger)"
+									color="var(--bs-danger)"
 									text="You're fired!"
 									textPosition="below"
 								/>
 								<ReferenceLine
 									x={xScale.range()}
 									y={[yScale(0), yScale(0)]}
-									color="var(--secondary)"
+									color="var(--bs-secondary)"
 								/>
 								{lineInfos.map(({ key, color, width = 1 }) => {
 									return (
@@ -234,7 +234,7 @@ const OwnerMoodsChart = ({
 					<li className="text-danger">— Regular season success</li>
 					<li className="text-info">— Playoff success</li>
 					<li className="text-success">— Finances</li>
-					<li className="text-dark font-weight-bold">— Total</li>
+					<li className="text-dark fw-bold">— Total</li>
 				</ul>
 			</div>
 		</div>

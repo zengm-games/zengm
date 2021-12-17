@@ -38,7 +38,7 @@ const Chart = ({
 }) => {
 	const MAX_WIDTH = 400;
 	const STROKE_WIDTH = 1;
-	const colors = ["var(--blue)", "var(--green)"];
+	const colors = ["var(--bs-blue)", "var(--bs-green)"];
 
 	const margin = {
 		top: 15,
@@ -85,7 +85,7 @@ const Chart = ({
 											? [yScale(0), yScale(0)]
 											: [yScale(0.5), yScale(0.5)]
 									}
-									color="var(--secondary)"
+									color="var(--bs-secondary)"
 								/>
 								{[0, 1].map(i => {
 									const filtered = seasonsToPlot.filter(
@@ -120,7 +120,7 @@ const Chart = ({
 								<ReferenceLine
 									x={[xMarker, xMarker]}
 									y={yScale.range() as [number, number]}
-									color="var(--danger)"
+									color="var(--bs-danger)"
 									text="Trade"
 									textPosition="right"
 								/>

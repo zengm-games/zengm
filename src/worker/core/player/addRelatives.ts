@@ -49,14 +49,12 @@ const getRelatives = async (
 	p: Player,
 	type: RelativeType,
 ): Promise<Player[]> => {
-	const players = await Promise.all(
-		p.relatives
-			.filter(rel => rel.type === type)
-			.map(({ pid }) =>
-				idb.getCopy.players({
-					pid,
-				}),
-			),
+	const pids = p.relatives.filter(rel => rel.type === type).map(rel => rel.pid);
+	const players = await idb.getCopies.players(
+		{
+			pids,
+		},
+		"noCopyCache",
 	);
 
 	// @ts-ignore
@@ -107,9 +105,12 @@ export const makeSon = async (p: Player) => {
 	);
 	const draftYear = p.draft.year - random.randInt(21, maxYearsAgo);
 	const possibleFathers = (
-		await idb.getCopies.players({
-			draftYear,
-		})
+		await idb.getCopies.players(
+			{
+				draftYear,
+			},
+			"noCopyCache",
+		)
 	).filter(
 		father =>
 			typeof father.diedYear !== "number" || father.diedYear >= p.born.year,
@@ -147,8 +148,9 @@ export const makeSon = async (p: Player) => {
 		p.lastName = fatherLastName;
 	}
 
-	p.born.loc = father.born.loc; // Handle case where father has other sons
+	p.born.loc = father.born.loc;
 
+	// Handle case where father has other sons
 	if (hasRelative(father, "son")) {
 		const existingSons = await getRelatives(father, "son");
 
@@ -159,8 +161,9 @@ export const makeSon = async (p: Player) => {
 				pid: p.pid,
 				name: `${p.firstName} ${p.lastName}`,
 			});
-			await idb.cache.players.put(existingSon); // Add existing brothers to new son
+			await idb.cache.players.put(existingSon);
 
+			// Add existing brothers to new son
 			addRelative(p, {
 				type: "brother",
 				pid: existingSon.pid,
@@ -184,8 +187,9 @@ export const makeSon = async (p: Player) => {
 				// Add father to each brother (assuming they don't somehow already have another father)
 				brother.born.loc = father.born.loc;
 				addRelative(brother, relFather);
-				await idb.cache.players.put(brother); // Add existing brothers as sons to father
+				await idb.cache.players.put(brother);
 
+				// Add existing brothers as sons to father
 				addRelative(father, {
 					type: "son",
 					pid: brother.pid,
@@ -216,9 +220,12 @@ export const makeBrother = async (p: Player) => {
 	const draftYear = p.draft.year - random.randInt(0, 5);
 	const existingRelativePids = p.relatives.map(rel => rel.pid);
 	const possibleBrothers = (
-		await idb.getCopies.players({
-			draftYear,
-		})
+		await idb.getCopies.players(
+			{
+				draftYear,
+			},
+			"noCopyCache",
+		)
 	).filter(p2 => {
 		if (p2.pid === p.pid) {
 			return false;

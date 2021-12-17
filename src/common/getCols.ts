@@ -2030,6 +2030,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	Change: {
+		desc: "Difference between pre-lottery rank and draft lottery result",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	College: {},
 	Conference: {},
 	Contract: {
@@ -2207,6 +2212,11 @@ const cols: {
 		sortSequence: [],
 	},
 	Note: {},
+	Odds: {
+		desc: "Pre-lottery odds of getting this pick",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Opp: {
 		desc: "Opponent",
 	},
@@ -2281,6 +2291,11 @@ const cols: {
 	},
 	"Pot Drop": {
 		desc: "Decrease in Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Pre-Lottery": {
+		desc: "Pre-lottery rank",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

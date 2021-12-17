@@ -89,6 +89,13 @@ const NewTeam = ({
 					teams willing to hire you.
 				</p>
 			);
+		} else if (gameOver) {
+			message = (
+				<p>
+					You've been fired by your current team, so pick an expansion team to
+					continue.
+				</p>
+			);
 		} else {
 			message = (
 				<p>
@@ -145,9 +152,9 @@ const NewTeam = ({
 		<>
 			{message}
 
-			<form className="form-inline" onSubmit={handleNewTeam}>
+			<form className="d-flex" onSubmit={handleNewTeam}>
 				<select
-					className="form-control mr-2"
+					className="form-select me-2"
 					style={{
 						width: "inherit",
 					}}
@@ -175,7 +182,7 @@ const NewTeam = ({
 					{t.imgURL ? (
 						<div
 							style={{ width: 128 }}
-							className="mr-3 d-flex align-items-center justify-content-center"
+							className="me-3 d-flex align-items-center justify-content-center"
 						>
 							<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
 								<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />

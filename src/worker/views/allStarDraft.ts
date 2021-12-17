@@ -21,7 +21,7 @@ const getPlayerInfo = async (
 	{ pid, tid, name }: AllStarPlayer,
 	season: number,
 ) => {
-	const p = await idb.getCopy.players({ pid });
+	const p = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (!p) {
 		throw new Error("Invalid pid");
 	}

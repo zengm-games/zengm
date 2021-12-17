@@ -159,7 +159,7 @@ const MultiTeamMode = ({
 			<div className="row">
 				<div className="col-sm-6">
 					<select
-						className="form-control"
+						className="form-select"
 						multiple
 						onChange={handleChange}
 						size={teams.length}

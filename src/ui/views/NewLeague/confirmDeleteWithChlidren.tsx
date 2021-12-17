@@ -60,7 +60,7 @@ const Confirm = confirmable(
 					>
 						<select
 							ref={selectRef}
-							className="form-control"
+							className="form-select"
 							value={controlledValue}
 							onChange={event => {
 								const value = event.target.value;

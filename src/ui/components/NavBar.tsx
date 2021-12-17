@@ -114,11 +114,10 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 			bg="light"
 			expand="sm"
 			fixed="top"
-			className="navbar-border flex-nowrap"
-			role="banner"
+			className="navbar-border flex-nowrap px-3"
 		>
 			<button
-				className="navbar-toggler mr-3"
+				className="navbar-toggler me-3"
 				onClick={() => {
 					localActions.toggleSidebar();
 				}}
@@ -143,14 +142,14 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 						}}
 						overlay={
 							<Popover id="popover-welcome">
-								<Popover.Title className="text-primary font-weight-bold">
+								<Popover.Header className="text-primary fw-bold">
 									Welcome to {GAME_NAME}!
-								</Popover.Title>
-								<Popover.Content>
+								</Popover.Header>
+								<Popover.Body>
 									To advance through the game, use the Play button at the top.
 									The options shown will change depending on the current state
 									of the game.
-								</Popover.Content>
+								</Popover.Body>
 							</Popover>
 						}
 					>

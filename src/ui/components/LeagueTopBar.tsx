@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { m, AnimatePresence } from "framer-motion";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -22,7 +21,7 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 };
 
 const hiddenStyle = {
-	marginBottom: -64,
+	marginBottom: -12,
 };
 
 const LeagueTopBar = memo(() => {
@@ -42,25 +41,98 @@ const LeagueTopBar = memo(() => {
 		}
 		return true;
 	});
-	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
+
+	const keepScrollToRightRef = useRef(true);
+
+	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
+		null,
+	);
+
 	const prevGames = useRef<typeof games>([]);
 
-	const updateNumberOfScoreBoxes = useCallback(() => {
-		// Limit number of ScoreBoxes to render
-		const documentElement = document.documentElement;
-		if (documentElement) {
-			const width = documentElement.clientWidth;
-			setNumberOfScoreBoxes(Math.ceil(width / 115));
+	const games2: typeof games = [];
+
+	const keepScrolledToRightIfNecessary = useCallback(() => {
+		if (
+			keepScrollToRightRef.current &&
+			wrapperElement &&
+			wrapperElement.scrollLeft + wrapperElement.offsetWidth <
+				wrapperElement.scrollWidth &&
+			// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
+			wrapperElement.scrollTo
+		) {
+			wrapperElement.scrollTo({
+				left: wrapperElement.scrollWidth,
+			});
 		}
-	}, []);
+	}, [wrapperElement]);
 
 	useEffect(() => {
-		updateNumberOfScoreBoxes();
-		window.addEventListener("optimizedResize", updateNumberOfScoreBoxes);
-		return () => {
-			window.removeEventListener("optimizedResize", updateNumberOfScoreBoxes);
+		if (!wrapperElement || !show) {
+			return;
+		}
+
+		const handleWheel = (event: WheelEvent) => {
+			if (
+				!wrapperElement ||
+				wrapperElement.scrollWidth <= wrapperElement.clientWidth ||
+				event.altKey ||
+				event.ctrlKey ||
+				event.metaKey ||
+				event.shiftKey ||
+				// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
+				!wrapperElement.scrollTo
+			) {
+				return;
+			}
+
+			// We're scrolling within the bar, not within the whole page
+			event.preventDefault();
+
+			const leagueTopBarPosition = wrapperElement.scrollLeft;
+
+			wrapperElement.scrollTo({
+				// Normal mouse wheels are just deltaY, but trackpads (such as on Mac) can include both, and I think there's no way to tell if this event came from a device supporting two dimensional scrolling or not.
+				left: leagueTopBarPosition + 2 * (event.deltaX + event.deltaY),
+			});
 		};
-	}, [updateNumberOfScoreBoxes]);
+
+		// This triggers for wheel scrolling and click scrolling
+		const handleScroll = () => {
+			if (
+				!wrapperElement ||
+				wrapperElement.scrollWidth <= wrapperElement.clientWidth
+			) {
+				return;
+			}
+
+			// Keep track of if we're scrolled to the right or not
+			const FUDGE_FACTOR = 15; // Off by a few pixels? That's fine!
+			keepScrollToRightRef.current =
+				wrapperElement.scrollLeft + wrapperElement.offsetWidth >=
+				wrapperElement.scrollWidth - FUDGE_FACTOR;
+		};
+
+		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
+		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
+
+		let resizeObserver: ResizeObserver | undefined;
+		// Chrome 64 and Safari 13.1 support ResizeObserver
+		if (typeof ResizeObserver !== "undefined") {
+			// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
+			resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);
+			resizeObserver.observe(wrapperElement);
+		}
+
+		return () => {
+			wrapperElement.removeEventListener("wheel", handleWheel);
+			wrapperElement.removeEventListener("scroll", handleScroll);
+			resizeObserver?.unobserve(wrapperElement);
+		};
+	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
+
+	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
+	keepScrolledToRightIfNecessary();
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
@@ -77,7 +149,6 @@ const LeagueTopBar = memo(() => {
 		prevGames.current = games;
 	}
 
-	let games2: typeof games = [];
 	if (show) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {
@@ -86,45 +157,37 @@ const LeagueTopBar = memo(() => {
 				break;
 			}
 		}
-
-		const start = games2.length - numberOfScoreBoxes;
-		if (start > 0) {
-			games2 = games2.slice(start);
-		}
 	}
-
-	const transition = { duration: 0.2, type: "tween" };
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2"
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2"
 			style={show ? undefined : hiddenStyle}
+			ref={element => {
+				setWrapperElement(element);
+			}}
 		>
-			{show ? (
-				// This makes it not animate the initial render
-				<AnimatePresence initial={false}>
-					{games2.map(game => (
-						<m.div
-							key={game.gid}
-							layout
-							initial={{ x: 105 }}
-							animate={{ x: 0 }}
-							// Need to specify exit, otherwise AnimatePresence makes divs stay around forever
-							exit={{}}
-							transition={transition}
-						>
-							<ScoreBox className="mr-2" game={game} small />
-						</m.div>
-					))}
-				</AnimatePresence>
-			) : null}
 			<Toggle
 				show={show}
 				toggle={() => {
-					setShow(show2 => !show2);
+					if (show === false) {
+						// When showing, always scroll to right
+						keepScrollToRightRef.current = true;
+					}
+					setShow(!show);
 					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
 				}}
 			/>
+			{show
+				? games2.map((game, i) => (
+						<ScoreBox
+							key={game.gid}
+							className={`me-2${i === 0 ? " ms-auto" : ""}`}
+							game={game}
+							small
+						/>
+				  ))
+				: null}
 		</div>
 	);
 });

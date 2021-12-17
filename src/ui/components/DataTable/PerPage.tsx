@@ -10,9 +10,9 @@ const PerPage = ({
 }) => {
 	return (
 		<div className="datatable-perpage">
-			<label>
+			<label className="form-label">
 				<select
-					className="form-control form-control-sm"
+					className="form-select form-select-sm"
 					onChange={onChange}
 					value={value}
 				>

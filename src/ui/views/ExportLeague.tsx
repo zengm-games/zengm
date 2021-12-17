@@ -409,7 +409,7 @@ const RenderOption = ({
 		<>
 			<div
 				className={classNames("form-check", {
-					"ml-4": parent,
+					"ms-4": parent,
 				})}
 			>
 				<label className="form-check-label">
@@ -749,7 +749,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					{state === "idle" || state === "dropbox" ? (
 						dropboxAccessToken ? (
 							<ActionButton
-								className={state === "idle" ? "ml-2" : undefined}
+								className={state === "idle" ? "ms-2" : undefined}
 								maintainWidth={false}
 								processing={state === "dropbox"}
 								onClick={handleSubmit("dropbox")}
@@ -759,7 +759,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							</ActionButton>
 						) : (
 							<button
-								className="btn btn-primary ml-2"
+								className="btn btn-primary ms-2"
 								onClick={async () => {
 									if (lid === undefined) {
 										return;
@@ -784,7 +784,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 					{SUPPORTS_CANCEL && state !== "idle" ? (
 						<button
-							className="btn btn-secondary ml-2"
+							className="btn btn-secondary ms-2"
 							type="button"
 							disabled={aborting}
 							onClick={() => {

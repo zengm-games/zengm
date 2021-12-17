@@ -59,8 +59,10 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			<h2>Login</h2>
 			<form onSubmit={handleSubmit} ref={formRef}>
 				<input type="hidden" name="sport" value={process.env.SPORT} />
-				<div className="form-group">
-					<label htmlFor="login-username">Username</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="login-username">
+						Username
+					</label>
 					<input
 						type="text"
 						className="form-control"
@@ -70,8 +72,10 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						required
 					/>
 				</div>
-				<div className="form-group">
-					<label htmlFor="login-password">Password</label>
+				<div className="mb-3">
+					<label className="form-label" htmlFor="login-password">
+						Password
+					</label>
 					<input
 						type="password"
 						className="form-control"

@@ -24,9 +24,7 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 		}
 
 		// Check players
-		const players = await idb.getCopies.players({
-			tid: t.tid,
-		});
+		const players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
 		const pidsGood: number[] = [];
 		const pidsExcludedGood: number[] = [];
 

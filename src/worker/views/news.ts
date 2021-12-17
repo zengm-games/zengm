@@ -123,7 +123,10 @@ export const processEvents = async (
 			break;
 		}
 		if (event.pids && event.pids.length > 0) {
-			const player = await idb.getCopy.players({ pid: event.pids[0] });
+			const player = await idb.getCopy.players(
+				{ pid: event.pids[0] },
+				"noCopyCache",
+			);
 			if (player) {
 				event.p = {
 					imgURL: player.imgURL,

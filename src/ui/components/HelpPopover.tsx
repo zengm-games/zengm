@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
-import { Popover } from "react-bootstrap";
-import { ReactNode, useCallback, useState } from "react";
-import OverlayTriggerPopoverAuto from "./OverlayTriggerPopoverAuto";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import type { ReactNode } from "react";
 
 const HelpPopover = ({
 	children,
@@ -16,29 +15,25 @@ const HelpPopover = ({
 	};
 	title: string;
 }) => {
-	// https://stackoverflow.com/a/53215514/786644
-	const [, updateState] = useState<any>();
-	const forceUpdate = useCallback(() => updateState({}), []);
-
 	if (!className) {
 		className = "";
 	}
 	className += " glyphicon glyphicon-question-sign help-icon";
 
 	return (
-		<OverlayTriggerPopoverAuto
-			popoverContent={
-				<>
-					<Popover.Title as="h3">{title}</Popover.Title>
-					<Popover.Content>{children}</Popover.Content>
-				</>
+		<OverlayTrigger
+			trigger="click"
+			placement="auto"
+			overlay={
+				<Popover id={title}>
+					<Popover.Header as="h3">{title}</Popover.Header>
+					<Popover.Body>{children}</Popover.Body>
+				</Popover>
 			}
-			popoverID={title}
-			// This is to force the popover to re-render each time it opens, which allows the "popover-margin-fix" heuristic to work. Currently this is done here rather than in OverlayTriggerPopoverAuto because OverlayTriggerPopoverAuto is only used in 2 places and the other already auto re-renders
-			onEnter={forceUpdate}
+			rootClose
 		>
 			<span className={className} style={style} />
-		</OverlayTriggerPopoverAuto>
+		</OverlayTrigger>
 	);
 };
 

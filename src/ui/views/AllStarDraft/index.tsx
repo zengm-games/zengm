@@ -305,7 +305,7 @@ const AllStars = ({
 					</button>
 					{godMode ? (
 						<button
-							className="btn btn-lg btn-god-mode ml-3"
+							className="btn btn-lg btn-god-mode ms-3"
 							onClick={() => {
 								setEditing(true);
 							}}

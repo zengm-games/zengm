@@ -37,6 +37,7 @@ const initAutoPlay = async (conditions: Conditions) => {
 		local.autoPlayUntil = {
 			season,
 			phase,
+			start: Date.now(),
 		};
 		autoPlay(conditions);
 	} else {

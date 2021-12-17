@@ -2,34 +2,45 @@ import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
-import type { MinimalPlayerRatings, Player } from "../../../common/types";
+import type {
+	GetCopyType,
+	MinimalPlayerRatings,
+	Player,
+} from "../../../common/types";
 import { unwrap } from "idb";
 
-const getCopies = async ({
-	pid,
-	pids,
-	retiredYear,
-	activeAndRetired,
-	activeSeason,
-	draftYear,
-	statsTid,
-	tid,
-	filter = () => true,
-}: {
-	pid?: number;
-	pids?: number[];
-	retiredYear?: number;
-	activeAndRetired?: boolean;
-	activeSeason?: number;
-	draftYear?: number;
-	statsTid?: number;
-	tid?: [number, number] | number;
-	filter?: (p: Player<MinimalPlayerRatings>) => boolean;
-} = {}): Promise<Player[]> => {
+const getCopies = async (
+	{
+		pid,
+		pids,
+		retiredYear,
+		activeAndRetired,
+		activeSeason,
+		draftYear,
+		statsTid,
+		tid,
+		filter = () => true,
+	}: {
+		pid?: number;
+		pids?: number[];
+		retiredYear?: number;
+		activeAndRetired?: boolean;
+		activeSeason?: number;
+		draftYear?: number;
+		statsTid?: number;
+		tid?: [number, number] | number;
+		filter?: (p: Player<MinimalPlayerRatings>) => boolean;
+	} = {},
+	type?: GetCopyType,
+): Promise<Player[]> => {
+	if (pids?.length === 1) {
+		pid = pids[0];
+	}
+
 	if (pid !== undefined) {
 		const p = await idb.cache.players.get(pid);
 		if (p) {
-			return [helpers.deepCopy(p)];
+			return [type === "noCopyCache" ? p : helpers.deepCopy(p)];
 		}
 
 		const p2 = await idb.league.get("players", pid);
@@ -89,6 +100,7 @@ const getCopies = async ({
 			fromDB,
 			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
 			"players",
+			type,
 		);
 
 		const sorted = [];
@@ -148,6 +160,7 @@ const getCopies = async ({
 			fromDB,
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 			"players",
+			type,
 		).filter(p => p.retiredYear === retiredYear);
 	}
 
@@ -165,9 +178,10 @@ const getCopies = async ({
 		}
 
 		// This works if tid is a number or [min, max]
-		return helpers.deepCopy(
-			(await idb.cache.players.indexGetAll("playersByTid", tid)).filter(filter),
-		);
+		const fromDB = (
+			await idb.cache.players.indexGetAll("playersByTid", tid)
+		).filter(filter);
+		return type === "noCopyCache" ? fromDB : helpers.deepCopy(fromDB);
 	}
 
 	if (activeAndRetired === true) {
@@ -194,6 +208,7 @@ const getCopies = async ({
 				]),
 			),
 			"players",
+			type,
 		).filter(filter);
 	}
 
@@ -254,6 +269,7 @@ const getCopies = async ({
 					p => p.draft.year < activeSeason && p.retiredYear >= activeSeason,
 				),
 			"players",
+			type,
 		);
 	}
 
@@ -272,6 +288,7 @@ const getCopies = async ({
 				])
 			).filter(p => p.draft.year === draftYear),
 			"players",
+			type,
 		);
 	}
 
@@ -294,6 +311,7 @@ const getCopies = async ({
 				)
 				.filter(p => p.statsTids.includes(constStatsTid)),
 			"players",
+			type,
 		);
 	}
 
@@ -301,6 +319,7 @@ const getCopies = async ({
 		await getAll(idb.league.transaction("players").store, undefined, filter),
 		await idb.cache.players.getAll(),
 		"players",
+		type,
 	).filter(filter);
 };
 

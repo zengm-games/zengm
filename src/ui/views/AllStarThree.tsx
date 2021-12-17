@@ -20,7 +20,7 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 		<div className="row" style={{ maxWidth: 800 }}>
 			{rackNames.map((name, i) => (
 				<div key={i} className={classNames("col-12 col-sm", highlight(i))}>
-					<div className="font-weight-bold text-center my-1">{name}</div>
+					<div className="fw-bold text-center my-1">{name}</div>
 					<div className="d-flex mb-2">
 						{range(NUM_BALLS_PER_RACK).map(j => {
 							const shotResult: boolean | undefined = racks[i]?.[j];

@@ -17,7 +17,7 @@ const Summary = forwardRef(
 							"mb-md-3": i === 0,
 						})}
 					>
-						<h4 className="font-weight-bold mb-1">{t.name} receive:</h4>
+						<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 						<ul className="list-unstyled mb-1">
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>

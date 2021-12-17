@@ -84,11 +84,11 @@ const StripeButton = ({ email }: { email: string }) => {
 			<div className="alert alert-info mt-3 mb-0">
 				If you would rather pay for multiple months at once rather than
 				subscribe, send money by{" "}
-				<a href="https://www.paypal.com/" className="font-weight-bold">
+				<a href="https://www.paypal.com/" className="fw-bold">
 					PayPal
 				</a>{" "}
 				to{" "}
-				<a href="mailto:jeremy@zengm.com" className="font-weight-bold">
+				<a href="mailto:jeremy@zengm.com" className="fw-bold">
 					jeremy@zengm.com
 				</a>{" "}
 				and include your username in the message. I will then manually credit

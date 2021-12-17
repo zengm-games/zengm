@@ -1,9 +1,9 @@
-import { Fragment, memo } from "react";
+import { memo } from "react";
 import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [
 	{
-		url: "https://zengm.com/",
+		url: "https://zengm.com/about/",
 		title: "About",
 	},
 	{
@@ -21,6 +21,7 @@ const footerLinks = [
 	{
 		url: "https://github.com/zengm-games/zengm",
 		title: "GitHub",
+		hideMobile: true,
 	},
 	{
 		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,
@@ -35,7 +36,7 @@ const footerLinks = [
 const Footer = memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
-		<footer className="footer-wrapper mt-auto" id="main-footer">
+		<footer className="footer-wrapper mt-auto mb-3" id="main-footer">
 			<p className="clearfix" />
 
 			<div
@@ -92,22 +93,25 @@ const Footer = memo(() => {
 			<div className="clearfix" />
 			<hr />
 
-			<p className="float-sm-left">
-				{footerLinks.map(({ url, title }, i) => {
+			<div className="float-sm-start">
+				{footerLinks.map(({ hideMobile, url, title }, i) => {
 					return (
-						<Fragment key={url}>
+						<span
+							key={url}
+							className={hideMobile ? "d-none d-sm-inline-block" : undefined}
+						>
 							{i > 0 ? " · " : null}
 							<a href={url} rel="noopener noreferrer" target="_blank">
 								{title}
 							</a>
-						</Fragment>
+						</span>
 					);
 				})}
 				<br />
-			</p>
-			<p className="float-sm-right text-muted">
+			</div>
+			<div className="float-sm-end text-muted">
 				{GAME_ACRONYM} v{window.bbgmVersion}
-			</p>
+			</div>
 		</footer>
 	);
 });

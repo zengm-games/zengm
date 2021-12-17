@@ -28,12 +28,12 @@ const Slider = ({
 
 	return (
 		<div className={className}>
-			<label className="mb-1" htmlFor={id}>
+			<label className="form-label mb-0" htmlFor={id}>
 				{playoffs ? "Playoffs" : "Regular Season"}
 			</label>
 			<input
 				type="range"
-				className="form-control-range"
+				className="form-range"
 				id={id}
 				value={value}
 				min="0"
@@ -53,12 +53,13 @@ const Slider = ({
 					}
 				}}
 			/>
-			<div className="mt-1">
+			<div style={{ marginTop: -5 }}>
 				{value === 0 ? (
 					"Only play fully healthy players"
 				) : (
 					<>
-						{value} {timeBetweenGames(value)} ({rounded}% performance)
+						{value} {timeBetweenGames(value)}{" "}
+						<span className="text-muted">({rounded}% performance)</span>
 					</>
 				)}
 			</div>
@@ -83,7 +84,7 @@ const PlayThroughInjuriesSliders = ({
 			<div className="d-flex align-items-center">
 				{window.mobile ? (
 					<button
-						className="btn btn-link p-0 font-weight-bold"
+						className="btn btn-link p-0 fw-bold"
 						type="button"
 						onClick={() => setExpanded(prev => !prev)}
 					>
@@ -107,7 +108,7 @@ const PlayThroughInjuriesSliders = ({
 					<b>{titleText}</b>
 				)}
 				{expanded ? (
-					<HelpPopover className="ml-1" title="Play Through Injuries">
+					<HelpPopover className="ms-1" title="Play Through Injuries">
 						<p>
 							This allows you to determine when players should play through
 							minor injuries. You can set the cutoff separately for the regular

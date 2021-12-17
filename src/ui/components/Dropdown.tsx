@@ -85,22 +85,20 @@ const Select = ({
 			}}
 		>
 			{buttons}
-			<div className="form-group mb-0">
-				<select
-					value={value}
-					className="dropdown-select"
-					onChange={event => {
-						handleChange(event.currentTarget.value);
-					}}
-					style={style}
-				>
-					{options.map(opt => (
-						<option key={opt.key} value={opt.key}>
-							{opt.val}
-						</option>
-					))}
-				</select>
-			</div>
+			<select
+				value={value}
+				className="dropdown-select"
+				onChange={event => {
+					handleChange(event.currentTarget.value);
+				}}
+				style={style}
+			>
+				{options.map(opt => (
+					<option key={opt.key} value={opt.key}>
+						{opt.val}
+					</option>
+				))}
+			</select>
 		</div>
 	);
 };
@@ -142,7 +140,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	};
 
 	return (
-		<form className="form-inline">
+		<form className="d-flex">
 			{keys.map((key, i) => {
 				return (
 					<Select

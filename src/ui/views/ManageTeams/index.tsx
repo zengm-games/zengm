@@ -164,7 +164,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				</div>
 			) : null}
 
-			<div className="form-row d-none d-lg-flex font-weight-bold mb-2">
+			<div className="row gx-2 d-none d-lg-flex fw-bold mb-2">
 				<div className="col-lg-2">
 					<br />
 					Region
@@ -210,7 +210,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			</div>
 
 			<form onSubmit={handleSubmit}>
-				<div className="form-row">
+				<div className="row gx-2">
 					{teams.map(t => (
 						<Fragment key={t.tid}>
 							<TeamForm

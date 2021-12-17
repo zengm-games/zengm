@@ -1053,7 +1053,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;
-	hof: boolean;
+	hof?: 1; // Would rather be boolean, but can't index boolean
 	imgURL: string;
 	injury: PlayerInjury;
 	injuries: {

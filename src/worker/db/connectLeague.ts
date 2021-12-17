@@ -103,6 +103,7 @@ export interface LeagueDB extends DBSchema {
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];
+			hof: number;
 			statsTids: number;
 			tid: number;
 		};
@@ -484,6 +485,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	playerStore.createIndex("tid", "tid", {
 		unique: false,
 	});
+	playerStore.createIndex("hof", "hof", {
+		unique: false,
+	});
 	teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 		unique: true,
 	});
@@ -506,7 +510,7 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	});
 };
 
-const migrate = ({
+const migrate = async ({
 	db,
 	lid,
 	oldVersion,
@@ -1130,6 +1134,30 @@ const migrate = ({
 				});
 			};
 		};
+	}
+
+	if (oldVersion <= 48) {
+		slowUpgrade();
+
+		const playerStore = transaction.objectStore("players");
+		await iterate(
+			transaction.objectStore("players"),
+			undefined,
+			undefined,
+			p => {
+				if (p.hof) {
+					p.hof = 1;
+				} else {
+					delete p.hof;
+				}
+
+				return p;
+			},
+		);
+
+		playerStore.createIndex("hof", "hof", {
+			unique: false,
+		});
 	}
 };
 

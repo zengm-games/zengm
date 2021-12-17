@@ -37,15 +37,15 @@ const connectIndexedDB = async <DBTypes>({
 			StoreNames<DBTypes>[],
 			"versionchange"
 		>;
-	}) => void;
+	}) => Promise<void>;
 }) => {
 	// Would like to await on create/migrate and inside those functions, but Firefox
 	const db = await openDB<DBTypes>(name, version, {
-		upgrade(db, oldVersion, newVerison, transaction) {
+		async upgrade(db, oldVersion, newVerison, transaction) {
 			if (oldVersion === 0) {
 				create(db);
 			} else {
-				migrate({ db, lid, oldVersion, transaction });
+				await migrate({ db, lid, oldVersion, transaction });
 			}
 		},
 		blocked() {

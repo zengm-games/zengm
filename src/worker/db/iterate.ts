@@ -26,7 +26,7 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 				IndexNames<LeagueDB, StoreName>,
 				IDBTransactionMode
 		  >,
-	key: StoreKey<LeagueDB, StoreName> | IDBKeyRange | undefined = undefined,
+	key: StoreKey<LeagueDB, StoreName> | IDBKeyRange | undefined,
 	direction: "next" | "nextunique" | "prev" | "prevunique" = "next",
 	callback: (
 		value: StoreValue<LeagueDB, StoreName>,

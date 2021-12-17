@@ -47,7 +47,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 	attributeStore.put("REV_GOES_HERE", "lastChangesVersion");
 };
 
-const migrate = ({
+const migrate = async ({
 	db,
 	oldVersion,
 }: {

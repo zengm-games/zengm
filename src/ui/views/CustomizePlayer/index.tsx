@@ -320,7 +320,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			if (type === "root") {
 				if (field === "hof") {
-					p[field] = val === "true";
+					if (val === "yes") {
+						p[field] = 1;
+					} else {
+						delete p[field];
+					}
 				} else if (field === "jerseyNumber") {
 					if (p.stats.length > 0) {
 						p.stats.at(-1).jerseyNumber = val;
@@ -823,11 +827,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<select
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "hof")}
-									value={String(p.hof)}
+									value={p.hof ? "yes" : "no"}
 									disabled={!godMode}
 								>
-									<option value="true">Yes</option>
-									<option value="false">No</option>
+									<option value="yes">Yes</option>
+									<option value="no">No</option>
 								</select>
 							</div>
 						</div>

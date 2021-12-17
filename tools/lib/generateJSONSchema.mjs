@@ -1322,7 +1322,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						hof: {
-							type: "boolean",
+							oneOf: [
+								{
+									type: "boolean",
+								},
+								{
+									const: 1,
+								},
+							],
 						},
 						imgURL: {
 							type: "string",

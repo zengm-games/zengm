@@ -17,6 +17,7 @@ const getCopies = async (
 		activeAndRetired,
 		activeSeason,
 		draftYear,
+		hof,
 		statsTid,
 		tid,
 		filter = () => true,
@@ -27,6 +28,7 @@ const getCopies = async (
 		activeAndRetired?: boolean;
 		activeSeason?: number;
 		draftYear?: number;
+		hof?: boolean;
 		statsTid?: number;
 		tid?: [number, number] | number;
 		filter?: (p: Player<MinimalPlayerRatings>) => boolean;
@@ -271,6 +273,19 @@ const getCopies = async (
 			"players",
 			type,
 		);
+	}
+
+	if (hof) {
+		return mergeByPk(
+			await getAll(
+				idb.league.transaction("players").store.index("hof"),
+				1,
+				filter,
+			),
+			(await idb.cache.players.getAll()).filter(p => p.hof === 1),
+			"players",
+			type,
+		).filter(filter);
 	}
 
 	if (draftYear !== undefined) {

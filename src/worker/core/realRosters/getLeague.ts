@@ -180,7 +180,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		if (hofSlugs.size > 0) {
 			for (const p of players) {
 				if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
-					p.hof = true;
+					p.hof = 1;
 					if (!p.awards) {
 						p.awards = [];
 					}

@@ -107,9 +107,10 @@ const LeagueTopBar = memo(() => {
 			}
 
 			// Keep track of if we're scrolled to the right or not
+			const FUDGE_FACTOR = 15; // Off by a few pixels? That's fine!
 			keepScrollToRightRef.current =
 				wrapperElement.scrollLeft + wrapperElement.offsetWidth >=
-				wrapperElement.scrollWidth;
+				wrapperElement.scrollWidth - FUDGE_FACTOR;
 		};
 
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });

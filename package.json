@@ -17,7 +17,7 @@
 		"deploy": "yarn run lint && yarn test && node tools/deploy.mjs",
 		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.mjs",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
-		"watch": "yarn run ajv-hack && node tools/watch.js",
+		"watch": "yarn run ajv-hack && node --openssl-legacy-provider tools/watch.js",
 		"lint": "concurrently --raw \"yarn run lint-js\" \"yarn run lint-ts\"",
 		"lint-js": "eslint \"*.{mjs,js,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,ts,tsx}\" \"tools/**/*.{mjs,js,ts,tsx}\"",
 		"lint-ts": "node tools/pre-test.mjs && yarn run tsc",

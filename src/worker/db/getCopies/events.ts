@@ -1,6 +1,6 @@
 import { getAll, idb } from "..";
-import { mergeByPk } from "./helpers";
-import type { EventBBGM } from "../../../common/types";
+import { maybeDeepCopy, mergeByPk } from "./helpers";
+import type { EventBBGM, GetCopyType } from "../../../common/types";
 
 type Filter = (event: EventBBGM) => boolean;
 
@@ -25,8 +25,15 @@ const getCopies = async (
 				season: number;
 				filter?: Filter;
 		  } = {},
+	type?: GetCopyType,
 ): Promise<EventBBGM[]> => {
-	const { eid, dpid, pid, season, filter = () => true } = input as {
+	const {
+		eid,
+		dpid,
+		pid,
+		season,
+		filter = () => true,
+	} = input as {
 		eid?: number;
 		dpid?: number;
 		pid?: number;
@@ -44,6 +51,7 @@ const getCopies = async (
 				return event.season === season;
 			}),
 			"events",
+			type,
 		).filter(filter);
 	}
 
@@ -54,6 +62,7 @@ const getCopies = async (
 				return event.pids !== undefined && event.pids.includes(pid);
 			}),
 			"events",
+			type,
 		).filter(filter);
 	}
 
@@ -64,13 +73,14 @@ const getCopies = async (
 				return event.dpids !== undefined && event.dpids.includes(dpid);
 			}),
 			"events",
+			type,
 		).filter(filter);
 	}
 
 	if (eid !== undefined) {
 		const event = await idb.cache.events.get(eid);
 		if (event) {
-			return [event];
+			return [maybeDeepCopy(event, type)];
 		}
 
 		const event2 = await idb.league.get("events", eid);
@@ -85,6 +95,7 @@ const getCopies = async (
 		await getAll(idb.league.transaction("events").store, undefined, filter),
 		await idb.cache.events.getAll(),
 		"events",
+		type,
 	).filter(filter);
 };
 

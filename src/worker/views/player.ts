@@ -523,13 +523,19 @@ const updatePlayer = async (
 
 		const eventsAll = orderBy(
 			[
-				...(await idb.getCopies.events({
-					pid: topStuff.pid,
-				})),
+				...(await idb.getCopies.events(
+					{
+						pid: topStuff.pid,
+					},
+					"noCopyCache",
+				)),
 				...(p.draft.dpid !== undefined
-					? await idb.getCopies.events({
-							dpid: p.draft.dpid,
-					  })
+					? await idb.getCopies.events(
+							{
+								dpid: p.draft.dpid,
+							},
+							"noCopyCache",
+					  )
 					: []),
 			],
 			"eid",

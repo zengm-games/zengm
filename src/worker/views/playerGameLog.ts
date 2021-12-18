@@ -47,7 +47,7 @@ const updatePlayerGameLog = async (
 			),
 		);
 
-		const games = await idb.getCopies.games({ season });
+		const games = await idb.getCopies.games({ season }, "noCopyCache");
 
 		const abbrevsByTid: Record<number, string> = {};
 		const getAbbrev = async (tid: number) => {

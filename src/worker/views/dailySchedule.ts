@@ -21,9 +21,12 @@ const updateDailySchedule = async (
 		inputs.day !== state.day
 	) {
 		const process = async (inputsDayOverride?: number) => {
-			const games = await idb.getCopies.games({
-				season: inputs.season,
-			});
+			const games = await idb.getCopies.games(
+				{
+					season: inputs.season,
+				},
+				"noCopyCache",
+			);
 
 			const daysAndPlayoffs = new Map<number, boolean>();
 			for (const game of games) {

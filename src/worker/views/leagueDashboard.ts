@@ -7,9 +7,12 @@ import { processEvents } from "./news";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
-		const messages = await idb.getCopies.messages({
-			limit: 2,
-		});
+		const messages = await idb.getCopies.messages(
+			{
+				limit: 2,
+			},
+			"noCopyCache",
+		);
 		messages.reverse();
 		return {
 			messages: messages.map(message => ({

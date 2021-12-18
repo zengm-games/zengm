@@ -3,16 +3,9 @@ import PropTypes from "prop-types";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
-import type { Argument } from "classnames";
+import type { Col, DataTableRow } from "./index";
 
-const Row = ({
-	row,
-}: {
-	row: {
-		classNames?: Argument;
-		data: any[];
-	};
-}) => {
+const Row = ({ row, cols }: { row: DataTableRow; cols: Col[] }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
 		<tr
@@ -21,7 +14,9 @@ const Row = ({
 			})}
 			onClick={toggleClicked}
 		>
-			{row.data.map((value = null, i) => {
+			{cols.map((col, i) => {
+				const key: string = col.key || "";
+				const value = row.data[key] ?? null;
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =
 					value !== null && value.hasOwnProperty("value") ? value.value : value;
@@ -81,7 +76,7 @@ const Row = ({
 
 Row.propTypes = {
 	row: PropTypes.shape({
-		data: PropTypes.array.isRequired,
+		data: PropTypes.object.isRequired,
 	}).isRequired,
 };
 

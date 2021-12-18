@@ -5,7 +5,7 @@ import type { Team } from "../../../common/types";
 const getDepthPlayers = <
 	T extends {
 		pid: number;
-	}
+	},
 >(
 	depth: Team["depth"],
 	players: T[],

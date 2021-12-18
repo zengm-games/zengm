@@ -153,8 +153,8 @@ const WatchList = ({
 			</ActionButton>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[5, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col3", "desc"]}
 				name="WatchList"
 				pagination
 				rows={rows}

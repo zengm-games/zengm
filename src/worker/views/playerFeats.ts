@@ -10,6 +10,7 @@ const updatePlayers = async (
 ) => {
 	if (
 		updateEvents.includes("gameSim") ||
+		updateEvents.includes("customizeTable") ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.season !== state.season
 	) {

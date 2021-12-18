@@ -13,6 +13,7 @@ const updatePlayers = async (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("customizeTable") ||
 		inputs.statType !== state.statType ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.flagNote !== state.flagNote

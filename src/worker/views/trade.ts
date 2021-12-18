@@ -4,6 +4,7 @@ import { team, trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
 import type { TradeTeams } from "../../common/types";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
@@ -95,17 +96,36 @@ const updateTrade = async () => {
 		"watch",
 		"untradable",
 		"jerseyNumber",
+		"pos",
 	];
-	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats = bySport({
-		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		basketball: [
+			"stat:gp",
+			"stat:min",
+			"stat:pts",
+			"stat:trb",
+			"stat:ast",
+			"stat:per",
+		],
+		football: ["stat:gp", "stat:keyStats", "stat:av"],
+		hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 	});
+
+	const config: TableConfig = new TableConfig("trade", [
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		"Contract",
+		...stats,
+	]);
+	await config.load();
+
 	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,
-		ratings,
-		stats,
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: g.get("season"),
 		tid: g.get("userTid"),
 		showNoStats: true,
@@ -153,8 +173,8 @@ const updateTrade = async () => {
 
 	const otherRoster = await idb.getCopies.playersPlus(otherRosterAll, {
 		attrs,
-		ratings,
-		stats,
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: g.get("season"),
 		tid: otherTid,
 		showNoStats: true,
@@ -201,6 +221,7 @@ const updateTrade = async () => {
 		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
 
 	return {
+		config,
 		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
 		salaryCap: g.get("salaryCap") / 1000,
@@ -217,7 +238,6 @@ const updateTrade = async () => {
 		otherPidsExcluded: teams[1].pidsExcluded,
 		otherRoster,
 		otherTid,
-		stats,
 		strategy: t.strategy,
 		summary,
 		won: t.seasonAttrs.won,

@@ -16,6 +16,7 @@ const updatePlayers = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.season !== state.season ||
 		inputs.statType !== state.statType
 	) {

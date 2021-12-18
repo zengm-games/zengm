@@ -111,8 +111,8 @@ const Players = ({
 				<span className="text-danger">highlighted in red</span>.
 			</p>
 			<DataTable
-				cols={cols}
-				defaultSort={[2, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col3", "desc"]}
 				name="TeamHistory"
 				rows={rows}
 				pagination

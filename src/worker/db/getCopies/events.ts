@@ -26,7 +26,13 @@ const getCopies = async (
 				filter?: Filter;
 		  } = {},
 ): Promise<EventBBGM[]> => {
-	const { eid, dpid, pid, season, filter = () => true } = input as {
+	const {
+		eid,
+		dpid,
+		pid,
+		season,
+		filter = () => true,
+	} = input as {
 		eid?: number;
 		dpid?: number;
 		pid?: number;

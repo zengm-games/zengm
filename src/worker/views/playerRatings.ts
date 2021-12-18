@@ -1,7 +1,8 @@
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, isSport, PHASE, PLAYER, POSITIONS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 export const getPlayers = async (
 	season: number,
@@ -10,6 +11,7 @@ export const getPlayers = async (
 	ratings: string[],
 	stats: string[],
 	tid: number | undefined,
+	config: TableConfig,
 ) => {
 	let playersAll;
 
@@ -41,10 +43,13 @@ export const getPlayers = async (
 			"watch",
 			"tid",
 			"abbrev",
+			"born",
+			"draft",
 			...attrs,
+			...config.attrsNeeded,
 		],
-		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
-		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: season,
 		showNoStats: true,
 		showRookies: true,
@@ -79,6 +84,7 @@ const updatePlayers = async (
 		(inputs.season === g.get("season") &&
 			updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
@@ -146,6 +152,30 @@ const updatePlayers = async (
 			hockey: ["ovrs", "pots"],
 		});
 
+		const ovrsPotsColNames: string[] = [];
+		if (isSport("football") || isSport("hockey")) {
+			for (const pos of POSITIONS) {
+				for (const type of ["ovr", "pot"]) {
+					ovrsPotsColNames.push(`rating:${type}${pos}`);
+				}
+			}
+		}
+
+		const config: TableConfig = new TableConfig("playerRatings", [
+			"Name",
+			"Pos",
+			"Team",
+			"Age",
+			"Contract",
+			"Exp",
+			"Ovr",
+			"Pot",
+			...ratings.map(rating => `rating:${rating}`),
+			...ovrsPotsColNames,
+		]);
+		await config.load();
+		console.log(config);
+
 		const players = await getPlayers(
 			inputs.season,
 			inputs.abbrev,
@@ -153,6 +183,7 @@ const updatePlayers = async (
 			[...ratings, ...extraRatings],
 			[],
 			inputs.tid,
+			config,
 		);
 
 		return {
@@ -161,7 +192,7 @@ const updatePlayers = async (
 			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,
-			ratings,
+			config,
 			userTid: g.get("userTid"),
 		};
 	}

@@ -71,7 +71,7 @@ export type AwardPlayerDefense = {
 
 export type Awards<
 	PlayerOverride = AwardPlayer,
-	PlayerDefenseOverride = AwardPlayerDefense
+	PlayerDefenseOverride = AwardPlayerDefense,
 > = {
 	season: number;
 	bestRecord: AwardTeam;

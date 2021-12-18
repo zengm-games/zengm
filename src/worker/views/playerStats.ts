@@ -6,6 +6,7 @@ import type {
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -16,6 +17,7 @@ const updatePlayers = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.season !== state.season ||
 		inputs.statType !== state.statType ||
@@ -42,7 +44,6 @@ const updatePlayers = async (
 			throw new Error(`Invalid statType: "${inputs.statType}"`);
 		}
 
-		const stats = statsTable.stats;
 		let playersAll;
 
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
@@ -87,6 +88,12 @@ const updatePlayers = async (
 			playersAll = playersAll.filter(p => p.watch);
 		}
 
+		const config: TableConfig = new TableConfig(
+			"playerStats." + inputs.statType,
+			["Name", "Pos", "Team", "Age", ...statsTable.stats.map(s => `stat:${s}`)],
+		);
+		await config.load();
+
 		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
@@ -100,9 +107,10 @@ const updatePlayers = async (
 				"abbrev",
 				"hof",
 				"watch",
+				...config.attrsNeeded,
 			],
-			ratings: ["skills", "pos", "season"],
-			stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
+			ratings: config.ratingsNeeded,
+			stats: config.statsNeeded,
 			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
 			statType,
@@ -187,7 +195,7 @@ const updatePlayers = async (
 			season: inputs.season,
 			statType: inputs.statType,
 			playoffs: inputs.playoffs,
-			stats,
+			config,
 			superCols: statsTable.superCols,
 			userTid: g.get("userTid"),
 		};

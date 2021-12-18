@@ -150,6 +150,7 @@ const updateTeams = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
+		updateEvents.includes("customizeTable") ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.season !== state.season ||
 		inputs.teamOpponent !== state.teamOpponent

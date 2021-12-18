@@ -97,8 +97,8 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[4, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col5", "desc"]}
 				name="TragicDeaths"
 				pagination
 				rows={rows}

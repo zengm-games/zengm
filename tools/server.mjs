@@ -35,7 +35,7 @@ const sendFile = (res, filename) => {
 	} else {
 		console.log(`404 ${filename}`);
 		res.writeHead(404, {
-			'Content-Type': 'text/plain'
+			"Content-Type": "text/plain",
 		});
 		res.end("404 Not Found");
 	}

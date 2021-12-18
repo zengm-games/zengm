@@ -109,6 +109,7 @@ import type { PlayerRatings } from "../../common/types.basketball";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
 import type { IDBPIndex, IDBPObjectStore } from "idb";
 import type { LeagueDB } from "../db/connectLeague";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1542,11 +1543,30 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			addDummySeason: true,
 			active: true,
 		});
+
 		const stats = bySport({
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+			basketball: [
+				"stat:gp",
+				"stat:min",
+				"stat:pts",
+				"stat:trb",
+				"stat:ast",
+				"stat:per",
+			],
+			football: ["stat:gp", "stat:keyStats", "stat:av"],
+			hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 		});
+		const config: TableConfig = new TableConfig("tradingBlock", [
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			"Contract",
+			"Exp",
+			...stats,
+		]);
+		await config.load();
 
 		// Take the pids and dpids in each offer and get the info needed to display the offer
 		return Promise.all(
@@ -1562,6 +1582,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					tid,
 				);
 				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
+
 				const players = await idb.getCopies.playersPlus(playersAll, {
 					attrs: [
 						"pid",
@@ -1572,8 +1593,8 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 						"watch",
 						"jerseyNumber",
 					],
-					ratings: ["ovr", "pot", "skills", "pos"],
-					stats,
+					ratings: config.ratingsNeeded,
+					stats: config.statsNeeded,
 					season: g.get("season"),
 					tid,
 					showNoStats: true,
@@ -2961,6 +2982,10 @@ const updateMultiTeamMode = async (gameAttributes: {
 	await toUI("realtimeUpdate", [["g.userTids"]]);
 };
 
+const updateColumns = async (data: { key: string; columns: object[] }) => {
+	await idb.meta.put("tables", data.columns, data.key);
+};
+
 const updateOptions = async (
 	options: Options & {
 		realPlayerPhotos: string;
@@ -3734,6 +3759,7 @@ export default {
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,
+	updateColumns,
 	updatePlayThroughInjuries,
 	updatePlayerWatch,
 	updatePlayingTime,

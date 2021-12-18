@@ -3,15 +3,36 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
 ) => {
 	const stats = bySport({
-		basketball: ["min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		basketball: [
+			"stat:gp",
+			"stat:min",
+			"stat:pts",
+			"stat:trb",
+			"stat:ast",
+			"stat:per",
+		],
+		football: ["stat:gp", "stat:keyStats", "stat:av"],
+		hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 	});
+
+	const config: TableConfig = new TableConfig("upcomingFreeAgents", [
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		...stats,
+		"Mood",
+		"CurrentMood",
+		"Projected",
+	]);
+	await config.load();
 
 	const showActualFreeAgents =
 		g.get("phase") === PHASE.RESIGN_PLAYERS &&
@@ -49,9 +70,10 @@ const updateUpcomingFreeAgents = async (
 			"watch",
 			"jerseyNumber",
 			"mood",
+			...config.attrsNeeded,
 		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
@@ -75,7 +97,7 @@ const updateUpcomingFreeAgents = async (
 		players,
 		projectedCapSpace,
 		season: inputs.season,
-		stats,
+		config,
 		userTid: g.get("userTid"),
 	};
 };

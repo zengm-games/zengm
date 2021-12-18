@@ -131,8 +131,8 @@ const LeagueFinances = ({
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[5, "desc"]}
+				legacyCols={cols}
+				defaultSort={["cols6", "desc"]}
 				name="LeagueFinances"
 				nonfluid
 				rows={rows}

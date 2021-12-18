@@ -27,8 +27,10 @@ const iterate2 = async (
 	cb: (info: ReturnType<typeof blankInfo>) => void,
 ) => {
 	const processHeadToHeadTeam = (headToHead: HeadToHead, tid2: number) => {
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", headToHead.season)
-			.length;
+		const numPlayoffRounds = g.get(
+			"numGamesPlayoffSeries",
+			headToHead.season,
+		).length;
 
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			if (tid === tid2) {

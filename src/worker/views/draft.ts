@@ -8,6 +8,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("customizeTable") ||
 		updateEvents.includes("newPhase")
 	) {
 		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;

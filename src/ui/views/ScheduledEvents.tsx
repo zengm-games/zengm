@@ -337,8 +337,8 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 				</Dropdown.Menu>
 			</Dropdown>
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col0", "asc"]}
 				name="ScheduledEvents"
 				rows={rows}
 			/>

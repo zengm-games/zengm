@@ -151,8 +151,8 @@ const Relatives = ({
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[20, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col21", "desc"]}
 				name="Relatives"
 				pagination
 				rows={rows}

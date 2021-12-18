@@ -1,17 +1,17 @@
+import type { Argument } from "classnames";
 import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
 import {
-	SyntheticEvent,
 	MouseEvent,
 	ReactNode,
-	useState,
-	useEffect,
+	SyntheticEvent,
 	useCallback,
+	useEffect,
+	useState,
 } from "react";
 import Controls from "./Controls";
-import CustomizeColumns from "./CustomizeColumns";
 import Footer from "./Footer";
 import Header from "./Header";
 import Info from "./Info";
@@ -23,16 +23,28 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers, safeLocalStorage } from "../../util";
+import {
+	downloadFile,
+	helpers,
+	realtimeUpdate,
+	safeLocalStorage,
+	toWorker,
+} from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-import type { Argument } from "classnames";
-import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
+import { arrayMove } from "react-sortable-hoc";
+import CustomizeColumns from "./CustomizeColumns";
+import type { TableConfig } from "../../util/TableConfig";
 
-export type SortBy = [number, SortOrder];
+export type SortBy = [string, SortOrder];
 
-export type Col = {
+export type Col = Omit<LegacyCol, "title"> & {
+	key: string;
+	title: string;
+};
+
+export type LegacyCol = {
 	classNames?: any;
 	desc?: string;
 	noSearch?: boolean;
@@ -51,6 +63,21 @@ export type SuperCol = {
 
 export type DataTableRow = {
 	key: number | string;
+	data: {
+		[key: string]:
+			| ReactNode
+			| {
+					classNames?: Argument;
+					value: ReactNode;
+					searchValue?: string;
+					sortValue?: string | number;
+			  };
+	};
+	classNames?: Argument;
+};
+
+export type LegacyDataTableRow = {
+	key: number | string;
 	data: (
 		| ReactNode
 		| {
@@ -67,7 +94,8 @@ export type Props = {
 	bordered?: boolean;
 	className?: string;
 	cols: Col[];
-	defaultSort: SortBy;
+	config?: TableConfig;
+	defaultSort?: SortBy;
 	disableSettingsCache?: boolean;
 	footer?: any[];
 	hideAllControls?: boolean;
@@ -82,14 +110,25 @@ export type Props = {
 	addFilters?: (string | undefined)[];
 };
 
+export type LegacyProps = Omit<Props, "cols"> & {
+	legacyCols: LegacyCol[];
+};
+
+export type Filter = {
+	col: string;
+	value: string;
+};
+
 export type State = {
 	colOrder: {
 		colIndex: number;
 		hidden?: boolean;
 	}[];
+	cols: Col[];
+	rows: DataTableRow[] | LegacyDataTableRow[];
 	currentPage: number;
 	enableFilters: boolean;
-	filters: string[];
+	filters: Filter[];
 	prevName: string;
 	perPage: number;
 	searchText: string;
@@ -98,32 +137,65 @@ export type State = {
 	settingsCache: SettingsCache;
 };
 
-const DataTable = ({
-	bordered,
-	className,
-	cols,
-	defaultSort,
-	disableSettingsCache,
-	footer,
-	hideAllControls,
-	name,
-	nonfluid,
-	pagination,
-	rankCol,
-	rows,
-	small,
-	striped,
-	superCols,
-	addFilters,
-}: Props) => {
-	const [state, setState] = useState<State>(() =>
-		loadStateFromCache({
+const DataTable = (props: Props | LegacyProps) => {
+	const {
+		bordered,
+		className,
+		defaultSort,
+		disableSettingsCache,
+		footer,
+		hideAllControls,
+		name,
+		nonfluid,
+		config,
+		pagination,
+		small,
+		striped,
+		superCols,
+		addFilters,
+	} = props;
+
+	const enableCustomizeColumns: boolean = !!config && !superCols;
+
+	// Convert LegacyCols to Cols for backwards compatability
+	const cols: Col[] =
+		"cols" in props
+			? props.cols
+			: props.legacyCols.map((col, i) => ({
+					...col,
+					key: `col${i + 1}`,
+			  }));
+	// Convert LegacyDataTableRows to DataTableRows for backwards compatability
+	const rows: DataTableRow[] =
+		props.rows.length && Array.isArray(props.rows[0].data)
+			? props.rows.map(
+					(row): DataTableRow => ({
+						...row,
+						data: Array.isArray(row.data)
+							? Object.fromEntries(
+									row.data.map((value, i) => [`col${i + 1}`, value]),
+							  )
+							: {},
+					}),
+			  )
+			: props.rows;
+
+	const [state, setState] = useState<State>(() => ({
+		...loadStateFromCache({
 			cols,
 			defaultSort,
-			disableSettingsCache,
+			disableSettingsCache: false,
 			name,
 		}),
-	);
+		rows,
+	}));
+
+	useEffect(() => {
+		if (config) {
+			setStatePartial({ cols });
+			processedRows = processRows();
+		}
+	}, [cols]);
 
 	const setStatePartial = useCallback((newState: Partial<State>) => {
 		setState(state2 => ({
@@ -133,15 +205,20 @@ const DataTable = ({
 	}, []);
 
 	const processRows = () => {
-		const filterFunctions = state.enableFilters
-			? state.filters.map((filter, i) =>
-					createFilterFunction(
-						filter,
-						cols[i] ? cols[i].sortType : undefined,
-						cols[i] ? cols[i].searchType : undefined,
-					),
-			  )
-			: [];
+		const filterFunctions: [string, (value: any) => boolean][] =
+			state.enableFilters
+				? state.filters.map(filter => {
+						const col = state.cols.find(f => filter.col === f.key);
+						return [
+							filter.col,
+							createFilterFunction(
+								filter.value || "",
+								col?.sortType,
+								col?.searchType,
+							),
+						];
+				  })
+				: [];
 		const skipFiltering = state.searchText === "" && !state.enableFilters;
 		const searchText = state.searchText.toLowerCase();
 		const rowsFiltered = skipFiltering
@@ -151,12 +228,15 @@ const DataTable = ({
 					if (state.searchText !== "") {
 						let found = false;
 
-						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+						for (const col of state.cols) {
+							if (col.noSearch) {
 								continue;
 							}
 
-							if (getSearchVal(row.data[i]).includes(searchText)) {
+							if (
+								row.data[col.key ?? ""] &&
+								getSearchVal(row.data[col.key ?? ""]).includes(searchText)
+							) {
 								found = true;
 								break;
 							}
@@ -169,15 +249,13 @@ const DataTable = ({
 
 					// Filter
 					if (state.enableFilters) {
-						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+						for (const [key, filterFunction] of filterFunctions) {
+							const col = state.cols.find(c => c.key === key);
+							if (!col || col.noSearch) {
 								continue;
 							}
 
-							if (
-								filterFunctions[i] &&
-								filterFunctions[i](row.data[i]) === false
-							) {
+							if (!filterFunction(row.data[key])) {
 								return false;
 							}
 						}
@@ -189,36 +267,35 @@ const DataTable = ({
 		const rowsOrdered = orderBy(
 			rowsFiltered,
 			state.sortBys.map(sortBy => row => {
-				let i = sortBy[0];
-
-				if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
-					i = 0;
-				}
-
-				return getSortVal(row.data[i], cols[i].sortType);
+				const key = sortBy[0];
+				const col = state.cols.find(c => c.key === key);
+				return getSortVal(row.data[key], col?.sortType);
 			}),
 			state.sortBys.map(sortBy => sortBy[1]),
 		);
 
-		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && cols[colIndex],
-		);
-
-		return rowsOrdered.map((row, i) => {
-			return {
-				...row,
-				data: colOrderFiltered.map(({ colIndex }) =>
-					colIndex === rankCol ? i + 1 : row.data[colIndex],
-				),
-			};
-		});
+		return rowsOrdered;
 	};
 
-	const handleColClick = (event: MouseEvent, i: number) => {
+	const handleReorder = async (oldIndex: number, newIndex: number) => {
+		const nextCols = arrayMove(state.cols, oldIndex, newIndex);
+		setStatePartial({
+			cols: nextCols,
+		});
+		if (config) {
+			await toWorker("main", "updateColumns", {
+				columns: nextCols.map(c => c.key),
+				key: config.tableName,
+			});
+			await realtimeUpdate(["customizeTable"]);
+		}
+	};
+
+	const handleColClick = (event: MouseEvent, colKey: string) => {
 		const sortBys = updateSortBys({
 			cols,
 			event,
-			i,
+			colKey,
 			prevSortBys: state.sortBys, // eslint-disable-line react/no-access-state-in-setstate
 		});
 
@@ -231,10 +308,10 @@ const DataTable = ({
 
 	const handleExportCSV = () => {
 		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && cols[colIndex],
+			({ hidden, colIndex }) => !hidden && state.cols[colIndex],
 		);
 		const columns = colOrderFiltered.map(
-			({ colIndex }) => cols[colIndex].title,
+			({ colIndex }) => state.cols[colIndex].title,
 		);
 		const rows = processRows().map(row =>
 			row.data.map(val => getSearchVal(val, false)),
@@ -280,11 +357,19 @@ const DataTable = ({
 
 	const handleFilterUpdate = (
 		event: SyntheticEvent<HTMLInputElement>,
-		i: number,
+		colKey: string,
 	) => {
 		const filters = helpers.deepCopy(state.filters); // eslint-disable-line react/no-access-state-in-setstate
+		const filterIndex = filters.findIndex(f => colKey === f.col);
 
-		filters[i] = event.currentTarget.value;
+		if (filterIndex !== -1)
+			filters[filterIndex].value = event.currentTarget.value;
+		else
+			filters.push({
+				col: colKey,
+				value: event.currentTarget.value,
+			});
+
 		setStatePartial({
 			currentPage: 1,
 			filters,
@@ -321,7 +406,7 @@ const DataTable = ({
 
 	// If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats).
 	// If colOrder does not match cols, need to run reconciliation code in loadStateFromCache (example: current vs past seasons in League Finances).
-	if (name !== state.prevName || cols.length > state.colOrder.length) {
+	if (name !== state.prevName || state.cols.length > state.colOrder.length) {
 		setState(
 			loadStateFromCache({
 				cols,
@@ -382,59 +467,25 @@ const DataTable = ({
 	}
 
 	const colOrderFiltered = state.colOrder.filter(
-		({ hidden, colIndex }) => !hidden && cols[colIndex],
+		({ hidden, colIndex }) => !hidden && state.cols[colIndex],
 	);
 
 	return (
 		<>
-			<CustomizeColumns
-				cols={cols}
-				colOrder={state.colOrder}
-				hasSuperCols={!!superCols}
-				show={state.showSelectColumnsModal}
-				onHide={() => {
-					setStatePartial({
-						showSelectColumnsModal: false,
-					});
-				}}
-				onReset={() => {
-					const newOrder = cols.map((col, i) => ({
-						colIndex: i,
-					}));
-					setStatePartial({
-						colOrder: newOrder,
-					});
-					state.settingsCache.set("DataTableColOrder", newOrder);
-				}}
-				onSortEnd={({ oldIndex, newIndex }) => {
-					const newOrder = arrayMoveImmutable(
-						state.colOrder,
-						oldIndex,
-						newIndex,
-					);
-					setStatePartial({
-						colOrder: newOrder,
-					});
-					state.settingsCache.set("DataTableColOrder", newOrder);
-				}}
-				onToggleHidden={(i: number) => () => {
-					const newOrder = [...state.colOrder];
-					if (newOrder[i]) {
-						newOrder[i] = {
-							...newOrder[i],
-						};
-						if (newOrder[i].hidden) {
-							delete newOrder[i].hidden;
-						} else {
-							newOrder[i].hidden = true;
-						}
+			{config ? (
+				<CustomizeColumns
+					config={config}
+					show={state.showSelectColumnsModal}
+					onHide={() => {
 						setStatePartial({
-							colOrder: newOrder,
+							showSelectColumnsModal: false,
 						});
-						state.settingsCache.set("DataTableColOrder", newOrder);
-					}
-				}}
-			/>
+					}}
+					onSave={async () => {
+						await realtimeUpdate(["customizeTable"]);
+					}}
+				/>
+			) : null}
 			<div
 				className={classNames(className, {
 					"table-nonfluid-wrapper": nonfluid,
@@ -446,6 +497,7 @@ const DataTable = ({
 					) : null}
 					<Controls
 						enableFilters={state.enableFilters}
+						enableCustomizeColumns={enableCustomizeColumns}
 						hideAllControls={hideAllControls}
 						name={name}
 						onExportCSV={handleExportCSV}
@@ -469,10 +521,10 @@ const DataTable = ({
 						})}
 					>
 						<Header
-							colOrder={colOrderFiltered}
-							cols={cols}
+							cols={state.cols}
 							enableFilters={state.enableFilters}
 							filters={state.filters}
+							handleReorder={handleReorder}
 							handleColClick={handleColClick}
 							handleFilterUpdate={handleFilterUpdate}
 							sortBys={state.sortBys}
@@ -480,7 +532,7 @@ const DataTable = ({
 						/>
 						<tbody>
 							{processedRows.map(row => (
-								<Row key={row.key} row={row} />
+								<Row key={row.key} cols={state.cols} row={row} />
 							))}
 						</tbody>
 						<Footer colOrder={colOrderFiltered} footer={footer} />
@@ -515,7 +567,6 @@ const DataTable = ({
 DataTable.propTypes = {
 	bordered: PropTypes.bool,
 	className: PropTypes.string,
-	cols: PropTypes.array.isRequired,
 	defaultSort: PropTypes.arrayOf(
 		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	).isRequired,
@@ -525,7 +576,7 @@ DataTable.propTypes = {
 	nonfluid: PropTypes.bool,
 	hideAllControls: PropTypes.bool,
 	pagination: PropTypes.bool,
-	rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+	rows: PropTypes.array.isRequired,
 	small: PropTypes.bool,
 	superCols: PropTypes.array,
 };

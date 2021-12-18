@@ -5,6 +5,9 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import { Player } from "../../common/types";
+import { ColTemp } from "../util/columns/getCols";
+import getTemplate from "../util/columns/getTemplate";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
@@ -12,7 +15,7 @@ const UpcomingFreeAgents = ({
 	players,
 	projectedCapSpace,
 	season,
-	stats,
+	config,
 	userTid,
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
@@ -21,78 +24,17 @@ const UpcomingFreeAgents = ({
 		dropdownFields: { seasonsUpcoming: season },
 	});
 
-	const superCols = [
-		{
-			title: "",
-			colspan: 6 + stats.length,
-		},
-		{
-			title: "Projected Mood",
-			colspan: 2,
-		},
-		{
-			title: "",
-			colspan: phase === PHASE.RESIGN_PLAYERS ? 1 : 2,
-		},
-	];
-
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Team",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map(stat => `stat:${stat}`),
-		"Mood",
-		"Mood",
-		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
-		"Projected Contract",
-	]);
-	cols[6 + stats.length].title = "Your Team";
-	cols[7 + stats.length].title = "Current Team";
+	const cols = config.columns;
 
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
-			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
-					{p.abbrev}
-				</a>,
-				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				dataTableWrappedMood({
-					defaultType: "user",
-					maxWidth: true,
-					p,
-				}),
-				dataTableWrappedMood({
-					defaultType: "current",
-					maxWidth: true,
-					p,
-				}),
-				...(phase === PHASE.RESIGN_PLAYERS
-					? []
-					: [helpers.formatCurrency(p.contract.amount, "M")]),
-				helpers.formatCurrency(p.contractDesired.amount, "M"),
-			],
-			classNames: {
-				"table-info": p.tid === userTid,
-			},
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 		};
 	});
+	console.log(players[0]);
 
 	return (
 		<>
@@ -119,11 +61,11 @@ const UpcomingFreeAgents = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[3, "desc"]}
+				config={config}
+				defaultSort={["Ovr", "desc"]}
 				name="UpcomingFreeAgents"
 				rows={rows}
 				pagination
-				superCols={superCols}
 			/>
 		</>
 	);
@@ -133,7 +75,7 @@ UpcomingFreeAgents.propTypes = {
 	phase: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	config: PropTypes.object.isRequired,
 };
 
 export default UpcomingFreeAgents;

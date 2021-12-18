@@ -94,8 +94,8 @@ const FrivolitiesTeamSeasons = ({
 			{description ? <p>{description}</p> : null}
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "asc"]}
 				name={`FrivolitiesTeamSeasons_${type}`}
 				nonfluid
 				rows={rows}

@@ -219,7 +219,6 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		otherTeamsWantToHire,
@@ -236,7 +235,7 @@ const Trade = (props: View<"trade">) => {
 		salaryCap,
 		summary,
 		showResigningMsg,
-		stats,
+		config,
 		strategy,
 		teams,
 		tied,
@@ -366,25 +365,23 @@ const Trade = (props: View<"trade">) => {
 						</div>
 					</div>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}
 						picks={otherPicks}
 						roster={otherRoster}
-						stats={stats}
+						config={config}
 						userOrOther="other"
 					/>
 
 					<h2 className="mt-3">{userTeamName}</h2>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}
 						picks={userPicks}
 						roster={userRoster}
-						stats={stats}
+						config={config}
 						userOrOther="user"
 					/>
 				</div>
@@ -495,6 +492,7 @@ const Trade = (props: View<"trade">) => {
 };
 
 Trade.propTypes = {
+	config: PropTypes.object.isRequired,
 	gameOver: PropTypes.bool.isRequired,
 	godMode: PropTypes.bool.isRequired,
 	lost: PropTypes.number.isRequired,
@@ -509,7 +507,6 @@ Trade.propTypes = {
 	salaryCap: PropTypes.number.isRequired,
 	summary: PropTypes.object.isRequired,
 	showResigningMsg: PropTypes.bool.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	strategy: PropTypes.string.isRequired,
 	teams: PropTypes.arrayOf(
 		PropTypes.shape({

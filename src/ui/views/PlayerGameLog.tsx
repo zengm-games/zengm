@@ -212,8 +212,8 @@ const PlayerGameLog = ({
 					{rowsRegularSeason.length > 0 ? (
 						<>
 							<DataTable
-								cols={cols}
-								defaultSort={[0, "asc"]}
+								legacyCols={cols}
+								defaultSort={["col1", "asc"]}
 								name="PlayerGameLog"
 								rows={rowsRegularSeason}
 								superCols={superCols}
@@ -227,8 +227,8 @@ const PlayerGameLog = ({
 							</h2>
 							<DataTable
 								className="datatable-negative-margin-top"
-								cols={cols}
-								defaultSort={[0, "asc"]}
+								legacyCols={cols}
+								defaultSort={["col1", "asc"]}
 								name="PlayerGameLogPlayoffs"
 								rows={rowsPlayoffs}
 								striped={striped}

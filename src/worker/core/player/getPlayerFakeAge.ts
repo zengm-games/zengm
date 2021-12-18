@@ -7,7 +7,7 @@ const getPlayerFakeAge = <
 			loc: string;
 		};
 		real?: boolean;
-	}
+	},
 >(
 	players: T[],
 ): T | void => {

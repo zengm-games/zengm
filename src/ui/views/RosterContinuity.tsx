@@ -60,8 +60,8 @@ const RosterContinuity = ({
 			</p>
 
 			<DataTable
-				cols={cols}
-				defaultSort={[0, "desc"]}
+				legacyCols={cols}
+				defaultSort={["col1", "desc"]}
 				name="RosterContinuity"
 				pagination={rows.length > 100}
 				rows={rows}

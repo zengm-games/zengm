@@ -206,7 +206,7 @@ const TeamStats = ({
 			<MoreLinks type="teamStats" page="team_stats" season={season} />
 
 			<DataTable
-				cols={cols}
+				legacyCols={cols}
 				defaultSort={[3, "desc"]}
 				name={`TeamStats${teamOpponent}`}
 				rankCol={0}

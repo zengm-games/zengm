@@ -1629,6 +1629,7 @@ export type UpdateEvents = (
 	| "team"
 	| "teamFinances"
 	| "watchList"
+	| "customizeTable"
 )[];
 
 export type RealPlayerPhotos = Record<string, string>;

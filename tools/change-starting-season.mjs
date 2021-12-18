@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile } from "fs/promises";
 
 if (process.argv.length < 4) {
 	console.error(

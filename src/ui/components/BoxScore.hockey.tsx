@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
+import { Fragment, memo, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, helpers, processPlayerStats } from "../util";
+import { helpers, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName } from "../../common";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { formatClock } from "../util/processLiveGameEvents.hockey";
@@ -9,6 +9,7 @@ import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
+import getCols from "../util/columns/getCols";
 
 type Team = {
 	abbrev: string;
@@ -42,20 +43,21 @@ const StatsTable = ({
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			stat => [`stat:${stat}`, "desc"] as SortBy,
 		);
 	});
 
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			prevSortBys =>
+	const onClick = (event: MouseEvent, colKey: string) => {
+		setSortBys(prevSortBys => {
+			return (
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
-				}) ?? [],
-		);
+				}) ?? []
+			);
+		});
 	};
 
 	const players = t.players

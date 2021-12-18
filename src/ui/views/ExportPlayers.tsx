@@ -130,8 +130,8 @@ const ExportPlayers = ({
 				<div className="col-12 col-lg-6">
 					<div className="clearfix">
 						<DataTable
-							cols={cols}
-							defaultSort={[0, "asc"]}
+							legacyCols={cols}
+							defaultSort={["col1", "asc"]}
 							name="ExportPlayers"
 							pagination
 							rows={rows}
@@ -165,8 +165,8 @@ const ExportPlayers = ({
 						<>
 							<div className="clearfix">
 								<DataTable
-									cols={cols2}
-									defaultSort={[0, "asc"]}
+									legacyCols={cols2}
+									defaultSort={["col1", "asc"]}
 									name="ExportPlayers2"
 									pagination
 									rows={rows2}

@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
-import { getCols, helpers } from "../util";
+import { helpers } from "../util";
+import getCols from "../util/columns/getCols";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import { MouseEvent, useState } from "react";
 import type { SortBy } from "./DataTable";
@@ -22,13 +23,13 @@ const StatsTable = ({
 }) => {
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
-	const onClick = (event: MouseEvent, i: number) => {
+	const onClick = (event: MouseEvent, colKey: string) => {
 		setSortBys(prevSortBys => {
 			const newSortBys =
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
 				}) ?? [];
 

@@ -172,8 +172,8 @@ const AwardRaces = ({
 							<h2>{name}</h2>
 							{rows.length > 0 ? (
 								<DataTable
-									cols={cols}
-									defaultSort={[0, "asc"]}
+									legacyCols={cols}
+									defaultSort={["col1", "asc"]}
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}

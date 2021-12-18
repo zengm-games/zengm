@@ -147,8 +147,8 @@ export const genView = (
 					of Famers are <span className="text-danger">highlighted in red</span>.
 				</p>
 				<DataTable
-					cols={cols}
-					defaultSort={[5, "desc"]}
+					legacyCols={cols}
+					defaultSort={["col6", "desc"]}
 					name={type === "college" ? "Colleges" : "Countries"}
 					rows={rows}
 					superCols={superCols}

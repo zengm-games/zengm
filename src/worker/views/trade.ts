@@ -141,13 +141,16 @@ const updateTrade = async () => {
 		},
 		"noCopyCache",
 	);
-	const t = await idb.getCopy.teamsPlus({
-		tid: otherTid,
-		season: g.get("season"),
-		attrs: ["strategy"],
-		seasonAttrs: ["won", "lost", "tied", "otl"],
-		addDummySeason: true,
-	});
+	const t = await idb.getCopy.teamsPlus(
+		{
+			tid: otherTid,
+			season: g.get("season"),
+			attrs: ["strategy"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
+			addDummySeason: true,
+		},
+		"noCopyCache",
+	);
 
 	if (t === undefined) {
 		// https://stackoverflow.com/a/59923262/786644

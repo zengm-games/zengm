@@ -5,11 +5,14 @@ import { g, local } from "../util";
 const updateDangerZone = async () => {
 	let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
 	if (canRegenerateSchedule) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			stats: ["gp"],
-			season: g.get("season"),
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				stats: ["gp"],
+				season: g.get("season"),
+			},
+			"noCopyCache",
+		);
 
 		for (const t of teams) {
 			if (t.stats.gp !== 0) {

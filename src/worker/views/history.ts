@@ -32,11 +32,14 @@ const updateHistory = async (
 			return returnValue;
 		}
 
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["playoffRoundsWon", "abbrev", "region", "name"],
-			season,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				seasonAttrs: ["playoffRoundsWon", "abbrev", "region", "name"],
+				season,
+			},
+			"noCopyCache",
+		);
 
 		const addAbbrev = (obj: any) => {
 			// Not sure why this would ever be null, but somebody said it was

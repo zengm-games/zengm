@@ -32,26 +32,29 @@ const updatePowerRankings = async (
 		season !== state.season ||
 		playoffs !== state.playoffs
 	) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "depth"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"lastTen",
-				"abbrev",
-				"region",
-				"name",
-				"cid",
-				"did",
-				"imgURL",
-				"imgURLSmall",
-			],
-			stats: ["gp", "mov", "pts", "oppPts"],
-			season,
-			showNoStats: true,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid", "depth"],
+				seasonAttrs: [
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"lastTen",
+					"abbrev",
+					"region",
+					"name",
+					"cid",
+					"did",
+					"imgURL",
+					"imgURLSmall",
+				],
+				stats: ["gp", "mov", "pts", "oppPts"],
+				season,
+				showNoStats: true,
+			},
+			"noCopyCache",
+		);
 
 		// Calculate team ovr ratings
 		const teamsWithRankings = await Promise.all(

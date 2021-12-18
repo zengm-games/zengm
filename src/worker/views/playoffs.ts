@@ -171,31 +171,34 @@ const updatePlayoffs = async (
 
 		let teamsToEdit: TeamToEdit[] = [];
 		if (canEdit) {
-			const teamsUnsorted = await idb.getCopies.teamsPlus({
-				attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
-				seasonAttrs: [
-					"cid",
-					"did",
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"winp",
-					"pts",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-				],
-				stats: ["pts", "oppPts", "gp"],
-				season: g.get("season"),
-				active: true,
-				showNoStats: true,
-			});
+			const teamsUnsorted = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+					seasonAttrs: [
+						"cid",
+						"did",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"winp",
+						"pts",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"otlDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"otlConf",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: g.get("season"),
+					active: true,
+					showNoStats: true,
+				},
+				"noCopyCache",
+			);
 
 			// Sort teams by normal playoff order
 			let teams: typeof teamsUnsorted;

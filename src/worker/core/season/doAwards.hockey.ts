@@ -122,34 +122,37 @@ export const royFilter = (p: PlayerFiltered) => {
 const doAwards = async (conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: [
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-			"winp",
-			"pts",
-			"playoffRoundsWon",
-			"abbrev",
-			"region",
-			"name",
-			"cid",
-			"did",
-		],
-		stats: ["pts", "oppPts", "gp"],
-		season: g.get("season"),
-		showNoStats: true,
-	});
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"playoffRoundsWon",
+				"abbrev",
+				"region",
+				"name",
+				"cid",
+				"did",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	const categories = [

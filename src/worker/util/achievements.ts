@@ -51,11 +51,14 @@ const checkDynasty = async (titles: number, years: number) => {
 };
 
 const checkMoneyball = async (maxPayroll: number) => {
-	const t = await idb.getCopy.teamsPlus({
-		seasonAttrs: ["expenses", "playoffRoundsWon"],
-		season: g.get("season"),
-		tid: g.get("userTid"),
-	});
+	const t = await idb.getCopy.teamsPlus(
+		{
+			seasonAttrs: ["expenses", "playoffRoundsWon"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
 	return !!(
 		t &&
 		t.seasonAttrs.playoffRoundsWon ===
@@ -65,11 +68,14 @@ const checkMoneyball = async (maxPayroll: number) => {
 };
 
 const userWonTitle = async () => {
-	const t = await idb.getCopy.teamsPlus({
-		seasonAttrs: ["playoffRoundsWon"],
-		season: g.get("season"),
-		tid: g.get("userTid"),
-	});
+	const t = await idb.getCopy.teamsPlus(
+		{
+			seasonAttrs: ["playoffRoundsWon"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
 	return t
 		? t.seasonAttrs.playoffRoundsWon ===
 				g.get("numGamesPlayoffSeries", "current").length
@@ -313,11 +319,14 @@ const achievements: Achievement[] = [
 		category: "Season",
 
 		async check() {
-			const t = await idb.getCopy.teamsPlus({
-				seasonAttrs: ["playoffRoundsWon", "pop"],
-				season: g.get("season"),
-				tid: g.get("userTid"),
-			});
+			const t = await idb.getCopy.teamsPlus(
+				{
+					seasonAttrs: ["playoffRoundsWon", "pop"],
+					season: g.get("season"),
+					tid: g.get("userTid"),
+				},
+				"noCopyCache",
+			);
 			return !!(
 				t &&
 				t.seasonAttrs.playoffRoundsWon ===
@@ -917,11 +926,14 @@ if (isSport("hockey") || isSport("basketball")) {
 			category: "Season",
 
 			async check() {
-				const t = await idb.getCopy.teamsPlus({
-					seasonAttrs: ["won"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				});
+				const t = await idb.getCopy.teamsPlus(
+					{
+						seasonAttrs: ["won"],
+						season: g.get("season"),
+						tid: g.get("userTid"),
+					},
+					"noCopyCache",
+				);
 				return !!(t && t.seasonAttrs.won >= 70);
 			},
 
@@ -937,11 +949,14 @@ if (isSport("hockey") || isSport("basketball")) {
 				const awarded = await checkFoFoFo();
 
 				if (awarded) {
-					const t = await idb.getCopy.teamsPlus({
-						seasonAttrs: ["won", "lost"],
-						season: g.get("season"),
-						tid: g.get("userTid"),
-					});
+					const t = await idb.getCopy.teamsPlus(
+						{
+							seasonAttrs: ["won", "lost"],
+							season: g.get("season"),
+							tid: g.get("userTid"),
+						},
+						"noCopyCache",
+					);
 
 					if (t && t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
 						return true;
@@ -1032,11 +1047,14 @@ if (isSport("hockey") || isSport("basketball")) {
 
 			async check() {
 				// Confirm lost finals
-				const t = await idb.getCopy.teamsPlus({
-					seasonAttrs: ["playoffRoundsWon"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				});
+				const t = await idb.getCopy.teamsPlus(
+					{
+						seasonAttrs: ["playoffRoundsWon"],
+						season: g.get("season"),
+						tid: g.get("userTid"),
+					},
+					"noCopyCache",
+				);
 
 				if (
 					!t ||
@@ -1075,11 +1093,14 @@ if (isSport("hockey") || isSport("basketball")) {
 
 			async check() {
 				// Confirm lost in first round
-				const t = await idb.getCopy.teamsPlus({
-					seasonAttrs: ["playoffRoundsWon"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				});
+				const t = await idb.getCopy.teamsPlus(
+					{
+						seasonAttrs: ["playoffRoundsWon"],
+						season: g.get("season"),
+						tid: g.get("userTid"),
+					},
+					"noCopyCache",
+				);
 
 				if (!t || t.seasonAttrs.playoffRoundsWon !== 0) {
 					return false;
@@ -1153,11 +1174,14 @@ if (isSport("football")) {
 			const wonTitle = await userWonTitle();
 
 			if (wonTitle) {
-				const t = await idb.getCopy.teamsPlus({
-					seasonAttrs: ["won", "lost"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				});
+				const t = await idb.getCopy.teamsPlus(
+					{
+						seasonAttrs: ["won", "lost"],
+						season: g.get("season"),
+						tid: g.get("userTid"),
+					},
+					"noCopyCache",
+				);
 
 				if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
 					return true;

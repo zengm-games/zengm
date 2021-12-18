@@ -165,13 +165,16 @@ const updateTeamFinances = async (
 		}
 
 		// Get stuff for the finances form
-		const t = await idb.getCopy.teamsPlus({
-			attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
-			seasonAttrs: ["expenses"],
-			season: g.get("season"),
-			tid: inputs.tid,
-			addDummySeason: true,
-		});
+		const t = await idb.getCopy.teamsPlus(
+			{
+				attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
+				seasonAttrs: ["expenses"],
+				season: g.get("season"),
+				tid: inputs.tid,
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		);
 
 		if (!t) {
 			throw new Error("Team not found");

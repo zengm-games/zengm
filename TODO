@@ -1,15 +1,12 @@
-way to tell getCopy we are not going to mutate, so don't need deepcopy
-- noCopyCache
-- in progress
-  - benchmark
-- getCopy/getCopies dry
-  - share code
-  - any place that uses this conditionally vs cache.get/getAll, use just getCopy and make sure it's no slower
-    - lookup of single primary key (such as season or xid) should look in cache first and short circuit if found there
+getCopy/getCopies dry
+- rename to idb.get/idb.getAll
+- share code
+- any place that uses this conditionally vs cache.get/getAll, use just getCopy and make sure it's no slower
+  - lookup of single primary key (such as season or xid) should look in cache first and short circuit if found there
 
-half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
-
-performance on FA page https://discord.com/channels/290013534023057409/290013534023057409/919493773224972348
+fbgm edge cases
+- half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
+- defensive penalty on last possession of half/OT - should have one untimed down https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVnWKrWXjxwNNXWTqsncqjNq
 
 mobile zoom issue
 - https://discord.com/channels/290013534023057409/290015591216054273/918908074251653202

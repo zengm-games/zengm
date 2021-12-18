@@ -47,23 +47,26 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		(updateEvents.includes("newPhase") &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
-			seasonAttrs: [
-				"season",
-				"playoffRoundsWon",
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"abbrev",
-				"region",
-				"name",
-				"imgURL",
-				"imgURLSmall",
-			],
-			addDummySeason: true,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
+				seasonAttrs: [
+					"season",
+					"playoffRoundsWon",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"abbrev",
+					"region",
+					"name",
+					"imgURL",
+					"imgURLSmall",
+				],
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		);
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const seasons: any[] = awards.map(a => {

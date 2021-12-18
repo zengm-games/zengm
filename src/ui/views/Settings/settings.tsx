@@ -181,8 +181,8 @@ export const settings: {
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
-			if (value <= 0) {
-				throw new Error("Must be positive");
+			if (value < 0) {
+				throw new Error("Must not be negative");
 			}
 
 			const numGamesDiv = output.numGamesDiv ?? 0;
@@ -1010,6 +1010,17 @@ export const settings: {
 		name: "Trade Matching Percentage",
 		godModeRequired: "existingLeagueOnly",
 		type: "int",
+		descriptionLong: (
+			<>
+				<p>
+					Set this to whatever value you want for the trades to match
+					contract-wise. In real life, the percentage is 125%, but this allows
+					you to modify this.
+				</p>
+
+				<p>Set this to 0 to turn off the rule</p>
+			</>
+		),
 	},
 	{
 		category: "Playoffs",

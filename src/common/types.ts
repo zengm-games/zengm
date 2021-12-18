@@ -1055,7 +1055,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;
-	hof: boolean;
+	hof?: 1; // Would rather be boolean, but can't index boolean
 	imgURL: string;
 	injury: PlayerInjury;
 	injuries: {
@@ -1213,6 +1213,7 @@ export type Local = {
 	autoPlayUntil?: {
 		season: number;
 		phase: number;
+		start: number;
 	};
 	autoSave: boolean;
 	fantasyDraftResults: (Player<any> & {
@@ -1622,6 +1623,7 @@ export type UpdateEvents = (
 	| "newPhase"
 	| "options"
 	| "playerMovement"
+	| "playoffs"
 	| "scheduledEvents"
 	| "retiredJerseys"
 	| "team"

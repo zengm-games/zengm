@@ -1580,9 +1580,12 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					showRookies: true,
 					fuzz: true,
 				});
-				let picks = await idb.getCopies.draftPicks({
-					tid,
-				});
+				let picks = await idb.getCopies.draftPicks(
+					{
+						tid,
+					},
+					"noCopyCache",
+				);
 				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
 
 				const picks2 = picks.map(dp => {

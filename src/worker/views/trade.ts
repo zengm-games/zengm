@@ -83,9 +83,12 @@ const updateTrade = async () => {
 		"playersByTid",
 		g.get("userTid"),
 	);
-	const userPicks = await idb.getCopies.draftPicks({
-		tid: g.get("userTid"),
-	});
+	const userPicks = await idb.getCopies.draftPicks(
+		{
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
 	const attrs = [
 		"pid",
 		"name",
@@ -132,9 +135,12 @@ const updateTrade = async () => {
 		"playersByTid",
 		otherTid,
 	);
-	const otherPicks = await idb.getCopies.draftPicks({
-		tid: otherTid,
-	});
+	const otherPicks = await idb.getCopies.draftPicks(
+		{
+			tid: otherTid,
+		},
+		"noCopyCache",
+	);
 	const t = await idb.getCopy.teamsPlus({
 		tid: otherTid,
 		season: g.get("season"),

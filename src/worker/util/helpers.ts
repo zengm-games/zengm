@@ -15,9 +15,12 @@ const augmentSeries = async (
 	}[][],
 	season: number = g.get("season"),
 ) => {
-	const teamSeasons = await idb.getCopies.teamSeasons({
-		season,
-	});
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			season,
+		},
+		"noCopyCache",
+	);
 
 	const setAll = (obj: PlayoffSeriesTeam) => {
 		obj.abbrev = g.get("teamInfoCache")[obj.tid]?.abbrev;

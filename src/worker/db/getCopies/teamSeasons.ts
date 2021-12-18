@@ -1,26 +1,30 @@
 import { idb } from "..";
-import { mergeByPk } from "./helpers";
-import { g, helpers } from "../../util";
-import type { TeamSeason } from "../../../common/types";
+import { maybeDeepCopy, mergeByPk } from "./helpers";
+import { g } from "../../util";
+import type { GetCopyType, TeamSeason } from "../../../common/types";
 
-const getCopies = async ({
-	tid,
-	season,
-	seasons,
-}: {
-	tid?: number;
-	season?: number;
-	seasons?: [number, number];
-} = {}): Promise<TeamSeason[]> => {
+const getCopies = async (
+	{
+		tid,
+		season,
+		seasons,
+	}: {
+		tid?: number;
+		season?: number;
+		seasons?: [number, number];
+	} = {},
+	type?: GetCopyType,
+): Promise<TeamSeason[]> => {
 	if (tid !== undefined && season !== undefined) {
 		// Return array of length 1
 		let teamSeason;
 		if (season >= g.get("season") - 2) {
-			teamSeason = helpers.deepCopy(
+			teamSeason = maybeDeepCopy(
 				await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
 					season,
 					tid,
 				]),
+				type,
 			);
 		}
 
@@ -41,11 +45,12 @@ const getCopies = async ({
 		if (season !== undefined) {
 			if (season >= g.get("season") - 2) {
 				// Single season, from cache
-				return helpers.deepCopy(
+				return maybeDeepCopy(
 					await idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
 						[season],
 						[season, "Z"],
 					]),
+					type,
 				);
 			}
 
@@ -72,6 +77,7 @@ const getCopies = async ({
 				[tid, seasons[1]],
 			]),
 			"teamSeasons",
+			type,
 		);
 	}
 
@@ -85,6 +91,7 @@ const getCopies = async ({
 			[tid, "Z"],
 		]),
 		"teamSeasons",
+		type,
 	);
 };
 

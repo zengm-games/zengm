@@ -130,10 +130,13 @@ const newPhasePreseason = async (
 		// Only actually need 3 seasons for userTid, but get it for all just in case there is a
 		// skipped season (alternatively could use cursor to just find most recent season, but this
 		// is not performance critical code)
-		const teamSeasons2 = await idb.getCopies.teamSeasons({
-			tid,
-			seasons: [g.get("season") - 3, g.get("season") - 1],
-		});
+		const teamSeasons2 = await idb.getCopies.teamSeasons(
+			{
+				tid,
+				seasons: [g.get("season") - 3, g.get("season") - 1],
+			},
+			"noCopyCache",
+		);
 		const prevSeason = teamSeasons2.at(-1);
 
 		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.

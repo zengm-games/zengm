@@ -571,9 +571,12 @@ const updateLeaders = async (
 	) {
 		const { categories, stats } = getCategoriesAndStats(); // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
 
-		const teamSeasons = await idb.getCopies.teamSeasons({
-			season: inputs.season,
-		});
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{
+				season: inputs.season,
+			},
+			"noCopyCache",
+		);
 		const gps: Record<number, number | undefined> = {};
 		for (const teamSeason of teamSeasons) {
 			if (inputs.playoffs === "playoffs") {

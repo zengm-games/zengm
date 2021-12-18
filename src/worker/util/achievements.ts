@@ -22,10 +22,13 @@ const trustTheProcessCutoff = bySport({
 });
 
 const checkDynasty = async (titles: number, years: number) => {
-	const teamSeasons = await idb.getCopies.teamSeasons({
-		tid: g.get("userTid"),
-		seasons: [g.get("season") - (years - 1), Infinity],
-	});
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			tid: g.get("userTid"),
+			seasons: [g.get("season") - (years - 1), Infinity],
+		},
+		"noCopyCache",
+	);
 	let titlesFound = 0; // Look over past years
 
 	for (let i = 0; i < years; i++) {
@@ -368,10 +371,13 @@ const achievements: Achievement[] = [
 		category: "Playoffs",
 
 		async check() {
-			const teamSeasons = await idb.getCopies.teamSeasons({
-				tid: g.get("userTid"),
-				seasons: [g.get("season") - 3, g.get("season")],
-			});
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: g.get("userTid"),
+					seasons: [g.get("season") - 3, g.get("season")],
+				},
+				"noCopyCache",
+			);
 			let count = 0;
 
 			for (const teamSeason of teamSeasons) {

@@ -198,9 +198,12 @@ const updateTeamHistory = async (
 			throw new Error("Invalid team ID number");
 		}
 
-		const teamSeasons = await idb.getCopies.teamSeasons({
-			tid: inputs.tid,
-		});
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{
+				tid: inputs.tid,
+			},
+			"noCopyCache",
+		);
 
 		const retiredJerseyNumbers = await Promise.all(
 			(t.retiredJerseyNumbers || []).map(async row => {

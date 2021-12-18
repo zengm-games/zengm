@@ -65,7 +65,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			addDummySeason: true,
 		});
 
-		const awards = await idb.getCopies.awards();
+		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,

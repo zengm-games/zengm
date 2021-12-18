@@ -18,15 +18,21 @@ const updateAwards = async (
 	}
 
 	let season = inputs.season;
-	let awards = await idb.getCopy.awards({
-		season,
-	});
+	let awards = await idb.getCopy.awards(
+		{
+			season,
+		},
+		"noCopyCache",
+	);
 	if (!awards) {
 		if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 			season -= 1;
-			awards = await idb.getCopy.awards({
-				season,
-			});
+			awards = await idb.getCopy.awards(
+				{
+					season,
+				},
+				"noCopyCache",
+			);
 		}
 	}
 	if (

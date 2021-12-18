@@ -3341,9 +3341,12 @@ const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
 ): Promise<any> => {
-	const awardsInitial = await idb.getCopy.awards({
-		season: awards.season,
-	});
+	const awardsInitial = await idb.getCopy.awards(
+		{
+			season: awards.season,
+		},
+		"noCopyCache",
+	);
 
 	if (!awardsInitial) {
 		throw new Error("awardsInitial not found");

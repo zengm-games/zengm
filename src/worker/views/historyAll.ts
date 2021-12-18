@@ -84,7 +84,10 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			};
 		});
 
-		const playoffSeries = await idb.getCopies.playoffSeries();
+		const playoffSeries = await idb.getCopies.playoffSeries(
+			undefined,
+			"noCopyCache",
+		);
 
 		for (let i = 0; i < seasons.length; i++) {
 			const season = seasons[i].season;

@@ -168,9 +168,12 @@ const checkFoFoFo = async () => {
 };
 
 const getUserSeed = async () => {
-	const playoffSeries = await idb.getCopy.playoffSeries({
-		season: g.get("season"),
-	});
+	const playoffSeries = await idb.getCopy.playoffSeries(
+		{
+			season: g.get("season"),
+		},
+		"noCopyCache",
+	);
 
 	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return;
@@ -189,9 +192,12 @@ const getUserSeed = async () => {
 
 const checkSevenGameFinals = async () => {
 	// Confirm 4-3 finals
-	const playoffSeries = await idb.getCopy.playoffSeries({
-		season: g.get("season"),
-	});
+	const playoffSeries = await idb.getCopy.playoffSeries(
+		{
+			season: g.get("season"),
+		},
+		"noCopyCache",
+	);
 
 	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return false;

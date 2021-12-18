@@ -2,8 +2,8 @@ import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { GetCopyType, PlayerFeat } from "../../../common/types";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getCopies = async (
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	options: any = {},
 	type?: GetCopyType,
 ): Promise<PlayerFeat[]> => {

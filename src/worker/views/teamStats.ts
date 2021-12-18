@@ -57,9 +57,12 @@ export const getStats = async ({
 
 	// For playoffs, fix W/L to be playoff W/L not regular season
 	if (playoffs) {
-		const playoffSeries = await idb.getCopy.playoffSeries({
-			season,
-		});
+		const playoffSeries = await idb.getCopy.playoffSeries(
+			{
+				season,
+			},
+			"noCopyCache",
+		);
 
 		if (playoffSeries !== undefined) {
 			// Reset W/L

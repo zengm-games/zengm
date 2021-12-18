@@ -769,7 +769,10 @@ const deleteFromTeamInfoScheduledEvent = async (
 };
 
 const deleteScheduledEvents = async (type: string) => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
 
 	const deletedExpansionTIDs: number[] = [];
 
@@ -2222,7 +2225,10 @@ const removeLastTeam = async (): Promise<void> => {
 
 	// Manually removing a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	// Delete future scheduledEvents for the deleted team, and decrement future tids for new teams
-	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season < g.get("season")) {
 			await idb.cache.scheduledEvents.delete(scheduledEvent.id);

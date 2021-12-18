@@ -181,8 +181,8 @@ export const settings: {
 		godModeRequired: "always",
 		type: "int",
 		validator: (value, output) => {
-			if (value < 0) {
-				throw new Error("Must not be negative");
+			if (value <= 0) {
+				throw new Error("Must be positive");
 			}
 
 			const numGamesDiv = output.numGamesDiv ?? 0;
@@ -994,6 +994,7 @@ export const settings: {
 				</p>
 			</>
 		),
+
 		validator: value => {
 			if (value > 1) {
 				throw new Error("Value cannot be greater than 1");
@@ -1002,6 +1003,13 @@ export const settings: {
 				throw new Error("Value cannot be less than 0");
 			}
 		},
+	},
+	{
+		category: "Schedule",
+		key: "tradeMatchingPercentage",
+		name: "Trade Matching Percentage",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
 	},
 	{
 		category: "Playoffs",

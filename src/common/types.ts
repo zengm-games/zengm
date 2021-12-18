@@ -507,6 +507,7 @@ export type GameAttributesLeague = {
 	numGames: number;
 	numGamesDiv: number | null;
 	numGamesConf: number | null;
+	tradeMatchingPercentage: number;
 	numGamesPlayoffSeries: number[];
 	numPeriods: number;
 	numPlayersDunk: number;
@@ -554,6 +555,7 @@ export type GameAttributesLeague = {
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
 	tiebreakers: (keyof typeof TIEBREAKERS)[];
+
 	teamInfoCache: {
 		abbrev: string;
 		region: string;
@@ -1053,7 +1055,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;
-	hof?: 1; // Would rather be boolean, but can't index boolean
+	hof: boolean;
 	imgURL: string;
 	injury: PlayerInjury;
 	injuries: {
@@ -1211,9 +1213,6 @@ export type Local = {
 	autoPlayUntil?: {
 		season: number;
 		phase: number;
-
-		// Time in milliseconds of the start of auto play
-		start: number;
 	};
 	autoSave: boolean;
 	fantasyDraftResults: (Player<any> & {
@@ -1623,7 +1622,6 @@ export type UpdateEvents = (
 	| "newPhase"
 	| "options"
 	| "playerMovement"
-	| "playoffs"
 	| "scheduledEvents"
 	| "retiredJerseys"
 	| "team"
@@ -1713,5 +1711,3 @@ export type HeadToHead = {
 		>
 	>;
 };
-
-export type GetCopyType = "noCopyCache";

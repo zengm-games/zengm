@@ -32,9 +32,9 @@ export const getSortedTeams = ({
 		);
 	}
 
-	const object: { [key: string]: string | undefined } = {};
+	const object: Record<string, string> = {};
 	for (const t of array) {
-		object[t.abbrev] = `${t.region} ${t.name}`;
+		object[t.abbrev] = window.mobile ? t.abbrev : `${t.region} ${t.name}`;
 		if (t.disabled) {
 			object[t.abbrev] += " (inactive)";
 		}
@@ -43,7 +43,7 @@ export const getSortedTeams = ({
 	return object;
 };
 
-const dropdownValues: { [key: string]: string | undefined } = {
+const dropdownValues: Record<string, string> = {
 	special: "All-Star Game",
 	"all|||teams": "All Teams",
 	watch: "Watch List",
@@ -139,9 +139,7 @@ if (isSport("hockey")) {
 
 export const getDropdownValue = (
 	key: number | string,
-	sortedTeams: {
-		[key: string]: string | undefined;
-	},
+	sortedTeams: Record<string, string>,
 ) => {
 	if (typeof key === "number") {
 		return String(key);
@@ -163,6 +161,8 @@ export const getDropdownValue = (
 	if (POSITIONS.includes(key)) {
 		return key;
 	}
+
+	return "???";
 };
 
 const useDropdownOptions = (
@@ -378,7 +378,7 @@ const useDropdownOptions = (
 
 	const newOptions: {
 		key: number | string;
-		val: string | undefined;
+		val: string;
 	}[] = keys.map(rawKey => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")

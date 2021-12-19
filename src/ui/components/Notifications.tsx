@@ -56,13 +56,6 @@ const Notification = ({
 			className={classNames("notification", extraClass)}
 			ref={notificationElement}
 		>
-			{title ? (
-				<>
-					<strong>{title}</strong>
-					<br />
-				</>
-			) : null}
-			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
 			<button
 				className="notification-close"
 				onClick={remove}
@@ -70,6 +63,13 @@ const Notification = ({
 			>
 				&times;
 			</button>
+			{title ? (
+				<>
+					<strong>{title}</strong>
+					<br />
+				</>
+			) : null}
+			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
 		</div>
 	);
 };

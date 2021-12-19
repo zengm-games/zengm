@@ -1,9 +1,8 @@
-after bootstrap 5 upgrade, long team names make some pages overflow weirdly
-- Shorten it to just city if the full name is too long, just abbreviation if the city is too long? https://discord.com/channels/290013534023057409/290015591216054273/922137989843419136
-- https://discord.com/channels/290013534023057409/290015591216054273/921982626594709544
-mobile zoom issue
-- https://discord.com/channels/290013534023057409/290015591216054273/918908074251653202
-- The white space thing only shows up (atleast I'm pretty sure) on the roster page, for me whenever I click on the three bar things that shows the people's stats, zoom out, or releasing players it shows up. https://discord.com/channels/290013534023057409/569726303926878219/918742921736519710
+soccer-style team names
+- instead of region and name, it's short name and long name
+- abstract any display of team name/region to handle this
+  - maybe in teamsPlus, have longName and shortName which check some option to see how to generate them
+- @Ra98
 
 getCopy/getCopies dry
 - rename to idb.get/idb.getAll
@@ -706,12 +705,6 @@ trade balancing
 - care more about bad contracts
 - FBGM should not demand as much in 2 for 1 trades? https://discord.com/channels/@me/696164463312764949/776342790586105877
 - https://old.reddit.com/r/BasketballGM/comments/k3339l/the_cpus_lack_of_value_for_draft_picks_is/
-
-soccer-style team names
-- instead of region and name, it's short name and long name
-- abstract any display of team name/region to handle this
-  - maybe in teamsPlus, have longName and shortName which check some option to see how to generate them
-- @Ra98
 
 profit for extreme caps needs to be fixed first, its not possible to make money above $400m cap space
 

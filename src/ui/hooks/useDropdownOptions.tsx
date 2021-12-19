@@ -9,6 +9,11 @@ import {
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
+export type ResponsiveOption = {
+	minWidth: number;
+	text: string;
+};
+
 export const getSortedTeams = ({
 	teamInfoCache,
 	hideDisabledTeams,
@@ -32,12 +37,19 @@ export const getSortedTeams = ({
 		);
 	}
 
-	const object: Record<string, string> = {};
+	const object: Record<string, string | ResponsiveOption[]> = {};
 	for (const t of array) {
-		object[t.abbrev] = window.mobile ? t.abbrev : `${t.region} ${t.name}`;
-		if (t.disabled) {
-			object[t.abbrev] += " (inactive)";
-		}
+		const inactiveText = t.disabled ? " (inactive)" : "";
+		object[t.abbrev] = [
+			{
+				minWidth: -Infinity,
+				text: `${t.abbrev}${inactiveText}`,
+			},
+			{
+				minWidth: 768,
+				text: `${t.region} ${t.name}${inactiveText}`,
+			},
+		];
 	}
 
 	return object;
@@ -139,7 +151,7 @@ if (isSport("hockey")) {
 
 export const getDropdownValue = (
 	key: number | string,
-	sortedTeams: Record<string, string>,
+	sortedTeams: Record<string, string | ResponsiveOption[]>,
 ) => {
 	if (typeof key === "number") {
 		return String(key);
@@ -378,7 +390,7 @@ const useDropdownOptions = (
 
 	const newOptions: {
 		key: number | string;
-		val: string;
+		val: string | ResponsiveOption[];
 	}[] = keys.map(rawKey => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")

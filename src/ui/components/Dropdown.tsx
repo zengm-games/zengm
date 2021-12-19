@@ -1,10 +1,25 @@
+import findLast from "lodash-es/findLast";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import useDropdownOptions from "../hooks/useDropdownOptions";
+import useDropdownOptions, {
+	ResponsiveOption,
+} from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
 import type { LocalStateUI } from "../../common/types";
+
+// This assumes that when val is an array, it is already sorted by minWidth ascending
+export const getResponsiveValue = (
+	val: string | ResponsiveOption[],
+	windowWidth: number,
+) => {
+	if (Array.isArray(val)) {
+		return findLast(val, row => windowWidth >= row.minWidth)!.text;
+	}
+
+	return val;
+};
 
 const Select = ({
 	customOptions,
@@ -19,18 +34,37 @@ const Select = ({
 }) => {
 	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+	const trackWindowWidth = options.some(option => Array.isArray(option.val));
+	useEffect(() => {
+		// Only track if we have some responsive options
+		if (trackWindowWidth) {
+			const updateWindowWidth = () => {
+				setWindowWidth(window.innerWidth);
+			};
+
+			window.addEventListener("optimizedResize", updateWindowWidth);
+			return () => {
+				window.removeEventListener("optimizedResize", updateWindowWidth);
+			};
+		}
+	}, [trackWindowWidth]);
+
+	const getResponsiveValue2 = useCallback(
+		(val: string | ResponsiveOption[]) => {
+			return getResponsiveValue(val, windowWidth);
+		},
+		[windowWidth],
+	);
 
 	useEffect(() => {
-		let currentValue;
-
+		let currentValue: string | ResponsiveOption[] = "";
 		for (const option of options) {
 			if (option.key === value) {
 				currentValue = option.val;
+				break;
 			}
-		}
-
-		if (currentValue === undefined) {
-			currentValue = "";
 		}
 
 		const el = document.createElement("select");
@@ -38,14 +72,14 @@ const Select = ({
 		el.style.fontSize = "14px";
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
-		el2.innerHTML = currentValue;
+		el2.innerHTML = getResponsiveValue2(currentValue);
 		el.appendChild(el2);
 
 		document.body.appendChild(el);
 		setWidth(el.offsetWidth);
 
 		document.body.removeChild(el);
-	}, [field, options, value]);
+	}, [field, getResponsiveValue2, options, value]);
 
 	const style: CSSProperties = {
 		width,
@@ -93,11 +127,13 @@ const Select = ({
 				}}
 				style={style}
 			>
-				{options.map(opt => (
-					<option key={opt.key} value={opt.key}>
-						{opt.val}
-					</option>
-				))}
+				{options.map(opt => {
+					return (
+						<option key={opt.key} value={opt.key}>
+							{getResponsiveValue2(opt.val)}
+						</option>
+					);
+				})}
 			</select>
 		</div>
 	);

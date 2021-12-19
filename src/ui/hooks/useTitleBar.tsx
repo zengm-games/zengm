@@ -3,6 +3,7 @@ import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
 import type { LocalStateUI, MenuItemHeader } from "../../common/types";
 import { GAME_NAME } from "../../common";
+import { getResponsiveValue } from "../components/Dropdown";
 
 const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	title,
@@ -57,7 +58,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 				const value = getDropdownValue(key, sortedTeams);
 
 				if (value !== undefined) {
-					parts.push(value);
+					parts.push(getResponsiveValue(value, Infinity));
 				}
 			}
 		}

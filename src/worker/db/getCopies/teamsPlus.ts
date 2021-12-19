@@ -24,12 +24,11 @@ const processAttrs = <
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
 	attrs: Attrs,
-	type: GetCopyType | undefined,
 ) => {
 	for (const attr of attrs) {
 		if (attr === "budget") {
-			// @ts-ignore
-			output.budget = maybeDeepCopy(t.budget, type);
+			// Always copy, because we mutate below to convert units
+			output.budget = helpers.deepCopy(t.budget);
 
 			// @ts-ignore
 			for (const [key, value] of Object.entries(output.budget)) {
@@ -358,7 +357,7 @@ const processTeam = async <
 
 	if (attrs) {
 		// @ts-ignore
-		processAttrs(output, t, attrs, type);
+		processAttrs(output, t, attrs);
 	}
 
 	const promises: Promise<any>[] = [];

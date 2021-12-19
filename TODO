@@ -1,4 +1,5 @@
 after bootstrap 5 upgrade, long team names make some pages overflow weirdly
+- Shorten it to just city if the full name is too long, just abbreviation if the city is too long? https://discord.com/channels/290013534023057409/290015591216054273/922137989843419136
 - https://discord.com/channels/290013534023057409/290015591216054273/921982626594709544
 mobile zoom issue
 - https://discord.com/channels/290013534023057409/290015591216054273/918908074251653202

@@ -32,11 +32,16 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 				safelist: {
 					standard: [/^qc-cmp2-persistent-link$/],
 					greedy: [
+						// react-bootstrap stuff
 						/^modal/,
 						/^navbar/,
 						/^popover/,
 						/^tooltip/,
 						/^bs-tooltip/,
+
+						// For align="end" in react-bootstrap
+						/^dropdown-menu-end$/,
+
 						/^flag-/,
 						/^dark-select/,
 						/^bar-graph/,

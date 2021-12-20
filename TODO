@@ -1,7 +1,7 @@
 soccer-style team names
-- instead of region and name, it's short name and long name
-- abstract any display of team name/region to handle this
-  - maybe in teamsPlus, have longName and shortName which check some option to see how to generate them
+- define formulas for short/medium/long names based on ABBREV, REGION, NAME
+- usually process in UI. maybe will need some in worker, like for notifications
+- add to teamsPlus?
 - @Ra98
 
 getCopy/getCopies dry

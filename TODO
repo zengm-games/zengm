@@ -1,6 +1,5 @@
 mobile
 - when resizing, need to recompute width of Dropdown boxes in TitleBar
-- get rid of right padding on titlebar
 
 soccer-style team names
 - implementation

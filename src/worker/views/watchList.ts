@@ -39,21 +39,8 @@ const updatePlayers = async (
 
 		const playersAll = await idb.getCopies.players(
 			{
-				filter: p => {
-					if (inputs.flagNote === "flag" || inputs.flagNote === "either") {
-						if (p.watch) {
-							return true;
-						}
-					}
-
-					if (inputs.flagNote === "note" || inputs.flagNote === "either") {
-						if (p.note !== undefined && p.note !== "") {
-							return true;
-						}
-					}
-
-					return false;
-				},
+				watch: inputs.flagNote === "flag" || inputs.flagNote === "either",
+				note: inputs.flagNote === "note" || inputs.flagNote === "either",
 			},
 			"noCopyCache",
 		);

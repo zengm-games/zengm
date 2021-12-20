@@ -87,7 +87,6 @@ const generate = (
 		statsTids: [],
 		tid,
 		transactions: [],
-		watch: false,
 		weight,
 		yearsFreeAgent: 0,
 		// These should be set by updateValues after player is completely done (automatic in develop)

@@ -139,7 +139,6 @@ export const getCommon = async (pid?: number, season?: number) => {
 				| "injury"
 				| "injuries"
 				| "college"
-				| "watch"
 				| "relatives"
 				| "awards"
 		  > & {
@@ -168,6 +167,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 				jerseyNumber?: string;
 				experience: number;
 				note?: string;
+				watch: boolean;
 		  })
 		| undefined = await idb.getCopy.playersPlus(pRaw, {
 		attrs: [

@@ -136,7 +136,7 @@ const getActualPlayerInfo = (
 		retiredYear: p.retiredYear,
 		skills: ratings.skills,
 		stat,
-		watch: p.watch,
+		watch: !!p.watch,
 	};
 };
 

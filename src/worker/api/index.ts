@@ -378,30 +378,16 @@ const clearInjury = async (pid: number | "all") => {
 };
 
 const clearWatchList = async () => {
-	const pids = new Set();
-	const players = await idb.cache.players.getAll();
-
+	const players = await idb.getCopies.players(
+		{
+			watch: true,
+		},
+		"noCopyCache",
+	);
 	for (const p of players) {
-		if (p.watch) {
-			p.watch = false;
-			await idb.cache.players.put(p);
-		}
-
-		pids.add(p.pid);
+		delete p.watch;
+		await idb.cache.players.put(p);
 	}
-
-	// For watched players not in cache
-	const tx = idb.league.transaction("players", "readwrite");
-	let cursor = await tx.store.openCursor();
-	while (cursor) {
-		const p = cursor.value;
-		if (p.watch && !pids.has(p.pid)) {
-			p.watch = false;
-			cursor.update(p);
-		}
-		cursor = await cursor.continue();
-	}
-	await tx.done;
 
 	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
@@ -2601,7 +2587,13 @@ const setPlayerNote = async (pid: number, note: string) => {
 	);
 
 	if (p) {
-		p.note = note;
+		if (note === "") {
+			delete p.note;
+			delete p.noteBool;
+		} else {
+			p.note = note;
+			p.noteBool = 1;
+		}
 		await idb.cache.players.put(p);
 	} else {
 		throw new Error("Invalid pid");
@@ -3117,20 +3109,19 @@ const updatePlayThroughInjuries = async (
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
-	const cachedPlayer = await idb.cache.players.get(pid);
-
-	if (cachedPlayer) {
-		cachedPlayer.watch = watch;
-		await idb.cache.players.put(cachedPlayer);
-	} else {
-		const p = await idb.league.get("players", pid);
-		if (p) {
-			p.watch = watch;
-			await idb.cache.players.add(p);
-		}
+	let p = await idb.cache.players.get(pid);
+	if (!p) {
+		p = await idb.league.get("players", pid);
 	}
-
-	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	if (p) {
+		if (watch) {
+			p.watch = 1;
+		} else {
+			delete p.watch;
+		}
+		await idb.cache.players.put(p);
+		await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	}
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {

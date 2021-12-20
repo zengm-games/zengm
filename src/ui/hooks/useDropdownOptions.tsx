@@ -9,6 +9,8 @@ import {
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
+const CUTOFF = 768;
+
 export type ResponsiveOption = {
 	minWidth: number;
 	text: string;
@@ -46,7 +48,7 @@ export const getSortedTeams = ({
 				text: `${t.abbrev}${inactiveText}`,
 			},
 			{
-				minWidth: 768,
+				minWidth: CUTOFF,
 				text: `${t.region} ${t.name}${inactiveText}`,
 			},
 		];
@@ -55,12 +57,21 @@ export const getSortedTeams = ({
 	return object;
 };
 
-const dropdownValues: Record<string, string> = {
+const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	special: "All-Star Game",
 	"all|||teams": "All Teams",
 	watch: "Watch List",
 	career: "Career Totals",
-	regularSeason: "Regular Season",
+	regularSeason: [
+		{
+			minWidth: -Infinity,
+			text: "Reg Seas",
+		},
+		{
+			minWidth: CUTOFF,
+			text: "Regular Season",
+		},
+	],
 	playoffs: "Playoffs",
 	"10": "Past 10 Seasons",
 	"all|||seasons": "All Seasons",

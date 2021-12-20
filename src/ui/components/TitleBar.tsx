@@ -138,7 +138,7 @@ const TitleBar = () => {
 		menuItems.push({
 			type: "header",
 			long: "More Info",
-			short: "More Info",
+			short: "More",
 			league: true,
 			children: [
 				{

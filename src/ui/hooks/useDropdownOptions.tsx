@@ -9,12 +9,21 @@ import {
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
-const CUTOFF = 768;
-
 export type ResponsiveOption = {
 	minWidth: number;
 	text: string;
 };
+
+const makeNormalResponsive = (short: string, long: string) => [
+	{
+		minWidth: -Infinity,
+		text: short,
+	},
+	{
+		minWidth: 768,
+		text: long,
+	},
+];
 
 export const getSortedTeams = ({
 	teamInfoCache,
@@ -42,16 +51,10 @@ export const getSortedTeams = ({
 	const object: Record<string, string | ResponsiveOption[]> = {};
 	for (const t of array) {
 		const inactiveText = t.disabled ? " (inactive)" : "";
-		object[t.abbrev] = [
-			{
-				minWidth: -Infinity,
-				text: `${t.abbrev}${inactiveText}`,
-			},
-			{
-				minWidth: CUTOFF,
-				text: `${t.region} ${t.name}${inactiveText}`,
-			},
-		];
+		object[t.abbrev] = makeNormalResponsive(
+			`${t.abbrev}${inactiveText}`,
+			`${t.region} ${t.name}${inactiveText}`,
+		);
 	}
 
 	return object;
@@ -62,16 +65,7 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	"all|||teams": "All Teams",
 	watch: "Watch List",
 	career: "Career Totals",
-	regularSeason: [
-		{
-			minWidth: -Infinity,
-			text: "Reg Seas",
-		},
-		{
-			minWidth: CUTOFF,
-			text: "Regular Season",
-		},
-	],
+	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
 	"10": "Past 10 Seasons",
 	"all|||seasons": "All Seasons",
@@ -128,21 +122,21 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	release: "Released",
 	trade: "Trades",
 	team: "Team",
-	opponent: "Opponent",
+	opponent: makeNormalResponsive("Opp", "Opponent"),
 	by_team: "By Team",
-	by_conf: "By Conference",
-	by_div: "By Division",
+	by_conf: makeNormalResponsive("By Conf", "By Conference"),
+	by_div: makeNormalResponsive("By Div", "By Division"),
 	"all|||news": "All Stories",
 	normal: "Normal",
 	big: "Only Big News",
 	newest: "Newest First",
 	oldest: "Oldest First",
-	league: "League",
-	conf: "Conference",
-	div: "Division",
+	league: makeNormalResponsive("Leag", "League"),
+	conf: makeNormalResponsive("Conf", "Conference"),
+	div: makeNormalResponsive("Div", "Division"),
 	your_teams: "Your Teams",
-	flag: "Flagged Players",
-	note: "Players With Notes",
+	flag: makeNormalResponsive("Flagged", "Flagged Players"),
+	note: makeNormalResponsive("Notes", "Players With Notes"),
 	either: "Either",
 	skater: "Skaters",
 	goalie: "Goalies",

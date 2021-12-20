@@ -84,9 +84,9 @@ const genRatings = (
 		],
 	];
 
-	const pca1 = 1.64 * hgt - 79.1 + random.realGauss(0, 10);
-	const pca2 = 0.42 * hgt - 20.12 + random.realGauss(0, 10);
-	const pca3 = 0.29 * hgt - 13.78 + random.realGauss(0, 10);
+	const pca1 = 1.64 * hgt - 79.1 + random.realGauss(0, 14.3);
+	const pca2 = 0.42 * hgt - 20.12 + random.realGauss(0, 16.2);
+	const pca3 = 0.29 * hgt - 13.78 + random.realGauss(0, 9.2);
 
 	const rawRatings = {
 		diq:

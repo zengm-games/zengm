@@ -7,36 +7,36 @@ import type {
 
 // (age coefficient, age offset) for mean, than std. dev.
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, Array<number>> = {
-	diq: [0.06, -1.098, 0.0, -0.011],
-	dnk: [0.029, -0.923, -0.008, 0.342],
-	drb: [0.064, -1.472, 0.0, 0.0],
-	endu: [-0.464, 12.505, 0.04, -0.873],
-	fg: [-0.005, 0.362, -0.004, 0.583],
-	ft: [0.025, -0.217, 0.003, 0.533],
-	ins: [0.016, -0.652, -0.034, 1.956],
-	jmp: [-0.166, 3.191, 0.074, -1.511],
-	oiq: [-0.042, 1.451, -0.0, 0.014],
-	pss: [0.04, -0.81, -0.001, 0.064],
-	reb: [0.045, -1.114, -0.0, 0.004],
-	spd: [-0.111, 2.399, 0.047, -0.983],
-	stre: [-0.039, 1.018, 0.001, -0.013],
-	tp: [0.095, -2.109, -0.009, 1.092],
+	diq: [0.0026, -0.058, -0.0, 0.0006],
+	dnk: [0.0021, -0.0556, -0.0004, 0.0115],
+	drb: [0.0031, -0.0764, 0.0, 0.0],
+	endu: [-0.0146, 0.392, 0.0025, -0.0572],
+	fg: [0.0012, -0.0254, -0.0004, 0.0275],
+	ft: [0.002, -0.0463, -0.0011, 0.0523],
+	ins: [0.0008, -0.029, 0.0005, 0.016],
+	jmp: [-0.0058, 0.1244, 0.0068, -0.1686],
+	oiq: [-0.0004, 0.0183, -0.0001, 0.0018],
+	pss: [0.0023, -0.0551, -0.0, 0.0002],
+	reb: [0.0023, -0.0617, -0.0, 0.0002],
+	spd: [-0.0022, 0.043, 0.0015, -0.0368],
+	stre: [-0.0001, -0.0, 0.0, 0.0],
+	tp: [0.0028, -0.0686, -0.0017, 0.0524],
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
 	let val: number;
 
-	const base_coef = [-0.174, 4.475, -0.001, 3.455];
+	const base_coef = [-0.0047, 0.1225, 0.0006, 0.0421];
 
 	val = base_coef[0] * age + base_coef[1];
 	const std_base = base_coef[2] * age + base_coef[3];
-	val += helpers.bound(
-		random.realGauss(0, 0.05 + Math.max(0, std_base)),
-		-5,
-		15,
+	const std_noise = helpers.bound(
+		random.realGauss(0, Math.max(0.00001, std_base)),
+		-0.05,
+		0.25,
 	);
+	val += std_noise;
 
-	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
 	if (g.hasOwnProperty("numActiveTeams")) {
 		const numActiveTeams = g.get("numActiveTeams");
 		if (numActiveTeams > 1) {
@@ -47,7 +47,6 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 			}
 		}
 	}
-
 	return val;
 };
 
@@ -78,12 +77,17 @@ const developSeason = (
 		const ageStd =
 			ratingsFormulas[key][2] * age_bounds + ratingsFormulas[key][3];
 
+		const ageChange =
+			ageModifier +
+			helpers.bound(
+				random.realGauss(0, Math.max(0.00001, ageStd)),
+				-0.05,
+				0.25,
+			);
 		ratings[key] = limitRating(
-			ratings[key] +
-				baseChange +
-				ageModifier +
-				helpers.bound(random.realGauss(0, 0.05 + Math.max(0, ageStd)), -5, 5),
+			Math.exp(Math.log(Math.max(0.1, ratings[key])) + baseChange + ageChange),
 		);
+		//console.log(baseChange,ageChange);
 	}
 };
 

@@ -69,7 +69,6 @@ const Select = ({
 
 		const el = document.createElement("select");
 		el.style.display = "inline";
-		el.style.fontSize = "14px";
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
 		el2.innerHTML = getResponsiveValue2(currentValue);

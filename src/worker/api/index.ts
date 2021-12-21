@@ -1411,6 +1411,10 @@ const getLocal = async (name: keyof Local) => {
 const getPlayerBioInfoDefaults = initDefaults;
 
 const getPlayerWatch = async (pid: number) => {
+	if (Number.isNaN(pid)) {
+		return false;
+	}
+
 	const p = await idb.cache.players.get(pid);
 	if (p) {
 		return p.watch;

@@ -50,6 +50,8 @@ const RelativesForm = ({
 	return (
 		<>
 			{relatives.map(({ pid, type }, i) => {
+				const pidInt = parseInt(pid as any, 10);
+
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
 						<div className="me-3">
@@ -98,7 +100,7 @@ const RelativesForm = ({
 							/>
 						</div>
 						<div className="flex-shrink-0" style={{ fontSize: 20 }}>
-							<RatingsStatsPopover pid={parseInt(pid as any, 10)} />
+							<RatingsStatsPopover pid={pidInt} />
 							<button
 								className="ms-3 text-danger btn btn-link p-0 border-0"
 								onClick={() => {

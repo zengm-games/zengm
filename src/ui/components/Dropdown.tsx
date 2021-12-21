@@ -59,25 +59,37 @@ const Select = ({
 	);
 
 	useEffect(() => {
-		let currentValue: string | ResponsiveOption[] = "";
-		for (const option of options) {
-			if (option.key === value) {
-				currentValue = option.val;
-				break;
+		const updateWidth = () => {
+			let currentValue: string | ResponsiveOption[] = "";
+			for (const option of options) {
+				if (option.key === value) {
+					currentValue = option.val;
+					break;
+				}
 			}
-		}
 
-		const el = document.createElement("select");
-		el.style.display = "inline";
-		el.className = "dropdown-select";
-		const el2 = document.createElement("option");
-		el2.innerHTML = getResponsiveValue2(currentValue);
-		el.appendChild(el2);
+			const el = document.createElement("select");
+			el.style.display = "inline";
+			el.className = "dropdown-select";
+			const el2 = document.createElement("option");
+			el2.innerHTML = getResponsiveValue2(currentValue);
+			el.appendChild(el2);
 
-		document.body.appendChild(el);
-		setWidth(el.offsetWidth);
+			document.body.appendChild(el);
+			setWidth(el.offsetWidth);
 
-		document.body.removeChild(el);
+			document.body.removeChild(el);
+		};
+
+		updateWidth();
+
+		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate
+		const mediaQueryList = window.matchMedia("(min-width: 768px)");
+		mediaQueryList.addEventListener("change", updateWidth);
+
+		return () => {
+			mediaQueryList.removeEventListener("change", updateWidth);
+		};
 	}, [field, getResponsiveValue2, options, value]);
 
 	const style: CSSProperties = {

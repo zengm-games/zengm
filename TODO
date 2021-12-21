@@ -1,6 +1,3 @@
-mobile
-- when resizing, need to recompute width of Dropdown boxes in TitleBar
-
 soccer-style team names
 - implementation
   - add two field allongside abbrev/region/name - customMedium and customLong

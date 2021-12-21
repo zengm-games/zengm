@@ -152,7 +152,7 @@ const gb = (team0: teamWonLost, team: teamWonLost) => {
  */
 const getAbbrev = (tid: number | string): string => {
 	if (typeof tid === "string") {
-		tid = parseInt(tid, 10);
+		tid = parseInt(tid);
 	}
 
 	if (tid === PLAYER.FREE_AGENT) {

@@ -7,8 +7,8 @@ import type {
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1: string, t2: string) => {
-	const [min1, sec1] = t1.split(":").map(x => parseInt(x, 10));
-	const [min2, sec2] = t2.split(":").map(x => parseInt(x, 10));
+	const [min1, sec1] = t1.split(":").map(x => parseInt(x));
+	const [min2, sec2] = t2.split(":").map(x => parseInt(x));
 
 	if (min1 > min2) {
 		return 1;

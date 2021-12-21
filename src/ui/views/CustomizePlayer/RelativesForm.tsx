@@ -50,7 +50,7 @@ const RelativesForm = ({
 	return (
 		<>
 			{relatives.map(({ pid, type }, i) => {
-				const pidInt = parseInt(pid as any, 10);
+				const pidInt = parseInt(pid as any);
 
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>

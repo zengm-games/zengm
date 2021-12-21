@@ -127,7 +127,7 @@ const Controller = () => {
 
 			let newLid: number | undefined;
 			if (typeof context.params.lid === "string") {
-				const newLidInt = parseInt(context.params.lid, 10);
+				const newLidInt = parseInt(context.params.lid);
 				if (!Number.isNaN(newLidInt)) {
 					newLid = newLidInt;
 				}

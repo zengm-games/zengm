@@ -3258,7 +3258,7 @@ const updateTeamInfo = async (
 		t.jersey = newTeam.jersey;
 
 		t.pop = parseFloat(newTeam.pop as string);
-		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string, 10);
+		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string);
 
 		const disableTeam = newTeam.disabled && !t.disabled;
 		const enableTeam = !newTeam.disabled && t.disabled;

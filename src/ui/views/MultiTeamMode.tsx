@@ -37,7 +37,7 @@ const MultiTeamMode = ({
 		async (event: ChangeEvent<HTMLSelectElement>) => {
 			const newUserTids = Array.from(event.target.options)
 				.filter(o => o.selected)
-				.map(o => parseInt(o.value, 10))
+				.map(o => parseInt(o.value))
 				.filter(n => !Number.isNaN(n));
 
 			if (newUserTids.length < 1) {

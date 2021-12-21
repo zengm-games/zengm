@@ -19,7 +19,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { bySport, getPeriodName, isSport } from "../../common";
-import useLocalStorageState from "use-local-storage-state";
+import { useLocalStorageState } from "use-local-storage-state";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -81,7 +81,7 @@ const updatePhaseAndLeagueTopBar = () => {
 };
 
 const getSeconds = (time: string) => {
-	const [min, sec] = time.split(":").map(x => parseInt(x, 10));
+	const [min, sec] = time.split(":").map(x => parseInt(x));
 	return min * 60 + sec;
 };
 

@@ -73,6 +73,7 @@
     "prefer-const": ["error", {
         "destructuring": "all"
     }],
+    "radix": ["error", "as-needed"],
     "react/display-name": "off",
     "react/jsx-key": "off",
     "react/no-unescaped-entities": "off",

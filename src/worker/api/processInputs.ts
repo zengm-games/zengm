@@ -68,7 +68,7 @@ export const validateSeason = (season?: number | string): number => {
 	}
 
 	if (typeof season === "string") {
-		season = parseInt(season, 10);
+		season = parseInt(season);
 	}
 
 	if (Number.isNaN(season)) {
@@ -94,7 +94,7 @@ const awardsRecords = (params: Params) => {
 const customizePlayer = (params: Params) => {
 	let pid: number | null = null;
 	if (typeof params.pid === "string") {
-		pid = parseInt(params.pid, 10);
+		pid = parseInt(params.pid);
 		if (Number.isNaN(pid) || pid < 0) {
 			pid = null;
 		}
@@ -264,7 +264,7 @@ const gameLog = (params: Params) => {
 		params.abbrev === "special" ? "special" : validateAbbrev(params.abbrev)[1];
 	return {
 		abbrev,
-		gid: params.gid !== undefined ? parseInt(params.gid, 10) : -1,
+		gid: params.gid !== undefined ? parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
 	};
 };
@@ -400,7 +400,7 @@ const liveGame = (params: Params, ctxBBGM: any) => {
 
 const message = (params: Params) => {
 	return {
-		mid: params.mid ? parseInt(params.mid, 10) : undefined,
+		mid: params.mid ? parseInt(params.mid) : undefined,
 	};
 };
 
@@ -415,7 +415,7 @@ const negotiation = (params: Params) => {
 	// undefined will load whatever the active one is
 	let pid: number | undefined;
 	if (typeof params.pid === "string") {
-		pid = parseInt(params.pid, 10);
+		pid = parseInt(params.pid);
 		if (Number.isNaN(pid) || pid < 0) {
 			pid = undefined;
 		}
@@ -444,7 +444,7 @@ const newLeague = (params: Params) => {
 	} else if (params.x === "legends") {
 		type = "legends";
 	} else if (params.x !== undefined) {
-		lid = parseInt(params.x, 10);
+		lid = parseInt(params.x);
 		if (Number.isNaN(lid)) {
 			lid = undefined;
 		}
@@ -496,7 +496,7 @@ const news = (params: Params) => {
 
 const player = (params: Params) => {
 	return {
-		pid: params.pid !== undefined ? parseInt(params.pid, 10) : undefined,
+		pid: params.pid !== undefined ? parseInt(params.pid) : undefined,
 	};
 };
 
@@ -528,7 +528,7 @@ const playerFeats = (params: Params) => {
 
 const playerGameLog = (params: Params) => {
 	return {
-		pid: params.pid !== undefined ? parseInt(params.pid, 10) : undefined,
+		pid: params.pid !== undefined ? parseInt(params.pid) : undefined,
 		season: validateSeason(params.season),
 	};
 };

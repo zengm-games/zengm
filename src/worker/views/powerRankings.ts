@@ -109,7 +109,7 @@ const updatePowerRankings = async (
 				// Add estimated MOV from ovr (0/100 to -30/30)
 				const estimatedMOV = ovr * 0.6 - 30;
 				score += estimatedMOV;
-				let winsLastTen = parseInt(t.seasonAttrs.lastTen.split("-")[0], 10);
+				let winsLastTen = parseInt(t.seasonAttrs.lastTen.split("-")[0]);
 
 				if (Number.isNaN(winsLastTen)) {
 					winsLastTen = 0;

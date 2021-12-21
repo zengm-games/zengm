@@ -311,13 +311,11 @@ const getCopies = async (
 		);
 	}
 
-	const constStatsTid = statsTid;
-
-	if (constStatsTid !== undefined) {
+	if (statsTid !== undefined) {
 		return mergeByPk(
 			await getAll(
 				idb.league.transaction("players").store.index("statsTids"),
-				constStatsTid,
+				statsTid,
 			),
 			([] as Player<MinimalPlayerRatings>[])
 				.concat(
@@ -328,7 +326,7 @@ const getCopies = async (
 						Infinity,
 					]),
 				)
-				.filter(p => p.statsTids.includes(constStatsTid)),
+				.filter(p => p.statsTids.includes(statsTid)),
 			"players",
 			type,
 		);

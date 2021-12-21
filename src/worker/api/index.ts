@@ -375,6 +375,7 @@ const clearInjury = async (pid: number | "all") => {
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 };
 
 const clearWatchList = async () => {
@@ -3525,6 +3526,9 @@ const upsertCustomizedPlayer = async (
 			}
 		}
 	}
+
+	// In case a player was injured or moved to another team
+	await recomputeLocalUITeamOvrs();
 
 	// @ts-ignore
 	return p.pid;

@@ -1,3 +1,8 @@
+spreads not updating
+- https://discord.com/channels/290013534023057409/290015591216054273/922715794402582568
+  - I think it occurs after a live sim, where the new game shows up… then you sim a day, guys recover from injury… but spread on the top bar doesn’t update to reflect that, it just holds at what it was at. Another example I found, denver 7.5 pt favorite in weekly schedule and 8 on the top bar (at least for me, it may be recomputed to 7.5 when someone loads this export) 
+
+
 soccer-style team names
 - implementation
   - add two field allongside abbrev/region/name - customMedium and customLong

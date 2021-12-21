@@ -180,7 +180,7 @@ const TitleBar = () => {
 	}
 
 	return (
-		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0 ps-3 pe-sm-3 py-0 py-sm-1">
+		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0 ps-3 pe-sm-3 py-0">
 			<h1 className="mb-0">
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}

@@ -1,6 +1,6 @@
 import findLast from "lodash-es/findLast";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	ResponsiveOption,
@@ -21,6 +21,10 @@ export const getResponsiveValue = (
 	return val;
 };
 
+const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
+	return getResponsiveValue(val, window.innerWidth);
+};
+
 const Select = ({
 	customOptions,
 	field,
@@ -34,29 +38,6 @@ const Select = ({
 }) => {
 	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-	const trackWindowWidth = options.some(option => Array.isArray(option.val));
-	useEffect(() => {
-		// Only track if we have some responsive options
-		if (trackWindowWidth) {
-			const updateWindowWidth = () => {
-				setWindowWidth(window.innerWidth);
-			};
-
-			window.addEventListener("optimizedResize", updateWindowWidth);
-			return () => {
-				window.removeEventListener("optimizedResize", updateWindowWidth);
-			};
-		}
-	}, [trackWindowWidth]);
-
-	const getResponsiveValue2 = useCallback(
-		(val: string | ResponsiveOption[]) => {
-			return getResponsiveValue(val, windowWidth);
-		},
-		[windowWidth],
-	);
 
 	useEffect(() => {
 		const updateWidth = () => {
@@ -83,14 +64,35 @@ const Select = ({
 
 		updateWidth();
 
-		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate
-		const mediaQueryList = window.matchMedia("(min-width: 768px)");
-		mediaQueryList.addEventListener("change", updateWidth);
+		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate. Coincidentally, 768 is also
+		const widthsToCheck = new Set([768]);
+
+		// Also check any other widths where there is a breakpoint in the text of one of the options for this dropdown
+		for (const { val } of options) {
+			if (Array.isArray(val)) {
+				for (const { minWidth } of val) {
+					if (minWidth > -Infinity) {
+						widthsToCheck.add(minWidth);
+					}
+				}
+			}
+		}
+
+		// Use one media query per cutoff. At the time of writing, there is only ever one, at 768px. This is more efficient than listening for the window resize event and updating every time it changes.
+		const mediaQueryLists = Array.from(widthsToCheck).map(widthToCheck => {
+			const mediaQueryList = window.matchMedia(
+				`(min-width: ${widthToCheck}px)`,
+			);
+			mediaQueryList.addEventListener("change", updateWidth);
+			return mediaQueryList;
+		});
 
 		return () => {
-			mediaQueryList.removeEventListener("change", updateWidth);
+			for (const mediaQueryList of mediaQueryLists) {
+				mediaQueryList.removeEventListener("change", updateWidth);
+			}
 		};
-	}, [field, getResponsiveValue2, options, value]);
+	}, [field, options, value]);
 
 	const style: CSSProperties = {
 		width,

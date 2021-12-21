@@ -83,13 +83,15 @@ const Select = ({
 			const mediaQueryList = window.matchMedia(
 				`(min-width: ${widthToCheck}px)`,
 			);
-			mediaQueryList.addEventListener("change", updateWidth);
+			// Rather than addEventListener for Safari <14
+			mediaQueryList.addListener(updateWidth);
 			return mediaQueryList;
 		});
 
 		return () => {
 			for (const mediaQueryList of mediaQueryLists) {
-				mediaQueryList.removeEventListener("change", updateWidth);
+				// Rather than removeEventListener for Safari <14
+				mediaQueryList.removeListener(updateWidth);
 			}
 		};
 	}, [field, options, value]);

@@ -19,6 +19,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { bySport, getPeriodName, isSport } from "../../common";
+import useLocalStorageState from "use-local-storage-state";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -87,8 +88,8 @@ const getSeconds = (time: string) => {
 const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
-	const [speed, setSpeed] = useState(7);
-	const speedRef = useRef(speed);
+	const [speed, setSpeed] = useLocalStorageState("live-game-speed", "7");
+	const speedRef = useRef(parseInt(speed));
 	const [playIndex, setPlayIndex] = useState(-1);
 	const [started, setStarted] = useState(!!props.events);
 	const [confetti, setConfetti] = useState<{
@@ -279,11 +280,9 @@ const LiveGame = (props: View<"liveGame">) => {
 	}, [props.events, props.initialBoxScore, started, startLiveGame]);
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const speed = parseInt(event.target.value, 10);
-		if (!Number.isNaN(speed)) {
-			setSpeed(speed);
-			speedRef.current = speed;
-		}
+		const speed = event.target.value;
+		setSpeed(speed);
+		speedRef.current = parseInt(speed);
 	};
 
 	const handlePause = useCallback(() => {

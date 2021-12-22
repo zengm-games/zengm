@@ -7,33 +7,33 @@ import type {
 
 // (age coefficient, age offset) for mean, than std. dev.
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, Array<number>> = {
-	diq: [0.0026, -0.058, -0.0, 0.0006],
-	dnk: [0.0021, -0.0556, -0.0004, 0.0115],
-	drb: [0.0031, -0.0764, 0.0, 0.0],
-	endu: [-0.0146, 0.392, 0.0025, -0.0572],
-	fg: [0.0012, -0.0254, -0.0004, 0.0275],
-	ft: [0.002, -0.0463, -0.0011, 0.0523],
-	ins: [0.0008, -0.029, 0.0005, 0.016],
-	jmp: [-0.0058, 0.1244, 0.0068, -0.1686],
-	oiq: [-0.0004, 0.0183, -0.0001, 0.0018],
-	pss: [0.0023, -0.0551, -0.0, 0.0002],
-	reb: [0.0023, -0.0617, -0.0, 0.0002],
-	spd: [-0.0022, 0.043, 0.0015, -0.0368],
-	stre: [-0.0001, -0.0, 0.0, 0.0],
-	tp: [0.0028, -0.0686, -0.0017, 0.0524],
+	diq: [0.0023, -0.0524, -0.0, 0.0003],
+	dnk: [0.0018, -0.0465, -0.0003, 0.0091],
+	drb: [0.0026, -0.0648, 0.0, 0.0],
+	endu: [-0.012, 0.3214, 0.0016, -0.0357],
+	fg: [0.0011, -0.0236, -0.0004, 0.0191],
+	ft: [0.0018, -0.0396, -0.0007, 0.0285],
+	ins: [0.0005, -0.0197, 0.0003, 0.0108],
+	jmp: [-0.0051, 0.1082, 0.0041, -0.102],
+	oiq: [-0.0003, 0.0137, -0.0, 0.0014],
+	pss: [0.0019, -0.046, -0.0, 0.0001],
+	reb: [0.0019, -0.0506, -0.0, 0.0001],
+	spd: [-0.002, 0.0402, 0.001, -0.0252],
+	stre: [-0.0001, -0.0001, 0.0, 0.0],
+	tp: [0.0024, -0.0596, -0.0012, 0.0385],
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
 	let val: number;
 
-	const base_coef = [-0.0047, 0.1225, 0.0006, 0.0421];
+	const base_coef = [-0.0039, 0.1018, 0.0003, 0.0266];
 
 	val = base_coef[0] * age + base_coef[1];
 	const std_base = base_coef[2] * age + base_coef[3];
 	const std_noise = helpers.bound(
 		random.realGauss(0, Math.max(0.00001, std_base)),
 		-0.05,
-		0.25,
+		0.35,
 	);
 	val += std_noise;
 
@@ -79,13 +79,9 @@ const developSeason = (
 
 		const ageChange =
 			ageModifier +
-			helpers.bound(
-				random.realGauss(0, Math.max(0.00001, ageStd)),
-				-0.05,
-				0.25,
-			);
+			helpers.bound(random.realGauss(0, Math.max(0.00001, ageStd)), -0.2, 0.3);
 		ratings[key] = limitRating(
-			Math.exp(Math.log(Math.max(0.1, ratings[key])) + baseChange + ageChange),
+			Math.exp(Math.log(Math.max(1, ratings[key])) + baseChange + ageChange),
 		);
 		//console.log(baseChange,ageChange);
 	}

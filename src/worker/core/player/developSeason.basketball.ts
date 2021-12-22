@@ -47,6 +47,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 			}
 		}
 	}
+
 	return val;
 };
 

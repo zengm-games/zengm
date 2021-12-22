@@ -1,3 +1,14 @@
+race condition for propagation of updateEvents
+- explanation
+  - game sim is happening (such as auto playing a whole season) so realtimeUpdate is being called frequently
+  - user clicks the "enable/disable god mode" button, which results in `await toUI("realtimeUpdate", [["gameAttributes"]]);`
+  - that goes to updatePage in Controller.tsx
+  - if that happens while the prior updatePage call is still processing (runBefore) has not completed, then the `idLoading.current === id` short circuit happens. this prevents the "gameAttributes" updateEvent from being sent to the worker
+- questions
+  - does it make sense to send this to UI first? the reason it does is because there might be a URL redirect for a particular tab that should happen at the same time. like it would be useless to process the updateEvents before/after a URL redirect, because you'd get an extra render
+  - does it make sense to return early if `idLoading.current === id`? sometimes yes (like the user clicking the same page twice, or multiple updates happening faster than 1 can render) but sometimes no (some new event has happened)
+- solution
+
 add way to play without salary cap
 - https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
 - unify setting with hardCap?

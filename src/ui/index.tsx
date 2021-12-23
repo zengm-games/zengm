@@ -70,7 +70,6 @@ const handleVersion = async () => {
 			let conflictNum = parseInt(
 				// @ts-ignore
 				safeLocalStorage.getItem("bbgmVersionConflict"),
-				10,
 			);
 
 			if (Number.isNaN(conflictNum)) {

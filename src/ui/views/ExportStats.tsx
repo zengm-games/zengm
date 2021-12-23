@@ -33,7 +33,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 		const selectEls = event.target.getElementsByTagName("select");
 		const grouping = selectEls[0].value;
 		const season =
-			selectEls[1].value === "all" ? "all" : parseInt(selectEls[1].value, 10);
+			selectEls[1].value === "all" ? "all" : parseInt(selectEls[1].value);
 
 		let csvPromise;
 		if (grouping === "averages") {

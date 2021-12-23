@@ -16,7 +16,7 @@ export const mergeByPk = <
 	fromDb: T[],
 	fromCache: T[],
 	storeName: MyStore,
-	type?: GetCopyType,
+	type: GetCopyType | undefined,
 ): T[] => {
 	const cacheKeys: {
 		[key: string]: number;

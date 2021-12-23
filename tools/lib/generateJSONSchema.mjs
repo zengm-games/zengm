@@ -1376,6 +1376,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 						name: {
 							type: "string",
 						},
+						note: {
+							type: "string",
+						},
+						noteBool: {
+							const: 1,
+						},
 						numDaysFreeAgent: {
 							type: "integer",
 							minimum: 0,
@@ -1503,7 +1509,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						watch: {
-							type: "boolean",
+							oneOf: [
+								{
+									type: "boolean",
+								},
+								{
+									const: 1,
+								},
+							],
 						},
 						weight: {
 							anyOf: [

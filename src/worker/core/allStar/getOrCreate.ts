@@ -15,7 +15,7 @@ const getOrCreate = async (season: number) => {
 		return allStars;
 	}
 
-	const allStars = await idb.getCopy.allStars({ season });
+	const allStars = await idb.getCopy.allStars({ season }, "noCopyCache");
 	return allStars;
 };
 

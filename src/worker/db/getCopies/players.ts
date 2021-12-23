@@ -18,8 +18,10 @@ const getCopies = async (
 		activeSeason,
 		draftYear,
 		hof,
+		note,
 		statsTid,
 		tid,
+		watch,
 		filter = () => true,
 	}: {
 		pid?: number;
@@ -29,8 +31,10 @@ const getCopies = async (
 		activeSeason?: number;
 		draftYear?: number;
 		hof?: boolean;
+		note?: boolean;
 		statsTid?: number;
 		tid?: [number, number] | number;
+		watch?: boolean;
 		filter?: (p: Player<MinimalPlayerRatings>) => boolean;
 	} = {},
 	type?: GetCopyType,
@@ -307,13 +311,11 @@ const getCopies = async (
 		);
 	}
 
-	const constStatsTid = statsTid;
-
-	if (constStatsTid !== undefined) {
+	if (statsTid !== undefined) {
 		return mergeByPk(
 			await getAll(
 				idb.league.transaction("players").store.index("statsTids"),
-				constStatsTid,
+				statsTid,
 			),
 			([] as Player<MinimalPlayerRatings>[])
 				.concat(
@@ -324,10 +326,43 @@ const getCopies = async (
 						Infinity,
 					]),
 				)
-				.filter(p => p.statsTids.includes(constStatsTid)),
+				.filter(p => p.statsTids.includes(statsTid)),
 			"players",
 			type,
 		);
+	}
+
+	// If watch and note both set, then return any players that have one of the flags set
+	if (watch || note) {
+		const playerStore = idb.league.transaction("players").store;
+		let fromDB = [];
+		if (watch) {
+			fromDB.push(...(await getAll(playerStore.index("watch"), 1, filter)));
+		}
+		if (note) {
+			// If watch and note both set, don't include record twice
+			const pidsDB = new Set(fromDB.map(p => p.pid));
+			fromDB.push(
+				...(await getAll(playerStore.index("noteBool"), 1, filter)).filter(
+					p => !pidsDB.has(p.pid),
+				),
+			);
+		}
+
+		const fromCacheAll = await idb.cache.players.getAll();
+
+		// Need to check if players with watch or noteBool in DB are updated in the cache. If so, mergeByPk can't handle it, so we need to handle it here.
+		const pidsCache = new Set(fromCacheAll.map(p => p.pid));
+		fromDB = fromDB.filter(p => !pidsCache.has(p.pid));
+
+		return mergeByPk(
+			fromDB,
+			fromCacheAll.filter(
+				p => (watch && p.watch === 1) || (note && p.noteBool === 1),
+			),
+			"players",
+			type,
+		).filter(filter);
 	}
 
 	return mergeByPk(

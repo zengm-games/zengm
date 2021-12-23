@@ -114,8 +114,6 @@ const updateSeasonPreview = async (
 			};
 		});
 
-		console.log(teamSeasons);
-
 		const teamsTop = orderBy(teamSeasons, "ovr", "desc").slice(
 			0,
 			NUM_TEAMS_TO_SHOW,

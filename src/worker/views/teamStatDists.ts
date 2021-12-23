@@ -144,17 +144,20 @@ const updateTeams = async (
 				"oppRbs",
 			],
 		});
-		const teams = await idb.getCopies.teamsPlus({
-			seasonAttrs: ["won", "lost"],
-			stats: stats,
-			season: inputs.season,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				seasonAttrs: ["won", "lost"],
+				stats: stats,
+				season: inputs.season,
+			},
+			"noCopyCache",
+		);
 
 		type Keys =
 			| keyof typeof teams[number]["seasonAttrs"]
 			| keyof typeof teams[number]["stats"];
 		type StatsAll = Record<Keys, number[]>;
-		const statsAll = (teams.reduce((memo: StatsAll, t) => {
+		const statsAll = teams.reduce((memo: StatsAll, t) => {
 			for (const cat of ["seasonAttrs", "stats"] as const) {
 				for (const stat of helpers.keys(t[cat])) {
 					if (memo.hasOwnProperty(stat)) {
@@ -166,7 +169,7 @@ const updateTeams = async (
 			}
 
 			return memo;
-		}, {}) as never) as StatsAll;
+		}, {}) as never as StatsAll;
 
 		return {
 			season: inputs.season,

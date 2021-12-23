@@ -16,11 +16,14 @@ const updateEventLog = async (
 		let events;
 
 		if (inputs.season === "all") {
-			events = await idb.getCopies.events();
+			events = await idb.getCopies.events(undefined, "noCopyCache");
 		} else {
-			events = await idb.getCopies.events({
-				season: inputs.season,
-			});
+			events = await idb.getCopies.events(
+				{
+					season: inputs.season,
+				},
+				"noCopyCache",
+			);
 		}
 
 		events.reverse(); // Newest first

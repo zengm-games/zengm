@@ -41,15 +41,18 @@ export const getStats = async ({
 		seasonAttrs.push("winp");
 	}
 	const teams = (
-		await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs,
-			stats: ["gp", ...stats] as TeamStatAttr[],
-			season,
-			tid,
-			playoffs,
-			regularSeason: !playoffs,
-		})
+		await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				seasonAttrs,
+				stats: ["gp", ...stats] as TeamStatAttr[],
+				season,
+				tid,
+				playoffs,
+				regularSeason: !playoffs,
+			},
+			"noCopyCache",
+		)
 	).filter(t => {
 		// For playoffs, only show teams who actually made playoffs (gp > 0)
 		return !playoffs || t.stats.gp > 0;
@@ -57,9 +60,12 @@ export const getStats = async ({
 
 	// For playoffs, fix W/L to be playoff W/L not regular season
 	if (playoffs) {
-		const playoffSeries = await idb.getCopy.playoffSeries({
-			season,
-		});
+		const playoffSeries = await idb.getCopy.playoffSeries(
+			{
+				season,
+			},
+			"noCopyCache",
+		);
 
 		if (playoffSeries !== undefined) {
 			// Reset W/L

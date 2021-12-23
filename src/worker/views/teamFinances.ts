@@ -24,7 +24,7 @@ const updateTeamFinances = async (
 		if (inputs.show === "all") {
 			showInt = g.get("season") - g.get("startingSeason") + 1;
 		} else {
-			showInt = parseInt(inputs.show, 10);
+			showInt = parseInt(inputs.show);
 		}
 
 		let season = g.get("season");
@@ -165,13 +165,16 @@ const updateTeamFinances = async (
 		}
 
 		// Get stuff for the finances form
-		const t = await idb.getCopy.teamsPlus({
-			attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
-			seasonAttrs: ["expenses"],
-			season: g.get("season"),
-			tid: inputs.tid,
-			addDummySeason: true,
-		});
+		const t = await idb.getCopy.teamsPlus(
+			{
+				attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
+				seasonAttrs: ["expenses"],
+				season: g.get("season"),
+				tid: inputs.tid,
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		);
 
 		if (!t) {
 			throw new Error("Team not found");

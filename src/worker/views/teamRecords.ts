@@ -357,26 +357,29 @@ const updateTeamRecords = async (
 		byType !== state.byType ||
 		filter !== state.filter
 	) {
-		const awards = await idb.getCopies.awards();
-		const allStars = await idb.getCopies.allStars();
+		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+		const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
 
 		const teamsAll = orderBy(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev", "region", "name", "cid", "did", "disabled"],
-				seasonAttrs: [
-					"abbrev",
-					"region",
-					"name",
-					"season",
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"pts",
-					"ptsMax",
-					"playoffRoundsWon",
-				],
-			}),
+			await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid", "abbrev", "region", "name", "cid", "did", "disabled"],
+					seasonAttrs: [
+						"abbrev",
+						"region",
+						"name",
+						"season",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"pts",
+						"ptsMax",
+						"playoffRoundsWon",
+					],
+				},
+				"noCopyCache",
+			),
 			["region", "name", "tid"],
 		);
 

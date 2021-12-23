@@ -9,7 +9,7 @@ import type {
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 
-export const getHistoryTeam = async (teamSeasons: TeamSeason[]) => {
+export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let bestRecord;
 	let worstRecord;
 	let bestWinp = -Infinity;
@@ -132,7 +132,7 @@ export const getHistory = async (
 	playersAll: Player[],
 	gmHistory?: boolean,
 ) => {
-	const teamHistory = await getHistoryTeam(teamSeasons);
+	const teamHistory = getHistoryTeam(teamSeasons);
 
 	const stats = bySport({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],

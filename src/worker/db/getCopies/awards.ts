@@ -1,11 +1,15 @@
 import { idb } from "..";
+import type { GetCopyType } from "../../../common/types";
 import { mergeByPk } from "./helpers";
 
-const getCopies = async ({
-	season,
-}: {
-	season?: number;
-} = {}): Promise<any[]> => {
+const getCopies = async (
+	{
+		season,
+	}: {
+		season?: number;
+	} = {},
+	type?: GetCopyType,
+): Promise<any[]> => {
 	if (season !== undefined) {
 		const awards = mergeByPk(
 			await idb.league.getAll("awards", season),
@@ -13,6 +17,7 @@ const getCopies = async ({
 				return event.season === season;
 			}),
 			"awards",
+			type,
 		);
 		return awards;
 	}
@@ -21,6 +26,7 @@ const getCopies = async ({
 		await idb.league.getAll("awards"),
 		await idb.cache.awards.getAll(),
 		"awards",
+		type,
 	);
 };
 

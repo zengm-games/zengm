@@ -100,9 +100,12 @@ const create = async (conditions: Conditions) => {
 	}
 
 	if (isSport("basketball")) {
-		const lastYear = await idb.getCopy.allStars({
-			season: g.get("season") - 1,
-		});
+		const lastYear = await idb.getCopy.allStars(
+			{
+				season: g.get("season") - 1,
+			},
+			"noCopyCache",
+		);
 		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
 			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner].pid;

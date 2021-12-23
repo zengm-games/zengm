@@ -56,7 +56,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return null;
 			}
 
-			return parseInt(sortVal.split("-")[0], 10);
+			return parseInt(sortVal.split("-")[0]);
 		}
 
 		if (sortType === "draftPick") {
@@ -66,7 +66,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 
 			const [round, pick] = sortVal.split("-"); // This assumes no league has more than a million teams lol
 
-			return parseInt(round, 10) * 1000000 + parseInt(pick, 10);
+			return parseInt(round) * 1000000 + parseInt(pick);
 		}
 
 		if (sortType === "name") {
@@ -112,9 +112,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return -Infinity;
 			}
 
-			let [won, lost, otl, tied] = sortVal
-				.split("-")
-				.map(num => parseInt(num, 10));
+			let [won, lost, otl, tied] = sortVal.split("-").map(num => parseInt(num));
 
 			// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 			if (typeof otl === "number" && typeof tied !== "number") {

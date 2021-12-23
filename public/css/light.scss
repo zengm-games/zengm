@@ -75,7 +75,7 @@ $flag-icon-css-path: "/img/flags";
 	height: auto;
 }
 
-// Taken from bootstrap.scss, but with unused things deleted
+// Taken from bootstrap.scss, but with unused things deleted. PurgeCSS would do the same thing from just importing the main bootstrap.scss file, but it has some false positives (such as offcanvas placeholder).
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
@@ -940,12 +940,10 @@ tr.table-warning:hover > td {
 
 .title-bar {
 	margin-left: -17px;
+	min-height: 44px;
 	h1 {
+		font-size: 20px;
 		margin-left: 17px;
-	}
-	min-height: 52px;
-	select {
-		font-size: 14px;
 	}
 	option {
 		font-size: 12px;
@@ -971,9 +969,21 @@ tr.table-warning:hover > td {
 	background-repeat: no-repeat, repeat;
 	background-position: right 0 top 45%, 0 0;
 	background-size: 0.62em auto, 100%;
+	font-size: 13px;
 
 	option {
 		color: #000;
+	}
+}
+@include media-breakpoint-up(md) {
+	.dropdown-select {
+		font-size: 14px;
+	}
+	.title-bar {
+		h1 {
+			font-size: 24px;
+		}
+		min-height: 52px;
 	}
 }
 
@@ -1000,6 +1010,9 @@ $league-top-bar-scrollbar-thumb-color: $gray-500;
 		background: $league-top-bar-scrollbar-thumb-color;
 		border-radius: 50px;
 	}
+}
+.league-top-bar-safari {
+	margin-right: $league-top-bar-toggle-width + 8px;
 }
 .league-top-bar-toggle {
 	border-top-right-radius: 0 !important;

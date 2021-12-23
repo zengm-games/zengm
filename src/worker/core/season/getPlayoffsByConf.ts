@@ -11,7 +11,10 @@ const getPlayoffsByConf = async (
 	},
 ) => {
 	if (!overrides?.skipPlayoffSeries) {
-		const playoffSeries = await idb.getCopy.playoffSeries({ season });
+		const playoffSeries = await idb.getCopy.playoffSeries(
+			{ season },
+			"noCopyCache",
+		);
 
 		if (playoffSeries && playoffSeries.byConf !== undefined) {
 			// This is the most authoritative source, because it also handles the case where the setting is enabled but a conference doesn't have enough teams

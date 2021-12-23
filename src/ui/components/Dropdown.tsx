@@ -1,10 +1,29 @@
+import findLast from "lodash-es/findLast";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import useDropdownOptions from "../hooks/useDropdownOptions";
+import useDropdownOptions, {
+	ResponsiveOption,
+} from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
 import type { LocalStateUI } from "../../common/types";
+
+// This assumes that when val is an array, it is already sorted by minWidth ascending
+export const getResponsiveValue = (
+	val: string | ResponsiveOption[],
+	windowWidth: number,
+) => {
+	if (Array.isArray(val)) {
+		return findLast(val, row => windowWidth >= row.minWidth)!.text;
+	}
+
+	return val;
+};
+
+const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
+	return getResponsiveValue(val, window.innerWidth);
+};
 
 const Select = ({
 	customOptions,
@@ -21,30 +40,60 @@ const Select = ({
 	const [width, setWidth] = useState<number | undefined>();
 
 	useEffect(() => {
-		let currentValue;
+		const updateWidth = () => {
+			let currentValue: string | ResponsiveOption[] = "";
+			for (const option of options) {
+				if (option.key === value) {
+					currentValue = option.val;
+					break;
+				}
+			}
 
-		for (const option of options) {
-			if (option.key === value) {
-				currentValue = option.val;
+			const el = document.createElement("select");
+			el.style.display = "inline";
+			el.className = "dropdown-select";
+			const el2 = document.createElement("option");
+			el2.innerHTML = getResponsiveValue2(currentValue);
+			el.appendChild(el2);
+
+			document.body.appendChild(el);
+			setWidth(el.offsetWidth);
+
+			document.body.removeChild(el);
+		};
+
+		updateWidth();
+
+		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate. Coincidentally, 768 is also
+		const widthsToCheck = new Set([768]);
+
+		// Also check any other widths where there is a breakpoint in the text of one of the options for this dropdown
+		for (const { val } of options) {
+			if (Array.isArray(val)) {
+				for (const { minWidth } of val) {
+					if (minWidth > -Infinity) {
+						widthsToCheck.add(minWidth);
+					}
+				}
 			}
 		}
 
-		if (currentValue === undefined) {
-			currentValue = "";
-		}
+		// Use one media query per cutoff. At the time of writing, there is only ever one, at 768px. This is more efficient than listening for the window resize event and updating every time it changes.
+		const mediaQueryLists = Array.from(widthsToCheck).map(widthToCheck => {
+			const mediaQueryList = window.matchMedia(
+				`(min-width: ${widthToCheck}px)`,
+			);
+			// Rather than addEventListener for Safari <14
+			mediaQueryList.addListener(updateWidth);
+			return mediaQueryList;
+		});
 
-		const el = document.createElement("select");
-		el.style.display = "inline";
-		el.style.fontSize = "14px";
-		el.className = "dropdown-select";
-		const el2 = document.createElement("option");
-		el2.innerHTML = currentValue;
-		el.appendChild(el2);
-
-		document.body.appendChild(el);
-		setWidth(el.offsetWidth);
-
-		document.body.removeChild(el);
+		return () => {
+			for (const mediaQueryList of mediaQueryLists) {
+				// Rather than removeEventListener for Safari <14
+				mediaQueryList.removeListener(updateWidth);
+			}
+		};
 	}, [field, options, value]);
 
 	const style: CSSProperties = {
@@ -93,11 +142,13 @@ const Select = ({
 				}}
 				style={style}
 			>
-				{options.map(opt => (
-					<option key={opt.key} value={opt.key}>
-						{opt.val}
-					</option>
-				))}
+				{options.map(opt => {
+					return (
+						<option key={opt.key} value={opt.key}>
+							{getResponsiveValue2(opt.val)}
+						</option>
+					);
+				})}
 			</select>
 		</div>
 	);

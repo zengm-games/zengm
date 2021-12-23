@@ -24,6 +24,8 @@ const hiddenStyle = {
 	marginBottom: -12,
 };
 
+const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 const LeagueTopBar = memo(() => {
 	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
 		games: state.games,
@@ -161,7 +163,9 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2"
+			className={`league-top-bar${
+				IS_SAFARI ? " league-top-bar-safari" : ""
+			} flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2`}
 			style={show ? undefined : hiddenStyle}
 			ref={element => {
 				setWrapperElement(element);

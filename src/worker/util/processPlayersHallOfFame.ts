@@ -56,7 +56,6 @@ const processPlayersHallOfFame = <
 					teamSums[teamA] > teamSums[teamB] ? teamA : teamB,
 				-1,
 			),
-			10,
 		);
 
 		return {

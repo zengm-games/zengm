@@ -18,12 +18,10 @@ const updateUserRoster = async (
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
-		const [userRosterAll, userPicks] = await Promise.all([
-			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
-			await idb.getCopies.draftPicks({
-				tid: g.get("userTid"),
-			}),
-		]);
+		const userRosterAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
 		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 			attrs: [
 				"pid",
@@ -43,6 +41,13 @@ const updateUserRoster = async (
 			showRookies: true,
 			fuzz: true,
 		});
+
+		const userPicks = await idb.getCopies.draftPicks(
+			{
+				tid: g.get("userTid"),
+			},
+			"noCopyCache",
+		);
 
 		const userPicks2 = userPicks.map(dp => {
 			return {

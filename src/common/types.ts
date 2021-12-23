@@ -1069,6 +1069,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	lastName: string;
 	moodTraits: MoodTrait[];
 	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;
 	pid?: number;
 	pos?: string; // Only in players from custom league files
@@ -1122,7 +1123,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	valueNoPot: number;
 	valueFuzz: number;
 	valueNoPotFuzz: number;
-	watch: boolean;
+	watch?: 1; // Would rather be boolean, but can't index boolean
 	weight: number;
 	yearsFreeAgent: number;
 

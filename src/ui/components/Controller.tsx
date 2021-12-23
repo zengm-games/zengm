@@ -104,7 +104,13 @@ const Controller = () => {
 
 	const prevData2 = useRef<Record<string, any>>({});
 	const idLoaded = useRef<string | undefined>(undefined);
-	const idLoading = useRef<string | undefined>(undefined);
+	const loading = useRef<
+		| {
+				id: string;
+				promise: Promise<void>;
+		  }
+		| undefined
+	>(undefined);
 
 	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
 		lid: state2.lid,
@@ -127,7 +133,7 @@ const Controller = () => {
 
 			let newLid: number | undefined;
 			if (typeof context.params.lid === "string") {
-				const newLidInt = parseInt(context.params.lid, 10);
+				const newLidInt = parseInt(context.params.lid);
 				if (!Number.isNaN(newLidInt)) {
 					newLid = newLidInt;
 				}
@@ -138,20 +144,35 @@ const Controller = () => {
 			// (2) loaded, but loading something else
 			let prevData;
 			if (
-				(idLoaded.current !== id && idLoading.current !== id) ||
+				(idLoaded.current !== id && loading.current?.id !== id) ||
 				(idLoaded.current === id &&
-					idLoading.current !== id &&
-					idLoading.current !== undefined)
+					loading.current !== undefined &&
+					loading.current.id !== id)
 			) {
 				if (!updateEvents.includes("firstRun")) {
 					updateEvents.push("firstRun");
 				}
 
 				prevData = {};
-			} else if (idLoading.current === id) {
-				// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
-				return;
 			} else {
+				if (loading.current?.id === id) {
+					if (updateEvents.length === 0) {
+						// Nothing in updateEvents, so this isn't adding anything beyond the current in-progress render
+						return;
+					}
+
+					// Something is in updateEvents, so wait for previous load to finish and then process this one, so we don't lose any updateEvent. This is what allows e.g. the enable/disable god mode button to consistently update its own page during game sim.
+					await loading.current.promise;
+
+					if (
+						(loading.current !== undefined && loading.current.id !== id) ||
+						idLoaded.current !== id
+					) {
+						// User must have navigated away. This will still lose some events, but only for other tabs which were expected to recieve it from the worker below, which is probably not that important.
+						return;
+					}
+				}
+
 				prevData = {
 					...prevData2.current,
 				};
@@ -160,7 +181,23 @@ const Controller = () => {
 			dispatch({
 				type: "startLoading",
 			});
-			idLoading.current = id;
+
+			// Need resolveLoadingPromise to handle situation where updatePage is called with an important updateEvent while a prior call is still running, so we need to wait for the prior call to finish and then run with this updateEvent.
+			let resolveLoadingPromise: () => void;
+			const loadingPromise = new Promise<void>(resolve => {
+				resolveLoadingPromise = resolve;
+			});
+			if (loading.current) {
+				loading.current = {
+					id,
+					promise: loading.current.promise.then(() => loadingPromise),
+				};
+			} else {
+				loading.current = {
+					id,
+					promise: loadingPromise,
+				};
+			}
 
 			if (inLeague) {
 				if (newLid !== lid) {
@@ -176,8 +213,9 @@ const Controller = () => {
 				}
 			}
 
-			if (idLoading.current !== id) {
+			if (loading.current?.id !== id) {
 				// User must have navigated away
+				resolveLoadingPromise!();
 				return;
 			}
 
@@ -196,8 +234,9 @@ const Controller = () => {
 				prevData,
 			);
 
-			if (idLoading.current !== id) {
+			if (loading.current?.id !== id) {
 				// User must have navigated away
+				resolveLoadingPromise!();
 				return;
 			}
 
@@ -206,7 +245,8 @@ const Controller = () => {
 				dispatch({
 					type: "doneLoading",
 				});
-				idLoading.current = undefined;
+				loading.current = undefined;
+				resolveLoadingPromise!();
 				return;
 			}
 
@@ -236,7 +276,7 @@ const Controller = () => {
 				dispatch({
 					type: "doneLoading",
 				});
-				idLoading.current = undefined;
+				loading.current = undefined;
 
 				// Wait a tick, otherwise there is a race condition on new page loads (such as reloading live_game box score) where initView is called and updates viewInfo while the local.subscribe subscription below is unsubscribed due to updatePage changing.
 				await new Promise<void>(resolve => {
@@ -253,17 +293,19 @@ const Controller = () => {
 					},
 					true,
 				);
+
+				resolveLoadingPromise!();
 				return;
 			}
 
 			// Make sure user didn't navigate to another page while async stuff was happening
-			if (idLoading.current === id) {
+			if (loading.current?.id === id) {
 				dispatch({
 					type: "reset",
 					vars,
 				});
 				idLoaded.current = id;
-				idLoading.current = undefined;
+				loading.current = undefined;
 				prevData2.current = vars.data;
 
 				// Scroll to top if this load came from user clicking a link
@@ -271,6 +313,8 @@ const Controller = () => {
 					window.scrollTo(window.pageXOffset, 0);
 				}
 			}
+
+			resolveLoadingPromise!();
 		},
 		[lid],
 	);
@@ -314,9 +358,9 @@ const Controller = () => {
 		}
 	}, [popup]);
 
-	const { Component, data, inLeague, loading } = state;
+	const { Component, data, inLeague, loading: updating } = state;
 	let contents;
-	const pageID = idLoading.current || idLoaded.current; // idLoading, idLoaded, or undefined
+	const pageID = loading.current?.id ?? idLoaded.current; // idLoading, idLoaded, or undefined
 
 	if (!Component) {
 		contents = null;
@@ -325,7 +369,7 @@ const Controller = () => {
 	} else {
 		contents = (
 			<>
-				<LeagueContent updating={loading}>
+				<LeagueContent updating={updating}>
 					<Component {...data} />
 				</LeagueContent>
 				<MultiTeamMenu />
@@ -335,7 +379,7 @@ const Controller = () => {
 
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>
-			<NavBar updating={loading} />
+			<NavBar updating={updating} />
 			<LeagueTopBar />
 			<TitleBar />
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 h-100">

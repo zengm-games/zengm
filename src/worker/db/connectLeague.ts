@@ -103,9 +103,11 @@ export interface LeagueDB extends DBSchema {
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];
-			hof: number;
+			hof: 1;
+			noteBool: 1;
 			statsTids: number;
 			tid: number;
+			watch: 1;
 		};
 	};
 	playoffSeries: {
@@ -486,6 +488,12 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		unique: false,
 	});
 	playerStore.createIndex("hof", "hof", {
+		unique: false,
+	});
+	playerStore.createIndex("noteBool", "noteBool", {
+		unique: false,
+	});
+	playerStore.createIndex("watch", "watch", {
 		unique: false,
 	});
 	teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
@@ -1136,7 +1144,7 @@ const migrate = async ({
 		};
 	}
 
-	if (oldVersion <= 48) {
+	if (oldVersion <= 49) {
 		slowUpgrade();
 
 		const playerStore = transaction.objectStore("players");
@@ -1145,17 +1153,34 @@ const migrate = async ({
 			undefined,
 			undefined,
 			p => {
-				if (p.hof) {
-					p.hof = 1;
+				for (const key of ["hof", "watch"] as const) {
+					if (p[key]) {
+						p[key] = 1;
+					} else {
+						delete p[key];
+					}
+				}
+
+				if (p.note) {
+					p.noteBool = 1;
 				} else {
-					delete p.hof;
+					delete p.note;
 				}
 
 				return p;
 			},
 		);
 
-		playerStore.createIndex("hof", "hof", {
+		// Had hof index in version 49, others in 50. Merged together here so the upgrade could happen together for people who have not yet upgraded to 49
+		if (oldVersion <= 48) {
+			playerStore.createIndex("hof", "hof", {
+				unique: false,
+			});
+		}
+		playerStore.createIndex("noteBool", "noteBool", {
+			unique: false,
+		});
+		playerStore.createIndex("watch", "watch", {
 			unique: false,
 		});
 	}

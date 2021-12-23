@@ -30,11 +30,11 @@ const copyValidValues = (
 ) => {
 	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
 	// @ts-ignore
-	const activated = source.tid >= 0 && parseInt(target.tid, 10) < 0;
+	const activated = source.tid >= 0 && parseInt(target.tid) < 0;
 
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-ignore
-		const val = parseInt(source[attr], 10);
+		const val = parseInt(source[attr]);
 		if (!Number.isNaN(val)) {
 			target[attr] = val;
 		}
@@ -80,7 +80,7 @@ const copyValidValues = (
 	let updatedRatingsOrAge = false;
 	{
 		// @ts-ignore
-		const age = parseInt(source.age, 10);
+		const age = parseInt(source.age);
 		if (!Number.isNaN(age)) {
 			const bornYear = season - age;
 			if (bornYear !== target.born.year) {
@@ -96,7 +96,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		const diedYear = parseInt(source.diedYear, 10);
+		const diedYear = parseInt(source.diedYear);
 		if (!Number.isNaN(diedYear)) {
 			target.diedYear = diedYear;
 		} else {
@@ -127,7 +127,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		let exp = parseInt(source.contract.exp, 10);
+		let exp = parseInt(source.contract.exp);
 		if (!Number.isNaN(exp)) {
 			// No contracts expiring in the past
 			if (exp < season) {
@@ -177,7 +177,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		const draftYear = parseInt(source.draft.year, 10);
+		const draftYear = parseInt(source.draft.year);
 		if (!Number.isNaN(draftYear)) {
 			target.draft.year = draftYear;
 		}
@@ -185,7 +185,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
+		let gamesRemaining = parseInt(source.injury.gamesRemaining);
 		if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
 			gamesRemaining = 0;
 		}
@@ -203,11 +203,7 @@ const copyValidValues = (
 					target.pos = source.ratings[r].pos; // Keep this way forever because fun
 				}
 			} else if (RATINGS.includes(rating)) {
-				const val = helpers.bound(
-					parseInt(source.ratings[r][rating], 10),
-					0,
-					100,
-				);
+				const val = helpers.bound(parseInt(source.ratings[r][rating]), 0, 100);
 				if (!Number.isNaN(val)) {
 					if (target.ratings[r][rating] !== val) {
 						target.ratings[r][rating] = val;
@@ -226,7 +222,7 @@ const copyValidValues = (
 	target.relatives = source.relatives
 		.map(rel => {
 			// @ts-ignore
-			rel.pid = parseInt(rel.pid, 10);
+			rel.pid = parseInt(rel.pid);
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));

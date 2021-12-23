@@ -138,7 +138,7 @@ const TitleBar = () => {
 		menuItems.push({
 			type: "header",
 			long: "More Info",
-			short: "More Info",
+			short: "More",
 			league: true,
 			children: [
 				{
@@ -180,7 +180,7 @@ const TitleBar = () => {
 	}
 
 	return (
-		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0 px-3">
+		<aside className="navbar navbar-border navbar-light title-bar flex-shrink-0 ps-3 pe-sm-3 py-0">
 			<h1 className="mb-0">
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}

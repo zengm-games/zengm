@@ -66,21 +66,24 @@ const updateRoster = async (
 			"name",
 			"avgAge",
 		];
-		const t = await idb.getCopy.teamsPlus({
-			season: inputs.season,
-			tid: inputs.tid,
-			attrs: [
-				"tid",
-				"strategy",
-				"region",
-				"name",
-				"keepRosterSorted",
-				"playThroughInjuries",
-			],
-			seasonAttrs,
-			stats: ["pts", "oppPts", "gp"],
-			addDummySeason: true,
-		});
+		const t = await idb.getCopy.teamsPlus(
+			{
+				season: inputs.season,
+				tid: inputs.tid,
+				attrs: [
+					"tid",
+					"strategy",
+					"region",
+					"name",
+					"keepRosterSorted",
+					"playThroughInjuries",
+				],
+				seasonAttrs,
+				stats: ["pts", "oppPts", "gp"],
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		);
 
 		if (!t) {
 			const returnValue = {

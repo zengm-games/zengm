@@ -301,7 +301,7 @@ const DataTable = ({
 	};
 
 	const handlePerPage = (event: SyntheticEvent<HTMLSelectElement>) => {
-		const perPage = parseInt(event.currentTarget.value, 10);
+		const perPage = parseInt(event.currentTarget.value);
 
 		if (!Number.isNaN(perPage) && perPage !== state.perPage) {
 			safeLocalStorage.setItem("perPage", String(perPage));

@@ -136,7 +136,7 @@ const getActualPlayerInfo = (
 		retiredYear: p.retiredYear,
 		skills: ratings.skills,
 		stat,
-		watch: p.watch,
+		watch: !!p.watch,
 	};
 };
 
@@ -370,7 +370,7 @@ const updateTradeSummary = async (
 		updateEvents.includes("playerMovement") ||
 		eid !== state.eid
 	) {
-		const event = await idb.getCopy.events({ eid });
+		const event = await idb.getCopy.events({ eid }, "noCopyCache");
 		if (
 			!event ||
 			event.type !== "trade" ||

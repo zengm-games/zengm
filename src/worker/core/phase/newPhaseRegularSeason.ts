@@ -15,12 +15,15 @@ import { unwrap } from "idb";
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: ["cid", "did"],
-		season: g.get("season"),
-		active: true,
-	});
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: ["cid", "did"],
+			season: g.get("season"),
+			active: true,
+		},
+		"noCopyCache",
+	);
 
 	await season.setSchedule(season.newSchedule(teams));
 

@@ -40,7 +40,7 @@ const Slider = ({
 				max="10"
 				step="1"
 				onChange={async event => {
-					const parsed = parseInt(event.target.value, 10);
+					const parsed = parseInt(event.target.value);
 					if (!Number.isNaN(parsed)) {
 						setValue(parsed);
 						await toWorker(

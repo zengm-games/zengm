@@ -1,5 +1,6 @@
 import { localActions } from "./local";
 import type { Context } from "../router";
+import { viewManager } from "./viewManager";
 
 type InitArgs = {
 	Component: any;
@@ -14,21 +15,25 @@ const initView = (args: InitArgs) => {
 
 	return async (context: Context): Promise<void> => {
 		return new Promise((resolve, reject) => {
-			localActions.update({
-				viewInfo: {
-					Component: args.Component,
-					id: args.id,
-					inLeague: !!args.inLeague,
-					context,
-					cb: error => {
-						if (error) {
-							reject(error);
-						} else {
-							resolve();
-						}
-					},
+			const viewInfo = {
+				Component: args.Component,
+				id: args.id,
+				inLeague: !!args.inLeague,
+				context,
+				cb: (error?: Error) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve();
+					}
 				},
+			};
+
+			localActions.update({
+				viewInfo,
 			});
+
+			viewManager.fromRouter(viewInfo);
 		});
 	};
 };

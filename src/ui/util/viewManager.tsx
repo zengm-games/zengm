@@ -64,22 +64,17 @@ class ViewManager {
 		this.viewData = {};
 		this.processingAction = false;
 		this.newNavigationPending = false;
+	}
 
-		local.subscribe(
-			state => state.viewInfo,
-			async (viewInfo: LocalStateUI["viewInfo"] | null) => {
-				if (viewInfo !== undefined && viewInfo !== null) {
-					try {
-						await this.processUpdate(viewInfo);
-					} catch (error) {
-						viewInfo.cb(error);
-						return;
-					}
+	async fromRouter(viewInfo: NonNullable<LocalStateUI["viewInfo"]>) {
+		try {
+			await this.processUpdate(viewInfo);
+		} catch (error) {
+			viewInfo.cb(error);
+			return;
+		}
 
-					viewInfo.cb();
-				}
-			},
-		);
+		viewInfo.cb();
 	}
 
 	add(action: Action) {

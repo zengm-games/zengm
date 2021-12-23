@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, localActions, toWorker } from "../util";
+import { helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { DAILY_SCHEDULE } from "../../common";
 
@@ -20,7 +20,6 @@ const GodMode = (props: View<"godMode">) => {
 		}
 
 		await toWorker("main", "updateGameAttributes", attrs);
-		localActions.update({ godMode: attrs.godMode });
 	};
 	return (
 		<div style={{ maxWidth: 1100 }}>

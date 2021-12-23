@@ -57,18 +57,35 @@ class ViewManager {
 	viewData: Record<string, unknown>;
 	idLoaded: string | undefined;
 	processingAction: boolean;
-	newNavigationPending: boolean;
+
+	// When navigation to a new URL happens (can be from clicking a link in which case it goes directly to fromRouter, or from realtimeUpdate in which case it goes to fromRealtimeUpdate first and then eventually fromRouter) we want to be able to discard any in-progress load. Do that by keeping track of a symbol associated with a navigation.
+	lastNavigationSymbol: symbol;
 
 	constructor() {
 		this.queue = [];
 		this.viewData = {};
 		this.processingAction = false;
-		this.newNavigationPending = false;
+		this.lastNavigationSymbol = Symbol();
 	}
 
 	async fromRouter(viewInfo: NonNullable<LocalStateUI["viewInfo"]>) {
 		try {
-			await this.processUpdate(viewInfo);
+			// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
+			if (viewInfo.context.state.navigationSymbol) {
+				if (
+					this.lastNavigationSymbol !== viewInfo.context.state.navigationSymbol
+				) {
+					// Must have been another navigation before this one processed
+					viewInfo.cb();
+					return;
+				}
+			} else {
+				// If coming only from router (like user clicked a link) then we set lastNavigationSymbol here and clear the queue
+				this.lastNavigationSymbol = Symbol();
+				this.queue = [];
+			}
+
+			await this.processUpdate(viewInfo, this.lastNavigationSymbol);
 		} catch (error) {
 			viewInfo.cb(error);
 			return;
@@ -77,26 +94,32 @@ class ViewManager {
 		viewInfo.cb();
 	}
 
-	add(action: Action) {
+	fromRealtimeUpdate(action: Action) {
 		if (this.queue.length === 0 && !this.processingAction) {
 			this.initAction(action);
 		} else {
+			// Clear queue if this is navigation
 			if (action.url) {
-				this.newNavigationPending = true;
+				this.queue = [action];
+			} else {
+				this.queue.push(action);
 			}
-
-			this.queue.push(action);
 		}
 	}
 
 	async initAction({ url, refresh, replace, updateEvents, raw }: Action) {
 		this.processingAction = true;
 
-		const state = {
+		const state: any = {
 			noTrack: refresh || replace,
 			updateEvents,
 			...raw,
 		};
+
+		if (url) {
+			this.lastNavigationSymbol = Symbol();
+		}
+		state.navigationSymbol = this.lastNavigationSymbol;
 
 		const actualURL = url ?? window.location.pathname + window.location.search;
 
@@ -109,7 +132,6 @@ class ViewManager {
 
 	async initNextAction() {
 		this.processingAction = false;
-		this.newNavigationPending = false;
 
 		const nextAction = this.queue.shift();
 		if (nextAction) {
@@ -117,12 +139,10 @@ class ViewManager {
 		}
 	}
 
-	async processUpdate({
-		Component,
-		context,
-		id,
-		inLeague,
-	}: NonNullable<LocalStateUI["viewInfo"]>) {
+	async processUpdate(
+		{ Component, context, id, inLeague }: NonNullable<LocalStateUI["viewInfo"]>,
+		navigationSymbol: symbol,
+	) {
 		actions.startLoading();
 
 		const updateEvents = context.state.updateEvents ?? [];
@@ -159,14 +179,15 @@ class ViewManager {
 			}
 		}
 
-		if (this.newNavigationPending) {
+		if (navigationSymbol !== this.lastNavigationSymbol) {
 			await this.initNextAction();
 			return;
 		}
 
 		// ctxBBGM is hacky!
 		const ctxBBGM = { ...context.state };
-		delete ctxBBGM.err; // Can't send error to worker
+		delete ctxBBGM.err; // Can't send Error to worker
+		delete ctxBBGM.navigationSymbol; // Can't send Symbol to worker
 
 		// Resolve all the promises before updating the UI to minimize flicker
 		const results = await toWorker(
@@ -179,7 +200,7 @@ class ViewManager {
 			this.viewData,
 		);
 
-		if (this.newNavigationPending) {
+		if (navigationSymbol !== this.lastNavigationSymbol) {
 			await this.initNextAction();
 			return;
 		}

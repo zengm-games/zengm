@@ -21,7 +21,7 @@ function realtimeUpdate(
 	const inLeague = urlTemp.substr(0, 3) === "/l/";
 	const refresh = urlTemp === window.location.pathname && inLeague;
 
-	viewManager.add({
+	viewManager.fromRealtimeUpdate({
 		url,
 		refresh,
 		replace,

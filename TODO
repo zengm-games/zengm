@@ -1,3 +1,22 @@
+make realtimeUpdate backed by queue
+- on add new event
+  - push updateEvents to other tabs, if there are any updateEvents (not just plain navigation)
+  - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
+  - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
+- need better short circuit logic, so we can start updating for a new navigation event while an old one is still running, and know we'll discard the old result even if the new one finishes first.
+- initView goes right to viewManager
+- no zustand subscribe middleware
+- get rid of local viewInfo
+- toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
+- titlebar dropdowns don't work
+- test
+  - any place that awaits realtimeUpdate, since it's now sync. does it need to be async, like having viewManager.add return a promise that resolves when this action is complete?
+  - redirectURL
+
+when creating a custom real players league, unchecking "teams" doesn't do anything. should switch to default 30 teams
+
+border between "watch game" and "sim game", and on hover, especially light mode
+
 add way to play without salary cap
 - https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
 - unify setting with hardCap?

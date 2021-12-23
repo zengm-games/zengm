@@ -1,5 +1,5 @@
-import router from "../router";
 import type { UpdateEvents } from "../../common/types";
+import { viewManager } from "./viewManager";
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -11,25 +11,22 @@ import type { UpdateEvents } from "../../common/types";
  * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
-async function realtimeUpdate(
+function realtimeUpdate(
 	updateEvents: UpdateEvents = [],
 	url?: string,
-	raw: Record<string, unknown> = {},
-	replace: boolean = false,
+	raw?: Record<string, unknown>,
+	replace?: boolean,
 ) {
-	url = url ?? window.location.pathname + window.location.search;
-	const inLeague = url.substr(0, 3) === "/l/";
-	const refresh = url === window.location.pathname && inLeague;
-	const state = {
-		noTrack: refresh || replace,
-		updateEvents,
-		...raw,
-	};
+	const urlTemp = url ?? window.location.pathname + window.location.search;
+	const inLeague = urlTemp.substr(0, 3) === "/l/";
+	const refresh = urlTemp === window.location.pathname && inLeague;
 
-	await router.navigate(url, {
-		state,
+	viewManager.add({
+		url,
 		refresh,
 		replace,
+		updateEvents,
+		raw,
 	});
 }
 

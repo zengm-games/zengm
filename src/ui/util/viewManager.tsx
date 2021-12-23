@@ -78,13 +78,13 @@ class ViewManager {
 	}
 
 	add(action: Action) {
-		if (action.url) {
-			this.newNavigationPending = true;
-		}
-
 		if (this.queue.length === 0 && !this.processingAction) {
 			this.initAction(action);
 		} else {
+			if (action.url) {
+				this.newNavigationPending = true;
+			}
+
 			this.queue.push(action);
 		}
 	}
@@ -178,7 +178,6 @@ class ViewManager {
 			updateEvents,
 			this.viewData,
 		);
-		console.log("got results", id, results);
 
 		if (this.newNavigationPending) {
 			await this.initNextAction();
@@ -230,11 +229,6 @@ class ViewManager {
 				true,
 			);
 
-			await this.initNextAction();
-			return;
-		}
-
-		if (this.newNavigationPending) {
 			await this.initNextAction();
 			return;
 		}

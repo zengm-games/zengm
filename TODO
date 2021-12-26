@@ -3,7 +3,6 @@ make realtimeUpdate backed by queue
   - push updateEvents to other tabs, if there are any updateEvents (not just plain navigation)
   - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
   - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
-- need better short circuit logic, so we can start updating for a new navigation event while an old one is still running, and know we'll discard the old result even if the new one finishes first.
 - get rid of local.viewInfo
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
 - titlebar dropdowns don't work

@@ -58,7 +58,7 @@ const match = (route: Route, path: string) => {
 	return { matches, params };
 };
 
-const makeRegex = (path: string) => {
+export const makeRegex = (path: string) => {
 	const parts = path
 		.replace(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
 		.split("/");

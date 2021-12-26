@@ -1,10 +1,11 @@
 import type { LocalStateUI, UpdateEvents } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import router from "../router";
+import router, { makeRegex } from "../router";
 import { local, localActions } from "./local";
 import realtimeUpdate from "./realtimeUpdate";
 import toWorker from "./toWorker";
 import create from "zustand";
+import routeInfos from "./routeInfos";
 
 type Action = {
 	url?: string;
@@ -57,6 +58,10 @@ class ViewManager {
 	viewData: Record<string, unknown>;
 	idLoaded: string | undefined;
 	processingAction: boolean;
+	routes: {
+		id: string;
+		regex: RegExp;
+	}[];
 
 	// When navigation to a new URL happens (can be from clicking a link in which case it goes directly to fromRouter, or from realtimeUpdate in which case it goes to fromRealtimeUpdate first and then eventually fromRouter) we want to be able to discard any in-progress load. Do that by keeping track of a symbol associated with a navigation.
 	lastNavigationSymbol: symbol;
@@ -66,6 +71,15 @@ class ViewManager {
 		this.viewData = {};
 		this.processingAction = false;
 		this.lastNavigationSymbol = Symbol();
+
+		this.routes = [];
+		for (const [path, id] of Object.entries(routeInfos)) {
+			const { regex } = makeRegex(path);
+			this.routes.push({
+				id,
+				regex,
+			});
+		}
 	}
 
 	async fromRouter(viewInfo: NonNullable<LocalStateUI["viewInfo"]>) {
@@ -95,15 +109,33 @@ class ViewManager {
 	}
 
 	fromRealtimeUpdate(action: Action) {
-		if (this.queue.length === 0 && !this.processingAction) {
+		let navigationEvent = false;
+		if (action.url) {
+			// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
+			let id;
+			const urlToMatch = action.url.split("?")[0].split("#")[0];
+			for (const route of this.routes) {
+				const m = route.regex.exec(decodeURIComponent(urlToMatch));
+
+				if (m) {
+					id = route.id;
+					break;
+				}
+			}
+
+			if (id && id !== this.idLoaded) {
+				navigationEvent = true;
+			}
+		}
+
+		if (navigationEvent) {
+			this.lastNavigationSymbol = Symbol();
+			this.queue = [];
+			this.initAction(action);
+		} else if (this.queue.length === 0 && !this.processingAction) {
 			this.initAction(action);
 		} else {
-			// Clear queue if this is navigation
-			if (action.url) {
-				this.queue = [action];
-			} else {
-				this.queue.push(action);
-			}
+			this.queue.push(action);
 		}
 	}
 
@@ -113,13 +145,9 @@ class ViewManager {
 		const state: any = {
 			noTrack: refresh || replace,
 			updateEvents,
+			navigationSymbol: this.lastNavigationSymbol,
 			...raw,
 		};
-
-		if (url) {
-			this.lastNavigationSymbol = Symbol();
-		}
-		state.navigationSymbol = this.lastNavigationSymbol;
 
 		const actualURL = url ?? window.location.pathname + window.location.search;
 

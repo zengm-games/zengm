@@ -66,7 +66,6 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	userTid: 0,
 	userTids: [],
 	username: undefined,
-	viewInfo: undefined,
 	title: undefined,
 	hideNewWindow: false,
 	jumpTo: false,

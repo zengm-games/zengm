@@ -1,4 +1,3 @@
-import { localActions } from "./local";
 import type { Context } from "../router";
 import { viewManager } from "./viewManager";
 
@@ -28,10 +27,6 @@ const initView = (args: InitArgs) => {
 					}
 				},
 			};
-
-			localActions.update({
-				viewInfo,
-			});
 
 			viewManager.fromRouter(viewInfo);
 		});

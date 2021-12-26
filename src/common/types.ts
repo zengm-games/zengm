@@ -1,6 +1,5 @@
 import type { Face } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
-import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
 
@@ -909,13 +908,6 @@ export type LocalStateUI = {
 	userTid: number;
 	userTids: number[];
 	username?: string;
-	viewInfo?: {
-		Component: any;
-		id: string;
-		inLeague: boolean;
-		context: Context;
-		cb: (a?: Error) => void;
-	};
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;

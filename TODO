@@ -3,7 +3,6 @@ make realtimeUpdate backed by queue
   - push updateEvents to other tabs, if there are any updateEvents (not just plain navigation)
   - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
   - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
-- get rid of local.viewInfo
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
 - sidebar highlighting
 - fromRouter cb can just be async/await

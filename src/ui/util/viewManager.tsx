@@ -1,6 +1,6 @@
-import type { LocalStateUI, UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import router, { makeRegex } from "../router";
+import router, { Context, makeRegex } from "../router";
 import { local, localActions } from "./local";
 import realtimeUpdate from "./realtimeUpdate";
 import toWorker from "./toWorker";
@@ -20,6 +20,14 @@ type State = {
 	loading: boolean;
 	inLeague: boolean;
 	data: Record<string, any>;
+};
+
+type ViewInfo = {
+	Component: any;
+	id: string;
+	inLeague: boolean;
+	context: Context;
+	cb: (a?: Error) => void;
 };
 
 export const useViewData = create<
@@ -82,7 +90,7 @@ class ViewManager {
 		}
 	}
 
-	async fromRouter(viewInfo: NonNullable<LocalStateUI["viewInfo"]>) {
+	async fromRouter(viewInfo: ViewInfo) {
 		try {
 			// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
 			if (viewInfo.context.state.navigationSymbol) {
@@ -168,7 +176,7 @@ class ViewManager {
 	}
 
 	async processUpdate(
-		{ Component, context, id, inLeague }: NonNullable<LocalStateUI["viewInfo"]>,
+		{ Component, context, id, inLeague }: ViewInfo,
 		navigationSymbol: symbol,
 	) {
 		actions.startLoading();

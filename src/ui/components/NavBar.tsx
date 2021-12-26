@@ -8,6 +8,7 @@ import {
 	safeLocalStorage,
 	useLocalShallow,
 } from "../util";
+import { useViewData } from "../util/viewManager";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
 import PlayMenu from "./PlayMenu";
@@ -77,7 +78,6 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		playMenuOptions,
 		popup,
 		username,
-		viewInfo,
 	} = useLocalShallow(state => ({
 		lid: state.lid,
 		godMode: state.godMode,
@@ -87,8 +87,8 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		playMenuOptions: state.playMenuOptions,
 		popup: state.popup,
 		username: state.username,
-		viewInfo: state.viewInfo,
 	}));
+	const viewInfo = useViewData();
 
 	// Checking lid too helps with some flicker
 	const inLeague = viewInfo?.inLeague && lid !== undefined;

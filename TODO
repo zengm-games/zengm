@@ -5,7 +5,6 @@ make realtimeUpdate backed by queue
   - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
 - sidebar highlighting
-- fromRouter cb can just be async/await
 - test
   - any place that awaits realtimeUpdate, since it's now sync. does it need to be async, like having viewManager.add return a promise that resolves when this action is complete?
   - redirectURL

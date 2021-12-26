@@ -27,7 +27,6 @@ type ViewInfo = {
 	id: string;
 	inLeague: boolean;
 	context: Context;
-	cb: (a?: Error) => void;
 };
 
 export const useViewData = create<
@@ -91,29 +90,21 @@ class ViewManager {
 	}
 
 	async fromRouter(viewInfo: ViewInfo) {
-		try {
-			// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
-			if (viewInfo.context.state.navigationSymbol) {
-				if (
-					this.lastNavigationSymbol !== viewInfo.context.state.navigationSymbol
-				) {
-					// Must have been another navigation before this one processed
-					viewInfo.cb();
-					return;
-				}
-			} else {
-				// If coming only from router (like user clicked a link) then we set lastNavigationSymbol here and clear the queue
-				this.lastNavigationSymbol = Symbol();
-				this.queue = [];
+		// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
+		if (viewInfo.context.state.navigationSymbol) {
+			if (
+				this.lastNavigationSymbol !== viewInfo.context.state.navigationSymbol
+			) {
+				// Must have been another navigation before this one processed
+				return;
 			}
-
-			await this.processUpdate(viewInfo, this.lastNavigationSymbol);
-		} catch (error) {
-			viewInfo.cb(error);
-			return;
+		} else {
+			// If coming only from router (like user clicked a link) then we set lastNavigationSymbol here and clear the queue
+			this.lastNavigationSymbol = Symbol();
+			this.queue = [];
 		}
 
-		viewInfo.cb();
+		await this.processUpdate(viewInfo, this.lastNavigationSymbol);
 	}
 
 	fromRealtimeUpdate(action: Action) {

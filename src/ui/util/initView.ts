@@ -13,23 +13,14 @@ const initView = (args: InitArgs) => {
 	}
 
 	return async (context: Context): Promise<void> => {
-		return new Promise((resolve, reject) => {
-			const viewInfo = {
-				Component: args.Component,
-				id: args.id,
-				inLeague: !!args.inLeague,
-				context,
-				cb: (error?: Error) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve();
-					}
-				},
-			};
+		const viewInfo = {
+			Component: args.Component,
+			id: args.id,
+			inLeague: !!args.inLeague,
+			context,
+		};
 
-			viewManager.fromRouter(viewInfo);
-		});
+		await viewManager.fromRouter(viewInfo);
 	};
 };
 

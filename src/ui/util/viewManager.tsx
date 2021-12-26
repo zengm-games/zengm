@@ -158,12 +158,12 @@ class ViewManager {
 		});
 	}
 
-	async initNextAction() {
+	initNextAction() {
 		this.processingAction = false;
 
 		const nextAction = this.queue.shift();
 		if (nextAction) {
-			await this.initAction(nextAction);
+			this.initAction(nextAction);
 		}
 	}
 
@@ -208,7 +208,7 @@ class ViewManager {
 		}
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
-			await this.initNextAction();
+			this.initNextAction();
 			return;
 		}
 
@@ -229,14 +229,14 @@ class ViewManager {
 		);
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
-			await this.initNextAction();
+			this.initNextAction();
 			return;
 		}
 
 		// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
 		if (results === undefined) {
 			actions.doneLoading();
-			await this.initNextAction();
+			this.initNextAction();
 			return;
 		}
 
@@ -278,7 +278,7 @@ class ViewManager {
 				true,
 			);
 
-			await this.initNextAction();
+			this.initNextAction();
 			return;
 		}
 
@@ -291,7 +291,7 @@ class ViewManager {
 			window.scrollTo(window.pageXOffset, 0);
 		}
 
-		await this.initNextAction();
+		this.initNextAction();
 	}
 }
 

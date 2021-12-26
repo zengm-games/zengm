@@ -5,14 +5,21 @@ make realtimeUpdate backed by queue
   - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
 - get rid of local.viewInfo
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
-- titlebar dropdowns don't work
 - sidebar highlighting
 - fromRouter cb can just be async/await
 - test
   - any place that awaits realtimeUpdate, since it's now sync. does it need to be async, like having viewManager.add return a promise that resolves when this action is complete?
   - redirectURL
 
+have alt + p skip my own pick too if im in spectator mode and wanting to just skip thru each pick 1 by 1, cause rn it doesn't allow me to use alt + p I have to Manually press the sim one pick button, probably not too important tbf https://discord.com/channels/290013534023057409/331882115119448065/923768021426765844
+
+Yeah it happens to me consistently after the first Season Preview occurs https://discord.com/channels/290013534023057409/290015591216054273/924136994240593960
+
+for some fbgm penalties, don't allow the ball carrier to be called
+
 when creating a custom real players league, unchecking "teams" doesn't do anything. should switch to default 30 teams
+
+decrease kicker value https://discord.com/channels/290013534023057409/331882115119448065/924775696608419840
 
 border between "watch game" and "sim game", and on hover, especially light mode
 

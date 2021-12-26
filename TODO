@@ -4,7 +4,6 @@ make realtimeUpdate backed by queue
   - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
   - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
-- sidebar highlighting
 - test
   - any place that awaits realtimeUpdate, since it's now sync. does it need to be async, like having viewManager.add return a promise that resolves when this action is complete?
   - redirectURL

@@ -1,6 +1,6 @@
 import { LazyMotion } from "framer-motion";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { localActions, useLocalShallow } from "../util";
 import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
@@ -50,15 +50,6 @@ const minWidth0 = {
 const Controller = () => {
 	const state = useViewData();
 
-	const idLoaded = useRef<string | undefined>(undefined);
-	const loading = useRef<
-		| {
-				id: string;
-				promise: Promise<void>;
-		  }
-		| undefined
-	>(undefined);
-
 	const { popup, showNagModal } = useLocalShallow(state2 => ({
 		popup: state2.popup,
 		showNagModal: state2.showNagModal,
@@ -86,10 +77,17 @@ const Controller = () => {
 		}
 	}, [popup]);
 
-	const { Component, data, inLeague, loading: updating } = state;
-	let contents;
-	const pageID = loading.current?.id ?? idLoaded.current; // idLoading, idLoaded, or undefined
+	const {
+		Component,
+		data,
+		idLoading,
+		idLoaded,
+		inLeague,
+		loading: updating,
+	} = state;
+	const pageID = idLoading ?? idLoaded; // Optimistically pick idLoading before it renders
 
+	let contents;
 	if (!Component) {
 		contents = null;
 	} else if (!inLeague) {

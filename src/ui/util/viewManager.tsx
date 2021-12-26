@@ -18,6 +18,8 @@ type Action = {
 type State = {
 	Component: any;
 	loading: boolean;
+	idLoaded: string | undefined;
+	idLoading: string | undefined;
 	inLeague: boolean;
 	data: Record<string, any>;
 };
@@ -32,19 +34,22 @@ type ViewInfo = {
 export const useViewData = create<
 	State & {
 		actions: {
-			startLoading: () => void;
-			doneLoading: () => void;
+			startLoading: (idLoading: string) => void;
+			doneLoading: (idLoaded: string) => void;
 			reset: (state: State) => void;
 		};
 	}
 >(set => ({
 	Component: undefined,
 	loading: false,
+	idLoaded: undefined,
+	idLoading: undefined,
 	inLeague: false,
 	data: {},
 	actions: {
-		startLoading: () => set({ loading: true }),
-		doneLoading: () => set({ loading: false }),
+		startLoading: (id: string) => set({ idLoading: id, loading: true }),
+		doneLoading: (id: string) =>
+			set({ idLoaded: id, idLoading: undefined, loading: false }),
 		reset: (state: State) => {
 			set(state);
 		},
@@ -170,7 +175,7 @@ class ViewManager {
 		{ Component, context, id, inLeague }: ViewInfo,
 		navigationSymbol: symbol,
 	) {
-		actions.startLoading();
+		actions.startLoading(id);
 
 		const updateEvents = context.state.updateEvents ?? [];
 
@@ -234,7 +239,7 @@ class ViewManager {
 
 		// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
 		if (results === undefined) {
-			actions.doneLoading();
+			actions.doneLoading(id);
 			this.initNextAction();
 			return;
 		}
@@ -257,6 +262,8 @@ class ViewManager {
 			Component: NewComponent,
 			data: Object.assign(this.viewData, results),
 			loading: false,
+			idLoaded: id,
+			idLoading: undefined,
 			inLeague,
 		};
 

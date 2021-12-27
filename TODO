@@ -1,13 +1,3 @@
-make realtimeUpdate backed by queue
-- on add new event
-  - push updateEvents to other tabs, if there are any updateEvents (not just plain navigation)
-  - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
-  - if this is a navigate, cancel in progress refresh/navigate and delete any prior to this one
-- toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
-- test
-  - account stuff
-  - redirectURL
-
 for some fbgm penalties, don't allow the ball carrier to be called
 
 decrease kicker value https://discord.com/channels/290013534023057409/331882115119448065/924775696608419840

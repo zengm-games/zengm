@@ -12,7 +12,7 @@ const initView = (args: InitArgs) => {
 		throw new Error("Missing arg Component");
 	}
 
-	return async (context: Context): Promise<void> => {
+	return async (context: Context) => {
 		const viewInfo = {
 			Component: args.Component,
 			id: args.id,

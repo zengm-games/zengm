@@ -7,6 +7,16 @@ import toWorker from "./toWorker";
 import create from "zustand";
 import routeInfos from "./routeInfos";
 
+/**
+ * Things that might be nice, to improve this:
+ *
+ * - remove tight coupling with router
+ * - automatically push updateEvents to other tabs, if there are any updateEvents
+ * - good way to handle navigation+updateEvents, where navigation is only one tab but updateEvents go to other tabs
+ * - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
+ * - tests
+ */
+
 type Action = {
 	url?: string;
 	refresh: boolean;

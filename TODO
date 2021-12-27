@@ -6,9 +6,8 @@ make realtimeUpdate backed by queue
 - toUI realtimeUpdate including a URL is currently broken cause it can only go to one tab
 - test
   - any place that awaits realtimeUpdate, since it's now sync. does it need to be async, like having viewManager.add return a promise that resolves when this action is complete?
+    - when doing game sim, it no longer waits until refresh finishes before simming next one
   - redirectURL
-
-have alt + p skip my own pick too if im in spectator mode and wanting to just skip thru each pick 1 by 1, cause rn it doesn't allow me to use alt + p I have to Manually press the sim one pick button, probably not too important tbf https://discord.com/channels/290013534023057409/331882115119448065/923768021426765844
 
 Yeah it happens to me consistently after the first Season Preview occurs https://discord.com/channels/290013534023057409/290015591216054273/924136994240593960
 

@@ -625,6 +625,12 @@ const NewLeague = (props: View<"newLeague">) => {
 		title = "New Real Players League";
 	}
 
+	const keptKeysIsAvailable = state.allKeys.length > 0;
+	const displayedTeams =
+		!keptKeysIsAvailable || state.keptKeys.includes("teams")
+			? state.teams
+			: teamsDefault;
+
 	const createLeague = async (settingsOverride?: State["settings"]) => {
 		if (props.lid !== undefined) {
 			const result = await confirm(
@@ -698,7 +704,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				startingSeasonFromInput,
 				confs: state.confs,
 				divs: state.divs,
-				teamsFromInput: state.teams,
+				teamsFromInput: displayedTeams,
 				settings,
 				fromFile: {
 					gameAttributes: state.basicInfo?.gameAttributes,
@@ -884,12 +890,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			</m.div>
 		);
 	}
-
-	const keptKeysIsAvailable = state.customize.startsWith("custom");
-	const displayedTeams =
-		!keptKeysIsAvailable || state.keptKeys.includes("teams")
-			? state.teams
-			: teamsDefault;
 
 	const createLeagueText =
 		props.lid !== undefined ? "Import League" : "Create League";

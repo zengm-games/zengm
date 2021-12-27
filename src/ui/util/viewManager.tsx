@@ -15,6 +15,10 @@ type Action = {
 	raw?: Record<string, unknown>;
 };
 
+type ActionWithResolve = Action & {
+	resolve: () => void;
+};
+
 type State = {
 	Component: any;
 	loading: boolean;
@@ -66,7 +70,7 @@ const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 };
 
 class ViewManager {
-	queue: Action[];
+	queue: ActionWithResolve[];
 	viewData: Record<string, unknown>;
 	idLoaded: string | undefined;
 	processingAction: boolean;
@@ -94,6 +98,13 @@ class ViewManager {
 		}
 	}
 
+	private clearQueue() {
+		for (const action of this.queue) {
+			action.resolve();
+		}
+		this.queue = [];
+	}
+
 	async fromRouter(viewInfo: ViewInfo) {
 		// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
 		if (viewInfo.context.state.navigationSymbol) {
@@ -106,44 +117,59 @@ class ViewManager {
 		} else {
 			// If coming only from router (like user clicked a link) then we set lastNavigationSymbol here and clear the queue
 			this.lastNavigationSymbol = Symbol();
-			this.queue = [];
+			this.clearQueue();
 		}
 
 		await this.processUpdate(viewInfo, this.lastNavigationSymbol);
 	}
 
 	fromRealtimeUpdate(action: Action) {
-		let navigationEvent = false;
-		if (action.url) {
-			// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
-			let id;
-			const urlToMatch = action.url.split("?")[0].split("#")[0];
-			for (const route of this.routes) {
-				const m = route.regex.exec(decodeURIComponent(urlToMatch));
+		// Return a promise because sometimes we want to wait for an update to process before continuing. For example, when simming multiple games, we want to update the UI between each day.
+		return new Promise<void>(resolve => {
+			let navigationEvent = false;
+			if (action.url) {
+				// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
+				let id;
+				const urlToMatch = action.url.split("?")[0].split("#")[0];
+				for (const route of this.routes) {
+					const m = route.regex.exec(decodeURIComponent(urlToMatch));
 
-				if (m) {
-					id = route.id;
-					break;
+					if (m) {
+						id = route.id;
+						break;
+					}
+				}
+
+				if (id && id !== this.idLoaded) {
+					navigationEvent = true;
 				}
 			}
 
-			if (id && id !== this.idLoaded) {
-				navigationEvent = true;
-			}
-		}
+			const actionWithResolve: ActionWithResolve = {
+				...action,
+				resolve,
+			};
 
-		if (navigationEvent) {
-			this.lastNavigationSymbol = Symbol();
-			this.queue = [];
-			this.initAction(action);
-		} else if (this.queue.length === 0 && !this.processingAction) {
-			this.initAction(action);
-		} else {
-			this.queue.push(action);
-		}
+			if (navigationEvent) {
+				this.lastNavigationSymbol = Symbol();
+				this.clearQueue();
+				this.initAction(actionWithResolve);
+			} else if (this.queue.length === 0 && !this.processingAction) {
+				this.initAction(actionWithResolve);
+			} else {
+				this.queue.push(actionWithResolve);
+			}
+		});
 	}
 
-	async initAction({ url, refresh, replace, updateEvents, raw }: Action) {
+	async initAction({
+		url,
+		refresh,
+		replace,
+		resolve,
+		updateEvents,
+		raw,
+	}: ActionWithResolve) {
 		this.processingAction = true;
 
 		const state: any = {
@@ -160,6 +186,9 @@ class ViewManager {
 			refresh,
 			replace,
 		});
+
+		// router.navigate runs fromRouter, which waits until the content is displayed, so we can resolve the action here
+		resolve();
 	}
 
 	initNextAction() {

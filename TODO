@@ -1,6 +1,12 @@
+more season preview stuff
+- top rookies
+- top free agent signings
+- ...1 more needed
+
 safari replacestate error is back
 - https://app.bugsnag.com/zengm-llc/basketball-gm/errors/61c12426865e09000712914b?filters[event.since]=30d&filters[error.status]=open
 - see commit cbdd64962bacf11415de66f5113409d1e8a72b43 - make sure replace/refresh are being set correctly before calling router.navigate
+- maybe fixed now?
 
 for some fbgm penalties, don't allow the ball carrier to be called
 

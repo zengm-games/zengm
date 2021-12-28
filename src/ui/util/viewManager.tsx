@@ -226,12 +226,17 @@ class ViewManager {
 			}
 		}
 
+		let prevData;
 		if (this.idLoaded !== id) {
 			// This is the initial load of a page, so reset viewData and add firstRun update event
 			if (!updateEvents.includes("firstRun")) {
 				updateEvents.push("firstRun");
 			}
-			this.viewData = {};
+			prevData = {};
+		} else {
+			prevData = {
+				...this.viewData,
+			};
 		}
 
 		const lid = local.getState().lid;
@@ -268,7 +273,7 @@ class ViewManager {
 			context.params,
 			ctxBBGM,
 			updateEvents,
-			this.viewData,
+			prevData,
 		);
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
@@ -285,13 +290,13 @@ class ViewManager {
 
 		// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack. THIS MAY NO LONGER BE TRUE AFTER CONSOLIDATING RUNBEFORE INTO A SINGLE FUNCTION, ideally the worker/views function could then handle conflicts itself. But currently the only ones returning errorMessage have just one function so it's either all or nothing.
 		if (results && Object.keys(results).length > 0) {
-			delete this.viewData.errorMessage;
+			delete prevData.errorMessage;
 		}
 
 		let NewComponent = Component;
 
 		if (
-			this.viewData.errorMessage ||
+			prevData.errorMessage ||
 			(results && results.hasOwnProperty("errorMessage"))
 		) {
 			NewComponent = ErrorMessage;
@@ -299,7 +304,7 @@ class ViewManager {
 
 		const vars = {
 			Component: NewComponent,
-			data: Object.assign(this.viewData, results),
+			data: Object.assign(prevData, results),
 			loading: false,
 			idLoaded: id,
 			idLoading: undefined,

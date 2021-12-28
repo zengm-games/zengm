@@ -62,18 +62,11 @@ const Controller = () => {
 	}, []);
 
 	useEffect(() => {
-		if (popup && document.body) {
-			if (document.body) {
-				document.body.style.paddingTop = "0";
-			}
-
+		if (popup) {
+			document.body.style.paddingTop = "0";
 			const css = document.createElement("style");
-			css.type = "text/css";
 			css.innerHTML = ".new_window { display: none }";
-
-			if (document.body) {
-				document.body.appendChild(css);
-			}
+			document.body.appendChild(css);
 		}
 	}, [popup]);
 

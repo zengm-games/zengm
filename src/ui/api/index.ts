@@ -292,14 +292,17 @@ const updateLocal = (obj: Partial<LocalStateUI>) => {
 const updateTeamOvrs = (ovrs: number[]) => {
 	const games = local.getState().games;
 
-	// Find upcoming game, it's the only one that needs updating
-	const game = games.find(game => game.teams[0].pts === undefined);
-	if (game) {
-		const { teams } = game;
+	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
+	const gameIndex = games.findIndex(game => game.teams[0].pts === undefined);
+	if (gameIndex >= 0) {
+		const { teams } = games[gameIndex];
 		if (
 			teams[0].ovr !== ovrs[teams[0].tid] ||
 			teams[1].ovr !== ovrs[teams[1].tid]
 		) {
+			games[gameIndex] = {
+				...games[gameIndex],
+			};
 			teams[0].ovr = ovrs[teams[0].tid];
 			teams[1].ovr = ovrs[teams[1].tid];
 

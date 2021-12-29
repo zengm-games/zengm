@@ -58,6 +58,10 @@ const getCopies = async (
 	}
 
 	if (pids !== undefined) {
+		if (pids.length === 0) {
+			return [];
+		}
+
 		const sortedPids = [...pids].sort((a, b) => a - b);
 		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
 			(resolve, reject) => {

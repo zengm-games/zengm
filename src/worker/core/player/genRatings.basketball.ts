@@ -2,46 +2,7 @@ import genFuzz from "./genFuzz";
 import heightToRating from "./heightToRating";
 import limitRating from "./limitRating";
 import { helpers, random } from "../../util";
-import type {
-	PlayerRatings,
-	RatingKey,
-} from "../../../common/types.basketball";
-
-const typeFactors: Record<
-	"point" | "wing" | "big",
-	Partial<Record<RatingKey, number>>
-> = {
-	point: {
-		jmp: 1.65,
-		spd: 1.65,
-		drb: 1.5,
-		pss: 1.5,
-		ft: 1.4,
-		fg: 1.4,
-		tp: 1.4,
-		oiq: 1.2,
-		endu: 1.4,
-	},
-	wing: {
-		drb: 1.2,
-		dnk: 1.5,
-		jmp: 1.4,
-		spd: 1.4,
-		ft: 1.2,
-		fg: 1.2,
-		tp: 1.2,
-	},
-	big: {
-		stre: 1.2,
-		ins: 1.6,
-		dnk: 1.5,
-		reb: 1.4,
-		ft: 0.8,
-		fg: 0.8,
-		tp: 0.8,
-		diq: 1.2,
-	},
-};
+import type { PlayerRatings } from "../../../common/types.basketball";
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -66,87 +27,104 @@ const genRatings = (
 	const hgt = heightToRating(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
-	const randType = Math.random();
-	let type: keyof typeof typeFactors;
+	const pca_comp = [
+		[
+			-0.04097378, 0.10708854, -0.37189642, -0.16707005, -0.31409436,
+			-0.29164582, 0.33714843, 0.10838294, -0.31849462, -0.12487201, -0.3799997,
+			0.12642711, -0.30714244, 0.03870837, -0.37182716,
+		],
+		[
+			0.26861978, 0.3138044, 0.15214671, 0.24289334, 0.03620905, -0.02747153,
+			0.19318229, 0.47557852, 0.06119868, 0.21228091, 0.20542903, 0.40515214,
+			0.03863032, 0.4684178, -0.07482827,
+		],
+		[
+			-0.18922555, 0.35164002, -0.30484948, 0.02890456, 0.30394453, 0.25071532,
+			0.28024483, -0.00872483, 0.26769468, 0.02539012, -0.5109063, -0.14047495,
+			0.2038116, 0.17138019, 0.29823953,
+		],
+	];
 
-	if (hgt >= 59) {
-		// 6'10" or taller
-		if (randType < 0.01) {
-			type = "point";
-		} else if (randType < 0.05) {
-			type = "wing";
-		} else {
-			type = "big";
-		}
-	} else if (hgt <= 33) {
-		// 6'3" or shorter
-		if (randType < 0.1) {
-			type = "wing";
-		} else {
-			type = "point";
-		}
-	} else {
-		// eslint-disable-next-line no-lonely-if
-		if (randType < 0.03) {
-			type = "point";
-		} else if (randType < 0.3) {
-			type = "big";
-		} else {
-			type = "wing";
-		}
-	}
+	const pca1 = 1.61 * hgt - 77.92 + random.realGauss(0, 15.4);
+	const pca2 = 0.51 * hgt - 24.93 + random.realGauss(0, 17.7);
+	const pca3 = 0.29 * hgt - 14.16 + random.realGauss(0, 9.3);
 
-	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 37,
-		spd: 40,
-		jmp: 40,
-		endu: 17,
-		ins: 27,
-		dnk: 27,
-		ft: 32,
-		fg: 32,
-		tp: 32,
-		oiq: 22,
-		diq: 22,
-		drb: 37,
-		pss: 37,
-		reb: 37,
+		diq:
+			41.8 +
+			pca1 * pca_comp[0][0] +
+			pca2 * pca_comp[1][0] +
+			pca3 * pca_comp[2][0],
+		dnk:
+			47.6 +
+			pca1 * pca_comp[0][1] +
+			pca2 * pca_comp[1][1] +
+			pca3 * pca_comp[2][1],
+		drb:
+			49.5 +
+			pca1 * pca_comp[0][2] +
+			pca2 * pca_comp[1][2] +
+			pca3 * pca_comp[2][2],
+		endu:
+			34.3 +
+			pca1 * pca_comp[0][3] +
+			pca2 * pca_comp[1][3] +
+			pca3 * pca_comp[2][3],
+		fg:
+			43.1 +
+			pca1 * pca_comp[0][4] +
+			pca2 * pca_comp[1][4] +
+			pca3 * pca_comp[2][4],
+		ft:
+			43.1 +
+			pca1 * pca_comp[0][5] +
+			pca2 * pca_comp[1][5] +
+			pca3 * pca_comp[2][5],
+		hgt: hgt,
+		ins:
+			41.5 +
+			pca1 * pca_comp[0][7] +
+			pca2 * pca_comp[1][7] +
+			pca3 * pca_comp[2][7],
+		jmp:
+			51.6 +
+			pca1 * pca_comp[0][8] +
+			pca2 * pca_comp[1][8] +
+			pca3 * pca_comp[2][8],
+		oiq:
+			40.7 +
+			pca1 * pca_comp[0][9] +
+			pca2 * pca_comp[1][9] +
+			pca3 * pca_comp[2][9],
+		pss:
+			46.4 +
+			pca1 * pca_comp[0][10] +
+			pca2 * pca_comp[1][10] +
+			pca3 * pca_comp[2][10],
+		reb:
+			48.7 +
+			pca1 * pca_comp[0][11] +
+			pca2 * pca_comp[1][11] +
+			pca3 * pca_comp[2][11],
+		spd:
+			51.8 +
+			pca1 * pca_comp[0][12] +
+			pca2 * pca_comp[1][12] +
+			pca3 * pca_comp[2][12],
+		stre:
+			47.6 +
+			pca1 * pca_comp[0][13] +
+			pca2 * pca_comp[1][13] +
+			pca3 * pca_comp[2][13],
+		tp:
+			44.2 +
+			pca1 * pca_comp[0][14] +
+			pca2 * pca_comp[1][14] +
+			pca3 * pca_comp[2][14],
 	};
 
-	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
-	// ensure there are some who are elite in one but not the other
-	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
-	const shootingRatings = ["ft", "fg", "tp"];
-	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
-
 	for (const key of helpers.keys(rawRatings)) {
-		const typeFactor = typeFactors[type].hasOwnProperty(key)
-			? typeFactors[type][key]
-			: 1;
-		let factor = factorIns;
-
-		if (athleticismRatings.includes(key)) {
-			factor = factorAthleticism;
-		} else if (shootingRatings.includes(key)) {
-			factor = factorShooting;
-		} else if (skillRatings.includes(key)) {
-			factor = factorSkill;
-		}
-
-		// For TypeScript
-		// https://github.com/microsoft/TypeScript/issues/21732
-		if (typeFactor === undefined) {
-			throw new Error("Should never happen");
-		}
-
-		rawRatings[key] = limitRating(
-			factor * typeFactor * random.realGauss(rawRatings[key], 3),
-		);
+		rawRatings[key] = limitRating(rawRatings[key] * random.uniform(0.77, 1.23));
 	}
 
 	const ratings = {

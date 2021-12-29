@@ -62,6 +62,7 @@ const navigationRoute = new NavigationRoute(handler, {
 		new RegExp("^/manifest"),
 		new RegExp("^/robots.txt"),
 		new RegExp("^/sw.js"),
+		new RegExp("^/upgrade-"),
 	],
 });
 registerRoute(navigationRoute);

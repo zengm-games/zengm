@@ -344,6 +344,12 @@ const achievements: Achievement[] = [
 		category: "Meta",
 	},
 	{
+		slug: "gold",
+		name: "Gold",
+		desc: "Subscribe to ZenGM Gold from your account page to get this achievement.",
+		category: "Meta",
+	},
+	{
 		slug: "longevity",
 		name: "Longevity",
 		desc: "Play 100 seasons in a single league.",

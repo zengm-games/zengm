@@ -90,7 +90,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 			</p>
 
 			<p>
-				Achievement can be earned at three difficulty levels: normal, hard, and
+				Achievements can be earned at three difficulty levels: normal, hard, and
 				insane. The three numbers you see in the top right of achievements you
 				earned are the number of times you got each achievement at each of those
 				levels.

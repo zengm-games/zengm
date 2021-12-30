@@ -135,6 +135,7 @@ export type BasicInfo = {
 	keys: Set<string>;
 	maxGid: number;
 	hasRookieContracts: boolean;
+	name?: string;
 };
 
 const getBasicInfo = async ({
@@ -197,6 +198,10 @@ const getBasicInfo = async ({
 			if (validate.errors) {
 				schemaErrors.push(...validate.errors);
 			}
+		}
+
+		if (value.key === "meta" && value.value.name) {
+			basicInfo.name = value.value.name;
 		}
 
 		// Need to store max gid from games, so generated schedule does not overwrite it

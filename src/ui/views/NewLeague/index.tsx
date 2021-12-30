@@ -209,6 +209,7 @@ type State = {
 	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
 	phase: number;
+	name: string;
 
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
@@ -259,6 +260,10 @@ type Action =
 	| {
 			type: "setLegend";
 			legend: string;
+	  }
+	| {
+			type: "setName";
+			name: string;
 	  }
 	| {
 			type: "setSeason";
@@ -402,6 +407,12 @@ const reducer = (state: State, action: Action): State => {
 				legend: action.legend,
 			};
 
+		case "setName":
+			return {
+				...state,
+				name: action.name,
+			};
+
 		case "setSeason":
 			return {
 				...state,
@@ -462,7 +473,7 @@ const reducer = (state: State, action: Action): State => {
 				}
 			}
 
-			return {
+			const updatedState: State = {
 				...state,
 				loadingLeagueFile: false,
 				basicInfo: action.basicInfo,
@@ -476,6 +487,12 @@ const reducer = (state: State, action: Action): State => {
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				settings: newSettings,
 			};
+
+			if (action.basicInfo.name) {
+				updatedState.name = action.basicInfo.name;
+			}
+
+			return updatedState;
 		}
 
 		case "newLeagueInfo": {
@@ -537,7 +554,6 @@ const reducer = (state: State, action: Action): State => {
 };
 
 const NewLeague = (props: View<"newLeague">) => {
-	const [name, setName] = useState(props.name);
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
@@ -595,6 +611,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				legend: "all",
 				difficulty: props.difficulty ?? DIFFICULTY.Normal,
 				phase,
+				name: props.name,
 				basicInfo,
 				file: undefined,
 				url: undefined,
@@ -693,7 +710,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			const hasRookieContracts = state.basicInfo?.hasRookieContracts ?? true;
 
 			const lid = await toWorker("main", "createLeague", {
-				name,
+				name: state.name,
 				tid: state.tid,
 				file: state.file,
 				url: state.url,
@@ -1002,9 +1019,12 @@ const NewLeague = (props: View<"newLeague">) => {
 									id="new-league-name"
 									className="form-control"
 									type="text"
-									value={name}
+									value={state.name}
 									onChange={event => {
-										setName(event.target.value);
+										dispatch({
+											type: "setName",
+											name: event.target.value,
+										});
 									}}
 								/>
 							</div>

@@ -67,6 +67,23 @@ const checkMoneyball = async (maxPayroll: number) => {
 	);
 };
 
+const checkSmallMarket = async (popCutoff: number) => {
+	const t = await idb.getCopy.teamsPlus(
+		{
+			seasonAttrs: ["playoffRoundsWon", "pop"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
+	return !!(
+		t &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
+		t.seasonAttrs.pop <= popCutoff
+	);
+};
+
 const userWonTitle = async () => {
 	const t = await idb.getCopy.teamsPlus(
 		{
@@ -351,24 +368,23 @@ const achievements: Achievement[] = [
 	{
 		slug: "small_market",
 		name: "Small Market",
-		desc: "Win a title in a city with under 2 million people.",
+		desc: "Win a title in a city with a population under 2 million people.",
 		category: "Season",
 
-		async check() {
-			const t = await idb.getCopy.teamsPlus(
-				{
-					seasonAttrs: ["playoffRoundsWon", "pop"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				},
-				"noCopyCache",
-			);
-			return !!(
-				t &&
-				t.seasonAttrs.playoffRoundsWon ===
-					g.get("numGamesPlayoffSeries", "current").length &&
-				t.seasonAttrs.pop <= 2
-			);
+		check() {
+			return checkSmallMarket(2);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "small_market_2",
+		name: "Small Market 2",
+		desc: "Win a title in a city with a population under 1.5 million people.",
+		category: "Season",
+
+		check() {
+			return checkSmallMarket(1.5);
 		},
 
 		when: "afterPlayoffs",

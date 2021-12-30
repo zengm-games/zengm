@@ -10,7 +10,6 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common";
-import { unwrap } from "idb";
 
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
@@ -28,32 +27,20 @@ const newPhaseRegularSeason = async (
 	await season.setSchedule(season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
-		// openKeyCursor rather than iterate for performance in Firefox.
-		// unwrap for old Firefox support
-		await new Promise<void>((resolve, reject) => {
-			const transaction = unwrap(idb.league.transaction("games", "readwrite"));
-			const store = transaction.objectStore("games");
-			const index = store.index("season");
+		const tx = idb.league.transaction("games", "readwrite");
+		const gameStore = tx.store;
 
-			const request = index.openKeyCursor(
-				IDBKeyRange.upperBound(g.get("season") - 3),
-			);
-			request.onsuccess = () => {
-				const cursor = request.result;
-				if (cursor) {
-					store.delete(cursor.primaryKey);
-					cursor.continue();
-				} else {
-					resolve();
-				}
-			};
+		// openKeyCursor is crucial for performance in Firefox
+		let cursor = await gameStore.openKeyCursor(
+			IDBKeyRange.upperBound(g.get("season") - 3),
+		);
 
-			const onerror = () => {
-				reject(transaction.error ?? new Error("Transaction error"));
-			};
-			transaction.onerror = onerror;
-			transaction.onabort = onerror;
-		});
+		while (cursor) {
+			gameStore.delete(cursor.primaryKey);
+			cursor = await cursor.continue();
+		}
+
+		await tx.done;
 	}
 
 	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost

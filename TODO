@@ -1,3 +1,15 @@
+More specific achievements, that are really more like challenges
+- https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
+- Win a championship as a play-in team https://discord.com/channels/290013534023057409/331882115119448065/889311847977730089
+
+new achievements
+- gold
+- 100 year championship drought before winning another (cubs)
+- win title without any 1st round picks @AtomicDelirium#1413
+- "On the edge" – Play 28 games in playoffs and win finals (4-3 in each series)
+- Have more than 100 players who played most of their career on your team be HOF @Happy_McSmileyface#1538
+- more levels to existing ones
+
 custom teams using the manage teams function, there are 3 invisible teams. whenever I try to make those 3 invisible teams inactive, different 3 teams become inactive and disappear from the standings and power rankings https://www.dropbox.com/s/k9j2a1pt8tlim3r/BBGM_League_2_2021_preseason%282%29.json?dl=0
 - https://discord.com/channels/290013534023057409/290015591216054273/925701798319243304
 
@@ -9,16 +21,9 @@ more season preview stuff
 - top free agent signings
 - ...1 more needed
 
-safari replacestate error is back
-- https://app.bugsnag.com/zengm-llc/basketball-gm/errors/61c12426865e09000712914b?filters[event.since]=30d&filters[error.status]=open
-- see commit cbdd64962bacf11415de66f5113409d1e8a72b43 - make sure replace/refresh are being set correctly before calling router.navigate
-- maybe fixed now?
-
 for some fbgm penalties, don't allow the ball carrier to be called
 
 decrease kicker value https://discord.com/channels/290013534023057409/331882115119448065/924775696608419840
-
-border between "watch game" and "sim game", and on hover, especially light mode
 
 add way to play without salary cap
 - https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
@@ -112,10 +117,6 @@ all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_featu
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
 
-get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
-
-other firefox comments
-
 refactor FBGM play by play logging
 - move text generation client side, like hockey
 - typescript for log function
@@ -161,8 +162,6 @@ nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
 - https://discord.com/channels/290013534023057409/290015468939640832/893115141015625779
 
-"May have found a small bug (Chrome), when you update a players rating, then attempt to update him to a retired jersey number, it throws the retired jersey error. after you change the jersey number, the rating change shows, but the listed OVR doesn't change to what's reflected in the edit page" https://discord.com/channels/290013534023057409/290015591216054273/893175557410406440
-
 more dramatic play-by-play
 - pass attempt and description before result
 - fg attempt before result
@@ -179,17 +178,6 @@ improve table column filtering
 - AND operation
   - how to handle mixing with OR?
 - parentheses to group operations
-
-More specific achievements, that are really more like challenges
-- https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
-- Win a championship as a play-in team https://discord.com/channels/290013534023057409/331882115119448065/889311847977730089
-
-new achievements
-- gold
-- 100 year championship drought before winning another (cubs)
-- win title without any 1st round picks @AtomicDelirium#1413
-- "On the edge" – Play 28 games in playoffs and win finals (4-3 in each series)
-- Have more than 100 players who played most of their career on your team be HOF @Happy_McSmileyface#1538
 
 better adjustment for real draft prospects
 
@@ -1772,7 +1760,6 @@ TEAM.VALUECHANGE REVAMP
 
 https://www.reddit.com/r/BasketballGM/comments/585af3/the_trade_ai_is_too_easy_to_abuse/
 http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_trade_ai/
-http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
   just drafted players are undervalued, possibly related to the following issue
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now. http://www.reddit.com/r/BasketballGM/comments/2bg3zx/simple_feature_mark_players_as_offlimits_when_we/cj5ap89

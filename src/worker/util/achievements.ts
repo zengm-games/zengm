@@ -1,4 +1,4 @@
-import { idb } from "../db";
+import { idb, iterate } from "../db";
 import g from "./g";
 import type { Achievement } from "../../common/types";
 import { bySport, isSport } from "../../common";
@@ -260,6 +260,61 @@ const checkSevenGameFinals = async () => {
 	}
 
 	return true;
+};
+
+// Cache is to improve performance, both for multiple checks at different limits in the same season, and for checks in multiple seasons (if last year was same session)
+const checkMvpCache = new Map<number, number>();
+const checkMvp = async (limit: number, overallLimit: number) => {
+	const season = g.get("season");
+
+	// If we have current season in cache, use it
+	const current = checkMvpCache.get(season);
+	if (current !== undefined) {
+		return current === limit;
+	}
+
+	const currentAwards = await idb.cache.awards.get(season);
+
+	// If we have last season in cache, use it
+	const previous = checkMvpCache.get(season - 1);
+	if (previous !== undefined) {
+		let current = previous;
+		if (currentAwards.mvp?.tid === g.get("userTid")) {
+			current += 1;
+		}
+		checkMvpCache.set(season, current);
+		return current === limit;
+	}
+
+	// Compute from scratch
+	let count = 0;
+	if (currentAwards.mvp?.tid === g.get("userTid")) {
+		count += 1;
+	}
+	await iterate(
+		idb.league.transaction("awards").store,
+		undefined,
+		undefined,
+		(awards, shortCircuit) => {
+			// Already checked current season in currentAwards
+			if (awards.season >= season) {
+				return;
+			}
+
+			const userTid = g.get("userTid", awards.season);
+			if (awards.mvp?.tid === userTid) {
+				count += 1;
+			}
+
+			// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
+			if (count > overallLimit) {
+				shortCircuit();
+			}
+		},
+	);
+
+	checkMvpCache.set(season, count);
+	return count === limit;
 };
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -766,7 +821,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "triple_crown",
 		name: "Triple Crown",
-		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year",
+		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year.",
 		category: "Awards",
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
@@ -846,6 +901,36 @@ const achievements: Achievement[] = [
 					awards.roy.tid === userTid &&
 					awards.finalsMvp.tid === userTid,
 			});
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp",
+		name: "10 MVPs",
+		desc: "Have your players collectively win 10 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(10, 1000);
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp_2",
+		name: "100 MVPs",
+		desc: "Have your players collectively win 100 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(100, 1000);
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp_3",
+		name: "1,000 MVPs",
+		desc: "Have your players collectively win 1,000 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(1000, 1000);
 		},
 		when: "afterAwards",
 	},

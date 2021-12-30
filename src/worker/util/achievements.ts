@@ -289,6 +289,42 @@ const achievements: Achievement[] = [
 		when: "afterPlayoffs",
 	},
 	{
+		slug: "dynasty_4",
+		name: "Dynasty 4",
+		desc: bySport({
+			basketball: "Win 16 championships in 20 years.",
+			default: "Win 13 championships in 20 years.",
+		}),
+		category: "Multiple Seasons",
+
+		check() {
+			return bySport({
+				basketball: checkDynasty(16, 20),
+				default: checkDynasty(13, 20),
+			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "dynasty_5",
+		name: "Dynasty 5",
+		desc: bySport({
+			basketball: "Win 24 championships in 30 years.",
+			default: "Win 19 championships in 30 years.",
+		}),
+		category: "Multiple Seasons",
+
+		check() {
+			return bySport({
+				basketball: checkDynasty(24, 30),
+				default: checkDynasty(19, 30),
+			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
 		slug: "moneyball",
 		name: "Moneyball",
 		desc: "Win a title with a payroll under 2/3 of the salary cap.",

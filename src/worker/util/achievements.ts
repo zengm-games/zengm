@@ -67,6 +67,25 @@ const checkMoneyball = async (maxPayroll: number) => {
 	);
 };
 
+const checkExpansion = async (numSeasons: number) => {
+	const t = await idb.getCopy.teamsPlus(
+		{
+			attrs: ["firstSeasonAfterExpansion"],
+			seasonAttrs: ["playoffRoundsWon"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
+	return !!(
+		t &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
+		t.firstSeasonAfterExpansion !== undefined &&
+		g.get("season") - t.firstSeasonAfterExpansion + 1 <= numSeasons
+	);
+};
+
 const checkSmallMarket = async (popCutoff: number) => {
 	const t = await idb.getCopy.teamsPlus(
 		{
@@ -361,6 +380,30 @@ const achievements: Achievement[] = [
 
 		check() {
 			return checkMoneyball(0.5 * g.get("salaryCap"));
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "expansion",
+		name: "Expansion To Champion",
+		desc: "Win a title as an expansion team within its first 5 seasons.",
+		category: "Season",
+
+		check() {
+			return checkExpansion(5);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "expansion_2",
+		name: "Expansion To Champion 2",
+		desc: "Win a title as an expansion team within its first 3 seasons.",
+		category: "Season",
+
+		check() {
+			return checkExpansion(3);
 		},
 
 		when: "afterPlayoffs",

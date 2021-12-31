@@ -294,7 +294,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
-				active: pageID => pageID === "account",
+				active: pageID => pageID === "achievements",
 				league: true,
 				nonLeague: true,
 				path: "/achievements",
@@ -446,7 +446,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "options",
+				active: pageID => pageID === "globalSettings",
 				league: true,
 				nonLeague: true,
 				path: "/settings",

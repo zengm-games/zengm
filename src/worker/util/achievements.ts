@@ -1106,6 +1106,63 @@ if (isSport("hockey") || isSport("basketball")) {
 			when: "afterPlayoffs",
 		},
 		{
+			slug: "living_dangerously",
+			name: "Living Dangerously",
+			desc: "Win every playoff series 4-3.",
+			category: "Playoffs",
+
+			async check() {
+				// Similar to checkFoFoFo
+
+				if (g.get("numGamesPlayoffSeries", "current").length < 3) {
+					return false;
+				}
+
+				const playoffSeries = await idb.cache.playoffSeries.get(
+					g.get("season"),
+				);
+
+				if (!playoffSeries || playoffSeries.series.length === 0) {
+					// Should only happen if playoffs are skipped
+					return false;
+				}
+
+				for (const round of playoffSeries.series) {
+					let found = false;
+
+					for (const series of round) {
+						if (
+							series.away &&
+							series.away.won >= 4 &&
+							series.home.won === series.away.won - 1 &&
+							series.away.tid === g.get("userTid")
+						) {
+							found = true;
+							break;
+						}
+
+						if (
+							series.away &&
+							series.home.won >= 4 &&
+							series.away.won === series.home.won - 1 &&
+							series.home.tid === g.get("userTid")
+						) {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						return false;
+					}
+				}
+
+				return true;
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
 			slug: "septuawinarian",
 			name: "Septuawinarian",
 			desc: "Win 70+ games in the regular season.",

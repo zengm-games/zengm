@@ -1084,6 +1084,35 @@ const achievements: Achievement[] = [
 
 		when: "afterPlayoffs",
 	},
+	{
+		slug: "no_first_round_picks",
+		name: "No First Round Picks",
+		desc: "Win a title without any players picked in the first round of the draft.",
+		category: "Team Composition",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+
+			if (!wonTitle) {
+				return false;
+			}
+
+			const players = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				g.get("userTid"),
+			);
+
+			for (const p of players) {
+				if (p.draft.round === 1) {
+					return false;
+				}
+			}
+
+			return true;
+		},
+
+		when: "afterPlayoffs",
+	},
 ];
 
 if (isSport("hockey") || isSport("basketball")) {

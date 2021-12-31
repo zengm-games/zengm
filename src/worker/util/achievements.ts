@@ -1,7 +1,7 @@
 import { idb, iterate } from "../db";
 import g from "./g";
 import type { Achievement } from "../../common/types";
-import { bySport, isSport } from "../../common";
+import { bySport, isSport, PLAYER } from "../../common";
 import helpers from "./helpers";
 
 const goldenOldiesCutoffs = bySport({
@@ -412,14 +412,14 @@ const achievements: Achievement[] = [
 		name: "Dynasty 5",
 		desc: bySport({
 			basketball: "Win 24 championships in 30 years.",
-			default: "Win 19 championships in 30 years.",
+			default: "Win 20 championships in 30 years.",
 		}),
 		category: "Multiple Seasons",
 
 		check() {
 			return bySport({
 				basketball: checkDynasty(24, 30),
-				default: checkDynasty(19, 30),
+				default: checkDynasty(20, 30),
 			});
 		},
 
@@ -1479,6 +1479,142 @@ if (isSport("basketball")) {
 			when: "afterAwards",
 		},
 	);
+
+	// Rebuilds!
+	const rebuilds = [
+		{
+			season: 2012,
+			srIDs: ["CHA", "CHO"], // Changes in 2015
+			name: "Charlotte",
+		},
+		{
+			season: 2013,
+			srIDs: ["ORL"],
+			name: "Orlando",
+		},
+		{
+			season: 2014,
+			srIDs: ["UTA"],
+			name: "Utah",
+		},
+		{
+			season: 2015,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 2016,
+			srIDs: ["LAL"],
+			name: "LA Lowriders",
+			the: true,
+		},
+		{
+			season: 2017,
+			srIDs: ["PHO"],
+			name: "Phoenix",
+		},
+		{
+			season: 2018,
+			srIDs: ["MEM"],
+			name: "Memphis",
+		},
+		{
+			season: 2019,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
+			season: 2020,
+			srIDs: ["WAS"],
+			name: "Washington",
+		},
+		{
+			season: 2021,
+			srIDs: ["DET"],
+			name: "Detroit",
+		},
+	];
+
+	const checkValidRebuild = async (
+		srIDs: string[],
+		season: number,
+		numSeasonsAllowed: number,
+	) => {
+		// After numSeasonsAllowed has passed, no point checking further
+		const numSeasonsElapsed = g.get("season") - season + 1;
+		if (numSeasonsElapsed > numSeasonsAllowed) {
+			return false;
+		}
+
+		// Make sure we're starting in the right season. PLAYER.DOES_NOT_EXIST is to handle case where realStats==="all" and startingSeason is therefore 1947 to account for historical data. That doesn't strictly mean they started in `season`, but the check below for userTid each season will confirm that.
+		if (
+			g.get("startingSeason") !== season &&
+			g.get("userTid", season - 1) !== PLAYER.DOES_NOT_EXIST
+		) {
+			return false;
+		}
+
+		// Get tid of srID
+		const teams = await idb.cache.teams.getAll();
+		const tid = teams.find(t => t.srID && srIDs.includes(t.srID))?.tid;
+		if (tid === undefined) {
+			return false;
+		}
+
+		// Confirm user has managed the same team every season
+		for (let s = season; s <= g.get("season"); s++) {
+			const userTid = g.get("userTid", s);
+			if (userTid !== tid) {
+				return false;
+			}
+		}
+
+		// Make sure there are at least some real players in the league, to prevent user from unselecting "Players" from a custom league and getting a random team
+		const players = await idb.cache.players.getAll();
+		return players.some(p => p.real);
+	};
+
+	for (const { name, season, srIDs, the } of rebuilds) {
+		const namePrefixed = `${the ? "the " : ""}${name}`;
+		const slug = `rebuild_${srIDs[0].toLowerCase()}_${season}`;
+
+		achievements.push(
+			{
+				slug,
+				name: `${season} ${name}`,
+				desc: `Start a real players league with ${namePrefixed} in ${season} and win a championship in your first 3 seasons.`,
+				category: "Rebuilds",
+
+				async check() {
+					const valid = await checkValidRebuild(srIDs, season, 3);
+					if (!valid) {
+						return false;
+					}
+
+					return userWonTitle();
+				},
+
+				when: "afterPlayoffs",
+			},
+			{
+				slug: `${slug}_2`,
+				name: `${season} ${name} 2`,
+				desc: `Start a real players league with ${namePrefixed} in ${season} and earn a Dynasty acheivement within your first 12 seasons.`,
+				category: "Rebuilds",
+
+				async check() {
+					const valid = await checkValidRebuild(srIDs, season, 12);
+					if (!valid) {
+						return false;
+					}
+
+					return checkDynasty(6, 8);
+				},
+
+				when: "afterPlayoffs",
+			},
+		);
+	}
 }
 
 if (isSport("football")) {

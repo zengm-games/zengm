@@ -29,8 +29,8 @@ const checkDynasty = async (titles: number, years: number) => {
 		},
 		"noCopyCache",
 	);
-	let titlesFound = 0; // Look over past years
 
+	let titlesFound = 0;
 	for (let i = 0; i < years; i++) {
 		const ts = teamSeasons[teamSeasons.length - 1 - i];
 
@@ -421,6 +421,42 @@ const achievements: Achievement[] = [
 				basketball: checkDynasty(24, 30),
 				default: checkDynasty(19, 30),
 			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "break_the_curse",
+		name: "Break The Curse",
+		desc: "Win a championship after going 108+ seasons without winning one.",
+		category: "Multiple Seasons",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+			if (!wonTitle) {
+				return false;
+			}
+
+			const NUM_SEASONS = 108;
+
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: g.get("userTid"),
+					seasons: [g.get("season") - NUM_SEASONS, g.get("season") - 1],
+				},
+				"noCopyCache",
+			);
+
+			if (teamSeasons.length < NUM_SEASONS) {
+				// Not enough seasons played
+				return false;
+			}
+
+			return teamSeasons.every(
+				ts =>
+					ts.playoffRoundsWon <
+					g.get("numGamesPlayoffSeries", ts.season).length,
+			);
 		},
 
 		when: "afterPlayoffs",

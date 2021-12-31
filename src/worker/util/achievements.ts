@@ -263,33 +263,44 @@ const checkSevenGameFinals = async () => {
 };
 
 // Cache is to improve performance, both for multiple checks at different limits in the same season, and for checks in multiple seasons (if last year was same session)
-const checkMvpCache = new Map<number, number>();
+let checkMvpCache:
+	| {
+			lid: number;
+			season: number;
+			count: number;
+	  }
+	| undefined;
 const checkMvp = async (limit: number, overallLimit: number) => {
+	if (checkMvpCache?.lid !== g.get("lid")) {
+		checkMvpCache = undefined;
+	}
+
 	const season = g.get("season");
 
 	// If we have current season in cache, use it
-	const current = checkMvpCache.get(season);
-	if (current !== undefined) {
-		return current === limit;
+	if (checkMvpCache?.season === season) {
+		return checkMvpCache.count === limit;
 	}
 
 	const currentAwards = await idb.cache.awards.get(season);
 
 	// If we have last season in cache, use it
-	const previous = checkMvpCache.get(season - 1);
-	if (previous !== undefined) {
-		let current = previous;
+	if (checkMvpCache?.season === season - 1) {
+		checkMvpCache.season = season;
 		if (currentAwards.mvp?.tid === g.get("userTid")) {
-			current += 1;
+			checkMvpCache.count += 1;
 		}
-		checkMvpCache.set(season, current);
-		return current === limit;
+		return checkMvpCache.count === limit;
 	}
 
 	// Compute from scratch
-	let count = 0;
+	checkMvpCache = {
+		lid: g.get("lid"),
+		season,
+		count: 0,
+	};
 	if (currentAwards.mvp?.tid === g.get("userTid")) {
-		count += 1;
+		checkMvpCache.count += 1;
 	}
 	await iterate(
 		idb.league.transaction("awards").store,
@@ -303,18 +314,17 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 
 			const userTid = g.get("userTid", awards.season);
 			if (awards.mvp?.tid === userTid) {
-				count += 1;
+				checkMvpCache!.count += 1;
 			}
 
 			// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
-			if (count > overallLimit) {
+			if (checkMvpCache!.count > overallLimit) {
 				shortCircuit();
 			}
 		},
 	);
 
-	checkMvpCache.set(season, count);
-	return count === limit;
+	return checkMvpCache.count === limit;
 };
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php

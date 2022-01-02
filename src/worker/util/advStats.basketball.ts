@@ -277,6 +277,8 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		threshPts[i] = thresh_pts;
 	}
 
+	const numPlayersOnCourt = g.get("numPlayersOnCourt");
+
 	// compute average offensive roles and positions
 	for (let i = 0; i < players.length; i++) {
 		const t = teams.find(t => t.tid === players[i].tid);
@@ -295,7 +297,8 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
 			prl = 3;
 		}
-		const minp = t.stats.min > 0 ? (p.min + 1e-9) / (t.stats.min / 5) : 0;
+		const minp =
+			t.stats.min > 0 ? (p.min + 1e-9) / (t.stats.min / numPlayersOnCourt) : 0;
 		const trbp = t.stats.trb > 0 ? p.trb / t.stats.trb / minp : 0;
 		const stlp = t.stats.stl > 0 ? p.stl / t.stats.stl / minp : 0;
 		const pfp = t.stats.pf > 0 ? p.pf / t.stats.pf / minp : 0;
@@ -444,9 +447,11 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 	for (const t of teams) {
 		teamAverages[t.tid].teamAdjBPM =
-			(teamAverages[t.tid].tmRate - teamAverages[t.tid].teamBPM) / 5;
+			(teamAverages[t.tid].tmRate - teamAverages[t.tid].teamBPM) /
+			numPlayersOnCourt;
 		teamAverages[t.tid].teamAdjOBPM =
-			(teamAverages[t.tid].ofRate - teamAverages[t.tid].teamOBPM) / 5;
+			(teamAverages[t.tid].ofRate - teamAverages[t.tid].teamOBPM) /
+			numPlayersOnCourt;
 	}
 	const DBPM: number[] = [];
 	const VORP: number[] = [];
@@ -472,6 +477,8 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 // https://www.basketball-reference.com/about/glossary.html
 const calculatePercentages = (players: any[], teams: Team[]) => {
+	const numPlayersOnCourt = g.get("numPlayersOnCourt");
+
 	const astp: number[] = [];
 	const blkp: number[] = [];
 	const drbp: number[] = [];
@@ -495,26 +502,27 @@ const calculatePercentages = (players: any[], teams: Team[]) => {
 		} else {
 			astp[i] =
 				(100 * p.stats.ast) /
-				((p.stats.min / (t.stats.min / 5)) * t.stats.fg - p.stats.fg);
+				((p.stats.min / (t.stats.min / numPlayersOnCourt)) * t.stats.fg -
+					p.stats.fg);
 			blkp[i] =
-				(100 * (p.stats.blk * (t.stats.min / 5))) /
+				(100 * (p.stats.blk * (t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * (t.stats.oppFga - t.stats.oppTpa));
 			drbp[i] =
-				(100 * (p.stats.drb * (t.stats.min / 5))) /
+				(100 * (p.stats.drb * (t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * (t.stats.drb + t.stats.oppOrb));
 			orbp[i] =
-				(100 * (p.stats.orb * (t.stats.min / 5))) /
+				(100 * (p.stats.orb * (t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * (t.stats.orb + t.stats.oppDrb));
 			stlp[i] =
-				(100 * (p.stats.stl * (t.stats.min / 5))) /
+				(100 * (p.stats.stl * (t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * t.stats.poss);
 			trbp[i] =
-				(100 * (p.stats.trb * (t.stats.min / 5))) /
+				(100 * (p.stats.trb * (t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * (t.stats.trb + t.stats.oppTrb));
 			usgp[i] =
 				(100 *
 					((p.stats.fga + 0.44 * p.stats.fta + p.stats.tov) *
-						(t.stats.min / 5))) /
+						(t.stats.min / numPlayersOnCourt))) /
 				(p.stats.min * (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
 
 			if (Number.isNaN(astp[i]) || astp[i] === Infinity) {
@@ -564,6 +572,8 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 	const dws: number[] = [];
 	const ortg: number[] = [];
 	const ows: number[] = [];
+
+	const numPlayersOnCourt = g.get("numPlayersOnCourt");
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
@@ -617,11 +627,11 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 			// Offensive rating
 			const ftRatio = p.stats.fta > 0 ? p.stats.ft / p.stats.fta : 0;
 			const qAst =
-				(p.stats.min / (t.stats.min / 5)) *
+				(p.stats.min / (t.stats.min / numPlayersOnCourt)) *
 					(1.14 * ((t.stats.ast - p.stats.ast) / t.stats.fg)) +
 				(((t.stats.ast / t.stats.min) * p.stats.min * 5 - p.stats.ast) /
 					((t.stats.fg / t.stats.min) * p.stats.min * 5 - p.stats.fg)) *
-					(1 - p.stats.min / (t.stats.min / 5));
+					(1 - p.stats.min / (t.stats.min / numPlayersOnCourt));
 			const fgPart =
 				p.stats.fg *
 				(1 - 0.5 * ((p.stats.pts - p.stats.ft) / (2 * p.stats.fga)) * qAst);

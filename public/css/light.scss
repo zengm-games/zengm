@@ -12,6 +12,7 @@ $badge-padding-y: 0.25em;
 $badge-padding-x: 0.4em;
 $popover-body-padding-y: 0.5rem;
 $popover-body-padding-x: 0.75rem;
+
 .form-check-inline {
 	margin-right: 0.75rem !important;
 }
@@ -503,6 +504,8 @@ table {
 	margin: 0;
 	padding: 0 0.25rem;
 	height: 20px;
+	padding-right: 0.1rem;
+	background-position: right 0.1em center;
 }
 
 // These colors are duplicated from Roster.js

@@ -96,15 +96,30 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return -Infinity;
 			}
 
-			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			if (sortVal.includes("B")) {
-				return parseFloat(sortVal.replace("$", "")) * 1000;
-			}
-			if (sortVal.includes("k")) {
-				return parseFloat(sortVal.replace("$", "")) / 1000;
+			// Keep in sync with helpers.formatCurrency
+			let factor;
+			if (sortVal.endsWith("Q")) {
+				factor = 1e15;
+			} else if (sortVal.endsWith("T")) {
+				factor = 1e12;
+			} else if (sortVal.endsWith("B")) {
+				factor = 1e9;
+			} else if (sortVal.endsWith("M")) {
+				factor = 1e6;
+			} else if (sortVal.endsWith("k")) {
+				factor = 1e3;
+			} else {
+				factor = 1;
 			}
 
-			return parseFloat(sortVal.replace("$", ""));
+			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
+			const number = parseFloat(sortVal.replace("$", "")) * factor;
+			if (factor > 1) {
+				// Get rid of floating point errors if we're multiplying by a large number
+				return Math.round(number);
+			}
+
+			return number;
 		}
 
 		if (sortType === "record") {

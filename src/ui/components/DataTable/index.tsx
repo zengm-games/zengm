@@ -233,13 +233,18 @@ const DataTable = ({
 		const colOrderFiltered = state.colOrder.filter(
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
-		const columns = colOrderFiltered.map(
-			({ colIndex }) => cols[colIndex].title,
-		);
+		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]);
+		const colNames = columns.map(col => col.title);
 		const rows = processRows().map(row =>
-			row.data.map(val => getSearchVal(val, false)),
+			row.data.map((val, i) => {
+				const sortType = columns[i].sortType;
+				if (sortType === "currency" || sortType === "number") {
+					return getSortVal(val, sortType);
+				}
+				return getSearchVal(val, false);
+			}),
 		);
-		const output = csvFormatRows([columns, ...rows]);
+		const output = csvFormatRows([colNames, ...rows]);
 		downloadFile(`${name}.csv`, output, "text/csv");
 	};
 

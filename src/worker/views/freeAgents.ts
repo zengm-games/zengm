@@ -55,8 +55,6 @@ const updateFreeAgents = async () => {
 	]);
 	await config.load();
 
-	console.log(config);
-
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: config.attrsNeeded,
 		ratings: config.ratingsNeeded,

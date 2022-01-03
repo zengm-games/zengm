@@ -7,10 +7,13 @@ import {
 	DataTable,
 	DraftAbbrev,
 	MoreLinks,
+	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
+import { Player } from "../../common/types";
+import getTemplate from "../util/columns/getTemplate";
 
 const DraftButtons = ({
 	spectator,
@@ -113,10 +116,9 @@ const Draft = ({
 	draftType,
 	drafted,
 	expansionDraft,
-	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
 	spectator,
-	stats,
+	config,
 	undrafted,
 	userPlayers,
 	userTids,
@@ -146,49 +148,19 @@ const Draft = ({
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
-	const colsUndrafted = getCols(
-		["#", "Name", "Pos", "Age", "Ovr", "Pot", "Draft"],
+
+	const colsUndrafted = [
 		{
-			Name: {
-				width: "100%",
-			},
+			key: "rank",
+			title: "#",
+			template: (p: Player) => p.rank,
 		},
-	);
-
-	if (fantasyDraft || expansionDraft) {
-		colsUndrafted.splice(
-			6,
-			0,
-			...getCols(["Contract", "Exp", ...stats.map(stat => `stat:${stat}`)]),
-		);
-	}
-
-	if (expansionDraft) {
-		colsUndrafted.splice(3, 0, ...getCols(["Team"]));
-	}
-
-	const rowsUndrafted = undrafted.map(p => {
-		const data = [
-			p.rank,
-			<PlayerNameLabels
-				pid={p.pid}
-				injury={p.injury}
-				skills={p.ratings.skills}
-				watch={p.watch}
-			>
-				{p.name}
-			</PlayerNameLabels>,
-			p.ratings.pos,
-			p.age,
-			!challengeNoRatings ? p.ratings.ovr : null,
-			!challengeNoRatings ? p.ratings.pot : null,
-			spectator ? null : (
-				<div
-					className="btn-group"
-					style={{
-						display: "flex",
-					}}
-				>
+		...config.columns,
+		{
+			key: "btns",
+			title: "",
+			template: (p: Player) => (
+				<>
 					<button
 						className="btn btn-xs btn-primary"
 						disabled={!usersTurn || drafting}
@@ -205,37 +177,17 @@ const Draft = ({
 					>
 						And Sim
 					</button>
-				</div>
+				</>
 			),
-		];
+		},
+	];
 
-		if (fantasyDraft || expansionDraft) {
-			data.splice(
-				6,
-				0,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
-				...stats.map(stat =>
-					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
-						? helpers.roundStat(p.stats[stat], stat)
-						: p.stats[stat],
-				),
-			);
-		}
-
-		if (expansionDraft) {
-			data.splice(
-				3,
-				0,
-				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
-					{p.abbrev}
-				</a>,
-			);
-		}
-
+	const rowsUndrafted = undrafted.map(p => {
 		return {
 			key: p.pid,
-			data,
+			data: Object.fromEntries(
+				colsUndrafted.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 		};
 	});
 
@@ -357,13 +309,13 @@ const Draft = ({
 									</p>
 								</div>
 							) : null}
-							{expansionDraftFilteredTeamsMessage ? (
-								<div>
-									<p className="alert alert-warning d-inline-block">
-										{expansionDraftFilteredTeamsMessage}
-									</p>
-								</div>
-							) : null}
+							{/*{expansionDraftFilteredTeamsMessage ? (*/}
+							{/*	<div>*/}
+							{/*		<p className="alert alert-warning d-inline-block">*/}
+							{/*			{expansionDraftFilteredTeamsMessage}*/}
+							{/*		</p>*/}
+							{/*	</div>*/}
+							{/*) : null}*/}
 							<DraftButtons
 								spectator={spectator}
 								userRemaining={userRemaining}
@@ -418,8 +370,9 @@ const Draft = ({
 					</h2>
 
 					<DataTable
-						legacyCols={colsUndrafted}
-						defaultSort={["col1", "asc"]}
+						cols={colsUndrafted}
+						config={config}
+						defaultSort={["rank", "asc"]}
 						name="Draft:Undrafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsUndrafted}
@@ -464,7 +417,6 @@ Draft.propTypes = {
 	draftType: PropTypes.string,
 	drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
 	fantasyDraft: PropTypes.bool.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
 	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };

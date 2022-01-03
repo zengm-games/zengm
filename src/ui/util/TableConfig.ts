@@ -16,7 +16,7 @@ export class TableConfig {
 	}
 
 	public fallback: string[];
-	public columns: Col[];
+	public columns: Partial<Col>[];
 	public tableName: string;
 	public vars: { [key: string]: any };
 

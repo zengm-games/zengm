@@ -17,6 +17,10 @@ export type ColTemp = Omit<LegacyCol, "title"> & {
 	options?: { [key: string]: any };
 };
 
+type LegacyColTemp = Omit<LegacyCol, "title"> & {
+	title?: string;
+};
+
 const gp = isSport("hockey") ? "GP" : "G";
 
 const sportSpecificCols = bySport<{
@@ -2916,11 +2920,6 @@ const cols: {
 		sortType: "name",
 		template: "Name",
 	},
-	// Release: {
-	// 	cat: "General",
-	// 	sortSequence: [],
-	// 	template: "Release",
-	// },
 	Exp: {
 		cat: "General",
 		desc: "Contract Expiration",
@@ -2950,6 +2949,8 @@ const cols: {
 		desc: "Decrease in Overall Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
+		template: "attr",
+		attrs: ["ovrDrop"],
 	},
 	"Peak Ovr": {
 		cat: "General",
@@ -2977,11 +2978,14 @@ const cols: {
 		desc: "Decrease in Potential Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
+		template: "attr",
+		attrs: ["potDrop"],
 	},
 	Pick: {
 		attrs: ["draft"],
 		cat: "General",
 		desc: "Draft Pick",
+		sortType: "draftPick",
 		template: "Pick",
 	},
 	Team: {
@@ -3001,6 +3005,22 @@ const cols: {
 		cat: "General",
 		desc: "Height",
 		template: "Height",
+	},
+	InjuryType: {
+		cat: "General",
+		template: "InjuryType",
+		attrs: ["injury"],
+		desc: "Type of Injury",
+		title: "Type",
+	},
+	InjuryLength: {
+		cat: "General",
+		template: "InjuryLength",
+		attrs: ["injury"],
+		title: "Games",
+		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"rating:endu": {
 		cat: "Rating",
@@ -3089,6 +3109,545 @@ const cols: {
 	...sportSpecificCols,
 };
 
+const legacyCols: {
+	[key: string]: LegacyColTemp;
+} = {
+	"": {
+		sortSequence: ["desc", "asc"],
+	},
+	"#": {},
+	"@": {
+		desc: "Home or Away",
+	},
+	"#AS": {
+		desc: "Number of All-Star Selections",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"%": {
+		desc: "Percentage",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Active: {
+		desc: "Number of Players Still Active",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Fathers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	HoF: {
+		desc: "Number of Players in the Hall of Fame",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Brothers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Players": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Seasons": {
+		desc: "Number of Seasons",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Sons": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Teams": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Trades": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	A: {
+		desc: "Attempted",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Actions: {},
+	"Avg Attendance": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	AvgAge: {
+		desc: "Average age, weighted by minutes played",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Age",
+	},
+	Born: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Cap Space": {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	"Captain 1": {
+		sortType: "name",
+	},
+	"Captain 2": {
+		sortType: "name",
+	},
+	Cash: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	Change: {
+		desc: "Difference between pre-lottery rank and draft lottery result",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Conference: {},
+	Count: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Created: {
+		desc: "Created Date",
+		searchType: "string",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Current: {
+		desc: "Current Team Rating (With Injuries)",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Details: {},
+	Died: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Diff: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Difficulty: {
+		sortSequence: ["desc", "asc"],
+	},
+	Division: {},
+	Draft: {
+		noSearch: true,
+		sortSequence: [],
+	},
+	"Draft Picks": {
+		sortSequence: [],
+		sortType: "draftPick",
+	},
+	"Dunk Winner": {
+		desc: "Slam Dunk Contest Winner",
+		sortType: "name",
+	},
+	Finals: {
+		desc: "Finals Appearances",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Won": {
+		desc: "Finals Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Finals Lost": {
+		desc: "Finals Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	From: {},
+	GB: {
+		desc: "Games Back",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Games: {
+		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	GOAT: {
+		desc: "GOAT Score",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Healthy: {
+		desc: "Team Rating (When Healthy)",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	HOF: {
+		sortSequence: ["desc", "asc"],
+	},
+	Injury: {},
+	L: {
+		desc: "Losses",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	L10: {
+		desc: "Last Ten Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "lastTen",
+	},
+	Last: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Last Played": {
+		desc: "Last Played Date",
+		sortSequence: ["desc", "asc"],
+		searchType: "string",
+		sortType: "number",
+	},
+	"Last Season": {
+		desc: "Last Season with Team",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"League Champion": {},
+	League: {
+		desc: "League Name",
+	},
+	Links: {
+		noSearch: true,
+		sortSequence: [],
+	},
+	M: {
+		desc: "Made",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	MVP: {
+		desc: "Most Valuable Player",
+		sortType: "name",
+	},
+	Name: {
+		sortType: "name",
+	},
+	Note: {},
+	Odds: {
+		desc: "Pre-lottery odds of getting this pick",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Opp: {
+		desc: "Opponent",
+	},
+	PA: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: isSport("hockey") ? "GA" : undefined,
+	},
+	PS: {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: isSport("hockey") ? "GF" : undefined,
+	},
+	"PA/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: isSport("hockey") ? "GA" : undefined,
+	},
+	"PS/g": {
+		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: isSport("hockey") ? "GF" : undefined,
+	},
+	Payroll: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	Phase: {
+		desc: "League Season and Phase",
+		sortSequence: ["desc", "asc"],
+	},
+	Pick: {
+		desc: "Draft Pick",
+		sortType: "draftPick",
+	},
+	Pop: {
+		desc: "Region Population",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Playoffs: {
+		desc: "Playoff Appearances",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Pre-Lottery": {
+		desc: "Pre-lottery rank",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Prog: {
+		desc: "Progression From Previous Season",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Profit (YTD)": {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	Received: {
+		desc: "Assets Received in Trade",
+	},
+	Record: {
+		desc: "Record",
+		sortType: "record",
+	},
+	Relation: {},
+	Result: {},
+	Retired: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Revenue (YTD)": {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	"Roster Spots": {
+		desc: "Number of Open Roster Spots",
+		sortSequence: ["desc", "asc"],
+	},
+	"Rounds Lost": {
+		desc: "Playoff Rounds Lost",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Rounds Won": {
+		desc: "Playoff Rounds Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Runner Up": {},
+	Season: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Seed: {
+		desc: "Playoff Seed",
+		sortType: "number",
+	},
+	Start: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	T: {
+		desc: "Ties",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Ticket Price": {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
+	Trade: {
+		desc: "Ties",
+		noSearch: true,
+	},
+	OTL: {
+		desc: "Overtime Losses",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Team: {},
+	"Three-Point Winner": {
+		desc: "Three-Point Contest Winner",
+		sortType: "name",
+	},
+	Titles: {
+		desc: "Championships Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Type: {
+		desc: "Type of Game",
+	},
+	W: {
+		desc: "Wins",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Year: {
+		sortType: "number",
+	},
+	Summary: {},
+	"stat:mov": {
+		desc: "Average Margin of Victory",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "MOV",
+	},
+	"stat:diff": {
+		desc: "Point Differential",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Diff",
+	},
+	"count:allDefense": {
+		desc: "All-Defensive Team",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ADT",
+	},
+	"count:allLeague": {
+		desc: "All-League Team",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ALT",
+	},
+	"count:allRookie": {
+		desc: "All-Rookie Team",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ART",
+	},
+	"count:allStar": {
+		desc: "All-Star",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "AS",
+	},
+	"count:allStarMVP": {
+		desc: "All-Star MVP",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ASMVP",
+	},
+	"count:bestRecord": {
+		desc: "Best Record",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "BR",
+	},
+	"count:bestRecordConf": {
+		desc: "Best Conference Record",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "BRC",
+	},
+	"count:dpoy": {
+		desc: "Defensive Player of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "DPOY",
+	},
+	"count:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "DFOY",
+	},
+	"count:goy": {
+		desc: "Goalie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "GOY",
+	},
+	"count:mip": {
+		desc: "Most Improved Player",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "MIP",
+	},
+	"count:mvp": {
+		desc: "Most Valuable Player",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "MVP",
+	},
+	"count:roy": {
+		desc: "Rookie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ROY",
+	},
+	"count:smoy": {
+		desc: "Sixth Man of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "SMOY",
+	},
+	"count:oroy": {
+		desc: "Offensive Rookie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "OROY",
+	},
+	"count:droy": {
+		desc: "Defensive Rookie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "DROY",
+	},
+	"award:dpoy": {
+		desc: "Defensive Player of the Year",
+		sortType: "name",
+		title: "DPOY",
+	},
+	"award:dfoy": {
+		desc: "Defensive Forward of the Year",
+		sortType: "name",
+		title: "DFOY",
+	},
+	"award:goy": {
+		desc: "Goalie of the Year",
+		sortType: "name",
+		title: "GOY",
+	},
+	"award:finalsMvp": {
+		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
+		sortType: "name",
+		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
+	},
+	"award:mip": {
+		desc: "Most Improved Player",
+		sortType: "name",
+		title: "MIP",
+	},
+	"award:mvp": {
+		desc: "Most Valuable Player",
+		sortType: "name",
+		title: "MVP",
+	},
+	"award:roy": {
+		desc: "Rookie of the Year",
+		sortType: "name",
+		title: "ROY",
+	},
+	"award:smoy": {
+		desc: "Sixth Man of the Year",
+		sortType: "name",
+		title: "SMOY",
+	},
+	"award:oroy": {
+		desc: "Offensive Rookie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "OROY",
+	},
+	"award:droy": {
+		desc: "Defensive Rookie of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "DROY",
+	},
+};
+
 export function getAllCols(): Col[] {
 	return Object.entries(cols).map(([name, col]): Col => {
 		return {
@@ -3102,17 +3661,14 @@ export function getAllCols(): Col[] {
 export default (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
-): Col[] => {
+): Partial<Col>[] => {
 	return titles.flatMap(title => {
-		if (!cols.hasOwnProperty(title)) {
-			console.log(`Could not find column: ${title}`);
-			return [];
-		}
+		const col: Partial<Col> = cols[title] ?? legacyCols[title] ?? {};
 
 		return [
 			{
-				...cols[title],
-				title: cols[title].title ?? title,
+				...col,
+				title: col.title ?? title,
 				key: title,
 				...overrides[title],
 			},

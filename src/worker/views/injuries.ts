@@ -2,6 +2,7 @@ import { bySport, PHASE } from "../../common";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updateInjuries = async (
 	inputs: ViewInput<"injuries">,
@@ -22,6 +23,20 @@ const updateInjuries = async (
 			hockey: ["gp", "keyStats"],
 		});
 
+		const config: TableConfig = new TableConfig("injuries", [
+			"Name",
+			"Pos",
+			"Team",
+			"Age",
+			"Ovr",
+			"Pot",
+			...stats.map(stat => `stat:${stat}`),
+			"InjuryType",
+			"InjuryLength",
+		]);
+
+		await config.load();
+
 		const players = await getPlayers(
 			inputs.season === "current" ? g.get("season") : inputs.season,
 			inputs.abbrev,
@@ -29,6 +44,7 @@ const updateInjuries = async (
 			["ovr", "pot"],
 			[...stats, "jerseyNumber"],
 			inputs.tid,
+			config,
 		);
 
 		const injuries = [];
@@ -67,7 +83,7 @@ const updateInjuries = async (
 			godMode: g.get("godMode"),
 			injuries,
 			season: inputs.season,
-			stats,
+			config,
 			userTid,
 		};
 	}

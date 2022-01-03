@@ -1,5 +1,6 @@
 export { default as Age } from "./Age";
 export { default as AskingFor } from "./AskingFor";
+export { default as Attr } from "./Attr";
 export { default as Contract } from "./Contract";
 export { default as Country } from "./Country";
 export { default as College } from "./College";
@@ -8,6 +9,8 @@ export { default as Pick } from "./Pick";
 export { default as Exp } from "./Exp";
 export { default as Experience } from "./Experience";
 export { default as Height } from "./Height";
+export { default as InjuryLength } from "./InjuryLength";
+export { default as InjuryType } from "./InjuryType";
 export { default as Mood } from "./Mood";
 export { default as MoodCurrent } from "./MoodCurrent";
 export { default as Name } from "./Name";

@@ -284,6 +284,7 @@ type Action =
 	  }
 	| {
 			type: "newLeagueFile";
+			importing: boolean;
 			basicInfo: BasicInfo;
 			file: File | undefined;
 			url: string | undefined;
@@ -488,7 +489,12 @@ const reducer = (state: State, action: Action): State => {
 				settings: newSettings,
 			};
 
-			if (action.basicInfo.name) {
+			// Update name only if we're creating a new league (not importing) and it's a meaningful name (not default League N)
+			if (
+				action.basicInfo.name &&
+				!action.importing &&
+				!action.basicInfo.name.match(/^League \d+$/)
+			) {
 				updatedState.name = action.basicInfo.name;
 			}
 
@@ -567,12 +573,14 @@ const NewLeague = (props: View<"newLeague">) => {
 		leagueCreationPercent: state.leagueCreationPercent,
 	}));
 
+	const importing = props.lid !== undefined;
+
 	const [state, dispatch] = useReducer(
 		reducer,
 		props,
 		(props: View<"newLeague">): State => {
 			let customize: State["customize"] = "default";
-			if (props.lid !== undefined) {
+			if (importing) {
 				customize = "custom-rosters";
 			}
 			if (props.type === "real") {
@@ -630,7 +638,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	);
 
 	let title: string;
-	if (props.lid !== undefined) {
+	if (importing) {
 		title = "Import League";
 	} else if (props.type === "custom") {
 		title = SPORT_HAS_REAL_PLAYERS ? "New Custom League" : "New League";
@@ -649,7 +657,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			: teamsDefault;
 
 	const createLeague = async (settingsOverride?: State["settings"]) => {
-		if (props.lid !== undefined) {
+		if (importing) {
 			const result = await confirm(
 				`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
 				{
@@ -809,6 +817,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 		dispatch({
 			type: "newLeagueFile",
+			importing,
 			basicInfo,
 			file,
 			url,
@@ -908,8 +917,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
-	const createLeagueText =
-		props.lid !== undefined ? "Import League" : "Create League";
+	const createLeagueText = importing ? "Import League" : "Create League";
 
 	if (currentScreen === "settings") {
 		subPage = (
@@ -995,7 +1003,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					}}
 					style={{ maxWidth: 800 }}
 				>
-					{props.lid !== undefined ? (
+					{importing ? (
 						<>
 							<p>
 								Here you can create a new league that overwrites one of your

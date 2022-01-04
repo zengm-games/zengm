@@ -127,12 +127,7 @@ const Select = ({
 	}
 
 	return (
-		<div
-			className="d-flex"
-			style={{
-				marginLeft: 10,
-			}}
-		>
+		<div className="d-flex dropdown-select-wrapper">
 			{buttons}
 			<select
 				value={value}
@@ -191,7 +186,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	};
 
 	return (
-		<form className="d-flex">
+		<form className="d-flex flex-wrap">
 			{keys.map((key, i) => {
 				return (
 					<Select

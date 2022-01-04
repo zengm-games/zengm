@@ -1483,6 +1483,171 @@ if (isSport("basketball")) {
 	// Rebuilds!
 	const rebuilds = [
 		{
+			season: 1980,
+			srIDs: ["SDC", "LAC"],
+			name: "San Diego",
+		},
+		{
+			season: 1981,
+			srIDs: ["DAL"],
+			name: "Dallas",
+		},
+		{
+			season: 1982,
+			srIDs: ["CHI"],
+			name: "Chicago",
+		},
+		{
+			season: 1983,
+			srIDs: ["HOU"],
+			name: "Houston",
+		},
+		{
+			season: 1984,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
+			season: 1985,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 1986,
+			srIDs: ["IND"],
+			name: "Indiana",
+		},
+		{
+			season: 1987,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 1988,
+			srIDs: ["PHO"],
+			name: "Phoenix",
+		},
+		{
+			season: 1989,
+			srIDs: ["MIA"],
+			name: "Miami",
+		},
+		{
+			season: 1990,
+			srIDs: ["NJN"],
+			name: "New Jersey",
+		},
+		{
+			season: 1991,
+			srIDs: ["WSB", "WAS"],
+			name: "Washington",
+		},
+		{
+			season: 1992,
+			srIDs: ["ORL"],
+			name: "Orlando",
+		},
+		{
+			season: 1993,
+			srIDs: ["DAL"],
+			name: "Dallas",
+		},
+		{
+			season: 1994,
+			srIDs: ["BOS"],
+			name: "Boston",
+		},
+		{
+			season: 1995,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 1996,
+			srIDs: ["VAN", "MEM"],
+			name: "Vancouver",
+		},
+		{
+			season: 1997,
+			srIDs: ["SAS"],
+			name: "San Antonio",
+		},
+		{
+			season: 1998,
+			srIDs: ["GSW"],
+			name: "Golden State",
+		},
+		{
+			season: 1999,
+			srIDs: ["CHI"],
+			name: "Chicago",
+		},
+		{
+			season: 2000,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 2001,
+			srIDs: ["WAS"],
+			name: "Washington",
+		},
+		{
+			season: 2002,
+			srIDs: ["DEN"],
+			name: "Denver",
+		},
+		{
+			season: 2002,
+			srIDs: ["DEN"],
+			name: "Denver",
+		},
+		{
+			season: 2003,
+			srIDs: ["MIA"],
+			name: "Miami",
+		},
+		{
+			season: 2004,
+			srIDs: ["PHI"],
+			name: "Philadelphia",
+		},
+		{
+			season: 2005,
+			srIDs: ["ATL"],
+			name: "Atlanta",
+		},
+		{
+			season: 2006,
+			srIDs: ["POR"],
+			name: "Portland",
+		},
+		{
+			season: 2007,
+			srIDs: ["MEM"],
+			name: "Memphis",
+		},
+		{
+			season: 2008,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 2009,
+			srIDs: ["MIN"],
+			name: "Minnesota",
+		},
+		{
+			season: 2010,
+			srIDs: ["DET"],
+			name: "Detroit",
+		},
+		{
+			season: 2011,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
 			season: 2012,
 			srIDs: ["CHA", "CHO"], // Changes in 2015
 			name: "Charlotte",
@@ -1506,7 +1671,6 @@ if (isSport("basketball")) {
 			season: 2016,
 			srIDs: ["LAL"],
 			name: "LA Lowriders",
-			the: true,
 		},
 		{
 			season: 2017,
@@ -1574,15 +1738,14 @@ if (isSport("basketball")) {
 		return players.some(p => p.real);
 	};
 
-	for (const { name, season, srIDs, the } of rebuilds) {
-		const namePrefixed = `${the ? "the " : ""}${name}`;
+	for (const { name, season, srIDs } of rebuilds) {
 		const slug = `rebuild_${srIDs[0].toLowerCase()}_${season}`;
 
 		achievements.push(
 			{
 				slug,
 				name: `${season} ${name}`,
-				desc: `Start a real players league with ${namePrefixed} in ${season} and win a championship in your first 3 seasons.`,
+				desc: "",
 				category: "Rebuilds",
 
 				async check() {
@@ -1599,7 +1762,7 @@ if (isSport("basketball")) {
 			{
 				slug: `${slug}_2`,
 				name: `${season} ${name} 2`,
-				desc: `Start a real players league with ${namePrefixed} in ${season} and earn a Dynasty acheivement within your first 12 seasons.`,
+				desc: "",
 				category: "Rebuilds",
 
 				async check() {

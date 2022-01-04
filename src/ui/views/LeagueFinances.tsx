@@ -41,14 +41,18 @@ const LeagueFinances = ({
 				"Profit (YTD)",
 				"Cash",
 				"Payroll",
-				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
+				...(showCapSpace
+					? ["Cap Space", "Roster Spots", "Strategy", "Trade"]
+					: []),
 		  ])
 		: getCols([
 				"Team",
 				"Pop",
 				"Avg Attendance",
 				"Payroll",
-				...(showCapSpace ? ["Cap Space", "Roster Spots", "Trade"] : []),
+				...(showCapSpace
+					? ["Cap Space", "Roster Spots", "Strategy", "Trade"]
+					: []),
 		  ]);
 
 	const rows = teams.map(t => {
@@ -85,6 +89,7 @@ const LeagueFinances = ({
 		if (showCapSpace) {
 			data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
 			data.push(t.rosterSpots);
+			data.push(helpers.upperCaseFirstLetter(t.strategy));
 			data.push(
 				<button
 					className="btn btn-light-bordered btn-xs"

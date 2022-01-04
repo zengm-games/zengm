@@ -2362,6 +2362,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Strategy: {},
 	T: {
 		desc: "Ties",
 		sortSequence: ["desc", "asc"],

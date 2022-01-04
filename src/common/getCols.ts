@@ -2207,6 +2207,21 @@ const cols: {
 	Name: {
 		sortType: "name",
 	},
+	Normal: {
+		desc: "Normal Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Hard: {
+		desc: "Hard Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Insane: {
+		desc: "Insane Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Negotiate: {
 		sortSequence: [],
 	},

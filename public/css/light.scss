@@ -1383,3 +1383,11 @@ hr {
 .input-group-xs > .form-select {
 	padding-right: $form-select-padding-x + $form-select-indicator-padding;
 }
+
+// Add !important to bg color so they can be used in table on achievements page
+@each $state, $value in $theme-colors {
+	$list-group-variant-bg: shift-color($value, $list-group-item-bg-scale);
+	.list-group-item-#{$state} {
+		background-color: $list-group-variant-bg !important;
+	}
+}

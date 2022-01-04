@@ -2,9 +2,10 @@ import classNames from "classnames";
 import { groupBy } from "../../common/groupBy";
 import { Fragment } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, useLocal } from "../util";
+import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { GAME_ACRONYM, GAME_NAME } from "../../common";
+import { DataTable } from "../components";
 
 const difficulties = ["normal", "hard", "insane"] as const;
 const difficultiesReverse = [...difficulties].reverse();
@@ -45,6 +46,171 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 				</tbody>
 			</table>
 		</>
+	);
+};
+
+const achievementClassNames = (
+	achievement: {
+		total: number;
+		normal: number;
+		hard: number;
+		insane: number;
+	} & {
+		total: number;
+	},
+) => ({
+	"list-group-item-light": achievement.total === 0,
+	"list-group-item-secondary":
+		achievement.normal > 0 &&
+		achievement.hard === 0 &&
+		achievement.insane === 0,
+	"list-group-item-warning": achievement.hard > 0 && achievement.insane === 0,
+	"list-group-item-success": achievement.insane > 0,
+});
+
+const Category = ({
+	achievements,
+	category,
+}: View<"achievements"> & {
+	category: string;
+}) => {
+	const difficulties =
+		category === "Meta"
+			? (["normal"] as typeof difficultiesReverse)
+			: difficultiesReverse;
+
+	const acheivementsWithTotal = achievements.map(achievement => ({
+		...achievement,
+		total: difficulties.reduce(
+			(sum, difficulty) => sum + achievement[difficulty],
+			0,
+		),
+	}));
+
+	if (category === "Rebuilds") {
+		const superCols = [
+			{
+				title: "",
+				colspan: 1,
+			},
+			{
+				title: "Level 1",
+				colspan: 3,
+			},
+			{
+				title: "Level 2",
+				colspan: 3,
+			},
+		];
+
+		const cols = getCols([
+			"Team",
+			"Normal",
+			"Hard",
+			"Insane",
+			"Normal",
+			"Hard",
+			"Insane",
+		]);
+
+		// Get all the same team/season grouped together
+		const achievementsGrouped = groupBy(acheivementsWithTotal, achievement =>
+			achievement.slug.split("_").slice(0, 3).join("_"),
+		);
+		const rows = Object.values(achievementsGrouped).map(achievements => {
+			return {
+				key: achievements[0].slug,
+				data: [
+					achievements[0].name,
+					...achievements
+						.map(achievement => {
+							const classNames = achievementClassNames(achievement);
+							console.log(classNames, achievement);
+							return [
+								{
+									value: achievement.normal,
+									classNames,
+								},
+								{
+									value: achievement.hard,
+									classNames,
+								},
+								{
+									value: achievement.insane,
+									classNames,
+								},
+							];
+						})
+						.flat(),
+				],
+			};
+		});
+
+		return (
+			<>
+				<p>
+					Earn rebuild achievements by starting a real players league in a
+					challenging historical situation.
+				</p>
+				<ul className="list-unstyled">
+					<li>Level 1: win a championship in your first 3 seasons.</li>
+					<li>
+						Level 2: earn a Dynasty acheivement within your first 12 seasons.
+					</li>
+				</ul>
+				<DataTable
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					name={"rebuilds"}
+					rows={rows}
+					superCols={superCols}
+					striped={false}
+				/>
+			</>
+		);
+	}
+
+	return (
+		<div className="row g-2">
+			{acheivementsWithTotal.map(achievement => {
+				return (
+					<div key={achievement.slug} className="col-sm-6 col-md-4 col-xl-3">
+						<div
+							className={classNames("card", achievementClassNames(achievement))}
+							key={achievement.slug}
+							style={{
+								minHeight: 109,
+							}}
+						>
+							<div className="card-body">
+								<h4 className="card-title">
+									{achievement.name}
+									{achievement.total > 0
+										? difficulties.map(difficulty => {
+												const count = achievement[difficulty];
+												return (
+													<span
+														key={difficulty}
+														className={`badge rounded-pill ${
+															count > 0 ? "bg-dark" : "bg-secondary"
+														} float-end ms-1`}
+														title={`${helpers.upperCaseFirstLetter(
+															difficulty,
+														)} difficulty`}
+													>
+														{count}
+													</span>
+												);
+										  })
+										: null}
+								</h4>
+								<p className="card-text">{achievement.desc}</p>
+							</div>
+						</div>
+					</div>
+				);
+			})}
+		</div>
 	);
 };
 
@@ -104,77 +270,11 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 			<CompletionTable achievements={achievements} />
 
 			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchivements], i) => {
-					const catDifficulties =
-						category === "Meta"
-							? (["normal"] as unknown as typeof difficultiesReverse)
-							: difficultiesReverse;
-
+				([category, catAchievements], i) => {
 					return (
 						<Fragment key={category}>
 							<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
-							<div
-								className="row g-2"
-								style={{
-									marginBottom: "-0.5rem",
-								}}
-							>
-								{catAchivements.map(achievement => {
-									const total = catDifficulties.reduce(
-										(sum, difficulty) => sum + achievement[difficulty],
-										0,
-									);
-
-									return (
-										<div
-											key={achievement.slug}
-											className="col-sm-6 col-md-4 col-xl-3"
-										>
-											<div
-												className={classNames("card", {
-													"list-group-item-light": total === 0,
-													"list-group-item-secondary":
-														achievement.normal > 0 &&
-														achievement.hard === 0 &&
-														achievement.insane === 0,
-													"list-group-item-warning":
-														achievement.hard > 0 && achievement.insane === 0,
-													"list-group-item-success": achievement.insane > 0,
-												})}
-												key={achievement.slug}
-												style={{
-													minHeight: 109,
-												}}
-											>
-												<div className="card-body">
-													<h4 className="card-title">
-														{achievement.name}
-														{total > 0
-															? catDifficulties.map(difficulty => {
-																	const count = achievement[difficulty];
-																	return (
-																		<span
-																			key={difficulty}
-																			className={`badge rounded-pill ${
-																				count > 0 ? "bg-dark" : "bg-secondary"
-																			} float-end ms-1`}
-																			title={`${helpers.upperCaseFirstLetter(
-																				difficulty,
-																			)} difficulty`}
-																		>
-																			{count}
-																		</span>
-																	);
-															  })
-															: null}
-													</h4>
-													<p className="card-text">{achievement.desc}</p>
-												</div>
-											</div>
-										</div>
-									);
-								})}
-							</div>
+							<Category achievements={catAchievements} category={category} />
 						</Fragment>
 					);
 				},

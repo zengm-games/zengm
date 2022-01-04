@@ -66,6 +66,7 @@ export type DataTableRow = {
 export type Props = {
 	bordered?: boolean;
 	className?: string;
+	clickable?: boolean;
 	cols: Col[];
 	defaultSort: SortBy;
 	disableSettingsCache?: boolean;
@@ -101,6 +102,7 @@ export type State = {
 const DataTable = ({
 	bordered,
 	className,
+	clickable,
 	cols,
 	defaultSort,
 	disableSettingsCache,
@@ -485,7 +487,7 @@ const DataTable = ({
 						/>
 						<tbody>
 							{processedRows.map(row => (
-								<Row key={row.key} row={row} />
+								<Row key={row.key} row={row} clickable={clickable} />
 							))}
 						</tbody>
 						<Footer colOrder={colOrderFiltered} footer={footer} />

@@ -7,17 +7,17 @@ import type { View } from "../../common/types";
 import { GAME_ACRONYM, GAME_NAME } from "../../common";
 import { DataTable } from "../components";
 
-const difficulties = ["normal", "hard", "insane"] as const;
-const difficultiesReverse = [...difficulties].reverse();
+const DIFFICULTIES = ["normal", "hard", "insane"] as const;
+const DIFFICULTIES_REVERSE = [...DIFFICULTIES].reverse();
 
 const CompletionTable = ({ achievements }: View<"achievements">) => {
 	const filtered = achievements.filter(
 		achievement => achievement.category !== "Meta",
 	);
 
-	const levels = difficulties.map((difficulty, i) => {
+	const levels = DIFFICULTIES.map((difficulty, i) => {
 		// "insane" and "hard" also count towards "normal". "insane" also counts towards "hard".
-		const allowed = difficulties.slice(i);
+		const allowed = DIFFICULTIES.slice(i);
 		const count = filtered.filter(achievement =>
 			allowed.some(difficulty => achievement[difficulty] > 0),
 		).length;
@@ -58,15 +58,28 @@ const achievementClassNames = (
 	} & {
 		total: number;
 	},
-) => ({
-	"list-group-item-light": achievement.total === 0,
-	"list-group-item-secondary":
-		achievement.normal > 0 &&
-		achievement.hard === 0 &&
-		achievement.insane === 0,
-	"list-group-item-warning": achievement.hard > 0 && achievement.insane === 0,
-	"list-group-item-success": achievement.insane > 0,
-});
+	difficultyRequired?: typeof DIFFICULTIES[number],
+) => {
+	return {
+		"list-group-item-light":
+			achievement.total === 0 ||
+			(difficultyRequired === "hard" &&
+				achievement.hard === 0 &&
+				achievement.insane === 0) ||
+			(difficultyRequired === "insane" && achievement.insane === 0),
+		"list-group-item-secondary":
+			achievement.normal > 0 &&
+			achievement.hard === 0 &&
+			achievement.insane === 0 &&
+			difficultyRequired !== "hard" &&
+			difficultyRequired !== "insane",
+		"list-group-item-warning":
+			achievement.hard > 0 &&
+			achievement.insane === 0 &&
+			difficultyRequired !== "insane",
+		"list-group-item-success": achievement.insane > 0,
+	};
+};
 
 const Category = ({
 	achievements,
@@ -76,8 +89,8 @@ const Category = ({
 }) => {
 	const difficulties =
 		category === "Meta"
-			? (["normal"] as typeof difficultiesReverse)
-			: difficultiesReverse;
+			? (["normal"] as typeof DIFFICULTIES_REVERSE)
+			: DIFFICULTIES_REVERSE;
 
 	const acheivementsWithTotal = achievements.map(achievement => ({
 		...achievement,
@@ -103,41 +116,79 @@ const Category = ({
 			},
 		];
 
-		const cols = getCols([
-			"Team",
-			"Normal",
-			"Hard",
-			"Insane",
-			"Normal",
-			"Hard",
-			"Insane",
-		]);
+		const cols = getCols(
+			["Team", "Normal", "Hard", "Insane", "Normal", "Hard", "Insane"],
+			{
+				Normal: {
+					width: "55px",
+				},
+				Hard: {
+					width: "55px",
+				},
+				Insane: {
+					width: "55px",
+				},
+			},
+		);
 
 		// Get all the same team/season grouped together
 		const achievementsGrouped = groupBy(acheivementsWithTotal, achievement =>
 			achievement.slug.split("_").slice(0, 3).join("_"),
 		);
 		const rows = Object.values(achievementsGrouped).map(achievements => {
+			// Minimum color of the achievements in this row, to highlight the name which represents them all
+			const fakeCounts = {
+				total: Math.min(...achievements.map(achievement => achievement.total)),
+				normal: 0,
+				hard: 0,
+				insane: 0,
+			};
+			const maxDifficulties = achievements.map(achievement => {
+				let index = -1; // -1 means no achievements at any difficulty level
+				for (let i = 0; i < DIFFICULTIES.length; i++) {
+					const difficulty = DIFFICULTIES[i];
+					if (achievement[difficulty] > 0) {
+						index = i;
+					}
+				}
+				return index;
+			});
+			const minDifficulty = Math.min(...maxDifficulties);
+			if (minDifficulty >= 0) {
+				fakeCounts[DIFFICULTIES[minDifficulty]] = 1;
+			}
+			const rowClassNames = achievementClassNames(fakeCounts);
+
 			return {
 				key: achievements[0].slug,
 				data: [
-					achievements[0].name,
+					{
+						value: achievements[0].name,
+						classNames: rowClassNames,
+					},
 					...achievements
 						.map(achievement => {
-							const classNames = achievementClassNames(achievement);
-							console.log(classNames, achievement);
 							return [
 								{
 									value: achievement.normal,
-									classNames,
+									classNames: {
+										...achievementClassNames(achievement),
+										"text-center": true,
+									},
 								},
 								{
 									value: achievement.hard,
-									classNames,
+									classNames: {
+										...achievementClassNames(achievement, "hard"),
+										"text-center": true,
+									},
 								},
 								{
 									value: achievement.insane,
-									classNames,
+									classNames: {
+										...achievementClassNames(achievement, "insane"),
+										"text-center": true,
+									},
 								},
 							];
 						})
@@ -158,14 +209,22 @@ const Category = ({
 						Level 2: earn a Dynasty acheivement within your first 12 seasons.
 					</li>
 				</ul>
-				<DataTable
-					cols={cols}
-					defaultSort={[0, "asc"]}
-					name={"rebuilds"}
-					rows={rows}
-					superCols={superCols}
-					striped={false}
-				/>
+				<div
+					style={{
+						maxWidth: 600,
+					}}
+				>
+					<DataTable
+						cols={cols}
+						defaultSort={[0, "asc"]}
+						name={"rebuilds"}
+						rows={rows}
+						superCols={superCols}
+						bordered={false}
+						striped={false}
+						clickable={false} // Clicking messes up achievement highlighting
+					/>
+				</div>
 			</>
 		);
 	}

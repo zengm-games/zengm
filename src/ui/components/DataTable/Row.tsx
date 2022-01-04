@@ -6,8 +6,10 @@ import useClickable from "../../hooks/useClickable";
 import type { Argument } from "classnames";
 
 const Row = ({
+	clickable,
 	row,
 }: {
+	clickable?: boolean;
 	row: {
 		classNames?: Argument;
 		data: any[];
@@ -17,9 +19,9 @@ const Row = ({
 	return (
 		<tr
 			className={classNames(row.classNames, {
-				"table-warning": clicked,
+				"table-warning": clickable && clicked,
 			})}
-			onClick={toggleClicked}
+			onClick={clickable ? toggleClicked : undefined}
 		>
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property

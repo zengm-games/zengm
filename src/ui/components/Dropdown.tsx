@@ -186,7 +186,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 	};
 
 	return (
-		<form className="d-flex flex-wrap">
+		<>
 			{keys.map((key, i) => {
 				return (
 					<Select
@@ -198,7 +198,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 					/>
 				);
 			})}
-		</form>
+		</>
 	);
 };
 

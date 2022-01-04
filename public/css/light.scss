@@ -756,15 +756,6 @@ tr.table-warning:hover > td {
 	border-bottom: 1px solid $gray-200;
 }
 
-.title-bar .dropdown-links .nav-item {
-	margin: -8px 0;
-	height: inherit;
-	.nav-link {
-		padding-top: 0;
-		padding-bottom: 0;
-	}
-}
-
 .dropdown-links .nav-item,
 #top-user-block .nav-item,
 .play-button-wrapper {
@@ -953,10 +944,8 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
-	margin-left: -17px;
 	h1 {
 		font-size: 20px;
-		margin-left: 17px;
 	}
 	option {
 		font-size: 12px;
@@ -964,9 +953,10 @@ tr.table-warning:hover > td {
 	.dropdown-links .dropdown.show.nav-item {
 		background-color: $gray-100;
 	}
+	gap: 10px;
 }
 .dropdown-select-wrapper {
-	margin: 10px 0 10px 10px;
+	margin: 7px 0;
 }
 .dropdown-select {
 	display: block;
@@ -992,6 +982,9 @@ tr.table-warning:hover > td {
 	}
 }
 @include media-breakpoint-up(md) {
+	.dropdown-select-wrapper {
+		margin: 10px 0;
+	}
 	.dropdown-select {
 		font-size: 14px;
 	}

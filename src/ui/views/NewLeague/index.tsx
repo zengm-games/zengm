@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
-import { useState, useReducer, useRef, useEffect } from "react";
+import { useState, useReducer, useRef } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -229,6 +229,7 @@ type State = {
 	keptKeys: string[];
 	expandOptions: boolean;
 	settings: Omit<Settings, "numActiveTeams">;
+	rebuildAbbrevPending?: string;
 };
 
 type Action =
@@ -524,6 +525,17 @@ const reducer = (state: State, action: Action): State => {
 			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
 			const divs = unwrapGameAttribute(action.gameAttributes, "divs");
 
+			let tid;
+			if (state.rebuildAbbrevPending) {
+				const t = action.teams.find(t => t.srID === state.rebuildAbbrevPending);
+				if (t) {
+					tid = t.tid;
+				}
+			}
+			if (tid === undefined) {
+				tid = getNewTid(prevTeamRegionName, action.teams);
+			}
+
 			return {
 				...state,
 				loadingLeagueFile: false,
@@ -542,9 +554,10 @@ const reducer = (state: State, action: Action): State => {
 				confs,
 				divs,
 				teams: action.teams,
-				tid: getNewTid(prevTeamRegionName, action.teams),
+				tid,
 				pendingInitialLeagueInfo: false,
 				settings: newSettings,
+				rebuildAbbrevPending: undefined,
 			};
 		}
 
@@ -556,6 +569,21 @@ const reducer = (state: State, action: Action): State => {
 
 		default:
 			throw new Error();
+	}
+};
+
+const getRebuildInfo = () => {
+	if (location.hash.startsWith("#rebuild=")) {
+		const rebuildSlug = location.hash.replace("#rebuild=", "");
+		const parts = rebuildSlug.split("_");
+		const abbrev = parts[1].toUpperCase();
+		const season = parseInt(parts[2]);
+		if (abbrev && !Number.isNaN(season)) {
+			return {
+				abbrev,
+				season,
+			};
+		}
 	}
 };
 
@@ -599,13 +627,22 @@ const NewLeague = (props: View<"newLeague">) => {
 				prevTeamRegionName = "";
 			}
 
-			let season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
-			if (Number.isNaN(season)) {
-				season = 2022;
-			}
-			let phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
-			if (Number.isNaN(phase)) {
+			let season;
+			let phase;
+			const rebuildInfo = getRebuildInfo();
+			if (rebuildInfo) {
+				season = rebuildInfo.season;
 				phase = PHASE.PRESEASON;
+				// Can't set tid yet because we haven't loaded teams for this season - do it later with rebuildAbbrevPending
+			} else {
+				season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
+				if (Number.isNaN(season)) {
+					season = 2022;
+				}
+				phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
+				if (Number.isNaN(phase)) {
+					phase = PHASE.PRESEASON;
+				}
 			}
 
 			const { allKeys, keptKeys } = initKeptKeys({
@@ -633,48 +670,10 @@ const NewLeague = (props: View<"newLeague">) => {
 				keptKeys,
 				expandOptions: false,
 				settings: props.defaultSettings,
+				rebuildAbbrevPending: rebuildInfo?.abbrev,
 			};
 		},
 	);
-
-	// Check if rebuild slug is passed in hash, from achievements page links
-	useEffect(() => {
-		if (props.type === "real") {
-			if (location.hash.startsWith("#rebuild=")) {
-				const run = async () => {
-					const rebuildSlug = location.hash.replace("#rebuild=", "");
-					const parts = rebuildSlug.split("_");
-					const abbrev = parts[1].toUpperCase();
-					const season = parseInt(parts[2]);
-					if (abbrev && !Number.isNaN(season)) {
-						console.log(abbrev, season);
-
-						const leagueInfo = await toWorker("main", "getLeagueInfo", {
-							type: "real",
-							season: season,
-							phase: PHASE.PRESEASON,
-							randomDebuts: false,
-							realDraftRatings: props.defaultSettings.realDraftRatings,
-							realStats: props.defaultSettings.realStats,
-						});
-						console.log("hash leagueInfo", leagueInfo);
-
-						/*const t = teams.find(t => t.abbrev === abbrev);
-						if (t) {
-							tidOverride = t.tid;
-							season = rebuildSeason;
-						}*/
-					}
-				};
-
-				run();
-			}
-		}
-	}, [
-		props.type,
-		props.defaultSettings.realDraftRatings,
-		props.defaultSettings.realStats,
-	]);
 
 	let title: string;
 	if (importing) {
@@ -888,7 +887,6 @@ const NewLeague = (props: View<"newLeague">) => {
 	};
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
-		console.log("handleNewLeagueInfo", leagueInfo);
 		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
 
 		dispatch({

@@ -944,8 +944,10 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
+	margin-left: -17px; // Needed when sidebar is open
 	h1 {
 		font-size: 20px;
+		margin: 7px 0 7px 17px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 	}
 	option {
 		font-size: 12px;
@@ -953,10 +955,11 @@ tr.table-warning:hover > td {
 	.dropdown-links .dropdown.show.nav-item {
 		background-color: $gray-100;
 	}
-	gap: 10px;
+	gap: 0 10px;
+	min-height: 39px;
 }
 .dropdown-select-wrapper {
-	margin: 7px 0;
+	margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 }
 .dropdown-select {
 	display: block;
@@ -964,8 +967,7 @@ tr.table-warning:hover > td {
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	appearance: none;
-	padding-left: 2px;
-	padding-right: 13px;
+	padding: 2px 13px 0 2px;
 	background-color: inherit;
 	border: 0;
 	color: inherit;
@@ -982,9 +984,6 @@ tr.table-warning:hover > td {
 	}
 }
 @include media-breakpoint-up(md) {
-	.dropdown-select-wrapper {
-		margin: 10px 0;
-	}
 	.dropdown-select {
 		font-size: 14px;
 	}
@@ -992,6 +991,7 @@ tr.table-warning:hover > td {
 		h1 {
 			font-size: 24px;
 		}
+		min-height: 45px;
 	}
 }
 

@@ -66,7 +66,14 @@ export const getTeamOvrDiffs = (
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to an array of player IDs who were drafted during this function call, in order.
  */
 const runPicks = async (
-	type: "onePick" | "untilYourNextPick" | "untilEnd",
+	action:
+		| {
+				type: "onePick" | "untilYourNextPick" | "untilEnd";
+		  }
+		| {
+				type: "untilPick";
+				dpid: number;
+		  },
 	conditions?: Conditions,
 ) => {
 	if (lock.get("drafting")) {
@@ -121,13 +128,18 @@ const runPicks = async (
 				const dp = draftPicks[0];
 
 				const singleUserPickInSpectatorMode =
-					g.get("spectator") && type === "onePick";
+					g.get("spectator") && action.type === "onePick";
 				const pauseForUserPick =
 					g.get("userTids").includes(dp.tid) &&
 					!local.autoPlayUntil &&
 					!singleUserPickInSpectatorMode &&
-					type !== "untilEnd";
-				if (pauseForUserPick) {
+					action.type !== "untilEnd" &&
+					action.type !== "untilPick";
+
+				const pauseForDpid =
+					action.type === "untilPick" && dp.dpid === action.dpid;
+
+				if (pauseForUserPick || pauseForDpid) {
 					return afterDoneAuto();
 				}
 
@@ -183,7 +195,7 @@ const runPicks = async (
 				pids.push(pid);
 				playersAll = playersAll.filter(p => p !== selection); // Delete from the list of undrafted players
 
-				if (type !== "onePick") {
+				if (action.type !== "onePick") {
 					return autoSelectPlayer();
 				}
 			}

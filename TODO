@@ -8,6 +8,7 @@ rebuilds
 - condensed UI on achievements page
   - highlight cells with same color as achievements
   - quick start button
+    - skip initial load from handleNewValue call in LeagueMenu.tsx
 
 set all ratings 0 and player gets assists to himself on beta site https://discord.com/channels/290013534023057409/290013534023057409/926551885425545296
 

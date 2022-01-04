@@ -157,13 +157,28 @@ const Category = ({
 			if (minDifficulty >= 0) {
 				fakeCounts[DIFFICULTIES[minDifficulty]] = 1;
 			}
-			const rowClassNames = achievementClassNames(fakeCounts);
+			const rowClassNames = {
+				...achievementClassNames(fakeCounts),
+				"d-flex": true,
+			};
 
 			return {
 				key: achievements[0].slug,
 				data: [
 					{
-						value: achievements[0].name,
+						value: (
+							<>
+								{achievements[0].name}
+
+								<a
+									className="btn btn-xs btn-secondary ms-auto"
+									href={`/new_league/real#rebuild=${achievements[0].slug}`}
+									role="button"
+								>
+									New league
+								</a>
+							</>
+						),
 						classNames: rowClassNames,
 					},
 					...achievements
@@ -211,7 +226,7 @@ const Category = ({
 				</ul>
 				<div
 					style={{
-						maxWidth: 600,
+						maxWidth: 550,
 					}}
 				>
 					<DataTable

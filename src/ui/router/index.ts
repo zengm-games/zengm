@@ -134,7 +134,7 @@ const samePath = (url: HTMLAnchorElement) => {
 	);
 };
 
-const clickEvent = window.document.ontouchstart ? "touchstart" : "click";
+const clickEvent = document.ontouchstart ? "touchstart" : "click";
 
 class Router {
 	private routeMatched: RouteMatched | undefined;
@@ -187,7 +187,7 @@ class Router {
 							{
 								path,
 							},
-							window.document.title,
+							document.title,
 							path,
 						);
 					} else if (!refresh) {
@@ -195,7 +195,7 @@ class Router {
 							{
 								path,
 							},
-							window.document.title,
+							document.title,
 							path,
 						);
 					}
@@ -250,19 +250,16 @@ class Router {
 			});
 		}
 
-		window.document.addEventListener(clickEvent, e => {
+		document.addEventListener(clickEvent, e => {
 			this._onclick(e as NonStandardEvent);
 		});
 		window.addEventListener("popstate", e => {
 			this._onpopstate(e);
 		});
 
-		this.navigate(
-			window.location.pathname + window.location.search + window.location.hash,
-			{
-				replace: true,
-			},
-		);
+		this.navigate(location.pathname + location.search + location.hash, {
+			replace: true,
+		});
 	}
 
 	// Mostly taken from page.js
@@ -318,16 +315,14 @@ class Router {
 	}
 
 	private _onpopstate(event: Event & { state: any }) {
-		if (window.document.readyState !== "complete") {
+		if (document.readyState !== "complete") {
 			return;
 		}
 
 		const path =
 			event.state && typeof event.state.path === "string"
 				? event.state.path
-				: window.location.pathname +
-				  window.location.search +
-				  window.location.hash;
+				: location.pathname + location.search + location.hash;
 
 		if (
 			this.lastNavigatedPath &&

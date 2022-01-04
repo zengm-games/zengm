@@ -127,7 +127,7 @@ const LeagueMenu = <Value extends string>({
 					</select>
 				) : null}
 				<button
-					className="btn btn-secondary"
+					className="btn btn-light-bordered"
 					type="button"
 					onClick={() => {
 						const keys = values.map(v => v.key);

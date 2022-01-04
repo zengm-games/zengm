@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
 import PropTypes from "prop-types";
-import { useState, useReducer, useRef } from "react";
+import { useState, useReducer, useRef, useEffect } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -637,6 +637,45 @@ const NewLeague = (props: View<"newLeague">) => {
 		},
 	);
 
+	// Check if rebuild slug is passed in hash, from achievements page links
+	useEffect(() => {
+		if (props.type === "real") {
+			if (location.hash.startsWith("#rebuild=")) {
+				const run = async () => {
+					const rebuildSlug = location.hash.replace("#rebuild=", "");
+					const parts = rebuildSlug.split("_");
+					const abbrev = parts[1].toUpperCase();
+					const season = parseInt(parts[2]);
+					if (abbrev && !Number.isNaN(season)) {
+						console.log(abbrev, season);
+
+						const leagueInfo = await toWorker("main", "getLeagueInfo", {
+							type: "real",
+							season: season,
+							phase: PHASE.PRESEASON,
+							randomDebuts: false,
+							realDraftRatings: props.defaultSettings.realDraftRatings,
+							realStats: props.defaultSettings.realStats,
+						});
+						console.log("hash leagueInfo", leagueInfo);
+
+						/*const t = teams.find(t => t.abbrev === abbrev);
+						if (t) {
+							tidOverride = t.tid;
+							season = rebuildSeason;
+						}*/
+					}
+				};
+
+				run();
+			}
+		}
+	}, [
+		props.type,
+		props.defaultSettings.realDraftRatings,
+		props.defaultSettings.realStats,
+	]);
+
 	let title: string;
 	if (importing) {
 		title = "Import League";
@@ -849,6 +888,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	};
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
+		console.log("handleNewLeagueInfo", leagueInfo);
 		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
 
 		dispatch({

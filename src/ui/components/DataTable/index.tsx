@@ -102,7 +102,7 @@ export type State = {
 const DataTable = ({
 	bordered,
 	className,
-	clickable,
+	clickable = true,
 	cols,
 	defaultSort,
 	disableSettingsCache,

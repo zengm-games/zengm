@@ -3,7 +3,11 @@ import { isValidElement } from "react";
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
 
-const getSortVal = (value: any = null, sortType: SortType | undefined) => {
+const getSortVal = (
+	value: any = null,
+	sortType: SortType | undefined,
+	exportCSV?: boolean,
+) => {
 	try {
 		let val;
 		let sortVal: string;
@@ -113,7 +117,14 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 			}
 
 			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			const number = parseFloat(sortVal.replace("$", "")) * factor;
+			const parsedNumber = parseFloat(sortVal.replace("$", ""));
+
+			if (!exportCSV) {
+				// This gets called by filter functions, which expect it to be in millions
+				factor /= 1e6;
+			}
+
+			const number = parsedNumber * factor;
 			if (factor > 1) {
 				// Get rid of floating point errors if we're multiplying by a large number
 				return Math.round(number);

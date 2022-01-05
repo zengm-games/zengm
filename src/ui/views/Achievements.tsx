@@ -179,6 +179,8 @@ const Category = ({
 								</a>
 							</>
 						),
+						sortValue: achievements[0].name,
+						searchValue: achievements[0].name,
 						classNames: rowClassNames,
 					},
 					...achievements

@@ -1598,11 +1598,6 @@ if (isSport("basketball")) {
 			name: "Denver",
 		},
 		{
-			season: 2002,
-			srIDs: ["DEN"],
-			name: "Denver",
-		},
-		{
 			season: 2003,
 			srIDs: ["MIA"],
 			name: "Miami",

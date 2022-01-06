@@ -92,7 +92,7 @@ const Category = ({
 			? (["normal"] as typeof DIFFICULTIES_REVERSE)
 			: DIFFICULTIES_REVERSE;
 
-	const acheivementsWithTotal = achievements.map(achievement => ({
+	const achievementsWithTotal = achievements.map(achievement => ({
 		...achievement,
 		total: difficulties.reduce(
 			(sum, difficulty) => sum + achievement[difficulty],
@@ -132,7 +132,7 @@ const Category = ({
 		);
 
 		// Get all the same team/season grouped together
-		const achievementsGrouped = groupBy(acheivementsWithTotal, achievement =>
+		const achievementsGrouped = groupBy(achievementsWithTotal, achievement =>
 			achievement.slug.split("_").slice(0, 3).join("_"),
 		);
 		const rows = Object.values(achievementsGrouped).map(achievements => {
@@ -223,7 +223,7 @@ const Category = ({
 				<ul className="list-unstyled">
 					<li>Level 1: win a championship in your first 3 seasons.</li>
 					<li>
-						Level 2: earn a Dynasty acheivement within your first 12 seasons.
+						Level 2: earn a Dynasty achievement within your first 12 seasons.
 					</li>
 				</ul>
 				<div
@@ -248,7 +248,7 @@ const Category = ({
 
 	return (
 		<div className="row g-2">
-			{acheivementsWithTotal.map(achievement => {
+			{achievementsWithTotal.map(achievement => {
 				return (
 					<div key={achievement.slug} className="col-sm-6 col-md-4 col-xl-3">
 						<div

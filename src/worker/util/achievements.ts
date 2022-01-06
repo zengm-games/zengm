@@ -276,6 +276,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	}
 
 	const season = g.get("season");
+	const userTid = g.get("userTid");
 
 	// If we have current season in cache, use it
 	if (checkMvpCache?.season === season) {
@@ -287,7 +288,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	// If we have last season in cache, use it
 	if (checkMvpCache?.season === season - 1) {
 		checkMvpCache.season = season;
-		if (currentAwards.mvp?.tid === g.get("userTid")) {
+		if (currentAwards.mvp?.tid === userTid) {
 			checkMvpCache.count += 1;
 		}
 		return checkMvpCache.count === limit;
@@ -299,7 +300,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 		season,
 		count: 0,
 	};
-	if (currentAwards.mvp?.tid === g.get("userTid")) {
+	if (currentAwards.mvp?.tid === userTid) {
 		checkMvpCache.count += 1;
 	}
 	await iterate(
@@ -324,7 +325,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 		},
 	);
 
-	return checkMvpCache.count === limit;
+	return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
 };
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php

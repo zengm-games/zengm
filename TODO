@@ -1,3 +1,6 @@
+on team history, graph of team ovr / winp / mov over time, star for championship
+- maybe better on league history, to show for whole league?
+
 add another retirement check, for players who fall off some factor below peak https://old.reddit.com/r/BasketballGM/comments/r62efc/monthly_suggestions_thread/hn4qtzb/
 
 new achievements
@@ -11,6 +14,7 @@ more season preview stuff
 - top rookies
 - top free agent signings
 - ...1 more needed
+  - top young players? kind of redundant
 
 for some fbgm penalties, don't allow the ball carrier to be called
 
@@ -72,8 +76,6 @@ add some way to auto find team colors based on logo
 
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
-
-on team history, graph of team ovr and winp over time, star for championship
 
 fix applying penalties on xp/2pt
 - store scrimmage of 2pt, then xp is offset from that
@@ -1236,7 +1238,7 @@ Game list redesign
   - show ovr in box score too
   - show player with highest game score under completed game
 
-nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
+nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff
 
 probGoForIt should account for being down by a FG or less late in the game
 

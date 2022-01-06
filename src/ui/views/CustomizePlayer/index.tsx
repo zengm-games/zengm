@@ -176,10 +176,28 @@ const copyValidValues = (
 	}
 
 	{
+		const prevDraftTid = target.draft.tid;
+
 		// @ts-ignore
-		const draftYear = parseInt(source.draft.year);
-		if (!Number.isNaN(draftYear)) {
-			target.draft.year = draftYear;
+		const draftInts = ["year", "round", "pick", "tid"] as const;
+		for (const key of draftInts) {
+			const int = parseInt(source.draft[key] as any);
+			console.log(key, int);
+			if (!Number.isNaN(int)) {
+				target.draft[key] = int;
+			}
+		}
+		if (target.draft.tid === PLAYER.UNDRAFTED) {
+			target.draft.round = 0;
+			target.draft.pick = 0;
+		}
+
+		if (prevDraftTid !== target.draft.tid) {
+			// dpid no longer makes sense to store, since player was drafted with a fake pick now
+			delete target.draft.dpid;
+
+			// No UI to set originalTid, yet so always change
+			target.draft.originalTid = target.draft.tid;
 		}
 	}
 
@@ -518,6 +536,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		jerseyNumber = "";
 	}
 
+	const draftTeamUndrafted =
+		p.draft.tid === PLAYER.UNDRAFTED ||
+		(p.draft.tid as any) === String(PLAYER.UNDRAFTED);
+
 	return (
 		<>
 			{!godMode ? (
@@ -807,6 +829,44 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.draft.year}
 									disabled={!godMode}
 								/>
+							</div>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Round</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "draft", "round")}
+									value={draftTeamUndrafted ? 0 : p.draft.round}
+									disabled={!godMode || draftTeamUndrafted}
+								/>
+							</div>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Pick</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "draft", "pick")}
+									value={draftTeamUndrafted ? 0 : p.draft.pick}
+									disabled={!godMode || draftTeamUndrafted}
+								/>
+							</div>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Team</label>
+								<select
+									className="form-select"
+									onChange={handleChange.bind(null, "draft", "tid")}
+									value={p.draft.tid}
+									disabled={!godMode}
+								>
+									<option value={PLAYER.UNDRAFTED}>Undrafted</option>
+									{orderBy(teams, ["text", "tid"]).map(t => {
+										return (
+											<option key={t.tid} value={t.tid}>
+												{t.text}
+											</option>
+										);
+									})}
+								</select>
 							</div>
 							<div className="col-sm-3 mb-3">
 								<label className="form-label">Year of Death</label>

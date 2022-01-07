@@ -286,7 +286,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 		const ts = await getTeamInfoBySeason(ps.tid, ps.season);
 		let t;
-		if (ts && ts.colors && ts.name && ts.region) {
+		if (ts && ts.colors && ts.name !== undefined && ts.region !== undefined) {
 			t = {
 				tid: ps.tid,
 				colors: ts.colors,

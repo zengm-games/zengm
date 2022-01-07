@@ -994,6 +994,7 @@ export const settings: {
 				</p>
 			</>
 		),
+
 		validator: value => {
 			if (value > 1) {
 				throw new Error("Value cannot be greater than 1");
@@ -1002,6 +1003,24 @@ export const settings: {
 				throw new Error("Value cannot be less than 0");
 			}
 		},
+	},
+	{
+		category: "Schedule",
+		key: "tradeMatchingPercentage",
+		name: "Trade Matching Percentage",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
+		descriptionLong: (
+			<>
+				<p>
+					Set this to whatever value you want for the trades to match
+					contract-wise. In real life, the percentage is 125%, but this allows
+					you to modify this.
+				</p>
+
+				<p>Set this to 0 to turn off the rule</p>
+			</>
+		),
 	},
 	{
 		category: "Playoffs",

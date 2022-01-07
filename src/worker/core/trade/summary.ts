@@ -2,6 +2,8 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { TradeSummary, TradeTeams } from "../../../common/types";
+import { league } from "src/worker/core";
+league.loadGameAttributes();
 
 /**
  * Create a summary of the trade, for eventual display to the user.
@@ -101,9 +103,13 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			}
 		}),
 	);
+	if (g.get("tradeMatchingPercentage") === 0) {
+		return s;
+	}
 	const softCapCondition =
 		!g.get("hardCap") &&
-		((ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]));
+		((ratios[0] > g.get("tradeMatchingPercentage") && overCap[0]) ||
+			(ratios[1] > g.get("tradeMatchingPercentage") && overCap[1]));
 
 	const overCapAndIncreasing = (i: 0 | 1) =>
 		overCap[i] && s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
@@ -113,8 +119,14 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 
 	if (softCapCondition) {
 		// Which team is at fault?;
-		const j = ratios[0] > 125 ? 0 : 1;
-		s.warning = `The ${s.teams[j].name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[j]}%.`;
+		const j = ratios[0] > g.get("tradeMatchingPercentage") ? 0 : 1;
+		s.warning = `The ${
+			s.teams[j].name
+		} are over the salary cap, so the players it receives must have a combined salary of less than ${g.get(
+			"tradeMatchingPercentage",
+		)}% of the salaries of the players it trades away.  Currently, that value is ${
+			ratios[j]
+		}%.`;
 	} else if (hardCapCondition) {
 		const j = overCapAndIncreasing(0) ? 0 : 1;
 		const amountIncrease =

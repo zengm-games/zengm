@@ -64,6 +64,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numGames: 82, // per season
 	numGamesDiv: 16,
 	numGamesConf: 36,
+	tradeMatchingPercentage: 125,
 	otherTeamsWantToHire: false,
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]

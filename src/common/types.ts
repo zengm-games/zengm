@@ -506,6 +506,7 @@ export type GameAttributesLeague = {
 	numGames: number;
 	numGamesDiv: number | null;
 	numGamesConf: number | null;
+	tradeMatchingPercentage: number;
 	numGamesPlayoffSeries: number[];
 	numPeriods: number;
 	numPlayersDunk: number;
@@ -553,6 +554,7 @@ export type GameAttributesLeague = {
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
 	tiebreakers: (keyof typeof TIEBREAKERS)[];
+
 	teamInfoCache: {
 		abbrev: string;
 		region: string;
@@ -1204,8 +1206,6 @@ export type Local = {
 	autoPlayUntil?: {
 		season: number;
 		phase: number;
-
-		// Time in milliseconds of the start of auto play
 		start: number;
 	};
 	autoSave: boolean;
@@ -1706,5 +1706,3 @@ export type HeadToHead = {
 		>
 	>;
 };
-
-export type GetCopyType = "noCopyCache";

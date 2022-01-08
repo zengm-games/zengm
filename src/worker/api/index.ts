@@ -56,6 +56,7 @@ import {
 	initUILocalGames,
 	loadNames,
 	defaultInjuries,
+	defaultTragicDeaths,
 } from "../util";
 import {
 	toPolyfillReadable,
@@ -1393,6 +1394,10 @@ const getAutoPos = (ratings: any) => {
 
 const getDefaultInjuries = () => {
 	return defaultInjuries;
+};
+
+const getDefaultTragicDeaths = () => {
+	return defaultTragicDeaths;
 };
 
 const getLeagueInfo = async (
@@ -3688,6 +3693,7 @@ export default {
 	generateFace,
 	getAutoPos,
 	getDefaultInjuries,
+	getDefaultTragicDeaths,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,

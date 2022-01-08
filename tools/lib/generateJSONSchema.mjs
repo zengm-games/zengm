@@ -1006,6 +1006,21 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
+							tragicDeaths: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										reason: {
+											type: "string",
+										},
+										frequency: {
+											type: "number",
+										},
+									},
+									required: ["reason", "frequency"],
+								},
+							},
 							userTid: wrap({
 								type: "integer",
 							}),

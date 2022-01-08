@@ -5,7 +5,9 @@ import type { Conditions, Player } from "../../../common/types";
 import { bySport } from "../../../common";
 
 const getReason = () => {
-	let reason = random.choice(defaultTragicDeaths, row => row.frequency).reason;
+	const tragicDeaths = g.get("tragicDeaths") ?? defaultTragicDeaths;
+
+	let reason = random.choice(tragicDeaths, row => row.frequency).reason;
 	if (reason === "SPECIAL_CLUE") {
 		reason = `PLAYER_NAME was killed by ${random.choice([
 			"Miss Scarlet",

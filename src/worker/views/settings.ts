@@ -1,9 +1,10 @@
-import { defaultInjuries, g } from "../util";
+import { defaultInjuries, defaultTragicDeaths, g } from "../util";
 import type {
 	Conf,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	InjuriesSetting,
+	TragicDeaths,
 	UpdateEvents,
 } from "../../common/types";
 
@@ -105,7 +106,10 @@ const keys = [
 
 export type Settings = Pick<
 	GameAttributesLeague,
-	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings" | "injuries">
+	Exclude<
+		typeof keys[number],
+		"repeatSeason" | "realDraftRatings" | "injuries" | "tragicDeaths"
+	>
 > & {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -116,6 +120,7 @@ export type Settings = Pick<
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	realStats: GetLeagueOptionsReal["realStats"];
 	injuries: InjuriesSetting;
+	tragicDeaths: TragicDeaths;
 	confs?: Conf[];
 };
 
@@ -219,6 +224,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayersDunk: g.get("numPlayersDunk"),
 			numPlayersThree: g.get("numPlayersThree"),
 			fantasyPoints: g.get("fantasyPoints"),
+			tragicDeaths: g.get("tragicDeaths") ?? defaultTragicDeaths,
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

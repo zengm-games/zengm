@@ -439,6 +439,11 @@ export type InjuriesSetting = {
 	games: number;
 }[];
 
+export type TragicDeaths = {
+	reason: string;
+	frequency: number;
+}[];
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -564,6 +569,7 @@ export type GameAttributesLeague = {
 	ties: boolean;
 	tradeDeadline: number;
 	tragicDeathRate: number;
+	tragicDeaths?: TragicDeaths;
 	userTid: number;
 	userTids: number[];
 

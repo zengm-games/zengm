@@ -21,8 +21,12 @@ import { isSport, WEBSITE_ROOT } from "../../../common";
 import { settings } from "./settings";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
-import Injuries from "./Injuries";
-import type { InjuriesSetting, PlayerBioInfo } from "../../../common/types";
+import RowsEditor from "./RowsEditor";
+import type {
+	InjuriesSetting,
+	PlayerBioInfo,
+	TragicDeaths,
+} from "../../../common/types";
 import PlayerBioInfo2 from "./PlayerBioInfo";
 
 const settingNeedsGodMode = (
@@ -1270,7 +1274,11 @@ const GodModeSettingsButton = ({
 	);
 };
 
-const SPECIAL_STATE_OTHERS = ["injuries", "playerBioInfo"] as const;
+const SPECIAL_STATE_OTHERS = [
+	"injuries",
+	"tragicDeaths",
+	"playerBioInfo",
+] as const;
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
@@ -1279,6 +1287,7 @@ type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
 type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<SpecialStateBoolean, boolean> &
 	Record<"injuries", InjuriesSetting> &
+	Record<"tragicDeaths", TragicDeaths> &
 	Record<"playerBioInfo", PlayerBioInfo | undefined>;
 
 const SettingsForm = ({
@@ -1332,11 +1341,9 @@ const SettingsForm = ({
 			initialState[key] = stringify ? stringify(value, values) : value;
 		}
 
-		for (const key of SPECIAL_STATE_BOOLEANS) {
-			initialState[key] = props[key];
+		for (const key of [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS]) {
+			(initialState as any)[key] = props[key];
 		}
-		initialState.injuries = props.injuries;
-		initialState.playerBioInfo = props.playerBioInfo;
 
 		return initialState;
 	});
@@ -1793,17 +1800,32 @@ const SettingsForm = ({
 												);
 											} else if (key === "injuries") {
 												customFormNode = (
-													<Injuries
-														defaultValue={state.injuries}
+													<RowsEditor
+														defaultValue={state[key]}
 														disabled={!enabled || submitting}
 														godModeRequired={godModeRequired}
-														onChange={injuries => {
+														onChange={rows => {
 															setState(prevState => ({
 																...prevState,
-																injuries,
+																rows,
 															}));
 														}}
-														type="injuries"
+														type={key}
+													/>
+												);
+											} else if (key === "tragicDeaths") {
+												customFormNode = (
+													<RowsEditor
+														defaultValue={state[key]}
+														disabled={!enabled || submitting}
+														godModeRequired={godModeRequired}
+														onChange={rows => {
+															setState(prevState => ({
+																...prevState,
+																rows,
+															}));
+														}}
+														type={key}
 													/>
 												);
 											} else if (key === "playerBioInfo") {

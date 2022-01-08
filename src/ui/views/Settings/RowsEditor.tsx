@@ -296,7 +296,7 @@ const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
 // If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though. Also https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZGhkhtPsGFPFxcKxhvZFkHpl
 export const animation = false;
 
-const Injuries = <Type extends "injuries" | "tragicDeaths">({
+const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 	defaultValue,
 	disabled,
 	godModeRequired,
@@ -411,7 +411,9 @@ const Injuries = <Type extends "injuries" | "tragicDeaths">({
 
 			<Modal show={show} onHide={handleCancel} animation={animation} scrollable>
 				<Modal.Header closeButton>
-					<Modal.Title>Injury Types</Modal.Title>
+					<Modal.Title>
+						{type === "injuries" ? "Injury Types" : "Tragic Death Types"}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<p>
@@ -578,4 +580,4 @@ const Injuries = <Type extends "injuries" | "tragicDeaths">({
 	);
 };
 
-export default Injuries;
+export default RowsEditor;

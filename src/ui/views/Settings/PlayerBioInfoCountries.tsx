@@ -11,7 +11,7 @@ import {
 	PlayerBioInfoState,
 	prune,
 } from "./PlayerBioInfo";
-import { IMPORT_FILE_STYLE } from "./Injuries";
+import { IMPORT_FILE_STYLE } from "./RowsEditor";
 import { CountryFlag } from "../../components";
 
 export const smallColStyle = {

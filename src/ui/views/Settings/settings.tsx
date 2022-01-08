@@ -777,6 +777,14 @@ export const settings: {
 	},
 	{
 		category: "Events",
+		key: "tragicDeaths",
+		name: "Tragic Death Types",
+		type: "custom",
+		godModeRequired: "always",
+		customForm: true,
+	},
+	{
+		category: "Events",
 		key: "brotherRate",
 		name: "Brother Rate",
 		type: "float",

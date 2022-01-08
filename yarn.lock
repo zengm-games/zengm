@@ -4415,9 +4415,9 @@ idb@^6.1.4:
   resolved "https://registry.yarnpkg.com/idb/-/idb-6.1.5.tgz#dbc53e7adf1ac7c59f9b2bf56e00b4ea4fce8c7b"
   integrity sha512-IJtugpKkiVXQn5Y+LteyBCNk1N8xpGV3wWZk9EVtZWH8DYkjBn0bX1XnGP9RkyZF0sAcywa6unHqSWKe7q4LGw==
 
-idb@dumbmatter/idb#bbgm2:
-  version "6.1.2"
-  resolved "https://codeload.github.com/dumbmatter/idb/tar.gz/6c0ef532b155224415d7cc5642801f4921102184"
+idb@dumbmatter/idb#autoIncrementKeyPath2-build:
+  version "7.0.0"
+  resolved "https://codeload.github.com/dumbmatter/idb/tar.gz/c1fc45dfeee1af3a12b83b2bebaec2f6670b28ce"
 
 ignore@^4.0.6:
   version "4.0.6"

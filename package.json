@@ -55,7 +55,7 @@
 		"facesjs": "^3.6.0",
 		"framer-motion": "^5.5.6",
 		"html2canvas": "^1.4.0",
-		"idb": "dumbmatter/idb#bbgm2",
+		"idb": "dumbmatter/idb#autoIncrementKeyPath2-build",
 		"lodash-es": "^4.17.21",
 		"nanoevents": "^6.0.2",
 		"promise-worker-bi": "^4.0.2",

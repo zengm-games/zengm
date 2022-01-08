@@ -671,7 +671,7 @@ export type GameProcessedCompleted = {
 };
 
 export type League = {
-	lid?: number;
+	lid: number;
 	name: string;
 	tid: number;
 	phaseText: string;

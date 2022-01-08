@@ -163,9 +163,13 @@ const updatePlayoffs = async (
 				}
 			}
 		}
-		for (const matchup of series[0]) {
-			if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
-				canEdit = false;
+		if (series.length === 0) {
+			canEdit = false;
+		} else {
+			for (const matchup of series[0]) {
+				if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+					canEdit = false;
+				}
 			}
 		}
 

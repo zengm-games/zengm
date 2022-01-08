@@ -13,6 +13,7 @@ import {
 } from "../../util";
 import { godModeRequiredMessage } from "./SettingsForm";
 import classNames from "classnames";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
 type RowsState<Type> = Type extends "injuries"
@@ -435,13 +436,21 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 							is some variability based on luck and health spending.
 						</p>
 					) : (
-						<p>
-							<code>PLAYER_NAME</code> will be replaced by the name of the
-							player who died. By default there are two special tragic deaths,
-							defined by the codes <code>SPECIAL_CLUE</code> and{" "}
-							<code>SPECIAL_GIFTS</code> because internally they have some
-							randomly generated parts.
-						</p>
+						<>
+							<p>
+								<code>PLAYER_NAME</code> will be replaced by the name of the
+								player who died. By default there are two special tragic deaths,
+								defined by the codes <code>SPECIAL_CLUE</code> and{" "}
+								<code>SPECIAL_GIFTS</code> because internally they have some
+								randomly generated parts.
+							</p>
+							{SPORT_HAS_REAL_PLAYERS ? (
+								<p>
+									If you're using the built-in rosters with real players, please
+									be aware that real players can never experience tragic deaths.
+								</p>
+							) : null}
+						</>
 					)}
 
 					<Controls position="top" rows={rows} setRows={setRows} type={type} />

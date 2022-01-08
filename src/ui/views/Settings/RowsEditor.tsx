@@ -409,7 +409,13 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 				Customize
 			</button>
 
-			<Modal show={show} onHide={handleCancel} animation={animation} scrollable>
+			<Modal
+				show={show}
+				onHide={handleCancel}
+				animation={animation}
+				scrollable
+				size={type === "injuries" ? undefined : "xl"}
+			>
 				<Modal.Header closeButton>
 					<Modal.Title>
 						{type === "injuries" ? "Injury Types" : "Tragic Death Types"}
@@ -452,8 +458,8 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 									</>
 								) : (
 									<>
-										<div className="col-9">Reason</div>
-										<div className="col-3">Games</div>
+										<div className="col-9 col-md-10 col-xl-11">Reason</div>
+										<div className="col-3 col-md-2 col-xl-1">Frequency</div>
 									</>
 								)}
 							</div>
@@ -506,7 +512,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 													</>
 												) : (
 													<>
-														<div className="col-9">
+														<div className="col-9 col-md-10 col-xl-11">
 															<input
 																type="text"
 																className="form-control"
@@ -514,7 +520,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 																onChange={handleChange("reason", i)}
 															/>
 														</div>
-														<div className="col-3">
+														<div className="col-3 col-md-2 col-xl-1">
 															<input
 																type="text"
 																className={classNames("form-control", {

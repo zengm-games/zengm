@@ -1798,7 +1798,7 @@ const SettingsForm = ({
 														</div>
 													</div>
 												);
-											} else if (key === "injuries") {
+											} else if (key === "injuries" || key === "tragicDeaths") {
 												customFormNode = (
 													<RowsEditor
 														defaultValue={state[key]}
@@ -1807,22 +1807,7 @@ const SettingsForm = ({
 														onChange={rows => {
 															setState(prevState => ({
 																...prevState,
-																rows,
-															}));
-														}}
-														type={key}
-													/>
-												);
-											} else if (key === "tragicDeaths") {
-												customFormNode = (
-													<RowsEditor
-														defaultValue={state[key]}
-														disabled={!enabled || submitting}
-														godModeRequired={godModeRequired}
-														onChange={rows => {
-															setState(prevState => ({
-																...prevState,
-																rows,
+																[key]: rows,
 															}));
 														}}
 														type={key}

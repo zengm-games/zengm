@@ -1336,11 +1336,12 @@ a.anchor {
 }
 
 // https://www.codeply.com/go/NiFzSCukVl/bootstrap-4-open-modal-from-another-modal
+// Increased z-index for Bootstrap 5 https://getbootstrap.com/docs/5.1/layout/z-index/
 .highest-modal {
-	z-index: 1052 !important;
+	z-index: 1057 !important;
 }
 .highest-modal-backdrop.show {
-	z-index: 1051 !important;
+	z-index: 1056 !important;
 }
 
 .border-top-light {
